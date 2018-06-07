@@ -1,121 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id V8yFJJs8GVvZNQAAmS7hNA
-	; Thu, 07 Jun 2018 14:09:31 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id nwwVK5XrGFunZwAAmS7hNA
+	; Thu, 07 Jun 2018 08:24:25 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 859F26063F; Thu,  7 Jun 2018 14:09:31 +0000 (UTC)
+	id E9194608C8; Thu,  7 Jun 2018 08:24:24 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 00677607DC;
-	Thu,  7 Jun 2018 14:09:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 00677607DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id B26C860115;
+	Thu,  7 Jun 2018 08:24:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B26C860115
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933153AbeFGOJ2 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:09:28 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39233 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933003AbeFGOJE (ORCPT
+        id S932657AbeFGIYV (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 04:24:21 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:37729 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932551AbeFGIYS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:09:04 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb4-0005Zl-8k; Thu, 07 Jun 2018 15:09:02 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb1-0002ox-70; Thu, 07 Jun 2018 15:08:59 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Thu, 7 Jun 2018 04:24:18 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w578O80l2127939
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 7 Jun 2018 01:24:08 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w578O8AQ2127936;
+        Thu, 7 Jun 2018 01:24:08 -0700
+Date: Thu, 7 Jun 2018 01:24:08 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-ndfjtpiop3tdcnyjgp320ra8@git.kernel.org>
+Cc: wangnan0@huawei.com, dsahern@gmail.com,
+        linux-kernel@vger.kernel.org, acme@redhat.com,
+        adrian.hunter@intel.com, mingo@kernel.org, hpa@zytor.com,
+        jolsa@kernel.org, tglx@linutronix.de, namhyung@kernel.org
+Reply-To: tglx@linutronix.de, namhyung@kernel.org, jolsa@kernel.org,
+          hpa@zytor.com, mingo@kernel.org, adrian.hunter@intel.com,
+          acme@redhat.com, linux-kernel@vger.kernel.org, dsahern@gmail.com,
+          wangnan0@huawei.com
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf annnotate: Make __symbol__inc_addr_samples
+ handle src->histograms == NULL
+Git-Commit-ID: 8d628d26b997e6b2e93bf31cfc09e42cc496922e
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Max Filippov" <jcmvbkbc@gmail.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.600727229@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 096/410] xtensa: fix futex_atomic_cmpxchg_inatomic
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+Commit-ID:  8d628d26b997e6b2e93bf31cfc09e42cc496922e
+Gitweb:     https://git.kernel.org/tip/8d628d26b997e6b2e93bf31cfc09e42cc496922e
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Tue, 5 Jun 2018 16:31:21 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Wed, 6 Jun 2018 12:52:08 -0300
 
-------------------
+perf annnotate: Make __symbol__inc_addr_samples handle src->histograms == NULL
 
-From: Max Filippov <jcmvbkbc@gmail.com>
+Making it a bit more robust, this took place here when a sample appeared
+right after:
 
-commit ca47480921587ae30417dd234a9f79af188e3666 upstream.
+  ffffffff8a925000 D __nosave_end
 
-Return 0 if the operation was successful, not the userspace memory
-value. Check that userspace value equals passed oldval, not itself.
-Don't update *uval if the value wasn't read from userspace memory.
+And before the next considered symbol, which, using kallsyms make us
+over guess the size of __nosave_end, and then the sequence:
 
-This fixes process hang due to infinite loop in futex_lock_pi.
-It also fixes a bunch of glibc tests nptl/tst-mutexpi*.
+  hist_entry__inc_addr_samples ->
+    symbol__inc_addr_samples ->
+      symbol__hists ->
+        annotated_source__alloc_histograms
 
-Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Ends up not liking to allocate gigabytes of ram for annotation...
+
+This will be alleviated by considering BSS symbols, which we should but
+don't so far, and then we should investigate those samples further.
+
+The testcase was to have:
+
+   perf top -e cycles/call-graph=fp/,cache-misses/call-graph=dwarf/,instructions
+
+Running for a while till it segfaulted trying to access NULL notes->src->histograms.
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-ndfjtpiop3tdcnyjgp320ra8@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- arch/xtensa/include/asm/futex.h | 23 ++++++++++-------------
- 1 file changed, 10 insertions(+), 13 deletions(-)
+ tools/perf/util/annotate.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/arch/xtensa/include/asm/futex.h
-+++ b/arch/xtensa/include/asm/futex.h
-@@ -109,7 +109,6 @@ futex_atomic_cmpxchg_inatomic(u32 *uval,
- 			      u32 oldval, u32 newval)
- {
- 	int ret = 0;
--	u32 prev;
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index 2baa22933b0e..f91775b4bc3c 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -819,6 +819,11 @@ static int __symbol__inc_addr_samples(struct symbol *sym, struct map *map,
  
- 	if (!access_ok(VERIFY_WRITE, uaddr, sizeof(u32)))
- 		return -EFAULT;
-@@ -120,26 +119,24 @@ futex_atomic_cmpxchg_inatomic(u32 *uval,
- 
- 	__asm__ __volatile__ (
- 	"	# futex_atomic_cmpxchg_inatomic\n"
--	"1:	l32i	%1, %3, 0\n"
--	"	mov	%0, %5\n"
--	"	wsr	%1, scompare1\n"
--	"2:	s32c1i	%0, %3, 0\n"
--	"3:\n"
-+	"	wsr	%5, scompare1\n"
-+	"1:	s32c1i	%1, %4, 0\n"
-+	"	s32i	%1, %6, 0\n"
-+	"2:\n"
- 	"	.section .fixup,\"ax\"\n"
- 	"	.align 4\n"
--	"4:	.long	3b\n"
--	"5:	l32r	%1, 4b\n"
--	"	movi	%0, %6\n"
-+	"3:	.long	2b\n"
-+	"4:	l32r	%1, 3b\n"
-+	"	movi	%0, %7\n"
- 	"	jx	%1\n"
- 	"	.previous\n"
- 	"	.section __ex_table,\"a\"\n"
--	"	.long 1b,5b,2b,5b\n"
-+	"	.long 1b,4b\n"
- 	"	.previous\n"
--	: "+r" (ret), "=&r" (prev), "+m" (*uaddr)
--	: "r" (uaddr), "r" (oldval), "r" (newval), "I" (-EFAULT)
-+	: "+r" (ret), "+r" (newval), "+m" (*uaddr), "+m" (*uval)
-+	: "r" (uaddr), "r" (oldval), "r" (uval), "I" (-EFAULT)
- 	: "memory");
- 
--	*uval = prev;
- 	return ret;
- }
- 
+ 	offset = addr - sym->start;
+ 	h = annotated_source__histogram(src, evidx);
++	if (h == NULL) {
++		pr_debug("%s(%d): ENOMEM! sym->name=%s, start=%#" PRIx64 ", addr=%#" PRIx64 ", end=%#" PRIx64 ", func: %d\n",
++			 __func__, __LINE__, sym->name, sym->start, addr, sym->end, sym->type == STT_FUNC);
++		return -ENOMEM;
++	}
+ 	h->nr_samples++;
+ 	h->addr[offset].nr_samples++;
+ 	h->period += sample->period;
