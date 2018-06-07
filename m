@@ -1,97 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Wj/RFhIaHVtFKgAAmS7hNA
-	; Sun, 10 Jun 2018 12:31:42 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id wXz5CmB1GVuYCwAAmS7hNA
+	; Thu, 07 Jun 2018 18:12:45 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 5F155607BB; Sun, 10 Jun 2018 12:31:42 +0000 (UTC)
+	id 0DDB0608BF; Thu,  7 Jun 2018 18:12:45 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SV0KpSyE"
+	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="jvmtWObt"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_MED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id C9083604D4;
-	Sun, 10 Jun 2018 12:31:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C9083604D4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 6A8A8605A2;
+	Thu,  7 Jun 2018 18:12:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6A8A8605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=netronome.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932190AbeFJMbj (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sun, 10 Jun 2018 08:31:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51858 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753297AbeFJMbh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 08:31:37 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B4AF62087E;
-        Sun, 10 Jun 2018 12:31:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528633897;
-        bh=yi9XpB3JPt2peRaDDjL1/HegVJQuOYG66VhCRxEo4JA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=SV0KpSyE9YEzvIXFne+si0e49Vr6YmFsOcI7xSYlYqVO/EEpWMwvd3tRdlSYjlvXp
-         CIXOkjJR2OLAS1m5NrSBcBnCMMpsK2A/U9yqWl+9u0ZWD0SSN1TMyGmUFi2dovnXzu
-         ur2olvmBn3wpw2+yvgrJRtxdISRnIvxKczFbNzZw=
-Date: Sun, 10 Jun 2018 13:31:31 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Eugen Hristev <eugen.hristev@microchip.com>
-Cc: <ludovic.desroches@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>, <linux-input@vger.kernel.org>,
-        <nicolas.ferre@microchip.com>, <dmitry.torokhov@gmail.com>,
-        <robh@kernel.org>
-Subject: Re: [PATCH v7 3/9] dt-bindings: input: touchscreen: add minimum
- pressure touchscreen property
-Message-ID: <20180610133131.2ec1ddae@archlinux>
-In-Reply-To: <1526975559-18966-4-git-send-email-eugen.hristev@microchip.com>
-References: <1526975559-18966-1-git-send-email-eugen.hristev@microchip.com>
-        <1526975559-18966-4-git-send-email-eugen.hristev@microchip.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S935228AbeFGSMm (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 14:12:42 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:52410 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933625AbeFGSMi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 14:12:38 -0400
+Received: by mail-wm0-f66.google.com with SMTP id p126-v6so19705961wmb.2
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 11:12:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/noWcpvMlvXKQtYeb+9JnZMxGCVSaMnGNzNS8Eaw8fE=;
+        b=jvmtWObtN9VfAPAj+0RZYkFyvhiHWBfG3DyNdUR2L4Dif5CEWJc4SJMTE9lWv7+GXj
+         C6eadtK18FI1lx8fW93DIYJMaO4Xh0vc5AT0Fb15mOcy8No/KYhOxp7nMV043wpoF3BZ
+         2/k9VslmUMbSkaNP7PS2ArCHcX+a9zlyrlCy8ixiQuLhOtd6CcgmUh023IRDWz3V2XGr
+         TfTRZfGOhHFdyWT+E56j6JeZ0W3bjiLRjqKXQ0lDNzgatIPCO/b91sTot4EcI4XsaUmZ
+         t+MrzmJ4XKacZvnqAfWz+4V9NhGQxnWDptLZby8WntuSEVpPi/ScjUAJnW6RcKletIMS
+         w/AA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/noWcpvMlvXKQtYeb+9JnZMxGCVSaMnGNzNS8Eaw8fE=;
+        b=Z9yn6rHo77YG5P6jC6bZuJhGCs4OMHI/tNZ/pCpeb7NGgG8YcA09QuXipsFNNCatlS
+         yoBVvge5GVL87UpGLz0W5f7sxdIKSqmk+Wva6TAZ71IiLYKFrFEBNd6BAMsvJbq291Qr
+         CH7SvYiD3NN62E1r9vb7OhR671VPo7eFbVHlcibYHdXrv7qn5XregUVVHBWtFcjuzWnp
+         ezS2DT6u1ZC3Fso3t7V8oX5KB5LPAYL9nRVzUFB6tMg5f17WbB5su5JTmbxwGGB3lCMv
+         hGSSgAGWizekwI4RGSL8xvsG6OkNZAIopVJ1pbKzGNpI1KzmAIhqrwN5Cfv+FKFtGJMc
+         dEIA==
+X-Gm-Message-State: APt69E1RSJVUCPjr+aQUHIXoOLNZH3cHE3BewLYx9OPbxnABVha9z4MJ
+        Fdao4btTAqVvV+9FpJahK8Ah6w==
+X-Google-Smtp-Source: ADUXVKJ0og2nrhF1uFgZizyCgn+XSPZBTb8kIpfEkbbBkl6zfGh8fNLFGaMBUjX7euBnuAGV/zkGsA==
+X-Received: by 2002:a50:aa2f:: with SMTP id o44-v6mr3648787edc.186.1528395157229;
+        Thu, 07 Jun 2018 11:12:37 -0700 (PDT)
+Received: from netronome.com (penelope-musen.amstelveen.horms.nl. [2001:470:7eb3:404:c685:8ff:fe7c:9971])
+        by smtp.gmail.com with ESMTPSA id f25-v6sm16606266edd.87.2018.06.07.11.12.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 07 Jun 2018 11:12:37 -0700 (PDT)
+Date: Thu, 7 Jun 2018 20:12:34 +0200
+From: Simon Horman <simon.horman@netronome.com>
+To: Sean Young <sean@mess.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>,
+        Matthias Reichl <hias@horus.com>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        netdev@vger.kernel.org,
+        Devin Heitmueller <dheitmueller@kernellabs.com>,
+        Y Song <ys114321@gmail.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>
+Subject: Re: [PATCH] bpf: attach type BPF_LIRC_MODE2 should not depend on
+ CONFIG_BPF_CGROUP
+Message-ID: <20180607181233.oazgcezk2tgeiuqc@netronome.com>
+References: <cover.1527419762.git.sean@mess.org>
+ <9f2c54d4956f962f44fcda739a824397ddea132c.1527419762.git.sean@mess.org>
+ <20180604174730.sctfoklq7klswebp@camel2.lan>
+ <20180605101629.yffyp64o7adg6hu5@gofer.mess.org>
+ <04cc36e7-4597-dc57-4ad7-71afcc17244a@iogearbox.net>
+ <20180606210939.q3vviyc4b2h6gu3c@gofer.mess.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180606210939.q3vviyc4b2h6gu3c@gofer.mess.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 22 May 2018 10:52:33 +0300
-Eugen Hristev <eugen.hristev@microchip.com> wrote:
+On Wed, Jun 06, 2018 at 10:09:40PM +0100, Sean Young wrote:
+> Compile bpf_prog_{attach,detach,query} even if CONFIG_BPF_CGROUP is not
+> set.
+> 
+> Signed-off-by: Sean Young <sean@mess.org>
 
-> Add a common touchscreen optional property that will specify
-> the minimum pressure applied to the screen that is needed
-> such that the driver will report the touch event.
-> 
-> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-Applied, Thanks,
+Hi Sean,
 
-Jonathan
-> ---
-> Changes in v5:
->  - Modified property name to touchscreen-min-pressure from
-> touchscreen-threshold-property
-> 
->  Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt b/Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
-> index 537643e..d092d5d 100644
-> --- a/Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
-> +++ b/Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
-> @@ -7,6 +7,9 @@ Optional properties for Touchscreens:
->  				  (in pixels)
->   - touchscreen-max-pressure	: maximum reported pressure (arbitrary range
->  				  dependent on the controller)
-> + - touchscreen-min-pressure	: minimum pressure on the touchscreen to be
-> +				  achieved in order for the touchscreen
-> +				  driver to report a touch event.
->   - touchscreen-fuzz-x		: horizontal noise value of the absolute input
->  				  device (in pixels)
->   - touchscreen-fuzz-y		: vertical noise value of the absolute input
+This patch seems to involve rather extensive refactoring, the details of
+which are not explained, in order to make a change whose motivation is also
+not explained. I for one would value a more extensive changelog if
+not a series of patches which implement discrete changes.
+
+Thanks!
