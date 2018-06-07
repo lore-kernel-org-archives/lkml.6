@@ -1,113 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id MvCgMlAfHVsDVwAAmS7hNA
-	; Sun, 10 Jun 2018 12:53:39 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id QdVvOfcUGVt/RwAAmS7hNA
+	; Thu, 07 Jun 2018 11:20:24 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 5229E607E7; Sun, 10 Jun 2018 12:53:39 +0000 (UTC)
+	id D0B45608BF; Thu,  7 Jun 2018 11:20:23 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id CA39D605A5;
-	Sun, 10 Jun 2018 12:53:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CA39D605A5
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by smtp.codeaurora.org (Postfix) with ESMTP id 19596608BA;
+	Thu,  7 Jun 2018 11:20:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 19596608BA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753753AbeFJMx3 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sun, 10 Jun 2018 08:53:29 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:57958 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753443AbeFJMx2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 08:53:28 -0400
-Received: from fsav304.sakura.ne.jp (fsav304.sakura.ne.jp [153.120.85.135])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w5ACrC9a094886;
-        Sun, 10 Jun 2018 21:53:12 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav304.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp);
- Sun, 10 Jun 2018 21:53:12 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w5ACr6AJ094853
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Sun, 10 Jun 2018 21:53:12 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: WARNING: kmalloc bug in xdp_umem_create
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@gmail.com>,
-        syzbot+4abadc5d69117b346506@syzkaller.appspotmail.com,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        "Karlsson, Magnus" <magnus.karlsson@intel.com>,
-        David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-References: <00000000000092de58056e3d4b96@google.com>
- <10d6b170-b820-3077-8737-c9d06e98d0fb@I-love.SAKURA.ne.jp>
- <CAJ+HfNhnmvTHsE7cgi8pROjprsYvCZuzZDmYmpiUx4jqtHboUw@mail.gmail.com>
- <CACT4Y+bfZK6yucoDrXPPW3Tc40RYq61u0Zcb=CKtdao8E+v1cQ@mail.gmail.com>
-From: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <13f6777a-2170-d0cc-1066-1b48a27ec981@i-love.sakura.ne.jp>
-Date: Sun, 10 Jun 2018 21:53:07 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S932516AbeFGLUV (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 07:20:21 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52698 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932066AbeFGLUT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 07:20:19 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0259C40122B1;
+        Thu,  7 Jun 2018 11:20:19 +0000 (UTC)
+Received: from [10.36.117.10] (ovpn-117-10.ams2.redhat.com [10.36.117.10])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C68DB6B5BE;
+        Thu,  7 Jun 2018 11:20:16 +0000 (UTC)
+Subject: Re: [less-CONFIG_NET 7/7] kvm: drop CONFIG_NET
+To: Norbert Manthey <nmanthey@amazon.de>
+Cc: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1528293127-23825-1-git-send-email-nmanthey@amazon.de>
+ <1528293206-24298-1-git-send-email-nmanthey@amazon.de>
+ <1528293206-24298-7-git-send-email-nmanthey@amazon.de>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <a7344c4f-a1d9-597d-b18d-059a2752becf@redhat.com>
+Date: Thu, 7 Jun 2018 13:20:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+bfZK6yucoDrXPPW3Tc40RYq61u0Zcb=CKtdao8E+v1cQ@mail.gmail.com>
+In-Reply-To: <1528293206-24298-7-git-send-email-nmanthey@amazon.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 07 Jun 2018 11:20:19 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 07 Jun 2018 11:20:19 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/06/10 20:52, Dmitry Vyukov wrote:
-> On Sun, Jun 10, 2018 at 11:31 AM, Björn Töpel <bjorn.topel@gmail.com> wrote:
->> Den sön 10 juni 2018 kl 04:53 skrev Tetsuo Handa
->> <penguin-kernel@i-love.sakura.ne.jp>:
->>>
->>> On 2018/06/10 7:47, syzbot wrote:
->>>> Hello,
->>>>
->>>> syzbot found the following crash on:
->>>>
->>>> HEAD commit:    7d3bf613e99a Merge tag 'libnvdimm-for-4.18' of git://git.k..
->>>> git tree:       upstream
->>>> console output: https://syzkaller.appspot.com/x/log.txt?x=1073f68f800000
->>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=f04d8d0a2afb789a
->>>> dashboard link: https://syzkaller.appspot.com/bug?extid=4abadc5d69117b346506
->>>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->>>> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=13c9756f800000
->>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16366f9f800000
->>>>
->>>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->>>> Reported-by: syzbot+4abadc5d69117b346506@syzkaller.appspotmail.com
->>>>
->>>> random: sshd: uninitialized urandom read (32 bytes read)
->>>> random: sshd: uninitialized urandom read (32 bytes read)
->>>> random: sshd: uninitialized urandom read (32 bytes read)
->>>> random: sshd: uninitialized urandom read (32 bytes read)
->>>> random: sshd: uninitialized urandom read (32 bytes read)
->>>> WARNING: CPU: 1 PID: 4537 at mm/slab_common.c:996 kmalloc_slab+0x56/0x70 mm/slab_common.c:996
->>>> Kernel panic - not syncing: panic_on_warn set ...
->>>
->>> syzbot gave up upon kmalloc(), but actually error handling path has
->>> NULL pointer dereference bug.
->>>
->>
->> Thanks Tetsuo! This crash has been fixed by Daniel Borkmann in commit
->> c09290c56376 ("bpf, xdp: fix crash in xdp_umem_unaccount_pages").
+On 06/06/2018 15:53, Norbert Manthey wrote:
+> In some scenarios, we do not want to use CONFIG_NET even though we want
+> to use CONFIG_KVM. To get this working, and to not pull in more
+> dependencies, we need to disable CONFIG_TASKSTATS as well.
 > 
-> Let's tell syzbot about this:
+> Signed-off-by: Norbert Manthey <nmanthey@amazon.de>
+> ---
+>  arch/x86/kvm/Kconfig | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
 > 
-> #syz fix: bpf, xdp: fix crash in xdp_umem_unaccount_pages
+> diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
+> index 92fd433..f209817 100644
+> --- a/arch/x86/kvm/Kconfig
+> +++ b/arch/x86/kvm/Kconfig
+> @@ -22,8 +22,8 @@ config KVM
+>  	tristate "Kernel-based Virtual Machine (KVM) support"
+>  	depends on HAVE_KVM
+>  	depends on HIGH_RES_TIMERS
+> -	# for TASKSTATS/TASK_DELAY_ACCT:
+> -	depends on NET && MULTIUSER
+> +	# TASK_DELAY_ACCT:
+> +	depends on MULTIUSER
+>  	depends on X86_LOCAL_APIC
+>  	select PREEMPT_NOTIFIERS
+>  	select MMU_NOTIFIER
+> @@ -37,7 +37,6 @@ config KVM
+>  	select KVM_ASYNC_PF
+>  	select USER_RETURN_NOTIFIER
+>  	select KVM_MMIO
+> -	select TASKSTATS
+>  	select TASK_DELAY_ACCT
+>  	select PERF_EVENTS
+>  	select HAVE_KVM_MSI
 > 
-> 
-Excuse me, but that patch fixes NULL pointer dereference which occurs after kmalloc()'s
-"WARNING: CPU: 1 PID: 4537 at mm/slab_common.c:996 kmalloc_slab+0x56/0x70 mm/slab_common.c:996"
-message. That is, "Too large memory allocation" itself is not yet fixed.
+
+Assuming it compiles, it looks good. :)
+
+Paolo
