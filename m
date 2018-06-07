@@ -1,95 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id YQZtKr6AGVtPAgAAmS7hNA
-	; Thu, 07 Jun 2018 19:00:36 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id GQEPMG2cGFvOGQAAmS7hNA
+	; Thu, 07 Jun 2018 02:46:44 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 37630608B8; Thu,  7 Jun 2018 19:00:36 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XvNRToF7"
+	id D2A8D608B8; Thu,  7 Jun 2018 02:46:43 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id B5D06601C3;
-	Thu,  7 Jun 2018 19:00:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B5D06601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 3FEA260452;
+	Thu,  7 Jun 2018 02:46:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3FEA260452
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753696AbeFGTAe (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 15:00:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38556 "EHLO mail.kernel.org"
+        id S932352AbeFGCqk (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 22:46:40 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50852 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753561AbeFGTAc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 15:00:32 -0400
-Received: from jouet.infradead.org (unknown [190.15.121.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 02D6D2089C;
-        Thu,  7 Jun 2018 19:00:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528398032;
-        bh=BQMc5sMqMKztIbFDCNkEdoG6LWICUUd74SuCF05sNUU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XvNRToF7/wXsTnUqE/KukOWgJRckDjSGsLeZ2wccmIFbeuBFmoDuaYrKzZVL9F56Y
-         CjLy6GRNsIinQ/3UB1emJb8suuVKoMBA4fMR2ckyVpPJKd6rfYUuMdpRjuBIYMf0Gk
-         ZJSFw2ScGwa5/yAcRTpTY/EZKIgpa8Swz9bgTkHw=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id E0FF91468B9; Thu,  7 Jun 2018 16:00:29 -0300 (-03)
-Date: Thu, 7 Jun 2018 16:00:29 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Milian Wolff <milian.wolff@kdab.com>,
-        Andi Kleen <andi@firstfloor.org>,
-        Frederic Weisbecker <frederic@kernel.org>
-Subject: Re: [PATCH 05/10] perf stat: Fix metric column display
-Message-ID: <20180607190029.GD17292@kernel.org>
-References: <20180606221513.11302-1-jolsa@kernel.org>
- <20180606221513.11302-6-jolsa@kernel.org>
+        id S1753471AbeFGCqj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 22:46:39 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 2F3DFAD0B;
+        Thu,  7 Jun 2018 02:46:38 +0000 (UTC)
+From: NeilBrown <neilb@suse.com>
+To: Tom Herbert <tom@herbertland.com>
+Date: Thu, 07 Jun 2018 12:46:30 +1000
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+        Thomas Graf <tgraf@suug.ch>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Tom Herbert <tom@quantonium.net>
+Subject: [PATCH - RFC] rhashtable: implement rhashtable_walk_peek() using
+ rhashtable_walk_last_seen()
+In-Reply-To: <871sdjnwkr.fsf@notabene.neil.brown.name>
+References: <152782754287.30340.4395718227884933670.stgit@noble> <152782824964.30340.6329146982899668633.stgit@noble> <20180602154851.pfy4wryezuhxp76v@gondor.apana.org.au> <87y3fvpf40.fsf@notabene.neil.brown.name> <CALx6S37AYrFoJNrdToRc84J=B4f57jaHS077UsxdEoQ-xwyCeg@mail.gmail.com> <87sh63pakb.fsf@notabene.neil.brown.name> <CALx6S35sf4oj=x73SfhUxi1e9-u4Stxgr9BAj5E7KKmbufntwg@mail.gmail.com> <87r2lmnj2c.fsf@notabene.neil.brown.name> <CALx6S36Ce-rXQMzmFYZVPGD10Bo6udvRAHiZ5gWwnzVwoTVv0w@mail.gmail.com> <87in6wo636.fsf@notabene.neil.brown.name> <871sdjnwkr.fsf@notabene.neil.brown.name>
+Message-ID: <87y3frmhyx.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180606221513.11302-6-jolsa@kernel.org>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Jun 07, 2018 at 12:15:08AM +0200, Jiri Olsa escreveu:
-> Make the metric only display aligned.
-> 
-> Before:
->   # perf stat --topdown -I 1000
->   #           time core         cpus retiring             bad speculation      frontend bound       backend bound
->        1.000394323 S0-C0           2     37.4%               12.0%               31.4%               19.2%
->        1.000394323 S0-C1           2     25.1%                9.2%               43.8%               21.9%
->        2.001521204 S0-C0           2     36.4%               11.4%               32.4%               19.8%
->        2.001521204 S0-C1           2     26.2%                9.4%               43.1%               21.3%
->        3.001930208 S0-C0           2     35.1%               10.7%               33.6%               20.6%
->        3.001930208 S0-C1           2     28.9%               10.0%               40.0%               21.1%
-> 
-> After:
->   # perf stat --topdown -I 1000
->   #           time core         cpus             retiring      bad speculation       frontend bound        backend bound
->        1.000303722 S0-C0           2                34.2%                 7.6%                34.2%                24.0%
->        1.000303722 S0-C1           2                33.1%                 6.4%                36.9%                23.6%
->        2.001281055 S0-C0           2                34.6%                 6.7%                36.8%                21.8%
->        2.001281055 S0-C1           2                32.8%                 7.1%                38.1%                22.0%
->        3.001546080 S0-C0           2                39.3%                 5.5%                32.7%                22.5%
->        3.001546080 S0-C1           2                37.8%                 6.0%                33.1%                23.1%
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, tested, applied.
 
-- Arnaldo
+rhashtable_walk_last_seen() does most of the work that
+rhashtable_walk_peek() needs done, so use it.
+Also update the documentation for rhashtable_walk_peek() to clarify
+the expected use case.
+
+Signed-off-by: NeilBrown <neilb@suse.com>
+=2D--
+ lib/rhashtable.c | 42 ++++++++++++++++++++----------------------
+ 1 file changed, 20 insertions(+), 22 deletions(-)
+
+diff --git a/lib/rhashtable.c b/lib/rhashtable.c
+index 45f2554399a5..30bb9ead15f4 100644
+=2D-- a/lib/rhashtable.c
++++ b/lib/rhashtable.c
+@@ -916,36 +916,34 @@ void *rhashtable_walk_next(struct rhashtable_iter *it=
+er)
+ EXPORT_SYMBOL_GPL(rhashtable_walk_next);
+=20
+ /**
+=2D * rhashtable_walk_peek - Return the next object but don't advance the i=
+terator
++ * rhashtable_walk_peek - Return the next object to use in an interrupted =
+walk
+  * @iter:	Hash table iterator
+  *
+=2D * Returns the next object or NULL when the end of the table is reached.
++ * Returns the "current" object or NULL when the end of the table is reach=
+ed.
++ * When an rhashtable_walk is interrupted with rhashtable_walk_stop(),
++ * it is often because an object was found that could not be processed
++ * immediately, possible because there is no more space to encode details
++ * of the object (e.g. when producing a seq_file from the table).
++ * When the walk is restarted, the same object needs to be processed again,
++ * if possible.  The object might have been removed from the table while
++ * the walk was paused, so it might not be available.  In that case, the
++ * normal "next" object should be treated as "current".
+  *
+=2D * Returns -EAGAIN if resize event occurred.  Note that the iterator
++ * To support this common case, rhashtable_walk_peek() returns the
++ * appropriate object to process after an interrupted walk, either the
++ * one that was most recently returned, or if that doesn't exist - the
++ * next one.
++ *
++ * Returns -EAGAIN if resize event occurred.  In that case the iterator
+  * will rewind back to the beginning and you may continue to use it.
+  */
+ void *rhashtable_walk_peek(struct rhashtable_iter *iter)
+ {
+=2D	struct rhlist_head *list =3D iter->list;
+=2D	struct rhashtable *ht =3D iter->ht;
+=2D	struct rhash_head *p =3D iter->p;
++	void *ret =3D rhashtable_walk_last_seen(iter);
+=20
+=2D	if (p)
+=2D		return rht_obj(ht, ht->rhlist ? &list->rhead : p);
+=2D
+=2D	/* No object found in current iter, find next one in the table. */
+=2D
+=2D	if (iter->skip) {
+=2D		/* A nonzero skip value points to the next entry in the table
+=2D		 * beyond that last one that was found. Decrement skip so
+=2D		 * we find the current value. __rhashtable_walk_find_next
+=2D		 * will restore the original value of skip assuming that
+=2D		 * the table hasn't changed.
+=2D		 */
+=2D		iter->skip--;
+=2D	}
+=2D
+=2D	return __rhashtable_walk_find_next(iter);
++	if (!ret)
++		ret =3D rhashtable_walk_next(iter);
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(rhashtable_walk_peek);
+=20
+=2D-=20
+2.14.0.rc0.dirty
+
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlsYnIcACgkQOeye3VZi
+gbl6PBAAp9ntBGKzD9pALbngdpTBLv+eK9ukpkhqJYlfZ6kwQsl272NQYzzUYHsv
+4OHkieUMt+8odh+eP8ucymUDCo3wad4dazhXih4qI4bwjn0UQyKxtWZxjJaVGAZX
+ojgXevPqsFnohOteLwbDbZiW+8DlRO/DDUZFVCKOn9SoCUjFjbLblrTklV+hlcWn
+PuuEsBdHEYVOZYvsp9pAlPu8Yh9+ZLx7vhWEZJbMpoubHp4Y0OoLmWVZEooEKVr1
+Ot6ABTxze3zwJKr8QrWHvsiKTfgZzPxmbK/Ux8X29DR9tyUFh3i4i5oSUQ26h9o4
+uWiTNERIFV/uR89XDw7MvtRyvTFdkux4IkZkf0NX3KUijADVED4DywfbOuz/03ul
+8aL/v8UrZvb8zzLubucGA2Kod2HEGy9UgWN6V5ylRLc5yRGLEND+Pkto6psHWW6q
+2UlE1/WnPYbRSVtry3sAxtAAb2VsRuAZHYPkT6aXWAoY/FfEVnL0GoloifY3RXKd
+/YBeXLTSkDeTbYBMhn/4TjM17pxLFbdWPD6Xui7nou6lY/mEzu7hsUFgEOks7IxB
+PGsdDDjp3nGhoPvkjMOGz8vjMhkxZ4E9K+mc3CyBgURm6e1KhQ9DKpKr33mxHOgW
+g7k0K4KzDXaIEV+wYS8YsbqRuRQO37nDwwPEsFDfg0U4OgWt6fM=
+=90TW
+-----END PGP SIGNATURE-----
+--=-=-=--
