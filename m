@@ -1,100 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id F8rLAKkIGVsZUwAAmS7hNA
-	; Thu, 07 Jun 2018 10:27:53 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id DZiHHFSHGVtYRwAAmS7hNA
+	; Thu, 07 Jun 2018 19:29:20 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id E633C607E7; Thu,  7 Jun 2018 10:27:52 +0000 (UTC)
+	id 24B24606DD; Thu,  7 Jun 2018 19:29:20 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 5BB1F602FC;
-	Thu,  7 Jun 2018 10:27:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5BB1F602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by smtp.codeaurora.org (Postfix) with ESMTP id 7D21D6063F;
+	Thu,  7 Jun 2018 19:29:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7D21D6063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932699AbeFGK1v (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 06:27:51 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:55632 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753471AbeFGK1t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 06:27:49 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id AEE7180591; Thu,  7 Jun 2018 12:27:47 +0200 (CEST)
-Date: Thu, 7 Jun 2018 12:27:40 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Marcel Holtmann <marcel@holtmann.org>
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-serial@vger.kernel.org,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
-        linux-bluetooth@vger.kernel.org
-Subject: Re: [PATCH 04/19] Bluetooth: hci_nokia: Add serdev_id_table
-Message-ID: <20180607102740.GD4372@localhost>
-References: <20180529131014.18641-1-ricardo.ribalda@gmail.com>
- <20180529131014.18641-5-ricardo.ribalda@gmail.com>
- <E848BED5-1D83-47FA-A673-29B366A60227@holtmann.org>
+        id S932399AbeFGT3R (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 15:29:17 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43888 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932124AbeFGT3Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 15:29:16 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 42562BB424;
+        Thu,  7 Jun 2018 19:29:15 +0000 (UTC)
+Received: from redhat.com (ovpn-120-206.rdu2.redhat.com [10.10.120.206])
+        by smtp.corp.redhat.com (Postfix) with SMTP id D5D4810F1C1C;
+        Thu,  7 Jun 2018 19:29:13 +0000 (UTC)
+Date: Thu, 7 Jun 2018 22:29:13 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: syzbot <syzbot+87cfa083e727a224754b@syzkaller.appspotmail.com>,
+        avagin@openvz.org, davem@davemloft.net, dingtianhong@huawei.com,
+        edumazet@google.com, elena.reshetova@intel.com,
+        jasowang@redhat.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, matthew@mjdsystems.ca,
+        mingo@kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
+        syzkaller-bugs@googlegroups.com,
+        virtualization@lists.linux-foundation.org, willemb@google.com
+Subject: Re: KMSAN: uninit-value in _copy_to_iter (2)
+Message-ID: <20180607222728-mutt-send-email-mst@kernel.org>
+References: <000000000000a5b2b1056a86e98c@google.com>
+ <000000000000cf4578056ab12452@google.com>
+ <20180607183627-mutt-send-email-mst@kernel.org>
+ <20180607174355.GR30522@ZenIV.linux.org.uk>
+ <20180607205611-mutt-send-email-mst@kernel.org>
+ <20180607180449.GS30522@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <E848BED5-1D83-47FA-A673-29B366A60227@holtmann.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180607180449.GS30522@ZenIV.linux.org.uk>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 07 Jun 2018 19:29:15 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 07 Jun 2018 19:29:15 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
-
-> > Describe which hardware is supported by the current driver.
+On Thu, Jun 07, 2018 at 07:04:49PM +0100, Al Viro wrote:
+> On Thu, Jun 07, 2018 at 08:59:06PM +0300, Michael S. Tsirkin wrote:
+> > On Thu, Jun 07, 2018 at 06:43:55PM +0100, Al Viro wrote:
+> > > On Thu, Jun 07, 2018 at 06:38:48PM +0300, Michael S. Tsirkin wrote:
+> > > > #syz test: https://github.com/google/kmsan.git/master d2d741e5d1898dfde1a75ea3d29a9a3e2edf0617
+> > > > 
+> > > > Subject: vhost: fix info leak
+> > > > 
+> > > > Fixes: CVE-2018-1118
+> > > > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> > > > ---
+> > > > diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> > > > index f0be5f35ab28..9beefa6ed1ce 100644
+> > > > --- a/drivers/vhost/vhost.c
+> > > > +++ b/drivers/vhost/vhost.c
+> > > > @@ -2345,6 +2345,9 @@ struct vhost_msg_node *vhost_new_msg(struct vhost_virtqueue *vq, int type)
+> > > >  	struct vhost_msg_node *node = kmalloc(sizeof *node, GFP_KERNEL);
+> > > >  	if (!node)
+> > > >  		return NULL;
+> > > > +
+> > > > +	/* Make sure all padding within the structure is initialized. */
+> > > > +	memset(&node->msg, 0, sizeof node->msg);
+> > > 
+> > > Umm...  Maybe kzalloc(), then?  You have
+> > > 
+> > > struct vhost_msg_node {
+> > >   struct vhost_msg msg;
+> > >   struct vhost_virtqueue *vq;
+> > >   struct list_head node;
+> > > };
+> > > 
+> > > and that's what, 68 bytes in msg, then either 4 bytes pointer or
+> > > 4 bytes padding + 8 bytes pointer, then two pointers?  How much
+> > > does explicit partial memset() save you here?
 > > 
-> > Cc: Marcel Holtmann <marcel@holtmann.org>
-> > Cc: Johan Hedberg <johan.hedberg@gmail.com>
-> > Cc: Rob Herring <robh@kernel.org>
-> > Cc: Johan Hovold <johan@kernel.org>
-> > Cc: linux-bluetooth@vger.kernel.org
-> > Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-> > ---
-> > drivers/bluetooth/hci_nokia.c | 6 ++++++
-> > 1 file changed, 6 insertions(+)
+> > Yes but 0 isn't a nop here so if this struct is used without
+> > a sensible initialization, it will crash elsewhere.
+> > I prefer KASAN to catch such uses.
 > > 
-> > diff --git a/drivers/bluetooth/hci_nokia.c b/drivers/bluetooth/hci_nokia.c
-> > index 3539fd03f47e..e32dfcd56b8d 100644
-> > --- a/drivers/bluetooth/hci_nokia.c
-> > +++ b/drivers/bluetooth/hci_nokia.c
-> > @@ -801,6 +801,11 @@ static const struct of_device_id nokia_bluetooth_of_match[] = {
-> > MODULE_DEVICE_TABLE(of, nokia_bluetooth_of_match);
-> > #endif
 > > 
-> > +static struct serdev_device_id nokia_bluetooth_serdev_id[] = {
-> > +	{ "hp4-bluetooth", },
-> > +	{},
-> > +};
-> > +
-> > static struct serdev_device_driver nokia_bluetooth_serdev_driver = {
-> > 	.probe = nokia_bluetooth_serdev_probe,
-> > 	.remove = nokia_bluetooth_serdev_remove,
-> > @@ -809,6 +814,7 @@ static struct serdev_device_driver nokia_bluetooth_serdev_driver = {
-> > 		.pm = &nokia_bluetooth_pm_ops,
-> > 		.of_match_table = of_match_ptr(nokia_bluetooth_of_match),
-> > 	},
-> > +	.id_table = nokia_bluetooth_serdev_id,
-> > };
+> > > >  	node->vq = vq;
+> > > >  	node->msg.type = type;
 > 
-> I would actually skip this hardware. First of all it is such a dedicated custom Nokia transport and hardware, and secondly it is no longer produced anyway.
-> 
+> IDGI - what would your variant catch that kzalloc + 2 assignments won't?
+> Accesses to uninitialized ->node?  Because that's the only difference in
+> what is and is not initialized between those variants...
 
-Would it make sense to cc: sre here? We want good support even for old
-hardware, and this is n9/n950, it is still on "top ten supported
-phones" list... Probably even top 5.
+For now yes but we'll likely add more fields in this structure
+down the road, which is where I'd expect new bugs to come from.
 
-Thanks,
-								 Pavel
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+MST
