@@ -1,283 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id FsvkALwYG1ucPwAAmS7hNA
-	; Sat, 09 Jun 2018 00:02:43 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 7EBdM6JUGVuaLwAAmS7hNA
+	; Thu, 07 Jun 2018 15:53:42 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 8908E6089E; Sat,  9 Jun 2018 00:02:43 +0000 (UTC)
+	id D3AAA607E7; Thu,  7 Jun 2018 15:53:42 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id C1C9B600D0;
-	Sat,  9 Jun 2018 00:02:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C1C9B600D0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 4BE99601D2;
+	Thu,  7 Jun 2018 15:53:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4BE99601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753169AbeFIACk (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 20:02:40 -0400
-Received: from mga17.intel.com ([192.55.52.151]:41965 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752628AbeFIACi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 20:02:38 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jun 2018 17:02:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,492,1520924400";
-   d="scan'208";a="47595608"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga007.jf.intel.com with ESMTP; 08 Jun 2018 17:02:37 -0700
-Received: from debox1-dev.jf.intel.com (debox1-dev.jf.intel.com [10.54.75.156])
-        by linux.intel.com (Postfix) with ESMTP id 8F53D5802A9;
-        Fri,  8 Jun 2018 17:02:37 -0700 (PDT)
-From: "Box, David E" <david.e.box@intel.com>
-To: rajneesh.bhardwaj@intel.com, vishwanath.somayaji@intel.com,
-        dvhart@infradead.org, andy@infradead.org,
-        kyle.d.pelton@linux.intel.com
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [V3] platform/x86: intel_pmc_core: Add CNP SLPS0 debug registers
-Date: Fri,  8 Jun 2018 17:02:37 -0700
-Message-Id: <20180609000237.7896-1-david.e.box@intel.com>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <CAHp75Vdxz2h1N_bLQ4wxrYoo-kRAHQK=+36Db0BfK1QR4iwVPw@mail.gmail.com>
-References: <CAHp75Vdxz2h1N_bLQ4wxrYoo-kRAHQK=+36Db0BfK1QR4iwVPw@mail.gmail.com>
+        id S934305AbeFGPxk (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:53:40 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40361 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932649AbeFGOer (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:34:47 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbu-0005Zk-6y; Thu, 07 Jun 2018 15:09:54 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb0-0002m5-5p; Thu, 07 Jun 2018 15:08:58 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Thomas Richter" <tmricht@linux.vnet.ibm.com>,
+        "Hendrik Brueckner" <brueckner@linux.vnet.ibm.com>,
+        "Arnaldo Carvalho de Melo" <acme@redhat.com>,
+        "Ravi Bangoria" <ravi.bangoria@linux.vnet.ibm.com>,
+        "Heiko Carstens" <heiko.carstens@de.ibm.com>,
+        "Martin Schwidefsky" <schwidefsky@de.ibm.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.73630898@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 073/410] perf annotate: Fix objdump comment parsing
+ for Intel mov dissassembly
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adds debugfs access to registers in the Cannon Point PCH PMC that are
-useful for debugging #SLP_S0 signal assertion and other low power relate
-activities. Device pm states are latched in these registers whenever the
-package enters C10 and can be read from slp_s0_debug_status. The pm
-states may also be latched by writing 1 to slp_s0_dbg_latch which will
-immediately capture the current state on the next read of
-slp_s0_debug_status.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Box, David E <david.e.box@intel.com>
+------------------
+
+From: Thomas Richter <tmricht@linux.vnet.ibm.com>
+
+commit 35a8a148d8c1ee9e5ae18f9565a880490f816f89 upstream.
+
+The command 'perf annotate' parses the output of objdump and also
+investigates the comments produced by objdump. For example the
+output of objdump produces (on x86):
+
+23eee:  4c 8b 3d 13 01 21 00 mov 0x210113(%rip),%r15
+                                # 234008 <stderr@@GLIBC_2.2.5+0x9a8>
+
+and the function mov__parse() is called to investigate the complete
+line. Mov__parse() breaks this line into several parts and finally
+calls function comment__symbol() to parse the data after the comment
+character '#'. Comment__symbol() expects a hexadecimal address followed
+by a symbol in '<' and '>' brackets.
+
+However the 2nd parameter given to function comment__symbol()
+always points to the comment character '#'. The address parsing
+always returns 0 because the character '#' is not a digit and
+strtoull() fails without being noticed.
+
+Fix this by advancing the second parameter to function comment__symbol()
+by one byte before invocation and add an error check after strtoull()
+has been called.
+
+Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Acked-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Fixes: 6de783b6f50f ("perf annotate: Resolve symbols using objdump comment")
+Link: http://lkml.kernel.org/r/20171128075632.72182-1-tmricht@linux.vnet.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
-V3:
-	- use null terminator in bit_map array
-	- replaced ternary operator with if/else
-	- Removed space fixes on old code
-V2:
-	- Clear latch bit after use
-	- Pass pmc_dev as parameter
-	- Use DEFINE_SHOW_ATTRIBUTE macro
+ tools/perf/util/annotate.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
- drivers/platform/x86/intel_pmc_core.c | 120 ++++++++++++++++++++++++++++++++++
- drivers/platform/x86/intel_pmc_core.h |   6 ++
- 2 files changed, 126 insertions(+)
-
-diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
-index 43bbe74743d9..2d272a3e0176 100644
---- a/drivers/platform/x86/intel_pmc_core.c
-+++ b/drivers/platform/x86/intel_pmc_core.c
-@@ -196,9 +196,67 @@ static const struct pmc_bit_map cnp_pfear_map[] = {
- 	{}
- };
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -146,6 +146,8 @@ static int comment__symbol(char *raw, ch
+ 		return 0;
  
-+static const struct pmc_bit_map cnp_slps0_dbg0_map[] = {
-+	{"AUDIO_D3",		BIT(0)},
-+	{"OTG_D3",		BIT(1)},
-+	{"XHCI_D3",		BIT(2)},
-+	{"LPIO_D3",		BIT(3)},
-+	{"SDX_D3",		BIT(4)},
-+	{"SATA_D3",		BIT(5)},
-+	{"UFS0_D3",		BIT(6)},
-+	{"UFS1_D3",		BIT(7)},
-+	{"EMMC_D3",		BIT(8)},
-+	{}
-+};
-+
-+static const struct pmc_bit_map cnp_slps0_dbg1_map[] = {
-+	{"SDIO_PLL_OFF",	BIT(0)},
-+	{"USB2_PLL_OFF",	BIT(1)},
-+	{"AUDIO_PLL_OFF",	BIT(2)},
-+	{"OC_PLL_OFF",		BIT(3)},
-+	{"MAIN_PLL_OFF",	BIT(4)},
-+	{"XOSC_OFF",		BIT(5)},
-+	{"LPC_CLKS_GATED",	BIT(6)},
-+	{"PCIE_CLKREQS_IDLE",	BIT(7)},
-+	{"AUDIO_ROSC_OFF",	BIT(8)},
-+	{"HPET_XOSC_CLK_REQ",	BIT(9)},
-+	{"PMC_ROSC_SLOW_CLK",	BIT(10)},
-+	{"AON2_ROSC_GATED",	BIT(11)},
-+	{"CLKACKS_DEASSERTED",	BIT(12)},
-+	{}
-+};
-+
-+static const struct pmc_bit_map cnp_slps0_dbg2_map[] = {
-+	{"MPHY_CORE_GATED",	BIT(0)},
-+	{"CSME_GATED",		BIT(1)},
-+	{"USB2_SUS_GATED",	BIT(2)},
-+	{"DYN_FLEX_IO_IDLE",	BIT(3)},
-+	{"GBE_NO_LINK",		BIT(4)},
-+	{"THERM_SEN_DISABLED",	BIT(5)},
-+	{"PCIE_LOW_POWER",	BIT(6)},
-+	{"ISH_VNNAON_REQ_ACT",	BIT(7)},
-+	{"ISH_VNN_REQ_ACT",	BIT(8)},
-+	{"CNV_VNNAON_REQ_ACT",	BIT(9)},
-+	{"CNV_VNN_REQ_ACT",	BIT(10)},
-+	{"NPK_VNNON_REQ_ACT",	BIT(11)},
-+	{"PMSYNC_STATE_IDLE",	BIT(12)},
-+	{"ALST_GT_THRES",	BIT(13)},
-+	{"PMC_ARC_PG_READY",	BIT(14)},
-+	{}
-+};
-+
-+static const struct pmc_bit_map *cnp_slps0_dbg_maps[] = {
-+	cnp_slps0_dbg0_map,
-+	cnp_slps0_dbg1_map,
-+	cnp_slps0_dbg2_map,
-+	NULL,
-+};
-+
- static const struct pmc_reg_map cnp_reg_map = {
- 	.pfear_sts = cnp_pfear_map,
- 	.slp_s0_offset = CNP_PMC_SLP_S0_RES_COUNTER_OFFSET,
-+	.slps0_dbg_maps = cnp_slps0_dbg_maps,
-+	.slps0_dbg_offset = CNP_PMC_SLPS0_DBG_OFFSET,
- 	.ltr_ignore_offset = CNP_PMC_LTR_IGNORE_OFFSET,
- 	.regmap_length = CNP_PMC_MMIO_REG_LEN,
- 	.ppfear0_offset = CNP_PMC_HOST_PPFEAR0A,
-@@ -252,6 +310,8 @@ static int pmc_core_check_read_lock_bit(void)
- }
+ 	*addrp = strtoull(comment, &endptr, 16);
++	if (endptr == comment)
++		return 0;
+ 	name = strchr(endptr, '<');
+ 	if (name == NULL)
+ 		return -1;
+@@ -251,8 +253,8 @@ static int mov__parse(struct ins_operand
+ 	while (comment[0] != '\0' && isspace(comment[0]))
+ 		++comment;
  
- #if IS_ENABLED(CONFIG_DEBUG_FS)
-+static bool slps0_dbg_latch;
-+
- static void pmc_core_display_map(struct seq_file *s, int index,
- 				 u8 pf_reg, const struct pmc_bit_map *pf_map)
- {
-@@ -481,6 +541,57 @@ static const struct file_operations pmc_core_ltr_ignore_ops = {
- 	.release        = single_release,
- };
+-	comment__symbol(ops->source.raw, comment, &ops->source.addr, &ops->source.name);
+-	comment__symbol(ops->target.raw, comment, &ops->target.addr, &ops->target.name);
++	comment__symbol(ops->source.raw, comment + 1, &ops->source.addr, &ops->source.name);
++	comment__symbol(ops->target.raw, comment + 1, &ops->target.addr, &ops->target.name);
  
-+static void pmc_core_slps0_dbg_latch(struct pmc_dev *pmcdev, bool reset)
-+{
-+	const struct pmc_reg_map *map = pmcdev->map;
-+	u32 fd;
-+
-+	mutex_lock(&pmcdev->lock);
-+
-+	if (!reset && !slps0_dbg_latch)
-+		goto out_unlock;
-+
-+	fd = pmc_core_reg_read(pmcdev, map->slps0_dbg_offset);
-+	if (reset)
-+		fd &= ~CNP_PMC_LATCH_SLPS0_EVENTS;
-+	else
-+		fd |= CNP_PMC_LATCH_SLPS0_EVENTS;
-+	pmc_core_reg_write(pmcdev, map->slps0_dbg_offset, fd);
-+
-+	slps0_dbg_latch = 0;
-+
-+out_unlock:
-+	mutex_unlock(&pmcdev->lock);
-+}
-+
-+static int pmc_core_slps0_dbg_show(struct seq_file *s, void *unused)
-+{
-+	struct pmc_dev *pmcdev = s->private;
-+	const struct pmc_bit_map **maps = pmcdev->map->slps0_dbg_maps;
-+	const struct pmc_bit_map *map;
-+	int offset;
-+	u32 data;
-+
-+	pmc_core_slps0_dbg_latch(pmcdev, false);
-+	offset = pmcdev->map->slps0_dbg_offset;
-+	while (*maps) {
-+		map = *maps;
-+		data = pmc_core_reg_read(pmcdev, offset);
-+		offset += 4;
-+		while (map->name) {
-+			seq_printf(s, "SLP_S0_DBG: %-32s\tState: %s\n",
-+				   map->name,
-+				   data & map->bit_mask ?
-+				   "Yes" : "No");
-+			++map;
-+		}
-+		++maps;
-+	}
-+	pmc_core_slps0_dbg_latch(pmcdev, true);
-+	return 0;
-+}
-+DEFINE_SHOW_ATTRIBUTE(pmc_core_slps0_dbg);
-+
- static void pmc_core_dbgfs_unregister(struct pmc_dev *pmcdev)
- {
- 	debugfs_remove_recursive(pmcdev->dbgfs_dir);
-@@ -514,6 +625,15 @@ static int pmc_core_dbgfs_register(struct pmc_dev *pmcdev)
- 				    0444, dir, pmcdev,
- 				    &pmc_core_mphy_pg_ops);
+ 	return 0;
  
-+	if (pmcdev->map->slps0_dbg_maps) {
-+		debugfs_create_file("slp_s0_debug_status", 0444,
-+				    dir, pmcdev,
-+				    &pmc_core_slps0_dbg_fops);
-+
-+		debugfs_create_bool("slp_s0_dbg_latch", 0644,
-+				    dir, &slps0_dbg_latch);
-+	}
-+
+@@ -298,7 +300,7 @@ static int dec__parse(struct ins_operand
+ 	while (comment[0] != '\0' && isspace(comment[0]))
+ 		++comment;
+ 
+-	comment__symbol(ops->target.raw, comment, &ops->target.addr, &ops->target.name);
++	comment__symbol(ops->target.raw, comment + 1, &ops->target.addr, &ops->target.name);
+ 
  	return 0;
  }
- #else
-diff --git a/drivers/platform/x86/intel_pmc_core.h b/drivers/platform/x86/intel_pmc_core.h
-index 5fa5f97870aa..93a7e99e1f8b 100644
---- a/drivers/platform/x86/intel_pmc_core.h
-+++ b/drivers/platform/x86/intel_pmc_core.h
-@@ -127,12 +127,14 @@ enum ppfear_regs {
- #define CNP_PMC_SLP_S0_RES_COUNTER_OFFSET      0x193C
- #define CNP_PMC_LTR_IGNORE_OFFSET              0x1B0C
- #define CNP_PMC_PM_CFG_OFFSET                  0x1818
-+#define CNP_PMC_SLPS0_DBG_OFFSET		0x10B4
- /* Cannonlake: PGD PFET Enable Ack Status Register(s) start */
- #define CNP_PMC_HOST_PPFEAR0A                  0x1D90
- 
- #define CNP_PMC_MMIO_REG_LEN                   0x2000
- #define CNP_PPFEAR_NUM_ENTRIES                 8
- #define CNP_PMC_READ_DISABLE_BIT               22
-+#define CNP_PMC_LATCH_SLPS0_EVENTS		BIT(31)
- 
- struct pmc_bit_map {
- 	const char *name;
-@@ -145,6 +147,7 @@ struct pmc_bit_map {
-  * @pfear_sts:		Maps name of IP block to PPFEAR* bit
-  * @mphy_sts:		Maps name of MPHY lane to MPHY status lane status bit
-  * @pll_sts:		Maps name of PLL to corresponding bit status
-+ * @slps0_dbg_maps:	Array of SLP_S0_DBG* registers containing debug info
-  * @slp_s0_offset:	PWRMBASE offset to read SLP_S0 residency
-  * @ltr_ignore_offset:	PWRMBASE offset to read/write LTR ignore bit
-  * @regmap_length:	Length of memory to map from PWRMBASE address to access
-@@ -153,6 +156,7 @@ struct pmc_bit_map {
-  *			PPFEAR
-  * @pm_cfg_offset:	PWRMBASE offset to PM_CFG register
-  * @pm_read_disable_bit: Bit index to read PMC_READ_DISABLE
-+ * @slps0_dbg_offset:	PWRMBASE offset to SLP_S0_DEBUG_REG*
-  *
-  * Each PCH has unique set of register offsets and bit indexes. This structure
-  * captures them to have a common implementation.
-@@ -161,6 +165,7 @@ struct pmc_reg_map {
- 	const struct pmc_bit_map *pfear_sts;
- 	const struct pmc_bit_map *mphy_sts;
- 	const struct pmc_bit_map *pll_sts;
-+	const struct pmc_bit_map **slps0_dbg_maps;
- 	const u32 slp_s0_offset;
- 	const u32 ltr_ignore_offset;
- 	const int regmap_length;
-@@ -168,6 +173,7 @@ struct pmc_reg_map {
- 	const int ppfear_buckets;
- 	const u32 pm_cfg_offset;
- 	const int pm_read_disable_bit;
-+	const u32 slps0_dbg_offset;
- };
- 
- /**
--- 
-2.14.4
