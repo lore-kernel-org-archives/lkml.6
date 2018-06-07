@@ -1,125 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id m20zJNhdHluqJwAAmS7hNA
-	; Mon, 11 Jun 2018 11:32:40 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id snSwODtsGVsbSQAAmS7hNA
+	; Thu, 07 Jun 2018 17:35:10 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 6A4BA601C3; Mon, 11 Jun 2018 11:32:40 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Xgbmx+wH"
+	id 66EC5608BA; Thu,  7 Jun 2018 17:35:10 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 65457601C3;
-	Mon, 11 Jun 2018 11:32:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 65457601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
+	by smtp.codeaurora.org (Postfix) with ESMTP id C3593606FA;
+	Thu,  7 Jun 2018 17:35:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C3593606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=rockwellcollins.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932881AbeFKLch (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Mon, 11 Jun 2018 07:32:37 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:34957 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932765AbeFKLcf (ORCPT
+        id S934438AbeFGRfG (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 13:35:06 -0400
+Received: from ch3vs03.rockwellcollins.com ([205.175.226.47]:48978 "EHLO
+        ch3vs03.rockwellcollins.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934131AbeFGRe4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 07:32:35 -0400
-Received: by mail-wr0-f193.google.com with SMTP id l10-v6so20029711wrn.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 04:32:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=BvosY+glcajskazeW3QKx7oNpuMskaqjo8F6Czy62cY=;
-        b=Xgbmx+wHheYnG/qHNvQydbn9aGXNWE8sSNqIZBp+1ecXIf7mM/1zmq8Bl7EbFTL9HY
-         lEamNfLfF+A2nK1qX0KbZdFpwQw2XvyuQRSghDm2Tp/zaIWmfYH87SKu6F77lQ2Fvhct
-         v4l7bd8BJDph2nGF3Cd0jsHNx7COieWzSko/o=
+        Thu, 7 Jun 2018 13:34:56 -0400
+X-RC-All-From: , 205.175.226.20, No hostname, brandon.maier@rockwellcollins.com,
+ Brandon Maier <brandon.maier@rockwellcollins.com>, ,
+X-RC-Attachments: , ,
+X-RC-RemoteIP: 205.175.226.20
+X-RC-RemoteHost: No hostname
+X-RC-IP-Hostname: ch3ip03.rockwellcollins.com
+X-RC-IP-MID: 6434595
+X-RC-IP-Group: GOOGLE_RELAYED
+X-RC-IP-Policy: $GOOGLE_RELAYED
+X-RC-IP-SBRS: None
+Received: from unknown (HELO mail-ot0-f198.google.com) ([205.175.226.20])
+  by ch3vs03.rockwellcollins.com with ESMTP/TLS/AES128-GCM-SHA256; 07 Jun 2018 12:34:55 -0500
+Received: by mail-ot0-f198.google.com with SMTP id l95-v6so6639271otl.17
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 10:34:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BvosY+glcajskazeW3QKx7oNpuMskaqjo8F6Czy62cY=;
-        b=XhYa0SzqBo5zE01C0lTEGHEeW5CwLXXB7lSgacePK2UOF78sOuXuGZ7k5c3GMyfsIV
-         O8S8dImProX0XH1YkW6VUoU98TmOVqgo0qGOGSWufPaN+XLTijuA3nMwUg/lMGiMK4In
-         c4o0pNxSj99AMG83OVSKg4fZRHsWzvAMY5Vdzo3iY0ggsEU0tbhylfk2OdxdiBQTIsNX
-         NDpYs40Bmd5ylc0zhj9E7o4CQ8CuW7XhjQYG6m9UJXyccNgUK7GyYfLJadCWGn8bfapB
-         AS5XPBhddAIxNeuZsfe9DGi0/jR7RBMSurYvpGuB0vLC8jXnU8C0E+U4PtOsQoOPMWKo
-         /obg==
-X-Gm-Message-State: APt69E2OKmWxTBEeaXxT6GcSqtm8GsMG2lHuUzpRjXlohAaNL+y7PjTE
-        nfke8H0B0fvMx/VGO8WfySNbsbCC
-X-Google-Smtp-Source: ADUXVKL4wnyiU9eo5YTUVQjIP9XhexkCT+BIfFouDXmmJ748vXNsIQUdS/OIW1y6PjbDxC+iuaRfsA==
-X-Received: by 2002:adf:86ae:: with SMTP id 43-v6mr11580554wrx.281.1528716753810;
-        Mon, 11 Jun 2018 04:32:33 -0700 (PDT)
-Received: from veci.piliscsaba.redhat.com (C2B0E321.catv.pool.telekom.hu. [194.176.227.33])
-        by smtp.gmail.com with ESMTPSA id z5-v6sm23300034wrh.10.2018.06.11.04.32.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 11 Jun 2018 04:32:32 -0700 (PDT)
-Date: Mon, 11 Jun 2018 13:32:30 +0200
-From: Miklos Szeredi <miklos@szeredi.hu>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Miklos Szeredi <mszeredi@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/11] vfs: factor out inode_insert5()
-Message-ID: <20180611113230.GI23785@veci.piliscsaba.redhat.com>
-References: <20180529144143.16378-1-mszeredi@redhat.com>
- <20180529144143.16378-10-mszeredi@redhat.com>
- <20180610054902.GQ30522@ZenIV.linux.org.uk>
- <20180610060159.GS30522@ZenIV.linux.org.uk>
- <CAJfpegt5guR3zJeATw4-N41Ad2n9pcB5mQoLmSLOfocnEoodVg@mail.gmail.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=Mo60SZDGatryRdChTYiM4u8iWqGHKK0GiQxeZtr0q8c=;
+        b=TCo0GFuVgAD0py9vH8lkakoeso6wBL21/LHWkn8i/gbQKxUu4JQTYX2kz614y+hS+d
+         oXCJQqN0E2glOoke5TIyBeaXNwa8DZPYBgbsoRyTaVI9tE9uIYxGJwJUz1QYwjsQ8m+Z
+         NqEGf4MyjreOvk8cZRijp+h9ecdznMGfQUcLSDk6toIuokiRzOVziM/kbeAb6ZDVOBJt
+         jnfaiAMr5twUQp993sEtFoUw1zsG8rcc6Kv3MmvvMfmG7scLsboG6EWup/Yok28H5jD3
+         Sb47wlPFxFqDnOTpBQC9voCf0HcsDA37uWdTJkWkLjDHUe6FW4KLyddpyDQDpT+1iz3d
+         aoIQ==
+X-Gm-Message-State: APt69E0eHFTcfmFSfaxg/UiLhWRLpYIYLL5RFCNO9IXobXYAeTu4HvX/
+        B6Dps4yv+F+sgxAxUvLlL7/flEs+l31Hqy71QvWRp54fs4jkF9yRNa0WkGd6fO17pEZg9PeCogq
+        8nz79YHvliKIW5agCmfjyluBp8k83Jr8BAvdLsyBTJOW+O5RDy18l4cOBa0Y=
+X-Received: by 2002:a9d:4d0c:: with SMTP id n12-v6mr1434105otf.203.1528392895235;
+        Thu, 07 Jun 2018 10:34:55 -0700 (PDT)
+X-Google-Smtp-Source: ADUXVKLAOrXN/cxG2Z5gfL/HxyTQmT7+x4vicz0sKulsXgXjO0R+YzOkIAxW9HUdyxYWf8QiI5/ePFVhhoHND2dyhoo=
+X-Received: by 2002:a9d:4d0c:: with SMTP id n12-v6mr1434089otf.203.1528392894908;
+ Thu, 07 Jun 2018 10:34:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegt5guR3zJeATw4-N41Ad2n9pcB5mQoLmSLOfocnEoodVg@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Received: by 2002:a4a:5fc9:0:0:0:0:0 with HTTP; Thu, 7 Jun 2018 10:34:54 -0700 (PDT)
+In-Reply-To: <20180607165227.GD25513@lunn.ch>
+References: <20180607155348.149665-1-brandon.maier@rockwellcollins.com> <20180607165227.GD25513@lunn.ch>
+From: Brandon Maier <brandon.maier@rockwellcollins.com>
+Date: Thu, 7 Jun 2018 12:34:54 -0500
+Message-ID: <CA+fik51YC14k8yMLRkybMXQNn6uWB0u6aQUd1GMZrQtOF=cd3A@mail.gmail.com>
+Subject: Re: [PATCH 1/3] net: phy: Check phy_driver ready before accessing
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: netdev@vger.kernel.org, f.fainelli@gmail.com, davem@davemloft.net,
+        michal.simek@xilinx.com,
+        Clayton Shotwell <clayton.shotwell@rockwellcollins.com>,
+        Kristopher Cory <kristopher.cory@rockwellcollins.com>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 11, 2018 at 11:15:55AM +0200, Miklos Szeredi wrote:
-> On Sun, Jun 10, 2018 at 8:02 AM, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > On Sun, Jun 10, 2018 at 06:49:10AM +0100, Al Viro wrote:
-> >> On Tue, May 29, 2018 at 04:41:41PM +0200, Miklos Szeredi wrote:
-> >> > From: Miklos Szeredi <miklos@szeredi.hu>
-> >> >
-> >> > Split out common helper for race free insertion of an already allocated
-> >> > inode into the cache.  Use this from iget5_locked() and
-> >> > insert_inode_locked4().  Make iget5_locked() use new_inode()/iput() instead
-> >> > of alloc_inode()/destroy_inode() directly.
-> >>
-> >> ... thus hitting the sucker with ->evict_inode(), in condition that is quite
-> >> likely to be unfit to be seen by that.
-> >>
-> >> NAK.
-> >
-> > To clarify: objection here is against the switch to new_inode/iput.  The rest is
-> > sane.  What makes new_inode() better here, anyway?
-> 
-> Umm, got to look into this.  The patch has already been pulled by
-> Linus, but I hope it's salvageable.
+On Thu, Jun 7, 2018 at 11:52 AM, Andrew Lunn <andrew@lunn.ch> wrote:
+> FYI: net-next is closed at the moment. Please resubmit these in two
+> weeks time.
 
-Incremental follows.  I think it's cleaner to initialize i_state and i_sb_list
-up front (hence the use of new_inode()), but could just as well add to sb list
-afterwards.
+Ah, I didn't see networking/netdev-FAQ.txt. I'll resubmit these then.
 
----
-diff --git a/fs/inode.c b/fs/inode.c
-index 0df41bb77e0f..03c0d7c1296f 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -1098,8 +1098,10 @@ struct inode *iget5_locked(struct super_block *sb, unsigned long hashval,
- 
- 		if (new) {
- 			inode = inode_insert5(new, hashval, test, set, data);
--			if (unlikely(inode != new))
--				iput(new);
-+			if (unlikely(inode != new)) {
-+				inode_sb_list_del(inode);
-+				destroy_inode(new);
-+			}
- 		}
- 	}
- 	return inode;
+> I'm sure there are more issues like this in the code.  e.g. there is
+> no attempt made to hold a reference to the child phy. So it could be
+> unbound. priv->phy_drv->read_status(phydev) is then going to do bad
+> things.
+>
+
+Agreed. Another thing that looks suspicious to me is the driver
+overrides the private data of the device it's attaching too, in the
+`priv->phy_dev->priv = priv` bit. Seems like that could cause all
+sorts of driver corruption problems.
+
+But fixing that is going to require more drastic changes to how this
+driver works. So it'd be worth applying this patch in the mean time.
