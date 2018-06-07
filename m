@@ -1,74 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id f6zYN+r7GluTAQAAmS7hNA
-	; Fri, 08 Jun 2018 21:58:27 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id cYNdLflSGVuSGwAAmS7hNA
+	; Thu, 07 Jun 2018 15:45:00 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 4A447607E7; Fri,  8 Jun 2018 21:58:27 +0000 (UTC)
+	id C3DD2607E7; Thu,  7 Jun 2018 15:45:00 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id BDC23605A2;
-	Fri,  8 Jun 2018 21:58:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BDC23605A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 55EC560590;
+	Thu,  7 Jun 2018 15:45:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 55EC560590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753005AbeFHV6Y (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 17:58:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36300 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752793AbeFHV6X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 17:58:23 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9F9827F6;
-        Fri,  8 Jun 2018 21:58:22 +0000 (UTC)
-Date: Fri, 8 Jun 2018 14:58:21 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: penguin-kernel@I-love.SAKURA.ne.jp, paulmck@linux.vnet.ibm.com,
-        linux-kernel@vger.kernel.org, syzkaller@googlegroups.com
-Subject: Re: [PATCH] kernel/hung_task.c: allow to set period separately from
- timeout
-Message-Id: <20180608145821.ec20a15944d1d19b683695e7@linux-foundation.org>
-In-Reply-To: <20180608133043.203744-1-dvyukov@google.com>
-References: <20180608133043.203744-1-dvyukov@google.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S934645AbeFGPo6 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:44:58 -0400
+Received: from mga09.intel.com ([134.134.136.24]:36280 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934511AbeFGOkj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:40:39 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 07:40:34 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
+   d="scan'208";a="47542305"
+Received: from 2b52.sc.intel.com ([143.183.136.51])
+  by orsmga008.jf.intel.com with ESMTP; 07 Jun 2018 07:40:33 -0700
+From: Yu-cheng Yu <yu-cheng.yu@intel.com>
+To: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org, linux-arch@vger.kernel.org, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
+Subject: [PATCH 7/9] x86/mm: Shadow stack page fault error checking
+Date: Thu,  7 Jun 2018 07:37:03 -0700
+Message-Id: <20180607143705.3531-8-yu-cheng.yu@intel.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180607143705.3531-1-yu-cheng.yu@intel.com>
+References: <20180607143705.3531-1-yu-cheng.yu@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  8 Jun 2018 15:30:43 +0200 Dmitry Vyukov <dvyukov@google.com> wrote:
+If a page fault is triggered by a shadow stack access (e.g.
+call/ret) or shadow stack management instructions (e.g.
+wrussq), then bit[6] of the page fault error code is set.
 
-> Currently task hung checking period is equal to timeout,
-> as the result hung is detected anywhere between timeout and 2*timeout.
-> This is fine for most interactive environments, but this hurts automated
-> testing setups (syzbot). In an automated setup we need to strictly order
-> CPU lockup < RCU stall < workqueue lockup < task hung < silent loss,
-> so that RCU stall is not detected as task hung and task hung is not
-> detected as silent machine loss. The large variance in task hung
-> detection timeout requires setting silent machine loss timeout to
-> a very large value (e.g. if task hung is 3 mins, then silent loss
-> need to be set to ~7 mins). The additional 3 minutes significantly
-> reduce testing efficiency because usually we crash kernel within
-> a minute, and this can add hours to bug localization process as it
-> needs to do dozens of tests.
-> 
-> Allow setting checking period separately from timeout.
-> This allows to set timeout to, say, 3 minutes, but period to 10 secs.
-> 
-> The period is controlled via a new hung_task_period_secs sysctl,
-> similar to the existing hung_task_timeout_secs sysctl.
-> The default value of 0 results in the current behavior.
+In access_error(), we check if a shadow stack page fault
+is within a shadow stack memory area.
 
-I'm rather struggling to understand the difference between "period" and
-"timeout".  We would benefit from a clear description of what these two
-things do.  An appropriate place for this description is
-Documentation/sysctl/kernel.txt, which this patch forgot to update.
+Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+---
+ arch/x86/include/asm/traps.h |  2 ++
+ arch/x86/mm/fault.c          | 11 +++++++++++
+ 2 files changed, 13 insertions(+)
+
+diff --git a/arch/x86/include/asm/traps.h b/arch/x86/include/asm/traps.h
+index 5196050ff3d5..58ea2f5722e9 100644
+--- a/arch/x86/include/asm/traps.h
++++ b/arch/x86/include/asm/traps.h
+@@ -157,6 +157,7 @@ enum {
+  *   bit 3 ==				1: use of reserved bit detected
+  *   bit 4 ==				1: fault was an instruction fetch
+  *   bit 5 ==				1: protection keys block access
++ *   bit 6 ==				1: shadow stack access fault
+  */
+ enum x86_pf_error_code {
+ 	X86_PF_PROT	=		1 << 0,
+@@ -165,5 +166,6 @@ enum x86_pf_error_code {
+ 	X86_PF_RSVD	=		1 << 3,
+ 	X86_PF_INSTR	=		1 << 4,
+ 	X86_PF_PK	=		1 << 5,
++	X86_PF_SHSTK	=		1 << 6,
+ };
+ #endif /* _ASM_X86_TRAPS_H */
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index 73bd8c95ac71..2b3b9170109c 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -1166,6 +1166,17 @@ access_error(unsigned long error_code, struct vm_area_struct *vma)
+ 				       (error_code & X86_PF_INSTR), foreign))
+ 		return 1;
+ 
++	/*
++	 * Verify X86_PF_SHSTK is within a shadow stack VMA.
++	 * It is always an error if there is a shadow stack
++	 * fault outside a shadow stack VMA.
++	 */
++	if (error_code & X86_PF_SHSTK) {
++		if (!(vma->vm_flags & VM_SHSTK))
++			return 1;
++		return 0;
++	}
++
+ 	if (error_code & X86_PF_WRITE) {
+ 		/* write, present and write, not present: */
+ 		if (unlikely(!(vma->vm_flags & VM_WRITE)))
+-- 
+2.15.1
