@@ -1,134 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id i9zYBeMNGVvjBgAAmS7hNA
-	; Thu, 07 Jun 2018 10:55:06 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id VDNsIPtIGVuPTAAAmS7hNA
+	; Thu, 07 Jun 2018 15:07:08 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id DB6BD608B8; Thu,  7 Jun 2018 10:55:05 +0000 (UTC)
+	id 6C109608BF; Thu,  7 Jun 2018 15:07:08 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Q+ttrOKF"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 101A86063F;
-	Thu,  7 Jun 2018 10:55:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 101A86063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by smtp.codeaurora.org (Postfix) with ESMTP id F2A166074D;
+	Thu,  7 Jun 2018 15:07:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F2A166074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753385AbeFGKzD (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 06:55:03 -0400
-Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:45736 "EHLO
-        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751472AbeFGKzB (ORCPT
+        id S936077AbeFGPHG (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:07:06 -0400
+Received: from mail-it0-f44.google.com ([209.85.214.44]:35046 "EHLO
+        mail-it0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935887AbeFGPHE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 06:55:01 -0400
-Received: from [IPv6:2001:420:44c1:2579:708b:15e9:d378:18bf] ([IPv6:2001:420:44c1:2579:708b:15e9:d378:18bf])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id QsZDf9EVABFh2QsZHfmf7C; Thu, 07 Jun 2018 12:55:00 +0200
-Subject: Re: [RFC PATCH 2/2] media: docs-rst: Add encoder UAPI specification
- to Codec Interfaces
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Tomasz Figa <tfiga@chromium.org>
-Cc: Pawel Osciak <posciak@chromium.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
-        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        jtp.park@samsung.com,
-        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?=
-        <tiffany.lin@mediatek.com>,
-        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?=
-        <andrew-ct.chen@mediatek.com>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        todor.tomov@linaro.org, nicolas@ndufresne.ca,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <20180605103328.176255-1-tfiga@chromium.org>
- <20180605103328.176255-3-tfiga@chromium.org>
- <1528199628.4074.15.camel@pengutronix.de>
- <CAAFQd5DYu+Oehr1UUvvdmWk7toO0i_=NFgvZcAKQ8ZURKy51fA@mail.gmail.com>
- <1528208578.4074.19.camel@pengutronix.de>
- <CAAFQd5DqHj65AdzfYmvHWkqHnZntiiA2AhAfgHbLA3AuWvsOTQ@mail.gmail.com>
- <1528278003.3438.3.camel@pengutronix.de>
- <CAAFQd5A2hsgrmwJ3bgv6EDKqqy5Y86CnMcktrWa+YihWGjxtHg@mail.gmail.com>
- <41fd04f2-fc44-1792-81e6-a3d4d384adc5@xs4all.nl>
- <1528367543.3308.6.camel@pengutronix.de>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <f5aab078-3e10-151b-c6f8-fb3fe6952d16@xs4all.nl>
-Date: Thu, 7 Jun 2018 12:54:55 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Thu, 7 Jun 2018 11:07:04 -0400
+Received: by mail-it0-f44.google.com with SMTP id a3-v6so13088316itd.0;
+        Thu, 07 Jun 2018 08:07:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bYTGoc7nhJ89GP/6tSzeuSfobCsTBBXkV5rQ2gH5iPE=;
+        b=Q+ttrOKF2nNeCbvLPv5R9T6xHvm4QIEew/R2Hdaf8OrNJ3y63fN4BmRD+CIfzsLzeJ
+         jx9ATCQAEFYPjUQAJhh6/VXfIihl1r3mpXis5SfWGMg6BIiSyfS12GRHBN5/WgKnjPck
+         ZtOOKq37IVK49shFzpRgB5xe+Nh7731mEbors=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bYTGoc7nhJ89GP/6tSzeuSfobCsTBBXkV5rQ2gH5iPE=;
+        b=rwcW/gV3wDggzzbrXpT6tooJ6LohKHdTaYY7FpeLG8/cOPc3OT1byiEvmOkaRn3unt
+         f1vMRyTUKmdcC6evPKzMj92/qHAd9X4oBNLS0NcEEP5UGIUQf5u/RajgbeXUtNtSZRpQ
+         VpDlBm4MsbPNi+CAXkpsA2yWcteoEsN8D6xi0zLWn4fdaqzsPhSsHz7JcemFRQ33OA1+
+         5SI+aSXfHZNzQrJa7ifq+f28r8hx0tkhAkUtHYSWAIg1KrWUwJ3b9INH03NxwLp2DnyX
+         4tlzW1COUldxpeJ/iSnFjAfa1J7L9VhPd2nZXjqeMYcO6tTE52Uqy1nacTD3KF0NleCI
+         K/+A==
+X-Gm-Message-State: APt69E0CwRa1FCVTE9zZ/w10ORIUiKI6rvnswI1OmNmeLJNnn7FQzMkB
+        g0tbv5CDecRfffWT8waQ+WwtclcMepib+HikFoY=
+X-Google-Smtp-Source: ADUXVKJJU1+R9ggq61/6WLaDwxb7O0/HK81eLErqp7wX25UebhA+ZCPK/JTb7jp8lttsayg8M0AgezHDW/JWcmwgSRA=
+X-Received: by 2002:a24:6b14:: with SMTP id v20-v6mr2254594itc.100.1528384023176;
+ Thu, 07 Jun 2018 08:07:03 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1528367543.3308.6.camel@pengutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfIRCWUnWXMudS/XYfB0urAHQxWHSxyAazphAUbDZDga+4EEcnk6deXpDd6SGjlt73B3S0IJeLXiTvl4d7KfGctA9Me8cPo6xAB/+RFaUqvyd9biFFmhU
- rhdtNs74UNsNvLHmlngXo6YRwO46X1TxiMBZqgj49xxT08L3YkEzPCEUZrXs9KzbzaZ6C1X3tNdG6eKMWB+P7DbeoX5LzTwvBo50PRrysYW2+Fvzfue+MlH9
- /TC3VGvhyx6ehJcHWaXC1OXzewh7tkRVRBZ3wk54Spj8G+HqVAEuo1kL3NuUUyVihP5+ipeRrnHdoY0DZHewRcD3tlSalBM2A30yovxaQRBecPlqXtAnzwiJ
- Ti5j5VRtDn2DaTGHBSMY8SlyEtoNMkLWDmu4Wu67kkSZ+qoytEU5GBMysOjSActiQezDTaGRXupaC/b3YXa7pnAqBBjeXXpCvuCiXBoBZLDf8Lt3PUCEJBht
- b5at24MBuVEvF2kA55ORNIqMV6MMAR8f58vOLV2eWpAVkIRMlLJZn4i1z9qQK5aySaPaN2gdi6TX57p7wN9kVqkuCj5f3Qr3wp5Hx5mnucVFTdz27pOS65ow
- 9QBVegD0+wiTWOux9/9GsQTuTE2y1mTGXjSjUyyr1rsU/Ob/LjJFSexh6iXrjlkP05hzEM2gxIosICYoOnW7LMhXK8XSdAiiVdwJfsihLSAM0wfX4awyfrnu
- eZ5WdKYtZ4gF2nSeXChMX/tueQ4IW/e09RPN6giytmZEVMxcY3ohLneKUEO4gXyDF1UqGGWJyn6wIXtMyqgPfNYHONIPV6044LAsHj3r6oBxJ4QdALy+FM4D
- QkxpqyDkhwrhIGPN692MpVu3JPv4o5xDrocfNQb9
+References: <20180530183826.GI7063@linux.vnet.ibm.com> <Pine.LNX.4.44L0.1805301449350.1502-100000@iolanthe.rowland.org>
+ <CAJrWOzBMB-6e1pKms4L216k=TN_Lr52_gWxj-ny8yitgf+K5gg@mail.gmail.com>
+ <20180606190710.GY3593@linux.vnet.ibm.com> <CA+55aFwZTAp3wZYGSJR1kPkc=QhPNMdEEPttsM4REcWPPDH9Bw@mail.gmail.com>
+ <20180607094314.GF3593@linux.vnet.ibm.com>
+In-Reply-To: <20180607094314.GF3593@linux.vnet.ibm.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 7 Jun 2018 08:06:51 -0700
+Message-ID: <CA+55aFzs0ueN22WaKs_R6=T4HHY9j0MtpoFA8eh=t=PN7grCnA@mail.gmail.com>
+Subject: Re: LKMM litmus test for Roman Penyaev's rcu-rr
+To: Paul McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Roman Pen <roman.penyaev@profitbricks.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        andrea.parri@amarulasolutions.com,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nick Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/07/18 12:32, Philipp Zabel wrote:
-> On Thu, 2018-06-07 at 09:27 +0200, Hans Verkuil wrote:
-> [...]
->>>>>> I think it could be useful to enforce the same colorimetry on CAPTURE
->>>>>> and OUTPUT queue if the hardware doesn't do any colorspace conversion.
->>>>>
->>>>> After thinking a bit more on this, I guess it wouldn't overly
->>>>> complicate things if we require that the values from OUTPUT queue are
->>>>> copied to CAPTURE queue, if the stream doesn't include such
->>>>> information or the hardware just can't parse them.
->>>>
->>>> And for encoders it would be copied from CAPTURE queue to OUTPUT queue?
->>>>
->>>
->>> I guess iy would be from OUTPUT to CAPTURE for encoders as well, since
->>> the colorimetry of OUTPUT is ultimately defined by the raw frames that
->>> userspace is going to be feeding to the encoder.
->>
->> Correct. All mem2mem drivers should just copy the colorimetry from the
->> output buffers to the capture buffers, unless the decoder hardware is able to
->> extract that data from the stream, in which case it can overwrite it for
->> the capture buffer.
->>
->> Currently colorspace converters are not supported since the V4L2 API does
->> not provide a way to let userspace define colorimetry for the capture queue.
-> 
-> Oh, I never realized this limitation [1] ...
-> 
->  "Image colorspace, from enum v4l2_colorspace. This information
->   supplements the pixelformat and must be set by the driver for capture
->   streams and by the application for output streams, see Colorspaces."
-> 
-> [1] https://linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/pixfmt-v4l2.html
-> 
-> It's just a bit unintuitive that the initialization sequence requires to
-> set S_FMT(CAP) first and then S_FMT(OUT) but with colorspace there is
-> information that flows the opposite way.
-> 
->> I have a patch to add a new v4l2_format flag for that since forever, but
->> since we do not have any drivers that can do this in the kernel it has never
->> been upstreamed.
-> 
-> Has this patch been posted some time? I think we could add a mem2mem
-> device to imx-media with support for linear transformations.
+On Thu, Jun 7, 2018 at 2:41 AM Paul E. McKenney
+<paulmck@linux.vnet.ibm.com> wrote:
+>
+> We are considering adding unmarked accesses, for example, accesses
+> protected by locks.  One possible litmus test (not yet supported!)
+> might look like this:
 
-I don't believe it's ever been posted.
+Fair enough - you do want to have the distinction between "marked" and
+"unmarked".
 
-It's here:
+And it does make sense, although at that point I think you do hit the
+"what can a compiler do" issue more. Right now, I think the things you
+check are all pretty much "compiler can't do a lot of movement".
 
-https://git.linuxtv.org/hverkuil/media_tree.git/commit/?h=csc&id=d0e588c1a36604538e16f24cad3444c84f5da73e
+But I suspect that the markings you do have are going to be fairly
+limited. Things like "READ_ONCE()" vs "smp_read_acquire()" are still
+fairly simple from a compiler standpoint, at least when it comes to
+control flow - they have "side effects". So I guess that's the only
+real difference there - a regular read doesn't have side effects, so
+it could be moved up past a conditional, and/or duplicated for each
+use. That sounds much more complex to the checker than the existing
+things it supports, no?
 
-Regards,
-
-	Hans
+               Linus
