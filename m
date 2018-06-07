@@ -1,108 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 4LxIHedfHluVOAAAmS7hNA
-	; Mon, 11 Jun 2018 11:41:27 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id GHw+FOFHGVuIQQAAmS7hNA
+	; Thu, 07 Jun 2018 14:59:37 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 58966607A4; Mon, 11 Jun 2018 11:41:27 +0000 (UTC)
+	id F1413608B8; Thu,  7 Jun 2018 14:59:36 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id B37D4601C3;
-	Mon, 11 Jun 2018 11:41:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B37D4601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 5D7ED601C3;
+	Thu,  7 Jun 2018 14:59:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5D7ED601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932939AbeFKLlY (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Mon, 11 Jun 2018 07:41:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39075 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932841AbeFKLlX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 07:41:23 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id C401AABCC;
-        Mon, 11 Jun 2018 11:41:21 +0000 (UTC)
-Date: Mon, 11 Jun 2018 13:41:21 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Miroslav Benes <mbenes@suse.cz>
-Cc: jikos@kernel.org, jpoimboe@redhat.com, jeyu@kernel.org,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] livepatch: Deny the patched modules to be removed
-Message-ID: <20180611114121.2u7wt6d6xu2cm6it@pathway.suse.cz>
-References: <20180607092949.1706-1-mbenes@suse.cz>
- <20180607092949.1706-3-mbenes@suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        id S935704AbeFGO7d (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:59:33 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41279 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935681AbeFGO72 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:59:28 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbh-0005hK-65; Thu, 07 Jun 2018 15:09:41 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb5-0002z9-MX; Thu, 07 Jun 2018 15:09:03 +0100
+Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
-In-Reply-To: <20180607092949.1706-3-mbenes@suse.cz>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Christoffer Dall" <christoffer.dall@linaro.org>,
+        "Catalin Marinas" <catalin.marinas@arm.com>,
+        "Ard Biesheuvel" <ard.biesheuvel@linaro.org>,
+        "Marc Zyngier" <marc.zyngier@arm.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.375080348@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 196/410] arm64: KVM: Increment PC after handling an
+ SMC trap
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2018-06-07 11:29:48, Miroslav Benes wrote:
-> We decided to deny the patched modules to be removed. If it proves to be
-> a major drawback for users, we can still implement a different approach.
-> 
-> The reference of a patched module has to be taken regardless of a
-> patch's state. Thus it is not taken and dropped in enable/disable paths,
-> but in register/unregister paths.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-> --- a/kernel/livepatch/core.c
-> +++ b/kernel/livepatch/core.c
-> @@ -739,6 +746,14 @@ static int klp_init_object_loaded(struct klp_patch *patch,
->  		}
->  	}
->  
-> +	/*
-> +	 * Do not allow patched modules to be removed.
-> +	 *
-> +	 * All callers of klp_init_object_loaded() set obj->mod.
-> +	 */
-> +	if (klp_is_module(obj) && !try_module_get(obj->mod))
-> +		return -ENODEV;
-> +
->  	return 0;
->  }
+------------------
 
-This looks strange. We try to take the reference after we do all
-actions needed for a loaded module. There is nothing that would
-prevent obj->mod to get into the going state.
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-Note that it was safe (except for the relocated symbols) because
-the module was not able to really go until it called
-klp_module_going(). But you removed this last break
-by the 3rd patch.
+commit f5115e8869e1dfafac0e414b4f1664f3a84a4683 upstream.
 
+When handling an SMC trap, the "preferred return address" is set
+to that of the SMC, and not the next PC (which is a departure from
+the behaviour of an SMC that isn't trapped).
 
-I suggest another approach:
+Increment PC in the handler, as the guest is otherwise forever
+stuck...
 
-I would rename klp_find_object_module() to klp_get_object_module()
-and get the reference there. Note that it should be fine to call
-it later in klp_init_object() (before klp_init_object_loaded()).
-This would solve klp_init_patch().
+Fixes: acfb3b883f6d ("arm64: KVM: Fix SMCCC handling of unimplemented SMC/HVC calls")
+Reviewed-by: Christoffer Dall <christoffer.dall@linaro.org>
+Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ arch/arm64/kvm/handle_exit.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-We will also need to get the reference in klp_module_coming().
-It can be called anywhere there. If it fails, we will block
-loading the module.
-
-
-Note that the mod->klp_alive logic will still be necessary.
-It solves various races when both the patch and the patched
-module are loaded in parallel.
-
-Sigh, this also means that we still could call klp_init_object_loaded()
-and apply reloacations even when the patched module fails to loaded
-later from other reasons. This means that this approach does not
-solve the original problem completely.
-
-I wonder how complicated would be the arch-specific part that
-would clean up relocations when the module is unloaded.
-
-Best Regards,
-Petr
+--- a/arch/arm64/kvm/handle_exit.c
++++ b/arch/arm64/kvm/handle_exit.c
+@@ -43,7 +43,16 @@ static int handle_hvc(struct kvm_vcpu *v
+ 
+ static int handle_smc(struct kvm_vcpu *vcpu, struct kvm_run *run)
+ {
++	/*
++	 * "If an SMC instruction executed at Non-secure EL1 is
++	 * trapped to EL2 because HCR_EL2.TSC is 1, the exception is a
++	 * Trap exception, not a Secure Monitor Call exception [...]"
++	 *
++	 * We need to advance the PC after the trap, as it would
++	 * otherwise return to the same address...
++	 */
+ 	*vcpu_reg(vcpu, 0) = ~0UL;
++	kvm_skip_instr(vcpu, kvm_vcpu_trap_il_is32bit(vcpu));
+ 	return 1;
+ }
+ 
