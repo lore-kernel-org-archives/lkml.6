@@ -1,115 +1,162 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id YU5mIEyaHlupXAAAmS7hNA
-	; Mon, 11 Jun 2018 15:51:21 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id VNfaKUVdGVuZKQAAmS7hNA
+	; Thu, 07 Jun 2018 16:40:21 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 9C46060791; Mon, 11 Jun 2018 15:51:21 +0000 (UTC)
+	id A3225607E7; Thu,  7 Jun 2018 16:40:21 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NcqLYnx5"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aN/yMzMu"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 1F59F60791;
-	Mon, 11 Jun 2018 15:51:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1F59F60791
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 20577606DD;
+	Thu,  7 Jun 2018 16:40:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 20577606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752631AbeFKPvR (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 11:51:17 -0400
-Received: from mail-wr0-f181.google.com ([209.85.128.181]:41885 "EHLO
-        mail-wr0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932970AbeFKPuM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 11:50:12 -0400
-Received: by mail-wr0-f181.google.com with SMTP id h10-v6so20925938wrq.8;
-        Mon, 11 Jun 2018 08:50:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=OctNiOvMZQodFuTkoSXeGAEO1GOlWVaF2nnI2M6IWAY=;
-        b=NcqLYnx5NyzLLKb/fMQZ2xzLbcEFV86yJyzBCMXaON2UjI0jA+ti8MuHZ6HrQhGylC
-         eR/E4v0VHRQEvZ1vV9keUCExBG4iQ8tywl4D3Hp+l403YRf0dxhaYuQNp+qC2P8iV2bl
-         3cLnLASlCeDZtpt1PfcIt5YQ9Go4a2gR7EY94YoCwTlf6A1JgAiJQoXB8MnscdMYQlAK
-         2gzgXIT423tnGkxHjq1o3NY+NiXRosy+kjMMaMEB17ZKzD1nV7Ctbf4Ev7SkqeDWhTRS
-         SyHNVX7pnl/O/E8iicwLHG2pmYMXmu+mO8H/1y/x1AU3F60ZM0E/BD76vwQPbqJhpQ/Q
-         +dOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=OctNiOvMZQodFuTkoSXeGAEO1GOlWVaF2nnI2M6IWAY=;
-        b=X9NvdfDNHeK2p3C/7u3JfKy2yN+0cHyAsh0Z1bjjc2qDsQbrwrNiPVhIYDeXyURBZD
-         i3tJnh9yal4W0RSOEY7ViBu4ninsrdCBm9Juol/AH1NsGv105DdTAj5vQGgIxOoTyVlP
-         edzUCKeSiy0PZo4ZdYajjbWmCo5AWZYfTBL/ui8qa3tMdSN3JyHPONKw/846sA33/CCp
-         +91SozId73+nnJSLhWsXtg9d5u5+emZLZ7eY3mRGPoN68T6srYNfl1gzgXMyJGXGk19W
-         cbc5FLyCwNzd/WFCxj96SJAaDtuKksD4ZBqjhORFf5fMHyacbHuAyeea+1Tntk8fvpuu
-         Qq0A==
-X-Gm-Message-State: APt69E35chbjzFfiw3UKa8B+DyBITja1g05wiAhn4n6O5CwHzXQs8m9I
-        u/LBTgB4HlE6qcafvISZE+c=
-X-Google-Smtp-Source: ADUXVKJCfCjxWZO+ALKnn05m0/9g/pRZCZ3dsZv1lZQvEB6myBzYnHC6Amx7JQFccweN2RUtUZde2g==
-X-Received: by 2002:adf:8023:: with SMTP id 32-v6mr11831390wrk.243.1528732210643;
-        Mon, 11 Jun 2018 08:50:10 -0700 (PDT)
-Received: from cperon-Latitude-7490.lan (static-css-csd-151233.business.bouyguestelecom.com. [176.162.151.233])
-        by smtp.gmail.com with ESMTPSA id n11-v6sm30308862wro.13.2018.06.11.08.50.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Jun 2018 08:50:09 -0700 (PDT)
-From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-To: Colin Didier <colin.didier@devialet.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Stefan Agner <stefan@agner.ch>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Rob Herring <robh@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        =?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
-Subject: [PATCH v7 2/5] ARM: imx: remove inexistant EPIT timer init
-Date: Mon, 11 Jun 2018 17:49:58 +0200
-Message-Id: <20180611155001.3506-3-peron.clem@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180611155001.3506-1-peron.clem@gmail.com>
-References: <20180611155001.3506-1-peron.clem@gmail.com>
+        id S933349AbeFGQkS (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 12:40:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36030 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932468AbeFGQkQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 12:40:16 -0400
+Received: from mail-wr0-f171.google.com (mail-wr0-f171.google.com [209.85.128.171])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 90311208A0
+        for <linux-kernel@vger.kernel.org>; Thu,  7 Jun 2018 16:40:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528389615;
+        bh=drcfHoT0egLAsCFZxplf4VYYKdit0d4+fyK+eSd0/ek=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=aN/yMzMuCSrKCr9SojSxe+JC6PtFolX5p01nnx6VxxX142VKx0aslG9+kv+ONHG1G
+         z093ls3Mfz5gTMZyw4xt7Zqpl6iw518VcLF39gZS/B0Xl5uS8nfHC+x4WVN7z3nugr
+         x/z81m9IT/VBEJL4Kz+V9n599PG1CWJFugNl0ddQ=
+Received: by mail-wr0-f171.google.com with SMTP id f16-v6so10545398wrm.3
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 09:40:15 -0700 (PDT)
+X-Gm-Message-State: APt69E3oCUWk/+97S+OUPs2R+4fVmWtIwZq6x40+Kp6odgjy8bEM2Mrk
+        VdAIHuT8pvVr+l16gfxLKqmWtqwc0RhZS8bvvR1JvA==
+X-Google-Smtp-Source: ADUXVKK+qO26sPPM8ayRtTzIx2ntTiQKbiH8eSk+9/rdlqjqeukrCaiMBq+cup4FhmRCppSj/rSnHulaUnwBhHxzoVU=
+X-Received: by 2002:adf:fe4c:: with SMTP id m12-v6mr2231970wrs.171.1528389614029;
+ Thu, 07 Jun 2018 09:40:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20180607143807.3611-1-yu-cheng.yu@intel.com> <20180607143807.3611-3-yu-cheng.yu@intel.com>
+In-Reply-To: <20180607143807.3611-3-yu-cheng.yu@intel.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Thu, 7 Jun 2018 09:40:02 -0700
+X-Gmail-Original-Message-ID: <CALCETrU45Cuzvfz3c1+-+7=9KS2N33Bpp1JqBtaGxhPo8U+Fqg@mail.gmail.com>
+Message-ID: <CALCETrU45Cuzvfz3c1+-+7=9KS2N33Bpp1JqBtaGxhPo8U+Fqg@mail.gmail.com>
+Subject: Re: [PATCH 02/10] x86/cet: Introduce WRUSS instruction
+To: Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        mike.kravetz@oracle.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Clément Peron <clement.peron@devialet.com>
+On Thu, Jun 7, 2018 at 7:41 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+>
+> WRUSS is a new kernel-mode instruction but writes directly
+> to user shadow stack memory.  This is used to construct
+> a return address on the shadow stack for the signal
+> handler.
+>
+> This instruction can fault if the user shadow stack is
+> invalid shadow stack memory.  In that case, the kernel does
+> fixup.
+>
+> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+> ---
+>  arch/x86/include/asm/special_insns.h          | 44 +++++++++++++++++++++++++++
+>  arch/x86/lib/x86-opcode-map.txt               |  2 +-
+>  arch/x86/mm/fault.c                           | 13 +++++++-
+>  tools/objtool/arch/x86/lib/x86-opcode-map.txt |  2 +-
+>  4 files changed, 58 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/special_insns.h b/arch/x86/include/asm/special_insns.h
+> index 317fc59b512c..8ce532fcc171 100644
+> --- a/arch/x86/include/asm/special_insns.h
+> +++ b/arch/x86/include/asm/special_insns.h
+> @@ -237,6 +237,50 @@ static inline void clwb(volatile void *__p)
+>                 : [pax] "a" (p));
+>  }
+>
+> +#ifdef CONFIG_X86_INTEL_CET
+> +
+> +#if defined(CONFIG_IA32_EMULATION) || defined(CONFIG_X86_X32)
+> +static inline int write_user_shstk_32(unsigned long addr, unsigned int val)
+> +{
+> +       int err;
+> +
 
-i.MX EPIT timer has been removed but not the init function declaration.
+Please add a comment indicating what exact opcode this is.
 
-Signed-off-by: Clément Peron <clement.peron@devialet.com>
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
-Reviewed-by: Vladimir Zapolskiy <vz@mleia.com>
-Tested-by: Vladimir Zapolskiy <vz@mleia.com>
----
- arch/arm/mach-imx/common.h | 1 -
- 1 file changed, 1 deletion(-)
+Peterz, isn't there some fancy better way we're supposed to handle the
+error return these days?
 
-diff --git a/arch/arm/mach-imx/common.h b/arch/arm/mach-imx/common.h
-index c8d68e918b2f..18aae76fa2da 100644
---- a/arch/arm/mach-imx/common.h
-+++ b/arch/arm/mach-imx/common.h
-@@ -38,7 +38,6 @@ void imx21_soc_init(void);
- void imx27_soc_init(void);
- void imx31_soc_init(void);
- void imx35_soc_init(void);
--void epit_timer_init(void __iomem *base, int irq);
- int mx21_clocks_init(unsigned long lref, unsigned long fref);
- int mx27_clocks_init(unsigned long fref);
- int mx31_clocks_init(unsigned long fref);
--- 
-2.17.1
+> +       asm volatile("1:.byte 0x66, 0x0f, 0x38, 0xf5, 0x37\n"
+> +                    "xor %[err],%[err]\n"
+> +                    "2:\n"
+> +                    ".section .fixup,\"ax\"\n"
+> +                    "3: mov $-1,%[err]; jmp 2b\n"
+> +                    ".previous\n"
+> +                    _ASM_EXTABLE(1b, 3b)
+> +               : [err] "=a" (err)
+> +               : [val] "S" (val), [addr] "D" (addr)
+> +               : "memory");
+> +       return err;
+> +}
+> +#else
+> +static inline int write_user_shstk_32(unsigned long addr, unsigned int val)
+> +{
+> +       return 0;
+
+BUG()?  Or just omit the ifdef?  It seems unhelpful to have a stub
+function that does nothing.
+
+> +}
+> +#endif
+> +
+> +static inline int write_user_shstk_64(unsigned long addr, unsigned long val)
+> +{
+> +       int err;
+> +
+
+Comment here too, please.
+
+> +       asm volatile("1:.byte 0x66, 0x48, 0x0f, 0x38, 0xf5, 0x37\n"
+> +                    "xor %[err],%[err]\n"
+> +                    "2:\n"
+> +                    ".section .fixup,\"ax\"\n"
+> +                    "3: mov $-1,%[err]; jmp 2b\n"
+> +                    ".previous\n"
+> +                    _ASM_EXTABLE(1b, 3b)
+> +               : [err] "=a" (err)
+> +               : [val] "S" (val), [addr] "D" (addr)
+> +               : "memory");
+> +       return err;
+> +}
+> +#endif /* CONFIG_X86_INTEL_CET */
+> +
+>  #define nop() asm volatile ("nop")
+>
+>
