@@ -1,130 +1,230 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id tqBKCZs7GlsUKQAAmS7hNA
-	; Fri, 08 Jun 2018 08:19:16 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ktphCNNgGVsWRAAAmS7hNA
+	; Thu, 07 Jun 2018 16:46:06 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 01A36607DC; Fri,  8 Jun 2018 08:19:16 +0000 (UTC)
+	id 006A5607E7; Thu,  7 Jun 2018 16:46:05 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jpYah+g6"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="J6ZNiXqp"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 6FB12606FA;
-	Fri,  8 Jun 2018 08:19:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6FB12606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 00BFA605A2;
+	Thu,  7 Jun 2018 16:46:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 00BFA605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=wdc.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752896AbeFHITN (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 04:19:13 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:40511 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752326AbeFHITI (ORCPT
+        id S933534AbeFGQqC (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 12:46:02 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:37050 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750933AbeFGQqB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 04:19:08 -0400
-Received: by mail-pf0-f193.google.com with SMTP id z24-v6so6259557pfe.7
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 01:19:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=HweywlkV3W7hX6j4jAziXnB8202QrrYYO0FfXOW5ydM=;
-        b=jpYah+g6bV7iiyUJ0nYKHVkiO4s11rtRN+TAWmZTzk2YGsyugFV8fqtax2Fgkg6wsw
-         kOKCCg4mKNdC0gmZeD+igEMjcmEKJqt2eKn9OCxysFMOl5zZxTVoGp4r03/q/uImtGRO
-         2VxdFL2wnOwn66W3nOPx15Xb0q+GWFqXYg9X4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=HweywlkV3W7hX6j4jAziXnB8202QrrYYO0FfXOW5ydM=;
-        b=h41OZY2fGnn0HKCRbaKB9gVAMR/sK10TOtpb64cJRbccwz04Uwnxtlspumfi5SN4ur
-         2XGqWP5BtbwypITenTkhnJ8rGMyV/Zbgk2DVWlpk4dziV9uc9n15ylXLk6pqVSg5vaN4
-         IV7+jmznowVIdem3KxR8k3Ib76sMi1b2Yhn+6EeLeh59125CeydQddZIrh2+XN5xilQW
-         MEYmTQ6tZ3HmSCIFPUs5ZeS9HWM+u/z+iEl1ilWfesJZjeALa++8W5lHh9EQGJBy8uZx
-         XuZx1RfUUDeUVLvBoBzez4VhLCv6mhpLZu0zGt54RImDmnRBswodUUY/xZV0BAd9zbx0
-         xFqA==
-X-Gm-Message-State: APt69E19OekY2XHCOQi3PiiZVBBfKWbo5miUYklYCzNOaDdZcrF6gKok
-        jpzqWurTQO0pSY4BBFapiehTNw==
-X-Google-Smtp-Source: ADUXVKIZ/l24gzIvah47m4Tcp3KS+Wrp9ImDSKC1yRNRWipnImeZEUMmlerZOkZS1pyO+n6AsmLkFA==
-X-Received: by 2002:a63:6d0:: with SMTP id 199-v6mr4348329pgg.338.1528445947598;
-        Fri, 08 Jun 2018 01:19:07 -0700 (PDT)
-Received: from ubt.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id s4-v6sm72243947pgp.35.2018.06.08.01.19.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 08 Jun 2018 01:19:06 -0700 (PDT)
-From: Chunyan Zhang <zhang.chunyan@linaro.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Billows Wu <billows.wu@spreadtrum.com>, zhang.lyra@gmail.com
-Subject: [PATCH 2/6] mmc: sdhci: made changes for System Address register of SDMA
-Date: Fri,  8 Jun 2018 16:18:09 +0800
-Message-Id: <1528445893-14530-3-git-send-email-zhang.chunyan@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528445893-14530-1-git-send-email-zhang.chunyan@linaro.org>
-References: <1528445893-14530-1-git-send-email-zhang.chunyan@linaro.org>
+        Thu, 7 Jun 2018 12:46:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1528389961; x=1559925961;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=T2wvRcJioAeSISEWLypp/5+xHhZNuGvbaAWz8A7smbM=;
+  b=J6ZNiXqp6SKxUhnae7nhkVBwETMA7xUJ8V1WZdg7ATcEtphTmYTd+7No
+   L8w+trJ+3udSOIAXuKJRPYe6PJ6M98MRG8zNxfXK11ghbjnGXib0RlIB8
+   AzIgBv1LPJKmDkd7ZFDaGlBwPj5SGuseCr21MK0HaaswWSTMgDZHQQSdY
+   ndGEhmrWhP2chr0eI6MH9g9dz6fOb0cLgVcGsKPyoy8u0Ks8ZnBBC+VQa
+   pxnEMfbETARuJo1P2lz3cwDI4XuFJcLlAPhBRoczPGslOKsklMCit3bht
+   FGB2dSQgkhPSjgpE0rYvimipsI5LSseJhvTGvDxBD0OkUakJzp4lnjZJ8
+   g==;
+X-IronPort-AV: E=Sophos;i="5.49,487,1520870400";
+   d="scan'208";a="183228011"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 08 Jun 2018 00:45:44 +0800
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP; 07 Jun 2018 09:36:12 -0700
+Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.196.157.210]) ([10.196.157.210])
+  by uls-op-cesaip02.wdc.com with ESMTP; 07 Jun 2018 09:45:44 -0700
+Subject: Re: [PATCH 3/3] riscv: fix __user annotation for __copy_user()
+To: Palmer Dabbelt <palmer@sifive.com>
+Cc: "luc.vanoostenryck@gmail.com" <luc.vanoostenryck@gmail.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "albert@sifive.com" <albert@sifive.com>
+References: <mhng-497a442f-c0da-4f88-9b48-827c4f164ed1@palmer-si-x1c4>
+From: Atish Patra <atish.patra@wdc.com>
+Message-ID: <47499095-142d-49ed-fb94-c24d9c29ef4e@wdc.com>
+Date: Thu, 7 Jun 2018 09:45:41 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <mhng-497a442f-c0da-4f88-9b48-827c4f164ed1@palmer-si-x1c4>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to the SD host controller specification version 4.10, when
-Host Version 4 is enabled, SDMA uses ADMA System Address register
-(05Fh-058h) instead of using SDMA System Address register to
-support both 32-bit and 64-bit addressing.
+On 6/7/18 9:30 AM, Palmer Dabbelt wrote:
+> On Mon, 04 Jun 2018 12:28:47 PDT (-0700), atish.patra@wdc.com wrote:
+>> On 6/4/18 12:09 PM, Luc Van Oostenryck wrote:
+>>> On Mon, Jun 04, 2018 at 11:46:50AM -0700, Atish Patra wrote:
+>>>> On 6/1/18 8:22 AM, Luc Van Oostenryck wrote:
+>>>>> __copy_user() is a function, written in assembly, used to copy
+>>>>> memory between kernel & user space. As such its to & from args
+>>>>> may both take a user pointer or a kernel pointer.
+>>>>>
+>>>>> However the prototype for this function declare these two args
+>>>>> as 'void __user *', which is no more & no less correct than
+>>>>> declaring them as 'void *'. In fact theer is no possible correct
+>>>>
+>>>> /s/theer/there
+>>>>
+>>>>> annotation for such a function.
+>>>>>
+>>>>> The problem is worked around here by declaring these args as
+>>>>> unsigned long and casting them to the right type in each of
+>>>>> two callers raw_copy_{to,from}_user() as some kind of cast would
+>>>>> be needed anyway.
+>>>>>
+>>>>> Note: another solution, maybe cleaner but slightly more complex,
+>>>>>          would be to declare two version of __copy_user,
+>>>>>          either in the asm file or via an alias, each having already
+>>>>>          the correct typing for raw_copy_{to,from}_user().
+>>>>>
+>>>>
+>>>> I feel that would be a better solution as it is implemented similarly
+>>>> in ARM as well.
+>>>>
+>>>> I am unable to understand how "unsigned long" is better than "void*".
+>>>> x86 implementation has both arguments as void*. Can you please clarify ?
+>>>
+>>> "better" is quite relative and it must be understood that sparse
+>>> allow to cast pointers o fany kinds to and from unsigned long
+>>> without any warnings (while doing a cast between different address
+>>> space will emit a warning unless you use '__force').
+>>>
+>>
+>> Got it.
+>>> As I tried to explain here above, the fact that this function is
+>>> declared as taking 2 __user pointers requires to use of casts
+>>> (ugly casts with __force) to get over the __user. By declaring
+>>> them as taking unsigned long, you still have to use casts but, IMO,
+>>> it's cleaner
+>>>
+>>
+>> Thanks for the detailed explanation.
+>>
+>>> Note: they're generic pointers/addresses anyway, they can't be
+>>>         dereferenced anyway so unsigned is as good as a plain void*
+>>>         or a void __user*
+>>> Note: using unsigned long here, fundamentally to bypass the __user,
+>>>         is the same as casting a const pointer back to a plain pointer
+>>>         via an intermediate cast to unsigned long. People can argue
+>>>         that's kinda cheating, and they would be right of course, but
+>>>         using __force or declaring twice the function with two different
+>>>         names and prototype is also a form of cheating.
+>>> Note: if this would be my code, I would choose the solution with
+>>>         two declarations.
+>>
+>> I prefer that as well.
+> 
+> I haven't compiled this, but I think it should work.  It's on the fix-sparse
+> branch of kernel.org/palmer/linux.git .
+> 
+> commit 88ffc46f92c16db0fa37edb79038d37ced0a8b41
+> gpg: Signature made Thu 07 Jun 2018 09:29:02 AM PDT
+> gpg:                using RSA key 00CE76D1834960DFCE886DF8EF4CA1502CCBAB41
+> gpg:                issuer "palmer@dabbelt.com"
+> gpg: Good signature from "Palmer Dabbelt <palmer@dabbelt.com>" [ultimate]
+> gpg:                 aka "Palmer Dabbelt <palmer@sifive.com>" [ultimate]
+> Author: Palmer Dabbelt <palmer@sifive.com>
+> Date:   Thu Jun 7 09:20:57 2018 -0700
+> 
+>      RISC-V: Split the definition of __copy_user
+>      
+>      We use a single __copy_user assembly function to copy memory both from
+>      and to userspace.  While this works, it triggers sparse errors because
+>      we're implicitly casting between the kernel and user address spaces by
+>      calling __copy_user.
+>      
+>      This patch splits the C declaration into a pair of functions,
+>      __asm_copy_{to,from}_user, that have sane semantics WRT __user.  This
+>      split tricks sparse into treating these function calls as safe.  The
+>      assembly implementation then just aliases these two symbols to
+>      __copy_user, which I renamed to __asm_copy_tofrom_user.  The result is
+>      an spare-safe implementation that pays to performance or code size
+>      penalty.
+>      
+>      Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+> 
+> diff --git a/arch/riscv/include/asm/uaccess.h b/arch/riscv/include/asm/uaccess.h
+> index 14b0b22fb578..0dbbbab05dac 100644
+> --- a/arch/riscv/include/asm/uaccess.h
+> +++ b/arch/riscv/include/asm/uaccess.h
+> @@ -392,19 +392,21 @@ do {								\
+>   })
+>   
+>   
+> -extern unsigned long __must_check __copy_user(void __user *to,
+> +extern unsigned long __must_check __asm_copy_from_user_user(void *to,
+>   	const void __user *from, unsigned long n);
 
-Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
----
- drivers/mmc/host/sdhci.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+Minor typos:
 
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index cf5695f..f57201f 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -805,6 +805,7 @@ static void sdhci_set_timeout(struct sdhci_host *host, struct mmc_command *cmd)
- static void sdhci_prepare_data(struct sdhci_host *host, struct mmc_command *cmd)
- {
- 	u8 ctrl;
-+	u32 reg;
- 	struct mmc_data *data = cmd->data;
- 
- 	if (sdhci_data_line_cmd(cmd))
-@@ -894,8 +895,10 @@ static void sdhci_prepare_data(struct sdhci_host *host, struct mmc_command *cmd)
- 					     SDHCI_ADMA_ADDRESS_HI);
- 		} else {
- 			WARN_ON(sg_cnt != 1);
-+			reg = host->v4_mode ? SDHCI_ADMA_ADDRESS :
-+				SDHCI_DMA_ADDRESS;
- 			sdhci_writel(host, sdhci_sdma_address(host),
--				     SDHCI_DMA_ADDRESS);
-+				     reg);
- 		}
- 	}
- 
-@@ -2721,6 +2724,7 @@ static void sdhci_data_irq(struct sdhci_host *host, u32 intmask)
- 		 */
- 		if (intmask & SDHCI_INT_DMA_END) {
- 			u32 dmastart, dmanow;
-+			u32 reg;
- 
- 			dmastart = sdhci_sdma_address(host);
- 			dmanow = dmastart + host->data->bytes_xfered;
-@@ -2733,7 +2737,9 @@ static void sdhci_data_irq(struct sdhci_host *host, u32 intmask)
- 			host->data->bytes_xfered = dmanow - dmastart;
- 			DBG("DMA base 0x%08x, transferred 0x%06x bytes, next 0x%08x\n",
- 			    dmastart, host->data->bytes_xfered, dmanow);
--			sdhci_writel(host, dmanow, SDHCI_DMA_ADDRESS);
-+			reg = host->v4_mode ? SDHCI_ADMA_ADDRESS :
-+				SDHCI_DMA_ADDRESS;
-+			sdhci_writel(host, dmanow, reg);
- 		}
- 
- 		if (intmask & SDHCI_INT_DATA_END) {
--- 
-2.7.4
+/s/__asm_copy_from_user_user/__asm_copy_from_user/
+
+> +extern unsigned long __must_check __asm_copy_to_user_user(void __user *to,
+> +	const void *from, unsigned long n);
+
+/s/__asm_copy_to_user_user/__asm_copy_to_user/
+
+>   
+>   static inline unsigned long
+>   raw_copy_from_user(void *to, const void __user *from, unsigned long n)
+>   {
+> -	return __copy_user(to, from, n);
+> +	return __asm_copy_from_user(to, from, n);
+>   }
+>   
+>   static inline unsigned long
+>   raw_copy_to_user(void __user *to, const void *from, unsigned long n)
+>   {
+> -	return __copy_user(to, from, n);
+> +	return __asm_copy_to_user(to, from, n);
+>   }
+>   
+>   extern long strncpy_from_user(char *dest, const char __user *src, long count);
+> diff --git a/arch/riscv/lib/uaccess.S b/arch/riscv/lib/uaccess.S
+> index 58fb2877c865..bd51e47ebd44 100644
+> --- a/arch/riscv/lib/uaccess.S
+> +++ b/arch/riscv/lib/uaccess.S
+> @@ -13,7 +13,15 @@ _epc:
+>   	.previous
+>   	.endm
+>   
+> -ENTRY(__copy_user)
+> +/* __asm_copy_to_user and __asm_copy_from_user are actually the same function,
+> + * they're just provided as two different symbols to C code so sparse doesn't
+> + * yell about casting between two different address spaces. */
+> +.global __asm_copy_to_user
+> +.set __asm_copy_to_user,__asm_copy_tofrom_user
+> +.global __asm_copy_from_user
+> +.set __asm_copy_from_user,__asm_copy_tofrom_user
+> +
+> +ENTRY(__asm_copy_tofrom_user)
+>   
+>   	/* Enable access to user memory */
+>   	li t6, SR_SUM
+> 
+-ENDPROC(__copy_user)
++ENDPROC(__asm_copy_tofrom_user)
+
+I have done boot testing with above typo fixes.
+
+Regards,
+Atish
