@@ -1,167 +1,306 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id HkMRDT44GFsdZAAAmS7hNA
-	; Wed, 06 Jun 2018 19:39:49 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id k8OcNfymGVseCwAAmS7hNA
+	; Thu, 07 Jun 2018 21:43:24 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 8C8776089E; Wed,  6 Jun 2018 19:39:49 +0000 (UTC)
+	id BBDA8606FA; Thu,  7 Jun 2018 21:43:24 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XjJwSDTo"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="m/zZLD5q"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id DF11E6074D;
-	Wed,  6 Jun 2018 19:39:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DF11E6074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=debian.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id D77D1601B4;
+	Thu,  7 Jun 2018 21:43:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D77D1601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752720AbeFFTjq (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 15:39:46 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:53485 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752339AbeFFTjp (ORCPT
+        id S1752641AbeFGVnV (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 17:43:21 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:34738 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750903AbeFGVnT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 15:39:45 -0400
-Received: by mail-wm0-f68.google.com with SMTP id x6-v6so13559089wmc.3
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Jun 2018 12:39:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=JsoumrurWROYwPouUJKCgxM1w0ObMU2zRAdzyDcHkXk=;
-        b=XjJwSDTotPOl0AmO/eDE+tSh1Gmbw2ZLAl6RTosgrs0X8DDKKmrb52n0wrUDydtAgv
-         wgzZmDotvZY09UWM4e5BzBod++Pw2g3uw4rjvAufl6a1c5orKhnRlYDI7EH0K0O67Gjx
-         GVKsGXNIeWN8bm3xRTVqdbrPayu69VttlHDlxpLWQ9ClJ5ulaz4tCxF+ee4QVpBB6XW5
-         3EYP23Q7QSsetdC6f8OQgG/1hHtshJzo0ska8CEZBZyd7HHFPaeJ7zGTfYThwaCJH7OL
-         D68EUd9JNLwaZ1TYx2NaATdCY7InaA09U/SJyug3BI1hCYI/WrpjQ8HAUMJd4cRY9vdr
-         uF4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=JsoumrurWROYwPouUJKCgxM1w0ObMU2zRAdzyDcHkXk=;
-        b=i9nrkIWujvc+ER2eniDInIyqud0yuUPDDqIcd+MuuUGoL6BuQZ827XxJjsgjXIjMur
-         XIby0xrftddVD567Y3J5MtJb805cIrXPS5fM7DEsDM38sdq27vUBOWbb6kyhRgzCmQnd
-         eXQbmMe9+q7gci8i+TlZ1PL0GnnfcIg9moQ9pELrd3XnaT8a+JHMUa0oDvexzi70vvzq
-         n7qsZznSVLeRSxwjUSxAdTOh+NioqhaZm5BWe4wT7gYeyT+igv3sX/iApkySjzTGyAaS
-         tl+dJbK5OmuFeToacCMU3K2AOfw3aDbIi4L+NojjriSKqAPiSyUeH7YZ9UTaNZ8BU4jO
-         X5/A==
-X-Gm-Message-State: APt69E2N4qhXbu/+culbcox6xjRtgU0vrk1ISa6IKZDWJPZIz+N4Cm7h
-        uw/AxawM/eC7vEGUAaxnRlg=
-X-Google-Smtp-Source: ADUXVKLNRQnwJ3bJ/aI6RjuBxlt9jAr9REjp89RYqBBEHvvMHDJw9OdGKl/THPLbYxEv3OxHQNBy4Q==
-X-Received: by 2002:a1c:f214:: with SMTP id s20-v6mr2713029wmc.29.1528313983853;
-        Wed, 06 Jun 2018 12:39:43 -0700 (PDT)
-Received: from macbookpro.malat.net (bru31-1-78-225-226-121.fbx.proxad.net. [78.225.226.121])
-        by smtp.gmail.com with ESMTPSA id t13-v6sm20132513wro.62.2018.06.06.12.39.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 06 Jun 2018 12:39:43 -0700 (PDT)
-Received: by macbookpro.malat.net (Postfix, from userid 1000)
-        id 24A9210C2B80; Wed,  6 Jun 2018 21:39:42 +0200 (CEST)
-From: Mathieu Malaterre <malat@debian.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Mathieu Malaterre <malat@debian.org>,
-        Christoph Lameter <cl@linux.com>,
-        Dennis Zhou <dennisszhou@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] percpu_counter: `percpu_counter_read_positive' should not return negative number
-Date: Wed,  6 Jun 2018 21:39:40 +0200
-Message-Id: <20180606193940.16126-1-malat@debian.org>
-X-Mailer: git-send-email 2.11.0
+        Thu, 7 Jun 2018 17:43:19 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w57LfYJN018374;
+        Thu, 7 Jun 2018 21:43:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2017-10-26;
+ bh=q2Fg2n/ZiSsqgu6n2tvxmhD6vK3OFQHJrc7zmAU7SRk=;
+ b=m/zZLD5q6CGD9vIc/9XVdEtDlptSfYy/aGUIb1QtcWJuSK23ach+RRfsesglmbPa2LHC
+ 8B4TX8+VZpVvUNGd6LMr+I0VZXEEDEbYE5p1If8bKzACdRUPe5JlOjfzV/5JXoH+90Lo
+ MaWMtX7OTUiQWuKMTQxPUb45ely0x2zY1qDVu2t3re7PhAtewJJLvcxqiZxlx0NqTcOw
+ tR04W6YYPEitRBkIBS6lAORdcI7kUOFkTRvoYiSad2FDHZODfIpiQnpL/+SeEy3XHeB2
+ w5kNjeJSkap9Csk2wGwLyR8nTFN4LERv1hs+crIR7I2OwD/EptbkKovvxbE9N6cF2C9Q Hw==
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2jbvypjqts-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 07 Jun 2018 21:43:05 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w57Lh4V8013994
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 7 Jun 2018 21:43:04 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w57Lh35e011763;
+        Thu, 7 Jun 2018 21:43:03 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 07 Jun 2018 14:43:03 -0700
+Subject: Re: [Xen-devel] [PATCH v2 5/9] xen/gntdev: Allow mappings for DMA
+ buffers
+To: Oleksandr Andrushchenko <andr2000@gmail.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        jgross@suse.com, konrad.wilk@oracle.com,
+        Stefano Stabellini <sstabellini@kernel.org>
+Cc: daniel.vetter@intel.com, matthew.d.roper@intel.com,
+        dongwon.kim@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180601114132.22596-1-andr2000@gmail.com>
+ <20180601114132.22596-6-andr2000@gmail.com>
+ <64facf05-0a51-c3d9-9d3b-780893248628@oracle.com>
+ <84217eac-b83b-710f-39ab-c93cad65bf9a@gmail.com>
+ <a172746d-7a97-159f-71a7-511b2d239089@oracle.com>
+ <30fa03c0-1b75-c0b1-b14f-8b52ea584e20@gmail.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <78dc2fc4-cdac-05b7-2c34-22b69e7e009c@oracle.com>
+Date: Thu, 7 Jun 2018 17:46:53 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <30fa03c0-1b75-c0b1-b14f-8b52ea584e20@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8917 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806070230
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since function `percpu_counter_add' may result in a signed integer overflow
-the result stored in `fbc->count' could be negative. Make sure that
-function `percpu_counter_read_positive' does not return a negative number
-in this case. This will match behavior when CONFIG_SMP=y.
+(Stefano, question for you at the end)
 
-Detected wth CONFIG_UBSAN=y
+On 06/07/2018 02:39 AM, Oleksandr Andrushchenko wrote:
+> On 06/07/2018 12:19 AM, Boris Ostrovsky wrote:
+>> On 06/06/2018 04:14 AM, Oleksandr Andrushchenko wrote:
+>>> On 06/04/2018 11:12 PM, Boris Ostrovsky wrote:
+>>>> On 06/01/2018 07:41 AM, Oleksandr Andrushchenko wrote:
+>>>> @@ -121,8 +146,27 @@ static void gntdev_free_map(struct grant_map
+>>>> *map)
+>>>>        if (map == NULL)
+>>>>            return;
+>>>>    +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
+> *Option 1: kfree(map->frames);*
+>>>> +    if (map->dma_vaddr) {
+>>>> +        struct gnttab_dma_alloc_args args;
+>>>> +
+>>>> +        args.dev = map->dma_dev;
+>>>> +        args.coherent = map->dma_flags & GNTDEV_DMA_FLAG_COHERENT;
+>>>> +        args.nr_pages = map->count;
+>>>> +        args.pages = map->pages;
+>>>> +        args.frames = map->frames;
+>>>> +        args.vaddr = map->dma_vaddr;
+>>>> +        args.dev_bus_addr = map->dma_bus_addr;
+>>>> +
+>>>> +        gnttab_dma_free_pages(&args);
+> *Option 2: kfree(map->frames);*
+>>>> +    } else
+>>>> +#endif
+>>>>        if (map->pages)
+>>>>            gnttab_free_pages(map->count, map->pages);
+>>>> +
+>>>> +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
+>>>> +    kfree(map->frames);
+>>>> +#endif
+>>>>
+>>>> Can this be done under if (map->dma_vaddr) ?
+>>>>    In other words, is it
+>>>> possible for dma_vaddr to be NULL and still have unallocated frames
+>>>> pointer?
+>>> It is possible to have vaddr == NULL and frames != NULL as we
+>>> allocate frames outside of gnttab_dma_alloc_pages which
+>>> may fail. Calling kfree on NULL pointer is safe,
+>>
+>> I am not questioning safety of the code, I would like avoid another
+>> ifdef.
+> Ah, I now understand, so you are asking if we can have
+> that kfree(map->frames); in the place *Option 2* I marked above.
+> Unfortunately no: map->frames is allocated before we try to
+> allocate DMA memory, e.g. before dma_vaddr is set:
+> [...]
+>         add->frames = kcalloc(count, sizeof(add->frames[0]),
+>                       GFP_KERNEL);
+>         if (!add->frames)
+>             goto err;
+>
+> [...]
+>         if (gnttab_dma_alloc_pages(&args))
+>             goto err;
+>
+>         add->dma_vaddr = args.vaddr;
+> [...]
+> err:
+>     gntdev_free_map(add);
+>
+> So, it is possible to enter gntdev_free_map with
+> frames != NULL and dma_vaddr == NULL. Option 1 above cannot be used
+> as map->frames is needed for gnttab_dma_free_pages(&args);
+> and Option 2 cannot be used as frames != NULL and dma_vaddr == NULL.
+> Thus, I think that unfortunately we need that #ifdef.
+> Option 3 below can also be considered, but that seems to be not good
+> as we free resources in different places which looks inconsistent.
 
-[76404.888450] ================================================================================
-[76404.888477] UBSAN: Undefined behaviour in ../include/linux/percpu_counter.h:136:13
-[76404.888485] signed integer overflow:
-[76404.888490] 9223308017647617321 + 76624449492175 cannot be represented in type 'long long int'
-[76404.888501] CPU: 0 PID: 0 Comm: swapper Not tainted 4.17.0+ #50
-[76404.888506] Call Trace:
-[76404.888523] [dffedd30] [c0478b90] ubsan_epilogue+0x18/0x4c (unreliable)
-[76404.888533] [dffedd40] [c0479530] handle_overflow+0xbc/0xdc
-[76404.888548] [dffeddc0] [c0439044] cfq_completed_request+0x560/0x1234
-[76404.888557] [dffede40] [c03f3fc4] __blk_put_request+0xb0/0x2dc
-[76404.888570] [dffede80] [c05a81d0] scsi_end_request+0x19c/0x344
-[76404.888579] [dffedeb0] [c05a9954] scsi_io_completion+0x4b4/0x854
-[76404.888592] [dffedf10] [c04046b4] blk_done_softirq+0xe4/0x1e0
-[76404.888605] [dffedf60] [c07ec1d4] __do_softirq+0x16c/0x5f0
-[76404.888617] [dffedfd0] [c0065160] irq_exit+0x110/0x1a8
-[76404.888629] [dffedff0] [c001646c] call_do_irq+0x24/0x3c
-[76404.888641] [c0cdbe80] [c0009a2c] do_IRQ+0x98/0x1a0
-[76404.888649] [c0cdbeb0] [c001b93c] ret_from_except+0x0/0x14
-[76404.888659] --- interrupt: 501 at arch_cpu_idle+0x30/0x78
-                   LR = arch_cpu_idle+0x30/0x78
-[76404.888667] [c0cdbf70] [c0cda000] 0xc0cda000 (unreliable)
-[76404.888679] [c0cdbf80] [c00a3844] do_idle+0xc4/0x158
-[76404.888687] [c0cdbfb0] [c00a3a90] cpu_startup_entry+0x24/0x28
-[76404.888696] [c0cdbfc0] [c097f820] start_kernel+0x47c/0x490
-[76404.888703] [c0cdbff0] [00003444] 0x3444
-[76404.888708] ================================================================================
-[76409.458652] ================================================================================
-[76409.458679] UBSAN: Undefined behaviour in ../include/linux/percpu_counter.h:136:13
-[76409.458687] signed integer overflow:
-[76409.458692] 9223369047059056210 + 76629034867964 cannot be represented in type 'long long int'
-[76409.458703] CPU: 0 PID: 0 Comm: swapper Not tainted 4.17.0+ #50
-[76409.458708] Call Trace:
-[76409.458725] [dffedd30] [c0478b90] ubsan_epilogue+0x18/0x4c (unreliable)
-[76409.458736] [dffedd40] [c0479530] handle_overflow+0xbc/0xdc
-[76409.458751] [dffeddc0] [c0438e60] cfq_completed_request+0x37c/0x1234
-[76409.458759] [dffede40] [c03f3fc4] __blk_put_request+0xb0/0x2dc
-[76409.458773] [dffede80] [c05a81d0] scsi_end_request+0x19c/0x344
-[76409.458781] [dffedeb0] [c05a9954] scsi_io_completion+0x4b4/0x854
-[76409.458794] [dffedf10] [c04046b4] blk_done_softirq+0xe4/0x1e0
-[76409.458807] [dffedf60] [c07ec1d4] __do_softirq+0x16c/0x5f0
-[76409.458820] [dffedfd0] [c0065160] irq_exit+0x110/0x1a8
-[76409.458832] [dffedff0] [c001646c] call_do_irq+0x24/0x3c
-[76409.458844] [c0cdbe80] [c0009a2c] do_IRQ+0x98/0x1a0
-[76409.458852] [c0cdbeb0] [c001b93c] ret_from_except+0x0/0x14
-[76409.458861] --- interrupt: 501 at arch_cpu_idle+0x30/0x78
-                   LR = arch_cpu_idle+0x30/0x78
-[76409.458870] [c0cdbf70] [c0cda000] 0xc0cda000 (unreliable)
-[76409.458882] [c0cdbf80] [c00a3844] do_idle+0xc4/0x158
-[76409.458889] [c0cdbfb0] [c00a3a8c] cpu_startup_entry+0x20/0x28
-[76409.458899] [c0cdbfc0] [c097f820] start_kernel+0x47c/0x490
-[76409.458905] [c0cdbff0] [00003444] 0x3444
-[76409.458910] ================================================================================
 
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
----
- include/linux/percpu_counter.h | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+I was only thinking of option 2. But if it is possible to have frames !=
+NULL and dma_vaddr == NULL then perhaps we indeed will have to live with
+the extra ifdef.
 
-diff --git a/include/linux/percpu_counter.h b/include/linux/percpu_counter.h
-index 4f052496cdfd..fd14f629123f 100644
---- a/include/linux/percpu_counter.h
-+++ b/include/linux/percpu_counter.h
-@@ -133,6 +133,7 @@ static inline void
- percpu_counter_add(struct percpu_counter *fbc, s64 amount)
- {
- 	preempt_disable();
-+	/* possible signed integer overflow */
- 	fbc->count += amount;
- 	preempt_enable();
- }
-@@ -154,7 +155,10 @@ static inline s64 percpu_counter_read(struct percpu_counter *fbc)
-  */
- static inline s64 percpu_counter_read_positive(struct percpu_counter *fbc)
- {
--	return fbc->count;
-+	if (fbc->count >= 0)
-+		return fbc->count;
-+
-+	return 0;
- }
- 
- static inline s64 percpu_counter_sum_positive(struct percpu_counter *fbc)
--- 
-2.11.0
+
+>
+> Sorry if I'm still missing your point.
+>>
+>>> so
+>>> I see no reason to change this code.
+>>>>>        kfree(map->pages);
+>>>>>        kfree(map->grants);
+>>>>>        kfree(map->map_ops);
+>>>>> @@ -132,7 +176,8 @@ static void gntdev_free_map(struct grant_map
+>>>>> *map)
+>>>>>        kfree(map);
+>>>>>    }
+>>>>>    -static struct grant_map *gntdev_alloc_map(struct gntdev_priv
+>>>>> *priv, int count)
+>>>>> +static struct grant_map *gntdev_alloc_map(struct gntdev_priv *priv,
+>>>>> int count,
+>>>>> +                      int dma_flags)
+>>>>>    {
+>>>>>        struct grant_map *add;
+>>>>>        int i;
+>>>>> @@ -155,6 +200,37 @@ static struct grant_map
+>>>>> *gntdev_alloc_map(struct gntdev_priv *priv, int count)
+>>>>>            NULL == add->pages)
+>>>>>            goto err;
+>>>>>    +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
+>>>>> +    add->dma_flags = dma_flags;
+>>>>> +
+>>>>> +    /*
+>>>>> +     * Check if this mapping is requested to be backed
+>>>>> +     * by a DMA buffer.
+>>>>> +     */
+>>>>> +    if (dma_flags & (GNTDEV_DMA_FLAG_WC |
+>>>>> GNTDEV_DMA_FLAG_COHERENT)) {
+>>>>> +        struct gnttab_dma_alloc_args args;
+>>>>> +
+>>>>> +        add->frames = kcalloc(count, sizeof(add->frames[0]),
+>>>>> +                      GFP_KERNEL);
+>>>>> +        if (!add->frames)
+>>>>> +            goto err;
+>>>>> +
+>>>>> +        /* Remember the device, so we can free DMA memory. */
+>>>>> +        add->dma_dev = priv->dma_dev;
+>>>>> +
+>>>>> +        args.dev = priv->dma_dev;
+>>>>> +        args.coherent = dma_flags & GNTDEV_DMA_FLAG_COHERENT;
+>>>>> +        args.nr_pages = count;
+>>>>> +        args.pages = add->pages;
+>>>>> +        args.frames = add->frames;
+>>>>> +
+>>>>> +        if (gnttab_dma_alloc_pages(&args))
+> *Option 3: kfree(map->frames);*
+>>>>> +            goto err;
+>>>>> +
+>>>>> +        add->dma_vaddr = args.vaddr;
+>>>>> +        add->dma_bus_addr = args.dev_bus_addr;
+>>>>> +    } else
+>>>>> +#endif
+>>>>>        if (gnttab_alloc_pages(count, add->pages))
+>>>>>            goto err;
+>>>>>    @@ -325,6 +401,14 @@ static int map_grant_pages(struct grant_map
+>>>>> *map)
+>>>>>            map->unmap_ops[i].handle = map->map_ops[i].handle;
+>>>>>            if (use_ptemod)
+>>>>>                map->kunmap_ops[i].handle = map->kmap_ops[i].handle;
+>>>>> +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
+>>>>> +        else if (map->dma_vaddr) {
+>>>>> +            unsigned long mfn;
+>>>>> +
+>>>>> +            mfn = __pfn_to_mfn(page_to_pfn(map->pages[i]));
+>>>> Not pfn_to_mfn()?
+>>> I'd love to, but pfn_to_mfn is only defined for x86, not ARM: [1]
+>>> and [2]
+>>> Thus,
+>>>
+>>> drivers/xen/gntdev.c:408:10: error: implicit declaration of function
+>>> ‘pfn_to_mfn’ [-Werror=implicit-function-declaration]
+>>>      mfn = pfn_to_mfn(page_to_pfn(map->pages[i]));
+>>>
+>>> So, I'll keep __pfn_to_mfn
+>>
+>> How will this work on non-PV x86?
+> So, you mean I need:
+> #ifdef CONFIG_X86
+> mfn = pfn_to_mfn(page_to_pfn(map->pages[i]));
+> #else
+> mfn = __pfn_to_mfn(page_to_pfn(map->pages[i]));
+> #endif
+>
+
+I'd rather fix it in ARM code. Stefano, why does ARM uses the
+underscored version?
+
+
+-boris
