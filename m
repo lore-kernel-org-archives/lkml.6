@@ -1,116 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id eNVdDmjpGVtnFAAAmS7hNA
-	; Fri, 08 Jun 2018 02:26:48 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id PcS+GjxLGVvTWgAAmS7hNA
+	; Thu, 07 Jun 2018 15:11:56 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 2497A608BA; Fri,  8 Jun 2018 02:26:48 +0000 (UTC)
+	id 5A86D6089E; Thu,  7 Jun 2018 15:11:56 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 9432260290;
-	Fri,  8 Jun 2018 02:26:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9432260290
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
+	by smtp.codeaurora.org (Postfix) with ESMTP id D6629601C3;
+	Thu,  7 Jun 2018 15:11:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D6629601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932153AbeFHC0I (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 22:26:08 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:58562 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752628AbeFHCYa (ORCPT
+        id S935961AbeFGPLy (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:11:54 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41465 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935181AbeFGPC5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 22:24:30 -0400
-Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 4B4CE2A337; Thu,  7 Jun 2018 22:24:29 -0400 (EDT)
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Michael Schmitz <schmitzmic@gmail.com>,
-        <linuxppc-dev@lists.ozlabs.org>, <linux-m68k@lists.linux-m68k.org>,
-        <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Message-Id: <d9d626ca4e7ac9c7e81b24a34f5fbcae9d1d5046.1528423341.git.fthain@telegraphics.com.au>
-In-Reply-To: <cover.1528423341.git.fthain@telegraphics.com.au>
-References: <cover.1528423341.git.fthain@telegraphics.com.au>
-From: Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH v2 08/12] macintosh/via-pmu68k: Don't load driver on
- unsupported hardware
-Date: Thu,  7 Jun 2018 22:24:29 -0400 (EDT)
+        Thu, 7 Jun 2018 11:02:57 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbo-0005Zq-VT; Thu, 07 Jun 2018 15:09:49 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb2-0002rr-IX; Thu, 07 Jun 2018 15:09:00 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Dan Carpenter" <dan.carpenter@oracle.com>,
+        "Mark Brown" <broonie@kernel.org>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.178171645@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 131/410] ASoC: au1x: Fix timeout tests in
+ au1xac97c_ac97_read()
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Don't load the via-pmu68k driver on early PowerBooks. The M50753 PMU
-device found in those models was never supported by this driver.
-Attempting to load the driver usually causes a boot hang.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+------------------
+
+From: Dan Carpenter <dan.carpenter@oracle.com>
+
+commit 123af9043e93cb6f235207d260d50f832cdb5439 upstream.
+
+The loop timeout doesn't work because it's a post op and ends with "tmo"
+set to -1.  I changed it from a post-op to a pre-op and I changed the
+initial the starting value from 5 to 6 so we still iterate 5 times.  I
+left the other as it was because it's a large number.
+
+Fixes: b3c70c9ea62a ("ASoC: Alchemy AC97C/I2SC audio support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/m68k/mac/misc.c           | 6 ++----
- drivers/macintosh/via-pmu68k.c | 4 ----
- include/uapi/linux/pmu.h       | 1 -
- 3 files changed, 2 insertions(+), 9 deletions(-)
+ sound/soc/au1x/ac97c.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/m68k/mac/misc.c b/arch/m68k/mac/misc.c
-index c68054361615..7ccb799eeb57 100644
---- a/arch/m68k/mac/misc.c
-+++ b/arch/m68k/mac/misc.c
-@@ -478,8 +478,7 @@ void mac_poweroff(void)
- 		cuda_shutdown();
- #endif
- #ifdef CONFIG_ADB_PMU68K
--	} else if (macintosh_config->adb_type == MAC_ADB_PB1
--		|| macintosh_config->adb_type == MAC_ADB_PB2) {
-+	} else if (macintosh_config->adb_type == MAC_ADB_PB2) {
- 		pmu_shutdown();
- #endif
- 	}
-@@ -520,8 +519,7 @@ void mac_reset(void)
- 		cuda_restart();
- #endif
- #ifdef CONFIG_ADB_PMU68K
--	} else if (macintosh_config->adb_type == MAC_ADB_PB1
--		|| macintosh_config->adb_type == MAC_ADB_PB2) {
-+	} else if (macintosh_config->adb_type == MAC_ADB_PB2) {
- 		pmu_restart();
- #endif
- 	} else if (CPU_IS_030) {
-diff --git a/drivers/macintosh/via-pmu68k.c b/drivers/macintosh/via-pmu68k.c
-index d545ed45e482..bec8e1837d7d 100644
---- a/drivers/macintosh/via-pmu68k.c
-+++ b/drivers/macintosh/via-pmu68k.c
-@@ -175,9 +175,6 @@ static s8 pmu_data_len[256][2] = {
- int __init find_via_pmu(void)
- {
- 	switch (macintosh_config->adb_type) {
--	case MAC_ADB_PB1:
--		pmu_kind = PMU_68K_V1;
--		break;
- 	case MAC_ADB_PB2:
- 		pmu_kind = PMU_68K_V2;
- 		break;
-@@ -785,7 +782,6 @@ pmu_enable_backlight(int on)
- 	    /* first call: get current backlight value */
- 	    if (backlight_level < 0) {
- 		switch(pmu_kind) {
--		    case PMU_68K_V1:
- 		    case PMU_68K_V2:
- 			pmu_request(&req, NULL, 3, PMU_READ_NVRAM, 0x14, 0xe);
- 			while (!req.complete)
-diff --git a/include/uapi/linux/pmu.h b/include/uapi/linux/pmu.h
-index 89cb1acea93a..30f64d46f5db 100644
---- a/include/uapi/linux/pmu.h
-+++ b/include/uapi/linux/pmu.h
-@@ -93,7 +93,6 @@ enum {
- 	PMU_HEATHROW_BASED,	/* PowerBook G3 series */
- 	PMU_PADDINGTON_BASED,	/* 1999 PowerBook G3 */
- 	PMU_KEYLARGO_BASED,	/* Core99 motherboard (PMU99) */
--	PMU_68K_V1,		/* 68K PMU, version 1 */
- 	PMU_68K_V2, 		/* 68K PMU, version 2 */
- };
+--- a/sound/soc/au1x/ac97c.c
++++ b/sound/soc/au1x/ac97c.c
+@@ -91,8 +91,8 @@ static unsigned short au1xac97c_ac97_rea
+ 	do {
+ 		mutex_lock(&ctx->lock);
  
--- 
-2.16.4
+-		tmo = 5;
+-		while ((RD(ctx, AC97_STATUS) & STAT_CP) && tmo--)
++		tmo = 6;
++		while ((RD(ctx, AC97_STATUS) & STAT_CP) && --tmo)
+ 			udelay(21);	/* wait an ac97 frame time */
+ 		if (!tmo) {
+ 			pr_debug("ac97rd timeout #1\n");
+@@ -105,7 +105,7 @@ static unsigned short au1xac97c_ac97_rea
+ 		 * poll, Forrest, poll...
+ 		 */
+ 		tmo = 0x10000;
+-		while ((RD(ctx, AC97_STATUS) & STAT_CP) && tmo--)
++		while ((RD(ctx, AC97_STATUS) & STAT_CP) && --tmo)
+ 			asm volatile ("nop");
+ 		data = RD(ctx, AC97_CMDRESP);
+ 
