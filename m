@@ -1,115 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id d2+2HYf1GFt+PgAAmS7hNA
-	; Thu, 07 Jun 2018 09:06:37 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id XcmAMsNFGVsxJQAAmS7hNA
+	; Thu, 07 Jun 2018 14:49:02 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 9D363607E7; Thu,  7 Jun 2018 09:06:37 +0000 (UTC)
+	id 64B49608B8; Thu,  7 Jun 2018 14:49:02 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 228C76063F;
-	Thu,  7 Jun 2018 09:06:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 228C76063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id F403F601C3;
+	Thu,  7 Jun 2018 14:49:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F403F601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932756AbeFGJGf (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 05:06:35 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48670 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753175AbeFGJGd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 05:06:33 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D75C515AB;
-        Thu,  7 Jun 2018 02:06:32 -0700 (PDT)
-Received: from [0.0.0.0] (e107985-lin.cambridge.arm.com [10.1.210.41])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BBBED3F59D;
-        Thu,  7 Jun 2018 02:06:30 -0700 (PDT)
-Subject: Re: [PATCH v5 07/10] sched/irq: add irq utilization tracking
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Quentin Perret <quentin.perret@arm.com>
-References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
- <1527253951-22709-8-git-send-email-vincent.guittot@linaro.org>
- <72473e6f-8ade-8e26-3282-276fcae4c4c7@arm.com>
- <CAKfTPtC8c9sP7TjefZPN2SFuNVGS7Q12WBj3BBYEbJFzxVN-2A@mail.gmail.com>
- <fba5a810-3c3b-dc8b-15fb-8078a591ec2b@arm.com>
- <CAKfTPtAMf1FUyY-HtziVzZ8JecnKTrQ1LaF60hg6bd=Nv9pCQQ@mail.gmail.com>
- <4368a36c-3df4-1454-1837-473e569b9080@arm.com>
- <CAKfTPtCc0pgxnBU4YN5mSxDqfq9k7=qEWE2nDp+MipPNsTwzWw@mail.gmail.com>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <5ff5d418-ed84-9747-3868-597223ceb7e2@arm.com>
-Date: Thu, 7 Jun 2018 11:06:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S935121AbeFGOtA (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:49:00 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40855 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934860AbeFGOs5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:48:57 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbr-0005Zp-HL; Thu, 07 Jun 2018 15:09:51 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb2-0002qU-1F; Thu, 07 Jun 2018 15:09:00 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-In-Reply-To: <CAKfTPtCc0pgxnBU4YN5mSxDqfq9k7=qEWE2nDp+MipPNsTwzWw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "=?UTF-8?q?Ernesto=20A=2E=20Fern=C3=A1ndez?="
+        <ernesto.mnd.fernandez@gmail.com>, "Theodore Ts'o" <tytso@mit.edu>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.265939592@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 115/410] ext4: correct documentation for grpid mount
+ option
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/07/2018 10:44 AM, Vincent Guittot wrote:
-> On 7 June 2018 at 10:29, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
->> On 06/06/2018 06:06 PM, Vincent Guittot wrote:
->>>
->>> Hi Dietmar,
->>>
->>> Sorry for the late answer
->>>
->>> On 31 May 2018 at 18:54, Dietmar Eggemann <dietmar.eggemann@arm.com>
->>> wrote:
->>>>
->>>> On 05/30/2018 08:45 PM, Vincent Guittot wrote:
->>>>>
->>>>> Hi Dietmar,
->>>>>
->>>>> On 30 May 2018 at 17:55, Dietmar Eggemann <dietmar.eggemann@arm.com>
->>>>> wrote:
->>>>>>
->>>>>> On 05/25/2018 03:12 PM, Vincent Guittot wrote:
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-[...]
+------------------
 
->> Can't buy this argument though because this is true with the current
->> implementation as well since the 'decay load sum' - 'accrue load sum'
->> sequence is not atomic.
-> 
-> it's not a problem that the _sum variable are updated in different
-> step because there are internal variable
-> Only util_avg is used "outside" and the latter is updated after both
-> idle and running steps have been applied
+From: Ernesto A. Fernández
+ <ernesto.mnd.fernandez@gmail.com>
 
-You're right here!
+commit 9f0372488cc9243018a812e8cfbf27de650b187b upstream.
 
->> What about calling update_irq_load_avg(rq, 0) in update_rq_clock_task() if
->> (irq_delta + steal) eq. 0 and sched_feat(NONTASK_CAPACITY) eq. true in this
->> #ifdef CONFIG_XXX_TIME_ACCOUNTING block?
-> 
-> update_irq_load_avg(rq, 0) is called in update_blocked_averages to
-> decay smoothly like other blocked signals and replace the need to call
-> update_irq_load_avg(rq, 0) for every call to update_rq_clock_task()
-> which can be significant
+The grpid option is currently described as being the same as nogrpid.
 
-OK.
+Signed-off-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ Documentation/filesystems/ext4.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->> Maintaining a irq/steal time signal makes only sense if at least one of the
->> CONFIG_XXX_TIME_ACCOUNTING is set and NONTASK_CAPACITY is true. The call to
->> update_irq_load_avg() in update_blocked_averages() isn't guarded my them.
-> 
-> good point
-
-[...]
+--- a/Documentation/filesystems/ext4.txt
++++ b/Documentation/filesystems/ext4.txt
+@@ -233,7 +233,7 @@ data_err=ignore(*)	Just print an error m
+ data_err=abort		Abort the journal if an error occurs in a file
+ 			data buffer in ordered mode.
+ 
+-grpid			Give objects the same group ID as their creator.
++grpid			New objects have the group ID of their parent.
+ bsdgroups
+ 
+ nogrpid		(*)	New objects have the group ID of their creator.
