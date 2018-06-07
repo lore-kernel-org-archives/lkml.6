@@ -1,80 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id RLxGGvoaG1uiXwAAmS7hNA
-	; Sat, 09 Jun 2018 00:10:34 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 6KisD7I8GVu8NgAAmS7hNA
+	; Thu, 07 Jun 2018 14:09:54 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 5B03B6089E; Sat,  9 Jun 2018 00:10:34 +0000 (UTC)
+	id 2B4AE608B8; Thu,  7 Jun 2018 14:09:54 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D78B8607A4;
-	Sat,  9 Jun 2018 00:10:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D78B8607A4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 9E4CC6063F;
+	Thu,  7 Jun 2018 14:09:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9E4CC6063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753307AbeFIAKb (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 20:10:31 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:60566 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753039AbeFIAI1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 20:08:27 -0400
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1fRRQd-00043r-2Q; Fri, 08 Jun 2018 18:08:26 -0600
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1fRRQb-0003cz-Vk; Fri, 08 Jun 2018 18:08:22 -0600
-From: Logan Gunthorpe <logang@deltatee.com>
-To: linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com
-Cc: Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>,
-        Allen Hubbe <allenbh@gmail.com>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Logan Gunthorpe <logang@deltatee.com>
-Date: Fri,  8 Jun 2018 18:08:15 -0600
-Message-Id: <20180609000819.13883-6-logang@deltatee.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180609000819.13883-1-logang@deltatee.com>
-References: <20180609000819.13883-1-logang@deltatee.com>
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com, jdmason@kudzu.us, dave.jiang@intel.com, allenbh@gmail.com, fancer.lancer@gmail.com, Shyam-sundar.S-k@amd.com, shuah@kernel.org, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH 5/8] NTB: perf: Don't require one more memory window than number of peers
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        id S933239AbeFGOJv (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:09:51 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39442 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932829AbeFGOJg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:09:36 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbM-0005Zl-R9; Thu, 07 Jun 2018 15:09:21 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbD-0003HR-TV; Thu, 07 Jun 2018 15:09:11 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Kirill Marinushkin" <k.marinushkin@gmail.com>,
+        "Takashi Iwai" <tiwai@suse.de>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.347057304@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 381/410] ALSA: usb-audio: Fix parsing descriptor of
+ UAC2 processing unit
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ntb_perf should not require more than one memory window per peer. This
-was probably an off-by-one error.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Fixes: 5648e56d03fa ("NTB: ntb_perf: Add full multi-port NTB API support")
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+------------------
+
+From: Kirill Marinushkin <k.marinushkin@gmail.com>
+
+commit a6618f4aedb2b60932d766bd82ae7ce866e842aa upstream.
+
+Currently, the offsets in the UAC2 processing unit descriptor are
+calculated incorrectly. It causes an issue when connecting the device which
+provides such a feature:
+
+~~~~
+[84126.724420] usb 1-1.3.1: invalid Processing Unit descriptor (id 18)
+~~~~
+
+After this patch is applied, the UAC2 processing unit inits w/o this error.
+
+Fixes: 23caaf19b11e ("ALSA: usb-mixer: Add support for Audio Class v2.0")
+Signed-off-by: Kirill Marinushkin <k.marinushkin@gmail.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/ntb/test/ntb_perf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/uapi/linux/usb/audio.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/ntb/test/ntb_perf.c b/drivers/ntb/test/ntb_perf.c
-index 2a9d6b0d1f19..fe27412ffe91 100644
---- a/drivers/ntb/test/ntb_perf.c
-+++ b/drivers/ntb/test/ntb_perf.c
-@@ -655,7 +655,7 @@ static int perf_init_service(struct perf_ctx *perf)
+--- a/include/uapi/linux/usb/audio.h
++++ b/include/uapi/linux/usb/audio.h
+@@ -369,7 +369,7 @@ static inline __u8 uac_processing_unit_b
  {
- 	u64 mask;
+ 	return (protocol == UAC_VERSION_1) ?
+ 		desc->baSourceID[desc->bNrInPins + 4] :
+-		desc->baSourceID[desc->bNrInPins + 6];
++		2; /* in UAC2, this value is constant */
+ }
  
--	if (ntb_peer_mw_count(perf->ntb) < perf->pcnt + 1) {
-+	if (ntb_peer_mw_count(perf->ntb) < perf->pcnt) {
- 		dev_err(&perf->ntb->dev, "Not enough memory windows\n");
- 		return -EINVAL;
- 	}
--- 
-2.11.0
+ static inline __u8 *uac_processing_unit_bmControls(struct uac_processing_unit_descriptor *desc,
+@@ -377,7 +377,7 @@ static inline __u8 *uac_processing_unit_
+ {
+ 	return (protocol == UAC_VERSION_1) ?
+ 		&desc->baSourceID[desc->bNrInPins + 5] :
+-		&desc->baSourceID[desc->bNrInPins + 7];
++		&desc->baSourceID[desc->bNrInPins + 6];
+ }
+ 
+ static inline __u8 uac_processing_unit_iProcessing(struct uac_processing_unit_descriptor *desc,
