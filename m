@@ -1,218 +1,139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id UB/BKleNGls/QAAAmS7hNA
-	; Fri, 08 Jun 2018 14:06:15 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id HExWC/5HGVtUQQAAmS7hNA
+	; Thu, 07 Jun 2018 14:59:07 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 92B06607E4; Fri,  8 Jun 2018 14:06:15 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PC+PEcuE"
+	id E93D9608B8; Thu,  7 Jun 2018 14:59:06 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id B048E60590;
-	Fri,  8 Jun 2018 14:06:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B048E60590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 4CADA601C3;
+	Thu,  7 Jun 2018 14:59:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4CADA601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752730AbeFHOGN (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 10:06:13 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:37520 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751523AbeFHOGL (ORCPT
+        id S935615AbeFGO7E (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:59:04 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41230 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935571AbeFGO6z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 10:06:11 -0400
-Received: by mail-pg0-f67.google.com with SMTP id r21-v6so6117711pgv.4
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 07:06:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=5BeWMN2BqTJaJXvBFwHo521ykKDWZZ6N7K0zRVTe7VI=;
-        b=PC+PEcuEFAVEm9lT2j8XnQtDYItL+RNPz7Ida0yrkm9wh7z86TjFfQtjWLFxKwxhja
-         h9y1bkR2RZLDAyXnpx05+J3ytD4rL6HpTl7yFd+hHyVqNqMaIztjBoRDKRcd4HVi44gX
-         OMX1ja6ee1SIMUk2TjKgoKzIdT/ylPqgJirFJXn6X3TV7m3F1OdLpzsWKk/rP/IXBZUZ
-         3sNWybhM4VC/iiXBiK/LbJ9u26RjWQ3HnJLBASdhrDlqWkg/G5dgTUMCwsSLIwCmJluX
-         u4RX3ypZ/kCKKredRK6ACk+VWlbZ9Zn/YOZaMvnpJR2EeKPYjOKYR3n+k6ikUknXjwZD
-         Hykg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=5BeWMN2BqTJaJXvBFwHo521ykKDWZZ6N7K0zRVTe7VI=;
-        b=YBsvPzHLIrnewRNCFu2hHXQ+TyW4kFvpQgz7BUG9pk4ObuxtWo4PyFhLkBJETbEs28
-         4RNTcCK7kxljJuOvAL97Yq2SBABPg1kA2fn9l859PpPmreww+hTQ6Z2/N1j4Zt+nM11c
-         XHQP1W2tq/wemI3xK0VHy8jzut/W6dzT7dWaf7/pyAshPz2GlFshWj/C67hv5NUlIQUz
-         y3hZHveMIwXKyRs5dNScULBSQYKKTaWQaAtddThNEUaXW7URyeUAvVyF2vsU8LuGSqMj
-         mcZWebhnFCAEf/lNsRHoCSsT3HLqg/F5Jz4iuXp5yhvJL1PedjnN9gov1KitNfbo2ae5
-         D2UQ==
-X-Gm-Message-State: APt69E0E7QEzJBjL+TiQc7kE/hBdYRST2ihLEzaFc05TQ0jXquLxwuGU
-        cc77SErlmyr/L3l7SMo5Ef+u+afSZVIcOMUYCHtTAg==
-X-Google-Smtp-Source: ADUXVKLgNJ3KYT6WNmpniOi4XmhpEGyF3NVsiWOMVvZH2PINXNhF/I5BmIwuC2BBPPZh5cpZgeENfnlEoK6ENz4Wq3g=
-X-Received: by 2002:a62:3e9a:: with SMTP id y26-v6mr6196624pfj.98.1528466770269;
- Fri, 08 Jun 2018 07:06:10 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a17:90a:d42:0:0:0:0 with HTTP; Fri, 8 Jun 2018 07:05:49
- -0700 (PDT)
-In-Reply-To: <CACT4Y+Z-+Rw9GfX4Q0HJxJtpMcRGO5EFj15cqOhJiEGkntcOMg@mail.gmail.com>
-References: <000000000000424989056d295959@google.com> <CACT4Y+Z-+Rw9GfX4Q0HJxJtpMcRGO5EFj15cqOhJiEGkntcOMg@mail.gmail.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Fri, 8 Jun 2018 16:05:49 +0200
-Message-ID: <CACT4Y+Zif9aN_dbR9ThH9cQYo4fVgpKafN=4zJWFx-XSO=Utrg@mail.gmail.com>
-Subject: Re: net-next boot error: KASAN: use-after-free Write in call_usermodehelper_exec_work
-To: syzbot <syzbot+9269ae80345087b898d0@syzkaller.appspotmail.com>,
-        netdev <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Alexei Starovoitov <ast@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+        Thu, 7 Jun 2018 10:58:55 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbm-0005Zj-3u; Thu, 07 Jun 2018 15:09:46 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb4-0002wx-Bn; Thu, 07 Jun 2018 15:09:02 +0100
 Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Al Viro" <viro@zeniv.linux.org.uk>,
+        "Richard Weinberger" <richard@nod.at>,
+        "Jake Daryll Obina" <jake.obina@gmail.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.404342975@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 169/410] jffs2: Fix use-after-free bug in
+ jffs2_iget()'s error handling path
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 27, 2018 at 7:40 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
-> On Sun, May 27, 2018 at 7:34 AM, syzbot
-> <syzbot+9269ae80345087b898d0@syzkaller.appspotmail.com> wrote:
->> Hello,
->>
->> syzbot found the following crash on:
->>
->> HEAD commit:    5b79c2af667c Merge git://git.kernel.org/pub/scm/linux/kern..
->> git tree:       net-next
->> console output: https://syzkaller.appspot.com/x/log.txt?x=16087fa7800000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=e4078980b886800c
->> dashboard link: https://syzkaller.appspot.com/bug?extid=9269ae80345087b898d0
->> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->>
->> Unfortunately, I don't have any reproducer for this crash yet.
->>
->> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> Reported-by: syzbot+9269ae80345087b898d0@syzkaller.appspotmail.com
->
->
-> This first happened just now on net-next, so +net maintainers.
-> This happened during boot, so no separate reproducer.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
+------------------
 
-Could fix this before it reaches Linus tree...
+From: Jake Daryll Obina <jake.obina@gmail.com>
 
-#syz fix: umh: fix race condition
+commit 5bdd0c6f89fba430e18d636493398389dadc3b17 upstream.
 
+If jffs2_iget() fails for a newly-allocated inode, jffs2_do_clear_inode()
+can get called twice in the error handling path, the first call in
+jffs2_iget() itself and the second through iget_failed(). This can result
+to a use-after-free error in the second jffs2_do_clear_inode() call, such
+as shown by the oops below wherein the second jffs2_do_clear_inode() call
+was trying to free node fragments that were already freed in the first
+jffs2_do_clear_inode() call.
 
->> FS-Cache: Loaded
->> CacheFiles: Loaded
->> pnp: PnP ACPI init
->> pnp: PnP ACPI: found 7 devices
->> ==================================================================
->> BUG: KASAN: use-after-free in call_usermodehelper_exec_work+0x2d3/0x310
->> kernel/umh.c:195
->> Write of size 4 at addr ffff8801d63bd370 by task kworker/u4:0/6
->>
->> CPU: 0 PID: 6 Comm: kworker/u4:0 Not tainted 4.17.0-rc6+ #65
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
->> Google 01/01/2011
->> Workqueue: events_unbound call_usermodehelper_exec_work
->> Call Trace:
->>  __dump_stack lib/dump_stack.c:77 [inline]
->>  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
->>  print_address_description+0x6c/0x20b mm/kasan/report.c:256
->>  kasan_report_error mm/kasan/report.c:354 [inline]
->>  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
->>  __asan_report_store4_noabort+0x17/0x20 mm/kasan/report.c:437
->>  call_usermodehelper_exec_work+0x2d3/0x310 kernel/umh.c:195
->>  process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
->>  worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
->>  kthread+0x345/0x410 kernel/kthread.c:240
->>  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
->>
->> Allocated by task 1:
->>  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->>  set_track mm/kasan/kasan.c:460 [inline]
->>  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
->>  kmem_cache_alloc_trace+0x152/0x780 mm/slab.c:3620
->>  kmalloc include/linux/slab.h:512 [inline]
->>  kzalloc include/linux/slab.h:701 [inline]
->>  call_usermodehelper_setup+0xe8/0x400 kernel/umh.c:382
->> clocksource: acpi_pm: mask: 0xffffff max_cycles: 0xffffff, max_idle_ns:
->> 2085701024 ns
->>  kobject_uevent_env+0xb21/0x1110 lib/kobject_uevent.c:608
->>  kobject_uevent+0x1f/0x30 lib/kobject_uevent.c:636
->>  device_add+0xb01/0x16d0 drivers/base/core.c:1843
->>  device_create_groups_vargs+0x1ff/0x270 drivers/base/core.c:2439
->>  device_create_vargs drivers/base/core.c:2479 [inline]
->>  device_create+0xd3/0x100 drivers/base/core.c:2515
->>  chr_dev_init+0x120/0x158 drivers/char/mem.c:938
->>  do_one_initcall+0x127/0x913 init/main.c:884
->>  do_initcall_level init/main.c:952 [inline]
->>  do_initcalls init/main.c:960 [inline]
->>  do_basic_setup init/main.c:978 [inline]
->>  kernel_init_freeable+0x49b/0x58e init/main.c:1135
->>  kernel_init+0x11/0x1b3 init/main.c:1061
->>  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
->>
->> Freed by task 1296:
->>  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->> NET: Registered protocol family 2
->>  set_track mm/kasan/kasan.c:460 [inline]
->>  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
->>  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
->>  __cache_free mm/slab.c:3498 [inline]
->>  kfree+0xd9/0x260 mm/slab.c:3813
->>  call_usermodehelper_freeinfo kernel/umh.c:45 [inline]
->>  umh_complete+0x7b/0x90 kernel/umh.c:59
->>  call_usermodehelper_exec_async+0x6e8/0x9e0 kernel/umh.c:116
->> tcp_listen_portaddr_hash hash table entries: 4096 (order: 6, 294912 bytes)
->>  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
->>
->> The buggy address belongs to the object at ffff8801d63bd300
->>  which belongs to the cache kmalloc-192 of size 192
->> The buggy address is located 112 bytes inside of
->>  192-byte region [ffff8801d63bd300, ffff8801d63bd3c0)
->> The buggy address belongs to the page:
->> TCP established hash table entries: 65536 (order: 7, 524288 bytes)
->> page:ffffea000758ef40 count:1 mapcount:0 mapping:ffff8801d63bd000 index:0x0
->> flags: 0x2fffc0000000100(slab)
->> raw: 02fffc0000000100 ffff8801d63bd000 0000000000000000 0000000100000010
->> TCP bind hash table entries: 65536 (order: 10, 4194304 bytes)
->> raw: ffffea000759c2e0 ffffea0007521be0 ffff8801da800040 0000000000000000
->> page dumped because: kasan: bad access detected
->>
->> Memory state around the buggy address:
->>  ffff8801d63bd200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->>  ffff8801d63bd280: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
->>>
->>> ffff8801d63bd300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->>
->> TCP: Hash tables configured (established 65536 bind 65536)
->>                                                              ^
->>  ffff8801d63bd380: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
->>  ffff8801d63bd400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->> ==================================================================
->> UDP hash table entries: 4096 (order: 7, 655360 bytes)
->> UDP-Lite hash table entries: 4096 (order: 7, 655360 bytes)
->>
->>
->> ---
->> This bug is generated by a bot. It may contain errors.
->> See https://goo.gl/tpsmEJ for more information about syzbot.
->> syzbot engineers can be reached at syzkaller@googlegroups.com.
->>
->> syzbot will keep track of this bug report. See:
->> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
->> syzbot.
->>
->> --
->> You received this message because you are subscribed to the Google Groups
->> "syzkaller-bugs" group.
->> To unsubscribe from this group and stop receiving emails from it, send an
->> email to syzkaller-bugs+unsubscribe@googlegroups.com.
->> To view this discussion on the web visit
->> https://groups.google.com/d/msgid/syzkaller-bugs/000000000000424989056d295959%40google.com.
->> For more options, visit https://groups.google.com/d/optout.
+[   78.178860] jffs2: error: (1904) jffs2_do_read_inode_internal: CRC failed for read_inode of inode 24 at physical location 0x1fc00c
+[   78.178914] Unable to handle kernel paging request at virtual address 6b6b6b6b6b6b6b7b
+[   78.185871] pgd = ffffffc03a567000
+[   78.188794] [6b6b6b6b6b6b6b7b] *pgd=0000000000000000, *pud=0000000000000000
+[   78.194968] Internal error: Oops: 96000004 [#1] PREEMPT SMP
+...
+[   78.513147] PC is at rb_first_postorder+0xc/0x28
+[   78.516503] LR is at jffs2_kill_fragtree+0x28/0x90 [jffs2]
+[   78.520672] pc : [<ffffff8008323d28>] lr : [<ffffff8000eb1cc8>] pstate: 60000105
+[   78.526757] sp : ffffff800cea38f0
+[   78.528753] x29: ffffff800cea38f0 x28: ffffffc01f3f8e80
+[   78.532754] x27: 0000000000000000 x26: ffffff800cea3c70
+[   78.536756] x25: 00000000dc67c8ae x24: ffffffc033d6945d
+[   78.540759] x23: ffffffc036811740 x22: ffffff800891a5b8
+[   78.544760] x21: 0000000000000000 x20: 0000000000000000
+[   78.548762] x19: ffffffc037d48910 x18: ffffff800891a588
+[   78.552764] x17: 0000000000000800 x16: 0000000000000c00
+[   78.556766] x15: 0000000000000010 x14: 6f2065646f6e695f
+[   78.560767] x13: 6461657220726f66 x12: 2064656c69616620
+[   78.564769] x11: 435243203a6c616e x10: 7265746e695f6564
+[   78.568771] x9 : 6f6e695f64616572 x8 : ffffffc037974038
+[   78.572774] x7 : bbbbbbbbbbbbbbbb x6 : 0000000000000008
+[   78.576775] x5 : 002f91d85bd44a2f x4 : 0000000000000000
+[   78.580777] x3 : 0000000000000000 x2 : 000000403755e000
+[   78.584779] x1 : 6b6b6b6b6b6b6b6b x0 : 6b6b6b6b6b6b6b6b
+...
+[   79.038551] [<ffffff8008323d28>] rb_first_postorder+0xc/0x28
+[   79.042962] [<ffffff8000eb5578>] jffs2_do_clear_inode+0x88/0x100 [jffs2]
+[   79.048395] [<ffffff8000eb9ddc>] jffs2_evict_inode+0x3c/0x48 [jffs2]
+[   79.053443] [<ffffff8008201ca8>] evict+0xb0/0x168
+[   79.056835] [<ffffff8008202650>] iput+0x1c0/0x200
+[   79.060228] [<ffffff800820408c>] iget_failed+0x30/0x3c
+[   79.064097] [<ffffff8000eba0c0>] jffs2_iget+0x2d8/0x360 [jffs2]
+[   79.068740] [<ffffff8000eb0a60>] jffs2_lookup+0xe8/0x130 [jffs2]
+[   79.073434] [<ffffff80081f1a28>] lookup_slow+0x118/0x190
+[   79.077435] [<ffffff80081f4708>] walk_component+0xfc/0x28c
+[   79.081610] [<ffffff80081f4dd0>] path_lookupat+0x84/0x108
+[   79.085699] [<ffffff80081f5578>] filename_lookup+0x88/0x100
+[   79.089960] [<ffffff80081f572c>] user_path_at_empty+0x58/0x6c
+[   79.094396] [<ffffff80081ebe14>] vfs_statx+0xa4/0x114
+[   79.098138] [<ffffff80081ec44c>] SyS_newfstatat+0x58/0x98
+[   79.102227] [<ffffff800808354c>] __sys_trace_return+0x0/0x4
+[   79.106489] Code: d65f03c0 f9400001 b40000e1 aa0103e0 (f9400821)
+
+The jffs2_do_clear_inode() call in jffs2_iget() is unnecessary since
+iget_failed() will eventually call jffs2_do_clear_inode() if needed, so
+just remove it.
+
+Fixes: 5451f79f5f81 ("iget: stop JFFS2 from using iget() and read_inode()")
+Reviewed-by: Richard Weinberger <richard@nod.at>
+Signed-off-by: Jake Daryll Obina <jake.obina@gmail.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ fs/jffs2/fs.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+--- a/fs/jffs2/fs.c
++++ b/fs/jffs2/fs.c
+@@ -363,7 +363,6 @@ error_io:
+ 	ret = -EIO;
+ error:
+ 	mutex_unlock(&f->sem);
+-	jffs2_do_clear_inode(c, f);
+ 	iget_failed(inode);
+ 	return ERR_PTR(ret);
+ }
