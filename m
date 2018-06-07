@@ -1,105 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id uUMIMQ95GltscQAAmS7hNA
-	; Fri, 08 Jun 2018 12:40:07 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id CwJxEQ15GVsEMwAAmS7hNA
+	; Thu, 07 Jun 2018 18:38:20 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 0431F6089E; Fri,  8 Jun 2018 12:40:07 +0000 (UTC)
+	id 3044A6089E; Thu,  7 Jun 2018 18:38:20 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="f6ivqwZJ"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 81B0E607DC;
-	Fri,  8 Jun 2018 12:40:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 81B0E607DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id A32FA60590;
+	Thu,  7 Jun 2018 18:38:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A32FA60590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752729AbeFHMkE (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 08:40:04 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:40296 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752661AbeFHMkD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 08:40:03 -0400
-Received: by mail-wm0-f68.google.com with SMTP id n5-v6so3435278wmc.5
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 05:40:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=aPvwLInGbnTkf9Icfav19kCQXkotfeOLbSvuHN3wDD0=;
-        b=svRMKgyxGK2DkeVIx4zOqasdfbweeet9Qmh46YGb/Kj9if5iLmT8mCdnb0yhN4Q1dp
-         Bf518WMJmZCphusEQRw3rxdCTPTChlQRm5+nsG962/k5tX50EYGgFuqHViekRPRuAj3U
-         VGnyCqnD06YKvhck9WMFZmKNqalvNMlbd2KwUmA+BOJht4k8WrxeB4s0s7jsYQNmmHbL
-         Aw4RT3BDYMWJjj9W28oEcKpPy6OQ8TUdHRX1g5tuEujaTCzh3OieSrBO2xCqxfUg3BjQ
-         ewJeW2PM4S6KEu/YFMO5OtN83oYB37C3TGPu1/nIhgyYdBLNAjrhGFvThEWLpx124qVP
-         IIFQ==
-X-Gm-Message-State: APt69E3ZcrfWnhG1E+3WRoDKAL6ft4eLVxd9lSCYXbRlYEZ4VpYppb+4
-        K9ytExgTBlbJh1cIUH36p71IIA==
-X-Google-Smtp-Source: ADUXVKIBqjKEvFgaBHlm9MJC3s7Jy20u/IHNXyhy+cxFjPX9tglRpRGlC3jaPV8PZ+GTQfJGgyiyNg==
-X-Received: by 2002:a1c:1050:: with SMTP id 77-v6mr1632680wmq.136.1528461601958;
-        Fri, 08 Jun 2018 05:40:01 -0700 (PDT)
-Received: from localhost.localdomain ([151.15.207.242])
-        by smtp.gmail.com with ESMTPSA id p10-v6sm1023567wmc.17.2018.06.08.05.40.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 08 Jun 2018 05:40:01 -0700 (PDT)
-Date: Fri, 8 Jun 2018 14:39:59 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: peterz@infradead.org, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, rjw@rjwysocki.net,
-        dietmar.eggemann@arm.com, Morten.Rasmussen@arm.com,
-        viresh.kumar@linaro.org, valentin.schneider@arm.com,
-        patrick.bellasi@arm.com, joel@joelfernandes.org,
-        daniel.lezcano@linaro.org, quentin.perret@arm.com,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH v6 06/11] cpufreq/schedutil: use dl utilization tracking
-Message-ID: <20180608123959.GE16089@localhost.localdomain>
-References: <1528459794-13066-1-git-send-email-vincent.guittot@linaro.org>
- <1528459794-13066-7-git-send-email-vincent.guittot@linaro.org>
+        id S1754027AbeFGSiR (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 14:38:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35054 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754010AbeFGSiQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 14:38:16 -0400
+Received: from mail-wm0-f54.google.com (mail-wm0-f54.google.com [74.125.82.54])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E3972089F
+        for <linux-kernel@vger.kernel.org>; Thu,  7 Jun 2018 18:38:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528396695;
+        bh=wcUk5+A/0qKa4hdM6cmbZllt6CvzsJhBid5Qt0tV3dI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=f6ivqwZJBM47+7hBICB8AGCNj5R2/vFovjlLydZfVUcptW5aPFLZLDqUpAI4/SCcj
+         sOMZnehXePuR2wG+NGeDhTz1K5mXQVNOU3szQEvpmJKlp5MrR1jOzq1YmBS24rPiJa
+         xhpmK1K0/OD+9tthnrIaR5Db4hS73Zxuak8rjKa0=
+Received: by mail-wm0-f54.google.com with SMTP id v131-v6so21130209wma.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 11:38:15 -0700 (PDT)
+X-Gm-Message-State: APt69E1qpc2EHVmW61MkvcemImmrnwZuAvUf5PSnKvhBLCn5Q5+ip+kQ
+        MGPENa1Mywe+dncIR6GhnSJmhQ9gavZ1AhnzIsKUjw==
+X-Google-Smtp-Source: ADUXVKLR6aoSzT5bPomlX7u7kQB7Kj1K4kgWGr7D8FW77hDTJo4o6NcyvYAbMaK4Q/psk115g505QRfuC4ja+TdUthU=
+X-Received: by 2002:a1c:f902:: with SMTP id x2-v6mr2241602wmh.116.1528396693907;
+ Thu, 07 Jun 2018 11:38:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1528459794-13066-7-git-send-email-vincent.guittot@linaro.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20180607143807.3611-1-yu-cheng.yu@intel.com> <20180607143807.3611-6-yu-cheng.yu@intel.com>
+In-Reply-To: <20180607143807.3611-6-yu-cheng.yu@intel.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Thu, 7 Jun 2018 11:38:02 -0700
+X-Gmail-Original-Message-ID: <CALCETrVyGdWnU1B5vZK4QP2TGVjTCg5wsPX8iAQRGzpcGNGr5g@mail.gmail.com>
+Message-ID: <CALCETrVyGdWnU1B5vZK4QP2TGVjTCg5wsPX8iAQRGzpcGNGr5g@mail.gmail.com>
+Subject: Re: [PATCH 05/10] x86/cet: ELF header parsing of Control Flow Enforcement
+To: Yu-cheng Yu <yu-cheng.yu@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        mike.kravetz@oracle.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vincent,
+On Thu, Jun 7, 2018 at 7:41 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+>
+> Look in .note.gnu.property of an ELF file and check if shadow stack needs
+> to be enabled for the task.
 
-On 08/06/18 14:09, Vincent Guittot wrote:
-> Now that we have both the dl class bandwidth requirement and the dl class
-> utilization, we can detect when CPU is fully used so we should run at max.
-> Otherwise, we keep using the dl bandwidth requirement to define the
-> utilization of the CPU
-> 
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> ---
+Nice!  But please structure it so it's one function that parses out
+all the ELF notes and some other code (a table or a switch statement)
+that handles them.  We will probably want to add more kernel-parsed
+ELF notes some day, so let's structure the code to make it easier.
 
-[...]
-
-> @@ -190,20 +192,24 @@ static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
->  	if (rq->rt.rt_nr_running)
->  		return sg_cpu->max;
->  
-> -	util = sg_cpu->util_dl;
-> -	util += sg_cpu->util_cfs;
-> +	util = sg_cpu->util_cfs;
->  	util += sg_cpu->util_rt;
->  
-> +	if ((util + sg_cpu->util_dl) >= sg_cpu->max)
-> +		return sg_cpu->max;
+> +static int find_cet(u8 *buf, u32 size, u32 align, int *shstk, int *ibt)
+> +{
+> +       unsigned long start = (unsigned long)buf;
+> +       struct elf_note *note = (struct elf_note *)buf;
 > +
+> +       *shstk = 0;
+> +       *ibt = 0;
+> +
+> +       /*
+> +        * Go through the x86_note_gnu_property array pointed by
+> +        * buf and look for shadow stack and indirect branch
+> +        * tracking features.
+> +        * The GNU_PROPERTY_X86_FEATURE_1_AND entry contains only
+> +        * one u32 as data.  Do not go beyond buf_size.
+> +        */
+> +
+> +       while ((unsigned long) (note + 1) - start < size) {
+> +               /* Find the NT_GNU_PROPERTY_TYPE_0 note. */
+> +               if (note->n_namesz == 4 &&
+> +                   note->n_type == NT_GNU_PROPERTY_TYPE_0 &&
+> +                   memcmp(note + 1, "GNU", 4) == 0) {
+> +                       u8 *ptr, *ptr_end;
+> +
+> +                       /* Check for invalid property. */
+> +                       if (note->n_descsz < 8 ||
+> +                          (note->n_descsz % align) != 0)
+> +                               return 0;
+> +
+> +                       /* Start and end of property array. */
+> +                       ptr = (u8 *)(note + 1) + 4;
+> +                       ptr_end = ptr + note->n_descsz;
 
-Mmm, won't we run at max (or reach max) with a, say, 100ms/500ms DL task
-running alone?
+Exploitable bug here?  You haven't checked that ptr is in bounds or
+that ptr + ptr_end is in bounds (or that ptr_end > ptr, for that
+matter).
 
-Best,
+> +
+> +                       while (1) {
+> +                               u32 type = *(u32 *)ptr;
+> +                               u32 datasz = *(u32 *)(ptr + 4);
+> +
+> +                               ptr += 8;
+> +                               if ((ptr + datasz) > ptr_end)
+> +                                       break;
+> +
+> +                               if (type == GNU_PROPERTY_X86_FEATURE_1_AND &&
+> +                                   datasz == 4) {
+> +                                       u32 p = *(u32 *)ptr;
+> +
+> +                                       if (p & GNU_PROPERTY_X86_FEATURE_1_SHSTK)
+> +                                               *shstk = 1;
+> +                                       if (p & GNU_PROPERTY_X86_FEATURE_1_IBT)
+> +                                               *ibt = 1;
+> +                                       return 1;
+> +                               }
+> +                       }
+> +               }
+> +
+> +               /*
+> +                * Note sections like .note.ABI-tag and .note.gnu.build-id
+> +                * are aligned to 4 bytes in 64-bit ELF objects.
+> +                */
+> +               note = (void *)note + ELF_NOTE_NEXT_OFFSET(note, align);
 
-- Juri
+A malicious value here will probably just break out of the while
+statement, but it's still scary.
+
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int check_pt_note_segment(struct file *file,
+> +                                unsigned long note_size, loff_t *pos,
+> +                                u32 align, int *shstk, int *ibt)
+> +{
+> +       int retval;
+> +       char *note_buf;
+> +
+> +       /*
+> +        * Try to read in the whole PT_NOTE segment.
+> +        */
+> +       note_buf = kmalloc(note_size, GFP_KERNEL);
+
+kmalloc() with fully user-controlled, unchecked size is not a good idea.
