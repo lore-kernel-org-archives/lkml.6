@@ -1,249 +1,168 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id pC/0LRoSHluXVgAAmS7hNA
-	; Mon, 11 Jun 2018 06:09:49 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id VQ55CqYPGVt+EwAAmS7hNA
+	; Thu, 07 Jun 2018 10:57:42 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id A09A960792; Mon, 11 Jun 2018 06:09:49 +0000 (UTC)
+	id 0BEF76089E; Thu,  7 Jun 2018 10:57:42 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b="NALVgYoN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WY/qVtpA"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D0306605A5;
-	Mon, 11 Jun 2018 06:09:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D0306605A5
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 6011360115;
+	Thu,  7 Jun 2018 10:57:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6011360115
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754071AbeFKGJr (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 02:09:47 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:32856 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753926AbeFKGJp (ORCPT
+        id S932421AbeFGK5j (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 06:57:39 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:34284 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932100AbeFGK5h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 02:09:45 -0400
-Received: by mail-wm0-f65.google.com with SMTP id z6-v6so14326328wma.0
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Jun 2018 23:09:44 -0700 (PDT)
+        Thu, 7 Jun 2018 06:57:37 -0400
+Received: by mail-wr0-f194.google.com with SMTP id a12-v6so9611307wro.1;
+        Thu, 07 Jun 2018 03:57:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=YNeDPIYG4vrf7/2PVcwWEVdDAMM99rCp4a/88SmbO/8=;
-        b=NALVgYoNTG09BtzUyTPqdFWeN2s+z0YLnGUHXbEUvLXVpPehtLfzAdSASmveIhmG7y
-         o8xqfPEV3Ug0BTuehgUiT3cyu0CAu4wve0v1BQ5WbUO3pVrz7qpa0bfhahlMw08MvmCn
-         8kw3d7immEfn2CHyFGAG4GC5ANU3iW2k8PtNqFYp4kXgvfYDZBgt6tJ6vsMik79pGgUd
-         Zp5jmcVARi6EhxnJ1ZOgJ98Z/GTTsJAilz0Brr1qU1rK4zwtdJfN3QRf7yFNKQW/pyLn
-         F//v531XQsK7X0EqIRLZaefIMDiiia9R7dWlKaYwEsbDGrodtwGQROCjqH1ZjcPVfAmu
-         u6ZQ==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=3GYk00ZwUJ+1vbIBVQMFkCIBrSSqwqpFUsv7NdkrWGQ=;
+        b=WY/qVtpAw0mZ2adJbHQBsHk2P+44E1LCmoo1lTqT3sfsMXM/g+GC4vNSxYzmbL7wiw
+         NsrCtFw8gzzQe3synjOxkeSo1lNdln0F+TJ87aVOZwYbUXh47xF3xLn+8Q+nfVY49Cgx
+         ruSE+EnlYRvzZZUHqAZKcW6wfvr9Ldv6jS+df3o5JjZ+eE6ql7spP+HxGP2G3UomEsDP
+         50bf6fC1RwY+uCKlCO4DnewY2DSuLyNtXm+EPSbkKrjBLw3+8SV4q3bjCmOsnhNqZepm
+         8uk4TuBJ/HQ3mKrgVolpwyrvJ99eht6AAEbT3t1WvhvrhQ8y5E7sSxhxWV8rQ18ASgKq
+         QHLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=YNeDPIYG4vrf7/2PVcwWEVdDAMM99rCp4a/88SmbO/8=;
-        b=Gv8zlEXOnR+UcUvUwq+zJu5S7eSMRhT2CWCaZ76pZOy31USkGo0fev5SAllJrJ1tQu
-         LRcle8r+6JRzVXTXcaulZqUTRnQzdug0GKUiGvvAqDTyp0USfhSxasuRD/Ek1ZXaBSzj
-         fVPpsmQiW3RQSczWLc9zoEWXCQP69ILiLffPOcD+rhCBdD59VRcvJIuxq2+OW2byAW5X
-         NbBKgZEw1LRjd4qaIMCBbPO2PmyGIdD1cwlap1bFmOo/A6WNt64fomFvuJQTHV0lOE00
-         KfqtPW1jNa1vR5FgzJafgW1YWi/GrFqBG7MraH5YAI1iuKQ82kax6sFBJ1DAC1CgdLMl
-         KGLg==
-X-Gm-Message-State: APt69E0cugumB+xlpnJsAdVYJ2I4ayf6e146qUcXETHiLjoE6WsnaAkl
-        k7WJ4atMsrJ/61BEhb7n1GjvhUDG
-X-Google-Smtp-Source: ADUXVKKeHykS1V1PddtKQFnQEIYB3t7ea7MNzIRTqyqg2EjoGfoiqilgZacenxz+kUOrb2NPkPZy1w==
-X-Received: by 2002:a1c:9947:: with SMTP id b68-v6mr7024770wme.159.1528697384022;
-        Sun, 10 Jun 2018 23:09:44 -0700 (PDT)
-Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
-        by smtp.gmail.com with ESMTPSA id c10-v6sm27557523wrs.6.2018.06.10.23.09.43
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Sun, 10 Jun 2018 23:09:43 -0700 (PDT)
-From: Michal Simek <michal.simek@xilinx.com>
-To: linux-kernel@vger.kernel.org, monstr@monstr.eu
-Cc: Rob Herring <robh@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        u-boot@lists.denx.de, Neil Armstrong <narmstrong@baylibre.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH] microblaze: Remove architecture heart beat code
-Date: Mon, 11 Jun 2018 08:09:39 +0200
-Message-Id: <84075652e978661247d71f84de46efd827869948.1528697370.git.michal.simek@xilinx.com>
-X-Mailer: git-send-email 1.9.1
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=3GYk00ZwUJ+1vbIBVQMFkCIBrSSqwqpFUsv7NdkrWGQ=;
+        b=D+Mjv7f89rBgeLgEZmpoa+xd/3H6QLjL5lCVF+I324OiF0s5oQ5sFkm104/AuJnIFv
+         Ayn4q0EoopbTFY3uJIQAOVWQiTbOKf5+4eMrs2kczkhnTFe4EasuaAwQE/5BL9v7RE/Y
+         sMRMz9yXVXNMkBbpOIU37PqkTdCdPkKR1sxhhbuMedTAsIJcAJOz2+1sqKvp74nB8Jzk
+         +yN2n6GZ8zrl4Z6+9qXYJsQ7x8F5T7bqZi5hP7U+iV5EB2kjKINzld2SK4dnAPUhH3/q
+         D9MkozNux+ej/2AN2mpLVFT3JelWFypxhNiDAa+8uus8nkKqCJiHhYkWPiqb4a7yAl7k
+         jKNA==
+X-Gm-Message-State: APt69E1SiT8xI05WcxNNStSFiaty7F8fkWRBYHjo6bDzoZRmf5kjD4vA
+        4A4AH4rVlAzXla+QNQkrO4NxV3ly
+X-Google-Smtp-Source: ADUXVKJDI5gsYKtUDdc2ukrivl4CjJG2Nfmj79O7UCV7ua9baGr0QJZ478Ith6gcgU4dyISzPNZmPQ==
+X-Received: by 2002:adf:9724:: with SMTP id r33-v6mr1352933wrb.79.1528369055506;
+        Thu, 07 Jun 2018 03:57:35 -0700 (PDT)
+Received: from [192.168.1.4] (ip-86-49-107-50.net.upcbroadband.cz. [86.49.107.50])
+        by smtp.gmail.com with ESMTPSA id n7-v6sm22417507wrr.39.2018.06.07.03.57.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Jun 2018 03:57:34 -0700 (PDT)
+Subject: Re: [PATCH v3 08/10] mfd: da9063: Register RTC only on DA9063L
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-kernel@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
+ <20180602101155.26375-8-marek.vasut+renesas@gmail.com>
+ <20180605075321.GM21163@dell>
+ <ac43842f-7d8a-1d6d-7077-9fb58ab852b7@gmail.com>
+ <20180606061623.GT21163@dell>
+ <69893894-899f-54cd-2610-96653ec246c0@gmail.com>
+ <20180607050411.GB21163@dell>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <feeb19cc-e7df-1859-86b9-da99059d8e32@gmail.com>
+Date: Thu, 7 Jun 2018 12:57:27 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180607050411.GB21163@dell>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no reason to keep this gpio based code in architecture. Use
-ledtrig-heartbeat.c instead which is much more flexible then this
-ancient code.
+On 06/07/2018 07:04 AM, Lee Jones wrote:
+> On Wed, 06 Jun 2018, Marek Vasut wrote:
+>> On 06/06/2018 08:16 AM, Lee Jones wrote:
+>>> On Tue, 05 Jun 2018, Marek Vasut wrote:
+>>
+>> [...]
+>>
+>>>>>> -static const struct mfd_cell da9063_devs[] = {
+>>>>>> +static const struct mfd_cell da9063_common_devs[] = {
+>>>>>>  	{
+>>>>>>  		.name		= DA9063_DRVNAME_REGULATORS,
+>>>>>
+>>>>> Appreciate that these are historical, but these device name defines
+>>>>> make me shudder.  They only serve to act as an obfuscation layer when
+>>>>> debugging at platform level.  Please consider getting rid of them.
+>>>>
+>>>> The macro can be shared between the core and the drivers, so the names
+>>>> never run out of sync.
+>>>
+>>> Platform driver name changes are vary rare.  Even if they are changed,
+>>> even light testing would uncover the fact that child drivers do not
+>>> .probe().
+>>
+>> Sure, while if the macro is used, this problem is avoided altogether.
+>>
+>>> Due to the current obfuscation, I currently have no idea
+>>> what this device's name is.
+>>
+>> I'm sure ctags or git grep can easily help.
+> 
+> I'm aware how to get around the 'issue', but it's an additional step
+> which is avoidable.  For me personally it comes from doing *a lot* of
+> platform level work and being irritated by the extra grepping.  Macros
+> for driver names does not sit right with me at all.  There are even
+> worse examples of people defining the MACROs *inside* the driver,
+> which doesn't even benefit from the small redeeming feature you
+> mention above.
 
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
----
+If we follow this line of thinking, we could just run cpp and expand all
+macros. Then there's no need for grepping at all. That probably won't be
+the result anyone would like though.
 
- arch/microblaze/Kconfig.debug       |  7 ----
- arch/microblaze/include/asm/setup.h |  3 --
- arch/microblaze/kernel/Makefile     |  2 --
- arch/microblaze/kernel/heartbeat.c  | 72 -------------------------------------
- arch/microblaze/kernel/timer.c      |  7 ----
- 5 files changed, 91 deletions(-)
- delete mode 100644 arch/microblaze/kernel/heartbeat.c
+> Anyway, I'm happy with you not wanting to change it.  Just leave them
+> as they are for now.
+> 
+>>>>>> +	{
+>>>>>> +		.name		= DA9063_DRVNAME_VIBRATION,
+>>>>>> +	},
+>>>>>
+>>>>> Place this on a single line please.
+>>>>
+>>>> This would only make the style inconsistent with the ie. LEDs entry.
+>>>>
+>>>>>         { .name	= DA9063_DRVNAME_VIBRATION },
+>>>
+>>> If that is a one line entry spaced over multiple lines, then that
+>>> should also be changed.
+>>>
+>>> Maybe I will go through and stylise this driver a bit after all (but
+>>> as time is short at the moment, maybe not!) :)
+>>
+>> You'd end up with two entries which look different then the rest, which
+>> triggers my OCD.
+> 
+> OCD or not, it's never okay to waste lines.  If ordering it not
+> important (which it should not be -- it's fragile to rely on device
+> ordering in MFD cells), the multi-line entries go at the top, followed
+> by the single line entries.  If done right, it looks the opposite of
+> bad/out of place.
 
-diff --git a/arch/microblaze/Kconfig.debug b/arch/microblaze/Kconfig.debug
-index 331a3bb66297..93a737c8d1a6 100644
---- a/arch/microblaze/Kconfig.debug
-+++ b/arch/microblaze/Kconfig.debug
-@@ -8,11 +8,4 @@ config TRACE_IRQFLAGS_SUPPORT
- 
- source "lib/Kconfig.debug"
- 
--config HEART_BEAT
--	bool "Heart beat function for kernel"
--	default n
--	help
--	  This option turns on/off heart beat kernel functionality.
--	  First GPIO node is taken.
--
- endmenu
-diff --git a/arch/microblaze/include/asm/setup.h b/arch/microblaze/include/asm/setup.h
-index d5384f6f36f7..a38e4a56e3c6 100644
---- a/arch/microblaze/include/asm/setup.h
-+++ b/arch/microblaze/include/asm/setup.h
-@@ -19,9 +19,6 @@
- 
- extern char *klimit;
- 
--void microblaze_heartbeat(void);
--void microblaze_setup_heartbeat(void);
--
- #   ifdef CONFIG_MMU
- extern void mmu_reset(void);
- #   endif /* CONFIG_MMU */
-diff --git a/arch/microblaze/kernel/Makefile b/arch/microblaze/kernel/Makefile
-index 7e99cf6984a1..3a53378d66d9 100644
---- a/arch/microblaze/kernel/Makefile
-+++ b/arch/microblaze/kernel/Makefile
-@@ -8,7 +8,6 @@ ifdef CONFIG_FUNCTION_TRACER
- CFLAGS_REMOVE_timer.o = -pg
- CFLAGS_REMOVE_intc.o = -pg
- CFLAGS_REMOVE_early_printk.o = -pg
--CFLAGS_REMOVE_heartbeat.o = -pg
- CFLAGS_REMOVE_ftrace.o = -pg
- CFLAGS_REMOVE_process.o = -pg
- endif
-@@ -22,7 +21,6 @@ obj-y += dma.o exceptions.o \
- 
- obj-y += cpu/
- 
--obj-$(CONFIG_HEART_BEAT)	+= heartbeat.o
- obj-$(CONFIG_MODULES)		+= microblaze_ksyms.o module.o
- obj-$(CONFIG_MMU)		+= misc.o
- obj-$(CONFIG_STACKTRACE)	+= stacktrace.o
-diff --git a/arch/microblaze/kernel/heartbeat.c b/arch/microblaze/kernel/heartbeat.c
-deleted file mode 100644
-index 2022130139d2..000000000000
---- a/arch/microblaze/kernel/heartbeat.c
-+++ /dev/null
-@@ -1,72 +0,0 @@
--/*
-- * Copyright (C) 2007-2009 Michal Simek <monstr@monstr.eu>
-- * Copyright (C) 2007-2009 PetaLogix
-- * Copyright (C) 2006 Atmark Techno, Inc.
-- *
-- * This file is subject to the terms and conditions of the GNU General Public
-- * License. See the file "COPYING" in the main directory of this archive
-- * for more details.
-- */
--
--#include <linux/sched.h>
--#include <linux/sched/loadavg.h>
--#include <linux/io.h>
--
--#include <asm/setup.h>
--#include <asm/page.h>
--#include <asm/prom.h>
--
--static unsigned int base_addr;
--
--void microblaze_heartbeat(void)
--{
--	static unsigned int cnt, period, dist;
--
--	if (base_addr) {
--		if (cnt == 0 || cnt == dist)
--			out_be32(base_addr, 1);
--		else if (cnt == 7 || cnt == dist + 7)
--			out_be32(base_addr, 0);
--
--		if (++cnt > period) {
--			cnt = 0;
--			/*
--			 * The hyperbolic function below modifies the heartbeat
--			 * period length in dependency of the current (5min)
--			 * load. It goes through the points f(0)=126, f(1)=86,
--			 * f(5)=51, f(inf)->30.
--			 */
--			period = ((672 << FSHIFT) / (5 * avenrun[0] +
--						(7 << FSHIFT))) + 30;
--			dist = period / 4;
--		}
--	}
--}
--
--void microblaze_setup_heartbeat(void)
--{
--	struct device_node *gpio = NULL;
--	int *prop;
--	int j;
--	const char * const gpio_list[] = {
--		"xlnx,xps-gpio-1.00.a",
--		NULL
--	};
--
--	for (j = 0; gpio_list[j] != NULL; j++) {
--		gpio = of_find_compatible_node(NULL, NULL, gpio_list[j]);
--		if (gpio)
--			break;
--	}
--
--	if (gpio) {
--		base_addr = be32_to_cpup(of_get_property(gpio, "reg", NULL));
--		base_addr = (unsigned long) ioremap(base_addr, PAGE_SIZE);
--		pr_notice("Heartbeat GPIO at 0x%x\n", base_addr);
--
--		/* GPIO is configured as output */
--		prop = (int *) of_get_property(gpio, "xlnx,is-bidir", NULL);
--		if (prop)
--			out_be32(base_addr + 4, 0);
--	}
--}
-diff --git a/arch/microblaze/kernel/timer.c b/arch/microblaze/kernel/timer.c
-index 7de941cbbd94..a6683484b3a1 100644
---- a/arch/microblaze/kernel/timer.c
-+++ b/arch/microblaze/kernel/timer.c
-@@ -156,9 +156,6 @@ static inline void timer_ack(void)
- static irqreturn_t timer_interrupt(int irq, void *dev_id)
- {
- 	struct clock_event_device *evt = &clockevent_xilinx_timer;
--#ifdef CONFIG_HEART_BEAT
--	microblaze_heartbeat();
--#endif
- 	timer_ack();
- 	evt->event_handler(evt);
- 	return IRQ_HANDLED;
-@@ -318,10 +315,6 @@ static int __init xilinx_timer_init(struct device_node *timer)
- 		return ret;
- 	}
- 
--#ifdef CONFIG_HEART_BEAT
--	microblaze_setup_heartbeat();
--#endif
--
- 	ret = xilinx_clocksource_init();
- 	if (ret)
- 		return ret;
+My point is, the style should at least be consistent. But anyway.
+
 -- 
-1.9.1
+Best regards,
+Marek Vasut
