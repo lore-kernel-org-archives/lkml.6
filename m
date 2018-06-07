@@ -1,88 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id /ns+FOFHGVuIQQAAmS7hNA
-	; Thu, 07 Jun 2018 14:58:03 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id /WVQFgBXGVscdQAAmS7hNA
+	; Thu, 07 Jun 2018 16:02:27 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D9A28608C1; Thu,  7 Jun 2018 14:58:02 +0000 (UTC)
+	id 913956074D; Thu,  7 Jun 2018 16:02:27 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 6CF49608B8;
-	Thu,  7 Jun 2018 14:58:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6CF49608B8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 0C5D3601D2;
+	Thu,  7 Jun 2018 16:02:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0C5D3601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935266AbeFGO6B (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:58:01 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41140 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933079AbeFGO5y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:57:54 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbr-0005Zl-JO; Thu, 07 Jun 2018 15:09:51 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb1-0002pz-PN; Thu, 07 Jun 2018 15:08:59 +0100
+        id S934837AbeFGQCY (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 12:02:24 -0400
+Received: from mga18.intel.com ([134.134.136.126]:15647 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932903AbeFGQCI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 12:02:08 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 09:02:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
+   d="scan'208";a="235254820"
+Received: from 2b52.sc.intel.com (HELO [143.183.136.51]) ([143.183.136.51])
+  by fmsmga005.fm.intel.com with ESMTP; 07 Jun 2018 09:02:07 -0700
+Message-ID: <1528387137.4636.6.camel@2b52.sc.intel.com>
+Subject: Re: [PATCH 2/9] x86/cet: Add Kconfig option for user-mode shadow
+ stack
+From: Yu-cheng Yu <yu-cheng.yu@intel.com>
+To: Andy Lutomirski <luto@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        mike.kravetz@oracle.com
+Date: Thu, 07 Jun 2018 08:58:57 -0700
+In-Reply-To: <CALCETrWwGCZ+Fbk+O8T6S48teHj60bQQiHQ49=SsKUOpm8VLBA@mail.gmail.com>
+References: <20180607143705.3531-1-yu-cheng.yu@intel.com>
+         <20180607143705.3531-3-yu-cheng.yu@intel.com>
+         <CALCETrWwGCZ+Fbk+O8T6S48teHj60bQQiHQ49=SsKUOpm8VLBA@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Charles_Rose@Dell.com" <Charles_Rose@Dell.com>,
-        "Nanda Kishore Chinna" <nanda_kishore_chinna@dell.com>,
-        "Charles Rose" <charles_rose@dell.com>, "Tejun Heo" <tj@kernel.org>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.291065086@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 109/410] ahci: Add Device ID for Intel Sunrise Point PCH
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+On Thu, 2018-06-07 at 08:47 -0700, Andy Lutomirski wrote:
+> On Thu, Jun 7, 2018 at 7:40 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+> >
+> > Introduce Kconfig option X86_INTEL_SHADOW_STACK_USER.
+> >
+> > An application has shadow stack protection when all the following are
+> > true:
+> >
+> >   (1) The kernel has X86_INTEL_SHADOW_STACK_USER enabled,
+> >   (2) The running processor supports the shadow stack,
+> >   (3) The application is built with shadow stack enabled tools & libs
+> >       and, and at runtime, all dependent shared libs can support shadow
+> >       stack.
+> >
+> > If this kernel config option is enabled, but (2) or (3) above is not
+> > true, the application runs without the shadow stack protection.
+> > Existing legacy applications will continue to work without the shadow
+> > stack protection.
+> >
+> > The user-mode shadow stack protection is only implemented for the
+> > 64-bit kernel.  Thirty-two bit applications are supported under the
+> > compatibility mode.
+> >
+> 
+> The 64-bit only part seems entirely reasonable.  So please make the
+> code 64-bit only :)
 
-------------------
-
-From: "Charles_Rose@Dell.com" <Charles_Rose@Dell.com>
-
-commit c5967b79ecabe2baca40658d9073e28b30d7f6cf upstream.
-
-This patch adds missing AHCI RAID SATA Device IDs for the Intel Sunrise
-Point PCH.
-
-Signed-off-by: Nanda Kishore Chinna <nanda_kishore_chinna@dell.com>
-Signed-off-by: Charles Rose <charles_rose@dell.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- drivers/ata/ahci.c | 2 ++
- 1 file changed, 2 insertions(+)
-
---- a/drivers/ata/ahci.c
-+++ b/drivers/ata/ahci.c
-@@ -368,8 +368,10 @@ static const struct pci_device_id ahci_p
- 	{ PCI_VDEVICE(INTEL, 0x9d03), board_ahci }, /* Sunrise Point-LP AHCI */
- 	{ PCI_VDEVICE(INTEL, 0x9d05), board_ahci }, /* Sunrise Point-LP RAID */
- 	{ PCI_VDEVICE(INTEL, 0x9d07), board_ahci }, /* Sunrise Point-LP RAID */
-+	{ PCI_VDEVICE(INTEL, 0xa102), board_ahci }, /* Sunrise Point-H AHCI */
- 	{ PCI_VDEVICE(INTEL, 0xa103), board_ahci }, /* Sunrise Point-H AHCI */
- 	{ PCI_VDEVICE(INTEL, 0xa105), board_ahci }, /* Sunrise Point-H RAID */
-+	{ PCI_VDEVICE(INTEL, 0xa106), board_ahci }, /* Sunrise Point-H RAID */
- 	{ PCI_VDEVICE(INTEL, 0xa107), board_ahci }, /* Sunrise Point-H RAID */
- 	{ PCI_VDEVICE(INTEL, 0xa10f), board_ahci }, /* Sunrise Point-H RAID */
- 
+Yes, I will remove changes in "arch/x86/entry/entry32.S".
+We still want to support x32/ia32 in the 64-bit kernel, right?
