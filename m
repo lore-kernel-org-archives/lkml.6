@@ -1,120 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id kjIEEFb2GFu5QwAAmS7hNA
-	; Thu, 07 Jun 2018 09:09:42 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id JIrPK+CzGVsCaQAAmS7hNA
+	; Thu, 07 Jun 2018 22:41:42 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 2567D6089E; Thu,  7 Jun 2018 09:09:42 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RIQgi5JX"
+	id BD0CE606FA; Thu,  7 Jun 2018 22:41:42 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 9638D607DC;
-	Thu,  7 Jun 2018 09:09:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9638D607DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 24B9F601C3;
+	Thu,  7 Jun 2018 22:41:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 24B9F601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=vt.edu
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932792AbeFGJJj (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 05:09:39 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:44940 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932396AbeFGJJh (ORCPT
+        id S1752413AbeFGWlk (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 18:41:40 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:51210 "EHLO
+        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752135AbeFGWlj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 05:09:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=0B01QRXqJRM5GULkW5+mO0Eio8lveXp58x8Xfqg24ps=; b=RIQgi5JXkDX+YDInUjDp3jtLM
-        tKC2PAgtTbIWkedAzuvUtGsfAdvJu8fYP71cyUs3oVQu0z8u0jY/29fcSzt1I4XGlzah+Y/lx78Uf
-        PCWP4Z2izXQbnftN0/Iw6YwWvuOqgy1mzhXrzlKuGjoXDnEIAbEHd6fNbWpm9fQwosijcY0FRs6qu
-        K806fq5gmSJMUpngxVpp+ajxbYWt5DvyFP2F8fW3OEALf3F3bhwRdUfAQaJeasWz5kd35xZRdbyYW
-        HlcBh4H/ED3Cu+zQLSLNEa32x+kdIUNIi65S0pJ7O8IPH5Ufni823rWZU6lbMGMuqf1ghP8zy1nLB
-        3MFLxoljQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fQqvC-00049C-17; Thu, 07 Jun 2018 09:09:30 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 40B89201EA7A4; Thu,  7 Jun 2018 11:09:28 +0200 (CEST)
-Date: Thu, 7 Jun 2018 11:09:28 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Javi Merino <javi.merino@kernel.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Kevin Wangtao <kevin.wangtao@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rui Zhang <rui.zhang@intel.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        "open list:POWER MANAGEMENT CORE" <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH V5] powercap/drivers/idle_injection: Add an idle
- injection framework
-Message-ID: <20180607090928.GK12198@hirez.programming.kicks-ass.net>
-References: <1528190208-22915-1-git-send-email-daniel.lezcano@linaro.org>
- <20180606122357.GN12258@hirez.programming.kicks-ass.net>
- <22f5cf0b-049e-7938-55f6-4b4b154f8389@linaro.org>
- <20180606150203.GE12180@hirez.programming.kicks-ass.net>
- <ea347237-7cef-095a-5ddb-19c181d10c23@linaro.org>
- <20180607083229.GJ12198@hirez.programming.kicks-ass.net>
- <20180607084251.rv2tg3kgz4aohlpd@vireshk-i7>
- <9996fb40-c7aa-db61-5445-52c146f44d85@linaro.org>
- <20180607084921.toctrooftl6y7kkx@vireshk-i7>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180607084921.toctrooftl6y7kkx@vireshk-i7>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        Thu, 7 Jun 2018 18:41:39 -0400
+Received: from mr6.cc.vt.edu (mr6.cc.vt.edu [IPv6:2607:b400:92:8500:0:af:2d00:4488])
+        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id w57Mfc65001215
+        for <linux-kernel@vger.kernel.org>; Thu, 7 Jun 2018 18:41:38 -0400
+Received: from mail-qt0-f198.google.com (mail-qt0-f198.google.com [209.85.216.198])
+        by mr6.cc.vt.edu (8.14.7/8.14.7) with ESMTP id w57MfXYS020229
+        for <linux-kernel@vger.kernel.org>; Thu, 7 Jun 2018 18:41:38 -0400
+Received: by mail-qt0-f198.google.com with SMTP id f8-v6so462058qth.9
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 15:41:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :mime-version:content-transfer-encoding:date:message-id;
+        bh=sNEnC5liJ6aJznoaFlANYvCiQZ3KI5+f0CBCfTNMaNY=;
+        b=iulh/73Udb+NV7JYQS6Fguqku3hGRO247iuDGqv7IFie9DeKLEKCEaOK+fRDK9mGem
+         jRY8oTtVZ5HO69gJOy2sDdKpyJwU4a6V31gT2ia49LfIB71c465d9cZWl8xxlOjO7mla
+         8BNQIj19mytB6USPyJqjDqzm6jo9UJSMobBZM2dsu9gU1B8IMGMbIsV32sHOida8gcuN
+         djAAlFflrCnTaLf9H9rD8ntaR/csiLq5KksToNb68PyJW71FKFWpOkNCttPsmsQMEGN0
+         pKUuivKVA/60iDKTyDSb86jj9Cb+APDflWNO/cnqrETO8iKHxQHZPvmbFLlnijMZOrbF
+         7/AQ==
+X-Gm-Message-State: APt69E08msKSRbPxKwji8yhFQNEVdyb1Y2m2qxtf3ufM7BDGhth7U1n4
+        YWbqjiPK4kj2VlJWwAnbHNDIwIw/gsaxzDAUerOlShIhDaBFM+lYxicPuXBJFvDcdE5tsJLFI0k
+        fOm4bWCeznGQL1kgt0F/xwEfKDetpjMTVyAg=
+X-Received: by 2002:a0c:b203:: with SMTP id x3-v6mr3579442qvd.86.1528411293316;
+        Thu, 07 Jun 2018 15:41:33 -0700 (PDT)
+X-Google-Smtp-Source: ADUXVKJc7RFhaiZTcnXZchdAYP/0/0h433HPFwKOGFRYc/6VrTEes4vKSyS25Z/yvjEnwpZBp2uoIg==
+X-Received: by 2002:a0c:b203:: with SMTP id x3-v6mr3579433qvd.86.1528411293057;
+        Thu, 07 Jun 2018 15:41:33 -0700 (PDT)
+Received: from turing-police.cc.vt.edu ([2607:b400:24:0:cc9d:915a:7ccc:2ab0])
+        by smtp.gmail.com with ESMTPSA id v56-v6sm16273649qtv.50.2018.06.07.15.41.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 07 Jun 2018 15:41:31 -0700 (PDT)
+From: valdis.kletnieks@vt.edu
+X-Google-Original-From: Valdis.Kletnieks@vt.edu
+X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
+To: Mike Snitzer <snitzer@redhat.com>
+Cc: Alasdair Kergon <agk@redhat.com>, linux-kernel@vger.kernel.org,
+        dm-devel@redhat.com, axboe@kernel.dk
+Subject: Re: next-20180605 - kernel tried to execute NX-protected page - exploit attempt?
+In-Reply-To: <20180607211401.GD4481@redhat.com>
+References: <21051.1528404057@turing-police.cc.vt.edu>
+ <20180607211401.GD4481@redhat.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1528411294_2703P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date: Thu, 07 Jun 2018 18:41:35 -0400
+Message-ID: <136327.1528411295@turing-police.cc.vt.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 07, 2018 at 02:19:21PM +0530, Viresh Kumar wrote:
-> On 07-06-18, 10:46, Daniel Lezcano wrote:
-> > Yes, correct.
-> > 
-> > But if we don't care about who wins to store to value, is there a risk
-> > of scramble variable if we just assign a value ?
-> 
-> Normally no, as the compiler wouldn't screw it up badly. But there is no rule
-> which stops the compiler from doing this:
-> 
-> idle_duration_ms = 5;
-> idle_duration_ms = -5;
-> idle_duration_ms = 0;
-> idle_duration_ms = <real-value-we-want-to-write>;
-> 
-> So we *must* use READ/WRITE_ONCE() to make sure garbage values aren't seen by
-> readers.
+--==_Exmh_1528411294_2703P
+Content-Type: text/plain; charset=us-ascii
 
-That too, however it is far worse..
+On Thu, 07 Jun 2018 17:14:01 -0400, Mike Snitzer said:
+> Can you please share what you test is?  We've gotten lots of reports
+> with failure following wake_up but I don't have a canned test to trigger
 
-The compiler is allowed to do store/load-tearing. Basically it can emit
-individual byte store/loads in any random order.
+Just a laptop with 16G of RAM, no clear reproducer -  Chrome with a lot of
+tabs, a mail reader, a bunch of SSH windows, and the next thing I know, it's
+locked up good and solid with wreckage in /sys/fs/pstore :)
 
-So:
-	foo = bar = 0;
+I got bit a third time a little while ago.  Will test the patches and see if
+they help - looks like I'm averaging two hours or so of active use before it
+hits, so it shouldn't take long before I know if the issue is swatted...
 
-	P0			P1
+--==_Exmh_1528411294_2703P
+Content-Type: application/pgp-signature
 
-	foo = 0x12345678;	bar = foo;
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.8.0 04/21/2017
 
-Could result in: bar == 0x12005600 or any other random combination.
+iQEVAwUBWxm0no0DS38y7CIcAQIGHAf/XtIUwKadG6TE1Cp4TbsXt0252qnv6N2K
+4SNCOxJdx1wWh3IcMrTc9Ff/iWuABARWhWjOOFsn88tG81WYBVveuF1rmy+vVlX+
+MJ6vTiuJKZDLQxvSn5q/2FA70CnG9OR+Hfih9RTXo9Qqzh5+iLxX6ON/wIgX9big
+ANChJeSh5+dtey5LDDy2mL43BXpLtD2vAxtjnrrk0R2pD9qOHmc7eLoBamrE8qwr
+BTBUjCMtREE1wO+V5ZCUWmS62gVjlh54rgLEe/Zw3Ug8TZcpRghlVlIgvoUE0IqU
+ZlNF8V4422yzu1qDF2moR0YFJxxusamPlxspDOm6+J6JuiHM0X0oKg==
+=mIUo
+-----END PGP SIGNATURE-----
 
-Now, it generally doesn't do this, because it is really retarded to
-generate code like that. But we've seen cases where it managed to do
-really weird things (think constructing 64bit literals with two or more
-smaller stores, which total smaller code).
-
-The volatile in READ/WRITE_ONCE() disallows this and ensures the
-variables are read / written in a single go (assuming naturally aligned
-native word sizes).
+--==_Exmh_1528411294_2703P--
