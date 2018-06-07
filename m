@@ -1,132 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id +vBZO/bpGFsWWAAAmS7hNA
-	; Thu, 07 Jun 2018 08:18:34 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id mIB3Cj5mGVuMDQAAmS7hNA
+	; Thu, 07 Jun 2018 17:07:10 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 5C877608BA; Thu,  7 Jun 2018 08:18:34 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iUIQwu9/"
+	id 1A46A608B8; Thu,  7 Jun 2018 17:07:10 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D50D36063F;
-	Thu,  7 Jun 2018 08:18:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D50D36063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 7F3ED60290;
+	Thu,  7 Jun 2018 17:07:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7F3ED60290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753510AbeFGISc (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 04:18:32 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:38854 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932066AbeFGIS3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 04:18:29 -0400
-Received: by mail-wm0-f65.google.com with SMTP id 69-v6so3957458wmf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 01:18:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=fb/HVRQHmXD11lSoBJhK5C7bBDDUNmldlFd2pgh3POU=;
-        b=iUIQwu9/YA15+20+9bI0Ow3YM4ip+JGo8Vy1+ytwJfp8RsXM2PB6USZ0IBWeTmMANG
-         YvAns7fLAOuKVLf5aSmZ18M2f9zZ/liVu8fz/VupucgKMuCsgMyulzp6xekmYdv1UTt4
-         fw3+n0JxluKePy/IXianoFygxOg78h4wE0yyU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=fb/HVRQHmXD11lSoBJhK5C7bBDDUNmldlFd2pgh3POU=;
-        b=T+wmG+aKl28T1P7hSCYJelIn2SyRqgCDCSSK3FrnviNAOQY+K/T2H2Q9oMaml1BxvS
-         I1Lk8t+v4KjAz4ynrx4AYRhz25t4Hwfrf57s5Hq4H027cRz9vui809OtYEZo0C3hGIku
-         FZdWZ9RrjtWZlFHqoW/2e2DBoWelOnXqEuC1fZCoTFJ5awNSkd2gw2sWzcZ58xmR8i9K
-         +gV1UtnUJHWszN3u1LPKazgw7aJbkXSG4bGyX+JysKY45tz6t3pi4kEs3lwFc4dckCu1
-         Oy3KoB1X0zkk4gBZV/Yghutz1LShrvYy0s4KaFZVJSHqSIU71ExcDU9Lc8Gq5sFpYhYt
-         oiyg==
-X-Gm-Message-State: APt69E3LkIIYw77ak1gY935l4rP08WEkCAwqYFzV/K+uHBaFME9DNbe9
-        mA8ZkXIr7tGQ8+C1sIKGa61V0Q==
-X-Google-Smtp-Source: ADUXVKIXNag+GgeUYu0Rmo63gjsStjYYAlcld5JiRXtvak+9uGtSVusOZU3xqf7npXxlgnjyACuWDw==
-X-Received: by 2002:a1c:d509:: with SMTP id m9-v6mr900642wmg.69.1528359508225;
-        Thu, 07 Jun 2018 01:18:28 -0700 (PDT)
-Received: from [192.168.1.75] (lft31-1-88-121-166-205.fbx.proxad.net. [88.121.166.205])
-        by smtp.googlemail.com with ESMTPSA id q194-v6sm1326439wmd.26.2018.06.07.01.18.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Jun 2018 01:18:27 -0700 (PDT)
-Subject: Re: [PATCH V5] powercap/drivers/idle_injection: Add an idle injection
- framework
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Javi Merino <javi.merino@kernel.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Kevin Wangtao <kevin.wangtao@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rui Zhang <rui.zhang@intel.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        "open list:POWER MANAGEMENT CORE" <linux-pm@vger.kernel.org>
-References: <1528190208-22915-1-git-send-email-daniel.lezcano@linaro.org>
- <20180606122357.GN12258@hirez.programming.kicks-ass.net>
- <22f5cf0b-049e-7938-55f6-4b4b154f8389@linaro.org>
- <20180606150203.GE12180@hirez.programming.kicks-ass.net>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <ea347237-7cef-095a-5ddb-19c181d10c23@linaro.org>
-Date: Thu, 7 Jun 2018 10:18:27 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180606150203.GE12180@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S934802AbeFGRG3 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 13:06:29 -0400
+Received: from mga12.intel.com ([192.55.52.136]:32208 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934468AbeFGRGY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 13:06:24 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 10:06:23 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,487,1520924400";
+   d="scan'208";a="206183217"
+Received: from chang-linux-2.sc.intel.com ([10.3.52.139])
+  by orsmga004.jf.intel.com with ESMTP; 07 Jun 2018 10:06:22 -0700
+From: "Chang S. Bae" <chang.seok.bae@intel.com>
+To: Andy Lutomirski <luto@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Cc: Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Markus T Metzger <markus.t.metzger@intel.com>,
+        "Ravi V . Shankar" <ravi.v.shankar@intel.com>,
+        "Chang S . Bae" <chang.seok.bae@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 3/7] x86/fsgsbase/64: Use FS/GS base helpers in core dump
+Date: Thu,  7 Jun 2018 10:06:04 -0700
+Message-Id: <1528391168-22224-4-git-send-email-chang.seok.bae@intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1528391168-22224-1-git-send-email-chang.seok.bae@intel.com>
+References: <1528391168-22224-1-git-send-email-chang.seok.bae@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/06/2018 17:02, Peter Zijlstra wrote:
-> On Wed, Jun 06, 2018 at 03:42:08PM +0200, Daniel Lezcano wrote:
->> On 06/06/2018 14:23, Peter Zijlstra wrote:
->>> On Tue, Jun 05, 2018 at 11:16:40AM +0200, Daniel Lezcano wrote:
->>>> +	atomic_t idle_duration_ms;
->>>> +	atomic_t run_duration_ms;
->>>
->>>> +	idle_duration_ms = atomic_read(&ii_dev->idle_duration_ms);
->>>
->>>> +	run_duration_ms = atomic_read(&ii_dev->run_duration_ms);
->>>
->>>> +	atomic_set(&ii_dev->run_duration_ms, run_duration_ms);
->>>> +	atomic_set(&ii_dev->idle_duration_ms, idle_duration_ms);
->>>
->>>> +	*run_duration_ms = atomic_read(&ii_dev->run_duration_ms);
->>>> +	*idle_duration_ms = atomic_read(&ii_dev->idle_duration_ms);
->>>
->>>> +	if (!atomic_read(&ii_dev->idle_duration_ms))
->>>
->>>> +	if (!atomic_read(&ii_dev->run_duration_ms))
->>>
->>> What is the point of atomic_t here ?!
->>
->> idle_duration and run_duration can be changed from different places at
->> the same time. The atomic is here to ensure the read/write are consistent.
->>
->> Do you think it is pointless ?
-> 
-> Yes, atomic_read() / atomic_set() are no more atomic than READ_ONCE() /
-> WRITE_ONCE().
+When new FSGSBASE instructions enabled, this read will
+become faster.
 
-So IIUC, neither atomic or WRITE|READ_ONCE are necessary in this code
-because of the wake_up_process() barrier is enough, right ?
+Based-on-code-from: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Reviewed-by: Andy Lutomirski <luto@kernel.org>
+---
+ arch/x86/include/asm/elf.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-
+diff --git a/arch/x86/include/asm/elf.h b/arch/x86/include/asm/elf.h
+index 0d157d2..49acefb 100644
+--- a/arch/x86/include/asm/elf.h
++++ b/arch/x86/include/asm/elf.h
+@@ -10,6 +10,7 @@
+ #include <asm/ptrace.h>
+ #include <asm/user.h>
+ #include <asm/auxvec.h>
++#include <asm/fsgsbase.h>
+ 
+ typedef unsigned long elf_greg_t;
+ 
+@@ -205,7 +206,6 @@ void set_personality_ia32(bool);
+ 
+ #define ELF_CORE_COPY_REGS(pr_reg, regs)			\
+ do {								\
+-	unsigned long base;					\
+ 	unsigned v;						\
+ 	(pr_reg)[0] = (regs)->r15;				\
+ 	(pr_reg)[1] = (regs)->r14;				\
+@@ -228,8 +228,8 @@ do {								\
+ 	(pr_reg)[18] = (regs)->flags;				\
+ 	(pr_reg)[19] = (regs)->sp;				\
+ 	(pr_reg)[20] = (regs)->ss;				\
+-	rdmsrl(MSR_FS_BASE, base); (pr_reg)[21] = base;		\
+-	rdmsrl(MSR_KERNEL_GS_BASE, base); (pr_reg)[22] = base;	\
++	(pr_reg)[21] = read_fsbase();				\
++	(pr_reg)[22] = read_inactive_gsbase();			\
+ 	asm("movl %%ds,%0" : "=r" (v)); (pr_reg)[23] = v;	\
+ 	asm("movl %%es,%0" : "=r" (v)); (pr_reg)[24] = v;	\
+ 	asm("movl %%fs,%0" : "=r" (v)); (pr_reg)[25] = v;	\
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+2.7.4
