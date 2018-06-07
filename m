@@ -1,143 +1,363 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id BlQzLCDDGFt9RAAAmS7hNA
-	; Thu, 07 Jun 2018 05:40:25 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id tLisIhLoGFsnTgAAmS7hNA
+	; Thu, 07 Jun 2018 08:09:32 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id EFE5E6089E; Thu,  7 Jun 2018 05:40:24 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tN9MyG8N"
+	id 974B76089E; Thu,  7 Jun 2018 08:09:32 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 72ECF607DC;
-	Thu,  7 Jun 2018 05:40:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 72ECF607DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 8B546607F7;
+	Thu,  7 Jun 2018 08:09:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8B546607F7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753028AbeFGFkW (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 01:40:22 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:46319 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752617AbeFGFkU (ORCPT
+        id S1753471AbeFGIJ2 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 04:09:28 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:37121 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753232AbeFGIJ0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 01:40:20 -0400
-Received: by mail-pf0-f195.google.com with SMTP id q1-v6so4303294pff.13;
-        Wed, 06 Jun 2018 22:40:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=McDeS/roM8NMD9O1NlRsu2E116L7PiqXs30zosmS7Ao=;
-        b=tN9MyG8NIYuB+fZOaxxh3sjraY/jti+qHkGrNokbmjYeKNB+W4Atg8WbWM924DlyDR
-         K629gEFf16Rl7xYNPmmd8EuW22kq1AdXfRt2EYk+zD/PgSHW2h7LTp6tY2V1FuJaK2MC
-         QdvOh33cG2Eh9CEv8XtRotSW2OZfJ6tG8NErfxT1E70T1rGgb5pQVt5utgd43eZ5EYJE
-         ri1iqIGkdT9ScDsmCDWtU1gdVAKkHbTSCXfjG0WWnQ4NcSnsjEx6d8Flvrgajx8KC61L
-         u3WeAsxvolJkvDXthyu8ijxTpe2jPfHxeVQMms/nqqvIE0hMmqP4X+ezki0iWoFovt/e
-         SmgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=McDeS/roM8NMD9O1NlRsu2E116L7PiqXs30zosmS7Ao=;
-        b=cKHkrKsSKwAE7F48eI6FhSaczDiwuJxu+iZ4yvlsO8CHomzb3fp2peC3guxF+4vip0
-         W/mK6R/4U+a8clBXV7se8wtVCHJontHK/kZI2MNlYzsCQzv6BC20gT+9H7z1JiJy4vVI
-         YPWF7J4P7enSHSVPGLbIA5me/rJa2Vg3ch21+ufQRiMNCx+e5vlZsEv368YBTY3n2KVR
-         qOkhlxFl+eG553KBObP1Ss1A123I43NyRVISe5q0o91B91VOf/sfn5SaGwrsRZKe+3a5
-         WhxgNnEi57dtY6DbJ1nbc9Omd+77ne4FJHannT9NkqjVl2BTDq0CXAIPNe5exKhpiG0s
-         TLFg==
-X-Gm-Message-State: APt69E3i3bhadlzTzVyzpv1MWX2tV0O0RhMh1lT5VV4+OtBvUc47Bwkm
-        Gc8MQ4JfiOilOIveOxWaX1w=
-X-Google-Smtp-Source: ADUXVKL3pmOqRoZNSD/CKi6RpDc/Wa39+fd/Qgr/aExIeKKJBgQCiXkIhb2S4iGgK88t3RVmPIwZBw==
-X-Received: by 2002:a62:7db:: with SMTP id 88-v6mr486089pfh.178.1528350019585;
-        Wed, 06 Jun 2018 22:40:19 -0700 (PDT)
-Received: from localhost ([39.7.47.166])
-        by smtp.gmail.com with ESMTPSA id 29-v6sm91111413pfj.14.2018.06.06.22.40.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 06 Jun 2018 22:40:17 -0700 (PDT)
-Date: Thu, 7 Jun 2018 14:40:13 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org, "4 . 13+" <stable@vger.kernel.org>
-Subject: Re: [PATCH] printk/nmi: Prevent deadlock when serializing NMI
- backtraces
-Message-ID: <20180607054013.GB10406@jagdpanzerIV>
-References: <20180517143903.19339-1-pmladek@suse.com>
- <20180605124729.3vix5nlkjpjzdljx@pathway.suse.cz>
- <20180606051029.GA19211@tigerII.localdomain>
- <20180606111557.xzs6l3lkvg7lq3ts@pathway.suse.cz>
+        Thu, 7 Jun 2018 04:09:26 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5789GlQ2124597
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 7 Jun 2018 01:09:16 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5789GqA2124593;
+        Thu, 7 Jun 2018 01:09:16 -0700
+Date: Thu, 7 Jun 2018 01:09:16 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-6qgtixurjgdk5u0n3rw78ges@git.kernel.org>
+Cc: jolsa@kernel.org, tglx@linutronix.de, hpa@zytor.com,
+        acme@redhat.com, namhyung@kernel.org, dsahern@gmail.com,
+        wangnan0@huawei.com, linux-kernel@vger.kernel.org,
+        adrian.hunter@intel.com, mingo@kernel.org
+Reply-To: hpa@zytor.com, jolsa@kernel.org, tglx@linutronix.de,
+          dsahern@gmail.com, namhyung@kernel.org, acme@redhat.com,
+          wangnan0@huawei.com, linux-kernel@vger.kernel.org,
+          adrian.hunter@intel.com, mingo@kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf annotate stdio: Use annotation_options
+ consistently
+Git-Commit-ID: 982d410bc6b405a75086236d3c1da1f18c40d6dd
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180606111557.xzs6l3lkvg7lq3ts@pathway.suse.cz>
-User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (06/06/18 13:15), Petr Mladek wrote:
-> On Wed 2018-06-06 14:10:29, Sergey Senozhatsky wrote:
-> > On (06/05/18 14:47), Petr Mladek wrote:
-> > [..]
-> > > Grr, the ABBA deadlock is still there. NMIs are not sent to the other
-> > > CPUs atomically. Even if we detect that logbuf_lock is available
-> > > in printk_nmi_enter() on some CPUs, it might still get locked on
-> > > another CPU before the other CPU gets NMI.
-> > 
-> > Can we do something about "B"? :) I mean - any chance we can rework
-> > locking in nmi_cpu_backtrace()?
-> 
-> I can't think of any possibility at the moment. Well, it does not mean
-> that it does not exist.
-> 
-> The irony is that we need the extra lock in nmi_cpu_backtrace() only
-> because we try to store the messages into the common log buffer.
-> If we always use the per-CPU buffers in NMI then the lock would
-> not cause any problems but it also won't be necessary.
+Commit-ID:  982d410bc6b405a75086236d3c1da1f18c40d6dd
+Gitweb:     https://git.kernel.org/tip/982d410bc6b405a75086236d3c1da1f18c40d6dd
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Fri, 25 May 2018 17:28:37 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 4 Jun 2018 10:28:52 -0300
 
-Yep. I think we can come up with something. It seems that the only
-problem is that we want in this particular case to avoid printk_nmi()->logbuf
-and instead we want to enforce per-CPU printk_nmi buffers. Then we can
-drop nmi_cpu_backtrace() spinlock, because the messages will be
-serialized by printk_safe flush spin_lock. That doesn't sound like an
-impossible thing to do. What am I missing?
+perf annotate stdio: Use annotation_options consistently
 
-Could you please check my follow up email?
+Accross all the routines, this way we can have eventually have a
+consistent set of defaults for all UIs.
 
-> > >   => I suggest to revert the commit 719f6a7040f1bdaf96fcc70
-> > >      "printk: Use the main logbuf in NMI when logbuf_lock is available"
-> > >      for-4.18 and stable until we get a better solution.
-> > 
-> > Just random thoughts.
-> > 
-> > May be we need to revert it, but let's not "panic". I think [but don't
-> > insist on it] that the patch in question is *probably* "good enough". It
-> > addresses a bug report after all.
-> 
-> It was a problem reported by me. I found it when testing other changes.
-> The patch improved the situation definitely. The question is if it is
-> enough in practice.
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-6qgtixurjgdk5u0n3rw78ges@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/builtin-annotate.c | 15 +++++++--------
+ tools/perf/builtin-top.c      | 14 ++++++++------
+ tools/perf/util/annotate.c    | 31 +++++++++++++++----------------
+ tools/perf/util/annotate.h    | 15 +++++++++------
+ tools/perf/util/top.h         |  3 ++-
+ 5 files changed, 41 insertions(+), 37 deletions(-)
 
-Oh, certainly. But I was talking about 719f6a7040f1bdaf96fcc70. We
-introduced that change in response to a bug report from Steven. He would
-not be able to debug his kernel otherwise, because per-CPU printk_nmi was
-too limited in size.
-So on one hand we have the problem that you reported, which you found
-while you were hammering/testing NMI printk-s [a valid report on its
-own]; on the other hand we have the problem that Steven reported, which
-he triggered while he was debugging the kernel. It might be the case that
-Steven's problem is more likely to happen in real world. So that's why I
-proposed to keep 719f6a7040f1bda for the time being [until we come up with
-another fix]. I may be wrong.
-
-	-ss
+diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
+index 2b21bbcd70ea..7238010f28d4 100644
+--- a/tools/perf/builtin-annotate.c
++++ b/tools/perf/builtin-annotate.c
+@@ -40,9 +40,8 @@
+ struct perf_annotate {
+ 	struct perf_tool tool;
+ 	struct perf_session *session;
++	struct annotation_options opts;
+ 	bool	   use_tui, use_stdio, use_stdio2, use_gtk;
+-	bool	   full_paths;
+-	bool	   print_line;
+ 	bool	   skip_missing;
+ 	bool	   has_br_stack;
+ 	bool	   group_set;
+@@ -289,10 +288,9 @@ static int hist_entry__tty_annotate(struct hist_entry *he,
+ 				    struct perf_annotate *ann)
+ {
+ 	if (!ann->use_stdio2)
+-		return symbol__tty_annotate(he->ms.sym, he->ms.map, evsel,
+-					    ann->print_line, ann->full_paths, 0, 0);
+-	return symbol__tty_annotate2(he->ms.sym, he->ms.map, evsel,
+-				     ann->print_line, ann->full_paths);
++		return symbol__tty_annotate(he->ms.sym, he->ms.map, evsel, &ann->opts);
++
++	return symbol__tty_annotate2(he->ms.sym, he->ms.map, evsel, &ann->opts);
+ }
+ 
+ static void hists__find_annotations(struct hists *hists,
+@@ -476,6 +474,7 @@ int cmd_annotate(int argc, const char **argv)
+ 			.ordered_events = true,
+ 			.ordering_requires_timestamps = true,
+ 		},
++		.opts = annotation__default_options,
+ 	};
+ 	struct perf_data data = {
+ 		.mode  = PERF_DATA_MODE_READ,
+@@ -503,9 +502,9 @@ int cmd_annotate(int argc, const char **argv)
+ 		   "file", "vmlinux pathname"),
+ 	OPT_BOOLEAN('m', "modules", &symbol_conf.use_modules,
+ 		    "load module symbols - WARNING: use only with -k and LIVE kernel"),
+-	OPT_BOOLEAN('l', "print-line", &annotate.print_line,
++	OPT_BOOLEAN('l', "print-line", &annotate.opts.print_lines,
+ 		    "print matching source lines (may be slow)"),
+-	OPT_BOOLEAN('P', "full-paths", &annotate.full_paths,
++	OPT_BOOLEAN('P', "full-paths", &annotate.opts.full_path,
+ 		    "Don't shorten the displayed pathnames"),
+ 	OPT_BOOLEAN(0, "skip-missing", &annotate.skip_missing,
+ 		    "Skip symbols that cannot be annotated"),
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index 4284840022a3..5e58cd4de90b 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -243,10 +243,9 @@ static void perf_top__show_details(struct perf_top *top)
+ 		goto out_unlock;
+ 
+ 	printf("Showing %s for %s\n", perf_evsel__name(top->sym_evsel), symbol->name);
+-	printf("  Events  Pcnt (>=%d%%)\n", top->sym_pcnt_filter);
++	printf("  Events  Pcnt (>=%d%%)\n", top->annotation_opts.min_pcnt);
+ 
+-	more = symbol__annotate_printf(symbol, he->ms.map, top->sym_evsel,
+-				       0, top->sym_pcnt_filter, top->print_entries, 4);
++	more = symbol__annotate_printf(symbol, he->ms.map, top->sym_evsel, &top->annotation_opts);
+ 
+ 	if (top->evlist->enabled) {
+ 		if (top->zero)
+@@ -406,7 +405,7 @@ static void perf_top__print_mapped_keys(struct perf_top *top)
+ 
+ 	fprintf(stdout, "\t[f]     profile display filter (count).    \t(%d)\n", top->count_filter);
+ 
+-	fprintf(stdout, "\t[F]     annotate display filter (percent). \t(%d%%)\n", top->sym_pcnt_filter);
++	fprintf(stdout, "\t[F]     annotate display filter (percent). \t(%d%%)\n", top->annotation_opts.min_pcnt);
+ 	fprintf(stdout, "\t[s]     annotate symbol.                   \t(%s)\n", name?: "NULL");
+ 	fprintf(stdout, "\t[S]     stop annotation.\n");
+ 
+@@ -509,7 +508,7 @@ static bool perf_top__handle_keypress(struct perf_top *top, int c)
+ 			prompt_integer(&top->count_filter, "Enter display event count filter");
+ 			break;
+ 		case 'F':
+-			prompt_percent(&top->sym_pcnt_filter,
++			prompt_percent(&top->annotation_opts.min_pcnt,
+ 				       "Enter details display event filter (percent)");
+ 			break;
+ 		case 'K':
+@@ -1259,7 +1258,7 @@ int cmd_top(int argc, const char **argv)
+ 			.overwrite	= 1,
+ 		},
+ 		.max_stack	     = sysctl__max_stack(),
+-		.sym_pcnt_filter     = 5,
++		.annotation_opts     = annotation__default_options,
+ 		.nr_threads_synthesize = UINT_MAX,
+ 	};
+ 	struct record_opts *opts = &top.record_opts;
+@@ -1385,6 +1384,9 @@ int cmd_top(int argc, const char **argv)
+ 	if (status < 0)
+ 		return status;
+ 
++	top.annotation_opts.min_pcnt = 5;
++	top.annotation_opts.context  = 4;
++
+ 	top.evlist = perf_evlist__new();
+ 	if (top.evlist == NULL)
+ 		return -ENOMEM;
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index bcd5d3e17b85..abcc7e24c365 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -1985,8 +1985,8 @@ static int annotated_source__addr_fmt_width(struct list_head *lines, u64 start)
+ }
+ 
+ int symbol__annotate_printf(struct symbol *sym, struct map *map,
+-			    struct perf_evsel *evsel, bool full_paths,
+-			    int min_pcnt, int max_lines, int context)
++			    struct perf_evsel *evsel,
++			    struct annotation_options *opts)
+ {
+ 	struct dso *dso = map->dso;
+ 	char *filename;
+@@ -1998,6 +1998,7 @@ int symbol__annotate_printf(struct symbol *sym, struct map *map,
+ 	u64 start = map__rip_2objdump(map, sym->start);
+ 	int printed = 2, queue_len = 0, addr_fmt_width;
+ 	int more = 0;
++	bool context = opts->context;
+ 	u64 len;
+ 	int width = symbol_conf.show_total_period ? 12 : 8;
+ 	int graph_dotted_len;
+@@ -2007,7 +2008,7 @@ int symbol__annotate_printf(struct symbol *sym, struct map *map,
+ 	if (!filename)
+ 		return -ENOMEM;
+ 
+-	if (full_paths)
++	if (opts->full_path)
+ 		d_filename = filename;
+ 	else
+ 		d_filename = basename(filename);
+@@ -2042,7 +2043,7 @@ int symbol__annotate_printf(struct symbol *sym, struct map *map,
+ 		}
+ 
+ 		err = annotation_line__print(pos, sym, start, evsel, len,
+-					     min_pcnt, printed, max_lines,
++					     opts->min_pcnt, printed, opts->max_lines,
+ 					     queue, addr_fmt_width);
+ 
+ 		switch (err) {
+@@ -2375,20 +2376,19 @@ static void symbol__calc_lines(struct symbol *sym, struct map *map,
+ }
+ 
+ int symbol__tty_annotate2(struct symbol *sym, struct map *map,
+-			  struct perf_evsel *evsel, bool print_lines,
+-			  bool full_paths)
++			  struct perf_evsel *evsel,
++			  struct annotation_options *opts)
+ {
+ 	struct dso *dso = map->dso;
+ 	struct rb_root source_line = RB_ROOT;
+-	struct annotation_options opts = annotation__default_options;
+ 	struct annotation *notes = symbol__annotation(sym);
+ 	char buf[1024];
+ 
+-	if (symbol__annotate2(sym, map, evsel, &opts, NULL) < 0)
++	if (symbol__annotate2(sym, map, evsel, opts, NULL) < 0)
+ 		return -1;
+ 
+-	if (print_lines) {
+-		srcline_full_filename = full_paths;
++	if (opts->print_lines) {
++		srcline_full_filename = opts->full_path;
+ 		symbol__calc_lines(sym, map, &source_line);
+ 		print_summary(&source_line, dso->long_name);
+ 	}
+@@ -2403,8 +2403,8 @@ int symbol__tty_annotate2(struct symbol *sym, struct map *map,
+ }
+ 
+ int symbol__tty_annotate(struct symbol *sym, struct map *map,
+-			 struct perf_evsel *evsel, bool print_lines,
+-			 bool full_paths, int min_pcnt, int max_lines)
++			 struct perf_evsel *evsel,
++			 struct annotation_options *opts)
+ {
+ 	struct dso *dso = map->dso;
+ 	struct rb_root source_line = RB_ROOT;
+@@ -2414,14 +2414,13 @@ int symbol__tty_annotate(struct symbol *sym, struct map *map,
+ 
+ 	symbol__calc_percent(sym, evsel);
+ 
+-	if (print_lines) {
+-		srcline_full_filename = full_paths;
++	if (opts->print_lines) {
++		srcline_full_filename = opts->full_path;
+ 		symbol__calc_lines(sym, map, &source_line);
+ 		print_summary(&source_line, dso->long_name);
+ 	}
+ 
+-	symbol__annotate_printf(sym, map, evsel, full_paths,
+-				min_pcnt, max_lines, 0);
++	symbol__annotate_printf(sym, map, evsel, opts);
+ 
+ 	annotated_source__purge(symbol__annotation(sym)->src);
+ 
+diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
+index 3dc4ca1d6c08..20f3326cc640 100644
+--- a/tools/perf/util/annotate.h
++++ b/tools/perf/util/annotate.h
+@@ -67,12 +67,17 @@ struct annotation_options {
+ 	bool hide_src_code,
+ 	     use_offset,
+ 	     jump_arrows,
++	     print_lines,
++	     full_path,
+ 	     show_linenr,
+ 	     show_nr_jumps,
+ 	     show_nr_samples,
+ 	     show_total_period,
+ 	     show_minmax_cycle;
+ 	u8   offset_level;
++	int  min_pcnt;
++	int  max_lines;
++	int  context;
+ };
+ 
+ enum {
+@@ -328,8 +333,8 @@ int symbol__strerror_disassemble(struct symbol *sym, struct map *map,
+ 				 int errnum, char *buf, size_t buflen);
+ 
+ int symbol__annotate_printf(struct symbol *sym, struct map *map,
+-			    struct perf_evsel *evsel, bool full_paths,
+-			    int min_pcnt, int max_lines, int context);
++			    struct perf_evsel *evsel,
++			    struct annotation_options *options);
+ int symbol__annotate_fprintf2(struct symbol *sym, FILE *fp);
+ void symbol__annotate_zero_histogram(struct symbol *sym, int evidx);
+ void symbol__annotate_decay_histogram(struct symbol *sym, int evidx);
+@@ -340,12 +345,10 @@ int map_symbol__annotation_dump(struct map_symbol *ms, struct perf_evsel *evsel)
+ bool ui__has_annotation(void);
+ 
+ int symbol__tty_annotate(struct symbol *sym, struct map *map,
+-			 struct perf_evsel *evsel, bool print_lines,
+-			 bool full_paths, int min_pcnt, int max_lines);
++			 struct perf_evsel *evsel, struct annotation_options *opts);
+ 
+ int symbol__tty_annotate2(struct symbol *sym, struct map *map,
+-			  struct perf_evsel *evsel, bool print_lines,
+-			  bool full_paths);
++			  struct perf_evsel *evsel, struct annotation_options *opts);
+ 
+ #ifdef HAVE_SLANG_SUPPORT
+ int symbol__tui_annotate(struct symbol *sym, struct map *map,
+diff --git a/tools/perf/util/top.h b/tools/perf/util/top.h
+index 9892323cdd7c..9add1f72ce95 100644
+--- a/tools/perf/util/top.h
++++ b/tools/perf/util/top.h
+@@ -3,6 +3,7 @@
+ #define __PERF_TOP_H 1
+ 
+ #include "tool.h"
++#include "annotate.h"
+ #include <linux/types.h>
+ #include <stddef.h>
+ #include <stdbool.h>
+@@ -16,6 +17,7 @@ struct perf_top {
+ 	struct perf_tool   tool;
+ 	struct perf_evlist *evlist;
+ 	struct record_opts record_opts;
++	struct annotation_options annotation_opts;
+ 	/*
+ 	 * Symbols will be added here in perf_event__process_sample and will
+ 	 * get out after decayed.
+@@ -35,7 +37,6 @@ struct perf_top {
+ 	struct perf_session *session;
+ 	struct winsize	   winsize;
+ 	int		   realtime_prio;
+-	int		   sym_pcnt_filter;
+ 	const char	   *sym_filter;
+ 	float		   min_percent;
+ 	unsigned int	   nr_threads_synthesize;
