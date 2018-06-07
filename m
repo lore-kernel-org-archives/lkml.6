@@ -1,119 +1,200 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id PpeCLt9gGFt8QAAAmS7hNA
-	; Wed, 06 Jun 2018 22:35:45 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id cRiYMIIOGVs9CgAAmS7hNA
+	; Thu, 07 Jun 2018 10:53:12 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 7002D60861; Wed,  6 Jun 2018 22:35:45 +0000 (UTC)
+	id 849AE608B8; Thu,  7 Jun 2018 10:53:12 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=gouders.net header.i=@gouders.net header.b="IgZNqoDS"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="B9I0fe+8"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 822F96063F;
-	Wed,  6 Jun 2018 22:35:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 822F96063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=gouders.net
+	by smtp.codeaurora.org (Postfix) with ESMTP id D898060115;
+	Thu,  7 Jun 2018 10:53:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D898060115
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753093AbeFFWfm (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 18:35:42 -0400
-Received: from services.gouders.net ([141.101.32.176]:47069 "EHLO
-        services.gouders.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752403AbeFFWfk (ORCPT
+        id S1753213AbeFGKwx (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 06:52:53 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:46802 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752960AbeFGKwu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 18:35:40 -0400
-Received: from localhost (ltea-047-066-034-138.pools.arcor-ip.net [47.66.34.138])
-        (authenticated bits=0)
-        by services.gouders.net (8.14.8/8.14.8) with ESMTP id w56MX1As005080
+        Thu, 7 Jun 2018 06:52:50 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w57AohXO025529;
+        Thu, 7 Jun 2018 10:52:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
+ date : message-id : in-reply-to : references; s=corp-2017-10-26;
+ bh=K9BtkV75JM22QTIiHxsHQDSrecEBDRNvGRKz6k6eGek=;
+ b=B9I0fe+8wbO3uBRqQj/DiAlX+IabyLfovVExDrcgnD4wm1hygRhPaUYWVFSlZIG2ndcK
+ LAWW+dHetbbER8EppFyMWTCxczrIzOwNG1xEpgK4SEuO1q0V3MxTQRZW8i4Yj9mlLBvp
+ kFiiC1XgPZ45LH/lfEPiwEG6SWEpGeogQsgfxxp08CGIHl7cok/pIclF62U1X8VpIlqg
+ lg3Itbi/y/BNIe5DNDrtSEm9bPKYzdqOn4rcbiYl0GE6VvbDtgGBSJTn0iLN5yowM9Sj
+ fmK8Qdlcl8IDsl4wV6BMFiQiuUOFqX7+3IG/YrKYiDO4fxobRS+KVN+8o1UkGLjb+3vx yw==
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2120.oracle.com with ESMTP id 2jbvyprdpk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 07 Jun 2018 10:52:25 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w57AqO5k008067
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 7 Jun 2018 00:33:01 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gouders.net; s=gnet;
-        t=1528324382; bh=4i4VjLWmi2ccN+YngtsbPAxDcRfyPZqXUUaNM6ScMek=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date;
-        b=IgZNqoDSuwwB3EEhVbRQ4l/mJLxOHsv/0YqCXpgPN5v6FBlXKW9fJVlFwYtj+0rsy
-         pGi9ykFfIU4YwnqqX4p+VVwzGgngfbmXdxnxyaW/X+g0RpVX/9XMQ6uPw0Q55jzprz
-         wO0D1pFrVqrDOOvNJWPLywvhV17bRTKiRHerehNs=
-From: Dirk Gouders <dirk@gouders.net>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC 0/1] mconf: Emacs-like isearch
-In-Reply-To: <a594b5a7-d5c8-e938-df4e-dbba93ff3837@infradead.org> (Randy
-        Dunlap's message of "Wed, 6 Jun 2018 15:24:06 -0700")
-References: <20180606215616.12817-1-dirk@gouders.net>
-        <a594b5a7-d5c8-e938-df4e-dbba93ff3837@infradead.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
-Date: Thu, 07 Jun 2018 00:32:59 +0200
-Message-ID: <ghzi07v944.fsf@lena.gouders.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Thu, 7 Jun 2018 10:52:24 GMT
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w57AqN6w004813;
+        Thu, 7 Jun 2018 10:52:23 GMT
+Received: from lab02.no.oracle.com (/10.172.144.56)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 07 Jun 2018 03:52:22 -0700
+From: Hans Westgaard Ry <hans.westgaard.ry@oracle.com>
+To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Hakon Bugge <haakon.bugge@oracle.com>,
+        Parav Pandit <parav@mellanox.com>,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Pravin Shedge <pravin.shedge4linux@gmail.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Wei Wang <wei.w.wang@intel.com>,
+        Chris Mi <chrism@mellanox.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] idr: Add ida_simple_get_cyclic
+Date: Thu,  7 Jun 2018 12:52:07 +0200
+Message-Id: <20180607105208.16332-2-hans.westgaard.ry@oracle.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180607105208.16332-1-hans.westgaard.ry@oracle.com>
+References: <20180529073808.27735-1-hans.westgaard.ry@oracle.com>
+ <20180607105208.16332-1-hans.westgaard.ry@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8916 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=966
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806070128
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Randy Dunlap <rdunlap@infradead.org> writes:
+Orabug: 25571450
 
-> On 06/06/2018 02:56 PM, Dirk Gouders wrote:
->> Hello,
->> 
->> being an Emacs user, I frequently find myself pressing CTRL-s in mconf
->> to search for some menu entry, especially in large menus.
->> 
->> I decided to implement a basic isearch in mconf and would like to hear
->> if others find this functionality useful, as well.
->> 
->> The new functionality is started with pressing CTRL-s followed by
->> characters that form the search string.  To search for further
->> occurences of an entered string, press CTRL-s instead of further
->> characters.
->> 
->> For example: to navigate to the USB device drivers, press CTRL-s de ENTER ENTER usb ENTER ENTER
->
-> Not being an emacs user, what is the "de" for above?
+Signed-off-by: Hans Westgaard Ry <hans.westgaard.ry@oracle.com>
+---
+ include/linux/idr.h |  8 +++++--
+ lib/idr.c           | 66 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 72 insertions(+), 2 deletions(-)
 
-"de" (with my .config) causes a match for "Device Drivers" --
-no other menu entry matching the string "de" is befor that entry.
-
->
->> Pressing just CTRL-s subsequently results in line-by-line navigation
->> through the menu (search for empty strings).
->> 
->> The isearch is terminated by pressing either ESC ESC or ENTER.
->> 
->> Because I expect that errors are found in the code and changes are requested, I
->> completely left out the documentation part and will add it to V2
->> should anyone find this functionality useful.
->
-> Hm, it seems to take 2 entries of Ctrl-s to begin the search??
-> No, it takes 2 entries of Ctrl-s to display the "isearch:" prompt,
-> but entering one Ctrl-s + a string will display it also.
->
-> Anyway, I am having trouble getting the USB drivers example to work.
-
-Yes, I should have stated that this example explains what _I_ have to do to
-navigate to the USB device drivers.  Probably, "de" in your case matches
-some other menu entry and the navigation requires more or other input.
-
-I'm sorry for causing confusion.
-
-Dirk
-
->> Thanks,
->> 
->> Dirk
->> 
->> Dirk Gouders (1):
->>   Emacs-like isearch for mconf.
->> 
->>  scripts/kconfig/lxdialog/dialog.h  |   5 ++
->>  scripts/kconfig/lxdialog/menubox.c | 140 ++++++++++++++++++++++++++++++++++++-
->>  scripts/kconfig/lxdialog/util.c    |   1 +
->>  3 files changed, 145 insertions(+), 1 deletion(-)
->> 
->
-> thanks,
+diff --git a/include/linux/idr.h b/include/linux/idr.h
+index e856f4e0ab35..f151ce89124a 100644
+--- a/include/linux/idr.h
++++ b/include/linux/idr.h
+@@ -218,10 +218,12 @@ DECLARE_PER_CPU(struct ida_bitmap *, ida_bitmap);
+ 
+ struct ida {
+ 	struct radix_tree_root	ida_rt;
++	unsigned int		ida_next;
+ };
+ 
+-#define IDA_INIT(name)	{						\
+-	.ida_rt = RADIX_TREE_INIT(name, IDR_RT_MARKER | GFP_NOWAIT),	\
++#define IDA_INIT(name)	{						     \
++		.ida_rt = RADIX_TREE_INIT(name, IDR_RT_MARKER | GFP_NOWAIT), \
++		.ida_next = 0,						     \
+ }
+ #define DEFINE_IDA(name)	struct ida name = IDA_INIT(name)
+ 
+@@ -232,6 +234,8 @@ void ida_destroy(struct ida *ida);
+ 
+ int ida_simple_get(struct ida *ida, unsigned int start, unsigned int end,
+ 		   gfp_t gfp_mask);
++int ida_simple_get_cyclic(struct ida *ida, unsigned int start, unsigned int end,
++			  gfp_t gfp_mask);
+ void ida_simple_remove(struct ida *ida, unsigned int id);
+ 
+ static inline void ida_init(struct ida *ida)
+diff --git a/lib/idr.c b/lib/idr.c
+index 823b813f08f8..3374c3fa4027 100644
+--- a/lib/idr.c
++++ b/lib/idr.c
+@@ -599,6 +599,72 @@ int ida_simple_get(struct ida *ida, unsigned int start, unsigned int end,
+ 	return ret;
+ }
+ EXPORT_SYMBOL(ida_simple_get);
++/**
++ * ida_simple_get_cyclic - get a new id.
++ * @ida: the (initialized) ida.
++ * @start: the minimum id (inclusive, < 0x8000000)
++ * @end: the maximum id (exclusive, < 0x8000000 or 0)
++ * @gfp_mask: memory allocation flags
++ *
++ * Allocates an id in the range start <= id < end, or returns -ENOSPC.
++ * On memory allocation failure, returns -ENOMEM.
++ * The search for an unused id will start at the last id allocated and will
++ * wrap around to @start if no free ids are found before reaching @end.
++ *
++ * Compared to ida_get_new_above() this function does its own locking, and
++ * should be used unless there are special requirements.
++ *
++ * Use ida_simple_remove() to get rid of an id.
++ */
++int ida_simple_get_cyclic(struct ida *ida, unsigned int start, unsigned int end,
++		   gfp_t gfp_mask)
++{
++	int ret, id, next;
++	unsigned int max;
++	unsigned long flags;
++
++	WARN_ON((int)start < 0);
++	WARN_ON((int)end < 0);
++
++	if (end == 0) {
++		max = 0x80000000;
++	} else {
++		WARN_ON(end < start);
++		max = end - 1;
++	}
++
++again:
++	if (!ida_pre_get(ida, gfp_mask))
++		return -ENOMEM;
++
++	spin_lock_irqsave(&simple_ida_lock, flags);
++	next = ida->ida_next;
++	if (next < start || next >= end)
++		next = start;
++
++	ret = ida_get_new_above(ida, next, &id);
++	if (likely(!ret)) {
++		if (unlikely(id >= max)) {
++			ida_remove(ida, id);
++			if (next == start) {
++				ret = -ENOSPC;
++			} else {
++				ida->ida_next = start;
++				spin_unlock_irqrestore(&simple_ida_lock, flags);
++				goto again;
++			}
++		} else {
++			ida->ida_next = id + 1;
++			ret = id;
++		}
++	}
++	spin_unlock_irqrestore(&simple_ida_lock, flags);
++
++	if (unlikely(ret == -EAGAIN))
++		goto again;
++	return ret;
++}
++EXPORT_SYMBOL(ida_simple_get_cyclic);
+ 
+ /**
+  * ida_simple_remove - remove an allocated id.
+-- 
+2.14.3
