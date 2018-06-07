@@ -1,124 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id CwoaAYJVGVvZNwAAmS7hNA
-	; Thu, 07 Jun 2018 15:55:46 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id /3Q5CFBYGVu2fwAAmS7hNA
+	; Thu, 07 Jun 2018 16:07:53 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id E96FA6074D; Thu,  7 Jun 2018 15:55:45 +0000 (UTC)
+	id 3B3C06089E; Thu,  7 Jun 2018 16:07:53 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 74B1C60590;
-	Thu,  7 Jun 2018 15:55:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 74B1C60590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 9E09F6074D;
+	Thu,  7 Jun 2018 16:07:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9E09F6074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934377AbeFGPzn (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:55:43 -0400
-Received: from foss.arm.com ([217.140.101.70]:53748 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933778AbeFGPzj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:55:39 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C7E9E80D;
-        Thu,  7 Jun 2018 08:55:38 -0700 (PDT)
-Received: from [192.168.0.102] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 31BA73F59D;
-        Thu,  7 Jun 2018 08:55:34 -0700 (PDT)
-Subject: Re: [RFC PATCH v3 03/10] PM: Introduce an Energy Model management
- framework
-To: Quentin Perret <quentin.perret@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>
-Cc: peterz@infradead.org, rjw@rjwysocki.net,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, mingo@redhat.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joelaf@google.com,
-        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
-        pkondeti@codeaurora.org, edubezval@gmail.com,
-        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
-        javi.merino@kernel.org
-References: <20180521142505.6522-1-quentin.perret@arm.com>
- <20180521142505.6522-4-quentin.perret@arm.com>
- <20180607144409.GB3311@localhost.localdomain>
- <20180607151954.GA3597@e108498-lin.cambridge.arm.com>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <52b9575b-4c2a-01df-fadd-10ccf3146112@arm.com>
-Date: Thu, 7 Jun 2018 17:55:32 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S935894AbeFGQFK (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 12:05:10 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39250 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933013AbeFGOJE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:09:04 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb4-0005Zp-AA; Thu, 07 Jun 2018 15:09:02 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb0-0002oE-Sd; Thu, 07 Jun 2018 15:08:58 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-In-Reply-To: <20180607151954.GA3597@e108498-lin.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
+        "Mauro Carvalho Chehab" <mchehab@s-opensource.com>,
+        "Arnd Bergmann" <arnd@arndb.de>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.535439802@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 087/410] media: exynos4-is: properly initialize frame
+ format
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/07/2018 05:19 PM, Quentin Perret wrote:
-> Hi Juri,
-> 
-> On Thursday 07 Jun 2018 at 16:44:09 (+0200), Juri Lelli wrote:
->> On 21/05/18 15:24, Quentin Perret wrote:
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-[...]
+------------------
 
->> Mmm, this gets complicated pretty fast eh? :)
-> 
-> Yeah, hopefully I'll be able to explain/clarify that :-).
-> 
->>
->> I had to go back and forth between patches to start understanding the
->> different data structures and how they are use, and I'm not sure yet
->> I've got the full picture. I guess some nice diagram (cover letter or
->> documentation patch) would help a lot.
+From: Arnd Bergmann <arnd@arndb.de>
 
-+1 on the diagram.
+commit 97913bcbe6da3957af27d9fdd76b3d97b99e6d6a upstream.
 
-> Right, so I'd like very much to write a nice documentation patch once we
-> are more or less OK with the overall design of this framework, but I
-> felt like it was a little bit early for that. If we finally decide that
-> what I did is totally stupid and that it'd be better to do things
-> completely differently, my nice documentation patch would be a lot of
-> efforts for nothing.
-> 
-> But I agree that at the same time all this complex code has to be
-> explained. Hopefully the existing comments can help with that.
-> Otherwise, I'm more than happy to answer all questions :-)
+We copy the subdev frame format from a partially initialized
+structure, which is not entirely well-defined. Older compilers
+like gcc-4.4 can copy uninitialized stack data here and warn
+about it:
 
-I'm not sure that the current API is the final one. Not sure that 
-em_rescale_cpu_capacity() is really needed.
+drivers/media/platform/exynos4-is/fimc-isp.c: In function 'fimc_isp_subdev_open':
+drivers/media/platform/exynos4-is/fimc-isp.c:379: error: 'fmt.reserved[10u]' may be used uninitialized in this function
+drivers/media/platform/exynos4-is/fimc-isp.c:379: error: 'fmt.reserved[9u]' may be used uninitialized in this function
+...
+drivers/media/platform/exynos4-is/fimc-isp.c:379: error: 'fmt.reserved[0u]' may be used uninitialized in this function
+drivers/media/platform/exynos4-is/fimc-isp.c:379: error: 'fmt.xfer_func' may be used uninitialized in this function
 
-We should first clarify the provider - consumer relation. Are multiple 
-providers allowed, if yes, are they allowed to provide partial EM data? 
-Do we really want to allow this overwriting of old EM data 
-(em_rescale_cpu_capacity()). In case multiple provider are allowed, is 
-there some kind of priority involved?
+On newer compilers, only the initialized fields get copied, but
+we should not rely on that, so this changes the code to zero-out
+the remaining fields first.
 
-The re-scaling thing comes from the requirement that the final cpu 
-capacity values are only known after the arch_topology driver was able 
-to scale the dmipz-capacity-values with the policy->cpuinfo.max_freq but 
-why can't we create the EM on arm/arm64 after this? Even though we would 
-be forced to get cpufreq's related cpumask from somewhere.
+Fixes: 9a761e436843 ("[media] exynos4-is: Add Exynos4x12 FIMC-IS driver")
 
-I guess the easiest model will be that the Energy Model (EM) is fully 
-initialized with one init call (from the arch) and fixed after that.
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ drivers/media/platform/exynos4-is/fimc-isp.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-In case the EM should not be tight to cpufreq, the interface 
-em_create_fd(cpumask_t *span, int nr_states, struct em_data_callback 
-*cb) seems ok.
-
-IMHO, part of the problem why this might be harder to understand is the 
-fact that the patches show the use of the 2. init call 
-'em_rescale_cpu_capacity()' but not the 1. one 
-'em_register_freq_domain()'. I guess that Quentin wanted to keep the set 
-as small as possible.
-
-[...]
+--- a/drivers/media/platform/exynos4-is/fimc-isp.c
++++ b/drivers/media/platform/exynos4-is/fimc-isp.c
+@@ -366,16 +366,16 @@ static int fimc_isp_subdev_s_power(struc
+ static int fimc_isp_subdev_open(struct v4l2_subdev *sd,
+ 				struct v4l2_subdev_fh *fh)
+ {
+-	struct v4l2_mbus_framefmt fmt;
+ 	struct v4l2_mbus_framefmt *format;
++	struct v4l2_mbus_framefmt fmt = {
++		.colorspace = V4L2_COLORSPACE_SRGB,
++		.code = fimc_isp_formats[0].mbus_code,
++		.width = DEFAULT_PREVIEW_STILL_WIDTH + FIMC_ISP_CAC_MARGIN_WIDTH,
++		.height = DEFAULT_PREVIEW_STILL_HEIGHT + FIMC_ISP_CAC_MARGIN_HEIGHT,
++		.field = V4L2_FIELD_NONE,
++	};
+ 
+ 	format = v4l2_subdev_get_try_format(fh, FIMC_ISP_SD_PAD_SINK);
+-
+-	fmt.colorspace = V4L2_COLORSPACE_SRGB;
+-	fmt.code = fimc_isp_formats[0].mbus_code;
+-	fmt.width = DEFAULT_PREVIEW_STILL_WIDTH + FIMC_ISP_CAC_MARGIN_WIDTH;
+-	fmt.height = DEFAULT_PREVIEW_STILL_HEIGHT + FIMC_ISP_CAC_MARGIN_HEIGHT;
+-	fmt.field = V4L2_FIELD_NONE;
+ 	*format = fmt;
+ 
+ 	format = v4l2_subdev_get_try_format(fh, FIMC_ISP_SD_PAD_SRC_FIFO);
