@@ -1,159 +1,195 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id uJX/I1mFHlsJLAAAmS7hNA
-	; Mon, 11 Jun 2018 14:21:46 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 1v+5I7RTGVtwHwAAmS7hNA
+	; Thu, 07 Jun 2018 15:48:17 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 0DC2A60791; Mon, 11 Jun 2018 14:21:46 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mSlf1ufG"
+	id E3A526074D; Thu,  7 Jun 2018 15:48:16 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 8F6B860351;
-	Mon, 11 Jun 2018 14:21:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8F6B860351
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 5B97A60590;
+	Thu,  7 Jun 2018 15:48:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5B97A60590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934262AbeFKOU3 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 10:20:29 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45218 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933494AbeFKOGu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:06:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=twa7itpLIU58lfU+MddoEIWcRCNFcsboeQJXmsXbu6U=; b=mSlf1ufG8UA2KgMlNo35S+NaM
-        4CjH391z2F6+7znnZEMPVL7go8HO+W+TN2hpsuDyFrxz2OPuWskz/wYlj552FIvE4Hpog7SO9kcxg
-        DrprQ4hWv0/bDKjgatLik6LF4krDh/OsLmsXbm3H/eM8s/VqgBF6Jv98EvDxXszTyk12YNiqF1xpv
-        d66vJwkvlPIKpNzbuT1hNaXfa2tF/8BtSOYLkWCuBKfTJPDSloDiG5SlNPm2EyWEqL2jml1g7woV7
-        cFqwjvs/OUsSqOtb6Q7OeV9m5zQAHgFlN7ay+NhOW5o6BjmAeP1/XMJC3yq2oo1UX/WygmkKtIClE
-        3CWvgUinA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSNT7-0004fa-G9; Mon, 11 Jun 2018 14:06:49 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Lukas Czerner <lczerner@redhat.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v13 24/72] page cache: Convert find_get_entries to XArray
-Date: Mon, 11 Jun 2018 07:05:51 -0700
-Message-Id: <20180611140639.17215-25-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
-References: <20180611140639.17215-1-willy@infradead.org>
+        id S934421AbeFGOkO (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:40:14 -0400
+Received: from mga17.intel.com ([192.55.52.151]:61095 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934171AbeFGOkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:40:06 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 07:39:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
+   d="scan'208";a="54825996"
+Received: from 2b52.sc.intel.com ([143.183.136.51])
+  by fmsmga002.fm.intel.com with ESMTP; 07 Jun 2018 07:39:58 -0700
+From: Yu-cheng Yu <yu-cheng.yu@intel.com>
+To: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org, linux-arch@vger.kernel.org, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
+Subject: [PATCH 4/5] x86/fpu/xstate: Add XSAVES system states for shadow stack
+Date: Thu,  7 Jun 2018 07:35:43 -0700
+Message-Id: <20180607143544.3477-5-yu-cheng.yu@intel.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180607143544.3477-1-yu-cheng.yu@intel.com>
+References: <20180607143544.3477-1-yu-cheng.yu@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+Intel Control-flow Enforcement Technology (CET) introduces the
+following MSRs into the XSAVES system states.
 
-Slightly shorter and simpler code.
+    IA32_U_CET (user-mode CET settings),
+    IA32_PL3_SSP (user-mode shadow stack),
+    IA32_PL0_SSP (kernel-mode shadow stack),
+    IA32_PL1_SSP (ring-1 shadow stack),
+    IA32_PL2_SSP (ring-2 shadow stack).
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
 ---
- mm/filemap.c | 51 +++++++++++++++++++++++----------------------------
- 1 file changed, 23 insertions(+), 28 deletions(-)
+ arch/x86/include/asm/fpu/types.h            | 22 ++++++++++++++++++++++
+ arch/x86/include/asm/fpu/xstate.h           |  4 +++-
+ arch/x86/include/uapi/asm/processor-flags.h |  2 ++
+ arch/x86/kernel/fpu/xstate.c                | 10 ++++++++++
+ 4 files changed, 37 insertions(+), 1 deletion(-)
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 6db3d35ff5f6..b49290131e85 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1578,53 +1578,48 @@ unsigned find_get_entries(struct address_space *mapping,
- 			  pgoff_t start, unsigned int nr_entries,
- 			  struct page **entries, pgoff_t *indices)
- {
--	void **slot;
-+	XA_STATE(xas, &mapping->i_pages, start);
-+	struct page *page;
- 	unsigned int ret = 0;
--	struct radix_tree_iter iter;
+diff --git a/arch/x86/include/asm/fpu/types.h b/arch/x86/include/asm/fpu/types.h
+index 202c53918ecf..e55d51d172f1 100644
+--- a/arch/x86/include/asm/fpu/types.h
++++ b/arch/x86/include/asm/fpu/types.h
+@@ -114,6 +114,9 @@ enum xfeature {
+ 	XFEATURE_Hi16_ZMM,
+ 	XFEATURE_PT_UNIMPLEMENTED_SO_FAR,
+ 	XFEATURE_PKRU,
++	XFEATURE_RESERVED,
++	XFEATURE_SHSTK_USER,
++	XFEATURE_SHSTK_KERNEL,
  
- 	if (!nr_entries)
- 		return 0;
+ 	XFEATURE_MAX,
+ };
+@@ -128,6 +131,8 @@ enum xfeature {
+ #define XFEATURE_MASK_Hi16_ZMM		(1 << XFEATURE_Hi16_ZMM)
+ #define XFEATURE_MASK_PT		(1 << XFEATURE_PT_UNIMPLEMENTED_SO_FAR)
+ #define XFEATURE_MASK_PKRU		(1 << XFEATURE_PKRU)
++#define XFEATURE_MASK_SHSTK_USER	(1 << XFEATURE_SHSTK_USER)
++#define XFEATURE_MASK_SHSTK_KERNEL	(1 << XFEATURE_SHSTK_KERNEL)
  
- 	rcu_read_lock();
--	radix_tree_for_each_slot(slot, &mapping->i_pages, &iter, start) {
--		struct page *head, *page;
--repeat:
--		page = radix_tree_deref_slot(slot);
--		if (unlikely(!page))
-+	xas_for_each(&xas, page, ULONG_MAX) {
-+		struct page *head;
-+		if (xas_retry(&xas, page))
- 			continue;
--		if (radix_tree_exception(page)) {
--			if (radix_tree_deref_retry(page)) {
--				slot = radix_tree_iter_retry(&iter);
--				continue;
--			}
--			/*
--			 * A shadow entry of a recently evicted page, a swap
--			 * entry from shmem/tmpfs or a DAX entry.  Return it
--			 * without attempting to raise page count.
--			 */
-+		/*
-+		 * A shadow entry of a recently evicted page, a swap
-+		 * entry from shmem/tmpfs or a DAX entry.  Return it
-+		 * without attempting to raise page count.
-+		 */
-+		if (xa_is_value(page))
- 			goto export;
--		}
+ #define XFEATURE_MASK_FPSSE		(XFEATURE_MASK_FP | XFEATURE_MASK_SSE)
+ #define XFEATURE_MASK_AVX512		(XFEATURE_MASK_OPMASK \
+@@ -229,6 +234,23 @@ struct pkru_state {
+ 	u32				pad;
+ } __packed;
  
- 		head = compound_head(page);
- 		if (!page_cache_get_speculative(head))
--			goto repeat;
-+			goto retry;
- 
- 		/* The page was split under us? */
--		if (compound_head(page) != head) {
--			put_page(head);
--			goto repeat;
--		}
-+		if (compound_head(page) != head)
-+			goto put_page;
- 
- 		/* Has the page moved? */
--		if (unlikely(page != *slot)) {
--			put_page(head);
--			goto repeat;
--		}
-+		if (unlikely(page != xas_reload(&xas)))
-+			goto put_page;
++/*
++ * State component 11 is Control flow Enforcement user states
++ */
++struct cet_user_state {
++	u64 u_cet;	/* user control flow settings */
++	u64 user_ssp;	/* user shadow stack pointer */
++} __packed;
 +
- export:
--		indices[ret] = iter.index;
-+		indices[ret] = xas.xa_index;
- 		entries[ret] = page;
- 		if (++ret == nr_entries)
- 			break;
-+		continue;
-+put_page:
-+		put_page(head);
-+retry:
-+		xas_reset(&xas);
- 	}
- 	rcu_read_unlock();
- 	return ret;
++/*
++ * State component 12 is Control flow Enforcement kernel states
++ */
++struct cet_kernel_state {
++	u64 kernel_ssp;	/* kernel shadow stack */
++	u64 pl1_ssp;	/* ring-1 shadow stack */
++	u64 pl2_ssp;	/* ring-2 shadow stack */
++} __packed;
++
+ struct xstate_header {
+ 	u64				xfeatures;
+ 	u64				xcomp_bv;
+diff --git a/arch/x86/include/asm/fpu/xstate.h b/arch/x86/include/asm/fpu/xstate.h
+index a32dc5f8c963..662562cbafe9 100644
+--- a/arch/x86/include/asm/fpu/xstate.h
++++ b/arch/x86/include/asm/fpu/xstate.h
+@@ -31,7 +31,9 @@
+ 				  XFEATURE_MASK_Hi16_ZMM | \
+ 				  XFEATURE_MASK_PKRU | \
+ 				  XFEATURE_MASK_BNDREGS | \
+-				  XFEATURE_MASK_BNDCSR)
++				  XFEATURE_MASK_BNDCSR | \
++				  XFEATURE_MASK_SHSTK_USER | \
++				  XFEATURE_MASK_SHSTK_KERNEL)
+ 
+ #ifdef CONFIG_X86_64
+ #define REX_PREFIX	"0x48, "
+diff --git a/arch/x86/include/uapi/asm/processor-flags.h b/arch/x86/include/uapi/asm/processor-flags.h
+index bcba3c643e63..25311ec4b731 100644
+--- a/arch/x86/include/uapi/asm/processor-flags.h
++++ b/arch/x86/include/uapi/asm/processor-flags.h
+@@ -130,6 +130,8 @@
+ #define X86_CR4_SMAP		_BITUL(X86_CR4_SMAP_BIT)
+ #define X86_CR4_PKE_BIT		22 /* enable Protection Keys support */
+ #define X86_CR4_PKE		_BITUL(X86_CR4_PKE_BIT)
++#define X86_CR4_CET_BIT		23 /* enable Control flow Enforcement */
++#define X86_CR4_CET		_BITUL(X86_CR4_CET_BIT)
+ 
+ /*
+  * x86-64 Task Priority Register, CR8
+diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
+index dd2c561c4544..91c0f665567b 100644
+--- a/arch/x86/kernel/fpu/xstate.c
++++ b/arch/x86/kernel/fpu/xstate.c
+@@ -35,6 +35,9 @@ static const char *xfeature_names[] =
+ 	"Processor Trace (unused)"	,
+ 	"Protection Keys User registers",
+ 	"unknown xstate feature"	,
++	"Control flow User registers"	,
++	"Control flow Kernel registers"	,
++	"unknown xstate feature"	,
+ };
+ 
+ static short xsave_cpuid_features[] __initdata = {
+@@ -48,6 +51,9 @@ static short xsave_cpuid_features[] __initdata = {
+ 	X86_FEATURE_AVX512F,
+ 	X86_FEATURE_INTEL_PT,
+ 	X86_FEATURE_PKU,
++	0,		   /* Unused */
++	X86_FEATURE_SHSTK, /* XFEATURE_SHSTK_USER */
++	X86_FEATURE_SHSTK, /* XFEATURE_SHSTK_KERNEL */
+ };
+ 
+ /*
+@@ -316,6 +322,8 @@ static void __init print_xstate_features(void)
+ 	print_xstate_feature(XFEATURE_MASK_ZMM_Hi256);
+ 	print_xstate_feature(XFEATURE_MASK_Hi16_ZMM);
+ 	print_xstate_feature(XFEATURE_MASK_PKRU);
++	print_xstate_feature(XFEATURE_MASK_SHSTK_USER);
++	print_xstate_feature(XFEATURE_MASK_SHSTK_KERNEL);
+ }
+ 
+ /*
+@@ -562,6 +570,8 @@ static void check_xstate_against_struct(int nr)
+ 	XCHECK_SZ(sz, nr, XFEATURE_ZMM_Hi256, struct avx_512_zmm_uppers_state);
+ 	XCHECK_SZ(sz, nr, XFEATURE_Hi16_ZMM,  struct avx_512_hi16_state);
+ 	XCHECK_SZ(sz, nr, XFEATURE_PKRU,      struct pkru_state);
++	XCHECK_SZ(sz, nr, XFEATURE_SHSTK_USER,   struct cet_user_state);
++	XCHECK_SZ(sz, nr, XFEATURE_SHSTK_KERNEL, struct cet_kernel_state);
+ 
+ 	/*
+ 	 * Make *SURE* to add any feature numbers in below if
 -- 
-2.17.1
+2.15.1
