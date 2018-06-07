@@ -1,166 +1,195 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id yLp0NJxTGVszHwAAmS7hNA
-	; Thu, 07 Jun 2018 15:48:46 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 6CskMWKHGVv7QgAAmS7hNA
+	; Thu, 07 Jun 2018 19:28:37 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 450056089E; Thu,  7 Jun 2018 15:48:46 +0000 (UTC)
+	id 6EF596074D; Thu,  7 Jun 2018 19:28:37 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="I8dE+aB2"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Dwtw4sOS"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 589F860590;
-	Thu,  7 Jun 2018 15:48:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 589F860590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
+	by smtp.codeaurora.org (Postfix) with ESMTP id CD02A60290;
+	Thu,  7 Jun 2018 19:28:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CD02A60290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934672AbeFGPsm (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:48:42 -0400
-Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:15701 "EHLO
-        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934435AbeFGPsh (ORCPT
+        id S932272AbeFGT2e (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 15:28:34 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:52243 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932124AbeFGT2b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:48:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1528386517; x=1559922517;
-  h=subject:from:to:cc:references:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=CRI6DSEE/FZ1u7uWp8cs/x1oKSjX4lX9Vrc7vuEelIk=;
-  b=I8dE+aB2PrV93t2vretdDx0Ne7lf8mREJQC2gqaJfzvfHZMatpzy0k9z
-   pn8qyJTOwKVmQkrH4sR0RKL5HB+i/vcYBUGuD7CAEiqwRUIeGkx3HYlLv
-   HecTfNJnOGwz8pT1fZW0rkFdjhHrdfvZBmxPUXIl9xjhBEjBiir7hiP7l
-   4=;
-X-IronPort-AV: E=Sophos;i="5.49,486,1520899200";
-   d="scan'208";a="682097804"
-Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-1a-67b371d8.us-east-1.amazon.com) ([10.124.125.2])
-  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 07 Jun 2018 15:48:36 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
-        by email-inbound-relay-1a-67b371d8.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id w57FmV4w105089
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Thu, 7 Jun 2018 15:48:33 GMT
-Received: from EX13D02EUB001.ant.amazon.com (10.43.166.150) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 7 Jun 2018 15:48:32 +0000
-Received: from uc1a35a69ae4659.ant.amazon.com (10.43.160.8) by
- EX13D02EUB001.ant.amazon.com (10.43.166.150) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 7 Jun 2018 15:48:28 +0000
-Subject: Re: [less-CONFIG_NET 7/7] kvm: drop CONFIG_NET
-From: Norbert Manthey <nmanthey@amazon.de>
-To: Paolo Bonzini <pbonzini@redhat.com>
-CC: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, <x86@kernel.org>,
-        <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1528293127-23825-1-git-send-email-nmanthey@amazon.de>
- <1528293206-24298-1-git-send-email-nmanthey@amazon.de>
- <1528293206-24298-7-git-send-email-nmanthey@amazon.de>
- <a7344c4f-a1d9-597d-b18d-059a2752becf@redhat.com>
- <ef0fe0ef-3620-3628-2a7e-c8b73e466a21@amazon.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nmanthey@amazon.de; prefer-encrypt=mutual; keydata=
- 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
- pEddsOqYwOs=
-Message-ID: <3f98f2be-47e1-ecf1-ff3c-0b35ae93437a@amazon.de>
-Date: Thu, 7 Jun 2018 17:48:23 +0200
+        Thu, 7 Jun 2018 15:28:31 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by fllnx210.ext.ti.com (8.15.1/8.15.1) with ESMTP id w57JSUMU017549;
+        Thu, 7 Jun 2018 14:28:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1528399710;
+        bh=DPNjxUj9qlEqQKGz4E9O5pSWkvEE0gAyzK0qECIq+RY=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=Dwtw4sOSdLfNpkD23jYzufxqhnbkgwGPqosBU9+bx0wQkNzuwM35ae9xAdLmyjBKn
+         nXxFUwrR6TM59NzwDZadPs+3LIbihNv3/WU+7paZIVm0N14HfMZv2iOP5PEDCvqW2X
+         LQiRnK6lEIa3ZAtdEmg4uAfSdVr4uLNB3E1wN2FA=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w57JSUUS007073;
+        Thu, 7 Jun 2018 14:28:30 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 7 Jun
+ 2018 14:28:30 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Thu, 7 Jun 2018 14:28:30 -0500
+Received: from [128.247.59.147] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w57JSUcF012561;
+        Thu, 7 Jun 2018 14:28:30 -0500
+Subject: Re: [PATCH 2/2] gpio: davinci: Do not assume continuous IRQ numbering
+To: Keerthy <j-keerthy@ti.com>, <linus.walleij@linaro.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <t-kristo@ti.com>
+References: <1528276734-1483-1-git-send-email-j-keerthy@ti.com>
+ <1528276734-1483-2-git-send-email-j-keerthy@ti.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <fa15890c-756e-0821-df69-302fdd451283@ti.com>
+Date: Thu, 7 Jun 2018 14:28:30 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <ef0fe0ef-3620-3628-2a7e-c8b73e466a21@amazon.de>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <1528276734-1483-2-git-send-email-j-keerthy@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
-X-Originating-IP: [10.43.160.8]
-X-ClientProxiedBy: EX13D10UWA001.ant.amazon.com (10.43.160.216) To
- EX13D02EUB001.ant.amazon.com (10.43.166.150)
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RGVhciBQYW9sbywKCmFmdGVyIHlvdSBhc2tlZCwgSSBydW4gYSBmZXcgbW9yZSAibWFrZSByYW5k
-Y29uZmlnOyBtYWtlIiByb3VuZHMsIGFuZApmb3VuZCBhIHByb2JsZW0gd2l0aCBvbmUgb2YgdGhl
-IGNvbW1pdHMgKHdoZW4gdXNpbmcgQlBGX1NZU0NBTEwsIE5FVCBhbmQKU0VDQ09NUF9GSUxURVIp
-LiBJJ2xsIGZpeCB0aGUgaXNzdWVzIGFuZCBhbGwgb3RoZXIgdGhhdCBtaWdodCBwb3AgdXAsCmFu
-ZCByZXJ1biB0aGUgcmFuZGNvbmZpZyBsb29wIG1hbnkgbW9yZSB0aW1lcyB0byBnZXQgYSBiZXR0
-ZXIgY292ZXJhZ2UKYW5kIGhpZ2hlciBjb25maWRlbmNlLiBJJ2xsIHVwZGF0ZSB0aGUgc2VyaWVz
-IGFmdGVyd2FyZHMuCgpCZXN0LApOb3JiZXJ0CgoKT24gMDYvMDcvMjAxOCAwMTo0NiBQTSwgTm9y
-YmVydCBNYW50aGV5IHdyb3RlOgo+IE9uIDA2LzA3LzIwMTggMDE6MjAgUE0sIFBhb2xvIEJvbnpp
-bmkgd3JvdGU6Cj4+IE9uIDA2LzA2LzIwMTggMTU6NTMsIE5vcmJlcnQgTWFudGhleSB3cm90ZToK
-Pj4+IEluIHNvbWUgc2NlbmFyaW9zLCB3ZSBkbyBub3Qgd2FudCB0byB1c2UgQ09ORklHX05FVCBl
-dmVuIHRob3VnaCB3ZSB3YW50Cj4+PiB0byB1c2UgQ09ORklHX0tWTS4gVG8gZ2V0IHRoaXMgd29y
-a2luZywgYW5kIHRvIG5vdCBwdWxsIGluIG1vcmUKPj4+IGRlcGVuZGVuY2llcywgd2UgbmVlZCB0
-byBkaXNhYmxlIENPTkZJR19UQVNLU1RBVFMgYXMgd2VsbC4KPj4+Cj4+PiBTaWduZWQtb2ZmLWJ5
-OiBOb3JiZXJ0IE1hbnRoZXkgPG5tYW50aGV5QGFtYXpvbi5kZT4KPj4+IC0tLQo+Pj4gIGFyY2gv
-eDg2L2t2bS9LY29uZmlnIHwgNSArKy0tLQo+Pj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlv
-bnMoKyksIDMgZGVsZXRpb25zKC0pCj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL2FyY2gveDg2L2t2bS9L
-Y29uZmlnIGIvYXJjaC94ODYva3ZtL0tjb25maWcKPj4+IGluZGV4IDkyZmQ0MzMuLmYyMDk4MTcg
-MTAwNjQ0Cj4+PiAtLS0gYS9hcmNoL3g4Ni9rdm0vS2NvbmZpZwo+Pj4gKysrIGIvYXJjaC94ODYv
-a3ZtL0tjb25maWcKPj4+IEBAIC0yMiw4ICsyMiw4IEBAIGNvbmZpZyBLVk0KPj4+ICAJdHJpc3Rh
-dGUgIktlcm5lbC1iYXNlZCBWaXJ0dWFsIE1hY2hpbmUgKEtWTSkgc3VwcG9ydCIKPj4+ICAJZGVw
-ZW5kcyBvbiBIQVZFX0tWTQo+Pj4gIAlkZXBlbmRzIG9uIEhJR0hfUkVTX1RJTUVSUwo+Pj4gLQkj
-IGZvciBUQVNLU1RBVFMvVEFTS19ERUxBWV9BQ0NUOgo+Pj4gLQlkZXBlbmRzIG9uIE5FVCAmJiBN
-VUxUSVVTRVIKPj4+ICsJIyBUQVNLX0RFTEFZX0FDQ1Q6Cj4+PiArCWRlcGVuZHMgb24gTVVMVElV
-U0VSCj4+PiAgCWRlcGVuZHMgb24gWDg2X0xPQ0FMX0FQSUMKPj4+ICAJc2VsZWN0IFBSRUVNUFRf
-Tk9USUZJRVJTCj4+PiAgCXNlbGVjdCBNTVVfTk9USUZJRVIKPj4+IEBAIC0zNyw3ICszNyw2IEBA
-IGNvbmZpZyBLVk0KPj4+ICAJc2VsZWN0IEtWTV9BU1lOQ19QRgo+Pj4gIAlzZWxlY3QgVVNFUl9S
-RVRVUk5fTk9USUZJRVIKPj4+ICAJc2VsZWN0IEtWTV9NTUlPCj4+PiAtCXNlbGVjdCBUQVNLU1RB
-VFMKPj4+ICAJc2VsZWN0IFRBU0tfREVMQVlfQUNDVAo+Pj4gIAlzZWxlY3QgUEVSRl9FVkVOVFMK
-Pj4+ICAJc2VsZWN0IEhBVkVfS1ZNX01TSQo+Pj4KPj4gQXNzdW1pbmcgaXQgY29tcGlsZXMsIGl0
-IGxvb2tzIGdvb2QuIDopCj4+Cj4+IFBhb2xvCj4+Cj4gSXQgY29tcGlsZXMsIHdpdGggdGhlIGRl
-ZmF1bHQgY29uZmlndXJhdGlvbiwgYXMgd2VsbCBhcyB3aXRoIHRoZSBzdWJzZXQKPiB0aGF0IEkg
-Y3VycmVudGx5IHVzZS4gU2luY2UgSSBoYXZlIGFuIGFjdHVhbGx5IHNtYWxsIHNlbGVjdGlvbiBv
-ZiBjb25maWcKPiBvcHRpb25zLCBJIHdvbmRlciB3aGV0aGVyIHRoZXJlIGlzIHNvbWUgYmVzdCBw
-cmFjdGljZXMgdG8gbWFrZSBzdXJlIHRoaXMKPiBjaGFuZ2UgZG9lcyBub3QgY29ycnVwdCBvdGhl
-ciBjb25maWd1cmF0aW9ucyB0aGF0IHJlbHkgb24gS1ZNIHNlbGVjdGluZwo+IFRBU0tTVEFUUy4K
-Pgo+IE5vcmJlcnQKCkFtYXpvbiBEZXZlbG9wbWVudCBDZW50ZXIgR2VybWFueSBHbWJICkJlcmxp
-biAtIERyZXNkZW4gLSBBYWNoZW4KbWFpbiBvZmZpY2U6IEtyYXVzZW5zdHIuIDM4LCAxMDExNyBC
-ZXJsaW4KR2VzY2hhZWZ0c2Z1ZWhyZXI6IERyLiBSYWxmIEhlcmJyaWNoLCBDaHJpc3RpYW4gU2No
-bGFlZ2VyClVzdC1JRDogREUyODkyMzc4NzkKRWluZ2V0cmFnZW4gYW0gQW10c2dlcmljaHQgQ2hh
-cmxvdHRlbmJ1cmcgSFJCIDE0OTE3MyBCCg==
+
+
+On 06/06/2018 04:18 AM, Keerthy wrote:
+> Currently the driver assumes that the interrupts are continuous
+> and does platform_get_irq only once and assumes the rest are continuous,
+> instead call platform_get_irq for all the interrupts and store them
+> in an array for later use.
+> 
+> Signed-off-by: Keerthy <j-keerthy@ti.com>
+> ---
+> 
+> Tested for GPIO Interrupts on da850-lcdk and keystone-k2g-evm boards.
+> 
+>   drivers/gpio/gpio-davinci.c | 49 ++++++++++++++++++++++++++++++---------------
+>   1 file changed, 33 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+> index 861f35b..375578c 100644
+> --- a/drivers/gpio/gpio-davinci.c
+> +++ b/drivers/gpio/gpio-davinci.c
+> @@ -42,6 +42,7 @@ struct davinci_gpio_regs {
+>   
+>   #define BINTEN	0x8 /* GPIO Interrupt Per-Bank Enable Register */
+>   #define MAX_LABEL_SIZE 20
+> +#define MAX_INT_PER_BANK 32
+>   
+>   static void __iomem *gpio_base;
+>   static unsigned int offset_array[5] = {0x10, 0x38, 0x60, 0x88, 0xb0};
+> @@ -55,7 +56,7 @@ static inline struct davinci_gpio_regs __iomem *irq2regs(struct irq_data *d)
+>   	return g;
+>   }
+>   
+> -static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq);
+> +static int davinci_gpio_irq_setup(struct platform_device *pdev, int *bank_irq);
+>   
+>   /*--------------------------------------------------------------------------*/
+>   
+> @@ -168,7 +169,8 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+>   {
+>   	static int ctrl_num, bank_base;
+>   	int gpio, bank, ret = 0;
+> -	unsigned ngpio, nbank, bank_irq;
+> +	unsigned int ngpio, nbank, nirq;
+> +	int bank_irq[MAX_INT_PER_BANK], i;
+>   	struct davinci_gpio_controller *chips;
+>   	struct davinci_gpio_platform_data *pdata;
+>   	struct device *dev = &pdev->dev;
+> @@ -197,6 +199,16 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+>   	if (WARN_ON(ARCH_NR_GPIOS < ngpio))
+>   		ngpio = ARCH_NR_GPIOS;
+>   
+> +	/*
+> +	 * If there are unbanked interrupts then the number of
+> +	 * interrupts is equal to number of gpios else all are banked so
+> +	 * number of interrupts is equal to number of banks(each with 16 gpios)
+> +	 */
+> +	if (pdata->gpio_unbanked)
+> +		nirq = pdata->gpio_unbanked;
+> +	else
+> +		nirq = DIV_ROUND_UP(ngpio, 16);
+> +
+>   	nbank = DIV_ROUND_UP(ngpio, 32);
+>   	chips = devm_kzalloc(dev,
+>   			     nbank * sizeof(struct davinci_gpio_controller),
+> @@ -209,10 +221,13 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+>   	if (IS_ERR(gpio_base))
+>   		return PTR_ERR(gpio_base);
+>   
+> -	bank_irq = platform_get_irq(pdev, 0);
+> -	if (bank_irq < 0) {
+> -		dev_dbg(dev, "IRQ not populated\n");
+> -		return bank_irq;
+> +	for (i = 0; i < nirq; i++) {
+> +		bank_irq[i] = platform_get_irq(pdev, i);
+> +		if (bank_irq[i] < 0) {
+> +			dev_info(dev, "IRQ not populated, err = %d\n",
+> +				 bank_irq[i]);
+> +			return bank_irq[i];
+> +		}
+>   	}
+>   
+>   	snprintf(label, MAX_LABEL_SIZE, "davinci_gpio.%d", ctrl_num++);
+> @@ -458,7 +473,7 @@ static struct irq_chip *keystone_gpio_get_irq_chip(unsigned int irq)
+>    * (dm6446) can be set appropriately for GPIOV33 pins.
+>    */
+>   
+> -static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq)
+> +static int davinci_gpio_irq_setup(struct platform_device *pdev, int *bank_irq)
+>   {
+>   	unsigned	gpio, bank;
+>   	int		irq;
+> @@ -492,6 +507,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq)
+>   		dev_err(dev, "Error %ld getting gpio clock\n", PTR_ERR(clk));
+>   		return PTR_ERR(clk);
+>   	}
+> +
+>   	ret = clk_prepare_enable(clk);
+>   	if (ret)
+>   		return ret;
+> @@ -531,12 +547,12 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq)
+>   	if (pdata->gpio_unbanked) {
+>   		/* pass "bank 0" GPIO IRQs to AINTC */
+>   		chips->chip.to_irq = gpio_to_irq_unbanked;
+> -		chips->base_irq = bank_irq;
+> +		chips->base_irq = bank_irq[0];
+
+
+i think, you need to update gpio_to_irq_unbanked() also, which
+probably would require to save array of irqs.
+
+
+and gpio_irq_type_unbanked()
+
+
+
+[...]
+> 
+
+-- 
+regards,
+-grygorii
