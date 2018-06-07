@@ -1,101 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 5YUTEonJG1swQAAAmS7hNA
-	; Sat, 09 Jun 2018 12:35:21 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id LBCkNIY/GVu7WwAAmS7hNA
+	; Thu, 07 Jun 2018 14:24:51 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 39120607A4; Sat,  9 Jun 2018 12:35:21 +0000 (UTC)
+	id 806CD6089E; Thu,  7 Jun 2018 14:24:51 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id CC0AA602FC;
-	Sat,  9 Jun 2018 12:35:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CC0AA602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id E98BA602FC;
+	Thu,  7 Jun 2018 14:24:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E98BA602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753620AbeFIMfS (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 08:35:18 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51622 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753408AbeFIMfP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 08:35:15 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 83459406E897;
-        Sat,  9 Jun 2018 12:35:14 +0000 (UTC)
-Received: from localhost (ovpn-12-40.pek2.redhat.com [10.72.12.40])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A4E4C2023488;
-        Sat,  9 Jun 2018 12:35:09 +0000 (UTC)
-From: Ming Lei <ming.lei@redhat.com>
-To: Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kent Overstreet <kent.overstreet@gmail.com>
-Cc: David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Theodore Ts'o <tytso@mit.edu>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Coly Li <colyli@suse.de>, Filipe Manana <fdmanana@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH V6 25/30] exofs: conver to bio_for_each_chunk_segment_all
-Date: Sat,  9 Jun 2018 20:30:09 +0800
-Message-Id: <20180609123014.8861-26-ming.lei@redhat.com>
-In-Reply-To: <20180609123014.8861-1-ming.lei@redhat.com>
-References: <20180609123014.8861-1-ming.lei@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Sat, 09 Jun 2018 12:35:14 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Sat, 09 Jun 2018 12:35:14 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
+        id S933550AbeFGOYt (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:24:49 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40133 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933376AbeFGOYh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:24:37 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbe-0005Zm-Jg; Thu, 07 Jun 2018 15:09:38 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb6-000329-Pg; Thu, 07 Jun 2018 15:09:04 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Nathan Fontenot" <nfont@linux.vnet.ibm.com>,
+        "Tyrel Datwyler" <tyreld@linux.vnet.ibm.com>,
+        "Michael Ellerman" <mpe@ellerman.id.au>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.683372353@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 219/410] powerpc/numa: Invalidate numa_cpu_lookup_table
+ on cpu remove
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-bio_for_each_segment_all() can't be used any more after multipage bvec is
-enabled, so we have to convert to bio_for_each_chunk_segment_all()
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
+------------------
+
+From: Nathan Fontenot <nfont@linux.vnet.ibm.com>
+
+commit 1d9a090783bef19fe8cdec878620d22f05191316 upstream.
+
+When DLPAR removing a CPU, the unmapping of the cpu from a node in
+unmap_cpu_from_node() should also invalidate the CPUs entry in the
+numa_cpu_lookup_table. There is not a guarantee that on a subsequent
+DLPAR add of the CPU the associativity will be the same and thus
+could be in a different node. Invalidating the entry in the
+numa_cpu_lookup_table causes the associativity to be read from the
+device tree at the time of the add.
+
+The current behavior of not invalidating the CPUs entry in the
+numa_cpu_lookup_table can result in scenarios where the the topology
+layout of CPUs in the partition does not match the device tree
+or the topology reported by the HMC.
+
+This bug looks like it was introduced in 2004 in the commit titled
+"ppc64: cpu hotplug notifier for numa", which is 6b15e4e87e32 in the
+linux-fullhist tree. Hence tag it for all stable releases.
+
+Signed-off-by: Nathan Fontenot <nfont@linux.vnet.ibm.com>
+Reviewed-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/exofs/ore.c      | 3 ++-
- fs/exofs/ore_raid.c | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ arch/powerpc/include/asm/topology.h          | 5 +++++
+ arch/powerpc/mm/numa.c                       | 5 -----
+ arch/powerpc/platforms/pseries/hotplug-cpu.c | 2 ++
+ 3 files changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/fs/exofs/ore.c b/fs/exofs/ore.c
-index ddbf87246898..fe2eb28de358 100644
---- a/fs/exofs/ore.c
-+++ b/fs/exofs/ore.c
-@@ -406,8 +406,9 @@ static void _clear_bio(struct bio *bio)
+--- a/arch/powerpc/include/asm/topology.h
++++ b/arch/powerpc/include/asm/topology.h
+@@ -44,6 +44,11 @@ extern void __init dump_numa_cpu_topolog
+ extern int sysfs_add_device_to_node(struct device *dev, int nid);
+ extern void sysfs_remove_device_from_node(struct device *dev, int nid);
+ 
++static inline void update_numa_cpu_lookup_table(unsigned int cpu, int node)
++{
++	numa_cpu_lookup_table[cpu] = node;
++}
++
+ static inline int early_cpu_to_node(int cpu)
  {
- 	struct bio_vec *bv;
- 	unsigned i;
-+	struct bvec_chunk_iter citer;
+ 	int nid;
+--- a/arch/powerpc/mm/numa.c
++++ b/arch/powerpc/mm/numa.c
+@@ -162,11 +162,6 @@ static void reset_numa_cpu_lookup_table(
+ 		numa_cpu_lookup_table[cpu] = -1;
+ }
  
--	bio_for_each_segment_all(bv, bio, i) {
-+	bio_for_each_chunk_segment_all(bv, bio, i, citer) {
- 		unsigned this_count = bv->bv_len;
+-static void update_numa_cpu_lookup_table(unsigned int cpu, int node)
+-{
+-	numa_cpu_lookup_table[cpu] = node;
+-}
+-
+ static void map_cpu_to_node(int cpu, int node)
+ {
+ 	update_numa_cpu_lookup_table(cpu, node);
+--- a/arch/powerpc/platforms/pseries/hotplug-cpu.c
++++ b/arch/powerpc/platforms/pseries/hotplug-cpu.c
+@@ -31,6 +31,7 @@
+ #include <asm/vdso_datapage.h>
+ #include <asm/xics.h>
+ #include <asm/plpar_wrappers.h>
++#include <asm/topology.h>
  
- 		if (likely(PAGE_SIZE == this_count))
-diff --git a/fs/exofs/ore_raid.c b/fs/exofs/ore_raid.c
-index 27cbdb697649..4da3065ce976 100644
---- a/fs/exofs/ore_raid.c
-+++ b/fs/exofs/ore_raid.c
-@@ -433,11 +433,12 @@ static void _mark_read4write_pages_uptodate(struct ore_io_state *ios, int ret)
- 	/* loop on all devices all pages */
- 	for (d = 0; d < ios->numdevs; d++) {
- 		struct bio *bio = ios->per_dev[d].bio;
-+		struct bvec_chunk_iter citer;
+ #include "offline_states.h"
  
- 		if (!bio)
- 			continue;
- 
--		bio_for_each_segment_all(bv, bio, i) {
-+		bio_for_each_chunk_segment_all(bv, bio, i, citer) {
- 			struct page *page = bv->bv_page;
- 
- 			SetPageUptodate(page);
--- 
-2.9.5
+@@ -328,6 +329,7 @@ static void pseries_remove_processor(str
+ 			BUG_ON(cpu_online(cpu));
+ 			set_cpu_present(cpu, false);
+ 			set_hard_smp_processor_id(cpu, -1);
++			update_numa_cpu_lookup_table(cpu, -1);
+ 			break;
+ 		}
+ 		if (cpu >= nr_cpu_ids)
