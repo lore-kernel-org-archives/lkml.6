@@ -1,93 +1,190 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id pSnEFuNKGVvsWAAAmS7hNA
-	; Thu, 07 Jun 2018 15:10:27 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id CMWqHn1SGVvtFgAAmS7hNA
+	; Thu, 07 Jun 2018 15:42:53 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 4B67A6074D; Thu,  7 Jun 2018 15:10:27 +0000 (UTC)
+	id 6E0EE607E7; Thu,  7 Jun 2018 15:42:53 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id C094B601B4;
-	Thu,  7 Jun 2018 15:10:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C094B601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id D30856074D;
+	Thu,  7 Jun 2018 15:42:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D30856074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965032AbeFGPDH (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:03:07 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41478 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S964993AbeFGPDF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:03:05 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbJ-0005Zn-1f; Thu, 07 Jun 2018 15:09:17 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbF-0003Jm-GM; Thu, 07 Jun 2018 15:09:13 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Takashi Iwai" <tiwai@suse.de>,
-        "Dan Carpenter" <dan.carpenter@oracle.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.331410592@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 403/410] ALSA: pcm: potential uninitialized return values
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        id S935474AbeFGPmv (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:42:51 -0400
+Received: from mga09.intel.com ([134.134.136.24]:36344 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934587AbeFGOlb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:41:31 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 07:41:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
+   d="scan'208";a="62632621"
+Received: from 2b52.sc.intel.com ([143.183.136.51])
+  by orsmga001.jf.intel.com with ESMTP; 07 Jun 2018 07:41:29 -0700
+From: Yu-cheng Yu <yu-cheng.yu@intel.com>
+To: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org, linux-arch@vger.kernel.org, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
+Subject: [PATCH 02/10] x86/cet: Introduce WRUSS instruction
+Date: Thu,  7 Jun 2018 07:37:59 -0700
+Message-Id: <20180607143807.3611-3-yu-cheng.yu@intel.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180607143807.3611-1-yu-cheng.yu@intel.com>
+References: <20180607143807.3611-1-yu-cheng.yu@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+WRUSS is a new kernel-mode instruction but writes directly
+to user shadow stack memory.  This is used to construct
+a return address on the shadow stack for the signal
+handler.
 
-------------------
+This instruction can fault if the user shadow stack is
+invalid shadow stack memory.  In that case, the kernel does
+fixup.
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-
-commit 5607dddbfca774fb38bffadcb077fe03aa4ac5c6 upstream.
-
-Smatch complains that "tmp" can be uninitialized if we do a zero size
-write.
-
-Fixes: 02a5d6925cd3 ("ALSA: pcm: Avoid potential races between OSS ioctls and read/write")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
 ---
- sound/core/oss/pcm_oss.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/special_insns.h          | 44 +++++++++++++++++++++++++++
+ arch/x86/lib/x86-opcode-map.txt               |  2 +-
+ arch/x86/mm/fault.c                           | 13 +++++++-
+ tools/objtool/arch/x86/lib/x86-opcode-map.txt |  2 +-
+ 4 files changed, 58 insertions(+), 3 deletions(-)
 
---- a/sound/core/oss/pcm_oss.c
-+++ b/sound/core/oss/pcm_oss.c
-@@ -1362,7 +1362,7 @@ static ssize_t snd_pcm_oss_write2(struct
- static ssize_t snd_pcm_oss_write1(struct snd_pcm_substream *substream, const char __user *buf, size_t bytes)
- {
- 	size_t xfer = 0;
--	ssize_t tmp;
-+	ssize_t tmp = 0;
- 	struct snd_pcm_runtime *runtime = substream->runtime;
+diff --git a/arch/x86/include/asm/special_insns.h b/arch/x86/include/asm/special_insns.h
+index 317fc59b512c..8ce532fcc171 100644
+--- a/arch/x86/include/asm/special_insns.h
++++ b/arch/x86/include/asm/special_insns.h
+@@ -237,6 +237,50 @@ static inline void clwb(volatile void *__p)
+ 		: [pax] "a" (p));
+ }
  
- 	if (atomic_read(&substream->mmap_count))
-@@ -1469,7 +1469,7 @@ static ssize_t snd_pcm_oss_read2(struct
- static ssize_t snd_pcm_oss_read1(struct snd_pcm_substream *substream, char __user *buf, size_t bytes)
- {
- 	size_t xfer = 0;
--	ssize_t tmp;
-+	ssize_t tmp = 0;
- 	struct snd_pcm_runtime *runtime = substream->runtime;
++#ifdef CONFIG_X86_INTEL_CET
++
++#if defined(CONFIG_IA32_EMULATION) || defined(CONFIG_X86_X32)
++static inline int write_user_shstk_32(unsigned long addr, unsigned int val)
++{
++	int err;
++
++	asm volatile("1:.byte 0x66, 0x0f, 0x38, 0xf5, 0x37\n"
++		     "xor %[err],%[err]\n"
++		     "2:\n"
++		     ".section .fixup,\"ax\"\n"
++		     "3: mov $-1,%[err]; jmp 2b\n"
++		     ".previous\n"
++		     _ASM_EXTABLE(1b, 3b)
++		: [err] "=a" (err)
++		: [val] "S" (val), [addr] "D" (addr)
++		: "memory");
++	return err;
++}
++#else
++static inline int write_user_shstk_32(unsigned long addr, unsigned int val)
++{
++	return 0;
++}
++#endif
++
++static inline int write_user_shstk_64(unsigned long addr, unsigned long val)
++{
++	int err;
++
++	asm volatile("1:.byte 0x66, 0x48, 0x0f, 0x38, 0xf5, 0x37\n"
++		     "xor %[err],%[err]\n"
++		     "2:\n"
++		     ".section .fixup,\"ax\"\n"
++		     "3: mov $-1,%[err]; jmp 2b\n"
++		     ".previous\n"
++		     _ASM_EXTABLE(1b, 3b)
++		: [err] "=a" (err)
++		: [val] "S" (val), [addr] "D" (addr)
++		: "memory");
++	return err;
++}
++#endif /* CONFIG_X86_INTEL_CET */
++
+ #define nop() asm volatile ("nop")
  
- 	if (atomic_read(&substream->mmap_count))
+ 
+diff --git a/arch/x86/lib/x86-opcode-map.txt b/arch/x86/lib/x86-opcode-map.txt
+index e0b85930dd77..72bb7c48a7df 100644
+--- a/arch/x86/lib/x86-opcode-map.txt
++++ b/arch/x86/lib/x86-opcode-map.txt
+@@ -789,7 +789,7 @@ f0: MOVBE Gy,My | MOVBE Gw,Mw (66) | CRC32 Gd,Eb (F2) | CRC32 Gd,Eb (66&F2)
+ f1: MOVBE My,Gy | MOVBE Mw,Gw (66) | CRC32 Gd,Ey (F2) | CRC32 Gd,Ew (66&F2)
+ f2: ANDN Gy,By,Ey (v)
+ f3: Grp17 (1A)
+-f5: BZHI Gy,Ey,By (v) | PEXT Gy,By,Ey (F3),(v) | PDEP Gy,By,Ey (F2),(v)
++f5: BZHI Gy,Ey,By (v) | PEXT Gy,By,Ey (F3),(v) | PDEP Gy,By,Ey (F2),(v) | WRUSS Pq,Qq (66),REX.W
+ f6: ADCX Gy,Ey (66) | ADOX Gy,Ey (F3) | MULX By,Gy,rDX,Ey (F2),(v)
+ f7: BEXTR Gy,Ey,By (v) | SHLX Gy,Ey,By (66),(v) | SARX Gy,Ey,By (F3),(v) | SHRX Gy,Ey,By (F2),(v)
+ EndTable
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index 2b3b9170109c..f157338862f8 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -640,6 +640,17 @@ static int is_f00f_bug(struct pt_regs *regs, unsigned long address)
+ 	return 0;
+ }
+ 
++/*
++ * WRUSS is a kernel instrcution and but writes to user
++ * shadow stack memory.  When a fault occurs, both
++ * X86_PF_USER and X86_PF_SHSTK are set.
++ */
++static int is_wruss(struct pt_regs *regs, unsigned long error_code)
++{
++	return (((error_code & (X86_PF_USER | X86_PF_SHSTK)) ==
++		(X86_PF_USER | X86_PF_SHSTK)) && !user_mode(regs));
++}
++
+ static const char nx_warning[] = KERN_CRIT
+ "kernel tried to execute NX-protected page - exploit attempt? (uid: %d)\n";
+ static const char smep_warning[] = KERN_CRIT
+@@ -851,7 +862,7 @@ __bad_area_nosemaphore(struct pt_regs *regs, unsigned long error_code,
+ 	struct task_struct *tsk = current;
+ 
+ 	/* User mode accesses just cause a SIGSEGV */
+-	if (error_code & X86_PF_USER) {
++	if ((error_code & X86_PF_USER) && !is_wruss(regs, error_code)) {
+ 		/*
+ 		 * It's possible to have interrupts off here:
+ 		 */
+diff --git a/tools/objtool/arch/x86/lib/x86-opcode-map.txt b/tools/objtool/arch/x86/lib/x86-opcode-map.txt
+index e0b85930dd77..72bb7c48a7df 100644
+--- a/tools/objtool/arch/x86/lib/x86-opcode-map.txt
++++ b/tools/objtool/arch/x86/lib/x86-opcode-map.txt
+@@ -789,7 +789,7 @@ f0: MOVBE Gy,My | MOVBE Gw,Mw (66) | CRC32 Gd,Eb (F2) | CRC32 Gd,Eb (66&F2)
+ f1: MOVBE My,Gy | MOVBE Mw,Gw (66) | CRC32 Gd,Ey (F2) | CRC32 Gd,Ew (66&F2)
+ f2: ANDN Gy,By,Ey (v)
+ f3: Grp17 (1A)
+-f5: BZHI Gy,Ey,By (v) | PEXT Gy,By,Ey (F3),(v) | PDEP Gy,By,Ey (F2),(v)
++f5: BZHI Gy,Ey,By (v) | PEXT Gy,By,Ey (F3),(v) | PDEP Gy,By,Ey (F2),(v) | WRUSS Pq,Qq (66),REX.W
+ f6: ADCX Gy,Ey (66) | ADOX Gy,Ey (F3) | MULX By,Gy,rDX,Ey (F2),(v)
+ f7: BEXTR Gy,Ey,By (v) | SHLX Gy,Ey,By (66),(v) | SARX Gy,Ey,By (F3),(v) | SHRX Gy,Ey,By (F2),(v)
+ EndTable
+-- 
+2.15.1
