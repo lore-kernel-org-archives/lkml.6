@@ -1,124 +1,279 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id kPGjA0JmGVuXDQAAmS7hNA
-	; Thu, 07 Jun 2018 17:07:56 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id pY7vHHtIGVttSAAAmS7hNA
+	; Thu, 07 Jun 2018 15:02:54 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 9A5046089E; Thu,  7 Jun 2018 17:07:56 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eyPrZcqg"
+	id 0929E608C1; Thu,  7 Jun 2018 15:02:54 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 0EB8260590;
-	Thu,  7 Jun 2018 17:07:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0EB8260590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 01FED601C3;
+	Thu,  7 Jun 2018 15:02:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 01FED601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933246AbeFGRHy (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 13:07:54 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:39841 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932609AbeFGRHv (ORCPT
+        id S964951AbeFGPCn (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:02:43 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41452 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935115AbeFGPCj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 13:07:51 -0400
-Received: by mail-oi0-f65.google.com with SMTP id t22-v6so9297592oih.6;
-        Thu, 07 Jun 2018 10:07:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Y1RsjnLjby4Eqik7xxvBqZDtpZ5upwG00JxIDEsmRr8=;
-        b=eyPrZcqgDPBtT8W3YIJx0Lb6qLuYBqeBV6BhN/SVu1EEvq1VtRwg6UDAlRVIbWnBDd
-         wM/BK+VR3WcUwrPFVyaeNo0lZDn9HTNTA39ge76r0dOUw9ZpZnzFX3pOR9o8fLmuCc8W
-         dutNwsgf4+t58DZ7NxtlUBt2G5j/79u324SMROWhK5JPxM+ckdmrtbq1hjG0LHhsiJpz
-         DtN4tBHNbHMPlxj5hok2wuPsPJVCMY+07SY2zrrE+GPCgm+v2qGMilksU8oPzZXnBazD
-         9SPLVH9tE3tOdBT5DVFeoNjEmOVvO0xgS6srZhqzxYHBdr4BPdxcGjqHQ3300+SSEwvR
-         zLiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Y1RsjnLjby4Eqik7xxvBqZDtpZ5upwG00JxIDEsmRr8=;
-        b=Vp3LQOExX1QZszG536uRVyHNd2/1A2HZbbIpIddo6+DWyKnLigmcj1KPZphxi/TUeY
-         piyh029kImOaKBtq3x0Ra8TEZqq/EztRwI7McDKQhNOL3xWZO1fho+hinPiCFSoFv4zX
-         dUnbkytj5j4/RQ34bsE65uvjdETryh5vWPbVlefayJDscnyWS2oDEpA1vwhV8IxsdeQn
-         HT0oSoBEkglkfauKU5ygg+Chu46sDnTwrLWy+Q5M84HaEsE73a6xQgkBTQH3w2pYofQ1
-         KUjjwq92PLs8twqY7KbBK6/lBLv4kIHhMbVuec/YPjxqCm27VuLbTMJ6a6hBbUZnEH62
-         z6ag==
-X-Gm-Message-State: APt69E19u7WHjk3oWoxZhAAaELdU2xX8AGOM/cjAwa4L/Bb7+80aNpL7
-        RVavh6FZI/1kAE32N16Vby18E2AaB+OmIwilxVA=
-X-Google-Smtp-Source: ADUXVKIzd4P0CUnCP0mCz/6eFOzc+PYAj6sVyKNgci3FrbEYqVLmxdessr333tTiRvJE5bdJonyyjKHRXtvG6AtrNWk=
-X-Received: by 2002:aca:f244:: with SMTP id q65-v6mr1457235oih.71.1528391270704;
- Thu, 07 Jun 2018 10:07:50 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a9d:1049:0:0:0:0:0 with HTTP; Thu, 7 Jun 2018 10:07:50 -0700 (PDT)
-In-Reply-To: <b31ca3ff50566c193003614d0bbf5e0a0e95901c.1528390418.git.leonard.crestez@nxp.com>
-References: <b31ca3ff50566c193003614d0bbf5e0a0e95901c.1528390418.git.leonard.crestez@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Thu, 7 Jun 2018 14:07:50 -0300
-Message-ID: <CAOMZO5Czf1bO7vJZ1UG46DyVhzApqS82GFw+NFm_HN5tjD=xoQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ARM: dts: imx6qdl-sabreauto: Add sensors
-To: Leonard Crestez <leonard.crestez@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Fugang Duan <fugang.duan@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
+        Thu, 7 Jun 2018 11:02:39 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbx-0005Zj-2f; Thu, 07 Jun 2018 15:09:57 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvaz-0002k7-19; Thu, 07 Jun 2018 15:08:57 +0100
 Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, arjan.van.de.ven@intel.com,
+        dave.hansen@intel.com, rkrcmar@redhat.com, karahmed@amazon.de,
+        kvm@vger.kernel.org, "Thomas Gleixner" <tglx@linutronix.de>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        pbonzini@redhat.com, "Ingo Molnar" <mingo@kernel.org>,
+        "David Woodhouse" <dwmw@amazon.co.uk>, bp@alien8.de,
+        "Peter Zijlstra" <peterz@infradead.org>, jmattson@google.com
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.211979700@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 050/410] x86/speculation: Use IBRS if available
+ before calling into firmware
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Leonard,
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-On Thu, Jun 7, 2018 at 2:00 PM, Leonard Crestez <leonard.crestez@nxp.com> wrote:
+------------------
 
-> +
-> +                       isl29023@44 {
+From: David Woodhouse <dwmw@amazon.co.uk>
 
-According to Devicetree Specification v0.2 document:
+commit dd84441a797150dcc49298ec95c459a8891d8bb1 upstream.
 
-"The name of a node should be somewhat generic, reflecting the function
-of the device and not its precise programming model."
+Retpoline means the kernel is safe because it has no indirect branches.
+But firmware isn't, so use IBRS for firmware calls if it's available.
 
-So you could write:
+Block preemption while IBRS is set, although in practice the call sites
+already had to be doing that.
 
-light-sensor@44
+Ignore hpwdt.c for now. It's taking spinlocks and calling into firmware
+code, from an NMI handler. I don't want to touch that with a bargepole.
 
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: arjan.van.de.ven@intel.com
+Cc: bp@alien8.de
+Cc: dave.hansen@intel.com
+Cc: jmattson@google.com
+Cc: karahmed@amazon.de
+Cc: kvm@vger.kernel.org
+Cc: pbonzini@redhat.com
+Cc: rkrcmar@redhat.com
+Link: http://lkml.kernel.org/r/1519037457-7643-2-git-send-email-dwmw@amazon.co.uk
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+[bwh: Backported to 3.16:
+ - x86 defines {,__}efi_call_virt() itself; update those definitions
+ - Renumber the feature bit
+ - Adjust context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ arch/x86/include/asm/apm.h           |  6 +++++
+ arch/x86/include/asm/cpufeature.h    |  1 +
+ arch/x86/include/asm/efi.h           |  8 ++++++
+ arch/x86/include/asm/nospec-branch.h | 39 +++++++++++++++++++++-------
+ arch/x86/kernel/cpu/bugs.c           | 12 ++++++++-
+ 5 files changed, 56 insertions(+), 10 deletions(-)
 
-> +                               compatible = "isil,isl29023";
-> +                               reg = <0x44>;
-> +                               interrupt-parent = <&gpio5>;
-> +                               interrupts = <17 IRQ_TYPE_EDGE_FALLING>;
-> +                       };
-> +
-> +                       mag3110@0e {
-
-No leading zero in unit address, please.
-
-Building with W=1 will give you warnings about it.
-
-magnetometer@e
-
-> +                               compatible = "fsl,mag3110";
-> +                               reg = <0x0e>;
-> +                               interrupt-parent = <&gpio2>;
-> +                               interrupts = <29 IRQ_TYPE_EDGE_RISING>;
-> +                       };
-> +
-> +                       mma8451@1c {
-
-accelerometer@1c
+--- a/arch/x86/include/asm/apm.h
++++ b/arch/x86/include/asm/apm.h
+@@ -6,6 +6,8 @@
+ #ifndef _ASM_X86_MACH_DEFAULT_APM_H
+ #define _ASM_X86_MACH_DEFAULT_APM_H
+ 
++#include <asm/nospec-branch.h>
++
+ #ifdef APM_ZERO_SEGS
+ #	define APM_DO_ZERO_SEGS \
+ 		"pushl %%ds\n\t" \
+@@ -31,6 +33,7 @@ static inline void apm_bios_call_asm(u32
+ 	 * N.B. We do NOT need a cld after the BIOS call
+ 	 * because we always save and restore the flags.
+ 	 */
++	firmware_restrict_branch_speculation_start();
+ 	__asm__ __volatile__(APM_DO_ZERO_SEGS
+ 		"pushl %%edi\n\t"
+ 		"pushl %%ebp\n\t"
+@@ -43,6 +46,7 @@ static inline void apm_bios_call_asm(u32
+ 		  "=S" (*esi)
+ 		: "a" (func), "b" (ebx_in), "c" (ecx_in)
+ 		: "memory", "cc");
++	firmware_restrict_branch_speculation_end();
+ }
+ 
+ static inline u8 apm_bios_call_simple_asm(u32 func, u32 ebx_in,
+@@ -55,6 +59,7 @@ static inline u8 apm_bios_call_simple_as
+ 	 * N.B. We do NOT need a cld after the BIOS call
+ 	 * because we always save and restore the flags.
+ 	 */
++	firmware_restrict_branch_speculation_start();
+ 	__asm__ __volatile__(APM_DO_ZERO_SEGS
+ 		"pushl %%edi\n\t"
+ 		"pushl %%ebp\n\t"
+@@ -67,6 +72,7 @@ static inline u8 apm_bios_call_simple_as
+ 		  "=S" (si)
+ 		: "a" (func), "b" (ebx_in), "c" (ecx_in)
+ 		: "memory", "cc");
++	firmware_restrict_branch_speculation_end();
+ 	return error;
+ }
+ 
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -190,6 +190,7 @@
+ #define X86_FEATURE_RSB_CTXSW	(7*32+11) /* "" Fill RSB on context switches */
+ 
+ #define X86_FEATURE_USE_IBPB	(7*32+12) /* "" Indirect Branch Prediction Barrier enabled */
++#define X86_FEATURE_USE_IBRS_FW (7*32+13) /* "" Use IBRS during runtime firmware calls */
+ 
+ #define X86_FEATURE_RETPOLINE	(7*32+29) /* "" Generic Retpoline mitigation for Spectre variant 2 */
+ #define X86_FEATURE_RETPOLINE_AMD (7*32+30) /* "" AMD Retpoline mitigation for Spectre variant 2 */
+--- a/arch/x86/include/asm/efi.h
++++ b/arch/x86/include/asm/efi.h
+@@ -2,6 +2,8 @@
+ #define _ASM_X86_EFI_H
+ 
+ #include <asm/i387.h>
++#include <asm/nospec-branch.h>
++
+ /*
+  * We map the EFI regions needed for runtime services non-contiguously,
+  * with preserved alignment on virtual addresses starting from -4G down
+@@ -37,8 +39,10 @@ extern unsigned long asmlinkage efi_call
+ ({									\
+ 	efi_status_t __s;						\
+ 	kernel_fpu_begin();						\
++	firmware_restrict_branch_speculation_start();			\
+ 	__s = ((efi_##f##_t __attribute__((regparm(0)))*)		\
+ 		efi.systab->runtime->f)(args);				\
++	firmware_restrict_branch_speculation_end();			\
+ 	kernel_fpu_end();						\
+ 	__s;								\
+ })
+@@ -47,8 +51,10 @@ extern unsigned long asmlinkage efi_call
+ #define __efi_call_virt(f, args...) \
+ ({									\
+ 	kernel_fpu_begin();						\
++	firmware_restrict_branch_speculation_start();			\
+ 	((efi_##f##_t __attribute__((regparm(0)))*)			\
+ 		efi.systab->runtime->f)(args);				\
++	firmware_restrict_branch_speculation_end();			\
+ 	kernel_fpu_end();						\
+ })
+ 
+@@ -69,7 +75,9 @@ extern u64 asmlinkage efi_call(void *fp,
+ 	efi_sync_low_kernel_mappings();					\
+ 	preempt_disable();						\
+ 	__kernel_fpu_begin();						\
++	firmware_restrict_branch_speculation_start();			\
+ 	__s = efi_call((void *)efi.systab->runtime->f, __VA_ARGS__);	\
++	firmware_restrict_branch_speculation_end();			\
+ 	__kernel_fpu_end();						\
+ 	preempt_enable();						\
+ 	__s;								\
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -194,17 +194,38 @@ static inline void vmexit_fill_RSB(void)
+ #endif
+ }
+ 
++#define alternative_msr_write(_msr, _val, _feature)		\
++	asm volatile(ALTERNATIVE("",				\
++				 "movl %[msr], %%ecx\n\t"	\
++				 "movl %[val], %%eax\n\t"	\
++				 "movl $0, %%edx\n\t"		\
++				 "wrmsr",			\
++				 _feature)			\
++		     : : [msr] "i" (_msr), [val] "i" (_val)	\
++		     : "eax", "ecx", "edx", "memory")
++
+ static inline void indirect_branch_prediction_barrier(void)
+ {
+-	asm volatile(ALTERNATIVE("",
+-				 "movl %[msr], %%ecx\n\t"
+-				 "movl %[val], %%eax\n\t"
+-				 "movl $0, %%edx\n\t"
+-				 "wrmsr",
+-				 X86_FEATURE_USE_IBPB)
+-		     : : [msr] "i" (MSR_IA32_PRED_CMD),
+-			 [val] "i" (PRED_CMD_IBPB)
+-		     : "eax", "ecx", "edx", "memory");
++	alternative_msr_write(MSR_IA32_PRED_CMD, PRED_CMD_IBPB,
++			      X86_FEATURE_USE_IBPB);
++}
++
++/*
++ * With retpoline, we must use IBRS to restrict branch prediction
++ * before calling into firmware.
++ */
++static inline void firmware_restrict_branch_speculation_start(void)
++{
++	preempt_disable();
++	alternative_msr_write(MSR_IA32_SPEC_CTRL, SPEC_CTRL_IBRS,
++			      X86_FEATURE_USE_IBRS_FW);
++}
++
++static inline void firmware_restrict_branch_speculation_end(void)
++{
++	alternative_msr_write(MSR_IA32_SPEC_CTRL, 0,
++			      X86_FEATURE_USE_IBRS_FW);
++	preempt_enable();
+ }
+ 
+ #endif /* __ASSEMBLY__ */
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -364,6 +364,15 @@ retpoline_auto:
+ 		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
+ 		pr_info("Enabling Indirect Branch Prediction Barrier\n");
+ 	}
++
++	/*
++	 * Retpoline means the kernel is safe because it has no indirect
++	 * branches. But firmware isn't, so use IBRS to protect that.
++	 */
++	if (boot_cpu_has(X86_FEATURE_IBRS)) {
++		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
++		pr_info("Enabling Restricted Speculation for firmware calls\n");
++	}
+ }
+ 
+ #undef pr_fmt
+@@ -393,8 +402,9 @@ ssize_t cpu_show_spectre_v2(struct devic
+ 	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
+ 		return sprintf(buf, "Not affected\n");
+ 
+-	return sprintf(buf, "%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
++	return sprintf(buf, "%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
+ 		       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
++		       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
+ 		       spectre_v2_module_string());
+ }
+ #endif
