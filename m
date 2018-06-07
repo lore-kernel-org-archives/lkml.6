@@ -1,58 +1,305 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id NkBpHq+7HFvFVwAAmS7hNA
-	; Sun, 10 Jun 2018 05:49:58 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id TQ97LVTjGFuFGAAAmS7hNA
+	; Thu, 07 Jun 2018 07:55:13 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id C9D6E60795; Sun, 10 Jun 2018 05:49:58 +0000 (UTC)
+	id 91C4D608CA; Thu,  7 Jun 2018 07:55:13 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D0836602FC;
-	Sun, 10 Jun 2018 05:49:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D0836602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id A375160452;
+	Thu,  7 Jun 2018 07:55:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A375160452
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753719AbeFJFtx (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sun, 10 Jun 2018 01:49:53 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:54432 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751542AbeFJFtv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 01:49:51 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fRtDy-00047R-RL; Sun, 10 Jun 2018 05:49:17 +0000
-Date: Sun, 10 Jun 2018 06:49:10 +0100
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Miklos Szeredi <mszeredi@redhat.com>
-Cc: linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/11] vfs: factor out inode_insert5()
-Message-ID: <20180610054902.GQ30522@ZenIV.linux.org.uk>
-References: <20180529144143.16378-1-mszeredi@redhat.com>
- <20180529144143.16378-10-mszeredi@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180529144143.16378-10-mszeredi@redhat.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S1753542AbeFGHzI (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 03:55:08 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55454 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753121AbeFGHzD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 03:55:03 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3596A40704A1;
+        Thu,  7 Jun 2018 07:55:03 +0000 (UTC)
+Received: from plouf.banquise.eu.com (ovpn-116-40.ams2.redhat.com [10.36.116.40])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E517C2026DEF;
+        Thu,  7 Jun 2018 07:55:01 +0000 (UTC)
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+To: Jiri Kosina <jikos@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Mario.Limonciello@dell.com,
+        Peter Hutterer <peter.hutterer@who-t.net>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Subject: [PATCH v2 06/13] HID: multitouch: ditch mt_report_id
+Date: Thu,  7 Jun 2018 09:54:41 +0200
+Message-Id: <20180607075448.5706-7-benjamin.tissoires@redhat.com>
+In-Reply-To: <20180607075448.5706-1-benjamin.tissoires@redhat.com>
+References: <20180607075448.5706-1-benjamin.tissoires@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 07 Jun 2018 07:55:03 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 07 Jun 2018 07:55:03 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'benjamin.tissoires@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 04:41:41PM +0200, Miklos Szeredi wrote:
-> From: Miklos Szeredi <miklos@szeredi.hu>
-> 
-> Split out common helper for race free insertion of an already allocated
-> inode into the cache.  Use this from iget5_locked() and
-> insert_inode_locked4().  Make iget5_locked() use new_inode()/iput() instead
-> of alloc_inode()/destroy_inode() directly.
+Now that the driver can handle more than one multitouch collection in
+a single HID device, ditch the last bit that contains us to use only
+one mt collection.
 
-... thus hitting the sucker with ->evict_inode(), in condition that is quite
-likely to be unfit to be seen by that.
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
-NAK.
+---
+
+no changes in v2
+---
+ drivers/hid/hid-multitouch.c | 126 ++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 94 insertions(+), 32 deletions(-)
+
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index beaac36f61a7..a2c10fc62ef2 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -147,6 +147,13 @@ struct mt_fields {
+ 	unsigned int length;
+ };
+ 
++struct mt_report_data {
++	struct list_head list;
++	struct hid_report *report;
++	struct mt_application *application;
++	bool is_mt_collection;
++};
++
+ struct mt_device {
+ 	struct mt_class mtclass;	/* our mt device class */
+ 	struct timer_list release_timer;	/* to release sticky fingers */
+@@ -154,13 +161,13 @@ struct mt_device {
+ 	struct mt_fields *fields;	/* temporary placeholder for storing the
+ 					   multitouch fields */
+ 	unsigned long mt_io_flags;	/* mt flags (MT_IO_FLAGS_*) */
+-	unsigned mt_report_id;	/* the report ID of the multitouch device */
+ 	__u8 inputmode_value;	/* InputMode HID feature value */
+ 	__u8 maxcontacts;
+ 	bool is_buttonpad;	/* is this device a button pad? */
+ 	bool serial_maybe;	/* need to check for serial protocol */
+ 
+ 	struct list_head applications;
++	struct list_head reports;
+ };
+ 
+ static void mt_post_parse_default_settings(struct mt_device *td,
+@@ -526,6 +533,60 @@ static struct mt_application *mt_find_application(struct mt_device *td,
+ 	return mt_application;
+ }
+ 
++static struct mt_report_data *mt_allocate_report_data(struct mt_device *td,
++						      struct hid_report *report)
++{
++	struct mt_report_data *rdata;
++	struct hid_field *field;
++	int r, n;
++
++	rdata = devm_kzalloc(&td->hdev->dev, sizeof(*rdata), GFP_KERNEL);
++	if (!rdata)
++		return NULL;
++
++	rdata->report = report;
++	rdata->application = mt_find_application(td, report->application);
++
++	if (!rdata->application) {
++		devm_kfree(&td->hdev->dev, rdata);
++		return NULL;
++	}
++
++	for (r = 0; r < report->maxfield; r++) {
++		field = report->field[r];
++
++		if (!(HID_MAIN_ITEM_VARIABLE & field->flags))
++			continue;
++
++		for (n = 0; n < field->report_count; n++) {
++			if (field->usage[n].hid == HID_DG_CONTACTID)
++				rdata->is_mt_collection = true;
++		}
++	}
++
++	list_add_tail(&rdata->list, &td->reports);
++
++	return rdata;
++}
++
++static struct mt_report_data *mt_find_report_data(struct mt_device *td,
++						  struct hid_report *report)
++{
++	struct mt_report_data *tmp, *rdata = NULL;
++
++	list_for_each_entry(tmp, &td->reports, list) {
++		if (report == tmp->report) {
++			rdata = tmp;
++			break;
++		}
++	}
++
++	if (!rdata)
++		rdata = mt_allocate_report_data(td, report);
++
++	return rdata;
++}
++
+ static void mt_store_field(struct hid_usage *usage, struct mt_device *td,
+ 		struct hid_input *hi)
+ {
+@@ -614,7 +675,6 @@ static int mt_touch_input_mapping(struct hid_device *hdev, struct hid_input *hi,
+ 		case HID_DG_CONTACTID:
+ 			mt_store_field(usage, td, hi);
+ 			app->touches_by_report++;
+-			td->mt_report_id = field->report->id;
+ 			return 1;
+ 		case HID_DG_WIDTH:
+ 			hid_map_usage(hi, usage, bit, max,
+@@ -979,10 +1039,12 @@ static void mt_process_mt_event(struct hid_device *hid, struct hid_field *field,
+ 	}
+ }
+ 
+-static void mt_touch_report(struct hid_device *hid, struct hid_report *report)
++static void mt_touch_report(struct hid_device *hid,
++			    struct mt_report_data *rdata)
+ {
+ 	struct mt_device *td = hid_get_drvdata(hid);
+-	struct mt_application *app;
++	struct hid_report *report = rdata->report;
++	struct mt_application *app = rdata->application;
+ 	struct hid_field *field;
+ 	bool first_packet;
+ 	unsigned count;
+@@ -994,11 +1056,6 @@ static void mt_touch_report(struct hid_device *hid, struct hid_report *report)
+ 	if (test_and_set_bit(MT_IO_FLAGS_RUNNING, &td->mt_io_flags))
+ 		return;
+ 
+-	app = mt_find_application(td, report->application);
+-
+-	if (!app)
+-		return;
+-
+ 	/*
+ 	 * Includes multi-packet support where subsequent
+ 	 * packets are sent with zero contactcount.
+@@ -1119,8 +1176,15 @@ static int mt_input_mapping(struct hid_device *hdev, struct hid_input *hi,
+ {
+ 	struct mt_device *td = hid_get_drvdata(hdev);
+ 	struct mt_application *application;
++	struct mt_report_data *rdata;
++
++	rdata = mt_find_report_data(td, field->report);
++	if (!rdata) {
++		hid_err(hdev, "failed to allocate data for report\n");
++		return 0;
++	}
+ 
+-	application = mt_find_application(td, field->application);
++	application = rdata->application;
+ 
+ 	/*
+ 	 * If mtclass.export_all_inputs is not set, only map fields from
+@@ -1163,22 +1227,9 @@ static int mt_input_mapping(struct hid_device *hdev, struct hid_input *hi,
+ 		return 1;
+ 	}
+ 
+-	/*
+-	 * some egalax touchscreens have "application == HID_DG_TOUCHSCREEN"
+-	 * for the stylus.
+-	 * The check for mt_report_id ensures we don't process
+-	 * HID_DG_CONTACTCOUNT from the pen report as it is outside the physical
+-	 * collection, but within the report ID.
+-	 */
+-	if (field->physical == HID_DG_STYLUS)
+-		return 0;
+-	else if ((field->physical == 0) &&
+-		 (field->report->id != td->mt_report_id) &&
+-		 (td->mt_report_id != -1))
+-		return 0;
+-
+-	if (field->application == HID_DG_TOUCHSCREEN ||
+-	    field->application == HID_DG_TOUCHPAD)
++	if (rdata->is_mt_collection &&
++	    (field->application == HID_DG_TOUCHSCREEN ||
++	     field->application == HID_DG_TOUCHPAD))
+ 		return mt_touch_input_mapping(hdev, hi, field, usage, bit, max,
+ 					      application);
+ 
+@@ -1211,8 +1262,10 @@ static int mt_event(struct hid_device *hid, struct hid_field *field,
+ 				struct hid_usage *usage, __s32 value)
+ {
+ 	struct mt_device *td = hid_get_drvdata(hid);
++	struct mt_report_data *rdata;
+ 
+-	if (field->report->id == td->mt_report_id)
++	rdata = mt_find_report_data(td, field->report);
++	if (rdata && rdata->is_mt_collection)
+ 		return mt_touch_event(hid, field, usage, value);
+ 
+ 	return 0;
+@@ -1222,12 +1275,14 @@ static void mt_report(struct hid_device *hid, struct hid_report *report)
+ {
+ 	struct mt_device *td = hid_get_drvdata(hid);
+ 	struct hid_field *field = report->field[0];
++	struct mt_report_data *rdata;
+ 
+ 	if (!(hid->claimed & HID_CLAIMED_INPUT))
+ 		return;
+ 
+-	if (report->id == td->mt_report_id)
+-		return mt_touch_report(hid, report);
++	rdata = mt_find_report_data(td, report);
++	if (rdata && rdata->is_mt_collection)
++		return mt_touch_report(hid, rdata);
+ 
+ 	if (field && field->hidinput && field->hidinput->input)
+ 		input_sync(field->hidinput->input);
+@@ -1368,15 +1423,22 @@ static int mt_input_configured(struct hid_device *hdev, struct hid_input *hi)
+ 	char *name;
+ 	const char *suffix = NULL;
+ 	unsigned int application = 0;
++	struct mt_report_data *rdata;
+ 	struct mt_application *mt_application = NULL;
+ 	struct hid_report *report;
+ 	int ret;
+ 
+ 	list_for_each_entry(report, &hi->reports, hidinput_list) {
+ 		application = report->application;
+-		mt_application = mt_find_application(td, application);
++		rdata = mt_find_report_data(td, report);
++		if (!rdata) {
++			hid_err(hdev, "failed to allocate data for report\n");
++			return -ENOMEM;
++		}
++
++		mt_application = rdata->application;
+ 
+-		if (report->id == td->mt_report_id) {
++		if (rdata->is_mt_collection) {
+ 			ret = mt_touch_input_configured(hdev, hi,
+ 							mt_application);
+ 			if (ret)
+@@ -1529,10 +1591,10 @@ static int mt_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ 	td->hdev = hdev;
+ 	td->mtclass = *mtclass;
+ 	td->inputmode_value = MT_INPUTMODE_TOUCHSCREEN;
+-	td->mt_report_id = -1;
+ 	hid_set_drvdata(hdev, td);
+ 
+ 	INIT_LIST_HEAD(&td->applications);
++	INIT_LIST_HEAD(&td->reports);
+ 
+ 	td->fields = devm_kzalloc(&hdev->dev, sizeof(struct mt_fields),
+ 				  GFP_KERNEL);
+-- 
+2.14.3
