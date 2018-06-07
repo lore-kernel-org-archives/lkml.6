@@ -1,105 +1,175 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id JyYKIfs4HlucOAAAmS7hNA
-	; Mon, 11 Jun 2018 08:55:25 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id rc7aEhwqGVvwEwAAmS7hNA
+	; Thu, 07 Jun 2018 12:53:36 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id C93046074D; Mon, 11 Jun 2018 08:55:25 +0000 (UTC)
+	id 2E214608BA; Thu,  7 Jun 2018 12:53:36 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 4C7AA60385;
-	Mon, 11 Jun 2018 08:55:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4C7AA60385
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 9128560115;
+	Thu,  7 Jun 2018 12:53:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9128560115
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932628AbeFKIzX (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 04:55:23 -0400
-Received: from mga01.intel.com ([192.55.52.88]:19393 "EHLO mga01.intel.com"
+        id S932630AbeFGMxd convert rfc822-to-8bit (ORCPT
+        <rfc822;monsieuricon@codeaurora.org> + 25 others);
+        Thu, 7 Jun 2018 08:53:33 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:42746 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932272AbeFKIzV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 04:55:21 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2018 01:55:21 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,501,1520924400";
-   d="scan'208";a="58214524"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by orsmga003.jf.intel.com with ESMTP; 11 Jun 2018 01:55:18 -0700
-Message-ID: <f05a1aa6e525ba26883d33fd40b85633442a83e1.camel@linux.intel.com>
-Subject: Re: [PATCH] acpi/x86: enable touchscreen on Dell Venue Pro 7139
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Tristian Celestin <tristiancelestin@fastmail.com>,
-        rjw@rjwysocki.net
-Cc: lenb@kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Mario Limonciello <mario_limonciello@dell.com>
-Date: Mon, 11 Jun 2018 11:55:18 +0300
-In-Reply-To: <1528582686-18577-1-git-send-email-tristiancelestin@fastmail.com>
-References: <1528582686-18577-1-git-send-email-tristiancelestin@fastmail.com>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S932100AbeFGMx3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 08:53:29 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 3D28F20717; Thu,  7 Jun 2018 14:53:27 +0200 (CEST)
+Received: from xps13 (AAubervilliers-681-1-128-7.w90-88.abo.wanadoo.fr [90.88.9.7])
+        by mail.bootlin.com (Postfix) with ESMTPSA id D803F20012;
+        Thu,  7 Jun 2018 14:53:26 +0200 (CEST)
+Date: Thu, 7 Jun 2018 14:53:26 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, Andy Gross <andy.gross@linaro.org>,
+        Archit Taneja <architt@codeaurora.org>
+Subject: Re: [PATCH v3 13/16] mtd: rawnand: qcom: minor code reorganization
+ for bad block check
+Message-ID: <20180607145326.339170fd@xps13>
+In-Reply-To: <53caff8799d30b6a81ac10f63a7c56c4@codeaurora.org>
+References: <1527250904-21988-1-git-send-email-absahu@codeaurora.org>
+        <1527250904-21988-14-git-send-email-absahu@codeaurora.org>
+        <20180526104629.74315561@xps13>
+        <90ae248edf8a06a1d35e2da458f75af5@codeaurora.org>
+        <20180528090352.254022ed@xps13>
+        <53caff8799d30b6a81ac10f63a7c56c4@codeaurora.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-06-09 at 18:18 -0400, Tristian Celestin wrote:
-> Permanently enable the SYNA7500 touchscreen device on the Dell
-> Venue Pro 7139. The DSDT hides the touchscreen ACPI device on
-> the 7139 in the same fashion as the 7130, and needs to
-> be enabled in the same way.
+Hi Abhishek,
+
+On Mon, 28 May 2018 15:40:52 +0530, Abhishek Sahu
+<absahu@codeaurora.org> wrote:
+
+> On 2018-05-28 12:33, Miquel Raynal wrote:
+> > Hi Abhishek,  
+> > >> >>  /* implements ecc->read_page() */  
+> >> >>  static int qcom_nandc_read_page(struct mtd_info *mtd, struct >> nand_chip *chip,
+> >> >>  				uint8_t *buf, int oob_required, int page)
+> >> >> @@ -2118,6 +2083,7 @@ static int qcom_nandc_block_bad(struct mtd_info >> *mtd, loff_t ofs)
+> >> >>  	struct nand_ecc_ctrl *ecc = &chip->ecc;
+> >> >>  	int page, ret, bbpos, bad = 0;
+> >> >>  	u32 flash_status;
+> >> >> +	u8 *bbm_bytes_buf = chip->data_buf;  
+> >> >> >>  	page = (int)(ofs >> chip->page_shift) & chip->pagemask;
+> >> >> >> @@ -2128,11 +2094,31 @@ static int qcom_nandc_block_bad(struct >> mtd_info *mtd, loff_t ofs)  
+> >> >>  	 * that contains the BBM
+> >> >>  	 */
+> >> >>  	host->use_ecc = false;
+> >> >> +	bbpos = mtd->writesize - host->cw_size * (ecc->steps - 1);
+> >> > > Are we sure there is no layout with only 1 step?
+> >> >>   All the layouts are such that, the BBM will come in  
+> >>   first byte of spare area.  
+> >> >>   For 4 bit ECC, the cw_size is 528 so for 2K page
+> >> >>    2048 - 528 * 3 = 464  
+> > > My question was more about small page NANDs. But I suppose it works  
+> > too if ecc->steps == 1.
+> >   
+>   Correct Miquel.
+> 
+> >> >>   So for last CW, the 464 is BBM (i.e 2048th byte) in  
+> >>   full page.  
+> >> >> > >> >>  	clear_bam_transaction(nandc);  
+> >> >> -	ret = copy_last_cw(host, page);
+> >> >> -	if (ret)
+> >> >> +	clear_read_regs(nandc);
+> >> >> +
+> >> >> +	set_address(host, host->cw_size * (ecc->steps - 1), page);
+> >> >> +	update_rw_regs(host, 1, true);
+> >> >> +
+> >> >> +	/*
+> >> >> +	 * The last codeword data will be copied from NAND device to NAND
+> >> >> +	 * controller internal HW buffer. Copy only required BBM size bytes
+> >> >> +	 * from this HW buffer to bbm_bytes_buf which is present at
+> >> >> +	 * bbpos offset.
+> >> >> +	 */
+> >> >> +	nandc_set_read_loc(nandc, 0, bbpos, host->bbm_size, 1);
+> >> >> +	config_nand_single_cw_page_read(nandc);
+> >> >> +	read_data_dma(nandc, FLASH_BUF_ACC + bbpos, bbm_bytes_buf,
+> >> >> +		      host->bbm_size, 0);
+> >> >> +
+> >> >> +	ret = submit_descs(nandc);
+> >> >> +	free_descs(nandc);
+> >> >> +	if (ret) {
+> >> >> +		dev_err(nandc->dev, "failed to copy bad block bytes\n");
+> >> >>  		goto err;
+> >> >> +	}  
+> >> >> >>  	flash_status = le32_to_cpu(nandc->reg_read_buf[0]);
+> >> >> >> @@ -2141,12 +2127,10 @@ static int qcom_nandc_block_bad(struct >> mtd_info *mtd, loff_t ofs)  
+> >> >>  		goto err;
+> >> >>  	}  
+> >> >> >> -	bbpos = mtd->writesize - host->cw_size * (ecc->steps - 1);  
+> >> >> -
+> >> >> -	bad = nandc->data_buffer[bbpos] != 0xff;
+> >> >> +	bad = bbm_bytes_buf[0] != 0xff;
+> >> > > This is suspect as it still points to the beginning of the data buffer.  
+> >> > Can you please check you did not meant bbm_bytes_buf[bbpos]?
+> >> >  
+> >>   The main thing here is
+> >>   nandc_set_read_loc(nandc, 0, bbpos, host->bbm_size, 1);  
+> >> >>   After reading one complete CW from NAND, the data will be still  
+> >>   in NAND HW buffer.  
+> >> >>   The above register tells that we need to read data from  
+> >>   bbpos of size host->bbm_size (which is 1 byte for 8 bus witdh
+> >>   and 2 byte for 16 bus width) in bbm_bytes_buf.
+> > > I see: idx 0 in bbm_bytes_buf is the data at offset bbpos. Then  
+> > it's ok.  
+> > >> >>   So bbm_bytes_buf[0] will contain the BBM first byte.  
+> >>   and bbm_bytes_buf[1] will contain the BBM second byte.  
+> >> >>   Regards,  
+> >>   Abhishek  
+> >> >> >> >>  	if (chip->options & NAND_BUSWIDTH_16)  
+> >> >> -		bad = bad || (nandc->data_buffer[bbpos + 1] != 0xff);
+> >> >> +		bad = bad || (bbm_bytes_buf[1] != 0xff);  
+> > > Sorry, my mistake, I did not see the above line.
+> > > However, technically, the BBM could be located in the first, second or  
+> > last page of the block. You should check the three of them are 0xFF
+> > before declaring the block is not bad.  
+> > > The more I look at the function, the more I wonder if you actually need  
+> > it. Why does the generic nand_block_bad() implementation in the core
+> > do not fit?  
+> 
+>   The BBM bytes can be accessed in raw mode only for QCOM NAND
+>   Contoller. We started with following patch for initial patches
+> 
+>   http://patchwork.ozlabs.org/patch/508565/
+> 
+>   I am also not very much sure, how can we go ahead now.
+>   Ideally we need to use generic function only which
+>   requires raw_read.
 > 
 
-Cc: Mario.
+I see, thanks for pointing this thread.
 
-> Signed-off-by: Tristian Celestin <tristiancelestin@fastmail.com>
-> ---
->  drivers/acpi/x86/utils.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/acpi/x86/utils.c b/drivers/acpi/x86/utils.c
-> index ec5b0f1..3a13b2a 100644
-> --- a/drivers/acpi/x86/utils.c
-> +++ b/drivers/acpi/x86/utils.c
-> @@ -62,14 +62,20 @@ struct always_present_id {
->  	 */
->  	ENTRY("INT0002", "1", ICPU(INTEL_FAM6_ATOM_AIRMONT), {}),
->  	/*
-> -	 * On the Dell Venue 11 Pro 7130 the DSDT hides the
-> touchscreen ACPI
-> -	 * device until a certain time after
-> _SB.PCI0.GFX0.LCD.LCD1._ON gets
-> -	 * called has passed *and* _STA has been called at least 3
-> times since.
-> +	 * On the Dell Venue 11 Pro 7130 and 7139, the DSDT hides
-> +	 * the touchscreen ACPI device until a certain time
-> +	 * after _SB.PCI0.GFX0.LCD.LCD1._ON gets called has passed
-> +	 * *and* _STA has been called at least 3 times since.
->  	 */
->  	ENTRY("SYNA7500", "1", ICPU(INTEL_FAM6_HASWELL_ULT), {
->  		DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
->  		DMI_MATCH(DMI_PRODUCT_NAME, "Venue 11 Pro 7130"),
->  	      }),
-> +	ENTRY("SYNA7500", "1", ICPU(INTEL_FAM6_HASWELL_ULT), {
-> +		DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-> +		DMI_MATCH(DMI_PRODUCT_NAME, "Venue 11 Pro 7139"),
-> +	      }),
-> +
->  	/*
->  	 * The GPD win BIOS dated 20170221 has disabled the
-> accelerometer, the
->  	 * drivers sometimes cause crashes under Windows and this is
-> how the
+Well for now then let's keep our driver-specific implementation.
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+I will just ask you to do a consistent check as requested above (you
+can copy code from the core) and add a comment above this function
+explaining why it is needed (what you just told me).
+
+Thanks,
+Miquèl
