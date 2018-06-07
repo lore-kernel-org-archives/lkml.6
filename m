@@ -1,119 +1,190 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 0s9fNo5WHlvXdQAAmS7hNA
-	; Mon, 11 Jun 2018 11:01:34 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id CVUTONRcGVvpJwAAmS7hNA
+	; Thu, 07 Jun 2018 16:27:00 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D081B607E4; Mon, 11 Jun 2018 11:01:34 +0000 (UTC)
+	id CFF7F608C8; Thu,  7 Jun 2018 16:27:00 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 63E50601C3;
-	Mon, 11 Jun 2018 11:01:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 63E50601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by smtp.codeaurora.org (Postfix) with ESMTP id 42E966074D;
+	Thu,  7 Jun 2018 16:27:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 42E966074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932848AbeFKLBd (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 07:01:33 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:35129 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932263AbeFKLBb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 07:01:31 -0400
-Received: from weser.hi.pengutronix.de ([2001:67c:670:100:fa0f:41ff:fe58:4010])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1fSKZi-0004f0-BU; Mon, 11 Jun 2018 13:01:26 +0200
-Message-ID: <1528714877.2842.3.camel@pengutronix.de>
-Subject: Re: [PATCH v3 0/6] add virt-dma support for imx-sdma
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Robin Gong <yibin.gong@nxp.com>, vkoul@kernel.org,
-        s.hauer@pengutronix.de, dan.j.williams@intel.com
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com
-Date: Mon, 11 Jun 2018 13:01:17 +0200
-In-Reply-To: <1528729173-28684-1-git-send-email-yibin.gong@nxp.com>
-References: <1528729173-28684-1-git-send-email-yibin.gong@nxp.com>
+        id S1753864AbeFGQ06 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 12:26:58 -0400
+Received: from mga01.intel.com ([192.55.52.88]:23692 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753833AbeFGQ0z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 12:26:55 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 09:26:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,487,1520924400";
+   d="scan'208";a="65161441"
+Received: from 2b52.sc.intel.com (HELO [143.183.136.51]) ([143.183.136.51])
+  by orsmga002.jf.intel.com with ESMTP; 07 Jun 2018 09:26:53 -0700
+Message-ID: <1528388623.4636.19.camel@2b52.sc.intel.com>
+Subject: Re: [PATCH 1/9] x86/cet: Control protection exception handler
+From: Yu-cheng Yu <yu-cheng.yu@intel.com>
+To: Andy Lutomirski <luto@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        mike.kravetz@oracle.com
+Date: Thu, 07 Jun 2018 09:23:43 -0700
+In-Reply-To: <CALCETrVbQDyvgf5XE+a0UrTVMuhb2X=bSbp1BjGp2FAvbpSm-Q@mail.gmail.com>
+References: <20180607143705.3531-1-yu-cheng.yu@intel.com>
+         <20180607143705.3531-2-yu-cheng.yu@intel.com>
+         <CALCETrVbQDyvgf5XE+a0UrTVMuhb2X=bSbp1BjGp2FAvbpSm-Q@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:fa0f:41ff:fe58:4010
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
+On Thu, 2018-06-07 at 08:46 -0700, Andy Lutomirski wrote:
+> On Thu, Jun 7, 2018 at 7:40 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+> >
 
-this series breaks serial DMA for me. I wasn't able to dig in deeper
-yet. Please let me know if you can test/reproduce at your side, if not
-I'll try to find some time to collect some more debug info.
+...
 
-Regards,
-Lucas
+> > diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+> > index bef8e2b202a8..14b63ef0d7d8 100644
+> > --- a/arch/x86/entry/entry_32.S
+> > +++ b/arch/x86/entry/entry_32.S
+> > @@ -1070,6 +1070,11 @@ ENTRY(general_protection)
+> >         jmp     common_exception
+> >  END(general_protection)
+> >
+> > +ENTRY(control_protection)
+> > +       pushl   $do_control_protection
+> > +       jmp     common_exception
+> > +END(control_protection)
+> 
+> Ugh, you're seriously supporting this on 32-bit?  Please test double
+> fault handling very carefully -- the CET interaction with task
+> switches is so gross that I didn't even bother reading the spec except
+> to let the architects know that they were a but nuts to support it at
+> all.
+> 
 
-Am Montag, den 11.06.2018, 22:59 +0800 schrieb Robin Gong:
-> The legacy sdma driver has below limitations or drawbacks:
->   1. Hardcode the max BDs number as "PAGE_SIZE / sizeof(*)", and alloc
->      one page size for one channel regardless of only few BDs needed
->      most time. But in few cases, the max PAGE_SIZE maybe not enough.
->   2. One SDMA channel can't stop immediatley once channel disabled which
->      means SDMA interrupt may come in after this channel terminated.There
->      are some patches for this corner case such as commit "2746e2c389f9",
->      but not cover non-cyclic.
+I will remove this.
+
+...
+
+> > diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+> > index 03f3d7695dac..4e8769a19aaf 100644
+> > --- a/arch/x86/kernel/traps.c
+> > +++ b/arch/x86/kernel/traps.c
 > 
-> The common virt-dma overcomes the above limitations. It can alloc bd
-> dynamically and free bd once this tx transfer done. No memory wasted or
-> maximum limititation here, only depends on how many memory can be requested
-> from kernel. For No.2, such issue can be workaround by checking if there
-> is available descript("sdmac->desc") now once the unwanted interrupt
-> coming. At last the common virt-dma is easier for sdma driver maintain.
+> > +/*
+> > + * When a control protection exception occurs, send a signal
+> > + * to the responsible application.  Currently, control
+> > + * protection is only enabled for the user mode.  This
+> > + * exception should not come from the kernel mode.
+> > + */
+> > +dotraplinkage void
+> > +do_control_protection(struct pt_regs *regs, long error_code)
+> > +{
+> > +       struct task_struct *tsk;
+> > +
+> > +       RCU_LOCKDEP_WARN(!rcu_is_watching(), "entry code didn't wake RCU");
+> > +       cond_local_irq_enable(regs);
+> > +
+> > +       tsk = current;
+> > +       if (!cpu_feature_enabled(X86_FEATURE_SHSTK) &&
+> > +           !cpu_feature_enabled(X86_FEATURE_IBT)) {
 > 
-> Change from v2:
->   1. include Sascha's patch to make the main patch easier to review.
->      Thanks Sacha.
->   2. remove useless 'desc'/'chan' in struct sdma_channe.
+> static_cpu_has(), please.  But your handling here is odd -- I think
+> that we should at least warn if we get #CP with CET disable.
+
+I will fix it.
+
 > 
-> Change from v1:
->   1. split v1 patch into 5 patches.
->   2. remove some unnecessary condition check.
->   3. remove unnecessary 'pending' list.
+> > +               goto exit;
+> > +       }
+> > +
+> > +       if (!user_mode(regs)) {
+> > +               tsk->thread.error_code = error_code;
+> > +               tsk->thread.trap_nr = X86_TRAP_CP;
 > 
-> Robin Gong (5):
->   dmaengine: imx-sdma: add virt-dma support
->   Revert "dmaengine: imx-sdma: fix pagefault when channel is disabled
->     during interrupt"
->   dmaengine: imx-sdma: remove usless lock
->   dmaengine: imx-sdma: remove the maximum limation for bd numbers
->   dmaengine: imx-sdma: add sdma_transfer_init to decrease code overlap
+> I realize you copied this from elsewhere in the file, but please
+> either delete these assignments to error_code and trap_nr or at least
+> hoist them out of the if block.
+
+I will fix it.
+
 > 
->  drivers/dma/Kconfig    |   1 +
->  drivers/dma/imx-sdma.c | 392 ++++++++++++++++++++++++++++---------------------
->  2 files changed, 227 insertions(+), 166 deletions(-)
+> > +               if (notify_die(DIE_TRAP, "control protection fault", regs,
+> > +                              error_code, X86_TRAP_CP, SIGSEGV) != NOTIFY_STOP)
 > 
-> -- 
-> 2.7.4
+> Does this notify_die() check serve any purpose at all?  Removing all
+> the old ones would be a project, but let's try not to add new callers.
+
+OK.
+
 > 
-> Robin Gong (5):
->   dmaengine: imx-sdma: add virt-dma support
->   Revert "dmaengine: imx-sdma: fix pagefault when channel is disabled
->     during interrupt"
->   dmaengine: imx-sdma: remove usless lock
->   dmaengine: imx-sdma: remove the maximum limation for bd numbers
->   dmaengine: imx-sdma: add sdma_transfer_init to decrease code overlap
+> > +                       die("control protection fault", regs, error_code);
+> > +               return;
+> > +       }
+> > +
+> > +       tsk->thread.error_code = error_code;
+> > +       tsk->thread.trap_nr = X86_TRAP_CP;
+> > +
+> > +       if (show_unhandled_signals && unhandled_signal(tsk, SIGSEGV) &&
+> > +           printk_ratelimit()) {
+> > +               unsigned int max_idx, err_idx;
+> > +
+> > +               max_idx = ARRAY_SIZE(control_protection_err) - 1;
+> > +               err_idx = min((unsigned int)error_code - 1, max_idx);
 > 
-> Sascha Hauer (1):
->   dmaengine: imx-sdma: factor out a struct sdma_desc from struct
->     sdma_channel
+> What if error_code == 0?  Is that also invalid?
+
+The error code is between 1 and 5 inclusive.  I thought if it is 0, then
+err_idx would become max_idx here.  I can change it to:
+
+if (error_code == 0)
+	error_code = max_idx;
+
+Or, add some comments for this case.
+
 > 
->  drivers/dma/Kconfig    |   1 +
->  drivers/dma/imx-sdma.c | 391 ++++++++++++++++++++++++++++---------------------
->  2 files changed, 226 insertions(+), 166 deletions(-)
+> > +               pr_info("%s[%d] control protection ip:%lx sp:%lx error:%lx(%s)",
+> > +                       tsk->comm, task_pid_nr(tsk),
+> > +                       regs->ip, regs->sp, error_code,
+> > +                       control_protection_err[err_idx]);
+> > +               print_vma_addr(" in ", regs->ip);
+> > +               pr_cont("\n");
+> > +       }
+> > +
+> > +exit:
+> > +       force_sig_info(SIGSEGV, SEND_SIG_PRIV, tsk);
 > 
+> This is definitely wrong for the feature-disabled, !user_mode case.
+> 
+
+I will fix it.
+
+> Also, are you planning on enabling CET for kernel code too?
+
+Yes, kernel protection will be enabled later.
