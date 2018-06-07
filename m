@@ -1,147 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id PfSMIw7bHVuYegAAmS7hNA
-	; Mon, 11 Jun 2018 02:14:38 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Uik8OFKLGVvsWgAAmS7hNA
+	; Thu, 07 Jun 2018 19:45:31 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 7030060795; Mon, 11 Jun 2018 02:14:38 +0000 (UTC)
+	id 851306074D; Thu,  7 Jun 2018 19:45:31 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="gX1zQAGp"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_MED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 86DE660791;
-	Mon, 11 Jun 2018 02:14:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 86DE660791
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id BC04B601D2;
+	Thu,  7 Jun 2018 19:45:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BC04B601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753907AbeFKCOg (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Sun, 10 Jun 2018 22:14:36 -0400
-Received: from mx.socionext.com ([202.248.49.38]:16895 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753738AbeFKCOe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 22:14:34 -0400
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 11 Jun 2018 11:14:33 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 96F44600E8;
-        Mon, 11 Jun 2018 11:14:33 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Mon, 11 Jun 2018 11:14:33 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id 22D66403FD;
-        Mon, 11 Jun 2018 11:14:33 +0900 (JST)
-Received: from DESKTOPFLNNJ4T (unknown [10.213.132.95])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id EE339120139;
-        Mon, 11 Jun 2018 11:14:32 +0900 (JST)
-From: "Katsuhiro Suzuki" <suzuki.katsuhiro@socionext.com>
-To: "'Kuninori Morimoto'" <kuninori.morimoto.gx@renesas.com>
-Cc: "Mark Brown" <broonie@kernel.org>, <alsa-devel@alsa-project.org>,
-        "Masami Hiramatsu" <masami.hiramatsu@linaro.org>,
-        "Jassi Brar" <jaswinder.singh@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20180608080843.11097-1-suzuki.katsuhiro@socionext.com> <87h8makxt7.wl-kuninori.morimoto.gx@renesas.com>
-In-Reply-To: <87h8makxt7.wl-kuninori.morimoto.gx@renesas.com>
-Subject: Re: [PATCH] ASoC: audio-graph-card: add hp and mic detect gpios same as simple-card
-Date: Mon, 11 Jun 2018 11:14:29 +0900
-Message-ID: <007301d40129$ee1c8380$ca558a80$@socionext.com>
-MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="iso-2022-jp"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHT/v/sk6RFhax+8k+xLUCtlsNRTaRZl3KAgAC9klA=
-Content-Language: ja
-x-securitypolicycheck: OK by SHieldMailChecker v2.5.2
-x-shieldmailcheckerpolicyversion: POLICY180220
+        id S1753878AbeFGTp0 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 15:45:26 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:34064 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932642AbeFGTpK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 15:45:10 -0400
+Received: by mail-wr0-f195.google.com with SMTP id a12-v6so11034561wro.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 12:45:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=sszc6qeEZoNbWImzwUGcyXXnJKHgmugDqwWhgTjCJLU=;
+        b=gX1zQAGpO+h8IPJBJErOIMjXDAFsVuStjn0NcaRt1Fn9uQfT5Q11Civ2d265bi63VL
+         j3rjdmsel+bWBqvtA12m88JNY86dm3HCUTEL3l5LNNxkuRk2MaLTr0QUJf6g6RxwoH4U
+         BaNJJq5MHCbvCS5mhhF27aUzX+sIPe2/+PQS4ix/ATozYqR0aSWzjm35JLLu5IegyzZS
+         iCfGbNJ/Xgjf9blfFq8AR6O+X3hWSgGr0tmLy64KIqgY6AMyOgrExej8zwP7XDEACgI2
+         fXCjyoaEpRK6rPcwlC5ya80QO34nWBxQNxTykg6MMQBD7cRn1YOgboDy8odwkpiQXFEn
+         q2KQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=sszc6qeEZoNbWImzwUGcyXXnJKHgmugDqwWhgTjCJLU=;
+        b=ZQcDV8ndgN53NcVr9issV/z1lcT2eFgN3qub0Xd58UBwkWLir2MQ99+G6XLy3QYcj7
+         24AA5admxFs/EvG265wbbkvbvxt2IH7rJM1d0qjdgcW1sUsbgahaN5lG/MAZZgK3vPXH
+         F4Yk80kZQ5hLXv3NYFnqDGKFtf3hXYdHm/Db536d8g2PnsnVJ4a4xhFHhUPifLqHKnz8
+         IBaxdX7zE1PJA7oaW1uv0Es0Qui/5lCitNnQD1Bty60CHLiHXXntQ4n66EzQRgAtkAM8
+         WaVw1nbIsIlg5JCnMKNnWw3cWoZdScKL1LNoOtQW+qT/Xm4L6GibvDagiQHUCA0UEs/W
+         8osQ==
+X-Gm-Message-State: APt69E2sDXDC72kqPO3UUkHUZFyS9uOVViBy/r06coKIpiMLxwFFKSp3
+        K1iHiKrKoAxR401aHabO3DWKcg==
+X-Google-Smtp-Source: ADUXVKJXYEpykZOhwwStB297rx3KhH3fWVKIfCqP464PwMfigPyGKG4ShwKx8ER+VhvznomDBOyr/A==
+X-Received: by 2002:adf:eccd:: with SMTP id s13-v6mr2956078wro.160.1528400709609;
+        Thu, 07 Jun 2018 12:45:09 -0700 (PDT)
+Received: from localhost.localdomain ([51.15.160.169])
+        by smtp.googlemail.com with ESMTPSA id n56-v6sm67841749wrn.72.2018.06.07.12.45.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 07 Jun 2018 12:45:08 -0700 (PDT)
+From: Corentin Labbe <clabbe@baylibre.com>
+To: geert+renesas@glider.be, jroedel@suse.de, horms@verge.net.au,
+        magnus.damm@gmail.com
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Corentin Labbe <clabbe@baylibre.com>
+Subject: [PATCH] iommu/shmobile: Remove unused include/linux/platform_data/sh_ipmmu.h header
+Date: Thu,  7 Jun 2018 19:44:56 +0000
+Message-Id: <1528400696-32609-1-git-send-email-clabbe@baylibre.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Morimoto-san,
+include/linux/platform_data/sh_ipmmu.h is unused since commit ae50dc4874c5 ("iommu/shmobile: Remove unused Renesas IPMMU/IPMMUI")
+Let's remove it.
 
-Thank you for your reviewing.
+Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+---
+ include/linux/platform_data/sh_ipmmu.h | 18 ------------------
+ 1 file changed, 18 deletions(-)
+ delete mode 100644 include/linux/platform_data/sh_ipmmu.h
 
-> -----Original Message-----
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Sent: Monday, June 11, 2018 8:53 AM
-> To: Suzuki, Katsuhiro <suzuki.katsuhiro@socionext.com>
-> Cc: Mark Brown <broonie@kernel.org>; alsa-devel@alsa-project.org; Masami
-Hiramatsu
-> <masami.hiramatsu@linaro.org>; Jassi Brar <jaswinder.singh@linaro.org>;
-> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH] ASoC: audio-graph-card: add hp and mic detect gpios same
-as
-> simple-card
-> 
-> 
-> Hi Katsuhiro-san
-> 
-> Thank you for your patch
-> 
-> > This patch adds headphone and microphone jack detection gpios as same
-> > as simple-card driver. This feature move into simple-card-utils from
-> > simple-card to avoid the duplicating code.
-> >
-> > Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-> > ---
-> 
-> I think it can be 2 patches ?
->  1. move function from simple-card to simple-card-utils
->  2. use it from audio-graph-card
-> 
-
-OK, I'll split this patch.
-
-
-> > +static int asoc_graph_soc_card_probe(struct snd_soc_card *card)
-> > +{
-> > +	struct graph_card_data *priv = snd_soc_card_get_drvdata(card);
-> > +	int ret;
-> > +
-> > +	ret = asoc_simple_card_init_hp(card, &priv->hp_jack, NULL);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	ret = asoc_simple_card_init_mic(card, &priv->mic_jack, NULL);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  static int asoc_graph_card_probe(struct platform_device *pdev)
-> >  {
-> >  	struct graph_card_data *priv;
-> > @@ -319,6 +336,7 @@ static int asoc_graph_card_probe(struct platform_device
-> *pdev)
-> >  	card->num_links	= num;
-> >  	card->dapm_widgets = asoc_graph_card_dapm_widgets;
-> >  	card->num_dapm_widgets = ARRAY_SIZE(asoc_graph_card_dapm_widgets);
-> > +	card->probe	= asoc_graph_soc_card_probe;
-> 
-> Current simple-card is calling init_hp/init_mic from
-> asoc_simple_card_dai_init(), and audio-graph-card has
-> asoc_graph_card_dai_init().
-> simple/audio card are doing samethings in different style.
-> Thus, I want to synchronized whole simple/audio card.
-> 
-
-Indeed. I need to add more one patch.
-
-  1. move function from simple-card to simple-card-utils
-  2. change calling init_hp/mic from soc_dai_link.init() to
-     soc_card.probe()
-  3. use it from audio-graph-card
-
-
-Regards,
---
-Katsuhiro Suzuki
-
-
-> Best regards
-> ---
-> Kuninori Morimoto
+diff --git a/include/linux/platform_data/sh_ipmmu.h b/include/linux/platform_data/sh_ipmmu.h
+deleted file mode 100644
+index 39f7405cdac5..000000000000
+--- a/include/linux/platform_data/sh_ipmmu.h
++++ /dev/null
+@@ -1,18 +0,0 @@
+-/* sh_ipmmu.h
+- *
+- * Copyright (C) 2012  Hideki EIRAKU
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; version 2 of the License.
+- */
+-
+-#ifndef __SH_IPMMU_H__
+-#define __SH_IPMMU_H__
+-
+-struct shmobile_ipmmu_platform_data {
+-	const char * const *dev_names;
+-	unsigned int num_dev_names;
+-};
+-
+-#endif /* __SH_IPMMU_H__ */
+-- 
+2.16.4
