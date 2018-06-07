@@ -1,89 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id d3aQCceFHlu5LwAAmS7hNA
-	; Mon, 11 Jun 2018 14:23:12 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 30dBAGgOGVutCQAAmS7hNA
+	; Thu, 07 Jun 2018 10:52:58 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 2CBEF60792; Mon, 11 Jun 2018 14:23:12 +0000 (UTC)
+	id D7AC2608BA; Thu,  7 Jun 2018 10:52:57 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gUHDc9Dk"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="rth7hNDR"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id C067660541;
-	Mon, 11 Jun 2018 14:23:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C067660541
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 471A560290;
+	Thu,  7 Jun 2018 10:52:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 471A560290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934373AbeFKOWb (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 10:22:31 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45492 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933502AbeFKOGy (ORCPT
+        id S1753334AbeFGKwz (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 06:52:55 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:46804 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753001AbeFGKwu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:06:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=kt/+7qUnKYsXzc+5idgPVZBKG9R3xFwDZCojf19t9wU=; b=gUHDc9DkAlPtTIzNBAmqfzkPF
-        LHHZ+NWTxjFa2l/eY0hTGJWTdaAQi/oRhhal6rrUDrSqIiGdGb7PHoHKNmw6bpwkcYPcuA/CYWMJx
-        jFdw0dK5OGH8VPjPvdA8PVAAoEgvLQ57lHJfGUr2hpMzh85P4W2nyJ54NQS7/+bY6EXBOhOK3lf3D
-        KbFJqOAtW0yU7Asv7DUUo7bfNi6QfYIrnfkZR0BqhVuEVMc/lI8LUA4K5GfnYmL2gO9lpzfvH+Z1Q
-        twXSBrexwlh6y7IzvjRm/FQ12RSlmH1dSsJTuVgQDf6MHozbd7gGafat8FSvGOaosudUIrCZ6FK5s
-        3KhkQGWQQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSNTB-0004iu-M3; Mon, 11 Jun 2018 14:06:53 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Lukas Czerner <lczerner@redhat.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v13 32/72] page cache: Remove stray radix comment
-Date: Mon, 11 Jun 2018 07:05:59 -0700
-Message-Id: <20180611140639.17215-33-willy@infradead.org>
+        Thu, 7 Jun 2018 06:52:50 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w57AojR4025593;
+        Thu, 7 Jun 2018 10:52:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
+ date : message-id : in-reply-to : references; s=corp-2017-10-26;
+ bh=wcn5xdx1h+tX95DVlfy5wYNH8sbLfJdxTw/eeU7NFjA=;
+ b=rth7hNDRi4BADcZtpW2dhZTnlUNyOAtdsVkfmvflPPwEfvhSnEi/eT5rXqcZD4nJixb/
+ CONNwMfgm0okr3I/ZobESaMpnSKveRZ1f7fhYff000a4vVYt9RuWj/Uyed+Q18eiFHQr
+ 2QdP+ZqoL2e3NLFMhxYZmulunVFuMxwkKsbNEZh0KgsVHZSFV7jH45/t0qAjE7kzLcxc
+ 6JWuywsKrKH++IRJiE42EZKf0Es8MFRnYwzzpqqMIRFpQJALXyPljXn2fSPpaJeKJGqC
+ Jvot3Kk4rbVoKiwJ+j3LavFlRSXESxPFiu2vdN8lBSA4RiCRBSDeLFjeeHA2w7mgKlL8 uA==
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2120.oracle.com with ESMTP id 2jbvyprdpg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 07 Jun 2018 10:52:23 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w57AqMTR012214
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 7 Jun 2018 10:52:22 GMT
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w57AqKfQ003761;
+        Thu, 7 Jun 2018 10:52:20 GMT
+Received: from lab02.no.oracle.com (/10.172.144.56)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 07 Jun 2018 03:52:19 -0700
+From: Hans Westgaard Ry <hans.westgaard.ry@oracle.com>
+To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Hakon Bugge <haakon.bugge@oracle.com>,
+        Parav Pandit <parav@mellanox.com>,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Pravin Shedge <pravin.shedge4linux@gmail.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Wei Wang <wei.w.wang@intel.com>,
+        Chris Mi <chrism@mellanox.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] IB:mad Use ID allocator routines to allocate agent number
+Date: Thu,  7 Jun 2018 12:52:06 +0200
+Message-Id: <20180607105208.16332-1-hans.westgaard.ry@oracle.com>
 X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
-References: <20180611140639.17215-1-willy@infradead.org>
+In-Reply-To: <20180529073808.27735-1-hans.westgaard.ry@oracle.com>
+References: <20180529073808.27735-1-hans.westgaard.ry@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8916 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=549
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806070128
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+v2:
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
----
- mm/filemap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Implement ida_get_simple_cyclic and use it when allocating ib_mad_client_ids.
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 025077bc82be..e447dd2d0f5c 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2682,7 +2682,7 @@ static struct page *do_read_cache_page(struct address_space *mapping,
- 			put_page(page);
- 			if (err == -EEXIST)
- 				goto repeat;
--			/* Presumably ENOMEM for radix tree node */
-+			/* Presumably ENOMEM for xarray node */
- 			return ERR_PTR(err);
- 		}
- 
+Hans Westgaard Ry (2):
+  idr: Add ida_simple_get_cyclic
+  IB/mad: Use ID allocator routines to allocate agent number
+
+ drivers/infiniband/core/mad.c | 24 +++++++++++++---
+ include/linux/idr.h           |  8 ++++--
+ lib/idr.c                     | 66 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 92 insertions(+), 6 deletions(-)
+
 -- 
-2.17.1
+2.14.3
