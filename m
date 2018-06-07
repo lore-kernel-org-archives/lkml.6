@@ -1,173 +1,220 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id gJz+AxenGVtuCwAAmS7hNA
-	; Thu, 07 Jun 2018 21:43:51 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ooacF10UGVtqOQAAmS7hNA
+	; Thu, 07 Jun 2018 11:19:24 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id E9056606FA; Thu,  7 Jun 2018 21:43:50 +0000 (UTC)
+	id 94076608B8; Thu,  7 Jun 2018 11:19:24 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DhA6EhCI"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fy1QR2BB"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 4EAED601B4;
-	Thu,  7 Jun 2018 21:43:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4EAED601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 79AB9607DC;
+	Thu,  7 Jun 2018 11:19:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 79AB9607DC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752777AbeFGVns (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 17:43:48 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:33091 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752615AbeFGVnq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 17:43:46 -0400
-Received: by mail-pl0-f65.google.com with SMTP id n10-v6so6959447plp.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 14:43:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=y/uNcp7Wu4DEchIu621YW2qvpe+ujcBIyrW9eND/AjI=;
-        b=DhA6EhCIbO9OmOZKLcSfFoPfuR+ERL3V7TQCjxbcekpj11z9ftwe7HW8P4KA2qMxsz
-         dzv6xoLTTn4jaNhJiV4K4MbWD/0EY2dVknbjymanL3VacUKLwdkG51RcHQbXYjV82+Xt
-         A2EcYRKEEhK/4aV+FEil9rfGcl12GbydfAZLA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=y/uNcp7Wu4DEchIu621YW2qvpe+ujcBIyrW9eND/AjI=;
-        b=QJAhFOYxnxejviN0t/TMl16s2rKME/NPqSlq2jUP7eZzZRzolSAEOS604Wuk4O9Sqc
-         1sFDf4IGjyvBrj+PdHqSbliNm8SrDhVzWBbjW/h73ET13FyMEUjtRWxezmcQola4rmPb
-         l5mLLazI+prFkHxERQGy0qrtr0miVHPWuYgktKCwqo0Y0ixn1jhtW40KvB9tJ9rgawfm
-         NiPzYQXLLjBHxHkPUkOIR1t4gWST6OkxzRw62zUvEtviNXpYunkVtVKxjstLRjc3/5n2
-         dywxiH2dvzyN1CukoaKOFUHTr3oVTE7tGPWhvGpot1Y0Wt1YSkmZywM63aPKCPmrsWPl
-         NwUg==
-X-Gm-Message-State: APt69E1FTdcBsEIV1+FsxZdWdmc2C1DVtW5iyo5Yq6CgmWTbW5VrZ84M
-        2TkJx2XncQxs96vtPGHMSEdJN6006MclyouS21uOQQ==
-X-Google-Smtp-Source: ADUXVKIDLLQs6J9iH6Vjz1ml8yMqUz56xpaSD76prBTfTSfTNT3U0PaPZQtd61HOxm5CigfwizTQ3YLOuLIiRypGbVs=
-X-Received: by 2002:a17:902:9309:: with SMTP id bc9-v6mr3691706plb.189.1528407825705;
- Thu, 07 Jun 2018 14:43:45 -0700 (PDT)
+        id S1753493AbeFGLTV (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 07:19:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58858 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752620AbeFGLTT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 07:19:19 -0400
+Received: from mail-wr0-f182.google.com (mail-wr0-f182.google.com [209.85.128.182])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B40002088F;
+        Thu,  7 Jun 2018 11:19:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528370359;
+        bh=tTwydDAVaHBDryPqpnOEGc7TkiEim4G1V3cMOxrulMI=;
+        h=From:Date:Subject:To:From;
+        b=Fy1QR2BB5a/DYXYyldyw4IHLEigmkLWGhXhlOeu7ygajiMmwDAf7Z/6bsc8JZITkt
+         Zff0XG6ni+mPO8NrKu0Y/wL/GaDul1z8KwiWzIF5ZjaMfrkchjBp6gd60SLsB4m3Ti
+         fbjyUUfPZW2xetgABQSU7pnzPzftyGGAiKnx2zG8=
+Received: by mail-wr0-f182.google.com with SMTP id l41-v6so9668158wre.7;
+        Thu, 07 Jun 2018 04:19:18 -0700 (PDT)
+X-Gm-Message-State: APt69E3VYzvZWd30KPuj1pN9EMFyPAeD+gODDTvcGcBRDiAKJv2W3aiD
+        R4qXVhqc8gKF8m47yCJS6QtlI2rL4efpXy6RLZY=
+X-Google-Smtp-Source: ADUXVKIC6FwCMwDaxCN+VZTBDycqvgtKgzjiXnP0HY/gHyPoWlK90xJKnCab1Tqdw/adRqiNMZzdZXYFL3dz4yEZ0J0=
+X-Received: by 2002:adf:f482:: with SMTP id l2-v6mr1409510wro.259.1528370357235;
+ Thu, 07 Jun 2018 04:19:17 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a17:90a:178d:0:0:0:0 with HTTP; Thu, 7 Jun 2018 14:43:45
- -0700 (PDT)
-In-Reply-To: <CAH3MdRXMHRtK9FJ4UP8Gy-bahCS2oipOY7yLTEqu-x6uOMKLvw@mail.gmail.com>
-References: <20180607105712.553-1-anders.roxell@linaro.org>
- <CAH3MdRWo0kUYngyAwXP1sOT_XqbxyfTvDd6sNz+qd7LL1T8LUA@mail.gmail.com>
- <CADYN=9J3wY1f6q4NvH1mHJXnu6GnErOqz75CfzfG1q5-WzcyCg@mail.gmail.com> <CAH3MdRXMHRtK9FJ4UP8Gy-bahCS2oipOY7yLTEqu-x6uOMKLvw@mail.gmail.com>
-From: Anders Roxell <anders.roxell@linaro.org>
-Date: Thu, 7 Jun 2018 23:43:45 +0200
-Message-ID: <CADYN=9Ly5UU34CxZFnWfQhNrS8V3gG7=Bdfn9n0h5XphZ8EiVQ@mail.gmail.com>
-Subject: Re: [PATCH] selftests: bpf: fix urandom_read build issue
-To: Y Song <ys114321@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Shuah Khan <shuah@kernel.org>, netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Received: by 2002:adf:9166:0:0:0:0:0 with HTTP; Thu, 7 Jun 2018 04:19:16 -0700 (PDT)
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Thu, 7 Jun 2018 13:19:16 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPd2rntNOpU1quR9Zm_J22+=pEaj4ZTC_tdZ0zcRYUciFg@mail.gmail.com>
+Message-ID: <CAJKOXPd2rntNOpU1quR9Zm_J22+=pEaj4ZTC_tdZ0zcRYUciFg@mail.gmail.com>
+Subject: [BUG BISECT] NFSv4 client fails on Flush Journal to Persistent Storage
+To: Trond Myklebust <trond.myklebust@primarydata.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>, linux-nfs@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org"
+        <linux-samsung-soc@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="0000000000003a9410056e0b7490"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7 June 2018 at 23:17, Y Song <ys114321@gmail.com> wrote:
-> On Thu, Jun 7, 2018 at 12:07 PM, Anders Roxell <anders.roxell@linaro.org>=
- wrote:
->> On 7 June 2018 at 19:52, Y Song <ys114321@gmail.com> wrote:
->>> On Thu, Jun 7, 2018 at 3:57 AM, Anders Roxell <anders.roxell@linaro.org=
-> wrote:
->>>> gcc complains that urandom_read gets built twice.
->>>>
->>>> gcc -o tools/testing/selftests/bpf/urandom_read
->>>> -static urandom_read.c -Wl,--build-id
->>>> gcc -Wall -O2 -I../../../include/uapi -I../../../lib -I../../../lib/bp=
-f
->>>> -I../../../../include/generated  -I../../../include    urandom_read.c
->>>> urandom_read -lcap -lelf -lrt -lpthread -o
->>>> tools/testing/selftests/bpf/urandom_read
->>>> gcc: fatal error: input file
->>>> =E2=80=98tools/testing/selftests/bpf/urandom_read=E2=80=99 is the
->>>> same as output file
->>>> compilation terminated.
->>>> ../lib.mk:110: recipe for target
->>>> 'tools/testing/selftests/bpf/urandom_read' failed
->>>
->>> What is the build/make command to reproduce the above failure?
->>
->> make -C tools/testing/selftests
->
-> Thanks. The patch will break
->    make -C tools/testing/selftests/bpf
->
-> [yhs@localhost bpf-next]$ make -C tools/testing/selftests/bpf
-> make: Entering directory '/home/yhs/work/bpf-next/tools/testing/selftests=
-/bpf'
-> gcc -o /urandom_read -static urandom_read.c -Wl,--build-id
-> /usr/bin/ld: cannot open output file /urandom_read: Permission denied
-> collect2: error: ld returned 1 exit status
-> make: *** [Makefile:20: /urandom_read] Error 1
-> make: Leaving directory '/home/yhs/work/bpf-next/tools/testing/selftests/=
-bpf'
-> [yhs@localhost bpf-next]$
+--0000000000003a9410056e0b7490
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-urgh, I'm sorry, missed that.
+Hi,
 
->
-> Could you still make the above command work?
+When booting my boards under recent linux-next, I see failures of systemd:
 
-$(TEST_CUSTOM_PROGS): $(OUTPUT)/%: %.c
-        $(CC) -o $(TEST_CUSTOM_PROGS) -static $< -Wl,--build-id
+[FAILED] Failed to start Flush Journal to Persistent Storage.
+See 'systemctl status systemd-journal-flush.service' for details.
+         Starting Create Volatile Files and Directories...
+[**    ] A start job is running for Create V=E2=80=A6 [  223.209289] nfs:
+server 192.168.1.10 not responding, still trying
+[  223.209377] nfs: server 192.168.1.10 not responding, still trying
 
-That worked both with:
-make -C tools/testing/selftests
-and
-make -C tools/testing/selftests/bpf
+Effectively the boards fails to boot. Example is here:
+https://krzk.eu/#/builders/1/builds/2157
 
-for me.
+This was bisected to:
+commit 37ac86c3a76c113619b7d9afe0251bbfc04cb80a
+Author: Chuck Lever <chuck.lever@oracle.com>
+Date:   Fri May 4 15:34:53 2018 -0400
 
-what do you think?
+    SUNRPC: Initialize rpc_rqst outside of xprt->reserve_lock
 
->
->>
->> Cheers,
->> Anders
->>
->>>
->>>> To fix this issue remove the urandom_read target and so target
->>>> TEST_CUSTOM_PROGS gets used.
->>>>
->>>> Fixes: 81f77fd0deeb ("bpf: add selftest for stackmap with BPF_F_STACK_=
-BUILD_ID")
->>>> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
->>>> ---
->>>>  tools/testing/selftests/bpf/Makefile | 6 ++----
->>>>  1 file changed, 2 insertions(+), 4 deletions(-)
->>>>
->>>> diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/self=
-tests/bpf/Makefile
->>>> index 607ed8729c06..67285591ffd7 100644
->>>> --- a/tools/testing/selftests/bpf/Makefile
->>>> +++ b/tools/testing/selftests/bpf/Makefile
->>>> @@ -16,10 +16,8 @@ LDLIBS +=3D -lcap -lelf -lrt -lpthread
->>>>  TEST_CUSTOM_PROGS =3D $(OUTPUT)/urandom_read
->>>>  all: $(TEST_CUSTOM_PROGS)
->>>>
->>>> -$(TEST_CUSTOM_PROGS): urandom_read
->>>> -
->>>> -urandom_read: urandom_read.c
->>>> -       $(CC) -o $(TEST_CUSTOM_PROGS) -static $< -Wl,--build-id
->>>> +$(TEST_CUSTOM_PROGS): $(OUTPUT)/%: %.c
->>>> +       $(CC) -o $@ -static $< -Wl,--build-id
->>>>
->>>>  # Order correspond to 'make run_tests' order
->>>>  TEST_GEN_PROGS =3D test_verifier test_tag test_maps test_lru_map test=
-_lpm_map test_progs \
->>>> --
->>>> 2.17.1
->>>>
+    alloc_slot is a transport-specific op, but initializing an rpc_rqst
+    is common to all transports. In addition, the only part of initial-
+    izing an rpc_rqst that needs serialization is getting a fresh XID.
+
+    Move rpc_rqst initialization to common code in preparation for
+    adding a transport-specific alloc_slot to xprtrdma.
+
+    Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+    Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+
+
+Bisect log attached. Full configuration:
+1. exynos_defconfig
+2. ARMv7, octa-core, Exynos5422 and Exynos4412 (Odroid XU3, U3 and others)
+3. NFSv4 client (from Raspberry Pi)
+
+Let me know if you need any more information.
+
+Best regards,
+Krzysztof
+
+--0000000000003a9410056e0b7490
+Content-Type: text/plain; charset="US-ASCII"; name="log.txt"
+Content-Disposition: attachment; filename="log.txt"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_ji4g80n10
+
+Z2l0IGJpc2VjdCBzdGFydAojIGdvb2Q6IFtjNjRkNDQxOWExN2NmYjM5YTViNTczZjkwMTZjZDAy
+YWRlNGM5YTY0XSBtdGQ6IGNmaV9jbWRzZXRfMDAwMjogQ2hhbmdlIGVyYXNlIG9uZSBibG9jayB0
+byBlbmFibGUgWElQIG9uY2UKZ2l0IGJpc2VjdCBnb29kIGM2NGQ0NDE5YTE3Y2ZiMzlhNWI1NzNm
+OTAxNmNkMDJhZGU0YzlhNjQKIyBnb29kOiBbNTZjNjg1NWM4MWM4YTY4MjhiNWQ2NWFhOTc0Y2Q1
+MGY0YjY3NzYwY10gbXRkOiBzcGktbm9yOiBBZGQgTWljcm9uIE1UMjVRVTAyIHN1cHBvcnQKZ2l0
+IGJpc2VjdCBnb29kIDU2YzY4NTVjODFjOGE2ODI4YjVkNjVhYTk3NGNkNTBmNGI2Nzc2MGMKIyBi
+YWQ6IFsyYjcwYTdiZDQ2NzNiNmRjZjI3NjM4ODhkMGIxNzJhNDBkZDQ5NDM0XSBNZXJnZSByZW1v
+dGUtdHJhY2tpbmcgYnJhbmNoICdibG9jay9mb3ItbmV4dCcKZ2l0IGJpc2VjdCBiYWQgMmI3MGE3
+YmQ0NjczYjZkY2YyNzYzODg4ZDBiMTcyYTQwZGQ0OTQzNAojIGJhZDogWzI1MzUwY2JlZWY0YTNl
+Yzk0Mzc1NGM0YWE0YzhhYzFhYWE2NGM3YTJdIE1lcmdlIHJlbW90ZS10cmFja2luZyBicmFuY2gg
+J25hbmQvbmFuZC9uZXh0JwpnaXQgYmlzZWN0IGJhZCAyNTM1MGNiZWVmNGEzZWM5NDM3NTRjNGFh
+NGM4YWMxYWFhNjRjN2EyCiMgZ29vZDogWzMxMWRhNDk3NTg5NGFhYjdhNGJiOTRhYTgzZjM4ZjA1
+MmQ3ZmZkYTRdIE1lcmdlIGJyYW5jaCAnZm9yLWxpbnVzJyBvZiBnaXQ6Ly9naXQuYXJtbGludXgu
+b3JnLnVrL35ybWsvbGludXgtYXJtCmdpdCBiaXNlY3QgZ29vZCAzMTFkYTQ5NzU4OTRhYWI3YTRi
+Yjk0YWE4M2YzOGYwNTJkN2ZmZGE0CiMgYmFkOiBbN2Q0NzBmOTViNGNjZDMyNDQ3NTk1MjRmNmNj
+OWE3NmEyYTM0YTljNl0gTWVyZ2UgcmVtb3RlLXRyYWNraW5nIGJyYW5jaCAncHJpbnRrL2Zvci1u
+ZXh0JwpnaXQgYmlzZWN0IGJhZCA3ZDQ3MGY5NWI0Y2NkMzI0NDc1OTUyNGY2Y2M5YTc2YTJhMzRh
+OWM2CiMgZ29vZDogWzhhM2FiMmYzOGYxNjY5ZTNiZTY0MzNhMWY2YjgyYTA3N2IzOGM0YzddIGJy
+Y21mbWFjOiB0cmlnZ2VyIG1lbW9yeSBkdW1wIHVwb24gZmlybXdhcmUgaGFsdCBzaWduYWwKZ2l0
+IGJpc2VjdCBnb29kIDhhM2FiMmYzOGYxNjY5ZTNiZTY0MzNhMWY2YjgyYTA3N2IzOGM0YzcKIyBn
+b29kOiBbN2ZhNzZkNzc3ZWM1M2VlZWNlMTU0NmI3MzdhM2I5M2IzNzYzOTU3NV0gbmV0ZGV2c2lt
+OiBBZGQgZXh0YWNrIGVycm9yIG1lc3NhZ2UgZm9yIGRldmxpbmsgcmVsb2FkCmdpdCBiaXNlY3Qg
+Z29vZCA3ZmE3NmQ3NzdlYzUzZWVlY2UxNTQ2YjczN2EzYjkzYjM3NjM5NTc1CiMgYmFkOiBbMWZl
+MDg3ZGE1OWZkZTJjY2U0Y2Y4ZTBhMWM3OGIzMjc5ZmI3ZWE0NF0gTWVyZ2UgcmVtb3RlLXRyYWNr
+aW5nIGJyYW5jaCAnZmJkZXYvZmJkZXYtZm9yLW5leHQnCmdpdCBiaXNlY3QgYmFkIDFmZTA4N2Rh
+NTlmZGUyY2NlNGNmOGUwYTFjNzhiMzI3OWZiN2VhNDQKIyBiYWQ6IFs5ZDg1YjJmZWU2NjE2OTk0
+NzU5ZWI0NTk5Yzg4NmFmNTEwZGVkMTc1XSBNZXJnZSByZW1vdGUtdHJhY2tpbmcgYnJhbmNoICdw
+Y2kvbmV4dCcKZ2l0IGJpc2VjdCBiYWQgOWQ4NWIyZmVlNjYxNjk5NDc1OWViNDU5OWM4ODZhZjUx
+MGRlZDE3NQojIGdvb2Q6IFsxM2ZiYWRjZDUxMmMyMjVjOTA3ZDZlODE0N2ZiNDhhODgxMTRiZjAz
+XSBNZXJnZSBicmFuY2ggJ3BjaS9zcGFyYycKZ2l0IGJpc2VjdCBnb29kIDEzZmJhZGNkNTEyYzIy
+NWM5MDdkNmU4MTQ3ZmI0OGE4ODExNGJmMDMKIyBnb29kOiBbNzQxZjhlN2VjYzJjNjQxNGNmZjQ0
+MmVjOGViMDdkY2ZlNDQ4MTUzM10gTWVyZ2UgYnJhbmNoICdsb3JlbnpvL3BjaS9odicKZ2l0IGJp
+c2VjdCBnb29kIDc0MWY4ZTdlY2MyYzY0MTRjZmY0NDJlYzhlYjA3ZGNmZTQ0ODE1MzMKIyBnb29k
+OiBbMWMyYmVmMGEzZmQxNDI4N2E2NmVkZDdlYWQ1N2ZkMmU0Mzk0ODVhMl0gTWVyZ2UgYnJhbmNo
+ICdsb3JlbnpvL3BjaS9yY2FyJwpnaXQgYmlzZWN0IGdvb2QgMWMyYmVmMGEzZmQxNDI4N2E2NmVk
+ZDdlYWQ1N2ZkMmU0Mzk0ODVhMgojIGdvb2Q6IFtlNTJkMzhmNGFiZjQ5ZjhiNjNhNmFkMGNlMjFl
+NWY0OTVjMTU4OTdmXSBNZXJnZSBicmFuY2ggJ2xvcmVuem8vcGNpL3JvY2tjaGlwJwpnaXQgYmlz
+ZWN0IGdvb2QgZTUyZDM4ZjRhYmY0OWY4YjYzYTZhZDBjZTIxZTVmNDk1YzE1ODk3ZgojIGdvb2Q6
+IFs3MzE0NGQ3N2NiODdkNjBiNGJjYWI2OTkyYTYyZDY3ODdiMDlkY2YwXSBNZXJnZSBicmFuY2gg
+J2xvcmVuem8vcGNpL3ZtZCcKZ2l0IGJpc2VjdCBnb29kIDczMTQ0ZDc3Y2I4N2Q2MGI0YmNhYjY5
+OTJhNjJkNjc4N2IwOWRjZjAKIyBnb29kOiBbODJlMTcxOWM0Y2Q2NWJkN2Y3ODQ3ZDZjMDIzNzZj
+ZmNhM2Q1ZTc5M10gUENJOiBDbGVhbiB1cCB3aGl0ZXNwYWNlIGluIHF1aXJrcy5jCmdpdCBiaXNl
+Y3QgZ29vZCA4MmUxNzE5YzRjZDY1YmQ3Zjc4NDdkNmMwMjM3NmNmY2EzZDVlNzkzCiMgZ29vZDog
+WzBlY2RhM2EwODc0NjJlYjg5YzFkOTIyN2RlZWE5OThkOGNkMDE0ZThdIE1lcmdlIGJyYW5jaCAn
+cGNpL2tjb25maWcnCmdpdCBiaXNlY3QgZ29vZCAwZWNkYTNhMDg3NDYyZWI4OWMxZDkyMjdkZWVh
+OTk4ZDhjZDAxNGU4CiMgZ29vZDogWzQ4OGFkNmQzNjc4YmVlZTY1YmNkNzRlNmE5NzY0YmQ3Y2Vl
+OWQzZDNdIE1lcmdlIGJyYW5jaCAncGNpL3RyaXZpYWwnCmdpdCBiaXNlY3QgZ29vZCA0ODhhZDZk
+MzY3OGJlZWU2NWJjZDc0ZTZhOTc2NGJkN2NlZTlkM2QzCiMgZ29vZDogWzg4NTg5MmZiMzc4ZGMw
+OTY2OTM1NTdiYTRmMmI4NzUxODg2MTliMzZdIG1seDRfY29yZTogcmVzdG9yZSBvcHRpbWFsIElD
+TSBtZW1vcnkgYWxsb2NhdGlvbgpnaXQgYmlzZWN0IGdvb2QgODg1ODkyZmIzNzhkYzA5NjY5MzU1
+N2JhNGYyYjg3NTE4ODYxOWIzNgojIGdvb2Q6IFs0ODhhZDZkMzY3OGJlZWU2NWJjZDc0ZTZhOTc2
+NGJkN2NlZTlkM2QzXSBNZXJnZSBicmFuY2ggJ3BjaS90cml2aWFsJwpnaXQgYmlzZWN0IGdvb2Qg
+NDg4YWQ2ZDM2NzhiZWVlNjViY2Q3NGU2YTk3NjRiZDdjZWU5ZDNkMwojIGdvb2Q6IFswZWNkYTNh
+MDg3NDYyZWI4OWMxZDkyMjdkZWVhOTk4ZDhjZDAxNGU4XSBNZXJnZSBicmFuY2ggJ3BjaS9rY29u
+ZmlnJwpnaXQgYmlzZWN0IGdvb2QgMGVjZGEzYTA4NzQ2MmViODljMWQ5MjI3ZGVlYTk5OGQ4Y2Qw
+MTRlOAojIGdvb2Q6IFs4MmUxNzE5YzRjZDY1YmQ3Zjc4NDdkNmMwMjM3NmNmY2EzZDVlNzkzXSBQ
+Q0k6IENsZWFuIHVwIHdoaXRlc3BhY2UgaW4gcXVpcmtzLmMKZ2l0IGJpc2VjdCBnb29kIDgyZTE3
+MTljNGNkNjViZDdmNzg0N2Q2YzAyMzc2Y2ZjYTNkNWU3OTMKIyBnb29kOiBbMWMyYmVmMGEzZmQx
+NDI4N2E2NmVkZDdlYWQ1N2ZkMmU0Mzk0ODVhMl0gTWVyZ2UgYnJhbmNoICdsb3JlbnpvL3BjaS9y
+Y2FyJwpnaXQgYmlzZWN0IGdvb2QgMWMyYmVmMGEzZmQxNDI4N2E2NmVkZDdlYWQ1N2ZkMmU0Mzk0
+ODVhMgojIGdvb2Q6IFs4N2NiNWFjOWNlY2U5ZjBmNzVkMDUzMmZhMmFmY2JmODcxZjZiNzJlXSBN
+ZXJnZSByZW1vdGUtdHJhY2tpbmcgYnJhbmNoICdhcm0tc29jL2Zvci1uZXh0JwpnaXQgYmlzZWN0
+IGdvb2QgODdjYjVhYzljZWNlOWYwZjc1ZDA1MzJmYTJhZmNiZjg3MWY2YjcyZQojIGdvb2Q6IFs2
+NGVlYzE5MmQ2MDk1MzFiMGMxNzNjNWI0ODg1ODMyMzcyZmIyYTRjXSBNZXJnZSByZW1vdGUtdHJh
+Y2tpbmcgYnJhbmNoICdwb3dlcnBjL25leHQnCmdpdCBiaXNlY3QgZ29vZCA2NGVlYzE5MmQ2MDk1
+MzFiMGMxNzNjNWI0ODg1ODMyMzcyZmIyYTRjCiMgZ29vZDogW2RkOGMxZmQyMDcxZGUzYTAyZWE2
+MGUzZmE2OGJlMjRjMWU4OTk0NWVdIE1lcmdlIHJlbW90ZS10cmFja2luZyBicmFuY2ggJ2pmcy9q
+ZnMtbmV4dCcKZ2l0IGJpc2VjdCBnb29kIGRkOGMxZmQyMDcxZGUzYTAyZWE2MGUzZmE2OGJlMjRj
+MWU4OTk0NWUKIyBiYWQ6IFs2MTI1YTNkYWIyMWYxOTM5ZGFlN2U4MzYxMDVkZWEwYzljNDY1ZGI0
+XSBNZXJnZSByZW1vdGUtdHJhY2tpbmcgYnJhbmNoICdvcmFuZ2Vmcy9mb3ItbmV4dCcKZ2l0IGJp
+c2VjdCBiYWQgNjEyNWEzZGFiMjFmMTkzOWRhZTdlODM2MTA1ZGVhMGM5YzQ2NWRiNAojIGdvb2Q6
+IFszZjBiM2NmNDZlMDU0MmFjNGI0MjQxYzU3OWI5NDRiNzU1ZDExYjY3XSBORlM6IEZpbHRlciBj
+YWNoZSBpbnZhbGlkYXRpb24gd2hlbiBob2xkaW5nIGEgZGVsZWdhdGlvbgpnaXQgYmlzZWN0IGdv
+b2QgM2YwYjNjZjQ2ZTA1NDJhYzRiNDI0MWM1NzliOTQ0Yjc1NWQxMWI2NwojIGdvb2Q6IFsyODc3
+MTk1MGM1OTI0ODJlZTg2Y2IxYzNiNjYxNjg4YWVjM2MwZDdkXSBzdmNyZG1hOiBGaXggaW5jb3Jy
+ZWN0IHJldHVybiB2YWx1ZS90eXBlIGluIHN2Y19yZG1hX3Bvc3RfcmVjdnMKZ2l0IGJpc2VjdCBn
+b29kIDI4NzcxOTUwYzU5MjQ4MmVlODZjYjFjM2I2NjE2ODhhZWMzYzBkN2QKIyBiYWQ6IFs4MzM1
+NjQwY2Y4OWZhYTBmNGUzOWU3M2UzMTRmM2YzYTIyZDc3NmYzXSB4cHJ0cmRtYTogQWRkIHRyYWNl
+X3hwcnRyZG1hX2RtYV9tYXAobXIpCmdpdCBiaXNlY3QgYmFkIDgzMzU2NDBjZjg5ZmFhMGY0ZTM5
+ZTczZTMxNGYzZjNhMjJkNzc2ZjMKIyBiYWQ6IFswZTBiODU0Y2ZiMzMwMmIxOTA3ZTlkM2E5Mjc0
+NjliOTU3MTAyMzhmXSB4cHJ0cmRtYTogQ2xlYW4gdXAgUmVjZWl2ZSB0cmFjZSBwb2ludHMKZ2l0
+IGJpc2VjdCBiYWQgMGUwYjg1NGNmYjMzMDJiMTkwN2U5ZDNhOTI3NDY5Yjk1NzEwMjM4ZgojIGJh
+ZDogWzBlMGI4NTRjZmIzMzAyYjE5MDdlOWQzYTkyNzQ2OWI5NTcxMDIzOGZdIHhwcnRyZG1hOiBD
+bGVhbiB1cCBSZWNlaXZlIHRyYWNlIHBvaW50cwpnaXQgYmlzZWN0IGJhZCAwZTBiODU0Y2ZiMzMw
+MmIxOTA3ZTlkM2E5Mjc0NjliOTU3MTAyMzhmCiMgZ29vZDogWzc1YmMzN2ZlZmM0NDcxZTcxOGJh
+OGU2NTFhYTc0NjczZDRlMGE5ZWJdIExpbnV4IDQuMTctcmM0CmdpdCBiaXNlY3QgZ29vZCA3NWJj
+MzdmZWZjNDQ3MWU3MThiYThlNjUxYWE3NDY3M2Q0ZTBhOWViCiMgYmFkOiBbMGUwYjg1NGNmYjMz
+MDJiMTkwN2U5ZDNhOTI3NDY5Yjk1NzEwMjM4Zl0geHBydHJkbWE6IENsZWFuIHVwIFJlY2VpdmUg
+dHJhY2UgcG9pbnRzCmdpdCBiaXNlY3QgYmFkIDBlMGI4NTRjZmIzMzAyYjE5MDdlOWQzYTkyNzQ2
+OWI5NTcxMDIzOGYKIyBnb29kOiBbOTE0ZmNhZDk4NzNjYmQ0NmUzYTRjM2MzMTU1MWI5OGIxNWE0
+OTA3OV0geHBydHJkbWE6IEZpeCBtYXhfc2VuZF93ciBjb21wdXRhdGlvbgpnaXQgYmlzZWN0IGdv
+b2QgOTE0ZmNhZDk4NzNjYmQ0NmUzYTRjM2MzMTU1MWI5OGIxNWE0OTA3OQojIGJhZDogW2E5Y2Rl
+MjNhYjdjZGY1ZTRlOTM0MzJkZmZkMGU3MzQyNjdmMmI3NDVdIFNVTlJQQzogQWRkIGEgLT5mcmVl
+X3Nsb3QgdHJhbnNwb3J0IGNhbGxvdXQKZ2l0IGJpc2VjdCBiYWQgYTljZGUyM2FiN2NkZjVlNGU5
+MzQzMmRmZmQwZTczNDI2N2YyYjc0NQojIGJhZDogWzM3YWM4NmMzYTc2YzExMzYxOWI3ZDlhZmUw
+MjUxYmJmYzA0Y2I4MGFdIFNVTlJQQzogSW5pdGlhbGl6ZSBycGNfcnFzdCBvdXRzaWRlIG9mIHhw
+cnQtPnJlc2VydmVfbG9jawpnaXQgYmlzZWN0IGJhZCAzN2FjODZjM2E3NmMxMTM2MTliN2Q5YWZl
+MDI1MWJiZmMwNGNiODBhCiMgZmlyc3QgYmFkIGNvbW1pdDogWzM3YWM4NmMzYTc2YzExMzYxOWI3
+ZDlhZmUwMjUxYmJmYzA0Y2I4MGFdIFNVTlJQQzogSW5pdGlhbGl6ZSBycGNfcnFzdCBvdXRzaWRl
+IG9mIHhwcnQtPnJlc2VydmVfbG9jawo=
+--0000000000003a9410056e0b7490--
