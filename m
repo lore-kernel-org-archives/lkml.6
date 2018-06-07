@@ -1,88 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id q4/rCwltGVunTwAAmS7hNA
-	; Thu, 07 Jun 2018 17:37:13 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id acmAMsNFGVsxJQAAmS7hNA
+	; Thu, 07 Jun 2018 14:49:46 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 66CF36074D; Thu,  7 Jun 2018 17:37:13 +0000 (UTC)
+	id 660D5608BA; Thu,  7 Jun 2018 14:49:46 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id DDEFA6063F;
-	Thu,  7 Jun 2018 17:37:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DDEFA6063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=rockwellcollins.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id D3E4A601C3;
+	Thu,  7 Jun 2018 14:49:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D3E4A601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934629AbeFGRhL (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 13:37:11 -0400
-Received: from ch3vs02.rockwellcollins.com ([205.175.226.29]:25646 "EHLO
-        ch3vs02.rockwellcollins.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933021AbeFGRhJ (ORCPT
+        id S964774AbeFGOtl (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:49:41 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40878 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934887AbeFGOti (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 13:37:09 -0400
-X-RC-All-From: , 205.175.226.20, No hostname, brandon.maier@rockwellcollins.com,
- Brandon Maier <brandon.maier@rockwellcollins.com>, ,
-X-RC-Attachments: , ,
-X-RC-RemoteIP: 205.175.226.20
-X-RC-RemoteHost: No hostname
-X-RC-IP-Hostname: ch3ip02.rockwellcollins.com
-X-RC-IP-MID: 94972797
-X-RC-IP-Group: GOOGLE_RELAYED
-X-RC-IP-Policy: $GOOGLE_RELAYED
-X-RC-IP-SBRS: None
-Received: from unknown (HELO mail-ot0-f197.google.com) ([205.175.226.20])
-  by ch3vs02.rockwellcollins.com with ESMTP/TLS/AES128-GCM-SHA256; 07 Jun 2018 12:37:08 -0500
-Received: by mail-ot0-f197.google.com with SMTP id h38-v6so6813845otb.4
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 10:37:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=ByzXH2jOStEnNw4uqvW6p2i4t/oFLSIqjI1/QG0PLY4=;
-        b=aR23xplSDkVzt75GX1I3hTmtsyG/wpH5SR7qAf+uQdtpCvJ57XZ5aRPWqu8NMq0l3r
-         w5EOVJY8NsqPyG6NblYi9iMh8J//2sGuFn0fVHqyeuanfYOMUVtzQYydRC7i71O9hf0S
-         60Ya0Apnf1G6mOU8TCq6FR0YKNFAzvx4NbQE4pdaBwcyfODlG0jWMwqgL795SB0BhjvQ
-         J8gWHMY3G9UeEQpelS9DSYUG4nYrJn+h0rC7Z9cuC56y3t2pMWyC4gVhIblX8pxFS36E
-         iWnNl+zIgdnSpDFWHfJgYWD/Q6gUxIzDVL3DFMWv4f7VSZceP56L/8kHWIzbW6ZWql94
-         Nimw==
-X-Gm-Message-State: APt69E04yd7siaLn/elf4NfzaJDnLDN96lQYme0MW6ydqzyQ0/gLWG0D
-        D2a8X0GVhgstosy/ynFcT7yGQQV3QwfA2Bl7Ct6sqlz2fIBaEZIdwZpsYGZ3b2m2m0AHgzRndgm
-        pYOlTSQkRjJjSA3HWfz5pi0CqzRoCIxPE43KlyhXXECWIlBxCtIgl0NtyAzI=
-X-Received: by 2002:a9d:331b:: with SMTP id f27-v6mr1718797otc.373.1528393028554;
-        Thu, 07 Jun 2018 10:37:08 -0700 (PDT)
-X-Google-Smtp-Source: ADUXVKI2LyrutrEMRzfX6Pppn3OpNkIKapzN2fqRDor8OOHIP46xG1RdNwXMkj0V5wKC5dUpgmocorrG1rBnmU3gpZU=
-X-Received: by 2002:a9d:331b:: with SMTP id f27-v6mr1718782otc.373.1528393028310;
- Thu, 07 Jun 2018 10:37:08 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a4a:5fc9:0:0:0:0:0 with HTTP; Thu, 7 Jun 2018 10:37:07 -0700 (PDT)
-In-Reply-To: <20180607164920.GC25513@lunn.ch>
-References: <20180607155348.149665-1-brandon.maier@rockwellcollins.com>
- <20180607155348.149665-2-brandon.maier@rockwellcollins.com> <20180607164920.GC25513@lunn.ch>
-From: Brandon Maier <brandon.maier@rockwellcollins.com>
-Date: Thu, 7 Jun 2018 12:37:07 -0500
-Message-ID: <CA+fik50j2JFJdNcN0AsnEea1R7Xg4Qpxu9zrihii2NBX_u9Zng@mail.gmail.com>
-Subject: Re: [PATCH 2/3] net: phy: xgmiitorgmii: Use correct mdio bus
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: netdev@vger.kernel.org, f.fainelli@gmail.com, davem@davemloft.net,
-        michal.simek@xilinx.com,
-        Clayton Shotwell <clayton.shotwell@rockwellcollins.com>,
-        Kristopher Cory <kristopher.cory@rockwellcollins.com>,
-        linux-kernel@vger.kernel.org
+        Thu, 7 Jun 2018 10:49:38 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbo-0005Zw-V5; Thu, 07 Jun 2018 15:09:49 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb2-0002rf-Ge; Thu, 07 Jun 2018 15:09:00 +0100
 Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Scott Mayhew" <smayhew@redhat.com>,
+        "Trond Myklebust" <trond.myklebust@primarydata.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.59515711@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 129/410] nfs/pnfs: fix nfs_direct_req ref leak when
+ i/o falls back to the mds
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 7, 2018 at 11:49 AM, Andrew Lunn <andrew@lunn.ch> wrote:
-> I think the assumption was they are both on the same bus.
-> However, they don't need to be.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-That was my assumption as well. We ran into a scenario where they were
-on separate buses.
+------------------
 
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Thanks
+From: Scott Mayhew <smayhew@redhat.com>
+
+commit ba4a76f703ab7eb72941fdaac848502073d6e9ee upstream.
+
+Currently when falling back to doing I/O through the MDS (via
+pnfs_{read|write}_through_mds), the client frees the nfs_pgio_header
+without releasing the reference taken on the dreq
+via pnfs_generic_pg_{read|write}pages -> nfs_pgheader_init ->
+nfs_direct_pgio_init.  It then takes another reference on the dreq via
+nfs_generic_pg_pgios -> nfs_pgheader_init -> nfs_direct_pgio_init and
+as a result the requester will become stuck in inode_dio_wait.  Once
+that happens, other processes accessing the inode will become stuck as
+well.
+
+Ensure that pnfs_read_through_mds() and pnfs_write_through_mds() clean
+up correctly by calling hdr->completion_ops->completion() instead of
+calling hdr->release() directly.
+
+This can be reproduced (sometimes) by performing "storage failover
+takeover" commands on NetApp filer while doing direct I/O from a client.
+
+This can also be reproduced using SystemTap to simulate a failure while
+doing direct I/O from a client (from Dave Wysochanski
+<dwysocha@redhat.com>):
+
+stap -v -g -e 'probe module("nfs_layout_nfsv41_files").function("nfs4_fl_prepare_ds").return { $return=NULL; exit(); }'
+
+Suggested-by: Trond Myklebust <trond.myklebust@primarydata.com>
+Signed-off-by: Scott Mayhew <smayhew@redhat.com>
+Fixes: 1ca018d28d ("pNFS: Fix a memory leak when attempted pnfs fails")
+Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ fs/nfs/pnfs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/fs/nfs/pnfs.c
++++ b/fs/nfs/pnfs.c
+@@ -1557,7 +1557,7 @@ pnfs_write_through_mds(struct nfs_pageio
+ 		nfs_pageio_reset_write_mds(desc);
+ 		desc->pg_recoalesce = 1;
+ 	}
+-	hdr->release(hdr);
++	hdr->completion_ops->completion(hdr);
+ }
+ 
+ static enum pnfs_try_status
+@@ -1694,7 +1694,7 @@ pnfs_read_through_mds(struct nfs_pageio_
+ 		nfs_pageio_reset_read_mds(desc);
+ 		desc->pg_recoalesce = 1;
+ 	}
+-	hdr->release(hdr);
++	hdr->completion_ops->completion(hdr);
+ }
+ 
+ /*
