@@ -1,92 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id n/N5LyeBHFuFQQAAmS7hNA
-	; Sun, 10 Jun 2018 01:38:47 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id nmVfENhiGVs1YgAAmS7hNA
+	; Thu, 07 Jun 2018 16:53:00 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id A2355608C8; Sun, 10 Jun 2018 01:38:47 +0000 (UTC)
+	id B64D26089E; Thu,  7 Jun 2018 16:53:00 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NvNzCZ5d"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+X-Spam-Status: No, score=-2.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,FROM_EXCESS_BASE64,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id A6647601D2;
-	Sun, 10 Jun 2018 01:38:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A6647601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+	by smtp.codeaurora.org (Postfix) with ESMTP id 3A1AF60115;
+	Thu,  7 Jun 2018 16:53:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3A1AF60115
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753593AbeFJBik (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 21:38:40 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:15941 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753564AbeFJBij (ORCPT
+        id S933695AbeFGQw6 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 12:52:58 -0400
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:34247 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932630AbeFGQwy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 21:38:39 -0400
-Received: from fsav101.sakura.ne.jp (fsav101.sakura.ne.jp [27.133.134.228])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w5A1cQpY049942;
-        Sun, 10 Jun 2018 10:38:26 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav101.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav101.sakura.ne.jp);
- Sun, 10 Jun 2018 10:38:26 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav101.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w5A1cKPF049790
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Sun, 10 Jun 2018 10:38:26 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Subject: Re: BUG: unable to handle kernel NULL pointer dereference in
- sock_poll
-To: syzbot <syzbot+344bb0f46d7719cd9483@syzkaller.appspotmail.com>,
-        ubraun@linux.ibm.com, linux-s390@vger.kernel.org
-References: <00000000000080d9a6056e3aeb35@google.com>
-Cc: davem@davemloft.net, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <1250334f-7220-2bff-5d87-b87573758d81@I-love.SAKURA.ne.jp>
-Date: Sun, 10 Jun 2018 10:38:20 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 7 Jun 2018 12:52:54 -0400
+Received: by mail-yw0-f196.google.com with SMTP id b125-v6so3228008ywe.1;
+        Thu, 07 Jun 2018 09:52:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=5Y2vzhyZp42Ba8LdVKKQla/fC1IJp4EV39lhWJu4oF4=;
+        b=NvNzCZ5dS3bJ7s9JuZq5ICjlnKM6r3PKnHToCRAk8UCfOd7f7nmJ7YAwYzNNAwhDzE
+         ymvsIPHjANdmw4J+oaGXgpIN4MBGLnaQYLtnRyokfvNWyPZOFPVCWxjEt76BqwYh9fBa
+         4lR0g8OGQEWoIEFr0uJfdiuBSL3aWkAtpYvTWjlyc2NKz473x8YEQOdWxn6bTwC5CG0R
+         OpviUtyAnODpaO6mIA4WLkLTTS8RgGDC8ArVnpF8I+xP8NC40VU8p4E28gfxhgURZfrv
+         rxulIFWgktuHqsKo4wcV9cr+BgDJUSADAO03ct+KjgwRKG7qBMY4z3y06ByvSIIi5Dok
+         Jd5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=5Y2vzhyZp42Ba8LdVKKQla/fC1IJp4EV39lhWJu4oF4=;
+        b=EfuBakqgfQGgvnrCWGv3cgXnbWyetFXu7I93B2/CZ4Z5MnGYeETeligeJcNd8GTe2l
+         bCqYBi5iJMHDBWsJ1vYRILVPSdf2nTU5qcn3+IgXaGxAoGDeemhRTWccy9y64otWFuWN
+         f1CndN/yld8FDDIfsgC0T9z1ij2LF7OysyKMWp5JIe7zHrMNEstMyVtYtj9OVhKZ/QFm
+         eU7RfLtIUoskc99/2tkBjfF40z+3UAVk2uQJ4l2xDeKckhlmpRd0vD32ewXs4jPb2lo6
+         WRQvgW/2YMm1gWW9zhpNQ3bnoF2pIVH5sXAVZBHQcIkEB8zPSqcgp+iCyxa6QwMFVqIp
+         reHw==
+X-Gm-Message-State: APt69E1sztrIKNI2r+jceaz2v7YNCRdNup0M+1lox63hiJz5t/fri5/D
+        NpkwN5qaSzWRKbux/rMmTqZTDDuFFXN6aQiNOj0=
+X-Google-Smtp-Source: ADUXVKJuw09R8Ocn5IodrxzKAjU1F1UO/exjlUU/BhcvMdhbKdulmLZVmnekQxkFurDOfr1ZBhhsE/+lzdlPB7QRW60=
+X-Received: by 2002:a0d:f7c2:: with SMTP id h185-v6mr1476830ywf.457.1528390373265;
+ Thu, 07 Jun 2018 09:52:53 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <00000000000080d9a6056e3aeb35@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <1528309291-25579-1-git-send-email-scott.branden@broadcom.com> <c0b4d69d-2826-320e-974e-c7cdbf341747@gmail.com>
+In-Reply-To: <c0b4d69d-2826-320e-974e-c7cdbf341747@gmail.com>
+From: =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Date: Thu, 7 Jun 2018 18:52:42 +0200
+Message-ID: <CAJiuCcefDycphDfTM1a=Dz7vaHMQy4Bq=b4mKTiVZhRTKmWhoQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] ARM: dts: cygnus: enable iproc-hwrng
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: scott.branden@broadcom.com, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ray Jui <rjui@broadcom.com>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, mohamed-ismail.abdul@broadcom.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/06/10 4:57, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    7d3bf613e99a Merge tag 'libnvdimm-for-4.18' of git://git.k..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1188a05f800000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=f04d8d0a2afb789a
-> dashboard link: https://syzkaller.appspot.com/bug?extid=344bb0f46d7719cd9483
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=12b5841f800000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17f4005f800000
+Hi Florian,
 
-This is a same report except s/epoll/poll/ .
+On Thu, 7 Jun 2018 at 18:35, Florian Fainelli <f.fainelli@gmail.com> wrote:
+>
+> On 06/06/2018 11:21 AM, Scott Branden wrote:
+> > From: Mohamed Ismail Abdul Packir Mohamed <mohamed-ismail.abdul@broadco=
+m.com>
+> >
+> > Enable the HW rng driver "iproc-rng200" for all cygnus platforms.
+> >
+> > Signed-off-by: Mohamed Ismail Abdul Packir Mohamed <mohamed-ismail.abdu=
+l@broadcom.com>
+> > Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+> > Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+>
+> Clement, do you want to test this and reported back?
 
-----------
-#include <sys/socket.h>
-#include <sys/poll.h>
-#define PF_SMC 43
+Tested v1 and works fine on bcm58305
 
-int main(int argc, char *argv[])
-{
-	int sfd = socket(PF_SMC, SOCK_STREAM, 0);
-	struct pollfd pfd = { .fd = sfd };
-	poll(&pfd, 1, 0);
-	return 0;
-}
-----------
+Tested-by: Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail.com>
 
-#syz dup: BUG: unable to handle kernel NULL pointer dereference in corrupted
+>
+> > ---
+> >  arch/arm/boot/dts/bcm-cygnus.dtsi | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> >
+> > diff --git a/arch/arm/boot/dts/bcm-cygnus.dtsi b/arch/arm/boot/dts/bcm-=
+cygnus.dtsi
+> > index 9fe4f5a..b0e38fa 100644
+> > --- a/arch/arm/boot/dts/bcm-cygnus.dtsi
+> > +++ b/arch/arm/boot/dts/bcm-cygnus.dtsi
+> > @@ -417,6 +417,11 @@
+> >                       status =3D "disabled";
+> >               };
+> >
+> > +             rng: rng@18032000 {
+> > +                     compatible =3D "brcm,iproc-rng200";
+> > +                     reg =3D <0x18032000 0x28>;
+> > +             };
+> > +
+> >               sdhci0: sdhci@18041000 {
+> >                       compatible =3D "brcm,sdhci-iproc-cygnus";
+> >                       reg =3D <0x18041000 0x100>;
+> >
+>
+>
+> --
+> Florian
