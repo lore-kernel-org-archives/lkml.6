@@ -1,125 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id YgF/Ip7GG1tyLwAAmS7hNA
-	; Sat, 09 Jun 2018 12:24:47 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id HkwbMpmNGFsoCAAAmS7hNA
+	; Thu, 07 Jun 2018 01:43:26 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id A5B1D607A4; Sat,  9 Jun 2018 12:24:47 +0000 (UTC)
+	id 0B2D76089E; Thu,  7 Jun 2018 01:43:26 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="xa1LKJBP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z2F23kHX"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 01CBE602FC;
-	Sat,  9 Jun 2018 12:24:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 01CBE602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 64877601A8;
+	Thu,  7 Jun 2018 01:43:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 64877601A8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753259AbeFIMYp (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 08:24:45 -0400
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:24592 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753175AbeFIMYn (ORCPT
+        id S1752886AbeFGBnX (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 21:43:23 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:43410 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752322AbeFGBnV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 08:24:43 -0400
-Received: from mail-vk0-f54.google.com (mail-vk0-f54.google.com [209.85.213.54]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id w59CObAX002527
-        for <linux-kernel@vger.kernel.org>; Sat, 9 Jun 2018 21:24:37 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w59CObAX002527
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1528547077;
-        bh=JponS2F5yrkQN1tP9JrgCKS7Gl1jUTYQv7Q8hWNkGUg=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=xa1LKJBP9qvc1HP2fHngsmV7E7tckjYEVgJI/EvX6W5dM25OPSG3YZpsYUM1CIM6v
-         E59jCiBXHLoTb5erwCtA8MclptCD41Hx2ryIq1zhhRwCgljoAi9szcBXLy4vBFJaOa
-         U2BkFDJpzFBsqfrJ+b3CcY86BoikjIirCxW7wRCl7vAaJhKG8SuCuw8/3D6vXO+xwx
-         PxqmhlkCuqo7MGxhJfqGwkRhL5/TnKbSQHmiWvmNywtT2brVduKgxBj594ywmx83EQ
-         ysrDdXsaC8ziIZQgy8HBm6M5B7JXpDxkLi9Ca6MkCcv7NHp5el560oWt5BCaDeEsKl
-         CeNCfvTJfzA3Q==
-X-Nifty-SrcIP: [209.85.213.54]
-Received: by mail-vk0-f54.google.com with SMTP id d74-v6so9513861vke.10
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Jun 2018 05:24:37 -0700 (PDT)
-X-Gm-Message-State: APt69E1//g9/lpELZrUHAJQh7iQfZLN80l/FcdrdEg/n8JuWgIya/s42
-        JMnEPP5izuc+v6E5apzXIf2x4ocr62ajRS8xYDo=
-X-Google-Smtp-Source: ADUXVKLt229qIdHbg7CWkBm54DdGRo2c09kDsmGPEcxAJL7Wu5bPnp/pG2mt/VzaC4KSXSX3rqahHIGsW97WZV6VZuE=
-X-Received: by 2002:a1f:a945:: with SMTP id s66-v6mr6493826vke.54.1528547076397;
- Sat, 09 Jun 2018 05:24:36 -0700 (PDT)
+        Wed, 6 Jun 2018 21:43:21 -0400
+Received: by mail-pf0-f195.google.com with SMTP id j20-v6so4021191pff.10
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Jun 2018 18:43:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=QRcPTJiVa8mTVEOhxd5W3GsgBdp1HtlMNAXYyca++nM=;
+        b=Z2F23kHXPf1D2iDf1/CWCJBb4UL2aiBeuJrp+jDGg9hWy2IfTg55bbTGiITGIX6XIc
+         tsMwVabBBFHEERxM0xwCUVop7iwyMyiNXxZBgS+kCskfqW7tJcwUgM+AfCbHHkFgvZ3p
+         Blp21pq28L4l/zlkDxMP4mlYIa1cJp629SLc2hCPZmY9siXRcdDPXkZt4FmiDa2CMJ3L
+         2rLoFTz7MzKmpHtAEjjteRbi9qOGzC5OEUNJb63m1PmNpxbZkfx7UQNgoss+ZPBcbUBk
+         UxnzMXRekofFdFjk4MJxltTmasGd15SaGS0KHgLny1O5BwovH/LDs7t0yogs9xyuik1f
+         G5og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=QRcPTJiVa8mTVEOhxd5W3GsgBdp1HtlMNAXYyca++nM=;
+        b=o9VBYm1AS23GORoLAofC5GvTyD0EasGAjAJUHWWhmp89K0ze3axLeQb10uPUjfeBHJ
+         1OozIr34woId64Zl4+2UbTBER2ctEU14s5YWxE+glzoJLJEV8rnE+Ggegc6ZRDa0n1bK
+         C8rbZySXSHSxSoDXivqR35CcW43T0FbzRGMkE8V126owOnQrZcS5UuU2yAffF203SQg0
+         dpOwjOtrLDeupvWKOoJ+pVNBMewOQqrB9F7m6Kgwv931VjuaavB4eHkiiWtm601aIYyj
+         X77viwkFWCHB9we9x+GRKbBXRv15RntMnLxXJm7x4p439/MGE/4i6b+HT9v7J91eluq4
+         3CVQ==
+X-Gm-Message-State: APt69E0N+PgsYH3pPEM7ldpoHKGSYKO2yA4+i5D0ibme3FLUmzPRAcu8
+        naxctQ5Cf26y8xzrf8jmHzyWbw==
+X-Google-Smtp-Source: ADUXVKIqJGLeW0UcRRG22WA23kxVphZk4/kGR/xt+Tig8YXRSVIZIZW4EEW1G7QHKEnY0+oQJiv0MQ==
+X-Received: by 2002:a62:1013:: with SMTP id y19-v6mr4632037pfi.166.1528335801111;
+        Wed, 06 Jun 2018 18:43:21 -0700 (PDT)
+Received: from roar.ozlabs.ibm.com (59-102-70-78.tpgi.com.au. [59.102.70.78])
+        by smtp.gmail.com with ESMTPSA id w125-v6sm2218469pgb.92.2018.06.06.18.43.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 06 Jun 2018 18:43:20 -0700 (PDT)
+Date: Thu, 7 Jun 2018 11:43:04 +1000
+From: Nicholas Piggin <npiggin@gmail.com>
+To: Christophe Leroy <christophe.leroy@c-s.fr>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v4 1/2] powerpc/time: Only set
+ CONFIG_ARCH_HAS_SCALED_CPUTIME on PPC64
+Message-ID: <20180607114304.327c4ab5@roar.ozlabs.ibm.com>
+In-Reply-To: <d9ac8da98f53debb4758b98d0227979aca9196f7.1528292284.git.christophe.leroy@c-s.fr>
+References: <d9ac8da98f53debb4758b98d0227979aca9196f7.1528292284.git.christophe.leroy@c-s.fr>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Received: by 2002:ab0:20ab:0:0:0:0:0 with HTTP; Sat, 9 Jun 2018 05:23:55 -0700 (PDT)
-In-Reply-To: <20180608091227.jbigan3vplns2oxk@unicorn.suse.cz>
-References: <7a5458da-4222-7480-00ed-a51bed2c1e39@mageia.org>
- <CA+55aFyD0OMV1eoc9wh_hLcnRhHq2FwJf4EZcORmHPNxTRSX9Q@mail.gmail.com>
- <daf0fbba-6357-1748-d583-bcb5edf067ec@mageia.org> <CA+55aFwiyuA4fKztofM-fdDSc+ZH9aAR1xksL8ZWRDE-pdXruw@mail.gmail.com>
- <CAK7LNAS=PvYVrLczeJT0utq3UHNL5YtSE_w=RjJYJ3SD9ALrYA@mail.gmail.com>
- <CA+55aFzNCQZHEz9P2a4ZSyWB0RxZcTkh5TVfwTmup-Y-6b8qjw@mail.gmail.com>
- <CA+55aFwAwoDdZRP6n9xXDPkeCUm35mmGH3fXv=r1HOZq1bpiGw@mail.gmail.com>
- <CAK7LNAS4Xb_CQ31t_cqt3q0zRFZ-O2n3+qkxXfxZB_jmqvFmWQ@mail.gmail.com>
- <f1f35cdf-bd03-54bb-7196-c13131f7d0fc@mageia.org> <CA+55aFxe+LooLzpvBLwW9Ehwomp45zdJ3a-P71ipHJzdMmtDkQ@mail.gmail.com>
- <20180608091227.jbigan3vplns2oxk@unicorn.suse.cz>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Sat, 9 Jun 2018 21:23:55 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQrhBukG14-ggBWPBauB1shAiuZvESo70KrFxuOwhRJjg@mail.gmail.com>
-Message-ID: <CAK7LNAQrhBukG14-ggBWPBauB1shAiuZvESo70KrFxuOwhRJjg@mail.gmail.com>
-Subject: Re: building in 32bit chroot on x86_64 host broken
-To: Michal Kubecek <mkubecek@suse.cz>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Backlund <tmb@mageia.org>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-06-08 18:12 GMT+09:00 Michal Kubecek <mkubecek@suse.cz>:
-> On Thu, Jun 07, 2018 at 12:40:30PM -0700, Linus Torvalds wrote:
->> On Thu, Jun 7, 2018 at 12:35 PM Thomas Backlund <tmb@mageia.org> wrote:
->> >
->> > I can work around it for now (or keep the revert in our kernel builds
->> > for now) until it gets properly fixed...
->>
->> So rather than doing the revert, it's probably better if  your
->> workaround just does
->>
->>    make ARCH=i386 oldconfig
->>
->> (or maybe even just a "export ARCH=i386" in the environment)
->>
->> That should get you to continue to otherwise do the same thing.
->>
->> And if it turns out that your flow is the *only* one affected by this,
->> and nobody else complains, maybe we can just say "yeah, slight change
->> in build rules, easy to work around" and leave it at that.
->
-> Not the only one, we hit the same problem when building openSUSE
-> packages (4.17-rc1) but we resolved it by always setting ARCH:
->
->   https://github.com/openSUSE/kernel-source/commit/fb21b7321ab5
->
-> It also revealed that we forgot to pass MAKE_ARGS to other phases of RPM
-> build process so we don't have reason to complain.
->
-> Michal Kubecek
+On Wed,  6 Jun 2018 14:21:08 +0000 (UTC)
+Christophe Leroy <christophe.leroy@c-s.fr> wrote:
 
+> scaled cputime is only meaningfull when the processor has
+> SPURR and/or PURR, which means only on PPC64.
+> 
+> Removing it on PPC32 significantly reduces the size of
+> vtime_account_system() and vtime_account_idle() on an 8xx:
+> 
+> Before:
+> 00000000 l     F .text	000000a8 vtime_delta
+> 00000280 g     F .text	0000010c vtime_account_system
+> 0000038c g     F .text	00000048 vtime_account_idle
+> 
+> After:
+> (vtime_delta gets inlined in the two functions)
+> 000001d8 g     F .text	000000a0 vtime_account_system
+> 00000278 g     F .text	00000038 vtime_account_idle
+> 
+> In terms of performance, we also get approximatly 5% improvement on task switch:
+> The following small benchmark app is run with perf stat:
+> 
+> void *thread(void *arg)
+> {
+> 	int i;
+> 
+> 	for (i = 0; i < atoi((char*)arg); i++)
+> 		pthread_yield();
+> }
+> 
+> int main(int argc, char **argv)
+> {
+> 	pthread_t th1, th2;
+> 
+> 	pthread_create(&th1, NULL, thread, argv[1]);
+> 	pthread_create(&th2, NULL, thread, argv[1]);
+> 	pthread_join(th1, NULL);
+> 	pthread_join(th2, NULL);
+> 
+> 	return 0;
+> }
+> 
+> Before the patch:
+> 
+> ~# perf stat chrt -f 98 ./sched 100000
+> 
+>  Performance counter stats for 'chrt -f 98 ./sched 100000':
+> 
+>        8622.166272      task-clock (msec)         #    0.955 CPUs utilized
+>             200027      context-switches          #    0.023 M/sec
+> 
+> After the patch:
+> 
+> ~# perf stat chrt -f 98 ./sched 100000
+> 
+>  Performance counter stats for 'chrt -f 98 ./sched 100000':
+> 
+>        8207.090048      task-clock (msec)         #    0.958 CPUs utilized
+>             200025      context-switches          #    0.024 M/sec
+> 
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
-Just a note.
+This looks okay to me. Nice numbers.
 
-In case of cross-compiling, not only ARCH but also CROSS_COMPILE
-must be passed when you do "make *config".
+> ---
+>  v4:
+>   - Using the correct symbol CONFIG_ARCH_HAS_SCALED_CPUTIME instead of ARCH_HAS_SCALED_CPUTIME
+>   - Grouped CONFIG_ARCH_HAS_SCALED_CPUTIME related code in dedicated functions to reduce the number of #ifdefs
+>   - Integrated read_spurr() directly into the related function.
+>  v3: Rebased following modifications in xmon.c
+>  v2: added ifdefs in xmon to fix compilation error
+> 
+>  arch/powerpc/Kconfig                  |   2 +-
+>  arch/powerpc/include/asm/accounting.h |   4 ++
+>  arch/powerpc/include/asm/cputime.h    |   1 -
+>  arch/powerpc/kernel/time.c            | 111 +++++++++++++++++++++-------------
+>  arch/powerpc/xmon/xmon.c              |   4 ++
+>  5 files changed, 77 insertions(+), 45 deletions(-)
+> 
+> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+> index b62a16e2c7cc..735398fd390d 100644
+> --- a/arch/powerpc/Kconfig
+> +++ b/arch/powerpc/Kconfig
+> @@ -142,7 +142,7 @@ config PPC
+>  	select ARCH_HAS_PHYS_TO_DMA
+>  	select ARCH_HAS_PMEM_API                if PPC64
+>  	select ARCH_HAS_MEMBARRIER_CALLBACKS
+> -	select ARCH_HAS_SCALED_CPUTIME		if VIRT_CPU_ACCOUNTING_NATIVE
+> +	select ARCH_HAS_SCALED_CPUTIME		if VIRT_CPU_ACCOUNTING_NATIVE && PPC64
 
-In this merge window, some compiler option tests are being moved
-from Makefiles to the Kconfig phase.
+I wonder if we could make this depend on PPC_PSERIES or even
+PPC_SPLPAR as well? (That would be for a later patch)
 
-People tend to set "export CROSS_COMPILE=..."
-in their build environment.
-I have not received any complaint about this change so far.
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+Thanks,
+Nick
