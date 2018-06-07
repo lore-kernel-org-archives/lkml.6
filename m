@@ -1,173 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id MUuaB7AAGVufFAAAmS7hNA
-	; Thu, 07 Jun 2018 09:53:52 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id QfVuBwdxGVtdaQAAmS7hNA
+	; Thu, 07 Jun 2018 18:00:59 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 016C5607DC; Thu,  7 Jun 2018 09:53:51 +0000 (UTC)
+	id 905C06074D; Thu,  7 Jun 2018 18:00:59 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tDm2DiyR"
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="XTH1QN2n"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 4D0DB601C3;
-	Thu,  7 Jun 2018 09:53:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4D0DB601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 18378601C3;
+	Thu,  7 Jun 2018 18:00:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 18378601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753659AbeFGJxs (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 05:53:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45568 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751681AbeFGJxr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 05:53:47 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 48D9520660;
-        Thu,  7 Jun 2018 09:53:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528365227;
-        bh=8ck2zvA/fGx8go5b7rwR18uoD2jvUo5OqPbkEjNwxfI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tDm2DiyRRWAoBPoeYGMQilWbgM0Qf6JcQcEROyXyRWsTauJtm7XwbLEnm6fZxHfc+
-         kZWo34geE76Gr60dx9cQXX3b0PV+0xUjnmWY6+CGtLXmCHRnlnob26Ll7cz8VzgFZ/
-         XWbFLnhEKrI3vuOEYD3D3pdZc35eZpXeMmyXeFx8=
-Date: Thu, 7 Jun 2018 11:53:22 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: Kim Phillips <kim.phillips@arm.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Gargi Sharma <gs051095@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Rik van Riel <riel@redhat.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Thierry Reding <treding@nvidia.com>,
-        Todd Kjos <tkjos@google.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 05/14] coresight: get/put module in
- coresight_build/release_path
-Message-ID: <20180607095322.GA26174@kroah.com>
-References: <20180605210710.22227-1-kim.phillips@arm.com>
- <20180605210710.22227-6-kim.phillips@arm.com>
- <20180606082422.GB19727@kroah.com>
- <a457594c-b391-23e1-6ab5-d115073cac5a@arm.com>
- <20180606155501.704583e1412996a1a2c6fa61@arm.com>
- <20180607083401.GE16651@kroah.com>
- <3219276b-2703-bc30-92e1-bae80cdc5901@arm.com>
- <20180607091353.GA20438@kroah.com>
- <2f8d233e-8847-ce3d-3a5b-06b175e3944b@arm.com>
+        id S935063AbeFGSAm (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 14:00:42 -0400
+Received: from mail-wm0-f47.google.com ([74.125.82.47]:40641 "EHLO
+        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933126AbeFGSAk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 14:00:40 -0400
+Received: by mail-wm0-f47.google.com with SMTP id n5-v6so20873908wmc.5
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 11:00:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=bSThr/Wzb/iXXPsZ3PXcPSOZ0vljyPrk4SSgppfj2ac=;
+        b=XTH1QN2n1FvuJo1tCjdRj64lftJTonddhavePGW3+WJEPaYvVQhjh6y8thjlHR31Pc
+         RlJE32wEVZmBHSAQRy6PqoBSpOWfkiJdmuExE8xoiK23dh2ARfpDn2vH/0/PLaU0glG1
+         6WONwem0mlyMb/8uf+aGgDj2+L8DbtvTEXmB45JzBcwhzcPSbiwS+o6FvDKPWpmJjaRJ
+         JZMOhGDJxF6wX7kFHRwU63aM6PS6igs9OlOmRA58GeBNdonDX8y1GasEXeA4E/91sGUX
+         V9DM0MfnYJqMs3Uz6jCZAkfUVwe7tnYEEvzVUx1PJDV2RFYKlDGYGZ71n8OBySeEVPTq
+         JdTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bSThr/Wzb/iXXPsZ3PXcPSOZ0vljyPrk4SSgppfj2ac=;
+        b=PQ9ytpsnx5WJ1LXQjfyyrbi5y9wFjRJKfcTnJidzaRnZBFITqGvfBETFDmjQ+7rsvK
+         Qy07bIqihHbqjwAKa2hCM4yi/lG7TV29E0Sba0wejX0GWqAomyuNdklKJYl9fCtlzn6B
+         iWVbCRwTrkDEm0o09gTREYJ8jmA138dFjE4rK7878oNAeXzdf9KCX8/t8MnBBGvEczTe
+         OLfyiSCqh3M+v14rtqWmg4DLYmcW6X1s1K8kzxH6WFoOsHxpX+Mny+XiML00csXoV8I+
+         fDx6Q7X8YAs9i0gBtRzsEcnBiX1DS/dYJ32WRlrpZ3RehLqbQGs9lBZa2r0xIt6oiKac
+         rSgQ==
+X-Gm-Message-State: APt69E09YXXe69gG7aQ5lQzPgRh4BoZR740wmZCC30/NqO3oEH0PZTai
+        5NzWGNHsaNmm/NeSBxy9Y5n8fA==
+X-Google-Smtp-Source: ADUXVKK9Z2QthIcjfutu84t9h9/saxguFiedhvknizR8hQoZvJC7i0FJ8IWynbC3VxYO1eZeYnYvjg==
+X-Received: by 2002:a1c:443:: with SMTP id 64-v6mr2505952wme.140.1528394439233;
+        Thu, 07 Jun 2018 11:00:39 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id 76-v6sm3108944wmj.0.2018.06.07.11.00.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Jun 2018 11:00:38 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.86_2)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1fQzD8-0002Xf-EV; Thu, 07 Jun 2018 12:00:34 -0600
+Date: Thu, 7 Jun 2018 12:00:34 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Greg Thelen <gthelen@google.com>
+Cc: Doug Ledford <dledford@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        swise@opengridcomputing.com, swise@chelsio.com,
+        yuval.shaia@oracle.com, linux-rdma@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Tarick Bedeir <tarick@google.com>
+Subject: Re: [PATCH] iw_cxgb4: add INFINIBAND_ADDR_TRANS dependency
+Message-ID: <20180607180034.GD14583@ziepe.ca>
+References: <20180530220405.GH30754@ziepe.ca>
+ <0be4e0fb-8d8e-b337-fc8d-550c90829d8c@opengridcomputing.com>
+ <20180530222520.GJ30754@ziepe.ca>
+ <d2472443-3ae6-63f4-59ad-d6367b837038@opengridcomputing.com>
+ <CAK8P3a3HZXTR60ua=cjBHnB5FWWKve9F-JqcNwn0ujks+=FsNg@mail.gmail.com>
+ <20180530230136.GK30754@ziepe.ca>
+ <CAHH2K0ZLDmsPNw=sOobL=+R54yRFrnG4syWcW43UEbwxsvFehw@mail.gmail.com>
+ <d23e215a30f1277c941973043262cdfc60c71315.camel@redhat.com>
+ <20180604230745.GG24926@ziepe.ca>
+ <CAHH2K0baMto7A75YxvP9LWtR9wgAFY76n_2q3fX_b=qcnuX1mw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2f8d233e-8847-ce3d-3a5b-06b175e3944b@arm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <CAHH2K0baMto7A75YxvP9LWtR9wgAFY76n_2q3fX_b=qcnuX1mw@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 07, 2018 at 10:32:21AM +0100, Suzuki K Poulose wrote:
-> On 06/07/2018 10:13 AM, Greg Kroah-Hartman wrote:
-> > On Thu, Jun 07, 2018 at 10:04:33AM +0100, Suzuki K Poulose wrote:
-> > > Hi Greg,
-> > > 
-> > > On 06/07/2018 09:34 AM, Greg Kroah-Hartman wrote:
-> > > > On Wed, Jun 06, 2018 at 03:55:01PM -0500, Kim Phillips wrote:
-> > > > > On Wed, 6 Jun 2018 10:46:36 +0100
-> > > > > Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
-> > > > > 
-> > > > > > On 06/06/2018 09:24 AM, Greg Kroah-Hartman wrote:
-> > > > > > > On Tue, Jun 05, 2018 at 04:07:01PM -0500, Kim Phillips wrote:
-> > > > > > > > Increment the refcnt for driver modules in current use by calling
-> > > > > > > > module_get in coresight_build_path and module_put in release_path.
-> > > > > > > > 
-> > > > > > > > This prevents driver modules from being unloaded when they are in use,
-> > > > > > > > either in sysfs or perf mode.
-> > > > > > > 
-> > > > > > > Why does it matter?  Shouldn't you be allowed to remove any module at
-> > > > > > > any point in time, much like a networking driver?
-> > > 
-> > > The user doesn't have an explicit refcount on the individual components
-> > > in a trace session. So, when a trace session is in progress, it is as
-> > > good as having a "file" open on each component that is part of the
-> > > active trace session. So, we don't want the driver to be removed when
-> > > the component is being used in the trace collection.
-> > 
-> > Why not?  What's wrong with that happening and then the trace collection
-> > starts failing with -ENODEV or something?
+On Thu, Jun 07, 2018 at 01:10:39AM -0700, Greg Thelen wrote:
+> > > I don't really think I like this approach though.  At a minimum if you
+> > > are going to make iWARP totally dependent on rdmacm, then there is zero
+> > > reason that iw_cm.o should be part of the obj-$(CONFIG_INFINIBAND)
+> > > Makefile recipe when ADDR_TRANS is disabled.
+> >
+> > This makes sense, Greg, can you send a followup patch with these
+> > items? I know this series has been tough..
+> >
+> > Thanks,
+> > Jason
 > 
-> May be I am missing something here. Can we allow the driver to be removed
-> when one of its device is "turned ON" and we need the same
-> driver to "turn it OFF" when the session ends ? To make a better
-> comparison :
-> 
-> Can we unload a usb_mass_storage module when a USB disk(which uses the
-> module driver) is mounted and is being used ? I believe, the module
-> will eventually get unloaded when we unmount the disk, if someone did
-> a unload.
+> Ack.  Sorry for delay.  I'll take a look at this in a day or two.  Let
+> me know if it's more urgent.
 
-No, mount causes the module count to be incrememted.  Mount and
-"open/close" are the old-school way of doing module reference counting.
+No rush, sometime in the next several weeks is fine
 
-Look at how network drivers work today, you can unload any network
-driver even if there is a valid network connection "up and running"
-attached to it.  It just gets torn down when that request happens.
-
-> We have a similar situation here. The only difference is the driver is
-> referenced only when one of its device is in a trace session.
-
-I understand, I'm saying that you have to be very careful when messing
-around with module reference counts to get it correct and perhaps you
-should just change your design to not care about module reference counts
-at all, like networking did 15+ years ago.
-
-Let's learn from the good examples in our past (like networking), and
-not like the older bad examples (like mount/files).
-
-> > Remember, removing a kernel module is something that only happens very
-> > rarely, and is an explicit choice by someone with root permissions.  If
-> > you want to remove that module, it should be able to go, as you know
-> > what you are doing at that point in time.
-> 
-> Right, but when a device is "in use" can we do that ? I thought the user
-> will get a module is in use or busy, error.
-
-Try it on networking today :)
-
-> > Don't try to "protect the user from themselves" here, they want to shoot
-> > their foot, make it hurt if they are aiming it there :)
-> > 
-> 
-> The module_get/put added here are only triggered when we start a trace
-> session, where we build a path for the current session from the configured
-> "source" to the configured "sink" and the path is destroyed
-> at the end of the trace session. i.e, the path is not a permanent thing.
-> It is constructed per session. So it is perfectly possible to remove a
-> device in between trace sessions.
-
-That's fine, but again, just be careful to get this correct.  The patch
-I reviewed did not seem to do that.
-
-thanks,
-
-greg k-h
+Jason
