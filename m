@@ -1,136 +1,214 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id XHOYHqbbHVvhCgAAmS7hNA
-	; Mon, 11 Jun 2018 02:49:59 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id +LSaN1xkGVvedwAAmS7hNA
+	; Thu, 07 Jun 2018 16:59:10 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 1FA5B607A4; Mon, 11 Jun 2018 02:49:59 +0000 (UTC)
+	id B77EC607E7; Thu,  7 Jun 2018 16:59:10 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c5SJw5GA"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id EAB2D60908;
-	Mon, 11 Jun 2018 02:49:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EAB2D60908
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id BFD6F606DD;
+	Thu,  7 Jun 2018 16:58:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BFD6F606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753883AbeFKCtw (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Sun, 10 Jun 2018 22:49:52 -0400
-Received: from www1102.sakura.ne.jp ([219.94.129.142]:39617 "EHLO
-        www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753736AbeFKCtv (ORCPT
+        id S934367AbeFGQ65 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 12:58:57 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:46307 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932728AbeFGQ6y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 22:49:51 -0400
-X-Greylist: delayed 2789 seconds by postgrey-1.27 at vger.kernel.org; Sun, 10 Jun 2018 22:49:51 EDT
-Received: from [192.168.1.2] (210.161.151.153.ap.dti.ne.jp [153.151.161.210])
-        (authenticated bits=0)
-        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w5B23Ks6083588
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Mon, 11 Jun 2018 11:03:21 +0900 (JST)
-        (envelope-from suzuki.katsuhiro@socionext.com)
-Subject: Re: [alsa-devel] [PATCH] ASoC: audio-graph-card: add hp and mic
- detect gpios same as simple-card
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: alsa-devel@alsa-project.org,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        linux-kernel@vger.kernel.org,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-References: <20180608080843.11097-1-suzuki.katsuhiro@socionext.com>
- <87h8makxt7.wl-kuninori.morimoto.gx@renesas.com>
-From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Message-ID: <a397e5b7-f6bd-17b5-2105-5875085467e5@socionext.com>
-Date: Mon, 11 Jun 2018 11:03:20 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 7 Jun 2018 12:58:54 -0400
+Received: by mail-pf0-f195.google.com with SMTP id q1-v6so5194951pff.13
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 09:58:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=uiGJKXY14qE7ItnVb1RpQJrrBTMrFPHK/i6p4ZTKLiw=;
+        b=c5SJw5GASrDIYcHj9CXY4Mj0R7T9hvPSSTj3CZti+kwH0MynOIqEuXtbooma9aAxoT
+         923pIytS6na1F0u8SH0wSHhpqhBZjy/xNDJOCER/HffmnGn/pYbkFVXM/uFGMyXX/Xk6
+         5OdpkgOEtLTWcVex0ksVK8Y8FhKmfS5xJwJIJPGqERmgdzEvapuMy0MDTBlmgUFduzry
+         4EZpmBdCbADxCltQLIDqkfOeTqIXopoTAh8KstySlG0xIR/DJVmeDiaDzYGiIIGGOzt2
+         QYLolqfFi6NYQ3ERgh3cLYLqrOyAbJTwslm4Gih3VWybfBeiV8UiBn9wQYyPHQqCMTXV
+         O3BA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=uiGJKXY14qE7ItnVb1RpQJrrBTMrFPHK/i6p4ZTKLiw=;
+        b=WLTbkIxSJaIP3HDxo2SfnyjAIsnpwRbG7w1qnXbY+Bk3gVu6wCY5/xUvSHhshmkkV/
+         nJpiiylxLQJMyEWzDt++66Ip8Cl3a/j7dop3ZaAMRCH5d0QroEAhFdeRJptZXzR6w4HO
+         PBrW3vbJvO3ZvEupoDGIUbDoL6nS5AgkmlQB4lSngxRKF/IBC50jJzTwqlvtt6iwaXAr
+         luuMcqvlC2HfZd8Osoyq4HR1Bps/54skvVHlQBJhF4ngKljcGG/PVifPbIxsE820Qorx
+         HEF36w8Fiu0eoC/jIFTfed+di/hBFBiO071VB1c07Wfxi7r0hN45udhCHDhyLIYpIm6s
+         d58A==
+X-Gm-Message-State: APt69E0Uh9RYZmpkXn/qZtpWlvxjn9LfR8GsPr/VfNBSgTCUb40ujqhP
+        PHB5H3MYIMxySlyWteze77iMvVWAigXKmderb2yuSA==
+X-Google-Smtp-Source: ADUXVKJwS7l/Mdh2jEEAsdxPZBEdY6aOIFEVuxl6nq5bLu33geFEvW1mOUpR4DEpH51EAZ0I16iMSqIp9yH5jpH/LpE=
+X-Received: by 2002:a62:a38d:: with SMTP id q13-v6mr2515291pfl.49.1528390733443;
+ Thu, 07 Jun 2018 09:58:53 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <87h8makxt7.wl-kuninori.morimoto.gx@renesas.com>
-Content-Type: text/plain; charset=ISO-2022-JP; format=flowed; delsp=yes
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a17:90a:d42:0:0:0:0 with HTTP; Thu, 7 Jun 2018 09:58:32
+ -0700 (PDT)
+In-Reply-To: <ca3eff64-adb0-6110-38ca-2e07b6ecc3d6@iogearbox.net>
+References: <000000000000cb4149056d3587f5@google.com> <ca3eff64-adb0-6110-38ca-2e07b6ecc3d6@iogearbox.net>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Thu, 7 Jun 2018 18:58:32 +0200
+Message-ID: <CACT4Y+YqCF3mcjkJSZaJSpBHazQsucdZWdgksg=Cdi7AFQuEqQ@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Write in bpf_tcp_close
+To: Daniel Borkmann <daniel@iogearbox.net>
+Cc: syzbot <syzbot+31025a5f3f7650081204@syzkaller.appspotmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        John Fastabend <john.fastabend@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Morimoto-san,
-
-Thank you for your reviewing.
-
-On 06/11/18 08:52, Kuninori Morimoto wrote:
-> 
-> Hi Katsuhiro-san
-> 
-> Thank you for your patch
-> 
->> This patch adds headphone and microphone jack detection gpios as same
->> as simple-card driver. This feature move into simple-card-utils from
->> simple-card to avoid the duplicating code.
+On Mon, May 28, 2018 at 12:15 AM, Daniel Borkmann <daniel@iogearbox.net> wrote:
+> [ +John ]
+>
+> On 05/27/2018 10:06 PM, syzbot wrote:
+>> Hello,
 >>
->> Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+>> syzbot found the following crash on:
+>>
+>> HEAD commit:    ff4fb475cea8 Merge branch 'btf-uapi-cleanups'
+>> git tree:       bpf-next
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=12b3d577800000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=b632d8e2c2ab2c1
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=31025a5f3f7650081204
+>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=109a2f37800000
+>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=171a727b800000
+>>
+>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>> Reported-by: syzbot+31025a5f3f7650081204@syzkaller.appspotmail.com
+>
+> Should be fixed by: https://patchwork.ozlabs.org/patch/920695/
+
+#syz fix: bpf: sockhash fix race with bpf_tcp_close and map delete
+
+>> ==================================================================
+>> BUG: KASAN: use-after-free in cmpxchg_size include/asm-generic/atomic-instrumented.h:355 [inline]
+>> BUG: KASAN: use-after-free in bpf_tcp_close+0x6f5/0xf80 kernel/bpf/sockmap.c:265
+>> Write of size 8 at addr ffff8801ca277680 by task syz-executor749/9723
+>>
+>> CPU: 0 PID: 9723 Comm: syz-executor749 Not tainted 4.17.0-rc4+ #19
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+>> Call Trace:
+>>  __dump_stack lib/dump_stack.c:77 [inline]
+>>  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+>>  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+>>  kasan_report_error mm/kasan/report.c:354 [inline]
+>>  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+>>  check_memory_region_inline mm/kasan/kasan.c:260 [inline]
+>>  check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
+>>  kasan_check_write+0x14/0x20 mm/kasan/kasan.c:278
+>>  cmpxchg_size include/asm-generic/atomic-instrumented.h:355 [inline]
+>>  bpf_tcp_close+0x6f5/0xf80 kernel/bpf/sockmap.c:265
+>>  inet_release+0x104/0x1f0 net/ipv4/af_inet.c:427
+>>  inet6_release+0x50/0x70 net/ipv6/af_inet6.c:459
+>>  sock_release+0x96/0x1b0 net/socket.c:594
+>>  sock_close+0x16/0x20 net/socket.c:1149
+>>  __fput+0x34d/0x890 fs/file_table.c:209
+>>  ____fput+0x15/0x20 fs/file_table.c:243
+>>  task_work_run+0x1e4/0x290 kernel/task_work.c:113
+>>  exit_task_work include/linux/task_work.h:22 [inline]
+>>  do_exit+0x1aee/0x2730 kernel/exit.c:865
+>>  do_group_exit+0x16f/0x430 kernel/exit.c:968
+>>  __do_sys_exit_group kernel/exit.c:979 [inline]
+>>  __se_sys_exit_group kernel/exit.c:977 [inline]
+>>  __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:977
+>>  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+>>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>> RIP: 0033:0x440a59
+>> RSP: 002b:00007ffdadf92488 EFLAGS: 00000206 ORIG_RAX: 00000000000000e7
+>> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000440a59
+>> RDX: 0000000000440a59 RSI: 0000000000000020 RDI: 0000000000000000
+>> RBP: 0000000000000000 R08: 00000000004002c8 R09: 0000000000401ea0
+>> R10: 00000000004002c8 R11: 0000000000000206 R12: 000000000001b5ac
+>> R13: 0000000000401ea0 R14: 0000000000000000 R15: 0000000000000000
+>>
+>> Allocated by task 9723:
+>>  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+>>  set_track mm/kasan/kasan.c:460 [inline]
+>>  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+>>  __do_kmalloc_node mm/slab.c:3682 [inline]
+>>  __kmalloc_node+0x47/0x70 mm/slab.c:3689
+>>  kmalloc_node include/linux/slab.h:554 [inline]
+>>  bpf_map_area_alloc+0x3f/0x90 kernel/bpf/syscall.c:144
+>>  sock_map_alloc+0x376/0x410 kernel/bpf/sockmap.c:1555
+>>  find_and_alloc_map kernel/bpf/syscall.c:126 [inline]
+>>  map_create+0x393/0x1010 kernel/bpf/syscall.c:448
+>>  __do_sys_bpf kernel/bpf/syscall.c:2128 [inline]
+>>  __se_sys_bpf kernel/bpf/syscall.c:2105 [inline]
+>>  __x64_sys_bpf+0x300/0x4f0 kernel/bpf/syscall.c:2105
+>>  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+>>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>>
+>> Freed by task 4521:
+>>  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+>>  set_track mm/kasan/kasan.c:460 [inline]
+>>  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
+>>  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+>>  __cache_free mm/slab.c:3498 [inline]
+>>  kfree+0xd9/0x260 mm/slab.c:3813
+>>  kvfree+0x61/0x70 mm/util.c:440
+>>  bpf_map_area_free+0x15/0x20 kernel/bpf/syscall.c:155
+>>  sock_map_remove_complete kernel/bpf/sockmap.c:1443 [inline]
+>>  sock_map_free+0x408/0x540 kernel/bpf/sockmap.c:1619
+>>  bpf_map_free_deferred+0xba/0xf0 kernel/bpf/syscall.c:259
+>>  process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
+>>  worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
+>>  kthread+0x345/0x410 kernel/kthread.c:238
+>>  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+>>
+>> The buggy address belongs to the object at ffff8801ca277680
+>>  which belongs to the cache kmalloc-1024 of size 1024
+>> The buggy address is located 0 bytes inside of
+>>  1024-byte region [ffff8801ca277680, ffff8801ca277a80)
+>> The buggy address belongs to the page:
+>> page:ffffea0007289d80 count:1 mapcount:0 mapping:ffff8801ca276000 index:0x0 compound_mapcount: 0
+>> flags: 0x2fffc0000008100(slab|head)
+>> raw: 02fffc0000008100 ffff8801ca276000 0000000000000000 0000000100000007
+>> raw: ffffea0006d12b20 ffffea000763bba0 ffff8801da800ac0 0000000000000000
+>> page dumped because: kasan: bad access detected
+>>
+>> Memory state around the buggy address:
+>>  ffff8801ca277580: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>>  ffff8801ca277600: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>>> ffff8801ca277680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>>                    ^
+>>  ffff8801ca277700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>>  ffff8801ca277780: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>> ==================================================================
+>>
+>>
 >> ---
-> 
-> I think it can be 2 patches ?
->   1. move function from simple-card to simple-card-utils
->   2. use it from audio-graph-card
-> 
-
-OK, I'll split this patch.
-
-
->> +static int asoc_graph_soc_card_probe(struct snd_soc_card *card)
->> +{
->> +	struct graph_card_data *priv = snd_soc_card_get_drvdata(card);
->> +	int ret;
->> +
->> +	ret = asoc_simple_card_init_hp(card, &priv->hp_jack, NULL);
->> +	if (ret < 0)
->> +		return ret;
->> +
->> +	ret = asoc_simple_card_init_mic(card, &priv->mic_jack, NULL);
->> +	if (ret < 0)
->> +		return ret;
->> +
->> +	return 0;
->> +}
->> +
->>   static int asoc_graph_card_probe(struct platform_device *pdev)
->>   {
->>   	struct graph_card_data *priv;
->> @@ -319,6 +336,7 @@ static int asoc_graph_card_probe(struct platform_device *pdev)
->>   	card->num_links	= num;
->>   	card->dapm_widgets = asoc_graph_card_dapm_widgets;
->>   	card->num_dapm_widgets = ARRAY_SIZE(asoc_graph_card_dapm_widgets);
->> +	card->probe	= asoc_graph_soc_card_probe;
-> 
-> Current simple-card is calling init_hp/init_mic from
-> asoc_simple_card_dai_init(), and audio-graph-card has
-> asoc_graph_card_dai_init().
-> simple/audio card are doing samethings in different style.
-> Thus, I want to synchronized whole simple/audio card.
-> 
-
-Ah, right. I need to add more one patch.
-
-   1. move function from simple-card to simple-card-utils
-   2. change calling init_hp/mic from soc_dai_link.init() to
-      soc_card.probe()
-   3. use it from audio-graph-card
-
-
-Regards,
---
-Katsuhiro Suzuki
-
-
-> Best regards
-> ---
-> Kuninori Morimoto
-> _______________________________________________
-> Alsa-devel mailing list
-> Alsa-devel@alsa-project.org
-> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
-> 
+>> This bug is generated by a bot. It may contain errors.
+>> See https://goo.gl/tpsmEJ for more information about syzbot.
+>> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>>
+>> syzbot will keep track of this bug report. See:
+>> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with syzbot.
+>> syzbot can test patches for this bug, for details see:
+>> https://goo.gl/tpsmEJ#testing-patches
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/ca3eff64-adb0-6110-38ca-2e07b6ecc3d6%40iogearbox.net.
+> For more options, visit https://groups.google.com/d/optout.
