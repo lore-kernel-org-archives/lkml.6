@@ -1,125 +1,376 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 3+z7EvF+GVvBcAAAmS7hNA
-	; Thu, 07 Jun 2018 18:53:40 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id HjPfJIxBGVuvbwAAmS7hNA
+	; Thu, 07 Jun 2018 14:32:07 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 99766608BA; Thu,  7 Jun 2018 18:53:40 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uUpKXWTL"
+	id 7FB476063F; Thu,  7 Jun 2018 14:32:07 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=2.0 tests=BAYES_00,DATE_IN_FUTURE_06_12,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 1631A60590;
-	Thu,  7 Jun 2018 18:53:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1631A60590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 8FB5C60908;
+	Thu,  7 Jun 2018 14:31:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8FB5C60908
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933081AbeFGSxi (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 14:53:38 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:42681 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932502AbeFGSxe (ORCPT
+        id S933846AbeFGOb5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:31:57 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40266 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933483AbeFGObw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 14:53:34 -0400
-Received: by mail-pl0-f68.google.com with SMTP id w17-v6so6692790pll.9
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 11:53:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=1MEFx8OKq4FPi8JwBok+9N4dEue8IfEuoq1xzWB9aZo=;
-        b=uUpKXWTLLCfsuv6wIU5d/8yL0z21U09SpLrkexYsrF1jlmbOuNOC3W/KM9tvOudcZB
-         mA8LeFz8RJl3pBxzT+Y7z1AncjPrIMKTAdRqr+nKhsd5EWB2yxKerlcEFOJJO8+G5OCt
-         oJDqLJxRrBm7Gpr+kDJw3RLAL7KaxHL7es5+t4Tx5FZjwhnSv7M3oZRNHRcuq/bWbSI8
-         FpFAkgPwKTUGGh8TrOJBOBRxvDja0HqJKtHbUhk04VRk+wWGehIZkkowgJPWpXuxGJTJ
-         cBMrTmVF+Pz2yjfwEWkrRdNP30w/SJzJcE1d6s4I3IIQGt8NAI9qZ8qrJ6V9rjUAhY+5
-         HG4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=1MEFx8OKq4FPi8JwBok+9N4dEue8IfEuoq1xzWB9aZo=;
-        b=pcn9EkXEuUpvn0u6iF1J6RL7ZVO9bn+SeQUivXL/VrbiXRQw6Z9pwtLOqJn+0A3umR
-         lKw96+6MoolfdFVZlhAbC/dBPDwGYupzMUkp4lg0x5HJDNfm6rIhEAJ9mn/9TmMAtMnW
-         yzDNKlLRtwz41C+BzVu/DOZRkqy5ox9kamlf7OwKS1LybqpiEpw4gtPXDvDfZT+GRgjr
-         xMz8RMkEiM5pFesOwRkVFd60IGmQt7GPJ/5x2IAOxqBNVWsQbMXD1IM5RmXpl71POqKY
-         xvVoDXtLchUX4rb4+92JRgEd7kTazM/lkdMqJbkiKt209/QF0d59WRbjGX2lZ2CuSe2B
-         KWoA==
-X-Gm-Message-State: APt69E14KeZ4Ejv21u+lEVkk07qphlLkCis/Uag0NTWD83hJAb5hFzVI
-        9rxAcAyTlwE5SfK7p3TaIl4=
-X-Google-Smtp-Source: ADUXVKKzAoZoJBAW0KxvpOW7FEgZaZygTuP0oaprVxzI4lL6+wmeVsL3A41Q0a2qp6okm5tzOtOStw==
-X-Received: by 2002:a17:902:5390:: with SMTP id c16-v6mr3313178pli.104.1528397613414;
-        Thu, 07 Jun 2018 11:53:33 -0700 (PDT)
-Received: from localhost.localdomain ([27.62.191.206])
-        by smtp.gmail.com with ESMTPSA id t134-v6sm44779749pgb.93.2018.06.07.11.53.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 07 Jun 2018 11:53:32 -0700 (PDT)
-From: Janani Sankara Babu <jananis37@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: johannes.berg@intel.com, davem@davemloft.net,
-        keescook@chromium.org, Rene.Hickersberger@gmx.at,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Janani Sankara Babu <jananis37@gmail.com>
-Subject: [PATCH 1/4] Staging:rtl8192e Replace function names by using __func__ identifier
-Date: Fri,  8 Jun 2018 00:32:59 -0400
-Message-Id: <1528432379-9605-1-git-send-email-jananis37@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        Thu, 7 Jun 2018 10:31:52 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbw-0005Zo-UE; Thu, 07 Jun 2018 15:09:57 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvaz-0002kX-87; Thu, 07 Jun 2018 15:08:57 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Dan Williams" <dan.j.williams@intel.com>,
+        "Dave Hansen" <dave.hansen@intel.com>,
+        "Arjan Van De Ven" <arjan.van.de.ven@intel.com>,
+        "Andy Lutomirski" <luto@kernel.org>,
+        "Andi Kleen" <ak@linux.intel.com>,
+        "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>, kvm@vger.kernel.org,
+        "KarimAllah Ahmed" <karahmed@amazon.de>,
+        "Tim Chen" <tim.c.chen@linux.intel.com>,
+        "Paolo Bonzini" <pbonzini@redhat.com>,
+        "Greg KH" <gregkh@linuxfoundation.org>,
+        "Asit Mallick" <asit.k.mallick@intel.com>,
+        "David Woodhouse" <dwmw@amazon.co.uk>,
+        "Andrea Arcangeli" <aarcange@redhat.com>,
+        "Ashok Raj" <ashok.raj@intel.com>,
+        "Jun Nakajima" <jun.nakajima@intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.516555246@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 055/410] KVM/x86: Add IBPB support
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch is created to solve the warning shown by checkpatch script
-Prefer using '"%s...", __func__' to using ', this function's name,
-in a string
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Janani Sankara Babu <jananis37@gmail.com>
+------------------
+
+From: Ashok Raj <ashok.raj@intel.com>
+
+commit 15d45071523d89b3fb7372e2135fbd72f6af9506 upstream.
+
+The Indirect Branch Predictor Barrier (IBPB) is an indirect branch
+control mechanism. It keeps earlier branches from influencing
+later ones.
+
+Unlike IBRS and STIBP, IBPB does not define a new mode of operation.
+It's a command that ensures predicted branch targets aren't used after
+the barrier. Although IBRS and IBPB are enumerated by the same CPUID
+enumeration, IBPB is very different.
+
+IBPB helps mitigate against three potential attacks:
+
+* Mitigate guests from being attacked by other guests.
+  - This is addressed by issing IBPB when we do a guest switch.
+
+* Mitigate attacks from guest/ring3->host/ring3.
+  These would require a IBPB during context switch in host, or after
+  VMEXIT. The host process has two ways to mitigate
+  - Either it can be compiled with retpoline
+  - If its going through context switch, and has set !dumpable then
+    there is a IBPB in that path.
+    (Tim's patch: https://patchwork.kernel.org/patch/10192871)
+  - The case where after a VMEXIT you return back to Qemu might make
+    Qemu attackable from guest when Qemu isn't compiled with retpoline.
+  There are issues reported when doing IBPB on every VMEXIT that resulted
+  in some tsc calibration woes in guest.
+
+* Mitigate guest/ring0->host/ring0 attacks.
+  When host kernel is using retpoline it is safe against these attacks.
+  If host kernel isn't using retpoline we might need to do a IBPB flush on
+  every VMEXIT.
+
+Even when using retpoline for indirect calls, in certain conditions 'ret'
+can use the BTB on Skylake-era CPUs. There are other mitigations
+available like RSB stuffing/clearing.
+
+* IBPB is issued only for SVM during svm_free_vcpu().
+  VMX has a vmclear and SVM doesn't.  Follow discussion here:
+  https://lkml.org/lkml/2018/1/15/146
+
+Please refer to the following spec for more details on the enumeration
+and control.
+
+Refer here to get documentation about mitigations.
+
+https://software.intel.com/en-us/side-channel-security-support
+
+[peterz: rebase and changelog rewrite]
+[karahmed: - rebase
+           - vmx: expose PRED_CMD if guest has it in CPUID
+           - svm: only pass through IBPB if guest has it in CPUID
+           - vmx: support !cpu_has_vmx_msr_bitmap()]
+           - vmx: support nested]
+[dwmw2: Expose CPUID bit too (AMD IBPB only for now as we lack IBRS)
+        PRED_CMD is a write-only MSR]
+
+Signed-off-by: Ashok Raj <ashok.raj@intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: kvm@vger.kernel.org
+Cc: Asit Mallick <asit.k.mallick@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Jun Nakajima <jun.nakajima@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Link: http://lkml.kernel.org/r/1515720739-43819-6-git-send-email-ashok.raj@intel.com
+Link: https://lkml.kernel.org/r/1517522386-18410-3-git-send-email-karahmed@amazon.de
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[bwh: Backported to 3.16:
+ - No support for nested MSR bitmaps in VMX
+ - Use literal number for CPU feature word
+ - Adjust context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/staging/rtl8192e/rtl819x_BAProc.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/x86/kvm/cpuid.c | 11 ++++++++-
+ arch/x86/kvm/cpuid.h | 12 ++++++++++
+ arch/x86/kvm/svm.c   | 28 +++++++++++++++++++++++
+ arch/x86/kvm/vmx.c   | 54 ++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 104 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8192e/rtl819x_BAProc.c b/drivers/staging/rtl8192e/rtl819x_BAProc.c
-index c466a5e7..3c7ba33 100644
---- a/drivers/staging/rtl8192e/rtl819x_BAProc.c
-+++ b/drivers/staging/rtl8192e/rtl819x_BAProc.c
-@@ -127,7 +127,7 @@ static struct sk_buff *rtllib_ADDBA(struct rtllib_device *ieee, u8 *Dst,
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -300,6 +300,10 @@ static inline int __do_cpuid_ent(struct
+ 		F(3DNOWPREFETCH) | F(OSVW) | 0 /* IBS */ | F(XOP) |
+ 		0 /* SKINIT, WDT, LWP */ | F(FMA4) | F(TBM);
+ 
++	/* cpuid 0x80000008.ebx */
++	const u32 kvm_cpuid_8000_0008_ebx_x86_features =
++		F(IBPB);
++
+ 	/* cpuid 0xC0000001.edx */
+ 	const u32 kvm_supported_word5_x86_features =
+ 		F(XSTORE) | F(XSTORE_EN) | F(XCRYPT) | F(XCRYPT_EN) |
+@@ -512,7 +516,12 @@ static inline int __do_cpuid_ent(struct
+ 		if (!g_phys_as)
+ 			g_phys_as = phys_as;
+ 		entry->eax = g_phys_as | (virt_as << 8);
+-		entry->ebx = entry->edx = 0;
++		entry->edx = 0;
++		/* IBPB isn't necessarily present in hardware cpuid */
++		if (boot_cpu_has(X86_FEATURE_IBPB))
++			entry->ebx |= F(IBPB);
++		entry->ebx &= kvm_cpuid_8000_0008_ebx_x86_features;
++		cpuid_mask(&entry->ebx, 11);
+ 		break;
  	}
-
- #ifdef VERBOSE_DEBUG
--	print_hex_dump_bytes("rtllib_ADDBA(): ", DUMP_PREFIX_NONE, skb->data,
-+	print_hex_dump_bytes("%s(): ", __func__, DUMP_PREFIX_NONE, skb->data,
-			     skb->len);
+ 	case 0x80000019:
+--- a/arch/x86/kvm/cpuid.h
++++ b/arch/x86/kvm/cpuid.h
+@@ -104,4 +104,16 @@ static inline bool guest_cpuid_has_mpx(s
+ 	return best && (best->ebx & bit(X86_FEATURE_MPX));
+ }
+ 
++static inline bool guest_cpuid_has_ibpb(struct kvm_vcpu *vcpu)
++{
++	struct kvm_cpuid_entry2 *best;
++
++	best = kvm_find_cpuid_entry(vcpu, 0x80000008, 0);
++	if (best && (best->ebx & bit(X86_FEATURE_IBPB)))
++		return true;
++	best = kvm_find_cpuid_entry(vcpu, 7, 0);
++	return best && (best->edx & bit(X86_FEATURE_SPEC_CTRL));
++}
++
++
  #endif
- 	return skb;
-@@ -178,7 +178,7 @@ static struct sk_buff *rtllib_DELBA(struct rtllib_device *ieee, u8 *dst,
- 	tag += 2;
-
- #ifdef VERBOSE_DEBUG
--	print_hex_dump_bytes("rtllib_DELBA(): ", DUMP_PREFIX_NONE, skb->data,
-+	print_hex_dump_bytes("%s(): ", __func__, DUMP_PREFIX_NONE, skb->data,
- 			     skb->len);
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -180,6 +180,7 @@ static const struct svm_direct_access_ms
+ 	{ .index = MSR_CSTAR,				.always = true  },
+ 	{ .index = MSR_SYSCALL_MASK,			.always = true  },
  #endif
- 	return skb;
-@@ -243,7 +243,7 @@ int rtllib_rx_ADDBAReq(struct rtllib_device *ieee, struct sk_buff *skb)
++	{ .index = MSR_IA32_PRED_CMD,			.always = false },
+ 	{ .index = MSR_IA32_LASTBRANCHFROMIP,		.always = false },
+ 	{ .index = MSR_IA32_LASTBRANCHTOIP,		.always = false },
+ 	{ .index = MSR_IA32_LASTINTFROMIP,		.always = false },
+@@ -409,6 +410,7 @@ struct svm_cpu_data {
+ 	struct kvm_ldttss_desc *tss_desc;
+ 
+ 	struct page *save_area;
++	struct vmcb *current_vmcb;
+ };
+ 
+ static DEFINE_PER_CPU(struct svm_cpu_data *, svm_data);
+@@ -1294,11 +1296,17 @@ static void svm_free_vcpu(struct kvm_vcp
+ 	__free_pages(virt_to_page(svm->nested.msrpm), MSRPM_ALLOC_ORDER);
+ 	kvm_vcpu_uninit(vcpu);
+ 	kmem_cache_free(kvm_vcpu_cache, svm);
++	/*
++	 * The vmcb page can be recycled, causing a false negative in
++	 * svm_vcpu_load(). So do a full IBPB now.
++	 */
++	indirect_branch_prediction_barrier();
+ }
+ 
+ static void svm_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+ {
+ 	struct vcpu_svm *svm = to_svm(vcpu);
++	struct svm_cpu_data *sd = per_cpu(svm_data, cpu);
+ 	int i;
+ 
+ 	if (unlikely(cpu != vcpu->cpu)) {
+@@ -1321,6 +1329,10 @@ static void svm_vcpu_load(struct kvm_vcp
+ 		__get_cpu_var(current_tsc_ratio) = svm->tsc_ratio;
+ 		wrmsrl(MSR_AMD64_TSC_RATIO, svm->tsc_ratio);
  	}
-
- #ifdef VERBOSE_DEBUG
--	print_hex_dump_bytes("rtllib_rx_ADDBAReq(): ", DUMP_PREFIX_NONE,
-+	print_hex_dump_bytes("%s(): ", __func__, DUMP_PREFIX_NONE,
- 			     skb->data, skb->len);
++	if (sd->current_vmcb != svm->vmcb) {
++		sd->current_vmcb = svm->vmcb;
++		indirect_branch_prediction_barrier();
++	}
+ }
+ 
+ static void svm_vcpu_put(struct kvm_vcpu *vcpu)
+@@ -3172,6 +3184,22 @@ static int svm_set_msr(struct kvm_vcpu *
+ 	case MSR_IA32_TSC:
+ 		kvm_write_tsc(vcpu, msr);
+ 		break;
++	case MSR_IA32_PRED_CMD:
++		if (!msr->host_initiated &&
++		    !guest_cpuid_has_ibpb(vcpu))
++			return 1;
++
++		if (data & ~PRED_CMD_IBPB)
++			return 1;
++
++		if (!data)
++			break;
++
++		wrmsrl(MSR_IA32_PRED_CMD, PRED_CMD_IBPB);
++		if (is_guest_mode(vcpu))
++			break;
++		set_msr_interception(svm->msrpm, MSR_IA32_PRED_CMD, 0, 1);
++		break;
+ 	case MSR_STAR:
+ 		svm->vmcb->save.star = data;
+ 		break;
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -431,6 +431,7 @@ struct vcpu_vmx {
+ 	u64 		      msr_host_kernel_gs_base;
+ 	u64 		      msr_guest_kernel_gs_base;
  #endif
-
-@@ -441,7 +441,7 @@ int rtllib_rx_DELBA(struct rtllib_device *ieee, struct sk_buff *skb)
++
+ 	u32 vm_entry_controls_shadow;
+ 	u32 vm_exit_controls_shadow;
+ 	/*
+@@ -756,6 +757,8 @@ static void copy_vmcs12_to_shadow(struct
+ static void copy_shadow_to_vmcs12(struct vcpu_vmx *vmx);
+ static bool vmx_mpx_supported(void);
+ static void vmx_update_msr_bitmap(struct kvm_vcpu *vcpu);
++static void __always_inline vmx_disable_intercept_for_msr(unsigned long *msr_bitmap,
++							  u32 msr, int type);
+ 
+ static DEFINE_PER_CPU(struct vmcs *, vmxarea);
+ static DEFINE_PER_CPU(struct vmcs *, current_vmcs);
+@@ -1507,6 +1510,29 @@ static void update_exception_bitmap(stru
+ 	vmcs_write32(EXCEPTION_BITMAP, eb);
+ }
+ 
++/*
++ * Check if MSR is intercepted for L01 MSR bitmap.
++ */
++static bool msr_write_intercepted_l01(struct kvm_vcpu *vcpu, u32 msr)
++{
++	unsigned long *msr_bitmap;
++	int f = sizeof(unsigned long);
++
++	if (!cpu_has_vmx_msr_bitmap())
++		return true;
++
++	msr_bitmap = to_vmx(vcpu)->vmcs01.msr_bitmap;
++
++	if (msr <= 0x1fff) {
++		return !!test_bit(msr, msr_bitmap + 0x800 / f);
++	} else if ((msr >= 0xc0000000) && (msr <= 0xc0001fff)) {
++		msr &= 0x1fff;
++		return !!test_bit(msr, msr_bitmap + 0xc00 / f);
++	}
++
++	return true;
++}
++
+ static void clear_atomic_switch_msr_special(struct vcpu_vmx *vmx,
+ 		unsigned long entry, unsigned long exit)
+ {
+@@ -1828,6 +1854,7 @@ static void vmx_vcpu_load(struct kvm_vcp
+ 	if (per_cpu(current_vmcs, cpu) != vmx->loaded_vmcs->vmcs) {
+ 		per_cpu(current_vmcs, cpu) = vmx->loaded_vmcs->vmcs;
+ 		vmcs_load(vmx->loaded_vmcs->vmcs);
++		indirect_branch_prediction_barrier();
  	}
-
- #ifdef VERBOSE_DEBUG
--	print_hex_dump_bytes("rtllib_rx_DELBA(): ", DUMP_PREFIX_NONE, skb->data,
-+	print_hex_dump_bytes("%s():", __func__, DUMP_PREFIX_NONE, skb->data,
- 			     skb->len);
- #endif
- 	delba = (struct rtllib_hdr_3addr *)skb->data;
---
-1.9.1
+ 
+ 	if (vmx->loaded_vmcs->cpu != cpu) {
+@@ -2587,6 +2614,33 @@ static int vmx_set_msr(struct kvm_vcpu *
+ 	case MSR_IA32_TSC:
+ 		kvm_write_tsc(vcpu, msr_info);
+ 		break;
++	case MSR_IA32_PRED_CMD:
++		if (!msr_info->host_initiated &&
++		    !guest_cpuid_has_ibpb(vcpu))
++			return 1;
++
++		if (data & ~PRED_CMD_IBPB)
++			return 1;
++
++		if (!data)
++			break;
++
++		wrmsrl(MSR_IA32_PRED_CMD, PRED_CMD_IBPB);
++
++		/*
++		 * For non-nested:
++		 * When it's written (to non-zero) for the first time, pass
++		 * it through.
++		 *
++		 * For nested:
++		 * The handling of the MSR bitmap for L2 guests is done in
++		 * nested_vmx_merge_msr_bitmap. We should not touch the
++		 * vmcs02.msr_bitmap here since it gets completely overwritten
++		 * in the merging.
++		 */
++		vmx_disable_intercept_for_msr(vmx->vmcs01.msr_bitmap, MSR_IA32_PRED_CMD,
++					      MSR_TYPE_W);
++		break;
+ 	case MSR_IA32_CR_PAT:
+ 		if (vmcs_config.vmentry_ctrl & VM_ENTRY_LOAD_IA32_PAT) {
+ 			if (!kvm_mtrr_valid(vcpu, MSR_IA32_CR_PAT, data))
