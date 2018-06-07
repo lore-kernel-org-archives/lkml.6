@@ -1,138 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 2PDtDRwzGlv5UAAAmS7hNA
-	; Fri, 08 Jun 2018 07:42:07 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id tTRpHRY7GVsoIQAAmS7hNA
+	; Thu, 07 Jun 2018 14:03:12 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id A845F607E4; Fri,  8 Jun 2018 07:42:07 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ArQrN9nG"
+	id 21709608BA; Thu,  7 Jun 2018 14:03:12 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 04041607A4;
-	Fri,  8 Jun 2018 07:42:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 04041607A4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 6CD786089E;
+	Thu,  7 Jun 2018 14:03:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6CD786089E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752853AbeFHHmB (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 03:42:01 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:44163 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751195AbeFHHl5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 03:41:57 -0400
-Received: by mail-pf0-f193.google.com with SMTP id h12-v6so6207017pfk.11;
-        Fri, 08 Jun 2018 00:41:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=xDOsFM1m8LjIPXzr05DKGgzHN2YIgV5IvXvx/lwPYAw=;
-        b=ArQrN9nGN4jFspIIvE/gpvQJLlLTcYhrhs9ktzGd6LtB0RPqmzDkuodojC88xH4UnU
-         fn1R0PIA4t4fTaZ46Nz0JfeRK1DHJitJzQgdazPxog6z5ZTubSSEf47xR2Z6hfd+J5cw
-         6ItHxhEX7HRQ4cF5IlO6ycMBA3n4BrBMgODu4ecqnJkrNagrI7As3bARq91oK1dR4wO8
-         C8P8DDw3BYf6J2rTHfEpXph/KIyqw6IzSq5ktemrtEIakwICtqkUHgajZhSmUyAqD9fP
-         i6bYOc0gL9UWuFQcODnKgRW39EMhtGzRmNL6Z99FQD/zG6tXCEYbidtLRV7ZIqj/1V/v
-         Z6Qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=xDOsFM1m8LjIPXzr05DKGgzHN2YIgV5IvXvx/lwPYAw=;
-        b=cyIZMJtewvhjV3ItlWSJqvlCl22hrn961dDXOT/Zt2krKCi4bI9dR3DVfsE4AAYnmn
-         t3qE806VDbQSWR/S7Ck+5LUYyL0R654LVyTOoMiqDxSniJHZevoLBkb3MclkxVDnQINg
-         zT6nCGaPWXyGcZLQcxXN1DLSoSKUKlMshfGLgHg/HcOe9bK8fLpJIjW7dK7K3G5MKOro
-         st0P1GPzmiihS/yGfz3OiSfwC4+32BR+JsvXRN1XFod6b7Z32I4zbaSz8TDKhnRr/4gV
-         jbdxbkY++MQFCCb/ZghEJV75wcW0+X6fk13bmpY55vWIP7kSfO7NI2j8nD84lCw62QbY
-         PiXw==
-X-Gm-Message-State: APt69E0j/8ZbDdXNr8Kuuxfd12V9HXkXy7+qhXhBSdVCXVE0idLCmj4Z
-        p7wj1tdW8hcb9l/2I8IcIAQ=
-X-Google-Smtp-Source: ADUXVKK/Nswi8+lgoYyBh1aEOWobXgClAUQJCOnzm3JtqwkwLeSoOfp/bMfSAmjod+8iemuabwjrmA==
-X-Received: by 2002:a63:b147:: with SMTP id g7-v6mr4253600pgp.379.1528443717363;
-        Fri, 08 Jun 2018 00:41:57 -0700 (PDT)
-Received: from ct7host.localdomain ([38.106.11.25])
-        by smtp.gmail.com with ESMTPSA id m9-v6sm97679408pff.41.2018.06.08.00.41.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Jun 2018 00:41:56 -0700 (PDT)
-From: Jia He <hejianet@gmail.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Jia He <hejianet@gmail.com>,
-        jia.he@hxt-semitech.com, <stable@vger.kernel.org>
-Subject: [PATCH v2] crypto: arm64/aes-blk - fix and move skcipher_walk_done out of kernel_neon_begin,_end
-Date: Fri,  8 Jun 2018 15:41:44 +0800
-Message-Id: <1528443704-26850-1-git-send-email-hejianet@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S1753713AbeFGODJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:03:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53713 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753447AbeFGODI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:03:08 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id CA130AC88;
+        Thu,  7 Jun 2018 14:03:06 +0000 (UTC)
+Subject: Re: [Xen-devel] [PATCH] xen/privcmd: fix static checker warning
+To: Paul Durrant <Paul.Durrant@citrix.com>,
+        Andrew Cooper <Andrew.Cooper3@citrix.com>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+References: <1528366873-25430-1-git-send-email-paul.durrant@citrix.com>
+ <8666edd3-2d4a-82f5-8354-47ae0906681f@citrix.com>
+ <d579dc06be7e4d08aae61050ed1cf816@AMSPEX02CL03.citrite.net>
+From: Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <de9b98df-62f3-61d1-b688-da3af4dc46d9@suse.com>
+Date: Thu, 7 Jun 2018 16:03:05 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <d579dc06be7e4d08aae61050ed1cf816@AMSPEX02CL03.citrite.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In a arm64 server(QDF2400),I met a similar might-sleep warning as [1]:
-[    7.019116] BUG: sleeping function called from invalid context at
-./include/crypto/algapi.h:416
-[    7.027863] in_atomic(): 1, irqs_disabled(): 0, pid: 410, name:
-cryptomgr_test
-[    7.035106] 1 lock held by cryptomgr_test/410:
-[    7.039549]  #0:         (ptrval) (&drbg->drbg_mutex){+.+.}, at:
-drbg_instantiate+0x34/0x398
-[    7.048038] CPU: 9 PID: 410 Comm: cryptomgr_test Not tainted
-4.17.0-rc6+ #27
-[    7.068228]  dump_backtrace+0x0/0x1c0
-[    7.071890]  show_stack+0x24/0x30
-[    7.075208]  dump_stack+0xb0/0xec
-[    7.078523]  ___might_sleep+0x160/0x238
-[    7.082360]  skcipher_walk_done+0x118/0x2c8
-[    7.086545]  ctr_encrypt+0x98/0x130
-[    7.090035]  simd_skcipher_encrypt+0x68/0xc0
-[    7.094304]  drbg_kcapi_sym_ctr+0xd4/0x1f8
-[    7.098400]  drbg_ctr_update+0x98/0x330
-[    7.102236]  drbg_seed+0x1b8/0x2f0
-[    7.105637]  drbg_instantiate+0x2ac/0x398
-[    7.109646]  drbg_kcapi_seed+0xbc/0x188
-[    7.113482]  crypto_rng_reset+0x4c/0xb0
-[    7.117319]  alg_test_drbg+0xec/0x330
-[    7.120981]  alg_test.part.6+0x1c8/0x3c8
-[    7.124903]  alg_test+0x58/0xa0
-[    7.128044]  cryptomgr_test+0x50/0x58
-[    7.131708]  kthread+0x134/0x138
-[    7.134936]  ret_from_fork+0x10/0x1c
+On 07/06/18 13:23, Paul Durrant wrote:
+>> -----Original Message-----
+>> From: Andrew Cooper
+>> Sent: 07 June 2018 11:28
+>> To: Paul Durrant <Paul.Durrant@citrix.com>; xen-devel@lists.xenproject.org;
+>> linux-kernel@vger.kernel.org
+>> Cc: Juergen Gross <jgross@suse.com>; Boris Ostrovsky
+>> <boris.ostrovsky@oracle.com>; Dan Carpenter
+>> <dan.carpenter@oracle.com>
+>> Subject: Re: [Xen-devel] [PATCH] xen/privcmd: fix static checker warning
+>>
+>> On 07/06/18 11:21, Paul Durrant wrote:
+>>> Commit 3ad0876554ca ("xen/privcmd: add
+>> IOCTL_PRIVCMD_MMAP_RESOURCE")
+>>> introduced a static checker warning:
+>>>
+>>>   drivers/xen/privcmd.c:827 privcmd_ioctl_mmap_resource()
+>>>   warn: passing casted pointer 'pfns' to 'xen_remap_domain_mfn_array()'
+>>>         64 vs 32.
+>>>
+>>> caused by this cast:
+>>>
+>>>    827  num = xen_remap_domain_mfn_array(vma,
+>>>    828                                   kdata.addr & PAGE_MASK,
+>>>    829                                   pfns, kdata.num, (int *)pfns,
+>>>                                                           ^^^^^^^^^^^
+>>>
+>>> The reason for the cast is that xen_remap_domain_mfn_array() requires
+>> an
+>>> array of ints to store error codes. It is actually safe to re-use the
+>>> pfns array for this purpose but it does look odd (as well as leading to
+>>> the warning). It would also be easy for a future implementation change
+>>> to make this re-use unsafe so this patch modifies privcmd to use a
+>>> separately allocated array for error codes.
+>>>
+>>> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+>>> Signed-off-by: Paul Durrant <paul.durrant@citrix.com>
+>>
+>> It may be safe to reuse pfns[] as the storage space for the errs array,
+>> but code is incorrect when sizeof(pfn) != sizeof(int).  In such a case,
+>> you skip over every other err, and second half of pfns[] is junk from
+>> the point of view of the errs loop.
+>>
+> 
+> Yep, that is indeed what happens without this patch.
 
-Seems there is a bug in Ard Biesheuvel's commit.
-Fixes: 683381747270 ("crypto: arm64/aes-blk - move kernel mode neon
-en/disable into loop")
+Can you please update the commit message accordingly?
 
-[1] https://www.spinics.net/lists/linux-crypto/msg33103.html
 
-Signed-off-by: jia.he@hxt-semitech.com
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: <stable@vger.kernel.org> # 4.17
----
-v2: cc stable
----
- arch/arm64/crypto/aes-glue.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/crypto/aes-glue.c b/arch/arm64/crypto/aes-glue.c
-index 253188f..e3e5095 100644
---- a/arch/arm64/crypto/aes-glue.c
-+++ b/arch/arm64/crypto/aes-glue.c
-@@ -223,8 +223,8 @@ static int ctr_encrypt(struct skcipher_request *req)
- 		kernel_neon_begin();
- 		aes_ctr_encrypt(walk.dst.virt.addr, walk.src.virt.addr,
- 				(u8 *)ctx->key_enc, rounds, blocks, walk.iv);
--		err = skcipher_walk_done(&walk, walk.nbytes % AES_BLOCK_SIZE);
- 		kernel_neon_end();
-+		err = skcipher_walk_done(&walk, walk.nbytes % AES_BLOCK_SIZE);
- 	}
- 	if (walk.nbytes) {
- 		u8 __aligned(8) tail[AES_BLOCK_SIZE];
--- 
-1.8.3.1
+Juergen
