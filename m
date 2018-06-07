@@ -1,107 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id NO4vMjcyHVsDNwAAmS7hNA
-	; Sun, 10 Jun 2018 14:16:26 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id d2mdB4KaGVvjJgAAmS7hNA
+	; Thu, 07 Jun 2018 20:51:01 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 98A26607A4; Sun, 10 Jun 2018 14:16:26 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DnWAJsvR"
+	id 221856074D; Thu,  7 Jun 2018 20:51:01 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 230A76074D;
-	Sun, 10 Jun 2018 14:16:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 230A76074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 868256063F;
+	Thu,  7 Jun 2018 20:51:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 868256063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753886AbeFJOQX (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sun, 10 Jun 2018 10:16:23 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:43662 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753671AbeFJOQV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 10:16:21 -0400
-Received: by mail-lf0-f68.google.com with SMTP id n15-v6so26701732lfn.10;
-        Sun, 10 Jun 2018 07:16:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=d+jRrk3v/ZhzVrxb7TQ2GkxIBsjVoZVhqkGGdLt1XhA=;
-        b=DnWAJsvRCLwK8z3lahtlHm0tlb9Zqgq2InK7KoQjx2Oi+PIpcZMhR/ukyxLLORJb2t
-         gECZvMVQHVEdaSP9qO1UPd5a5e26JkvFAcSno4Ru5fmY28IOSWyEzkDbmAIa/5ZmvKFi
-         8VjqRgHqUi7ONDhaj0VZ5fpqpVucddCkdwSgt08c3qKUWnXVmX9po9E3EmC1i7NeSZT9
-         5WJse7Fs8N3hyR7yPMcsEGhWJbVv7Zv78eKAeLkxpnnR+qeWg1HjRHB2asQUAHwSo6R4
-         PWgz0k87yuJn3imWOMAbRKKqF4QCksgDpiyg6sexV5QeWKtRvrY1y2wYzJjPfHelsnz5
-         w8VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=d+jRrk3v/ZhzVrxb7TQ2GkxIBsjVoZVhqkGGdLt1XhA=;
-        b=YxgwPzCuDYuALvmlwBjKopBdD/eSInAMdsoXNoQ/m4V8CGuO22TeBT0lqWYKRUAgrk
-         3Mug+RUJMBjMRVmPtMqqElmQm4ZBaLxulHbvUsoafiHSGC9rmqMW4B4/h1sb4EHiEGy/
-         5t+rqYnjpKqksvGB5fPoV1x+izUtwRUdkmXVtdAGX5uQ7O7q33KGv/SddPxULYJMd3J2
-         wGO+Y0OVXev3/7pZ0P9n9pywhs5TZO4NPQQwbu42fMzmtHKGeNskQQzMaV37joR563Qo
-         JdmEenzvooKyk/brV7HkeT7YqFEYmKCjkElwdd5E7K3H8ZwoDNuHZGH6zhRifXPX7xEz
-         pDrw==
-X-Gm-Message-State: APt69E0cUwkkLN85ES2rKM+Xp5qp4qqa9pt9yx6QL2qplo++jGuBB2Ck
-        pQIebqFg71MR/sJevKC4XVs=
-X-Google-Smtp-Source: ADUXVKLcFRwOrlmpIPKlCMG5EKqPfGymrTDGOoG5T60hlSPr7Ifrb6pl61JTiTmuc50PesK7ijTP9Q==
-X-Received: by 2002:a2e:cf:: with SMTP id e76-v6mr9178046lji.82.1528640179957;
-        Sun, 10 Jun 2018 07:16:19 -0700 (PDT)
-Received: from localhost.localdomain (user-94-254-173-75.play-internet.pl. [94.254.173.75])
-        by smtp.googlemail.com with ESMTPSA id t12-v6sm1769243ljb.7.2018.06.10.07.16.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 10 Jun 2018 07:16:19 -0700 (PDT)
-From: =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-To: kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH 1/1] ARM: dts: s5pv210: Add missing interrupt-controller property to gph2
-Date: Sun, 10 Jun 2018 16:15:49 +0200
-Message-Id: <1528640149-2195-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        id S932812AbeFGUu6 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 16:50:58 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38419 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932634AbeFGUuk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 16:50:40 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 0283EAF25;
+        Thu,  7 Jun 2018 20:50:38 +0000 (UTC)
+From: NeilBrown <neilb@suse.com>
+To: Ben Evans <bevans@cray.com>, James Simmons <jsimmons@infradead.org>
+Date: Fri, 08 Jun 2018 06:50:29 +1000
+Cc: Oleg Drokin <oleg.drokin@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lustre Development List <lustre-devel@lists.lustre.org>
+Subject: Re: [lustre-devel] [PATCH 10/11] staging: lustre: move ldlm into ptlrpc
+In-Reply-To: <D73EEFA7.FCA6%jevans@cray.com>
+References: <152826510267.16761.14361003167157833896.stgit@noble> <152826511923.16761.9237280635711887801.stgit@noble> <alpine.LFD.2.21.1806070546210.23188@casper.infradead.org> <87sh5zlyf4.fsf@notabene.neil.brown.name> <D73EEFA7.FCA6%jevans@cray.com>
+Message-ID: <87k1ramicq.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit adds missing interrupt-controller property to gph2 block,
-to silence following warnings during build
-  /soc/pinctrl@e0200000/gph2: Missing interrupt-controller or interrupt-map property
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Observed on not yet mainlined, an S5PV210 based
-Samsung Galaxy S (i9000) phone.
+On Thu, Jun 07 2018, Ben Evans wrote:
 
-Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
----
- arch/arm/boot/dts/s5pv210-pinctrl.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+> On 6/7/18, 5:48 AM, "lustre-devel on behalf of NeilBrown"
+> <lustre-devel-bounces@lists.lustre.org on behalf of neilb@suse.com> wrote:
+>
+>>On Thu, Jun 07 2018, James Simmons wrote:
+>>
+>>>> The ldlm code is built into the ptlrpc module, yet it lived in a
+>>>> separate directory.  This requires filename editing in the Makefile
+>>>> and make it difficult to e.g. build the .s file for code in ldlm.
+>>>>=20
+>>>> All the ldlm files have distinctive names so confusion from having
+>>>> ptlrpc and ldlm in the same directory is unlikely.  So move them all
+>>>> into ptlrpc.
+>>>
+>>> Nak. The reason is it would be nice to keep the directory structure.
+>>> What really needs to be done and Oleg has looked into it is to reduced
+>>> the number of modules created down to two, one for LNet and the other
+>>> lustre.ko. This also is a step in the right direction to remove the
+>>> create struct obd_ops and struct md_ops pointer madness. Well their
+>>> is the issue with obd echo client but we can deal with this at a later
+>>> date. Also the number of EXPORT_SYMBOLS and things will greatly reduce.
+>>
+>>Yeah, you are probably right.
+>>I had a bit of a look at how to build everything into a
+>>single module.  You can do with by having a single make
+>>file that lists parts from other directories - the same way
+>>that ptlrpc includes files from ldlm - but that is rather ugly.
+>>
+>>I've very nearly got it working using the lib-y infrastructure.
+>>I can build lnet as a single module, but the dependency calc isn't
+>>quite right so things happen in the wrong order.  The build
+>>fails the first time because some files don't exist, then
+>>succeeds on the second run.
+>>Hopefully I'll figure out how to make it work tomorrow.
+>>
+>>Thanks for the review,
+>>NeilBrown
+>
+> Would this be client-only, or could the server code be added as well with
+> an ldiskfs/zfs module?
 
-diff --git a/arch/arm/boot/dts/s5pv210-pinctrl.dtsi b/arch/arm/boot/dts/s5pv210-pinctrl.dtsi
-index 3a79feab11c3..7f0c9d447871 100644
---- a/arch/arm/boot/dts/s5pv210-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/s5pv210-pinctrl.dtsi
-@@ -258,6 +258,8 @@
- 	gph2: gph2 {
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+
-+		interrupt-controller;
- 		#interrupt-cells = <2>;
- 	};
- 
--- 
-2.7.4
+The important step is creating the infrastructure so that choice can
+be easily made, and changed, with just a single line in a Makefile.
+Fine-tuning decisions can follow.
+
+I doubt it would make sense for ldiskfs and/or zfs to be in the same
+module as lustre.  I also doubt that either will ever land upstream so
+it hardly matters (to me).
+When the server lands upstream (I think it will), it will use (at least)
+the upstream ext4.  This might require changes to upstream ext4
+(I understand a lot of work has already happened in that direction).  It
+might require sacrificing some functionality (hopefully only
+temporarily).  It might require having an incompatible on-disk format
+(which is unfortunate but quite manageable).
+
+Thanks,
+NeilBrown
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlsZmpYACgkQOeye3VZi
+gbleNQ//UgWRXf1X5/IeFhJbL3XELrng4HlePmsVRZ8CGGbED+CXzeyhzJOuT3cv
+DawotaTex1FEb+e4eRbfh9/lwcSriZz37FmyGUSNuoZXewKO42+IP8gRmS2jDsNo
+8jHConYRfkwmB2NDFUMM5dnfY5VFFmVVZsoqa6pyw8Rob4hGeLBxvby/gR73Ut0q
+wJy/7DEVJggQFTiJ5lIEKhqnq3rN9roLfN6I3cau9MBbOELjmTRs5z6s71rwVF7M
+ByXIu9lWKmOC49vSSEGLSJQcAiLCESM+gjTcavE5k15EE+PiFsQ1dGdLO3A0gHJg
+RxTnjnwi3OLLZSEcrinteZog5HHQwNj4HeH0fUrvb9nRLngfkYJnTm+cMe487sDY
+4iQhRFLiLikWDO4N6UMUeNEO/L8UZ3wysMlIAYPifiyc9aObnQ2CtQdkPJSpbXf6
+TXLXGRn61gD78EVDYMvP6IQXwkD30WOjaE8z+XCw7C2wg7ayejDYXoxQ8fRrhpcG
+uL1w5W4WO5+ai0iLIWaF2kcx2Jio59iV55f700sdHpkj/iRHGzkEy6xfAlcSUYJX
+isI72/j/FMIjpGvZ88RIEQ46aMB1thPkfOzWA7rfogXfvWZSfhtvRCklV6D9/2Bt
+D9/kLog2nfI+nfKWc+JVJmB0Dl90lQ5aRMoQnUo+8+m0nc6lPAI=
+=qQIo
+-----END PGP SIGNATURE-----
+--=-=-=--
