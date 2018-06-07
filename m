@@ -1,135 +1,254 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id R2HRAv8fHlvhSQAAmS7hNA
-	; Mon, 11 Jun 2018 07:09:10 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id n6FSJaRTGVt6HwAAmS7hNA
+	; Thu, 07 Jun 2018 15:48:05 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 5A891607BB; Mon, 11 Jun 2018 07:09:10 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="MeaLhXvX"
+	id 870A5607E7; Thu,  7 Jun 2018 15:48:05 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 0DAC8606FA;
-	Mon, 11 Jun 2018 07:09:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0DAC8606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
+	by smtp.codeaurora.org (Postfix) with ESMTP id CCDE660590;
+	Thu,  7 Jun 2018 15:48:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CCDE660590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932459AbeFKHJH (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 03:09:07 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:38151 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932109AbeFKHJF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 03:09:05 -0400
-Received: by mail-ot0-f194.google.com with SMTP id n3-v6so22575075ota.5
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 00:09:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=EbE77kF6+OynJ/bbplasKtmMn1oidHGDxdyMxsprOQg=;
-        b=MeaLhXvXkCJp4r3oEAZBcabo5yT+D4oZrf89mZZiOyMnNVItio+Uybd0FgTv7J1Y33
-         k5E+JNP1d1SsAo434qGLk1ewAN8eEoY5y7pgChj5UqEyiu/tVWozS5wW6j+RqLxpndIx
-         hFNDHxVjxU+5Ew3f+pMh7RcuQEDVGyLsmJsGw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=EbE77kF6+OynJ/bbplasKtmMn1oidHGDxdyMxsprOQg=;
-        b=QCW+jiyIRyZS55WnBH3WmXFdnDN7AnMatzkoUER8DPHkjeVidcIZ3ecKvS6AXt1am3
-         FPnpSU4GXa/e2V9jBLGXDuxWgvJQUXKF7uJa3HL390R5tCUOOOkTSpJhCP9XTPOL5O1X
-         0TayYwl/MLSYMfHB1e7UmGht1D2mtISRCkOlHXo4Jf9wx+S1eQh2AREKNxLcz03R1qX8
-         7Aib3MZkJk6mUtFdsm4rRRuUh0lV6+TN7dZAWlr9ADwIxc699EXpuoVq3Oruxt8wD77A
-         eYur4u2dlVAK7spUxu1MEVM8ex0cTw+YlqtFaDdLg1eoY8oqglyGigM/5vaJf+ElhH9q
-         Sr/w==
-X-Gm-Message-State: APt69E0KGlsdEBPU8NRRcYdfgztlARC2KgGnGC+YbgJwSoMgjzFbj/r5
-        maz+MyzSPW6vnqhZ3mCT2fCVmcqR4dVtbWgYFMkPEw==
-X-Google-Smtp-Source: ADUXVKKDvvAu1/C74hH1Dttcbob9mAZFcqrtWRvGabbArn/lqR/a4FbPlWkWgKdJ1iLqbNjOB5aa4y8utfGpbmAAavI=
-X-Received: by 2002:a9d:19e8:: with SMTP id k95-v6mr8651302otk.368.1528700945150;
- Mon, 11 Jun 2018 00:09:05 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a9d:1123:0:0:0:0:0 with HTTP; Mon, 11 Jun 2018 00:09:04
- -0700 (PDT)
-X-Originating-IP: [194.176.227.33]
-In-Reply-To: <20180610041243.GJ30522@ZenIV.linux.org.uk>
-References: <20180529144339.16538-1-mszeredi@redhat.com> <20180529144339.16538-15-mszeredi@redhat.com>
- <20180610041243.GJ30522@ZenIV.linux.org.uk>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Mon, 11 Jun 2018 09:09:04 +0200
-Message-ID: <CAJfpegtEGuBqmJ+6Kzd0456o0xyebe3LBk66xWQcuzsenqKVeg@mail.gmail.com>
-Subject: Re: [PATCH 14/39] ovl: stack file ops
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Miklos Szeredi <mszeredi@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        id S934444AbeFGOkQ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:40:16 -0400
+Received: from mga17.intel.com ([192.55.52.151]:61091 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932912AbeFGOkH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:40:07 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 07:39:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
+   d="scan'208";a="54825999"
+Received: from 2b52.sc.intel.com ([143.183.136.51])
+  by fmsmga002.fm.intel.com with ESMTP; 07 Jun 2018 07:39:58 -0700
+From: Yu-cheng Yu <yu-cheng.yu@intel.com>
+To: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org, linux-arch@vger.kernel.org, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
+Subject: [PATCH 5/5] Documentation/x86: Add CET description
+Date: Thu,  7 Jun 2018 07:35:44 -0700
+Message-Id: <20180607143544.3477-6-yu-cheng.yu@intel.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180607143544.3477-1-yu-cheng.yu@intel.com>
+References: <20180607143544.3477-1-yu-cheng.yu@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 10, 2018 at 6:13 AM, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> On Tue, May 29, 2018 at 04:43:14PM +0200, Miklos Szeredi wrote:
->> Implement file operations on a regular overlay file.  The underlying file
->> is opened separately and cached in ->private_data.
->>
->> It might be worth making an exception for such files when accounting in
->> nr_file to confirm to userspace expectations.  We are only adding a small
->> overhead (248bytes for the struct file) since the real inode and dentry are
->> pinned by overlayfs anyway.
->>
->> This patch doesn't have any effect, since the vfs will use d_real() to find
->> the real underlying file to open.  The patch at the end of the series will
->> actually enable this functionality.
->
->> +static struct file *ovl_open_realfile(const struct file *file)
->> +{
->> +     struct inode *inode = file_inode(file);
->> +     struct inode *upperinode = ovl_inode_upper(inode);
->> +     struct inode *realinode = upperinode ?: ovl_inode_lower(inode);
->> +     struct file *realfile;
->> +     const struct cred *old_cred;
->> +
->> +     old_cred = ovl_override_creds(inode->i_sb);
->> +     realfile = path_open(&file->f_path, file->f_flags | O_NOATIME,
->> +                          realinode, current_cred(), false);
->> +     revert_creds(old_cred);
->> +
->> +     pr_debug("open(%p[%pD2/%c], 0%o) -> (%p, 0%o)\n",
->> +              file, file, upperinode ? 'u' : 'l', file->f_flags,
->> +              realfile, IS_ERR(realfile) ? 0 : realfile->f_flags);
->> +
->> +     return realfile;
->> +}
->
-> IDGI.  OK, you open a file in the layer you want; good, but why the hell do you
-> *not* use the dentry/vfsmount from the same layer?
->
-> IOW, why does your path_open() get an explicit inode argument at all?  With the
-> rest of the work done in that series it looks like you should be able to use
-> vfs_open() instead...  Sure, for ovlfs file you want ->f_path on overlayfs and
-> not in a layer, but why do the same for those?
+Explain how CET works and the noshstk/noibt kernel parameters.
 
-I'd really like to get there some time but...
+Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+---
+ Documentation/admin-guide/kernel-parameters.txt |   6 +
+ Documentation/x86/intel_cet.txt                 | 161 ++++++++++++++++++++++++
+ 2 files changed, 167 insertions(+)
+ create mode 100644 Documentation/x86/intel_cet.txt
 
-List of basic requirements:
-
- - Private mmap of overlay file shares page cache with lower file (and
-hence with all other overlays using the same lower file).
-
- - /proc/PID/maps shows correct path.
-
-Thought about setting f_mapping/i_mapping of overlay file to that of
-underlying file.  But that breaks when doing a copy-up.  We can't just
-go and change those mapping pointers, assumption is that those remain
-constant (we'd need READ_ONCE() for all cases where we use the mapping
-more than once).  It's probably doable, but it's a large and fragile
-change.
-
-Thanks,
-Miklos
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index f2040d46f095..c9a94bec1519 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2649,6 +2649,12 @@
+ 			noexec=on: enable non-executable mappings (default)
+ 			noexec=off: disable non-executable mappings
+ 
++	noibt		[X86-64] Disable indirect branch tracking for user-mode
++			applications
++
++	noshstk		[X86-64] Disable shadow stack support for user-mode
++			applications
++
+ 	nosmap		[X86]
+ 			Disable SMAP (Supervisor Mode Access Prevention)
+ 			even if it is supported by processor.
+diff --git a/Documentation/x86/intel_cet.txt b/Documentation/x86/intel_cet.txt
+new file mode 100644
+index 000000000000..1b902a6c49f4
+--- /dev/null
++++ b/Documentation/x86/intel_cet.txt
+@@ -0,0 +1,161 @@
++-----------------------------------------
++Control Flow Enforcement Technology (CET)
++-----------------------------------------
++
++[1] Overview
++
++Control Flow Enforcement Technology (CET) provides protection against
++return/jump-oriented programing (ROP) attacks.  It can be implemented to
++protect both the kernel and applications.  In the first phase, only the
++user-mode protection is implemented for the 64-bit kernel.  Thirty-two bit
++applications are supported under the compatibility mode.
++
++CET includes shadow stack (SHSTK) and indirect branch tracking (IBT) and
++they are enabled from two kernel configuration options:
++
++  INTEL_X86_SHADOW_STACK_USER, and
++  INTEL_X86_BRANCH_TRACKING_USER.
++
++There are two command-line options for disabling CET features:
++
++  noshstk - disables shadow stack, and
++  noibt - disables indirect branch tracking.
++
++At run time, /proc/cpuinfo shows the availability of SHSTK and IBT.
++
++[2] Application Enabling
++
++The design of CET user-mode interface provides maximum overall coverage
++and compatibility with existing applications.
++
++To verify the CET capability of an application, use the following command
++and look for SHSTK/IBT in the NT_GNU_PROPERTY_TYPE_0 field:
++
++  readelf -n <application>
++
++CET features are opt-in by each application.  To build a CET-capable
++application, the following tools are needed: Binutils v2.30, GCC v8.1,
++and GLIBC v2.29 (or later).
++
++If an application has CET capabilities, is statically linked, and the
++kernel supports CET, it will run with CET enabled.  If an application
++needs any shared libraries, the loader checks all dependencies and enables
++CET only when all requirements are met.  Once an application starts with
++CET enabled, the protection cannot be turned off until the next exec().
++
++[3] CET system calls
++
++The following arch_prctl() system calls are added for CET:
++
++(3a) arch_prctl(ARCH_CET_STATUS, unsigned long *addr)
++
++     Return CET feature status.
++
++     The parameter 'addr' is a pointer to a user buffer.
++     On returning to the caller, the kernel fills the following
++     information:
++
++     *addr = SHSTK/IBT status
++     *(addr + 1) = SHSTK/IBT default setting on exec()
++     *(addr + 2) = default SHSTK size on exec()
++
++(3b) arch_prctl(ARCH_CET_DISABLE, unsigned long features)
++
++     Disable SHSTK and/or IBT specified in 'features'.  Return -EPERM
++     if CET is locked out.
++
++(3c) arch_prctl(ARCH_CET_LOCK)
++
++     Lock out CET features; disable turning off of SHSTK/IBT.
++
++(3d) arch_prctl(ARCH_CET_EXEC, unsigned long *addr)
++
++     Control how CET features should be enabled upon exec() a new
++     image.
++
++     The parameter 'addr' is a pointer to a user buffer.
++
++     *addr = a bitmap indicating which features are being changed
++     *(addr + 1) = how CET should be enabled upon exec().
++                      0: Check ELF header
++                      1: Always disable
++                      2: Always enable
++     *(addr + 2) = default SHSTK size on exec()
++
++(3e) arch_prctl(ARCH_CET_ALLOC_SHSTK, unsigned long *addr)
++
++     Allocate a new SHSTK.
++
++     The parameter 'addr' is a pointer to a user buffer and indicates
++     the desired SHSTK size to allocate.  On returning to the caller
++     the buffer contains the address of the new SHSTK.
++
++(3f) arch_prctl(ARCH_CET_PUSH_SHSTK, unsigned long *addr)
++
++     Push a value onto the SHSTK.
++
++     The parameter 'addr' is a pointer to a user buffer.
++
++     *addr = the SHSTK pointer
++     *(addr + 1) = the value to push (a function return address)
++
++Note: ARCH_CET_ALLOC_SHSTK and ARCH_CET_PUSH_SHSTK are intended for
++      the implementation of GLIBC getcontext(), setcontext(),
++      makecontext(), and swapcontext().
++
++(3g) arch_prctl(ARCH_CET_LEGACY_BITMAP, unsigned long *addr)
++
++     If the current task does not have a legacy bitmap, setup one.
++     Return bitmap information as the following:
++
++     *addr = bitmap base address
++     *(addr + 1) = bitmap size
++
++[4] The implementation of the SHSTK
++
++A task's SHSTK is allocated from memory to a fixed size that can
++support 32 KB nested function calls; that is 256 KB for a 64-bit
++application and 128 KB for a 32-bit application.  The system admin
++can change the size with the CET command line utility.
++
++The main program and its signal handlers use the same shadow stack.
++
++The SHSTK's vma has VM_SHSTK flag set; its PTEs are required to be
++read-only and dirty.  When a SHSTK PTE is not present, RO, and dirty,
++a SHSTK access triggers a page fault with an additional SHSTK bit set
++in the page fault error code.
++
++When a task forks a child, its SHSTK PTEs are copied and both the
++parent's and the child's SHSTK PTEs are cleared of the dirty bit.
++Upon the next SHSTK access, the resulting SHSTK page fault is handled
++by page copy/re-use.
++
++When a pthread child is created, a separate SHSTK is created for the
++child.
++
++[5] The management of read-only & dirty PTEs for SHSTK
++
++A RO and dirty PTE exists in the following cases:
++
++(5a) A page is modified and then shared with a fork()'ed child;
++(5b) access_remote_vm with (FOLL_WRITE | FOLL_FORCE) on a RO page;
++(5c) A SHSTK page.
++
++The processor does not read the dirty bit for (5a) and (5b), but
++checks the dirty bit for (5c).  To prevent accidental use of non-
++SHSTK memory as SHSTK, we introduce the use of a spare bit of the
++64-bit PTE as _PAGE_BIT_DIRTY_SW and exchange it with the dirty
++bit for (5a) and (5b).  This results to the following possible
++PTE settings:
++
++Modified PTE:		  (R/W + DIRTY_HW)
++Modified and shared PTE:  (R/O + DIRTY_SW)
++R/O PTE was (FOLL_FORCE | FOLL_WRITE): (R/O + DIRTY_SW)
++SHSTK stack PTE:	  (R/O + DIRTY_HW)
++Shared SHSTK PTE:	  (R/O + DIRTY_SW)
++
++[6] The implementation of IBT
++
++The kernel provides IBT support in mmap() of the legacy code bit map.
++However, the management of the bitmap is done in the GLIBC or the
++application.
+-- 
+2.15.1
