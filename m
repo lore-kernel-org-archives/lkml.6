@@ -1,166 +1,198 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Y2mKI9/hGltuMgAAmS7hNA
-	; Fri, 08 Jun 2018 20:07:56 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id FdtaArZFGVsOJQAAmS7hNA
+	; Thu, 07 Jun 2018 14:48:39 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 54D99605A5; Fri,  8 Jun 2018 20:07:56 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ptt1xLzm"
+	id 2B4C6608C8; Thu,  7 Jun 2018 14:48:39 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 540F56074D;
-	Fri,  8 Jun 2018 20:07:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 540F56074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 69D21601C3;
+	Thu,  7 Jun 2018 14:48:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 69D21601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753269AbeFHUHy (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 16:07:54 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:37452 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752968AbeFHUFH (ORCPT
+        id S935113AbeFGOse (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:48:34 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40844 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934471AbeFGOsc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 16:05:07 -0400
-Received: by mail-pl0-f66.google.com with SMTP id 31-v6so8873825plc.4
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 13:05:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+N7TW72v+t/5sD1mAeheF2xfj4Q3xhLy8CyQ/zPhWjE=;
-        b=Ptt1xLzmDnqX83AoLI88XYrXyKWoegFBJbihHi7RUDznwqy/JTV6qmMbu5Gdx0DIgX
-         mHi/ghC3iPvRK1tLEx9tbxeuXnMn3uWWWkfkogGRXMTf3KjBqfssQlR525VyP9kqXIf8
-         cAEChVOUb4xIsYPQtkYmOx+j/wD9SbyFvz7Ns=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+N7TW72v+t/5sD1mAeheF2xfj4Q3xhLy8CyQ/zPhWjE=;
-        b=eoXcf6O60L5zHNViiQnJ715VT2CSFD6VSc+fp/1myZQUCRlrhVexLVyCt9anvXwf6d
-         TuhOprlj8iDTHarZtyjlOjVrZvgAUb50ROjMUvG00KTrQ/jO3wqYppwvv/Jrd/M2mbD3
-         gHYLBJZw8qbtlKRSZ7LyFoXS+vXLAHl+M0me2QTwsqnJ9Uo/cfE/sbaBZQCu7BVGmlj1
-         vumTBMiaQX8vR1JHhO+HtL8H/FdB9nXk9XQv4ivMx/uVyS4/S7Xq6AwcRCy2n/lY2U7U
-         WYv9C4fXQhAvn4y/PIbjxgnLQr2/j/E6FtEJ/P2H1B6tGOcK1PRPSJfzTfUDWa7bOzh1
-         xshg==
-X-Gm-Message-State: APt69E2NEsXWCERbuSnjJFLsWo/9WR6YWjG+zRYVwgjiW25IvLdkiYqu
-        EiCo8IIRnLtFdf3YJMGk6Ym02g==
-X-Google-Smtp-Source: ADUXVKIYRWCjBzyp79OTh+i6/VNZoiyeTDltWlQMxrVBH5TAmvuEJ5pXtft9NmAIlr0H3RmwQ41EbQ==
-X-Received: by 2002:a17:902:c6b:: with SMTP id 98-v6mr7861000pls.37.1528488307207;
-        Fri, 08 Jun 2018 13:05:07 -0700 (PDT)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id l26-v6sm32253043pgn.55.2018.06.08.13.05.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Jun 2018 13:05:06 -0700 (PDT)
-Date: Fri, 8 Jun 2018 14:05:03 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, robh@kernel.org,
-        frowand.list@gmail.com, mark.rutland@arm.com, sudeep.holla@arm.com,
-        arm@kernel.org, linux-kernel@vger.kernel.org, matt.sealey@arm.com,
-        john.horley@arm.com, charles.garcia-tobin@arm.com,
-        coresight@lists.linaro.org, devicetree@vger.kernel.org,
-        mike.leach@linaro.org
-Subject: Re: [PATCH 03/20] coresight: Fix remote endpoint parsing
-Message-ID: <20180608200503.GC30587@xps15>
-References: <1528235011-30691-1-git-send-email-suzuki.poulose@arm.com>
- <1528235011-30691-4-git-send-email-suzuki.poulose@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Thu, 7 Jun 2018 10:48:32 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbg-0005Zw-Eq; Thu, 07 Jun 2018 15:09:40 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb6-00031P-DO; Thu, 07 Jun 2018 15:09:04 +0100
+Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
-In-Reply-To: <1528235011-30691-4-git-send-email-suzuki.poulose@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        "Eric Biggers" <ebiggers@google.com>,
+        "Mikulas Patocka" <mpatocka@redhat.com>,
+        "Willy Tarreau" <w@1wt.eu>,
+        "Alexander Viro" <viro@zeniv.linux.org.uk>,
+        "Joe Lawrence" <joe.lawrence@redhat.com>,
+        "Michael Kerrisk" <mtk.manpages@gmail.com>,
+        "Kees Cook" <keescook@chromium.org>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.744262895@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 210/410] pipe, sysctl: drop 'min' parameter from
+ pipe-max-size converter
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 10:43:14PM +0100, Suzuki K Poulose wrote:
-> When parsing the remote endpoint of an output port, we do :
->      rport = of_graph_get_remote_port(ep);
->      rparent = of_graph_get_remote_port_parent(ep);
-> 
-> and then parse the "remote_port" as if it was the remote endpoint,
-> which is wrong. The code worked fine because we used endpoint number
-> as the port number. Let us fix it and optimise a bit as:
-> 
->      remote_ep = of_graph_get_remote_endpoint(ep);
->      if (remote_ep)
->         remote_parent = of_graph_get_port_parent(remote_ep);
-> 
-> and then, parse the remote_ep for the port/endpoint details.
-> 
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
->  drivers/hwtracing/coresight/of_coresight.c | 22 +++++++++++-----------
->  1 file changed, 11 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/of_coresight.c b/drivers/hwtracing/coresight/of_coresight.c
-> index 8a23c63..ada4f07 100644
-> --- a/drivers/hwtracing/coresight/of_coresight.c
-> +++ b/drivers/hwtracing/coresight/of_coresight.c
-> @@ -129,7 +129,7 @@ static int of_coresight_parse_endpoint(struct device_node *ep,
->  	int ret = 0;
->  	struct of_endpoint endpoint, rendpoint;
->  	struct device_node *rparent = NULL;
-> -	struct device_node *rport = NULL;
-> +	struct device_node *rep = NULL;
->  	struct device *rdev = NULL;
->  
->  	do {
-> @@ -144,16 +144,16 @@ static int of_coresight_parse_endpoint(struct device_node *ep,
->  		if (of_graph_parse_endpoint(ep, &endpoint))
->  			break;
->  		/*
-> -		 * Get a handle on the remote port and parent
-> -		 * attached to it.
-> +		 * Get a handle on the remote endpoint and the device it is
-> +		 * attached to.
->  		 */
-> -		rparent = of_graph_get_remote_port_parent(ep);
-> +		rep = of_graph_get_remote_endpoint(ep);
-> +		if (!rep)
-> +			break;
-> +		rparent = of_graph_get_port_parent(rep);
->  		if (!rparent)
->  			break;
-> -		rport = of_graph_get_remote_port(ep);
-> -		if (!rport)
-> -			break;
-> -		if (of_graph_parse_endpoint(rport, &rendpoint))
-> +		if (of_graph_parse_endpoint(rep, &rendpoint))
->  			break;
->  
->  		/* If the remote device is not available, defer probing */
-> @@ -165,15 +165,15 @@ static int of_coresight_parse_endpoint(struct device_node *ep,
->  
->  		pdata->outports[*i] = endpoint.port;
->  		pdata->child_names[*i] = dev_name(rdev);
-> -		pdata->child_ports[*i] = rendpoint.id;
-> +		pdata->child_ports[*i] = rendpoint.port;
->  		/* Move the index */
->  		(*i)++;
->  	} while (0);
->  
->  	if (rparent)
->  		of_node_put(rparent);
-> -	if (rport)
-> -		of_node_put(rport);
-> +	if (rep)
-> +		of_node_put(rep);
->  
->  	return ret;
->  }
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+------------------
 
-(Please add to the next iteration so that I don't have to review again)
+From: Eric Biggers <ebiggers@google.com>
 
-> -- 
-> 2.7.4
-> 
+commit 4c2e4befb3cc9ce42d506aa537c9ab504723e98c upstream.
+
+Patch series "pipe: buffer limits fixes and cleanups", v2.
+
+This series simplifies the sysctl handler for pipe-max-size and fixes
+another set of bugs related to the pipe buffer limits:
+
+- The root user wasn't allowed to exceed the limits when creating new
+  pipes.
+
+- There was an off-by-one error when checking the limits, so a limit of
+  N was actually treated as N - 1.
+
+- F_SETPIPE_SZ accepted values over UINT_MAX.
+
+- Reading the pipe buffer limits could be racy.
+
+This patch (of 7):
+
+Before validating the given value against pipe_min_size,
+do_proc_dopipe_max_size_conv() calls round_pipe_size(), which rounds the
+value up to pipe_min_size.  Therefore, the second check against
+pipe_min_size is redundant.  Remove it.
+
+Link: http://lkml.kernel.org/r/20180111052902.14409-2-ebiggers3@gmail.com
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Acked-by: Kees Cook <keescook@chromium.org>
+Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: "Luis R . Rodriguez" <mcgrof@kernel.org>
+Cc: Michael Kerrisk <mtk.manpages@gmail.com>
+Cc: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Willy Tarreau <w@1wt.eu>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ fs/pipe.c                 | 10 +++-------
+ include/linux/pipe_fs_i.h |  2 +-
+ kernel/sysctl.c           | 15 +--------------
+ 3 files changed, 5 insertions(+), 22 deletions(-)
+
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -34,11 +34,6 @@
+  */
+ unsigned int pipe_max_size = 1048576;
+ 
+-/*
+- * Minimum pipe size, as required by POSIX
+- */
+-unsigned int pipe_min_size = PAGE_SIZE;
+-
+ /* Maximum allocatable pages per user. Hard limit is unset by default, soft
+  * matches default values.
+  */
+@@ -1012,8 +1007,9 @@ unsigned int round_pipe_size(unsigned in
+ {
+ 	unsigned long nr_pages;
+ 
+-	if (size < pipe_min_size)
+-		size = pipe_min_size;
++	/* Minimum pipe size, as required by POSIX */
++	if (size < PAGE_SIZE)
++		size = PAGE_SIZE;
+ 
+ 	nr_pages = (size + PAGE_SIZE - 1) >> PAGE_SHIFT;
+ 	if (nr_pages == 0)
+--- a/include/linux/pipe_fs_i.h
++++ b/include/linux/pipe_fs_i.h
+@@ -124,7 +124,7 @@ void pipe_lock(struct pipe_inode_info *)
+ void pipe_unlock(struct pipe_inode_info *);
+ void pipe_double_lock(struct pipe_inode_info *, struct pipe_inode_info *);
+ 
+-extern unsigned int pipe_max_size, pipe_min_size;
++extern unsigned int pipe_max_size;
+ extern unsigned long pipe_user_pages_hard;
+ extern unsigned long pipe_user_pages_soft;
+ int pipe_proc_fn(struct ctl_table *, int, void __user *, size_t *, loff_t *);
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -1672,7 +1672,6 @@ static struct ctl_table fs_table[] = {
+ 		.maxlen		= sizeof(int),
+ 		.mode		= 0644,
+ 		.proc_handler	= &pipe_proc_fn,
+-		.extra1		= &pipe_min_size,
+ 	},
+ 	{
+ 		.procname	= "pipe-user-pages-hard",
+@@ -2223,15 +2222,9 @@ int proc_dointvec_minmax(struct ctl_tabl
+ 				do_proc_dointvec_minmax_conv, &param);
+ }
+ 
+-struct do_proc_dopipe_max_size_conv_param {
+-	unsigned int *min;
+-};
+-
+ static int do_proc_dopipe_max_size_conv(bool *negp, unsigned long *lvalp,
+ 					int *valp, int write, void *data)
+ {
+-	struct do_proc_dopipe_max_size_conv_param *param = data;
+-
+ 	if (write) {
+ 		unsigned int val;
+ 
+@@ -2242,9 +2235,6 @@ static int do_proc_dopipe_max_size_conv(
+ 		if (*negp || val == 0)
+ 			return -EINVAL;
+ 
+-		if (param->min && *param->min > val)
+-			return -ERANGE;
+-
+ 		*valp = val;
+ 	} else {
+ 		unsigned int val = *valp;
+@@ -2258,11 +2248,8 @@ static int do_proc_dopipe_max_size_conv(
+ int proc_dopipe_max_size(struct ctl_table *table, int write,
+ 			 void __user *buffer, size_t *lenp, loff_t *ppos)
+ {
+-	struct do_proc_dopipe_max_size_conv_param param = {
+-		.min = (unsigned int *) table->extra1,
+-	};
+ 	return do_proc_dointvec(table, write, buffer, lenp, ppos,
+-				do_proc_dopipe_max_size_conv, &param);
++				do_proc_dopipe_max_size_conv, NULL);
+ }
+ 
+ static void validate_coredump_safety(void)
