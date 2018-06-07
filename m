@@ -1,178 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 2CD9LnuaGVu7IwAAmS7hNA
-	; Thu, 07 Jun 2018 20:50:19 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id fYNdLflSGVuSGwAAmS7hNA
+	; Thu, 07 Jun 2018 15:47:46 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id BA9BE6074D; Thu,  7 Jun 2018 20:50:19 +0000 (UTC)
+	id 3E0B7608BA; Thu,  7 Jun 2018 15:47:46 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q0yLiq4U"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="t4b22XPh"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 2A2D0605A2;
-	Thu,  7 Jun 2018 20:50:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2A2D0605A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id C24DE601B4;
+	Thu,  7 Jun 2018 15:47:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C24DE601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932696AbeFGUuR (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 16:50:17 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:33519 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932634AbeFGUuO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 16:50:14 -0400
-Received: by mail-pg0-f68.google.com with SMTP id e11-v6so5321182pgq.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 13:50:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=yGeT2z0TEJiRxrbez/GsuqB8RgVtytCBVtTQ7JK4sXk=;
-        b=q0yLiq4UUXYjLhkgo6Khtd2rSzXGgII69YbUgaORklAWxE1ORMmkM+/cNn/mvyOJB2
-         SZtG10NYmCRUow/xNTFu+uZwPnN/MEXeFkdc4Zwi6lrAONCqHbm0+KuVpblvfhPXw76r
-         za6oR1DMVmnPFkiLHT+RD6+ksZkcBOy98ZfVo8RlzsTzrv0/fF78qBWlDgK7ooWL5zf8
-         QEo36NWOTXEPEoeslLoEjGbdtKgE4p95fceNfuw5zunvWgDmYNHi72HXRRrUJ3jHnywC
-         VZgc2ZlNpxsSVbwcEa43FmNnui6vyW/RnTch2QENEn0LWtrgoudGWNaE31AE7MoIYEjE
-         yKDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=yGeT2z0TEJiRxrbez/GsuqB8RgVtytCBVtTQ7JK4sXk=;
-        b=XrQkq1RR8vW7nOvR073jzFFL583nBKpEwXvtvuimYX1xzccIs+8OUUHvHRAXFMY7RB
-         DiiKMCSO2W47IXRw3ZEW0RcGYP7f4c+NtEDDrzRTu6C87Ata2on1c4+iNaDmBL11sCvn
-         VYL+Nn2QEDoSbiQkCPJQMcNN95+UfFqa50VJFI6zmpqrfmnGMo7Rd3SBP2nEXHgo8dNU
-         YY/blP8+x61XBRLYB9RyoxaC8zm5zngLBwGZ+kvbdEiwlgpkRiSacWAGW3wnLNqRKiuC
-         BD/Jgcp3zEZKBtaicIX2jHS5BzjkJ2t5FS1lhlrfJRd2eKL8uxr135HNbwHgkGJbBgh+
-         SbOg==
-X-Gm-Message-State: APt69E22rU/abODdNEFnxPcb+Z/7zvXINAXW7s3m+/4E28gaWvJS1S7G
-        YSZ1zINvsZzvSjWJESFON8QIoQ==
-X-Google-Smtp-Source: ADUXVKITgW7CYltfWcmphTqZwbR4c0+YCzRuihluXb2VzgIEQtK8aFZvDAgVfEb6ie8zkKU49D7u7Q==
-X-Received: by 2002:a62:32c6:: with SMTP id y189-v6mr3123267pfy.241.1528404612809;
-        Thu, 07 Jun 2018 13:50:12 -0700 (PDT)
-Received: from ndesaulniers0.svl.corp.google.com ([2620:15c:2a3:1:d33:166f:5b79:14b3])
-        by smtp.gmail.com with ESMTPSA id w18-v6sm3780460pgq.1.2018.06.07.13.50.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Jun 2018 13:50:12 -0700 (PDT)
-From: Nick Desaulniers <ndesaulniers@google.com>
-To: akpm@linux-foundation.org, hpa@zytor.com, mingo@redhat.com,
-        tglx@linutronix.de
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, virtualization@lists.linux-foundation.org,
-        astrachan@google.com, manojgupta@google.com, ghackmann@google.com,
-        sedat.dilek@gmail.com, tstellar@redhat.com, keescook@google.com,
-        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        linux-kbuild@vger.kernel.org, geert@linux-m68k.org,
-        will.deacon@arm.com, mawilcox@microsoft.com, arnd@arndb.de,
-        rientjes@google.com, acme@redhat.com, pombredanne@nexb.com,
-        aryabinin@virtuozzo.com, kstewart@linuxfoundation.org,
-        boris.ostrovsky@oracle.com, jan.kiszka@siemens.com,
-        rostedt@goodmis.org, kirill.shutemov@linux.intel.com,
-        ard.biesheuvel@linaro.org, akataria@vmware.com,
-        brijesh.singh@amd.com, caoj.fnst@cn.fujitsu.com,
-        gregkh@linuxfoundation.org, jarkko.sakkinen@linux.intel.com,
-        jgross@suse.com, jpoimboe@redhat.com, mka@chromium.org,
-        ndesaulniers@google.com, thomas.lendacky@amd.com, tweek@google.com,
-        mjg59@google.com, joe@perches.com,
-        "H. Peter Anvin" <hpa@linux.intel.com>
-Subject: [PATCH v4 2/3] x86/asm: add _ASM_ARG* constants for argument registers to <asm/asm.h>
-Date: Thu,  7 Jun 2018 13:49:26 -0700
-Message-Id: <20180607204927.219329-3-ndesaulniers@google.com>
-X-Mailer: git-send-email 2.17.1.1185.g55be947832-goog
-In-Reply-To: <20180607204927.219329-1-ndesaulniers@google.com>
-References: <20180607204927.219329-1-ndesaulniers@google.com>
+        id S934696AbeFGPro (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:47:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47752 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932578AbeFGPrl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 11:47:41 -0400
+Received: from mail-it0-f43.google.com (mail-it0-f43.google.com [209.85.214.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D7D9B20896
+        for <linux-kernel@vger.kernel.org>; Thu,  7 Jun 2018 15:47:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528386461;
+        bh=mDTXmyladVBd3eh/mjrYcjmTj9XAgNFR2n7J1EwIYXw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=t4b22XPhi1V8EcA81pcTXxuOrm3Dp/1GNdaGWLiZCnbLwCbzNu5aoN1wEFh8lASMj
+         NscDMbnHFJCYLGG5LY5YGGhh2b5CzjB48YjIigLUttiwAkcImaTKsEVDf/Y6+A0K2U
+         f+b6RUuXSz9JAgJpoxWdjskNN+6i/NNHf2l2l574=
+Received: by mail-it0-f43.google.com with SMTP id l6-v6so13260385iti.2
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 08:47:40 -0700 (PDT)
+X-Gm-Message-State: APt69E2n3rBZJx5AYokj4QTLDwGNWTdhaeGmg9/XObyBgP0FI1HfedHl
+        0aNUETdtK/2errJYywsjLVobsrSiUBn/K9BaZwfiEg==
+X-Google-Smtp-Source: ADUXVKLQn7MAttUV/AWjvOdW64m/ElOISsEQbeEIlXfdTTn5GiAqrfNx++kIR2/1Hr6to1wRwcFfoUHLlgdMZr5e6hM=
+X-Received: by 2002:a24:d050:: with SMTP id m77-v6mr2392521itg.147.1528386460335;
+ Thu, 07 Jun 2018 08:47:40 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180607143705.3531-1-yu-cheng.yu@intel.com> <20180607143705.3531-3-yu-cheng.yu@intel.com>
+In-Reply-To: <20180607143705.3531-3-yu-cheng.yu@intel.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Thu, 7 Jun 2018 08:47:28 -0700
+X-Gmail-Original-Message-ID: <CALCETrWwGCZ+Fbk+O8T6S48teHj60bQQiHQ49=SsKUOpm8VLBA@mail.gmail.com>
+Message-ID: <CALCETrWwGCZ+Fbk+O8T6S48teHj60bQQiHQ49=SsKUOpm8VLBA@mail.gmail.com>
+Subject: Re: [PATCH 2/9] x86/cet: Add Kconfig option for user-mode shadow stack
+To: Yu-cheng Yu <yu-cheng.yu@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        mike.kravetz@oracle.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "H. Peter Anvin" <hpa@linux.intel.com>
+On Thu, Jun 7, 2018 at 7:40 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+>
+> Introduce Kconfig option X86_INTEL_SHADOW_STACK_USER.
+>
+> An application has shadow stack protection when all the following are
+> true:
+>
+>   (1) The kernel has X86_INTEL_SHADOW_STACK_USER enabled,
+>   (2) The running processor supports the shadow stack,
+>   (3) The application is built with shadow stack enabled tools & libs
+>       and, and at runtime, all dependent shared libs can support shadow
+>       stack.
+>
+> If this kernel config option is enabled, but (2) or (3) above is not
+> true, the application runs without the shadow stack protection.
+> Existing legacy applications will continue to work without the shadow
+> stack protection.
+>
+> The user-mode shadow stack protection is only implemented for the
+> 64-bit kernel.  Thirty-two bit applications are supported under the
+> compatibility mode.
+>
 
-i386 and x86-64 uses different registers for arguments; make them
-available so we don't have to #ifdef in the actual code.
-
-Native size and specified size (q, l, w, b) versions are provided.
-
-Suggested-by: Sedat Dilek <sedat.dilek@gmail.com>
-Signed-off-by: H. Peter Anvin <hpa@linux.intel.com>
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
----
- arch/x86/include/asm/asm.h | 59 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
-
-diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
-index 219faaec51df..990770f9e76b 100644
---- a/arch/x86/include/asm/asm.h
-+++ b/arch/x86/include/asm/asm.h
-@@ -46,6 +46,65 @@
- #define _ASM_SI		__ASM_REG(si)
- #define _ASM_DI		__ASM_REG(di)
- 
-+#ifndef __x86_64__
-+/* 32 bit */
-+
-+#define _ASM_ARG1	_ASM_AX
-+#define _ASM_ARG2	_ASM_DX
-+#define _ASM_ARG3	_ASM_CX
-+
-+#define _ASM_ARG1L	eax
-+#define _ASM_ARG2L	edx
-+#define _ASM_ARG3L	ecx
-+
-+#define _ASM_ARG1W	ax
-+#define _ASM_ARG2W	dx
-+#define _ASM_ARG3W	cx
-+
-+#define _ASM_ARG1B	al
-+#define _ASM_ARG2B	dl
-+#define _ASM_ARG3B	cl
-+
-+#else
-+/* 64 bit */
-+
-+#define _ASM_ARG1	_ASM_DI
-+#define _ASM_ARG2	_ASM_SI
-+#define _ASM_ARG3	_ASM_DX
-+#define _ASM_ARG4	_ASM_CX
-+#define _ASM_ARG5	r8
-+#define _ASM_ARG6	r9
-+
-+#define _ASM_ARG1Q	rdi
-+#define _ASM_ARG2Q	rsi
-+#define _ASM_ARG3Q	rdx
-+#define _ASM_ARG4Q	rcx
-+#define _ASM_ARG5Q	r8
-+#define _ASM_ARG6Q	r9
-+
-+#define _ASM_ARG1L	edi
-+#define _ASM_ARG2L	esi
-+#define _ASM_ARG3L	edx
-+#define _ASM_ARG4L	ecx
-+#define _ASM_ARG5L	r8d
-+#define _ASM_ARG6L	r9d
-+
-+#define _ASM_ARG1W	di
-+#define _ASM_ARG2W	si
-+#define _ASM_ARG3W	dx
-+#define _ASM_ARG4W	cx
-+#define _ASM_ARG5W	r8w
-+#define _ASM_ARG6W	r9w
-+
-+#define _ASM_ARG1B	dil
-+#define _ASM_ARG2B	sil
-+#define _ASM_ARG3B	dl
-+#define _ASM_ARG4B	cl
-+#define _ASM_ARG5B	r8b
-+#define _ASM_ARG6B	r9b
-+
-+#endif
-+
- /*
-  * Macros to generate condition code outputs from inline assembly,
-  * The output operand must be type "bool".
--- 
-2.17.1.1185.g55be947832-goog
+The 64-bit only part seems entirely reasonable.  So please make the
+code 64-bit only :)
