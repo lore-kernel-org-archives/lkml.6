@@ -1,82 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id n/g8MljRGlvZFwAAmS7hNA
-	; Fri, 08 Jun 2018 18:57:22 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id y21wLh1JGVsTTgAAmS7hNA
+	; Thu, 07 Jun 2018 15:03:38 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 8A62C607DC; Fri,  8 Jun 2018 18:57:22 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="eV8ALMw6"
+	id 6D42B608B8; Thu,  7 Jun 2018 15:03:38 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 052D0601D2;
-	Fri,  8 Jun 2018 18:57:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 052D0601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 1C92F601C3;
+	Thu,  7 Jun 2018 15:03:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1C92F601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752774AbeFHS5U (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 14:57:20 -0400
-Received: from mail-io0-f178.google.com ([209.85.223.178]:39126 "EHLO
-        mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752357AbeFHS5S (ORCPT
+        id S935923AbeFGPDg (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:03:36 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41511 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935753AbeFGPDd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 14:57:18 -0400
-Received: by mail-io0-f178.google.com with SMTP id f1-v6so17035226ioh.6;
-        Fri, 08 Jun 2018 11:57:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SbmgiceFQkHo47hoj3Ob7+rkCFXZ6eMCEMne9h6KXcM=;
-        b=eV8ALMw6uettYzkBlH1VQWJV0w2TWFqmcfCHUvUUbdldMT+FfKQ0TndundvqEPCZwM
-         jM3oqxRrZ5ZnXxrJDUtedEt9lEgTDcVOFmOU5/CMP61nHPBpYYKHxdURjXTOfQU2g5Dz
-         +qnZmbh6NxygKpEJI0+Jy+pMyFRUAFhPqemtw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SbmgiceFQkHo47hoj3Ob7+rkCFXZ6eMCEMne9h6KXcM=;
-        b=H6rpy3aCluxlSkSeZWJMaMm26d6VzMA9nR3I+W/1D3E450yp97JFa/e9kFnPAui7ta
-         JPIZY3IzbvVJfW7aHvWAKixHY4iSjkl+LXTNVBDNirAy9Pj5sEM6GZU6y+AqFIAJYpOL
-         Dl9Hk+G1mHNmqfWnCL4Odkm/FdewDU0sOwjp7uyyNuJDug9F2Sg8+Zx1S01sf8NjX75l
-         WOMLyIbcmmaCeK5Niv2s2YR+UbDXFJ0cNyjfwiN3cdtEUWJkqbeCj+V3my5PVdMexWBL
-         08npsPJSuojLWFII5BxPwNpm3p70PgkFvmcw5qfIZaVWH51qKNWYaZRvCYjymk50LUby
-         5d4g==
-X-Gm-Message-State: APt69E2LY8qSK9HhF3+H6SVNTM5r+CRq7/7GsQOvQinKn647Rz2swhzm
-        KxEQO9DKlbDx83MpjXCWMpqZ/OOnHwUgCqmhoG7Bew==
-X-Google-Smtp-Source: ADUXVKK7x0zqtx32zQMYvYIi0HlWwUHNgboUZE/XxIgDlmORFT6srlfR1E1GnjNE+64URwMEqr6x7AtR+p2IUE6FfyE=
-X-Received: by 2002:a6b:1502:: with SMTP id 2-v6mr2954116iov.203.1528484237921;
- Fri, 08 Jun 2018 11:57:17 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180608184842.GD30522@ZenIV.linux.org.uk>
-In-Reply-To: <20180608184842.GD30522@ZenIV.linux.org.uk>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 8 Jun 2018 11:57:06 -0700
-Message-ID: <CA+55aFz9cS3m=wZxqKbzrCLEjhPoPddKw5U2MDKNqbG79Wx6bw@mail.gmail.com>
-Subject: Re: [RFC][PATCHES] getting rid of int *open in ->atomic_open() and friends
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+        Thu, 7 Jun 2018 11:03:33 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbX-0005Zk-CD; Thu, 07 Jun 2018 15:09:31 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbA-0003AF-NO; Thu, 07 Jun 2018 15:09:08 +0100
 Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Nikola Ciprich" <nikola.ciprich@linuxbox.cz>,
+        "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.40248050@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 307/410] serial: 8250_pci: Add Brainboxes UC-260 4
+ port serial device
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I'm obviously biased since I asked for this, but:
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-On Fri, Jun 8, 2018 at 11:48 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
->  33 files changed, 135 insertions(+), 180 deletions(-)
+------------------
 
-this already looks nice.
+From: Nikola Ciprich <nikola.ciprich@linuxbox.cz>
 
-I'll go through the individual patches and see if there's anything
-there that raises my hackles. Silence will mean assent in this case
+commit 9f2068f35729948bde84d87a40d135015911345d upstream.
 
-           Linus
+Add PCI ids for two variants of Brainboxes UC-260 quad port
+PCI serial cards.
+
+Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Nikola Ciprich <nikola.ciprich@linuxbox.cz>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ drivers/tty/serial/8250/8250_pci.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+--- a/drivers/tty/serial/8250/8250_pci.c
++++ b/drivers/tty/serial/8250/8250_pci.c
+@@ -5067,6 +5067,17 @@ static struct pci_device_id serial_pci_t
+ 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,    /* 135a.0dc0 */
+ 		pbn_b2_4_115200 },
+ 	/*
++	 * BrainBoxes UC-260
++	 */
++	{	PCI_VENDOR_ID_INTASHIELD, 0x0D21,
++		PCI_ANY_ID, PCI_ANY_ID,
++		PCI_CLASS_COMMUNICATION_MULTISERIAL << 8, 0xffff00,
++		pbn_b2_4_115200 },
++	{	PCI_VENDOR_ID_INTASHIELD, 0x0E34,
++		PCI_ANY_ID, PCI_ANY_ID,
++		 PCI_CLASS_COMMUNICATION_MULTISERIAL << 8, 0xffff00,
++		pbn_b2_4_115200 },
++	/*
+ 	 * Perle PCI-RAS cards
+ 	 */
+ 	{       PCI_VENDOR_ID_PLX, PCI_DEVICE_ID_PLX_9030,
