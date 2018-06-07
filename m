@@ -1,141 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id xZ85BklHGltKHQAAmS7hNA
-	; Fri, 08 Jun 2018 09:07:21 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id TxFvGR6bGVteLwAAmS7hNA
+	; Thu, 07 Jun 2018 20:54:01 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id EF897607E4; Fri,  8 Jun 2018 09:07:20 +0000 (UTC)
+	id EAD65608BA; Thu,  7 Jun 2018 20:54:00 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ho+54WoW"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cP6MLTon"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 6684F602FC;
-	Fri,  8 Jun 2018 09:07:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6684F602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 5AF74605A2;
+	Thu,  7 Jun 2018 20:54:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5AF74605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751244AbeFHJHQ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 05:07:16 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:45853 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751056AbeFHJHO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 05:07:14 -0400
-Received: by mail-wr0-f196.google.com with SMTP id o12-v6so12563756wrm.12
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 02:07:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=jPBUqT9TcPVLpzyKaKJeMyOZjrXCcHlVjX+KXOjAYTc=;
-        b=ho+54WoWhNx2GOmO9T5P4fnWcbICZlhzk1QBnRPA/MqmBPXNo8+8GiqjKV976PtXvn
-         l1lE+OsxddtOrHUyGB6oNMSfWJcqz8y2KhqyFRW9o6lB7MhVW2PPHHGC27iIGleOQLYl
-         vmPGYxF8jFQXD1xQuAgLmYuuUlDXsMRQxA0AQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=jPBUqT9TcPVLpzyKaKJeMyOZjrXCcHlVjX+KXOjAYTc=;
-        b=HAf2JWvSl5iT8IGy3Q7zy+gL5bmOs25IXU6qEbhF431P35LZETwN6mHXRfhb9tqFoe
-         J/PIc90zKMhGet0Knvl0v9cZKWZTxnigTEGixbbpram1+TKk4J3H4FE3epVwzojGzU26
-         vYN2x4VRpZyEjlL8iwB62nMYQlWokdcv/gKBnTfg+lanvZc/lMuHpzBJvmZQXhxbHTHv
-         CapVcyh8ZY6yoyDQi0z3+xIAyBDQ7AaviWLIrVW4rBOFjZTbLDpAj80c0orlMYeFoK6q
-         43BISh/FtCLU/1c/+10Bmx5v1knLTljkOnY7xos/IvL0foDqxDEp6CEoPsDTivBXsvJZ
-         DucQ==
-X-Gm-Message-State: APt69E3m/uB1iNfZPdCj61ITO2QiMbm3XQaClgGuVxXdY37JwFyZChON
-        Is5CTR5WLXJePVXxegVlz+lIeg==
-X-Google-Smtp-Source: ADUXVKKFcl1PEVLyM4SaRCCkBL1fu9G3pClA18ggIk/1omptftvaKVBZqIKaM8DeZHWSi76/jm7RtQ==
-X-Received: by 2002:adf:f8c2:: with SMTP id f2-v6mr4091253wrq.237.1528448833499;
-        Fri, 08 Jun 2018 02:07:13 -0700 (PDT)
-Received: from [192.168.1.100] (aig34-1-88-167-228-121.fbx.proxad.net. [88.167.228.121])
-        by smtp.gmail.com with ESMTPSA id d90-v6sm1103867wmi.26.2018.06.08.02.07.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Jun 2018 02:07:12 -0700 (PDT)
-Subject: Re: [PATCH RESEND] lib/test_printf.c: call wait_for_random_bytes()
- before plain %p tests
-To: Petr Mladek <pmladek@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        David Miller <davem@davemloft.net>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "Tobin C . Harding" <me@tobin.cc>, linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-References: <20180604113708.11554-1-thierry.escande@linaro.org>
- <20180607122434.i4x7b5ij4p6dpx7w@pathway.suse.cz>
- <d9ecdf72-7500-66d4-0360-231218cccbb4@linaro.org>
- <20180608080437.n2b5nv73d3kp6yhb@pathway.suse.cz>
-From: Thierry Escande <thierry.escande@linaro.org>
-Message-ID: <0fa30e13-c16f-95d8-d1ef-fd45e7a99888@linaro.org>
-Date: Fri, 8 Jun 2018 11:07:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S932514AbeFGUx6 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 16:53:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40948 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753260AbeFGUx4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 16:53:56 -0400
+Received: from mail-wr0-f178.google.com (mail-wr0-f178.google.com [209.85.128.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 90A76208B2
+        for <linux-kernel@vger.kernel.org>; Thu,  7 Jun 2018 20:53:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528404835;
+        bh=kIDoHe33oqzBtjUlSVvhJ4ihMwGu5pSiq6i65T1FsKg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=cP6MLTonwjWllFuTqgglaTDFopBrXji1V36oapxPoHSZnnQzU9agXTdPOVkUDalOq
+         FBrn+VzNCBHds2T4Pk8UWxptDIhj3KyP8/ibsQhGRBLRYKcswxVQde8C8tLuA6wkWP
+         nzBd7LPhd5geDvpmTwJZ4V3gzEH5+GZ5YJBcag/A=
+Received: by mail-wr0-f178.google.com with SMTP id h10-v6so11183584wrq.8
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 13:53:55 -0700 (PDT)
+X-Gm-Message-State: APt69E1HH0IYSyURzy5+7I61anUBLoM6ZNzW7DIh+5FrCKuPoCmppNZ8
+        4cMFWgje3DxePfGb0C1xe/dGFH+zcW03ojV/MroImw==
+X-Google-Smtp-Source: ADUXVKLb27aOdI3cXj/aiBarJeE7VxabjGgMyFbwvVO2fXh+uCsbeFGBHedIKvyNC98F8bMWLI1bgFvofpIZOP0KTWI=
+X-Received: by 2002:adf:b445:: with SMTP id v5-v6mr2780352wrd.67.1528404833918;
+ Thu, 07 Jun 2018 13:53:53 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180608080437.n2b5nv73d3kp6yhb@pathway.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180607143807.3611-1-yu-cheng.yu@intel.com> <20180607143807.3611-5-yu-cheng.yu@intel.com>
+ <CALCETrUqXvh2FDXe6bveP10TFpzptEyQe2=mdfZFGKU0T+NXsA@mail.gmail.com> <3c1bdf85-0c52-39ed-a799-e26ac0e52391@redhat.com>
+In-Reply-To: <3c1bdf85-0c52-39ed-a799-e26ac0e52391@redhat.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Thu, 7 Jun 2018 13:53:41 -0700
+X-Gmail-Original-Message-ID: <CALCETrWPDXpbVcuFK_1M5DtaCOW_LSf-XHFAD0vpc735oFWLPg@mail.gmail.com>
+Message-ID: <CALCETrWPDXpbVcuFK_1M5DtaCOW_LSf-XHFAD0vpc735oFWLPg@mail.gmail.com>
+Subject: Re: [PATCH 04/10] x86/cet: Handle thread shadow stack
+To: Florian Weimer <fweimer@redhat.com>
+Cc: Andrew Lutomirski <luto@kernel.org>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        mike.kravetz@oracle.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jun 7, 2018 at 12:47 PM Florian Weimer <fweimer@redhat.com> wrote:
+>
+> On 06/07/2018 08:21 PM, Andy Lutomirski wrote:
+> > On Thu, Jun 7, 2018 at 7:41 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrot=
+e:
+> >>
+> >> When fork() specifies CLONE_VM but not CLONE_VFORK, the child
+> >> needs a separate program stack and a separate shadow stack.
+> >> This patch handles allocation and freeing of the thread shadow
+> >> stack.
+> >
+> > Aha -- you're trying to make this automatic.  I'm not convinced this
+> > is a good idea.  The Linux kernel has a long and storied history of
+> > enabling new hardware features in ways that are almost entirely
+> > useless for userspace.
+> >
+> > Florian, do you have any thoughts on how the user/kernel interaction
+> > for the shadow stack should work?
+>
+> I have not looked at this in detail, have not played with the emulator,
+> and have not been privy to any discussions before these patches have
+> been posted, however =E2=80=A6
+>
+> I believe that we want as little code in userspace for shadow stack
+> management as possible.  One concern I have is that even with the code
+> we arguably need for various kinds of stack unwinding, we might have
+> unwittingly built a generic trampoline that leads to full CET bypass.
+
+I was imagining an API like "allocate a shadow stack for the current
+thread, fail if the current thread already has one, and turn on the
+shadow stack".  glibc would call clone and then call this ABI pretty
+much immediately (i.e. before making any calls from which it expects
+to return).
+
+We definitely want strong enough user control that tools like CRIU can
+continue to work.  I haven't looked at the SDM recently enough to
+remember for sure, but I'm reasonably confident that user code can
+learn the address of its own shadow stack.  If nothing else, CRIU
+needs to be able to restore from a context where there's a signal on
+the stack and the signal frame contains a shadow stack pointer.
 
 
-On 08/06/2018 10:04, Petr Mladek wrote:
-> On Thu 2018-06-07 20:47:25, Thierry Escande wrote:
->> Hi Petr,
->>
->> On 07/06/2018 14:24, Petr Mladek wrote:
->>> On Mon 2018-06-04 13:37:08, Thierry Escande wrote:
->>>> If the test_printf module is loaded before the crng is initialized, the
->>>> plain 'p' tests will fail because the printed address will not be hashed
->>>> and the buffer will contain '(ptrval)' instead.
->>>> This patch adds a call to wait_for_random_bytes() before plain 'p' tests
->>>> to make sure the crng is initialized.
->>>
->>> Hmm, my system did not boot with this patch and
->>> CONFIG_TEST_PRINTF=y
->>>
->>> I guess that there was not enough entropy. It is basically a deadlock.
->>> The build-in module init calls are called when SMP is enabled but
->>> there is no real activity and the init calls are called sequentially.
->>> Therefore there is nothing that could produce some entropy, ...
->>>
->>> I suggest to skip the test when crng is not ready.
->>
->> Thanks for pointing this out.
->>
->> The issue is that the crng_ready() is not available outside of random.c.
->> I'll leave the call to wait_for_random_bytes() if test_printf is compiled as
->> a module and use add_random_ready_callback() to check if crng is initialized
->> otherwise. Does that sound ok to you?
-> 
-> Great, I was not aware of add_random_ready_callback().
-> 
-> I suggest to make the decision in test_printf_init()
-> and run all tests either as the callback or immediately.
-> 
+>
+> I also expect that we'd only have donor mappings in userspace anyway,
+> and that the memory is not actually accessible from userspace if it is
+> used for a shadow stack.
+>
+> > My intuition would be that all
+> > shadow stack management should be entirely controlled by userspace --
+> > newly cloned threads (with CLONE_VM) should have no shadow stack
+> > initially, and newly started processes should have no shadow stack
+> > until they ask for one.
+>
+> If the new thread doesn't have a shadow stack, we need to disable
+> signals around clone, and we are very likely forced to rewrite the early
+> thread setup in assembler, to avoid spurious calls (including calls to
+> thunks to get EIP on i386).  I wouldn't want to do this If we can avoid
+> it.  Just using C and hoping to get away with it doesn't sound greater,
+> either.  And obviously there is the matter that the initial thread setup
+> code ends up being that universal trampoline.
+>
 
-The run_kselftest.sh script relies on the error code returned by 
-modprobe to check if the test is passed or not. So the init function has 
-to return the test results and we cannot defer the test execution in the 
-random ready callback if the crng is not yet initialized at __init.
+Only if the trampoline works if the shadow stack is already enabled.
 
-My idea was to use add_random_ready_callback() as a non blocking test 
-when compiled built-in as it returns -EALREADY if crng is already 
-initialized.
-
-But as I type I realize it's not necessary. I will simply enclose the 
-call to wait_for_random_bytes() by #if IS_MODULE() #endif so it gets 
-called only if built as a module, which is how run_kselftest.sh wants 
-it... If test_printf is compiled built-in and the crng is not yet 
-initialized the test will fail anyway so there is no need to add an 
-extra check.
-
-Regards,
-Thierry
+I could very easily be convinced that automatic shadow stack setup is
+a good idea, but I still think we need manual control for CRIU and
+such.
