@@ -1,99 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id KSwPAuyGHltyOQAAmS7hNA
-	; Mon, 11 Jun 2018 14:27:58 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id MdjdA/RYGVvPBAAAmS7hNA
+	; Thu, 07 Jun 2018 16:10:56 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 3E1D360792; Mon, 11 Jun 2018 14:27:58 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="djsguOgB"
+	id A4FEE6089E; Thu,  7 Jun 2018 16:10:56 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id BB1E56074D;
-	Mon, 11 Jun 2018 14:27:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BB1E56074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 1A71D60115;
+	Thu,  7 Jun 2018 16:10:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1A71D60115
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934700AbeFKO1z (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 10:27:55 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:36868 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934639AbeFKO1q (ORCPT
+        id S936098AbeFGQKy (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 12:10:54 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39175 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932973AbeFGOJB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:27:46 -0400
-Received: by mail-wr0-f195.google.com with SMTP id d8-v6so20649107wro.4;
-        Mon, 11 Jun 2018 07:27:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=JrH8Ij012fxadUQg2ac4/rVD+BQU/gbbLmpgAyRLZ40=;
-        b=djsguOgBZk0tahd/Sk/UKcThoATqGoCqBrpjAv3z3yGk3aisAYI/UXin3idbwfwB4v
-         eJm40jLygT7kJSiYV96XHHzgSXmDv/ESfqckQ2xXRd2m/0+yrM3G/hHu683uONn0qICk
-         SjhIiz0qXIZ/1qkkONWnL6K9OGBmSJbk4yNSeT/hGVxAbIbrZodS6m1eUzAQAxOs/juC
-         Ddzr0HgwQHgI3C8JYwyeK3jHA3l9TTI37PKysMZBeA4RLzNCqRFnTGNaihbJ0ZyoTJGi
-         /0YL+k8Gx3n++a9QtcmD7TIoHFMS/yV6ddWviN2xEI6Narq9cI2FHuGgn+6ibUFJ4dNG
-         EuwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=JrH8Ij012fxadUQg2ac4/rVD+BQU/gbbLmpgAyRLZ40=;
-        b=LRBkI2uRKkJsdxct6S0IsEc8ht6Rcy5VsbqQ6A5pOU7exn0XLL+x5/FVKQjlE1Hien
-         6q8yeC6GrpYhcoOZ0ushK9bx3iF20T5Iq3E8uJW+x968o448b21oX+oABLv8YgY6m9tu
-         Dc8jmqjSXf1EENCanzsK8gjYRVB2KxnP6YtjktHbEfgbvFtvXrJxgJGbUoUuhLJcFy56
-         DLN2C/0RJ7ekvqLsyz/tCq1ZajFS+UUJJJFb2nVw2oMZW5ZBYJh1q2AC/O/K90Yhtat8
-         IRtfvZado62KWPNz+CiOJLPqIf9acCzNT7YT+OsWtve3AKpgjKvslw5tVGn1YvHgMitE
-         CWuw==
-X-Gm-Message-State: APt69E25sm+hHcPHzSV9sxCSmOPvumemBJQrXTv8tvBNHgYJwkyHmUxt
-        kojM33+YRw5sGh0C6+Pqy1I=
-X-Google-Smtp-Source: ADUXVKK9f7f+rHNt8exA6JpIdu8zC/LeXfnm/HL89yRzcjW2Y/dbGLeCTn12cxcNCb/WdIjnKZErjg==
-X-Received: by 2002:adf:9663:: with SMTP id c32-v6mr13938968wra.89.1528727265266;
-        Mon, 11 Jun 2018 07:27:45 -0700 (PDT)
-Received: from localhost.localdomain (83-103-103-194.ip.fastwebnet.it. [83.103.103.194])
-        by smtp.gmail.com with ESMTPSA id y18-v6sm36204266wrl.53.2018.06.11.07.27.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 11 Jun 2018 07:27:44 -0700 (PDT)
-From: Andrea Greco <andrea.greco.gapmilano@gmail.com>
-To: davem@davemloft.net
-Cc: tobin@apporbit.com, Andrea Greco <a.greco@4sigma.it>,
-        Michael Grzeschik <m.grzeschik@pengutronix.de>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/6] arcnet: com20020: Fixup missing SLOWARB bit
-Date: Mon, 11 Jun 2018 16:27:37 +0200
-Message-Id: <20180611142737.20983-1-andrea.greco.gapmilano@gmail.com>
-X-Mailer: git-send-email 2.14.4
+        Thu, 7 Jun 2018 10:09:01 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb1-0005Zi-FR; Thu, 07 Jun 2018 15:08:59 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvax-0002hd-Mg; Thu, 07 Jun 2018 15:08:55 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Theodore Ts'o" <tytso@mit.edu>,
+        "Ilya Dryomov" <idryomov@gmail.com>,
+        "Lukas Czerner" <lczerner@redhat.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.749965963@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 020/410] ext4: fix bitmap position validation
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrea Greco <a.greco@4sigma.it>
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-If com20020 clock is major of 40Mhz SLOWARB bit is requested.
+------------------
 
-Signed-off-by: Andrea Greco <a.greco@4sigma.it>
+From: Lukas Czerner <lczerner@redhat.com>
+
+commit 22be37acce25d66ecf6403fc8f44df9c5ded2372 upstream.
+
+Currently in ext4_valid_block_bitmap() we expect the bitmap to be
+positioned anywhere between 0 and s_blocksize clusters, but that's
+wrong because the bitmap can be placed anywhere in the block group. This
+causes false positives when validating bitmaps on perfectly valid file
+system layouts. Fix it by checking whether the bitmap is within the group
+boundary.
+
+The problem can be reproduced using the following
+
+mkfs -t ext3 -E stride=256 /dev/vdb1
+mount /dev/vdb1 /mnt/test
+cd /mnt/test
+wget https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.16.3.tar.xz
+tar xf linux-4.16.3.tar.xz
+
+This will result in the warnings in the logs
+
+EXT4-fs error (device vdb1): ext4_validate_block_bitmap:399: comm tar: bg 84: block 2774529: invalid block bitmap
+
+[ Changed slightly for clarity and to not drop a overflow test -- TYT ]
+
+Signed-off-by: Lukas Czerner <lczerner@redhat.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reported-by: Ilya Dryomov <idryomov@gmail.com>
+Fixes: 7dac4a1726a9 ("ext4: add validity checks for bitmap block numbers")
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/net/arcnet/com20020.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ fs/ext4/balloc.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/arcnet/com20020.c b/drivers/net/arcnet/com20020.c
-index 8d979a66d8e9..1a0fd30fe8ae 100644
---- a/drivers/net/arcnet/com20020.c
-+++ b/drivers/net/arcnet/com20020.c
-@@ -133,6 +133,10 @@ int com20020_check(struct net_device *dev)
- 	lp->setup = lp->clockm ? 0 : (lp->clockp << 1);
- 	lp->setup2 = (lp->clockm << 4) | 8;
+--- a/fs/ext4/balloc.c
++++ b/fs/ext4/balloc.c
+@@ -323,6 +323,7 @@ static ext4_fsblk_t ext4_valid_block_bit
+ 	struct ext4_sb_info *sbi = EXT4_SB(sb);
+ 	ext4_grpblk_t offset;
+ 	ext4_grpblk_t next_zero_bit;
++	ext4_grpblk_t max_bit = EXT4_CLUSTERS_PER_GROUP(sb);
+ 	ext4_fsblk_t blk;
+ 	ext4_fsblk_t group_first_block;
  
-+	/* If clock is major of 40Mhz, SLOWARB bit must be set */
-+	if (lp->clockm > 1)
-+		lp->setup2 |= SLOWARB;
-+
- 	/* CHECK: should we do this for SOHARD cards ? */
- 	/* Enable P1Mode for backplane mode */
- 	lp->setup = lp->setup | P1MODE;
--- 
-2.14.4
+@@ -340,7 +341,7 @@ static ext4_fsblk_t ext4_valid_block_bit
+ 	/* check whether block bitmap block number is set */
+ 	blk = ext4_block_bitmap(sb, desc);
+ 	offset = blk - group_first_block;
+-	if (offset < 0 || EXT4_B2C(sbi, offset) >= sb->s_blocksize ||
++	if (offset < 0 || EXT4_B2C(sbi, offset) >= max_bit ||
+ 	    !ext4_test_bit(EXT4_B2C(sbi, offset), bh->b_data))
+ 		/* bad block bitmap */
+ 		return blk;
+@@ -348,7 +349,7 @@ static ext4_fsblk_t ext4_valid_block_bit
+ 	/* check whether the inode bitmap block number is set */
+ 	blk = ext4_inode_bitmap(sb, desc);
+ 	offset = blk - group_first_block;
+-	if (offset < 0 || EXT4_B2C(sbi, offset) >= sb->s_blocksize ||
++	if (offset < 0 || EXT4_B2C(sbi, offset) >= max_bit ||
+ 	    !ext4_test_bit(EXT4_B2C(sbi, offset), bh->b_data))
+ 		/* bad block bitmap */
+ 		return blk;
+@@ -356,8 +357,8 @@ static ext4_fsblk_t ext4_valid_block_bit
+ 	/* check whether the inode table block number is set */
+ 	blk = ext4_inode_table(sb, desc);
+ 	offset = blk - group_first_block;
+-	if (offset < 0 || EXT4_B2C(sbi, offset) >= sb->s_blocksize ||
+-	    EXT4_B2C(sbi, offset + sbi->s_itb_per_group) >= sb->s_blocksize)
++	if (offset < 0 || EXT4_B2C(sbi, offset) >= max_bit ||
++	    EXT4_B2C(sbi, offset + sbi->s_itb_per_group) >= max_bit)
+ 		return blk;
+ 	next_zero_bit = ext4_find_next_zero_bit(bh->b_data,
+ 			EXT4_B2C(sbi, offset + EXT4_SB(sb)->s_itb_per_group),
