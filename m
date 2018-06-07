@@ -1,115 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 2vRKCHFEGVu/EwAAmS7hNA
-	; Thu, 07 Jun 2018 14:43:04 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id h47vHHtIGVttSAAAmS7hNA
+	; Thu, 07 Jun 2018 15:00:11 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id F1809607DC; Thu,  7 Jun 2018 14:43:03 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Xvxsb9FF"
+	id 64349608BA; Thu,  7 Jun 2018 15:00:11 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 7BEA6607E7;
-	Thu,  7 Jun 2018 14:43:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7BEA6607E7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id E1809606DD;
+	Thu,  7 Jun 2018 15:00:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E1809606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934821AbeFGOnA (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:43:00 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55026 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934797AbeFGOmx (ORCPT
+        id S935762AbeFGPAJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:00:09 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41324 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935761AbeFGPAF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:42:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=C01r5sDjeT1H1DayAoPkQfIMP1RpEnTLumlESsnD0Ew=; b=Xvxsb9FFPmWgSQuHaGvuDlWGS
-        1QGR5hSSoFStx5VbaKFlehNHN6eYYthtcD3l56K1CzQAcwze5FVvi1blccW6ucMnof0T3ybukUpEi
-        /gIVG5CE4WAtPux3bw7JpBvxdPrPPEr0+lH78NnsvjDjj9Uh0MYXS4oYWYJjRkRo/0jRp0UzWzq6e
-        W9Hc9WqqQkl0CZQwT4u3oWkA/LIihzKarpprG+FshG/12Kzooz+0uRoD4ROIfdUhECxaanu1Yok1K
-        dUTT5/JUAUIii2YB43AYhgVIMMrVp559OxNaf1Hp9Y08qSLZ23SP9eAWbn75acmO91hpYvHTn5MUU
-        JzvsQ2vBQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fQw7j-0005Jv-BF; Thu, 07 Jun 2018 14:42:47 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 69133201EA7AA; Thu,  7 Jun 2018 16:42:45 +0200 (CEST)
-Date: Thu, 7 Jun 2018 16:42:45 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: mingo@kernel.org, oleg@redhat.com, gkohli@codeaurora.org
-Cc: tglx@linutronix.de, mpe@ellerman.id.au, bigeasy@linutronix.de,
-        linux-kernel@vger.kernel.org, will.deacon@arm.com
-Subject: Re: [PATCH 2/4] watchdog/softlockup: Replace "watchdog/%u" threads
- with cpu_stop_work
-Message-ID: <20180607144245.GG12235@hirez.programming.kicks-ass.net>
-References: <20180607123310.866085998@infradead.org>
- <20180607124006.158330973@infradead.org>
- <20180607142405.GO12198@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Thu, 7 Jun 2018 11:00:05 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbN-0005Zx-3L; Thu, 07 Jun 2018 15:09:21 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbD-0003HM-Rr; Thu, 07 Jun 2018 15:09:11 +0100
+Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
-In-Reply-To: <20180607142405.GO12198@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Hans de Goede" <hdegoede@redhat.com>,
+        "Tejun Heo" <tj@kernel.org>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.376683433@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 380/410] libata: Modify quirks for MX100 to limit
+ NCQ_TRIM quirk to MU01 version
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 07, 2018 at 04:24:05PM +0200, Peter Zijlstra wrote:
-> On Thu, Jun 07, 2018 at 02:33:12PM +0200, Peter Zijlstra wrote:
-> 
-> > +static int softlockup_stop_fn(void *data)
-> >  {
-> > +	watchdog_disable(smp_processor_id());
-> > +	return 0;
-> >  }
-> >  
-> > +static void softlockup_stop_all(void)
-> >  {
-> > +	int cpu;
-> > +
-> > +	for_each_cpu(cpu, &watchdog_allowed_mask)
-> > +		stop_one_cpu(cpu, softlockup_stop_fn, NULL);
-> > +
-> > +	cpumask_clear(&watchdog_allowed_mask);
-> >  }
-> 
-> Bugger, that one doesn't quite work.. watchdog_disable() ends up calling
-> a sleeping function. I forgot to enable all the debug cruft when
-> testing..
-> 
-> Let me try and fix that..
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-The below seems to fix that, and now I can complete all the tests
-without triggering debug nonsense ;-)
+------------------
 
+From: Hans de Goede <hdegoede@redhat.com>
 
---- a/kernel/watchdog.c
-+++ b/kernel/watchdog.c
-@@ -512,7 +512,7 @@ static void softlockup_stop_all(void)
- 	int cpu;
+commit d418ff56b8f2d2b296daafa8da151fe27689b757 upstream.
+
+When commit 9c7be59fc519af ("libata: Apply NOLPM quirk to Crucial MX100
+512GB SSDs") was added it inherited the ATA_HORKAGE_NO_NCQ_TRIM quirk
+from the existing "Crucial_CT*MX100*" entry, but that entry sets model_rev
+to "MU01", where as the entry adding the NOLPM quirk sets it to NULL.
+
+This means that after this commit we no apply the NO_NCQ_TRIM quirk to
+all "Crucial_CT512MX100*" SSDs even if they have the fixed "MU02"
+firmware. This commit splits the "Crucial_CT512MX100*" quirk into 2
+quirks, one for the "MU01" firmware and one for all other firmware
+versions, so that we once again only apply the NO_NCQ_TRIM quirk to the
+"MU01" firmware version.
+
+Fixes: 9c7be59fc519af ("libata: Apply NOLPM quirk to ... MX100 512GB SSDs")
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+[bwh: Backported to 3.16: There's no ATA_HORKAGE_ZERO_AFTER_TRIM flag]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ drivers/ata/libata-core.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -4227,9 +4227,11 @@ static const struct ata_blacklist_entry
+ 	/* Crucial BX100 SSD 500GB has broken LPM support */
+ 	{ "CT500BX100SSD1",		NULL,	ATA_HORKAGE_NOLPM },
  
- 	for_each_cpu(cpu, &watchdog_allowed_mask)
--		stop_one_cpu(cpu, softlockup_stop_fn, NULL);
-+		smp_call_on_cpu(cpu, softlockup_stop_fn, NULL, false);
+-	/* The 512GB version of the MX100 has both queued TRIM and LPM issues */
+-	{ "Crucial_CT512MX100*",	NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
++	/* 512GB MX100 with MU01 firmware has both queued TRIM and LPM issues */
++	{ "Crucial_CT512MX100*",	"MU01",	ATA_HORKAGE_NO_NCQ_TRIM |
+ 						ATA_HORKAGE_NOLPM, },
++	/* 512GB MX100 with newer firmware has only LPM issues */
++	{ "Crucial_CT512MX100*",	NULL,	ATA_HORKAGE_NOLPM, },
  
- 	cpumask_clear(&watchdog_allowed_mask);
- }
-@@ -529,7 +529,7 @@ static void softlockup_start_all(void)
- 
- 	cpumask_copy(&watchdog_allowed_mask, &watchdog_cpumask);
- 	for_each_cpu(cpu, &watchdog_allowed_mask)
--		stop_one_cpu(cpu, softlockup_start_fn, NULL);
-+		smp_call_on_cpu(cpu, softlockup_start_fn, NULL, false);
- }
- 
- int lockup_detector_online_cpu(unsigned int cpu)
+ 	/* 480GB+ M500 SSDs have both queued TRIM and LPM issues */
+ 	{ "Crucial_CT480M500*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
