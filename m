@@ -1,51 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Syu3IjJPGVsmfAAAmS7hNA
-	; Thu, 07 Jun 2018 15:31:23 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id r5CEJKlYGVsgAwAAmS7hNA
+	; Thu, 07 Jun 2018 16:12:14 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 44C3C60115; Thu,  7 Jun 2018 15:31:23 +0000 (UTC)
+	id A6A2F6074D; Thu,  7 Jun 2018 16:12:14 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 00A89608C8;
-	Thu,  7 Jun 2018 15:31:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 00A89608C8
+	by smtp.codeaurora.org (Postfix) with ESMTP id 16C1A605A2;
+	Thu,  7 Jun 2018 16:12:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 16C1A605A2
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934572AbeFGPbS (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:31:18 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40974 "EHLO
+        id S935321AbeFGQMM (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 12:12:12 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39168 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935190AbeFGOyC (ORCPT
+        by vger.kernel.org with ESMTP id S932970AbeFGOJB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:54:02 -0400
+        Thu, 7 Jun 2018 10:09:01 -0400
 Received: from [148.252.241.226] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbG-0005Zi-69; Thu, 07 Jun 2018 15:09:14 +0100
+        id 1fQvb1-0005a0-Gb; Thu, 07 Jun 2018 15:08:59 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbC-0003FT-Qz; Thu, 07 Jun 2018 15:09:10 +0100
+        id 1fQvay-0002ir-82; Thu, 07 Jun 2018 15:08:56 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Jann Horn" <jannh@google.com>,
-        "Kent Overstreet" <kent.overstreet@gmail.com>,
-        "Tejun Heo" <tj@kernel.org>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>
+CC: akpm@linux-foundation.org, "Thomas Gleixner" <tglx@linutronix.de>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Andy Lutomirski" <luto@kernel.org>
 Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.457141993@decadent.org.uk>
+Message-ID: <lsq.1528380321.754426041@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 357/410] fs/aio: Add explicit RCU grace period when
- freeing kioctx
+Subject: [PATCH 3.16 034/410] x86/entry/64: Don't use IST entry for #BP stack
 In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
 X-SA-Exim-Connect-IP: 148.252.241.226
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,88 +57,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tejun Heo <tj@kernel.org>
+From: Andy Lutomirski <luto@kernel.org>
 
-commit a6d7cff472eea87d96899a20fa718d2bab7109f3 upstream.
+commit d8ba61ba58c88d5207c1ba2f7d9a2280e7d03be9 upstream.
 
-While fixing refcounting, e34ecee2ae79 ("aio: Fix a trinity splat")
-incorrectly removed explicit RCU grace period before freeing kioctx.
-The intention seems to be depending on the internal RCU grace periods
-of percpu_ref; however, percpu_ref uses a different flavor of RCU,
-sched-RCU.  This can lead to kioctx being freed while RCU read
-protected dereferences are still in progress.
+There's nothing IST-worthy about #BP/int3.  We don't allow kprobes
+in the small handful of places in the kernel that run at CPL0 with
+an invalid stack, and 32-bit kernels have used normal interrupt
+gates for #BP forever.
 
-Fix it by updating free_ioctx() to go through call_rcu() explicitly.
+Furthermore, we don't allow kprobes in places that have usergs while
+in kernel mode, so "paranoid" is also unnecessary.
 
-v2: Comment added to explain double bouncing.
-
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Reported-by: Jann Horn <jannh@google.com>
-Fixes: e34ecee2ae79 ("aio: Fix a trinity splat")
-Cc: Kent Overstreet <kent.overstreet@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+[carnil: Backport to 3.16:
+ - Adjust finename change: arch/x86/kernel/entry_64.S
+ - Context changes
+]
+[bwh: Rebase on top of "x86/traps: Enable DEBUG_STACK after cpu_init() for
+ TRAP_DB/BP", and restore change in trap_init() instead of early_trap_init()]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/aio.c | 23 +++++++++++++++++++----
- 1 file changed, 19 insertions(+), 4 deletions(-)
-
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -115,7 +115,8 @@ struct kioctx {
- 	struct page		**ring_pages;
- 	long			nr_pages;
+--- a/arch/x86/kernel/entry_64.S
++++ b/arch/x86/kernel/entry_64.S
+@@ -1322,7 +1322,7 @@ apicinterrupt3 HYPERVISOR_CALLBACK_VECTO
+ #endif /* CONFIG_HYPERV */
  
--	struct work_struct	free_work;
-+	struct rcu_head		free_rcu;
-+	struct work_struct	free_work;	/* see free_ioctx() */
+ idtentry debug do_debug has_error_code=0 paranoid=1 shift_ist=DEBUG_STACK
+-idtentry int3 do_int3 has_error_code=0 paranoid=1 shift_ist=DEBUG_STACK
++idtentry int3 do_int3 has_error_code=0
+ idtentry stack_segment do_stack_segment has_error_code=1
+ #ifdef CONFIG_XEN
+ idtentry xen_debug do_debug has_error_code=0
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -334,7 +334,6 @@ exit:
+ }
+ NOKPROBE_SYMBOL(do_general_protection);
+ 
+-/* May run on IST stack. */
+ dotraplinkage void notrace do_int3(struct pt_regs *regs, long error_code)
+ {
+ 	enum ctx_state prev_state;
+@@ -367,15 +366,9 @@ dotraplinkage void notrace do_int3(struc
+ 			SIGTRAP) == NOTIFY_STOP)
+ 		goto exit;
+ 
+-	/*
+-	 * Let others (NMI) know that the debug stack is in use
+-	 * as we may switch to the interrupt stack.
+-	 */
+-	debug_stack_usage_inc();
+ 	preempt_conditional_sti(regs);
+ 	do_trap(X86_TRAP_BP, SIGTRAP, "int3", regs, error_code, NULL);
+ 	preempt_conditional_cli(regs);
+-	debug_stack_usage_dec();
+ exit:
+ 	exception_exit(prev_state);
+ }
+@@ -862,19 +855,16 @@ void __init trap_init(void)
+ 	cpu_init();
  
  	/*
- 	 * signals when all in-flight requests are done
-@@ -512,6 +513,12 @@ static int kiocb_cancel(struct kiocb *ki
- 	return cancel(kiocb);
+-	 * X86_TRAP_DB and X86_TRAP_BP have been set
+-	 * in early_trap_init(). However, DEBUG_STACK works only after
+-	 * cpu_init() loads TSS. See comments in early_trap_init().
++	 * X86_TRAP_DB was installed in early_trap_init(). However,
++	 * DEBUG_STACK works only after cpu_init() loads TSS. See comments
++	 * in early_trap_init().
+ 	 */
+ 	set_intr_gate_ist(X86_TRAP_DB, &debug, DEBUG_STACK);
+-	/* int3 can be called from all */
+-	set_system_intr_gate_ist(X86_TRAP_BP, &int3, DEBUG_STACK);
+ 
+ 	x86_init.irqs.trap_init();
+ 
+ #ifdef CONFIG_X86_64
+ 	memcpy(&debug_idt_table, &idt_table, IDT_ENTRIES * 16);
+ 	set_nmi_gate(X86_TRAP_DB, &debug);
+-	set_nmi_gate(X86_TRAP_BP, &int3);
+ #endif
  }
- 
-+/*
-+ * free_ioctx() should be RCU delayed to synchronize against the RCU
-+ * protected lookup_ioctx() and also needs process context to call
-+ * aio_free_ring(), so the double bouncing through kioctx->free_rcu and
-+ * ->free_work.
-+ */
- static void free_ioctx(struct work_struct *work)
- {
- 	struct kioctx *ctx = container_of(work, struct kioctx, free_work);
-@@ -523,6 +530,14 @@ static void free_ioctx(struct work_struc
- 	kmem_cache_free(kioctx_cachep, ctx);
- }
- 
-+static void free_ioctx_rcufn(struct rcu_head *head)
-+{
-+	struct kioctx *ctx = container_of(head, struct kioctx, free_rcu);
-+
-+	INIT_WORK(&ctx->free_work, free_ioctx);
-+	schedule_work(&ctx->free_work);
-+}
-+
- static void free_ioctx_reqs(struct percpu_ref *ref)
- {
- 	struct kioctx *ctx = container_of(ref, struct kioctx, reqs);
-@@ -531,8 +546,8 @@ static void free_ioctx_reqs(struct percp
- 	if (ctx->rq_wait && atomic_dec_and_test(&ctx->rq_wait->count))
- 		complete(&ctx->rq_wait->comp);
- 
--	INIT_WORK(&ctx->free_work, free_ioctx);
--	schedule_work(&ctx->free_work);
-+	/* Synchronize against RCU protected table->table[] dereferences */
-+	call_rcu(&ctx->free_rcu, free_ioctx_rcufn);
- }
- 
- /*
-@@ -754,7 +769,7 @@ static int kill_ioctx(struct mm_struct *
- 	table->table[ctx->id] = NULL;
- 	spin_unlock(&mm->ioctx_lock);
- 
--	/* percpu_ref_kill() will do the necessary call_rcu() */
-+	/* free_ioctx_reqs() will do the necessary RCU synchronization */
- 	wake_up_all(&ctx->wait);
- 
- 	/*
