@@ -1,190 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id CMWqHn1SGVvtFgAAmS7hNA
-	; Thu, 07 Jun 2018 15:42:53 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id hX4GJxrXGFt2SQAAmS7hNA
+	; Thu, 07 Jun 2018 06:56:26 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 6E0EE607E7; Thu,  7 Jun 2018 15:42:53 +0000 (UTC)
+	id 8612F608B8; Thu,  7 Jun 2018 06:56:26 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="cxl33Uvu"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D30856074D;
-	Thu,  7 Jun 2018 15:42:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D30856074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 138A5607F7;
+	Thu,  7 Jun 2018 06:56:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 138A5607F7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935474AbeFGPmv (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:42:51 -0400
-Received: from mga09.intel.com ([134.134.136.24]:36344 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934587AbeFGOlb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:41:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 07:41:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
-   d="scan'208";a="62632621"
-Received: from 2b52.sc.intel.com ([143.183.136.51])
-  by orsmga001.jf.intel.com with ESMTP; 07 Jun 2018 07:41:29 -0700
-From: Yu-cheng Yu <yu-cheng.yu@intel.com>
-To: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [PATCH 02/10] x86/cet: Introduce WRUSS instruction
-Date: Thu,  7 Jun 2018 07:37:59 -0700
-Message-Id: <20180607143807.3611-3-yu-cheng.yu@intel.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180607143807.3611-1-yu-cheng.yu@intel.com>
-References: <20180607143807.3611-1-yu-cheng.yu@intel.com>
+        id S1752960AbeFGG4Y (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 02:56:24 -0400
+Received: from smtprelay6.synopsys.com ([198.182.37.59]:42497 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751797AbeFGG4W (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 02:56:22 -0400
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id DAD7F1E03E8;
+        Thu,  7 Jun 2018 08:56:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1528354581; bh=U/B/vEGZzSoiW3M/fjxBTgAGW+pLRtonYKME16fX5Ds=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=cxl33UvuJLuH3SEFdUbCTdhOifYcRFM4jyT4O/I85EQMihHTEpLbySnn6moaKxC8x
+         00sDbUNqKRWHwmq9KoMb7mVfQyPYUQgoMoefPHKvLKkcOPeIQYcjPOwltEE5BMhAdQ
+         497YxcBc8Adwel0JyoKwvWBN8ejIQdewzzriR0brT4lefKH8U2Aru7tqbZqA2/TmR4
+         ei9bw9hdBeal1yDygKgdVD265yeNoU+yfAGMSMbbt9jksdYUhkGyZtXUOiyBZhB3No
+         t2iYn1HULeOE0Z8INnZA4Lj4Xw1m8ZONntmueAcFCJBmYjk8lS/bMnhHpaV8EUlBk9
+         lsWmC/MecAMpQ==
+Received: from us01wehtc1.internal.synopsys.com (us01wehtc1.internal.synopsys.com [10.12.239.235])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 7D8975B1D;
+        Wed,  6 Jun 2018 23:56:19 -0700 (PDT)
+Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.106) by
+ us01wehtc1.internal.synopsys.com (10.12.239.235) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Wed, 6 Jun 2018 23:55:53 -0700
+Received: from IN01WEMBXA.internal.synopsys.com ([fe80::ed6f:22d3:d35:4833])
+ by IN01WEHTCB.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Thu,
+ 7 Jun 2018 12:25:43 +0530
+From: Ladvine D Almeida <Ladvine.DAlmeida@synopsys.com>
+To: Jens Axboe <axboe@kernel.dk>,
+        Ladvine D Almeida <Ladvine.DAlmeida@synopsys.com>,
+        Christoph Hellwig <hch@infradead.org>
+CC: Hannes Reinecke <hare@suse.com>,
+        "ming.lei@redhat.com" <ming.lei@redhat.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Manjunath M Bettegowda <Manjunath.MB@synopsys.com>,
+        Prabu Thangamuthu <Prabu.T@synopsys.com>,
+        Tejas Joglekar <Tejas.Joglekar@synopsys.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        "Milan Broz" <gmazyland@gmail.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        device-mapper development <dm-devel@redhat.com>,
+        "Eric Biggers" <ebiggers3@gmail.com>,
+        Theodore Ts'o <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH] block: Add block level changes for inline encryption
+Thread-Topic: [PATCH] block: Add block level changes for inline encryption
+Thread-Index: AQHT+YBsRN+yoa9w10qCAP3oXXj0ew==
+Date: Thu, 7 Jun 2018 06:55:42 +0000
+Message-ID: <BD7FB879CC136E419544C8E2AE7B9C3020C7FA@IN01WEMBXA.internal.synopsys.com>
+References: <d3624fab-e6fc-f14d-c780-db703c809068@synopsys.com>
+ <20180601081330.GA13067@infradead.org>
+ <BD7FB879CC136E419544C8E2AE7B9C3020C566@IN01WEMBXA.internal.synopsys.com>
+ <918609fa-8721-0ee1-801e-4c29b64ac9ae@kernel.dk>
+Accept-Language: en-US, en-IN
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.12.239.235]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-WRUSS is a new kernel-mode instruction but writes directly
-to user shadow stack memory.  This is used to construct
-a return address on the shadow stack for the signal
-handler.
-
-This instruction can fault if the user shadow stack is
-invalid shadow stack memory.  In that case, the kernel does
-fixup.
-
-Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
----
- arch/x86/include/asm/special_insns.h          | 44 +++++++++++++++++++++++++++
- arch/x86/lib/x86-opcode-map.txt               |  2 +-
- arch/x86/mm/fault.c                           | 13 +++++++-
- tools/objtool/arch/x86/lib/x86-opcode-map.txt |  2 +-
- 4 files changed, 58 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/include/asm/special_insns.h b/arch/x86/include/asm/special_insns.h
-index 317fc59b512c..8ce532fcc171 100644
---- a/arch/x86/include/asm/special_insns.h
-+++ b/arch/x86/include/asm/special_insns.h
-@@ -237,6 +237,50 @@ static inline void clwb(volatile void *__p)
- 		: [pax] "a" (p));
- }
- 
-+#ifdef CONFIG_X86_INTEL_CET
-+
-+#if defined(CONFIG_IA32_EMULATION) || defined(CONFIG_X86_X32)
-+static inline int write_user_shstk_32(unsigned long addr, unsigned int val)
-+{
-+	int err;
-+
-+	asm volatile("1:.byte 0x66, 0x0f, 0x38, 0xf5, 0x37\n"
-+		     "xor %[err],%[err]\n"
-+		     "2:\n"
-+		     ".section .fixup,\"ax\"\n"
-+		     "3: mov $-1,%[err]; jmp 2b\n"
-+		     ".previous\n"
-+		     _ASM_EXTABLE(1b, 3b)
-+		: [err] "=a" (err)
-+		: [val] "S" (val), [addr] "D" (addr)
-+		: "memory");
-+	return err;
-+}
-+#else
-+static inline int write_user_shstk_32(unsigned long addr, unsigned int val)
-+{
-+	return 0;
-+}
-+#endif
-+
-+static inline int write_user_shstk_64(unsigned long addr, unsigned long val)
-+{
-+	int err;
-+
-+	asm volatile("1:.byte 0x66, 0x48, 0x0f, 0x38, 0xf5, 0x37\n"
-+		     "xor %[err],%[err]\n"
-+		     "2:\n"
-+		     ".section .fixup,\"ax\"\n"
-+		     "3: mov $-1,%[err]; jmp 2b\n"
-+		     ".previous\n"
-+		     _ASM_EXTABLE(1b, 3b)
-+		: [err] "=a" (err)
-+		: [val] "S" (val), [addr] "D" (addr)
-+		: "memory");
-+	return err;
-+}
-+#endif /* CONFIG_X86_INTEL_CET */
-+
- #define nop() asm volatile ("nop")
- 
- 
-diff --git a/arch/x86/lib/x86-opcode-map.txt b/arch/x86/lib/x86-opcode-map.txt
-index e0b85930dd77..72bb7c48a7df 100644
---- a/arch/x86/lib/x86-opcode-map.txt
-+++ b/arch/x86/lib/x86-opcode-map.txt
-@@ -789,7 +789,7 @@ f0: MOVBE Gy,My | MOVBE Gw,Mw (66) | CRC32 Gd,Eb (F2) | CRC32 Gd,Eb (66&F2)
- f1: MOVBE My,Gy | MOVBE Mw,Gw (66) | CRC32 Gd,Ey (F2) | CRC32 Gd,Ew (66&F2)
- f2: ANDN Gy,By,Ey (v)
- f3: Grp17 (1A)
--f5: BZHI Gy,Ey,By (v) | PEXT Gy,By,Ey (F3),(v) | PDEP Gy,By,Ey (F2),(v)
-+f5: BZHI Gy,Ey,By (v) | PEXT Gy,By,Ey (F3),(v) | PDEP Gy,By,Ey (F2),(v) | WRUSS Pq,Qq (66),REX.W
- f6: ADCX Gy,Ey (66) | ADOX Gy,Ey (F3) | MULX By,Gy,rDX,Ey (F2),(v)
- f7: BEXTR Gy,Ey,By (v) | SHLX Gy,Ey,By (66),(v) | SARX Gy,Ey,By (F3),(v) | SHRX Gy,Ey,By (F2),(v)
- EndTable
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 2b3b9170109c..f157338862f8 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -640,6 +640,17 @@ static int is_f00f_bug(struct pt_regs *regs, unsigned long address)
- 	return 0;
- }
- 
-+/*
-+ * WRUSS is a kernel instrcution and but writes to user
-+ * shadow stack memory.  When a fault occurs, both
-+ * X86_PF_USER and X86_PF_SHSTK are set.
-+ */
-+static int is_wruss(struct pt_regs *regs, unsigned long error_code)
-+{
-+	return (((error_code & (X86_PF_USER | X86_PF_SHSTK)) ==
-+		(X86_PF_USER | X86_PF_SHSTK)) && !user_mode(regs));
-+}
-+
- static const char nx_warning[] = KERN_CRIT
- "kernel tried to execute NX-protected page - exploit attempt? (uid: %d)\n";
- static const char smep_warning[] = KERN_CRIT
-@@ -851,7 +862,7 @@ __bad_area_nosemaphore(struct pt_regs *regs, unsigned long error_code,
- 	struct task_struct *tsk = current;
- 
- 	/* User mode accesses just cause a SIGSEGV */
--	if (error_code & X86_PF_USER) {
-+	if ((error_code & X86_PF_USER) && !is_wruss(regs, error_code)) {
- 		/*
- 		 * It's possible to have interrupts off here:
- 		 */
-diff --git a/tools/objtool/arch/x86/lib/x86-opcode-map.txt b/tools/objtool/arch/x86/lib/x86-opcode-map.txt
-index e0b85930dd77..72bb7c48a7df 100644
---- a/tools/objtool/arch/x86/lib/x86-opcode-map.txt
-+++ b/tools/objtool/arch/x86/lib/x86-opcode-map.txt
-@@ -789,7 +789,7 @@ f0: MOVBE Gy,My | MOVBE Gw,Mw (66) | CRC32 Gd,Eb (F2) | CRC32 Gd,Eb (66&F2)
- f1: MOVBE My,Gy | MOVBE Mw,Gw (66) | CRC32 Gd,Ey (F2) | CRC32 Gd,Ew (66&F2)
- f2: ANDN Gy,By,Ey (v)
- f3: Grp17 (1A)
--f5: BZHI Gy,Ey,By (v) | PEXT Gy,By,Ey (F3),(v) | PDEP Gy,By,Ey (F2),(v)
-+f5: BZHI Gy,Ey,By (v) | PEXT Gy,By,Ey (F3),(v) | PDEP Gy,By,Ey (F2),(v) | WRUSS Pq,Qq (66),REX.W
- f6: ADCX Gy,Ey (66) | ADOX Gy,Ey (F3) | MULX By,Gy,rDX,Ey (F2),(v)
- f7: BEXTR Gy,Ey,By (v) | SHLX Gy,Ey,By (66),(v) | SARX Gy,Ey,By (F3),(v) | SHRX Gy,Ey,By (F2),(v)
- EndTable
--- 
-2.15.1
+On Thursday 07 June 2018 02:53 AM, Jens Axboe wrote:=0A=
+> On 6/6/18 1:35 AM, Ladvine D Almeida wrote:=0A=
+>> On Friday 01 June 2018 09:13 AM, Christoph Hellwig wrote:=0A=
+>>> On Mon, May 28, 2018 at 02:43:09PM +0100, Ladvine D Almeida wrote:=0A=
+>>>> This patch introduces new variable under bio structure to=0A=
+>>>> facilitate inline encryption. This variable is used to=0A=
+>>>> associate I/O requests to crypto information.=0A=
+>>> This seems to be missing a whole lot of context.  Where is the whole=0A=
+>>> series showing what you are trying to do?=0A=
+>>>=0A=
+>> Christoph,=0A=
+>>=0A=
+>> The patches are generated in the below > manner, with a thought of=0A=
+>> sending separately to the MAINTAINERS responsible for each.=0A=
+> What both Christoph and I have said is that it's _impossible_ to review=
+=0A=
+> changes when you don't know what is being built on top of it. The block=
+=0A=
+> change, by itself, is utterly useless. The use case needs to be seen.=0A=
+> But apart from that, my comments on why it's doing it completely=0A=
+> backwards still apply, and I've outlined how you need to fix it. The=0A=
+> patch, in its current form, isn't going anywhere.=0A=
+>=0A=
+Jens,=0A=
+=0A=
+Since there are implementation level concerns on both device mapper layer a=
+nd block layer, I will investigate=0A=
+=0A=
+more and work on those lines. I can send the full patch series to the relev=
+ant maintainers after addressing the=0A=
+=0A=
+issues.=0A=
+=0A=
+Regards,=0A=
+=0A=
+Ladvine=0A=
+=0A=
