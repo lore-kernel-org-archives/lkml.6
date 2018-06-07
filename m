@@ -1,147 +1,261 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id zfiWEwcPGlubSQAAmS7hNA
-	; Fri, 08 Jun 2018 05:07:19 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id qkdzHcjmGFtLMwAAmS7hNA
+	; Thu, 07 Jun 2018 08:03:20 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 411D9607E4; Fri,  8 Jun 2018 05:07:19 +0000 (UTC)
+	id 62FE6607F7; Thu,  7 Jun 2018 08:03:20 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id B194F6074D;
-	Fri,  8 Jun 2018 05:07:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B194F6074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 89815605A2;
+	Thu,  7 Jun 2018 08:03:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 89815605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751117AbeFHFHR (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 01:07:17 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36174 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750781AbeFHFHP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 01:07:15 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BD900C12AD;
-        Fri,  8 Jun 2018 05:07:14 +0000 (UTC)
-Received: from [10.72.12.64] (ovpn-12-64.pek2.redhat.com [10.72.12.64])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5CD892026DEF;
-        Fri,  8 Jun 2018 05:07:12 +0000 (UTC)
-Subject: Re: [PATCH net] vhost_net: remove VHOST_NET_F_VIRTIO_NET_HDR support
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1528429842-22835-1-git-send-email-jasowang@redhat.com>
- <20180608074115-mutt-send-email-mst@kernel.org>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <23efe110-f61a-5aee-c0b4-bd3dc5426438@redhat.com>
-Date: Fri, 8 Jun 2018 13:07:09 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1753234AbeFGIDP (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 04:03:15 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:57011 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751956AbeFGIDM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 04:03:12 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w57831Z32122237
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 7 Jun 2018 01:03:01 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w57831VO2122233;
+        Thu, 7 Jun 2018 01:03:01 -0700
+Date: Thu, 7 Jun 2018 01:03:01 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-t0s7vy19wq5kak74kavm8swf@git.kernel.org>
+Cc: namhyung@kernel.org, jolsa@kernel.org, mingo@kernel.org,
+        wangnan0@huawei.com, acme@redhat.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, dsahern@gmail.com, hpa@zytor.com,
+        adrian.hunter@intel.com
+Reply-To: dsahern@gmail.com, hpa@zytor.com, adrian.hunter@intel.com,
+          tglx@linutronix.de, linux-kernel@vger.kernel.org,
+          namhyung@kernel.org, jolsa@kernel.org, mingo@kernel.org,
+          acme@redhat.com, wangnan0@huawei.com
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf annotate: Pass perf_evsel instead of just
+ evsel->idx
+Git-Commit-ID: e345f3bd9b2f4a768a216f629a1ae750eb609aee
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20180608074115-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 08 Jun 2018 05:07:14 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 08 Jun 2018 05:07:14 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jasowang@redhat.com' RCPT:''
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  e345f3bd9b2f4a768a216f629a1ae750eb609aee
+Gitweb:     https://git.kernel.org/tip/e345f3bd9b2f4a768a216f629a1ae750eb609aee
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Thu, 24 May 2018 12:05:39 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 4 Jun 2018 10:28:50 -0300
 
+perf annotate: Pass perf_evsel instead of just evsel->idx
 
-On 2018年06月08日 12:46, Michael S. Tsirkin wrote:
-> On Fri, Jun 08, 2018 at 11:50:42AM +0800, Jason Wang wrote:
->> This feature bit is duplicated with VIRTIO_F_ANY_LAYOUT, this means if
->> a userpsace want to enable VRITIO_F_ANY_LAYOUT,
->> VHOST_NET_F_VIRTIO_NET_HDR will be implied too. This is wrong and will
->> break networking.
-> What breaks networking exactly? VHOST_NET supported ANY_LAYOUT
-> from day one. For this reason it does not need to know about
-> VRITIO_F_ANY_LAYOUT and we reused the bit for other purposes.
+The code gets shorter and we'll be able to use evsel->evlist in a
+followup patch.
 
-It's the knowledge of vhost_net code it self but not userspace. For 
-userspace, it should depends on the value of returned by 
-VHOST_GET_FEATURES. So when userspace can set_features with ANY_LAYOUT, 
-vhost may think it wants VHOST_NET_F_VIRTIO_NET_HDR.
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-t0s7vy19wq5kak74kavm8swf@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/builtin-annotate.c |  6 +++---
+ tools/perf/builtin-report.c   | 17 ++++++++---------
+ tools/perf/builtin-top.c      |  6 +++---
+ tools/perf/util/annotate.c    | 12 ++++++------
+ tools/perf/util/annotate.h    |  4 ++--
+ 5 files changed, 22 insertions(+), 23 deletions(-)
 
->
->
->
->> Fixing this by safely removing
->> VHOST_NET_F_VIRTIO_NET_HDR support. There should be very few or even
->> no userspace can use this.
-> Quite possibly, but it is hard to be sure. It seems safer to
-> maintain it unless there's an actual reason something's broken.
-
-I think not since the feature is negotiated not mandatory?
-
->
->> Further cleanups could be done for
->> -net-next for safety.
->>
->> In the future, we need a vhost dedicated feature set/get ioctl()
->> instead of reusing virtio ones.
-> Not just in the future, we might want to switch iommu
-> to a sane structure without the 64 bit padding bug
-> right now.
-
-Yes, I hit this bug when introducing V2 of msg IOTLB message.
-
->
->> Fixes: 4e9fa50c6ccbe ("vhost: move features to core")
-> This tag makes no sense here IMHO. Looks like people are using some tool
-> that just looks at the earliest version where patch won't apply. The
-> commit in question just moved some code around.
-
-Looks not, before this commit, vhost_net won't return ANY_LAYOUT.
-
-Thanks
-
->
->> Signed-off-by: Jason Wang <jasowang@redhat.com>
->> ---
->>   drivers/vhost/net.c | 15 +++++----------
->>   1 file changed, 5 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
->> index 986058a..83eef52 100644
->> --- a/drivers/vhost/net.c
->> +++ b/drivers/vhost/net.c
->> @@ -69,7 +69,6 @@ MODULE_PARM_DESC(experimental_zcopytx, "Enable Zero Copy TX;"
->>   
->>   enum {
->>   	VHOST_NET_FEATURES = VHOST_FEATURES |
->> -			 (1ULL << VHOST_NET_F_VIRTIO_NET_HDR) |
->>   			 (1ULL << VIRTIO_NET_F_MRG_RXBUF) |
->>   			 (1ULL << VIRTIO_F_IOMMU_PLATFORM)
->>   };
->> @@ -1255,15 +1254,11 @@ static int vhost_net_set_features(struct vhost_net *n, u64 features)
->>   			       (1ULL << VIRTIO_F_VERSION_1))) ?
->>   			sizeof(struct virtio_net_hdr_mrg_rxbuf) :
->>   			sizeof(struct virtio_net_hdr);
->> -	if (features & (1 << VHOST_NET_F_VIRTIO_NET_HDR)) {
->> -		/* vhost provides vnet_hdr */
->> -		vhost_hlen = hdr_len;
->> -		sock_hlen = 0;
->> -	} else {
->> -		/* socket provides vnet_hdr */
->> -		vhost_hlen = 0;
->> -		sock_hlen = hdr_len;
->> -	}
->> +
->> +        /* socket provides vnet_hdr */
->> +	vhost_hlen = 0;
->> +	sock_hlen = hdr_len;
->> +
->>   	mutex_lock(&n->dev.mutex);
->>   	if ((features & (1 << VHOST_F_LOG_ALL)) &&
->>   	    !vhost_log_access_ok(&n->dev))
->> -- 
->> 2.7.4
+diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
+index da5704240239..2b21bbcd70ea 100644
+--- a/tools/perf/builtin-annotate.c
++++ b/tools/perf/builtin-annotate.c
+@@ -162,12 +162,12 @@ static int hist_iter__branch_callback(struct hist_entry_iter *iter,
+ 	hist__account_cycles(sample->branch_stack, al, sample, false);
+ 
+ 	bi = he->branch_info;
+-	err = addr_map_symbol__inc_samples(&bi->from, sample, evsel->idx);
++	err = addr_map_symbol__inc_samples(&bi->from, sample, evsel);
+ 
+ 	if (err)
+ 		goto out;
+ 
+-	err = addr_map_symbol__inc_samples(&bi->to, sample, evsel->idx);
++	err = addr_map_symbol__inc_samples(&bi->to, sample, evsel);
+ 
+ out:
+ 	return err;
+@@ -249,7 +249,7 @@ static int perf_evsel__add_sample(struct perf_evsel *evsel,
+ 	if (he == NULL)
+ 		return -ENOMEM;
+ 
+-	ret = hist_entry__inc_addr_samples(he, sample, evsel->idx, al->addr);
++	ret = hist_entry__inc_addr_samples(he, sample, evsel, al->addr);
+ 	hists__inc_nr_samples(hists, true);
+ 	return ret;
+ }
+diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+index ad978e3ee2b8..7a689c933f04 100644
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -136,26 +136,25 @@ static int hist_iter__report_callback(struct hist_entry_iter *iter,
+ 
+ 	if (sort__mode == SORT_MODE__BRANCH) {
+ 		bi = he->branch_info;
+-		err = addr_map_symbol__inc_samples(&bi->from, sample, evsel->idx);
++		err = addr_map_symbol__inc_samples(&bi->from, sample, evsel);
+ 		if (err)
+ 			goto out;
+ 
+-		err = addr_map_symbol__inc_samples(&bi->to, sample, evsel->idx);
++		err = addr_map_symbol__inc_samples(&bi->to, sample, evsel);
+ 
+ 	} else if (rep->mem_mode) {
+ 		mi = he->mem_info;
+-		err = addr_map_symbol__inc_samples(&mi->daddr, sample, evsel->idx);
++		err = addr_map_symbol__inc_samples(&mi->daddr, sample, evsel);
+ 		if (err)
+ 			goto out;
+ 
+-		err = hist_entry__inc_addr_samples(he, sample, evsel->idx, al->addr);
++		err = hist_entry__inc_addr_samples(he, sample, evsel, al->addr);
+ 
+ 	} else if (symbol_conf.cumulate_callchain) {
+ 		if (single)
+-			err = hist_entry__inc_addr_samples(he, sample, evsel->idx,
+-							   al->addr);
++			err = hist_entry__inc_addr_samples(he, sample, evsel, al->addr);
+ 	} else {
+-		err = hist_entry__inc_addr_samples(he, sample, evsel->idx, al->addr);
++		err = hist_entry__inc_addr_samples(he, sample, evsel, al->addr);
+ 	}
+ 
+ out:
+@@ -181,11 +180,11 @@ static int hist_iter__branch_callback(struct hist_entry_iter *iter,
+ 			     rep->nonany_branch_mode);
+ 
+ 	bi = he->branch_info;
+-	err = addr_map_symbol__inc_samples(&bi->from, sample, evsel->idx);
++	err = addr_map_symbol__inc_samples(&bi->from, sample, evsel);
+ 	if (err)
+ 		goto out;
+ 
+-	err = addr_map_symbol__inc_samples(&bi->to, sample, evsel->idx);
++	err = addr_map_symbol__inc_samples(&bi->to, sample, evsel);
+ 
+ 	branch_type_count(&rep->brtype_stat, &bi->flags,
+ 			  bi->from.addr, bi->to.addr);
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index 7a349fcd3864..bc71e899096d 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -188,7 +188,7 @@ static void ui__warn_map_erange(struct map *map, struct symbol *sym, u64 ip)
+ static void perf_top__record_precise_ip(struct perf_top *top,
+ 					struct hist_entry *he,
+ 					struct perf_sample *sample,
+-					int counter, u64 ip)
++					struct perf_evsel *evsel, u64 ip)
+ {
+ 	struct annotation *notes;
+ 	struct symbol *sym = he->ms.sym;
+@@ -204,7 +204,7 @@ static void perf_top__record_precise_ip(struct perf_top *top,
+ 	if (pthread_mutex_trylock(&notes->lock))
+ 		return;
+ 
+-	err = hist_entry__inc_addr_samples(he, sample, counter, ip);
++	err = hist_entry__inc_addr_samples(he, sample, evsel, ip);
+ 
+ 	pthread_mutex_unlock(&notes->lock);
+ 
+@@ -691,7 +691,7 @@ static int hist_iter__top_callback(struct hist_entry_iter *iter,
+ 	struct perf_evsel *evsel = iter->evsel;
+ 
+ 	if (perf_hpp_list.sym && single)
+-		perf_top__record_precise_ip(top, he, iter->sample, evsel->idx, al->addr);
++		perf_top__record_precise_ip(top, he, iter->sample, evsel, al->addr);
+ 
+ 	hist__account_cycles(iter->sample->branch_stack, al, iter->sample,
+ 		     !(top->record_opts.branch_stack & PERF_SAMPLE_BRANCH_ANY));
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index 71897689dacf..0f5ed6091e00 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -836,7 +836,7 @@ static struct annotation *symbol__get_annotation(struct symbol *sym, bool cycles
+ }
+ 
+ static int symbol__inc_addr_samples(struct symbol *sym, struct map *map,
+-				    int evidx, u64 addr,
++				    struct perf_evsel *evsel, u64 addr,
+ 				    struct perf_sample *sample)
+ {
+ 	struct annotation *notes;
+@@ -846,7 +846,7 @@ static int symbol__inc_addr_samples(struct symbol *sym, struct map *map,
+ 	notes = symbol__get_annotation(sym, false);
+ 	if (notes == NULL)
+ 		return -ENOMEM;
+-	return __symbol__inc_addr_samples(sym, map, notes, evidx, addr, sample);
++	return __symbol__inc_addr_samples(sym, map, notes, evsel->idx, addr, sample);
+ }
+ 
+ static int symbol__account_cycles(u64 addr, u64 start,
+@@ -974,15 +974,15 @@ void annotation__compute_ipc(struct annotation *notes, size_t size)
+ }
+ 
+ int addr_map_symbol__inc_samples(struct addr_map_symbol *ams, struct perf_sample *sample,
+-				 int evidx)
++				 struct perf_evsel *evsel)
+ {
+-	return symbol__inc_addr_samples(ams->sym, ams->map, evidx, ams->al_addr, sample);
++	return symbol__inc_addr_samples(ams->sym, ams->map, evsel, ams->al_addr, sample);
+ }
+ 
+ int hist_entry__inc_addr_samples(struct hist_entry *he, struct perf_sample *sample,
+-				 int evidx, u64 ip)
++				 struct perf_evsel *evsel, u64 ip)
+ {
+-	return symbol__inc_addr_samples(he->ms.sym, he->ms.map, evidx, ip, sample);
++	return symbol__inc_addr_samples(he->ms.sym, he->ms.map, evsel, ip, sample);
+ }
+ 
+ static void disasm_line__init_ins(struct disasm_line *dl, struct arch *arch, struct map_symbol *ms)
+diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
+index 5080b6dd98b8..aef9eae4f125 100644
+--- a/tools/perf/util/annotate.h
++++ b/tools/perf/util/annotate.h
+@@ -279,14 +279,14 @@ static inline struct annotation *symbol__annotation(struct symbol *sym)
+ }
+ 
+ int addr_map_symbol__inc_samples(struct addr_map_symbol *ams, struct perf_sample *sample,
+-				 int evidx);
++				 struct perf_evsel *evsel);
+ 
+ int addr_map_symbol__account_cycles(struct addr_map_symbol *ams,
+ 				    struct addr_map_symbol *start,
+ 				    unsigned cycles);
+ 
+ int hist_entry__inc_addr_samples(struct hist_entry *he, struct perf_sample *sample,
+-				 int evidx, u64 addr);
++				 struct perf_evsel *evsel, u64 addr);
+ 
+ int symbol__alloc_hist(struct symbol *sym);
+ void symbol__annotate_zero_histograms(struct symbol *sym);
