@@ -1,198 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id yPJnJFN6GVt7OQAAmS7hNA
-	; Thu, 07 Jun 2018 18:33:00 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ANZQELVYGVuTAwAAmS7hNA
+	; Thu, 07 Jun 2018 16:10:15 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 56AE4608B8; Thu,  7 Jun 2018 18:33:00 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Dw6gMm5Q"
+	id 7F0AC6089E; Thu,  7 Jun 2018 16:10:15 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 77C71606DD;
-	Thu,  7 Jun 2018 18:32:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 77C71606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 89F7D605A2;
+	Thu,  7 Jun 2018 16:10:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 89F7D605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936384AbeFGSc4 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 14:32:56 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:40622 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936335AbeFGScv (ORCPT
+        id S934429AbeFGQJI (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 12:09:08 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39219 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932993AbeFGOJC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 14:32:51 -0400
-Received: by mail-pf0-f194.google.com with SMTP id z24-v6so5324489pfe.7
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 11:32:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=MPtvFM9RmOmX1Ahr0Fa+Dw3BDhmehCY5YEyrPuKZw+s=;
-        b=Dw6gMm5QNPYGAVEoBl2X0jSMciuOdG28Og5H9vMnthpyNiXuLrjAU6YsrEMmsAW9sf
-         kc9SikIynGVU2XAH5eNeB4fuMtKK7dQN0281/cGGw4BQ99kMGW9W9e/jcd5dZ3Redx5E
-         lfryE6SBALcL5leNR7lmb6aJBAmCEUyJ+HMcL433T0zqzfalOxr3n+A2O/2BjY8P/RT/
-         gVMXhM0YzLb/dhXwM3uzZPCnN/Dnz4dGlVKz7Wpb5qwSdLVuonzIGUGxW1ik5K9rHNjZ
-         8U1vd3ZQYAkqjkyT8Gk4Q9WiSX5Keo030DMS1RXQkRUoPKYv5tx4EZO8trkAPdhdhMhL
-         TgcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=MPtvFM9RmOmX1Ahr0Fa+Dw3BDhmehCY5YEyrPuKZw+s=;
-        b=Foh+5QZh328hL1MzMxAdZ4Q1S1cWPdHijuLCdI5IY6FqT0He2aGB++VfBvjup8m0t3
-         S+PMT9I7mJWOSR9nboRVj4XxYl/6llqxfdUC6pTp2AgoD7AJKY9QBRRJOSDC97qhrWGf
-         /EyQ/SZuWsHU9AbVVl5b+UEy5x60EZ9pBmnpcB/GnyopqDO8udguWx1OG+bW4hfeAA2u
-         8kPCznsC74owGm09ZXfS4y8YeFx9r4WRseKPW/HgAxQmKdLw+KPORY77ByZWiM/YbXzF
-         P3fYToC+7vyxHmkrWSOlRSnsAYeb6mVQt4EQvJDUZqxZ09VPJGLKnFUTGvZN1qmdtoyE
-         oaPg==
-X-Gm-Message-State: APt69E2j+qb2Tg/sGBVI4IFaHWkD7Iecow8Ix/m6rcCtupBIPTE+rc6f
-        1sg2TriPLDpEe3mHlOvrOrcygt7Hj1k=
-X-Google-Smtp-Source: ADUXVKKg6tAPADfZjlBeusLwIAk/aegDdLdfWKbeb6FHm1OZ3mMT0dI0yjr/c2cSok2LCfbMC/jyXA==
-X-Received: by 2002:a63:714c:: with SMTP id b12-v6mr1730247pgn.420.1528396370427;
-        Thu, 07 Jun 2018 11:32:50 -0700 (PDT)
-Received: from ndesaulniers0.svl.corp.google.com ([2620:15c:2a3:1:d33:166f:5b79:14b3])
-        by smtp.gmail.com with ESMTPSA id n76-v6sm6932739pfg.98.2018.06.07.11.32.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Jun 2018 11:32:49 -0700 (PDT)
-From: Nick Desaulniers <ndesaulniers@google.com>
-To: akpm@linux-foundation.org, hpa@zytor.com, mingo@redhat.com,
-        tglx@linutronix.de
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, virtualization@lists.linux-foundation.org,
-        astrachan@google.com, manojgupta@google.com, ghackmann@google.com,
-        sedat.dilek@gmail.com, tstellar@redhat.com, keescook@google.com,
-        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        linux-kbuild@vger.kernel.org, geert@linux-m68k.org,
-        will.deacon@arm.com, mawilcox@microsoft.com, arnd@arndb.de,
-        rientjes@google.com, acme@redhat.com, pombredanne@nexb.com,
-        aryabinin@virtuozzo.com, kstewart@linuxfoundation.org,
-        boris.ostrovsky@oracle.com, jan.kiszka@siemens.com,
-        rostedt@goodmis.org, kirill.shutemov@linux.intel.com,
-        ard.biesheuvel@linaro.org, akataria@vmware.com,
-        brijesh.singh@amd.com, caoj.fnst@cn.fujitsu.com,
-        gregkh@linuxfoundation.org, jarkko.sakkinen@linux.intel.com,
-        jgross@suse.com, jpoimboe@redhat.com, mka@chromium.org,
-        ndesaulniers@google.com, thomas.lendacky@amd.com, tweek@google.com,
-        mjg59@google.com, joe@perches.com
-Subject: [PATCH v3 3/3] x86: paravirt: make native_save_fl extern inline
-Date: Thu,  7 Jun 2018 11:32:19 -0700
-Message-Id: <20180607183219.192973-4-ndesaulniers@google.com>
-X-Mailer: git-send-email 2.17.1.1185.g55be947832-goog
-In-Reply-To: <20180607183219.192973-1-ndesaulniers@google.com>
-References: <20180607183219.192973-1-ndesaulniers@google.com>
+        Thu, 7 Jun 2018 10:09:02 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb1-0005Zm-Cp; Thu, 07 Jun 2018 15:08:59 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvax-0002iC-T9; Thu, 07 Jun 2018 15:08:55 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Naoya Horiguchi" <n-horiguchi@ah.jp.nec.com>,
+        "Mike Kravetz" <mike.kravetz@oracle.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Hillf Danton" <hillf.zj@alibaba-inc.com>,
+        "Vegard Nossum" <vegard.nossum@oracle.com>,
+        "Michal Hocko" <mhocko@suse.com>,
+        "Dmitry Vyukov" <dvyukov@google.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Andrey Ryabinin" <aryabinin@virtuozzo.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.79589622@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 027/410] hugetlbfs: fix offset overflow in hugetlbfs mmap
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-native_save_fl() is marked static inline, but by using it as
-a function pointer in arch/x86/kernel/paravirt.c, it MUST be outlined.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-paravirt's use of native_save_fl() also requires that no GPRs other than
-%rax are clobbered.
+------------------
 
-Compilers have different heuristics which they use to emit stack guard
-code, the emittance of which can break paravirt's callee saved assumption
-by clobbering %rcx.
+From: Mike Kravetz <mike.kravetz@oracle.com>
 
-Marking a function definition extern inline means that if this version
-cannot be inlined, then the out-of-line version will be preferred. By
-having the out-of-line version be implemented in assembly, it cannot be
-instrumented with a stack protector, which might violate custom calling
-conventions that code like paravirt rely on.
+commit 045c7a3f53d9403b62d396b6d051c4be5044cdb4 upstream.
 
-The semantics of extern inline has changed since gnu89. This means that
-folks using GCC versions >= 5.1 may see symbol redefinition errors at
-link time for subdirs that override KBUILD_CFLAGS (making the C standard
-used implicit) regardless of this patch. This has been cleaned up
-earlier in the patch set, but is left as a note in the commit message
-for future travelers.
+If mmap() maps a file, it can be passed an offset into the file at which
+the mapping is to start.  Offset could be a negative value when
+represented as a loff_t.  The offset plus length will be used to update
+the file size (i_size) which is also a loff_t.
 
-Reports:
-https://lkml.org/lkml/2018/5/7/534
-https://github.com/ClangBuiltLinux/linux/issues/16
+Validate the value of offset and offset + length to make sure they do
+not overflow and appear as negative.
 
-Discussion:
-https://bugs.llvm.org/show_bug.cgi?id=37512
-https://lkml.org/lkml/2018/5/24/1371
+Found by syzcaller with commit ff8c0c53c475 ("mm/hugetlb.c: don't call
+region_abort if region_chg fails") applied.  Prior to this commit, the
+overflow would still occur but we would luckily return ENOMEM.
 
-Thanks to the many folks that participated in the discussion.
+To reproduce:
 
-Debugged-by: Alistair Strachan <astrachan@google.com>
-Debugged-by: Matthias Kaehlcke <mka@chromium.org>
-Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-Suggested-by: Arnd Bergmann <arnd@arndb.de>
-Suggested-by: H. Peter Anvin <hpa@zytor.com>
-Suggested-by: Tom Stellar <tstellar@redhat.com>
-Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
+   mmap(0, 0x2000, 0, 0x40021, 0xffffffffffffffffULL, 0x8000000000000000ULL);
+
+Resulted in,
+
+  kernel BUG at mm/hugetlb.c:742!
+  Call Trace:
+   hugetlbfs_evict_inode+0x80/0xa0
+   evict+0x24a/0x620
+   iput+0x48f/0x8c0
+   dentry_unlink_inode+0x31f/0x4d0
+   __dentry_kill+0x292/0x5e0
+   dput+0x730/0x830
+   __fput+0x438/0x720
+   ____fput+0x1a/0x20
+   task_work_run+0xfe/0x180
+   exit_to_usermode_loop+0x133/0x150
+   syscall_return_slowpath+0x184/0x1c0
+   entry_SYSCALL_64_fastpath+0xab/0xad
+
+Fixes: ff8c0c53c475 ("mm/hugetlb.c: don't call region_abort if region_chg fails")
+Link: http://lkml.kernel.org/r/1491951118-30678-1-git-send-email-mike.kravetz@oracle.com
+Reported-by: Vegard Nossum <vegard.nossum@oracle.com>
+Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+Acked-by: Hillf Danton <hillf.zj@alibaba-inc.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/include/asm/irqflags.h |  2 +-
- arch/x86/kernel/Makefile        |  1 +
- arch/x86/kernel/irqflags.S      | 26 ++++++++++++++++++++++++++
- 3 files changed, 28 insertions(+), 1 deletion(-)
- create mode 100644 arch/x86/kernel/irqflags.S
+ fs/hugetlbfs/inode.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/include/asm/irqflags.h b/arch/x86/include/asm/irqflags.h
-index 89f08955fff7..c4fc17220df9 100644
---- a/arch/x86/include/asm/irqflags.h
-+++ b/arch/x86/include/asm/irqflags.h
-@@ -13,7 +13,7 @@
-  * Interrupt control:
-  */
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -115,17 +115,26 @@ static int hugetlbfs_file_mmap(struct fi
+ 	vma->vm_flags |= VM_HUGETLB | VM_DONTEXPAND;
+ 	vma->vm_ops = &hugetlb_vm_ops;
  
--static inline unsigned long native_save_fl(void)
-+extern inline unsigned long native_save_fl(void)
- {
- 	unsigned long flags;
++	/*
++	 * Offset passed to mmap (before page shift) could have been
++	 * negative when represented as a (l)off_t.
++	 */
++	if (((loff_t)vma->vm_pgoff << PAGE_SHIFT) < 0)
++		return -EINVAL;
++
+ 	if (vma->vm_pgoff & (~huge_page_mask(h) >> PAGE_SHIFT))
+ 		return -EINVAL;
  
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index 02d6f5cf4e70..8824d01c0c35 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -61,6 +61,7 @@ obj-y			+= alternative.o i8253.o hw_breakpoint.o
- obj-y			+= tsc.o tsc_msr.o io_delay.o rtc.o
- obj-y			+= pci-iommu_table.o
- obj-y			+= resource.o
-+obj-y			+= irqflags.o
+ 	vma_len = (loff_t)(vma->vm_end - vma->vm_start);
++	len = vma_len + ((loff_t)vma->vm_pgoff << PAGE_SHIFT);
++	/* check for overflow */
++	if (len < vma_len)
++		return -EINVAL;
  
- obj-y				+= process.o
- obj-y				+= fpu/
-diff --git a/arch/x86/kernel/irqflags.S b/arch/x86/kernel/irqflags.S
-new file mode 100644
-index 000000000000..ddeeaac8adda
---- /dev/null
-+++ b/arch/x86/kernel/irqflags.S
-@@ -0,0 +1,26 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#include <asm/asm.h>
-+#include <asm/export.h>
-+#include <linux/linkage.h>
-+
-+/*
-+ * unsigned long native_save_fl(void)
-+ */
-+ENTRY(native_save_fl)
-+	pushf
-+	pop %_ASM_AX
-+	ret
-+ENDPROC(native_save_fl)
-+EXPORT_SYMBOL(native_save_fl)
-+
-+/*
-+ * void native_restore_fl(unsigned long flags)
-+ * %eax/%rdi: flags
-+ */
-+ENTRY(native_restore_fl)
-+	push %_ASM_ARG1
-+	popf
-+	ret
-+ENDPROC(native_restore_fl)
-+EXPORT_SYMBOL(native_restore_fl)
--- 
-2.17.1.1185.g55be947832-goog
+ 	mutex_lock(&inode->i_mutex);
+ 	file_accessed(file);
+ 
+ 	ret = -ENOMEM;
+-	len = vma_len + ((loff_t)vma->vm_pgoff << PAGE_SHIFT);
+-
+ 	if (hugetlb_reserve_pages(inode,
+ 				vma->vm_pgoff >> huge_page_order(h),
+ 				len >> huge_page_shift(h), vma,
+@@ -135,7 +144,7 @@ static int hugetlbfs_file_mmap(struct fi
+ 	ret = 0;
+ 	hugetlb_prefault_arch_hook(vma->vm_mm);
+ 	if (vma->vm_flags & VM_WRITE && inode->i_size < len)
+-		inode->i_size = len;
++		i_size_write(inode, len);
+ out:
+ 	mutex_unlock(&inode->i_mutex);
+ 
