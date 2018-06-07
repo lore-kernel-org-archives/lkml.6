@@ -1,102 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id +PXHIu1AGVvmZgAAmS7hNA
-	; Thu, 07 Jun 2018 14:28:46 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 9PA+O3UzGVt5SwAAmS7hNA
+	; Thu, 07 Jun 2018 13:30:31 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 296BE607E7; Thu,  7 Jun 2018 14:28:46 +0000 (UTC)
+	id A2AAD608BA; Thu,  7 Jun 2018 13:30:31 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 9A82C602FC;
-	Thu,  7 Jun 2018 14:28:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9A82C602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 46B6E601D2;
+	Thu,  7 Jun 2018 13:30:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 46B6E601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933443AbeFGO2o (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:28:44 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39424 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933067AbeFGOJK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:09:10 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbA-0005Zv-JC; Thu, 07 Jun 2018 15:09:08 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb7-000338-AA; Thu, 07 Jun 2018 15:09:05 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        id S1753683AbeFGNa3 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 09:30:29 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51108 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753220AbeFGNa1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 09:30:27 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 7264AACD2;
+        Thu,  7 Jun 2018 13:30:26 +0000 (UTC)
+From: Andreas Schwab <schwab@suse.de>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Rob Herring <robh@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pci@vger.kernel.org
+Subject: Re: PCI: Move OF-related PCI functions into PCI core
+References: <20180206193546.52AFA21D4F@pdx-korg-gitolite-1.ci.codeaurora.org>
+        <mvmlgbrj7tz.fsf@suse.de>
+        <CAErSpo6_BTHJgAhFJxQiVFenqns5rP98TRtSguL21h9HdZAxpA@mail.gmail.com>
+X-Yow: ..  Now KEN and BARBIE are PERMANENTLY ADDICTED to MIND-ALTERING DRUGS..
+Date: Thu, 07 Jun 2018 15:30:26 +0200
+In-Reply-To: <CAErSpo6_BTHJgAhFJxQiVFenqns5rP98TRtSguL21h9HdZAxpA@mail.gmail.com>
+        (Bjorn Helgaas's message of "Thu, 7 Jun 2018 08:25:57 -0500")
+Message-ID: <mvm36xyk9l9.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Gregory CLEMENT" <gregory.clement@bootlin.com>,
-        "Ulf Magnusson" <ulfalizer@gmail.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.538650465@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 231/410] ARM: mvebu: Fix broken PL310_ERRATA_753970
- selects
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+On Jun 07 2018, Bjorn Helgaas <bhelgaas@google.com> wrote:
 
-------------------
+> On Thu, Jun 7, 2018 at 3:53 AM Andreas Schwab <schwab@suse.de> wrote:
+>>
+>> OF_PCI is still referenced by drivers/pci/host/Kconfig.
+>
+> Do you have a SHA1 for the file you're looking at?
 
-From: Ulf Magnusson <ulfalizer@gmail.com>
+I'm lookig at 4.17.
 
-commit 8aa36a8dcde3183d84db7b0d622ffddcebb61077 upstream.
+Andreas.
 
-The MACH_ARMADA_375 and MACH_ARMADA_38X boards select ARM_ERRATA_753970,
-but it was renamed to PL310_ERRATA_753970 by commit fa0ce4035d48 ("ARM:
-7162/1: errata: tidy up Kconfig options for PL310 errata workarounds").
-
-Fix the selects to use the new name.
-
-Discovered with the
-https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
-script.
-Fixes: fa0ce4035d48 ("ARM: 7162/1: errata: tidy up Kconfig options for
-PL310 errata workarounds"
-Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- arch/arm/mach-mvebu/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
---- a/arch/arm/mach-mvebu/Kconfig
-+++ b/arch/arm/mach-mvebu/Kconfig
-@@ -33,7 +33,7 @@ config MACH_ARMADA_370
- config MACH_ARMADA_375
- 	bool "Marvell Armada 375 boards" if ARCH_MULTI_V7
- 	select ARM_ERRATA_720789
--	select ARM_ERRATA_753970
-+	select PL310_ERRATA_753970
- 	select ARM_GIC
- 	select ARMADA_375_CLK
- 	select HAVE_ARM_SCU
-@@ -48,7 +48,7 @@ config MACH_ARMADA_375
- config MACH_ARMADA_38X
- 	bool "Marvell Armada 380/385 boards" if ARCH_MULTI_V7
- 	select ARM_ERRATA_720789
--	select ARM_ERRATA_753970
-+	select PL310_ERRATA_753970
- 	select ARM_GIC
- 	select ARMADA_38X_CLK
- 	select HAVE_ARM_SCU
+-- 
+Andreas Schwab, SUSE Labs, schwab@suse.de
+GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
+"And now for something completely different."
