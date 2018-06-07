@@ -1,85 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id FdTjCy1UGVvWLAAAmS7hNA
-	; Thu, 07 Jun 2018 15:51:10 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id erp8ABcJGVurVwAAmS7hNA
+	; Thu, 07 Jun 2018 10:32:40 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 466F46074D; Thu,  7 Jun 2018 15:51:10 +0000 (UTC)
+	id DA3C6607F7; Thu,  7 Jun 2018 10:32:39 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D842260290;
-	Thu,  7 Jun 2018 15:51:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D842260290
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 6AE1E607DC;
+	Thu,  7 Jun 2018 10:32:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6AE1E607DC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934514AbeFGPvH (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:51:07 -0400
-Received: from mga02.intel.com ([134.134.136.20]:60249 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933702AbeFGPvE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:51:04 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 08:51:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
-   d="scan'208";a="61249294"
-Received: from 2b52.sc.intel.com (HELO [143.183.136.51]) ([143.183.136.51])
-  by fmsmga004.fm.intel.com with ESMTP; 07 Jun 2018 08:51:03 -0700
-Message-ID: <1528386472.4636.1.camel@2b52.sc.intel.com>
-Subject: Re: [PATCH 2/5] x86/fpu/xstate: Change some names to separate
- XSAVES system and user states
-From: Yu-cheng Yu <yu-cheng.yu@intel.com>
-To: Andy Lutomirski <luto@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. J. Lu" <hjl.tools@gmail.com>,
-        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        mike.kravetz@oracle.com
-Date: Thu, 07 Jun 2018 08:47:52 -0700
-In-Reply-To: <CALCETrXAx4vBUxf3VaePNm3HHLZkdTFAR9TV0T+A-jb2QL7Uag@mail.gmail.com>
-References: <20180607143544.3477-1-yu-cheng.yu@intel.com>
-         <20180607143544.3477-3-yu-cheng.yu@intel.com>
-         <CALCETrXAx4vBUxf3VaePNm3HHLZkdTFAR9TV0T+A-jb2QL7Uag@mail.gmail.com>
+        id S1753511AbeFGKch (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 06:32:37 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:36045 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752590AbeFGKcf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 06:32:35 -0400
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1fQsDX-0001Gh-VA; Thu, 07 Jun 2018 12:32:31 +0200
+Message-ID: <1528367543.3308.6.camel@pengutronix.de>
+Subject: Re: [RFC PATCH 2/2] media: docs-rst: Add encoder UAPI specification
+ to Codec Interfaces
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Hans Verkuil <hverkuil@xs4all.nl>, Tomasz Figa <tfiga@chromium.org>
+Cc: Pawel Osciak <posciak@chromium.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
+        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        jtp.park@samsung.com,
+        Tiffany Lin =?UTF-8?Q?=28=E6=9E=97=E6=85=A7=E7=8F=8A=29?=
+        <tiffany.lin@mediatek.com>,
+        Andrew-CT Chen =?UTF-8?Q?=28=E9=99=B3=E6=99=BA=E8=BF=AA=29?=
+        <andrew-ct.chen@mediatek.com>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        todor.tomov@linaro.org, nicolas@ndufresne.ca,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Date: Thu, 07 Jun 2018 12:32:23 +0200
+In-Reply-To: <41fd04f2-fc44-1792-81e6-a3d4d384adc5@xs4all.nl>
+References: <20180605103328.176255-1-tfiga@chromium.org>
+         <20180605103328.176255-3-tfiga@chromium.org>
+         <1528199628.4074.15.camel@pengutronix.de>
+         <CAAFQd5DYu+Oehr1UUvvdmWk7toO0i_=NFgvZcAKQ8ZURKy51fA@mail.gmail.com>
+         <1528208578.4074.19.camel@pengutronix.de>
+         <CAAFQd5DqHj65AdzfYmvHWkqHnZntiiA2AhAfgHbLA3AuWvsOTQ@mail.gmail.com>
+         <1528278003.3438.3.camel@pengutronix.de>
+         <CAAFQd5A2hsgrmwJ3bgv6EDKqqy5Y86CnMcktrWa+YihWGjxtHg@mail.gmail.com>
+         <41fd04f2-fc44-1792-81e6-a3d4d384adc5@xs4all.nl>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+X-Mailer: Evolution 3.22.6-1+deb9u1 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-06-07 at 08:38 -0700, Andy Lutomirski wrote:
-> On Thu, Jun 7, 2018 at 7:40 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
-> >
-> > To support XSAVES system states, change some names to distinguish
-> > user and system states.
-> >
-> > Change:
-> >   supervisor to system
-> >   copy_init_fpstate_to_fpregs() to copy_init_fpstate_user_settings_to_fpregs()
-> >   xfeatures_mask to xfeatures_mask_user
-> >   XCNTXT_MASK to SUPPORTED_XFEATURES_MASK (states supported)
+On Thu, 2018-06-07 at 09:27 +0200, Hans Verkuil wrote:
+[...]
+> > > > > I think it could be useful to enforce the same colorimetry on CAPTURE
+> > > > > and OUTPUT queue if the hardware doesn't do any colorspace conversion.
+> > > > 
+> > > > After thinking a bit more on this, I guess it wouldn't overly
+> > > > complicate things if we require that the values from OUTPUT queue are
+> > > > copied to CAPTURE queue, if the stream doesn't include such
+> > > > information or the hardware just can't parse them.
+> > > 
+> > > And for encoders it would be copied from CAPTURE queue to OUTPUT queue?
+> > > 
+> > 
+> > I guess iy would be from OUTPUT to CAPTURE for encoders as well, since
+> > the colorimetry of OUTPUT is ultimately defined by the raw frames that
+> > userspace is going to be feeding to the encoder.
 > 
-> How about copy_init_user_fpstate_to_fpregs()?  It's shorter and more
-> to the point.
+> Correct. All mem2mem drivers should just copy the colorimetry from the
+> output buffers to the capture buffers, unless the decoder hardware is able to
+> extract that data from the stream, in which case it can overwrite it for
+> the capture buffer.
 > 
-> --Andy
+> Currently colorspace converters are not supported since the V4L2 API does
+> not provide a way to let userspace define colorimetry for the capture queue.
 
-I will change that.
+Oh, I never realized this limitation [1] ...
 
-Yu-cheng
+ "Image colorspace, from enum v4l2_colorspace. This information
+  supplements the pixelformat and must be set by the driver for capture
+  streams and by the application for output streams, see Colorspaces."
+
+[1] https://linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/pixfmt-v4l2.html
+
+It's just a bit unintuitive that the initialization sequence requires to
+set S_FMT(CAP) first and then S_FMT(OUT) but with colorspace there is
+information that flows the opposite way.
+
+> I have a patch to add a new v4l2_format flag for that since forever, but
+> since we do not have any drivers that can do this in the kernel it has never
+> been upstreamed.
+
+Has this patch been posted some time? I think we could add a mem2mem
+device to imx-media with support for linear transformations.
+
+regards
+Philipp
