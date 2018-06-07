@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 34LaJqY8GlsgOwAAmS7hNA
-	; Fri, 08 Jun 2018 08:22:48 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id +eA/OQwoGVsKewAAmS7hNA
+	; Thu, 07 Jun 2018 12:42:12 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 8E0C3607DC; Fri,  8 Jun 2018 08:22:48 +0000 (UTC)
+	id 54643608BA; Thu,  7 Jun 2018 12:42:12 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="gPqsD3Y5"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="W0+QsOI+"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
@@ -13,233 +13,114 @@ X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id C4BE0606FA;
-	Fri,  8 Jun 2018 08:22:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C4BE0606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 24770607DC;
+	Thu,  7 Jun 2018 12:42:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 24770607DC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932463AbeFHIWp (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 04:22:45 -0400
-Received: from smtprelay.synopsys.com ([198.182.37.59]:47739 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932190AbeFHITl (ORCPT
+        id S932637AbeFGMmI (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 08:42:08 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:51251 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932456AbeFGMmE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 04:19:41 -0400
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 8A8EF1E14A2;
-        Fri,  8 Jun 2018 10:19:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1528445974; bh=uV0N/SWn0gFsPITGXKqTFxYsKOeYNCFelcmSlIfNu3c=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=gPqsD3Y5yHbMxiWPgqlJV62haHX/liCqBpy02cG2eg6yMpWDSFn7IVZlqXPIRDxVL
-         9R4HtES2gYyYtzQ1G/Y1FEHeibFaX6n4dysHO0KD0/VwbFF+7dKbuTlnXLGYTpXAwa
-         VXTF5IozGCGkGkdTjywfiuKJvYx49fZiygHB9hjPzEeQxnTMV2YjRXuP5GjT6RmaXw
-         5d7e3ej9xSzKfHSj+Jt5OMQ4/orQI2afaGwMqTDGkYFO4h3fyNG1dBM6tdQ4tuT+p4
-         rRWeIq8PhC1v8x6NVYj+8PJx7pcPB5ynqVyXdQ8j48k/e0orR9PffVkMcXRCXSBq70
-         qa/MEjiseXSIg==
-Received: from pt02.synopsys.com (pt02.synopsys.com [10.107.23.240])
-        by mailhost.synopsys.com (Postfix) with ESMTP id BCEB959DC;
-        Fri,  8 Jun 2018 01:19:33 -0700 (PDT)
-Received: from UbuntuMate-64Bits.internal.synopsys.com (gustavo-e7480.internal.synopsys.com [10.107.25.102])
-        by pt02.synopsys.com (Postfix) with ESMTP id 585323E941;
-        Fri,  8 Jun 2018 09:19:32 +0100 (WEST)
-From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
-        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
-        adouglas@cadence.com, jesper.nilsson@axis.com
-Cc: linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Subject: [PATCH v3 10/10] tools: PCI: Add MSI-X support
-Date: Fri,  8 Jun 2018 09:19:26 +0100
-Message-Id:
- <f01e56d31b9f7a9b924f146cea007218bb081f5f.1527862777.git.gustavo.pimentel@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1527862777.git.gustavo.pimentel@synopsys.com>
-References: <cover.1527862777.git.gustavo.pimentel@synopsys.com>
-In-Reply-To: <cover.1527862777.git.gustavo.pimentel@synopsys.com>
-References: <cover.1527862777.git.gustavo.pimentel@synopsys.com>
+        Thu, 7 Jun 2018 08:42:04 -0400
+Received: by mail-wm0-f67.google.com with SMTP id r15-v6so17809238wmc.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 05:42:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=JITfRUA35l09IgWVHykUbsr1yeW+qAmwu9QC7+6b6i8=;
+        b=W0+QsOI+tiZKKyGiNQc/TsM+fibNwdkuPnvxKvqiHkvrKdX4HJeneprnm3cHyzNZjH
+         htZPmbPB9fBurLsOEqZMJ+sZTFJhMsmWtN3LtZ+jRq90evvbcJAIA4ojZDFJ5dzpz4ON
+         S991SzMGYIVWPMUiE4AQuO1bclqFtm2yUz+c0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=JITfRUA35l09IgWVHykUbsr1yeW+qAmwu9QC7+6b6i8=;
+        b=TDMTJGteBqI1x7n5FhsbwZvpIQiM25CMsVtgFO9E6xtBQhmuPWvIxFlKd/KR7woZkg
+         jdyd8+Ih+ziPTZgFlMGJzfU1FGXMteu4fW85pmeKwpvhTb9RYmATMASROAym4T8ItX//
+         H6rCuEhCK7/+SDJix4lgtCrK4CYZOTX67RqM+7/jgtL1nWobpNLuae7mj3A5G7sOPxEg
+         zyzpnACbgCuX5kvrwa8rUEGyJXdqWDkRwwfcGRtzuZ7eAZGPEBX5M7NB9r9siG/TbMqP
+         /K+2bE7JonjXaRtNMJW7UkIXjQ/9Yw6SJFNnHwrzR7mf4R/TURf/N7wgmUTfWSMbefKW
+         rVsw==
+X-Gm-Message-State: APt69E1eSzf+mhU4VdXyHs8TfZqq6U36pnaNy2fYT88jpNd3W2czpZs+
+        m5Ep4ziRNmEwvvdRUGoXGzW9ZA==
+X-Google-Smtp-Source: ADUXVKJ2+nez1L+SRptf/MsBtDKt/m8Vxcj2+AV8D79pKobxjEuTQGOGx7MXUnBV+M7BodmQATFs/w==
+X-Received: by 2002:adf:f98a:: with SMTP id f10-v6mr1596321wrr.105.1528375322811;
+        Thu, 07 Jun 2018 05:42:02 -0700 (PDT)
+Received: from dell ([2.31.163.53])
+        by smtp.gmail.com with ESMTPSA id j4-v6sm1898410wrr.47.2018.06.07.05.42.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 07 Jun 2018 05:42:01 -0700 (PDT)
+Date: Thu, 7 Jun 2018 13:41:59 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v5 01/14] mfd: da9063: Replace regmap_add_irq_chip with
+ devm counterpart
+Message-ID: <20180607124159.GD22841@dell>
+References: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
+ <019675f0-13ff-d381-87d1-891316cbfd83@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <019675f0-13ff-d381-87d1-891316cbfd83@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Message-ID: <20180608081926.5fvb8Sj_iQAmD1_PtHt5mVF5xXYmwRd31uxM0caD9t8@z>
 
-Add MSI-X support to pcitest tool.
+On Thu, 07 Jun 2018, Marek Vasut wrote:
 
-Add 2 new IOCTL commands:
- - Allow to reconfigure driver IRQ type in runtime.
- - Allow to retrieve current driver IRQ type configured.
+> On 06/06/2018 11:59 AM, Marek Vasut wrote:
+> > Use devm_regmap_add_irq_chip() instead of plain regmap_add_irq_chip(),
+> > which removes the need for da9063_irq_exit() altogether and also
+> > fixes a bug in da9063_device_init() where the da9063_irq_exit() was
+> > not called in a failpath.
+> > 
+> > Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> > Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Cc: Lee Jones <lee.jones@linaro.org>
+> > Cc: Mark Brown <broonie@kernel.org>
+> > Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+> > Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > Cc: linux-renesas-soc@vger.kernel.org
+> 
+> So it's just this one patch that's missing AB/RB and the series should
+> be good?
 
-Modify pcitest.sh script to accommodate MSI-X interrupt tests.
+Looks fine. Although we'll let it sit for a while in case anyone else
+has any thoughts.
 
-Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
----
-Change v1->v2:
- - Allow IRQ type driver reconfiguring in runtime, follwing Kishon's
-suggestion.
-Change v2->v3:
- - Nothing changed, just to follow the patch set version.
+The merge window is currently open, so there is no rush to apply.
 
- include/uapi/linux/pcitest.h |  3 +++
- tools/pci/pcitest.c          | 51 +++++++++++++++++++++++++++++++++++++++++++-
- tools/pci/pcitest.sh         | 15 +++++++++++++
- 3 files changed, 68 insertions(+), 1 deletion(-)
+> > ---
+> > V5: New patch
+> > ---
+> >  drivers/mfd/da9063-core.c       | 1 -
+> >  drivers/mfd/da9063-irq.c        | 8 ++------
+> >  include/linux/mfd/da9063/core.h | 1 -
+> >  3 files changed, 2 insertions(+), 8 deletions(-)
 
-diff --git a/include/uapi/linux/pcitest.h b/include/uapi/linux/pcitest.h
-index 953cf03..cbf422e 100644
---- a/include/uapi/linux/pcitest.h
-+++ b/include/uapi/linux/pcitest.h
-@@ -16,5 +16,8 @@
- #define PCITEST_WRITE		_IOW('P', 0x4, unsigned long)
- #define PCITEST_READ		_IOW('P', 0x5, unsigned long)
- #define PCITEST_COPY		_IOW('P', 0x6, unsigned long)
-+#define PCITEST_MSIX		_IOW('P', 0x7, int)
-+#define PCITEST_SET_IRQTYPE	_IOW('P', 0x8, int)
-+#define PCITEST_GET_IRQTYPE	_IO('P', 0x9)
- 
- #endif /* __UAPI_LINUX_PCITEST_H */
-diff --git a/tools/pci/pcitest.c b/tools/pci/pcitest.c
-index 9074b47..af146bb 100644
---- a/tools/pci/pcitest.c
-+++ b/tools/pci/pcitest.c
-@@ -31,12 +31,17 @@
- #define BILLION 1E9
- 
- static char *result[] = { "NOT OKAY", "OKAY" };
-+static char *irq[] = { "LEGACY", "MSI", "MSI-X" };
- 
- struct pci_test {
- 	char		*device;
- 	char		barnum;
- 	bool		legacyirq;
- 	unsigned int	msinum;
-+	unsigned int	msixnum;
-+	int		irqtype;
-+	bool		set_irqtype;
-+	bool		get_irqtype;
- 	bool		read;
- 	bool		write;
- 	bool		copy;
-@@ -65,6 +70,24 @@ static int run_test(struct pci_test *test)
- 			fprintf(stdout, "%s\n", result[ret]);
- 	}
- 
-+	if (test->set_irqtype) {
-+		ret = ioctl(fd, PCITEST_SET_IRQTYPE, test->irqtype);
-+		fprintf(stdout, "SET IRQ TYPE TO %s:\t\t", irq[test->irqtype]);
-+		if (ret < 0)
-+			fprintf(stdout, "FAILED\n");
-+		else
-+			fprintf(stdout, "%s\n", result[ret]);
-+	}
-+
-+	if (test->get_irqtype) {
-+		ret = ioctl(fd, PCITEST_GET_IRQTYPE);
-+		fprintf(stdout, "GET IRQ TYPE:\t\t");
-+		if (ret < 0)
-+			fprintf(stdout, "FAILED\n");
-+		else
-+			fprintf(stdout, "%s\n", irq[ret]);
-+	}
-+
- 	if (test->legacyirq) {
- 		ret = ioctl(fd, PCITEST_LEGACY_IRQ, 0);
- 		fprintf(stdout, "LEGACY IRQ:\t");
-@@ -83,6 +106,15 @@ static int run_test(struct pci_test *test)
- 			fprintf(stdout, "%s\n", result[ret]);
- 	}
- 
-+	if (test->msixnum > 0 && test->msixnum <= 2048) {
-+		ret = ioctl(fd, PCITEST_MSIX, test->msixnum);
-+		fprintf(stdout, "MSI-X%d:\t\t", test->msixnum);
-+		if (ret < 0)
-+			fprintf(stdout, "TEST FAILED\n");
-+		else
-+			fprintf(stdout, "%s\n", result[ret]);
-+	}
-+
- 	if (test->write) {
- 		ret = ioctl(fd, PCITEST_WRITE, test->size);
- 		fprintf(stdout, "WRITE (%7ld bytes):\t\t", test->size);
-@@ -133,7 +165,7 @@ int main(int argc, char **argv)
- 	/* set default endpoint device */
- 	test->device = "/dev/pci-endpoint-test.0";
- 
--	while ((c = getopt(argc, argv, "D:b:m:lrwcs:")) != EOF)
-+	while ((c = getopt(argc, argv, "D:b:m:x:i:Ilrwcs:")) != EOF)
- 	switch (c) {
- 	case 'D':
- 		test->device = optarg;
-@@ -151,6 +183,20 @@ int main(int argc, char **argv)
- 		if (test->msinum < 1 || test->msinum > 32)
- 			goto usage;
- 		continue;
-+	case 'x':
-+		test->msixnum = atoi(optarg);
-+		if (test->msixnum < 1 || test->msixnum > 2048)
-+			goto usage;
-+		continue;
-+	case 'i':
-+		test->irqtype = atoi(optarg);
-+		if (test->irqtype < 0 || test->irqtype > 2)
-+			goto usage;
-+		test->set_irqtype = true;
-+		continue;
-+	case 'I':
-+		test->get_irqtype = true;
-+		continue;
- 	case 'r':
- 		test->read = true;
- 		continue;
-@@ -173,6 +219,9 @@ int main(int argc, char **argv)
- 			"\t-D <dev>		PCI endpoint test device {default: /dev/pci-endpoint-test.0}\n"
- 			"\t-b <bar num>		BAR test (bar number between 0..5)\n"
- 			"\t-m <msi num>		MSI test (msi number between 1..32)\n"
-+			"\t-x <msix num>	\tMSI-X test (msix number between 1..2048)\n"
-+			"\t-i <irq type>	\tSet IRQ type (0 - Legacy, 1 - MSI, 2 - MSI-X)\n"
-+			"\t-I			Get current IRQ type configured\n"
- 			"\t-l			Legacy IRQ test\n"
- 			"\t-r			Read buffer test\n"
- 			"\t-w			Write buffer test\n"
-diff --git a/tools/pci/pcitest.sh b/tools/pci/pcitest.sh
-index 77e8c85..75ed48f 100644
---- a/tools/pci/pcitest.sh
-+++ b/tools/pci/pcitest.sh
-@@ -16,7 +16,10 @@ echo
- echo "Interrupt tests"
- echo
- 
-+pcitest -i 0
- pcitest -l
-+
-+pcitest -i 1
- msi=1
- 
- while [ $msi -lt 33 ]
-@@ -26,9 +29,21 @@ do
- done
- echo
- 
-+pcitest -i 2
-+msix=1
-+
-+while [ $msix -lt 2049 ]
-+do
-+        pcitest -x $msix
-+        msix=`expr $msix + 1`
-+done
-+echo
-+
- echo "Read Tests"
- echo
- 
-+pcitest -i 1
-+
- pcitest -r -s 1
- pcitest -r -s 1024
- pcitest -r -s 1025
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+
 -- 
-2.7.4
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
