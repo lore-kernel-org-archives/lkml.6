@@ -1,95 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id wyfUGo8gGlvzSAAAmS7hNA
-	; Fri, 08 Jun 2018 06:22:07 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 8eA/OQwoGVsKewAAmS7hNA
+	; Thu, 07 Jun 2018 12:41:49 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 5BF0A608BA; Fri,  8 Jun 2018 06:22:07 +0000 (UTC)
+	id D0D48608BA; Thu,  7 Jun 2018 12:41:48 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LhD67+E0"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D1872606FA;
-	Fri,  8 Jun 2018 06:22:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D1872606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 429B0607DC;
+	Thu,  7 Jun 2018 12:41:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 429B0607DC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751116AbeFHGWE (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 02:22:04 -0400
-Received: from muru.com ([72.249.23.125]:46294 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750837AbeFHGWC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 02:22:02 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 6E4A68080;
-        Fri,  8 Jun 2018 06:24:32 +0000 (UTC)
-Date: Thu, 7 Jun 2018 23:21:58 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Faiz Abbas <faiz_abbas@ti.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, mark.rutland@arm.com, paul@pwsan.com,
-        t-kristo@ti.com, robh+dt@kernel.org, bcousson@baylibre.com
-Subject: Re: [PATCH v3 4/6] bus: ti-sysc: Add support for software reset
-Message-ID: <20180608062158.GI5738@atomide.com>
-References: <20180606060826.14671-1-faiz_abbas@ti.com>
- <20180606060826.14671-5-faiz_abbas@ti.com>
- <20180607073530.GH5738@atomide.com>
- <a169ba7f-53f2-cf9a-a9ee-daffd6b53279@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a169ba7f-53f2-cf9a-a9ee-daffd6b53279@ti.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        id S932509AbeFGMlo (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 08:41:44 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:49910 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932318AbeFGMll (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 08:41:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Subject:Cc:To:From:Date:Message-Id:
+        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=YS1qMxUC8Zs8NRD6d41S1qG0bl2WzwPoHhsIXF/y3/s=; b=LhD67+E0BzK33pmCPDs2fSUeE
+        5DytzUwu8mjI3EVlN6QcjFGKPBVim9+TwOLYReidSrXWriiwHZvDgKsiooIbBadIR5FA8NjLlo5M2
+        HEAOGHOxYvH2tTEBIwszSUUj2sj/TbRA3+fRKVen6n4zImwPQZkfyb23oj/jwrrjZPFbc/+O5EAkS
+        0+SO25ZBMKglT+IG1BsEJUHcBlzdDo2W7N4XzpJ2YpZ5p0ZasYqVbB5VsNz8XN20RgDo0Qq2FaxR2
+        aMO+rxwJEBFR7lZ36TLbjCHeBgSO8ycTGACqau8mSe63eiE1UanLmINJl+FW3YDSy1qNiNi6nIm52
+        hcHLRis4g==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fQuEI-000647-4n; Thu, 07 Jun 2018 12:41:26 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
+        id 94FAB201EA7A3; Thu,  7 Jun 2018 14:41:18 +0200 (CEST)
+Message-Id: <20180607123310.866085998@infradead.org>
+User-Agent: quilt/0.63-1
+Date: Thu, 07 Jun 2018 14:33:10 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: mingo@kernel.org, oleg@redhat.com, gkohli@codeaurora.org
+Cc: tglx@linutronix.de, mpe@ellerman.id.au, bigeasy@linutronix.de,
+        linux-kernel@vger.kernel.org, will.deacon@arm.com,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>
+Subject: [PATCH 0/4] kthread/smpboot: More fixes...
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Faiz Abbas <faiz_abbas@ti.com> [180607 10:24]:
-> Hi,
-> 
-> On Thursday 07 June 2018 01:05 PM, Tony Lindgren wrote:
-> > * Faiz Abbas <faiz_abbas@ti.com> [180606 06:14]:
-> >> +static int sysc_reset(struct sysc *ddata)
-> >> +{
-> >> +	int offset = ddata->offsets[SYSC_SYSCONFIG];
-> >> +	int val = sysc_read(ddata, offset);
-> >> +
-> >> +	val |= (0x1 << ddata->cap->regbits->srst_shift);
-> >> +	sysc_write(ddata, offset, val);
-> >> +
-> >> +	/* Poll on reset status */
-> >> +	if (ddata->cfg.quirks & SYSC_QUIRK_RESET_STATUS) {
-> >> +		offset = ddata->offsets[SYSC_SYSSTATUS];
-> >> +
-> >> +		return readl_poll_timeout(ddata->module_va + offset, val,
-> >> +				(val & ddata->cfg.syss_mask) == 0x0,
-> >> +				100, MAX_MODULE_SOFTRESET_WAIT);
-> >> +	}
-> >> +
-> >> +	return 0;
-> >> +}
-> > 
-> > I wonder if we should also add SYSS_QUIRK_RESET_STATUS in
-> > addition to SYSC_QUIRK_RESET status to make it easy to
-> > read the right register?
-> 
-> I assumed SYSC_QUIRK is the prefix to indicate the ti-sysc driver not
-> the register. Are there layouts in which the reset status bit is in the
-> sysconfig register rather than the sysstatus register?
+These patches were tested with hotplug and /proc/sys/kernel/watchdog_cpumask
+manipulations.
 
-Yes we can have reset status bit in either syss or syssconfig register.
-We detect that in sysc_init_syss_mask() but we should also set something
-at that point to make it clear which reset to use. But as we don't need
-the quirk flag, it's probably set a function pointer after the detection.
-So how about let's have two functions sysc_reset() and sysc_syss_reset()
-and then we can implement sysc_syss_reset() in a separate patch after
-testing it when we have a non-platform data using example for
-sysc_syss_reset().
+I used 'grep watchdog_fn /proc/timer_list | wc -l' to verify the expected
+number of active timers.
 
-Regards,
+Please have a look..
 
-Tony
+---
+ include/linux/cpuhotplug.h |   1 +
+ include/linux/kthread.h    |   1 -
+ include/linux/nmi.h        |   5 ++
+ include/linux/sched.h      |   2 +-
+ include/linux/smpboot.h    |  15 +-----
+ kernel/cpu.c               |   5 ++
+ kernel/kthread.c           |  34 +++++++++---
+ kernel/sched/core.c        |  31 ++++-------
+ kernel/smpboot.c           |  54 ++-----------------
+ kernel/watchdog.c          | 132 +++++++++++++++++++--------------------------
+ 10 files changed, 112 insertions(+), 168 deletions(-)
