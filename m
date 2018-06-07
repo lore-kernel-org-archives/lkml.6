@@ -1,124 +1,186 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 588WFlpfGVtKNwAAmS7hNA
-	; Thu, 07 Jun 2018 16:37:46 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 778fErdhGVvXTQAAmS7hNA
+	; Thu, 07 Jun 2018 16:48:06 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 494CD6074D; Thu,  7 Jun 2018 16:37:46 +0000 (UTC)
+	id 6DA8B6074D; Thu,  7 Jun 2018 16:48:06 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bD2aj8kx"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 9B98D601B4;
-	Thu,  7 Jun 2018 16:37:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9B98D601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id D1760601B4;
+	Thu,  7 Jun 2018 16:48:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D1760601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933266AbeFGQhn convert rfc822-to-8bit (ORCPT
-        <rfc822;monsieuricon@codeaurora.org> + 25 others);
-        Thu, 7 Jun 2018 12:37:43 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58838 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933158AbeFGQhh (ORCPT
+        id S933562AbeFGQru (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 12:47:50 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:46768 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932598AbeFGQrp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 12:37:37 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w57GYe83072987
-        for <linux-kernel@vger.kernel.org>; Thu, 7 Jun 2018 12:37:36 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jf5q18w8n-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 12:37:36 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <naveen.n.rao@linux.vnet.ibm.com>;
-        Thu, 7 Jun 2018 17:37:34 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 7 Jun 2018 17:37:30 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w57GbT5W17432684
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 7 Jun 2018 16:37:29 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DE54D42045;
-        Thu,  7 Jun 2018 17:27:48 +0100 (BST)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8A57642047;
-        Thu,  7 Jun 2018 17:27:48 +0100 (BST)
-Received: from localhost (unknown [9.77.126.253])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  7 Jun 2018 17:27:48 +0100 (BST)
-Date: Thu, 07 Jun 2018 22:07:26 +0530
-From: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Subject: Re: [RFC PATCH -tip v5 18/27] powerpc/kprobes: Don't call the
- ->break_handler() in arm kprobes code
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        "H . Peter Anvin" <hpa@zytor.com>, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Ingo Molnar <mingo@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <152812730943.10068.5166429445118734697.stgit@devbox>
-        <152812783350.10068.4690566636762511152.stgit@devbox>
-        <1528371112.vwnh1m0k39.naveen@linux.ibm.com>
-        <20180607232802.c5fcea960e94ef2f3cd4cde8@kernel.org>
-In-Reply-To: <20180607232802.c5fcea960e94ef2f3cd4cde8@kernel.org>
-User-Agent: astroid/0.11.1 (https://github.com/astroidmail/astroid)
+        Thu, 7 Jun 2018 12:47:45 -0400
+Received: by mail-pl0-f66.google.com with SMTP id 30-v6so6473261pld.13
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 09:47:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1vvE8/Q+vV9bIYURs2xz/1jXvh+r6/GRDdCY4r1ruig=;
+        b=bD2aj8kxxJAbhZ2jLn9eHzsNCwYZc9CYHjI/2fAB5uqWd4w8ack0GXcoo95YfJ1AX9
+         rySMxJkfUt8lG2uV9yPAwMxmAstv+DakymDwW/m83ykxer2bM7bS0KNfzaEAHEco8EGo
+         H2YVe8R4zyv979B2z1nO8hVp3KiAEXSWsEEnA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1vvE8/Q+vV9bIYURs2xz/1jXvh+r6/GRDdCY4r1ruig=;
+        b=G4d6D4wCdZmy3hjbSVpjTZLsZ9NcOXpPH1dKgy5gq1YK4qwcQA2rdyRwIUxl9DWsCr
+         vhabD98sm0mmbVUtLiJz2GJnmLqHgQmJ9BS5584/mTqSJ78YG6AcA1vjgjsAolpPT2aq
+         dY8dqtDQ7VisTOwOlFim/ZAkwYxMpLZYQFrQSY1vDxhUjCfu9AeJSnISKbVzkOd34U3I
+         xrmn+pYJkoWgdwRg6UOET0yc60HXOud5VJUy96o6uWFRkyMimDRs+ELusZpzY97aKvoX
+         6qeQQxInB6Dyay1XnOwiIY2FR+XoYBDMt3xGvSJO1GfOzc7ZBT8kDb9YT5e5vveZEW/7
+         xhBQ==
+X-Gm-Message-State: APt69E2jFUfwj7fYPzYZ0cArhwv4ScmwKZz02iqnQWuyVBkmfIeowtRQ
+        d2U+aMezvV960V18YRO8BY/+UA==
+X-Google-Smtp-Source: ADUXVKIxy3mcfWPjNnpvLOILfS1EGLCXtddRe7rVaXTG6GICE1NnSzzFduiKzbwXnaMnd50r1Ep2CQ==
+X-Received: by 2002:a17:902:7688:: with SMTP id m8-v6mr2887643pll.54.1528390064815;
+        Thu, 07 Jun 2018 09:47:44 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id k84-v6sm77551657pfh.110.2018.06.07.09.47.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 07 Jun 2018 09:47:44 -0700 (PDT)
+Date: Thu, 7 Jun 2018 09:49:50 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: Martijn Coenen <maco@android.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Vikram Mulukutla <markivx@codeaurora.org>,
+        Arve Hj?nnev?g <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-security-module@vger.kernel.org,
+        Chris Wright <chrisw@sous-sol.org>,
+        David Howells <dhowells@redhat.com>,
+        Alan Cox <alan@linux.intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        platform-driver-x86@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Jones <pjones@redhat.com>,
+        Dave Olsthoorn <dave@bewaar.me>,
+        Will Deacon <will.deacon@arm.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Josh Triplett <josh@joshtriplett.org>,
+        dmitry.torokhov@gmail.com, mfuzzey@parkeon.com,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Arend Van Spriel <arend.vanspriel@broadcom.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        nbroeking@me.com, Torsten Duwe <duwe@suse.de>, x86@kernel.org,
+        linux-efi <linux-efi@vger.kernel.org>,
+        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v3 2/5] efi: Add embedded peripheral firmware support
+Message-ID: <20180607164950.GP510@tuxbook-pro>
+References: <20180408174014.21908-3-hdegoede@redhat.com>
+ <20180423211143.GZ14440@wotan.suse.de>
+ <71e6a45a-398d-b7a4-dab0-8b9936683226@redhat.com>
+ <1524586021.3364.20.camel@linux.vnet.ibm.com>
+ <20180424234219.GX14440@wotan.suse.de>
+ <1524632409.3371.48.camel@linux.vnet.ibm.com>
+ <20180425175557.GY14440@wotan.suse.de>
+ <CAB0TPYGnCu+anWHBGvkaigxD--8uHQaQJ2c62kegJ7mTqvkmnA@mail.gmail.com>
+ <20180508153805.GC27853@wotan.suse.de>
+ <20180508161037.GE27853@wotan.suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8BIT
-X-TM-AS-GCONF: 00
-x-cbid: 18060716-0020-0000-0000-000002985BD1
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18060716-0021-0000-0000-000020E461CD
-Message-Id: <1528389409.62iyaqw9yn.naveen@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-07_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=917 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806070183
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180508161037.GE27853@wotan.suse.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Masami Hiramatsu wrote:
-> On Thu, 07 Jun 2018 17:07:00 +0530
-> "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> wrote:
-> 
->> Masami Hiramatsu wrote:
->> > Don't call the ->break_handler() from the arm kprobes code,
->> 					    ^^^ powerpc
->> 
->> > because it was only used by jprobes which got removed.
->> > 
->> > This also makes skip_singlestep() a static function since
->> > only ftrace-kprobe.c is using this function.
->> > 
->> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
->> > Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
->> > Cc: Paul Mackerras <paulus@samba.org>
->> > Cc: Michael Ellerman <mpe@ellerman.id.au>
->> > Cc: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
->> > Cc: linuxppc-dev@lists.ozlabs.org
->> > ---
->> >  arch/powerpc/include/asm/kprobes.h   |   10 ----------
->> >  arch/powerpc/kernel/kprobes-ftrace.c |   16 +++-------------
->> >  arch/powerpc/kernel/kprobes.c        |   31 +++++++++++--------------------
->> >  3 files changed, 14 insertions(+), 43 deletions(-)
->> 
->> With 2 small comments...
-> 
-> 2 ? or 1 ?
+On Tue 08 May 09:10 PDT 2018, Luis R. Rodriguez wrote:
 
-Two, with one in the commit log above :)
+> On Tue, May 08, 2018 at 03:38:05PM +0000, Luis R. Rodriguez wrote:
+> > On Fri, May 04, 2018 at 12:44:37PM -0700, Martijn Coenen wrote:
+> > > On Wed, Apr 25, 2018 at 10:55 AM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
+[..]
+> > > 2) Most of those paths are not mounted by the time the corresponding
+> > > drivers are loaded, because pretty much all Android kernels today are
+> > > built without module support, and therefore drivers are loaded well
+> > > before the firmware partition is mounted
+> 
+> I've given this some more thought and you can address this with initramfs,
+> this is how other Linux distributions are addressing this. One way to
+> address this automatically is to scrape the drivers built-in or needed early on
+> boot in initamfs and if the driver has a MODULE_FIRMWARE() its respective
+> firmware is added to initramfs as well.
+> 
 
-- Naveen
+That could be done, but it would not change the fact that the
+/sys/class/firmware is ABI and you may not break it.
+
+
+And it doesn't change the fact that the ramdisk would have to be over
+100mb to facilitate this.
+
+> If you *don't* use initramfs, then yes you can obviously run into issues
+> where your firmware may not be accessible if the driver is somehow loaded
+> early.
+> 
+
+This is still a problem that lacks a solution.
+
+> > > 3) I think we use _FALLBACK because doing this with uevents is just
+> > > the easiest thing to do; our init code has a firmware helper that
+> > > deals with this and searches the paths that we care about
+> > > 
+> > > 2) will change at some point, because Android is moving towards a
+> > > model where device-specific peripheral drivers will be loaded as
+> > > modules, and since those modules would likely come from the same
+> > > partition as the firmware, it's possible that the direct load would
+> > > succeed (depending on whether the custom path is configured there or
+> > > not). But I don't think we can rely on the direct loader even in those
+> > > cases, unless we could configure it with multiple custom paths.
+> 
+> Using initramfs will help, but because of the custom path needs -- you're
+> right, we don't have anything for that yet, its also a bit unclear if
+> something nice and clean can be drawn up for it. So perhaps dealing with
+> the fallback mechanism is the way to go for this for sure, since we already
+> have support for it.
+> 
+> Just keep in mind that the fallback mechanism costs you about ~13436 bytes.
+> 
+
+Remember that putting the firmware in the ramdisk would cost about
+10000x (yes, ten thousand times) more ram.
+
+> So, if someone comes up with a clean interface for custom paths I'd love
+> to consider it to avoid those 13436 bytes.
+> 
+
+Combined with a way of synchronizing this with the availability of the
+firmware, this would be a nice thing!
+
+Regards,
+Bjorn
