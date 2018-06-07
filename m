@@ -1,86 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ONZgHyxyHlsRXAAAmS7hNA
-	; Mon, 11 Jun 2018 12:59:24 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 9Xm2B3dJGVu/TwAAmS7hNA
+	; Thu, 07 Jun 2018 15:05:01 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 738AC607BB; Mon, 11 Jun 2018 12:59:24 +0000 (UTC)
+	id EF193608B8; Thu,  7 Jun 2018 15:05:00 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 0780760385;
-	Mon, 11 Jun 2018 12:59:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0780760385
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=holtmann.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 779A76063F;
+	Thu,  7 Jun 2018 15:05:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 779A76063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933081AbeFKM7X convert rfc822-to-8bit (ORCPT
-        <rfc822;monsieuricon@codeaurora.org> + 20 others);
-        Mon, 11 Jun 2018 08:59:23 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:42110 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932607AbeFKM7V (ORCPT
+        id S965115AbeFGPE7 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:04:59 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41576 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934962AbeFGPEK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 08:59:21 -0400
-Received: from marcel-macpro.fritz.box (p5B3D24B5.dip0.t-ipconnect.de [91.61.36.181])
-        by mail.holtmann.org (Postfix) with ESMTPSA id 14EF9CF185;
-        Mon, 11 Jun 2018 15:06:02 +0200 (CEST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.4 \(3445.8.2\))
-Subject: Re: [PATCH v2 11/24] Bluetooth: hci_bcm: MODULE_DEVICE_TABLE(serdev)
-From: Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20180611115240.32606-12-ricardo.ribalda@gmail.com>
-Date: Mon, 11 Jun 2018 14:59:19 +0200
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
-        linux-bluetooth@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <D4622EB7-BB18-4931-BF14-34995F7EBBA8@holtmann.org>
-References: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
- <20180611115240.32606-12-ricardo.ribalda@gmail.com>
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-X-Mailer: Apple Mail (2.3445.8.2)
+        Thu, 7 Jun 2018 11:04:10 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbu-0005Zp-5O; Thu, 07 Jun 2018 15:09:54 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb0-0002nX-GV; Thu, 07 Jun 2018 15:08:58 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Mark Brown" <broonie@kernel.org>,
+        "Dan Carpenter" <dan.carpenter@oracle.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.422478306@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 079/410] ASoC: nuc900: Fix a loop timeout test
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ricardo,
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-> Export serdev table to the module header, allowing module autoload via
-> udev/modprobe.
-> 
-> Cc: Marcel Holtmann <marcel@holtmann.org>
-> Cc: Johan Hedberg <johan.hedberg@gmail.com>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Johan Hovold <johan@kernel.org>
-> Cc: linux-bluetooth@vger.kernel.org
-> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-> ---
-> drivers/bluetooth/hci_bcm.c | 2 ++
-> 1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
-> index f4d7846c06b8..ff0fd3502a90 100644
-> --- a/drivers/bluetooth/hci_bcm.c
-> +++ b/drivers/bluetooth/hci_bcm.c
-> @@ -1327,8 +1327,10 @@ MODULE_DEVICE_TABLE(of, bcm_bluetooth_of_match);
-> 
-> static const struct serdev_device_id bcm_serdev_id[] = {
-> 	{ "bcm43438-bt", },
-> +	{ "hci_uart_bcm", },
-> 	{}
-> };
-> +MODULE_DEVICE_TABLE(serdev, bcm_serdev_id);
+------------------
 
-so this one I can see real use of and is a good fix to finally clean up hci_bcm.c and remove platform support for the Edison hardware. However, I would really then first rename hci_uart_bcm into some Edison specific string since this is really just one outlier here. Everything else will have ACPI or DT support.
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-With that said, I do not understand why we need to duplicate the DT compatible strings in serdev_device_id. They will be enumerated fine via ACPI or DT in the first place. So if we want some new_id support, then wouldn’t an empty serdev_device_id table just be fine?
+commit 65a12b3aafed5fc59f4ce41b22b752b1729e6701 upstream.
 
-Regards
+We should be finishing the loop with timeout set to zero but because
+this is a post-op we finish with timeout == -1.
 
-Marcel
+Fixes: 1082e2703a2d ("ASoC: NUC900/audio: add nuc900 audio driver support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ sound/soc/nuc900/nuc900-ac97.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/sound/soc/nuc900/nuc900-ac97.c
++++ b/sound/soc/nuc900/nuc900-ac97.c
+@@ -67,7 +67,7 @@ static unsigned short nuc900_ac97_read(s
+ 
+ 	/* polling the AC_R_FINISH */
+ 	while (!(AUDIO_READ(nuc900_audio->mmio + ACTL_ACCON) & AC_R_FINISH)
+-								&& timeout--)
++								&& --timeout)
+ 		mdelay(1);
+ 
+ 	if (!timeout) {
+@@ -121,7 +121,7 @@ static void nuc900_ac97_write(struct snd
+ 
+ 	/* polling the AC_W_FINISH */
+ 	while ((AUDIO_READ(nuc900_audio->mmio + ACTL_ACCON) & AC_W_FINISH)
+-								&& timeout--)
++								&& --timeout)
+ 		mdelay(1);
+ 
+ 	if (!timeout)
