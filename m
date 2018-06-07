@@ -1,128 +1,151 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id DNu/GglFGltmCQAAmS7hNA
-	; Fri, 08 Jun 2018 08:58:44 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id KsTbItecGVtxRQAAmS7hNA
+	; Thu, 07 Jun 2018 21:00:07 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id DDC44608BA; Fri,  8 Jun 2018 08:58:43 +0000 (UTC)
+	id 6FBDB6089E; Thu,  7 Jun 2018 21:00:07 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="R9kAhxHD"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 6ACC0602FC;
-	Fri,  8 Jun 2018 08:58:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6ACC0602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id DC5DA601C3;
+	Thu,  7 Jun 2018 21:00:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DC5DA601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751216AbeFHI6l (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 04:58:41 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:40830 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750969AbeFHI6h (ORCPT
+        id S933186AbeFGVAF (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 17:00:05 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:51284 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932351AbeFGVAD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 04:58:37 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 58D66286FF3
-Subject: Re: [PATCH v3 00/12] cros_ec: Match licenses and switch to SPDX
- identifier.
-To: Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org
-Cc: Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Paolo Cretaro <paolocretaro@gmail.com>,
-        linux-iio@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-i2c@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        linux-rtc@vger.kernel.org, Anton Vorontsov <anton@enomsg.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Benson Leung <bleung@chromium.org>,
-        linux-input@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Colin Cross <ccross@android.com>,
-        Kees Cook <keescook@chromium.org>
-References: <20180606150900.8342-1-enric.balletbo@collabora.com>
- <517d33d8219f22126ec8caaf41072c14b5ebf407.camel@perches.com>
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <aee6f480-28e0-4b9f-0e90-35a2b7a37419@collabora.com>
-Date: Fri, 8 Jun 2018 10:58:31 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 7 Jun 2018 17:00:03 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w57Koxta007551;
+        Thu, 7 Jun 2018 20:59:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2017-10-26;
+ bh=b2EOFKlkzYbJtAU7toAOslOIHWH7o7NjJ/7HqWyDcUk=;
+ b=R9kAhxHD/GckBAhymcE3jMHvOdczhtqd6JouOwRku5WbABd61wo2XIb90vmgUgJGU0OP
+ n0UsptT8vDsS+Pm+jX18FqJ36bdwKLnnzF+lDNFotrrbv194ilvLI4cJpMp0sGoGalq+
+ eq+zOU34h41jl6eKHYlxgZW3if7Is/uv1rE+b+EZ9sKBJvNSkPbHih1duoc9+2HTEfku
+ q4JnBk7NEe24Ez7c4xgl73hWSFnrBsxkMwIuDGLxJPDmrBDvfnybgNU3BFRFLSLqAXff
+ uclMQ+zULXQgrmcXbCzQaeXbMFy17vuJr9+jjZyvticltT9bNk0tGtd85si1+o3F2/id sQ==
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2jbvyptm8v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 07 Jun 2018 20:59:51 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w57KxoOH007449
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 7 Jun 2018 20:59:50 GMT
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w57Kxoqh008486;
+        Thu, 7 Jun 2018 20:59:50 GMT
+Received: from [10.211.203.83] (/10.211.203.83)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 07 Jun 2018 13:59:50 -0700
+Subject: Re: [PATCH 4.4 010/268] xen-swiotlb: fix the check condition for
+ xen_swiotlb_free_coherent
+To: Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        John Sobecki <john.sobecki@oracle.com>,
+        Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: stable@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+References: <20180528100202.045206534@linuxfoundation.org>
+ <20180528100203.277622038@linuxfoundation.org>
+ <1528403323.2289.84.camel@codethink.co.uk>
+From: Joe Jin <joe.jin@oracle.com>
+Message-ID: <90be58ac-fd9a-abb1-3bf6-8f5001c39a0b@oracle.com>
+Date: Thu, 7 Jun 2018 13:59:49 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <517d33d8219f22126ec8caaf41072c14b5ebf407.camel@perches.com>
+In-Reply-To: <1528403323.2289.84.camel@codethink.co.uk>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8917 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806070221
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joe,
-
-On 06/06/18 17:42, Joe Perches wrote:
-> On Wed, 2018-06-06 at 17:08 +0200, Enric Balletbo i Serra wrote:
->> Dear all,
+On 6/7/18 1:28 PM, Ben Hutchings wrote:
+> On Mon, 2018-05-28 at 11:59 +0200, Greg Kroah-Hartman wrote:
+>> 4.4-stable review patch.  If anyone has any objections, please let me know.
 >>
->> This patchset is just to adopt the SPDX license identifier for all
->> ChromeOS Embedded Controller related drivers.
-> 
-> This bit is fine,
-> 
->>  The patches touches
->> different subsystems but every patch can be picked from their respective
->> maintainer independently.
+>> ------------------
 >>
->> This third version takes the license note as the valid license (I did
->> the contrary in the second version) so apart from add the SPDX tags it
->> also introduces new patches to match the license.
+>> From: Joe Jin <joe.jin@oracle.com>
+>>
+>> commit 4855c92dbb7b3b85c23e88ab7ca04f99b9677b41 upstream.
+>>
+>> When run raidconfig from Dom0 we found that the Xen DMA heap is reduced,
+>> but Dom Heap is increased by the same size. Tracing raidconfig we found
+>> that the related ioctl() in megaraid_sas will call dma_alloc_coherent()
+>> to apply memory. If the memory allocated by Dom0 is not in the DMA area,
+>> it will exchange memory with Xen to meet the requiment. Later drivers
+>> call dma_free_coherent() to free the memory, on xen_swiotlb_free_coherent()
+>> the check condition (dev_addr + size - 1 <= dma_mask) is always false,
 > 
-> But why change any MODULE_LICENSE text?
+> I think this was meant to say (dev_addr + size - 1 > dma_mask), i.e.
+
+Hi Ben,
+
+Yes you are right, sorry I made the mistake, thanks for catch it.
+Is there any way to fix description from git repo?
+
+Regards,
+Joe
+
+> the condition that is replaced by this commit.  If that's always false,
+> the new condition (the logical inverse) must always be true.
+> 
+> [...]
+>> --- a/drivers/xen/swiotlb-xen.c
+>> +++ b/drivers/xen/swiotlb-xen.c
+>> @@ -359,7 +359,7 @@ xen_swiotlb_free_coherent(struct device
+>>  	 * physical address */
+>>  	phys = xen_bus_to_phys(dev_addr);
+>>  
+>> -	if (((dev_addr + size - 1 > dma_mask)) ||
+>> +	if (((dev_addr + size - 1 <= dma_mask)) ||
+>>  	    range_straddles_page_boundary(phys, size))
+>>  		xen_destroy_contiguous_region(phys, order);
+>>  
+> 
+> So now we will always call xen_destroy_contiguous_region(), whether or
+> not xen_create_contiguous_region() was called during allocation.  Is
+> that really the intent?  If so, the entire condition could be removed
+> to make this clear.
+> 
+> Alternately, if the commit message is correct, the condition could be
+> simplified to range_straddles_page_boundary(...).
+> 
+> But I'm not at all convinced that either of these is correct.  It seems
+> like you need to either find a way of distinguishing between memory
+> allocated with or without the use of xen_create_contiguous_region(), or
+> to use it unconditionally.
+> 
+> Ben.
 > 
 
-Because in some cases there is a mismatch between the license note and the
-MODULE_LICENSE text.
 
-According to the documentation setting MODULE_LICENSE("GPL") means GNU Public
-License v2 or later [1], in the cases where the license note tells explicitly
-that is GPL v2 only I think that the MODULE_LICENSE should match and be changed
-to "GPL v2".
-
-[1] https://elixir.bootlin.com/linux/v4.17/source/include/linux/module.h#L172
-
-> There are uses of MODULE_LICENSE("GPL") where
-> the SPDX license identifier is some GPL variant
-> 
-
-Right, but I suppose in such cases is wrong and should be changed too?
-
-> For instance:
-> $ git grep -P --name-only
-> 'MODULE_LICENSE\s*\("GPL"\s*\)\s*;'| \
->   xargs grep "SPDX-License-
-> Identifier:" | \
->   cut -f3- -d: | \
->   sed -r 's@\s*\*/\s*$@@' | \
->   sort |
-> uniq -c | sort -rn
->     551  GPL-2.0+
->     281  GPL-2.0
->      13  GPL-1.0+
->     
->   9  GPL-2.0-only
->       2  GPL-2.0 OR MIT
->       1  (GPL-2.0 OR MPL-1.1)
->    
->    1  (GPL-2.0+ OR BSD-3-Clause)
->       1  (GPL-2.0 OR BSD-3-Clause)
-> 
-> And if you were to do this, please do it tree-wide,
-> and ideally via a script
-> 
+-- 
+Oracle <http://www.oracle.com>
+Joe Jin | IT Director 
+ORACLE | Production Engineering and Operations
+600 Oracle Parkway Redwood City, CA US 94065
