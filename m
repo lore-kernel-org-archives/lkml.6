@@ -1,129 +1,190 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id IC+FHIzaGlt0YQAAmS7hNA
-	; Fri, 08 Jun 2018 19:35:56 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ZMFZJyfdGFswcgAAmS7hNA
+	; Thu, 07 Jun 2018 07:22:54 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id BE845607DC; Fri,  8 Jun 2018 19:35:56 +0000 (UTC)
+	id EF1D66089E; Thu,  7 Jun 2018 07:22:53 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b="l4x+7Vyb"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 4F701601B4;
-	Fri,  8 Jun 2018 19:35:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4F701601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 593D1607DC;
+	Thu,  7 Jun 2018 07:22:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 593D1607DC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=hartkopp.net
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752716AbeFHTfy (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 15:35:54 -0400
-Received: from mga04.intel.com ([192.55.52.120]:54715 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752356AbeFHTfw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 15:35:52 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jun 2018 12:35:52 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,490,1520924400";
-   d="scan'208";a="62996564"
-Received: from ray.jf.intel.com (HELO [10.7.201.145]) ([10.7.201.145])
-  by orsmga001.jf.intel.com with ESMTP; 08 Jun 2018 12:35:51 -0700
-Subject: Re: [PATCH v11 10/13] intel_sgx: driver for Intel Software Guard
- Extensions
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
-        platform-driver-x86@vger.kernel.org
-References: <20180608171216.26521-1-jarkko.sakkinen@linux.intel.com>
- <20180608171216.26521-11-jarkko.sakkinen@linux.intel.com>
-Cc: sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
-        <linux-kernel@vger.kernel.org>,
-        "open list:INTEL SGX" <intel-sgx-kernel-dev@lists.01.org>
-From: Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <b4403cf7-ddfa-284a-d61f-ad93b895b097@intel.com>
-Date: Fri, 8 Jun 2018 12:35:51 -0700
+        id S1753314AbeFGHWt (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 03:22:49 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.51]:17538 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752620AbeFGHWr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 03:22:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1528356162;
+        s=strato-dkim-0002; d=hartkopp.net;
+        h=In-Reply-To:Date:Message-ID:From:References:Cc:To:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=Zjsr9iM5NRJN32C3bN3+dJkd6WuNgwbA2/gzfYnlOKE=;
+        b=l4x+7Vybs48rMJhlIzKH5MSwTPXyQIZk/+r3nJIgG6Gckhmq5vYRcI2bm8kZWzljCp
+        xbkF8cQRcN7qKj/VPYExIlWVg936D8WjqWockqsxrwsXfHdBxAxPmG5LkY8PC1nJzGiu
+        Q4ZsSA8W+TIkGkOMK1BMnGl9zlQUVc6m8KpZIBycfgU5Jgxg6AbsCiRKXHug7SqyCQ8O
+        tDgRYQ0qoXzcW09oYEYKS1n6284SdQwnjIUgOeyrocm4jtweA/IvPCcvN2daFPb8fHcP
+        7JwQRhrIHwITsZnCueYGZNASlmT4r053E313542DqHN8CY4nH7Jh/8ftIANSdve4ofe5
+        G7Xg==
+X-RZG-AUTH: ":P2MHfkW8eP4Mre39l357AZT/I7AY/7nT2yrDxb8mjG14FZxedJy6qgO1rHLMalyLi1fNpX87/zI="
+X-RZG-CLASS-ID: mo00
+Received: from [10.180.29.82]
+        by smtp.strato.de (RZmta 43.10 DYNA|AUTH)
+        with ESMTPSA id j0912bu577MfD33
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Thu, 7 Jun 2018 09:22:41 +0200 (CEST)
+Subject: Re: [PATCH 0/5] can: enable multi-queue for SocketCAN devices
+To: Mark Jonas <mark.jonas@de.bosch.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, hs@denx.de, yi.zhu5@cn.bosch.com
+References: <1528224240-30786-1-git-send-email-mark.jonas@de.bosch.com>
+From: Oliver Hartkopp <socketcan@hartkopp.net>
+Message-ID: <e27cbd23-f922-218b-b314-ff99e1401609@hartkopp.net>
+Date: Thu, 7 Jun 2018 09:22:35 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180608171216.26521-11-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1528224240-30786-1-git-send-email-mark.jonas@de.bosch.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +#define sgx_pr_ratelimited(level, encl, fmt, ...)			\
-> +	pr_ ## level ## _ratelimited("[%d:0x%p] " fmt,			\
-> +				     pid_nr((encl)->tgid),		\
-> +				     (void *)(encl)->base, ##__VA_ARGS__)
-> +
-> +#define sgx_dbg(encl, fmt, ...) \
-> +	sgx_pr_ratelimited(debug, encl, fmt, ##__VA_ARGS__)
-> +#define sgx_info(encl, fmt, ...) \
-> +	sgx_pr_ratelimited(info, encl, fmt, ##__VA_ARGS__)
-> +#define sgx_warn(encl, fmt, ...) \
-> +	sgx_pr_ratelimited(warn, encl, fmt, ##__VA_ARGS__)
-> +#define sgx_err(encl, fmt, ...) \
-> +	sgx_pr_ratelimited(err, encl, fmt, ##__VA_ARGS__)
-> +#define sgx_crit(encl, fmt, ...) \
-> +	sgx_pr_ratelimited(crit, encl, fmt, ##__VA_ARGS__)
 
-I thought the pr_* thingies were to keep everyone from having to do this
-in each driver.  Why did you need this?
 
-Can you do any better than a 2,000-line patch?  For instance, could you
-break out the memory management portion into its own part and have that
-reviewed by mm folks?  Or the ioctl()'s by device driver folks?
+On 06/05/2018 08:43 PM, Mark Jonas wrote:
+> Upon request by Marc Kleine-Budde this patch series does not only
+> contain our patch to enable enable multi-queue for SocketCAN devices
+> but also a driver (Companion driver suite) which makes active use of
+> this feature.
+> 
+> The driver suite implements
+>    - two CAN interfaces
+>    - one generic command interfaces
+> and offers a SocketCAN as well as a char device interface. The
+> SocketCAN interface supports multi-queue.
+> 
+> The functionality bases on an external peripheral chip named Companion.
+> It offers two CAN interfaces, each has 8 prioritized transmit FIFOs as
+> well as one receive FIFO. Besides CAN, undisclosed additional functions
+> can be accessed through the char device.
+> 
+> A standard SPI interface with two additional lines for flow control is
+> used. The Companion chip is the SPI slave.
+> 
+> The driver suite consists of three separate drivers. The following
+> diagram illustrates the dependencies in layers.
+> 
+>             /dev/companion       SocketCAN                User Space
+> -------------------------------------------------------------------
+>           +----------------+ +---------------+
+>           | companion-char | | companion-can |
+>           +----------------+ +---------------+
+>           +----------------------------------+
+>           |          companion-spi           |
+>           +----------------------------------+
+>           +----------------------------------+
+>           |     standard SPI subsystem       |
+>           +----------------------------------+          Linux Kernel
+> -------------------------------------------------------------------
+>                 | | | |      | |                            Hardware
+>              CS-+ | | |      | +-BUSY
+>              CLK--+ | |      +---REQUEST
+>              MOSI---+ |
+>              MISO-----+
+> 
+> companion-spi
+>     core.c: handles SPI, sysfs entry and interface to upper layer
+>     protocol-manager.c: handles protocol with the SPI HW
+>     queue-manager.c: handles buffering and packets scheduling
+> 
+> companion-can
+>     makes use of multi-queue support and allows to use tc to configure
+>     the queuing discipline (e.g. mqprio). Together with the SO_PRIORITY
+>     socket option this allows to specify the FIFO a CAN frame shall be
+>     sent to.
+> 
+> companion-char
+>     handles messages to other undisclosed functionality beyond CAN.
+> 
+> Zhu Yi (5):
+>    can: enable multi-queue for SocketCAN devices
+>    spi: implement companion-spi driver
+>    char: implement companion-char driver
+>    can: implement companion-can driver
+>    spi,can,char: add companion DT binding documentation
+> 
+>   .../devicetree/bindings/spi/bosch,companion.txt    |   82 ++
+>   drivers/char/Kconfig                               |    7 +
+>   drivers/char/Makefile                              |    2 +
+>   drivers/char/companion-char.c                      |  367 ++++++
+>   drivers/net/can/Kconfig                            |    8 +
+>   drivers/net/can/Makefile                           |    1 +
+>   drivers/net/can/companion-can.c                    |  694 ++++++++++++
+
+Please place the companion driver in
+
+drivers/net/can/spi/companion.c
+
+It also makes more sense in the Kconfig structure.
+
+Probably this naming scheme also makes sense for
+
+linux/drivers/char/spi/companion.c
+
+then ...
+
+If not it should be named at least
+
+drivers/char/companion-spi.c
+
+or
+
+drivers/char/spi-companion.c
+
+BR Oliver
+
+>   drivers/net/can/dev.c                              |    8 +-
+>   drivers/spi/Kconfig                                |    2 +
+>   drivers/spi/Makefile                               |    2 +
+>   drivers/spi/companion/Kconfig                      |    5 +
+>   drivers/spi/companion/Makefile                     |    2 +
+>   drivers/spi/companion/core.c                       | 1189 ++++++++++++++++++++
+>   drivers/spi/companion/protocol-manager.c           | 1035 +++++++++++++++++
+>   drivers/spi/companion/protocol-manager.h           |  348 ++++++
+>   drivers/spi/companion/protocol.h                   |  273 +++++
+>   drivers/spi/companion/queue-manager.c              |  146 +++
+>   drivers/spi/companion/queue-manager.h              |  245 ++++
+>   include/linux/can/dev.h                            |    7 +-
+>   include/linux/companion.h                          |  258 +++++
+>   20 files changed, 4677 insertions(+), 4 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/spi/bosch,companion.txt
+>   create mode 100644 drivers/char/companion-char.c
+>   create mode 100644 drivers/net/can/companion-can.c
+>   create mode 100644 drivers/spi/companion/Kconfig
+>   create mode 100644 drivers/spi/companion/Makefile
+>   create mode 100644 drivers/spi/companion/core.c
+>   create mode 100644 drivers/spi/companion/protocol-manager.c
+>   create mode 100644 drivers/spi/companion/protocol-manager.h
+>   create mode 100644 drivers/spi/companion/protocol.h
+>   create mode 100644 drivers/spi/companion/queue-manager.c
+>   create mode 100644 drivers/spi/companion/queue-manager.h
+>   create mode 100644 include/linux/companion.h
+> 
