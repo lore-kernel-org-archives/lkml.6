@@ -1,90 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id fF4vOfdZGlvdYAAAmS7hNA
-	; Fri, 08 Jun 2018 10:27:59 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id veoiIyExGVtjMgAAmS7hNA
+	; Thu, 07 Jun 2018 13:21:48 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 42FBB606FA; Fri,  8 Jun 2018 10:27:59 +0000 (UTC)
+	id 90678607DC; Thu,  7 Jun 2018 13:21:47 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KWGCRTkG"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id BFA6560590;
-	Fri,  8 Jun 2018 10:27:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BFA6560590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 10F8B601C3;
+	Thu,  7 Jun 2018 13:21:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 10F8B601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752478AbeFHK14 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 06:27:56 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8704 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751152AbeFHK1y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 06:27:54 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 976E049E2C96E;
-        Fri,  8 Jun 2018 18:27:40 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.75) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.382.0; Fri, 8 Jun 2018 18:27:35 +0800
-From: John Garry <john.garry@huawei.com>
-To: <tj@kernel.org>
-CC: <linux-ide@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dan.carpenter@oracle.com>, John Garry <john.garry@huawei.com>
-Subject: [PATCH] libahci: Fix possible Spectre-v1 pmp indexing in ahci_led_store()
-Date: Fri, 8 Jun 2018 18:26:33 +0800
-Message-ID: <1528453593-225313-1-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 1.9.1
+        id S932676AbeFGNVo (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 09:21:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48358 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932462AbeFGNVm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 09:21:42 -0400
+Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D8502086E;
+        Thu,  7 Jun 2018 13:21:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528377701;
+        bh=h9cFA1P3D+vZC6T7fcxE7lr79c7rSWjPhPLxThXNv8w=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KWGCRTkGQUKP4ZiL/rRZq3G33/CH83m6cOMsyji12Cxk00nMtWMumyvfX8fJWrY1r
+         UlAhhMpzOxNtwKSU83y+3djTAMqDNolavbSXeLyogMpbe/muoPmsQbZm1TJ6BHOt77
+         mdXA1bjfZFCb3s9byO9xKrOZxRwPbTpSOU16A/bc=
+Date: Thu, 7 Jun 2018 08:21:40 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Oza Pawandeep <poza@codeaurora.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dongdong Liu <liudongdong3@huawei.com>,
+        Keith Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH NEXT 1/6] PCI/AER: Take mask into account while clearing
+ error bits
+Message-ID: <20180607132140.GA15137@bhelgaas-glaptop.roam.corp.google.com>
+References: <1528351234-26914-1-git-send-email-poza@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1528351234-26914-1-git-send-email-poza@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently smatch warns of possible Spectre-V1 issue in ahci_led_store():
-drivers/ata/libahci.c:1150 ahci_led_store() warn: potential spectre issue 'pp->em_priv' (local cap)
+On Thu, Jun 07, 2018 at 02:00:29AM -0400, Oza Pawandeep wrote:
+> PCIe ERR_NONFATAL and ERR_FATAL are uncorrectable errors, and clearing
+> uncorrectable error bits should take error mask into account.
+> 
+> Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
 
-Userspace controls @pmp from following callchain:
-em_message->store()
-->ata_scsi_em_message_store()
--->ap->ops->em_store()
---->ahci_led_store()
+If/when you repost these, please include a [0/6] cover letter with an
+overview of the purpose of the series.
 
-After the mask+shift @pmp is effectively an 8b value, which is used to
-index into an array of length 8, so sanitize the array index.
+I assume these are for v4.19, so I'll look at them after the merge
+window.
 
-Signed-off-by: John Garry <john.garry@huawei.com>
+If they fix issues introduced during the v4.18 merge window, we may be
+able to merge them during the v4.18 -rc cycle.  In this case, I would
+need specifics about what exactly the problems are.
 
-diff --git a/drivers/ata/libahci.c b/drivers/ata/libahci.c
-index 7adcf3c..4ce5bb4 100644
---- a/drivers/ata/libahci.c
-+++ b/drivers/ata/libahci.c
-@@ -35,6 +35,7 @@
- #include <linux/kernel.h>
- #include <linux/gfp.h>
- #include <linux/module.h>
-+#include <linux/nospec.h>
- #include <linux/blkdev.h>
- #include <linux/delay.h>
- #include <linux/interrupt.h>
-@@ -1142,10 +1143,12 @@ static ssize_t ahci_led_store(struct ata_port *ap, const char *buf,
- 
- 	/* get the slot number from the message */
- 	pmp = (state & EM_MSG_LED_PMP_SLOT) >> 8;
--	if (pmp < EM_MAX_SLOTS)
-+	if (pmp < EM_MAX_SLOTS) {
-+		pmp = array_index_nospec(pmp, EM_MAX_SLOTS);
- 		emp = &pp->em_priv[pmp];
--	else
-+	} else {
- 		return -EINVAL;
-+	}
- 
- 	/* mask off the activity bits if we are in sw_activity
- 	 * mode, user should turn off sw_activity before setting
--- 
-1.9.1
+> diff --git a/drivers/pci/pcie/aer/aerdrv.c b/drivers/pci/pcie/aer/aerdrv.c
+> index 377e576..8cbc62b 100644
+> --- a/drivers/pci/pcie/aer/aerdrv.c
+> +++ b/drivers/pci/pcie/aer/aerdrv.c
+> @@ -341,8 +341,6 @@ static pci_ers_result_t aer_root_reset(struct pci_dev *dev)
+>   */
+>  static void aer_error_resume(struct pci_dev *dev)
+>  {
+> -	int pos;
+> -	u32 status, mask;
+>  	u16 reg16;
+>  
+>  	/* Clean up Root device status */
+> @@ -350,11 +348,7 @@ static void aer_error_resume(struct pci_dev *dev)
+>  	pcie_capability_write_word(dev, PCI_EXP_DEVSTA, reg16);
+>  
+>  	/* Clean AER Root Error Status */
+> -	pos = dev->aer_cap;
+> -	pci_read_config_dword(dev, pos + PCI_ERR_UNCOR_STATUS, &status);
+> -	pci_read_config_dword(dev, pos + PCI_ERR_UNCOR_SEVER, &mask);
+> -	status &= ~mask; /* Clear corresponding nonfatal bits */
+> -	pci_write_config_dword(dev, pos + PCI_ERR_UNCOR_STATUS, status);
+> +	pci_cleanup_aer_uncorrect_error_status(dev);
+>  }
+>  
+>  /**
+> diff --git a/drivers/pci/pcie/aer/aerdrv_core.c b/drivers/pci/pcie/aer/aerdrv_core.c
+> index 946f3f6..309f3f5 100644
+> --- a/drivers/pci/pcie/aer/aerdrv_core.c
+> +++ b/drivers/pci/pcie/aer/aerdrv_core.c
+> @@ -50,13 +50,17 @@ EXPORT_SYMBOL_GPL(pci_disable_pcie_error_reporting);
+>  int pci_cleanup_aer_uncorrect_error_status(struct pci_dev *dev)
+>  {
+>  	int pos;
+> -	u32 status;
+> +	u32 status, mask;
+>  
+>  	pos = dev->aer_cap;
+>  	if (!pos)
+>  		return -EIO;
+>  
+> +	/* Clean AER Root Error Status */
+> +	pos = dev->aer_cap;
+>  	pci_read_config_dword(dev, pos + PCI_ERR_UNCOR_STATUS, &status);
+> +	pci_read_config_dword(dev, pos + PCI_ERR_UNCOR_SEVER, &mask);
+> +	status &= ~mask; /* Clear corresponding nonfatal bits */
+>  	if (status)
+>  		pci_write_config_dword(dev, pos + PCI_ERR_UNCOR_STATUS, status);
+>  
+> -- 
+> 2.7.4
+> 
