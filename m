@@ -1,78 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 4jPnNUtIGVtCRwAAmS7hNA
-	; Thu, 07 Jun 2018 14:59:50 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id usILGdJJGVteUgAAmS7hNA
+	; Thu, 07 Jun 2018 15:06:16 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id CD8B6608CE; Thu,  7 Jun 2018 14:59:49 +0000 (UTC)
+	id 43482608B8; Thu,  7 Jun 2018 15:06:16 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 65D4E6074D;
-	Thu,  7 Jun 2018 14:59:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 65D4E6074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id AAD956063F;
+	Thu,  7 Jun 2018 15:06:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AAD956063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935749AbeFGO7r (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:59:47 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:33474 "EHLO
-        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S935702AbeFGO7l (ORCPT
+        id S936054AbeFGPFo (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:05:44 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41570 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933405AbeFGPEH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:59:41 -0400
-Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id w57EwNCV019460;
-        Thu, 7 Jun 2018 17:58:24 +0300
-Received: by taln60.nuvoton.co.il (Postfix, from userid 8441)
-        id B12C762FF3; Thu,  7 Jun 2018 17:58:23 +0300 (IDT)
-From: avifishman70@gmail.com
-To: gregkh@linuxfoundation.org, stern@rowland.harvard.edu
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, venture@google.com,
-        yuenn@google.com, brendanhiggins@google.com,
-        mathias.nyman@linux.intel.com, bjorn.andersson@linaro.org,
-        jhogan@kernel.org, albeu@free.fr, chunfeng.yun@mediatek.com,
-        tony@atomide.com, baolu.lu@linux.intel.com, elder@linaro.org,
-        digetx@gmail.com, kstewart@linuxfoundation.org,
-        hdegoede@redhat.com, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, openbmc@lists.ozlabs.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, Avi Fishman <AviFishman70@gmail.com>
-Subject: [PATCH v4 3/3] MAINTAINERS: add subfolders for nuvoton *npcm*
-Date: Thu,  7 Jun 2018 17:58:21 +0300
-Message-Id: <20180607145821.322979-4-avifishman70@gmail.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180607145821.322979-1-avifishman70@gmail.com>
-References: <20180607145821.322979-1-avifishman70@gmail.com>
+        Thu, 7 Jun 2018 11:04:07 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbb-0005hK-Jz; Thu, 07 Jun 2018 15:09:35 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb8-00034a-4e; Thu, 07 Jun 2018 15:09:06 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        syzbot+d7a918a7a8e1c952bc36@syzkaller.appspotmail.com,
+        "Yisheng Xie" <xieyisheng1@huawei.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.410679082@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 249/410] staging: android: ashmem: Fix possible
+ deadlock in ashmem_ioctl
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Avi Fishman <AviFishman70@gmail.com>
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Avi Fishman <AviFishman70@gmail.com>
+------------------
+
+From: Yisheng Xie <xieyisheng1@huawei.com>
+
+commit 740a5759bf222332fbb5eda42f89aa25ba38f9b2 upstream.
+
+ashmem_mutex may create a chain of dependencies like:
+
+CPU0                                    CPU1
+ mmap syscall                           ioctl syscall
+ -> mmap_sem (acquired)                 -> ashmem_ioctl
+ -> ashmem_mmap                            -> ashmem_mutex (acquired)
+    -> ashmem_mutex (try to acquire)       -> copy_from_user
+                                              -> mmap_sem (try to acquire)
+
+There is a lock odering problem between mmap_sem and ashmem_mutex causing
+a lockdep splat[1] during a syzcaller test. This patch fixes the problem
+by move copy_from_user out of ashmem_mutex.
+
+[1] https://www.spinics.net/lists/kernel/msg2733200.html
+
+Fixes: ce8a3a9e76d0 (staging: android: ashmem: Fix a race condition in pin ioctls)
+Reported-by: syzbot+d7a918a7a8e1c952bc36@syzkaller.appspotmail.com
+Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- MAINTAINERS | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/staging/android/ashmem.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e0ce3c5f32e5..23c450adad44 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1727,7 +1727,10 @@ F:	arch/arm/mach-npcm/
- F:	arch/arm/boot/dts/nuvoton-npcm*
- F:	include/dt-bindings/clock/nuvoton,npcm7xx-clks.h
- F:	drivers/*/*npcm*
-+F:	drivers/*/*/*npcm*
- F:	Documentation/*/*npcm*
-+F:	Documentation/*/*/*npcm*
-+F:	Documentation/*/*/*/*npcm*
+--- a/drivers/staging/android/ashmem.c
++++ b/drivers/staging/android/ashmem.c
+@@ -703,16 +703,14 @@ static int ashmem_pin_unpin(struct ashme
+ 	size_t pgstart, pgend;
+ 	int ret = -EINVAL;
  
- ARM/NUVOTON W90X900 ARM ARCHITECTURE
- M:	Wan ZongShun <mcuos.com@gmail.com>
--- 
-2.14.1
++	if (unlikely(copy_from_user(&pin, p, sizeof(pin))))
++		return -EFAULT;
++
+ 	mutex_lock(&ashmem_mutex);
+ 
+ 	if (unlikely(!asma->file))
+ 		goto out_unlock;
+ 
+-	if (unlikely(copy_from_user(&pin, p, sizeof(pin)))) {
+-		ret = -EFAULT;
+-		goto out_unlock;
+-	}
+-
+ 	/* per custom, you can pass zero for len to mean "everything onward" */
+ 	if (!pin.len)
+ 		pin.len = PAGE_ALIGN(asma->size) - pin.offset;
