@@ -1,111 +1,253 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id j33dHYT4GFsAVgAAmS7hNA
-	; Thu, 07 Jun 2018 09:19:34 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id HejdGpc+GVsdSgAAmS7hNA
+	; Thu, 07 Jun 2018 14:17:59 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 0B4B1607F7; Thu,  7 Jun 2018 09:19:34 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="H6FxfGxg"
+	id 4C491608C8; Thu,  7 Jun 2018 14:17:59 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id E6473606DD;
-	Thu,  7 Jun 2018 09:19:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E6473606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 6D1396089E;
+	Thu,  7 Jun 2018 14:17:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6D1396089E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753669AbeFGJTa (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 05:19:30 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:42637 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751472AbeFGJT0 (ORCPT
+        id S933406AbeFGOR4 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:17:56 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39527 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933095AbeFGOJN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 05:19:26 -0400
-Received: by mail-pf0-f193.google.com with SMTP id w7-v6so4606862pfn.9
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 02:19:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=zUteiuLZGZl1vPXeKOE12kMgvdfGFTtlrpEiUqgjJ9Y=;
-        b=H6FxfGxgAwB/jvB/2LihDTFAGXV03CzcadEVInmZ/Q/9N7cTx2EA29gPWtB62N9XPE
-         o314pwz8lpb2q6eTK2tvbUDl0U5QiHGpEbl/obGmr5ZdtmjD605YYuk9/J37l0uQdwvZ
-         UGsmSMdHa+XNYE0dms4E0FJzv5reO76jmJx7U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zUteiuLZGZl1vPXeKOE12kMgvdfGFTtlrpEiUqgjJ9Y=;
-        b=XMTe8B4NycZpv3HqXT+kuoQaW0+sualJMrpFdd72Iimj/+goQnz0zlXp6t/0TjFkQc
-         sMyofIhJsSUXteEJyku+UHlpaoMiRGJq4jBis7TzNPrf8iZ3sgFzFt1A37K2XcEbvP/g
-         tLC9nhbSmrn4+YaJe0NAa7Gde0Zu4Euky3/Fl7iVE8pooNxSBZmkrPRSLOeMdnQWGzNk
-         3HUPkefjXborG1trE1p1PZ1sk95lo1EaM+zgz5Yet+YxWvISq9yTgrOpbJu09WJNBK5b
-         I+GnmbuaMAXesSzOgfCQbDJGqkqa5cFd6p2oa1uWnS9cGh0a6UqwTaccwmDUQE4a4hyx
-         xUBw==
-X-Gm-Message-State: APt69E1llaoQoC4HyRDphbxH8r4Sk4Wh7OJRu18C27GMQuNp/V1aMKRi
-        xr5Vy4XU+kc+4sdqrl1DrJqmFA==
-X-Google-Smtp-Source: ADUXVKLA7CqBDm8P4M23o8R8ho+kCaG76nKfnFmGt4IT5TeKgPjNZCT+Fn4ojY/bVCnwEAtQpnETMA==
-X-Received: by 2002:a62:db05:: with SMTP id f5-v6mr1026059pfg.123.1528363166013;
-        Thu, 07 Jun 2018 02:19:26 -0700 (PDT)
-Received: from localhost ([122.172.167.207])
-        by smtp.gmail.com with ESMTPSA id h124-v6sm3199478pfc.100.2018.06.07.02.19.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Jun 2018 02:19:25 -0700 (PDT)
-Date: Thu, 7 Jun 2018 14:49:23 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: Bernd Petrovitsch <bernd@petrovitsch.priv.at>,
-        "Du, Changbin" <changbin.du@intel.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        gregkh@linuxfoundation.org, alex.elder@linaro.org,
-        kbuild test robot <lkp@intel.com>,
-        linux-arch@vger.kernel.org, michal.lkml@markovi.net,
-        linux-kernel@vger.kernel.org, arnd@arndb.de,
-        yamada.masahiro@socionext.com, lgirdwood@gmail.com,
-        broonie@kernel.org, rdunlap@infradead.org, x86@kernel.org,
-        linux@armlinux.org.uk, linux-sparse@vger.kernel.org,
-        mingo@redhat.com, kbuild-all@01.org, akpm@linux-foundation.org,
-        changbin.du@gmail.com, tglx@linutronix.de,
-        linux-kbuild@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 2/4] kernel hacking: new config NO_AUTO_INLINE to
- disable compiler auto-inline optimizations
-Message-ID: <20180607091923.n5q5uzsxuymy3vov@vireshk-i7>
-References: <201806060501.btF3aJMZ%fengguang.wu@intel.com>
- <20180606095714.1d3c2def@vmware.local.home>
- <20180606142600.GN13775@localhost>
- <20180606142622.2338abf6@vmware.local.home>
- <20180607041718.qpqucjzlvcm5h3gn@vireshk-i7>
- <20180607074628.kd3iyxevwj3ypzbr@intel.com>
- <20180607083856.ealw62v3wx43zeqz@vireshk-i7>
- <1303b1abf9f9229a8d3ccbb68a3e413266b360d7.camel@petrovitsch.priv.at>
- <20180607091025.m7dfix3e2xbwx4cs@vireshk-i7>
- <20180607091816.GT13775@localhost>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Thu, 7 Jun 2018 10:09:13 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbD-0005Zj-DY; Thu, 07 Jun 2018 15:09:11 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb9-00038T-RH; Thu, 07 Jun 2018 15:09:07 +0100
+Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
-In-Reply-To: <20180607091816.GT13775@localhost>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Sven Eckelmann" <sven@narfation.org>,
+        "Simon Wunderlich" <sw@simonwunderlich.de>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.247963666@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 285/410] batman-adv: Fix internal interface indices types
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07-06-18, 11:18, Johan Hovold wrote:
-> If you want to work around the warning and think you can do it in some
-> non-contrived way, then go for it.
-> 
-> Clearing the request buffer, checking for termination using strnlen, and
-> then using memcpy might not be too bad.
-> 
-> But after all, it is a false positive, so leaving things as they stand
-> is fine too.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Leave it then :)
+------------------
 
--- 
-viresh
+From: Sven Eckelmann <sven@narfation.org>
+
+commit f22e08932c2960f29b5e828e745c9f3fb7c1bb86 upstream.
+
+batman-adv uses internal indices for each enabled and active interface.
+It is currently used by the B.A.T.M.A.N. IV algorithm to identifify the
+correct position in the ogm_cnt bitmaps.
+
+The type for the number of enabled interfaces (which defines the next
+interface index) was set to char. This type can be (depending on the
+architecture) either signed (limiting batman-adv to 127 active slave
+interfaces) or unsigned (limiting batman-adv to 255 active slave
+interfaces).
+
+This limit was not correctly checked when an interface was enabled and thus
+an overflow happened. This was only catched on systems with the signed char
+type when the B.A.T.M.A.N. IV code tried to resize its counter arrays with
+a negative size.
+
+The if_num interface index was only a s16 and therefore significantly
+smaller than the ifindex (int) used by the code net code.
+
+Both &batadv_hard_iface->if_num and &batadv_priv->num_ifaces must be
+(unsigned) int to support the same number of slave interfaces as the net
+core code. And the interface activation code must check the number of
+active slave interfaces to avoid integer overflows.
+
+Fixes: c6c8fea29769 ("net: Add batman-adv meshing protocol")
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+[bwh: Backported to 3.16:
+ - Drop changes in batadv_iv_ogm_{drop_bcast_{own,sum}_entry,orig_get}()
+ - Adjust context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+--- a/net/batman-adv/bat_iv_ogm.c
++++ b/net/batman-adv/bat_iv_ogm.c
+@@ -105,7 +105,7 @@ static void batadv_iv_ogm_orig_free(stru
+  * Returns 0 on success, a negative error code otherwise.
+  */
+ static int batadv_iv_ogm_orig_add_if(struct batadv_orig_node *orig_node,
+-				     int max_if_num)
++				     unsigned int max_if_num)
+ {
+ 	void *data_ptr;
+ 	size_t data_size, old_size;
+@@ -150,7 +150,8 @@ unlock:
+  * Returns 0 on success, a negative error code otherwise.
+  */
+ static int batadv_iv_ogm_orig_del_if(struct batadv_orig_node *orig_node,
+-				     int max_if_num, int del_if_num)
++				     unsigned int max_if_num,
++				     unsigned int del_if_num)
+ {
+ 	int chunk_size,  ret = -ENOMEM, if_offset;
+ 	void *data_ptr = NULL;
+@@ -867,7 +868,7 @@ batadv_iv_ogm_slide_own_bcast_window(str
+ 	uint32_t i;
+ 	size_t word_index;
+ 	uint8_t *w;
+-	int if_num;
++	unsigned int if_num;
+ 
+ 	for (i = 0; i < hash->size; i++) {
+ 		head = &hash->table[i];
+@@ -977,7 +978,7 @@ batadv_iv_ogm_orig_update(struct batadv_
+ 	struct batadv_neigh_node *neigh_node = NULL, *tmp_neigh_node = NULL;
+ 	struct batadv_neigh_node *router = NULL;
+ 	struct batadv_orig_node *orig_node_tmp;
+-	int if_num;
++	unsigned int if_num;
+ 	uint8_t sum_orig, sum_neigh;
+ 	uint8_t *neigh_addr;
+ 	uint8_t tq_avg;
+@@ -1134,7 +1135,8 @@ static int batadv_iv_ogm_calc_tq(struct
+ 	uint8_t total_count;
+ 	uint8_t orig_eq_count, neigh_rq_count, neigh_rq_inv, tq_own;
+ 	unsigned int neigh_rq_inv_cube, neigh_rq_max_cube;
+-	int if_num, ret = 0;
++	unsigned int if_num;
++	int ret = 0;
+ 	unsigned int tq_asym_penalty, inv_asym_penalty;
+ 	unsigned int combined_tq;
+ 	unsigned int tq_iface_penalty;
+@@ -1641,9 +1643,9 @@ static void batadv_iv_ogm_process(const
+ 
+ 	if (is_my_orig) {
+ 		unsigned long *word;
+-		int offset;
++		size_t offset;
+ 		int32_t bit_pos;
+-		int16_t if_num;
++		unsigned int if_num;
+ 		uint8_t *weight;
+ 
+ 		orig_neigh_node = batadv_iv_ogm_orig_get(bat_priv,
+--- a/net/batman-adv/hard-interface.c
++++ b/net/batman-adv/hard-interface.c
+@@ -411,6 +411,11 @@ int batadv_hardif_enable_interface(struc
+ 	hard_iface->soft_iface = soft_iface;
+ 	bat_priv = netdev_priv(hard_iface->soft_iface);
+ 
++	if (bat_priv->num_ifaces >= UINT_MAX) {
++		ret = -ENOSPC;
++		goto err_dev;
++	}
++
+ 	ret = netdev_master_upper_dev_link(hard_iface->net_dev, soft_iface);
+ 	if (ret)
+ 		goto err_dev;
+@@ -514,7 +519,7 @@ void batadv_hardif_disable_interface(str
+ 	dev_put(hard_iface->soft_iface);
+ 
+ 	/* nobody uses this interface anymore */
+-	if (!bat_priv->num_ifaces) {
++	if (bat_priv->num_ifaces == 0) {
+ 		batadv_gw_check_client_stop(bat_priv);
+ 
+ 		if (autodel == BATADV_IF_CLEANUP_AUTO)
+@@ -571,7 +576,7 @@ batadv_hardif_add_interface(struct net_d
+ 	if (ret)
+ 		goto free_if;
+ 
+-	hard_iface->if_num = -1;
++	hard_iface->if_num = 0;
+ 	hard_iface->net_dev = net_dev;
+ 	hard_iface->soft_iface = NULL;
+ 	hard_iface->if_status = BATADV_IF_NOT_IN_USE;
+--- a/net/batman-adv/originator.c
++++ b/net/batman-adv/originator.c
+@@ -1069,7 +1069,7 @@ out:
+ }
+ 
+ int batadv_orig_hash_add_if(struct batadv_hard_iface *hard_iface,
+-			    int max_if_num)
++			    unsigned int max_if_num)
+ {
+ 	struct batadv_priv *bat_priv = netdev_priv(hard_iface->soft_iface);
+ 	struct batadv_algo_ops *bao = bat_priv->bat_algo_ops;
+@@ -1105,7 +1105,7 @@ err:
+ }
+ 
+ int batadv_orig_hash_del_if(struct batadv_hard_iface *hard_iface,
+-			    int max_if_num)
++			    unsigned int max_if_num)
+ {
+ 	struct batadv_priv *bat_priv = netdev_priv(hard_iface->soft_iface);
+ 	struct batadv_hashtable *hash = bat_priv->orig_hash;
+--- a/net/batman-adv/originator.h
++++ b/net/batman-adv/originator.h
+@@ -58,9 +58,9 @@ void batadv_orig_ifinfo_free_ref(struct
+ int batadv_orig_seq_print_text(struct seq_file *seq, void *offset);
+ int batadv_orig_hardif_seq_print_text(struct seq_file *seq, void *offset);
+ int batadv_orig_hash_add_if(struct batadv_hard_iface *hard_iface,
+-			    int max_if_num);
++			    unsigned int max_if_num);
+ int batadv_orig_hash_del_if(struct batadv_hard_iface *hard_iface,
+-			    int max_if_num);
++			    unsigned int max_if_num);
+ struct batadv_orig_node_vlan *
+ batadv_orig_node_vlan_new(struct batadv_orig_node *orig_node,
+ 			  unsigned short vid);
+--- a/net/batman-adv/types.h
++++ b/net/batman-adv/types.h
+@@ -89,7 +89,7 @@ struct batadv_hard_iface_bat_iv {
+  */
+ struct batadv_hard_iface {
+ 	struct list_head list;
+-	int16_t if_num;
++	unsigned int if_num;
+ 	char if_status;
+ 	struct net_device *net_dev;
+ 	uint8_t num_bcasts;
+@@ -795,7 +795,7 @@ struct batadv_priv {
+ 	atomic_t bcast_seqno;
+ 	atomic_t bcast_queue_left;
+ 	atomic_t batman_queue_left;
+-	char num_ifaces;
++	unsigned int num_ifaces;
+ 	struct kobject *mesh_obj;
+ 	struct dentry *debug_dir;
+ 	struct hlist_head forw_bat_list;
+@@ -1166,9 +1166,10 @@ struct batadv_algo_ops {
+ 			       struct batadv_hard_iface *hard_iface);
+ 	void (*bat_orig_free)(struct batadv_orig_node *orig_node);
+ 	int (*bat_orig_add_if)(struct batadv_orig_node *orig_node,
+-			       int max_if_num);
++			       unsigned int max_if_num);
+ 	int (*bat_orig_del_if)(struct batadv_orig_node *orig_node,
+-			       int max_if_num, int del_if_num);
++			       unsigned int max_if_num,
++			       unsigned int del_if_num);
+ };
+ 
+ /**
