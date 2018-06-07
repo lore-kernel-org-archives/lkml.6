@@ -1,133 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id zuQoF13sGFtzcAAAmS7hNA
-	; Thu, 07 Jun 2018 08:27:09 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id UmrFE3hLGVs9WwAAmS7hNA
+	; Thu, 07 Jun 2018 15:13:32 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 4DCCC607F7; Thu,  7 Jun 2018 08:27:09 +0000 (UTC)
+	id 5CC506089E; Thu,  7 Jun 2018 15:13:32 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id B8D856063F;
-	Thu,  7 Jun 2018 08:27:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B8D856063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 18381601B4;
+	Thu,  7 Jun 2018 15:13:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 18381601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932768AbeFGI1E (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 04:27:04 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:44451 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932626AbeFGI03 (ORCPT
+        id S964891AbeFGPCQ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:02:16 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41431 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935113AbeFGPCK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 04:26:29 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w578P9Hw2128028
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 7 Jun 2018 01:25:09 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w578P9Au2128025;
-        Thu, 7 Jun 2018 01:25:09 -0700
-Date: Thu, 7 Jun 2018 01:25:09 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From: tip-bot for Jin Yao <tipbot@zytor.com>
-Message-ID: <tip-5f9e0f3158a5cd0ef7bb205b9f1826b2ec1893a9@git.kernel.org>
-Cc: ak@linux.intel.com, hpa@zytor.com, acme@redhat.com,
-        kan.liang@linux.intel.com, yao.jin@linux.intel.com,
-        linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com,
-        tglx@linutronix.de, peterz@infradead.org, jolsa@kernel.org,
-        mingo@kernel.org
-Reply-To: peterz@infradead.org, jolsa@kernel.org, mingo@kernel.org,
-          linux-kernel@vger.kernel.org, tglx@linutronix.de,
-          alexander.shishkin@linux.intel.com, acme@redhat.com,
-          kan.liang@linux.intel.com, yao.jin@linux.intel.com,
-          ak@linux.intel.com, hpa@zytor.com
-In-Reply-To: <1527843663-32288-2-git-send-email-yao.jin@linux.intel.com>
-References: <1527843663-32288-2-git-send-email-yao.jin@linux.intel.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf script python: Move dsoname code to a new
- function
-Git-Commit-ID: 5f9e0f3158a5cd0ef7bb205b9f1826b2ec1893a9
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+        Thu, 7 Jun 2018 11:02:10 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbY-0005hJ-SX; Thu, 07 Jun 2018 15:09:33 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb9-00036a-9j; Thu, 07 Jun 2018 15:09:07 +0100
+Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Andy Lutomirski" <luto@kernel.org>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Juergen Gross" <jgross@suse.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Josh Poimboeuf" <jpoimboe@redhat.com>,
+        "Denys Vlasenko" <dvlasenk@redhat.com>,
+        "Jan Beulich" <JBeulich@suse.com>,
+        "Ingo Molnar" <mingo@kernel.org>,
+        "Brian Gerst" <brgerst@gmail.com>,
+        "Jan Beulich" <jbeulich@suse.com>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Borislav Petkov" <bp@alien8.de>,
+        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.494514515@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 273/410] x86/mm: Fix {pmd,pud}_{set,clear}_flags()
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5f9e0f3158a5cd0ef7bb205b9f1826b2ec1893a9
-Gitweb:     https://git.kernel.org/tip/5f9e0f3158a5cd0ef7bb205b9f1826b2ec1893a9
-Author:     Jin Yao <yao.jin@linux.intel.com>
-AuthorDate: Fri, 1 Jun 2018 17:01:01 +0800
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 6 Jun 2018 12:52:09 -0300
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-perf script python: Move dsoname code to a new function
+------------------
 
-This patch creates a new function get_dsoname() and move the code which
-gets the dsoname string to this function.
+From: Jan Beulich <JBeulich@suse.com>
 
-That's because in next patch, when we process LBR data, we will also
-need get_dsoname() to return dsoname for branch from/to.
+commit 842cef9113c2120f74f645111ded1e020193d84c upstream.
 
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
-Reviewed-by: Andi Kleen <ak@linux.intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
+Just like pte_{set,clear}_flags() their PMD and PUD counterparts should
+not do any address translation. This was outright wrong under Xen
+(causing a dead boot with no useful output on "suitable" systems), and
+produced needlessly more complicated code (even if just slightly) when
+paravirt was enabled.
+
+Signed-off-by: Jan Beulich <jbeulich@suse.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1527843663-32288-2-git-send-email-yao.jin@linux.intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Link: http://lkml.kernel.org/r/5A8AF1BB02000078001A91C3@prv-mh.provo.novell.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+[bwh: Backported to 3.16:
+ - There aren't any pud_{set,clear}_flags() functions
+ - There's no p4d level]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- .../util/scripting-engines/trace-event-python.c    | 23 ++++++++++++++--------
- 1 file changed, 15 insertions(+), 8 deletions(-)
-
-diff --git a/tools/perf/util/scripting-engines/trace-event-python.c b/tools/perf/util/scripting-engines/trace-event-python.c
-index 7f8afacd08ee..f863e96fb7bc 100644
---- a/tools/perf/util/scripting-engines/trace-event-python.c
-+++ b/tools/perf/util/scripting-engines/trace-event-python.c
-@@ -372,6 +372,19 @@ static PyObject *get_field_numeric_entry(struct event_format *event,
- 	return obj;
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -263,14 +263,14 @@ static inline pmd_t pmd_set_flags(pmd_t
+ {
+ 	pmdval_t v = native_pmd_val(pmd);
+ 
+-	return __pmd(v | set);
++	return native_make_pmd(v | set);
  }
  
-+static const char *get_dsoname(struct map *map)
+ static inline pmd_t pmd_clear_flags(pmd_t pmd, pmdval_t clear)
+ {
+ 	pmdval_t v = native_pmd_val(pmd);
+ 
+-	return __pmd(v & ~clear);
++	return native_make_pmd(v & ~clear);
+ }
+ 
+ static inline pmd_t pmd_mkold(pmd_t pmd)
+--- a/arch/x86/include/asm/pgtable_types.h
++++ b/arch/x86/include/asm/pgtable_types.h
+@@ -321,6 +321,11 @@ static inline pmdval_t native_pmd_val(pm
+ #else
+ #include <asm-generic/pgtable-nopmd.h>
+ 
++static inline pmd_t native_make_pmd(pmdval_t val)
 +{
-+	const char *dsoname = "[unknown]";
-+
-+	if (map && map->dso) {
-+		if (symbol_conf.show_kernel_path && map->dso->long_name)
-+			dsoname = map->dso->long_name;
-+		else
-+			dsoname = map->dso->name;
-+	}
-+
-+	return dsoname;
++	return (pmd_t) { .pud.pgd = native_make_pgd(val) };
 +}
- 
- static PyObject *python_process_callchain(struct perf_sample *sample,
- 					 struct perf_evsel *evsel,
-@@ -427,14 +440,8 @@ static PyObject *python_process_callchain(struct perf_sample *sample,
- 		}
- 
- 		if (node->map) {
--			struct map *map = node->map;
--			const char *dsoname = "[unknown]";
--			if (map && map->dso) {
--				if (symbol_conf.show_kernel_path && map->dso->long_name)
--					dsoname = map->dso->long_name;
--				else
--					dsoname = map->dso->name;
--			}
-+			const char *dsoname = get_dsoname(node->map);
 +
- 			pydict_set_item_string_decref(pyelem, "dso",
- 					_PyUnicode_FromString(dsoname));
- 		}
+ static inline pmdval_t native_pmd_val(pmd_t pmd)
+ {
+ 	return native_pgd_val(pmd.pud.pgd);
