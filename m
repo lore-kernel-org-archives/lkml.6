@@ -1,167 +1,206 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id VlPYMtOFHlvALwAAmS7hNA
-	; Mon, 11 Jun 2018 14:23:43 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id rhl5Cj1CGVtHeQAAmS7hNA
+	; Thu, 07 Jun 2018 14:33:59 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 3D984607A4; Mon, 11 Jun 2018 14:23:43 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YiYGMkML"
+	id A5520607E7; Thu,  7 Jun 2018 14:33:59 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id BAC1860541;
-	Mon, 11 Jun 2018 14:23:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BAC1860541
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 05C59601D2;
+	Thu,  7 Jun 2018 14:33:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 05C59601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934205AbeFKOW1 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 10:22:27 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45392 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933499AbeFKOGw (ORCPT
+        id S933935AbeFGOd5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:33:57 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49134 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933398AbeFGOdx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:06:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=TZ3/gaq6XS6yRX727fCrlQmNfcqbJPfvdc+FduOIwpI=; b=YiYGMkML2TP6QrHAOotEIc/Iw
-        l7Q3bbAMEQIubujejBI60eDPOtbr+ZxiI0CKH7qkxCNs1ARFZ4YljMs8cT55WJhCxAaNdccgQTQRT
-        sab92D61SOpyLqfjvzbCxiXLpC67uibJHdUcPFXDXA4rZLyGN06zvmk7K96YUB80nIL/KNtQbKR8J
-        dzMrG93s6enYV7X4+niS795fg5vHqWEPauU3FprP9EApeDVop+dnmi56Hw9R6H53dVoxVrhVDA/3o
-        LzVV5WEgiBNgGq5FEQr2VKzEQU1fXe+lh0Z+SrCDtXl7loU+o3pyHOUBDxaizXEJAD5TjfHcXzhYP
-        EUoHcnFCw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSNTA-0004hb-6b; Mon, 11 Jun 2018 14:06:52 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Lukas Czerner <lczerner@redhat.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v13 29/72] page cache: Convert filemap_map_pages to XArray
-Date: Mon, 11 Jun 2018 07:05:56 -0700
-Message-Id: <20180611140639.17215-30-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
-References: <20180611140639.17215-1-willy@infradead.org>
+        Thu, 7 Jun 2018 10:33:53 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w57EXpRa072536
+        for <linux-kernel@vger.kernel.org>; Thu, 7 Jun 2018 10:33:53 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jf4n5f305-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 10:33:52 -0400
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.vnet.ibm.com>;
+        Thu, 7 Jun 2018 10:33:51 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 7 Jun 2018 10:33:47 -0400
+Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w57EXjse65929268
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 7 Jun 2018 14:33:45 GMT
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1CE93124058;
+        Thu,  7 Jun 2018 11:35:10 -0400 (EDT)
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0A1EA12405A;
+        Thu,  7 Jun 2018 11:35:09 -0400 (EDT)
+Received: from oc8043147753.ibm.com (unknown [9.85.135.133])
+        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu,  7 Jun 2018 11:35:08 -0400 (EDT)
+Subject: Re: [PATCH v5 10/13] s390: vfio-ap: sysfs interface to view matrix
+ mdev matrix
+To: Halil Pasic <pasic@linux.ibm.com>, pmorel@linux.ibm.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1525705912-12815-11-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <a6bba129-8a3c-a848-65aa-b67816bf2d25@linux.ibm.com>
+ <53275110-45fb-d50f-c97e-93141378f094@linux.vnet.ibm.com>
+ <89bda651-d465-af50-a737-1900a54b01c8@linux.ibm.com>
+ <6f67a282-773d-3fca-5b36-cc23ad49ba5b@linux.vnet.ibm.com>
+ <32340d2a-bea6-bdb1-38a6-76afe3d54672@linux.ibm.com>
+ <624dcbbf-5f40-6f27-b173-a4c533dd7781@linux.vnet.ibm.com>
+ <4f42fa11-e9cc-20a9-3068-b103a8ead644@linux.ibm.com>
+ <525163cf-d656-b146-05b6-2efbbd2f5a9d@linux.vnet.ibm.com>
+ <adc6b4cd-e104-98fa-6d1b-29bd2a638e5c@linux.ibm.com>
+From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Date: Thu, 7 Jun 2018 10:33:43 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+In-Reply-To: <adc6b4cd-e104-98fa-6d1b-29bd2a638e5c@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18060714-0060-0000-0000-00000279CC30
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009146; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000265; SDB=6.01043529; UDB=6.00534332; IPR=6.00822627;
+ MB=3.00021513; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-07 14:33:49
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18060714-0061-0000-0000-0000455F14CE
+Message-Id: <93e5df44-8f31-7a3e-227e-8e6425062892@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-07_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806070165
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+On 06/07/2018 09:16 AM, Halil Pasic wrote:
+>
+>
+> On 06/07/2018 02:53 PM, Tony Krowiak wrote:
+>>>>> 2) As I said above, what you show is not the effective mask used 
+>>>>> by the guest
+>>>>
+>>>> Why would a sysfs attribute for the mediated matrix device show the 
+>>>> effective
+>>>> mask used by the guest?
+>>>
+>>> OK, bad word, "effective", replace with "really".
+>>>
+>>> We do not implement any kind of provisioning nor do we implement update
+>>> of the CRYCB at any point after the first mediated device open.
+>>
+>> I think this is a way we might be able to hot plug/unplug devices.
+>>
+>>>
+>>>
+>>> Binding a queue and updating the mask can be done at any time (may 
+>>> be we should change this ?)
+>>
+>> As I said above, I think we can utilize this as a means of hot 
+>> plugging/unplugging AP
+>> adapters and domains. If the guest is running when an adapter or 
+>> domain is assigned,
+>> we can update the guest's CRYCB at that time.
+>>
+>>>
+>>>
+>>> What is the point of showing a matrix which will never be used by 
+>>> the guest?
+>>
+>> That is simply not true. The matrix WILL be used by a guest the next time a 
+>>
+>> guest is configured with a vfio-ap device referencing the path to the
+>> mediated matrix device - i.e., -device vfio-ap,sysfsdev=$PATH. The point
+>> is to show the matrix assigned to the mediated matrix device. In my 
+>> mind, the
+>> mediated matrix device is a separate object from the guest. Sure it is used 
+>>
+>> to configure a guest's matrix when the guest is started, but it could 
+>> be used
+>> to configure the matrix for any guest; it has no direct connection to a
+>> particular guest until a guest using the device is started. IMHO the sysfs 
+>>
+>> attributes for the mediated matrix device reflect only the attributes of
+>> the device, not the attributes of a guest.
+>
+> So bottom line is what? Is the interface going to change so that 
+> modifications
+> to the mdev's matrix will be reflected immediately -- to support 
+> hotplug of
+> domains and ap cards?
+>
+>
+> Or are you intending to keep the interface as is?
 
-Slight change of strategy here; if we have trouble getting hold of a
-page for whatever reason (eg a compound page is split underneath us),
-don't spin to stabilise the page, just continue the iteration, like we
-would if we failed to trylock the page.  Since this is a speculative
-optimisation, it feels like we should allow the process to take an extra
-fault if it turns out to need this page instead of spending time to pin
-down a page it may not need.
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
----
- mm/filemap.c | 42 +++++++++++++-----------------------------
- 1 file changed, 13 insertions(+), 29 deletions(-)
+I have been looking in to hot plug/unplug. I am in the exploratory phase and
+have not yet come up with a concrete plan, but I believe we will be able to
+hot plug/unplug adapters and domains using the sysfs attributes interfaces
+for the mediated matrix device.
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 67f04bcdf9ef..4204d9df003b 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2516,45 +2516,31 @@ EXPORT_SYMBOL(filemap_fault);
- void filemap_map_pages(struct vm_fault *vmf,
- 		pgoff_t start_pgoff, pgoff_t end_pgoff)
- {
--	struct radix_tree_iter iter;
--	void **slot;
- 	struct file *file = vmf->vma->vm_file;
- 	struct address_space *mapping = file->f_mapping;
- 	pgoff_t last_pgoff = start_pgoff;
- 	unsigned long max_idx;
-+	XA_STATE(xas, &mapping->i_pages, start_pgoff);
- 	struct page *head, *page;
- 
- 	rcu_read_lock();
--	radix_tree_for_each_slot(slot, &mapping->i_pages, &iter, start_pgoff) {
--		if (iter.index > end_pgoff)
--			break;
--repeat:
--		page = radix_tree_deref_slot(slot);
--		if (unlikely(!page))
--			goto next;
--		if (radix_tree_exception(page)) {
--			if (radix_tree_deref_retry(page)) {
--				slot = radix_tree_iter_retry(&iter);
--				continue;
--			}
-+	xas_for_each(&xas, page, end_pgoff) {
-+		if (xas_retry(&xas, page))
-+			continue;
-+		if (xa_is_value(page))
- 			goto next;
--		}
- 
- 		head = compound_head(page);
- 		if (!page_cache_get_speculative(head))
--			goto repeat;
-+			goto next;
- 
- 		/* The page was split under us? */
--		if (compound_head(page) != head) {
--			put_page(head);
--			goto repeat;
--		}
-+		if (compound_head(page) != head)
-+			goto skip;
- 
- 		/* Has the page moved? */
--		if (unlikely(page != *slot)) {
--			put_page(head);
--			goto repeat;
--		}
-+		if (unlikely(page != xas_reload(&xas)))
-+			goto skip;
- 
- 		if (!PageUptodate(page) ||
- 				PageReadahead(page) ||
-@@ -2573,10 +2559,10 @@ void filemap_map_pages(struct vm_fault *vmf,
- 		if (file->f_ra.mmap_miss > 0)
- 			file->f_ra.mmap_miss--;
- 
--		vmf->address += (iter.index - last_pgoff) << PAGE_SHIFT;
-+		vmf->address += (xas.xa_index - last_pgoff) << PAGE_SHIFT;
- 		if (vmf->pte)
--			vmf->pte += iter.index - last_pgoff;
--		last_pgoff = iter.index;
-+			vmf->pte += xas.xa_index - last_pgoff;
-+		last_pgoff = xas.xa_index;
- 		if (alloc_set_pte(vmf, NULL, page))
- 			goto unlock;
- 		unlock_page(page);
-@@ -2589,8 +2575,6 @@ void filemap_map_pages(struct vm_fault *vmf,
- 		/* Huge page is mapped? No need to proceed. */
- 		if (pmd_trans_huge(*vmf->pmd))
- 			break;
--		if (iter.index == end_pgoff)
--			break;
- 	}
- 	rcu_read_unlock();
- }
--- 
-2.17.1
+>
+>
+> If the matrix assigned to the mediated device can differ from the matrix
+> of the guest (that is the masks in the CRYCB, and I'm talking about a 
+> running
+> guest) do you provide a way for the host admin to examine the matrix 
+> of the
+> guest? If not, why do you think that information is irrelevant to the 
+> host
+> admin?
+
+I never said the information contained in the CRYCB is irrelevant to the 
+host
+admin. What I said was that the sysfs attributes apply to the mediated 
+device,
+not the guest. There may or may not be a guest using the mediated device at
+any given point in time. I do not currently provide a way to examine the 
+matrix
+of the guest. I'm not sure whether a sysfs attribute of the mediated
+device is the appropriate venue for displaying what's in the guest's CRYCB.
+I suppose we could use the mediated device matrix attribute for this purpose
+if you and Pierre insist, but I think we still need to
+display the matrix or devices configured for the mediated device. It 
+does beg
+the question, are there interfaces an admin can use to display all of 
+the other
+devices being used by a guest? The only surefire way to see which AP devices
+are actually used by the guest is to execute lszcrypt on the guest itself.
+
+>
+>
+> Regards,
+> Halil
