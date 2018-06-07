@@ -1,176 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id rHuGD5RlGVvrCQAAmS7hNA
-	; Thu, 07 Jun 2018 17:07:01 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id tQ/fMcUZGVstXwAAmS7hNA
+	; Thu, 07 Jun 2018 11:41:25 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id B67F4606DD; Thu,  7 Jun 2018 17:07:01 +0000 (UTC)
+	id A46DE6089E; Thu,  7 Jun 2018 11:41:25 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 8013C60115;
-	Thu,  7 Jun 2018 17:07:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8013C60115
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 38DBF60115;
+	Thu,  7 Jun 2018 11:41:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 38DBF60115
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934853AbeFGRGa (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 13:06:30 -0400
-Received: from mga12.intel.com ([192.55.52.136]:32205 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934578AbeFGRGY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 13:06:24 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 10:06:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,487,1520924400";
-   d="scan'208";a="206183228"
-Received: from chang-linux-2.sc.intel.com ([10.3.52.139])
-  by orsmga004.jf.intel.com with ESMTP; 07 Jun 2018 10:06:23 -0700
-From: "Chang S. Bae" <chang.seok.bae@intel.com>
-To: Andy Lutomirski <luto@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Cc: Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Markus T Metzger <markus.t.metzger@intel.com>,
-        "Ravi V . Shankar" <ravi.v.shankar@intel.com>,
-        "Chang S . Bae" <chang.seok.bae@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 6/7] x86/vdso: Introduce CPU number helper functions
-Date: Thu,  7 Jun 2018 10:06:07 -0700
-Message-Id: <1528391168-22224-7-git-send-email-chang.seok.bae@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528391168-22224-1-git-send-email-chang.seok.bae@intel.com>
-References: <1528391168-22224-1-git-send-email-chang.seok.bae@intel.com>
+        id S1753612AbeFGLlX (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 07:41:23 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:53642 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753103AbeFGLlW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 07:41:22 -0400
+Received: from fsav105.sakura.ne.jp (fsav105.sakura.ne.jp [27.133.134.232])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w57Bf3BA049809;
+        Thu, 7 Jun 2018 20:41:03 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav105.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav105.sakura.ne.jp);
+ Thu, 07 Jun 2018 20:41:03 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav105.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w57BeugH049789
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Thu, 7 Jun 2018 20:41:03 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Subject: Re: possible deadlock in console_unlock
+To: Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: syzbot <syzbot+43e93968b964e369db0b@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+        sergey.senozhatsky@gmail.com, syzkaller-bugs@googlegroups.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <00000000000087008b056df8fbb3@google.com>
+ <20180607051019.GA10406@jagdpanzerIV>
+ <20180607110034.qrkencwsr4stv6xp@pathway.suse.cz>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <6cc6d5c1-fc01-efab-86b8-eb072607680c@I-love.SAKURA.ne.jp>
+Date: Thu, 7 Jun 2018 20:40:54 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180607110034.qrkencwsr4stv6xp@pathway.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CPU number initialization in vDSO is now a bit cleaned up by
-the new helper functions. The helper functions will take
-care of combing CPU and node number and reading each from
-the combined value.
+On 2018/06/07 20:00, Petr Mladek wrote:
+>> ---
+>>
+>>  drivers/tty/tty_buffer.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/tty/tty_buffer.c b/drivers/tty/tty_buffer.c
+>> index c996b6859c5e..71958ef6a831 100644
+>> --- a/drivers/tty/tty_buffer.c
+>> +++ b/drivers/tty/tty_buffer.c
+>> @@ -167,7 +167,8 @@ static struct tty_buffer *tty_buffer_alloc(struct tty_port *port, size_t size)
+>>  	   have queued and recycle that ? */
+>>  	if (atomic_read(&port->buf.mem_used) > port->buf.mem_limit)
+>>  		return NULL;
+>> -	p = kmalloc(sizeof(struct tty_buffer) + 2 * size, GFP_ATOMIC);
+>> +	p = kmalloc(sizeof(struct tty_buffer) + 2 * size,
+>> +			GFP_ATOMIC | __GFP_NOWARN);
+>>  	if (p == NULL)
+>>  		return NULL;
+>>
+>> ---
+> 
+> This looks like the most simple solution for this particular problem.
+> I am just afraid that there are many other locations like this.
+> 
+I haven't tried the reproducer with that change. But isn't __GFP_NOWARN
+ignored by fail_dump() (and thus printk() from fault injection still occurs)?
 
-Suggested-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/entry/vdso/vgetcpu.c  |  4 ++--
- arch/x86/entry/vdso/vma.c      | 16 ++++++++--------
- arch/x86/include/asm/segment.h | 28 ++++++++++++++++++++++++++++
- arch/x86/include/asm/vgtod.h   |  2 --
- 4 files changed, 38 insertions(+), 12 deletions(-)
-
-diff --git a/arch/x86/entry/vdso/vgetcpu.c b/arch/x86/entry/vdso/vgetcpu.c
-index 8ec3d1f..3284069 100644
---- a/arch/x86/entry/vdso/vgetcpu.c
-+++ b/arch/x86/entry/vdso/vgetcpu.c
-@@ -18,9 +18,9 @@ __vdso_getcpu(unsigned *cpu, unsigned *node, struct getcpu_cache *unused)
- 	p = __getcpu();
- 
- 	if (cpu)
--		*cpu = p & VGETCPU_CPU_MASK;
-+		*cpu = lsl_tscp_to_cpu(p);
- 	if (node)
--		*node = p >> 12;
-+		*node = lsl_tscp_to_node(p);
- 	return 0;
- }
- 
-diff --git a/arch/x86/entry/vdso/vma.c b/arch/x86/entry/vdso/vma.c
-index 833e229..1fc93da 100644
---- a/arch/x86/entry/vdso/vma.c
-+++ b/arch/x86/entry/vdso/vma.c
-@@ -340,19 +340,19 @@ static void vgetcpu_cpu_init(void *arg)
- 	int cpu = smp_processor_id();
- 	struct desc_struct d = { };
- 	unsigned long node = 0;
-+	unsigned long cpu_number = 0;
- #ifdef CONFIG_NUMA
- 	node = cpu_to_node(cpu);
- #endif
-+	cpu_number = make_lsl_tscp(cpu, node);
-+
- 	if (static_cpu_has(X86_FEATURE_RDTSCP))
--		write_rdtscp_aux((node << 12) | cpu);
-+		write_rdtscp_aux(cpu_number);
-+
-+	/* Store cpu number in limit */
-+	d.limit0 = cpu_number;
-+	d.limit1 = cpu_number >> 16;
- 
--	/*
--	 * Store cpu number in limit so that it can be loaded
--	 * quickly in user space in vgetcpu. (12 bits for the CPU
--	 * and 8 bits for the node)
--	 */
--	d.limit0 = cpu | ((node & 0xf) << 12);
--	d.limit1 = node >> 4;
- 	d.type = 5;		/* RO data, expand down, accessed */
- 	d.dpl = 3;		/* Visible to user code */
- 	d.s = 1;		/* Not a system segment */
-diff --git a/arch/x86/include/asm/segment.h b/arch/x86/include/asm/segment.h
-index 492e3d1..2169a24 100644
---- a/arch/x86/include/asm/segment.h
-+++ b/arch/x86/include/asm/segment.h
-@@ -224,6 +224,34 @@
- #define GDT_ENTRY_TLS_ENTRIES		3
- #define TLS_SIZE			(GDT_ENTRY_TLS_ENTRIES* 8)
- 
-+#ifdef CONFIG_X86_64
-+
-+/* Bit size and mask of CPU number stored in the per CPU data (and TSC_AUX) */
-+#define LSL_TSCP_CPU_SIZE		12
-+#define LSL_TSCP_CPU_MASK		0xfff
-+
-+#ifndef __ASSEMBLY__
-+
-+/* Helper functions to store/load CPU and node numbers */
-+
-+static inline unsigned long make_lsl_tscp(int cpu, unsigned long node)
-+{
-+	return ((node << LSL_TSCP_CPU_SIZE) | cpu);
-+}
-+
-+static inline unsigned int lsl_tscp_to_cpu(unsigned long x)
-+{
-+	return (x & LSL_TSCP_CPU_MASK);
-+}
-+
-+static inline unsigned int lsl_tscp_to_node(unsigned long x)
-+{
-+	return (x >> LSL_TSCP_CPU_SIZE);
-+}
-+
-+#endif /* !__ASSEMBLY__ */
-+#endif /* CONFIG_X86_64 */
-+
- #ifdef __KERNEL__
- 
- /*
-diff --git a/arch/x86/include/asm/vgtod.h b/arch/x86/include/asm/vgtod.h
-index 9cd9036..24e69b3 100644
---- a/arch/x86/include/asm/vgtod.h
-+++ b/arch/x86/include/asm/vgtod.h
-@@ -79,8 +79,6 @@ static inline void gtod_write_end(struct vsyscall_gtod_data *s)
- 
- #ifdef CONFIG_X86_64
- 
--#define VGETCPU_CPU_MASK 0xfff
--
- static inline unsigned int __getcpu(void)
- {
- 	unsigned int p;
--- 
-2.7.4
+By the way, this reproducer is tricky. It needs to run like ./a.out
+followed by "while :; do fg; done" because it always stops by a signal.
