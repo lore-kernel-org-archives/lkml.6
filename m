@@ -1,144 +1,162 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Sk/zCZylGltvEAAAmS7hNA
-	; Fri, 08 Jun 2018 15:56:51 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id rUPuNFNBGVuaawAAmS7hNA
+	; Thu, 07 Jun 2018 14:30:44 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 52D6B607E4; Fri,  8 Jun 2018 15:56:51 +0000 (UTC)
+	id B146A608D2; Thu,  7 Jun 2018 14:30:44 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YFqOfsmZ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BBopdLZZ"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id B01E1605A5;
-	Fri,  8 Jun 2018 15:56:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B01E1605A5
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id EC9006063F;
+	Thu,  7 Jun 2018 14:30:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EC9006063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752777AbeFHP4t (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 11:56:49 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:35794 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751576AbeFHP4q (ORCPT
+        id S933798AbeFGOak (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:30:40 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:40110 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933768AbeFGOaX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 11:56:46 -0400
-Received: by mail-pg0-f66.google.com with SMTP id 15-v6so6591523pge.2
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 08:56:46 -0700 (PDT)
+        Thu, 7 Jun 2018 10:30:23 -0400
+Received: by mail-qt0-f194.google.com with SMTP id q6-v6so10028147qtn.7
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 07:30:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=19KKjaxCJTHwLDieLDI0lL7GxXca/rog49NJsj1gpUk=;
-        b=YFqOfsmZ+epf9yyo+TzyLqkGwkftb/kahycAk7+CSQITW/xQRQKFl9oG+UeweKaILe
-         KAxN57IVdjI5t5QxqhkreMDxO8R8Kejq0nJjihPI/9JH2r34mO8QUTPyr8tcvp5KaIYG
-         oskH9fZaEkuq1ugPvp3dYzO4yEX2t4fWBn+A8=
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=5bUYUqpMgW4l68gibDz5KOj6FkpoOroYTO0xGnF7t30=;
+        b=BBopdLZZxs5Kb1sHfPYPXECQ8sZJAhPn7QizAJKH/RWEwTfM+mARJrCjd+G81JYyFX
+         DCrkPZjOcNjyvpn1Mvy0TxhtdRmyRq/tKqLwiUnJA3/J6j31g3rB3vELG8SrtMn5weqh
+         Gb4YGs+FjOYfvoVBlcmn0+0WxZV/v/bQCl8J7EHhn6jCTHRiQ2RtM8QzeVHuO/0auBt8
+         b5vIA9C5Gbo0WyiNrBguSC5wNB/olsehle0ElqkNDGG1JnVfA68T8vfI7O3jcwwaFeK8
+         eEnajPZ4GGo9e5Ra3X5iBemEsUFScHC3MU/62h46HT56lRMKn0IBKQoEFl2fzGu7xic9
+         /zvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=19KKjaxCJTHwLDieLDI0lL7GxXca/rog49NJsj1gpUk=;
-        b=H8xMaD2BcxY5/pWh91aw/eTABWFdLEphZAj9nFr5krKjXWZfEI97Ts4TrsRaKuJFfC
-         j34+oOxAzpuVW64wGo1Dk22IIxw23zNss5fXQJ7nHjsZzyUSkwTEh3mnvvpbGXPoh+pg
-         nj4YEOqWz/JE9rVqwFMWuJZyV0nT34fyoThM8OsRS7pNbw6WBo8XuiWy40kW0h+w6nlk
-         iAE7NztHJIaNgDIAiABEO1lssR5NBQjMk0CC0mPeL8oWHFY07VdmrpcscLHxld8UHs0e
-         BdGy+gKhigLs5XljQx8wGWF2mtomfkLpsOCR0tgRyPAvS3cwaDd12XFDbBQZ0c7RIal8
-         LQbg==
-X-Gm-Message-State: APt69E063bLTL8CpH0H4PghtFxdHdGG865NnHb7UU8mNTnCrzd7L07Qa
-        X6KW0vJaQa33JmgjMMisU0oHyg==
-X-Google-Smtp-Source: ADUXVKJguXmDP9qELT1Brr+qjvaHv5Sle05ULnf13Sq7SSu4ugk4BDj/RLcxmPzncleXZJ3Qd1sFqg==
-X-Received: by 2002:a63:3115:: with SMTP id x21-v6mr5650218pgx.373.1528473406148;
-        Fri, 08 Jun 2018 08:56:46 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id w11-v6sm21507366pfn.71.2018.06.08.08.56.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 08 Jun 2018 08:56:45 -0700 (PDT)
-Date: Fri, 8 Jun 2018 08:56:44 -0700
-From: Matthias Kaehlcke <mka@chromium.org>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Brian Norris <briannorris@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v2 11/11] misc: throttler: Add Chrome OS EC throttler
-Message-ID: <20180608155644.GE88063@google.com>
-References: <20180607181214.30338-1-mka@chromium.org>
- <20180607181214.30338-12-mka@chromium.org>
- <e1681e0f-2141-12a7-bed1-4d27a43ac9e8@collabora.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=5bUYUqpMgW4l68gibDz5KOj6FkpoOroYTO0xGnF7t30=;
+        b=Mls8rdyhTRDnW71e3n2rVKh3WN89hVqzGnVTSp+dPTpzGHcFkHXUqJOMrW0v9Qlt9b
+         yxDPV8nKIYsFl5bCrV0/3NMpC7hOL55VoQ6Psp3wiwo1pBKxhMCvVzYrEAwhezt5i+gb
+         DAh53lEYHVdtGCmhv+6oCvzRIcvQOE58v+Iof0TbkzA4iKM4uKCZ7S/i8cFTchgNu0XA
+         t0919leYcpgFb5S7JoSqjHIvLjoGPxt6NnavIA9nC85Qt+1hU2qLQSSvfTURnHBaA1mD
+         TjHyxPdnPKRNsRHuMHlzr34lm87XzZApWVssXtBC4xTiKH2UHEEFFA5S9usGlMLV9Mq4
+         LXtw==
+X-Gm-Message-State: APt69E0MqXlvUTry8FJluriQ3qVFcGC7OYUJdUTqSGjtGvzopF1emxeo
+        t/+5obwfJXZ9Hd6eblZJN12yYKc6EVPqBuzZ5l4=
+X-Google-Smtp-Source: ADUXVKKB9F6Kla7iQhqpkqw5treKaIkQqzigSEEfwdN8bqjNJFSaOQlh3x8ijvJ/aMD+mQwChtQ8STsFCfnrWfLa3LM=
+X-Received: by 2002:ac8:1692:: with SMTP id r18-v6mr1922426qtj.206.1528381823269;
+ Thu, 07 Jun 2018 07:30:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e1681e0f-2141-12a7-bed1-4d27a43ac9e8@collabora.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Received: by 2002:ac8:4716:0:0:0:0:0 with HTTP; Thu, 7 Jun 2018 07:30:02 -0700 (PDT)
+In-Reply-To: <20180607142209.5w5uitasnq4jfs7h@gmail.com>
+References: <20180607142209.5w5uitasnq4jfs7h@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 7 Jun 2018 16:30:02 +0200
+Message-ID: <CANiq72k1aov6OM-RDJo_xCZmO+vD1Sn2gwHPiG1hz_yYVo5Ong@mail.gmail.com>
+Subject: Re: [GIT PULL] auxdisplay for v4.18-rc1
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Robert Abel <rabel@robertabel.eu>, Sean Young <sean@mess.org>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Enric,
+Hi Linus,
 
-On Fri, Jun 08, 2018 at 04:09:18PM +0200, Enric Balletbo i Serra wrote:
+On Thu, Jun 7, 2018 at 4:22 PM, Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+> The following changes since commit 0adb32858b0bddf4ada5f364a84ed60b196dbcda:
+>
+>   Linux 4.16 (2018-04-01 14:20:27 -0700)
+>
+> are available in the git repository at:
+>
+>   https://github.com/ojeda/linux.git tags/auxdisplay-for-linus-v4.18-rc1
+>
+> for you to fetch changes up to 351f683b9823a3d1bffb6e2e3f381601aa0b2671:
+>
+>   auxdisplay: Replace licenses with SPDX identifiers (2018-04-12 19:02:45 +0200)
 
-> On 07/06/18 20:12, Matthias Kaehlcke wrote:
-> > The driver subscribes to throttling events from the Chrome OS
-> > embedded controller and enables/disables system throttling based
-> > on these events.
-> > 
-> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> > Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> > ---
-> > Changes in v2:
-> > - added SPDX line instead of license boiler-plate
-> > - use macro to avoid splitting line
-> > - changed variable name for throttler from 'cte' to 'ce_thr'
-> > - formatting fixes
-> > - Kconfig: removed odd dashes around 'help'
-> > - added 'Reviewed-by' tag
-> > 
-> > Note: I finally decided to keep 'Chrome OS' instead of changing it
-> > to 'ChromeOS'. Both are currently used in the kernel, the latter is
-> > currently more prevalent, however the official name is 'Chrome OS',
-> > so there is no good reason to keep introducing the 'alternative' name.
-> > 
-> 
-> I am pretty sure that somebody from Google told me the contrary, so
-> 
-> ¯\_(ツ)_/¯
-> 
-> Anyway, you will probably know better than me :)
+This pull request is an identical one to the one sent for v4.17-rc1 --
+which was rejected because it was quite late in the merge window.
+Please pull -- thanks!
 
-The different names in the kernel code indicate that even folks at
-Google disagree on this ;-) The name might have evolved over time.
+Cheers,
+Miguel Ojeda
 
-chrome://chrome on a Chromebook names it 'Chrome OS', as do official
-pages like https://www.google.com/chromebook/ and
-https://www.chromium.org/chromium-os so I think it is better to use
-this name.
-
-> > +MODULE_LICENSE("GPL");
-> 
-> Something that I learnt recently. To match the SPDX-license tag you should set
-> this to "GPL v2" [1]
-> 
->  *	"GPL"				[GNU Public License v2 or later]
->  *	"GPL v2"			[GNU Public License v2]
-> 
-> [1] https://elixir.bootlin.com/linux/v4.17/source/include/linux/module.h#L172
-
-Will update in the next revision
-
-Thanks!
-
-Matthias
+>
+> ----------------------------------------------------------------
+> Mostly small fixes and cleanups, plus a non-trivial fix for charlcd
+>
+>   - charlcd: fixes and cleanups
+>     From Robert Abel and Sean Young
+>
+>   - Kconfig fixes
+>     From Randy Dunlap, Corentin Labbe and Ulf Magnusson
+>
+>   - cfag12864bfb: const cleanup
+>     From Gustavo A. R. Silva
+>
+>   - Docs/licenses/warnings cleanups
+>
+> ----------------------------------------------------------------
+> Corentin Labbe (1):
+>       auxdisplay: img-ascii-lcd: fix typo on select SYSCON/MFD_SYSCON
+>
+> Gustavo A. R. Silva (1):
+>       auxdisplay: cfag12864bfb: constify fb_fix_screeninfo and fb_var_screeninfo structures
+>
+> Miguel Ojeda (5):
+>       Doc: misc-devices: move lcd-panel-cgram.txt to auxdisplay/
+>       MAINTAINERS: auxdisplay: remove obsolete webpages
+>       auxdisplay: arm-charlcd: Fix struct charlcd doc line
+>       auxdisplay: charlcd: Fix and clean up handling of x/y commands
+>       auxdisplay: Replace licenses with SPDX identifiers
+>
+> Randy Dunlap (2):
+>       auxdisplay: fix broken menu
+>       auxdisplay: make PANEL a menuconfig
+>
+> Robert Abel (4):
+>       auxdisplay: charlcd: use null character instead of zero literal to terminate strings
+>       auxdisplay: charlcd: replace octal literal with form-feed escape sequence
+>       auxdisplay: charlcd: fix two-line command ^[[LN not marked as processed
+>       auxdisplay: charlcd: fix hex literal ranges for graphics command
+>
+> Sean Young (1):
+>       auxdisplay: charlcd: no need to call charlcd_gotoxy() if nothing changes
+>
+> Ulf Magnusson (1):
+>       auxdisplay: img-ascii-lcd: kconfig: Remove MIPS_SEAD3 reference
+>
+>  .../lcd-panel-cgram.txt                            |   0
+>  MAINTAINERS                                        |   8 --
+>  drivers/auxdisplay/Kconfig                         |  16 +--
+>  drivers/auxdisplay/arm-charlcd.c                   |   4 +-
+>  drivers/auxdisplay/cfag12864b.c                    |  16 +--
+>  drivers/auxdisplay/cfag12864bfb.c                  |  20 +---
+>  drivers/auxdisplay/charlcd.c                       | 119 +++++++++++++++------
+>  drivers/auxdisplay/hd44780.c                       |   6 +-
+>  drivers/auxdisplay/ht16k33.c                       |  10 +-
+>  drivers/auxdisplay/ks0108.c                        |  16 +--
+>  drivers/auxdisplay/panel.c                         |   6 +-
+>  include/linux/cfag12864b.h                         |  16 +--
+>  include/linux/ks0108.h                             |  16 +--
+>  samples/auxdisplay/cfag12864b-example.c            |  16 +--
+>  14 files changed, 111 insertions(+), 158 deletions(-)
+>  rename Documentation/{misc-devices => auxdisplay}/lcd-panel-cgram.txt (100%)
