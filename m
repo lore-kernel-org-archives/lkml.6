@@ -1,479 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id QK1lFaBRGVsiEQAAmS7hNA
-	; Thu, 07 Jun 2018 15:40:13 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 616aIjA/GVsZWAAAmS7hNA
+	; Thu, 07 Jun 2018 14:20:32 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 4A623607E7; Thu,  7 Jun 2018 15:40:13 +0000 (UTC)
+	id 7A61E6089E; Thu,  7 Jun 2018 14:20:32 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 585D860590;
-	Thu,  7 Jun 2018 15:40:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 585D860590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id D91CA602FC;
+	Thu,  7 Jun 2018 14:20:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D91CA602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934661AbeFGOlq (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:41:46 -0400
-Received: from mga09.intel.com ([134.134.136.24]:36348 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934601AbeFGOlf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:41:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 07:41:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
-   d="scan'208";a="62632639"
-Received: from 2b52.sc.intel.com ([143.183.136.51])
-  by orsmga001.jf.intel.com with ESMTP; 07 Jun 2018 07:41:32 -0700
-From: Yu-cheng Yu <yu-cheng.yu@intel.com>
-To: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [PATCH 06/10] x86/cet: Add arch_prctl functions for shadow stack
-Date: Thu,  7 Jun 2018 07:38:03 -0700
-Message-Id: <20180607143807.3611-7-yu-cheng.yu@intel.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180607143807.3611-1-yu-cheng.yu@intel.com>
-References: <20180607143807.3611-1-yu-cheng.yu@intel.com>
+        id S933481AbeFGOT0 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:19:26 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39516 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933091AbeFGOJN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:09:13 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbD-0005Zi-BG; Thu, 07 Jun 2018 15:09:11 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbA-00039b-Bj; Thu, 07 Jun 2018 15:09:08 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Ulf Hansson" <ulf.hansson@linaro.org>,
+        "Adrian Hunter" <adrian.hunter@intel.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.87317720@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 299/410] mmc: sdhci: Allow override of mmc host
+ operations
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following operations are provided.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-ARCH_CET_STATUS:
-	return the current CET status
+------------------
 
-ARCH_CET_DISABLE:
-	disable CET features
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-ARCH_CET_LOCK:
-	lock out CET features
+commit bf60e592a1af4d6f65dd54593250183f14360eed upstream.
 
-ARCH_CET_EXEC:
-	set CET features for exec()
+In the past, fixes for specific hardware devices were implemented
+in sdhci using quirks.  That approach is no longer accepted because
+the growing number of quirks was starting to make the code difficult
+to understand and maintain.
 
-ARCH_CET_ALLOC_SHSTK:
-	allocate a new shadow stack
+One alternative to quirks, is to allow drivers to override the default
+mmc host operations.  This patch makes it easy to do that, and it is
+needed for a subsequent bug fix, for which separate patches are
+provided.
 
-ARCH_CET_PUSH_SHSTK:
-	put a return address on shadow stack
-
-ARCH_CET_ALLOC_SHSTK and ARCH_CET_PUSH_SHSTK are intended only for
-the implementation of GLIBC ucontext related APIs.
-
-Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
-Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+[bwh: Backported to 3.16: adjust filename, context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/include/asm/cet.h        |   7 ++
- arch/x86/include/uapi/asm/prctl.h |  15 +++
- arch/x86/kernel/Makefile          |   2 +-
- arch/x86/kernel/cet.c             |  18 +++-
- arch/x86/kernel/cet_prctl.c       | 203 ++++++++++++++++++++++++++++++++++++++
- arch/x86/kernel/elf.c             |  24 ++++-
- arch/x86/kernel/process.c         |   7 ++
- 7 files changed, 270 insertions(+), 6 deletions(-)
- create mode 100644 arch/x86/kernel/cet_prctl.c
+ drivers/mmc/host/sdhci.c  | 3 ++-
+ include/linux/mmc/sdhci.h | 1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/cet.h b/arch/x86/include/asm/cet.h
-index c8fd87e13859..a2a53fe4d5e6 100644
---- a/arch/x86/include/asm/cet.h
-+++ b/arch/x86/include/asm/cet.h
-@@ -12,24 +12,31 @@ struct task_struct;
- struct cet_stat {
- 	unsigned long	shstk_base;
- 	unsigned long	shstk_size;
-+	unsigned long	exec_shstk_size;
- 	unsigned int	shstk_enabled:1;
-+	unsigned int	locked:1;
-+	unsigned int	exec_shstk:2;
- };
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -2781,6 +2781,8 @@ struct sdhci_host *sdhci_alloc_host(stru
  
- #ifdef CONFIG_X86_INTEL_CET
-+int prctl_cet(int option, unsigned long arg2);
- unsigned long cet_get_shstk_ptr(void);
- int cet_push_shstk(int ia32, unsigned long ssp, unsigned long val);
- int cet_setup_shstk(void);
- int cet_setup_thread_shstk(struct task_struct *p);
-+int cet_alloc_shstk(unsigned long *arg);
- void cet_disable_shstk(void);
- void cet_disable_free_shstk(struct task_struct *p);
- int cet_restore_signal(unsigned long ssp);
- int cet_setup_signal(int ia32, unsigned long addr);
- #else
-+static inline int prctl_cet(int option, unsigned long arg2) { return 0; }
- static inline unsigned long cet_get_shstk_ptr(void) { return 0; }
- static inline int cet_push_shstk(int ia32, unsigned long ssp,
- 				 unsigned long val) { return 0; }
- static inline int cet_setup_shstk(void) { return 0; }
- static inline int cet_setup_thread_shstk(struct task_struct *p) { return 0; }
-+static inline int cet_alloc_shstk(unsigned long *arg) { return -EINVAL; }
- static inline void cet_disable_shstk(void) {}
- static inline void cet_disable_free_shstk(struct task_struct *p) {}
- static inline int cet_restore_signal(unsigned long ssp) { return 0; }
-diff --git a/arch/x86/include/uapi/asm/prctl.h b/arch/x86/include/uapi/asm/prctl.h
-index 5a6aac9fa41f..f9965403b655 100644
---- a/arch/x86/include/uapi/asm/prctl.h
-+++ b/arch/x86/include/uapi/asm/prctl.h
-@@ -14,4 +14,19 @@
- #define ARCH_MAP_VDSO_32	0x2002
- #define ARCH_MAP_VDSO_64	0x2003
+ 	host = mmc_priv(mmc);
+ 	host->mmc = mmc;
++	host->mmc_host_ops = sdhci_ops;
++	mmc->ops = &host->mmc_host_ops;
  
-+#define ARCH_CET_STATUS		0x3001
-+#define ARCH_CET_DISABLE	0x3002
-+#define ARCH_CET_LOCK		0x3003
-+#define ARCH_CET_EXEC		0x3004
-+#define ARCH_CET_ALLOC_SHSTK	0x3005
-+#define ARCH_CET_PUSH_SHSTK	0x3006
-+
-+/*
-+ * Settings for ARCH_CET_EXEC
-+ */
-+#define CET_EXEC_ELF_PROPERTY	0
-+#define CET_EXEC_ALWAYS_OFF	1
-+#define CET_EXEC_ALWAYS_ON	2
-+#define CET_EXEC_MAX CET_EXEC_ALWAYS_ON
-+
- #endif /* _ASM_X86_PRCTL_H */
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index cbf983f44b61..80464f925a6a 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -138,7 +138,7 @@ obj-$(CONFIG_UNWINDER_ORC)		+= unwind_orc.o
- obj-$(CONFIG_UNWINDER_FRAME_POINTER)	+= unwind_frame.o
- obj-$(CONFIG_UNWINDER_GUESS)		+= unwind_guess.o
- 
--obj-$(CONFIG_X86_INTEL_CET)		+= cet.o
-+obj-$(CONFIG_X86_INTEL_CET)		+= cet.o cet_prctl.o
- 
- obj-$(CONFIG_ARCH_HAS_PROGRAM_PROPERTIES) += elf.o
- 
-diff --git a/arch/x86/kernel/cet.c b/arch/x86/kernel/cet.c
-index 156f5d88ffd5..1b7089dcf1ea 100644
---- a/arch/x86/kernel/cet.c
-+++ b/arch/x86/kernel/cet.c
-@@ -83,6 +83,19 @@ static unsigned long shstk_mmap(unsigned long addr, unsigned long len)
- 	return addr;
+ 	return host;
  }
+@@ -2939,7 +2941,6 @@ int sdhci_add_host(struct sdhci_host *ho
+ 	/*
+ 	 * Set host parameters.
+ 	 */
+-	mmc->ops = &sdhci_ops;
+ 	mmc->f_max = host->max_clk;
+ 	if (host->ops->get_min_clock)
+ 		mmc->f_min = host->ops->get_min_clock(host);
+--- a/include/linux/mmc/sdhci.h
++++ b/include/linux/mmc/sdhci.h
+@@ -109,6 +109,7 @@ struct sdhci_host {
  
-+int cet_alloc_shstk(unsigned long *arg)
-+{
-+	unsigned long size = *arg;
-+	unsigned long addr;
-+
-+	addr = shstk_mmap(0, size);
-+	if (addr >= TASK_SIZE)
-+		return -ENOMEM;
-+
-+	*arg = addr;
-+	return 0;
-+}
-+
- int cet_setup_shstk(void)
- {
- 	unsigned long addr, size;
-@@ -90,7 +103,10 @@ int cet_setup_shstk(void)
- 	if (!cpu_feature_enabled(X86_FEATURE_SHSTK))
- 		return -EOPNOTSUPP;
+ 	/* Internal data */
+ 	struct mmc_host *mmc;	/* MMC structure */
++	struct mmc_host_ops mmc_host_ops;	/* MMC host ops */
+ 	u64 dma_mask;		/* custom DMA mask */
  
--	size = SHSTK_SIZE;
-+	size = current->thread.cet.exec_shstk_size;
-+	if ((size > TASK_SIZE) || (size == 0))
-+		size = SHSTK_SIZE;
-+
- 	addr = shstk_mmap(0, size);
- 
- 	if (addr >= TASK_SIZE)
-diff --git a/arch/x86/kernel/cet_prctl.c b/arch/x86/kernel/cet_prctl.c
-new file mode 100644
-index 000000000000..326996e2ea80
---- /dev/null
-+++ b/arch/x86/kernel/cet_prctl.c
-@@ -0,0 +1,203 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#include <linux/errno.h>
-+#include <linux/uaccess.h>
-+#include <linux/prctl.h>
-+#include <linux/compat.h>
-+#include <asm/processor.h>
-+#include <asm/prctl.h>
-+#include <asm/elf.h>
-+#include <asm/elf_property.h>
-+#include <asm/cet.h>
-+
-+/*
-+ * Handler of prctl for CET:
-+ *
-+ * ARCH_CET_STATUS: return the current status
-+ * ARCH_CET_DISABLE: disable features
-+ * ARCH_CET_LOCK: lock out cet features until exec()
-+ * ARCH_CET_EXEC: set default features for exec()
-+ * ARCH_CET_ALLOC_SHSTK: allocate shadow stack
-+ * ARCH_CET_PUSH_SHSTK: put a return address on shadow stack
-+ */
-+
-+static int handle_get_status(unsigned long arg2)
-+{
-+	unsigned int features = 0, cet_exec = 0;
-+	unsigned long shstk_size = 0;
-+
-+	if (current->thread.cet.shstk_enabled)
-+		features |= GNU_PROPERTY_X86_FEATURE_1_SHSTK;
-+	if (current->thread.cet.exec_shstk == CET_EXEC_ALWAYS_ON)
-+		cet_exec |= GNU_PROPERTY_X86_FEATURE_1_SHSTK;
-+	shstk_size = current->thread.cet.exec_shstk_size;
-+
-+	if (in_compat_syscall()) {
-+		unsigned int buf[3];
-+
-+		buf[0] = features;
-+		buf[1] = cet_exec;
-+		buf[2] = (unsigned int)shstk_size;
-+		return copy_to_user((unsigned int __user *)arg2, buf,
-+				    sizeof(buf));
-+	} else {
-+		unsigned long buf[3];
-+
-+		buf[0] = (unsigned long)features;
-+		buf[1] = (unsigned long)cet_exec;
-+		buf[2] = shstk_size;
-+		return copy_to_user((unsigned long __user *)arg2, buf,
-+				    sizeof(buf));
-+	}
-+}
-+
-+static int handle_set_exec(unsigned long arg2)
-+{
-+	unsigned int features = 0, cet_exec = 0;
-+	unsigned long shstk_size = 0;
-+	int err = 0;
-+
-+	if (in_compat_syscall()) {
-+		unsigned int buf[3];
-+
-+		err = copy_from_user(buf, (unsigned int __user *)arg2,
-+				     sizeof(buf));
-+		if (!err) {
-+			features = buf[0];
-+			cet_exec = buf[1];
-+			shstk_size = (unsigned long)buf[2];
-+		}
-+	} else {
-+		unsigned long buf[3];
-+
-+		err = copy_from_user(buf, (unsigned long __user *)arg2,
-+				     sizeof(buf));
-+		if (!err) {
-+			features = (unsigned int)buf[0];
-+			cet_exec = (unsigned int)buf[1];
-+			shstk_size = buf[2];
-+		}
-+	}
-+
-+	if (err)
-+		return -EFAULT;
-+	if (cet_exec > CET_EXEC_MAX)
-+		return -EINVAL;
-+	if (shstk_size >= TASK_SIZE)
-+		return -EINVAL;
-+
-+	if (features & GNU_PROPERTY_X86_FEATURE_1_SHSTK) {
-+		if (!cpu_feature_enabled(X86_FEATURE_SHSTK))
-+			return -EINVAL;
-+		if ((current->thread.cet.exec_shstk == CET_EXEC_ALWAYS_ON) &&
-+		    (cet_exec != CET_EXEC_ALWAYS_ON))
-+			return -EPERM;
-+	}
-+
-+	if (features & GNU_PROPERTY_X86_FEATURE_1_SHSTK)
-+		current->thread.cet.exec_shstk = cet_exec;
-+
-+	current->thread.cet.exec_shstk_size = shstk_size;
-+	return 0;
-+}
-+
-+static int handle_push_shstk(unsigned long arg2)
-+{
-+	unsigned long ssp = 0, ret_addr = 0;
-+	int ia32, err;
-+
-+	ia32 = in_ia32_syscall();
-+
-+	if (ia32) {
-+		unsigned int buf[2];
-+
-+		err = copy_from_user(buf, (unsigned int __user *)arg2,
-+				     sizeof(buf));
-+		if (!err) {
-+			ssp = (unsigned long)buf[0];
-+			ret_addr = (unsigned long)buf[1];
-+		}
-+	} else {
-+		unsigned long buf[2];
-+
-+		err = copy_from_user(buf, (unsigned long __user *)arg2,
-+				     sizeof(buf));
-+		if (!err) {
-+			ssp = buf[0];
-+			ret_addr = buf[1];
-+		}
-+	}
-+	if (err)
-+		return -EFAULT;
-+	err = cet_push_shstk(ia32, ssp, ret_addr);
-+	if (err)
-+		return -err;
-+	return 0;
-+}
-+
-+static int handle_alloc_shstk(unsigned long arg2)
-+{
-+	int err = 0;
-+	unsigned long shstk_size = 0;
-+
-+	if (in_ia32_syscall()) {
-+		unsigned int size;
-+
-+		err = get_user(size, (unsigned int __user *)arg2);
-+		if (!err)
-+			shstk_size = size;
-+	} else {
-+		err = get_user(shstk_size, (unsigned long __user *)arg2);
-+	}
-+
-+	if (err)
-+		return -EFAULT;
-+
-+	err = cet_alloc_shstk(&shstk_size);
-+	if (err)
-+		return -err;
-+
-+	if (in_ia32_syscall()) {
-+		if (put_user(shstk_size, (unsigned int __user *)arg2))
-+			return -EFAULT;
-+	} else {
-+		if (put_user(shstk_size, (unsigned long __user *)arg2))
-+			return -EFAULT;
-+	}
-+	return 0;
-+}
-+
-+int prctl_cet(int option, unsigned long arg2)
-+{
-+	if (!cpu_feature_enabled(X86_FEATURE_SHSTK))
-+		return -EINVAL;
-+
-+	switch (option) {
-+	case ARCH_CET_STATUS:
-+		return handle_get_status(arg2);
-+
-+	case ARCH_CET_DISABLE:
-+		if (current->thread.cet.locked)
-+			return -EPERM;
-+		if (arg2 & GNU_PROPERTY_X86_FEATURE_1_SHSTK)
-+			cet_disable_free_shstk(current);
-+
-+		return 0;
-+
-+	case ARCH_CET_LOCK:
-+		current->thread.cet.locked = 1;
-+		return 0;
-+
-+	case ARCH_CET_EXEC:
-+		return handle_set_exec(arg2);
-+
-+	case ARCH_CET_ALLOC_SHSTK:
-+		return handle_alloc_shstk(arg2);
-+
-+	case ARCH_CET_PUSH_SHSTK:
-+		return handle_push_shstk(arg2);
-+
-+	default:
-+		return -EINVAL;
-+	}
-+}
-diff --git a/arch/x86/kernel/elf.c b/arch/x86/kernel/elf.c
-index 8e2719d8dc86..de08d41971f6 100644
---- a/arch/x86/kernel/elf.c
-+++ b/arch/x86/kernel/elf.c
-@@ -8,7 +8,10 @@
- 
- #include <asm/cet.h>
- #include <asm/elf_property.h>
-+#include <asm/prctl.h>
-+#include <asm/processor.h>
- #include <uapi/linux/elf-em.h>
-+#include <uapi/linux/prctl.h>
- #include <linux/binfmts.h>
- #include <linux/elf.h>
- #include <linux/slab.h>
-@@ -208,13 +211,26 @@ int arch_setup_features(void *ehdr_p, void *phdr_p,
- 	current->thread.cet.shstk_enabled = 0;
- 	current->thread.cet.shstk_base = 0;
- 	current->thread.cet.shstk_size = 0;
-+	current->thread.cet.locked = 0;
- 	if (cpu_feature_enabled(X86_FEATURE_SHSTK)) {
--		if (shstk) {
--			err = cet_setup_shstk();
--			if (err < 0)
--				goto out;
-+		int exec = current->thread.cet.exec_shstk;
-+
-+		if (exec != CET_EXEC_ALWAYS_OFF) {
-+			if (shstk || (exec == CET_EXEC_ALWAYS_ON)) {
-+				err = cet_setup_shstk();
-+				if (err < 0)
-+					goto out;
-+			}
- 		}
- 	}
-+
-+	/*
-+	 * Lockout CET features if no interpreter
-+	 */
-+	if (!interp)
-+		current->thread.cet.locked = 1;
-+
-+	err = 0;
- out:
- 	return err;
- }
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index ae56caee41f9..54ad1863c6d2 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -794,6 +794,13 @@ long do_arch_prctl_common(struct task_struct *task, int option,
- 		return get_cpuid_mode();
- 	case ARCH_SET_CPUID:
- 		return set_cpuid_mode(task, cpuid_enabled);
-+	case ARCH_CET_STATUS:
-+	case ARCH_CET_DISABLE:
-+	case ARCH_CET_LOCK:
-+	case ARCH_CET_EXEC:
-+	case ARCH_CET_ALLOC_SHSTK:
-+	case ARCH_CET_PUSH_SHSTK:
-+		return prctl_cet(option, cpuid_enabled);
- 	}
- 
- 	return -EINVAL;
--- 
-2.15.1
+ #if defined(CONFIG_LEDS_CLASS) || defined(CONFIG_LEDS_CLASS_MODULE)
