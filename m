@@ -1,162 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id tYD4Gr/1G1sDcQAAmS7hNA
-	; Sat, 09 Jun 2018 15:44:02 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id JL+NHC41GVtnVQAAmS7hNA
+	; Thu, 07 Jun 2018 13:37:50 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id DC93C608C8; Sat,  9 Jun 2018 15:44:01 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QwBeGpxA"
+	id 6384F608B8; Thu,  7 Jun 2018 13:37:50 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 43CA1605A5;
-	Sat,  9 Jun 2018 15:44:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 43CA1605A5
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id D4828606DD;
+	Thu,  7 Jun 2018 13:37:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D4828606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932832AbeFIPe2 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 11:34:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36668 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753750AbeFIPeW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 11:34:22 -0400
-Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 325FF204EC;
-        Sat,  9 Jun 2018 15:34:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528558461;
-        bh=WIQUWKB7AYaa+RasWTeb2xxLdvwZKk/0gwlPIX+O1ik=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QwBeGpxA7L2SXG77ObTJ9xbdDiq9HvDym6lujzZgz5CPDukDxc5mGkivU34x3BsF4
-         kI4lwWQcjlz0y8NyApWL9D3XuadfD4hVondjwM08g35vDcIDKU6DemdlPt3jRqpt/4
-         +JsuXS/WKAYnUEKRrUZOKhZXs5JUqa4vE2qTL9xE=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "David.butterfield" <david.butterfield@wdc.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 01/41] scsi: sd_zbc: Fix potential memory leak
-Date: Sat,  9 Jun 2018 17:29:33 +0200
-Message-Id: <20180609152926.475797635@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180609152926.389750182@linuxfoundation.org>
-References: <20180609152926.389750182@linuxfoundation.org>
-User-Agent: quilt/0.65
+        id S932818AbeFGNhs (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 09:37:48 -0400
+Received: from laurent.telenet-ops.be ([195.130.137.89]:43348 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932792AbeFGNhn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 09:37:43 -0400
+Received: from ayla.of.borg ([84.194.111.163])
+        by laurent.telenet-ops.be with bizsmtp
+        id vpdc1x0093XaVaC01pdcZC; Thu, 07 Jun 2018 15:37:41 +0200
+Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
+        by ayla.of.borg with esmtp (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1fQv6e-0000CV-4L; Thu, 07 Jun 2018 15:37:36 +0200
+Received: from geert by ramsan with local (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1fQuIC-0005vo-Qs; Thu, 07 Jun 2018 14:45:28 +0200
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Eyal Ilsar <eilsar@codeaurora.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>
+Cc: Arnd Bergmann <arnd@arndb.de>, wcn36xx@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH] wcn36xx: Remove Unicode Byte Order Mark from testcode
+Date: Thu,  7 Jun 2018 14:45:27 +0200
+Message-Id: <1528375527-22761-1-git-send-email-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+Older gcc (< 4.4) doesn't like files starting with a Unicode BOM:
 
-------------------
+    drivers/net/wireless/ath/wcn36xx/testmode.c:1: error: stray ‘\357’ in program
+    drivers/net/wireless/ath/wcn36xx/testmode.c:1: error: stray ‘\273’ in program
+    drivers/net/wireless/ath/wcn36xx/testmode.c:1: error: stray ‘\277’ in program
 
-From: Damien Le Moal <damien.lemoal@wdc.com>
+Remove the BOM, the rest of the file is plain ASCII anyway.
 
-commit 4b433924b2755a94f99258c178684a0e05c344de upstream.
+Output of "file drivers/net/wireless/ath/wcn36xx/testmode.c" before:
 
-Rework sd_zbc_check_zone_size() to avoid a memory leak due to an early
-return if sd_zbc_report_zones() fails.
+    drivers/net/wireless/ath/wcn36xx/testmode.c: C source, UTF-8 Unicode (with BOM) text
 
-Reported-by: David.butterfield <david.butterfield@wdc.com>
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-Cc: stable@vger.kernel.org
-Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+and after:
 
+    drivers/net/wireless/ath/wcn36xx/testmode.c: C source, ASCII text
+
+Fixes: 87f825e6e246cee0 ("wcn36xx: Add support for Factory Test Mode (FTM)")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
- drivers/scsi/sd_zbc.c |   34 +++++++++++++++-------------------
- 1 file changed, 15 insertions(+), 19 deletions(-)
+ drivers/net/wireless/ath/wcn36xx/testmode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/scsi/sd_zbc.c
-+++ b/drivers/scsi/sd_zbc.c
-@@ -425,7 +425,7 @@ static int sd_zbc_check_capacity(struct
- 
- static int sd_zbc_check_zone_size(struct scsi_disk *sdkp)
- {
--	u64 zone_blocks;
-+	u64 zone_blocks = 0;
- 	sector_t block = 0;
- 	unsigned char *buf;
- 	unsigned char *rec;
-@@ -443,10 +443,8 @@ static int sd_zbc_check_zone_size(struct
- 
- 	/* Do a report zone to get the same field */
- 	ret = sd_zbc_report_zones(sdkp, buf, SD_ZBC_BUF_SIZE, 0);
--	if (ret) {
--		zone_blocks = 0;
--		goto out;
--	}
-+	if (ret)
-+		goto out_free;
- 
- 	same = buf[4] & 0x0f;
- 	if (same > 0) {
-@@ -489,7 +487,7 @@ static int sd_zbc_check_zone_size(struct
- 			ret = sd_zbc_report_zones(sdkp, buf,
- 						  SD_ZBC_BUF_SIZE, block);
- 			if (ret)
--				return ret;
-+				goto out_free;
- 		}
- 
- 	} while (block < sdkp->capacity);
-@@ -497,34 +495,32 @@ static int sd_zbc_check_zone_size(struct
- 	zone_blocks = sdkp->zone_blocks;
- 
- out:
--	kfree(buf);
--
- 	if (!zone_blocks) {
- 		if (sdkp->first_scan)
- 			sd_printk(KERN_NOTICE, sdkp,
- 				  "Devices with non constant zone "
- 				  "size are not supported\n");
--		return -ENODEV;
--	}
--
--	if (!is_power_of_2(zone_blocks)) {
-+		ret = -ENODEV;
-+	} else if (!is_power_of_2(zone_blocks)) {
- 		if (sdkp->first_scan)
- 			sd_printk(KERN_NOTICE, sdkp,
- 				  "Devices with non power of 2 zone "
- 				  "size are not supported\n");
--		return -ENODEV;
--	}
--
--	if (logical_to_sectors(sdkp->device, zone_blocks) > UINT_MAX) {
-+		ret = -ENODEV;
-+	} else if (logical_to_sectors(sdkp->device, zone_blocks) > UINT_MAX) {
- 		if (sdkp->first_scan)
- 			sd_printk(KERN_NOTICE, sdkp,
- 				  "Zone size too large\n");
--		return -ENODEV;
-+		ret = -ENODEV;
-+	} else {
-+		sdkp->zone_blocks = zone_blocks;
-+		sdkp->zone_shift = ilog2(zone_blocks);
- 	}
- 
--	sdkp->zone_blocks = zone_blocks;
-+out_free:
-+	kfree(buf);
- 
--	return 0;
-+	return ret;
- }
- 
- static int sd_zbc_setup(struct scsi_disk *sdkp)
+diff --git a/drivers/net/wireless/ath/wcn36xx/testmode.c b/drivers/net/wireless/ath/wcn36xx/testmode.c
+index 1279064a3b716c2e..51a038022c8b8040 100644
+--- a/drivers/net/wireless/ath/wcn36xx/testmode.c
++++ b/drivers/net/wireless/ath/wcn36xx/testmode.c
+@@ -1,4 +1,4 @@
+-﻿/*
++/*
+  * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+  *
+  * Permission to use, copy, modify, and/or distribute this software for any
+-- 
+2.7.4
