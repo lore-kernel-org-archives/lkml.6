@@ -1,89 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id rKVBCMpDGVtfDAAAmS7hNA
-	; Thu, 07 Jun 2018 14:41:51 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ET/GEYg9GVveQAAAmS7hNA
+	; Thu, 07 Jun 2018 14:14:01 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id F3B98608BF; Thu,  7 Jun 2018 14:41:50 +0000 (UTC)
+	id B42CF608B8; Thu,  7 Jun 2018 14:14:01 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 8596F607DC;
-	Thu,  7 Jun 2018 14:41:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8596F607DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 374566063F;
+	Thu,  7 Jun 2018 14:14:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 374566063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934688AbeFGOls (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:41:48 -0400
-Received: from mga09.intel.com ([134.134.136.24]:36344 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934604AbeFGOlg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:41:36 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 07:41:34 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
-   d="scan'208";a="62632648"
-Received: from 2b52.sc.intel.com ([143.183.136.51])
-  by orsmga001.jf.intel.com with ESMTP; 07 Jun 2018 07:41:33 -0700
-From: Yu-cheng Yu <yu-cheng.yu@intel.com>
-To: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [PATCH 08/10] mm: Prevent mremap of shadow stack
-Date: Thu,  7 Jun 2018 07:38:05 -0700
-Message-Id: <20180607143807.3611-9-yu-cheng.yu@intel.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180607143807.3611-1-yu-cheng.yu@intel.com>
-References: <20180607143807.3611-1-yu-cheng.yu@intel.com>
+        id S933378AbeFGON6 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:13:58 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39512 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933157AbeFGOJi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:09:38 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbM-0005hJ-6c; Thu, 07 Jun 2018 15:09:20 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbE-0003I8-78; Thu, 07 Jun 2018 15:09:12 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Takashi Iwai" <tiwai@suse.de>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.352848545@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 388/410] ALSA: aloop: Fix access to not-yet-ready
+ substream via cable
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
----
- mm/mremap.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-diff --git a/mm/mremap.c b/mm/mremap.c
-index 049470aa1e3e..70f20edb248e 100644
---- a/mm/mremap.c
-+++ b/mm/mremap.c
-@@ -525,7 +525,7 @@ SYSCALL_DEFINE5(mremap, unsigned long, addr, unsigned long, old_len,
- 		unsigned long, new_addr)
- {
- 	struct mm_struct *mm = current->mm;
--	struct vm_area_struct *vma;
-+	struct vm_area_struct *vma = find_vma(mm, addr);
- 	unsigned long ret = -EINVAL;
- 	unsigned long charged = 0;
- 	bool locked = false;
-@@ -533,6 +533,9 @@ SYSCALL_DEFINE5(mremap, unsigned long, addr, unsigned long, old_len,
- 	LIST_HEAD(uf_unmap_early);
- 	LIST_HEAD(uf_unmap);
+------------------
+
+From: Takashi Iwai <tiwai@suse.de>
+
+commit 8e6b1a72a75bb5067ccb6b56d8ca4aa3a300a64e upstream.
+
+In loopback_open() and loopback_close(), we assign and release the
+substream object to the corresponding cable in a racy way.  It's
+neither locked nor done in the right position.  The open callback
+assigns the substream before its preparation finishes, hence the other
+side of the cable may pick it up, which may lead to the invalid memory
+access.
+
+This patch addresses these: move the assignment to the end of the open
+callback, and wrap with cable->lock for avoiding concurrent accesses.
+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ sound/drivers/aloop.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+--- a/sound/drivers/aloop.c
++++ b/sound/drivers/aloop.c
+@@ -667,7 +667,9 @@ static void free_cable(struct snd_pcm_su
+ 		return;
+ 	if (cable->streams[!substream->stream]) {
+ 		/* other stream is still alive */
++		spin_lock_irq(&cable->lock);
+ 		cable->streams[substream->stream] = NULL;
++		spin_unlock_irq(&cable->lock);
+ 	} else {
+ 		/* free the cable */
+ 		loopback->cables[substream->number][dev] = NULL;
+@@ -707,7 +709,6 @@ static int loopback_open(struct snd_pcm_
+ 		loopback->cables[substream->number][dev] = cable;
+ 	}
+ 	dpcm->cable = cable;
+-	cable->streams[substream->stream] = dpcm;
  
-+	if (vma->vm_flags & VM_SHSTK)
-+		return ret;
+ 	snd_pcm_hw_constraint_integer(runtime, SNDRV_PCM_HW_PARAM_PERIODS);
+ 
+@@ -739,6 +740,11 @@ static int loopback_open(struct snd_pcm_
+ 		runtime->hw = loopback_pcm_hardware;
+ 	else
+ 		runtime->hw = cable->hw;
 +
- 	if (flags & ~(MREMAP_FIXED | MREMAP_MAYMOVE))
- 		return ret;
- 
--- 
-2.15.1
++	spin_lock_irq(&cable->lock);
++	cable->streams[substream->stream] = dpcm;
++	spin_unlock_irq(&cable->lock);
++
+  unlock:
+ 	if (err < 0) {
+ 		free_cable(substream);
