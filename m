@@ -1,177 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Hm++NjEQGVtmFgAAmS7hNA
-	; Thu, 07 Jun 2018 11:00:01 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id c6XYFf1GGVuiOgAAmS7hNA
+	; Thu, 07 Jun 2018 14:55:09 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id BAD186089E; Thu,  7 Jun 2018 11:00:01 +0000 (UTC)
+	id 2033D608B8; Thu,  7 Jun 2018 14:55:09 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 280B860115;
-	Thu,  7 Jun 2018 11:00:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 280B860115
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 1BD6D606DD;
+	Thu,  7 Jun 2018 14:55:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1BD6D606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932637AbeFGK76 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 06:59:58 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:31666 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932502AbeFGK7x (ORCPT
+        id S935452AbeFGOzE (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:55:04 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41037 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935431AbeFGOzC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 06:59:53 -0400
-X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
-   d="scan'208";a="12270510"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES128-SHA; 07 Jun 2018 03:59:52 -0700
-Received: from m19893.microchip.com (10.10.76.4) by
- CHN-SV-EXCH01.mchp-main.com (10.10.76.37) with Microsoft SMTP Server id
- 14.3.352.0; Thu, 7 Jun 2018 03:59:51 -0700
-From: Radu Pirea <radu.pirea@microchip.com>
-To: <broonie@kernel.org>, <nicolas.ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <lee.jones@linaro.org>,
-        <richard.genoud@gmail.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <gregkh@linuxfoundation.org>
-CC: <linux-spi@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>,
-        Radu Pirea <radu.pirea@microchip.com>
-Subject: [PATCH v6 3/6] mfd: at91-usart: added mfd driver for usart
-Date: Thu, 7 Jun 2018 14:00:17 +0300
-Message-ID: <20180607110020.20565-4-radu.pirea@microchip.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180607110020.20565-1-radu.pirea@microchip.com>
-References: <20180607110020.20565-1-radu.pirea@microchip.com>
+        Thu, 7 Jun 2018 10:55:02 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbO-0005Zs-O2; Thu, 07 Jun 2018 15:09:23 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbD-0003Gi-FR; Thu, 07 Jun 2018 15:09:11 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-Content-Type: text/plain
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Daniel Borkmann" <daniel@iogearbox.net>,
+        "David S. Miller" <davem@davemloft.net>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.949680204@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 372/410] skb: Add skb_postpush_rcsum()
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This mfd driver is just a wrapper over atmel_serial driver and
-spi-at91-usart driver. Selection of one of the drivers is based on a
-property from device tree. If the property is not specified, the default
-driver is atmel_serial.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Radu Pirea <radu.pirea@microchip.com>
-Acked-by: Rob Herring <robh@kernel.org>
+------------------
+
+From: Ben Hutchings <ben@decadent.org.uk>
+
+This is based on commit f8ffad69c9f8b8dfb0b633425d4ef4d2493ba61a upstream,
+"bpf: add skb_postpush_rcsum and fix dev_forward_skb occasions".  We don't
+need the bpf fixes here, just the new function.
+
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: David S. Miller <davem@davemloft.net>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/mfd/Kconfig      |  9 ++++++
- drivers/mfd/Makefile     |  1 +
- drivers/mfd/at91-usart.c | 68 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 78 insertions(+)
- create mode 100644 drivers/mfd/at91-usart.c
-
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index b860eb5aa194..a886672b960d 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -99,6 +99,15 @@ config MFD_AAT2870_CORE
- 	  additional drivers must be enabled in order to use the
- 	  functionality of the device.
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -2477,6 +2477,23 @@ static inline void skb_postpull_rcsum(st
  
-+config MFD_AT91_USART
-+	tristate "AT91 USART Driver"
-+	select MFD_CORE
-+	help
-+	  Select this to get support for AT91 USART IP. This is a wrapper
-+	  over at91-usart-serial driver and usart-spi-driver. Only one function
-+	  can be used at a time. The choice is done at boot time by the probe
-+	  function of this MFD driver according to a device tree property.
-+
- config MFD_ATMEL_FLEXCOM
- 	tristate "Atmel Flexcom (Flexible Serial Communication Unit)"
- 	select MFD_CORE
-diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-index d9d2cf0d32ef..db1332aa96db 100644
---- a/drivers/mfd/Makefile
-+++ b/drivers/mfd/Makefile
-@@ -185,6 +185,7 @@ obj-$(CONFIG_MFD_SPMI_PMIC)	+= qcom-spmi-pmic.o
- obj-$(CONFIG_TPS65911_COMPARATOR)	+= tps65911-comparator.o
- obj-$(CONFIG_MFD_TPS65090)	+= tps65090.o
- obj-$(CONFIG_MFD_AAT2870_CORE)	+= aat2870-core.o
-+obj-$(CONFIG_MFD_AT91_USART)	+= at91-usart.o
- obj-$(CONFIG_MFD_ATMEL_FLEXCOM)	+= atmel-flexcom.o
- obj-$(CONFIG_MFD_ATMEL_HLCDC)	+= atmel-hlcdc.o
- obj-$(CONFIG_MFD_ATMEL_SMC)	+= atmel-smc.o
-diff --git a/drivers/mfd/at91-usart.c b/drivers/mfd/at91-usart.c
-new file mode 100644
-index 000000000000..1a2bdeff7f6d
---- /dev/null
-+++ b/drivers/mfd/at91-usart.c
-@@ -0,0 +1,68 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Driver for AT91 USART
-+ *
-+ * Copyright (C) 2018 Microchip Technology
-+ *
-+ * Author: Radu Pirea <radu.pirea@microchip.com>
-+ *
-+ */
-+
-+#include <dt-bindings/mfd/at91-usart.h>
-+
-+#include <linux/module.h>
-+#include <linux/mfd/core.h>
-+#include <linux/property.h>
-+
-+static struct mfd_cell at91_usart_spi_subdev = {
-+		.name = "at91_usart_spi",
-+		.of_compatible = "microchip,at91sam9g45-usart-spi",
-+	};
-+
-+static struct mfd_cell at91_usart_serial_subdev = {
-+		.name = "atmel_usart_serial",
-+		.of_compatible = "atmel,at91rm9200-usart-serial",
-+	};
-+
-+static int at91_usart_mode_probe(struct platform_device *pdev)
+ unsigned char *skb_pull_rcsum(struct sk_buff *skb, unsigned int len);
+ 
++static inline void skb_postpush_rcsum(struct sk_buff *skb,
++				      const void *start, unsigned int len)
 +{
-+	struct mfd_cell cell;
-+	u32 opmode;
-+	int err;
-+
-+	err = device_property_read_u32(&pdev->dev, "atmel,usart-mode", &opmode);
-+
-+	switch (opmode) {
-+	case AT91_USART_MODE_SPI:
-+		cell = at91_usart_spi_subdev;
-+		break;
-+	case AT91_USART_MODE_SERIAL:
-+	default:
-+		cell = at91_usart_serial_subdev;
-+	}
-+
-+	return devm_mfd_add_devices(&pdev->dev, PLATFORM_DEVID_AUTO, &cell, 1,
-+			      NULL, 0, NULL);
++	/* For performing the reverse operation to skb_postpull_rcsum(),
++	 * we can instead of ...
++	 *
++	 *   skb->csum = csum_add(skb->csum, csum_partial(start, len, 0));
++	 *
++	 * ... just use this equivalent version here to save a few
++	 * instructions. Feeding csum of 0 in csum_partial() and later
++	 * on adding skb->csum is equivalent to feed skb->csum in the
++	 * first place.
++	 */
++	if (skb->ip_summed == CHECKSUM_COMPLETE)
++		skb->csum = csum_partial(start, len, skb->csum);
 +}
 +
-+static const struct of_device_id at91_usart_mode_of_match[] = {
-+	{ .compatible = "atmel,at91rm9200-usart" },
-+	{ .compatible = "atmel,at91sam9260-usart" },
-+	{ /* sentinel */ }
-+};
-+
-+MODULE_DEVICE_TABLE(of, at91_flexcom_of_match);
-+
-+static struct platform_driver at91_usart_mfd = {
-+	.probe	= at91_usart_mode_probe,
-+	.driver	= {
-+		.name		= "at91_usart_mode",
-+		.of_match_table	= at91_usart_mode_of_match,
-+	},
-+};
-+
-+module_platform_driver(at91_usart_mfd);
-+
-+MODULE_AUTHOR("Radu Pirea <radu.pirea@microchip.com>");
-+MODULE_DESCRIPTION("AT91 USART MFD driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.17.1
+ /**
+  *	pskb_trim_rcsum - trim received skb and update checksum
+  *	@skb: buffer to trim
