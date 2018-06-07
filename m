@@ -1,102 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id QaLuB0w2HlufHwAAmS7hNA
-	; Mon, 11 Jun 2018 08:44:42 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id a+uqNYtrGVvzRgAAmS7hNA
+	; Thu, 07 Jun 2018 17:29:55 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 8EEC3607E7; Mon, 11 Jun 2018 08:44:42 +0000 (UTC)
+	id 62BE1608BA; Thu,  7 Jun 2018 17:29:55 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 13B3560385;
-	Mon, 11 Jun 2018 08:44:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 13B3560385
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id F2149605A2;
+	Thu,  7 Jun 2018 17:29:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F2149605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932643AbeFKIoj (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 04:44:39 -0400
-Received: from xavier.telenet-ops.be ([195.130.132.52]:41504 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754066AbeFKIoc (ORCPT
+        id S933851AbeFGR3w (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 13:29:52 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:6989 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932648AbeFGR3v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 04:44:32 -0400
-Received: from ayla.of.borg ([84.194.111.163])
-        by xavier.telenet-ops.be with bizsmtp
-        id xLkS1x00i3XaVaC01LkSjr; Mon, 11 Jun 2018 10:44:31 +0200
-Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
-        by ayla.of.borg with esmtp (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1fSIR8-0006xM-F3; Mon, 11 Jun 2018 10:44:26 +0200
-Received: from geert by ramsan with local (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1fSIR8-0005OA-DS; Mon, 11 Jun 2018 10:44:26 +0200
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Greg Ungerer <gerg@linux-m68k.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Corentin Labbe <clabbe@baylibre.com>,
-        "David S . Miller" <davem@davemloft.net>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-m68k@lists.linux-m68k.org,
-        linux-mips@linux-mips.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH 0/3] Legacy clock drivers: Normalize clk API
-Date: Mon, 11 Jun 2018 10:44:20 +0200
-Message-Id: <1528706663-20670-1-git-send-email-geert@linux-m68k.org>
-X-Mailer: git-send-email 2.7.4
+        Thu, 7 Jun 2018 13:29:51 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b196b990000>; Thu, 07 Jun 2018 10:30:01 -0700
+Received: from HQMAIL105.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 07 Jun 2018 10:29:50 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 07 Jun 2018 10:29:50 -0700
+Received: from rcampbell-dev.nvidia.com (10.110.48.66) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 7 Jun
+ 2018 17:29:50 +0000
+Subject: Re: [PATCH 6/6] Convert intel uncore to struct_size
+To: Matthew Wilcox <willy@infradead.org>,
+        Kees Cook <keescook@chromium.org>
+CC: Matthew Wilcox <mawilcox@microsoft.com>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>,
+        <kernel-hardening@lists.openwall.com>
+References: <20180607145720.22590-1-willy@infradead.org>
+ <20180607145720.22590-7-willy@infradead.org>
+From: Ralph Campbell <rcampbell@nvidia.com>
+Message-ID: <03d9addb-9c68-c6e5-d7db-57468fc3950c@nvidia.com>
+Date: Thu, 7 Jun 2018 10:29:49 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180607145720.22590-7-willy@infradead.org>
+X-Originating-IP: [10.110.48.66]
+X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
+ HQMAIL105.nvidia.com (172.20.187.12)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-	Hi all,
 
-When seeing commit bde4975310eb1982 ("net: stmmac: fix build failure due
-to missing COMMON_CLK dependency"), I wondered why this dependency is
-needed, as all implementations of the clock API should implement all
-required functionality, or provide dummies.
 
-It turns out there were still two implementations that lacked the
-clk_set_rate() function: Coldfire and AR7.
+On 06/07/2018 07:57 AM, Matthew Wilcox wrote:
+> From: Matthew Wilcox <mawilcox@microsoft.com>
+> 
+> Need to do a bit of rearranging to make this work.
+> 
+> Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+> ---
+>   arch/x86/events/intel/uncore.c | 19 ++++++++++---------
+>   1 file changed, 10 insertions(+), 9 deletions(-)
+> 
+> diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
+> index 15b07379e72d..e15cfad4f89b 100644
+> --- a/arch/x86/events/intel/uncore.c
+> +++ b/arch/x86/events/intel/uncore.c
+> @@ -865,8 +865,6 @@ static void uncore_types_exit(struct intel_uncore_type **types)
+>   static int __init uncore_type_init(struct intel_uncore_type *type, bool setid)
+>   {
+>   	struct intel_uncore_pmu *pmus;
+> -	struct attribute_group *attr_group;
+> -	struct attribute **attrs;
+>   	size_t size;
+>   	int i, j;
+>   
+> @@ -891,21 +889,24 @@ static int __init uncore_type_init(struct intel_uncore_type *type, bool setid)
+>   				0, type->num_counters, 0, 0);
+>   
+>   	if (type->event_descs) {
+> +		struct {
+> +			struct attribute_group group;
+> +			struct attribute *attrs[];
+> +		} *attr_group;
+>   		for (i = 0; type->event_descs[i].attr.attr.name; i++);
 
-This series contains three patches:
-  - The first two patches add dummies for clk_set_rate(),
-    clk_set_rate(), clk_set_parent(), and clk_get_parent() to the
-    Coldfire and AR7, like Arnd has done for other legacy clock
-    implementations a while ago.
-  - The second patch removes the COMMON_CLK dependency from the stmmac
-    network drivers again, as it is no longer needed.
-    Obviously this patch has a hard dependency on the first two patches.
+What does this for loop do?
+Looks like nothing given the semicolon at the end.
 
-Thanks!
-
-Geert Uytterhoeven (3):
-  m68k: coldfire: Normalize clk API
-  MIPS: AR7: Normalize clk API
-  [RFC] Revert "net: stmmac: fix build failure due to missing COMMON_CLK
-    dependency"
-
- arch/m68k/coldfire/clk.c                    | 29 +++++++++++++++++++++++++++++
- arch/mips/ar7/clock.c                       | 29 +++++++++++++++++++++++++++++
- drivers/net/ethernet/stmicro/stmmac/Kconfig | 10 +++++-----
- 3 files changed, 63 insertions(+), 5 deletions(-)
-
--- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+> -		attr_group = kzalloc(sizeof(struct attribute *) * (i + 1) +
+> -					sizeof(*attr_group), GFP_KERNEL);
+> +		attr_group = kzalloc(struct_size(attr_group, attrs, i + 1),
+> +								GFP_KERNEL);
+>   		if (!attr_group)
+>   			goto err;
+>   
+> -		attrs = (struct attribute **)(attr_group + 1);
+> -		attr_group->name = "events";
+> -		attr_group->attrs = attrs;
+> +		attr_group->group.name = "events";
+> +		attr_group->group.attrs = attr_group->attrs;
+>   
+>   		for (j = 0; j < i; j++)
+> -			attrs[j] = &type->event_descs[j].attr.attr;
+> +			attr_group->attrs[j] = &type->event_descs[j].attr.attr;
+>   
+> -		type->events_group = attr_group;
+> +		type->events_group = &attr_group->group;
+>   	}
+>   
+>   	type->pmu_group = &uncore_pmu_attr_group;
+> 
