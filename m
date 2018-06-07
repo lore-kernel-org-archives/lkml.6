@@ -1,69 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id kmSmOPBHHFvNfgAAmS7hNA
-	; Sat, 09 Jun 2018 21:34:45 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id yyN2LxkQGVunFQAAmS7hNA
+	; Thu, 07 Jun 2018 10:59:54 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id BB504608BA; Sat,  9 Jun 2018 21:34:45 +0000 (UTC)
+	id 335CE608BF; Thu,  7 Jun 2018 10:59:54 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 7FB306032D;
-	Sat,  9 Jun 2018 21:34:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7FB306032D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=twibright.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id B4C0B6063F;
+	Thu,  7 Jun 2018 10:59:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B4C0B6063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753415AbeFIVem (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 17:34:42 -0400
-Received: from 109-183-129-149.tmcz.cz ([109.183.129.149]:37166 "EHLO
-        leontynka.twibright.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751138AbeFIVel (ORCPT
+        id S932594AbeFGK7v (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 06:59:51 -0400
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:31666 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932502AbeFGK7r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 17:34:41 -0400
-X-Greylist: delayed 1789 seconds by postgrey-1.27 at vger.kernel.org; Sat, 09 Jun 2018 17:34:40 EDT
-Received: from mikulas (helo=localhost)
-        by leontynka.twibright.com with local-esmtp (Exim 4.89)
-        (envelope-from <mikulas@twibright.com>)
-        id 1fRl2V-0003Wn-Ba; Sat, 09 Jun 2018 23:04:47 +0200
-Date: Sat, 9 Jun 2018 23:04:47 +0200 (CEST)
-From: Mikulas Patocka <mikulas@twibright.com>
-X-X-Sender: mikulas@leontynka
-To: Linus Torvalds <torvalds@linux-foundation.org>
-cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH] hpfs: Use EUCLEAN for filesystem errors
-Message-ID: <alpine.DEB.2.20.1806092257450.13306@leontynka>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Thu, 7 Jun 2018 06:59:47 -0400
+X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
+   d="scan'208";a="12270502"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES128-SHA; 07 Jun 2018 03:59:43 -0700
+Received: from m19893.microchip.com (10.10.76.4) by
+ CHN-SV-EXCH01.mchp-main.com (10.10.76.37) with Microsoft SMTP Server id
+ 14.3.352.0; Thu, 7 Jun 2018 03:59:42 -0700
+From: Radu Pirea <radu.pirea@microchip.com>
+To: <broonie@kernel.org>, <nicolas.ferre@microchip.com>,
+        <alexandre.belloni@bootlin.com>, <lee.jones@linaro.org>,
+        <richard.genoud@gmail.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <gregkh@linuxfoundation.org>
+CC: <linux-spi@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>,
+        Radu Pirea <radu.pirea@microchip.com>
+Subject: [PATCH v6 1/6] MAINTAINERS: add at91 usart mfd driver
+Date: Thu, 7 Jun 2018 14:00:15 +0300
+Message-ID: <20180607110020.20565-2-radu.pirea@microchip.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180607110020.20565-1-radu.pirea@microchip.com>
+References: <20180607110020.20565-1-radu.pirea@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset=US-ASCII
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the error code EUCLEAN for filesystem errors because other filesystems
-use this code too.
+Added entry for at91 usart mfd driver.
 
-Signed-off-by: Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>
-
+Signed-off-by: Radu Pirea <radu.pirea@microchip.com>
 ---
-  fs/hpfs/hpfs_fn.h |    3 +--
-  1 file changed, 1 insertion(+), 2 deletions(-)
+ MAINTAINERS | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Index: linux-4.17/fs/hpfs/hpfs_fn.h
-===================================================================
---- linux-4.17.orig/fs/hpfs/hpfs_fn.h	2018-01-10 09:31:23.000000000 +0100
-+++ linux-4.17/fs/hpfs/hpfs_fn.h	2018-06-09 22:54:58.000000000 +0200
-@@ -26,8 +26,7 @@
-  #include "hpfs.h"
-
-  #define EIOERROR  EIO
--#define EFSERROR  EPERM
--#define EMEMERROR ENOMEM
-+#define EFSERROR  EUCLEAN
-
-  #define ANODE_ALLOC_FWD	512
-  #define FNODE_ALLOC_FWD	0
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8e2a2fddbd19..12203d07c6af 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9160,6 +9160,7 @@ M:	Richard Genoud <richard.genoud@gmail.com>
+ S:	Maintained
+ F:	drivers/tty/serial/atmel_serial.c
+ F:	drivers/tty/serial/atmel_serial.h
++F:	Documentation/devicetree/bindings/mfd/atmel-usart.txt
+ 
+ MICROCHIP / ATMEL DMA DRIVER
+ M:	Ludovic Desroches <ludovic.desroches@microchip.com>
+@@ -9192,6 +9193,14 @@ S:	Supported
+ F:	drivers/mtd/nand/raw/atmel/*
+ F:	Documentation/devicetree/bindings/mtd/atmel-nand.txt
+ 
++MICROCHIP AT91 USART MFD DRIVER
++M:	Radu Pirea <radu.pirea@microchip.com>
++L:	linux-kernel@vger.kernel.org
++S:	Supported
++F:	drivers/mfd/at91-usart.c
++F:	include/dt-bindings/mfd/at91-usart.h
++F:	Documentation/devicetree/bindings/mfd/atmel-usart.txt
++
+ MICROCHIP KSZ SERIES ETHERNET SWITCH DRIVER
+ M:	Woojung Huh <Woojung.Huh@microchip.com>
+ M:	Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>
+-- 
+2.17.1
