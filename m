@@ -1,74 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id azTBD3OiGlvRcwAAmS7hNA
-	; Fri, 08 Jun 2018 15:38:08 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id HBvDG/KuGVtrQgAAmS7hNA
+	; Thu, 07 Jun 2018 22:17:22 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id E3972608C1; Fri,  8 Jun 2018 15:38:07 +0000 (UTC)
+	id 5EA546089E; Thu,  7 Jun 2018 22:17:22 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 72F08608BA;
-	Fri,  8 Jun 2018 15:38:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 72F08608BA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id D9D13602FC;
+	Thu,  7 Jun 2018 22:17:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D9D13602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752627AbeFHPiE (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 11:38:04 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50874 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751141AbeFHPiC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 11:38:02 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E23237D843;
-        Fri,  8 Jun 2018 15:38:01 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-245.rdu2.redhat.com [10.10.121.245])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 64C821C730;
-        Fri,  8 Jun 2018 15:37:59 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20180607191201.97080-1-ebiggers3@gmail.com>
-References: <20180607191201.97080-1-ebiggers3@gmail.com> <0000000000009c221d056e0cf53a@google.com>
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: dhowells@redhat.com, James Morris <jmorris@namei.org>,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, Tycho Andersen <tycho@tycho.ws>,
-        Kees Cook <keescook@chromium.org>,
-        Stephan Mueller <smueller@chronox.de>,
-        Eric Biggers <ebiggers@google.com>
-Subject: Re: [PATCH] dh key: fix rounding up KDF output length
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <17594.1528472278.1@warthog.procyon.org.uk>
-Date: Fri, 08 Jun 2018 16:37:58 +0100
-Message-ID: <17595.1528472278@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 08 Jun 2018 15:38:02 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 08 Jun 2018 15:38:02 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+        id S1752178AbeFGWRT (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 18:17:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37184 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751607AbeFGWRS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 18:17:18 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6BDE1480;
+        Thu,  7 Jun 2018 22:17:18 +0000 (UTC)
+Date: Thu, 7 Jun 2018 15:17:17 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Baoquan He <bhe@redhat.com>
+Cc: linux-kernel@vger.kernel.org, dave.hansen@intel.com,
+        pagupta@redhat.com, linux-mm@kvack.org,
+        kirill.shutemov@linux.intel.com
+Subject: Re: [PATCH v4 0/4] mm/sparse: Optimize memmap allocation during
+ sparse_init()
+Message-Id: <20180607151717.618eea26c03c124c79ad50d0@linux-foundation.org>
+In-Reply-To: <20180521101555.25610-1-bhe@redhat.com>
+References: <20180521101555.25610-1-bhe@redhat.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Eric Biggers <ebiggers3@gmail.com> wrote:
+On Mon, 21 May 2018 18:15:51 +0800 Baoquan He <bhe@redhat.com> wrote:
 
-> Commit 383203eff718 ("dh key: get rid of stack allocated array") changed
-> kdf_ctr() to assume that the length of key material to derive is a
-> multiple of the digest size.  The length was supposed to be rounded up
-> accordingly.  However, the round_up() macro was used which only gives
-> the correct result on power-of-2 arguments, whereas not all hash
-> algorithms have power-of-2 digest sizes.  In some cases this resulted in
-> a write past the end of the 'outbuf' buffer.
+> This is v4 post. V3 can be found here:
+> https://lkml.org/lkml/2018/2/27/928
 > 
-> Fix it by switching to roundup(), which works for non-power-of-2 inputs.
+> V1 can be found here:
+> https://www.spinics.net/lists/linux-mm/msg144486.html
+> 
+> In sparse_init(), two temporary pointer arrays, usemap_map and map_map
+> are allocated with the size of NR_MEM_SECTIONS. They are used to store
+> each memory section's usemap and mem map if marked as present. In
+> 5-level paging mode, this will cost 512M memory though they will be
+> released at the end of sparse_init(). System with few memory, like
+> kdump kernel which usually only has about 256M, will fail to boot
+> because of allocation failure if CONFIG_X86_5LEVEL=y.
+> 
+> In this patchset, optimize the memmap allocation code to only use
+> usemap_map and map_map with the size of nr_present_sections. This
+> makes kdump kernel boot up with normal crashkernel='' setting when
+> CONFIG_X86_5LEVEL=y.
 
-Applied.
+We're still a bit short on review input for this series.  Hi, Dave!
