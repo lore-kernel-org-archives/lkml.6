@@ -1,113 +1,170 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id YNHTLCrNGFtoewAAmS7hNA
-	; Thu, 07 Jun 2018 06:24:06 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id QTvCBD/8GFtoDgAAmS7hNA
+	; Thu, 07 Jun 2018 09:34:55 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 77664608B8; Thu,  7 Jun 2018 06:24:06 +0000 (UTC)
+	id 03812605A2; Thu,  7 Jun 2018 09:34:55 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id E3A10607E7;
-	Thu,  7 Jun 2018 06:24:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E3A10607E7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=debian.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 48A4B601C3;
+	Thu,  7 Jun 2018 09:34:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 48A4B601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752969AbeFGGYE (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 02:24:04 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:43837 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752880AbeFGGYB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 02:24:01 -0400
-Received: by mail-oi0-f65.google.com with SMTP id t133-v6so7547524oif.10
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Jun 2018 23:24:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=783nSWGh9m9PLif2Bx2byVwYnFxfXgJhIM02FCZye2k=;
-        b=fdB2J5L4208quO8545rpFnfy4fY/2qnmaGLL38DJjEXO3Bi9fkTJS36gJm7sVo1ksa
-         8PYeeR8SPBbyHK+0vnfiCv7r5Dlb7G+UMo6dAmJYYhqVKOC17aHYhI2cNVs6sDmWH9H+
-         h4Gj3vHzvrb+qb6x0Lcb5Cx6ef41Gw9t3McOLT+JyuJlv5NzfhrpAMBGvllN8g/RiJxb
-         E8rgPOOAZWoQ6wD7yf4M6gkPftoZUl0S1Si4j7Qgy/+ERAmpsQtibjgT+7OOZ54yvWaX
-         lchXs5kiqwjCdhO98VGhJkIhvfybuW3h37BmvioB8BramuguJHyb6XUCk2+jzcNwtg6s
-         wUYg==
-X-Gm-Message-State: APt69E3uigi5kZVRFfPWYEb5O3NlUdqe+eEgWHCzg3f5ZY1HS4yqcSGI
-        KreMkFZJoxHHMKH4WN2r9O0uD9Ts2Kiw8jpBrj1Reg==
-X-Google-Smtp-Source: ADUXVKJi4eumRXXU8Lquc2zyUbreW3RnZef8CKcN8rnGwb2p7DsoNYZj5BpQXnpfG6XEcEsGxyVrTIxMllUpvFNeido=
-X-Received: by 2002:aca:b184:: with SMTP id a126-v6mr260214oif.67.1528352640353;
- Wed, 06 Jun 2018 23:24:00 -0700 (PDT)
+        id S1753511AbeFGJew (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 05:34:52 -0400
+Received: from foss.arm.com ([217.140.101.70]:49250 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753069AbeFGJev (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 05:34:51 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 865D915AB;
+        Thu,  7 Jun 2018 02:34:50 -0700 (PDT)
+Received: from [10.37.9.91] (unknown [10.37.9.91])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 448F53F5A0;
+        Thu,  7 Jun 2018 02:34:45 -0700 (PDT)
+Subject: Re: [PATCH v4 05/14] coresight: get/put module in
+ coresight_build/release_path
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Kim Phillips <kim.phillips@arm.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Gargi Sharma <gs051095@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Rik van Riel <riel@redhat.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Thierry Reding <treding@nvidia.com>,
+        Todd Kjos <tkjos@google.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180605210710.22227-1-kim.phillips@arm.com>
+ <20180605210710.22227-6-kim.phillips@arm.com>
+ <20180606082422.GB19727@kroah.com>
+ <a457594c-b391-23e1-6ab5-d115073cac5a@arm.com>
+ <20180606155501.704583e1412996a1a2c6fa61@arm.com>
+ <20180607083401.GE16651@kroah.com>
+ <3219276b-2703-bc30-92e1-bae80cdc5901@arm.com>
+ <20180607091353.GA20438@kroah.com>
+ <2f8d233e-8847-ce3d-3a5b-06b175e3944b@arm.com>
+Message-ID: <30d4d1cc-47d8-b42d-af5d-b1f6301d1bd9@arm.com>
+Date: Thu, 7 Jun 2018 10:34:55 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-References: <20180606193940.16126-1-malat@debian.org> <20180606195655.GO1351649@devbig577.frc2.facebook.com>
-In-Reply-To: <20180606195655.GO1351649@devbig577.frc2.facebook.com>
-From: Mathieu Malaterre <malat@debian.org>
-Date: Thu, 7 Jun 2018 08:23:44 +0200
-Message-ID: <CA+7wUsw6DsKWzPKZxi0xA4YRiBASBDFF203RCuHSdWYWLyRPfQ@mail.gmail.com>
-Subject: Re: [PATCH] percpu_counter: `percpu_counter_read_positive' should not
- return negative number
-To: Tejun Heo <tj@kernel.org>
-Cc: Christoph Lameter <cl@linux.com>,
-        Dennis Zhou <dennisszhou@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <2f8d233e-8847-ce3d-3a5b-06b175e3944b@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 6, 2018 at 9:57 PM Tejun Heo <tj@kernel.org> wrote:
->
-> On Wed, Jun 06, 2018 at 09:39:40PM +0200, Mathieu Malaterre wrote:
-> > Since function `percpu_counter_add' may result in a signed integer overflow
-> > the result stored in `fbc->count' could be negative. Make sure that
-> > function `percpu_counter_read_positive' does not return a negative number
-> > in this case. This will match behavior when CONFIG_SMP=y.
-> >
-> > Detected wth CONFIG_UBSAN=y
-> >
-> > [76404.888450] ================================================================================
-> > [76404.888477] UBSAN: Undefined behaviour in ../include/linux/percpu_counter.h:136:13
-> > [76404.888485] signed integer overflow:
-> > [76404.888490] 9223308017647617321 + 76624449492175 cannot be represented in type 'long long int'
-> > [76404.888501] CPU: 0 PID: 0 Comm: swapper Not tainted 4.17.0+ #50
-> > [76404.888506] Call Trace:
-> > [76404.888523] [dffedd30] [c0478b90] ubsan_epilogue+0x18/0x4c (unreliable)
-> > [76404.888533] [dffedd40] [c0479530] handle_overflow+0xbc/0xdc
-> > [76404.888548] [dffeddc0] [c0439044] cfq_completed_request+0x560/0x1234
-> > [76404.888557] [dffede40] [c03f3fc4] __blk_put_request+0xb0/0x2dc
-> > [76404.888570] [dffede80] [c05a81d0] scsi_end_request+0x19c/0x344
-> > [76404.888579] [dffedeb0] [c05a9954] scsi_io_completion+0x4b4/0x854
-> > [76404.888592] [dffedf10] [c04046b4] blk_done_softirq+0xe4/0x1e0
-> > [76404.888605] [dffedf60] [c07ec1d4] __do_softirq+0x16c/0x5f0
-> > [76404.888617] [dffedfd0] [c0065160] irq_exit+0x110/0x1a8
-> > [76404.888629] [dffedff0] [c001646c] call_do_irq+0x24/0x3c
-> > [76404.888641] [c0cdbe80] [c0009a2c] do_IRQ+0x98/0x1a0
-> > [76404.888649] [c0cdbeb0] [c001b93c] ret_from_except+0x0/0x14
-> > [76404.888659] --- interrupt: 501 at arch_cpu_idle+0x30/0x78
-> >                    LR = arch_cpu_idle+0x30/0x78
-> > [76404.888667] [c0cdbf70] [c0cda000] 0xc0cda000 (unreliable)
-> > [76404.888679] [c0cdbf80] [c00a3844] do_idle+0xc4/0x158
-> > [76404.888687] [c0cdbfb0] [c00a3a90] cpu_startup_entry+0x24/0x28
-> > [76404.888696] [c0cdbfc0] [c097f820] start_kernel+0x47c/0x490
-> > [76404.888703] [c0cdbff0] [00003444] 0x3444
->
-> So, the _positive versions are there to deal with small negative reads
-> coming from percpu propagation delays.  It's not there to protect
-> against actual counter overflow although it can't detect that on SMP.
-> It's just outright wrong to report 0 when the counter actually
-> overflowed and applying the suggested patch masks a real problem
-> undetectable.
+On 06/07/2018 10:32 AM, Suzuki K Poulose wrote:
+> On 06/07/2018 10:13 AM, Greg Kroah-Hartman wrote:
+>> On Thu, Jun 07, 2018 at 10:04:33AM +0100, Suzuki K Poulose wrote:
+>>> Hi Greg,
+>>>
+>>> On 06/07/2018 09:34 AM, Greg Kroah-Hartman wrote:
+>>>> On Wed, Jun 06, 2018 at 03:55:01PM -0500, Kim Phillips wrote:
+>>>>> On Wed, 6 Jun 2018 10:46:36 +0100
+>>>>> Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+>>>>>
+>>>>>> On 06/06/2018 09:24 AM, Greg Kroah-Hartman wrote:
+>>>>>>> On Tue, Jun 05, 2018 at 04:07:01PM -0500, Kim Phillips wrote:
+>>>>>>>> Increment the refcnt for driver modules in current use by calling
+>>>>>>>> module_get in coresight_build_path and module_put in release_path.
+>>>>>>>>
+>>>>>>>> This prevents driver modules from being unloaded when they are 
+>>>>>>>> in use,
+>>>>>>>> either in sysfs or perf mode.
+>>>>>>>
+>>>>>>> Why does it matter?  Shouldn't you be allowed to remove any 
+>>>>>>> module at
+>>>>>>> any point in time, much like a networking driver?
+>>>
+>>> The user doesn't have an explicit refcount on the individual components
+>>> in a trace session. So, when a trace session is in progress, it is as
+>>> good as having a "file" open on each component that is part of the
+>>> active trace session. So, we don't want the driver to be removed when
+>>> the component is being used in the trace collection.
+>>
+>> Why not?  What's wrong with that happening and then the trace collection
+>> starts failing with -ENODEV or something?
 
-I see, thanks for the explanation.
+Forgot to add, this will indeed hit -ENODEV, if the device driver was
+removed, as we fail to build the trace path before the session.
 
-> I think the right thing to do is actually undersatnding what's going
-> on (why is a 64bit counter overflowing?) and fix the underlying issue.
->
-> Thanks.
->
-> --
-> tejun
+> 
+> May be I am missing something here. Can we allow the driver to be 
+> removed when one of its device is "turned ON" and we need the same
+> driver to "turn it OFF" when the session ends ? To make a better
+> comparison :
+> 
+> Can we unload a usb_mass_storage module when a USB disk(which uses the 
+> module driver) is mounted and is being used ? I believe, the module
+> will eventually get unloaded when we unmount the disk, if someone did
+> a unload.
+> 
+> We have a similar situation here. The only difference is the driver is
+> referenced only when one of its device is in a trace session.
+> 
+>>
+>> Remember, removing a kernel module is something that only happens very
+>> rarely, and is an explicit choice by someone with root permissions.  If
+>> you want to remove that module, it should be able to go, as you know
+>> what you are doing at that point in time.
+> 
+> Right, but when a device is "in use" can we do that ? I thought the user
+> will get a module is in use or busy, error.
+> 
+> 
+>>
+>> Don't try to "protect the user from themselves" here, they want to shoot
+>> their foot, make it hurt if they are aiming it there :)
+>>
+> 
+> The module_get/put added here are only triggered when we start a trace 
+> session, where we build a path for the current session from the 
+> configured "source" to the configured "sink" and the path is destroyed
+> at the end of the trace session. i.e, the path is not a permanent thing.
+> It is constructed per session. So it is perfectly possible to remove a
+> device in between trace sessions.
+> 
+>>> This will be
+>>> released as soon as the session is ended. It is just like a PMU driver
+>>> where the module refcount is held to ensure the module stays until the
+>>> session is over. In this case, we have multiple components, each with
+>>> its own driver invisible to the PMU driver. Hence the coresight driver
+>>> must hold the reference.
+>>
+>> Again, please think this through and don't add extra complexity to the
+>> normal path, and get it right if you do it (the existing patch is not
+>> right as I pointed out.)  Personally, I feel the code should just be
+>> able to be unloaded whenever they want, user beware...
+> 
+> Sure, will explore more to refine the code. Thanks for the trigger.
+> 
+> Cheers
+> Suzuki
+
+Suzuki
