@@ -1,408 +1,966 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id A/pIIeqcGlsRRgAAmS7hNA
-	; Fri, 08 Jun 2018 15:12:42 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id DDFwKxP6GFv5cAAAmS7hNA
+	; Thu, 07 Jun 2018 09:26:51 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 7683B607E4; Fri,  8 Jun 2018 15:12:42 +0000 (UTC)
+	id D7F73607DC; Thu,  7 Jun 2018 09:26:50 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 035F4601B4;
-	Fri,  8 Jun 2018 15:12:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 035F4601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id B7E44605A2;
+	Thu,  7 Jun 2018 09:26:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B7E44605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751643AbeFHPMi (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 11:12:38 -0400
-Received: from mga12.intel.com ([192.55.52.136]:17808 "EHLO mga12.intel.com"
+        id S1753783AbeFGJ0r (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 05:26:47 -0400
+Received: from foss.arm.com ([217.140.101.70]:49024 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751241AbeFHPMg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 11:12:36 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jun 2018 08:12:36 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,490,1520924400";
-   d="scan'208";a="55800367"
-Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
-  by FMSMGA003.fm.intel.com with ESMTP; 08 Jun 2018 08:12:34 -0700
-Received: from kbuild by bee with local (Exim 4.84_2)
-        (envelope-from <lkp@intel.com>)
-        id 1fRJ46-000Xu5-4T; Fri, 08 Jun 2018 23:12:34 +0800
-Date: Fri, 08 Jun 2018 23:11:40 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [linus:master] BUILD REGRESSION
- 68abbe729567cef128b2c2141f2ed2567f3b8372
-Message-ID: <5b1a9cac.E0zqScbTCJ5WgP6x%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        id S932547AbeFGJ0m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 05:26:42 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BFD2815AB;
+        Thu,  7 Jun 2018 02:26:41 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 68BC53F5A0;
+        Thu,  7 Jun 2018 02:26:41 -0700 (PDT)
+Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
+        id C0BE968028F; Thu,  7 Jun 2018 10:26:39 +0100 (BST)
+Date: Thu, 7 Jun 2018 10:26:39 +0100
+From: Liviu Dudau <Liviu.Dudau@arm.com>
+To: Brian Starkey <brian.starkey@arm.com>
+Cc: Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        David Airlie <airlied@linux.ie>,
+        Alexandru-Cosmin Gheorghe <alexandru-cosmin.gheorghe@arm.com>,
+        Eric Anholt <eric@anholt.net>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Daniel Stone <daniels@collabora.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Mihail Atanassov <mihail.atanassov@arm.com>
+Subject: Re: [PATCH v9 1/3] drm: Add writeback connector type
+Message-ID: <20180607092639.GB4144@e110455-lin.cambridge.arm.com>
+References: <20180524164103.8378-1-Liviu.Dudau@arm.com>
+ <20180524164103.8378-2-Liviu.Dudau@arm.com>
+ <20180525153237.GA1139@e107564-lin.cambridge.arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: lkp@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <20180525153237.GA1139@e107564-lin.cambridge.arm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git  master
-branch HEAD: 68abbe729567cef128b2c2141f2ed2567f3b8372  Merge branch 'akpm' (patches from Andrew)
+On Fri, May 25, 2018 at 04:32:38PM +0100, Brian Starkey wrote:
+> On Thu, May 24, 2018 at 05:41:01PM +0100, Liviu Dudau wrote:
+> > From: Brian Starkey <brian.starkey@arm.com>
+> > 
+> > Writeback connectors represent writeback engines which can write the
+> > CRTC output to a memory framebuffer. Add a writeback connector type and
+> > related support functions.
+> > 
+> > Drivers should initialize a writeback connector with
+> > drm_writeback_connector_init() which takes care of setting up all the
+> > writeback-specific details on top of the normal functionality of
+> > drm_connector_init().
+> > 
+> > Writeback connectors have a WRITEBACK_FB_ID property, used to set the
+> > output framebuffer, and a WRITEBACK_PIXEL_FORMATS blob used to expose the
+> > supported writeback formats to userspace.
+> > 
+> > When a framebuffer is attached to a writeback connector with the
+> > WRITEBACK_FB_ID property, it is used only once (for the commit in which
+> > it was included), and userspace can never read back the value of
+> > WRITEBACK_FB_ID. WRITEBACK_FB_ID can only be set if the connector is
+> > attached to a CRTC.
+> > 
+> > Changes since v1:
+> > - Added drm_writeback.c + documentation
+> > - Added helper to initialize writeback connector in one go
+> > - Added core checks
+> > - Squashed into a single commit
+> > - Dropped the client cap
+> > - Writeback framebuffers are no longer persistent
+> > 
+> > Changes since v2:
+> > Daniel Vetter:
+> > - Subclass drm_connector to drm_writeback_connector
+> > - Relax check to allow CRTC to be set without an FB
+> > - Add some writeback_ prefixes
+> > - Drop PIXEL_FORMATS_SIZE property, as it was unnecessary
+> > Gustavo Padovan:
+> > - Add drm_writeback_job to handle writeback signalling centrally
+> > 
+> > Changes since v3:
+> > - Rebased
+> > - Rename PIXEL_FORMATS -> WRITEBACK_PIXEL_FORMATS
+> > 
+> > Chances since v4:
+> > - Embed a drm_encoder inside the drm_writeback_connector to
+> >   reduce the amount of boilerplate code required from the drivers
+> >   that are using it.
+> > 
+> > Changes since v5:
+> > - Added Rob Clark's atomic_commit() vfunc to connector helper
+> >   funcs, so that writeback jobs are commited from atomic helpers
+> > - Updated create_writeback_properties() signature to return an
+> >   error code rather than a boolean false for failure.
+> > - Free writeback job with the connector state rather than when
+> >   doing the cleanup_work()
+> > 
+> > Changes since v7:
+> > - fix extraneous use of out_fence that is only introduced in a
+> >   subsequent patch.
+> > 
+> > Changes since v8:
+> > - whitespace changes pull from subsequent patch
+> > 
+> > Reviewed-by: Eric Anholt <eric@anholt.net>
+> > Signed-off-by: Brian Starkey <brian.starkey@arm.com>
+> > [rebased and fixed conflicts]
+> > Signed-off-by: Mihail Atanassov <mihail.atanassov@arm.com>
+> > [rebased and added atomic_commit() vfunc for writeback jobs]
+> > Signed-off-by: Rob Clark <robdclark@gmail.com>
+> > Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
+> > ---
+> > Documentation/gpu/drm-kms.rst            |   9 +
+> > drivers/gpu/drm/Makefile                 |   2 +-
+> > drivers/gpu/drm/drm_atomic.c             | 128 ++++++++++++
+> > drivers/gpu/drm/drm_atomic_helper.c      |  30 +++
+> > drivers/gpu/drm/drm_connector.c          |   4 +-
+> > drivers/gpu/drm/drm_writeback.c          | 255 +++++++++++++++++++++++
+> > include/drm/drm_atomic.h                 |   3 +
+> > include/drm/drm_connector.h              |  13 ++
+> > include/drm/drm_mode_config.h            |  15 ++
+> > include/drm/drm_modeset_helper_vtables.h |  11 +
+> > include/drm/drm_writeback.h              |  90 ++++++++
+> > include/uapi/drm/drm_mode.h              |   1 +
+> > 12 files changed, 559 insertions(+), 2 deletions(-)
+> > create mode 100644 drivers/gpu/drm/drm_writeback.c
+> > create mode 100644 include/drm/drm_writeback.h
+> > 
+> > diff --git a/Documentation/gpu/drm-kms.rst b/Documentation/gpu/drm-kms.rst
+> > index 1dffd1ac4cd44..809d403087f95 100644
+> > --- a/Documentation/gpu/drm-kms.rst
+> > +++ b/Documentation/gpu/drm-kms.rst
+> > @@ -373,6 +373,15 @@ Connector Functions Reference
+> > .. kernel-doc:: drivers/gpu/drm/drm_connector.c
+> >    :export:
+> > 
+> > +Writeback Connectors
+> > +--------------------
+> > +
+> > +.. kernel-doc:: drivers/gpu/drm/drm_writeback.c
+> > +  :doc: overview
+> > +
+> > +.. kernel-doc:: drivers/gpu/drm/drm_writeback.c
+> > +  :export:
+> > +
+> > Encoder Abstraction
+> > ===================
+> > 
+> > diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
+> > index ef9f3dab287fd..69c13517ea3a6 100644
+> > --- a/drivers/gpu/drm/Makefile
+> > +++ b/drivers/gpu/drm/Makefile
+> > @@ -18,7 +18,7 @@ drm-y       :=	drm_auth.o drm_bufs.o drm_cache.o \
+> > 		drm_encoder.o drm_mode_object.o drm_property.o \
+> > 		drm_plane.o drm_color_mgmt.o drm_print.o \
+> > 		drm_dumb_buffers.o drm_mode_config.o drm_vblank.o \
+> > -		drm_syncobj.o drm_lease.o
+> > +		drm_syncobj.o drm_lease.o drm_writeback.o
+> > 
+> > drm-$(CONFIG_DRM_LIB_RANDOM) += lib/drm_random.o
+> > drm-$(CONFIG_DRM_VM) += drm_vm.o
+> > diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+> > index 895741e9cd7db..e32a93931c0dc 100644
+> > --- a/drivers/gpu/drm/drm_atomic.c
+> > +++ b/drivers/gpu/drm/drm_atomic.c
+> > @@ -30,6 +30,7 @@
+> > #include <drm/drm_atomic.h>
+> > #include <drm/drm_mode.h>
+> > #include <drm/drm_print.h>
+> > +#include <drm/drm_writeback.h>
+> > #include <linux/sync_file.h>
+> > 
+> > #include "drm_crtc_internal.h"
+> > @@ -676,6 +677,45 @@ static void drm_atomic_crtc_print_state(struct drm_printer *p,
+> > 		crtc->funcs->atomic_print_state(p, state);
+> > }
+> > 
+> > +/**
+> > + * drm_atomic_connector_check - check connector state
+> > + * @connector: connector to check
+> > + * @state: connector state to check
+> > + *
+> > + * Provides core sanity checks for connector state.
+> > + *
+> > + * RETURNS:
+> > + * Zero on success, error code on failure
+> > + */
+> > +static int drm_atomic_connector_check(struct drm_connector *connector,
+> > +		struct drm_connector_state *state)
+> > +{
+> > +	struct drm_crtc_state *crtc_state;
+> > +	struct drm_writeback_job *writeback_job = state->writeback_job;
+> > +
+> > +	if ((connector->connector_type != DRM_MODE_CONNECTOR_WRITEBACK) || !writeback_job)
+> > +		return 0;
+> > +
+> > +	if (writeback_job->fb && !state->crtc) {
+> > +		DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] framebuffer without CRTC\n",
+> > +				 connector->base.id, connector->name);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	if (state->crtc)
+> > +		crtc_state = drm_atomic_get_existing_crtc_state(state->state,
+> > +								state->crtc);
+> > +
+> > +	if (writeback_job->fb && !crtc_state->active) {
+> > +		DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] has framebuffer, but [CRTC:%d] is off\n",
+> > +				 connector->base.id, connector->name,
+> > +				 state->crtc->base.id);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > /**
+> >  * drm_atomic_get_plane_state - get plane state
+> >  * @state: global atomic state object
+> > @@ -1286,6 +1326,12 @@ static int drm_atomic_connector_set_property(struct drm_connector *connector,
+> > 			return -EINVAL;
+> > 		}
+> > 		state->content_protection = val;
+> > +	} else if (property == config->writeback_fb_id_property) {
+> > +		struct drm_framebuffer *fb = drm_framebuffer_lookup(dev, NULL, val);
+> > +		int ret = drm_atomic_set_writeback_fb_for_connector(state, fb);
+> > +		if (fb)
+> > +			drm_framebuffer_unreference(fb);
+> > +		return ret;
+> > 	} else if (connector->funcs->atomic_set_property) {
+> > 		return connector->funcs->atomic_set_property(connector,
+> > 				state, property, val);
+> > @@ -1367,6 +1413,9 @@ drm_atomic_connector_get_property(struct drm_connector *connector,
+> > 		*val = state->scaling_mode;
+> > 	} else if (property == connector->content_protection_property) {
+> > 		*val = state->content_protection;
+> > +	} else if (property == config->writeback_fb_id_property) {
+> > +		/* Writeback framebuffer is one-shot, write and forget */
+> > +		*val = 0;
+> > 	} else if (connector->funcs->atomic_get_property) {
+> > 		return connector->funcs->atomic_get_property(connector,
+> > 				state, property, val);
+> > @@ -1584,6 +1633,74 @@ drm_atomic_set_crtc_for_connector(struct drm_connector_state *conn_state,
+> > }
+> > EXPORT_SYMBOL(drm_atomic_set_crtc_for_connector);
+> > 
+> > +/*
+> > + * drm_atomic_get_writeback_job - return or allocate a writeback job
+> > + * @conn_state: Connector state to get the job for
+> > + *
+> > + * Writeback jobs have a different lifetime to the atomic state they are
+> > + * associated with. This convenience function takes care of allocating a job
+> > + * if there isn't yet one associated with the connector state, otherwise
+> > + * it just returns the existing job.
+> > + *
+> > + * Returns: The writeback job for the given connector state
+> > + */
+> > +static struct drm_writeback_job *
+> > +drm_atomic_get_writeback_job(struct drm_connector_state *conn_state)
+> > +{
+> > +	WARN_ON(conn_state->connector->connector_type != DRM_MODE_CONNECTOR_WRITEBACK);
+> > +
+> > +	if (!conn_state->writeback_job)
+> > +		conn_state->writeback_job =
+> > +			kzalloc(sizeof(*conn_state->writeback_job), GFP_KERNEL);
+> > +
+> > +	return conn_state->writeback_job;
+> > +}
+> > +
+> > +/**
+> > + * drm_atomic_set_writeback_fb_for_connector - set writeback framebuffer
+> > + * @conn_state: atomic state object for the connector
+> > + * @fb: fb to use for the connector
+> > + *
+> > + * This is used to set the framebuffer for a writeback connector, which outputs
+> > + * to a buffer instead of an actual physical connector.
+> > + * Changing the assigned framebuffer requires us to grab a reference to the new
+> > + * fb and drop the reference to the old fb, if there is one. This function
+> > + * takes care of all these details besides updating the pointer in the
+> > + * state object itself.
+> > + *
+> > + * Note: The only way conn_state can already have an fb set is if the commit
+> > + * sets the property more than once.
+> > + *
+> > + * See also: drm_writeback_connector_init()
+> > + *
+> > + * Returns: 0 on success
+> > + */
+> > +int drm_atomic_set_writeback_fb_for_connector(
+> > +		struct drm_connector_state *conn_state,
+> > +		struct drm_framebuffer *fb)
+> > +{
+> > +	struct drm_writeback_job *job =
+> > +		drm_atomic_get_writeback_job(conn_state);
+> > +	if (!job)
+> > +		return -ENOMEM;
+> > +
+> > +	if (job->fb)
+> > +		drm_framebuffer_unreference(job->fb);
+> > +	if (fb)
+> > +		drm_framebuffer_reference(fb);
+> > +	job->fb = fb;
+> > +
+> > +	if (fb)
+> > +		DRM_DEBUG_ATOMIC("Set [FB:%d] for connector state %p\n",
+> > +				 fb->base.id, conn_state);
+> > +	else
+> > +		DRM_DEBUG_ATOMIC("Set [NOFB] for connector state %p\n",
+> > +				 conn_state);
+> > +
+> > +	return 0;
+> > +}
+> > +EXPORT_SYMBOL(drm_atomic_set_writeback_fb_for_connector);
+> > +
+> > /**
+> >  * drm_atomic_add_affected_connectors - add connectors for crtc
+> >  * @state: atomic state
+> > @@ -1702,6 +1819,8 @@ int drm_atomic_check_only(struct drm_atomic_state *state)
+> > 	struct drm_plane_state *plane_state;
+> > 	struct drm_crtc *crtc;
+> > 	struct drm_crtc_state *crtc_state;
+> > +	struct drm_connector *conn;
+> > +	struct drm_connector_state *conn_state;
+> > 	int i, ret = 0;
+> > 
+> > 	DRM_DEBUG_ATOMIC("checking %p\n", state);
+> > @@ -1724,6 +1843,15 @@ int drm_atomic_check_only(struct drm_atomic_state *state)
+> > 		}
+> > 	}
+> > 
+> > +	for_each_new_connector_in_state(state, conn, conn_state, i) {
+> > +		ret = drm_atomic_connector_check(conn, conn_state);
+> > +		if (ret) {
+> > +			DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] atomic core check failed\n",
+> > +					 conn->base.id, conn->name);
+> > +			return ret;
+> > +		}
+> > +	}
+> > +
+> > 	if (config->funcs->atomic_check) {
+> > 		ret = config->funcs->atomic_check(state->dev, state);
+> > 
+> > diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+> > index 130da5195f3b6..5fd12666f7d7a 100644
+> > --- a/drivers/gpu/drm/drm_atomic_helper.c
+> > +++ b/drivers/gpu/drm/drm_atomic_helper.c
+> > @@ -30,6 +30,7 @@
+> > #include <drm/drm_plane_helper.h>
+> > #include <drm/drm_crtc_helper.h>
+> > #include <drm/drm_atomic_helper.h>
+> > +#include <drm/drm_writeback.h>
+> > #include <linux/dma-fence.h>
+> > 
+> > #include "drm_crtc_helper_internal.h"
+> > @@ -1172,6 +1173,25 @@ void drm_atomic_helper_commit_modeset_disables(struct drm_device *dev,
+> > }
+> > EXPORT_SYMBOL(drm_atomic_helper_commit_modeset_disables);
+> > 
+> > +static void drm_atomic_helper_commit_writebacks(struct drm_device *dev,
+> > +						struct drm_atomic_state *old_state)
+> > +{
+> > +	struct drm_connector *connector;
+> > +	struct drm_connector_state *new_conn_state;
+> > +	int i;
+> > +
+> > +	for_each_new_connector_in_state(old_state, connector, new_conn_state, i) {
+> > +		const struct drm_connector_helper_funcs *funcs;
+> > +
+> > +		funcs = connector->helper_private;
+> > +
+> > +		if (new_conn_state->writeback_job && new_conn_state->writeback_job->fb) {
+> > +			WARN_ON(connector->connector_type != DRM_MODE_CONNECTOR_WRITEBACK);
+> > +			funcs->atomic_commit(connector, new_conn_state->writeback_job);
+> > +		}
+> > +	}
+> > +}
+> > +
+> > /**
+> >  * drm_atomic_helper_commit_modeset_enables - modeset commit to enable outputs
+> >  * @dev: DRM device
+> > @@ -1251,6 +1271,8 @@ void drm_atomic_helper_commit_modeset_enables(struct drm_device *dev,
+> > 
+> > 		drm_bridge_enable(encoder->bridge);
+> > 	}
+> > +
+> > +	drm_atomic_helper_commit_writebacks(dev, old_state);
+> > }
+> > EXPORT_SYMBOL(drm_atomic_helper_commit_modeset_enables);
+> > 
+> > @@ -3660,6 +3682,9 @@ __drm_atomic_helper_connector_duplicate_state(struct drm_connector *connector,
+> > 	if (state->crtc)
+> > 		drm_connector_get(connector);
+> > 	state->commit = NULL;
+> > +
+> > +	/* Don't copy over a writeback job, they are used only once */
+> > +	state->writeback_job = NULL;
+> > }
+> > EXPORT_SYMBOL(__drm_atomic_helper_connector_duplicate_state);
+> > 
+> > @@ -3789,6 +3814,11 @@ __drm_atomic_helper_connector_destroy_state(struct drm_connector_state *state)
+> > 
+> > 	if (state->commit)
+> > 		drm_crtc_commit_put(state->commit);
+> > +
+> > +	if (state->writeback_job) {
+> > +		drm_writeback_cleanup_job(state->writeback_job);
+> > +		kfree(state->writeback_job);
+> > +	}
+> 
+> I don't think this will work properly. After calling
+> drm_writeback_queue_job, the driver is meant to set
+> state->writeback_job to NULL, and then the writeback queue was meant
+> to take full ownership of the job (and free it on the
+> drm_writeback_signal_completion path).
+> 
+> So, if drivers do that - by the time we get here, the driver will have
+> set the pointer to NULL, and we'll leak the job (because it's no
+> longer freed on the signal path).
+> 
+> If drivers don't set it to NULL after queueing, then this can race
+> with the drm_writeback_signal_completion() path and do nasty things.
+> 
+> If there's no way to free the job on the signal_completion() path,
+> then we'll probably need to refcount the writeback_job, and add a lock
+> to it to protect the job->fb.
+> 
+> I was trying originally to avoid the refcount, but tbh the fact that
+> drivers had to set the pointer to NULL after calling
+> drm_writeback_queue_job is a little ugly and a little fragile, so
+> perhaps it's the best thing to do.
 
-Regressions in current branch:
+Hi Brian,
 
-arch/sh/include/asm/io.h:246:32: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-arch/x86/net/bpf_jit_comp32.c:2449 do_jit() warn: potential off by one 'addrs[]' limit 'bpf_prog->len'
-drivers/acpi/battery.c:720:3-9: preceding lock on line 701
-drivers/gpu/drm/amd/amdkfd/Kconfig:8: unknown option "imply"
-drivers/gpu/drm/amd/amdkfd/Kconfig:9: syntax error
-drivers/gpu/drm/bridge/Kconfig:77: unknown option "imply"
-drivers/gpu/drm/bridge/Kconfig:78: syntax error
-drivers/net/dsa/mv88e6xxx/Kconfig:26: unknown option "imply"
-drivers/net/dsa/mv88e6xxx/Kconfig:27: syntax error
-drivers/net/ethernet/adi/Kconfig:61: unknown option "imply"
-drivers/net/ethernet/adi/Kconfig:62: syntax error
-drivers/net/ethernet/amd/Kconfig:180: unknown option "imply"
-drivers/net/ethernet/amd/Kconfig:181: syntax error
-drivers/net/ethernet/broadcom/Kconfig:113: unknown option "imply"
-drivers/net/ethernet/broadcom/Kconfig:114: syntax error
-drivers/net/ethernet/cadence/Kconfig:38: unknown option "imply"
-drivers/net/ethernet/cadence/Kconfig:39: syntax error
-drivers/net/ethernet/cavium/Kconfig:56: unknown option "imply"
-drivers/net/ethernet/cavium/Kconfig:57: syntax error
-drivers/net/ethernet/freescale/Kconfig:28: unknown option "imply"
-drivers/net/ethernet/freescale/Kconfig:29: syntax error
-drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c:4448:4: note: in expansion of macro 'xchg'
-drivers/net/ethernet/intel/Kconfig:61: unknown option "imply"
-drivers/net/ethernet/intel/Kconfig:62: syntax error
-drivers/net/ethernet/mellanox/mlx4/Kconfig:10: unknown option "imply"
-drivers/net/ethernet/mellanox/mlx4/Kconfig:11: syntax error
-drivers/net/ethernet/mellanox/mlx5/core/Kconfig:17: unknown option "imply"
-drivers/net/ethernet/mellanox/mlx5/core/Kconfig:18: syntax error
-drivers/net/ethernet/qlogic/Kconfig:107: unknown option "imply"
-drivers/net/ethernet/qlogic/Kconfig:108: syntax error
-drivers/net/ethernet/renesas/Kconfig:40: unknown option "imply"
-drivers/net/ethernet/renesas/Kconfig:41: syntax error
-drivers/net/ethernet/samsung/Kconfig:24: unknown option "imply"
-drivers/net/ethernet/samsung/Kconfig:25: syntax error
-drivers/net/ethernet/sfc/Kconfig:8: unknown option "imply"
-drivers/net/ethernet/sfc/Kconfig:9: syntax error
-drivers/net/ethernet/stmicro/stmmac/Kconfig:7: unknown option "imply"
-drivers/net/ethernet/stmicro/stmmac/Kconfig:8: syntax error
-drivers/net/ethernet/ti/Kconfig:79: unknown option "imply"
-drivers/net/ethernet/ti/Kconfig:80: syntax error
-drivers/net/ethernet/tile/Kconfig:12: unknown option "imply"
-drivers/net/ethernet/tile/Kconfig:13: syntax error
-drivers/ptp/Kconfig:79: unknown option "imply"
-drivers/ptp/Kconfig:80: syntax error
-include/linux/syscalls.h:233:18: error: 'sys_getdomainname' alias between functions of incompatible types 'long int(char *, int)' and 'long int(long int,  long int)' [-Werror=attribute-alias]
-include/linux/syscalls.h:233:18: error: 'sys_mmap2' alias between functions of incompatible types 'long int(long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int)' and 'long int(long int,  long int,  long int,  long int,  long int,  long int)' [-Werror=attribute-alias]
-include/linux/syscalls.h:233:18: error: 'sys_mmap' alias between functions of incompatible types 'long int(long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int)' and 'long int(long int,  long int,  long int,  long int,  long int,  long int)' [-Werror=attribute-alias]
-include/linux/syscalls.h:233:18: error: 'sys_sparc_remap_file_pages' alias between functions of incompatible types 'long int(long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int)' and 'long int(long int,  long int,  long int,  long int,  long int)' [-Werror=attribute-alias]
-include/net/mac80211.h:955: warning: Function parameter or member 'control.rates' not described in 'ieee80211_tx_info'
-include/net/mac80211.h:955: warning: Function parameter or member 'status.is_valid_ack_signal' not described in 'ieee80211_tx_info'
-include/net/mac80211.h:955: warning: Function parameter or member 'status.status_driver_data' not described in 'ieee80211_tx_info'
-init/Kconfig:1278: unknown option "imply"
-init/Kconfig:1279: syntax error
-kernel/sched/fair.c:3760: warning: Function parameter or member 'flags' not described in 'attach_entity_load_avg'
-mm/nobootmem.c:65:8: note: in expansion of macro 'phys_to_virt'
-net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.ack_signal_filled' not described in 'sta_info'
-net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.last_ack_signal' not described in 'sta_info'
-net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.msdu_failed' not described in 'sta_info'
-net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.msdu_retries' not described in 'sta_info'
-net/mac80211/sta_info.h:588: warning: Function parameter or member 'tx_stats.msdu' not described in 'sta_info'
-scripts/kconfig/zconf.gperf:47:78: error: 'T_OPT_ALLNOCONFIG_Y' undeclared (first use in this function)
-scripts/kconfig/zconf.gperf:47:78: error: 'T_OPT_ALLNOCONFIG_Y' undeclared (first use in this function); did you mean 'T_OPT_DEFCONFIG_LIST'?
-scripts/kconfig/zconf.lex.c_shipped:2357:23: warning: initialization makes pointer from integer without a cast [-Wint-conversion]
-scripts/kconfig/zconf.lex.c_shipped:805:7: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
-scripts/kconfig/zconf.lex.c_shipped:805:9: warning: implicit declaration of function 'xmalloc'; did you mean 'malloc'? [-Wimplicit-function-declaration]
-scripts/kconfig/zconf.lex.c_shipped:805:9: warning: implicit declaration of function 'xmalloc' [-Wimplicit-function-declaration]
-security/Kconfig:146: unknown option "imply"
-security/Kconfig:147: syntax error
+I've got back from my holiday and had another look at the code when I've
+realised that all this is probably not needed, as I don't think that
+your initial assumption that drm_framebuffer_unreference() can sleep is
+true. That means we can drop the framebuffer reference in the
+drm_writeback_signal_completion() safely and we don't need all the
+cleanup jobs.
 
-Error ids grouped by kconfigs:
+I'm going to update the patch and also switch to
+drm_framebuffer_{get,put} functions and send the new series today.
 
-recent_errors
-├── i386-allmodconfig
-│   └── drivers-acpi-battery.c:preceding-lock-on-line
-├── i386-allnoconfig
-│   ├── include-net-mac80211.h:warning:Function-parameter-or-member-control.rates-not-described-in-ieee80211_tx_info
-│   ├── include-net-mac80211.h:warning:Function-parameter-or-member-status.is_valid_ack_signal-not-described-in-ieee80211_tx_info
-│   ├── include-net-mac80211.h:warning:Function-parameter-or-member-status.status_driver_data-not-described-in-ieee80211_tx_info
-│   ├── kernel-sched-fair.c:warning:Function-parameter-or-member-flags-not-described-in-attach_entity_load_avg
-│   ├── net-mac80211-sta_info.h:warning:Function-parameter-or-member-status_stats.ack_signal_filled-not-described-in-sta_info
-│   ├── net-mac80211-sta_info.h:warning:Function-parameter-or-member-status_stats.last_ack_signal-not-described-in-sta_info
-│   ├── net-mac80211-sta_info.h:warning:Function-parameter-or-member-status_stats.msdu_failed-not-described-in-sta_info
-│   ├── net-mac80211-sta_info.h:warning:Function-parameter-or-member-status_stats.msdu_retries-not-described-in-sta_info
-│   └── net-mac80211-sta_info.h:warning:Function-parameter-or-member-tx_stats.msdu-not-described-in-sta_info
-├── i386-allyesconfig
-│   └── arch-x86-net-bpf_jit_comp32.c-do_jit()-warn:potential-off-by-one-addrs-limit-bpf_prog-len
-├── openrisc-or1ksim_defconfig
-│   ├── scripts-kconfig-zconf.gperf:error:T_OPT_ALLNOCONFIG_Y-undeclared-(first-use-in-this-function)-did-you-mean-T_OPT_DEFCONFIG_LIST
-│   ├── scripts-kconfig-zconf.lex.c_shipped:warning:assignment-makes-pointer-from-integer-without-a-cast
-│   ├── scripts-kconfig-zconf.lex.c_shipped:warning:implicit-declaration-of-function-xmalloc-did-you-mean-malloc
-│   └── scripts-kconfig-zconf.lex.c_shipped:warning:initialization-makes-pointer-from-integer-without-a-cast
-├── s390-allmodconfig
-│   ├── drivers-net-ethernet-adi-Kconfig:syntax-error
-│   ├── drivers-net-ethernet-adi-Kconfig:unknown-option-imply
-│   ├── drivers-net-ethernet-tile-Kconfig:syntax-error
-│   └── drivers-net-ethernet-tile-Kconfig:unknown-option-imply
-├── sh-allmodconfig
-│   ├── arch-sh-include-asm-io.h:warning:cast-to-pointer-from-integer-of-different-size
-│   └── mm-nobootmem.c:note:in-expansion-of-macro-phys_to_virt
-├── sh-allyesconfig
-│   ├── arch-sh-include-asm-io.h:warning:cast-to-pointer-from-integer-of-different-size
-│   └── mm-nobootmem.c:note:in-expansion-of-macro-phys_to_virt
-├── sparc64-allyesconfig
-│   └── drivers-net-ethernet-intel-ixgbevf-ixgbevf_main.c:note:in-expansion-of-macro-xchg
-├── sparc-allyesconfig
-│   └── drivers-net-ethernet-intel-ixgbevf-ixgbevf_main.c:note:in-expansion-of-macro-xchg
-├── sparc-defconfig
-│   ├── include-linux-syscalls.h:error:sys_getdomainname-alias-between-functions-of-incompatible-types-long-int(char-int)-and-long-int(long-int-long-int)
-│   ├── include-linux-syscalls.h:error:sys_mmap2-alias-between-functions-of-incompatible-types-long-int(long-unsigned-int-long-unsigned-int-long-unsigned-int-long-unsigned-int-long-unsigned-int-long-unsigned-
-│   ├── include-linux-syscalls.h:error:sys_mmap-alias-between-functions-of-incompatible-types-long-int(long-unsigned-int-long-unsigned-int-long-unsigned-int-long-unsigned-int-long-unsigned-int-long-unsigned-i
-│   └── include-linux-syscalls.h:error:sys_sparc_remap_file_pages-alias-between-functions-of-incompatible-types-long-int(long-unsigned-int-long-unsigned-int-long-unsigned-int-long-unsigned-int-long-unsigned-i
-├── um-i386_defconfig
-│   ├── scripts-kconfig-zconf.gperf:error:T_OPT_ALLNOCONFIG_Y-undeclared-(first-use-in-this-function)
-│   └── scripts-kconfig-zconf.lex.c_shipped:warning:implicit-declaration-of-function-xmalloc
-└── x86_64-randconfig-v2-201822
-    ├── drivers-gpu-drm-amd-amdkfd-Kconfig:syntax-error
-    ├── drivers-gpu-drm-amd-amdkfd-Kconfig:unknown-option-imply
-    ├── drivers-gpu-drm-bridge-Kconfig:syntax-error
-    ├── drivers-gpu-drm-bridge-Kconfig:unknown-option-imply
-    ├── drivers-net-dsa-mv88e6xxx-Kconfig:syntax-error
-    ├── drivers-net-dsa-mv88e6xxx-Kconfig:unknown-option-imply
-    ├── drivers-net-ethernet-amd-Kconfig:syntax-error
-    ├── drivers-net-ethernet-amd-Kconfig:unknown-option-imply
-    ├── drivers-net-ethernet-broadcom-Kconfig:syntax-error
-    ├── drivers-net-ethernet-broadcom-Kconfig:unknown-option-imply
-    ├── drivers-net-ethernet-cadence-Kconfig:syntax-error
-    ├── drivers-net-ethernet-cadence-Kconfig:unknown-option-imply
-    ├── drivers-net-ethernet-cavium-Kconfig:syntax-error
-    ├── drivers-net-ethernet-cavium-Kconfig:unknown-option-imply
-    ├── drivers-net-ethernet-freescale-Kconfig:syntax-error
-    ├── drivers-net-ethernet-freescale-Kconfig:unknown-option-imply
-    ├── drivers-net-ethernet-intel-Kconfig:syntax-error
-    ├── drivers-net-ethernet-intel-Kconfig:unknown-option-imply
-    ├── drivers-net-ethernet-mellanox-mlx4-Kconfig:syntax-error
-    ├── drivers-net-ethernet-mellanox-mlx4-Kconfig:unknown-option-imply
-    ├── drivers-net-ethernet-mellanox-mlx5-core-Kconfig:syntax-error
-    ├── drivers-net-ethernet-mellanox-mlx5-core-Kconfig:unknown-option-imply
-    ├── drivers-net-ethernet-qlogic-Kconfig:syntax-error
-    ├── drivers-net-ethernet-qlogic-Kconfig:unknown-option-imply
-    ├── drivers-net-ethernet-renesas-Kconfig:syntax-error
-    ├── drivers-net-ethernet-renesas-Kconfig:unknown-option-imply
-    ├── drivers-net-ethernet-samsung-Kconfig:syntax-error
-    ├── drivers-net-ethernet-samsung-Kconfig:unknown-option-imply
-    ├── drivers-net-ethernet-sfc-Kconfig:syntax-error
-    ├── drivers-net-ethernet-sfc-Kconfig:unknown-option-imply
-    ├── drivers-net-ethernet-stmicro-stmmac-Kconfig:syntax-error
-    ├── drivers-net-ethernet-stmicro-stmmac-Kconfig:unknown-option-imply
-    ├── drivers-net-ethernet-ti-Kconfig:syntax-error
-    ├── drivers-net-ethernet-ti-Kconfig:unknown-option-imply
-    ├── drivers-ptp-Kconfig:syntax-error
-    ├── drivers-ptp-Kconfig:unknown-option-imply
-    ├── init-Kconfig:syntax-error
-    ├── init-Kconfig:unknown-option-imply
-    ├── security-Kconfig:syntax-error
-    └── security-Kconfig:unknown-option-imply
+Best regards,
+Liviu
 
+> 
+> -Brian
+> 
+> > }
+> > EXPORT_SYMBOL(__drm_atomic_helper_connector_destroy_state);
+> > 
+> > diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
+> > index 9b9ba5d5ec0cb..d031e46ebffcf 100644
+> > --- a/drivers/gpu/drm/drm_connector.c
+> > +++ b/drivers/gpu/drm/drm_connector.c
+> > @@ -87,6 +87,7 @@ static struct drm_conn_prop_enum_list drm_connector_enum_list[] = {
+> > 	{ DRM_MODE_CONNECTOR_VIRTUAL, "Virtual" },
+> > 	{ DRM_MODE_CONNECTOR_DSI, "DSI" },
+> > 	{ DRM_MODE_CONNECTOR_DPI, "DPI" },
+> > +	{ DRM_MODE_CONNECTOR_WRITEBACK, "Writeback" },
+> > };
+> > 
+> > void drm_connector_ida_init(void)
+> > @@ -249,7 +250,8 @@ int drm_connector_init(struct drm_device *dev,
+> > 	config->num_connector++;
+> > 	spin_unlock_irq(&config->connector_list_lock);
+> > 
+> > -	if (connector_type != DRM_MODE_CONNECTOR_VIRTUAL)
+> > +	if (connector_type != DRM_MODE_CONNECTOR_VIRTUAL &&
+> > +	    connector_type != DRM_MODE_CONNECTOR_WRITEBACK)
+> > 		drm_object_attach_property(&connector->base,
+> > 					      config->edid_property,
+> > 					      0);
+> > diff --git a/drivers/gpu/drm/drm_writeback.c b/drivers/gpu/drm/drm_writeback.c
+> > new file mode 100644
+> > index 0000000000000..1141325b004ab
+> > --- /dev/null
+> > +++ b/drivers/gpu/drm/drm_writeback.c
+> > @@ -0,0 +1,255 @@
+> > +/*
+> > + * (C) COPYRIGHT 2016 ARM Limited. All rights reserved.
+> > + * Author: Brian Starkey <brian.starkey@arm.com>
+> > + *
+> > + * This program is free software and is provided to you under the terms of the
+> > + * GNU General Public License version 2 as published by the Free Software
+> > + * Foundation, and any use by you of this program is subject to the terms
+> > + * of such GNU licence.
+> > + */
+> > +
+> > +#include <drm/drm_crtc.h>
+> > +#include <drm/drm_modeset_helper_vtables.h>
+> > +#include <drm/drm_property.h>
+> > +#include <drm/drm_writeback.h>
+> > +#include <drm/drmP.h>
+> > +
+> > +/**
+> > + * DOC: overview
+> > + *
+> > + * Writeback connectors are used to expose hardware which can write the output
+> > + * from a CRTC to a memory buffer. They are used and act similarly to other
+> > + * types of connectors, with some important differences:
+> > + *  - Writeback connectors don't provide a way to output visually to the user.
+> > + *  - Writeback connectors should always report as "disconnected" (so that
+> > + *    clients which don't understand them will ignore them).
+> > + *  - Writeback connectors don't have EDID.
+> > + *
+> > + * A framebuffer may only be attached to a writeback connector when the
+> > + * connector is attached to a CRTC. The WRITEBACK_FB_ID property which sets the
+> > + * framebuffer applies only to a single commit (see below). A framebuffer may
+> > + * not be attached while the CRTC is off.
+> > + *
+> > + * Writeback connectors have some additional properties, which userspace
+> > + * can use to query and control them:
+> > + *
+> > + *  "WRITEBACK_FB_ID":
+> > + *	Write-only object property storing a DRM_MODE_OBJECT_FB: it stores the
+> > + *	framebuffer to be written by the writeback connector. This property is
+> > + *	similar to the FB_ID property on planes, but will always read as zero
+> > + *	and is not preserved across commits.
+> > + *	Userspace must set this property to an output buffer every time it
+> > + *	wishes the buffer to get filled.
+> > + *
+> > + *  "WRITEBACK_PIXEL_FORMATS":
+> > + *	Immutable blob property to store the supported pixel formats table. The
+> > + *	data is an array of u32 DRM_FORMAT_* fourcc values.
+> > + *	Userspace can use this blob to find out what pixel formats are supported
+> > + *	by the connector's writeback engine.
+> > + */
+> > +
+> > +static int create_writeback_properties(struct drm_device *dev)
+> > +{
+> > +	struct drm_property *prop;
+> > +
+> > +	if (!dev->mode_config.writeback_fb_id_property) {
+> > +		prop = drm_property_create_object(dev, DRM_MODE_PROP_ATOMIC,
+> > +						  "WRITEBACK_FB_ID",
+> > +						  DRM_MODE_OBJECT_FB);
+> > +		if (!prop)
+> > +			return -ENOMEM;
+> > +		dev->mode_config.writeback_fb_id_property = prop;
+> > +	}
+> > +
+> > +	if (!dev->mode_config.writeback_pixel_formats_property) {
+> > +		prop = drm_property_create(dev, DRM_MODE_PROP_BLOB |
+> > +					   DRM_MODE_PROP_ATOMIC |
+> > +					   DRM_MODE_PROP_IMMUTABLE,
+> > +					   "WRITEBACK_PIXEL_FORMATS", 0);
+> > +		if (!prop)
+> > +			return -ENOMEM;
+> > +		dev->mode_config.writeback_pixel_formats_property = prop;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static const struct drm_encoder_funcs drm_writeback_encoder_funcs = {
+> > +	.destroy = drm_encoder_cleanup,
+> > +};
+> > +
+> > +/**
+> > + * drm_writeback_connector_init - Initialize a writeback connector and its properties
+> > + * @dev: DRM device
+> > + * @wb_connector: Writeback connector to initialize
+> > + * @con_funcs: Connector funcs vtable
+> > + * @enc_helper_funcs: Encoder helper funcs vtable to be used by the internal encoder
+> > + * @formats: Array of supported pixel formats for the writeback engine
+> > + * @n_formats: Length of the formats array
+> > + *
+> > + * This function creates the writeback-connector-specific properties if they
+> > + * have not been already created, initializes the connector as
+> > + * type DRM_MODE_CONNECTOR_WRITEBACK, and correctly initializes the property
+> > + * values. It will also create an internal encoder associated with the
+> > + * drm_writeback_connector and set it to use the @enc_helper_funcs vtable for
+> > + * the encoder helper.
+> > + *
+> > + * Drivers should always use this function instead of drm_connector_init() to
+> > + * set up writeback connectors.
+> > + *
+> > + * Returns: 0 on success, or a negative error code
+> > + */
+> > +int drm_writeback_connector_init(struct drm_device *dev,
+> > +				 struct drm_writeback_connector *wb_connector,
+> > +				 const struct drm_connector_funcs *con_funcs,
+> > +				 const struct drm_encoder_helper_funcs *enc_helper_funcs,
+> > +				 const u32 *formats, int n_formats)
+> > +{
+> > +	struct drm_property_blob *blob;
+> > +	struct drm_connector *connector = &wb_connector->base;
+> > +	struct drm_mode_config *config = &dev->mode_config;
+> > +	int ret = create_writeback_properties(dev);
+> > +
+> > +	if (ret != 0)
+> > +		return ret;
+> > +
+> > +	blob = drm_property_create_blob(dev, n_formats * sizeof(*formats),
+> > +					formats);
+> > +	if (IS_ERR(blob))
+> > +		return PTR_ERR(blob);
+> > +
+> > +	drm_encoder_helper_add(&wb_connector->encoder, enc_helper_funcs);
+> > +	ret = drm_encoder_init(dev, &wb_connector->encoder,
+> > +			       &drm_writeback_encoder_funcs,
+> > +			       DRM_MODE_ENCODER_VIRTUAL, NULL);
+> > +	if (ret)
+> > +		goto fail;
+> > +
+> > +	connector->interlace_allowed = 0;
+> > +
+> > +	ret = drm_connector_init(dev, connector, con_funcs,
+> > +				 DRM_MODE_CONNECTOR_WRITEBACK);
+> > +	if (ret)
+> > +		goto connector_fail;
+> > +
+> > +	ret = drm_mode_connector_attach_encoder(connector,
+> > +						&wb_connector->encoder);
+> > +	if (ret)
+> > +		goto attach_fail;
+> > +
+> > +	INIT_LIST_HEAD(&wb_connector->job_queue);
+> > +	spin_lock_init(&wb_connector->job_lock);
+> > +
+> > +	drm_object_attach_property(&connector->base,
+> > +				   config->writeback_fb_id_property, 0);
+> > +
+> > +	drm_object_attach_property(&connector->base,
+> > +				   config->writeback_pixel_formats_property,
+> > +				   blob->base.id);
+> > +	wb_connector->pixel_formats_blob_ptr = blob;
+> > +
+> > +	return 0;
+> > +
+> > +attach_fail:
+> > +	drm_connector_cleanup(connector);
+> > +connector_fail:
+> > +	drm_encoder_cleanup(&wb_connector->encoder);
+> > +fail:
+> > +	drm_property_unreference_blob(blob);
+> > +	return ret;
+> > +}
+> > +EXPORT_SYMBOL(drm_writeback_connector_init);
+> > +
+> > +/**
+> > + * drm_writeback_queue_job - Queue a writeback job for later signalling
+> > + * @wb_connector: The writeback connector to queue a job on
+> > + * @job: The job to queue
+> > + *
+> > + * This function adds a job to the job_queue for a writeback connector. It
+> > + * should be considered to take ownership of the writeback job, and so any other
+> > + * references to the job must be cleared after calling this function.
+> > + *
+> > + * Drivers must ensure that for a given writeback connector, jobs are queued in
+> > + * exactly the same order as they will be completed by the hardware (and
+> > + * signaled via drm_writeback_signal_completion).
+> > + *
+> > + * For every call to drm_writeback_queue_job() there must be exactly one call to
+> > + * drm_writeback_signal_completion()
+> > + *
+> > + * See also: drm_writeback_signal_completion()
+> > + */
+> > +void drm_writeback_queue_job(struct drm_writeback_connector *wb_connector,
+> > +			     struct drm_writeback_job *job)
+> > +{
+> > +	unsigned long flags;
+> > +
+> > +	spin_lock_irqsave(&wb_connector->job_lock, flags);
+> > +	list_add_tail(&job->list_entry, &wb_connector->job_queue);
+> > +	spin_unlock_irqrestore(&wb_connector->job_lock, flags);
+> > +}
+> > +EXPORT_SYMBOL(drm_writeback_queue_job);
+> > +
+> > +/**
+> > + * drm_writeback_cleanup_job - Cleanup and free a writeback job
+> > + * @job: The writeback job to free
+> > + *
+> > + * Drops any references held by the writeback job, and frees the structure.
+> > + */
+> > +void drm_writeback_cleanup_job(struct drm_writeback_job *job)
+> > +{
+> > +	if (job->fb)
+> > +		drm_framebuffer_unreference(job->fb);
+> > +}
+> > +EXPORT_SYMBOL(drm_writeback_cleanup_job);
+> > +
+> > +/*
+> > + * @cleanup_work: deferred cleanup of a writeback job
+> > + *
+> > + * The job cannot be cleaned up directly in drm_writeback_signal_completion,
+> > + * because it may be called in interrupt context. Dropping the framebuffer
+> > + * reference can sleep, and so the cleanup is deferred to a workqueue.
+> > + */
+> > +static void cleanup_work(struct work_struct *work)
+> > +{
+> > +	struct drm_writeback_job *job = container_of(work,
+> > +						     struct drm_writeback_job,
+> > +						     cleanup_work);
+> > +	drm_writeback_cleanup_job(job);
+> > +}
+> > +
+> > +/**
+> > + * drm_writeback_signal_completion - Signal the completion of a writeback job
+> > + * @wb_connector: The writeback connector whose job is complete
+> > + *
+> > + * Drivers should call this to signal the completion of a previously queued
+> > + * writeback job. It should be called as soon as possible after the hardware
+> > + * has finished writing, and may be called from interrupt context.
+> > + * It is the driver's responsibility to ensure that for a given connector, the
+> > + * hardware completes writeback jobs in the same order as they are queued.
+> > + *
+> > + * Unless the driver is holding its own reference to the framebuffer, it must
+> > + * not be accessed after calling this function.
+> > + *
+> > + * See also: drm_writeback_queue_job()
+> > + */
+> > +void
+> > +drm_writeback_signal_completion(struct drm_writeback_connector *wb_connector)
+> > +{
+> > +	unsigned long flags;
+> > +	struct drm_writeback_job *job;
+> > +
+> > +	spin_lock_irqsave(&wb_connector->job_lock, flags);
+> > +	job = list_first_entry_or_null(&wb_connector->job_queue,
+> > +				       struct drm_writeback_job,
+> > +				       list_entry);
+> > +	if (job)
+> > +		list_del(&job->list_entry);
+> > +	spin_unlock_irqrestore(&wb_connector->job_lock, flags);
+> > +
+> > +	if (WARN_ON(!job))
+> > +		return;
+> > +
+> > +	INIT_WORK(&job->cleanup_work, cleanup_work);
+> > +	queue_work(system_long_wq, &job->cleanup_work);
+> > +}
+> > +EXPORT_SYMBOL(drm_writeback_signal_completion);
+> > diff --git a/include/drm/drm_atomic.h b/include/drm/drm_atomic.h
+> > index a57a8aa90ffb7..a5e904105db3a 100644
+> > --- a/include/drm/drm_atomic.h
+> > +++ b/include/drm/drm_atomic.h
+> > @@ -594,6 +594,9 @@ void drm_atomic_set_fence_for_plane(struct drm_plane_state *plane_state,
+> > int __must_check
+> > drm_atomic_set_crtc_for_connector(struct drm_connector_state *conn_state,
+> > 				  struct drm_crtc *crtc);
+> > +int drm_atomic_set_writeback_fb_for_connector(
+> > +		struct drm_connector_state *conn_state,
+> > +		struct drm_framebuffer *fb);
+> > int __must_check
+> > drm_atomic_add_affected_connectors(struct drm_atomic_state *state,
+> > 				   struct drm_crtc *crtc);
+> > diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
+> > index 675cc3f8cf852..60c0ffb947d5e 100644
+> > --- a/include/drm/drm_connector.h
+> > +++ b/include/drm/drm_connector.h
+> > @@ -429,6 +429,19 @@ struct drm_connector_state {
+> > 	 * protection. This is most commonly used for HDCP.
+> > 	 */
+> > 	unsigned int content_protection;
+> > +
+> > +	/**
+> > +	 * @writeback_job: Writeback job for writeback connectors
+> > +	 *
+> > +	 * Holds the framebuffer for a writeback connector. As the writeback
+> > +	 * completion may be asynchronous to the normal commit cycle, the
+> > +	 * writeback job lifetime is managed separately from the normal atomic
+> > +	 * state by this object.
+> > +	 *
+> > +	 * See also: drm_writeback_queue_job() and
+> > +	 * drm_writeback_signal_completion()
+> > +	 */
+> > +	struct drm_writeback_job *writeback_job;
+> > };
+> > 
+> > /**
+> > diff --git a/include/drm/drm_mode_config.h b/include/drm/drm_mode_config.h
+> > index 33b3a96d66d0a..9ca32bf7bf183 100644
+> > --- a/include/drm/drm_mode_config.h
+> > +++ b/include/drm/drm_mode_config.h
+> > @@ -779,6 +779,21 @@ struct drm_mode_config {
+> > 	 */
+> > 	struct drm_property *panel_orientation_property;
+> > 
+> > +	/**
+> > +	 * @writeback_fb_id_property: Property for writeback connectors, storing
+> > +	 * the ID of the output framebuffer.
+> > +	 * See also: drm_writeback_connector_init()
+> > +	 */
+> > +	struct drm_property *writeback_fb_id_property;
+> > +
+> > +	/**
+> > +	 * @writeback_pixel_formats_property: Property for writeback connectors,
+> > +	 * storing an array of the supported pixel formats for the writeback
+> > +	 * engine (read-only).
+> > +	 * See also: drm_writeback_connector_init()
+> > +	 */
+> > +	struct drm_property *writeback_pixel_formats_property;
+> > +
+> > 	/* dumb ioctl parameters */
+> > 	uint32_t preferred_depth, prefer_shadow;
+> > 
+> > diff --git a/include/drm/drm_modeset_helper_vtables.h b/include/drm/drm_modeset_helper_vtables.h
+> > index 35e2a3a79fc56..3b289773297c2 100644
+> > --- a/include/drm/drm_modeset_helper_vtables.h
+> > +++ b/include/drm/drm_modeset_helper_vtables.h
+> > @@ -974,6 +974,17 @@ struct drm_connector_helper_funcs {
+> > 	 */
+> > 	int (*atomic_check)(struct drm_connector *connector,
+> > 			    struct drm_connector_state *state);
+> > +
+> > +	/**
+> > +	 * @atomic_commit:
+> > +	 *
+> > +	 * This hook is to be used by drivers implementing writeback connectors
+> > +	 * that need a point when to commit the writeback job to the hardware.
+> > +	 *
+> > +	 * This callback is used by the atomic modeset helpers.
+> > +	 */
+> > +	void (*atomic_commit)(struct drm_connector *connector,
+> > +			      struct drm_writeback_job *writeback_job);
+> > };
+> > 
+> > /**
+> > diff --git a/include/drm/drm_writeback.h b/include/drm/drm_writeback.h
+> > new file mode 100644
+> > index 0000000000000..499c5c7b0a54e
+> > --- /dev/null
+> > +++ b/include/drm/drm_writeback.h
+> > @@ -0,0 +1,90 @@
+> > +/*
+> > + * (C) COPYRIGHT 2016 ARM Limited. All rights reserved.
+> > + * Author: Brian Starkey <brian.starkey@arm.com>
+> > + *
+> > + * This program is free software and is provided to you under the terms of the
+> > + * GNU General Public License version 2 as published by the Free Software
+> > + * Foundation, and any use by you of this program is subject to the terms
+> > + * of such GNU licence.
+> > + */
+> > +
+> > +#ifndef __DRM_WRITEBACK_H__
+> > +#define __DRM_WRITEBACK_H__
+> > +#include <drm/drm_connector.h>
+> > +#include <drm/drm_encoder.h>
+> > +#include <linux/workqueue.h>
+> > +
+> > +struct drm_writeback_connector {
+> > +	struct drm_connector base;
+> > +
+> > +	/**
+> > +	 * @encoder: Internal encoder used by the connector to fulfill
+> > +	 * the DRM framework requirements. The users of the
+> > +	 * @drm_writeback_connector control the behaviour of the @encoder
+> > +	 * by passing the @enc_funcs parameter to drm_writeback_connector_init()
+> > +	 * function.
+> > +	 */
+> > +	struct drm_encoder encoder;
+> > +
+> > +	/**
+> > +	 * @pixel_formats_blob_ptr:
+> > +	 *
+> > +	 * DRM blob property data for the pixel formats list on writeback
+> > +	 * connectors
+> > +	 * See also drm_writeback_connector_init()
+> > +	 */
+> > +	struct drm_property_blob *pixel_formats_blob_ptr;
+> > +
+> > +	/** @job_lock: Protects job_queue */
+> > +	spinlock_t job_lock;
+> > +
+> > +	/**
+> > +	 * @job_queue:
+> > +	 *
+> > +	 * Holds a list of a connector's writeback jobs; the last item is the
+> > +	 * most recent. The first item may be either waiting for the hardware
+> > +	 * to begin writing, or currently being written.
+> > +	 *
+> > +	 * See also: drm_writeback_queue_job() and
+> > +	 * drm_writeback_signal_completion()
+> > +	 */
+> > +	struct list_head job_queue;
+> > +};
+> > +
+> > +struct drm_writeback_job {
+> > +	/**
+> > +	 * @cleanup_work:
+> > +	 *
+> > +	 * Used to allow drm_writeback_signal_completion to defer dropping the
+> > +	 * framebuffer reference to a workqueue.
+> > +	 */
+> > +	struct work_struct cleanup_work;
+> > +
+> > +	/**
+> > +	 * @list_entry:
+> > +	 *
+> > +	 * List item for the connector's @job_queue
+> > +	 */
+> > +	struct list_head list_entry;
+> > +
+> > +	/**
+> > +	 * @fb:
+> > +	 *
+> > +	 * Framebuffer to be written to by the writeback connector. Do not set
+> > +	 * directly, use drm_atomic_set_writeback_fb_for_connector()
+> > +	 */
+> > +	struct drm_framebuffer *fb;
+> > +};
+> > +
+> > +int drm_writeback_connector_init(struct drm_device *dev,
+> > +				 struct drm_writeback_connector *wb_connector,
+> > +				 const struct drm_connector_funcs *con_funcs,
+> > +				 const struct drm_encoder_helper_funcs *enc_helper_funcs,
+> > +				 const u32 *formats, int n_formats);
+> > +
+> > +void drm_writeback_queue_job(struct drm_writeback_connector *wb_connector,
+> > +			     struct drm_writeback_job *job);
+> > +
+> > +void drm_writeback_cleanup_job(struct drm_writeback_job *job);
+> > +void drm_writeback_signal_completion(struct drm_writeback_connector *wb_connector);
+> > +#endif
+> > diff --git a/include/uapi/drm/drm_mode.h b/include/uapi/drm/drm_mode.h
+> > index 4b3a1bb58e680..3e6541f0400b8 100644
+> > --- a/include/uapi/drm/drm_mode.h
+> > +++ b/include/uapi/drm/drm_mode.h
+> > @@ -344,6 +344,7 @@ enum drm_mode_subconnector {
+> > #define DRM_MODE_CONNECTOR_VIRTUAL      15
+> > #define DRM_MODE_CONNECTOR_DSI		16
+> > #define DRM_MODE_CONNECTOR_DPI		17
+> > +#define DRM_MODE_CONNECTOR_WRITEBACK	18
+> > 
+> > struct drm_mode_get_connector {
+> > 
+> > -- 
+> > 2.17.0
+> > 
 
-i386-tinyconfig vmlinux size:
-
-=============================================================================================================================================
- TOTAL  TEXT  is_pageblock_removable_nolock()  percpu_ida_alloc()                                                                            
-=============================================================================================================================================
-     0     0                                0                   0  5d752600a8c3 mm: restructure memfd code                                   
-     0     0                                0                   0  230671533d64 mm: memory.low hierarchical behavior                         
-     0     0                                0                   0  5f93ad67436b mm: treat memory.low value inclusive                         
-     0     0                                0                   0  7854207fe954 mm/docs: describe memory.low refinements                     
-     0     0                                0                   0  9ccc36171636 memcg: writeback: use memcg->cgwb_list directly              
-     0     0                                0                   0  8dd53fd3b702 memcg: mark memcg1_events static const                       
-     0     0                                0                   0  bb4a7ea2b144 mm: memcontrol: drain stocks on resize limit                 
-     0     0                                0                   0  d12c60f64cf8 mm: memcontrol: drain memcg stock on force_empty             
-     0     0                                0                   0  25cf23d7a957 mm/memblock: print memblock_remove                           
-     0     0                                                    0  d62ff365b812 mm/vmpressure.c: use kstrndup instead of kmalloc+strncpy     
-     0     0                                                    0  3cadfa2b9497 mm/vmpressure.c: convert to use match_string() helper        
-     0     0                                                    0  a380b40abbce mm/page_alloc.c: remove useless parameter of finalise_ac()   
-     0     0                                                    0  2bcd6454bae7 mm: use new return type vm_fault_t                           
-     0     0                                                    0  b3ec9f33acb8 mm: change return type to vm_fault_t                         
-     0     0                                                    0  285b8dcaacfc mm, hugetlbfs: pass fault address to no page handler         
-     0     0                                                    0  e67d4ca79aaf mm: save two stranded bits in gfp_mask                       
-    +1    +1                                                    0  1d40a5ea01d5 mm: mark pages in use for page tables                        
-     0     0                                                    0  d4fc5069a394 mm: switch s_mem and slab_cache in struct page               
-     0     0                                                    0  7d27a04bb2b5 mm: move 'private' union within struct page                  
-     0     0                                                    0  b21999da02f8 mm: move _refcount out of struct page union                  
-     0     0                                                    0  66a6ffd2af42 mm: combine first three unions in struct page                
-     0     0                                                    0  fa3015b7eed5 mm: use page->deferred_list                                  
-     0     0                                                    0  b7ccc7f8c643 mm: move lru union within struct page                        
-     0     0                                                    0  4da1984edbbe mm: combine LRU and main union in struct page                
-     0     0                                                    0  97b4a6719871 mm: improve struct page documentation                        
-     0     0                                                    0  a052f0a5168e mm: add pt_mm to struct page                                 
-     0     0                                                    0  50e7fbc3bf0c mm: add hmm_data to struct page                              
-     0     0                                                    0  bf68c214df6d slab,slub: remove rcu_head size checks                       
-     0     0                                                    0  9736d2a95e36 slub: remove kmem_cache->reserved                            
-     0     0                                                    0  df2cc96e7701 userfaultfd: prevent non-cooperative events vs mcopy_atomic  
-    -9    -9                                                    0  7810e6781e0f mm, page_alloc: do not break __GFP_THISNODE by zonelist rese 
-     0     0                                                    0  e81bf9793b18 mem_cgroup: make sure moving_account, move_lock_task and sta 
-     0     0                                                    0  941169298a3e proc: smaller RCU section in ->getattr()                     
-     0     0                                                    0  a4ef3895655c proc: use "unsigned int" in proc_fill_cache()                
-     0     0                                                    0  197850a1e04a proc: use "unsigned int" for sigqueue length                 
-     0     0                                                    0  5d008fb414f7 proc: use "unsigned int" for /proc/*/stack                   
-     0     0                                                    0  b2f5de0334f0 tools/testing/selftests/proc: test /proc/*/fd a bit (+ PF_KT 
-     0     0                                                    0  6d8e41080782 int-ll64.h: define u{8,16,32,64} and s{8,16,32,64} based on  
-   -14   -14                                                    0  ca1250bbd4e0 lib/bitmap.c: micro-optimization for __bitmap_complement()   
-     0     0                                                    0  b94078e69533 lib/idr.c: remove simple_ida_lock                            
-  -388  -388                                                 -404  804209d8a009 lib/percpu_ida.c: use _irqsave() instead of local_irq_save() 
-     0     0                                                    0  5cc41e099504 fs/binfmt_misc.c: do not allow offset overflow               
-     0     0                                                    0  ef8b42f78e88 autofs4: merge auto_fs.h and auto_fs4.h                      
-     0     0                                                    0  47206e012a0a autofs4: use autofs instead of autofs4 everywhere            
-     0     0                                                    0  2a3ae0a1212d autofs: create autofs Kconfig and Makefile                   
-     0     0                                                    0  9005d8333855 autofs: rename autofs documentation files                    
-     0     0                                                    0  b6bb226a72f0 autofs: use autofs instead of autofs4 in documentation       
-     0     0                                                    0  016e92da037e autofs: small cleanup in autofs_getpath()                    
-   -16   -16                                                    0  68abbe729567 Merge branch 'akpm' (patches from Andrew)                    
-  -387  -387                              -77                -404  89e85bce4b02..68abbe729567 (ALL COMMITS)                                  
-=============================================================================================================================================
-
-elapsed time: 780m
-
-configs tested: 126
-
-parisc                        c3000_defconfig
-parisc                         b180_defconfig
-parisc                              defconfig
-alpha                               defconfig
-parisc                            allnoconfig
-x86_64                           allyesdebian
-x86_64                                nfsroot
-sh                            titan_defconfig
-sh                          rsk7269_defconfig
-sh                  sh7785lcr_32bit_defconfig
-sh                                allnoconfig
-x86_64                           allmodconfig
-i386                               tinyconfig
-i386                   randconfig-x012-201822
-i386                   randconfig-x016-201822
-i386                   randconfig-x014-201822
-i386                   randconfig-x017-201822
-i386                   randconfig-x018-201822
-i386                   randconfig-x013-201822
-i386                   randconfig-x011-201822
-i386                   randconfig-x015-201822
-i386                   randconfig-x019-201822
-i386                   randconfig-x010-201822
-i386                     randconfig-n0-201822
-x86_64                 randconfig-x003-201822
-x86_64                 randconfig-x007-201822
-x86_64                 randconfig-x000-201822
-x86_64                 randconfig-x004-201822
-x86_64                 randconfig-x005-201822
-x86_64                 randconfig-x001-201822
-x86_64                 randconfig-x008-201822
-x86_64                 randconfig-x002-201822
-x86_64                 randconfig-x006-201822
-x86_64                 randconfig-x009-201822
-i386                     randconfig-i0-201822
-ia64                              allnoconfig
-ia64                                defconfig
-ia64                             alldefconfig
-arm                       omap2plus_defconfig
-arm                                    sa1100
-arm                              allmodconfig
-arm                                   samsung
-arm                        mvebu_v7_defconfig
-arm                          ixp4xx_defconfig
-arm                       imx_v6_v7_defconfig
-arm64                            allmodconfig
-arm                           tegra_defconfig
-arm                                      arm5
-arm64                            alldefconfig
-arm                                        sh
-arm                                     arm67
-i386                     randconfig-a0-201822
-i386                     randconfig-a1-201822
-x86_64                 randconfig-x011-201822
-x86_64                 randconfig-x015-201822
-x86_64                 randconfig-x018-201822
-x86_64                 randconfig-x010-201822
-x86_64                 randconfig-x014-201822
-x86_64                 randconfig-x019-201822
-x86_64                 randconfig-x013-201822
-x86_64                 randconfig-x017-201822
-x86_64                 randconfig-x016-201822
-x86_64                 randconfig-x012-201822
-i386                              allnoconfig
-i386                                defconfig
-i386                             alldefconfig
-i386                     randconfig-s0-201822
-i386                     randconfig-s1-201822
-openrisc                    or1ksim_defconfig
-um                           x86_64_defconfig
-um                             i386_defconfig
-i386                             allmodconfig
-powerpc                             defconfig
-s390                        default_defconfig
-powerpc                       ppc64_defconfig
-powerpc                           allnoconfig
-x86_64                   randconfig-i0-201822
-sparc                               defconfig
-sparc64                           allnoconfig
-sparc64                             defconfig
-microblaze                      mmu_defconfig
-microblaze                    nommu_defconfig
-c6x                        evmc6678_defconfig
-xtensa                       common_defconfig
-xtensa                          iss_defconfig
-nios2                         10m50_defconfig
-h8300                    h8300h-sim_defconfig
-i386                   randconfig-x009-201822
-i386                   randconfig-x008-201822
-i386                   randconfig-x005-201822
-i386                   randconfig-x001-201822
-i386                   randconfig-x003-201822
-i386                   randconfig-x000-201822
-i386                   randconfig-x004-201822
-i386                   randconfig-x006-201822
-i386                   randconfig-x002-201822
-i386                   randconfig-x007-201822
-i386                   randconfig-x078-201822
-i386                   randconfig-x079-201822
-i386                   randconfig-x070-201822
-i386                   randconfig-x074-201822
-i386                   randconfig-x076-201822
-i386                   randconfig-x075-201822
-i386                   randconfig-x071-201822
-i386                   randconfig-x073-201822
-i386                   randconfig-x077-201822
-i386                   randconfig-x072-201822
-arm                         at91_dt_defconfig
-arm                               allnoconfig
-arm                           efm32_defconfig
-arm64                               defconfig
-arm                        multi_v5_defconfig
-arm                           sunxi_defconfig
-arm64                             allnoconfig
-arm                          exynos_defconfig
-arm                        shmobile_defconfig
-arm                        multi_v7_defconfig
-m68k                           sun3_defconfig
-m68k                          multi_defconfig
-m68k                       m5475evb_defconfig
-x86_64                                   rhel
-mips                                   jz4740
-mips                      malta_kvm_defconfig
-mips                              allnoconfig
-mips                      fuloong2e_defconfig
-mips                                     txx9
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+-- 
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
