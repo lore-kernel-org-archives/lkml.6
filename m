@@ -1,144 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id rK/pH4JWHltLdAAAmS7hNA
-	; Mon, 11 Jun 2018 11:01:22 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id zkh8AyRHGVuLOwAAmS7hNA
+	; Thu, 07 Jun 2018 14:55:42 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 7555260792; Mon, 11 Jun 2018 11:01:22 +0000 (UTC)
+	id 19551607E7; Thu,  7 Jun 2018 14:55:42 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI,
+	UPPERCASE_50_75 autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id E5D20601C3;
-	Mon, 11 Jun 2018 11:01:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E5D20601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 03E2D601C3;
+	Thu,  7 Jun 2018 14:55:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 03E2D601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932780AbeFKLBU (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 07:01:20 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33428 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932263AbeFKLBT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 07:01:19 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 7D87BAF1E;
-        Mon, 11 Jun 2018 11:01:17 +0000 (UTC)
-Message-ID: <1528714451.31911.15.camel@suse.com>
-Subject: Re: [PATCH] usb: cdc_acm: Add quirk for Uniden UBC125 scanner
-From: Oliver Neukum <oneukum@suse.com>
-To: Houston Yaroschoff <hstn@4ever3.net>
-Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Date: Mon, 11 Jun 2018 12:54:11 +0200
-In-Reply-To: <20180611103909.24753-1-hstn@4ever3.net>
-References: <20180611103909.24753-1-hstn@4ever3.net>
+        id S935467AbeFGOzj (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:55:39 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41066 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935196AbeFGOzf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:55:35 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbd-0005Zj-KQ; Thu, 07 Jun 2018 15:09:37 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb7-000340-Q9; Thu, 07 Jun 2018 15:09:05 +0100
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Karsten Koop" <kkoop@ld-didactic.de>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.942339772@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 242/410] usb: ldusb: add PIDs for new CASSY devices
+ supported by this driver
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mo, 2018-06-11 at 12:39 +0200, Houston Yaroschoff wrote:
-> Uniden UBC125 radio scanner has USB interface which fails to work
-> with cdc_acm driver:
->   usb 1-1.5: new full-speed USB device number 4 using xhci_hcd
->   cdc_acm 1-1.5:1.0: Zero length descriptor references
->   cdc_acm: probe of 1-1.5:1.0 failed with error -22
-> 
-> Adding the NO_UNION_NORMAL quirk for the device fixes the issue:
->   usb 1-4: new full-speed USB device number 15 using xhci_hcd
->   usb 1-4: New USB device found, idVendor=1965, idProduct=0018
->   usb 1-4: New USB device strings: Mfr=1, Product=2, SerialNumber=3
->   usb 1-4: Product: UBC125XLT
->   usb 1-4: Manufacturer: Uniden Corp.
->   usb 1-4: SerialNumber: 0001
->   cdc_acm 1-4:1.0: ttyACM0: USB ACM device
-> 
-> `lsusb -v` of the device:
-> 
->   Bus 001 Device 015: ID 1965:0018 Uniden Corporation
->   Device Descriptor:
->     bLength                18
->     bDescriptorType         1
->     bcdUSB               2.00
->     bDeviceClass            2 Communications
->     bDeviceSubClass         0
->     bDeviceProtocol         0
->     bMaxPacketSize0        64
->     idVendor           0x1965 Uniden Corporation
->     idProduct          0x0018
->     bcdDevice            0.01
->     iManufacturer           1 Uniden Corp.
->     iProduct                2 UBC125XLT
->     iSerial                 3 0001
->     bNumConfigurations      1
->     Configuration Descriptor:
->       bLength                 9
->       bDescriptorType         2
->       wTotalLength           48
->       bNumInterfaces          2
->       bConfigurationValue     1
->       iConfiguration          0
->       bmAttributes         0x80
->         (Bus Powered)
->       MaxPower              500mA
->       Interface Descriptor:
->         bLength                 9
->         bDescriptorType         4
->         bInterfaceNumber        0
->         bAlternateSetting       0
->         bNumEndpoints           1
->         bInterfaceClass         2 Communications
->         bInterfaceSubClass      2 Abstract (modem)
->         bInterfaceProtocol      0 None
->         iInterface              0
->         Endpoint Descriptor:
->           bLength                 7
->           bDescriptorType         5
->           bEndpointAddress     0x87  EP 7 IN
->           bmAttributes            3
->             Transfer Type            Interrupt
->             Synch Type               None
->             Usage Type               Data
->           wMaxPacketSize     0x0008  1x 8 bytes
->           bInterval              10
->       Interface Descriptor:
->         bLength                 9
->         bDescriptorType         4
->         bInterfaceNumber        1
->         bAlternateSetting       0
->         bNumEndpoints           2
->         bInterfaceClass        10 CDC Data
->         bInterfaceSubClass      0 Unused
->         bInterfaceProtocol      0
->         iInterface              0
->         Endpoint Descriptor:
->           bLength                 7
->           bDescriptorType         5
->           bEndpointAddress     0x81  EP 1 IN
->           bmAttributes            2
->             Transfer Type            Bulk
->             Synch Type               None
->             Usage Type               Data
->           wMaxPacketSize     0x0040  1x 64 bytes
->           bInterval               0
->         Endpoint Descriptor:
->           bLength                 7
->           bDescriptorType         5
->           bEndpointAddress     0x02  EP 2 OUT
->           bmAttributes            2
->             Transfer Type            Bulk
->             Synch Type               None
->             Usage Type               Data
->           wMaxPacketSize     0x0040  1x 64 bytes
->           bInterval               0
->   Device Status:     0x0000
->     (Bus Powered)
-> 
-> Signed-off-by: Houston Yaroschoff <hstn@4ever3.net>
-Acked-by: Oliver Neukum <oneukum@suse.com>
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+
+------------------
+
+From: Karsten Koop <kkoop@ld-didactic.de>
+
+commit 52ad2bd8918158266fc88a05f95429b56b6a33c5 upstream.
+
+This patch adds support for new CASSY devices to the ldusb driver. The
+PIDs are also added to the ignore list in hid-quirks.
+
+Signed-off-by: Karsten Koop <kkoop@ld-didactic.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[bwh: Backported to 3.16: adjust filename]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ drivers/hid/hid-core.c   | 3 +++
+ drivers/hid/hid-ids.h    | 3 +++
+ drivers/usb/misc/ldusb.c | 6 ++++++
+ 3 files changed, 12 insertions(+)
+
+--- a/drivers/hid/hid-core.c
++++ b/drivers/hid/hid-core.c
+@@ -2309,6 +2309,9 @@ static const struct hid_device_id hid_ig
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_MICROCASSYTIME) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_MICROCASSYTEMPERATURE) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_MICROCASSYPH) },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_POWERANALYSERCASSY) },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_CONVERTERCONTROLLERCASSY) },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_MACHINETESTCASSY) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_JWM) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_DMMP) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_UMIP) },
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -582,6 +582,9 @@
+ #define USB_DEVICE_ID_LD_MICROCASSYTIME		0x1033
+ #define USB_DEVICE_ID_LD_MICROCASSYTEMPERATURE	0x1035
+ #define USB_DEVICE_ID_LD_MICROCASSYPH		0x1038
++#define USB_DEVICE_ID_LD_POWERANALYSERCASSY	0x1040
++#define USB_DEVICE_ID_LD_CONVERTERCONTROLLERCASSY	0x1042
++#define USB_DEVICE_ID_LD_MACHINETESTCASSY	0x1043
+ #define USB_DEVICE_ID_LD_JWM		0x1080
+ #define USB_DEVICE_ID_LD_DMMP		0x1081
+ #define USB_DEVICE_ID_LD_UMIP		0x1090
+--- a/drivers/usb/misc/ldusb.c
++++ b/drivers/usb/misc/ldusb.c
+@@ -46,6 +46,9 @@
+ #define USB_DEVICE_ID_LD_MICROCASSYTIME		0x1033	/* USB Product ID of Micro-CASSY Time (reserved) */
+ #define USB_DEVICE_ID_LD_MICROCASSYTEMPERATURE	0x1035	/* USB Product ID of Micro-CASSY Temperature */
+ #define USB_DEVICE_ID_LD_MICROCASSYPH		0x1038	/* USB Product ID of Micro-CASSY pH */
++#define USB_DEVICE_ID_LD_POWERANALYSERCASSY	0x1040	/* USB Product ID of Power Analyser CASSY */
++#define USB_DEVICE_ID_LD_CONVERTERCONTROLLERCASSY	0x1042	/* USB Product ID of Converter Controller CASSY */
++#define USB_DEVICE_ID_LD_MACHINETESTCASSY	0x1043	/* USB Product ID of Machine Test CASSY */
+ #define USB_DEVICE_ID_LD_JWM		0x1080	/* USB Product ID of Joule and Wattmeter */
+ #define USB_DEVICE_ID_LD_DMMP		0x1081	/* USB Product ID of Digital Multimeter P (reserved) */
+ #define USB_DEVICE_ID_LD_UMIP		0x1090	/* USB Product ID of UMI P */
+@@ -94,6 +97,9 @@ static const struct usb_device_id ld_usb
+ 	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_MICROCASSYTIME) },
+ 	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_MICROCASSYTEMPERATURE) },
+ 	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_MICROCASSYPH) },
++	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_POWERANALYSERCASSY) },
++	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_CONVERTERCONTROLLERCASSY) },
++	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_MACHINETESTCASSY) },
+ 	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_JWM) },
+ 	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_DMMP) },
+ 	{ USB_DEVICE(USB_VENDOR_ID_LD, USB_DEVICE_ID_LD_UMIP) },
