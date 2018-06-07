@@ -1,254 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id n6FSJaRTGVt6HwAAmS7hNA
-	; Thu, 07 Jun 2018 15:48:05 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id EMTqE9vuGFs9AQAAmS7hNA
+	; Thu, 07 Jun 2018 08:37:47 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 870A5607E7; Thu,  7 Jun 2018 15:48:05 +0000 (UTC)
+	id 409BB607F7; Thu,  7 Jun 2018 08:37:47 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id CCDE660590;
-	Thu,  7 Jun 2018 15:48:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CCDE660590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id A5ACC60452;
+	Thu,  7 Jun 2018 08:37:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A5ACC60452
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934444AbeFGOkQ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:40:16 -0400
-Received: from mga17.intel.com ([192.55.52.151]:61091 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932912AbeFGOkH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:40:07 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 07:39:58 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
-   d="scan'208";a="54825999"
-Received: from 2b52.sc.intel.com ([143.183.136.51])
-  by fmsmga002.fm.intel.com with ESMTP; 07 Jun 2018 07:39:58 -0700
-From: Yu-cheng Yu <yu-cheng.yu@intel.com>
-To: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [PATCH 5/5] Documentation/x86: Add CET description
-Date: Thu,  7 Jun 2018 07:35:44 -0700
-Message-Id: <20180607143544.3477-6-yu-cheng.yu@intel.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180607143544.3477-1-yu-cheng.yu@intel.com>
-References: <20180607143544.3477-1-yu-cheng.yu@intel.com>
+        id S1753503AbeFGIhn (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 04:37:43 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:40575 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752568AbeFGIhj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 04:37:39 -0400
+Received: from weser.hi.pengutronix.de ([2001:67c:670:100:fa0f:41ff:fe58:4010])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1fQqQK-0006Na-9v; Thu, 07 Jun 2018 10:37:36 +0200
+Message-ID: <1528360654.15027.2.camel@pengutronix.de>
+Subject: Re: [PATCH 1/3 v2] drm/v3d: Take a lock across GPU scheduler job
+ creation and queuing.
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Eric Anholt <eric@anholt.net>, dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org
+Date: Thu, 07 Jun 2018 10:37:34 +0200
+In-Reply-To: <20180606174851.12433-1-eric@anholt.net>
+References: <1528274797.26063.6.camel@pengutronix.de>
+         <20180606174851.12433-1-eric@anholt.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:fa0f:41ff:fe58:4010
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Explain how CET works and the noshstk/noibt kernel parameters.
+Am Mittwoch, den 06.06.2018, 10:48 -0700 schrieb Eric Anholt:
+> Between creation and queueing of a job, you need to prevent any other
+> job from being created and queued.  Otherwise the scheduler's fences
+> may be signaled out of seqno order.
+> 
+> v2: move mutex unlock to the error label.
+> 
+> > Signed-off-by: Eric Anholt <eric@anholt.net>
+> Fixes: 57692c94dcbe ("drm/v3d: Introduce a new DRM driver for Broadcom V3D V3.x+")
 
-Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
----
- Documentation/admin-guide/kernel-parameters.txt |   6 +
- Documentation/x86/intel_cet.txt                 | 161 ++++++++++++++++++++++++
- 2 files changed, 167 insertions(+)
- create mode 100644 Documentation/x86/intel_cet.txt
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index f2040d46f095..c9a94bec1519 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2649,6 +2649,12 @@
- 			noexec=on: enable non-executable mappings (default)
- 			noexec=off: disable non-executable mappings
- 
-+	noibt		[X86-64] Disable indirect branch tracking for user-mode
-+			applications
-+
-+	noshstk		[X86-64] Disable shadow stack support for user-mode
-+			applications
-+
- 	nosmap		[X86]
- 			Disable SMAP (Supervisor Mode Access Prevention)
- 			even if it is supported by processor.
-diff --git a/Documentation/x86/intel_cet.txt b/Documentation/x86/intel_cet.txt
-new file mode 100644
-index 000000000000..1b902a6c49f4
---- /dev/null
-+++ b/Documentation/x86/intel_cet.txt
-@@ -0,0 +1,161 @@
-+-----------------------------------------
-+Control Flow Enforcement Technology (CET)
-+-----------------------------------------
-+
-+[1] Overview
-+
-+Control Flow Enforcement Technology (CET) provides protection against
-+return/jump-oriented programing (ROP) attacks.  It can be implemented to
-+protect both the kernel and applications.  In the first phase, only the
-+user-mode protection is implemented for the 64-bit kernel.  Thirty-two bit
-+applications are supported under the compatibility mode.
-+
-+CET includes shadow stack (SHSTK) and indirect branch tracking (IBT) and
-+they are enabled from two kernel configuration options:
-+
-+  INTEL_X86_SHADOW_STACK_USER, and
-+  INTEL_X86_BRANCH_TRACKING_USER.
-+
-+There are two command-line options for disabling CET features:
-+
-+  noshstk - disables shadow stack, and
-+  noibt - disables indirect branch tracking.
-+
-+At run time, /proc/cpuinfo shows the availability of SHSTK and IBT.
-+
-+[2] Application Enabling
-+
-+The design of CET user-mode interface provides maximum overall coverage
-+and compatibility with existing applications.
-+
-+To verify the CET capability of an application, use the following command
-+and look for SHSTK/IBT in the NT_GNU_PROPERTY_TYPE_0 field:
-+
-+  readelf -n <application>
-+
-+CET features are opt-in by each application.  To build a CET-capable
-+application, the following tools are needed: Binutils v2.30, GCC v8.1,
-+and GLIBC v2.29 (or later).
-+
-+If an application has CET capabilities, is statically linked, and the
-+kernel supports CET, it will run with CET enabled.  If an application
-+needs any shared libraries, the loader checks all dependencies and enables
-+CET only when all requirements are met.  Once an application starts with
-+CET enabled, the protection cannot be turned off until the next exec().
-+
-+[3] CET system calls
-+
-+The following arch_prctl() system calls are added for CET:
-+
-+(3a) arch_prctl(ARCH_CET_STATUS, unsigned long *addr)
-+
-+     Return CET feature status.
-+
-+     The parameter 'addr' is a pointer to a user buffer.
-+     On returning to the caller, the kernel fills the following
-+     information:
-+
-+     *addr = SHSTK/IBT status
-+     *(addr + 1) = SHSTK/IBT default setting on exec()
-+     *(addr + 2) = default SHSTK size on exec()
-+
-+(3b) arch_prctl(ARCH_CET_DISABLE, unsigned long features)
-+
-+     Disable SHSTK and/or IBT specified in 'features'.  Return -EPERM
-+     if CET is locked out.
-+
-+(3c) arch_prctl(ARCH_CET_LOCK)
-+
-+     Lock out CET features; disable turning off of SHSTK/IBT.
-+
-+(3d) arch_prctl(ARCH_CET_EXEC, unsigned long *addr)
-+
-+     Control how CET features should be enabled upon exec() a new
-+     image.
-+
-+     The parameter 'addr' is a pointer to a user buffer.
-+
-+     *addr = a bitmap indicating which features are being changed
-+     *(addr + 1) = how CET should be enabled upon exec().
-+                      0: Check ELF header
-+                      1: Always disable
-+                      2: Always enable
-+     *(addr + 2) = default SHSTK size on exec()
-+
-+(3e) arch_prctl(ARCH_CET_ALLOC_SHSTK, unsigned long *addr)
-+
-+     Allocate a new SHSTK.
-+
-+     The parameter 'addr' is a pointer to a user buffer and indicates
-+     the desired SHSTK size to allocate.  On returning to the caller
-+     the buffer contains the address of the new SHSTK.
-+
-+(3f) arch_prctl(ARCH_CET_PUSH_SHSTK, unsigned long *addr)
-+
-+     Push a value onto the SHSTK.
-+
-+     The parameter 'addr' is a pointer to a user buffer.
-+
-+     *addr = the SHSTK pointer
-+     *(addr + 1) = the value to push (a function return address)
-+
-+Note: ARCH_CET_ALLOC_SHSTK and ARCH_CET_PUSH_SHSTK are intended for
-+      the implementation of GLIBC getcontext(), setcontext(),
-+      makecontext(), and swapcontext().
-+
-+(3g) arch_prctl(ARCH_CET_LEGACY_BITMAP, unsigned long *addr)
-+
-+     If the current task does not have a legacy bitmap, setup one.
-+     Return bitmap information as the following:
-+
-+     *addr = bitmap base address
-+     *(addr + 1) = bitmap size
-+
-+[4] The implementation of the SHSTK
-+
-+A task's SHSTK is allocated from memory to a fixed size that can
-+support 32 KB nested function calls; that is 256 KB for a 64-bit
-+application and 128 KB for a 32-bit application.  The system admin
-+can change the size with the CET command line utility.
-+
-+The main program and its signal handlers use the same shadow stack.
-+
-+The SHSTK's vma has VM_SHSTK flag set; its PTEs are required to be
-+read-only and dirty.  When a SHSTK PTE is not present, RO, and dirty,
-+a SHSTK access triggers a page fault with an additional SHSTK bit set
-+in the page fault error code.
-+
-+When a task forks a child, its SHSTK PTEs are copied and both the
-+parent's and the child's SHSTK PTEs are cleared of the dirty bit.
-+Upon the next SHSTK access, the resulting SHSTK page fault is handled
-+by page copy/re-use.
-+
-+When a pthread child is created, a separate SHSTK is created for the
-+child.
-+
-+[5] The management of read-only & dirty PTEs for SHSTK
-+
-+A RO and dirty PTE exists in the following cases:
-+
-+(5a) A page is modified and then shared with a fork()'ed child;
-+(5b) access_remote_vm with (FOLL_WRITE | FOLL_FORCE) on a RO page;
-+(5c) A SHSTK page.
-+
-+The processor does not read the dirty bit for (5a) and (5b), but
-+checks the dirty bit for (5c).  To prevent accidental use of non-
-+SHSTK memory as SHSTK, we introduce the use of a spare bit of the
-+64-bit PTE as _PAGE_BIT_DIRTY_SW and exchange it with the dirty
-+bit for (5a) and (5b).  This results to the following possible
-+PTE settings:
-+
-+Modified PTE:		  (R/W + DIRTY_HW)
-+Modified and shared PTE:  (R/O + DIRTY_SW)
-+R/O PTE was (FOLL_FORCE | FOLL_WRITE): (R/O + DIRTY_SW)
-+SHSTK stack PTE:	  (R/O + DIRTY_HW)
-+Shared SHSTK PTE:	  (R/O + DIRTY_SW)
-+
-+[6] The implementation of IBT
-+
-+The kernel provides IBT support in mmap() of the legacy code bit map.
-+However, the management of the bitmap is done in the GLIBC or the
-+application.
--- 
-2.15.1
+> ---
+>  drivers/gpu/drm/v3d/v3d_drv.h | 5 +++++
+>  drivers/gpu/drm/v3d/v3d_gem.c | 4 ++++
+>  2 files changed, 9 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d_drv.h
+> index a043ac3aae98..26005abd9c5d 100644
+> --- a/drivers/gpu/drm/v3d/v3d_drv.h
+> +++ b/drivers/gpu/drm/v3d/v3d_drv.h
+> @@ -85,6 +85,11 @@ struct v3d_dev {
+> >  	 */
+> >  	struct mutex reset_lock;
+>  
+> > +	/* Lock taken when creating and pushing the GPU scheduler
+> > +	 * jobs, to keep the sched-fence seqnos in order.
+> > +	 */
+> > +	struct mutex sched_lock;
+> +
+> >  	struct {
+> >  		u32 num_allocated;
+> >  		u32 pages_allocated;
+> diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d_gem.c
+> index b513f9189caf..269fe16379c0 100644
+> --- a/drivers/gpu/drm/v3d/v3d_gem.c
+> +++ b/drivers/gpu/drm/v3d/v3d_gem.c
+> @@ -550,6 +550,7 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void *data,
+> >  	if (ret)
+> >  		goto fail;
+>  
+> > +	mutex_lock(&v3d->sched_lock);
+> >  	if (exec->bin.start != exec->bin.end) {
+> >  		ret = drm_sched_job_init(&exec->bin.base,
+> >  					 &v3d->queue[V3D_BIN].sched,
+> @@ -576,6 +577,7 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void *data,
+> >  	kref_get(&exec->refcount); /* put by scheduler job completion */
+> >  	drm_sched_entity_push_job(&exec->render.base,
+> >  				  &v3d_priv->sched_entity[V3D_RENDER]);
+> > +	mutex_unlock(&v3d->sched_lock);
+>  
+> >  	v3d_attach_object_fences(exec);
+>  
+> @@ -594,6 +596,7 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void *data,
+> >  	return 0;
+>  
+>  fail_unreserve:
+> > +	mutex_unlock(&v3d->sched_lock);
+> >  	v3d_unlock_bo_reservations(dev, exec, &acquire_ctx);
+>  fail:
+> >  	v3d_exec_put(exec);
+> @@ -615,6 +618,7 @@ v3d_gem_init(struct drm_device *dev)
+> >  	spin_lock_init(&v3d->job_lock);
+> >  	mutex_init(&v3d->bo_lock);
+> >  	mutex_init(&v3d->reset_lock);
+> > +	mutex_init(&v3d->sched_lock);
+>  
+> >  	/* Note: We don't allocate address 0.  Various bits of HW
+> >  	 * treat 0 as special, such as the occlusion query counters
