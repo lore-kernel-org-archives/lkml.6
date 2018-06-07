@@ -1,184 +1,216 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id w2ZdKFRVGVuZNAAAmS7hNA
-	; Thu, 07 Jun 2018 15:55:19 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Qn4EEx9ZGVubBgAAmS7hNA
+	; Thu, 07 Jun 2018 16:18:11 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 8DD5E607E7; Thu,  7 Jun 2018 15:55:19 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ba8iDx5v"
+	id 4BA7E6074D; Thu,  7 Jun 2018 16:18:11 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id E2943601D2;
-	Thu,  7 Jun 2018 15:55:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E2943601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 9B0CB60590;
+	Thu,  7 Jun 2018 16:18:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9B0CB60590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934444AbeFGPzR (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:55:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49792 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933699AbeFGPzO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:55:14 -0400
-Received: from mail-it0-f54.google.com (mail-it0-f54.google.com [209.85.214.54])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB0C52086E;
-        Thu,  7 Jun 2018 15:55:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528386913;
-        bh=Ahv9R/0mGB6aQf9bAECV3z+yofIjl9XWQv8aQD0sgiE=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=Ba8iDx5v6rSm1WYhrFUOMPeIzl0GDU/11lZR4mvCwk5qN9BlP8GMoYulOa9tXu1Kg
-         UIo7Nf3dz8ntnBrvfTPFkuzFQLDm2GQVyQk+UwyykyL17LZKHgR9gv3I2zZwrEn7qR
-         yiiA83g8972lnvznoWMg9Sx6rIy5Iixs8ltRgnqw=
-Received: by mail-it0-f54.google.com with SMTP id n7-v6so13516104itn.1;
-        Thu, 07 Jun 2018 08:55:13 -0700 (PDT)
-X-Gm-Message-State: APt69E08R+Kgas4/v/DUvM8oo5VlCmDFEr12R2/dP4H4a5FmhYQVAfkW
-        jDSRYiv1rA5m4vxAdeJzoiQwU5rcD6e+yz9K+Q==
-X-Google-Smtp-Source: ADUXVKLGe28tPsZm48d9mVzkW8zmXv5aRamr2d2ZkMOP0eZzY9O0bg8hu2Inp9JZE9wLvX1XsThcqUOsGfOt23Qo9n4=
-X-Received: by 2002:a24:ec44:: with SMTP id g65-v6mr2654124ith.18.1528386913189;
- Thu, 07 Jun 2018 08:55:13 -0700 (PDT)
+        id S935618AbeFGQSH (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 12:18:07 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44706 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932940AbeFGQSF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 12:18:05 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w57G9jDp053377
+        for <linux-kernel@vger.kernel.org>; Thu, 7 Jun 2018 12:18:05 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jf4uyjgkv-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 12:18:04 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
+        Thu, 7 Jun 2018 17:18:02 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 7 Jun 2018 17:17:59 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w57GHv7V33030164
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 7 Jun 2018 16:17:58 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DF51E5204B;
+        Thu,  7 Jun 2018 16:07:34 +0100 (BST)
+Received: from oc3836556865.ibm.com (unknown [9.152.224.179])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 571E35203F;
+        Thu,  7 Jun 2018 16:07:34 +0100 (BST)
+Subject: Re: [qemu-s390x] [PATCH RFC 2/2] vfio-ccw: support for halt/clear
+ subchannel
+To: Cornelia Huck <cohuck@redhat.com>,
+        Pierre Morel <pmorel@linux.ibm.com>
+Cc: linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, qemu-devel@nongnu.org,
+        qemu-s390x@nongnu.org, Dong Jia Shi <bjsdjshi@linux.ibm.com>
+References: <20180509154822.23510-1-cohuck@redhat.com>
+ <20180509154822.23510-3-cohuck@redhat.com>
+ <c18f9b9f-da00-1a0b-8ef0-7ac223c73d1a@linux.ibm.com>
+ <20180515181006.0cb1dfc2.cohuck@redhat.com>
+ <a5d08fb7-d9c1-b230-fe0c-acebbda2ba65@linux.ibm.com>
+ <20180522145208.310143ea.cohuck@redhat.com>
+ <4e4001cc-540e-0f2b-bbd1-1f82ca594bb3@linux.ibm.com>
+ <20180605151449.22aafbfc.cohuck@redhat.com>
+ <e73038ff-fb2d-5865-8b84-e775990f3983@linux.ibm.com>
+ <20180606142131.74ea2eb7.cohuck@redhat.com>
+ <5b77ec9c-41b8-2e32-ce79-d9005b93fdd0@linux.ibm.com>
+ <20180607115442.6a779ed9.cohuck@redhat.com>
+From: Halil Pasic <pasic@linux.ibm.com>
+Date: Thu, 7 Jun 2018 18:17:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Received: by 2002:a4f:5505:0:0:0:0:0 with HTTP; Thu, 7 Jun 2018 08:54:52 -0700 (PDT)
-In-Reply-To: <OSBPR01MB205442B483C792125E6A6AF7D2640@OSBPR01MB2054.jpnprd01.prod.outlook.com>
-References: <1528198148-23308-1-git-send-email-michel.pollet@bp.renesas.com>
- <1528198148-23308-3-git-send-email-michel.pollet@bp.renesas.com>
- <0481173f-6384-98d6-707c-89dc5ef103f0@gmail.com> <OSBPR01MB2054E3A1E383495F3534B551D2650@OSBPR01MB2054.jpnprd01.prod.outlook.com>
- <9cef7124-3020-5741-f3a2-6925a6c8f0f3@gmail.com> <79c0899e-7df1-1fe7-9681-ad3bd51feda7@gmail.com>
- <OSBPR01MB205442B483C792125E6A6AF7D2640@OSBPR01MB2054.jpnprd01.prod.outlook.com>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Thu, 7 Jun 2018 10:54:52 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqLn+x0JCkjwABU7XkPsgvyVdiCRq=gZTfUBbbR4-c+1bQ@mail.gmail.com>
-Message-ID: <CAL_JsqLn+x0JCkjwABU7XkPsgvyVdiCRq=gZTfUBbbR4-c+1bQ@mail.gmail.com>
-Subject: Re: [PATCH v4 2/3] arm: shmobile: Add the R9A06G032 SMP enabler driver
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: Frank Rowand <frowand.list@gmail.com>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Douglas Anderson <dianders@chromium.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Carlo Caione <carlo@endlessm.com>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Frank Rowand <frank.rowand@sony.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180607115442.6a779ed9.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18060716-0020-0000-0000-000002985A60
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18060716-0021-0000-0000-000020E46041
+Message-Id: <10c8a0ac-fe61-d7c7-c7bb-0fffc6909cb3@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-07_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806070180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 7, 2018 at 1:59 AM, Michel Pollet
-<michel.pollet@bp.renesas.com> wrote:
-> On 06 June 2018 22:53, Frank wrote:
->> On 06/06/18 14:48, Frank Rowand wrote:
->> > On 06/05/18 23:36, Michel Pollet wrote:
->> >> Hi Frank,
->> >>
->> >> On 05 June 2018 18:34, Frank wrote:
->> >>> On 06/05/18 04:28, Michel Pollet wrote:
->> >>>> The Renesas R9A06G032 second CA7 is parked in a ROM pen at boot
->> >>>> time, it requires a special enable method to get it started.
 
-[...]
 
->> >>>> + * The second CPU is parked in ROM at boot time. It requires
->> >>>> +waking it after
->> >>>> + * writing an address into the BOOTADDR register of sysctrl.
->> >>>> + *
->> >>>> + * So the default value of the "cpu-release-addr" corresponds to
->> >>> BOOTADDR...
->> >>>> + *
->> >>>> + * *However* the BOOTADDR register is not available when the
->> >>>> +kernel
->> >>>> + * starts in NONSEC mode.
->> >>>> + *
->> >>>> + * So for NONSEC mode, the bootloader re-parks the second CPU into
->> >>>> +a pen
->> >>>> + * in SRAM, and changes the "cpu-release-addr" of linux's DT to a
->> >>>> +SRAM address,
->> >>>> + * which is not restricted.
->> >>>
->> >>> The binding document for cpu-release-addr does not have a definition
->> >>> for 32 bit arm.  The existing definition is only 64 bit arm.  Please
->> >>> add the definition for 32 bit arm to patch 1.
->> >>
->> >> Hmmm I do find a definition in
->> >> Documentation/devicetree/bindings/arm/cpus.txt -- just under where I
->> >> added my 'enable-method' -- And it is already used as 32 bits in at
->> >> least arch/arm/boot/dts/stih407-family.dtsi.
->> >
->> > If the correct answer is for cpu-release-addr to be 64 bits in certain
->> > cases (that discussion is ongoing further downthread) then one
->> > approach to maintain compatibility _and_ to fix the devicetree source
->> > files is to change the source code that currently gets
->> > cpu-release-addr as a
->> > 32 bit object to check the size of the property and get it as either a
->> > 32 bit or 64 bit object, based on the actual size of the property in
->> > the device tree and then change the value in the devicetree source
->> > files to be two cells.  BUT this does not consider the bootloader
->> > complication.  arch/arm/boot/dts/axm5516-cpus.dtsi has a note "//
->> > Fixed by the boot loader", so the boot loader also has to be modified
->> > to be able to handle the possibility that the property could be either
->> > 32 bits or 64 bits.  I don't know how to maintain compatibility with
->> > the boot loader since we can't force it to change synchronously with
->> > changes in the kernel.
->> >
->> > You can consider this comment to be a drive-by observation.  I think
->> > Rob and Geert and people like that are likely to be more helpful with
->> > what to actually do, and you can treat my comment more as pointing out
->> > the issue than as providing the perfect solution.
->>
->> Darn it, hit <send> too quickly.
->>
->> I meant to mention that there are several devicetree source files that have a
->> single cell value for cpu-release-addr, and thus potentially face the same
->> situation, depending on what the final decision is on the proper size for cpu-
->> release-addr. As of v4.17, a git grep shows one cell values in:
->>
->>   arch/arm/boot/dts/axm5516-cpus.dtsi
->>   arch/arm/boot/dts/stih407-family.dtsi
->>   arch/arm/boot/dts/stih418.dtsi
->
-> Yes, I had grepped before I used 32 bits on mine...
->
-> Now, what is the decision here? Our bootloader is already modified to set it to 32 bits, so I propose that
+On 06/07/2018 11:54 AM, Cornelia Huck wrote:
+> Hm, I think we need to be more precise as to what scsw we're talking
+> about. Bad ascii art time:
+> 
+> --------------
+> |   scsw(g)  |  ssch
+> --------------   |
+>                   |                                       guest
+> --------------------------------------------------------------
+>                   |                                        qemu
+> --------------   v
+> |   scsw(q)  | emulate
+> --------------   |
+>                   |
+> --------------   v
+> |   scsw(r)  | pwrite()
+> --------------   |
+>                   |
+> --------------------------------------------------------------
+>                   |                                        vfio
+>                   v
+>                  ssch
+>                   |
+> --------------------------------------------------------------
+>                   |                                    hardware
+> --------------   v
+> |   scsw(h)  | actually do something
+> --------------
+> 
+> The guest issues a ssch (which gets intercepted; it won't get control
+> back until ssch finishes with a cc set.) scsw(g) won't change, unless
+> the guest does a stsch for the subchannel on another vcpu, in which
+> case it will get whatever information qemu holds in scsw(q) at that
+> point in time.
 
-And too late to fix the bootloader?
+(1) I think BQL make other cpu or not other kind of the same. We will
+effectively start processing the stsch in QEMU after we are done
+with the ssch in QEMU.
 
->
-> + I change the driver to handle 32 and 64 bits properties
+> 
+> When qemu starts to emulate the guest's ssch, it will set the start
+> function bit in the fctl field of scsw(q). It then copies scsw(q) to
+> scsw(r) in the vfio region.
+> 
 
-That's fine if you can't fix the bootloader.
+(2) This is architecturally wrong AFAIK. The fctl bit is supposed to be set on
+cc 0. But because of (1) this might not be a observable by the guest --
+we can fix it up.
 
-> + I add this to the cpu.txt, as a separate patch:
-> # On other systems, the property can be either
->   32 bits or 64 bits, it is the driver's responsibility
->   to deal with either sizes.
+(3)IMHO scsw(r) is not a real scsw as defined by the architecture but
+a strange communication structure (not) defined vfio-ccw.
 
-That is definitely not what we want to say. Use of 32-bit should be
-considered out of spec. Yes, we have a few platforms in that category,
-but they already handle that themselves. Would be nice to fix them,
-but at least the STi platforms don't seem too active.
+> The vfio code will then proceed to call ssch on the real subchannel.
+> This is the first time we get really asynchronous, as the ssch will
+> return with cc set and the start function will be performed at some
+> point in time. If we would do a stsch on the real subchannel, we would
+> see that scsw(h) now has the start function bit set.
+> 
 
-IMO, we should delete whatever text we can here and at most just refer
-to the spec.
+(4) I guess only if cc 0.
 
-Rob
+> Currently, we won't return back up the chain until we get an interrupt
+> from the hardware, at which time we update the scsw(r) from the irb.
+> This will propagate into the scsw(q). At the time we finish handling
+> the guest's ssch and return control to it, we're all done and if the
+> guest does a stsch to update its scsw(g), it will get the current
+> scsw(q) which will already contain the scsw from the interrupt's irb
+> (indicating that the start function is already finished).
+> 
+> Now let's imagine we have a future implementation that handles actually
+> performing the start on the hardware asynchronously, i.e. it returns
+> control to the guest without the interrupt having been posted (let's
+> say that it is a longer-running I/O request). If the guest now did a
+> stsch to update scsw(g), it would get the current state of scsw(q),
+> which would be "start function set, but not done yet".
+
+(5) AFAIK this is how the current implementation works. We don't wait
+for the I/O interrupt on the host to present a cc to the guest for it's
+ssch.
+
+> 
+> If the guest now does a hsch, it would trap in the same way as the ssch
+> before. When qemu gets control, it adds the halt bit in scsw(q) (which
+> is in accordance with the architecture).
+
+(7) Again it's when is fctl set according to the architecture...
+
+> My proposal is to do the same
+> copying to scsw(r) again, which would mean we get a request with both
+> the halt and the start bit set.
+
+(8) IMHO when receiving the 'request' we are and should be in instruction
+context -- opposed to basic io function context. So we should not set fctl
+before we know what will our guest cc be. But since scsw(r) is not a real
+scsw it is just strange.
+
+> The vfio code now needs to do a hsch
+> (instead of a ssch). The real channel subsystem should figure this out,
+> as we can't reliably check whether the start function has concluded
+> already (there's always a race window).
+> 
+
+(9) Yes we can't tell for sure if the start function is still being performed
+by the stuff below.
+
+Regards,
+Halil
+
+> For csch, things are a bit different (which the code posted here did
+> not take into account). The qemu emulation of csch needs to clear any
+> start/halt bits in scsw(q) when setting the clear bit there, and
+> therefore scsw(r) will only have the clear bit set in that case. We
+> still should do an unconditional csch for the same reasons as above;
+> the hardware will do the same things (clearing start/halt, setting
+> clear) in the scsw(h).
+> 
+> Congratulations, you've reached the end:)  I hope that was helpful and
+> not too confusing.
+> 
