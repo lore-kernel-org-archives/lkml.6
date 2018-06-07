@@ -1,273 +1,188 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Al3mLaY9GlvkQgAAmS7hNA
-	; Fri, 08 Jun 2018 08:26:14 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id g8eCJ5Q2GVsFXwAAmS7hNA
+	; Thu, 07 Jun 2018 13:43:48 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 9ED74607DC; Fri,  8 Jun 2018 08:26:14 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UFJ/Mun3"
+	id 8D6C66089E; Thu,  7 Jun 2018 13:43:48 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D6D6B60590;
-	Fri,  8 Jun 2018 08:26:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D6D6B60590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 75DBF602FC;
+	Thu,  7 Jun 2018 13:43:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 75DBF602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=holtmann.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932414AbeFHI0L (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 04:26:11 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:45806 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752858AbeFHITM (ORCPT
+        id S1753700AbeFGNnp convert rfc822-to-8bit (ORCPT
+        <rfc822;monsieuricon@codeaurora.org> + 25 others);
+        Thu, 7 Jun 2018 09:43:45 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:51902 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753665AbeFGNnn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 04:19:12 -0400
-Received: by mail-pl0-f66.google.com with SMTP id c23-v6so7849593plz.12
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 01:19:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+3GjdRwaIJtxrpzrWThzILTOwfyJwnhrNFXpyH81hF8=;
-        b=UFJ/Mun3Rav880NZKFXyn60VYo45EZo4FuF0gM5rZeCUvAsN+8Bb94r0mXRybMAvag
-         lHrqn5VvxYqWDC2wvBPRri/LK+u+7gEMh/K18zvbSh1qgoo72Ia5ANclewS57pqyxUjx
-         twul1gwB+RmLuVG/fqAs/Bu4Owbn1czWE3tps=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=+3GjdRwaIJtxrpzrWThzILTOwfyJwnhrNFXpyH81hF8=;
-        b=RwN9GhM92VYbplGGxOMnWQ6lY8f8DFuOzasyGfxoJ6WnXR2jQ570YpQG8+6/loBbFx
-         oCsxlT7iZhU0tR3lh9V6pg9Gq1o2/BaZ3owlRfxuNvKSgheWVbm5jJoWSB9GBxeDCCQS
-         ueZTQRO/WxKMyQFIklo2kom0GKuk8kBciThn/KKwSPi3DBBNalErmd+Tae0mkuDZ3wZX
-         CF23LzkEBT+uOMlu5EIzklgCMmE2GSxZavelus2iQ45kXU1HEwPktL0stUeFkcNdxfOm
-         0u9ptmDWuwrR/plwRk9PQYhpaL0wcuc/e+9HKN5HnVKD/AhYdPlC8d6qMjGM9RCZCID9
-         Qrrg==
-X-Gm-Message-State: APt69E1l0H3zklJlILbQnVMYG0iJ/BsYYFq6GzQTcG+LXdOrsHhT5/3E
-        pE9qfKcg6m04ZdEx51b23ZIZLw==
-X-Google-Smtp-Source: ADUXVKKYBq9ctFZ4/SAaEgAholtYEWBPCDSkmu7d2bvtqCw6a3hwZxCgVMEEQ5oNCa5nhIi4qNK0HQ==
-X-Received: by 2002:a17:902:380c:: with SMTP id l12-v6mr5606277plc.19.1528445951264;
-        Fri, 08 Jun 2018 01:19:11 -0700 (PDT)
-Received: from ubt.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id s4-v6sm72243947pgp.35.2018.06.08.01.19.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 08 Jun 2018 01:19:10 -0700 (PDT)
-From: Chunyan Zhang <zhang.chunyan@linaro.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Billows Wu <billows.wu@spreadtrum.com>, zhang.lyra@gmail.com
-Subject: [PATCH 3/6] mmc: sdhci: add ADMA2 64-bit addressing support for V4 mode
-Date: Fri,  8 Jun 2018 16:18:10 +0800
-Message-Id: <1528445893-14530-4-git-send-email-zhang.chunyan@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528445893-14530-1-git-send-email-zhang.chunyan@linaro.org>
-References: <1528445893-14530-1-git-send-email-zhang.chunyan@linaro.org>
+        Thu, 7 Jun 2018 09:43:43 -0400
+Received: from marcel-macpro.fritz.box (p5B3D24B5.dip0.t-ipconnect.de [91.61.36.181])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 2AF14CF356;
+        Thu,  7 Jun 2018 15:50:22 +0200 (CEST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.4 \(3445.8.2\))
+Subject: Re: [PATCH] Bluetooth: hci_bcm: Configure SCO routing automatically
+From: Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20180605191743.27748-1-attitokes@gmail.com>
+Date: Thu, 7 Jun 2018 15:43:40 +0200
+Cc: Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <280FCB2C-6DF1-4790-A89F-AF5BE3513AE5@holtmann.org>
+References: <20180605191743.27748-1-attitokes@gmail.com>
+To: =?utf-8?B?QXR0aWxhIFTFkWvDqXM=?= <attitokes@gmail.com>
+X-Mailer: Apple Mail (2.3445.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ADMA2 64-bit addressing support is divided into V3 mode and V4 mode.
-So there are two kinds of descriptors for ADMA2 64-bit addressing
-i.e. 96-bit Descriptor for V3 mode, and 128-bit Descriptor for V4
-mode. 128-bit Descriptor is aligned to 8-byte.
+Hi Attila,
 
-For V4 mode, ADMA2 64-bit addressing is enabled via Host Control 2
-register.
+please include a commit message explains the changes.
 
-Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
----
- drivers/mmc/host/sdhci.c | 50 +++++++++++++++++++++++++++++++++++-------------
- drivers/mmc/host/sdhci.h | 23 +++++++++++++++++-----
- 2 files changed, 55 insertions(+), 18 deletions(-)
+> Signed-off-by: Attila Tőkés <attitokes@gmail.com>
+> ---
+> drivers/bluetooth/hci_bcm.c | 61 +++++++++++++++++++++++++++++++++++++
+> 1 file changed, 61 insertions(+)
+> 
+> diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
+> index ddbd8c6a..50c73eef 100644
+> --- a/drivers/bluetooth/hci_bcm.c
+> +++ b/drivers/bluetooth/hci_bcm.c
+> @@ -83,6 +83,16 @@
+> * @hu: pointer to HCI UART controller struct,
+> *	used to disable flow control during runtime suspend and system sleep
+> * @is_suspended: whether flow control is currently disabled
+> + *
+> + *  SCO routing parameters:
+> + *   used as the parameters for the bcm_set_pcm_int_params command
+> + *	@sco_routing:
+> + *	 >= 255 (skip SCO routing configuration)
+> + *	 0-3 (PCM, Transport, Codec, I2S)
+> + *	@pcm_interface_rate: 0-4 (128 Kbps - 2048 Kbps)
+> + *	@pcm_frame_type: 0 (short), 1 (long)
+> + *	@pcm_sync_mode: 0 (slave), 1 (master)
+> + *	@pcm_clock_mode: 0 (slave), 1 (master)
+> */
+> struct bcm_device {
+> 	/* Must be the first member, hci_serdev.c expects this. */
+> @@ -114,6 +124,13 @@ struct bcm_device {
+> 	struct hci_uart		*hu;
+> 	bool			is_suspended;
+> #endif
+> +
+> +	/* SCO routing parameters */
+> +	u32			sco_routing;
+> +	u32			pcm_interface_rate;
+> +	u32			pcm_frame_type;
+> +	u32			pcm_sync_mode;
+> +	u32			pcm_clock_mode;
+> };
 
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index f57201f..5d3b0d8 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -585,6 +585,8 @@ static void sdhci_adma_table_pre(struct sdhci_host *host,
- 	void *desc, *align;
- 	char *buffer;
- 	int len, offset, i;
-+	unsigned int adma2_align = SDHCI_ADMA2_ALIGN(host);
-+	unsigned int adma2_mask = SDHCI_ADMA2_MASK(host);
- 
- 	/*
- 	 * The spec does not specify endianness of descriptor table.
-@@ -608,8 +610,8 @@ static void sdhci_adma_table_pre(struct sdhci_host *host,
- 		 * buffer for the (up to three) bytes that screw up the
- 		 * alignment.
- 		 */
--		offset = (SDHCI_ADMA2_ALIGN - (addr & SDHCI_ADMA2_MASK)) &
--			 SDHCI_ADMA2_MASK;
-+		offset = (adma2_align - (addr & adma2_align)) &
-+			 adma2_mask;
- 		if (offset) {
- 			if (data->flags & MMC_DATA_WRITE) {
- 				buffer = sdhci_kmap_atomic(sg, &flags);
-@@ -623,8 +625,8 @@ static void sdhci_adma_table_pre(struct sdhci_host *host,
- 
- 			BUG_ON(offset > 65536);
- 
--			align += SDHCI_ADMA2_ALIGN;
--			align_addr += SDHCI_ADMA2_ALIGN;
-+			align += adma2_align;
-+			align_addr += adma2_align;
- 
- 			desc += host->desc_sz;
- 
-@@ -668,13 +670,15 @@ static void sdhci_adma_table_post(struct sdhci_host *host,
- 	void *align;
- 	char *buffer;
- 	unsigned long flags;
-+	unsigned int adma2_align = SDHCI_ADMA2_ALIGN(host);
-+	unsigned int adma2_mask = SDHCI_ADMA2_MASK(host);
- 
- 	if (data->flags & MMC_DATA_READ) {
- 		bool has_unaligned = false;
- 
- 		/* Do a quick scan of the SG list for any unaligned mappings */
- 		for_each_sg(data->sg, sg, host->sg_count, i)
--			if (sg_dma_address(sg) & SDHCI_ADMA2_MASK) {
-+			if (sg_dma_address(sg) & adma2_mask) {
- 				has_unaligned = true;
- 				break;
- 			}
-@@ -686,15 +690,15 @@ static void sdhci_adma_table_post(struct sdhci_host *host,
- 			align = host->align_buffer;
- 
- 			for_each_sg(data->sg, sg, host->sg_count, i) {
--				if (sg_dma_address(sg) & SDHCI_ADMA2_MASK) {
--					size = SDHCI_ADMA2_ALIGN -
--					       (sg_dma_address(sg) & SDHCI_ADMA2_MASK);
-+				if (sg_dma_address(sg) & adma2_mask) {
-+					size = adma2_align -
-+					       (sg_dma_address(sg) & adma2_mask);
- 
- 					buffer = sdhci_kmap_atomic(sg, &flags);
- 					memcpy(buffer, align, size);
- 					sdhci_kunmap_atomic(buffer, &flags);
- 
--					align += SDHCI_ADMA2_ALIGN;
-+					align += adma2_align;
- 				}
- 			}
- 		}
-@@ -3400,6 +3404,26 @@ static int sdhci_allocate_bounce_buffer(struct sdhci_host *host)
- 	return 0;
- }
- 
-+static inline bool sdhci_use_64bit_dma(struct sdhci_host *host)
-+{
-+	u32 addr64bit_en;
-+
-+	/*
-+	 * According to SD Host Controller spec v4.10, bit[27] added from
-+	 * version 4.10 in Capabilities Register is used as 64-bit System
-+	 * Address support for V4 mode, 64-bit DMA Addressing for V4 mode
-+	 * is enabled only if 64-bit Addressing =1 in the Host Control 2
-+	 * register.
-+	 */
-+	if (host->version == SDHCI_SPEC_410 && host->v4_mode) {
-+		addr64bit_en = (sdhci_readw(host, SDHCI_HOST_CONTROL2) &
-+				SDHCI_CTRL_64BIT_ADDR);
-+		return addr64bit_en && (host->caps & SDHCI_CAN_64BIT_V4);
-+	}
-+
-+	return host->caps & SDHCI_CAN_64BIT;
-+}
-+
- int sdhci_setup_host(struct sdhci_host *host)
- {
- 	struct mmc_host *mmc;
-@@ -3471,7 +3495,7 @@ int sdhci_setup_host(struct sdhci_host *host)
- 	 * SDHCI_QUIRK2_BROKEN_64_BIT_DMA must be left to the drivers to
- 	 * implement.
- 	 */
--	if (host->caps & SDHCI_CAN_64BIT)
-+	if (sdhci_use_64bit_dma(host))
- 		host->flags |= SDHCI_USE_64_BIT_DMA;
- 
- 	if (host->flags & (SDHCI_USE_SDMA | SDHCI_USE_ADMA)) {
-@@ -3505,15 +3529,15 @@ int sdhci_setup_host(struct sdhci_host *host)
- 		 */
- 		if (host->flags & SDHCI_USE_64_BIT_DMA) {
- 			host->adma_table_sz = (SDHCI_MAX_SEGS * 2 + 1) *
--					      SDHCI_ADMA2_64_DESC_SZ;
--			host->desc_sz = SDHCI_ADMA2_64_DESC_SZ;
-+					      SDHCI_ADMA2_64_DESC_SZ(host);
-+			host->desc_sz = SDHCI_ADMA2_64_DESC_SZ(host);
- 		} else {
- 			host->adma_table_sz = (SDHCI_MAX_SEGS * 2 + 1) *
- 					      SDHCI_ADMA2_32_DESC_SZ;
- 			host->desc_sz = SDHCI_ADMA2_32_DESC_SZ;
- 		}
- 
--		host->align_buffer_sz = SDHCI_MAX_SEGS * SDHCI_ADMA2_ALIGN;
-+		host->align_buffer_sz = SDHCI_MAX_SEGS * SDHCI_ADMA2_ALIGN(host);
- 		buf = dma_alloc_coherent(mmc_dev(mmc), host->align_buffer_sz +
- 					 host->adma_table_sz, &dma, GFP_KERNEL);
- 		if (!buf) {
-diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-index 128b0ba..820a863 100644
---- a/drivers/mmc/host/sdhci.h
-+++ b/drivers/mmc/host/sdhci.h
-@@ -185,6 +185,7 @@
- #define  SDHCI_CTRL_EXEC_TUNING		0x0040
- #define  SDHCI_CTRL_TUNED_CLK		0x0080
- #define  SDHCI_CTRL_V4_MODE		0x1000
-+#define  SDHCI_CTRL_64BIT_ADDR		0x2000
- #define  SDHCI_CTRL_PRESET_VAL_ENABLE	0x8000
- 
- #define SDHCI_CAPABILITIES	0x40
-@@ -206,6 +207,7 @@
- #define  SDHCI_CAN_VDD_300	0x02000000
- #define  SDHCI_CAN_VDD_180	0x04000000
- #define  SDHCI_CAN_64BIT	0x10000000
-+#define  SDHCI_CAN_64BIT_V4	0x8000000
- 
- #define  SDHCI_SUPPORT_SDR50	0x00000001
- #define  SDHCI_SUPPORT_SDR104	0x00000002
-@@ -297,9 +299,14 @@ struct sdhci_adma2_32_desc {
- 	__le32	addr;
- }  __packed __aligned(4);
- 
--/* ADMA2 data alignment */
--#define SDHCI_ADMA2_ALIGN	4
--#define SDHCI_ADMA2_MASK	(SDHCI_ADMA2_ALIGN - 1)
-+/*
-+ * ADMA2 data alignment
-+ * According to SD Host Controller spec v4.10, if Host Version 4 Enable is set
-+ * in the Host Control 2 register, 128-bit Descriptor will be selected which
-+ * shall be aligned 8-byte address boundary.
-+ */
-+#define SDHCI_ADMA2_ALIGN(host)	((host)->v4_mode ? 8 : 4)
-+#define SDHCI_ADMA2_MASK(host)	(SDHCI_ADMA2_ALIGN(host) - 1)
- 
- /*
-  * ADMA2 descriptor alignment.  Some controllers (e.g. Intel) require 8 byte
-@@ -308,8 +315,14 @@ struct sdhci_adma2_32_desc {
-  */
- #define SDHCI_ADMA2_DESC_ALIGN	8
- 
--/* ADMA2 64-bit DMA descriptor size */
--#define SDHCI_ADMA2_64_DESC_SZ	12
-+/*
-+ * ADMA2 64-bit DMA descriptor size
-+ * According to SD Host Controller spec v4.10, there are two kinds of
-+ * descriptors for 64-bit addressing mode: 96-bit Descriptor and 128-bit
-+ * Descriptor, if Host Version 4 Enable is set in the Host Control 2
-+ * register, 128-bit Descriptor will be selected.
-+ */
-+#define SDHCI_ADMA2_64_DESC_SZ(host)	((host)->v4_mode ? 16 : 12)
- 
- /*
-  * ADMA2 64-bit descriptor. Note 12-byte descriptor can't always be 8-byte
--- 
-2.7.4
+These should be all u8 since that is what they are in bcm_set_pcm_int_params.
+
+> /* generic bcm uart resources */
+> @@ -189,6 +206,35 @@ static int bcm_set_baudrate(struct hci_uart *hu, unsigned int speed)
+> 	return 0;
+> }
+> 
+> +static int bcm_configure_sco_routing(struct hci_uart *hu, struct bcm_device *bcm_dev)
+> +{
+> +	struct hci_dev *hdev = hu->hdev;
+> +	struct sk_buff *skb;
+> +	struct bcm_set_pcm_int_params params;
+> +
+> +	bt_dev_dbg(hdev, "BCM: Configuring SCO routing (%d %d %d %d %d)",
+> +			bcm_dev->sco_routing, bcm_dev->pcm_interface_rate, bcm_dev->pcm_frame_type,
+> +			bcm_dev->pcm_sync_mode,	bcm_dev->pcm_clock_mode);
+> +
+> +	params.routing = bcm_dev->sco_routing;
+> +	params.rate = bcm_dev->pcm_interface_rate;
+> +	params.frame_sync = bcm_dev->pcm_frame_type;
+> +	params.sync_mode = bcm_dev->pcm_sync_mode;
+> +	params.clock_mode = bcm_dev->pcm_clock_mode;
+> +
+> +	// send the SCO routing configuration command
+
+Please follow networking comment style here.
+
+> +	skb = __hci_cmd_sync(hdev, 0xfc1c, sizeof(params), &params, HCI_CMD_TIMEOUT);
+> +	if (IS_ERR(skb)) {
+> +		int err = PTR_ERR(skb);
+> +		bt_dev_err(hdev, "BCM: failed to configure SCO routing (%d)", err);
+> +		return err;
+> +	}
+> +
+> +	kfree_skb(skb);
+> +
+> +	return 0;
+> +}
+> +
+> /* bcm_device_exists should be protected by bcm_device_lock */
+> static bool bcm_device_exists(struct bcm_device *device)
+> {
+> @@ -534,6 +580,10 @@ static int bcm_setup(struct hci_uart *hu)
+> 			host_set_baudrate(hu, speed);
+> 	}
+> 
+> +	if (bcm->dev->sco_routing < 0xff) {
+> +		bcm_configure_sco_routing(hu, bcm->dev);
+> +	}
+> +
+
+Move that check into bcm_configure_sco_routing to exit that function early.
+
+I would also recommend to read the current settings first and deal with missing parameters in the DT. For example if you just change the routing part that should be fine as well.
+
+> finalize:
+> 	release_firmware(fw);
+> 
+> @@ -1007,6 +1057,11 @@ static int bcm_acpi_probe(struct bcm_device *dev)
+> static int bcm_of_probe(struct bcm_device *bdev)
+> {
+> 	device_property_read_u32(bdev->dev, "max-speed", &bdev->oper_speed);
+> +	device_property_read_u32(bdev->dev, "sco-routing", &bdev->sco_routing);
+> +	device_property_read_u32(bdev->dev, "pcm-interface-rate", &bdev->pcm_interface_rate);
+> +	device_property_read_u32(bdev->dev, "pcm-frame-type", &bdev->pcm_frame_type);
+> +	device_property_read_u32(bdev->dev, "pcm-sync-mode", &bdev->pcm_sync_mode);
+> +	device_property_read_u32(bdev->dev, "pcm-clock-mode", &bdev->pcm_clock_mode);
+> 	return 0;
+> }
+
+You need a patch documenting these DT settings.
+
+> 
+> @@ -1022,6 +1077,9 @@ static int bcm_probe(struct platform_device *pdev)
+> 	dev->dev = &pdev->dev;
+> 	dev->irq = platform_get_irq(pdev, 0);
+> 
+> +	/* SCO routing configuration is disabled by default */
+> +	dev->sco_routing = 0xff;
+> +
+> 	if (has_acpi_companion(&pdev->dev)) {
+> 		ret = bcm_acpi_probe(dev);
+> 		if (ret)
+> @@ -1281,6 +1339,9 @@ static int bcm_serdev_probe(struct serdev_device *serdev)
+> 	bcmdev->serdev_hu.serdev = serdev;
+> 	serdev_device_set_drvdata(serdev, bcmdev);
+> 
+> +	/* SCO routing configuration is disabled by default */
+> +	bcmdev->sco_routing = 0xff;
+> +
+> 	if (has_acpi_companion(&serdev->dev))
+> 		err = bcm_acpi_probe(bcmdev);
+> 	else
+
+Regards
+
+Marcel
