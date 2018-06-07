@@ -1,195 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id AXYhHSRgGFsVPAAAmS7hNA
-	; Wed, 06 Jun 2018 22:29:59 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ssILGdJJGVteUgAAmS7hNA
+	; Thu, 07 Jun 2018 15:05:54 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D91C060861; Wed,  6 Jun 2018 22:29:58 +0000 (UTC)
+	id 52F8C608BA; Thu,  7 Jun 2018 15:05:54 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 130726074D;
-	Wed,  6 Jun 2018 22:29:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 130726074D
+	by smtp.codeaurora.org (Postfix) with ESMTP id B66E1601C3;
+	Thu,  7 Jun 2018 15:05:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B66E1601C3
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753043AbeFFW34 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 18:29:56 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56438 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752042AbeFFW3y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 18:29:54 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        id S936087AbeFGPFv (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:05:51 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33576 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934945AbeFGPFr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 11:05:47 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EC501818BAF3;
-        Wed,  6 Jun 2018 22:29:53 +0000 (UTC)
-Received: from localhost (ovpn-112-19.rdu2.redhat.com [10.10.112.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 00CE46B5A1;
-        Wed,  6 Jun 2018 22:29:50 +0000 (UTC)
-Date: Wed, 6 Jun 2018 18:29:49 -0400
-From: Mike Snitzer <snitzer@redhat.com>
-To: Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Toshi Kani <toshi.kani@hpe.com>, dm-devel@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v2 5/7] dm: remove DM_TYPE_DAX_BIO_BASED dm_queue_mode
-Message-ID: <20180606222949.GA4465@redhat.com>
-References: <20180529195106.14268-1-ross.zwisler@linux.intel.com>
- <20180529195106.14268-6-ross.zwisler@linux.intel.com>
- <20180601220443.GB18712@redhat.com>
- <20180604232416.GB10666@linux.intel.com>
- <20180605004558.GB6898@redhat.com>
- <20180606172421.GA2208@linux.intel.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id D23875D687;
+        Thu,  7 Jun 2018 15:05:46 +0000 (UTC)
+Received: from w520.home (ovpn-116-135.phx2.redhat.com [10.3.116.135])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 55E1060BEC;
+        Thu,  7 Jun 2018 15:05:41 +0000 (UTC)
+Date: Thu, 7 Jun 2018 09:05:40 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+Cc: "eric.auger@redhat.com" <eric.auger@redhat.com>,
+        "pmorel@linux.vnet.ibm.com" <pmorel@linux.vnet.ibm.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        Linuxarm <linuxarm@huawei.com>,
+        "John Garry" <john.garry@huawei.com>,
+        "xuwei (O)" <xuwei5@huawei.com>, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH v6 0/7] vfio/type1: Add support for valid iova list
+ management
+Message-ID: <20180607090540.3e7b6946@w520.home>
+In-Reply-To: <5FC3163CFD30C246ABAA99954A238FA8386F783C@FRAEML521-MBX.china.huawei.com>
+References: <20180418114045.7968-1-shameerali.kolothum.thodi@huawei.com>
+        <20180524122032.724676b9@w520.home>
+        <5FC3163CFD30C246ABAA99954A238FA8386EE591@FRAEML521-MBX.china.huawei.com>
+        <20180525145408.2938a9ec@w520.home>
+        <20180605110304.33e14b0d@w520.home>
+        <5FC3163CFD30C246ABAA99954A238FA8386F783C@FRAEML521-MBX.china.huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180606172421.GA2208@linux.intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 06 Jun 2018 22:29:54 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 06 Jun 2018 22:29:54 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'msnitzer@redhat.com' RCPT:''
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 07 Jun 2018 15:05:47 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 06 2018 at  1:24P -0400,
-Ross Zwisler <ross.zwisler@linux.intel.com> wrote:
+On Wed, 6 Jun 2018 06:52:08 +0000
+Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com> wrote:
 
-> On Mon, Jun 04, 2018 at 08:46:28PM -0400, Mike Snitzer wrote:
-> > On Mon, Jun 04 2018 at  7:24pm -0400,
-> > Ross Zwisler <ross.zwisler@linux.intel.com> wrote:
+> > -----Original Message-----
+> > From: Alex Williamson [mailto:alex.williamson@redhat.com]
+> > Sent: 05 June 2018 18:03
+> > To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+> > Cc: eric.auger@redhat.com; pmorel@linux.vnet.ibm.com;
+> > kvm@vger.kernel.org; linux-kernel@vger.kernel.org; iommu@lists.linux-
+> > foundation.org; Linuxarm <linuxarm@huawei.com>; John Garry
+> > <john.garry@huawei.com>; xuwei (O) <xuwei5@huawei.com>; Joerg Roedel
+> > <joro@8bytes.org>; David Woodhouse <dwmw2@infradead.org>
+> > Subject: Re: [PATCH v6 0/7] vfio/type1: Add support for valid iova list
+> > management
 > > 
-> > > On Fri, Jun 01, 2018 at 06:04:43PM -0400, Mike Snitzer wrote:
-> > > > On Tue, May 29 2018 at  3:51pm -0400,
-> > > > Ross Zwisler <ross.zwisler@linux.intel.com> wrote:
-> > > > 
-> > > > > The DM_TYPE_DAX_BIO_BASED dm_queue_mode was introduced to prevent DM
-> > > > > devices that could possibly support DAX from transitioning into DM devices
-> > > > > that cannot support DAX.
-> > > > > 
-> > > > > For example, the following transition will currently fail:
-> > > > > 
-> > > > >  dm-linear: [fsdax pmem][fsdax pmem] => [fsdax pmem][fsdax raw]
-> > > > > 	      DM_TYPE_DAX_BIO_BASED       DM_TYPE_BIO_BASED
-> > > > > 
-> > > > > but these will both succeed:
-> > > > > 
-> > > > >  dm-linear: [fsdax pmem][brd ramdisk] => [fsdax pmem][fsdax raw]
-> > > > >  	      DM_TYPE_DAX_BIO_BASED        DM_TYPE_BIO_BASED
-> > > > > 
-> > > > 
-> > > > I fail to see how this succeeds given
-> > > > drivers/md/dm-ioctl.c:is_valid_type() only allows transitions from:
-> > > > 
-> > > > DM_TYPE_BIO_BASED => DM_TYPE_DAX_BIO_BASED
-> > > 
-> > > Right, sorry, that was a typo.  What I meant was:
-> > > 
-> > > > For example, the following transition will currently fail:
-> > > > 
-> > > >  dm-linear: [fsdax pmem][fsdax pmem] => [fsdax pmem][fsdax raw]
-> > > >               DM_TYPE_DAX_BIO_BASED       DM_TYPE_BIO_BASED
-> > > > 
-> > > > but these will both succeed:
-> > > > 
-> > > >  dm-linear: [fsdax pmem][brd ramdisk] => [fsdax pmem][fsdax raw]
-> > > >                 DM_TYPE_BIO_BASED        DM_TYPE_BIO_BASED
-> > > > 
-> > > >  dm-linear: [fsdax pmem][fsdax raw] => [fsdax pmem][fsdax pmem]
-> > > >                 DM_TYPE_BIO_BASED        DM_TYPE_DAX_BIO_BASED
-> > > 
-> > > So we allow 2 of the 3 transitions, but the reason that we disallow the third
-> > > isn't fully clear to me.
-> > > 
-> > > > >  dm-linear: [fsdax pmem][fsdax raw] => [fsdax pmem][fsdax pmem]
-> > > > >  		DM_TYPE_BIO_BASED        DM_TYPE_DAX_BIO_BASED
-> > > > > 
-> > > > > This seems arbitrary, as really the choice on whether to use DAX happens at
-> > > > > filesystem mount time.  There's no guarantee that the in the first case
-> > > > > (double fsdax pmem) we were using the dax mount option with our file
-> > > > > system.
-> > > > > 
-> > > > > Instead, get rid of DM_TYPE_DAX_BIO_BASED and all the special casing around
-> > > > > it, and instead make the request queue's QUEUE_FLAG_DAX be our one source
-> > > > > of truth.  If this is set, we can use DAX, and if not, not.  We keep this
-> > > > > up to date in table_load() as the table changes.  As with regular block
-> > > > > devices the filesystem will then know at mount time whether DAX is a
-> > > > > supported mount option or not.
-> > > > 
-> > > > If you don't think you need this specialization that is fine.. but DM
-> > > > devices supporting suspending (as part of table reloads) so is there any
-> > > > risk that there will be inflight IO (say if someone did 'dmsetup suspend
-> > > > --noflush').. and then upon reload the device type changed out from
-> > > > under us.. anyway, I don't have all the PMEM DAX stuff paged back into
-> > > > my head yet.
-> > > > 
-> > > > But this just seems like we really shouldn't be allowing the
-> > > > transition from what was DM_TYPE_DAX_BIO_BASED back to DM_TYPE_BIO_BASED
-> > > 
-> > > I admit I don't fully understand all the ways that DM supports suspending and
-> > > resuming devices.  Is there actually a case where we can change out the DM
-> > > devices while I/O is running, and somehow end up trying to issue a DAX I/O to
-> > > a device that doesn't support DAX?
+> > [Cc +dwmw2]
 > > 
-> > Yes, provided root permissions, it's very easy to dmsetup suspend/load/resume
-> > to replace any portion of the DM device's logical address space to map to an
-> > entirely different DM target (with a different backing store).  It's
-> > pretty intrusive to do such things, but easily done and powerful.
+> > On Fri, 25 May 2018 14:54:08 -0600
+> > Alex Williamson <alex.williamson@redhat.com> wrote:
+> >   
+> > > On Fri, 25 May 2018 08:45:36 +0000
+> > > Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>  
+> > wrote:  
+> > >  
+> > > > Yes, the above changes related to list empty cases looks fine to me.  
+> > >
+> > > Thanks Shameer, applied to my next branch with the discussed fixes for
+> > > v4.18 (modulo patch 4/7 which Joerg already pushed for v4.17).  Thanks,  
 > > 
-> > Mike
+> > Hi Shameer,
+> > 
+> > We're still hitting issues with this.  VT-d marks reserved regions for
+> > any RMRR ranges, which are IOVA ranges that the BIOS requests to be
+> > identity mapped for a device.  These are indicated by these sorts of
+> > log entries on boot:
+> > 
+> >  DMAR: Setting RMRR:
+> >  DMAR: Setting identity map for device 0000:00:02.0 [0xbf800000 - 0xcf9fffff]
+> >  DMAR: Setting identity map for device 0000:00:1a.0 [0xbe8d1000 - 0xbe8dffff]
+> >  DMAR: Setting identity map for device 0000:00:1d.0 [0xbe8d1000 - 0xbe8dffff]
+> > 
+> > So while for an unaffected device, I see very usable ranges for QEMU,
+> > such as:
+> > 
+> > 	00: 0000000000000000 - 00000000fedfffff
+> > 	01: 00000000fef00000 - 01ffffffffffffff
+> > 
+> > If I try to assign the previously assignable 00:02.0 IGD graphics
+> > device, I get:
+> > 
+> > 	00: 0000000000000000 - 00000000bf7fffff
+> > 	01: 00000000cfa00000 - 00000000fedfffff
+> > 	02: 00000000fef00000 - 01ffffffffffffff
+> > 
+> > And we get a fault when QEMU tries the following mapping:
+> > 
+> > vfio_dma_map(0x55f790421a20, 0x100000, 0xbff00000, 0x7ff163f00000)
+> > 
+> > bff00000 clearly extends into the gap starting at bf800000.  VT-d is
+> > rather split-brained about RMRRs, typically we'd exclude devices from
+> > assignment at all for relying on RMRRs and these reserved ranges
+> > would be a welcome mechanism to avoid conflicts with those ranges, but
+> > for RMRR ranges covering IGD and USB devices we've decided that we
+> > don't need to honor the RMRR (see device_is_rmrr_locked()), but it's
+> > still listed as a reserved range and bites us here.  
 > 
-> Hmmm, I don't understand how you can do this if there is a filesystem built on
-> your DM device?  Say you have a DM device, either striped or linear, that is
-> made up of 2 devices, and then you use dmsetup to replace one of the DM member
-> devices with something else.  You've just swapped out half of your LBA space
-> with new data, right? 
-> 
-> I don't understand how you can expect a filesystem built on the old DM device
-> to still work?  You especially can't do this while the filesystem is mounted -
-> all the in-core filesystem metadata would be garbage because the on-media data
-> would have totally changed.
+> Ah..:(. This looks similar to the pci window range reporting issue faced in
+> the arm world. I see the RFC you have sent out to ignore these "known" 
+> RMRRs. Hope we will be able to resolve this soon.
 
-Sure it can cause you to no longer have access to the original backing
-store (e.g. swapping in an "error" target instead of linear).
+In the meantime, it seems that I need to drop the iova list from my
+branch for v4.18, I don't think it makes much sense to expose to
+userspace if we cannot also enforce it and it seems like it presents API
+issues if we were to expose the iova list without enforcement and later
+try to enforce it.  Sorry I didn't catch this earlier.  Thanks,
 
-But this ability to suspend a DM device with a table that is using
-"linear", load a new table (that uses a different target) into the
-inactive table slot, and then resume to make the device active is how
-things like snapshot support are achieved.  The "linear" target gets
-replaced with "snapshot-origin', etc.
- 
-> So, when dealing with a filesystem, the flow must be:
-> 
-> unmount your filesystem
-> redo your DM device, changing out devices
-> reformat your filesystem on the new DM device
-> remount your filesystem
-> 
-> Right?
-
-No.
-
-> If so, then I don't see how a transition of the DM device from
-> supporting DAX to not supporting DAX or vice versa could harm us, as we can't
-> be doing filesystem I/O at the time when we change the composition of the DM
-> device.
-
-Yes you can.  That is the entire point.
-
-BTW, I'm not saying you have to change the backing store.  I'm saying
-you _can_ if you would like.  Obviously if you remove the backing store
-with the filesystem then you'll not be able to access the filesystem.
-
-The point of all this is to say, DM table swaps can be good and
-powerful.  But they can also be harmful.  The goal of preventing
-transitions from DM_TYPE_DAX_BIO_BASED to DM_TYPE_BIO_BASED was to
-shield users from doing obviously wrong things... things they might not
-realize are problematic because of the relatively opaque nature of "DAX"
-support.
-
-Mike
+Alex
