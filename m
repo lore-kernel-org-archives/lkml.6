@@ -1,96 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id /HtnFgLzG1tQYAAAmS7hNA
-	; Sat, 09 Jun 2018 15:32:18 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id zmOJAQmaGVu7EQAAmS7hNA
+	; Thu, 07 Jun 2018 20:49:48 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 411B2608BF; Sat,  9 Jun 2018 15:32:18 +0000 (UTC)
+	id 68887608CA; Thu,  7 Jun 2018 20:49:48 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="S2wKZygD"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gnkqtkUL"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id A8B92608B8;
-	Sat,  9 Jun 2018 15:32:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A8B92608B8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 900FD6063F;
+	Thu,  7 Jun 2018 20:49:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 900FD6063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932418AbeFIPcQ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 11:32:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34684 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932395AbeFIPcM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 11:32:12 -0400
-Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 541E9204EC;
-        Sat,  9 Jun 2018 15:32:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528558331;
-        bh=P9iJlQFFlZfIUvIqNGLiSCbc4TUZYyVUddHbClJUjic=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S2wKZygDl7g8pXDj3Dg3rOeXw2GH4omy55754pMLTKK/Ez1NJuI703k+EjnjPc05y
-         wZqR/EDdW1w1aKhBg+QSo77ZcvEhQg4uCxfzawVYQd34mXQS31By7m089SlRT/QPQ3
-         Zg2qP8iOHBlYlTFhNGJ3n/AIpgoyCMX3e4y0YXWU=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vlad Buslov <vladbu@mellanox.com>,
-        Roi Dayan <roid@mellanox.com>, Jiri Pirko <jiri@mellanox.com>,
-        Paul Blakey <paulb@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 07/48] cls_flower: Fix incorrect idr release when failing to modify rule
-Date: Sat,  9 Jun 2018 17:29:19 +0200
-Message-Id: <20180609145948.147600514@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
-References: <20180609145947.679103414@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        id S932471AbeFGUtn (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 16:49:43 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:40819 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932251AbeFGUtk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 16:49:40 -0400
+Received: by mail-pl0-f67.google.com with SMTP id t12-v6so6863446plo.7
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 13:49:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=1mzbwQWjqDOTCo5dN3Uk9vpaDn6rpIdjVL4+gGWXNM0=;
+        b=gnkqtkULTZcm/hxul1tIfrTjkdBKMHn8P/YS9eIzWvtwzyky3IZMlhPXpt386FT8jV
+         uuCRSJnn3VO0EsgwfCGJC/pvORkBn0YI0GT/d5+uReZjsGytdbgUCcyLKTDCTLgc+WDz
+         HIuZkGTONZEFboosS5KtEtG4/3sErCLAfuisZQgGG6pnVOJbJsvaruhJFQ3hVZPuYKAy
+         ft9zcifTICB+ebXHYse1e8RKkkddWLPpgBVwQ4AntmKE6s2eUynnrNeX3PxD4yCF6JWS
+         faxMGluWAXYkkPfPRCcB6ZC3PVqVLw6CIQ7n493VehYsM0A7DBiRrRsRMLt14oW1405f
+         /xIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=1mzbwQWjqDOTCo5dN3Uk9vpaDn6rpIdjVL4+gGWXNM0=;
+        b=sL5lPYICxHUJOsdjC/DJo0m+oEJuDTWumaBKbxxo/uvEnw+bSS8GAwceFi/LjV3uYP
+         dUQb8yU3kye1HdXO9d8U+nOqUkPp23MVaHKGcGJY8yVQb6YSX1Ala8YTZYpnCVc61Yg3
+         RkiwlQBifwbsaU+JM/B9cFtW73uwXNZ/z1Oo0HYyFtENkgXEAZFTBQS8aXJpcYYo3nxF
+         STCNs+aXhrhyuHiovfgkRVyOSGV7tSDcgOhzuiqcPI08P1NtH79O+tDxz40cPiGGFUiv
+         8CvzSuqBnNQv4Z+XuRYS/uaj0VaWELFXeekFby7Ftr1oiuZqrf7pPPRDtc8bC0FDhkgI
+         rc/A==
+X-Gm-Message-State: APt69E0F/VMiyGc6QoKUAIjMm3zpYZyUNAhtz3m8Q9q3eQbxFSICkL/I
+        Xi2Y6qDti+u0dWOcDhZN6ufN/Q==
+X-Google-Smtp-Source: ADUXVKKhisXedgUjv7GV8j0yHnA1ZEBa5unXTSWU+yFEN1QzlsCPHCCmdPQSzDfx4QMONierctfmyw==
+X-Received: by 2002:a17:902:2983:: with SMTP id h3-v6mr3567145plb.232.1528404579831;
+        Thu, 07 Jun 2018 13:49:39 -0700 (PDT)
+Received: from ndesaulniers0.svl.corp.google.com ([2620:15c:2a3:1:d33:166f:5b79:14b3])
+        by smtp.gmail.com with ESMTPSA id w18-v6sm3780460pgq.1.2018.06.07.13.49.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Jun 2018 13:49:38 -0700 (PDT)
+From: Nick Desaulniers <ndesaulniers@google.com>
+To: akpm@linux-foundation.org, hpa@zytor.com, mingo@redhat.com,
+        tglx@linutronix.de
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org, virtualization@lists.linux-foundation.org,
+        astrachan@google.com, manojgupta@google.com, ghackmann@google.com,
+        sedat.dilek@gmail.com, tstellar@redhat.com, keescook@google.com,
+        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
+        linux-kbuild@vger.kernel.org, geert@linux-m68k.org,
+        will.deacon@arm.com, mawilcox@microsoft.com, arnd@arndb.de,
+        rientjes@google.com, acme@redhat.com, pombredanne@nexb.com,
+        aryabinin@virtuozzo.com, kstewart@linuxfoundation.org,
+        boris.ostrovsky@oracle.com, jan.kiszka@siemens.com,
+        rostedt@goodmis.org, kirill.shutemov@linux.intel.com,
+        ard.biesheuvel@linaro.org, akataria@vmware.com,
+        brijesh.singh@amd.com, caoj.fnst@cn.fujitsu.com,
+        gregkh@linuxfoundation.org, jarkko.sakkinen@linux.intel.com,
+        jgross@suse.com, jpoimboe@redhat.com, mka@chromium.org,
+        ndesaulniers@google.com, thomas.lendacky@amd.com, tweek@google.com,
+        mjg59@google.com, joe@perches.com
+Subject: [PATCH v4 0/3] extern inline native_save_fl for paravirt
+Date: Thu,  7 Jun 2018 13:49:24 -0700
+Message-Id: <20180607204927.219329-1-ndesaulniers@google.com>
+X-Mailer: git-send-email 2.17.1.1185.g55be947832-goog
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+paravirt depends on a custom calling convention (callee saved), but
+expects this from a static inline function that it then forces to be
+outlined. This is problematic because different compilers or flags can
+then add a stack guard that violates the calling conventions.
 
-------------------
+Uses extern inline with the out-of-line definition in assembly to
+prevent compilers from adding stack guards to the outlined version.
 
-From: Paul Blakey <paulb@mellanox.com>
+Other parts of the codebase overwrite KBUILD_CFLAGS, which is *extremely
+problematic* for extern inline, as the sematics are completely the
+opposite depending on what C standard is used.
+http://blahg.josefsipek.net/?p=529
 
-[ Upstream commit 8258d2da9f9f521dce7019e018360c28d116354e ]
+Changes since v3:
+  Take Joe's suggestion to hoist __inline__ and __inline out of
+  conditional block.
 
-When we fail to modify a rule, we incorrectly release the idr handle
-of the unmodified old rule.
+Changes since v2:
+  Take hpa's _ASM_ARG patch into the set in order to simplify cross
+  32b/64b x86 assembly and rebase my final patch to use it.  Apply
+  Sedat's typo fix to commit message and sign off on it. Take Joe's
+  suggestion to simplify __inline__ and __inline. Add Arnd to list of
+  folks who made helpful suggestions.
 
-Fix that by checking if we need to release it.
+Changes since v1:
+  Prefer gnu_inline function attribute instead of explicitly setting C
+  standard compiler flag in problematic Makefiles. We should instead
+  carefully evaluate if those Makefiles should be overwriting
+  KBUILD_CFLAGS at all. Dropped the previous first two patches and added
+  a new first patch.
 
-Fixes: fe2502e49b58 ("net_sched: remove cls_flower idr on failure")
-Reported-by: Vlad Buslov <vladbu@mellanox.com>
-Reviewed-by: Roi Dayan <roid@mellanox.com>
-Acked-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: Paul Blakey <paulb@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/sched/cls_flower.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+H. Peter Anvin (1):
+  x86/asm: add _ASM_ARG* constants for argument registers to <asm/asm.h>
 
---- a/net/sched/cls_flower.c
-+++ b/net/sched/cls_flower.c
-@@ -974,7 +974,7 @@ static int fl_change(struct net *net, st
- 	return 0;
- 
- errout_idr:
--	if (fnew->handle)
-+	if (!fold)
- 		idr_remove(&head->handle_idr, fnew->handle);
- errout:
- 	tcf_exts_destroy(&fnew->exts);
+Nick Desaulniers (2):
+  compiler-gcc.h: add gnu_inline to all inline declarations
+  x86: paravirt: make native_save_fl extern inline
+
+ arch/x86/include/asm/asm.h      | 59 +++++++++++++++++++++++++++++++++
+ arch/x86/include/asm/irqflags.h |  2 +-
+ arch/x86/kernel/Makefile        |  1 +
+ arch/x86/kernel/irqflags.S      | 26 +++++++++++++++
+ include/linux/compiler-gcc.h    | 17 ++++++----
+ 5 files changed, 97 insertions(+), 8 deletions(-)
+ create mode 100644 arch/x86/kernel/irqflags.S
+
+-- 
+2.17.1.1185.g55be947832-goog
