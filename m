@@ -1,113 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id IkpFGthVGVubOgAAmS7hNA
-	; Thu, 07 Jun 2018 15:58:00 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id dY2YDaOIGVv6TQAAmS7hNA
+	; Thu, 07 Jun 2018 19:33:55 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 3FAC26074D; Thu,  7 Jun 2018 15:58:00 +0000 (UTC)
+	id 1C27B6089E; Thu,  7 Jun 2018 19:33:55 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DgmuyJU0"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id B6FB7601D2;
-	Thu,  7 Jun 2018 15:57:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B6FB7601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 76C5B601C3;
+	Thu,  7 Jun 2018 19:33:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 76C5B601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934503AbeFGP56 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:57:58 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39350 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933055AbeFGOJH (ORCPT
+        id S1753120AbeFGTdw (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 15:33:52 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:46991 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751037AbeFGTdu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:09:07 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb7-0005Zp-Jl; Thu, 07 Jun 2018 15:09:05 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb3-0002v7-Lr; Thu, 07 Jun 2018 15:09:01 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Johan Hovold" <johan@kernel.org>,
-        "Kirk Madsen" <kirkm@Navsys.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.659234615@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 153/410] USB: serial: add Novatel Wireless GPS driver
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Thu, 7 Jun 2018 15:33:50 -0400
+Received: by mail-oi0-f68.google.com with SMTP id h79-v6so9665879oig.13;
+        Thu, 07 Jun 2018 12:33:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=EDFzg7yHcMkki5gobLgrIzHSDEIDAYiPYLkosue7+PU=;
+        b=DgmuyJU0JE7viG65OzO3fZ7q1CfCBPgUy5Dtdwhy7DmSHWQLbJS5OnG66zQh/KrBfn
+         OKoQGHPlvK5x7IDNKDZaZKbWJJKhjf0HkZMsm+N55eaCqG49ENXbQnAt+zZF4GmlWtiy
+         nqL8G39XdLvtEMNikpHR4pY36l9nC3r356xg7Z461DwHyxjY20tZOxkz4wg1rDPNNpCC
+         EGkPUG5nqCMAawQjYkz5ibbVvcPrA0B8sGHBYbVy8BSYoaSHFSEliYocVrTWdDfZih1c
+         Y8KATHBrlajdzMIxWyV87xGlLHTu6S0Dcr51oQi52i6jN3PX6sLIftos2IKNrCa0Cntg
+         QFlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=EDFzg7yHcMkki5gobLgrIzHSDEIDAYiPYLkosue7+PU=;
+        b=Hy4wtd0O+moqybCvUYlc7lv0vQQg1eTmYVv/NN0vaAfGWHZH4nY/95r5fcn2PNXyGB
+         oMt4BzrnLGsIv1soZDSgVd0Tm4WJDFOFPu6fj2pr6JsErS9Zyixr6rgateaa4ArCmqT2
+         E6YMdFOSeYbwscqN5AlSM9XeqaUqNU4io0PlgpXEs25wVFQzr4WqSB75bAHnc4Y4N6RX
+         4nLIz/OPCUsNhv39aVs4xsWyJCBDVprvsWlE2nAcQj1JX8xbCc4VDis0K540D0sD3kN/
+         a/mTX4uNW43sHOpjUCtF/w4ajzah5FWRr74Fr2+86LRrfy0MOeLsUlhmdJifUF6a7him
+         VCQA==
+X-Gm-Message-State: APt69E0ipTpfMvzGDwIBQ/CajOPJJUcNYWkYR7dGKfrMbWKfFPWSZl/Q
+        UjfQtjoFjtRCzpdBVoNy4kUfIsCc
+X-Google-Smtp-Source: ADUXVKLE/61tf0LFxgKVo8fQhEBByTcSAs97J/MJi+2UOfe82DASAQCxreK0AiDXtYwlY60I8ZYqMQ==
+X-Received: by 2002:aca:cf84:: with SMTP id f126-v6mr1688474oig.131.1528400029667;
+        Thu, 07 Jun 2018 12:33:49 -0700 (PDT)
+Received: from nuclearis2_1.lan (c-98-201-114-184.hsd1.tx.comcast.net. [98.201.114.184])
+        by smtp.gmail.com with ESMTPSA id g36-v6sm7400877otb.54.2018.06.07.12.33.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 07 Jun 2018 12:33:49 -0700 (PDT)
+From: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+To: linux-acpi@vger.kernel.org
+Cc: alex_gagniuc@dellteam.com, austin_bolen@dell.com,
+        shyam_iyer@dell.com, keith.busch@intel.com,
+        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] PCI/AER: Fix aerdrv loading with "pcie_ports=native" parameter
+Date: Thu,  7 Jun 2018 14:33:40 -0500
+Message-Id: <20180607193341.18891-1-mr.nuke.me@gmail.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+According to the documentation, "pcie_ports=native", linux should use
+native AER and DPC services. While that is true for the _OSC method
+parsing, this is not the only place that is checked. Should the HEST
+table list PCIe ports as firmware-first, linux will not use native
+services.
 
-------------------
+This happens because aer_acpi_firmware_first() doesn't take
+'pcie_ports' into account. This is wrong. DPC uses the same logic when
+it decides whether to load or not, so fixing this also fixes DPC not
+loading.
 
-From: Johan Hovold <johan@kernel.org>
-
-commit c5cd24d7b179a415df263e5b18b72f6e3aaf81e0 upstream.
-
-Add simple driver for Novatel Wireless GPS receivers.
-
-Reported-by: Kirk Madsen <kirkm@Navsys.com>
-Tested-by: Kirk Madsen <kirkm@Navsys.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
 ---
- drivers/usb/serial/Kconfig             | 1 +
- drivers/usb/serial/usb-serial-simple.c | 7 +++++++
- 2 files changed, 8 insertions(+)
+ drivers/pci/pcie/aer/aerdrv_acpi.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/serial/Kconfig
-+++ b/drivers/usb/serial/Kconfig
-@@ -62,6 +62,7 @@ config USB_SERIAL_SIMPLE
- 		- Google USB serial devices
- 		- HP4x calculators
- 		- a number of Motorola phones
-+		- Novatel Wireless GPS receivers
- 		- Siemens USB/MPI adapter.
- 		- ViVOtech ViVOpay USB device.
- 		- Infineon Modem Flashloader USB interface
---- a/drivers/usb/serial/usb-serial-simple.c
-+++ b/drivers/usb/serial/usb-serial-simple.c
-@@ -75,6 +75,11 @@ DEVICE(vivopay, VIVOPAY_IDS);
- 	{ USB_DEVICE(0x22b8, 0x2c64) }	/* Motorola V950 phone */
- DEVICE(moto_modem, MOTO_IDS);
+diff --git a/drivers/pci/pcie/aer/aerdrv_acpi.c b/drivers/pci/pcie/aer/aerdrv_acpi.c
+index 08c87de13cb8..4b491851a781 100644
+--- a/drivers/pci/pcie/aer/aerdrv_acpi.c
++++ b/drivers/pci/pcie/aer/aerdrv_acpi.c
+@@ -101,7 +101,7 @@ static void aer_set_firmware_first(struct pci_dev *pci_dev)
  
-+/* Novatel Wireless GPS driver */
-+#define NOVATEL_IDS()			\
-+	{ USB_DEVICE(0x09d7, 0x0100) }	/* NovAtel FlexPack GPS */
-+DEVICE_N(novatel_gps, NOVATEL_IDS, 3);
-+
- /* HP4x (48/49) Generic Serial driver */
- #define HP4X_IDS()			\
- 	{ USB_DEVICE(0x03f0, 0x0121) }
-@@ -99,6 +104,7 @@ static struct usb_serial_driver * const
- 	&google_device,
- 	&vivopay_device,
- 	&moto_modem_device,
-+	&novatel_gps_device,
- 	&hp4x_device,
- 	&suunto_device,
- 	&siemens_mpi_device,
-@@ -112,6 +118,7 @@ static const struct usb_device_id id_tab
- 	GOOGLE_IDS(),
- 	VIVOPAY_IDS(),
- 	MOTO_IDS(),
-+	NOVATEL_IDS(),
- 	HP4X_IDS(),
- 	SUUNTO_IDS(),
- 	SIEMENS_IDS(),
+ 	rc = apei_hest_parse(aer_hest_parse, &info);
+ 
+-	if (rc)
++	if (rc || pcie_ports_native)
+ 		pci_dev->__aer_firmware_first = 0;
+ 	else
+ 		pci_dev->__aer_firmware_first = info.firmware_first;
+@@ -135,6 +135,8 @@ bool aer_acpi_firmware_first(void)
+ 		apei_hest_parse(aer_hest_parse, &info);
+ 		aer_firmware_first = info.firmware_first;
+ 		parsed = true;
++		if (pcie_ports_native)
++			aer_firmware_first = 0;
+ 	}
+ 	return aer_firmware_first;
+ }
+-- 
+2.14.3
