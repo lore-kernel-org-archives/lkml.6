@@ -1,119 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id xCwgD00nGluaDgAAmS7hNA
-	; Fri, 08 Jun 2018 06:51:49 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id FERbCaSlGFtBbAAAmS7hNA
+	; Thu, 07 Jun 2018 03:25:56 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id E3896607E4; Fri,  8 Jun 2018 06:51:48 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="g7JVJQ1Q"
+	id 7E5476089E; Thu,  7 Jun 2018 03:25:56 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 4D78C602FC;
-	Fri,  8 Jun 2018 06:51:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4D78C602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id EDD55605BD;
+	Thu,  7 Jun 2018 03:25:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EDD55605BD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752716AbeFHGvp (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 02:51:45 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:42446 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751241AbeFHGvo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 02:51:44 -0400
-Received: by mail-lf0-f65.google.com with SMTP id v135-v6so18383782lfa.9
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 23:51:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=7W1yzcnJNHKQrgraPILtxT9yr1QxYFzVWYM+zREzulI=;
-        b=g7JVJQ1Qcw2bDXC59EEZrED106BJqlUAt3Ej6pkQnHC5rZkZLRA+vn86UXus/xV+Fx
-         kO1Cqrrmpjc6EmReZ5YvsAEidC4CEfBGPPNl5KwCejpx2phzW9Cs3kD8BiumT7THJjva
-         Mh1rfYCajmd93bW2C8DnzUvUkFAyUtQOcdRVA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=7W1yzcnJNHKQrgraPILtxT9yr1QxYFzVWYM+zREzulI=;
-        b=E/M2mqRjw9+CGt1b9auM40l/yAVjeU3Kuq/dDDiyIU6QD7YL2K0Nkynl1OgCAeLRjg
-         zFOfP6F4eCRmBDRuqG1C7TXRq9/7HuXNZr2kEPd/zYVW1DK1Cqx/Mf2S7NDRiwodAtbO
-         LNZADH2XMvFjfivHMMExxL5nN5xB81uFjr4F6/uwZ9MN1I7+eRKCQxU9hg+MUPIlcYjg
-         PDrZrCZ+tfJlHNWX3G+eJwLoHzbOkqgKXY5gTcm14ustYlNbLn2Z+xh22a/83b3G9fRt
-         KFQEfhjJpSphKJ7ZrJWzp85ktVvEANyb950TWi4zmfvAJQH2Okxd3+golysMcmn5PI4j
-         CheQ==
-X-Gm-Message-State: APt69E0TCdcBDq2vmyPZgMn1IJm6fqZ8gAArAjCPbuGfYz0NhB+A2LAS
-        CFiC1/VsA2lGIsOCXwbFqjjX0A==
-X-Google-Smtp-Source: ADUXVKJGxkhdwmByU2A6NOCYztEo3fzr/1qfLT2NmPQB7mFOn9F7LOoZhJP9tsWwyqFFi4JMPqc0Mw==
-X-Received: by 2002:a19:c452:: with SMTP id u79-v6mr3003244lff.5.1528440702473;
-        Thu, 07 Jun 2018 23:51:42 -0700 (PDT)
-Received: from localhost (c-2c3d70d5.07-21-73746f28.bbcust.telenor.se. [213.112.61.44])
-        by smtp.gmail.com with ESMTPSA id q78-v6sm6988379lfd.35.2018.06.07.23.51.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Jun 2018 23:51:41 -0700 (PDT)
-From: Anders Roxell <anders.roxell@linaro.org>
-To: ast@kernel.org, daniel@iogearbox.net, ys114321@gmail.com,
-        shuah@kernel.org
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH v2] selftests: bpf: fix urandom_read build issue
-Date: Fri,  8 Jun 2018 08:51:27 +0200
-Message-Id: <20180608065127.28115-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <CADYN=9JEi2=YcC0KD555atZFiJNbP8Y9O0UME+63iTpSSd=ttg@mail.gmail.com>
-References: <CADYN=9JEi2=YcC0KD555atZFiJNbP8Y9O0UME+63iTpSSd=ttg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S1753617AbeFGDZE (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 23:25:04 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:33836 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932652AbeFGDYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 23:24:55 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id C14A92000E4;
+        Thu,  7 Jun 2018 05:24:53 +0200 (CEST)
+Received: from smtp.na-rdc02.nxp.com (inv1260.us-phx01.nxp.com [134.27.49.11])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 816F42001D4;
+        Thu,  7 Jun 2018 05:24:53 +0200 (CEST)
+Received: from az84smr01.freescale.net (az84smr01.freescale.net [10.64.34.197])
+        by inv1260.na-rdc02.nxp.com (Postfix) with ESMTP id 3AD3540C72;
+        Wed,  6 Jun 2018 20:24:53 -0700 (MST)
+Received: from titan.ap.freescale.net ([10.192.208.233])
+        by az84smr01.freescale.net (8.14.3/8.14.0) with ESMTP id w573OSwU023286;
+        Wed, 6 Jun 2018 20:24:50 -0700
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: netdev@vger.kernel.org, madalin.bucur@nxp.com,
+        Richard Cochran <richardcochran@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>
+Cc: devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Yangbo Lu <yangbo.lu@nxp.com>
+Subject: [v2, 07/10] fsl/fman_port: support getting timestamp field
+Date: Thu,  7 Jun 2018 11:22:53 +0800
+Message-Id: <20180607032256.39802-8-yangbo.lu@nxp.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180607032256.39802-1-yangbo.lu@nxp.com>
+References: <20180607032256.39802-1-yangbo.lu@nxp.com>
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-gcc complains that urandom_read gets built twice.
+This patch is to add fman_port_get_tstamp_field() interface
+to get timestamp field data.
 
-gcc -o tools/testing/selftests/bpf/urandom_read
--static urandom_read.c -Wl,--build-id
-gcc -Wall -O2 -I../../../include/uapi -I../../../lib -I../../../lib/bpf
--I../../../../include/generated  -I../../../include    urandom_read.c
-urandom_read -lcap -lelf -lrt -lpthread -o
-tools/testing/selftests/bpf/urandom_read
-gcc: fatal error: input file
-‘tools/testing/selftests/bpf/urandom_read’ is the
-same as output file
-compilation terminated.
-../lib.mk:110: recipe for target
-'tools/testing/selftests/bpf/urandom_read' failed
-To fix this issue remove the urandom_read target and so target
-TEST_CUSTOM_PROGS gets used.
-
-Fixes: 81f77fd0deeb ("bpf: add selftest for stackmap with BPF_F_STACK_BUILD_ID")
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-Acked-by: Yonghong Song <yhs@fb.com>
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
 ---
- tools/testing/selftests/bpf/Makefile | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Changes for v2:
+	- None.
+---
+ drivers/net/ethernet/freescale/fman/fman_port.c |   12 ++++++++++++
+ drivers/net/ethernet/freescale/fman/fman_port.h |    3 +++
+ 2 files changed, 15 insertions(+), 0 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index 607ed8729c06..7a6214e9ae58 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -16,9 +16,7 @@ LDLIBS += -lcap -lelf -lrt -lpthread
- TEST_CUSTOM_PROGS = $(OUTPUT)/urandom_read
- all: $(TEST_CUSTOM_PROGS)
+diff --git a/drivers/net/ethernet/freescale/fman/fman_port.c b/drivers/net/ethernet/freescale/fman/fman_port.c
+index ce6e24c..86f0094 100644
+--- a/drivers/net/ethernet/freescale/fman/fman_port.c
++++ b/drivers/net/ethernet/freescale/fman/fman_port.c
+@@ -1731,6 +1731,18 @@ int fman_port_get_hash_result_offset(struct fman_port *port, u32 *offset)
+ }
+ EXPORT_SYMBOL(fman_port_get_hash_result_offset);
  
--$(TEST_CUSTOM_PROGS): urandom_read
--
--urandom_read: urandom_read.c
-+$(TEST_CUSTOM_PROGS): $(OUTPUT)/%: %.c
- 	$(CC) -o $(TEST_CUSTOM_PROGS) -static $< -Wl,--build-id
++int fman_port_get_tstamp_field(struct fman_port *port, const void *data,
++			       u64 *tstamp)
++{
++	if (port->buffer_offsets.time_stamp_offset == ILLEGAL_BASE)
++		return -EINVAL;
++
++	*tstamp = *(u64 *)(data + port->buffer_offsets.time_stamp_offset);
++
++	return 0;
++}
++EXPORT_SYMBOL(fman_port_get_tstamp_field);
++
+ static int fman_port_probe(struct platform_device *of_dev)
+ {
+ 	struct fman_port *port;
+diff --git a/drivers/net/ethernet/freescale/fman/fman_port.h b/drivers/net/ethernet/freescale/fman/fman_port.h
+index e86ca6a..d10e48d 100644
+--- a/drivers/net/ethernet/freescale/fman/fman_port.h
++++ b/drivers/net/ethernet/freescale/fman/fman_port.h
+@@ -153,6 +153,9 @@ int fman_port_cfg_buf_prefix_content(struct fman_port *port,
  
- # Order correspond to 'make run_tests' order
+ int fman_port_get_hash_result_offset(struct fman_port *port, u32 *offset);
+ 
++int fman_port_get_tstamp_field(struct fman_port *port, const void *data,
++			       u64 *tstamp);
++
+ struct fman_port *fman_port_bind(struct device *dev);
+ 
+ #endif /* __FMAN_PORT_H */
 -- 
-2.17.1
+1.7.1
