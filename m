@@ -1,94 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id OwtsMatFGVs8IwAAmS7hNA
-	; Thu, 07 Jun 2018 14:49:48 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ox4yFpGaGVvZJgAAmS7hNA
+	; Thu, 07 Jun 2018 20:50:48 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D46D7608BF; Thu,  7 Jun 2018 14:49:48 +0000 (UTC)
+	id 55CD56089E; Thu,  7 Jun 2018 20:50:48 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2Za5nIcr"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 5F15A601C3;
-	Thu,  7 Jun 2018 14:49:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5F15A601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id D1005605A2;
+	Thu,  7 Jun 2018 20:50:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D1005605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935181AbeFGOtq (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:49:46 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40882 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934866AbeFGOtn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:49:43 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbt-0005a0-Iq; Thu, 07 Jun 2018 15:09:53 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb0-0002np-MT; Thu, 07 Jun 2018 15:08:58 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        id S932781AbeFGUup (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 16:50:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39660 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932752AbeFGUul (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 16:50:41 -0400
+Received: from mail-wr0-f169.google.com (mail-wr0-f169.google.com [209.85.128.169])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 76FA6208B2
+        for <linux-kernel@vger.kernel.org>; Thu,  7 Jun 2018 20:50:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528404640;
+        bh=6tfRoYycs67EisAlcuI8sCcT2bMn1JKNnSB8Zvrv6b4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=2Za5nIcr/MI4vpCBvH7TApfhZcaRq7Vw7gZzUJebas9J1wqdw+pBi52TfQxXWr0uG
+         7SmLG/SjGvJdywwdYy7jW8bA3JrODNJAk6Xk6pJ2uYFA5hDlHIhsUQVxn+YFAo2fzR
+         51U7kNa+8JKKM6Pf6Iks5zW3D+wQAGY/2Cs4d5U8=
+Received: by mail-wr0-f169.google.com with SMTP id d8-v6so11198515wro.4
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 13:50:40 -0700 (PDT)
+X-Gm-Message-State: APt69E00S80fkssHBuPOLGNzxsEyU0hWZoUtm4c3nqqET11XvUQCTFAI
+        OK9RJppTW0sVDO10/hK8TKE//L7NrebrOE4ZtUgjLw==
+X-Google-Smtp-Source: ADUXVKJVKbSywxKqAttGo+EflbXdzMf2TcAzJowwWokLc4SPtC9qxr0sfszaScMQt0B98yhrNdB/l24ZJKetixHEOsg=
+X-Received: by 2002:adf:b445:: with SMTP id v5-v6mr2775019wrd.67.1528404638864;
+ Thu, 07 Jun 2018 13:50:38 -0700 (PDT)
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Mimi Zohar" <zohar@linux.vnet.ibm.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.450045610@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 082/410] ima: relax requiring a file signature for
- new files with zero length
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+References: <20180607143855.3681-1-yu-cheng.yu@intel.com> <20180607143855.3681-6-yu-cheng.yu@intel.com>
+In-Reply-To: <20180607143855.3681-6-yu-cheng.yu@intel.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Thu, 7 Jun 2018 13:50:26 -0700
+X-Gmail-Original-Message-ID: <CALCETrVRH8LeYoo7V1VBPqg4WS0Enxtizt=T7dPvgoeWfJrdzA@mail.gmail.com>
+Message-ID: <CALCETrVRH8LeYoo7V1VBPqg4WS0Enxtizt=T7dPvgoeWfJrdzA@mail.gmail.com>
+Subject: Re: [PATCH 5/7] x86: Insert endbr32/endbr64 to vDSO
+To: Yu-cheng Yu <yu-cheng.yu@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        mike.kravetz@oracle.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+On Thu, Jun 7, 2018 at 7:42 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+>
+> From: "H.J. Lu" <hjl.tools@gmail.com>
+>
+> When Intel indirect branch tracking is enabled, functions in vDSO which
+> may be called indirectly should have endbr32 or endbr64 as the first
+> instruction.  We try to compile vDSO with -fcf-protection=branch -mibt
+> if possible.  Otherwise, we insert endbr32 or endbr64 by hand to assembly
+> codes generated by the compiler.
 
-------------------
+Wow, that's... a genuine abomination.  Do we really need to support
+CET on kernels built with old toolchains?
 
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-
-commit b7e27bc1d42e8e0cc58b602b529c25cd0071b336 upstream.
-
-Custom policies can require file signatures based on LSM labels.  These
-files are normally created and only afterwards labeled, requiring them
-to be signed.
-
-Instead of requiring file signatures based on LSM labels, entire
-filesystems could require file signatures.  In this case, we need the
-ability of writing new files without requiring file signatures.
-
-The definition of a "new" file was originally defined as any file with
-a length of zero.  Subsequent patches redefined a "new" file to be based
-on the FILE_CREATE open flag.  By combining the open flag with a file
-size of zero, this patch relaxes the file signature requirement.
-
-Fixes: 1ac202e978e1 ima: accept previously set IMA_NEW_FILE
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- security/integrity/ima/ima_appraise.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -198,7 +198,8 @@ int ima_appraise_measurement(int func, s
- 		if (opened & FILE_CREATED)
- 			iint->flags |= IMA_NEW_FILE;
- 		if ((iint->flags & IMA_NEW_FILE) &&
--		    !(iint->flags & IMA_DIGSIG_REQUIRED))
-+		    (!(iint->flags & IMA_DIGSIG_REQUIRED) ||
-+		     (inode->i_size == 0)))
- 			status = INTEGRITY_PASS;
- 		goto out;
- 	}
+--Andy
