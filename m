@@ -1,79 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 7HpCM/RrGltIbwAAmS7hNA
-	; Fri, 08 Jun 2018 11:43:48 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Mg43Chk9GVtmPAAAmS7hNA
+	; Thu, 07 Jun 2018 14:11:37 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id BF623607DC; Fri,  8 Jun 2018 11:43:48 +0000 (UTC)
+	id 14677608B8; Thu,  7 Jun 2018 14:11:37 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=BAYES_00,DATE_IN_FUTURE_06_12,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 56C30601D2;
-	Fri,  8 Jun 2018 11:43:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 56C30601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 8DF7A6063F;
+	Thu,  7 Jun 2018 14:11:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8DF7A6063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752746AbeFHLnq (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 07:43:46 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8705 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751485AbeFHLnl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 07:43:41 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id E3AFB46B124F;
-        Fri,  8 Jun 2018 19:43:25 +0800 (CST)
-Received: from localhost.localdomain (10.143.28.90) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.382.0; Fri, 8 Jun 2018 19:43:17 +0800
-From: Dongjiu Geng <gengdongjiu@huawei.com>
-To: <rkrcmar@redhat.com>, <corbet@lwn.net>, <christoffer.dall@arm.com>,
-        <marc.zyngier@arm.com>, <linux@armlinux.org.uk>,
-        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
-        <kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <james.morse@arm.com>, <gengdongjiu@huawei.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>
-Subject: [PATCH RESEND v4 0/2] support exception state migration and set VSESR_EL2 by user space
-Date: Sat, 9 Jun 2018 03:48:38 +0800
-Message-ID: <1528487320-2873-1-git-send-email-gengdongjiu@huawei.com>
-X-Mailer: git-send-email 1.9.1
+        id S933185AbeFGOJp (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:09:45 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39446 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932921AbeFGOJf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:09:35 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbM-0005Zp-So; Thu, 07 Jun 2018 15:09:21 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbE-0003Hh-3X; Thu, 07 Jun 2018 15:09:12 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.143.28.90]
-X-CFilter-Loop: Reflected
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Jason Gunthorpe" <jgg@mellanox.com>,
+        "Shiraz Saleem" <shiraz.saleem@intel.com>,
+        "Leon Romanovsky" <leonro@mellanox.com>,
+        "Chien Tin Tung" <chien.tin.tung@intel.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.87066022@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 384/410] RDMA/ucma: Correct option size check using
+ optlen
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series patch is separated from https://www.spinics.net/lists/kvm/msg168917.html
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-1. Detect whether KVM can set set guest SError syndrome
-2. Support to Set VSESR_EL2 and inject SError by user space.
-3. Support live migration to keep SError pending state and VSESR_EL2 value
+------------------
 
-The user space patch is here: https://www.mail-archive.com/qemu-devel@nongnu.org/msg539534.html
+From: Chien Tin Tung <chien.tin.tung@intel.com>
 
-Dongjiu Geng (2):
-  arm64: KVM: export the capability to set guest SError syndrome
-  arm/arm64: KVM: Add KVM_GET/SET_VCPU_EVENTS
+commit 5f3e3b85cc0a5eae1c46d72e47d3de7bf208d9e2 upstream.
 
- Documentation/virtual/kvm/api.txt    | 42 +++++++++++++++++++++++++++++++++---
- arch/arm/include/asm/kvm_host.h      |  6 ++++++
- arch/arm/include/uapi/asm/kvm.h      | 12 +++++++++++
- arch/arm/kvm/guest.c                 | 12 +++++++++++
- arch/arm64/include/asm/kvm_emulate.h |  5 +++++
- arch/arm64/include/asm/kvm_host.h    |  7 ++++++
- arch/arm64/include/uapi/asm/kvm.h    | 13 +++++++++++
- arch/arm64/kvm/guest.c               | 36 +++++++++++++++++++++++++++++++
- arch/arm64/kvm/inject_fault.c        |  6 +++---
- arch/arm64/kvm/reset.c               |  4 ++++
- include/uapi/linux/kvm.h             |  1 +
- virt/kvm/arm/arm.c                   | 19 ++++++++++++++++
- 12 files changed, 157 insertions(+), 6 deletions(-)
+The option size check is using optval instead of optlen
+causing the set option call to fail. Use the correct
+field, optlen, for size check.
 
--- 
-2.7.4
+Fixes: 6a21dfc0d0db ("RDMA/ucma: Limit possible option size")
+Signed-off-by: Chien Tin Tung <chien.tin.tung@intel.com>
+Signed-off-by: Shiraz Saleem <shiraz.saleem@intel.com>
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ drivers/infiniband/core/ucma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/infiniband/core/ucma.c
++++ b/drivers/infiniband/core/ucma.c
+@@ -1200,7 +1200,7 @@ static ssize_t ucma_set_option(struct uc
+ 	if (IS_ERR(ctx))
+ 		return PTR_ERR(ctx);
+ 
+-	if (unlikely(cmd.optval > KMALLOC_MAX_SIZE))
++	if (unlikely(cmd.optlen > KMALLOC_MAX_SIZE))
+ 		return -EINVAL;
+ 
+ 	optval = memdup_user((void __user *) (unsigned long) cmd.optval,
