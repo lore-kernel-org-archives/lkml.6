@@ -1,90 +1,180 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 5ZkeFMA7HlurRQAAmS7hNA
-	; Mon, 11 Jun 2018 09:07:12 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id jMizGd+XGVvPfAAAmS7hNA
+	; Thu, 07 Jun 2018 20:38:55 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 4117D607BB; Mon, 11 Jun 2018 09:07:12 +0000 (UTC)
+	id 4D6D46074D; Thu,  7 Jun 2018 20:38:55 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e5itmGRH"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id CCC3660791;
-	Mon, 11 Jun 2018 09:07:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CCC3660791
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 78A3C60452;
+	Thu,  7 Jun 2018 20:38:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 78A3C60452
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754188AbeFKJHK (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 05:07:10 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43702 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754066AbeFKJHJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 05:07:09 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D0F4C401EF04;
-        Mon, 11 Jun 2018 09:07:08 +0000 (UTC)
-Received: from krava (unknown [10.43.17.242])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 6C578112D180;
-        Mon, 11 Jun 2018 09:07:07 +0000 (UTC)
-Date: Mon, 11 Jun 2018 11:07:06 +0200
-From: Jiri Olsa <jolsa@redhat.com>
-To: Thomas-Mich Richter <tmricht@linux.ibm.com>
-Cc: Kim Phillips <kim.phillips@arm.com>, acme@kernel.org,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com
-Subject: Re: [PATCH] perf test: Test 6 dumps core on s390
-Message-ID: <20180611090706.GA21328@krava>
-References: <20180608131728.75084-1-tmricht@linux.ibm.com>
- <20180608095318.2ba14669fdc5da2004285bcf@arm.com>
- <0d25bc25-ed0b-81bb-c516-12fd25442427@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0d25bc25-ed0b-81bb-c516-12fd25442427@linux.ibm.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 11 Jun 2018 09:07:08 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 11 Jun 2018 09:07:08 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
+        id S932514AbeFGUiw (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 16:38:52 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:33635 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932296AbeFGUiu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 16:38:50 -0400
+Received: by mail-pl0-f65.google.com with SMTP id n10-v6so6862151plp.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 13:38:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=XPt5YujdfZsiysYDWGSFfTMiw9NfNNEGK0vlrekDSbQ=;
+        b=e5itmGRHtYjrymYPy1DHhQvxuirJ7a/PqwLSwo88Rv3AlxEnzoKu7c0udDNSqiarT2
+         P7ULyH7AoMHBih2l/Tqj8j81+8MecA7+VQTw416XsnagvS3Oca4gkF6CAK63uAj6jm2R
+         H2n083kcXj0YiQ08jglQ+T+4ka9l03m7FoMGqkbRnW0vyVpg28pDQe7UgWGh/qp2GVvg
+         Lr/whZWZR1jh8Bi+mvwRlSHSI+DcN77vNo4ThiFtSTr0ZJnTGSvMkQFJ82CMUVwNc4sZ
+         gE7NqNnldb/m6u/xO7od4Ap5ULEuaElfLyiYHxWg1qi6kF2WOtD6LwI89nuJDtMtoTB0
+         ZH7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=XPt5YujdfZsiysYDWGSFfTMiw9NfNNEGK0vlrekDSbQ=;
+        b=iOxQNP6/tN2QBUTcmYm4/ydw/atxBZ3rSOdmtp3M12RlHKarkUm3X6aDklPA21CjI0
+         IH23W6mJ3YW45Wz+y4cXKSWw5LFDlpZJVCeIvoHdxCMdayYdCXrmJN1FYzsLI8JrE2xT
+         YlErTIL6jWONcOcM60v6JLl4630HMYI2pgJBDr89B/X9AB7ONslLqbrQ3jKvFIR/P3jE
+         WddxQ4m1ghHeFWJu7AnHkM2dW3KEckI3Jgi6yS4tFip1dkC+3ioSmYbxv3tbBBla6Un0
+         tanJ48fcv4o30Rm+j1r591XD+OpUlWukf4ACzoovAKzhO6Q15kFXSrUjkHqLSCEAyXAy
+         /CAw==
+X-Gm-Message-State: APt69E3xc9uK31soC8PO02FrO7Xgt0I5tRsJEcx1KMunfZvuijAeuHIk
+        V7f7RKr/PoZhYSD0q3DSkg+3cB/enXo=
+X-Google-Smtp-Source: ADUXVKIQgerCtzY1Sjhdrah/A0mGx3RBe61V5JemGxp/Y8PiO3TUZL4uyl8yo2hYetD0CoKwqy/kag==
+X-Received: by 2002:a17:902:20c9:: with SMTP id v9-v6mr3524161plg.206.1528403929139;
+        Thu, 07 Jun 2018 13:38:49 -0700 (PDT)
+Received: from joelaf.mtv.corp.google.com ([2620:0:1000:1600:3122:ea9c:d178:eb])
+        by smtp.gmail.com with ESMTPSA id v27-v6sm10324174pfi.23.2018.06.07.13.38.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Jun 2018 13:38:48 -0700 (PDT)
+From: Joel Fernandes <joelaf@google.com>
+X-Google-Original-From: Joel Fernandes <joel@joelfernandes.org>
+To: linux-kernel@vger.kernel.org
+Cc: kernel-team@android.com,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Erick Reyes <erickreyes@google.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Julia Cartwright <julia@ni.com>,
+        linux-kselftest@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Todd Kjos <tkjos@google.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: [PATCH v9 0/7] Centralize and unify usage of preempt/irq
+Date: Thu,  7 Jun 2018 13:38:08 -0700
+Message-Id: <20180607203815.255845-1-joel@joelfernandes.org>
+X-Mailer: git-send-email 2.17.1.1185.g55be947832-goog
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 11, 2018 at 09:00:53AM +0200, Thomas-Mich Richter wrote:
-> On 06/08/2018 04:53 PM, Kim Phillips wrote:
-> > On Fri, 8 Jun 2018 15:17:28 +0200
-> > Thomas Richter <tmricht@linux.ibm.com> wrote:
-> > 
-> >> Perf test case 6 "Parse event definition strings"
-> >> dumps core when executed on s390.
-> > 
-> > I reported it actually fails on any $ARCH system without
-> > Intel Processor Trace (PT) h/w:
-> > 
-> > https://www.spinics.net/lists/linux-perf-users/msg06020.html
-> > 
-> > There was a follow-up patch sent here:
-> > 
-> > https://www.spinics.net/lists/linux-perf-users/msg06029.html
-> > 
-> > which worked for me, but I don't know what has/has-not transpired
-> > since, other than it is still broken, as you found.
-> > 
-> > Kim
-> 
-> 
-> Looks like this is still broken. I also can not find this patch on
-> git clone -b perf/core git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux
-> 
-> We actually need 2 patches
-> - one to fix the core dump
-> - one to test for x86 platform
+From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 
-right.. I forgot about those, will rebase/repost it
+This is the next (hopefully close to final) revision of preempt/irq tracepoint
+centralization and unified usage across the kernel. This revision mostly has
+minor style corrections, reviewed-by tag additions and an improvement to the
+test module. All patches now have a Reviewed-by tag except for the kselftest
+script (patch 7/7). I have also now split out the softirq fix which really
+should go into an -rc cycle and is independent of this series (see [1]).
 
-jirka
+The preempt/irq tracepoints exist but not everything in the kernel is using it
+whenever they need to be notified that a preempt disable/enable or an irq
+disable enable has occurred.  This makes things not work simultaneously (for
+example, only either lockdep or irqsoff trace-events can be used at a time).
+
+This is particular painful to deal with, since turning on lockdep breaks
+tracers that install probes on IRQ events, such as the BCC atomic critical
+section tracer [2]. This constraint also makes it not possible to use synthetic
+events to trace irqsoff sections with lockdep simulataneously turned on.
+
+This series solves that, and also results in a nice clean up of relevant parts
+of the kernel. Several ifdefs are simpler, and the design is more unified and
+better. Also as a result of this, we also speeded performance all rcuidle
+tracepoints since their handling is simpler.
+
+[1] https://lkml.org/lkml/2018/6/7/1135
+[2] https://github.com/iovisor/bcc/pull/1801/
+
+v8->v9:
+- Small style changes to tracepoint code (Mathieu)
+- Minor style fix to use PTR_ERR_OR_ZERO (0-day bot)
+- Minor fix to test_atomic_sections to use unsigned long.
+- Added Namhyung's, Mathieu's Reviewed-by to some patches.
+
+v7->v8:
+- Refactored irqsoff tracer probe defines (Namhyung)
+
+v6->v7:
+- Added a module to simulate an atomic section, a kselftest to load and
+  and trigger it which verifies the preempt-tracer and this series.
+
+- Fixed a new warning after I rebased in early boot, this is because
+early_boot_irqs_disabled was set too early, I moved it after the lockdep
+initialization.
+
+- added back the softirq fix since it appears it wasn't picked up.
+
+- Ran Ingo's locking API selftest suite which are passing with this
+  series.
+
+- Mathieu suggested ifdef'ing the tracepoint_synchronize_unregister
+  function incase tracepoints aren't enabled, did that.
+
+Joel Fernandes (Google) (6):
+  srcu: Add notrace variant of srcu_dereference
+  trace/irqsoff: Split reset into separate functions
+  tracepoint: Make rcuidle tracepoint callers use SRCU
+  tracing: Centralize preemptirq tracepoints and unify their usage
+  lib: Add module to simulate atomic sections for testing preemptoff
+    tracers
+  kselftests: Add tests for the preemptoff and irqsoff tracers
+
+Paul McKenney (1):
+  srcu: Add notrace variants of srcu_read_{lock,unlock}
+
+ include/linux/ftrace.h                        |  11 +-
+ include/linux/irqflags.h                      |  11 +-
+ include/linux/lockdep.h                       |   8 +-
+ include/linux/preempt.h                       |   2 +-
+ include/linux/srcu.h                          |  22 ++
+ include/linux/tracepoint.h                    |  49 +++-
+ include/trace/events/preemptirq.h             |  23 +-
+ init/main.c                                   |   5 +-
+ kernel/locking/lockdep.c                      |  35 +--
+ kernel/sched/core.c                           |   2 +-
+ kernel/trace/Kconfig                          |  22 +-
+ kernel/trace/Makefile                         |   2 +-
+ kernel/trace/trace_irqsoff.c                  | 253 ++++++------------
+ kernel/trace/trace_preemptirq.c               |  71 +++++
+ kernel/tracepoint.c                           |  16 +-
+ lib/Kconfig.debug                             |   8 +
+ lib/Makefile                                  |   1 +
+ lib/test_atomic_sections.c                    |  77 ++++++
+ tools/testing/selftests/ftrace/config         |   3 +
+ .../test.d/preemptirq/irqsoff_tracer.tc       |  74 +++++
+ 20 files changed, 454 insertions(+), 241 deletions(-)
+ create mode 100644 kernel/trace/trace_preemptirq.c
+ create mode 100644 lib/test_atomic_sections.c
+ create mode 100644 tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc
+
+-- 
+2.17.1.1185.g55be947832-goog
