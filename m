@@ -1,111 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id T4f6MzJSGVvVFQAAmS7hNA
-	; Thu, 07 Jun 2018 15:41:52 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ekWlCJo3GVvuZgAAmS7hNA
+	; Thu, 07 Jun 2018 13:48:17 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 5402A6089E; Thu,  7 Jun 2018 15:41:52 +0000 (UTC)
+	id 4FA7F607E7; Thu,  7 Jun 2018 13:48:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+	s=default; t=1528379297;
+	bh=aMGTZV/Txs5XiGLVGoXCYibwqxR03GdV/Rl9O06xyxo=;
+	h=Date:From:To:Subject:In-Reply-To:References:List-ID:From;
+	b=amjlHcNlJMiaRMDocVDk5jcghcEvm8i141S/dq9oCHOwZbcZus6lEpVKuUQOl77sJ
+	 TuxJUMai6Y4aRqqKnANj5wny6aktLzvsbgKikd2Dq0LjXmsVNZ4wMvMYXs3WeZrLKy
+	 kEQ4qQcsTioiFZQtdj+s8U0wHNfZggG4/Qtk/UiM=
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id A05416074D;
-	Thu,  7 Jun 2018 15:41:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A05416074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id BC282601B4;
+	Thu,  7 Jun 2018 13:48:16 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cqE7COVh";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oowlkLz/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BC282601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934982AbeFGPlt (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:41:49 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40599 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934608AbeFGOli (ORCPT
+        id S932693AbeFGNsO (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 09:48:14 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56286 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932152AbeFGNsL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:41:38 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbz-0005Zn-UZ; Thu, 07 Jun 2018 15:10:00 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvay-0002jF-Gh; Thu, 07 Jun 2018 15:08:56 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Thu, 7 Jun 2018 09:48:11 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 84078607E7; Thu,  7 Jun 2018 13:48:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528379290;
+        bh=aMGTZV/Txs5XiGLVGoXCYibwqxR03GdV/Rl9O06xyxo=;
+        h=Date:From:To:Subject:In-Reply-To:References:From;
+        b=cqE7COVhSF9dxekCZr22uGxF3/Ie1APFykzWMXSFpW0aLoOolwnfye0rTL7ncRuFP
+         qPnZrH1yeHhEvB17QIc70SdhOuBWBVAmLd8Rkx+z+MCXrPhbs7MgKgePXxCH7pSmM7
+         LjWtGw6Wcc6PEvI58RCe8+B943Q8O3aTvuiWO8jg=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id B758F601B4;
+        Thu,  7 Jun 2018 13:48:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528379283;
+        bh=aMGTZV/Txs5XiGLVGoXCYibwqxR03GdV/Rl9O06xyxo=;
+        h=Date:From:To:Subject:In-Reply-To:References:From;
+        b=oowlkLz/a5YXibHHw/tLicNJCf3LRsMt04MeaEEYaaVccbUbDuEOyHRpzpS3Dl5Na
+         JO/cay/nKkmeXAsfIaSH9cIrJ68LenyptEP1Z4R53NPV1oXs7Wd2Rpb/QsX3f1Y9d1
+         NL1GRIc2HiYhRqDo7sksFZ+3x0eHZxqfKrcjLyNs=
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Thomas Gleixner" <tglx@linutronix.de>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Ingo Molnar" <mingo@kernel.org>, "Len Brown" <lenb@kernel.org>,
-        "Dave Hansen" <dave.hansen@linux.intel.com>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "Dave Hansen" <dave@sr71.net>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.386119095@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 039/410] x86/cpu: Rename "WESTMERE2" family to
- "NEHALEM_G"
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Thu, 07 Jun 2018 19:18:03 +0530
+From: poza@codeaurora.org
+To: Bjorn Helgaas <bhelgaas@google.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dongdong Liu <liudongdong3@huawei.com>,
+        Keith Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH NEXT 6/6] PCI/PORTDRV: Remove ERR_FATAL handling from
+ pcie_portdrv_slot_reset()
+In-Reply-To: <1528351234-26914-6-git-send-email-poza@codeaurora.org>
+References: <1528351234-26914-1-git-send-email-poza@codeaurora.org>
+ <1528351234-26914-6-git-send-email-poza@codeaurora.org>
+Message-ID: <94661add3e71e3694aa22c2a9cabf503@codeaurora.org>
+X-Sender: poza@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+On 2018-06-07 11:30, Oza Pawandeep wrote:
+> We are handling ERR_FATAL by resetting the Link in software,skipping 
+> the
+> driver pci_error_handlers callbacks, removing the devices from the PCI
+> subsystem, and re-enumerating, as a result of that, no more calling
+> pcie_portdrv_slot_reset in ERR_FATAL case.
+> 
+> Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
+> 
+> diff --git a/drivers/pci/pcie/portdrv_pci.c 
+> b/drivers/pci/pcie/portdrv_pci.c
+> index 973f1b8..92f5d330 100644
+> --- a/drivers/pci/pcie/portdrv_pci.c
+> +++ b/drivers/pci/pcie/portdrv_pci.c
+> @@ -42,17 +42,6 @@ __setup("pcie_ports=", pcie_port_setup);
+> 
+>  /* global data */
+> 
+> -static int pcie_portdrv_restore_config(struct pci_dev *dev)
+> -{
+> -	int retval;
+> -
+> -	retval = pci_enable_device(dev);
+> -	if (retval)
+> -		return retval;
+> -	pci_set_master(dev);
+> -	return 0;
+> -}
+> -
+>  #ifdef CONFIG_PM
+>  static int pcie_port_runtime_suspend(struct device *dev)
+>  {
+> @@ -162,14 +151,6 @@ static pci_ers_result_t
+> pcie_portdrv_mmio_enabled(struct pci_dev *dev)
+> 
+>  static pci_ers_result_t pcie_portdrv_slot_reset(struct pci_dev *dev)
+>  {
+> -	/* If fatal, restore cfg space for possible link reset at upstream */
+> -	if (dev->error_state == pci_channel_io_frozen) {
+> -		dev->state_saved = true;
+> -		pci_restore_state(dev);
+> -		pcie_portdrv_restore_config(dev);
+> -		pci_enable_pcie_error_reporting(dev);
+> -	}
+> -
+>  	return PCI_ERS_RESULT_RECOVERED;
+>  }
 
-------------------
 
-From: Dave Hansen <dave.hansen@linux.intel.com>
+Hi Bjorn,
 
-commit 4b3b234f434d440fcd749b9636131b76e2ce561e upstream.
+the above patch removes ERR_FATAL handling from 
+pcie_portdrv_slot_reset()
+because now we are handling ERR_FATAL differently than before.
 
-Len Brown noticed something was amiss in our INTEL_FAM6_*
-definitions.  It seems like model 0x1F was a Nehalem part,
-marketed as "Intel Core i7 and i5 Processors" (according to the
-SDM).  But, although it was a Nehalem 0x1F had some uncore events
-which were shared with Westmere.
+I tried to dig into pcie_portdrv_slot_reset() handling for ERR_FATAL 
+case where it
+restores the config space, enable device, set master and enable error 
+reporting....
+and as far as I understand this is being done for upstream link (bridges 
+etc..)
 
-Len also mentioned he thought it was called "Havendale", which
-Wikipedia says was graphics-oriented and canceled:
+why was it done at the first point (I checked the commit description, 
+but could not really get it)
+and do we need to handle the same thing in ERR_FATAL now ?
 
-	https://en.wikipedia.org/wiki/Nehalem_(microarchitecture)
-
-So either way, it's probably not imporant what we call it, but
-call it Nehalem to be accurate, and add a "G" since it seems
-graphics-related.  If it were canceled that would be a good reason
-why it's so sparsely and inconsistently referred to in the code.
-
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Dave Hansen <dave@sr71.net>
-Cc: Len Brown <lenb@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20160629192737.949C41A8@viggo.jf.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-[bwh: Backported to 3.16: drop changes in intel_idle.c]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- arch/x86/include/asm/intel-family.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/arch/x86/include/asm/intel-family.h
-+++ b/arch/x86/include/asm/intel-family.h
-@@ -18,10 +18,10 @@
- #define INTEL_FAM6_CORE2_DUNNINGTON	0x1D
- 
- #define INTEL_FAM6_NEHALEM		0x1E
-+#define INTEL_FAM6_NEHALEM_G		0x1F /* Auburndale / Havendale */
- #define INTEL_FAM6_NEHALEM_EP		0x1A
- #define INTEL_FAM6_NEHALEM_EX		0x2E
- #define INTEL_FAM6_WESTMERE		0x25
--#define INTEL_FAM6_WESTMERE2		0x1F
- #define INTEL_FAM6_WESTMERE_EP		0x2C
- #define INTEL_FAM6_WESTMERE_EX		0x2F
- 
+Regards,
+Oza.
