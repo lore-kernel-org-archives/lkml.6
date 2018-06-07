@@ -1,129 +1,236 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id yk4hHJfpGFsQVgAAmS7hNA
-	; Thu, 07 Jun 2018 08:16:15 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id m78aA+qgGVubXwAAmS7hNA
+	; Thu, 07 Jun 2018 21:24:39 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 1D526608BF; Thu,  7 Jun 2018 08:16:15 +0000 (UTC)
+	id 496F66074D; Thu,  7 Jun 2018 21:24:39 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 7D86A607F7;
-	Thu,  7 Jun 2018 08:16:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7D86A607F7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 8C35760115;
+	Thu,  7 Jun 2018 21:24:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8C35760115
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753484AbeFGIQL (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 04:16:11 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:54939 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752669AbeFGIQJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 04:16:09 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w578FxlW2125498
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 7 Jun 2018 01:15:59 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w578FwlP2125495;
-        Thu, 7 Jun 2018 01:15:58 -0700
-Date: Thu, 7 Jun 2018 01:15:58 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-edgwb1b2mpbrdeg0w64wp7ms@git.kernel.org>
-Cc: jolsa@kernel.org, hpa@zytor.com, namhyung@kernel.org,
-        tglx@linutronix.de, mingo@kernel.org, acme@redhat.com,
-        dsahern@gmail.com, wangnan0@huawei.com, adrian.hunter@intel.com,
-        linux-kernel@vger.kernel.org
-Reply-To: linux-kernel@vger.kernel.org, wangnan0@huawei.com,
-          adrian.hunter@intel.com, dsahern@gmail.com, acme@redhat.com,
-          mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com,
-          namhyung@kernel.org, jolsa@kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf sched: Use sched->show_callchain where
- appropriate
-Git-Commit-ID: 4c50563d818622bb0f99b378b4e6683f189b39fb
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        id S1752449AbeFGVYg (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 17:24:36 -0400
+Received: from mga14.intel.com ([192.55.52.115]:38470 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750903AbeFGVYf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 17:24:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 14:24:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,488,1520924400";
+   d="scan'208";a="47299978"
+Received: from rchatre-s.jf.intel.com ([10.54.70.76])
+  by orsmga007.jf.intel.com with ESMTP; 07 Jun 2018 14:24:34 -0700
+From: Reinette Chatre <reinette.chatre@intel.com>
+To: tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
+        vikas.shivappa@linux.intel.com
+Cc: gavin.hindman@intel.com, jithu.joseph@intel.com,
+        dave.hansen@intel.com, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
+        Reinette Chatre <reinette.chatre@intel.com>
+Subject: [PATCH V6 07/38] x86/intel_rdt: Initialize new resource group with sane defaults
+Date: Thu,  7 Jun 2018 14:24:25 -0700
+Message-Id: <44af4ecef879e88ec1b74c5decbf5dccaf998866.1528405422.git.reinette.chatre@intel.com>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <68030110df15615d95731fd354ff7adfb0476d37.1527593970.git.reinette.chatre@intel.com>
+References: <68030110df15615d95731fd354ff7adfb0476d37.1527593970.git.reinette.chatre@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  4c50563d818622bb0f99b378b4e6683f189b39fb
-Gitweb:     https://git.kernel.org/tip/4c50563d818622bb0f99b378b4e6683f189b39fb
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Mon, 28 May 2018 16:07:56 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 5 Jun 2018 10:09:54 -0300
+Currently when a new resource group is created its allocations would be
+those that belonged to the resource group to which its closid belonged
+previously.
 
-perf sched: Use sched->show_callchain where appropriate
+That is, we can encounter a case like:
+mkdir newgroup
+cat newgroup/schemata
+L2:0=ff;1=ff
+echo 'L2:0=0xf0;1=0xf0' > newgroup/schemata
+cat newgroup/schemata
+L2:0=0xf0;1=0xf0
+rmdir newgroup
+mkdir newnewgroup
+cat newnewgroup/schemata
+L2:0=0xf0;1=0xf0
 
-Instead of using symbol_conf.use_callchain, reducing its usage a bit
-more.
+When the new group is created it would be reasonable to expect its
+allocations to be initialized with all regions that it can possibly use.
+At this time these regions would be all that are shareable by other
+resource groups as well as regions that are not currently used.
+If the available cache region is found to be non-contiguous the
+available region is adjusted to enforce validity.
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-edgwb1b2mpbrdeg0w64wp7ms@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+When a new resource group is created the hardware is initialized with
+these new default allocations.
+
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- tools/perf/builtin-sched.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+V6: The cache region that is available for use by a new resource group may
+    not be contiguous. Enforce the available region to be valid by
+    selecting only the first contiguous portion. The goal is to ensure a
+    sane and valid default on resource group creation, the user still has
+    the ability to modify this default if it does not meet requirements.
 
-diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
-index 97f9e755e8e6..cbf39dab19c1 100644
---- a/tools/perf/builtin-sched.c
-+++ b/tools/perf/builtin-sched.c
-@@ -2143,7 +2143,7 @@ static void save_task_callchain(struct perf_sched *sched,
- 		return;
- 	}
- 
--	if (!symbol_conf.use_callchain || sample->callchain == NULL)
-+	if (!sched->show_callchain || sample->callchain == NULL)
- 		return;
- 
- 	if (thread__resolve_callchain(thread, cursor, evsel, sample,
-@@ -2271,10 +2271,11 @@ static struct thread *get_idle_thread(int cpu)
- 	return idle_threads[cpu];
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 107 ++++++++++++++++++++++++++++++-
+ 1 file changed, 104 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+index 35e538eed977..7ae798a8ebf6 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
++++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+@@ -133,7 +133,7 @@ void closid_free(int closid)
+  * Return: true if @closid is currently associated with a resource group,
+  * false if @closid is free
+  */
+-static bool __attribute__ ((unused)) closid_allocated(unsigned int closid)
++static bool closid_allocated(unsigned int closid)
+ {
+ 	return (closid_free_map & (1 << closid)) == 0;
+ }
+@@ -1799,6 +1799,102 @@ static int mkdir_mondata_all(struct kernfs_node *parent_kn,
+ 	return ret;
  }
  
--static void save_idle_callchain(struct idle_thread_runtime *itr,
-+static void save_idle_callchain(struct perf_sched *sched,
-+				struct idle_thread_runtime *itr,
- 				struct perf_sample *sample)
- {
--	if (!symbol_conf.use_callchain || sample->callchain == NULL)
-+	if (!sched->show_callchain || sample->callchain == NULL)
- 		return;
++/**
++ * cbm_ensure_valid - Enforce validity on provided CBM
++ * @_val:	Candidate CBM
++ * @r:		RDT resource to which the CBM belongs
++ *
++ * The provided CBM represents all cache portions available for use. This
++ * may be represented by a bitmap that does not consist of contiguous ones
++ * and thus be an invalid CBM.
++ * Here the provided CBM is forced to be a valid CBM by only considering
++ * the first set of contiguous bits as valid and clearing all bits.
++ * The intention here is to provide a valid default CBM with which a new
++ * resource group is initialized. The user can follow this with a
++ * modification to the CBM if the default does not satisfy the
++ * requirements.
++ */
++static void cbm_ensure_valid(u32 *_val, struct rdt_resource *r)
++{
++	unsigned long *val = (unsigned long *)_val;
++	unsigned int cbm_len = r->cache.cbm_len;
++	unsigned long first_bit, zero_bit;
++
++	if (*val == 0)
++		return;
++
++	first_bit = find_first_bit(val, cbm_len);
++	zero_bit = find_next_zero_bit(val, cbm_len, first_bit);
++
++	/* Clear any remaining bits to ensure contiguous region */
++	bitmap_clear(val, zero_bit, cbm_len - zero_bit);
++}
++
++/**
++ * rdtgroup_init_alloc - Initialize the new RDT group's allocations
++ *
++ * A new RDT group is being created on an allocation capable (CAT)
++ * supporting system. Set this group up to start off with all usable
++ * allocations. That is, all shareable and unused bits.
++ *
++ * All-zero CBM is invalid. If there are no more shareable bits available
++ * on any domain then the entire allocation will fail.
++ */
++static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
++{
++	u32 used_b = 0, unused_b = 0;
++	u32 closid = rdtgrp->closid;
++	struct rdt_resource *r;
++	enum rdtgrp_mode mode;
++	struct rdt_domain *d;
++	int i, ret;
++	u32 *ctrl;
++
++	for_each_alloc_enabled_rdt_resource(r) {
++		list_for_each_entry(d, &r->domains, list) {
++			d->have_new_ctrl = false;
++			d->new_ctrl = r->cache.shareable_bits;
++			used_b = r->cache.shareable_bits;
++			ctrl = d->ctrl_val;
++			for (i = 0; i < r->num_closid; i++, ctrl++) {
++				if (closid_allocated(i) && i != closid) {
++					mode = rdtgroup_mode_by_closid(i);
++					used_b |= *ctrl;
++					if (mode == RDT_MODE_SHAREABLE)
++						d->new_ctrl |= *ctrl;
++				}
++			}
++			unused_b = used_b ^ (BIT_MASK(r->cache.cbm_len) - 1);
++			unused_b &= BIT_MASK(r->cache.cbm_len) - 1;
++			d->new_ctrl |= unused_b;
++			/*
++			 * Force the initial CBM to be valid, user can
++			 * modify the CBM based on system availability.
++			 */
++			cbm_ensure_valid(&d->new_ctrl, r);
++			if (bitmap_weight((unsigned long *) &d->new_ctrl,
++					  r->cache.cbm_len) <
++					r->cache.min_cbm_bits) {
++				rdt_last_cmd_printf("no space on %s:%d\n",
++						    r->name, d->id);
++				return -ENOSPC;
++			}
++			d->have_new_ctrl = true;
++		}
++	}
++
++	for_each_alloc_enabled_rdt_resource(r) {
++		ret = update_domains(r, rdtgrp->closid);
++		if (ret < 0) {
++			rdt_last_cmd_puts("failed to initialize allocations\n");
++			return ret;
++		}
++		rdtgrp->mode = RDT_MODE_SHAREABLE;
++	}
++
++	return 0;
++}
++
+ static int mkdir_rdt_prepare(struct kernfs_node *parent_kn,
+ 			     struct kernfs_node *prgrp_kn,
+ 			     const char *name, umode_t mode,
+@@ -1957,6 +2053,10 @@ static int rdtgroup_mkdir_ctrl_mon(struct kernfs_node *parent_kn,
+ 	ret = 0;
  
- 	callchain_cursor__copy(&itr->cursor, &callchain_cursor);
-@@ -2320,7 +2321,7 @@ static struct thread *timehist_get_thread(struct perf_sched *sched,
+ 	rdtgrp->closid = closid;
++	ret = rdtgroup_init_alloc(rdtgrp);
++	if (ret < 0)
++		goto out_id_free;
++
+ 	list_add(&rdtgrp->rdtgroup_list, &rdt_all_groups);
  
- 			/* copy task callchain when entering to idle */
- 			if (perf_evsel__intval(evsel, sample, "next_pid") == 0)
--				save_idle_callchain(itr, sample);
-+				save_idle_callchain(sched, itr, sample);
+ 	if (rdt_mon_capable) {
+@@ -1967,15 +2067,16 @@ static int rdtgroup_mkdir_ctrl_mon(struct kernfs_node *parent_kn,
+ 		ret = mongroup_create_dir(kn, NULL, "mon_groups", NULL);
+ 		if (ret) {
+ 			rdt_last_cmd_puts("kernfs subdir error\n");
+-			goto out_id_free;
++			goto out_del_list;
  		}
  	}
  
-@@ -2849,7 +2850,7 @@ static void timehist_print_summary(struct perf_sched *sched,
- 			printf("    CPU %2d idle entire time window\n", i);
- 	}
+ 	goto out_unlock;
  
--	if (sched->idle_hist && symbol_conf.use_callchain) {
-+	if (sched->idle_hist && sched->show_callchain) {
- 		callchain_param.mode  = CHAIN_FOLDED;
- 		callchain_param.value = CCVAL_PERIOD;
- 
++out_del_list:
++	list_del(&rdtgrp->rdtgroup_list);
+ out_id_free:
+ 	closid_free(closid);
+-	list_del(&rdtgrp->rdtgroup_list);
+ out_common_fail:
+ 	mkdir_rdt_prepare_clean(rdtgrp);
+ out_unlock:
+-- 
+2.13.6
