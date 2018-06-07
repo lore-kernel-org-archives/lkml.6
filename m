@@ -1,109 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Q9mEHXoaHlsZGAAAmS7hNA
-	; Mon, 11 Jun 2018 06:46:17 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id v6OgIFhEGVutEwAAmS7hNA
+	; Thu, 07 Jun 2018 15:10:48 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D1D3A607BB; Mon, 11 Jun 2018 06:46:16 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HBiy+2RU"
+	id AF7E0608B8; Thu,  7 Jun 2018 15:10:48 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 4D1CF600D0;
-	Mon, 11 Jun 2018 06:46:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4D1CF600D0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 268CB601B4;
+	Thu,  7 Jun 2018 15:10:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 268CB601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754068AbeFKGqM (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 02:46:12 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:38236 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753974AbeFKGqK (ORCPT
+        id S935803AbeFGPKq (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:10:46 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41481 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S965016AbeFGPDH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 02:46:10 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by lelnx194.ext.ti.com (8.15.1/8.15.1) with ESMTP id w5B6jXb7018436;
-        Mon, 11 Jun 2018 01:45:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1528699533;
-        bh=rmM8FIsoOqMYX9eAs1e9A5xt38/N4GcVQNl9NWSst4I=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=HBiy+2RUfG1qQUWRPvTpIrebn6lNzNFE0Ca0d4H3PtQkHpvO14w4zpIr8jCJVRCrx
-         T3jd77K5cZDeP4RkfOoKbkxoql7GSVJtrVBA8egHyyjkruu2xiabzpFsEmSslQqBw6
-         +PdwxTqcLyQoC/tPQNrv5DuPhF2cO8RPvMpQ+NPA=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5B6jXuL022752;
-        Mon, 11 Jun 2018 01:45:33 -0500
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 11
- Jun 2018 01:45:33 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Mon, 11 Jun 2018 01:45:33 -0500
-Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5B6jTRh007415;
-        Mon, 11 Jun 2018 01:45:30 -0500
-Subject: Re: [PATCH v3 4/6] bus: ti-sysc: Add support for software reset
-To: Tony Lindgren <tony@atomide.com>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <mark.rutland@arm.com>,
-        <paul@pwsan.com>, <t-kristo@ti.com>, <robh+dt@kernel.org>,
-        <bcousson@baylibre.com>
-References: <20180606060826.14671-1-faiz_abbas@ti.com>
- <20180606060826.14671-5-faiz_abbas@ti.com>
- <20180607073530.GH5738@atomide.com>
- <a169ba7f-53f2-cf9a-a9ee-daffd6b53279@ti.com>
- <20180608062158.GI5738@atomide.com>
- <acdfef83-8778-e8f4-e423-ed04a9a8a649@ti.com>
- <20180611060957.GN5738@atomide.com>
- <f460481f-85a9-2a41-a894-6f25122dee8a@ti.com>
- <20180611062904.GO5738@atomide.com>
-From: Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <89d55b0b-fe9e-793b-2694-25755ac2bc15@ti.com>
-Date: Mon, 11 Jun 2018 12:17:10 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 7 Jun 2018 11:03:07 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbV-0005hL-SR; Thu, 07 Jun 2018 15:09:30 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbA-0003AU-SV; Thu, 07 Jun 2018 15:09:08 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-In-Reply-To: <20180611062904.GO5738@atomide.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
+        "Michal Suchanek" <hramrach@gmail.com>,
+        "David Vrabel" <david.vrabel@citrix.com>,
+        "Stefano Stabellini" <stefano.stabellini@eu.citrix.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.450624095@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 310/410] xen/arm: Define xen_arch_suspend()
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-On Monday 11 June 2018 11:59 AM, Tony Lindgren wrote:
-> * Faiz Abbas <faiz_abbas@ti.com> [180611 06:28]:
->> Great. I thought I completely misunderstood you. But I don't see what
->> adding another function will accomplish. A QUIRK flag used in the same
->> function would work well enough>
-> Fine with me as long as the function stays simple for both
-> syss and sysc reset.
->
+------------------
 
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 
-In general a reset status bit being in sysstatus is the norm and it
-being in sysconfig should be the "quirk" for which a flag needs to be
-added. What do you think?
+commit ffb7dbed47da6ac4460b606a3feee295bbe4d9e2 upstream.
 
-As an aside, naming bitshifts by the name of the platform they were
-originally added in seems weird. There should be some generic mask
-saying "soft reset is the 0th bit". Currently I am using
-SYSC_OMAP4_SOFTRESET for a dra76x module. I guess it depends on how many
-different sysconfig types we have.
+Commit 2b953a5e994c ("xen: Suspend ticks on all CPUs during suspend")
+introduced xen_arch_suspend() routine but did so only for x86, breaking
+ARM builds.
 
-Thanks,
-Faiz
+We need to add it to ARM as well.
+
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Reported-by: Michal Suchanek <hramrach@gmail.com>
+Tested-by: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+Signed-off-by: David Vrabel <david.vrabel@citrix.com>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ arch/arm/xen/enlighten.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/arch/arm/xen/enlighten.c
++++ b/arch/arm/xen/enlighten.c
+@@ -344,6 +344,7 @@ void xen_arch_pre_suspend(void) { }
+ void xen_arch_post_suspend(int suspend_cancelled) { }
+ void xen_timer_resume(void) { }
+ void xen_arch_resume(void) { }
++void xen_arch_suspend(void) { }
+ 
+ 
+ /* In the hypervisor.S file. */
