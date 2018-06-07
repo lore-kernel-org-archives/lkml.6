@@ -1,172 +1,225 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Xr+rBxjMG1siTQAAmS7hNA
-	; Sat, 09 Jun 2018 12:46:16 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id YJuZI1g/GVuFWQAAmS7hNA
+	; Thu, 07 Jun 2018 14:21:12 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id E9B066074D; Sat,  9 Jun 2018 12:46:15 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="Ceob0gCH"
+	id 7F0D96089E; Thu,  7 Jun 2018 14:21:12 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 3C0386032D;
-	Sat,  9 Jun 2018 12:46:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3C0386032D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id C0EA86063F;
+	Thu,  7 Jun 2018 14:21:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C0EA86063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753285AbeFIMqM (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 08:46:12 -0400
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:49441 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753101AbeFIMqK (ORCPT
+        id S933436AbeFGOTV (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:19:21 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39504 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933087AbeFGOJN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 08:46:10 -0400
-X-Greylist: delayed 70390 seconds by postgrey-1.27 at vger.kernel.org; Sat, 09 Jun 2018 08:46:10 EDT
-Received: from mail-vk0-f46.google.com (mail-vk0-f46.google.com [209.85.213.46]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id w59Ck6kZ017100;
-        Sat, 9 Jun 2018 21:46:07 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w59Ck6kZ017100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1528548367;
-        bh=E43f0R/DydyzQIiVUE1Z/omN2mAugsNkbM744NYn5BA=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=Ceob0gCHhBnQhxMCXWru9N1nCdmOare8jWHxqqNyQvbWdQJ8KhK6jQXiTMof6ONVP
-         WCSYCIB8bcSJykQQRWt//g8UiWZ8Womfhymt0TQj9McNmBrrRf4ga25SDKu6sTMxiP
-         EncBlYXPirEQF2zP0Sg28DkLlkbUgmgZhmvfEf8h5CmWe2pXlaWJ5bdJyrV2mRU2oH
-         pTQL/rUBEMBRlBPHFKmgkxzBJpk7mNf9sxE1GrI1UgqSlM32orf5mzuz/9Am4mACB5
-         51RwQds6Vge0qHgboZWX/NAo12PErD6UDsHUKJRY/ff/cjxik6EZ0jC47nAj8/Q3iX
-         W8XeeYoBI9PRg==
-X-Nifty-SrcIP: [209.85.213.46]
-Received: by mail-vk0-f46.google.com with SMTP id l64-v6so2243058vkl.12;
-        Sat, 09 Jun 2018 05:46:06 -0700 (PDT)
-X-Gm-Message-State: APt69E0bLlZAOZPYJnhxxcYOS4YHL/1e/1B5yKvNC7D4tv+xEfAXw8wp
-        AmNNJuRYK1Getu8ntR1FjTzQmZEcSVbl8tLNpT0=
-X-Google-Smtp-Source: ADUXVKKQI4frtCmNDY0Yt6//UTzzC3WypcBLDe5sXA45KeFmROQI9J+uTBOghQRhEb50IPqfABK28m66rvjTGXUZR3o=
-X-Received: by 2002:a1f:ac07:: with SMTP id v7-v6mr6177097vke.11.1528548365911;
- Sat, 09 Jun 2018 05:46:05 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ab0:20ab:0:0:0:0:0 with HTTP; Sat, 9 Jun 2018 05:45:23 -0700 (PDT)
-In-Reply-To: <20180608204727.jggtai5iro7ao34v@ast-mbp.dhcp.thefacebook.com>
-References: <1528477930-7342-1-git-send-email-yamada.masahiro@socionext.com>
- <1528477930-7342-3-git-send-email-yamada.masahiro@socionext.com> <20180608204727.jggtai5iro7ao34v@ast-mbp.dhcp.thefacebook.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Sat, 9 Jun 2018 21:45:23 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARKp7u5hSC-3DRMJTsPAWCSt0f1yNNbPUv5odayMiH+_Q@mail.gmail.com>
-Message-ID: <CAK7LNARKp7u5hSC-3DRMJTsPAWCSt0f1yNNbPUv5odayMiH+_Q@mail.gmail.com>
-Subject: Re: [PATCH 2/3] bpfilter: include bpfilter_umh in assembly instead of
- using objcopy
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: netdev@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
+        Thu, 7 Jun 2018 10:09:13 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbD-0005Zp-7d; Thu, 07 Jun 2018 15:09:11 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbA-000397-3M; Thu, 07 Jun 2018 15:09:08 +0100
 Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
+        "James Chapman" <jchapman@katalix.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.510344523@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 293/410] l2tp: fix race in pppol2tp_release with
+ session object destroy
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-06-09 5:47 GMT+09:00 Alexei Starovoitov <alexei.starovoitov@gmail.com>:
-> On Sat, Jun 09, 2018 at 02:12:09AM +0900, Masahiro Yamada wrote:
->> Do not use the troublesome ELF magic.  What is happening here is to
->> embed a user-space program into the kernel.  Simply wrap it in the
->> assembly with the '.incbin' directive.
->>
->> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->> ---
->>
->>  net/bpfilter/Makefile            | 15 ++-------------
->>  net/bpfilter/bpfilter_kern.c     | 11 +++++------
->>  net/bpfilter/bpfilter_umh_blob.S |  7 +++++++
->>  3 files changed, 14 insertions(+), 19 deletions(-)
->>  create mode 100644 net/bpfilter/bpfilter_umh_blob.S
->>
->> diff --git a/net/bpfilter/Makefile b/net/bpfilter/Makefile
->> index aafa720..39c6980 100644
->> --- a/net/bpfilter/Makefile
->> +++ b/net/bpfilter/Makefile
->> @@ -15,18 +15,7 @@ ifeq ($(CONFIG_BPFILTER_UMH), y)
->>  HOSTLDFLAGS += -static
->>  endif
->>
->> -# a bit of elf magic to convert bpfilter_umh binary into a binary blob
->> -# inside bpfilter_umh.o elf file referenced by
->> -# _binary_net_bpfilter_bpfilter_umh_start symbol
->> -# which bpfilter_kern.c passes further into umh blob loader at run-time
->> -quiet_cmd_copy_umh = GEN $@
->> -      cmd_copy_umh = echo ':' > $(obj)/.bpfilter_umh.o.cmd; \
->> -      $(OBJCOPY) -I binary -O $(CONFIG_OUTPUT_FORMAT) \
->> -      -B `$(OBJDUMP) -f $<|grep architecture|cut -d, -f1|cut -d' ' -f2` \
->> -      --rename-section .data=.init.rodata $< $@
->> -
->> -$(obj)/bpfilter_umh.o: $(obj)/bpfilter_umh
->> -     $(call cmd,copy_umh)
->> +$(obj)/bpfilter_umh_blob.o: $(obj)/bpfilter_umh
->>
->>  obj-$(CONFIG_BPFILTER_UMH) += bpfilter.o
->> -bpfilter-objs += bpfilter_kern.o bpfilter_umh.o
->> +bpfilter-objs += bpfilter_kern.o bpfilter_umh_blob.o
->> diff --git a/net/bpfilter/bpfilter_kern.c b/net/bpfilter/bpfilter_kern.c
->> index b13d058..fcc1a7c 100644
->> --- a/net/bpfilter/bpfilter_kern.c
->> +++ b/net/bpfilter/bpfilter_kern.c
->> @@ -10,11 +10,8 @@
->>  #include <linux/file.h>
->>  #include "msgfmt.h"
->>
->> -#define UMH_start _binary_net_bpfilter_bpfilter_umh_start
->> -#define UMH_end _binary_net_bpfilter_bpfilter_umh_end
->> -
->> -extern char UMH_start;
->> -extern char UMH_end;
->> +extern char bpfilter_umh_start;
->> +extern char bpfilter_umh_end;
->>
->>  static struct umh_info info;
->>  /* since ip_getsockopt() can run in parallel, serialize access to umh */
->> @@ -89,7 +86,9 @@ static int __init load_umh(void)
->>       int err;
->>
->>       /* fork usermode process */
->> -     err = fork_usermode_blob(&UMH_start, &UMH_end - &UMH_start, &info);
->> +     err = fork_usermode_blob(&bpfilter_umh_end,
->> +                              &bpfilter_umh_end - &bpfilter_umh_start,
->> +                              &info);
->>       if (err)
->>               return err;
->>       pr_info("Loaded bpfilter_umh pid %d\n", info.pid);
->> diff --git a/net/bpfilter/bpfilter_umh_blob.S b/net/bpfilter/bpfilter_umh_blob.S
->> new file mode 100644
->> index 0000000..40311d1
->> --- /dev/null
->> +++ b/net/bpfilter/bpfilter_umh_blob.S
->> @@ -0,0 +1,7 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +     .section .init.rodata, "a"
->> +     .global bpfilter_umh_start
->> +bpfilter_umh_start:
->> +     .incbin "net/bpfilter/bpfilter_umh"
->
-> Interesting. I think this is good idea. Looks cleaner than objcopy magic.
-> btw CONFIG_OUTPUT_FORMAT already fixed by
-> commit 8d97ca6b6755 ("bpfilter: fix OUTPUT_FORMAT") in net tree.
-> Could you please rebase on top of that tree?
->
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
+------------------
 
-OK, I will rebase it.
+From: James Chapman <jchapman@katalix.com>
 
-BTW, I only compile-tested this patch.
-Could you check if it really works?
+commit d02ba2a6110c530a32926af8ad441111774d2893 upstream.
 
+pppol2tp_release uses call_rcu to put the final ref on its socket. But
+the session object doesn't hold a ref on the session socket so may be
+freed while the pppol2tp_put_sk RCU callback is scheduled. Fix this by
+having the session hold a ref on its socket until the session is
+destroyed. It is this ref that is dropped via call_rcu.
 
+Sessions are also deleted via l2tp_tunnel_closeall. This must now also put
+the final ref via call_rcu. So move the call_rcu call site into
+pppol2tp_session_close so that this happens in both destroy paths. A
+common destroy path should really be implemented, perhaps with
+l2tp_tunnel_closeall calling l2tp_session_delete like pppol2tp_release
+does, but this will be looked at later.
 
--- 
-Best Regards
-Masahiro Yamada
+ODEBUG: activate active (active state 1) object type: rcu_head hint:           (null)
+WARNING: CPU: 3 PID: 13407 at lib/debugobjects.c:291 debug_print_object+0x166/0x220
+Modules linked in:
+CPU: 3 PID: 13407 Comm: syzbot_19c09769 Not tainted 4.16.0-rc2+ #38
+Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+RIP: 0010:debug_print_object+0x166/0x220
+RSP: 0018:ffff880013647a00 EFLAGS: 00010082
+RAX: dffffc0000000008 RBX: 0000000000000003 RCX: ffffffff814d3333
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff88001a59f6d0
+RBP: ffff880013647a40 R08: 0000000000000000 R09: 0000000000000001
+R10: ffff8800136479a8 R11: 0000000000000000 R12: 0000000000000001
+R13: ffffffff86161420 R14: ffffffff85648b60 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff88001a580000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020e77000 CR3: 0000000006022000 CR4: 00000000000006e0
+Call Trace:
+ debug_object_activate+0x38b/0x530
+ ? debug_object_assert_init+0x3b0/0x3b0
+ ? __mutex_unlock_slowpath+0x85/0x8b0
+ ? pppol2tp_session_destruct+0x110/0x110
+ __call_rcu.constprop.66+0x39/0x890
+ ? __call_rcu.constprop.66+0x39/0x890
+ call_rcu_sched+0x17/0x20
+ pppol2tp_release+0x2c7/0x440
+ ? fcntl_setlk+0xca0/0xca0
+ ? sock_alloc_file+0x340/0x340
+ sock_release+0x92/0x1e0
+ sock_close+0x1b/0x20
+ __fput+0x296/0x6e0
+ ____fput+0x1a/0x20
+ task_work_run+0x127/0x1a0
+ do_exit+0x7f9/0x2ce0
+ ? SYSC_connect+0x212/0x310
+ ? mm_update_next_owner+0x690/0x690
+ ? up_read+0x1f/0x40
+ ? __do_page_fault+0x3c8/0xca0
+ do_group_exit+0x10d/0x330
+ ? do_group_exit+0x330/0x330
+ SyS_exit_group+0x22/0x30
+ do_syscall_64+0x1e0/0x730
+ ? trace_hardirqs_off_thunk+0x1a/0x1c
+ entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x7f362e471259
+RSP: 002b:00007ffe389abe08 EFLAGS: 00000202 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f362e471259
+RDX: 00007f362e471259 RSI: 000000000000002e RDI: 0000000000000000
+RBP: 00007ffe389abe30 R08: 0000000000000000 R09: 00007f362e944270
+R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000400b60
+R13: 00007ffe389abf50 R14: 0000000000000000 R15: 0000000000000000
+Code: 8d 3c dd a0 8f 64 85 48 89 fa 48 c1 ea 03 80 3c 02 00 75 7b 48 8b 14 dd a0 8f 64 85 4c 89 f6 48 c7 c7 20 85 64 85 e
+8 2a 55 14 ff <0f> 0b 83 05 ad 2a 68 04 01 48 83 c4 18 5b 41 5c 41 5d 41 5e 41
+
+Fixes: ee40fb2e1eb5b ("l2tp: protect sock pointer of struct pppol2tp_session with RCU")
+Signed-off-by: James Chapman <jchapman@katalix.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ net/l2tp/l2tp_ppp.c | 52 +++++++++++++++++++++++----------------------
+ 1 file changed, 27 insertions(+), 25 deletions(-)
+
+--- a/net/l2tp/l2tp_ppp.c
++++ b/net/l2tp/l2tp_ppp.c
+@@ -437,10 +437,28 @@ abort:
+  * Session (and tunnel control) socket create/destroy.
+  *****************************************************************************/
+ 
++static void pppol2tp_put_sk(struct rcu_head *head)
++{
++	struct pppol2tp_session *ps;
++
++	ps = container_of(head, typeof(*ps), rcu);
++	sock_put(ps->__sk);
++}
++
+ /* Called by l2tp_core when a session socket is being closed.
+  */
+ static void pppol2tp_session_close(struct l2tp_session *session)
+ {
++	struct pppol2tp_session *ps;
++
++	ps = l2tp_session_priv(session);
++	mutex_lock(&ps->sk_lock);
++	ps->__sk = rcu_dereference_protected(ps->sk,
++					     lockdep_is_held(&ps->sk_lock));
++	RCU_INIT_POINTER(ps->sk, NULL);
++	if (ps->__sk)
++		call_rcu(&ps->rcu, pppol2tp_put_sk);
++	mutex_unlock(&ps->sk_lock);
+ }
+ 
+ /* Really kill the session socket. (Called from sock_put() if
+@@ -460,14 +478,6 @@ static void pppol2tp_session_destruct(st
+ 	}
+ }
+ 
+-static void pppol2tp_put_sk(struct rcu_head *head)
+-{
+-	struct pppol2tp_session *ps;
+-
+-	ps = container_of(head, typeof(*ps), rcu);
+-	sock_put(ps->__sk);
+-}
+-
+ /* Called when the PPPoX socket (session) is closed.
+  */
+ static int pppol2tp_release(struct socket *sock)
+@@ -491,26 +501,17 @@ static int pppol2tp_release(struct socke
+ 	sock_orphan(sk);
+ 	sock->sk = NULL;
+ 
++	/* If the socket is associated with a session,
++	 * l2tp_session_delete will call pppol2tp_session_close which
++	 * will drop the session's ref on the socket.
++	 */
+ 	session = pppol2tp_sock_to_session(sk);
+-
+-	if (session != NULL) {
+-		struct pppol2tp_session *ps;
+-
++	if (session) {
+ 		l2tp_session_delete(session);
+-
+-		ps = l2tp_session_priv(session);
+-		mutex_lock(&ps->sk_lock);
+-		ps->__sk = rcu_dereference_protected(ps->sk,
+-						     lockdep_is_held(&ps->sk_lock));
+-		RCU_INIT_POINTER(ps->sk, NULL);
+-		mutex_unlock(&ps->sk_lock);
+-		call_rcu(&ps->rcu, pppol2tp_put_sk);
+-
+-		/* Rely on the sock_put() call at the end of the function for
+-		 * dropping the reference held by pppol2tp_sock_to_session().
+-		 * The last reference will be dropped by pppol2tp_put_sk().
+-		 */
++		/* drop the ref obtained by pppol2tp_sock_to_session */
++		sock_put(sk);
+ 	}
++
+ 	release_sock(sk);
+ 
+ 	/* This will delete the session context via
+@@ -815,6 +816,7 @@ static int pppol2tp_connect(struct socke
+ 
+ out_no_ppp:
+ 	/* This is how we get the session context from the socket. */
++	sock_hold(sk);
+ 	sk->sk_user_data = session;
+ 	rcu_assign_pointer(ps->sk, sk);
+ 	mutex_unlock(&ps->sk_lock);
