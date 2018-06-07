@@ -1,146 +1,198 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 7ZWPJO/PGlu1EAAAmS7hNA
-	; Fri, 08 Jun 2018 18:50:59 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id jMhtD+ATGVtrNwAAmS7hNA
+	; Thu, 07 Jun 2018 11:15:44 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 52EC7607E4; Fri,  8 Jun 2018 18:50:59 +0000 (UTC)
+	id 2296D608BA; Thu,  7 Jun 2018 11:15:44 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="L8n/hkJH"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id BD0D7601D2;
-	Fri,  8 Jun 2018 18:50:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BD0D7601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 7DD07607DC;
+	Thu,  7 Jun 2018 11:15:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7DD07607DC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753189AbeFHSu5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 14:50:57 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:53830 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752846AbeFHSuW (ORCPT
+        id S932251AbeFGLPk (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 07:15:40 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:50772 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753004AbeFGLPh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 14:50:22 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fRMSq-0006OT-UL; Fri, 08 Jun 2018 18:50:20 +0000
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 13/13] get rid of 'opened' in path_openat() and the helpers downstream
-Date: Fri,  8 Jun 2018 19:50:19 +0100
-Message-Id: <20180608185019.24472-13-viro@ZenIV.linux.org.uk>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20180608185019.24472-1-viro@ZenIV.linux.org.uk>
-References: <20180608184842.GD30522@ZenIV.linux.org.uk>
- <20180608185019.24472-1-viro@ZenIV.linux.org.uk>
+        Thu, 7 Jun 2018 07:15:37 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w57BBiPq164357;
+        Thu, 7 Jun 2018 11:15:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
+ date : message-id : in-reply-to : references; s=corp-2017-10-26;
+ bh=FoJdPP4hYaRyzVJNDR1Gu3aOnDLTIFrZO3sIViiJqB0=;
+ b=L8n/hkJH2qg1F/mGlQZmViLTCjSv3S/AcqndSeJ48xpZ8CAz1tumWxb0k1hpD0k0K1Gh
+ Lwtg+x/11MjeVAcwRL00W3qvP3NtMUdAyf+Ma17HCC2+T1KH3z/T0UW8tsx10mD4PKnt
+ yuW0oLhm0Rdn01jmLAyhrOK79t1uCKZkZMpD7T3Wcnf/0WMym3WTw79HFFU+datr7ux3
+ XKRh4I+PomHddYAu+g4pxR1YAEBd7iT1oBki4UKVPCYwx76RImkaIkRL03eKAn4NJ57d
+ lESJCrXdfXi2Vg/9OK0u1ZP+0O+Ja58ExDtW9D17iKjIcw4Bcl1sXEe4XLv7Y6qp+Pur dQ==
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2jbvypgh6n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 07 Jun 2018 11:15:10 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w57BFAsx002683
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 7 Jun 2018 11:15:10 GMT
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w57BF8MS014932;
+        Thu, 7 Jun 2018 11:15:08 GMT
+Received: from lab02.no.oracle.com (/10.172.144.56)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 07 Jun 2018 04:15:08 -0700
+From: Hans Westgaard Ry <hans.westgaard.ry@oracle.com>
+To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Hakon Bugge <haakon.bugge@oracle.com>,
+        Parav Pandit <parav@mellanox.com>,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Pravin Shedge <pravin.shedge4linux@gmail.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Wei Wang <wei.w.wang@intel.com>,
+        Chris Mi <chrism@mellanox.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/2] idr: Add ida_simple_get_cyclic
+Date: Thu,  7 Jun 2018 13:14:34 +0200
+Message-Id: <20180607111435.17538-2-hans.westgaard.ry@oracle.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180607111435.17538-1-hans.westgaard.ry@oracle.com>
+References: <20180529073808.27735-1-hans.westgaard.ry@oracle.com>
+ <20180607111435.17538-1-hans.westgaard.ry@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8916 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=966
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806070132
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
-
-unused now
-
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Hans Westgaard Ry <hans.westgaard.ry@oracle.com>
 ---
- fs/namei.c | 22 ++++++++--------------
- 1 file changed, 8 insertions(+), 14 deletions(-)
+ include/linux/idr.h |  8 +++++--
+ lib/idr.c           | 66 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 72 insertions(+), 2 deletions(-)
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 189ead589811..00436749003b 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3002,8 +3002,7 @@ static int may_o_create(const struct path *dir, struct dentry *dentry, umode_t m
- static int atomic_open(struct nameidata *nd, struct dentry *dentry,
- 			struct path *path, struct file *file,
- 			const struct open_flags *op,
--			int open_flag, umode_t mode,
--			int *opened)
-+			int open_flag, umode_t mode)
- {
- 	struct dentry *const DENTRY_NOT_SET = (void *) -1UL;
- 	struct inode *dir =  nd->path.dentry->d_inode;
-@@ -3071,14 +3070,11 @@ static int atomic_open(struct nameidata *nd, struct dentry *dentry,
-  * specified then a negative dentry may be returned.
-  *
-  * An error code is returned otherwise.
-- *
-- * FILE_CREATE will be set in @*opened if the dentry was created and will be
-- * cleared otherwise prior to returning.
-  */
- static int lookup_open(struct nameidata *nd, struct path *path,
- 			struct file *file,
- 			const struct open_flags *op,
--			bool got_write, int *opened)
-+			bool got_write)
- {
- 	struct dentry *dir = nd->path.dentry;
- 	struct inode *dir_inode = dir->d_inode;
-@@ -3153,7 +3149,7 @@ static int lookup_open(struct nameidata *nd, struct path *path,
+diff --git a/include/linux/idr.h b/include/linux/idr.h
+index e856f4e0ab35..f151ce89124a 100644
+--- a/include/linux/idr.h
++++ b/include/linux/idr.h
+@@ -218,10 +218,12 @@ DECLARE_PER_CPU(struct ida_bitmap *, ida_bitmap);
  
- 	if (dir_inode->i_op->atomic_open) {
- 		error = atomic_open(nd, dentry, path, file, op, open_flag,
--				    mode, opened);
-+				    mode);
- 		if (unlikely(error == -ENOENT) && create_error)
- 			error = create_error;
- 		return error;
-@@ -3206,8 +3202,7 @@ static int lookup_open(struct nameidata *nd, struct path *path,
-  * Handle the last step of open()
-  */
- static int do_last(struct nameidata *nd,
--		   struct file *file, const struct open_flags *op,
--		   int *opened)
-+		   struct file *file, const struct open_flags *op)
- {
- 	struct dentry *dir = nd->path.dentry;
- 	int open_flag = op->open_flag;
-@@ -3273,7 +3268,7 @@ static int do_last(struct nameidata *nd,
- 		inode_lock(dir->d_inode);
- 	else
- 		inode_lock_shared(dir->d_inode);
--	error = lookup_open(nd, &path, file, op, got_write, opened);
-+	error = lookup_open(nd, &path, file, op, got_write);
- 	if (open_flag & O_CREAT)
- 		inode_unlock(dir->d_inode);
- 	else
-@@ -3418,7 +3413,7 @@ EXPORT_SYMBOL(vfs_tmpfile);
+ struct ida {
+ 	struct radix_tree_root	ida_rt;
++	unsigned int		ida_next;
+ };
  
- static int do_tmpfile(struct nameidata *nd, unsigned flags,
- 		const struct open_flags *op,
--		struct file *file, int *opened)
-+		struct file *file)
- {
- 	struct dentry *child;
- 	struct path path;
-@@ -3465,7 +3460,6 @@ static struct file *path_openat(struct nameidata *nd,
- {
- 	const char *s;
- 	struct file *file;
--	int opened = 0;
- 	int error;
+-#define IDA_INIT(name)	{						\
+-	.ida_rt = RADIX_TREE_INIT(name, IDR_RT_MARKER | GFP_NOWAIT),	\
++#define IDA_INIT(name)	{						     \
++		.ida_rt = RADIX_TREE_INIT(name, IDR_RT_MARKER | GFP_NOWAIT), \
++		.ida_next = 0,						     \
+ }
+ #define DEFINE_IDA(name)	struct ida name = IDA_INIT(name)
  
- 	file = get_empty_filp();
-@@ -3475,7 +3469,7 @@ static struct file *path_openat(struct nameidata *nd,
- 	file->f_flags = op->open_flag;
+@@ -232,6 +234,8 @@ void ida_destroy(struct ida *ida);
  
- 	if (unlikely(file->f_flags & __O_TMPFILE)) {
--		error = do_tmpfile(nd, flags, op, file, &opened);
-+		error = do_tmpfile(nd, flags, op, file);
- 		goto out2;
- 	}
+ int ida_simple_get(struct ida *ida, unsigned int start, unsigned int end,
+ 		   gfp_t gfp_mask);
++int ida_simple_get_cyclic(struct ida *ida, unsigned int start, unsigned int end,
++			  gfp_t gfp_mask);
+ void ida_simple_remove(struct ida *ida, unsigned int id);
  
-@@ -3490,7 +3484,7 @@ static struct file *path_openat(struct nameidata *nd,
- 		return ERR_CAST(s);
- 	}
- 	while (!(error = link_path_walk(s, nd)) &&
--		(error = do_last(nd, file, op, &opened)) > 0) {
-+		(error = do_last(nd, file, op)) > 0) {
- 		nd->flags &= ~(LOOKUP_OPEN|LOOKUP_CREATE|LOOKUP_EXCL);
- 		s = trailing_symlink(nd);
- 		if (IS_ERR(s)) {
+ static inline void ida_init(struct ida *ida)
+diff --git a/lib/idr.c b/lib/idr.c
+index 823b813f08f8..3374c3fa4027 100644
+--- a/lib/idr.c
++++ b/lib/idr.c
+@@ -599,6 +599,72 @@ int ida_simple_get(struct ida *ida, unsigned int start, unsigned int end,
+ 	return ret;
+ }
+ EXPORT_SYMBOL(ida_simple_get);
++/**
++ * ida_simple_get_cyclic - get a new id.
++ * @ida: the (initialized) ida.
++ * @start: the minimum id (inclusive, < 0x8000000)
++ * @end: the maximum id (exclusive, < 0x8000000 or 0)
++ * @gfp_mask: memory allocation flags
++ *
++ * Allocates an id in the range start <= id < end, or returns -ENOSPC.
++ * On memory allocation failure, returns -ENOMEM.
++ * The search for an unused id will start at the last id allocated and will
++ * wrap around to @start if no free ids are found before reaching @end.
++ *
++ * Compared to ida_get_new_above() this function does its own locking, and
++ * should be used unless there are special requirements.
++ *
++ * Use ida_simple_remove() to get rid of an id.
++ */
++int ida_simple_get_cyclic(struct ida *ida, unsigned int start, unsigned int end,
++		   gfp_t gfp_mask)
++{
++	int ret, id, next;
++	unsigned int max;
++	unsigned long flags;
++
++	WARN_ON((int)start < 0);
++	WARN_ON((int)end < 0);
++
++	if (end == 0) {
++		max = 0x80000000;
++	} else {
++		WARN_ON(end < start);
++		max = end - 1;
++	}
++
++again:
++	if (!ida_pre_get(ida, gfp_mask))
++		return -ENOMEM;
++
++	spin_lock_irqsave(&simple_ida_lock, flags);
++	next = ida->ida_next;
++	if (next < start || next >= end)
++		next = start;
++
++	ret = ida_get_new_above(ida, next, &id);
++	if (likely(!ret)) {
++		if (unlikely(id >= max)) {
++			ida_remove(ida, id);
++			if (next == start) {
++				ret = -ENOSPC;
++			} else {
++				ida->ida_next = start;
++				spin_unlock_irqrestore(&simple_ida_lock, flags);
++				goto again;
++			}
++		} else {
++			ida->ida_next = id + 1;
++			ret = id;
++		}
++	}
++	spin_unlock_irqrestore(&simple_ida_lock, flags);
++
++	if (unlikely(ret == -EAGAIN))
++		goto again;
++	return ret;
++}
++EXPORT_SYMBOL(ida_simple_get_cyclic);
+ 
+ /**
+  * ida_simple_remove - remove an allocated id.
 -- 
-2.11.0
+2.14.3
