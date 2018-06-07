@@ -1,115 +1,260 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id o1g+LcVDGVtFDAAAmS7hNA
-	; Thu, 07 Jun 2018 14:40:08 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id AeE/OQwoGVsKewAAmS7hNA
+	; Thu, 07 Jun 2018 12:42:42 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id F02206089E; Thu,  7 Jun 2018 14:40:07 +0000 (UTC)
+	id 1AF73608BA; Thu,  7 Jun 2018 12:42:42 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="2IIzIwf5"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 67342602FC;
-	Thu,  7 Jun 2018 14:40:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 67342602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 547DF607DC;
+	Thu,  7 Jun 2018 12:42:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 547DF607DC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934126AbeFGOkD (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:40:03 -0400
-Received: from mga17.intel.com ([192.55.52.151]:61088 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934377AbeFGOj6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:39:58 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 07:39:57 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
-   d="scan'208";a="54825980"
-Received: from 2b52.sc.intel.com ([143.183.136.51])
-  by fmsmga002.fm.intel.com with ESMTP; 07 Jun 2018 07:39:57 -0700
-From: Yu-cheng Yu <yu-cheng.yu@intel.com>
-To: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [PATCH 0/5] Control Flow Enforcement - Part (1)
-Date: Thu,  7 Jun 2018 07:35:39 -0700
-Message-Id: <20180607143544.3477-1-yu-cheng.yu@intel.com>
-X-Mailer: git-send-email 2.15.1
+        id S932533AbeFGMl6 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 08:41:58 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:49918 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932459AbeFGMlm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 08:41:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
+        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=swXVvSn64Di+C2bFMkrPZ14lE/ZRlv9WavYcIDDE+l8=; b=2IIzIwf5WaPcMT1uVlfdtgmP7Y
+        3b1m8SRgNhi/tpfFVQwii5EJ1Nz4d4rsrHpPn83NP4hpuso4hxSOjA1xUEG4g5okpQd1Yp2Pj/g/I
+        HteHdlzuAnx+H/WhDu7JHbk4Q4M7Q1FzKMBUi1bN5xgS5Jo4iR/rFuLZARS9rHfPb83uz6fvd27kt
+        iQSW7GSJ9BhDAlK6b0Ey42UBQyXjiNcBRjyhxo/PqScYETI2gd0aEaFuuUwvFfNkcJ3dzyGdirRQh
+        NJgndn28RDOvw7rZpYVSHEkVaNjWUL4aD6a1VA7CA9oksWmDJBDguLKrHnTd7ZdAYGRvK/c3JwykS
+        z+8eKuJg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fQuEI-000646-4q; Thu, 07 Jun 2018 12:41:27 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
+        id 98E9B201EA7A1; Thu,  7 Jun 2018 14:41:18 +0200 (CEST)
+Message-Id: <20180607124006.104273400@infradead.org>
+User-Agent: quilt/0.63-1
+Date: Thu, 07 Jun 2018 14:33:11 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: mingo@kernel.org, oleg@redhat.com, gkohli@codeaurora.org
+Cc: tglx@linutronix.de, mpe@ellerman.id.au, bigeasy@linutronix.de,
+        linux-kernel@vger.kernel.org, will.deacon@arm.com,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>
+Subject: [PATCH 1/4] kthread, sched: Fix kthread_parkme() (again...)
+References: <20180607123310.866085998@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline; filename=peterz-kthread-0.patch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Control flow enforcement technology (CET) is an upcoming Intel
-processor family feature that prevents return/jmp-oriented
-programming attacks.  It has two components: shadow stack (SHSTK)
-and indirect branch tracking (IBT).
+Gaurav reports that commit:
 
-The specification is at:
+   85f1abe0019f ("kthread, sched/wait: Fix kthread_parkme() completion issue")
 
-  https://software.intel.com/sites/default/files/managed/4d/2a/
-  control-flow-enforcement-technology-preview.pdf
+isn't working for him. Because of the following race:
 
-The SHSTK is a secondary stack allocated from system memory.
-The CALL instruction stores a secure copy of the return address
-on the SHSTK; the RET instruction compares the return address
-from the program stack to the SHSTK copy.  Any mismatch
-triggers a control protection fault.
+> controller Thread                               CPUHP Thread
+> takedown_cpu
+> kthread_park
+> kthread_parkme
+> Set KTHREAD_SHOULD_PARK
+>                                                 smpboot_thread_fn
+>                                                 set Task interruptible
+> 
+> 
+> wake_up_process
+>  if (!(p->state & state))
+>                 goto out;
+>   
+>                                                 Kthread_parkme
+>                                                 SET TASK_PARKED
+>                                                 schedule
+>                                                 raw_spin_lock(&rq->lock)
+> ttwu_remote
+> waiting for __task_rq_lock
+>                                                 context_switch
+>        
+>                                                 finish_lock_switch
+> 
+> 
+>        
+>                                                 Case TASK_PARKED
+>                                                 kthread_park_complete
+> 
+>      
+> SET Running
 
-When the IBT is enabled, the processor verifies an indirect
-CALL/JMP destination is an ENDBR instruction; otherwise, it
-raises a control protection fault.  The compiler inserts ENDBRs
-at all valid branch targets.
+Furthermore, Oleg noticed that the whole scheduler TASK_PARKED
+handling is buggered because the TASK_DEAD thing is done with
+preemption disabled, the current code can still complete early on
+preemption :/
 
-CET can be enabled for both kernel and user mode protection.
-The Linux kernel patches being posted are for user-mode
-protection.  They are grouped into four series:
+So basically revert that earlier fix and go with a variant of the
+alternative mentioned in the commit. Promote TASK_PARKED to special
+state to avoid the store-store issue on task->state leading to the
+WARN in kthread_unpark() -> __kthread_bind().
 
-  (1) CPUID enumeration, CET XSAVES system states, and
-      documentation;
-  (2) Kernel config, exception handling, and memory management
-      changes;
-  (3) SHSTK support;
-  (4) IBT support, command-line tool, PTRACE.
+But in addition, add wait_task_inactive() to kthread_park() to ensure
+the task really is PARKED when we return from kthread_park(). This
+avoids the whole kthread still gets migrated nonsense -- although it
+would be really good to get this done differently.
 
-Yu-cheng Yu (5):
-  x86/cpufeatures: Add CPUIDs for Control-flow Enforcement Technology
-    (CET)
-  x86/fpu/xstate: Change some names to separate XSAVES system and user
-    states
-  x86/fpu/xstate: Enable XSAVES system states
-  x86/fpu/xstate: Add XSAVES system states for shadow stack
-  Documentation/x86: Add CET description
+Cc: Oleg Nesterov <oleg@redhat.com>
+Reported-by: Gaurav Kohli <gkohli@codeaurora.org>
+Fixes: 85f1abe0019f ("kthread, sched/wait: Fix kthread_parkme() completion issue")
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ include/linux/kthread.h |    1 -
+ include/linux/sched.h   |    2 +-
+ kernel/kthread.c        |   30 ++++++++++++++++++++++++------
+ kernel/sched/core.c     |   31 +++++++++++--------------------
+ 4 files changed, 36 insertions(+), 28 deletions(-)
 
- Documentation/admin-guide/kernel-parameters.txt |   6 +
- Documentation/x86/intel_cet.txt                 | 161 ++++++++++++++++++++++++
- arch/x86/include/asm/cpufeatures.h              |   2 +
- arch/x86/include/asm/fpu/internal.h             |   6 +-
- arch/x86/include/asm/fpu/types.h                |  22 ++++
- arch/x86/include/asm/fpu/xstate.h               |  31 ++---
- arch/x86/include/uapi/asm/processor-flags.h     |   2 +
- arch/x86/kernel/cpu/scattered.c                 |   1 +
- arch/x86/kernel/fpu/core.c                      |  11 +-
- arch/x86/kernel/fpu/init.c                      |  10 --
- arch/x86/kernel/fpu/signal.c                    |   6 +-
- arch/x86/kernel/fpu/xstate.c                    | 152 +++++++++++++---------
- 12 files changed, 319 insertions(+), 91 deletions(-)
- create mode 100644 Documentation/x86/intel_cet.txt
-
--- 
-2.15.1
+--- a/include/linux/kthread.h
++++ b/include/linux/kthread.h
+@@ -62,7 +62,6 @@ void *kthread_probe_data(struct task_str
+ int kthread_park(struct task_struct *k);
+ void kthread_unpark(struct task_struct *k);
+ void kthread_parkme(void);
+-void kthread_park_complete(struct task_struct *k);
+ 
+ int kthreadd(void *unused);
+ extern struct task_struct *kthreadd_task;
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -117,7 +117,7 @@ struct task_group;
+  * the comment with set_special_state().
+  */
+ #define is_special_task_state(state)				\
+-	((state) & (__TASK_STOPPED | __TASK_TRACED | TASK_DEAD))
++	((state) & (__TASK_STOPPED | __TASK_TRACED | TASK_PARKED | TASK_DEAD))
+ 
+ #define __set_current_state(state_value)			\
+ 	do {							\
+--- a/kernel/kthread.c
++++ b/kernel/kthread.c
+@@ -177,9 +177,20 @@ void *kthread_probe_data(struct task_str
+ static void __kthread_parkme(struct kthread *self)
+ {
+ 	for (;;) {
+-		set_current_state(TASK_PARKED);
++		/*
++		 * TASK_PARKED is a special state; we must serialize against
++		 * possible pending wakeups to avoid store-store collisions on
++		 * task->state.
++		 *
++		 * Such a collision might possibly result in the task state
++		 * changin from TASK_PARKED and us failing the
++		 * wait_task_inactive() in kthread_park().
++		 */
++		set_special_state(TASK_PARKED);
+ 		if (!test_bit(KTHREAD_SHOULD_PARK, &self->flags))
+ 			break;
++
++		complete_all(&self->parked);
+ 		schedule();
+ 	}
+ 	__set_current_state(TASK_RUNNING);
+@@ -191,11 +202,6 @@ void kthread_parkme(void)
+ }
+ EXPORT_SYMBOL_GPL(kthread_parkme);
+ 
+-void kthread_park_complete(struct task_struct *k)
+-{
+-	complete_all(&to_kthread(k)->parked);
+-}
+-
+ static int kthread(void *_create)
+ {
+ 	/* Copy data: it's on kthread's stack */
+@@ -461,6 +467,9 @@ void kthread_unpark(struct task_struct *
+ 
+ 	reinit_completion(&kthread->parked);
+ 	clear_bit(KTHREAD_SHOULD_PARK, &kthread->flags);
++	/*
++	 * __kthread_parkme() will either see !SHOULD_PARK or get the wakeup.
++	 */
+ 	wake_up_state(k, TASK_PARKED);
+ }
+ EXPORT_SYMBOL_GPL(kthread_unpark);
+@@ -487,7 +496,16 @@ int kthread_park(struct task_struct *k)
+ 	set_bit(KTHREAD_SHOULD_PARK, &kthread->flags);
+ 	if (k != current) {
+ 		wake_up_process(k);
++		/*
++		 * Wait for __kthread_parkme() to complete(), this means we
++		 * _will_ have TASK_PARKED and are about to call schedule().
++		 */
+ 		wait_for_completion(&kthread->parked);
++		/*
++		 * Now wait for that schedule() to complete and the task to
++		 * get scheduled out.
++		 */
++		WARN_ON_ONCE(!wait_task_inactive(k, TASK_PARKED));
+ 	}
+ 
+ 	return 0;
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -7,7 +7,6 @@
+  */
+ #include "sched.h"
+ 
+-#include <linux/kthread.h>
+ #include <linux/nospec.h>
+ 
+ #include <asm/switch_to.h>
+@@ -2701,28 +2700,20 @@ static struct rq *finish_task_switch(str
+ 		membarrier_mm_sync_core_before_usermode(mm);
+ 		mmdrop(mm);
+ 	}
+-	if (unlikely(prev_state & (TASK_DEAD|TASK_PARKED))) {
+-		switch (prev_state) {
+-		case TASK_DEAD:
+-			if (prev->sched_class->task_dead)
+-				prev->sched_class->task_dead(prev);
+-
+-			/*
+-			 * Remove function-return probe instances associated with this
+-			 * task and put them back on the free list.
+-			 */
+-			kprobe_flush_task(prev);
++	if (unlikely(prev_state == TASK_DEAD)) {
++		if (prev->sched_class->task_dead)
++			prev->sched_class->task_dead(prev);
+ 
+-			/* Task is done with its stack. */
+-			put_task_stack(prev);
++		/*
++		 * Remove function-return probe instances associated with this
++		 * task and put them back on the free list.
++		 */
++		kprobe_flush_task(prev);
+ 
+-			put_task_struct(prev);
+-			break;
++		/* Task is done with its stack. */
++		put_task_stack(prev);
+ 
+-		case TASK_PARKED:
+-			kthread_park_complete(prev);
+-			break;
+-		}
++		put_task_struct(prev);
+ 	}
+ 
+ 	tick_nohz_task_switch();
