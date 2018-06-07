@@ -1,118 +1,168 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id eIvnM3lEHVtLIAAAmS7hNA
-	; Sun, 10 Jun 2018 15:32:09 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id h9p1M8Y2GVtrYQAAmS7hNA
+	; Thu, 07 Jun 2018 13:44:43 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id C218060791; Sun, 10 Jun 2018 15:32:09 +0000 (UTC)
+	id 6720C608BA; Thu,  7 Jun 2018 13:44:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+	s=default; t=1528379083;
+	bh=Pn+f4SrGbImOUNFcbc4MNV3slx53YnttR93PmGNqDrY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=L5IqPpiUx+4pORuNm525URy/8cSfosl1Q/gxnM0kyHmOfRZMHd/Rl8gmscQg60EmU
+	 iSPxRgYRkqbXrnjdwFnxAwvB05S9adsrDRPRZnRlNbtPBs31CoO+1lUHNxrxCskro2
+	 TtRYmQ6Sg+H+dE7/+bzRWkh+Si/1K4L37GkeLcMg=
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 491B5605A5;
-	Sun, 10 Jun 2018 15:32:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 491B5605A5
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id BFEC7602FC;
+	Thu,  7 Jun 2018 13:44:42 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hKNMH0aa";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hp1z+T+Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BFEC7602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753592AbeFJPcH (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sun, 10 Jun 2018 11:32:07 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:34823 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753407AbeFJPcF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 11:32:05 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 059C0207A5; Sun, 10 Jun 2018 17:32:03 +0200 (CEST)
-Received: from bbrezillon (unknown [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 7B39C20702;
-        Sun, 10 Jun 2018 17:32:02 +0200 (CEST)
-Date: Sun, 10 Jun 2018 17:32:02 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Stefan Agner <stefan@agner.ch>, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
-        dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
-        marcel@ziswiler.com, krzk@kernel.org, benjamin.lindqvist@endian.se,
-        jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        mirza.krak@gmail.com, linux-mtd@lists.infradead.org,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/6] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-Message-ID: <20180610173202.680d2ee8@bbrezillon>
-In-Reply-To: <1868760.y7shk6NfjH@dimapc>
-References: <20180531221637.6017-1-stefan@agner.ch>
-        <22478634.OSqaXHucyu@dimapc>
-        <5751ef697130ba93ce9fb7722a1ce117@agner.ch>
-        <1868760.y7shk6NfjH@dimapc>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S932662AbeFGNok (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 09:44:40 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53778 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932295AbeFGNoi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 09:44:38 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id EF7F7608CA; Thu,  7 Jun 2018 13:44:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528379077;
+        bh=Pn+f4SrGbImOUNFcbc4MNV3slx53YnttR93PmGNqDrY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=hKNMH0aatcb3OKZxf3rUntHqduNaf1OczYOug4bNsFIa5WN3gRP2yZ/ST/aZ3R4QM
+         foZCZH4C/ATQ41vAR3Ub+uJn3XYUF/aUOreGGIVuHrhpu/0F4fVK1my9BNzYdDJWdj
+         NUfLNmkbSS1grZ3/Ygb/6Q9rXETC3UGoWLYseOW8=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id D0AC4602FC;
+        Thu,  7 Jun 2018 13:44:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528379076;
+        bh=Pn+f4SrGbImOUNFcbc4MNV3slx53YnttR93PmGNqDrY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=hp1z+T+Zux6hKAik+SF8VWjKPCR/pXwegFJKD4lK9dSRbx52rLCQzKWuvwe8O1lsV
+         JyojrEXsul/FeD98DZTc8630JGdfyq0bHr7zyJhcbqJcqFUrbGxLjPmPmRbKQ2Rnl5
+         ey857VCMQRMhgDGAKHnPuDghcJIW9xiGNYzbzi9o=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date: Thu, 07 Jun 2018 19:14:36 +0530
+From: poza@codeaurora.org
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dongdong Liu <liudongdong3@huawei.com>,
+        Keith Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH NEXT 1/6] PCI/AER: Take mask into account while clearing
+ error bits
+In-Reply-To: <20180607132140.GA15137@bhelgaas-glaptop.roam.corp.google.com>
+References: <1528351234-26914-1-git-send-email-poza@codeaurora.org>
+ <20180607132140.GA15137@bhelgaas-glaptop.roam.corp.google.com>
+Message-ID: <08f79e22cde746f08942fc1de268a0e9@codeaurora.org>
+X-Sender: poza@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 10 Jun 2018 18:00:06 +0300
-Dmitry Osipenko <digetx@gmail.com> wrote:
-
-> > >> That seems a lot of work for a code path I do not intend to ever use :-)  
-> > > 
-> > > Are you sure that resetting HW resets the timing and other registers
-> > > configuration? Reset implementation is HW-specific, like for example in a
-> > > case of a video decoder the registers state is re-intialized on HW reset,
-> > > but registers configuration is untouched in a case of resetting GPU. I'd
-> > > suggest to check whether NAND controller resetting affects the HW
-> > > configuration.  
-> > It seems all registers are set back to their documented reset value:
-> > 
-> > [boot loader/ROM initialized values]
-> > [    1.270253] tegra-nand 70008000.nand: Tegra NAND controller register
-> > dump
-> > [    1.277051] tegra-nand 70008000.nand: COMMAND: 0x66880104
-> > [    1.282457] tegra-nand 70008000.nand: STATUS: 0x00000101
-> > [    1.287763] tegra-nand 70008000.nand: ISR: 0x01000120
-> > [    1.292818] tegra-nand 70008000.nand: IER: 0x00000000
-> > [    1.297863] tegra-nand 70008000.nand: CONFIG: 0x00840000
-> > [    1.303181] tegra-nand 70008000.nand: TIMING: 0x05040000
-> > [    1.308486] tegra-nand 70008000.nand: TIMING2: 0x00000003
-> > [    1.313897] tegra-nand 70008000.nand: CMD_REG1: 0x00000000
-> > [    1.319377] tegra-nand 70008000.nand: CMD_REG2: 0x00000030
-> > [    1.324868] tegra-nand 70008000.nand: ADDR_REG1: 0x03000000
-> > [    1.330435] tegra-nand 70008000.nand: ADDR_REG2: 0x00000000
-> > [    1.336011] tegra-nand 70008000.nand: DMA_MST_CTRL: 0x04100004
-> > [    1.341838] tegra-nand 70008000.nand: DMA_CFG_A: 0x00000fff
-> > [    1.347415] tegra-nand 70008000.nand: DMA_CFG_B: 0x0000001b
-> > [    1.352991] tegra-nand 70008000.nand: FIFO_CTRL: 0x0000aa00
-> > [reset]
-> > [    1.358559] tegra-nand 70008000.nand: Tegra NAND controller register
-> > dump
-> > [    1.365352] tegra-nand 70008000.nand: COMMAND: 0x00800004
-> > [    1.370744] tegra-nand 70008000.nand: STATUS: 0x00000101
-> > [    1.376060] tegra-nand 70008000.nand: ISR: 0x00000100
-> > [    1.381105] tegra-nand 70008000.nand: IER: 0x00000000
-> > [    1.386161] tegra-nand 70008000.nand: CONFIG: 0x10030000
-> > [    1.391466] tegra-nand 70008000.nand: TIMING: 0x00000000
-> > [    1.396782] tegra-nand 70008000.nand: TIMING2: 0x00000000
-> > [    1.402174] tegra-nand 70008000.nand: CMD_REG1: 0x00000000
-> > [    1.407664] tegra-nand 70008000.nand: CMD_REG2: 0x00000000
-> > [    1.413156] tegra-nand 70008000.nand: ADDR_REG1: 0x00000000
-> > [    1.418722] tegra-nand 70008000.nand: ADDR_REG2: 0x00000000
-> > [    1.424297] tegra-nand 70008000.nand: DMA_MST_CTRL: 0x24000000
-> > [    1.430123] tegra-nand 70008000.nand: DMA_CFG_A: 0x00000000
-> > [    1.435698] tegra-nand 70008000.nand: DMA_CFG_B: 0x00000000
-> > [    1.441264] tegra-nand 70008000.nand: FIFO_CTRL: 0x0000aa00  
+On 2018-06-07 18:51, Bjorn Helgaas wrote:
+> On Thu, Jun 07, 2018 at 02:00:29AM -0400, Oza Pawandeep wrote:
+>> PCIe ERR_NONFATAL and ERR_FATAL are uncorrectable errors, and clearing
+>> uncorrectable error bits should take error mask into account.
+>> 
+>> Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
 > 
-> Alright, then indeed it's not really worth to bother with HW resetting here.  
-> Probably only a kernel module reload or a reboot will help if HW is hung. 
-> Maybe NAND controller / chip recovering is something that NAND core should be 
-> handling in a such case by providing a nand_controller_reset() hook?
+> If/when you repost these, please include a [0/6] cover letter with an
+> overview of the purpose of the series.
 > 
+> I assume these are for v4.19, so I'll look at them after the merge
+> window.
+> 
+> If they fix issues introduced during the v4.18 merge window, we may be
+> able to merge them during the v4.18 -rc cycle.  In this case, I would
+> need specifics about what exactly the problems are.
 
-I don't see what the core could do to help with that. We'd end up with
-a new hook implemented by the controller that would be called by the
-controller driver when it knows it's safe to reset the controller. So,
-why bother exposing that in the core?
+sure Bjorn, will include cover letter.
+Mostly these fixes the things which existed before 4.18 as well.
+I have a question, please clarify when you get a chance.
+
+I am posting the question on tops of PATCH-6.
+
+Regards,
+Oza.
+
+> 
+>> diff --git a/drivers/pci/pcie/aer/aerdrv.c 
+>> b/drivers/pci/pcie/aer/aerdrv.c
+>> index 377e576..8cbc62b 100644
+>> --- a/drivers/pci/pcie/aer/aerdrv.c
+>> +++ b/drivers/pci/pcie/aer/aerdrv.c
+>> @@ -341,8 +341,6 @@ static pci_ers_result_t aer_root_reset(struct 
+>> pci_dev *dev)
+>>   */
+>>  static void aer_error_resume(struct pci_dev *dev)
+>>  {
+>> -	int pos;
+>> -	u32 status, mask;
+>>  	u16 reg16;
+>> 
+>>  	/* Clean up Root device status */
+>> @@ -350,11 +348,7 @@ static void aer_error_resume(struct pci_dev *dev)
+>>  	pcie_capability_write_word(dev, PCI_EXP_DEVSTA, reg16);
+>> 
+>>  	/* Clean AER Root Error Status */
+>> -	pos = dev->aer_cap;
+>> -	pci_read_config_dword(dev, pos + PCI_ERR_UNCOR_STATUS, &status);
+>> -	pci_read_config_dword(dev, pos + PCI_ERR_UNCOR_SEVER, &mask);
+>> -	status &= ~mask; /* Clear corresponding nonfatal bits */
+>> -	pci_write_config_dword(dev, pos + PCI_ERR_UNCOR_STATUS, status);
+>> +	pci_cleanup_aer_uncorrect_error_status(dev);
+>>  }
+>> 
+>>  /**
+>> diff --git a/drivers/pci/pcie/aer/aerdrv_core.c 
+>> b/drivers/pci/pcie/aer/aerdrv_core.c
+>> index 946f3f6..309f3f5 100644
+>> --- a/drivers/pci/pcie/aer/aerdrv_core.c
+>> +++ b/drivers/pci/pcie/aer/aerdrv_core.c
+>> @@ -50,13 +50,17 @@ 
+>> EXPORT_SYMBOL_GPL(pci_disable_pcie_error_reporting);
+>>  int pci_cleanup_aer_uncorrect_error_status(struct pci_dev *dev)
+>>  {
+>>  	int pos;
+>> -	u32 status;
+>> +	u32 status, mask;
+>> 
+>>  	pos = dev->aer_cap;
+>>  	if (!pos)
+>>  		return -EIO;
+>> 
+>> +	/* Clean AER Root Error Status */
+>> +	pos = dev->aer_cap;
+>>  	pci_read_config_dword(dev, pos + PCI_ERR_UNCOR_STATUS, &status);
+>> +	pci_read_config_dword(dev, pos + PCI_ERR_UNCOR_SEVER, &mask);
+>> +	status &= ~mask; /* Clear corresponding nonfatal bits */
+>>  	if (status)
+>>  		pci_write_config_dword(dev, pos + PCI_ERR_UNCOR_STATUS, status);
+>> 
+>> --
+>> 2.7.4
+>> 
