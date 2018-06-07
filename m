@@ -1,50 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id YBFxGtVBGVuJdAAAmS7hNA
-	; Thu, 07 Jun 2018 14:31:51 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id p47vHHtIGVttSAAAmS7hNA
+	; Thu, 07 Jun 2018 15:03:09 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 027696089E; Thu,  7 Jun 2018 14:31:51 +0000 (UTC)
+	id EC4BB608BA; Thu,  7 Jun 2018 15:03:08 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 72D65602FC;
-	Thu,  7 Jun 2018 14:31:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 72D65602FC
+	by smtp.codeaurora.org (Postfix) with ESMTP id 79653607E7;
+	Thu,  7 Jun 2018 15:03:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 79653607E7
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933821AbeFGObs (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:31:48 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40255 "EHLO
+        id S965013AbeFGPDE (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:03:04 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41470 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933620AbeFGObm (ORCPT
+        by vger.kernel.org with ESMTP id S964993AbeFGPC7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:31:42 -0400
+        Thu, 7 Jun 2018 11:02:59 -0400
 Received: from [148.252.241.226] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbh-0005Zm-7U; Thu, 07 Jun 2018 15:09:41 +0100
+        id 1fQvbu-0005Zv-4a; Thu, 07 Jun 2018 15:09:54 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb5-0002z4-L4; Thu, 07 Jun 2018 15:09:03 +0100
+        id 1fQvb0-0002nL-EI; Thu, 07 Jun 2018 15:08:58 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Marc Zyngier" <marc.zyngier@arm.com>,
-        "Catalin Marinas" <catalin.marinas@arm.com>,
-        "Ard Biesheuvel" <ard.biesheuvel@linaro.org>
+CC: akpm@linux-foundation.org, "Nicholas Piggin" <npiggin@gmail.com>,
+        "Michael Ellerman" <mpe@ellerman.id.au>
 Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.986419228@decadent.org.uk>
+Message-ID: <lsq.1528380321.468354703@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 195/410] arm: KVM: Fix SMCCC handling of
- unimplemented SMC/HVC calls
+Subject: [PATCH 3.16 078/410] powerpc/64: Don't trace irqs-off at
+ interrupt return to soft-disabled context
 In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
 X-SA-Exim-Connect-IP: 148.252.241.226
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,53 +57,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-commit 20e8175d246e9f9deb377f2784b3e7dfb2ad3e86 upstream.
+commit acb1feab320e38588fccc568e3767761f494976f upstream.
 
-KVM doesn't follow the SMCCC when it comes to unimplemented calls,
-and inject an UNDEF instead of returning an error. Since firmware
-calls are now used for security mitigation, they are becoming more
-common, and the undef is counter productive.
+When an interrupt is returning to a soft-disabled context (which can
+happen for non-maskable interrupts or synchronous interrupts), it goes
+through the motions of soft-disabling again, including calling
+TRACE_DISABLE_INTS (i.e., trace_hardirqs_off()).
 
-Instead, let's follow the SMCCC which states that -1 must be returned
-to the caller when getting an unknown function number.
+This is not necessary, because we must already be soft-disabled in the
+interrupt context, it also may be causing crashes in the irq tracing
+code to re-enter as an nmi. Replace it with a warning to ensure that
+soft-interrupts are still disabled.
 
-Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-[bwh: Backported to 3.16: Use vcpu_reg() instead of vcpu_set_reg()]
+Fixes: 7c0482e3d055 ("powerpc/irq: Fix another case of lazy IRQ state getting out of sync")
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/arm/kvm/handle_exit.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ arch/powerpc/kernel/entry_64.S | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/arch/arm/kvm/handle_exit.c
-+++ b/arch/arm/kvm/handle_exit.c
-@@ -45,7 +45,7 @@ static int handle_hvc(struct kvm_vcpu *v
+--- a/arch/powerpc/kernel/entry_64.S
++++ b/arch/powerpc/kernel/entry_64.S
+@@ -885,9 +885,13 @@ restore_irq_off:
+ 	beq	1f
+ 	rlwinm	r7,r7,0,~PACA_IRQ_HARD_DIS
+ 	stb	r7,PACAIRQHAPPENED(r13)
+-1:	li	r0,0
+-	stb	r0,PACASOFTIRQEN(r13);
+-	TRACE_DISABLE_INTS
++1:
++#if defined(CONFIG_TRACE_IRQFLAGS) && defined(CONFIG_BUG)
++	/* The interrupt should not have soft enabled. */
++	lbz	r7,PACASOFTIRQEN(r13)
++1:	tdnei	r7,0
++	EMIT_BUG_ENTRY 1b,__FILE__,__LINE__,BUGFLAG_WARNING
++#endif
+ 	b	do_restore
  
- 	ret = kvm_psci_call(vcpu);
- 	if (ret < 0) {
--		kvm_inject_undefined(vcpu);
-+		*vcpu_reg(vcpu, 0) = ~0UL;
- 		return 1;
- 	}
- 
-@@ -54,7 +54,16 @@ static int handle_hvc(struct kvm_vcpu *v
- 
- static int handle_smc(struct kvm_vcpu *vcpu, struct kvm_run *run)
- {
--	kvm_inject_undefined(vcpu);
-+	/*
-+	 * "If an SMC instruction executed at Non-secure EL1 is
-+	 * trapped to EL2 because HCR_EL2.TSC is 1, the exception is a
-+	 * Trap exception, not a Secure Monitor Call exception [...]"
-+	 *
-+	 * We need to advance the PC after the trap, as it would
-+	 * otherwise return to the same address...
-+	 */
-+	*vcpu_reg(vcpu, 0) = ~0UL;
-+	kvm_skip_instr(vcpu, kvm_vcpu_trap_il_is32bit(vcpu));
- 	return 1;
- }
- 
+ 	/*
