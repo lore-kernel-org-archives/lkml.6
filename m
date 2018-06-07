@@ -1,85 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ZEQRLstrGFvxfQAAmS7hNA
-	; Wed, 06 Jun 2018 23:18:35 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id iDazATqFGVv1MgAAmS7hNA
+	; Thu, 07 Jun 2018 19:19:25 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 9D770608B8; Wed,  6 Jun 2018 23:18:35 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=firstfloor.org header.i=@firstfloor.org header.b="WnVThfxK"
+	id 5830A606DD; Thu,  7 Jun 2018 19:19:25 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 1ABB8607E4;
-	Wed,  6 Jun 2018 23:18:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1ABB8607E4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=firstfloor.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id A73636063F;
+	Thu,  7 Jun 2018 19:19:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A73636063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752789AbeFFXSd (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 19:18:33 -0400
-Received: from one.firstfloor.org ([193.170.194.197]:42390 "EHLO
-        one.firstfloor.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752042AbeFFXSb (ORCPT
+        id S1753390AbeFGTTW (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 15:19:22 -0400
+Received: from gateway21.websitewelcome.com ([192.185.45.91]:27903 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751155AbeFGTTV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 19:18:31 -0400
-X-Greylist: delayed 489 seconds by postgrey-1.27 at vger.kernel.org; Wed, 06 Jun 2018 19:18:31 EDT
-Received: by one.firstfloor.org (Postfix, from userid 503)
-        id 43C7586897; Thu,  7 Jun 2018 01:10:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=firstfloor.org;
-        s=mail; t=1528326619;
-        bh=lZE/h/QyE9RRJ+CpBm0gwuWPPWRMlhvf59REC+HsWTM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WnVThfxKgMwOQy1D2QsQWOFlBqZMsh4B8J/PPAGDqRPYipSEI4K5JMN9FQPuvVAHW
-         du3li48YEi5ysyMqqa3bgiWJIgvsFjnVkzz3w9Sq+pMXpohdP+BsQjHb2FM5EzwK4c
-         X3skt5q1cFiUzao+HGw2+jb3sOFhSjp/ZBD4UTeQ=
-Date: Wed, 6 Jun 2018 16:10:18 -0700
-From: Andi Kleen <andi@firstfloor.org>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Milian Wolff <milian.wolff@kdab.com>,
-        Andi Kleen <andi@firstfloor.org>,
-        Frederic Weisbecker <frederic@kernel.org>
-Subject: Re: [RFC 00/10] perf: Add cputime events/metrics
-Message-ID: <20180606231016.o3u3u3nduoq7227e@two.firstfloor.org>
-References: <20180606221513.11302-1-jolsa@kernel.org>
+        Thu, 7 Jun 2018 15:19:21 -0400
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id 69D07400DECD0
+        for <linux-kernel@vger.kernel.org>; Thu,  7 Jun 2018 14:19:20 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id R0RMfZ9YIaSeyR0RMfIVDP; Thu, 07 Jun 2018 14:19:20 -0500
+X-Authority-Reason: nr=8
+Received: from [187.192.46.223] (port=43968 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.89_1)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fR0RJ-004BrQ-TY; Thu, 07 Jun 2018 14:19:18 -0500
+Date: Thu, 7 Jun 2018 14:19:15 -0500
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Raed Salem <raeds@mellanox.com>, Leon Romanovsky <leon@kernel.org>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] IB/mlx5: Fix memory leak in mlx5_ib_create_flow
+Message-ID: <20180607191915.GA9092@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180606221513.11302-1-jolsa@kernel.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.46.223
+X-Source-L: No
+X-Exim-ID: 1fR0RJ-004BrQ-TY
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [187.192.46.223]:43968
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> I had some issues with IDLE counter being miscounted due to stopping
-> of the idle tick. I tried to solve it in this patch (it's part of the
-> patchset):
->   perf/cputime: Don't stop idle tick if there's live cputime event
-> 
-> but I'm pretty sure it's wrong and there's better solution.
+In case memory resources for *ucmd* were allocated, release them
+before return.
 
-At least on intel we already have hardware counters for different idle
-states. You just would need to add them and convert to the same
-unit.
+Addresses-Coverity-ID: 1469857 ("Resource leak")
+Fixes: 3b3233fbf02e ("IB/mlx5: Add flow counters binding support")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/infiniband/hw/mlx5/main.c | 33 +++++++++++++++++++++------------
+ 1 file changed, 21 insertions(+), 12 deletions(-)
 
-But of course it's still useful when this is not available.
-
-> My current plan is now to read those counters in perf top/record/report
-> to show (at least) the idle percentage for the current profile.
-
-It's useful. Thanks for working on it. I was thinking about doing
-something similar for some time.
-
--Andi
+diff --git a/drivers/infiniband/hw/mlx5/main.c b/drivers/infiniband/hw/mlx5/main.c
+index e52dd21..0472e6c 100644
+--- a/drivers/infiniband/hw/mlx5/main.c
++++ b/drivers/infiniband/hw/mlx5/main.c
+@@ -3546,29 +3546,35 @@ static struct ib_flow *mlx5_ib_create_flow(struct ib_qp *qp,
+ 			return ERR_PTR(-ENOMEM);
+ 
+ 		err = ib_copy_from_udata(ucmd, udata, required_ucmd_sz);
+-		if (err) {
+-			kfree(ucmd);
+-			return ERR_PTR(err);
+-		}
++		if (err)
++			goto free_ucmd;
+ 	}
+ 
+-	if (flow_attr->priority > MLX5_IB_FLOW_LAST_PRIO)
+-		return ERR_PTR(-ENOMEM);
++	if (flow_attr->priority > MLX5_IB_FLOW_LAST_PRIO) {
++		err = -ENOMEM;
++		goto free_ucmd;
++	}
+ 
+ 	if (domain != IB_FLOW_DOMAIN_USER ||
+ 	    flow_attr->port > dev->num_ports ||
+ 	    (flow_attr->flags & ~(IB_FLOW_ATTR_FLAGS_DONT_TRAP |
+-				  IB_FLOW_ATTR_FLAGS_EGRESS)))
+-		return ERR_PTR(-EINVAL);
++				  IB_FLOW_ATTR_FLAGS_EGRESS))) {
++		err = -EINVAL;
++		goto free_ucmd;
++	}
+ 
+ 	if (is_egress &&
+ 	    (flow_attr->type == IB_FLOW_ATTR_ALL_DEFAULT ||
+-	     flow_attr->type == IB_FLOW_ATTR_MC_DEFAULT))
+-		return ERR_PTR(-EINVAL);
++	     flow_attr->type == IB_FLOW_ATTR_MC_DEFAULT)) {
++		err = -EINVAL;
++		goto free_ucmd;
++	}
+ 
+ 	dst = kzalloc(sizeof(*dst), GFP_KERNEL);
+-	if (!dst)
+-		return ERR_PTR(-ENOMEM);
++	if (!dst) {
++		err = -ENOMEM;
++		goto free_ucmd;
++	}
+ 
+ 	mutex_lock(&dev->flow_db->lock);
+ 
+@@ -3640,6 +3646,9 @@ static struct ib_flow *mlx5_ib_create_flow(struct ib_qp *qp,
+ 	kfree(ucmd);
+ 	kfree(handler);
+ 	return ERR_PTR(err);
++free_ucmd:
++	kfree(ucmd);
++	return ERR_PTR(err);
+ }
+ 
+ static u32 mlx5_ib_flow_action_flags_to_accel_xfrm_flags(u32 mlx5_flags)
+-- 
+2.7.4
