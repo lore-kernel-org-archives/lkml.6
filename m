@@ -1,148 +1,180 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id H79XHHNIHlsVFQAAmS7hNA
-	; Mon, 11 Jun 2018 10:01:53 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id erv8AF44GVueegAAmS7hNA
+	; Thu, 07 Jun 2018 13:51:53 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 055FA607A4; Mon, 11 Jun 2018 10:01:53 +0000 (UTC)
+	id B167A607E7; Thu,  7 Jun 2018 13:51:53 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="IgcA524+"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 5748E606FA;
-	Mon, 11 Jun 2018 10:01:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5748E606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=public-files.de
+	by smtp.codeaurora.org (Postfix) with ESMTP id 1A057601D2;
+	Thu,  7 Jun 2018 13:51:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1A057601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932788AbeFKKBu (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 06:01:50 -0400
-Received: from mout.gmx.net ([212.227.17.20]:35169 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932263AbeFKKBq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 06:01:46 -0400
-Received: from [213.128.98.93] ([213.128.98.93]) by
- 3c-app-gmx-bs27.server.lan (via HTTP); Mon, 11 Jun 2018 12:01:43 +0200
-MIME-Version: 1.0
-Message-ID: <trinity-5eab4708-85af-4a10-911f-86b9afc2c0cc-1528711303734@3c-app-gmx-bs27>
-From: st6589@public-files.de
-To: linux-kernel@vger.kernel.org
-Cc: linux-amlogic@lists.infradead.org
-Subject: [BUG] Pinning in pinctrl-meson-gxbb.c for uart_C is wrong
-Content-Type: multipart/mixed;
- boundary=refeik-b4421615-3be7-45eb-a938-7f1e82e91fd3
-Date: Mon, 11 Jun 2018 12:01:43 +0200
-Importance: normal
-Sensitivity: Normal
-X-Priority: 3
-X-Provags-ID: V03:K1:QDs9JIOnupg8cWvj0TovdAFI0KSA1wC8NXSn1j1grlr
- dPYdSgQBYsSobhZgcaTfsacVdCfLCkA9cTWwSr/sMi2aR/jR2l
- pdkFtGtOB/U86e2NSBiqm0eChQZ6BSDrNOM2gASVtEMtLrjgXL
- c2hyKBg0lhO4nmLrja8g91bgyCyu/o73c9R3r6kfA6BoOm+mck
- yJmqWkL9hGxFRXrHGp110I0QAuAYYtAFgDDrzgRzd87ql1qA70
- 2OnXDa5Lp+5DKy+SY3dOOLKXSmKSF80fzwKHvBecfnFQRJE+XM Hu9cgk=
-X-UI-Out-Filterresults: notjunk:1;V01:K0:pQ1fnFdLSa8=:cwwSmGXHvM2deD0jC1dG01
- 4bfbXGFHYD3sDaR6ps60dDiWRmm8YvC6sH0zVt4sC4xNnqGRZnGLKRCjjmfdPIrJD6AXUHonE
- MWKm0GUHXszOWGAciLOYsw/2NziUrRZQzBj80UPa8KFhzMiaMHovpvUnyi6xLx0tyZ3v+1zkZ
- 8Wx0IbsQ30UYJg4ZebH38oUk7e422EbS8OSPGJWTVYgDp7lDUDbqkhw1do8X5tAQEEuf+GLcG
- p4lhArryp9441BoJnc5DTlERta5PXrX6HjxUTD5G9ZiobfULeWagY+toqd23wkwuS+eM/3ltW
- SaVQ5y8BfiMl1JEZ+44WPyfmCwkEqiEYxEMFxi04MrIVsAbiMy8QptKeqiy4khHFkmdTOmJ50
- 8Ps5mSIzonusm0JpmLUf+tSs0LBT7MlPNy6Jsj4ehcybHpHqXkgStRTwronmcnArDFuPL6E0u
- E5DwElmQur0WqYnE0Vy0b3oRrJbf/kl/Mw3M8WNgx28dss3X24Yj
+        id S932815AbeFGNvt (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 09:51:49 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:36155 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932152AbeFGNvq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 09:51:46 -0400
+Received: by mail-pf0-f196.google.com with SMTP id a12-v6so4965541pfi.3
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 06:51:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=ucuAFwdegSYTYPWSJpOrEMDTUib4eAbTMAGIYUISLag=;
+        b=IgcA524+uSkG8XSgCFkoCvfRDo1ZpT32Rhreg1Di+mV57IwxKShzfdiveyfFLLSGDD
+         xnX96eblIOYrXCsXqBn8iL6DpOip0XgQzaiRDcHe6o2P4UFoMoO4RUPC7UVtxCKvWQ2p
+         6iTmxw4UIj+XLZ/3msSx6B5B7mzrg09gr0umQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=ucuAFwdegSYTYPWSJpOrEMDTUib4eAbTMAGIYUISLag=;
+        b=NESxDjxr3/WnxQ8PD3GcKSMw2pOCT3tUZQdfaTCJXMfncaEnQMtzy/bKVFtnyZP++h
+         Jj8Iq+CnFyWI0iu/xv+9s2GqQeZlLCLnIe0LjDJADGuqfnixZm868AdYsCrM4O17HDJx
+         NW2JMGDTp0XGqtPAPdfjf53z7L9WYHZAP7sF0vPJfkuRQOY7muDiiK6iq65H00iMbKyH
+         mwea07STW2gaMgWXsWB8YkwucD0KWSLPuCFWMb5So1LfUA2XeDnSeRKjlZemFlIJ33Tn
+         h2hUi5IdHo2IOjnUxlA0+7/eXzyEiy2qL8yabdst2zNEj3yjUR1IeQBGl8NApwB2xIPs
+         ZvPg==
+X-Gm-Message-State: APt69E0x1z2Vn5dGqF8z/02fmv5H5U0hT/VE3egqYv4sxGElA9FaA3aT
+        5ULsVoTkafhFyvhFR08EF2JKHy/+Lpo=
+X-Google-Smtp-Source: ADUXVKKCGvi1X8UHcoZKXgTu9RNkCcpUUi0+EwUd7V0aL0+Sm9PN8HCYJlLHNmdSNUrAEKtcazT/fg==
+X-Received: by 2002:a63:bf49:: with SMTP id i9-v6mr1701167pgo.342.1528379505721;
+        Thu, 07 Jun 2018 06:51:45 -0700 (PDT)
+Received: from localhost.localdomain ([115.97.190.51])
+        by smtp.gmail.com with ESMTPSA id b3-v6sm56455901pgn.44.2018.06.07.06.51.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 07 Jun 2018 06:51:45 -0700 (PDT)
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Matteo Lisi <matteo.lisi@engicam.com>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH 2/3] ARM: dts: imx6q-icore-mipi: Add OV5640 Camera sensor
+Date: Thu,  7 Jun 2018 19:21:32 +0530
+Message-Id: <20180607135133.3104-2-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180607135133.3104-1-jagan@amarulasolutions.com>
+References: <20180607135133.3104-1-jagan@amarulasolutions.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---refeik-b4421615-3be7-45eb-a938-7f1e82e91fd3
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+OV5640 Camera sensor is connected in i.CoreM6 1.5 Quad/Dual MIPI
+starter kit.
 
+This patch also move MX6QDL_PAD_GPIO_0__CCM_CLKO1 pinctrl
+from i2c3 to ov5640 pinctrl.
 
-Hello with the actuel Pinning definition in=C2=A0 pinctrl-meson-gxbb=2Ec f=
-or the uart_c
-the system crashes when activated=2E The seams to be a depency with mmc dr=
-iver for SD cards=2E
-=C2=A0
-according to the comment here: https://forum=2Eodroid=2Ecom/viewtopic=2Eph=
-p?f=3D137&t=3D25373#p177855
-the seams to be an error in the amlogic datasheets regarding uart_c
-=C2=A0
-with the attached patch everything works as it should=2E
-=C2=A0
-Best regards
-=C2=A0
-=C2=A0
-##
-#    https://forum=2Eodroid=2Ecom/viewtopic=2Ephp?f=3D137&t=3D25373#p17785=
-5
-#
---- linux-next-20180608/drivers/pinctrl/meson/pinctrl-meson-gxbb=2Ec=2Eori=
-g 2018-06-09 12:03:58=2E921540445 +0200
-+++ linux-next-20180608/drivers/pinctrl/meson/pinctrl-meson-gxbb=2Ec      =
-2018-06-10 18:51:52=2E080665271 +0200
-@@ -198,8 +198,8 @@
-=20
- static const unsigned int uart_tx_c_pins[]     =3D { GPIOY_13 };
- static const unsigned int uart_rx_c_pins[]     =3D { GPIOY_14 };
--static const unsigned int uart_cts_c_pins[]    =3D { GPIOX_11 };
--static const unsigned int uart_rts_c_pins[]    =3D { GPIOX_12 };
-+static const unsigned int uart_cts_c_pins[]    =3D { GPIOY_11 };
-+static const unsigned int uart_rts_c_pins[]    =3D { GPIOY_12 };
-=20
- static const unsigned int i2c_sck_a_pins[]     =3D { GPIODV_25 };
- static const unsigned int i2c_sda_a_pins[]     =3D { GPIODV_24 };
-@@ -443,10 +443,10 @@
-        GROUP(pwm_f_x,          3,      18),
-=20
-        /* Bank Y */
--       GROUP(uart_cts_c,       1,      19),
--       GROUP(uart_rts_c,       1,      18),
--       GROUP(uart_tx_c,        1,      17),
--       GROUP(uart_rx_c,        1,      16),
-+       GROUP(uart_cts_c,       1,      17),
-+       GROUP(uart_rts_c,       1,      16),
-+       GROUP(uart_tx_c,        1,      19),
-+       GROUP(uart_rx_c,        1,      18),
-        GROUP(pwm_a_y,          1,      21),
-        GROUP(pwm_f_y,          1,      20),
-        GROUP(i2s_out_ch23_y,   1,      5),
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+ arch/arm/boot/dts/imx6q-icore-mipi.dts |  8 ++++++
+ arch/arm/boot/dts/imx6qdl-icore.dtsi   | 46 +++++++++++++++++++++++++++++++++-
+ 2 files changed, 53 insertions(+), 1 deletion(-)
 
---refeik-b4421615-3be7-45eb-a938-7f1e82e91fd3
-Content-Type: text/x-patch
-Content-Disposition: attachment; filename=my-diff-4.17-uac-pin.diff
-
-##
-#    https://forum.odroid.com/viewtopic.php?f=137&t=25373#p177855
-#
---- linux-next-20180608/drivers/pinctrl/meson/pinctrl-meson-gxbb.c.orig	2018-06-09 12:03:58.921540445 +0200
-+++ linux-next-20180608/drivers/pinctrl/meson/pinctrl-meson-gxbb.c	2018-06-10 18:51:52.080665271 +0200
-@@ -198,8 +198,8 @@
+diff --git a/arch/arm/boot/dts/imx6q-icore-mipi.dts b/arch/arm/boot/dts/imx6q-icore-mipi.dts
+index acd3d33476d4..95b2efda17b4 100644
+--- a/arch/arm/boot/dts/imx6q-icore-mipi.dts
++++ b/arch/arm/boot/dts/imx6q-icore-mipi.dts
+@@ -20,6 +20,14 @@
+ 	status = "okay";
+ };
  
- static const unsigned int uart_tx_c_pins[]	= { GPIOY_13 };
- static const unsigned int uart_rx_c_pins[]	= { GPIOY_14 };
--static const unsigned int uart_cts_c_pins[]	= { GPIOX_11 };
--static const unsigned int uart_rts_c_pins[]	= { GPIOX_12 };
-+static const unsigned int uart_cts_c_pins[]	= { GPIOY_11 };
-+static const unsigned int uart_rts_c_pins[]	= { GPIOY_12 };
++&mipi_csi {
++	status = "okay";
++};
++
++&ov5640 {
++	status = "okay";
++};
++
+ &usdhc3 {
+ 	status = "okay";
+ };
+diff --git a/arch/arm/boot/dts/imx6qdl-icore.dtsi b/arch/arm/boot/dts/imx6qdl-icore.dtsi
+index 0a1574998fc6..be8aa55c973e 100644
+--- a/arch/arm/boot/dts/imx6qdl-icore.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-icore.dtsi
+@@ -215,6 +215,29 @@
+ 	pinctrl-0 = <&pinctrl_i2c3>;
+ 	status = "okay";
  
- static const unsigned int i2c_sck_a_pins[]	= { GPIODV_25 };
- static const unsigned int i2c_sda_a_pins[]	= { GPIODV_24 };
-@@ -443,10 +443,10 @@
- 	GROUP(pwm_f_x,		3,	18),
++	ov5640: camera@3c {
++		compatible = "ovti,ov5640";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_ov5640>;
++		reg = <0x3c>;
++		clocks = <&clks IMX6QDL_CLK_CKO>;
++		clock-names = "xclk";
++		DOVDD-supply = <&reg_1p8v>;
++		AVDD-supply = <&reg_3p3v>;
++		DVDD-supply = <&reg_3p3v>;
++		powerdown-gpios = <&gpio5 30 GPIO_ACTIVE_HIGH>;
++		reset-gpios = <&gpio5 31 GPIO_ACTIVE_LOW>;
++		status = "disabled";
++
++		port {
++			ov5640_to_mipi_csi2: endpoint {
++				remote-endpoint = <&mipi_csi2_in>;
++				clock-lanes = <0>;
++				data-lanes = <1 2>;
++			};
++		};
++	};
++
+ 	sgtl5000: codec@a {
+ 		#sound-dai-cells = <0>;
+ 		compatible = "fsl,sgtl5000";
+@@ -226,6 +249,20 @@
+ 	};
+ };
  
- 	/* Bank Y */
--	GROUP(uart_cts_c,	1,	19),
--	GROUP(uart_rts_c,	1,	18),
--	GROUP(uart_tx_c,	1,	17),
--	GROUP(uart_rx_c,	1,	16),
-+	GROUP(uart_cts_c,	1,	17),
-+	GROUP(uart_rts_c,	1,	16),
-+	GROUP(uart_tx_c,	1,	19),
-+	GROUP(uart_rx_c,	1,	18),
- 	GROUP(pwm_a_y,		1,	21),
- 	GROUP(pwm_f_y,		1,	20),
- 	GROUP(i2s_out_ch23_y,	1,	5),
-
---refeik-b4421615-3be7-45eb-a938-7f1e82e91fd3--
++&mipi_csi {
++	status = "disabled";
++
++	port@0 {
++		reg = <0>;
++
++		mipi_csi2_in: endpoint {
++			remote-endpoint = <&ov5640_to_mipi_csi2>;
++			clock-lanes = <0>;
++			data-lanes = <1 2>;
++		};
++	};
++};
++
+ &pwm3 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_pwm3>;
+@@ -353,7 +390,14 @@
+ 		fsl,pins = <
+ 			MX6QDL_PAD_GPIO_5__I2C3_SCL  0x4001b8b1
+ 			MX6QDL_PAD_EIM_D18__I2C3_SDA 0x4001b8b1
+-			MX6QDL_PAD_GPIO_0__CCM_CLKO1	0x130b0
++		>;
++	};
++
++	pinctrl_ov5640: ov5640grp {
++		fsl,pins = <
++			MX6QDL_PAD_CSI0_DAT12__GPIO5_IO30 0x1b0b0
++			MX6QDL_PAD_CSI0_DAT13__GPIO5_IO31 0x1b0b0
++			MX6QDL_PAD_GPIO_0__CCM_CLKO1	  0x130b0
+ 		>;
+ 	};
+ 
+-- 
+2.14.3
