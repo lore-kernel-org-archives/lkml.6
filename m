@@ -1,135 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id u97oMXPWG1v2HwAAmS7hNA
-	; Sat, 09 Jun 2018 13:31:38 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id x3wjLL7rGFs8bAAAmS7hNA
+	; Thu, 07 Jun 2018 08:26:38 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 1E12A608BF; Sat,  9 Jun 2018 13:31:38 +0000 (UTC)
+	id C75B7608BF; Thu,  7 Jun 2018 08:26:37 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id A0E83608B8;
-	Sat,  9 Jun 2018 13:31:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A0E83608B8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=hygon.cn
+	by smtp.codeaurora.org (Postfix) with ESMTP id 368C56063F;
+	Thu,  7 Jun 2018 08:26:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 368C56063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753416AbeFINa3 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 09:30:29 -0400
-Received: from smtp21.cstnet.cn ([159.226.251.21]:44117 "EHLO cstnet.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753214AbeFINaV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 09:30:21 -0400
-Received: from pw-vbox.higon.com (unknown [182.150.46.145])
-        by APP-01 (Coremail) with SMTP id qwCowACXni4D1RtbaFdEBA--.1159S2;
-        Sat, 09 Jun 2018 21:24:24 +0800 (CST)
-From: Pu Wen <puwen@hygon.cn>
-To: rjw@rjwysocki.net, viresh.kumar@linaro.org, zhangpanyong@hygon.cn
-Cc: lenb@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, thomas.lendacky@amd.com,
-        peterz@infradead.org, tony.luck@intel.com, bp@alien8.de,
-        pbonzini@redhat.com, rkrcmar@redhat.com,
-        boris.ostrovsky@oracle.com, jgross@suse.com, mchehab@kernel.org,
-        trenn@suse.com, shuah@kernel.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-x86_64@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-edac@vger.kernel.org, linux-pm@vger.kernel.org,
-        kvm@vger.kernel.org, xen-devel@lists.xenproject.org,
-        Pu Wen <puwen@hygon.cn>
-Subject: [PATCH 09/11] driver/cpufreq: Add support for Hygon's Dhyana Family 18h processor
-Date: Sat,  9 Jun 2018 21:24:12 +0800
-Message-Id: <1528550652-28485-1-git-send-email-puwen@hygon.cn>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: qwCowACXni4D1RtbaFdEBA--.1159S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7uF1rJw17ur4kGw47CFyfZwb_yoW5JrW3pF
-        W5WFW8tr48JasrW3srArWUXF98Z3Wqyay0kr9rK3sYyF45Za45XrWDAw1UWr98K3ykWF1x
-        A3WDGw4UJa1YyFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUva14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-        1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-        JVWxJr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
-        1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
-        7VC0I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Cr0_Gr1UMcvjeVCFs4IE7xkEbV
-        WUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7Cj
-        xVA2Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-        Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a
-        6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6x
-        kF7I0E14v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6r4j6FyUMIIF0xvEx4A2jsIE
-        14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyT
-        uYvjfUFa0PUUUUU
-X-Originating-IP: [182.150.46.145]
-X-CM-SenderInfo: psxzv046klw03qof0z/
+        id S932760AbeFGI0d (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 04:26:33 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:39905 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932741AbeFGI0a (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 04:26:30 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w578Q9Ck2128131
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 7 Jun 2018 01:26:09 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w578Q94f2128126;
+        Thu, 7 Jun 2018 01:26:09 -0700
+Date: Thu, 7 Jun 2018 01:26:09 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From: tip-bot for Jin Yao <tipbot@zytor.com>
+Message-ID: <tip-ac56aa4549cdfd9c56387b35e99e3c868cfc7bd0@git.kernel.org>
+Cc: ak@linux.intel.com, tglx@linutronix.de, yao.jin@intel.com,
+        mingo@kernel.org, jolsa@kernel.org, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        yao.jin@linux.intel.com, kan.liang@linux.intel.com,
+        acme@redhat.com, alexander.shishkin@linux.intel.com
+Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com,
+          peterz@infradead.org, yao.jin@linux.intel.com, acme@redhat.com,
+          alexander.shishkin@linux.intel.com, kan.liang@linux.intel.com,
+          ak@linux.intel.com, yao.jin@intel.com, tglx@linutronix.de,
+          mingo@kernel.org, jolsa@kernel.org
+In-Reply-To: <1527843663-32288-4-git-send-email-yao.jin@linux.intel.com>
+References: <1527843663-32288-4-git-send-email-yao.jin@linux.intel.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf script python: Add dict fields introduction
+ to Documentation
+Git-Commit-ID: ac56aa4549cdfd9c56387b35e99e3c868cfc7bd0
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch enables the cpufreq driver support to Hygon Family 18h CPU:
-- It recognize Hygon's boost state in boost_state(),
-  boost_set_msr(), extract_msr() functions.
-- It also add SMBUS support for Hygon Family 18h in
-  amd_freq_sensitivity_init().
+Commit-ID:  ac56aa4549cdfd9c56387b35e99e3c868cfc7bd0
+Gitweb:     https://git.kernel.org/tip/ac56aa4549cdfd9c56387b35e99e3c868cfc7bd0
+Author:     Jin Yao <yao.jin@linux.intel.com>
+AuthorDate: Fri, 1 Jun 2018 17:01:03 +0800
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Wed, 6 Jun 2018 15:40:10 -0300
 
-Signed-off-by: Pu Wen <puwen@hygon.cn>
+perf script python: Add dict fields introduction to Documentation
+
+Add a brief introduction about fields to perf-script-python.txt.
+
+It should help python script developers in easily finding what fields
+are supported.
+
+Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jin Yao <yao.jin@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/1527843663-32288-4-git-send-email-yao.jin@linux.intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- drivers/cpufreq/acpi-cpufreq.c         | 5 ++++-
- drivers/cpufreq/amd_freq_sensitivity.c | 9 +++++++--
- 2 files changed, 11 insertions(+), 3 deletions(-)
+ tools/perf/Documentation/perf-script-python.txt | 26 +++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/drivers/cpufreq/acpi-cpufreq.c b/drivers/cpufreq/acpi-cpufreq.c
-index 9449657..04c9b81 100644
---- a/drivers/cpufreq/acpi-cpufreq.c
-+++ b/drivers/cpufreq/acpi-cpufreq.c
-@@ -95,6 +95,7 @@ static bool boost_state(unsigned int cpu)
- 		rdmsr_on_cpu(cpu, MSR_IA32_MISC_ENABLE, &lo, &hi);
- 		msr = lo | ((u64)hi << 32);
- 		return !(msr & MSR_IA32_MISC_ENABLE_TURBO_DISABLE);
-+	case X86_VENDOR_HYGON:
- 	case X86_VENDOR_AMD:
- 		rdmsr_on_cpu(cpu, MSR_K7_HWCR, &lo, &hi);
- 		msr = lo | ((u64)hi << 32);
-@@ -113,6 +114,7 @@ static int boost_set_msr(bool enable)
- 		msr_addr = MSR_IA32_MISC_ENABLE;
- 		msr_mask = MSR_IA32_MISC_ENABLE_TURBO_DISABLE;
- 		break;
-+	case X86_VENDOR_HYGON:
- 	case X86_VENDOR_AMD:
- 		msr_addr = MSR_K7_HWCR;
- 		msr_mask = MSR_K7_HWCR_CPB_DIS;
-@@ -223,7 +225,8 @@ static unsigned extract_msr(struct cpufreq_policy *policy, u32 msr)
- 	struct cpufreq_frequency_table *pos;
- 	struct acpi_processor_performance *perf;
+diff --git a/tools/perf/Documentation/perf-script-python.txt b/tools/perf/Documentation/perf-script-python.txt
+index 51ec2d20068a..0fb9eda3cbca 100644
+--- a/tools/perf/Documentation/perf-script-python.txt
++++ b/tools/perf/Documentation/perf-script-python.txt
+@@ -610,6 +610,32 @@ Various utility functions for use with perf script:
+   nsecs_str(nsecs) - returns printable string in the form secs.nsecs
+   avg(total, n) - returns average given a sum and a total number of values
  
--	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
-+	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
-+	    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
- 		msr &= AMD_MSR_RANGE;
- 	else
- 		msr &= INTEL_MSR_RANGE;
-diff --git a/drivers/cpufreq/amd_freq_sensitivity.c b/drivers/cpufreq/amd_freq_sensitivity.c
-index be926d9..4ac7c3c 100644
---- a/drivers/cpufreq/amd_freq_sensitivity.c
-+++ b/drivers/cpufreq/amd_freq_sensitivity.c
-@@ -111,11 +111,16 @@ static int __init amd_freq_sensitivity_init(void)
- {
- 	u64 val;
- 	struct pci_dev *pcidev;
-+	unsigned int pci_vendor;
- 
--	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD)
-+	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
-+		pci_vendor = PCI_VENDOR_ID_AMD;
-+	else if (boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
-+		pci_vendor = PCI_VENDOR_ID_HYGON;
-+	else
- 		return -ENODEV;
- 
--	pcidev = pci_get_device(PCI_VENDOR_ID_AMD,
-+	pcidev = pci_get_device(pci_vendor,
- 			PCI_DEVICE_ID_AMD_KERNCZ_SMBUS, NULL);
- 
- 	if (!pcidev) {
--- 
-2.7.4
++SUPPORTED FIELDS
++----------------
++
++Currently supported fields:
++
++ev_name, comm, pid, tid, cpu, ip, time, period, phys_addr, addr,
++symbol, dso, time_enabled, time_running, values, callchain,
++brstack, brstacksym, datasrc, datasrc_decode, iregs, uregs,
++weight, transaction, raw_buf, attr.
++
++Some fields have sub items:
++
++brstack:
++    from, to, from_dsoname, to_dsoname, mispred,
++    predicted, in_tx, abort, cycles.
++
++brstacksym:
++    items: from, to, pred, in_tx, abort (converted string)
++
++For example,
++We can use this code to print brstack "from", "to", "cycles".
++
++if 'brstack' in dict:
++	for entry in dict['brstack']:
++		print "from %s, to %s, cycles %s" % (entry["from"], entry["to"], entry["cycles"])
++
+ SEE ALSO
+ --------
+ linkperf:perf-script[1]
