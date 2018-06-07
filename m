@@ -1,117 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id HmSMCHvyGFvtJAAAmS7hNA
-	; Thu, 07 Jun 2018 08:53:15 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id vrIYI1h9GVswWgAAmS7hNA
+	; Thu, 07 Jun 2018 18:47:33 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 135BE607E7; Thu,  7 Jun 2018 08:53:15 +0000 (UTC)
+	id B2F8D608BF; Thu,  7 Jun 2018 18:47:33 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FRbWhDm+"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 8EA946063F;
-	Thu,  7 Jun 2018 08:53:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8EA946063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=denx.de
+	by smtp.codeaurora.org (Postfix) with ESMTP id 19D116074D;
+	Thu,  7 Jun 2018 18:47:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 19D116074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932558AbeFGIxL (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 04:53:11 -0400
-Received: from mail-out.m-online.net ([212.18.0.9]:33010 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753269AbeFGIxJ (ORCPT
+        id S932264AbeFGSra (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 14:47:30 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:38094 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753169AbeFGSr3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 04:53:09 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 411fSx0yPPz1qymG;
-        Thu,  7 Jun 2018 10:53:05 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 411fSw70fbz1qsLM;
-        Thu,  7 Jun 2018 10:53:04 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id Y1LHNO4SKiVX; Thu,  7 Jun 2018 10:53:03 +0200 (CEST)
-X-Auth-Info: L4notD97Ueine1IDI1CgJF3D17NrJ6sC58dJWEiDHpI=
-Received: from jawa (85-222-111-42.dynamic.chello.pl [85.222.111.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Thu,  7 Jun 2018 10:53:03 +0200 (CEST)
-Date: Thu, 7 Jun 2018 10:51:32 +0200
-From: Lukasz Majewski <lukma@denx.de>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Fabio Estevam <festevam@gmail.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2] ARM: DTS: imx53: Add support for imx53 HSC/DDC
- boards from K+P
-Message-ID: <20180607105132.16f28635@jawa>
-In-Reply-To: <CAOMZO5BiKjoiyh0dxycRhPkRzS2Uk9h8fPTA+sXMZBDJpbcyWQ@mail.gmail.com>
-References: <20180509153428.1440-1-lukma@denx.de>
-        <20180519121506.32344-1-lukma@denx.de>
-        <CAOMZO5BiKjoiyh0dxycRhPkRzS2Uk9h8fPTA+sXMZBDJpbcyWQ@mail.gmail.com>
-Organization: denx.de
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Thu, 7 Jun 2018 14:47:29 -0400
+Received: by mail-wr0-f194.google.com with SMTP id e18-v6so2626015wrs.5
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 11:47:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=jq3fo19f6padLIIBgXrSmLayZed11pR10Zz/YBUntHE=;
+        b=FRbWhDm+pQcfuJmLXtoO3ZCus4wRNQ1gYQF4DigY4rhnrGG8PcXsxwI2yWtnmXJqr0
+         Vhca/OGOk5az6fgfLB/4P/ELFpIDFMF0beL17XZqdFC0gBIj6sCCB5qjwiCoOqNt0NFd
+         ppySwaC0OLzHZPOOhbNE7inaBH/KR3YIHZN7s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jq3fo19f6padLIIBgXrSmLayZed11pR10Zz/YBUntHE=;
+        b=a97FMjLMdq9zHUgTBcE9kdoMSd22DQP6KPVsG6/hpEmihY5Tiy1t4Lb6Li5bjQP1U/
+         fJJBbImPLQSQSftnGG46Rb9Fd38XtbeEJjdUyBLdcA/DKgCPaYsRRTbxXyOT1mz/NYuD
+         dDKzXbWbVD93NY4K3C4MCOOA1de0hRBXvpaK2AELRPx6fMPRkeCyPbGNEnsHsYeIpqUg
+         c+ZKZAZZXVSGmPwDnhalBaJ/1ZhBArleWoos2acrD7LQ+rZS4p44isu0xTUfXFjjEZ6N
+         HbVxND6HLWpGBKbezjg+ftJImXpaTukxjo9r6ruIKfpQkNlsQzyDiXszEBbsY/Uxa4ah
+         IsNg==
+X-Gm-Message-State: APt69E37uvhpynAXUwH68zJDgWJM3S/W1nTPQVw09C2O8qEhVxyXQiPC
+        TIoM8D9Fyfthr+gvj9W0zpKJWA==
+X-Google-Smtp-Source: ADUXVKLhoWHs1M9Vj0aPiZyFRcbRoYEe/xl7kbGSeHOEI3SpmNcbbeU1jmIXweCNv0GR/mw6Xg5QIw==
+X-Received: by 2002:adf:9341:: with SMTP id 59-v6mr2497149wro.80.1528397247901;
+        Thu, 07 Jun 2018 11:47:27 -0700 (PDT)
+Received: from [192.168.1.100] (aig34-1-88-167-228-121.fbx.proxad.net. [88.167.228.121])
+        by smtp.gmail.com with ESMTPSA id p6-v6sm24210331wrq.19.2018.06.07.11.47.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Jun 2018 11:47:27 -0700 (PDT)
+Subject: Re: [PATCH RESEND] lib/test_printf.c: call wait_for_random_bytes()
+ before plain %p tests
+To: Petr Mladek <pmladek@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        David Miller <davem@davemloft.net>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        "Tobin C . Harding" <me@tobin.cc>, linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <20180604113708.11554-1-thierry.escande@linaro.org>
+ <20180607122434.i4x7b5ij4p6dpx7w@pathway.suse.cz>
+From: Thierry Escande <thierry.escande@linaro.org>
+Message-ID: <d9ecdf72-7500-66d4-0360-231218cccbb4@linaro.org>
+Date: Thu, 7 Jun 2018 20:47:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/esdQhX_4xzCN10eHNJjxJVV"; protocol="application/pgp-signature"
+In-Reply-To: <20180607122434.i4x7b5ij4p6dpx7w@pathway.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/esdQhX_4xzCN10eHNJjxJVV
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Petr,
 
-Hi Shawn,
+On 07/06/2018 14:24, Petr Mladek wrote:
+> On Mon 2018-06-04 13:37:08, Thierry Escande wrote:
+>> If the test_printf module is loaded before the crng is initialized, the
+>> plain 'p' tests will fail because the printed address will not be hashed
+>> and the buffer will contain '(ptrval)' instead.
+>> This patch adds a call to wait_for_random_bytes() before plain 'p' tests
+>> to make sure the crng is initialized.
+> 
+> Hmm, my system did not boot with this patch and
+> CONFIG_TEST_PRINTF=y
+> 
+> I guess that there was not enough entropy. It is basically a deadlock.
+> The build-in module init calls are called when SMP is enabled but
+> there is no real activity and the init calls are called sequentially.
+> Therefore there is nothing that could produce some entropy, ...
+> 
+> I suggest to skip the test when crng is not ready.
 
-> On Sat, May 19, 2018 at 9:15 AM, Lukasz Majewski <lukma@denx.de>
-> wrote:
-> > This commit provides support for HSC and DDC boards from
-> > Kieback&Peter GmbH vendor.
-> >
-> > Signed-off-by: Lukasz Majewski <lukma@denx.de> =20
->=20
-> Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Thanks for pointing this out.
 
-Gentle ping on this patch.
+The issue is that the crng_ready() is not available outside of random.c. 
+I'll leave the call to wait_for_random_bytes() if test_printf is 
+compiled as a module and use add_random_ready_callback() to check if 
+crng is initialized otherwise. Does that sound ok to you?
 
+Regards,
+Thierry
 
-Best regards,
-
-Lukasz Majewski
-
---
-
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-10 Fax: (+49)-8142-66989-80 Email: wd@denx.de
-
---Sig_/esdQhX_4xzCN10eHNJjxJVV
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAlsY8hQACgkQAR8vZIA0
-zr0XBQgAsgImf0VM/M8wO9K9WQv7RA+ok/6DrrxrKpO7RpME65YYG7MLWHL0R60S
-RDnM/sBHypEGLBl2JqF9GHJsJQxdfncgrOmBodeRKgIbTP99/2U7IiNoGEjC2jc+
-dE6Mv5PHLJKe+UuErjvvQMn7K/FDJnqIdC3McpCQV+bOHc7RSggckIL52REukuNT
-8EWLCsQpqlkcpRTGktMXUpcCJDTjnUgzYmymDCTcvjtiOdLa++arvlezcZOY0Toe
-2Vyw2QJYLhcvIQUQbPMaGy06xufB8bJdxMRqwN5IJM5I5S2LG6fE4c2v933VZ2TG
-sqZh3NSHu0R7+hiBKR6HiuMcuWOvQA==
-=rxn9
------END PGP SIGNATURE-----
-
---Sig_/esdQhX_4xzCN10eHNJjxJVV--
+> 
+> Best Regards,
+> Petr
+> 
+>> Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
+>> Acked-by: Tobin C. Harding <me@tobin.cc>
+>> ---
+>>   lib/test_printf.c | 7 +++++++
+>>   1 file changed, 7 insertions(+)
+>>
+>> diff --git a/lib/test_printf.c b/lib/test_printf.c
+>> index 71ebfa43ad05..839be9385a8a 100644
+>> --- a/lib/test_printf.c
+>> +++ b/lib/test_printf.c
+>> @@ -260,6 +260,13 @@ plain(void)
+>>   {
+>>   	int err;
+>>   
+>> +	/*
+>> +	 * Make sure crng is ready. Otherwise we get "(ptrval)" instead
+>> +	 * of a hashed address when printing '%p' in plain_hash() and
+>> +	 * plain_format().
+>> +	 */
+>> +	wait_for_random_bytes();
+>> +
+>>   	err = plain_hash();
+>>   	if (err) {
+>>   		pr_warn("plain 'p' does not appear to be hashed\n");
+>> -- 
+>> 2.14.1
+>>
