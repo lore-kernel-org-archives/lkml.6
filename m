@@ -1,162 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id NM8hKj0IGlsDGAAAmS7hNA
-	; Fri, 08 Jun 2018 04:38:21 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id VgByOR5WGVscPAAAmS7hNA
+	; Thu, 07 Jun 2018 15:58:23 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 8BA70607E4; Fri,  8 Jun 2018 04:38:21 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MbqOl+Dh"
+	id D8CAE6074D; Thu,  7 Jun 2018 15:58:22 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id EB24C6063F;
-	Fri,  8 Jun 2018 04:38:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EB24C6063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 62A1360590;
+	Thu,  7 Jun 2018 15:58:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 62A1360590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751249AbeFHEiT (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 00:38:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47186 "EHLO mail.kernel.org"
+        id S934752AbeFGP6U (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:58:20 -0400
+Received: from foss.arm.com ([217.140.101.70]:53874 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750829AbeFHEiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 00:38:17 -0400
-Received: from mail-wm0-f52.google.com (mail-wm0-f52.google.com [74.125.82.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 533F520895
-        for <linux-kernel@vger.kernel.org>; Fri,  8 Jun 2018 04:38:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528432696;
-        bh=lPdBK5FFP8eQWZExAdb9H7HnZzyQ6rQLjxpLJ8Ru4eM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=MbqOl+DhxsfXHG14X4161IAtmaMYTfYPcoKN7v/c+r1ynmH81lTCdFe/H1XAufbsK
-         c+dxLBjYDyZEFQ299OoJufRrQaLfpZ8mxSzAX+lEJmUaGOfs4Q6XxOc7raIHXiO2BS
-         QHz+6wzoLjVsI90+16PwMh7mU6BHRt6rWGb83CzE=
-Received: by mail-wm0-f52.google.com with SMTP id 69-v6so1060016wmf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 21:38:16 -0700 (PDT)
-X-Gm-Message-State: APt69E3dIm/AQnqL4NAhpCuh+8GjljfhS9L9p/CTaCnQjkXav0hJ49bq
-        yX7rev1Lo7QPPaetGs24bT7O/2T5v9s11OwogPz46g==
-X-Google-Smtp-Source: ADUXVKKKd7W07022IPPiWJZSDi+S4r3VoK0ODCq4hA55QifnbiVMpdTMVmJoPL+NSIbcJr+iB0KhftS6HgsX5NMmQv8=
-X-Received: by 2002:a1c:4a9d:: with SMTP id n29-v6mr314605wmi.46.1528432694803;
- Thu, 07 Jun 2018 21:38:14 -0700 (PDT)
+        id S933050AbeFGP6P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 11:58:15 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8CE3D80D;
+        Thu,  7 Jun 2018 08:58:15 -0700 (PDT)
+Received: from [192.168.0.102] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F03B53F59D;
+        Thu,  7 Jun 2018 08:58:10 -0700 (PDT)
+Subject: Re: [RFC PATCH v3 03/10] PM: Introduce an Energy Model management
+ framework
+To: Quentin Perret <quentin.perret@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>
+Cc: peterz@infradead.org, rjw@rjwysocki.net,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, mingo@redhat.com,
+        morten.rasmussen@arm.com, chris.redpath@arm.com,
+        patrick.bellasi@arm.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
+        viresh.kumar@linaro.org, tkjos@google.com, joelaf@google.com,
+        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
+        pkondeti@codeaurora.org, edubezval@gmail.com,
+        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
+        javi.merino@kernel.org
+References: <20180521142505.6522-1-quentin.perret@arm.com>
+ <20180521142505.6522-4-quentin.perret@arm.com>
+ <b47cb1f1-6ca1-7674-903f-724be43a57a0@arm.com>
+ <20180606143739.GF10870@e108498-lin.cambridge.arm.com>
+ <20180606152000.GB15894@localhost.localdomain>
+ <20180606152950.GH10870@e108498-lin.cambridge.arm.com>
+ <20180606162647.GI10870@e108498-lin.cambridge.arm.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <2802df66-8947-dc2c-a99f-cf872ddaeddb@arm.com>
+Date: Thu, 7 Jun 2018 17:58:09 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <20180607143807.3611-1-yu-cheng.yu@intel.com> <20180607143807.3611-7-yu-cheng.yu@intel.com>
- <CALCETrU6axo158CiSCRRkC4GC5hib9hypC98t7LLjA3gDaacsw@mail.gmail.com>
- <1528403417.5265.35.camel@2b52.sc.intel.com> <CALCETrXz3WWgZwUXJsDTWvmqKUArQFuMH1xJdSLVKFpTysNWxg@mail.gmail.com>
- <CAMe9rOr49V8rqRa_KVsw61PWd+crkQvPDgPKtvowazjmsfgWWQ@mail.gmail.com>
- <CALCETrV1GG5rq_kwxkS-o3x8Ldr72ThdYgkJKQ9cx9Q63SxgTQ@mail.gmail.com> <CAMe9rOpeDrkwi-AG0vsiZy4NwkmavhB5Empv58FSHxtr3rpapw@mail.gmail.com>
-In-Reply-To: <CAMe9rOpeDrkwi-AG0vsiZy4NwkmavhB5Empv58FSHxtr3rpapw@mail.gmail.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Thu, 7 Jun 2018 21:38:03 -0700
-X-Gmail-Original-Message-ID: <CALCETrWhMmqGWKx-yw55YKHMJwGyLZio5f8Pskh8X69zfQMy7A@mail.gmail.com>
-Message-ID: <CALCETrWhMmqGWKx-yw55YKHMJwGyLZio5f8Pskh8X69zfQMy7A@mail.gmail.com>
-Subject: Re: [PATCH 06/10] x86/cet: Add arch_prctl functions for shadow stack
-To: "H. J. Lu" <hjl.tools@gmail.com>
-Cc: Andrew Lutomirski <luto@kernel.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        mike.kravetz@oracle.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180606162647.GI10870@e108498-lin.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 7, 2018 at 9:10 PM H.J. Lu <hjl.tools@gmail.com> wrote:
->
-> On Thu, Jun 7, 2018 at 4:01 PM, Andy Lutomirski <luto@kernel.org> wrote:
-> > On Thu, Jun 7, 2018 at 3:02 PM H.J. Lu <hjl.tools@gmail.com> wrote:
-> >>
-> >> On Thu, Jun 7, 2018 at 2:01 PM, Andy Lutomirski <luto@kernel.org> wrote:
-> >> > On Thu, Jun 7, 2018 at 1:33 PM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
-> >> >>
-> >> >> On Thu, 2018-06-07 at 11:48 -0700, Andy Lutomirski wrote:
-> >> >> > On Thu, Jun 7, 2018 at 7:41 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
-> >> >> > >
-> >> >> > > The following operations are provided.
-> >> >> > >
-> >> >> > > ARCH_CET_STATUS:
-> >> >> > >         return the current CET status
-> >> >> > >
-> >> >> > > ARCH_CET_DISABLE:
-> >> >> > >         disable CET features
-> >> >> > >
-> >> >> > > ARCH_CET_LOCK:
-> >> >> > >         lock out CET features
-> >> >> > >
-> >> >> > > ARCH_CET_EXEC:
-> >> >> > >         set CET features for exec()
-> >> >> > >
-> >> >> > > ARCH_CET_ALLOC_SHSTK:
-> >> >> > >         allocate a new shadow stack
-> >> >> > >
-> >> >> > > ARCH_CET_PUSH_SHSTK:
-> >> >> > >         put a return address on shadow stack
-> >> >> > >
-> >> >> > > ARCH_CET_ALLOC_SHSTK and ARCH_CET_PUSH_SHSTK are intended only for
-> >> >> > > the implementation of GLIBC ucontext related APIs.
-> >> >> >
-> >> >> > Please document exactly what these all do and why.  I don't understand
-> >> >> > what purpose ARCH_CET_LOCK and ARCH_CET_EXEC serve.  CET is opt in for
-> >> >> > each ELF program, so I think there should be no need for a magic
-> >> >> > override.
-> >> >>
-> >> >> CET is initially enabled if the loader has CET capability.  Then the
-> >> >> loader decides if the application can run with CET.  If the application
-> >> >> cannot run with CET (e.g. a dependent library does not have CET), then
-> >> >> the loader turns off CET before passing to the application.  When the
-> >> >> loader is done, it locks out CET and the feature cannot be turned off
-> >> >> anymore until the next exec() call.
-> >> >
-> >> > Why is the lockout necessary?  If user code enables CET and tries to
-> >> > run code that doesn't support CET, it will crash.  I don't see why we
-> >> > need special code in the kernel to prevent a user program from calling
-> >> > arch_prctl() and crashing itself.  There are already plenty of ways to
-> >> > do that :)
-> >>
-> >> On CET enabled machine, not all programs nor shared libraries are
-> >> CET enabled.  But since ld.so is CET enabled, all programs start
-> >> as CET enabled.  ld.so will disable CET if a program or any of its shared
-> >> libraries aren't CET enabled.  ld.so will lock up CET once it is done CET
-> >> checking so that CET can't no longer be disabled afterwards.
-> >
-> > Yeah, I got that.  No one has explained *why*.
->
-> It is to prevent malicious code from disabling CET.
->
+On 06/06/2018 06:26 PM, Quentin Perret wrote:
+> On Wednesday 06 Jun 2018 at 16:29:50 (+0100), Quentin Perret wrote:
+>> On Wednesday 06 Jun 2018 at 17:20:00 (+0200), Juri Lelli wrote:
+>>>>> This brings me to another question. Let's say there are multiple users of
+>>>>> the Energy Model in the system. Shouldn't the units of frequency and power
+>>>>> not standardized, maybe Mhz and mW?
+>>>>> The task scheduler doesn't care since it is only interested in power diffs
+>>>>> but other user might do.
+>>>>
+>>>> So the good thing about specifying units is that we can probably assume
+>>>> ranges on the values. If the power is in mW, assuming that we're talking
+>>>> about a single CPU, it'll probably fit in 16 bits. 65W/core should be
+>>>> a reasonable upper-bound ?
+>>>> But there are also vendors who might not be happy with disclosing absolute
+>>>> values ... These are sometimes considered sensitive and only relative
+>>>> numbers are discussed publicly. Now, you can also argue that we already
+>>>> have units specified in IPA for ex, and that it doesn't really matter if
+>>>> a driver "lies" about the real value, as long as the ratios are correct.
+>>>> And I guess that anyone can do measurement on the hardware and get those
+>>>> values anyway. So specifying a unit (mW) for the power is probably a
+>>>> good idea.
+>>>
+>>> Mmm, I remember we fought quite a bit while getting capacity-dmpis-mhz
+>>> binding accepted, and one of the musts was that the values were going to
+>>> be normalized. So, normalized power values again maybe?
+>>
+>> Hmmm, that's a very good point ... There should be no problems on the
+>> scheduler side -- we're only interested in correct ratios. But I'm not
+>> sure on the thermal side ... I will double check that.
+> 
+> So, IPA needs to compare the power of the CPUs with the power of other
+> things (e.g. GPUs). So we can't normalize the power of the CPUs without
+> normalizing in the same scale the power of the other devices. I see two
+> possibilities:
+> 
+> 1) we don't normalize the CPU power values, we specify them in mW, and
+>     we document (and maybe throw a warning if we see an issue at runtime)
+>     the max range of values. The max expected power for a single core
+>     could be 65K for ex (16bits). And based on that we can verify
+>     overflow and precision issues in the algorithms, and we keep it easy
+>     to compare the CPU power numbers with other devices.
 
-By the time malicious code issue its own syscalls, you've already lost
-the battle.  I could probably be convinced that a lock-CET-on feature
-that applies *only* to the calling thread and is not inherited by
-clone() is a decent idea, but I'd want to see someone who understands
-the state of the art in exploit design justify it.  You're also going
-to need to figure out how to make CRIU work if you allow locking CET
-on.
+I would say we need 1). 32bit values with units and proper documentation 
+of the possible ranges.
 
-A priori, I think we should just not provide a lock mechanism.
-
-> > (Also, shouldn't the vDSO itself be marked as supporting CET?)
->
-> No. vDSO is loaded by kernel.  vDSO in CET kernel is CET
-> compatible.
->
-
-I think the vDSO should do its best to act like a real DSO.  That
-means that, if the vDSO supports CET, it should advertise support for
-CET using the Linux ABI.  Since you're going to require GCC 8 anyway,
-this should be a single line of code in the Makefile.
+[...]
