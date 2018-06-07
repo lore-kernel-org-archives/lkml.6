@@ -1,84 +1,151 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id +j3uElr5GFsrZwAAmS7hNA
-	; Thu, 07 Jun 2018 09:23:07 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 9+5eLWQIGVtQUwAAmS7hNA
+	; Thu, 07 Jun 2018 10:27:23 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 511FC608FC; Thu,  7 Jun 2018 09:23:06 +0000 (UTC)
+	id 64EAC607DC; Thu,  7 Jun 2018 10:27:23 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VZI6LMyz"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 944B6608CD;
-	Thu,  7 Jun 2018 09:23:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 944B6608CD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id CD0D060452;
+	Thu,  7 Jun 2018 10:27:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CD0D060452
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932967AbeFGJXB (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 05:23:01 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:54788 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932856AbeFGJWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 05:22:50 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 886B3200051;
-        Thu,  7 Jun 2018 11:22:48 +0200 (CEST)
-Received: from smtp.na-rdc02.nxp.com (inv1260.us-phx01.nxp.com [134.27.49.11])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 47EBA200037;
-        Thu,  7 Jun 2018 11:22:48 +0200 (CEST)
-Received: from az84smr01.freescale.net (az84smr01.freescale.net [10.64.34.197])
-        by inv1260.na-rdc02.nxp.com (Postfix) with ESMTP id A35B240A56;
-        Thu,  7 Jun 2018 02:22:47 -0700 (MST)
-Received: from titan.ap.freescale.net ([10.192.208.233])
-        by az84smr01.freescale.net (8.14.3/8.14.0) with ESMTP id w579MJ4o020959;
-        Thu, 7 Jun 2018 02:22:44 -0700
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: netdev@vger.kernel.org, madalin.bucur@nxp.com,
-        Richard Cochran <richardcochran@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>
-Cc: devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Yangbo Lu <yangbo.lu@nxp.com>
-Subject: [v3, 08/10] fsl/fman: define frame description command UPD
-Date: Thu,  7 Jun 2018 17:20:48 +0800
-Message-Id: <20180607092050.46128-9-yangbo.lu@nxp.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180607092050.46128-1-yangbo.lu@nxp.com>
-References: <20180607092050.46128-1-yangbo.lu@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1753779AbeFGK1V (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 06:27:21 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:34451 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751956AbeFGK1S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 06:27:18 -0400
+Received: by mail-lf0-f66.google.com with SMTP id o9-v6so13857752lfk.1;
+        Thu, 07 Jun 2018 03:27:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=s3jY28aDeZe7e13P62EsA/IuSNqoiP3qRKqu8Zk8QVs=;
+        b=VZI6LMyzDS/0++bIrNelVdjDx4t/BgWgpPNO0hAPXOQAjarem+vLRMZVruoMFDIwx1
+         LObtuYZEuLDunddLSSyrUOhrz0aRX3Ax+lcHaqyklelnQsL4cza7uBQc+hxGCijwbIU3
+         7vciQOAbQ16blTxgfQlZqTh2bcNyRlz8wo1lMwCPbZLjVvIc+wMfau4uwbB8YODFmpd5
+         DhtHTZFSr92IeGMkUiwxWb7ofTjiclZIAHkOF26ShJ4E3Qyb31ULk0EQ/d2956/Hts/J
+         40EGIbLb0eXJLr3ThKDZ9sHpwp+e3ykeGbpQDvHNZNYslTAwJKDKx25VBVNavl302Kym
+         6Xvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=s3jY28aDeZe7e13P62EsA/IuSNqoiP3qRKqu8Zk8QVs=;
+        b=Ajf3dmWHMQTv40E77FUff16TbDiTVwL/GRaG1X8QYxGGn3N35dcUbZQwpYds1fxazJ
+         qLEPpqUggBkIAOycbBndjGGJlXCczuua7XoxpqGp5A+2k9JfOwBbihkVWw7u1KfZgKXy
+         v0OPdXWSo9Rvz28YS9ePd+3C2XY3CMuH+9AVMcf4cn0i1QDT38oVmJRedvGE5Os/MC/1
+         SQRNQ8yzDSlwzJzrVm0D25RsFE2yfW+WxO+LYMhyWya4lPdgp7SUtRtQ8xM/UzWCOg0V
+         2guF21rWFSO3jsl777FgTXN9yXt8hpuL5NUiBNckMco6t/GeZA/lMJNar+XRwe1wr+VB
+         Cmwg==
+X-Gm-Message-State: APt69E1w/L4+bvCEaLC2cgzCIakYNVGhBJrZV261TGcDVU4sUTnA7h0A
+        BMZXm+b7KnqEy9VCSfcVAeQ=
+X-Google-Smtp-Source: ADUXVKK/wO8ijzIHBUc81/X2nnidDL4RyBTI179mh8rzQkRWgDpaVJlitFEkBnpAoNBJdG9WAiXmTA==
+X-Received: by 2002:a19:a413:: with SMTP id q19-v6mr900286lfc.143.1528367236557;
+        Thu, 07 Jun 2018 03:27:16 -0700 (PDT)
+Received: from xi.terra (c-8bb2e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.178.139])
+        by smtp.gmail.com with ESMTPSA id d6-v6sm3517034ljd.52.2018.06.07.03.27.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Jun 2018 03:27:15 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.90_1)
+        (envelope-from <johan@kernel.org>)
+        id 1fQs8D-0000Yb-Li; Thu, 07 Jun 2018 12:27:02 +0200
+Date: Thu, 7 Jun 2018 12:27:01 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Alex Elder <elder@linaro.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+        Johan Hovold <johan@kernel.org>,
+        Bernd Petrovitsch <bernd@petrovitsch.priv.at>,
+        "Du, Changbin" <changbin.du@intel.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        gregkh@linuxfoundation.org, alex.elder@linaro.org,
+        kbuild test robot <lkp@intel.com>,
+        linux-arch@vger.kernel.org, michal.lkml@markovi.net,
+        linux-kernel@vger.kernel.org, arnd@arndb.de,
+        yamada.masahiro@socionext.com, lgirdwood@gmail.com,
+        broonie@kernel.org, rdunlap@infradead.org, x86@kernel.org,
+        linux@armlinux.org.uk, linux-sparse@vger.kernel.org,
+        mingo@redhat.com, kbuild-all@01.org, akpm@linux-foundation.org,
+        changbin.du@gmail.com, tglx@linutronix.de,
+        linux-kbuild@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 2/4] kernel hacking: new config NO_AUTO_INLINE to
+ disable compiler auto-inline optimizations
+Message-ID: <20180607102701.GU13775@localhost>
+References: <20180606142600.GN13775@localhost>
+ <20180606142622.2338abf6@vmware.local.home>
+ <20180607041718.qpqucjzlvcm5h3gn@vireshk-i7>
+ <20180607074628.kd3iyxevwj3ypzbr@intel.com>
+ <20180607083856.ealw62v3wx43zeqz@vireshk-i7>
+ <1303b1abf9f9229a8d3ccbb68a3e413266b360d7.camel@petrovitsch.priv.at>
+ <20180607091025.m7dfix3e2xbwx4cs@vireshk-i7>
+ <20180607091816.GT13775@localhost>
+ <20180607091923.n5q5uzsxuymy3vov@vireshk-i7>
+ <314bb2b3-186e-d7b0-d800-f77a42fd80fa@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <314bb2b3-186e-d7b0-d800-f77a42fd80fa@linaro.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Defined frame description command FM_FD_CMD_UPD for
-prepended data updating.
+On Thu, Jun 07, 2018 at 05:12:51AM -0500, Alex Elder wrote:
+> On 06/07/2018 04:19 AM, Viresh Kumar wrote:
+> > On 07-06-18, 11:18, Johan Hovold wrote:
+> >> If you want to work around the warning and think you can do it in some
+> >> non-contrived way, then go for it.
+> >>
+> >> Clearing the request buffer, checking for termination using strnlen, and
+> >> then using memcpy might not be too bad.
+> >>
+> >> But after all, it is a false positive, so leaving things as they stand
+> >> is fine too.
+> > 
+> > Leave it then :)
+> > 
+> 
+> It's interesting that the warning isn't reported for this in
+> fw_mgmt_interface_fw_version_operation().  The difference there is
+> that you actually put a zero byte at that last position before
+> returning.  I'm mildly impressed if gcc is distinguishing that.
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
----
-Changes for v2:
-	- None.
-Changes for v3:
-	- None.
----
- drivers/net/ethernet/freescale/fman/fman.h |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+Found a redhat blog post claiming it does check for some cases like
+that:
 
-diff --git a/drivers/net/ethernet/freescale/fman/fman.h b/drivers/net/ethernet/freescale/fman/fman.h
-index bfa02e0..935c317 100644
---- a/drivers/net/ethernet/freescale/fman/fman.h
-+++ b/drivers/net/ethernet/freescale/fman/fman.h
-@@ -41,6 +41,7 @@
- /* Frame queue Context Override */
- #define FM_FD_CMD_FCO                   0x80000000
- #define FM_FD_CMD_RPD                   0x40000000  /* Read Prepended Data */
-+#define FM_FD_CMD_UPD			0x20000000  /* Update Prepended Data */
- #define FM_FD_CMD_DTC                   0x10000000  /* Do L4 Checksum */
- 
- /* TX-Port: Unsupported Format */
--- 
-1.7.1
+	https://developers.redhat.com/blog/2018/05/24/detecting-string-truncation-with-gcc-8/
+
+> You *are* returning the fw_info->firmware_tag array newly filled
+> with a non-null-terminated string in one of the two cases that
+> get warnings in "fw-management.c".
+
+No, there's no warning for that one (line 250), and there fw_info is
+used as the source, not the destination, so no unterminated string is
+returned there either.
+
+> But the other one is only
+> updating a buffer in a local/automatic variable.
+
+All three cases, except the one that is explicitly terminated.
+
+> Weird.  I wish there were a non-clumsy way of marking false positives
+> like this as A-OK.
+
+The gcc docs mentions an attribute for that but it seems a bit overkill
+here.
+
+Thanks,
+Johan
