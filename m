@@ -1,105 +1,326 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Ql9pIn22GVtGdwAAmS7hNA
-	; Thu, 07 Jun 2018 22:49:33 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id NRZCOPfGGVuhagAAmS7hNA
+	; Thu, 07 Jun 2018 23:59:54 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 77A526074D; Thu,  7 Jun 2018 22:49:33 +0000 (UTC)
+	id 83D4F6074D; Thu,  7 Jun 2018 23:59:54 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 14073601C3;
-	Thu,  7 Jun 2018 22:49:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 14073601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 7C0AE60271;
+	Thu,  7 Jun 2018 23:59:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7C0AE60271
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752373AbeFGWta (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 18:49:30 -0400
-Received: from mga06.intel.com ([134.134.136.31]:22415 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751641AbeFGWt3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 18:49:29 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 15:49:28 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,488,1520924400";
-   d="scan'208";a="62751190"
-Received: from ray.jf.intel.com (HELO [10.7.201.24]) ([10.7.201.24])
-  by orsmga001.jf.intel.com with ESMTP; 07 Jun 2018 15:49:28 -0700
-Subject: Re: [PATCH v4 3/4] mm/sparse: Add a new parameter 'data_unit_size'
- for alloc_usemap_and_memmap
-To: Baoquan He <bhe@redhat.com>, linux-kernel@vger.kernel.org,
-        akpm@linux-foundation.org, pagupta@redhat.com
-References: <20180521101555.25610-1-bhe@redhat.com>
- <20180521101555.25610-4-bhe@redhat.com>
-Cc: linux-mm@kvack.org, kirill.shutemov@linux.intel.com
-From: Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <8ff7638c-d3ee-a40c-e5cf-deded8d19e93@intel.com>
-Date: Thu, 7 Jun 2018 15:48:07 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180521101555.25610-4-bhe@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1752346AbeFGX7v (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 19:59:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50590 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752140AbeFGX7t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 19:59:49 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 05CCB89B;
+        Thu,  7 Jun 2018 23:59:47 +0000 (UTC)
+Date: Thu, 07 Jun 2018 16:59:47 -0700
+From: akpm@linux-foundation.org
+To: broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
+        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        mm-commits@vger.kernel.org
+Subject: mmotm 2018-06-07-16-59 uploaded
+Message-ID: <20180607235947.xWQtg%akpm@linux-foundation.org>
+User-Agent: s-nail v14.9.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/21/2018 03:15 AM, Baoquan He wrote:
-> It's used to pass the size of map data unit into alloc_usemap_and_memmap,
-> and is preparation for next patch.
+The mm-of-the-moment snapshot 2018-06-07-16-59 has been uploaded to
 
-This is the "what", but not the "why".  Could you add another sentence
-or two to explain why we need this?
+   http://www.ozlabs.org/~akpm/mmotm/
+
+mmotm-readme.txt says
+
+README for mm-of-the-moment:
+
+http://www.ozlabs.org/~akpm/mmotm/
+
+This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+more than once a week.
+
+You will need quilt to apply these patches to the latest Linus release (4.x
+or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+http://ozlabs.org/~akpm/mmotm/series
+
+The file broken-out.tar.gz contains two datestamp files: .DATE and
+.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+followed by the base kernel version against which this patch series is to
+be applied.
+
+This tree is partially included in linux-next.  To see which patches are
+included in linux-next, consult the `series' file.  Only the patches
+within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+linux-next.
+
+A git tree which contains the memory management portion of this tree is
+maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+by Michal Hocko.  It contains the patches which are between the
+"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
+file, http://www.ozlabs.org/~akpm/mmotm/series.
+
+
+A full copy of the full kernel tree with the linux-next and mmotm patches
+already applied is available through git within an hour of the mmotm
+release.  Individual mmotm releases are tagged.  The master branch always
+points to the latest release, so it's constantly rebasing.
+
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
+
+To develop on top of mmotm git:
+
+  $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+  $ git remote update mmotm
+  $ git checkout -b topic mmotm/master
+  <make changes, commit>
+  $ git send-email mmotm/master.. [...]
+
+To rebase a branch with older patches to a new mmotm release:
+
+  $ git remote update mmotm
+  $ git rebase --onto mmotm/master <topic base> topic
+
+
+
+
+The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+contains daily snapshots of the -mm tree.  It is updated more frequently
+than mmotm, and is untested.
+
+A git copy of this tree is available at
+
+	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
+
+and use of this tree is similar to
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
+
+
+This mmotm tree contains the following patches against 4.17:
+(patches marked "*" will be included in linux-next)
+
+  origin.patch
+  i-need-old-gcc.patch
+* fs-dax-adding-new-return-type-vm_fault_t.patch
+* scripts-use-spdx-tag-in-get_maintainer-and-checkpatch.patch
+* ocfs2-clean-up-redundant-function-declarations.patch
+* ocfs2-ocfs2_inode_lock_tracker-does-not-distinguish-lock-level.patch
+* ocfs2-eliminate-a-misreported-warning.patch
+* ocfs2-correct-the-comments-position-of-the-structure-ocfs2_dir_block_trailer.patch
+* ocfs2-drop-a-vla-in-ocfs2_orphan_del.patch
+* fs-ocfs2-adding-new-return-type-vm_fault_t.patch
+* net-9p-detecting-invalid-options-as-much-as-possible.patch
+* fs-9p-detecting-invalid-options-as-much-as-possible.patch
+* xen-9pfs-dont-inclide-rwlockh-directly.patch
+* slab-__gfp_zero-is-incompatible-with-a-constructor.patch
+* mm-slubc-add-__printf-verification-to-slab_err.patch
+* mm-slub-remove-impertinent-comment.patch
+* slab-clean-up-the-code-comment-in-slab-kmem_cache-struct.patch
+* mm-introduce-arg_lock-to-protect-arg_startend-and-env_startend-in-mm_struct.patch
+* mm-memcontrol-move-swap-charge-handling-into-get_swap_page.patch
+* mm-memcontrol-implement-memoryswapevents.patch
+* zram-correct-flag-name-of-zram_access.patch
+* zram-mark-incompressible-page-as-zram_huge.patch
+* zram-record-accessed-second.patch
+* zram-introduce-zram-memory-tracking.patch
+* mm-shmem-add-__rcu-annotations-and-properly-deref-radix-entry.patch
+* mm-shmem-update-file-sealing-comments-and-file-checking.patch
+* mm-restructure-memfd-code.patch
+* mm-page_alloc-remove-realsize-in-free_area_init_core.patch
+* mm-introduce-arch_has_pte_special.patch
+* mm-remove-odd-have_pte_special.patch
+* mm-memblock-introduce-phys_addr_max.patch
+* mm-rename-page_counters-count-limit-into-usage-max.patch
+* mm-memorylow-hierarchical-behavior.patch
+* mm-treat-memorylow-value-inclusive.patch
+* mm-docs-describe-memorylow-refinements.patch
+* mm-gup-prevent-pmd-checking-race-in-follow_pmd_mask.patch
+* mm-sparse-check-__highest_present_section_nr-only-for-a-present-section.patch
+* mm-sparse-pass-the-__highest_present_section_nr-1-to-alloc_func.patch
+* mm-vmalloc-clean-up-vunmap-to-avoid-pgtable-ops-twice.patch
+* mm-vmalloc-avoid-racy-handling-of-debugobjects-in-vunmap.patch
+* mm-vmalloc-pass-proper-vm_start-into-debugobjects.patch
+* mm-shmem-make-statst_blksize-return-huge-page-size-if-thp-is-on.patch
+* lockdep-fix-fs_reclaim-annotation.patch
+* mm-ksm-remove-unused-page_referenced_ksm-declaration.patch
+* mm-ksm-move-page_stable_node-from-ksmh-to-ksmc.patch
+* tmpfs-allow-decoding-a-file-handle-of-an-unlinked-file.patch
+* memcg-writeback-use-memcg-cgwb_list-directly.patch
+* memcg-mark-memcg1_events-static-const.patch
+* mm-memcontrol-drain-stocks-on-resize-limit.patch
+* mm-memcontrol-drain-memcg-stock-on-force_empty.patch
+* mm-memblock-print-memblock_remove.patch
+* mm-pagemap-hide-swap-entry-for-unprivileged-users.patch
+* mm-move-is_pageblock_removable_nolock-to-mm-memory_hotplugc.patch
+* mm-introduce-memorymin.patch
+* mm-vmpressure-use-kstrndup-instead-of-kmallocstrncpy.patch
+* mm-vmpressure-convert-to-use-match_string-helper.patch
+* mm-page_allocc-remove-useless-parameter-of-finalise_ac.patch
+* mm-adding-new-return-type-vm_fault_t.patch
+* mm-change-return-type-to-vm_fault_t.patch
+* mm-hugetlbfs-pass-fault-address-to-no-page-handler.patch
+* mm-save-two-stranding-bit-in-gfp_mask.patch
+* s390-use-_refcount-for-pgtables.patch
+* mm-split-page_type-out-from-_mapcount.patch
+* mm-mark-pages-in-use-for-page-tables.patch
+* mm-switch-s_mem-and-slab_cache-in-struct-page.patch
+* mm-move-private-union-within-struct-page.patch
+* mm-move-_refcount-out-of-struct-page-union.patch
+* mm-combine-first-three-unions-in-struct-page.patch
+* mm-use-page-deferred_list.patch
+* mm-move-lru-union-within-struct-page.patch
+* mm-combine-lru-and-main-union-in-struct-page.patch
+* mm-improve-struct-page-documentation.patch
+* mm-add-pt_mm-to-struct-page.patch
+* mm-add-hmm_data-to-struct-page.patch
+* slabslub-remove-rcu_head-size-checks.patch
+* slub-remove-kmem_cache-reserved.patch
+* slub-remove-reserved-file-from-sysfs.patch
+* mm-shmem-adding-new-return-type-vm_fault_t.patch
+* mm-memcg-allow-lowering-memoryswapmax-below-the-current-usage.patch
+* userfaultfd-prevent-non-cooperative-events-vs-mcopy_atomic-races.patch
+* mm-page_alloc-do-not-break-__gfp_thisnode-by-zonelist-reset.patch
+* mm-shmem-zero-out-unused-vma-fields-in-shmem_pseudo_vma_init.patch
+* include-linux-gfph-fix-the-annotation-of-gfp_zone_table.patch
+* mm-kvmalloc-does-not-fallback-to-vmalloc-for-incompatible-gfp-flags.patch
+* mem_cgroup-make-sure-moving_account-move_lock_task-and-stat_cpu-in-the-same-cacheline.patch
+* mm-clean-up-page_is_poisoned-in-linux-mmh.patch
+* proc-more-unsigned-int-in-proc-cmdline.patch
+* proc-somewhat-simpler-code-for-proc-cmdline.patch
+* proc-simpler-iterations-for-proc-cmdline.patch
+* proc-deduplicate-proc-cmdline-implementation.patch
+* proc-smaller-rcu-section-in-getattr.patch
+* proc-use-unsigned-int-in-proc_fill_cache.patch
+* proc-use-unsigned-int-for-sigqueue-length.patch
+* proc-use-unsigned-int-for-proc-stack.patch
+* proc-test-proc-fd-a-bit-pf_kthread-is-abi.patch
+* int-ll64h-define-u8163264-and-s8163264-based-on-uapi-header.patch
+* types-define-aligned_-types-based-on-uapi-header.patch
+* types-use-fixed-width-types-without-double-underscore-prefix.patch
+* locking-hung_task-show-all-hung-tasks-before-panic.patch
+* get_maintainer-improve-patch-recognition.patch
+* lib-micro-optimization-for-__bitmap_complement.patch
+* ida-remove-simple_ida_lock.patch
+* percpu_ida-use-_irqsave-instead-of-local_irq_save-spin_lock.patch
+* lib-mpi-headers-cleanup.patch
+* lib-ucs2_string-add-module_license.patch
+* checkpatch-improve-patch-recognition.patch
+* fs-binfmt_miscc-do-not-allow-offset-overflow.patch
+* autofs4-merge-auto_fsh-and-auto_fs4h.patch
+* autofs4-use-autofs-instead-of-autofs4-everywhere.patch
+* autofs-copy-autofs4-to-autofs.patch
+* autofs-update-fs-autofs4-kconfig.patch
+* autofs-update-fs-autofs4-makefile.patch
+* autofs-delete-fs-autofs4-source-files.patch
+* autofs-create-autofs-kconfig-and-makefile.patch
+* autofs-rename-autofs-documentation-files.patch
+* autofs-use-autofs-instead-of-autofs4-in-documentation.patch
+* autofs-update-maintainers-entry-for-autofs.patch
+* autofs-comment-on-selinux-changes-needed-for-module-autoload.patch
+* autofs-clean-up-includes.patch
+* autofs-small-cleanup-in-autofs_getpath.patch
+* memcg-remove-memcg_cgroup-id-from-idr-on-mem_cgroup_css_alloc-failure.patch
+* mm-fix-race-between-kmem_cache-destroy-create-and-deactivate.patch
+* mm-fix-race-between-kmem_cache-destroy-create-and-deactivate-v2.patch
+* mm-fix-race-between-kmem_cache-destroy-create-and-deactivate-v2-fix.patch
+* mm-fix-race-between-kmem_cache-destroy-create-and-deactivate-v3.patch
+* arm-arch-arm-include-asm-pageh-needs-personalityh.patch
+* prctl-add-pr_et_pdeathsig_proc.patch
+* ocfs2-get-rid-of-ocfs2_is_o2cb_active-function.patch
+* ocfs2-without-quota-support-try-to-avoid-calling-quota-recovery.patch
+* ocfs2-without-quota-support-try-to-avoid-calling-quota-recovery-checkpatch-fixes.patch
+* ocfs2-dont-use-iocb-when-eiocbqueued-returns.patch
+* ocfs2-fix-a-misuse-a-of-brelse-after-failing-ocfs2_check_dir_entry.patch
+* ocfs2-dont-put-and-assigning-null-to-bh-allocated-outside.patch
+* block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
+* dentry-fix-kmemcheck-splat-at-take_dentry_name_snapshot.patch
+* namei-allow-restricted-o_creat-of-fifos-and-regular-files.patch
+* namei-allow-restricted-o_creat-of-fifos-and-regular-files-fix.patch
+  mm.patch
+* mm-check-for-sigkill-inside-dup_mmap-loop.patch
+* mm-ksm-ignore-stable_flag-of-rmap_item-address-in-rmap_walk_ksm.patch
+* mm-devm_memremap_pages-mark-devm_memremap_pages-export_symbol_gpl.patch
+* mm-devm_memremap_pages-handle-errors-allocating-final-devres-action.patch
+* mm-hmm-use-devm-semantics-for-hmm_devmem_add-remove.patch
+* mm-hmm-replace-hmm_devmem_pages_create-with-devm_memremap_pages.patch
+* mm-hmm-mark-hmm_devmem_add-add_resource-export_symbol_gpl.patch
+* mm-sparse-add-a-static-variable-nr_present_sections.patch
+* mm-sparsemem-defer-the-ms-section_mem_map-clearing.patch
+* mm-sparse-add-a-new-parameter-data_unit_size-for-alloc_usemap_and_memmap.patch
+* mm-swap-fix-race-between-swapoff-and-some-swap-operations.patch
+* mm-swap-fix-race-between-swapoff-and-some-swap-operations-v6.patch
+* mm-fix-race-between-swapoff-and-mincore.patch
+* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock.patch
+* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock-fix.patch
+* mm-oom-refactor-the-oom_kill_process-function.patch
+* mm-implement-mem_cgroup_scan_tasks-for-the-root-memory-cgroup.patch
+* mm-oom-cgroup-aware-oom-killer.patch
+* mm-oom-cgroup-aware-oom-killer-fix.patch
+* mm-oom-cgroup-aware-oom-killer-fix-2.patch
+* mm-oom-introduce-memoryoom_group.patch
+* mm-oom-introduce-memoryoom_group-fix.patch
+* mm-oom-add-cgroup-v2-mount-option-for-cgroup-aware-oom-killer.patch
+* mm-oom-docs-describe-the-cgroup-aware-oom-killer.patch
+* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix.patch
+* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix-2.patch
+* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix-2-fix.patch
+* cgroup-list-groupoom-in-cgroup-features.patch
+* mm-add-strictlimit-knob-v2.patch
+* mm-dont-expose-page-to-fast-gup-before-its-ready.patch
+* mm-page_owner-align-with-pageblock_nr_pages.patch
+* mm-page_owner-align-with-pageblock_nr-pages.patch
+* proc-skip-branch-in-proc-lookup.patch
+* proc-skip-branch-in-proc-lookup-fix.patch
+* checkpatch-add-a-strict-test-for-structs-with-bool-member-definitions.patch
+* fat-use-fat_fs_error-instead-of-bug_on-in-__fat_get_block.patch
+* coredump-fix-spam-with-zero-vma-process.patch
+* exofs-avoid-vla-in-structures.patch
+* exofs-avoid-vla-in-structures-v2.patch
+* bfs-add-sanity-check-at-bfs_fill_super.patch
+* kernel-relay-change-return-type-to-vm_fault_t.patch
+* kcov-ensure-irq-code-sees-a-valid-area.patch
+* kcov-prefault-the-kcov_area.patch
+* kcov-prefault-the-kcov_area-fix.patch
+* kcov-prefault-the-kcov_area-fix-fix.patch
+* kcov-prefault-the-kcov_area-fix-fix-fix.patch
+* sched-core-kcov-avoid-kcov_area-during-task-switch.patch
+* arm-port-kcov-to-arm.patch
+* fault-injection-reorder-config-entries.patch
+* ipc-sem-mitigate-semnum-index-against-spectre-v1.patch
+* ipc-adding-new-return-type-vm_fault_t.patch
+  linux-next.patch
+  linux-next-rejects.patch
+  linux-next-git-rejects.patch
+* mm-use-octal-not-symbolic-permissions.patch
+* treewide-use-phys_addr_max-to-avoid-type-casting-ullong_max.patch
+* mm-fix-oom_kill-event-handling.patch
+* mm-fix-oom_kill-event-handling-fix.patch
+* hexagon-fix-printk-format-warning-in-setupc.patch
+* hexagon-drop-the-unused-variable-zero_page_mask.patch
+* mm-propagate-memory-effective-protection-on-setting-memorymin-low.patch
+* mm-dont-skip-memory-guarantee-calculations.patch
+* selftests-cgroup-add-test-for-memorylow-corner-cases.patch
+* lib-test_printfc-call-wait_for_random_bytes-before-plain-%p-tests.patch
+* resource-add-walk_system_ram_res_rev.patch
+* kexec_file-load-kernel-at-top-of-system-ram-if-required.patch
+* fix-read-buffer-overflow-in-delta-ipc.patch
+* sparc64-ng4-memset-32-bits-overflow.patch
+  make-sure-nobodys-leaking-resources.patch
+  releasing-resources-with-children.patch
+  mutex-subsystem-synchro-test-module.patch
+  kernel-forkc-export-kernel_thread-to-modules.patch
+  slab-leaks3-default-y.patch
+  workaround-for-a-pci-restoring-bug.patch
