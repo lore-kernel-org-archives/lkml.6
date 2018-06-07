@@ -1,223 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id QtuHMjUQGVsEFwAAmS7hNA
-	; Thu, 07 Jun 2018 11:00:15 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id J4R+NYFDGVtwCAAAmS7hNA
+	; Thu, 07 Jun 2018 14:38:57 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 5D0CD608CA; Thu,  7 Jun 2018 11:00:15 +0000 (UTC)
+	id CA7FE607E7; Thu,  7 Jun 2018 14:38:57 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id B8DEB60909;
-	Thu,  7 Jun 2018 11:00:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B8DEB60909
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 4314B601C3;
+	Thu,  7 Jun 2018 14:38:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4314B601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932733AbeFGLAL (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 07:00:11 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:31666 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932688AbeFGLAI (ORCPT
+        id S934272AbeFGOi4 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:38:56 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40486 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933655AbeFGOiy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 07:00:08 -0400
-X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
-   d="scan'208";a="12270515"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES128-SHA; 07 Jun 2018 04:00:07 -0700
-Received: from m19893.microchip.com (10.10.76.4) by
- CHN-SV-EXCH01.mchp-main.com (10.10.76.37) with Microsoft SMTP Server id
- 14.3.352.0; Thu, 7 Jun 2018 04:00:05 -0700
-From: Radu Pirea <radu.pirea@microchip.com>
-To: <broonie@kernel.org>, <nicolas.ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <lee.jones@linaro.org>,
-        <richard.genoud@gmail.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <gregkh@linuxfoundation.org>
-CC: <linux-spi@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>,
-        Radu Pirea <radu.pirea@microchip.com>
-Subject: [PATCH v6 6/6] tty/serial: atmel: change the driver to work under at91-usart mfd
-Date: Thu, 7 Jun 2018 14:00:20 +0300
-Message-ID: <20180607110020.20565-7-radu.pirea@microchip.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180607110020.20565-1-radu.pirea@microchip.com>
-References: <20180607110020.20565-1-radu.pirea@microchip.com>
+        Thu, 7 Jun 2018 10:38:54 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbg-0005a0-Cq; Thu, 07 Jun 2018 15:09:40 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb6-00031a-F4; Thu, 07 Jun 2018 15:09:04 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-Content-Type: text/plain
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        "Mikulas Patocka" <mpatocka@redhat.com>,
+        "Eric Biggers" <ebiggers@google.com>, "Willy Tarreau" <w@1wt.eu>,
+        "Alexander Viro" <viro@zeniv.linux.org.uk>,
+        "Joe Lawrence" <joe.lawrence@redhat.com>,
+        "Michael Kerrisk" <mtk.manpages@gmail.com>,
+        "Kees Cook" <keescook@chromium.org>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.251987497@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 212/410] pipe: actually allow root to exceed the pipe
+ buffer limits
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch modifies the place where resources and device tree properties
-are searched.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Radu Pirea <radu.pirea@microchip.com>
+------------------
+
+From: Eric Biggers <ebiggers@google.com>
+
+commit 85c2dd5473b2718b4b63e74bfeb1ca876868e11f upstream.
+
+pipe-user-pages-hard and pipe-user-pages-soft are only supposed to apply
+to unprivileged users, as documented in both Documentation/sysctl/fs.txt
+and the pipe(7) man page.
+
+However, the capabilities are actually only checked when increasing a
+pipe's size using F_SETPIPE_SZ, not when creating a new pipe.  Therefore,
+if pipe-user-pages-hard has been set, the root user can run into it and be
+unable to create pipes.  Similarly, if pipe-user-pages-soft has been set,
+the root user can run into it and have their pipes limited to 1 page each.
+
+Fix this by allowing the privileged override in both cases.
+
+Link: http://lkml.kernel.org/r/20180111052902.14409-4-ebiggers3@gmail.com
+Fixes: 759c01142a5d ("pipe: limit the per-user amount of pages allocated in pipes")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Acked-by: Kees Cook <keescook@chromium.org>
+Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: "Luis R . Rodriguez" <mcgrof@kernel.org>
+Cc: Michael Kerrisk <mtk.manpages@gmail.com>
+Cc: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Willy Tarreau <w@1wt.eu>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/tty/serial/Kconfig        |  1 +
- drivers/tty/serial/atmel_serial.c | 42 ++++++++++++++++++++-----------
- 2 files changed, 28 insertions(+), 15 deletions(-)
+ fs/pipe.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-index 3682fd3e960c..25e55332f8b1 100644
---- a/drivers/tty/serial/Kconfig
-+++ b/drivers/tty/serial/Kconfig
-@@ -119,6 +119,7 @@ config SERIAL_ATMEL
- 	depends on ARCH_AT91 || COMPILE_TEST
- 	select SERIAL_CORE
- 	select SERIAL_MCTRL_GPIO if GPIOLIB
-+	select MFD_AT91_USART
- 	help
- 	  This enables the driver for the on-chip UARTs of the Atmel
- 	  AT91 processors.
-diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
-index df46a9e88c34..5ef8a6a6fe17 100644
---- a/drivers/tty/serial/atmel_serial.c
-+++ b/drivers/tty/serial/atmel_serial.c
-@@ -193,8 +193,7 @@ static struct console atmel_console;
- 
- #if defined(CONFIG_OF)
- static const struct of_device_id atmel_serial_dt_ids[] = {
--	{ .compatible = "atmel,at91rm9200-usart" },
--	{ .compatible = "atmel,at91sam9260-usart" },
-+	{ .compatible = "atmel,at91rm9200-usart-serial" },
- 	{ /* sentinel */ }
- };
- #endif
-@@ -915,6 +914,7 @@ static void atmel_tx_dma(struct uart_port *port)
- static int atmel_prepare_tx_dma(struct uart_port *port)
- {
- 	struct atmel_uart_port *atmel_port = to_atmel_uart_port(port);
-+	struct device *mfd_dev = port->dev->parent;
- 	dma_cap_mask_t		mask;
- 	struct dma_slave_config config;
- 	int ret, nent;
-@@ -922,7 +922,7 @@ static int atmel_prepare_tx_dma(struct uart_port *port)
- 	dma_cap_zero(mask);
- 	dma_cap_set(DMA_SLAVE, mask);
- 
--	atmel_port->chan_tx = dma_request_slave_channel(port->dev, "tx");
-+	atmel_port->chan_tx = dma_request_slave_channel(mfd_dev, "tx");
- 	if (atmel_port->chan_tx == NULL)
- 		goto chan_err;
- 	dev_info(port->dev, "using %s for tx DMA transfers\n",
-@@ -1093,6 +1093,7 @@ static void atmel_rx_from_dma(struct uart_port *port)
- static int atmel_prepare_rx_dma(struct uart_port *port)
- {
- 	struct atmel_uart_port *atmel_port = to_atmel_uart_port(port);
-+	struct device *mfd_dev = port->dev->parent;
- 	struct dma_async_tx_descriptor *desc;
- 	dma_cap_mask_t		mask;
- 	struct dma_slave_config config;
-@@ -1104,7 +1105,7 @@ static int atmel_prepare_rx_dma(struct uart_port *port)
- 	dma_cap_zero(mask);
- 	dma_cap_set(DMA_CYCLIC, mask);
- 
--	atmel_port->chan_rx = dma_request_slave_channel(port->dev, "rx");
-+	atmel_port->chan_rx = dma_request_slave_channel(mfd_dev, "rx");
- 	if (atmel_port->chan_rx == NULL)
- 		goto chan_err;
- 	dev_info(port->dev, "using %s for rx DMA transfers\n",
-@@ -2222,8 +2223,8 @@ static const char *atmel_type(struct uart_port *port)
-  */
- static void atmel_release_port(struct uart_port *port)
- {
--	struct platform_device *pdev = to_platform_device(port->dev);
--	int size = pdev->resource[0].end - pdev->resource[0].start + 1;
-+	struct platform_device *mpdev = to_platform_device(port->dev->parent);
-+	int size = resource_size(mpdev->resource);
- 
- 	release_mem_region(port->mapbase, size);
- 
-@@ -2238,8 +2239,8 @@ static void atmel_release_port(struct uart_port *port)
-  */
- static int atmel_request_port(struct uart_port *port)
- {
--	struct platform_device *pdev = to_platform_device(port->dev);
--	int size = pdev->resource[0].end - pdev->resource[0].start + 1;
-+	struct platform_device *mpdev = to_platform_device(port->dev->parent);
-+	int size = resource_size(mpdev->resource);
- 
- 	if (!request_mem_region(port->mapbase, size, "atmel_serial"))
- 		return -EBUSY;
-@@ -2341,27 +2342,28 @@ static int atmel_init_port(struct atmel_uart_port *atmel_port,
- {
- 	int ret;
- 	struct uart_port *port = &atmel_port->uart;
-+	struct platform_device *mpdev = to_platform_device(pdev->dev.parent);
- 
- 	atmel_init_property(atmel_port, pdev);
- 	atmel_set_ops(port);
- 
--	uart_get_rs485_mode(&pdev->dev, &port->rs485);
-+	uart_get_rs485_mode(&mpdev->dev, &port->rs485);
- 
- 	port->iotype		= UPIO_MEM;
- 	port->flags		= UPF_BOOT_AUTOCONF | UPF_IOREMAP;
- 	port->ops		= &atmel_pops;
- 	port->fifosize		= 1;
- 	port->dev		= &pdev->dev;
--	port->mapbase	= pdev->resource[0].start;
--	port->irq	= pdev->resource[1].start;
-+	port->mapbase		= mpdev->resource[0].start;
-+	port->irq		= mpdev->resource[1].start;
- 	port->rs485_config	= atmel_config_rs485;
--	port->membase	= NULL;
-+	port->membase		= NULL;
- 
- 	memset(&atmel_port->rx_ring, 0, sizeof(atmel_port->rx_ring));
- 
- 	/* for console, the clock could already be configured */
- 	if (!atmel_port->clk) {
--		atmel_port->clk = clk_get(&pdev->dev, "usart");
-+		atmel_port->clk = clk_get(&mpdev->dev, "usart");
- 		if (IS_ERR(atmel_port->clk)) {
- 			ret = PTR_ERR(atmel_port->clk);
- 			atmel_port->clk = NULL;
-@@ -2694,13 +2696,22 @@ static void atmel_serial_probe_fifos(struct atmel_uart_port *atmel_port,
- static int atmel_serial_probe(struct platform_device *pdev)
- {
- 	struct atmel_uart_port *atmel_port;
--	struct device_node *np = pdev->dev.of_node;
-+	struct device_node *np = pdev->dev.parent->of_node;
- 	void *data;
- 	int ret = -ENODEV;
- 	bool rs485_enabled;
- 
- 	BUILD_BUG_ON(ATMEL_SERIAL_RINGSIZE & (ATMEL_SERIAL_RINGSIZE - 1));
- 
-+	/*
-+	 * In device tree is no node with "atmel,at91rm9200-usart-serial"
-+	 * as compatible string. This driver is probed by at91-usart mfd driver
-+	 * which is just a wrapper over the atmel_serial driver and
-+	 * spi-at91-usart driver. All attributes needed by this driver are
-+	 * found in of_node of parent.
-+	 */
-+	pdev->dev.of_node = np;
-+
- 	ret = of_alias_get_id(np, "serial");
- 	if (ret < 0)
- 		/* port id not found in platform data nor device-tree aliases:
-@@ -2835,6 +2846,7 @@ static int atmel_serial_remove(struct platform_device *pdev)
- 
- 	clk_put(atmel_port->clk);
- 	atmel_port->clk = NULL;
-+	pdev->dev.of_node = NULL;
- 
- 	return ret;
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -601,6 +601,11 @@ static bool too_many_pipe_buffers_hard(u
+ 	return pipe_user_pages_hard && user_bufs >= pipe_user_pages_hard;
  }
-@@ -2845,7 +2857,7 @@ static struct platform_driver atmel_serial_driver = {
- 	.suspend	= atmel_serial_suspend,
- 	.resume		= atmel_serial_resume,
- 	.driver		= {
--		.name			= "atmel_usart",
-+		.name			= "atmel_usart_serial",
- 		.of_match_table		= of_match_ptr(atmel_serial_dt_ids),
- 	},
- };
--- 
-2.17.1
+ 
++static bool is_unprivileged_user(void)
++{
++	return !capable(CAP_SYS_RESOURCE) && !capable(CAP_SYS_ADMIN);
++}
++
+ struct pipe_inode_info *alloc_pipe_info(void)
+ {
+ 	struct pipe_inode_info *pipe;
+@@ -617,12 +622,12 @@ struct pipe_inode_info *alloc_pipe_info(
+ 
+ 	user_bufs = account_pipe_buffers(user, 0, pipe_bufs);
+ 
+-	if (too_many_pipe_buffers_soft(user_bufs)) {
++	if (too_many_pipe_buffers_soft(user_bufs) && is_unprivileged_user()) {
+ 		user_bufs = account_pipe_buffers(user, pipe_bufs, 1);
+ 		pipe_bufs = 1;
+ 	}
+ 
+-	if (too_many_pipe_buffers_hard(user_bufs))
++	if (too_many_pipe_buffers_hard(user_bufs) && is_unprivileged_user())
+ 		goto out_revert_acct;
+ 
+ 	pipe->bufs = kcalloc(pipe_bufs, sizeof(struct pipe_buffer),
+@@ -1053,7 +1058,7 @@ static long pipe_set_size(struct pipe_in
+ 	if (nr_pages > pipe->buffers &&
+ 			(too_many_pipe_buffers_hard(user_bufs) ||
+ 			 too_many_pipe_buffers_soft(user_bufs)) &&
+-			!capable(CAP_SYS_RESOURCE) && !capable(CAP_SYS_ADMIN)) {
++			is_unprivileged_user()) {
+ 		ret = -EPERM;
+ 		goto out_revert_acct;
+ 	}
