@@ -1,470 +1,294 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id avQ5AnI/GVulWQAAmS7hNA
-	; Thu, 07 Jun 2018 14:21:39 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id UzGILWXNGFt+fAAAmS7hNA
+	; Thu, 07 Jun 2018 06:23:57 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 78243608BA; Thu,  7 Jun 2018 14:21:39 +0000 (UTC)
+	id 69D6D6089E; Thu,  7 Jun 2018 06:23:57 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 2EA97602FC;
-	Thu,  7 Jun 2018 14:21:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2EA97602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 6713E6063F;
+	Thu,  7 Jun 2018 06:23:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6713E6063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=ah.jp.nec.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933296AbeFGOTT (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:19:19 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39509 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933090AbeFGOJN (ORCPT
+        id S1752873AbeFGGXx convert rfc822-to-8bit (ORCPT
+        <rfc822;monsieuricon@codeaurora.org> + 25 others);
+        Thu, 7 Jun 2018 02:23:53 -0400
+Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:55119 "EHLO
+        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751372AbeFGGXw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:09:13 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbD-0005Zv-9f; Thu, 07 Jun 2018 15:09:11 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbA-000392-2A; Thu, 07 Jun 2018 15:09:08 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Thu, 7 Jun 2018 02:23:52 -0400
+Received: from mailgate02.nec.co.jp ([114.179.233.122])
+        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id w576NCxn022279
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 7 Jun 2018 15:23:12 +0900
+Received: from mailsv01.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id w576NCCQ011456;
+        Thu, 7 Jun 2018 15:23:12 +0900
+Received: from mail01b.kamome.nec.co.jp (mail01b.kamome.nec.co.jp [10.25.43.2])
+        by mailsv01.nec.co.jp (8.15.1/8.15.1) with ESMTP id w576NCFc005398;
+        Thu, 7 Jun 2018 15:23:12 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.149] [10.38.151.149]) by mail03.kamome.nec.co.jp with ESMTP id BT-MMP-1041300; Thu, 7 Jun 2018 15:22:20 +0900
+Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
+ BPXC21GP.gisp.nec.co.jp ([10.38.151.149]) with mapi id 14.03.0319.002; Thu, 7
+ Jun 2018 15:22:20 +0900
+From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To: Oscar Salvador <osalvador@techadventures.net>
+CC: Matthew Wilcox <willy@infradead.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>
+Subject: Re: kernel panic in reading /proc/kpageflags when enabling
+ RAM-simulated PMEM
+Thread-Topic: kernel panic in reading /proc/kpageflags when enabling
+ RAM-simulated PMEM
+Thread-Index: AQHT/GeymmpDVR1XWE69lshFJtmzcqRQRpEAgABpKgCAAWucAIAALt0AgAANvoCAAAOvAIAABOqAgAFfi4A=
+Date: Thu, 7 Jun 2018 06:22:19 +0000
+Message-ID: <20180607062218.GB22554@hori1.linux.bs1.fc.nec.co.jp>
+References: <20180605005402.GA22975@hori1.linux.bs1.fc.nec.co.jp>
+ <20180605011836.GA32444@bombadil.infradead.org>
+ <20180605073500.GA23766@hori1.linux.bs1.fc.nec.co.jp>
+ <20180606051624.GA16021@hori1.linux.bs1.fc.nec.co.jp>
+ <20180606080408.GA31794@techadventures.net>
+ <20180606085319.GA32052@techadventures.net>
+ <20180606090630.GA27065@hori1.linux.bs1.fc.nec.co.jp>
+ <20180606092405.GA6562@hori1.linux.bs1.fc.nec.co.jp>
+In-Reply-To: <20180606092405.GA6562@hori1.linux.bs1.fc.nec.co.jp>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.51.8.80]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <C1A409AA411F0B4895AFE9A0F0B3DE87@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
-        "James Chapman" <jchapman@katalix.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.400888144@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 292/410] l2tp: fix races with tunnel socket close
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+On Wed, Jun 06, 2018 at 09:24:05AM +0000, Horiguchi Naoya(堀口 直也) wrote:
+> On Wed, Jun 06, 2018 at 09:06:30AM +0000, Horiguchi Naoya(堀口 直也) wrote:
+> > On Wed, Jun 06, 2018 at 10:53:19AM +0200, Oscar Salvador wrote:
+> > > On Wed, Jun 06, 2018 at 10:04:08AM +0200, Oscar Salvador wrote:
+> > > > On Wed, Jun 06, 2018 at 05:16:24AM +0000, Naoya Horiguchi wrote:
+> > > > > On Tue, Jun 05, 2018 at 07:35:01AM +0000, Horiguchi Naoya(堀口 直也) wrote:
+> > > > > > On Mon, Jun 04, 2018 at 06:18:36PM -0700, Matthew Wilcox wrote:
+> > > > > > > On Tue, Jun 05, 2018 at 12:54:03AM +0000, Naoya Horiguchi wrote:
+> > > > > > > > Reproduction precedure is like this:
+> > > > > > > >  - enable RAM based PMEM (with a kernel boot parameter like memmap=1G!4G)
+> > > > > > > >  - read /proc/kpageflags (or call tools/vm/page-types with no arguments)
+> > > > > > > >  (- my kernel config is attached)
+> > > > > > > >
+> > > > > > > > I spent a few days on this, but didn't reach any solutions.
+> > > > > > > > So let me report this with some details below ...
+> > > > > > > >
+> > > > > > > > In the critial page request, stable_page_flags() is called with an argument
+> > > > > > > > page whose ->compound_head was somehow filled with '0xffffffffffffffff'.
+> > > > > > > > And compound_head() returns (struct page *)(head - 1), which explains the
+> > > > > > > > address 0xfffffffffffffffe in the above message.
+> > > > > > >
+> > > > > > > Hm.  compound_head shares with:
+> > > > > > >
+> > > > > > >                         struct list_head lru;
+> > > > > > >                                 struct list_head slab_list;     /* uses lru */
+> > > > > > >                                 struct {        /* Partial pages */
+> > > > > > >                                         struct page *next;
+> > > > > > >                         unsigned long _compound_pad_1;  /* compound_head */
+> > > > > > >                         unsigned long _pt_pad_1;        /* compound_head */
+> > > > > > >                         struct dev_pagemap *pgmap;
+> > > > > > >                 struct rcu_head rcu_head;
+> > > > > > >
+> > > > > > > None of them should be -1.
+> > > > > > >
+> > > > > > > > It seems that this kernel panic happens when reading kpageflags of pfn range
+> > > > > > > > [0xbffd7, 0xc0000), which coresponds to a 'reserved' range.
+> > > > > > > >
+> > > > > > > > [    0.000000] user-defined physical RAM map:
+> > > > > > > > [    0.000000] user: [mem 0x0000000000000000-0x000000000009fbff] usable
+> > > > > > > > [    0.000000] user: [mem 0x000000000009fc00-0x000000000009ffff] reserved
+> > > > > > > > [    0.000000] user: [mem 0x00000000000f0000-0x00000000000fffff] reserved
+> > > > > > > > [    0.000000] user: [mem 0x0000000000100000-0x00000000bffd6fff] usable
+> > > > > > > > [    0.000000] user: [mem 0x00000000bffd7000-0x00000000bfffffff] reserved
+> > > > > > > > [    0.000000] user: [mem 0x00000000feffc000-0x00000000feffffff] reserved
+> > > > > > > > [    0.000000] user: [mem 0x00000000fffc0000-0x00000000ffffffff] reserved
+> > > > > > > > [    0.000000] user: [mem 0x0000000100000000-0x000000013fffffff] persistent (type 12)
+> > > > > > > >
+> > > > > > > > So I guess 'memmap=' parameter might badly affect the memory initialization process.
+> > > > > > > >
+> > > > > > > > This problem doesn't reproduce on v4.17, so some pre-released patch introduces it.
+> > > > > > > > I hope this info helps you find the solution/workaround.
+> > > > > > >
+> > > > > > > Can you try bisecting this?  It could be one of my patches to reorder struct
+> > > > > > > page, or it could be one of Pavel's deferred page initialisation patches.
+> > > > > > > Or something else ;-)
+> > > > > >
+> > > > > > Thank you for the comment. I'm trying bisecting now, let you know the result later.
+> > > > > >
+> > > > > > And I found that my statement "not reproduce on v4.17" was wrong (I used
+> > > > > > different kvm guests, which made some different test condition and misguided me),
+> > > > > > this seems an older (at least < 4.15) bug.
+> > > > >
+> > > > > (Cc: Pavel)
+> > > > >
+> > > > > Bisection showed that the following commit introduced this issue:
+> > > > >
+> > > > >   commit f7f99100d8d95dbcf09e0216a143211e79418b9f
+> > > > >   Author: Pavel Tatashin <pasha.tatashin@oracle.com>
+> > > > >   Date:   Wed Nov 15 17:36:44 2017 -0800
+> > > > >
+> > > > >       mm: stop zeroing memory during allocation in vmemmap
+> > > > >
+> > > > > This patch postpones struct page zeroing to later stage of memory initialization.
+> > > > > My kernel config disabled CONFIG_DEFERRED_STRUCT_PAGE_INIT so two callsites of
+> > > > > __init_single_page() were never reached. So in such case, struct pages populated
+> > > > > by vmemmap_pte_populate() could be left uninitialized?
+> > > > > And I'm not sure yet how this issue becomes visible with memmap= setting.
+> > > >
+> > > > I think that this becomes visible because memmap=x!y creates a persistent memory region:
+> > > >
+> > > > parse_memmap_one
+> > > > {
+> > > > 	...
+> > > >         } else if (*p == '!') {
+> > > >                 start_at = memparse(p+1, &p);
+> > > >                 e820__range_add(start_at, mem_size, E820_TYPE_PRAM);
+> > > > 	...
+> > > > }
+> > > >
+> > > > and this region it is not added neither in memblock.memory nor in memblock.reserved.
+> > > > Ranges in memblock.memory get zeroed in memmap_init_zone(), while memblock.reserved get zeroed
+> > > > in free_low_memory_core_early():
+> > > >
+> > > > static unsigned long __init free_low_memory_core_early(void)
+> > > > {
+> > > > 	...
+> > > > 	for_each_reserved_mem_region(i, &start, &end)
+> > > > 		reserve_bootmem_region(start, end);
+> > > > 	...
+> > > > }
+> > > >
+> > > >
+> > > > Maybe I am mistaken, but I think that persistent memory regions should be marked as reserved.
+> > > > A comment in do_mark_busy() suggests this:
+> > > >
+> > > > static bool __init do_mark_busy(enum e820_type type, struct resource *res)
+> > > > {
+> > > >
+> > > > 	...
+> > > >         /*
+> > > >          * Treat persistent memory like device memory, i.e. reserve it
+> > > >          * for exclusive use of a driver
+> > > >          */
+> > > > 	...
+> > > > }
+> > > >
+> > > >
+> > > > I wonder if something like this could work and if so, if it is right (i haven't tested it yet):
+> > > >
+> > > > diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+> > > > index 71c11ad5643e..3c9686ef74e5 100644
+> > > > --- a/arch/x86/kernel/e820.c
+> > > > +++ b/arch/x86/kernel/e820.c
+> > > > @@ -1247,6 +1247,11 @@ void __init e820__memblock_setup(void)
+> > > >                 if (end != (resource_size_t)end)
+> > > >                         continue;
+> > > >
+> > > > +               if (entry->type == E820_TYPE_PRAM || entry->type == E820_TYPE_PMEM) {
+> > > > +                       memblock_reserve(entry->addr, entry->size);
+> > > > +                       continue;
+> > > > +               }
+> > > > +
+> > > >                 if (entry->type != E820_TYPE_RAM && entry->type != E820_TYPE_RESERVED_KERN)
+> > > >                         continue;
+> > >
+> > > It does not seem to work, so the reasoning might be incorrect.
+> > 
+> > Thank you for the comment.
+> > 
+> > One note is that the memory region with "broken struct page" is a typical
+> > reserved region, not a pmem region. Strangely reading offset 0xbffd7 of
+> > /proc/kpageflags is OK if pmem region does not exist, but NG if pmem region exists.
+> > Reading the offset like 0x100000 (on pmem region) does not cause the crash,
+> > so pmem region seems properly set up.
+> > 
+> > [    0.000000] user-defined physical RAM map:
+> > [    0.000000] user: [mem 0x0000000000000000-0x000000000009fbff] usable
+> > [    0.000000] user: [mem 0x000000000009fc00-0x000000000009ffff] reserved
+> > [    0.000000] user: [mem 0x00000000000f0000-0x00000000000fffff] reserved
+> > [    0.000000] user: [mem 0x0000000000100000-0x00000000bffd6fff] usable
+> > [    0.000000] user: [mem 0x00000000bffd7000-0x00000000bfffffff] reserved   ===> "broken struct page" region
+> > [    0.000000] user: [mem 0x00000000feffc000-0x00000000feffffff] reserved
+> > [    0.000000] user: [mem 0x00000000fffc0000-0x00000000ffffffff] reserved
+> > [    0.000000] user: [mem 0x0000000100000000-0x000000013fffffff] persistent (type 12) => pmem region
+> > [    0.000000] user: [mem 0x0000000140000000-0x000000023fffffff] usable
+> > 
+> 
+> I have another note:
+> 
+> > My kernel config disabled CONFIG_DEFERRED_STRUCT_PAGE_INIT so two callsites of
+> > __init_single_page() were never reached. So in such case, struct pages populated
+> > by vmemmap_pte_populate() could be left uninitialized?
+> 
+> I quickly checked whether enabling CONFIG_DEFERRED_STRUCT_PAGE_INIT affect
+> the issue. And found that the kernel panic happens even with this config enabled.
+> So I'm still confused...
 
-------------------
+Let me share some new facts:
 
-From: James Chapman <jchapman@katalix.com>
+I gave accidentally an inconvenient memmap layout like 'memmap=1G!4G' in
+2 NUMA node with 8 GB memory.
+While I didn't intended this, but 4GB is the address starting some memory
+block when no "memmap=" option is provided.
 
-commit d00fa9adc528c1b0e64d532556764852df8bd7b9 upstream.
+  (messages from free_area_init_nodes() for no "memmap=" case
+  [    0.000000] Early memory node ranges
+  [    0.000000]   node   0: [mem 0x0000000000001000-0x000000000009efff]
+  [    0.000000]   node   0: [mem 0x0000000000100000-0x00000000bffd6fff]
+  [    0.000000]   node   0: [mem 0x0000000100000000-0x000000013fffffff] // <---
+  [    0.000000]   node   1: [mem 0x0000000140000000-0x000000023fffffff]
 
-The tunnel socket tunnel->sock (struct sock) is accessed when
-preparing a new ppp session on a tunnel at pppol2tp_session_init. If
-the socket is closed by a thread while another is creating a new
-session, the threads race. In pppol2tp_connect, the tunnel object may
-be created if the pppol2tp socket is associated with the special
-session_id 0 and the tunnel socket is looked up using the provided
-fd. When handling this, pppol2tp_connect cannot sock_hold the tunnel
-socket to prevent it being destroyed during pppol2tp_connect since
-this may itself may race with the socket being destroyed. Doing
-sockfd_lookup in pppol2tp_connect isn't sufficient to prevent
-tunnel->sock going away either because a given tunnel socket fd may be
-reused between calls to pppol2tp_connect. Instead, have
-l2tp_tunnel_create sock_hold the tunnel socket before it does
-sockfd_put. This ensures that the tunnel's socket is always extant
-while the tunnel object exists. Hold a ref on the socket until the
-tunnel is destroyed and ensure that all tunnel destroy paths go
-through a common function (l2tp_tunnel_delete) since this will do the
-final sock_put to release the tunnel socket.
+When "memmap=1G!4G" is given, the range [0x0000000100000000-0x000000013fffffff]
+disappears and kernel messages are like below:
 
-Since the tunnel's socket is now guaranteed to exist if the tunnel
-exists, we no longer need to use sockfd_lookup via l2tp_sock_to_tunnel
-to derive the tunnel from the socket since this is always
-sk_user_data.
+  (messages from free_area_init_nodes() for "memmap=1G!4G" case
+  [    0.000000] Early memory node ranges
+  [    0.000000]   node   0: [mem 0x0000000000001000-0x000000000009efff]
+  [    0.000000]   node   0: [mem 0x0000000000100000-0x00000000bffd6fff]
+  [    0.000000]   node   1: [mem 0x0000000140000000-0x000000023fffffff]
 
-Also, sessions no longer sock_hold the tunnel socket since sessions
-already hold a tunnel ref and the tunnel sock will not be freed until
-the tunnel is freed. Removing these sock_holds in
-l2tp_session_register avoids a possible sock leak in the
-pppol2tp_connect error path if l2tp_session_register succeeds but
-attaching a ppp channel fails. The pppol2tp_connect error path could
-have been fixed instead and have the sock ref dropped when the session
-is freed, but doing a sock_put of the tunnel socket when the session
-is freed would require a new session_free callback. It is simpler to
-just remove the sock_hold of the tunnel socket in
-l2tp_session_register, now that the tunnel socket lifetime is
-guaranteed.
+This makes kernel think that the end pfn of node 0 is 0 0xbffd7
+instead of 0x140000, which affects the memory initialization process.
+memmap_init_zone() calls __init_single_page() for each page within a zone,
+so if zone->spanned_pages are underestimated, some pages are left uninitialized.
 
-Finally, some init code in l2tp_tunnel_create is reordered to ensure
-that the new tunnel object's refcount is set and the tunnel socket ref
-is taken before the tunnel socket destructor callbacks are set.
+If I provide 'memmap=1G!7G', the kernel panic does not reproduce and
+kernel messages are like below.
+  
+  (messages from free_area_init_nodes() for "memmap=1G!7G" case
+  [    0.000000] Early memory node ranges
+  [    0.000000]   node   0: [mem 0x0000000000001000-0x000000000009efff]
+  [    0.000000]   node   0: [mem 0x0000000000100000-0x00000000bffd6fff]
+  [    0.000000]   node   0: [mem 0x0000000100000000-0x000000013fffffff]
+  [    0.000000]   node   1: [mem 0x0000000140000000-0x00000001bfffffff]
+  [    0.000000]   node   1: [mem 0x0000000200000000-0x000000023fffffff]
 
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-Modules linked in:
-CPU: 0 PID: 4360 Comm: syzbot_19c09769 Not tainted 4.16.0-rc2+ #34
-Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-RIP: 0010:pppol2tp_session_init+0x1d6/0x500
-RSP: 0018:ffff88001377fb40 EFLAGS: 00010212
-RAX: dffffc0000000000 RBX: ffff88001636a940 RCX: ffffffff84836c1d
-RDX: 0000000000000045 RSI: 0000000055976744 RDI: 0000000000000228
-RBP: ffff88001377fb60 R08: ffffffff84836bc8 R09: 0000000000000002
-R10: ffff88001377fab8 R11: 0000000000000001 R12: 0000000000000000
-R13: ffff88001636aac8 R14: ffff8800160f81c0 R15: 1ffff100026eff76
-FS:  00007ffb3ea66700(0000) GS:ffff88001a400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020e77000 CR3: 0000000016261000 CR4: 00000000000006f0
-Call Trace:
- pppol2tp_connect+0xd18/0x13c0
- ? pppol2tp_session_create+0x170/0x170
- ? __might_fault+0x115/0x1d0
- ? lock_downgrade+0x860/0x860
- ? __might_fault+0xe5/0x1d0
- ? security_socket_connect+0x8e/0xc0
- SYSC_connect+0x1b6/0x310
- ? SYSC_bind+0x280/0x280
- ? __do_page_fault+0x5d1/0xca0
- ? up_read+0x1f/0x40
- ? __do_page_fault+0x3c8/0xca0
- SyS_connect+0x29/0x30
- ? SyS_accept+0x40/0x40
- do_syscall_64+0x1e0/0x730
- ? trace_hardirqs_off_thunk+0x1a/0x1c
- entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x7ffb3e376259
-RSP: 002b:00007ffeda4f6508 EFLAGS: 00000202 ORIG_RAX: 000000000000002a
-RAX: ffffffffffffffda RBX: 0000000020e77012 RCX: 00007ffb3e376259
-RDX: 000000000000002e RSI: 0000000020e77000 RDI: 0000000000000004
-RBP: 00007ffeda4f6540 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000400b60
-R13: 00007ffeda4f6660 R14: 0000000000000000 R15: 0000000000000000
-Code: 80 3d b0 ff 06 02 00 0f 84 07 02 00 00 e8 13 d6 db fc 49 8d bc 24 28 02 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 f
-a 48 c1 ea 03 <80> 3c 02 00 0f 85 ed 02 00 00 4d 8b a4 24 28 02 00 00 e8 13 16
 
-Fixes: 80d84ef3ff1dd ("l2tp: prevent l2tp_tunnel_delete racing with userspace close")
-Signed-off-by: James Chapman <jchapman@katalix.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[bwh; Backported to 3.16: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- net/l2tp/l2tp_core.c | 117 +++++++++++++------------------------------
- net/l2tp/l2tp_core.h |  23 +--------
- net/l2tp/l2tp_ip.c   |  10 ++--
- net/l2tp/l2tp_ip6.c  |   8 ++-
- 4 files changed, 42 insertions(+), 116 deletions(-)
+I think that in order to fix this, we need some conditions and/or prechecks
+for memblock layout, does it make sense? Or any other better approaches?
 
---- a/net/l2tp/l2tp_core.c
-+++ b/net/l2tp/l2tp_core.c
-@@ -135,51 +135,6 @@ l2tp_session_id_hash_2(struct l2tp_net *
- 
- }
- 
--/* Lookup the tunnel socket, possibly involving the fs code if the socket is
-- * owned by userspace.  A struct sock returned from this function must be
-- * released using l2tp_tunnel_sock_put once you're done with it.
-- */
--static struct sock *l2tp_tunnel_sock_lookup(struct l2tp_tunnel *tunnel)
--{
--	int err = 0;
--	struct socket *sock = NULL;
--	struct sock *sk = NULL;
--
--	if (!tunnel)
--		goto out;
--
--	if (tunnel->fd >= 0) {
--		/* Socket is owned by userspace, who might be in the process
--		 * of closing it.  Look the socket up using the fd to ensure
--		 * consistency.
--		 */
--		sock = sockfd_lookup(tunnel->fd, &err);
--		if (sock)
--			sk = sock->sk;
--	} else {
--		/* Socket is owned by kernelspace */
--		sk = tunnel->sock;
--		sock_hold(sk);
--	}
--
--out:
--	return sk;
--}
--
--/* Drop a reference to a tunnel socket obtained via. l2tp_tunnel_sock_put */
--static void l2tp_tunnel_sock_put(struct sock *sk)
--{
--	struct l2tp_tunnel *tunnel = l2tp_sock_to_tunnel(sk);
--	if (tunnel) {
--		if (tunnel->fd >= 0) {
--			/* Socket is owned by userspace */
--			sockfd_put(sk->sk_socket);
--		}
--		sock_put(sk);
--	}
--	sock_put(sk);
--}
--
- /* Lookup a session by id in the global session list
-  */
- static struct l2tp_session *l2tp_session_find_2(struct net *net, u32 session_id)
-@@ -241,6 +196,13 @@ struct l2tp_session *l2tp_session_find(s
- }
- EXPORT_SYMBOL_GPL(l2tp_session_find);
- 
-+void l2tp_tunnel_free(struct l2tp_tunnel *tunnel)
-+{
-+	sock_put(tunnel->sock);
-+	/* the tunnel is freed in the socket destructor */
-+}
-+EXPORT_SYMBOL(l2tp_tunnel_free);
-+
- /* Lookup a tunnel. A new reference is held on the returned tunnel. */
- struct l2tp_tunnel *l2tp_tunnel_get(const struct net *net, u32 tunnel_id)
- {
-@@ -405,13 +367,11 @@ int l2tp_session_register(struct l2tp_se
- 			}
- 
- 		l2tp_tunnel_inc_refcount(tunnel);
--		sock_hold(tunnel->sock);
- 		hlist_add_head_rcu(&session->global_hlist, g_head);
- 
- 		spin_unlock_bh(&pn->l2tp_session_hlist_lock);
- 	} else {
- 		l2tp_tunnel_inc_refcount(tunnel);
--		sock_hold(tunnel->sock);
- 	}
- 
- 	hlist_add_head(&session->hlist, head);
-@@ -1051,7 +1011,7 @@ int l2tp_udp_encap_recv(struct sock *sk,
- {
- 	struct l2tp_tunnel *tunnel;
- 
--	tunnel = l2tp_sock_to_tunnel(sk);
-+	tunnel = l2tp_tunnel(sk);
- 	if (tunnel == NULL)
- 		goto pass_up;
- 
-@@ -1059,13 +1019,10 @@ int l2tp_udp_encap_recv(struct sock *sk,
- 		 tunnel->name, skb->len);
- 
- 	if (l2tp_udp_recv_core(tunnel, skb, tunnel->recv_payload_hook))
--		goto pass_up_put;
-+		goto pass_up;
- 
--	sock_put(sk);
- 	return 0;
- 
--pass_up_put:
--	sock_put(sk);
- pass_up:
- 	return 1;
- }
-@@ -1299,7 +1256,6 @@ static void l2tp_tunnel_destruct(struct
- 
- 	l2tp_info(tunnel, L2TP_MSG_CONTROL, "%s: closing...\n", tunnel->name);
- 
--
- 	/* Disable udp encapsulation */
- 	switch (tunnel->encap) {
- 	case L2TP_ENCAPTYPE_UDP:
-@@ -1322,12 +1278,11 @@ static void l2tp_tunnel_destruct(struct
- 	list_del_rcu(&tunnel->list);
- 	spin_unlock_bh(&pn->l2tp_tunnel_list_lock);
- 
--	tunnel->sock = NULL;
--	l2tp_tunnel_dec_refcount(tunnel);
--
- 	/* Call the original destructor */
- 	if (sk->sk_destruct)
- 		(*sk->sk_destruct)(sk);
-+
-+	kfree_rcu(tunnel, rcu);
- end:
- 	return;
- }
-@@ -1391,30 +1346,22 @@ EXPORT_SYMBOL_GPL(l2tp_tunnel_closeall);
- /* Tunnel socket destroy hook for UDP encapsulation */
- static void l2tp_udp_encap_destroy(struct sock *sk)
- {
--	struct l2tp_tunnel *tunnel = l2tp_sock_to_tunnel(sk);
--	if (tunnel) {
--		l2tp_tunnel_closeall(tunnel);
--		sock_put(sk);
--	}
-+	struct l2tp_tunnel *tunnel = l2tp_tunnel(sk);
-+
-+	if (tunnel)
-+		l2tp_tunnel_delete(tunnel);
- }
- 
- /* Workqueue tunnel deletion function */
- static void l2tp_tunnel_del_work(struct work_struct *work)
- {
--	struct l2tp_tunnel *tunnel = NULL;
--	struct socket *sock = NULL;
--	struct sock *sk = NULL;
--
--	tunnel = container_of(work, struct l2tp_tunnel, del_work);
-+	struct l2tp_tunnel *tunnel = container_of(work, struct l2tp_tunnel,
-+						  del_work);
-+	struct sock *sk = tunnel->sock;
-+	struct socket *sock = sk->sk_socket;
- 
- 	l2tp_tunnel_closeall(tunnel);
- 
--	sk = l2tp_tunnel_sock_lookup(tunnel);
--	if (!sk)
--		goto out;
--
--	sock = sk->sk_socket;
--
- 	/* If the tunnel socket was created within the kernel, use
- 	 * the sk API to release it here.
- 	 */
-@@ -1424,8 +1371,10 @@ static void l2tp_tunnel_del_work(struct
- 		sk_release_kernel(sk);
- 	}
- 
--	l2tp_tunnel_sock_put(sk);
--out:
-+	/* drop initial ref */
-+	l2tp_tunnel_dec_refcount(tunnel);
-+
-+	/* drop workqueue ref */
- 	l2tp_tunnel_dec_refcount(tunnel);
- }
- 
-@@ -1717,13 +1666,22 @@ int l2tp_tunnel_create(struct net *net,
- 
- 	sk->sk_user_data = tunnel;
- 
-+	/* Bump the reference count. The tunnel context is deleted
-+	 * only when this drops to zero. A reference is also held on
-+	 * the tunnel socket to ensure that it is not released while
-+	 * the tunnel is extant. Must be done before sk_destruct is
-+	 * set.
-+	 */
-+	atomic_set(&tunnel->ref_count, 1);
-+	sock_hold(sk);
-+	tunnel->sock = sk;
-+	tunnel->fd = fd;
-+
- 	/* Hook on the tunnel socket destructor so that we can cleanup
- 	 * if the tunnel socket goes away.
- 	 */
- 	tunnel->old_sk_destruct = sk->sk_destruct;
- 	sk->sk_destruct = &l2tp_tunnel_destruct;
--	tunnel->sock = sk;
--	tunnel->fd = fd;
- 	lockdep_set_class_and_name(&sk->sk_lock.slock, &l2tp_socket_class, "l2tp_sock");
- 
- 	sk->sk_allocation = GFP_ATOMIC;
-@@ -1733,11 +1691,6 @@ int l2tp_tunnel_create(struct net *net,
- 
- 	/* Add tunnel to our list */
- 	INIT_LIST_HEAD(&tunnel->list);
--
--	/* Bump the reference count. The tunnel context is deleted
--	 * only when this drops to zero. Must be done before list insertion
--	 */
--	l2tp_tunnel_inc_refcount(tunnel);
- 	spin_lock_bh(&pn->l2tp_tunnel_list_lock);
- 	list_add_rcu(&tunnel->list, &pn->l2tp_tunnel_list);
- 	spin_unlock_bh(&pn->l2tp_tunnel_list_lock);
-@@ -1778,8 +1731,6 @@ void l2tp_session_free(struct l2tp_sessi
- 
- 	if (tunnel) {
- 		BUG_ON(tunnel->magic != L2TP_TUNNEL_MAGIC);
--		sock_put(tunnel->sock);
--		session->tunnel = NULL;
- 		l2tp_tunnel_dec_refcount(tunnel);
- 	}
- 
---- a/net/l2tp/l2tp_core.h
-+++ b/net/l2tp/l2tp_core.h
-@@ -229,27 +229,8 @@ static inline void *l2tp_session_priv(st
- 	return &session->priv[0];
- }
- 
--static inline struct l2tp_tunnel *l2tp_sock_to_tunnel(struct sock *sk)
--{
--	struct l2tp_tunnel *tunnel;
--
--	if (sk == NULL)
--		return NULL;
--
--	sock_hold(sk);
--	tunnel = (struct l2tp_tunnel *)(sk->sk_user_data);
--	if (tunnel == NULL) {
--		sock_put(sk);
--		goto out;
--	}
--
--	BUG_ON(tunnel->magic != L2TP_TUNNEL_MAGIC);
--
--out:
--	return tunnel;
--}
--
- struct l2tp_tunnel *l2tp_tunnel_get(const struct net *net, u32 tunnel_id);
-+void l2tp_tunnel_free(struct l2tp_tunnel *tunnel);
- 
- struct l2tp_session *l2tp_session_get(const struct net *net,
- 				      struct l2tp_tunnel *tunnel,
-@@ -303,7 +284,7 @@ static inline void l2tp_tunnel_inc_refco
- static inline void l2tp_tunnel_dec_refcount(struct l2tp_tunnel *tunnel)
- {
- 	if (atomic_dec_and_test(&tunnel->ref_count))
--		kfree_rcu(tunnel, rcu);
-+		l2tp_tunnel_free(tunnel);
- }
- 
- /* Session reference counts. Incremented when code obtains a reference
---- a/net/l2tp/l2tp_ip.c
-+++ b/net/l2tp/l2tp_ip.c
-@@ -234,17 +234,13 @@ static void l2tp_ip_close(struct sock *s
- static void l2tp_ip_destroy_sock(struct sock *sk)
- {
- 	struct sk_buff *skb;
--	struct l2tp_tunnel *tunnel = l2tp_sock_to_tunnel(sk);
-+	struct l2tp_tunnel *tunnel = sk->sk_user_data;
- 
- 	while ((skb = __skb_dequeue_tail(&sk->sk_write_queue)) != NULL)
- 		kfree_skb(skb);
- 
--	if (tunnel) {
--		l2tp_tunnel_closeall(tunnel);
--		sock_put(sk);
--	}
--
--	sk_refcnt_debug_dec(sk);
-+	if (tunnel)
-+		l2tp_tunnel_delete(tunnel);
- }
- 
- static int l2tp_ip_bind(struct sock *sk, struct sockaddr *uaddr, int addr_len)
---- a/net/l2tp/l2tp_ip6.c
-+++ b/net/l2tp/l2tp_ip6.c
-@@ -246,16 +246,14 @@ static void l2tp_ip6_close(struct sock *
- 
- static void l2tp_ip6_destroy_sock(struct sock *sk)
- {
--	struct l2tp_tunnel *tunnel = l2tp_sock_to_tunnel(sk);
-+	struct l2tp_tunnel *tunnel = sk->sk_user_data;
- 
- 	lock_sock(sk);
- 	ip6_flush_pending_frames(sk);
- 	release_sock(sk);
- 
--	if (tunnel) {
--		l2tp_tunnel_closeall(tunnel);
--		sock_put(sk);
--	}
-+	if (tunnel)
-+		l2tp_tunnel_delete(tunnel);
- 
- 	inet6_destroy_sock(sk);
- }
+Thanks,
+Naoya Horiguchi
