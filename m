@@ -1,87 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id IhCkNIY/GVu7WwAAmS7hNA
-	; Thu, 07 Jun 2018 14:22:18 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id NBJRLjxQGVvRBQAAmS7hNA
+	; Thu, 07 Jun 2018 15:34:59 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 58730608CE; Thu,  7 Jun 2018 14:22:18 +0000 (UTC)
+	id AE6106089E; Thu,  7 Jun 2018 15:34:59 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id B5E3D608CA;
-	Thu,  7 Jun 2018 14:22:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B5E3D608CA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 2E91C60590;
+	Thu,  7 Jun 2018 15:34:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2E91C60590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933641AbeFGOWP (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:22:15 -0400
-Received: from mga01.intel.com ([192.55.52.88]:16055 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933625AbeFGOWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:22:10 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 07:22:09 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
-   d="scan'208";a="235227181"
-Received: from um.fi.intel.com (HELO um) ([10.237.72.212])
-  by fmsmga005.fm.intel.com with ESMTP; 07 Jun 2018 07:22:04 -0700
-Received: from ash by um with local (Exim 4.91)
-        (envelope-from <alexander.shishkin@linux.intel.com>)
-        id 1fQvnd-0005Yf-Mp; Thu, 07 Jun 2018 17:22:01 +0300
-Date: Thu, 7 Jun 2018 17:22:01 +0300
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To: Luwei Kang <luwei.kang@intel.com>
-Cc: kvm@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, chao.p.peng@linux.intel.com,
-        thomas.lendacky@amd.com, bp@suse.de, Kan.liang@intel.com,
-        Janakarajan.Natarajan@amd.com, dwmw@amazon.co.uk,
-        linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com,
-        peterz@infradead.org, mathieu.poirier@linaro.org,
-        kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
-        pbonzini@redhat.com, rkrcmar@redhat.com, david@redhat.com,
-        bsd@redhat.com, yu.c.zhang@linux.intel.com, joro@8bytes.org
-Subject: Re: [PATCH v9 11/12] KVM: x86: Set intercept for Intel PT MSRs
- read/write
-Message-ID: <20180607142201.btdz57ufzlogf25r@um.fi.intel.com>
-References: <1526964735-16566-1-git-send-email-luwei.kang@intel.com>
- <1526964735-16566-12-git-send-email-luwei.kang@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        id S935124AbeFGPe5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:34:57 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40641 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933716AbeFGOml (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:42:41 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbP-0005hL-EW; Thu, 07 Jun 2018 15:09:23 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbD-0003Gd-EC; Thu, 07 Jun 2018 15:09:11 +0100
+Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
-In-Reply-To: <1526964735-16566-12-git-send-email-luwei.kang@intel.com>
-User-Agent: NeoMutt/20180323
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Takashi Iwai" <tiwai@suse.de>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.949954103@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 371/410] ALSA: hda/realtek - Always immediately
+ update mute LED with pin VREF
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 12:52:14PM +0800, Luwei Kang wrote:
-> From: Chao Peng <chao.p.peng@linux.intel.com>
-> 
-> Disable intercept Intel PT MSRs only when Intel PT is
-> enabled in guest. But MSR_IA32_RTIT_CTL will alway be
-> intercept.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-"I'd like to offer some suggestions as to how to make the commit message
-friendlier for reviewing.
+------------------
 
-Generally, for every patch, we want to explain the following: what we want,
-why we want it and how we want to go about getting it. We also would prefer
-to do it in english rather than in C, because for the latter we can just
-look at the code." [1]
+From: Takashi Iwai <tiwai@suse.de>
 
-I apologize for quoting myself or if I'm stating the obvious, but it looks
-appropriate here.
+commit e40bdb03d3cd7da66bd0bc1e40cbcfb49351265c upstream.
 
-[1] https://marc.info/?l=linux-kernel&m=152233031020263
+Some HP laptops have a mute mute LED controlled by a pin VREF.  The
+Realtek codec driver updates the VREF via vmaster hook by calling
+snd_hda_set_pin_ctl_cache().
 
-Regards,
---
-Alex
+This works fine as long as the driver is running in a normal mode.
+However, when the VREF change happens during the codec being in
+runtime PM suspend, the regmap access will skip and postpone the
+actual register change.  This ends up with the unchanged LED status
+until the next runtime PM resume even if you change the Master mute
+switch.  (Interestingly, the machine keeps the LED status even after
+the codec goes into D3 -- but it's another story.)
+
+For improving this usability, let the driver temporarily powering up /
+down only during the pin VREF change.  This can be achieved easily by
+wrapping the call with snd_hda_power_up_pm() / *_down_pm().
+
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=199073
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+[bwh: Backported to 3.16: Use snd_hda_power{down,up}() (without the _pm
+ suffix]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ sound/pci/hda/patch_realtek.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -3435,8 +3435,12 @@ static void alc269_fixup_mic_mute_hook(v
+ 	pinval = snd_hda_codec_get_pin_target(codec, spec->mute_led_nid);
+ 	pinval &= ~AC_PINCTL_VREFEN;
+ 	pinval |= enabled ? AC_PINCTL_VREF_HIZ : AC_PINCTL_VREF_80;
+-	if (spec->mute_led_nid)
++	if (spec->mute_led_nid) {
++		/* temporarily power up/down for setting VREF */
++		snd_hda_power_up(codec);
+ 		snd_hda_set_pin_ctl_cache(codec, spec->mute_led_nid, pinval);
++		snd_hda_power_down(codec);
++	}
+ }
+ 
+ /* Make sure the led works even in runtime suspend */
