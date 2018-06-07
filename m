@@ -1,128 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id xJrPLEuDHlteEwAAmS7hNA
-	; Mon, 11 Jun 2018 14:13:11 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id wkh8AyRHGVuLOwAAmS7hNA
+	; Thu, 07 Jun 2018 14:54:28 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id A50B1607BB; Mon, 11 Jun 2018 14:13:11 +0000 (UTC)
+	id F0223608BA; Thu,  7 Jun 2018 14:54:27 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id A732360351;
-	Mon, 11 Jun 2018 14:13:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A732360351
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=emlix.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 80AF4601C3;
+	Thu,  7 Jun 2018 14:54:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 80AF4601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933669AbeFKONJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 10:13:09 -0400
-Received: from mx1.emlix.com ([46.4.235.150]:56754 "EHLO mx1.emlix.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933646AbeFKONA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:13:00 -0400
-Received: from mailer.emlix.com (unknown [81.20.119.6])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mx1.emlix.com (Postfix) with ESMTPS id C37BF25F5B5;
-        Mon, 11 Jun 2018 16:12:58 +0200 (CEST)
-Received: by mailer.emlix.com
-        id 1fSNZ5-0005uG-7E; Mon, 11 Jun 2018 16:12:59 +0200
-Subject: Re: [PATCH] clk: imx6: fix video_27m parent for IMX6QDL_CLK_CKO1_SEL
-To: Fabio Estevam <festevam@gmail.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-clk <linux-clk@vger.kernel.org>
-References: <20180608101924.31195-1-pp@emlix.com>
- <CAOMZO5C8CA02V+oiag5tGpKBWN+UP28KwQ98jQ9PpQ2_aCq_bA@mail.gmail.com>
-From: Philipp Puschmann <pp@emlix.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pp@emlix.com; prefer-encrypt=mutual; keydata=
- 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
- nkFFRXn8
-Message-ID: <40261c5f-285f-66f3-41dc-7107c487a47e@emlix.com>
-Date: Mon, 11 Jun 2018 16:12:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S935375AbeFGOyY (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:54:24 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40989 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935200AbeFGOyU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:54:20 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbh-0005hJ-75; Thu, 07 Jun 2018 15:09:41 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb5-0002zO-Rj; Thu, 07 Jun 2018 15:09:03 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-In-Reply-To: <CAOMZO5C8CA02V+oiag5tGpKBWN+UP28KwQ98jQ9PpQ2_aCq_bA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
-Organization: emlix gmbh, Goettingen, Germany
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Vegard Nossum" <vegard.nossum@oracle.com>,
+        "Tetsuo Handa" <penguin-kernel@I-love.SAKURA.ne.jp>,
+        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
+        "" <socketpair@gmail.com>, "Al Viro" <viro@zeniv.linux.org.uk>,
+        "Willy Tarreau" <w@1wt.eu>, "Jens Axboe" <axboe@fb.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.766409795@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 199/410] pipe: relocate round_pipe_size() above
+ pipe_set_size()
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Hi Philipp,
-> 
-> On Fri, Jun 8, 2018 at 7:19 AM, Philipp Puschmann <pp@emlix.com> wrote:
->> q/dl datasheets list the 5th selection value for ck01_sel as
->> video_27M_clk_root.
->>
->> By replacing the dummy value we then can set IMX6QDL_CLK_VIDEO_27M
->> as parent for IMX6QDL_CLK_CKO1_SEL.
->>
->> Signed-off-by: Philipp Puschmann <pp@emlix.com>
-> 
-> You could still have added my Reviewed-by tag that I sent previously :-)
-> 
-> Here it goes:
-> 
-> Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
-> 
-> Also in the future, when posting a new version of a patch, please mark
-> it as such:
-> 
-> [PATCH v2] clk: imx6: fix video_27m parent for IMX6QDL_CLK_CKO1_SEL
-> 
-> and write below the --- line what are the changes in this new version.
-> 
-> Thanks
-> 
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Hi Fabio,
+------------------
 
-thank you for your hints, next time i will do it that way
+From: "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+
+commit f491bd71118beba608d39ac2d5f1530e1160cd2e upstream.
+
+Patch series "pipe: fix limit handling", v2.
+
+When changing a pipe's capacity with fcntl(F_SETPIPE_SZ), various limits
+defined by /proc/sys/fs/pipe-* files are checked to see if unprivileged
+users are exceeding limits on memory consumption.
+
+While documenting and testing the operation of these limits I noticed
+that, as currently implemented, these checks have a number of problems:
+
+(1) When increasing the pipe capacity, the checks against the limits
+    in /proc/sys/fs/pipe-user-pages-{soft,hard} are made against
+    existing consumption, and exclude the memory required for the
+    increased pipe capacity. The new increase in pipe capacity can then
+    push the total memory used by the user for pipes (possibly far) over
+    a limit. This can also trigger the problem described next.
+
+(2) The limit checks are performed even when the new pipe capacity
+    is less than the existing pipe capacity. This can lead to problems
+    if a user sets a large pipe capacity, and then the limits are
+    lowered, with the result that the user will no longer be able to
+    decrease the pipe capacity.
+
+(3) As currently implemented, accounting and checking against the
+    limits is done as follows:
+
+    (a) Test whether the user has exceeded the limit.
+    (b) Make new pipe buffer allocation.
+    (c) Account new allocation against the limits.
+
+    This is racey. Multiple processes may pass point (a) simultaneously,
+    and then allocate pipe buffers that are accounted for only in step
+    (c).  The race means that the user's pipe buffer allocation could be
+    pushed over the limit (by an arbitrary amount, depending on how
+    unlucky we were in the race). [Thanks to Vegard Nossum for spotting
+    this point, which I had missed.]
+
+This patch series addresses these three problems.
+
+This patch (of 8):
+
+This is a minor preparatory patch.  After subsequent patches,
+round_pipe_size() will be called from pipe_set_size(), so place
+round_pipe_size() above pipe_set_size().
+
+Link: http://lkml.kernel.org/r/91a91fdb-a959-ba7f-b551-b62477cc98a1@gmail.com
+Signed-off-by: Michael Kerrisk <mtk.manpages@gmail.com>
+Reviewed-by: Vegard Nossum <vegard.nossum@oracle.com>
+Cc: Willy Tarreau <w@1wt.eu>
+Cc: <socketpair@gmail.com>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Jens Axboe <axboe@fb.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ fs/pipe.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -994,6 +994,18 @@ const struct file_operations pipefifo_fo
+ };
+ 
+ /*
++ * Currently we rely on the pipe array holding a power-of-2 number
++ * of pages.
++ */
++static inline unsigned int round_pipe_size(unsigned int size)
++{
++	unsigned long nr_pages;
++
++	nr_pages = (size + PAGE_SIZE - 1) >> PAGE_SHIFT;
++	return roundup_pow_of_two(nr_pages) << PAGE_SHIFT;
++}
++
++/*
+  * Allocate a new array of pipe buffers and copy the info over. Returns the
+  * pipe size if successful, or return -ERROR on error.
+  */
+@@ -1044,18 +1056,6 @@ static long pipe_set_size(struct pipe_in
+ }
+ 
+ /*
+- * Currently we rely on the pipe array holding a power-of-2 number
+- * of pages.
+- */
+-static inline unsigned int round_pipe_size(unsigned int size)
+-{
+-	unsigned long nr_pages;
+-
+-	nr_pages = (size + PAGE_SIZE - 1) >> PAGE_SHIFT;
+-	return roundup_pow_of_two(nr_pages) << PAGE_SHIFT;
+-}
+-
+-/*
+  * This should work even if CONFIG_PROC_FS isn't set, as proc_dointvec_minmax
+  * will return an error.
+  */
