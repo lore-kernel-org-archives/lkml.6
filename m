@@ -1,137 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 8+idJ4hyG1u6aQAAmS7hNA
-	; Sat, 09 Jun 2018 06:24:08 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id XT4KG+zqGFsXZwAAmS7hNA
+	; Thu, 07 Jun 2018 08:21:00 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 80A61607E7; Sat,  9 Jun 2018 06:24:08 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="g8gPkPy1"
+	id 55E60607F7; Thu,  7 Jun 2018 08:21:00 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id EE11C606FA;
-	Sat,  9 Jun 2018 06:24:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EE11C606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	by smtp.codeaurora.org (Postfix) with ESMTP id C20FB601B4;
+	Thu,  7 Jun 2018 08:20:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C20FB601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753098AbeFIGYF (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 02:24:05 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:44394 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751528AbeFIGYC (ORCPT
+        id S932545AbeFGIU5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 04:20:57 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:55877 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932323AbeFGIUx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 02:24:02 -0400
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 667495C0070;
-        Sat,  9 Jun 2018 08:23:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1528525433;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=DLvQASc2QC6abz66duiku+98Or+vgwGP99s1Lcmi6Bw=;
-        b=g8gPkPy1H2hEx4Nh6TykhJ89fluuCJn1B9AzsIpSg150OdGg/qMtOGTuqmSfOPPNbcaBvo
-        1lrDEtYp7KiXJFXhfwFGe+049dqDjNiL8QvazTRr1gh18wEadL35ivR6evHgMB5NcXDnJY
-        ADX2EaxJfcCfie3MzRppxC7rc36lTGY=
+        Thu, 7 Jun 2018 04:20:53 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w578JXE82125917
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 7 Jun 2018 01:19:33 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w578JXXX2125914;
+        Thu, 7 Jun 2018 01:19:33 -0700
+Date: Thu, 7 Jun 2018 01:19:33 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From: tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-ceac7b79df7bd67ef9aaf464b0179a2686aff4ee@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, peterz@infradead.org,
+        adrian.hunter@intel.com, alexander.shishkin@linux.intel.com,
+        mingo@kernel.org, acme@redhat.com, tglx@linutronix.de,
+        dsahern@gmail.com, namhyung@kernel.org, jolsa@kernel.org,
+        hpa@zytor.com
+Reply-To: dsahern@gmail.com, tglx@linutronix.de, mingo@kernel.org,
+          acme@redhat.com, hpa@zytor.com, jolsa@kernel.org,
+          namhyung@kernel.org, adrian.hunter@intel.com,
+          peterz@infradead.org, linux-kernel@vger.kernel.org,
+          alexander.shishkin@linux.intel.com
+In-Reply-To: <20180605121416.31645-1-jolsa@kernel.org>
+References: <20180605121416.31645-1-jolsa@kernel.org>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf tools: Fix pmu events parsing rule
+Git-Commit-ID: ceac7b79df7bd67ef9aaf464b0179a2686aff4ee
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date: Sat, 09 Jun 2018 08:23:51 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Dmitry Osipenko <digetx@gmail.com>, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
-        dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
-        marcel@ziswiler.com, krzk@kernel.org, benjamin.lindqvist@endian.se,
-        jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        mirza.krak@gmail.com, linux-mtd@lists.infradead.org,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/6] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-In-Reply-To: <20180609075256.725354d6@bbrezillon>
-References: <20180531221637.6017-1-stefan@agner.ch>
- <20180531221637.6017-5-stefan@agner.ch>
- <cdca329f-0b8d-0604-4cfb-b95baf84c867@gmail.com>
- <d625dd8ca816543e03668b74921563c1@agner.ch>
- <20180609075256.725354d6@bbrezillon>
-Message-ID: <792ee71847f6f4752b8bcba65d22bf81@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-0.14 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[22];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
-         RCVD_TLS_ALL(0.00)[];
-         BAYES_HAM(-0.04)[58.36%];
-         ARC_NA(0.00)[]
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09.06.2018 07:52, Boris Brezillon wrote:
-> On Fri, 08 Jun 2018 23:51:01 +0200
-> Stefan Agner <stefan@agner.ch> wrote:
-> 
-> 
->> >
->> > void tegra_nand_controller_reset(struct tegra_nand_controller *ctrl)
->> > {
->> > 	int err;
->> >
->> > 	disable_irq(ctrl->irq);
->> >
->> > 	err = reset_control_reset(ctrl->rst);
->> > 	if (err) {
->> > 		dev_err(ctrl->dev, "Failed to reset HW: %d\n", err);
->> > 		msleep(HW_TIMEOUT);
->> > 	}
->> >
->> > 	writel_relaxed(NAND_CMD_STATUS, ctrl->regs + HWSTATUS_CMD);
->> > 	writel_relaxed(HWSTATUS_MASK, ctrl->regs + HWSTATUS_MASK);
->> > 	writel_relaxed(INT_MASK, ctrl->regs + ISR);
->>
->> If we do a controller reset, there is much more state than that which
->> needs to be restored. A lot of it is not readily available currently
->> (timing, ECC settings...)
-> 
-> This is actually a good test to detect what is not properly initialized
-> by the driver. Timings should be configured correctly through
-> ->setup_data_interface(). ECC engine should be disabled by default and
-> only enabled when ->{read,write}_page() is called.
-> 
+Commit-ID:  ceac7b79df7bd67ef9aaf464b0179a2686aff4ee
+Gitweb:     https://git.kernel.org/tip/ceac7b79df7bd67ef9aaf464b0179a2686aff4ee
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Tue, 5 Jun 2018 14:14:16 +0200
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Wed, 6 Jun 2018 12:52:05 -0300
 
-Is setup_data_interface guaranteed to be called after a failed
-->exec_op()/{read,write}_page()?
+perf tools: Fix pmu events parsing rule
 
->>
->> That seems a lot of work for a code path I do not intend to ever use :-)
->>
-> 
-> Not so sure it's a lot of work. If ECC and timing settings are the
-> only thing you need to initialize then it should work just fine.
-> Try with a controller reset and you'll know if you miss something ;-).
+Currently all the event parsing fails end up
+in the event_pmu rule, and display misleading
+help like:
 
-Currently the setting gets written directly to the registers. Only the
-enable flag is set in the HW ECC {read,write}_page() functions. So I
-will have to store the complete register in the chip structure and write
-them on every {read,write}_page()?
+  $ perf stat -e inst kill
+  event syntax error: 'inst'
+                       \___ Cannot find PMU `inst'. Missing kernel support?
+  ...
 
---
-Stefan
+The reason is that the event_pmu is too strong
+and match also single string. Changing it to
+force the '/' separators to be part of the rule,
+and getting the proper error now:
+
+  $ perf stat -e inst kill
+  event syntax error: 'inst'
+                       \___ parser error
+  Run 'perf list' for a list of valid events
+  ...
+
+Suggested-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180605121416.31645-1-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/parse-events.y | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
+index e37608a87dba..155d2570274f 100644
+--- a/tools/perf/util/parse-events.y
++++ b/tools/perf/util/parse-events.y
+@@ -73,6 +73,7 @@ static void inc_group_count(struct list_head *list,
+ %type <num> value_sym
+ %type <head> event_config
+ %type <head> opt_event_config
++%type <head> opt_pmu_config
+ %type <term> event_term
+ %type <head> event_pmu
+ %type <head> event_legacy_symbol
+@@ -224,7 +225,7 @@ event_def: event_pmu |
+ 	   event_bpf_file
+ 
+ event_pmu:
+-PE_NAME opt_event_config
++PE_NAME opt_pmu_config
+ {
+ 	struct list_head *list, *orig_terms, *terms;
+ 
+@@ -496,6 +497,17 @@ opt_event_config:
+ 	$$ = NULL;
+ }
+ 
++opt_pmu_config:
++'/' event_config '/'
++{
++	$$ = $2;
++}
++|
++'/' '/'
++{
++	$$ = NULL;
++}
++
+ start_terms: event_config
+ {
+ 	struct parse_events_state *parse_state = _parse_state;
