@@ -1,94 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Onx+MlJIGVtPRwAAmS7hNA
-	; Thu, 07 Jun 2018 15:00:04 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 0K+BACNeGVsgLwAAmS7hNA
+	; Thu, 07 Jun 2018 16:33:49 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 55593607E7; Thu,  7 Jun 2018 15:00:04 +0000 (UTC)
+	id 51A68607E7; Thu,  7 Jun 2018 16:33:49 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="oGQ5A675"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_MED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id C4DD8601C3;
-	Thu,  7 Jun 2018 15:00:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C4DD8601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id AD318601D2;
+	Thu,  7 Jun 2018 16:33:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AD318601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=netronome.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935760AbeFGPAC (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:00:02 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41307 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935208AbeFGO76 (ORCPT
+        id S1753932AbeFGQdr (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 12:33:47 -0400
+Received: from mail-pg0-f41.google.com ([74.125.83.41]:36959 "EHLO
+        mail-pg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753909AbeFGQdp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:59:58 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbd-0005Zw-HC; Thu, 07 Jun 2018 15:09:37 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb8-00034L-09; Thu, 07 Jun 2018 15:09:06 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Thu, 7 Jun 2018 12:33:45 -0400
+Received: by mail-pg0-f41.google.com with SMTP id r21-v6so4674542pgv.4
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 09:33:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=wWEPR9Sa9GTfTcdZvvpj0JHTiL37HlRwKc/VZW+efj0=;
+        b=oGQ5A675lUOoXJoWAl0kPBa/gzb58NU5zr8R7c6I3urWpo7IqU5+Uw4EH/IZcm5ZFz
+         7LyCj8hUK85yDBnf6Lk/hh9O9bxp4U/1OXTHz3hJA47rnZb2euMPeKjhySHhhdKOeupk
+         jdIbaN2wUi01OTT1pexm9MNGtIzqS+xbPYfWTTImtgmbPqB+NngG+6INvyxMlFlCBzKF
+         lYJtmLCbeGqjNmX9YwTDGEa++tkkiYdahpvj68M0cOUYaoS48u7jQdjJD+P5FnnGGslJ
+         3+vMxd8ekfZwsDoyH1tyq2tzpvY/Cf9ms0sg52zqQalqK8rEhPWYJslxHIPcQ1A83wrM
+         +fQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=wWEPR9Sa9GTfTcdZvvpj0JHTiL37HlRwKc/VZW+efj0=;
+        b=omxM89SVu1XeacX+e4ulXzGkHT0XUgaLr/VRBHlk9Q/zQbRxic2nFssk0ZNsZxv15I
+         vS7iKZ4mltLVrgRfAu8RLXOM2mwEVoxcfHuPhP3nn15zjU0vTtij6Fi47mvx6SJ4HuZH
+         oxd1EUVNSUs4QiIUtLrQCmOzMDvYS45VbVA9Gy6cMpJtPUmE3QVVQJMCjfSGvI+oeRn8
+         HAa2EWCbRihBBb9xiWcmtNJo8WuP8A7x85DaA5cu1uUchY9SQ6kAmudu/Me1/Hq+f/53
+         kpct6lrpGjw8GGDRgbJ7oeWKO/Pah1DiaBBM4mTjJbocla/FUbno0DxTynconrCmDJnO
+         gNSg==
+X-Gm-Message-State: APt69E1vUqIo9INlbBqidCgYLvCnLryYLxzSrT72UsVsPqWcgYhSSEqZ
+        yNxCTAG8DDwVxW4rSQ7HeKl9mA==
+X-Google-Smtp-Source: ADUXVKKYG38WuROhBCj1LL2w6NjyNLghLITZ1lWTX1EDoBnys+z6Pl3+MZnijJK15LYxt7hLFgSO2Q==
+X-Received: by 2002:a63:2ac4:: with SMTP id q187-v6mr2218997pgq.333.1528389224689;
+        Thu, 07 Jun 2018 09:33:44 -0700 (PDT)
+Received: from cakuba.netronome.com ([75.53.12.129])
+        by smtp.gmail.com with ESMTPSA id 131-v6sm97398685pfa.128.2018.06.07.09.33.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 07 Jun 2018 09:33:44 -0700 (PDT)
+Date: Thu, 7 Jun 2018 09:33:40 -0700
+From: Jakub Kicinski <jakub.kicinski@netronome.com>
+To: Kees Cook <keescook@chromium.org>
+Cc: Quentin Monnet <quentin.monnet@netronome.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Network Development <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: nfp: bpf: perf event output helpers support
+Message-ID: <20180607093340.1742a5d1@cakuba.netronome.com>
+In-Reply-To: <CAGXu5jJq774LZY1xUCKxG3Z4MkJ_JBJP7veB5gUCy4meb_PtSA@mail.gmail.com>
+References: <CAGXu5jJq774LZY1xUCKxG3Z4MkJ_JBJP7veB5gUCy4meb_PtSA@mail.gmail.com>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Eric Biggers" <ebiggers@google.com>,
-        "syzbot" <syzkaller@googlegroups.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.752807048@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 246/410] binder: check for binder_thread allocation
- failure in binder_poll()
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+On Wed, 6 Jun 2018 22:15:04 -0700, Kees Cook wrote:
+> > +       rcu_read_lock();
+> > +       if (!rhashtable_lookup_fast(&bpf->maps_neutral, &map,
+> > +                                   nfp_bpf_maps_neutral_params)) {
+> > +               rcu_read_unlock();
+> > +               pr_warn("perf event: dest map pointer %px not recognized, dropping event\n",
+> > +                       map);  
+> 
+> Please don't use %px on kernel pointers unless you absolutely have
+> to[1]. It seems like this value wouldn't be actionable here, so likely
+> it's best to just remove its use entirely.
 
-------------------
+We're using kernel pointer as an opaque handle when communicating with
+the device.  We need the actual value to correlate things.  Maybe I used
+the %px slightly out of spite there, because I forgot %p is now useless
+and wasted half an hour on debugging an endian issue :S
 
-From: Eric Biggers <ebiggers@google.com>
-
-commit f88982679f54f75daa5b8eff3da72508f1e7422f upstream.
-
-If the kzalloc() in binder_get_thread() fails, binder_poll()
-dereferences the resulting NULL pointer.
-
-Fix it by returning POLLERR if the memory allocation failed.
-
-This bug was found by syzkaller using fault injection.
-
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Fixes: 457b9a6f09f0 ("Staging: android: add binder driver")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.16:
- - Drop the binder global lock before returning
- - Adjust filename]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
---- a/drivers/staging/android/binder.c
-+++ b/drivers/staging/android/binder.c
-@@ -2572,6 +2572,10 @@ static unsigned int binder_poll(struct f
- 	binder_lock(__func__);
- 
- 	thread = binder_get_thread(proc);
-+	if (!thread) {
-+		binder_unlock(__func__);
-+		return POLLERR;
-+	}
- 
- 	wait_for_proc_work = thread->transaction_stack == NULL &&
- 		list_empty(&thread->todo) && thread->return_error == BR_OK;
+This message can only really trigger when root loads a specific BPF map
+onto the device and FW is buggy.  Can I fix it in -next?  I'm making
+changes to this part of the code anyway.
