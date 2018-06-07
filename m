@@ -1,191 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id IrJDDa9RGVsWEQAAmS7hNA
-	; Thu, 07 Jun 2018 15:40:44 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id JWOgJpvoGFvuUAAAmS7hNA
+	; Thu, 07 Jun 2018 08:11:07 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id ECE60608B8; Thu,  7 Jun 2018 15:40:43 +0000 (UTC)
+	id 88AD9608B8; Thu,  7 Jun 2018 08:11:07 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 5E4A760590;
-	Thu,  7 Jun 2018 15:40:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5E4A760590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id E88EB607E7;
+	Thu,  7 Jun 2018 08:11:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E88EB607E7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934637AbeFGOlm (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:41:42 -0400
-Received: from mga09.intel.com ([134.134.136.24]:36346 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932931AbeFGOle (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:41:34 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 07:41:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
-   d="scan'208";a="62632631"
-Received: from 2b52.sc.intel.com ([143.183.136.51])
-  by orsmga001.jf.intel.com with ESMTP; 07 Jun 2018 07:41:30 -0700
-From: Yu-cheng Yu <yu-cheng.yu@intel.com>
-To: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [PATCH 04/10] x86/cet: Handle thread shadow stack
-Date: Thu,  7 Jun 2018 07:38:01 -0700
-Message-Id: <20180607143807.3611-5-yu-cheng.yu@intel.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180607143807.3611-1-yu-cheng.yu@intel.com>
-References: <20180607143807.3611-1-yu-cheng.yu@intel.com>
+        id S932351AbeFGILF (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 04:11:05 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:57023 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753541AbeFGILC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 04:11:02 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w578ApiO2124744
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 7 Jun 2018 01:10:51 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w578Apdj2124741;
+        Thu, 7 Jun 2018 01:10:51 -0700
+Date: Thu, 7 Jun 2018 01:10:51 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-irhzpfmgdaf6cyk0uqqexoh9@git.kernel.org>
+Cc: mingo@kernel.org, jolsa@kernel.org, acme@redhat.com,
+        tglx@linutronix.de, namhyung@kernel.org, adrian.hunter@intel.com,
+        hpa@zytor.com, wangnan0@huawei.com, linux-kernel@vger.kernel.org,
+        dsahern@gmail.com
+Reply-To: wangnan0@huawei.com, hpa@zytor.com, tglx@linutronix.de,
+          adrian.hunter@intel.com, namhyung@kernel.org,
+          linux-kernel@vger.kernel.org, dsahern@gmail.com, acme@redhat.com,
+          mingo@kernel.org, jolsa@kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf srcline: Make hist_entry srcline helper
+ consistent with map's
+Git-Commit-ID: 6a53da05c433284252c9363043bf3d8a5789cfca
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When fork() specifies CLONE_VM but not CLONE_VFORK, the child
-needs a separate program stack and a separate shadow stack.
-This patch handles allocation and freeing of the thread shadow
-stack.
+Commit-ID:  6a53da05c433284252c9363043bf3d8a5789cfca
+Gitweb:     https://git.kernel.org/tip/6a53da05c433284252c9363043bf3d8a5789cfca
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Mon, 28 May 2018 11:06:58 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 4 Jun 2018 10:28:53 -0300
 
-Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+perf srcline: Make hist_entry srcline helper consistent with map's
+
+No need to have "get_srcline", plain hist_entry__srcline() is enough and
+shorter.
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-irhzpfmgdaf6cyk0uqqexoh9@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- arch/x86/include/asm/cet.h         |  2 ++
- arch/x86/include/asm/mmu_context.h |  3 +++
- arch/x86/kernel/cet.c              | 34 ++++++++++++++++++++++++++++++++++
- arch/x86/kernel/process.c          |  1 +
- arch/x86/kernel/process_64.c       |  7 +++++++
- 5 files changed, 47 insertions(+)
+ tools/perf/builtin-c2c.c | 2 +-
+ tools/perf/util/sort.c   | 8 ++++----
+ tools/perf/util/sort.h   | 2 +-
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/include/asm/cet.h b/arch/x86/include/asm/cet.h
-index 5507469cb803..c8fd87e13859 100644
---- a/arch/x86/include/asm/cet.h
-+++ b/arch/x86/include/asm/cet.h
-@@ -19,6 +19,7 @@ struct cet_stat {
- unsigned long cet_get_shstk_ptr(void);
- int cet_push_shstk(int ia32, unsigned long ssp, unsigned long val);
- int cet_setup_shstk(void);
-+int cet_setup_thread_shstk(struct task_struct *p);
- void cet_disable_shstk(void);
- void cet_disable_free_shstk(struct task_struct *p);
- int cet_restore_signal(unsigned long ssp);
-@@ -28,6 +29,7 @@ static inline unsigned long cet_get_shstk_ptr(void) { return 0; }
- static inline int cet_push_shstk(int ia32, unsigned long ssp,
- 				 unsigned long val) { return 0; }
- static inline int cet_setup_shstk(void) { return 0; }
-+static inline int cet_setup_thread_shstk(struct task_struct *p) { return 0; }
- static inline void cet_disable_shstk(void) {}
- static inline void cet_disable_free_shstk(struct task_struct *p) {}
- static inline int cet_restore_signal(unsigned long ssp) { return 0; }
-diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
-index cf9911b5a53c..42395257efc3 100644
---- a/arch/x86/include/asm/mmu_context.h
-+++ b/arch/x86/include/asm/mmu_context.h
-@@ -13,6 +13,7 @@
- #include <asm/tlbflush.h>
- #include <asm/paravirt.h>
- #include <asm/mpx.h>
-+#include <asm/cet.h>
+diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
+index 2126bfbcb385..307b3594525f 100644
+--- a/tools/perf/builtin-c2c.c
++++ b/tools/perf/builtin-c2c.c
+@@ -1976,7 +1976,7 @@ static int filter_cb(struct hist_entry *he)
+ 	c2c_he = container_of(he, struct c2c_hist_entry, he);
  
- extern atomic64_t last_mm_ctx_id;
+ 	if (c2c.show_src && !he->srcline)
+-		he->srcline = hist_entry__get_srcline(he);
++		he->srcline = hist_entry__srcline(he);
  
-@@ -228,6 +229,8 @@ do {						\
- #else
- #define deactivate_mm(tsk, mm)			\
- do {						\
-+	if (!tsk->vfork_done)			\
-+		cet_disable_free_shstk(tsk);	\
- 	load_gs_index(0);			\
- 	loadsegment(fs, 0);			\
- } while (0)
-diff --git a/arch/x86/kernel/cet.c b/arch/x86/kernel/cet.c
-index 6f445ce94c83..156f5d88ffd5 100644
---- a/arch/x86/kernel/cet.c
-+++ b/arch/x86/kernel/cet.c
-@@ -103,6 +103,40 @@ int cet_setup_shstk(void)
- 	return 0;
- }
+ 	calc_width(c2c_he);
  
-+int cet_setup_thread_shstk(struct task_struct *tsk)
-+{
-+	unsigned long addr, size;
-+	struct cet_user_state *state;
-+
-+	if (!current->thread.cet.shstk_enabled)
-+		return 0;
-+
-+	state = get_xsave_addr(&tsk->thread.fpu.state.xsave,
-+			       XFEATURE_MASK_SHSTK_USER);
-+
-+	if (!state)
-+		return -EINVAL;
-+
-+	size = tsk->thread.cet.shstk_size;
-+	if (size == 0)
-+		size = SHSTK_SIZE;
-+
-+	addr = shstk_mmap(0, size);
-+
-+	if (addr >= TASK_SIZE) {
-+		tsk->thread.cet.shstk_base = 0;
-+		tsk->thread.cet.shstk_size = 0;
-+		tsk->thread.cet.shstk_enabled = 0;
-+		return -ENOMEM;
-+	}
-+
-+	state->user_ssp = (u64)(addr + size - sizeof(u64));
-+	tsk->thread.cet.shstk_base = addr;
-+	tsk->thread.cet.shstk_size = size;
-+	tsk->thread.cet.shstk_enabled = 1;
-+	return 0;
-+}
-+
- void cet_disable_shstk(void)
+diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
+index 4ab0b4ab24e4..fed2952ab45a 100644
+--- a/tools/perf/util/sort.c
++++ b/tools/perf/util/sort.c
+@@ -331,7 +331,7 @@ struct sort_entry sort_sym = {
+ 
+ /* --sort srcline */
+ 
+-char *hist_entry__get_srcline(struct hist_entry *he)
++char *hist_entry__srcline(struct hist_entry *he)
  {
- 	u64 r;
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index b3b0b482983a..ae56caee41f9 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -127,6 +127,7 @@ void exit_thread(struct task_struct *tsk)
- 
- 	free_vm86(t);
- 
-+	cet_disable_free_shstk(tsk);
- 	fpu__drop(fpu);
+ 	return map__srcline(he->ms.map, he->ip, he->ms.sym);
  }
+@@ -340,9 +340,9 @@ static int64_t
+ sort__srcline_cmp(struct hist_entry *left, struct hist_entry *right)
+ {
+ 	if (!left->srcline)
+-		left->srcline = hist_entry__get_srcline(left);
++		left->srcline = hist_entry__srcline(left);
+ 	if (!right->srcline)
+-		right->srcline = hist_entry__get_srcline(right);
++		right->srcline = hist_entry__srcline(right);
  
-diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index 12bb445fb98d..6e493b0bcedd 100644
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -317,6 +317,13 @@ int copy_thread_tls(unsigned long clone_flags, unsigned long sp,
- 	if (sp)
- 		childregs->sp = sp;
+ 	return strcmp(right->srcline, left->srcline);
+ }
+@@ -351,7 +351,7 @@ static int hist_entry__srcline_snprintf(struct hist_entry *he, char *bf,
+ 					size_t size, unsigned int width)
+ {
+ 	if (!he->srcline)
+-		he->srcline = hist_entry__get_srcline(he);
++		he->srcline = hist_entry__srcline(he);
  
-+	/* Allocate a new shadow stack for pthread */
-+	if ((clone_flags & (CLONE_VFORK | CLONE_VM)) == CLONE_VM) {
-+		err = cet_setup_thread_shstk(p);
-+		if (err)
-+			goto out;
-+	}
-+
- 	err = -ENOMEM;
- 	if (unlikely(test_tsk_thread_flag(me, TIF_IO_BITMAP))) {
- 		p->thread.io_bitmap_ptr = kmemdup(me->thread.io_bitmap_ptr,
--- 
-2.15.1
+ 	return repsep_snprintf(bf, size, "%-.*s", width, he->srcline);
+ }
+diff --git a/tools/perf/util/sort.h b/tools/perf/util/sort.h
+index 9e6896293bbd..f007a26d6f6d 100644
+--- a/tools/perf/util/sort.h
++++ b/tools/perf/util/sort.h
+@@ -292,5 +292,5 @@ int64_t
+ sort__daddr_cmp(struct hist_entry *left, struct hist_entry *right);
+ int64_t
+ sort__dcacheline_cmp(struct hist_entry *left, struct hist_entry *right);
+-char *hist_entry__get_srcline(struct hist_entry *he);
++char *hist_entry__srcline(struct hist_entry *he);
+ #endif	/* __PERF_SORT_H */
