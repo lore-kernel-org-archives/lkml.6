@@ -1,168 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id pCIKKoNCGVtofAAAmS7hNA
-	; Thu, 07 Jun 2018 14:35:38 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id X2SmN1jCGVsMSwAAmS7hNA
+	; Thu, 07 Jun 2018 23:49:16 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 6E9D4607E7; Thu,  7 Jun 2018 14:35:38 +0000 (UTC)
+	id 4051E6074D; Thu,  7 Jun 2018 23:49:16 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EgUNGI7+"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D90CF601D2;
-	Thu,  7 Jun 2018 14:35:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D90CF601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 9658B60290;
+	Thu,  7 Jun 2018 23:49:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9658B60290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934061AbeFGOfg (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:35:36 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40392 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934039AbeFGOf1 (ORCPT
+        id S1752364AbeFGXtN (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 19:49:13 -0400
+Received: from mail-pl0-f47.google.com ([209.85.160.47]:46573 "EHLO
+        mail-pl0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751631AbeFGXtL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:35:27 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbX-0005dI-CA; Thu, 07 Jun 2018 15:09:31 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb9-000378-IR; Thu, 07 Jun 2018 15:09:07 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Thu, 7 Jun 2018 19:49:11 -0400
+Received: by mail-pl0-f47.google.com with SMTP id 30-v6so7100708pld.13;
+        Thu, 07 Jun 2018 16:49:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ANBWOuetEBldsKOxNMGSYXEA+tvV8a9csYSnu451wXE=;
+        b=EgUNGI7+hxYdy+UWsgnK6ZlrLNHFB+DV3baZ6QOUzKK5YRzNupJjYtVVqDEzcpmxrE
+         y/Cn8O8Qc9tKMctgx5jU2F7B/qsqG2h0/lQIfAgDdCGsuwkcVjPO++JPX2garM+6+Jst
+         k4VhbYvASgd6VGYwKtDN0Mb5QZVJ9kSCqKYEwy70hqBcKFRMUwKgBjcHq1A21kXIE2UT
+         jGnOQqMFGnWp51DD8gkp+2FORYCg8cjgQz758kyQtb6b90gZQquI3SaYWjv5T3uEdEHx
+         sxPlZhXVzR8ArzJOnJOIhX1P/yV1gQEDVutJ8malRhXkTrV2Nd5B/BHY5z+VuvTqiv9w
+         JmrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ANBWOuetEBldsKOxNMGSYXEA+tvV8a9csYSnu451wXE=;
+        b=fGnn02pejRlv8ql4cC6nkO3EfSpEdN673uzYWNh71WnkiKxwsCzIZG30g7KEouV/Zd
+         gYo8eTMd5KpAA5RXaZEiCsTl/tY+eZnXB4Je4Rc/Nn93g9A/UEsyy/Z9VQB46J1H+T3A
+         gvJRKYB7MW+irl5cmmTm0CrviBsVUSWJAkKHvZHKhqNpdyKThISRf3zEcghjw3PYMA6W
+         kDoMHFN2RT+E29+iNs5mhm65nN0Cnj5U18EEX/K6vQsQAiC2LxG8OK6h9ALi2Vg5VCIV
+         DI+F7NPwnpOSniVZRpvaYiVof4SMlC5A0W1/KCsai+1NOxgfm1tAh9GZdZ+owdrA05GW
+         WW6Q==
+X-Gm-Message-State: APt69E2srkMZbQXY4RCP0IcHAwBJJ0pcSAbXjwPKOUQX7iBkoEeB4aNm
+        3ofxQl3wnDmkwGrQjcrv2xyuDH5f
+X-Google-Smtp-Source: ADUXVKK24/rfWfbC9PzosazWpi6kUg8LWsTpI+HFeGg5MXZg+rWnTG/Xo6/nO5Tg3whMVFxN6OZZfg==
+X-Received: by 2002:a17:902:2983:: with SMTP id h3-v6mr4058714plb.232.1528415350216;
+        Thu, 07 Jun 2018 16:49:10 -0700 (PDT)
+Received: from dsa-mb.dana.cumulusnetworks.com (fw.cumulusnetworks.com. [216.129.126.126])
+        by smtp.googlemail.com with ESMTPSA id y20-v6sm67971336pgv.27.2018.06.07.16.49.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Jun 2018 16:49:08 -0700 (PDT)
+Subject: Re: next-20180605 - BUG in ipv6_add_addr
+To: valdis.kletnieks@vt.edu, netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+References: <15599.1528402643@turing-police.cc.vt.edu>
+From: David Ahern <dsahern@gmail.com>
+Message-ID: <fe2d6bfd-17a3-8464-175d-3e8714e14827@gmail.com>
+Date: Thu, 7 Jun 2018 16:49:07 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.8.0
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?=" <rkrcmar@redhat.com>,
-        "Wanpeng Li" <wanpeng.li@hotmail.com>,
-        "Paolo Bonzini" <pbonzini@redhat.com>,
-        "Eric Biggers" <ebiggers3@gmail.com>,
-        "Dmitry Vyukov" <dvyukov@google.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.371974922@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 279/410] KVM: mmu: Fix overlap between public and
- private memslots
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+In-Reply-To: <15599.1528402643@turing-police.cc.vt.edu>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+On 6/7/18 1:17 PM, valdis.kletnieks@vt.edu wrote:
+> Hit the following, after which my network connection was pretty much hosed
+> 
+> This ring any bells? I don't have a reproducer for this, so bisecting is problematic....
+> 
+> [ 1820.832682] BUG: unable to handle kernel NULL pointer dereference at 0000000000000209
+> [ 1820.832728] RIP: 0010:ipv6_add_addr+0x280/0xd10
+> [ 1820.832732] Code: 49 8b 1f 0f 84 6a 0a 00 00 48 85 db 0f 84 4e 0a 00 00 48 8b 03 48 8b 53 08 49 89 45 00 49 8b 47 10
+> 49 89 55 08 48 85 c0 74 15 <48> 8b 50 08 48 8b 00 49 89 95 b8 01 00 00 49 89 85 b0 01 00 00 4c
+> [ 1820.832847] RSP: 0018:ffffaa07c2fd7880 EFLAGS: 00010202
+> [ 1820.832853] RAX: 0000000000000201 RBX: ffffaa07c2fd79b0 RCX: 0000000000000000
+> [ 1820.832858] RDX: a4cfbfba2cbfa64c RSI: 0000000000000000 RDI: ffffffff8a8e9fa0
+> [ 1820.832862] RBP: ffffaa07c2fd7920 R08: 000000000000017a R09: ffffffff8a555300
+> [ 1820.832866] R10: 0000000000000000 R11: 0000000000000000 R12: ffff888d18e71c00
+> [ 1820.832871] R13: ffff888d0a9b1200 R14: 0000000000000000 R15: ffffaa07c2fd7980
+> [ 1820.832876] FS:  00007faa51bdb800(0000) GS:ffff888d1d400000(0000) knlGS:0000000000000000
+> [ 1820.832880] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [ 1820.832885] CR2: 0000000000000209 CR3: 000000021e8f8001 CR4: 00000000001606e0
+> [ 1820.832888] Call Trace:
+> [ 1820.832898]  ? __local_bh_enable_ip+0x119/0x260
+> [ 1820.832904]  ? ipv6_create_tempaddr+0x259/0x5a0
+> [ 1820.832912]  ? __local_bh_enable_ip+0x139/0x260
+> [ 1820.832921]  ipv6_create_tempaddr+0x2da/0x5a0
+> [ 1820.832926]  ? ipv6_create_tempaddr+0x2da/0x5a0
+> [ 1820.832941]  manage_tempaddrs+0x1a5/0x240
+> [ 1820.832951]  inet6_addr_del+0x20b/0x3b0
+> [ 1820.832959]  ? nla_parse+0xce/0x1e0
+> [ 1820.832968]  inet6_rtm_deladdr+0xd9/0x210
+> [ 1820.832981]  rtnetlink_rcv_msg+0x1d4/0x5f0
 
-------------------
-
-From: Wanpeng Li <wanpeng.li@hotmail.com>
-
-commit b28676bb8ae4569cced423dc2a88f7cb319d5379 upstream.
-
-Reported by syzkaller:
-
-    pte_list_remove: ffff9714eb1f8078 0->BUG
-    ------------[ cut here ]------------
-    kernel BUG at arch/x86/kvm/mmu.c:1157!
-    invalid opcode: 0000 [#1] SMP
-    RIP: 0010:pte_list_remove+0x11b/0x120 [kvm]
-    Call Trace:
-     drop_spte+0x83/0xb0 [kvm]
-     mmu_page_zap_pte+0xcc/0xe0 [kvm]
-     kvm_mmu_prepare_zap_page+0x81/0x4a0 [kvm]
-     kvm_mmu_invalidate_zap_all_pages+0x159/0x220 [kvm]
-     kvm_arch_flush_shadow_all+0xe/0x10 [kvm]
-     kvm_mmu_notifier_release+0x6c/0xa0 [kvm]
-     ? kvm_mmu_notifier_release+0x5/0xa0 [kvm]
-     __mmu_notifier_release+0x79/0x110
-     ? __mmu_notifier_release+0x5/0x110
-     exit_mmap+0x15a/0x170
-     ? do_exit+0x281/0xcb0
-     mmput+0x66/0x160
-     do_exit+0x2c9/0xcb0
-     ? __context_tracking_exit.part.5+0x4a/0x150
-     do_group_exit+0x50/0xd0
-     SyS_exit_group+0x14/0x20
-     do_syscall_64+0x73/0x1f0
-     entry_SYSCALL64_slow_path+0x25/0x25
-
-The reason is that when creates new memslot, there is no guarantee for new
-memslot not overlap with private memslots. This can be triggered by the
-following program:
-
-   #include <fcntl.h>
-   #include <pthread.h>
-   #include <setjmp.h>
-   #include <signal.h>
-   #include <stddef.h>
-   #include <stdint.h>
-   #include <stdio.h>
-   #include <stdlib.h>
-   #include <string.h>
-   #include <sys/ioctl.h>
-   #include <sys/stat.h>
-   #include <sys/syscall.h>
-   #include <sys/types.h>
-   #include <unistd.h>
-   #include <linux/kvm.h>
-
-   long r[16];
-
-   int main()
-   {
-	void *p = valloc(0x4000);
-
-	r[2] = open("/dev/kvm", 0);
-	r[3] = ioctl(r[2], KVM_CREATE_VM, 0x0ul);
-
-	uint64_t addr = 0xf000;
-	ioctl(r[3], KVM_SET_IDENTITY_MAP_ADDR, &addr);
-	r[6] = ioctl(r[3], KVM_CREATE_VCPU, 0x0ul);
-	ioctl(r[3], KVM_SET_TSS_ADDR, 0x0ul);
-	ioctl(r[6], KVM_RUN, 0);
-	ioctl(r[6], KVM_RUN, 0);
-
-	struct kvm_userspace_memory_region mr = {
-		.slot = 0,
-		.flags = KVM_MEM_LOG_DIRTY_PAGES,
-		.guest_phys_addr = 0xf000,
-		.memory_size = 0x4000,
-		.userspace_addr = (uintptr_t) p
-	};
-	ioctl(r[3], KVM_SET_USER_MEMORY_REGION, &mr);
-	return 0;
-   }
-
-This patch fixes the bug by not adding a new memslot even if it
-overlaps with private memslots.
-
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Eric Biggers <ebiggers3@gmail.com>
-Signed-off-by: Wanpeng Li <wanpeng.li@hotmail.com>
-[bwh: Backported to 3.16: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- virt/kvm/kvm_main.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -837,8 +837,7 @@ int __kvm_set_memory_region(struct kvm *
- 		/* Check for overlaps */
- 		r = -EEXIST;
- 		kvm_for_each_memslot(slot, kvm->memslots) {
--			if ((slot->id >= KVM_USER_MEM_SLOTS) ||
--			    (slot->id == mem->slot))
-+			if (slot->id == mem->slot)
- 				continue;
- 			if (!((base_gfn + npages <= slot->base_gfn) ||
- 			      (base_gfn >= slot->base_gfn + slot->npages)))
+I am the most likely guilty party. I have been staring at the code for
+this stack trace for a while and nothing jumps out. Can you send me the
+kernel config?
