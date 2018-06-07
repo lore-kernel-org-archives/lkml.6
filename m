@@ -1,149 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id icUoAesIGVulVwAAmS7hNA
-	; Thu, 07 Jun 2018 10:30:43 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id U5+uONRNGVtTcwAAmS7hNA
+	; Thu, 07 Jun 2018 15:23:01 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 0280B608B8; Thu,  7 Jun 2018 10:30:43 +0000 (UTC)
+	id D2515608B8; Thu,  7 Jun 2018 15:23:00 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 6E49660452;
-	Thu,  7 Jun 2018 10:30:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6E49660452
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 04CFD6063F;
+	Thu,  7 Jun 2018 15:23:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 04CFD6063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753561AbeFGKak (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 06:30:40 -0400
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:23818 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750905AbeFGKai (ORCPT
+        id S935803AbeFGPW6 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:22:58 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41219 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935544AbeFGO6u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 06:30:38 -0400
-X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
-   d="scan'208";a="14946588"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 07 Jun 2018 03:30:31 -0700
-Received: from [10.145.4.77] (10.10.76.4) by chn-sv-exch04.mchp-main.com
- (10.10.76.105) with Microsoft SMTP Server id 14.3.352.0; Thu, 7 Jun 2018
- 03:30:30 -0700
-Subject: Re: [PATCH v4 1/7] dt-bindings: clk: at91: add an I2S mux clock
-To: Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Mark Brown <broonie@kernel.org>
-CC: <devicetree@vger.kernel.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        <Cristian.Birsan@microchip.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-References: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
- <1527251668-31396-2-git-send-email-codrin.ciubotariu@microchip.com>
- <20180531005827.GA17203@rob-hp-laptop>
- <4f2e6e6a-df3a-b645-093c-b4467b3aa843@microchip.com>
- <CAL_JsqJ=T0p17hHg6=obtydt7T-yrAeOr7C2XAEnDFQ-c0b5XQ@mail.gmail.com>
- <152778070837.144038.4555982304713569160@swboyd.mtv.corp.google.com>
- <CAL_JsqJu6=ORfutZ5tAyNp2q2rH6P+fgJMRKw750RyFy=ptjPw@mail.gmail.com>
-From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Message-ID: <18f6871e-794d-3ea2-487e-32399a8b89b4@microchip.com>
-Date: Thu, 7 Jun 2018 13:30:14 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 7 Jun 2018 10:58:50 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbe-0005hL-EK; Thu, 07 Jun 2018 15:09:38 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb6-000324-Ot; Thu, 07 Jun 2018 15:09:04 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqJu6=ORfutZ5tAyNp2q2rH6P+fgJMRKw750RyFy=ptjPw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Herbert Xu" <herbert@gondor.apana.org.au>,
+        "=?UTF-8?q?Horia=20Geant=C4=83?=" <horia.geanta@nxp.com>,
+        "Auer Lukas" <lukas.auer@aisec.fraunhofer.de>,
+        "Bryan O'Donoghue" <pure.logic@nexus-software.ie>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.855397034@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 218/410] crypto: caam - fix endless loop when DECO
+ acquire fails
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31.05.2018 18:56, Rob Herring wrote:
-> On Thu, May 31, 2018 at 10:31 AM, Stephen Boyd <sboyd@kernel.org> wrote:
->> Quoting Rob Herring (2018-05-31 07:20:57)
->>> On Thu, May 31, 2018 at 5:25 AM, Codrin Ciubotariu
->>> <codrin.ciubotariu@microchip.com> wrote:
->>>> On 31.05.2018 03:58, Rob Herring wrote:
->>>>>
->>>>> On Fri, May 25, 2018 at 03:34:22PM +0300, Codrin Ciubotariu wrote:
->>>>>>
->>>>>> The I2S mux clock can be used to select the I2S input clock. The
->>>>>> available parents are the peripheral and the generated clocks.
->>>>>>
->>>>>> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
->>>>>> ---
->>>>>>    .../devicetree/bindings/clock/at91-clock.txt       | 34
->>>>>> ++++++++++++++++++++++
->>>>>>    1 file changed, 34 insertions(+)
->>>>>>
->>>>>> diff --git a/Documentation/devicetree/bindings/clock/at91-clock.txt
->>>>>> b/Documentation/devicetree/bindings/clock/at91-clock.txt
->>>>>> index 51c259a..1c46b3c 100644
->>>>>> --- a/Documentation/devicetree/bindings/clock/at91-clock.txt
->>>>>> +++ b/Documentation/devicetree/bindings/clock/at91-clock.txt
->>>>>> @@ -90,6 +90,8 @@ Required properties:
->>>>>>          "atmel,sama5d2-clk-audio-pll-pmc"
->>>>>>                  at91 audio pll output on AUDIOPLLCLK that feeds the PMC
->>>>>>                  and can be used by peripheral clock or generic clock
->>>>>> +       "atmel,sama5d2-clk-i2s-mux":
->>>>>> +               at91 I2S clock source selection
->>>>>
->>>>>
->>>>> Is this boolean or takes some values. If latter, what are valid values?
->>>>
->>>>
->>>> This is the compatible string of the clock driver.
->>>
->>> Ah, now I remember. AT91 uses fine grained clock nodes in DT. Is there
->>> still a plan to fix this?
->>
->> I'm also interested in a plan.
->>
->>>>>
->>>>>> +               compatible = "atmel,sama5d2-clk-i2s-mux";
->>>>>> +               #address-cells = <1>;
->>>>>> +               #size-cells = <0>;
->>>>>
->>>>>
->>>>> How do you address this block? My guess is you don't because it is just
->>>>> part of some other block and you are just creating this node to
->>>>> instantiate a driver. Just make the node for the actual h/w block a
->>>>> clock provider and define the clock ids (0 and 1).
->>>>
->>>>
->>>> This block is not addressed, but its children are. The register we access in
->>>> this driver is not part of other block. It's a SFR register, accessed
->>>> through syscon and it has nothing to do with the I2S IP (see SAMA5D2 DS,
->>>> page 1256, fig. 44-1: I2SC Block Diagram) that is the consumer of this
->>>> clock. Adding a clock-id property in the I2S node would be just like v3 of
->>>> this series, with the difference that we use clock-id instead of alias id to
->>>> set the clock parent, which is not how you suggested back then.
->>>
->>> I wasn't suggesting a clock-id property, but a clock specifier (i.e.
->>> make #clock-cells 1).
->>>
->>> But AT91 clocks are all a mess, so I don't know what to tell you.
->>>
->>
->> If #clock-cells of 1 works then we should go with that. It's still weird
->> that we need random nodes to add more clks, but I guess that's how it's
->> going to be for each at91 clk driver until it changes to be one big
->> provider node.
-> 
-> Seems to me that clock additions could use a new binding and we start
-> with a new driver that handles these few clocks initially. But I
-> haven't looked whether both can coexist.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Mark already applied to broonie/sound.git the I2S bindings that have a 
-phandle to this clock. If I am to change #clock-cells to 1, I will have 
-to change the bindings to include the clock-id.
-Which approach should I take now?
+------------------
 
-Thanks and best regards,
-Codrin
+From: Horia Geantă <horia.geanta@nxp.com>
+
+commit 225ece3e7dad4cfc44cca38ce7a3a80f255ea8f1 upstream.
+
+In case DECO0 cannot be acquired - i.e. run_descriptor_deco0() fails
+with -ENODEV, caam_probe() enters an endless loop:
+
+run_descriptor_deco0
+	ret -ENODEV
+	-> instantiate_rng
+		-ENODEV, overwritten by -EAGAIN
+		ret -EAGAIN
+		-> caam_probe
+			-EAGAIN results in endless loop
+
+It turns out the error path in instantiate_rng() is incorrect,
+the checks are done in the wrong order.
+
+Fixes: 1005bccd7a4a6 ("crypto: caam - enable instantiation of all RNG4 state handles")
+Reported-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Suggested-by: Auer Lukas <lukas.auer@aisec.fraunhofer.de>
+Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ drivers/crypto/caam/ctrl.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+--- a/drivers/crypto/caam/ctrl.c
++++ b/drivers/crypto/caam/ctrl.c
+@@ -196,12 +196,16 @@ static int instantiate_rng(struct device
+ 		 * without any error (HW optimizations for later
+ 		 * CAAM eras), then try again.
+ 		 */
++		if (ret)
++			break;
++
+ 		rdsta_val =
+ 			rd_reg32(&topregs->ctrl.r4tst[0].rdsta) & RDSTA_IFMASK;
+-		if (status || !(rdsta_val & (1 << sh_idx)))
++		if (status || !(rdsta_val & (1 << sh_idx))) {
+ 			ret = -EAGAIN;
+-		if (ret)
+ 			break;
++		}
++
+ 
+ 		dev_info(ctrldev, "Instantiated RNG4 SH%d\n", sh_idx);
+ 		/* Clear the contents before recreating the descriptor */
