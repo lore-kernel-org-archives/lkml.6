@@ -1,95 +1,260 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Uds0OPhiGVsEZAAAmS7hNA
-	; Thu, 07 Jun 2018 16:55:25 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id EyxuNnBIGVt+SAAAmS7hNA
+	; Thu, 07 Jun 2018 15:01:13 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 695F5607E7; Thu,  7 Jun 2018 16:55:25 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="klY7oAG/"
+	id 8BE91606DD; Thu,  7 Jun 2018 15:01:13 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id EFDA860115;
-	Thu,  7 Jun 2018 16:55:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EFDA860115
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 8406D606DD;
+	Thu,  7 Jun 2018 15:01:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8406D606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934336AbeFGQzX (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 12:55:23 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:40528 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934365AbeFGQzT (ORCPT
+        id S935868AbeFGPBD (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:01:03 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41368 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935852AbeFGPBA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 12:55:19 -0400
-Received: by mail-pf0-f196.google.com with SMTP id z24-v6so5200917pfe.7;
-        Thu, 07 Jun 2018 09:55:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=aBid5YyZ6egphb25/1IoadslkDcJ6RfN2payxMAwW10=;
-        b=klY7oAG/mGYnbByNldCX0xGBPN7XH4cmz/kNr8fCmC4Dz9HIUJTtpEiRzgb+3gJlJ/
-         TjKOdDf7KZZN2DtxjtLKNeOhMmqNtgfxbisZoM9c7NTUR4G0Jb/1yJcZpEAyocrhLaus
-         OtV1mmYag4OuigJCdI1YBEyNgmEYTF2eVLB/P0qarBcCsydm8o4WYgCXuwntJ+OBiHz+
-         M88QFeMstIi+kxvXJ3pHqG+b05uJxCbisLNUgrhTOpO3/EppgaiDL7Dm+z3ewtvq+zYM
-         J/h7YZPdU8UNcWteShftg/JEib3xgEnhQHwwTa1BtlejLOGRh6X2ZTdIJAsyx4rObVJ7
-         4n+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=aBid5YyZ6egphb25/1IoadslkDcJ6RfN2payxMAwW10=;
-        b=SuDJJifZ+jUNf2Q46A4VPek4QUS3iNCh9kJ/JxHGNgiHnccJxZX/QyV2N39K2xkBUy
-         CQqVDdTvIeaQgsNaI1Cn4+vyjRIltNyH6tVaE9l3NPEpHBOglPdfYyhNWV8BN25R818V
-         j3GFtpIKkVCKNQzozgpFwe0UTq1l/iUNevL6EaM/uYjOLBiPDnd6/vdvQ9xoIdnYTX41
-         jWkA5EIxj5FyfkY5vCYrGWfyE2SA9Tg9wtxdWL0foOEFYheBQ73epl9pSvFweleAjuzC
-         pvSsRNf6B4YN5Ifv7xK8alTvzN740tag+LfhJ3tBa27lkd0YXEsSlkiTJuSfRi5KNWem
-         BTAQ==
-X-Gm-Message-State: APt69E1+YeBGlO84J1MNluCmF1lldoLwm2KDtV9A5AjY9QDTzWOONV1v
-        cFO1FqN9oNnMbRkrtT9mYS8=
-X-Google-Smtp-Source: ADUXVKJxPlqqyr2CZIlQw1UEltLsnCVLZmsw3EmVm4IPPImeisGswqzpTt1nQ/Nk1Hphkxo0QtGpxg==
-X-Received: by 2002:a62:ecdb:: with SMTP id e88-v6mr2545371pfm.16.1528390519227;
-        Thu, 07 Jun 2018 09:55:19 -0700 (PDT)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id r26-v6sm71951202pfj.180.2018.06.07.09.55.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Jun 2018 09:55:18 -0700 (PDT)
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: bcm-kernel-feedback-list@broadcom.com,
-        Scott Branden <scott.branden@broadcom.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Clement Peron <peron.clem@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Mohamed Ismail Abdul Packir Mohamed
-        <mohamed-ismail.abdul@broadcom.com>
-Subject: Re: [PATCH v2 1/1] ARM: dts: cygnus: enable iproc-hwrng
-Date: Thu,  7 Jun 2018 09:55:16 -0700
-Message-Id: <20180607165516.2089-1-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <1528309291-25579-1-git-send-email-scott.branden@broadcom.com>
-References: <1528309291-25579-1-git-send-email-scott.branden@broadcom.com>
+        Thu, 7 Jun 2018 11:01:00 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbw-0005Zx-UD; Thu, 07 Jun 2018 15:09:57 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvaz-0002km-DG; Thu, 07 Jun 2018 15:08:57 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Jun Nakajima" <jun.nakajima@intel.com>,
+        "Ashok Raj" <ashok.raj@intel.com>,
+        "Andrea Arcangeli" <aarcange@redhat.com>,
+        "David Woodhouse" <dwmw@amazon.co.uk>,
+        "Greg KH" <gregkh@linuxfoundation.org>,
+        "Asit Mallick" <asit.k.mallick@intel.com>,
+        "Paolo Bonzini" <pbonzini@redhat.com>,
+        "Tim Chen" <tim.c.chen@linux.intel.com>,
+        "KarimAllah Ahmed" <karahmed@amazon.de>, kvm@vger.kernel.org,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>,
+        "Andi Kleen" <ak@linux.intel.com>,
+        "Andy Lutomirski" <luto@kernel.org>,
+        "Arjan Van De Ven" <arjan.van.de.ven@intel.com>,
+        "Dan Williams" <dan.j.williams@intel.com>,
+        "Dave Hansen" <dave.hansen@intel.com>,
+        "Darren Kenny" <darren.kenny@oracle.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.520837304@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 058/410] KVM/SVM: Allow direct access to
+ MSR_IA32_SPEC_CTRL
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed,  6 Jun 2018 11:21:31 -0700, Scott Branden <scott.branden@broadcom.com> wrote:
-> From: Mohamed Ismail Abdul Packir Mohamed <mohamed-ismail.abdul@broadcom.com>
-> 
-> Enable the HW rng driver "iproc-rng200" for all cygnus platforms.
-> 
-> Signed-off-by: Mohamed Ismail Abdul Packir Mohamed <mohamed-ismail.abdul@broadcom.com>
-> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
-> ---
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Applied to devicetree/next, thanks!
---
-Florian
+------------------
+
+From: KarimAllah Ahmed <karahmed@amazon.de>
+
+commit b2ac58f90540e39324e7a29a7ad471407ae0bf48 upstream.
+
+[ Based on a patch from Paolo Bonzini <pbonzini@redhat.com> ]
+
+... basically doing exactly what we do for VMX:
+
+- Passthrough SPEC_CTRL to guests (if enabled in guest CPUID)
+- Save and restore SPEC_CTRL around VMExit and VMEntry only if the guest
+  actually used it.
+
+Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jun Nakajima <jun.nakajima@intel.com>
+Cc: kvm@vger.kernel.org
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Asit Mallick <asit.k.mallick@intel.com>
+Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ashok Raj <ashok.raj@intel.com>
+Link: https://lkml.kernel.org/r/1517669783-20732-1-git-send-email-karahmed@amazon.de
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ arch/x86/kvm/svm.c | 88 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 88 insertions(+)
+
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -146,6 +146,8 @@ struct vcpu_svm {
+ 		u64 gs_base;
+ 	} host;
+ 
++	u64 spec_ctrl;
++
+ 	u32 *msrpm;
+ 
+ 	ulong nmi_iret_rip;
+@@ -180,6 +182,7 @@ static const struct svm_direct_access_ms
+ 	{ .index = MSR_CSTAR,				.always = true  },
+ 	{ .index = MSR_SYSCALL_MASK,			.always = true  },
+ #endif
++	{ .index = MSR_IA32_SPEC_CTRL,			.always = false },
+ 	{ .index = MSR_IA32_PRED_CMD,			.always = false },
+ 	{ .index = MSR_IA32_LASTBRANCHFROMIP,		.always = false },
+ 	{ .index = MSR_IA32_LASTBRANCHTOIP,		.always = false },
+@@ -762,6 +765,25 @@ static bool valid_msr_intercept(u32 inde
+ 	return false;
+ }
+ 
++static bool msr_write_intercepted(struct kvm_vcpu *vcpu, unsigned msr)
++{
++	u8 bit_write;
++	unsigned long tmp;
++	u32 offset;
++	u32 *msrpm;
++
++	msrpm = is_guest_mode(vcpu) ? to_svm(vcpu)->nested.msrpm:
++				      to_svm(vcpu)->msrpm;
++
++	offset    = svm_msrpm_offset(msr);
++	bit_write = 2 * (msr & 0x0f) + 1;
++	tmp       = msrpm[offset];
++
++	BUG_ON(offset == MSR_INVALID);
++
++	return !!test_bit(bit_write,  &tmp);
++}
++
+ static void set_msr_interception(u32 *msrpm, unsigned msr,
+ 				 int read, int write)
+ {
+@@ -1206,6 +1228,8 @@ static void svm_vcpu_reset(struct kvm_vc
+ 	u32 dummy;
+ 	u32 eax = 1;
+ 
++	svm->spec_ctrl = 0;
++
+ 	init_vmcb(svm);
+ 
+ 	kvm_cpuid(vcpu, &eax, &dummy, &dummy, &dummy);
+@@ -3112,6 +3136,13 @@ static int svm_get_msr(struct kvm_vcpu *
+ 	case MSR_VM_CR:
+ 		msr_info->data = svm->nested.vm_cr_msr;
+ 		break;
++	case MSR_IA32_SPEC_CTRL:
++		if (!msr_info->host_initiated &&
++		    !guest_cpuid_has_ibrs(vcpu))
++			return 1;
++
++		msr_info->data = svm->spec_ctrl;
++		break;
+ 	case MSR_IA32_UCODE_REV:
+ 		msr_info->data = 0x01000065;
+ 		break;
+@@ -3184,6 +3215,33 @@ static int svm_set_msr(struct kvm_vcpu *
+ 	case MSR_IA32_TSC:
+ 		kvm_write_tsc(vcpu, msr);
+ 		break;
++	case MSR_IA32_SPEC_CTRL:
++		if (!msr->host_initiated &&
++		    !guest_cpuid_has_ibrs(vcpu))
++			return 1;
++
++		/* The STIBP bit doesn't fault even if it's not advertised */
++		if (data & ~(SPEC_CTRL_IBRS | SPEC_CTRL_STIBP))
++			return 1;
++
++		svm->spec_ctrl = data;
++
++		if (!data)
++			break;
++
++		/*
++		 * For non-nested:
++		 * When it's written (to non-zero) for the first time, pass
++		 * it through.
++		 *
++		 * For nested:
++		 * The handling of the MSR bitmap for L2 guests is done in
++		 * nested_svm_vmrun_msrpm.
++		 * We update the L1 MSR bit as well since it will end up
++		 * touching the MSR anyway now.
++		 */
++		set_msr_interception(svm->msrpm, MSR_IA32_SPEC_CTRL, 1, 1);
++		break;
+ 	case MSR_IA32_PRED_CMD:
+ 		if (!msr->host_initiated &&
+ 		    !guest_cpuid_has_ibpb(vcpu))
+@@ -3902,6 +3960,15 @@ static void svm_vcpu_run(struct kvm_vcpu
+ 
+ 	local_irq_enable();
+ 
++	/*
++	 * If this vCPU has touched SPEC_CTRL, restore the guest's value if
++	 * it's non-zero. Since vmentry is serialising on affected CPUs, there
++	 * is no need to worry about the conditional branch over the wrmsr
++	 * being speculatively taken.
++	 */
++	if (svm->spec_ctrl)
++		wrmsrl(MSR_IA32_SPEC_CTRL, svm->spec_ctrl);
++
+ 	asm volatile (
+ 		"push %%" _ASM_BP "; \n\t"
+ 		"mov %c[rbx](%[svm]), %%" _ASM_BX " \n\t"
+@@ -3994,6 +4061,27 @@ static void svm_vcpu_run(struct kvm_vcpu
+ #endif
+ 		);
+ 
++	/*
++	 * We do not use IBRS in the kernel. If this vCPU has used the
++	 * SPEC_CTRL MSR it may have left it on; save the value and
++	 * turn it off. This is much more efficient than blindly adding
++	 * it to the atomic save/restore list. Especially as the former
++	 * (Saving guest MSRs on vmexit) doesn't even exist in KVM.
++	 *
++	 * For non-nested case:
++	 * If the L01 MSR bitmap does not intercept the MSR, then we need to
++	 * save it.
++	 *
++	 * For nested case:
++	 * If the L02 MSR bitmap does not intercept the MSR, then we need to
++	 * save it.
++	 */
++	if (!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL))
++		rdmsrl(MSR_IA32_SPEC_CTRL, svm->spec_ctrl);
++
++	if (svm->spec_ctrl)
++		wrmsrl(MSR_IA32_SPEC_CTRL, 0);
++
+ 	/* Eliminate branch target predictions from guest mode */
+ 	vmexit_fill_RSB();
+ 
