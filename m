@@ -1,174 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id OsN1Ow5rHltbOAAAmS7hNA
-	; Mon, 11 Jun 2018 12:33:34 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id FV2pAz+BGVsDCAAAmS7hNA
+	; Thu, 07 Jun 2018 19:02:23 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 1C5F160909; Mon, 11 Jun 2018 12:33:33 +0000 (UTC)
+	id E763F6074D; Thu,  7 Jun 2018 19:02:22 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HiyrKiFv"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 33B3260923;
-	Mon, 11 Jun 2018 12:33:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 33B3260923
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 7CA88601D2;
+	Thu,  7 Jun 2018 19:02:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7CA88601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754230AbeFKMda (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Mon, 11 Jun 2018 08:33:30 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43232 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754203AbeFKMd3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 08:33:29 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1753643AbeFGTAW (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 15:00:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38526 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750927AbeFGTAV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 15:00:21 -0400
+Received: from jouet.infradead.org (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3D39D818BAF0;
-        Mon, 11 Jun 2018 12:33:28 +0000 (UTC)
-Received: from [10.36.117.21] (ovpn-117-21.ams2.redhat.com [10.36.117.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7D5ED2026609;
-        Mon, 11 Jun 2018 12:33:21 +0000 (UTC)
-Subject: Re: [PATCH v1 00/10] mm: online/offline 4MB chunks controlled by
- device driver
-To: Michal Hocko <mhocko@kernel.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Alexander Potapenko <glider@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Baoquan He <bhe@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Young <dyoung@redhat.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hari Bathini <hbathini@linux.vnet.ibm.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Hugh Dickins <hughd@google.com>,
+        by mail.kernel.org (Postfix) with ESMTPSA id 9291120895;
+        Thu,  7 Jun 2018 19:00:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528398020;
+        bh=zsgJri9oPeZ1HAY0o+FSGjA1BnCAaNo3VQ5luK+hWr8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HiyrKiFvdKLI9RvbjB3Y9mdBKfODMA1tlrxkNaKAR0g/c3tusOSEOmk3UIwT4kG3p
+         o5Zq7T26Eok0TkizkHUtHNzpXTP6LTN1nT6nbOYV7GdozoQEIXaLkLD5cJbghRFbeq
+         T4OGioWAJVUmyjfFDm0t4BZPpYPYKKOBQLZRbynQ=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 613F61468B9; Thu,  7 Jun 2018 16:00:18 -0300 (-03)
+Date: Thu, 7 Jun 2018 16:00:18 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        lkml <linux-kernel@vger.kernel.org>,
         Ingo Molnar <mingo@kernel.org>,
-        Jaewon Kim <jaewon31.kim@samsung.com>, Jan Kara <jack@suse.cz>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Juergen Gross <jgross@suse.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Mel Gorman <mgorman@suse.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Oscar Salvador <osalvador@techadventures.net>,
-        Paul Mackerras <paulus@samba.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Rashmica Gupta <rashmica.g@gmail.com>,
-        Reza Arbab <arbab@linux.vnet.ibm.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vlastimil Babka <vbabka@suse.cz>
-References: <20180523151151.6730-1-david@redhat.com>
- <20180524075327.GU20441@dhcp22.suse.cz>
- <14d79dad-ad47-f090-2ec0-c5daf87ac529@redhat.com>
- <20180524093121.GZ20441@dhcp22.suse.cz>
- <c0b8bbd5-6c01-f550-ae13-ef80b2255ea6@redhat.com>
- <20180524120341.GF20441@dhcp22.suse.cz>
- <1a03ac4e-9185-ce8e-a672-c747c3e40ff2@redhat.com>
- <20180524142241.GJ20441@dhcp22.suse.cz>
- <819e45c5-6ae3-1dff-3f1d-c0411b6e2e1d@redhat.com>
- <3748f033-f349-6d88-d189-d77c76565981@redhat.com>
- <20180611115641.GL13364@dhcp22.suse.cz>
-From: David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <71bd1b65-2a88-5de7-9789-bf4fac26507d@redhat.com>
-Date: Mon, 11 Jun 2018 14:33:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Namhyung Kim <namhyung@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Milian Wolff <milian.wolff@kdab.com>,
+        Andi Kleen <andi@firstfloor.org>,
+        Frederic Weisbecker <frederic@kernel.org>
+Subject: Re: [PATCH 04/10] perf stat: Use only color_fprintf call in
+ print_metric_only
+Message-ID: <20180607190018.GC17292@kernel.org>
+References: <20180606221513.11302-1-jolsa@kernel.org>
+ <20180606221513.11302-5-jolsa@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20180611115641.GL13364@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 11 Jun 2018 12:33:28 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 11 Jun 2018 12:33:28 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180606221513.11302-5-jolsa@kernel.org>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11.06.2018 13:56, Michal Hocko wrote:
-> On Mon 11-06-18 13:53:49, David Hildenbrand wrote:
->> On 24.05.2018 23:07, David Hildenbrand wrote:
->>> On 24.05.2018 16:22, Michal Hocko wrote:
->>>> I will go over the rest of the email later I just wanted to make this
->>>> point clear because I suspect we are talking past each other.
->>>
->>> It sounds like we are now talking about how to solve the problem. I like
->>> that :)
->>>
->>
->> Hi Michal,
->>
->> did you have time to think about the details of your proposed idea?
-> 
-> Not really. Sorry about that. It's been busy time. I am planning to
-> revisit after merge window closes.
-> 
+Em Thu, Jun 07, 2018 at 12:15:07AM +0200, Jiri Olsa escreveu:
+> We can call color_fprintf also for non color case, it's
+> handled properly. This change simplifies following patch.
 
-Sure no worries, I still have a bunch of other things to work on. But it
-would be nice to clarify soon in which direction I have to head to get
-this implemented and upstream (e.g. what I proposed, what you proposed
-or maybe something different).
+Thanks, applied.
 
--- 
-
-Thanks,
-
-David / dhildenb
+- Arnaldo
