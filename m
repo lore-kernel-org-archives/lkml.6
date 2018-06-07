@@ -1,175 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id oIvNF1vAGlvpfwAAmS7hNA
-	; Fri, 08 Jun 2018 17:43:55 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id s26KMHY3GVvfZgAAmS7hNA
+	; Thu, 07 Jun 2018 13:48:37 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 4993E607A4; Fri,  8 Jun 2018 17:43:55 +0000 (UTC)
+	id A47F6607DC; Thu,  7 Jun 2018 13:48:37 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="LKl1MBsH"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id C3AFF607E4;
-	Fri,  8 Jun 2018 17:43:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C3AFF607E4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id EEF64601B4;
+	Thu,  7 Jun 2018 13:48:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EEF64601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753050AbeFHRnx (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 13:43:53 -0400
-Received: from mga14.intel.com ([192.55.52.115]:7212 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752075AbeFHRnv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 13:43:51 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jun 2018 10:43:50 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,490,1520924400";
-   d="scan'208";a="62973393"
-Received: from ray.jf.intel.com (HELO [10.7.201.145]) ([10.7.201.145])
-  by orsmga001.jf.intel.com with ESMTP; 08 Jun 2018 10:43:50 -0700
-Subject: Re: [PATCH v11 08/13] x86, sgx: added ENCLS wrappers
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
-        platform-driver-x86@vger.kernel.org
-References: <20180608171216.26521-1-jarkko.sakkinen@linux.intel.com>
- <20180608171216.26521-9-jarkko.sakkinen@linux.intel.com>
-Cc: sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
-        <linux-kernel@vger.kernel.org>,
-        "open list:INTEL SGX" <intel-sgx-kernel-dev@lists.01.org>
-From: Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <ff75a95a-c1fc-dfb7-ae5e-146278bee2b6@intel.com>
-Date: Fri, 8 Jun 2018 10:43:50 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180608171216.26521-9-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S932769AbeFGNsf (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 09:48:35 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:34606 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932152AbeFGNsc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 09:48:32 -0400
+Received: by mail-pg0-f67.google.com with SMTP id q4-v6so3735428pgr.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 06:48:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=Sj8yVXuwGwsCtUoahHUvuwNMeyIeFv8aqTfmIvYWQrg=;
+        b=LKl1MBsHBVJ5X/iEc74I8EEa/wtzXQ0h/0OI7+HdG+5ZSgTym8wqTZbdKAvXGpQlPs
+         3w+hbN/2E94ESXtWIRdMgw4cA4hFX5l0j2n+WQlYZz0gMd1hz3npSaaNJtAvldtiNcvS
+         +Jvt2AOHL8B3ke8lnPPsy/acQj7819DXlV+PE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=Sj8yVXuwGwsCtUoahHUvuwNMeyIeFv8aqTfmIvYWQrg=;
+        b=VBfei4wlnx+61Nw3J3mZnNRzM3yLt7Ee6xJOSjNoSZ7mohBDdgu4tN9puIgWsh475u
+         yxLE+g1Pg/0F8oSJjGeI37g9iRhwA2UOMOOovjpcyUIWH5PIPFJzzeQv8CV54nFD+oKF
+         wd65ysvMIatwL1YS+o8swQ6yuwC3dR36UimJ+o1ulDdtNzcR1VjoF1dXVrYNKsC/2zYH
+         mYlDJZ3LwuWPDZi2GGYzLnY/hoItcYeNhGg/PT4T1ceVQeq32S5squoQAMGr3UdM7leC
+         VCevuBsBS72Jy2JqzjZEE0jMTdfmDx/N8F5LhdbQ3LCJOVwoVmZKnZDiQaDVbi/iiDWn
+         +Kfw==
+X-Gm-Message-State: APt69E2GXvpWPkLixVjV28iRJThLB7Q0oxa1bYl9ZF5V5lpPXHd8hCTK
+        VutZTyGi9IrAuAZhoPTtXWqOuA==
+X-Google-Smtp-Source: ADUXVKKuBH5nLOAL3Z3HNXrtdtUOA82dadG88zpZWmk0PFiJwHskA0OegFSB2qtiY+8hDiQQYwSbpQ==
+X-Received: by 2002:a63:2b15:: with SMTP id r21-v6mr1662303pgr.269.1528379312180;
+        Thu, 07 Jun 2018 06:48:32 -0700 (PDT)
+Received: from localhost.localdomain ([115.97.190.51])
+        by smtp.gmail.com with ESMTPSA id r30-v6sm12879137pgn.58.2018.06.07.06.48.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 07 Jun 2018 06:48:31 -0700 (PDT)
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Fabio maggi <fabio.mauri@bticino.it>, lamiaposta71@gmail.com,
+        Andrea CORTESE <andrea.cortese@bticino.it>,
+        "davide . bonfanti" <davide.bonfanti@bticino.it>,
+        Shyam Saini <shyam.saini@amarulasolutions.com>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Simone CIANNI <simone.cianni@bticino.it>,
+        Raffaele RECALCATI <raffaele.recalcati@bticino.it>,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v2 4/4] ARM: dts: i.MX6: imx6dl-mamoj: Add usb host and device support
+Date: Thu,  7 Jun 2018 19:17:48 +0530
+Message-Id: <20180607134748.2970-3-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180607134748.2970-1-jagan@amarulasolutions.com>
+References: <20180607134748.2970-1-jagan@amarulasolutions.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/08/2018 10:09 AM, Jarkko Sakkinen wrote:
-> This commit adds wrappers for Intel(R) SGX ENCLS opcode functionality.
+From: Michael Trimarchi <michael@amarulasolutions.com>
 
-What's ENCLS?  I know what an opcode is, but I don't know what "opcode
-functionality" is.  Could you give us more than a single, cryptic
-sentence, please?
+Add USB host and device support for BTicino i.MX6DL Mamoj board.
 
-> +enum sgx_commands {
-> +	ECREATE	= 0x0,
-> +	EADD	= 0x1,
-> +	EINIT	= 0x2,
-> +	EREMOVE	= 0x3,
-> +	EDGBRD	= 0x4,
-> +	EDGBWR	= 0x5,
-> +	EEXTEND	= 0x6,
-> +	ELDU	= 0x8,
-> +	EBLOCK	= 0x9,
-> +	EPA	= 0xA,
-> +	EWB	= 0xB,
-> +	ETRACK	= 0xC,
-> +	EAUG	= 0xD,
-> +	EMODPR	= 0xE,
-> +	EMODT	= 0xF,
-> +};
+Signed-off-by: Simone CIANNI <simone.cianni@bticino.it>
+Signed-off-by: Raffaele RECALCATI <raffaele.recalcati@bticino.it>
+Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+---
+Changes for v2:
+- collect Fabio r-w-b tag
 
-Again, please differentiate hardware-defined values from
-software-defines ones.  Also, would it hurt to expand the acronyms a
-bit, like:
+ arch/arm/boot/dts/imx6dl-mamoj.dts | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-+	ELDU	= 0x8, /* LoaD Underpants */
-
-> +#define SGX_FN(name, params...)		\
-> +{					\
-> +	void *epc;			\
-> +	int ret;			\
-> +	epc = sgx_get_page(epc_page);	\
-> +	ret = __##name(params);		\
-> +	sgx_put_page(epc);		\
-> +	return ret;			\
-> +}
-
-Have I seen sgx_*_page() yet in this series?  This seems out of order.
-
-> +#define BUILD_SGX_FN(fn, name)				\
-> +static inline int fn(struct sgx_epc_page *epc_page)	\
-> +	SGX_FN(name, epc)
-> +BUILD_SGX_FN(sgx_eremove, eremove)
-> +BUILD_SGX_FN(sgx_eblock, eblock)
-> +BUILD_SGX_FN(sgx_etrack, etrack)
-> +BUILD_SGX_FN(sgx_epa, epa)
-> +
-> +static inline int sgx_emodpr(struct sgx_secinfo *secinfo,
-> +			     struct sgx_epc_page *epc_page)
-> +	SGX_FN(emodpr, secinfo, epc)
-> +static inline int sgx_emodt(struct sgx_secinfo *secinfo,
-> +			    struct sgx_epc_page *epc_page)
-> +	SGX_FN(emodt, secinfo, epc)
-
-Wow, that's hideous.
-
-Can't you just do:
-
-BUILD_SGX_FN(__sgx_emopt, foo)
-
-static inline int sgx_emodt(struct sgx_secinfo *secinfo,
-			    struct sgx_epc_page *epc_page)
-{
-	return __sgx_emopt(secinfo, page);
-}
-
-Also, this entire patch seems rather comment-free.  Was that intentional?
+diff --git a/arch/arm/boot/dts/imx6dl-mamoj.dts b/arch/arm/boot/dts/imx6dl-mamoj.dts
+index 5034b086035f..a727e1471006 100644
+--- a/arch/arm/boot/dts/imx6dl-mamoj.dts
++++ b/arch/arm/boot/dts/imx6dl-mamoj.dts
+@@ -134,6 +134,17 @@
+ 		vin-supply = <&reg_lcd_vgl>;
+ 	};
+ 
++	reg_usb_host: regulator-usb-vbus {
++		compatible = "regulator-fixed";
++		regulator-name = "usbhost-vbus";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_usbhost>;
++		regulator-min-microvolt = <50000000>;
++		regulator-max-microvolt = <50000000>;
++		gpio = <&gpio6 6 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
++
+ 	reg_wl18xx_vmmc:  regulator-wl18xx-vmcc {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vwl1807";
+@@ -297,6 +308,16 @@
+ 	status = "okay";
+ };
+ 
++&usbh1 {
++	vbus-supply = <&reg_usb_host>;
++	status = "okay";
++};
++
++&usbotg {
++	dr_mode = "peripheral";
++	status = "okay";
++};
++
+ &usdhc1 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_usdhc1>;
+@@ -428,6 +449,12 @@
+ 		>;
+ 	};
+ 
++	pinctrl_usbhost: usbhost {
++		fsl,pins = <
++			MX6QDL_PAD_EIM_A23__GPIO6_IO06		0x4001b0b0
++		>;
++	};
++
+ 	pinctrl_usdhc1: usdhc1grp {
+ 		fsl,pins = <
+ 			MX6QDL_PAD_SD1_CMD__SD1_CMD    0x17069
+-- 
+2.14.3
