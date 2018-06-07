@@ -1,142 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id rAGUMHqEGltndQAAmS7hNA
-	; Fri, 08 Jun 2018 13:28:26 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 7cVYO21lGVv1CAAAmS7hNA
+	; Thu, 07 Jun 2018 17:04:07 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id B7B8B608C8; Fri,  8 Jun 2018 13:28:26 +0000 (UTC)
+	id 49F9B606DD; Thu,  7 Jun 2018 17:04:07 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=2.0 tests=BAYES_00,FROM_LOCAL_HEX,
+	MAILING_LIST_MULTI,SORTED_RECIPS autolearn=no autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 18579607E4;
-	Fri,  8 Jun 2018 13:28:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 18579607E4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by smtp.codeaurora.org (Postfix) with ESMTP id C88C960290;
+	Thu,  7 Jun 2018 17:04:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C88C960290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752872AbeFHN2X (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 09:28:23 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:24199 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752326AbeFHN1p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 09:27:45 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 412NWJ15fGz9ty8X;
-        Fri,  8 Jun 2018 15:27:40 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id WfjzXYgHu2RY; Fri,  8 Jun 2018 15:27:40 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 412NWJ0dRtz9ty8M;
-        Fri,  8 Jun 2018 15:27:40 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 5269E8BB62;
-        Fri,  8 Jun 2018 15:27:41 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id bB50IdCowRzh; Fri,  8 Jun 2018 15:27:41 +0200 (CEST)
-Received: from po14934vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 3708D8BB5D;
-        Fri,  8 Jun 2018 15:27:41 +0200 (CEST)
-Received: by po14934vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 289456F846; Fri,  8 Jun 2018 13:27:41 +0000 (UTC)
-Message-Id: <f473fd0faf8b61909726b3a5032d118b22958f59.1528463979.git.christophe.leroy@c-s.fr>
-In-Reply-To: <85de16f5629ac9f4a815230cced361908758b53a.1528463979.git.christophe.leroy@c-s.fr>
-References: <85de16f5629ac9f4a815230cced361908758b53a.1528463979.git.christophe.leroy@c-s.fr>
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v5 4/4] selftests/powerpc: update strlen() test to test the
- new assembly function
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, wei.guo.simon@gmail.com
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Fri,  8 Jun 2018 13:27:41 +0000 (UTC)
+        id S933882AbeFGREF (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 13:04:05 -0400
+Received: from mail-io0-f199.google.com ([209.85.223.199]:37552 "EHLO
+        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753234AbeFGREC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 13:04:02 -0400
+Received: by mail-io0-f199.google.com with SMTP id g20-v6so7999130ioc.4
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 10:04:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=jWrcbCghHy+FtOI2lMql2ROEVMLMi3AU+yJwoFTMWc0=;
+        b=okPrnJZJw7eHID+5JrznZlzNnlKcaBlE4MzXczZ5PSv4ugeUd+xH4p8JeH3ubZQRxw
+         LksVvRqL/d6ZVCtp4t5nCFnXjslmr77NEIVk0q85mSRx1Taq/50fS3Zom824A/+LD5XF
+         2aldxYXPPFK01vT5rj/AJRWLG79Gb9Gf7s0cwdCaMtEKlrc5KvabPT4sPM1SLZKwVpK7
+         017Q0QjG84M/TzYL4DxyEhmaYWI7TK+4SFxrW/07W5gkSQXAU/pX9mw5Gtk3GgaYG04b
+         7B39W+Cb+83I36PpXIIY76wZrRr/7Hv2GzTgv2V78tP7MmiXKVf9SyqR0h50OgiqCWBL
+         FogQ==
+X-Gm-Message-State: APt69E3OfvJ0vBMd7RQ6CjmGgOWkB2GN1qg98Ar7mT64SMlLUEYCM8wX
+        4Yemg9qzdPQuOeBp+oG7nNM4fGFY2UX/8TKZVshMSDD3FSXk
+X-Google-Smtp-Source: ADUXVKL5TLbrbhzdyYEXCXOg8uRF4ZCsB5wKRevdM6NpnqtsNdH2l1f2lKBT/Dkm6tXlKdbWS0G9ahJTSBAzjcoX9LSvnzGP9rVN
+MIME-Version: 1.0
+X-Received: by 2002:a6b:91d7:: with SMTP id t206-v6mr1167098iod.36.1528391042245;
+ Thu, 07 Jun 2018 10:04:02 -0700 (PDT)
+Date: Thu, 07 Jun 2018 10:04:02 -0700
+In-Reply-To: <CACT4Y+btyLi+z09EO0JU-7AS_OfRbWiZvGn-KP9fndevh+xFNw@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000026a983056e1045b4@google.com>
+Subject: Re: KMSAN: uninit-value in _copy_to_iter (2)
+From: syzbot <syzbot+87cfa083e727a224754b@syzkaller.appspotmail.com>
+To: avagin@openvz.org, davem@davemloft.net, dingtianhong@huawei.com,
+        dvyukov@google.com, edumazet@google.com, elena.reshetova@intel.com,
+        jasowang@redhat.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, matthew@mjdsystems.ca,
+        mingo@kernel.org, mst@redhat.com, netdev@vger.kernel.org,
+        pabeni@redhat.com, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk, virtualization@lists.linux-foundation.org,
+        willemb@google.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch modifies the test for testing the new assembly strlen() instead
-of the generic strlen()
+Hello,
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- v5: no change
- v4: new
+syzbot has tested the proposed patch and the reproducer did not trigger  
+crash:
 
- tools/testing/selftests/powerpc/stringloops/Makefile |  3 +--
- .../selftests/powerpc/stringloops/asm/cache.h        |  1 +
- .../selftests/powerpc/stringloops/asm/ppc_asm.h      | 20 ++++++++++++++++++++
- tools/testing/selftests/powerpc/stringloops/string.S |  1 +
- 4 files changed, 23 insertions(+), 2 deletions(-)
- create mode 100644 tools/testing/selftests/powerpc/stringloops/asm/cache.h
- create mode 120000 tools/testing/selftests/powerpc/stringloops/string.S
+Reported-and-tested-by:  
+syzbot+87cfa083e727a224754b@syzkaller.appspotmail.com
 
-diff --git a/tools/testing/selftests/powerpc/stringloops/Makefile b/tools/testing/selftests/powerpc/stringloops/Makefile
-index df663ee9ddb3..0c088a6d0369 100644
---- a/tools/testing/selftests/powerpc/stringloops/Makefile
-+++ b/tools/testing/selftests/powerpc/stringloops/Makefile
-@@ -10,8 +10,7 @@ $(OUTPUT)/memcmp_64: CFLAGS += -m64
- $(OUTPUT)/memcmp_32: memcmp.c
- $(OUTPUT)/memcmp_32: CFLAGS += -m32
- 
--$(OUTPUT)/strlen: strlen.c string.o
--$(OUTPUT)/string.o: string.c
-+$(OUTPUT)/strlen: strlen.c string.S
- 
- ASFLAGS = $(CFLAGS)
- 
-diff --git a/tools/testing/selftests/powerpc/stringloops/asm/cache.h b/tools/testing/selftests/powerpc/stringloops/asm/cache.h
-new file mode 100644
-index 000000000000..8a2840831122
---- /dev/null
-+++ b/tools/testing/selftests/powerpc/stringloops/asm/cache.h
-@@ -0,0 +1 @@
-+#define	IFETCH_ALIGN_BYTES 4
-diff --git a/tools/testing/selftests/powerpc/stringloops/asm/ppc_asm.h b/tools/testing/selftests/powerpc/stringloops/asm/ppc_asm.h
-index 136242ec4b0e..9f8e34ffc131 100644
---- a/tools/testing/selftests/powerpc/stringloops/asm/ppc_asm.h
-+++ b/tools/testing/selftests/powerpc/stringloops/asm/ppc_asm.h
-@@ -1,4 +1,12 @@
- /* SPDX-License-Identifier: GPL-2.0 */
-+#if !defined(CONFIG_PPC64) && !defined(CONFIG_PPC32)
-+#ifdef __powerpc64__
-+#define CONFIG_PPC64
-+#else
-+#define CONFIG_PPC32
-+#endif
-+#endif
-+
- #include <ppc-asm.h>
- 
- #ifndef r1
-@@ -6,3 +14,15 @@
- #endif
- 
- #define _GLOBAL(A) FUNC_START(test_ ## A)
-+
-+#ifdef __powerpc64__
-+#define SZL		8
-+#define PPC_LLU		ldu
-+#define PPC_LCMPI	cmpldi
-+#define PPC_ROTLI	rotldi
-+#else
-+#define SZL		4
-+#define PPC_LLU		lwzu
-+#define PPC_LCMPI	cmplwi
-+#define PPC_ROTLI	rotlwi
-+#endif
-diff --git a/tools/testing/selftests/powerpc/stringloops/string.S b/tools/testing/selftests/powerpc/stringloops/string.S
-new file mode 120000
-index 000000000000..9f5babec7d21
---- /dev/null
-+++ b/tools/testing/selftests/powerpc/stringloops/string.S
-@@ -0,0 +1 @@
-+../../../../../arch/powerpc/lib/string.S
-\ No newline at end of file
--- 
-2.13.3
+Tested on:
+
+commit:         c6a6aed994b6 kmsan: remove dead code to trigger syzbot build
+git tree:       https://github.com/google/kmsan.git/master
+kernel config:  https://syzkaller.appspot.com/x/.config?x=848e40757852af3e
+compiler:       clang version 7.0.0 (trunk 334104)
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17dc3a8f800000
+
+Note: testing is done by a robot and is best-effort only.
