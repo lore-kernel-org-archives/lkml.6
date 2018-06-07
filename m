@@ -1,142 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id PPiBJSomHluVfAAAmS7hNA
-	; Mon, 11 Jun 2018 07:35:06 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id kNF4C7SBGVvrCgAAmS7hNA
+	; Thu, 07 Jun 2018 19:05:03 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 8700B607E7; Mon, 11 Jun 2018 07:35:06 +0000 (UTC)
+	id DA0766074D; Thu,  7 Jun 2018 19:05:02 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="voH+a76Q"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 8275060792;
-	Mon, 11 Jun 2018 07:35:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8275060792
+	by smtp.codeaurora.org (Postfix) with ESMTP id 4AAC3601D2;
+	Thu,  7 Jun 2018 19:05:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4AAC3601D2
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932358AbeFKHfB (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 03:35:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37497 "EHLO mx2.suse.de"
+        id S1753641AbeFGTFA (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 15:05:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39590 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932230AbeFKHfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 03:35:00 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 20326AD0B;
-        Mon, 11 Jun 2018 07:34:59 +0000 (UTC)
-Date: Mon, 11 Jun 2018 09:34:58 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Roman Gushchin <guro@fb.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
-        kernel-team@fb.com, linux-kernel@vger.kernel.org,
-        Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCH] mm: fix null pointer dereference in mem_cgroup_protected
-Message-ID: <20180611073458.GD13364@dhcp22.suse.cz>
-References: <20180608170607.29120-1-guro@fb.com>
+        id S1753100AbeFGTE6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 15:04:58 -0400
+Received: from jouet.infradead.org (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05AAF20896;
+        Thu,  7 Jun 2018 19:04:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528398298;
+        bh=mWJMwtYhNOLBBQEB4rx76yGKeEDuQwYyk1gXpVWhURE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=voH+a76QNHMqDeHUjPtVfK3+9UzNGzLI18XG1F2PDSdN0CCdmlKbmZAd/NRa5R6+E
+         mRDnVXzh4xzlcq+zsNPrLUp/PGedQxsLraQabVwf7WDx2idJ7ZL1XKqWsyOd12/Wt0
+         5a1IWS8Xur6DQswrW6nPrX+m1eo2slOc2LWKE57Y=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 99ED11468B9; Thu,  7 Jun 2018 16:04:55 -0300 (-03)
+Date: Thu, 7 Jun 2018 16:04:55 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Milian Wolff <milian.wolff@kdab.com>,
+        Andi Kleen <andi@firstfloor.org>,
+        Frederic Weisbecker <frederic@kernel.org>
+Subject: Re: [PATCH 07/10] perf stat: Add event parsing error handling to
+ add_default_attributes
+Message-ID: <20180607190455.GE17292@kernel.org>
+References: <20180606221513.11302-1-jolsa@kernel.org>
+ <20180606221513.11302-8-jolsa@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180608170607.29120-1-guro@fb.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180606221513.11302-8-jolsa@kernel.org>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 08-06-18 18:06:07, Roman Gushchin wrote:
-> Shakeel reported a crash in mem_cgroup_protected(), which
-> can be triggered by memcg reclaim if the legacy cgroup v1
-> use_hierarchy=0 mode is used:
+Em Thu, Jun 07, 2018 at 12:15:10AM +0200, Jiri Olsa escreveu:
+> Adding missing error handling for parse_events calls
+> in add_default_attributes functions. The error handler
+> displays error details, like for transactions (-T):
+
+Applied up to here, that are trivial, waiting a bit more discussion
+about the really new stuff,
+
+Thanks,
+
+- Arnaldo
+ 
+> Before:
+>   $ perf stat -T
+>   Cannot set up transaction events
 > 
-> [  226.060572] BUG: unable to handle kernel NULL pointer dereference
-> at 0000000000000120
-> [  226.068310] PGD 8000001ff55da067 P4D 8000001ff55da067 PUD 1fdc7df067 PMD 0
-> [  226.075191] Oops: 0000 [#4] SMP PTI
-> [  226.078637] CPU: 0 PID: 15581 Comm: bash Tainted: G      D
->  4.17.0-smp-clean #5
-> [  226.086635] Hardware name: ...
-> [  226.094546] RIP: 0010:mem_cgroup_protected+0x54/0x130
-> [  226.099533] Code: 4c 8b 8e 00 01 00 00 4c 8b 86 08 01 00 00 48 8d
-> 8a 08 ff ff ff 48 85 d2 ba 00 00 00 00 48 0f 44 ca 48 39 c8 0f 84 cf
-> 00 00 00 <48> 8b 81 20 01 00 00 4d 89 ca 4c 39 c8 4c 0f 46 d0 4d 85 d2
-> 74 05
-> [  226.118194] RSP: 0000:ffffabe64dfafa58 EFLAGS: 00010286
-> [  226.123358] RAX: ffff9fb6ff03d000 RBX: ffff9fb6f5b1b000 RCX: 0000000000000000
-> [  226.130406] RDX: 0000000000000000 RSI: ffff9fb6f5b1b000 RDI: ffff9fb6f5b1b000
-> [  226.137454] RBP: ffffabe64dfafb08 R08: 0000000000000000 R09: 0000000000000000
-> [  226.144503] R10: 0000000000000000 R11: 000000000000c800 R12: ffffabe64dfafb88
-> [  226.151551] R13: ffff9fb6f5b1b000 R14: ffffabe64dfafb88 R15: ffff9fb77fffe000
-> [  226.158602] FS:  00007fed1f8ac700(0000) GS:ffff9fb6ff400000(0000)
-> knlGS:0000000000000000
-> [  226.166594] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  226.172270] CR2: 0000000000000120 CR3: 0000001fdcf86003 CR4: 00000000001606f0
-> [  226.179317] Call Trace:
-> [  226.181732]  ? shrink_node+0x194/0x510
-> [  226.185435]  do_try_to_free_pages+0xfd/0x390
-> [  226.189653]  try_to_free_mem_cgroup_pages+0x123/0x210
-> [  226.194643]  try_charge+0x19e/0x700
-> [  226.198088]  mem_cgroup_try_charge+0x10b/0x1a0
-> [  226.202478]  wp_page_copy+0x134/0x5b0
-> [  226.206094]  do_wp_page+0x90/0x460
-> [  226.209453]  __handle_mm_fault+0x8e3/0xf30
-> [  226.213498]  handle_mm_fault+0xfe/0x220
-> [  226.217285]  __do_page_fault+0x262/0x500
-> [  226.221158]  do_page_fault+0x28/0xd0
-> [  226.224689]  ? page_fault+0x8/0x30
-> [  226.228048]  page_fault+0x1e/0x30
-> [  226.231323] RIP: 0033:0x485b72
+> After:
+>   $ perf stat -T
+>   Cannot set up transaction events
+>   event syntax error: '..cycles,cpu/cycles-t/,cpu/tx-start/,cpu/el-start/,cpu/cycles-ct/}'
+>                                     \___ unknown term
 > 
-> The problem happens because parent_mem_cgroup() returns a NULL
-> pointer, which is dereferenced later without a check.
-> 
-> As cgroup v1 has no memory guarantee support, let's make
-> mem_cgroup_protected() immediately return MEMCG_PROT_NONE,
-> if the given cgroup has no parent (non-hierarchical mode is used).
-> 
-
-Fixes: bf8d5d52ffe8 ("memcg: introduce memory.min")
-
-I guess.
-
-> Reported-by: Shakeel Butt <shakeelb@google.com>
-> Signed-off-by: Roman Gushchin <guro@fb.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-I really do not see why the whole min limit thing had to be rushed into
-mainline. It has clearly not been tested for all configurations. Sigh...
-
+> Link: http://lkml.kernel.org/n/tip-hmctifkfiaij47xb9en1hlcf@git.kernel.org
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 > ---
->  mm/memcontrol.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  tools/perf/builtin-stat.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
 > 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 6c9fb4e47be3..6205ba512928 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -5750,6 +5750,9 @@ enum mem_cgroup_protection mem_cgroup_protected(struct mem_cgroup *root,
->  	elow = memcg->memory.low;
+> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+> index a8f93885763a..cc3dd85d5a60 100644
+> --- a/tools/perf/builtin-stat.c
+> +++ b/tools/perf/builtin-stat.c
+> @@ -2451,14 +2451,13 @@ static int add_default_attributes(void)
+>  	(PERF_COUNT_HW_CACHE_OP_PREFETCH	<<  8) |
+>  	(PERF_COUNT_HW_CACHE_RESULT_MISS	<< 16)				},
+>  };
+> +	struct parse_events_error errinfo;
 >  
->  	parent = parent_mem_cgroup(memcg);
-> +	if (!parent)
-> +		return MEMCG_PROT_NONE;
-> +
-
-This deserves a comment.
-	/* No parent means a non-hierarchical mode on v1 memcg */
-
->  	if (parent == root_mem_cgroup)
->  		goto exit;
+>  	/* Set attrs if no event is selected and !null_run: */
+>  	if (null_run)
+>  		return 0;
 >  
+>  	if (transaction_run) {
+> -		struct parse_events_error errinfo;
+> -
+>  		if (pmu_have_event("cpu", "cycles-ct") &&
+>  		    pmu_have_event("cpu", "el-start"))
+>  			err = parse_events(evsel_list, transaction_attrs,
+> @@ -2469,6 +2468,7 @@ static int add_default_attributes(void)
+>  					   &errinfo);
+>  		if (err) {
+>  			fprintf(stderr, "Cannot set up transaction events\n");
+> +			parse_events_print_error(&errinfo, transaction_attrs);
+>  			return -1;
+>  		}
+>  		return 0;
+> @@ -2494,10 +2494,11 @@ static int add_default_attributes(void)
+>  		    pmu_have_event("msr", "smi")) {
+>  			if (!force_metric_only)
+>  				metric_only = true;
+> -			err = parse_events(evsel_list, smi_cost_attrs, NULL);
+> +			err = parse_events(evsel_list, smi_cost_attrs, &errinfo);
+>  		} else {
+>  			fprintf(stderr, "To measure SMI cost, it needs "
+>  				"msr/aperf/, msr/smi/ and cpu/cycles/ support\n");
+> +			parse_events_print_error(&errinfo, smi_cost_attrs);
+>  			return -1;
+>  		}
+>  		if (err) {
+> @@ -2532,12 +2533,13 @@ static int add_default_attributes(void)
+>  		if (topdown_attrs[0] && str) {
+>  			if (warn)
+>  				arch_topdown_group_warn();
+> -			err = parse_events(evsel_list, str, NULL);
+> +			err = parse_events(evsel_list, str, &errinfo);
+>  			if (err) {
+>  				fprintf(stderr,
+>  					"Cannot set up top down events %s: %d\n",
+>  					str, err);
+>  				free(str);
+> +				parse_events_print_error(&errinfo, str);
+>  				return -1;
+>  			}
+>  		} else {
 > -- 
-> 2.14.3
-
--- 
-Michal Hocko
-SUSE Labs
+> 2.13.6
