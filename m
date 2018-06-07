@@ -1,99 +1,200 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id MnOjIDTsHVuAJgAAmS7hNA
-	; Mon, 11 Jun 2018 03:27:48 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 4fRdMWxTGVssHgAAmS7hNA
+	; Thu, 07 Jun 2018 15:47:02 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 7851760792; Mon, 11 Jun 2018 03:27:48 +0000 (UTC)
+	id 75B81607E7; Thu,  7 Jun 2018 15:47:02 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JoF544Ql"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 06234606DD;
-	Mon, 11 Jun 2018 03:27:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 06234606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id D2558601B4;
+	Thu,  7 Jun 2018 15:47:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D2558601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932514AbeFKD1U (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Sun, 10 Jun 2018 23:27:20 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:12577 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753970AbeFKD1S (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 23:27:18 -0400
-X-UUID: 23e52402d38840a68ff9e856883666df-20180611
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
-        (envelope-from <stu.hsieh@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 900419655; Mon, 11 Jun 2018 11:27:10 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Mon, 11 Jun 2018 11:27:08 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Mon, 11 Jun 2018 11:27:08 +0800
-From: Stu Hsieh <stu.hsieh@mediatek.com>
-To: CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>
-CC: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, Stu Hsieh <stu.hsieh@mediatek.com>
-Subject: [PATCH 23/28] drm/mediatek: add DPI1 support for mutex
-Date: Mon, 11 Jun 2018 11:26:15 +0800
-Message-ID: <1528687580-549-24-git-send-email-stu.hsieh@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
-References: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
+        id S935276AbeFGPq7 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:46:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47400 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934229AbeFGPq4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 11:46:56 -0400
+Received: from mail-it0-f46.google.com (mail-it0-f46.google.com [209.85.214.46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 28D03208AE
+        for <linux-kernel@vger.kernel.org>; Thu,  7 Jun 2018 15:46:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528386416;
+        bh=Jix8cnifTw1QBx5OWB32i+eNmI/ZBGogTdTY3BfSSz0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=JoF544QluiQE0gJ2Abd9j3b+MjrLwJCuBrBx70nOvouctmfJRs+zI8xDxrcWO0niE
+         q66Lt1kJfhSJCh0uyZr9K4Ra5iOog7bLx+zHvGwsrLPM7fSZLeEk8uyhfL6QDt79wM
+         vuf6KnRxUud0FVOrSO7l8aZIvH8tfN1u/q/NBBa8=
+Received: by mail-it0-f46.google.com with SMTP id j135-v6so2961361itj.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 08:46:56 -0700 (PDT)
+X-Gm-Message-State: APt69E3T3h12hzzPtdgBopnOeSacdrYUFmaoXFKJWiE8mGMclIaMOPEK
+        2nx2fXjYb8nq/2fMLejJRZ6eb5lMADUH09HV/DUZMg==
+X-Google-Smtp-Source: ADUXVKLLi4fZMel7xRkDxcl0xgcGzLc0HvNmXtNR7eDgKATnBbq9HAcpT1k0bkjzXJslJ7+6PYN0FdX3KkGgyPn1Jzo=
+X-Received: by 2002:a24:e9c6:: with SMTP id f189-v6mr2529336ith.12.1528386415392;
+ Thu, 07 Jun 2018 08:46:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+References: <20180607143705.3531-1-yu-cheng.yu@intel.com> <20180607143705.3531-2-yu-cheng.yu@intel.com>
+In-Reply-To: <20180607143705.3531-2-yu-cheng.yu@intel.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Thu, 7 Jun 2018 08:46:43 -0700
+X-Gmail-Original-Message-ID: <CALCETrVbQDyvgf5XE+a0UrTVMuhb2X=bSbp1BjGp2FAvbpSm-Q@mail.gmail.com>
+Message-ID: <CALCETrVbQDyvgf5XE+a0UrTVMuhb2X=bSbp1BjGp2FAvbpSm-Q@mail.gmail.com>
+Subject: Re: [PATCH 1/9] x86/cet: Control protection exception handler
+To: Yu-cheng Yu <yu-cheng.yu@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        mike.kravetz@oracle.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add the DPI1 support for mutex
+On Thu, Jun 7, 2018 at 7:40 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+>
+> A control protection exception is triggered when a control flow transfer
+> attempt violated shadow stack or indirect branch tracking constraints.
+> For example, the return address for a RET instruction differs from the
+> safe copy on the shadow stack; or a JMP instruction arrives at a non-
+> ENDBR instruction.
+>
+> The control protection exception handler works in a similar way as the
+> general protection fault handler.
+>
+> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+> ---
+>  arch/x86/entry/entry_32.S    |  5 ++++
+>  arch/x86/entry/entry_64.S    |  2 +-
+>  arch/x86/include/asm/traps.h |  3 +++
+>  arch/x86/kernel/idt.c        |  1 +
+>  arch/x86/kernel/traps.c      | 61 ++++++++++++++++++++++++++++++++++++++++++++
+>  5 files changed, 71 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+> index bef8e2b202a8..14b63ef0d7d8 100644
+> --- a/arch/x86/entry/entry_32.S
+> +++ b/arch/x86/entry/entry_32.S
+> @@ -1070,6 +1070,11 @@ ENTRY(general_protection)
+>         jmp     common_exception
+>  END(general_protection)
+>
+> +ENTRY(control_protection)
+> +       pushl   $do_control_protection
+> +       jmp     common_exception
+> +END(control_protection)
 
-Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
----
- drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Ugh, you're seriously supporting this on 32-bit?  Please test double
+fault handling very carefully -- the CET interaction with task
+switches is so gross that I didn't even bother reading the spec except
+to let the architects know that they were a but nuts to support it at
+all.
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-index 5a8569fa6505..5916fc11693a 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-@@ -76,6 +76,7 @@
- #define MUTEX_SOF_DSI0			1
- #define MUTEX_SOF_DSI1			2
- #define MUTEX_SOF_DPI0			3
-+#define MUTEX_SOF_DPI1			4
- 
- #define OVL0_MOUT_EN_COLOR0		0x1
- #define OD_MOUT_EN_RDMA0		0x1
-@@ -385,6 +386,9 @@ void mtk_disp_mutex_add_comp(struct mtk_disp_mutex *mutex,
- 	case DDP_COMPONENT_DPI0:
- 		reg = MUTEX_SOF_DPI0;
- 		break;
-+	case DDP_COMPONENT_DPI1:
-+		reg = MUTEX_SOF_DPI1;
-+		break;
- 	default:
- 		if (ddp->mutex_mod[id] < 32) {
- 			offset = DISP_REG_MUTEX_MOD(mutex->id);
-@@ -417,6 +421,7 @@ void mtk_disp_mutex_remove_comp(struct mtk_disp_mutex *mutex,
- 	case DDP_COMPONENT_DSI0:
- 	case DDP_COMPONENT_DSI1:
- 	case DDP_COMPONENT_DPI0:
-+	case DDP_COMPONENT_DPI1:
- 		writel_relaxed(MUTEX_SOF_SINGLE_MODE,
- 			       ddp->regs + DISP_REG_MUTEX_SOF(mutex->id));
- 		break;
--- 
-2.12.5
+> +
+>  #ifdef CONFIG_KVM_GUEST
+>  ENTRY(async_page_fault)
+>         ASM_CLAC
+> diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+> index 3166b9674429..5230f705d229 100644
+> --- a/arch/x86/entry/entry_64.S
+> +++ b/arch/x86/entry/entry_64.S
+> @@ -999,7 +999,7 @@ idtentry spurious_interrupt_bug             do_spurious_interrupt_bug       has_error_code=0
+>  idtentry coprocessor_error             do_coprocessor_error            has_error_code=0
+>  idtentry alignment_check               do_alignment_check              has_error_code=1
+>  idtentry simd_coprocessor_error                do_simd_coprocessor_error       has_error_code=0
+> -
+> +idtentry control_protection            do_control_protection           has_error_code=1
+> diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+> index 03f3d7695dac..4e8769a19aaf 100644
+> --- a/arch/x86/kernel/traps.c
+> +++ b/arch/x86/kernel/traps.c
+
+> +/*
+> + * When a control protection exception occurs, send a signal
+> + * to the responsible application.  Currently, control
+> + * protection is only enabled for the user mode.  This
+> + * exception should not come from the kernel mode.
+> + */
+> +dotraplinkage void
+> +do_control_protection(struct pt_regs *regs, long error_code)
+> +{
+> +       struct task_struct *tsk;
+> +
+> +       RCU_LOCKDEP_WARN(!rcu_is_watching(), "entry code didn't wake RCU");
+> +       cond_local_irq_enable(regs);
+> +
+> +       tsk = current;
+> +       if (!cpu_feature_enabled(X86_FEATURE_SHSTK) &&
+> +           !cpu_feature_enabled(X86_FEATURE_IBT)) {
+
+static_cpu_has(), please.  But your handling here is odd -- I think
+that we should at least warn if we get #CP with CET disable.
+
+> +               goto exit;
+> +       }
+> +
+> +       if (!user_mode(regs)) {
+> +               tsk->thread.error_code = error_code;
+> +               tsk->thread.trap_nr = X86_TRAP_CP;
+
+I realize you copied this from elsewhere in the file, but please
+either delete these assignments to error_code and trap_nr or at least
+hoist them out of the if block.
+
+> +               if (notify_die(DIE_TRAP, "control protection fault", regs,
+> +                              error_code, X86_TRAP_CP, SIGSEGV) != NOTIFY_STOP)
+
+Does this notify_die() check serve any purpose at all?  Removing all
+the old ones would be a project, but let's try not to add new callers.
+
+> +                       die("control protection fault", regs, error_code);
+> +               return;
+> +       }
+> +
+> +       tsk->thread.error_code = error_code;
+> +       tsk->thread.trap_nr = X86_TRAP_CP;
+> +
+> +       if (show_unhandled_signals && unhandled_signal(tsk, SIGSEGV) &&
+> +           printk_ratelimit()) {
+> +               unsigned int max_idx, err_idx;
+> +
+> +               max_idx = ARRAY_SIZE(control_protection_err) - 1;
+> +               err_idx = min((unsigned int)error_code - 1, max_idx);
+
+What if error_code == 0?  Is that also invalid?
+
+> +               pr_info("%s[%d] control protection ip:%lx sp:%lx error:%lx(%s)",
+> +                       tsk->comm, task_pid_nr(tsk),
+> +                       regs->ip, regs->sp, error_code,
+> +                       control_protection_err[err_idx]);
+> +               print_vma_addr(" in ", regs->ip);
+> +               pr_cont("\n");
+> +       }
+> +
+> +exit:
+> +       force_sig_info(SIGSEGV, SEND_SIG_PRIV, tsk);
+
+This is definitely wrong for the feature-disabled, !user_mode case.
+
+Also, are you planning on enabling CET for kernel code too?
