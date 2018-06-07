@@ -1,130 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id bNePLzyaHlsAUAAAmS7hNA
-	; Mon, 11 Jun 2018 15:50:20 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id iw4iOpI/GVtTXAAAmS7hNA
+	; Thu, 07 Jun 2018 14:24:02 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 9B8FA607A4; Mon, 11 Jun 2018 15:50:20 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oSK0sRi9"
+	id 7C3F6608BF; Thu,  7 Jun 2018 14:24:02 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 125E9600D0;
-	Mon, 11 Jun 2018 15:50:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 125E9600D0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id AD805602FC;
+	Thu,  7 Jun 2018 14:24:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AD805602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933188AbeFKPuS (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 11:50:18 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:37439 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933014AbeFKPuN (ORCPT
+        id S1753754AbeFGOYA (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:24:00 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40117 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933313AbeFGOX5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 11:50:13 -0400
-Received: by mail-wr0-f195.google.com with SMTP id d8-v6so20949558wro.4;
-        Mon, 11 Jun 2018 08:50:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=SUr+6NOSsNUEwURPfi8G1Ijjt8fnnFLs1nUeW5tCN0I=;
-        b=oSK0sRi9gjEhUiOFhSau5Duy8Jn+N2RtWiCVnCpaju0rfcDg1DT+/ZYdNeki64VvzD
-         qGag8fTdmmp35QTzruP+PYoOw8rdidV1ix1HoCkY7xpQgVVCBBO6QdVtALIZLQBqMjF6
-         T1o77sCfdbTNVfQ50obL+a/VjjRTxBCSwLxQOoyzkxCE1llFb7h0lZk2ctHAekC15O+h
-         PbGBnJpiAfNpy3NCEkH+wbEfUTlIN/a4+P3xlpsvfisWAyDj4+U8JzQzwd8QPvnJsEhg
-         5c/bazbG740Phy3xIHvCXGPWamzCHcU9OdZcKQX5Ry/AEs0vEL1M/IfHlgxy/CaVNJdk
-         fW6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=SUr+6NOSsNUEwURPfi8G1Ijjt8fnnFLs1nUeW5tCN0I=;
-        b=HGoiBwgurjZFj7mLPqi0JASYeFWbszoNYUS6aq6DKXlz3basuwX7E8b6jRwjvsAGKI
-         WQYu5ej74/1oivKhn4Xl+YXVWVAwwYb/7DE/sF9aTlzH4w67wu2JOvmwVzx8qYmb+Xij
-         IGos7gnYt0H6zyW52Y/F2wO1Z6i+H4lb7Anh0SqYF2jB4TyBqTkLBGTieWAe0aZrhtz6
-         Gj71nqUlYHM1UhtX0RLIpKOvnWwx/B9K+TlYZ0qTF7zcucpNBsRg+QUFkNh8aW8lzC0U
-         9yERtK/YG4P7MDlzCXCQcz/eGzgjPW8iMBCZHeURZNhwJts6nvNHGJDGVWQe5xgRpjLI
-         kKFg==
-X-Gm-Message-State: APt69E2zwGtfc4h3QEaSBDXhz8sb8DXnQoPBn8Hth45nA9jD+2bxNEBt
-        2MeqQsaEGmvhucn3eYL9BtI=
-X-Google-Smtp-Source: ADUXVKLI6WtBEQod9cOLr99RLOhLzxZ7xN2w5cc+oyjlXwABekfDOoj+WL1AG29N8SBwAWrZpsqzAg==
-X-Received: by 2002:adf:ee91:: with SMTP id b17-v6mr14460364wro.21.1528732211704;
-        Mon, 11 Jun 2018 08:50:11 -0700 (PDT)
-Received: from cperon-Latitude-7490.lan (static-css-csd-151233.business.bouyguestelecom.com. [176.162.151.233])
-        by smtp.gmail.com with ESMTPSA id n11-v6sm30308862wro.13.2018.06.11.08.50.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Jun 2018 08:50:10 -0700 (PDT)
-From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-To: Colin Didier <colin.didier@devialet.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Stefan Agner <stefan@agner.ch>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Rob Herring <robh@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        =?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
-Subject: [PATCH v7 3/5] dt-bindings: timer: add i.MX EPIT timer binding
-Date: Mon, 11 Jun 2018 17:49:59 +0200
-Message-Id: <20180611155001.3506-4-peron.clem@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180611155001.3506-1-peron.clem@gmail.com>
-References: <20180611155001.3506-1-peron.clem@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        Thu, 7 Jun 2018 10:23:57 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbd-0005Zl-KU; Thu, 07 Jun 2018 15:09:37 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb7-00033r-Nu; Thu, 07 Jun 2018 15:09:05 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Anand Moon" <linux.amoon@gmail.com>,
+        "Kamil Konieczny" <k.konieczny@partner.samsung.com>,
+        "Krzysztof Kozlowski" <krzk@kernel.org>,
+        "Herbert Xu" <herbert@gondor.apana.org.au>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.182070501@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 240/410] crypto: s5p-sss - Fix kernel Oops in AES-ECB
+ mode
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Clément Peron <clement.peron@devialet.com>
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Add devicetree binding document for NXP's i.MX SoC specific
-EPIT timer driver.
+------------------
 
-Signed-off-by: Clément Peron <clement.peron@devialet.com>
-Reviewed-by: Vladimir Zapolskiy <vz@mleia.com>
+From: Kamil Konieczny <k.konieczny@partner.samsung.com>
+
+commit c927b080c67e3e97193c81fc1d27f4251bf4e036 upstream.
+
+In AES-ECB mode crypt is done with key only, so any use of IV
+can cause kernel Oops. Use IV only in AES-CBC and AES-CTR.
+
+Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Reported-by: Anand Moon <linux.amoon@gmail.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Tested-by: Anand Moon <linux.amoon@gmail.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- .../devicetree/bindings/timer/fsl,imxepit.txt | 21 +++++++++++++++++++
- 1 file changed, 21 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/timer/fsl,imxepit.txt
+ drivers/crypto/s5p-sss.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/timer/fsl,imxepit.txt b/Documentation/devicetree/bindings/timer/fsl,imxepit.txt
-new file mode 100644
-index 000000000000..819d6458a860
---- /dev/null
-+++ b/Documentation/devicetree/bindings/timer/fsl,imxepit.txt
-@@ -0,0 +1,21 @@
-+Binding for the i.MX Enhanced Periodic Interrupt Timer (EPIT)
-+
-+The Enhanced Periodic Interrupt Timer (EPIT) is a 32-bit set-and-forget timer
-+that is capable of providing precise interrupts at regular intervals with
-+minimal processor intervention.
-+
-+Required properties:
-+- compatible: should be "fsl,<chip>-epit", "fsl,imx31-epit" where <chip> is
-+  imx25, imx6qdl, imx6sl, imx6sul or imx6sx.
-+- reg: physical base address of the controller and length of memory mapped
-+  region.
-+- interrupts: Should contain EPIT controller interrupt
-+- clocks : The clock provided by the SoC to drive the timer.
-+
-+Example for i.MX6QDL:
-+	epit1: timer@20d0000 {
-+		compatible = "fsl,imx6qdl-epit", "fsl,imx31-epit";
-+		reg = <0x020d0000 0x4000>;
-+		interrupts = <0 56 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&clks IMX6QDL_CLK_EPIT1>;
-+	};
--- 
-2.17.1
+--- a/drivers/crypto/s5p-sss.c
++++ b/drivers/crypto/s5p-sss.c
+@@ -426,15 +426,21 @@ static void s5p_aes_crypt_start(struct s
+ 	uint32_t                    aes_control;
+ 	int                         err;
+ 	unsigned long               flags;
++	u8 *iv;
+ 
+ 	aes_control = SSS_AES_KEY_CHANGE_MODE;
+ 	if (mode & FLAGS_AES_DECRYPT)
+ 		aes_control |= SSS_AES_MODE_DECRYPT;
+ 
+-	if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CBC)
++	if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CBC) {
+ 		aes_control |= SSS_AES_CHAIN_MODE_CBC;
+-	else if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CTR)
++		iv = req->info;
++	} else if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CTR) {
+ 		aes_control |= SSS_AES_CHAIN_MODE_CTR;
++		iv = req->info;
++	} else {
++		iv = NULL; /* AES_ECB */
++	}
+ 
+ 	if (dev->ctx->keylen == AES_KEYSIZE_192)
+ 		aes_control |= SSS_AES_KEY_SIZE_192;
+@@ -465,7 +471,7 @@ static void s5p_aes_crypt_start(struct s
+ 		goto outdata_error;
+ 
+ 	SSS_AES_WRITE(dev, AES_CONTROL, aes_control);
+-	s5p_set_aes(dev, dev->ctx->aes_key, req->info, dev->ctx->keylen);
++	s5p_set_aes(dev, dev->ctx->aes_key, iv, dev->ctx->keylen);
+ 
+ 	s5p_set_dma_indata(dev,  req->src);
+ 	s5p_set_dma_outdata(dev, req->dst);
