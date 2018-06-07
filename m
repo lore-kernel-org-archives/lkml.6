@@ -1,117 +1,210 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Pa9dBw2gHlsDMwAAmS7hNA
-	; Mon, 11 Jun 2018 16:15:19 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id K8g3Iz9DGVvWBgAAmS7hNA
+	; Thu, 07 Jun 2018 14:40:47 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id A0348607A4; Mon, 11 Jun 2018 16:15:19 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="j89aEuS8"
+	id 98AF6608C8; Thu,  7 Jun 2018 14:40:47 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 712EB601C3;
-	Mon, 11 Jun 2018 16:15:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 712EB601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id B4C3E602FC;
+	Thu,  7 Jun 2018 14:40:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B4C3E602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933283AbeFKQPR (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 12:15:17 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:41172 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933242AbeFKQPM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 12:15:12 -0400
-Received: by mail-pg0-f67.google.com with SMTP id l65-v6so9980122pgl.8
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 09:15:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=keqn+229SBus/F711ElacOgKgpQOxHNTPwATX7IzJMw=;
-        b=j89aEuS80vWbJaBOEuw3Hkk3oCmefPT1D3djJfDMt80l5ZKzmQX4g3Kxj6Ch2/MMK+
-         3P/fkS/fleurKv0/p3ccQ+D+CRxud2Y3YljWmlx27gQrN0ehUQJSA5cSKQ31v4bxn4GQ
-         muEJpvjehINNgYl51SwRihzXDn8tHM2Sk8kqA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=keqn+229SBus/F711ElacOgKgpQOxHNTPwATX7IzJMw=;
-        b=cqpTL3aje+jWGba0SKqGOoYJZQAQvY21kMeWcxvUmzmquQl1zartMLMTbMBPpuMT7W
-         MopX4cXbCE4xR69RcSSx+FroUjGw2fPRRHjHjDdG6584m9z13z7/PQOgy/oXfAAssVA+
-         J5z8sS46gc8jnmnawsR19Vtz7aklDoVstB+tYZtDi6fXfB8nxnxOznhEh7j2sl8q9WD2
-         ST6pYM+LQDO9GXEWbspOb7PYs3KfquE6rt6y0gjxBBGaUfpHdarKvdavlM2uZ5koFMYX
-         ifFLUS0fCdc+PGMe1KZYgwPRKb2xS/Vbq986T8FFG3AKqMjtWOoOgDYUczwtjJQIS7ie
-         Oj6Q==
-X-Gm-Message-State: APt69E02d9rhyEW5vMs1o/5ga5YMT9p6m54pS0NCoEkySOjus97O63n5
-        XGhY7dRGFNwZY0g6RDCa4Dj3IA==
-X-Google-Smtp-Source: ADUXVKKJPagO9BFn3OWOs2PdYW7aMbRXqWwHebO2MmL8lsBsra9de8/6AJqNqMgG8rDIQJyphVW2XA==
-X-Received: by 2002:a63:6ecd:: with SMTP id j196-v6mr15043902pgc.12.1528733711109;
-        Mon, 11 Jun 2018 09:15:11 -0700 (PDT)
-Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id y2-v6sm26253136pfk.82.2018.06.11.09.15.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 11 Jun 2018 09:15:10 -0700 (PDT)
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: corbet@lwn.net, joe@perches.com
-Cc: tom.saeger@oracle.com, changbin.du@intel.com,
-        alexander.shishkin@linux.intel.com,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] Documentation: Fix reference to stm.txt
-Date: Mon, 11 Jun 2018 10:15:08 -0600
-Message-Id: <1528733708-9999-1-git-send-email-mathieu.poirier@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        id S934531AbeFGOkn (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:40:43 -0400
+Received: from mga09.intel.com ([134.134.136.24]:36283 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932912AbeFGOki (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:40:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 07:40:33 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
+   d="scan'208";a="47542302"
+Received: from 2b52.sc.intel.com ([143.183.136.51])
+  by orsmga008.jf.intel.com with ESMTP; 07 Jun 2018 07:40:33 -0700
+From: Yu-cheng Yu <yu-cheng.yu@intel.com>
+To: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org, linux-arch@vger.kernel.org, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
+Subject: [PATCH 6/9] x86/mm: Introduce ptep_set_wrprotect_flush and related functions
+Date: Thu,  7 Jun 2018 07:37:02 -0700
+Message-Id: <20180607143705.3531-7-yu-cheng.yu@intel.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180607143705.3531-1-yu-cheng.yu@intel.com>
+References: <20180607143705.3531-1-yu-cheng.yu@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit "1606f8d8e75b trace doc: convert trace/stm.txt to rst format"
-changed stm.txt to stm.rst but references to it in other files have not
-been modified, something that is corrected in this patch.
+The function ptep_set_wrprotect()/huge_ptep_set_wrprotect() is
+used by copy_page_range()/copy_hugetlb_page_range() to copy
+PTEs.
 
-Reported-by: Joe Perches <joe@perches.com>
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+On x86, when the shadow stack is enabled, only a shadow stack
+PTE has the read-only and _PAGE_DIRTY_HW combination.  Upon
+making a dirty PTE read-only, we move its _PAGE_DIRTY_HW to
+_PAGE_DIRTY_SW.
+
+When ptep_set_wrprotect() moves _PAGE_DIRTY_HW to _PAGE_DIRTY_SW,
+if the PTE is writable and the mm is shared, another task could
+race to set _PAGE_DIRTY_HW again.
+
+Introduce ptep_set_wrprotect_flush(), pmdp_set_wrprotect_flush(),
+and huge_ptep_set_wrprotect_flush() to make sure this does not
+happen.
+
+Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
 ---
- Documentation/trace/coresight.txt | 2 +-
- Documentation/trace/intel_th.rst  | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/include/asm/pgtable.h | 56 +++++++++++++++++++++++++++++++++++-------
+ include/asm-generic/pgtable.h  | 26 ++++++++++++++++++++
+ 2 files changed, 73 insertions(+), 9 deletions(-)
 
-diff --git a/Documentation/trace/coresight.txt b/Documentation/trace/coresight.txt
-index 1d74ad0202b6..efbc832146e7 100644
---- a/Documentation/trace/coresight.txt
-+++ b/Documentation/trace/coresight.txt
-@@ -426,5 +426,5 @@ root@genericarmv8:~#
- Details on how to use the generic STM API can be found here [2].
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index 0996f8a6979a..1053b940b35c 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -1148,11 +1148,27 @@ static inline pte_t ptep_get_and_clear_full(struct mm_struct *mm,
+ 	return pte;
+ }
  
- [1]. Documentation/ABI/testing/sysfs-bus-coresight-devices-stm
--[2]. Documentation/trace/stm.txt
-+[2]. Documentation/trace/stm.rst
- [3]. https://github.com/Linaro/perf-opencsd
-diff --git a/Documentation/trace/intel_th.rst b/Documentation/trace/intel_th.rst
-index 990f13265178..fdb34114ee20 100644
---- a/Documentation/trace/intel_th.rst
-+++ b/Documentation/trace/intel_th.rst
-@@ -38,7 +38,7 @@ description is at Documentation/ABI/testing/sysfs-bus-intel_th-devices-gth.
+-#define __HAVE_ARCH_PTEP_SET_WRPROTECT
+-static inline void ptep_set_wrprotect(struct mm_struct *mm,
+-				      unsigned long addr, pte_t *ptep)
+-{
+-	clear_bit(_PAGE_BIT_RW, (unsigned long *)&ptep->pte);
++#define __HAVE_ARCH_PTEP_SET_WRPROTECT_FLUSH
++extern pte_t ptep_clear_flush(struct vm_area_struct *vma,
++			      unsigned long address,
++			      pte_t *ptep);
++static inline void ptep_set_wrprotect_flush(struct vm_area_struct *vma,
++					    unsigned long addr, pte_t *ptep)
++{
++	bool rw;
++
++	rw = test_and_clear_bit(_PAGE_BIT_RW, (unsigned long *)&ptep->pte);
++	if (IS_ENABLED(CONFIG_X86_INTEL_SHADOW_STACK_USER)) {
++		struct mm_struct *mm = vma->vm_mm;
++		pte_t pte;
++
++		if (rw && (atomic_read(&mm->mm_users) > 1))
++			pte = ptep_clear_flush(vma, addr, ptep);
++		else
++			pte = *ptep;
++		pte = pte_move_flags(pte, _PAGE_DIRTY_HW, _PAGE_DIRTY_SW);
++		set_pte_at(mm, addr, ptep, pte);
++	}
+ }
  
- STH registers an stm class device, through which it provides interface
- to userspace and kernelspace software trace sources. See
--Documentation/trace/stm.txt for more information on that.
-+Documentation/trace/stm.rst for more information on that.
+ #define flush_tlb_fix_spurious_fault(vma, address) do { } while (0)
+@@ -1198,11 +1214,33 @@ static inline pud_t pudp_huge_get_and_clear(struct mm_struct *mm,
+ 	return native_pudp_get_and_clear(pudp);
+ }
  
- MSU can be configured to collect trace data into a system memory
- buffer, which can later on be read from its device nodes via read() or
-@@ -89,7 +89,7 @@ Quick example
+-#define __HAVE_ARCH_PMDP_SET_WRPROTECT
+-static inline void pmdp_set_wrprotect(struct mm_struct *mm,
+-				      unsigned long addr, pmd_t *pmdp)
++#define __HAVE_ARCH_HUGE_PTEP_SET_WRPROTECT_FLUSH
++static inline void huge_ptep_set_wrprotect_flush(struct vm_area_struct *vma,
++						 unsigned long addr, pte_t *ptep)
+ {
+-	clear_bit(_PAGE_BIT_RW, (unsigned long *)pmdp);
++	ptep_set_wrprotect_flush(vma, addr, ptep);
++}
++
++#define __HAVE_ARCH_PMDP_SET_WRPROTECT_FLUSH
++extern pmd_t pmdp_huge_clear_flush(struct vm_area_struct *vma,
++				   unsigned long address,
++				   pmd_t *pmdp);
++static inline void pmdp_set_wrprotect_flush(struct vm_area_struct *vma,
++					    unsigned long addr, pmd_t *pmdp)
++{	bool rw;
++
++	rw = test_and_clear_bit(_PAGE_BIT_RW, (unsigned long *)&pmdp);
++	if (IS_ENABLED(CONFIG_X86_INTEL_SHADOW_STACK_USER)) {
++		struct mm_struct *mm = vma->vm_mm;
++		pmd_t pmd;
++
++		if (rw && (atomic_read(&mm->mm_users) > 1))
++			pmd = pmdp_huge_clear_flush(vma, addr, pmdp);
++		else
++			pmd = *pmdp;
++		pmd = pmd_move_flags(pmd, _PAGE_DIRTY_HW, _PAGE_DIRTY_SW);
++		set_pmd_at(mm, addr, pmdp, pmd);
++	}
+ }
  
- 	$ echo 1 > /sys/bus/intel_th/devices/0-msc0/active
+ #define pud_write pud_write
+diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
+index 3f6f998509f0..9bcfdfc045bb 100644
+--- a/include/asm-generic/pgtable.h
++++ b/include/asm-generic/pgtable.h
+@@ -121,6 +121,15 @@ static inline int pmdp_clear_flush_young(struct vm_area_struct *vma,
+ #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+ #endif
  
--# .. send data to master 33, see stm.txt for more details ..
-+# .. send data to master 33, see stm.rst for more details ..
- # .. wait for traces to pile up ..
- # .. and stop the trace::
++#ifndef __HAVE_ARCH_HUGE_PTEP_SET_WRPROTECT_FLUSH
++static inline void huge_ptep_set_wrorptect_flush(struct vm_area_struct *vma,
++						 unsigned long addr,
++						 pte_t *ptep)
++{
++	huge_ptep_set_wrprotect(vma->vm_mm, addr, ptep);
++}
++#endif
++
+ #ifndef __HAVE_ARCH_PTEP_GET_AND_CLEAR
+ static inline pte_t ptep_get_and_clear(struct mm_struct *mm,
+ 				       unsigned long address,
+@@ -226,6 +235,15 @@ static inline void ptep_set_wrprotect(struct mm_struct *mm, unsigned long addres
+ }
+ #endif
  
++#ifndef __HAVE_ARCH_PTEP_SET_WRPROTECT_FLUSH
++static inline void ptep_set_wrprotect_flush(struct vm_area_struct *vma,
++					    unsigned long address,
++					    pte_t *ptep)
++{
++	ptep_set_wrprotect(vma->vm_mm, address, ptep);
++}
++#endif
++
+ #ifndef pte_savedwrite
+ #define pte_savedwrite pte_write
+ #endif
+@@ -266,6 +284,14 @@ static inline void pmdp_set_wrprotect(struct mm_struct *mm,
+ }
+ #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+ #endif
++#ifndef __HAVE_ARCH_PMDP_SET_WRPROTECT_FLUSH
++static inline void pmdp_set_wrprotect_flush(struct vm_area_struct *vma,
++					    unsigned long address,
++					    pmd_t *pmdp)
++{
++	pmdp_set_wrprotect(vma->vm_mm, address, pmdp);
++}
++#endif
+ #ifndef __HAVE_ARCH_PUDP_SET_WRPROTECT
+ #ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
+ static inline void pudp_set_wrprotect(struct mm_struct *mm,
 -- 
-2.7.4
+2.15.1
