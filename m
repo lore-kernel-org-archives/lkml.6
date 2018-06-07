@@ -1,75 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id XgQkJqWSHlvtFgAAmS7hNA
-	; Mon, 11 Jun 2018 15:17:57 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id f2RiI9NuGVvnWAAAmS7hNA
+	; Thu, 07 Jun 2018 17:44:26 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 7CA0C607A4; Mon, 11 Jun 2018 15:17:57 +0000 (UTC)
+	id 5BF0B6074D; Thu,  7 Jun 2018 17:44:26 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id EAF4860541;
-	Mon, 11 Jun 2018 15:17:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EAF4860541
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=jmondi.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 866DF6063F;
+	Thu,  7 Jun 2018 17:44:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 866DF6063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932655AbeFKPRy (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 11:17:54 -0400
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:38693 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754038AbeFKPRw (ORCPT
+        id S935004AbeFGRoW (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 13:44:22 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:51046 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933088AbeFGRoV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 11:17:52 -0400
-X-Originating-IP: 2.224.242.101
-Received: from w540.lan (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 43966240016;
-        Mon, 11 Jun 2018 15:17:53 +0000 (UTC)
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: mchehab@kernel.org
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 0/2] media: i2c: mt9v111 sensor driver
-Date: Mon, 11 Jun 2018 17:17:31 +0200
-Message-Id: <1528730253-25135-1-git-send-email-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.7.4
+        Thu, 7 Jun 2018 13:44:21 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1fQyx1-0001Fs-QP; Thu, 07 Jun 2018 17:43:55 +0000
+Date: Thu, 7 Jun 2018 18:43:55 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: syzbot <syzbot+87cfa083e727a224754b@syzkaller.appspotmail.com>,
+        avagin@openvz.org, davem@davemloft.net, dingtianhong@huawei.com,
+        edumazet@google.com, elena.reshetova@intel.com,
+        jasowang@redhat.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, matthew@mjdsystems.ca,
+        mingo@kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
+        syzkaller-bugs@googlegroups.com,
+        virtualization@lists.linux-foundation.org, willemb@google.com
+Subject: Re: KMSAN: uninit-value in _copy_to_iter (2)
+Message-ID: <20180607174355.GR30522@ZenIV.linux.org.uk>
+References: <000000000000a5b2b1056a86e98c@google.com>
+ <000000000000cf4578056ab12452@google.com>
+ <20180607183627-mutt-send-email-mst@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180607183627-mutt-send-email-mst@kernel.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-   this is a sensor level driver for Aptina MT9V111.
+On Thu, Jun 07, 2018 at 06:38:48PM +0300, Michael S. Tsirkin wrote:
+> #syz test: https://github.com/google/kmsan.git/master d2d741e5d1898dfde1a75ea3d29a9a3e2edf0617
+> 
+> Subject: vhost: fix info leak
+> 
+> Fixes: CVE-2018-1118
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> ---
+> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> index f0be5f35ab28..9beefa6ed1ce 100644
+> --- a/drivers/vhost/vhost.c
+> +++ b/drivers/vhost/vhost.c
+> @@ -2345,6 +2345,9 @@ struct vhost_msg_node *vhost_new_msg(struct vhost_virtqueue *vq, int type)
+>  	struct vhost_msg_node *node = kmalloc(sizeof *node, GFP_KERNEL);
+>  	if (!node)
+>  		return NULL;
+> +
+> +	/* Make sure all padding within the structure is initialized. */
+> +	memset(&node->msg, 0, sizeof node->msg);
 
-The driver supports YUYV_2X8 output formats and VGA,QVGA,QQVGA,CIF and QCIF
-resolution.
+Umm...  Maybe kzalloc(), then?  You have
 
-The driver allows control of frame rate through s_frame_interval or
-V4L2_CID_H/VBLANK control. In order to allow manual frame control, the chip
-is initialized with auto-exposure control, auto white balancing and flickering
-control disabled.
+struct vhost_msg_node {
+  struct vhost_msg msg;
+  struct vhost_virtqueue *vq;
+  struct list_head node;
+};
 
-Tested VGA, QVGA QQVGA resolutions at 5, 10, 15 and 30 frame per second.
+and that's what, 68 bytes in msg, then either 4 bytes pointer or
+4 bytes padding + 8 bytes pointer, then two pointers?  How much
+does explicit partial memset() save you here?
 
-Thanks
-   j
-
-Jacopo Mondi (2):
-  dt-bindings: media: i2c: Document MT9V111 bindings
-  media: i2c: Add driver for Aptina MT9V111
-
- .../bindings/media/i2c/aptina,mt9v111.txt          |   46 +
- MAINTAINERS                                        |    8 +
- drivers/media/i2c/Kconfig                          |   12 +
- drivers/media/i2c/Makefile                         |    1 +
- drivers/media/i2c/mt9v111.c                        | 1297 ++++++++++++++++++++
- 5 files changed, 1364 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.txt
- create mode 100644 drivers/media/i2c/mt9v111.c
-
---
-2.7.4
+>  	node->vq = vq;
+>  	node->msg.type = type;
+>  	return node;
