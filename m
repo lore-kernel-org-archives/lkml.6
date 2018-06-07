@@ -1,129 +1,173 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id D5y4EcZXGFsJDgAAmS7hNA
-	; Wed, 06 Jun 2018 21:53:23 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id MUuaB7AAGVufFAAAmS7hNA
+	; Thu, 07 Jun 2018 09:53:52 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 2C0FE6089E; Wed,  6 Jun 2018 21:53:23 +0000 (UTC)
+	id 016C5607DC; Thu,  7 Jun 2018 09:53:51 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tDm2DiyR"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 8F1BD601C3;
-	Wed,  6 Jun 2018 21:53:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8F1BD601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=santannapisa.it
+	by smtp.codeaurora.org (Postfix) with ESMTP id 4D0DB601C3;
+	Thu,  7 Jun 2018 09:53:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4D0DB601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752641AbeFFVxU (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 17:53:20 -0400
-Received: from mail.santannapisa.it ([193.205.80.99]:52467 "EHLO
-        mail.santannapisa.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752177AbeFFVxT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 17:53:19 -0400
-Received: from [151.40.69.140] (account l.abeni@santannapisa.it HELO nowhere)
-  by santannapisa.it (CommuniGate Pro SMTP 6.1.11)
-  with ESMTPSA id 131054393; Wed, 06 Jun 2018 22:53:15 +0200
-Date: Wed, 6 Jun 2018 22:53:09 +0200
-From: luca abeni <luca.abeni@santannapisa.it>
-To: Claudio Scordino <claudio@evidence.eu.com>
-Cc: Quentin Perret <quentin.perret@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Valentin Schneider <valentin.schneider@arm.com>
-Subject: Re: [PATCH v5 00/10] track CPU utilization
-Message-ID: <20180606225309.24602773@nowhere>
-In-Reply-To: <6c2dc1aa-3e19-be14-0ed8-b29003c72e61@evidence.eu.com>
-References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
-        <CAKfTPtB0MHN3=VbS4mYqVH_0fv1WwKq6N1-ogU84mNUAxfCwjw@mail.gmail.com>
-        <20180605105721.GA12193@e108498-lin.cambridge.arm.com>
-        <20180605121153.GD16081@localhost.localdomain>
-        <20180605130548.GB12193@e108498-lin.cambridge.arm.com>
-        <20180605131518.GG16081@localhost.localdomain>
-        <20180605140101.GE12193@e108498-lin.cambridge.arm.com>
-        <20180605141317.GJ16081@localhost.localdomain>
-        <6c2dc1aa-3e19-be14-0ed8-b29003c72e61@evidence.eu.com>
-Organization: Scuola Superiore S.Anna
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1753659AbeFGJxs (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 05:53:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45568 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751681AbeFGJxr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 05:53:47 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 48D9520660;
+        Thu,  7 Jun 2018 09:53:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528365227;
+        bh=8ck2zvA/fGx8go5b7rwR18uoD2jvUo5OqPbkEjNwxfI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tDm2DiyRRWAoBPoeYGMQilWbgM0Qf6JcQcEROyXyRWsTauJtm7XwbLEnm6fZxHfc+
+         kZWo34geE76Gr60dx9cQXX3b0PV+0xUjnmWY6+CGtLXmCHRnlnob26Ll7cz8VzgFZ/
+         XWbFLnhEKrI3vuOEYD3D3pdZc35eZpXeMmyXeFx8=
+Date: Thu, 7 Jun 2018 11:53:22 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: Kim Phillips <kim.phillips@arm.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Gargi Sharma <gs051095@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Rik van Riel <riel@redhat.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Thierry Reding <treding@nvidia.com>,
+        Todd Kjos <tkjos@google.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 05/14] coresight: get/put module in
+ coresight_build/release_path
+Message-ID: <20180607095322.GA26174@kroah.com>
+References: <20180605210710.22227-1-kim.phillips@arm.com>
+ <20180605210710.22227-6-kim.phillips@arm.com>
+ <20180606082422.GB19727@kroah.com>
+ <a457594c-b391-23e1-6ab5-d115073cac5a@arm.com>
+ <20180606155501.704583e1412996a1a2c6fa61@arm.com>
+ <20180607083401.GE16651@kroah.com>
+ <3219276b-2703-bc30-92e1-bae80cdc5901@arm.com>
+ <20180607091353.GA20438@kroah.com>
+ <2f8d233e-8847-ce3d-3a5b-06b175e3944b@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2f8d233e-8847-ce3d-3a5b-06b175e3944b@arm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
-
-sorry; I missed the beginning of this thread... Anyway, below I add
-some comments:
-
-On Wed, 6 Jun 2018 15:05:58 +0200
-Claudio Scordino <claudio@evidence.eu.com> wrote:
-[...]
-> >> Ok, I see ... Have you guys already tried something like my patch
-> >> above (keeping the freq >= this_bw) in real world use cases ? Is
-> >> this costing that much energy in practice ? If we fill the gaps
-> >> left by DL (when it  
+On Thu, Jun 07, 2018 at 10:32:21AM +0100, Suzuki K Poulose wrote:
+> On 06/07/2018 10:13 AM, Greg Kroah-Hartman wrote:
+> > On Thu, Jun 07, 2018 at 10:04:33AM +0100, Suzuki K Poulose wrote:
+> > > Hi Greg,
+> > > 
+> > > On 06/07/2018 09:34 AM, Greg Kroah-Hartman wrote:
+> > > > On Wed, Jun 06, 2018 at 03:55:01PM -0500, Kim Phillips wrote:
+> > > > > On Wed, 6 Jun 2018 10:46:36 +0100
+> > > > > Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+> > > > > 
+> > > > > > On 06/06/2018 09:24 AM, Greg Kroah-Hartman wrote:
+> > > > > > > On Tue, Jun 05, 2018 at 04:07:01PM -0500, Kim Phillips wrote:
+> > > > > > > > Increment the refcnt for driver modules in current use by calling
+> > > > > > > > module_get in coresight_build_path and module_put in release_path.
+> > > > > > > > 
+> > > > > > > > This prevents driver modules from being unloaded when they are in use,
+> > > > > > > > either in sysfs or perf mode.
+> > > > > > > 
+> > > > > > > Why does it matter?  Shouldn't you be allowed to remove any module at
+> > > > > > > any point in time, much like a networking driver?
+> > > 
+> > > The user doesn't have an explicit refcount on the individual components
+> > > in a trace session. So, when a trace session is in progress, it is as
+> > > good as having a "file" open on each component that is part of the
+> > > active trace session. So, we don't want the driver to be removed when
+> > > the component is being used in the trace collection.
 > > 
-> > IIRC, Claudio (now Cc-ed) did experiment a bit with both
-> > approaches, so he might add some numbers to my words above. I
-> > didn't (yet). But, please consider that I might be reserving (for
-> > example) 50% of bandwidth for my heavy and time sensitive task and
-> > then have that task wake up only once in a while (but I'll be
-> > keeping clock speed up for the whole time). :/  
+> > Why not?  What's wrong with that happening and then the trace collection
+> > starts failing with -ENODEV or something?
 > 
-> As far as I can remember, we never tested energy consumption of
-> running_bw vs this_bw, as at OSPM'17 we had already decided to use
-> running_bw implementing GRUB-PA. The rationale is that, as Juri
-> pointed out, the amount of spare (i.e. reclaimable) bandwidth in
-> this_bw is very user-dependent.
-
-Yes, I agree with this. The appropriateness of using this_bw or
-running_bw is highly workload-dependent... If a periodic task consumes
-much less than its runtime (or if a sporadic task has inter-activation
-times much larger than the SCHED_DEADLINE period), then running_bw has
-to be preferred. But if a periodic task consumes almost all of its
-runtime before blocking, then this_bw has to be preferred...
-
-But this also depends on the hardware: if the frequency switch time is
-small, then running_bw is more appropriate... On the other hand,
-this_bw works much better if the frequency switch time is high.
-(Talking about this, I remember Claudio measured frequency switch times
-large almost 3ms... Is this really due to hardware issues? Or maybe
-there is some software issue invoved? 3ms look like a lot of time...)
-
-Anyway, this is why I proposed to use some kind of /sys/... file to
-control the kind of deadline utilization used for frequency scaling: in
-this way, the system designer / administrator, who hopefully has the
-needed information about workload and hardware, can optimize the
-frequency scaling behaviour by deciding if running_bw or this_bw will be
-used.
-
-
-			Luca
-
-> For example, the user can let this_bw
-> be much higher than the measured bandwidth, just to be sure that the
-> deadlines are met even in corner cases. In practice, this means that
-> the task executes for quite a short time and then blocks (with its
-> bandwidth reclaimed, hence the CPU frequency reduced, at the 0lag
-> time). Using this_bw rather than running_bw, the CPU frequency would
-> remain at the same fixed value even when the task is blocked. I
-> understand that on some cases it could even be better (i.e. no waste
-> of energy in frequency switch). However, IMHO, these are corner cases
-> and in the average case it is better to rely on running_bw and reduce
-> the CPU frequency accordingly.
+> May be I am missing something here. Can we allow the driver to be removed
+> when one of its device is "turned ON" and we need the same
+> driver to "turn it OFF" when the session ends ? To make a better
+> comparison :
 > 
-> Best regards,
+> Can we unload a usb_mass_storage module when a USB disk(which uses the
+> module driver) is mounted and is being used ? I believe, the module
+> will eventually get unloaded when we unmount the disk, if someone did
+> a unload.
+
+No, mount causes the module count to be incrememted.  Mount and
+"open/close" are the old-school way of doing module reference counting.
+
+Look at how network drivers work today, you can unload any network
+driver even if there is a valid network connection "up and running"
+attached to it.  It just gets torn down when that request happens.
+
+> We have a similar situation here. The only difference is the driver is
+> referenced only when one of its device is in a trace session.
+
+I understand, I'm saying that you have to be very careful when messing
+around with module reference counts to get it correct and perhaps you
+should just change your design to not care about module reference counts
+at all, like networking did 15+ years ago.
+
+Let's learn from the good examples in our past (like networking), and
+not like the older bad examples (like mount/files).
+
+> > Remember, removing a kernel module is something that only happens very
+> > rarely, and is an explicit choice by someone with root permissions.  If
+> > you want to remove that module, it should be able to go, as you know
+> > what you are doing at that point in time.
 > 
->               Claudio
+> Right, but when a device is "in use" can we do that ? I thought the user
+> will get a module is in use or busy, error.
+
+Try it on networking today :)
+
+> > Don't try to "protect the user from themselves" here, they want to shoot
+> > their foot, make it hurt if they are aiming it there :)
+> > 
+> 
+> The module_get/put added here are only triggered when we start a trace
+> session, where we build a path for the current session from the configured
+> "source" to the configured "sink" and the path is destroyed
+> at the end of the trace session. i.e, the path is not a permanent thing.
+> It is constructed per session. So it is perfectly possible to remove a
+> device in between trace sessions.
+
+That's fine, but again, just be careful to get this correct.  The patch
+I reviewed did not seem to do that.
+
+thanks,
+
+greg k-h
