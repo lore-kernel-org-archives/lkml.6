@@ -1,104 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id cfTjOcK4GVvLDQAAmS7hNA
-	; Thu, 07 Jun 2018 23:00:27 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id FfsFLw12GVslEwAAmS7hNA
+	; Thu, 07 Jun 2018 18:16:13 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 82080606FA; Thu,  7 Jun 2018 23:00:27 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HSs3FBvN"
+	id 0F0CC608C8; Thu,  7 Jun 2018 18:16:13 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 1061F602FC;
-	Thu,  7 Jun 2018 23:00:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1061F602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 8CBA4606FA;
+	Thu,  7 Jun 2018 18:16:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8CBA4606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752268AbeFGXAZ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 19:00:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33102 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751641AbeFGXAW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 19:00:22 -0400
-Received: from mail-wm0-f51.google.com (mail-wm0-f51.google.com [74.125.82.51])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77F97208AE
-        for <linux-kernel@vger.kernel.org>; Thu,  7 Jun 2018 23:00:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528412421;
-        bh=X9mB3BMubu2rf2zG4I+wWVzfEh9NkrUASkflKEe3eKU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=HSs3FBvNPF8CtlsxPgd+HfgcG/kLdlJZ8lis1FZstS+gJ6h4IEGNLIfSgV81kIRQu
-         QJTOMP9XO/ErKvA/nDKyQ6c5HESs37ResONQ+/F+mYOvhtytGGd0GHah1PBl0ryQWQ
-         /GM9UFK7PkU2SLPZ6viu5hz/k1tfg4fFo+dMZeug=
-Received: by mail-wm0-f51.google.com with SMTP id p126-v6so126226wmb.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 16:00:21 -0700 (PDT)
-X-Gm-Message-State: APt69E1TKoF9e56Qw+bi6BdSw782/Bn4CTunw/rtdx5MxjHFrd7eXPCP
-        w/ho/0C7xqwy+9WcUVaO49OH+zoIXLIYgg2EPpxO1w==
-X-Google-Smtp-Source: ADUXVKLLWPi/uSpRUwLLVmW7ArZjjYHamstqTRxKmJlntsyDhJ7TidKvm5NMG6KcVVSxV/pX9K9eoSGSPEFvsP/rxRM=
-X-Received: by 2002:a1c:dca:: with SMTP id 193-v6mr2713781wmn.36.1528412419860;
- Thu, 07 Jun 2018 16:00:19 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180607143855.3681-1-yu-cheng.yu@intel.com> <20180607143855.3681-6-yu-cheng.yu@intel.com>
- <CALCETrVRH8LeYoo7V1VBPqg4WS0Enxtizt=T7dPvgoeWfJrdzA@mail.gmail.com> <CAMe9rOp9YtNnTzsDPFXukK6ps7VNa2MU6o0GwnoES5Ma_AC65A@mail.gmail.com>
-In-Reply-To: <CAMe9rOp9YtNnTzsDPFXukK6ps7VNa2MU6o0GwnoES5Ma_AC65A@mail.gmail.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Thu, 7 Jun 2018 16:00:08 -0700
-X-Gmail-Original-Message-ID: <CALCETrXOc3-2QLks3iaTTvEE=4+2Oi3PORa8HPbYiDTtKV6CLQ@mail.gmail.com>
-Message-ID: <CALCETrXOc3-2QLks3iaTTvEE=4+2Oi3PORa8HPbYiDTtKV6CLQ@mail.gmail.com>
-Subject: Re: [PATCH 5/7] x86: Insert endbr32/endbr64 to vDSO
-To: "H. J. Lu" <hjl.tools@gmail.com>
-Cc: Andrew Lutomirski <luto@kernel.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        mike.kravetz@oracle.com
-Content-Type: text/plain; charset="UTF-8"
+        id S936222AbeFGSQK (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 14:16:10 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:34090 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936071AbeFGSNC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 14:13:02 -0400
+Received: by mail-pg0-f66.google.com with SMTP id q4-v6so4070572pgr.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 11:13:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=SWb5QeE+21llbmN/IZkUxeVqFa2RAmJAr0TMkSP535Q=;
+        b=EuBA0SKieI8yW8lZ/sTTO13zDI4ypvysBhSKSjLOnbPIIp/JY0ZAZddmbuHHMG8sqW
+         bQL+Gh/Zo+rrzirlL2stnkTk1W7Ad0mwGZmMmGVrPtugI6znJed2xRE0xud9WL76b/qL
+         g+tr/yyD/lQniIROxJiG11zSNWwwBqQiiE6EC2Pz9E8b8kU+edYhPTusXkxPQTbIxVNV
+         augpQj/mbkkF4UiKxIuO+1CJF1LOheOmARZ54Hh6eDFnkZdcsI9Tpdilu7SlTyt8nIgA
+         HvAkhVCP66VnIyLla4vfP52viV8q6KuY9VcmbWiO1DynIzbCccqthvVOKgG4NNYuhT7V
+         gBQw==
+X-Gm-Message-State: APt69E1j95b53vX9MQRhT8uiuRC+tFlTukMaWU4PCOxvVahkoH4d60X9
+        TrQhFXiIVDMo3lfJnCwM+dZKVw==
+X-Google-Smtp-Source: ADUXVKJinG8fg6t90/YZ2x63em5SpHT/26VBYyEJ4SPZpuz0nqBAUHad4uENRsT1Nc1d1a4H3F55ag==
+X-Received: by 2002:a63:18c:: with SMTP id 134-v6mr2439035pgb.138.1528395180574;
+        Thu, 07 Jun 2018 11:13:00 -0700 (PDT)
+Received: from mka.mtv.corp.google.com ([2620:0:1000:1501:8e2d:4727:1211:622])
+        by smtp.gmail.com with ESMTPSA id z3-v6sm5029002pfn.36.2018.06.07.11.12.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Jun 2018 11:12:59 -0700 (PDT)
+From: Matthias Kaehlcke <mka@chromium.org>
+To: MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH v2 06/11] PM / devfreq: Make update_devfreq() public
+Date: Thu,  7 Jun 2018 11:12:09 -0700
+Message-Id: <20180607181214.30338-7-mka@chromium.org>
+X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a-goog
+In-Reply-To: <20180607181214.30338-1-mka@chromium.org>
+References: <20180607181214.30338-1-mka@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 7, 2018 at 3:03 PM H.J. Lu <hjl.tools@gmail.com> wrote:
->
-> On Thu, Jun 7, 2018 at 1:50 PM, Andy Lutomirski <luto@kernel.org> wrote:
-> > On Thu, Jun 7, 2018 at 7:42 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
-> >>
-> >> From: "H.J. Lu" <hjl.tools@gmail.com>
-> >>
-> >> When Intel indirect branch tracking is enabled, functions in vDSO which
-> >> may be called indirectly should have endbr32 or endbr64 as the first
-> >> instruction.  We try to compile vDSO with -fcf-protection=branch -mibt
-> >> if possible.  Otherwise, we insert endbr32 or endbr64 by hand to assembly
-> >> codes generated by the compiler.
-> >
-> > Wow, that's... a genuine abomination.  Do we really need to support
-> > CET on kernels built with old toolchains?
-> >
->
-> Yes.  GCC 7 should be able to build CET kernel.
->
+Currently update_devfreq() is only visible to devfreq governors outside
+of devfreq.c. Make it public to allow drivers that adjust devfreq policies
+to cause a re-evaluation of the frequency after a policy change.
 
-Why?  Presumably people running distros that use CET are going to have
-kernels build with a CET-supporting compiler.
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+---
+Changes in v2:
+- added 'Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>' tag
 
-If we really really need this patch, then I want some kind of
-assurance that selftests will catch the failure if something breaks it
-or a new vDSO entry point is added.  But my inclination is to NAK this
-patch and let the distros carry it if they really really want it.  As
-it stands, this sucks for maintainability.
+ drivers/devfreq/governor.h | 3 ---
+ include/linux/devfreq.h    | 8 ++++++++
+ 2 files changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/devfreq/governor.h b/drivers/devfreq/governor.h
+index b81700244ce3..f53339ca610f 100644
+--- a/drivers/devfreq/governor.h
++++ b/drivers/devfreq/governor.h
+@@ -57,9 +57,6 @@ struct devfreq_governor {
+ 				unsigned int event, void *data);
+ };
+ 
+-/* Caution: devfreq->lock must be locked before calling update_devfreq */
+-extern int update_devfreq(struct devfreq *devfreq);
+-
+ extern void devfreq_monitor_start(struct devfreq *devfreq);
+ extern void devfreq_monitor_stop(struct devfreq *devfreq);
+ extern void devfreq_monitor_suspend(struct devfreq *devfreq);
+diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
+index 8a4c0f10a394..781edefb0087 100644
+--- a/include/linux/devfreq.h
++++ b/include/linux/devfreq.h
+@@ -222,6 +222,14 @@ extern void devm_devfreq_remove_device(struct device *dev,
+ extern int devfreq_suspend_device(struct devfreq *devfreq);
+ extern int devfreq_resume_device(struct devfreq *devfreq);
+ 
++/**
++ * update_devfreq() - Reevaluate the device and configure frequency
++ * @devfreq:	the devfreq device
++ *
++ * Note: devfreq->lock must be held
++ */
++extern int update_devfreq(struct devfreq *devfreq);
++
+ /* Helper functions for devfreq user device driver with OPP. */
+ extern struct dev_pm_opp *devfreq_recommended_opp(struct device *dev,
+ 					   unsigned long *freq, u32 flags);
+-- 
+2.18.0.rc1.242.g61856ae69a-goog
