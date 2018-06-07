@@ -1,127 +1,192 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id GkxWC/5HGVtUQQAAmS7hNA
-	; Thu, 07 Jun 2018 14:58:52 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id FhQxHpx1GVtDDgAAmS7hNA
+	; Thu, 07 Jun 2018 18:13:02 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 6A1FF608C9; Thu,  7 Jun 2018 14:58:52 +0000 (UTC)
+	id AE7086074D; Thu,  7 Jun 2018 18:13:02 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D608B6074D;
-	Thu,  7 Jun 2018 14:58:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D608B6074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 1DF5E605A2;
+	Thu,  7 Jun 2018 18:13:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1DF5E605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935560AbeFGO6s (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:58:48 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41206 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935544AbeFGO6l (ORCPT
+        id S936066AbeFGSM7 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 14:12:59 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:35894 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934260AbeFGSMz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:58:41 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbT-0005Zl-LJ; Thu, 07 Jun 2018 15:09:28 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbB-0003Bw-QO; Thu, 07 Jun 2018 15:09:09 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Hans de Goede" <hdegoede@redhat.com>,
-        "Hante Meuleman" <hante.meuleman@broadcom.com>,
-        "Arend Van Spriel" <arend.vanspriel@broadcom.com>,
-        "Franky Lin" <franky.lin@broadcom.com>,
-        "Kalle Valo" <kvalo@codeaurora.org>,
-        "Pieter-Paul Giesberts" <pieter-paul.giesberts@broadcom.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.33330984@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 328/410] brcmfmac: fix P2P_DEVICE ethernet address
- generation
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Thu, 7 Jun 2018 14:12:55 -0400
+Received: by mail-pf0-f193.google.com with SMTP id a12-v6so5306616pfi.3
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 11:12:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=E1TTi1m2UewF1bqfFu4ZuPLrGPvQd9yZwooLHvznvZU=;
+        b=oCbi5hlrjFWlmxsZZnKh3mNV9aSijtlq8kG4+UEn6OMRSj1WU5oriQlESIXHbGSEgb
+         kty50zZP0xdu+NV2VUKZbVtzfy6DLsP7l+AkIc8FtrOxyQXIFCSB/HFCrKAHehISsjz6
+         gqn548sRFZEk6QBxGchmrxDUPuBgHCNlbX4YphsYjEG7Ndv+z+cElVGW1HPdkAIYW+n5
+         B8EJNTLNk+ReDlRf5jNEhq64UXib9IMw62PYzs+ApnLYWAO2eZG2NLI+pOFKbTnA55BX
+         pdGQbCYB5afGvyAFgjLT/1aCrV5mRBUiup2pj7YRm3GumaQURulSMvjYuWqv9cA9LBEE
+         Extw==
+X-Gm-Message-State: APt69E32FE1OOgSbFcgsOqCpAhgoYOS2xeNdsyXff/HYGjNP+zUBugyO
+        bA5SYRQZbl7AoiT3gccQRHNvhw==
+X-Google-Smtp-Source: ADUXVKLaTQlzFJ9hM8NxwYX19/aSq1CXHONb4xpzG3F5Gzrzpcj9AWLTj0SMU4gLxVisP2VSlYKryg==
+X-Received: by 2002:a65:468e:: with SMTP id h14-v6mr2385567pgr.89.1528395174586;
+        Thu, 07 Jun 2018 11:12:54 -0700 (PDT)
+Received: from mka.mtv.corp.google.com ([2620:0:1000:1501:8e2d:4727:1211:622])
+        by smtp.gmail.com with ESMTPSA id z3-v6sm5029002pfn.36.2018.06.07.11.12.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Jun 2018 11:12:53 -0700 (PDT)
+From: Matthias Kaehlcke <mka@chromium.org>
+To: MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH v2 02/11] PM / devfreq: Fix handling of min/max_freq == 0
+Date: Thu,  7 Jun 2018 11:12:05 -0700
+Message-Id: <20180607181214.30338-3-mka@chromium.org>
+X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a-goog
+In-Reply-To: <20180607181214.30338-1-mka@chromium.org>
+References: <20180607181214.30338-1-mka@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+Commit ab8f58ad72c4 ("PM / devfreq: Set min/max_freq when adding the
+devfreq device") initializes df->min/max_freq with the min/max OPP when
+the device is added. Later commit f1d981eaecf8 ("PM / devfreq: Use the
+available min/max frequency") adds df->scaling_min/max_freq and the
+following to the frequency adjustment code:
 
-------------------
+  max_freq = MIN(devfreq->scaling_max_freq, devfreq->max_freq);
 
-From: Arend Van Spriel <arend.vanspriel@broadcom.com>
+With the current handling of min/max_freq this is incorrect:
 
-commit 455f3e76cfc0d893585a5f358b9ddbe9c1e1e53b upstream.
+Even though df->max_freq is now initialized to a value != 0 user space
+can still set it to 0, in this case max_freq would be 0 instead of
+df->scaling_max_freq as intended. In consequence the frequency adjustment
+is not performed:
 
-The firmware has a requirement that the P2P_DEVICE address should
-be different from the address of the primary interface. When not
-specified by user-space, the driver generates the MAC address for
-the P2P_DEVICE interface using the MAC address of the primary
-interface and setting the locally administered bit. However, the MAC
-address of the primary interface may already have that bit set causing
-the creation of the P2P_DEVICE interface to fail with -EBUSY. Fix this
-by using a random address instead to determine the P2P_DEVICE address.
+  if (max_freq && freq > max_freq) {
+	freq = max_freq;
 
-Reported-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Hante Meuleman <hante.meuleman@broadcom.com>
-Reviewed-by: Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>
-Reviewed-by: Franky Lin <franky.lin@broadcom.com>
-Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-[bwh: Backported to 3.16: adjust filename]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+To fix this set df->min/max freq to the min/max OPP in max/max_freq_store,
+when the user passes a value of 0. This also prevents df->max_freq from
+being set below the min OPP when df->min_freq is 0, and similar for
+min_freq. Since it is now guaranteed that df->min/max_freq can't be 0 the
+checks for this case can be removed.
+
+Fixes: f1d981eaecf8 ("PM / devfreq: Use the available min/max frequency")
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 ---
- drivers/net/wireless/brcm80211/brcmfmac/p2p.c | 24 +++++++++----------
- 1 file changed, 11 insertions(+), 13 deletions(-)
+Changes in v2:
+- handle freq tables sorted in ascending and descending order in
+  min/max_freq_store()
+- use same order for conditional statements in min/max_freq_store()
 
---- a/drivers/net/wireless/brcm80211/brcmfmac/p2p.c
-+++ b/drivers/net/wireless/brcm80211/brcmfmac/p2p.c
-@@ -457,25 +457,23 @@ static int brcmf_p2p_set_firmware(struct
-  * @dev_addr: optional device address.
-  *
-  * P2P needs mac addresses for P2P device and interface. If no device
-- * address it specified, these are derived from the primary net device, ie.
-- * the permanent ethernet address of the device.
-+ * address it specified, these are derived from a random ethernet
-+ * address.
-  */
- static void brcmf_p2p_generate_bss_mac(struct brcmf_p2p_info *p2p, u8 *dev_addr)
+ drivers/devfreq/devfreq.c | 42 ++++++++++++++++++++++++++++-----------
+ 1 file changed, 30 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+index 0057ef5b0a98..6f604f8b2b81 100644
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -283,11 +283,11 @@ int update_devfreq(struct devfreq *devfreq)
+ 	max_freq = MIN(devfreq->scaling_max_freq, devfreq->max_freq);
+ 	min_freq = MAX(devfreq->scaling_min_freq, devfreq->min_freq);
+ 
+-	if (min_freq && freq < min_freq) {
++	if (freq < min_freq) {
+ 		freq = min_freq;
+ 		flags &= ~DEVFREQ_FLAG_LEAST_UPPER_BOUND; /* Use GLB */
+ 	}
+-	if (max_freq && freq > max_freq) {
++	if (freq > max_freq) {
+ 		freq = max_freq;
+ 		flags |= DEVFREQ_FLAG_LEAST_UPPER_BOUND; /* Use LUB */
+ 	}
+@@ -1122,18 +1122,27 @@ static ssize_t min_freq_store(struct device *dev, struct device_attribute *attr,
  {
--	struct brcmf_if *pri_ifp = p2p->bss_idx[P2PAPI_BSSCFG_PRIMARY].vif->ifp;
--	bool local_admin = false;
-+	bool random_addr = false;
+ 	struct devfreq *df = to_devfreq(dev);
+ 	unsigned long value;
++	unsigned long *freq_table;
+ 	int ret;
+-	unsigned long max;
  
--	if (!dev_addr || is_zero_ether_addr(dev_addr)) {
--		dev_addr = pri_ifp->mac_addr;
--		local_admin = true;
--	}
-+	if (!dev_addr || is_zero_ether_addr(dev_addr))
-+		random_addr = true;
+ 	ret = sscanf(buf, "%lu", &value);
+ 	if (ret != 1)
+ 		return -EINVAL;
  
--	/* Generate the P2P Device Address.  This consists of the device's
--	 * primary MAC address with the locally administered bit set.
-+	/* Generate the P2P Device Address obtaining a random ethernet
-+	 * address with the locally administered bit set.
- 	 */
--	memcpy(p2p->dev_addr, dev_addr, ETH_ALEN);
--	if (local_admin)
--		p2p->dev_addr[0] |= 0x02;
-+	if (random_addr)
-+		eth_random_addr(p2p->dev_addr);
-+	else
-+		memcpy(p2p->dev_addr, dev_addr, ETH_ALEN);
+ 	mutex_lock(&df->lock);
+-	max = df->max_freq;
+-	if (value && max && value > max) {
+-		ret = -EINVAL;
+-		goto unlock;
++
++	if (value) {
++		if (value > df->max_freq) {
++			ret = -EINVAL;
++			goto unlock;
++		}
++	} else {
++		freq_table = df->profile->freq_table;
++		/* typical order is ascending, some drivers use descending */
++		if (freq_table[0] < freq_table[df->profile->max_state - 1])
++			value = freq_table[0];
++		else
++			value = freq_table[df->profile->max_state - 1];
+ 	}
  
- 	/* Generate the P2P Interface Address.  If the discovery and connection
- 	 * BSSCFGs need to simultaneously co-exist, then this address must be
+ 	df->min_freq = value;
+@@ -1157,18 +1166,27 @@ static ssize_t max_freq_store(struct device *dev, struct device_attribute *attr,
+ {
+ 	struct devfreq *df = to_devfreq(dev);
+ 	unsigned long value;
++	unsigned long *freq_table;
+ 	int ret;
+-	unsigned long min;
+ 
+ 	ret = sscanf(buf, "%lu", &value);
+ 	if (ret != 1)
+ 		return -EINVAL;
+ 
+ 	mutex_lock(&df->lock);
+-	min = df->min_freq;
+-	if (value && min && value < min) {
+-		ret = -EINVAL;
+-		goto unlock;
++
++	if (value) {
++		if (value < df->min_freq) {
++			ret = -EINVAL;
++			goto unlock;
++		}
++	} else {
++		freq_table = df->profile->freq_table;
++		/* typical order is ascending, some drivers use descending */
++		if (freq_table[0] < freq_table[df->profile->max_state - 1])
++			value = freq_table[df->profile->max_state - 1];
++		else
++			value = freq_table[0];
+ 	}
+ 
+ 	df->max_freq = value;
+-- 
+2.18.0.rc1.242.g61856ae69a-goog
