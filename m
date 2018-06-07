@@ -1,160 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id M7kSMb76GFtKeAAAmS7hNA
-	; Thu, 07 Jun 2018 09:30:36 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id guA9KAtFGVvjGgAAmS7hNA
+	; Thu, 07 Jun 2018 14:46:31 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 401BC607DC; Thu,  7 Jun 2018 09:30:36 +0000 (UTC)
+	id 09C0F6089E; Thu,  7 Jun 2018 14:46:31 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id A33E7605A2;
-	Thu,  7 Jun 2018 09:30:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A33E7605A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by smtp.codeaurora.org (Postfix) with ESMTP id 84C02602FC;
+	Thu,  7 Jun 2018 14:46:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 84C02602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932206AbeFGJad (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 05:30:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54615 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753001AbeFGJ3x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 05:29:53 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 571C0AEF5;
-        Thu,  7 Jun 2018 09:29:52 +0000 (UTC)
-From: Miroslav Benes <mbenes@suse.cz>
-To: jikos@kernel.org, jpoimboe@redhat.com, jeyu@kernel.org
-Cc: pmladek@suse.com, live-patching@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Miroslav Benes <mbenes@suse.cz>
-Subject: [PATCH 2/3] livepatch: Deny the patched modules to be removed
-Date: Thu,  7 Jun 2018 11:29:48 +0200
-Message-Id: <20180607092949.1706-3-mbenes@suse.cz>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180607092949.1706-1-mbenes@suse.cz>
-References: <20180607092949.1706-1-mbenes@suse.cz>
+        id S934986AbeFGOq2 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:46:28 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40766 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934083AbeFGOqZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:46:25 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbU-0005Zw-2y; Thu, 07 Jun 2018 15:09:28 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbB-0003BN-Ez; Thu, 07 Jun 2018 15:09:09 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Aaron Brown" <aaron.f.brown@intel.com>,
+        "Benjamin Poirier" <bpoirier@suse.com>,
+        "Jeff Kirsher" <jeffrey.t.kirsher@intel.com>,
+        "Sasha Neftin" <sasha.neftin@intel.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.143459743@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 321/410] e1000e: Fix check_for_link return value with
+ autoneg off
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Josh reported a bug:
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-  When the object to be patched is a module, and that module is
-  rmmod'ed and reloaded, it fails to load with:
+------------------
 
-  module: x86/modules: Skipping invalid relocation target, existing value is nonzero for type 2, loc 00000000ba0302e9, val ffffffffa03e293c
-  livepatch: failed to initialize patch 'livepatch_nfsd' for module 'nfsd' (-8)
-  livepatch: patch 'livepatch_nfsd' failed for module 'nfsd', refusing to load module 'nfsd'
+From: Benjamin Poirier <bpoirier@suse.com>
 
-  The livepatch module has a relocation which references a symbol
-  in the _previous_ loading of nfsd. When apply_relocate_add()
-  tries to replace the old relocation with a new one, it sees that
-  the previous one is nonzero and it errors out.
+commit 4e7dc08e57c95673d2edaba8983c3de4dd1f65f5 upstream.
 
-  On ppc64le, we have a similar issue:
+When autoneg is off, the .check_for_link callback functions clear the
+get_link_status flag and systematically return a "pseudo-error". This means
+that the link is not detected as up until the next execution of the
+e1000_watchdog_task() 2 seconds later.
 
-  module_64: livepatch_nfsd: Expected nop after call, got e8410018 at e_show+0x60/0x548 [livepatch_nfsd]
-  livepatch: failed to initialize patch 'livepatch_nfsd' for module 'nfsd' (-8)
-  livepatch: patch 'livepatch_nfsd' failed for module 'nfsd', refusing to load module 'nfsd'
-
-He also proposed three different solutions. We could remove the error
-check in apply_relocate_add() introduced by commit eda9cec4c9a1
-("x86/module: Detect and skip invalid relocations"). However the check
-is useful for detecting corrupted modules.
-
-We could also reverse the relocation patching (clear all relocation
-targets on x86_64, or return back nops on powerpc) in
-klp_unpatch_object(). The solution is not universal and is too much
-arch-specific.
-
-We decided to deny the patched modules to be removed. If it proves to be
-a major drawback for users, we can still implement a different approach.
-
-The reference of a patched module has to be taken regardless of a
-patch's state. Thus it is not taken and dropped in enable/disable paths,
-but in register/unregister paths.
-
-The new behaviour should not collide with mod->klp_alive variable.
-
-Reported-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Miroslav Benes <mbenes@suse.cz>
+Fixes: 19110cfbb34d ("e1000e: Separate signaling for link check/link up")
+Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
+Acked-by: Sasha Neftin <sasha.neftin@intel.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- kernel/livepatch/core.c | 24 ++++++++++++++++++++++--
- 1 file changed, 22 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/intel/e1000e/ich8lan.c | 2 +-
+ drivers/net/ethernet/intel/e1000e/mac.c     | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-index 36eb5cf38766..2fa9eaee7bb5 100644
---- a/kernel/livepatch/core.c
-+++ b/kernel/livepatch/core.c
-@@ -645,6 +645,10 @@ static void klp_free_object_loaded(struct klp_object *obj)
- {
- 	struct klp_func *func;
+--- a/drivers/net/ethernet/intel/e1000e/ich8lan.c
++++ b/drivers/net/ethernet/intel/e1000e/ich8lan.c
+@@ -1442,7 +1442,7 @@ static s32 e1000_check_for_copper_link_i
+ 	 * we have already determined whether we have link or not.
+ 	 */
+ 	if (!mac->autoneg)
+-		return -E1000_ERR_CONFIG;
++		return 1;
  
-+	/*
-+	 * Drop the reference from klp_init_object_loaded()
-+	 */
-+	module_put(obj->mod);
- 	obj->mod = NULL;
+ 	/* Auto-Neg is enabled.  Auto Speed Detection takes care
+ 	 * of MAC speed/duplex configuration.  So we only need to
+--- a/drivers/net/ethernet/intel/e1000e/mac.c
++++ b/drivers/net/ethernet/intel/e1000e/mac.c
+@@ -450,7 +450,7 @@ s32 e1000e_check_for_copper_link(struct
+ 	 * we have already determined whether we have link or not.
+ 	 */
+ 	if (!mac->autoneg)
+-		return -E1000_ERR_CONFIG;
++		return 1;
  
- 	klp_for_each_func(obj, func)
-@@ -663,6 +667,9 @@ static void klp_free_objects_limited(struct klp_patch *patch,
- 	for (obj = patch->objs; obj->funcs && obj != limit; obj++) {
- 		klp_free_funcs_limited(obj, NULL);
- 		kobject_put(&obj->kobj);
-+
-+		if (klp_is_module(obj) && klp_is_object_loaded(obj))
-+			module_put(obj->mod);
- 	}
- }
- 
-@@ -739,6 +746,14 @@ static int klp_init_object_loaded(struct klp_patch *patch,
- 		}
- 	}
- 
-+	/*
-+	 * Do not allow patched modules to be removed.
-+	 *
-+	 * All callers of klp_init_object_loaded() set obj->mod.
-+	 */
-+	if (klp_is_module(obj) && !try_module_get(obj->mod))
-+		return -ENODEV;
-+
- 	return 0;
- }
- 
-@@ -984,7 +999,7 @@ int klp_module_coming(struct module *mod)
- 			if (ret) {
- 				pr_warn("pre-patch callback failed for object '%s'\n",
- 					obj->name);
--				goto err;
-+				goto err_after_init;
- 			}
- 
- 			ret = klp_patch_object(obj);
-@@ -993,7 +1008,7 @@ int klp_module_coming(struct module *mod)
- 					patch->mod->name, obj->mod->name, ret);
- 
- 				klp_post_unpatch_callback(obj);
--				goto err;
-+				goto err_after_init;
- 			}
- 
- 			if (patch != klp_transition_patch)
-@@ -1007,6 +1022,11 @@ int klp_module_coming(struct module *mod)
- 
- 	return 0;
- 
-+err_after_init:
-+	/*
-+	 * Drop the reference from klp_init_object_loaded().
-+	 */
-+	module_put(obj->mod);
- err:
- 	/*
- 	 * If a patch is unsuccessfully applied, return
--- 
-2.17.0
+ 	/* Auto-Neg is enabled.  Auto Speed Detection takes care
+ 	 * of MAC speed/duplex configuration.  So we only need to
