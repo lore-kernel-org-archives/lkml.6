@@ -1,111 +1,196 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id +hVOFLRZGlsFWAAAmS7hNA
-	; Fri, 08 Jun 2018 10:26:33 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 5OrLBJBEGVt9FAAAmS7hNA
+	; Thu, 07 Jun 2018 14:43:59 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 9881C606FA; Fri,  8 Jun 2018 10:26:33 +0000 (UTC)
+	id C7EA5608BA; Thu,  7 Jun 2018 14:43:58 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 1013860590;
-	Fri,  8 Jun 2018 10:26:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1013860590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by smtp.codeaurora.org (Postfix) with ESMTP id 0B783602FC;
+	Thu,  7 Jun 2018 14:43:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0B783602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752685AbeFHK0b (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 06:26:31 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:2823 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751056AbeFHK01 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 06:26:27 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 412JV94lyWz9ty7C;
-        Fri,  8 Jun 2018 12:26:25 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 01vT6abGZdyC; Fri,  8 Jun 2018 12:26:25 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 412JV94Gb4z9ty78;
-        Fri,  8 Jun 2018 12:26:25 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id D2DB68BB57;
-        Fri,  8 Jun 2018 12:26:26 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id NZhskhYOxgLV; Fri,  8 Jun 2018 12:26:26 +0200 (CEST)
-Received: from po14934vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id A40A78BB51;
-        Fri,  8 Jun 2018 12:26:26 +0200 (CEST)
-Received: by po14934vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 9A2166F846; Fri,  8 Jun 2018 10:26:26 +0000 (UTC)
-Message-Id:
- <a348f4ffda6349467e4270e754d12150fa773462.1528452373.git.christophe.leroy@c-s.fr>
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v4 1/4] selftests/powerpc: add test for 32 bits memcmp
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, wei.guo.simon@gmail.com
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Fri,  8 Jun 2018 10:26:26 +0000 (UTC)
+        id S934885AbeFGOnz (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:43:55 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40696 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934145AbeFGOnx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:43:53 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbg-0005Zk-Ex; Thu, 07 Jun 2018 15:09:40 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb6-0002zs-50; Thu, 07 Jun 2018 15:09:04 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "" <socketpair@gmail.com>,
+        "Al Viro" <viro@zeniv.linux.org.uk>, "Willy Tarreau" <w@1wt.eu>,
+        "Jens Axboe" <axboe@fb.com>,
+        "Vegard Nossum" <vegard.nossum@oracle.com>,
+        "Tetsuo Handa" <penguin-kernel@I-love.SAKURA.ne.jp>,
+        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.469393976@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 205/410] pipe: make account_pipe_buffers() return a
+ value, and use it
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Message-ID: <20180608102626.dCOmurYeB6YsNAHQSelTiPjgXFK_S6Cv5ItvhXVcGQ8@z>
 
-This patch renames memcmp test to memcmp_64 and adds
-a memcmp_32 test for testing the 32 bits version of memcmp()
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+------------------
+
+From: "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+
+commit 9c87bcf0a31b338dc8a69a5d251a037565a94e13 upstream.
+
+This is an optional patch, to provide a small performance
+improvement.  Alter account_pipe_buffers() so that it returns the
+new value in user->pipe_bufs. This means that we can refactor
+too_many_pipe_buffers_soft() and too_many_pipe_buffers_hard() to
+avoid the costs of repeated use of atomic_long_read() to get the
+value user->pipe_bufs.
+
+Link: http://lkml.kernel.org/r/93e5f193-1e5e-3e1f-3a20-eae79b7e1310@gmail.com
+Signed-off-by: Michael Kerrisk <mtk.manpages@gmail.com>
+Reviewed-by: Vegard Nossum <vegard.nossum@oracle.com>
+Cc: Willy Tarreau <w@1wt.eu>
+Cc: <socketpair@gmail.com>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Jens Axboe <axboe@fb.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- RESENDING without memcmp_32 BIN
+ fs/pipe.c | 36 ++++++++++++++++++------------------
+ 1 file changed, 18 insertions(+), 18 deletions(-)
 
- v4: new
-
- tools/testing/selftests/powerpc/stringloops/Makefile    |  14 +++++++++++---
- tools/testing/selftests/powerpc/stringloops/memcmp_32.S |   1 +
- 2 files changed, 12 insertions(+), 3 deletions(-)
- create mode 120000 tools/testing/selftests/powerpc/stringloops/memcmp_32.S
-
-diff --git a/tools/testing/selftests/powerpc/stringloops/Makefile b/tools/testing/selftests/powerpc/stringloops/Makefile
-index 1125e489055e..1e7301d4bac9 100644
---- a/tools/testing/selftests/powerpc/stringloops/Makefile
-+++ b/tools/testing/selftests/powerpc/stringloops/Makefile
-@@ -1,10 +1,18 @@
- # SPDX-License-Identifier: GPL-2.0
- # The loops are all 64-bit code
--CFLAGS += -m64
- CFLAGS += -I$(CURDIR)
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -590,22 +590,20 @@ pipe_fasync(int fd, struct file *filp, i
+ 	return retval;
+ }
  
--TEST_GEN_PROGS := memcmp
--EXTRA_SOURCES := memcmp_64.S ../harness.c
-+EXTRA_SOURCES := ../harness.c
-+
-+$(OUTPUT)/memcmp_64: memcmp.c
-+$(OUTPUT)/memcmp_64: CFLAGS += -m64
-+
-+$(OUTPUT)/memcmp_32: memcmp.c
-+$(OUTPUT)/memcmp_32: CFLAGS += -m32
-+
-+ASFLAGS = $(CFLAGS)
-+
-+TEST_GEN_PROGS := memcmp_32 memcmp_64
+-static void account_pipe_buffers(struct user_struct *user,
++static unsigned long account_pipe_buffers(struct user_struct *user,
+                                  unsigned long old, unsigned long new)
+ {
+-	atomic_long_add(new - old, &user->pipe_bufs);
++	return atomic_long_add_return(new - old, &user->pipe_bufs);
+ }
  
- include ../../lib.mk
+-static bool too_many_pipe_buffers_soft(struct user_struct *user)
++static bool too_many_pipe_buffers_soft(unsigned long user_bufs)
+ {
+-	return pipe_user_pages_soft &&
+-	       atomic_long_read(&user->pipe_bufs) >= pipe_user_pages_soft;
++	return pipe_user_pages_soft && user_bufs >= pipe_user_pages_soft;
+ }
  
-diff --git a/tools/testing/selftests/powerpc/stringloops/memcmp_32.S b/tools/testing/selftests/powerpc/stringloops/memcmp_32.S
-new file mode 120000
-index 000000000000..056f2b3af789
---- /dev/null
-+++ b/tools/testing/selftests/powerpc/stringloops/memcmp_32.S
-@@ -0,0 +1 @@
-+../../../../../arch/powerpc/lib/memcmp_32.S
-\ No newline at end of file
--- 
-2.13.3
+-static bool too_many_pipe_buffers_hard(struct user_struct *user)
++static bool too_many_pipe_buffers_hard(unsigned long user_bufs)
+ {
+-	return pipe_user_pages_hard &&
+-	       atomic_long_read(&user->pipe_bufs) >= pipe_user_pages_hard;
++	return pipe_user_pages_hard && user_bufs >= pipe_user_pages_hard;
+ }
+ 
+ struct pipe_inode_info *alloc_pipe_info(void)
+@@ -613,19 +611,20 @@ struct pipe_inode_info *alloc_pipe_info(
+ 	struct pipe_inode_info *pipe;
+ 	unsigned long pipe_bufs = PIPE_DEF_BUFFERS;
+ 	struct user_struct *user = get_current_user();
++	unsigned long user_bufs;
+ 
+ 	pipe = kzalloc(sizeof(struct pipe_inode_info), GFP_KERNEL);
+ 	if (pipe == NULL)
+ 		goto out_free_uid;
+ 
+-	account_pipe_buffers(user, 0, pipe_bufs);
++	user_bufs = account_pipe_buffers(user, 0, pipe_bufs);
+ 
+-	if (too_many_pipe_buffers_soft(user)) {
+-		account_pipe_buffers(user, pipe_bufs, 1);
++	if (too_many_pipe_buffers_soft(user_bufs)) {
++		user_bufs = account_pipe_buffers(user, pipe_bufs, 1);
+ 		pipe_bufs = 1;
+ 	}
+ 
+-	if (too_many_pipe_buffers_hard(user))
++	if (too_many_pipe_buffers_hard(user_bufs))
+ 		goto out_revert_acct;
+ 
+ 	pipe->bufs = kcalloc(pipe_bufs, sizeof(struct pipe_buffer),
+@@ -641,7 +640,7 @@ struct pipe_inode_info *alloc_pipe_info(
+ 	}
+ 
+ out_revert_acct:
+-	account_pipe_buffers(user, pipe_bufs, 0);
++	(void) account_pipe_buffers(user, pipe_bufs, 0);
+ 	kfree(pipe);
+ out_free_uid:
+ 	free_uid(user);
+@@ -652,7 +651,7 @@ void free_pipe_info(struct pipe_inode_in
+ {
+ 	int i;
+ 
+-	account_pipe_buffers(pipe->user, pipe->buffers, 0);
++	(void) account_pipe_buffers(pipe->user, pipe->buffers, 0);
+ 	free_uid(pipe->user);
+ 	for (i = 0; i < pipe->buffers; i++) {
+ 		struct pipe_buffer *buf = pipe->bufs + i;
+@@ -1022,6 +1021,7 @@ static long pipe_set_size(struct pipe_in
+ {
+ 	struct pipe_buffer *bufs;
+ 	unsigned int size, nr_pages;
++	unsigned long user_bufs;
+ 	long ret = 0;
+ 
+ 	size = round_pipe_size(arg);
+@@ -1041,11 +1041,11 @@ static long pipe_set_size(struct pipe_in
+ 			size > pipe_max_size && !capable(CAP_SYS_RESOURCE))
+ 		return -EPERM;
+ 
+-	account_pipe_buffers(pipe->user, pipe->buffers, nr_pages);
++	user_bufs = account_pipe_buffers(pipe->user, pipe->buffers, nr_pages);
+ 
+ 	if (nr_pages > pipe->buffers &&
+-			(too_many_pipe_buffers_hard(pipe->user) ||
+-			 too_many_pipe_buffers_soft(pipe->user)) &&
++			(too_many_pipe_buffers_hard(user_bufs) ||
++			 too_many_pipe_buffers_soft(user_bufs)) &&
+ 			!capable(CAP_SYS_RESOURCE) && !capable(CAP_SYS_ADMIN)) {
+ 		ret = -EPERM;
+ 		goto out_revert_acct;
+@@ -1096,7 +1096,7 @@ static long pipe_set_size(struct pipe_in
+ 	return nr_pages * PAGE_SIZE;
+ 
+ out_revert_acct:
+-	account_pipe_buffers(pipe->user, nr_pages, pipe->buffers);
++	(void) account_pipe_buffers(pipe->user, nr_pages, pipe->buffers);
+ 	return ret;
+ }
+ 
