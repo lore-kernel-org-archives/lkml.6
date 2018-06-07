@@ -1,123 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id sBMABi/MGlsPaAAAmS7hNA
-	; Fri, 08 Jun 2018 18:34:34 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id qNWeLRlDGVvVBAAAmS7hNA
+	; Thu, 07 Jun 2018 14:37:13 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 4D6796089E; Fri,  8 Jun 2018 18:34:34 +0000 (UTC)
+	id 9C492607DC; Thu,  7 Jun 2018 14:37:13 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id CFEA7607A4;
-	Fri,  8 Jun 2018 18:34:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CFEA7607A4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 24225601C3;
+	Thu,  7 Jun 2018 14:37:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 24225601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753061AbeFHSec (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 14:34:32 -0400
-Received: from mga05.intel.com ([192.55.52.43]:32729 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752864AbeFHSea (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 14:34:30 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jun 2018 11:34:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,490,1520924400";
-   d="scan'208";a="62985513"
-Received: from ray.jf.intel.com (HELO [10.7.201.145]) ([10.7.201.145])
-  by orsmga001.jf.intel.com with ESMTP; 08 Jun 2018 11:34:30 -0700
-Subject: Re: [PATCH v11 11/13] intel_sgx: ptrace() support
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
-        platform-driver-x86@vger.kernel.org
-References: <20180608171216.26521-1-jarkko.sakkinen@linux.intel.com>
- <20180608171216.26521-12-jarkko.sakkinen@linux.intel.com>
-Cc: sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        "open list:INTEL SGX" <intel-sgx-kernel-dev@lists.01.org>,
-        open list <linux-kernel@vger.kernel.org>
-From: Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <91e35b3e-b42d-b3d5-752c-031973e69273@intel.com>
-Date: Fri, 8 Jun 2018 11:34:29 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180608171216.26521-12-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        id S933901AbeFGOhM (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:37:12 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40420 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933688AbeFGOgm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:36:42 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbz-0005Zw-UF; Thu, 07 Jun 2018 15:10:00 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvay-0002j6-D9; Thu, 07 Jun 2018 15:08:56 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Paolo Bonzini" <pbonzini@redhat.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.420496415@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 037/410] KVM: x86: rename update_db_bp_intercept to
+ update_bp_intercept
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/08/2018 10:09 AM, Jarkko Sakkinen wrote:
-> +		ret = sgx_edbgrd(encl, entry, align, data);
-> +		if (ret)
-> +			break;
-> +		if (write) {
-> +			memcpy(data + offset, buf + i, cnt);
-> +			ret = sgx_edbgwr(encl, entry, align, data);
-> +			if (ret)
-> +				break;
-> +		}
-> +		else
-> +			memcpy(buf + i,data + offset, cnt);
-> +	}
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-The SGX instructions like "edbgrd" be great to put on a license plat,
-but we can do better in the kernel.  Can you give these reasonable
-english names, please?  sgx_debug_write(), maybe?
+------------------
 
-Note that we have plenty of incomprehensible instruction names in the
-kernel like "wrpkru", but we do our best to keep them as confined as
-possible and make sure they don't hurt code readability.
+From: Paolo Bonzini <pbonzini@redhat.com>
+
+commit a96036b8ef7df9f10cd575c0d78359bd33188e8e upstream.
+
+Because #DB is now intercepted unconditionally, this callback
+only operates on #BP for both VMX and SVM.
+
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+[carnil: Backported to 3.16: adjust context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ arch/x86/include/asm/kvm_host.h | 2 +-
+ arch/x86/kvm/svm.c              | 2 +-
+ arch/x86/kvm/vmx.c              | 2 +-
+ arch/x86/kvm/x86.c              | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
+
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -682,7 +682,7 @@ struct kvm_x86_ops {
+ 	void (*vcpu_load)(struct kvm_vcpu *vcpu, int cpu);
+ 	void (*vcpu_put)(struct kvm_vcpu *vcpu);
+ 
+-	void (*update_db_bp_intercept)(struct kvm_vcpu *vcpu);
++	void (*update_bp_intercept)(struct kvm_vcpu *vcpu);
+ 	int (*get_msr)(struct kvm_vcpu *vcpu, u32 msr_index, u64 *pdata);
+ 	int (*set_msr)(struct kvm_vcpu *vcpu, struct msr_data *msr);
+ 	u64 (*get_segment_base)(struct kvm_vcpu *vcpu, int seg);
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -4353,7 +4353,7 @@ static struct kvm_x86_ops svm_x86_ops =
+ 	.vcpu_load = svm_vcpu_load,
+ 	.vcpu_put = svm_vcpu_put,
+ 
+-	.update_db_bp_intercept = update_bp_intercept,
++	.update_bp_intercept = update_bp_intercept,
+ 	.get_msr = svm_get_msr,
+ 	.set_msr = svm_set_msr,
+ 	.get_segment_base = svm_get_segment_base,
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -8932,7 +8932,7 @@ static struct kvm_x86_ops vmx_x86_ops =
+ 	.vcpu_load = vmx_vcpu_load,
+ 	.vcpu_put = vmx_vcpu_put,
+ 
+-	.update_db_bp_intercept = update_exception_bitmap,
++	.update_bp_intercept = update_exception_bitmap,
+ 	.get_msr = vmx_get_msr,
+ 	.set_msr = vmx_set_msr,
+ 	.get_segment_base = vmx_get_segment_base,
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -6732,7 +6732,7 @@ int kvm_arch_vcpu_ioctl_set_guest_debug(
+ 	 */
+ 	kvm_set_rflags(vcpu, rflags);
+ 
+-	kvm_x86_ops->update_db_bp_intercept(vcpu);
++	kvm_x86_ops->update_bp_intercept(vcpu);
+ 
+ 	r = 0;
+ 
