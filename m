@@ -1,52 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id LhoBCQdIGVudQAAAmS7hNA
-	; Thu, 07 Jun 2018 15:08:54 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 8N9EOeNBGVsfdwAAmS7hNA
+	; Thu, 07 Jun 2018 14:34:17 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 2F256601B4; Thu,  7 Jun 2018 15:08:54 +0000 (UTC)
+	id 436236089E; Thu,  7 Jun 2018 14:34:17 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 476B8601B4;
-	Thu,  7 Jun 2018 15:08:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 476B8601B4
+	by smtp.codeaurora.org (Postfix) with ESMTP id 876B7607DC;
+	Thu,  7 Jun 2018 14:34:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 876B7607DC
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936081AbeFGPIh (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:08:37 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41522 "EHLO
+        id S933979AbeFGOeO (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:34:14 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40341 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935927AbeFGPDk (ORCPT
+        by vger.kernel.org with ESMTP id S933937AbeFGOeL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:03:40 -0400
+        Thu, 7 Jun 2018 10:34:11 -0400
 Received: from [148.252.241.226] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbS-0005hO-9s; Thu, 07 Jun 2018 15:09:26 +0100
+        id 1fQvbM-0005hK-7f; Thu, 07 Jun 2018 15:09:20 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbB-0003C6-TZ; Thu, 07 Jun 2018 15:09:09 +0100
+        id 1fQvbE-0003I3-67; Thu, 07 Jun 2018 15:09:12 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Guillaume Nault" <g.nault@alphalink.fr>,
-        "Eric Dumazet" <edumazet@google.com>,
-        "syzbot" <syzkaller@googlegroups.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "James Chapman" <jchapman@katalix.com>
+CC: akpm@linux-foundation.org, "Takashi Iwai" <tiwai@suse.de>
 Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.168359152@decadent.org.uk>
+Message-ID: <lsq.1528380321.626859859@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 330/410] l2tp: do not accept arbitrary sockets
+Subject: [PATCH 3.16 387/410] ALSA: aloop: Sync stale timer before release
 In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
 X-SA-Exim-Connect-IP: 148.252.241.226
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -60,74 +55,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 17cfe79a65f98abe535261856c5aef14f306dff7 upstream.
+commit 67a01afaf3d34893cf7d2ea19b34555d6abb7cb0 upstream.
 
-syzkaller found an issue caused by lack of sufficient checks
-in l2tp_tunnel_create()
+The aloop driver tries to stop the pending timer via timer_del() in
+the trigger callback and in the close callback.  The former is
+correct, as it's an atomic operation, while the latter expects that
+the timer gets really removed and proceeds the resource releases after
+that.  But timer_del() doesn't synchronize, hence the running timer
+may still access the released resources.
 
-RAW sockets can not be considered as UDP ones for instance.
+A similar situation can be also seen in the prepare callback after
+trigger(STOP) where the prepare tries to re-initialize the things
+while a timer is still running.
 
-In another patch, we shall replace all pr_err() by less intrusive
-pr_debug() so that syzkaller can find other bugs faster.
-Acked-by: Guillaume Nault <g.nault@alphalink.fr>
-Acked-by: James Chapman <jchapman@katalix.com>
+The problems like the above are seen indirectly in some syzkaller
+reports (although it's not 100% clear whether this is the only cause,
+as the race condition is quite narrow and not always easy to
+trigger).
 
-==================================================================
-BUG: KASAN: slab-out-of-bounds in setup_udp_tunnel_sock+0x3ee/0x5f0 net/ipv4/udp_tunnel.c:69
-dst_release: dst:00000000d53d0d0f refcnt:-1
-Write of size 1 at addr ffff8801d013b798 by task syz-executor3/6242
+For addressing these issues, this patch adds the explicit alls of
+timer_del_sync() in some places, so that the pending timer is properly
+killed / synced.
 
-CPU: 1 PID: 6242 Comm: syz-executor3 Not tainted 4.16.0-rc2+ #253
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:17 [inline]
- dump_stack+0x194/0x24d lib/dump_stack.c:53
- print_address_description+0x73/0x250 mm/kasan/report.c:256
- kasan_report_error mm/kasan/report.c:354 [inline]
- kasan_report+0x23b/0x360 mm/kasan/report.c:412
- __asan_report_store1_noabort+0x17/0x20 mm/kasan/report.c:435
- setup_udp_tunnel_sock+0x3ee/0x5f0 net/ipv4/udp_tunnel.c:69
- l2tp_tunnel_create+0x1354/0x17f0 net/l2tp/l2tp_core.c:1596
- pppol2tp_connect+0x14b1/0x1dd0 net/l2tp/l2tp_ppp.c:707
- SYSC_connect+0x213/0x4a0 net/socket.c:1640
- SyS_connect+0x24/0x30 net/socket.c:1621
- do_syscall_64+0x280/0x940 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
-Fixes: fd558d186df2 ("l2tp: Split pppol2tp patch into separate l2tp and ppp parts")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/l2tp/l2tp_core.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ sound/drivers/aloop.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/net/l2tp/l2tp_core.c
-+++ b/net/l2tp/l2tp_core.c
-@@ -1581,9 +1581,14 @@ int l2tp_tunnel_create(struct net *net,
- 		encap = cfg->encap;
+--- a/sound/drivers/aloop.c
++++ b/sound/drivers/aloop.c
+@@ -193,6 +193,11 @@ static inline void loopback_timer_stop(s
+ 	dpcm->timer.expires = 0;
+ }
  
- 	/* Quick sanity checks */
-+	err = -EPROTONOSUPPORT;
-+	if (sk->sk_type != SOCK_DGRAM) {
-+		pr_debug("tunl %hu: fd %d wrong socket type\n",
-+			 tunnel_id, fd);
-+		goto err;
-+	}
- 	switch (encap) {
- 	case L2TP_ENCAPTYPE_UDP:
--		err = -EPROTONOSUPPORT;
- 		if (sk->sk_protocol != IPPROTO_UDP) {
- 			pr_err("tunl %hu: fd %d wrong protocol, got %d, expected %d\n",
- 			       tunnel_id, fd, sk->sk_protocol, IPPROTO_UDP);
-@@ -1591,7 +1596,6 @@ int l2tp_tunnel_create(struct net *net,
- 		}
- 		break;
- 	case L2TP_ENCAPTYPE_IP:
--		err = -EPROTONOSUPPORT;
- 		if (sk->sk_protocol != IPPROTO_L2TP) {
- 			pr_err("tunl %hu: fd %d wrong protocol, got %d, expected %d\n",
- 			       tunnel_id, fd, sk->sk_protocol, IPPROTO_L2TP);
++static inline void loopback_timer_stop_sync(struct loopback_pcm *dpcm)
++{
++	del_timer_sync(&dpcm->timer);
++}
++
+ #define CABLE_VALID_PLAYBACK	(1 << SNDRV_PCM_STREAM_PLAYBACK)
+ #define CABLE_VALID_CAPTURE	(1 << SNDRV_PCM_STREAM_CAPTURE)
+ #define CABLE_VALID_BOTH	(CABLE_VALID_PLAYBACK|CABLE_VALID_CAPTURE)
+@@ -327,6 +332,8 @@ static int loopback_prepare(struct snd_p
+ 	struct loopback_cable *cable = dpcm->cable;
+ 	int bps, salign;
+ 
++	loopback_timer_stop_sync(dpcm);
++
+ 	salign = (snd_pcm_format_width(runtime->format) *
+ 						runtime->channels) / 8;
+ 	bps = salign * runtime->rate;
+@@ -746,7 +753,7 @@ static int loopback_close(struct snd_pcm
+ 	struct loopback *loopback = substream->private_data;
+ 	struct loopback_pcm *dpcm = substream->runtime->private_data;
+ 
+-	loopback_timer_stop(dpcm);
++	loopback_timer_stop_sync(dpcm);
+ 	mutex_lock(&loopback->cable_lock);
+ 	free_cable(substream);
+ 	mutex_unlock(&loopback->cable_lock);
