@@ -1,91 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id uO+4C/A1GVuRVwAAmS7hNA
-	; Thu, 07 Jun 2018 13:41:04 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id cP3HCAZzGVvdVAAAmS7hNA
+	; Thu, 07 Jun 2018 19:38:23 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 0BC356089E; Thu,  7 Jun 2018 13:41:04 +0000 (UTC)
+	id AE1196074D; Thu,  7 Jun 2018 19:38:23 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="qVS8Qxup"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_MED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 7E163606DD;
-	Thu,  7 Jun 2018 13:41:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7E163606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id DD94D601D2;
+	Thu,  7 Jun 2018 19:38:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DD94D601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753445AbeFGNlB (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 09:41:01 -0400
-Received: from mga12.intel.com ([192.55.52.136]:20613 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753047AbeFGNlA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 09:41:00 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 06:40:59 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
-   d="scan'208";a="47193419"
-Received: from um.fi.intel.com (HELO um) ([10.237.72.212])
-  by orsmga007.jf.intel.com with ESMTP; 07 Jun 2018 06:40:54 -0700
-Received: from ash by um with local (Exim 4.91)
-        (envelope-from <alexander.shishkin@linux.intel.com>)
-        id 1fQv9n-0004U3-Ko; Thu, 07 Jun 2018 16:40:51 +0300
-Date: Thu, 7 Jun 2018 16:40:51 +0300
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To: Luwei Kang <luwei.kang@intel.com>
-Cc: kvm@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, chao.p.peng@linux.intel.com,
-        thomas.lendacky@amd.com, bp@suse.de, Kan.liang@intel.com,
-        Janakarajan.Natarajan@amd.com, dwmw@amazon.co.uk,
-        linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com,
-        peterz@infradead.org, mathieu.poirier@linaro.org,
-        kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
-        pbonzini@redhat.com, rkrcmar@redhat.com, david@redhat.com,
-        bsd@redhat.com, yu.c.zhang@linux.intel.com, joro@8bytes.org
-Subject: Re: [PATCH v9 04/12] perf/x86/intel/pt: add new capability for Intel
- PT
-Message-ID: <20180607134051.rwu5pqtz45cgq7ve@um.fi.intel.com>
-References: <1526964735-16566-1-git-send-email-luwei.kang@intel.com>
- <1526964735-16566-5-git-send-email-luwei.kang@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526964735-16566-5-git-send-email-luwei.kang@intel.com>
-User-Agent: NeoMutt/20180323
+        id S1753420AbeFGTiV (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 15:38:21 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:38583 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751956AbeFGTiT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 15:38:19 -0400
+Received: by mail-wm0-f65.google.com with SMTP id 69-v6so8359868wmf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 12:38:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=CiSIiqV4WQ+QOpQO21lmsZ3iZl+daa6ujnjnGsFTJqg=;
+        b=qVS8QxupwD9v8Hz682BYIhc6Q+AJG7/O2X6lBdRdx6LHBxrXwjZkHNLrkByK5+59EX
+         +yujTGDjialsadDQ8d6rAPVb28RzsWxqWBaozmhwqj3hdp18p79+6alyd6Q6UkUYCK/w
+         6OpCmQZ8XL40l+hAY2tF/AcnVv7AxpHvVyDGdt6JZRhwRGZLh0Ip+Lyi6WhBP0Ix5VGi
+         Ah3iZyDinlu7z9grZAgLk5yQtoErG5gXepG0etdNKHxs8NYKydsq6KEL9aeuEhQ5qH2e
+         lWB3fezwVfP+RrJEE7aYTEO2C+QfOLOxHTv2DfOVTaIOnnEQ+ECjMNBxt+R/J4EeoSnk
+         a2Cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=CiSIiqV4WQ+QOpQO21lmsZ3iZl+daa6ujnjnGsFTJqg=;
+        b=gXQ77CFHq8k5XoMcqwm172iQ+9Fcd7wobTtoL8hk5zEoVQrfEYaSq+VNWnOqg3P7rO
+         ITwUV7pZOYpMxrtmFgSotmNKiymTy5TSK0UaZxiwcM6fcI/5vA3KGu+ni6TFshwuw1Qh
+         nJ7W6zgbxlsc6lgZXSRIWxvMoP5ZA9xgKBeY9wZj/ZRiL/6rKf/nMzObY82Z6OhZF/uc
+         +aTxXmQvtoHGUe3CTAAUBumtFPUMO733hMBdtNVxu3rm5ddyjdjOjTFkfIY8p9iEAzKe
+         h0pw4kAZukwgb5Jdq+Sgrqq0x9rEQrCd87jANP13wbNOHZn6P1nzKVVB9zTL5/Zu5Me9
+         M8vw==
+X-Gm-Message-State: APt69E0JAfwhDxplzw1vWCPVc50SToXo+IU4nnHwkWGWVR/oBnTkf0f7
+        AlEU3jnHMi2Ty7MnrrHi4orMUw==
+X-Google-Smtp-Source: ADUXVKJ/X7JPng9dLiP3cY6WR3Vas3Lhvt4I8NY+MxIN5fkLRwkGzjYWQaNZJGxcevJXhUE++9yW1w==
+X-Received: by 2002:a1c:da4e:: with SMTP id r75-v6mr2486312wmg.64.1528400297974;
+        Thu, 07 Jun 2018 12:38:17 -0700 (PDT)
+Received: from localhost.localdomain ([51.15.160.169])
+        by smtp.googlemail.com with ESMTPSA id o138-v6sm3253342wmg.10.2018.06.07.12.38.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 07 Jun 2018 12:38:16 -0700 (PDT)
+From: Corentin Labbe <clabbe@baylibre.com>
+To: davem@davemloft.net, fw@strlen.de, kadlec@blackhole.kfki.hu,
+        pablo@netfilter.org
+Cc: coreteam@netfilter.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        Corentin Labbe <clabbe@baylibre.com>
+Subject: [PATCH] netfilter: remove include/net/netfilter/nft_dup.h
+Date: Thu,  7 Jun 2018 19:38:09 +0000
+Message-Id: <1528400289-28004-1-git-send-email-clabbe@baylibre.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 12:52:07PM +0800, Luwei Kang wrote:
-> CPUID(EAX=14H,ECX=0):EBX[bit 3] = 1 indicates support of
-> output to Trace Transport subsystem.
-> MSR IA32_RTIT_CTL.FabricEn[bit 6] is reserved if
-> CPUID.(EAX=14H, ECX=0):ECX[bit 3] = 0.
+include/net/netfilter/nft_dup.h was introduced in d877f07112f1 ("netfilter: nf_tables: add nft_dup expression")
+but was never user since this date.
 
-This should instead say:
+Furthermore, the only struct in this file is unused elsewhere.
 
-This adds support for "output to Trace Transport subsystem" capability
-of Intel PT, as documented in IA SDM Chapter 36.x.y.z. It means that
-PT can output its trace to an MMIO address range rather than system
-memory buffer.
+Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+---
+ include/net/netfilter/nft_dup.h | 10 ----------
+ 1 file changed, 10 deletions(-)
+ delete mode 100644 include/net/netfilter/nft_dup.h
 
-> This is use for emulate IA32_RTIT_CTL MSR read/write
-> in KVM. KVM guest write IA32_RTIT_CTL will trap to
-> root mode and a #GP would be injected to guest if set
-> IA32_RTIT_CTL.FabricEn with
-> CPUID.(EAX=14H, ECX=0):ECX[bit 3] = 0.
-
-I'm not sure what this means, this patch has nothing to do with KVM
-as far as I can tell.
-
-Aside from the commit message, this is a valid patch.
-
-Thanks,
---
-Alex
+diff --git a/include/net/netfilter/nft_dup.h b/include/net/netfilter/nft_dup.h
+deleted file mode 100644
+index 4d9d512984b2..000000000000
+--- a/include/net/netfilter/nft_dup.h
++++ /dev/null
+@@ -1,10 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-#ifndef _NFT_DUP_H_
+-#define _NFT_DUP_H_
+-
+-struct nft_dup_inet {
+-	enum nft_registers	sreg_addr:8;
+-	enum nft_registers	sreg_dev:8;
+-};
+-
+-#endif /* _NFT_DUP_H_ */
+-- 
+2.16.4
