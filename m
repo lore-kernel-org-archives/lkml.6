@@ -1,96 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id l8nUCmEVG1siFQAAmS7hNA
-	; Fri, 08 Jun 2018 23:53:47 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id i1EsIUBAGVtjYAAAmS7hNA
+	; Thu, 07 Jun 2018 14:25:22 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 4E384607DC; Fri,  8 Jun 2018 23:53:47 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="T2cFixwb"
+	id C703A6089E; Thu,  7 Jun 2018 14:25:22 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_MED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 405FE600D0;
-	Fri,  8 Jun 2018 23:53:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 405FE600D0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id D399D6063F;
+	Thu,  7 Jun 2018 14:25:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D399D6063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753156AbeFHXxn (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 19:53:43 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:45283 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752885AbeFHXxm (ORCPT
+        id S933310AbeFGOV4 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:21:56 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39435 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933071AbeFGOJK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 19:53:42 -0400
-Received: by mail-pf0-f193.google.com with SMTP id a22-v6so7360041pfo.12
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 16:53:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:organization:references:date:in-reply-to
-         :message-id:user-agent:mime-version;
-        bh=5WxdiRLRrbE4wlBtuKlqRziUYwznS3Zc8/13UiOmVNU=;
-        b=T2cFixwbN7Xb1CPcoCsIT+HvLTkMdGOFJi5nyNT8uK/rF6s4tW1ahDQRltROIWj2hJ
-         HKRtcPe5w9ultSPgt1cQPtTfuqkUyE2OMnzsR95H71f2O0eH3taumIqCuLg7gLBiO5cJ
-         NnmRQhk67Wy/DIqP55aoK5uAPr+3h7R0Isi6FUeaalSsTa05zS9j8uEIkfAgJuma/vx0
-         50YIkMfuNySgUqEp1skncVQF6bRJVTIr3waqNQx13OUTVM+z3s4WLWY2T8BNhxnjQNVR
-         AX6Ze3NoJBHA/ThCVpEMMKm1j086oFRRyjqLvqmidsHAsfH5jegGbTK4FLim7FqfBsUS
-         /Cxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:organization:references:date
-         :in-reply-to:message-id:user-agent:mime-version;
-        bh=5WxdiRLRrbE4wlBtuKlqRziUYwznS3Zc8/13UiOmVNU=;
-        b=mydvBIlT+04ErK7AxbQYVQsrVbri90IUK2DLYAAX+iTFKOXTuDWvkg44aIuU7ELmKD
-         dnkzpjbG7m8CBrRHhMePsmsZCYUYsHs2LeFanyuzVqTBYmPXgEmwCVvjALVYJy7dXcjw
-         ssZjLL1RpRwwCzblW1cov4n7wnRiOUgciQigCRsTyJpnWh+20OT3Ywio0ghYHFhGXNCc
-         UK69f+Yt8FUiQCS/XUeDTuMv+y84D5AFq4ae9RUg/LHDK9zXBTNZyqOA+ELHtAq+54hz
-         KITVNRZ16Hv8kFNe8EQdaXUfaDNzjuAIMP/LdzJyZLVnUQT+NRcFIg1ngIzLQav7GHD4
-         K1QQ==
-X-Gm-Message-State: APt69E2okRbVgvGbFqkrPN5ipmFJcriVW9H2PwAHM/JeYLJ9DEKY7WBu
-        ZDVNaNQCXKjetXcwuV0Dpf6DPw==
-X-Google-Smtp-Source: ADUXVKJAbZiSG/Ltwx3TN96WML7JTy+5mxQQb92UVz7uQ/QAuVM/7dCmLXxwW+dN9g1kF4IPli6d8w==
-X-Received: by 2002:a65:6252:: with SMTP id q18-v6mr7043000pgv.106.1528502021980;
-        Fri, 08 Jun 2018 16:53:41 -0700 (PDT)
-Received: from localhost ([98.237.141.101])
-        by smtp.googlemail.com with ESMTPSA id a22-v6sm24228061pfi.124.2018.06.08.16.53.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 08 Jun 2018 16:53:41 -0700 (PDT)
-From: Kevin Hilman <khilman@baylibre.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] ARM64: dts: meson-gxl-s905x-p212: Add phy-supply for usb0
-Organization: BayLibre
-References: <1528188743-12798-1-git-send-email-narmstrong@baylibre.com>
-        <CAFBinCCF7v40PrtL3HVf9X-fEVx7P2uOVePa5wQ_y6s7uLKmnw@mail.gmail.com>
-Date: Fri, 08 Jun 2018 16:53:40 -0700
-In-Reply-To: <CAFBinCCF7v40PrtL3HVf9X-fEVx7P2uOVePa5wQ_y6s7uLKmnw@mail.gmail.com>
-        (Martin Blumenstingl's message of "Tue, 5 Jun 2018 21:09:09 +0200")
-Message-ID: <7hsh5wygvv.fsf@baylibre.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        Thu, 7 Jun 2018 10:09:10 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbA-0005hO-8K; Thu, 07 Jun 2018 15:09:08 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb9-00036J-5Q; Thu, 07 Jun 2018 15:09:07 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-Content-Type: text/plain
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "NCSC Security" <security@ncsc.gov.uk>,
+        "Will Deacon" <will.deacon@arm.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.245798275@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 270/410] arm64: __show_regs: Only resolve kernel
+ symbols when running at EL1
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-> On Tue, Jun 5, 2018 at 10:52 AM, Neil Armstrong <narmstrong@baylibre.com> wrote:
->> Like LibreTech-CC, the USB0 needs the 5V regulator to be enabled to power the
->> devices on the P212 Reference Design based boards.
->>
->> Fixes: b9f07cb4f41f ("ARM64: dts: meson-gxl-s905x-p212: enable the USB controller")
->> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
->
-> Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+------------------
 
-Applied to v4.18/fixes (will queue for v4.18-rc).
+From: Will Deacon <will.deacon@arm.com>
 
-Kevin
+commit a06f818a70de21b4b3b4186816094208fc7accf9 upstream.
+
+__show_regs pretty prints PC and LR by attempting to map them to kernel
+function names to improve the utility of crash reports. Unfortunately,
+this mapping is applied even when the pt_regs corresponds to user mode,
+resulting in a KASLR oracle.
+
+Avoid this issue by only looking up the function symbols when the register
+state indicates that we're actually running at EL1.
+
+Reported-by: NCSC Security <security@ncsc.gov.uk>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ arch/arm64/kernel/process.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+--- a/arch/arm64/kernel/process.c
++++ b/arch/arm64/kernel/process.c
+@@ -197,8 +197,15 @@ void __show_regs(struct pt_regs *regs)
+ 	}
+ 
+ 	show_regs_print_info(KERN_DEFAULT);
+-	printk("pc : %pS\n", (void *)regs->pc);
+-	printk("lr : %pS\n", (void *)lr);
++
++	if (!user_mode(regs)) {
++		printk("pc : %pS\n", (void *)regs->pc);
++		printk("lr : %pS\n", (void *)lr);
++	} else {
++		printk("pc : %016llx\n", regs->pc);
++		printk("lr : %016llx\n", lr);
++	}
++
+ 	printk("sp : %016llx pstate : %08llx\n", sp, regs->pstate);
+ 	for (i = top_reg; i >= 0; i--) {
+ 		printk("x%-2d: %016llx ", i, regs->regs[i]);
