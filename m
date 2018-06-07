@@ -1,89 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id J95LKJFPHlspRwAAmS7hNA
-	; Mon, 11 Jun 2018 10:31:45 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id hdtlGTw5GVvACAAAmS7hNA
+	; Thu, 07 Jun 2018 13:57:25 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 9791D607BB; Mon, 11 Jun 2018 10:31:45 +0000 (UTC)
+	id 57B3F608CA; Thu,  7 Jun 2018 13:57:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+	s=default; t=1528379845;
+	bh=TthbVH7Kga29oLsBTTMHQR6WqazIdSsjlITVGU2u0BI=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=hcGE7eV/9LZxgf2eBH+3XuPRPBAh/Kd3O+/WsSxlTY9OA1S7rM9goIEkWc1+eUIx6
+	 7EQxApcWYEgOSByuy7FL+0JVgdnu3szuCExGuRMCoKBNYPkYBuAwb/f5r0Ostd8E5P
+	 2oHZyTGz39V9THjax3VyuFfGv9GeD503eiJ1GJVU=
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 0E83B60385;
-	Mon, 11 Jun 2018 10:31:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0E83B60385
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by smtp.codeaurora.org (Postfix) with ESMTP id C8D19608C8;
+	Thu,  7 Jun 2018 13:57:24 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="b/EAAW9t";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="b/EAAW9t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C8D19608C8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932802AbeFKKbm (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 06:31:42 -0400
-Received: from www62.your-server.de ([213.133.104.62]:55252 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932526AbeFKKbl (ORCPT
+        id S932722AbeFGN5W (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 09:57:22 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39472 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932129AbeFGN5V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 06:31:41 -0400
-Received: from [188.63.75.139] (helo=linux.home)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-SHA:256)
-        (Exim 4.85_2)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fSK6r-0005j8-Gx; Mon, 11 Jun 2018 12:31:37 +0200
-Subject: Re: KASAN: slab-out-of-bounds Read in bpf_skb_change_proto
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: syzbot <syzbot+d2d729bdde65dee3eae6@syzkaller.appspotmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-References: <000000000000c64842056e4b4326@google.com>
- <76483220-226b-bf3c-d529-ea839d6624c6@iogearbox.net>
- <CACT4Y+boO990R6a9kGtx-UZpZPeB2bwhgvyUjPvEFOpbzxJKrg@mail.gmail.com>
-From: Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <170ef50b-6895-d7fa-a9ae-80915741971b@iogearbox.net>
-Date: Mon, 11 Jun 2018 12:31:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
-MIME-Version: 1.0
-In-Reply-To: <CACT4Y+boO990R6a9kGtx-UZpZPeB2bwhgvyUjPvEFOpbzxJKrg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.99.3/24652/Mon Jun 11 06:34:15 2018)
+        Thu, 7 Jun 2018 09:57:21 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 9FDD7607DC; Thu,  7 Jun 2018 13:57:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528379840;
+        bh=TthbVH7Kga29oLsBTTMHQR6WqazIdSsjlITVGU2u0BI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=b/EAAW9tcvo5Zk17CJgBS+QhC4pOcilGsSQ0HwRww96HVHqLtakbH8+ZOliFJcJpb
+         GVfH5P5lRj88/BGCjACCiukANguesFKHRm6Ah3mWpqE1jyWjEx67qHRn1/Pl3ombUF
+         JMBsxuJvGjf6rPqoBfBlzQJ3hsZVtMgbRMJ8TOgU=
+Received: from azshara.qualcomm.com (global_nat1_iad_fw.qualcomm.com [129.46.232.65])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: agustinv@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 01179601D2;
+        Thu,  7 Jun 2018 13:57:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528379840;
+        bh=TthbVH7Kga29oLsBTTMHQR6WqazIdSsjlITVGU2u0BI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=b/EAAW9tcvo5Zk17CJgBS+QhC4pOcilGsSQ0HwRww96HVHqLtakbH8+ZOliFJcJpb
+         GVfH5P5lRj88/BGCjACCiukANguesFKHRm6Ah3mWpqE1jyWjEx67qHRn1/Pl3ombUF
+         JMBsxuJvGjf6rPqoBfBlzQJ3hsZVtMgbRMJ8TOgU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 01179601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=agustinv@codeaurora.org
+From: Agustin Vega-Frias <agustinv@codeaurora.org>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: timur@codeaurora.org, agustinv@codeaurora.org
+Subject: [RFC V2 0/3] arm_pmu: acpi: variant support and QCOM Falkor extensions
+Date: Thu,  7 Jun 2018 09:56:45 -0400
+Message-Id: <1528379808-27970-1-git-send-email-agustinv@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/11/2018 11:52 AM, Dmitry Vyukov wrote:
-> On Mon, Jun 11, 2018 at 11:42 AM, Daniel Borkmann <daniel@iogearbox.net> wrote:
->> On 06/10/2018 05:27 PM, syzbot wrote:
->>> Hello,
->>>
->>> syzbot found the following crash on:
->>>
->>> HEAD commit:    a16afaf7928b Merge tag 'for-v4.18' of git://git.kernel.org..
->>> git tree:       upstream
->>> console output: https://syzkaller.appspot.com/x/log.txt?x=1338f6bf800000
->>> kernel config:  https://syzkaller.appspot.com/x/.config?x=314f2150f36c16ca
->>> dashboard link: https://syzkaller.appspot.com/bug?extid=d2d729bdde65dee3eae6
->>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->>> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1173381f800000
->>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=171f90cf800000
->>>
->>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->>> Reported-by: syzbot+d2d729bdde65dee3eae6@syzkaller.appspotmail.com
->>
->> #syz fix: bpf: reject passing modified ctx to helper functions
-> 
-> On a related note, it seems that it still can unwind past
-> bpf_skb_change_proto. I think the "net.core.bpf_jit_kallsyms = 1"
-> sysctl should have been reached syzbot by the time of crash. Are you
-> sure that's the only thing requires? We are using frame pointer
-> unwinder just in case.
+This series is a complete re-design of V1 of the QCOM Falkor extensions [1],
+it introduces a probe table based on the HID of a device nested under the CPU
+device to allow variant detection and arm_pmu customization.
 
-Nah, I know what happened; just sent a PR fix for syzkaller.
+The first patch adds an additional section at the end of each ACPI probe table.
+This allows probe tables to be sentinel-delimited and better accommodate some
+APIs that require such tables.
 
-Thanks,
-Daniel
+The second patch adds the PMUv3 ACPI probe table and plumbing to allow drivers
+to plug into the ACPI PMUv3 probe sequence.
+
+The third patch adds the QCOM Falkor extensions using the new probe table.
+
+If this found to be a reasonable extension approach other patches will be
+added to the series to build on the base QCOM extensions.
+
+[1] https://lkml.org/lkml/2017/3/1/540
+
+Changes since V1:
+- Redesign as a separate module by adding variant detection support.
+
+Agustin Vega-Frias (3):
+  ACPI: add support for sentinel-delimited probe tables
+  arm_pmu: acpi: add support for CPU PMU variant detection
+  perf: qcom: Add Falkor CPU PMU IMPLEMENTATION DEFINED event support
+
+ drivers/perf/Makefile             |   2 +-
+ drivers/perf/arm_pmu_acpi.c       |  27 ++++
+ drivers/perf/qcom_arm_pmu.c       | 310 ++++++++++++++++++++++++++++++++++++++
+ include/asm-generic/vmlinux.lds.h |   4 +-
+ include/linux/acpi.h              |  11 ++
+ include/linux/perf/arm_pmu.h      |   1 +
+ 6 files changed, 353 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/perf/qcom_arm_pmu.c
+
+--
+Qualcomm Datacenter Technologies, Inc. on behalf of the Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
