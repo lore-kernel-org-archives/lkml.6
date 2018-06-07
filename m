@@ -1,128 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 0Lp0NJxTGVszHwAAmS7hNA
-	; Thu, 07 Jun 2018 15:49:47 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id E9/VC/diGVtsZAAAmS7hNA
+	; Thu, 07 Jun 2018 16:54:15 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id C9E9860590; Thu,  7 Jun 2018 15:49:47 +0000 (UTC)
+	id A1B06608B8; Thu,  7 Jun 2018 16:54:15 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="EuSeYG7i"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 1C47E6074D;
-	Thu,  7 Jun 2018 15:49:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1C47E6074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 351B060115;
+	Thu,  7 Jun 2018 16:54:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 351B060115
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935168AbeFGPtZ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:49:25 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40530 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934383AbeFGOkA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:40:00 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbV-0005hK-Sp; Thu, 07 Jun 2018 15:09:30 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbA-0003AZ-UC; Thu, 07 Jun 2018 15:09:08 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        id S934019AbeFGQyL (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 12:54:11 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:56976 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933743AbeFGQyI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 12:54:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=TLlkhZw+XWxGNeMnXy/Gi+jy3pYmYwWbVwRtmgHi6YM=;
+        b=EuSeYG7inf7A1ax0C3JzggnZ/6l8vqAqvcWE0sMIXhX3Xz94KrcUHNyMM22QnBetHMT+DmpsrMpEIp3k6UrfWS6y8dcPdHLnoRl9Ra4QOGOIx6A6OUm+hglr92gO4djOt30pwim6VY+Mgak/fg+HkWc/7K+rpAA2xvkkH4zkA1E=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1fQyAi-0001hD-Jg; Thu, 07 Jun 2018 18:54:00 +0200
+Date: Thu, 7 Jun 2018 18:54:00 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Brandon Maier <brandon.maier@rockwellcollins.com>
+Cc: netdev@vger.kernel.org, f.fainelli@gmail.com, davem@davemloft.net,
+        michal.simek@xilinx.com, clayton.shotwell@rockwellcollins.com,
+        kristopher.cory@rockwellcollins.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] net: phy: Check phy_driver ready before accessing
+Message-ID: <20180607165400.GE25513@lunn.ch>
+References: <20180607155348.149665-1-brandon.maier@rockwellcollins.com>
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Jan Beulich" <jbeulich@suse.com>,
-        boris.ostrovsky@oracle.com, "Juergen Gross" <jgross@suse.com>,
-        xen-devel@lists.xenproject.org,
-        "Thomas Gleixner" <tglx@linutronix.de>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.162593112@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 311/410] x86/xen: Zero MSR_IA32_SPEC_CTRL before suspend
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180607155348.149665-1-brandon.maier@rockwellcollins.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+On Thu, Jun 07, 2018 at 10:53:46AM -0500, Brandon Maier wrote:
+> Since a phy_device is added to the global mdio_bus list during
+> phy_device_register(), but a phy_device's phy_driver doesn't get
+> attached until phy_probe(). It's possible of_phy_find_device() in
+> xgmiitorgmii will return a valid phy with a NULL phy_driver. Leading to
+> a NULL pointer access during the memcpy().
 
-------------------
+Hi Brandon
 
-From: Juergen Gross <jgross@suse.com>
+FYI: net-next is closed at the moment. Please resubmit these in two
+weeks time.
 
-commit 71c208dd54ab971036d83ff6d9837bae4976e623 upstream.
-
-Older Xen versions (4.5 and before) might have problems migrating pv
-guests with MSR_IA32_SPEC_CTRL having a non-zero value. So before
-suspending zero that MSR and restore it after being resumed.
-
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Jan Beulich <jbeulich@suse.com>
-Cc: xen-devel@lists.xenproject.org
-Cc: boris.ostrovsky@oracle.com
-Link: https://lkml.kernel.org/r/20180226140818.4849-1-jgross@suse.com
-[bwh: Backported to 3.16:
- - Include <asm/cpufeature.h> instead of <asm/cpufeatures.h>
- - Adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
---- a/arch/x86/xen/suspend.c
-+++ b/arch/x86/xen/suspend.c
-@@ -1,10 +1,13 @@
- #include <linux/types.h>
- #include <linux/clockchips.h>
-+#include <linux/percpu-defs.h>
- 
- #include <xen/interface/xen.h>
- #include <xen/grant_table.h>
- #include <xen/events.h>
- 
-+#include <asm/cpufeature.h>
-+#include <asm/msr-index.h>
- #include <asm/xen/hypercall.h>
- #include <asm/xen/page.h>
- #include <asm/fixmap.h>
-@@ -12,6 +15,8 @@
- #include "xen-ops.h"
- #include "mmu.h"
- 
-+static DEFINE_PER_CPU(u64, spec_ctrl);
-+
- static void xen_pv_pre_suspend(void)
- {
- 	xen_mm_pin_all();
-@@ -84,6 +89,9 @@ static void xen_vcpu_notify_restore(void
- {
- 	unsigned long reason = (unsigned long)data;
- 
-+	if (xen_pv_domain() && boot_cpu_has(X86_FEATURE_SPEC_CTRL))
-+		wrmsrl(MSR_IA32_SPEC_CTRL, this_cpu_read(spec_ctrl));
-+
- 	/* Boot processor notified via generic timekeeping_resume() */
- 	if ( smp_processor_id() == 0)
- 		return;
-@@ -93,6 +101,13 @@ static void xen_vcpu_notify_restore(void
- 
- static void xen_vcpu_notify_suspend(void *data)
- {
-+	u64 tmp;
-+
-+	if (xen_pv_domain() && boot_cpu_has(X86_FEATURE_SPEC_CTRL)) {
-+		rdmsrl(MSR_IA32_SPEC_CTRL, tmp);
-+		this_cpu_write(spec_ctrl, tmp);
-+		wrmsrl(MSR_IA32_SPEC_CTRL, 0);
-+	}
- }
- 
- void xen_arch_resume(void)
+      Andrew
