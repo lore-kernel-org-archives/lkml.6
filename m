@@ -1,149 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id lLG4Ok5lGVvoBwAAmS7hNA
-	; Thu, 07 Jun 2018 17:03:24 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id dtIKBfxVGVt0OwAAmS7hNA
+	; Thu, 07 Jun 2018 16:00:50 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 0E4026074D; Thu,  7 Jun 2018 17:03:24 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ft3i6o2l"
+	id 4CC9D608B8; Thu,  7 Jun 2018 16:00:50 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 8260260590;
-	Thu,  7 Jun 2018 17:03:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8260260590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id C85D0601D2;
+	Thu,  7 Jun 2018 16:00:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C85D0601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932789AbeFGRDU (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 13:03:20 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:33192 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932368AbeFGRDT (ORCPT
+        id S935784AbeFGQAq (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 12:00:46 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39286 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932870AbeFGOJE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 13:03:19 -0400
-Received: by mail-wm0-f68.google.com with SMTP id z6-v6so3965785wma.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 10:03:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=+zC+riEVWwJRMtaQdbVVtwYjNK4ONhMtZO9aoiw2mwg=;
-        b=Ft3i6o2lrD7dHhsiyYiiv/htSE69noz5c/+fd/ieqff+8AR8ezjxEHU97D5fn0FxlJ
-         7hu9MfZarfJnLE2Rt+bgdxXjZrgRhiUQFbUSKqHXMWf9MoSo3e8OwDVNGrI3xJjLa5y9
-         3kI9aodNY8QdxBDTOIjpJ30xtP3eOHr2zVsMk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+zC+riEVWwJRMtaQdbVVtwYjNK4ONhMtZO9aoiw2mwg=;
-        b=Tl8o8luM1lDcc2YCpSccPm9XHWQurDTSBJyGvrXYtgbwYa2l0X5KC681Ui0TjnX+F+
-         a3a6mhrSW37c149rutkURCp1Dsstkpz1w0nAsMoIJM1OXcvcm81XJZPnSstoVs2Zst14
-         muGAOeI6Rm3TzHjYVM/EMluQcPx13uwQaOl3NokvSpYoE72ur1QNiaW9PXrj9jJeurTc
-         Z4p1im4ROw5WSVjxFi8RbzYu8gmqUdeN2vBQVTbJwd5Gx0L3BMvtg2hdP0NPOZEk0bva
-         A08OOvwtMqR2InFl5/Ckt5gBHkHyhh8CoA/TorhgvHo43dFGD4svHhfSfsd1/Nv5lyRi
-         EO+g==
-X-Gm-Message-State: APt69E3GWe262rSitFnuGncw4wejBjdpEXYjybXtkICMYtPi8Mv4ojho
-        PctzIte1obj8rS2JP8uoGnedbA==
-X-Google-Smtp-Source: ADUXVKIalXkuw+7oA2pFYeezvVfiS+4MA0LP6PtuZvz6z8QQCYXUbNfOBQ5+3a9t+ChUlWJ8EoKJ0g==
-X-Received: by 2002:a1c:2856:: with SMTP id o83-v6mr2445617wmo.3.1528390997889;
-        Thu, 07 Jun 2018 10:03:17 -0700 (PDT)
-Received: from [192.168.0.18] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.googlemail.com with ESMTPSA id c201-v6sm4147332wmh.18.2018.06.07.10.03.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Jun 2018 10:03:17 -0700 (PDT)
-Subject: Re: [PATCH v3 1/3] nvmem: Update the OF binding to use a subnode for
- the cells list
-To: Alban <albeu@free.fr>
-Cc: linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        devicetree@vger.kernel.org, linux-mtd@lists.infradead.org
-References: <1521933899-362-1-git-send-email-albeu@free.fr>
- <1521933899-362-2-git-send-email-albeu@free.fr>
- <344e0087-7410-aebb-8a66-c6976064df10@linaro.org>
- <20180417165420.423a691b@avionic-0020>
- <8c4b48ad-e99e-030a-a4ee-b6df0fa59c79@linaro.org>
- <20180417180040.04f53495@avionic-0020> <20180418134119.2e587621@avionic-0020>
- <9f7d2987-b33e-79b5-ae58-2985fd7334e4@linaro.org>
- <20180418143243.3c23493c@avionic-0020>
- <e34619a4-e9b6-9945-a1cc-a3680aac6819@linaro.org>
- <20180418153440.187ed16e@avionic-0020>
- <d30656d6-f17e-6ed0-251f-2b59d02cd202@linaro.org>
- <20180607184155.6da38a01@tock>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <0fb0e8e9-e7b8-10c3-fcdd-399c73a33878@linaro.org>
-Date: Thu, 7 Jun 2018 18:03:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Thu, 7 Jun 2018 10:09:04 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb4-0005Zk-Bd; Thu, 07 Jun 2018 15:09:02 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb0-0002oY-W2; Thu, 07 Jun 2018 15:08:58 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-In-Reply-To: <20180607184155.6da38a01@tock>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Nicolas Ferre" <nicolas.ferre@atmel.com>,
+        "Tomi Valkeinen" <tomi.valkeinen@ti.com>,
+        "Julia Lawall" <Julia.Lawall@lip6.fr>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.388464661@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 091/410] drivers: video: fbdev: atmel_lcdfb.c: fix
+ error return code
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
+------------------
 
-On 07/06/18 17:41, Alban wrote:
-> AFAIU the only thing that we disagree on now is if the nodes
-> representing the cells should be direct children of the provider
-> or in a dedicated subnode. For the MTD case both solution would solve
-> the binding clash. I would really appreciate if the DT people could
-Am reluctant in changing the nvmem generic bindings for a special case.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Can you try this with your original subnode proposal:
-just pass the subnode node pointer in np of nvmem_config:
+commit 6c131850eca653344c41d68ce87f3ab5a89af89e upstream.
 
-------------------------->cut<------------------------------------
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index b05aa8e81303..c9621632bbfb 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -472,7 +472,11 @@ struct nvmem_device *nvmem_register(const struct 
-nvmem_config *config)
-         nvmem->priv = config->priv;
-         nvmem->reg_read = config->reg_read;
-         nvmem->reg_write = config->reg_write;
--       nvmem->dev.of_node = config->dev->of_node;
-+
-+       if (config->np)
-+               nvmem->dev.of_node = config->np;
-+       else
-+               nvmem->dev.of_node = config->dev->of_node;
+Convert a zero return value on error to a negative one, as returned
+elsewhere in the function.
 
-         if (config->id == -1 && config->name) {
-                 dev_set_name(&nvmem->dev, "%s", config->name);
-diff --git a/include/linux/nvmem-provider.h b/include/linux/nvmem-provider.h
-index f89598bc4e1c..743345ffe2c8 100644
---- a/include/linux/nvmem-provider.h
-+++ b/include/linux/nvmem-provider.h
-@@ -49,6 +49,7 @@ typedef int (*nvmem_reg_write_t)(void *priv, unsigned 
-int offset,
-   */
-  struct nvmem_config {
-         struct device           *dev;
-+       struct device_node      *np;
-         const char              *name;
-         int                     id;
-         struct module           *owner;
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-------------------------->cut<------------------------------------
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
 
-thanks,
-srini
+// </smpl>
 
-> chip in so that we can settle this and get the MTD support merged.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Acked-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ drivers/video/fbdev/atmel_lcdfb.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/drivers/video/fbdev/atmel_lcdfb.c
++++ b/drivers/video/fbdev/atmel_lcdfb.c
+@@ -1101,12 +1101,14 @@ static int atmel_lcdfb_of_init(struct at
+ 	timings = of_get_display_timings(display_np);
+ 	if (!timings) {
+ 		dev_err(dev, "failed to get display timings\n");
++		ret = -EINVAL;
+ 		goto put_display_node;
+ 	}
+ 
+ 	timings_np = of_find_node_by_name(display_np, "display-timings");
+ 	if (!timings_np) {
+ 		dev_err(dev, "failed to find display-timings node\n");
++		ret = -ENODEV;
+ 		goto put_display_node;
+ 	}
+ 
