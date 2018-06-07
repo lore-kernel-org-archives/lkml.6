@@ -1,91 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id TpYLJ4soHltMDwAAmS7hNA
-	; Mon, 11 Jun 2018 07:45:20 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id SMRfB+w8GVv+OAAAmS7hNA
+	; Thu, 07 Jun 2018 14:10:55 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id A2A4A607E7; Mon, 11 Jun 2018 07:45:19 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m0KeBFD5"
+	id 0B843608B8; Thu,  7 Jun 2018 14:10:55 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 22403608CA;
-	Mon, 11 Jun 2018 07:45:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 22403608CA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 33EE26063F;
+	Thu,  7 Jun 2018 14:10:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 33EE26063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754101AbeFKHpP (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 03:45:15 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37156 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753964AbeFKHpO (ORCPT
+        id S933225AbeFGOJu (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:09:50 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39417 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933154AbeFGOJb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 03:45:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=J90GsHWbmiMUP60WHu7W/BPoqlHG5vrbzrKoQ+f5kWM=; b=m0KeBFD5c5hPIDsPbBpIEHOGd
-        JW/UwWQ9XXImqVbiOGIiU+0m6C5dgDVoJgy2oNEGQ62rYCCXhPV1xyu5t9HccVF2HCbXsov83vt6N
-        C9zJzr8x3tgW8Sw1i02ekV+UykjVCEC91qVlqm4Mf0f5JK0YEiWvPmoV4lyBD/i71DTwCfPgW9qzz
-        JHI/ZYsu9yeN7BO6OFQ3RSUdXEudaj7R9irg/uV/mGRL8a48C0e0bRPcdASJCC7d7q0zIEiDwZS82
-        ivCNZDYkneO5gBYlg/7dxgQvpHSyy/PblrOn6HD75zwzfcKYlPBwEURNpPyJrozCXMfyK7T9czzd6
-        BqnQcxfbg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSHVl-0004Uw-9n; Mon, 11 Jun 2018 07:45:09 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 85FD6201EA7B1; Mon, 11 Jun 2018 09:45:07 +0200 (CEST)
-Date: Mon, 11 Jun 2018 09:45:07 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Nadav Amit <namit@vmware.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-        Juergen Gross <jgross@suse.com>,
-        Alok Kataria <akataria@vmware.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH v3 6/9] x86: prevent inline distortion by paravirt ops
-Message-ID: <20180611074507.GP12258@hirez.programming.kicks-ass.net>
-References: <20180610141911.52948-1-namit@vmware.com>
- <20180610141911.52948-7-namit@vmware.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Thu, 7 Jun 2018 10:09:31 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbM-0005Zj-T3; Thu, 07 Jun 2018 15:09:21 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbE-0003Hs-4b; Thu, 07 Jun 2018 15:09:12 +0100
+Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
-In-Reply-To: <20180610141911.52948-7-namit@vmware.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, linux-mips@linux-mips.org,
+        "Ralf Baechle" <ralf@linux-mips.org>,
+        "John Crispin" <blogic@openwrt.org>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.412991301@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 385/410] MIPS: ralink: Don't set pm_power_off
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 10, 2018 at 07:19:08AM -0700, Nadav Amit wrote:
-> +/*
-> + * This generates an indirect call based on the operation type number.
-> + * The type number, computed in PARAVIRT_PATCH, is derived from the
-> + * offset into the paravirt_patch_template structure, and can therefore be
-> + * freely converted back into a structure offset.
-> + */
-> +.macro PARAVIRT_ALT type:req clobber:req pv_opptr:req
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Unlike the marcro maze you replaced, this has the CALL hardcoded in. So
-maybe name this PARAVIRT_CALL instead of PARAVIRT_ALT ?
+------------------
 
-> +771:	ANNOTATE_RETPOLINE_SAFE
-> +	call *\pv_opptr
-> +772:	.pushsection .parainstructions,"a"
-> +	_ASM_ALIGN
-> +	_ASM_PTR 771b
-> +	.byte \type
-> +	.byte 772b-771b
-> +	.short \clobber
-> +	.popsection
-> +.endm
+From: John Crispin <blogic@openwrt.org>
+
+commit 81ab9f6c5ff8565e4cba330e340a8979a10521d7 upstream.
+
+Setting pm_power_off is apprently wrong and makes drivers such as
+gpio-poweroff not work.
+
+Signed-off-by: John Crispin <blogic@openwrt.org>
+Cc: linux-mips@linux-mips.org
+Patchwork: https://patchwork.linux-mips.org/patch/11445/
+Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ arch/mips/ralink/reset.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+--- a/arch/mips/ralink/reset.c
++++ b/arch/mips/ralink/reset.c
+@@ -98,7 +98,6 @@ static int __init mips_reboot_setup(void
+ {
+ 	_machine_restart = ralink_restart;
+ 	_machine_halt = ralink_halt;
+-	pm_power_off = ralink_halt;
+ 
+ 	return 0;
+ }
