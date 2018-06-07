@@ -1,172 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id K87FAIpQGVssCAAAmS7hNA
-	; Thu, 07 Jun 2018 15:35:08 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id MtuwCIE8GVt9NAAAmS7hNA
+	; Thu, 07 Jun 2018 14:09:05 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 12336607E7; Thu,  7 Jun 2018 15:35:08 +0000 (UTC)
+	id 10635608B8; Thu,  7 Jun 2018 14:09:05 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,FROM_LOCAL_HEX,
-	MAILING_LIST_MULTI autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 5269D601B4;
-	Thu,  7 Jun 2018 15:35:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5269D601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 8E46D6063F;
+	Thu,  7 Jun 2018 14:09:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8E46D6063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935352AbeFGPfG (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:35:06 -0400
-Received: from mail-io0-f198.google.com ([209.85.223.198]:39741 "EHLO
-        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934030AbeFGPfD (ORCPT
+        id S932987AbeFGOJB (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:09:01 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39098 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932872AbeFGOI6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:35:03 -0400
-Received: by mail-io0-f198.google.com with SMTP id k9-v6so7696800ioa.6
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 08:35:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=t1YBaW4eUvVLpLzvCW9FZGli27b/0XqQyu9R98XgalU=;
-        b=ifw+x/r2l7NXTNQdNkyQwhcmzVRpHgLDHWdFL1NwuMFfgM1PCuXgnSa7t7souGboDf
-         q3EV13j3b99+bxIaYo2Wsz6SZDZ0EtHgaP2vl+PhtMXmIKkhjuXVnqEVbZh9JKJRvEyx
-         XgVlsl7SgS0T8dviGnrqMmnWUrc8FHd/9KpT0nzzXxzjQ/lDkMstZXytGoUQdXfamJCW
-         qGxLQZ2OY6w1dz7VpOhkrle5bom5hyXxoHgNuf/ZwRq0RAU2KP6fPyvyQUGlXP5rc2RX
-         zpL7e993PBGTiD7OR7eTbmWbEH3YnSHdgB7QBJbbYhFSVZ4eeLYNrzLljjefpzUiymVb
-         f7Rg==
-X-Gm-Message-State: APt69E1yFNX+pE9V3y3aWqQe0Gy/kexpqnpkcajMRJOFK92534CDg578
-        +3Z4ctk9uiorFpc7IwOkKCrMF7uiK9Kc6DbPc6ueB6fqWN7t
-X-Google-Smtp-Source: ADUXVKJ7d0xmKLyF5WCR2PYRD4FyiBHKKHHNmYvXEI/x65lVOqKjhw7F6VKpcoMd9dFckJnpynUXMhASf2y0bKKQP96Vp0ggDMhQ
+        Thu, 7 Jun 2018 10:08:58 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvay-0005Zp-85; Thu, 07 Jun 2018 15:08:56 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvax-0002gY-5w; Thu, 07 Jun 2018 15:08:55 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-X-Received: by 2002:a6b:264d:: with SMTP id m74-v6mr985491iom.73.1528385702608;
- Thu, 07 Jun 2018 08:35:02 -0700 (PDT)
-Date: Thu, 07 Jun 2018 08:35:02 -0700
-In-Reply-To: <00000000000075cc63056e0d0707@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e24ad8056e0f063e@google.com>
-Subject: Re: KASAN: slab-out-of-bounds Write in rmd160_final
-From: syzbot <syzbot+d04e58bd384f1fe0b112@syzkaller.appspotmail.com>
-To: davem@davemloft.net, herbert@gondor.apana.org.au,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Malcolm Priestley" <tvboxspy@gmail.com>,
+        "Mauro Carvalho Chehab" <mchehab@s-opensource.com>,
+        "Andrey Konovalov" <andreyknvl@google.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.577136295@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 007/410] media: dvb-usb-v2: lmedm04: Improve logic
+ checking of warm  start
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-HEAD commit:    1c8c5a9d38f6 Merge git://git.kernel.org/pub/scm/linux/kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1189a3d7800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4f1acdf888c9d4e9
-dashboard link: https://syzkaller.appspot.com/bug?extid=d04e58bd384f1fe0b112
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-userspace arch: i386
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=14dde79f800000
+------------------
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+d04e58bd384f1fe0b112@syzkaller.appspotmail.com
+From: Malcolm Priestley <tvboxspy@gmail.com>
 
-IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
-IPv6: ADDRCONF(NETDEV_CHANGE): bond0: link becomes ready
-8021q: adding VLAN 0 to HW filter on device team0
-==================================================================
-BUG: KASAN: slab-out-of-bounds in rmd160_final+0x201/0x240  
-crypto/rmd160.c:334
-Write of size 4 at addr ffff8801d0fae518 by task syz-executor0/4822
+commit 3d932ee27e852e4904647f15b64dedca51187ad7 upstream.
 
-CPU: 0 PID: 4822 Comm: syz-executor0 Not tainted 4.17.0+ #114
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
-  __asan_report_store4_noabort+0x17/0x20 mm/kasan/report.c:437
-  rmd160_final+0x201/0x240 crypto/rmd160.c:334
-  crypto_shash_final+0x104/0x260 crypto/shash.c:152
-  kdf_ctr security/keys/dh.c:186 [inline]
-  keyctl_dh_compute_kdf security/keys/dh.c:217 [inline]
-  __keyctl_dh_compute+0x1184/0x1bc0 security/keys/dh.c:389
-  compat_keyctl_dh_compute+0x2c8/0x3e0 security/keys/compat_dh.c:39
-  __do_compat_sys_keyctl security/keys/compat.c:136 [inline]
-  __se_compat_sys_keyctl security/keys/compat.c:59 [inline]
-  __ia32_compat_sys_keyctl+0x137/0x3b0 security/keys/compat.c:59
-  do_syscall_32_irqs_on arch/x86/entry/common.c:323 [inline]
-  do_fast_syscall_32+0x345/0xf9b arch/x86/entry/common.c:394
-  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-RIP: 0023:0xf7faacb9
-Code: 55 08 8b 88 64 cd ff ff 8b 98 68 cd ff ff 89 c8 85 d2 74 02 89 0a 5b  
-5d c3 8b 04 24 c3 8b 1c 24 c3 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90  
-90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 002b:00000000ffab4bcc EFLAGS: 00000282 ORIG_RAX: 0000000000000120
-RAX: ffffffffffffffda RBX: 0000000000000017 RCX: 0000000020000100
-RDX: 0000000020a53ffb RSI: 0000000000000005 RDI: 0000000020c61fc8
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000296 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+Warm start has no check as whether a genuine device has
+connected and proceeds to next execution path.
 
-Allocated by task 4822:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-  __do_kmalloc mm/slab.c:3718 [inline]
-  __kmalloc+0x14e/0x760 mm/slab.c:3727
-  kmalloc include/linux/slab.h:518 [inline]
-  keyctl_dh_compute_kdf security/keys/dh.c:211 [inline]
-  __keyctl_dh_compute+0xfe9/0x1bc0 security/keys/dh.c:389
-  compat_keyctl_dh_compute+0x2c8/0x3e0 security/keys/compat_dh.c:39
-  __do_compat_sys_keyctl security/keys/compat.c:136 [inline]
-  __se_compat_sys_keyctl security/keys/compat.c:59 [inline]
-  __ia32_compat_sys_keyctl+0x137/0x3b0 security/keys/compat.c:59
-  do_syscall_32_irqs_on arch/x86/entry/common.c:323 [inline]
-  do_fast_syscall_32+0x345/0xf9b arch/x86/entry/common.c:394
-  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+Check device should read 0x47 at offset of 2 on USB descriptor read
+and it is the amount requested of 6 bytes.
 
-Freed by task 3199:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xd9/0x260 mm/slab.c:3813
-  load_elf_binary+0x463e/0x5610 fs/binfmt_elf.c:1108
-  search_binary_handler+0x17d/0x570 fs/exec.c:1653
-  exec_binprm fs/exec.c:1695 [inline]
-  __do_execve_file.isra.34+0x16fe/0x2610 fs/exec.c:1819
-  do_execveat_common fs/exec.c:1865 [inline]
-  do_execve fs/exec.c:1882 [inline]
-  __do_sys_execve fs/exec.c:1963 [inline]
-  __se_sys_execve fs/exec.c:1958 [inline]
-  __x64_sys_execve+0x8f/0xc0 fs/exec.c:1958
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Fix for
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access as
 
-The buggy address belongs to the object at ffff8801d0fae500
-  which belongs to the cache kmalloc-32 of size 32
-The buggy address is located 24 bytes inside of
-  32-byte region [ffff8801d0fae500, ffff8801d0fae520)
-The buggy address belongs to the page:
-page:ffffea000743eb80 count:1 mapcount:0 mapping:ffff8801d0fae000  
-index:0xffff8801d0faefc1
-flags: 0x2fffc0000000100(slab)
-raw: 02fffc0000000100 ffff8801d0fae000 ffff8801d0faefc1 0000000100000023
-raw: ffffea00074171a0 ffffea000749e220 ffff8801da8001c0 0000000000000000
-page dumped because: kasan: bad access detected
+Reported-by: Andrey Konovalov <andreyknvl@google.com>
+Signed-off-by: Malcolm Priestley <tvboxspy@gmail.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ drivers/media/usb/dvb-usb-v2/lmedm04.c | 26 ++++++++++++++++++--------
+ 1 file changed, 18 insertions(+), 8 deletions(-)
 
-Memory state around the buggy address:
-  ffff8801d0fae400: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-  ffff8801d0fae480: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-> ffff8801d0fae500: 00 00 00 fc fc fc fc fc fb fb fb fb fc fc fc fc
-                             ^
-  ffff8801d0fae580: 00 fc fc fc fc fc fc fc fb fb fb fb fc fc fc fc
-  ffff8801d0fae600: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-==================================================================
+--- a/drivers/media/usb/dvb-usb-v2/lmedm04.c
++++ b/drivers/media/usb/dvb-usb-v2/lmedm04.c
+@@ -434,18 +434,23 @@ static int lme2510_pid_filter(struct dvb
+ 
+ static int lme2510_return_status(struct dvb_usb_device *d)
+ {
+-	int ret = 0;
++	int ret;
+ 	u8 *data;
+ 
+-	data = kzalloc(10, GFP_KERNEL);
++	data = kzalloc(6, GFP_KERNEL);
+ 	if (!data)
+ 		return -ENOMEM;
+ 
+-	ret |= usb_control_msg(d->udev, usb_rcvctrlpipe(d->udev, 0),
+-			0x06, 0x80, 0x0302, 0x00, data, 0x0006, 200);
+-	info("Firmware Status: %x (%x)", ret , data[2]);
++	ret = usb_control_msg(d->udev, usb_rcvctrlpipe(d->udev, 0),
++			      0x06, 0x80, 0x0302, 0x00,
++			      data, 0x6, 200);
++	if (ret != 6)
++		ret = -EINVAL;
++	else
++		ret = data[2];
++
++	info("Firmware Status: %6ph", data);
+ 
+-	ret = (ret < 0) ? -ENODEV : data[2];
+ 	kfree(data);
+ 	return ret;
+ }
+@@ -1228,6 +1233,7 @@ static int lme2510_get_adapter_count(str
+ static int lme2510_identify_state(struct dvb_usb_device *d, const char **name)
+ {
+ 	struct lme2510_state *st = d->priv;
++	int status;
+ 
+ 	usb_reset_configuration(d->udev);
+ 
+@@ -1236,12 +1242,16 @@ static int lme2510_identify_state(struct
+ 
+ 	st->dvb_usb_lme2510_firmware = dvb_usb_lme2510_firmware;
+ 
+-	if (lme2510_return_status(d) == 0x44) {
++	status = lme2510_return_status(d);
++	if (status == 0x44) {
+ 		*name = lme_firmware_switch(d, 0);
+ 		return COLD;
+ 	}
+ 
+-	return 0;
++	if (status != 0x47)
++		return -EINVAL;
++
++	return WARM;
+ }
+ 
+ static int lme2510_get_stream_config(struct dvb_frontend *fe, u8 *ts_type,
