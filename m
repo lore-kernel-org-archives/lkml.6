@@ -1,169 +1,183 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 1QA8MstxGluIPAAAmS7hNA
-	; Fri, 08 Jun 2018 12:10:37 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id r5CoEDpdGVv1KAAAmS7hNA
+	; Thu, 07 Jun 2018 16:28:44 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id CBFCD608BA; Fri,  8 Jun 2018 12:10:37 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dU1Piiot"
+	id 574CA608B8; Thu,  7 Jun 2018 16:28:44 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 2798E60290;
-	Fri,  8 Jun 2018 12:10:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2798E60290
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id BDE4D6074D;
+	Thu,  7 Jun 2018 16:28:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BDE4D6074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752985AbeFHMKf (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 08:10:35 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:38275 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752938AbeFHMKb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 08:10:31 -0400
-Received: by mail-wm0-f66.google.com with SMTP id 69-v6so3287347wmf.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 05:10:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=gUNOi+06UjqIu3kZ8NcmOFtpA+W+JZqfpkKfqG940N0=;
-        b=dU1PiiotISxwH0ggnI0s9vTAO0eAhEgbarb6Cnz2QFt0T1NY/2Urm0UHgQmKaj2KQ6
-         py0rdflU/NpFecvQ2yYJRYS5sdg+VeTK/1PBnSV8SzsYaqdJXna3f/DCzU/k2tR7TgVv
-         BHm09w4tVGE91+93NyJxJTssysMTBjZT7YgbE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=gUNOi+06UjqIu3kZ8NcmOFtpA+W+JZqfpkKfqG940N0=;
-        b=rUZBteAr5v+U8qwKU/EV+D3SGyiJl6wyJgwFbIGO6s/y0+ZsKGtrRB8lfJj9zneg++
-         2KD2vqbJIYHJNBTE4UiliMTHc3g8RazzcjU+cbBoy7ORYu5MuwJKCYgYTopIX96UNi23
-         A9x+N5eKpB+tk+IxbyXFPOTWBl66E19LKLK1TZpeQY8TBY7ulzzVHOwSue3z00FkUIjT
-         xigbA4v3WAKJe541nZqnhyHRAZgwmSxDLostLh/21VcO2iXcfuVvbti/CsL7rFRlg1R2
-         TIV+A9UiIaXHBGu65zGv4hp4dAdL84USkhC4NvO34Uq3nZzcF4gN+3897jSA15AamLan
-         jGtA==
-X-Gm-Message-State: APt69E0yuzXBuVnsMIlCbEDUc9/WqAtg8V4RtS8vXdR5G7b/EDB8J54c
-        wUKEGNF9R6SQz9BqLNxsT28m6g==
-X-Google-Smtp-Source: ADUXVKJh42LEFfcvPpJsoUr+zxct/6swpWFdaJG3l8+RRbMOw/arJyWV2S+0nqZhM1b3Gz+FoL5ELQ==
-X-Received: by 2002:a1c:1701:: with SMTP id 1-v6mr1327240wmx.38.1528459829981;
-        Fri, 08 Jun 2018 05:10:29 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:e0a:f:6020:6c67:7ea:9f4d:8968])
-        by smtp.gmail.com with ESMTPSA id b204-v6sm1546003wmh.22.2018.06.08.05.10.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 08 Jun 2018 05:10:29 -0700 (PDT)
-From: Vincent Guittot <vincent.guittot@linaro.org>
-To: peterz@infradead.org, mingo@kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: rjw@rjwysocki.net, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
-        Morten.Rasmussen@arm.com, viresh.kumar@linaro.org,
-        valentin.schneider@arm.com, patrick.bellasi@arm.com,
-        joel@joelfernandes.org, daniel.lezcano@linaro.org,
-        quentin.perret@arm.com,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: [PATCH v6 06/11] cpufreq/schedutil: use dl utilization tracking
-Date: Fri,  8 Jun 2018 14:09:49 +0200
-Message-Id: <1528459794-13066-7-git-send-email-vincent.guittot@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528459794-13066-1-git-send-email-vincent.guittot@linaro.org>
-References: <1528459794-13066-1-git-send-email-vincent.guittot@linaro.org>
+        id S932601AbeFGQ2m (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 12:28:42 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34556 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932160AbeFGQ2j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 12:28:39 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D6938401EF1B;
+        Thu,  7 Jun 2018 16:28:38 +0000 (UTC)
+Received: from redhat.com (ovpn-120-226.rdu2.redhat.com [10.10.120.226])
+        by smtp.corp.redhat.com (Postfix) with SMTP id DE301213AF01;
+        Thu,  7 Jun 2018 16:28:35 +0000 (UTC)
+Date: Thu, 7 Jun 2018 19:28:35 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        Ram Pai <linuxram@us.ibm.com>, robh@kernel.org, aik@ozlabs.ru,
+        jasowang@redhat.com, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, joe@perches.com,
+        linuxppc-dev@lists.ozlabs.org, elfring@users.sourceforge.net,
+        david@gibson.dropbear.id.au, cohuck@redhat.com, pawel.moll@arm.com,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>
+Subject: Re: [RFC V2] virtio: Add platform specific DMA API translation for
+ virito devices
+Message-ID: <20180607185234-mutt-send-email-mst@kernel.org>
+References: <20180522063317.20956-1-khandual@linux.vnet.ibm.com>
+ <20180523213703-mutt-send-email-mst@kernel.org>
+ <20180524072104.GD6139@ram.oc3035372033.ibm.com>
+ <0c508eb2-08df-3f76-c260-90cf7137af80@linux.vnet.ibm.com>
+ <20180531204320-mutt-send-email-mst@kernel.org>
+ <20180607052306.GA1532@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180607052306.GA1532@infradead.org>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 07 Jun 2018 16:28:38 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 07 Jun 2018 16:28:38 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that we have both the dl class bandwidth requirement and the dl class
-utilization, we can detect when CPU is fully used so we should run at max.
-Otherwise, we keep using the dl bandwidth requirement to define the
-utilization of the CPU
+On Wed, Jun 06, 2018 at 10:23:06PM -0700, Christoph Hellwig wrote:
+> On Thu, May 31, 2018 at 08:43:58PM +0300, Michael S. Tsirkin wrote:
+> > Pls work on a long term solution. Short term needs can be served by
+> > enabling the iommu platform in qemu.
+> 
+> So, I spent some time looking at converting virtio to dma ops overrides,
+> and the current virtio spec, and the sad through I have to tell is that
+> both the spec and the Linux implementation are complete and utterly fucked
+> up.
 
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
----
- kernel/sched/cpufreq_schedutil.c | 24 +++++++++++++++---------
- kernel/sched/sched.h             |  7 ++++++-
- 2 files changed, 21 insertions(+), 10 deletions(-)
+Let me restate it: DMA API has support for a wide range of hardware, and
+hardware based virtio implementations likely won't benefit from all of
+it.
 
-diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-index 32f97fb..25cee59 100644
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@ -56,6 +56,7 @@ struct sugov_cpu {
- 	/* The fields below are only needed when sharing a policy: */
- 	unsigned long		util_cfs;
- 	unsigned long		util_dl;
-+	unsigned long		bw_dl;
- 	unsigned long		util_rt;
- 	unsigned long		max;
- 
-@@ -179,6 +180,7 @@ static void sugov_get_util(struct sugov_cpu *sg_cpu)
- 	sg_cpu->max = arch_scale_cpu_capacity(NULL, sg_cpu->cpu);
- 	sg_cpu->util_cfs = cpu_util_cfs(rq);
- 	sg_cpu->util_dl  = cpu_util_dl(rq);
-+	sg_cpu->bw_dl    = cpu_bw_dl(rq);
- 	sg_cpu->util_rt  = cpu_util_rt(rq);
- }
- 
-@@ -190,20 +192,24 @@ static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
- 	if (rq->rt.rt_nr_running)
- 		return sg_cpu->max;
- 
--	util = sg_cpu->util_dl;
--	util += sg_cpu->util_cfs;
-+	util = sg_cpu->util_cfs;
- 	util += sg_cpu->util_rt;
- 
-+	if ((util + sg_cpu->util_dl) >= sg_cpu->max)
-+		return sg_cpu->max;
-+
- 	/*
--	 * Utilization required by DEADLINE must always be granted while, for
--	 * FAIR, we use blocked utilization of IDLE CPUs as a mechanism to
--	 * gracefully reduce the frequency when no tasks show up for longer
-+	 * As there is still idle time on the CPU, we need to compute the
-+	 * utilization level of the CPU.
-+	 * Bandwidth required by DEADLINE must always be granted while, for
-+	 * FAIR and RT, we use blocked utilization of IDLE CPUs as a mechanism
-+	 * to gracefully reduce the frequency when no tasks show up for longer
- 	 * periods of time.
--	 *
--	 * Ideally we would like to set util_dl as min/guaranteed freq and
--	 * util_cfs + util_dl as requested freq. However, cpufreq is not yet
--	 * ready for such an interface. So, we only do the latter for now.
- 	 */
-+
-+	/* Add DL bandwidth requirement */
-+	util += sg_cpu->bw_dl;
-+
- 	return min(sg_cpu->max, util);
- }
- 
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 4526ba6..bc4305f 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -2192,11 +2192,16 @@ static inline void cpufreq_update_util(struct rq *rq, unsigned int flags) {}
- #endif
- 
- #ifdef CONFIG_CPU_FREQ_GOV_SCHEDUTIL
--static inline unsigned long cpu_util_dl(struct rq *rq)
-+static inline unsigned long cpu_bw_dl(struct rq *rq)
- {
- 	return (rq->dl.running_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
- }
- 
-+static inline unsigned long cpu_util_dl(struct rq *rq)
-+{
-+	return READ_ONCE(rq->avg_dl.util_avg);
-+}
-+
- static inline unsigned long cpu_util_cfs(struct rq *rq)
- {
- 	unsigned long util = READ_ONCE(rq->cfs.avg.util_avg);
+And given virtio right now is optimized for specific workloads, improving
+portability without regressing performance isn't easy.
+
+I think it's unsurprising since it started a strictly a guest/host
+mechanism.  People did implement offloads on specific platforms though,
+and they are known to work. To improve portability even further,
+we might need to make spec and code changes.
+
+I'm not really sympathetic to people complaining that they can't even
+set a flag in qemu though. If that's the case the stack in question is
+way too inflexible.
+
+
+
+> Both in the flag naming and the implementation there is an implication
+> of DMA API == IOMMU, which is fundamentally wrong.
+
+Maybe we need to extend the meaning of PLATFORM_IOMMU or rename it.
+
+It's possible that some setups will benefit from a more
+fine-grained approach where some aspects of the DMA
+API are bypassed, others aren't.
+
+This seems to be what was being asked for in this thread,
+with comments claiming IOMMU flag adds too much overhead.
+
+
+> The DMA API does a few different things:
+> 
+>  a) address translation
+> 
+> 	This does include IOMMUs.  But it also includes random offsets
+> 	between PCI bars and system memory that we see on various
+> 	platforms.
+
+I don't think you mean bars. That's unrelated to DMA.
+
+>  Worse so some of these offsets might be based on
+> 	banks, e.g. on the broadcom bmips platform.  It also deals
+> 	with bitmask in physical addresses related to memory encryption
+> 	like AMD SEV.  I'd be really curious how for example the
+> 	Intel virtio based NIC is going to work on any of those
+> 	plaforms.
+
+SEV guys report that they just set the iommu flag and then it all works.
+I guess if there's translation we can think of this as a kind of iommu.
+Maybe we should rename PLATFORM_IOMMU to PLARTFORM_TRANSLATION?
+
+And apparently some people complain that just setting that flag makes
+qemu check translation on each access with an unacceptable performance
+overhead.  Forcing same behaviour for everyone on general principles
+even without the flag is unlikely to make them happy.
+
+>   b) coherency
+> 
+> 	On many architectures DMA is not cache coherent, and we need
+> 	to invalidate and/or write back cache lines before doing
+> 	DMA.  Again, I wonder how this is every going to work with
+> 	hardware based virtio implementations.
+
+
+You mean dma_Xmb and friends?
+There's a new feature VIRTIO_F_IO_BARRIER that's being proposed
+for that.
+
+
+>  Even worse I think this
+> 	is actually broken at least for VIVT event for virtualized
+> 	implementations.  E.g. a KVM guest is going to access memory
+> 	using different virtual addresses than qemu, vhost might throw
+> 	in another different address space.
+
+I don't really know what VIVT is. Could you help me please?
+
+>   c) bounce buffering
+> 
+> 	Many DMA implementations can not address all physical memory
+> 	due to addressing limitations.  In such cases we copy the
+> 	DMA memory into a known addressable bounc buffer and DMA
+> 	from there.
+
+Don't do it then?
+
+
+>   d) flushing write combining buffers or similar
+> 
+> 	On some hardware platforms we need workarounds to e.g. read
+> 	from a certain mmio address to make sure DMA can actually
+> 	see memory written by the host.
+
+I guess it isn't an issue as long as WC isn't actually used.
+It will become an issue when virtio spec adds some WC capability -
+I suspect we can ignore this for now.
+
+> 
+> All of this is bypassed by virtio by default despite generally being
+> platform issues, not particular to a given device.
+
+It's both a device and a platform issue. A PV device is often more like
+another CPU than like a PCI device.
+
+
+
 -- 
-2.7.4
+MST
