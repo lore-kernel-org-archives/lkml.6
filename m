@@ -1,124 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ldGtLHZ+HFudNwAAmS7hNA
-	; Sun, 10 Jun 2018 01:45:56 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id iK8sHLFBGVsjcgAAmS7hNA
+	; Thu, 07 Jun 2018 14:32:46 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id B9A7E608BA; Sun, 10 Jun 2018 01:45:55 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hZm6Zjbb"
+	id 47342607E7; Thu,  7 Jun 2018 14:32:46 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 4AB92605A2;
-	Sun, 10 Jun 2018 01:45:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4AB92605A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id B90F1602FC;
+	Thu,  7 Jun 2018 14:32:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B90F1602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753586AbeFJBpv (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 21:45:51 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:46309 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753555AbeFJBpu (ORCPT
+        id S933551AbeFGOcn (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:32:43 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40285 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932911AbeFGOcl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 21:45:50 -0400
-Received: by mail-wr0-f195.google.com with SMTP id v13-v6so16847486wrp.13
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Jun 2018 18:45:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=rPFopr9rq8jmvhQ5G1wBDhE89b7GcS3rHk55gW/1L6M=;
-        b=hZm6ZjbbwkeqC/VxszShEL1Uaj4BWG3eQjMeuQ0RF9NPtK4aN5yk/HIwwktuk/EZqp
-         mDW6KXKqwmrLs4VGDi1Xva1iHQ7lf9JJscRpoUQSZR4OyaWQNk6D1jhIMRwzR1HbH33Q
-         +ksO4ojIsTm1WqIonsDRYi/rI/nWtTWfcB7uxONSIk9kCuNlCf078F8CbqzgmyutwXhW
-         jygeBQxKIwkQNHF3WroS0wVUqrYUmu9PjNczMAtUe8di702Tvi0ZtCjfZXy24OOs89xN
-         PeRAsiQUwhQ36/SFLjVcrU5BNx+/KtM5x6AWWA+JOV7ObJa3pgR+EthhyuOznxP0I+Df
-         UfRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=rPFopr9rq8jmvhQ5G1wBDhE89b7GcS3rHk55gW/1L6M=;
-        b=UVD7SKqFHghoSTqlvTSfGzPjVVXNvTVyLU8NZ94q8T6rHmVzPczjTc/nPiVnHs1zdK
-         3gSBxujZEDphgBzatYRnOlCOAPT/zhEmlJu90nFjB80iMWCCVtRIOm5YCzwG/KNSA130
-         fJb2JW+U/j+eKr1i6sdJMkzfhhH/Fbhy4FLAxmO+vuFTZ2X6kUT/GQV+oegD792z2pZm
-         sC1auv8xzTaSLyFY9h+q0cu1V7712NHMhEtp+lW7miPl7VfgeFJVahKBPpLUdm8IsmC8
-         ed57hGnsFaSVLOUMZuDEBw1vTo1aUCWYZR3rpcbGkmPo1P8ZAbnzbLYY4O/vsBDzgYWJ
-         ENCA==
-X-Gm-Message-State: APt69E2pIyQsZH0Bf5hUhRJDvq4oasDlF6BObrd030WPHs+zB5fus29Y
-        zQBE1+o4ga/whjEQ86ECM37hAKvz49IOTP6S4Sw=
-X-Google-Smtp-Source: ADUXVKKk3mK4vlC4fbEwHli5bPqyAA58Jj32HDXp2r5oAiq/theBkSYBPAJE4/3eAXcAEGtaFKAfbWskno6GoPwbJ28=
-X-Received: by 2002:adf:9b86:: with SMTP id d6-v6mr9705554wrc.240.1528595149047;
- Sat, 09 Jun 2018 18:45:49 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:adf:97de:0:0:0:0:0 with HTTP; Sat, 9 Jun 2018 18:45:48 -0700 (PDT)
-In-Reply-To: <20180609000819.13883-1-logang@deltatee.com>
-References: <20180609000819.13883-1-logang@deltatee.com>
-From: Allen Hubbe <allenbh@gmail.com>
-Date: Sat, 9 Jun 2018 21:45:48 -0400
-Message-ID: <CAJ80satPXHNXbZ5OYqzDNknxp7gug4ukg19Fuksvgrm0Y4AsZg@mail.gmail.com>
-Subject: Re: [PATCH 0/8] Fix breakage caused by the NTB multi-port patchset
-To: Logan Gunthorpe <logang@deltatee.com>
-Cc: linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
-        Jon Mason <jdmason@kudzu.us>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-        Shuah Khan <shuah@kernel.org>
+        Thu, 7 Jun 2018 10:32:41 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbo-0005Zp-QN; Thu, 07 Jun 2018 15:09:48 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb2-0002s6-Oe; Thu, 07 Jun 2018 15:09:00 +0100
 Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Oliver Neukum" <oneukum@suse.com>,
+        "Hans de Goede" <hdegoede@redhat.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.777310816@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 134/410] USB: cdc-acm: Do not log urb submission
+ errors on disconnect
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 8, 2018 at 8:08 PM, Logan Gunthorpe <logang@deltatee.com> wrote:
-> Hey,
->
-> Here are all the fixes required to get ntb_test on switchtec working
-> again after the multi-port test patches were merged.
->
-> I'd appreciate it if future changes can be a) more careful about
-> not breaking things, b) communicated more clearly so that better
-> review can be done, and c) not merged until sufficient review actually
-> is done.
->
-> Note, I sent the first patch in this series earlier; please disregard
-> the earlier one.
->
-> Thanks,
->
-> Logan
->
-> Logan Gunthorpe (8):
->   NTB: ntb_tool: reading the link file should not end in a NULL byte
->   NTB: Setup the DMA mask globally for all drivers
->   NTB: Fix the default port and peer numbers for legacy drivers
->   NTB: ntb_pingpong: Choose doorbells based on port number
->   NTB: perf: Don't require one more memory window than number of peers
->   NTB: perf: Fix support for hardware that doesn't have port numbers
->   NTB: perf: Fix race condition when run with ntb_test
->   NTB: ntb_test: Fix bug when counting remote files
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Thanks Logan.
+------------------
 
-Series:
-Acked-by: Allen Hubbe <allenbh@gmail.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
->
->  drivers/ntb/hw/amd/ntb_hw_amd.c         |  4 ----
->  drivers/ntb/hw/idt/ntb_hw_idt.c         |  6 ------
->  drivers/ntb/hw/intel/ntb_hw_intel.c     |  4 ----
->  drivers/ntb/ntb.c                       | 22 ++++++++++++++--------
->  drivers/ntb/test/ntb_perf.c             | 22 +++++++++++++++++++---
->  drivers/ntb/test/ntb_pingpong.c         | 14 ++++++--------
->  drivers/ntb/test/ntb_tool.c             |  3 +--
->  tools/testing/selftests/ntb/ntb_test.sh |  2 +-
->  8 files changed, 41 insertions(+), 36 deletions(-)
->
-> --
-> 2.11.0
+commit f0386c083c2ce85284dc0b419d7b89c8e567c09f upstream.
+
+When disconnected sometimes the cdc-acm driver logs errors like these:
+
+[20278.039417] cdc_acm 2-2:2.1: urb 9 failed submission with -19
+[20278.042924] cdc_acm 2-2:2.1: urb 10 failed submission with -19
+[20278.046449] cdc_acm 2-2:2.1: urb 11 failed submission with -19
+[20278.049920] cdc_acm 2-2:2.1: urb 12 failed submission with -19
+[20278.053442] cdc_acm 2-2:2.1: urb 13 failed submission with -19
+[20278.056915] cdc_acm 2-2:2.1: urb 14 failed submission with -19
+[20278.060418] cdc_acm 2-2:2.1: urb 15 failed submission with -19
+
+Silence these by not logging errors when the result is -ENODEV.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Acked-by: Oliver Neukum <oneukum@suse.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ drivers/usb/class/cdc-acm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -378,7 +378,7 @@ static int acm_submit_read_urb(struct ac
+ 
+ 	res = usb_submit_urb(acm->read_urbs[index], mem_flags);
+ 	if (res) {
+-		if (res != -EPERM) {
++		if (res != -EPERM && res != -ENODEV) {
+ 			dev_err(&acm->data->dev,
+ 					"%s - usb_submit_urb failed: %d\n",
+ 					__func__, res);
