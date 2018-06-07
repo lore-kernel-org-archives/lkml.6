@@ -1,107 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id /beeF8YUGVufRQAAmS7hNA
-	; Thu, 07 Jun 2018 11:19:34 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 71xDGn1RGVv6DwAAmS7hNA
+	; Thu, 07 Jun 2018 15:39:00 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 4C7CA608C1; Thu,  7 Jun 2018 11:19:34 +0000 (UTC)
+	id 007AE607E7; Thu,  7 Jun 2018 15:38:59 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,FROM_LOCAL_HEX,
+	MAILING_LIST_MULTI autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id DB2AC6089E;
-	Thu,  7 Jun 2018 11:19:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DB2AC6089E
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 75A33601B4;
+	Thu,  7 Jun 2018 15:38:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 75A33601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753595AbeFGLTb (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 07:19:31 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42096 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753325AbeFGLTa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 07:19:30 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9E59D35C1;
-        Thu,  7 Jun 2018 11:19:29 +0000 (UTC)
-Received: from [10.40.204.234] (ovpn-204-234.brq.redhat.com [10.40.204.234])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2C182217B409;
-        Thu,  7 Jun 2018 11:19:27 +0000 (UTC)
-Subject: Re: [4.17 regression] Performance drop on kernel-4.17 visible on
- Stream, Linpack and NAS parallel benchmarks
-To: Michal Hocko <mhocko@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
-        Mel Gorman <mgorman@suse.de>, linux-mm@kvack.org
-References: <20180606122731.GB27707@jra-laptop.brq.redhat.com>
- <20180607110713.GJ32433@dhcp22.suse.cz>
-From: =?UTF-8?Q?Jakub_Ra=c4=8dek?= <jracek@redhat.com>
-Message-ID: <cd26794b-cb82-919c-053d-9bcb6e3d78d8@redhat.com>
-Date: Thu, 7 Jun 2018 13:19:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S935452AbeFGPi5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:38:57 -0400
+Received: from mail-it0-f70.google.com ([209.85.214.70]:43765 "EHLO
+        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933193AbeFGPix (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 11:38:53 -0400
+Received: by mail-it0-f70.google.com with SMTP id i9-v6so8165403itb.8
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 08:38:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to:cc;
+        bh=0M/fXvT78lIcsKcjUMbL+7c5TkMF9QMbAsWAjrc249U=;
+        b=eZkAc+VDWCFvyOrdU0u5OOEXZ9azj/5+aasCkairl1wULYhXiU/FRGJIE9pHMUziVg
+         lHMen/AbL2nk/bIGg7xnfbZ837kR6H5eqetJNsTFtrXRDfry1PzE9u4qULYrGOZdFycx
+         WJ/wDtb6HkBGKSdGuS3Coxg8ItWi0+eIbTnC9e8CNiP1w9LaPMl/4jMS26tX5wKkmllG
+         w7Z77pvniOaIc6z6dUqQwIXCzWWLdkllnHBI28ATTGbZ61SlmxN1KZinpwRaBZPetNux
+         vhwPYpN6hYBGTuksaMJQKCOuSxjCmvC8BNSm7xepEUZq7qV9VvKe7SiCBJoiTXizXSYK
+         U9Tg==
+X-Gm-Message-State: APt69E13UDGy/1QLC3WXwzsFvrcudRGydaUu2K0Yj4QCyN8NRIU1qp6Y
+        4KyP4ReejrTZhFIMX0TnIjmdbdNP2qANfiFNdkZouxBpAI7t
+X-Google-Smtp-Source: ADUXVKLXVKUrjv9DxtYSEmxQ8qNpf3Tf6ZnMCDHfzy+1CQBRkfYaXObm6I/zy+tvejuE50PwZ8ikCHSnzARjus2RYzSKRxk2uqJM
 MIME-Version: 1.0
-In-Reply-To: <20180607110713.GJ32433@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 07 Jun 2018 11:19:29 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 07 Jun 2018 11:19:29 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jracek@redhat.com' RCPT:''
+X-Received: by 2002:a6b:700a:: with SMTP id l10-v6mr999556ioc.60.1528385932836;
+ Thu, 07 Jun 2018 08:38:52 -0700 (PDT)
+Date: Thu, 07 Jun 2018 08:38:52 -0700
+In-Reply-To: <20180607183627-mutt-send-email-mst@kernel.org>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009b46ec056e0f1460@google.com>
+Subject: Re: Re: KMSAN: uninit-value in _copy_to_iter (2)
+From: syzbot <syzbot+87cfa083e727a224754b@syzkaller.appspotmail.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: avagin@openvz.org, davem@davemloft.net, dingtianhong@huawei.com,
+        edumazet@google.com, elena.reshetova@intel.com,
+        jasowang@redhat.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, matthew@mjdsystems.ca,
+        mingo@kernel.org, mst@redhat.com, netdev@vger.kernel.org,
+        pabeni@redhat.com, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk, virtualization@lists.linux-foundation.org,
+        willemb@google.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+> #syz test: https://github.com/google/kmsan.git/master  
+> d2d741e5d1898dfde1a75ea3d29a9a3e2edf0617
 
-On 06/07/2018 01:07 PM, Michal Hocko wrote:
-> [CCing Mel and MM mailing list]
-> 
-> On Wed 06-06-18 14:27:32, Jakub Racek wrote:
->> Hi,
->>
->> There is a huge performance regression on the 2 and 4 NUMA node systems on
->> stream benchmark with 4.17 kernel compared to 4.16 kernel. Stream, Linpack
->> and NAS parallel benchmarks show upto 50% performance drop.
->>
->> When running for example 20 stream processes in parallel, we see the following behavior:
->>
->> * all processes are started at NODE #1
->> * memory is also allocated on NODE #1
->> * roughly half of the processes are moved to the NODE #0 very quickly. *
->> however, memory is not moved to NODE #0 and stays allocated on NODE #1
->>
->> As the result, half of the processes are running on NODE#0 with memory being
->> still allocated on NODE#1. This leads to non-local memory accesses
->> on the high Remote-To-Local Memory Access Ratio on the numatop charts.
->>
->> So it seems that 4.17 is not doing a good job to move the memory to the right NUMA
->> node after the process has been moved.
->>
->> ----8<----
->>
->> The above is an excerpt from performance testing on 4.16 and 4.17 kernels.
->>
->> For now I'm merely making sure the problem is reported.
-> 
-> Do you have numa balancing enabled?
-> 
-
-Yes. The relevant settings are:
-
-kernel.numa_balancing = 1
-kernel.numa_balancing_scan_delay_ms = 1000
-kernel.numa_balancing_scan_period_max_ms = 60000
-kernel.numa_balancing_scan_period_min_ms = 1000
-kernel.numa_balancing_scan_size_mb = 256
+"https://github.com/google/kmsan.git/master" does not look like a valid git  
+repo address.
 
 
--- 
-Best regards,
-Jakub Racek
-FMK
+> Subject: vhost: fix info leak
+
+> Fixes: CVE-2018-1118
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> ---
+> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> index f0be5f35ab28..9beefa6ed1ce 100644
+> --- a/drivers/vhost/vhost.c
+> +++ b/drivers/vhost/vhost.c
+> @@ -2345,6 +2345,9 @@ struct vhost_msg_node *vhost_new_msg(struct  
+> vhost_virtqueue *vq, int type)
+>   	struct vhost_msg_node *node = kmalloc(sizeof *node, GFP_KERNEL);
+>   	if (!node)
+>   		return NULL;
+> +
+> +	/* Make sure all padding within the structure is initialized. */
+> +	memset(&node->msg, 0, sizeof node->msg);
+>   	node->vq = vq;
+>   	node->msg.type = type;
+>   	return node;
