@@ -1,194 +1,240 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id eUhWAeg7GlsDGAAAmS7hNA
-	; Fri, 08 Jun 2018 08:18:48 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 1nNxKp46GlvDJAAAmS7hNA
+	; Fri, 08 Jun 2018 08:17:36 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id DDF0D607DC; Fri,  8 Jun 2018 08:18:47 +0000 (UTC)
+	id 6B067607E4; Fri,  8 Jun 2018 08:17:36 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gHO8lKPG"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="lFDuBYYc"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_MED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id CC80D60590;
-	Fri,  8 Jun 2018 08:18:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CC80D60590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id A2927606FA;
+	Fri,  8 Jun 2018 08:17:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A2927606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752734AbeFHISo (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 04:18:44 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:43969 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751898AbeFHISk (ORCPT
+        id S1752270AbeFHIRd (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 04:17:33 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:53106 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751021AbeFHIR1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 04:18:40 -0400
-Received: by mail-pf0-f195.google.com with SMTP id j20-v6so6247393pff.10
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 01:18:40 -0700 (PDT)
+        Fri, 8 Jun 2018 04:17:27 -0400
+Received: by mail-wm0-f67.google.com with SMTP id p126-v6so1782027wmb.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 01:17:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=mhgb8sSguj0EYxH7CLsDSa3+QwuEcssr+gLqC4aDDjQ=;
-        b=gHO8lKPGO2Bv1zPt8cZUmpccKEcKm16sYxHiKcjuFyJIHhX9d5jtgA4BHOtUQpo9dR
-         Q7z4M4xZdt3T4s8gCR0sNXmISVJl/A3d3zbIqCB2KdBGSUYhGFLSJLu4o5f/yFoQAtBf
-         StBF77Z6S7MeUCV6gi8XSaSH7SG7iIxyz3DxyArQlDZ3uqZMcl+AMfUwRjkkjtYgFUbQ
-         HGrkcJ9Di8vW6qUT9dFR819d98+Xlc44t9rBCm4+bRynRoAwWbh+gJM2DxBnyFWkJeWt
-         9k0yq65HqNq9r5Gg1Rj+bQi4HvxC9F7qaJPjL7vMPmLM5VxF50GsaV6HQxS1295WcftH
-         k3yQ==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=bCwA8+vOM11p7Qs3Tmb22/nVPCf0Yza6lcHKivwfdoE=;
+        b=lFDuBYYcmsWakdj2GOLHw9r4UPlY8s6aIu2tf5hy5tn3yxkuMDPYBcOl9a1KP4SBDx
+         m1bdbqkbNsgA0wcmPngpE/gShcMZQm7xsfqDYeOzIHOzvbCNZYBkj5g+YNpmOX0+N5w5
+         ZOFXfJ6weht/ZYvY+jPcLHoCoNPgzLJr6gtz+OXNyL5gcUqUvxo6JDSsoFhFKlryEGi+
+         mvCWPpTq8k/xjAWLasRp83gLG6d1tcitK5doX6spAI/BsoIl+ody87k/cNqpP7vSeoG0
+         wv05Zx91UNwGx4nQRZCq4kzJj6dz0C44pu+cYGLGP3XdJ+iExqnhltfkeHEQKuUz59ud
+         5edg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=mhgb8sSguj0EYxH7CLsDSa3+QwuEcssr+gLqC4aDDjQ=;
-        b=jgcLYybt7ux49rMZjXSZ+v7tpTryBsXcKuumu6iKUQlLawg+oALRNe+mi1kdoGdUnp
-         fhvQ11wjf9nQqj4uCfPn9/3AdohknrGZYLeMiMMYzcnTQD4tZ1zNqYMOpnepHDoCJveh
-         fBTXEoRBVni1SnwAdnCRGWnP/oMmSthzD40PcVCDbu3bNc2sDkju/2Nq+JfMeS9SZtGD
-         ILhZp16kVUhuESy+jM4iDUZF5AlU0+Ow19639QQTP9laQfAcqKdbvsuH4b3D2cjznh7p
-         CxXxjq+GroVy36Tn81+Ng8zjscktT+tYorNufVAEDK0uJcPEoDrOzkLggQa4ejCes5IP
-         yLwA==
-X-Gm-Message-State: APt69E2Ey7tN+aEoaOeM/ZIgPjdwQQ/aMqO0ekRZ/LEBED+hyas2nLJp
-        6KeQemwTR8U88xZanYoCOZjX+nPCGzdVZBmyRfZYZA==
-X-Google-Smtp-Source: ADUXVKJ9qWdU/YU7P8wnuHs4a6rLKulgXicXXWfa72B7CeK9MEfLcAftGNG8eX9y1j0AvA4QO1tTlEG8j5UZHTo4b3Q=
-X-Received: by 2002:a62:3e9a:: with SMTP id y26-v6mr4999516pfj.98.1528445919356;
- Fri, 08 Jun 2018 01:18:39 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=bCwA8+vOM11p7Qs3Tmb22/nVPCf0Yza6lcHKivwfdoE=;
+        b=P5tG5RDWAPx32iF6EHqpR0erbI2fdVWDNJdtRTStFvWt3skNtQC3rYzd8lyL69Tn6G
+         WEiqWyTCrKVb+0kGptNYuzPermBG1Kw9cg2k8EEbCSKZ18dQyHzNIIx0umbXRcfy2j31
+         LKCZ66nGojDSHJP83YdFgoDMoUHyMc1tsgU7Ff/rDCkQsMv78rc/mzD9bTSbKu29yBPS
+         KdqbxmWiKUUTpxhW1eKjJXU3Mx4um8oJOFH9M4XgewPgDYEy2bpC38tQCDqs1EYuQUGl
+         Qj+cZzWgKB96AZuPHFPpoPOxLiR88b0if5JHqUDd3XIBlTTDb3QZPUqal2xohtyM8bvN
+         p7uA==
+X-Gm-Message-State: APt69E1WsfEiQATL/9diOtZMaOZKYAph+sn8ihoMYtdFtvP5suovkk59
+        W5L5qL/eJZVBK4Fwi5T4cCO23Q==
+X-Google-Smtp-Source: ADUXVKLM+CJ9RYrdyLDPa+IjmVWKwCRTojAWWHizQ1X/H90BFpt0LBD3/BCJ7qM8p4pgSa3th4Uxtg==
+X-Received: by 2002:a1c:5c93:: with SMTP id q141-v6mr778949wmb.77.1528445845881;
+        Fri, 08 Jun 2018 01:17:25 -0700 (PDT)
+Received: from [10.1.2.12] ([90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id g75-v6sm1341756wmd.15.2018.06.08.01.17.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Jun 2018 01:17:24 -0700 (PDT)
+Subject: Re: [PATCH v7 0/6] Add ChromeOS EC CEC Support
+To: Hans Verkuil <hverkuil@xs4all.nl>, airlied@linux.ie,
+        hans.verkuil@cisco.com, lee.jones@linaro.org, olof@lixom.net,
+        seanpaul@google.com
+Cc: sadolfsson@google.com, felixe@google.com, bleung@google.com,
+        darekm@google.com, marcheu@chromium.org, fparent@baylibre.com,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        eballetbo@gmail.com
+References: <1527841154-24832-1-git-send-email-narmstrong@baylibre.com>
+ <04598b47-5099-6695-da43-6e7148145cfa@xs4all.nl>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
+ GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
+ RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
+ NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
+ 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
+ ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
+ YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
+ GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
+ coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
+ SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
+ YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
+ mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
+ zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
+ 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
+ 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
+ RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
+ C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
+ Acmp6h8g
+Organization: Baylibre
+Message-ID: <55c2c02d-5675-0821-97ec-6a805659b807@baylibre.com>
+Date: Fri, 8 Jun 2018 10:17:23 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a17:90a:d42:0:0:0:0 with HTTP; Fri, 8 Jun 2018 01:18:18
- -0700 (PDT)
-In-Reply-To: <6b14e8b9-c335-dd46-98a6-7f58a624fcea@virtuozzo.com>
-References: <0000000000006e4595056dd23c16@google.com> <CACT4Y+ZmxgKvgD2RWD1=KEZQqY=vwdhrAZfqMT-gGuj8k8eKKg@mail.gmail.com>
- <cf729ce5-7948-d475-1b20-f31fb313df88@virtuozzo.com> <CACT4Y+bPrdK7xSeUk=pgVVyaseDZUAvArBA4bEWPsUi7CE3EVw@mail.gmail.com>
- <e71c0df1-d83c-030c-7c97-13a923aca1b3@virtuozzo.com> <CACT4Y+YBY2yGJBHgqGhAcOguag9JUkGkeOz1acgKd=KR3q+noQ@mail.gmail.com>
- <04b6ee08-7919-bf2d-5b77-bd346a0bff48@virtuozzo.com> <CACT4Y+b8FkwFe1PCEVDZcTufB4HKVy+ekk=1_YcFH6-RoBGY-w@mail.gmail.com>
- <6b14e8b9-c335-dd46-98a6-7f58a624fcea@virtuozzo.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Fri, 8 Jun 2018 10:18:18 +0200
-Message-ID: <CACT4Y+a57xaVfph_u78Z+kM8xUF=8fVk-VSA+xqok38Zm4bhFw@mail.gmail.com>
-Subject: Re: INFO: task hung in ip6gre_exit_batch_net
-To: Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc: syzbot <syzbot+bf78a74f82c1cf19069e@syzkaller.appspotmail.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        David Miller <davem@davemloft.net>,
-        David Ahern <dsahern@gmail.com>,
-        Florian Westphal <fw@strlen.de>, Jiri Benc <jbenc@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Xin Long <lucien.xin@gmail.com>,
-        mschiffer@universe-factory.net, netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Vladislav Yasevich <vyasevich@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <04598b47-5099-6695-da43-6e7148145cfa@xs4all.nl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 7, 2018 at 9:59 PM, Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
-> On 07.06.2018 22:03, Dmitry Vyukov wrote:
->> On Thu, Jun 7, 2018 at 8:54 PM, Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
->>>>>>> Hi, Dmirty!
->>>>>>>
->>>>>>> On 04.06.2018 18:22, Dmitry Vyukov wrote:
->>>>>>>> On Mon, Jun 4, 2018 at 5:03 PM, syzbot
->>>>>>>> <syzbot+bf78a74f82c1cf19069e@syzkaller.appspotmail.com> wrote:
->>>>>>>>> Hello,
->>>>>>>>>
->>>>>>>>> syzbot found the following crash on:
->>>>>>>>>
->>>>>>>>> HEAD commit:    bc2dbc5420e8 Merge branch 'akpm' (patches from Andrew)
->>>>>>>>> git tree:       upstream
->>>>>>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=164e42b7800000
->>>>>>>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=982e2df1b9e60b02
->>>>>>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=bf78a74f82c1cf19069e
->>>>>>>>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->>>>>>>>>
->>>>>>>>> Unfortunately, I don't have any reproducer for this crash yet.
->>>>>>>>>
->>>>>>>>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->>>>>>>>> Reported-by: syzbot+bf78a74f82c1cf19069e@syzkaller.appspotmail.com
->>>>>>>>
->>>>>>>> Another hang on rtnl lock:
->>>>>>>>
->>>>>>>> #syz dup: INFO: task hung in netdev_run_todo
->>>>>>>>
->>>>>>>> May be related to "unregister_netdevice: waiting for DEV to become free":
->>>>>>>> https://syzkaller.appspot.com/bug?id=1a97a5bd119fd97995f752819fd87840ab9479a9
->>>>>>
->>>>>> netdev_wait_allrefs does not hold rtnl lock during waiting, so it must
->>>>>> be something different.
->>>>>>
->>>>>>
->>>>>>>> Any other explanations for massive hangs on rtnl lock for minutes?
->>>>>>>
->>>>>>> To exclude the situation, when a task exists with rtnl_mutex held:
->>>>>>>
->>>>>>> would the pr_warn() from print_held_locks_bug() be included in the console output
->>>>>>> if they appear?
->>>>>>
->>>>>> Yes, everything containing "WARNING:" is detected as bug.
->>>>>
->>>>> OK, then dead task not releasing the lock is excluded.
->>>>>
->>>>> One more assumption: someone corrupted memory around rtnl_mutex and it looks like locked.
->>>>> (I track lockdep "(rtnl_mutex){+.+.}" prints in initial message as "nobody owns rtnl_mutex").
->>>>> There may help a crash dump of the VM.
->>>>
->>>> I can't find any legend for these +'s and .'s, but {+.+.} is present
->>>> in large amounts in just any task hung report for different mutexes,
->>>> so I would not expect that it means corruption.
->>>>
->>>> Are dozens of known corruptions that syzkaller can trigger. But
->>>> usually they are reliably caught by KASAN. If any of them would lead
->>>> to silent memory corruption, we would got dozens of assorted crashes
->>>> throughout the kernel. We've seen that at some points, but not
->>>> recently. So I would assume that memory is not corrupted in all these
->>>> cases:
->>>> https://syzkaller.appspot.com/bug?id=2503c576cabb08d41812e732b390141f01a59545
->>>
->>> This BUG clarifies the {+.+.}:
->>>
->>> 4 locks held by kworker/0:145/381:
->>>  #0:  ((wq_completion)"hwsim_wq"){+.+.}, at: [<000000003f9487f0>] work_static include/linux/workqueue.h:198 [inline]
->>>  #0:  ((wq_completion)"hwsim_wq"){+.+.}, at: [<000000003f9487f0>] set_work_data kernel/workqueue.c:619 [inline]
->>>  #0:  ((wq_completion)"hwsim_wq"){+.+.}, at: [<000000003f9487f0>] set_work_pool_and_clear_pending kernel/workqueue.c:646 [inline]
->>>  #0:  ((wq_completion)"hwsim_wq"){+.+.}, at: [<000000003f9487f0>] process_one_work+0xb12/0x1bb0 kernel/workqueue.c:2084
->>>  #1:  ((work_completion)(&data->destroy_work)){+.+.}, at: [<00000000bbdd2115>] process_one_work+0xb89/0x1bb0 kernel/workqueue.c:2088
->>>  #2:  (rtnl_mutex){+.+.}, at: [<000000009c9d14f8>] rtnl_lock+0x17/0x20 net/core/rtnetlink.c:74
->>>  #3:  (rcu_sched_state.exp_mutex){+.+.}, at: [<000000001ba1a807>] exp_funnel_lock kernel/rcu/tree_exp.h:272 [inline]
->>>  #3:  (rcu_sched_state.exp_mutex){+.+.}, at: [<000000001ba1a807>] _synchronize_rcu_expedited.constprop.72+0x9fa/0xac0 kernel/rcu/tree_exp.h:596
->>>
->>> There we have rtnl_mutex locked and the {..} is like above. It's definitely locked
->>> since there is one more lock after it.
->>>
->>> This BUG happen because of there are many rtnl_mutex waiters while owner
->>> is synchronizing RCU. Rather clear for me in comparison to the topic's hung.
+Hi Hans,
+
+On 08/06/2018 09:53, Hans Verkuil wrote:
+> On 06/01/2018 10:19 AM, Neil Armstrong wrote:
+>> Hi All,
 >>
+>> The new Google "Fizz" Intel-based ChromeOS device is gaining CEC support
+>> through it's Embedded Controller, to enable the Linux CEC Core to communicate
+>> with it and get the CEC Physical Address from the correct HDMI Connector, the
+>> following must be added/changed:
+>> - Add the CEC sub-device registration in the ChromeOS EC MFD Driver
+>> - Add the CEC related commands and events definitions into the EC MFD driver
+>> - Add a way to get a CEC notifier with it's (optional) connector name
+>> - Add the CEC notifier to the i915 HDMI driver
+>> - Add the proper ChromeOS EC CEC Driver
 >>
->> You mean that it's not hanged, but rather needs more than 2 minutes to
->> complete, right?
->
-> Yeah, I think, this is possible. I've seen the situations like that.
-> Let synchronize_rcu_expedited() is executed for X seconds. Then,
-> it's need just 120/x calls of "this function under rtnl_mutex" to make
-> a soft lockup of someone else who wants the mutex too.
->
-> Also, despite the CFS is fair scheduler, in case of the calls are
-> made from workqueue, every work will cause sleep. So, every work
-> will be executed in separate worker task. Every worker will haved its
-> own time slice. This increases the probability these tasks will
-> take cpu time before the task in the header of the hang.
+>> The CEC notifier with the connector name is the tricky point, since even on
+>> Device-Tree platforms, there is no way to distinguish between multiple HDMI
+>> connectors from the same DRM driver. The solution I implemented is pretty
+>> simple and only adds an optional connector name to eventually distinguish
+>> an HDMI connector notifier from another if they share the same device.
+> 
+> This looks good to me, which brings me to the next question: how to merge
+> this?
+> 
+> It touches on three subsystems (media, drm, mfd), so that makes this
+> tricky.
+> 
+> I think there are two options: either the whole series goes through the
+> media tree, or patches 1+2 go through drm and 3-6 through media. If there
+> is a high chance of conflicts in the mfd code, then it is also an option to
+> have patches 3-6 go through the mfd subsystem.
 
+I think patches 3-6 should go in the mfd tree, Lee is used to handle this,
+then I think the rest could go in the media tree.
 
-OK, let's stick with this theory for now. Looking at the crash frequencies here:
-https://syzkaller.appspot.com/bug?id=2503c576cabb08d41812e732b390141f01a59545
-I can actually believe that this is just flakes due to too slow execution.
+Lee, do you think it would be possible to have an immutable branch with patches 3-6 ?
 
-I've noted that we need either reduce load and/or increase timeouts:
-https://github.com/google/syzkaller/issues/516#issuecomment-395685629
+Could we have an immutable branch from media tree with patch 1 to be merged in
+the i915 tree for patch 2 ?
 
-Let's keep duping new such reports onto "INFO: task hung in
-netdev_run_todo" so that they are all collected at a single location.
+Or patch 1+2 could me merged into the i915 tree and generate an immutable branch
+for media to merge the mfd branch + patch 7 ?
 
-Thanks for help
+Neil
+
+> 
+> Any opinions?
+> 
+> Regards,
+> 
+> 	Hans
+> 
+>>
+>> Feel free to comment this patchset !
+>>
+>> Changes since v6:
+>> - Added stable identifier comment in intel_display.h
+>> - Renamed to cec_notifier in intel_hdmi.c/intel_drv.h
+>> - Added Acked-by/Reviewed-By tags
+>>
+>> Changes since v5:
+>>  - Small fixups on include/linux/mfd/cros_ec_commands.h
+>>  - Fixed on cros-ec-cec driver accordingly
+>>  - Added Reviewed-By tags
+>>
+>> Changes since v4:
+>>  - Split patch 3 to move the mkbp event size change into a separate patch
+>>
+>> Changes since v3 (incorrectly reported as v2):
+>>  - Renamed "Chrome OS" to "ChromeOS"
+>>  - Updated cros_ec_commands.h new structs definitions to kernel doc format
+>>  - Added Reviewed-By tags
+>>
+>> Changes since v2:
+>>  - Add i915 port_identifier() and use this stable name as cec_notifier conn name
+>>  - Fixed and cleaned up the CEC commands and events handling
+>>  - Rebased the CEC sub-device registration on top of Enric's serie
+>>  - Fixed comments typo on cec driver
+>>  - Protected the DMI match only with PCI and DMI Kconfigs
+>>
+>> Changes since v1:
+>>  - Added cec_notifier_put to intel_hdmi
+>>  - Fixed all small reported issues on the EC CEC driver
+>>  - Moved the cec_notifier_get out of the #if .. #else .. #endif
+>>
+>> Changes since RFC:
+>>  - Moved CEC sub-device registration after CEC commands and events definitions patch
+>>  - Removed get_notifier_get_byname
+>>  - Added CEC_CORE select into i915 Kconfig
+>>  - Removed CEC driver fallback if notifier is not configured on HW, added explicit warn
+>>  - Fixed CEC core return type on error
+>>  - Moved to cros-ec-cec media platform directory
+>>  - Use bus_find_device() to find the pci i915 device instead of get_notifier_get_byname()
+>>  - Fix Logical Address setup
+>>  - Added comment about HW support
+>>  - Removed memset of msg structures
+>>
+>> Neil Armstrong (6):
+>>   media: cec-notifier: Get notifier by device and connector name
+>>   drm/i915: hdmi: add CEC notifier to intel_hdmi
+>>   mfd: cros-ec: Increase maximum mkbp event size
+>>   mfd: cros-ec: Introduce CEC commands and events definitions.
+>>   mfd: cros_ec_dev: Add CEC sub-device registration
+>>   media: platform: Add ChromeOS EC CEC driver
+>>
+>>  drivers/gpu/drm/i915/Kconfig                     |   1 +
+>>  drivers/gpu/drm/i915/intel_display.h             |  24 ++
+>>  drivers/gpu/drm/i915/intel_drv.h                 |   2 +
+>>  drivers/gpu/drm/i915/intel_hdmi.c                |  13 +
+>>  drivers/media/cec/cec-notifier.c                 |  11 +-
+>>  drivers/media/platform/Kconfig                   |  11 +
+>>  drivers/media/platform/Makefile                  |   2 +
+>>  drivers/media/platform/cros-ec-cec/Makefile      |   1 +
+>>  drivers/media/platform/cros-ec-cec/cros-ec-cec.c | 347 +++++++++++++++++++++++
+>>  drivers/mfd/cros_ec_dev.c                        |  16 ++
+>>  drivers/platform/chrome/cros_ec_proto.c          |  40 ++-
+>>  include/linux/mfd/cros_ec.h                      |   2 +-
+>>  include/linux/mfd/cros_ec_commands.h             | 100 +++++++
+>>  include/media/cec-notifier.h                     |  27 +-
+>>  14 files changed, 581 insertions(+), 16 deletions(-)
+>>  create mode 100644 drivers/media/platform/cros-ec-cec/Makefile
+>>  create mode 100644 drivers/media/platform/cros-ec-cec/cros-ec-cec.c
+>>
+> 
