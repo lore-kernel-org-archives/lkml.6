@@ -1,178 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id QICQHHsiHlsaZAAAmS7hNA
-	; Mon, 11 Jun 2018 07:20:26 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id RCkmFcbJGVvlDgAAmS7hNA
+	; Fri, 08 Jun 2018 00:12:12 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 7BCD9607BB; Mon, 11 Jun 2018 07:20:26 +0000 (UTC)
+	id 4AEDB6074D; Fri,  8 Jun 2018 00:12:12 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 71B8160791;
-	Mon, 11 Jun 2018 07:20:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 71B8160791
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id B884560290;
+	Fri,  8 Jun 2018 00:12:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B884560290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754143AbeFKHUK (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 03:20:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35999 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754073AbeFKHUI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 03:20:08 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 173F2ADE3;
-        Mon, 11 Jun 2018 07:20:07 +0000 (UTC)
-Date: Mon, 11 Jun 2018 09:20:05 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Jason Baron <jbaron@akamai.com>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Vlastimil Babka <vbabka@suse.cz>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH] mm/madvise: allow MADV_DONTNEED to free memory that is
- MLOCK_ONFAULT
-Message-ID: <20180611072005.GC13364@dhcp22.suse.cz>
-References: <1528484212-7199-1-git-send-email-jbaron@akamai.com>
+        id S1752456AbeFHAMJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 20:12:09 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54602 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752178AbeFHAMI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 20:12:08 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AE66CBB42F;
+        Fri,  8 Jun 2018 00:12:07 +0000 (UTC)
+Received: from krava (ovpn-204-19.brq.redhat.com [10.40.204.19])
+        by smtp.corp.redhat.com (Postfix) with SMTP id BE59B1117648;
+        Fri,  8 Jun 2018 00:12:04 +0000 (UTC)
+Date: Fri, 8 Jun 2018 02:12:03 +0200
+From: Jiri Olsa <jolsa@redhat.com>
+To: Stephane Eranian <eranian@google.com>
+Cc: Andi Kleen <andi@firstfloor.org>, Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Milian Wolff <milian.wolff@kdab.com>, frederic@kernel.org
+Subject: Re: [PATCH 09/10] perf/cputime: Don't stop idle tick if there's live
+ cputime event
+Message-ID: <20180608001203.GB12322@krava>
+References: <20180606221513.11302-1-jolsa@kernel.org>
+ <20180606221513.11302-10-jolsa@kernel.org>
+ <20180607154522.hyjmxn3q6zgcvsnx@two.firstfloor.org>
+ <CABPqkBR88VBZB1mLttUx0UxnFgWTJ=ggb66PsMti--svJU70UQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1528484212-7199-1-git-send-email-jbaron@akamai.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <CABPqkBR88VBZB1mLttUx0UxnFgWTJ=ggb66PsMti--svJU70UQ@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 08 Jun 2018 00:12:07 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 08 Jun 2018 00:12:07 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[CCing linux-api - please make sure to CC this mailing list anytime you
- are touching user visible apis]
-
-On Fri 08-06-18 14:56:52, Jason Baron wrote:
-> In order to free memory that is marked MLOCK_ONFAULT, the memory region
-> needs to be first unlocked, before calling MADV_DONTNEED. And if the region
-> is to be reused as MLOCK_ONFAULT, we require another call to mlock2() with
-> the MLOCK_ONFAULT flag.
+On Thu, Jun 07, 2018 at 09:01:30AM -0700, Stephane Eranian wrote:
+> Hi Jiri,
 > 
-> Let's simplify freeing memory that is set MLOCK_ONFAULT, by allowing
-> MADV_DONTNEED to work directly for memory that is set MLOCK_ONFAULT.
+> On Thu, Jun 7, 2018 at 8:45 AM Andi Kleen <andi@firstfloor.org> wrote:
+> >
+> > On Thu, Jun 07, 2018 at 12:15:12AM +0200, Jiri Olsa wrote:
+> > > Disable stopping of the idle tick when having live cputime
+> > > event. When the tick is disabled, the idle counts are out
+> > > of date until next tick/update and perf cputime PMU provides
+> > > misleading counts.
+> >
+> > I really don't like this. This can totally change performance
+> > (e.g. less Turbo due to less idle) and performance tools shouldn't
+> > change the performance profile drastically.
+> >
+> You do not want to change the behavior of the kernel just because you
+> are monitoring.
+> This may introduce side effects on other events which may not otherwise exist.
 
-I do not understand the point here. How is MLOCK_ONFAULT any different
-from the regular mlock here? If you want to free mlocked memory then
-fine but the behavior should be consistent. MLOCK_ONFAULT is just a way
-to say that we do not want to pre-populate the mlocked area and do that
-lazily on the page fault time. madvise should make any difference here.
+right.. I guess we can survive few seconds of misleading idle counts
+and perhaps we could detect nohz is enabled and warn about this
 
-That being said we do not allow MADV_DONTNEED on VM_LOCKED since ever. I
-do not really see why but this would be a user visible change. Can we do
-that? What was the original motivation for exclusion?
-
-[keeping the rest of email for linux-api]
-
-> The
-> locked memory limits, tracked by mm->locked_vm do not need to be adjusted
-> in this case, since they were charged to the entire region when
-> MLOCK_ONFAULT was initially set.
-> 
-> Further, I don't think allowing MADV_FREE for MLOCK_ONFAULT regions makes
-> sense, since the point of MLOCK_ONFAULT is for userspace to know when pages
-> are locked in memory and thus to know when page faults will occur.
-> 
-> Signed-off-by: Jason Baron <jbaron@akamai.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> Cc: Mel Gorman <mgorman@suse.de>
-> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> ---
->  mm/internal.h | 18 ++++++++++++++++++
->  mm/madvise.c  |  4 ++--
->  mm/oom_kill.c |  2 +-
->  3 files changed, 21 insertions(+), 3 deletions(-)
-> 
-> diff --git a/mm/internal.h b/mm/internal.h
-> index 9e3654d..16c0041 100644
-> --- a/mm/internal.h
-> +++ b/mm/internal.h
-> @@ -15,6 +15,7 @@
->  #include <linux/mm.h>
->  #include <linux/pagemap.h>
->  #include <linux/tracepoint-defs.h>
-> +#include <uapi/asm-generic/mman-common.h>
->  
->  /*
->   * The set of flags that only affect watermark checking and reclaim
-> @@ -45,9 +46,26 @@ void free_pgtables(struct mmu_gather *tlb, struct vm_area_struct *start_vma,
->  
->  static inline bool can_madv_dontneed_vma(struct vm_area_struct *vma)
->  {
-> +	return !(((vma->vm_flags & (VM_LOCKED|VM_LOCKONFAULT)) == VM_LOCKED) ||
-> +		 (vma->vm_flags & (VM_HUGETLB|VM_PFNMAP)));
-> +}
-> +
-> +static inline bool can_madv_free_vma(struct vm_area_struct *vma)
-> +{
->  	return !(vma->vm_flags & (VM_LOCKED|VM_HUGETLB|VM_PFNMAP));
->  }
->  
-> +static inline bool can_madv_dontneed_or_free_vma(struct vm_area_struct *vma,
-> +						 int behavior)
-> +{
-> +	if (behavior == MADV_DONTNEED)
-> +		return can_madv_dontneed_vma(vma);
-> +	else if (behavior == MADV_FREE)
-> +		return can_madv_free_vma(vma);
-> +	else
-> +		return 0;
-> +}
-> +
->  void unmap_page_range(struct mmu_gather *tlb,
->  			     struct vm_area_struct *vma,
->  			     unsigned long addr, unsigned long end,
-> diff --git a/mm/madvise.c b/mm/madvise.c
-> index 4d3c922..61ff306 100644
-> --- a/mm/madvise.c
-> +++ b/mm/madvise.c
-> @@ -517,7 +517,7 @@ static long madvise_dontneed_free(struct vm_area_struct *vma,
->  				  int behavior)
->  {
->  	*prev = vma;
-> -	if (!can_madv_dontneed_vma(vma))
-> +	if (!can_madv_dontneed_or_free_vma(vma, behavior))
->  		return -EINVAL;
->  
->  	if (!userfaultfd_remove(vma, start, end)) {
-> @@ -539,7 +539,7 @@ static long madvise_dontneed_free(struct vm_area_struct *vma,
->  			 */
->  			return -ENOMEM;
->  		}
-> -		if (!can_madv_dontneed_vma(vma))
-> +		if (!can_madv_dontneed_or_free_vma(vma, behavior))
->  			return -EINVAL;
->  		if (end > vma->vm_end) {
->  			/*
-> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-> index 8ba6cb8..9817d15 100644
-> --- a/mm/oom_kill.c
-> +++ b/mm/oom_kill.c
-> @@ -492,7 +492,7 @@ void __oom_reap_task_mm(struct mm_struct *mm)
->  	set_bit(MMF_UNSTABLE, &mm->flags);
->  
->  	for (vma = mm->mmap ; vma; vma = vma->vm_next) {
-> -		if (!can_madv_dontneed_vma(vma))
-> +		if (!can_madv_free_vma(vma))
->  			continue;
->  
->  		/*
-> -- 
-> 2.7.4
-> 
-
--- 
-Michal Hocko
-SUSE Labs
+thanks,
+jirka
