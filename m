@@ -1,84 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id iisMDFAAHVt3EwAAmS7hNA
-	; Sun, 10 Jun 2018 10:43:19 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id lfeJHKrhGVvKIQAAmS7hNA
+	; Fri, 08 Jun 2018 01:54:41 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 3ABB060850; Sun, 10 Jun 2018 10:43:19 +0000 (UTC)
+	id 15BBE6074D; Fri,  8 Jun 2018 01:54:41 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="p+FZDv6W"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qrWw1t0Q"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id AF1C76074D;
-	Sun, 10 Jun 2018 10:43:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AF1C76074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 7804B601D2;
+	Fri,  8 Jun 2018 01:54:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7804B601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753896AbeFJKnP (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sun, 10 Jun 2018 06:43:15 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41542 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753535AbeFJKnN (ORCPT
+        id S1752628AbeFHByi (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 21:54:38 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:40592 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752312AbeFHByh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 06:43:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=eepF24QiBLgDmsEEzfuNY9KDl9wNPo0v7GnpGJZtkIE=; b=p+FZDv6WgZHxc0VhD5rP+nJ59
-        PhKLiddSf/ysM56l4RNsqLGWprD3JiowzrsdBFKdI/eL+GEH+q74a7SC/cLAYh4LW4xk5StwOrN9f
-        RV+6N4CNzGQB25qDGxmILif/HcTPO4pz4wQha5tstJZLSjdhjvKeZCLqQzQJnfnqgAN72Jj5cOuRF
-        HNbIGT0CpmZFXH9jC8XuO42KcrDxUFZEfh7BSWgL7Jy4+NTybumur7xpBvc0LLyisdk88ZFXcbxbB
-        2pvInqyH5sJIIV54FR9Tl6MnqtFyM8QTZiGr1T9F/mPR1MeB1ahDS83xSEKEexQJJrP4sXMqUqgAE
-        q7LMOzBIg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fRxoQ-00052f-4a; Sun, 10 Jun 2018 10:43:06 +0000
-Date: Sun, 10 Jun 2018 03:43:05 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: hans.westgaard.ry@oracle.com, Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        linux-rdma@vger.kernel.org,
-        =?iso-8859-1?Q?H=E5kon?= Bugge <haakon.bugge@oracle.com>,
-        Parav Pandit <parav@mellanox.com>,
-        Jack Morgenstein <jackm@dev.mellanox.co.il>,
-        Pravin Shedge <pravin.shedge4linux@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] IB/mad: Use IDR for agent IDs
-Message-ID: <20180610104305.GA9284@bombadil.infradead.org>
-References: <20180608174218.32455-1-willy@infradead.org>
- <20180608174218.32455-3-willy@infradead.org>
- <20180610063028.GH12407@mtr-leonro.mtl.com>
+        Thu, 7 Jun 2018 21:54:37 -0400
+Received: by mail-pl0-f67.google.com with SMTP id t12-v6so7264822plo.7
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 18:54:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=nzCBQlRS35zoCxyTantuxIw/cel5xVtYMq9WSOLRAvs=;
+        b=qrWw1t0Qg6nB8IrxGN3Wod85wVMpn9MTg4R2gYtZ7w6m1Zdpcj7W+q9hfZLZwfrGHA
+         jHUzWQQ7dYMIPs4YjcXuZkEqgYdsZ2ccMNmAmRc0OP3IKnWxeYiNPntsAj834isaF14P
+         l0UGGYG11tDeJtt/D51b7CLKPEEsEqnPZUloDYVmZd6WcJ6t4g97iunKtpgGAOlO2OQL
+         +ub0pU+6tdvLY+M9mf3JiLIni03IZZJySDLx5m3PpyAR/pKXUODawb2x+nVziuOf34p+
+         dVPBljhHLz0r1/Tlt/KY40yRrwdEkIpAViDV35zh6pWTmmdjurDZu+Z0sRVJ/lWVqNl8
+         ifTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=nzCBQlRS35zoCxyTantuxIw/cel5xVtYMq9WSOLRAvs=;
+        b=CWgzF/w5E7QpqmZuSqkFG51xk6rS+zf9yXqFLP+qLdYobBwG2u82OkcndLvq98CsNi
+         4N8Mtk4wFulzPikvhVEuVSSVaEgVfhLTO9di3GsKBbXlTmlma9QasUuhBHTfU9+/YC0R
+         zOOccyasHiIkGo0QAbcTAowcvQSiVpGmQCwpO+I53MAUEeXkfJBhRDkFjFECjHei5F7r
+         T4rKbtwrTWG91+AnoWUhHlg6j0eOerNJRIWz3Xu+NbnJM50oGvrcr2oGzc/mGFTBiG5a
+         32aXU5tFoKXzRa29ZfUN5GWhqrE7Y8CPirAvsV5n5S840kSxzyEZpOzXD0ZR7RhfoagA
+         +4PQ==
+X-Gm-Message-State: APt69E3IwGsfiVihsaxxlCDtVVyM2ur8IQmwzx7cQqnIyb0oTIYU/Hx2
+        SE5m025DQM0RAjiFvHwPwPo=
+X-Google-Smtp-Source: ADUXVKLnTZl8az232HYTeIJ2mPDDq1OtRav8WIka/tkWfyGct8lp5uoyrdAmIWRtnJfNWkGvFH781g==
+X-Received: by 2002:a17:902:7105:: with SMTP id a5-v6mr4468085pll.171.1528422876669;
+        Thu, 07 Jun 2018 18:54:36 -0700 (PDT)
+Received: from roar.ozlabs.ibm.com (59-102-70-78.tpgi.com.au. [59.102.70.78])
+        by smtp.gmail.com with ESMTPSA id s14-v6sm17972676pfh.116.2018.06.07.18.54.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 07 Jun 2018 18:54:36 -0700 (PDT)
+Date: Fri, 8 Jun 2018 11:54:29 +1000
+From: Nicholas Piggin <npiggin@gmail.com>
+To: Christophe Leroy <christophe.leroy@c-s.fr>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH 1/3] powerpc: make CPU selection logic generic in
+ Makefile
+Message-ID: <20180608115429.50c8d578@roar.ozlabs.ibm.com>
+In-Reply-To: <273f8ed3e980b9385c6e1b31e17f890ea08ce33c.1528365638.git.christophe.leroy@c-s.fr>
+References: <273f8ed3e980b9385c6e1b31e17f890ea08ce33c.1528365638.git.christophe.leroy@c-s.fr>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180610063028.GH12407@mtr-leonro.mtl.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 10, 2018 at 09:30:28AM +0300, Leon Romanovsky wrote:
-> 1. IBTA spec doesn't talk at all about the size of TransactionID, more
-> on that in section "13.4.6.4 TRANSACTION ID USAGE", the specification
-> says: "The contents of the TransactionID (TID) field are implementation-
-> dependent. So let's don't call it mlx4 bug.
+On Thu,  7 Jun 2018 10:10:18 +0000 (UTC)
+Christophe Leroy <christophe.leroy@c-s.fr> wrote:
 
-I was loosely paraphrasing the original bug report; suggested rewording
-of the comments gratefully accepted.
+> At the time being, when adding a new CPU for selection, both
+> Kconfig.cputype and Makefile have to be modified.
+> 
+> This patch moves into Kconfig.cputype the name of the CPU to me
+> passed to the -mcpu= argument.
 
-> 2. The current implementation means that in mlx5-only network we will
-> still have upto (1 << 24) TIDs. I don't know if it is really important,
-> but worth to mention.
+Seems like a good cleanup.
 
-Actually, the TIDs will be up to 2^56.  We're limited to 2^24 clients,
-each of which can send up to 2^32 messages.
+Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
+
+> 
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> ---
+>  arch/powerpc/Makefile                  |  8 +-------
+>  arch/powerpc/platforms/Kconfig.cputype | 15 +++++++++++++++
+>  2 files changed, 16 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
+> index 9704ab360d39..9a5642552abc 100644
+> --- a/arch/powerpc/Makefile
+> +++ b/arch/powerpc/Makefile
+> @@ -175,13 +175,7 @@ ifdef CONFIG_MPROFILE_KERNEL
+>      endif
+>  endif
+>  
+> -CFLAGS-$(CONFIG_CELL_CPU) += $(call cc-option,-mcpu=cell)
+> -CFLAGS-$(CONFIG_POWER5_CPU) += $(call cc-option,-mcpu=power5)
+> -CFLAGS-$(CONFIG_POWER6_CPU) += $(call cc-option,-mcpu=power6)
+> -CFLAGS-$(CONFIG_POWER7_CPU) += $(call cc-option,-mcpu=power7)
+> -CFLAGS-$(CONFIG_POWER8_CPU) += $(call cc-option,-mcpu=power8)
+> -CFLAGS-$(CONFIG_POWER9_CPU) += $(call cc-option,-mcpu=power9)
+> -CFLAGS-$(CONFIG_PPC_8xx) += $(call cc-option,-mcpu=860)
+> +CFLAGS-$(CONFIG_SPECIAL_CPU_BOOL) += $(call cc-option,-mcpu=$(CONFIG_SPECIAL_CPU))
+>  
+>  # Altivec option not allowed with e500mc64 in GCC.
+>  ifeq ($(CONFIG_ALTIVEC),y)
+> diff --git a/arch/powerpc/platforms/Kconfig.cputype b/arch/powerpc/platforms/Kconfig.cputype
+> index cc892dcfa114..71ef559cc474 100644
+> --- a/arch/powerpc/platforms/Kconfig.cputype
+> +++ b/arch/powerpc/platforms/Kconfig.cputype
+> @@ -140,6 +140,21 @@ config E6500_CPU
+>  
+>  endchoice
+>  
+> +config SPECIAL_CPU_BOOL
+> +	bool
+> +	default !GENERIC_CPU
+> +
+> +config SPECIAL_CPU
+> +	string
+> +	depends on SPECIAL_CPU_BOOL
+> +	default "cell" if CELL_CPU
+> +	default "power5" if POWER5_CPU
+> +	default "power6" if POWER6_CPU
+> +	default "power7" if POWER7_CPU
+> +	default "power8" if POWER8_CPU
+> +	default "power9" if POWER9_CPU
+> +	default "860" if PPC_8xx
+> +
+>  config PPC_BOOK3S
+>  	def_bool y
+>  	depends on PPC_BOOK3S_32 || PPC_BOOK3S_64
