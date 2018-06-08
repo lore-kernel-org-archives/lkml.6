@@ -1,88 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id KWJlEjnlGFvhKwAAmS7hNA
-	; Thu, 07 Jun 2018 07:57:01 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id NAGVEtFoGlu/UAAAmS7hNA
+	; Fri, 08 Jun 2018 11:30:37 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id B34F9607E7; Thu,  7 Jun 2018 07:57:01 +0000 (UTC)
+	id EDEC96089E; Fri,  8 Jun 2018 11:30:36 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 37788608B8;
-	Thu,  7 Jun 2018 07:57:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 37788608B8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by smtp.codeaurora.org (Postfix) with ESMTP id 79B63607A4;
+	Fri,  8 Jun 2018 11:30:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 79B63607A4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753612AbeFGH46 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 03:56:58 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:44129 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752585AbeFGH4l (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 03:56:41 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1fQpmf-000228-3m; Thu, 07 Jun 2018 09:56:37 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1fQpmb-00025s-U0; Thu, 07 Jun 2018 09:56:33 +0200
-Date: Thu, 7 Jun 2018 09:56:33 +0200
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-To: Stefan Agner <stefan@agner.ch>
-Cc: gregkh@linuxfoundation.org, festevam@gmail.com, jslaby@suse.com,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] serial: imx: fix cached UCR2 read on software reset
-Message-ID: <20180607075633.y3tm245jv7nkdrqx@pengutronix.de>
-References: <20180420124407.12892-1-stefan@agner.ch>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180420124407.12892-1-stefan@agner.ch>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        id S1753006AbeFHLad (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 07:30:33 -0400
+Received: from mga17.intel.com ([192.55.52.151]:32425 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752756AbeFHLaB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 07:30:01 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jun 2018 04:30:00 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,490,1520924400";
+   d="scan'208";a="62389008"
+Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
+  by fmsmga001.fm.intel.com with ESMTP; 08 Jun 2018 04:29:58 -0700
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Guenter Roeck <linux@roeck-us.net>,
+        Hans de Goede <hdegoede@redhat.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jun Li <jun.li@nxp.com>,
+        Mats Karrman <mats.dev.list@gmail.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH v4 7/8] usb: typec: pi3usb30532: Start using generic state values
+Date: Fri,  8 Jun 2018 14:29:40 +0300
+Message-Id: <20180608112941.26332-8-heikki.krogerus@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180608112941.26332-1-heikki.krogerus@linux.intel.com>
+References: <20180608112941.26332-1-heikki.krogerus@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 02:44:07PM +0200, Stefan Agner wrote:
-> To reset the UART the SRST needs be cleared (low active). According
-> to the documentation the bit will remain active for 4 module clocks
-> until it is cleared (set to 1).
-> 
-> Hence the real register need to be read in case the cached register
-> indicates that the SRST bit is zero.
-> 
-> This bug lead to wrong baudrate because the baud rate register got
-> restored before reset completed in imx_flush_buffer.
-> 
-> Fixes: 3a0ab62f43de ("serial: imx: implement shadow registers for UCRx and UFCR")
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
-> Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Instead of the tcpm specific mux states, using the generic
+USB type-c connector state values, and with DisplayPort
+using connector states defined for the DisplayPort Alt Mode.
 
-For the record, there is a customer of mine who reports that this commit
-breaks rs485 communication on i.MX25 because RTS stops to toggle as
-intended.
+Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+---
+ drivers/usb/typec/mux/pi3usb30532.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-(Some details: uart3, fsl,uart-has-rtscts, fsl,dte-mode,
-linux,rs485-enabled-at-boot-time, native RTS.)
-
-I didn't debug this yet.
-
-Best regards
-Uwe
-
+diff --git a/drivers/usb/typec/mux/pi3usb30532.c b/drivers/usb/typec/mux/pi3usb30532.c
+index b0e88db60ecf..bcea242852f2 100644
+--- a/drivers/usb/typec/mux/pi3usb30532.c
++++ b/drivers/usb/typec/mux/pi3usb30532.c
+@@ -9,7 +9,7 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+-#include <linux/usb/tcpm.h>
++#include <linux/usb/typec_dp.h>
+ #include <linux/usb/typec_mux.h>
+ 
+ #define PI3USB30532_CONF			0x00
+@@ -83,21 +83,24 @@ static int pi3usb30532_mux_set(struct typec_mux *mux, int state)
+ 	new_conf = pi->conf;
+ 
+ 	switch (state) {
+-	case TYPEC_MUX_NONE:
++	case TYPEC_STATE_SAFE:
+ 		new_conf = PI3USB30532_CONF_OPEN;
+ 		break;
+-	case TYPEC_MUX_USB:
++	case TYPEC_STATE_USB:
+ 		new_conf = (new_conf & PI3USB30532_CONF_SWAP) |
+-			   PI3USB30532_CONF_USB3;
++			PI3USB30532_CONF_USB3;
+ 		break;
+-	case TYPEC_MUX_DP:
++	case TYPEC_DP_STATE_C:
++	case TYPEC_DP_STATE_E:
+ 		new_conf = (new_conf & PI3USB30532_CONF_SWAP) |
+ 			   PI3USB30532_CONF_4LANE_DP;
+ 		break;
+-	case TYPEC_MUX_DOCK:
++	case TYPEC_DP_STATE_D:
+ 		new_conf = (new_conf & PI3USB30532_CONF_SWAP) |
+ 			   PI3USB30532_CONF_USB3_AND_2LANE_DP;
+ 		break;
++	default:
++		break;
+ 	}
+ 
+ 	ret = pi3usb30532_set_conf(pi, new_conf);
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+2.17.1
