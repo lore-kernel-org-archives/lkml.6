@@ -1,96 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 1LNHEnBDGVsXCAAAmS7hNA
-	; Thu, 07 Jun 2018 14:38:40 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id gZ87MRgwGlsoRQAAmS7hNA
+	; Fri, 08 Jun 2018 07:29:04 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 38D006089E; Thu,  7 Jun 2018 14:38:40 +0000 (UTC)
+	id 773DB607E4; Fri,  8 Jun 2018 07:29:04 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 8EFFA601C3;
-	Thu,  7 Jun 2018 14:38:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8EFFA601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id D774560275;
+	Fri,  8 Jun 2018 07:29:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D774560275
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934243AbeFGOih (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:38:37 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40477 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934023AbeFGOiZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:38:25 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbz-0005Zo-Ty; Thu, 07 Jun 2018 15:10:00 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvay-0002jL-IM; Thu, 07 Jun 2018 15:08:56 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        id S1752608AbeFHH3B (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 03:29:01 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58486 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751021AbeFHH3A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 03:29:00 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A2985401EF04;
+        Fri,  8 Jun 2018 07:28:59 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-137.pek2.redhat.com [10.72.12.137])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4F4A61C5B2;
+        Fri,  8 Jun 2018 07:28:51 +0000 (UTC)
+Date: Fri, 8 Jun 2018 15:28:48 +0800
+From: Dave Young <dyoung@redhat.com>
+To: David Howells <dhowells@redhat.com>
+Cc: keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kexec@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>,
+        mathew.j.martineau@linux.intel.com,
+        Laura Abbott <labbott@redhat.com>, jwboyer@redhat.com
+Subject: Re: [PATCH] certs: always use secondary keyring first if possible
+Message-ID: <20180608072848.GA7773@dhcp-128-65.nay.redhat.com>
+References: <20171118044711.GA7352@dhcp-128-65.nay.redhat.com>
+ <20171214102513.GA2371@dhcp-128-65.nay.redhat.com>
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Thomas Gleixner" <tglx@linutronix.de>,
-        "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Ingo Molnar" <mingo@kernel.org>,
-        "Dave Hansen" <dave.hansen@linux.intel.com>,
-        "Peter Zijlstra" <peterz@infradead.org>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.703013321@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 040/410] x86/cpu: Rename Merrifield2 to Moorefield
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171214102513.GA2371@dhcp-128-65.nay.redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 08 Jun 2018 07:28:59 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 08 Jun 2018 07:28:59 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dyoung@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+On 12/14/17 at 06:25pm, Dave Young wrote:
+> On 11/18/17 at 12:47pm, Dave Young wrote:
+> > Commit d3bfe84129f6 introduced secondary_trusted_keys keyring, current
+> > users of verify_pkcs7_signature are below:
+> > net/wireless/reg.c : uses its own trusted_keys
+> > kernel/module_signing.c : pass NULL trusted_keys 
+> > crypto/asymmetric_keys/verify_pefile.c : pass NULL trusted_keys
+> > 
+> > For both module and pefile verification, there is no reason to use builtin
+> > keys only. Actually in Fedora kernel module signing code passes 1UL, but
+> > kexec code does not pass 1UL for pefile verification thus we have below bug
+> > https://bugzilla.redhat.com/show_bug.cgi?id=1470995
+> > 
+> > Drop the hard code 1UL checking so that pefile verification can use
+> > secondary keyring as well.
+> > 
+> > Signed-off-by: Dave Young <dyoung@redhat.com>
+> > ---
+> >  certs/system_keyring.c |    2 --
+> >  1 file changed, 2 deletions(-)
+> > 
+> > --- linux-x86.orig/certs/system_keyring.c
+> > +++ linux-x86/certs/system_keyring.c
+> > @@ -229,8 +229,6 @@ int verify_pkcs7_signature(const void *d
+> >  		goto error;
+> >  
+> >  	if (!trusted_keys) {
+> > -		trusted_keys = builtin_trusted_keys;
+> > -	} else if (trusted_keys == (void *)1UL) {
+> >  #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
+> >  		trusted_keys = secondary_trusted_keys;
+> >  #else
+> 
+> Another ping.
+> 
+> If the (-1UL) is really needed, below file need update to use it
+> But I think it is ugly..
+> crypto/asymmetric_keys/verify_pefile.c
 
-------------------
+Ping again.  Can anyone response to this issue?
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Let me describe more details about the problem:
 
-commit f5fbf848303c8704d0e1a1e7cabd08fd0a49552f upstream.
+In Fedora kernel there is a patch below which is not upstreamed:
+https://src.fedoraproject.org/rpms/kernel/blob/master/f/Fix-for-module-sig-verification.patch
 
-Merrifield2 is actually Moorefield.
+It has below changes:
 
-Rename it accordingly and drop tail digit from Merrifield1.
-
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20160906184254.94440-1-andriy.shevchenko@linux.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-[bwh: Backported to 3.16: Drop driver changes]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/include/asm/intel-family.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+diff --git a/kernel/module_signing.c b/kernel/module_signing.c
+index 937c844..d3d6f95 100644
+--- a/kernel/module_signing.c
++++ b/kernel/module_signing.c
+@@ -81,6 +81,6 @@ int mod_verify_sig(const void *mod, unsigned long *_modlen)
+ 	}
 
---- a/arch/x86/include/asm/intel-family.h
-+++ b/arch/x86/include/asm/intel-family.h
-@@ -56,8 +56,8 @@
- #define INTEL_FAM6_ATOM_SILVERMONT1	0x37 /* BayTrail/BYT / Valleyview */
- #define INTEL_FAM6_ATOM_SILVERMONT2	0x4D /* Avaton/Rangely */
- #define INTEL_FAM6_ATOM_AIRMONT		0x4C /* CherryTrail / Braswell */
--#define INTEL_FAM6_ATOM_MERRIFIELD1	0x4A /* Tangier */
--#define INTEL_FAM6_ATOM_MERRIFIELD2	0x5A /* Annidale */
-+#define INTEL_FAM6_ATOM_MERRIFIELD	0x4A /* Tangier */
-+#define INTEL_FAM6_ATOM_MOOREFIELD	0x5A /* Annidale */
- #define INTEL_FAM6_ATOM_GOLDMONT	0x5C
- #define INTEL_FAM6_ATOM_DENVERTON	0x5F /* Goldmont Microserver */
- 
+ 	return verify_pkcs7_signature(mod, modlen, mod + modlen, sig_len,
+-				      NULL, VERIFYING_MODULE_SIGNATURE,
++				      (void *)1UL, VERIFYING_MODULE_SIGNATURE,
+ 				      NULL, NULL);
+ }
+---
+
+Above change is needed because the verify_pkcs7_signature is doing
+below:
+---
+        if (!trusted_keys) {
+                trusted_keys = builtin_trusted_keys;
+        } else if (trusted_keys == (void *)1UL) {
+#ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
+                trusted_keys = secondary_trusted_keys;
+#else
+                trusted_keys = builtin_trusted_keys;
+#endif
+        }
+---
+
+The trusted_keys is an argument passed to verify_pkcs7_signature
+function. We can see that users of this function must pass "-1UL"
+as trusted_keys to use secondary keyring.  This "-1UL" is not
+documented and it looks a hardcode api.   Besides of the module
+signing code, actually as I mentioned in the patch log kexec/kdump
+also need passing "-1UL" to use the secondary keyring.
+
+But why do we need that hack?  If I understand it correctly
+if use secondary then builtin can still be used, see commit log
+of d3bfe84129f65e0af2450743ebdab33d161d01c9:
+    If the secondary keyring is enabled, a link is created from that to
+    .builtin_trusted_keys so that the the latter will automatically be searched
+    too if the secondary keyring is searched.
+
+So why not directly use secondary in case trusted_keys == NULL?
+
+I'm not familar with the certs/keyring code, if I'm wrong please
+correct me.
+
+--
+Thanks
+Dave
