@@ -1,121 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id KTfQKkCOGFtZCwAAmS7hNA
-	; Thu, 07 Jun 2018 01:46:00 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id GzRmHrDYGVtNaQAAmS7hNA
+	; Fri, 08 Jun 2018 01:15:28 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 0D351608B8; Thu,  7 Jun 2018 01:46:00 +0000 (UTC)
+	id 610846089E; Fri,  8 Jun 2018 01:15:28 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="n3pQN8Av"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 5F6A2601A8;
-	Thu,  7 Jun 2018 01:45:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5F6A2601A8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id D95B2606DD;
+	Fri,  8 Jun 2018 01:15:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D95B2606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752955AbeFGBp5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 21:45:57 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:58974 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752344AbeFGBp4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 21:45:56 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 9FCF6B19E18B3;
-        Thu,  7 Jun 2018 09:45:52 +0800 (CST)
-Received: from [127.0.0.1] (10.177.23.164) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.382.0; Thu, 7 Jun 2018
- 09:45:45 +0800
-Subject: Re: Is this a kernel BUG? ///Re: [Question] Can we use SIGRTMIN when
- vdso disabled on X86?
-To: <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, x86l <x86@kernel.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <5B1672FE.4050705@huawei.com> <5B1792C9.8010203@huawei.com>
- <5B17A6B6.70300@huawei.com> <B2D1D0A5-D35B-435C-9548-1FB5964F61BA@zytor.com>
-CC: <yaomin2@huawei.com>
-From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
-Message-ID: <5B188E2B.7040700@huawei.com>
-Date: Thu, 7 Jun 2018 09:45:15 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        id S1752660AbeFHBPZ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 21:15:25 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:59592 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752268AbeFHBPY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 21:15:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
+        Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=6+BYgvPfX+NaAb31nf1ZXiZRGX3sXcILUg/pCZzpQ1c=; b=n3pQN8AvQfhQMc8C4s1uyUkfjM
+        B2wncHCpdV6Q8tJPf0+NoU2qPVh/ZvbO3MdAI3xQvUmBaW52I426UoWVh8e7XT1gyXJQM/VjABHwG
+        AttljBpShkxHjP6ea4HlfWBS1GLsLQ9fHxEWJytA9LVjxNx/X+fsiMadRDAmqcqKDrtMmWl/3VNmx
+        s3WXKYMleufmsopR/Q87Kd5Y64ewXYzxCnxGU099YmH9VcalVV59E4+rE6p5k2gyr8qbix+43td8I
+        ZFtWn8x8xm5awtN2BGhUsDyGQcj5SwDFSzZLasQ8Bi/Zc7QWfQxZEq3hDucsF7mG6zS+fI2A1lhoj
+        nmVQClgQ==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fR5zt-0004DS-5T; Fri, 08 Jun 2018 01:15:21 +0000
+Subject: Re: mmotm 2018-06-07-16-59 uploaded (scsi/ipr)
+To: akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz,
+        sfr@canb.auug.org.au, linux-next@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org
+References: <20180607235947.xWQtg%akpm@linux-foundation.org>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <656ccc09-951c-4b74-05a0-bc6f510a6453@infradead.org>
+Date: Thu, 7 Jun 2018 18:15:19 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <B2D1D0A5-D35B-435C-9548-1FB5964F61BA@zytor.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20180607235947.xWQtg%akpm@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.23.164]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2018/6/7 1:48, hpa@zytor.com wrote:
-> On June 6, 2018 2:17:42 AM PDT, "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com> wrote:
->> I found that glibc has already dealt with this case. So this issue must
->> have been met before, should it be maintained by libc/user?
->>
->> 	if (GLRO(dl_sysinfo_dso) == NULL)
->> 	{
->> 		kact.sa_flags |= SA_RESTORER;
->>
->> 		kact.sa_restorer = ((act->sa_flags & SA_SIGINFO)
->> 			? &restore_rt : &restore);
->> 	}
->>
->>
->> On 2018/6/6 15:52, Leizhen (ThunderTown) wrote:
->>>
->>>
->>> On 2018/6/5 19:24, Leizhen (ThunderTown) wrote:
->>>> After I executed "echo 0 > /proc/sys/abi/vsyscall32" to disable
->> vdso, the rt_sigaction01 test case from ltp_2015 failed.
->>>> The test case source code please refer to the attachment, and the
->> output as blow:
->>>>
->>>> -----------------
->>>> ./rt_sigaction01
->>>> rt_sigaction01    0  TINFO  :  signal: 34
->>>> rt_sigaction01    1  TPASS  :  rt_sigaction call succeeded: result =
->> 0
->>>> rt_sigaction01    0  TINFO  :  sa.sa_flags = SA_RESETHAND|SA_SIGINFO
->>>> rt_sigaction01    0  TINFO  :  Signal Handler Called with signal
->> number 34
->>>>
->>>> Segmentation fault
->>>> ------------------
->>>>
->>>>
->>>> Is this the desired result? In function ia32_setup_rt_frame, I found
->> below code:
->>>>
->>>> 	if (ksig->ka.sa.sa_flags & SA_RESTORER)
->>>> 		restorer = ksig->ka.sa.sa_restorer;
->>>> 	else
->>>> 		restorer = current->mm->context.vdso +
->>>> 			vdso_image_32.sym___kernel_rt_sigreturn;
->>>> 	put_user_ex(ptr_to_compat(restorer), &frame->pretcode);
->>>>
->>>> Because the vdso is disabled, so current->mm->context.vdso is NULL,
->> which cause the result of frame->pretcode invalid.
->>>>
->>>> I'm not sure whether this is a kernel bug or just an error of test
->> case itself. Can anyone help me?
->>>>
->>>
+On 06/07/2018 04:59 PM, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2018-06-07-16-59 has been uploaded to
 > 
-> The use of signals without SA_RESTORER is considered obsolete, but it's somewhat surprising that the vdso isn't there; it should be mapped even for static binaries esp. on i386 since it is the preferred way to do system calls (you don't need to parse the ELF for that.) Are you explicitly disabling the VDSO? If so, Don't Do That.
-
-Yes, the vdso was explicitly disabled by the tester. Thanks.
-
+>    http://www.ozlabs.org/~akpm/mmotm/
 > 
 
+on i386 (randconfig):
+
+../drivers/scsi/ipr.c: In function 'ipr_mask_and_clear_interrupts':
+../drivers/scsi/ipr.c:767:3: error: implicit declaration of function 'writeq_relaxed' [-Werror=implicit-function-declaration]
+   writeq_relaxed(~0, ioa_cfg->regs.set_interrupt_mask_reg);
+   ^
+
+
+
+need config?
 -- 
-Thanks!
-BestRegards
+~Randy
