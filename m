@@ -1,188 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id g8eCJ5Q2GVsFXwAAmS7hNA
-	; Thu, 07 Jun 2018 13:43:48 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id cxj3L9XiGlt9OgAAmS7hNA
+	; Fri, 08 Jun 2018 20:12:44 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 8D6C66089E; Thu,  7 Jun 2018 13:43:48 +0000 (UTC)
+	id 26261608C9; Fri,  8 Jun 2018 20:12:44 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 75DBF602FC;
-	Thu,  7 Jun 2018 13:43:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 75DBF602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=holtmann.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id AC6236089E;
+	Fri,  8 Jun 2018 20:12:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AC6236089E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753700AbeFGNnp convert rfc822-to-8bit (ORCPT
-        <rfc822;monsieuricon@codeaurora.org> + 25 others);
-        Thu, 7 Jun 2018 09:43:45 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:51902 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753665AbeFGNnn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 09:43:43 -0400
-Received: from marcel-macpro.fritz.box (p5B3D24B5.dip0.t-ipconnect.de [91.61.36.181])
-        by mail.holtmann.org (Postfix) with ESMTPSA id 2AF14CF356;
-        Thu,  7 Jun 2018 15:50:22 +0200 (CEST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.4 \(3445.8.2\))
-Subject: Re: [PATCH] Bluetooth: hci_bcm: Configure SCO routing automatically
-From: Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20180605191743.27748-1-attitokes@gmail.com>
-Date: Thu, 7 Jun 2018 15:43:40 +0200
-Cc: Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <280FCB2C-6DF1-4790-A89F-AF5BE3513AE5@holtmann.org>
-References: <20180605191743.27748-1-attitokes@gmail.com>
-To: =?utf-8?B?QXR0aWxhIFTFkWvDqXM=?= <attitokes@gmail.com>
-X-Mailer: Apple Mail (2.3445.8.2)
+        id S1753189AbeFHUMl (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 16:12:41 -0400
+Received: from mga05.intel.com ([192.55.52.43]:36699 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753115AbeFHUMi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 16:12:38 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jun 2018 13:12:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,491,1520924400";
+   d="scan'208";a="65493137"
+Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
+  by orsmga002.jf.intel.com with ESMTP; 08 Jun 2018 13:12:25 -0700
+Received: from kbuild by bee with local (Exim 4.84_2)
+        (envelope-from <lkp@intel.com>)
+        id 1fRNkF-0008BA-Mn; Sat, 09 Jun 2018 04:12:23 +0800
+Date: Sat, 9 Jun 2018 04:11:26 +0800
+From: kbuild test robot <fengguang.wu@intel.com>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH rcu] fixup! EXP iommu: stupid_workaround() can be static
+Message-ID: <20180608201126.GA72227@cairo>
+References: <201806090402.ONNRpjQE%fengguang.wu@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201806090402.ONNRpjQE%fengguang.wu@intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: lkp@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Attila,
 
-please include a commit message explains the changes.
+Fixes: 814ee31d1f90 ("fixup! EXP iommu: Placeholder for fix in mainline")
+Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
+---
+ amd_iommu.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Signed-off-by: Attila Tőkés <attitokes@gmail.com>
-> ---
-> drivers/bluetooth/hci_bcm.c | 61 +++++++++++++++++++++++++++++++++++++
-> 1 file changed, 61 insertions(+)
-> 
-> diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
-> index ddbd8c6a..50c73eef 100644
-> --- a/drivers/bluetooth/hci_bcm.c
-> +++ b/drivers/bluetooth/hci_bcm.c
-> @@ -83,6 +83,16 @@
-> * @hu: pointer to HCI UART controller struct,
-> *	used to disable flow control during runtime suspend and system sleep
-> * @is_suspended: whether flow control is currently disabled
-> + *
-> + *  SCO routing parameters:
-> + *   used as the parameters for the bcm_set_pcm_int_params command
-> + *	@sco_routing:
-> + *	 >= 255 (skip SCO routing configuration)
-> + *	 0-3 (PCM, Transport, Codec, I2S)
-> + *	@pcm_interface_rate: 0-4 (128 Kbps - 2048 Kbps)
-> + *	@pcm_frame_type: 0 (short), 1 (long)
-> + *	@pcm_sync_mode: 0 (slave), 1 (master)
-> + *	@pcm_clock_mode: 0 (slave), 1 (master)
-> */
-> struct bcm_device {
-> 	/* Must be the first member, hci_serdev.c expects this. */
-> @@ -114,6 +124,13 @@ struct bcm_device {
-> 	struct hci_uart		*hu;
-> 	bool			is_suspended;
-> #endif
-> +
-> +	/* SCO routing parameters */
-> +	u32			sco_routing;
-> +	u32			pcm_interface_rate;
-> +	u32			pcm_frame_type;
-> +	u32			pcm_sync_mode;
-> +	u32			pcm_clock_mode;
-> };
-
-These should be all u8 since that is what they are in bcm_set_pcm_int_params.
-
-> /* generic bcm uart resources */
-> @@ -189,6 +206,35 @@ static int bcm_set_baudrate(struct hci_uart *hu, unsigned int speed)
-> 	return 0;
-> }
-> 
-> +static int bcm_configure_sco_routing(struct hci_uart *hu, struct bcm_device *bcm_dev)
-> +{
-> +	struct hci_dev *hdev = hu->hdev;
-> +	struct sk_buff *skb;
-> +	struct bcm_set_pcm_int_params params;
-> +
-> +	bt_dev_dbg(hdev, "BCM: Configuring SCO routing (%d %d %d %d %d)",
-> +			bcm_dev->sco_routing, bcm_dev->pcm_interface_rate, bcm_dev->pcm_frame_type,
-> +			bcm_dev->pcm_sync_mode,	bcm_dev->pcm_clock_mode);
-> +
-> +	params.routing = bcm_dev->sco_routing;
-> +	params.rate = bcm_dev->pcm_interface_rate;
-> +	params.frame_sync = bcm_dev->pcm_frame_type;
-> +	params.sync_mode = bcm_dev->pcm_sync_mode;
-> +	params.clock_mode = bcm_dev->pcm_clock_mode;
-> +
-> +	// send the SCO routing configuration command
-
-Please follow networking comment style here.
-
-> +	skb = __hci_cmd_sync(hdev, 0xfc1c, sizeof(params), &params, HCI_CMD_TIMEOUT);
-> +	if (IS_ERR(skb)) {
-> +		int err = PTR_ERR(skb);
-> +		bt_dev_err(hdev, "BCM: failed to configure SCO routing (%d)", err);
-> +		return err;
-> +	}
-> +
-> +	kfree_skb(skb);
-> +
-> +	return 0;
-> +}
-> +
-> /* bcm_device_exists should be protected by bcm_device_lock */
-> static bool bcm_device_exists(struct bcm_device *device)
-> {
-> @@ -534,6 +580,10 @@ static int bcm_setup(struct hci_uart *hu)
-> 			host_set_baudrate(hu, speed);
-> 	}
-> 
-> +	if (bcm->dev->sco_routing < 0xff) {
-> +		bcm_configure_sco_routing(hu, bcm->dev);
-> +	}
-> +
-
-Move that check into bcm_configure_sco_routing to exit that function early.
-
-I would also recommend to read the current settings first and deal with missing parameters in the DT. For example if you just change the routing part that should be fine as well.
-
-> finalize:
-> 	release_firmware(fw);
-> 
-> @@ -1007,6 +1057,11 @@ static int bcm_acpi_probe(struct bcm_device *dev)
-> static int bcm_of_probe(struct bcm_device *bdev)
-> {
-> 	device_property_read_u32(bdev->dev, "max-speed", &bdev->oper_speed);
-> +	device_property_read_u32(bdev->dev, "sco-routing", &bdev->sco_routing);
-> +	device_property_read_u32(bdev->dev, "pcm-interface-rate", &bdev->pcm_interface_rate);
-> +	device_property_read_u32(bdev->dev, "pcm-frame-type", &bdev->pcm_frame_type);
-> +	device_property_read_u32(bdev->dev, "pcm-sync-mode", &bdev->pcm_sync_mode);
-> +	device_property_read_u32(bdev->dev, "pcm-clock-mode", &bdev->pcm_clock_mode);
-> 	return 0;
-> }
-
-You need a patch documenting these DT settings.
-
-> 
-> @@ -1022,6 +1077,9 @@ static int bcm_probe(struct platform_device *pdev)
-> 	dev->dev = &pdev->dev;
-> 	dev->irq = platform_get_irq(pdev, 0);
-> 
-> +	/* SCO routing configuration is disabled by default */
-> +	dev->sco_routing = 0xff;
-> +
-> 	if (has_acpi_companion(&pdev->dev)) {
-> 		ret = bcm_acpi_probe(dev);
-> 		if (ret)
-> @@ -1281,6 +1339,9 @@ static int bcm_serdev_probe(struct serdev_device *serdev)
-> 	bcmdev->serdev_hu.serdev = serdev;
-> 	serdev_device_set_drvdata(serdev, bcmdev);
-> 
-> +	/* SCO routing configuration is disabled by default */
-> +	bcmdev->sco_routing = 0xff;
-> +
-> 	if (has_acpi_companion(&serdev->dev))
-> 		err = bcm_acpi_probe(bcmdev);
-> 	else
-
-Regards
-
-Marcel
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index 46519d0..00dcafe 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -3563,7 +3563,7 @@ EXPORT_SYMBOL(amd_iommu_device_info);
+ static struct irq_chip amd_ir_chip;
+ static DEFINE_SPINLOCK(iommu_table_lock);
+ 
+-void __maybe_unused stupid_workaround(void)
++static void __maybe_unused stupid_workaround(void)
+ {
+ 	spin_lock(&iommu_table_lock);
+ 	spin_unlock(&iommu_table_lock);
