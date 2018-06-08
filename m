@@ -1,117 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 62snLS2JGVulTwAAmS7hNA
-	; Thu, 07 Jun 2018 19:36:13 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 9964Nn8lGlsadAAAmS7hNA
+	; Fri, 08 Jun 2018 06:45:33 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id A6054606DD; Thu,  7 Jun 2018 19:36:13 +0000 (UTC)
+	id 4F1D7607E4; Fri,  8 Jun 2018 06:45:33 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AJy5JzYW"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 07486601C3;
-	Thu,  7 Jun 2018 19:36:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 07486601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by smtp.codeaurora.org (Postfix) with ESMTP id B4A2F6074D;
+	Fri,  8 Jun 2018 06:45:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B4A2F6074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753410AbeFGTgK (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 15:36:10 -0400
-Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:53051 "EHLO
-        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752041AbeFGTgI (ORCPT
+        id S1752610AbeFHGpb (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 02:45:31 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:37905 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752061AbeFHGp2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 15:36:08 -0400
-Received: from [192.168.2.10] ([212.251.195.8])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id R0hWfky7gtLaAR0hafwkSS; Thu, 07 Jun 2018 21:36:07 +0200
-Subject: Re: [RFC PATCH 1/2] media: docs-rst: Add decoder UAPI specification
- to Codec Interfaces
-To: Nicolas Dufresne <nicolas@ndufresne.ca>,
-        Tomasz Figa <tfiga@chromium.org>
-Cc: dave.stevenson@raspberrypi.org,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Pawel Osciak <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
-        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
-        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?=
-        <tiffany.lin@mediatek.com>,
-        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?=
-        <andrew-ct.chen@mediatek.com>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        todor.tomov@linaro.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <20180605103328.176255-1-tfiga@chromium.org>
- <20180605103328.176255-2-tfiga@chromium.org>
- <CAAoAYcOJ5Q2rHqGEmcStxxXj423a3ddKOSzvwRV6R5-UxhM+Hg@mail.gmail.com>
- <b767d9d7-5a26-f6f8-3978-81e8d60769c2@xs4all.nl>
- <CAAFQd5BSq+kz0xxrFVFKhA4XFJE1hF8NHomQSGqYzNo+Swdyyw@mail.gmail.com>
- <3c852dec2279fa95af268357a438d442ddb70d44.camel@ndufresne.ca>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <9a07ec24-79c9-e6c8-edf7-7da962635148@xs4all.nl>
-Date: Thu, 7 Jun 2018 21:36:02 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Fri, 8 Jun 2018 02:45:28 -0400
+Received: by mail-pl0-f68.google.com with SMTP id b14-v6so7711119pls.5
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 23:45:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=GbC4LEzMFLHSLMlkpBvphN8IMpRZIZ+S3/CmwaQxefo=;
+        b=AJy5JzYW3yZ09gs4XflPYFYOdgDEy+C8StbRTRmXAImL2maoHvrgbbQtQB9KL0Z/EK
+         l31pzI3OwhnKpWgmeLVAi7+gUGZ9jO43NhR64Sni7+gZshtSrMF5I4iLLgdURhliAk5y
+         0FonktMqsGzGFMjVDMT5GEHd9mQKcFudeOWh0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=GbC4LEzMFLHSLMlkpBvphN8IMpRZIZ+S3/CmwaQxefo=;
+        b=naVITnV2TpcsbIkmpw74OTf1Fs8rVcyQwK2kpe6b4xeBx4dWrg3HnJF4VQlRll496Y
+         MTFqLP9YarO/RXv968pmRsSxIgHfHqY9VQIuov8EP3InF7+8MpDBgwM6AYEjUFkEZKrv
+         UxS/2mqqRxbFQVE5JaTIJwyjsnWsdVj3HVDeTQTJmdFpXHlGc+TCs38drZrkP4mrZVtE
+         PBTBeP7TtCMrkjV1FSi8Oqn7KRNEV31kekFX0ZQ56BK8gt8r9BvmabS/nhpvio6W8wmM
+         qrQSUmY7jiB+EjVjWdF5KpieNtyoi7//QunCwbU4v/Fg684olnzVqaPKg9prazPgTG+t
+         xZDg==
+X-Gm-Message-State: APt69E2MkolfeDX4rrOJp8A8ddtqJRq2HSfdRNkvMmiaKTMYy3igrWZE
+        1y095rRhq+91mzstIEh8WrY82aNOXKxcwfdGZCxTQg==
+X-Google-Smtp-Source: ADUXVKLvGzkwiCD1SJq1C56JXm1s9fIzg1ygbo7mk3wierL+pNP/r4CdlWxUU4HvrJQ5yTMZw6QtvYFyj/SD9PbUmxs=
+X-Received: by 2002:a17:902:26a:: with SMTP id 97-v6mr5289431plc.367.1528440328296;
+ Thu, 07 Jun 2018 23:45:28 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <3c852dec2279fa95af268357a438d442ddb70d44.camel@ndufresne.ca>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4wfERH9PQ4RrhBfiy3Zy8mOud/HEDwmzDxrXa5dVOU6fovkL2rlzq+dv6u0XPT5TC9/2ZDchEsfozehpoXeH71rYjciLPIEre8/gBbAzrK7r/vb9TwCnOq
- QAAHUJGYh7wwodSto0/XoJqTb8PBm+RotOS5SGCHy0cNqCoHK73ZJPpoELBWVxVm3bP0u/h8tmnhQdps0d8ZQpZajRY5zWkluDzUvUVbWEIwOzD7aGpcJJmA
- ara3l0WR6NBuUktbDZmNtLkzMucdnbbPbWUWeVWFUKaDPeZM6g1Pj3DMHs3ja7QHxwhuFTyD+/4TMKaO7Oby8Nc1yb8L6w7odp34AOldDH5TTk+sQ3BdllZt
- SETx+pSCTu6jxB8i/Cq26QV61+XZBjIHH/62bR8mVgyDx/AtA1HVoVYvhU9NwQJp6jeWdozRFvgNVpzdyNK77++wzTjlmyhbf2NIJdyvugascqX1KpKqQmoj
- yjx0x9hsW8cTlKX68vQZo3QHhNKJUX0D7XITpzlt5qqnr7JOSDCI2z6vgn1Ux0hMphMgF+iMV2UujmCMP8FfpoC84qnn/5umDVwPJCUZMWCpVSEMVuB2cG7H
- YfNi4ZYkjfw9igm+fskSW7XOUHlPk5g6/aQQWfc5YjS4zYrlebkcNpNkf6KHPZqrpunXwnKw7Gxboogh/qlkk/bMqRI5mfehpP1dK3wNeeOW6sg9e3Xd27qN
- ltBHzRnBDliNwE9w/wmtHN2RRl1l0/zZ
+Received: by 2002:a17:90a:178d:0:0:0:0 with HTTP; Thu, 7 Jun 2018 23:45:27
+ -0700 (PDT)
+In-Reply-To: <CAH3MdRWaVKrYbR14wjn6YjurcHvOFe-=t6g0Me=9=g+GRXqeeg@mail.gmail.com>
+References: <20180607105712.553-1-anders.roxell@linaro.org>
+ <CAH3MdRWo0kUYngyAwXP1sOT_XqbxyfTvDd6sNz+qd7LL1T8LUA@mail.gmail.com>
+ <CADYN=9J3wY1f6q4NvH1mHJXnu6GnErOqz75CfzfG1q5-WzcyCg@mail.gmail.com>
+ <CAH3MdRXMHRtK9FJ4UP8Gy-bahCS2oipOY7yLTEqu-x6uOMKLvw@mail.gmail.com>
+ <CADYN=9Ly5UU34CxZFnWfQhNrS8V3gG7=Bdfn9n0h5XphZ8EiVQ@mail.gmail.com> <CAH3MdRWaVKrYbR14wjn6YjurcHvOFe-=t6g0Me=9=g+GRXqeeg@mail.gmail.com>
+From: Anders Roxell <anders.roxell@linaro.org>
+Date: Fri, 8 Jun 2018 08:45:27 +0200
+Message-ID: <CADYN=9JEi2=YcC0KD555atZFiJNbP8Y9O0UME+63iTpSSd=ttg@mail.gmail.com>
+Subject: Re: [PATCH] selftests: bpf: fix urandom_read build issue
+To: Y Song <ys114321@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Shuah Khan <shuah@kernel.org>, netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/07/2018 07:53 PM, Nicolas Dufresne wrote:
-> Le jeudi 07 juin 2018 à 16:30 +0900, Tomasz Figa a écrit :
->>>> v4l2-compliance (so probably one for Hans).
->>>> testUnlimitedOpens tries opening the device 100 times. On a normal
->>>> device this isn't a significant overhead, but when you're allocating
->>>> resources on a per instance basis it quickly adds up.
->>>> Internally I have state that has a limit of 64 codec instances (either
->>>> encode or decode), so either I allocate at start_streaming and fail on
->>>> the 65th one, or I fail on open. I generally take the view that
->>>> failing early is a good thing.
->>>> Opinions? Is 100 instances of an M2M device really sensible?
+On 8 June 2018 at 07:08, Y Song <ys114321@gmail.com> wrote:
+> On Thu, Jun 7, 2018 at 2:43 PM, Anders Roxell <anders.roxell@linaro.org> =
+wrote:
+>> On 7 June 2018 at 23:17, Y Song <ys114321@gmail.com> wrote:
+>>> On Thu, Jun 7, 2018 at 12:07 PM, Anders Roxell <anders.roxell@linaro.or=
+g> wrote:
+>>>> On 7 June 2018 at 19:52, Y Song <ys114321@gmail.com> wrote:
+>>>>> On Thu, Jun 7, 2018 at 3:57 AM, Anders Roxell <anders.roxell@linaro.o=
+rg> wrote:
+>>>>>> gcc complains that urandom_read gets built twice.
+>>>>>>
+>>>>>> gcc -o tools/testing/selftests/bpf/urandom_read
+>>>>>> -static urandom_read.c -Wl,--build-id
+>>>>>> gcc -Wall -O2 -I../../../include/uapi -I../../../lib -I../../../lib/=
+bpf
+>>>>>> -I../../../../include/generated  -I../../../include    urandom_read.=
+c
+>>>>>> urandom_read -lcap -lelf -lrt -lpthread -o
+>>>>>> tools/testing/selftests/bpf/urandom_read
+>>>>>> gcc: fatal error: input file
+>>>>>> =E2=80=98tools/testing/selftests/bpf/urandom_read=E2=80=99 is the
+>>>>>> same as output file
+>>>>>> compilation terminated.
+>>>>>> ../lib.mk:110: recipe for target
+>>>>>> 'tools/testing/selftests/bpf/urandom_read' failed
+>>>>>
+>>>>> What is the build/make command to reproduce the above failure?
+>>>>
+>>>> make -C tools/testing/selftests
 >>>
->>> Resources should not be allocated by the driver until needed (i.e. the
->>> queue_setup op is a good place for that).
+>>> Thanks. The patch will break
+>>>    make -C tools/testing/selftests/bpf
 >>>
->>> It is perfectly legal to open a video node just to call QUERYCAP to
->>> see what it is, and I don't expect that to allocate any hardware resources.
->>> And if I want to open it 100 times, then that should just work.
->>>
->>> It is *always* wrong to limit the number of open arbitrarily.
+>>> [yhs@localhost bpf-next]$ make -C tools/testing/selftests/bpf
+>>> make: Entering directory '/home/yhs/work/bpf-next/tools/testing/selftes=
+ts/bpf'
+>>> gcc -o /urandom_read -static urandom_read.c -Wl,--build-id
+>>> /usr/bin/ld: cannot open output file /urandom_read: Permission denied
+>>> collect2: error: ld returned 1 exit status
+>>> make: *** [Makefile:20: /urandom_read] Error 1
+>>> make: Leaving directory '/home/yhs/work/bpf-next/tools/testing/selftest=
+s/bpf'
+>>> [yhs@localhost bpf-next]$
 >>
->> That's a valid point indeed. Besides the querying use case, userspace
->> might just want to pre-open a bigger number of instances, but it
->> doesn't mean that they would be streaming all at the same time indeed.
-> 
-> We have used in GStreamer the open() failure to be able to fallback to
-> software when the instances are exhausted. The pros was it fails really
-> early, so falling back is easy. If you remove this, it might not fail
-> before STREAMON. At least in GStreamer, it too late to fallback to
-> software.  So I don't have better idea then limiting on Open calls.
+>> urgh, I'm sorry, missed that.
+>>
+>>>
+>>> Could you still make the above command work?
+>>
+>> $(TEST_CUSTOM_PROGS): $(OUTPUT)/%: %.c
+>>         $(CC) -o $(TEST_CUSTOM_PROGS) -static $< -Wl,--build-id
+>>
+>> That worked both with:
+>> make -C tools/testing/selftests
+>> and
+>> make -C tools/testing/selftests/bpf
+>>
+>> for me.
+>>
+>> what do you think?
+>
+> This indeed works. You can submit a revised patch and add my Ack.
+> Acked-by: Yonghong Song <yhs@fb.com>
 
-It should fail when you call REQBUFS. That's the point at which you commit
-to allocating resources. Everything before that is just querying things.
+Thank you for your time reviewing this.
+I will send that out shortly.
 
-STREAMON is way too late, but REQBUFS/CREATE_BUFS (i.e. when queue_setup
-is called) is a good point. You already allocate memory there, you can
-also claim the m2m hw resource(s) you need.
 
-Regards,
-
-	Hans
+Cheers,
+Anders
