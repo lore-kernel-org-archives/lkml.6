@@ -1,133 +1,199 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id cb83JL8eHVsVUwAAmS7hNA
-	; Sun, 10 Jun 2018 13:30:44 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id SIc2EDM9GluhPgAAmS7hNA
+	; Fri, 08 Jun 2018 08:24:38 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 797BB607BB; Sun, 10 Jun 2018 13:30:44 +0000 (UTC)
+	id B0075607A4; Fri,  8 Jun 2018 08:24:38 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="p1w+yXXS"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XxU/TqD+"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id EAE07600D0;
-	Sun, 10 Jun 2018 13:30:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EAE07600D0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 074C260590;
+	Fri,  8 Jun 2018 08:24:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 074C260590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753880AbeFJNal (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sun, 10 Jun 2018 09:30:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38032 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753699AbeFJNak (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 09:30:40 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD53E2088E;
-        Sun, 10 Jun 2018 13:30:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528637439;
-        bh=wMkGLaXGMZ0p8Ll+MzSGvllL5UuIitCG8tBTUYMFQI4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=p1w+yXXS8tJV59u9qlF1rHq9L6R8hqTs5rc5g/svmZLoWpS3JPveI9J7Ew6cIPPsJ
-         nutyuUnfurYC8PH89715VIzYvU3Ks7ILHS2pphwL/tiZN9DHg2wFLC537ByKTVqYhb
-         7GC6P5re1vgxMvJHInTwJsKc8rLh3ECtb0WPnkp0=
-Date: Sun, 10 Jun 2018 14:30:34 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Stefan Popa <stefan.popa@analog.com>
-Cc: <Michael.Hennerich@analog.com>, <lars@metafoo.de>,
-        <knaack.h@gmx.de>, <pmeerw@pmeerw.net>, <linux-pm@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] iio:dac:ad5686: Add AD5311R support
-Message-ID: <20180610143034.37279fe0@archlinux>
-In-Reply-To: <1528122127-1911-1-git-send-email-stefan.popa@analog.com>
-References: <1528122127-1911-1-git-send-email-stefan.popa@analog.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1753024AbeFHIYf (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 04:24:35 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:40279 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752957AbeFHITX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 04:19:23 -0400
+Received: by mail-wm0-f67.google.com with SMTP id n5-v6so1977750wmc.5
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 01:19:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:references:from:cc:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=WnGFrXGohf0ssxHUMuNfANuj6m/SGPG3Sv41IxnMLmE=;
+        b=XxU/TqD+6a71OdYQ/BQoEw6GK/Q01LBCBuNxAjvC20j3zeQdeVLqCNBEXKibDCyrwU
+         lS334kZY065SXpvhgbQLvjfbLgqv45gqLCtl4ZQXgd0jMi9CTwXYiPESncU/lfLU+Knd
+         bnCsCrEMgVbEZiYPBzOTAD+wFbjy3GbOmaau4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:cc:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=WnGFrXGohf0ssxHUMuNfANuj6m/SGPG3Sv41IxnMLmE=;
+        b=YKqtO4UjLk8NtwhzOAOwnEM3ta3CILhTRQ914nvz4JAlzXwRrKe3XtC+paVDWivHAH
+         hF26lWSMEkbTF4afDTFez0m4+Fojs/AyqD5+GaX7OoIwfJzr3LYOXRHXMqrjriP6QrH3
+         zs3COhA9GHS2xbbMz+Ul1v9uzKapkvsqrVcnMGS/+EhdJ49aiKPpYejMjr2V95bOP0tf
+         TmB1LpVmA/sDIDyjGgMBeJKBEDogP+Sy/PZkaaXFDJdjFliXEAdXXd8wtU1RP7Uzkj6A
+         4H7YpC3gKMVR/WK/AbMAQOZr+6Wdox2Bgt9zz2B2T68MgrOiEmIIEEb+j1nKYbMVb5yB
+         CmRA==
+X-Gm-Message-State: APt69E28x4HneYhZuartbDOwKY6R3N0KUyvee/c7Rpp8SN6215I3gceQ
+        BYVuu18QB8GredXy7OhzGmRUQfWXTsM=
+X-Google-Smtp-Source: ADUXVKLNsc04ydVt+Zs7EoIv4JWjmMukla3XfEFm8royaVzirTPOWlXE036klV6oA1t0lVqusgUHfw==
+X-Received: by 2002:a1c:ea9b:: with SMTP id g27-v6mr750394wmi.21.1528445962398;
+        Fri, 08 Jun 2018 01:19:22 -0700 (PDT)
+Received: from [192.168.27.197] ([37.157.136.206])
+        by smtp.gmail.com with ESMTPSA id m16-v6sm21481717wro.91.2018.06.08.01.19.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Jun 2018 01:19:21 -0700 (PDT)
+Subject: Re: [PATCH v2] media: v4l: Add new 10-bit packed grayscale format
+To: Hans Verkuil <hverkuil@xs4all.nl>
+References: <1525769177-6328-1-git-send-email-todor.tomov@linaro.org>
+ <6411f254-cc4f-43b2-868f-bcf2d6e6f0eb@xs4all.nl>
+From: Todor Tomov <todor.tomov@linaro.org>
+Cc: sakari.ailus@iki.fi, mchehab@kernel.org,
+        laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Message-ID: <3b9e09b1-462f-509e-e2e3-06ede47331a1@linaro.org>
+Date: Fri, 8 Jun 2018 11:19:20 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <6411f254-cc4f-43b2-868f-bcf2d6e6f0eb@xs4all.nl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 4 Jun 2018 17:22:07 +0300
-Stefan Popa <stefan.popa@analog.com> wrote:
+Hi Hans,
 
-> AD5311R is a single channel DAC with 10-bit precision and i2c interface.
-> The device includes a 2.5V internal reference which is enabled by default.
+On  8.06.2018 11:13, Hans Verkuil wrote:
+> On 05/08/2018 10:46 AM, Todor Tomov wrote:
+>> The new format will be called V4L2_PIX_FMT_Y10P.
+>> It is similar to the V4L2_PIX_FMT_SBGGR10P family formats
+>> but V4L2_PIX_FMT_Y10P is a grayscale format.
+>>
+>> Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
 > 
-> This device is similar to AD5691R/AD5692R/AD5693/AD5693R, the only
-> difference is that it has 10-bit precision.
+> I see no patch adding support for this to a driver. We don't like adding new
+> defines without a driver that needs it.
 > 
-> Datasheet:
-> http://www.analog.com/media/en/technical-documentation/data-sheets/AD5310R_5311R.pdf
-> 
-> Signed-off-by: Stefan Popa <stefan.popa@analog.com>
-Applied to the togreg branch of iio.git and pushed out as testing
-for the autobuilders to play with it.
+> Is it possible to add support for this to a mainlined driver? Or is it going to
+> be used by a new driver?
 
-Thanks,
+This will be used by a new version of the QComm CAMSS driver. I wanted to get it
+reviewed first.
+If it is ok, you could take it when the new QComm CAMSS is posted and accepted.
 
-Jonathan
+Best regards,
+Todor
 
-> ---
->  drivers/iio/dac/ad5686.c     | 7 +++++++
->  drivers/iio/dac/ad5686.h     | 1 +
->  drivers/iio/dac/ad5696-i2c.c | 1 +
->  3 files changed, 9 insertions(+)
 > 
-> diff --git a/drivers/iio/dac/ad5686.c b/drivers/iio/dac/ad5686.c
-> index e136f0f..2ddbfc3 100644
-> --- a/drivers/iio/dac/ad5686.c
-> +++ b/drivers/iio/dac/ad5686.c
-> @@ -221,6 +221,7 @@ static struct iio_chan_spec name[] = {				\
->  		AD5868_CHANNEL(7, 7, bits, _shift),		\
->  }
->  
-> +DECLARE_AD5693_CHANNELS(ad5311r_channels, 10, 6);
->  DECLARE_AD5676_CHANNELS(ad5672_channels, 12, 4);
->  DECLARE_AD5676_CHANNELS(ad5676_channels, 16, 0);
->  DECLARE_AD5686_CHANNELS(ad5684_channels, 12, 4);
-> @@ -231,6 +232,12 @@ DECLARE_AD5693_CHANNELS(ad5692r_channels, 14, 2);
->  DECLARE_AD5693_CHANNELS(ad5691r_channels, 12, 4);
->  
->  static const struct ad5686_chip_info ad5686_chip_info_tbl[] = {
-> +	[ID_AD5311R] = {
-> +		.channels = ad5311r_channels,
-> +		.int_vref_mv = 2500,
-> +		.num_channels = 1,
-> +		.regmap_type = AD5693_REGMAP,
-> +	},
->  	[ID_AD5671R] = {
->  		.channels = ad5672_channels,
->  		.int_vref_mv = 2500,
-> diff --git a/drivers/iio/dac/ad5686.h b/drivers/iio/dac/ad5686.h
-> index d05cda9..57b3c61 100644
-> --- a/drivers/iio/dac/ad5686.h
-> +++ b/drivers/iio/dac/ad5686.h
-> @@ -45,6 +45,7 @@
->   * ad5686_supported_device_ids:
->   */
->  enum ad5686_supported_device_ids {
-> +	ID_AD5311R,
->  	ID_AD5671R,
->  	ID_AD5672R,
->  	ID_AD5675R,
-> diff --git a/drivers/iio/dac/ad5696-i2c.c b/drivers/iio/dac/ad5696-i2c.c
-> index d18735d..7350d98 100644
-> --- a/drivers/iio/dac/ad5696-i2c.c
-> +++ b/drivers/iio/dac/ad5696-i2c.c
-> @@ -71,6 +71,7 @@ static int ad5686_i2c_remove(struct i2c_client *i2c)
->  }
->  
->  static const struct i2c_device_id ad5686_i2c_id[] = {
-> +	{"ad5311r", ID_AD5311R},
->  	{"ad5671r", ID_AD5671R},
->  	{"ad5675r", ID_AD5675R},
->  	{"ad5691r", ID_AD5691R},
+> Regards,
+> 
+> 	Hans
+> 
+>> ---
+>>
+>> v2:
+>> - doc: improved bit-packed representation: added bit positions for LSB bits;
+>> - doc: improved bit-packed representation: added table column widths.
+>>
+>>  Documentation/media/uapi/v4l/pixfmt-y10p.rst | 33 ++++++++++++++++++++++++++++
+>>  Documentation/media/uapi/v4l/yuv-formats.rst |  1 +
+>>  drivers/media/v4l2-core/v4l2-ioctl.c         |  1 +
+>>  include/uapi/linux/videodev2.h               |  1 +
+>>  4 files changed, 36 insertions(+)
+>>  create mode 100644 Documentation/media/uapi/v4l/pixfmt-y10p.rst
+>>
+>> diff --git a/Documentation/media/uapi/v4l/pixfmt-y10p.rst b/Documentation/media/uapi/v4l/pixfmt-y10p.rst
+>> new file mode 100644
+>> index 0000000..13b5713
+>> --- /dev/null
+>> +++ b/Documentation/media/uapi/v4l/pixfmt-y10p.rst
+>> @@ -0,0 +1,33 @@
+>> +.. -*- coding: utf-8; mode: rst -*-
+>> +
+>> +.. _V4L2-PIX-FMT-Y10P:
+>> +
+>> +******************************
+>> +V4L2_PIX_FMT_Y10P ('Y10P')
+>> +******************************
+>> +
+>> +Grey-scale image as a MIPI RAW10 packed array
+>> +
+>> +
+>> +Description
+>> +===========
+>> +
+>> +This is a packed grey-scale image format with a depth of 10 bits per
+>> +pixel. Every four consecutive pixels are packed into 5 bytes. Each of
+>> +the first 4 bytes contain the 8 high order bits of the pixels, and
+>> +the 5th byte contains the 2 least significants bits of each pixel,
+>> +in the same order.
+>> +
+>> +**Bit-packed representation.**
+>> +
+>> +.. flat-table::
+>> +    :header-rows:  0
+>> +    :stub-columns: 0
+>> +    :widths: 8 8 8 8 64
+>> +
+>> +    * - Y'\ :sub:`00[9:2]`
+>> +      - Y'\ :sub:`01[9:2]`
+>> +      - Y'\ :sub:`02[9:2]`
+>> +      - Y'\ :sub:`03[9:2]`
+>> +      - Y'\ :sub:`03[1:0]`\ (bits 7--6) Y'\ :sub:`02[1:0]`\ (bits 5--4)
+>> +	Y'\ :sub:`01[1:0]`\ (bits 3--2) Y'\ :sub:`00[1:0]`\ (bits 1--0)
+>> diff --git a/Documentation/media/uapi/v4l/yuv-formats.rst b/Documentation/media/uapi/v4l/yuv-formats.rst
+>> index 3334ea4..9ab0592 100644
+>> --- a/Documentation/media/uapi/v4l/yuv-formats.rst
+>> +++ b/Documentation/media/uapi/v4l/yuv-formats.rst
+>> @@ -29,6 +29,7 @@ to brightness information.
+>>      pixfmt-y10
+>>      pixfmt-y12
+>>      pixfmt-y10b
+>> +    pixfmt-y10p
+>>      pixfmt-y16
+>>      pixfmt-y16-be
+>>      pixfmt-y8i
+>> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+>> index de5d96d..dececea 100644
+>> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+>> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+>> @@ -1147,6 +1147,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+>>  	case V4L2_PIX_FMT_Y16:		descr = "16-bit Greyscale"; break;
+>>  	case V4L2_PIX_FMT_Y16_BE:	descr = "16-bit Greyscale BE"; break;
+>>  	case V4L2_PIX_FMT_Y10BPACK:	descr = "10-bit Greyscale (Packed)"; break;
+>> +	case V4L2_PIX_FMT_Y10P:		descr = "10-bit Greyscale (MIPI Packed)"; break;
+>>  	case V4L2_PIX_FMT_Y8I:		descr = "Interleaved 8-bit Greyscale"; break;
+>>  	case V4L2_PIX_FMT_Y12I:		descr = "Interleaved 12-bit Greyscale"; break;
+>>  	case V4L2_PIX_FMT_Z16:		descr = "16-bit Depth"; break;
+>> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+>> index 600877b..b24ab720 100644
+>> --- a/include/uapi/linux/videodev2.h
+>> +++ b/include/uapi/linux/videodev2.h
+>> @@ -522,6 +522,7 @@ struct v4l2_pix_format {
+>>  
+>>  /* Grey bit-packed formats */
+>>  #define V4L2_PIX_FMT_Y10BPACK    v4l2_fourcc('Y', '1', '0', 'B') /* 10  Greyscale bit-packed */
+>> +#define V4L2_PIX_FMT_Y10P    v4l2_fourcc('Y', '1', '0', 'P') /* 10  Greyscale, MIPI RAW10 packed */
+>>  
+>>  /* Palette formats */
+>>  #define V4L2_PIX_FMT_PAL8    v4l2_fourcc('P', 'A', 'L', '8') /*  8  8-bit palette */
+>>
+> 
