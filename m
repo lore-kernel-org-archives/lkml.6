@@ -1,150 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ILUuIn92GltUYQAAmS7hNA
-	; Fri, 08 Jun 2018 12:39:44 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 5j2VCxX6GVsjFgAAmS7hNA
+	; Fri, 08 Jun 2018 03:37:57 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id A54D6608BA; Fri,  8 Jun 2018 12:39:44 +0000 (UTC)
+	id 1605D607DC; Fri,  8 Jun 2018 03:37:57 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HaAGfLPN"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 1B43B607A4;
-	Fri,  8 Jun 2018 12:39:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1B43B607A4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id A031E602FC;
+	Fri,  8 Jun 2018 03:37:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A031E602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752604AbeFHMjn (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 08:39:43 -0400
-Received: from foss.arm.com ([217.140.101.70]:33338 "EHLO foss.arm.com"
+        id S1752694AbeFHDhx (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 23:37:53 -0400
+Received: from ozlabs.org ([203.11.71.1]:40345 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751251AbeFHMjl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 08:39:41 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ECF911529;
-        Fri,  8 Jun 2018 05:39:40 -0700 (PDT)
-Received: from [0.0.0.0] (e107985-lin.cambridge.arm.com [10.1.210.41])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 95A453F557;
-        Fri,  8 Jun 2018 05:39:35 -0700 (PDT)
-Subject: Re: [RFC PATCH v3 03/10] PM: Introduce an Energy Model management
- framework
-To: Quentin Perret <quentin.perret@arm.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>, peterz@infradead.org,
-        rjw@rjwysocki.net, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        mingo@redhat.com, morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joelaf@google.com,
-        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
-        pkondeti@codeaurora.org, edubezval@gmail.com,
-        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
-        javi.merino@kernel.org
-References: <20180521142505.6522-1-quentin.perret@arm.com>
- <20180521142505.6522-4-quentin.perret@arm.com>
- <20180607144409.GB3311@localhost.localdomain>
- <20180607151954.GA3597@e108498-lin.cambridge.arm.com>
- <52b9575b-4c2a-01df-fadd-10ccf3146112@arm.com>
- <20180608082511.GE3597@e108498-lin.cambridge.arm.com>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <5a7b8177-7cbe-df90-7d00-8aad0a0f5f08@arm.com>
-Date: Fri, 8 Jun 2018 14:39:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1752329AbeFHDhw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 23:37:52 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 4127Qj4lpdz9s3q;
+        Fri,  8 Jun 2018 13:37:48 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1528429070;
+        bh=YE7eK0oWDOy/PGqiodXcLmpyS4riGUtF6efzG07j2Ig=;
+        h=Date:From:To:Cc:Subject:From;
+        b=HaAGfLPNLlh3z1nlGYLaLbOlPkChNzq8lcfsFjYAmHbyW2Fl0/DG2IvCV0OiZI+tH
+         rG74FRh/Rzz9MqIe+JQ2t+RCmsiIKsBmRUpEgbWjDZCWr8b4afQcX08cuuZAQJ01DP
+         HUxELml3v4zs6ABI0F7xV1Gmp83PDdxt8NyahJ/gBDOwS2yF2kd7/J9ITb8ix53Qdw
+         mjkE4rEJYCcLLSoIvzb2R1TwDACB4XMEmUjYk2g7D1gqixUElW9ZoaHDkYqkMFLbOC
+         ggiZVdjgS7R+uLQdVEj1JHClmJV6hVqDjZNJZlZRBMarA4J0d2a2rHPY1SNqAej2pJ
+         ZIzZF+XtVeXzQ==
+Date: Fri, 8 Jun 2018 13:37:48 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Tobin C. Harding" <me@tobin.cc>
+Subject: linux-next: build warning after merge of the random tree
+Message-ID: <20180608133748.58a272d5@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20180608082511.GE3597@e108498-lin.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/CQuTvknR=BFhx8rb09qkq+T"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/08/2018 10:25 AM, Quentin Perret wrote:
-> Hi Dietmar,
-> 
-> On Thursday 07 Jun 2018 at 17:55:32 (+0200), Dietmar Eggemann wrote:
->> On 06/07/2018 05:19 PM, Quentin Perret wrote:
->>> Hi Juri,
->>>
->>> On Thursday 07 Jun 2018 at 16:44:09 (+0200), Juri Lelli wrote:
->>>> On 21/05/18 15:24, Quentin Perret wrote:
+--Sig_/CQuTvknR=BFhx8rb09qkq+T
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-[...]
+Hi Theodore,
 
-> The comment above em_register_freq_domain() explains that, at least
-> partially. In the current implementation, if multiple providers register
-> the same frequency domain, all but the first will be ignored. The reason
-> I implemented this that way is because: 1) it's simple; 2) it should
-> cover the current use-cases for EAS and IPA.
-> 
-> But we could do something more clever. We could add a parameter to
-> em_register_freq_domain() that would represent some sort of priority. In
-> this case, if multiple providers register the same freq domain, the
-> higher priority would override the lower priority. For example, power
-> values coming from firmware could overwrite power values estimated with
-> P=CV^2f for example.
+After merging the random tree, today's linux-next build (arm
+multi_v7_defconfig) produced this warning:
 
-In your current '(3)* Arm/Arm64 init code' (* see at the end of this 
-email) you have this dev_pm_opp_of_estimate_power() em_data_callback 
-active_power function.
+lib/vsprintf.c:1668:13: warning: 'have_filled_random_ptr_key' defined but n=
+ot used [-Wunused-variable]
+ static bool have_filled_random_ptr_key __read_mostly;
+             ^~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Let's say thermal and the task scheduler would initialize the EM 
-independently. They would still end up using C from dt, and f, V and P 
-from opp library in your example.
+Introduced by commit
 
-IMHO, this information should be only provided once from one source per 
-platform.
+  bfe80ed3d7c7 ("vsprintf: add command line option debug_boot_weak_hash")
 
->> The re-scaling thing comes from the requirement that the final cpu capacity
->> values are only known after the arch_topology driver was able to scale the
->> dmipz-capacity-values with the policy->cpuinfo.max_freq but why can't we
->> create the EM on arm/arm64 after this?
-> 
-> What if you don't have dmips-capacity-mhz values in the DT and still
-> want to use IPA ? There is no good reason to create a dependency between
-> the thermal subsystem and the arch_topology driver IMO.
+--=20
+Cheers,
+Stephen Rothwell
 
-Mmmmh, that's correct. So it can't be simply called in 
-init_cpu_capacity_callback() [drivers/base/arch_topology.c] in case the 
-cpus_to_visit mask is empty. There is this dependency that cpufreq can 
-be loaded at any time, requiring this re-scaling of capacity values ... 
-That's not nice ...
+--Sig_/CQuTvknR=BFhx8rb09qkq+T
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
->> Even though we would be forced to get cpufreq's related cpumask from
->> somewhere.
-> 
-> That's the easy part. The difficult part is, where do you get power
-> values from ? You have to let the lower layers register those values
-> in a centralized location on a voluntary basis. And then it becomes easy
-> for consumers to access that data, because they know where it is.
+-----BEGIN PGP SIGNATURE-----
 
-The code in the arch could use the same struct em_data_callback em_cb = 
-{ &dev_pm_opp_of_estimate_power } that the cpufreq driver is currently 
-using?
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsZ+gwACgkQAVBC80lX
+0Gwn4QgApiEiqB/lA1gsaZfeVzvuqOU4jf2K501KHhT1/84mcCxPEzoz4QvXng6y
+ps0JrT1dI2qriqKePzAnpc6dr5WrBay45qkJCUYz8TT4WzoTKaJAySP1G4eP+ItB
++XcL2iWho9dmLCPUdRZqp2qL5HJAV3DCyuH3jxJmH7MVFmYM6Vx0gD3yxZLQEu5L
+ULLmM9Zsy6TaoDdcoarajyDJeeOfgo0NUPBdmpH9p1QKEpVuQqMxdKpc0NW5WD5G
+8dgU2xernEpGKZejOmQJ60nhIFG2LKPzKBGx74D1RcD3pwZ21NNrj1mW/K0U/nAE
+TEP/TPNZjH0lvX1JVdw3PhrNnZe+mQ==
+=G6po
+-----END PGP SIGNATURE-----
 
->> I guess the easiest model will be that the Energy Model (EM) is fully
->> initialized with one init call (from the arch) and fixed after that.
-> 
-> Again, I don't think that's possible. You have to let the lower layers
-> tell you where the power values come from, at the very least. You could
-> let the archs do that aggregation I suppose, but I don't really see the
-> benefit over one centralized framework with a generic interface ...
-> What's your opinion ?
-
-Don't understand the '... let the lower layers tell you where the power 
-values come from ...' part. Where is the difference whether the arch or 
-the cpufreq driver uses em_data_callback?
-
-[...]
-
-> So I think I'll drop patch 10/10 for v4 ... That part should be
-> discussed separately, with the rest of the Arm-specific changes.
-
-Maybe 3 clearly separated parts of the patch-set; (1) EM (2) EAS uses EM 
-(3) Arm/Arm64 init code ?
-
-[...]
+--Sig_/CQuTvknR=BFhx8rb09qkq+T--
