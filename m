@@ -1,138 +1,243 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id XRiPG6saHVtEMwAAmS7hNA
-	; Sun, 10 Jun 2018 12:34:13 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id wJ7bIdqWGltOEwAAmS7hNA
+	; Fri, 08 Jun 2018 14:46:54 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 91489608BA; Sun, 10 Jun 2018 12:34:13 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zmN5k34X"
+	id 7A5BE608FC; Fri,  8 Jun 2018 14:46:54 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 0FD6A604D4;
-	Sun, 10 Jun 2018 12:34:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0FD6A604D4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 5C6266089E;
+	Fri,  8 Jun 2018 14:46:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5C6266089E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753888AbeFJMeL (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sun, 10 Jun 2018 08:34:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53444 "EHLO mail.kernel.org"
+        id S1753045AbeFHOqv (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 10:46:51 -0400
+Received: from foss.arm.com ([217.140.101.70]:34646 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753451AbeFJMeJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 08:34:09 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06F8620660;
-        Sun, 10 Jun 2018 12:34:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528634049;
-        bh=FZdpxTaNysHjmfUpSMgEIFQ9h+hiX87odS6q8B1HfHM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=zmN5k34XJvVJ9saTGMWGj0LWbjDmvB6wugwovMXccz+0KLpkKhHrTFiZ5qk9WUx69
-         5TP1Xi4F7lvNSpM1ZXEslqeCT8szuPPArXgDHcSoLQ0Z6tqiz4W2TIUIhZ2EZFRddw
-         Ty6PFITrEE1R+W7cHMig000r/+pGjmCSHdN7kwt0=
-Date: Sun, 10 Jun 2018 13:34:03 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Ludovic Desroches <ludovic.desroches@microchip.com>
-Cc: Eugen Hristev <eugen.hristev@microchip.com>,
-        <alexandre.belloni@bootlin.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>, <linux-input@vger.kernel.org>,
-        <nicolas.ferre@microchip.com>, <dmitry.torokhov@gmail.com>,
-        <robh@kernel.org>
-Subject: Re: [PATCH v7 7/9] dt-bindings: iio: adc: at91-sama5d2_adc: add
- channel specific consumer info
-Message-ID: <20180610133403.533cfe38@archlinux>
-In-Reply-To: <20180522122319.GN22971@rfolt0960.corp.atmel.com>
-References: <1526975559-18966-1-git-send-email-eugen.hristev@microchip.com>
-        <1526975559-18966-8-git-send-email-eugen.hristev@microchip.com>
-        <20180522122319.GN22971@rfolt0960.corp.atmel.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1752729AbeFHOqs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 10:46:48 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F39631435;
+        Fri,  8 Jun 2018 07:46:47 -0700 (PDT)
+Received: from [10.37.13.33] (unknown [10.37.13.33])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 002233F5A0;
+        Fri,  8 Jun 2018 07:46:46 -0700 (PDT)
+Subject: Re: [PATCH v2 5/5] arm64: perf: Add support for chaining event
+ counters
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        will.deacon@arm.com, robin.murphy@arm.com
+References: <1527591356-10934-1-git-send-email-suzuki.poulose@arm.com>
+ <1527591356-10934-6-git-send-email-suzuki.poulose@arm.com>
+ <20180606180119.4ofhges6codarbmk@lakrids.cambridge.arm.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <4a5b5e7f-fc0b-84e3-fc65-b9f860029207@arm.com>
+Date: Fri, 8 Jun 2018 15:46:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180606180119.4ofhges6codarbmk@lakrids.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 22 May 2018 14:23:19 +0200
-Ludovic Desroches <ludovic.desroches@microchip.com> wrote:
+Hi Mark,
 
-> On Tue, May 22, 2018 at 10:52:37AM +0300, Eugen Hristev wrote:
-> > Added defines for channel consumer device-tree binding
-> > 
-> > Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-> > Reviewed-by: Rob Herring <robh@kernel.org>  
-> Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-Applied to the togreg branch of iio.git and pushed out as testing for
-the autobuilders to play with it.
+On 06/06/2018 07:01 PM, Mark Rutland wrote:
+> On Tue, May 29, 2018 at 11:55:56AM +0100, Suzuki K Poulose wrote:
+>> Add support for 64bit event by using chained event counters
+>> and 64bit cycle counters.
+>>
+>> Arm v8 PMUv3 allows chaining a pair of adjacent PMU counters
+>> (with the lower counter number being always "even"). The low
+>> counter is programmed to count the event of interest and the
+>> high counter(odd numbered) is programmed with a special event
+>> code (0x1e - Chain).
+> 
+> I found this a little difficult to read. How about:
+> 
+> PMUv3 allows chaining a pair of adjacent 32-bit counters, effectively
+> forming a 64-bit counter. The low/even counter is programmed to count
+> the event of interest, and the high/odd counter is programmed to count
+> the CHAIN event, taken when the low/even counter overflows.
+> 
 
-Thanks,
+Sure, that looks better.
 
-Jonathan
+>> Thus we need special allocation schemes
+>> to make the full use of available counters. So, we allocate the
+>> counters from either ends. i.e, chained counters are allocated
+>> from the lower end in pairs of two and the normal counters are
+>> allocated from the higher number. Also makes necessary changes to
+>> handle the chained events as a single event with 2 counters.
+> 
+> Why do we need to allocate in this way?
+> 
+> I can see this might make allocating a pair of counters more likely in
+> some cases, but there are still others where it wouldn't be possible
+> (and we'd rely on the rotation logic to repack the counters for us).
+
+It makes the efficient use of the counters in all cases and allows
+counting maximum number of events with any given set, keeping the 
+precedence on the order of their "inserts".
+e.g, if the number of counters happened to be "odd" (not sure if it is 
+even possible).
 
 > 
-> > ---
-> >  .../devicetree/bindings/iio/adc/at91-sama5d2_adc.txt     |  9 +++++++++
-> >  include/dt-bindings/iio/adc/at91-sama5d2_adc.h           | 16 ++++++++++++++++
-> >  2 files changed, 25 insertions(+)
-> >  create mode 100644 include/dt-bindings/iio/adc/at91-sama5d2_adc.h
-> > 
-> > diff --git a/Documentation/devicetree/bindings/iio/adc/at91-sama5d2_adc.txt b/Documentation/devicetree/bindings/iio/adc/at91-sama5d2_adc.txt
-> > index 6469a4c..4a3c1d4 100644
-> > --- a/Documentation/devicetree/bindings/iio/adc/at91-sama5d2_adc.txt
-> > +++ b/Documentation/devicetree/bindings/iio/adc/at91-sama5d2_adc.txt
-> > @@ -21,6 +21,14 @@ Optional properties:
-> >    - dmas: Phandle to dma channel for the ADC.
-> >    - dma-names: Must be "rx" when dmas property is being used.
-> >    See ../../dma/dma.txt for details.
-> > +  - #io-channel-cells: in case consumer drivers are attached, this must be 1.
-> > +  See <Documentation/devicetree/bindings/iio/iio-bindings.txt> for details.
-> > +
-> > +Properties for consumer drivers:
-> > +  - Consumer drivers can be connected to this producer device, as specified
-> > +  in <Documentation/devicetree/bindings/iio/iio-bindings.txt>
-> > +  - Channels exposed are specified in:
-> > +  <dt-bindings/iio/adc/at91-sama5d2_adc.txt>
-> >  
-> >  Example:
-> >  
-> > @@ -38,4 +46,5 @@ adc: adc@fc030000 {
-> >  	atmel,trigger-edge-type = <IRQ_TYPE_EDGE_BOTH>;
-> >  	dmas = <&dma0 (AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) | AT91_XDMAC_DT_PERID(25))>;
-> >  	dma-names = "rx";
-> > +	#io-channel-cells = <1>;
-> >  }
-> > diff --git a/include/dt-bindings/iio/adc/at91-sama5d2_adc.h b/include/dt-bindings/iio/adc/at91-sama5d2_adc.h
-> > new file mode 100644
-> > index 0000000..70f99db
-> > --- /dev/null
-> > +++ b/include/dt-bindings/iio/adc/at91-sama5d2_adc.h
-> > @@ -0,0 +1,16 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +/*
-> > + * This header provides constants for configuring the AT91 SAMA5D2 ADC
-> > + */
-> > +
-> > +#ifndef _DT_BINDINGS_IIO_ADC_AT91_SAMA5D2_ADC_H
-> > +#define _DT_BINDINGS_IIO_ADC_AT91_SAMA5D2_ADC_H
-> > +
-> > +/* X relative position channel index */
-> > +#define AT91_SAMA5D2_ADC_X_CHANNEL		24
-> > +/* Y relative position channel index */
-> > +#define AT91_SAMA5D2_ADC_Y_CHANNEL		25
-> > +/* pressure channel index */
-> > +#define AT91_SAMA5D2_ADC_P_CHANNEL		26
-> > +
-> > +#endif
-> > -- 
-> > 2.7.4
-> >   
+> [...]
+> 
+>> +static inline u32 armv8pmu_read_evcntr(int idx)
+>> +{
+>> +	return (armv8pmu_select_counter(idx) == idx) ?
+>> +	       read_sysreg(pmxevcntr_el0) : 0;
+>> +}
+> 
+> Given armv8pmu_select_counter() always returns the idx passed to it, I
+> don't think we need to check anything here. We can clean that up to be
+> void, and remove the existing checks.
+> 
+> [...]
+
+OK.
+
+> 
+>> +static inline u64 armv8pmu_read_chain_counter(int idx)
+>> +{
+>> +	u64 prev_hi, hi, lo;
+>> +
+>> +	hi = armv8pmu_read_evcntr(idx);
+>> +	do {
+>> +		prev_hi = hi;
+>> +		isb();
+>> +		lo = armv8pmu_read_evcntr(idx - 1);
+>> +		isb();
+>> +		hi = armv8pmu_read_evcntr(idx);
+>> +	} while (prev_hi != hi);
+>> +
+>> +	return (hi << 32) | lo;
+>> +}
+> 
+>> +static inline void armv8pmu_write_chain_counter(int idx, u64 value)
+>> +{
+>> +	armv8pmu_write_evcntr(idx, value >> 32);
+>> +	isb();
+>> +	armv8pmu_write_evcntr(idx - 1, value);
+>> +}
+> 
+> Can we use upper_32_bits() and lower_32_bits() here?
+> 
+> As a more general thing, I think we need to clean up the way we
+> read/write counters, because I don't think that it's right that we poke
+> them while they're running -- that means you get some arbitrary skew on
+> counter groups.
+> 
+> It looks like the only case we do that is the IRQ handler, so we should
+> be able to stop/start the PMU there.
+
+Since we don't stop the "counting" of events usually when an IRQ is
+triggered, the skew will be finally balanced when the events are stopped
+in a the group. So, I think, stopping the PMU may not be really a good
+thing after all. Just my thought.
+
+> 
+> With that, we can get rid of the ISB here, and likewise in
+> read_chain_counter, which wouldn't need to be a loop.
+> 
+>> +
+>> +static inline void armv8pmu_write_hw_counter(struct perf_event *event,
+>> +					     u64 value)
+>> +{
+>> +	int idx = event->hw.idx;
+>> +
+>> +	if (armv8pmu_event_is_chained(event))
+>> +		armv8pmu_write_chain_counter(idx, value);
+>> +	else
+>> +		armv8pmu_write_evcntr(idx, value);
+>> +}
+>> +
+>>   static inline void armv8pmu_write_counter(struct perf_event *event, u64 value)
+>>   {
+>>   	struct arm_pmu *cpu_pmu = to_arm_pmu(event->pmu);
+>> @@ -541,14 +612,14 @@ static inline void armv8pmu_write_counter(struct perf_event *event, u64 value)
+>>   			smp_processor_id(), idx);
+>>   	else if (idx == ARMV8_IDX_CYCLE_COUNTER) {
+>>   		/*
+>> -		 * Set the upper 32bits as this is a 64bit counter but we only
+>> -		 * count using the lower 32bits and we want an interrupt when
+>> -		 * it overflows.
+>> +		 * Set the upper 32bits if we are counting this in
+>> +		 * 32bit mode, as this is a 64bit counter.
+>>   		 */
+> 
+> It would be good to keep the explaination as to why.
+> 
+
+Sure
+
+>> -		value |= 0xffffffff00000000ULL;
+>> +		if (!armv8pmu_event_is_64bit(event))
+>> +			value |= 0xffffffff00000000ULL;
+>>   		write_sysreg(value, pmccntr_el0);
+>> -	} else if (armv8pmu_select_counter(idx) == idx)
+>> -		write_sysreg(value, pmxevcntr_el0);
+>> +	} else
+>> +		armv8pmu_write_hw_counter(event, value);
+>>   }
+> 
+>> +static inline void armv8pmu_write_event_type(struct perf_event *event)
+>> +{
+>> +	struct hw_perf_event *hwc = &event->hw;
+>> +	int idx = hwc->idx;
+>> +
+>> +	/*
+>> +	 * For chained events, write the the low counter event type
+>> +	 * followed by the high counter. The high counter is programmed
+>> +	 * with CHAIN event code with filters set to count at all ELs.
+>> +	 */
+>> +	if (armv8pmu_event_is_chained(event)) {
+>> +		u32 chain_evt = ARMV8_PMUV3_PERFCTR_CHAIN |
+>> +				ARMV8_PMU_INCLUDE_EL2;
+>> +
+>> +		armv8pmu_write_evtype(idx - 1, hwc->config_base);
+>> +		isb();
+>> +		armv8pmu_write_evtype(idx, chain_evt);
+> 
+> The ISB isn't necessary here, AFAICT. We only do this while the PMU is
+> disabled; no?
+
+You're right. I was just following the ARM ARM.
+
+> 
+>> +	} else
+>> +		armv8pmu_write_evtype(idx, hwc->config_base);
+>> +}
+> 
+> [...]
+> 
+>> @@ -679,6 +679,12 @@ static void cpu_pm_pmu_setup(struct arm_pmu *armpmu, unsigned long cmd)
+>>   			continue;
+>>   
+>>   		event = hw_events->events[idx];
+>> +		/*
+>> +		 * If there is no event at this idx (e.g, an idx used
+>> +		 * by a chained event in Arm v8 PMUv3), skip it.
+>> +		 */
+>> +		if (!event)
+>> +			continue;
+> 
+> We may as well lose the used_mask test if we're looking at the event
+> regardless.
+
+Ok
+
+Suzuki
