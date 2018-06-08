@@ -1,212 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Sg2SEi+fG1tPWQAAmS7hNA
-	; Sat, 09 Jun 2018 09:34:39 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id NLEHMiD9GVtPOgAAmS7hNA
+	; Fri, 08 Jun 2018 03:50:56 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 2D3F0605A5; Sat,  9 Jun 2018 09:34:39 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MZ2+tlPy"
+	id B8CB6607E4; Fri,  8 Jun 2018 03:50:56 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 4325F605A5;
-	Sat,  9 Jun 2018 09:34:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4325F605A5
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 20DD860590;
+	Fri,  8 Jun 2018 03:50:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 20DD860590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752979AbeFIJeg (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 05:34:36 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:45482 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751245AbeFIJed (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 05:34:33 -0400
-Received: by mail-pf0-f196.google.com with SMTP id a22-v6so7788941pfo.12
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Jun 2018 02:34:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=ZMCqarDgrZ+w7nK6oQV2DPBBORQ5N+dBcxQHaUfJOU4=;
-        b=MZ2+tlPyZHAdH3s7TBSnKO/mzXpMqQbSYcM+rRTKPcjPp7KiiZJk/3X+R6ARO5QMlA
-         9TRfhYRMjNbfbsoGKkCTq7APMLjM5zjGu4uuErXWfZ+mctzVGar0eJXN20qZEfw8JpBu
-         F2Za1/L+hiEsF//saXtxO8fT3RRJ5fDzyyxXXZZ8bfymqD3MyNDSWIQcV2s0E0Q6f45Z
-         7IW18DI3lSOdApNyTts5hm3mJYnh7Yh1/X2FvJuC1Lm3ie8IX8dYZfcl6YYjFck1iMwI
-         yvnPnt0TSqTtVY+AxGrqAu7rFCQLidRJOGgDIlZ0TUghw4iB6owgWulZsB3sSpiwQ3db
-         PeVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=ZMCqarDgrZ+w7nK6oQV2DPBBORQ5N+dBcxQHaUfJOU4=;
-        b=kFdgtqAWp75HtZHY9g9aHSTkWWF3Kvt8JPiwdvwzDlybLUEJOQl0cKwhF10bH6mdLw
-         2BvJHwJQklrDQN4EYLoty4B3t0d7+OPJge480NxXfb9jPdXngczNAMub5TiobxKA8Grw
-         /k89QIyOS27WUa6E7kwSmYaLoH7TTWMvDpKWDNfNCMpaW3+B04XV6WnUN7WjPmhCNSiu
-         IenJ4Oucib679MvndjRtLvAlENjqUiZcguGe2NhXMp9aDU0zyhaCzsddBDyrc9cChkzJ
-         loH58gO3372LGYKEm2UNUQmeIf+smXCI/7FMyvgHlVo51m4o6BpRNnrQ6H9s/6G477pH
-         YFww==
-X-Gm-Message-State: APt69E3lfJsLY8Z2bmT/y7BCxRBdS4mbecEomZlwbfgLPdiyW/icLKyq
-        o7AqdCJE0r3noJnwUKHAnGqOHMC0NQ5i3m1C/8n4vw==
-X-Google-Smtp-Source: ADUXVKJ+IGnOHRm1ck6BWeUyiY+ZtaA7vilG67tdXTAiCkDcY071tEexdQBwbu2YsMbOauN2BsTo/sXEhhIF5d146Tk=
-X-Received: by 2002:a63:b407:: with SMTP id s7-v6mr8326535pgf.334.1528536872540;
- Sat, 09 Jun 2018 02:34:32 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a17:90a:d42:0:0:0:0 with HTTP; Sat, 9 Jun 2018 02:34:11
- -0700 (PDT)
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Sat, 9 Jun 2018 11:34:11 +0200
-Message-ID: <CACT4Y+ZmRj61ia-WQBC=M72o=OZWk5LSnzf2qOEuOLHAa4do_A@mail.gmail.com>
-Subject: mainline boot is broken: KASAN: use-after-free in blk_flush_complete_seq
-To: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1752758AbeFHDuu (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 23:50:50 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46884 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752621AbeFHDus (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 23:50:48 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4F4C6402315A;
+        Fri,  8 Jun 2018 03:50:48 +0000 (UTC)
+Received: from jason-ThinkPad-T450s.redhat.com (ovpn-12-64.pek2.redhat.com [10.72.12.64])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3D0EF2166BB2;
+        Fri,  8 Jun 2018 03:50:44 +0000 (UTC)
+From: Jason Wang <jasowang@redhat.com>
+To: mst@redhat.com, jasowang@redhat.com
+Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH net] vhost_net: remove VHOST_NET_F_VIRTIO_NET_HDR support
+Date: Fri,  8 Jun 2018 11:50:42 +0800
+Message-Id: <1528429842-22835-1-git-send-email-jasowang@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 08 Jun 2018 03:50:48 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 08 Jun 2018 03:50:48 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jasowang@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This feature bit is duplicated with VIRTIO_F_ANY_LAYOUT, this means if
+a userpsace want to enable VRITIO_F_ANY_LAYOUT,
+VHOST_NET_F_VIRTIO_NET_HDR will be implied too. This is wrong and will
+break networking. Fixing this by safely removing
+VHOST_NET_F_VIRTIO_NET_HDR support. There should be very few or even
+no userspace can use this. Further cleanups could be done for
+-net-next for safety.
 
-Boot of mainline kernel is currently broken.
-On commit 7d3bf613e99abbd96ac7b90ee3694a246c975021.
-Config:
-https://gist.githubusercontent.com/dvyukov/9f7f1fd9e477efd85b221b3a21036c20/raw/7c56ede0840494b26045976960866f2b265c6f64/gistfile1.txt
-Should have been introduced very recently.
+In the future, we need a vhost dedicated feature set/get ioctl()
+instead of reusing virtio ones.
 
-You may need to also patch "umh: fix race condition", because that's
-another boot crasher currently present in tree.
+Fixes: 4e9fa50c6ccbe ("vhost: move features to core")
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+---
+ drivers/vhost/net.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
-==================================================================
-BUG: KASAN: use-after-free in blk_flush_complete_seq+0xfde/0x1810
-block/blk-flush.c:215
-Read of size 4 at addr ffff880063f876d4 by task swapper/2/0
-
-CPU: 2 PID: 0 Comm: swapper/2 Not tainted 4.17.0+ #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1a7/0x275 lib/dump_stack.c:113
- print_address_description+0x73/0x250 mm/kasan/report.c:256
- kasan_report_error mm/kasan/report.c:354 [inline]
- kasan_report+0x23c/0x360 mm/kasan/report.c:412
- __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
- blk_flush_complete_seq+0xfde/0x1810 block/blk-flush.c:215
- flush_end_io+0x523/0xb50 block/blk-flush.c:257
- blk_finish_request+0x3fa/0x6a0 block/blk-core.c:3209
- scsi_end_request+0x3d3/0x820 drivers/scsi/scsi_lib.c:715
- scsi_io_completion+0x1869/0x1910 drivers/scsi/scsi_lib.c:898
- scsi_finish_command+0x4de/0x8d0 drivers/scsi/scsi.c:248
- scsi_softirq_done+0x3ad/0x4b0 drivers/scsi/scsi_lib.c:1683
- blk_done_softirq+0x48c/0x700 block/blk-softirq.c:37
- __do_softirq+0x2e0/0xb94 kernel/softirq.c:284
- invoke_softirq kernel/softirq.c:364 [inline]
- irq_exit+0x1cc/0x200 kernel/softirq.c:404
- exiting_irq arch/x86/include/asm/apic.h:525 [inline]
- do_IRQ+0xf1/0x190 arch/x86/kernel/irq.c:257
- common_interrupt+0xf/0xf arch/x86/entry/entry_64.S:642
- </IRQ>
-RIP: 0010:native_safe_halt+0x6/0x10 arch/x86/include/asm/irqflags.h:54
-Code: 48 89 df e8 5c 88 a3 fa e9 51 ff ff ff 4c 89 ef e8 4f 88 a3 fa
-eb 9b 90 90 90 90 90 90 90 90 90 90 90 90 90 55 48 89 e5 fb f4 <5d> c3
-0f 1f 84 00 00 00 00 00 55 48 89 e5 f4 5d c3 90 90 90 90 90
-RSP: 0000:ffff88006bdcfc38 EFLAGS: 00000282 ORIG_RAX: ffffffffffffffde
-RAX: dffffc0000000000 RBX: 1ffff1000d7b9f8a RCX: 0000000000000000
-RDX: 1ffffffff10e2b78 RSI: 0000000000000001 RDI: ffffffff88715bc0
-RBP: ffff88006bdcfc38 R08: ffffed000d9246d7 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000002
-R13: ffff88006bdcfcf0 R14: 0000000000000000 R15: ffffffff88715bb0
- arch_safe_halt arch/x86/include/asm/paravirt.h:94 [inline]
- default_idle+0xbf/0x440 arch/x86/kernel/process.c:500
- arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:491
- default_idle_call+0x36/0x90 kernel/sched/idle.c:93
- cpuidle_idle_call kernel/sched/idle.c:153 [inline]
- do_idle+0x345/0x560 kernel/sched/idle.c:262
- cpu_startup_entry+0x104/0x120 kernel/sched/idle.c:368
- start_secondary+0x42b/0x5b0 arch/x86/kernel/smpboot.c:265
- secondary_startup_64+0xa5/0xb0 arch/x86/kernel/head_64.S:242
-
-Allocated by task 1:
- save_stack+0x43/0xd0 mm/kasan/kasan.c:448
- set_track mm/kasan/kasan.c:460 [inline]
- kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:553
- __do_kmalloc_node mm/slab.c:3682 [inline]
- __kmalloc_node+0x47/0x70 mm/slab.c:3689
- kmalloc_node include/linux/slab.h:555 [inline]
- alloc_request_size+0x80/0x120 block/blk-core.c:844
- mempool_alloc+0x16c/0x4b0 mm/mempool.c:384
- __get_request block/blk-core.c:1424 [inline]
- get_request+0xe04/0x2480 block/blk-core.c:1535
- blk_queue_bio+0x5e9/0x1980 block/blk-core.c:2054
- generic_make_request+0x919/0x1540 block/blk-core.c:2447
- submit_bio+0x19a/0x4d0 block/blk-core.c:2555
- submit_bio_wait+0x137/0x1e0 block/bio.c:977
- blkdev_issue_flush+0x204/0x2f0 block/blk-flush.c:551
- jbd2_journal_recover+0x3f3/0x4b0 fs/jbd2/recovery.c:289
- jbd2_journal_load+0x256/0xca0 fs/jbd2/journal.c:1686
- ext4_load_journal fs/ext4/super.c:4704 [inline]
- ext4_fill_super+0x8e60/0xb700 fs/ext4/super.c:4076
- mount_bdev+0x2ba/0x370 fs/super.c:1174
- ext4_mount+0x34/0x40 fs/ext4/super.c:5771
- mount_fs+0x6b/0x2d0 fs/super.c:1277
- vfs_kern_mount.part.26+0xc6/0x4a0 fs/namespace.c:1037
- vfs_kern_mount fs/namespace.c:2515 [inline]
- do_new_mount fs/namespace.c:2518 [inline]
- do_mount+0xea4/0x2bd0 fs/namespace.c:2848
- ksys_mount+0xab/0x120 fs/namespace.c:3064
- do_mount_root init/do_mounts.c:366 [inline]
- mount_block_root+0x381/0x685 init/do_mounts.c:395
- mount_root+0x287/0x2bb init/do_mounts.c:540
- prepare_namespace+0x1cf/0x20c init/do_mounts.c:599
- kernel_init_freeable+0x53f/0x55d init/main.c:1154
- kernel_init+0x13/0x180 init/main.c:1061
- ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
-
-Freed by task 0:
- save_stack+0x43/0xd0 mm/kasan/kasan.c:448
- set_track mm/kasan/kasan.c:460 [inline]
- __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
- kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
- __cache_free mm/slab.c:3498 [inline]
- kfree+0xd9/0x260 mm/slab.c:3813
- free_request_size+0x5b/0x70 block/blk-core.c:859
- mempool_free+0xda/0x350 mm/mempool.c:493
- blk_free_request block/blk-core.c:1210 [inline]
- __blk_put_request+0x513/0xc70 block/blk-core.c:1768
- blk_finish_request+0x349/0x6a0 block/blk-core.c:3214
- __blk_end_bidi_request+0xeb/0x1e0 block/blk-core.c:3278
- __blk_end_request_all+0x129/0x270 block/blk-core.c:3368
- blk_flush_complete_seq+0xf92/0x1810 block/blk-flush.c:208
- flush_end_io+0x523/0xb50 block/blk-flush.c:257
- blk_finish_request+0x3fa/0x6a0 block/blk-core.c:3209
- scsi_end_request+0x3d3/0x820 drivers/scsi/scsi_lib.c:715
- scsi_io_completion+0x1869/0x1910 drivers/scsi/scsi_lib.c:898
- scsi_finish_command+0x4de/0x8d0 drivers/scsi/scsi.c:248
- scsi_softirq_done+0x3ad/0x4b0 drivers/scsi/scsi_lib.c:1683
- blk_done_softirq+0x48c/0x700 block/blk-softirq.c:37
- __do_softirq+0x2e0/0xb94 kernel/softirq.c:284
-
-The buggy address belongs to the object at ffff880063f876c0
- which belongs to the cache kmalloc-1024 of size 1024
-The buggy address is located 20 bytes inside of
- 1024-byte region [ffff880063f876c0, ffff880063f87ac0)
-The buggy address belongs to the page:
-page:ffffea00018fe180 count:1 mapcount:0 mapping:ffff88006c400ac0
-index:0x0 compound_mapcount: 0
-flags: 0x1fffc0000008100(slab|head)
-raw: 01fffc0000008100 ffffea00018fe108 ffff88006c401848 ffff88006c400ac0
-raw: 0000000000000000 ffff880063f86040 0000000100000007 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff880063f87580: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff880063f87600: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff880063f87680: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
-                                                 ^
- ffff880063f87700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff880063f87780: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+index 986058a..83eef52 100644
+--- a/drivers/vhost/net.c
++++ b/drivers/vhost/net.c
+@@ -69,7 +69,6 @@ MODULE_PARM_DESC(experimental_zcopytx, "Enable Zero Copy TX;"
+ 
+ enum {
+ 	VHOST_NET_FEATURES = VHOST_FEATURES |
+-			 (1ULL << VHOST_NET_F_VIRTIO_NET_HDR) |
+ 			 (1ULL << VIRTIO_NET_F_MRG_RXBUF) |
+ 			 (1ULL << VIRTIO_F_IOMMU_PLATFORM)
+ };
+@@ -1255,15 +1254,11 @@ static int vhost_net_set_features(struct vhost_net *n, u64 features)
+ 			       (1ULL << VIRTIO_F_VERSION_1))) ?
+ 			sizeof(struct virtio_net_hdr_mrg_rxbuf) :
+ 			sizeof(struct virtio_net_hdr);
+-	if (features & (1 << VHOST_NET_F_VIRTIO_NET_HDR)) {
+-		/* vhost provides vnet_hdr */
+-		vhost_hlen = hdr_len;
+-		sock_hlen = 0;
+-	} else {
+-		/* socket provides vnet_hdr */
+-		vhost_hlen = 0;
+-		sock_hlen = hdr_len;
+-	}
++
++        /* socket provides vnet_hdr */
++	vhost_hlen = 0;
++	sock_hlen = hdr_len;
++
+ 	mutex_lock(&n->dev.mutex);
+ 	if ((features & (1 << VHOST_F_LOG_ALL)) &&
+ 	    !vhost_log_access_ok(&n->dev))
+-- 
+2.7.4
