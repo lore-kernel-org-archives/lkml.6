@@ -1,96 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id EQXHIkPzG1t1ZAAAmS7hNA
-	; Sat, 09 Jun 2018 15:34:15 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id SkTYCoEPGlvYZgAAmS7hNA
+	; Fri, 08 Jun 2018 05:09:21 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 7CEE1608C9; Sat,  9 Jun 2018 15:34:15 +0000 (UTC)
+	id F2011607DC; Fri,  8 Jun 2018 05:09:20 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QhjYOJvt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TnIG6EX0"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D47D4606FA;
-	Sat,  9 Jun 2018 15:34:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D47D4606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 5F4F0602FC;
+	Fri,  8 Jun 2018 05:09:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5F4F0602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932813AbeFIPeM (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 11:34:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36498 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932774AbeFIPeJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 11:34:09 -0400
-Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2BDC5204EC;
-        Sat,  9 Jun 2018 15:34:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528558448;
-        bh=U0DY9SVaXcjB5WYRj85Z1UQiNG81oncdN7qbmaE/k9A=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QhjYOJvtL56wrmOVs7fV3tlfkSAj+0sRfBXiKhtMpuhyKQf65gN1fNNuOZQr6S6C+
-         zjGTbKrSgis7y5ixzm4WYAwoR1Ow5dyhzf7dG68nLI+8xSeoh0HRh0/vk1pm29Ubvp
-         rYSpXWwdFhl5sqOKuY27lkEOGp0oETPLUf9d6vHM=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Or Gerlitz <ogerlitz@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 43/48] net : sched: cls_api: deal with egdev path only if needed
-Date: Sat,  9 Jun 2018 17:29:55 +0200
-Message-Id: <20180609145950.731645550@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
-References: <20180609145947.679103414@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1751176AbeFHFJS (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 01:09:18 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:37919 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750781AbeFHFJR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 01:09:17 -0400
+Received: by mail-ua0-f196.google.com with SMTP id 59-v6so8081868uas.5;
+        Thu, 07 Jun 2018 22:09:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=4jkeYeXOhzL/qM8dV2E38BdfyF0jaduBUSfulGwfRT4=;
+        b=TnIG6EX0EjedZpMc3MEWH/x3RpWJDLsxD3Cu731Wj0ZWs1iR42RZjhOr0+7SCZV7El
+         QUSVtzWGLEWg/rEOU4pLpKdw3uSI4PCMBk9qnj16MHZXTxVtuiZ4Pdk3PYdnnWLF+Ct9
+         hZbxqUQAd6q3ifVzAlkBTQILXf7V2h8adySvmzBg9ZuSsenjA+ZVuPP4K6if6q6v/L2E
+         oKtieRorP07W8dGOWgcURRdkWvSQOXvAMxDR5DdwNPNJSCdNDmmRJIekTOgln0S3tS5m
+         aFx8V0WXsqnykWQ2+u7XONjTh1egX1E6ySZZO/e7ChmMvvyELEccFaJSvgtuldqrbClY
+         VaAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=4jkeYeXOhzL/qM8dV2E38BdfyF0jaduBUSfulGwfRT4=;
+        b=fGvt3/m7ZFaLVIodAwnkize+uYXUhHlTF6SwqvGuI6FS7LG63G2Ri38D55ob3PuibJ
+         ppNosZJLEdJEnuOQQ2eXqScK4YcUWx6r6G/6REp1dBsgB7bLDteVQob7UslhzjDpA+ql
+         YNbQfjmbEvGVAwU8ruA5QKsMONY6pCvtvAuv++mX9VgTcQV38duPeIZUWjAafuo6dc1X
+         kCvSNIv7Aggt7LIdFv9bbn6ZniPVrdATbh6paSJnwzSBpamIgnBMd3Mjk7uuHpiGmk/V
+         NBSyN5GFCWfFPAxHhstaj9qGhm6la1ur4fnOlnmdZssyFCt+njQIIpbzQZ5Fya/X3OKi
+         tO8w==
+X-Gm-Message-State: APt69E3F0dusdN2WXNK05V6zl1j2EIEMCW1ajgCUCunE2kN7ZKHz/PGF
+        M9JP75Vq201N3JlCbNeTCYH/RMOcOBhQfWr/T2Gmiy5v
+X-Google-Smtp-Source: ADUXVKLaEDvpRi6FccagkFIzPAfK+gxWcvtlRPNM4menfflHoLyR/gCDLUiZ7P66kuzxgbn5H05qNaSObWbRqiR1mDE=
+X-Received: by 2002:ab0:3141:: with SMTP id e1-v6mr3356946uam.48.1528434555979;
+ Thu, 07 Jun 2018 22:09:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Received: by 2002:a67:5494:0:0:0:0:0 with HTTP; Thu, 7 Jun 2018 22:08:35 -0700 (PDT)
+In-Reply-To: <CADYN=9Ly5UU34CxZFnWfQhNrS8V3gG7=Bdfn9n0h5XphZ8EiVQ@mail.gmail.com>
+References: <20180607105712.553-1-anders.roxell@linaro.org>
+ <CAH3MdRWo0kUYngyAwXP1sOT_XqbxyfTvDd6sNz+qd7LL1T8LUA@mail.gmail.com>
+ <CADYN=9J3wY1f6q4NvH1mHJXnu6GnErOqz75CfzfG1q5-WzcyCg@mail.gmail.com>
+ <CAH3MdRXMHRtK9FJ4UP8Gy-bahCS2oipOY7yLTEqu-x6uOMKLvw@mail.gmail.com> <CADYN=9Ly5UU34CxZFnWfQhNrS8V3gG7=Bdfn9n0h5XphZ8EiVQ@mail.gmail.com>
+From: Y Song <ys114321@gmail.com>
+Date: Thu, 7 Jun 2018 22:08:35 -0700
+Message-ID: <CAH3MdRWaVKrYbR14wjn6YjurcHvOFe-=t6g0Me=9=g+GRXqeeg@mail.gmail.com>
+Subject: Re: [PATCH] selftests: bpf: fix urandom_read build issue
+To: Anders Roxell <anders.roxell@linaro.org>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Shuah Khan <shuah@kernel.org>, netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+On Thu, Jun 7, 2018 at 2:43 PM, Anders Roxell <anders.roxell@linaro.org> wr=
+ote:
+> On 7 June 2018 at 23:17, Y Song <ys114321@gmail.com> wrote:
+>> On Thu, Jun 7, 2018 at 12:07 PM, Anders Roxell <anders.roxell@linaro.org=
+> wrote:
+>>> On 7 June 2018 at 19:52, Y Song <ys114321@gmail.com> wrote:
+>>>> On Thu, Jun 7, 2018 at 3:57 AM, Anders Roxell <anders.roxell@linaro.or=
+g> wrote:
+>>>>> gcc complains that urandom_read gets built twice.
+>>>>>
+>>>>> gcc -o tools/testing/selftests/bpf/urandom_read
+>>>>> -static urandom_read.c -Wl,--build-id
+>>>>> gcc -Wall -O2 -I../../../include/uapi -I../../../lib -I../../../lib/b=
+pf
+>>>>> -I../../../../include/generated  -I../../../include    urandom_read.c
+>>>>> urandom_read -lcap -lelf -lrt -lpthread -o
+>>>>> tools/testing/selftests/bpf/urandom_read
+>>>>> gcc: fatal error: input file
+>>>>> =E2=80=98tools/testing/selftests/bpf/urandom_read=E2=80=99 is the
+>>>>> same as output file
+>>>>> compilation terminated.
+>>>>> ../lib.mk:110: recipe for target
+>>>>> 'tools/testing/selftests/bpf/urandom_read' failed
+>>>>
+>>>> What is the build/make command to reproduce the above failure?
+>>>
+>>> make -C tools/testing/selftests
+>>
+>> Thanks. The patch will break
+>>    make -C tools/testing/selftests/bpf
+>>
+>> [yhs@localhost bpf-next]$ make -C tools/testing/selftests/bpf
+>> make: Entering directory '/home/yhs/work/bpf-next/tools/testing/selftest=
+s/bpf'
+>> gcc -o /urandom_read -static urandom_read.c -Wl,--build-id
+>> /usr/bin/ld: cannot open output file /urandom_read: Permission denied
+>> collect2: error: ld returned 1 exit status
+>> make: *** [Makefile:20: /urandom_read] Error 1
+>> make: Leaving directory '/home/yhs/work/bpf-next/tools/testing/selftests=
+/bpf'
+>> [yhs@localhost bpf-next]$
+>
+> urgh, I'm sorry, missed that.
+>
+>>
+>> Could you still make the above command work?
+>
+> $(TEST_CUSTOM_PROGS): $(OUTPUT)/%: %.c
+>         $(CC) -o $(TEST_CUSTOM_PROGS) -static $< -Wl,--build-id
+>
+> That worked both with:
+> make -C tools/testing/selftests
+> and
+> make -C tools/testing/selftests/bpf
+>
+> for me.
+>
+> what do you think?
 
-------------------
-
-From: Or Gerlitz <ogerlitz@mellanox.com>
-
-[ Upstream commit f8f4bef322e4600c5856911c7a632c0e3da920d6 ]
-
-When dealing with ingress rule on a netdev, if we did fine through the
-conventional path, there's no need to continue into the egdev route,
-and we can stop right there.
-
-Not doing so may cause a 2nd rule to be added by the cls api layer
-with the ingress being the egdev.
-
-For example, under sriov switchdev scheme, a user rule of VFR A --> VFR B
-will end up with two HW rules (1) VF A --> VF B and (2) uplink --> VF B
-
-Fixes: 208c0f4b5237 ('net: sched: use tc_setup_cb_call to call per-block callbacks')
-Signed-off-by: Or Gerlitz <ogerlitz@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/sched/cls_api.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/net/sched/cls_api.c
-+++ b/net/sched/cls_api.c
-@@ -1587,7 +1587,7 @@ int tc_setup_cb_call(struct tcf_block *b
- 		return ret;
- 	ok_count = ret;
- 
--	if (!exts)
-+	if (!exts || ok_count)
- 		return ok_count;
- 	ret = tc_exts_setup_cb_egdev_call(exts, type, type_data, err_stop);
- 	if (ret < 0)
+This indeed works. You can submit a revised patch and add my Ack.
+Acked-by: Yonghong Song <yhs@fb.com>
