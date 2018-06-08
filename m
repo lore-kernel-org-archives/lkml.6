@@ -1,127 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id AGKFN4CAGVuQBAAAmS7hNA
-	; Thu, 07 Jun 2018 18:59:12 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id okVbCp9YGlv7VgAAmS7hNA
+	; Fri, 08 Jun 2018 10:21:19 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id CCFE36089E; Thu,  7 Jun 2018 18:59:12 +0000 (UTC)
+	id 11857607E4; Fri,  8 Jun 2018 10:21:19 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 45B8E601D2;
-	Thu,  7 Jun 2018 18:59:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 45B8E601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 5AC4960590;
+	Fri,  8 Jun 2018 10:21:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5AC4960590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753612AbeFGS7J (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 14:59:09 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39032 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751231AbeFGS7H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 14:59:07 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4386B40122A1;
-        Thu,  7 Jun 2018 18:59:06 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (ovpn-116-135.ams2.redhat.com [10.36.116.135])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C11081C65D;
-        Thu,  7 Jun 2018 18:58:57 +0000 (UTC)
-Subject: Re: [PATCH 03/10] x86/cet: Signal handling for shadow stack
-To: Andy Lutomirski <luto@amacapital.net>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Dmitry Safonov <dsafonov@virtuozzo.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. J. Lu" <hjl.tools@gmail.com>,
-        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        mike.kravetz@oracle.com
-References: <20180607143807.3611-1-yu-cheng.yu@intel.com>
- <20180607143807.3611-4-yu-cheng.yu@intel.com>
- <CALCETrWo77RS_wOzskw5OG-LdC1S-b_NY=uPWUmPbQEnNwANgQ@mail.gmail.com>
-From: Florian Weimer <fweimer@redhat.com>
-Message-ID: <2b920019-cf03-334c-3b6a-b2c6b7f4dfa3@redhat.com>
-Date: Thu, 7 Jun 2018 20:58:56 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <CALCETrWo77RS_wOzskw5OG-LdC1S-b_NY=uPWUmPbQEnNwANgQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 07 Jun 2018 18:59:06 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 07 Jun 2018 18:59:06 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'fweimer@redhat.com' RCPT:''
+        id S1752848AbeFHKVQ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 06:21:16 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:50289 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751145AbeFHKVL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 06:21:11 -0400
+Received: from weser.hi.pengutronix.de ([2001:67c:670:100:fa0f:41ff:fe58:4010])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1fREW3-0008II-Ps; Fri, 08 Jun 2018 12:21:07 +0200
+Message-ID: <1528453265.26356.10.camel@pengutronix.de>
+Subject: Re: [PATCH 2/3] drm/v3d: Remove the bad signaled() implementation.
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Eric Anholt <eric@anholt.net>, dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org
+Date: Fri, 08 Jun 2018 12:21:05 +0200
+In-Reply-To: <20180605190302.18279-2-eric@anholt.net>
+References: <20180605190302.18279-1-eric@anholt.net>
+         <20180605190302.18279-2-eric@anholt.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:fa0f:41ff:fe58:4010
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/07/2018 08:30 PM, Andy Lutomirski wrote:
-> On Thu, Jun 7, 2018 at 7:41 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
->>
->> Set and restore shadow stack pointer for signals.
+Am Dienstag, den 05.06.2018, 12:03 -0700 schrieb Eric Anholt:
+> Since our seqno value comes from a counter associated with the GPU
+> ring, not the entity (aka client), they'll be completed out of order.
+> There's actually no need for this code at all, since we don't have
+> enable_signaling() and thus DMA_FENCE_SIGNALED_BIT will be set before
+> we could be called.
 > 
-> How does this interact with siglongjmp()?
+> Signed-off-by: Eric Anholt <eric@anholt.net>
 
-We plan to use some unused signal mask bits in the jump buffer (we have 
-a lot of those in glibc for some reason) to store the shadow stack pointer.
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
 
-> This patch makes me extremely nervous due to the possibility of ABI
-> issues and CRIU breakage.
+> ---
+>  drivers/gpu/drm/v3d/v3d_drv.h   |  1 -
+>  drivers/gpu/drm/v3d/v3d_fence.c | 13 ++++---------
+>  drivers/gpu/drm/v3d/v3d_gem.c   |  7 ++-----
+>  drivers/gpu/drm/v3d/v3d_irq.c   |  3 ---
+>  4 files changed, 6 insertions(+), 18 deletions(-)
 > 
->> diff --git a/arch/x86/include/uapi/asm/sigcontext.h b/arch/x86/include/uapi/asm/sigcontext.h
->> index 844d60eb1882..6c8997a0156a 100644
->> --- a/arch/x86/include/uapi/asm/sigcontext.h
->> +++ b/arch/x86/include/uapi/asm/sigcontext.h
->> @@ -230,6 +230,7 @@ struct sigcontext_32 {
->>          __u32                           fpstate; /* Zero when no FPU/extended context */
->>          __u32                           oldmask;
->>          __u32                           cr2;
->> +       __u32                           ssp;
->>   };
->>
->>   /*
->> @@ -262,6 +263,7 @@ struct sigcontext_64 {
->>          __u64                           trapno;
->>          __u64                           oldmask;
->>          __u64                           cr2;
->> +       __u64                           ssp;
->>
->>          /*
->>           * fpstate is really (struct _fpstate *) or (struct _xstate *)
->> @@ -320,6 +322,7 @@ struct sigcontext {
->>          struct _fpstate __user          *fpstate;
->>          __u32                           oldmask;
->>          __u32                           cr2;
->> +       __u32                           ssp;
-> 
-> Is it actually okay to modify these structures like this?  They're
-> part of the user ABI, and I don't know whether any user code relies on
-> the size being constant.
-
-Probably not.  Historically, these things have been tacked at the end of 
-the floating point state, see struct _xstate:
-
-         /* New processor state extensions go here: */
-
-However, I'm not sure if this is really ideal because I doubt that 
-everyone who needs the shadow stack pointer also wants to sacrifice 
-space for the AVX-512 save area (which is already a backwards 
-compatibility hazard).  Other architectures have variable offsets and 
-some TLV-style setup here.
-
-Thanks,
-Florian
+> diff --git a/drivers/gpu/drm/v3d/v3d_drv.h
+> b/drivers/gpu/drm/v3d/v3d_drv.h
+> index 26005abd9c5d..f32ac8c98f37 100644
+> --- a/drivers/gpu/drm/v3d/v3d_drv.h
+> +++ b/drivers/gpu/drm/v3d/v3d_drv.h
+> @@ -25,7 +25,6 @@ struct v3d_queue_state {
+>  
+>  	u64 fence_context;
+>  	u64 emit_seqno;
+> -	u64 finished_seqno;
+>  };
+>  
+>  struct v3d_dev {
+> diff --git a/drivers/gpu/drm/v3d/v3d_fence.c
+> b/drivers/gpu/drm/v3d/v3d_fence.c
+> index 087d49c8cb12..bfe31a89668b 100644
+> --- a/drivers/gpu/drm/v3d/v3d_fence.c
+> +++ b/drivers/gpu/drm/v3d/v3d_fence.c
+> @@ -40,19 +40,14 @@ static bool v3d_fence_enable_signaling(struct
+> dma_fence *fence)
+>  	return true;
+>  }
+>  
+> -static bool v3d_fence_signaled(struct dma_fence *fence)
+> -{
+> -	struct v3d_fence *f = to_v3d_fence(fence);
+> -	struct v3d_dev *v3d = to_v3d_dev(f->dev);
+> -
+> -	return v3d->queue[f->queue].finished_seqno >= f->seqno;
+> -}
+> -
+>  const struct dma_fence_ops v3d_fence_ops = {
+>  	.get_driver_name = v3d_fence_get_driver_name,
+>  	.get_timeline_name = v3d_fence_get_timeline_name,
+>  	.enable_signaling = v3d_fence_enable_signaling,
+> -	.signaled = v3d_fence_signaled,
+> +	/* Each of our fences gets signaled as complete by the IRQ
+> +	 * handler, so we rely on the core's tracking of signaling.
+> +	 */
+> +	.signaled = NULL,
+>  	.wait = dma_fence_default_wait,
+>  	.release = dma_fence_free,
+>  };
+> diff --git a/drivers/gpu/drm/v3d/v3d_gem.c
+> b/drivers/gpu/drm/v3d/v3d_gem.c
+> index 9ea83bdb9a30..d06d6697e089 100644
+> --- a/drivers/gpu/drm/v3d/v3d_gem.c
+> +++ b/drivers/gpu/drm/v3d/v3d_gem.c
+> @@ -657,17 +657,14 @@ void
+>  v3d_gem_destroy(struct drm_device *dev)
+>  {
+>  	struct v3d_dev *v3d = to_v3d_dev(dev);
+> -	enum v3d_queue q;
+>  
+>  	v3d_sched_fini(v3d);
+>  
+>  	/* Waiting for exec to finish would need to be done before
+>  	 * unregistering V3D.
+>  	 */
+> -	for (q = 0; q < V3D_MAX_QUEUES; q++) {
+> -		WARN_ON(v3d->queue[q].emit_seqno !=
+> -			v3d->queue[q].finished_seqno);
+> -	}
+> +	WARN_ON(v3d->bin_job);
+> +	WARN_ON(v3d->render_job);
+>  
+>  	drm_mm_takedown(&v3d->mm);
+>  
+> diff --git a/drivers/gpu/drm/v3d/v3d_irq.c
+> b/drivers/gpu/drm/v3d/v3d_irq.c
+> index 77e1fa046c10..e07514eb11b5 100644
+> --- a/drivers/gpu/drm/v3d/v3d_irq.c
+> +++ b/drivers/gpu/drm/v3d/v3d_irq.c
+> @@ -87,15 +87,12 @@ v3d_irq(int irq, void *arg)
+>  	}
+>  
+>  	if (intsts & V3D_INT_FLDONE) {
+> -		v3d->queue[V3D_BIN].finished_seqno++;
+>  		dma_fence_signal(v3d->bin_job->bin.done_fence);
+>  		status = IRQ_HANDLED;
+>  	}
+>  
+>  	if (intsts & V3D_INT_FRDONE) {
+> -		v3d->queue[V3D_RENDER].finished_seqno++;
+>  		dma_fence_signal(v3d->render_job-
+> >render.done_fence);
+> -
+>  		status = IRQ_HANDLED;
+>  	}
+>  
