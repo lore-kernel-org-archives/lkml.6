@@ -1,222 +1,139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id GpgjNTsBGVu1GwAAmS7hNA
-	; Thu, 07 Jun 2018 09:56:11 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 81/3ArGGGlv/fwAAmS7hNA
+	; Fri, 08 Jun 2018 13:39:12 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id C0128607DC; Thu,  7 Jun 2018 09:56:11 +0000 (UTC)
+	id E1543608B8; Fri,  8 Jun 2018 13:39:11 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b="qvycfyae"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PngCa/4G"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 21CA86063F;
-	Thu,  7 Jun 2018 09:56:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 21CA86063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=hartkopp.net
+	by smtp.codeaurora.org (Postfix) with ESMTP id 4B6DE607DC;
+	Fri,  8 Jun 2018 13:39:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4B6DE607DC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932523AbeFGJ4H (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 05:56:07 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.166]:28695 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753397AbeFGJ4G (ORCPT
+        id S1752152AbeFHNjI (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 09:39:08 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:53133 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751019AbeFHNjH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 05:56:06 -0400
-X-Greylist: delayed 364 seconds by postgrey-1.27 at vger.kernel.org; Thu, 07 Jun 2018 05:56:05 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1528365364;
-        s=strato-dkim-0002; d=hartkopp.net;
-        h=In-Reply-To:Date:Message-ID:From:References:Cc:To:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=e2cJbJap2IzSAHassnHTCpr6JA2UcyDpj2zahvze0PM=;
-        b=qvycfyaewk0jzjFWeA1q0DFDxKC+NwMdNyNWtyCCzrnlhyazwQy2aZppw3rJo+P303
-        fQSEz2ulatTvPCHvtyayUFYq55iGyqvgMncwKMykhdd5ELUFqJOX2VucAgvUMYAMdhH/
-        OTJopuORk6Z9ECmDR7VzUcswk3t9w0giXPCE2oOZgA3wTaE9HXWMsDjy0qvhZ/Ug1dNB
-        RAAc7KoXOfz97cN7e0+I+M8PE+Nd62HC7gMxQ977uskU4UA04QnWP//SdDKWDwqKR540
-        jdEAFxUkyQCWt3luqhMkJAkt67csMIiB9pNVjx7Enq+z2A5Q2Jj5Cb36z1o5UnnwjhU4
-        2nUA==
-X-RZG-AUTH: ":P2MHfkW8eP4Mre39l357AZT/I7AY/7nT2yrDxb8mjG14FZxedJy6qgO1rHLMalyLi1fNpX87/zI="
-X-RZG-CLASS-ID: mo00
-Received: from [10.180.29.82]
-        by smtp.strato.de (RZmta 43.10 DYNA|AUTH)
-        with ESMTPSA id j0912bu579nwDuu
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Thu, 7 Jun 2018 11:49:58 +0200 (CEST)
-Subject: Re: [PATCH 0/5] can: enable multi-queue for SocketCAN devices
-To: "Jonas Mark (BT-FIR/ENG1)" <Mark.Jonas@de.bosch.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "hs@denx.de" <hs@denx.de>,
-        "ZHU Yi (BT-FIR/ENG1-Zhu)" <Yi.Zhu5@cn.bosch.com>
-References: <e8c47bca2ea64b5ab900f4f1e98bb405@de.bosch.com>
-From: Oliver Hartkopp <socketcan@hartkopp.net>
-Message-ID: <bb1b5a1c-9f62-a35b-040f-d212d88ffa6c@hartkopp.net>
-Date: Thu, 7 Jun 2018 11:49:53 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 8 Jun 2018 09:39:07 -0400
+Received: by mail-it0-f68.google.com with SMTP id m194-v6so2374691itg.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 06:39:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=ZqVZCdIzSxvJDMcLf9yRwXmG7LoFmAHjcU1sqYdfGco=;
+        b=PngCa/4G9TQ29TNi4eIoMBlv8l4EJB7QDQ3ZPU6dYgViaxhb5P5Xsx969bZCsdzW8J
+         TirSX4FqcA31YAl3wzmmPjM9Tumm6Ckiw84bzQhnq4XD5Ep0ZM5Sx+xNvbHnMiW0F9ve
+         ndAPUBfunX0f5yPpQRPv3uSlM+wJZYGp2mLWs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=ZqVZCdIzSxvJDMcLf9yRwXmG7LoFmAHjcU1sqYdfGco=;
+        b=XEXhNTDJl0mmS+20TiPfL8g5IALA2Y13SmvgbQTeOvRAoOTo0uknl7ADf9vT/sVWwh
+         FHThWuAdwEoBtPMfrgzANDO3ZZOQFzZlqp1Am4nGLtDXKvT9jWFoAGxEkFnTPfqyl+3p
+         4AFseyeO2owINy7b40wzg2gBOe6KrfPBN4saH9Tuyw33vvpUeUleqIVLBvlstC4DmFQp
+         WMnQdBRd/2ALcK5JngcasvqEeAu+Pc0qJoaJp8heellKoX0mPrySQAMrW1ykQhIXgNt9
+         3Zz9hq/o5ybm1VoI3tnx+u15thdFk/0t37BjzG0wEC17QKntBeX3QMBpgT6HX2MR5G/e
+         KIeQ==
+X-Gm-Message-State: APt69E1KLGzGGXVq4rdqIcaCkhQKt6Pbs3F46cdOAgdZE4rtSCinZRA/
+        bod3DSXnkmikXguqCIcl/ybw107aCfAQVxMVSIkCtA==
+X-Google-Smtp-Source: ADUXVKLvXB+aLdmfaFTVj2Wrur/p9F9jOO0pk44TwvngcrUHqxLtcMdF1vMKkzHTWj+I8BsU1zfAtfqD+tXWFBGT6Ls=
+X-Received: by 2002:a24:4001:: with SMTP id n1-v6mr1654823ita.8.1528465146722;
+ Fri, 08 Jun 2018 06:39:06 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <e8c47bca2ea64b5ab900f4f1e98bb405@de.bosch.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a6b:304a:0:0:0:0:0 with HTTP; Fri, 8 Jun 2018 06:38:46 -0700 (PDT)
+In-Reply-To: <20180608133630.GS16089@localhost.localdomain>
+References: <1528459794-13066-1-git-send-email-vincent.guittot@linaro.org>
+ <1528459794-13066-7-git-send-email-vincent.guittot@linaro.org>
+ <20180608123959.GE16089@localhost.localdomain> <CAKfTPtCTMFN2Hed9Ku=VLH2Uwm4sC1kBBa5yRbb20r0o=-R7jw@mail.gmail.com>
+ <20180608125448.GR16089@localhost.localdomain> <20180608133630.GS16089@localhost.localdomain>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Fri, 8 Jun 2018 15:38:46 +0200
+Message-ID: <CAKfTPtDi9JN2gJAZ2BPqVbKwzHxop+4yev++LZsXq-igMT0Djg@mail.gmail.com>
+Subject: Re: [PATCH v6 06/11] cpufreq/schedutil: use dl utilization tracking
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Luca Abeni <luca.abeni@santannapisa.it>,
+        Claudio Scordino <claudio@evidence.eu.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 06/07/2018 10:06 AM, Jonas Mark (BT-FIR/ENG1) wrote:
-> Hi Oliver,
-> 
->>> The driver suite consists of three separate drivers. The following
->>> diagram illustrates the dependencies in layers.
->>>
->>>              /dev/companion       SocketCAN                User Space
->>> -------------------------------------------------------------------
->>>            +----------------+ +---------------+
->>>            | companion-char | | companion-can |
->>>            +----------------+ +---------------+
->>>            +----------------------------------+
->>>            |          companion-spi           |
->>>            +----------------------------------+
->>>            +----------------------------------+
->>>            |     standard SPI subsystem       |
->>>            +----------------------------------+          Linux Kernel
->>> -------------------------------------------------------------------
->>>                  | | | |      | |                            Hardware
->>>               CS-+ | | |      | +-BUSY
->>>               CLK--+ | |      +---REQUEST
->>>               MOSI---+ |
->>>               MISO-----+
->>>
->>> companion-spi
->>>      core.c: handles SPI, sysfs entry and interface to upper layer
->>>      protocol-manager.c: handles protocol with the SPI HW
->>>      queue-manager.c: handles buffering and packets scheduling
->>>
->>> companion-can
->>>      makes use of multi-queue support and allows to use tc to configure
->>>      the queuing discipline (e.g. mqprio). Together with the SO_PRIORITY
->>>      socket option this allows to specify the FIFO a CAN frame shall be
->>>      sent to.
->>>
->>> companion-char
->>>      handles messages to other undisclosed functionality beyond CAN.
-> 
->>>    .../devicetree/bindings/spi/bosch,companion.txt    |   82 ++
->>>    drivers/char/Kconfig                               |    7 +
->>>    drivers/char/Makefile                              |    2 +
->>>    drivers/char/companion-char.c                      |  367 ++++++
->>>    drivers/net/can/Kconfig                            |    8 +
->>>    drivers/net/can/Makefile                           |    1 +
->>>    drivers/net/can/companion-can.c                    |  694 ++++++++++++
+On 8 June 2018 at 15:36, Juri Lelli <juri.lelli@redhat.com> wrote:
+> On 08/06/18 14:54, Juri Lelli wrote:
+>> On 08/06/18 14:48, Vincent Guittot wrote:
+>> > On 8 June 2018 at 14:39, Juri Lelli <juri.lelli@redhat.com> wrote:
+>> > > Hi Vincent,
+>> > >
+>> > > On 08/06/18 14:09, Vincent Guittot wrote:
+>> > >> Now that we have both the dl class bandwidth requirement and the dl class
+>> > >> utilization, we can detect when CPU is fully used so we should run at max.
+>> > >> Otherwise, we keep using the dl bandwidth requirement to define the
+>> > >> utilization of the CPU
+>> > >>
+>> > >> Cc: Ingo Molnar <mingo@redhat.com>
+>> > >> Cc: Peter Zijlstra <peterz@infradead.org>
+>> > >> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+>> > >> ---
+>> > >
+>> > > [...]
+>> > >
+>> > >> @@ -190,20 +192,24 @@ static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
+>> > >>       if (rq->rt.rt_nr_running)
+>> > >>               return sg_cpu->max;
+>> > >>
+>> > >> -     util = sg_cpu->util_dl;
+>> > >> -     util += sg_cpu->util_cfs;
+>> > >> +     util = sg_cpu->util_cfs;
+>> > >>       util += sg_cpu->util_rt;
+>> > >>
+>> > >> +     if ((util + sg_cpu->util_dl) >= sg_cpu->max)
+>> > >> +             return sg_cpu->max;
+>> > >> +
+>> > >
+>> > > Mmm, won't we run at max (or reach max) with a, say, 100ms/500ms DL task
+>> > > running alone?
+>> >
+>> > not for a 100ms running task. You have to run more than 320ms to reach max value
+>> >
+>> > 100ms/500ms will vary between 0 and 907
 >>
->> Please place the companion driver in
->>
->> drivers/net/can/spi/companion.c
->>
->> It also makes more sense in the Kconfig structure.
->>
->> Probably this naming scheme also makes sense for
->>
->> linux/drivers/char/spi/companion.c
->>
->> then ...
->>
->> If not it should be named at least
->>
->> drivers/char/companion-spi.c
->>
->> or
->>
->> drivers/char/spi-companion.c
-> 
-> We intentionally left out the spi in the driver path / name because
-> only the drivers/spi/companion/* driver knows that that it is connected
-> to SPI. The others (drivers/net/can/companion-can.c and
-> drivers/char/companion-char.c) only know the API. This could also be
-> supplied by a driver which talks to the Companion via a different
-> interface. Actually, we started with a UART connection but switched to
-> SPI due to latency issues.
+>> OK, right, my point I guess is still that such a task will run fine at
+>> ~250 and it might be save more energy by doing so?
+>
+> As discussed on IRC, we still endup selecting 1/5 of max freq because
+> util_dl is below max.
+>
+> So, turning point is at ~320ms/[something_bigger], which looks a pretty
+> big runtime, but I'm not sure if having that is OK. Also, it becomes
+> smaller with CFS/RT background "perturbations". Mmm.
+>
+> BTW, adding Luca and Claudio. :)
 
-Ok, got it.
-
-> Should we still change it?
-
-At least I would then vote for
-
-drivers/char/companion.c
-drivers/net/can/companion.c
-
-instead of
-
-drivers/char/companion-char.c
-drivers/net/can/companion-can.c
-
-as you would have companion-users in different driver subsystems that 
-are already clearly referenced by their path.
-
-The modules itself should still be named with companion-can of course 
-(as-is right now).
-
-Btw.
-
-+#define DRIVER_NAME     "bosch,companion-can"
-
-+static const struct can_bittiming_const companion_can_bittiming_const = {
-+	.name      = "bosch,companion",
-
-
-Is there any reason why it's not only "companion-can" or "companion"?
-The fact that the driver is provided by Bosch is visible in the source code.
-
-Best regards,
-Oliver
-
-
-> 
->>>    drivers/net/can/dev.c                              |    8 +-
->>>    drivers/spi/Kconfig                                |    2 +
->>>    drivers/spi/Makefile                               |    2 +
->>>    drivers/spi/companion/Kconfig                      |    5 +
->>>    drivers/spi/companion/Makefile                     |    2 +
->>>    drivers/spi/companion/core.c                       | 1189 ++++++++++++++++++++
->>>    drivers/spi/companion/protocol-manager.c           | 1035 +++++++++++++++++
->>>    drivers/spi/companion/protocol-manager.h           |  348 ++++++
->>>    drivers/spi/companion/protocol.h                   |  273 +++++
->>>    drivers/spi/companion/queue-manager.c              |  146 +++
->>>    drivers/spi/companion/queue-manager.h              |  245 ++++
->>>    include/linux/can/dev.h                            |    7 +-
->>>    include/linux/companion.h                          |  258 +++++
->>>    20 files changed, 4677 insertions(+), 4 deletions(-)
->>>    create mode 100644
->> Documentation/devicetree/bindings/spi/bosch,companion.txt
->>>    create mode 100644 drivers/char/companion-char.c
->>>    create mode 100644 drivers/net/can/companion-can.c
->>>    create mode 100644 drivers/spi/companion/Kconfig
->>>    create mode 100644 drivers/spi/companion/Makefile
->>>    create mode 100644 drivers/spi/companion/core.c
->>>    create mode 100644 drivers/spi/companion/protocol-manager.c
->>>    create mode 100644 drivers/spi/companion/protocol-manager.h
->>>    create mode 100644 drivers/spi/companion/protocol.h
->>>    create mode 100644 drivers/spi/companion/queue-manager.c
->>>    create mode 100644 drivers/spi/companion/queue-manager.h
->>>    create mode 100644 include/linux/companion.h
-> 
-> Greetings,
-> Mark
-> 
-> Building Technologies, Panel Software Fire (BT-FIR/ENG1)
-> Bosch Sicherheitssysteme GmbH | Postfach 11 11 | 85626 Grasbrunn | GERMANY | www.boschsecurity.com
-> 
-> Sitz: Stuttgart, Registergericht: Amtsgericht Stuttgart HRB 23118
-> Aufsichtsratsvorsitzender: Stefan Hartung; Geschäftsführung: Gert van Iperen, Andreas Bartz, Thomas Quante, Bernhard Schuster
-> 
+Argh... I have added few more but forgot Luca and Claudio. I'm very sorry
