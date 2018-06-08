@@ -1,162 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id +d3QGqZ9GVuAXAAAmS7hNA
-	; Thu, 07 Jun 2018 18:47:02 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 5vOZHvLoGVvJEgAAmS7hNA
+	; Fri, 08 Jun 2018 02:24:50 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 4D2676074D; Thu,  7 Jun 2018 18:47:02 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n6mab6q6"
+	id 69BD86074D; Fri,  8 Jun 2018 02:24:50 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 12FAF601C3;
-	Thu,  7 Jun 2018 18:47:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 12FAF601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id CF07360290;
+	Fri,  8 Jun 2018 02:24:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CF07360290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753064AbeFGSq7 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 14:46:59 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:42430 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752577AbeFGSqy (ORCPT
+        id S1752733AbeFHCYc (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 22:24:32 -0400
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:58488 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752341AbeFHCY3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 14:46:54 -0400
-Received: by mail-pf0-f194.google.com with SMTP id w7-v6so5331230pfn.9
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 11:46:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=s3L+IUFYXkB3Vtil9sjO2vfp/MQqKSt9HRxQs9p17fg=;
-        b=n6mab6q6mcsvzONaJ5IvWqo/Okqp9RLGE1RNoUCX70B7ACXS1Rr4kTWn9sCNvK+X0m
-         tpMlvhuMdmuaIDAHybcJkQhfkKXBMzRjfjIxulJWyTpSRHdgLYYQggDHRwvT73U4aCF6
-         nzrlle9mqhYPXDDOp+dEfXeFN+lMnMbSga228Eh02e8b+qcy4sTuqVknQ4saAE43qrfX
-         rl4lVGUAp2BFQ/Gm1NyMj+0DIWRbe7YYk6f97Y/VJc8Da7xZ7gUVVwbiVfAbkZHFLq1B
-         i1RKLSstYC9makeZ2hDcUGtaTk6BRcfu+CZS2ENwmZcV0vKjrpJhLZj92laVCzRkpb1Q
-         1g8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=s3L+IUFYXkB3Vtil9sjO2vfp/MQqKSt9HRxQs9p17fg=;
-        b=Nw3RwAQL4Tqxix0ofBjOOQJkp2xQIoJH7BD/lodLj6t7SJ8fuCjgKycUBhw3JRIVMn
-         za2107nQg9YNfexi53WLit0xPC6mNkQOgLcv1ZqdLKTpBMGGc2CLrzeLdHGv4xUhHbCO
-         L9kiWQ4PF30dvbPvkcH9O4qeddbSS9qGWLbKHL7JbUw/T5MR7p/sZP+p5Ya1/dTS1wW6
-         Hgp5pA1z8Kp3ZpAb4lmlLgEsRojxYM2ieGvKbQ45UlLNee9yxdHf7YZ+HoZRDE8yRLot
-         cYVC13k4JXfYKLcvBvULqDpZLSGPAjSJJ4N3YTgY9lM5o7m9Z/EDkV3ysEWAcRwTkiaa
-         Zw6A==
-X-Gm-Message-State: APt69E0TOMBGPTNLxg94hCCBoNyVQRkwgY5Bj4MKo4DXJofkF0wtFSDp
-        BjRQLoea9ljbPR73wtf6T5OHuNNubBpE0p61oDzO7A==
-X-Google-Smtp-Source: ADUXVKJQH2VYJsxXHNUQUBJok4NtgLo7QPBTCiXg8tiOzgvp+/dR4JF4hiWGqdRjBqgJH3jA/f8fTT2p/+tA7rlM1r4=
-X-Received: by 2002:a65:490d:: with SMTP id p13-v6mr2470795pgs.84.1528397213456;
- Thu, 07 Jun 2018 11:46:53 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a17:90a:d42:0:0:0:0 with HTTP; Thu, 7 Jun 2018 11:46:32
- -0700 (PDT)
-In-Reply-To: <95865cab-e12f-d45b-b6e3-465b624862ba@i-love.sakura.ne.jp>
-References: <000000000000cbd959056d1851ca@google.com> <0c7c5dea-7312-8a59-9d1b-5467f69719bf@I-love.SAKURA.ne.jp>
- <20180528133503.awomzj6djozbo5bv@quack2.suse.cz> <2dda7a11-3f6b-bdba-a68a-7c0694806cc4@I-love.SAKURA.ne.jp>
- <20180531114228.6zx27xxurmz27pke@quack2.suse.cz> <c0fc1c47-0efb-5ded-7f6c-79074ad4deac@i-love.sakura.ne.jp>
- <20180531134212.oo4ra4ypuruab3xp@quack2.suse.cz> <eacb3cbe-3768-82cd-02c1-c8d1b549673f@kernel.dk>
- <95865cab-e12f-d45b-b6e3-465b624862ba@i-love.sakura.ne.jp>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Thu, 7 Jun 2018 20:46:32 +0200
-Message-ID: <CACT4Y+byRRtCA9B9bPG9mjrf3UY3OsGeBsoh8dZ0T+V6tKpTHg@mail.gmail.com>
-Subject: Re: general protection fault in wb_workfn (2)
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
-        syzbot <syzbot+4a7438e774b21ddd8eca@syzkaller.appspotmail.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Tejun Heo <tj@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-block@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 7 Jun 2018 22:24:29 -0400
+Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
+        id 553FA29E59; Thu,  7 Jun 2018 22:24:28 -0400 (EDT)
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Michael Schmitz <schmitzmic@gmail.com>,
+        <linuxppc-dev@lists.ozlabs.org>, <linux-m68k@lists.linux-m68k.org>,
+        <linux-kernel@vger.kernel.org>
+Message-Id: <cover.1528423341.git.fthain@telegraphics.com.au>
+From: Finn Thain <fthain@telegraphics.com.au>
+Subject: [PATCH v2 00/12] macintosh: Resolve various PMU driver problems
+Date: Thu,  7 Jun 2018 22:24:28 -0400 (EDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 5, 2018 at 3:45 PM, Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
-> Dmitry, can you assign VM resources for a git tree for this bug? This bug wants to fight
-> against https://github.com/google/syzkaller/blob/master/docs/syzbot.md#no-custom-patches ...
+This series of patches has the following aims.
 
-Hi Tetsuo,
+1) Eliminate duplicated code. Linux presently has two drivers for
+   the 68HC05-based PMU devices found in Macs: via-pmu and via-pmu68k.
+   There's no value in having separate PMU drivers for each architecture.
 
-Most of the reasons for not doing it still stand. A syzkaller instance
-will produce not just this bug, it will produce hundreds of different
-bugs. Then the question is: what to do with these bugs? Report all to
-mailing lists?
-I think the solution here is just to run syzkaller instance locally.
-It's just a program anybody can run it on any kernel with any custom
-patches. Moreover for local instance it's also possible to limit set
-of tested syscalls to increase probability of hitting this bug and at
-the same time filter out most of other bugs.
+2) Avoid further work on via-pmu68k that's not needed for via-pmu.
 
-Do we have any idea about the guilty subsystem? You mentioned
-bdi_unregister, why? What would be the set of syscalls to concentrate
-on?
-I will do a custom run when I get around to it, if nobody else beats me to it.
+3) Fix some bugs in the via-pmu driver.
+
+4) Enable the /dev/pmu and /proc/pmu/* userspace APIs on m68k Macs
+   by adopting via-pmu.
+
+5) Improve stability on early 100-series PowerBooks by loading no PMU
+   driver at all. Neither via-pmu nor via-pmu68k supports the early
+   M50753-based PMU device found in these models.
+
+6) Eliminate duplicated RTC accessors for PMU and Cuda. Presently these
+   can be found under both arch/m68k and arch/powerpc.
+
+7) Assist the out-of-tree NuBus PowerMac port to support PMU designs
+   shared with the m68k Mac port (e.g. PowerBooks 190 and 5300).
+
+This patch series has been regression tested on various PowerBooks
+(190, 520, 3400, Pismo G3) and PowerMacs (Beige G3, G5). These patches
+did not affect userland utilities. (Note that there is a userland-
+visible change to the contents of /proc/pmu/interrupts.)
+
+Changed since v1:
+1) Added blank lines after 'break' statements in patch 10.
+2) Improved patch description for patch 3.
+3) Added reviewed-by tags.
+4) Split patch 8 to make code review easier.
 
 
-> On 2018/06/01 1:56, Jens Axboe wrote:
->> On 5/31/18 7:42 AM, Jan Kara wrote:
->>> On Thu 31-05-18 22:19:44, Tetsuo Handa wrote:
->>>> On 2018/05/31 20:42, Jan Kara wrote:
->>>>> On Thu 31-05-18 01:00:08, Tetsuo Handa wrote:
->>>>>> So, we have no idea what is happening...
->>>>>> Then, what about starting from temporary debug printk() patch shown below?
->>>>>>
->>>>>> >From 4f70f72ad3c9ae6ce1678024ef740aca4958e5b0 Mon Sep 17 00:00:00 2001
->>>>>> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
->>>>>> Date: Wed, 30 May 2018 09:57:10 +0900
->>>>>> Subject: [PATCH] bdi: Add temporary config for debugging wb_workfn() versus
->>>>>>  bdi_unregister() race bug.
->>>>>>
->>>>>> syzbot is hitting NULL pointer dereference at wb_workfn() [1]. But due to
->>>>>> limitations that syzbot cannot find reproducer for this bug (frequency is
->>>>>> once or twice per a day) nor we can't capture vmcore in the environment
->>>>>> which syzbot is using, for now we need to rely on printk() debugging.
->>>>>>
->>>>>> [1] https://syzkaller.appspot.com/bug?id=e0818ccb7e46190b3f1038b0c794299208ed4206
->>>>>>
->>>>>> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
->>>>>
->>>>> Hum a bit ugly solution but if others are fine with this, I can live with
->>>>> it for a while as well. Or would it be possible for syzkaller to just test
->>>>> some git tree where this patch is included? Then we would not even have to
->>>>> have the extra config option...
->>>>
->>>> If syzbot can reproduce this bug that way. While it is possible to add/remove
->>>> git trees syzbot tests, frequently adding/removing trees is bothering.
->>>>
->>>> syzbot can enable extra config option. Maybe the config name should be
->>>> something like CONFIG_DEBUG_FOR_SYZBOT rather than individual topic.
->>>>
->>>> I think that syzbot is using many VM instances. I don't know how many
->>>> instances will be needed for reproducing this bug within reasonable period.
->>>> More git trees syzbot tests, (I assume that) longer period will be needed
->>>> for reproducing this bug. The most reliable way is to use the shared part
->>>> of all trees (i.e. linux.git).
->>>
->>> I understand this, I'd be just a bit reluctant to merge temporary debug
->>> patches like this to Linus' tree only to revert them later just because
->>> syzkaller... What do others think?
->>
->> I guess I don't understand why having it in Linus's tree would make
->> a difference to syzkaller?
->>
->> If there is a compelling reason why that absolutely has to be done,
->> I don't think it should be accompanied by a special Kconfig option
->> for it. It should just be on unconditionally, with the intent to
->> remove it before release.
->>
->
+Finn Thain (12):
+  macintosh/via-pmu: Fix section mismatch warning
+  macintosh/via-pmu: Add missing mmio accessors
+  macintosh/via-pmu: Don't clear shift register interrupt flag twice
+  macintosh/via-pmu: Enhance state machine with new 'uninitialized'
+    state
+  macintosh/via-pmu: Replace via pointer with via1 and via2 pointers
+  macintosh/via-pmu: Add support for m68k PowerBooks
+  macintosh/via-pmu: Make CONFIG_PPC_PMAC Kconfig deps explicit
+  macintosh/via-pmu68k: Don't load driver on unsupported hardware
+  macintosh/via-pmu: Replace via-pmu68k driver with via-pmu driver
+  macintosh: Use common code to access RTC
+  macintosh/via-pmu: Clean up interrupt statistics
+  macintosh/via-pmu: Disambiguate interrupt statistics
+
+ arch/m68k/configs/mac_defconfig        |   2 +-
+ arch/m68k/configs/multi_defconfig      |   2 +-
+ arch/m68k/mac/config.c                 |   2 +-
+ arch/m68k/mac/misc.c                   | 118 +----
+ arch/powerpc/platforms/powermac/time.c |  74 +--
+ drivers/macintosh/Kconfig              |  19 +-
+ drivers/macintosh/Makefile             |   1 -
+ drivers/macintosh/adb.c                |   2 +-
+ drivers/macintosh/via-cuda.c           |  34 ++
+ drivers/macintosh/via-pmu.c            | 378 ++++++++++-----
+ drivers/macintosh/via-pmu68k.c         | 850 ---------------------------------
+ include/linux/cuda.h                   |   3 +
+ include/linux/pmu.h                    |   3 +
+ include/uapi/linux/pmu.h               |   2 -
+ 14 files changed, 311 insertions(+), 1179 deletions(-)
+ delete mode 100644 drivers/macintosh/via-pmu68k.c
+
+-- 
+2.16.4
