@@ -1,676 +1,269 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id hG8ZNz8GG1tIOwAAmS7hNA
-	; Fri, 08 Jun 2018 22:47:59 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id GYL7DGhBGluJXwAAmS7hNA
+	; Fri, 08 Jun 2018 08:44:05 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id C03A9607E7; Fri,  8 Jun 2018 22:47:59 +0000 (UTC)
+	id D71F86074D; Fri,  8 Jun 2018 08:44:02 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="KdVtBidG"
+	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="LqCiJqPY"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 60D53601C3;
-	Fri,  8 Jun 2018 22:47:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 60D53601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 6E0CB60925;
+	Fri,  8 Jun 2018 08:44:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6E0CB60925
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753216AbeFHWrz (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 18:47:55 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:34708 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753111AbeFHWrx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 18:47:53 -0400
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-        by m0089730.ppops.net (8.16.0.22/8.16.0.22) with SMTP id w58MilfP017226
-        for <linux-kernel@vger.kernel.org>; Fri, 8 Jun 2018 15:47:53 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=facebook;
- bh=7ZZVuNuoMY+x6Zke3Xaxa61EaivSlhtOXCwTLhD8GXI=;
- b=KdVtBidGckhe5HIdM8aBwHOMoVHkJ54gte8DXSJNx8izq1gbV+Crb+f6MS1ic1n/BqfU
- vdYGFT2oUWnPFU/KP1rX2nZ/1yIuEglBxfDoLeodfAhplhsNXfiEjnROeTBPnw3d5hoR
- eVfqIdAKWBiPDu5emrzKaEYa1911Sdzr8oY=
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by m0089730.ppops.net with ESMTP id 2jg0m1gcsh-2
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 15:47:53 -0700
-Received: from mx-out.facebook.com (192.168.52.123) by mail.thefacebook.com
- (192.168.16.22) with Microsoft SMTP Server (TLS) id 14.3.319.2; Fri, 8 Jun
- 2018 15:47:51 -0700
-Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)    id
- 4229662E0FD1; Fri,  8 Jun 2018 15:47:49 -0700 (PDT)
-Smtp-Origin-Hostprefix: devbig
-From: Song Liu <songliubraving@fb.com>
-Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
-To: <linux-kernel@vger.kernel.org>
-CC: Song Liu <songliubraving@fb.com>, <kernel-team@fb.com>,
-        Tejun Heo <tj@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>
-Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH] perf: Sharing PMU counters across compatible events
-Date: Fri, 8 Jun 2018 15:47:46 -0700
-Message-ID: <20180608224746.2143845-1-songliubraving@fb.com>
-X-Mailer: git-send-email 2.9.5
-X-FB-Internal: Safe
+        id S1753048AbeFHIn4 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 04:43:56 -0400
+Received: from mail-eopbgr00101.outbound.protection.outlook.com ([40.107.0.101]:55748
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752999AbeFHInt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 04:43:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pGkhs7/unDtKaKyWhCIIheslI1YumE8Z5GwxUH2UrQM=;
+ b=LqCiJqPYTYvK70CbNtSilxRuy+dwjQBEK6jpM8fK8bjylk0qSD5fsSXsXXt4ysSON4efA6gp6hcVEkfBwIPZVP/xVywIVU9K7jGny1eq4/ftXr5fBzlr0qSi1+HanjwhtAJroasIUWMJmeJjWKeh5Bt/shatFr4zJmoZpqje054=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=ktkhai@virtuozzo.com;
+Received: from [172.16.25.5] (195.214.232.6) by
+ HE1PR0801MB1337.eurprd08.prod.outlook.com (2603:10a6:3:39::27) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.841.13; Fri, 8 Jun 2018 08:43:43 +0000
+Subject: Re: INFO: task hung in ip6gre_exit_batch_net
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: syzbot <syzbot+bf78a74f82c1cf19069e@syzkaller.appspotmail.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        David Miller <davem@davemloft.net>,
+        David Ahern <dsahern@gmail.com>,
+        Florian Westphal <fw@strlen.de>, Jiri Benc <jbenc@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Xin Long <lucien.xin@gmail.com>,
+        mschiffer@universe-factory.net, netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Vladislav Yasevich <vyasevich@gmail.com>
+References: <0000000000006e4595056dd23c16@google.com>
+ <CACT4Y+ZmxgKvgD2RWD1=KEZQqY=vwdhrAZfqMT-gGuj8k8eKKg@mail.gmail.com>
+ <cf729ce5-7948-d475-1b20-f31fb313df88@virtuozzo.com>
+ <CACT4Y+bPrdK7xSeUk=pgVVyaseDZUAvArBA4bEWPsUi7CE3EVw@mail.gmail.com>
+ <e71c0df1-d83c-030c-7c97-13a923aca1b3@virtuozzo.com>
+ <CACT4Y+YBY2yGJBHgqGhAcOguag9JUkGkeOz1acgKd=KR3q+noQ@mail.gmail.com>
+ <04b6ee08-7919-bf2d-5b77-bd346a0bff48@virtuozzo.com>
+ <CACT4Y+b8FkwFe1PCEVDZcTufB4HKVy+ekk=1_YcFH6-RoBGY-w@mail.gmail.com>
+ <6b14e8b9-c335-dd46-98a6-7f58a624fcea@virtuozzo.com>
+ <CACT4Y+a57xaVfph_u78Z+kM8xUF=8fVk-VSA+xqok38Zm4bhFw@mail.gmail.com>
+ <d544eb27-339b-a7df-3143-08ac0fc9bc69@virtuozzo.com>
+ <CACT4Y+Zo1e3VFEtXRUToM6Gk_pD7egdi6c-VbAhCOc-=cdfJWA@mail.gmail.com>
+From: Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <6beeea79-92eb-462c-c5a3-009a38e1ae4f@virtuozzo.com>
+Date: Fri, 8 Jun 2018 11:43:39 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-08_10:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+In-Reply-To: <CACT4Y+Zo1e3VFEtXRUToM6Gk_pD7egdi6c-VbAhCOc-=cdfJWA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [195.214.232.6]
+X-ClientProxiedBy: HE1P192CA0019.EURP192.PROD.OUTLOOK.COM (2603:10a6:3:fe::29)
+ To HE1PR0801MB1337.eurprd08.prod.outlook.com (2603:10a6:3:39::27)
+X-MS-PublicTrafficType: Email
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:HE1PR0801MB1337;
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB1337;3:XARX38fwrmVoKJwzrN+2sjstJ73kvueBJ5JmU/OceHBpNpLYzwxd5WtL6MJoqAg9DZZ8wLJnT05qN6EB4iJn3G+E6fUW7m5SREVD1w5MSgj3/ISsDzr9Gfh2Cl75cd6wN31H50JJ+zfGutraRsJ4X/naQGF3jHPKzLAe2LMxqAa5lrrw81iRKSJnJF82imhP5yOOoou2YxaGoe2dFjMOfTc8SlV2jmSYyPJ5yazX15cZkmvFsowDMetrkwdCkbiA;25:osfaTT6zJGPikgarmPQD2at0MuglH5jfX+ZnkPEar3TA1lrnqaGFDUmo5qcJChaj6Zyuq33oE3/DJS432rhok0J4UzIHCrGyWBYr6bIXii2XaA6b4lUYB7pqZLkYudTRfuc0WHT/R3OwxFnekibvy5Tf1JbDzxymAKJ1//y+R19/8fYe3UN2QXEZpPHdIaAeQ+NdtNiVZOxoK4qiXRcEc9qyI6RCuGONMSRxBB+kW8j+9bRmByt+kbLzHdLr+kcK+FGJ3gBhjt4bUUq2exrvkMkswIJCXkQLzLe6t8DKpMGysLtd5c7OeW4cZmpnNDG6ACYoSBIicnK22XZWpTxuBQ==;31:+aMe2NgoaJsyvPOgtqq6sDUxrpzsoxX2gJX2eVWq9tg/FPQb2HuV9hJgPEywi1exgNGj4AQJCSl2ep1vWIFWzwRje8sn0CgIzEJHEnPoU5k50nja3plXO2kNXguSoDKOLkuQB/lpRPkJHbpMaWCLE29GZAVBQJ4VZFvW6IACurxH8bqcyu0EQyXxEY5ZfDVFqoUAvaSFZBdSR+8YJ/Sj6w67Dk7R7NOGOVBw3z2W/9c=
+X-MS-TrafficTypeDiagnostic: HE1PR0801MB1337:
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB1337;20:/YPD47RTjsZaBuob5y4H/NeLABHCTF6/kEOp4U3UDn9TUdi6cDHsQTh6j1L4OdEo0rBVjygojvgxhLswmdIHgQkEUhhdIzwsmwVVIWTfMVXvfF2B6t+INkUUQBxgW4p8TT9j1/j1IVtX3NWH/jk7Ty/fAsMBoIxRlZSrvCqYKCjYVcxd06dQEIzllbmUMe/gLNR9CEMcf8OvxteClSaN/F9VdbSjnv7lE8GgySp7M83xRgVYl0gBOuRMS8Cwhnyc16xHPJsQXmCVC3Uh5lp2aJISBRk9dMhKRsQOLvXl4gLJS5f1Elb/XjD935WxHz1PaGhwCD05tQkfVeTEBEn5nsz3PPZeP5/kRqYx4W3rlVLmEC5NXswoTX+bms800G0Qkj+rh6DTpdv6ScYiCqGQ6s/5dPEzpLGrl7vGBYvLAOJKsvgJi8cjvW3fsCBw91ubP7G/EX3KxACrdCfmxjxto3ssrVWqM5H5fYSauF640fWgicz4Q7QZtoEzNvuTRJbk;4:MgROikhOM44arbD0Wr0Y2WKCGHWYyAhhMqxXhNaOw/HUxhBdn79Vq2h4tFqF7DUekntmhA9rfYIiipnV6DxZpMbsBklnKQ7YkjgPwyQgna7m75+0gtqTgvx81LhavQDTXHmszI0UBZ/+vXv+OPTdAsMpOpHIUnP5k3T2BT71K4OMpttujy/TirsLGrao8L+wxIGWfvS1TrcJJQ0z1McwvSS4lRoV8xCtmPo6mQiPgJZ/QHqje8wwyMyWm4tCepS3YnetdgmRg250MQn+g2Padnb/tvS0x6zlVqrq/W9NU7J5l2wNWS/NdazoNQkM9a4dYQHs+Qzj6kscdHruQ6TQsCsCkAAajm23R+lojk5mThY=
+X-Microsoft-Antispam-PRVS: <HE1PR0801MB1337B7C57AE61EAA94ECCA6BCD7B0@HE1PR0801MB1337.eurprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(20558992708506)(166708455590820);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231254)(944501410)(52105095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:HE1PR0801MB1337;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0801MB1337;
+X-Forefront-PRVS: 06973FFAD3
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(39830400003)(366004)(376002)(39380400002)(396003)(346002)(189003)(199004)(16526019)(66066001)(15760500003)(31686004)(53936002)(966005)(25786009)(39060400002)(478600001)(6246003)(105586002)(4326008)(7416002)(106356001)(316002)(6666003)(6916009)(305945005)(7736002)(3846002)(6486002)(229853002)(230700001)(64126003)(81166006)(81156014)(6306002)(8676002)(8936002)(76176011)(59450400001)(2486003)(386003)(486006)(53546011)(23676004)(52116002)(52146003)(186003)(50466002)(65826007)(11346002)(956004)(446003)(97736004)(476003)(2616005)(47776003)(36756003)(65806001)(58126008)(16576012)(2906002)(86362001)(55236004)(93886005)(5660300001)(65956001)(6116002)(68736007)(54906003)(31696002)(26005)(77096007)(99710200001);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0801MB1337;H:[172.16.25.5];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: virtuozzo.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtIRTFQUjA4MDFNQjEzMzc7MjM6MTlMdGZVLy84a2N6QmM2dzMrVlZNYlZx?=
+ =?utf-8?B?RkFJRnpaUlZSL043OU9BN2dqazc5TGo3cDVETUhvK0RmU3FYY2E5ZzE1UFhW?=
+ =?utf-8?B?TXhKTkZFTEpaSVRucHM2VVEySmRpZVVkRUpWWitCMGRmT0pUclhEaUg3RmJq?=
+ =?utf-8?B?akZ5ZTB4ZHlmMVlESmJjVHF6THkvUEhteUlIRyt1RUdoOWs5NkJaU3g3MU1w?=
+ =?utf-8?B?bWtCVUdXbUYxek96TWVFb2MrTFhtZ1hYWVQwa1hNeW95SXlMbERUZndIMHpE?=
+ =?utf-8?B?bkJUcm9JTExUd1pmazhFdlUrbEYzTGZhc1A2QnRWYW5xc0l1YlFHYmVRSzVa?=
+ =?utf-8?B?V0NZNExCaEVjeHBIU0FzTVgrTnZGbWExU1lJZFJqZ2dKOEdrck5FUkNmbGlL?=
+ =?utf-8?B?UjNNY2o2N1RFUFUxNVlNalF3NlpIUVQ4WjFSRHVLdXFzdlFGMWpwNzl1dGM2?=
+ =?utf-8?B?MGhmSG95V3E3bzVXZU9VVHgxdlpCYmkyR0owVDBkNnc1V0hTZlFQcVNzQnFo?=
+ =?utf-8?B?MlNiSjZ3di9rUHI3WEpYUyt1T1RoRmNVQ1lGbWtsc3ZzZWptbWJaWFNKN0x5?=
+ =?utf-8?B?ak9DQTJ1bmUzbHVLVVFpWTQ4SWlsZElOVFpSSEVQZi9NT0pKQmtOdXhSZmU0?=
+ =?utf-8?B?MXZZSXdieTdFYXI5OVRnVzg1aEdnMVBZdE1JcnJBeUhhV1dXUmZrdUF0T0pa?=
+ =?utf-8?B?SXM0Q09IS3J6czlac2wwZENxYVBEY1JHdDlvQk9aV2pCaHpFaXZVRmEyamJY?=
+ =?utf-8?B?RW5UVHhJczRYL0ZKZllRc3R2U1RUY2R0UkZJZzVzcWdndWFhdnAyS1hEVDg4?=
+ =?utf-8?B?eXRlSmQwekcvbnVWb1VsYk5ISzdVNERoVkRGS204K1BKbHpSbWg3d2pUd3FK?=
+ =?utf-8?B?MmNGL1N4a3ZnaXN4V3pBWGhXODlIY1RpVmNDdm1PZGx2c0lGajBxWm9YWDMr?=
+ =?utf-8?B?QWhPd3I4NFhodVJaQ2t2clREUzNCSnFyNGp4Y3JxSVppVmFIWGVFYmduWDV1?=
+ =?utf-8?B?UCtkNlpTVDBSK1NENWdCM0lqcUNieTU5WGhUaXVWbDhyQkNieHhRL2Y2b3lG?=
+ =?utf-8?B?MGc1UGFidVRuRnpZV1hHanhXbFdDOVN3enZMOWRYTmxFZThEb0lyMXdTaWdC?=
+ =?utf-8?B?dkZ3Q1hKejZiTDNwNG9PdllicWRja1UxWEpQUVZ5bGV3bHlkK0tjamNncG1i?=
+ =?utf-8?B?VC9BRXdXemhad3hzSnNJQ3hBaFlUVWRVMW1Cb2ZySDdoVkZUMlVKU0VYMFYr?=
+ =?utf-8?B?UGx1b0ZjQXFFR3VxaytZMC9lRTNveTVka0hDMVU5SExDblJoK0JlcFJjVXBY?=
+ =?utf-8?B?RGNVNWNlaEV2Z2lFdTltT3hGKy9JMnByaVZvMEtXRDNaUUNaRGo0b0lrODBC?=
+ =?utf-8?B?RWkxME9qOWYrSmtyOVhteWZFWmtIUXZIVUVhaDJGTFBxbWYvcUxKZEQ5M2Yw?=
+ =?utf-8?B?NEVrb1YxancvUWlDNDBPdWg3YWJBYlp1Qjd1TWROVEVWS2xZS3R1TytVRkJ2?=
+ =?utf-8?B?RFlzNUM0eXdFbmt5b0VRRlVEaEJZZ3B0Z0lnUTdJY3ZGa1ovUU5NcnEya3E5?=
+ =?utf-8?B?ZkNoUmVKVXVRZUlCc1RkVEl2WVVjSHdBaHRwU2tYU0Myb3hFNHdSMzRhUGg3?=
+ =?utf-8?B?NTVqS0RaL2lZWVI2cXRVQzV2TGEwVHZTS0hBMkYrZTNnR2hLcEtpcHg3OFNr?=
+ =?utf-8?B?eEpXU2cvZ2ViOUEzR0YzZmxmWVBLWUxoTjU1ai91Tjh5clVha09WSFJmVC9k?=
+ =?utf-8?B?bjh0WWY3QTZnbWVsZUN0RDIxRVB1T2E3SE4zMk0vaEZlZW10dVVUc3dZaWdU?=
+ =?utf-8?B?djVacThHZWlWMWZnYlFMZGh0a2gwWlhQM2J5Z2tZc1QvVjd4QlMxK25ScklE?=
+ =?utf-8?B?MVZYK0lwcDE1N0pOUDJVczB4VTNuU253YlltLzZNbms3RXJBNVRmdGhEY0Ur?=
+ =?utf-8?B?RDVudjlNa3RWTXozaTgrcHliTHZmWGRuQ21DODE1ZFliMG1BWnQyRWs3WDZD?=
+ =?utf-8?B?NFZTN05wL2kxS3V5M0RQYlZrcmlCcjM2TXRzbWs2MkVCbmw0TDNORjhDQ1JY?=
+ =?utf-8?B?bHRJN29idWhSeitmUGxUKzBVYTNmYTJGTGtxdXFuWkpSOWoxclh2YWxsQUVj?=
+ =?utf-8?B?d3V4aE1yWVYrVkJic1YxdEVheGdjYjIvNGdwTFNYNzRkekJlNWdObU94Q3Q5?=
+ =?utf-8?Q?HfNV2V2LK0J8pipJ4rRgC1Dc9DKulRMXmb2zt2FYNAU0=3D?=
+X-Microsoft-Antispam-Message-Info: d3eEoUpj7xuUMplnZhGwR6O2npI+eOEO2O6PFUHBqrMxQpRGHE6F28jyb3jwiCNfHp/1XCfILXjbvpUF0OIB9bGxLGGXZ8N9NbiGKyoU77t1e2MktbG84xC3SWOmx/a2lbJ31IuxPr8UQmlo3gYipZ+sOzzhAxGUVZvAO7XZlfzyXZnuLfN6/saz0Zp671YZ
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB1337;6:4Dy58BeK3V/BT1PPWPrGJRDLcETO5axp9rfxtK0WvZfRAGfEEyAjiWFQVLo5vbvHORLf3q+nnzSEGnOnpk8sk+d2pBOnK8L1vWK8UTZJztWErA0h287Nl+DTYl6V1FufyOOMfoGKv2/o28ZkHSOIsx+iKuw1gp6QsfE3uZiIIGLXWyWg+4/5Zaan7nmM0wmWi4BRlk4HHD6JMxoUCqtwHBrhhT9vwvbAO0FEcwSWQOpnBF1BsYgVx02TkVaERt1OVgfngFtfPubqRncCl4Ef59sw/Rgml+PDqV8ooboKgcn1alCS41u4nQz5Sw7SmGl7x+ffJi+XhomBx1iSgRPHtDnNswG5eRpkDRikupT5CZBl8XzY7qaNXLVUrIOrQ0aIMJUJ8JMxTc04dwl9K4k8lA18wnKqztiB4nHIhuq6mIvhVrY131nVZ2LwgmuKv4X/IXdAigqT9DIvdtIEcgXxIQ==;5:vCotUG6a1VbKuLqt+tQJJrjCk+79tDgVAcUmkyiHa/B+NAZkI5seATZCQKy4g7PcPvM24Cthl0+AgCUDejbOND7yWRlOGYm3/qHXb+XI7wE4SE3rH2Ge2GD40NBdW+YD5Quz9hmpbzhnRzIyUlB76ECVEjmeQNbHr1TdOALQALw=;24:+n9UJHXKOlkL4R7wGqegiRqHzwNCwbW5tfvlrTqQZPCWfDOZM+U8yltjHtHTnfKZHCFhko99r09HiTw8mQTfW8OUuQu07yu4hYUIVdFY3j0=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB1337;7:CT37vj45laEupFzuu4GWij5jTBzw3uWrufFkWSlngW81U405ZwAonqvMjcUZClppOaKZqy8F55HjsC4/GxWrlD0Z0CO2V6U/KKQzDjQ7ccYtCoLpe005+PnbVpf0zquphoBNyxUysbsvJmp0FTTueieIZEEInwTNvDwrJIJMtNp5vuo8ujTLPH6l0zuC4ahWukgMBdsCTSl3YytxRTSOQD0S+FvHWOvA9y86htdmxVoSaoe37Q9t9gTrIYinY0+J;20:n4DyG5NjfJX21fvfHBziQ07ltSMUnf50zCGTlqIZn+nZkNUtv+UXtXJwwqvVDKu+obPlYtE+pJpJR9LUgkO5Jen1nCRB4QHBqjwX0PILqYFNM+1BerqtoFHTzDwXGSq0A5l6L0LIpcQSP3f9PNueZGADDWvrfly5EtDXTyJiKl0=
+X-MS-Office365-Filtering-Correlation-Id: 268e6d48-2117-4aba-6425-08d5cd1bf155
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jun 2018 08:43:43.4821 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 268e6d48-2117-4aba-6425-08d5cd1bf155
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0801MB1337
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch tries to enable PMU sharing. To make perf event scheduling
-fast, we use special data structures.
+On 08.06.2018 11:38, Dmitry Vyukov wrote:
+> On Fri, Jun 8, 2018 at 10:31 AM, Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+>>>>>>>>>> Hi, Dmirty!
+>>>>>>>>>>
+>>>>>>>>>> On 04.06.2018 18:22, Dmitry Vyukov wrote:
+>>>>>>>>>>> On Mon, Jun 4, 2018 at 5:03 PM, syzbot
+>>>>>>>>>>> <syzbot+bf78a74f82c1cf19069e@syzkaller.appspotmail.com> wrote:
+>>>>>>>>>>>> Hello,
+>>>>>>>>>>>>
+>>>>>>>>>>>> syzbot found the following crash on:
+>>>>>>>>>>>>
+>>>>>>>>>>>> HEAD commit:    bc2dbc5420e8 Merge branch 'akpm' (patches from Andrew)
+>>>>>>>>>>>> git tree:       upstream
+>>>>>>>>>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=164e42b7800000
+>>>>>>>>>>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=982e2df1b9e60b02
+>>>>>>>>>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=bf78a74f82c1cf19069e
+>>>>>>>>>>>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>>>>>>>>>>>>
+>>>>>>>>>>>> Unfortunately, I don't have any reproducer for this crash yet.
+>>>>>>>>>>>>
+>>>>>>>>>>>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>>>>>>>>>>>> Reported-by: syzbot+bf78a74f82c1cf19069e@syzkaller.appspotmail.com
+>>>>>>>>>>>
+>>>>>>>>>>> Another hang on rtnl lock:
+>>>>>>>>>>>
+>>>>>>>>>>> #syz dup: INFO: task hung in netdev_run_todo
+>>>>>>>>>>>
+>>>>>>>>>>> May be related to "unregister_netdevice: waiting for DEV to become free":
+>>>>>>>>>>> https://syzkaller.appspot.com/bug?id=1a97a5bd119fd97995f752819fd87840ab9479a9
+>>>>>>>>>
+>>>>>>>>> netdev_wait_allrefs does not hold rtnl lock during waiting, so it must
+>>>>>>>>> be something different.
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>>>> Any other explanations for massive hangs on rtnl lock for minutes?
+>>>>>>>>>>
+>>>>>>>>>> To exclude the situation, when a task exists with rtnl_mutex held:
+>>>>>>>>>>
+>>>>>>>>>> would the pr_warn() from print_held_locks_bug() be included in the console output
+>>>>>>>>>> if they appear?
+>>>>>>>>>
+>>>>>>>>> Yes, everything containing "WARNING:" is detected as bug.
+>>>>>>>>
+>>>>>>>> OK, then dead task not releasing the lock is excluded.
+>>>>>>>>
+>>>>>>>> One more assumption: someone corrupted memory around rtnl_mutex and it looks like locked.
+>>>>>>>> (I track lockdep "(rtnl_mutex){+.+.}" prints in initial message as "nobody owns rtnl_mutex").
+>>>>>>>> There may help a crash dump of the VM.
+>>>>>>>
+>>>>>>> I can't find any legend for these +'s and .'s, but {+.+.} is present
+>>>>>>> in large amounts in just any task hung report for different mutexes,
+>>>>>>> so I would not expect that it means corruption.
+>>>>>>>
+>>>>>>> Are dozens of known corruptions that syzkaller can trigger. But
+>>>>>>> usually they are reliably caught by KASAN. If any of them would lead
+>>>>>>> to silent memory corruption, we would got dozens of assorted crashes
+>>>>>>> throughout the kernel. We've seen that at some points, but not
+>>>>>>> recently. So I would assume that memory is not corrupted in all these
+>>>>>>> cases:
+>>>>>>> https://syzkaller.appspot.com/bug?id=2503c576cabb08d41812e732b390141f01a59545
+>>>>>>
+>>>>>> This BUG clarifies the {+.+.}:
+>>>>>>
+>>>>>> 4 locks held by kworker/0:145/381:
+>>>>>>  #0:  ((wq_completion)"hwsim_wq"){+.+.}, at: [<000000003f9487f0>] work_static include/linux/workqueue.h:198 [inline]
+>>>>>>  #0:  ((wq_completion)"hwsim_wq"){+.+.}, at: [<000000003f9487f0>] set_work_data kernel/workqueue.c:619 [inline]
+>>>>>>  #0:  ((wq_completion)"hwsim_wq"){+.+.}, at: [<000000003f9487f0>] set_work_pool_and_clear_pending kernel/workqueue.c:646 [inline]
+>>>>>>  #0:  ((wq_completion)"hwsim_wq"){+.+.}, at: [<000000003f9487f0>] process_one_work+0xb12/0x1bb0 kernel/workqueue.c:2084
+>>>>>>  #1:  ((work_completion)(&data->destroy_work)){+.+.}, at: [<00000000bbdd2115>] process_one_work+0xb89/0x1bb0 kernel/workqueue.c:2088
+>>>>>>  #2:  (rtnl_mutex){+.+.}, at: [<000000009c9d14f8>] rtnl_lock+0x17/0x20 net/core/rtnetlink.c:74
+>>>>>>  #3:  (rcu_sched_state.exp_mutex){+.+.}, at: [<000000001ba1a807>] exp_funnel_lock kernel/rcu/tree_exp.h:272 [inline]
+>>>>>>  #3:  (rcu_sched_state.exp_mutex){+.+.}, at: [<000000001ba1a807>] _synchronize_rcu_expedited.constprop.72+0x9fa/0xac0 kernel/rcu/tree_exp.h:596
+>>>>>>
+>>>>>> There we have rtnl_mutex locked and the {..} is like above. It's definitely locked
+>>>>>> since there is one more lock after it.
+>>>>>>
+>>>>>> This BUG happen because of there are many rtnl_mutex waiters while owner
+>>>>>> is synchronizing RCU. Rather clear for me in comparison to the topic's hung.
+>>>>>
+>>>>>
+>>>>> You mean that it's not hanged, but rather needs more than 2 minutes to
+>>>>> complete, right?
+>>>>
+>>>> Yeah, I think, this is possible. I've seen the situations like that.
+>>>> Let synchronize_rcu_expedited() is executed for X seconds. Then,
+>>>> it's need just 120/x calls of "this function under rtnl_mutex" to make
+>>>> a soft lockup of someone else who wants the mutex too.
+>>>>
+>>>> Also, despite the CFS is fair scheduler, in case of the calls are
+>>>> made from workqueue, every work will cause sleep. So, every work
+>>>> will be executed in separate worker task. Every worker will haved its
+>>>> own time slice. This increases the probability these tasks will
+>>>> take cpu time before the task in the header of the hang.
+>>>
+>>>
+>>> OK, let's stick with this theory for now. Looking at the crash frequencies here:
+>>> https://syzkaller.appspot.com/bug?id=2503c576cabb08d41812e732b390141f01a59545
+>>> I can actually believe that this is just flakes due to too slow execution.
+>>>
+>>> I've noted that we need either reduce load and/or increase timeouts:
+>>> https://github.com/google/syzkaller/issues/516#issuecomment-395685629
+>>
+>> Hm, I'm not sure we should hide such the situations from syzbot,
+>> because the load like this may occur in real life on real workload.
+>> They may help us to understand whether rtnl_mutex already needs
+>> a redesign came from this statistics. Also, these hungs may happen
+>> in a place, which can be rewritten without rtnl_mutex, so we focus
+>> attention on it.
+> 
+> If somebody wants to act on these reports:
+> https://syzkaller.appspot.com/bug?id=2503c576cabb08d41812e732b390141f01a59545
+> it's even better. The point is that testing must not have false
+> positives, one way or another. If we do nothing then syzbot will
+> slowly discover all 250 usages of rtnl_lock and produce unique bugs
+> for them. Each and every of these bug reports will need to handled by
+> somebody.
+> 
+> Does somebody want to act on these and improve rtnl performance in
+> foreseeable future?
 
-An array of "struct perf_event_dup" is added to the perf_event_context,
-to remember all the duplicated events under this ctx. All the events
-under this ctx has a "dup_id" pointing to its perf_event_dup. Compatible
-events under the same ctx share the same perf_event_dup. The following
-figure shows a simplified version of the data structure.
+I just analyzed this question a little bit, and it looks like only
+the preparations for improving the performance will take much much time.
+And the performance won't change till preparations are finished.
+So, this looks like "not a foreseeable future".
 
-      ctx ->  perf_event_dup -> master
-                     ^
-                     |
-         perf_event /|
-                     |
-         perf_event /
-
-Connection among perf_event and perf_event_dup are built when events are
-added or removed from the ctx. So these are not on the critical path of
-schedule or perf_rotate_context().
-
-On the critical paths (add, del read), sharing PMU counters doesn't
-increase the complexity. Helper functions event_pmu_[add|del|read]() are
-introduced to cover these cases. All these functions have O(1) time
-complexity.
-
-We allocate a separate perf_event for perf_event_dup->master. This needs
-extra attention, because perf_event_alloc() may sleep. To allocate the
-master event properly, a new pointer, tmp_master, is added to perf_event.
-tmp_master carries a separate perf_event into list_[add|del]_event().
-The master event has valid ->ctx and holds ctx->refcount.
-
-Details about the handling of the master event is added to
-include/linux/perf_event.h, before struct perf_event_dup.
-
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
----
- include/linux/perf_event.h |  61 ++++++++++
- kernel/events/core.c       | 284 +++++++++++++++++++++++++++++++++++++++++++--
- 2 files changed, 335 insertions(+), 10 deletions(-)
-
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index bea0b0c..75ed2ad 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -695,6 +695,12 @@ struct perf_event {
- #endif
- 
- 	struct list_head		sb_list;
-+
-+	/* for PMU sharing */
-+	struct perf_event		*tmp_master;
-+	u64				dup_id;
-+	u64				dup_base_count;
-+	u64				dup_base_child_count;
- #endif /* CONFIG_PERF_EVENTS */
- };
- 
-@@ -704,6 +710,58 @@ struct perf_event_groups {
- 	u64		index;
- };
- 
-+/*
-+ * Sharing PMU across compatible events
-+ *
-+ * If two perf_events in the same perf_event_context are counting same
-+ * hardware events (instructions, cycles, etc.), they could share the
-+ * hardware PMU counter.
-+ *
-+ * When a perf_event is added to the ctx (list_add_event), it is compared
-+ * against other events in the ctx. If they can share the PMU counter,
-+ * a perf_event_dup is allocated to represent the sharing.
-+ *
-+ * Each perf_event_dup has a virtual master event, which is called by
-+ * pmu->add() and pmu->del(). We cannot call perf_event_alloc() in
-+ * list_add_event(), so it is allocated and carried by event->tmp_master
-+ * into list_add_event().
-+ *
-+ * Virtual master in different cases/paths:
-+ *
-+ * < I > perf_event_open() -> close() path:
-+ *
-+ * 1. Allocated by perf_event_alloc() in sys_perf_event_open();
-+ * 2. event->tmp_master->ctx assigned in perf_install_in_context();
-+ * 3.a. if used by ctx->dup_events, freed in perf_event_release_kernel();
-+ * 3.b. if not used by ctx->dup_events, freed in perf_event_open().
-+ *
-+ * < II > inherit_event() path:
-+ *
-+ * 1. Allocated by perf_event_alloc() in inherit_event();
-+ * 2. tmp_master->ctx assigned in inherit_event();
-+ * 3.a. if used by ctx->dup_events, freed in perf_event_release_kernel();
-+ * 3.b. if not used by ctx->dup_events, freed in inherit_event().
-+ *
-+ * < III > perf_pmu_migrate_context() path:
-+ * all dup_events removed during migration (no sharing after the move).
-+ *
-+ * < IV > perf_event_create_kernel_counter() path:
-+ * not supported yet.
-+ */
-+struct perf_event_dup {
-+	/*
-+	 * master event being called by pmu->add() and pmu->del().
-+	 * This event is allocated with perf_event_alloc(). When
-+	 * attached to a ctx, this event should hold ctx->refcount.
-+	 */
-+	struct perf_event       *master;
-+	/* number of events in the ctx that shares the master */
-+	int			total_event_count;
-+	/* number of active events of the master */
-+	int			active_event_count;
-+};
-+
-+#define MAX_PERF_EVENT_DUP_PER_CTX 4
- /**
-  * struct perf_event_context - event context structure
-  *
-@@ -759,6 +817,9 @@ struct perf_event_context {
- #endif
- 	void				*task_ctx_data; /* pmu specific data */
- 	struct rcu_head			rcu_head;
-+
-+	/* for PMU sharing. array is needed for O(1) access */
-+	struct perf_event_dup		dup_events[MAX_PERF_EVENT_DUP_PER_CTX];
- };
- 
- /*
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 08f5e1b..e9cd752 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -1655,6 +1655,146 @@ perf_event_groups_next(struct perf_event *event)
- 		event = rb_entry_safe(rb_next(&event->group_node),	\
- 				typeof(*event), group_node))
- 
-+static void _free_event(struct perf_event *event);
-+
-+
-+/* free event->tmp_master */
-+static inline void perf_event_free_tmp_master(struct perf_event *event)
-+{
-+	if (event->tmp_master) {
-+		_free_event(event->tmp_master);
-+		event->tmp_master = NULL;
-+	}
-+}
-+
-+static inline u64 dup_read_count(struct perf_event_dup *dup)
-+{
-+	return local64_read(&dup->master->count);
-+}
-+
-+static inline u64 dup_read_child_count(struct perf_event_dup *dup)
-+{
-+	return atomic64_read(&dup->master->child_count);
-+}
-+
-+/* Returns whether a perf_event can share PMU counter with other events */
-+static inline bool perf_event_can_share(struct perf_event *event)
-+{
-+	/* only do sharing for hardware events */
-+	if (is_software_event(event))
-+		return false;
-+
-+	/*
-+	 * limit sharing to counting events.
-+	 * perf-stat sets PERF_SAMPLE_IDENTIFIER for counting events, so
-+	 * let that in.
-+	 */
-+	if (event->attr.sample_type & ~PERF_SAMPLE_IDENTIFIER)
-+		return false;
-+
-+	return true;
-+}
-+
-+/*
-+ * Returns whether the two events can share a PMU counter.
-+ *
-+ * Note: This function does NOT check perf_event_can_share() for
-+ * the two events, they should be checked before this function
-+ */
-+static inline bool perf_event_compatible(struct perf_event *event_a,
-+					 struct perf_event *event_b)
-+{
-+	return event_a->attr.type == event_b->attr.type &&
-+		event_a->attr.config == event_b->attr.config &&
-+		event_a->attr.config1 == event_b->attr.config1 &&
-+		event_a->attr.config2 == event_b->attr.config2;
-+}
-+
-+/*
-+ * After adding a event to the ctx, try find compatible event(s).
-+ *
-+ * This function should only be called at the end of list_add_event().
-+ * Master event cannot be allocated or freed within this function. To add
-+ * new master event, the event should already have a master event
-+ * allocated (event->tmp_master).
-+ */
-+static inline void perf_event_setup_dup(struct perf_event *event,
-+					struct perf_event_context *ctx)
-+
-+{
-+	struct perf_event *tmp;
-+	int empty_slot = -1;
-+	int match;
-+	int i;
-+
-+	if (!perf_event_can_share(event))
-+		goto not_dup;
-+
-+	/* look for sharing with existing dup events */
-+	for (i = 0; i < MAX_PERF_EVENT_DUP_PER_CTX; i++) {
-+		if (ctx->dup_events[i].master == NULL) {
-+			if (empty_slot == -1)
-+				empty_slot = i;
-+			continue;
-+		}
-+
-+		if (perf_event_compatible(event, ctx->dup_events[i].master)) {
-+			event->dup_id = i;
-+			ctx->dup_events[i].total_event_count++;
-+			return;
-+		}
-+	}
-+
-+	if (!event->tmp_master ||  /* perf_event_alloc() failed */
-+	    empty_slot == -1)      /* no available dup_event */
-+		goto not_dup;
-+
-+	match = 0;
-+	/* look for dup with other events */
-+	list_for_each_entry(tmp, &ctx->event_list, event_entry) {
-+		if (tmp == event || tmp->dup_id != -1 ||
-+		    !perf_event_can_share(tmp) ||
-+		    !perf_event_compatible(event, tmp))
-+			continue;
-+
-+		tmp->dup_id = empty_slot;
-+		match++;
-+	}
-+
-+	/* found at least one dup */
-+	if (match) {
-+		ctx->dup_events[empty_slot].master = event->tmp_master;
-+		ctx->dup_events[empty_slot].total_event_count = match + 1;
-+		event->dup_id = empty_slot;
-+		event->tmp_master = NULL;
-+		return;
-+	}
-+
-+not_dup:
-+	event->dup_id = -1;
-+}
-+
-+/*
-+ * Remove the event from ctx->dup_events.
-+ * This function should only be called from list_del_event(). Similar to
-+ * perf_event_setup_dup(), we cannot call _free_event(master). If a master
-+ * event should be freed, it is carried out of this function by the event
-+ * (event->tmp_master).
-+ */
-+static void perf_event_remove_dup(struct perf_event *event,
-+				  struct perf_event_context *ctx)
-+
-+{
-+	if (event->dup_id == -1)
-+		return;
-+
-+	if (--ctx->dup_events[event->dup_id].total_event_count == 0) {
-+		event->tmp_master = ctx->dup_events[event->dup_id].master;
-+		ctx->dup_events[event->dup_id].master = NULL;
-+	}
-+	event->dup_id = -1;
-+}
-+
- /*
-  * Add a event from the lists for its context.
-  * Must be called with ctx->mutex and ctx->lock held.
-@@ -1687,6 +1827,7 @@ list_add_event(struct perf_event *event, struct perf_event_context *ctx)
- 		ctx->nr_stat++;
- 
- 	ctx->generation++;
-+	perf_event_setup_dup(event, ctx);
- }
- 
- /*
-@@ -1853,6 +1994,7 @@ list_del_event(struct perf_event *event, struct perf_event_context *ctx)
- 	WARN_ON_ONCE(event->ctx != ctx);
- 	lockdep_assert_held(&ctx->lock);
- 
-+	perf_event_remove_dup(event, ctx);
- 	/*
- 	 * We can have double detach due to exit/hot-unplug + close.
- 	 */
-@@ -1982,6 +2124,92 @@ event_filter_match(struct perf_event *event)
- 	       perf_cgroup_match(event) && pmu_filter_match(event);
- }
- 
-+/* PMU sharing aware version of event->pmu->add() */
-+static int event_pmu_add(struct perf_event *event,
-+			 struct perf_event_context *ctx)
-+{
-+	struct perf_event_dup *dup;
-+	int ret;
-+
-+	/* no sharing, just do event->pmu->add() */
-+	if (event->dup_id == -1)
-+		return event->pmu->add(event, PERF_EF_START);
-+
-+	dup = &ctx->dup_events[event->dup_id];
-+
-+	if (dup->active_event_count) {
-+		/* already enabled */
-+		dup->active_event_count++;
-+		dup->master->pmu->read(dup->master);
-+		event->dup_base_count = dup_read_count(dup);
-+		event->dup_base_child_count = dup_read_child_count(dup);
-+		return 0;
-+	}
-+
-+	/* try add master */
-+	ret = event->pmu->add(dup->master, PERF_EF_START);
-+
-+	if (!ret) {
-+		dup->active_event_count = 1;
-+		event->pmu->read(dup->master);
-+		event->dup_base_count = dup_read_count(dup);
-+		event->dup_base_child_count = dup_read_child_count(dup);
-+	}
-+	return ret;
-+}
-+
-+/*
-+ * sync data count from dup->master to event, called on event_pmu_read()
-+ * and event_pmu_del()
-+ */
-+static void event_sync_dup_count(struct perf_event *event,
-+				 struct perf_event_dup *dup)
-+{
-+	u64 new_count;
-+	u64 new_child_count;
-+
-+	event->pmu->read(dup->master);
-+	new_count = dup_read_count(dup);
-+	new_child_count = dup_read_child_count(dup);
-+
-+	local64_add(new_count - event->dup_base_count, &event->count);
-+	atomic64_add(new_child_count - event->dup_base_child_count,
-+		     &event->child_count);
-+
-+	event->dup_base_count = new_count;
-+	event->dup_base_child_count = new_child_count;
-+}
-+
-+/* PMU sharing aware version of event->pmu->del() */
-+static void event_pmu_del(struct perf_event *event,
-+			  struct perf_event_context *ctx)
-+{
-+	struct perf_event_dup *dup;
-+
-+	if (event->dup_id == -1) {
-+		event->pmu->del(event, 0);
-+		return;
-+	}
-+
-+	dup = &ctx->dup_events[event->dup_id];
-+	event_sync_dup_count(event, dup);
-+	if (--dup->active_event_count == 0)
-+		event->pmu->del(dup->master, 0);
-+}
-+
-+/* PMU sharing aware version of event->pmu->read() */
-+static void event_pmu_read(struct perf_event *event)
-+{
-+	struct perf_event_dup *dup;
-+
-+	if (event->dup_id == -1) {
-+		event->pmu->read(event);
-+		return;
-+	}
-+	dup = &event->ctx->dup_events[event->dup_id];
-+	event_sync_dup_count(event, dup);
-+}
-+
- static void
- event_sched_out(struct perf_event *event,
- 		  struct perf_cpu_context *cpuctx,
-@@ -2004,7 +2232,7 @@ event_sched_out(struct perf_event *event,
- 
- 	perf_pmu_disable(event->pmu);
- 
--	event->pmu->del(event, 0);
-+	event_pmu_del(event, ctx);
- 	event->oncpu = -1;
- 
- 	if (event->pending_disable) {
-@@ -2276,7 +2504,7 @@ event_sched_in(struct perf_event *event,
- 
- 	perf_log_itrace_start(event);
- 
--	if (event->pmu->add(event, PERF_EF_START)) {
-+	if (event_pmu_add(event, ctx)) {
- 		perf_event_set_state(event, PERF_EVENT_STATE_INACTIVE);
- 		event->oncpu = -1;
- 		ret = -EAGAIN;
-@@ -2561,6 +2789,10 @@ perf_install_in_context(struct perf_event_context *ctx,
- 	 * Ensures that if we can observe event->ctx, both the event and ctx
- 	 * will be 'complete'. See perf_iterate_sb_cpu().
- 	 */
-+	if (event->tmp_master) {
-+		event->tmp_master->ctx = ctx;
-+		get_ctx(ctx);
-+	}
- 	smp_store_release(&event->ctx, ctx);
- 
- 	if (!task) {
-@@ -3011,7 +3243,7 @@ static void __perf_event_sync_stat(struct perf_event *event,
- 	 * don't need to use it.
- 	 */
- 	if (event->state == PERF_EVENT_STATE_ACTIVE)
--		event->pmu->read(event);
-+		event_pmu_read(event);
- 
- 	perf_event_update_time(event);
- 
-@@ -3867,14 +4099,14 @@ static void __perf_event_read(void *info)
- 		goto unlock;
- 
- 	if (!data->group) {
--		pmu->read(event);
-+		event_pmu_read(event);
- 		data->ret = 0;
- 		goto unlock;
- 	}
- 
- 	pmu->start_txn(pmu, PERF_PMU_TXN_READ);
- 
--	pmu->read(event);
-+	event_pmu_read(event);
- 
- 	for_each_sibling_event(sub, event) {
- 		if (sub->state == PERF_EVENT_STATE_ACTIVE) {
-@@ -3882,7 +4114,7 @@ static void __perf_event_read(void *info)
- 			 * Use sibling's PMU rather than @event's since
- 			 * sibling could be on different (eg: software) PMU.
- 			 */
--			sub->pmu->read(sub);
-+			event_pmu_read(sub);
- 		}
- 	}
- 
-@@ -3946,7 +4178,7 @@ int perf_event_read_local(struct perf_event *event, u64 *value,
- 	 * oncpu == -1).
- 	 */
- 	if (event->oncpu == smp_processor_id())
--		event->pmu->read(event);
-+		event_pmu_read(event);
- 
- 	*value = local64_read(&event->count);
- 	if (enabled || running) {
-@@ -4469,6 +4701,7 @@ static void free_event(struct perf_event *event)
- 		return;
- 	}
- 
-+	perf_event_free_tmp_master(event);
- 	_free_event(event);
- }
- 
-@@ -4528,6 +4761,7 @@ static void put_event(struct perf_event *event)
- 	if (!atomic_long_dec_and_test(&event->refcount))
- 		return;
- 
-+	perf_event_free_tmp_master(event);
- 	_free_event(event);
- }
- 
-@@ -6087,7 +6321,7 @@ static void perf_output_read_group(struct perf_output_handle *handle,
- 
- 	if ((leader != event) &&
- 	    (leader->state == PERF_EVENT_STATE_ACTIVE))
--		leader->pmu->read(leader);
-+		event_pmu_read(leader);
- 
- 	values[n++] = perf_event_count(leader);
- 	if (read_format & PERF_FORMAT_ID)
-@@ -6100,7 +6334,7 @@ static void perf_output_read_group(struct perf_output_handle *handle,
- 
- 		if ((sub != event) &&
- 		    (sub->state == PERF_EVENT_STATE_ACTIVE))
--			sub->pmu->read(sub);
-+			event_pmu_read(sub);
- 
- 		values[n++] = perf_event_count(sub);
- 		if (read_format & PERF_FORMAT_ID)
-@@ -9103,7 +9337,7 @@ static enum hrtimer_restart perf_swevent_hrtimer(struct hrtimer *hrtimer)
- 	if (event->state != PERF_EVENT_STATE_ACTIVE)
- 		return HRTIMER_NORESTART;
- 
--	event->pmu->read(event);
-+	event_pmu_read(event);
- 
- 	perf_sample_data_init(&data, 0, event->hw.last_period);
- 	regs = get_irq_regs();
-@@ -10498,6 +10732,11 @@ SYSCALL_DEFINE5(perf_event_open,
- 		goto err_cred;
- 	}
- 
-+	if (perf_event_can_share(event))
-+		event->tmp_master = perf_event_alloc(&event->attr, cpu,
-+						     task, NULL, NULL,
-+						     NULL, NULL, -1);
-+
- 	if (is_sampling_event(event)) {
- 		if (event->pmu->capabilities & PERF_PMU_CAP_NO_INTERRUPT) {
- 			err = -EOPNOTSUPP;
-@@ -10703,9 +10942,17 @@ SYSCALL_DEFINE5(perf_event_open,
- 		perf_remove_from_context(group_leader, 0);
- 		put_ctx(gctx);
- 
-+		/*
-+		 * move_group only happens to sw events, from sw ctx to hw
-+		 * ctx. The sw events should not have valid dup_id. So it
-+		 * is not necessary to handle dup_events.
-+		 */
-+		WARN_ON_ONCE(group_leader->dup_id != -1);
-+
- 		for_each_sibling_event(sibling, group_leader) {
- 			perf_remove_from_context(sibling, 0);
- 			put_ctx(gctx);
-+			WARN_ON_ONCE(sibling->dup_id != -1);
- 		}
- 
- 		/*
-@@ -10763,6 +11010,9 @@ SYSCALL_DEFINE5(perf_event_open,
- 		put_task_struct(task);
- 	}
- 
-+	/* if event->tmp_master is not used by ctx->dup_events, free it */
-+	perf_event_free_tmp_master(event);
-+
- 	mutex_lock(&current->perf_event_mutex);
- 	list_add_tail(&event->owner_entry, &current->perf_event_list);
- 	mutex_unlock(&current->perf_event_mutex);
-@@ -10907,6 +11157,7 @@ void perf_pmu_migrate_context(struct pmu *pmu, int src_cpu, int dst_cpu)
- 		perf_remove_from_context(event, 0);
- 		unaccount_event_cpu(event, src_cpu);
- 		put_ctx(src_ctx);
-+		perf_event_free_tmp_master(event);
- 		list_add(&event->migrate_entry, &events);
- 	}
- 
-@@ -11257,6 +11508,11 @@ inherit_event(struct perf_event *parent_event,
- 	if (IS_ERR(child_event))
- 		return child_event;
- 
-+	if (perf_event_can_share(child_event))
-+		child_event->tmp_master = perf_event_alloc(&parent_event->attr,
-+							   parent_event->cpu,
-+							   child, NULL, NULL,
-+							   NULL, NULL, -1);
- 
- 	if ((child_event->attach_state & PERF_ATTACH_TASK_DATA) &&
- 	    !child_ctx->task_ctx_data) {
-@@ -11311,6 +11567,10 @@ inherit_event(struct perf_event *parent_event,
- 	child_event->overflow_handler = parent_event->overflow_handler;
- 	child_event->overflow_handler_context
- 		= parent_event->overflow_handler_context;
-+	if (child_event->tmp_master) {
-+		child_event->tmp_master->ctx = child_ctx;
-+		get_ctx(child_ctx);
-+	}
- 
- 	/*
- 	 * Precalculate sample_data sizes
-@@ -11325,6 +11585,7 @@ inherit_event(struct perf_event *parent_event,
- 	add_event_to_ctx(child_event, child_ctx);
- 	raw_spin_unlock_irqrestore(&child_ctx->lock, flags);
- 
-+	perf_event_free_tmp_master(child_event);
- 	/*
- 	 * Link this into the parent event's child list
- 	 */
-@@ -11596,6 +11857,7 @@ static void perf_event_exit_cpu_context(int cpu)
- {
- 	struct perf_cpu_context *cpuctx;
- 	struct perf_event_context *ctx;
-+	struct perf_event *event;
- 	struct pmu *pmu;
- 
- 	mutex_lock(&pmus_lock);
-@@ -11607,6 +11869,8 @@ static void perf_event_exit_cpu_context(int cpu)
- 		smp_call_function_single(cpu, __perf_event_exit_context, ctx, 1);
- 		cpuctx->online = 0;
- 		mutex_unlock(&ctx->mutex);
-+		list_for_each_entry(event, &ctx->event_list, event_entry)
-+			perf_event_free_tmp_master(event);
- 	}
- 	cpumask_clear_cpu(cpu, perf_online_mask);
- 	mutex_unlock(&pmus_lock);
--- 
-2.9.5
+Kirill
