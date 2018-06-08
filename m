@@ -1,369 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id XIhHKWThGlsHLwAAmS7hNA
-	; Fri, 08 Jun 2018 20:05:25 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id pFG9G584GlvCFAAAmS7hNA
+	; Fri, 08 Jun 2018 08:04:47 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id CA427607A4; Fri,  8 Jun 2018 20:05:24 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MOlmE0yj"
+	id 55DDB607A4; Fri,  8 Jun 2018 08:04:47 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id F29F4601D2;
-	Fri,  8 Jun 2018 20:05:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F29F4601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id C5765602FC;
+	Fri,  8 Jun 2018 08:04:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C5765602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932101AbeFHUFV (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 16:05:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48952 "EHLO mail.kernel.org"
+        id S1751639AbeFHIEn (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 04:04:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40914 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753019AbeFHUFS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 16:05:18 -0400
-Received: from localhost (unknown [150.199.191.185])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A73F20874;
-        Fri,  8 Jun 2018 20:05:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528488317;
-        bh=Z7PU/dHQMCBCTpnwl2VzFW6S3CeGnq+U08eeRDHM30Y=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=MOlmE0yjQaKhecR06yavBIyp4mEVCyCaMuQGro4FfC9oCcILB47bnH1omAnQCl7aX
-         yY8tgabAFV4jan4d1HbRLv3KGStivjJ15v89k96mgGeJRbiSaSkNfaL/Bo8JylgTlO
-         QHLYiKZePtsCJyAifrFX9C793KmiEOK+XGqS598Q=
-Subject: [PATCH v1 05/13] PCI/AER: Squash aerdrv_acpi.c into aerdrv.c
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: linux-pci@vger.kernel.org
-Cc: Keith Busch <keith.busch@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Oza Pawandeep <poza@codeaurora.org>,
-        linux-kernel@vger.kernel.org
-Date: Fri, 08 Jun 2018 15:05:16 -0500
-Message-ID: <152848831661.11888.330564546588374373.stgit@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <152848785553.11888.12243539903985770441.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <152848785553.11888.12243539903985770441.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: StGit/0.18
+        id S1751138AbeFHIEk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 04:04:40 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id E9DA5AE54;
+        Fri,  8 Jun 2018 08:04:38 +0000 (UTC)
+Date: Fri, 8 Jun 2018 10:04:37 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Thierry Escande <thierry.escande@linaro.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        David Miller <davem@davemloft.net>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        "Tobin C . Harding" <me@tobin.cc>, linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH RESEND] lib/test_printf.c: call wait_for_random_bytes()
+ before plain %p tests
+Message-ID: <20180608080437.n2b5nv73d3kp6yhb@pathway.suse.cz>
+References: <20180604113708.11554-1-thierry.escande@linaro.org>
+ <20180607122434.i4x7b5ij4p6dpx7w@pathway.suse.cz>
+ <d9ecdf72-7500-66d4-0360-231218cccbb4@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d9ecdf72-7500-66d4-0360-231218cccbb4@linaro.org>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+On Thu 2018-06-07 20:47:25, Thierry Escande wrote:
+> Hi Petr,
+> 
+> On 07/06/2018 14:24, Petr Mladek wrote:
+> > On Mon 2018-06-04 13:37:08, Thierry Escande wrote:
+> > > If the test_printf module is loaded before the crng is initialized, the
+> > > plain 'p' tests will fail because the printed address will not be hashed
+> > > and the buffer will contain '(ptrval)' instead.
+> > > This patch adds a call to wait_for_random_bytes() before plain 'p' tests
+> > > to make sure the crng is initialized.
+> > 
+> > Hmm, my system did not boot with this patch and
+> > CONFIG_TEST_PRINTF=y
+> > 
+> > I guess that there was not enough entropy. It is basically a deadlock.
+> > The build-in module init calls are called when SMP is enabled but
+> > there is no real activity and the init calls are called sequentially.
+> > Therefore there is nothing that could produce some entropy, ...
+> > 
+> > I suggest to skip the test when crng is not ready.
+> 
+> Thanks for pointing this out.
+> 
+> The issue is that the crng_ready() is not available outside of random.c.
+> I'll leave the call to wait_for_random_bytes() if test_printf is compiled as
+> a module and use add_random_ready_callback() to check if crng is initialized
+> otherwise. Does that sound ok to you?
 
-Squash aerdrv_acpi.c into aerdrv.c.  No functional change intended.
+Great, I was not aware of add_random_ready_callback().
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/pcie/aer/Makefile      |    1 
- drivers/pci/pcie/aer/aerdrv.c      |  122 +++++++++++++++++++++++++++++++
- drivers/pci/pcie/aer/aerdrv_acpi.c |  141 ------------------------------------
- 3 files changed, 122 insertions(+), 142 deletions(-)
- delete mode 100644 drivers/pci/pcie/aer/aerdrv_acpi.c
+I suggest to make the decision in test_printf_init()
+and run all tests either as the callback or immediately.
 
-diff --git a/drivers/pci/pcie/aer/Makefile b/drivers/pci/pcie/aer/Makefile
-index 662fb0d2abfe..80e77c686fb8 100644
---- a/drivers/pci/pcie/aer/Makefile
-+++ b/drivers/pci/pcie/aer/Makefile
-@@ -8,6 +8,5 @@ obj-$(CONFIG_PCIEAER) += aerdriver.o
- obj-$(CONFIG_PCIE_ECRC)	+= ecrc.o
- 
- aerdriver-objs := aerdrv.o
--aerdriver-$(CONFIG_ACPI) += aerdrv_acpi.o
- 
- obj-$(CONFIG_PCIEAER_INJECT) += aer_inject.o
-diff --git a/drivers/pci/pcie/aer/aerdrv.c b/drivers/pci/pcie/aer/aerdrv.c
-index 3dca26681eec..f77f5df83676 100644
---- a/drivers/pci/pcie/aer/aerdrv.c
-+++ b/drivers/pci/pcie/aer/aerdrv.c
-@@ -21,6 +21,7 @@
- #include <linux/delay.h>
- #include <linux/kfifo.h>
- #include <linux/slab.h>
-+#include <acpi/apei.h>
- #include <ras/ras_event.h>
- 
- #include "aerdrv.h"
-@@ -38,6 +39,127 @@ bool pci_aer_available(void)
- 	return !pcie_aer_disable && pci_msi_enabled();
- }
- 
-+#ifdef CONFIG_ACPI_APEI
-+static inline int hest_match_pci(struct acpi_hest_aer_common *p,
-+				 struct pci_dev *pci)
-+{
-+	return   ACPI_HEST_SEGMENT(p->bus) == pci_domain_nr(pci->bus) &&
-+		 ACPI_HEST_BUS(p->bus)     == pci->bus->number &&
-+		 p->device                 == PCI_SLOT(pci->devfn) &&
-+		 p->function               == PCI_FUNC(pci->devfn);
-+}
-+
-+static inline bool hest_match_type(struct acpi_hest_header *hest_hdr,
-+				struct pci_dev *dev)
-+{
-+	u16 hest_type = hest_hdr->type;
-+	u8 pcie_type = pci_pcie_type(dev);
-+
-+	if ((hest_type == ACPI_HEST_TYPE_AER_ROOT_PORT &&
-+		pcie_type == PCI_EXP_TYPE_ROOT_PORT) ||
-+	    (hest_type == ACPI_HEST_TYPE_AER_ENDPOINT &&
-+		pcie_type == PCI_EXP_TYPE_ENDPOINT) ||
-+	    (hest_type == ACPI_HEST_TYPE_AER_BRIDGE &&
-+		(dev->class >> 16) == PCI_BASE_CLASS_BRIDGE))
-+		return true;
-+	return false;
-+}
-+
-+struct aer_hest_parse_info {
-+	struct pci_dev *pci_dev;
-+	int firmware_first;
-+};
-+
-+static int hest_source_is_pcie_aer(struct acpi_hest_header *hest_hdr)
-+{
-+	if (hest_hdr->type == ACPI_HEST_TYPE_AER_ROOT_PORT ||
-+	    hest_hdr->type == ACPI_HEST_TYPE_AER_ENDPOINT ||
-+	    hest_hdr->type == ACPI_HEST_TYPE_AER_BRIDGE)
-+		return 1;
-+	return 0;
-+}
-+
-+static int aer_hest_parse(struct acpi_hest_header *hest_hdr, void *data)
-+{
-+	struct aer_hest_parse_info *info = data;
-+	struct acpi_hest_aer_common *p;
-+	int ff;
-+
-+	if (!hest_source_is_pcie_aer(hest_hdr))
-+		return 0;
-+
-+	p = (struct acpi_hest_aer_common *)(hest_hdr + 1);
-+	ff = !!(p->flags & ACPI_HEST_FIRMWARE_FIRST);
-+
-+	/*
-+	 * If no specific device is supplied, determine whether
-+	 * FIRMWARE_FIRST is set for *any* PCIe device.
-+	 */
-+	if (!info->pci_dev) {
-+		info->firmware_first |= ff;
-+		return 0;
-+	}
-+
-+	/* Otherwise, check the specific device */
-+	if (p->flags & ACPI_HEST_GLOBAL) {
-+		if (hest_match_type(hest_hdr, info->pci_dev))
-+			info->firmware_first = ff;
-+	} else
-+		if (hest_match_pci(p, info->pci_dev))
-+			info->firmware_first = ff;
-+
-+	return 0;
-+}
-+
-+static void aer_set_firmware_first(struct pci_dev *pci_dev)
-+{
-+	int rc;
-+	struct aer_hest_parse_info info = {
-+		.pci_dev	= pci_dev,
-+		.firmware_first	= 0,
-+	};
-+
-+	rc = apei_hest_parse(aer_hest_parse, &info);
-+
-+	if (rc)
-+		pci_dev->__aer_firmware_first = 0;
-+	else
-+		pci_dev->__aer_firmware_first = info.firmware_first;
-+	pci_dev->__aer_firmware_first_valid = 1;
-+}
-+
-+int pcie_aer_get_firmware_first(struct pci_dev *dev)
-+{
-+	if (!pci_is_pcie(dev))
-+		return 0;
-+
-+	if (!dev->__aer_firmware_first_valid)
-+		aer_set_firmware_first(dev);
-+	return dev->__aer_firmware_first;
-+}
-+
-+static bool aer_firmware_first;
-+
-+/**
-+ * aer_acpi_firmware_first - Check if APEI should control AER.
-+ */
-+bool aer_acpi_firmware_first(void)
-+{
-+	static bool parsed = false;
-+	struct aer_hest_parse_info info = {
-+		.pci_dev	= NULL,	/* Check all PCIe devices */
-+		.firmware_first	= 0,
-+	};
-+
-+	if (!parsed) {
-+		apei_hest_parse(aer_hest_parse, &info);
-+		aer_firmware_first = info.firmware_first;
-+		parsed = true;
-+	}
-+	return aer_firmware_first;
-+}
-+#endif
-+
- #define	PCI_EXP_AER_FLAGS	(PCI_EXP_DEVCTL_CERE | PCI_EXP_DEVCTL_NFERE | \
- 				 PCI_EXP_DEVCTL_FERE | PCI_EXP_DEVCTL_URRE)
- 
-diff --git a/drivers/pci/pcie/aer/aerdrv_acpi.c b/drivers/pci/pcie/aer/aerdrv_acpi.c
-deleted file mode 100644
-index 08c87de13cb8..000000000000
---- a/drivers/pci/pcie/aer/aerdrv_acpi.c
-+++ /dev/null
-@@ -1,141 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * Access ACPI _OSC method
-- *
-- * Copyright (C) 2006 Intel Corp.
-- *	Tom Long Nguyen (tom.l.nguyen@intel.com)
-- *	Zhang Yanmin (yanmin.zhang@intel.com)
-- */
--
--#include <linux/module.h>
--#include <linux/pci.h>
--#include <linux/kernel.h>
--#include <linux/errno.h>
--#include <linux/pm.h>
--#include <linux/suspend.h>
--#include <linux/acpi.h>
--#include <linux/pci-acpi.h>
--#include <linux/delay.h>
--#include <acpi/apei.h>
--#include "aerdrv.h"
--
--#ifdef CONFIG_ACPI_APEI
--static inline int hest_match_pci(struct acpi_hest_aer_common *p,
--				 struct pci_dev *pci)
--{
--	return   ACPI_HEST_SEGMENT(p->bus) == pci_domain_nr(pci->bus) &&
--		 ACPI_HEST_BUS(p->bus)     == pci->bus->number &&
--		 p->device                 == PCI_SLOT(pci->devfn) &&
--		 p->function               == PCI_FUNC(pci->devfn);
--}
--
--static inline bool hest_match_type(struct acpi_hest_header *hest_hdr,
--				struct pci_dev *dev)
--{
--	u16 hest_type = hest_hdr->type;
--	u8 pcie_type = pci_pcie_type(dev);
--
--	if ((hest_type == ACPI_HEST_TYPE_AER_ROOT_PORT &&
--		pcie_type == PCI_EXP_TYPE_ROOT_PORT) ||
--	    (hest_type == ACPI_HEST_TYPE_AER_ENDPOINT &&
--		pcie_type == PCI_EXP_TYPE_ENDPOINT) ||
--	    (hest_type == ACPI_HEST_TYPE_AER_BRIDGE &&
--		(dev->class >> 16) == PCI_BASE_CLASS_BRIDGE))
--		return true;
--	return false;
--}
--
--struct aer_hest_parse_info {
--	struct pci_dev *pci_dev;
--	int firmware_first;
--};
--
--static int hest_source_is_pcie_aer(struct acpi_hest_header *hest_hdr)
--{
--	if (hest_hdr->type == ACPI_HEST_TYPE_AER_ROOT_PORT ||
--	    hest_hdr->type == ACPI_HEST_TYPE_AER_ENDPOINT ||
--	    hest_hdr->type == ACPI_HEST_TYPE_AER_BRIDGE)
--		return 1;
--	return 0;
--}
--
--static int aer_hest_parse(struct acpi_hest_header *hest_hdr, void *data)
--{
--	struct aer_hest_parse_info *info = data;
--	struct acpi_hest_aer_common *p;
--	int ff;
--
--	if (!hest_source_is_pcie_aer(hest_hdr))
--		return 0;
--
--	p = (struct acpi_hest_aer_common *)(hest_hdr + 1);
--	ff = !!(p->flags & ACPI_HEST_FIRMWARE_FIRST);
--
--	/*
--	 * If no specific device is supplied, determine whether
--	 * FIRMWARE_FIRST is set for *any* PCIe device.
--	 */
--	if (!info->pci_dev) {
--		info->firmware_first |= ff;
--		return 0;
--	}
--
--	/* Otherwise, check the specific device */
--	if (p->flags & ACPI_HEST_GLOBAL) {
--		if (hest_match_type(hest_hdr, info->pci_dev))
--			info->firmware_first = ff;
--	} else
--		if (hest_match_pci(p, info->pci_dev))
--			info->firmware_first = ff;
--
--	return 0;
--}
--
--static void aer_set_firmware_first(struct pci_dev *pci_dev)
--{
--	int rc;
--	struct aer_hest_parse_info info = {
--		.pci_dev	= pci_dev,
--		.firmware_first	= 0,
--	};
--
--	rc = apei_hest_parse(aer_hest_parse, &info);
--
--	if (rc)
--		pci_dev->__aer_firmware_first = 0;
--	else
--		pci_dev->__aer_firmware_first = info.firmware_first;
--	pci_dev->__aer_firmware_first_valid = 1;
--}
--
--int pcie_aer_get_firmware_first(struct pci_dev *dev)
--{
--	if (!pci_is_pcie(dev))
--		return 0;
--
--	if (!dev->__aer_firmware_first_valid)
--		aer_set_firmware_first(dev);
--	return dev->__aer_firmware_first;
--}
--
--static bool aer_firmware_first;
--
--/**
-- * aer_acpi_firmware_first - Check if APEI should control AER.
-- */
--bool aer_acpi_firmware_first(void)
--{
--	static bool parsed = false;
--	struct aer_hest_parse_info info = {
--		.pci_dev	= NULL,	/* Check all PCIe devices */
--		.firmware_first	= 0,
--	};
--
--	if (!parsed) {
--		apei_hest_parse(aer_hest_parse, &info);
--		aer_firmware_first = info.firmware_first;
--		parsed = true;
--	}
--	return aer_firmware_first;
--}
--#endif
+Best Regards,
+Petr
