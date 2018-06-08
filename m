@@ -1,300 +1,222 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id owdMBuNRGVuwEwAAmS7hNA
-	; Thu, 07 Jun 2018 15:43:06 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id PAe2KGPMGVvoIwAAmS7hNA
+	; Fri, 08 Jun 2018 00:22:59 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 1810E608B8; Thu,  7 Jun 2018 15:43:06 +0000 (UTC)
+	id 8C36E6074D; Fri,  8 Jun 2018 00:22:59 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="UtqXo+Aw"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 65C6760590;
-	Thu,  7 Jun 2018 15:43:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 65C6760590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 31189601D2;
+	Fri,  8 Jun 2018 00:22:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 31189601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935215AbeFGPmt (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:42:49 -0400
-Received: from mga09.intel.com ([134.134.136.24]:36348 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934592AbeFGOlb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:41:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 07:41:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
-   d="scan'208";a="62632625"
-Received: from 2b52.sc.intel.com ([143.183.136.51])
-  by orsmga001.jf.intel.com with ESMTP; 07 Jun 2018 07:41:30 -0700
-From: Yu-cheng Yu <yu-cheng.yu@intel.com>
-To: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [PATCH 03/10] x86/cet: Signal handling for shadow stack
-Date: Thu,  7 Jun 2018 07:38:00 -0700
-Message-Id: <20180607143807.3611-4-yu-cheng.yu@intel.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180607143807.3611-1-yu-cheng.yu@intel.com>
-References: <20180607143807.3611-1-yu-cheng.yu@intel.com>
+        id S1752644AbeFHAW4 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 20:22:56 -0400
+Received: from conuserg-09.nifty.com ([210.131.2.76]:55490 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752407AbeFHAWy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 20:22:54 -0400
+Received: from grover.sesame (FL1-125-199-20-195.osk.mesh.ad.jp [125.199.20.195]) (authenticated)
+        by conuserg-09.nifty.com with ESMTP id w580LmFG000891;
+        Fri, 8 Jun 2018 09:21:48 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com w580LmFG000891
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1528417309;
+        bh=avjwhE/WevHv+QiaUB43qqYeepyYvCoMSn+3y8zkiCQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=UtqXo+AwpX4SWV4jhr5JCVuYLt+50Q/y7bW8mpZbDUgQNt+pWq+TVebcISimdlhW6
+         p0JIptYAcgsZh8aFWJAUo4k/jIz5QIhoJazp1bmqgKCjkcBsk3/mL7sXWE4DJUL/P2
+         +bx/4h7a0StZ7nX8eIIVSgIzuOhBsecmMtY8UvvFTRcClhyRd7S6lytPP15edri9++
+         aCX31pt4o8eBN9QtPY+XoFiI6fTUjnnYHWZNmtEGVSIErccVUMHWPt4j9fk1bj7BOi
+         FzdwBZmHNAFsdJLfcBoj+Kzl3UlD1TdJhtgeCB0oycKaLwFWSFx1a9QCPDF1dh+SS1
+         6w2weHhmeRgSg==
+X-Nifty-SrcIP: [125.199.20.195]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kbuild@vger.kernel.org
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>
+Subject: [PATCH] kbuild: fix endless syncconfig in case arch Makefile sets CROSS_COMPILE
+Date: Fri,  8 Jun 2018 09:21:43 +0900
+Message-Id: <1528417303-14842-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Set and restore shadow stack pointer for signals.
+Commit 21c54b774744 ("kconfig: show compiler version text in the top
+comment") was intended to detect the compiler upgrade, but Geert
+reported a breakage on the m68k build.
 
-Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+The compiler upgrade is detected by the change of the environment
+variable, CC_VERSION_TEXT, which contains the first line of the output
+from $(CC) --version.  Currently, this works well when CROSS_COMPILE
+is given via the environment variable or the Make command line.
+
+However, some architectures such as m68k can specify CROSS_COMPILE
+from arch/$(SRCARCH)/Makefile as well.  In this case, "make ARCH=m68k"
+ends up with endless syncconfig loop.
+
+  $ make ARCH=m68k defconfig
+  *** Default configuration is based on 'multi_defconfig'
+  #
+  # configuration written to .config
+  #
+  $ make ARCH=m68k
+  scripts/kconfig/conf  --syncconfig Kconfig
+  scripts/kconfig/conf  --syncconfig Kconfig
+  scripts/kconfig/conf  --syncconfig Kconfig
+  scripts/kconfig/conf  --syncconfig Kconfig
+
+Things are happening like this:
+
+Because arch/$(SRCARCH)/Makefile is included after CC_VERSION_TEXT
+is set, it contains the host compiler version in the defconfig phase.
+
+To create or update auto.conf, the following line is triggered:
+
+include/config/%.conf: $(KCONFIG_CONFIG) include/config/auto.conf.cmd
+        $(Q)$(MAKE) -f $(srctree)/Makefile syncconfig
+
+This recurses the top Makefile after arch/$(SRCARCH)/Makefile is
+included.  CROSS_COMPILE is set to a m68k toolchain prefix and
+exported to the recursed Make.  Then, syncconfig is invoked with
+the target compiler version in CC_VERSION_TEXT.
+
+The Make will restart because auto.conf and auto.conf.cmd have been
+updated.  At this point, CROSS_COMPILE is reset, so CC_VERSION_TEXT
+is set to the host compiler version again.  Then, syncconfig is
+triggered due to the change of CC_VERSION_TEXT.  This loop continues
+eternally.
+
+To fix this problem, $(CC_VERSION_TEXT) must be evaluated only after
+arch/$(SRCARCH)/Makefile.  Setting it earlier is OK as long as it is
+defined by using the '=' operator instead of ':='.
+
+For the defconfig phase, $(CC_VERSION_TEXT) is evaluated when Kbuild
+descends into scripts/kconfig/, so it contains the target compiler
+version correctly.
+
+include/config/auto.conf.cmd references $(CC_VERSION_TEXT) as well,
+so it must be included after arch/$(SRCARCH)/Makefile.
+
+Fixes: 21c54b774744 ("kconfig: show compiler version text in the top comment")
+Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- arch/x86/ia32/ia32_signal.c            |  5 ++++
- arch/x86/include/asm/cet.h             |  7 +++++
- arch/x86/include/uapi/asm/sigcontext.h |  4 +++
- arch/x86/kernel/cet.c                  | 51 ++++++++++++++++++++++++++++++++++
- arch/x86/kernel/signal.c               | 11 ++++++++
- 5 files changed, 78 insertions(+)
 
-diff --git a/arch/x86/ia32/ia32_signal.c b/arch/x86/ia32/ia32_signal.c
-index 86b1341cba9a..26a776baff7c 100644
---- a/arch/x86/ia32/ia32_signal.c
-+++ b/arch/x86/ia32/ia32_signal.c
-@@ -34,6 +34,7 @@
- #include <asm/sigframe.h>
- #include <asm/sighandling.h>
- #include <asm/smap.h>
-+#include <asm/cet.h>
+ Makefile | 54 ++++++++++++++++++++++++++++++------------------------
+ 1 file changed, 30 insertions(+), 24 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 019a5a0..747edaf 100644
+--- a/Makefile
++++ b/Makefile
+@@ -442,8 +442,6 @@ export KBUILD_AFLAGS_MODULE KBUILD_CFLAGS_MODULE KBUILD_LDFLAGS_MODULE
+ export KBUILD_AFLAGS_KERNEL KBUILD_CFLAGS_KERNEL
+ export KBUILD_ARFLAGS
  
- /*
-  * Do a signal return; undo the signal stack.
-@@ -74,6 +75,7 @@ static int ia32_restore_sigcontext(struct pt_regs *regs,
- 	unsigned int tmpflags, err = 0;
- 	void __user *buf;
- 	u32 tmp;
-+	u32 ssp;
+-export CC_VERSION_TEXT := $(shell $(CC) --version | head -n 1)
+-
+ # When compiling out-of-tree modules, put MODVERDIR in the module
+ # tree rather than in the kernel tree. The kernel tree might
+ # even be read-only.
+@@ -514,6 +512,12 @@ ifeq ($(shell $(CONFIG_SHELL) $(srctree)/scripts/cc-can-link.sh $(CC)), y)
+   export CC_CAN_LINK
+ endif
  
- 	/* Always make any pending restarted system calls return -EINTR */
- 	current->restart_block.fn = do_no_restart_syscall;
-@@ -104,9 +106,11 @@ static int ia32_restore_sigcontext(struct pt_regs *regs,
- 
- 		get_user_ex(tmp, &sc->fpstate);
- 		buf = compat_ptr(tmp);
-+		get_user_ex(ssp, &sc->ssp);
- 	} get_user_catch(err);
- 
- 	err |= fpu__restore_sig(buf, 1);
-+	err |= cet_restore_signal((unsigned long)ssp);
- 
- 	force_iret();
- 
-@@ -194,6 +198,7 @@ static int ia32_setup_sigcontext(struct sigcontext_32 __user *sc,
- 		put_user_ex(current->thread.trap_nr, &sc->trapno);
- 		put_user_ex(current->thread.error_code, &sc->err);
- 		put_user_ex(regs->ip, &sc->ip);
-+		put_user_ex((u32)cet_get_shstk_ptr(), &sc->ssp);
- 		put_user_ex(regs->cs, (unsigned int __user *)&sc->cs);
- 		put_user_ex(regs->flags, &sc->flags);
- 		put_user_ex(regs->sp, &sc->sp_at_signal);
-diff --git a/arch/x86/include/asm/cet.h b/arch/x86/include/asm/cet.h
-index 9d5bc1efc9b7..5507469cb803 100644
---- a/arch/x86/include/asm/cet.h
-+++ b/arch/x86/include/asm/cet.h
-@@ -17,14 +17,21 @@ struct cet_stat {
- 
- #ifdef CONFIG_X86_INTEL_CET
- unsigned long cet_get_shstk_ptr(void);
-+int cet_push_shstk(int ia32, unsigned long ssp, unsigned long val);
- int cet_setup_shstk(void);
- void cet_disable_shstk(void);
- void cet_disable_free_shstk(struct task_struct *p);
-+int cet_restore_signal(unsigned long ssp);
-+int cet_setup_signal(int ia32, unsigned long addr);
- #else
- static inline unsigned long cet_get_shstk_ptr(void) { return 0; }
-+static inline int cet_push_shstk(int ia32, unsigned long ssp,
-+				 unsigned long val) { return 0; }
- static inline int cet_setup_shstk(void) { return 0; }
- static inline void cet_disable_shstk(void) {}
- static inline void cet_disable_free_shstk(struct task_struct *p) {}
-+static inline int cet_restore_signal(unsigned long ssp) { return 0; }
-+static inline int cet_setup_signal(int ia32, unsigned long addr) { return 0; }
- #endif
- 
- #endif /* __ASSEMBLY__ */
-diff --git a/arch/x86/include/uapi/asm/sigcontext.h b/arch/x86/include/uapi/asm/sigcontext.h
-index 844d60eb1882..6c8997a0156a 100644
---- a/arch/x86/include/uapi/asm/sigcontext.h
-+++ b/arch/x86/include/uapi/asm/sigcontext.h
-@@ -230,6 +230,7 @@ struct sigcontext_32 {
- 	__u32				fpstate; /* Zero when no FPU/extended context */
- 	__u32				oldmask;
- 	__u32				cr2;
-+	__u32				ssp;
- };
- 
- /*
-@@ -262,6 +263,7 @@ struct sigcontext_64 {
- 	__u64				trapno;
- 	__u64				oldmask;
- 	__u64				cr2;
-+	__u64				ssp;
- 
- 	/*
- 	 * fpstate is really (struct _fpstate *) or (struct _xstate *)
-@@ -320,6 +322,7 @@ struct sigcontext {
- 	struct _fpstate __user		*fpstate;
- 	__u32				oldmask;
- 	__u32				cr2;
-+	__u32				ssp;
- };
- # else /* __x86_64__: */
- struct sigcontext {
-@@ -377,6 +380,7 @@ struct sigcontext {
- 	__u64				trapno;
- 	__u64				oldmask;
- 	__u64				cr2;
-+	__u64				ssp;
- 	struct _fpstate __user		*fpstate;	/* Zero when no FPU context */
- #  ifdef __ILP32__
- 	__u32				__fpstate_pad;
-diff --git a/arch/x86/kernel/cet.c b/arch/x86/kernel/cet.c
-index 8abbfd44322a..6f445ce94c83 100644
---- a/arch/x86/kernel/cet.c
-+++ b/arch/x86/kernel/cet.c
-@@ -17,6 +17,7 @@
- #include <asm/fpu/xstate.h>
- #include <asm/fpu/types.h>
- #include <asm/cet.h>
-+#include <asm/special_insns.h>
- 
- #define SHSTK_SIZE (0x8000 * (test_thread_flag(TIF_IA32) ? 4 : 8))
- 
-@@ -47,6 +48,24 @@ unsigned long cet_get_shstk_ptr(void)
- 	return ptr;
- }
- 
-+int cet_push_shstk(int ia32, unsigned long ssp, unsigned long val)
-+{
-+	if (val >= TASK_SIZE)
-+		return -EINVAL;
++# The expansion should be delayed until arch/$(SRCARCH)/Makefile is included.
++# Some architectures define CROSS_COMPILE in arch/$(SRCARCH)/Makefile.
++# CC_VERSION_TEXT is referenced from Kconfig (so it needs export),
++# and from include/config/auto.conf.cmd to detect the compiler upgrade.
++CC_VERSION_TEXT = $(shell $(CC) --version | head -n 1)
 +
-+	if (IS_ENABLED(CONFIG_IA32_EMULATION) && ia32) {
-+		if (!IS_ALIGNED(ssp, 4))
-+			return -EINVAL;
-+		cet_set_shstk_ptr(ssp);
-+		return write_user_shstk_32(ssp, (unsigned int)val);
-+	} else {
-+		if (!IS_ALIGNED(ssp, 8))
-+			return -EINVAL;
-+		cet_set_shstk_ptr(ssp);
-+		return write_user_shstk_64(ssp, val);
-+	}
-+}
-+
- static unsigned long shstk_mmap(unsigned long addr, unsigned long len)
- {
- 	struct mm_struct *mm = current->mm;
-@@ -121,3 +140,35 @@ void cet_disable_free_shstk(struct task_struct *tsk)
+ ifeq ($(config-targets),1)
+ # ===========================================================================
+ # *config targets only - make sure prerequisites are updated, and descend
+@@ -523,7 +527,7 @@ ifeq ($(config-targets),1)
+ # KBUILD_DEFCONFIG may point out an alternative default configuration
+ # used for 'make defconfig'
+ include arch/$(SRCARCH)/Makefile
+-export KBUILD_DEFCONFIG KBUILD_KCONFIG
++export KBUILD_DEFCONFIG KBUILD_KCONFIG CC_VERSION_TEXT
  
- 	tsk->thread.cet.shstk_enabled = 0;
- }
-+
-+int cet_restore_signal(unsigned long ssp)
-+{
-+	if (!current->thread.cet.shstk_enabled)
-+		return 0;
-+	return cet_set_shstk_ptr(ssp);
-+}
-+
-+int cet_setup_signal(int ia32, unsigned long rstor_addr)
-+{
-+	unsigned long ssp;
-+	struct cet_stat *cet = &current->thread.cet;
-+
-+	if (!current->thread.cet.shstk_enabled)
-+		return 0;
-+
-+	ssp = cet_get_shstk_ptr();
-+
-+	/*
-+	 * Put the restorer address on the shstk
-+	 */
-+	if (ia32)
-+		ssp -= sizeof(u32);
-+	else
-+		ssp -= sizeof(rstor_addr);
-+
-+	if (ssp >= (cet->shstk_base + cet->shstk_size) ||
-+	    ssp < cet->shstk_base)
-+		return -EINVAL;
-+
-+	return cet_push_shstk(ia32, ssp, rstor_addr);
-+}
-diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
-index da270b95fe4d..86fb897cae19 100644
---- a/arch/x86/kernel/signal.c
-+++ b/arch/x86/kernel/signal.c
-@@ -46,6 +46,7 @@
+ config: scripts_basic outputmakefile FORCE
+ 	$(Q)$(MAKE) $(build)=scripts/kconfig $@
+@@ -585,12 +589,32 @@ virt-y		:= virt/
+ endif # KBUILD_EXTMOD
  
- #include <asm/sigframe.h>
- #include <asm/signal.h>
-+#include <asm/cet.h>
- 
- #define COPY(x)			do {			\
- 	get_user_ex(regs->x, &sc->x);			\
-@@ -102,6 +103,7 @@ static int restore_sigcontext(struct pt_regs *regs,
- 	void __user *buf;
- 	unsigned int tmpflags;
- 	unsigned int err = 0;
-+	unsigned long ssp = 0;
- 
- 	/* Always make any pending restarted system calls return -EINTR */
- 	current->restart_block.fn = do_no_restart_syscall;
-@@ -148,9 +150,11 @@ static int restore_sigcontext(struct pt_regs *regs,
- 
- 		get_user_ex(buf_val, &sc->fpstate);
- 		buf = (void __user *)buf_val;
-+		get_user_ex(ssp, &sc->ssp);
- 	} get_user_catch(err);
- 
- 	err |= fpu__restore_sig(buf, IS_ENABLED(CONFIG_X86_32));
-+	err |= cet_restore_signal(ssp);
- 
- 	force_iret();
- 
-@@ -193,6 +197,7 @@ int setup_sigcontext(struct sigcontext __user *sc, void __user *fpstate,
- 		put_user_ex(current->thread.trap_nr, &sc->trapno);
- 		put_user_ex(current->thread.error_code, &sc->err);
- 		put_user_ex(regs->ip, &sc->ip);
-+		put_user_ex(cet_get_shstk_ptr(), &sc->ssp);
- #ifdef CONFIG_X86_32
- 		put_user_ex(regs->cs, (unsigned int __user *)&sc->cs);
- 		put_user_ex(regs->flags, &sc->flags);
-@@ -742,6 +747,12 @@ handle_signal(struct ksignal *ksig, struct pt_regs *regs)
- 		user_disable_single_step(current);
- 
- 	failed = (setup_rt_frame(ksig, regs) < 0);
-+	if (!failed) {
-+		unsigned long rstor = (unsigned long)ksig->ka.sa.sa_restorer;
-+		int ia32 = is_ia32_frame(ksig);
+ ifeq ($(dot-config),1)
+-# Read in config
+ -include include/config/auto.conf
++endif
 +
-+		failed = cet_setup_signal(ia32, rstor);
-+	}
- 	if (!failed) {
- 		/*
- 		 * Clear the direction flag as per the ABI for function entry.
++# The all: target is the default when no target is given on the
++# command line.
++# This allow a user to issue only 'make' to build a kernel including modules
++# Defaults to vmlinux, but the arch makefile usually adds further targets
++all: vmlinux
++
++CFLAGS_GCOV	:= -fprofile-arcs -ftest-coverage \
++	$(call cc-option,-fno-tree-loop-im) \
++	$(call cc-disable-warning,maybe-uninitialized,)
++export CFLAGS_GCOV CFLAGS_KCOV
++
++# The arch Makefile can set ARCH_{CPP,A,C}FLAGS to override the default
++# values of the respective KBUILD_* variables
++ARCH_CPPFLAGS :=
++ARCH_AFLAGS :=
++ARCH_CFLAGS :=
++include arch/$(SRCARCH)/Makefile
+ 
++ifeq ($(dot-config),1)
+ ifeq ($(KBUILD_EXTMOD),)
+-# Read in dependencies to all Kconfig* files, make sure to run
+-# oldconfig if changes are detected.
++# Read in dependencies to all Kconfig* files, make sure to run syncconfig if
++# changes are detected. This should be included after arch/$(SRCARCH)/Makefile
++# because some architectures define CROSS_COMPILE there.
+ -include include/config/auto.conf.cmd
+ 
+ # To avoid any implicit rule to kick in, define an empty command
+@@ -622,24 +646,6 @@ else
+ include/config/auto.conf: ;
+ endif # $(dot-config)
+ 
+-# The all: target is the default when no target is given on the
+-# command line.
+-# This allow a user to issue only 'make' to build a kernel including modules
+-# Defaults to vmlinux, but the arch makefile usually adds further targets
+-all: vmlinux
+-
+-CFLAGS_GCOV	:= -fprofile-arcs -ftest-coverage \
+-	$(call cc-option,-fno-tree-loop-im) \
+-	$(call cc-disable-warning,maybe-uninitialized,)
+-export CFLAGS_GCOV CFLAGS_KCOV
+-
+-# The arch Makefile can set ARCH_{CPP,A,C}FLAGS to override the default
+-# values of the respective KBUILD_* variables
+-ARCH_CPPFLAGS :=
+-ARCH_AFLAGS :=
+-ARCH_CFLAGS :=
+-include arch/$(SRCARCH)/Makefile
+-
+ KBUILD_CFLAGS	+= $(call cc-option,-fno-delete-null-pointer-checks,)
+ KBUILD_CFLAGS	+= $(call cc-disable-warning,frame-address,)
+ KBUILD_CFLAGS	+= $(call cc-disable-warning, format-truncation)
 -- 
-2.15.1
+2.7.4
