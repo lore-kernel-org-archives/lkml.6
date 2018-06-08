@@ -1,251 +1,222 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id fPKFLQ68GlsiYgAAmS7hNA
-	; Fri, 08 Jun 2018 17:25:36 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id tsmRLEGnGlsgGAAAmS7hNA
+	; Fri, 08 Jun 2018 15:57:12 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id C8114607E4; Fri,  8 Jun 2018 17:25:36 +0000 (UTC)
+	id B7AD7607DC; Fri,  8 Jun 2018 15:57:12 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fYvxtmT+"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="AoF3chY3"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 06D61605A2;
-	Fri,  8 Jun 2018 17:25:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 06D61605A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 034CA601B4;
+	Fri,  8 Jun 2018 15:57:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 034CA601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932086AbeFHRZe (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 13:25:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53288 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752917AbeFHRZb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 13:25:31 -0400
-Received: from mail-it0-f53.google.com (mail-it0-f53.google.com [209.85.214.53])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8130D2089E;
-        Fri,  8 Jun 2018 17:25:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528478730;
-        bh=KqjjA1EMwrTCGSzWDZqEfzP48WeXXGy8YVhya+TQ5N0=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=fYvxtmT+AANY66XJcfzTNNC1Y1b+2Wvt9Y6qiRipSiieVn2A9vm12OiHyQ/Ur7SxM
-         E10nhTvBevEWlqoPS5n0KR8NeDgimdELG0EpeYzzp3sU+RWPSGJaxFMWX1BQ2NY+Vi
-         Q/sqisONI5L9AUNasDTeZJjhRwroc68zMLRK+o2s=
-Received: by mail-it0-f53.google.com with SMTP id k17-v6so5593781ita.0;
-        Fri, 08 Jun 2018 10:25:30 -0700 (PDT)
-X-Gm-Message-State: APt69E3zIdYk6OskrhUYqVCz22Y6FKA9VeGEeDtjLqiSD+95RzThlcUO
-        lyTVM5n0wKHTSV2tz+lyJpI4eSiPK1q4lGz10w==
-X-Google-Smtp-Source: ADUXVKIannmSiLBPuI+RpVdQXNmonFIZlvV7lvLlIbEBDxfxk0SFnHnvyBHnUG4YZSi9QwqKK1NMUyB6E/qLg9kAF6U=
-X-Received: by 2002:a24:f04e:: with SMTP id p14-v6mr2571650iti.106.1528478729854;
- Fri, 08 Jun 2018 10:25:29 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a4f:5505:0:0:0:0:0 with HTTP; Fri, 8 Jun 2018 10:25:09 -0700 (PDT)
-In-Reply-To: <20180608162009.22762-1-attitokes@gmail.com>
-References: <280FCB2C-6DF1-4790-A89F-AF5BE3513AE5@holtmann.org> <20180608162009.22762-1-attitokes@gmail.com>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Fri, 8 Jun 2018 11:25:09 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKGeCEBBLNQNdymQovknRM7zt4+nNJy0YSkxRicOxkCSg@mail.gmail.com>
-Message-ID: <CAL_JsqKGeCEBBLNQNdymQovknRM7zt4+nNJy0YSkxRicOxkCSg@mail.gmail.com>
-Subject: Re: [PATCH] Bluetooth: hci_bcm: Configure SCO routing automatically
-To: attitokes@gmail.com
-Cc: "David S. Miller" <davem@davemloft.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Artiom Vaskov <velemas@gmail.com>,
-        netdev <netdev@vger.kernel.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        id S1752875AbeFHP5J (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 11:57:09 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:54411 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751244AbeFHP5G (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 11:57:06 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180608155704euoutp021e7c81fd58f02c9df1bed14a163eb263~2Onspohen2143521435euoutp02T;
+        Fri,  8 Jun 2018 15:57:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180608155704euoutp021e7c81fd58f02c9df1bed14a163eb263~2Onspohen2143521435euoutp02T
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1528473424;
+        bh=gcTGhf1sEBt9bdJngOePyb2RwMAXjs91lMXDusYqv0c=;
+        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
+        b=AoF3chY3+0p2yqFX8Gl4QcCQnrhWwjSWzUPOJb+9bGPJQiputCA3iuUidFF6AtPvg
+         TpfUqTbrEsGgXIRWYVC2La9Rffz89xtqm9FC0WhZUR5p232W1dG6DCjueHzGn3a5vv
+         GKT7lJ3YEFqq04wGESHErn6D/SWGFOo804hMHjsA=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20180608155703eucas1p1a44508eeef5e73c0271ed521f34d7dfd~2OnrrJnTy2757627576eucas1p1p;
+        Fri,  8 Jun 2018 15:57:03 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id F4.56.17380.E47AA1B5; Fri,  8
+        Jun 2018 16:57:02 +0100 (BST)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20180608155701eucas1p1ecfd4b722d96b63681336d509d73c38f~2OnqU0JEE3012330123eucas1p1u;
+        Fri,  8 Jun 2018 15:57:01 +0000 (GMT)
+X-AuditID: cbfec7f4-6f9ff700000043e4-d6-5b1aa74e1886
+Received: from eusync1.samsung.com ( [203.254.199.211]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 5E.36.04183.D47AA1B5; Fri,  8
+        Jun 2018 16:57:01 +0100 (BST)
+Received: from amdc3058.localnet ([106.120.53.102]) by eusync1.samsung.com
+        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
+        2014)) with ESMTPA id <0PA000LVSHN1SA00@eusync1.samsung.com>; Fri, 08 Jun
+        2018 16:57:01 +0100 (BST)
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Imre Deak <imre.deak@intel.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>, linux-fbdev@vger.kernel.org,
+        linux-omap@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] video/omap: add module license tags
+Date: Fri, 08 Jun 2018 17:57 +0200
+Message-id: <7804713.l6SSBF4zTq@amdc3058>
+User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+In-reply-to: <20180528154704.2568184-1-arnd@arndb.de>
+MIME-version: 1.0
+Content-transfer-encoding: 7Bit
+Content-type: text/plain; charset="us-ascii"
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjleLIzCtJLcpLzFFi42LZduznOV2/5VLRBm/Xalr8nXSM3eLK1/ds
+        FpcvnWKyOH9+A7vFib4PrBaXd81hs5i9pJ/FYv38W2wWK0/MYnbg9Pj9axKjx+I9L5k8Nq3q
+        ZPO4332cyePkqScsHsdvbGfy+LxJLoA9issmJTUnsyy1SN8ugSuj+9dnpoIZqhWXVgg1MF5R
+        6GLk5JAQMJHYueI2axcjF4eQwApGiYOPljJCOJ8ZJb4tu8oEU/V2x2s2EFtIYBmjxIItvhBF
+        vxklGjcfZQdJsAlYSUxsX8UIYosIKEpMffGMGaSIWWASk8TNC8/AJgkLWEgsW9PNDGKzCChJ
+        fPjUDDaVV0BT4uW/IywgtqiAl8SWfe1g9ZwCphI32z+wQ9QISvyYfA+shllAXmLf/qmsELaO
+        xNlj68DOlhC4zibReuIlK8TZLhKnlj9ngbCFJV4d38IOYctIXJ7czQLRMJ1R4s2vpVDOekaJ
+        NWeOQT1tLXH4+EWoFXwSk7ZNBzqbAyjOK9HRJgRR4iHxZ8tCFkhYdDBKNDydwDSBUWYWkmtn
+        Ibl2FpJrFzAyr2IUTy0tzk1PLTbKSy3XK07MLS7NS9dLzs/dxAhMHaf/Hf+yg3HXn6RDjAIc
+        jEo8vA1NUtFCrIllxZW5hxglOJiVRHifKQGFeFMSK6tSi/Lji0pzUosPMUpzsCiJ88Zp1EUJ
+        CaQnlqRmp6YWpBbBZJk4OKUaGBt0maz2LVjmayZ58Myug9xnXVlCD6xz+pSbIvpKdXfAumu3
+        XxqVZ+537Uov3a9SeipswXuRw57pn1l3JLUqafR8uK0T9ODk4hUnOBb8s5TZyKDxPfzS3tXm
+        7ccWqpyTfTaB2WXRg8g8A51kpStfq6cYaFj9vhP65+O12KLoJVM5ds3rC57zabMSS3FGoqEW
+        c1FxIgD5K8HEGQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrELMWRmVeSWpSXmKPExsVy+t/xy7q+y6WiDTr38lr8nXSM3eLK1/ds
+        FpcvnWKyOH9+A7vFib4PrBaXd81hs5i9pJ/FYv38W2wWK0/MYnbg9Pj9axKjx+I9L5k8Nq3q
+        ZPO4332cyePkqScsHsdvbGfy+LxJLoA9issmJTUnsyy1SN8ugSuj+9dnpoIZqhWXVgg1MF5R
+        6GLk5JAQMJF4u+M1WxcjF4eQwBJGiRn/ZrCBJIQE/jJKfO01ArHZBKwkJravYgSxRQQUJaa+
+        eMYM0sAsMIlJYvPts6wgCWEBC4lla7qZQWwWASWJD5+awQbxCmhKvPx3hAXEFhXwktiyr50J
+        xOYUMJW42f6BHWJZF6PExf+qEPWCEj8m3wOrZxaQl9i3fyorhK0lsX7ncaYJjPyzkJTNQlI2
+        C0nZAkbmVYwiqaXFuem5xUZ6xYm5xaV56XrJ+bmbGIEhv+3Yzy07GLveBR9iFOBgVOLhbWiS
+        ihZiTSwrrsw9xCjBwawkwvtMCSjEm5JYWZValB9fVJqTWnyIUZqDRUmc97xBZZSQQHpiSWp2
+        ampBahFMlomDU6qBkf27il/RI5NL1e/+CMcV7hO1tnuZ/tukgdG2+9xZU6/ru9sy/D/PWMld
+        vFNYL+slT2ZRltSPizu69ZUb1y19douhopgr4tLRxrVpn/987PJd9Eb3wdWPbYbXPvf9Ob/0
+        +rYHLG4WlvOU7A6tvTwpxM+yZ8W5uvVsc1c8mszcFv7z6OpcrxkRS5RYijMSDbWYi4oTAUYE
+        Xsl1AgAA
+X-CMS-MailID: 20180608155701eucas1p1ecfd4b722d96b63681336d509d73c38f
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180528154724epcas4p2a7e53a8a3ee382375f23328f9b8bd823
+References: <CGME20180528154724epcas4p2a7e53a8a3ee382375f23328f9b8bd823@epcas4p2.samsung.com>
+        <20180528154704.2568184-1-arnd@arndb.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 8, 2018 at 10:20 AM,  <attitokes@gmail.com> wrote:
-> From: Attila T=C5=91k=C3=A9s <attitokes@gmail.com>
->
-> Added support to automatically configure the SCO packet routing at the de=
-vice setup. The SCO packets are used with the HSP / HFP profiles, but in so=
-me devices (ex. CYW43438) they are routed to a PCM output by default. This =
-change allows sending the vendor specific HCI command to configure the SCO =
-routing. The parameters of the command are loaded from the device tree.
+On Monday, May 28, 2018 05:46:19 PM Arnd Bergmann wrote:
+> I got a bunch of warnings in a randconfig build:
+> 
+> WARNING: modpost: missing MODULE_LICENSE() in drivers/video/fbdev/omap/lcd_ams_delta.o
+> WARNING: modpost: missing MODULE_LICENSE() in drivers/video/fbdev/omap/lcd_inn1510.o
+> WARNING: modpost: missing MODULE_LICENSE() in drivers/video/fbdev/omap/lcd_palmte.o
+> WARNING: modpost: missing MODULE_LICENSE() in drivers/video/fbdev/omap/lcd_palmtt.o
+> 
+> These come from an earlier patch of mine that turned all display drivers
+> into separate modules. The fix is to add a MODULE_LICENSE tag. Since I'm
+> doing that, adding a description and author field also makes sense. I
+> went by the authors listed in the comment at the top of each file, but
+> removed Imre's Nokia email address that I assume is not valid any more,
+> since Imre is working at Intel these days.
+> 
+> Fixes: 81c44c2b2ce3 ("video/omap: fix modular build")
+> Cc: Imre Deak <imre.deak@intel.com>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Please wrap your commit msg.
+Patch queued for 4.18 (with minor fixups, interdiff below), thanks.
 
->
-> Signed-off-by: Attila T=C5=91k=C3=A9s <attitokes@gmail.com>
-> ---
->  .../bindings/net/broadcom-bluetooth.txt       |  7 ++
-
-Please split bindings to separate patch.
-
->  drivers/bluetooth/hci_bcm.c                   | 72 +++++++++++++++++++
->  2 files changed, 79 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt=
- b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-> index 4194ff7e..aea3a094 100644
-> --- a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-> +++ b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-> @@ -21,6 +21,12 @@ Optional properties:
->   - clocks: clock specifier if external clock provided to the controller
->   - clock-names: should be "extclk"
->
-> + SCO routing parameters:
-> + - sco-routing: 0-3 (PCM, Transport, Codec, I2S)
-> + - pcm-interface-rate: 0-4 (128 Kbps - 2048 Kbps)
-> + - pcm-frame-type: 0 (short), 1 (long)
-> + - pcm-sync-mode: 0 (slave), 1 (master)
-> + - pcm-clock-mode: 0 (slave), 1 (master)
-
-Are these Broadcom specific? Properties need either vendor prefix or
-to be documented in a common location. I think these look like the
-latter.
-
-However, this also looks incomplete to me. For example, which SoC
-I2S/PCM port is BT audio connected to and how does it fit into the
-existing audio related bindings? There's been work on HDMI audio
-bindings which would be similar (except for the SCO over UART at
-least).
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
 
->
->  Example:
->
-> @@ -31,5 +37,6 @@ Example:
->         bluetooth {
->                 compatible =3D "brcm,bcm43438-bt";
->                 max-speed =3D <921600>;
-> +               sco-routing =3D <1>; /* 1 =3D transport (UART) */
->         };
->  };
-> diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
-> index ddbd8c6a..0e729534 100644
-> --- a/drivers/bluetooth/hci_bcm.c
-> +++ b/drivers/bluetooth/hci_bcm.c
-> @@ -83,6 +83,16 @@
->   * @hu: pointer to HCI UART controller struct,
->   *     used to disable flow control during runtime suspend and system sl=
-eep
->   * @is_suspended: whether flow control is currently disabled
-> + *
-> + *  SCO routing parameters:
-> + *   used as the parameters for the bcm_set_pcm_int_params command
-> + *     @sco_routing:
-> + *      >=3D 255 (skip SCO routing configuration)
-> + *      0-3 (PCM, Transport, Codec, I2S)
-> + *     @pcm_interface_rate: 0-4 (128 Kbps - 2048 Kbps)
-> + *     @pcm_frame_type: 0 (short), 1 (long)
-> + *     @pcm_sync_mode: 0 (slave), 1 (master)
-> + *     @pcm_clock_mode: 0 (slave), 1 (master)
->   */
->  struct bcm_device {
->         /* Must be the first member, hci_serdev.c expects this. */
-> @@ -114,6 +124,13 @@ struct bcm_device {
->         struct hci_uart         *hu;
->         bool                    is_suspended;
->  #endif
-> +
-> +       /* SCO routing parameters */
-> +       u8                      sco_routing;
-> +       u8                      pcm_interface_rate;
-> +       u8                      pcm_frame_type;
-> +       u8                      pcm_sync_mode;
-> +       u8                      pcm_clock_mode;
->  };
->
->  /* generic bcm uart resources */
-> @@ -189,6 +206,40 @@ static int bcm_set_baudrate(struct hci_uart *hu, uns=
-igned int speed)
->         return 0;
->  }
->
-> +static int bcm_configure_sco_routing(struct hci_uart *hu, struct bcm_dev=
-ice *bcm_dev)
-> +{
-> +       struct hci_dev *hdev =3D hu->hdev;
-> +       struct sk_buff *skb;
-> +       struct bcm_set_pcm_int_params params;
-> +
-> +       if (bcm_dev->sco_routing >=3D 0xff) {
-> +               /* SCO routing configuration should be skipped */
-> +               return 0;
-> +       }
-> +
-> +       bt_dev_dbg(hdev, "BCM: Configuring SCO routing (%d %d %d %d %d)",
-> +                       bcm_dev->sco_routing, bcm_dev->pcm_interface_rate=
-, bcm_dev->pcm_frame_type,
-> +                       bcm_dev->pcm_sync_mode, bcm_dev->pcm_clock_mode);
-> +
-> +       params.routing =3D bcm_dev->sco_routing;
-> +       params.rate =3D bcm_dev->pcm_interface_rate;
-> +       params.frame_sync =3D bcm_dev->pcm_frame_type;
-> +       params.sync_mode =3D bcm_dev->pcm_sync_mode;
-> +       params.clock_mode =3D bcm_dev->pcm_clock_mode;
-> +
-> +       /* Send the SCO routing configuration command */
-> +       skb =3D __hci_cmd_sync(hdev, 0xfc1c, sizeof(params), &params, HCI=
-_CMD_TIMEOUT);
-> +       if (IS_ERR(skb)) {
-> +               int err =3D PTR_ERR(skb);
-> +               bt_dev_err(hdev, "BCM: failed to configure SCO routing (%=
-d)", err);
-> +               return err;
-> +       }
-> +
-> +       kfree_skb(skb);
-> +
-> +       return 0;
-> +}
-> +
->  /* bcm_device_exists should be protected by bcm_device_lock */
->  static bool bcm_device_exists(struct bcm_device *device)
->  {
-> @@ -534,6 +585,9 @@ static int bcm_setup(struct hci_uart *hu)
->                         host_set_baudrate(hu, speed);
->         }
->
-> +       /* Configure SCO routing if needed */
-> +       bcm_configure_sco_routing(hu, bcm->dev);
-> +
->  finalize:
->         release_firmware(fw);
->
-> @@ -1004,9 +1058,21 @@ static int bcm_acpi_probe(struct bcm_device *dev)
->  }
->  #endif /* CONFIG_ACPI */
->
-> +static void read_u8_device_property(struct device *device, const char *p=
-roperty, u8 *destination) {
-> +       u32 temp;
-> +       if (device_property_read_u32(device, property, &temp) =3D=3D 0) {
-> +               *destination =3D temp & 0xff;
-> +       }
-> +}
-> +
->  static int bcm_of_probe(struct bcm_device *bdev)
->  {
->         device_property_read_u32(bdev->dev, "max-speed", &bdev->oper_spee=
-d);
-> +       read_u8_device_property(bdev->dev, "sco-routing", &bdev->sco_rout=
-ing);
-> +       read_u8_device_property(bdev->dev, "pcm-interface-rate", &bdev->p=
-cm_interface_rate);
-> +       read_u8_device_property(bdev->dev, "pcm-frame-type", &bdev->pcm_f=
-rame_type);
-> +       read_u8_device_property(bdev->dev, "pcm-sync-mode", &bdev->pcm_sy=
-nc_mode);
-> +       read_u8_device_property(bdev->dev, "pcm-clock-mode", &bdev->pcm_c=
-lock_mode);
-
-These are actually broken because the DT properties are 32-bit.
-
-Rob
+diff -u b/drivers/video/fbdev/omap/lcd_ams_delta.c b/drivers/video/fbdev/omap/lcd_ams_delta.c
+--- b/drivers/video/fbdev/omap/lcd_ams_delta.c
++++ b/drivers/video/fbdev/omap/lcd_ams_delta.c	2018-06-08 17:39:29.739986550 +0200
+@@ -197,6 +197,7 @@
+ };
+ 
+ module_platform_driver(ams_delta_panel_driver);
++
+ MODULE_AUTHOR("Jonathan McDowell <noodles@earth.li>");
+ MODULE_DESCRIPTION("LCD panel support for the Amstrad E3 (Delta) videophone");
+ MODULE_LICENSE("GPL");
+diff -u b/drivers/video/fbdev/omap/lcd_h3.c b/drivers/video/fbdev/omap/lcd_h3.c
+--- b/drivers/video/fbdev/omap/lcd_h3.c
++++ b/drivers/video/fbdev/omap/lcd_h3.c	2018-06-08 17:39:41.323986842 +0200
+@@ -89,6 +89,7 @@
+ };
+ 
+ module_platform_driver(h3_panel_driver);
++
+ MODULE_AUTHOR("Imre Deak");
+ MODULE_DESCRIPTION("LCD panel support for the TI OMAP H3 board");
+ MODULE_LICENSE("GPL");
+diff -u b/drivers/video/fbdev/omap/lcd_inn1510.c b/drivers/video/fbdev/omap/lcd_inn1510.c
+--- b/drivers/video/fbdev/omap/lcd_inn1510.c
++++ b/drivers/video/fbdev/omap/lcd_inn1510.c	2018-06-08 17:40:29.055988044 +0200
+@@ -73,6 +73,7 @@
+ };
+ 
+ module_platform_driver(innovator1510_panel_driver);
++
+ MODULE_AUTHOR("Imre Deak");
+ MODULE_DESCRIPTION("LCD panel support for the TI OMAP1510 Innovator board");
+ MODULE_LICENSE("GPL");
+diff -u b/drivers/video/fbdev/omap/lcd_inn1610.c b/drivers/video/fbdev/omap/lcd_inn1610.c
+--- b/drivers/video/fbdev/omap/lcd_inn1610.c
++++ b/drivers/video/fbdev/omap/lcd_inn1610.c	2018-06-08 17:40:40.851988341 +0200
+@@ -106,6 +106,7 @@
+ };
+ 
+ module_platform_driver(innovator1610_panel_driver);
++
+ MODULE_AUTHOR("Imre Deak");
+ MODULE_DESCRIPTION("LCD panel support for the TI OMAP1610 Innovator board");
+ MODULE_LICENSE("GPL");
+diff -u b/drivers/video/fbdev/omap/lcd_osk.c b/drivers/video/fbdev/omap/lcd_osk.c
+--- b/drivers/video/fbdev/omap/lcd_osk.c
++++ b/drivers/video/fbdev/omap/lcd_osk.c	2018-06-08 17:40:55.163988701 +0200
+@@ -97,3 +97,3 @@
+-MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Imre Deak");
+ MODULE_DESCRIPTION("LCD panel support for the TI OMAP OSK board");
++MODULE_LICENSE("GPL");
+diff -u b/drivers/video/fbdev/omap/lcd_palmte.c b/drivers/video/fbdev/omap/lcd_palmte.c
+--- b/drivers/video/fbdev/omap/lcd_palmte.c
++++ b/drivers/video/fbdev/omap/lcd_palmte.c	2018-06-08 17:41:13.839989172 +0200
+@@ -60,5 +60,5 @@
+ 
+ module_platform_driver(palmte_panel_driver);
+-MODULE_AUTHOR("Romain Goyet <r.goyet@gmail.com>");
++MODULE_AUTHOR("Romain Goyet <r.goyet@gmail.com>, Laurent Gonzalez <palmte.linux@free.fr>");
+ MODULE_DESCRIPTION("LCD panel support for the Palm Tungsten E");
+ MODULE_LICENSE("GPL");
+diff -u b/drivers/video/fbdev/omap/lcd_palmtt.c b/drivers/video/fbdev/omap/lcd_palmtt.c
+--- b/drivers/video/fbdev/omap/lcd_palmtt.c
++++ b/drivers/video/fbdev/omap/lcd_palmtt.c	2018-06-08 17:42:30.855991111 +0200
+@@ -72,6 +72,7 @@
+ };
+ 
+ module_platform_driver(palmtt_panel_driver);
++
+ MODULE_AUTHOR("Marek Vasut <marek.vasut@gmail.com>");
+ MODULE_DESCRIPTION("LCD panel support for Palm Tungsten|T");
+ MODULE_LICENSE("GPL");
+diff -u b/drivers/video/fbdev/omap/lcd_palmz71.c b/drivers/video/fbdev/omap/lcd_palmz71.c
+--- b/drivers/video/fbdev/omap/lcd_palmz71.c
++++ b/drivers/video/fbdev/omap/lcd_palmz71.c	2018-06-08 17:43:16.543992262 +0200
+@@ -67,5 +67,5 @@
+ 
+ module_platform_driver(palmz71_panel_driver);
+-MODULE_AUTHOR("Marek Vasut");
++MODULE_AUTHOR("Romain Goyet, Laurent Gonzalez, Marek Vasut");
+ MODULE_LICENSE("GPL");
+ MODULE_DESCRIPTION("LCD panel support for the Palm Zire71");
