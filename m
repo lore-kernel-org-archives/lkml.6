@@ -1,151 +1,452 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id BLukAPi/Glu6fAAAmS7hNA
-	; Fri, 08 Jun 2018 17:42:34 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id KR+jIAT6GlsqdAAAmS7hNA
+	; Fri, 08 Jun 2018 21:49:56 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 4BC88607E4; Fri,  8 Jun 2018 17:42:34 +0000 (UTC)
+	id 60437607E4; Fri,  8 Jun 2018 21:49:56 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GVi1BqaE"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CBn2BgdT"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id B498F605A5;
-	Fri,  8 Jun 2018 17:42:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B498F605A5
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 85E07601D2;
+	Fri,  8 Jun 2018 21:49:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 85E07601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752775AbeFHRma (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 13:42:30 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36696 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751694AbeFHRm3 (ORCPT
+        id S1753220AbeFHVtw (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 17:49:52 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:46749 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752974AbeFHVtu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 13:42:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=2UZYN8ulbHDW9480iZM+EmI3W97aWs8aF4H/1Xc0A8M=; b=GVi1BqaED0UlRkVQ78ABc8vdD
-        36mbxU/JTQfsjBdfnRPk14mwa9k1o/+GJ0yvxatdfkgcyarEDZwAUKFwSb5IPNYh2UrxjnEG0Wry+
-        FlGwUIhX6qmSECybrSHeY1papP6+H1IQRlCWwpL99pl2tA/bORdEa5aH9JQUw21sLNvh9VHzTF74j
-        p3NZHGaNYZRY6WXYh5Z6Ck6gsZKUJmFeIcVnWQu52c3dDbo6YlFZgtuZ9UkdlV0I3IM1mMbZEnKbX
-        gOXXwRa6cQpfAhQkDc9lYz9VJtNgHSGVRWn4akf4WWBLcbtOiSwMTNc5gCI9X6va+NUOw1xx4cA3A
-        wpId3K70A==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fRLP3-0008TU-BV; Fri, 08 Jun 2018 17:42:21 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: hans.westgaard.ry@oracle.com, Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>,
-        linux-rdma@vger.kernel.org,
-        =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>,
-        Parav Pandit <parav@mellanox.com>,
-        Jack Morgenstein <jackm@dev.mellanox.co.il>,
-        Pravin Shedge <pravin.shedge4linux@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] IB/mad: Agent registration is process context only
-Date: Fri,  8 Jun 2018 10:42:17 -0700
-Message-Id: <20180608174218.32455-2-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180608174218.32455-1-willy@infradead.org>
-References: <20180608174218.32455-1-willy@infradead.org>
+        Fri, 8 Jun 2018 17:49:50 -0400
+Received: by mail-pl0-f65.google.com with SMTP id 30-v6so8985870pld.13
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 14:49:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6Hjozd42Y6BkBsBG0IRgBlBGWgfxuUNnid2BGXcR+KY=;
+        b=CBn2BgdTDAOraONKY+DiyNXeXstRoTV3q2MFbPjSaHcOVLdLQrcOBGTyyaj+ZJkzHD
+         wJVlFro+FUVRKQgWaSgKQur34HjVtnhNge0OzhNm59jC/KUHOXxrTzoRXfSm/95+JjZL
+         mKI6GfBQAQlzRixbLzoP2Y5byKW3+8xG1L1y0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6Hjozd42Y6BkBsBG0IRgBlBGWgfxuUNnid2BGXcR+KY=;
+        b=NC0RTtiBfU3fJYNVJHg7jkcrxClUM7LkmiRmYHRXhvgxAkEii4GPRyuBtHsqCZ09LB
+         okLpBw5Ocsd51tpoZVyDBSVdPKdImZQsko+U9IyCOjBuwFAbxiD5oNQ32XBVr3rWe34k
+         +LFl7fTxDaM0F0InoZipleLof7JTy/YrX/N3O7PFTUj8qDLDgBy7ePIVUc6OsxT0PcTc
+         0wtomfYDKGV/gbDZRMek/Fpl7MX4EOleb+zmprNvOEoYKPNURI5GEQgsrOWI9MSwr6Ez
+         bYUDXb222O+JEMnWel1ZyeNQr+dVSTE/aMXiETYdlj+UNCf2rNBhPBfiZYBwp3y2qP7H
+         Xs/A==
+X-Gm-Message-State: APt69E0ASMJszLSRklPFYkk8NRgYQKh0XWbsFPFkczVmVmoKJYTrW5Qh
+        AbFlJTxfHPfi0IqcpL9vp99L1Q==
+X-Google-Smtp-Source: ADUXVKKXE1jl7VTG7WPwPBOQ27EhSQWyD4f05WwOnA8FQCNruWjyEJEQys0pDNhFcDnxzPAmR61eYA==
+X-Received: by 2002:a17:902:6ac7:: with SMTP id i7-v6mr8249902plt.288.1528494590351;
+        Fri, 08 Jun 2018 14:49:50 -0700 (PDT)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id q68-v6sm101989460pfb.182.2018.06.08.14.49.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Jun 2018 14:49:49 -0700 (PDT)
+Date: Fri, 8 Jun 2018 15:49:46 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, robh@kernel.org,
+        frowand.list@gmail.com, mark.rutland@arm.com, sudeep.holla@arm.com,
+        arm@kernel.org, linux-kernel@vger.kernel.org, matt.sealey@arm.com,
+        john.horley@arm.com, charles.garcia-tobin@arm.com,
+        coresight@lists.linaro.org, devicetree@vger.kernel.org,
+        mike.leach@linaro.org, Liviu Dudau <liviu.dudau@arm.com>
+Subject: Re: [PATCH 10/20] dts: juno: Update coresight bindings for hw port
+Message-ID: <20180608214946.GI30587@xps15>
+References: <1528235011-30691-1-git-send-email-suzuki.poulose@arm.com>
+ <1528235011-30691-11-git-send-email-suzuki.poulose@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1528235011-30691-11-git-send-email-suzuki.poulose@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+On Tue, Jun 05, 2018 at 10:43:21PM +0100, Suzuki K Poulose wrote:
+> Switch to updated coresight bindings for hw ports.
+> 
+> Cc: Sudeep Holla <sudeep.holla@arm.com>
+> Cc: Liviu Dudau <liviu.dudau@arm.com>
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+> Changes since V1:
+>   - Add support Juno for r1 & r2.
+> ---
 
-Document this (it's implicitly true due to sleeping operations already
-in use in both registration and deregistration).  Use this fact to use
-spin_lock_irq instead of spin_lock_irqsave.  This improves performance
-slightly.
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
----
- drivers/infiniband/core/mad.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/infiniband/core/mad.c b/drivers/infiniband/core/mad.c
-index f742ae7a768b..68f4dda916c8 100644
---- a/drivers/infiniband/core/mad.c
-+++ b/drivers/infiniband/core/mad.c
-@@ -190,6 +190,8 @@ EXPORT_SYMBOL(ib_response_mad);
- 
- /*
-  * ib_register_mad_agent - Register to send/receive MADs
-+ *
-+ * Context: Process context.
-  */
- struct ib_mad_agent *ib_register_mad_agent(struct ib_device *device,
- 					   u8 port_num,
-@@ -210,7 +212,6 @@ struct ib_mad_agent *ib_register_mad_agent(struct ib_device *device,
- 	struct ib_mad_mgmt_vendor_class *vendor_class;
- 	struct ib_mad_mgmt_method_table *method;
- 	int ret2, qpn;
--	unsigned long flags;
- 	u8 mgmt_class, vclass;
- 
- 	/* Validate parameters */
-@@ -376,7 +377,7 @@ struct ib_mad_agent *ib_register_mad_agent(struct ib_device *device,
- 		goto error4;
- 	}
- 
--	spin_lock_irqsave(&port_priv->reg_lock, flags);
-+	spin_lock_irq(&port_priv->reg_lock);
- 	mad_agent_priv->agent.hi_tid = atomic_inc_return(&ib_mad_client_id);
- 
- 	/*
-@@ -422,11 +423,11 @@ struct ib_mad_agent *ib_register_mad_agent(struct ib_device *device,
- 
- 	/* Add mad agent into port's agent list */
- 	list_add_tail(&mad_agent_priv->agent_list, &port_priv->agent_list);
--	spin_unlock_irqrestore(&port_priv->reg_lock, flags);
-+	spin_unlock_irq(&port_priv->reg_lock);
- 
- 	return &mad_agent_priv->agent;
- error5:
--	spin_unlock_irqrestore(&port_priv->reg_lock, flags);
-+	spin_unlock_irq(&port_priv->reg_lock);
- 	ib_mad_agent_security_cleanup(&mad_agent_priv->agent);
- error4:
- 	kfree(reg_req);
-@@ -575,7 +576,6 @@ static inline void deref_snoop_agent(struct ib_mad_snoop_private *mad_snoop_priv
- static void unregister_mad_agent(struct ib_mad_agent_private *mad_agent_priv)
- {
- 	struct ib_mad_port_private *port_priv;
--	unsigned long flags;
- 
- 	/* Note that we could still be handling received MADs */
- 
-@@ -587,10 +587,10 @@ static void unregister_mad_agent(struct ib_mad_agent_private *mad_agent_priv)
- 	port_priv = mad_agent_priv->qp_info->port_priv;
- 	cancel_delayed_work(&mad_agent_priv->timed_work);
- 
--	spin_lock_irqsave(&port_priv->reg_lock, flags);
-+	spin_lock_irq(&port_priv->reg_lock);
- 	remove_mad_reg_req(mad_agent_priv);
- 	list_del(&mad_agent_priv->agent_list);
--	spin_unlock_irqrestore(&port_priv->reg_lock, flags);
-+	spin_unlock_irq(&port_priv->reg_lock);
- 
- 	flush_workqueue(port_priv->wq);
- 	ib_cancel_rmpp_recvs(mad_agent_priv);
-@@ -625,6 +625,8 @@ static void unregister_mad_snoop(struct ib_mad_snoop_private *mad_snoop_priv)
- 
- /*
-  * ib_unregister_mad_agent - Unregisters a client from using MAD services
-+ *
-+ * Context: Process context.
-  */
- void ib_unregister_mad_agent(struct ib_mad_agent *mad_agent)
- {
--- 
-2.17.1
+>  arch/arm64/boot/dts/arm/juno-base.dtsi    | 82 ++++++++++++++++++++++---------
+>  arch/arm64/boot/dts/arm/juno-cs-r1r2.dtsi | 26 +++++++---
+>  arch/arm64/boot/dts/arm/juno.dts          |  5 +-
+>  3 files changed, 81 insertions(+), 32 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/arm/juno-base.dtsi b/arch/arm64/boot/dts/arm/juno-base.dtsi
+> index eb749c5..33b41ba 100644
+> --- a/arch/arm64/boot/dts/arm/juno-base.dtsi
+> +++ b/arch/arm64/boot/dts/arm/juno-base.dtsi
+> @@ -122,15 +122,18 @@
+>  			port@0 {
+>  				reg = <0>;
+>  				etf0_in_port: endpoint {
+> -					slave-mode;
+> +					direction = <0>;
+>  					remote-endpoint = <&main_funnel_out_port>;
+> +					coresight,hwid = <0>;
+>  				};
+>  			};
+>  
+>  			/* output port */
+>  			port@1 {
+> -				reg = <0>;
+> +				reg = <1>;
+>  				etf0_out_port: endpoint {
+> +					coresight,hwid = <0>;
+> +					direction = <1>;
+>  				};
+>  			};
+>  		};
+> @@ -145,8 +148,9 @@
+>  		power-domains = <&scpi_devpd 0>;
+>  		port {
+>  			tpiu_in_port: endpoint {
+> -				slave-mode;
+> +				direction = <0>;
+>  				remote-endpoint = <&replicator_out_port0>;
+> +				coresight,hwid = <0>;
+>  			};
+>  		};
+>  	};
+> @@ -168,23 +172,27 @@
+>  				reg = <0>;
+>  				main_funnel_out_port: endpoint {
+>  					remote-endpoint = <&etf0_in_port>;
+> +					coresight,hwid = <0>;
+> +					direction = <1>;
+>  				};
+>  			};
+>  
+>  			/* input ports */
+>  			port@1 {
+> -				reg = <0>;
+> +				reg = <1>;
+>  				main_funnel_in_port0: endpoint {
+> -					slave-mode;
+> +					direction = <0>;
+>  					remote-endpoint = <&cluster0_funnel_out_port>;
+> +					coresight,hwid = <0>;
+>  				};
+>  			};
+>  
+>  			port@2 {
+> -				reg = <1>;
+> +				reg = <2>;
+>  				main_funnel_in_port1: endpoint {
+> -					slave-mode;
+> +					direction = <0>;
+>  					remote-endpoint = <&cluster1_funnel_out_port>;
+> +					coresight,hwid = <1>;
+>  				};
+>  			};
+>  		};
+> @@ -200,8 +208,9 @@
+>  		power-domains = <&scpi_devpd 0>;
+>  		port {
+>  			etr_in_port: endpoint {
+> -				slave-mode;
+> +				direction = <0>;
+>  				remote-endpoint = <&replicator_out_port1>;
+> +				coresight,hwid = <0>;
+>  			};
+>  		};
+>  	};
+> @@ -217,6 +226,8 @@
+>  		power-domains = <&scpi_devpd 0>;
+>  		port {
+>  			stm_out_port: endpoint {
+> +				coresight,hwid = <0>;
+> +				direction = <1>;
+>  			};
+>  		};
+>  	};
+> @@ -240,6 +251,8 @@
+>  		port {
+>  			cluster0_etm0_out_port: endpoint {
+>  				remote-endpoint = <&cluster0_funnel_in_port0>;
+> +				coresight,hwid = <0>;
+> +				direction = <1>;
+>  			};
+>  		};
+>  	};
+> @@ -259,22 +272,26 @@
+>  				reg = <0>;
+>  				cluster0_funnel_out_port: endpoint {
+>  					remote-endpoint = <&main_funnel_in_port0>;
+> +					coresight,hwid = <0>;
+> +					direction = <1>;
+>  				};
+>  			};
+>  
+>  			port@1 {
+> -				reg = <0>;
+> +				reg = <1>;
+>  				cluster0_funnel_in_port0: endpoint {
+> -					slave-mode;
+> +					direction = <0>;
+>  					remote-endpoint = <&cluster0_etm0_out_port>;
+> +					coresight,hwid = <0>;
+>  				};
+>  			};
+>  
+>  			port@2 {
+> -				reg = <1>;
+> +				reg = <2>;
+>  				cluster0_funnel_in_port1: endpoint {
+> -					slave-mode;
+> +					direction = <0>;
+>  					remote-endpoint = <&cluster0_etm1_out_port>;
+> +					coresight,hwid = <1>;
+>  				};
+>  			};
+>  		};
+> @@ -299,6 +316,8 @@
+>  		port {
+>  			cluster0_etm1_out_port: endpoint {
+>  				remote-endpoint = <&cluster0_funnel_in_port1>;
+> +				coresight,hwid = <0>;
+> +				direction = <1>;
+>  			};
+>  		};
+>  	};
+> @@ -322,6 +341,8 @@
+>  		port {
+>  			cluster1_etm0_out_port: endpoint {
+>  				remote-endpoint = <&cluster1_funnel_in_port0>;
+> +				coresight,hwid = <0>;
+> +				direction = <1>;
+>  			};
+>  		};
+>  	};
+> @@ -341,36 +362,42 @@
+>  				reg = <0>;
+>  				cluster1_funnel_out_port: endpoint {
+>  					remote-endpoint = <&main_funnel_in_port1>;
+> +					coresight,hwid = <0>;
+> +					direction = <1>;
+>  				};
+>  			};
+>  
+>  			port@1 {
+> -				reg = <0>;
+> +				reg = <1>;
+>  				cluster1_funnel_in_port0: endpoint {
+> -					slave-mode;
+> +					direction = <0>;
+>  					remote-endpoint = <&cluster1_etm0_out_port>;
+> +					coresight,hwid = <0>;
+>  				};
+>  			};
+>  
+>  			port@2 {
+> -				reg = <1>;
+> +				reg = <2>;
+>  				cluster1_funnel_in_port1: endpoint {
+> -					slave-mode;
+> +					direction = <0>;
+>  					remote-endpoint = <&cluster1_etm1_out_port>;
+> +					coresight,hwid = <1>;
+>  				};
+>  			};
+>  			port@3 {
+> -				reg = <2>;
+> +				reg = <3>;
+>  				cluster1_funnel_in_port2: endpoint {
+> -					slave-mode;
+> +					direction = <0>;
+>  					remote-endpoint = <&cluster1_etm2_out_port>;
+> +					coresight,hwid = <2>;
+>  				};
+>  			};
+>  			port@4 {
+> -				reg = <3>;
+> +				reg = <4>;
+>  				cluster1_funnel_in_port3: endpoint {
+> -					slave-mode;
+> +					direction = <0>;
+>  					remote-endpoint = <&cluster1_etm3_out_port>;
+> +					coresight,hwid = <3>;
+>  				};
+>  			};
+>  		};
+> @@ -395,6 +422,8 @@
+>  		port {
+>  			cluster1_etm1_out_port: endpoint {
+>  				remote-endpoint = <&cluster1_funnel_in_port1>;
+> +				coresight,hwid = <0>;
+> +				direction = <1>;
+>  			};
+>  		};
+>  	};
+> @@ -418,6 +447,8 @@
+>  		port {
+>  			cluster1_etm2_out_port: endpoint {
+>  				remote-endpoint = <&cluster1_funnel_in_port2>;
+> +				coresight,hwid = <0>;
+> +				direction = <1>;
+>  			};
+>  		};
+>  	};
+> @@ -441,6 +472,8 @@
+>  		port {
+>  			cluster1_etm3_out_port: endpoint {
+>  				remote-endpoint = <&cluster1_funnel_in_port3>;
+> +				coresight,hwid = <0>;
+> +				direction = <1>;
+>  			};
+>  		};
+>  	};
+> @@ -462,6 +495,8 @@
+>  				reg = <0>;
+>  				replicator_out_port0: endpoint {
+>  					remote-endpoint = <&tpiu_in_port>;
+> +					coresight,hwid = <0>;
+> +					direction = <1>;
+>  				};
+>  			};
+>  
+> @@ -469,14 +504,17 @@
+>  				reg = <1>;
+>  				replicator_out_port1: endpoint {
+>  					remote-endpoint = <&etr_in_port>;
+> +					coresight,hwid = <1>;
+> +					direction = <1>;
+>  				};
+>  			};
+>  
+>  			/* replicator input port */
+>  			port@2 {
+> -				reg = <0>;
+> +				reg = <2>;
+>  				replicator_in_port0: endpoint {
+> -					slave-mode;
+> +					direction = <0>;
+> +					coresight,hwid = <0>;
+>  				};
+>  			};
+>  		};
+> diff --git a/arch/arm64/boot/dts/arm/juno-cs-r1r2.dtsi b/arch/arm64/boot/dts/arm/juno-cs-r1r2.dtsi
+> index 0c43fb3..146a5d9 100644
+> --- a/arch/arm64/boot/dts/arm/juno-cs-r1r2.dtsi
+> +++ b/arch/arm64/boot/dts/arm/juno-cs-r1r2.dtsi
+> @@ -15,15 +15,18 @@
+>  			port@0 {
+>  				reg = <0>;
+>  				csys1_funnel_out_port: endpoint {
+> +					coresight,hwid = <0>;
+> +					direction = <1>;
+>  					remote-endpoint = <&etf1_in_port>;
+>  				};
+>  			};
+>  
+>  			/* input port */
+>  			port@1 {
+> -				reg = <0>;
+> +				reg = <1>;
+>  				csys1_funnel_in_port0: endpoint {
+> -					slave-mode;
+> +					coresight,hwid = <0>;
+> +					direction = <0>;
+>  				};
+>  			};
+>  
+> @@ -45,15 +48,18 @@
+>  			port@0 {
+>  				reg = <0>;
+>  				etf1_in_port: endpoint {
+> -					slave-mode;
+> +					direction = <0>;
+> +					coresight,hwid = <0>;
+>  					remote-endpoint = <&csys1_funnel_out_port>;
+>  				};
+>  			};
+>  
+>  			/* output port */
+>  			port@1 {
+> -				reg = <0>;
+> +				reg = <1>;
+>  				etf1_out_port: endpoint {
+> +					coresight,hwid = <0>;
+> +					direction = <1>;
+>  					remote-endpoint = <&csys2_funnel_in_port1>;
+>  				};
+>  			};
+> @@ -75,23 +81,27 @@
+>  			port@0 {
+>  				reg = <0>;
+>  				csys2_funnel_out_port: endpoint {
+> +					coresight,hwid = <0>;
+> +					direction = <1>;
+>  					remote-endpoint = <&replicator_in_port0>;
+>  				};
+>  			};
+>  
+>  			/* input ports */
+>  			port@1 {
+> -				reg = <0>;
+> +				reg = <1>;
+>  				csys2_funnel_in_port0: endpoint {
+> -					slave-mode;
+> +					direction = <0>;
+> +					coresight,hwid = <0>;
+>  					remote-endpoint = <&etf0_out_port>;
+>  				};
+>  			};
+>  
+>  			port@2 {
+> -				reg = <1>;
+> +				reg = <2>;
+>  				csys2_funnel_in_port1: endpoint {
+> -					slave-mode;
+> +					direction = <0>;
+> +					coresight,hwid = <1>;
+>  					remote-endpoint = <&etf1_out_port>;
+>  				};
+>  			};
+> diff --git a/arch/arm64/boot/dts/arm/juno.dts b/arch/arm64/boot/dts/arm/juno.dts
+> index c9236c4..27b8036 100644
+> --- a/arch/arm64/boot/dts/arm/juno.dts
+> +++ b/arch/arm64/boot/dts/arm/juno.dts
+> @@ -260,10 +260,11 @@
+>  &main_funnel {
+>  	ports {
+>  		port@3 {
+> -			reg = <2>;
+> +			reg = <3>;
+>  			main_funnel_in_port2: endpoint {
+> -				slave-mode;
+> +				direction = <0>;
+>  				remote-endpoint = <&stm_out_port>;
+> +				coresight,hwid = <2>;
+>  			};
+>  		};
+>  	};
+> -- 
+> 2.7.4
+> 
