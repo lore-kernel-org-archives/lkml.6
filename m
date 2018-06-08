@@ -1,173 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id fV8DLA8PGlulSQAAmS7hNA
-	; Fri, 08 Jun 2018 05:14:40 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id vjbhHZ88GluoOgAAmS7hNA
+	; Fri, 08 Jun 2018 08:23:31 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id A2B27607DC; Fri,  8 Jun 2018 05:14:40 +0000 (UTC)
+	id 708D5607E4; Fri,  8 Jun 2018 08:23:31 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2W9epIFp"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k3tuVFkd"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id E95F2602FC;
-	Fri,  8 Jun 2018 05:14:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E95F2602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id C33F760590;
+	Fri,  8 Jun 2018 08:23:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C33F760590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751185AbeFHFOh (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 01:14:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53120 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751101AbeFHFOg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 01:14:36 -0400
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 57FA820874;
-        Fri,  8 Jun 2018 05:14:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528434875;
-        bh=bR3QsnNTDfsAtGYe2KsRx1NhzKcusA9FpmFMx7dxz70=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=2W9epIFpZ7RCTm+OqK7HekXP9NQlBNPkKpzeWjQxK9S3H8RYlZUDZmQhlES0l/KkS
-         Vnz1FFrHcc2hW53pg6/sv3+UEW/4YG7oJkzvqNEK7rQGobC2XZHHMzJeNX+x3ZyDey
-         wuqedLh6zShGJrNAZzyBIh7TheXswl8rX25sXTBk=
-Date: Fri, 8 Jun 2018 14:14:31 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc: oleg@redhat.com, srikar@linux.vnet.ibm.com, rostedt@goodmis.org,
-        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org, corbet@lwn.net,
-        linux-doc@vger.kernel.org, ananth@linux.vnet.ibm.com,
-        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com
-Subject: Re: [PATCH 0/7] Uprobes: Support SDT markers having reference count
- (semaphore)
-Message-Id: <20180608141431.c0196a2c80a8d4701bc9db58@kernel.org>
-In-Reply-To: <0d487b32-3141-ec30-6cca-eba7159d70b0@linux.ibm.com>
-References: <20180606083344.31320-1-ravi.bangoria@linux.ibm.com>
-        <20180608101023.cbf20db485026213d490cb7c@kernel.org>
-        <0d487b32-3141-ec30-6cca-eba7159d70b0@linux.ibm.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S932395AbeFHIX0 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 04:23:26 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:37229 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932130AbeFHIWn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 04:22:43 -0400
+Received: by mail-ua0-f196.google.com with SMTP id i3-v6so8338239uad.4;
+        Fri, 08 Jun 2018 01:22:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=LUoCfABQXykEbDmg8Afn9uUe1pvrxvO4FI6fSj57kzM=;
+        b=k3tuVFkd7GSD9TZwIbpiqTOfGPf2DjpVKAeYelM8E+dxvoIB1OPr6bPsj8owBj4Brp
+         gv1qW7ACJEj50Xk8lOdvXVgL2HeO2NP8pqTRhM6JPtPORaiilBS3Al/uUt/ZdZ/ux7cZ
+         oh4frNiBJ4cUXQdnWnjdT2fDT2fMa9aizt8fe8heRgSv7uGuKq7o4GzP0fR1Lwq1gWI9
+         1E++lk+zJEEmhQF2LDpm+90jRoYQuwVJZcF5861QKJlFwLR/E67f2kHbCzJPemudvrf/
+         JAKwqpfbTiXsMW9kebnzNKFtnJIe+BE4nzOTN86MTn7VybMmNA7nl/voRkcB3e6Khn66
+         71YQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=LUoCfABQXykEbDmg8Afn9uUe1pvrxvO4FI6fSj57kzM=;
+        b=hwNpSdERIbRUKk5Pbqc5/Z94Lm4JWaKupMvGJHpyDsReG080W4n3JqRhJ6eXPkyXoE
+         ct41qAms0yNPcdJGUZ0TQEX4ZsojrIDAJiCuQR6BBPeDj6KJHkXQUS3fS3cypkLD3ai3
+         q1mH5AM1dT/cpeQFjhNNg+raZgsg8LQkr6Sjg52NWC/ZSAvdcxbEMvI9nTw+nx/CN0Uc
+         /n6FZHLGNmgRFT/OlKArUZPwhQRZrT6vRolfSuOGZpCnC8ekdg9HZejSOP8RdYzEqNBT
+         G6Hx79MhMeK2N6EHa6UkOQdUlR6qa3wqpwxzhTNJghADmZb+oNqDlLdifdKJrZaSwEXG
+         Nm1w==
+X-Gm-Message-State: APt69E3f05zHDThFhno+yLx+W47ceo3XI73Lg1gG3ADtNNx2FP3PZXsz
+        CuTw7nSlHzzo6ETunRBdOBLJpt8RmEQ3h7yUqqI=
+X-Google-Smtp-Source: ADUXVKK5KmtrTauqDWEYM10rUw+dKYnQbIPG5NhMe21kFLzrshTsgV9zwXtKGotfwqlUdqz5IFu1/1n8UuUOc8qSQzg=
+X-Received: by 2002:ab0:48e1:: with SMTP id y30-v6mr3524068uac.180.1528446162295;
+ Fri, 08 Jun 2018 01:22:42 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a67:8596:0:0:0:0:0 with HTTP; Fri, 8 Jun 2018 01:22:41 -0700 (PDT)
+In-Reply-To: <CAK7LNAR5f+ZU+W9hUZJW+78rATsUjmgSnq31f-iZkMgPEhaoBw@mail.gmail.com>
+References: <1527499328-13213-1-git-send-email-yamada.masahiro@socionext.com>
+ <1527499328-13213-22-git-send-email-yamada.masahiro@socionext.com>
+ <CAMuHMdUDCtnyqydZan9Q-+hOQacWGJrrMbw4LshjYSjn2=yBjw@mail.gmail.com>
+ <CAK7LNAQxS7xkqja2J5FNkRfhCtQpeKqJVsQXFggQrJT6cL_2Cw@mail.gmail.com> <CAK7LNAR5f+ZU+W9hUZJW+78rATsUjmgSnq31f-iZkMgPEhaoBw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 8 Jun 2018 10:22:41 +0200
+X-Google-Sender-Auth: y7szswoaj74IrePhqmJO2ls-dPs
+Message-ID: <CAMuHMdV9U1-3NsojpAZROAJsKSyun=RzFt6CqGAHwW3KHqi5kA@mail.gmail.com>
+Subject: Re: [PATCH v5 21/31] kconfig: show compiler version text in the top comment
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Luis R . Rodriguez" <mcgrof@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 8 Jun 2018 07:59:38 +0530
-Ravi Bangoria <ravi.bangoria@linux.ibm.com> wrote:
+Hi Yamada-san,
 
-> Hi Masami,
-> 
-> On 06/08/2018 06:40 AM, Masami Hiramatsu wrote:
-> > On Wed,  6 Jun 2018 14:03:37 +0530
-> > Ravi Bangoria <ravi.bangoria@linux.ibm.com> wrote:
-> > 
-> >> Why RFC again:
-> >>
-> >> This series is different from earlier versions[1]. Earlier series
-> >> implemented this feature in trace_uprobe while this has implemented
-> >> the logic in core uprobe. Few reasons for this:
-> >>  1. One of the major reason was the deadlock between uprobe_lock and
-> >>  mm->mmap inside trace_uprobe_mmap(). That deadlock was not easy to fix
-> >>  because mm->mmap is not in control of trace_uprobe_mmap() and it has
-> >>  to take uprobe_lock to loop over trace_uprobe list. More details can
-> >>  be found at[2]. With this new approach, there are no deadlocks found
-> >>  so far.
-> >>  2. Many of the core uprobe function and data-structures needs to be
-> >>  exported to make earlier implementation simple. With this new approach,
-> >>  reference counter logic is been implemented in core uprobe and thus
-> >>  no need to export anything.
-> > 
-> > I agree with you. Moreover, since uprobe_register/unregister() are
-> > exported to modules, this enablement would better be implemented
-> > inside uprobe so that all uprobe users benefit from this.
-> 
-> 
-> Sorry, I think you got me wrong. I meant, I don't need to expose all core
-> uprobe _static_ functions to tarce_uprobe.
-> 
-> Now, about kernel modules, basically uprobe_register() takes three parameters:
->     inode, offset and consumer.
-> There is no scope for the reference counter there. So I've created one more
-> function: uprobe_register_refctr(). But this function is not exported as ABI
-> to kernel module. i.e. kernel modules still does not have a way to create
-> uprobe with reference counter.
+On Fri, Jun 8, 2018 at 9:04 AM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> 2018-06-07 17:58 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+>> 2018-06-07 17:42 GMT+09:00 Geert Uytterhoeven <geert@linux-m68k.org>:
+>>> On Mon, May 28, 2018 at 11:21 AM, Masahiro Yamada
+>>> <yamada.masahiro@socionext.com> wrote:
+>>>> The kernel configuration phase is now tightly coupled with the compiler
+>>>> in use.  It will be nice to show the compiler information in Kconfig.
 
-OK, I got it from your patches. :)
+[...]
 
-> So for kernel modules,
-> 
-> is it fine to change current ABI from
->     uprobe_register(inode, offset, consumer)
-> to
->     uprobe_register(inode, offset, ref_ctr_offset, consumer)
-> 
-> Or I should introduce new function for this:
->     uprobe_register_refctr(inode, offset, ref_ctr_offset, consumer)
-> and export it to kernel module?
-> 
-> What's your suggestion?
+>>>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>>>> Reviewed-by: Kees Cook <keescook@chromium.org>
+>>>
+>>> This is now commit 21c54b774744719c ("kconfig: show compiler version text
+>>> in the top comment") upstream.
+>>>
+>>> This commit broke cross-compilation for me:
+>>>
+>>>     $ make ARCH=m68k
+>>>     scripts/kconfig/conf  --syncconfig Kconfig
+>>>     scripts/kconfig/conf  --syncconfig Kconfig
+>>>     scripts/kconfig/conf  --syncconfig Kconfig
+>>>     scripts/kconfig/conf  --syncconfig Kconfig
+>>>     ...
+>>>
+>>> with O=:
+>>>
+>>>       GEN     ./Makefile
+>>>      scripts/kconfig/conf  --syncconfig Kconfig
+>>>       GEN     ./Makefile
+>>>     scripts/kconfig/conf  --syncconfig Kconfig
+>>>       GEN     ./Makefile
+>>>     scripts/kconfig/conf  --syncconfig Kconfig
+>>>       GEN     ./Makefile
+>>>     ...
+>>>
+>>> .config gained (both with/without O=):
+>>>
+>>>     #
+>>>     # Compiler: gcc (Ubuntu 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+>>>     #
+>>>
+>>> which is definitely wrong when cross-compiling for m68k.
+>>>
+>>> Reverting the commit, and fixing up the conflicts, fixes the issue for me
+>>>
+>>> Do you have a clue?
+>>> Thanks!
+>>
+>>
+>> Agh, I missed the case where CROSS_COMPILE is
+>> set by arch/$(SRCARCH)/Makefile.
+>>
+>>
+>> I will fix it.  Thanks for the report!
+>
+> I posted a patch.
+> https://patchwork.kernel.org/patch/10453685/
+>
+> I hope it will fix your problem.
 
-Latter is fine to me. Since the refctr is introduced totally in userspace
-(for SDT) and free-address userspace probing doesn't need refctr, maybe
-we should keep those separated.
+Yes it has. Thanks!
 
-> [...]
-> 
-> >> 
-> >>  - This patches still has one issue. If there are multiple instances of
-> >>    same application running and user wants to trace any particular
-> >>    instance, trace_uprobe is updating reference counter in all instances.
-> >>    This is not a problem on user side because instruction is not replaced
-> >>    with trap/int3 and thus user will only see samples from his interested
-> >>    process. But still this is more of a correctness issue. I'm working on
-> >>    a fix for this.
-> > 
-> > Hmm, it sounds like not a correctness issue, but there maybe a performace
-> > tradeoff. Tracing one particulear instance, other instances also will get
-> > a performance loss
-> 
-> 
-> Right, but it's temporary. I mean, putting everything in to this series was making
-> it complex. So this is the initial one and I'll send followup patches which will
-> optimize the reference counter update.
+Gr{oetje,eeting}s,
 
-Ah, OK. If you have prepared the followup patches, could you also send it
-with this series? Perhups it will help us to understand the issue clearer.
-
-> 
-> > (Only if the parameter preparation block is heavy,
-> > because the heaviest part of probing - trap/int3 and recording data - isn't
-> > executed.)
-> >> BTW, why this happens? I thought the refcounter part is just a data which
-> > is not shared among processes...
-> > 
-> 
-> This happens because we are not calling consumer_filter function. consumer_filter
-> is the one who decides whether to change the instruction to trap or not in a given
-> mm. We also need to call it before updating reference counter.
-
-Hmm, it sounds simple... maybe we can increment refctr in install_breakpoint/
-remove_breakpoint?
-
-Thank you,
-
-> 
-> Let me know your thoughts.
-> 
-> Thanks,
-> Ravi
-> 
-
+                        Geert
 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
