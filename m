@@ -1,264 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id pdEJLN5HGVs9QQAAmS7hNA
-	; Thu, 07 Jun 2018 14:59:40 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id YmoYL9dpGlvFUAAAmS7hNA
+	; Fri, 08 Jun 2018 11:34:47 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 246AF608BF; Thu,  7 Jun 2018 14:59:40 +0000 (UTC)
+	id 9A15A608B8; Fri,  8 Jun 2018 11:34:47 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zrblun/i"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 3EE0F601C3;
-	Thu,  7 Jun 2018 14:59:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3EE0F601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 1449C607DC;
+	Fri,  8 Jun 2018 11:34:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1449C607DC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935719AbeFGO7g (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:59:36 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41291 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935702AbeFGO7e (ORCPT
+        id S1752898AbeFHLeo (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 07:34:44 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:44799 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752650AbeFHLem (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:59:34 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbg-0005Zi-Gp; Thu, 07 Jun 2018 15:09:40 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb6-00030b-Ba; Thu, 07 Jun 2018 15:09:04 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Fri, 8 Jun 2018 07:34:42 -0400
+Received: by mail-lf0-f65.google.com with SMTP id 36-v6so19538480lfr.11;
+        Fri, 08 Jun 2018 04:34:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=9sA7oRCH1r5JNp+7y2Zmxqp3kX7+dtEdhA8/B7jnz48=;
+        b=Zrblun/i1qmWE3Ez/n4WFoRk/PquieOgftJDYbTsQnsUeNEBod71Fgyxzcq9qQjs+1
+         wTA6CwRpjX7aEnUtROWJ9aVSRLvnvvX1uHuoVTeHLWYEypxlVFyQ/PC0Sp8wnVPczMSd
+         tNTWo5xL7ybIcDXknC9WiMWsfBdMiAINpMqGzpTaoxrPOFk0XKS21dzyEZX6ArkoQgv7
+         e7gLZ5yXc2KKOyu8dY1kzQrD1bPOOYHpLvO6QixrR3iQ85wF3VA6CTJQlKMRytdRFmbd
+         FKf/WAxmzBaDccLZl/is43KGZ+poa2ZyJlp/NqPojPnfclHpfIeTAFRomT4ewZTKzVZn
+         hOKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=9sA7oRCH1r5JNp+7y2Zmxqp3kX7+dtEdhA8/B7jnz48=;
+        b=K6CzpEtjgnzihPwV06XM+B68fuhQdBQieDP/ScesU+Fa4Smg8lX1pKs3vCUsZ40WLL
+         bjxmt+OO8bM6Zc76hsmBBsZM18FWcDaKFivPr2z24QWtmaVK81q6hotdLUY40zqbJ3NJ
+         mBwzkCeryirGApe8T0DTMFraY4RbGJIkpi/saSIFHsIPLblKLu9cBTnXWHw+H1hRVND/
+         LyT2GL+HQk6oUBtYYwwokrjp0QkB08ZMlzMyqH16InEURI2+PwPhLzglP4eMOFeGEBUx
+         C+Ku4v/Wn8vnnjRelAU1NuTb1NAzdEnXFH57KVrcD/bMr8QquRN7GoNw9Ap08/7REl2y
+         fTlg==
+X-Gm-Message-State: APt69E0491baaq5DDZr6sJF3g1aQQATt2TP1PqtLB8Hywkua1lBmrOd4
+        kCaH+MNJPU0Ivd10Ypq0Dfs=
+X-Google-Smtp-Source: ADUXVKIlbWs3dhiysCj4pXwKmw9XpomJmRXVnqj0U4eGRS4Y0u9IqQixNh/aCMjddV0uI/A2E+CbTg==
+X-Received: by 2002:a19:d1d4:: with SMTP id i203-v6mr3636202lfg.93.1528457681224;
+        Fri, 08 Jun 2018 04:34:41 -0700 (PDT)
+Received: from [10.17.182.9] (ll-74.141.223.85.sovam.net.ua. [85.223.141.74])
+        by smtp.gmail.com with ESMTPSA id p18-v6sm12180747lfd.91.2018.06.08.04.34.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Jun 2018 04:34:40 -0700 (PDT)
+Subject: Re: [PATCH v2 7/9] xen/gntdev: Implement dma-buf export functionality
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        jgross@suse.com, konrad.wilk@oracle.com
+Cc: daniel.vetter@intel.com, dongwon.kim@intel.com,
+        matthew.d.roper@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180601114132.22596-1-andr2000@gmail.com>
+ <20180601114132.22596-8-andr2000@gmail.com>
+ <96dd30f5-6ac6-498f-06e7-352e46994576@oracle.com>
+ <117e05b3-69f6-b879-50d9-0cddd8e4c313@gmail.com>
+ <4b37bbe1-6c5c-1941-bac0-2c7ba88af3e3@oracle.com>
+ <d83a356c-f7a5-bce1-cafd-a52e736570fb@gmail.com>
+ <b7f27688-f627-3fd9-9298-e02e6f35ca1e@oracle.com>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <0c820b7d-d9e5-8a60-b9fc-86eb3ca81df8@gmail.com>
+Date: Fri, 8 Jun 2018 14:34:39 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Josh Poimboeuf" <jpoimboe@redhat.com>,
-        "Michael Kerrisk" <mtk.manpages@gmail.com>,
-        "Randy Dunlap" <rdunlap@infradead.org>,
-        "Al Viro" <viro@zeniv.linux.org.uk>,
-        "Joe Lawrence" <joe.lawrence@redhat.com>,
-        "Mikulas Patocka" <mpatocka@redhat.com>,
-        "Jens Axboe" <axboe@kernel.dk>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.972258691@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 208/410] pipe: add proc_dopipe_max_size() to safely
- assign pipe_max_size
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+In-Reply-To: <b7f27688-f627-3fd9-9298-e02e6f35ca1e@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
-
-------------------
-
-From: Joe Lawrence <joe.lawrence@redhat.com>
-
-commit 7a8d181949fb2c16be00f8cdb354794a30e46b39 upstream.
-
-pipe_max_size is assigned directly via procfs sysctl:
-
-  static struct ctl_table fs_table[] = {
-          ...
-          {
-                  .procname       = "pipe-max-size",
-                  .data           = &pipe_max_size,
-                  .maxlen         = sizeof(int),
-                  .mode           = 0644,
-                  .proc_handler   = &pipe_proc_fn,
-                  .extra1         = &pipe_min_size,
-          },
-          ...
-
-  int pipe_proc_fn(struct ctl_table *table, int write, void __user *buf,
-                   size_t *lenp, loff_t *ppos)
-  {
-          ...
-          ret = proc_dointvec_minmax(table, write, buf, lenp, ppos)
-          ...
-
-and then later rounded in-place a few statements later:
-
-          ...
-          pipe_max_size = round_pipe_size(pipe_max_size);
-          ...
-
-This leaves a window of time between initial assignment and rounding
-that may be visible to other threads.  (For example, one thread sets a
-non-rounded value to pipe_max_size while another reads its value.)
-
-Similar reads of pipe_max_size are potentially racy:
-
-  pipe.c :: alloc_pipe_info()
-  pipe.c :: pipe_set_size()
-
-Add a new proc_dopipe_max_size() that consolidates reading the new value
-from the user buffer, verifying bounds, and calling round_pipe_size()
-with a single assignment to pipe_max_size.
-
-Link: http://lkml.kernel.org/r/1507658689-11669-4-git-send-email-joe.lawrence@redhat.com
-Signed-off-by: Joe Lawrence <joe.lawrence@redhat.com>
-Reported-by: Mikulas Patocka <mpatocka@redhat.com>
-Reviewed-by: Mikulas Patocka <mpatocka@redhat.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Michael Kerrisk <mtk.manpages@gmail.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-[bwh: Backported to 3.16: Continue using int sysctl functions because we don't
- have proper unsigned int support]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -1008,7 +1008,7 @@ const struct file_operations pipefifo_fo
-  * Currently we rely on the pipe array holding a power-of-2 number
-  * of pages. Returns 0 on error.
-  */
--static inline unsigned int round_pipe_size(unsigned int size)
-+unsigned int round_pipe_size(unsigned int size)
- {
- 	unsigned long nr_pages;
- 
-@@ -1112,25 +1112,13 @@ out_revert_acct:
- }
- 
- /*
-- * This should work even if CONFIG_PROC_FS isn't set, as proc_dointvec_minmax
-+ * This should work even if CONFIG_PROC_FS isn't set, as proc_dopipe_max_size
-  * will return an error.
-  */
- int pipe_proc_fn(struct ctl_table *table, int write, void __user *buf,
- 		 size_t *lenp, loff_t *ppos)
- {
--	unsigned int rounded_pipe_max_size;
--	int ret;
--
--	ret = proc_dointvec_minmax(table, write, buf, lenp, ppos);
--	if (ret < 0 || !write)
--		return ret;
--
--	rounded_pipe_max_size = round_pipe_size(pipe_max_size);
--	if (rounded_pipe_max_size == 0)
--		return -EINVAL;
--
--	pipe_max_size = rounded_pipe_max_size;
--	return ret;
-+	return proc_dopipe_max_size(table, write, buf, lenp, ppos);
- }
- 
- /*
---- a/include/linux/pipe_fs_i.h
-+++ b/include/linux/pipe_fs_i.h
-@@ -149,5 +149,6 @@ long pipe_fcntl(struct file *, unsigned
- struct pipe_inode_info *get_pipe_info(struct file *file);
- 
- int create_pipe_files(struct file **, int);
-+unsigned int round_pipe_size(unsigned int size);
- 
- #endif
---- a/include/linux/sysctl.h
-+++ b/include/linux/sysctl.h
-@@ -45,6 +45,9 @@ extern int proc_dointvec(struct ctl_tabl
- 			 void __user *, size_t *, loff_t *);
- extern int proc_dointvec_minmax(struct ctl_table *, int,
- 				void __user *, size_t *, loff_t *);
-+extern int proc_dopipe_max_size(struct ctl_table *table, int write,
-+				void __user *buffer, size_t *lenp,
-+				loff_t *ppos);
- extern int proc_dointvec_jiffies(struct ctl_table *, int,
- 				 void __user *, size_t *, loff_t *);
- extern int proc_dointvec_userhz_jiffies(struct ctl_table *, int,
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -64,6 +64,7 @@
- #include <linux/sched/sysctl.h>
- #include <linux/kexec.h>
- #include <linux/mount.h>
-+#include <linux/pipe_fs_i.h>
- 
- #include <asm/uaccess.h>
- #include <asm/processor.h>
-@@ -2222,6 +2223,47 @@ int proc_dointvec_minmax(struct ctl_tabl
- 				do_proc_dointvec_minmax_conv, &param);
- }
- 
-+struct do_proc_dopipe_max_size_conv_param {
-+	unsigned int *min;
-+};
-+
-+static int do_proc_dopipe_max_size_conv(bool *negp, unsigned long *lvalp,
-+					int *valp, int write, void *data)
-+{
-+	struct do_proc_dopipe_max_size_conv_param *param = data;
-+
-+	if (write) {
-+		unsigned int val = round_pipe_size(*lvalp);
-+
-+		if (*negp || val == 0)
-+			return -EINVAL;
-+
-+		if (param->min && *param->min > val)
-+			return -ERANGE;
-+
-+		if (*lvalp > UINT_MAX)
-+			return -EINVAL;
-+
-+		*valp = val;
-+	} else {
-+		unsigned int val = *valp;
-+		*negp = false;
-+		*lvalp = (unsigned long) val;
-+	}
-+
-+	return 0;
-+}
-+
-+int proc_dopipe_max_size(struct ctl_table *table, int write,
-+			 void __user *buffer, size_t *lenp, loff_t *ppos)
-+{
-+	struct do_proc_dopipe_max_size_conv_param param = {
-+		.min = (unsigned int *) table->extra1,
-+	};
-+	return do_proc_dointvec(table, write, buffer, lenp, ppos,
-+				do_proc_dopipe_max_size_conv, &param);
-+}
-+
- static void validate_coredump_safety(void)
- {
- #ifdef CONFIG_COREDUMP
-@@ -2737,6 +2779,12 @@ int proc_dointvec_minmax(struct ctl_tabl
- 	return -ENOSYS;
- }
- 
-+int proc_dopipe_max_size(struct ctl_table *table, int write,
-+			 void __user *buffer, size_t *lenp, loff_t *ppos)
-+{
-+	return -ENOSYS;
-+}
-+
- int proc_dointvec_jiffies(struct ctl_table *table, int write,
- 		    void __user *buffer, size_t *lenp, loff_t *ppos)
- {
-@@ -2778,6 +2826,7 @@ int proc_doulongvec_ms_jiffies_minmax(st
- EXPORT_SYMBOL(proc_dointvec);
- EXPORT_SYMBOL(proc_dointvec_jiffies);
- EXPORT_SYMBOL(proc_dointvec_minmax);
-+EXPORT_SYMBOL_GPL(proc_dopipe_max_size);
- EXPORT_SYMBOL(proc_dointvec_userhz_jiffies);
- EXPORT_SYMBOL(proc_dointvec_ms_jiffies);
- EXPORT_SYMBOL(proc_dostring);
+On 06/08/2018 01:30 AM, Boris Ostrovsky wrote:
+> On 06/07/2018 04:44 AM, Oleksandr Andrushchenko wrote:
+>> On 06/07/2018 12:48 AM, Boris Ostrovsky wrote:
+>>> On 06/06/2018 08:10 AM, Oleksandr Andrushchenko wrote:
+>>>> On 06/05/2018 01:07 AM, Boris Ostrovsky wrote:
+>>>>> On 06/01/2018 07:41 AM, Oleksandr Andrushchenko wrote:
+>>>>> +
+>>>>> +static struct sg_table *
+>>>>> +dmabuf_exp_ops_map_dma_buf(struct dma_buf_attachment *attach,
+>>>>> +               enum dma_data_direction dir)
+>>>>> +{
+>>>>> +    struct gntdev_dmabuf_attachment *gntdev_dmabuf_attach =
+>>>>> attach->priv;
+>>>>> +    struct gntdev_dmabuf *gntdev_dmabuf = attach->dmabuf->priv;
+>>>>> +    struct sg_table *sgt;
+>>>>> +
+>>>>> +    pr_debug("Mapping %d pages for dev %p\n",
+>>>>> gntdev_dmabuf->nr_pages,
+>>>>> +         attach->dev);
+>>>>> +
+>>>>> +    if (WARN_ON(dir == DMA_NONE || !gntdev_dmabuf_attach))
+>>>>>
+>>>>> WARN_ON_ONCE. Here and elsewhere.
+>>>> Why? The UAPI may be used by different applications, thus we might
+>>>> lose warnings for some of them. Having WARN_ON will show problems
+>>>> for multiple users, not for the first one.
+>>>> Does this make sense to still use WARN_ON?
+>>> Just as with pr_err call somewhere else the concern here is that
+>>> userland (which I think is where this is eventually called from?) may
+>>> intentionally trigger the error, flooding the log.
+>>>
+>>> And even this is not directly called from userland there is still a
+>>> possibility of triggering this error multiple times.
+>> Ok, will use WARN_ON_ONCE
+>
+> In fact, is there a reason to use WARN at all? Does this condition
+> indicate some sort of internal inconsistency/error?
+Well, the corresponding errors are anyways handled, so I will remove WARN
+> -boris
+>
+>
+>
