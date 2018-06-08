@@ -1,326 +1,208 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id NRZCOPfGGVuhagAAmS7hNA
-	; Thu, 07 Jun 2018 23:59:54 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id BRigMaVqGlsEZgAAmS7hNA
+	; Fri, 08 Jun 2018 11:38:40 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 83D4F6074D; Thu,  7 Jun 2018 23:59:54 +0000 (UTC)
+	id 1E4C2607DC; Fri,  8 Jun 2018 11:38:40 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gMCV3aw9"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 7C0AE60271;
-	Thu,  7 Jun 2018 23:59:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7C0AE60271
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 5C469602FC;
+	Fri,  8 Jun 2018 11:38:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5C469602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752346AbeFGX7v (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 19:59:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50590 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752140AbeFGX7t (ORCPT
+        id S1752626AbeFHLih (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 07:38:37 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:44301 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751056AbeFHLif (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 19:59:49 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 05CCB89B;
-        Thu,  7 Jun 2018 23:59:47 +0000 (UTC)
-Date: Thu, 07 Jun 2018 16:59:47 -0700
-From: akpm@linux-foundation.org
-To: broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
-        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        mm-commits@vger.kernel.org
-Subject: mmotm 2018-06-07-16-59 uploaded
-Message-ID: <20180607235947.xWQtg%akpm@linux-foundation.org>
-User-Agent: s-nail v14.9.6
+        Fri, 8 Jun 2018 07:38:35 -0400
+Received: by mail-lf0-f66.google.com with SMTP id 36-v6so19554787lfr.11;
+        Fri, 08 Jun 2018 04:38:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=fEYfh+jdxCPT42CuFuSfKqN/GGx6tW1nhsHdbvEUEMM=;
+        b=gMCV3aw95bUlDRXFwX/P8aM+rDiFwIc9FtXOZ1j73VnwcWdUiQK8uhdx6K/Qdn71RO
+         MWrN7YI+rPQI9Wg6O25ZHzwetkfw0BQtja64w8gWJF8y9dpMpp3iOz136ZwMrfdhVnSr
+         qfsvEROfQxvWO17e3mn77+qNfxRwC8wXcgki+2TKHNj+lUjQ/BXOK64BKJg7Z7hZnblo
+         onSxSmcWnT/kXu/jUsQ9BoTNXkVgVTBS25B57rDSqk6zqScPYe0/YOx0MJzBLwGAKw9F
+         wHvqe5uFckAumSyfjduEjjKI/QRh9ss4vbB73dJjmJWhrrOfpXpCH0sL5dHKWefDGfku
+         X7OQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=fEYfh+jdxCPT42CuFuSfKqN/GGx6tW1nhsHdbvEUEMM=;
+        b=cghHDyf0lb3o5oOdzrdO8Mg7Gci3T12yUPlCeFEBsi70DmN0CQ4ASnOabIUAbeALkb
+         uSWJriuJiRWK2bkkuECFrVFEL1X4lgb+YC6KheqGVi6YfXYr3FxQx4vmz/A9KUFntG+j
+         s0+1hStw1AFUvPe4bGVdWxfiWzR9qMDjE6/e5R6W4CT4ysyeX6aWEJrK43aRVWbznpol
+         /e+lKQN26j8F5A1erdg41bbBFmTXedAtN/Tzm2uVhiTajXylLU2BH6rEEdc1XEDIAhmh
+         WgPQ+HPSoHfXpGgzPulRYMs44ZJnYvEoFilSp165qEjPawzgCUphWP9S11Jez5+yLRRh
+         XJwg==
+X-Gm-Message-State: APt69E2X/8dlqiFkVNBiBbiAxGR7ZlD8kgv/0LCbC4YNlSOUN21F5EWg
+        mu/z2UPMn3MexPmVXniTUe7gB++t
+X-Google-Smtp-Source: ADUXVKJ8XtYCCZfU0nVxtOUD5y5EOIAMb0miukBOzMxV5L/uz7XS6PGzHrkh9iit5VsjFKy0dAgKfQ==
+X-Received: by 2002:a2e:60:: with SMTP id 93-v6mr4524689lja.96.1528457913318;
+        Fri, 08 Jun 2018 04:38:33 -0700 (PDT)
+Received: from [10.17.182.9] (ll-74.141.223.85.sovam.net.ua. [85.223.141.74])
+        by smtp.gmail.com with ESMTPSA id i188-v6sm942389lfe.34.2018.06.08.04.38.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Jun 2018 04:38:32 -0700 (PDT)
+Subject: Re: [PATCH v2 6/9] xen/gntdev: Add initial support for dma-buf UAPI
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        jgross@suse.com, konrad.wilk@oracle.com
+Cc: daniel.vetter@intel.com, dongwon.kim@intel.com,
+        matthew.d.roper@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180601114132.22596-1-andr2000@gmail.com>
+ <20180601114132.22596-7-andr2000@gmail.com>
+ <29c1f1fb-2d52-e3df-adce-44fdee135413@oracle.com>
+ <d2bbda68-af74-58b1-36a6-d8af47ad8beb@gmail.com>
+ <7c73fae9-2dac-f3e8-bad8-0dadb73ad7af@oracle.com>
+ <4e15c758-a314-9fdc-1d70-4a465137a6f9@gmail.com>
+ <41d794ce-a318-b2f1-5ad7-e9500175bdc8@oracle.com>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <113e3bf5-1e20-2ea0-9ad4-06e5d83df905@gmail.com>
+Date: Fri, 8 Jun 2018 14:38:31 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <41d794ce-a318-b2f1-5ad7-e9500175bdc8@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The mm-of-the-moment snapshot 2018-06-07-16-59 has been uploaded to
-
-   http://www.ozlabs.org/~akpm/mmotm/
-
-mmotm-readme.txt says
-
-README for mm-of-the-moment:
-
-http://www.ozlabs.org/~akpm/mmotm/
-
-This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-more than once a week.
-
-You will need quilt to apply these patches to the latest Linus release (4.x
-or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-http://ozlabs.org/~akpm/mmotm/series
-
-The file broken-out.tar.gz contains two datestamp files: .DATE and
-.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-followed by the base kernel version against which this patch series is to
-be applied.
-
-This tree is partially included in linux-next.  To see which patches are
-included in linux-next, consult the `series' file.  Only the patches
-within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-linux-next.
-
-A git tree which contains the memory management portion of this tree is
-maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-by Michal Hocko.  It contains the patches which are between the
-"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
-file, http://www.ozlabs.org/~akpm/mmotm/series.
-
-
-A full copy of the full kernel tree with the linux-next and mmotm patches
-already applied is available through git within an hour of the mmotm
-release.  Individual mmotm releases are tagged.  The master branch always
-points to the latest release, so it's constantly rebasing.
-
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
-
-To develop on top of mmotm git:
-
-  $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-  $ git remote update mmotm
-  $ git checkout -b topic mmotm/master
-  <make changes, commit>
-  $ git send-email mmotm/master.. [...]
-
-To rebase a branch with older patches to a new mmotm release:
-
-  $ git remote update mmotm
-  $ git rebase --onto mmotm/master <topic base> topic
-
-
-
-
-The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-contains daily snapshots of the -mm tree.  It is updated more frequently
-than mmotm, and is untested.
-
-A git copy of this tree is available at
-
-	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
-
-and use of this tree is similar to
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
-
-
-This mmotm tree contains the following patches against 4.17:
-(patches marked "*" will be included in linux-next)
-
-  origin.patch
-  i-need-old-gcc.patch
-* fs-dax-adding-new-return-type-vm_fault_t.patch
-* scripts-use-spdx-tag-in-get_maintainer-and-checkpatch.patch
-* ocfs2-clean-up-redundant-function-declarations.patch
-* ocfs2-ocfs2_inode_lock_tracker-does-not-distinguish-lock-level.patch
-* ocfs2-eliminate-a-misreported-warning.patch
-* ocfs2-correct-the-comments-position-of-the-structure-ocfs2_dir_block_trailer.patch
-* ocfs2-drop-a-vla-in-ocfs2_orphan_del.patch
-* fs-ocfs2-adding-new-return-type-vm_fault_t.patch
-* net-9p-detecting-invalid-options-as-much-as-possible.patch
-* fs-9p-detecting-invalid-options-as-much-as-possible.patch
-* xen-9pfs-dont-inclide-rwlockh-directly.patch
-* slab-__gfp_zero-is-incompatible-with-a-constructor.patch
-* mm-slubc-add-__printf-verification-to-slab_err.patch
-* mm-slub-remove-impertinent-comment.patch
-* slab-clean-up-the-code-comment-in-slab-kmem_cache-struct.patch
-* mm-introduce-arg_lock-to-protect-arg_startend-and-env_startend-in-mm_struct.patch
-* mm-memcontrol-move-swap-charge-handling-into-get_swap_page.patch
-* mm-memcontrol-implement-memoryswapevents.patch
-* zram-correct-flag-name-of-zram_access.patch
-* zram-mark-incompressible-page-as-zram_huge.patch
-* zram-record-accessed-second.patch
-* zram-introduce-zram-memory-tracking.patch
-* mm-shmem-add-__rcu-annotations-and-properly-deref-radix-entry.patch
-* mm-shmem-update-file-sealing-comments-and-file-checking.patch
-* mm-restructure-memfd-code.patch
-* mm-page_alloc-remove-realsize-in-free_area_init_core.patch
-* mm-introduce-arch_has_pte_special.patch
-* mm-remove-odd-have_pte_special.patch
-* mm-memblock-introduce-phys_addr_max.patch
-* mm-rename-page_counters-count-limit-into-usage-max.patch
-* mm-memorylow-hierarchical-behavior.patch
-* mm-treat-memorylow-value-inclusive.patch
-* mm-docs-describe-memorylow-refinements.patch
-* mm-gup-prevent-pmd-checking-race-in-follow_pmd_mask.patch
-* mm-sparse-check-__highest_present_section_nr-only-for-a-present-section.patch
-* mm-sparse-pass-the-__highest_present_section_nr-1-to-alloc_func.patch
-* mm-vmalloc-clean-up-vunmap-to-avoid-pgtable-ops-twice.patch
-* mm-vmalloc-avoid-racy-handling-of-debugobjects-in-vunmap.patch
-* mm-vmalloc-pass-proper-vm_start-into-debugobjects.patch
-* mm-shmem-make-statst_blksize-return-huge-page-size-if-thp-is-on.patch
-* lockdep-fix-fs_reclaim-annotation.patch
-* mm-ksm-remove-unused-page_referenced_ksm-declaration.patch
-* mm-ksm-move-page_stable_node-from-ksmh-to-ksmc.patch
-* tmpfs-allow-decoding-a-file-handle-of-an-unlinked-file.patch
-* memcg-writeback-use-memcg-cgwb_list-directly.patch
-* memcg-mark-memcg1_events-static-const.patch
-* mm-memcontrol-drain-stocks-on-resize-limit.patch
-* mm-memcontrol-drain-memcg-stock-on-force_empty.patch
-* mm-memblock-print-memblock_remove.patch
-* mm-pagemap-hide-swap-entry-for-unprivileged-users.patch
-* mm-move-is_pageblock_removable_nolock-to-mm-memory_hotplugc.patch
-* mm-introduce-memorymin.patch
-* mm-vmpressure-use-kstrndup-instead-of-kmallocstrncpy.patch
-* mm-vmpressure-convert-to-use-match_string-helper.patch
-* mm-page_allocc-remove-useless-parameter-of-finalise_ac.patch
-* mm-adding-new-return-type-vm_fault_t.patch
-* mm-change-return-type-to-vm_fault_t.patch
-* mm-hugetlbfs-pass-fault-address-to-no-page-handler.patch
-* mm-save-two-stranding-bit-in-gfp_mask.patch
-* s390-use-_refcount-for-pgtables.patch
-* mm-split-page_type-out-from-_mapcount.patch
-* mm-mark-pages-in-use-for-page-tables.patch
-* mm-switch-s_mem-and-slab_cache-in-struct-page.patch
-* mm-move-private-union-within-struct-page.patch
-* mm-move-_refcount-out-of-struct-page-union.patch
-* mm-combine-first-three-unions-in-struct-page.patch
-* mm-use-page-deferred_list.patch
-* mm-move-lru-union-within-struct-page.patch
-* mm-combine-lru-and-main-union-in-struct-page.patch
-* mm-improve-struct-page-documentation.patch
-* mm-add-pt_mm-to-struct-page.patch
-* mm-add-hmm_data-to-struct-page.patch
-* slabslub-remove-rcu_head-size-checks.patch
-* slub-remove-kmem_cache-reserved.patch
-* slub-remove-reserved-file-from-sysfs.patch
-* mm-shmem-adding-new-return-type-vm_fault_t.patch
-* mm-memcg-allow-lowering-memoryswapmax-below-the-current-usage.patch
-* userfaultfd-prevent-non-cooperative-events-vs-mcopy_atomic-races.patch
-* mm-page_alloc-do-not-break-__gfp_thisnode-by-zonelist-reset.patch
-* mm-shmem-zero-out-unused-vma-fields-in-shmem_pseudo_vma_init.patch
-* include-linux-gfph-fix-the-annotation-of-gfp_zone_table.patch
-* mm-kvmalloc-does-not-fallback-to-vmalloc-for-incompatible-gfp-flags.patch
-* mem_cgroup-make-sure-moving_account-move_lock_task-and-stat_cpu-in-the-same-cacheline.patch
-* mm-clean-up-page_is_poisoned-in-linux-mmh.patch
-* proc-more-unsigned-int-in-proc-cmdline.patch
-* proc-somewhat-simpler-code-for-proc-cmdline.patch
-* proc-simpler-iterations-for-proc-cmdline.patch
-* proc-deduplicate-proc-cmdline-implementation.patch
-* proc-smaller-rcu-section-in-getattr.patch
-* proc-use-unsigned-int-in-proc_fill_cache.patch
-* proc-use-unsigned-int-for-sigqueue-length.patch
-* proc-use-unsigned-int-for-proc-stack.patch
-* proc-test-proc-fd-a-bit-pf_kthread-is-abi.patch
-* int-ll64h-define-u8163264-and-s8163264-based-on-uapi-header.patch
-* types-define-aligned_-types-based-on-uapi-header.patch
-* types-use-fixed-width-types-without-double-underscore-prefix.patch
-* locking-hung_task-show-all-hung-tasks-before-panic.patch
-* get_maintainer-improve-patch-recognition.patch
-* lib-micro-optimization-for-__bitmap_complement.patch
-* ida-remove-simple_ida_lock.patch
-* percpu_ida-use-_irqsave-instead-of-local_irq_save-spin_lock.patch
-* lib-mpi-headers-cleanup.patch
-* lib-ucs2_string-add-module_license.patch
-* checkpatch-improve-patch-recognition.patch
-* fs-binfmt_miscc-do-not-allow-offset-overflow.patch
-* autofs4-merge-auto_fsh-and-auto_fs4h.patch
-* autofs4-use-autofs-instead-of-autofs4-everywhere.patch
-* autofs-copy-autofs4-to-autofs.patch
-* autofs-update-fs-autofs4-kconfig.patch
-* autofs-update-fs-autofs4-makefile.patch
-* autofs-delete-fs-autofs4-source-files.patch
-* autofs-create-autofs-kconfig-and-makefile.patch
-* autofs-rename-autofs-documentation-files.patch
-* autofs-use-autofs-instead-of-autofs4-in-documentation.patch
-* autofs-update-maintainers-entry-for-autofs.patch
-* autofs-comment-on-selinux-changes-needed-for-module-autoload.patch
-* autofs-clean-up-includes.patch
-* autofs-small-cleanup-in-autofs_getpath.patch
-* memcg-remove-memcg_cgroup-id-from-idr-on-mem_cgroup_css_alloc-failure.patch
-* mm-fix-race-between-kmem_cache-destroy-create-and-deactivate.patch
-* mm-fix-race-between-kmem_cache-destroy-create-and-deactivate-v2.patch
-* mm-fix-race-between-kmem_cache-destroy-create-and-deactivate-v2-fix.patch
-* mm-fix-race-between-kmem_cache-destroy-create-and-deactivate-v3.patch
-* arm-arch-arm-include-asm-pageh-needs-personalityh.patch
-* prctl-add-pr_et_pdeathsig_proc.patch
-* ocfs2-get-rid-of-ocfs2_is_o2cb_active-function.patch
-* ocfs2-without-quota-support-try-to-avoid-calling-quota-recovery.patch
-* ocfs2-without-quota-support-try-to-avoid-calling-quota-recovery-checkpatch-fixes.patch
-* ocfs2-dont-use-iocb-when-eiocbqueued-returns.patch
-* ocfs2-fix-a-misuse-a-of-brelse-after-failing-ocfs2_check_dir_entry.patch
-* ocfs2-dont-put-and-assigning-null-to-bh-allocated-outside.patch
-* block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
-* dentry-fix-kmemcheck-splat-at-take_dentry_name_snapshot.patch
-* namei-allow-restricted-o_creat-of-fifos-and-regular-files.patch
-* namei-allow-restricted-o_creat-of-fifos-and-regular-files-fix.patch
-  mm.patch
-* mm-check-for-sigkill-inside-dup_mmap-loop.patch
-* mm-ksm-ignore-stable_flag-of-rmap_item-address-in-rmap_walk_ksm.patch
-* mm-devm_memremap_pages-mark-devm_memremap_pages-export_symbol_gpl.patch
-* mm-devm_memremap_pages-handle-errors-allocating-final-devres-action.patch
-* mm-hmm-use-devm-semantics-for-hmm_devmem_add-remove.patch
-* mm-hmm-replace-hmm_devmem_pages_create-with-devm_memremap_pages.patch
-* mm-hmm-mark-hmm_devmem_add-add_resource-export_symbol_gpl.patch
-* mm-sparse-add-a-static-variable-nr_present_sections.patch
-* mm-sparsemem-defer-the-ms-section_mem_map-clearing.patch
-* mm-sparse-add-a-new-parameter-data_unit_size-for-alloc_usemap_and_memmap.patch
-* mm-swap-fix-race-between-swapoff-and-some-swap-operations.patch
-* mm-swap-fix-race-between-swapoff-and-some-swap-operations-v6.patch
-* mm-fix-race-between-swapoff-and-mincore.patch
-* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock.patch
-* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock-fix.patch
-* mm-oom-refactor-the-oom_kill_process-function.patch
-* mm-implement-mem_cgroup_scan_tasks-for-the-root-memory-cgroup.patch
-* mm-oom-cgroup-aware-oom-killer.patch
-* mm-oom-cgroup-aware-oom-killer-fix.patch
-* mm-oom-cgroup-aware-oom-killer-fix-2.patch
-* mm-oom-introduce-memoryoom_group.patch
-* mm-oom-introduce-memoryoom_group-fix.patch
-* mm-oom-add-cgroup-v2-mount-option-for-cgroup-aware-oom-killer.patch
-* mm-oom-docs-describe-the-cgroup-aware-oom-killer.patch
-* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix.patch
-* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix-2.patch
-* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix-2-fix.patch
-* cgroup-list-groupoom-in-cgroup-features.patch
-* mm-add-strictlimit-knob-v2.patch
-* mm-dont-expose-page-to-fast-gup-before-its-ready.patch
-* mm-page_owner-align-with-pageblock_nr_pages.patch
-* mm-page_owner-align-with-pageblock_nr-pages.patch
-* proc-skip-branch-in-proc-lookup.patch
-* proc-skip-branch-in-proc-lookup-fix.patch
-* checkpatch-add-a-strict-test-for-structs-with-bool-member-definitions.patch
-* fat-use-fat_fs_error-instead-of-bug_on-in-__fat_get_block.patch
-* coredump-fix-spam-with-zero-vma-process.patch
-* exofs-avoid-vla-in-structures.patch
-* exofs-avoid-vla-in-structures-v2.patch
-* bfs-add-sanity-check-at-bfs_fill_super.patch
-* kernel-relay-change-return-type-to-vm_fault_t.patch
-* kcov-ensure-irq-code-sees-a-valid-area.patch
-* kcov-prefault-the-kcov_area.patch
-* kcov-prefault-the-kcov_area-fix.patch
-* kcov-prefault-the-kcov_area-fix-fix.patch
-* kcov-prefault-the-kcov_area-fix-fix-fix.patch
-* sched-core-kcov-avoid-kcov_area-during-task-switch.patch
-* arm-port-kcov-to-arm.patch
-* fault-injection-reorder-config-entries.patch
-* ipc-sem-mitigate-semnum-index-against-spectre-v1.patch
-* ipc-adding-new-return-type-vm_fault_t.patch
-  linux-next.patch
-  linux-next-rejects.patch
-  linux-next-git-rejects.patch
-* mm-use-octal-not-symbolic-permissions.patch
-* treewide-use-phys_addr_max-to-avoid-type-casting-ullong_max.patch
-* mm-fix-oom_kill-event-handling.patch
-* mm-fix-oom_kill-event-handling-fix.patch
-* hexagon-fix-printk-format-warning-in-setupc.patch
-* hexagon-drop-the-unused-variable-zero_page_mask.patch
-* mm-propagate-memory-effective-protection-on-setting-memorymin-low.patch
-* mm-dont-skip-memory-guarantee-calculations.patch
-* selftests-cgroup-add-test-for-memorylow-corner-cases.patch
-* lib-test_printfc-call-wait_for_random_bytes-before-plain-%p-tests.patch
-* resource-add-walk_system_ram_res_rev.patch
-* kexec_file-load-kernel-at-top-of-system-ram-if-required.patch
-* fix-read-buffer-overflow-in-delta-ipc.patch
-* sparc64-ng4-memset-32-bits-overflow.patch
-  make-sure-nobodys-leaking-resources.patch
-  releasing-resources-with-children.patch
-  mutex-subsystem-synchro-test-module.patch
-  kernel-forkc-export-kernel_thread-to-modules.patch
-  slab-leaks3-default-y.patch
-  workaround-for-a-pci-restoring-bug.patch
+On 06/08/2018 01:26 AM, Boris Ostrovsky wrote:
+> On 06/07/2018 03:17 AM, Oleksandr Andrushchenko wrote:
+>> On 06/07/2018 12:32 AM, Boris Ostrovsky wrote:
+>>> On 06/06/2018 05:06 AM, Oleksandr Andrushchenko wrote:
+>>>> On 06/04/2018 11:49 PM, Boris Ostrovsky wrote:
+>>>>>> diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
+>>>>>> index 9813fc440c70..7d58dfb3e5e8 100644
+>>>>>> --- a/drivers/xen/gntdev.c
+>>>>>> +++ b/drivers/xen/gntdev.c
+>>>>> ...
+>>>>>
+>>>>>>     +#ifdef CONFIG_XEN_GNTDEV_DMABUF
+>>>>> This code belongs in gntdev-dmabuf.c.
+>>>> The reason I have this code here is that it is heavily
+>>>> tied to gntdev's internal functionality, e.g. map/unmap.
+>>>> I do not want to extend gntdev's API, so gntdev-dmabuf can
+>>>> access these. What is more dma-buf doesn't need to know about
+>>>> maps done by gntdev as there is no use of that information
+>>>> in gntdev-dmabuf. So, it seems more naturally to have
+>>>> dma-buf's related map/unmap code where it is: in gntdev.
+>>> Sorry, I don't follow. Why would this require extending the API? It's
+>>> just moving routines to a different file that is linked to the same
+>>> module.
+>> I do understand your intention here and tried to avoid dma-buf
+>> related code in gntdev.c as much as possible. So, let me explain
+>> my decision in more detail.
+>>
+>> There are 2 use-cases we have: dma-buf import and export.
+>>
+>> While importing a dma-buf all the dma-buf related functionality can
+>> easily be kept inside gntdev-dmabuf.c w/o any issue as all we need
+>> from gntdev.c is dev, dma_buf_fd, count and domid for that.
+>>
+>> But in case of dma-buf export we need to:
+>> 1. struct grant_map *map = gntdev_alloc_map(priv, count, dmabuf_flags);
+>> 2. gntdev_add_map(priv, map);
+>> 3. Set map->flags
+>> 4. ret = map_grant_pages(map);
+>> 5. And only now we are all set to export the new dma-buf from
+>> *map->pages*
+>>
+>> So, until 5) we use private gtndev.c's API not exported to outside world:
+>> a. struct grant_map
+>> b. static struct grant_map *gntdev_alloc_map(struct gntdev_priv *priv,
+>> int count,
+>>                        int dma_flags)
+>> c. static void gntdev_add_map(struct gntdev_priv *priv, struct
+>> grant_map *add)
+>> d. static int map_grant_pages(struct grant_map *map)
+>>
+>> Thus, all the above cannot be accessed from gntdev-dmabuf.c
+>> This is why I say that gntdev.c's API will need to be extended to
+>> provide the above
+>> a-d if we want all dma-buf export code to leave in gntdev-dmabuf.c.
+>
+>
+> I still don't understand why you feel this would be extending the API.
+> These routines and the struct can be declared in local header file and
+> this header file will not be visible to anyone but gntdev.c and
+> gntdev-dmabuf.c.
+Ok, this is what I meant: I will need to move private structures
+and some function prototypes from gntdev.c into a header file,
+thus extending its API: before the header nothing were exposed.
+Sorry for not being clear here.
+>   You can, for example, put this into gntdev-dmabuf.h
+> (and then rename it to something else, like gntdev-common.h).
+Sure, I will move all I need into that shared header
+>
+>
+>> But that doesn't seem good to me and what is more a-d are really
+>> gntdev.c's
+>> functionality, not dma-buf's which only needs pages and doesn't really
+>> care from
+>> where those come.
+>> That was the reason I partitioned export into 2 chunks: gntdev +
+>> gntdev-dmabuf.
+>>
+>> You might also ask why importing side does Xen related things
+>> (granting references+)
+>> in gntdev-dmabuf, not gntdev so it is consistent with the dma-buf
+>> exporter?
+>> This is because importer uses grant-table's API which seems to be not
+>> natural for gntdev.c,
+>> so it can leave in gntdev-dmabuf.c which has a use-case for that,
+>> while gntdev
+>> remains the same.
+>
+> Yet another reason why this code should be moved: importing and
+> exporting functionalities logically belong together. The fat that they
+> are implemented using different methods is not relevant IMO.
+>
+> If you have code which is under ifdef CONFIG_GNTDEV_DMABUF and you have
+> file called gntdev-dmabuf.c it sort of implies that this code should
+> live in that file (unless that code is intertwined with other code,
+> which is not the case here).
+Ok, will move as discussed above
+>
+> -boris
+Thank you,
+Oleksandr
+>
+>
+>>> Since this is under CONFIG_XEN_GNTDEV_DMABUF then why shouldn't it be in
+>>> gntdev-dmabuf.c? In my view that's the file where all dma-related
+>>> "stuff" lives.
+>> Agree, but IMO grant_map stuff for dma-buf importer is right in its
+>> place in gntdev.c
+>> and all the rest of dma-buf specifics live in gntdev-dmabuf.c as they
+>> should
+>>> -boris
+>>>
+>>>
+>>> -boris
+>>>
+>> Thank you,
+>> Oleksandr
