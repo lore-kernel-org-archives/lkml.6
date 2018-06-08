@@ -1,169 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 8hqcMQU2GlusbAAAmS7hNA
-	; Fri, 08 Jun 2018 07:53:41 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id BYk7LLmJGlvuHgAAmS7hNA
+	; Fri, 08 Jun 2018 13:52:04 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id B06A9607DC; Fri,  8 Jun 2018 07:53:41 +0000 (UTC)
+	id EF13B607E4; Fri,  8 Jun 2018 13:52:03 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ckEFXQXx"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=roeck-us.net header.i=@roeck-us.net header.b="Ij+JFfrO"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id F065E6074D;
-	Fri,  8 Jun 2018 07:53:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F065E6074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id A3912606FA;
+	Fri,  8 Jun 2018 13:52:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A3912606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752863AbeFHHxi (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 03:53:38 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:33585 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752814AbeFHHxe (ORCPT
+        id S1752682AbeFHNv7 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 09:51:59 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:58407 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751133AbeFHNv5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 03:53:34 -0400
-Received: by mail-pl0-f65.google.com with SMTP id n10-v6so7823951plp.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 00:53:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=hz2emXW2q76gwJrqkM27vFWOcSLcJLvZg3qaq2uqvjg=;
-        b=ckEFXQXxgwSCAGlG5ptYJyHKNUNgkUnx7q8W8VCSj0fifh3O6ZEeqZZkSYYrLs6me2
-         BSyJRSR6JVytt/CMlbuWFw42pc2Xt0JeoxMpBAgfcUqlV/9btRLR18r+Tb2NZcMqpdLo
-         9p6ITqoqYbfG2QX1OPm1O4ktp/Z+2GP1Lt5HSgTzHnip9jOgCSbuni3S6U8maWk53zO2
-         9H8zghUYHNACYd9puREZ/6v165DHsASxnXeTT9UENHQYKS/VFKsJUSGCWecnQ2z5UhBC
-         fqzMS3QXxYDIk/j/o6KE5VjmcIwZU9+3Pvqa5Son6okenapng1J9zfR+wEbKWrNef32T
-         a4Nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=hz2emXW2q76gwJrqkM27vFWOcSLcJLvZg3qaq2uqvjg=;
-        b=sQdyxfUxKjI/g4jp8ae5zikeCRmw5UWz6K83TzoYRKCnQwUryu8dfIpK+DzY/UAb0i
-         +xMNBmD2Az2yFkKw9ABSruaUm/VsVZHS6vKtPLhDUqJ5LdENhXzSKJKFP9qJk9hxRs3U
-         Lcjeq8V5UaX/uBfehM8R3QObiYHXQlptwrt90LStXgxdLBDYzoeCPNOB8/JE1sP0YsnC
-         v4p4I7PSjBEQQQ0DvqdDVP/SCvP9VJa9M7ejkkeKDATzeAH6qysLFW8y/FRd2gGjtk3W
-         JvJKQAYnmprqBxTOaPJWVL7tAeSIdLOF8Y98NJZtqXYFDz9heh9CpphHO3NNgedVBNA5
-         2j4g==
-X-Gm-Message-State: APt69E1fKhKcSsnZwLXas1fHrtJ1jvpVSd5GJMPu8Sh/VooXpb3d4wCN
-        3NX37QRc0J/qb9bUOHNxS/Nn8tyU48ZVrh/ub79wUIfJBPs=
-X-Google-Smtp-Source: ADUXVKILUQMfULkyTLE1hF6sBNjtIwOeCgZIzoWUpwODOw26CF5B7YEnTGr2koiU6Kfo93/nBHjnSyIk5VRCdcxFwzI=
-X-Received: by 2002:a17:902:7d09:: with SMTP id z9-v6mr5419248pll.233.1528444413527;
- Fri, 08 Jun 2018 00:53:33 -0700 (PDT)
+        Fri, 8 Jun 2018 09:51:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=roeck-us.net; s=default; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=YhR9kSeFbeTWy66AhH59XCT/TdbXBZ1mvkQ57DZYpqY=; b=Ij+JFfrOppGqhEoI9Df97Z4hVc
+        vg5a0w4p72ovO40DAC0YRvwN+7eLrAKBSHAubpKuvayDNntZuemf7LYoS/RIggLQCdZFOvqk4w0XK
+        VAO1LgxcA3hAGShzzVq5XMtDa/qAAIerF7hCup8EhyJi3Tou9swZ681BBOf7DBzM3UTJM+7d9Ue1n
+        O8BWpkJlmJydeHD1QtA5SMhx8ukMXxNWpq27snvJoWGCA3sb2oDC7k40rzNx3DmZlGYAhLnw//ErF
+        wH6M/IutqlvvPFHyRdpmy8QKjlZqOScnlqpq6jmldAH+g1mv2HBnua0MDcth0dSpGnabfcDDBfcUL
+        gJpz2iKw==;
+Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:46392 helo=localhost)
+        by bh-25.webhostbox.net with esmtpa (Exim 4.89)
+        (envelope-from <linux@roeck-us.net>)
+        id 1fRHo4-003lPO-BM; Fri, 08 Jun 2018 13:51:57 +0000
+Date: Fri, 8 Jun 2018 06:51:55 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
+Cc: Helge Eichelberg <kernelorg@elchenberg.name>,
+        Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hwmon: (dell-smm) Disable fan support for Dell XPS13 9333
+Message-ID: <20180608135155.GA30453@roeck-us.net>
+References: <20180605173833.27003-1-kernelorg@elchenberg.name>
+ <20180606152134.sw77aborznfy6mrj@pali>
+ <20180607080455.daccaaab8a7e2f2a35b68873@elchenberg.name>
+ <20180607082542.gvc7oz7qvrpodkus@pali>
 MIME-Version: 1.0
-Received: by 2002:a17:90a:d42:0:0:0:0 with HTTP; Fri, 8 Jun 2018 00:53:12
- -0700 (PDT)
-In-Reply-To: <1519734229.2699.6.camel@redhat.com>
-References: <001a114fa99028d2a10565e33df4@google.com> <1519734229.2699.6.camel@redhat.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Fri, 8 Jun 2018 09:53:12 +0200
-Message-ID: <CACT4Y+byLAh+RoGc-a_b446jMmR2kwkWcnDVzCB6msKeS1yZXA@mail.gmail.com>
-Subject: Re: WARNING in smc_unhash_sk
-To: Davide Caratti <dcaratti@redhat.com>
-Cc: syzbot <syzbot+3a0748c8f2f210c0ef9b@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>, linux-s390@vger.kernel.org,
-        netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        ubraun@linux.vnet.ibm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180607082542.gvc7oz7qvrpodkus@pali>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Authenticated_sender: guenter@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 27, 2018 at 1:23 PM, Davide Caratti <dcaratti@redhat.com> wrote:
-> On Fri, 2018-02-23 at 07:59 -0800, syzbot wrote:
->> Hello,
->>
->> syzbot hit the following crash on upstream commit
->> af3e79d29555b97dd096e2f8e36a0f50213808a8 (Tue Feb 20 18:05:02 2018 +0000)
->> Merge tag 'leds_for-4.16-rc3' of
->> git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds
->>
->> So far this crash happened 27 times on
->> https://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git/master,
->> net-next, upstream.
->> C reproducer is attached.
->> syzkaller reproducer is attached.
->> Raw console output is attached.
->> compiler: gcc (GCC) 7.1.1 20170620
->> .config is attached.
->>
->> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> Reported-by: syzbot+3a0748c8f2f210c0ef9b@syzkaller.appspotmail.com
->> It will help syzbot understand when the bug is fixed. See footer for
->> details.
->> If you forward the report, please keep this part and the footer.
->>
->> WARNING: CPU: 1 PID: 9921 at ./include/net/sock.h:638 sk_del_node_init
->> include/net/sock.h:638 [inline]
->> WARNING: CPU: 1 PID: 9921 at ./include/net/sock.h:638
->> smc_unhash_sk+0x335/0x450 net/smc/af_smc.c:90
->> Kernel panic - not syncing: panic_on_warn set ...
->>
->> CPU: 1 PID: 9921 Comm: syzkaller089677 Not tainted 4.16.0-rc2+ #324
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
->> Google 01/01/2011
->> Call Trace:
->>   __dump_stack lib/dump_stack.c:17 [inline]
->>   dump_stack+0x194/0x24d lib/dump_stack.c:53
->>   panic+0x1e4/0x41c kernel/panic.c:183
->>   __warn+0x1dc/0x200 kernel/panic.c:547
->>   report_bug+0x211/0x2d0 lib/bug.c:184
->>   fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
->>   fixup_bug arch/x86/kernel/traps.c:247 [inline]
->>   do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
->>   do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
->>   invalid_op+0x58/0x80 arch/x86/entry/entry_64.S:957
->> RIP: 0010:sk_del_node_init include/net/sock.h:638 [inline]
->> RIP: 0010:smc_unhash_sk+0x335/0x450 net/smc/af_smc.c:90
->> RSP: 0018:ffff8801b639f198 EFLAGS: 00010293
->> RAX: ffff8801b684a340 RBX: 1ffff10036c73e37 RCX: ffffffff85a3f1f5
->> RDX: 0000000000000000 RSI: dffffc0000000000 RDI: 1ffff10036c73e3b
->> RBP: ffff8801b639f280 R08: dffffc0000000000 R09: 0000000000000004
->> R10: ffff8801b639f050 R11: 0000000000000004 R12: ffff8801b639f258
->> R13: ffffffff87669b40 R14: ffff8801c08d57c0 R15: 1ffff10036c73e3b
->>   smc_release+0x321/0x580 net/smc/af_smc.c:148
->>   sock_release+0x8d/0x1e0 net/socket.c:595
->>   sock_close+0x16/0x20 net/socket.c:1149
->>   __fput+0x327/0x7e0 fs/file_table.c:209
->>   ____fput+0x15/0x20 fs/file_table.c:243
->>   task_work_run+0x199/0x270 kernel/task_work.c:113
->>   exit_task_work include/linux/task_work.h:22 [inline]
->>   do_exit+0x9bb/0x1ad0 kernel/exit.c:865
->>   do_group_exit+0x149/0x400 kernel/exit.c:968
->>   get_signal+0x73a/0x16d0 kernel/signal.c:2469
->>   do_signal+0x90/0x1e90 arch/x86/kernel/signal.c:809
->>   exit_to_usermode_loop+0x258/0x2f0 arch/x86/entry/common.c:162
->>   prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
->>   syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
->>   do_syscall_64+0x6e5/0x940 arch/x86/entry/common.c:292
->>   entry_SYSCALL_64_after_hwframe+0x42/0xb7
->> RIP: 0033:0x44cad9
->> RSP: 002b:00007fbf24687ce8 EFLAGS: 00000246 ORIG_RAX: 0000000000000007
->> RAX: 0000000000000001 RBX: 0000000000700024 RCX: 000000000044cad9
->> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000020000080
->> RBP: 0000000000700020 R08: 0000000000000000 R09: 0000000000000000
->> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
->> R13: 000000000080ef3f R14: 00007fbf246889c0 R15: 0000000000000005
->> Dumping ftrace buffer:
->>     (ftrace buffer empty)
->> Kernel Offset: disabled
->> Rebooting in 86400 seconds..
->>
->
-> #syz test: git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git master
+On Thu, Jun 07, 2018 at 10:25:42AM +0200, Pali Rohár wrote:
+> On Thursday 07 June 2018 08:04:55 Helge Eichelberg wrote:
+> > On Wed, 6 Jun 2018 17:21:34 +0200
+> > Pali Rohár <pali.rohar@gmail.com> wrote:
+> > 
+> > > On Tuesday 05 June 2018 19:38:32 Helge Eichelberg wrote:
+> > > > Calling fan related SMM functions implemented by Dell BIOS firmware on Dell
+> > > > XPS13 9333 freeze kernel for about 500ms. Until Dell fixes it we need to
+> > > > disable fan support for Dell XPS13 9333.
+> > > 
+> > > Hi! Have you reported this firmware bug to Dell?
+> > 
+> > No, I haven't.
+> 
+> Mario (from @Dell) wrote on github, that we should start reporting
+> firmware bugs to Dell as "voice of the customer is the most important".
+> https://github.com/dell/libsmbios/issues/48#issuecomment-393527813
+> 
+> > > Also we should probably match also BIOS version and do not apply this
+> > > blacklist quirk for BIOS versions in which Dell fixed it.
+> > 
+> > The BIOS hasn't been updated since 08/31/2015 and I'm running the latest version (A08). I wonder if Dell cares anymore about the 9333 which has been replaced by the 9343 in early 2015. Nevertheless, should I add a line matching the BIOS version and should it look like this?
+> 
+> Ok, I was in impression that it was fixed or was going to be fixed. This
+> looks like that laptop does not have any support. In this case would
+> need to blacklist it for all bios version and forever. So no match for
+> bios version. Maybe you should re-phrase commit message to indicate that
+> Dell probably does not fix it. Or drop that sentence "Until Dell...".
+> 
+Those would just be assumptions and not add any value to the commit log.
+I don't recall similar comments for previous patches either, and it is not
+as if Dell stopped supporting Linux only recently. I'll apply the patch
+as-is; I don't see value in a respin.
 
+Guenter
 
-Hi Davide,
-
-Any progress on this?
-
-This is syzbot top crasher at the moment with 86000+ machines crashed:
-https://syzkaller.appspot.com/bug?id=004b0f7b61d4901cbfecfc33de7996e8cbe0a278
+> > DMI_EXACT_MATCH(DMI_BIOS_VERSION, "A08")
+> > 
+> > Helge
+> > 
+> > > > Via "force" module param fan support can be enabled.
+> > > > 
+> > > > Link: https://bugzilla.kernel.org/show_bug.cgi?id=195751
+> > > > Signed-off-by: Helge Eichelberg <kernelorg@elchenberg.name>
+> > > > ---
+> > > >  drivers/hwmon/dell-smm-hwmon.c | 7 +++++++
+> > > >  1 file changed, 7 insertions(+)
+> > > > 
+> > > > diff --git a/drivers/hwmon/dell-smm-hwmon.c b/drivers/hwmon/dell-smm-hwmon.c
+> > > > index bf3bb7e1adab..9d3ef879dc51 100644
+> > > > --- a/drivers/hwmon/dell-smm-hwmon.c
+> > > > +++ b/drivers/hwmon/dell-smm-hwmon.c
+> > > > @@ -1074,6 +1074,13 @@ static struct dmi_system_id i8k_blacklist_fan_support_dmi_table[] __initdata = {
+> > > >  			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Vostro 3360"),
+> > > >  		},
+> > > >  	},
+> > > > +	{
+> > > > +		.ident = "Dell XPS13 9333",
+> > > > +		.matches = {
+> > > > +			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
+> > > > +			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "XPS13 9333"),
+> > > > +		},
+> > > > +	},
+> > > >  	{ }
+> > > >  };
+> > > >  
+> > > 
+> > > -- 
+> > > Pali Rohár
+> > > pali.rohar@gmail.com
+> 
+> -- 
+> Pali Rohár
+> pali.rohar@gmail.com
