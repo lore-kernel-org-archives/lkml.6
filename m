@@ -1,108 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id IoMlJ4soHVvefgAAmS7hNA
-	; Sun, 10 Jun 2018 13:33:40 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Jr7cJAi8GlsPYgAAmS7hNA
+	; Fri, 08 Jun 2018 17:25:52 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 32960607BB; Sun, 10 Jun 2018 13:33:40 +0000 (UTC)
+	id 9C939607E4; Fri,  8 Jun 2018 17:25:52 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id AF9DA605A5;
-	Sun, 10 Jun 2018 13:33:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AF9DA605A5
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=kaiser.cx
+	by smtp.codeaurora.org (Postfix) with ESMTP id 280CD605A2;
+	Fri,  8 Jun 2018 17:25:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 280CD605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932204AbeFJNdh (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sun, 10 Jun 2018 09:33:37 -0400
-Received: from botnar.kaiser.cx ([176.28.20.183]:53676 "EHLO botnar.kaiser.cx"
+        id S1753030AbeFHRZc (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 13:25:32 -0400
+Received: from mga07.intel.com ([134.134.136.100]:28059 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753462AbeFJNdf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 09:33:35 -0400
-Received: from dslb-084-058-101-183.084.058.pools.vodafone-ip.de ([84.58.101.183] helo=reykholt.kaiser.cx)
-        by botnar.kaiser.cx with esmtpsa (TLSv1:AES128-SHA:128)
-        (Exim 4.72)
-        (envelope-from <martin@kaiser.cx>)
-        id 1fS0S8-0002y8-BV; Sun, 10 Jun 2018 15:32:16 +0200
-From: Martin Kaiser <martin@kaiser.cx>
-To: Boris Brezillon <boris.brezillon@bootlin.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Martin Kaiser <martin@kaiser.cx>, stable@vger.kernel.org
-Subject: [PATCH v2] mtd: rawnand: mxc: set spare area size register explicitly
-Date: Sun, 10 Jun 2018 15:31:27 +0200
-Message-Id: <1528637487-25172-1-git-send-email-martin@kaiser.cx>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1528025495-14443-1-git-send-email-martin@kaiser.cx>
-References: <1528025495-14443-1-git-send-email-martin@kaiser.cx>
+        id S1752075AbeFHRZa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 13:25:30 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jun 2018 10:25:29 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,490,1520924400";
+   d="scan'208";a="62969424"
+Received: from ray.jf.intel.com (HELO [10.7.201.145]) ([10.7.201.145])
+  by orsmga001.jf.intel.com with ESMTP; 08 Jun 2018 10:25:29 -0700
+Subject: Re: [PATCH v11 04/13] x86, sgx: add SGX definitions to msr-index.h
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
+        platform-driver-x86@vger.kernel.org
+References: <20180608171216.26521-1-jarkko.sakkinen@linux.intel.com>
+ <20180608171216.26521-5-jarkko.sakkinen@linux.intel.com>
+Cc: sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, Haim Cohen <haim.cohen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@suse.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
+        <linux-kernel@vger.kernel.org>,
+        "open list:INTEL SGX" <intel-sgx-kernel-dev@lists.01.org>
+From: Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <a51c11da-650a-1828-4173-e424a5340565@intel.com>
+Date: Fri, 8 Jun 2018 10:25:29 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180608171216.26521-5-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The v21 version of the NAND flash controller contains a Spare Area Size
-Register (SPAS) at offset 0x10. Its setting defaults to the maximum
-spare area size of 218 bytes. The size that is set in this register is
-used by the controller when it calculates the ECC bytes internally in
-hardware.
+On 06/08/2018 10:09 AM, Jarkko Sakkinen wrote:
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Signed-off-by: Haim Cohen <haim.cohen@intel.com>
+> Tested-by: Serge Ayoun <serge.ayoun@intel.com>
+> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-Usually, this register is updated from settings in the IIM fuses when
-the system is booting from NAND flash. For other boot media, however,
-the SPAS register remains at the default setting, which may not work for
-the particular flash chip on the board. The same goes for flash chips
-whose configuration cannot be set in the IIM fuses (e.g. chips with 2k
-sector size and 128 bytes spare area size can't be configured in the IIM
-fuses on imx25 systems).
+These are a mess.  If you're signing off on it, a review of some kind is
+pretty implied.
 
-Set the SPAS register explicitly during the preset operation. Derive the
-register value from mtd->oobsize that was detected during probe by
-decoding the flash chip's ID bytes.
-
-While at it, rename the define for the spare area register's offset to
-NFC_V21_RSLTSPARE_AREA. The register at offset 0x10 on v1 controllers is
-different from the register on v21 controllers.
-
-Signed-off-by: Martin Kaiser <martin@kaiser.cx>
-Reviewed-by: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: stable@vger.kernel.org
----
-changes in v2
-   - fix the commit message
-   - use '/ 2' instead of shift operator for division
-
-BTW is it ok to keep a Reviewed-by tag when updating the patch?
-
- drivers/mtd/nand/raw/mxc_nand.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mtd/nand/raw/mxc_nand.c b/drivers/mtd/nand/raw/mxc_nand.c
-index 45786e7..26cef21 100644
---- a/drivers/mtd/nand/raw/mxc_nand.c
-+++ b/drivers/mtd/nand/raw/mxc_nand.c
-@@ -48,7 +48,7 @@
- #define NFC_V1_V2_CONFIG		(host->regs + 0x0a)
- #define NFC_V1_V2_ECC_STATUS_RESULT	(host->regs + 0x0c)
- #define NFC_V1_V2_RSLTMAIN_AREA		(host->regs + 0x0e)
--#define NFC_V1_V2_RSLTSPARE_AREA	(host->regs + 0x10)
-+#define NFC_V21_RSLTSPARE_AREA		(host->regs + 0x10)
- #define NFC_V1_V2_WRPROT		(host->regs + 0x12)
- #define NFC_V1_UNLOCKSTART_BLKADDR	(host->regs + 0x14)
- #define NFC_V1_UNLOCKEND_BLKADDR	(host->regs + 0x16)
-@@ -1274,6 +1274,9 @@ static void preset_v2(struct mtd_info *mtd)
- 	writew(config1, NFC_V1_V2_CONFIG1);
- 	/* preset operation */
- 
-+	/* spare area size in 16-bit half-words */
-+	writew(mtd->oobsize / 2, NFC_V21_RSLTSPARE_AREA);
-+
- 	/* Unlock the internal RAM Buffer */
- 	writew(0x2, NFC_V1_V2_CONFIG);
- 
--- 
-2.1.4
+Also, how did Sean write this, send it to Haim to sign off on it, and
+then send it to you?  That seems unlikely.
