@@ -1,95 +1,227 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id SoJMFI1KGVupVgAAmS7hNA
-	; Thu, 07 Jun 2018 15:10:08 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ZxovITvjGlt9PAAAmS7hNA
+	; Fri, 08 Jun 2018 20:12:43 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id E1ACA6089E; Thu,  7 Jun 2018 15:10:07 +0000 (UTC)
+	id 6E959608BF; Fri,  8 Jun 2018 20:12:43 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TLVlI2EK"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 5BE14601B4;
-	Thu,  7 Jun 2018 15:10:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5BE14601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 25FC66089E;
+	Fri,  8 Jun 2018 20:12:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 25FC66089E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965083AbeFGPKF (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:10:05 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41498 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933515AbeFGPDP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:03:15 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbs-0005hL-M6; Thu, 07 Jun 2018 15:09:52 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb0-0002nu-Nt; Thu, 07 Jun 2018 15:08:58 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        id S932086AbeFHUMg (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 16:12:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51546 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753115AbeFHUMd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 16:12:33 -0400
+Received: from localhost (unknown [150.199.191.185])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A4883206B7;
+        Fri,  8 Jun 2018 20:12:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528488752;
+        bh=/79RUPsUPmX/JEhrn52CHxbCa+WggclOBN9rJRnnvYk=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=TLVlI2EK3raVbEvBEaNPdUgcG0g1uHWhMQdUKIOHKqimdIP0Phl+QxepUSeKB0UH2
+         rAuxIJSFv80ATraHJ+jQ9astAySFeSuirk9DkALlTzcxJ0vaP/bMlRVbDy2GuzXzqx
+         L9AKVDMBVBoMlHO3khX6hCRVYx+oeleN1nmJdsuY=
+Subject: [PATCH v1 5/9] PCI/portdrv: Squash lookup interfaces into
+ portdrv_pci.c
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: linux-pci@vger.kernel.org
+Cc: Oza Pawandeep <poza@codeaurora.org>, linux-kernel@vger.kernel.org
+Date: Fri, 08 Jun 2018 15:12:31 -0500
+Message-ID: <152848875188.14051.2166609505666979991.stgit@bhelgaas-glaptop.roam.corp.google.com>
+In-Reply-To: <152848853199.14051.12670957565366345798.stgit@bhelgaas-glaptop.roam.corp.google.com>
+References: <152848853199.14051.12670957565366345798.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: StGit/0.18
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Geert Uytterhoeven" <geert@linux-m68k.org>,
-        "Jason Gunthorpe" <jgg@mellanox.com>,
-        "Tatyana Nikolova" <tatyana.e.nikolova@intel.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.561101861@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 083/410] RDMA/iwpm: Fix uninitialized error code in
- iwpm_send_mapinfo()
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-------------------
+Squash lookup interfaces into portdrv_pci.c.  No functional change
+intended.
 
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-
-commit 302d6424e4a293a5761997e6c9fc3dfb1e4c355f upstream.
-
-With gcc-4.1.2:
-
-    drivers/infiniband/core/iwpm_util.c: In function ‘iwpm_send_mapinfo’:
-    drivers/infiniband/core/iwpm_util.c:647: warning: ‘ret’ may be used uninitialized in this function
-
-Indeed, if nl_client is not found in any of the scanned has buckets, ret
-will be used uninitialized.
-
-Preinitialize ret to -EINVAL to fix this.
-
-Fixes: 30dc5e63d6a5ad24 ("RDMA/core: Add support for iWARP Port Mapper user space service")
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Reviewed-by: Tatyana Nikolova <tatyana.e.nikolova@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-[bwh: Backported to 3.16: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
- drivers/infiniband/core/iwpm_util.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pci/pcie/portdrv_core.c |   69 ---------------------------------------
+ drivers/pci/pcie/portdrv_pci.c  |   68 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 68 insertions(+), 69 deletions(-)
 
---- a/drivers/infiniband/core/iwpm_util.c
-+++ b/drivers/infiniband/core/iwpm_util.c
-@@ -513,6 +513,7 @@ int iwpm_send_mapinfo(u8 nl_client, int
- 	}
- 	skb_num++;
- 	spin_lock_irqsave(&iwpm_mapinfo_lock, flags);
-+	ret = -EINVAL;
- 	for (i = 0; i < IWPM_HASH_BUCKET_SIZE; i++) {
- 		hlist_for_each_entry(map_info, &iwpm_hash_bucket[i],
- 				     hlist_node) {
+diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
+index 2ef046af08d2..77b1c1ea8885 100644
+--- a/drivers/pci/pcie/portdrv_core.c
++++ b/drivers/pci/pcie/portdrv_core.c
+@@ -19,75 +19,6 @@
+ #include "../pci.h"
+ #include "portdrv.h"
+ 
+-struct portdrv_service_data {
+-	struct pcie_port_service_driver *drv;
+-	struct device *dev;
+-	u32 service;
+-};
+-
+-static int find_service_iter(struct device *device, void *data)
+-{
+-	struct pcie_port_service_driver *service_driver;
+-	struct portdrv_service_data *pdrvs;
+-	u32 service;
+-
+-	pdrvs = (struct portdrv_service_data *) data;
+-	service = pdrvs->service;
+-
+-	if (device->bus == &pcie_port_bus_type && device->driver) {
+-		service_driver = to_service_driver(device->driver);
+-		if (service_driver->service == service) {
+-			pdrvs->drv = service_driver;
+-			pdrvs->dev = device;
+-			return 1;
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-/**
+- * pcie_port_find_service - find the service driver
+- * @dev: PCI Express port the service is associated with
+- * @service: Service to find
+- *
+- * Find PCI Express port service driver associated with given service
+- */
+-struct pcie_port_service_driver *pcie_port_find_service(struct pci_dev *dev,
+-							u32 service)
+-{
+-	struct pcie_port_service_driver *drv;
+-	struct portdrv_service_data pdrvs;
+-
+-	pdrvs.drv = NULL;
+-	pdrvs.service = service;
+-	device_for_each_child(&dev->dev, &pdrvs, find_service_iter);
+-
+-	drv = pdrvs.drv;
+-	return drv;
+-}
+-
+-/**
+- * pcie_port_find_device - find the struct device
+- * @dev: PCI Express port the service is associated with
+- * @service: For the service to find
+- *
+- * Find the struct device associated with given service on a pci_dev
+- */
+-struct device *pcie_port_find_device(struct pci_dev *dev,
+-				      u32 service)
+-{
+-	struct device *device;
+-	struct portdrv_service_data pdrvs;
+-
+-	pdrvs.dev = NULL;
+-	pdrvs.service = service;
+-	device_for_each_child(&dev->dev, &pdrvs, find_service_iter);
+-
+-	device = pdrvs.dev;
+-	return device;
+-}
+-
+ /**
+  * pcie_port_probe_service - probe driver for given PCI Express port service
+  * @dev: PCI Express port service device to probe against
+diff --git a/drivers/pci/pcie/portdrv_pci.c b/drivers/pci/pcie/portdrv_pci.c
+index ab5e3a63981b..b019af97f14e 100644
+--- a/drivers/pci/pcie/portdrv_pci.c
++++ b/drivers/pci/pcie/portdrv_pci.c
+@@ -42,6 +42,74 @@ __setup("pcie_ports=", pcie_port_setup);
+ 
+ /* global data */
+ 
++struct portdrv_service_data {
++	struct pcie_port_service_driver *drv;
++	struct device *dev;
++	u32 service;
++};
++
++static int find_service_iter(struct device *device, void *data)
++{
++	struct pcie_port_service_driver *service_driver;
++	struct portdrv_service_data *pdrvs;
++	u32 service;
++
++	pdrvs = (struct portdrv_service_data *) data;
++	service = pdrvs->service;
++
++	if (device->bus == &pcie_port_bus_type && device->driver) {
++		service_driver = to_service_driver(device->driver);
++		if (service_driver->service == service) {
++			pdrvs->drv = service_driver;
++			pdrvs->dev = device;
++			return 1;
++		}
++	}
++
++	return 0;
++}
++
++/**
++ * pcie_port_find_service - find the service driver
++ * @dev: PCI Express port the service is associated with
++ * @service: Service to find
++ *
++ * Find PCI Express port service driver associated with given service
++ */
++struct pcie_port_service_driver *pcie_port_find_service(struct pci_dev *dev,
++							u32 service)
++{
++	struct pcie_port_service_driver *drv;
++	struct portdrv_service_data pdrvs;
++
++	pdrvs.drv = NULL;
++	pdrvs.service = service;
++	device_for_each_child(&dev->dev, &pdrvs, find_service_iter);
++
++	drv = pdrvs.drv;
++	return drv;
++}
++
++/**
++ * pcie_port_find_device - find the struct device
++ * @dev: PCI Express port the service is associated with
++ * @service: For the service to find
++ *
++ * Find the struct device associated with given service on a pci_dev
++ */
++struct device *pcie_port_find_device(struct pci_dev *dev, u32 service)
++{
++	struct device *device;
++	struct portdrv_service_data pdrvs;
++
++	pdrvs.dev = NULL;
++	pdrvs.service = service;
++	device_for_each_child(&dev->dev, &pdrvs, find_service_iter);
++
++	device = pdrvs.dev;
++	return device;
++}
++
+ static int pcie_portdrv_restore_config(struct pci_dev *dev)
+ {
+ 	int retval;
