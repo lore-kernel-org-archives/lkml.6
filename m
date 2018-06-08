@@ -1,476 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id +GxtKbloGlszTwAAmS7hNA
-	; Fri, 08 Jun 2018 11:30:01 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id NKrgAFrnGltKYwAAmS7hNA
+	; Fri, 08 Jun 2018 20:30:18 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 91842607DC; Fri,  8 Jun 2018 11:30:01 +0000 (UTC)
+	id D9128607E7; Fri,  8 Jun 2018 20:30:17 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PY6xzadl"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 3C453601D2;
-	Fri,  8 Jun 2018 11:30:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3C453601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 48263601D2;
+	Fri,  8 Jun 2018 20:30:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 48263601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752869AbeFHL35 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 07:29:57 -0400
-Received: from mga17.intel.com ([192.55.52.151]:32416 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752756AbeFHL3x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 07:29:53 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jun 2018 04:29:53 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,490,1520924400";
-   d="scan'208";a="62388992"
-Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 08 Jun 2018 04:29:51 -0700
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Guenter Roeck <linux@roeck-us.net>,
-        Hans de Goede <hdegoede@redhat.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jun Li <jun.li@nxp.com>,
-        Mats Karrman <mats.dev.list@gmail.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v4 4/8] usb: typec: Register a device for every mode
-Date: Fri,  8 Jun 2018 14:29:37 +0300
-Message-Id: <20180608112941.26332-5-heikki.krogerus@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180608112941.26332-1-heikki.krogerus@linux.intel.com>
-References: <20180608112941.26332-1-heikki.krogerus@linux.intel.com>
+        id S932092AbeFHUaP (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 16:30:15 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:38693 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752777AbeFHUaN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 16:30:13 -0400
+Received: by mail-pf0-f194.google.com with SMTP id b74-v6so7180423pfl.5
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 13:30:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=wwQOtuXl4E4GgWhitlx0Pj0xixasp8LEMmt5iX5JPzI=;
+        b=PY6xzadlpnHDh22W29cdykFU1anQ0Gj6ujKeqe/MeWV/+Kin+tXJUerKTGynNYtY/n
+         3fWsFn28xHNfeAjnQhlCeZipPWKKRofP5coLUpr/VAj1+ji4uajr3VWHAfIgC/TVy/iR
+         1qKfaYELbOaHoMEQ6tNOE4nQ3EDWdHqTqu3WI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wwQOtuXl4E4GgWhitlx0Pj0xixasp8LEMmt5iX5JPzI=;
+        b=RYe+JuvU6Q1nTRjbw22IM2woe/fyYJ8wQjj1HBMukxDYVITDmR3oEEneI/oFB+8kAd
+         RkLBdQmJQCeKNueqEtaCm/5OI8vzzgYwDVUfWp0YclygqQvPZCGSyXjDz4854H0IJOSB
+         h48iRJRklR6u9pEPhRS6rH5wtSleCRkB1tgM7SiXJJAfI4n9XuZtoAOWxFJZhpdrKNNC
+         901ToHq5l+RHYoCO0SIqF1x85vEIN04AT0hTAIgpc5DeyRpw49FND8F6r0j1UJuXoiwv
+         o8b4XQ1+mfieKSOcC5KMuVgppC3L085pWco7KwJZBUmnkh4NX3wDGxz+jSpDPXiQiVku
+         L60g==
+X-Gm-Message-State: APt69E1BUftmdQcxzFID7lS4zo2wH2H1latTXdPe7ZukMLAAyekF4QKN
+        nRv6YsGE2Qgx7HgnSgDVrkf+7w==
+X-Google-Smtp-Source: ADUXVKIydJPj1NjAm/uMX59mtrIF5y77id0xoMBYvE0A4vKoz0ISUJ0yKz5lnFCvmrTz3HvlPt4t2g==
+X-Received: by 2002:a63:7d4c:: with SMTP id m12-v6mr6412945pgn.201.1528489812596;
+        Fri, 08 Jun 2018 13:30:12 -0700 (PDT)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id w3-v6sm7409811pfi.109.2018.06.08.13.30.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Jun 2018 13:30:11 -0700 (PDT)
+Date: Fri, 8 Jun 2018 14:30:09 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, robh@kernel.org,
+        frowand.list@gmail.com, mark.rutland@arm.com, sudeep.holla@arm.com,
+        arm@kernel.org, linux-kernel@vger.kernel.org, matt.sealey@arm.com,
+        john.horley@arm.com, charles.garcia-tobin@arm.com,
+        coresight@lists.linaro.org, devicetree@vger.kernel.org,
+        mike.leach@linaro.org
+Subject: Re: [PATCH 07/20] coresight: dts: Document usage of graph bindings
+Message-ID: <20180608203009.GF30587@xps15>
+References: <1528235011-30691-1-git-send-email-suzuki.poulose@arm.com>
+ <1528235011-30691-8-git-send-email-suzuki.poulose@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1528235011-30691-8-git-send-email-suzuki.poulose@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Before a device was created for every discovered SVID, but
-this will create a device for every discovered mode of every
-SVID. The idea is to make it easier to create mode specific
-drivers once a bus for the alternate mode is added.
+On Tue, Jun 05, 2018 at 10:43:18PM +0100, Suzuki K Poulose wrote:
+> Before we update the bindings, document the current graph bindings
+> and usage of additional properties.
+> 
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
----
- drivers/usb/typec/class.c | 172 ++++++++++++--------------------------
- drivers/usb/typec/tcpm.c  |  45 +++++-----
- include/linux/usb/typec.h |  37 ++------
- 3 files changed, 83 insertions(+), 171 deletions(-)
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
-index 49468f5329d6..dd8c48b629d6 100644
---- a/drivers/usb/typec/class.c
-+++ b/drivers/usb/typec/class.c
-@@ -13,31 +13,20 @@
- #include <linux/usb/typec.h>
- #include <linux/usb/typec_mux.h>
- 
--struct typec_mode {
--	int				index;
-+struct typec_altmode {
-+	struct device			dev;
-+	u16				svid;
-+	u8				mode;
-+
- 	u32				vdo;
- 	char				*desc;
- 	enum typec_port_type		roles;
--
--	struct typec_altmode		*alt_mode;
--
- 	unsigned int			active:1;
- 
-+	struct attribute		*attrs[5];
- 	char				group_name[6];
- 	struct attribute_group		group;
--	struct attribute		*attrs[5];
--	struct device_attribute		vdo_attr;
--	struct device_attribute		desc_attr;
--	struct device_attribute		active_attr;
--	struct device_attribute		roles_attr;
--};
--
--struct typec_altmode {
--	struct device			dev;
--	u16				svid;
--	int				n_modes;
--	struct typec_mode		modes[ALTMODE_MAX_MODES];
--	const struct attribute_group	*mode_groups[ALTMODE_MAX_MODES];
-+	const struct attribute_group	*groups[2];
- };
- 
- struct typec_plug {
-@@ -177,23 +166,20 @@ static void typec_report_identity(struct device *dev)
- /**
-  * typec_altmode_update_active - Report Enter/Exit mode
-  * @alt: Handle to the alternate mode
-- * @mode: Mode index
-  * @active: True when the mode has been entered
-  *
-  * If a partner or cable plug executes Enter/Exit Mode command successfully, the
-  * drivers use this routine to report the updated state of the mode.
-  */
--void typec_altmode_update_active(struct typec_altmode *alt, int mode,
--				 bool active)
-+void typec_altmode_update_active(struct typec_altmode *alt, bool active)
- {
--	struct typec_mode *m = &alt->modes[mode];
- 	char dir[6];
- 
--	if (m->active == active)
-+	if (alt->active == active)
- 		return;
- 
--	m->active = active;
--	snprintf(dir, sizeof(dir), "mode%d", mode);
-+	alt->active = active;
-+	snprintf(dir, sizeof(dir), "mode%d", alt->mode);
- 	sysfs_notify(&alt->dev.kobj, dir, "active");
- 	kobject_uevent(&alt->dev.kobj, KOBJ_CHANGE);
- }
-@@ -220,42 +206,36 @@ struct typec_port *typec_altmode2port(struct typec_altmode *alt)
- EXPORT_SYMBOL_GPL(typec_altmode2port);
- 
- static ssize_t
--typec_altmode_vdo_show(struct device *dev, struct device_attribute *attr,
--		       char *buf)
-+vdo_show(struct device *dev, struct device_attribute *attr, char *buf)
- {
--	struct typec_mode *mode = container_of(attr, struct typec_mode,
--					       vdo_attr);
-+	struct typec_altmode *alt = to_altmode(dev);
- 
--	return sprintf(buf, "0x%08x\n", mode->vdo);
-+	return sprintf(buf, "0x%08x\n", alt->vdo);
- }
-+static DEVICE_ATTR_RO(vdo);
- 
- static ssize_t
--typec_altmode_desc_show(struct device *dev, struct device_attribute *attr,
--			char *buf)
-+description_show(struct device *dev, struct device_attribute *attr, char *buf)
- {
--	struct typec_mode *mode = container_of(attr, struct typec_mode,
--					       desc_attr);
-+	struct typec_altmode *alt = to_altmode(dev);
- 
--	return sprintf(buf, "%s\n", mode->desc ? mode->desc : "");
-+	return sprintf(buf, "%s\n", alt->desc ? alt->desc : "");
- }
-+static DEVICE_ATTR_RO(description);
- 
- static ssize_t
--typec_altmode_active_show(struct device *dev, struct device_attribute *attr,
--			  char *buf)
-+active_show(struct device *dev, struct device_attribute *attr, char *buf)
- {
--	struct typec_mode *mode = container_of(attr, struct typec_mode,
--					       active_attr);
-+	struct typec_altmode *alt = to_altmode(dev);
- 
--	return sprintf(buf, "%s\n", mode->active ? "yes" : "no");
-+	return sprintf(buf, "%s\n", alt->active ? "yes" : "no");
- }
- 
--static ssize_t
--typec_altmode_active_store(struct device *dev, struct device_attribute *attr,
--			   const char *buf, size_t size)
-+static ssize_t active_store(struct device *dev, struct device_attribute *attr,
-+			    const char *buf, size_t size)
- {
--	struct typec_mode *mode = container_of(attr, struct typec_mode,
--					       active_attr);
--	struct typec_port *port = typec_altmode2port(mode->alt_mode);
-+	struct typec_altmode *alt = to_altmode(dev);
-+	struct typec_port *port = typec_altmode2port(alt);
- 	bool activate;
- 	int ret;
- 
-@@ -266,22 +246,22 @@ typec_altmode_active_store(struct device *dev, struct device_attribute *attr,
- 	if (ret)
- 		return ret;
- 
--	ret = port->cap->activate_mode(port->cap, mode->index, activate);
-+	ret = port->cap->activate_mode(port->cap, alt->mode, activate);
- 	if (ret)
- 		return ret;
- 
- 	return size;
- }
-+static DEVICE_ATTR_RW(active);
- 
- static ssize_t
--typec_altmode_roles_show(struct device *dev, struct device_attribute *attr,
--			 char *buf)
-+supported_roles_show(struct device *dev, struct device_attribute *attr,
-+		     char *buf)
- {
--	struct typec_mode *mode = container_of(attr, struct typec_mode,
--					       roles_attr);
-+	struct typec_altmode *alt = to_altmode(dev);
- 	ssize_t ret;
- 
--	switch (mode->roles) {
-+	switch (alt->roles) {
- 	case TYPEC_PORT_SRC:
- 		ret = sprintf(buf, "source\n");
- 		break;
-@@ -295,61 +275,13 @@ typec_altmode_roles_show(struct device *dev, struct device_attribute *attr,
- 	}
- 	return ret;
- }
-+static DEVICE_ATTR_RO(supported_roles);
- 
--static void typec_init_modes(struct typec_altmode *alt,
--			     const struct typec_mode_desc *desc, bool is_port)
-+static void typec_altmode_release(struct device *dev)
- {
--	int i;
--
--	for (i = 0; i < alt->n_modes; i++, desc++) {
--		struct typec_mode *mode = &alt->modes[i];
--
--		/* Not considering the human readable description critical */
--		mode->desc = kstrdup(desc->desc, GFP_KERNEL);
--		if (desc->desc && !mode->desc)
--			dev_err(&alt->dev, "failed to copy mode%d desc\n", i);
--
--		mode->alt_mode = alt;
--		mode->vdo = desc->vdo;
--		mode->roles = desc->roles;
--		mode->index = desc->index;
--		sprintf(mode->group_name, "mode%d", desc->index);
--
--		sysfs_attr_init(&mode->vdo_attr.attr);
--		mode->vdo_attr.attr.name = "vdo";
--		mode->vdo_attr.attr.mode = 0444;
--		mode->vdo_attr.show = typec_altmode_vdo_show;
--
--		sysfs_attr_init(&mode->desc_attr.attr);
--		mode->desc_attr.attr.name = "description";
--		mode->desc_attr.attr.mode = 0444;
--		mode->desc_attr.show = typec_altmode_desc_show;
--
--		sysfs_attr_init(&mode->active_attr.attr);
--		mode->active_attr.attr.name = "active";
--		mode->active_attr.attr.mode = 0644;
--		mode->active_attr.show = typec_altmode_active_show;
--		mode->active_attr.store = typec_altmode_active_store;
--
--		mode->attrs[0] = &mode->vdo_attr.attr;
--		mode->attrs[1] = &mode->desc_attr.attr;
--		mode->attrs[2] = &mode->active_attr.attr;
--
--		/* With ports, list the roles that the mode is supported with */
--		if (is_port) {
--			sysfs_attr_init(&mode->roles_attr.attr);
--			mode->roles_attr.attr.name = "supported_roles";
--			mode->roles_attr.attr.mode = 0444;
--			mode->roles_attr.show = typec_altmode_roles_show;
--
--			mode->attrs[3] = &mode->roles_attr.attr;
--		}
--
--		mode->group.attrs = mode->attrs;
--		mode->group.name = mode->group_name;
-+	struct typec_altmode *alt = to_altmode(dev);
- 
--		alt->mode_groups[i] = &mode->group;
--	}
-+	kfree(alt);
- }
- 
- static ssize_t svid_show(struct device *dev, struct device_attribute *attr,
-@@ -367,16 +299,6 @@ static struct attribute *typec_altmode_attrs[] = {
- };
- ATTRIBUTE_GROUPS(typec_altmode);
- 
--static void typec_altmode_release(struct device *dev)
--{
--	struct typec_altmode *alt = to_altmode(dev);
--	int i;
--
--	for (i = 0; i < alt->n_modes; i++)
--		kfree(alt->modes[i].desc);
--	kfree(alt);
--}
--
- static const struct device_type typec_altmode_dev_type = {
- 	.name = "typec_alternate_mode",
- 	.groups = typec_altmode_groups,
-@@ -395,13 +317,27 @@ typec_register_altmode(struct device *parent,
- 		return ERR_PTR(-ENOMEM);
- 
- 	alt->svid = desc->svid;
--	alt->n_modes = desc->n_modes;
--	typec_init_modes(alt, desc->modes, is_typec_port(parent));
-+	alt->mode = desc->mode;
-+	alt->vdo = desc->vdo;
-+	alt->roles = desc->roles;
-+
-+	alt->attrs[0] = &dev_attr_vdo.attr;
-+	alt->attrs[1] = &dev_attr_description.attr;
-+	alt->attrs[2] = &dev_attr_active.attr;
-+
-+	if (is_typec_port(parent))
-+		alt->attrs[3] = &dev_attr_supported_roles.attr;
-+
-+	sprintf(alt->group_name, "mode%d", desc->mode);
-+	alt->group.name = alt->group_name;
-+	alt->group.attrs = alt->attrs;
-+	alt->groups[0] = &alt->group;
- 
- 	alt->dev.parent = parent;
--	alt->dev.groups = alt->mode_groups;
-+	alt->dev.groups = alt->groups;
- 	alt->dev.type = &typec_altmode_dev_type;
--	dev_set_name(&alt->dev, "svid-%04x", alt->svid);
-+	dev_set_name(&alt->dev, "%s-%04x:%u", dev_name(parent),
-+		     alt->svid, alt->mode);
- 
- 	ret = device_register(&alt->dev);
- 	if (ret) {
-diff --git a/drivers/usb/typec/tcpm.c b/drivers/usb/typec/tcpm.c
-index 8a201dd53d36..44ce3955cb59 100644
---- a/drivers/usb/typec/tcpm.c
-+++ b/drivers/usb/typec/tcpm.c
-@@ -310,8 +310,8 @@ struct tcpm_port {
- 
- 	/* Alternate mode data */
- 	struct pd_mode_data mode_data;
--	struct typec_altmode *partner_altmode[SVID_DISCOVERY_MAX];
--	struct typec_altmode *port_altmode[SVID_DISCOVERY_MAX];
-+	struct typec_altmode *partner_altmode[SVID_DISCOVERY_MAX * 6];
-+	struct typec_altmode *port_altmode[SVID_DISCOVERY_MAX * 6];
- 
- 	/* Deadline in jiffies to exit src_try_wait state */
- 	unsigned long max_wait;
-@@ -994,7 +994,6 @@ static void svdm_consume_modes(struct tcpm_port *port, const __le32 *payload,
- {
- 	struct pd_mode_data *pmdata = &port->mode_data;
- 	struct typec_altmode_desc *paltmode;
--	struct typec_mode_desc *pmode;
- 	int i;
- 
- 	if (pmdata->altmodes >= ARRAY_SIZE(port->partner_altmode)) {
-@@ -1002,32 +1001,28 @@ static void svdm_consume_modes(struct tcpm_port *port, const __le32 *payload,
- 		return;
- 	}
- 
--	paltmode = &pmdata->altmode_desc[pmdata->altmodes];
--	memset(paltmode, 0, sizeof(*paltmode));
-+	for (i = 1; i < cnt; i++) {
-+		paltmode = &pmdata->altmode_desc[pmdata->altmodes];
-+		memset(paltmode, 0, sizeof(*paltmode));
- 
--	paltmode->svid = pmdata->svids[pmdata->svid_index];
-+		paltmode->svid = pmdata->svids[pmdata->svid_index];
-+		paltmode->mode = i;
-+		paltmode->vdo = le32_to_cpu(payload[i]);
- 
--	tcpm_log(port, " Alternate mode %d: SVID 0x%04x",
--		 pmdata->altmodes, paltmode->svid);
-+		tcpm_log(port, " Alternate mode %d: SVID 0x%04x, VDO %d: 0x%08x",
-+			 pmdata->altmodes, paltmode->svid,
-+			 paltmode->mode, paltmode->vdo);
- 
--	for (i = 1; i < cnt && paltmode->n_modes < ALTMODE_MAX_MODES; i++) {
--		pmode = &paltmode->modes[paltmode->n_modes];
--		memset(pmode, 0, sizeof(*pmode));
--		pmode->vdo = le32_to_cpu(payload[i]);
--		pmode->index = i - 1;
--		paltmode->n_modes++;
--		tcpm_log(port, "  VDO %d: 0x%08x",
--			 pmode->index, pmode->vdo);
--	}
--	port->partner_altmode[pmdata->altmodes] =
--		typec_partner_register_altmode(port->partner, paltmode);
--	if (!port->partner_altmode[pmdata->altmodes]) {
--		tcpm_log(port,
--			 "Failed to register alternate modes for SVID 0x%04x",
--			 paltmode->svid);
--		return;
-+		port->partner_altmode[pmdata->altmodes] =
-+			typec_partner_register_altmode(port->partner, paltmode);
-+		if (!port->partner_altmode[pmdata->altmodes]) {
-+			tcpm_log(port,
-+				 "Failed to register modes for SVID 0x%04x",
-+				 paltmode->svid);
-+			return;
-+		}
-+		pmdata->altmodes++;
- 	}
--	pmdata->altmodes++;
- }
- 
- #define supports_modal(port)	PD_IDH_MODAL_SUPP((port)->partner_ident.id_header)
-diff --git a/include/linux/usb/typec.h b/include/linux/usb/typec.h
-index a5f6433e218b..51c76591c506 100644
---- a/include/linux/usb/typec.h
-+++ b/include/linux/usb/typec.h
-@@ -93,41 +93,23 @@ int typec_partner_set_identity(struct typec_partner *partner);
- int typec_cable_set_identity(struct typec_cable *cable);
- 
- /*
-- * struct typec_mode_desc - Individual Mode of an Alternate Mode
-- * @index: Index of the Mode within the SVID
-+ * struct typec_altmode_desc - USB Type-C Alternate Mode Descriptor
-+ * @svid: Standard or Vendor ID
-+ * @mode: Index of the Mode
-  * @vdo: VDO returned by Discover Modes USB PD command
-- * @desc: Optional human readable description of the mode
-  * @roles: Only for ports. DRP if the mode is available in both roles
-  *
-- * Description of a mode of an Alternate Mode which a connector, cable plug or
-- * partner supports. Every mode will have it's own sysfs group. The details are
-- * the VDO returned by discover modes command, description for the mode and
-- * active flag telling has the mode being entered or not.
-+ * Description of an Alternate Mode which a connector, cable plug or partner
-+ * supports.
-  */
--struct typec_mode_desc {
--	int			index;
-+struct typec_altmode_desc {
-+	u16			svid;
-+	u8			mode;
- 	u32			vdo;
--	char			*desc;
- 	/* Only used with ports */
- 	enum typec_port_type	roles;
- };
- 
--/*
-- * struct typec_altmode_desc - USB Type-C Alternate Mode Descriptor
-- * @svid: Standard or Vendor ID
-- * @n_modes: Number of modes
-- * @modes: Array of modes supported by the Alternate Mode
-- *
-- * Representation of an Alternate Mode that has SVID assigned by USB-IF. The
-- * array of modes will list the modes of a particular SVID that are supported by
-- * a connector, partner of a cable plug.
-- */
--struct typec_altmode_desc {
--	u16			svid;
--	int			n_modes;
--	struct typec_mode_desc	modes[ALTMODE_MAX_MODES];
--};
--
- struct typec_altmode
- *typec_partner_register_altmode(struct typec_partner *partner,
- 				const struct typec_altmode_desc *desc);
-@@ -141,8 +123,7 @@ void typec_unregister_altmode(struct typec_altmode *altmode);
- 
- struct typec_port *typec_altmode2port(struct typec_altmode *alt);
- 
--void typec_altmode_update_active(struct typec_altmode *alt, int mode,
--				 bool active);
-+void typec_altmode_update_active(struct typec_altmode *alt, bool active);
- 
- enum typec_plug_index {
- 	TYPEC_PLUG_SOP_P,
--- 
-2.17.1
+> ---
+>  .../devicetree/bindings/arm/coresight.txt          | 31 +++++++++++++++++++---
+>  1 file changed, 27 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/coresight.txt b/Documentation/devicetree/bindings/arm/coresight.txt
+> index 9aa30a1..ed6b555 100644
+> --- a/Documentation/devicetree/bindings/arm/coresight.txt
+> +++ b/Documentation/devicetree/bindings/arm/coresight.txt
+> @@ -52,9 +52,7 @@ its hardware characteristcs.
+>  	  clocks the core of that coresight component. The latter clock
+>  	  is optional.
+>  
+> -	* port or ports: The representation of the component's port
+> -	  layout using the generic DT graph presentation found in
+> -	  "bindings/graph.txt".
+> +	* port or ports: see "Graph bindings for Coresight" below.
+>  
+>  * Additional required properties for System Trace Macrocells (STM):
+>  	* reg: along with the physical base address and length of the register
+> @@ -71,7 +69,7 @@ its hardware characteristcs.
+>  	  AMBA markee):
+>  		- "arm,coresight-replicator"
+>  
+> -	* port or ports: same as above.
+> +	* port or ports: see "Graph bindings for Coresight" below.
+>  
+>  * Optional properties for ETM/PTMs:
+>  
+> @@ -90,6 +88,31 @@ its hardware characteristcs.
+>  	* arm,scatter-gather: boolean. Indicates that the TMC-ETR can safely
+>  	  use the SG mode on this system.
+>  
+> +Graph bindings for Coresight
+> +-------------------------------
+> +
+> +Coresight components are interconnected to create a data path for the flow of
+> +trace data generated from the "sources" to their collection points "sink".
+> +Each coresight component must describe the "input" and "output" connections.
+> +The connections must be described via generic DT graph bindings as described
+> +by the "bindings/graph.txt", where each "port" along with an "endpoint"
+> +component represents a hardware port and the connection.
+> +
+> +Since it is possible to have multiple connections for any coresight component
+> +with a specific direction of data flow, each connection must define the
+> +following properties to uniquely identify the connection details.
+> +
+> + * Direction of the data flow w.r.t the component :
+> +   Each input port must have the following property defined at the "endpoint"
+> +   for the port.
+> +	"slave-mode"
+> +
+> + * Hardware Port number at the component:
+> +     -  The hardware port number is assumed to be the address of the "port"
+> +         component.
+> +
+> +
+> +
+>  Example:
+>  
+>  1. Sinks
+> -- 
+> 2.7.4
+> 
