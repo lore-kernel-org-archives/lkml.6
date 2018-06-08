@@ -1,90 +1,260 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id QqHUIjpRGVvEDQAAmS7hNA
-	; Thu, 07 Jun 2018 15:39:08 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id gowTOl65GlvARgAAmS7hNA
+	; Fri, 08 Jun 2018 17:15:06 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 3F4686074D; Thu,  7 Jun 2018 15:39:08 +0000 (UTC)
+	id 011EF607E4; Fri,  8 Jun 2018 17:15:05 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="l0sa3y39"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="K53HhVAA"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id BC53C6089E;
-	Thu,  7 Jun 2018 15:39:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BC53C6089E
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 0D66D601D2;
+	Fri,  8 Jun 2018 17:15:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0D66D601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935526AbeFGPjF (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:39:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45136 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933193AbeFGPjA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:39:00 -0400
-Received: from mail-io0-f179.google.com (mail-io0-f179.google.com [209.85.223.179])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 02CBA2088F
-        for <linux-kernel@vger.kernel.org>; Thu,  7 Jun 2018 15:39:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528385940;
-        bh=/Z+yN54nwBtnO1YsmpoDAvuKNDr6RvNMby9iLJrueyc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=l0sa3y39UIhDuhJ4KYUwVh/2cC8qc0EcuTQlgt19RM1EVb/xzMxPvdFnRnnxNkAGw
-         eLiai/jgZ1xQYls0P8RzvbWJQ+SKPy2WiM42fh4PqZNVa5/7c+XnC04Kp8LzzXRcpM
-         ceeDOVRYppdv4batiKDqD9/juuzQQWIZ6iD/EdBM=
-Received: by mail-io0-f179.google.com with SMTP id s26-v6so12337162ioj.4
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 08:38:59 -0700 (PDT)
-X-Gm-Message-State: APt69E20m3Ww5JOUfFAyLvNcooAIECcygkGBArmkx3krYrUiSbOzZWRU
-        pB9P+JKBTebgX1NlHGKhb1gprm4SlWlJO0yBAY39Yg==
-X-Google-Smtp-Source: ADUXVKI5YR8BZLeEZcTjR14Vei0NXRwH3vL4H/MYpZNEsIZx8o0BunmVBc9/yI0n4U7DSV5kr8R6IL+bsfS4w57N+3w=
-X-Received: by 2002:a6b:ef02:: with SMTP id k2-v6mr1968977ioh.136.1528385939471;
- Thu, 07 Jun 2018 08:38:59 -0700 (PDT)
+        id S1752857AbeFHRPC (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 13:15:02 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:40625 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752682AbeFHRPA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 13:15:00 -0400
+Received: by mail-pf0-f194.google.com with SMTP id z24-v6so6953222pfe.7
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 10:15:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=4lZ78WJMA6KSSCOk4gTI8GJfhQU+c2Rvd5NoJy5VD/M=;
+        b=K53HhVAAZXCW6C9IKi2paiqUQQYL32W6rYOrwzyKGXBFgsPiila2WO/knDcc7j8j0e
+         8A9rC7iHWlNXdczdS+hnzIbXuIx/U+gX+4Gq05d5QeJ4SyoWh0bqbanskqvLDtVHBHw1
+         JULa0CRutY8v65dD0z2QX9cRFftfd/PRriqT1MDRVjLtY/bERB7pPZuNFUX8mjG+XsVY
+         IoKYfqEJcGUBgE8K2o+nDO5HYIGgr3KQHu8iN4HCDS0wrWoepPCvAfXLKN/miwf/3LjC
+         TnINO9QHcLcT8AzO8YHbXxeYyOLI+TM1vqZEkp5wViHB0OgD2mzG5PqJbn9ZW3zlTTt7
+         tWVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=4lZ78WJMA6KSSCOk4gTI8GJfhQU+c2Rvd5NoJy5VD/M=;
+        b=dDI1dsUQgSUJ37Ku9N24d4v1EVYyAN4fAIqP2RtEhIMfYkjhTlZOjPewhqkeMzSGIR
+         l56u+UoF00y1t0wDQq/2Ye0LRoqmZ8a33FjxZyv5qknv5NGoGFQ7G+R+gLAlT8rhM1tI
+         Y2rWm3P+3rnc3R0AD9ssKnecq9Iq8aBhnZ9TmEONzhcIRwkQlOZa/LcJSiGfn5gATzUo
+         GbLcyJET/wgY6n/RGKND5ndKbKngx+KtmYFgdMvNtJp6LWYqATIPbcixhNwR5N5rnfEY
+         c1O2FkonIT+u8j0OpqvSHZL3LXenBdl+Eo4WzwHOhaFkhWivvkLm5iEGqJqUQwVr4yEE
+         xlMA==
+X-Gm-Message-State: APt69E0DODakX9sl13FH1Bd4wC0ltrfQInU1M0TYtxQZne2ZYo8Yg4nh
+        j08i+oWO44tnBFIsytyiZOJx40eI/h8r3rdn8Jz1tA==
+X-Google-Smtp-Source: ADUXVKI6rFftpFhkGYL33aPqJFWlvytSYZaYd+AKfem8NoQEu/hsaFmRSMvJhj88mZjn+ZdwHlJZXb7iNlV60zzRpDo=
+X-Received: by 2002:a63:721c:: with SMTP id n28-v6mr5999137pgc.96.1528478099262;
+ Fri, 08 Jun 2018 10:14:59 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180607143544.3477-1-yu-cheng.yu@intel.com> <20180607143544.3477-3-yu-cheng.yu@intel.com>
-In-Reply-To: <20180607143544.3477-3-yu-cheng.yu@intel.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Thu, 7 Jun 2018 08:38:47 -0700
-X-Gmail-Original-Message-ID: <CALCETrXAx4vBUxf3VaePNm3HHLZkdTFAR9TV0T+A-jb2QL7Uag@mail.gmail.com>
-Message-ID: <CALCETrXAx4vBUxf3VaePNm3HHLZkdTFAR9TV0T+A-jb2QL7Uag@mail.gmail.com>
-Subject: Re: [PATCH 2/5] x86/fpu/xstate: Change some names to separate XSAVES
- system and user states
-To: Yu-cheng Yu <yu-cheng.yu@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. J. Lu" <hjl.tools@gmail.com>,
-        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        mike.kravetz@oracle.com
+Received: by 2002:a17:90a:d42:0:0:0:0 with HTTP; Fri, 8 Jun 2018 10:14:38
+ -0700 (PDT)
+In-Reply-To: <CACT4Y+bHDWDapwOonO1EpR6TiRa=qf9nSDtHArq75yCGuHf=gg@mail.gmail.com>
+References: <95865cab-e12f-d45b-b6e3-465b624862ba@i-love.sakura.ne.jp>
+ <CACT4Y+byRRtCA9B9bPG9mjrf3UY3OsGeBsoh8dZ0T+V6tKpTHg@mail.gmail.com>
+ <201806080231.w582VIRn021009@www262.sakura.ne.jp> <CACT4Y+Y7Mj1JngLst1aRHDhURXQMn-eTjyPFjDdGAT0ZV-dHrw@mail.gmail.com>
+ <CACT4Y+bBfwpcP2h0URpqwiNMQ5SFJdPDHThUu2xetmrxgC+3BQ@mail.gmail.com> <CACT4Y+bHDWDapwOonO1EpR6TiRa=qf9nSDtHArq75yCGuHf=gg@mail.gmail.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Fri, 8 Jun 2018 19:14:38 +0200
+Message-ID: <CACT4Y+Z4i=bD49cb4pJ5zOMxVu675NT8wCNk+c2n2XJVOXG2bg@mail.gmail.com>
+Subject: Re: general protection fault in wb_workfn (2)
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        syzbot <syzbot+4a7438e774b21ddd8eca@syzkaller.appspotmail.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Tejun Heo <tj@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        linux-block@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 7, 2018 at 7:40 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+On Fri, Jun 8, 2018 at 6:53 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> On Fri, Jun 8, 2018 at 5:16 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
+>>> On Fri, Jun 8, 2018 at 4:31 AM, Tetsuo Handa
+>>> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>>>> Dmitry Vyukov wrote:
+>>>>> On Tue, Jun 5, 2018 at 3:45 PM, Tetsuo Handa
+>>>>> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>>>>> > Dmitry, can you assign VM resources for a git tree for this bug? This bug wants to fight
+>>>>> > against https://github.com/google/syzkaller/blob/master/docs/syzbot.md#no-custom-patches ...
+>>>>>
+>>>>> Hi Tetsuo,
+>>>>>
+>>>>> Most of the reasons for not doing it still stand. A syzkaller instance
+>>>>> will produce not just this bug, it will produce hundreds of different
+>>>>> bugs. Then the question is: what to do with these bugs? Report all to
+>>>>> mailing lists?
+>>>>
+>>>> Is it possible to add linux-next.git tree as a target for fuzzing? If yes,
+>>>> we can try debug patches easily, in addition to find bugs earlier than now.
+>>>
+>>> syzbot tested linux-next and mmotm initially, but they were removed at
+>>> the request of kernel developers. See:
+>>> https://groups.google.com/d/msg/syzkaller/0H0LHW_ayR8/dsK5qGB_AQAJ
+>>> and:
+>>> https://groups.google.com/d/msg/syzkaller-bugs/FeAgni6Atlk/U0JGoR0AAwAJ
+>>> Indeed, linux-next produces around 50 assorted one-off unexplainable
+>>> bug reports.
+>>>
+>>>
+>>>>> I think the solution here is just to run syzkaller instance locally.
+>>>>> It's just a program anybody can run it on any kernel with any custom
+>>>>> patches. Moreover for local instance it's also possible to limit set
+>>>>> of tested syscalls to increase probability of hitting this bug and at
+>>>>> the same time filter out most of other bugs.
+>>>>
+>>>> If this bug is reproducible with VM resources individual developer can afford...
+>>>>
+>>>> Since my Linux development environment is VMware guests on a Windows PC, I can't
+>>>> run VM instance which needs KVM acceleration. Also, due to security policy, I can't
+>>>> utilize external VM resources available on the Internet, as well as I can't use ssh
+>>>> and git protocols. Speak of this bug, even with a lot of VM instances, syzbot can
+>>>> reproduce this bug only once or twice per a day. Thus, the question for me boils
+>>>> down to, whether I can reproduce this bug using one VMware guest instance with 4GB
+>>>> of memory. Effectively, I don't have access to environments for running syzkaller
+>>>> instance...
+>>>
+>>> Well, I don't know what to say, it does require some resources.
+>>>
+>>>>> Do we have any idea about the guilty subsystem? You mentioned
+>>>>> bdi_unregister, why? What would be the set of syscalls to concentrate
+>>>>> on?
+>>>>> I will do a custom run when I get around to it, if nobody else beats me to it.
+>>>>
+>>>> Because bdi_unregister() does "bdi->dev = NULL;" which wb_workfn() is hitting
+>>>> NULL pointer dereference.
+>>>
+>>> Right, wb_workfn is not a generic function, it's fs-specific function.
+>>>
+>>> Trying to reproduce this locally now.
+>>
+>>
+>> No luck so far.
+>>
+>> Trying to look from a different angle: is it possible that bdi->dev is
+>> not set yet, rather then already reset?
 >
-> To support XSAVES system states, change some names to distinguish
-> user and system states.
 >
-> Change:
->   supervisor to system
->   copy_init_fpstate_to_fpregs() to copy_init_fpstate_user_settings_to_fpregs()
->   xfeatures_mask to xfeatures_mask_user
->   XCNTXT_MASK to SUPPORTED_XFEATURES_MASK (states supported)
+> I was able to reproduce this once locally running syz-crush utility
+> replaying one of the crash logs. Now running with Tetsuo's patch.
+>
+> I can say we hunting a very subtle race condition with short
+> inconsistency window, perhaps few instructions.
 
-How about copy_init_user_fpstate_to_fpregs()?  It's shorter and more
-to the point.
 
---Andy
+Here we go:
+
+[ 2853.033175] WARNING: wb_workfn: device is NULL
+[ 2853.034709] wb->state=2
+[ 2853.035486] (wb == &wb->bdi->wb)=0
+[ 2853.036489] list_empty(&wb->work_list)=1
+[ 2853.037603] list_empty(&wb->bdi->bdi_list)=0
+[ 2853.038843] wb->bdi->wb.state=0
+[ 2853.039819] (wb->congested->__bdi == wb->bdi)=1
+[ 2853.041062] list_empty(&wb->congested->__bdi->bdi_list)=0
+[ 2853.042609] wb->congested->__bdi->wb.state=0
+[ 2853.043793] kasan: CONFIG_KASAN_INLINE enabled
+[ 2853.045315] kasan: GPF could be caused by NULL-ptr deref or user
+memory access
+[ 2853.047376] general protection fault: 0000 [#1] SMP KASAN
+[ 2853.048980] CPU: 1 PID: 13971 Comm: kworker/u12:8 Not tainted 4.17.0+ #21
+[ 2853.050762] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+BIOS 1.10.2-1 04/01/2014
+[ 2853.053034] Workqueue: writeback wb_workfn
+[ 2853.054193] RIP: 0010:wb_workfn+0x187/0xab0
+[ 2853.055360] Code: 85 70 fd ff ff 48 83 e8 10 48 89 85 60 fd ff ff
+e8 5e 38 ab ff 48 8d 7b 50 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48
+c1 ea 03 <80> 3c 02 00 0f 85 05 08 00 00 4c 8b 63 50 4d 85 e4 0f 84 b5
+05 00
+[ 2853.060692] RSP: 0018:ffff8800600ef480 EFLAGS: 00010206
+[ 2853.062210] RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
+[ 2853.064215] RDX: 000000000000000a RSI: ffffffff81cf0312 RDI: 0000000000000050
+[ 2853.066198] RBP: ffff8800600ef750 R08: ffff880061e30400 R09: ffffed000d8ccfc0
+[ 2853.068037] R10: ffffed000d8ccfc0 R11: ffff88006c667e07 R12: 1ffff1000c01dead
+[ 2853.069970] R13: ffff8800600ef728 R14: ffff8800676bd180 R15: dffffc0000000000
+[ 2853.071932] FS:  0000000000000000(0000) GS:ffff88006c640000(0000)
+knlGS:0000000000000000
+[ 2853.074080] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 2853.075699] CR2: 00007ffc8478c000 CR3: 0000000008c6a006 CR4: 00000000001626e0
+[ 2853.077633] Call Trace:
+[ 2853.078341]  ? inode_wait_for_writeback+0x40/0x40
+[ 2853.079642]  ? graph_lock+0x170/0x170
+[ 2853.080710]  ? lock_downgrade+0x8e0/0x8e0
+[ 2853.081889]  ? find_held_lock+0x36/0x1c0
+[ 2853.083047]  ? graph_lock+0x170/0x170
+[ 2853.084105]  ? lock_acquire+0x1dc/0x520
+[ 2853.085216]  ? process_one_work+0xb8c/0x1b70
+[ 2853.086425]  ? kasan_check_read+0x11/0x20
+[ 2853.087608]  ? __lock_is_held+0xb5/0x140
+[ 2853.088720]  process_one_work+0xc64/0x1b70
+[ 2853.089875]  ? finish_task_switch+0x182/0x840
+[ 2853.091085]  ? pwq_dec_nr_in_flight+0x490/0x490
+[ 2853.092358]  ? __schedule+0x809/0x1e30
+[ 2853.093475]  ? retint_kernel+0x10/0x10
+[ 2853.094561]  ? retint_kernel+0x10/0x10
+[ 2853.095610]  ? graph_lock+0x170/0x170
+[ 2853.096623]  ? trace_hardirqs_on_caller+0x421/0x5c0
+[ 2853.097981]  ? trace_hardirqs_off_thunk+0x1a/0x1c
+[ 2853.099298]  ? find_held_lock+0x36/0x1c0
+[ 2853.100394]  ? lock_acquire+0x1dc/0x520
+[ 2853.101472]  ? worker_thread+0x3d4/0x13a0
+[ 2853.102558]  ? __sanitizer_cov_trace_const_cmp8+0x18/0x20
+[ 2853.104060]  ? move_linked_works+0x2f6/0x470
+[ 2853.105204]  ? trace_event_raw_event_workqueue_execute_start+0x290/0x290
+[ 2853.107013]  ? do_raw_spin_trylock+0x1b0/0x1b0
+[ 2853.108243]  worker_thread+0x9e5/0x13a0
+[ 2853.109304]  ? process_one_work+0x1b70/0x1b70
+[ 2853.110488]  ? graph_lock+0x170/0x170
+[ 2853.111514]  ? find_held_lock+0x36/0x1c0
+[ 2853.112610]  ? find_held_lock+0x36/0x1c0
+[ 2853.113674]  ? __schedule+0x1e30/0x1e30
+[ 2853.114714]  ? do_raw_spin_unlock+0x1f9/0x2e0
+[ 2853.115885]  ? do_raw_spin_trylock+0x1b0/0x1b0
+[ 2853.117060]  ? __sanitizer_cov_trace_const_cmp8+0x18/0x20
+[ 2853.118492]  ? __kthread_parkme+0x111/0x1d0
+[ 2853.119616]  ? parse_args.cold.15+0x1b3/0x1b3
+[ 2853.120804]  ? trace_hardirqs_on_caller+0x421/0x5c0
+[ 2853.122071]  ? trace_hardirqs_on+0xd/0x10
+[ 2853.123117]  kthread+0x345/0x410
+[ 2853.123999]  ? process_one_work+0x1b70/0x1b70
+[ 2853.125174]  ? kthread_bind+0x40/0x40
+[ 2853.126201]  ret_from_fork+0x3a/0x50
+[ 2853.127199] Modules linked in:
+[ 2853.128022] Dumping ftrace buffer:
+[ 2853.128901]    (ftrace buffer empty)
+[ 2853.129986] ---[ end trace 3ba28e076cb32fda ]---
+[ 2853.131269] RIP: 0010:wb_workfn+0x187/0xab0
+[ 2853.132441] Code: 85 70 fd ff ff 48 83 e8 10 48 89 85 60 fd ff ff
+e8 5e 38 ab ff 48 8d 7b 50 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48
+c1 ea 03 <80> 3c 02 00 0f 85 05 08 00 00 4c 8b 63 50 4d 85 e4 0f 84 b5
+05 00
+[ 2853.137449] RSP: 0018:ffff8800600ef480 EFLAGS: 00010206
+[ 2853.138618] RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
+[ 2853.140176] RDX: 000000000000000a RSI: ffffffff81cf0312 RDI: 0000000000000050
+[ 2853.141722] RBP: ffff8800600ef750 R08: ffff880061e30400 R09: ffffed000d8ccfc0
+[ 2853.143300] R10: ffffed000d8ccfc0 R11: ffff88006c667e07 R12: 1ffff1000c01dead
+[ 2853.144841] R13: ffff8800600ef728 R14: ffff8800676bd180 R15: dffffc0000000000
+[ 2853.146391] FS:  0000000000000000(0000) GS:ffff88006c640000(0000)
+knlGS:0000000000000000
+[ 2853.148141] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 2853.149406] CR2: 00007ffc8478c000 CR3: 0000000008c6a006 CR4: 00000000001626e0
+[ 2853.150968] Kernel panic - not syncing: Fatal exception
+[ 2853.152419] Dumping ftrace buffer:
+[ 2853.153121]    (ftrace buffer empty)
+[ 2853.153786] Kernel Offset: disabled
+[ 2853.154442] Rebooting in 86400 seconds..
