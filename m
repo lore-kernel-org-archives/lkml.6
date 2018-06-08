@@ -1,118 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id kfZZDrJPGlu2DgAAmS7hNA
-	; Fri, 08 Jun 2018 09:43:14 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ngFdBLB7Glv9AgAAmS7hNA
+	; Fri, 08 Jun 2018 12:50:56 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 25521607DC; Fri,  8 Jun 2018 09:43:14 +0000 (UTC)
+	id 01A3A608BA; Fri,  8 Jun 2018 12:50:56 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 8082960275;
-	Fri,  8 Jun 2018 09:43:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8082960275
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 7A4FB607A4;
+	Fri,  8 Jun 2018 12:50:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7A4FB607A4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752650AbeFHJnK (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 05:43:10 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:41236 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751141AbeFHJnF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 05:43:05 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 356FE28A732
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: kernel@collabora.com,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        intel-gfx@lists.freedesktop.org,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Subject: [PATCH v7 2/2] drm/i915: remove intel_cursor_plane_funcs
-Date: Fri,  8 Jun 2018 11:42:52 +0200
-Message-Id: <20180608094252.12629-2-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180608094252.12629-1-enric.balletbo@collabora.com>
-References: <20180608094252.12629-1-enric.balletbo@collabora.com>
+        id S1752992AbeFHMux (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 08:50:53 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52436 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751384AbeFHMuu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 08:50:50 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0A350C12BA;
+        Fri,  8 Jun 2018 12:50:50 +0000 (UTC)
+Received: from ming.t460p (ovpn-12-42.pek2.redhat.com [10.72.12.42])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0890310EE6CE;
+        Fri,  8 Jun 2018 12:50:33 +0000 (UTC)
+Date: Fri, 8 Jun 2018 20:50:29 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: dsterba@suse.cz, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Huang Ying <ying.huang@intel.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Theodore Ts'o <tytso@mit.edu>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Coly Li <colyli@suse.de>, Filipe Manana <fdmanana@gmail.com>
+Subject: Re: [RESEND PATCH V5 00/33] block: support multipage bvec
+Message-ID: <20180608125023.GA9444@ming.t460p>
+References: <20180525034621.31147-1-ming.lei@redhat.com>
+ <20180601140954.GY3539@suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180601140954.GY3539@suse.cz>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 08 Jun 2018 12:50:50 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 08 Jun 2018 12:50:50 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gustavo Padovan <gustavo.padovan@collabora.com>
+On Fri, Jun 01, 2018 at 04:09:54PM +0200, David Sterba wrote:
+> On Fri, May 25, 2018 at 11:45:48AM +0800, Ming Lei wrote:
+> >  fs/btrfs/check-integrity.c          |   6 +-
+> >  fs/btrfs/compression.c              |   8 +-
+> >  fs/btrfs/disk-io.c                  |   3 +-
+> >  fs/btrfs/extent_io.c                |  14 ++-
+> >  fs/btrfs/file-item.c                |   4 +-
+> >  fs/btrfs/inode.c                    |  12 ++-
+> >  fs/btrfs/raid56.c                   |   5 +-
+> 
+> For the btrfs bits,
+> Acked-by: David Sterba <dsterba@suse.com>
+> 
+> but that's from the bio API user perspective only, I'll leave the design
+> and implementation questions to others.
+> 
+> I've let the patchset through fstests, no problems. One thing that caught
 
-After converting legacy cursor updates to atomic async commits
-intel_cursor_plane_funcs just duplicates intel_plane_funcs now.
+Thanks for your test!
 
-Cc: Daniel Vetter <daniel.vetter@intel.com>
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
+> my eye was use of the 'struct bvec_iter_all' in random functions. As
+> this structure is a compound of 2 others and is 40 bytes in size, I was
+> curious how this increased stack consumption.
+> 
+> Measured with -fstack-usage before and after patch 22/33 "btrfs: conver to
+> bio_for_each_page_all2"
+> 
+> -disk-io.c:btree_csum_one_bio                             48 static
+> +disk-io.c:btree_csum_one_bio                             80 static
+> -extent_io.c:end_bio_extent_buffer_writepage              56 static
+> +extent_io.c:end_bio_extent_buffer_writepage              80 static
+> -extent_io.c:end_bio_extent_readpage                      176 dynamic,bounded
+> +extent_io.c:end_bio_extent_readpage                      240 dynamic,bounded
+> -extent_io.c:end_bio_extent_writepage                     56 static
+> +extent_io.c:end_bio_extent_writepage                     120 static
+> -inode.c:btrfs_retry_endio                                96 dynamic,bounded
+> +inode.c:btrfs_retry_endio                                144 dynamic,bounded
+> -inode.c:btrfs_retry_endio_nocsum                         72 dynamic,bounded
+> +inode.c:btrfs_retry_endio_nocsum                         104 dynamic,bounded
+> -raid56.c:set_bio_pages_uptodate                          8 static
+> +raid56.c:set_bio_pages_uptodate                          40 static
+> 
+> It's not that bad, but still quite a lot just to iterate a list of bios. I
+> think it's worth mentioning as it affects several other filesystems and
+> should be possibly optimized in the future.
 
-Changes in v7: None
-Changes in v6: None
-Changes in v5: None
-Changes in v4: None
-Changes in v3: None
+OK.
 
- drivers/gpu/drm/i915/intel_display.c | 23 +----------------------
- 1 file changed, 1 insertion(+), 22 deletions(-)
+We could decrease the affect by using a lightweight iterator for
+bio_for_each_page_all2(), will do it in V6.
 
-diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
-index 4ff73bfd1616..06f53960ccd8 100644
---- a/drivers/gpu/drm/i915/intel_display.c
-+++ b/drivers/gpu/drm/i915/intel_display.c
-@@ -13320,16 +13320,6 @@ static bool intel_primary_plane_format_mod_supported(struct drm_plane *plane,
- 		return i8xx_mod_supported(format, modifier);
- }
- 
--static bool intel_cursor_plane_format_mod_supported(struct drm_plane *plane,
--						    uint32_t format,
--						    uint64_t modifier)
--{
--	if (WARN_ON(modifier == DRM_FORMAT_MOD_INVALID))
--		return false;
--
--	return modifier == DRM_FORMAT_MOD_LINEAR && format == DRM_FORMAT_ARGB8888;
--}
--
- static struct drm_plane_funcs intel_plane_funcs = {
- 	.update_plane = drm_atomic_helper_update_plane,
- 	.disable_plane = drm_atomic_helper_disable_plane,
-@@ -13341,17 +13331,6 @@ static struct drm_plane_funcs intel_plane_funcs = {
- 	.format_mod_supported = intel_primary_plane_format_mod_supported,
- };
- 
--static const struct drm_plane_funcs intel_cursor_plane_funcs = {
--	.update_plane = drm_atomic_helper_update_plane,
--	.disable_plane = drm_atomic_helper_disable_plane,
--	.destroy = intel_plane_destroy,
--	.atomic_get_property = intel_plane_atomic_get_property,
--	.atomic_set_property = intel_plane_atomic_set_property,
--	.atomic_duplicate_state = intel_plane_duplicate_state,
--	.atomic_destroy_state = intel_plane_destroy_state,
--	.format_mod_supported = intel_cursor_plane_format_mod_supported,
--};
--
- static bool i9xx_plane_has_fbc(struct drm_i915_private *dev_priv,
- 			       enum i9xx_plane_id i9xx_plane)
- {
-@@ -13614,7 +13593,7 @@ intel_cursor_plane_create(struct drm_i915_private *dev_priv,
- 		cursor->cursor.size = ~0;
- 
- 	ret = drm_universal_plane_init(&dev_priv->drm, &cursor->base,
--				       0, &intel_cursor_plane_funcs,
-+				       0, &intel_plane_funcs,
- 				       intel_cursor_formats,
- 				       ARRAY_SIZE(intel_cursor_formats),
- 				       cursor_format_modifiers,
--- 
-2.17.1
+
+Thanks,
+Ming
