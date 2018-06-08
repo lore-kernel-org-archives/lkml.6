@@ -1,231 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id TwfEEyXNGVssJgAAmS7hNA
-	; Fri, 08 Jun 2018 00:26:59 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id +PvELyYtGlv0KgAAmS7hNA
+	; Fri, 08 Jun 2018 07:16:27 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 7A78E6089E; Fri,  8 Jun 2018 00:26:59 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dDk3CvEN"
+	id 2C08D607E4; Fri,  8 Jun 2018 07:16:27 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,FREEMAIL_FROM,
+	MAILING_LIST_MULTI autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D5855602FC;
-	Fri,  8 Jun 2018 00:26:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D5855602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 4230A60590;
+	Fri,  8 Jun 2018 07:16:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4230A60590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=gmx.de
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752674AbeFHA05 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 20:26:57 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:35034 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752626AbeFHA0z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 20:26:55 -0400
-Received: by mail-pl0-f67.google.com with SMTP id i5-v6so7164575plt.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 17:26:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Lo7SKYbXqDmC1YEQCtWu9lkwtVcj6UT77iWGOUeGKTc=;
-        b=dDk3CvENrNIBuW4K19sIdt0tqj9a0un5XwKXE10YpKZtGS8jBmnXUATHWaUIOXuosY
-         jdqnq8rFEyUPvxBIYdMUoDkJu3uLyUQxnLl9Fz94TJ2AU+ZfsI6TYW4Y0mbEFjlib2My
-         8Msn1vi1UdqRWMI5x346YONguvHGCjLPv2XiA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Lo7SKYbXqDmC1YEQCtWu9lkwtVcj6UT77iWGOUeGKTc=;
-        b=DWSWlUgzTSZm7tuRCYcToP8tbxaZyUb0RUJWm6gMfSk3Yqq7HxTNOS8V/lmdHV+siX
-         aDI6QmaS+gTWa2oIv5soFVN8xHmeppjSR8YLHNbIlMeAHoLAIDDA7uUl/7wp/UVGHSM7
-         yb43OKA4ydq6YgF8Ig5zFp+wtUloU8okZRhqMQ1cID4a+IOxlrfiAVO+xKgbSKx8ZNOQ
-         L9ZHxzeOgf5AzVckahDEfA1Ed7V4j1/q43IpiR1HyuSvHzSVGd/V9HEVs4WcQK+MrH5Y
-         uiN8V4E6fpuzvQOkN/D1hF+mXMUBCzqP+4nkBlXijQ7j7BP+J/R1gOhyyMaRU5a7VclZ
-         0qQA==
-X-Gm-Message-State: APt69E2+wh6CWMTuQP+pUY17FRyYCqtZ3guzvSlJSHxCpU3HeArwqdqb
-        SoUs9ixfbACdgWwHDapcs2Uv/A==
-X-Google-Smtp-Source: ADUXVKJeN8kCUi+kT86Ln2ZQ3Fx+lWT3QFtSHfKp3GvqSJBdoth8Id89LmAgyFApSbo2RA+wgAAODg==
-X-Received: by 2002:a17:902:e00a:: with SMTP id ca10-v6mr4072956plb.224.1528417614577;
-        Thu, 07 Jun 2018 17:26:54 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id s28-v6sm62464744pfg.89.2018.06.07.17.26.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Jun 2018 17:26:53 -0700 (PDT)
-Date: Thu, 7 Jun 2018 17:26:53 -0700
-From: Matthias Kaehlcke <mka@chromium.org>
-To: David Collins <collinsd@codeaurora.org>
-Cc: broonie@kernel.org, lgirdwood@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, rnayak@codeaurora.org,
-        sboyd@kernel.org, dianders@chromium.org
-Subject: Re: [PATCH v6 2/2] regulator: add QCOM RPMh regulator driver
-Message-ID: <20180608002653.GD88063@google.com>
-References: <cover.1528138319.git.collinsd@codeaurora.org>
- <6d7abf248493cf81d62eb17ecb5030783aa85f72.1528138319.git.collinsd@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <6d7abf248493cf81d62eb17ecb5030783aa85f72.1528138319.git.collinsd@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1752270AbeFHHQX (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 03:16:23 -0400
+Received: from mout.gmx.net ([212.227.17.22]:34161 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751079AbeFHHQW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 03:16:22 -0400
+Received: from homer.simpson.net ([185.191.216.72]) by mail.gmx.com (mrgmx101
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0Lubnw-1gQxGb0fc8-00zokR; Fri, 08
+ Jun 2018 09:16:17 +0200
+Message-ID: <1528442176.4678.10.camel@gmx.de>
+Subject: regression: "95cde3c59966 debugfs: inode: debugfs_create_dir uses
+ mode permission from parent" terminally annoys libvirt
+From: Mike Galbraith <efault@gmx.de>
+To: LKML <linux-kernel@vger.kernel.org>,
+        Thomas Richter <tmricht@linux.ibm.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>
+Date: Fri, 08 Jun 2018 09:16:16 +0200
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:msM1bvMiZnpiZBdtrTugrV6Alqn9t1bQibLRkoCiyy4jKR3x0k8
+ Z5Wo1uF2F0hvKYpBdeX8H/p5tVNQESOPbN/L/aY+WfndE8gKnj5VtPVnR8K39bSGG94Vjd/
+ 8oDu/NBNomtsWXZgyjMJoqlb/5ySZPYH6Co+mgvjGnxcFbwpLQRHQh9kpGplwhbhSowGp2l
+ 2t1xNXKE8Y/jgJ3jqL3IQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:CQ9yRbZT424=:JMVFCjMs0Z9DLAj3aMwPHa
+ RkHWwpKfxpCtMOe2OTdLtYtscNeItli7adHNDVLy2wmRUFZQOeQyvWo/zr0Gl3FJmpYvL3X9w
+ 2XoBhO11OgqGVqAgQlvj2hZ8lH5ZG9eZPU+S7CO8EM1NrRf0VZDToDeLHcJORuAzlNDTSd2Z9
+ QOcbXksoJX70ycBexMJBHrIvK03B/3zJBwggPfzLzAd3ZvS4+86H7+LMQu16gJzd+nCPa08jE
+ +r+PWQQ+zyqz604ttv7MGGy07BPpIMusdlUwW11KaQ5hakKuX/ZB39ESHNZiqUrviNcJsTyPl
+ TlvLm1kVGtIDxBatATDEu7edrhHVcQlNishYOpCLKdgmyA6OLr8z/xqIBOHENLZHtbzpfrn9q
+ 8vJ5yIK164ecLHwh9KgUd5EqKPc8V8aluPGaHRdmHcOlrLAzkF0clyGyPISr3xrtWn4+G0gnW
+ HBxcY2PODCemG/ISJXLS9zw2YMCmHKDvDev3ePkq325f6taGQj/Sk/MyCNQwztdGeN3yIwK9c
+ H7xSFVJtg188Bi652HMS4MAD0OApHXka0kIzyqHShUffW87as2QHlgb6l67HIcibfYg2OFElg
+ AQU23mkS1ExfRhArzUo6fquoPkDvHxyHhDj7l5EUHEFWGBB5xC0b+gOaAw/48rBD4XYdh+keg
+ nydIkI7DFpyC4mA/RaQ47qoieLzcO4aAq6W6f/MtD/VIZqSYrKgantszYZNGAioZTWn4YzdPn
+ Fyc3lTWnWKQwspSvm50E4aO0SUDDhw/Rv+ACl6qKMuDJAEV0TMutVwDGmt6q7qRcXfx9DJbeb
+ qaPX0ci
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
+Greetings,
 
-On Mon, Jun 04, 2018 at 12:15:12PM -0700, David Collins wrote:
-> Add the QCOM RPMh regulator driver to manage PMIC regulators
-> which are controlled via RPMh on some Qualcomm Technologies, Inc.
-> SoCs.  RPMh is a hardware block which contains several
-> accelerators which are used to manage various hardware resources
-> that are shared between the processors of the SoC.  The final
-> hardware state of a regulator is determined within RPMh by
-> performing max aggregation of the requests made by all of the
-> processors.
-> 
-> Add support for PMIC regulator control via the voltage regulator
-> manager (VRM) and oscillator buffer (XOB) RPMh accelerators.
-> VRM supports manipulation of enable state, voltage, and mode.
-> XOB supports manipulation of enable state.
-> 
-> Signed-off-by: David Collins <collinsd@codeaurora.org>
-> ---
->  drivers/regulator/Kconfig               |   9 +
->  drivers/regulator/Makefile              |   1 +
->  drivers/regulator/qcom-rpmh-regulator.c | 767 ++++++++++++++++++++++++++++++++
->  3 files changed, 777 insertions(+)
->  create mode 100644 drivers/regulator/qcom-rpmh-regulator.c
->
-> ...
->
-> diff --git a/drivers/regulator/qcom-rpmh-regulator.c b/drivers/regulator/qcom-rpmh-regulator.c
-> new file mode 100644
-> index 0000000..a7fffb6
-> --- /dev/null
-> +++ b/drivers/regulator/qcom-rpmh-regulator.c
->
-> ...
-> static int rpmh_regulator_send_request(struct rpmh_vreg *vreg,
-> +                       struct tcs_cmd *cmd, int count, bool wait_for_ack)
->
+$subject bisected and verified via revert.  Box is garden variety
+i4790, distro is openSUSE Leap 15.0.
 
-nit: as of now this is only called with a single command. If you
-anticipate that this is unlikely to change consider removing 'count',
-not having it in the calls slightly improves readability.
+Error starting domain: internal error: process exited while connecting to monitor: ioctl(KVM_CREATE_VM) failed: 12 Cannot allocate memory
+2018-06-08T03:18:00.453006Z qemu-system-x86_64: failed to initialize KVM: Cannot allocate memory
 
-> ...
-> +static int _rpmh_regulator_vrm_set_voltage_sel(struct regulator_dev *rdev,
-> +				unsigned int selector, bool wait_for_ack)
-> +{
-> +	struct rpmh_vreg *vreg = rdev_get_drvdata(rdev);
-> +	struct tcs_cmd cmd = {
-> +		.addr = vreg->addr + RPMH_REGULATOR_REG_VRM_VOLTAGE,
-> +	};
-> +	int ret;
-> +
-> +	/* VRM voltage control register is set with voltage in millivolts. */
-> +	cmd.data = DIV_ROUND_UP(regulator_list_voltage_linear_range(rdev,
-> +							selector), 1000);
-> +
-> +	ret = rpmh_regulator_send_request(vreg, &cmd, 1, wait_for_ack);
-> +	if (!ret)
-> +		vreg->voltage_selector = selector;
-> +
-> +	return 0;
+Traceback (most recent call last):
+  File "/usr/share/virt-manager/virtManager/asyncjob.py", line 89, in cb_wrapper
+    callback(asyncjob, *args, **kwargs)
+  File "/usr/share/virt-manager/virtManager/asyncjob.py", line 125, in tmpcb
+    callback(*args, **kwargs)
+  File "/usr/share/virt-manager/virtManager/libvirtobject.py", line 82, in newfn
+    ret = fn(self, *args, **kwargs)
+  File "/usr/share/virt-manager/virtManager/domain.py", line 1508, in startup
+    self._backend.create()
+  File "/usr/lib64/python3.6/site-packages/libvirt.py", line 1069, in create
+    if ret == -1: raise libvirtError ('virDomainCreate() failed', dom=self)
+libvirt.libvirtError: internal error: process exited while connecting to monitor: ioctl(KVM_CREATE_VM) failed: 12 Cannot allocate memory
+2018-06-08T03:18:00.453006Z qemu-system-x86_64: failed to initialize KVM: Cannot allocate memory
 
-Shouldn't this return 'ret'?
+95cde3c59966f6371b6bcd9e4e2da2ba64ee9775 is the first bad commit
+commit 95cde3c59966f6371b6bcd9e4e2da2ba64ee9775
+Author: Thomas Richter <tmricht@linux.ibm.com>
+Date:   Fri Apr 27 14:35:47 2018 +0200
 
-> +static int rpmh_regulator_enable(struct regulator_dev *rdev)
-> +{
-> +	struct rpmh_vreg *vreg = rdev_get_drvdata(rdev);
-> +	struct tcs_cmd cmd = {
-> +		.addr = vreg->addr + RPMH_REGULATOR_REG_ENABLE,
-> +		.data = 1,
-> +	};
-> +	int ret;
-> +
-> +	if (vreg->enabled == -EINVAL &&
-> +	    vreg->voltage_selector != -ENOTRECOVERABLE) {
-> +		ret = _rpmh_regulator_vrm_set_voltage_sel(rdev,
-> +						vreg->voltage_selector, true);
-> +		if (ret < 0)
-> +			return ret;
-> +	}
-> +
-> +	ret = rpmh_regulator_send_request(vreg, &cmd, 1, true);
-> +	if (!ret)
-> +		vreg->enabled = true;
-> +
-> +	return ret;
-> +}
-> +
-> +static int rpmh_regulator_disable(struct regulator_dev *rdev)
-> +{
-> +	struct rpmh_vreg *vreg = rdev_get_drvdata(rdev);
-> +	struct tcs_cmd cmd = {
-> +		.addr = vreg->addr + RPMH_REGULATOR_REG_ENABLE,
-> +		.data = 0,
-> +	};
-> +	int ret;
-> +
-> +	if (vreg->enabled == -EINVAL &&
-> +	    vreg->voltage_selector != -ENOTRECOVERABLE) {
-> +		ret = _rpmh_regulator_vrm_set_voltage_sel(rdev,
-> +						vreg->voltage_selector, true);
-> +		if (ret < 0)
-> +			return ret;
-> +	}
-> +
-> +	ret = rpmh_regulator_send_request(vreg, &cmd, 1, false);
-> +	if (!ret)
-> +		vreg->enabled = false;
-> +
-> +	return ret;
-> +}
-
-nit: rpmh_regulator_enable() and rpmh_regulator_disable() are
-essentially the same code, consider introducing a helper like
-_rpmh_regulator_enable(struct regulator_dev *rdev, bool enable).
-
-> +/**
-> + * rpmh_regulator_init_vreg() - initialize all attributes of an rpmh-regulator
-> + * vreg:		Pointer to the individual rpmh-regulator resource
-> + * dev:			Pointer to the top level rpmh-regulator PMIC device
-> + * node:		Pointer to the individual rpmh-regulator resource
-> + *			device node
-> + * pmic_id:		String used to identify the top level rpmh-regulator
-> + *			PMIC device on the board
-> + * rpmh_data:		Pointer to a null-terminated array of rpmh-regulator
-> + *			resources defined for the top level PMIC device
-> + *
-> + * Return: 0 on success, errno on failure
-> + */
-> +static int rpmh_regulator_init_vreg(struct rpmh_vreg *vreg, struct device *dev,
-> +				struct device_node *node, const char *pmic_id,
-> +				const struct rpmh_vreg_init_data *rpmh_data)
-> +{
-> +	struct regulator_config reg_config = {};
-> +	char rpmh_resource_name[20] = "";
-> +	struct regulator_dev *rdev;
-> +	struct regulator_init_data *init_data;
-> +	int ret;
-> +
-> +	vreg->dev = dev;
-> +
-> +	for (; rpmh_data->name; rpmh_data++)
-> +		if (!strcmp(rpmh_data->name, node->name))
-> +			break;
-
-nit: it's a bit odd to use the parameter itself for iteration, but I
-guess it's a matter of preferences.
-
-Thanks
-
-Matthias
+    debugfs: inode: debugfs_create_dir uses mode permission from parent
+    
+git bisect start
+# good: [29dcea88779c856c7dc92040a0c01233263101d4] Linux 4.17
+git bisect good 29dcea88779c856c7dc92040a0c01233263101d4
+# bad: [ba1b7309fc2e909a5828c36a7cd187e5d7df6f53] Merge branch 'next-smack' of git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security
+git bisect bad ba1b7309fc2e909a5828c36a7cd187e5d7df6f53
+# bad: [135c5504a600ff9b06e321694fbcac78a9530cd4] Merge tag 'drm-next-2018-06-06-1' of git://anongit.freedesktop.org/drm/drm
+git bisect bad 135c5504a600ff9b06e321694fbcac78a9530cd4
+# good: [5231804cf9e584f3e7e763a0d6d2fffe011c1bce] Merge tag 'leds_for_4.18-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds
+git bisect good 5231804cf9e584f3e7e763a0d6d2fffe011c1bce
+# good: [315852b422972e6ebb1dfddaadada09e46a2681a] drm: rcar-du: Fix build failure
+git bisect good 315852b422972e6ebb1dfddaadada09e46a2681a
+# bad: [ec064d3c6b40697fd72f4b1eeabbf293b7947a04] Merge tag 'driver-core-4.18-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core
+git bisect bad ec064d3c6b40697fd72f4b1eeabbf293b7947a04
+# good: [a941fc3957113df977e7396c2cf1679e87a65555] USB: typec: tcpm: no need to check return value of debugfs_create_dir()
+git bisect good a941fc3957113df977e7396c2cf1679e87a65555
+# good: [07c4dd3435aa387d3b58f4e941dc516513f14507] Merge tag 'usb-4.18-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb
+git bisect good 07c4dd3435aa387d3b58f4e941dc516513f14507
+# good: [e55077307d6f7ce86f9a468408fa5613c4a5cb5d] nvmem: meson-efuse: add write support
+git bisect good e55077307d6f7ce86f9a468408fa5613c4a5cb5d
+# good: [fdff4053d51be4850185aa895813405decd6e956] fpga: clarify that unregister functions also free
+git bisect good fdff4053d51be4850185aa895813405decd6e956
+# good: [1bc4d68b06ab913d392c8ad6481b9729bd58b8d5] ath10k: re-enable the firmware fallback mechanism for testmode
+git bisect good 1bc4d68b06ab913d392c8ad6481b9729bd58b8d5
+# bad: [085aa2de568493d7cde52126512d37260077811a] mm: memory_hotplug: use put_device() if device_register fail
+git bisect bad 085aa2de568493d7cde52126512d37260077811a
+# good: [f0a462970ee19930518b03798a21cfdb3fd35877] Documentation: clarify firmware_class provenance and why we can't rename the module
+git bisect good f0a462970ee19930518b03798a21cfdb3fd35877
+# bad: [95cde3c59966f6371b6bcd9e4e2da2ba64ee9775] debugfs: inode: debugfs_create_dir uses mode permission from parent
+git bisect bad 95cde3c59966f6371b6bcd9e4e2da2ba64ee9775
+# good: [964f8363a1aba6cb4198bfaaac538b08f1c538f1] debugfs: Re-use kstrtobool_from_user()
+git bisect good 964f8363a1aba6cb4198bfaaac538b08f1c538f1
+# first bad commit: [95cde3c59966f6371b6bcd9e4e2da2ba64ee9775] debugfs: inode: debugfs_create_dir uses mode permission from parent
