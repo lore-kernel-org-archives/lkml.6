@@ -1,415 +1,187 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id rt/+BRjpGFu5UgAAmS7hNA
-	; Thu, 07 Jun 2018 08:13:12 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Ko6oKhuLGls8KAAAmS7hNA
+	; Fri, 08 Jun 2018 13:57:15 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 0472E6089E; Thu,  7 Jun 2018 08:13:12 +0000 (UTC)
+	id D92BD607E4; Fri,  8 Jun 2018 13:57:14 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id E1A35607E7;
-	Thu,  7 Jun 2018 08:13:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E1A35607E7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 60FFC606FA;
+	Fri,  8 Jun 2018 13:57:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 60FFC606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932338AbeFGINH (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 04:13:07 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:41851 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932148AbeFGINF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 04:13:05 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w578Csff2125068
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 7 Jun 2018 01:12:54 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w578CsDr2125065;
-        Thu, 7 Jun 2018 01:12:54 -0700
-Date: Thu, 7 Jun 2018 01:12:54 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-5daawc40zhl6gcs600com1ua@git.kernel.org>
-Cc: namhyung@kernel.org, tglx@linutronix.de, jolsa@kernel.org,
-        dsahern@gmail.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
-        adrian.hunter@intel.com, wangnan0@huawei.com, acme@redhat.com,
-        hpa@zytor.com
-Reply-To: mingo@kernel.org, linux-kernel@vger.kernel.org,
-          adrian.hunter@intel.com, namhyung@kernel.org, tglx@linutronix.de,
-          jolsa@kernel.org, dsahern@gmail.com, hpa@zytor.com,
-          acme@redhat.com, wangnan0@huawei.com
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf hists browser: Pass annotation_options from
- tool to browser
-Git-Commit-ID: cd0cccbae9f654479a1c5abcd876c7fc4356b882
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1752881AbeFHN5M (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 09:57:12 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47690 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751604AbeFHN5G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 09:57:06 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 33FA7406E89B;
+        Fri,  8 Jun 2018 13:57:06 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
+        by smtp.corp.redhat.com (Postfix) with SMTP id B6D622166BB2;
+        Fri,  8 Jun 2018 13:57:04 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Fri,  8 Jun 2018 15:57:05 +0200 (CEST)
+Date: Fri, 8 Jun 2018 15:57:04 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@kernel.org, gkohli@codeaurora.org, tglx@linutronix.de,
+        mpe@ellerman.id.au, bigeasy@linutronix.de,
+        linux-kernel@vger.kernel.org, will.deacon@arm.com
+Subject: Re: [PATCH 2/4] watchdog/softlockup: Replace "watchdog/%u" threads
+ with cpu_stop_work
+Message-ID: <20180608135703.GD18941@redhat.com>
+References: <20180607123310.866085998@infradead.org>
+ <20180607124006.158330973@infradead.org>
+ <20180607142405.GO12198@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180607142405.GO12198@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 08 Jun 2018 13:57:06 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 08 Jun 2018 13:57:06 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'oleg@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  cd0cccbae9f654479a1c5abcd876c7fc4356b882
-Gitweb:     https://git.kernel.org/tip/cd0cccbae9f654479a1c5abcd876c7fc4356b882
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Mon, 28 May 2018 13:54:59 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 4 Jun 2018 10:28:53 -0300
+On 06/07, Peter Zijlstra wrote:
+>
+> On Thu, Jun 07, 2018 at 02:33:12PM +0200, Peter Zijlstra wrote:
+>
+> > +static int softlockup_stop_fn(void *data)
+> >  {
+> > +	watchdog_disable(smp_processor_id());
+> > +	return 0;
+> >  }
+> >
+> > +static void softlockup_stop_all(void)
+> >  {
+> > +	int cpu;
+> > +
+> > +	for_each_cpu(cpu, &watchdog_allowed_mask)
+> > +		stop_one_cpu(cpu, softlockup_stop_fn, NULL);
+> > +
+> > +	cpumask_clear(&watchdog_allowed_mask);
+> >  }
+>
+> Bugger, that one doesn't quite work.. watchdog_disable() ends up calling
+> a sleeping function. I forgot to enable all the debug cruft when
+> testing..
 
-perf hists browser: Pass annotation_options from tool to browser
+And probably there is another problem. Both watchdog_disable(cpu) and
+watchdog_nmi_disable(cpu) assume that cpu == smp_processor_id(), this arg
+is simply ignored.
 
-So that things changed in the command line may percolate to the browser
-code without using globals.
+but lockup_detector_offline_cpu(cpu) is called by cpuhp_invoke_callback(),
+so in this case watchdog_disable(dying_cpu) is simply wrong.
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-5daawc40zhl6gcs600com1ua@git.kernel.org
-[ Merged fix for NO_SLANG=1 build provided by Jiri Olsa ]
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/builtin-annotate.c     |  2 +-
- tools/perf/builtin-report.c       |  2 +-
- tools/perf/builtin-top.c          |  3 ++-
- tools/perf/ui/browsers/annotate.c | 19 ++++++++++++-------
- tools/perf/ui/browsers/hists.c    | 29 ++++++++++++++++++++---------
- tools/perf/ui/browsers/hists.h    |  3 +++
- tools/perf/util/annotate.h        |  7 ++++---
- tools/perf/util/hist.h            | 20 ++++++++++++++------
- 8 files changed, 57 insertions(+), 28 deletions(-)
+May be we can do something like below? Then softlockup_stop_all() can simply do
 
-diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
-index 3ee063598364..2339ae719e1d 100644
---- a/tools/perf/builtin-annotate.c
-+++ b/tools/perf/builtin-annotate.c
-@@ -341,7 +341,7 @@ find_next:
- 			/* skip missing symbols */
- 			nd = rb_next(nd);
- 		} else if (use_browser == 1) {
--			key = hist_entry__tui_annotate(he, evsel, NULL);
-+			key = hist_entry__tui_annotate(he, evsel, NULL, &ann->opts);
- 
- 			switch (key) {
- 			case -1:
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index c74f9a219ad1..14b516a3a0de 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -561,7 +561,7 @@ static int report__browse_hists(struct report *rep)
- 		ret = perf_evlist__tui_browse_hists(evlist, help, NULL,
- 						    rep->min_percent,
- 						    &session->header.env,
--						    true);
-+						    true, &rep->annotation_opts);
- 		/*
- 		 * Usually "ret" is the last pressed key, and we only
- 		 * care if the key notifies us to switch data file.
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index 739c158fb39e..bd60a631a481 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -606,7 +606,8 @@ static void *display_thread_tui(void *arg)
- 	perf_evlist__tui_browse_hists(top->evlist, help, &hbt,
- 				      top->min_percent,
- 				      &top->session->header.env,
--				      !top->record_opts.overwrite);
-+				      !top->record_opts.overwrite,
-+				      &top->annotation_opts);
- 
- 	done = 1;
- 	return NULL;
-diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
-index 3bfe17e176fe..3b4f1c10ff57 100644
---- a/tools/perf/ui/browsers/annotate.c
-+++ b/tools/perf/ui/browsers/annotate.c
-@@ -29,6 +29,7 @@ struct annotate_browser {
- 	struct rb_node		   *curr_hot;
- 	struct annotation_line	   *selection;
- 	struct arch		   *arch;
-+	struct annotation_options  *opts;
- 	bool			    searching_backwards;
- 	char			    search_bf[128];
- };
-@@ -418,7 +419,7 @@ static bool annotate_browser__callq(struct annotate_browser *browser,
- 	}
- 
- 	pthread_mutex_unlock(&notes->lock);
--	symbol__tui_annotate(dl->ops.target.sym, ms->map, evsel, hbt);
-+	symbol__tui_annotate(dl->ops.target.sym, ms->map, evsel, hbt, browser->opts);
- 	sym_title(ms->sym, ms->map, title, sizeof(title));
- 	ui_browser__show_title(&browser->b, title);
- 	return true;
-@@ -817,24 +818,27 @@ out:
+	for_each_cpu(cpu, &watchdog_allowed_mask)
+		watchdog_disable(cpu);
+
+watchdog_nmi_disable() is __weak, but at first glance arch/sparc/kernel/nmi.c
+does everything correctly.
+
+Oleg.
+
+--- x/kernel/watchdog.c
++++ x/kernel/watchdog.c
+@@ -108,13 +108,13 @@ __setup("hardlockup_all_cpu_backtrace=",
+  */
+ int __weak watchdog_nmi_enable(unsigned int cpu)
+ {
+-	hardlockup_detector_perf_enable();
++	hardlockup_detector_perf_enable(cpu);
+ 	return 0;
  }
  
- int map_symbol__tui_annotate(struct map_symbol *ms, struct perf_evsel *evsel,
--			     struct hist_browser_timer *hbt)
-+			     struct hist_browser_timer *hbt,
-+			     struct annotation_options *opts)
+ void __weak watchdog_nmi_disable(unsigned int cpu)
  {
--	return symbol__tui_annotate(ms->sym, ms->map, evsel, hbt);
-+	return symbol__tui_annotate(ms->sym, ms->map, evsel, hbt, opts);
+-	hardlockup_detector_perf_disable();
++	hardlockup_detector_perf_disable(cpu);
  }
  
- int hist_entry__tui_annotate(struct hist_entry *he, struct perf_evsel *evsel,
--			     struct hist_browser_timer *hbt)
-+			     struct hist_browser_timer *hbt,
-+			     struct annotation_options *opts)
+ /* Return 0, if a NMI watchdog is available. Error code otherwise */
+@@ -479,7 +479,7 @@ static void watchdog_enable(unsigned int
+ 
+ static void watchdog_disable(unsigned int cpu)
  {
- 	/* reset abort key so that it can get Ctrl-C as a key */
- 	SLang_reset_tty();
- 	SLang_init_tty(0, 0, 0);
+-	struct hrtimer *hrtimer = this_cpu_ptr(&watchdog_hrtimer);
++	struct hrtimer *hrtimer = per_cpu_ptr(&watchdog_hrtimer, cpu);
  
--	return map_symbol__tui_annotate(&he->ms, evsel, hbt);
-+	return map_symbol__tui_annotate(&he->ms, evsel, hbt, opts);
- }
- 
- int symbol__tui_annotate(struct symbol *sym, struct map *map,
- 			 struct perf_evsel *evsel,
--			 struct hist_browser_timer *hbt)
-+			 struct hist_browser_timer *hbt,
-+			 struct annotation_options *opts)
- {
- 	struct annotation *notes = symbol__annotation(sym);
- 	struct map_symbol ms = {
-@@ -851,6 +855,7 @@ int symbol__tui_annotate(struct symbol *sym, struct map *map,
- 			.priv	 = &ms,
- 			.use_navkeypressed = true,
- 		},
-+		.opts = opts,
- 	};
- 	int ret = -1, err;
- 
-@@ -860,7 +865,7 @@ int symbol__tui_annotate(struct symbol *sym, struct map *map,
- 	if (map->dso->annotate_warned)
- 		return -1;
- 
--	err = symbol__annotate2(sym, map, evsel, &annotation__default_options, &browser.arch);
-+	err = symbol__annotate2(sym, map, evsel, opts, &browser.arch);
- 	if (err) {
- 		char msg[BUFSIZ];
- 		symbol__strerror_disassemble(sym, map, err, msg, sizeof(msg));
-diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
-index e5f247247daa..3af1b74608ab 100644
---- a/tools/perf/ui/browsers/hists.c
-+++ b/tools/perf/ui/browsers/hists.c
-@@ -2175,7 +2175,8 @@ struct hist_browser *hist_browser__new(struct hists *hists)
- static struct hist_browser *
- perf_evsel_browser__new(struct perf_evsel *evsel,
- 			struct hist_browser_timer *hbt,
--			struct perf_env *env)
-+			struct perf_env *env,
-+			struct annotation_options *annotation_opts)
- {
- 	struct hist_browser *browser = hist_browser__new(evsel__hists(evsel));
- 
-@@ -2183,6 +2184,7 @@ perf_evsel_browser__new(struct perf_evsel *evsel,
- 		browser->hbt   = hbt;
- 		browser->env   = env;
- 		browser->title = hists_browser__scnprintf_title;
-+		browser->annotation_opts = annotation_opts;
- 	}
- 	return browser;
- }
-@@ -2344,7 +2346,8 @@ do_annotate(struct hist_browser *browser, struct popup_action *act)
- 		return 0;
- 
- 	evsel = hists_to_evsel(browser->hists);
--	err = map_symbol__tui_annotate(&act->ms, evsel, browser->hbt);
-+	err = map_symbol__tui_annotate(&act->ms, evsel, browser->hbt,
-+				       browser->annotation_opts);
- 	he = hist_browser__selected_entry(browser);
+ 	watchdog_set_prio(SCHED_NORMAL, 0);
  	/*
- 	 * offer option to annotate the other branch source or target
-@@ -2697,10 +2700,11 @@ static int perf_evsel__hists_browse(struct perf_evsel *evsel, int nr_events,
- 				    struct hist_browser_timer *hbt,
- 				    float min_pcnt,
- 				    struct perf_env *env,
--				    bool warn_lost_event)
-+				    bool warn_lost_event,
-+				    struct annotation_options *annotation_opts)
- {
- 	struct hists *hists = evsel__hists(evsel);
--	struct hist_browser *browser = perf_evsel_browser__new(evsel, hbt, env);
-+	struct hist_browser *browser = perf_evsel_browser__new(evsel, hbt, env, annotation_opts);
- 	struct branch_info *bi;
- #define MAX_OPTIONS  16
- 	char *options[MAX_OPTIONS];
-@@ -3062,6 +3066,7 @@ out:
- struct perf_evsel_menu {
- 	struct ui_browser b;
- 	struct perf_evsel *selection;
-+	struct annotation_options *annotation_opts;
- 	bool lost_events, lost_events_warned;
- 	float min_pcnt;
- 	struct perf_env *env;
-@@ -3163,7 +3168,8 @@ browse_hists:
- 						       true, hbt,
- 						       menu->min_pcnt,
- 						       menu->env,
--						       warn_lost_event);
-+						       warn_lost_event,
-+						       menu->annotation_opts);
- 			ui_browser__show_title(&menu->b, title);
- 			switch (key) {
- 			case K_TAB:
-@@ -3222,7 +3228,8 @@ static int __perf_evlist__tui_browse_hists(struct perf_evlist *evlist,
- 					   struct hist_browser_timer *hbt,
- 					   float min_pcnt,
- 					   struct perf_env *env,
--					   bool warn_lost_event)
-+					   bool warn_lost_event,
-+					   struct annotation_options *annotation_opts)
- {
- 	struct perf_evsel *pos;
- 	struct perf_evsel_menu menu = {
-@@ -3237,6 +3244,7 @@ static int __perf_evlist__tui_browse_hists(struct perf_evlist *evlist,
- 		},
- 		.min_pcnt = min_pcnt,
- 		.env = env,
-+		.annotation_opts = annotation_opts,
- 	};
+--- x/kernel/watchdog_hld.c
++++ x/kernel/watchdog_hld.c
+@@ -162,9 +162,8 @@ static void watchdog_overflow_callback(s
+ 	return;
+ }
  
- 	ui_helpline__push("Press ESC to exit");
-@@ -3257,7 +3265,8 @@ int perf_evlist__tui_browse_hists(struct perf_evlist *evlist, const char *help,
- 				  struct hist_browser_timer *hbt,
- 				  float min_pcnt,
- 				  struct perf_env *env,
--				  bool warn_lost_event)
-+				  bool warn_lost_event,
-+				  struct annotation_options *annotation_opts)
+-static int hardlockup_detector_event_create(void)
++static int hardlockup_detector_event_create(int cpu)
  {
- 	int nr_entries = evlist->nr_entries;
+-	unsigned int cpu = smp_processor_id();
+ 	struct perf_event_attr *wd_attr;
+ 	struct perf_event *evt;
  
-@@ -3267,7 +3276,8 @@ single_entry:
- 
- 		return perf_evsel__hists_browse(first, nr_entries, help,
- 						false, hbt, min_pcnt,
--						env, warn_lost_event);
-+						env, warn_lost_event,
-+						annotation_opts);
+@@ -179,37 +178,37 @@ static int hardlockup_detector_event_cre
+ 			PTR_ERR(evt));
+ 		return PTR_ERR(evt);
  	}
- 
- 	if (symbol_conf.event_group) {
-@@ -3285,5 +3295,6 @@ single_entry:
- 
- 	return __perf_evlist__tui_browse_hists(evlist, nr_entries, help,
- 					       hbt, min_pcnt, env,
--					       warn_lost_event);
-+					       warn_lost_event,
-+					       annotation_opts);
- }
-diff --git a/tools/perf/ui/browsers/hists.h b/tools/perf/ui/browsers/hists.h
-index 9428bee076f2..91d3e18b50aa 100644
---- a/tools/perf/ui/browsers/hists.h
-+++ b/tools/perf/ui/browsers/hists.h
-@@ -4,6 +4,8 @@
- 
- #include "ui/browser.h"
- 
-+struct annotation_options;
-+
- struct hist_browser {
- 	struct ui_browser   b;
- 	struct hists	    *hists;
-@@ -12,6 +14,7 @@ struct hist_browser {
- 	struct hist_browser_timer *hbt;
- 	struct pstack	    *pstack;
- 	struct perf_env	    *env;
-+	struct annotation_options *annotation_opts;
- 	int		     print_seq;
- 	bool		     show_dso;
- 	bool		     show_headers;
-diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-index 71a734b86873..6e6e2a571928 100644
---- a/tools/perf/util/annotate.h
-+++ b/tools/perf/util/annotate.h
-@@ -357,13 +357,14 @@ int symbol__tty_annotate2(struct symbol *sym, struct map *map,
- #ifdef HAVE_SLANG_SUPPORT
- int symbol__tui_annotate(struct symbol *sym, struct map *map,
- 			 struct perf_evsel *evsel,
--			 struct hist_browser_timer *hbt);
-+			 struct hist_browser_timer *hbt,
-+			 struct annotation_options *opts);
- #else
- static inline int symbol__tui_annotate(struct symbol *sym __maybe_unused,
- 				struct map *map __maybe_unused,
- 				struct perf_evsel *evsel  __maybe_unused,
--				struct hist_browser_timer *hbt
--				__maybe_unused)
-+				struct hist_browser_timer *hbt __maybe_unused,
-+				struct annotation_options *opts __maybe_unused)
- {
- 	return 0;
- }
-diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
-index fbabfd8a215d..cafafbf2aa9f 100644
---- a/tools/perf/util/hist.h
-+++ b/tools/perf/util/hist.h
-@@ -419,19 +419,24 @@ struct hist_browser_timer {
- 	int refresh;
- };
- 
-+struct annotation_options;
-+
- #ifdef HAVE_SLANG_SUPPORT
- #include "../ui/keysyms.h"
- int map_symbol__tui_annotate(struct map_symbol *ms, struct perf_evsel *evsel,
--			     struct hist_browser_timer *hbt);
-+			     struct hist_browser_timer *hbt,
-+			     struct annotation_options *annotation_opts);
- 
- int hist_entry__tui_annotate(struct hist_entry *he, struct perf_evsel *evsel,
--			     struct hist_browser_timer *hbt);
-+			     struct hist_browser_timer *hbt,
-+			     struct annotation_options *annotation_opts);
- 
- int perf_evlist__tui_browse_hists(struct perf_evlist *evlist, const char *help,
- 				  struct hist_browser_timer *hbt,
- 				  float min_pcnt,
- 				  struct perf_env *env,
--				  bool warn_lost_event);
-+				  bool warn_lost_event,
-+				  struct annotation_options *annotation_options);
- int script_browse(const char *script_opt);
- #else
- static inline
-@@ -440,20 +445,23 @@ int perf_evlist__tui_browse_hists(struct perf_evlist *evlist __maybe_unused,
- 				  struct hist_browser_timer *hbt __maybe_unused,
- 				  float min_pcnt __maybe_unused,
- 				  struct perf_env *env __maybe_unused,
--				  bool warn_lost_event __maybe_unused)
-+				  bool warn_lost_event __maybe_unused,
-+				  struct annotation_options *annotation_options __maybe_unused)
- {
- 	return 0;
- }
- static inline int map_symbol__tui_annotate(struct map_symbol *ms __maybe_unused,
- 					   struct perf_evsel *evsel __maybe_unused,
--					   struct hist_browser_timer *hbt __maybe_unused)
-+					   struct hist_browser_timer *hbt __maybe_unused,
-+					   struct annotation_options *annotation_options __maybe_unused)
- {
+-	this_cpu_write(watchdog_ev, evt);
++	raw_cpu_write(watchdog_ev, evt);
  	return 0;
  }
  
- static inline int hist_entry__tui_annotate(struct hist_entry *he __maybe_unused,
- 					   struct perf_evsel *evsel __maybe_unused,
--					   struct hist_browser_timer *hbt __maybe_unused)
-+					   struct hist_browser_timer *hbt __maybe_unused,
-+					   struct annotation_options *annotation_opts __maybe_unused)
+ /**
+  * hardlockup_detector_perf_enable - Enable the local event
+  */
+-void hardlockup_detector_perf_enable(void)
++void hardlockup_detector_perf_enable(int cpu)
  {
- 	return 0;
+-	if (hardlockup_detector_event_create())
++	if (hardlockup_detector_event_create(cpu))
+ 		return;
+ 
+ 	/* use original value for check */
+ 	if (!atomic_fetch_inc(&watchdog_cpus))
+ 		pr_info("Enabled. Permanently consumes one hw-PMU counter.\n");
+ 
+-	perf_event_enable(this_cpu_read(watchdog_ev));
++	perf_event_enable(raw_cpu_read(watchdog_ev));
+ }
+ 
+ /**
+  * hardlockup_detector_perf_disable - Disable the local event
+  */
+-void hardlockup_detector_perf_disable(void)
++void hardlockup_detector_perf_disable(int cpu)
+ {
+-	struct perf_event *event = this_cpu_read(watchdog_ev);
++	struct perf_event *event = per_cpu_read(watchdog_ev, cpu);
+ 
+ 	if (event) {
+ 		perf_event_disable(event);
+-		this_cpu_write(watchdog_ev, NULL);
+-		this_cpu_write(dead_event, event);
+-		cpumask_set_cpu(smp_processor_id(), &dead_events_mask);
++		raw_cpu_write(watchdog_ev, cpu, NULL);
++		raw_cpu_write(dead_event, cpu, event);
++		cpumask_set_cpu(cpu, &dead_events_mask);
+ 		atomic_dec(&watchdog_cpus);
+ 	}
  }
