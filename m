@@ -1,97 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id SwSdB7PzG1sTZwAAmS7hNA
-	; Sat, 09 Jun 2018 15:35:17 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id fwycK7JhGlufFAAAmS7hNA
+	; Fri, 08 Jun 2018 11:00:26 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 4AE4D608B8; Sat,  9 Jun 2018 15:35:17 +0000 (UTC)
+	id 6C6EE607E4; Fri,  8 Jun 2018 11:00:26 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BrRSNvVa"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vpOU3ntB"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 8104F608BF;
-	Sat,  9 Jun 2018 15:35:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8104F608BF
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id BC1D5602FC;
+	Fri,  8 Jun 2018 11:00:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BC1D5602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933014AbeFIPfN (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 11:35:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37456 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932776AbeFIPfK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 11:35:10 -0400
-Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F8EE208A4;
-        Sat,  9 Jun 2018 15:35:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528558510;
-        bh=BEOubpUqu/mjoQKNr8qBUh7vMgsVT559R35a+3N0oKw=;
+        id S1752478AbeFHLAY (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 07:00:24 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:57920 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751056AbeFHLAW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 07:00:22 -0400
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id D998057;
+        Fri,  8 Jun 2018 13:00:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1528455619;
+        bh=4Vv6Nh1VzCheYZ2isn5rXBZ0FVK/rRbwXwpv6m8Aoc0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BrRSNvVaVR+v13goIYKPLD0p64yzsVMca2oCL7MTNGnnmX6XM/HBhe7WqZoCjo2VJ
-         Q2nAV52LpPG99NnOF3sTvyYuNrR0QH94M8qYIcvXPw4wZ2z59yPS2s+LiqowcN7Pfo
-         rasl3f0DLSwXUJWr+3h70Hl7Fs7Bs5jCdGAeLnFk=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shahed Shaikh <shahed.shaikh@cavium.com>,
-        Ariel Elior <ariel.elior@cavium.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 25/41] qed: Fix mask for physical address in ILT entry
-Date: Sat,  9 Jun 2018 17:29:57 +0200
-Message-Id: <20180609152927.786265776@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180609152926.389750182@linuxfoundation.org>
-References: <20180609152926.389750182@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        b=vpOU3ntBpsV4hsdc4Cy2Q49YrANsL5xtUiu5EOHPH/bdLcjo7//8LLB1/WeYZ3+A6
+         A4MI8TWDORL11dF9HbDComdQ8Epap9D5TQmqI19TrUBJTkMVk5Zt3rv1ALuHGarMnx
+         SwpLskjvOyw4AMdCDvdwqaymZFIynwCnyhhYxIqU=
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Will Deacon <will.deacon@arm.com>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
+        <linux-arm-kernel@lists.infradead.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH 11/17] arm64: dts: r8a77965: Add VSP instances
+Date: Fri, 08 Jun 2018 14:00:36 +0300
+Message-ID: <7269469.ESYJcRDGIc@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <CAMuHMdU7OyUvgNqbkjtHyb0LPjgTdPp_BBcGNbjiqfQUgCdMuw@mail.gmail.com>
+References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com> <1787243.JuNJAuBqMb@avalon> <CAMuHMdU7OyUvgNqbkjtHyb0LPjgTdPp_BBcGNbjiqfQUgCdMuw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+Hi Geert,
 
-------------------
+On Friday, 8 June 2018 12:29:29 EEST Geert Uytterhoeven wrote:
+> On Thu, Apr 26, 2018 at 11:11 PM, Laurent Pinchart wrote:
+> > On Thursday, 26 April 2018 19:53:40 EEST Kieran Bingham wrote:
+> >> The r8a77965 has 4 VSP instances.
+> >> 
+> >> Based on a similar patch of the R8A7796 device tree
+> >> by Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>.
+> >> 
+> >> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> >> [Kieran: Rebased to top of tree, fixed sort orders]
+> >> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> >> ---
+> >> 
+> >>  arch/arm64/boot/dts/renesas/r8a77965.dtsi | 44 +++++++++++++++++++++++
+> >>  1 file changed, 44 insertions(+)
+> >> 
+> >> diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> >> b/arch/arm64/boot/dts/renesas/r8a77965.dtsi index
+> >> 1f44ed7c1b1c..e92e6b03333a 100644
+> >> --- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> >> +++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> >> @@ -1025,6 +1047,17 @@
+> >>                       resets = <&cpg 611>;
+> >>               };
+> >> 
+> >> +             vspd0: vsp@fea20000 {
+> >> +                     compatible = "renesas,vsp2";
+> >> +                     reg = <0 0xfea20000 0 0x4000>;
+> > 
+> > RFP2 has a CLUT so the register range needs to be extended. I'd recommend
+> > covering the entire space (0x8000) even if no LUT or CLU module is
+> > present.
+> 
+> Even on V3H/V3M, which have some part of the CLUT, and could do
+> with 0x5000?
+> 
+> Note that this makes it overlap with fcpvd0 on all R-Car Gen3 SoCs,
+> as mentioned by Simon on IRC.
 
-From: Shahed Shaikh <shahed.shaikh@cavium.com>
+My bad :-/ I'll submit fixes shortly.
 
-[ Upstream commit fdd13dd350dda1826579eb5c333d76b14513b812 ]
+> >> +                     interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
+> >> +                     clocks = <&cpg CPG_MOD 623>;
+> >> +                     power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
+> >> +                     resets = <&cpg 623>;
+> >> +
+> >> +                     renesas,fcp = <&fcpvd0>;
+> >> +             };
+> >> +
+> >>               fcpvd0: fcp@fea27000 {
+> >>                       compatible = "renesas,fcpv";
+> >>                       reg = <0 0xfea27000 0 0x200>;
 
-ILT entry requires 12 bit right shifted physical address.
-Existing mask for ILT entry of physical address i.e.
-ILT_ENTRY_PHY_ADDR_MASK is not sufficient to handle 64bit
-address because upper 8 bits of 64 bit address were getting
-masked which resulted in completer abort error on
-PCIe bus due to invalid address.
+-- 
+Regards,
 
-Fix that mask to handle 64bit physical address.
-
-Fixes: fe56b9e6a8d9 ("qed: Add module with basic common support")
-Signed-off-by: Shahed Shaikh <shahed.shaikh@cavium.com>
-Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/qlogic/qed/qed_cxt.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/drivers/net/ethernet/qlogic/qed/qed_cxt.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_cxt.c
-@@ -77,7 +77,7 @@
- #define ILT_CFG_REG(cli, reg)	PSWRQ2_REG_ ## cli ## _ ## reg ## _RT_OFFSET
- 
- /* ILT entry structure */
--#define ILT_ENTRY_PHY_ADDR_MASK		0x000FFFFFFFFFFFULL
-+#define ILT_ENTRY_PHY_ADDR_MASK		(~0ULL >> 12)
- #define ILT_ENTRY_PHY_ADDR_SHIFT	0
- #define ILT_ENTRY_VALID_MASK		0x1ULL
- #define ILT_ENTRY_VALID_SHIFT		52
+Laurent Pinchart
