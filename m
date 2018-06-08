@@ -1,178 +1,632 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id iyySEM50HluJEwAAmS7hNA
-	; Mon, 11 Jun 2018 13:10:38 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 06q9FmThGlvCLgAAmS7hNA
+	; Fri, 08 Jun 2018 20:05:19 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 28F60607BB; Mon, 11 Jun 2018 13:10:38 +0000 (UTC)
+	id 7A81A6089E; Fri,  8 Jun 2018 20:05:19 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MDQ3r1t+"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TmpeW0en"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 68B54601C3;
-	Mon, 11 Jun 2018 13:10:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 68B54601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 3DBA86074D;
+	Fri,  8 Jun 2018 20:05:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3DBA86074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933116AbeFKNKf (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 09:10:35 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:41471 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932516AbeFKNKd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 09:10:33 -0400
-Received: by mail-wr0-f194.google.com with SMTP id h10-v6so20339519wrq.8;
-        Mon, 11 Jun 2018 06:10:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=zDKzscYWoVp6LPOwxIkF2BGslwWmlicISZc3gF/Zp3M=;
-        b=MDQ3r1t+n+FWa749G3gQNQXtZAMIvPkKMMJy6749jNl4pl8y5j2UFGwFiN6aD0lqVb
-         FTKZNibjX9CQR6O7o11AGunG77bjZRnZMeOA49mnj07BUPqeeQRS+PtE3ZXMY+GJFPRO
-         SPi8mSNE0CvBOJSJDB0i3q48SbXwmw2gFPEyvBSJXGtquRRnGYBG9qYTjkA/rWvcxvZW
-         i5SStnrVrSuAEmSytSbwcxDgQNHXm7GO+8LqXtrfs/7hApH/Lu11t4kvfAxBD9nlSklR
-         6xXVIIpgrO/AuUOPQ1Oi3CJL8D1WKZdpWA+uqf6xvkpA0c/HiyJvsbNwbskQOC44QKdI
-         FUCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=zDKzscYWoVp6LPOwxIkF2BGslwWmlicISZc3gF/Zp3M=;
-        b=oZRWwQ/MLeglENEx/brYAe6OcHztKRPzyVk3jGGhA9v8lCW97KmNzqeLn+in5QznhT
-         3mk7MvcdD6d50Mbx/Vug2LLOoKhS23RYFAsyk9hoYe1Jvy6Cho1hgtIpYw6NV9h+DpSa
-         A7I4o+HupCB5Zaz9OH88r+BesHE+RUwXreLTdFiMozxjmYUQPz27mN8QpfSrJShOFLEv
-         TUYcYPWx4wdpCRbHedWXWipWKfgCeiSMuqlev2TKuaHAVldjD/paLPPl3VdArc7ASbFX
-         1sRqcFdkLgL7aeLPsbd7FSH+m71mPOO+xWEpXiJGIjF/mlIx8QPBXXfQbSE3+9iZrHgs
-         VMrw==
-X-Gm-Message-State: APt69E2tEY5KrPE6fg/VQgrae7twSHLZL7tmJOm+6kKnoh1/aGz7H27a
-        gD3dnIXymkgDASEP1OUBUkQ=
-X-Google-Smtp-Source: ADUXVKIuh8IS4SgkDZ0UoCa1lJgH06G80hZJBTleCi6yaQ9v/iH6hQUfuFBgcYSCMoEitLp7mMAXCw==
-X-Received: by 2002:adf:a148:: with SMTP id r8-v6mr12427053wrr.104.1528722631594;
-        Mon, 11 Jun 2018 06:10:31 -0700 (PDT)
-Received: from dimapc.localnet (109-252-55-168.nat.spd-mgts.ru. [109.252.55.168])
-        by smtp.gmail.com with ESMTPSA id o16-v6sm40286138wrp.8.2018.06.11.06.10.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Jun 2018 06:10:30 -0700 (PDT)
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Stefan Agner <stefan@agner.ch>, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
-        dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
-        marcel@ziswiler.com, krzk@kernel.org, benjamin.lindqvist@endian.se,
-        jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        mirza.krak@gmail.com, linux-mtd@lists.infradead.org,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        id S1753048AbeFHUFQ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 16:05:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48922 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753014AbeFHUFL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 16:05:11 -0400
+Received: from localhost (unknown [150.199.191.185])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3FD7720874;
+        Fri,  8 Jun 2018 20:05:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528488311;
+        bh=z09FtLMN3+ngDkJgFCD3M18bGqb7Z9gJEqAbw5JGS2s=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=TmpeW0en7o4Gfj/rZw7/iYS+nFseOCOIRK5fZTcPqIUnZVwYx6uH8FhekGI6OROo/
+         6+4HzJqPQa2kqwZpKIYUSMq8t7+o/8Q9dNSfNTmYe1qbqmP/5nuuWrwBfkqztqB9MO
+         JUQSGNkfmNkAT15SWq4pp6SBlWDlqcrrM7OYX+sw=
+Subject: [PATCH v1 04/13] PCI/AER: Squash aerdrv_errprint.c into aerdrv.c
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: linux-pci@vger.kernel.org
+Cc: Keith Busch <keith.busch@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Oza Pawandeep <poza@codeaurora.org>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/6] mtd: rawnand: add NVIDIA Tegra NAND Flash controller driver
-Date: Mon, 11 Jun 2018 16:10:21 +0300
-Message-ID: <6764263.x6FQro3A0J@dimapc>
-In-Reply-To: <20180611135013.7bb5b59b@bbrezillon>
-References: <20180531221637.6017-1-stefan@agner.ch> <1862022.905gDpZtpO@dimapc> <20180611135013.7bb5b59b@bbrezillon>
+Date: Fri, 08 Jun 2018 15:05:10 -0500
+Message-ID: <152848831041.11888.12582600421420381066.stgit@bhelgaas-glaptop.roam.corp.google.com>
+In-Reply-To: <152848785553.11888.12243539903985770441.stgit@bhelgaas-glaptop.roam.corp.google.com>
+References: <152848785553.11888.12243539903985770441.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: StGit/0.18
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, 11 June 2018 14:50:13 MSK Boris Brezillon wrote:
-> On Mon, 11 Jun 2018 14:45:45 +0300
-> 
-> Dmitry Osipenko <digetx@gmail.com> wrote:
-> > On Sunday, 10 June 2018 18:32:02 MSK Boris Brezillon wrote:
-> > > On Sun, 10 Jun 2018 18:00:06 +0300
-> > > 
-> > > Dmitry Osipenko <digetx@gmail.com> wrote:
-> > > > > >> That seems a lot of work for a code path I do not intend to ever
-> > > > > >> use
-> > > > > >> 
-> > > > > >> :-)
-> > > > > > 
-> > > > > > Are you sure that resetting HW resets the timing and other
-> > > > > > registers
-> > > > > > configuration? Reset implementation is HW-specific, like for
-> > > > > > example
-> > > > > > in a
-> > > > > > case of a video decoder the registers state is re-intialized on HW
-> > > > > > reset,
-> > > > > > but registers configuration is untouched in a case of resetting
-> > > > > > GPU.
-> > > > > > I'd
-> > > > > > suggest to check whether NAND controller resetting affects the HW
-> > > > > > configuration.
-> > > > > 
-> > > > > It seems all registers are set back to their documented reset value:
-> > > > > 
-> > > > > [boot loader/ROM initialized values]
-> > > > > [    1.270253] tegra-nand 70008000.nand: Tegra NAND controller
-> > > > > register
-> > > > > dump
-> > > > > [    1.277051] tegra-nand 70008000.nand: COMMAND: 0x66880104
-> > > > > [    1.282457] tegra-nand 70008000.nand: STATUS: 0x00000101
-> > > > > [    1.287763] tegra-nand 70008000.nand: ISR: 0x01000120
-> > > > > [    1.292818] tegra-nand 70008000.nand: IER: 0x00000000
-> > > > > [    1.297863] tegra-nand 70008000.nand: CONFIG: 0x00840000
-> > > > > [    1.303181] tegra-nand 70008000.nand: TIMING: 0x05040000
-> > > > > [    1.308486] tegra-nand 70008000.nand: TIMING2: 0x00000003
-> > > > > [    1.313897] tegra-nand 70008000.nand: CMD_REG1: 0x00000000
-> > > > > [    1.319377] tegra-nand 70008000.nand: CMD_REG2: 0x00000030
-> > > > > [    1.324868] tegra-nand 70008000.nand: ADDR_REG1: 0x03000000
-> > > > > [    1.330435] tegra-nand 70008000.nand: ADDR_REG2: 0x00000000
-> > > > > [    1.336011] tegra-nand 70008000.nand: DMA_MST_CTRL: 0x04100004
-> > > > > [    1.341838] tegra-nand 70008000.nand: DMA_CFG_A: 0x00000fff
-> > > > > [    1.347415] tegra-nand 70008000.nand: DMA_CFG_B: 0x0000001b
-> > > > > [    1.352991] tegra-nand 70008000.nand: FIFO_CTRL: 0x0000aa00
-> > > > > [reset]
-> > > > > [    1.358559] tegra-nand 70008000.nand: Tegra NAND controller
-> > > > > register
-> > > > > dump
-> > > > > [    1.365352] tegra-nand 70008000.nand: COMMAND: 0x00800004
-> > > > > [    1.370744] tegra-nand 70008000.nand: STATUS: 0x00000101
-> > > > > [    1.376060] tegra-nand 70008000.nand: ISR: 0x00000100
-> > > > > [    1.381105] tegra-nand 70008000.nand: IER: 0x00000000
-> > > > > [    1.386161] tegra-nand 70008000.nand: CONFIG: 0x10030000
-> > > > > [    1.391466] tegra-nand 70008000.nand: TIMING: 0x00000000
-> > > > > [    1.396782] tegra-nand 70008000.nand: TIMING2: 0x00000000
-> > > > > [    1.402174] tegra-nand 70008000.nand: CMD_REG1: 0x00000000
-> > > > > [    1.407664] tegra-nand 70008000.nand: CMD_REG2: 0x00000000
-> > > > > [    1.413156] tegra-nand 70008000.nand: ADDR_REG1: 0x00000000
-> > > > > [    1.418722] tegra-nand 70008000.nand: ADDR_REG2: 0x00000000
-> > > > > [    1.424297] tegra-nand 70008000.nand: DMA_MST_CTRL: 0x24000000
-> > > > > [    1.430123] tegra-nand 70008000.nand: DMA_CFG_A: 0x00000000
-> > > > > [    1.435698] tegra-nand 70008000.nand: DMA_CFG_B: 0x00000000
-> > > > > [    1.441264] tegra-nand 70008000.nand: FIFO_CTRL: 0x0000aa00
-> > > > 
-> > > > Alright, then indeed it's not really worth to bother with HW resetting
-> > > > here. Probably only a kernel module reload or a reboot will help if HW
-> > > > is
-> > > > hung. Maybe NAND controller / chip recovering is something that NAND
-> > > > core
-> > > > should be handling in a such case by providing a
-> > > > nand_controller_reset()
-> > > > hook?
-> > > 
-> > > I don't see what the core could do to help with that. We'd end up with
-> > > a new hook implemented by the controller that would be called by the
-> > > controller driver when it knows it's safe to reset the controller. So,
-> > > why bother exposing that in the core?
-> > 
-> > Giving a driver more flexibility is always a good thing. I'm not really
-> > familiar with mtd/ and maybe indeed it doesn't make much sense to move HW
-> > resetting to NAND core, though it looked to me that it should be always
-> > safe for NAND core to initiate HW resetting after IO failure and hence
-> > would be cleaner and nicer to have a unified HW reset management rather
-> > than to have each driver to do its own thing.
-> 
-> No really, the NAND core can't know when it's appropriate to reset the
-> controller, and what this reset will do, hence it doesn't know if the
-> chips connected to the controller should also be reset.
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-Okay!
+Squash aerdrv_errprint.c into aerdrv.c.  No functional change intended.
+
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+---
+ drivers/pci/pcie/aer/Makefile          |    2 
+ drivers/pci/pcie/aer/aerdrv.c          |  243 ++++++++++++++++++++++++++++++
+ drivers/pci/pcie/aer/aerdrv.h          |    2 
+ drivers/pci/pcie/aer/aerdrv_errprint.c |  260 --------------------------------
+ 4 files changed, 244 insertions(+), 263 deletions(-)
+ delete mode 100644 drivers/pci/pcie/aer/aerdrv_errprint.c
+
+diff --git a/drivers/pci/pcie/aer/Makefile b/drivers/pci/pcie/aer/Makefile
+index c85bd0851903..662fb0d2abfe 100644
+--- a/drivers/pci/pcie/aer/Makefile
++++ b/drivers/pci/pcie/aer/Makefile
+@@ -7,7 +7,7 @@ obj-$(CONFIG_PCIEAER) += aerdriver.o
+ 
+ obj-$(CONFIG_PCIE_ECRC)	+= ecrc.o
+ 
+-aerdriver-objs := aerdrv_errprint.o aerdrv.o
++aerdriver-objs := aerdrv.o
+ aerdriver-$(CONFIG_ACPI) += aerdrv_acpi.o
+ 
+ obj-$(CONFIG_PCIEAER_INJECT) += aer_inject.o
+diff --git a/drivers/pci/pcie/aer/aerdrv.c b/drivers/pci/pcie/aer/aerdrv.c
+index c185069ef880..3dca26681eec 100644
+--- a/drivers/pci/pcie/aer/aerdrv.c
++++ b/drivers/pci/pcie/aer/aerdrv.c
+@@ -9,6 +9,7 @@
+  *	Zhang Yanmin (yanmin.zhang@intel.com)
+  */
+ 
++#include <linux/cper.h>
+ #include <linux/pci.h>
+ #include <linux/pci-acpi.h>
+ #include <linux/sched.h>
+@@ -20,6 +21,7 @@
+ #include <linux/delay.h>
+ #include <linux/kfifo.h>
+ #include <linux/slab.h>
++#include <ras/ras_event.h>
+ 
+ #include "aerdrv.h"
+ #include "../../pci.h"
+@@ -112,6 +114,247 @@ int pci_aer_init(struct pci_dev *dev)
+ 	return pci_cleanup_aer_error_status_regs(dev);
+ }
+ 
++#define AER_AGENT_RECEIVER		0
++#define AER_AGENT_REQUESTER		1
++#define AER_AGENT_COMPLETER		2
++#define AER_AGENT_TRANSMITTER		3
++
++#define AER_AGENT_REQUESTER_MASK(t)	((t == AER_CORRECTABLE) ?	\
++	0 : (PCI_ERR_UNC_COMP_TIME|PCI_ERR_UNC_UNSUP))
++#define AER_AGENT_COMPLETER_MASK(t)	((t == AER_CORRECTABLE) ?	\
++	0 : PCI_ERR_UNC_COMP_ABORT)
++#define AER_AGENT_TRANSMITTER_MASK(t)	((t == AER_CORRECTABLE) ?	\
++	(PCI_ERR_COR_REP_ROLL|PCI_ERR_COR_REP_TIMER) : 0)
++
++#define AER_GET_AGENT(t, e)						\
++	((e & AER_AGENT_COMPLETER_MASK(t)) ? AER_AGENT_COMPLETER :	\
++	(e & AER_AGENT_REQUESTER_MASK(t)) ? AER_AGENT_REQUESTER :	\
++	(e & AER_AGENT_TRANSMITTER_MASK(t)) ? AER_AGENT_TRANSMITTER :	\
++	AER_AGENT_RECEIVER)
++
++#define AER_PHYSICAL_LAYER_ERROR	0
++#define AER_DATA_LINK_LAYER_ERROR	1
++#define AER_TRANSACTION_LAYER_ERROR	2
++
++#define AER_PHYSICAL_LAYER_ERROR_MASK(t) ((t == AER_CORRECTABLE) ?	\
++	PCI_ERR_COR_RCVR : 0)
++#define AER_DATA_LINK_LAYER_ERROR_MASK(t) ((t == AER_CORRECTABLE) ?	\
++	(PCI_ERR_COR_BAD_TLP|						\
++	PCI_ERR_COR_BAD_DLLP|						\
++	PCI_ERR_COR_REP_ROLL|						\
++	PCI_ERR_COR_REP_TIMER) : PCI_ERR_UNC_DLP)
++
++#define AER_GET_LAYER_ERROR(t, e)					\
++	((e & AER_PHYSICAL_LAYER_ERROR_MASK(t)) ? AER_PHYSICAL_LAYER_ERROR : \
++	(e & AER_DATA_LINK_LAYER_ERROR_MASK(t)) ? AER_DATA_LINK_LAYER_ERROR : \
++	AER_TRANSACTION_LAYER_ERROR)
++
++/*
++ * AER error strings
++ */
++static const char *aer_error_severity_string[] = {
++	"Uncorrected (Non-Fatal)",
++	"Uncorrected (Fatal)",
++	"Corrected"
++};
++
++static const char *aer_error_layer[] = {
++	"Physical Layer",
++	"Data Link Layer",
++	"Transaction Layer"
++};
++
++static const char *aer_correctable_error_string[] = {
++	"Receiver Error",		/* Bit Position 0	*/
++	NULL,
++	NULL,
++	NULL,
++	NULL,
++	NULL,
++	"Bad TLP",			/* Bit Position 6	*/
++	"Bad DLLP",			/* Bit Position 7	*/
++	"RELAY_NUM Rollover",		/* Bit Position 8	*/
++	NULL,
++	NULL,
++	NULL,
++	"Replay Timer Timeout",		/* Bit Position 12	*/
++	"Advisory Non-Fatal",		/* Bit Position 13	*/
++	"Corrected Internal Error",	/* Bit Position 14	*/
++	"Header Log Overflow",		/* Bit Position 15	*/
++};
++
++static const char *aer_uncorrectable_error_string[] = {
++	"Undefined",			/* Bit Position 0	*/
++	NULL,
++	NULL,
++	NULL,
++	"Data Link Protocol",		/* Bit Position 4	*/
++	"Surprise Down Error",		/* Bit Position 5	*/
++	NULL,
++	NULL,
++	NULL,
++	NULL,
++	NULL,
++	NULL,
++	"Poisoned TLP",			/* Bit Position 12	*/
++	"Flow Control Protocol",	/* Bit Position 13	*/
++	"Completion Timeout",		/* Bit Position 14	*/
++	"Completer Abort",		/* Bit Position 15	*/
++	"Unexpected Completion",	/* Bit Position 16	*/
++	"Receiver Overflow",		/* Bit Position 17	*/
++	"Malformed TLP",		/* Bit Position 18	*/
++	"ECRC",				/* Bit Position 19	*/
++	"Unsupported Request",		/* Bit Position 20	*/
++	"ACS Violation",		/* Bit Position 21	*/
++	"Uncorrectable Internal Error",	/* Bit Position 22	*/
++	"MC Blocked TLP",		/* Bit Position 23	*/
++	"AtomicOp Egress Blocked",	/* Bit Position 24	*/
++	"TLP Prefix Blocked Error",	/* Bit Position 25	*/
++};
++
++static const char *aer_agent_string[] = {
++	"Receiver ID",
++	"Requester ID",
++	"Completer ID",
++	"Transmitter ID"
++};
++
++static void __print_tlp_header(struct pci_dev *dev,
++			       struct aer_header_log_regs *t)
++{
++	pci_err(dev, "  TLP Header: %08x %08x %08x %08x\n",
++		t->dw0, t->dw1, t->dw2, t->dw3);
++}
++
++static void __aer_print_error(struct pci_dev *dev,
++			      struct aer_err_info *info)
++{
++	int i, status;
++	const char *errmsg = NULL;
++	status = (info->status & ~info->mask);
++
++	for (i = 0; i < 32; i++) {
++		if (!(status & (1 << i)))
++			continue;
++
++		if (info->severity == AER_CORRECTABLE)
++			errmsg = i < ARRAY_SIZE(aer_correctable_error_string) ?
++				aer_correctable_error_string[i] : NULL;
++		else
++			errmsg = i < ARRAY_SIZE(aer_uncorrectable_error_string) ?
++				aer_uncorrectable_error_string[i] : NULL;
++
++		if (errmsg)
++			pci_err(dev, "   [%2d] %-22s%s\n", i, errmsg,
++				info->first_error == i ? " (First)" : "");
++		else
++			pci_err(dev, "   [%2d] Unknown Error Bit%s\n",
++				i, info->first_error == i ? " (First)" : "");
++	}
++}
++
++static void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
++{
++	int layer, agent;
++	int id = ((dev->bus->number << 8) | dev->devfn);
++
++	if (!info->status) {
++		pci_err(dev, "PCIe Bus Error: severity=%s, type=Inaccessible, (Unregistered Agent ID)\n",
++			aer_error_severity_string[info->severity]);
++		goto out;
++	}
++
++	layer = AER_GET_LAYER_ERROR(info->severity, info->status);
++	agent = AER_GET_AGENT(info->severity, info->status);
++
++	pci_err(dev, "PCIe Bus Error: severity=%s, type=%s, (%s)\n",
++		aer_error_severity_string[info->severity],
++		aer_error_layer[layer], aer_agent_string[agent]);
++
++	pci_err(dev, "  device [%04x:%04x] error status/mask=%08x/%08x\n",
++		dev->vendor, dev->device,
++		info->status, info->mask);
++
++	__aer_print_error(dev, info);
++
++	if (info->tlp_header_valid)
++		__print_tlp_header(dev, &info->tlp);
++
++out:
++	if (info->id && info->error_dev_num > 1 && info->id == id)
++		pci_err(dev, "  Error of this Agent is reported first\n");
++
++	trace_aer_event(dev_name(&dev->dev), (info->status & ~info->mask),
++			info->severity, info->tlp_header_valid, &info->tlp);
++}
++
++static void aer_print_port_info(struct pci_dev *dev, struct aer_err_info *info)
++{
++	u8 bus = info->id >> 8;
++	u8 devfn = info->id & 0xff;
++
++	pci_info(dev, "AER: %s%s error received: %04x:%02x:%02x.%d\n",
++		info->multi_error_valid ? "Multiple " : "",
++		aer_error_severity_string[info->severity],
++		pci_domain_nr(dev->bus), bus, PCI_SLOT(devfn), PCI_FUNC(devfn));
++}
++
++#ifdef CONFIG_ACPI_APEI_PCIEAER
++int cper_severity_to_aer(int cper_severity)
++{
++	switch (cper_severity) {
++	case CPER_SEV_RECOVERABLE:
++		return AER_NONFATAL;
++	case CPER_SEV_FATAL:
++		return AER_FATAL;
++	default:
++		return AER_CORRECTABLE;
++	}
++}
++EXPORT_SYMBOL_GPL(cper_severity_to_aer);
++
++void cper_print_aer(struct pci_dev *dev, int aer_severity,
++		    struct aer_capability_regs *aer)
++{
++	int layer, agent, tlp_header_valid = 0;
++	u32 status, mask;
++	struct aer_err_info info;
++
++	if (aer_severity == AER_CORRECTABLE) {
++		status = aer->cor_status;
++		mask = aer->cor_mask;
++	} else {
++		status = aer->uncor_status;
++		mask = aer->uncor_mask;
++		tlp_header_valid = status & AER_LOG_TLP_MASKS;
++	}
++
++	layer = AER_GET_LAYER_ERROR(aer_severity, status);
++	agent = AER_GET_AGENT(aer_severity, status);
++
++	memset(&info, 0, sizeof(info));
++	info.severity = aer_severity;
++	info.status = status;
++	info.mask = mask;
++	info.first_error = PCI_ERR_CAP_FEP(aer->cap_control);
++
++	pci_err(dev, "aer_status: 0x%08x, aer_mask: 0x%08x\n", status, mask);
++	__aer_print_error(dev, &info);
++	pci_err(dev, "aer_layer=%s, aer_agent=%s\n",
++		aer_error_layer[layer], aer_agent_string[agent]);
++
++	if (aer_severity != AER_CORRECTABLE)
++		pci_err(dev, "aer_uncor_severity: 0x%08x\n",
++			aer->uncor_severity);
++
++	if (tlp_header_valid)
++		__print_tlp_header(dev, &aer->header_log);
++
++	trace_aer_event(dev_name(&dev->dev), (status & ~mask),
++			aer_severity, tlp_header_valid, &aer->header_log);
++}
++#endif
++
+ /**
+  * add_error_device - list device to be handled
+  * @e_info: pointer to error info
+diff --git a/drivers/pci/pcie/aer/aerdrv.h b/drivers/pci/pcie/aer/aerdrv.h
+index 059b89441acb..7fa902b1f7c1 100644
+--- a/drivers/pci/pcie/aer/aerdrv.h
++++ b/drivers/pci/pcie/aer/aerdrv.h
+@@ -77,8 +77,6 @@ struct aer_rpc {
+ };
+ 
+ extern struct bus_type pcie_port_bus_type;
+-void aer_print_error(struct pci_dev *dev, struct aer_err_info *info);
+-void aer_print_port_info(struct pci_dev *dev, struct aer_err_info *info);
+ irqreturn_t aer_irq(int irq, void *context);
+ 
+ #ifdef CONFIG_ACPI_APEI
+diff --git a/drivers/pci/pcie/aer/aerdrv_errprint.c b/drivers/pci/pcie/aer/aerdrv_errprint.c
+deleted file mode 100644
+index 4985bdf64c2e..000000000000
+--- a/drivers/pci/pcie/aer/aerdrv_errprint.c
++++ /dev/null
+@@ -1,260 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * Format error messages and print them to console.
+- *
+- * Copyright (C) 2006 Intel Corp.
+- *	Tom Long Nguyen (tom.l.nguyen@intel.com)
+- *	Zhang Yanmin (yanmin.zhang@intel.com)
+- */
+-
+-#include <linux/module.h>
+-#include <linux/pci.h>
+-#include <linux/kernel.h>
+-#include <linux/errno.h>
+-#include <linux/pm.h>
+-#include <linux/suspend.h>
+-#include <linux/cper.h>
+-
+-#include "aerdrv.h"
+-#include <ras/ras_event.h>
+-
+-#define AER_AGENT_RECEIVER		0
+-#define AER_AGENT_REQUESTER		1
+-#define AER_AGENT_COMPLETER		2
+-#define AER_AGENT_TRANSMITTER		3
+-
+-#define AER_AGENT_REQUESTER_MASK(t)	((t == AER_CORRECTABLE) ?	\
+-	0 : (PCI_ERR_UNC_COMP_TIME|PCI_ERR_UNC_UNSUP))
+-#define AER_AGENT_COMPLETER_MASK(t)	((t == AER_CORRECTABLE) ?	\
+-	0 : PCI_ERR_UNC_COMP_ABORT)
+-#define AER_AGENT_TRANSMITTER_MASK(t)	((t == AER_CORRECTABLE) ?	\
+-	(PCI_ERR_COR_REP_ROLL|PCI_ERR_COR_REP_TIMER) : 0)
+-
+-#define AER_GET_AGENT(t, e)						\
+-	((e & AER_AGENT_COMPLETER_MASK(t)) ? AER_AGENT_COMPLETER :	\
+-	(e & AER_AGENT_REQUESTER_MASK(t)) ? AER_AGENT_REQUESTER :	\
+-	(e & AER_AGENT_TRANSMITTER_MASK(t)) ? AER_AGENT_TRANSMITTER :	\
+-	AER_AGENT_RECEIVER)
+-
+-#define AER_PHYSICAL_LAYER_ERROR	0
+-#define AER_DATA_LINK_LAYER_ERROR	1
+-#define AER_TRANSACTION_LAYER_ERROR	2
+-
+-#define AER_PHYSICAL_LAYER_ERROR_MASK(t) ((t == AER_CORRECTABLE) ?	\
+-	PCI_ERR_COR_RCVR : 0)
+-#define AER_DATA_LINK_LAYER_ERROR_MASK(t) ((t == AER_CORRECTABLE) ?	\
+-	(PCI_ERR_COR_BAD_TLP|						\
+-	PCI_ERR_COR_BAD_DLLP|						\
+-	PCI_ERR_COR_REP_ROLL|						\
+-	PCI_ERR_COR_REP_TIMER) : PCI_ERR_UNC_DLP)
+-
+-#define AER_GET_LAYER_ERROR(t, e)					\
+-	((e & AER_PHYSICAL_LAYER_ERROR_MASK(t)) ? AER_PHYSICAL_LAYER_ERROR : \
+-	(e & AER_DATA_LINK_LAYER_ERROR_MASK(t)) ? AER_DATA_LINK_LAYER_ERROR : \
+-	AER_TRANSACTION_LAYER_ERROR)
+-
+-/*
+- * AER error strings
+- */
+-static const char *aer_error_severity_string[] = {
+-	"Uncorrected (Non-Fatal)",
+-	"Uncorrected (Fatal)",
+-	"Corrected"
+-};
+-
+-static const char *aer_error_layer[] = {
+-	"Physical Layer",
+-	"Data Link Layer",
+-	"Transaction Layer"
+-};
+-
+-static const char *aer_correctable_error_string[] = {
+-	"Receiver Error",		/* Bit Position 0	*/
+-	NULL,
+-	NULL,
+-	NULL,
+-	NULL,
+-	NULL,
+-	"Bad TLP",			/* Bit Position 6	*/
+-	"Bad DLLP",			/* Bit Position 7	*/
+-	"RELAY_NUM Rollover",		/* Bit Position 8	*/
+-	NULL,
+-	NULL,
+-	NULL,
+-	"Replay Timer Timeout",		/* Bit Position 12	*/
+-	"Advisory Non-Fatal",		/* Bit Position 13	*/
+-	"Corrected Internal Error",	/* Bit Position 14	*/
+-	"Header Log Overflow",		/* Bit Position 15	*/
+-};
+-
+-static const char *aer_uncorrectable_error_string[] = {
+-	"Undefined",			/* Bit Position 0	*/
+-	NULL,
+-	NULL,
+-	NULL,
+-	"Data Link Protocol",		/* Bit Position 4	*/
+-	"Surprise Down Error",		/* Bit Position 5	*/
+-	NULL,
+-	NULL,
+-	NULL,
+-	NULL,
+-	NULL,
+-	NULL,
+-	"Poisoned TLP",			/* Bit Position 12	*/
+-	"Flow Control Protocol",	/* Bit Position 13	*/
+-	"Completion Timeout",		/* Bit Position 14	*/
+-	"Completer Abort",		/* Bit Position 15	*/
+-	"Unexpected Completion",	/* Bit Position 16	*/
+-	"Receiver Overflow",		/* Bit Position 17	*/
+-	"Malformed TLP",		/* Bit Position 18	*/
+-	"ECRC",				/* Bit Position 19	*/
+-	"Unsupported Request",		/* Bit Position 20	*/
+-	"ACS Violation",		/* Bit Position 21	*/
+-	"Uncorrectable Internal Error",	/* Bit Position 22	*/
+-	"MC Blocked TLP",		/* Bit Position 23	*/
+-	"AtomicOp Egress Blocked",	/* Bit Position 24	*/
+-	"TLP Prefix Blocked Error",	/* Bit Position 25	*/
+-};
+-
+-static const char *aer_agent_string[] = {
+-	"Receiver ID",
+-	"Requester ID",
+-	"Completer ID",
+-	"Transmitter ID"
+-};
+-
+-static void __print_tlp_header(struct pci_dev *dev,
+-			       struct aer_header_log_regs *t)
+-{
+-	pci_err(dev, "  TLP Header: %08x %08x %08x %08x\n",
+-		t->dw0, t->dw1, t->dw2, t->dw3);
+-}
+-
+-static void __aer_print_error(struct pci_dev *dev,
+-			      struct aer_err_info *info)
+-{
+-	int i, status;
+-	const char *errmsg = NULL;
+-	status = (info->status & ~info->mask);
+-
+-	for (i = 0; i < 32; i++) {
+-		if (!(status & (1 << i)))
+-			continue;
+-
+-		if (info->severity == AER_CORRECTABLE)
+-			errmsg = i < ARRAY_SIZE(aer_correctable_error_string) ?
+-				aer_correctable_error_string[i] : NULL;
+-		else
+-			errmsg = i < ARRAY_SIZE(aer_uncorrectable_error_string) ?
+-				aer_uncorrectable_error_string[i] : NULL;
+-
+-		if (errmsg)
+-			pci_err(dev, "   [%2d] %-22s%s\n", i, errmsg,
+-				info->first_error == i ? " (First)" : "");
+-		else
+-			pci_err(dev, "   [%2d] Unknown Error Bit%s\n",
+-				i, info->first_error == i ? " (First)" : "");
+-	}
+-}
+-
+-void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
+-{
+-	int layer, agent;
+-	int id = ((dev->bus->number << 8) | dev->devfn);
+-
+-	if (!info->status) {
+-		pci_err(dev, "PCIe Bus Error: severity=%s, type=Inaccessible, (Unregistered Agent ID)\n",
+-			aer_error_severity_string[info->severity]);
+-		goto out;
+-	}
+-
+-	layer = AER_GET_LAYER_ERROR(info->severity, info->status);
+-	agent = AER_GET_AGENT(info->severity, info->status);
+-
+-	pci_err(dev, "PCIe Bus Error: severity=%s, type=%s, (%s)\n",
+-		aer_error_severity_string[info->severity],
+-		aer_error_layer[layer], aer_agent_string[agent]);
+-
+-	pci_err(dev, "  device [%04x:%04x] error status/mask=%08x/%08x\n",
+-		dev->vendor, dev->device,
+-		info->status, info->mask);
+-
+-	__aer_print_error(dev, info);
+-
+-	if (info->tlp_header_valid)
+-		__print_tlp_header(dev, &info->tlp);
+-
+-out:
+-	if (info->id && info->error_dev_num > 1 && info->id == id)
+-		pci_err(dev, "  Error of this Agent is reported first\n");
+-
+-	trace_aer_event(dev_name(&dev->dev), (info->status & ~info->mask),
+-			info->severity, info->tlp_header_valid, &info->tlp);
+-}
+-
+-void aer_print_port_info(struct pci_dev *dev, struct aer_err_info *info)
+-{
+-	u8 bus = info->id >> 8;
+-	u8 devfn = info->id & 0xff;
+-
+-	pci_info(dev, "AER: %s%s error received: %04x:%02x:%02x.%d\n",
+-		info->multi_error_valid ? "Multiple " : "",
+-		aer_error_severity_string[info->severity],
+-		pci_domain_nr(dev->bus), bus, PCI_SLOT(devfn), PCI_FUNC(devfn));
+-}
+-
+-#ifdef CONFIG_ACPI_APEI_PCIEAER
+-int cper_severity_to_aer(int cper_severity)
+-{
+-	switch (cper_severity) {
+-	case CPER_SEV_RECOVERABLE:
+-		return AER_NONFATAL;
+-	case CPER_SEV_FATAL:
+-		return AER_FATAL;
+-	default:
+-		return AER_CORRECTABLE;
+-	}
+-}
+-EXPORT_SYMBOL_GPL(cper_severity_to_aer);
+-
+-void cper_print_aer(struct pci_dev *dev, int aer_severity,
+-		    struct aer_capability_regs *aer)
+-{
+-	int layer, agent, tlp_header_valid = 0;
+-	u32 status, mask;
+-	struct aer_err_info info;
+-
+-	if (aer_severity == AER_CORRECTABLE) {
+-		status = aer->cor_status;
+-		mask = aer->cor_mask;
+-	} else {
+-		status = aer->uncor_status;
+-		mask = aer->uncor_mask;
+-		tlp_header_valid = status & AER_LOG_TLP_MASKS;
+-	}
+-
+-	layer = AER_GET_LAYER_ERROR(aer_severity, status);
+-	agent = AER_GET_AGENT(aer_severity, status);
+-
+-	memset(&info, 0, sizeof(info));
+-	info.severity = aer_severity;
+-	info.status = status;
+-	info.mask = mask;
+-	info.first_error = PCI_ERR_CAP_FEP(aer->cap_control);
+-
+-	pci_err(dev, "aer_status: 0x%08x, aer_mask: 0x%08x\n", status, mask);
+-	__aer_print_error(dev, &info);
+-	pci_err(dev, "aer_layer=%s, aer_agent=%s\n",
+-		aer_error_layer[layer], aer_agent_string[agent]);
+-
+-	if (aer_severity != AER_CORRECTABLE)
+-		pci_err(dev, "aer_uncor_severity: 0x%08x\n",
+-			aer->uncor_severity);
+-
+-	if (tlp_header_valid)
+-		__print_tlp_header(dev, &aer->header_log);
+-
+-	trace_aer_event(dev_name(&dev->dev), (status & ~mask),
+-			aer_severity, tlp_header_valid, &aer->header_log);
+-}
+-#endif
