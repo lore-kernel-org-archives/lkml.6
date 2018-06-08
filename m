@@ -1,164 +1,151 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id yqyXMOG1GVt7cwAAmS7hNA
-	; Thu, 07 Jun 2018 22:47:29 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id BLukAPi/Glu6fAAAmS7hNA
+	; Fri, 08 Jun 2018 17:42:34 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id A9F666074D; Thu,  7 Jun 2018 22:47:29 +0000 (UTC)
+	id 4BC88607E4; Fri,  8 Jun 2018 17:42:34 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GVi1BqaE"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 3AFBE601C3;
-	Thu,  7 Jun 2018 22:47:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3AFBE601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id B498F605A5;
+	Fri,  8 Jun 2018 17:42:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B498F605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752152AbeFGWr1 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 18:47:27 -0400
-Received: from mga02.intel.com ([134.134.136.20]:25665 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751521AbeFGWrZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 18:47:25 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 15:47:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,488,1520924400";
-   d="scan'208";a="62750857"
-Received: from ray.jf.intel.com (HELO [10.7.201.24]) ([10.7.201.24])
-  by orsmga001.jf.intel.com with ESMTP; 07 Jun 2018 15:47:25 -0700
-Subject: Re: [PATCH v4 4/4] mm/sparse: Optimize memmap allocation during
- sparse_init()
-To: Baoquan He <bhe@redhat.com>, linux-kernel@vger.kernel.org,
-        akpm@linux-foundation.org, pagupta@redhat.com
-References: <20180521101555.25610-1-bhe@redhat.com>
- <20180521101555.25610-5-bhe@redhat.com>
-Cc: linux-mm@kvack.org, kirill.shutemov@linux.intel.com
-From: Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzShEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gPGRhdmVAc3I3MS5uZXQ+wsF7BBMBAgAlAhsDBgsJCAcDAgYVCAIJ
- CgsEFgIDAQIeAQIXgAUCTo3k0QIZAQAKCRBoNZUwcMmSsMO2D/421Xg8pimb9mPzM5N7khT0
- 2MCnaGssU1T59YPE25kYdx2HntwdO0JA27Wn9xx5zYijOe6B21ufrvsyv42auCO85+oFJWfE
- K2R/IpLle09GDx5tcEmMAHX6KSxpHmGuJmUPibHVbfep2aCh9lKaDqQR07gXXWK5/yU1Dx0r
- VVFRaHTasp9fZ9AmY4K9/BSA3VkQ8v3OrxNty3OdsrmTTzO91YszpdbjjEFZK53zXy6tUD2d
- e1i0kBBS6NLAAsqEtneplz88T/v7MpLmpY30N9gQU3QyRC50jJ7LU9RazMjUQY1WohVsR56d
- ORqFxS8ChhyJs7BI34vQusYHDTp6PnZHUppb9WIzjeWlC7Jc8lSBDlEWodmqQQgp5+6AfhTD
- kDv1a+W5+ncq+Uo63WHRiCPuyt4di4/0zo28RVcjtzlGBZtmz2EIC3vUfmoZbO/Gn6EKbYAn
- rzz3iU/JWV8DwQ+sZSGu0HmvYMt6t5SmqWQo/hyHtA7uF5Wxtu1lCgolSQw4t49ZuOyOnQi5
- f8R3nE7lpVCSF1TT+h8kMvFPv3VG7KunyjHr3sEptYxQs4VRxqeirSuyBv1TyxT+LdTm6j4a
- mulOWf+YtFRAgIYyyN5YOepDEBv4LUM8Tz98lZiNMlFyRMNrsLV6Pv6SxhrMxbT6TNVS5D+6
- UorTLotDZKp5+M7BTQRUY85qARAAsgMW71BIXRgxjYNCYQ3Xs8k3TfAvQRbHccky50h99TUY
- sqdULbsb3KhmY29raw1bgmyM0a4DGS1YKN7qazCDsdQlxIJp9t2YYdBKXVRzPCCsfWe1dK/q
- 66UVhRPP8EGZ4CmFYuPTxqGY+dGRInxCeap/xzbKdvmPm01Iw3YFjAE4PQ4hTMr/H76KoDbD
- cq62U50oKC83ca/PRRh2QqEqACvIH4BR7jueAZSPEDnzwxvVgzyeuhwqHY05QRK/wsKuhq7s
- UuYtmN92Fasbxbw2tbVLZfoidklikvZAmotg0dwcFTjSRGEg0Gr3p/xBzJWNavFZZ95Rj7Et
- db0lCt0HDSY5q4GMR+SrFbH+jzUY/ZqfGdZCBqo0cdPPp58krVgtIGR+ja2Mkva6ah94/oQN
- lnCOw3udS+Eb/aRcM6detZr7XOngvxsWolBrhwTQFT9D2NH6ryAuvKd6yyAFt3/e7r+HHtkU
- kOy27D7IpjngqP+b4EumELI/NxPgIqT69PQmo9IZaI/oRaKorYnDaZrMXViqDrFdD37XELwQ
- gmLoSm2VfbOYY7fap/AhPOgOYOSqg3/Nxcapv71yoBzRRxOc4FxmZ65mn+q3rEM27yRztBW9
- AnCKIc66T2i92HqXCw6AgoBJRjBkI3QnEkPgohQkZdAb8o9WGVKpfmZKbYBo4pEAEQEAAcLB
- XwQYAQIACQUCVGPOagIbDAAKCRBoNZUwcMmSsJeCEACCh7P/aaOLKWQxcnw47p4phIVR6pVL
- e4IEdR7Jf7ZL00s3vKSNT+nRqdl1ugJx9Ymsp8kXKMk9GSfmZpuMQB9c6io1qZc6nW/3TtvK
- pNGz7KPPtaDzvKA4S5tfrWPnDr7n15AU5vsIZvgMjU42gkbemkjJwP0B1RkifIK60yQqAAlT
- YZ14P0dIPdIPIlfEPiAWcg5BtLQU4Wg3cNQdpWrCJ1E3m/RIlXy/2Y3YOVVohfSy+4kvvYU3
- lXUdPb04UPw4VWwjcVZPg7cgR7Izion61bGHqVqURgSALt2yvHl7cr68NYoFkzbNsGsye9ft
- M9ozM23JSgMkRylPSXTeh5JIK9pz2+etco3AfLCKtaRVysjvpysukmWMTrx8QnI5Nn5MOlJj
- 1Ov4/50JY9pXzgIDVSrgy6LYSMc4vKZ3QfCY7ipLRORyalFDF3j5AGCMRENJjHPD6O7bl3Xo
- 4DzMID+8eucbXxKiNEbs21IqBZbbKdY1GkcEGTE7AnkA3Y6YB7I/j9mQ3hCgm5muJuhM/2Fr
- OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
- ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
- z5cecg==
-Message-ID: <766d4f69-befe-5219-9ede-6c9927f12f0a@intel.com>
-Date: Thu, 7 Jun 2018 15:46:03 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180521101555.25610-5-bhe@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1752775AbeFHRma (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 13:42:30 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36696 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751694AbeFHRm3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 13:42:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
+        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=2UZYN8ulbHDW9480iZM+EmI3W97aWs8aF4H/1Xc0A8M=; b=GVi1BqaED0UlRkVQ78ABc8vdD
+        36mbxU/JTQfsjBdfnRPk14mwa9k1o/+GJ0yvxatdfkgcyarEDZwAUKFwSb5IPNYh2UrxjnEG0Wry+
+        FlGwUIhX6qmSECybrSHeY1papP6+H1IQRlCWwpL99pl2tA/bORdEa5aH9JQUw21sLNvh9VHzTF74j
+        p3NZHGaNYZRY6WXYh5Z6Ck6gsZKUJmFeIcVnWQu52c3dDbo6YlFZgtuZ9UkdlV0I3IM1mMbZEnKbX
+        gOXXwRa6cQpfAhQkDc9lYz9VJtNgHSGVRWn4akf4WWBLcbtOiSwMTNc5gCI9X6va+NUOw1xx4cA3A
+        wpId3K70A==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fRLP3-0008TU-BV; Fri, 08 Jun 2018 17:42:21 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: hans.westgaard.ry@oracle.com, Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>,
+        linux-rdma@vger.kernel.org,
+        =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>,
+        Parav Pandit <parav@mellanox.com>,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Pravin Shedge <pravin.shedge4linux@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] IB/mad: Agent registration is process context only
+Date: Fri,  8 Jun 2018 10:42:17 -0700
+Message-Id: <20180608174218.32455-2-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180608174218.32455-1-willy@infradead.org>
+References: <20180608174218.32455-1-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> @@ -297,8 +298,8 @@ void __init sparse_mem_maps_populate_node(struct page **map_map,
->  		if (!present_section_nr(pnum))
->  			continue;
->  
-> -		map_map[pnum] = sparse_mem_map_populate(pnum, nodeid, NULL);
-> -		if (map_map[pnum])
-> +		map_map[nr_consumed_maps] = sparse_mem_map_populate(pnum, nodeid, NULL);
-> +		if (map_map[nr_consumed_maps++])
->  			continue;
-...
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-This looks wonky.
+Document this (it's implicitly true due to sleeping operations already
+in use in both registration and deregistration).  Use this fact to use
+spin_lock_irq instead of spin_lock_irqsave.  This improves performance
+slightly.
 
-This seems to say that even if we fail to sparse_mem_map_populate() (it
-returns NULL), we still consume a map.  Is that right?
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+ drivers/infiniband/core/mad.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
->  	/* fallback */
-> +	nr_consumed_maps = 0;
->  	for (pnum = pnum_begin; pnum < pnum_end; pnum++) {
->  		struct mem_section *ms;
->  
->  		if (!present_section_nr(pnum))
->  			continue;
-> -		map_map[pnum] = sparse_mem_map_populate(pnum, nodeid, NULL);
-> -		if (map_map[pnum])
-> +		map_map[nr_consumed_maps] = sparse_mem_map_populate(pnum, nodeid, NULL);
-> +		if (map_map[nr_consumed_maps++])
->  			continue;
-
-Same questionable pattern as above...
-
->  #ifdef CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER
-> -	size2 = sizeof(struct page *) * NR_MEM_SECTIONS;
-> +	size2 = sizeof(struct page *) * nr_present_sections;
->  	map_map = memblock_virt_alloc(size2, 0);
->  	if (!map_map)
->  		panic("can not allocate map_map\n");
-> @@ -586,27 +594,44 @@ void __init sparse_init(void)
->  				sizeof(map_map[0]));
->  #endif
->  
-> +	/* The numner of present sections stored in nr_present_sections
-
-"number"?
-
-Also, this is not correct comment CodingStyle.
-
-> +	 * are kept the same since mem sections are marked as present in
-> +	 * memory_present().
-
-Are you just trying to say that we are not making sections present here?
-
->                         In this for loop, we need check which sections
-> +	 * failed to allocate memmap or usemap, then clear its
-> +	 * ->section_mem_map accordingly. During this process, we need
-> +	 * increase 'alloc_usemap_and_memmap' whether its allocation of
-> +	 * memmap or usemap failed or not, so that after we handle the i-th
-> +	 * memory section, can get memmap and usemap of (i+1)-th section
-> +	 * correctly. */
-
-I'm really scratching my head over this comment.  For instance "increase
-'alloc_usemap_and_memmap'" doesn't make any sense to me.  How do you
-increase a function?
-
-I wonder if you could give that comment another shot.
+diff --git a/drivers/infiniband/core/mad.c b/drivers/infiniband/core/mad.c
+index f742ae7a768b..68f4dda916c8 100644
+--- a/drivers/infiniband/core/mad.c
++++ b/drivers/infiniband/core/mad.c
+@@ -190,6 +190,8 @@ EXPORT_SYMBOL(ib_response_mad);
+ 
+ /*
+  * ib_register_mad_agent - Register to send/receive MADs
++ *
++ * Context: Process context.
+  */
+ struct ib_mad_agent *ib_register_mad_agent(struct ib_device *device,
+ 					   u8 port_num,
+@@ -210,7 +212,6 @@ struct ib_mad_agent *ib_register_mad_agent(struct ib_device *device,
+ 	struct ib_mad_mgmt_vendor_class *vendor_class;
+ 	struct ib_mad_mgmt_method_table *method;
+ 	int ret2, qpn;
+-	unsigned long flags;
+ 	u8 mgmt_class, vclass;
+ 
+ 	/* Validate parameters */
+@@ -376,7 +377,7 @@ struct ib_mad_agent *ib_register_mad_agent(struct ib_device *device,
+ 		goto error4;
+ 	}
+ 
+-	spin_lock_irqsave(&port_priv->reg_lock, flags);
++	spin_lock_irq(&port_priv->reg_lock);
+ 	mad_agent_priv->agent.hi_tid = atomic_inc_return(&ib_mad_client_id);
+ 
+ 	/*
+@@ -422,11 +423,11 @@ struct ib_mad_agent *ib_register_mad_agent(struct ib_device *device,
+ 
+ 	/* Add mad agent into port's agent list */
+ 	list_add_tail(&mad_agent_priv->agent_list, &port_priv->agent_list);
+-	spin_unlock_irqrestore(&port_priv->reg_lock, flags);
++	spin_unlock_irq(&port_priv->reg_lock);
+ 
+ 	return &mad_agent_priv->agent;
+ error5:
+-	spin_unlock_irqrestore(&port_priv->reg_lock, flags);
++	spin_unlock_irq(&port_priv->reg_lock);
+ 	ib_mad_agent_security_cleanup(&mad_agent_priv->agent);
+ error4:
+ 	kfree(reg_req);
+@@ -575,7 +576,6 @@ static inline void deref_snoop_agent(struct ib_mad_snoop_private *mad_snoop_priv
+ static void unregister_mad_agent(struct ib_mad_agent_private *mad_agent_priv)
+ {
+ 	struct ib_mad_port_private *port_priv;
+-	unsigned long flags;
+ 
+ 	/* Note that we could still be handling received MADs */
+ 
+@@ -587,10 +587,10 @@ static void unregister_mad_agent(struct ib_mad_agent_private *mad_agent_priv)
+ 	port_priv = mad_agent_priv->qp_info->port_priv;
+ 	cancel_delayed_work(&mad_agent_priv->timed_work);
+ 
+-	spin_lock_irqsave(&port_priv->reg_lock, flags);
++	spin_lock_irq(&port_priv->reg_lock);
+ 	remove_mad_reg_req(mad_agent_priv);
+ 	list_del(&mad_agent_priv->agent_list);
+-	spin_unlock_irqrestore(&port_priv->reg_lock, flags);
++	spin_unlock_irq(&port_priv->reg_lock);
+ 
+ 	flush_workqueue(port_priv->wq);
+ 	ib_cancel_rmpp_recvs(mad_agent_priv);
+@@ -625,6 +625,8 @@ static void unregister_mad_snoop(struct ib_mad_snoop_private *mad_snoop_priv)
+ 
+ /*
+  * ib_unregister_mad_agent - Unregisters a client from using MAD services
++ *
++ * Context: Process context.
+  */
+ void ib_unregister_mad_agent(struct ib_mad_agent *mad_agent)
+ {
+-- 
+2.17.1
