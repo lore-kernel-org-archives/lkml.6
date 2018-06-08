@@ -1,135 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id f4CUEyIGGltLAwAAmS7hNA
-	; Fri, 08 Jun 2018 04:35:36 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id BFdRK6g8GlvXOgAAmS7hNA
+	; Fri, 08 Jun 2018 08:22:00 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 01CD36089E; Fri,  8 Jun 2018 04:35:36 +0000 (UTC)
+	id 97F77607DC; Fri,  8 Jun 2018 08:22:00 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lDE8OaUc"
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="hUeWhO2N"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 6DD276063F;
-	Fri,  8 Jun 2018 04:35:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6DD276063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 3FBE060590;
+	Fri,  8 Jun 2018 08:21:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3FBE060590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751074AbeFHEfd (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 00:35:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46564 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750898AbeFHEfb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 00:35:31 -0400
-Received: from mail-wr0-f178.google.com (mail-wr0-f178.google.com [209.85.128.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6DA8208B0
-        for <linux-kernel@vger.kernel.org>; Fri,  8 Jun 2018 04:35:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528432531;
-        bh=Yy/MOg5lY8RT/R+Td8aOKYrzKBLYWUBWowtyJ0VhcdI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=lDE8OaUcf56dk7dqePO4PM4r6HKXlACpBiKUAhfq5kW3SXO9ZRHB/nBVdbhTTlXI7
-         tOWw1eQcSvdzTdpezKisVzKAYcIZCeZLjev3J0X+vG1atRYnuRgY0tTjRTywhbaKwV
-         1MBD7v9ouQto1kVU+QOsRJPIpX+PpZKEgiXGQc5c=
-Received: by mail-wr0-f178.google.com with SMTP id h10-v6so11910232wrq.8
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 21:35:30 -0700 (PDT)
-X-Gm-Message-State: APt69E389ibLitlHZP8a+crFbJwKdsrqWOOEiwh42QrdBymYWdr2NA9N
-        /TcetwCrPcTo/VVHMPcloqQFexkgWIBJ49QQvYL68A==
-X-Google-Smtp-Source: ADUXVKJa9F5xGIn7S0S7RDb7sXj5LeozWn3EDkT69Picjz0wrEScVVem9JWJimQFkDY818ATJ86CJhqC4tdryHl9rCQ=
-X-Received: by 2002:adf:b445:: with SMTP id v5-v6mr3513194wrd.67.1528432529016;
- Thu, 07 Jun 2018 21:35:29 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180607143807.3611-1-yu-cheng.yu@intel.com> <20180607143807.3611-7-yu-cheng.yu@intel.com>
- <CALCETrU6axo158CiSCRRkC4GC5hib9hypC98t7LLjA3gDaacsw@mail.gmail.com>
- <1528403417.5265.35.camel@2b52.sc.intel.com> <CALCETrXz3WWgZwUXJsDTWvmqKUArQFuMH1xJdSLVKFpTysNWxg@mail.gmail.com>
- <CAMe9rOr49V8rqRa_KVsw61PWd+crkQvPDgPKtvowazjmsfgWWQ@mail.gmail.com> <CAMe9rOphjpPd3HnKAdU-RmG0RGj6c2oAbnq+C2Jd1srsqTA7=w@mail.gmail.com>
-In-Reply-To: <CAMe9rOphjpPd3HnKAdU-RmG0RGj6c2oAbnq+C2Jd1srsqTA7=w@mail.gmail.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Thu, 7 Jun 2018 21:35:17 -0700
-X-Gmail-Original-Message-ID: <CALCETrWd+1iNmt36EFiLxMv8bQ-GodU=XygPRGb4h+xanhHHLQ@mail.gmail.com>
-Message-ID: <CALCETrWd+1iNmt36EFiLxMv8bQ-GodU=XygPRGb4h+xanhHHLQ@mail.gmail.com>
-Subject: Re: [PATCH 06/10] x86/cet: Add arch_prctl functions for shadow stack
-To: "H. J. Lu" <hjl.tools@gmail.com>
-Cc: Andrew Lutomirski <luto@kernel.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        mike.kravetz@oracle.com
-Content-Type: text/plain; charset="UTF-8"
+        id S1753014AbeFHIV5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 04:21:57 -0400
+Received: from smtprelay.synopsys.com ([198.182.37.59]:47742 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932207AbeFHITm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 04:19:42 -0400
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id AD0431E15F6;
+        Fri,  8 Jun 2018 10:19:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1528445975; bh=hwoxD3CoYJXBahMfwl5D+DVmJ2wjlKzA1jZvUCY0FPg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
+         References:From;
+        b=hUeWhO2Nx71azp9+7GIpx7P/GuOuqnT3KDTEOZV+yOa/J2SIucEe6Cdh1R6sgU+wX
+         KqNgPtA+enbGvuiMijv9LnrVuj8L8d2JOTex2fPPo4P6ZUY/ydepHS3RYOiJrom5sc
+         erqxgnsBV1Hu667BVr1WjI3IbXSI3G2OGxIXbOWAWn+LFIjygrGSFN9MaIN+aQZ5Xh
+         Qc0cHLlOEMhGXJj8YO9O894cMjChEy5o0DyBo7P4X4XDi3KedTVI1QRCd/cZVz4Yql
+         oQx+MIGXWF/U90As8D6FPAqgPLPkDcLNehfkYhrsGk0Zh+2jM7hBNJqyi374CwS2Gm
+         BbT/LRrFOygIA==
+Received: from pt02.synopsys.com (pt02.internal.synopsys.com [10.107.23.240])
+        by mailhost.synopsys.com (Postfix) with ESMTP id DBECF3446;
+        Fri,  8 Jun 2018 01:19:33 -0700 (PDT)
+Received: from UbuntuMate-64Bits.internal.synopsys.com (gustavo-e7480.internal.synopsys.com [10.107.25.102])
+        by pt02.synopsys.com (Postfix) with ESMTP id 138273E92A;
+        Fri,  8 Jun 2018 09:19:32 +0100 (WEST)
+From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
+        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
+        adouglas@cadence.com, jesper.nilsson@axis.com
+Cc: linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Subject: [PATCH v3 05/10] PCI: dwc: Add legacy interrupt callback handler
+Date: Fri,  8 Jun 2018 09:19:21 +0100
+Message-Id:
+ <8c34b249752c37e5729fd4ac100961d334d46ff7.1527862777.git.gustavo.pimentel@synopsys.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1527862777.git.gustavo.pimentel@synopsys.com>
+References: <cover.1527862777.git.gustavo.pimentel@synopsys.com>
+In-Reply-To: <cover.1527862777.git.gustavo.pimentel@synopsys.com>
+References: <cover.1527862777.git.gustavo.pimentel@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Message-ID: <20180608081921.7wg6W-twgpcQSz0KrnjQxL9ODyD88148tg528s2sj6M@z>
 
-On Thu, Jun 7, 2018 at 9:22 PM H.J. Lu <hjl.tools@gmail.com> wrote:
->
-> On Thu, Jun 7, 2018 at 3:02 PM, H.J. Lu <hjl.tools@gmail.com> wrote:
-> > On Thu, Jun 7, 2018 at 2:01 PM, Andy Lutomirski <luto@kernel.org> wrote:
-> >> On Thu, Jun 7, 2018 at 1:33 PM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
-> >>>
-> >>> On Thu, 2018-06-07 at 11:48 -0700, Andy Lutomirski wrote:
-> >>> > On Thu, Jun 7, 2018 at 7:41 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
-> >>> > >
-> >>> > > The following operations are provided.
-> >>> > >
-> >>> > > ARCH_CET_STATUS:
-> >>> > >         return the current CET status
-> >>> > >
-> >>> > > ARCH_CET_DISABLE:
-> >>> > >         disable CET features
-> >>> > >
-> >>> > > ARCH_CET_LOCK:
-> >>> > >         lock out CET features
-> >>> > >
-> >>> > > ARCH_CET_EXEC:
-> >>> > >         set CET features for exec()
-> >>> > >
-> >>> > > ARCH_CET_ALLOC_SHSTK:
-> >>> > >         allocate a new shadow stack
-> >>> > >
-> >>> > > ARCH_CET_PUSH_SHSTK:
-> >>> > >         put a return address on shadow stack
-> >>> > >
->
-> >> And why do we need ARCH_CET_EXEC?
-> >>
-> >> For background, I really really dislike adding new state that persists
-> >> across exec().  It's nice to get as close to a clean slate as possible
-> >> after exec() so that programs can run in a predictable environment.
-> >> exec() is also a security boundary, and anything a task can do to
-> >> affect itself after exec() needs to have its security implications
-> >> considered very carefully.  (As a trivial example, you should not be
-> >> able to use cetcmd ... sudo [malicious options here] to cause sudo to
-> >> run with CET off and then try to exploit it via the malicious options.
-> >>
-> >> If a shutoff is needed for testing, how about teaching ld.so to parse
-> >> LD_CET=no or similar and protect it the same way as LD_PRELOAD is
-> >> protected.  Or just do LD_PRELOAD=/lib/libdoesntsupportcet.so.
-> >>
-> >
-> > I will take a look.
->
-> We can use LD_CET to turn off CET.   Since most of legacy binaries
-> are compatible with shadow stack,  ARCH_CET_EXEC can be used
-> to turn on shadow stack on legacy binaries:
+Add a legacy interrupt callback handler. Currently DesignWare IP don't
+allow trigger legacy interrupts.
 
-Is there any reason you can't use LD_CET=force to do it for
-dynamically linked binaries?
+Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+---
+Change v1->v2:
+ - Nothing changed, just to follow the patch set version.
+Change v2->v3:
+ - Nothing changed, just to follow the patch set version.
 
-I find it quite hard to believe that forcibly CET-ifying a legacy
-statically linked binary is a good idea.
+ drivers/pci/dwc/pcie-designware-ep.c   | 10 ++++++++++
+ drivers/pci/dwc/pcie-designware-plat.c |  3 +--
+ drivers/pci/dwc/pcie-designware.h      |  6 ++++++
+ 3 files changed, 17 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
+index 3ba7059..6fa363c 100644
+--- a/drivers/pci/dwc/pcie-designware-ep.c
++++ b/drivers/pci/dwc/pcie-designware-ep.c
+@@ -370,6 +370,16 @@ static const struct pci_epc_ops epc_ops = {
+ 	.stop			= dw_pcie_ep_stop,
+ };
+ 
++int dw_pcie_ep_raise_legacy_irq(struct dw_pcie_ep *ep, u8 func_no)
++{
++	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
++	struct device *dev = pci->dev;
++
++	dev_err(dev, "EP cannot trigger legacy IRQs\n");
++
++	return -EINVAL;
++}
++
+ int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
+ 			     u8 interrupt_num)
+ {
+diff --git a/drivers/pci/dwc/pcie-designware-plat.c b/drivers/pci/dwc/pcie-designware-plat.c
+index 654dcb5..90a8c95 100644
+--- a/drivers/pci/dwc/pcie-designware-plat.c
++++ b/drivers/pci/dwc/pcie-designware-plat.c
+@@ -84,8 +84,7 @@ static int dw_plat_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
+ 
+ 	switch (type) {
+ 	case PCI_EPC_IRQ_LEGACY:
+-		dev_err(pci->dev, "EP cannot trigger legacy IRQs\n");
+-		return -EINVAL;
++		return dw_pcie_ep_raise_legacy_irq(ep, func_no);
+ 	case PCI_EPC_IRQ_MSI:
+ 		return dw_pcie_ep_raise_msi_irq(ep, func_no, interrupt_num);
+ 	case PCI_EPC_IRQ_MSIX:
+diff --git a/drivers/pci/dwc/pcie-designware.h b/drivers/pci/dwc/pcie-designware.h
+index a0ab12f..69e6e17 100644
+--- a/drivers/pci/dwc/pcie-designware.h
++++ b/drivers/pci/dwc/pcie-designware.h
+@@ -350,6 +350,7 @@ static inline int dw_pcie_allocate_domains(struct pcie_port *pp)
+ void dw_pcie_ep_linkup(struct dw_pcie_ep *ep);
+ int dw_pcie_ep_init(struct dw_pcie_ep *ep);
+ void dw_pcie_ep_exit(struct dw_pcie_ep *ep);
++int dw_pcie_ep_raise_legacy_irq(struct dw_pcie_ep *ep, u8 func_no);
+ int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
+ 			     u8 interrupt_num);
+ int dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, u8 func_no,
+@@ -369,6 +370,11 @@ static inline void dw_pcie_ep_exit(struct dw_pcie_ep *ep)
+ {
+ }
+ 
++static inline int dw_pcie_ep_raise_legacy_irq(struct dw_pcie_ep *ep, u8 func_no)
++{
++	return 0;
++}
++
+ static inline int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
+ 					   u8 interrupt_num)
+ {
+-- 
+2.7.4
