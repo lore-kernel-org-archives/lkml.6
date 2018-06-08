@@ -1,96 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id RkCLFH5BGVuobgAAmS7hNA
-	; Thu, 07 Jun 2018 14:30:27 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id th9VOf0nGlsPEQAAmS7hNA
+	; Fri, 08 Jun 2018 06:54:48 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 6CBDF607E7; Thu,  7 Jun 2018 14:30:27 +0000 (UTC)
+	id D3B20607DC; Fri,  8 Jun 2018 06:54:47 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="T1VorLAU"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D37676063F;
-	Thu,  7 Jun 2018 14:30:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D37676063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 49C666074D;
+	Fri,  8 Jun 2018 06:54:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 49C666074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933790AbeFGOaZ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:30:25 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39409 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933061AbeFGOJJ (ORCPT
+        id S1751450AbeFHGyp (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 02:54:45 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:41305 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751054AbeFHGyo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:09:09 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbA-0005hL-8k; Thu, 07 Jun 2018 15:09:08 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb9-00036E-3m; Thu, 07 Jun 2018 15:09:07 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Will Deacon" <will.deacon@arm.com>,
-        "Michael Weiser" <michael.weiser@gmx.de>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.88828682@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 269/410] arm64: Remove unimplemented syscall log message
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Fri, 8 Jun 2018 02:54:44 -0400
+Received: by mail-pl0-f67.google.com with SMTP id az12-v6so7715485plb.8
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 23:54:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=HS95F6AmXx6dReOUr/RBhtRv3IaYyjkllBloByxiaTY=;
+        b=T1VorLAU19R2I2IF77k1nR4ImZrzkQiMqjiklGBu0bdGw1OTh1Jv5VIT2lUPPs9ijp
+         neCo/akjl8EnblEGKC2xr5iGtS/ZrlRAjdhdBYdQ5Z/cdG5SbL48Bg/gUQ9PO+x8T2fR
+         2wDJcVHC+ibRXgaFMrtMBylM++D8VfdEDsaNs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=HS95F6AmXx6dReOUr/RBhtRv3IaYyjkllBloByxiaTY=;
+        b=q7FE/A2poBWKQ0IorEqXH9RzTd3IuIlzBtvNvknXya3RrcpRbWDsDdZFAMxvxk2CXA
+         dqgR6+Gvdx3onDZomkvoVGx2iUIlChecs7BXQoaFNtOLHwvhg+j3juM+gSz8QY9RMNxo
+         i3ePh7yBGU2b4oWeYQOmEZmefH0xRaX1fIq/j/CDvOzKeSV+6TKx7U2C1tIXxRGDTlIG
+         lzv0szk+61+73iqQPeQQTgK4b4ee11gDfbAHEJOUN/gZpa6Qi9AgdTbdFcXGCiuKWkTV
+         zzF1Un+7xC3pApbzol6uIN5ev8Y4ZS0JcPJKq+ANpOT3hSR7IcNTigjxQsPPkMHVj7Ej
+         g0Rg==
+X-Gm-Message-State: APt69E0tN0ZBpsdUdlUVlDhpTbFUwxmqAojlgtayJZvn0aYrjhjp7dyQ
+        NTnZKDgv6Hyd983inSDAuDU/QQ==
+X-Google-Smtp-Source: ADUXVKKXSnhZo2nGSyGcnIMHhGxI2XNzZEo8dgL6qBG0lU4RB66BSEznuwgYJcTeScTl9Vo9DvreEQ==
+X-Received: by 2002:a17:902:aa48:: with SMTP id c8-v6mr5301951plr.132.1528440883598;
+        Thu, 07 Jun 2018 23:54:43 -0700 (PDT)
+Received: from excession.tpe.corp.google.com ([2401:fa00:1:10:3987:9bf6:3352:7574])
+        by smtp.gmail.com with ESMTPSA id c27-v6sm63287516pfl.63.2018.06.07.23.54.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 07 Jun 2018 23:54:43 -0700 (PDT)
+From: Louis Collard <louiscollard@chromium.org>
+To: linux-integrity@vger.kernel.org
+Cc: Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, apronin@chromium.org
+Subject: [PATCH] tpm: Add module parameter for hwrng quality.
+Date: Fri,  8 Jun 2018 14:54:38 +0800
+Message-Id: <20180608065438.110109-1-louiscollard@chromium.org>
+X-Mailer: git-send-email 2.13.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+It is now possible for drivers to easily specify a hwrng quality, however
+most do not currently do this, and in cases where they do, it may be
+desirable to override the driver-specified value with a user-specified
+one. This patch adds a parameter to set or override the hwrng quality.
 
-------------------
-
-From: Michael Weiser <michael.weiser@gmx.de>
-
-commit 1962682d2b2fbe6cfa995a85c53c069fadda473e upstream.
-
-Stop printing a (ratelimited) kernel message for each instance of an
-unimplemented syscall being called. Userland making an unimplemented
-syscall is not necessarily misbehaviour and to be expected with a
-current userland running on an older kernel. Also, the current message
-looks scary to users but does not actually indicate a real problem nor
-help them narrow down the cause. Just rely on sys_ni_syscall() to return
--ENOSYS.
-
-Acked-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Michael Weiser <michael.weiser@gmx.de>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-[bwh: Backported to 3.16: Deleted code was slightly different]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Louis Collard <louiscollard@chromium.org>
 ---
- arch/arm64/kernel/traps.c | 8 --------
- 1 file changed, 8 deletions(-)
+ drivers/char/tpm/tpm-chip.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
---- a/arch/arm64/kernel/traps.c
-+++ b/arch/arm64/kernel/traps.c
-@@ -251,14 +251,6 @@ asmlinkage long do_ni_syscall(struct pt_
- 	}
- #endif
+diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+index 0a62c19937b6..4def49cfc634 100644
+--- a/drivers/char/tpm/tpm-chip.c
++++ b/drivers/char/tpm/tpm-chip.c
+@@ -33,6 +33,11 @@
+ DEFINE_IDR(dev_nums_idr);
+ static DEFINE_MUTEX(idr_lock);
  
--	if (show_unhandled_signals && printk_ratelimit()) {
--		pr_info("%s[%d]: syscall %d\n", current->comm,
--			task_pid_nr(current), (int)regs->syscallno);
--		dump_instr("", regs);
--		if (user_mode(regs))
--			__show_regs(regs);
--	}
--
- 	return sys_ni_syscall();
++static short override_rng_quality = -1;
++module_param(override_rng_quality, short, 0644);
++MODULE_PARM_DESC(override_rng_quality,
++		 "tpm-rng quality (overrides values provided by drivers)");
++
+ struct class *tpm_class;
+ struct class *tpmrm_class;
+ dev_t tpm_devt;
+@@ -409,6 +414,13 @@ static int tpm_add_hwrng(struct tpm_chip *chip)
+ 		 "tpm-rng-%d", chip->dev_num);
+ 	chip->hwrng.name = chip->hwrng_name;
+ 	chip->hwrng.read = tpm_hwrng_read;
++	if (override_rng_quality > -1) {
++		dev_info(&chip->dev,
++			 "Overriding hwrng quality for %s: driver default=%d, override=%d",
++			 chip->hwrng.name, chip->hwrng.quality,
++			 override_rng_quality);
++		chip->hwrng.quality = override_rng_quality;
++	}
+ 	return hwrng_register(&chip->hwrng);
  }
  
+-- 
+2.13.5
