@@ -1,142 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id BsQwE7KTGVtaTgAAmS7hNA
-	; Thu, 07 Jun 2018 20:22:11 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id m7UeHndiGlu3GQAAmS7hNA
+	; Fri, 08 Jun 2018 11:03:19 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id AFEAC60452; Thu,  7 Jun 2018 20:22:11 +0000 (UTC)
+	id 67504607DC; Fri,  8 Jun 2018 11:03:19 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id F2840608B8;
-	Thu,  7 Jun 2018 20:22:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F2840608B8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id EA6F5605A5;
+	Fri,  8 Jun 2018 11:03:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EA6F5605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753614AbeFGUWI (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 16:22:08 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:43105 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753028AbeFGUWH (ORCPT
+        id S1751486AbeFHLDR (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 07:03:17 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53240 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751056AbeFHLDP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 16:22:07 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w57KLwqn2320798
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 7 Jun 2018 13:21:58 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w57KLvcN2320795;
-        Thu, 7 Jun 2018 13:21:57 -0700
-Date: Thu, 7 Jun 2018 13:21:57 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From: tip-bot for Anna-Maria Gleixner <tipbot@zytor.com>
-Message-ID: <tip-e79e0f38083e607da5d7b493e7a0f78ba38d788e@git.kernel.org>
-Cc: mingo@kernel.org, ebiederm@xmission.com, bigeasy@linutronix.de,
-        paulmck@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, anna-maria@linutronix.de, hpa@zytor.com
-Reply-To: anna-maria@linutronix.de, hpa@zytor.com, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, paulmck@linux.vnet.ibm.com,
-          ebiederm@xmission.com, bigeasy@linutronix.de, mingo@kernel.org
-In-Reply-To: <20180504144014.5378-1-bigeasy@linutronix.de>
-References: <20180504144014.5378-1-bigeasy@linutronix.de>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:core/urgent] signal: Remove no longer required irqsave/restore
-Git-Commit-ID: e79e0f38083e607da5d7b493e7a0f78ba38d788e
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Fri, 8 Jun 2018 07:03:15 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w58AxWKl127426
+        for <linux-kernel@vger.kernel.org>; Fri, 8 Jun 2018 07:03:15 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jfqxhhjd5-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 07:03:15 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <s1seetee@linux.vnet.ibm.com>;
+        Fri, 8 Jun 2018 12:03:12 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 8 Jun 2018 12:03:09 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w58B38Kv35782746
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 8 Jun 2018 11:03:08 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B5AE5AE051;
+        Fri,  8 Jun 2018 11:52:04 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A1F8FAE059;
+        Fri,  8 Jun 2018 11:52:02 +0100 (BST)
+Received: from oc1548405160.ibm.com (unknown [9.79.185.147])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Fri,  8 Jun 2018 11:52:02 +0100 (BST)
+From: Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>
+To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org
+Cc: s1seetee@linux.vnet.ibm.com
+Subject: [PATCH] perf script: Show hw-cache events
+Date: Fri,  8 Jun 2018 16:32:28 +0530
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+x-cbid: 18060811-0012-0000-0000-0000027D3956
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18060811-0013-0000-0000-000020AE3C40
+Message-Id: <1528455748-20087-1-git-send-email-s1seetee@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-08_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806080127
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e79e0f38083e607da5d7b493e7a0f78ba38d788e
-Gitweb:     https://git.kernel.org/tip/e79e0f38083e607da5d7b493e7a0f78ba38d788e
-Author:     Anna-Maria Gleixner <anna-maria@linutronix.de>
-AuthorDate: Fri, 4 May 2018 16:40:14 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 7 Jun 2018 22:18:55 +0200
+perf script fails to report hardware cache events (PERF_TYPE_HW_CACHE)
+where as perf report shows the samples. Fix it. Ex,
 
-signal: Remove no longer required irqsave/restore
+ # perf record -e L1-dcache-loads ./a.out
+  [ perf record: Woken up 1 times to write data ]
+  [ perf record: Captured and wrote 0.008 MB perf.data (11 samples)]
 
-Commit a841796f11c9 ("signal: align __lock_task_sighand() irq disabling and
-RCU") introduced a rcu read side critical section with interrupts
-disabled. The changelog suggested that a better long-term fix would be "to
-make rt_mutex_unlock() disable irqs when acquiring the rt_mutex structure's
-->wait_lock".
+Before patch:
+ # perf script | wc -l
+ 0
+After patch:
+ # perf script | wc -l
+ 11
 
-This long-term fix has been made in commit 4abf91047cf ("rtmutex: Make >
-wait_lock irq safe") for different reason.
-
-Therefore revert commit a841796f11c9 ("signal: align >
-__lock_task_sighand() irq disabling and RCU") as the interrupt disable
-dance is not longer required.
-
-Testing was done over an extensive period with RCU torture, especially with
-TREE03 as requested by Paul.
-
-Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
-Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
-Link: https://lkml.kernel.org/r/20180504144014.5378-1-bigeasy@linutronix.de
+Signed-off-by: Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>
 ---
- kernel/signal.c | 24 +++++++-----------------
- 1 file changed, 7 insertions(+), 17 deletions(-)
+ tools/perf/builtin-script.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 0f865d67415d..8d8a940422a8 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -1244,19 +1244,12 @@ struct sighand_struct *__lock_task_sighand(struct task_struct *tsk,
- {
- 	struct sighand_struct *sighand;
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index cefc881..9e94bb7 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -180,6 +180,18 @@ enum {
+ 				  PERF_OUTPUT_EVNAME | PERF_OUTPUT_TRACE
+ 	},
  
-+	rcu_read_lock();
- 	for (;;) {
--		/*
--		 * Disable interrupts early to avoid deadlocks.
--		 * See rcu_read_unlock() comment header for details.
--		 */
--		local_irq_save(*flags);
--		rcu_read_lock();
- 		sighand = rcu_dereference(tsk->sighand);
--		if (unlikely(sighand == NULL)) {
--			rcu_read_unlock();
--			local_irq_restore(*flags);
-+		if (unlikely(sighand == NULL))
- 			break;
--		}
++	[PERF_TYPE_HW_CACHE] = {
++		.user_set = false,
 +
- 		/*
- 		 * This sighand can be already freed and even reused, but
- 		 * we rely on SLAB_TYPESAFE_BY_RCU and sighand_ctor() which
-@@ -1268,15 +1261,12 @@ struct sighand_struct *__lock_task_sighand(struct task_struct *tsk,
- 		 * __exit_signal(). In the latter case the next iteration
- 		 * must see ->sighand == NULL.
- 		 */
--		spin_lock(&sighand->siglock);
--		if (likely(sighand == tsk->sighand)) {
--			rcu_read_unlock();
-+		spin_lock_irqsave(&sighand->siglock, *flags);
-+		if (likely(sighand == tsk->sighand))
- 			break;
--		}
--		spin_unlock(&sighand->siglock);
--		rcu_read_unlock();
--		local_irq_restore(*flags);
-+		spin_unlock_irqrestore(&sighand->siglock, *flags);
- 	}
-+	rcu_read_unlock();
++		.fields = PERF_OUTPUT_COMM | PERF_OUTPUT_TID |
++			      PERF_OUTPUT_CPU | PERF_OUTPUT_TIME |
++			      PERF_OUTPUT_EVNAME | PERF_OUTPUT_IP |
++			      PERF_OUTPUT_SYM | PERF_OUTPUT_SYMOFFSET |
++			      PERF_OUTPUT_DSO | PERF_OUTPUT_PERIOD,
++
++		.invalid_fields = PERF_OUTPUT_TRACE | PERF_OUTPUT_BPF_OUTPUT,
++	},
++
+ 	[PERF_TYPE_RAW] = {
+ 		.user_set = false,
  
- 	return sighand;
- }
+-- 
+1.8.3.1
