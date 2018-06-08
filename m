@@ -1,118 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id /3Q5CFBYGVu2fwAAmS7hNA
-	; Thu, 07 Jun 2018 16:07:53 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id WT1BE8VoGls7TwAAmS7hNA
+	; Fri, 08 Jun 2018 11:31:34 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 3B3C06089E; Thu,  7 Jun 2018 16:07:53 +0000 (UTC)
+	id 30B47607E4; Fri,  8 Jun 2018 11:31:34 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 9E09F6074D;
-	Thu,  7 Jun 2018 16:07:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9E09F6074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 86380606FA;
+	Fri,  8 Jun 2018 11:31:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 86380606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935894AbeFGQFK (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 12:05:10 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39250 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933013AbeFGOJE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:09:04 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb4-0005Zp-AA; Thu, 07 Jun 2018 15:09:02 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb0-0002oE-Sd; Thu, 07 Jun 2018 15:08:58 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
-        "Mauro Carvalho Chehab" <mchehab@s-opensource.com>,
-        "Arnd Bergmann" <arnd@arndb.de>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.535439802@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 087/410] media: exynos4-is: properly initialize frame
- format
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        id S932148AbeFHLbc (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 07:31:32 -0400
+Received: from mga17.intel.com ([192.55.52.151]:32416 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752780AbeFHL3v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 07:29:51 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jun 2018 04:29:51 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,490,1520924400";
+   d="scan'208";a="62388990"
+Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
+  by fmsmga001.fm.intel.com with ESMTP; 08 Jun 2018 04:29:48 -0700
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Guenter Roeck <linux@roeck-us.net>,
+        Hans de Goede <hdegoede@redhat.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jun Li <jun.li@nxp.com>,
+        Mats Karrman <mats.dev.list@gmail.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH v4 3/8] usb: typec: mux: Get the mux identifier from function parameter
+Date: Fri,  8 Jun 2018 14:29:36 +0300
+Message-Id: <20180608112941.26332-4-heikki.krogerus@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180608112941.26332-1-heikki.krogerus@linux.intel.com>
+References: <20180608112941.26332-1-heikki.krogerus@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+In order for the muxes to be usable with alternate modes,
+the alternate mode devices will need also to be able to get
+a handle to the muxes on top of the port devices. To make
+that possible, the muxes need to be possible to request with
+an identifier.
 
-------------------
+This will change the API so that the mux identifier is given
+as a function parameter to typec_mux_get(), and the hard-coded
+"typec-mux" is replaced with that value.
 
-From: Arnd Bergmann <arnd@arndb.de>
-
-commit 97913bcbe6da3957af27d9fdd76b3d97b99e6d6a upstream.
-
-We copy the subdev frame format from a partially initialized
-structure, which is not entirely well-defined. Older compilers
-like gcc-4.4 can copy uninitialized stack data here and warn
-about it:
-
-drivers/media/platform/exynos4-is/fimc-isp.c: In function 'fimc_isp_subdev_open':
-drivers/media/platform/exynos4-is/fimc-isp.c:379: error: 'fmt.reserved[10u]' may be used uninitialized in this function
-drivers/media/platform/exynos4-is/fimc-isp.c:379: error: 'fmt.reserved[9u]' may be used uninitialized in this function
-...
-drivers/media/platform/exynos4-is/fimc-isp.c:379: error: 'fmt.reserved[0u]' may be used uninitialized in this function
-drivers/media/platform/exynos4-is/fimc-isp.c:379: error: 'fmt.xfer_func' may be used uninitialized in this function
-
-On newer compilers, only the initialized fields get copied, but
-we should not rely on that, so this changes the code to zero-out
-the remaining fields first.
-
-Fixes: 9a761e436843 ("[media] exynos4-is: Add Exynos4x12 FIMC-IS driver")
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-[bwh: Backported to 3.16: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 ---
- drivers/media/platform/exynos4-is/fimc-isp.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/usb/typec/class.c     | 2 +-
+ drivers/usb/typec/mux.c       | 6 +++---
+ include/linux/usb/typec_mux.h | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
---- a/drivers/media/platform/exynos4-is/fimc-isp.c
-+++ b/drivers/media/platform/exynos4-is/fimc-isp.c
-@@ -366,16 +366,16 @@ static int fimc_isp_subdev_s_power(struc
- static int fimc_isp_subdev_open(struct v4l2_subdev *sd,
- 				struct v4l2_subdev_fh *fh)
+diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
+index 02db9bcbac0c..49468f5329d6 100644
+--- a/drivers/usb/typec/class.c
++++ b/drivers/usb/typec/class.c
+@@ -1356,7 +1356,7 @@ struct typec_port *typec_register_port(struct device *parent,
+ 		goto err_switch;
+ 	}
+ 
+-	port->mux = typec_mux_get(cap->fwnode ? &port->dev : parent);
++	port->mux = typec_mux_get(parent, "typec-mux");
+ 	if (IS_ERR(port->mux)) {
+ 		ret = PTR_ERR(port->mux);
+ 		goto err_mux;
+diff --git a/drivers/usb/typec/mux.c b/drivers/usb/typec/mux.c
+index 9d8330e9c431..ddaac63ecf12 100644
+--- a/drivers/usb/typec/mux.c
++++ b/drivers/usb/typec/mux.c
+@@ -123,19 +123,19 @@ static void *typec_mux_match(struct device_connection *con, int ep, void *data)
+ /**
+  * typec_mux_get - Find USB Type-C Multiplexer
+  * @dev: The caller device
++ * @name: Mux identifier
+  *
+  * Finds a mux linked to the caller. This function is primarily meant for the
+  * Type-C drivers. Returns a reference to the mux on success, NULL if no
+  * matching connection was found, or ERR_PTR(-EPROBE_DEFER) when a connection
+  * was found but the mux has not been enumerated yet.
+  */
+-struct typec_mux *typec_mux_get(struct device *dev)
++struct typec_mux *typec_mux_get(struct device *dev, const char *name)
  {
--	struct v4l2_mbus_framefmt fmt;
- 	struct v4l2_mbus_framefmt *format;
-+	struct v4l2_mbus_framefmt fmt = {
-+		.colorspace = V4L2_COLORSPACE_SRGB,
-+		.code = fimc_isp_formats[0].mbus_code,
-+		.width = DEFAULT_PREVIEW_STILL_WIDTH + FIMC_ISP_CAC_MARGIN_WIDTH,
-+		.height = DEFAULT_PREVIEW_STILL_HEIGHT + FIMC_ISP_CAC_MARGIN_HEIGHT,
-+		.field = V4L2_FIELD_NONE,
-+	};
+ 	struct typec_mux *mux;
  
- 	format = v4l2_subdev_get_try_format(fh, FIMC_ISP_SD_PAD_SINK);
--
--	fmt.colorspace = V4L2_COLORSPACE_SRGB;
--	fmt.code = fimc_isp_formats[0].mbus_code;
--	fmt.width = DEFAULT_PREVIEW_STILL_WIDTH + FIMC_ISP_CAC_MARGIN_WIDTH;
--	fmt.height = DEFAULT_PREVIEW_STILL_HEIGHT + FIMC_ISP_CAC_MARGIN_HEIGHT;
--	fmt.field = V4L2_FIELD_NONE;
- 	*format = fmt;
+ 	mutex_lock(&mux_lock);
+-	mux = device_connection_find_match(dev, "typec-mux", NULL,
+-					   typec_mux_match);
++	mux = device_connection_find_match(dev, name, NULL, typec_mux_match);
+ 	if (!IS_ERR_OR_NULL(mux))
+ 		get_device(mux->dev);
+ 	mutex_unlock(&mux_lock);
+diff --git a/include/linux/usb/typec_mux.h b/include/linux/usb/typec_mux.h
+index 12c1b057834b..79293f630ee1 100644
+--- a/include/linux/usb/typec_mux.h
++++ b/include/linux/usb/typec_mux.h
+@@ -47,7 +47,7 @@ void typec_switch_put(struct typec_switch *sw);
+ int typec_switch_register(struct typec_switch *sw);
+ void typec_switch_unregister(struct typec_switch *sw);
  
- 	format = v4l2_subdev_get_try_format(fh, FIMC_ISP_SD_PAD_SRC_FIFO);
+-struct typec_mux *typec_mux_get(struct device *dev);
++struct typec_mux *typec_mux_get(struct device *dev, const char *name);
+ void typec_mux_put(struct typec_mux *mux);
+ int typec_mux_register(struct typec_mux *mux);
+ void typec_mux_unregister(struct typec_mux *mux);
+-- 
+2.17.1
