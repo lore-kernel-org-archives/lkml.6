@@ -1,166 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id n2GdEGlEGVspFQAAmS7hNA
-	; Thu, 07 Jun 2018 14:42:57 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id npN+LDxDGlsieQAAmS7hNA
+	; Fri, 08 Jun 2018 08:50:17 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id E86CD608C8; Thu,  7 Jun 2018 14:42:56 +0000 (UTC)
+	id F16D1607E4; Fri,  8 Jun 2018 08:50:16 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oaRFEAvg"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 26DAD602FC;
-	Thu,  7 Jun 2018 14:42:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 26DAD602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 39C81605A5;
+	Fri,  8 Jun 2018 08:50:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 39C81605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934809AbeFGOmy (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:42:54 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40648 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934319AbeFGOms (ORCPT
+        id S1752626AbeFHIuN (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 04:50:13 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:39074 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751117AbeFHIuI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:42:48 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbU-0005Zi-B7; Thu, 07 Jun 2018 15:09:28 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbB-0003B3-6W; Thu, 07 Jun 2018 15:09:09 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Fri, 8 Jun 2018 04:50:08 -0400
+Received: by mail-wr0-f195.google.com with SMTP id w7-v6so12527458wrn.6;
+        Fri, 08 Jun 2018 01:50:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=N77nWT+03NBslMoXwIc/REx7a3j3lTlfEroltzAI+M0=;
+        b=oaRFEAvgh/ZJ/Bn+F4ryVhZLTIt6NDZa3dc7RLqRtEbduTMYRo8jisdLkP72CJcWJt
+         3exv/9ImKsDawVJHy4vX+zD9pEqWs0xJ+0q4blmmsu9D2KQuXqf+mMgPCMq9Je2FQpZA
+         MX4K0PS1NWU15jyKbzG7CqMDUGT8SDZxkQA/63cEybljNS4cwxW6gfaU28elGqt5g2ZM
+         Imvts9BBG6IQRd5bWjg+G9iO6OH/4Jm6+DHHmwdoWwiwy2araN05md42EZhbw7pJS4nl
+         8EqIa37/mO8JWg6HPzjf2U7sYeFqSJ+jldVudYUhYCYgzSA2G3TohItkdRNU+J9eev6Y
+         kCPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=N77nWT+03NBslMoXwIc/REx7a3j3lTlfEroltzAI+M0=;
+        b=IyEMuLhyYwUwrMXff+meVZBjKoeqKHbl+5zrMtcwTkDQwiu2yDZ85XBgRzZDAmr4XQ
+         K4T2AzDM0MWeoFWmjqTc91gyc11tcm0ZSUXDwEQp7vahKTO2obgIea1asgVHnlrw2JyZ
+         GVSCcUBHBfZepud+yu+GO78gMtl6To7NMpTAqngrT676lepZec4MyS68Lgrk/jChSKFv
+         NAAdHC7QNAmnG7r7Y+ct9m5dDDXKy+ClSChilQP3aR6lra1yI4crtKsV6yrCKnhs8AaA
+         zdcRV5+rd7c2S39R+JF7rQl5snlaJbOaiiLr2pirx4UQoCvWZfkan5imV/5/MRVNNzgt
+         jrBw==
+X-Gm-Message-State: APt69E3KYr0jGVniXzTp9z59uitIAOuvSO2QVGVNFr/whLQIFMyxwYn1
+        5o2L6znNpgCEv64JUQwv9OpViO3K
+X-Google-Smtp-Source: ADUXVKKg+0fUiKn493mdDYFzlJL4AklbyC/SY3xilWOOhcXdWE8Q2quqy/A//TICWsioUQ5OAH1IxA==
+X-Received: by 2002:adf:e447:: with SMTP id t7-v6mr4439104wrm.145.1528447807243;
+        Fri, 08 Jun 2018 01:50:07 -0700 (PDT)
+Received: from [192.168.1.4] (ip-86-49-107-50.net.upcbroadband.cz. [86.49.107.50])
+        by smtp.gmail.com with ESMTPSA id m65-v6sm1462561wmd.1.2018.06.08.01.50.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Jun 2018 01:50:06 -0700 (PDT)
+Subject: Re: [PATCH v5 01/14] mfd: da9063: Replace regmap_add_irq_chip with
+ devm counterpart
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-kernel@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+References: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
+ <019675f0-13ff-d381-87d1-891316cbfd83@gmail.com>
+ <20180607124159.GD22841@dell>
+ <d62db199-0255-fcde-1de0-5d335d596dc1@gmail.com> <20180608063716.GA5278@dell>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <5c6dd35d-3467-664b-15fd-c7d518518d60@gmail.com>
+Date: Fri, 8 Jun 2018 10:50:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Tejun Heo" <tj@kernel.org>,
-        "Shaohua Li" <shli@fb.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.620274648@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 317/410] ata: Add a new flag to destinguish sas
- controller
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+In-Reply-To: <20180608063716.GA5278@dell>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+On 06/08/2018 08:37 AM, Lee Jones wrote:
+> On Thu, 07 Jun 2018, Marek Vasut wrote:
+> 
+>> On 06/07/2018 02:41 PM, Lee Jones wrote:
+>>> On Thu, 07 Jun 2018, Marek Vasut wrote:
+>>>
+>>>> On 06/06/2018 11:59 AM, Marek Vasut wrote:
+>>>>> Use devm_regmap_add_irq_chip() instead of plain regmap_add_irq_chip(),
+>>>>> which removes the need for da9063_irq_exit() altogether and also
+>>>>> fixes a bug in da9063_device_init() where the da9063_irq_exit() was
+>>>>> not called in a failpath.
+>>>>>
+>>>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>>>>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>>>>> Cc: Lee Jones <lee.jones@linaro.org>
+>>>>> Cc: Mark Brown <broonie@kernel.org>
+>>>>> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+>>>>> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>>>>> Cc: linux-renesas-soc@vger.kernel.org
+>>>>
+>>>> So it's just this one patch that's missing AB/RB and the series should
+>>>> be good?
+>>>
+>>> Looks fine. Although we'll let it sit for a while in case anyone else
+>>> has any thoughts.
+>>
+>> Fine by me.
+>>
+>>> The merge window is currently open, so there is no rush to apply.
+>>
+>> This is still 4.18 material ? Hum, OK.
+> 
+> You mean this could be added to v4.18?  If so, not a chance.  I
+> normally cut off accepting trivial patches at around -rc6(ish).  Large
+> sets like this require a longer soak in -next for all of the build
+> bots and testers to have their wicked way with them and for potential
+> merge conflicts to show.
 
-------------------
+Fine
 
-From: Shaohua Li <shli@fb.com>
-
-commit 5067c0469c643512f24786990e315f9c15cc7d24 upstream.
-
-SAS controller has its own tag allocation, which doesn't directly match to ATA
-tag, so SAS and SATA have different code path for ata tags. Originally we use
-port->scsi_host (98bd4be1) to destinguish SAS controller, but libsas set
-->scsi_host too, so we can't use it for the destinguish, we add a new flag for
-this purpose.
-
-Without this patch, the following oops can happen because scsi-mq uses
-a host-wide tag map shared among all devices with some integer tag
-values >= ATA_MAX_QUEUE.  These unexpectedly high tag values cause
-__ata_qc_from_tag() to return NULL, which is then dereferenced in
-ata_qc_new_init().
-
-  BUG: unable to handle kernel NULL pointer dereference at 0000000000000058
-  IP: [<ffffffff804fd46e>] ata_qc_new_init+0x3e/0x120
-  PGD 32adf0067 PUD 32adf1067 PMD 0
-  Oops: 0002 [#1] SMP DEBUG_PAGEALLOC
-  Modules linked in: iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi igb
-  i2c_algo_bit ptp pps_core pm80xx libsas scsi_transport_sas sg coretemp
-  eeprom w83795 i2c_i801
-  CPU: 4 PID: 1450 Comm: cydiskbench Not tainted 4.0.0-rc3 #1
-  Hardware name: Supermicro X8DTH-i/6/iF/6F/X8DTH, BIOS 2.1b       05/04/12
-  task: ffff8800ba86d500 ti: ffff88032a064000 task.ti: ffff88032a064000
-  RIP: 0010:[<ffffffff804fd46e>]  [<ffffffff804fd46e>] ata_qc_new_init+0x3e/0x120
-  RSP: 0018:ffff88032a067858  EFLAGS: 00010046
-  RAX: 0000000000000000 RBX: ffff8800ba0d2230 RCX: 000000000000002a
-  RDX: ffffffff80505ae0 RSI: 0000000000000020 RDI: ffff8800ba0d2230
-  RBP: ffff88032a067868 R08: 0000000000000201 R09: 0000000000000001
-  R10: 0000000000000000 R11: 0000000000000000 R12: ffff8800ba0d0000
-  R13: ffff8800ba0d2230 R14: ffffffff80505ae0 R15: ffff8800ba0d0000
-  FS:  0000000041223950(0063) GS:ffff88033e480000(0000) knlGS:0000000000000000
-  CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003b
-  CR2: 0000000000000058 CR3: 000000032a0a3000 CR4: 00000000000006e0
-  Stack:
-   ffff880329eee758 ffff880329eee758 ffff88032a0678a8 ffffffff80502dad
-   ffff8800ba167978 ffff880329eee758 ffff88032bf9c520 ffff8800ba167978
-   ffff88032bf9c520 ffff88032bf9a290 ffff88032a0678b8 ffffffff80506909
-  Call Trace:
-   [<ffffffff80502dad>] ata_scsi_translate+0x3d/0x1b0
-   [<ffffffff80506909>] ata_sas_queuecmd+0x149/0x2a0
-   [<ffffffffa0046650>] sas_queuecommand+0xa0/0x1f0 [libsas]
-   [<ffffffff804ea544>] scsi_dispatch_cmd+0xd4/0x1a0
-   [<ffffffff804eb50f>] scsi_queue_rq+0x66f/0x7f0
-   [<ffffffff803e5098>] __blk_mq_run_hw_queue+0x208/0x3f0
-   [<ffffffff803e54b8>] blk_mq_run_hw_queue+0x88/0xc0
-   [<ffffffff803e5c74>] blk_mq_insert_request+0xc4/0x130
-   [<ffffffff803e0b63>] blk_execute_rq_nowait+0x73/0x160
-   [<ffffffffa0023fca>] sg_common_write+0x3da/0x720 [sg]
-   [<ffffffffa0025100>] sg_new_write+0x250/0x360 [sg]
-   [<ffffffffa0025feb>] sg_write+0x13b/0x450 [sg]
-   [<ffffffff8032ec91>] vfs_write+0xd1/0x1b0
-   [<ffffffff8032ee54>] SyS_write+0x54/0xc0
-   [<ffffffff80689932>] system_call_fastpath+0x12/0x17
-
-tj: updated description.
-
-Fixes: 12cb5ce101ab ("libata: use blk taging")
-Reported-and-tested-by: Tony Battersby <tonyb@cybernetics.com>
-Signed-off-by: Shaohua Li <shli@fb.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
-[bwh: Backported to 3.16: Drop changes to ata_qc_{new_init,free}(); we don't
- actually have the tag allocation bug]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- drivers/ata/libata-core.c     | 4 ++--
- drivers/scsi/ipr.c            | 3 ++-
- drivers/scsi/libsas/sas_ata.c | 3 ++-
- include/linux/libata.h        | 1 +
- 4 files changed, 7 insertions(+), 4 deletions(-)
-
---- a/drivers/scsi/ipr.c
-+++ b/drivers/scsi/ipr.c
-@@ -6862,7 +6862,8 @@ static struct ata_port_operations ipr_sa
- };
- 
- static struct ata_port_info sata_port_info = {
--	.flags		= ATA_FLAG_SATA | ATA_FLAG_PIO_DMA,
-+	.flags		= ATA_FLAG_SATA | ATA_FLAG_PIO_DMA |
-+			  ATA_FLAG_SAS_HOST,
- 	.pio_mask	= ATA_PIO4_ONLY,
- 	.mwdma_mask	= ATA_MWDMA2,
- 	.udma_mask	= ATA_UDMA6,
---- a/drivers/scsi/libsas/sas_ata.c
-+++ b/drivers/scsi/libsas/sas_ata.c
-@@ -566,7 +566,8 @@ static struct ata_port_operations sas_sa
- };
- 
- static struct ata_port_info sata_port_info = {
--	.flags = ATA_FLAG_SATA | ATA_FLAG_PIO_DMA | ATA_FLAG_NCQ,
-+	.flags = ATA_FLAG_SATA | ATA_FLAG_PIO_DMA | ATA_FLAG_NCQ |
-+		 ATA_FLAG_SAS_HOST,
- 	.pio_mask = ATA_PIO4,
- 	.mwdma_mask = ATA_MWDMA2,
- 	.udma_mask = ATA_UDMA6,
---- a/include/linux/libata.h
-+++ b/include/linux/libata.h
-@@ -232,6 +232,7 @@ enum {
- 					      * led */
- 	ATA_FLAG_NO_DIPM	= (1 << 23), /* host not happy with DIPM */
- 	ATA_FLAG_LOWTAG		= (1 << 24), /* host wants lowest available tag */
-+	ATA_FLAG_SAS_HOST	= (1 << 25), /* SAS host */
- 
- 	/* bits 24:31 of ap->flags are reserved for LLD specific flags */
- 
+-- 
+Best regards,
+Marek Vasut
