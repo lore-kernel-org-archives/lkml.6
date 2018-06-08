@@ -1,155 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Hn1EBEvFG1uHHwAAmS7hNA
-	; Sat, 09 Jun 2018 12:17:15 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id OWMxLPI7GluNKwAAmS7hNA
+	; Fri, 08 Jun 2018 08:19:24 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id EA9FF6089E; Sat,  9 Jun 2018 12:17:14 +0000 (UTC)
+	id 49B17608BA; Fri,  8 Jun 2018 08:19:24 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="wyUvB40V"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eMu3uV+F"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 3F0A6606FA;
-	Sat,  9 Jun 2018 12:17:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3F0A6606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id B581760590;
+	Fri,  8 Jun 2018 08:19:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B581760590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753261AbeFIMRM (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 08:17:12 -0400
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:60935 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752979AbeFIMRK (ORCPT
+        id S1752948AbeFHITV (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 04:19:21 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:44239 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752897AbeFHITP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 08:17:10 -0400
-Received: from mail-vk0-f41.google.com (mail-vk0-f41.google.com [209.85.213.41]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id w59CGoXC006071
-        for <linux-kernel@vger.kernel.org>; Sat, 9 Jun 2018 21:16:51 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w59CGoXC006071
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1528546611;
-        bh=X6AOlhC2rJJQXSuIWpUbByVrVAi64vekmYeNLzRIP2U=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=wyUvB40VdWV+gs1inwk+aei3StnNCUNlpMocketk8lepvxy285/JTX3QlB4flNRyK
-         +1QC2VkHmNeUp2i7i2sKXRzvwjTNzeJBIbW6cHA6jknRPtn9M4T9RhGpkD3SNywVgt
-         geiUUio1y3oaO3clax/IRoRy/E4nL+KPvlgWRN2Pvw40EbU6M7y7u9XtNWUhYpQ/yL
-         MQ6PEj9t6wVhYJkouoPgv5aDVRhqtrdvgfQr29YlnVXbsSee29ECTT40NV/sYO7eNv
-         w6UUPsOs886WaUi7b+RrBa/NM8gyltnNHfjwiHQlKEP1/thOikhOVyXpPIoAGyl0f0
-         eb1tvbMik5INg==
-X-Nifty-SrcIP: [209.85.213.41]
-Received: by mail-vk0-f41.google.com with SMTP id q135-v6so9798554vkh.1
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Jun 2018 05:16:51 -0700 (PDT)
-X-Gm-Message-State: APt69E0OLbctbrMR+YPfi53OwPVkY3ebfuSovrQGCT1xu0cNUFMTF7mF
-        z/NzA1giVofRG9QbppfqFu6Uhilluse4Spd+j9E=
-X-Google-Smtp-Source: ADUXVKLOWUAb5Qn0zZmxg2c5NeMMiG+0JZooIfb6JBIZSJZYMnIHOC177ZgGs1R2Rj1c3KFCkZtjw76kwXldCB0a/KQ=
-X-Received: by 2002:a1f:cc85:: with SMTP id c127-v6mr6213662vkg.166.1528546610207;
- Sat, 09 Jun 2018 05:16:50 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ab0:20ab:0:0:0:0:0 with HTTP; Sat, 9 Jun 2018 05:16:09 -0700 (PDT)
-In-Reply-To: <67595efc-410d-7517-d788-eb3c4d2d7129@mageia.org>
-References: <CA+55aFxhx_tKGm02UySguvbyfB_7oTF31QfgOHCK0YkBvmfV0g@mail.gmail.com>
- <8f46ed9a-85c0-8df4-2d1e-d268cbc9d0e9@mageia.org> <CA+55aFwJAbr8_Xs0ZX9K2iAr8bf=ZgNnKTLopQe6jPCgEBemrA@mail.gmail.com>
- <7a5458da-4222-7480-00ed-a51bed2c1e39@mageia.org> <CA+55aFyD0OMV1eoc9wh_hLcnRhHq2FwJf4EZcORmHPNxTRSX9Q@mail.gmail.com>
- <daf0fbba-6357-1748-d583-bcb5edf067ec@mageia.org> <CA+55aFwiyuA4fKztofM-fdDSc+ZH9aAR1xksL8ZWRDE-pdXruw@mail.gmail.com>
- <CAK7LNAS=PvYVrLczeJT0utq3UHNL5YtSE_w=RjJYJ3SD9ALrYA@mail.gmail.com>
- <CA+55aFzNCQZHEz9P2a4ZSyWB0RxZcTkh5TVfwTmup-Y-6b8qjw@mail.gmail.com>
- <CA+55aFwAwoDdZRP6n9xXDPkeCUm35mmGH3fXv=r1HOZq1bpiGw@mail.gmail.com>
- <CAK7LNAS4Xb_CQ31t_cqt3q0zRFZ-O2n3+qkxXfxZB_jmqvFmWQ@mail.gmail.com>
- <f1f35cdf-bd03-54bb-7196-c13131f7d0fc@mageia.org> <CA+55aFxe+LooLzpvBLwW9Ehwomp45zdJ3a-P71ipHJzdMmtDkQ@mail.gmail.com>
- <67595efc-410d-7517-d788-eb3c4d2d7129@mageia.org>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Sat, 9 Jun 2018 21:16:09 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQiCz7bdDCyOc7VtA5=GdzT6nFp4kX7D21LEfFeJ8mURg@mail.gmail.com>
-Message-ID: <CAK7LNAQiCz7bdDCyOc7VtA5=GdzT6nFp4kX7D21LEfFeJ8mURg@mail.gmail.com>
-Subject: Re: building in 32bit chroot on x86_64 host broken
-To: Thomas Backlund <tmb@mageia.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 8 Jun 2018 04:19:15 -0400
+Received: by mail-pl0-f67.google.com with SMTP id z9-v6so7854833plk.11
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 01:19:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=2kKdK2qZqm7YxqxQreraVLLw0s8TN4UgsB3k/YpdPQI=;
+        b=eMu3uV+FIFUH5dBfHJQiTcF0H8MCPRxIB+C1Z8BezzykBY/c9VijVF7D+18wXIupGp
+         9aY28w3zMYMd9f4wZZWE//C9ccivy+hltm8SjDk5jBnJGI5a+lUBK1LuAlkY6UTSbi+2
+         lt+JsJqsQ9mWalp1GrUydWKAmewnFKaXj9XeM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=2kKdK2qZqm7YxqxQreraVLLw0s8TN4UgsB3k/YpdPQI=;
+        b=c4zpc+GFUNIe6tBlQNg/q0Qku/FJe2oS73AVap+aWE53uKPq9Ug5Y51oUOsHh6SgAr
+         9bZLZOtkNKyCj4++w/VrURnXKb0oUz7U7jeRFFsDVVMATSMKTmNxWiSmEWzdVXp9ee5B
+         26tQdfQ7/thZ/9PbAKDvNPl/NlD4ZwTgWMMxO95zB3C/PPbn3DgYFictaxnNsN50Wt9i
+         9DTRQfiDrbn2TvQwb/rGni2vxG2wc1kzCmI+QDFTZwWlZnTabeU1tu2TivS3baENv7MN
+         MAG8Qmk8f497A3wxuChK50Ebbz0Op9ba8GmtYUVP9mX7m+7ga72U+dBpMeRqVk6KvJ1z
+         Lcrw==
+X-Gm-Message-State: APt69E3CBhpRDd2xaI7uV0Uwff7MP9Mqp12HhGgjBJLJuU5E/Yw7Ym9E
+        RK2BjpAsqAxNIVeyQZn6W/JDwQ==
+X-Google-Smtp-Source: ADUXVKIUuLi1glU/e8hqbQE0DObSJSYswciFEi/IT+z1kGiHRXqdrtgswWoPT4Q7+dU+qS46Y13jBA==
+X-Received: by 2002:a17:902:8f8b:: with SMTP id z11-v6mr5516405plo.203.1528445954765;
+        Fri, 08 Jun 2018 01:19:14 -0700 (PDT)
+Received: from ubt.spreadtrum.com ([117.18.48.102])
+        by smtp.gmail.com with ESMTPSA id s4-v6sm72243947pgp.35.2018.06.08.01.19.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 08 Jun 2018 01:19:13 -0700 (PDT)
+From: Chunyan Zhang <zhang.chunyan@linaro.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Billows Wu <billows.wu@spreadtrum.com>, zhang.lyra@gmail.com
+Subject: [PATCH 4/6] mmc: sdhci: add 32-bit block count support for v4 mode
+Date: Fri,  8 Jun 2018 16:18:11 +0800
+Message-Id: <1528445893-14530-5-git-send-email-zhang.chunyan@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1528445893-14530-1-git-send-email-zhang.chunyan@linaro.org>
+References: <1528445893-14530-1-git-send-email-zhang.chunyan@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-06-08 4:49 GMT+09:00 Thomas Backlund <tmb@mageia.org>:
->
-> Den 2018-06-07 kl. 22:40, skrev Linus Torvalds:
->>
->> On Thu, Jun 7, 2018 at 12:35 PM Thomas Backlund <tmb@mageia.org> wrote:
->>>
->>> I can work around it for now (or keep the revert in our kernel builds
->>> for now) until it gets properly fixed...
->>
->> So rather than doing the revert, it's probably better if  your
->> workaround just does
->>
->>     make ARCH=i386 oldconfig
->>
->> (or maybe even just a "export ARCH=i386" in the environment)
->>
->> That should get you to continue to otherwise do the same thing.
->>
->> And if it turns out that your flow is the *only* one affected by this,
->> and nobody else complains, maybe we can just say "yeah, slight change
->> in build rules, easy to work around" and leave it at that.
->>
->>                  Linus
->
->
-> Yeah, I can live with that too :)
->
-> I just wanted to point out the regression in case it was not (sort of)
-> intentional...
+When Host Version 4 is enabled, SDMA System Address register is
+re-defined as 32-bit Block Count, and SDMA uses ADMA System
+Address register (05Fh-058h) instead.
 
+Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
+---
+ drivers/mmc/host/sdhci.c | 3 ++-
+ drivers/mmc/host/sdhci.h | 1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-
-If you want to do 'make oldconfig' without setting ARCH,
-maybe the following could work.
-
-
-
-diff --git a/Makefile b/Makefile
-index 019a5a0..b491e86 100644
---- a/Makefile
-+++ b/Makefile
-@@ -292,7 +292,7 @@ export VERSION PATCHLEVEL SUBLEVEL KERNELRELEASE
-KERNELVERSION
- # then ARCH is assigned, getting whatever value it gets normally, and
- # SUBARCH is subsequently ignored.
-
--SUBARCH := $(shell uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ \
-+SUBARCH := $(shell uname -m | sed -e s/i.86/i386/ -e s/x86_64/x86/ \
-                                  -e s/sun4u/sparc64/ \
-                                  -e s/arm.*/arm/ -e s/sa110/arm/ \
-                                  -e s/s390x/s390/ -e s/parisc64/parisc/ \
-
-
-or
-
-
-diff --git a/Makefile b/Makefile
-index 019a5a0..3586967 100644
---- a/Makefile
-+++ b/Makefile
-@@ -292,7 +292,7 @@ export VERSION PATCHLEVEL SUBLEVEL KERNELRELEASE
-KERNELVERSION
- # then ARCH is assigned, getting whatever value it gets normally, and
- # SUBARCH is subsequently ignored.
-
--SUBARCH := $(shell uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ \
-+SUBARCH := $(shell uname -m | sed -e s/i.86/i386/ \
-                                  -e s/sun4u/sparc64/ \
-                                  -e s/arm.*/arm/ -e s/sa110/arm/ \
-                                  -e s/s390x/s390/ -e s/parisc64/parisc/ \
-
-
-
-
-
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index 5d3b0d8..b8ee124 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -943,7 +943,8 @@ static void sdhci_prepare_data(struct sdhci_host *host, struct mmc_command *cmd)
+ 	/* Set the DMA boundary value and block size */
+ 	sdhci_writew(host, SDHCI_MAKE_BLKSZ(host->sdma_boundary, data->blksz),
+ 		     SDHCI_BLOCK_SIZE);
+-	sdhci_writew(host, data->blocks, SDHCI_BLOCK_COUNT);
++	reg = host->v4_mode ? SDHCI_32BIT_BLK_CNT : SDHCI_BLOCK_COUNT;
++	sdhci_writew(host, data->blocks, reg);
+ }
+ 
+ static inline bool sdhci_auto_cmd12(struct sdhci_host *host,
+diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+index 820a863..1e84539 100644
+--- a/drivers/mmc/host/sdhci.h
++++ b/drivers/mmc/host/sdhci.h
+@@ -28,6 +28,7 @@
+ 
+ #define SDHCI_DMA_ADDRESS	0x00
+ #define SDHCI_ARGUMENT2		SDHCI_DMA_ADDRESS
++#define SDHCI_32BIT_BLK_CNT	SDHCI_DMA_ADDRESS
+ 
+ #define SDHCI_BLOCK_SIZE	0x04
+ #define  SDHCI_MAKE_BLKSZ(dma, blksz) (((dma & 0x7) << 12) | (blksz & 0xFFF))
 -- 
-Best Regards
-Masahiro Yamada
+2.7.4
