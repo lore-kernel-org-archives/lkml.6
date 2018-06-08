@@ -1,105 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Dwm4FuP1HFsQbAAAmS7hNA
-	; Sun, 10 Jun 2018 09:56:51 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id tKE4GtZSGlv3GQAAmS7hNA
+	; Fri, 08 Jun 2018 09:56:38 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 2CC3A60850; Sun, 10 Jun 2018 09:56:51 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U4xAIJ1v"
+	id 5C717607A4; Fri,  8 Jun 2018 09:56:38 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id AC327602FC;
-	Sun, 10 Jun 2018 09:56:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AC327602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id D687F605A5;
+	Fri,  8 Jun 2018 09:56:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D687F605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932330AbeFJJ4q (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sun, 10 Jun 2018 05:56:46 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:47016 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751368AbeFJJ4o (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 05:56:44 -0400
-Received: by mail-lf0-f67.google.com with SMTP id j13-v6so26206445lfb.13;
-        Sun, 10 Jun 2018 02:56:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=8/HjZQg/+E2TcGrnFf/1bJ23sEU2KQgSGMJ5YnA+qxs=;
-        b=U4xAIJ1v8JG+yBeegndq5WNBf56hYEEBrF8ML0SRy+OfGV62LG91KgWIFTQ2KODNre
-         ndjFX5uPQIJQGWDP0bLea8Qr3MZpj2frmKRaRgtGi1OJINilgjGrzXG1XKNzg+s6fqIU
-         lxBfO3e85lZuMkqAbl1skY3O7n6ajkzNB8a4w7WdWSkPnootv+52RoEN6i8U4ohwNBE7
-         r4qWbsalYMKPr72bjMeWGt/ezwVucZ2aRS2YHQuVeWLCITr5+JTV8G4VOExBNy/Ly8Ao
-         1ptQwK+zvATghX/s1JyyeM8shRajqT6fYgj0RW/fcGmSGd4YRrX30PYEh2frT6odf1D6
-         TL9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=8/HjZQg/+E2TcGrnFf/1bJ23sEU2KQgSGMJ5YnA+qxs=;
-        b=JCbdEErpWNllxoYpGZo8W69BMT9YuaWUe3qtXegb5ygoAjlym2LJZZ3eaIgVENObv2
-         F9NmK1mavAvzmpD8Dcjz3qOprVhoHJhOHn6F4Lv2OfBBwgS4afvcQAA0djWM8nLzpHrI
-         tqJWP2PgF4p6eQery2I2imaTNxz/7aM6nPik6KuqTk+y5UIwwBG8VBai6T01U3KWPd/v
-         GX8jV2dgoxEsYt+y3IYjgpfF+NklwKiqdvYim+uIOGbhR+4W3synNUX3lfnfW2nt5Zh/
-         Gy5aj6Dgrshl0NPZOO4RECRGSGsxU3+mC4YKGvE4SeDGuJYjGcKIh/HOZoBMgK8am9VT
-         A5NQ==
-X-Gm-Message-State: APt69E3haEa3BrMiOp59BSQCeO6BrcceERDRW3W7fxGQGLbsKH9AhrbT
-        mnI/ngJ6p54jlQyPlv4+QBDAD7037RuKh6cHvZM=
-X-Google-Smtp-Source: ADUXVKKGltfo3x5gr7AHSYvAJyqoSUPTzl17tbyANHfTVr8IOCLbOwjjBMiZMrG4vcgI1bSimBt2RwjLgFt0P2ytOPI=
-X-Received: by 2002:a19:a111:: with SMTP id k17-v6mr3014016lfe.60.1528624602827;
- Sun, 10 Jun 2018 02:56:42 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a19:2b43:0:0:0:0:0 with HTTP; Sun, 10 Jun 2018 02:56:42
- -0700 (PDT)
-In-Reply-To: <20180610095640.GA4061@jordon-HP-15-Notebook-PC>
-References: <20180610095640.GA4061@jordon-HP-15-Notebook-PC>
-From: Souptick Joarder <jrdr.linux@gmail.com>
-Date: Sun, 10 Jun 2018 15:26:42 +0530
-Message-ID: <CAFqt6zaDdhG9=ak1ufeY2x8sr+nin8e+cgMQoi=-2o41uS5jxA@mail.gmail.com>
-Subject: Re: [PATCH] fs: 9p: Adding new return type vm_fault_t
-To: Eric Van Hensbergen <ericvh@gmail.com>, rminnich@sandia.gov,
-        Latchesar Ionkov <lucho@ionkov.net>
-Cc: v9fs-developer@lists.sourceforge.net,
-        Matthew Wilcox <willy@infradead.org>, netdev@vger.kernel.org,
+        id S1752660AbeFHJ4f (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 05:56:35 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55318 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751271AbeFHJ4d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 05:56:33 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id A2EBDADF4;
+        Fri,  8 Jun 2018 09:56:32 +0000 (UTC)
+Subject: Re: [PATCH v3] xen: share start flags between PV and PVH
+To: Roger Pau Monne <roger.pau@citrix.com>,
         linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        xen-devel@lists.xenproject.org
+References: <20180608084038.19344-1-roger.pau@citrix.com>
+From: Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <88a5ed1a-6d32-0cd3-5e49-e0bba9216ebb@suse.com>
+Date: Fri, 8 Jun 2018 11:56:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180608084038.19344-1-roger.pau@citrix.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 10, 2018 at 3:26 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> Use new return type vm_fault_t for page_mkwrite
-> handler.
->
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
-> ---
->  fs/9p/vfs_file.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
-> index 03c9e32..5f2e48d 100644
-> --- a/fs/9p/vfs_file.c
-> +++ b/fs/9p/vfs_file.c
-> @@ -533,7 +533,7 @@ int v9fs_file_fsync_dotl(struct file *filp, loff_t start, loff_t end,
->         return retval;
->  }
->
-> -static int
-> +static vm_fault_t
->  v9fs_vm_page_mkwrite(struct vm_fault *vmf)
->  {
->         struct v9fs_inode *v9inode;
-> --
-> 1.9.1
->
+On 08/06/18 10:40, Roger Pau Monne wrote:
+> Use a global variable to store the start flags for both PV and PVH.
+> This allows the xen_initial_domain macro to work properly on PVH.
+> 
+> Note that ARM is also switched to use the new variable.
+> 
+> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
 
-Eric, as requested, posted it in net-dev and lkml mailing list.
+Reviewed-by: Juergen Gross <jgross@suse.com>
+
+
+Juergen
