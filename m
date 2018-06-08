@@ -1,103 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id idPRHXWmHFtLbAAAmS7hNA
-	; Sun, 10 Jun 2018 04:19:00 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id TsWOObFAGlvwWAAAmS7hNA
+	; Fri, 08 Jun 2018 08:39:14 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id A1BC260795; Sun, 10 Jun 2018 04:19:00 +0000 (UTC)
+	id DBACC607DC; Fri,  8 Jun 2018 08:39:13 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 0C8E56074D;
-	Sun, 10 Jun 2018 04:18:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0C8E56074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 2437860290;
+	Fri,  8 Jun 2018 08:39:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2437860290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753682AbeFJES5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sun, 10 Jun 2018 00:18:57 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:50001 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750744AbeFJES4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 00:18:56 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5A4Iktc3241665
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 9 Jun 2018 21:18:46 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5A4Ij4Q3241662;
-        Sat, 9 Jun 2018 21:18:45 -0700
-Date: Sat, 9 Jun 2018 21:18:45 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From: tip-bot for Anna-Maria Gleixner <tipbot@zytor.com>
-Message-ID: <tip-ec84b27f9b3b569f9235413d1945a2006b97b0aa@git.kernel.org>
-Cc: ebiederm@xmission.com, anna-maria@linutronix.de,
-        linux-kernel@vger.kernel.org, paulmck@linux.vnet.ibm.com,
-        mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de
-Reply-To: hpa@zytor.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
-          paulmck@linux.vnet.ibm.com, tglx@linutronix.de,
-          anna-maria@linutronix.de, ebiederm@xmission.com
-In-Reply-To: <20180525090507.22248-2-anna-maria@linutronix.de>
-References: <20180525090507.22248-2-anna-maria@linutronix.de>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:core/urgent] rcu: Update documentation of rcu_read_unlock()
-Git-Commit-ID: ec84b27f9b3b569f9235413d1945a2006b97b0aa
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1752918AbeFHIjK (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 04:39:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44550 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752326AbeFHIjI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 04:39:08 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 49018AC2E;
+        Fri,  8 Jun 2018 08:39:07 +0000 (UTC)
+Date: Fri, 8 Jun 2018 10:39:06 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Maninder Singh <maninder1.s@samsung.com>
+Cc: sergey.senozhatsky@gmail.com, rostedt@goodmis.org,
+        linux-kernel@vger.kernel.org, a.sahrawat@samsung.com,
+        pankaj.m@samsung.com, v.narang@samsung.com
+Subject: Re: [PATCH v2] printk: make sure to print log on console.
+Message-ID: <20180608083906.fwx3r3y2pxtv3ga6@pathway.suse.cz>
+References: <CGME20180601090029epcas5p3cc93d4bfbebb3199f0a2684058da7e26@epcas5p3.samsung.com>
+ <20180601090029epcas5p3cc93d4bfbebb3199f0a2684058da7e26~z-a_jkmrI2993329933epcas5p3q@epcas5p3.samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180601090029epcas5p3cc93d4bfbebb3199f0a2684058da7e26~z-a_jkmrI2993329933epcas5p3q@epcas5p3.samsung.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  ec84b27f9b3b569f9235413d1945a2006b97b0aa
-Gitweb:     https://git.kernel.org/tip/ec84b27f9b3b569f9235413d1945a2006b97b0aa
-Author:     Anna-Maria Gleixner <anna-maria@linutronix.de>
-AuthorDate: Fri, 25 May 2018 11:05:06 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sun, 10 Jun 2018 06:14:01 +0200
+On Fri 2018-06-01 14:26:42, Maninder Singh wrote:
+> This patch make sure printing of log on console if loglevel
+> at time of storing log is less than current console loglevel.
+> 
+> @why
+> In SMP printk can work asynchronously, logs can be missed on console
+> because it checks current log level at time of console_unlock,
+> not at time of storing logs.
+> 
+> func()
+> {
+> ....
+> ....
+>         console_verbose();  // user wants to have all the logs on console.
+>         pr_alert();
+> 	dump_backtrace(); //prints with default loglevel.
+>         ...
+>         console_silent(); // stop all logs from printing on console.
+> }
+> 
+> Now if console_lock was owned by another process, the messages might
+> be handled after the consoles were silenced.
 
-rcu: Update documentation of rcu_read_unlock()
+It might make sense to document the limitations reported by
+Sergey. I mean to add something like:
 
-Since commit b4abf91047cf ("rtmutex: Make wait_lock irq safe") the
-explanation in rcu_read_unlock() documentation about irq unsafe rtmutex
-wait_lock is no longer valid.
+"There are still some corner cases where this patch is not enough,
+for example, when the messages are flushed later from printk_safe
+buffers or when there are races between console_verbose() and
+console_silent() callers."
 
-Remove it to prevent kernel developers reading the documentation to rely on
-it.
 
-Suggested-by: Eric W. Biederman <ebiederm@xmission.com>
-Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: bigeasy@linutronix.de
-Link: https://lkml.kernel.org/r/20180525090507.22248-2-anna-maria@linutronix.de
+> reused flag LOG_NOCONS as its usage is gone long back.
+> (5c2992ee7fd8a29d04125dc0aa3522784c5fa5eb)
+> 
+> Signed-off-by: Vaneet Narang <v.narang@samsung.com>
+> Signed-off-by: Maninder Singh <maninder1.s@samsung.com>
 
----
- include/linux/rcupdate.h | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Anyway. the patch helps in many situations and it is a step in the right
+direction:
 
-diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-index e679b175b411..65163aa0bb04 100644
---- a/include/linux/rcupdate.h
-+++ b/include/linux/rcupdate.h
-@@ -652,9 +652,7 @@ static inline void rcu_read_lock(void)
-  * Unfortunately, this function acquires the scheduler's runqueue and
-  * priority-inheritance spinlocks.  This means that deadlock could result
-  * if the caller of rcu_read_unlock() already holds one of these locks or
-- * any lock that is ever acquired while holding them; or any lock which
-- * can be taken from interrupt context because rcu_boost()->rt_mutex_lock()
-- * does not disable irqs while taking ->wait_lock.
-+ * any lock that is ever acquired while holding them.
-  *
-  * That said, RCU readers are never priority boosted unless they were
-  * preempted.  Therefore, one way to avoid deadlock is to make sure
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+
+Best Regards,
+Petr
+
+PS: There is no need to resend the patch. I could update the commit
+message when pushing the patch. I am just going to wait a bit for
+other potential reviewers.
