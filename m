@@ -1,164 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 9QaQNssGHVsPOgAAmS7hNA
-	; Sun, 10 Jun 2018 11:08:59 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 53rMFnmJGlujBwAAmS7hNA
+	; Fri, 08 Jun 2018 13:54:08 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id CB149608B8; Sun, 10 Jun 2018 11:08:59 +0000 (UTC)
+	id F3400607E4; Fri,  8 Jun 2018 13:54:07 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 474D3600D0;
-	Sun, 10 Jun 2018 11:08:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 474D3600D0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 72D84606FA;
+	Fri,  8 Jun 2018 13:54:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 72D84606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753927AbeFJLIm (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sun, 10 Jun 2018 07:08:42 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:35191 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753874AbeFJLIh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 07:08:37 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 111E44A3AAC54;
-        Sun, 10 Jun 2018 19:08:31 +0800 (CST)
-Received: from localhost (10.177.23.164) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.382.0; Sun, 10 Jun 2018
- 19:08:25 +0800
-From: Zhen Lei <thunder.leizhen@huawei.com>
-To: Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        iommu <iommu@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-CC: Zhen Lei <thunder.leizhen@huawei.com>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Libin <huawei.libin@huawei.com>,
-        Guozhu Li <liguozhu@hisilicon.com>,
-        "Xinwei Hu" <huxinwei@huawei.com>
-Subject: [PATCH v2 4/5] iommu/io-pgtable-arm: add support for non-strict mode
-Date: Sun, 10 Jun 2018 19:07:22 +0800
-Message-ID: <1528628843-10280-5-git-send-email-thunder.leizhen@huawei.com>
-X-Mailer: git-send-email 1.9.5.msysgit.0
-In-Reply-To: <1528628843-10280-1-git-send-email-thunder.leizhen@huawei.com>
-References: <1528628843-10280-1-git-send-email-thunder.leizhen@huawei.com>
+        id S1752356AbeFHNyF (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 09:54:05 -0400
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:31178 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751133AbeFHNyE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 09:54:04 -0400
+X-IronPort-AV: E=Sophos;i="5.49,490,1520924400";
+   d="scan'208";a="14762806"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 08 Jun 2018 06:54:04 -0700
+Received: from [10.159.245.163] (10.10.76.4) by chn-sv-exch06.mchp-main.com
+ (10.10.76.107) with Microsoft SMTP Server id 14.3.352.0; Fri, 8 Jun 2018
+ 06:54:03 -0700
+Subject: Re: [PATCH] add support to non-uniform SFDP SPI NOR flash memories
+To: Tudor Ambarus <tudor.ambarus@microchip.com>,
+        <marek.vasut@gmail.com>, <dwmw2@infradead.org>,
+        <computersforpeace@gmail.com>, <boris.brezillon@bootlin.com>,
+        <richard@nod.at>
+CC: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <nicolas.ferre@microchip.com>, <Cristian.Birsan@microchip.com>
+References: <20180608134818.21387-1-tudor.ambarus@microchip.com>
+From: Cyrille Pitchen <cyrille.pitchen@microchip.com>
+Message-ID: <d171a525-e2bd-be61-1fd4-d6ffeecdc9b4@microchip.com>
+Date: Fri, 8 Jun 2018 15:54:00 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.23.164]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180608134818.21387-1-tudor.ambarus@microchip.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To support the non-strict mode, now we only tlbi and sync for the strict
-mode. But for the non-leaf case, always follow strict mode.
+Hi Tudor,
 
-Use the lowest bit of the iova parameter to pass the strict mode:
-0, IOMMU_STRICT;
-1, IOMMU_NON_STRICT;
-Treat 0 as IOMMU_STRICT, so that the unmap operation can compatible with
-other IOMMUs which still use strict mode.
+Le 08/06/2018 à 15:48, Tudor Ambarus a écrit :
+> The commit message became wall-of-text, my feeling is that I heavily
+> reworked the code so I changed the author. If someone thinks differently,
+> please say and I'll change back to the initial authorship. What I've done:
 
-Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
----
- drivers/iommu/io-pgtable-arm.c | 23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
+It's obvious that you're the author of the patch so I'm totally fine with
+this change :)
 
-diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
-index 010a254..9234db3 100644
---- a/drivers/iommu/io-pgtable-arm.c
-+++ b/drivers/iommu/io-pgtable-arm.c
-@@ -292,7 +292,7 @@ static void __arm_lpae_set_pte(arm_lpae_iopte *ptep, arm_lpae_iopte pte,
+Best regards,
 
- static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
- 			       unsigned long iova, size_t size, int lvl,
--			       arm_lpae_iopte *ptep);
-+			       arm_lpae_iopte *ptep, int strict);
+Cyrille
 
- static void __arm_lpae_init_pte(struct arm_lpae_io_pgtable *data,
- 				phys_addr_t paddr, arm_lpae_iopte prot,
-@@ -334,7 +334,7 @@ static int arm_lpae_init_pte(struct arm_lpae_io_pgtable *data,
- 		size_t sz = ARM_LPAE_BLOCK_SIZE(lvl, data);
-
- 		tblp = ptep - ARM_LPAE_LVL_IDX(iova, lvl, data);
--		if (WARN_ON(__arm_lpae_unmap(data, iova, sz, lvl, tblp) != sz))
-+		if (WARN_ON(__arm_lpae_unmap(data, iova, sz, lvl, tblp, IOMMU_STRICT) != sz))
- 			return -EINVAL;
- 	}
-
-@@ -531,7 +531,7 @@ static void arm_lpae_free_pgtable(struct io_pgtable *iop)
- static size_t arm_lpae_split_blk_unmap(struct arm_lpae_io_pgtable *data,
- 				       unsigned long iova, size_t size,
- 				       arm_lpae_iopte blk_pte, int lvl,
--				       arm_lpae_iopte *ptep)
-+				       arm_lpae_iopte *ptep, int strict)
- {
- 	struct io_pgtable_cfg *cfg = &data->iop.cfg;
- 	arm_lpae_iopte pte, *tablep;
-@@ -576,15 +576,18 @@ static size_t arm_lpae_split_blk_unmap(struct arm_lpae_io_pgtable *data,
- 	}
-
- 	if (unmap_idx < 0)
--		return __arm_lpae_unmap(data, iova, size, lvl, tablep);
-+		return __arm_lpae_unmap(data, iova, size, lvl, tablep, strict);
-
- 	io_pgtable_tlb_add_flush(&data->iop, iova, size, size, true);
-+	if (!strict)
-+		io_pgtable_tlb_sync(&data->iop);
-+
- 	return size;
- }
-
- static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
- 			       unsigned long iova, size_t size, int lvl,
--			       arm_lpae_iopte *ptep)
-+			       arm_lpae_iopte *ptep, int strict)
- {
- 	arm_lpae_iopte pte;
- 	struct io_pgtable *iop = &data->iop;
-@@ -609,7 +612,7 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
- 			io_pgtable_tlb_sync(iop);
- 			ptep = iopte_deref(pte, data);
- 			__arm_lpae_free_pgtable(data, lvl + 1, ptep);
--		} else {
-+		} else if (strict) {
- 			io_pgtable_tlb_add_flush(iop, iova, size, size, true);
- 		}
-
-@@ -620,25 +623,27 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
- 		 * minus the part we want to unmap
- 		 */
- 		return arm_lpae_split_blk_unmap(data, iova, size, pte,
--						lvl + 1, ptep);
-+						lvl + 1, ptep, strict);
- 	}
-
- 	/* Keep on walkin' */
- 	ptep = iopte_deref(pte, data);
--	return __arm_lpae_unmap(data, iova, size, lvl + 1, ptep);
-+	return __arm_lpae_unmap(data, iova, size, lvl + 1, ptep, strict);
- }
-
- static size_t arm_lpae_unmap(struct io_pgtable_ops *ops, unsigned long iova,
- 			     size_t size)
- {
-+	int strict = ((iova & IOMMU_STRICT_MODE_MASK) == IOMMU_STRICT);
- 	struct arm_lpae_io_pgtable *data = io_pgtable_ops_to_data(ops);
- 	arm_lpae_iopte *ptep = data->pgd;
- 	int lvl = ARM_LPAE_START_LVL(data);
-
-+	iova &= ~IOMMU_STRICT_MODE_MASK;
- 	if (WARN_ON(iova >= (1ULL << data->iop.cfg.ias)))
- 		return 0;
-
--	return __arm_lpae_unmap(data, iova, size, lvl, ptep);
-+	return __arm_lpae_unmap(data, iova, size, lvl, ptep, strict);
- }
-
- static phys_addr_t arm_lpae_iova_to_phys(struct io_pgtable_ops *ops,
---
-1.8.3
+> 
+> - minimize the amount of erase() calls by using the best sequence of erase
+>   type commands depending on alignment.
+> 
+> - build the list of best fitted erase commands to be executed once we
+>   validate that the erase can be performed.
+> 
+> - add improvements on how the erase map is handled. The regions are
+>   consecutive in the address space, walk through the regions incrementally.
+> 
+> - speed up finding the best erase type command. Order erase types by
+>   size, iterate them from the biggest to the smallest and stop when best
+>   fitted command is found.
+> 
+> - determine at init if there are erase types that can erase the entire
+>   memory
+> 
+> - fix the erase size in overlaid regions. S25FS512S states that 'if a sector
+>   erase command is applied to a 256KB range that is overlaid by 4KB secors,
+>   the overlaid 4kB sectors are not affected by the erase'
+> 
+> Backward compatibility test done on MX25L25673G.
+> 
+> Changes since RFC PATCH:
+> - build a list of erase commands to be executed once we validate
+>   that the erase can be performed
+> - fix walking through the address space in overlaid regions
+> - drop wall-of-text description commit message, change author
+> 
+> 
+> Tudor Ambarus (1):
+>   mtd: spi-nor: add support to non-uniform SFDP SPI NOR flash memories
+> 
+>  drivers/mtd/spi-nor/spi-nor.c | 357 ++++++++++++++++++++++++++++++++++++++++--
+>  include/linux/mtd/spi-nor.h   | 108 +++++++++++++
+>  2 files changed, 451 insertions(+), 14 deletions(-)
+> 
