@@ -1,192 +1,185 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id pgiLDc7yG1uAYAAAmS7hNA
-	; Sat, 09 Jun 2018 15:31:41 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id R2zZIBDIGVtKagAAmS7hNA
+	; Fri, 08 Jun 2018 00:07:13 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 1703D608C1; Sat,  9 Jun 2018 15:31:41 +0000 (UTC)
+	id 097326074D; Fri,  8 Jun 2018 00:07:13 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ONU9k/vB"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JERBz0pq"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 775C1608B8;
-	Sat,  9 Jun 2018 15:31:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 775C1608B8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 6AF4960290;
+	Fri,  8 Jun 2018 00:07:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6AF4960290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753617AbeFIPbh (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 11:31:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34056 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753598AbeFIPbc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 11:31:32 -0400
-Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 946E5208A3;
-        Sat,  9 Jun 2018 15:31:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528558292;
-        bh=4C0LVkzggnZte63TcfjFq+aYh8P+w5RxihDg7vSDeAA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ONU9k/vB3Wd+80nu0ZpQnELKaKQt7OfqsIZF5CVZjDHIbGW66LnbaZfEwyWat6oUx
-         mIbwotrMqiLh0+/AiYePcIDwQVANzwj2fP8Ya464BYd5ZcIuhbMBBDSCA5vMiDkO/C
-         ZpG7quRnIxwP25kmmX/viuEKpQilSDNtbIjzKs7E=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>
-Subject: [PATCH 4.17 15/15] PCI: hv: Do not wait forever on a device that has disappeared
-Date: Sat,  9 Jun 2018 17:29:50 +0200
-Message-Id: <20180609150001.502446311@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180609150000.746833461@linuxfoundation.org>
-References: <20180609150000.746833461@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1752475AbeFHAHJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 20:07:09 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:59210 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752449AbeFHAHG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 20:07:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Type:In-Reply-To:MIME-Version:
+        Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=luodI2Y1LPtjolK47Bhx+AS0gYS+PZBx1b5+Ma50Cd0=; b=JERBz0pqyt8kOYPfyeahWPqhP
+        XW6QvOBThtNbn+NPsHQ79jOZEdxax2mq1EGqOiISnB+IPtaq3a+93ubHvURgb+oeZfA8nzn+YKhoi
+        tRVtLMQWyFmDY+ydLbIBTLkGMkvMQe1p4/stsD1l2DFiNSlUUdDbLZT8pmcFp9P1kx2To1Mc3+VdO
+        Hr9H7EEALRh9sDF8aXJpD/6TCj0VwcMQHAfjmWPkiSKURZmtrxZwFCDf2akCHmCZ7JLwa/odhYkrv
+        fvdE84MSkc94Wxfq/+28BB3XDOXp9n/Vsj3l28Eqqc3lY4903IpWiMbUkQiiXxEpqs7g7Tkb0NtNi
+        QcB+qLBng==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fR4vn-0003xm-U9; Fri, 08 Jun 2018 00:07:04 +0000
+Subject: Re: [PATCH] uapi: Make generic uapi headers compile standalone.
+To: Jayant Chowdhary <jchowdhary@google.com>,
+        linux-kernel@vger.kernel.org
+Cc: akpm@linux-foundation.org, kernel-team@android.com,
+        linux-kbuild@vger.kernel.org
+References: <20180606231602.231326-1-jchowdhary@google.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <b6b6dd56-c948-54e8-df95-3d170a3c1e7d@infradead.org>
+Date: Thu, 7 Jun 2018 17:07:01 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20180606231602.231326-1-jchowdhary@google.com>
+Content-Type: multipart/mixed;
+ boundary="------------B62B25DCCC7D3ABB45F9F1E7"
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+This is a multi-part message in MIME format.
+--------------B62B25DCCC7D3ABB45F9F1E7
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-------------------
+On 06/06/2018 04:16 PM, Jayant Chowdhary wrote:
+> In order for static analysis tools to analyze each of the uapi headers,
+> we need to enable them to compile stand-alone. Some uapi headers were
+> missing dependencies which would not make them compile stand-alone in
+> user-land. This patch adds those dependencies.
 
-From: Dexuan Cui <decui@microsoft.com>
+Hi,
 
-commit c3635da2a336441253c33298b87b3042db100725 upstream.
+Thanks for getting started on this.  I see that the kbuild robot and I were
+still not able to do successful builds even after this patch is applied.
+We were building different targets though.  robot was doing kernel builds
+and I was doing a large "all-uapi" build.
 
-Before the guest finishes the device initialization, the device can be
-removed anytime by the host, and after that the host won't respond to
-the guest's request, so the guest should be prepared to handle this
-case.
+I started on my all-uapi work about 1 week ago but haven't posted anything yet,
+but it's posted (attached) below.  It's not yet up to kernel quality yet (for a
+Makefile), and I have made very little progress toward a successful userspace build.
 
-Add a polling mechanism to detect device presence.
+If anyone is interested, just put these 3 files in <kernel_tree>/tools/build
+and then run:
 
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-[lorenzo.pieralisi@arm.com: edited commit log]
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: K. Y. Srinivasan <kys@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+make ARCH=$some_arch O=build_dir headers_check
+so that the headers will be cleaned up and installed in build_dir/usr/.
 
----
- drivers/pci/host/pci-hyperv.c |   46 +++++++++++++++++++++++++++++++-----------
- 1 file changed, 34 insertions(+), 12 deletions(-)
+Then run 'make -f all-uapi.mk'
+and the userspace program with all header files found in build_dir/usr/include
+will be built -- i.e., attempted (not successfully).
 
---- a/drivers/pci/host/pci-hyperv.c
-+++ b/drivers/pci/host/pci-hyperv.c
-@@ -556,6 +556,26 @@ static void put_pcichild(struct hv_pci_d
- static void get_hvpcibus(struct hv_pcibus_device *hv_pcibus);
- static void put_hvpcibus(struct hv_pcibus_device *hv_pcibus);
- 
-+/*
-+ * There is no good way to get notified from vmbus_onoffer_rescind(),
-+ * so let's use polling here, since this is not a hot path.
-+ */
-+static int wait_for_response(struct hv_device *hdev,
-+			     struct completion *comp)
-+{
-+	while (true) {
-+		if (hdev->channel->rescind) {
-+			dev_warn_once(&hdev->device, "The device is gone.\n");
-+			return -ENODEV;
-+		}
-+
-+		if (wait_for_completion_timeout(comp, HZ / 10))
-+			break;
-+	}
-+
-+	return 0;
-+}
-+
- /**
-  * devfn_to_wslot() - Convert from Linux PCI slot to Windows
-  * @devfn:	The Linux representation of PCI slot
-@@ -1568,7 +1588,8 @@ static struct hv_pci_dev *new_pcichild_d
- 	if (ret)
- 		goto error;
- 
--	wait_for_completion(&comp_pkt.host_event);
-+	if (wait_for_response(hbus->hdev, &comp_pkt.host_event))
-+		goto error;
- 
- 	hpdev->desc = *desc;
- 	refcount_set(&hpdev->refs, 1);
-@@ -2069,15 +2090,16 @@ static int hv_pci_protocol_negotiation(s
- 				sizeof(struct pci_version_request),
- 				(unsigned long)pkt, VM_PKT_DATA_INBAND,
- 				VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED);
-+		if (!ret)
-+			ret = wait_for_response(hdev, &comp_pkt.host_event);
-+
- 		if (ret) {
- 			dev_err(&hdev->device,
--				"PCI Pass-through VSP failed sending version reqquest: %#x",
-+				"PCI Pass-through VSP failed to request version: %d",
- 				ret);
- 			goto exit;
- 		}
- 
--		wait_for_completion(&comp_pkt.host_event);
--
- 		if (comp_pkt.completion_status >= 0) {
- 			pci_protocol_version = pci_protocol_versions[i];
- 			dev_info(&hdev->device,
-@@ -2286,11 +2308,12 @@ static int hv_pci_enter_d0(struct hv_dev
- 	ret = vmbus_sendpacket(hdev->channel, d0_entry, sizeof(*d0_entry),
- 			       (unsigned long)pkt, VM_PKT_DATA_INBAND,
- 			       VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED);
-+	if (!ret)
-+		ret = wait_for_response(hdev, &comp_pkt.host_event);
-+
- 	if (ret)
- 		goto exit;
- 
--	wait_for_completion(&comp_pkt.host_event);
--
- 	if (comp_pkt.completion_status < 0) {
- 		dev_err(&hdev->device,
- 			"PCI Pass-through VSP failed D0 Entry with status %x\n",
-@@ -2330,11 +2353,10 @@ static int hv_pci_query_relations(struct
- 
- 	ret = vmbus_sendpacket(hdev->channel, &message, sizeof(message),
- 			       0, VM_PKT_DATA_INBAND, 0);
--	if (ret)
--		return ret;
-+	if (!ret)
-+		ret = wait_for_response(hdev, &comp);
- 
--	wait_for_completion(&comp);
--	return 0;
-+	return ret;
- }
- 
- /**
-@@ -2404,11 +2426,11 @@ static int hv_send_resources_allocated(s
- 				size_res, (unsigned long)pkt,
- 				VM_PKT_DATA_INBAND,
- 				VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED);
-+		if (!ret)
-+			ret = wait_for_response(hdev, &comp_pkt.host_event);
- 		if (ret)
- 			break;
- 
--		wait_for_completion(&comp_pkt.host_event);
--
- 		if (comp_pkt.completion_status < 0) {
- 			ret = -EPROTO;
- 			dev_err(&hdev->device,
+(note: chmod +x hdr-fix-lines.pl)
+
+
+-- 
+~Randy
+
+--------------B62B25DCCC7D3ABB45F9F1E7
+Content-Type: text/x-makefile;
+ name="all-uapi.mk"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="all-uapi.mk"
+
+# all-uapi.mk
+# currently resides in tools/build/
+#
+# before running 'make -f all-uapi.mk',
+# run (from top of kernel tree): make ARCH=arch O=dir headers_check
+# so that the uapi headers will be installed.
+
+srctree=../..
+CC=gcc
+
+all: all-uapi.h all-uapi.o
+
+all-uapi.h: all-uapi.mk hdr-fix-lines.pl
+	rm -f all-uapi.h
+	touch all-uapi.h
+#	find $(srctree)/xx64/usr/include/uapi -type f | grep -v \\.orig |
+	find $(srctree)/xx64/usr/include -type f | grep -v \\.orig | \
+		./hdr-fix-lines.pl >>all-uapi.h
+
+all-uapi.o: all-uapi.h
+	$(CC) -I../../xx64/usr/include all-uapi.c -o all-uapi.o
+
+--------------B62B25DCCC7D3ABB45F9F1E7
+Content-Type: text/x-csrc;
+ name="all-uapi.c"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="all-uapi.c"
+
+// SPDX GPL 2.0
+// This userspace source file pulls in all #include <uapi/*> header files
+// to see what kinds of problems happen.
+
+#include <stdio.h>
+#include <stdarg.h>
+#include <stdint.h>
+
+#include <linux/posix_types.h>
+#include <asm-generic/ipcbuf.h>
+
+#include "all-uapi.h"
+
+int main(int argc, char *argv[])
+{
+}
+
+--------------B62B25DCCC7D3ABB45F9F1E7
+Content-Type: application/x-perl;
+ name="hdr-fix-lines.pl"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="hdr-fix-lines.pl"
+
+#! /usr/bin/perl
+
+# $_ is a filename like ../../include/uapi/linux/prctl.h
+# convert it to be like: $include <uapi/linux/prctl.h>
+# input via stdin; output to stdout.
+# vi:ts=4
+
+LINE:
+	while ($line = <STDIN>) {
+		chomp $line;		# drop ending newline
+
+		# skip if not a .h file
+		next LINE if ($line !~ m/\.h$/);
+		# skip any /asm.*posix_types/
+		next LINE if ($line =~ "asm.*posix_types");
+
+		$line =~ s@^.*include/@#include <@;
+		$line =~ s@\.h$@.h>@;
+
+		print "$line\n";
+	} ### < STDIN
+
+--------------B62B25DCCC7D3ABB45F9F1E7--
