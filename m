@@ -1,76 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id JJdyFXVVHVs2egAAmS7hNA
-	; Sun, 10 Jun 2018 16:48:28 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id GJAcBvumGltBFwAAmS7hNA
+	; Fri, 08 Jun 2018 15:56:27 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 33B8C60791; Sun, 10 Jun 2018 16:48:28 +0000 (UTC)
+	id F0BE5607DC; Fri,  8 Jun 2018 15:56:26 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XlOB1lO3"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=2.0 tests=BAYES_05,LOTS_OF_MONEY,
-	MAILING_LIST_MULTI autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 88476606FA;
-	Sun, 10 Jun 2018 16:48:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 88476606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=talentscout.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 582B4605A5;
+	Fri,  8 Jun 2018 15:56:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 582B4605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753586AbeFJQsY convert rfc822-to-8bit (ORCPT
-        <rfc822;monsieuricon@codeaurora.org> + 25 others);
-        Sun, 10 Jun 2018 12:48:24 -0400
-Received: from correo.seminario.edu.uy ([179.27.75.230]:33234 "EHLO
-        correo.seminario.edu.uy" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753462AbeFJQsX (ORCPT
+        id S1752746AbeFHP4Y (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 11:56:24 -0400
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:44053 "EHLO
+        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751694AbeFHP4W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 12:48:23 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by correo.seminario.edu.uy (Postfix) with ESMTP id 429531EAA6F;
-        Sun, 10 Jun 2018 13:44:26 -0300 (-03)
-Received: from correo.seminario.edu.uy ([127.0.0.1])
-        by localhost (correo.seminario.edu.uy [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id FFnf68qWVqaH; Sun, 10 Jun 2018 13:44:25 -0300 (-03)
-Received: from localhost (localhost [127.0.0.1])
-        by correo.seminario.edu.uy (Postfix) with ESMTP id D3FC41EAA20;
-        Sun, 10 Jun 2018 13:44:25 -0300 (-03)
-X-Virus-Scanned: amavisd-new at seminario.edu.uy
-Received: from correo.seminario.edu.uy ([127.0.0.1])
-        by localhost (correo.seminario.edu.uy [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id sxv0foyKYAPw; Sun, 10 Jun 2018 13:44:25 -0300 (-03)
-Received: from [192.168.8.102] (unknown [129.56.11.36])
-        by correo.seminario.edu.uy (Postfix) with ESMTPSA id 47DD11EA9C4;
-        Sun, 10 Jun 2018 13:44:16 -0300 (-03)
-Content-Type: text/plain; charset="iso-8859-1"
+        Fri, 8 Jun 2018 11:56:22 -0400
+Received: by mail-lf0-f53.google.com with SMTP id 36-v6so20775492lfr.11
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 08:56:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=QTvyie+NFQwfLkWlL33g51lHg1HUimomLm3bF7UnGRw=;
+        b=XlOB1lO3VdW/IsPfT1eFAjEhHlr/jGipIZxMJ29z9r3XcMt1ek73nuRcdtDj4AX3B3
+         mICVSYnu8gN5r3+nFvSHh4av5BAeBdwWTghCGwol04eflKPAwtxolXCdY9SzjVd84WgQ
+         UTqo5WxBvGIYGx/2uMw5qxIt5eb9S6EhH24PZJZEtK1FXumjL+wxQizNo0gd7817QcpS
+         9Pa9GScvbMi94eQBrfnxfMwwlaNqRXCEAJ+RKmfdCbOsqJlbFdQ0Z+5U7T9l955gDju+
+         AXjCEUeT7ltvLzAcBnM/NeuCZqkL114/uuUJIxnrNQzLJVtX6YGeMtadPqRxpyTlo6qY
+         0OCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=QTvyie+NFQwfLkWlL33g51lHg1HUimomLm3bF7UnGRw=;
+        b=i5ii/u1nBPxSwClXLnK4Ikufnh+8aa931Kya4KOer6K7yLwSnjVuSq4iKmuZJqtoRM
+         yTI8drlAe/iCk9C/RTpvGl8nyAzAEYqG0EaMAU2v5W4CPMjzI6ayrIRwIPgFqJuuvU+S
+         HQk0rH+OeKNoZSnvPVbF+pNqXcOGl6QtAGi1DzzxR4uczqGy6w1i9VyqxNmqm/nL10io
+         p3WYAxx6K0MSxQE0/WfIr5EjY258Sd46wbPjv12NTQzK+u3V5GvRcHPSNft0VtfRedUU
+         1ztjCR5JgK2MeXWAjz99M5UWX06z8PNqV9LIuFdJYzrxmkPUX3IpOvdOHT/CW1SYz9rZ
+         aHwQ==
+X-Gm-Message-State: APt69E0ib/i61857/+jAjI1g4DlosUoxtPdZg/8MWKA9IwdFToguUVfw
+        L26s5gzq4mJTR+mH7z/9rZPBFDM0bYzoKXfUfarEs9A=
+X-Google-Smtp-Source: ADUXVKJpDFXyP81Bm1ZXnl0QBvizt7wC6Wo6g2IGZ0v3kIcGjDLYKNey16dhvLtI1n8VtMXmGdry/foUtsubHCbO8kw=
+X-Received: by 2002:a2e:95d5:: with SMTP id y21-v6mr4831930ljh.90.1528473381221;
+ Fri, 08 Jun 2018 08:56:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: Dear Talented
-To: Recipients <info@talentscout.com>
-From: Lisa Clement <info@talentscout.com>
-Date: Sun, 10 Jun 2018 22:14:09 +0530
-Reply-To: blueskyanimationstudio@gmail.com
-Message-Id: <20180610164417.47DD11EA9C4@correo.seminario.edu.uy>
+Received: by 2002:a19:ae16:0:0:0:0:0 with HTTP; Fri, 8 Jun 2018 08:56:20 -0700 (PDT)
+From: Alex <mysqlstudent@gmail.com>
+Date: Fri, 8 Jun 2018 11:56:20 -0400
+Message-ID: <CAB1R3sjA97Hd32iJ-6e4qbeAbSSDJNZJQ4+ppAJOTDqH1+jQaA@mail.gmail.com>
+Subject: How to determine why kernel is dropping packets
+To: lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Talented,
+Hi,
 
-I am Talent Scout For BLUE SKY FILM STUDIO, Present Blue sky Studio a
-Film Corporation Located in the United State, is Soliciting for the
-Right to use Your Photo/Face and Personality as One of the Semi -Major
-Role/ Character in our Upcoming ANIMATED Stereoscope 3D Movie-The Story
-of Spies in Disguise (Spies in Disguise 2019) The Movie is Currently Filming (In
-Production) Please Note That There Will Be No Auditions, Traveling or
-Any Special / Professional Acting Skills, Since the Production of This
-Movie Will Be Done with our State of Art Computer -Generating Imagery
-Equipment. We Are Prepared to Pay the Total Sum of $620,000.00 USD. For
-More Information/Understanding, Please Write us on the E-Mail Below.
-CONTACT EMAIL: bluesky.filmstudio@usa.com
-All Reply to: bluesky.filmstudio@usa.com
-Note: Only the Response send to this mail will be Given a Prior
-Consideration.
+I'm having a problem trying to figure out why the kernel is dropping
+packets on any machine connected to my cable modem and I don't know
+why. I've tried posting to fedora and network lists, but haven't had
+any luck, and hoped someone could help me here.
 
-Talent Scout
-Lisa Clement
+I have a fedora28 system with 4.16.12-300.fc28.x86_64 on a Xeon
+E5-1650 v3 @ 3.50GHz system, and during regular activity, it's
+dropping packets:
+
+# ifconfig br0
+br0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 68.195.193.42  netmask 255.255.255.248  broadcast 68.195.193.47
+        inet6 fe80::6c26:fdff:fe03:7f7e  prefixlen 64  scopeid 0x20<link>
+        inet6 ::ec4:7aff:fea9:18de  prefixlen 64  scopeid 0x0<global>
+        ether 0c:c4:7a:a9:18:de  txqueuelen 500  (Ethernet)
+        RX packets 202664225  bytes 255532394512 (237.9 GiB)
+        RX errors 0  dropped 391461  overruns 0  frame 0
+        TX packets 130138618  bytes 91417518889 (85.1 GiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+This occurs on the other similar system directly connected to this
+Optonline cable modem as well, with a different kernel, so I don't
+even know if it's the kernel itself. Perhaps it's a kernel tuning
+option?
+
+I've had the cable company here and they've replaced the line from the
+street and the cable modem itself. Perhaps it's somewhere else on
+their network?
+
+How can I determine what those packets were that were dropped and why
+they were dropped?
+
+Regular ping tests and tests like speedtest.net work just fine and
+show no latency or lost packet issues. DNS tests frequently fail or
+timeout.
+
+I don't know where else to go for help or how to troubleshoot this
+further. Ideas greatly appreciated.
