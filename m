@@ -1,146 +1,205 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id GoejOmjvGlvbHAAAmS7hNA
-	; Fri, 08 Jun 2018 21:04:41 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id VNL0DSslGluHcQAAmS7hNA
+	; Fri, 08 Jun 2018 06:41:47 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id CFDC4607E4; Fri,  8 Jun 2018 21:04:40 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="gnkJb8Ne"
+	id 253C66089E; Fri,  8 Jun 2018 06:41:47 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_MED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 04E03601D2;
-	Fri,  8 Jun 2018 21:04:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 04E03601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	by smtp.codeaurora.org (Postfix) with ESMTP id 96914607A4;
+	Fri,  8 Jun 2018 06:41:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 96914607A4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753179AbeFHVEi (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 17:04:38 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:39829 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752958AbeFHVEg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 17:04:36 -0400
-Received: by mail-ot0-f195.google.com with SMTP id l15-v6so16228801oth.6
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 14:04:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=OKeGko4c4eMdUHto+Radj03z6VgMYaKADmh907H74pg=;
-        b=gnkJb8NebfOL5X8W1EOtooNeqy2xBkZnIgSCgoTVBCQfIIyQ4yZ1kuR0iYeIPFE4Be
-         bEb9dmGVoXo4b7fyQXgOUCr9IEpydsUbqojv55aTEOPJDMs1nVGzwxUwqnpXchyFde2Z
-         m+aWMQSXQjQPzYK/3uHfw10UtQEmOnUFVJ8i18pmgoFCbBQW2RdfdzFh1UccinLAOypw
-         tEp+lIB73vF9KOEMqyv2KTuryMkEAvxIZ6DbRtB8mB79kx4lK5XD4vy6SXkiRrKwh2Pq
-         8OSf6FL4UYa1tF+2TsxjPzFW8AnqbRocPaBRn+kkW+0jRb41+/QqUS1GE/ts7NCA/upv
-         ywmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OKeGko4c4eMdUHto+Radj03z6VgMYaKADmh907H74pg=;
-        b=mu0rPtpVP10KN59AgP1JNObYLmyz29ovEbn7k4TWH9u6MNFELGeMNwOPMwob0E6iFm
-         YB/VwP3gKLego/Vthyt4GnqC+75DIkdJOyt89bnn8zzafplPrIn8Pyq14gBpd4FSCT7W
-         qlX8xVXs1rFs4EeU0znLRyHUFu9QshnBCELy5E+rEs0lBmfhulEb9twtfdoP76hmK1Mz
-         KKAhzOFPWxcwoDPrYKMi49gU6bJiL+CjDJifAwlJI4xOF0WrhTudY/ZygHs4YnaV7j/L
-         IF3bfXBk1jAcMAjWc7U4iFlDorD0U4ZUn+RCQeLc99IB3Kmx/+Biwe1yQW8AEUb1HELl
-         1RVA==
-X-Gm-Message-State: APt69E2rxglc8i7CF1vSxEKa86/r4z9BpbY7qrRyYTXNNuWv9j6ZyXuC
-        3e06Za+5VwVcEha7FdCmRBFCew==
-X-Google-Smtp-Source: ADUXVKLODO5i+jsv+RqiJ/R2NpiOFHfFT9jq3PRaOUvgYepYtytzL6LRLNj5v9AmGz/OJVLYp9Zktg==
-X-Received: by 2002:a9d:3851:: with SMTP id r17-v6mr4359172otd.335.1528491875495;
-        Fri, 08 Jun 2018 14:04:35 -0700 (PDT)
-Received: from cisco ([8.24.24.129])
-        by smtp.gmail.com with ESMTPSA id o55-v6sm20231668otb.51.2018.06.08.14.04.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 08 Jun 2018 14:04:34 -0700 (PDT)
-Date: Fri, 8 Jun 2018 15:04:33 -0600
-From: Tycho Andersen <tycho@tycho.ws>
-To: Kees Cook <keescook@chromium.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        "Tobin C . Harding" <me@tobin.cc>
-Subject: Re: [PATCH v3 0/4] seccomp trap to userspace
-Message-ID: <20180608210433.GA15707@cisco>
-References: <20180531144949.24995-1-tycho@tycho.ws>
- <CAGXu5jKsLDSBjB74SrvCvmGy_RTEjBsMtR5dk1CcRFrHEQfM_g@mail.gmail.com>
+        id S1752186AbeFHGlo (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 02:41:44 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33006 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751079AbeFHGlj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 02:41:39 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 35CEDAEC4;
+        Fri,  8 Jun 2018 06:41:37 +0000 (UTC)
+Subject: Re: Do Qualcomm drivers use DMA buffers for
+ request_firmware_into_buf()?
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Will Deacon <will.deacon@arm.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        David Brown <david.brown@linaro.org>,
+        Peter Jones <pjones@redhat.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
+        Nicolas Broeking <nbroeking@me.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Arve Hj?nnev?g <arve@android.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Arend Van Spriel <arend.vanspriel@broadcom.com>,
+        Todd Kjos <tkjos@android.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        linux-arm-msm@vger.kernel.org, Torsten Duwe <duwe@suse.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Chris Wright <chrisw@sous-sol.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        platform-driver-x86@vger.kernel.org,
+        Martijn Coenen <maco@android.com>,
+        Alan Cox <alan@linux.intel.com>,
+        Martin Fuzzey <mfuzzey@parkeon.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Vikram Mulukutla <markivx@codeaurora.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Dave Olsthoorn <dave@bewaar.me>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Shevchenko <andy@infradead.org>
+References: <1524586021.3364.20.camel@linux.vnet.ibm.com>
+ <20180424234219.GX14440@wotan.suse.de>
+ <1524632409.3371.48.camel@linux.vnet.ibm.com>
+ <20180425175557.GY14440@wotan.suse.de>
+ <CAB0TPYGnCu+anWHBGvkaigxD--8uHQaQJ2c62kegJ7mTqvkmnA@mail.gmail.com>
+ <20180508153805.GC27853@wotan.suse.de> <20180601192346.GQ4511@wotan.suse.de>
+ <20180606203257.GH4511@wotan.suse.de> <20180607161847.GN510@tuxbook-pro>
+ <CAKv+Gu8+Fq7BD4XD-YCyXzZh0mg6Z2k-0styj0cw6_uZfaqy4Q@mail.gmail.com>
+ <20180607163308.GA18834@kroah.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <39e942b6-795c-b7c8-bf9d-16907ef40aea@suse.cz>
+Date: Fri, 8 Jun 2018 08:41:28 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGXu5jKsLDSBjB74SrvCvmGy_RTEjBsMtR5dk1CcRFrHEQfM_g@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180607163308.GA18834@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kees,
-
-On Fri, Jun 08, 2018 at 09:29:42AM -0700, Kees Cook wrote:
-> On Thu, May 31, 2018 at 7:49 AM, Tycho Andersen <tycho@tycho.ws> wrote:
-> > Hi all,
-> >
-> > Here's a v3 of the seccomp trap to userspace, with all the nits from v2
-> > fixed. Open questions from v2 are still:
-> >
-> > 1. is it ok not to use netlink?
+On 06/07/2018 06:33 PM, Greg Kroah-Hartman wrote:
+> On Thu, Jun 07, 2018 at 06:23:01PM +0200, Ard Biesheuvel wrote:
+>> On 7 June 2018 at 18:18, Bjorn Andersson <bjorn.andersson@linaro.org> wrote:
+>>> On Wed 06 Jun 13:32 PDT 2018, Luis R. Rodriguez wrote:
+>>>
+>>>> On Fri, Jun 01, 2018 at 09:23:46PM +0200, Luis R. Rodriguez wrote:
+>>>>> On Tue, May 08, 2018 at 03:38:05PM +0000, Luis R. Rodriguez wrote:
+>>>>>> On Fri, May 04, 2018 at 12:44:37PM -0700, Martijn Coenen wrote:
+>>>>>>>
+>>>>>>> I think the Qualcomm folks owning this (Andy, David, Bjorn, already
+>>>>>>> cc'd here) are better suited to answer that question.
+>>>>>>
+>>>>>> Andy, David, Bjorn?
+>>>>>
+>>>>> Andy, David, Bjorn?
+>>>>
+>>>> A month now with no answer...
+>>>>
+>>>
+>>> The patch at the top of this thread doesn't interest me and you didn't
+>>> bother sending your question To me.
+>>>
+>>> As a matter of fact I'm confused to what the actual question is.
+>>>
+>>
+>> The actual question is whether it is really required that the firmware
+>> is loaded by the kernel into a buffer that is already mapped for DMA
+>> at that point, and thus accessible by the device.
+>>
+>> To me, it is not entirely clear what the nature is of the firmware
+>> that we are talking about, since it seems to be getting passed to the
+>> secure world as well?
+>>
+>> In any case, the preferred model in terms of validation/sig checking is
+>>
+>> 1) allocate a CPU accessible buffer
+>>
+>> 2) request the firmware into it (which may include a sig check under the hood)
+>>
+>> 3) map the buffer for DMA to the device so it can load the firmware.
+>>
+>> 4) kick off the DMA transfer.
+>>
+>> The use of dma_alloc_coherent() for this purpose seems unnecessary,
+>> given that the DMA transfer is not bidirectional. Would it be possible
+>> to replace it with something like the above sequence?
 > 
-> Yeah, I think there isn't a sensible way to reuse that API, which is
-> too bad. Let's just try to keep this interface future-proofed. :)
+> Why not just use kmalloc, it will always return a DMAable buffer.
 
-Yes, I think it is, assuming that we always use a zero value as the
-"do the same thing as before" value. Perhaps I should write that
-assumption down somewhere...
+DMAble in what sense? For devices that can't handle physical addresses
+above 16M you need to pass __GFP_DMA to get those, from ZONE_DMA.
+Otherwise it can return anything from lowmem. That's for x86_64, some
+other arches have different DMA zone.
 
-> > 2. what should the fd passing API look like? (see patch notes on this
-> >    one for details of why the current one might (?) be a problem)
+> Is the problem that vmalloc() might not?
+
+vmalloc() could only be used as an alternative if you used kvmalloc(),
+otherwise kmalloc() won't give you anything from vmalloc
+
+> We need to drop the whole DMA zone crud, it confuses everyone who sees
+> it and was primarily for really really old systems.
+
+Yeah that would be nice.
+
+> greg k-h
 > 
-> The only thing in my mind is avoiding the problems with other fd
-> passing API (e.g. when do rlimits get checked, etc).
-
-My read of get_unused_fd_flags() is that it does check RLIMIT_NOFILE,
-so I think we're ok there.
-
-My biggest concern was just about the case where we want to do
-something besides return an fd from a syscall (e.g. install an fd, but
-return it via some pointer or something), but I'm not aware of
-anywhere we do that today, so maybe I'm worrying about it too much.
-
-> > As an added bonus, I've also written some stress testing, with lots of
-> > tasks and listeners (1000 of each) sharing the same notification thread,
-> > and not found any issues so far. Code is here:
-> > https://github.com/tych0/kernel-utils/blob/master/seccomp/notify_stress.c
-> > although I haven't included it in the patchset.
-> 
-> That's excellent, thanks!
-> 
-> > v2: https://lkml.org/lkml/2018/5/17/627
-> >
-> > Tycho Andersen (4):
-> >   seccomp: add a return code to trap to userspace
-> >   seccomp: make get_nth_filter available outside of CHECKPOINT_RESTORE
-> >   seccomp: add a way to get a listener fd from ptrace
-> >   seccomp: add support for passing fds via USER_NOTIF
-> 
-> I'm under a time crunch with the merge window, but after -rc2 I should
-> have time to give this some close review. FWIW, I expect this to enter
-> -next this cycle and get it into the 4.19 merge window: we need the
-> feature and the alternatives have been well explored and don't look
-> workable.
-
-No rush. I am preparing a v4 with the various comments in this thread
-fixed, hopefully I'll send it out early next week.
-
-Tycho
