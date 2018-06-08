@@ -1,127 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id xhbmOhNgHluFPAAAmS7hNA
-	; Mon, 11 Jun 2018 11:42:12 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id l6VxARYfGltCNgAAmS7hNA
+	; Fri, 08 Jun 2018 06:17:54 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D14E2607A4; Mon, 11 Jun 2018 11:42:11 +0000 (UTC)
+	id 1EC5D6089E; Fri,  8 Jun 2018 06:17:54 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="E4XMvtrz"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 5823C60541;
-	Mon, 11 Jun 2018 11:42:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5823C60541
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 6337C606FA;
+	Fri,  8 Jun 2018 06:17:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6337C606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933002AbeFKLmK (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Mon, 11 Jun 2018 07:42:10 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47898 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932858AbeFKLmI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 07:42:08 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5DDE0401EF00;
-        Mon, 11 Jun 2018 11:42:07 +0000 (UTC)
-Received: from [10.36.117.231] (ovpn-117-231.ams2.redhat.com [10.36.117.231])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id BA892ED156;
-        Mon, 11 Jun 2018 11:41:55 +0000 (UTC)
-Subject: Re: [PATCH v9 09/12] KVM: x86: Introduce a function to initialize the
- PT configuration
-To: "Kang, Luwei" <luwei.kang@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "chao.p.peng@linux.intel.com" <chao.p.peng@linux.intel.com>,
-        "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
-        "bp@suse.de" <bp@suse.de>, "Liang, Kan" <kan.liang@intel.com>,
-        "Janakarajan.Natarajan@amd.com" <Janakarajan.Natarajan@amd.com>,
-        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "david@redhat.com" <david@redhat.com>,
-        "bsd@redhat.com" <bsd@redhat.com>,
-        "yu.c.zhang@linux.intel.com" <yu.c.zhang@linux.intel.com>,
-        "joro@8bytes.org" <joro@8bytes.org>
-References: <1526964735-16566-1-git-send-email-luwei.kang@intel.com>
- <1526964735-16566-10-git-send-email-luwei.kang@intel.com>
- <20180607135648.mkciyfrd2wgvdxze@um.fi.intel.com>
- <82D7661F83C1A047AF7DC287873BF1E167FF0140@SHSMSX101.ccr.corp.intel.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <c3a25e58-cb4e-f3f7-bbd5-559bc763bb26@redhat.com>
-Date: Mon, 11 Jun 2018 13:41:53 +0200
+        id S1751125AbeFHGRv (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 02:17:51 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:11962 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750898AbeFHGRu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 02:17:50 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllnx209.ext.ti.com (8.15.1/8.15.1) with ESMTP id w586HM7O026675;
+        Fri, 8 Jun 2018 01:17:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1528438642;
+        bh=mCZcp4XOUFAFNnK7GXNwgv0DV1/ocKDqwQX5g/I0FkY=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=E4XMvtrz+2CrwE4efu/LtjgnYdbvE6//tLQl5bETJfI/W9ABI9OS1Ff8sJEiAUz8d
+         K9ve1+cHT2SAWQ2OjUb0+O1V4TQuTeCIZWc1jKzb09iaRGssyM+oddkZLSLaI50XgF
+         0IpKLJAQJpS74driBq5RbTBkotsHJIYPp6VwOgS0=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w586HMvN027601;
+        Fri, 8 Jun 2018 01:17:22 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 8 Jun
+ 2018 01:17:22 -0500
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Fri, 8 Jun 2018 01:17:22 -0500
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w586HKHR006081;
+        Fri, 8 Jun 2018 01:17:20 -0500
+Subject: Re: [PATCH v2] gpu: drm: omapdrm: Adding new typedef vm_fault_t
+To: Souptick Joarder <jrdr.linux@gmail.com>, <airlied@linux.ie>
+CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <willy@infradead.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20180522181357.GA31257@jordon-HP-15-Notebook-PC>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Message-ID: <cf6ee7ab-5818-3309-5a0d-ba047d3f900c@ti.com>
+Date: Fri, 8 Jun 2018 09:17:20 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <82D7661F83C1A047AF7DC287873BF1E167FF0140@SHSMSX101.ccr.corp.intel.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180522181357.GA31257@jordon-HP-15-Notebook-PC>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 11 Jun 2018 11:42:07 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 11 Jun 2018 11:42:07 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/06/2018 16:56, Kang, Luwei wrote:
->>> +	/* Initialize and clear the no dependency bits */
->>> +	vmx->pt_desc.ctl_bitmask = ~0ULL;
->> This looks redundant, doesn't it?
-> This is a bit mask for RTIT_CTL MSR and it will make & with the value of RTIT_CLT from guest.
-> The reserved bits will be 1 in this bit mask and the setable  bits are 0.
+Hi,
+
+On 22/05/18 21:13, Souptick Joarder wrote:
+> Use new return type vm_fault_t for fault handler. For
+> now, this is just documenting that the function returns
+> a VM_FAULT value rather than an errno. Once all instances
+> are converted, vm_fault_t will become a distinct type.
 > 
->>> +	vmx->pt_desc.ctl_bitmask = ~(RTIT_CTL_TRACEEN | RTIT_CTL_OS |
->>> +			RTIT_CTL_USR | RTIT_CTL_TSC_EN |
->> RTIT_CTL_DISRETC);
+> Ref-> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+> 
+> Previously vm_insert_mixed() returns err which driver
+> mapped into VM_FAULT_* type. Also return value of
+> vm_insert_mixed() not handled correctly and 0 was
+> returned inside fault_2d() as default. The new function
+> vmf_insert_mixed() will replace this inefficiency by
+> returning correct VM_FAULT_* type.
+> 
+> vmf_error() is the newly introduce inline function
+> in 4.17-rc6.
+> 
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+> ---
+> v2: Fixed kbuild error by initialized ret
+>     in fault_2d().
+> 
+>  drivers/gpu/drm/omapdrm/omap_gem.c | 51 +++++++++++++++++---------------------
+>  drivers/gpu/drm/omapdrm/omap_gem.h |  3 ++-
+>  2 files changed, 25 insertions(+), 29 deletions(-)
 
-But it's set twice, so the first assignment is superfluous.
+Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
 
-Paolo
+It's too late to get this to 4.18 via my normal routes. If you have
+other similar patches queued and Linus/maintainers are ok to merge this
+late, feel free to queue this that way.
+
+Otherwise I can pick this up for my 4.19 patches.
+
+Laurent, this will conflict omap_gem cleanups you did, but I don't think
+there's anything problematic there.
+
+ Tomi
+
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
