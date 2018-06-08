@@ -1,131 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id mnN/K2GCHltUCQAAmS7hNA
-	; Mon, 11 Jun 2018 14:08:33 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 6KREJWhjGlsYHgAAmS7hNA
+	; Fri, 08 Jun 2018 11:19:19 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 93B2D6074D; Mon, 11 Jun 2018 14:08:33 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="S1LKptTF"
+	id 73FA76089E; Fri,  8 Jun 2018 11:19:19 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id A880F607A4;
-	Mon, 11 Jun 2018 14:08:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A880F607A4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id C21B0606FA;
+	Fri,  8 Jun 2018 11:19:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C21B0606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933687AbeFKOHW (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 10:07:22 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46352 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933618AbeFKOHH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:07:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=UgFl0dysXKDbf8W2SmP4EbGU6+EmivqudowCUQbLCL0=; b=S1LKptTFb6IwBRg/HFYNOtO6s
-        xvhJtCtRZZ/azdaRVrsVXBKxznY8NRzGqqPsxzoPcIMpgWcNGO7pCGmrSJPVpo4dy8tBWbejz0l6Y
-        VYDcFR3PfrFZROAhODYJfzw3uvV6DaAd6MoPsXunHLLukqr8LCSD9+yfcEWMLTuO7niKodKCY+9lU
-        1Xv3Mw3lWkVdARbEiBYjYfV/pLnKM+0ssccRgRT+LLmxWjLfTe/YZofGJzhmPAw+zJahrprKdfIUq
-        /Bl/g6MqmnFDZNRPCJuSuUibq3I5cq6ZXH6flRzvCuoRb0vyp0UOCTExJzauIo/8c8ean3HGkQRx0
-        r7QfT+jow==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSNTO-0004wc-TE; Mon, 11 Jun 2018 14:07:06 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Lukas Czerner <lczerner@redhat.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v13 55/72] shmem: Comment fixups
-Date: Mon, 11 Jun 2018 07:06:22 -0700
-Message-Id: <20180611140639.17215-56-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
-References: <20180611140639.17215-1-willy@infradead.org>
+        id S1751565AbeFHLTQ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 07:19:16 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:32794 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750993AbeFHLTP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 07:19:15 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 06E2E1529;
+        Fri,  8 Jun 2018 04:19:15 -0700 (PDT)
+Received: from e108498-lin.cambridge.arm.com (e108498-lin.cambridge.arm.com [10.1.211.46])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 12AB93F557;
+        Fri,  8 Jun 2018 04:19:10 -0700 (PDT)
+Date: Fri, 8 Jun 2018 12:19:09 +0100
+From: Quentin Perret <quentin.perret@arm.com>
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: peterz@infradead.org, rjw@rjwysocki.net,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, mingo@redhat.com,
+        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
+        chris.redpath@arm.com, patrick.bellasi@arm.com,
+        valentin.schneider@arm.com, vincent.guittot@linaro.org,
+        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
+        tkjos@google.com, joelaf@google.com, smuckle@google.com,
+        adharmap@quicinc.com, skannan@quicinc.com, pkondeti@codeaurora.org,
+        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
+        currojerez@riseup.net, javi.merino@kernel.org
+Subject: Re: [RFC PATCH v3 09/10] sched/fair: Select an energy-efficient CPU
+ on task wake-up
+Message-ID: <20180608111909.GC418@e108498-lin.cambridge.arm.com>
+References: <20180521142505.6522-1-quentin.perret@arm.com>
+ <20180521142505.6522-10-quentin.perret@arm.com>
+ <20180608102446.GE658@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180608102446.GE658@localhost.localdomain>
+User-Agent: Mutt/1.8.3 (2017-05-23)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+On Friday 08 Jun 2018 at 12:24:46 (+0200), Juri Lelli wrote:
+> Hi,
+> 
+> On 21/05/18 15:25, Quentin Perret wrote:
+> 
+> [...]
+> 
+> > +static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
+> > +{
+> > +	unsigned long cur_energy, prev_energy, best_energy, cpu_cap, task_util;
+> > +	int cpu, best_energy_cpu = prev_cpu;
+> > +	struct sched_energy_fd *sfd;
+> > +	struct sched_domain *sd;
+> > +
+> > +	sync_entity_load_avg(&p->se);
+> > +
+> > +	task_util = task_util_est(p);
+> > +	if (!task_util)
+> > +		return prev_cpu;
+> > +
+> > +	/*
+> > +	 * Energy-aware wake-up happens on the lowest sched_domain starting
+> > +	 * from sd_ea spanning over this_cpu and prev_cpu.
+> > +	 */
+> > +	sd = rcu_dereference(*this_cpu_ptr(&sd_ea));
+> > +	while (sd && !cpumask_test_cpu(prev_cpu, sched_domain_span(sd)))
+> > +		sd = sd->parent;
+> > +	if (!sd)
+> > +		return -1;
+> 
+> Shouldn't this be return prev_cpu?
 
-Remove the last mentions of radix tree from various comments.
+Well, you shouldn't be entering this function without an sd_ea pointer,
+so this case is a sort of bug I think. By returning -1 I think we should
+end-up picking a CPU using select_fallback_rq(), which sort of makes
+sense ?
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
----
- mm/shmem.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> > +
+> > +	if (cpumask_test_cpu(prev_cpu, &p->cpus_allowed))
+> > +		prev_energy = best_energy = compute_energy(p, prev_cpu);
+> > +	else
+> > +		prev_energy = best_energy = ULONG_MAX;
+> > +
+> > +	for_each_freq_domain(sfd) {
+> > +		unsigned long spare_cap, max_spare_cap = 0;
+> > +		int max_spare_cap_cpu = -1;
+> > +		unsigned long util;
+> > +
+> > +		/* Find the CPU with the max spare cap in the freq. dom. */
+> 
+> I undestand this being a heuristic to cut some overhead, but shouldn't
+> the model tell between packing vs. spreading?
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index bffb87854852..5f14acf95eff 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -766,7 +766,7 @@ void shmem_unlock_mapping(struct address_space *mapping)
- }
- 
- /*
-- * Remove range of pages and swap entries from radix tree, and free them.
-+ * Remove range of pages and swap entries from page cache, and free them.
-  * If !unfalloc, truncate or punch hole; if unfalloc, undo failed fallocate.
-  */
- static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
-@@ -1146,10 +1146,10 @@ static int shmem_unuse_inode(struct shmem_inode_info *info,
- 		 * We needed to drop mutex to make that restrictive page
- 		 * allocation, but the inode might have been freed while we
- 		 * dropped it: although a racing shmem_evict_inode() cannot
--		 * complete without emptying the radix_tree, our page lock
-+		 * complete without emptying the page cache, our page lock
- 		 * on this swapcache page is not enough to prevent that -
- 		 * free_swap_and_cache() of our swap entry will only
--		 * trylock_page(), removing swap from radix_tree whatever.
-+		 * trylock_page(), removing swap from page cache whatever.
- 		 *
- 		 * We must not proceed to shmem_add_to_page_cache() if the
- 		 * inode has been freed, but of course we cannot rely on
-@@ -1215,7 +1215,7 @@ int shmem_unuse(swp_entry_t swap, struct page *page)
- 			false);
- 	if (error)
- 		goto out;
--	/* No radix_tree_preload: swap entry keeps a place for page in tree */
-+	/* No memory allocation: swap entry occupies the slot for the page */
- 	error = -EAGAIN;
- 
- 	mutex_lock(&shmem_swaplist_mutex);
-@@ -1889,7 +1889,7 @@ alloc_nohuge:		page = shmem_alloc_and_acct_page(gfp, inode,
- 		spin_unlock_irq(&info->lock);
- 		goto repeat;
- 	}
--	if (error == -EEXIST)	/* from above or from radix_tree_insert */
-+	if (error == -EEXIST)
- 		goto repeat;
- 	return error;
- }
-@@ -2501,7 +2501,7 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
- }
- 
- /*
-- * llseek SEEK_DATA or SEEK_HOLE through the radix_tree.
-+ * llseek SEEK_DATA or SEEK_HOLE through the page cache.
-  */
- static pgoff_t shmem_seek_hole_data(struct address_space *mapping,
- 				    pgoff_t index, pgoff_t end, int whence)
--- 
-2.17.1
+Ah, that's a very interesting one :-) !
+
+So, with only active costs of the CPUs in the model, we can't really
+tell what's best between packing or spreading between identical CPUs if
+the migration of the task doesn't change the OPP request.
+
+In a frequency domain, all the "best" CPU candidates for a task are
+those for which we'll request a low OPP. When there are several CPUs for
+which the OPP request will be the same, we just don't know which one to
+pick from an energy standpoint, because we don't have other energy costs
+(for idle states for ex) to break the tie.
+
+With this EM, the interesting thing is that if you assume that OPP
+requests follow utilization, you are _guaranteed_ that the CPU with
+the max spare capacity in a freq domain will always be among the best
+candidates of this freq domain. And since we don't know how to
+differentiate those candidates, why not using this one ?
+
+Yes, it _might_ be better from an energy standpoint to pack small tasks
+on a CPU in order to let other CPUs go in deeper idle states. But that
+also hurts your chances to go cluster idle. Which solution is the best ?
+It depends, and we have no ways to tell with this EM.
+
+This approach basically favors cluster-packing, and spreading inside a
+cluster. That should at least be a good thing for latency, and this is
+consistent with the idea that most of the energy savings come from the
+asymmetry of the system, and not so much from breaking the tie between
+identical CPUs. That's also the reason why EAS is enabled only if your
+system has SD_ASYM_CPUCAPACITY set, as we already discussed for patch
+05/10 :-).
+
+Does that make sense ?
+
+Thanks,
+Quentin
