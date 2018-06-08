@@ -1,107 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 5YkbHXx+GVv6awAAmS7hNA
-	; Thu, 07 Jun 2018 18:50:51 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Ji9uJ4RYGls7VAAAmS7hNA
+	; Fri, 08 Jun 2018 10:20:52 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 350CF6074D; Thu,  7 Jun 2018 18:50:51 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="hfz2w1r6"
+	id 906B2607A4; Fri,  8 Jun 2018 10:20:52 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 8B268606DD;
-	Thu,  7 Jun 2018 18:50:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8B268606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+	by smtp.codeaurora.org (Postfix) with ESMTP id 0A18660590;
+	Fri,  8 Jun 2018 10:20:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0A18660590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932573AbeFGSur (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 14:50:47 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:51164 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932504AbeFGSup (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 14:50:45 -0400
-Received: by mail-wm0-f66.google.com with SMTP id e16-v6so19783026wmd.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 11:50:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KHtSFMK3pkdaXrphp2O5ytRdMqjcSWaTsAMiJ7/fYDc=;
-        b=hfz2w1r6sM6Lr7H5nZlK8ng1PXBUliBUaHAhkh/PjwnhchXoUTScqFMcahJwQoZ12g
-         LuvPn5Opdgq/5kdpo0EbsOYTGzpWC/4iwWx3LXE98yFVdKb9DCPnwSRdWfI7nS3yx1BZ
-         m4tY3gNFsxdGytQziiUgAuJhEtsK8jyew+TyVgdMZNYRmRhlYQ7vfZ9+LVVMKCvNo+my
-         7s6h9Crh46EEtWWwhQ1qENDK4M1PNT6wrnBaPb3AX2BIMxeKlci81Fp9btGIYTYoBFxZ
-         uTYrb0QUDbqvMVHbIkPHWUDEVykv0r0tA0g71gmWobczQmo2UyTXzsFpgMjePHYU0Vvj
-         aaTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KHtSFMK3pkdaXrphp2O5ytRdMqjcSWaTsAMiJ7/fYDc=;
-        b=JlEk4ZBn2F5IdOtd/ai1rNApM6wuK95RMIDe4bZOaQVIKXmb5MFT42zhRZaKQ4Qyli
-         RPWZFiSBxdu2NBmw7oVUZmdrGzP/8lomXJYTTs9OHX7RRfyK9F9VsO0L9Z6DQo3yp/TU
-         CXPL2ydt5f6jHMkC1CJaEZAWA726wMq2tKhFtl48WiasB5OJP+zH1oQ0NkC6zY6Sr3I2
-         9Axgtn9/a9t9KtZwCCwIZD/WYDIt4klV9d/Im4l8O+HpKuqqS9Pcj2iOu+u7NFivfT3e
-         HKjbQtD4yRaAQPFZvLzV7nwsoDLl95rA7QlSnylVRhtftNaTL9JtqvUjJQGOavZT2I0+
-         0tww==
-X-Gm-Message-State: APt69E19WXBS40fylg96bwu7loq2BDzup4jO3aSUDhaMS+GfcTDd7DXL
-        S2gqr4cay7ElxgnJEyQdag6FKw==
-X-Google-Smtp-Source: ADUXVKKTQnSpgIOlGlpBvLmBytHdqFOOCtugIBTqOhhFUI40VkX0ys7T+5xABdzBsL4RslUoQv3fWw==
-X-Received: by 2002:a1c:9d49:: with SMTP id g70-v6mr2545801wme.134.1528397444186;
-        Thu, 07 Jun 2018 11:50:44 -0700 (PDT)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id u7-v6sm38858835wrp.44.2018.06.07.11.50.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Jun 2018 11:50:43 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.86_2)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1fQzza-0002yM-7R; Thu, 07 Jun 2018 12:50:38 -0600
-Date: Thu, 7 Jun 2018 12:50:38 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Hans Westgaard Ry <hans.westgaard.ry@oracle.com>
-Cc: Doug Ledford <dledford@redhat.com>,
-        Hakon Bugge <haakon.bugge@oracle.com>,
-        Parav Pandit <parav@mellanox.com>,
-        Jack Morgenstein <jackm@dev.mellanox.co.il>,
-        Pravin Shedge <pravin.shedge4linux@gmail.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Wei Wang <wei.w.wang@intel.com>,
-        Chris Mi <chrism@mellanox.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] idr: Add ida_simple_get_cyclic
-Message-ID: <20180607185038.GF14583@ziepe.ca>
-References: <20180529073808.27735-1-hans.westgaard.ry@oracle.com>
- <20180607111435.17538-1-hans.westgaard.ry@oracle.com>
- <20180607111435.17538-2-hans.westgaard.ry@oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180607111435.17538-2-hans.westgaard.ry@oracle.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1752775AbeFHKUs (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 06:20:48 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:22254 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752685AbeFHKUp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 06:20:45 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 412JMb0Vlyz9ttrk;
+        Fri,  8 Jun 2018 12:20:43 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 153MSih0MUS0; Fri,  8 Jun 2018 12:20:43 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 412JMZ72Pfz9ttqt;
+        Fri,  8 Jun 2018 12:20:42 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 3BE0D8BB57;
+        Fri,  8 Jun 2018 12:20:44 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id R0FEJXsAKSoj; Fri,  8 Jun 2018 12:20:44 +0200 (CEST)
+Received: from po14934vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 173BC8BB51;
+        Fri,  8 Jun 2018 12:20:44 +0200 (CEST)
+Received: by po14934vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 071796F846; Fri,  8 Jun 2018 10:20:44 +0000 (UTC)
+Message-Id: <d840d836f392b890c2e477d059b5a3a511a14631.1528452373.git.christophe.leroy@c-s.fr>
+In-Reply-To: <a348f4ffda6349467e4270e754d12150fa773462.1528452373.git.christophe.leroy@c-s.fr>
+References: <a348f4ffda6349467e4270e754d12150fa773462.1528452373.git.christophe.leroy@c-s.fr>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v4 4/4] selftests/powerpc: update strlen() test to test the
+ new assembly function
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, wei.guo.simon@gmail.com
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date: Fri,  8 Jun 2018 10:20:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 07, 2018 at 01:14:34PM +0200, Hans Westgaard Ry wrote:
-> Signed-off-by: Hans Westgaard Ry <hans.westgaard.ry@oracle.com>
-> ---
->  include/linux/idr.h |  8 +++++--
->  lib/idr.c           | 66 +++++++++++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 72 insertions(+), 2 deletions(-)
+This patch modifies the test for testing the new assembly strlen() instead
+of the generic strlen()
 
-If you are going to do this you should convert the other places that
-open coded this as well..
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ v4: new
 
-Jason
+ tools/testing/selftests/powerpc/stringloops/Makefile |  3 +--
+ .../selftests/powerpc/stringloops/asm/cache.h        |  1 +
+ .../selftests/powerpc/stringloops/asm/ppc_asm.h      | 20 ++++++++++++++++++++
+ tools/testing/selftests/powerpc/stringloops/string.S |  1 +
+ 4 files changed, 23 insertions(+), 2 deletions(-)
+ create mode 100644 tools/testing/selftests/powerpc/stringloops/asm/cache.h
+ create mode 120000 tools/testing/selftests/powerpc/stringloops/string.S
+
+diff --git a/tools/testing/selftests/powerpc/stringloops/Makefile b/tools/testing/selftests/powerpc/stringloops/Makefile
+index df663ee9ddb3..0c088a6d0369 100644
+--- a/tools/testing/selftests/powerpc/stringloops/Makefile
++++ b/tools/testing/selftests/powerpc/stringloops/Makefile
+@@ -10,8 +10,7 @@ $(OUTPUT)/memcmp_64: CFLAGS += -m64
+ $(OUTPUT)/memcmp_32: memcmp.c
+ $(OUTPUT)/memcmp_32: CFLAGS += -m32
+ 
+-$(OUTPUT)/strlen: strlen.c string.o
+-$(OUTPUT)/string.o: string.c
++$(OUTPUT)/strlen: strlen.c string.S
+ 
+ ASFLAGS = $(CFLAGS)
+ 
+diff --git a/tools/testing/selftests/powerpc/stringloops/asm/cache.h b/tools/testing/selftests/powerpc/stringloops/asm/cache.h
+new file mode 100644
+index 000000000000..8a2840831122
+--- /dev/null
++++ b/tools/testing/selftests/powerpc/stringloops/asm/cache.h
+@@ -0,0 +1 @@
++#define	IFETCH_ALIGN_BYTES 4
+diff --git a/tools/testing/selftests/powerpc/stringloops/asm/ppc_asm.h b/tools/testing/selftests/powerpc/stringloops/asm/ppc_asm.h
+index 136242ec4b0e..9f8e34ffc131 100644
+--- a/tools/testing/selftests/powerpc/stringloops/asm/ppc_asm.h
++++ b/tools/testing/selftests/powerpc/stringloops/asm/ppc_asm.h
+@@ -1,4 +1,12 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
++#if !defined(CONFIG_PPC64) && !defined(CONFIG_PPC32)
++#ifdef __powerpc64__
++#define CONFIG_PPC64
++#else
++#define CONFIG_PPC32
++#endif
++#endif
++
+ #include <ppc-asm.h>
+ 
+ #ifndef r1
+@@ -6,3 +14,15 @@
+ #endif
+ 
+ #define _GLOBAL(A) FUNC_START(test_ ## A)
++
++#ifdef __powerpc64__
++#define SZL		8
++#define PPC_LLU		ldu
++#define PPC_LCMPI	cmpldi
++#define PPC_ROTLI	rotldi
++#else
++#define SZL		4
++#define PPC_LLU		lwzu
++#define PPC_LCMPI	cmplwi
++#define PPC_ROTLI	rotlwi
++#endif
+diff --git a/tools/testing/selftests/powerpc/stringloops/string.S b/tools/testing/selftests/powerpc/stringloops/string.S
+new file mode 120000
+index 000000000000..9f5babec7d21
+--- /dev/null
++++ b/tools/testing/selftests/powerpc/stringloops/string.S
+@@ -0,0 +1 @@
++../../../../../arch/powerpc/lib/string.S
+\ No newline at end of file
+-- 
+2.13.3
