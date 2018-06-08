@@ -1,134 +1,192 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id V77tB9mxGFsATgAAmS7hNA
-	; Thu, 07 Jun 2018 04:17:29 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id CrvgJmsEG1vgMgAAmS7hNA
+	; Fri, 08 Jun 2018 22:35:46 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 025D0608B8; Thu,  7 Jun 2018 04:17:29 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GgqIEDTs"
+	id EAD226089E; Fri,  8 Jun 2018 22:35:45 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 55B4F60115;
-	Thu,  7 Jun 2018 04:17:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 55B4F60115
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 2A9DF601B4;
+	Fri,  8 Jun 2018 22:35:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2A9DF601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751615AbeFGERY (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 00:17:24 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:41452 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750912AbeFGERX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 00:17:23 -0400
-Received: by mail-pl0-f66.google.com with SMTP id az12-v6so5191649plb.8
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Jun 2018 21:17:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=B30T/MR3oOIEVwdYJwa4azGY1N0gbhZXwu5qbrxKnNA=;
-        b=GgqIEDTsLXciUpO5wdEIxmnYQXy3U5T5I0d+dWEBsymqaFC9o3T7qwSoLKMpxE15aO
-         S7OqTK+q2S/fWEgkRYI1GLUdkWJlerBHEfCUHZHta7UpC1Eps67URp2BV0tm+EpXvzOn
-         CjAsADKymcNCpgGbMOUc9wJ/TLloyq8gKG3HI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=B30T/MR3oOIEVwdYJwa4azGY1N0gbhZXwu5qbrxKnNA=;
-        b=Ay1QkJUJGUhRFZ+9JRQz1S2DB7HD7GiTAHtDsdOsuICeSMeI69w7l8SRxaow0YPjcX
-         J69nUTKxdU7dtsfypoB93nq5igPhHmkK9mKLH8wyL0hG4019AJ9KRp4hfgwUT6zMNbZI
-         64k7Cxjna1XlIIrFTv+t3YxmMixzPzp2hhBY1iGr77JFelOQzpqyUtmY7oHZggR5Zkd/
-         DHxjNFWVK2Qgu0ohVg/f+WvLcb6sCv92rT0KoLQClBLFbJXt0o9u5by17wEcxlk5AW9g
-         TUq3vDDXNOI8Ul7aRhEezvnULoZmZ33YDSu82XP+FiLhQYtdZ3dbR0cBg3OMD0P4j7Nm
-         FllA==
-X-Gm-Message-State: APt69E26NDPaX6RlTDTTK4EiwRRdBxwSziV1kyIJNtld/iYp3mqqXAci
-        udp5WI/04gHrf24bVX4mEDBC/w==
-X-Google-Smtp-Source: ADUXVKJtT5DSPqppXJCe6/+fJAovyoyu86Ju63TqkPmSEJpRWzWIr+Hb+0Y0c6MiSpKUm87LsBMknA==
-X-Received: by 2002:a17:902:650a:: with SMTP id b10-v6mr323796plk.45.1528345042356;
-        Wed, 06 Jun 2018 21:17:22 -0700 (PDT)
-Received: from localhost ([122.172.63.23])
-        by smtp.gmail.com with ESMTPSA id u65-v6sm47016596pgb.36.2018.06.06.21.17.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 06 Jun 2018 21:17:20 -0700 (PDT)
-Date: Thu, 7 Jun 2018 09:47:18 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: gregkh@linuxfoundation.org, alex.elder@linaro.org,
-        Johan Hovold <johan@kernel.org>,
-        kbuild test robot <lkp@intel.com>,
-        linux-arch@vger.kernel.org, michal.lkml@markovi.net,
-        linux-kernel@vger.kernel.org, arnd@arndb.de,
-        yamada.masahiro@socionext.com, lgirdwood@gmail.com,
-        broonie@kernel.org, rdunlap@infradead.org, x86@kernel.org,
-        linux@armlinux.org.uk, changbin.du@intel.com,
-        linux-sparse@vger.kernel.org, mingo@redhat.com, kbuild-all@01.org,
-        akpm@linux-foundation.org, changbin.du@gmail.com,
-        tglx@linutronix.de, linux-kbuild@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 2/4] kernel hacking: new config NO_AUTO_INLINE to
- disable compiler auto-inline optimizations
-Message-ID: <20180607041718.qpqucjzlvcm5h3gn@vireshk-i7>
-References: <1528186420-6615-3-git-send-email-changbin.du@intel.com>
- <201806060501.btF3aJMZ%fengguang.wu@intel.com>
- <20180606095714.1d3c2def@vmware.local.home>
- <20180606142600.GN13775@localhost>
- <20180606142622.2338abf6@vmware.local.home>
+        id S1753193AbeFHWfn (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 18:35:43 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48410 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752911AbeFHWfm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 18:35:42 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F1C2C30001DB;
+        Fri,  8 Jun 2018 22:35:41 +0000 (UTC)
+Received: from redhat.com (ovpn-116-62.phx2.redhat.com [10.3.116.62])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A449426E56;
+        Fri,  8 Jun 2018 22:35:41 +0000 (UTC)
+Received: from fche by redhat.com with local (Exim 4.89)
+        (envelope-from <fche@redhat.com>)
+        id 1fRPyt-0001XU-ES; Fri, 08 Jun 2018 18:35:39 -0400
+Date: Fri, 8 Jun 2018 18:35:39 -0400
+From: "Frank Ch. Eigler" <fche@redhat.com>
+To: systemtap@sourceware.org
+Cc: linux-kernel@vger.kernel.org, lwn@lwn.net
+Subject: systemtap 3.3 release
+Message-ID: <20180608223539.GA29002@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180606142622.2338abf6@vmware.local.home>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Fri, 08 Jun 2018 22:35:42 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Greg/Alex,
+The SystemTap team announces release 3.3!
 
-@Fegguang/build-bot: I do see mention of Greg and /me in your initial email's
-body saying TO: Viresh, CC: Greg, but I don't see any of us getting cc'd in your
-email. Bug ?
+  eBPF backend extensions, easier access to examples, adapting to
+  meltdown/spectre complications, real-time / high-cpu-count
+  concurrency fixes
 
-On 06-06-18, 14:26, Steven Rostedt wrote:
-> On Wed, 6 Jun 2018 16:26:00 +0200
-> Johan Hovold <johan@kernel.org> wrote:
-> 
-> > Looks like the greybus code above is working as intended by checking for
-> > unterminated string after the strncpy, even if this does now triggers
-> > the truncation warning.
 
-So why exactly are we generating a warning here ? Is it because it is possible
-that the first n bytes of src may not have the null terminating byte and the
-dest may not be null terminated eventually ?
+= Where to get it
 
-Maybe I should just use memcpy here then ?
+  https://sourceware.org/systemtap/ - our project page
+  https://sourceware.org/systemtap/ftp/releases/systemtap-3.3.tar.gz
+  https://koji.fedoraproject.org/koji/packageinfo?packageID=615
+  git tag release-3.3 (commit 48867d1cface944)
 
-But AFAIR, I used strncpy() specifically because it also sets all the remaining
-bytes after the null terminating byte with the null terminating byte. And so it
-is pretty easy for me to check if the final string is null terminated by
-checking [max - 1] byte against '\0', which the code is doing right now.
+  There have been over 237 commits since the last release.
+  There have been over 19 bugs fixed / features added since the last release.
 
-I am not sure what would the best way to get around this incorrect-warning.
 
-And I am wondering on why buildbot reported the warning only for two instances
-in that file, while I have done the same thing at 4 places.
+= How to build it
 
-> Ah, yes I now see that. Thanks for pointing it out. But perhaps it
-> should also add the "- 1" to the strncpy() so that gcc doesn't think
-> it's a mistake.
+  See the README and NEWS files at
+  https://sourceware.org/git/?p=systemtap.git;a=tree
 
-The src string is passed on from a firmware entity and we need to make sure the
-protocol (greybus) is implemented properly by the other end. For example, in the
-current case if the firmware sends "HELLOWORLD", its an error as it should have
-sent "HELLWORLD\0". But with what you are saying we will forcefully make dest as
-"HELLWORLD\0", which wouldn't be the right thing to do as we will miss the bug
-present in firmware.
+  Further information at https://sourceware.org/systemtap/wiki/
 
--- 
-viresh
+
+= SystemTap frontend (stap) changes
+
+- The "stap --sysroot /PATH" option has received a revamp, so it
+  works much better against cross-compiled environments.
+
+- A new "stap --example FOO.stp" mode searches the example scripts
+  distributed with systemtap for a file named FOO.stp, so its whole
+  path does not need to be typed in.
+
+
+= SystemTap backend changes
+
+- The eBPF backend now supports uprobes, perf counter, timer, and
+  tracepoint probes.
+
+- The eBPF backend has learned to perform loops - at least in the
+  userspace "begin/end" probe contexts, so one can iterate across BPF
+  arrays for reporting.  (The linux kernel eBPF interpreter precludes
+  loops and string processing.)  It can also handle much larger probe
+  handler bodies, with a smarter register spiller/allocator.
+
+- Systemtap's runtime has learned to deal with some of the collateral
+  damage from kernel hardening after meltdown/spectre, including more
+  pointer hiding and relocation.  The kptr_restrict procfs flag is
+  forced on if running on a new enough kernel.
+
+- Several low level locking-related fixes were added to the runtime
+  that used uprobes/tracepoint apis, in order to work more reliably on
+  real-time kernels and on high-cpu-count machines.
+
+
+= SystemTap tapset changes
+
+- Runtime/tapsets were ported to include up to kernel version 4.17.
+  (The syscall tapsets are broken on kernel 4.17-rc, and will be fixed
+  in a next release coming soon; PR23160.)
+
+- Some MIPS support has been added.
+    
+
+= SystemTap sample scripts
+
+ All 178 examples can be found at https://sourceware.org/systemtap/examples/
+
+- io_submit.stp has been optimized for larger systems
+
+- new example capture_ssl_master_secrets.stp is just as naughty as it sounds
+
+
+= Examples of tested kernel versions
+
+  2.6.32     (RHEL 6 x86 and x86_64)
+  3.10.0     (RHEL 7 x86_64)
+  4.16.5     (Fedora 27 x86_64)
+  4.18-rc0   (Fedora rawhide x86_64)
+
+
+= Known issues with this release
+
+- The syscall tapset is broken for kernels >= 4.17.  Use the
+  kernel.trace("sys_enter") probe until we get this fixed. (PR23160)
+
+- Some post-meltdown/spectre kernel versions have broken uprobes
+  (resulting in SIGILL in userspace programs) and kernel tracepoints.
+  Kernel fixes are underway. (RHBZ1579521)
+
+- Some kernel crashes continue to be reported when a script probes
+  broad kernel function wildcards.  (PR2725)
+
+- An upstream kernel commit #2062afb4f804a put "-fno-var-tracking-assignments"
+  into KCFLAGS, dramatically reducing debuginfo quality, which can cause
+  debuginfo failures. The simplest fix is to erase, excise, nay, eradicate
+  this line from the top level linux Makefile:
+  
+  KBUILD_CFLAGS   += $(call cc-option, -fno-var-tracking-assignments)
+
+
+= Coming soon
+
+- http and systemtap coming together, like peanut butter and chocolate
+
+
+= Contributors for this release
+
+  Aaron Merey, *Aryeh Weinreb, *Bernhard Wiedemann, David Smith, Frank
+  Ch. Eigler, *Gustavo Moreira, *Igor Gnatenko, *Iryna Shcherbina, *Jafeer
+  Uddin, Jeff Moyer, *Lukas Herbolt, Mark Wielaard, Martin Cermak, *Petr
+  Viktorin, Serhei Makarov, Stan Cox, Stefan Hajnoczi, Timo Juhani
+  Lindfors, Victor Kamensky
+
+  Special thanks to new contributors, marked with '*' above.
+
+
+= Bugs fixed for this release <https://sourceware.org/PR#####>
+
+  21107   a few more access_ok tweaks needed      
+  21890   bpf uprobes support   
+  22004   dyninst does not handle R_*_IRELATIV in .rela.plt       
+  22141   The RPM specfile needs an update handling the bpf bits  
+  22248   failure processing linux-vdso64.so.1    
+  22311   bpf: drop the copy of the bpf map logic & snapshot-based pre-post begin {} synch        
+  22313   bpf: exit-state checking prologue  
+  22314   bpf: add support for uprobes, uretprobe and tracepoint events   
+  22323   bpf: format string tags appearing in output when wildcards are used     
+  22327   the loadavg tapset no longer works on recent kernels       
+  22328   bpf: add timer probes                   
+  22462   quoted include path  
+  22536   Add shorthand option --bpf for --runtime=bpf    
+  22551   on rawhide, we're getting a compile error that init_timer() doesn't exist       
+  22695   "make rpm" broken by commit 3128ca27f67476fdd5f26a44bc3809fa8396e749    
+  22698   bpf translator: add support for array $context variables        
+  22822   bpf translator lacks register spilling         
+  22857   vfs.do_mpage_readpage doesn't work as expected on ext4 filesystems  
+  23226   stap foo.stp should search a path for sample foo.stp
