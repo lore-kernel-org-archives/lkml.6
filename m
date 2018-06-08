@@ -1,93 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id AzUKOmpAHVvrBAAAmS7hNA
-	; Sun, 10 Jun 2018 15:14:51 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id czuKKK3cGVs8DQAAmS7hNA
+	; Fri, 08 Jun 2018 01:34:21 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id CE6BA60791; Sun, 10 Jun 2018 15:14:50 +0000 (UTC)
+	id B345E6074D; Fri,  8 Jun 2018 01:34:21 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=roeck-us.net header.i=@roeck-us.net header.b="mXsOCwve"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="IM9H7TfW"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 64265605A5;
-	Sun, 10 Jun 2018 15:14:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 64265605A5
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by smtp.codeaurora.org (Postfix) with ESMTP id 3DAFF605A5;
+	Fri,  8 Jun 2018 01:34:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3DAFF605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753675AbeFJPOs (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sun, 10 Jun 2018 11:14:48 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:42023 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752158AbeFJPOq (ORCPT
+        id S1752692AbeFHBeS (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 21:34:18 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:40242 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752363AbeFHBeQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 11:14:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=roeck-us.net; s=default; h=In-Reply-To:Content-Type:MIME-Version:References
-        :Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
-        :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=dkQvkFQJz3WeFyZQmOtZPOGoiIOBZf9wFO3ukH4dKxA=; b=mXsOCwverpKAbhZPTtZTkI+FNR
-        iHVojhuBV8O6+H+NVxybwLvkKCNXEmKa+8Pa87zCkd0QLilYip6RiOAarNdWx7maumvDpXi+hE9tz
-        Q2mPWpUaO1LjkqgPilAcLd1qoGMfCxWF1ZN5ResJAcnNDTVwU1SVhg4wf/paDreQ1K06YhNufnnv1
-        ex58zGqg1o0Xtkb15TXMWgYwd7UclEAgt9crRHua4f4geaNPuwVJPvL3lh7m3s3BU3XfLPdbRNN/L
-        +Af/n46AMhVMIMH71VS8bTOQlhMRb06EhObuVRI4r7htEKZx7YFNGmiiDFvUI9qh5SIsQBGlZKYr8
-        m/TLhBnQ==;
-Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:56654 helo=localhost)
-        by bh-25.webhostbox.net with esmtpa (Exim 4.89)
-        (envelope-from <linux@roeck-us.net>)
-        id 1fS23J-00EgSM-6t; Sun, 10 Jun 2018 15:14:46 +0000
-Date: Sun, 10 Jun 2018 08:14:44 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.17 00/15] 4.17.1-stable review
-Message-ID: <20180610151444.GB29924@roeck-us.net>
-References: <20180609150000.746833461@linuxfoundation.org>
+        Thu, 7 Jun 2018 21:34:16 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w581VtPi153015;
+        Fri, 8 Jun 2018 01:33:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2017-10-26;
+ bh=fE9qXYphG7/m8u2ZID0OhoHy7BQWRAGkf0bFG4Kpb8Q=;
+ b=IM9H7TfWGwjWbMgZltPjJkBJkOeHq6GPV9UsQ1eXib2uSImdHBk18JPeykqO/AyLXiYo
+ zMxqHkXQSbK8lhWmysD0Q3D30k1MNTqeEIasYVYMH/iSPaA5UjCSjXIm9wb1mW44MAqx
+ mNmiNk48rpardszCQGSKjmPoS2Boag2YGJK3/VGg+rFYqte4rqYzOJJRPAuxCASejmVi
+ uMJKazkLX2B9+B6aXZYCIQ/OdjftAOzoUvU8Jq1jZn8Pvy0bs9s8tY6nsu2JeGXjNmBY
+ HMNvwELDDLm7oFSoj57dNroAgYQwnQ9zTNk45QlW7MXzuwhKyQHuJLYJkSiP4xfydx0I rA==
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2jbvypk5k7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 08 Jun 2018 01:33:58 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w581XvMC003998
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 8 Jun 2018 01:33:57 GMT
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w581Xtut005679;
+        Fri, 8 Jun 2018 01:33:56 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 07 Jun 2018 18:33:55 -0700
+To: Varsha Rao <rvarsha016@gmail.com>
+Cc: Sathya Prakash <sathya.prakash@broadcom.com>,
+        Chaitra P B <chaitra.basappa@broadcom.com>,
+        Suganath Prabu Subramani
+        <suganath-prabu.subramani@broadcom.com>,
+        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Nicholas Mc Guire <der.herr@hofr.at>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: Re: [PATCH v2 0/2] message: fusion: Fix clang and checkpatch warnings
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <cover.1528342739.git.rvarsha016@gmail.com>
+Date: Thu, 07 Jun 2018 21:33:52 -0400
+In-Reply-To: <cover.1528342739.git.rvarsha016@gmail.com> (Varsha Rao's message
+        of "Thu, 7 Jun 2018 09:17:07 +0530")
+Message-ID: <yq1fu1y83jz.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180609150000.746833461@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Authenticated_sender: guenter@roeck-us.net
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
-X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8917 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=700
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806080015
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 09, 2018 at 05:29:35PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.17.1 release.
-> There are 15 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Mon Jun 11 14:59:48 UTC 2018.
-> Anything received after that time might be too late.
-> 
-Build results:
-	total: 134 pass: 134 fail: 0
-Qemu test results:
-	total: 143 pass: 143 fail: 0
 
-Deteails are available at http://kerneltests.org/builders/.
+Hello Varsha,
 
-Guenter
+> This patchset fixes extraneous parentheses clang warning and few
+> checkpatch issues.
+>
+> Varsha Rao (2):
+>   message: fusion: Remove extra parentheses
+>   message: fusion: Replace NULL comparison
+
+This is an old driver that's pining for retirement. We generally do not
+accept code cleanups for unmaintained code for fear of introducing
+regressions.
+
+Thanks!
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
