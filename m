@@ -1,98 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 5j2VCxX6GVsjFgAAmS7hNA
-	; Fri, 08 Jun 2018 03:37:57 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id KJdHEAWpGluOQwAAmS7hNA
+	; Fri, 08 Jun 2018 16:05:17 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 1605D607DC; Fri,  8 Jun 2018 03:37:57 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HaAGfLPN"
+	id E19C5607E4; Fri,  8 Jun 2018 16:05:16 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id A031E602FC;
-	Fri,  8 Jun 2018 03:37:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A031E602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by smtp.codeaurora.org (Postfix) with ESMTP id 403C260590;
+	Fri,  8 Jun 2018 16:05:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 403C260590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752694AbeFHDhx (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 23:37:53 -0400
-Received: from ozlabs.org ([203.11.71.1]:40345 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752329AbeFHDhw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 23:37:52 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 4127Qj4lpdz9s3q;
-        Fri,  8 Jun 2018 13:37:48 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1528429070;
-        bh=YE7eK0oWDOy/PGqiodXcLmpyS4riGUtF6efzG07j2Ig=;
-        h=Date:From:To:Cc:Subject:From;
-        b=HaAGfLPNLlh3z1nlGYLaLbOlPkChNzq8lcfsFjYAmHbyW2Fl0/DG2IvCV0OiZI+tH
-         rG74FRh/Rzz9MqIe+JQ2t+RCmsiIKsBmRUpEgbWjDZCWr8b4afQcX08cuuZAQJ01DP
-         HUxELml3v4zs6ABI0F7xV1Gmp83PDdxt8NyahJ/gBDOwS2yF2kd7/J9ITb8ix53Qdw
-         mjkE4rEJYCcLLSoIvzb2R1TwDACB4XMEmUjYk2g7D1gqixUElW9ZoaHDkYqkMFLbOC
-         ggiZVdjgS7R+uLQdVEj1JHClmJV6hVqDjZNJZlZRBMarA4J0d2a2rHPY1SNqAej2pJ
-         ZIzZF+XtVeXzQ==
-Date: Fri, 8 Jun 2018 13:37:48 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Tobin C. Harding" <me@tobin.cc>
-Subject: linux-next: build warning after merge of the random tree
-Message-ID: <20180608133748.58a272d5@canb.auug.org.au>
+        id S1752674AbeFHQFO (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 12:05:14 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35406 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751719AbeFHQFM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 12:05:12 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7F71F1435;
+        Fri,  8 Jun 2018 09:05:12 -0700 (PDT)
+Received: from [10.1.206.73] (en101.cambridge.arm.com [10.1.206.73])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8B2343F5A0;
+        Fri,  8 Jun 2018 09:05:11 -0700 (PDT)
+Subject: Re: [PATCH v2 5/5] arm64: perf: Add support for chaining event
+ counters
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        will.deacon@arm.com, robin.murphy@arm.com
+References: <1527591356-10934-1-git-send-email-suzuki.poulose@arm.com>
+ <1527591356-10934-6-git-send-email-suzuki.poulose@arm.com>
+ <20180606180119.4ofhges6codarbmk@lakrids.cambridge.arm.com>
+ <4a5b5e7f-fc0b-84e3-fc65-b9f860029207@arm.com>
+ <20180608152419.kamu7ptmgsoah5m3@lakrids.cambridge.arm.com>
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <38fbe2a8-26a3-84dc-bd88-de30af50e7c2@arm.com>
+Date: Fri, 8 Jun 2018 17:05:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/CQuTvknR=BFhx8rb09qkq+T"; protocol="application/pgp-signature"
+In-Reply-To: <20180608152419.kamu7ptmgsoah5m3@lakrids.cambridge.arm.com>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/CQuTvknR=BFhx8rb09qkq+T
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 08/06/18 16:24, Mark Rutland wrote:
+> On Fri, Jun 08, 2018 at 03:46:57PM +0100, Suzuki K Poulose wrote:
+>> On 06/06/2018 07:01 PM, Mark Rutland wrote:
+>>>> Thus we need special allocation schemes
+>>>> to make the full use of available counters. So, we allocate the
+>>>> counters from either ends. i.e, chained counters are allocated
+>>>> from the lower end in pairs of two and the normal counters are
+>>>> allocated from the higher number. Also makes necessary changes to
+>>>> handle the chained events as a single event with 2 counters.
+>>>
+>>> Why do we need to allocate in this way?
+>>>
+>>> I can see this might make allocating a pair of counters more likely in
+>>> some cases, but there are still others where it wouldn't be possible
+>>> (and we'd rely on the rotation logic to repack the counters for us).
+>>
+>> It makes the efficient use of the counters in all cases and allows
+>> counting maximum number of events with any given set, keeping the precedence
+>> on the order of their "inserts".
+>> e.g, if the number of counters happened to be "odd" (not sure if it is even
+>> possible).
+> 
+> Unfortunately, that doesn't always work.
+> 
+> Say you have a system with 8 counters, and you open 8 (32-bit) events.
 
-Hi Theodore,
+I was talking about the following (imaginary) case :
 
-After merging the random tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
+We have 7 counters, and you have 5 32bit counters and 1 64bit counter.
+Without the above scheme, you would place first 5 events on the first
+5 counters and then you can't place the 64bit counter, as you are now
+left with a low/odd counter and a high/even counter.
 
-lib/vsprintf.c:1668:13: warning: 'have_filled_random_ptr_key' defined but n=
-ot used [-Wunused-variable]
- static bool have_filled_random_ptr_key __read_mostly;
-             ^~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> Then you close the events in counters 0, 2, 4, and 6. The live events
+> aren't moved, and stay where they are, in counters 1, 3, 5, and 7.
+> 
+> Now, say you open a 64-bit event. When we try to add it, we try to
+> allocate an index for two consecutive counters, and find that we can't,
+> despite 4 counters being free.
+> 
+> We return -EAGAIN to the core perf code, whereupon it removes any other
+> events in that group (none in this case).
+> 
+> Then we wait for the rotation logic to pull all of the events out and
+> schedule them back in, re-packing them, which should (eventually) work
+> regardless of how we allocate counters.
+> 
+> ... we might need to re-pack events to solve that. :/
 
-Introduced by commit
+I agree, removing and putting them back in is not going to work unless
+we re-pack or delay allocating the counters until we start the PMU.
 
-  bfe80ed3d7c7 ("vsprintf: add command line option debug_boot_weak_hash")
+> 
+> [...]
+> 
+>>>> +static inline void armv8pmu_write_chain_counter(int idx, u64 value)
+>>>> +{
+>>>> +	armv8pmu_write_evcntr(idx, value >> 32);
+>>>> +	isb();
+>>>> +	armv8pmu_write_evcntr(idx - 1, value);
+>>>> +}
+>>>
+>>> Can we use upper_32_bits() and lower_32_bits() here?
+>>>
+>>> As a more general thing, I think we need to clean up the way we
+>>> read/write counters, because I don't think that it's right that we poke
+>>> them while they're running -- that means you get some arbitrary skew on
+>>> counter groups.
+>>>
+>>> It looks like the only case we do that is the IRQ handler, so we should
+>>> be able to stop/start the PMU there.
+>>
+>> Since we don't stop the "counting" of events usually when an IRQ is
+>> triggered, the skew will be finally balanced when the events are stopped
+>> in a the group. So, I think, stopping the PMU may not be really a good
+>> thing after all. Just my thought.
+> 
+> That's not quite right -- if one event in a group overflows, we'll
+> reprogram it *while* other events are counting, losing some events in
+> the process.
 
---=20
-Cheers,
-Stephen Rothwell
+Oh yes, you're right. I can fix it.
 
---Sig_/CQuTvknR=BFhx8rb09qkq+T
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
+> 
+> Stopping the PMU for the duration of the IRQ handler ensures that events
+> in a group are always in-sync with one another.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsZ+gwACgkQAVBC80lX
-0Gwn4QgApiEiqB/lA1gsaZfeVzvuqOU4jf2K501KHhT1/84mcCxPEzoz4QvXng6y
-ps0JrT1dI2qriqKePzAnpc6dr5WrBay45qkJCUYz8TT4WzoTKaJAySP1G4eP+ItB
-+XcL2iWho9dmLCPUdRZqp2qL5HJAV3DCyuH3jxJmH7MVFmYM6Vx0gD3yxZLQEu5L
-ULLmM9Zsy6TaoDdcoarajyDJeeOfgo0NUPBdmpH9p1QKEpVuQqMxdKpc0NW5WD5G
-8dgU2xernEpGKZejOmQJ60nhIFG2LKPzKBGx74D1RcD3pwZ21NNrj1mW/K0U/nAE
-TEP/TPNZjH0lvX1JVdw3PhrNnZe+mQ==
-=G6po
------END PGP SIGNATURE-----
-
---Sig_/CQuTvknR=BFhx8rb09qkq+T--
+Suzuki
