@@ -1,118 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id rfrfEjUEGVuWLAAAmS7hNA
-	; Thu, 07 Jun 2018 10:10:24 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 2PDtDRwzGlv5UAAAmS7hNA
+	; Fri, 08 Jun 2018 07:42:07 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 986E6607DC; Thu,  7 Jun 2018 10:10:24 +0000 (UTC)
+	id A845F607E4; Fri,  8 Jun 2018 07:42:07 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ArQrN9nG"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id C642360452;
-	Thu,  7 Jun 2018 10:10:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C642360452
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by smtp.codeaurora.org (Postfix) with ESMTP id 04041607A4;
+	Fri,  8 Jun 2018 07:42:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 04041607A4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753679AbeFGKKV (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 06:10:21 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:17188 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753165AbeFGKKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 06:10:20 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 411hB227mzz9txc6;
-        Thu,  7 Jun 2018 12:10:18 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id GTZAyzIrZTWU; Thu,  7 Jun 2018 12:10:18 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 411hB21SJHz9txbq;
-        Thu,  7 Jun 2018 12:10:18 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id DA11A8B951;
-        Thu,  7 Jun 2018 12:10:18 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id oICFxeBLmRvP; Thu,  7 Jun 2018 12:10:18 +0200 (CEST)
-Received: from po14934vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 923BC8B94D;
-        Thu,  7 Jun 2018 12:10:18 +0200 (CEST)
-Received: by po14934vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 56E9D6F83C; Thu,  7 Jun 2018 10:10:18 +0000 (UTC)
-Message-Id: <273f8ed3e980b9385c6e1b31e17f890ea08ce33c.1528365638.git.christophe.leroy@c-s.fr>
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH 1/3] powerpc: make CPU selection logic generic in Makefile
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Thu,  7 Jun 2018 10:10:18 +0000 (UTC)
+        id S1752853AbeFHHmB (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 03:42:01 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:44163 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751195AbeFHHl5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 03:41:57 -0400
+Received: by mail-pf0-f193.google.com with SMTP id h12-v6so6207017pfk.11;
+        Fri, 08 Jun 2018 00:41:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=xDOsFM1m8LjIPXzr05DKGgzHN2YIgV5IvXvx/lwPYAw=;
+        b=ArQrN9nGN4jFspIIvE/gpvQJLlLTcYhrhs9ktzGd6LtB0RPqmzDkuodojC88xH4UnU
+         fn1R0PIA4t4fTaZ46Nz0JfeRK1DHJitJzQgdazPxog6z5ZTubSSEf47xR2Z6hfd+J5cw
+         6ItHxhEX7HRQ4cF5IlO6ycMBA3n4BrBMgODu4ecqnJkrNagrI7As3bARq91oK1dR4wO8
+         C8P8DDw3BYf6J2rTHfEpXph/KIyqw6IzSq5ktemrtEIakwICtqkUHgajZhSmUyAqD9fP
+         i6bYOc0gL9UWuFQcODnKgRW39EMhtGzRmNL6Z99FQD/zG6tXCEYbidtLRV7ZIqj/1V/v
+         Z6Qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=xDOsFM1m8LjIPXzr05DKGgzHN2YIgV5IvXvx/lwPYAw=;
+        b=cyIZMJtewvhjV3ItlWSJqvlCl22hrn961dDXOT/Zt2krKCi4bI9dR3DVfsE4AAYnmn
+         t3qE806VDbQSWR/S7Ck+5LUYyL0R654LVyTOoMiqDxSniJHZevoLBkb3MclkxVDnQINg
+         zT6nCGaPWXyGcZLQcxXN1DLSoSKUKlMshfGLgHg/HcOe9bK8fLpJIjW7dK7K3G5MKOro
+         st0P1GPzmiihS/yGfz3OiSfwC4+32BR+JsvXRN1XFod6b7Z32I4zbaSz8TDKhnRr/4gV
+         jbdxbkY++MQFCCb/ZghEJV75wcW0+X6fk13bmpY55vWIP7kSfO7NI2j8nD84lCw62QbY
+         PiXw==
+X-Gm-Message-State: APt69E0j/8ZbDdXNr8Kuuxfd12V9HXkXy7+qhXhBSdVCXVE0idLCmj4Z
+        p7wj1tdW8hcb9l/2I8IcIAQ=
+X-Google-Smtp-Source: ADUXVKK/Nswi8+lgoYyBh1aEOWobXgClAUQJCOnzm3JtqwkwLeSoOfp/bMfSAmjod+8iemuabwjrmA==
+X-Received: by 2002:a63:b147:: with SMTP id g7-v6mr4253600pgp.379.1528443717363;
+        Fri, 08 Jun 2018 00:41:57 -0700 (PDT)
+Received: from ct7host.localdomain ([38.106.11.25])
+        by smtp.gmail.com with ESMTPSA id m9-v6sm97679408pff.41.2018.06.08.00.41.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Jun 2018 00:41:56 -0700 (PDT)
+From: Jia He <hejianet@gmail.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Jia He <hejianet@gmail.com>,
+        jia.he@hxt-semitech.com, <stable@vger.kernel.org>
+Subject: [PATCH v2] crypto: arm64/aes-blk - fix and move skcipher_walk_done out of kernel_neon_begin,_end
+Date: Fri,  8 Jun 2018 15:41:44 +0800
+Message-Id: <1528443704-26850-1-git-send-email-hejianet@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At the time being, when adding a new CPU for selection, both
-Kconfig.cputype and Makefile have to be modified.
+In a arm64 server(QDF2400),I met a similar might-sleep warning as [1]:
+[    7.019116] BUG: sleeping function called from invalid context at
+./include/crypto/algapi.h:416
+[    7.027863] in_atomic(): 1, irqs_disabled(): 0, pid: 410, name:
+cryptomgr_test
+[    7.035106] 1 lock held by cryptomgr_test/410:
+[    7.039549]  #0:         (ptrval) (&drbg->drbg_mutex){+.+.}, at:
+drbg_instantiate+0x34/0x398
+[    7.048038] CPU: 9 PID: 410 Comm: cryptomgr_test Not tainted
+4.17.0-rc6+ #27
+[    7.068228]  dump_backtrace+0x0/0x1c0
+[    7.071890]  show_stack+0x24/0x30
+[    7.075208]  dump_stack+0xb0/0xec
+[    7.078523]  ___might_sleep+0x160/0x238
+[    7.082360]  skcipher_walk_done+0x118/0x2c8
+[    7.086545]  ctr_encrypt+0x98/0x130
+[    7.090035]  simd_skcipher_encrypt+0x68/0xc0
+[    7.094304]  drbg_kcapi_sym_ctr+0xd4/0x1f8
+[    7.098400]  drbg_ctr_update+0x98/0x330
+[    7.102236]  drbg_seed+0x1b8/0x2f0
+[    7.105637]  drbg_instantiate+0x2ac/0x398
+[    7.109646]  drbg_kcapi_seed+0xbc/0x188
+[    7.113482]  crypto_rng_reset+0x4c/0xb0
+[    7.117319]  alg_test_drbg+0xec/0x330
+[    7.120981]  alg_test.part.6+0x1c8/0x3c8
+[    7.124903]  alg_test+0x58/0xa0
+[    7.128044]  cryptomgr_test+0x50/0x58
+[    7.131708]  kthread+0x134/0x138
+[    7.134936]  ret_from_fork+0x10/0x1c
 
-This patch moves into Kconfig.cputype the name of the CPU to me
-passed to the -mcpu= argument.
+Seems there is a bug in Ard Biesheuvel's commit.
+Fixes: 683381747270 ("crypto: arm64/aes-blk - move kernel mode neon
+en/disable into loop")
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+[1] https://www.spinics.net/lists/linux-crypto/msg33103.html
+
+Signed-off-by: jia.he@hxt-semitech.com
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: <stable@vger.kernel.org> # 4.17
 ---
- arch/powerpc/Makefile                  |  8 +-------
- arch/powerpc/platforms/Kconfig.cputype | 15 +++++++++++++++
- 2 files changed, 16 insertions(+), 7 deletions(-)
+v2: cc stable
+---
+ arch/arm64/crypto/aes-glue.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
-index 9704ab360d39..9a5642552abc 100644
---- a/arch/powerpc/Makefile
-+++ b/arch/powerpc/Makefile
-@@ -175,13 +175,7 @@ ifdef CONFIG_MPROFILE_KERNEL
-     endif
- endif
- 
--CFLAGS-$(CONFIG_CELL_CPU) += $(call cc-option,-mcpu=cell)
--CFLAGS-$(CONFIG_POWER5_CPU) += $(call cc-option,-mcpu=power5)
--CFLAGS-$(CONFIG_POWER6_CPU) += $(call cc-option,-mcpu=power6)
--CFLAGS-$(CONFIG_POWER7_CPU) += $(call cc-option,-mcpu=power7)
--CFLAGS-$(CONFIG_POWER8_CPU) += $(call cc-option,-mcpu=power8)
--CFLAGS-$(CONFIG_POWER9_CPU) += $(call cc-option,-mcpu=power9)
--CFLAGS-$(CONFIG_PPC_8xx) += $(call cc-option,-mcpu=860)
-+CFLAGS-$(CONFIG_SPECIAL_CPU_BOOL) += $(call cc-option,-mcpu=$(CONFIG_SPECIAL_CPU))
- 
- # Altivec option not allowed with e500mc64 in GCC.
- ifeq ($(CONFIG_ALTIVEC),y)
-diff --git a/arch/powerpc/platforms/Kconfig.cputype b/arch/powerpc/platforms/Kconfig.cputype
-index cc892dcfa114..71ef559cc474 100644
---- a/arch/powerpc/platforms/Kconfig.cputype
-+++ b/arch/powerpc/platforms/Kconfig.cputype
-@@ -140,6 +140,21 @@ config E6500_CPU
- 
- endchoice
- 
-+config SPECIAL_CPU_BOOL
-+	bool
-+	default !GENERIC_CPU
-+
-+config SPECIAL_CPU
-+	string
-+	depends on SPECIAL_CPU_BOOL
-+	default "cell" if CELL_CPU
-+	default "power5" if POWER5_CPU
-+	default "power6" if POWER6_CPU
-+	default "power7" if POWER7_CPU
-+	default "power8" if POWER8_CPU
-+	default "power9" if POWER9_CPU
-+	default "860" if PPC_8xx
-+
- config PPC_BOOK3S
- 	def_bool y
- 	depends on PPC_BOOK3S_32 || PPC_BOOK3S_64
+diff --git a/arch/arm64/crypto/aes-glue.c b/arch/arm64/crypto/aes-glue.c
+index 253188f..e3e5095 100644
+--- a/arch/arm64/crypto/aes-glue.c
++++ b/arch/arm64/crypto/aes-glue.c
+@@ -223,8 +223,8 @@ static int ctr_encrypt(struct skcipher_request *req)
+ 		kernel_neon_begin();
+ 		aes_ctr_encrypt(walk.dst.virt.addr, walk.src.virt.addr,
+ 				(u8 *)ctx->key_enc, rounds, blocks, walk.iv);
+-		err = skcipher_walk_done(&walk, walk.nbytes % AES_BLOCK_SIZE);
+ 		kernel_neon_end();
++		err = skcipher_walk_done(&walk, walk.nbytes % AES_BLOCK_SIZE);
+ 	}
+ 	if (walk.nbytes) {
+ 		u8 __aligned(8) tail[AES_BLOCK_SIZE];
 -- 
-2.13.3
+1.8.3.1
