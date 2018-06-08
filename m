@@ -1,128 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 71RzKRY8GltJMgAAmS7hNA
-	; Fri, 08 Jun 2018 08:21:07 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id yAeaHak6GltbJAAAmS7hNA
+	; Fri, 08 Jun 2018 08:19:47 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 303BF607E4; Fri,  8 Jun 2018 08:21:07 +0000 (UTC)
+	id B6AD0608BF; Fri,  8 Jun 2018 08:19:47 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="etDAjx/s"
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="XNAejoGr"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 3577560590;
-	Fri,  8 Jun 2018 08:21:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3577560590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 26B3F60590;
+	Fri,  8 Jun 2018 08:19:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 26B3F60590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752981AbeFHIVD (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 04:21:03 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:45448 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752734AbeFHIU5 (ORCPT
+        id S932295AbeFHITn (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 04:19:43 -0400
+Received: from smtprelay6.synopsys.com ([198.182.37.59]:47734 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932157AbeFHITg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 04:20:57 -0400
-Received: by mail-ua0-f193.google.com with SMTP id k14-v6so8317508uao.12;
-        Fri, 08 Jun 2018 01:20:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=NWmvzHPjVAmhSPhpySA9HxGmxP0SkDV4oBWdkqOYiTQ=;
-        b=etDAjx/sQmpwA/3eVSOLe7t73qmFO1x8VW+j3CsBZBP5lVlfHLAuG3jcjK+sUlgxfJ
-         dPu4Kfd+r62dVKY8aIM6MGYh6w8HAHjYy8HY8bwKtAezYnHG50qBdAdxfZHjpoEfarg8
-         WQ1S9g4J44iA4zuweCdlT3KL+hKYM73AhqhRBql5KLuGaclC6bZkgtPpbDo8rvdyuQg9
-         AThOp4iBUneMHxtwz9dOb0HrsJvVQ8rjDiG583J+9IYkedExhcjCnNu+CIy5V4ZBzu4R
-         31HvUYZSyHvOKR+MuJrvMGn3poQwB9YkqYUtcpB7MTINPwfgLjU7gH7xCyljCZthq4l4
-         P2aA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=NWmvzHPjVAmhSPhpySA9HxGmxP0SkDV4oBWdkqOYiTQ=;
-        b=QWNNNtVCdip/rvn6BygSBsy40khpvr209+8kwQRICPwdCf8/N905W7QQ1BVUNE0A9d
-         mrUY4ySsARpKCID0g/Yy7Ff4t/qpcPAel+OOtF5vAsF6SMoQfqAITK5I8RNVzRWGzka7
-         ItTDHVrAawwuTR5UbrlBPOHxUW5QBcMtrB+AEoOytQ1dOUR+whpNnxFlerSGYutb/LAS
-         OdwWcu4ui3hUaSZ1+r7ent1h/kj9te+u3oTHwGlIdHptLznMuGBdEcQ2W+VeNR1b10tg
-         TNhZyVekAeIQ1cxTENJY8H9IvjEbyr+Osrpz4tjOnxIAaCt+Oth+dM8M+EL8znYwRKEn
-         cn6A==
-X-Gm-Message-State: APt69E0IxK5/Rnptxt6gxap6S301xZmhzIYq9Ktc+FdS0NiDLWcL+JSC
-        4X2L785a+O6aHTXv577asEiOPHGQo1dfuoQ6MWc=
-X-Google-Smtp-Source: ADUXVKIOrknkTN2ksupkLe+23JYEb8w890RGQn+eECvkEQEcyQ8s6zW+VuXyVr023ZduRlgOO2Wp4MRa1Bp9arDlPbU=
-X-Received: by 2002:ab0:1446:: with SMTP id c6-v6mr3519615uae.12.1528446056898;
- Fri, 08 Jun 2018 01:20:56 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a67:8596:0:0:0:0:0 with HTTP; Fri, 8 Jun 2018 01:20:56 -0700 (PDT)
-In-Reply-To: <1528417303-14842-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1528417303-14842-1-git-send-email-yamada.masahiro@socionext.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 8 Jun 2018 10:20:56 +0200
-X-Google-Sender-Auth: TL4l73weN0xTJcJn741o8pQV8A4
-Message-ID: <CAMuHMdX7oyxQKyc-DTXKG+o0SA_eJhKEFznn3bPxD0Gi=sA01A@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: fix endless syncconfig in case arch Makefile sets CROSS_COMPILE
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-kbuild <linux-kbuild@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Michal Marek <michal.lkml@markovi.net>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 8 Jun 2018 04:19:36 -0400
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id AE2071E04A3;
+        Fri,  8 Jun 2018 10:19:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1528445973; bh=9UCxShg4DFlxwjj5LUgbVXBCIgWFgXp1odYPFCGvQXg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=XNAejoGrVIHNv1WMTBHi6+eP8duszhuiAdDBH0wjWCAs2Yk+ezPf656eKGjJgMzek
+         +NSWEkoZhiJCbBaz0/U/ZtWT496f1ut4QHo1KpBr4sHBOQJCUNKW7ZsEtvW9HOIlCs
+         gQyrxT061fck6p/f/z1QcNAjCXAUGo6SoCLHmmP6Qs6wXM1HoBGu7Hg7SRWP8INno0
+         OgBPhzgZvC5VTHDr2ua5m7EXnIlqSQTIn8GXXL0asfZVhzCSYOFNGGHkqQe6TKRHze
+         nurRcWZtOEluzSkI6ytMdHpQ2KSqDJt/H4Jraqb5S1eWJ8gsi/KeLyB6jxPVrdo7h5
+         4irmm/BlvgrMQ==
+Received: from pt02.synopsys.com (pt02.synopsys.com [10.107.23.240])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 694EF59A4;
+        Fri,  8 Jun 2018 01:19:32 -0700 (PDT)
+Received: from UbuntuMate-64Bits.internal.synopsys.com (gustavo-e7480.internal.synopsys.com [10.107.25.102])
+        by pt02.synopsys.com (Postfix) with ESMTP id BC42D3E910;
+        Fri,  8 Jun 2018 09:19:31 +0100 (WEST)
+From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
+        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
+        adouglas@cadence.com, jesper.nilsson@axis.com
+Cc: linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Subject: [PATCH v3 00/10] Add MSI-X support on pcitest tool
+Date: Fri,  8 Jun 2018 09:19:16 +0100
+Message-Id: <cover.1527862777.git.gustavo.pimentel@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Message-ID: <20180608081916.shet5YWs71rXWjmz7LAi_RE9BrD5X8PO_8VyhtKuaDc@z>
 
-Hi Yamada-san,
+Patch series made against Lorenzo's branches and also depends of:
+ - pci/dwc
+ - pci/endpoint
 
-On Fri, Jun 8, 2018 at 2:21 AM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> Commit 21c54b774744 ("kconfig: show compiler version text in the top
-> comment") was intended to detect the compiler upgrade, but Geert
-> reported a breakage on the m68k build.
->
-> The compiler upgrade is detected by the change of the environment
-> variable, CC_VERSION_TEXT, which contains the first line of the output
-> from $(CC) --version.  Currently, this works well when CROSS_COMPILE
-> is given via the environment variable or the Make command line.
->
-> However, some architectures such as m68k can specify CROSS_COMPILE
-> from arch/$(SRCARCH)/Makefile as well.  In this case, "make ARCH=m68k"
-> ends up with endless syncconfig loop.
->
->   $ make ARCH=m68k defconfig
->   *** Default configuration is based on 'multi_defconfig'
->   #
->   # configuration written to .config
->   #
->   $ make ARCH=m68k
->   scripts/kconfig/conf  --syncconfig Kconfig
->   scripts/kconfig/conf  --syncconfig Kconfig
->   scripts/kconfig/conf  --syncconfig Kconfig
->   scripts/kconfig/conf  --syncconfig Kconfig
+Add MSI-X support on pcitest tool.
 
-[...]
+Add new callbacks methods and handlers to trigger the MSI-X interrupts
+on the EP DesignWare IP driver.
 
-> Fixes: 21c54b774744 ("kconfig: show compiler version text in the top comment")
-> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Allow to set/get MSI-X EP maximum capability number.
 
-Thanks for fixing this quickly!
+Rework on set/get and triggering MSI methods on EP DesignWare IP driver.
 
-Tested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Add a new input parameter (msix) to pcitest tool to test MSI-X feature.
 
-Gr{oetje,eeting}s,
+Update the pcitest.sh script to support MSI-X feature tests.
 
-                        Geert
+Gustavo Pimentel (10):
+  PCI: endpoint: Add MSI-X interfaces
+  PCI: dwc: Add MSI-X callbacks handler
+  PCI: Update xxx_pcie_ep_raise_irq() and pci_epc_raise_irq() signatures
+  PCI: dwc: Rework MSI callbacks handler
+  PCI: dwc: Add legacy interrupt callback handler
+  pci-epf-test/pci_endpoint_test: Cleanup PCI_ENDPOINT_TEST memspace
+  pci-epf-test/pci_endpoint_test: Use irq_type module parameter
+  pci-epf-test/pci_endpoint_test: Add MSI-X support
+  pci_endpoint_test: Add 2 ioctl commands
+  tools: PCI: Add MSI-X support
+
+ Documentation/misc-devices/pci-endpoint-test.txt |   6 +
+ drivers/misc/pci_endpoint_test.c                 | 261 +++++++++++++++++------
+ drivers/pci/cadence/pcie-cadence-ep.c            |   3 +-
+ drivers/pci/dwc/pci-dra7xx.c                     |   2 +-
+ drivers/pci/dwc/pcie-artpec6.c                   |   2 +-
+ drivers/pci/dwc/pcie-designware-ep.c             | 205 ++++++++++++++++--
+ drivers/pci/dwc/pcie-designware-plat.c           |   7 +-
+ drivers/pci/dwc/pcie-designware.h                |  31 +--
+ drivers/pci/endpoint/functions/pci-epf-test.c    |  81 +++++--
+ drivers/pci/endpoint/pci-ep-cfs.c                |  24 +++
+ drivers/pci/endpoint/pci-epc-core.c              |  68 +++++-
+ include/linux/pci-epc.h                          |  15 +-
+ include/linux/pci-epf.h                          |   1 +
+ include/uapi/linux/pcitest.h                     |   3 +
+ tools/pci/pcitest.c                              |  51 ++++-
+ tools/pci/pcitest.sh                             |  15 ++
+ 16 files changed, 643 insertions(+), 132 deletions(-)
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.7.4
