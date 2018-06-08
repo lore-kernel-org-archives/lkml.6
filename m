@@ -1,95 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id mdIWBEJrG1tyRAAAmS7hNA
-	; Sat, 09 Jun 2018 05:53:06 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id XxdGD1xOGlsrewAAmS7hNA
+	; Fri, 08 Jun 2018 09:40:41 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id F0934608B8; Sat,  9 Jun 2018 05:53:05 +0000 (UTC)
+	id B8817607DC; Fri,  8 Jun 2018 09:40:41 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DnRpsedb"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 716696032D;
-	Sat,  9 Jun 2018 05:53:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 716696032D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 3A6AA602FC;
+	Fri,  8 Jun 2018 09:40:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3A6AA602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751633AbeFIFxC (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 01:53:02 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:50184 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751257AbeFIFxA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 01:53:00 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 2D700207CA; Sat,  9 Jun 2018 07:52:58 +0200 (CEST)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 9DC33203EC;
-        Sat,  9 Jun 2018 07:52:57 +0200 (CEST)
-Date: Sat, 9 Jun 2018 07:52:56 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Stefan Agner <stefan@agner.ch>
-Cc: Dmitry Osipenko <digetx@gmail.com>, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
-        dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
-        marcel@ziswiler.com, krzk@kernel.org, benjamin.lindqvist@endian.se,
-        jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        mirza.krak@gmail.com, linux-mtd@lists.infradead.org,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/6] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-Message-ID: <20180609075256.725354d6@bbrezillon>
-In-Reply-To: <d625dd8ca816543e03668b74921563c1@agner.ch>
-References: <20180531221637.6017-1-stefan@agner.ch>
-        <20180531221637.6017-5-stefan@agner.ch>
-        <cdca329f-0b8d-0604-4cfb-b95baf84c867@gmail.com>
-        <d625dd8ca816543e03668b74921563c1@agner.ch>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1752665AbeFHJkj (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 05:40:39 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:35438 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751195AbeFHJkd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 05:40:33 -0400
+Received: by mail-vk0-f66.google.com with SMTP id o17-v6so7842928vka.2;
+        Fri, 08 Jun 2018 02:40:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Cs/diijMD/t43OBrQrSD7YSCuUjL/i28a2NzPKLo5pY=;
+        b=DnRpsedbCjNIS3t0NRMft003xRPk8I43pt+WJj6mWmy+SwL0oRgum0wBQ2Dmexoy4r
+         YfwP/OyBDZFcJ7jdAxWZ7+hypCJj6IfT5hOjRih9CXfTYHsmXdHfSA7R9NGN5bZraEi3
+         ELGcQrUNBDPWCerkzersqddin7i60oPmK1YBw/hclsaksf+75+LyIwsYN22apTMYqdKm
+         dkw7/6Ek5sqkv2dwhC444exqjXOv0xwOXc/Eys4v+0nnJ9YSLIsDSkKV9xR6f83BoEbl
+         su6JwGVBorPW0i50np50lbJVfOn1wGtu0MdLaidjJFumPIwmggKMFqR6xH1XpyajoySp
+         v6Gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Cs/diijMD/t43OBrQrSD7YSCuUjL/i28a2NzPKLo5pY=;
+        b=LqX/KFUNkjnU0qf+zhpaZ/86uO2OFlrsrSDAUBeFx7ntQbcxeWGg4Qpp9ewRjUd7Kk
+         i0+eH2BxnOFmkD/ML73CudErtyzu4x1XHvmyeJ4f+lUzggw7tBEqJq0dufq8PTsAna/T
+         46/UHSyddjs605or33lHxga4zncCX7BlSa7nAH4FdNKNEDulAM4ifefOWpLOhMnRZ9LC
+         bZGP3xvNjRqgghs9vGdoNRo3HIElRfykwMEyXgMheLKYt4REZYs6HBveqlXPHSIbWjkZ
+         eXBPurnQlRPlatA1RN/GDUCYB1lKJ5v000d8SJJDo22uo4hxTx9loKqnXGzoa9uci+sS
+         jqIw==
+X-Gm-Message-State: APt69E2CR24FHUxoy8x/Pn2snNb16d47yzjBBROdzRJCCS0wPYu7FtKZ
+        sou8mkP3YSkNpAgVQVyItFDd4vL4oYy0CLfLPcYNFpb8
+X-Google-Smtp-Source: ADUXVKKgBU+pefGk7obEXAaw0K3qbTiDaG3QxG7Nhs+acM81G/pGux9CUjgHhAsdrRaigZlVN+rqBS/JrSAgsgbpCAw=
+X-Received: by 2002:a1f:7283:: with SMTP id n125-v6mr3367756vkc.26.1528450832662;
+ Fri, 08 Jun 2018 02:40:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Fri, 8 Jun 2018 02:40:32 -0700 (PDT)
+In-Reply-To: <20180608081204.ztv4yb62szuyfsz6@pali>
+References: <20180608081204.ztv4yb62szuyfsz6@pali>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 8 Jun 2018 12:40:32 +0300
+Message-ID: <CAHp75VfFA6ghuSeAAfcbRS47A12BCcQiAmBt_N5ejm8EsP+3yA@mail.gmail.com>
+Subject: Re: ThinkPad T480s & thinkpad_acpi.ko
+To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
+Cc: Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
+        ibm-acpi-devel@lists.sourceforge.net,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 08 Jun 2018 23:51:01 +0200
-Stefan Agner <stefan@agner.ch> wrote:
+On Fri, Jun 8, 2018 at 11:12 AM, Pali Roh=C3=A1r <pali.rohar@gmail.com> wro=
+te:
+> Hi! I just found out that thinkpad_acpi.ko is not automatically loaded
+> on new ThinkPad T480s. Is there any reason for it? Manually calling
+> modprobe thinkpad_acpi is working fine, but I would expect that it
+> should be loaded automatically.
+>
+> Here is dmesg output after loading it manually:
+>
+> thinkpad_acpi: ThinkPad ACPI Extras v0.25
+> thinkpad_acpi: http://ibm-acpi.sf.net/
+> thinkpad_acpi: ThinkPad BIOS N22ET34W (1.11 ), EC unknown
+> thinkpad_acpi: Lenovo ThinkPad T480s, model 20L7S03000
+> thinkpad_acpi: radio switch found; radios are enabled
+> thinkpad_acpi: This ThinkPad has standard ACPI backlight brightness contr=
+ol, supported by the ACPI video driver
+> thinkpad_acpi: Disabling thinkpad-acpi brightness events by default...
+> thinkpad_acpi: rfkill switch tpacpi_bluetooth_sw: radio is unblocked
+> thinkpad_acpi: Standard ACPI backlight interface available, not loading n=
+ative one
 
+Did you run depmod -a?
+Is it present in the output?
 
-> > 
-> > void tegra_nand_controller_reset(struct tegra_nand_controller *ctrl)
-> > {
-> > 	int err;
-> > 
-> > 	disable_irq(ctrl->irq);
-> > 
-> > 	err = reset_control_reset(ctrl->rst);
-> > 	if (err) {
-> > 		dev_err(ctrl->dev, "Failed to reset HW: %d\n", err);
-> > 		msleep(HW_TIMEOUT);
-> > 	}
-> > 
-> > 	writel_relaxed(NAND_CMD_STATUS, ctrl->regs + HWSTATUS_CMD);
-> > 	writel_relaxed(HWSTATUS_MASK, ctrl->regs + HWSTATUS_MASK);
-> > 	writel_relaxed(INT_MASK, ctrl->regs + ISR);  
-> 
-> If we do a controller reset, there is much more state than that which
-> needs to be restored. A lot of it is not readily available currently
-> (timing, ECC settings...)
+There are three ways of enumeration as far as I can see from the driver's c=
+ode:
+- by short driver name "tpacpi" (not likely our case)
+- by DMI matching (only for old BIOS'es)
+- by ACPI ID
 
-This is actually a good test to detect what is not properly initialized
-by the driver. Timings should be configured correctly through
-->setup_data_interface(). ECC engine should be disabled by default and
-only enabled when ->{read,write}_page() is called.
+So, does the ACPI contain one of the listed IDs?
 
-> 
-> That seems a lot of work for a code path I do not intend to ever use :-)
-> 
+#define TPACPI_ACPI_IBM_HKEY_HID        "IBM0068"
+#define TPACPI_ACPI_LENOVO_HKEY_HID     "LEN0068"
+#define TPACPI_ACPI_LENOVO_HKEY_V2_HID  "LEN0268"
+?
 
-Not so sure it's a lot of work. If ECC and timing settings are the
-only thing you need to initialize then it should work just fine.
-Try with a controller reset and you'll know if you miss something ;-).
+--=20
+With Best Regards,
+Andy Shevchenko
