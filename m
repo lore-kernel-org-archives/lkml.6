@@ -1,144 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id SuypAf9FHlvaeAAAmS7hNA
-	; Mon, 11 Jun 2018 09:50:55 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id dhHwIX4MG1vpYQAAmS7hNA
+	; Fri, 08 Jun 2018 23:19:54 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id EA3A3607E4; Mon, 11 Jun 2018 09:50:54 +0000 (UTC)
+	id EE5286089E; Fri,  8 Jun 2018 23:19:53 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=networkplumber-org.20150623.gappssmtp.com header.i=@networkplumber-org.20150623.gappssmtp.com header.b="TxoLOg3x"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_MED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 5F08D60385;
-	Mon, 11 Jun 2018 09:50:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5F08D60385
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=st.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 7DCBB60275;
+	Fri,  8 Jun 2018 23:19:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7DCBB60275
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=networkplumber.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932742AbeFKJux (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 05:50:53 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:5591 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932453AbeFKJuv (ORCPT
+        id S1753165AbeFHXTv (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 19:19:51 -0400
+Received: from mail-pg0-f49.google.com ([74.125.83.49]:42544 "EHLO
+        mail-pg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753031AbeFHXTt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 05:50:51 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5B9nZst008531;
-        Mon, 11 Jun 2018 11:50:17 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2jg4bwga54-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 11 Jun 2018 11:50:17 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 70FF031;
-        Mon, 11 Jun 2018 09:50:16 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4F7C724DC;
-        Mon, 11 Jun 2018 09:50:16 +0000 (GMT)
-Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by Safex1hubcas22.st.com
- (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 11 Jun
- 2018 11:50:16 +0200
-Received: from localhost (10.201.23.73) by webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 11 Jun 2018 11:50:15
- +0200
-From: Hugues Fruchet <hugues.fruchet@st.com>
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Hans Verkuil" <hverkuil@xs4all.nl>
-CC: <linux-media@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Yannick Fertre <yannick.fertre@st.com>,
-        Hugues Fruchet <hugues.fruchet@st.com>
-Subject: [PATCH] media: stm32-dcmi: code cleanup
-Date: Mon, 11 Jun 2018 11:50:09 +0200
-Message-ID: <1528710609-8501-1-git-send-email-hugues.fruchet@st.com>
-X-Mailer: git-send-email 1.9.1
+        Fri, 8 Jun 2018 19:19:49 -0400
+Received: by mail-pg0-f49.google.com with SMTP id c10-v6so1418378pgu.9
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 16:19:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=networkplumber-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version;
+        bh=OHpmlgk11OaAtHpieg8gD8hkBAsJjor5Bt6OuODWhuE=;
+        b=TxoLOg3xer0iFisZLolqVQnVePVr1Q2uAVmuxMrC6p+iVXt6GzegW+mai6i89ksiPR
+         I3hom0XhPl2FrJk1bfopdG6+HsqDQgb1tVKFpeKhEhfmwf3dnUO1kSDdUBAzs04uvdb9
+         lEK5NdMhmEuqBkNONaNHsnUiJsfHBOq+mO918QjmzSEtXPURhf1lccsB4UiUlGQlhLJA
+         YuKVlnKZb0iemKzlzgd7OcFRTBmmu+j4p8pByrBI8XJvTqEv2KoenufBwlXWlsyYGFB/
+         piWYukxKW3aKypksdryz7oAFHPpzUA+wuP98bzSN1Bl272lR4i/Ba4XLI5an7r/DFy/h
+         lPKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version;
+        bh=OHpmlgk11OaAtHpieg8gD8hkBAsJjor5Bt6OuODWhuE=;
+        b=mFrhlpXLqq6gGoJ6ZZDz5n+QxBSJS31cEXwRjkEzHxRhDlfSVDWgDfRTpOZ79ZkUet
+         91NiceU/N+ySQLpO6K/bxyeI7jhztxpL7ZFpZ71EbMLOVORllJNCbx/Dhz0H9p5lNpir
+         lzc8n78kxdzdj/zZYQsV9bxoaAAt05QfWIwC3Pspfl9jnE0PZ6dsvKkNUoVCgZ4sXqFj
+         b+COApxi5NUKXKirc8qdFn5COpd7XAosWNPRZbMmseBV9MJwfg1buZrH5dd+PvAyxOI+
+         E7lm+sA01EfsrZlPK7+C6zYyR+uZEnHa2AA8dT4P2CYouDdZ2ZLxAaZPcsBZHeczZfLf
+         9c/g==
+X-Gm-Message-State: APt69E1L5D2U1tBOP/ujXfCL2TSo1wjMrgJW5W0VXD6/iIvLFOM3FE/E
+        6FxFeqqCsknDTPv0Ago61ofd0w==
+X-Google-Smtp-Source: ADUXVKL3goLbyTpbWvWvwdwnPE9rWCovZ7q2WMUhrfMPrgQ6KhALcJgtF3CbOzg+bNZ2wpw1eyRRmA==
+X-Received: by 2002:a63:a356:: with SMTP id v22-v6mr2931776pgn.182.1528499988381;
+        Fri, 08 Jun 2018 16:19:48 -0700 (PDT)
+Received: from xeon-e3 (204-195-35-107.wavecable.com. [204.195.35.107])
+        by smtp.gmail.com with ESMTPSA id i88-v6sm14923444pfi.153.2018.06.08.16.19.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 08 Jun 2018 16:19:48 -0700 (PDT)
+Date: Fri, 8 Jun 2018 16:19:45 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Doug Ledford <dledford@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-netdev <netdev@vger.kernel.org>,
+        RDMA mailing list <linux-rdma@vger.kernel.org>
+Subject: Re: linux-next: Please add mlx5-next tree
+Message-ID: <20180608161945.66f4628f@xeon-e3>
+In-Reply-To: <20180606192500.GZ2958@mtr-leonro.mtl.com>
+References: <20180606192500.GZ2958@mtr-leonro.mtl.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.23.73]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-11_04:,,
- signatures=0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/iuh=vHxoaWVk2Mm6=WKGlDG"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Minor non-functional fixes around comments, variable namings
-and trace point enhancement.
+--Sig_/iuh=vHxoaWVk2Mm6=WKGlDG
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Hugues Fruchet <hugues.fruchet@st.com>
----
- drivers/media/platform/stm32/stm32-dcmi.c | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
+On Wed, 6 Jun 2018 22:25:00 +0300
+Leon Romanovsky <leon@kernel.org> wrote:
 
-diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
-index c55e6b5..b796334 100644
---- a/drivers/media/platform/stm32/stm32-dcmi.c
-+++ b/drivers/media/platform/stm32/stm32-dcmi.c
-@@ -249,13 +249,12 @@ static int dcmi_restart_capture(struct stm32_dcmi *dcmi)
- static void dcmi_dma_callback(void *param)
- {
- 	struct stm32_dcmi *dcmi = (struct stm32_dcmi *)param;
--	struct dma_chan *chan = dcmi->dma_chan;
- 	struct dma_tx_state state;
- 	enum dma_status status;
- 	struct dcmi_buf *buf = dcmi->active;
- 
- 	/* Check DMA status */
--	status = dmaengine_tx_status(chan, dcmi->dma_cookie, &state);
-+	status = dmaengine_tx_status(dcmi->dma_chan, dcmi->dma_cookie, &state);
- 
- 	switch (status) {
- 	case DMA_IN_PROGRESS:
-@@ -309,10 +308,11 @@ static int dcmi_start_dma(struct stm32_dcmi *dcmi,
- 	/* Prepare a DMA transaction */
- 	desc = dmaengine_prep_slave_single(dcmi->dma_chan, buf->paddr,
- 					   buf->size,
--					   DMA_DEV_TO_MEM, DMA_PREP_INTERRUPT);
-+					   DMA_DEV_TO_MEM,
-+					   DMA_PREP_INTERRUPT);
- 	if (!desc) {
--		dev_err(dcmi->dev, "%s: DMA dmaengine_prep_slave_single failed for buffer size %zu\n",
--			__func__, buf->size);
-+		dev_err(dcmi->dev, "%s: DMA dmaengine_prep_slave_single failed for buffer phy=%pad size=%zu\n",
-+			__func__, &buf->paddr, buf->size);
- 		return -EINVAL;
- 	}
- 
-@@ -378,7 +378,6 @@ static void dcmi_process_jpeg(struct stm32_dcmi *dcmi)
- {
- 	struct dma_tx_state state;
- 	enum dma_status status;
--	struct dma_chan *chan = dcmi->dma_chan;
- 	struct dcmi_buf *buf = dcmi->active;
- 
- 	if (!buf)
-@@ -386,8 +385,7 @@ static void dcmi_process_jpeg(struct stm32_dcmi *dcmi)
- 
- 	/*
- 	 * Because of variable JPEG buffer size sent by sensor,
--	 * DMA transfer never completes due to transfer size
--	 * never reached.
-+	 * DMA transfer never completes due to transfer size never reached.
- 	 * In order to ensure that all the JPEG data are transferred
- 	 * in active buffer memory, DMA is drained.
- 	 * Then DMA tx status gives the amount of data transferred
-@@ -396,10 +394,10 @@ static void dcmi_process_jpeg(struct stm32_dcmi *dcmi)
- 	 */
- 
- 	/* Drain DMA */
--	dmaengine_synchronize(chan);
-+	dmaengine_synchronize(dcmi->dma_chan);
- 
- 	/* Get DMA residue to get JPEG size */
--	status = dmaengine_tx_status(chan, dcmi->dma_cookie, &state);
-+	status = dmaengine_tx_status(dcmi->dma_chan, dcmi->dma_cookie, &state);
- 	if (status != DMA_ERROR && state.residue < buf->size) {
- 		/* Return JPEG buffer to V4L2 with received JPEG buffer size */
- 		dcmi_buffer_done(dcmi, buf, buf->size - state.residue, 0);
--- 
-1.9.1
+> Hi Stephen,
+>=20
+> Can you please add the branch "mlx5-next" from the following tree to the
+> linux-next integration tree?
+>=20
+> https://git.kernel.org/pub/scm/linux/kernel/git/mellanox/linux.git/
+>=20
+> The mlx5-next branch is used to send shared pull requests to both netdev
+> and RDMA subsystems and it is worth to have linux-next coverage on it
+> before.
+>=20
+> Thanks
+
+I would hope all network drivers keep getting review in netdev.
+Don't want a path to upstream that bypasses review.
+
+--Sig_/iuh=vHxoaWVk2Mm6=WKGlDG
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEn2/DRbBb5+dmuDyPgKd/YJXN5H4FAlsbDxEACgkQgKd/YJXN
+5H74Dg//cOmo++ATnkQe0N+Ojxm/v8Puqu/+vS+1MFCYL7JR+/ZM6EJNfJ5u8Rvl
+vjlJoKnA4ek9CljopF4LV7CWAdSpqN3rrbhvSWlR9Z0mIfThh6flBE7gPErkKavW
+2So/EcDXCnC83mCew11k5fEDLpbPEK2Ik3OdwPV3qIiz7dedrK1ULWSptSKrxR1o
+iUAxN/gdDizR+ZvlTqOc10os10m8BLiqYHJu1WeEH84FFICkSouyartNtWv/iSCY
+dJz6GKhFvUB2CdavhJvqNzgI64OreoJTIh7b8TJqbCQWLYzklF+Et6lsOBtLayP1
+FI9Jg+f4nKDyXomfzbm3r+p0wMncK6atIzqtqpCw3TjnRH92G5U5/0M+qyOCE/jT
+7tzqlp24oPUYvL9zwf8RR83UaUw4dB5MKhTxnrutWtpJYtZMMg9jfabFwgI2Y7+1
+aAwppQBYj7WOzx1Vf/7N782yssL1rhpWpwLGU90FOoYgw3+l44a4EAKsvGB2KZ3N
+bClGGGbxCiojPZe+Buu160RSFMuJ9+qvCU8rSbO+FzlQWPsTZI7B1nOptnKCsc/W
+cOpeSHcHcc94hgcBg1fK+gaFhtdSZJvzmM8CXZOH8VPIZE5wr0bmDKD8Ez5LWVlT
+dZMK7uFtTwaq4IcSQEMxJJVq+poJnJ7p0/3LDJEFlZysIeg1TRw=
+=feST
+-----END PGP SIGNATURE-----
+
+--Sig_/iuh=vHxoaWVk2Mm6=WKGlDG--
