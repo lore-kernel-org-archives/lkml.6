@@ -1,110 +1,166 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id um7oNY4/GlvMTwAAmS7hNA
-	; Fri, 08 Jun 2018 08:34:22 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Y2mKI9/hGltuMgAAmS7hNA
+	; Fri, 08 Jun 2018 20:07:56 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id BDFD3607E4; Fri,  8 Jun 2018 08:34:22 +0000 (UTC)
+	id 54D99605A5; Fri,  8 Jun 2018 20:07:56 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ptt1xLzm"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id EAAFF60290;
-	Fri,  8 Jun 2018 08:34:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EAAFF60290
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 540F56074D;
+	Fri,  8 Jun 2018 20:07:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 540F56074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752858AbeFHIeT (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 04:34:19 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59526 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751571AbeFHIeR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 04:34:17 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 598671529;
-        Fri,  8 Jun 2018 01:34:17 -0700 (PDT)
-Received: from localhost (unknown [10.37.8.155])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B7B7E3F557;
-        Fri,  8 Jun 2018 01:34:16 -0700 (PDT)
-Date: Fri, 8 Jun 2018 10:34:14 +0200
-From: Christoffer Dall <christoffer.dall@arm.com>
-To: Jia He <hejianet@gmail.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        Suzuki.Poulose@arm.com, linux-kernel@vger.kernel.org,
-        jia.he@hxt-semitech.com
-Subject: Re: [PATCH v2 2/2] KVM: arm/arm64: harden unmap_stage2_ptes in case
- end is not PAGE_SIZE aligned
-Message-ID: <20180608083414.GA5097@C02W217FHV2R.local>
-References: <1526635630-18917-1-git-send-email-hejianet@gmail.com>
- <1526635630-18917-2-git-send-email-hejianet@gmail.com>
- <2185a61e-c157-e177-9bad-83b6f27fd784@arm.com>
- <50c98169-1606-48bf-0489-124adefd2a54@gmail.com>
+        id S1753269AbeFHUHy (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 16:07:54 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:37452 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752968AbeFHUFH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 16:05:07 -0400
+Received: by mail-pl0-f66.google.com with SMTP id 31-v6so8873825plc.4
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 13:05:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+N7TW72v+t/5sD1mAeheF2xfj4Q3xhLy8CyQ/zPhWjE=;
+        b=Ptt1xLzmDnqX83AoLI88XYrXyKWoegFBJbihHi7RUDznwqy/JTV6qmMbu5Gdx0DIgX
+         mHi/ghC3iPvRK1tLEx9tbxeuXnMn3uWWWkfkogGRXMTf3KjBqfssQlR525VyP9kqXIf8
+         cAEChVOUb4xIsYPQtkYmOx+j/wD9SbyFvz7Ns=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+N7TW72v+t/5sD1mAeheF2xfj4Q3xhLy8CyQ/zPhWjE=;
+        b=eoXcf6O60L5zHNViiQnJ715VT2CSFD6VSc+fp/1myZQUCRlrhVexLVyCt9anvXwf6d
+         TuhOprlj8iDTHarZtyjlOjVrZvgAUb50ROjMUvG00KTrQ/jO3wqYppwvv/Jrd/M2mbD3
+         gHYLBJZw8qbtlKRSZ7LyFoXS+vXLAHl+M0me2QTwsqnJ9Uo/cfE/sbaBZQCu7BVGmlj1
+         vumTBMiaQX8vR1JHhO+HtL8H/FdB9nXk9XQv4ivMx/uVyS4/S7Xq6AwcRCy2n/lY2U7U
+         WYv9C4fXQhAvn4y/PIbjxgnLQr2/j/E6FtEJ/P2H1B6tGOcK1PRPSJfzTfUDWa7bOzh1
+         xshg==
+X-Gm-Message-State: APt69E2NEsXWCERbuSnjJFLsWo/9WR6YWjG+zRYVwgjiW25IvLdkiYqu
+        EiCo8IIRnLtFdf3YJMGk6Ym02g==
+X-Google-Smtp-Source: ADUXVKIYRWCjBzyp79OTh+i6/VNZoiyeTDltWlQMxrVBH5TAmvuEJ5pXtft9NmAIlr0H3RmwQ41EbQ==
+X-Received: by 2002:a17:902:c6b:: with SMTP id 98-v6mr7861000pls.37.1528488307207;
+        Fri, 08 Jun 2018 13:05:07 -0700 (PDT)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id l26-v6sm32253043pgn.55.2018.06.08.13.05.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Jun 2018 13:05:06 -0700 (PDT)
+Date: Fri, 8 Jun 2018 14:05:03 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, robh@kernel.org,
+        frowand.list@gmail.com, mark.rutland@arm.com, sudeep.holla@arm.com,
+        arm@kernel.org, linux-kernel@vger.kernel.org, matt.sealey@arm.com,
+        john.horley@arm.com, charles.garcia-tobin@arm.com,
+        coresight@lists.linaro.org, devicetree@vger.kernel.org,
+        mike.leach@linaro.org
+Subject: Re: [PATCH 03/20] coresight: Fix remote endpoint parsing
+Message-ID: <20180608200503.GC30587@xps15>
+References: <1528235011-30691-1-git-send-email-suzuki.poulose@arm.com>
+ <1528235011-30691-4-git-send-email-suzuki.poulose@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <50c98169-1606-48bf-0489-124adefd2a54@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1528235011-30691-4-git-send-email-suzuki.poulose@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 09:04:40PM +0800, Jia He wrote:
+On Tue, Jun 05, 2018 at 10:43:14PM +0100, Suzuki K Poulose wrote:
+> When parsing the remote endpoint of an output port, we do :
+>      rport = of_graph_get_remote_port(ep);
+>      rparent = of_graph_get_remote_port_parent(ep);
 > 
+> and then parse the "remote_port" as if it was the remote endpoint,
+> which is wrong. The code worked fine because we used endpoint number
+> as the port number. Let us fix it and optimise a bit as:
 > 
-> On 5/18/2018 5:48 PM, Marc Zyngier Wrote:
-> > On 18/05/18 10:27, Jia He wrote:
-> >> If it passes addr=0x202920000,size=0xfe00 to unmap_stage2_range->
-> >> ...->unmap_stage2_ptes, unmap_stage2_ptes will get addr=0x202920000,
-> >> end=0x20292fe00. After first while loop addr=0x202930000, end=0x20292fe00,
-> >> then addr!=end. Thus it will touch another pages by put_pages() in the
-> >> 2nd loop.
-> >>
-> >> This patch fixes it by hardening the break condition of while loop.
-> >>
-> >> Signed-off-by: jia.he@hxt-semitech.com
-> >> ---
-> >> v2: newly added
-> >>
-> >>  virt/kvm/arm/mmu.c | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-> >> index 8dac311..45cd040 100644
-> >> --- a/virt/kvm/arm/mmu.c
-> >> +++ b/virt/kvm/arm/mmu.c
-> >> @@ -217,7 +217,7 @@ static void unmap_stage2_ptes(struct kvm *kvm, pmd_t *pmd,
-> >>  
-> >>  			put_page(virt_to_page(pte));
-> >>  		}
-> >> -	} while (pte++, addr += PAGE_SIZE, addr != end);
-> >> +	} while (pte++, addr += PAGE_SIZE, addr < end);
-> >>  
-> >>  	if (stage2_pte_table_empty(start_pte))
-> >>  		clear_stage2_pmd_entry(kvm, pmd, start_addr);
-> >>
-> > 
-> > I don't think this change is the right thing to do. You get that failure
-> > because you're being passed a size that is not a multiple of PAGE_SIZE.
-> > That's the mistake.
-> > 
-> > You should ensure that this never happens, rather than changing the page
-> > table walkers (which are consistent with the way this kind of code is
-> > written in other places of the kernel). As you mentioned in your first
-> > patch, the real issue is that KSM is broken, and this is what should be
-> > fixed.
-> > 
-> Got it, thanks
-> Should I resend the patch 1/2 without any changes after droping patch 2/2?
+>      remote_ep = of_graph_get_remote_endpoint(ep);
+>      if (remote_ep)
+>         remote_parent = of_graph_get_port_parent(remote_ep);
 > 
+> and then, parse the remote_ep for the port/endpoint details.
+> 
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+>  drivers/hwtracing/coresight/of_coresight.c | 22 +++++++++++-----------
+>  1 file changed, 11 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/of_coresight.c b/drivers/hwtracing/coresight/of_coresight.c
+> index 8a23c63..ada4f07 100644
+> --- a/drivers/hwtracing/coresight/of_coresight.c
+> +++ b/drivers/hwtracing/coresight/of_coresight.c
+> @@ -129,7 +129,7 @@ static int of_coresight_parse_endpoint(struct device_node *ep,
+>  	int ret = 0;
+>  	struct of_endpoint endpoint, rendpoint;
+>  	struct device_node *rparent = NULL;
+> -	struct device_node *rport = NULL;
+> +	struct device_node *rep = NULL;
+>  	struct device *rdev = NULL;
+>  
+>  	do {
+> @@ -144,16 +144,16 @@ static int of_coresight_parse_endpoint(struct device_node *ep,
+>  		if (of_graph_parse_endpoint(ep, &endpoint))
+>  			break;
+>  		/*
+> -		 * Get a handle on the remote port and parent
+> -		 * attached to it.
+> +		 * Get a handle on the remote endpoint and the device it is
+> +		 * attached to.
+>  		 */
+> -		rparent = of_graph_get_remote_port_parent(ep);
+> +		rep = of_graph_get_remote_endpoint(ep);
+> +		if (!rep)
+> +			break;
+> +		rparent = of_graph_get_port_parent(rep);
+>  		if (!rparent)
+>  			break;
+> -		rport = of_graph_get_remote_port(ep);
+> -		if (!rport)
+> -			break;
+> -		if (of_graph_parse_endpoint(rport, &rendpoint))
+> +		if (of_graph_parse_endpoint(rep, &rendpoint))
+>  			break;
+>  
+>  		/* If the remote device is not available, defer probing */
+> @@ -165,15 +165,15 @@ static int of_coresight_parse_endpoint(struct device_node *ep,
+>  
+>  		pdata->outports[*i] = endpoint.port;
+>  		pdata->child_names[*i] = dev_name(rdev);
+> -		pdata->child_ports[*i] = rendpoint.id;
+> +		pdata->child_ports[*i] = rendpoint.port;
+>  		/* Move the index */
+>  		(*i)++;
+>  	} while (0);
+>  
+>  	if (rparent)
+>  		of_node_put(rparent);
+> -	if (rport)
+> -		of_node_put(rport);
+> +	if (rep)
+> +		of_node_put(rep);
+>  
+>  	return ret;
+>  }
 
-That's fine if you trim the commit message to make it look nicer.
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-Also, in the future, please include a cover letter if you send more than
-one patch to the list.
+(Please add to the next iteration so that I don't have to review again)
 
-Thanks,
--Christoffer
+> -- 
+> 2.7.4
+> 
