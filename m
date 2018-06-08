@@ -1,67 +1,641 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id CCKuCP5RGlt9EwAAmS7hNA
-	; Fri, 08 Jun 2018 09:53:02 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id zmUyC4lWGltnOwAAmS7hNA
+	; Fri, 08 Jun 2018 10:13:13 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 0A847607A4; Fri,  8 Jun 2018 09:53:02 +0000 (UTC)
+	id B7899605A5; Fri,  8 Jun 2018 10:13:13 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 97BE760290;
-	Fri,  8 Jun 2018 09:53:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 97BE760290
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by smtp.codeaurora.org (Postfix) with ESMTP id 149CE60290;
+	Fri,  8 Jun 2018 10:13:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 149CE60290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752820AbeFHJw7 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 05:52:59 -0400
-Received: from www62.your-server.de ([213.133.104.62]:39332 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751186AbeFHJw5 (ORCPT
+        id S1752608AbeFHKNJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 06:13:09 -0400
+Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:55068 "EHLO
+        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751176AbeFHKNG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 05:52:57 -0400
-Received: from [178.197.248.12] (helo=linux.home)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-SHA:256)
-        (Exim 4.85_2)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fRE4k-0008S5-Nq; Fri, 08 Jun 2018 11:52:54 +0200
-Subject: Re: KASAN: use-after-free Read in bpf_csum_update
-To: syzbot <syzbot+3d0b2441dbb71751615e@syzkaller.appspotmail.com>,
-        ast@kernel.org, davem@davemloft.net, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <000000000000bec587056dc547ba@google.com>
-From: Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <732ecdd6-135d-7a3e-6c06-fb098c65d76f@iogearbox.net>
-Date: Fri, 8 Jun 2018 11:52:54 +0200
+        Fri, 8 Jun 2018 06:13:06 -0400
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id REOCfoBfjtLaAREOFfyBvO; Fri, 08 Jun 2018 12:13:05 +0200
+Subject: Re: [RFC PATCH 1/2] media: docs-rst: Add decoder UAPI specification
+ to Codec Interfaces
+To: Tomasz Figa <tfiga@chromium.org>
+Cc: Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Pawel Osciak <posciak@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
+        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
+        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?=
+        <tiffany.lin@mediatek.com>,
+        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?=
+        <andrew-ct.chen@mediatek.com>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        todor.tomov@linaro.org, nicolas@ndufresne.ca,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20180605103328.176255-1-tfiga@chromium.org>
+ <20180605103328.176255-2-tfiga@chromium.org>
+ <83bebfbc-6cd4-fb9b-48c3-7b82846837be@xs4all.nl>
+ <CAAFQd5Dd_ehFJxLVakprRgA+W-adkRhB=QY1wcz=Of0=OpX3Dg@mail.gmail.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <30773e15-b0c4-83f8-24b0-17bcfca99b22@xs4all.nl>
+Date: Fri, 8 Jun 2018 12:13:00 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <000000000000bec587056dc547ba@google.com>
+In-Reply-To: <CAAFQd5Dd_ehFJxLVakprRgA+W-adkRhB=QY1wcz=Of0=OpX3Dg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.99.3/24643/Fri Jun  8 06:37:57 2018)
+X-CMAE-Envelope: MS4wfFxHpdnDbEPUbKI6ZGCvWDP2kB6oQ60lvlCdC2pgKcHJ08EpIy+AHUN4eBKu3lnpKN/CJiUFtfIRULbpD2l5CKpTBVJFWSTudoi5zN4gEzApmT4AqeRm
+ /bcW5JRUgzW4NdW5ZEmsjYfX3z7I0WaOhMQFroLZjSQQ9ge7+DnthlqJkpMWHkbwuf/qEIcGfmCXb+l21ijO5qBGfnohFWq7sF+E2yJPgs1P00wAtX3S9LG8
+ fap/hJMR8+LwtmtwQ3Hwu/H6zvid50/kKwonr7IuG2T0ZEJ4uIbW0wH8lU6KsNzHYF2/OTY/bVPuazW/VIz0h17tqXgGprOnXpPaHtfFKRKcfS4XW4s6ubR9
+ SdUsRxvTZ/YDmkVaDeht8TyRwGYK5i+x2CQuntyap9YM2B3NuV2585EwmSgZGTe/QV2DiacGW+tyPUTV7yK/88gHhRXsX2RgSi+jRKstmXeSfcJw2UNgP3w5
+ Y0gkuhrhLp+LNJ3RloFuLjbaR6o32Qrh291ATSgwVUznXkLAbjoOTSaaYHRhEr+p8w+8melnMTA830q1jgxqVoXPMev8SqAHg2mcBHW6LxVdi789ibo0oKEu
+ QKxChS4klDlkgBwK+8N57KBGS/Px7stO3erUmyidJRPVxTgSDoc3hj39eMizaaSyZb/imlGXw0pajJRZdkwUO3eX
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/04/2018 01:36 AM, syzbot wrote:
-> Hello,
+On 06/08/2018 11:03 AM, Tomasz Figa wrote:
+> Hi Hans,
 > 
-> syzbot found the following crash on:
+> On Thu, Jun 7, 2018 at 5:48 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>>
+>> Hi Tomasz,
+>>
+>> First of all: thank you very much for working on this. It's a big missing piece of
+>> information, so filling this in is very helpful.
 > 
-> HEAD commit:    bcece5dc40b9 bpf: Change bpf_fib_lookup to return -EAFNOSU..
-> git tree:       bpf-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=161e2c6f800000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=e4078980b886800c
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3d0b2441dbb71751615e
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=17cb5adf800000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17ebf19f800000
+> Thanks for review!
+> 
+>>
+>> On 06/05/2018 12:33 PM, Tomasz Figa wrote:
+>>> Due to complexity of the video decoding process, the V4L2 drivers of
+>>> stateful decoder hardware require specific sequencies of V4L2 API calls
+>>> to be followed. These include capability enumeration, initialization,
+>>> decoding, seek, pause, dynamic resolution change, flush and end of
+>>> stream.
+>>>
+>>> Specifics of the above have been discussed during Media Workshops at
+>>> LinuxCon Europe 2012 in Barcelona and then later Embedded Linux
+>>> Conference Europe 2014 in Düsseldorf. The de facto Codec API that
+>>> originated at those events was later implemented by the drivers we already
+>>> have merged in mainline, such as s5p-mfc or mtk-vcodec.
+>>>
+>>> The only thing missing was the real specification included as a part of
+>>> Linux Media documentation. Fix it now and document the decoder part of
+>>> the Codec API.
+>>>
+>>> Signed-off-by: Tomasz Figa <tfiga@chromium.org>
+>>> ---
+>>>  Documentation/media/uapi/v4l/dev-codec.rst | 771 +++++++++++++++++++++
+>>>  Documentation/media/uapi/v4l/v4l2.rst      |  14 +-
+>>>  2 files changed, 784 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/Documentation/media/uapi/v4l/dev-codec.rst b/Documentation/media/uapi/v4l/dev-codec.rst
+>>> index c61e938bd8dc..0483b10c205e 100644
+>>> --- a/Documentation/media/uapi/v4l/dev-codec.rst
+>>> +++ b/Documentation/media/uapi/v4l/dev-codec.rst
+>>> @@ -34,3 +34,774 @@ the codec and reprogram it whenever another file handler gets access.
+>>>  This is different from the usual video node behavior where the video
+>>>  properties are global to the device (i.e. changing something through one
+>>>  file handle is visible through another file handle).
+>>
+>> To what extent does the information in this patch series apply specifically to
+>> video (de)compression hardware and to what extent it is applicable for any m2m
+>> device? It looks like most if not all is specific to video (de)compression hw
+>> and not to e.g. a simple deinterlacer.
+> 
+> It is specifically written for stateful codecs, i.e. those that can
+> work on bitstream directly.
+> 
+>>
+>> Ideally there would be a common section first describing the requirements for
+>> all m2m devices, followed by an encoder and decoder section going into details
+>> for those specific devices.
+> 
+> I wonder if we can say too much in general about "all m2m devices".
+> The simple m2m devices (scalers, deinterlacers) do not have much in
+> common with codecs that operate in a quite complicated manner (and so
+> need all the things defined below).
+> 
+> This brings quite an interesting question of whether we can really
+> call such simple m2m device "a V4L2 codec" as the original text of
+> dev-codec.rst does. I guess it depends on the convention we agree on,
+> but I personally have only heard the term "codec" in context of
+> audio/video/etc. compression.
 
-#syz fix: bpf: reject passing modified ctx to helper functions
+It's for historical reasons that this is called the "Codec Interface" in the
+spec. I wouldn't mind at all if it was renamed to "Memory-to-Memory Interface".
+
+But perhaps that's better done as a separate final patch.
+
+> 
+>>
+>> I also think that we need an additional paragraph somewhere at the beginning
+>> of the Codec Interface chapter that explains more clearly that OUTPUT buffers
+>> send data to the hardware to be processed and that CAPTURE buffers contains
+>> the processed data. It is always confusing for newcomers to understand that
+>> in V4L2 this is seen from the point of view of the CPU.
+> 
+> I believe this is included in the glossary below, although using a
+> slightly different wording that doesn't involve CPU.
+> 
+> [snip]
+>>> +
+>>> +EOS
+>>> +   end of stream
+>>> +
+>>> +input height
+>>> +   height in pixels for given input resolution
+>>
+>> 'input' is a confusing name. Because I think this refers to the resolution
+>> set for the OUTPUT buffer. How about renaming this to 'source'?
+>>
+>> I.e.: an OUTPUT buffer contains the source data for the hardware. The capture
+>> buffer contains the sink data from the hardware.
+> 
+> Yes, indeed, "source" sounds more logical.
+> 
+>>
+>>> +
+>>> +input resolution
+>>> +   resolution in pixels of source frames being input
+>>
+>> "source resolution
+>>         resolution in pixels of source frames passed"
+>>
+>>> +   to the encoder and subject to further cropping to the bounds of visible
+>>> +   resolution
+>>> +
+>>> +input width
+>>> +   width in pixels for given input resolution
+>>> +
+>>> +OUTPUT
+>>> +   the source buffer queue, encoded bitstream for
+>>> +   decoders, raw frames for encoders; ``V4L2_BUF_TYPE_VIDEO_OUTPUT`` or
+>>> +   ``V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE``
+>>> +
+>>> +raw format
+>>> +   uncompressed format containing raw pixel data (e.g.
+>>> +   YUV, RGB formats)
+>>> +
+>>> +resume point
+>>> +   a point in the bitstream from which decoding may
+>>> +   start/continue, without any previous state/data present, e.g.: a
+>>> +   keyframe (VPX) or SPS/PPS/IDR sequence (H.264); a resume point is
+>>> +   required to start decode of a new stream, or to resume decoding after a
+>>> +   seek;
+>>> +
+>>> +source buffer
+>>> +   buffers allocated for source queue
+>>
+>> "OUTPUT buffers allocated..."
+> 
+> Ack.
+> 
+>>
+>>> +
+>>> +source queue
+>>> +   queue containing buffers used for source data, i.e.
+>>
+>> Line suddenly ends.
+>>
+>> I'd say: "queue containing OUTPUT buffers"
+> 
+> Ack.
+> 
+> [snip]
+>>> +Initialization sequence
+>>> +-----------------------
+>>> +
+>>> +1. (optional) Enumerate supported OUTPUT formats and resolutions. See
+>>> +   capability enumeration.
+>>> +
+>>> +2. Set a coded format on the source queue via :c:func:`VIDIOC_S_FMT`
+>>> +
+>>> +   a. Required fields:
+>>> +
+>>> +      i.   type = OUTPUT
+>>> +
+>>> +      ii.  fmt.pix_mp.pixelformat set to a coded format
+>>> +
+>>> +      iii. fmt.pix_mp.width, fmt.pix_mp.height only if cannot be
+>>> +           parsed from the stream for the given coded format;
+>>> +           ignored otherwise;
+>>> +
+>>> +   b. Return values:
+>>> +
+>>> +      i.  EINVAL: unsupported format.
+>>> +
+>>> +      ii. Others: per spec
+>>> +
+>>> +   .. note::
+>>> +
+>>> +      The driver must not adjust pixelformat, so if
+>>> +      ``V4L2_PIX_FMT_H264`` is passed but only
+>>> +      ``V4L2_PIX_FMT_H264_SLICE`` is supported, S_FMT will return
+>>> +      -EINVAL. If both are acceptable by client, calling S_FMT for
+>>> +      the other after one gets rejected may be required (or use
+>>> +      :c:func:`VIDIOC_ENUM_FMT` to discover beforehand, see Capability
+>>> +      enumeration).
+>>
+>> This needs to be documented in S_FMT as well.
+>>
+>> What will TRY_FMT do? Return EINVAL as well, or replace the pixelformat?
+>>
+>> Should this be a general rule for output devices that S_FMT (and perhaps TRY_FMT)
+>> fail with EINVAL if the pixelformat is not supported? There is something to be
+>> said for that.
+> 
+> I think this was covered by other reviewers already and I believe we
+> should stick to the general semantics of TRY_/S_FMT, which are
+> specified to never return error if unsupported values are given (and
+> silently adjust to supported ones). I don't see any reason to make
+> codecs different from that - userspace can just check if the pixel
+> format matches what was set.
+> 
+> [snip]
+>>> +5.  Begin parsing the stream for stream metadata via :c:func:`VIDIOC_STREAMON` on
+>>> +    OUTPUT queue. This step allows the driver to parse/decode
+>>> +    initial stream metadata until enough information to allocate
+>>> +    CAPTURE buffers is found. This is indicated by the driver by
+>>> +    sending a ``V4L2_EVENT_SOURCE_CHANGE`` event, which the client
+>>> +    must handle.
+>>> +
+>>> +    a. Required fields: as per spec.
+>>> +
+>>> +    b. Return values: as per spec.
+>>> +
+>>> +    .. note::
+>>> +
+>>> +       Calling :c:func:`VIDIOC_REQBUFS`, :c:func:`VIDIOC_STREAMON`
+>>> +       or :c:func:`VIDIOC_G_FMT` on the CAPTURE queue at this time is not
+>>> +       allowed and must return EINVAL.
+>>
+>> I dislike EINVAL here. It is too generic. Also, the passed arguments can be
+>> perfectly valid, you just aren't in the right state. EPERM might be better.
+> 
+> The problem of hardware that can't parse the resolution or software
+> that wants to pre-allocate buffers was brought up in different
+> replies. I think we might want to revise this in general, but I agree
+> that EPERM sounds better than EINVAL in this context.
+> 
+>>
+>>> +
+>>> +6.  This step only applies for coded formats that contain resolution
+>>> +    information in the stream.
+>>> +    Continue queuing/dequeuing bitstream buffers to/from the
+>>> +    OUTPUT queue via :c:func:`VIDIOC_QBUF` and :c:func:`VIDIOC_DQBUF`. The driver
+>>> +    must keep processing and returning each buffer to the client
+>>> +    until required metadata to send a ``V4L2_EVENT_SOURCE_CHANGE``
+>>> +    for source change type ``V4L2_EVENT_SRC_CH_RESOLUTION`` is
+>>> +    found.
+>>
+>> This sentence is confusing. It's not clear what you mean here.
+> 
+> The point is that userspace needs to keep providing new bitstream data
+> until the header can be parsed.
+> 
+>>
+>>  There is no requirement to pass enough data for this to
+>>> +    occur in the first buffer and the driver must be able to
+>>> +    process any number
+>>
+>> Missing period at the end of the sentence.
+>>
+>>> +
+>>> +    a. Required fields: as per spec.
+>>> +
+>>> +    b. Return values: as per spec.
+>>> +
+>>> +    c. If data in a buffer that triggers the event is required to decode
+>>> +       the first frame, the driver must not return it to the client,
+>>> +       but must retain it for further decoding.
+>>> +
+>>> +    d. Until the resolution source event is sent to the client, calling
+>>> +       :c:func:`VIDIOC_G_FMT` on the CAPTURE queue must return -EINVAL.
+>>
+>> EPERM?
+> 
+> Ack. +/- the problem of userspace that wants to pre-allocate CAPTURE queue.
+> 
+> Although when I think of it now, such userspace would set coded
+> resolution on OUTPUT queue and then driver could instantly signal
+> source change event on CAPTURE queue even before the hardware finishes
+> the parsing. If what the hardware parses doesn't match what the
+> userspace set, yet another event would be signaled.
+> 
+>>
+>>> +
+>>> +    .. note::
+>>> +
+>>> +       No decoded frames are produced during this phase.
+>>> +
+>>> +7.  This step only applies for coded formats that contain resolution
+>>
+>> applies to  (same elsewhere)
+>>
+>>> +    information in the stream.
+>>> +    Receive and handle ``V4L2_EVENT_SOURCE_CHANGE`` from the driver
+>>> +    via :c:func:`VIDIOC_DQEVENT`. The driver must send this event once
+>>> +    enough data is obtained from the stream to allocate CAPTURE
+>>> +    buffers and to begin producing decoded frames.
+>>> +
+>>> +    a. Required fields:
+>>> +
+>>> +       i. type = ``V4L2_EVENT_SOURCE_CHANGE``
+>>> +
+>>> +    b. Return values: as per spec.
+>>> +
+>>> +    c. The driver must return u.src_change.changes =
+>>> +       ``V4L2_EVENT_SRC_CH_RESOLUTION``.
+>>> +
+>>> +8.  This step only applies for coded formats that contain resolution
+>>> +    information in the stream.
+>>> +    Call :c:func:`VIDIOC_G_FMT` for CAPTURE queue to get format for the
+>>> +    destination buffers parsed/decoded from the bitstream.
+>>> +
+>>> +    a. Required fields:
+>>> +
+>>> +       i. type = CAPTURE
+>>> +
+>>> +    b. Return values: as per spec.
+>>> +
+>>> +    c. Return fields:
+>>> +
+>>> +       i.   fmt.pix_mp.width, fmt.pix_mp.height: coded resolution
+>>> +            for the decoded frames
+>>> +
+>>> +       ii.  fmt.pix_mp.pixelformat: default/required/preferred by
+>>> +            driver pixelformat for decoded frames.
+>>> +
+>>> +       iii. num_planes: set to number of planes for pixelformat.
+>>> +
+>>> +       iv.  For each plane p = [0, num_planes-1]:
+>>> +            plane_fmt[p].sizeimage, plane_fmt[p].bytesperline as
+>>> +            per spec for coded resolution.
+>>> +
+>>> +    .. note::
+>>> +
+>>> +       Te value of pixelformat may be any pixel format supported,
+>>> +       and must
+>>> +       be supported for current stream, based on the information
+>>> +       parsed from the stream and hardware capabilities. It is
+>>> +       suggested that driver chooses the preferred/optimal format
+>>> +       for given configuration. For example, a YUV format may be
+>>> +       preferred over an RGB format, if additional conversion step
+>>> +       would be required.
+>>> +
+>>> +9.  (optional) Enumerate CAPTURE formats via :c:func:`VIDIOC_ENUM_FMT` on
+>>> +    CAPTURE queue.
+>>> +    Once the stream information is parsed and known, the client
+>>> +    may use this ioctl to discover which raw formats are supported
+>>> +    for given stream and select on of them via :c:func:`VIDIOC_S_FMT`.
+>>> +
+>>> +    a. Fields/return values as per spec.
+>>> +
+>>> +    .. note::
+>>> +
+>>> +       The driver must return only formats supported for the
+>>> +       current stream parsed in this initialization sequence, even
+>>> +       if more formats may be supported by the driver in general.
+>>> +       For example, a driver/hardware may support YUV and RGB
+>>> +       formats for resolutions 1920x1088 and lower, but only YUV for
+>>> +       higher resolutions (e.g. due to memory bandwidth
+>>> +       limitations). After parsing a resolution of 1920x1088 or
+>>> +       lower, :c:func:`VIDIOC_ENUM_FMT` may return a set of YUV and RGB
+>>> +       pixelformats, but after parsing resolution higher than
+>>> +       1920x1088, the driver must not return (unsupported for this
+>>> +       resolution) RGB.
+>>> +
+>>> +       However, subsequent resolution change event
+>>> +       triggered after discovering a resolution change within the
+>>> +       same stream may switch the stream into a lower resolution;
+>>> +       :c:func:`VIDIOC_ENUM_FMT` must return RGB formats again in that case.
+>>> +
+>>> +10.  (optional) Choose a different CAPTURE format than suggested via
+>>> +     :c:func:`VIDIOC_S_FMT` on CAPTURE queue. It is possible for the client
+>>> +     to choose a different format than selected/suggested by the
+>>> +     driver in :c:func:`VIDIOC_G_FMT`.
+>>> +
+>>> +     a. Required fields:
+>>> +
+>>> +        i.  type = CAPTURE
+>>> +
+>>> +        ii. fmt.pix_mp.pixelformat set to a coded format
+>>> +
+>>> +     b. Return values:
+>>> +
+>>> +        i. EINVAL: unsupported format.
+>>
+>> Or replace it with a supported format. I'm inclined to do that instead of
+>> returning EINVAL.
+> 
+> Agreed.
+> 
+>>
+>>> +
+>>> +     c. Calling :c:func:`VIDIOC_ENUM_FMT` to discover currently available formats
+>>> +        after receiving ``V4L2_EVENT_SOURCE_CHANGE`` is useful to find
+>>> +        out a set of allowed pixelformats for given configuration,
+>>> +        but not required.
+>>> +
+>>> +11.  (optional) Acquire visible resolution via :c:func:`VIDIOC_G_SELECTION`.
+>>> +
+>>> +    a. Required fields:
+>>> +
+>>> +       i.  type = CAPTURE
+>>> +
+>>> +       ii. target = ``V4L2_SEL_TGT_CROP``
+>>
+>> I don't think this is the right selection target to use, but I think others
+>> commented on that already.
+> 
+> Yes, Philipp brought this topic before and we had some further
+> exchange on it, which I think would benefit from you taking a look. :)
+> 
+>>
+>>> +
+>>> +    b. Return values: per spec.
+>>> +
+>>> +    c. Return fields
+>>> +
+>>> +       i. r.left, r.top, r.width, r.height: visible rectangle; this must
+>>> +          fit within coded resolution returned from :c:func:`VIDIOC_G_FMT`.
+>>> +
+>>> +12. (optional) Get minimum number of buffers required for CAPTURE queue
+>>> +    via :c:func:`VIDIOC_G_CTRL`. This is useful if client intends to use
+>>> +    more buffers than minimum required by hardware/format (see
+>>> +    allocation).
+>>> +
+>>> +    a. Required fields:
+>>> +
+>>> +       i. id = ``V4L2_CID_MIN_BUFFERS_FOR_CAPTURE``
+>>> +
+>>> +    b. Return values: per spec.
+>>> +
+>>> +    c. Return fields:
+>>> +
+>>> +       i. value: minimum number of buffers required to decode the stream
+>>> +          parsed in this initialization sequence.
+>>> +
+>>> +    .. note::
+>>> +
+>>> +       Note that the minimum number of buffers must be at least the
+>>> +       number required to successfully decode the current stream.
+>>> +       This may for example be the required DPB size for an H.264
+>>
+>> Is DPB in the glossary?
+> 
+> Need to add indeed.
+> 
+> [snip]
+>>> +Seek
+>>> +----
+>>> +
+>>> +Seek is controlled by the OUTPUT queue, as it is the source of bitstream
+>>> +data. CAPTURE queue remains unchanged/unaffected.
+>>> +
+>>> +1. Stop the OUTPUT queue to begin the seek sequence via
+>>> +   :c:func:`VIDIOC_STREAMOFF`.
+>>> +
+>>> +   a. Required fields:
+>>> +
+>>> +      i. type = OUTPUT
+>>> +
+>>> +   b. The driver must drop all the pending OUTPUT buffers and they are
+>>> +      treated as returned to the client (as per spec).
+>>> +
+>>> +2. Restart the OUTPUT queue via :c:func:`VIDIOC_STREAMON`
+>>> +
+>>> +   a. Required fields:
+>>> +
+>>> +      i. type = OUTPUT
+>>> +
+>>> +   b. The driver must be put in a state after seek and be ready to
+>>> +      accept new source bitstream buffers.
+>>> +
+>>> +3. Start queuing buffers to OUTPUT queue containing stream data after
+>>> +   the seek until a suitable resume point is found.
+>>> +
+>>> +   .. note::
+>>> +
+>>> +      There is no requirement to begin queuing stream
+>>> +      starting exactly from a resume point (e.g. SPS or a keyframe).
+>>
+>> SPS, keyframe: are they in the glossary?
+> 
+> Will add.
+> 
+> [snip]
+>>> +Flush
+>>> +-----
+>>> +
+>>> +Flush is the process of draining the CAPTURE queue of any remaining
+>>> +buffers. After the flush sequence is complete, the client has received
+>>> +all decoded frames for all OUTPUT buffers queued before the sequence was
+>>> +started.
+>>> +
+>>> +1. Begin flush by issuing :c:func:`VIDIOC_DECODER_CMD`.
+>>> +
+>>> +   a. Required fields:
+>>> +
+>>> +      i. cmd = ``V4L2_DEC_CMD_STOP``
+>>
+>> Drivers should set the V4L2_DEC_CMD_STOP_IMMEDIATELY flag since I doubt any
+>> m2m driver supports stopping at a specific pts.
+> 
+> The documentation says:
+> 
+> "If V4L2_DEC_CMD_STOP_IMMEDIATELY is set, then the decoder stops
+> immediately (ignoring the pts value), otherwise it will keep decoding
+> until timestamp >= pts or until the last of the pending data from its
+> internal buffers was decoded."
+> 
+> also for the pts field:
+> 
+> "Stop playback at this pts or immediately if the playback is already
+> past that timestamp. Leave to 0 if you want to stop after the last
+> frame was decoded."
+> 
+> What we want the decoder to do here is to "keep decoding [...] until
+> the last of the pending data from its internal buffers was decoded",
+> which looks like something happening exactly without
+> V4L2_DEC_CMD_STOP_IMMEDIATELY when pts is set to 0.
+> 
+>>
+>> They should also support VIDIOC_DECODER_CMD_TRY!
+> 
+> Agreed.
+> 
+>>
+>> You can probably make default implementations in v4l2-mem2mem.c since the only
+>> thing that I expect is supported is the STOP command with the STOP_IMMEDIATELY
+>> flag set.
+> 
+> Is there any useful case for STOP_IMMEDIATELY with m2m decoders? The
+> only thing I can think of is some kind of power management trick that
+> could stop the decoder until the client collect enough OUTPUT buffers
+> to make it process in longer batch. Still, that could be done by the
+> client just holding on with QBUF(OUTPUT) until enough data to fill the
+> desired number of buffers is collected.
+
+I don't follow. The idea of STOP_IMMEDIATELY is basically to stop by discarding any
+pending OUTPUT buffers and an immediate EOS on the CAPTURE queue.
+
+That's the idea at least. But this can of course also be done by just calling
+STREAMOFF on both capture and output queues. So I agree that I am not sure if
+it makes sense. However, you should specific that besides setting cmd to V4L2_DEC_CMD_STOP
+you should also set pts to 0.
+
+> 
+> [snip]
+>>> +Commit points
+>>> +-------------
+>>> +
+>>> +Setting formats and allocating buffers triggers changes in the behavior
+>>> +of the driver.
+>>> +
+>>> +1. Setting format on OUTPUT queue may change the set of formats
+>>> +   supported/advertised on the CAPTURE queue. It also must change
+>>> +   the format currently selected on CAPTURE queue if it is not
+>>> +   supported by the newly selected OUTPUT format to a supported one.
+>>> +
+>>> +2. Enumerating formats on CAPTURE queue must only return CAPTURE formats
+>>> +   supported for the OUTPUT format currently set.
+>>> +
+>>> +3. Setting/changing format on CAPTURE queue does not change formats
+>>> +   available on OUTPUT queue.
+>>
+>> True.
+>>
+>>  An attempt to set CAPTURE format that
+>>> +   is not supported for the currently selected OUTPUT format must
+>>> +   result in an error (-EINVAL) from :c:func:`VIDIOC_S_FMT`.
+>>
+>> I'm not sure about that. I believe it is valid to replace it with the
+>> first supported pixelformat. TRY_FMT certainly should do that.
+> 
+> As above, we probably should stay consistent with general semantics.
+> 
+> Best regards,
+> Tomasz
+> 
+
+Regards,
+
+	Hans
