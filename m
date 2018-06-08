@@ -1,101 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id s2oMJ/IiHltkbgAAmS7hNA
-	; Mon, 11 Jun 2018 07:21:22 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id zfiWEwcPGlubSQAAmS7hNA
+	; Fri, 08 Jun 2018 05:07:19 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 792F7607A4; Mon, 11 Jun 2018 07:21:22 +0000 (UTC)
+	id 411D9607E4; Fri,  8 Jun 2018 05:07:19 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id DBF8660385;
-	Mon, 11 Jun 2018 07:21:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DBF8660385
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by smtp.codeaurora.org (Postfix) with ESMTP id B194F6074D;
+	Fri,  8 Jun 2018 05:07:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B194F6074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754126AbeFKHVT (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 03:21:19 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36117 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754035AbeFKHVS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 03:21:18 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id C055DADE3;
-        Mon, 11 Jun 2018 07:21:16 +0000 (UTC)
-Date: Mon, 11 Jun 2018 09:21:16 +0200
-From: Johannes Thumshirn <jthumshirn@suse.de>
-To: Zhouyang Jia <jiazhouyang09@gmail.com>
-Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Hannes Reinecke <hare@suse.com>, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pcmcia: add error handling for pcmcia_enable_device
-Message-ID: <20180611072116.vaz4xff4pd6qxtj7@linux-x5ow.site>
-References: <1528694152-31724-1-git-send-email-jiazhouyang09@gmail.com>
+        id S1751117AbeFHFHR (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 01:07:17 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36174 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750781AbeFHFHP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 01:07:15 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BD900C12AD;
+        Fri,  8 Jun 2018 05:07:14 +0000 (UTC)
+Received: from [10.72.12.64] (ovpn-12-64.pek2.redhat.com [10.72.12.64])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5CD892026DEF;
+        Fri,  8 Jun 2018 05:07:12 +0000 (UTC)
+Subject: Re: [PATCH net] vhost_net: remove VHOST_NET_F_VIRTIO_NET_HDR support
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1528429842-22835-1-git-send-email-jasowang@redhat.com>
+ <20180608074115-mutt-send-email-mst@kernel.org>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <23efe110-f61a-5aee-c0b4-bd3dc5426438@redhat.com>
+Date: Fri, 8 Jun 2018 13:07:09 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <20180608074115-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1528694152-31724-1-git-send-email-jiazhouyang09@gmail.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 08 Jun 2018 05:07:14 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 08 Jun 2018 05:07:14 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jasowang@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 11, 2018 at 01:15:50PM +0800, Zhouyang Jia wrote:
-> When pcmcia_enable_device fails, the lack of error-handling code may
-> cause unexpected results.
-> 
-> This patch adds error-handling code after calling pcmcia_enable_device.
-> 
-> Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
-> ---
->  drivers/scsi/pcmcia/qlogic_stub.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/scsi/pcmcia/qlogic_stub.c b/drivers/scsi/pcmcia/qlogic_stub.c
-> index 0556054..9287d52 100644
-> --- a/drivers/scsi/pcmcia/qlogic_stub.c
-> +++ b/drivers/scsi/pcmcia/qlogic_stub.c
-> @@ -254,8 +254,14 @@ static void qlogic_release(struct pcmcia_device *link)
->  static int qlogic_resume(struct pcmcia_device *link)
->  {
->  	scsi_info_t *info = link->priv;
-> +	int ret;
-> +
-> +	ret = pcmcia_enable_device(link);
-> +	if (ret) {
-> +		pcmcia_disable_device(link);
-> +		return -ENODEV;
-> +	}
 
-pcmcia_enable_device() can fail for three reasons:
-1) the socket is not present
-2) the configuration is locked
-3) setting the socket's power control fails
 
-In all three cases I think it's actually an error to call
-pcmcia_disable_device().
+On 2018å¹´06æœˆ08æ—¥ 12:46, Michael S. Tsirkin wrote:
+> On Fri, Jun 08, 2018 at 11:50:42AM +0800, Jason Wang wrote:
+>> This feature bit is duplicated with VIRTIO_F_ANY_LAYOUT, this means if
+>> a userpsace want to enable VRITIO_F_ANY_LAYOUT,
+>> VHOST_NET_F_VIRTIO_NET_HDR will be implied too. This is wrong and will
+>> break networking.
+> What breaks networking exactly? VHOST_NET supported ANY_LAYOUT
+> from day one. For this reason it does not need to know about
+> VRITIO_F_ANY_LAYOUT and we reused the bit for other purposes.
 
-Imagine the following scenario:
-pcmcia_enable_device() failed because the device configuration is
-locked by another driver, then you call pcmcia_disable_device() which
-calls pcmcia_release_configuration(). pcmcia_release_configuration()
-checks if the device is locked, decrements the lock counter, clears
-the CONFIG_LOCKED bit in the PCMCIA config and sets the voltage to 0
-without the first driver every noticing it.
+It's the knowledge of vhost_net code it self but not userspace. For 
+userspace, it should depends on the value of returned by 
+VHOST_GET_FEATURES. So when userspace can set_features with ANY_LAYOUT, 
+vhost may think it wants VHOST_NET_F_VIRTIO_NET_HDR.
 
-Byte,
-	Johannes
--- 
-Johannes Thumshirn                                          Storage
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
-Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+>
+>
+>
+>> Fixing this by safely removing
+>> VHOST_NET_F_VIRTIO_NET_HDR support. There should be very few or even
+>> no userspace can use this.
+> Quite possibly, but it is hard to be sure. It seems safer to
+> maintain it unless there's an actual reason something's broken.
+
+I think not since the feature is negotiated not mandatory?
+
+>
+>> Further cleanups could be done for
+>> -net-next for safety.
+>>
+>> In the future, we need a vhost dedicated feature set/get ioctl()
+>> instead of reusing virtio ones.
+> Not just in the future, we might want to switch iommu
+> to a sane structure without the 64 bit padding bug
+> right now.
+
+Yes, I hit this bug when introducing V2 of msg IOTLB message.
+
+>
+>> Fixes: 4e9fa50c6ccbe ("vhost: move features to core")
+> This tag makes no sense here IMHO. Looks like people are using some tool
+> that just looks at the earliest version where patch won't apply. The
+> commit in question just moved some code around.
+
+Looks not, before this commit, vhost_net won't return ANY_LAYOUT.
+
+Thanks
+
+>
+>> Signed-off-by: Jason Wang <jasowang@redhat.com>
+>> ---
+>>   drivers/vhost/net.c | 15 +++++----------
+>>   1 file changed, 5 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+>> index 986058a..83eef52 100644
+>> --- a/drivers/vhost/net.c
+>> +++ b/drivers/vhost/net.c
+>> @@ -69,7 +69,6 @@ MODULE_PARM_DESC(experimental_zcopytx, "Enable Zero Copy TX;"
+>>   
+>>   enum {
+>>   	VHOST_NET_FEATURES = VHOST_FEATURES |
+>> -			 (1ULL << VHOST_NET_F_VIRTIO_NET_HDR) |
+>>   			 (1ULL << VIRTIO_NET_F_MRG_RXBUF) |
+>>   			 (1ULL << VIRTIO_F_IOMMU_PLATFORM)
+>>   };
+>> @@ -1255,15 +1254,11 @@ static int vhost_net_set_features(struct vhost_net *n, u64 features)
+>>   			       (1ULL << VIRTIO_F_VERSION_1))) ?
+>>   			sizeof(struct virtio_net_hdr_mrg_rxbuf) :
+>>   			sizeof(struct virtio_net_hdr);
+>> -	if (features & (1 << VHOST_NET_F_VIRTIO_NET_HDR)) {
+>> -		/* vhost provides vnet_hdr */
+>> -		vhost_hlen = hdr_len;
+>> -		sock_hlen = 0;
+>> -	} else {
+>> -		/* socket provides vnet_hdr */
+>> -		vhost_hlen = 0;
+>> -		sock_hlen = hdr_len;
+>> -	}
+>> +
+>> +        /* socket provides vnet_hdr */
+>> +	vhost_hlen = 0;
+>> +	sock_hlen = hdr_len;
+>> +
+>>   	mutex_lock(&n->dev.mutex);
+>>   	if ((features & (1 << VHOST_F_LOG_ALL)) &&
+>>   	    !vhost_log_access_ok(&n->dev))
+>> -- 
+>> 2.7.4
