@@ -1,171 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id UPV7ANs5GFv4cAAAmS7hNA
-	; Wed, 06 Jun 2018 19:46:29 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id BdPyLfycGlu4RgAAmS7hNA
+	; Fri, 08 Jun 2018 15:17:56 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id F099D6089E; Wed,  6 Jun 2018 19:46:28 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ie/ER7wp"
+	id 7064D607E4; Fri,  8 Jun 2018 15:17:56 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 68964601C3;
-	Wed,  6 Jun 2018 19:46:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 68964601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id E908160590;
+	Fri,  8 Jun 2018 15:17:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E908160590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752605AbeFFTq0 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 15:46:26 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:43234 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752188AbeFFTqX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 15:46:23 -0400
-Received: by mail-ua0-f195.google.com with SMTP id z16-v6so4852365uaz.10;
-        Wed, 06 Jun 2018 12:46:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=/dfOEduecKD0dNhw+SZydJsFpw/1Kw6wHU2hF4aebLA=;
-        b=ie/ER7wpvkUeXkHeRWLnAUYKJdwObyzQ4TZft1xg25BDHEzFAhkvmEcUQzvUVaAUw/
-         AA5gkfaKi5l7Jw2ppzgK1wC0cxKVkA3FfUIugSR2t3Jnl/Imt028LD0/JBpyOK3df2sl
-         FZmGmCkdu8g5SQ88fs1jVGpDq7mrW8rSSeq805ntae5l/lNn/AX+r9Bbw1pXdMAK+Cf/
-         oBDEtk7qgiQBZ1bgHzfm0otXUXuoctSNujdNhBJsVB42QPbvcQnVnJLHGKb/p3iPdI43
-         bqcrMGk19H+cYgrCNd5+geb42sIgo4Ge3yOUs9o7sc680WIB0BZLSTOOrvcJIfqTscc9
-         bhUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=/dfOEduecKD0dNhw+SZydJsFpw/1Kw6wHU2hF4aebLA=;
-        b=hgb2UHRcLUgXQYm+7fnOgo5qBans4lDoorKCpJJMqbIJ1oGS3RmnNH3BCG1MLeLGiw
-         ZSkJJZUdYtnpGipOVe+t5EKw4rg0jL7qfQBG8PnHy8afDo3CIpS3qLEwCP5toV4pU4TD
-         IwCip0j/1gX+mpPOt6kMau7DSYGU9y2k9kWqV4NZdkQOzk7yQn6UqS5npbcEVM3soO6T
-         8WVXctc26gXRViAPbt9r1fZgDWf95ug1rbkMOqxaJX2dpCj4dNLxIiHpfkEYEDtSuHXa
-         oKH0QqNPxyGk+fJe2AG9oS8cxxLaqdgomANwllvMebyN2328jNNdJdWMikF9yot2imb9
-         HFzw==
-X-Gm-Message-State: APt69E0mht5hW2m5gtIiIlq8uQtp+Slsw2KLa8yq++z8+GqlXOLVJJIZ
-        4OFyHrKAV1T0r1ypSKgXKB8NyWtEsNejr0PY6/o=
-X-Google-Smtp-Source: ADUXVKKzKAZnkskUKvSPgktVxlayUD7MBTnh3c+hNyv12zPXuXV+Cp2+Y3VB038e11O0ZwVfRwOhwVJ1nFWf49/Wejk=
-X-Received: by 2002:a9f:2e0f:: with SMTP id t15-v6mr3193009uaj.114.1528314381728;
- Wed, 06 Jun 2018 12:46:21 -0700 (PDT)
+        id S1752857AbeFHPRy (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 11:17:54 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49984 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751496AbeFHPRw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 11:17:52 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 53F6E859A2;
+        Fri,  8 Jun 2018 15:17:52 +0000 (UTC)
+Received: from localhost (ovpn-8-19.pek2.redhat.com [10.72.8.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8BD2E10EE6D6;
+        Fri,  8 Jun 2018 15:17:51 +0000 (UTC)
+Date: Fri, 8 Jun 2018 23:17:48 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        pagupta@redhat.com, linux-mm@kvack.org,
+        kirill.shutemov@linux.intel.com
+Subject: Re: [PATCH v4 3/4] mm/sparse: Add a new parameter 'data_unit_size'
+ for alloc_usemap_and_memmap
+Message-ID: <20180608151748.GE16231@MiWiFi-R3L-srv>
+References: <20180521101555.25610-1-bhe@redhat.com>
+ <20180521101555.25610-4-bhe@redhat.com>
+ <8ff7638c-d3ee-a40c-e5cf-deded8d19e93@intel.com>
+ <20180608062733.GB16231@MiWiFi-R3L-srv>
+ <74359df3-76a8-6dc7-51c5-27019130224f@intel.com>
 MIME-Version: 1.0
-Received: by 2002:a67:8596:0:0:0:0:0 with HTTP; Wed, 6 Jun 2018 12:46:21 -0700 (PDT)
-In-Reply-To: <7e49c265-e332-29c5-5d91-4b5d5da6cb37@gmail.com>
-References: <1528198148-23308-1-git-send-email-michel.pollet@bp.renesas.com>
- <1528198148-23308-3-git-send-email-michel.pollet@bp.renesas.com>
- <0481173f-6384-98d6-707c-89dc5ef103f0@gmail.com> <OSBPR01MB2054E3A1E383495F3534B551D2650@OSBPR01MB2054.jpnprd01.prod.outlook.com>
- <bbbd287c-437e-d7bd-d40f-6bb914d96860@gmail.com> <7e49c265-e332-29c5-5d91-4b5d5da6cb37@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 6 Jun 2018 21:46:21 +0200
-X-Google-Sender-Auth: JQ7qkuEPksKI8aIWwTVJuouVjXk
-Message-ID: <CAMuHMdXxAjaGA3OoD2+FEEixJjA39MtGD6zXbSJZd6RbQ-6Few@mail.gmail.com>
-Subject: Re: [PATCH v4 2/3] arm: shmobile: Add the R9A06G032 SMP enabler driver
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Frank Rowand <frowand.list@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Carlo Caione <carlo@endlessm.com>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Frank Rowand <frank.rowand@sony.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <74359df3-76a8-6dc7-51c5-27019130224f@intel.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 08 Jun 2018 15:17:52 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 08 Jun 2018 15:17:52 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Florian,
+On 06/08/18 at 07:20am, Dave Hansen wrote:
+> On 06/07/2018 11:27 PM, Baoquan He wrote:
+> > In alloc_usemap_and_memmap(), it will call
+> > sparse_early_usemaps_alloc_node() or sparse_early_mem_maps_alloc_node()
+> > to allocate usemap and memmap for each node and install them into
+> > usemap_map[] and map_map[]. Here we need pass in the number of present
+> > sections on this node so that we can move pointer of usemap_map[] and
+> > map_map[] to right position.
+> > 
+> > How do think about above words?
+> 
+> But you're now passing in the size of the data structure.  Why is that
+> needed all of a sudden?
 
-On Wed, Jun 6, 2018 at 9:37 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
-> On 06/06/2018 12:30 PM, Frank Rowand wrote:
->> On 06/05/18 23:36, Michel Pollet wrote:
->>> On 05 June 2018 18:34, Frank wrote:
->>>> On 06/05/18 04:28, Michel Pollet wrote:
->>>>> The Renesas R9A06G032 second CA7 is parked in a ROM pen at boot time,
->>>>> it requires a special enable method to get it started.
->>>>>
->>>>> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Oh, it's the size of the data structure. Because
+alloc_usemap_and_memmap() is reused for both usemap and memmap
+allocation, then inside alloc_usemap_and_memmap(), we need move forward
+the passed in pointer which points at the starting address of usemap_map
+or memmap_map, to a new position which points at the next starting
+address on new node.
 
->>>>> --- /dev/null
->>>>> +++ b/arch/arm/mach-shmobile/smp-r9a06g032.c
+You can see we passed the usemap_map, map_map, and the array element
+size.  
 
->>>>> +/*
->>>>> + * The second CPU is parked in ROM at boot time. It requires waking
->>>>> +it after
->>>>> + * writing an address into the BOOTADDR register of sysctrl.
->>>>> + *
->>>>> + * So the default value of the "cpu-release-addr" corresponds to
->>>> BOOTADDR...
->>>>> + *
->>>>> + * *However* the BOOTADDR register is not available when the kernel
->>>>> + * starts in NONSEC mode.
->>>>> + *
->>>>> + * So for NONSEC mode, the bootloader re-parks the second CPU into a
->>>>> +pen
->>>>> + * in SRAM, and changes the "cpu-release-addr" of linux's DT to a
->>>>> +SRAM address,
->>>>> + * which is not restricted.
->>>>
->>>> The binding document for cpu-release-addr does not have a definition for 32
->>>> bit arm.  The existing definition is only 64 bit arm.  Please add the definition
->>>> for 32 bit arm to patch 1.
->>>
->>> Hmmm I do find a definition in
->>> Documentation/devicetree/bindings/arm/cpus.txt -- just under where I
->>> added my 'enable-method' -- And it is already used as 32 bits in at least
->>> arch/arm/boot/dts/stih407-family.dtsi.
->>
->> From cpus.txt:
->>
->>         - cpu-release-addr
->>                 Usage: required for systems that have an "enable-method"
->>                        property value of "spin-table".
->>                 Value type: <prop-encoded-array>
->>                 Definition:
->>                         # On ARM v8 64-bit systems must be a two cell
->>                           property identifying a 64-bit zero-initialised
->>                           memory location.
->>
->> The definition specifies a two cell property for 64-bit systems.
->>
->> Please add to the definition that cpu-release-addr is a one cell property
->> for 32-bit systems.
->
-> Or maybe phrase it such that the number of cells encoded in
-> cpu-release-addr must exactly match the CPU node's #address-cells size?
+void __init sparse_init(void)
+{
+	...
+        alloc_usemap_and_memmap(sparse_early_usemaps_alloc_node,                                                                                  
+                                (void *)usemap_map,
+                                sizeof(usemap_map[0]));
+	...
+        alloc_usemap_and_memmap(sparse_early_mem_maps_alloc_node,
+                                (void *)map_map,
+                                sizeof(map_map[0]));
+	...
+}
 
-The CPU node's #address-cells size is unrelated.
-You need the #address-cells value from the SoC bus (typically the root
-node, not considering heterogeneous systems with multiple CPUs ;-).
+Then inside alloc_usemap_and_memmap(), For each node, we get how many
+present sections on this node, call hook alloc_func(). Then we update
+the pointer to point at a new position of usemap_map[] or map_map[].
 
-Gr{oetje,eeting}s,
+Here usemap_map[] is (unsigned long *), map_map[] is (struct page*).
+Even though both of them are pointer, I think it might be not good to
+assume that in alloc_usemap_and_memmap() because
+alloc_usemap_and_memmap() doesn't know what is stored in its 2nd
+parameter, namely (void * data). So add this new parameter to tell it.
 
-                        Geert
+Combine with patch 4/4, it might be easier to understand.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+static void __init alloc_usemap_and_memmap(void (*alloc_func)
+..
+{
+	...
+	for_each_present_section_nr(pnum_begin + 1, pnum) {
+                alloc_func(data, pnum_begin, pnum,                                                                                                
+                                                map_count, nodeid_begin);
+		...
+		data += map_count * data_unit_size; 
+		...
+	}
+	...
+}
