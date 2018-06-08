@@ -1,238 +1,313 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id UsHEGBrzG1t5YgAAmS7hNA
-	; Sat, 09 Jun 2018 15:33:04 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id x4NzOukUG1vaDgAAmS7hNA
+	; Fri, 08 Jun 2018 23:45:07 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 927FA608C8; Sat,  9 Jun 2018 15:33:04 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HpWLX8mN"
+	id 2D0086090B; Fri,  8 Jun 2018 23:45:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+	s=default; t=1528501507;
+	bh=X0/1GiKzpCR28Vnanq698e1V/dc7Xt7aLWgU/YBdV/k=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
+	 References:List-ID:From;
+	b=FqUZSgCGI8R/VUm1S5fEXzhgb4eF/ikmFVoUwZ8Ol0wxUdYB/TQGwoL/vAY5aynb6
+	 jXzp7ME6vD7MKac1dM2UxFrpAevmKqJi2EN7MKu/ZuNI7Raf61d7/+h3Hqz+tOnmcM
+	 mA/aWxzVRqkXxZhrBeEwWosyzNeW4ghSFXzqpMBA=
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id AF8DB606FA;
-	Sat,  9 Jun 2018 15:33:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AF8DB606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id DA6D7608CA;
+	Fri,  8 Jun 2018 23:45:05 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="goN8zGfJ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oEdfvcvA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DA6D7608CA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932590AbeFIPdC (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 11:33:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35384 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932551AbeFIPc7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 11:32:59 -0400
-Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1753209AbeFHXoq (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 19:44:46 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33300 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753123AbeFHXon (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 19:44:43 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id BE870608D2; Fri,  8 Jun 2018 23:44:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528501482;
+        bh=X0/1GiKzpCR28Vnanq698e1V/dc7Xt7aLWgU/YBdV/k=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
+         References:From;
+        b=goN8zGfJAI2EKX/FFp8KsCNYR8ArLZK5VMCrQ+Jkbgf+lLzsC2zQAGbWr/HOQW7Qp
+         pMExGNbiMaAYBlXIsmAqTJRr47aqW59HnMMTFoQOOR4TIDJ7wAWKfARw5PEZIaatFi
+         k9U85gnaDhAem+u98DjCIVkgLC6GCuzJZ9WFyusw=
+Received: from codeaurora.org (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 226E6204EC;
-        Sat,  9 Jun 2018 15:32:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528558378;
-        bh=g1d2pk8gKUJy4kksQbn0+ATMiGLg25ixwIJ0mflzoZs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HpWLX8mNSpK5PThzmSus2jlcQ3JKSOi0IkDavgLHMsu+48+hEspHm1d1VwOwViQP1
-         uOKgc62xI3UPNOiS86VnmX6iPkjFnoQfAsEW1+lHIjHepcAfvds1Wfv4ZARZ+4c0BN
-         o5JLMZnUCuJjYmqYFGEirkeSjovFkSiaRwPjCNco=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Lebrun <dlebrun@google.com>,
-        Mathieu Xhonneux <m.xhonneux@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 33/48] ipv6: sr: fix memory OOB access in seg6_do_srh_encap/inline
-Date: Sat,  9 Jun 2018 17:29:45 +0200
-Message-Id: <20180609145950.012629613@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
-References: <20180609145947.679103414@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        (Authenticated sender: collinsd@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 06F08605A2;
+        Fri,  8 Jun 2018 23:44:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528501481;
+        bh=X0/1GiKzpCR28Vnanq698e1V/dc7Xt7aLWgU/YBdV/k=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
+         References:From;
+        b=oEdfvcvAKWR9BxP96wECW0yr2zEqq3iaBYngTvLeZAVTPLimmIbHZSxvDH7gKqqLQ
+         AJOZ2eKCexcTex6gHkIwMeBBKyHI6QcmdKa6/mZAFId3Z56j/prs7PArfWLwhQRC8/
+         oMrHsShSG3uJdmnnxnpTu/FScQMUTQ9G/3lPLjOE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 06F08605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
+From: David Collins <collinsd@codeaurora.org>
+To: broonie@kernel.org, lgirdwood@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: David Collins <collinsd@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, rnayak@codeaurora.org,
+        sboyd@kernel.org, dianders@chromium.org, mka@chromium.org
+Subject: [PATCH v7 1/2] regulator: dt-bindings: add QCOM RPMh regulator bindings
+Date: Fri,  8 Jun 2018 16:44:14 -0700
+Message-Id: <c052314645147a152bf0e6bc99bcf31f68b36a91.1528498807.git.collinsd@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <cover.1528498807.git.collinsd@codeaurora.org>
+References: <cover.1528498807.git.collinsd@codeaurora.org>
+In-Reply-To: <cover.1528498807.git.collinsd@codeaurora.org>
+References: <cover.1528498807.git.collinsd@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+Introduce bindings for RPMh regulator devices found on some
+Qualcomm Technlogies, Inc. SoCs.  These devices allow a given
+processor within the SoC to make PMIC regulator requests which
+are aggregated within the RPMh hardware block along with requests
+from other processors in the SoC to determine the final PMIC
+regulator hardware state.
 
-------------------
-
-From: Mathieu Xhonneux <m.xhonneux@gmail.com>
-
-[ Upstream commit bbb40a0b75209734ff9286f3326171638c9f6569 ]
-
-seg6_do_srh_encap and seg6_do_srh_inline can possibly do an
-out-of-bounds access when adding the SRH to the packet. This no longer
-happen when expanding the skb not only by the size of the SRH (+
-outer IPv6 header), but also by skb->mac_len.
-
-[   53.793056] BUG: KASAN: use-after-free in seg6_do_srh_encap+0x284/0x620
-[   53.794564] Write of size 14 at addr ffff88011975ecfa by task ping/674
-
-[   53.796665] CPU: 0 PID: 674 Comm: ping Not tainted 4.17.0-rc3-ARCH+ #90
-[   53.796670] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-BIOS 1.11.0-20171110_100015-anatol 04/01/2014
-[   53.796673] Call Trace:
-[   53.796679]  <IRQ>
-[   53.796689]  dump_stack+0x71/0xab
-[   53.796700]  print_address_description+0x6a/0x270
-[   53.796707]  kasan_report+0x258/0x380
-[   53.796715]  ? seg6_do_srh_encap+0x284/0x620
-[   53.796722]  memmove+0x34/0x50
-[   53.796730]  seg6_do_srh_encap+0x284/0x620
-[   53.796741]  ? seg6_do_srh+0x29b/0x360
-[   53.796747]  seg6_do_srh+0x29b/0x360
-[   53.796756]  seg6_input+0x2e/0x2e0
-[   53.796765]  lwtunnel_input+0x93/0xd0
-[   53.796774]  ipv6_rcv+0x690/0x920
-[   53.796783]  ? ip6_input+0x170/0x170
-[   53.796791]  ? eth_gro_receive+0x2d0/0x2d0
-[   53.796800]  ? ip6_input+0x170/0x170
-[   53.796809]  __netif_receive_skb_core+0xcc0/0x13f0
-[   53.796820]  ? netdev_info+0x110/0x110
-[   53.796827]  ? napi_complete_done+0xb6/0x170
-[   53.796834]  ? e1000_clean+0x6da/0xf70
-[   53.796845]  ? process_backlog+0x129/0x2a0
-[   53.796853]  process_backlog+0x129/0x2a0
-[   53.796862]  net_rx_action+0x211/0x5c0
-[   53.796870]  ? napi_complete_done+0x170/0x170
-[   53.796887]  ? run_rebalance_domains+0x11f/0x150
-[   53.796891]  __do_softirq+0x10e/0x39e
-[   53.796894]  do_softirq_own_stack+0x2a/0x40
-[   53.796895]  </IRQ>
-[   53.796898]  do_softirq.part.16+0x54/0x60
-[   53.796900]  __local_bh_enable_ip+0x5b/0x60
-[   53.796903]  ip6_finish_output2+0x416/0x9f0
-[   53.796906]  ? ip6_dst_lookup_flow+0x110/0x110
-[   53.796909]  ? ip6_sk_dst_lookup_flow+0x390/0x390
-[   53.796911]  ? __rcu_read_unlock+0x66/0x80
-[   53.796913]  ? ip6_mtu+0x44/0xf0
-[   53.796916]  ? ip6_output+0xfc/0x220
-[   53.796918]  ip6_output+0xfc/0x220
-[   53.796921]  ? ip6_finish_output+0x2b0/0x2b0
-[   53.796923]  ? memcpy+0x34/0x50
-[   53.796926]  ip6_send_skb+0x43/0xc0
-[   53.796929]  rawv6_sendmsg+0x1216/0x1530
-[   53.796932]  ? __orc_find+0x6b/0xc0
-[   53.796934]  ? rawv6_rcv_skb+0x160/0x160
-[   53.796937]  ? __rcu_read_unlock+0x66/0x80
-[   53.796939]  ? __rcu_read_unlock+0x66/0x80
-[   53.796942]  ? is_bpf_text_address+0x1e/0x30
-[   53.796944]  ? kernel_text_address+0xec/0x100
-[   53.796946]  ? __kernel_text_address+0xe/0x30
-[   53.796948]  ? unwind_get_return_address+0x2f/0x50
-[   53.796950]  ? __save_stack_trace+0x92/0x100
-[   53.796954]  ? save_stack+0x89/0xb0
-[   53.796956]  ? kasan_kmalloc+0xa0/0xd0
-[   53.796958]  ? kmem_cache_alloc+0xd2/0x1f0
-[   53.796961]  ? prepare_creds+0x23/0x160
-[   53.796963]  ? __x64_sys_capset+0x252/0x3e0
-[   53.796966]  ? do_syscall_64+0x69/0x160
-[   53.796968]  ? entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[   53.796971]  ? __alloc_pages_nodemask+0x170/0x380
-[   53.796973]  ? __alloc_pages_slowpath+0x12c0/0x12c0
-[   53.796977]  ? tty_vhangup+0x20/0x20
-[   53.796979]  ? policy_nodemask+0x1a/0x90
-[   53.796982]  ? __mod_node_page_state+0x8d/0xa0
-[   53.796986]  ? __check_object_size+0xe7/0x240
-[   53.796989]  ? __sys_sendto+0x229/0x290
-[   53.796991]  ? rawv6_rcv_skb+0x160/0x160
-[   53.796993]  __sys_sendto+0x229/0x290
-[   53.796996]  ? __ia32_sys_getpeername+0x50/0x50
-[   53.796999]  ? commit_creds+0x2de/0x520
-[   53.797002]  ? security_capset+0x57/0x70
-[   53.797004]  ? __x64_sys_capset+0x29f/0x3e0
-[   53.797007]  ? __x64_sys_rt_sigsuspend+0xe0/0xe0
-[   53.797011]  ? __do_page_fault+0x664/0x770
-[   53.797014]  __x64_sys_sendto+0x74/0x90
-[   53.797017]  do_syscall_64+0x69/0x160
-[   53.797019]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[   53.797022] RIP: 0033:0x7f43b7a6714a
-[   53.797023] RSP: 002b:00007ffd891bd368 EFLAGS: 00000246 ORIG_RAX:
-000000000000002c
-[   53.797026] RAX: ffffffffffffffda RBX: 00000000006129c0 RCX: 00007f43b7a6714a
-[   53.797028] RDX: 0000000000000040 RSI: 00000000006129c0 RDI: 0000000000000004
-[   53.797029] RBP: 00007ffd891be640 R08: 0000000000610940 R09: 000000000000001c
-[   53.797030] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000040
-[   53.797032] R13: 000000000060e6a0 R14: 0000000000008004 R15: 000000000040b661
-
-[   53.797171] Allocated by task 642:
-[   53.797460]  kasan_kmalloc+0xa0/0xd0
-[   53.797463]  kmem_cache_alloc+0xd2/0x1f0
-[   53.797465]  getname_flags+0x40/0x210
-[   53.797467]  user_path_at_empty+0x1d/0x40
-[   53.797469]  do_faccessat+0x12a/0x320
-[   53.797471]  do_syscall_64+0x69/0x160
-[   53.797473]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-[   53.797607] Freed by task 642:
-[   53.797869]  __kasan_slab_free+0x130/0x180
-[   53.797871]  kmem_cache_free+0xa8/0x230
-[   53.797872]  filename_lookup+0x15b/0x230
-[   53.797874]  do_faccessat+0x12a/0x320
-[   53.797876]  do_syscall_64+0x69/0x160
-[   53.797878]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-[   53.798014] The buggy address belongs to the object at ffff88011975e600
-                which belongs to the cache names_cache of size 4096
-[   53.799043] The buggy address is located 1786 bytes inside of
-                4096-byte region [ffff88011975e600, ffff88011975f600)
-[   53.800013] The buggy address belongs to the page:
-[   53.800414] page:ffffea000465d600 count:1 mapcount:0
-mapping:0000000000000000 index:0x0 compound_mapcount: 0
-[   53.801259] flags: 0x17fff0000008100(slab|head)
-[   53.801640] raw: 017fff0000008100 0000000000000000 0000000000000000
-0000000100070007
-[   53.803147] raw: dead000000000100 dead000000000200 ffff88011b185a40
-0000000000000000
-[   53.803787] page dumped because: kasan: bad access detected
-
-[   53.804384] Memory state around the buggy address:
-[   53.804788]  ffff88011975eb80: fb fb fb fb fb fb fb fb fb fb fb fb
-fb fb fb fb
-[   53.805384]  ffff88011975ec00: fb fb fb fb fb fb fb fb fb fb fb fb
-fb fb fb fb
-[   53.805979] >ffff88011975ec80: fb fb fb fb fb fb fb fb fb fb fb fb
-fb fb fb fb
-[   53.806577]                                                                 ^
-[   53.807165]  ffff88011975ed00: fb fb fb fb fb fb fb fb fb fb fb fb
-fb fb fb fb
-[   53.807762]  ffff88011975ed80: fb fb fb fb fb fb fb fb fb fb fb fb
-fb fb fb fb
-[   53.808356] ==================================================================
-[   53.808949] Disabling lock debugging due to kernel taint
-
-Fixes: 6c8702c60b88 ("ipv6: sr: add support for SRH encapsulation and injection with lwtunnels")
-Signed-off-by: David Lebrun <dlebrun@google.com>
-Signed-off-by: Mathieu Xhonneux <m.xhonneux@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: David Collins <collinsd@codeaurora.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 ---
- net/ipv6/seg6_iptunnel.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ .../bindings/regulator/qcom,rpmh-regulator.txt     | 160 +++++++++++++++++++++
+ .../dt-bindings/regulator/qcom,rpmh-regulator.h    |  36 +++++
+ 2 files changed, 196 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
+ create mode 100644 include/dt-bindings/regulator/qcom,rpmh-regulator.h
 
---- a/net/ipv6/seg6_iptunnel.c
-+++ b/net/ipv6/seg6_iptunnel.c
-@@ -103,7 +103,7 @@ int seg6_do_srh_encap(struct sk_buff *sk
- 	hdrlen = (osrh->hdrlen + 1) << 3;
- 	tot_len = hdrlen + sizeof(*hdr);
- 
--	err = skb_cow_head(skb, tot_len);
-+	err = skb_cow_head(skb, tot_len + skb->mac_len);
- 	if (unlikely(err))
- 		return err;
- 
-@@ -161,7 +161,7 @@ int seg6_do_srh_inline(struct sk_buff *s
- 
- 	hdrlen = (osrh->hdrlen + 1) << 3;
- 
--	err = skb_cow_head(skb, hdrlen);
-+	err = skb_cow_head(skb, hdrlen + skb->mac_len);
- 	if (unlikely(err))
- 		return err;
- 
+diff --git a/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt b/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
+new file mode 100644
+index 0000000..7ef2dbe
+--- /dev/null
++++ b/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
+@@ -0,0 +1,160 @@
++Qualcomm Technologies, Inc. RPMh Regulators
++
++rpmh-regulator devices support PMIC regulator management via the Voltage
++Regulator Manager (VRM) and Oscillator Buffer (XOB) RPMh accelerators.  The APPS
++processor communicates with these hardware blocks via a Resource State
++Coordinator (RSC) using command packets.  The VRM allows changing three
++parameters for a given regulator: enable state, output voltage, and operating
++mode.  The XOB allows changing only a single parameter for a given regulator:
++its enable state.  Despite its name, the XOB is capable of controlling the
++enable state of any PMIC peripheral.  It is used for clock buffers, low-voltage
++switches, and LDO/SMPS regulators which have a fixed voltage and mode.
++
++=======================
++Required Node Structure
++=======================
++
++RPMh regulators must be described in two levels of device nodes.  The first
++level describes the PMIC containing the regulators and must reside within an
++RPMh device node.  The second level describes each regulator within the PMIC
++which is to be used on the board.  Each of these regulators maps to a single
++RPMh resource.
++
++The names used for regulator nodes must match those supported by a given PMIC.
++Supported regulator node names:
++	PM8998:		smps1 - smps13, ldo1 - ldo28, lvs1 - lvs2
++	PMI8998:	bob
++	PM8005:		smps1 - smps4
++
++========================
++First Level Nodes - PMIC
++========================
++
++- compatible
++	Usage:      required
++	Value type: <string>
++	Definition: Must be one of: "qcom,pm8998-rpmh-regulators",
++		    "qcom,pmi8998-rpmh-regulators" or
++		    "qcom,pm8005-rpmh-regulators".
++
++- qcom,pmic-id
++	Usage:      required
++	Value type: <string>
++	Definition: RPMh resource name suffix used for the regulators found on
++		    this PMIC.  Typical values: "a", "b", "c", "d", "e", "f".
++
++- vdd-s1-supply
++- vdd-s2-supply
++- vdd-s3-supply
++- vdd-s4-supply
++	Usage:      optional (PM8998 and PM8005 only)
++	Value type: <phandle>
++	Definition: phandle of the parent supply regulator of one or more of the
++		    regulators for this PMIC.
++
++- vdd-s5-supply
++- vdd-s6-supply
++- vdd-s7-supply
++- vdd-s8-supply
++- vdd-s9-supply
++- vdd-s10-supply
++- vdd-s11-supply
++- vdd-s12-supply
++- vdd-s13-supply
++- vdd-l1-l27-supply
++- vdd-l2-l8-l17-supply
++- vdd-l3-l11-supply
++- vdd-l4-l5-supply
++- vdd-l6-supply
++- vdd-l7-l12-l14-l15-supply
++- vdd-l9-supply
++- vdd-l10-l23-l25-supply
++- vdd-l13-l19-l21-supply
++- vdd-l16-l28-supply
++- vdd-l18-l22-supply
++- vdd-l20-l24-supply
++- vdd-l26-supply
++- vin-lvs-1-2-supply
++	Usage:      optional (PM8998 only)
++	Value type: <phandle>
++	Definition: phandle of the parent supply regulator of one or more of the
++		    regulators for this PMIC.
++
++- vdd-bob-supply
++	Usage:      optional (PMI8998 only)
++	Value type: <phandle>
++	Definition: BOB regulator parent supply phandle
++
++===============================
++Second Level Nodes - Regulators
++===============================
++
++- qcom,always-wait-for-ack
++	Usage:      optional
++	Value type: <empty>
++	Definition: Boolean flag which indicates that the application processor
++		    must wait for an ACK or a NACK from RPMh for every request
++		    sent for this regulator including those which are for a
++		    strictly lower power state.
++
++Other properties defined in Documentation/devicetree/bindings/regulator.txt
++may also be used.  regulator-initial-mode and regulator-allowed-modes may be
++specified for VRM regulators using mode values from
++include/dt-bindings/regulator/qcom,rpmh-regulator.h.  regulator-allow-bypass
++may be specified for BOB type regulators managed via VRM.
++regulator-allow-set-load may be specified for LDO type regulators managed via
++VRM.
++
++========
++Examples
++========
++
++#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
++
++&apps_rsc {
++	pm8998-rpmh-regulators {
++		compatible = "qcom,pm8998-rpmh-regulators";
++		qcom,pmic-id = "a";
++
++		vdd-l7-l12-l14-l15-supply = <&pm8998_s5>;
++
++		smps2 {
++			regulator-min-microvolt = <1100000>;
++			regulator-max-microvolt = <1100000>;
++		};
++
++		pm8998_s5: smps5 {
++			regulator-min-microvolt = <1904000>;
++			regulator-max-microvolt = <2040000>;
++		};
++
++		ldo7 {
++			regulator-min-microvolt = <1800000>;
++			regulator-max-microvolt = <1800000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++			regulator-allowed-modes =
++				<RPMH_REGULATOR_MODE_LPM
++				 RPMH_REGULATOR_MODE_HPM>;
++			regulator-allow-set-load;
++		};
++
++		lvs1 {
++			regulator-min-microvolt = <1800000>;
++			regulator-max-microvolt = <1800000>;
++		};
++	};
++
++	pmi8998-rpmh-regulators {
++		compatible = "qcom,pmi8998-rpmh-regulators";
++		qcom,pmic-id = "b";
++
++		bob {
++			regulator-min-microvolt = <3312000>;
++			regulator-max-microvolt = <3600000>;
++			regulator-allowed-modes =
++				<RPMH_REGULATOR_MODE_AUTO
++				 RPMH_REGULATOR_MODE_HPM>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_AUTO>;
++		};
++	};
++};
+diff --git a/include/dt-bindings/regulator/qcom,rpmh-regulator.h b/include/dt-bindings/regulator/qcom,rpmh-regulator.h
+new file mode 100644
+index 0000000..86713dc
+--- /dev/null
++++ b/include/dt-bindings/regulator/qcom,rpmh-regulator.h
+@@ -0,0 +1,36 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (c) 2018, The Linux Foundation. All rights reserved. */
++
++#ifndef __QCOM_RPMH_REGULATOR_H
++#define __QCOM_RPMH_REGULATOR_H
++
++/*
++ * These mode constants may be used to specify modes for various RPMh regulator
++ * device tree properties (e.g. regulator-initial-mode).  Each type of regulator
++ * supports a subset of the possible modes.
++ *
++ * %RPMH_REGULATOR_MODE_RET:	Retention mode in which only an extremely small
++ *				load current is allowed.  This mode is supported
++ *				by LDO and SMPS type regulators.
++ * %RPMH_REGULATOR_MODE_LPM:	Low power mode in which a small load current is
++ *				allowed.  This mode corresponds to PFM for SMPS
++ *				and BOB type regulators.  This mode is supported
++ *				by LDO, HFSMPS, BOB, and PMIC4 FTSMPS type
++ *				regulators.
++ * %RPMH_REGULATOR_MODE_AUTO:	Auto mode in which the regulator hardware
++ *				automatically switches between LPM and HPM based
++ *				upon the real-time load current.  This mode is
++ *				supported by HFSMPS, BOB, and PMIC4 FTSMPS type
++ *				regulators.
++ * %RPMH_REGULATOR_MODE_HPM:	High power mode in which the full rated current
++ *				of the regulator is allowed.  This mode
++ *				corresponds to PWM for SMPS and BOB type
++ *				regulators.  This mode is supported by all types
++ *				of regulators.
++ */
++#define RPMH_REGULATOR_MODE_RET		0
++#define RPMH_REGULATOR_MODE_LPM		1
++#define RPMH_REGULATOR_MODE_AUTO	2
++#define RPMH_REGULATOR_MODE_HPM		3
++
++#endif
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
