@@ -1,86 +1,158 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id PjITFR6JHlsySAAAmS7hNA
-	; Mon, 11 Jun 2018 14:38:12 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id sAeaHak6GltbJAAAmS7hNA
+	; Fri, 08 Jun 2018 08:13:52 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id ABF6D607E4; Mon, 11 Jun 2018 14:38:12 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="flH+Y8Qx"
+	id B11B3602FC; Fri,  8 Jun 2018 08:13:52 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 42B58607A4;
-	Mon, 11 Jun 2018 14:38:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 42B58607A4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 11A3A606FA;
+	Fri,  8 Jun 2018 08:13:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 11A3A606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754004AbeFKOiK (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 10:38:10 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56182 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753893AbeFKOiI (ORCPT
+        id S1752779AbeFHINu (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 04:13:50 -0400
+Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:36688 "EHLO
+        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751898AbeFHINq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:38:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=uyVXhK36QtyNO3ODfhGBHrTY0DBp3d5lSAqgILFwYUw=; b=flH+Y8QxmH6Q/oP5MzEe3B7Mi
-        siWn84RwRxaTo+Il6HlbYBYWRhtEyFo/Pd8WEE5OGAu1XigKVJonIUKXQ8K1IKzHmlpBgXGOj+BKB
-        a45xwq0b4bLE6zRJMjKV+wPNed6Ts/1m6s01JveyY0FYitNTaSrqcW0F0s1wIghsUE+7pDhJfEfsT
-        r9PtAphGiTncUwTp2JL1sd8s5BjRfoEMlSD+PzDmao0/i2zUOhRFEa+SwabnU5Pq687tqctkNy0Ab
-        aei+VFdFdLfwKJU03b8t/gnTObtUYOhuc5dPL+n2iTdm0QoH8D4hG5Sj/3rRseCQZ3D9roqmUhiXe
-        54HzCxkCQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSNxL-0005fN-Kn; Mon, 11 Jun 2018 14:38:03 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id AF70F201EA7A5; Mon, 11 Jun 2018 16:38:01 +0200 (CEST)
-Date: Mon, 11 Jun 2018 16:38:01 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Jeremy Cline <jeremy@jcline.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        rui.zhang@intel.com, len.brown@intel.com, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org, regressions@leemhuis.info,
-        Diego Viola <diego.viola@gmail.com>
-Subject: Re: Regression: x86/tsc: Fix mark_tsc_unstable()
-Message-ID: <20180611143801.GH12235@hirez.programming.kicks-ass.net>
-References: <01000163ef24c875-daa2c00e-611e-4383-99a6-c8c72ef04a14-000000@email.amazonses.com>
- <20180611141742.GP12198@hirez.programming.kicks-ass.net>
+        Fri, 8 Jun 2018 04:13:46 -0400
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id RCWjfnUNMtLaARCWmfxffl; Fri, 08 Jun 2018 10:13:45 +0200
+Subject: Re: [PATCH v2] media: v4l: Add new 10-bit packed grayscale format
+To: Todor Tomov <todor.tomov@linaro.org>, sakari.ailus@iki.fi,
+        mchehab@kernel.org, laurent.pinchart@ideasonboard.com,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1525769177-6328-1-git-send-email-todor.tomov@linaro.org>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <6411f254-cc4f-43b2-868f-bcf2d6e6f0eb@xs4all.nl>
+Date: Fri, 8 Jun 2018 10:13:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180611141742.GP12198@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <1525769177-6328-1-git-send-email-todor.tomov@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfC0VfgDXUY5vjfN3dt2/QsY/QmoCwR3VxVVWbxz+zuYtzRRIy5hRkEQCN/eSFcJiB/m0mNNtqzjc10zhaED9d7VMHE47Xzgca1PXD/1pliergaQZwXCQ
+ zwDb1upAPr9BvazYKfXBSb96FP6T7Wf9MF/DyC7wBBqV5DiA4zCH+9i/uWCgcoGJ3auPo36ALf7cMXZje05R8mDnU8/DlYEbJq2bZRBl9Gnnjz2rECs9nzx+
+ hHxk+Y7yKzhdB12DhfUulvwsToYHfuXls8J+sRC5yh0w2P6Jxs1mheS0ZNnCKb237TivJKfKWVw5JJn2DDsbiJrWD4R04kNWb3PRZd7ao7r+iimHtDN10OZx
+ FeCFK2CF
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 11, 2018 at 04:17:42PM +0200, Peter Zijlstra wrote:
-> On Mon, Jun 11, 2018 at 01:59:15PM +0000, Jeremy Cline wrote:
-> > A user has bisected the problem to the v4.16 commit 1ab4ca7c59d4
-> > ("x86/tsc: Fix mark_tsc_unstable()"). According to the reporter,
-> > explicitly setting "tsc=" on the kernel command line causes the boot to
-> > always succeed. All the users have Thinkpad T500s or T400s (Core 2 Duos)
+On 05/08/2018 10:46 AM, Todor Tomov wrote:
+> The new format will be called V4L2_PIX_FMT_Y10P.
+> It is similar to the V4L2_PIX_FMT_SBGGR10P family formats
+> but V4L2_PIX_FMT_Y10P is a grayscale format.
 > 
-> Weird. So Core2 typically triggers mark_tsc_unstable() in either
-> intel_idle or processor_idle. ISTR testing that when I did the patches.
-> 
-> When I make that mark_tsc_unstable() in the idle drivers unconditional
-> and boot my ivb with that, it doesn't want to fail. I've booted the
-> machine 5 consequctive times without issue.
-> 
-> Let me try and checkout -stable, maybe something's up with that.
+> Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
 
-Nope -stable seems to be working as well on the IVB (with modification).
-I just dug up my T500 and that's actually still running the test kernel.
-Let me try and build the -stable kernel for that.
+I see no patch adding support for this to a driver. We don't like adding new
+defines without a driver that needs it.
+
+Is it possible to add support for this to a mainlined driver? Or is it going to
+be used by a new driver?
+
+Regards,
+
+	Hans
+
+> ---
+> 
+> v2:
+> - doc: improved bit-packed representation: added bit positions for LSB bits;
+> - doc: improved bit-packed representation: added table column widths.
+> 
+>  Documentation/media/uapi/v4l/pixfmt-y10p.rst | 33 ++++++++++++++++++++++++++++
+>  Documentation/media/uapi/v4l/yuv-formats.rst |  1 +
+>  drivers/media/v4l2-core/v4l2-ioctl.c         |  1 +
+>  include/uapi/linux/videodev2.h               |  1 +
+>  4 files changed, 36 insertions(+)
+>  create mode 100644 Documentation/media/uapi/v4l/pixfmt-y10p.rst
+> 
+> diff --git a/Documentation/media/uapi/v4l/pixfmt-y10p.rst b/Documentation/media/uapi/v4l/pixfmt-y10p.rst
+> new file mode 100644
+> index 0000000..13b5713
+> --- /dev/null
+> +++ b/Documentation/media/uapi/v4l/pixfmt-y10p.rst
+> @@ -0,0 +1,33 @@
+> +.. -*- coding: utf-8; mode: rst -*-
+> +
+> +.. _V4L2-PIX-FMT-Y10P:
+> +
+> +******************************
+> +V4L2_PIX_FMT_Y10P ('Y10P')
+> +******************************
+> +
+> +Grey-scale image as a MIPI RAW10 packed array
+> +
+> +
+> +Description
+> +===========
+> +
+> +This is a packed grey-scale image format with a depth of 10 bits per
+> +pixel. Every four consecutive pixels are packed into 5 bytes. Each of
+> +the first 4 bytes contain the 8 high order bits of the pixels, and
+> +the 5th byte contains the 2 least significants bits of each pixel,
+> +in the same order.
+> +
+> +**Bit-packed representation.**
+> +
+> +.. flat-table::
+> +    :header-rows:  0
+> +    :stub-columns: 0
+> +    :widths: 8 8 8 8 64
+> +
+> +    * - Y'\ :sub:`00[9:2]`
+> +      - Y'\ :sub:`01[9:2]`
+> +      - Y'\ :sub:`02[9:2]`
+> +      - Y'\ :sub:`03[9:2]`
+> +      - Y'\ :sub:`03[1:0]`\ (bits 7--6) Y'\ :sub:`02[1:0]`\ (bits 5--4)
+> +	Y'\ :sub:`01[1:0]`\ (bits 3--2) Y'\ :sub:`00[1:0]`\ (bits 1--0)
+> diff --git a/Documentation/media/uapi/v4l/yuv-formats.rst b/Documentation/media/uapi/v4l/yuv-formats.rst
+> index 3334ea4..9ab0592 100644
+> --- a/Documentation/media/uapi/v4l/yuv-formats.rst
+> +++ b/Documentation/media/uapi/v4l/yuv-formats.rst
+> @@ -29,6 +29,7 @@ to brightness information.
+>      pixfmt-y10
+>      pixfmt-y12
+>      pixfmt-y10b
+> +    pixfmt-y10p
+>      pixfmt-y16
+>      pixfmt-y16-be
+>      pixfmt-y8i
+> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+> index de5d96d..dececea 100644
+> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+> @@ -1147,6 +1147,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+>  	case V4L2_PIX_FMT_Y16:		descr = "16-bit Greyscale"; break;
+>  	case V4L2_PIX_FMT_Y16_BE:	descr = "16-bit Greyscale BE"; break;
+>  	case V4L2_PIX_FMT_Y10BPACK:	descr = "10-bit Greyscale (Packed)"; break;
+> +	case V4L2_PIX_FMT_Y10P:		descr = "10-bit Greyscale (MIPI Packed)"; break;
+>  	case V4L2_PIX_FMT_Y8I:		descr = "Interleaved 8-bit Greyscale"; break;
+>  	case V4L2_PIX_FMT_Y12I:		descr = "Interleaved 12-bit Greyscale"; break;
+>  	case V4L2_PIX_FMT_Z16:		descr = "16-bit Depth"; break;
+> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+> index 600877b..b24ab720 100644
+> --- a/include/uapi/linux/videodev2.h
+> +++ b/include/uapi/linux/videodev2.h
+> @@ -522,6 +522,7 @@ struct v4l2_pix_format {
+>  
+>  /* Grey bit-packed formats */
+>  #define V4L2_PIX_FMT_Y10BPACK    v4l2_fourcc('Y', '1', '0', 'B') /* 10  Greyscale bit-packed */
+> +#define V4L2_PIX_FMT_Y10P    v4l2_fourcc('Y', '1', '0', 'P') /* 10  Greyscale, MIPI RAW10 packed */
+>  
+>  /* Palette formats */
+>  #define V4L2_PIX_FMT_PAL8    v4l2_fourcc('P', 'A', 'L', '8') /*  8  8-bit palette */
+> 
