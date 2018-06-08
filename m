@@ -1,129 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Xan/BjrRG1sCbgAAmS7hNA
-	; Sat, 09 Jun 2018 13:08:10 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Y4voDBLAGlshfgAAmS7hNA
+	; Fri, 08 Jun 2018 17:42:42 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id EC9C1608BA; Sat,  9 Jun 2018 13:08:09 +0000 (UTC)
+	id 182446089E; Fri,  8 Jun 2018 17:42:42 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dIIDDBhS"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Am/DcqBz"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 643B26074D;
-	Sat,  9 Jun 2018 13:08:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 643B26074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 89C74605A2;
+	Fri,  8 Jun 2018 17:42:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 89C74605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753256AbeFINIH (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 09:08:07 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:36188 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753175AbeFINIG (ORCPT
+        id S1752984AbeFHRmi (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 13:42:38 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36712 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752328AbeFHRmc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 09:08:06 -0400
-Received: by mail-pl0-f65.google.com with SMTP id a7-v6so7287028plp.3
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Jun 2018 06:08:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=lOGdgsogbCjVMUN7Ghgm9ndaH3WDFvknMaCm4TobH14=;
-        b=dIIDDBhSVyawWzDPDFdeE+6iiS4clHDTO1VUh4j2InpXAuoevl4VNRqsx+fE1DHQ+J
-         M7bjTUYDiDyGsz5MJXuGiLMezP1hUqGEnoo572lXc9Q5wqZvR+pHJc9ju8G1+nqV9Y5t
-         MZQdV2yeXY7uJmoYzzbrnXLkilyUJX9d9HCTPqpAyFSIh70R92ZW7JHDuycA9NABEyFT
-         UhZ95GDCdepjSVaaFCvSiNQE25hmF6+ZQW1FhKBAvvGsmVpiWOBy1Y9SRABmd9B0Ko4W
-         oCH3S9bleZcyM9YDI9Evx5Rq84fB2a6Mq0PTHOhN2ygwWxpIxAco/Iv/C8KrEVB2Sq9U
-         qeug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=lOGdgsogbCjVMUN7Ghgm9ndaH3WDFvknMaCm4TobH14=;
-        b=c6FteFH8apqbzkACI+jVYZca6BXr8oOkFHCJKGhhKbaQjb3Z1APxCeBmwC4gtdSo7M
-         P+Ska6/SKE/0b8QEZbEytzlLsAKjdQjVf5IJ3fcnjkhJFPEpX8OIm0ABZiNtQCJhYY57
-         QtMOE38nVYx07pz1d2XEzny97LfIe8rALZMehlLbUdffYLPLBlPCDGDSm4GGQ5aEu/7G
-         wXUkxgfzjmeS0Scd61oXGb1tIpS8D9K+9NL36ii/iHAm+4c1Mb7EEQOpVKxfZzXzAFq8
-         jNyigGJ8vXWl2d9nPj+lzITpdK0Er48w7sOB3fJKFR02hLwc4xx8mCJB1Kz3UZChkeZD
-         9uDg==
-X-Gm-Message-State: APt69E0pMWvybjGWeaLNS9NiR3f2rTBbDLdVa78y+X/yRV036Z99kwG2
-        XHmxid9Zy/mKNdnNEx/sgYRbsA==
-X-Google-Smtp-Source: ADUXVKI8hLzho1yQI0CrGeUD6erSe4bId6p8eNigl4o5Xer5TkulC/wjN1fXed8ZeCAU+tNuBIFCOQ==
-X-Received: by 2002:a17:902:ba87:: with SMTP id k7-v6mr10849863pls.271.1528549685693;
-        Sat, 09 Jun 2018 06:08:05 -0700 (PDT)
-Received: from nihaal-Latitude-E6410 ([157.50.53.245])
-        by smtp.gmail.com with ESMTPSA id 10-v6sm70963235pgb.40.2018.06.09.06.08.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 09 Jun 2018 06:08:05 -0700 (PDT)
-From: Abdun Nihaal <abdun.nihaal@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: matthias.bgg@gmail.com, neil@brown.name,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Abdun Nihaal <abdun.nihaal@gmail.com>
-Subject: [PATCH] staging: mt7621-pci: Fix coding style error
-Date: Sat,  9 Jun 2018 18:37:42 +0530
-Message-Id: <20180609130742.31917-1-abdun.nihaal@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Fri, 8 Jun 2018 13:42:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Message-Id:Date:Subject:Cc:To:From:
+        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=8svxQJHCnDNwnOBLknPNB23MDOWLTKyhqQk3ffmgcdM=; b=Am/DcqBzSoATmNBax2a7vEi+G
+        F/tYv42ccM3Flig31/2DswoWrfUxSoveXzqttjjMZRCoVYlWjM7JpbP5XWDE66v3wbzhQwtTxYgzA
+        L125/vz6ksapClEAz1Ov7w87mTbvVlawk+iW/7+qvuisI3QuAc0Za1QWOn8EOcMEKLKMIu3H6W5C3
+        jiMNm/2wCv8lXHzQuPUsB5P9UMHlappjcOKJ5hsSTeFhK2kahZqoIsK5d+VMYFGeFbXDx81tpZ+Rt
+        5hs+ENmDlMKNXZjAtdTtABH+/HAzQEYWhyDn3l0a3L5jmREs2E57ygYFHFAmE2emjMJBPbgyQQz4J
+        JS/4QrRxw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fRLP3-0008TM-0M; Fri, 08 Jun 2018 17:42:21 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: hans.westgaard.ry@oracle.com, Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>,
+        linux-rdma@vger.kernel.org,
+        =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>,
+        Parav Pandit <parav@mellanox.com>,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Pravin Shedge <pravin.shedge4linux@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] Convert IB/mad to use an IDR for agent IDs
+Date: Fri,  8 Jun 2018 10:42:16 -0700
+Message-Id: <20180608174218.32455-1-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch removes space after * to fix the following checkpatch error:
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-ERROR: "foo * bar" should be "foo *bar"
+Compared to the RFC I sent yesterday, this version retains the per-port
+spinlock for use when looking up the MAD agent by vendor/class/etc.
+Now we should only see a performance improvement relative to the current
+code.  We should see that improvement two different ways: interrupts
+remain enabled and no spinlock is taken when doing a lookup in the IDR,
+and we don't walk a linked list looking for the right agent; we just
+walk the (low height) tree and find the correct agent.
 
-Signed-off-by: Abdun Nihaal <abdun.nihaal@gmail.com>
----
- drivers/staging/mt7621-pci/pci-mt7621.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+There are more improvements that could be made, but this fixes the mlx4
+bug that Hans reported.
 
-diff --git a/drivers/staging/mt7621-pci/pci-mt7621.c b/drivers/staging/mt7621-pci/pci-mt7621.c
-index 17f2105ec698..0543ff7d7f40 100644
---- a/drivers/staging/mt7621-pci/pci-mt7621.c
-+++ b/drivers/staging/mt7621-pci/pci-mt7621.c
-@@ -184,7 +184,7 @@ static int pcie_link_status = 0;
- #define PCI_ACCESS_WRITE_4 5
- 
- static int config_access(unsigned char access_type, struct pci_bus *bus,
--			unsigned int devfn, unsigned int where, u32 * data)
-+			unsigned int devfn, unsigned int where, u32 *data)
- {
- 	unsigned int slot = PCI_SLOT(devfn);
- 	u8 func = PCI_FUNC(devfn);
-@@ -225,19 +225,19 @@ static int config_access(unsigned char access_type, struct pci_bus *bus,
- }
- 
- static int
--read_config_byte(struct pci_bus *bus, unsigned int devfn, int where, u8 * val)
-+read_config_byte(struct pci_bus *bus, unsigned int devfn, int where, u8 *val)
- {
- 	return config_access(PCI_ACCESS_READ_1, bus, devfn, (unsigned int)where, (u32 *)val);
- }
- 
- static int
--read_config_word(struct pci_bus *bus, unsigned int devfn, int where, u16 * val)
-+read_config_word(struct pci_bus *bus, unsigned int devfn, int where, u16 *val)
- {
- 	return config_access(PCI_ACCESS_READ_2, bus, devfn, (unsigned int)where, (u32 *)val);
- }
- 
- static int
--read_config_dword(struct pci_bus *bus, unsigned int devfn, int where, u32 * val)
-+read_config_dword(struct pci_bus *bus, unsigned int devfn, int where, u32 *val)
- {
- 	return config_access(PCI_ACCESS_READ_4, bus, devfn, (unsigned int)where, (u32 *)val);
- }
-@@ -270,7 +270,7 @@ write_config_dword(struct pci_bus *bus, unsigned int devfn, int where, u32 val)
- }
- 
- static int
--pci_config_read(struct pci_bus *bus, unsigned int devfn, int where, int size, u32 * val)
-+pci_config_read(struct pci_bus *bus, unsigned int devfn, int where, int size, u32 *val)
- {
- 	switch (size) {
- 	case 1:
+Matthew Wilcox (2):
+  IB/mad: Agent registration is process context only
+  IB/mad: Use IDR for agent IDs
+
+ drivers/infiniband/core/mad.c      | 90 ++++++++++++++++++------------
+ drivers/infiniband/core/mad_priv.h |  7 ++-
+ include/linux/idr.h                |  9 +++
+ 3 files changed, 66 insertions(+), 40 deletions(-)
+
 -- 
-2.17.0
+2.17.1
