@@ -1,106 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id BoylIvo/GVu7XgAAmS7hNA
-	; Thu, 07 Jun 2018 14:23:54 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id GvYhI3BoGlujSgAAmS7hNA
+	; Fri, 08 Jun 2018 11:31:43 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 6A269608BA; Thu,  7 Jun 2018 14:23:54 +0000 (UTC)
+	id 46E326089E; Fri,  8 Jun 2018 11:31:43 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YdA66D0q"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RICuUffZ"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,TVD_SUBJ_WIPE_DEBT,
-	T_DKIMWL_WL_HIGH autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D2B08602FC;
-	Thu,  7 Jun 2018 14:23:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D2B08602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id BCF48607A4;
+	Fri,  8 Jun 2018 11:31:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BCF48607A4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933370AbeFGOXw (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:23:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45896 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932859AbeFGOXt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:23:49 -0400
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8B1B2086E;
-        Thu,  7 Jun 2018 14:23:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528381428;
-        bh=6XqSk6Mkohqwo2pQWtrptz5FIPsPP3xxzmx7Rx8GFp4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=YdA66D0q28Y9lFQxyzFNhrOCxYhpkyw1lYS4Z17R86fq/0PJQhWD8yfcaXY9sdofx
-         T99wc395xSaCvr9uRinf7mMb62ARtMAE6IAQrXP4gqhwCtoxerNDOyPMBy4uW5tGLo
-         o2UercB98bGh120wTYlfq0wI7ooi8RG5LfYUmwgc=
-Date: Thu, 7 Jun 2018 23:23:44 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        "H . Peter Anvin" <hpa@zytor.com>, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [RFC PATCH -tip v5 07/27] powerpc/kprobes: Remove jprobe
- powerpc implementation
-Message-Id: <20180607232344.31785bad5ebcbe82dd381284@kernel.org>
-In-Reply-To: <1528370755.shi1gq6h7g.naveen@linux.ibm.com>
-References: <152812730943.10068.5166429445118734697.stgit@devbox>
-        <152812751377.10068.6090934299713110701.stgit@devbox>
-        <1528370755.shi1gq6h7g.naveen@linux.ibm.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1753077AbeFHLbj (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 07:31:39 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:46447 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752356AbeFHLbg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 07:31:36 -0400
+Received: by mail-vk0-f65.google.com with SMTP id b134-v6so7978584vke.13;
+        Fri, 08 Jun 2018 04:31:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=W8v8qH82dOiZa7et3pdpTdIEDcnwYoszxiAUYr2sLt4=;
+        b=RICuUffZ1qAFOuxqim/ZrZ4saz2xd/UXu6D58P1jjTlGK2cb4fuCT0qDB68uu1yNfj
+         sSy5yHUbsxCr+MoX0JqikP0lb/DAEaZnfOGr4qq5/nlXad0lvAJjGI1HzohmyU6l1vvC
+         tr3lujziwvHL3VFYMN2exnULFS6GBNyvcReOf3CduRvThO9N422VhT1pOEDlIWaPSVgb
+         1pna0lCOTQl+nr3N8AB4zrNTn2hse8x1w7fr9JSpMf/XfmouMwcBy5l7P49JZgJ9Yn6O
+         cgnNBl9O/9w24vuK3LG5vU/RGieFnT1i9GSIVuRDuVjCuuhgzRfUF0IOCR5rfNU+df+t
+         BtZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=W8v8qH82dOiZa7et3pdpTdIEDcnwYoszxiAUYr2sLt4=;
+        b=SG02qrnYysXA4TS+SNIYySLLJ9Y6C9kIo8/OwGnO/LKxrpei5ON4F4dtg2kICuCWXL
+         /+fd7+z6wq/WnhCck/bWYaArram+HZTmcJ4F166rbmCTEBN54Ia0vXkyoYAQpKw5XKPv
+         4PLhPAt18QNpiSIFbKlmc2UbCDMXD1NJRIshl6NVHohk4y6ZMVtkEEUFVDomhbiI3yTP
+         OjY05qaUIWrll4jViQbkItBz1TR+cx2v72HlBFdlCHfIDX5hyUXTzmo4E7TrfGc8qLu5
+         2horFM9XHWaU8jk1333B09oiNnIDrSU7Klap508tazfMcfbs0QO42tDCol6/7N0Cs+CN
+         HgNQ==
+X-Gm-Message-State: APt69E1IMXS0WAK09vKwWPkf0OBsWxkCewQBNItRxPXaNmxIMYz91jow
+        6R1HYIdCVaYFj8N2TPy3uinwuyg89P2lVBG39BM=
+X-Google-Smtp-Source: ADUXVKIb6YuI7/W8gQjlkzB/MakZm0Ifliel2lZIpBxHfgM6jCkO5e52JQBHtCL1FxdVmmKCvXBVdqXnXBL+gxuQ2Ko=
+X-Received: by 2002:a1f:1e10:: with SMTP id e16-v6mr447775vke.176.1528457495536;
+ Fri, 08 Jun 2018 04:31:35 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Fri, 8 Jun 2018 04:31:35 -0700 (PDT)
+In-Reply-To: <20180607210023.11789-1-hdegoede@redhat.com>
+References: <20180607210023.11789-1-hdegoede@redhat.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 8 Jun 2018 14:31:35 +0300
+Message-ID: <CAHp75VeYxvShJVxY8LanFnrow195k4tv+1_2bHEYashGGcF6cg@mail.gmail.com>
+Subject: Re: [PATCH 0/1] platform/x86: Rename silead_dmi to touchscreen_dmi
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 07 Jun 2018 17:01:23 +0530
-"Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> wrote:
+On Fri, Jun 8, 2018 at 12:00 AM, Hans de Goede <hdegoede@redhat.com> wrote:
+> Hi,
+>
+> This patch is part of / preparation for the EFI embedded firmware
+> stuff. But it can be merged by itself without the test of that series
+> and since silead_dmi.c sees quite a bit of churn I would like to get
+> this one of my queue and merged.
+>
+> I guess it is to late for 4.18, but please consider queuing this
+> up for next when the merge window closes.
+>
+> Note this applies on top of the alphabetically sort series which
+> I sent out earlier.
+>
 
-> Masami Hiramatsu wrote:
-> > Remove arch dependent setjump/longjump functions
-> > and unused fields in kprobe_ctlblk for jprobes
-> > from arch/powerpc. This also reverts commits
-> > related __is_active_jprobe() function.
-> > 
-> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> > 
-> > Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> > Cc: Paul Mackerras <paulus@samba.org>
-> > Cc: Michael Ellerman <mpe@ellerman.id.au>
-> > Cc: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-> > Cc: linuxppc-dev@lists.ozlabs.org
-> > ---
-> >  arch/powerpc/include/asm/kprobes.h             |    2 -
-> >  arch/powerpc/kernel/kprobes-ftrace.c           |   15 -------
-> >  arch/powerpc/kernel/kprobes.c                  |   54 ------------------------
-> >  arch/powerpc/kernel/trace/ftrace_64_mprofile.S |   39 ++---------------
-> >  4 files changed, 5 insertions(+), 105 deletions(-)
-> 
-> LGTM.
-> 
-> Acked-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Pushed to my review and testing queue, thanks!
 
-Thanks Naveen!
+> Regards,
+>
+> Hans
+>
 
-> 
-> - Naveen
-> 
-> 
 
 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+With Best Regards,
+Andy Shevchenko
