@@ -1,133 +1,273 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id hyG2NHSqGVv3KQAAmS7hNA
-	; Thu, 07 Jun 2018 21:58:12 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 9ZWPJO/PGlu1EAAAmS7hNA
+	; Fri, 08 Jun 2018 18:51:47 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id BB9876089E; Thu,  7 Jun 2018 21:58:12 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H1TEc1af"
+	id 58382607E7; Fri,  8 Jun 2018 18:51:47 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 347D760452;
-	Thu,  7 Jun 2018 21:58:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 347D760452
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 93292607DC;
+	Fri,  8 Jun 2018 18:51:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 93292607DC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752140AbeFGV6K (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 17:58:10 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:44730 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751144AbeFGV6I (ORCPT
+        id S1753223AbeFHSvp (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 14:51:45 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:53814 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752754AbeFHSuV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 17:58:08 -0400
-Received: by mail-pf0-f194.google.com with SMTP id h12-v6so5562303pfk.11;
-        Thu, 07 Jun 2018 14:58:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=qHgaPTzqqxL25OcwUVkVLEymw1c9neFhJVm2QjhMxGk=;
-        b=H1TEc1afsch+QW1422J6JnEYHq56l8y30mOAp5vXNLYfVKolAKRCyC8v9MqhLyeXAr
-         xCx4gpC2+llxSN2xk3jP5u61173Rj/vDLxd9eLjY3YfgEDTRofwCf5pxTBoy6aXnw6//
-         QVdkqwu0UmzjWe9QSONkJcFoizqJ70RZBIn7U876GZWnUwlaWbp9xqHctEypMyWJAdS+
-         WZ6VQ98yI9ayIFLzwdhpSzVvtKBVCBqHCrYxl2OsU5GmmXiUVbEhhC8fJ/3NSp48cgbQ
-         9LhxsYW9rNbWxlAC8TcG0sB7GEDNZdbhpY4WvuJLpxyJd6G2xFYx3WLkuSABeYVZDGFu
-         bi3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qHgaPTzqqxL25OcwUVkVLEymw1c9neFhJVm2QjhMxGk=;
-        b=DcNglNZsp7/uEaUNaO3mS5Cihx41tsuy96puTTBYsUbYgcEUWj8tb3PynhjbA1g2WJ
-         190brC8PfzgKWVAntkqj7x0ZuB/lSo2HMwVzNc+/hXYjuVYki3L6V4M+/NwBDnsWO3il
-         muyH3keK6fT7cG31PVP/HXtw+TLmyU8Y2rGlQimpnuOSPLTcvTjglHlNGkANNRC51bgZ
-         TrPOL47gU05+oVFjqA6DZIxlvAQmJQC1KPfmzXttbx/4MOQTvdwDnERp0gIyg8ndDKDQ
-         hvW8DllMiH75PhTnp6JqUwsxxYh/1MA8/Ta2x68CyhXyPq/3Eo+34c0rx3pfwQPQb57q
-         TF4g==
-X-Gm-Message-State: APt69E0wfQLPn97EtwR77bsu4xLgd587bvWclJuHOp8rmjUbkPKkWH5c
-        JjH7LB0JhlNDV7Ndsw/eylk=
-X-Google-Smtp-Source: ADUXVKKBhI3dfYTvY2jJXuGa+6GdOldPDYmf1fNHVNXDSVrXLwELyLcGRWZW+EP6rxD5Fh8hnfunlQ==
-X-Received: by 2002:a65:5c89:: with SMTP id a9-v6mr2924409pgt.51.1528408687709;
-        Thu, 07 Jun 2018 14:58:07 -0700 (PDT)
-Received: from ast-mbp ([2620:10d:c090:180::1:3bc6])
-        by smtp.gmail.com with ESMTPSA id m12-v6sm7748083pgp.88.2018.06.07.14.58.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Jun 2018 14:58:06 -0700 (PDT)
-Date: Thu, 7 Jun 2018 14:58:04 -0700
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: syzbot <syzbot+7ade6c94abb2774c0fee@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, netdev@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Subject: Re: general protection fault in __vfs_write
-Message-ID: <20180607215759.5jt2rin652xnrk3h@ast-mbp>
-References: <000000000000973c2c056e0ecddd@google.com>
- <20180607152846.GB27079@bombadil.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180607152846.GB27079@bombadil.infradead.org>
-User-Agent: NeoMutt/20180223
+        Fri, 8 Jun 2018 14:50:21 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1fRMSq-0006O5-DH; Fri, 08 Jun 2018 18:50:20 +0000
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 09/13] introduce FMODE_CREATED and switch to it
+Date: Fri,  8 Jun 2018 19:50:15 +0100
+Message-Id: <20180608185019.24472-9-viro@ZenIV.linux.org.uk>
+X-Mailer: git-send-email 2.9.5
+In-Reply-To: <20180608185019.24472-1-viro@ZenIV.linux.org.uk>
+References: <20180608184842.GD30522@ZenIV.linux.org.uk>
+ <20180608185019.24472-1-viro@ZenIV.linux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 07, 2018 at 08:28:46AM -0700, Matthew Wilcox wrote:
-> 
-> I would suggest this is a BPF problem, not a VFS problem.
-> 
-> On Thu, Jun 07, 2018 at 08:19:01AM -0700, syzbot wrote:
-> > Hello,
-> > 
-> > syzbot found the following crash on:
-> > 
-> > HEAD commit:    7170e6045a6a strparser: Add __strp_unpause and use it in k..
-> > git tree:       net-next
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=14bde74f800000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=a601a80fec461d44
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=7ade6c94abb2774c0fee
-> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> > 
-> > Unfortunately, I don't have any reproducer for this crash yet.
-> > 
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+7ade6c94abb2774c0fee@syzkaller.appspotmail.com
-> > 
-> > bpfilter: read fail -512
-> > kasan: GPF could be caused by NULL-ptr deref or user memory access
-> > general protection fault: 0000 [#1] SMP KASAN
-> > Dumping ftrace buffer:
-> >    (ftrace buffer empty)
-> > Modules linked in:
-> > CPU: 1 PID: 4590 Comm: syz-executor7 Not tainted 4.17.0-rc7+ #82
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> > Google 01/01/2011
-> > RIP: 0010:file_write_hint include/linux/fs.h:1925 [inline]
-> > RIP: 0010:init_sync_kiocb include/linux/fs.h:1935 [inline]
-> > RIP: 0010:new_sync_write fs/read_write.c:470 [inline]
-> > RIP: 0010:__vfs_write+0x4a6/0x960 fs/read_write.c:487
-> > RSP: 0018:ffff88019b5c7850 EFLAGS: 00010202
-> > RAX: dffffc0000000000 RBX: ffff8801d2117c80 RCX: ffffffff81bfc6bb
-> > RDX: 0000000000000019 RSI: ffffffff81bfc6ca RDI: 00000000000000c8
-> > RBP: ffff88019b5c79c8 R08: ffff88019b5ba540 R09: fffffbfff12cae69
-> > R10: ffff88019b5c7a10 R11: ffffffff8965734b R12: 0000000000000000
-> > R13: ffff88019b5c79a0 R14: 0000000000000000 R15: ffff88019b5c7a88
-> > FS:  0000000002a11940(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 0000000000700138 CR3: 000000019b410000 CR4: 00000000001406e0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > Call Trace:
-> >  __kernel_write+0x10c/0x380 fs/read_write.c:506
-> >  __bpfilter_process_sockopt+0x1d8/0x35b net/bpfilter/bpfilter_kern.c:66
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-I think I see the problem. Will send the fix soon.
+Parallel to FILE_CREATED, goes into ->f_mode instead of *opened.
+NFS is a bit of a wart here - it doesn't have file at the point
+where FILE_CREATED used to be set, so we need to propagate it
+there (for now).  IMA is another one (here and everywhere)...
+
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+ drivers/staging/lustre/lustre/llite/namei.c |  2 +-
+ fs/9p/vfs_inode.c                           |  2 +-
+ fs/9p/vfs_inode_dotl.c                      |  2 +-
+ fs/ceph/file.c                              |  2 +-
+ fs/cifs/dir.c                               |  2 +-
+ fs/fuse/dir.c                               |  2 +-
+ fs/gfs2/inode.c                             |  2 +-
+ fs/namei.c                                  | 15 ++++++++-------
+ fs/nfs/dir.c                                |  5 ++++-
+ fs/nfs/nfs4proc.c                           |  2 +-
+ include/linux/fs.h                          |  1 +
+ 11 files changed, 21 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/staging/lustre/lustre/llite/namei.c b/drivers/staging/lustre/lustre/llite/namei.c
+index b47bda601ead..72376af0d4b5 100644
+--- a/drivers/staging/lustre/lustre/llite/namei.c
++++ b/drivers/staging/lustre/lustre/llite/namei.c
+@@ -735,7 +735,7 @@ static int ll_atomic_open(struct inode *dir, struct dentry *dentry,
+ 				goto out_release;
+ 			}
+ 
+-			*opened |= FILE_CREATED;
++			file->f_mode |= FMODE_CREATED;
+ 		}
+ 		if (d_really_is_positive(dentry) &&
+ 		    it_disposition(it, DISP_OPEN_OPEN)) {
+diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
+index d719d7fe92ce..6d6af0109cf2 100644
+--- a/fs/9p/vfs_inode.c
++++ b/fs/9p/vfs_inode.c
+@@ -930,7 +930,7 @@ v9fs_vfs_atomic_open(struct inode *dir, struct dentry *dentry,
+ 	if (v9ses->cache == CACHE_LOOSE || v9ses->cache == CACHE_FSCACHE)
+ 		v9fs_cache_inode_set_cookie(d_inode(dentry), file);
+ 
+-	*opened |= FILE_CREATED;
++	file->f_mode |= FMODE_CREATED;
+ out:
+ 	dput(res);
+ 	return err;
+diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
+index 0b79872848c1..c6939b7cb18c 100644
+--- a/fs/9p/vfs_inode_dotl.c
++++ b/fs/9p/vfs_inode_dotl.c
+@@ -358,7 +358,7 @@ v9fs_vfs_atomic_open_dotl(struct inode *dir, struct dentry *dentry,
+ 	file->private_data = ofid;
+ 	if (v9ses->cache == CACHE_LOOSE || v9ses->cache == CACHE_FSCACHE)
+ 		v9fs_cache_inode_set_cookie(inode, file);
+-	*opened |= FILE_CREATED;
++	file->f_mode |= FMODE_CREATED;
+ out:
+ 	v9fs_put_acl(dacl, pacl);
+ 	dput(res);
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index 4f2aa53c4ff6..37ab240d4cdf 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -472,7 +472,7 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
+ 		dout("atomic_open finish_open on dn %p\n", dn);
+ 		if (req->r_op == CEPH_MDS_OP_CREATE && req->r_reply_info.has_create_ino) {
+ 			ceph_init_inode_acls(d_inode(dentry), &acls);
+-			*opened |= FILE_CREATED;
++			file->f_mode |= FMODE_CREATED;
+ 		}
+ 		err = finish_open(file, dentry, ceph_open);
+ 	}
+diff --git a/fs/cifs/dir.c b/fs/cifs/dir.c
+index ca8fc209af6d..88a8178f90bb 100644
+--- a/fs/cifs/dir.c
++++ b/fs/cifs/dir.c
+@@ -539,7 +539,7 @@ cifs_atomic_open(struct inode *inode, struct dentry *direntry,
+ 	}
+ 
+ 	if ((oflags & (O_CREAT | O_EXCL)) == (O_CREAT | O_EXCL))
+-		*opened |= FILE_CREATED;
++		file->f_mode |= FMODE_CREATED;
+ 
+ 	rc = finish_open(file, direntry, generic_file_open);
+ 	if (rc) {
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index ae40501d39c9..31b432a0e70b 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -508,7 +508,7 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
+ 		goto no_open;
+ 
+ 	/* Only creates */
+-	*opened |= FILE_CREATED;
++	file->f_mode |= FMODE_CREATED;
+ 
+ 	if (fc->no_create)
+ 		goto mknod;
+diff --git a/fs/gfs2/inode.c b/fs/gfs2/inode.c
+index 198e07d5ecdd..146ef177982e 100644
+--- a/fs/gfs2/inode.c
++++ b/fs/gfs2/inode.c
+@@ -767,7 +767,7 @@ static int gfs2_create_inode(struct inode *dir, struct dentry *dentry,
+ 	mark_inode_dirty(inode);
+ 	d_instantiate(dentry, inode);
+ 	if (file) {
+-		*opened |= FILE_CREATED;
++		file->f_mode |= FMODE_CREATED;
+ 		error = finish_open(file, dentry, gfs2_open_common);
+ 	}
+ 	gfs2_glock_dq_uninit(ghs);
+diff --git a/fs/namei.c b/fs/namei.c
+index ef21c904f147..592d62a9f549 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3027,7 +3027,7 @@ static int atomic_open(struct nameidata *nd, struct dentry *dentry,
+ 		 * permission here.
+ 		 */
+ 		int acc_mode = op->acc_mode;
+-		if (*opened & FILE_CREATED) {
++		if (file->f_mode & FMODE_CREATED) {
+ 			WARN_ON(!(open_flag & O_CREAT));
+ 			fsnotify_create(dir, dentry);
+ 			acc_mode = 0;
+@@ -3043,7 +3043,7 @@ static int atomic_open(struct nameidata *nd, struct dentry *dentry,
+ 				dput(dentry);
+ 				dentry = file->f_path.dentry;
+ 			}
+-			if (*opened & FILE_CREATED)
++			if (file->f_mode & FMODE_CREATED)
+ 				fsnotify_create(dir, dentry);
+ 			if (unlikely(d_is_negative(dentry))) {
+ 				error = -ENOENT;
+@@ -3092,7 +3092,7 @@ static int lookup_open(struct nameidata *nd, struct path *path,
+ 	if (unlikely(IS_DEADDIR(dir_inode)))
+ 		return -ENOENT;
+ 
+-	*opened &= ~FILE_CREATED;
++	file->f_mode &= ~FMODE_CREATED;
+ 	dentry = d_lookup(dir, &nd->last);
+ 	for (;;) {
+ 		if (!dentry) {
+@@ -3177,7 +3177,7 @@ static int lookup_open(struct nameidata *nd, struct path *path,
+ 
+ 	/* Negative dentry, just create the file */
+ 	if (!dentry->d_inode && (open_flag & O_CREAT)) {
+-		*opened |= FILE_CREATED;
++		file->f_mode |= FMODE_CREATED;
+ 		audit_inode_child(dir_inode, dentry, AUDIT_TYPE_CHILD_CREATE);
+ 		if (!dir_inode->i_op->create) {
+ 			error = -EACCES;
+@@ -3284,7 +3284,7 @@ static int do_last(struct nameidata *nd,
+ 		if (error)
+ 			goto out;
+ 
+-		if ((*opened & FILE_CREATED) ||
++		if ((file->f_mode & FMODE_CREATED) ||
+ 		    !S_ISREG(file_inode(file)->i_mode))
+ 			will_truncate = false;
+ 
+@@ -3292,7 +3292,7 @@ static int do_last(struct nameidata *nd,
+ 		goto opened;
+ 	}
+ 
+-	if (*opened & FILE_CREATED) {
++	if (file->f_mode & FMODE_CREATED) {
+ 		/* Don't check for write permission, don't truncate */
+ 		open_flag &= ~O_TRUNC;
+ 		will_truncate = false;
+@@ -3366,7 +3366,8 @@ static int do_last(struct nameidata *nd,
+ 	if (error)
+ 		goto out;
+ opened:
+-	error = ima_file_check(file, op->acc_mode, *opened);
++	error = ima_file_check(file, op->acc_mode,
++				file->f_mode & FMODE_CREATED ? FILE_CREATED : 0);
+ 	if (!error && will_truncate)
+ 		error = handle_truncate(file);
+ out:
+diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
+index 43dc1c66873d..bc4a045493f5 100644
+--- a/fs/nfs/dir.c
++++ b/fs/nfs/dir.c
+@@ -1444,6 +1444,7 @@ int nfs_atomic_open(struct inode *dir, struct dentry *dentry,
+ 	struct inode *inode;
+ 	unsigned int lookup_flags = 0;
+ 	bool switched = false;
++	int created = 0;
+ 	int err;
+ 
+ 	/* Expect a negative dentry */
+@@ -1504,7 +1505,9 @@ int nfs_atomic_open(struct inode *dir, struct dentry *dentry,
+ 		goto out;
+ 
+ 	trace_nfs_atomic_open_enter(dir, ctx, open_flags);
+-	inode = NFS_PROTO(dir)->open_context(dir, ctx, open_flags, &attr, opened);
++	inode = NFS_PROTO(dir)->open_context(dir, ctx, open_flags, &attr, &created);
++	if (created)
++		file->f_mode |= FMODE_CREATED;
+ 	if (IS_ERR(inode)) {
+ 		err = PTR_ERR(inode);
+ 		trace_nfs_atomic_open_exit(dir, ctx, open_flags, err);
+diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+index b71757e85066..0504439d1600 100644
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -2934,7 +2934,7 @@ static int _nfs4_do_open(struct inode *dir,
+ 		}
+ 	}
+ 	if (opened && opendata->file_created)
+-		*opened |= FILE_CREATED;
++		*opened = 1;
+ 
+ 	if (pnfs_use_threshold(ctx_th, opendata->f_attr.mdsthreshold, server)) {
+ 		*ctx_th = opendata->f_attr.mdsthreshold;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index a7c090c2b6b9..6dafc39987fa 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -148,6 +148,7 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+ #define FMODE_CAN_WRITE         ((__force fmode_t)0x40000)
+ 
+ #define FMODE_OPENED		((__force fmode_t)0x80000)
++#define FMODE_CREATED		((__force fmode_t)0x100000)
+ 
+ /* File was opened by fanotify and shouldn't generate fanotify events */
+ #define FMODE_NONOTIFY		((__force fmode_t)0x4000000)
+-- 
+2.11.0
