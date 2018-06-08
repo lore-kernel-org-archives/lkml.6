@@ -1,255 +1,251 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id EERbCaSlGFtBbAAAmS7hNA
-	; Thu, 07 Jun 2018 03:25:24 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id fPKFLQ68GlsiYgAAmS7hNA
+	; Fri, 08 Jun 2018 17:25:36 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 129DF608B8; Thu,  7 Jun 2018 03:25:24 +0000 (UTC)
+	id C8114607E4; Fri,  8 Jun 2018 17:25:36 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fYvxtmT+"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 4900F60452;
-	Thu,  7 Jun 2018 03:25:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4900F60452
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 06D61605A2;
+	Fri,  8 Jun 2018 17:25:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 06D61605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932806AbeFGDZI (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 23:25:08 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:33793 "EHLO inva021.nxp.com"
+        id S932086AbeFHRZe (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 13:25:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53288 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932522AbeFGDYw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 23:24:52 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id EF49C2000AA;
-        Thu,  7 Jun 2018 05:24:50 +0200 (CEST)
-Received: from smtp.na-rdc02.nxp.com (inv1260.us-phx01.nxp.com [134.27.49.11])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8D2C22000E4;
-        Thu,  7 Jun 2018 05:24:50 +0200 (CEST)
-Received: from az84smr01.freescale.net (az84smr01.freescale.net [10.64.34.197])
-        by inv1260.na-rdc02.nxp.com (Postfix) with ESMTP id 469E940A70;
-        Wed,  6 Jun 2018 20:24:50 -0700 (MST)
-Received: from titan.ap.freescale.net ([10.192.208.233])
-        by az84smr01.freescale.net (8.14.3/8.14.0) with ESMTP id w573OSwT023286;
-        Wed, 6 Jun 2018 20:24:47 -0700
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: netdev@vger.kernel.org, madalin.bucur@nxp.com,
-        Richard Cochran <richardcochran@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>
-Cc: devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Yangbo Lu <yangbo.lu@nxp.com>
-Subject: [v2, 06/10] fsl/fman: add set_tstamp interface
-Date: Thu,  7 Jun 2018 11:22:52 +0800
-Message-Id: <20180607032256.39802-7-yangbo.lu@nxp.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180607032256.39802-1-yangbo.lu@nxp.com>
-References: <20180607032256.39802-1-yangbo.lu@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1752917AbeFHRZb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 13:25:31 -0400
+Received: from mail-it0-f53.google.com (mail-it0-f53.google.com [209.85.214.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8130D2089E;
+        Fri,  8 Jun 2018 17:25:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528478730;
+        bh=KqjjA1EMwrTCGSzWDZqEfzP48WeXXGy8YVhya+TQ5N0=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=fYvxtmT+AANY66XJcfzTNNC1Y1b+2Wvt9Y6qiRipSiieVn2A9vm12OiHyQ/Ur7SxM
+         E10nhTvBevEWlqoPS5n0KR8NeDgimdELG0EpeYzzp3sU+RWPSGJaxFMWX1BQ2NY+Vi
+         Q/sqisONI5L9AUNasDTeZJjhRwroc68zMLRK+o2s=
+Received: by mail-it0-f53.google.com with SMTP id k17-v6so5593781ita.0;
+        Fri, 08 Jun 2018 10:25:30 -0700 (PDT)
+X-Gm-Message-State: APt69E3zIdYk6OskrhUYqVCz22Y6FKA9VeGEeDtjLqiSD+95RzThlcUO
+        lyTVM5n0wKHTSV2tz+lyJpI4eSiPK1q4lGz10w==
+X-Google-Smtp-Source: ADUXVKIannmSiLBPuI+RpVdQXNmonFIZlvV7lvLlIbEBDxfxk0SFnHnvyBHnUG4YZSi9QwqKK1NMUyB6E/qLg9kAF6U=
+X-Received: by 2002:a24:f04e:: with SMTP id p14-v6mr2571650iti.106.1528478729854;
+ Fri, 08 Jun 2018 10:25:29 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a4f:5505:0:0:0:0:0 with HTTP; Fri, 8 Jun 2018 10:25:09 -0700 (PDT)
+In-Reply-To: <20180608162009.22762-1-attitokes@gmail.com>
+References: <280FCB2C-6DF1-4790-A89F-AF5BE3513AE5@holtmann.org> <20180608162009.22762-1-attitokes@gmail.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Fri, 8 Jun 2018 11:25:09 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKGeCEBBLNQNdymQovknRM7zt4+nNJy0YSkxRicOxkCSg@mail.gmail.com>
+Message-ID: <CAL_JsqKGeCEBBLNQNdymQovknRM7zt4+nNJy0YSkxRicOxkCSg@mail.gmail.com>
+Subject: Re: [PATCH] Bluetooth: hci_bcm: Configure SCO routing automatically
+To: attitokes@gmail.com
+Cc: "David S. Miller" <davem@davemloft.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Artiom Vaskov <velemas@gmail.com>,
+        netdev <netdev@vger.kernel.org>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch is to add set_tstamp interface for memac,
-dtsec, and 10GEC controllers to configure HW timestamping.
+On Fri, Jun 8, 2018 at 10:20 AM,  <attitokes@gmail.com> wrote:
+> From: Attila T=C5=91k=C3=A9s <attitokes@gmail.com>
+>
+> Added support to automatically configure the SCO packet routing at the de=
+vice setup. The SCO packets are used with the HSP / HFP profiles, but in so=
+me devices (ex. CYW43438) they are routed to a PCM output by default. This =
+change allows sending the vendor specific HCI command to configure the SCO =
+routing. The parameters of the command are loaded from the device tree.
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
----
-Changes for v2:
-	- None.
----
- drivers/net/ethernet/freescale/fman/fman_dtsec.c |   27 ++++++++++++++++++++++
- drivers/net/ethernet/freescale/fman/fman_dtsec.h |    1 +
- drivers/net/ethernet/freescale/fman/fman_memac.c |    5 ++++
- drivers/net/ethernet/freescale/fman/fman_memac.h |    1 +
- drivers/net/ethernet/freescale/fman/fman_tgec.c  |   21 +++++++++++++++++
- drivers/net/ethernet/freescale/fman/fman_tgec.h  |    1 +
- drivers/net/ethernet/freescale/fman/mac.c        |    3 ++
- drivers/net/ethernet/freescale/fman/mac.h        |    1 +
- 8 files changed, 60 insertions(+), 0 deletions(-)
+Please wrap your commit msg.
 
-diff --git a/drivers/net/ethernet/freescale/fman/fman_dtsec.c b/drivers/net/ethernet/freescale/fman/fman_dtsec.c
-index 57b1e2b..1ca543a 100644
---- a/drivers/net/ethernet/freescale/fman/fman_dtsec.c
-+++ b/drivers/net/ethernet/freescale/fman/fman_dtsec.c
-@@ -123,11 +123,13 @@
- #define DTSEC_ECNTRL_R100M		0x00000008
- #define DTSEC_ECNTRL_QSGMIIM		0x00000001
- 
-+#define TCTRL_TTSE			0x00000040
- #define TCTRL_GTS			0x00000020
- 
- #define RCTRL_PAL_MASK			0x001f0000
- #define RCTRL_PAL_SHIFT			16
- #define RCTRL_GHTX			0x00000400
-+#define RCTRL_RTSE			0x00000040
- #define RCTRL_GRS			0x00000020
- #define RCTRL_MPROM			0x00000008
- #define RCTRL_RSF			0x00000004
-@@ -1136,6 +1138,31 @@ int dtsec_set_allmulti(struct fman_mac *dtsec, bool enable)
- 	return 0;
- }
- 
-+int dtsec_set_tstamp(struct fman_mac *dtsec, bool enable)
-+{
-+	struct dtsec_regs __iomem *regs = dtsec->regs;
-+	u32 rctrl, tctrl;
-+
-+	if (!is_init_done(dtsec->dtsec_drv_param))
-+		return -EINVAL;
-+
-+	rctrl = ioread32be(&regs->rctrl);
-+	tctrl = ioread32be(&regs->tctrl);
-+
-+	if (enable) {
-+		rctrl |= RCTRL_RTSE;
-+		tctrl |= TCTRL_TTSE;
-+	} else {
-+		rctrl &= ~RCTRL_RTSE;
-+		tctrl &= ~TCTRL_TTSE;
-+	}
-+
-+	iowrite32be(rctrl, &regs->rctrl);
-+	iowrite32be(tctrl, &regs->tctrl);
-+
-+	return 0;
-+}
-+
- int dtsec_del_hash_mac_address(struct fman_mac *dtsec, enet_addr_t *eth_addr)
- {
- 	struct dtsec_regs __iomem *regs = dtsec->regs;
-diff --git a/drivers/net/ethernet/freescale/fman/fman_dtsec.h b/drivers/net/ethernet/freescale/fman/fman_dtsec.h
-index 1a689ad..5149d96 100644
---- a/drivers/net/ethernet/freescale/fman/fman_dtsec.h
-+++ b/drivers/net/ethernet/freescale/fman/fman_dtsec.h
-@@ -56,5 +56,6 @@ int dtsec_set_exception(struct fman_mac *dtsec,
- int dtsec_del_hash_mac_address(struct fman_mac *dtsec, enet_addr_t *eth_addr);
- int dtsec_get_version(struct fman_mac *dtsec, u32 *mac_version);
- int dtsec_set_allmulti(struct fman_mac *dtsec, bool enable);
-+int dtsec_set_tstamp(struct fman_mac *dtsec, bool enable);
- 
- #endif /* __DTSEC_H */
-diff --git a/drivers/net/ethernet/freescale/fman/fman_memac.c b/drivers/net/ethernet/freescale/fman/fman_memac.c
-index 446a97b..bc6eb30 100644
---- a/drivers/net/ethernet/freescale/fman/fman_memac.c
-+++ b/drivers/net/ethernet/freescale/fman/fman_memac.c
-@@ -964,6 +964,11 @@ int memac_set_allmulti(struct fman_mac *memac, bool enable)
- 	return 0;
- }
- 
-+int memac_set_tstamp(struct fman_mac *memac, bool enable)
-+{
-+	return 0; /* Always enabled. */
-+}
-+
- int memac_del_hash_mac_address(struct fman_mac *memac, enet_addr_t *eth_addr)
- {
- 	struct memac_regs __iomem *regs = memac->regs;
-diff --git a/drivers/net/ethernet/freescale/fman/fman_memac.h b/drivers/net/ethernet/freescale/fman/fman_memac.h
-index b5a5033..b2c671e 100644
---- a/drivers/net/ethernet/freescale/fman/fman_memac.h
-+++ b/drivers/net/ethernet/freescale/fman/fman_memac.h
-@@ -58,5 +58,6 @@ int memac_set_exception(struct fman_mac *memac,
- int memac_add_hash_mac_address(struct fman_mac *memac, enet_addr_t *eth_addr);
- int memac_del_hash_mac_address(struct fman_mac *memac, enet_addr_t *eth_addr);
- int memac_set_allmulti(struct fman_mac *memac, bool enable);
-+int memac_set_tstamp(struct fman_mac *memac, bool enable);
- 
- #endif /* __MEMAC_H */
-diff --git a/drivers/net/ethernet/freescale/fman/fman_tgec.c b/drivers/net/ethernet/freescale/fman/fman_tgec.c
-index 284735d..4070593 100644
---- a/drivers/net/ethernet/freescale/fman/fman_tgec.c
-+++ b/drivers/net/ethernet/freescale/fman/fman_tgec.c
-@@ -44,6 +44,7 @@
- #define TGEC_TX_IPG_LENGTH_MASK	0x000003ff
- 
- /* Command and Configuration Register (COMMAND_CONFIG) */
-+#define CMD_CFG_EN_TIMESTAMP		0x00100000
- #define CMD_CFG_NO_LEN_CHK		0x00020000
- #define CMD_CFG_PAUSE_IGNORE		0x00000100
- #define CMF_CFG_CRC_FWD			0x00000040
-@@ -588,6 +589,26 @@ int tgec_set_allmulti(struct fman_mac *tgec, bool enable)
- 	return 0;
- }
- 
-+int tgec_set_tstamp(struct fman_mac *tgec, bool enable)
-+{
-+	struct tgec_regs __iomem *regs = tgec->regs;
-+	u32 tmp;
-+
-+	if (!is_init_done(tgec->cfg))
-+		return -EINVAL;
-+
-+	tmp = ioread32be(&regs->command_config);
-+
-+	if (enable)
-+		tmp |= CMD_CFG_EN_TIMESTAMP;
-+	else
-+		tmp &= ~CMD_CFG_EN_TIMESTAMP;
-+
-+	iowrite32be(tmp, &regs->command_config);
-+
-+	return 0;
-+}
-+
- int tgec_del_hash_mac_address(struct fman_mac *tgec, enet_addr_t *eth_addr)
- {
- 	struct tgec_regs __iomem *regs = tgec->regs;
-diff --git a/drivers/net/ethernet/freescale/fman/fman_tgec.h b/drivers/net/ethernet/freescale/fman/fman_tgec.h
-index cbbd3b4..3bfd106 100644
---- a/drivers/net/ethernet/freescale/fman/fman_tgec.h
-+++ b/drivers/net/ethernet/freescale/fman/fman_tgec.h
-@@ -52,5 +52,6 @@ int tgec_set_exception(struct fman_mac *tgec,
- int tgec_del_hash_mac_address(struct fman_mac *tgec, enet_addr_t *eth_addr);
- int tgec_get_version(struct fman_mac *tgec, u32 *mac_version);
- int tgec_set_allmulti(struct fman_mac *tgec, bool enable);
-+int tgec_set_tstamp(struct fman_mac *tgec, bool enable);
- 
- #endif /* __TGEC_H */
-diff --git a/drivers/net/ethernet/freescale/fman/mac.c b/drivers/net/ethernet/freescale/fman/mac.c
-index 7b5b95f..a847b9c 100644
---- a/drivers/net/ethernet/freescale/fman/mac.c
-+++ b/drivers/net/ethernet/freescale/fman/mac.c
-@@ -471,6 +471,7 @@ static void setup_dtsec(struct mac_device *mac_dev)
- 	mac_dev->set_rx_pause		= dtsec_accept_rx_pause_frames;
- 	mac_dev->set_exception		= dtsec_set_exception;
- 	mac_dev->set_allmulti		= dtsec_set_allmulti;
-+	mac_dev->set_tstamp		= dtsec_set_tstamp;
- 	mac_dev->set_multi		= set_multi;
- 	mac_dev->start			= start;
- 	mac_dev->stop			= stop;
-@@ -490,6 +491,7 @@ static void setup_tgec(struct mac_device *mac_dev)
- 	mac_dev->set_rx_pause		= tgec_accept_rx_pause_frames;
- 	mac_dev->set_exception		= tgec_set_exception;
- 	mac_dev->set_allmulti		= tgec_set_allmulti;
-+	mac_dev->set_tstamp		= tgec_set_tstamp;
- 	mac_dev->set_multi		= set_multi;
- 	mac_dev->start			= start;
- 	mac_dev->stop			= stop;
-@@ -509,6 +511,7 @@ static void setup_memac(struct mac_device *mac_dev)
- 	mac_dev->set_rx_pause		= memac_accept_rx_pause_frames;
- 	mac_dev->set_exception		= memac_set_exception;
- 	mac_dev->set_allmulti		= memac_set_allmulti;
-+	mac_dev->set_tstamp		= memac_set_tstamp;
- 	mac_dev->set_multi		= set_multi;
- 	mac_dev->start			= start;
- 	mac_dev->stop			= stop;
-diff --git a/drivers/net/ethernet/freescale/fman/mac.h b/drivers/net/ethernet/freescale/fman/mac.h
-index b520cec..824a81a 100644
---- a/drivers/net/ethernet/freescale/fman/mac.h
-+++ b/drivers/net/ethernet/freescale/fman/mac.h
-@@ -68,6 +68,7 @@ struct mac_device {
- 	int (*set_promisc)(struct fman_mac *mac_dev, bool enable);
- 	int (*change_addr)(struct fman_mac *mac_dev, enet_addr_t *enet_addr);
- 	int (*set_allmulti)(struct fman_mac *mac_dev, bool enable);
-+	int (*set_tstamp)(struct fman_mac *mac_dev, bool enable);
- 	int (*set_multi)(struct net_device *net_dev,
- 			 struct mac_device *mac_dev);
- 	int (*set_rx_pause)(struct fman_mac *mac_dev, bool en);
--- 
-1.7.1
+>
+> Signed-off-by: Attila T=C5=91k=C3=A9s <attitokes@gmail.com>
+> ---
+>  .../bindings/net/broadcom-bluetooth.txt       |  7 ++
+
+Please split bindings to separate patch.
+
+>  drivers/bluetooth/hci_bcm.c                   | 72 +++++++++++++++++++
+>  2 files changed, 79 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt=
+ b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
+> index 4194ff7e..aea3a094 100644
+> --- a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
+> +++ b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
+> @@ -21,6 +21,12 @@ Optional properties:
+>   - clocks: clock specifier if external clock provided to the controller
+>   - clock-names: should be "extclk"
+>
+> + SCO routing parameters:
+> + - sco-routing: 0-3 (PCM, Transport, Codec, I2S)
+> + - pcm-interface-rate: 0-4 (128 Kbps - 2048 Kbps)
+> + - pcm-frame-type: 0 (short), 1 (long)
+> + - pcm-sync-mode: 0 (slave), 1 (master)
+> + - pcm-clock-mode: 0 (slave), 1 (master)
+
+Are these Broadcom specific? Properties need either vendor prefix or
+to be documented in a common location. I think these look like the
+latter.
+
+However, this also looks incomplete to me. For example, which SoC
+I2S/PCM port is BT audio connected to and how does it fit into the
+existing audio related bindings? There's been work on HDMI audio
+bindings which would be similar (except for the SCO over UART at
+least).
+
+
+>
+>  Example:
+>
+> @@ -31,5 +37,6 @@ Example:
+>         bluetooth {
+>                 compatible =3D "brcm,bcm43438-bt";
+>                 max-speed =3D <921600>;
+> +               sco-routing =3D <1>; /* 1 =3D transport (UART) */
+>         };
+>  };
+> diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
+> index ddbd8c6a..0e729534 100644
+> --- a/drivers/bluetooth/hci_bcm.c
+> +++ b/drivers/bluetooth/hci_bcm.c
+> @@ -83,6 +83,16 @@
+>   * @hu: pointer to HCI UART controller struct,
+>   *     used to disable flow control during runtime suspend and system sl=
+eep
+>   * @is_suspended: whether flow control is currently disabled
+> + *
+> + *  SCO routing parameters:
+> + *   used as the parameters for the bcm_set_pcm_int_params command
+> + *     @sco_routing:
+> + *      >=3D 255 (skip SCO routing configuration)
+> + *      0-3 (PCM, Transport, Codec, I2S)
+> + *     @pcm_interface_rate: 0-4 (128 Kbps - 2048 Kbps)
+> + *     @pcm_frame_type: 0 (short), 1 (long)
+> + *     @pcm_sync_mode: 0 (slave), 1 (master)
+> + *     @pcm_clock_mode: 0 (slave), 1 (master)
+>   */
+>  struct bcm_device {
+>         /* Must be the first member, hci_serdev.c expects this. */
+> @@ -114,6 +124,13 @@ struct bcm_device {
+>         struct hci_uart         *hu;
+>         bool                    is_suspended;
+>  #endif
+> +
+> +       /* SCO routing parameters */
+> +       u8                      sco_routing;
+> +       u8                      pcm_interface_rate;
+> +       u8                      pcm_frame_type;
+> +       u8                      pcm_sync_mode;
+> +       u8                      pcm_clock_mode;
+>  };
+>
+>  /* generic bcm uart resources */
+> @@ -189,6 +206,40 @@ static int bcm_set_baudrate(struct hci_uart *hu, uns=
+igned int speed)
+>         return 0;
+>  }
+>
+> +static int bcm_configure_sco_routing(struct hci_uart *hu, struct bcm_dev=
+ice *bcm_dev)
+> +{
+> +       struct hci_dev *hdev =3D hu->hdev;
+> +       struct sk_buff *skb;
+> +       struct bcm_set_pcm_int_params params;
+> +
+> +       if (bcm_dev->sco_routing >=3D 0xff) {
+> +               /* SCO routing configuration should be skipped */
+> +               return 0;
+> +       }
+> +
+> +       bt_dev_dbg(hdev, "BCM: Configuring SCO routing (%d %d %d %d %d)",
+> +                       bcm_dev->sco_routing, bcm_dev->pcm_interface_rate=
+, bcm_dev->pcm_frame_type,
+> +                       bcm_dev->pcm_sync_mode, bcm_dev->pcm_clock_mode);
+> +
+> +       params.routing =3D bcm_dev->sco_routing;
+> +       params.rate =3D bcm_dev->pcm_interface_rate;
+> +       params.frame_sync =3D bcm_dev->pcm_frame_type;
+> +       params.sync_mode =3D bcm_dev->pcm_sync_mode;
+> +       params.clock_mode =3D bcm_dev->pcm_clock_mode;
+> +
+> +       /* Send the SCO routing configuration command */
+> +       skb =3D __hci_cmd_sync(hdev, 0xfc1c, sizeof(params), &params, HCI=
+_CMD_TIMEOUT);
+> +       if (IS_ERR(skb)) {
+> +               int err =3D PTR_ERR(skb);
+> +               bt_dev_err(hdev, "BCM: failed to configure SCO routing (%=
+d)", err);
+> +               return err;
+> +       }
+> +
+> +       kfree_skb(skb);
+> +
+> +       return 0;
+> +}
+> +
+>  /* bcm_device_exists should be protected by bcm_device_lock */
+>  static bool bcm_device_exists(struct bcm_device *device)
+>  {
+> @@ -534,6 +585,9 @@ static int bcm_setup(struct hci_uart *hu)
+>                         host_set_baudrate(hu, speed);
+>         }
+>
+> +       /* Configure SCO routing if needed */
+> +       bcm_configure_sco_routing(hu, bcm->dev);
+> +
+>  finalize:
+>         release_firmware(fw);
+>
+> @@ -1004,9 +1058,21 @@ static int bcm_acpi_probe(struct bcm_device *dev)
+>  }
+>  #endif /* CONFIG_ACPI */
+>
+> +static void read_u8_device_property(struct device *device, const char *p=
+roperty, u8 *destination) {
+> +       u32 temp;
+> +       if (device_property_read_u32(device, property, &temp) =3D=3D 0) {
+> +               *destination =3D temp & 0xff;
+> +       }
+> +}
+> +
+>  static int bcm_of_probe(struct bcm_device *bdev)
+>  {
+>         device_property_read_u32(bdev->dev, "max-speed", &bdev->oper_spee=
+d);
+> +       read_u8_device_property(bdev->dev, "sco-routing", &bdev->sco_rout=
+ing);
+> +       read_u8_device_property(bdev->dev, "pcm-interface-rate", &bdev->p=
+cm_interface_rate);
+> +       read_u8_device_property(bdev->dev, "pcm-frame-type", &bdev->pcm_f=
+rame_type);
+> +       read_u8_device_property(bdev->dev, "pcm-sync-mode", &bdev->pcm_sy=
+nc_mode);
+> +       read_u8_device_property(bdev->dev, "pcm-clock-mode", &bdev->pcm_c=
+lock_mode);
+
+These are actually broken because the DT properties are 32-bit.
+
+Rob
