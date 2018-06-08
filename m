@@ -1,115 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id GwApItnzGFt6MwAAmS7hNA
-	; Thu, 07 Jun 2018 08:59:05 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id g70PACzQGlsaEgAAmS7hNA
+	; Fri, 08 Jun 2018 18:51:24 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 7C1456089E; Thu,  7 Jun 2018 08:59:05 +0000 (UTC)
+	id E3C09607E4; Fri,  8 Jun 2018 18:51:23 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id E3FC3607DC;
-	Thu,  7 Jun 2018 08:59:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E3FC3607DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=benyossef.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 60DF36074D;
+	Fri,  8 Jun 2018 18:51:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 60DF36074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932730AbeFGI7C (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 04:59:02 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48554 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753220AbeFGI7A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 04:59:00 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0D8A515AB;
-        Thu,  7 Jun 2018 01:59:00 -0700 (PDT)
-Received: from sugar.kfn.arm.com (unknown [10.45.48.146])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5F4C93F59D;
-        Thu,  7 Jun 2018 01:58:58 -0700 (PDT)
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: Ofir Drang <ofir.drang@arm.com>, stable@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] crypto: ccree: fix iv copying for small buffers
-Date: Thu,  7 Jun 2018 09:58:47 +0100
-Message-Id: <1528361927-4172-1-git-send-email-gilad@benyossef.com>
-X-Mailer: git-send-email 2.7.4
+        id S1753128AbeFHSuz (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 14:50:55 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:53834 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752864AbeFHSuW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 14:50:22 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1fRMSp-0006NN-Ep; Fri, 08 Jun 2018 18:50:19 +0000
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Keith Packard <keithp@keithp.com>
+Subject: [PATCH 01/13] drm_mode_create_lease_ioctl(): switch to filp_clone_open()
+Date: Fri,  8 Jun 2018 19:50:07 +0100
+Message-Id: <20180608185019.24472-1-viro@ZenIV.linux.org.uk>
+X-Mailer: git-send-email 2.9.5
+In-Reply-To: <20180608184842.GD30522@ZenIV.linux.org.uk>
+References: <20180608184842.GD30522@ZenIV.linux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We are copying our last cipher block into the request for use as IV as
-required by the Crypto API but we failed to handle correctly the case the
-buffer we are working on is smaller than a block. Fix it by calculating
-how much we need to copy based on buffer size.
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-CC: stable@vger.kernel.org
-Fixes: 63ee04c8b491 ("crypto: ccree - add skcipher support")
-Reported by: Hadar Gat <hadar.gat@arm.com>
-Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+It had been open-coding that and, AFAICS, getting the error case wrong.
+
+Cc: Keith Packard <keithp@keithp.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- drivers/crypto/ccree/cc_cipher.c | 30 ++++++++++++++++++++++++------
- 1 file changed, 24 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/drm_lease.c | 16 +---------------
+ fs/internal.h               |  1 -
+ include/linux/fs.h          |  1 +
+ 3 files changed, 2 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/crypto/ccree/cc_cipher.c b/drivers/crypto/ccree/cc_cipher.c
-index d2810c1..a07547f 100644
---- a/drivers/crypto/ccree/cc_cipher.c
-+++ b/drivers/crypto/ccree/cc_cipher.c
-@@ -616,9 +616,18 @@ static void cc_cipher_complete(struct device *dev, void *cc_req, int err)
- 		memcpy(req->iv, req_ctx->backup_info, ivsize);
- 		kzfree(req_ctx->backup_info);
- 	} else if (!err) {
--		scatterwalk_map_and_copy(req->iv, req->dst,
--					 (req->cryptlen - ivsize),
--					 ivsize, 0);
-+		unsigned int len;
-+
-+		if (req->cryptlen > ivsize) {
-+			len = req->cryptlen - ivsize;
-+		} else {
-+			memset(req->iv, 0, ivsize);
-+			len = 0;
-+			ivsize = req->cryptlen;
-+
-+		}
-+
-+		scatterwalk_map_and_copy(req->iv, req->dst, len, ivsize, 0);
+diff --git a/drivers/gpu/drm/drm_lease.c b/drivers/gpu/drm/drm_lease.c
+index d345563fdff3..ce281d651ae8 100644
+--- a/drivers/gpu/drm/drm_lease.c
++++ b/drivers/gpu/drm/drm_lease.c
+@@ -553,24 +553,13 @@ int drm_mode_create_lease_ioctl(struct drm_device *dev,
+ 
+ 	/* Clone the lessor file to create a new file for us */
+ 	DRM_DEBUG_LEASE("Allocating lease file\n");
+-	path_get(&lessor_file->f_path);
+-	lessee_file = alloc_file(&lessor_file->f_path,
+-				 lessor_file->f_mode,
+-				 fops_get(lessor_file->f_inode->i_fop));
+-
++	lessee_file = filp_clone_open(lessor_file);
+ 	if (IS_ERR(lessee_file)) {
+ 		ret = PTR_ERR(lessee_file);
+ 		goto out_lessee;
  	}
  
- 	skcipher_request_complete(req, err);
-@@ -755,17 +764,26 @@ static int cc_cipher_decrypt(struct skcipher_request *req)
- 	struct cipher_req_ctx *req_ctx = skcipher_request_ctx(req);
- 	unsigned int ivsize = crypto_skcipher_ivsize(sk_tfm);
- 	gfp_t flags = cc_gfp_flags(&req->base);
-+	unsigned int len;
+-	/* Initialize the new file for DRM */
+-	DRM_DEBUG_LEASE("Initializing the file with %p\n", lessee_file->f_op->open);
+-	ret = lessee_file->f_op->open(lessee_file->f_inode, lessee_file);
+-	if (ret)
+-		goto out_lessee_file;
+-
+ 	lessee_priv = lessee_file->private_data;
+-
+ 	/* Change the file to a master one */
+ 	drm_master_put(&lessee_priv->master);
+ 	lessee_priv->master = lessee;
+@@ -588,9 +577,6 @@ int drm_mode_create_lease_ioctl(struct drm_device *dev,
+ 	DRM_DEBUG_LEASE("drm_mode_create_lease_ioctl succeeded\n");
+ 	return 0;
  
- 	/*
- 	 * Allocate and save the last IV sized bytes of the source, which will
- 	 * be lost in case of in-place decryption and might be needed for CTS.
- 	 */
--	req_ctx->backup_info = kmalloc(ivsize, flags);
-+	req_ctx->backup_info = kzalloc(ivsize, flags);
- 	if (!req_ctx->backup_info)
- 		return -ENOMEM;
+-out_lessee_file:
+-	fput(lessee_file);
+-
+ out_lessee:
+ 	drm_master_put(&lessee);
  
--	scatterwalk_map_and_copy(req_ctx->backup_info, req->src,
--				 (req->cryptlen - ivsize), ivsize, 0);
-+
-+	if (req->cryptlen > ivsize) {
-+		len = req->cryptlen - ivsize;
-+	} else {
-+		len = 0;
-+		ivsize = req->cryptlen;
-+	}
-+
-+	scatterwalk_map_and_copy(req_ctx->backup_info, req->src, len, ivsize,
-+				 0);
- 	req_ctx->is_giv = false;
+diff --git a/fs/internal.h b/fs/internal.h
+index 980d005b21b4..5645b4ebf494 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -127,7 +127,6 @@ int do_fchownat(int dfd, const char __user *filename, uid_t user, gid_t group,
  
- 	return cc_cipher_process(req, DRV_CRYPTO_DIRECTION_DECRYPT);
+ extern int open_check_o_direct(struct file *f);
+ extern int vfs_open(const struct path *, struct file *, const struct cred *);
+-extern struct file *filp_clone_open(struct file *);
+ 
+ /*
+  * inode.c
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 760d8da1b6c7..81fe0292a7ac 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2401,6 +2401,7 @@ extern struct file *filp_open(const char *, int, umode_t);
+ extern struct file *file_open_root(struct dentry *, struct vfsmount *,
+ 				   const char *, int, umode_t);
+ extern struct file * dentry_open(const struct path *, int, const struct cred *);
++extern struct file *filp_clone_open(struct file *);
+ extern int filp_close(struct file *, fl_owner_t id);
+ 
+ extern struct filename *getname_flags(const char __user *, int, int *);
 -- 
-2.7.4
+2.11.0
