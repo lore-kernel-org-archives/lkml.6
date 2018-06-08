@@ -1,111 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id V2rQCNbwGFt9EwAAmS7hNA
-	; Thu, 07 Jun 2018 08:49:29 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 0SM/GmaZGlvxMQAAmS7hNA
+	; Fri, 08 Jun 2018 14:57:42 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id ADDD0608B8; Thu,  7 Jun 2018 08:49:29 +0000 (UTC)
+	id 4E2BF607E4; Fri,  8 Jun 2018 14:57:42 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pqyr5n1W"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hjIxmd5o"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 3D758607DC;
-	Thu,  7 Jun 2018 08:49:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3D758607DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id AA4BE601D2;
+	Fri,  8 Jun 2018 14:57:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AA4BE601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932696AbeFGIt1 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 04:49:27 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:37937 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932550AbeFGItY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 04:49:24 -0400
-Received: by mail-pg0-f66.google.com with SMTP id c9-v6so4425980pgf.5
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 01:49:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=CghJsvp2s6j1fXfMuhENnUTS1OrRgPOuN6UC+h4COxk=;
-        b=Pqyr5n1WwlG3cGpAXomQNBFVuDl662SWFWYwnKM7VVRh3qtJB+DijqSyPs86MGmP6n
-         YJdXelkWQ80V3i+xRPhK4fCdTsI0TDyDD0QxqEn5wtPR2rrfaIYB5fu8VPvuTffSYfWX
-         QxYs/yS8eoFvNm4/AsKyM2dC6ZKfmoXzvWp2Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CghJsvp2s6j1fXfMuhENnUTS1OrRgPOuN6UC+h4COxk=;
-        b=cC/ntmoPOWEdEdSWdWqro6yv4dnIM4B0a/JBpmrCx0qERLCW6kfK077NBXrmqBxBjG
-         XfzulBLmEAkIoPDxmJKJPFp3Fu2GCER7fyYKwX3DbLiXmha+NoVA30yUdVOr1WoajWDL
-         d87B09TuuzUe8EY562UHEGh8c8ZsaQZnnOpo0An65ItclYCTcD1GF6ndqwsO+EZOAlFm
-         zldL9MF+4cbYKgPIfZSxWc2SDHPjN9j8siafXIxSycqyuRQxTyl44qsEUsw+9iQsFuOo
-         f1Jklbifh2IuDqs1yWJZby8j8a3XSH6kAJZjt8YO2Qkx5LHIZGYPkspyH9C/8+1PNFtr
-         xyrg==
-X-Gm-Message-State: APt69E33HXcimdSbgUZIt1I44eKpXH1SqDxvn7Zms7HJi+PMR/pzlFtO
-        HWvMQECMexrfYB2ZvK4wPGAQxw==
-X-Google-Smtp-Source: ADUXVKK14QJXEJ7NMEy8r4Dqs5da883Z89sIVJWrINs5vIxbV4knEfxYdgQNsUvKs6uV3ILk2v0Rtw==
-X-Received: by 2002:aa7:8345:: with SMTP id z5-v6mr949469pfm.251.1528361364438;
-        Thu, 07 Jun 2018 01:49:24 -0700 (PDT)
-Received: from localhost ([122.172.167.207])
-        by smtp.gmail.com with ESMTPSA id q9-v6sm19544132pgv.84.2018.06.07.01.49.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Jun 2018 01:49:23 -0700 (PDT)
-Date: Thu, 7 Jun 2018 14:19:21 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Javi Merino <javi.merino@kernel.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Kevin Wangtao <kevin.wangtao@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rui Zhang <rui.zhang@intel.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        "open list:POWER MANAGEMENT CORE" <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH V5] powercap/drivers/idle_injection: Add an idle
- injection framework
-Message-ID: <20180607084921.toctrooftl6y7kkx@vireshk-i7>
-References: <1528190208-22915-1-git-send-email-daniel.lezcano@linaro.org>
- <20180606122357.GN12258@hirez.programming.kicks-ass.net>
- <22f5cf0b-049e-7938-55f6-4b4b154f8389@linaro.org>
- <20180606150203.GE12180@hirez.programming.kicks-ass.net>
- <ea347237-7cef-095a-5ddb-19c181d10c23@linaro.org>
- <20180607083229.GJ12198@hirez.programming.kicks-ass.net>
- <20180607084251.rv2tg3kgz4aohlpd@vireshk-i7>
- <9996fb40-c7aa-db61-5445-52c146f44d85@linaro.org>
+        id S1752931AbeFHO5j (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 10:57:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38858 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752774AbeFHO5i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 10:57:38 -0400
+Received: from mail-wm0-f54.google.com (mail-wm0-f54.google.com [74.125.82.54])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E2A920896
+        for <linux-kernel@vger.kernel.org>; Fri,  8 Jun 2018 14:57:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528469857;
+        bh=6PHHvd5BH7Cl5TWX+A64ZoLEP/xRgqMqY7eFx+Mu+WI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=hjIxmd5orAm56smf+hfm/uMx/eD1cyMpVTeYAdbiiJ0O+M77vuviy8BFaS+55g1VQ
+         YR93LMdhpNH1Jyfxu6x6r5VibvpYKPtrpcXkQt3yfT8476iqoPrF31t6e+Ub7rLzDH
+         t89ZRrDj0PGUu0ZauikpNSdlka8ZgW7uonPmRWjc=
+Received: by mail-wm0-f54.google.com with SMTP id j15-v6so4336433wme.0
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 07:57:37 -0700 (PDT)
+X-Gm-Message-State: APt69E0GB/PYu4Ez1VF02aAWyKBnog+xAqS2FjQc9JMG1r/q84G65T4T
+        JIdXeDwjp9QXotbXj5XLN9MLG3vsBLOQSYe0Ba/NxQ==
+X-Google-Smtp-Source: ADUXVKIPzNU/wmJvLtMBmlvkxh5GNbJrhIdrANeANmmJyCCwGJFC8+GEX4mXYv451IYfkdylr9xfXm2WyugwG1Ugj/Y=
+X-Received: by 2002:a1c:4a9d:: with SMTP id n29-v6mr1685075wmi.46.1528469855649;
+ Fri, 08 Jun 2018 07:57:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9996fb40-c7aa-db61-5445-52c146f44d85@linaro.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+References: <20180607143807.3611-1-yu-cheng.yu@intel.com> <20180607143807.3611-7-yu-cheng.yu@intel.com>
+ <CALCETrU6axo158CiSCRRkC4GC5hib9hypC98t7LLjA3gDaacsw@mail.gmail.com>
+ <1528403417.5265.35.camel@2b52.sc.intel.com> <CALCETrXz3WWgZwUXJsDTWvmqKUArQFuMH1xJdSLVKFpTysNWxg@mail.gmail.com>
+ <CAMe9rOr49V8rqRa_KVsw61PWd+crkQvPDgPKtvowazjmsfgWWQ@mail.gmail.com>
+ <CALCETrV1GG5rq_kwxkS-o3x8Ldr72ThdYgkJKQ9cx9Q63SxgTQ@mail.gmail.com>
+ <CAMe9rOpeDrkwi-AG0vsiZy4NwkmavhB5Empv58FSHxtr3rpapw@mail.gmail.com>
+ <CALCETrWhMmqGWKx-yw55YKHMJwGyLZio5f8Pskh8X69zfQMy7A@mail.gmail.com> <CAMe9rOpLDzWk=xdZqN1QJVnP-c_dti5Fy=C_GqbeQpS_a=0ewA@mail.gmail.com>
+In-Reply-To: <CAMe9rOpLDzWk=xdZqN1QJVnP-c_dti5Fy=C_GqbeQpS_a=0ewA@mail.gmail.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Fri, 8 Jun 2018 07:57:22 -0700
+X-Gmail-Original-Message-ID: <CALCETrUyapFiiXrHH23NW8XbqEkfKdGGU2wMUZ2DU=A+GWGqvw@mail.gmail.com>
+Message-ID: <CALCETrUyapFiiXrHH23NW8XbqEkfKdGGU2wMUZ2DU=A+GWGqvw@mail.gmail.com>
+Subject: Re: [PATCH 06/10] x86/cet: Add arch_prctl functions for shadow stack
+To: "H. J. Lu" <hjl.tools@gmail.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Dmitry Safonov <dsafonov@virtuozzo.com>
+Cc: Andrew Lutomirski <luto@kernel.org>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        mike.kravetz@oracle.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07-06-18, 10:46, Daniel Lezcano wrote:
-> Yes, correct.
-> 
-> But if we don't care about who wins to store to value, is there a risk
-> of scramble variable if we just assign a value ?
+On Fri, Jun 8, 2018 at 5:24 AM H.J. Lu <hjl.tools@gmail.com> wrote:
+>
+> On Thu, Jun 7, 2018 at 9:38 PM, Andy Lutomirski <luto@kernel.org> wrote:
+> > On Thu, Jun 7, 2018 at 9:10 PM H.J. Lu <hjl.tools@gmail.com> wrote:
+> >>
+> >> On Thu, Jun 7, 2018 at 4:01 PM, Andy Lutomirski <luto@kernel.org> wrote:
+> >>
+> >
+> > By the time malicious code issue its own syscalls, you've already lost
+> > the battle.  I could probably be convinced that a lock-CET-on feature
+> > that applies *only* to the calling thread and is not inherited by
+> > clone() is a decent idea, but I'd want to see someone who understands
+> > the state of the art in exploit design justify it.  You're also going
+> > to need to figure out how to make CRIU work if you allow locking CET
+> > on.
+> >
+> > A priori, I think we should just not provide a lock mechanism.
+>
+> We need a door for CET.  But it is a very bad idea to leave it open
+> all the time.  I don't know much about CRIU,  If it is Checkpoint/Restore
+> In Userspace.  Can you free any application with AVX512 on AVX512
+> machine and restore it on non-AVX512 machine?
 
-Normally no, as the compiler wouldn't screw it up badly. But there is no rule
-which stops the compiler from doing this:
+Presumably not -- if the program uses AVX512 and AVX512 goes away,
+then the program won't be happy.
 
-idle_duration_ms = 5;
-idle_duration_ms = -5;
-idle_duration_ms = 0;
-idle_duration_ms = <real-value-we-want-to-write>;
+Anyway, having thought about this, here's a straw man proposal.  We
+add a lock flag like in these patches.  The lock flag is set by
+arch_prctl(), inherited on clone, and cleared on exec().  ptrace()
+gains a new API to clear the lock flag and can modify the CET
+configuration regardless of the lock flag.  (So ptrace() needs APIs to
+read and write SSP, to read and write the shadow stack itself, and to
+change the mode.)  By the time an attacker has gotten enough control
+of a victim process to get it to use ptrace(), I don't think that
+trying to protect CET serves any purpose.
 
-So we *must* use READ/WRITE_ONCE() to make sure garbage values aren't seen by
-readers.
+As an aside, where are the latest CET docs?  I've found the "CET
+technology preview 2.0", but it doesn't seem to be very clear or
+entirely complete.
 
--- 
-viresh
+On Fri, Jun 8, 2018 at 5:17 AM H.J. Lu <hjl.tools@gmail.com> wrote:
+>
+> On Thu, Jun 7, 2018 at 9:35 PM, Andy Lutomirski <luto@kernel.org> wrote:
+
+> > Is there any reason you can't use LD_CET=force to do it for
+> > dynamically linked binaries?
+>
+> We need to enable shadow stack from the start.  Otherwise function
+> return will fail when returning from callee with shadow stack to caller
+> without shadow stack.
+
+I don't see the problem.  A CET-supporting ld.so will be started with
+CET on regardless of what the final binary says.  If ld.so sees
+LD_CET=force, it can keep CET on regardless of the flags in the loaded
+binary.
+
+>
+> > I find it quite hard to believe that forcibly CET-ifying a legacy
+> > statically linked binary is a good idea.
+>
+> We'd like to provide protection as much as we can.
+>
+
+I agree that this is a nice sentiment, but I don't think that a simple
+"force CET on next exec()" flag is a good way to accomplish this.
+I've had the pleasure of using legacy binaries, and there are all
+kinds of gotchas.  First, a bunch of them aren't binaries at all --
+they're shell scripts.  There's big_expensive_program that starts with
+#!/bin/bash and eventually execs
+/opt/blahblahblah/big_expensive_program_bin, and that involves two
+execs.  (Heck, even Firefox is set up more or less like this.)  Some
+programs can re-exec themselves.  All of this is not to mention that
+it would be really annoying when your program crashes after you've
+been using it for hours because you finally triggered the code path
+that did longjmp() and CET kills it.
+
+And you don't really need kernel support for this anyway.  It should
+be relatively straightforward to write a loader that opens and loads a
+static binary.
+
+I think that this entire CET-on-exec concept should be dropped from
+this patch series.  If someone really wants it, make it a separate
+patch on top after everything has been merged, and we can poke holes
+in it them.
