@@ -1,101 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id zqm0NbR8HlsxUQAAmS7hNA
-	; Mon, 11 Jun 2018 14:16:39 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 8gTJFqZRGlv3DwAAmS7hNA
+	; Fri, 08 Jun 2018 09:52:27 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 06FF0607A4; Mon, 11 Jun 2018 14:16:39 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XkMgaY6A"
+	id DF432607E4; Fri,  8 Jun 2018 09:52:26 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 8F2C860351;
-	Mon, 11 Jun 2018 14:16:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8F2C860351
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 7679A60290;
+	Fri,  8 Jun 2018 09:52:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7679A60290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933557AbeFKOG7 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 10:06:59 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45042 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933486AbeFKOGr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:06:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=dGkzfC0RM7gc5d0orX2hU4DPQ3QLXn+i7TNcZAss9dw=; b=XkMgaY6AkOoFJHfIkcQxrYlMO
-        dlWV9Rg5erA1rsPqNft1xX8dPajTtdB+gjPNxrcuCqHlIYzXwFLIQGMdBuReV63+atIWOt6yBlShi
-        tgEPlcuW7gt3Yh2n6/QeJauiX1o5746sAc8My6YKcdHy7+m1rq0bNlg8+XLFpN+1nj1/Aj4zpuInK
-        2+EWJE5mb4nqNshK/sIAIAVorQzWsEM/c5CzNE/HIYo9FL90KABaL9ApCD7opp0YuRy8vTgiUL+v/
-        g8I3Be4GM3RfGfqbmuZT7JlbSh/yX4PDebgn7wHQMhRjJ/T0AB9FHFc3ZckzlTywspmfvxZXNNv0j
-        CcuJvsE+Q==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSNT4-0004dU-Py; Mon, 11 Jun 2018 14:06:46 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Lukas Czerner <lczerner@redhat.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v13 18/72] xarray: Add MAINTAINERS entry
-Date: Mon, 11 Jun 2018 07:05:45 -0700
-Message-Id: <20180611140639.17215-19-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
-References: <20180611140639.17215-1-willy@infradead.org>
+        id S1752804AbeFHJwY (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 05:52:24 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33810 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751614AbeFHJwX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 05:52:23 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id ABCE5401EF11;
+        Fri,  8 Jun 2018 09:52:22 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 253901116702;
+        Fri,  8 Jun 2018 09:52:21 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Fri,  8 Jun 2018 11:52:22 +0200 (CEST)
+Date: Fri, 8 Jun 2018 11:52:20 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@kernel.org, gkohli@codeaurora.org, tglx@linutronix.de,
+        mpe@ellerman.id.au, bigeasy@linutronix.de,
+        linux-kernel@vger.kernel.org, will.deacon@arm.com
+Subject: Re: [PATCH 4/4] kthread: Simplify kthread_park() completion
+Message-ID: <20180608095220.GA18941@redhat.com>
+References: <20180607123310.866085998@infradead.org>
+ <20180607124006.266038375@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180607124006.266038375@infradead.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 08 Jun 2018 09:52:22 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 08 Jun 2018 09:52:22 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'oleg@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+Peter,
 
-Add myself as XArray and IDR maintainer.
+I am travelling till the end of the next week, unlikely I will be able
+to reply to emails or even read them.
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
----
- MAINTAINERS | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+But I want very much to comment this change,
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 14fbc6e94774..afb6678188b1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15598,6 +15598,18 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/vdso
- S:	Maintained
- F:	arch/x86/entry/vdso/
- 
-+XARRAY
-+M:	Matthew Wilcox <mawilcox@microsoft.com>
-+M:	Matthew Wilcox <willy@infradead.org>
-+L:	linux-fsdevel@vger.kernel.org
-+S:	Supported
-+F:	Documentation/core-api/xarray.rst
-+F:	lib/idr.c
-+F:	lib/xarray.c
-+F:	include/linux/idr.h
-+F:	include/linux/xarray.h
-+F:	tools/testing/radix-tree
-+
- XC2028/3028 TUNER DRIVER
- M:	Mauro Carvalho Chehab <mchehab@kernel.org>
- L:	linux-media@vger.kernel.org
--- 
-2.17.1
+On 06/07, Peter Zijlstra wrote:
+>
+> Now that smpboot_update_cpumask_percpu_thread() is gone, we no longer
+> have anybody calling kthread_park() on already parked threads. So
+> revert commit:
+>
+>   b1f5b378e126 ("kthread: Allow kthread_park() on a parked kthread")
+
+Great, I obviously like this patch but the changelog should be fixed ;)
+
+smpboot_update_cpumask_percpu_thread() was actually fine. And we can
+(should) revert this commit in any case. Unless I am totally confused.
+
+So how this code
+
+	for_each_cpu_and(cpu, &tmp, cpu_online_mask)
+		smpboot_park_thread(plug_thread, cpu);
+
+in smpboot_update_cpumask_percpu_thread() can hit a KTHREAD_SHOULD_PARK
+thread? Lets look into kernel test robot's .config:
+
+	CONFIG_NR_CPUS=1
+
+Now look at NR_CPUS==1 version of for_each_cpu* helpers:
+
+	#define for_each_cpu(cpu, mask)			\
+		for ((cpu) = 0; (cpu) < 1; (cpu)++, (void)mask)
+	#define for_each_cpu_not(cpu, mask)		\
+		for ((cpu) = 0; (cpu) < 1; (cpu)++, (void)mask)
+	#define for_each_cpu_wrap(cpu, mask, start)	\
+		for ((cpu) = 0; (cpu) < 1; (cpu)++, (void)mask, (void)(start))
+	#define for_each_cpu_and(cpu, mask, and)	\
+		for ((cpu) = 0; (cpu) < 1; (cpu)++, (void)mask, (void)and)
+
+See? They all ignore the "mask" argument, and this is obviously wrong.
+
+So even if the "tmp" cpumask is empty the code above always does
+
+		smpboot_park_thread(plug_thread, 0);
+
+and hits the already parked kthread.
+
+Oleg.
