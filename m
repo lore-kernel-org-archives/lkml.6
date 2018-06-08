@@ -1,230 +1,175 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id n0YONFJYGVvrfwAAmS7hNA
-	; Thu, 07 Jun 2018 16:08:02 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 9POZHvLoGVvJEgAAmS7hNA
+	; Fri, 08 Jun 2018 02:29:57 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 46B26608B8; Thu,  7 Jun 2018 16:08:02 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dell.com header.i=@dell.com header.b="kc+Dev//"
+	id 97BA86089E; Fri,  8 Jun 2018 02:29:57 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 2139560590;
-	Thu,  7 Jun 2018 16:08:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2139560590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=dell.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 02679601B4;
+	Fri,  8 Jun 2018 02:29:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 02679601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934696AbeFGQH7 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 12:07:59 -0400
-Received: from esa7.dell-outbound.iphmx.com ([68.232.153.96]:27047 "EHLO
-        esa7.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933012AbeFGQHy (ORCPT
+        id S1752662AbeFHC3z (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 22:29:55 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59078 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752413AbeFHC3x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 12:07:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=dell.com; i=@dell.com; q=dns/txt; s=smtpout;
-  t=1528387515; x=1559923515;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=NslY2ywmp2Tg4TZjsic6Ru8sYJ96bUCwdiI8Mc6cUnk=;
-  b=kc+Dev//AsQtPIQ70HXyf0f9/kWv32tSJZPnWi+IlJPC+YVcWrA/VMi7
-   bwTWjaNGrCM/wzVHdF78L8MVgeF8OF7j0m3eHHRSTPzmGV6edjX1ZteTe
-   bgETVFrRUcjgBDL0b3nE2NM+LQQphB42ag5yxu3mlFa0yIuTHsgDeYArB
-   I=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2GpAAD5Vxlbh8qZ6ERdGQEBAQEBAQEBA?=
- =?us-ascii?q?QEBAQcBAQEBAYQXgQ0oCoNuiASMZ4F5gW2GKow7FIFkC4F3gnUCF4IuITQYAQI?=
- =?us-ascii?q?BAQEBAQECAQECEAEBAQoLCQgoL0IQAYFiIoJTAQEBBCMEDUUMBAIBCBEEAQEDA?=
- =?us-ascii?q?iMDAgICHyUBCAgCBAESCIMagWkDFalmgWkzhxANgSyBaIELhziCE4EPgl4ugk+?=
- =?us-ascii?q?BaFmCY4JVAodEhhOKeCwHAotngnqNLopOhl2BQYILcIMTgh0DDgmOF28BiCiHa?=
- =?us-ascii?q?IEZAQE?=
-X-IPAS-Result: =?us-ascii?q?A2GpAAD5Vxlbh8qZ6ERdGQEBAQEBAQEBAQEBAQcBAQEBAYQ?=
- =?us-ascii?q?XgQ0oCoNuiASMZ4F5gW2GKow7FIFkC4F3gnUCF4IuITQYAQIBAQEBAQECAQECE?=
- =?us-ascii?q?AEBAQoLCQgoL0IQAYFiIoJTAQEBBCMEDUUMBAIBCBEEAQEDAiMDAgICHyUBCAg?=
- =?us-ascii?q?CBAESCIMagWkDFalmgWkzhxANgSyBaIELhziCE4EPgl4ugk+BaFmCY4JVAodEh?=
- =?us-ascii?q?hOKeCwHAotngnqNLopOhl2BQYILcIMTgh0DDgmOF28BiCiHaIEZAQE?=
-Received: from esa2.dell-outbound2.iphmx.com ([68.232.153.202])
-  by esa7.dell-outbound.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 11:05:14 -0500
-From: <Mario.Limonciello@dell.com>
-To: <Douglas.Warzecha@dell.com>, <dvhart@infradead.org>,
-        <andy@infradead.org>, <Stuart.Hayes@dell.com>
-Cc: <Jared.Dominguez@dell.com>, <linux-kernel@vger.kernel.org>,
-        <platform-driver-x86@vger.kernel.org>, <stuart.w.hayes@gmail.com>
-Received: from ausc60pc101.us.dell.com ([143.166.85.206])
-  by esa2.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 22:03:12 +0600
-X-LoopCount0: from 10.166.132.152
-X-IronPort-AV: E=Sophos;i="5.49,487,1520917200";
-   d="scan'208";a="1259565179"
-X-DLP: DLP_GlobalPCIDSS
-Subject: RE: [PATCH resend v2] dcdbas: Add support for WSMT ACPI table
-Thread-Topic: [PATCH resend v2] dcdbas: Add support for WSMT ACPI table
-Thread-Index: AQHT/nimP1EmLCCn3E2XclfkbDCd/qRU9cCQ
-Date: Thu, 7 Jun 2018 16:07:50 +0000
-Message-ID: <2f071e184b0040198954421d92dcca45@ausx13mpc120.AMER.DELL.COM>
-References: <45b8bde6-aaa8-3f3f-0528-81e5e931751c@gmail.com>
- <bc6846e1-2b6d-dcc2-355c-2699aa1607a2@gmail.com>
-In-Reply-To: <bc6846e1-2b6d-dcc2-355c-2699aa1607a2@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.18.86]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Thu, 7 Jun 2018 22:29:53 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w582THRr045461
+        for <linux-kernel@vger.kernel.org>; Thu, 7 Jun 2018 22:29:52 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jfcmy8wy6-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 22:29:52 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Fri, 8 Jun 2018 03:29:50 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 8 Jun 2018 03:29:45 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w582TiE323855238
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 8 Jun 2018 02:29:44 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CAF3CA4051;
+        Fri,  8 Jun 2018 03:20:43 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0350EA4040;
+        Fri,  8 Jun 2018 03:20:39 +0100 (BST)
+Received: from [9.195.45.85] (unknown [9.195.45.85])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  8 Jun 2018 03:20:38 +0100 (BST)
+Subject: Re: [PATCH 0/7] Uprobes: Support SDT markers having reference count
+ (semaphore)
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: oleg@redhat.com, srikar@linux.vnet.ibm.com, rostedt@goodmis.org,
+        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org, ananth@linux.vnet.ibm.com,
+        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+References: <20180606083344.31320-1-ravi.bangoria@linux.ibm.com>
+ <20180608101023.cbf20db485026213d490cb7c@kernel.org>
+From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Date: Fri, 8 Jun 2018 07:59:38 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
+In-Reply-To: <20180608101023.cbf20db485026213d490cb7c@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18060802-0016-0000-0000-000001D95E1F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18060802-0017-0000-0000-0000322C76DE
+Message-Id: <0d487b32-3141-ec30-6cca-eba7159d70b0@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-07_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806080024
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTdHVhcnQgSGF5ZXMgW21haWx0
-bzpzdHVhcnQudy5oYXllc0BnbWFpbC5jb21dDQo+IFNlbnQ6IFRodXJzZGF5LCBKdW5lIDcsIDIw
-MTggMTE6MDAgQU0NCj4gVG86IFdhcnplY2hhLCBEb3VnbGFzDQo+IENjOiBMaW1vbmNpZWxsbywg
-TWFyaW87IERvbWluZ3VleiwgSmFyZWQ7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IHBs
-YXRmb3JtLQ0KPiBkcml2ZXIteDg2QHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBbUEFUQ0gg
-cmVzZW5kIHYyXSBkY2RiYXM6IEFkZCBzdXBwb3J0IGZvciBXU01UIEFDUEkgdGFibGUNCj4gDQo+
-IElmIHRoZSBXU01UIEFDUEkgdGFibGUgaXMgcHJlc2VudCBhbmQgaW5kaWNhdGVzIHRoYXQgYSBm
-aXhlZCBjb21tdW5pY2F0aW9uDQo+IGJ1ZmZlciBzaG91bGQgYmUgdXNlZCwgdXNlIHRoZSBmaXJt
-d2FyZS1zcGVjaWZpZWQgYnVmZmVyIGluc3RlYWQgb2YNCj4gYWxsb2NhdGluZyBhIGJ1ZmZlciBp
-biBtZW1vcnkgZm9yIGNvbW11bmljYXRpb25zIGJldHdlZW4gdGhlIGRjZGJhcyBkcml2ZXINCj4g
-YW5kIGZpcm1hcmUuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBTdHVhcnQgSGF5ZXMgPHN0dWFydC53
-LmhheWVzQGdtYWlsLmNvbT4NCj4gVGVzdGVkLWJ5OiBNYXJpbyBMaW1vbmNpZWxsbyA8bWFyaW8u
-bGltb25jaWVsbG9AZGVsbC5jb20+DQo+IEFja2VkLWJ5OiBEb3VnIFdhcnplY2hhIDxkb3VnbGFz
-X3dhcnplY2hhQGRlbGwuY29tPg0KPiAtLS0NCj4gdjIgQnVtcGVkIGRyaXZlciB2ZXJzaW9uIHRv
-IDUuNi4wLTMuMw0KPiANCj4gDQo+ICBkcml2ZXJzL2Zpcm13YXJlL0tjb25maWcgIHwgICAyICst
-DQo+ICBkcml2ZXJzL2Zpcm13YXJlL2RjZGJhcy5jIHwgMTAyDQo+ICsrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKystLS0NCj4gIGRyaXZlcnMvZmlybXdhcmUvZGNkYmFz
-LmggfCAgMTEgKysrKysNCj4gIDMgZmlsZXMgY2hhbmdlZCwgMTA5IGluc2VydGlvbnMoKyksIDYg
-ZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9maXJtd2FyZS9LY29uZmln
-IGIvZHJpdmVycy9maXJtd2FyZS9LY29uZmlnDQo+IGluZGV4IGI3Yzc0ODI0OGU1My4uYTJiZDYw
-OTJiZmExIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2Zpcm13YXJlL0tjb25maWcNCj4gKysrIGIv
-ZHJpdmVycy9maXJtd2FyZS9LY29uZmlnDQo+IEBAIC0xMjUsNyArMTI1LDcgQEAgY29uZmlnIERF
-TExfUkJVDQo+IA0KPiAgY29uZmlnIERDREJBUw0KPiAgCXRyaXN0YXRlICJEZWxsIFN5c3RlbXMg
-TWFuYWdlbWVudCBCYXNlIERyaXZlciINCj4gLQlkZXBlbmRzIG9uIFg4Ng0KPiArCWRlcGVuZHMg
-b24gWDg2ICYmIEFDUEkNCj4gIAloZWxwDQo+ICAJICBUaGUgRGVsbCBTeXN0ZW1zIE1hbmFnZW1l
-bnQgQmFzZSBEcml2ZXIgcHJvdmlkZXMgYSBzeXNmcyBpbnRlcmZhY2UNCj4gIAkgIGZvciBzeXN0
-ZW1zIG1hbmFnZW1lbnQgc29mdHdhcmUgdG8gcGVyZm9ybSBTeXN0ZW0gTWFuYWdlbWVudA0KPiBk
-aWZmIC0tZ2l0IGEvZHJpdmVycy9maXJtd2FyZS9kY2RiYXMuYyBiL2RyaXZlcnMvZmlybXdhcmUv
-ZGNkYmFzLmMNCj4gaW5kZXggMGJkZWE2MGM2NWRkLi4xNjk5Y2ZkY2VmZTQgMTAwNjQ0DQo+IC0t
-LSBhL2RyaXZlcnMvZmlybXdhcmUvZGNkYmFzLmMNCj4gKysrIGIvZHJpdmVycy9maXJtd2FyZS9k
-Y2RiYXMuYw0KPiBAQCAtMzYsMTIgKzM2LDEzIEBADQo+ICAjaW5jbHVkZSA8bGludXgvc3RyaW5n
-Lmg+DQo+ICAjaW5jbHVkZSA8bGludXgvdHlwZXMuaD4NCj4gICNpbmNsdWRlIDxsaW51eC9tdXRl
-eC5oPg0KPiArI2luY2x1ZGUgPGxpbnV4L2FjcGkuaD4NCj4gICNpbmNsdWRlIDxhc20vaW8uaD4N
-Cj4gDQo+ICAjaW5jbHVkZSAiZGNkYmFzLmgiDQo+IA0KPiAgI2RlZmluZSBEUklWRVJfTkFNRQkJ
-ImRjZGJhcyINCj4gLSNkZWZpbmUgRFJJVkVSX1ZFUlNJT04JCSI1LjYuMC0zLjIiDQo+ICsjZGVm
-aW5lIERSSVZFUl9WRVJTSU9OCQkiNS42LjAtMy4zIg0KPiAgI2RlZmluZSBEUklWRVJfREVTQ1JJ
-UFRJT04JIkRlbGwgU3lzdGVtcyBNYW5hZ2VtZW50IEJhc2UgRHJpdmVyIg0KPiANCj4gIHN0YXRp
-YyBzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpkY2RiYXNfcGRldjsNCj4gQEAgLTQ5LDE5ICs1MCwy
-MyBAQCBzdGF0aWMgc3RydWN0IHBsYXRmb3JtX2RldmljZSAqZGNkYmFzX3BkZXY7DQo+ICBzdGF0
-aWMgdTggKnNtaV9kYXRhX2J1ZjsNCj4gIHN0YXRpYyBkbWFfYWRkcl90IHNtaV9kYXRhX2J1Zl9o
-YW5kbGU7DQo+ICBzdGF0aWMgdW5zaWduZWQgbG9uZyBzbWlfZGF0YV9idWZfc2l6ZTsNCj4gK3N0
-YXRpYyB1bnNpZ25lZCBsb25nIG1heF9zbWlfZGF0YV9idWZfc2l6ZSA9IE1BWF9TTUlfREFUQV9C
-VUZfU0laRTsNCj4gIHN0YXRpYyB1MzIgc21pX2RhdGFfYnVmX3BoeXNfYWRkcjsNCj4gIHN0YXRp
-YyBERUZJTkVfTVVURVgoc21pX2RhdGFfbG9jayk7DQo+ICtzdGF0aWMgdTggKmVwc19idWZmZXI7
-DQo+IA0KPiAgc3RhdGljIHVuc2lnbmVkIGludCBob3N0X2NvbnRyb2xfYWN0aW9uOw0KPiAgc3Rh
-dGljIHVuc2lnbmVkIGludCBob3N0X2NvbnRyb2xfc21pX3R5cGU7DQo+ICBzdGF0aWMgdW5zaWdu
-ZWQgaW50IGhvc3RfY29udHJvbF9vbl9zaHV0ZG93bjsNCj4gDQo+ICtzdGF0aWMgYm9vbCB3c210
-X2VuYWJsZWQ7DQo+ICsNCj4gIC8qKg0KPiAgICogc21pX2RhdGFfYnVmX2ZyZWU6IGZyZWUgU01J
-IGRhdGEgYnVmZmVyDQo+ICAgKi8NCj4gIHN0YXRpYyB2b2lkIHNtaV9kYXRhX2J1Zl9mcmVlKHZv
-aWQpDQo+ICB7DQo+IC0JaWYgKCFzbWlfZGF0YV9idWYpDQo+ICsJaWYgKCFzbWlfZGF0YV9idWYg
-fHwgd3NtdF9lbmFibGVkKQ0KPiAgCQlyZXR1cm47DQo+IA0KPiAgCWRldl9kYmcoJmRjZGJhc19w
-ZGV2LT5kZXYsICIlczogcGh5czogJXggc2l6ZTogJWx1XG4iLA0KPiBAQCAtODYsNyArOTEsNyBA
-QCBzdGF0aWMgaW50IHNtaV9kYXRhX2J1Zl9yZWFsbG9jKHVuc2lnbmVkIGxvbmcgc2l6ZSkNCj4g
-IAlpZiAoc21pX2RhdGFfYnVmX3NpemUgPj0gc2l6ZSkNCj4gIAkJcmV0dXJuIDA7DQo+IA0KPiAt
-CWlmIChzaXplID4gTUFYX1NNSV9EQVRBX0JVRl9TSVpFKQ0KPiArCWlmIChzaXplID4gbWF4X3Nt
-aV9kYXRhX2J1Zl9zaXplKQ0KPiAgCQlyZXR1cm4gLUVJTlZBTDsNCj4gDQo+ICAJLyogbmV3IGJ1
-ZmZlciBpcyBuZWVkZWQgKi8NCj4gQEAgLTE2OSw3ICsxNzQsNyBAQCBzdGF0aWMgc3NpemVfdCBz
-bWlfZGF0YV93cml0ZShzdHJ1Y3QgZmlsZSAqZmlscCwgc3RydWN0IGtvYmplY3QNCj4gKmtvYmos
-DQo+ICB7DQo+ICAJc3NpemVfdCByZXQ7DQo+IA0KPiAtCWlmICgocG9zICsgY291bnQpID4gTUFY
-X1NNSV9EQVRBX0JVRl9TSVpFKQ0KPiArCWlmICgocG9zICsgY291bnQpID4gbWF4X3NtaV9kYXRh
-X2J1Zl9zaXplKQ0KPiAgCQlyZXR1cm4gLUVJTlZBTDsNCj4gDQo+ICAJbXV0ZXhfbG9jaygmc21p
-X2RhdGFfbG9jayk7DQo+IEBAIC0zMjMsNyArMzI4LDggQEAgc3RhdGljIHNzaXplX3Qgc21pX3Jl
-cXVlc3Rfc3RvcmUoc3RydWN0IGRldmljZSAqZGV2LA0KPiAgCQlicmVhazsNCj4gIAljYXNlIDE6
-DQo+ICAJCS8qIENhbGxpbmcgSW50ZXJmYWNlIFNNSSAqLw0KPiAtCQlzbWlfY21kLT5lYnggPSAo
-dTMyKSB2aXJ0X3RvX3BoeXMoc21pX2NtZC0+Y29tbWFuZF9idWZmZXIpOw0KPiArCQlzbWlfY21k
-LT5lYnggPSBzbWlfZGF0YV9idWZfcGh5c19hZGRyDQo+ICsJCQkJKyBvZmZzZXRvZihzdHJ1Y3Qg
-c21pX2NtZCwgY29tbWFuZF9idWZmZXIpOw0KPiAgCQlyZXQgPSBkY2RiYXNfc21pX3JlcXVlc3Qo
-c21pX2NtZCk7DQo+ICAJCWlmICghcmV0KQ0KPiAgCQkJcmV0ID0gY291bnQ7DQo+IEBAIC00ODIs
-NiArNDg4LDg1IEBAIHN0YXRpYyB2b2lkIGRjZGJhc19ob3N0X2NvbnRyb2wodm9pZCkNCj4gIAl9
-DQo+ICB9DQo+IA0KPiArLyogV1NNVCAqLw0KPiArDQo+ICtzdGF0aWMgdTggY2hlY2tzdW0odTgg
-KmJ1ZmZlciwgdTggbGVuZ3RoKQ0KPiArew0KPiArCXU4IHN1bSA9IDA7DQo+ICsJdTggKmVuZCA9
-IGJ1ZmZlciArIGxlbmd0aDsNCj4gKw0KPiArCXdoaWxlIChidWZmZXIgPCBlbmQpDQo+ICsJCXN1
-bSA9ICh1OCkoc3VtICsgKihidWZmZXIrKykpOw0KPiArCXJldHVybiBzdW07DQo+ICt9DQo+ICsN
-Cj4gK3N0YXRpYyBpbmxpbmUgc3RydWN0IHNtbV9lcHNfdGFibGUgKmNoZWNrX2Vwc190YWJsZSh1
-OCAqYWRkcikNCj4gK3sNCj4gKwlzdHJ1Y3Qgc21tX2Vwc190YWJsZSAqZXBzID0gKHN0cnVjdCBz
-bW1fZXBzX3RhYmxlICopYWRkcjsNCj4gKw0KPiArCWlmIChzdHJuY21wKFNNTV9FUFNfU0lHLCBl
-cHMtPnNtbV9jb21tX2J1ZmZfYW5jaG9yLCA0KSAhPSAwKQ0KPiArCQlyZXR1cm4gTlVMTDsNCj4g
-Kw0KPiArCWlmIChjaGVja3N1bShhZGRyLCBlcHMtPmxlbmd0aCkgIT0gMCkNCj4gKwkJcmV0dXJu
-IE5VTEw7DQo+ICsNCj4gKwlyZXR1cm4gZXBzOw0KPiArfQ0KPiArDQo+ICtzdGF0aWMgaW50IGRj
-ZGJhc19jaGVja193c210KHZvaWQpDQo+ICt7DQo+ICsJc3RydWN0IGFjcGlfdGFibGVfd3NtdCAq
-d3NtdCA9IE5VTEw7DQo+ICsJc3RydWN0IHNtbV9lcHNfdGFibGUgKmVwcyA9IE5VTEw7DQo+ICsJ
-dTggKmFkZHI7DQo+ICsNCj4gKwlhY3BpX2dldF90YWJsZShBQ1BJX1NJR19XU01ULCAwLCAoc3Ry
-dWN0IGFjcGlfdGFibGVfaGVhZGVyICoqKSZ3c210KTsNCj4gKwlpZiAoIXdzbXQpDQo+ICsJCXJl
-dHVybiAwOw0KPiArDQo+ICsJLyogQ2hlY2sgaWYgV1NNVCBBQ1BJIHRhYmxlIHNob3dzIHRoYXQg
-cHJvdGVjdGlvbiBpcyBlbmFibGVkICovDQo+ICsJaWYgKCEod3NtdC0+cHJvdGVjdGlvbl9mbGFn
-cyAmIEFDUElfV1NNVF9GSVhFRF9DT01NX0JVRkZFUlMpDQo+ICsJICAgIHx8ICEod3NtdC0+cHJv
-dGVjdGlvbl9mbGFncw0KPiArCQkgJiBBQ1BJX1dTTVRfQ09NTV9CVUZGRVJfTkVTVEVEX1BUUl9Q
-Uk9URUNUSU9OKSkNCj4gKwkJcmV0dXJuIDA7DQo+ICsNCj4gKwkvKiBTY2FuIGZvciBFUFMgKGVu
-dHJ5IHBvaW50IHN0cnVjdHVyZSkgKi8NCj4gKwlmb3IgKGFkZHIgPSAodTggKilfX3ZhKDB4ZjAw
-MDApOw0KPiArCSAgICAgYWRkciA8ICh1OCAqKV9fdmEoMHgxMDAwMDAgLSBzaXplb2Yoc3RydWN0
-IHNtbV9lcHNfdGFibGUpKSAmJiAhZXBzOw0KPiArCSAgICAgYWRkciArPSAxKQ0KPiArCQllcHMg
-PSBjaGVja19lcHNfdGFibGUoYWRkcik7DQo+ICsNCj4gKwlpZiAoIWVwcykgew0KPiArCQlkZXZf
-ZGJnKCZkY2RiYXNfcGRldi0+ZGV2LCAiZm91bmQgV1NNVCwgYnV0IG5vIEVQUw0KPiBmb3VuZFxu
-Iik7DQo+ICsJCXJldHVybiAtRU5PREVWOw0KPiArCX0NCj4gKw0KPiArCS8qDQo+ICsJICogR2V0
-IHBoeXNpY2FsIGFkZHJlc3Mgb2YgYnVmZmVyIGFuZCBtYXAgdG8gdmlydHVhbCBhZGRyZXNzLg0K
-PiArCSAqIFRhYmxlIGdpdmVzIHNpemUgaW4gNEsgcGFnZXMsIHJlZ2FyZGxlc3Mgb2YgYWN0dWFs
-IHN5c3RlbSBwYWdlIHNpemUuDQo+ICsJICovDQo+ICsJaWYgKGVwcy0+c21tX2NvbW1fYnVmZl9h
-ZGRyICsgOCA+IFUzMl9NQVgpIHsNCj4gKwkJZGV2X3dhcm4oJmRjZGJhc19wZGV2LT5kZXYsICJm
-b3VuZCBXU01ULCBidXQgRVBTIGJ1ZmZlcg0KPiBhZGRyZXNzIGlzIGFib3ZlIDRHQlxuIik7DQo+
-ICsJCXJldHVybiAtRUlOVkFMOw0KPiArCX0NCj4gKwllcHNfYnVmZmVyID0gKHU4ICopbWVtcmVt
-YXAoZXBzLT5zbW1fY29tbV9idWZmX2FkZHIsDQo+ICsJCQkJICAgICBlcHMtPm51bV9vZl80a19w
-YWdlcyAqIDQwOTYsDQo+IE1FTVJFTUFQX1dCKTsNCj4gKwlpZiAoIWVwc19idWZmZXIpIHsNCj4g
-KwkJZGV2X3dhcm4oJmRjZGJhc19wZGV2LT5kZXYsICJmb3VuZCBXU01ULCBidXQgZmFpbGVkIHRv
-IG1hcA0KPiBFUFMgYnVmZmVyXG4iKTsNCj4gKwkJcmV0dXJuIC1FTk9NRU07DQo+ICsJfQ0KPiAr
-DQo+ICsJLyogRmlyc3QgOCBieXRlcyBvZiBidWZmZXIgaXMgZm9yIHNlbWFwaG9yZSAqLw0KPiAr
-CXNtaV9kYXRhX2J1Zl9waHlzX2FkZHIgPSAodTMyKSBlcHMtPnNtbV9jb21tX2J1ZmZfYWRkciAr
-IDg7DQo+ICsJc21pX2RhdGFfYnVmID0gZXBzX2J1ZmZlciArIDg7DQo+ICsJc21pX2RhdGFfYnVm
-X3NpemUgPSAodW5zaWduZWQgbG9uZykgbWluKGVwcy0+bnVtX29mXzRrX3BhZ2VzICogNDA5NiAt
-DQo+IDgsDQo+ICsJCQkgICAgKHU2NCkgVUxPTkdfTUFYKTsNCj4gKwltYXhfc21pX2RhdGFfYnVm
-X3NpemUgPSBzbWlfZGF0YV9idWZfc2l6ZTsNCj4gKwl3c210X2VuYWJsZWQgPSB0cnVlOw0KPiAr
-CWRldl9pbmZvKCZkY2RiYXNfcGRldi0+ZGV2LA0KPiArCQkgIldTTVQgZm91bmQsIHVzaW5nIGZp
-cm13YXJlLXByb3ZpZGVkIFNNSSBidWZmZXIuXG4iKTsNCj4gKwlyZXR1cm4gMTsNCj4gK30NCj4g
-Kw0KPiAgLyoqDQo+ICAgKiBkY2RiYXNfcmVib290X25vdGlmeTogaGFuZGxlIHJlYm9vdCBub3Rp
-ZmljYXRpb24gZm9yIGhvc3QgY29udHJvbA0KPiAgICovDQo+IEBAIC01NDgsNiArNjMzLDExIEBA
-IHN0YXRpYyBpbnQgZGNkYmFzX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKmRldikNCj4g
-DQo+ICAJZGNkYmFzX3BkZXYgPSBkZXY7DQo+IA0KPiArCS8qIENoZWNrIGlmIEFDUEkgV1NNVCB0
-YWJsZSBzcGVjaWZpZXMgcHJvdGVjdGVkIFNNSSBidWZmZXIgYWRkcmVzcyAqLw0KPiArCWVycm9y
-ID0gZGNkYmFzX2NoZWNrX3dzbXQoKTsNCj4gKwlpZiAoZXJyb3IgPCAwKQ0KPiArCQlyZXR1cm4g
-ZXJyb3I7DQo+ICsNCj4gIAkvKg0KPiAgCSAqIEJJT1MgU01JIGNhbGxzIHJlcXVpcmUgYnVmZmVy
-IGFkZHJlc3NlcyBiZSBpbiAzMi1iaXQgYWRkcmVzcyBzcGFjZS4NCj4gIAkgKiBUaGlzIGlzIGRv
-bmUgYnkgc2V0dGluZyB0aGUgRE1BIG1hc2sgYmVsb3cuDQo+IEBAIC02MzUsNiArNzI1LDggQEAg
-c3RhdGljIHZvaWQgX19leGl0IGRjZGJhc19leGl0KHZvaWQpDQo+ICAJICovDQo+ICAJaWYgKGRj
-ZGJhc19wZGV2KQ0KPiAgCQlzbWlfZGF0YV9idWZfZnJlZSgpOw0KPiArCWlmIChlcHNfYnVmZmVy
-KQ0KPiArCQltZW11bm1hcChlcHNfYnVmZmVyKTsNCj4gIAlwbGF0Zm9ybV9kZXZpY2VfdW5yZWdp
-c3RlcihkY2RiYXNfcGRldl9yZWcpOw0KPiAgCXBsYXRmb3JtX2RyaXZlcl91bnJlZ2lzdGVyKCZk
-Y2RiYXNfZHJpdmVyKTsNCj4gIH0NCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZmlybXdhcmUvZGNk
-YmFzLmggYi9kcml2ZXJzL2Zpcm13YXJlL2RjZGJhcy5oDQo+IGluZGV4IGNhM2NiMGE1NGFiNi4u
-N2VhNWIzZTA3MGI5IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2Zpcm13YXJlL2RjZGJhcy5oDQo+
-ICsrKyBiL2RyaXZlcnMvZmlybXdhcmUvZGNkYmFzLmgNCj4gQEAgLTU0LDYgKzU0LDggQEANCj4g
-DQo+ICAjZGVmaW5lIFNNSV9DTURfTUFHSUMJCQkJKDB4NTM0RDQ5MzEpDQo+IA0KPiArI2RlZmlu
-ZSBTTU1fRVBTX1NJRwkJCQkiJFNDQiINCj4gKw0KPiAgI2RlZmluZSBEQ0RCQVNfREVWX0FUVFJf
-UlcoX25hbWUpIFwNCj4gIAlERVZJQ0VfQVRUUihfbmFtZSwwNjAwLF9uYW1lIyNfc2hvdyxfbmFt
-ZSMjX3N0b3JlKTsNCj4gDQo+IEBAIC0xMDMsNSArMTA1LDE0IEBAIHN0cnVjdCBhcG1fY21kIHsN
-Cj4gDQo+ICBpbnQgZGNkYmFzX3NtaV9yZXF1ZXN0KHN0cnVjdCBzbWlfY21kICpzbWlfY21kKTsN
-Cj4gDQo+ICtzdHJ1Y3Qgc21tX2Vwc190YWJsZSB7DQo+ICsJY2hhciBzbW1fY29tbV9idWZmX2Fu
-Y2hvcls0XTsNCj4gKwl1OCBsZW5ndGg7DQo+ICsJdTggY2hlY2tzdW07DQo+ICsJdTggdmVyc2lv
-bjsNCj4gKwl1NjQgc21tX2NvbW1fYnVmZl9hZGRyOw0KPiArCXU2NCBudW1fb2ZfNGtfcGFnZXM7
-DQo+ICt9IF9fcGFja2VkOw0KPiArDQo+ICAjZW5kaWYgLyogX0RDREJBU19IXyAqLw0KPiANCj4g
-LS0NCj4gMi4xNC4yDQoNCkRhcnJlbiwgQW5keSwNCg0KU3R1YXJ0IGFuZCBJIHdlcmUgaG9waW5n
-IHlvdSBndXlzIGNvdWxkIGJyaW5nIHRoaXMgdGhyb3VnaCB0aGUgcGxhdGZvcm0tZHJpdmVyLXg4
-NiB0cmVlLg0KVGhlIGxvZ2ljIGJlaGluZCB0aGlzIGlzIHRoYXQgdGhlIG9ubHkgY29uc3VtZXIg
-Zm9yIGRjZGJhcyBpbiBrZXJuZWwgaXMgZGVsbC1zbWJpb3MuDQoNClRoZXJlIGlzbid0IGEgc3Vi
-c3lzdGVtIG1haW50YWluZXIgZm9yIHNvbWVvbmUgdG8gcHVsbCBpbiBkY2RiYXMgZXZlbiB0aG91
-Z2ggdGhlDQpjdXJyZW50IG1haW50YWluZXIgKERvdWcgVykgaGFzIGFja2VkIGl0Lg0KDQpUaGFu
-a3MNCg==
+Hi Masami,
+
+On 06/08/2018 06:40 AM, Masami Hiramatsu wrote:
+> On Wed,  6 Jun 2018 14:03:37 +0530
+> Ravi Bangoria <ravi.bangoria@linux.ibm.com> wrote:
+> 
+>> Why RFC again:
+>>
+>> This series is different from earlier versions[1]. Earlier series
+>> implemented this feature in trace_uprobe while this has implemented
+>> the logic in core uprobe. Few reasons for this:
+>>  1. One of the major reason was the deadlock between uprobe_lock and
+>>  mm->mmap inside trace_uprobe_mmap(). That deadlock was not easy to fix
+>>  because mm->mmap is not in control of trace_uprobe_mmap() and it has
+>>  to take uprobe_lock to loop over trace_uprobe list. More details can
+>>  be found at[2]. With this new approach, there are no deadlocks found
+>>  so far.
+>>  2. Many of the core uprobe function and data-structures needs to be
+>>  exported to make earlier implementation simple. With this new approach,
+>>  reference counter logic is been implemented in core uprobe and thus
+>>  no need to export anything.
+> 
+> I agree with you. Moreover, since uprobe_register/unregister() are
+> exported to modules, this enablement would better be implemented
+> inside uprobe so that all uprobe users benefit from this.
+
+
+Sorry, I think you got me wrong. I meant, I don't need to expose all core
+uprobe _static_ functions to tarce_uprobe.
+
+Now, about kernel modules, basically uprobe_register() takes three parameters:
+    inode, offset and consumer.
+There is no scope for the reference counter there. So I've created one more
+function: uprobe_register_refctr(). But this function is not exported as ABI
+to kernel module. i.e. kernel modules still does not have a way to create
+uprobe with reference counter. So for kernel modules,
+
+is it fine to change current ABI from
+    uprobe_register(inode, offset, consumer)
+to
+    uprobe_register(inode, offset, ref_ctr_offset, consumer)
+
+Or I should introduce new function for this:
+    uprobe_register_refctr(inode, offset, ref_ctr_offset, consumer)
+and export it to kernel module?
+
+What's your suggestion?
+
+[...]
+
+>> 
+>>  - This patches still has one issue. If there are multiple instances of
+>>    same application running and user wants to trace any particular
+>>    instance, trace_uprobe is updating reference counter in all instances.
+>>    This is not a problem on user side because instruction is not replaced
+>>    with trap/int3 and thus user will only see samples from his interested
+>>    process. But still this is more of a correctness issue. I'm working on
+>>    a fix for this.
+> 
+> Hmm, it sounds like not a correctness issue, but there maybe a performace
+> tradeoff. Tracing one particulear instance, other instances also will get
+> a performance loss
+
+
+Right, but it's temporary. I mean, putting everything in to this series was making
+it complex. So this is the initial one and I'll send followup patches which will
+optimize the reference counter update.
+
+
+> (Only if the parameter preparation block is heavy,
+> because the heaviest part of probing - trap/int3 and recording data - isn't
+> executed.)
+>> BTW, why this happens? I thought the refcounter part is just a data which
+> is not shared among processes...
+> 
+
+This happens because we are not calling consumer_filter function. consumer_filter
+is the one who decides whether to change the instruction to trap or not in a given
+mm. We also need to call it before updating reference counter.
+
+Let me know your thoughts.
+
+Thanks,
+Ravi
