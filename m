@@ -1,797 +1,342 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id f2FRLuyFHlvGLwAAmS7hNA
-	; Mon, 11 Jun 2018 14:24:54 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id bjpRC1/hGltMLwAAmS7hNA
+	; Fri, 08 Jun 2018 20:05:32 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id B42F9607A4; Mon, 11 Jun 2018 14:24:54 +0000 (UTC)
+	id DE928607DC; Fri,  8 Jun 2018 20:05:31 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TzKEiy4e"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nPk2Jigd"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 305C6607BB;
-	Mon, 11 Jun 2018 14:24:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 305C6607BB
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 18C36605A5;
+	Fri,  8 Jun 2018 20:05:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 18C36605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934328AbeFKOYh (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 10:24:37 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44938 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933466AbeFKOGo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:06:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=zyfNjUzxBsTUYY/rQVHVEIxzcX52oZqpxzOsWTF5BV0=; b=TzKEiy4ecC3EMATa6ujy7IKEE
-        WyO9ETSAFjZSQ7MFSCDcmllP2KCrxOpJXBl7bGxQvZa4QKvZJNlrCeMa+DF48Qrx/yoHvr2B7qqw7
-        96xphfMiDI9w3zY3dl2GRWaExJ3eVPC9+cL2ZG2lE7XwDlsO0qVHYC11c5DloNVpsp12DAsjB7QXR
-        UiTF5mJH5R5FdMEvqeTm6Urnle4LPzJwzQNcSuOrtF+bwDsvVi29ZbBiurzgJg7NClxLtwaXOvmL4
-        7yFjxh3uUTSLYzjqVAu3J6vOWLJ0lGHi0uNiR5ZS06590AH/2yde5JQSJMa680nuc1zPNtHZU2/0C
-        FoHaf8sxg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSNT2-0004ZV-6y; Mon, 11 Jun 2018 14:06:44 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        id S1753099AbeFHUF3 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 16:05:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49008 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753028AbeFHUFY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 16:05:24 -0400
+Received: from localhost (unknown [150.199.191.185])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8E13820874;
+        Fri,  8 Jun 2018 20:05:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528488323;
+        bh=jGln+qRysJ3xBNvagJEtvhPStO6uy+94e8WL/+b61LA=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=nPk2JigdpUAUiz2bq6bCq3t0YNXQ0pvfOevVFksoos82WLROkSoVO0QswHECqR80o
+         L02pKnCAG6GOQNRIfliW49jscdoA+zdL4m7REOhZDbxj5y2Y6hVxpP9/LfGoOordRv
+         V8xLne5jZxcNllSSGBUkdnOhNjDftATbtBZ4qrIU=
+Subject: [PATCH v1 06/13] PCI/AER: Squash ecrc.c into aerdrv.c
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: linux-pci@vger.kernel.org
+Cc: Keith Busch <keith.busch@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Oza Pawandeep <poza@codeaurora.org>,
         linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Lukas Czerner <lczerner@redhat.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v13 12/72] xarray: Add xa_for_each
-Date: Mon, 11 Jun 2018 07:05:39 -0700
-Message-Id: <20180611140639.17215-13-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
-References: <20180611140639.17215-1-willy@infradead.org>
+Date: Fri, 08 Jun 2018 15:05:22 -0500
+Message-ID: <152848832278.11888.4761786652784923945.stgit@bhelgaas-glaptop.roam.corp.google.com>
+In-Reply-To: <152848785553.11888.12243539903985770441.stgit@bhelgaas-glaptop.roam.corp.google.com>
+References: <152848785553.11888.12243539903985770441.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: StGit/0.18
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-This iterator allows the user to efficiently walk a range of the array,
-executing the loop body once for each entry in that range that matches
-the filter.  This commit also includes xa_find() and xa_find_above()
-which are helper functions for xa_for_each() but may also be useful in
-their own right.
+Squash ecrc.c into aerdrv.c.  No functional change intended.
 
-In the xas family of functions, we also have xas_for_each(), xas_find(),
-xas_next_entry(), xas_for_each_tagged(), xas_find_tagged(),
-xas_next_tagged() and xas_pause().
-
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
- include/linux/xarray.h                 | 169 +++++++++++++++
- lib/xarray.c                           | 274 +++++++++++++++++++++++++
- tools/testing/radix-tree/test.c        |  13 ++
- tools/testing/radix-tree/test.h        |   1 +
- tools/testing/radix-tree/xarray-test.c | 125 +++++++++++
- 5 files changed, 582 insertions(+)
+ drivers/pci/pcie/aer/Makefile |    2 -
+ drivers/pci/pcie/aer/aerdrv.c |  110 +++++++++++++++++++++++++++++++++++++++
+ drivers/pci/pcie/aer/ecrc.c   |  117 -----------------------------------------
+ 3 files changed, 110 insertions(+), 119 deletions(-)
+ delete mode 100644 drivers/pci/pcie/aer/ecrc.c
 
-diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-index c9fc47d28c09..89f37d841d18 100644
---- a/include/linux/xarray.h
-+++ b/include/linux/xarray.h
-@@ -223,6 +223,10 @@ void *xa_cmpxchg(struct xarray *, unsigned long index,
- bool xa_get_tag(struct xarray *, unsigned long index, xa_tag_t);
- void xa_set_tag(struct xarray *, unsigned long index, xa_tag_t);
- void xa_clear_tag(struct xarray *, unsigned long index, xa_tag_t);
-+void *xa_find(struct xarray *xa, unsigned long *index,
-+		unsigned long max, xa_tag_t) __attribute__((nonnull(2)));
-+void *xa_find_after(struct xarray *xa, unsigned long *index,
-+		unsigned long max, xa_tag_t) __attribute__((nonnull(2)));
+diff --git a/drivers/pci/pcie/aer/Makefile b/drivers/pci/pcie/aer/Makefile
+index 80e77c686fb8..af756b6e7e33 100644
+--- a/drivers/pci/pcie/aer/Makefile
++++ b/drivers/pci/pcie/aer/Makefile
+@@ -5,8 +5,6 @@
  
- /**
-  * xa_init() - Initialise an empty XArray.
-@@ -279,6 +283,35 @@ static inline bool xa_tagged(const struct xarray *xa, xa_tag_t tag)
- 	return xa->xa_flags & XA_FLAGS_TAG(tag);
+ obj-$(CONFIG_PCIEAER) += aerdriver.o
+ 
+-obj-$(CONFIG_PCIE_ECRC)	+= ecrc.o
+-
+ aerdriver-objs := aerdrv.o
+ 
+ obj-$(CONFIG_PCIEAER_INJECT) += aer_inject.o
+diff --git a/drivers/pci/pcie/aer/aerdrv.c b/drivers/pci/pcie/aer/aerdrv.c
+index f77f5df83676..51b66307e68c 100644
+--- a/drivers/pci/pcie/aer/aerdrv.c
++++ b/drivers/pci/pcie/aer/aerdrv.c
+@@ -7,6 +7,9 @@
+  * Copyright (C) 2006 Intel Corp.
+  *	Tom Long Nguyen (tom.l.nguyen@intel.com)
+  *	Zhang Yanmin (yanmin.zhang@intel.com)
++ *
++ * (C) Copyright 2009 Hewlett-Packard Development Company, L.P.
++ *    Andrew Patterson <andrew.patterson@hp.com>
+  */
+ 
+ #include <linux/cper.h>
+@@ -39,6 +42,111 @@ bool pci_aer_available(void)
+ 	return !pcie_aer_disable && pci_msi_enabled();
  }
  
-+/**
-+ * xa_for_each() - Iterate over a portion of an XArray.
-+ * @xa: XArray.
-+ * @entry: Entry retrieved from array.
-+ * @index: Index of @entry.
-+ * @max: Maximum index to retrieve from array.
-+ * @filter: Selection criterion.
-+ *
-+ * Initialise @index to the minimum index you want to retrieve from
-+ * the array.  During the iteration, @entry will have the value of the
-+ * entry stored in @xa at @index.  The iteration will skip all entries in
-+ * the array which do not match @filter.  You may modify @index during the
-+ * iteration if you want to skip or reprocess indices.  It is safe to modify
-+ * the array during the iteration.  At the end of the iteration, @entry will
-+ * be set to NULL and @index will have a value less than or equal to max.
-+ *
-+ * xa_for_each() is O(n.log(n)) while xas_for_each() is O(n).  You have
-+ * to handle your own locking with xas_for_each(), and if you have to unlock
-+ * after each iteration, it will also end up being O(n.log(n)).  xa_for_each()
-+ * will spin if it hits a retry entry; if you intend to see retry entries,
-+ * you should use the xas_for_each() iterator instead.  The xas_for_each()
-+ * iterator will expand into more inline code than xa_for_each().
-+ *
-+ * Context: Any context.  Takes and releases the RCU lock.
-+ */
-+#define xa_for_each(xa, entry, index, max, filter) \
-+	for (entry = xa_find(xa, &index, max, filter); entry; \
-+	     entry = xa_find_after(xa, &index, max, filter))
++#ifdef CONFIG_PCIE_ECRC
 +
- /**
-  * xa_insert() - Store this entry in the XArray unless another entry is
-  *			already present.
-@@ -707,13 +740,16 @@ static inline bool xas_retry(struct xa_state *xas, const void *entry)
- 
- void *xas_load(struct xa_state *);
- void *xas_store(struct xa_state *, void *entry);
-+void *xas_find(struct xa_state *, unsigned long max);
- 
- bool xas_get_tag(const struct xa_state *, xa_tag_t);
- void xas_set_tag(const struct xa_state *, xa_tag_t);
- void xas_clear_tag(const struct xa_state *, xa_tag_t);
-+void *xas_find_tagged(struct xa_state *, unsigned long max, xa_tag_t);
- void xas_init_tags(const struct xa_state *);
- 
- bool xas_nomem(struct xa_state *, gfp_t);
-+void xas_pause(struct xa_state *);
- 
- /**
-  * xas_reload() - Refetch an entry from the xarray.
-@@ -786,6 +822,139 @@ static inline void xas_set_update(struct xa_state *xas, xa_update_node_t update)
- 	xas->xa_update = update;
- }
- 
-+/* Skip over any of these entries when iterating */
-+static inline bool xa_iter_skip(const void *entry)
-+{
-+	return unlikely(!entry ||
-+			(xa_is_internal(entry) && entry < XA_RETRY_ENTRY));
-+}
++#define ECRC_POLICY_DEFAULT 0		/* ECRC set by BIOS */
++#define ECRC_POLICY_OFF     1		/* ECRC off for performance */
++#define ECRC_POLICY_ON      2		/* ECRC on for data integrity */
 +
-+/**
-+ * xas_next_entry() - Advance iterator to next present entry.
-+ * @xas: XArray operation state.
-+ * @max: Highest index to return.
-+ *
-+ * xas_next_entry() is an inline function to optimise xarray traversal for
-+ * speed.  It is equivalent to calling xas_find(), and will call xas_find()
-+ * for all the hard cases.
-+ *
-+ * Return: The next present entry after the one currently referred to by @xas.
-+ */
-+static inline void *xas_next_entry(struct xa_state *xas, unsigned long max)
-+{
-+	struct xa_node *node = xas->xa_node;
-+	void *entry;
++static int ecrc_policy = ECRC_POLICY_DEFAULT;
 +
-+	if (unlikely(xas_not_node(node) || node->shift))
-+		return xas_find(xas, max);
-+
-+	do {
-+		if (unlikely(xas->xa_index >= max))
-+			return xas_find(xas, max);
-+		if (unlikely(xas->xa_offset == XA_CHUNK_MASK))
-+			return xas_find(xas, max);
-+		xas->xa_index++;
-+		xas->xa_offset++;
-+		entry = xa_entry(xas->xa, node, xas->xa_offset);
-+	} while (xa_iter_skip(entry));
-+
-+	return entry;
-+}
-+
-+/* Private */
-+static inline unsigned int xas_find_chunk(struct xa_state *xas, bool advance,
-+		xa_tag_t tag)
-+{
-+	unsigned long *addr = xas->xa_node->tags[(__force unsigned)tag];
-+	unsigned int offset = xas->xa_offset;
-+
-+	if (advance)
-+		offset++;
-+	if (XA_CHUNK_SIZE == BITS_PER_LONG) {
-+		if (offset < XA_CHUNK_SIZE) {
-+			unsigned long data = *addr & (~0UL << offset);
-+			if (data)
-+				return __ffs(data);
-+		}
-+		return XA_CHUNK_SIZE;
-+	}
-+
-+	return find_next_bit(addr, XA_CHUNK_SIZE, offset);
-+}
-+
-+/**
-+ * xas_next_tagged() - Advance iterator to next tagged entry.
-+ * @xas: XArray operation state.
-+ * @max: Highest index to return.
-+ * @tag: Tag to search for.
-+ *
-+ * xas_next_tagged() is an inline function to optimise xarray traversal for
-+ * speed.  It is equivalent to calling xas_find_tagged(), and will call
-+ * xas_find_tagged() for all the hard cases.
-+ *
-+ * Return: The next tagged entry after the one currently referred to by @xas.
-+ */
-+static inline void *xas_next_tagged(struct xa_state *xas, unsigned long max,
-+								xa_tag_t tag)
-+{
-+	struct xa_node *node = xas->xa_node;
-+	unsigned int offset;
-+
-+	if (unlikely(xas_not_node(node) || node->shift))
-+		return xas_find_tagged(xas, max, tag);
-+	offset = xas_find_chunk(xas, true, tag);
-+	xas->xa_offset = offset;
-+	xas->xa_index = (xas->xa_index & ~XA_CHUNK_MASK) + offset;
-+	if (xas->xa_index > max)
-+		return NULL;
-+	if (offset == XA_CHUNK_SIZE)
-+		return xas_find_tagged(xas, max, tag);
-+	return xa_entry(xas->xa, node, offset);
-+}
-+
-+/*
-+ * If iterating while holding a lock, drop the lock and reschedule
-+ * every %XA_CHECK_SCHED loops.
-+ */
-+enum {
-+	XA_CHECK_SCHED = 4096,
++static const char *ecrc_policy_str[] = {
++	[ECRC_POLICY_DEFAULT] = "bios",
++	[ECRC_POLICY_OFF] = "off",
++	[ECRC_POLICY_ON] = "on"
 +};
 +
 +/**
-+ * xas_for_each() - Iterate over a range of an XArray.
-+ * @xas: XArray operation state.
-+ * @entry: Entry retrieved from the array.
-+ * @max: Maximum index to retrieve from array.
++ * enable_ercr_checking - enable PCIe ECRC checking for a device
++ * @dev: the PCI device
 + *
-+ * The loop body will be executed for each entry present in the xarray
-+ * between the current xas position and @max.  @entry will be set to
-+ * the entry retrieved from the xarray.  It is safe to delete entries
-+ * from the array in the loop body.  You should hold either the RCU lock
-+ * or the xa_lock while iterating.  If you need to drop the lock, call
-+ * xas_pause() first.
++ * Returns 0 on success, or negative on failure.
 + */
-+#define xas_for_each(xas, entry, max) \
-+	for (entry = xas_find(xas, max); entry; \
-+	     entry = xas_next_entry(xas, max))
-+
-+/**
-+ * xas_for_each_tagged() - Iterate over a range of an XArray.
-+ * @xas: XArray operation state.
-+ * @entry: Entry retrieved from the array.
-+ * @max: Maximum index to retrieve from array.
-+ * @tag: Tag to search for.
-+ *
-+ * The loop body will be executed for each tagged entry in the xarray
-+ * between the current xas position and @max.  @entry will be set to
-+ * the entry retrieved from the xarray.  It is safe to delete entries
-+ * from the array in the loop body.  You should hold either the RCU lock
-+ * or the xa_lock while iterating.  If you need to drop the lock, call
-+ * xas_pause() first.
-+ */
-+#define xas_for_each_tagged(xas, entry, max, tag) \
-+	for (entry = xas_find_tagged(xas, max, tag); entry; \
-+	     entry = xas_next_tagged(xas, max, tag))
-+
- /* Internal functions, mostly shared between radix-tree.c, xarray.c and idr.c */
- void xas_destroy(struct xa_state *);
- 
-diff --git a/lib/xarray.c b/lib/xarray.c
-index 86b9e00a37a0..c6b7adcd6131 100644
---- a/lib/xarray.c
-+++ b/lib/xarray.c
-@@ -117,6 +117,11 @@ static unsigned int get_offset(unsigned long index, struct xa_node *node)
- 	return (index >> node->shift) & XA_CHUNK_MASK;
- }
- 
-+static void xas_set_offset(struct xa_state *xas)
++static int enable_ecrc_checking(struct pci_dev *dev)
 +{
-+	xas->xa_offset = get_offset(xas->xa_index, xas->xa_node);
++	int pos;
++	u32 reg32;
++
++	if (!pci_is_pcie(dev))
++		return -ENODEV;
++
++	pos = dev->aer_cap;
++	if (!pos)
++		return -ENODEV;
++
++	pci_read_config_dword(dev, pos + PCI_ERR_CAP, &reg32);
++	if (reg32 & PCI_ERR_CAP_ECRC_GENC)
++		reg32 |= PCI_ERR_CAP_ECRC_GENE;
++	if (reg32 & PCI_ERR_CAP_ECRC_CHKC)
++		reg32 |= PCI_ERR_CAP_ECRC_CHKE;
++	pci_write_config_dword(dev, pos + PCI_ERR_CAP, reg32);
++
++	return 0;
 +}
 +
- /* move the index either forwards (find) or backwards (sibling slot) */
- static void xas_move_index(struct xa_state *xas, unsigned long offset)
- {
-@@ -125,6 +130,12 @@ static void xas_move_index(struct xa_state *xas, unsigned long offset)
- 	xas->xa_index += offset << shift;
- }
- 
-+static void xas_advance(struct xa_state *xas)
++/**
++ * disable_ercr_checking - disables PCIe ECRC checking for a device
++ * @dev: the PCI device
++ *
++ * Returns 0 on success, or negative on failure.
++ */
++static int disable_ecrc_checking(struct pci_dev *dev)
 +{
-+	xas->xa_offset++;
-+	xas_move_index(xas, xas->xa_offset);
++	int pos;
++	u32 reg32;
++
++	if (!pci_is_pcie(dev))
++		return -ENODEV;
++
++	pos = dev->aer_cap;
++	if (!pos)
++		return -ENODEV;
++
++	pci_read_config_dword(dev, pos + PCI_ERR_CAP, &reg32);
++	reg32 &= ~(PCI_ERR_CAP_ECRC_GENE | PCI_ERR_CAP_ECRC_CHKE);
++	pci_write_config_dword(dev, pos + PCI_ERR_CAP, reg32);
++
++	return 0;
 +}
 +
- static void *set_bounds(struct xa_state *xas)
- {
- 	xas->xa_node = XAS_BOUNDS;
-@@ -830,6 +841,191 @@ void xas_init_tags(const struct xa_state *xas)
- }
- EXPORT_SYMBOL_GPL(xas_init_tags);
- 
 +/**
-+ * xas_pause() - Pause a walk to drop a lock.
-+ * @xas: XArray operation state.
-+ *
-+ * Some users need to pause a walk and drop the lock they're holding in
-+ * order to yield to a higher priority thread or carry out an operation
-+ * on an entry.  Those users should call this function before they drop
-+ * the lock.  It resets the @xas to be suitable for the next iteration
-+ * of the loop after the user has reacquired the lock.  If most entries
-+ * found during a walk require you to call xas_pause(), the xa_for_each()
-+ * iterator may be more appropriate.
-+ *
-+ * Note that xas_pause() only works for forward iteration.  If a user needs
-+ * to pause a reverse iteration, we will need a xas_pause_rev().
++ * pcie_set_ecrc_checking - set/unset PCIe ECRC checking for a device based on global policy
++ * @dev: the PCI device
 + */
-+void xas_pause(struct xa_state *xas)
++void pcie_set_ecrc_checking(struct pci_dev *dev)
 +{
-+	struct xa_node *node = xas->xa_node;
++	switch (ecrc_policy) {
++	case ECRC_POLICY_DEFAULT:
++		return;
++	case ECRC_POLICY_OFF:
++		disable_ecrc_checking(dev);
++		break;
++	case ECRC_POLICY_ON:
++		enable_ecrc_checking(dev);
++		break;
++	default:
++		return;
++	}
++}
 +
-+	if (xas_invalid(xas))
++/**
++ * pcie_ecrc_get_policy - parse kernel command-line ecrc option
++ */
++void pcie_ecrc_get_policy(char *str)
++{
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(ecrc_policy_str); i++)
++		if (!strncmp(str, ecrc_policy_str[i],
++			     strlen(ecrc_policy_str[i])))
++			break;
++	if (i >= ARRAY_SIZE(ecrc_policy_str))
 +		return;
 +
-+	if (node) {
-+		unsigned int offset = xas->xa_offset;
-+		while (++offset < XA_CHUNK_SIZE) {
-+			if (!xa_is_sibling(xa_entry(xas->xa, node, offset)))
-+				break;
-+		}
-+		xas->xa_index += (offset - xas->xa_offset) << node->shift;
-+	} else {
-+		xas->xa_index++;
-+	}
-+	xas->xa_node = XAS_RESTART;
++	ecrc_policy = i;
 +}
-+EXPORT_SYMBOL_GPL(xas_pause);
++#endif	/* CONFIG_PCIE_ECRC */
 +
-+/**
-+ * xas_find() - Find the next present entry in the XArray.
-+ * @xas: XArray operation state.
-+ * @max: Highest index to return.
-+ *
-+ * If the xas has not yet been walked to an entry, return the entry
-+ * which has an index >= xas.xa_index.  If it has been walked, the entry
-+ * currently being pointed at has been processed, and so we move to the
-+ * next entry.
-+ *
-+ * If no entry is found and the array is smaller than @max, the iterator
-+ * is set to the smallest index not yet in the array.  This allows @xas
-+ * to be immediately passed to xas_store().
-+ *
-+ * Return: The entry, if found, otherwise NULL.
-+ */
-+void *xas_find(struct xa_state *xas, unsigned long max)
-+{
-+	void *entry;
-+
-+	if (xas_error(xas))
-+		return NULL;
-+
-+	if (!xas->xa_node) {
-+		xas->xa_index = 1;
-+		return set_bounds(xas);
-+	} else if (xas_top(xas->xa_node)) {
-+		entry = xas_load(xas);
-+		if (entry || xas_not_node(xas->xa_node))
-+			return entry;
-+	}
-+
-+	xas_advance(xas);
-+
-+	while (xas->xa_node && (xas->xa_index <= max)) {
-+		if (unlikely(xas->xa_offset == XA_CHUNK_SIZE)) {
-+			xas->xa_offset = xas->xa_node->offset + 1;
-+			xas->xa_node = xa_parent(xas->xa, xas->xa_node);
-+			continue;
-+		}
-+
-+		entry = xa_entry(xas->xa, xas->xa_node, xas->xa_offset);
-+		if (xa_is_node(entry)) {
-+			xas->xa_node = xa_to_node(entry);
-+			xas->xa_offset = 0;
-+			continue;
-+		}
-+		if (!xa_iter_skip(entry))
-+			return entry;
-+
-+		xas_advance(xas);
-+	}
-+
-+	if (!xas->xa_node)
-+		xas->xa_node = XAS_BOUNDS;
-+	return NULL;
-+}
-+EXPORT_SYMBOL_GPL(xas_find);
-+
-+/**
-+ * xas_find_tagged() - Find the next tagged entry in the XArray.
-+ * @xas: XArray operation state.
-+ * @max: Highest index to return.
-+ * @tag: Tag number to search for.
-+ *
-+ * If the xas has not yet been walked to an entry, return the tagged entry
-+ * which has an index >= xas.xa_index.  If it has been walked, the entry
-+ * currently being pointed at has been processed, and so we move to the
-+ * next tagged entry.
-+ *
-+ * If no tagged entry is found and the array is smaller than @max, @xas is
-+ * set to the bounds state and xas->xa_index is set to the smallest index
-+ * not yet in the array.  This allows @xas to be immediately passed to
-+ * xas_store().
-+ *
-+ * Return: The entry, if found, otherwise %NULL.
-+ */
-+void *xas_find_tagged(struct xa_state *xas, unsigned long max, xa_tag_t tag)
-+{
-+	bool advance = true;
-+	unsigned int offset;
-+	void *entry;
-+
-+	if (xas_error(xas))
-+		return NULL;
-+
-+	if (!xas->xa_node) {
-+		xas->xa_index = 1;
-+		goto out;
-+	} else if (xas_top(xas->xa_node)) {
-+		advance = false;
-+		entry = xa_head(xas->xa);
-+		if (xas->xa_index > max_index(entry))
-+			goto out;
-+		if (!xa_is_node(entry)) {
-+			if (xa_tagged(xas->xa, tag)) {
-+				xas->xa_node = NULL;
-+				return entry;
-+			}
-+			xas->xa_index = 1;
-+			goto out;
-+		}
-+		xas->xa_node = xa_to_node(entry);
-+		xas->xa_offset = xas->xa_index >> xas->xa_node->shift;
-+	}
-+
-+	while (xas->xa_index <= max) {
-+		if (unlikely(xas->xa_offset == XA_CHUNK_SIZE)) {
-+			xas->xa_offset = xas->xa_node->offset + 1;
-+			xas->xa_node = xa_parent(xas->xa, xas->xa_node);
-+			if (!xas->xa_node)
-+				break;
-+			advance = false;
-+			continue;
-+		}
-+
-+		if (!advance) {
-+			entry = xa_entry(xas->xa, xas->xa_node, xas->xa_offset);
-+			if (xa_is_sibling(entry)) {
-+				xas->xa_offset = xa_to_sibling(entry);
-+				xas_move_index(xas, xas->xa_offset);
-+			}
-+		}
-+
-+		offset = xas_find_chunk(xas, advance, tag);
-+		if (offset > xas->xa_offset) {
-+			advance = false;
-+			xas_move_index(xas, offset);
-+			xas->xa_offset = offset;
-+			if (offset == XA_CHUNK_SIZE)
-+				continue;
-+			if (xas->xa_index > max)
-+				break;
-+		}
-+
-+		entry = xa_entry(xas->xa, xas->xa_node, xas->xa_offset);
-+		if (!xa_is_node(entry))
-+			return entry;
-+		xas->xa_node = xa_to_node(entry);
-+		xas_set_offset(xas);
-+	}
-+
-+ out:
-+	if (!xas->xa_node)
-+		xas->xa_node = XAS_BOUNDS;
-+	return NULL;
-+}
-+EXPORT_SYMBOL_GPL(xas_find_tagged);
-+
- /**
-  * xa_init_flags() - Initialise an empty XArray with flags.
-  * @xa: XArray.
-@@ -1153,6 +1349,84 @@ void xa_clear_tag(struct xarray *xa, unsigned long index, xa_tag_t tag)
+ #ifdef CONFIG_ACPI_APEI
+ static inline int hest_match_pci(struct acpi_hest_aer_common *p,
+ 				 struct pci_dev *pci)
+@@ -137,6 +245,8 @@ int pcie_aer_get_firmware_first(struct pci_dev *dev)
+ 		aer_set_firmware_first(dev);
+ 	return dev->__aer_firmware_first;
  }
- EXPORT_SYMBOL(xa_clear_tag);
++#define	PCI_EXP_AER_FLAGS	(PCI_EXP_DEVCTL_CERE | PCI_EXP_DEVCTL_NFERE | \
++				 PCI_EXP_DEVCTL_FERE | PCI_EXP_DEVCTL_URRE)
  
-+/**
-+ * xa_find() - Search the XArray for an entry.
-+ * @xa: XArray.
-+ * @indexp: Pointer to an index.
-+ * @max: Maximum index to search to.
-+ * @filter: Selection criterion.
-+ *
-+ * Finds the entry in @xa which matches the @filter, and has the lowest
-+ * index that is at least @indexp and no more than @max.
-+ * If an entry is found, @indexp is updated to be the index of the entry.
-+ * This function is protected by the RCU read lock, so it may not find
-+ * entries which are being simultaneously added.  It will not return an
-+ * %XA_RETRY_ENTRY; if you need to see retry entries, use xas_find().
-+ *
-+ * Context: Any context.  Takes and releases the RCU lock.
-+ * Return: The entry, if found, otherwise NULL.
-+ */
-+void *xa_find(struct xarray *xa, unsigned long *indexp,
-+			unsigned long max, xa_tag_t filter)
-+{
-+	XA_STATE(xas, xa, *indexp);
-+	void *entry;
-+
-+	rcu_read_lock();
-+	do {
-+		if ((__force unsigned int)filter < XA_MAX_TAGS)
-+			entry = xas_find_tagged(&xas, max, filter);
-+		else
-+			entry = xas_find(&xas, max);
-+	} while (xas_retry(&xas, entry));
-+	rcu_read_unlock();
-+
-+	if (entry)
-+		*indexp = xas.xa_index;
-+	return entry;
-+}
-+EXPORT_SYMBOL(xa_find);
-+
-+/**
-+ * xa_find_after() - Search the XArray for a present entry.
-+ * @xa: XArray.
-+ * @indexp: Pointer to an index.
-+ * @max: Maximum index to search to.
-+ * @filter: Selection criterion.
-+ *
-+ * Finds the entry in @xa which matches the @filter and has the lowest
-+ * index that is above @indexp and no more than @max.
-+ * If an entry is found, @indexp is updated to be the index of the entry.
-+ * This function is protected by the RCU read lock, so it may miss entries
-+ * which are being simultaneously added.  It will not return an
-+ * %XA_RETRY_ENTRY; if you need to see retry entries, use xas_find().
-+ *
-+ * Context: Any context.  Takes and releases the RCU lock.
-+ * Return: The pointer, if found, otherwise NULL.
-+ */
-+void *xa_find_after(struct xarray *xa, unsigned long *indexp,
-+			unsigned long max, xa_tag_t filter)
-+{
-+	XA_STATE(xas, xa, *indexp + 1);
-+	void *entry;
-+
-+	rcu_read_lock();
-+	do {
-+		if ((__force unsigned int)filter < XA_MAX_TAGS)
-+			entry = xas_find_tagged(&xas, max, filter);
-+		else
-+			entry = xas_find(&xas, max);
-+		if (*indexp >= xas.xa_index)
-+			entry = xas_next_entry(&xas, max);
-+	} while (xas_retry(&xas, entry));
-+	rcu_read_unlock();
-+
-+	if (entry)
-+		*indexp = xas.xa_index;
-+	return entry;
-+}
-+EXPORT_SYMBOL(xa_find_after);
-+
- #ifdef XA_DEBUG
- void xa_dump_node(const struct xa_node *node)
- {
-diff --git a/tools/testing/radix-tree/test.c b/tools/testing/radix-tree/test.c
-index f619a6083dc1..4966ccb96fc9 100644
---- a/tools/testing/radix-tree/test.c
-+++ b/tools/testing/radix-tree/test.c
-@@ -263,6 +263,19 @@ unsigned long find_item(struct radix_tree_root *root, void *item)
- 	return found;
- }
+ static bool aer_firmware_first;
  
-+static LIST_HEAD(item_nodes);
-+
-+void item_update_node(struct xa_node *node)
-+{
-+	if (node->count) {
-+		if (list_empty(&node->private_list))
-+			list_add(&node->private_list, &item_nodes);
-+	} else {
-+		if (!list_empty(&node->private_list))
-+			list_del_init(&node->private_list);
-+        }
-+}
-+
- static int verify_node(struct radix_tree_node *slot, unsigned int tag,
- 			int tagged)
- {
-diff --git a/tools/testing/radix-tree/test.h b/tools/testing/radix-tree/test.h
-index 025b7324250f..3c6080703d1c 100644
---- a/tools/testing/radix-tree/test.h
-+++ b/tools/testing/radix-tree/test.h
-@@ -33,6 +33,7 @@ void item_gang_check_present(struct radix_tree_root *root,
- void item_full_scan(struct radix_tree_root *root, unsigned long start,
- 			unsigned long nr, int chunk);
- void item_kill_tree(struct radix_tree_root *root);
-+void item_update_node(struct xa_node *node);
- 
- int tag_tagged_items(struct radix_tree_root *, pthread_mutex_t *,
- 			unsigned long start, unsigned long end, unsigned batch,
-diff --git a/tools/testing/radix-tree/xarray-test.c b/tools/testing/radix-tree/xarray-test.c
-index 575f494e17da..24eb1bda4a79 100644
---- a/tools/testing/radix-tree/xarray-test.c
-+++ b/tools/testing/radix-tree/xarray-test.c
-@@ -53,6 +53,29 @@ void check_xa_tag(struct xarray *xa)
- 	xa_store(xa, 0, NULL, 0);
- }
- 
-+void check_xas_retry(struct xarray *xa)
-+{
-+	XA_STATE(xas, xa, 0);
-+
-+	xa_store(xa, 0, xa_mk_value(0), GFP_KERNEL);
-+	xa_store(xa, 1, xa_mk_value(1), GFP_KERNEL);
-+
-+	assert(xas_find(&xas, ULONG_MAX) == xa_mk_value(0));
-+	xa_erase(xa, 1);
-+	assert(xa_is_retry(xas_reload(&xas)));
-+	assert(!xas_retry(&xas, NULL));
-+	assert(!xas_retry(&xas, xa_mk_value(0)));
-+	assert(xas_retry(&xas, XA_RETRY_ENTRY));
-+	assert(xas.xa_node == XAS_RESTART);
-+	assert(xas_next_entry(&xas, ULONG_MAX) == xa_mk_value(0));
-+	assert(xas.xa_node == NULL);
-+
-+	xa_store(xa, 1, xa_mk_value(1), GFP_KERNEL);
-+	assert(xa_is_internal(xas_reload(&xas)));
-+	xas.xa_node = XAS_RESTART;
-+	assert(xas_next_entry(&xas, ULONG_MAX) == xa_mk_value(0));
-+}
-+
- void check_xa_load(struct xarray *xa)
- {
- 	unsigned long i, j;
-@@ -151,6 +174,101 @@ void check_multi_store(struct xarray *xa)
- 	BUG_ON(!xa_empty(xa));
- }
- 
-+void check_multi_find(struct xarray *xa)
-+{
-+	unsigned long index;
-+	xa_store_order(xa, 12, 2, xa_mk_value(12), GFP_KERNEL);
-+	xa_store(xa, 16, xa_mk_value(16), GFP_KERNEL);
-+
-+	index = 0;
-+	assert(xa_find(xa, &index, ULONG_MAX, XA_PRESENT) == xa_mk_value(12));
-+	assert(index == 12);
-+	index = 13;
-+	assert(xa_find(xa, &index, ULONG_MAX, XA_PRESENT) == xa_mk_value(12));
-+	assert(index >= 12 && index < 16);
-+	assert(xa_find_after(xa, &index, ULONG_MAX, XA_PRESENT) == xa_mk_value(16));
-+	assert(index == 16);
-+	xa_erase(xa, 12);
-+	xa_erase(xa, 16);
-+	assert(xa_empty(xa));
-+}
-+
-+void check_find(struct xarray *xa)
-+{
-+	unsigned long i, j, k;
-+
-+	assert(xa_empty(xa));
-+
-+	for (i = 0; i < 100; i++) {
-+		xa_store(xa, i, xa_mk_value(i), GFP_KERNEL);
-+		xa_set_tag(xa, i, XA_TAG_0);
-+		for (j = 0; j < i; j++) {
-+			xa_store(xa, j, xa_mk_value(j), GFP_KERNEL);
-+			xa_set_tag(xa, j, XA_TAG_0);
-+			for (k = 0; k < 100; k++) {
-+				unsigned long index = k;
-+				void *entry = xa_find(xa, &index, ULONG_MAX,
-+								XA_PRESENT);
-+				if (k <= j)
-+					assert(index == j);
-+				else if (k <= i)
-+					assert(index == i);
-+				else
-+					assert(entry == NULL);
-+
-+				index = k;
-+				entry = xa_find(xa, &index, ULONG_MAX,
-+								XA_TAG_0);
-+				if (k <= j)
-+					assert(index == j);
-+				else if (k <= i)
-+					assert(index == i);
-+				else
-+					assert(entry == NULL);
-+			}
-+			xa_erase(xa, j);
-+			assert(!xa_get_tag(xa, j, XA_TAG_0));
-+			assert(xa_get_tag(xa, i, XA_TAG_0));
-+		}
-+		xa_erase(xa, i);
-+		assert(!xa_get_tag(xa, i, XA_TAG_0));
-+	}
-+	assert(xa_empty(xa));
-+	check_multi_find(xa);
-+}
-+
-+void check_xas_delete(struct xarray *xa)
-+{
-+	XA_STATE(xas, xa, 0);
-+	void *entry;
-+	unsigned long i, j;
-+
-+	xas_set_update(&xas, item_update_node);
-+	for (i = 0; i < 200; i++) {
-+		for (j = i; j < 2 * i + 17; j++) {
-+			xas_set(&xas, j);
-+			do {
-+				xas_store(&xas, xa_mk_value(j));
-+			} while (xas_nomem(&xas, GFP_KERNEL));
-+		}
-+
-+		xas_set(&xas, ULONG_MAX);
-+		do {
-+			xas_store(&xas, xa_mk_value(0));
-+		} while (xas_nomem(&xas, GFP_KERNEL));
-+		xas_store(&xas, NULL);
-+
-+		xas_set(&xas, 0);
-+		j = i;
-+		xas_for_each(&xas, entry, ULONG_MAX) {
-+			assert(entry == xa_mk_value(j));
-+			xas_store(&xas, NULL);
-+			j++;
-+		}
-+		assert(xa_empty(xa));
-+	}
-+}
-+
- void xarray_checks(void)
- {
- 	DEFINE_XARRAY(array);
-@@ -161,6 +279,9 @@ void xarray_checks(void)
- 	check_xa_tag(&array);
- 	item_kill_tree(&array);
- 
-+	check_xas_retry(&array);
-+	item_kill_tree(&array);
-+
- 	check_xa_load(&array);
- 	item_kill_tree(&array);
- 
-@@ -170,6 +291,10 @@ void xarray_checks(void)
- 	check_cmpxchg(&array);
- 	check_multi_store(&array);
- 	item_kill_tree(&array);
-+
-+	check_find(&array);
-+	check_xas_delete(&array);
-+	item_kill_tree(&array);
- }
- 
- int __weak main(void)
--- 
-2.17.1
+diff --git a/drivers/pci/pcie/aer/ecrc.c b/drivers/pci/pcie/aer/ecrc.c
+deleted file mode 100644
+index 039efb606e31..000000000000
+--- a/drivers/pci/pcie/aer/ecrc.c
++++ /dev/null
+@@ -1,117 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * Enable/disable PCIe ECRC checking
+- *
+- * (C) Copyright 2009 Hewlett-Packard Development Company, L.P.
+- *    Andrew Patterson <andrew.patterson@hp.com>
+- */
+-
+-#include <linux/kernel.h>
+-#include <linux/module.h>
+-#include <linux/moduleparam.h>
+-#include <linux/pci.h>
+-#include <linux/pci_regs.h>
+-#include <linux/errno.h>
+-#include "../../pci.h"
+-
+-#define ECRC_POLICY_DEFAULT 0		/* ECRC set by BIOS */
+-#define ECRC_POLICY_OFF     1		/* ECRC off for performance */
+-#define ECRC_POLICY_ON      2		/* ECRC on for data integrity */
+-
+-static int ecrc_policy = ECRC_POLICY_DEFAULT;
+-
+-static const char *ecrc_policy_str[] = {
+-	[ECRC_POLICY_DEFAULT] = "bios",
+-	[ECRC_POLICY_OFF] = "off",
+-	[ECRC_POLICY_ON] = "on"
+-};
+-
+-/**
+- * enable_ercr_checking - enable PCIe ECRC checking for a device
+- * @dev: the PCI device
+- *
+- * Returns 0 on success, or negative on failure.
+- */
+-static int enable_ecrc_checking(struct pci_dev *dev)
+-{
+-	int pos;
+-	u32 reg32;
+-
+-	if (!pci_is_pcie(dev))
+-		return -ENODEV;
+-
+-	pos = dev->aer_cap;
+-	if (!pos)
+-		return -ENODEV;
+-
+-	pci_read_config_dword(dev, pos + PCI_ERR_CAP, &reg32);
+-	if (reg32 & PCI_ERR_CAP_ECRC_GENC)
+-		reg32 |= PCI_ERR_CAP_ECRC_GENE;
+-	if (reg32 & PCI_ERR_CAP_ECRC_CHKC)
+-		reg32 |= PCI_ERR_CAP_ECRC_CHKE;
+-	pci_write_config_dword(dev, pos + PCI_ERR_CAP, reg32);
+-
+-	return 0;
+-}
+-
+-/**
+- * disable_ercr_checking - disables PCIe ECRC checking for a device
+- * @dev: the PCI device
+- *
+- * Returns 0 on success, or negative on failure.
+- */
+-static int disable_ecrc_checking(struct pci_dev *dev)
+-{
+-	int pos;
+-	u32 reg32;
+-
+-	if (!pci_is_pcie(dev))
+-		return -ENODEV;
+-
+-	pos = dev->aer_cap;
+-	if (!pos)
+-		return -ENODEV;
+-
+-	pci_read_config_dword(dev, pos + PCI_ERR_CAP, &reg32);
+-	reg32 &= ~(PCI_ERR_CAP_ECRC_GENE | PCI_ERR_CAP_ECRC_CHKE);
+-	pci_write_config_dword(dev, pos + PCI_ERR_CAP, reg32);
+-
+-	return 0;
+-}
+-
+-/**
+- * pcie_set_ecrc_checking - set/unset PCIe ECRC checking for a device based on global policy
+- * @dev: the PCI device
+- */
+-void pcie_set_ecrc_checking(struct pci_dev *dev)
+-{
+-	switch (ecrc_policy) {
+-	case ECRC_POLICY_DEFAULT:
+-		return;
+-	case ECRC_POLICY_OFF:
+-		disable_ecrc_checking(dev);
+-		break;
+-	case ECRC_POLICY_ON:
+-		enable_ecrc_checking(dev);
+-		break;
+-	default:
+-		return;
+-	}
+-}
+-
+-/**
+- * pcie_ecrc_get_policy - parse kernel command-line ecrc option
+- */
+-void pcie_ecrc_get_policy(char *str)
+-{
+-	int i;
+-
+-	for (i = 0; i < ARRAY_SIZE(ecrc_policy_str); i++)
+-		if (!strncmp(str, ecrc_policy_str[i],
+-			     strlen(ecrc_policy_str[i])))
+-			break;
+-	if (i >= ARRAY_SIZE(ecrc_policy_str))
+-		return;
+-
+-	ecrc_policy = i;
+-}
