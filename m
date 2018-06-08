@@ -1,216 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id +g91IscuHVtOIwAAmS7hNA
-	; Sun, 10 Jun 2018 13:59:35 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id mC8jKYNFGlvDDgAAmS7hNA
+	; Fri, 08 Jun 2018 08:59:57 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 6D889607A4; Sun, 10 Jun 2018 13:59:35 +0000 (UTC)
+	id 49FD06089E; Fri,  8 Jun 2018 08:59:57 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mk75Jksw"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gxz3qZ5i"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id B856F601C3;
-	Sun, 10 Jun 2018 13:59:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B856F601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id A980B605A5;
+	Fri,  8 Jun 2018 08:59:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A980B605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932230AbeFJN7c (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sun, 10 Jun 2018 09:59:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41146 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753509AbeFJN73 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 09:59:29 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D51520858;
-        Sun, 10 Jun 2018 13:59:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528639169;
-        bh=STmvehvPBPxPZllugB+SeL85rYNLUSw9cBUgAI90BCA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Mk75JkswXV3+trbrHntaC3o6ENg114fCpKhDULM8WvPsdvjyUrAhIcWxxda+8xrjs
-         JTqnsboIAofIXeZTa+JX7g3RNIfNNnWdDuHGXKRQWOK2f5e+rrSbMYsMpgiCxhVz1C
-         iGMkXPWCNlqYWqaB32vjEGMDBNfSeezto3M8Bq3U=
-Date: Sun, 10 Jun 2018 14:59:23 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Stefan Popa <stefan.popa@analog.com>
-Cc: <Michael.Hennerich@analog.com>, <lars@metafoo.de>,
-        <knaack.h@gmx.de>, <pmeerw@pmeerw.net>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <mchehab@kernel.org>,
-        <davem@davemloft.net>, <gregkh@linuxfoundation.org>,
-        <akpm@linux-foundation.org>, <linus.walleij@linaro.org>,
-        <rdunlap@infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] dt-bindings: iio: dac: Add docs for AD5758 DAC
-Message-ID: <20180610145923.3b767ad4@archlinux>
-In-Reply-To: <1528377065-647-1-git-send-email-stefan.popa@analog.com>
-References: <1528377065-647-1-git-send-email-stefan.popa@analog.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1751224AbeFHI7x (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 04:59:53 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:40030 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750977AbeFHI7u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 04:59:50 -0400
+Received: by mail-pl0-f67.google.com with SMTP id t12-v6so7909974plo.7
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 01:59:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding;
+        bh=4uBFP2hS65FbtUc3YZ5P/sJMZzF6S3m1oX1+dLdnPwU=;
+        b=gxz3qZ5i4nd9DW3NkqovUsA5H86Vs1CGWz2+jclcpo5CT7eM7Ieu4Lub//SfFIjAik
+         G76FP9MbSxsYYbdKFdaHp1C7VmgvyxxQah76s4pXbmpkZcIGmJ1pRrF0ZcWWcYYoqNOo
+         iTAshy3OcxGiLKtZcWmo9Mr9VBDNi+dD8YNQVKJQsRVr1WiMTWGlz6lvIxXBDaTIb7Lw
+         cYpNMyisAjtPXTZrrra50ZnHK0jc3gjAKPtvmrIPf5y7IT1LGK4+/XOy9DupDgvZGYc8
+         keIfdoYOI9/iRKXvBWBXV2Xv2DhegCusoO8mfM2fDSWhOovbnR6fdC6+qARnWP98euwa
+         ys7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=4uBFP2hS65FbtUc3YZ5P/sJMZzF6S3m1oX1+dLdnPwU=;
+        b=oR8nTqmCVUd86uAM4o3bq75acCiS+ZW9k1fz8owy7kONR89c+4sTnjXmg1Ewcjwyby
+         HA7LqOT1jhs/jYPsn2RXS34RRSd79ooPatdMPo4jftqOn+65JuyI+cY7s20vdzDX9R8S
+         OLHkt7LckgebT3mD6vE++7M9cA2yJ3T4cyOn93sDqK36pRIt1lNrX2unxjjMkdSHoed/
+         ijvSBqvQPDHtjE/7bSHpC9f4J7PJmcIKKXY9c7nBCi9S3i8yE4fBkLtJfhcyyUOLikRU
+         ylwpGhHfPPR0LdATb8iC7qU/ulesA8CDoPyHy29pusXsJsv0nR/LMjpdHk7juHrxSNMn
+         Brvw==
+X-Gm-Message-State: APt69E2hz8V+SXEqrdHug/c1SdH41956V4jyMw/2/xVMTx5d//JcUUBG
+        PBTzbDo5QtC6jN/dlJw9Ajw=
+X-Google-Smtp-Source: ADUXVKLEFQmHKZA5QyH/eGwWchOIG3xn+1DM7HfsYtz2DraSFRdaSNZ/XMWritZtfF/wNT58tRkzyA==
+X-Received: by 2002:a17:902:7c84:: with SMTP id y4-v6mr5805502pll.262.1528448390005;
+        Fri, 08 Jun 2018 01:59:50 -0700 (PDT)
+Received: from [0.0.0.0] (67.216.217.169.16clouds.com. [67.216.217.169])
+        by smtp.gmail.com with ESMTPSA id d88-v6sm45059475pfb.43.2018.06.08.01.59.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Jun 2018 01:59:49 -0700 (PDT)
+Subject: Re: [PATCH v2 2/2] KVM: arm/arm64: harden unmap_stage2_ptes in case
+ end is not PAGE_SIZE aligned
+To: Christoffer Dall <christoffer.dall@arm.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        Suzuki.Poulose@arm.com, linux-kernel@vger.kernel.org,
+        jia.he@hxt-semitech.com
+References: <1526635630-18917-1-git-send-email-hejianet@gmail.com>
+ <1526635630-18917-2-git-send-email-hejianet@gmail.com>
+ <2185a61e-c157-e177-9bad-83b6f27fd784@arm.com>
+ <50c98169-1606-48bf-0489-124adefd2a54@gmail.com>
+ <20180608083414.GA5097@C02W217FHV2R.local>
+From: Jia He <hejianet@gmail.com>
+Message-ID: <42df5a9e-23bc-79ac-3d10-66da9f05c0ca@gmail.com>
+Date: Fri, 8 Jun 2018 16:59:42 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20180608083414.GA5097@C02W217FHV2R.local>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 7 Jun 2018 16:11:05 +0300
-Stefan Popa <stefan.popa@analog.com> wrote:
+Hi Christoffer
+I ever sent out the v3 patch set with the single patch 1/2
+[link] https://patchwork.kernel.org/patch/10413803/
+Sorry,I ping-ed the wrong mail thread ;-).
 
-> Signed-off-by: Stefan Popa <stefan.popa@analog.com>
-Hmm. The first part number I've ever googled where the top hit has
-been a flight number.=20
-Rio de Janeiro to Campinas is apparently on time today.
+Cheers,
+Jia
 
-> ---
-> Changes in v2:
-> 	- Nothing changed, just to follow the patch set version.
->=20
->  .../devicetree/bindings/iio/dac/ad5758.txt         | 84 ++++++++++++++++=
-++++++
->  MAINTAINERS                                        |  1 +
->  2 files changed, 85 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/dac/ad5758.txt
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/dac/ad5758.txt b/Docum=
-entation/devicetree/bindings/iio/dac/ad5758.txt
-> new file mode 100644
-> index 0000000..75fff6c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/dac/ad5758.txt
-> @@ -0,0 +1,84 @@
-> +Analog Devices AD5758 DAC device driver
-> +
-> +Required properties for the AD5758:
-> +	- compatible: Must be "adi,ad5758"
-> +	- reg: SPI chip select number for the device
-> +	- spi-max-frequency: Max SPI frequency to use (< 50000000)
-> +	- spi-cpha: is the only mode that is supported
-> +
-> +Optional properties:
-> +
-> + - adi,dc-dc-mode: Mode of operation of the dc-to-dc converter
-> +		   The following values are currently supported:
-> +		   	* 0: DC-to-DC converter powered off
-> +			* 1: DPC current mode
-Perhaps expand those acronyms?
-Dynamic Power Control  and perhaps a bit of explanation so people
-who are ready DT files don't have to go find the data sheet to have
-some idea of what these are?
-
-Otherwise, binding is fine.
-
-> +			* 2: DPC voltage mode
-> +			* 3: PPC current mode
-> +
-> + - adi,dc-dc-ilim: The dc-to-dc converter current limit
-> +		   The following values are currently supported [mA]:
-Unit should be in the name.
-adi,dc-dc-ilim_ma
-> +		   	* 150
-> +			* 200
-> +			* 250
-> +			* 300
-> +			* 350
-> +			* 400
-> +
-> + - adi,slew: Array of slewrate settings should contain 3 fields:
-> +	1: Should be either 0 or 1 in order to enable or disable slewrate.
-
-If it is disabled, why not just detect that as the 'not here' version
-and then you can drop this element?
-
-> +	2: Slew rate clock:
-> +		Valid values for the slew rate update frequency [Hz]:
-> +		* 240000
-> +		* 200000
-> +		* 150000
-> +		* 128000
-> +		* 64000
-> +		* 32000
-> +		* 16000
-> +		* 8000
-> +		* 4000
-> +		* 2000
-> +		* 1000
-> +		* 512
-> +		* 256
-> +		* 128
-> +		* 64
-> +		* 16
-> +	3: Slew rate step:
-> +		Defines by how much the output value changes at each update.
-> +		Valid values for the step size LSBs:
-> +		* 4
-> +		* 12
-> +		* 64
-> +		* 120
-> +		* 256
-> +		* 500
-> +		* 1820
-> +		* 2048
-
-I think these last two are kind of separate parameters, would be interested
-to hear if Rob thinks this should be separate or not.  They are both
-related to slew rate, but different elements that add up to it.
-
-> +
-> + - adi,range: The output range
-> +	      The following values are currently supported:
-> +	      	* 0: 0 V to 5 V voltage range
-> +		* 1: 0 V to 10 V voltage range
-> +		* 2: =C2=B15 V voltage range
-> +		* 3: =C2=B110 V voltage range
-> +		* 8: 0 mA to 20 mA current range
-> +		* 9: 0 mA to 24 mA current range
-> +		* 10: 4 mA to 20 mA current range
-> +		* 11: =C2=B120 mA current range
-> +		* 12: =C2=B124 mA current range
-> +		* 13: =E2=88=921 mA to +22 mA current range
-
-Not sure if we can't represent this better.  It's either
-a current or voltage output device.
-
-adi,voltage_output or something like that or use
-
-adi,voltage_range_v =3D <0 5>
-adi,current_range_ma =3D <-1 22> etc
-with it only being valid to specify one or the other.
-
-I much prefer DT elements that don't require looking
-at the docs where possible.
-
-Again, Rob's input on this would be good.
-
-> +
-> +AD5758 Example:
-> +
-> +	ad5758@0 {
-> +		compatible =3D "adi,ad5758";
-> +		reg =3D <0>;
-> +		spi-max-frequency =3D <1000000>;
-> +		spi-cpha;
-> +
-> +		adi,dc-dc-mode =3D <2>;
-> +		adi,dc-dc-ilim =3D <200>;
-> +		adi,slew =3D <1 200000 12>;
-> +		adi,range =3D <1>;
-> +	};
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 1993779..f640146 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -808,6 +808,7 @@ L:	linux-iio@vger.kernel.org
->  W:	http://ez.analog.com/community/linux-device-drivers
->  S:	Supported
->  F:	drivers/iio/dac/ad5758.c
-> +F:	Documentation/devicetree/bindings/iio/dac/ad5758.txt
-> =20
->  ANALOG DEVICES INC AD9389B DRIVER
->  M:	Hans Verkuil <hans.verkuil@cisco.com>
+On 6/8/2018 4:34 PM, Christoffer Dall Wrote:
+> On Fri, May 18, 2018 at 09:04:40PM +0800, Jia He wrote:
+>>
+>>
+>> On 5/18/2018 5:48 PM, Marc Zyngier Wrote:
+>>> On 18/05/18 10:27, Jia He wrote:
+>>>> If it passes addr=0x202920000,size=0xfe00 to unmap_stage2_range->
+>>>> ...->unmap_stage2_ptes, unmap_stage2_ptes will get addr=0x202920000,
+>>>> end=0x20292fe00. After first while loop addr=0x202930000, end=0x20292fe00,
+>>>> then addr!=end. Thus it will touch another pages by put_pages() in the
+>>>> 2nd loop.
+>>>>
+>>>> This patch fixes it by hardening the break condition of while loop.
+>>>>
+>>>> Signed-off-by: jia.he@hxt-semitech.com
+>>>> ---
+>>>> v2: newly added
+>>>>
+>>>>  virt/kvm/arm/mmu.c | 2 +-
+>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+>>>> index 8dac311..45cd040 100644
+>>>> --- a/virt/kvm/arm/mmu.c
+>>>> +++ b/virt/kvm/arm/mmu.c
+>>>> @@ -217,7 +217,7 @@ static void unmap_stage2_ptes(struct kvm *kvm, pmd_t *pmd,
+>>>>  
+>>>>  			put_page(virt_to_page(pte));
+>>>>  		}
+>>>> -	} while (pte++, addr += PAGE_SIZE, addr != end);
+>>>> +	} while (pte++, addr += PAGE_SIZE, addr < end);
+>>>>  
+>>>>  	if (stage2_pte_table_empty(start_pte))
+>>>>  		clear_stage2_pmd_entry(kvm, pmd, start_addr);
+>>>>
+>>>
+>>> I don't think this change is the right thing to do. You get that failure
+>>> because you're being passed a size that is not a multiple of PAGE_SIZE.
+>>> That's the mistake.
+>>>
+>>> You should ensure that this never happens, rather than changing the page
+>>> table walkers (which are consistent with the way this kind of code is
+>>> written in other places of the kernel). As you mentioned in your first
+>>> patch, the real issue is that KSM is broken, and this is what should be
+>>> fixed.
+>>>
+>> Got it, thanks
+>> Should I resend the patch 1/2 without any changes after droping patch 2/2?
+>>
+> 
+> That's fine if you trim the commit message to make it look nicer.
+> 
+> Also, in the future, please include a cover letter if you send more than
+> one patch to the list.
+> 
+> Thanks,
+> -Christoffer
+> 
