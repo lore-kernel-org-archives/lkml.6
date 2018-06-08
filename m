@@ -1,375 +1,186 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id bY4PIUWGHls4NAAAmS7hNA
-	; Mon, 11 Jun 2018 14:26:03 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id lSjMG/Y7GlubKwAAmS7hNA
+	; Fri, 08 Jun 2018 08:19:50 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 17F20607A4; Mon, 11 Jun 2018 14:26:03 +0000 (UTC)
+	id 1B84B607DC; Fri,  8 Jun 2018 08:19:50 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UKA1Dp0z"
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="lA+SjpMP"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 212C86074D;
-	Mon, 11 Jun 2018 14:26:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 212C86074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 4BD0960590;
+	Fri,  8 Jun 2018 08:19:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4BD0960590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934593AbeFKOZq (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 10:25:46 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44886 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933459AbeFKOGn (ORCPT
+        id S932330AbeFHITq (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 04:19:46 -0400
+Received: from smtprelay6.synopsys.com ([198.182.37.59]:47735 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932158AbeFHITg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:06:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=MpkRNEeJRKeNFXw1dXFnXnKHkjjL2vHzBbuf+crM4gs=; b=UKA1Dp0zT16XGD2LyTB9nBQjr
-        okcWzoq00tpC1T6XPmQeivHl4khYnEn43epSda+tX6UkgPyBXBbIpTNar5qoRKXHMpTAvjvv6fKJh
-        FhhtzwhDd6P3EOJn70yAbxLKjz75Pfnb0EizbcGfaE+iK3WbUrByK2kwzfshzpqe0MO6UQcnaG2S7
-        +N8FtGo2b52HdRuRjtQYZ+Tpn92WSpOYAPhJI+xFvFJmUEu76RFHsxmjpcAyk6nM+FnTwdmgsEUf3
-        HiyUwY02dXPAXQFk7L4loC23u2eP9wjGVtaQJAzxld3P833ZGd6XPbt4+UkVsey0bGC1z8+WGlm87
-        mPz6H+YEg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSNSz-0004Xv-Na; Mon, 11 Jun 2018 14:06:41 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Lukas Czerner <lczerner@redhat.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v13 04/72] xarray: Change definition of sibling entries
-Date: Mon, 11 Jun 2018 07:05:31 -0700
-Message-Id: <20180611140639.17215-5-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
-References: <20180611140639.17215-1-willy@infradead.org>
+        Fri, 8 Jun 2018 04:19:36 -0400
+Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id AFE861E06A3;
+        Fri,  8 Jun 2018 10:19:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1528445973; bh=3erSmJvKPSyjFYr+ikn9jJGFFyX9rzBDXTK0lu5sfF8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
+         References:From;
+        b=lA+SjpMPPjQ0kd5exC476ZMWmLryf5i7cvXAC9DUlw2Ny0v9ZjV73qAlavMyz0BYr
+         YlXOGvbq5NA1Yiqc786NNZOeooNu7SYjUTJ8WxA90tyIH7gm+swhl4+rZ9Idd99sWV
+         LSouievPL3/+IVGWFKXBjc0Q1Z4TrHN06ZO+ZEbCU1qwfINBK9Jp4ug6qJ9ma61OHL
+         hxGm97COtiedn6BhWYBYsxqPenD7ULEo5W6iMQQU/UF92ef8Ge+GdBrKcOzOabY9qn
+         KKqnGgz92/+Yj4X/SdD+IVgclbp6dzdpM6qwov2hIeb1pXJkTKdEO4nJwW1afINpj1
+         N87nYMKTZpOuw==
+Received: from pt02.synopsys.com (pt02.internal.synopsys.com [10.107.23.240])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 91920399F;
+        Fri,  8 Jun 2018 01:19:32 -0700 (PDT)
+Received: from UbuntuMate-64Bits.internal.synopsys.com (gustavo-e7480.internal.synopsys.com [10.107.25.102])
+        by pt02.synopsys.com (Postfix) with ESMTP id E93003E91E;
+        Fri,  8 Jun 2018 09:19:31 +0100 (WEST)
+From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
+        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
+        adouglas@cadence.com, jesper.nilsson@axis.com
+Cc: linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Subject: [PATCH v3 03/10] PCI: Update xxx_pcie_ep_raise_irq() and pci_epc_raise_irq() signatures
+Date: Fri,  8 Jun 2018 09:19:19 +0100
+Message-Id:
+ <b4eba65e4ae7b8d15a5770a31d6a339de518cea7.1527862777.git.gustavo.pimentel@synopsys.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1527862777.git.gustavo.pimentel@synopsys.com>
+References: <cover.1527862777.git.gustavo.pimentel@synopsys.com>
+In-Reply-To: <cover.1527862777.git.gustavo.pimentel@synopsys.com>
+References: <cover.1527862777.git.gustavo.pimentel@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Message-ID: <20180608081919.E3eebyoP6HgDE3ktmZkhorL2U0Qjll-1KEtCli9NBNM@z>
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+Change {cdns, dra7xx, artpec6}_pcie_ep_raise_irq() and pci_epc_raise_irq()
+signature, namely the interrupt_num variable type from u8 to u16 to
+accommodate 2048 maximum MSI-X interrupts.
 
-Instead of storing a pointer to the slot containing the canonical entry,
-store the offset of the slot.  Produces slightly more efficient code
-(~300 bytes) and simplifies the implementation.
-
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
-Reviewed-by: Josef Bacik <jbacik@fb.com>
+Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Acked-by: Alan Douglas <adouglas@cadence.com>
 ---
- include/linux/xarray.h | 93 ++++++++++++++++++++++++++++++++++++++++++
- lib/radix-tree.c       | 64 +++++++++--------------------
- 2 files changed, 112 insertions(+), 45 deletions(-)
+Change v1->v2:
+ - Nothing changed, just to follow the patch set version.
+Change v2->v3:
+ - Move into here the pci_epc_raise_irq() signature change from patch
+file #1.
+ - Move into here the {dra7xx, artpec6}_pcie_ep_raise_irq() signature
+changes from patch file #2.
 
-diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-index f61806fd8002..283beb5aac58 100644
---- a/include/linux/xarray.h
-+++ b/include/linux/xarray.h
-@@ -22,6 +22,12 @@
-  * x1: Value entry
+ drivers/pci/cadence/pcie-cadence-ep.c | 3 ++-
+ drivers/pci/dwc/pci-dra7xx.c          | 2 +-
+ drivers/pci/dwc/pcie-artpec6.c        | 2 +-
+ drivers/pci/endpoint/pci-epc-core.c   | 8 ++++----
+ include/linux/pci-epc.h               | 6 +++---
+ 5 files changed, 11 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/pci/cadence/pcie-cadence-ep.c b/drivers/pci/cadence/pcie-cadence-ep.c
+index 3d8283e..6b713ca 100644
+--- a/drivers/pci/cadence/pcie-cadence-ep.c
++++ b/drivers/pci/cadence/pcie-cadence-ep.c
+@@ -363,7 +363,8 @@ static int cdns_pcie_ep_send_msi_irq(struct cdns_pcie_ep *ep, u8 fn,
+ }
+ 
+ static int cdns_pcie_ep_raise_irq(struct pci_epc *epc, u8 fn,
+-				  enum pci_epc_irq_type type, u8 interrupt_num)
++				  enum pci_epc_irq_type type,
++				  u16 interrupt_num)
+ {
+ 	struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
+ 
+diff --git a/drivers/pci/dwc/pci-dra7xx.c b/drivers/pci/dwc/pci-dra7xx.c
+index f688204..bdf948b 100644
+--- a/drivers/pci/dwc/pci-dra7xx.c
++++ b/drivers/pci/dwc/pci-dra7xx.c
+@@ -370,7 +370,7 @@ static void dra7xx_pcie_raise_msi_irq(struct dra7xx_pcie *dra7xx,
+ }
+ 
+ static int dra7xx_pcie_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
+-				 enum pci_epc_irq_type type, u8 interrupt_num)
++				 enum pci_epc_irq_type type, u16 interrupt_num)
+ {
+ 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+ 	struct dra7xx_pcie *dra7xx = to_dra7xx_pcie(pci);
+diff --git a/drivers/pci/dwc/pcie-artpec6.c b/drivers/pci/dwc/pcie-artpec6.c
+index 321b56c..9a2474b 100644
+--- a/drivers/pci/dwc/pcie-artpec6.c
++++ b/drivers/pci/dwc/pcie-artpec6.c
+@@ -428,7 +428,7 @@ static void artpec6_pcie_ep_init(struct dw_pcie_ep *ep)
+ }
+ 
+ static int artpec6_pcie_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
+-				  enum pci_epc_irq_type type, u8 interrupt_num)
++				  enum pci_epc_irq_type type, u16 interrupt_num)
+ {
+ 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+ 
+diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
+index 7d77bd0..c72e656 100644
+--- a/drivers/pci/endpoint/pci-epc-core.c
++++ b/drivers/pci/endpoint/pci-epc-core.c
+@@ -131,13 +131,13 @@ EXPORT_SYMBOL_GPL(pci_epc_start);
+  * pci_epc_raise_irq() - interrupt the host system
+  * @epc: the EPC device which has to interrupt the host
+  * @func_no: the endpoint function number in the EPC device
+- * @type: specify the type of interrupt; legacy or MSI
+- * @interrupt_num: the MSI interrupt number
++ * @type: specify the type of interrupt; legacy, MSI or MSI-X
++ * @interrupt_num: the MSI or MSI-X interrupt number
   *
-  * Attempting to store internal entries in the XArray is a bug.
-+ *
-+ * Most internal entries are pointers to the next node in the tree.
-+ * The following internal entries have a special meaning:
-+ *
-+ * 0-62: Sibling entries
-+ * 256: Retry entry
+- * Invoke to raise an MSI or legacy interrupt
++ * Invoke to raise an legacy, MSI or MSI-X interrupt
   */
- 
- #define BITS_PER_XA_VALUE	(BITS_PER_LONG - 1)
-@@ -63,6 +69,42 @@ static inline bool xa_is_value(const void *entry)
- 	return (unsigned long)entry & 1;
- }
- 
-+/*
-+ * xa_mk_internal() - Create an internal entry.
-+ * @v: Value to turn into an internal entry.
-+ *
-+ * Context: Any context.
-+ * Return: An XArray internal entry corresponding to this value.
-+ */
-+static inline void *xa_mk_internal(unsigned long v)
-+{
-+	return (void *)((v << 2) | 2);
-+}
-+
-+/*
-+ * xa_to_internal() - Extract the value from an internal entry.
-+ * @entry: XArray entry.
-+ *
-+ * Context: Any context.
-+ * Return: The value which was stored in the internal entry.
-+ */
-+static inline unsigned long xa_to_internal(const void *entry)
-+{
-+	return (unsigned long)entry >> 2;
-+}
-+
-+/*
-+ * xa_is_internal() - Is the entry an internal entry?
-+ * @entry: XArray entry.
-+ *
-+ * Context: Any context.
-+ * Return: %true if the entry is an internal entry.
-+ */
-+static inline bool xa_is_internal(const void *entry)
-+{
-+	return ((unsigned long)entry & 3) == 2;
-+}
-+
- #define xa_trylock(xa)		spin_trylock(&(xa)->xa_lock)
- #define xa_lock(xa)		spin_lock(&(xa)->xa_lock)
- #define xa_unlock(xa)		spin_unlock(&(xa)->xa_lock)
-@@ -75,4 +117,55 @@ static inline bool xa_is_value(const void *entry)
- #define xa_unlock_irqrestore(xa, flags) \
- 				spin_unlock_irqrestore(&(xa)->xa_lock, flags)
- 
-+/* Everything below here is the Advanced API.  Proceed with caution. */
-+
-+/*
-+ * The xarray is constructed out of a set of 'chunks' of pointers.  Choosing
-+ * the best chunk size requires some tradeoffs.  A power of two recommends
-+ * itself so that we can walk the tree based purely on shifts and masks.
-+ * Generally, the larger the better; as the number of slots per level of the
-+ * tree increases, the less tall the tree needs to be.  But that needs to be
-+ * balanced against the memory consumption of each node.  On a 64-bit system,
-+ * xa_node is currently 576 bytes, and we get 7 of them per 4kB page.  If we
-+ * doubled the number of slots per node, we'd get only 3 nodes per 4kB page.
-+ */
-+#ifndef XA_CHUNK_SHIFT
-+#define XA_CHUNK_SHIFT		(CONFIG_BASE_SMALL ? 4 : 6)
-+#endif
-+#define XA_CHUNK_SIZE		(1UL << XA_CHUNK_SHIFT)
-+#define XA_CHUNK_MASK		(XA_CHUNK_SIZE - 1)
-+
-+/* Private */
-+static inline bool xa_is_node(const void *entry)
-+{
-+	return xa_is_internal(entry) && (unsigned long)entry > 4096;
-+}
-+
-+/* Private */
-+static inline void *xa_mk_sibling(unsigned int offset)
-+{
-+	return xa_mk_internal(offset);
-+}
-+
-+/* Private */
-+static inline unsigned long xa_to_sibling(const void *entry)
-+{
-+	return xa_to_internal(entry);
-+}
-+
-+/**
-+ * xa_is_sibling() - Is the entry a sibling entry?
-+ * @entry: Entry retrieved from the XArray
-+ *
-+ * Return: %true if the entry is a sibling entry.
-+ */
-+static inline bool xa_is_sibling(const void *entry)
-+{
-+	return IS_ENABLED(CONFIG_RADIX_TREE_MULTIORDER) &&
-+		xa_is_internal(entry) &&
-+		(entry < xa_mk_sibling(XA_CHUNK_SIZE - 1));
-+}
-+
-+#define XA_RETRY_ENTRY		xa_mk_internal(256)
-+
- #endif /* _LINUX_XARRAY_H */
-diff --git a/lib/radix-tree.c b/lib/radix-tree.c
-index fa43dcdc1f6a..22ca63cb3204 100644
---- a/lib/radix-tree.c
-+++ b/lib/radix-tree.c
-@@ -38,6 +38,7 @@
- #include <linux/rcupdate.h>
- #include <linux/slab.h>
- #include <linux/string.h>
-+#include <linux/xarray.h>
- 
- 
- /* Number of nodes in fully populated tree of given height */
-@@ -98,24 +99,7 @@ static inline void *node_to_entry(void *ptr)
- 	return (void *)((unsigned long)ptr | RADIX_TREE_INTERNAL_NODE);
- }
- 
--#define RADIX_TREE_RETRY	node_to_entry(NULL)
--
--#ifdef CONFIG_RADIX_TREE_MULTIORDER
--/* Sibling slots point directly to another slot in the same node */
--static inline
--bool is_sibling_entry(const struct radix_tree_node *parent, void *node)
--{
--	void __rcu **ptr = node;
--	return (parent->slots <= ptr) &&
--			(ptr < parent->slots + RADIX_TREE_MAP_SIZE);
--}
--#else
--static inline
--bool is_sibling_entry(const struct radix_tree_node *parent, void *node)
--{
--	return false;
--}
--#endif
-+#define RADIX_TREE_RETRY	XA_RETRY_ENTRY
- 
- static inline unsigned long
- get_slot_offset(const struct radix_tree_node *parent, void __rcu **slot)
-@@ -129,16 +113,10 @@ static unsigned int radix_tree_descend(const struct radix_tree_node *parent,
- 	unsigned int offset = (index >> parent->shift) & RADIX_TREE_MAP_MASK;
- 	void __rcu **entry = rcu_dereference_raw(parent->slots[offset]);
- 
--#ifdef CONFIG_RADIX_TREE_MULTIORDER
--	if (radix_tree_is_internal_node(entry)) {
--		if (is_sibling_entry(parent, entry)) {
--			void __rcu **sibentry;
--			sibentry = (void __rcu **) entry_to_node(entry);
--			offset = get_slot_offset(parent, sibentry);
--			entry = rcu_dereference_raw(*sibentry);
--		}
-+	if (xa_is_sibling(entry)) {
-+		offset = xa_to_sibling(entry);
-+		entry = rcu_dereference_raw(parent->slots[offset]);
- 	}
--#endif
- 
- 	*nodep = (void *)entry;
- 	return offset;
-@@ -300,10 +278,10 @@ static void dump_node(struct radix_tree_node *node, unsigned long index)
- 		} else if (!radix_tree_is_internal_node(entry)) {
- 			pr_debug("radix entry %p offset %ld indices %lu-%lu parent %p\n",
- 					entry, i, first, last, node);
--		} else if (is_sibling_entry(node, entry)) {
-+		} else if (xa_is_sibling(entry)) {
- 			pr_debug("radix sblng %p offset %ld indices %lu-%lu parent %p val %p\n",
- 					entry, i, first, last, node,
--					*(void **)entry_to_node(entry));
-+					node->slots[xa_to_sibling(entry)]);
- 		} else {
- 			dump_node(entry_to_node(entry), first);
- 		}
-@@ -873,8 +851,7 @@ static void radix_tree_free_nodes(struct radix_tree_node *node)
- 
- 	for (;;) {
- 		void *entry = rcu_dereference_raw(child->slots[offset]);
--		if (radix_tree_is_internal_node(entry) &&
--					!is_sibling_entry(child, entry)) {
-+		if (xa_is_node(entry)) {
- 			child = entry_to_node(entry);
- 			offset = 0;
- 			continue;
-@@ -896,7 +873,7 @@ static void radix_tree_free_nodes(struct radix_tree_node *node)
- static inline int insert_entries(struct radix_tree_node *node,
- 		void __rcu **slot, void *item, unsigned order, bool replace)
+ int pci_epc_raise_irq(struct pci_epc *epc, u8 func_no,
+-		      enum pci_epc_irq_type type, u8 interrupt_num)
++		      enum pci_epc_irq_type type, u16 interrupt_num)
  {
--	struct radix_tree_node *child;
-+	void *sibling;
- 	unsigned i, n, tag, offset, tags = 0;
- 
- 	if (node) {
-@@ -914,7 +891,7 @@ static inline int insert_entries(struct radix_tree_node *node,
- 		offset = offset & ~(n - 1);
- 		slot = &node->slots[offset];
- 	}
--	child = node_to_entry(slot);
-+	sibling = xa_mk_sibling(offset);
- 
- 	for (i = 0; i < n; i++) {
- 		if (slot[i]) {
-@@ -931,7 +908,7 @@ static inline int insert_entries(struct radix_tree_node *node,
- 	for (i = 0; i < n; i++) {
- 		struct radix_tree_node *old = rcu_dereference_raw(slot[i]);
- 		if (i) {
--			rcu_assign_pointer(slot[i], child);
-+			rcu_assign_pointer(slot[i], sibling);
- 			for (tag = 0; tag < RADIX_TREE_MAX_TAGS; tag++)
- 				if (tags & (1 << tag))
- 					tag_clear(node, tag, offset + i);
-@@ -941,9 +918,7 @@ static inline int insert_entries(struct radix_tree_node *node,
- 				if (tags & (1 << tag))
- 					tag_set(node, tag, offset);
- 		}
--		if (radix_tree_is_internal_node(old) &&
--					!is_sibling_entry(node, old) &&
--					(old != RADIX_TREE_RETRY))
-+		if (xa_is_node(old))
- 			radix_tree_free_nodes(old);
- 		if (xa_is_value(old))
- 			node->exceptional--;
-@@ -1102,10 +1077,10 @@ static inline void replace_sibling_entries(struct radix_tree_node *node,
- 				void __rcu **slot, int count, int exceptional)
- {
- #ifdef CONFIG_RADIX_TREE_MULTIORDER
--	void *ptr = node_to_entry(slot);
--	unsigned offset = get_slot_offset(node, slot) + 1;
-+	unsigned offset = get_slot_offset(node, slot);
-+	void *ptr = xa_mk_sibling(offset);
- 
--	while (offset < RADIX_TREE_MAP_SIZE) {
-+	while (++offset < RADIX_TREE_MAP_SIZE) {
- 		if (rcu_dereference_raw(node->slots[offset]) != ptr)
- 			break;
- 		if (count < 0) {
-@@ -1113,7 +1088,6 @@ static inline void replace_sibling_entries(struct radix_tree_node *node,
- 			node->count--;
- 		}
- 		node->exceptional += exceptional;
--		offset++;
- 	}
- #endif
- }
-@@ -1312,8 +1286,7 @@ int radix_tree_split(struct radix_tree_root *root, unsigned long index,
- 			tags |= 1 << tag;
- 
- 	for (end = offset + 1; end < RADIX_TREE_MAP_SIZE; end++) {
--		if (!is_sibling_entry(parent,
--				rcu_dereference_raw(parent->slots[end])))
-+		if (!xa_is_sibling(rcu_dereference_raw(parent->slots[end])))
- 			break;
- 		for (tag = 0; tag < RADIX_TREE_MAX_TAGS; tag++)
- 			if (tags & (1 << tag))
-@@ -1611,7 +1584,7 @@ static void __rcu **skip_siblings(struct radix_tree_node **nodep,
- {
- 	while (iter->index < iter->next_index) {
- 		*nodep = rcu_dereference_raw(*slot);
--		if (*nodep && !is_sibling_entry(iter->node, *nodep))
-+		if (*nodep && !xa_is_sibling(*nodep))
- 			return slot;
- 		slot++;
- 		iter->index = __radix_tree_iter_add(iter, 1);
-@@ -1762,7 +1735,7 @@ void __rcu **radix_tree_next_chunk(const struct radix_tree_root *root,
- 				while (++offset	< RADIX_TREE_MAP_SIZE) {
- 					void *slot = rcu_dereference_raw(
- 							node->slots[offset]);
--					if (is_sibling_entry(node, slot))
-+					if (xa_is_sibling(slot))
- 						continue;
- 					if (slot)
- 						break;
-@@ -2283,6 +2256,7 @@ void __init radix_tree_init(void)
- 
- 	BUILD_BUG_ON(RADIX_TREE_MAX_TAGS + __GFP_BITS_SHIFT > 32);
- 	BUILD_BUG_ON(ROOT_IS_IDR & ~GFP_ZONEMASK);
-+	BUILD_BUG_ON(XA_CHUNK_SIZE > 255);
- 	radix_tree_node_cachep = kmem_cache_create("radix_tree_node",
- 			sizeof(struct radix_tree_node), 0,
- 			SLAB_PANIC | SLAB_RECLAIM_ACCOUNT,
+ 	int ret;
+ 	unsigned long flags;
+diff --git a/include/linux/pci-epc.h b/include/linux/pci-epc.h
+index 89f079f..bb2395b 100644
+--- a/include/linux/pci-epc.h
++++ b/include/linux/pci-epc.h
+@@ -35,7 +35,7 @@ enum pci_epc_irq_type {
+  *	     MSI-X capability register
+  * @get_msix: ops to get the number of MSI-X interrupts allocated by the RC
+  *	     from the MSI-X capability register
+- * @raise_irq: ops to raise a legacy or MSI interrupt
++ * @raise_irq: ops to raise a legacy, MSI or MSI-X interrupt
+  * @start: ops to start the PCI link
+  * @stop: ops to stop the PCI link
+  * @owner: the module owner containing the ops
+@@ -56,7 +56,7 @@ struct pci_epc_ops {
+ 	int	(*set_msix)(struct pci_epc *epc, u8 func_no, u16 interrupts);
+ 	int	(*get_msix)(struct pci_epc *epc, u8 func_no);
+ 	int	(*raise_irq)(struct pci_epc *epc, u8 func_no,
+-			     enum pci_epc_irq_type type, u8 interrupt_num);
++			     enum pci_epc_irq_type type, u16 interrupt_num);
+ 	int	(*start)(struct pci_epc *epc);
+ 	void	(*stop)(struct pci_epc *epc);
+ 	struct module *owner;
+@@ -154,7 +154,7 @@ int pci_epc_get_msi(struct pci_epc *epc, u8 func_no);
+ int pci_epc_set_msix(struct pci_epc *epc, u8 func_no, u16 interrupts);
+ int pci_epc_get_msix(struct pci_epc *epc, u8 func_no);
+ int pci_epc_raise_irq(struct pci_epc *epc, u8 func_no,
+-		      enum pci_epc_irq_type type, u8 interrupt_num);
++		      enum pci_epc_irq_type type, u16 interrupt_num);
+ int pci_epc_start(struct pci_epc *epc);
+ void pci_epc_stop(struct pci_epc *epc);
+ struct pci_epc *pci_epc_get(const char *epc_name);
 -- 
-2.17.1
+2.7.4
