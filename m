@@ -1,166 +1,177 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id GgkDMJneHVuQKAAAmS7hNA
-	; Mon, 11 Jun 2018 02:29:48 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id hMTHNdPTGls1IwAAmS7hNA
+	; Fri, 08 Jun 2018 19:09:36 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 85E7D607BB; Mon, 11 Jun 2018 02:29:48 +0000 (UTC)
+	id EDD89607DC; Fri,  8 Jun 2018 19:09:35 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id E78E7605A5;
-	Mon, 11 Jun 2018 02:29:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E78E7605A5
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 75BC660275;
+	Fri,  8 Jun 2018 19:09:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 75BC660275
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753923AbeFKC3p (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Sun, 10 Jun 2018 22:29:45 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53260 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753793AbeFKC3o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 22:29:44 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A8F3EBB40A;
-        Mon, 11 Jun 2018 02:29:43 +0000 (UTC)
-Received: from [10.72.12.98] (ovpn-12-98.pek2.redhat.com [10.72.12.98])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D602420244E0;
-        Mon, 11 Jun 2018 02:29:39 +0000 (UTC)
-Subject: Re: [PATCH net] vhost_net: remove VHOST_NET_F_VIRTIO_NET_HDR support
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1528429842-22835-1-git-send-email-jasowang@redhat.com>
- <20180608074115-mutt-send-email-mst@kernel.org>
- <23efe110-f61a-5aee-c0b4-bd3dc5426438@redhat.com>
- <20180611050741-mutt-send-email-mst@kernel.org>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <90e9b3ea-e9d2-d60d-8355-42d447c67452@redhat.com>
-Date: Mon, 11 Jun 2018 10:29:36 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180611050741-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 11 Jun 2018 02:29:43 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 11 Jun 2018 02:29:43 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jasowang@redhat.com' RCPT:''
+        id S1752946AbeFHTJc (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 15:09:32 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52864 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752693AbeFHTIy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 15:08:54 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w58J4pL5128913
+        for <linux-kernel@vger.kernel.org>; Fri, 8 Jun 2018 15:08:54 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jfykw06xa-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 15:08:53 -0400
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <alifm@linux.ibm.com>;
+        Fri, 8 Jun 2018 15:08:52 -0400
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 8 Jun 2018 15:08:49 -0400
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w58J8mHD4522418
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 8 Jun 2018 19:08:48 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0B7242805A;
+        Fri,  8 Jun 2018 15:08:34 -0400 (EDT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EFAC72805E;
+        Fri,  8 Jun 2018 15:08:33 -0400 (EDT)
+Received: from alifm-ThinkPad-T470p.pok.ibm.com (unknown [9.56.58.93])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTPS;
+        Fri,  8 Jun 2018 15:08:33 -0400 (EDT)
+From: Farhan Ali <alifm@linux.ibm.com>
+To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: mst@redhat.com, qemu-devel@nongnu.org, arei.gonglei@huawei.com,
+        longpeng2@huawei.com, pasic@linux.ibm.com, frankja@linux.ibm.com,
+        borntraeger@de.ibm.com, alifm@linux.ibm.com
+Subject: [RFC v1 1/2] crypto/virtio-crypto: Read crypto services and algorithm masks
+Date: Fri,  8 Jun 2018 15:08:46 -0400
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1528462918.git.alifm@linux.ibm.com>
+References: <cover.1528462918.git.alifm@linux.ibm.com>
+In-Reply-To: <cover.1528462918.git.alifm@linux.ibm.com>
+References: <cover.1528462918.git.alifm@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18060819-0040-0000-0000-0000043D802B
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009153; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000265; SDB=6.01044097; UDB=6.00534601; IPR=6.00823136;
+ MB=3.00021536; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-08 19:08:51
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18060819-0041-0000-0000-000008438527
+Message-Id: <e0fe84d1df4e0c2c88d7d29f94d621c988c22194.1528462918.git.alifm@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-08_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806080209
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Read the crypto services and algorithm masks which provides
+information about the services and algorithms supported by
+virtio-crypto backend.
 
+Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
+---
+ drivers/crypto/virtio/virtio_crypto_common.h | 14 ++++++++++++++
+ drivers/crypto/virtio/virtio_crypto_core.c   | 29 ++++++++++++++++++++++++++++
+ 2 files changed, 43 insertions(+)
 
-On 2018年06月11日 10:12, Michael S. Tsirkin wrote:
-> On Fri, Jun 08, 2018 at 01:07:09PM +0800, Jason Wang wrote:
->>
->> On 2018年06月08日 12:46, Michael S. Tsirkin wrote:
->>> On Fri, Jun 08, 2018 at 11:50:42AM +0800, Jason Wang wrote:
->>>> This feature bit is duplicated with VIRTIO_F_ANY_LAYOUT, this means if
->>>> a userpsace want to enable VRITIO_F_ANY_LAYOUT,
->>>> VHOST_NET_F_VIRTIO_NET_HDR will be implied too. This is wrong and will
->>>> break networking.
->>> What breaks networking exactly? VHOST_NET supported ANY_LAYOUT
->>> from day one. For this reason it does not need to know about
->>> VRITIO_F_ANY_LAYOUT and we reused the bit for other purposes.
->> It's the knowledge of vhost_net code it self but not userspace. For
->> userspace, it should depends on the value of returned by VHOST_GET_FEATURES.
->> So when userspace can set_features with ANY_LAYOUT, vhost may think it wants
->> VHOST_NET_F_VIRTIO_NET_HDR.
-> Yes but that's the admittedly ugly API that we have now.
-> userspace is supposed to know VRITIO_F_ANY_LAYOUT does
-> not make sense for vhost.
-
-Ok.
-
->
->
->
->>>
->>>
->>>> Fixing this by safely removing
->>>> VHOST_NET_F_VIRTIO_NET_HDR support. There should be very few or even
->>>> no userspace can use this.
->>> Quite possibly, but it is hard to be sure. It seems safer to
->>> maintain it unless there's an actual reason something's broken.
->> I think not since the feature is negotiated not mandatory?
-> That doesn't mean much.
->
->>>> Further cleanups could be done for
->>>> -net-next for safety.
->>>>
->>>> In the future, we need a vhost dedicated feature set/get ioctl()
->>>> instead of reusing virtio ones.
->>> Not just in the future, we might want to switch iommu
->>> to a sane structure without the 64 bit padding bug
->>> right now.
->> Yes, I hit this bug when introducing V2 of msg IOTLB message.
-> Sounds good, so if you like, reserve a bit for
-> VHOST_NET_F_VIRTIO_NET_HDR in the new ioctl mask and
-> do not enable it there.
-
-Ok, and maybe VHOST_F_LOG_ALL.
-
->
->>>> Fixes: 4e9fa50c6ccbe ("vhost: move features to core")
->>> This tag makes no sense here IMHO. Looks like people are using some tool
->>> that just looks at the earliest version where patch won't apply. The
->>> commit in question just moved some code around.
->> Looks not, before this commit, vhost_net won't return ANY_LAYOUT.
->>
->> Thanks
-> Well ANY_LAYOUT just happens to be same as VHOST_NET_F_VIRTIO_NET_HDR
-> and that has been set since forever.
-
-So do you still want this patch? If not we need to document that 
-ANY_LAYOUT could not be passed through SET_FEATURES somewhere.
-
-Thanks
-
->
->>>> Signed-off-by: Jason Wang <jasowang@redhat.com>
->>>> ---
->>>>    drivers/vhost/net.c | 15 +++++----------
->>>>    1 file changed, 5 insertions(+), 10 deletions(-)
->>>>
->>>> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
->>>> index 986058a..83eef52 100644
->>>> --- a/drivers/vhost/net.c
->>>> +++ b/drivers/vhost/net.c
->>>> @@ -69,7 +69,6 @@ MODULE_PARM_DESC(experimental_zcopytx, "Enable Zero Copy TX;"
->>>>    enum {
->>>>    	VHOST_NET_FEATURES = VHOST_FEATURES |
->>>> -			 (1ULL << VHOST_NET_F_VIRTIO_NET_HDR) |
->>>>    			 (1ULL << VIRTIO_NET_F_MRG_RXBUF) |
->>>>    			 (1ULL << VIRTIO_F_IOMMU_PLATFORM)
->>>>    };
->>>> @@ -1255,15 +1254,11 @@ static int vhost_net_set_features(struct vhost_net *n, u64 features)
->>>>    			       (1ULL << VIRTIO_F_VERSION_1))) ?
->>>>    			sizeof(struct virtio_net_hdr_mrg_rxbuf) :
->>>>    			sizeof(struct virtio_net_hdr);
->>>> -	if (features & (1 << VHOST_NET_F_VIRTIO_NET_HDR)) {
->>>> -		/* vhost provides vnet_hdr */
->>>> -		vhost_hlen = hdr_len;
->>>> -		sock_hlen = 0;
->>>> -	} else {
->>>> -		/* socket provides vnet_hdr */
->>>> -		vhost_hlen = 0;
->>>> -		sock_hlen = hdr_len;
->>>> -	}
->>>> +
->>>> +        /* socket provides vnet_hdr */
->>>> +	vhost_hlen = 0;
->>>> +	sock_hlen = hdr_len;
->>>> +
->>>>    	mutex_lock(&n->dev.mutex);
->>>>    	if ((features & (1 << VHOST_F_LOG_ALL)) &&
->>>>    	    !vhost_log_access_ok(&n->dev))
->>>> -- 
->>>> 2.7.4
+diff --git a/drivers/crypto/virtio/virtio_crypto_common.h b/drivers/crypto/virtio/virtio_crypto_common.h
+index 66501a5..05eca12e 100644
+--- a/drivers/crypto/virtio/virtio_crypto_common.h
++++ b/drivers/crypto/virtio/virtio_crypto_common.h
+@@ -55,6 +55,20 @@ struct virtio_crypto {
+ 	/* Number of queue currently used by the driver */
+ 	u32 curr_queue;
+ 
++	/*
++	 * Specifies the services mask which the device support,
++	 * see VIRTIO_CRYPTO_SERVICE_* above
++	 */
++	u32 crypto_services;
++
++	/* Detailed algorithms mask */
++	u32 cipher_algo_l;
++	u32 cipher_algo_h;
++	u32 hash_algo;
++	u32 mac_algo_l;
++	u32 mac_algo_h;
++	u32 aead_algo;
++
+ 	/* Maximum length of cipher key */
+ 	u32 max_cipher_key_len;
+ 	/* Maximum length of authenticated key */
+diff --git a/drivers/crypto/virtio/virtio_crypto_core.c b/drivers/crypto/virtio/virtio_crypto_core.c
+index 8332698..8f745f2 100644
+--- a/drivers/crypto/virtio/virtio_crypto_core.c
++++ b/drivers/crypto/virtio/virtio_crypto_core.c
+@@ -303,6 +303,13 @@ static int virtcrypto_probe(struct virtio_device *vdev)
+ 	u32 max_data_queues = 0, max_cipher_key_len = 0;
+ 	u32 max_auth_key_len = 0;
+ 	u64 max_size = 0;
++	u32 cipher_algo_l = 0;
++	u32 cipher_algo_h = 0;
++	u32 hash_algo = 0;
++	u32 mac_algo_l = 0;
++	u32 mac_algo_h = 0;
++	u32 aead_algo = 0;
++	u32 crypto_services = 0;
+ 
+ 	if (!virtio_has_feature(vdev, VIRTIO_F_VERSION_1))
+ 		return -ENODEV;
+@@ -339,6 +346,20 @@ static int virtcrypto_probe(struct virtio_device *vdev)
+ 		max_auth_key_len, &max_auth_key_len);
+ 	virtio_cread(vdev, struct virtio_crypto_config,
+ 		max_size, &max_size);
++	virtio_cread(vdev, struct virtio_crypto_config,
++		crypto_services, &crypto_services);
++	virtio_cread(vdev, struct virtio_crypto_config,
++		cipher_algo_l, &cipher_algo_l);
++	virtio_cread(vdev, struct virtio_crypto_config,
++		cipher_algo_h, &cipher_algo_h);
++	virtio_cread(vdev, struct virtio_crypto_config,
++		hash_algo, &hash_algo);
++	virtio_cread(vdev, struct virtio_crypto_config,
++		mac_algo_l, &mac_algo_l);
++	virtio_cread(vdev, struct virtio_crypto_config,
++		mac_algo_h, &mac_algo_h);
++	virtio_cread(vdev, struct virtio_crypto_config,
++		aead_algo, &aead_algo);
+ 
+ 	/* Add virtio crypto device to global table */
+ 	err = virtcrypto_devmgr_add_dev(vcrypto);
+@@ -358,6 +379,14 @@ static int virtcrypto_probe(struct virtio_device *vdev)
+ 	vcrypto->max_cipher_key_len = max_cipher_key_len;
+ 	vcrypto->max_auth_key_len = max_auth_key_len;
+ 	vcrypto->max_size = max_size;
++	vcrypto->crypto_services = crypto_services;
++	vcrypto->cipher_algo_l = cipher_algo_l;
++	vcrypto->cipher_algo_h = cipher_algo_h;
++	vcrypto->mac_algo_l = mac_algo_l;
++	vcrypto->mac_algo_h = mac_algo_h;
++	vcrypto->hash_algo = hash_algo;
++	vcrypto->aead_algo = aead_algo;
++
+ 
+ 	dev_info(&vdev->dev,
+ 		"max_queues: %u, max_cipher_key_len: %u, max_auth_key_len: %u, max_size 0x%llx\n",
+-- 
+2.7.4
