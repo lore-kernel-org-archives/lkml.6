@@ -1,101 +1,211 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id LO24Mlf5GFsiZwAAmS7hNA
-	; Thu, 07 Jun 2018 09:22:42 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ndrZImlMGltNYAAAmS7hNA
+	; Fri, 08 Jun 2018 09:29:51 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 77645607F7; Thu,  7 Jun 2018 09:22:42 +0000 (UTC)
+	id 12BE5607A4; Fri,  8 Jun 2018 09:29:51 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id ED316606DD;
-	Thu,  7 Jun 2018 09:22:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org ED316606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 53ED460275;
+	Fri,  8 Jun 2018 09:29:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 53ED460275
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932871AbeFGJWj (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 05:22:39 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:46073 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932377AbeFGJW0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 05:22:26 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6085F1A02D8;
-        Thu,  7 Jun 2018 11:22:24 +0200 (CEST)
-Received: from smtp.na-rdc02.nxp.com (inv1260.us-phx01.nxp.com [134.27.49.11])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 1FE301A02CE;
-        Thu,  7 Jun 2018 11:22:24 +0200 (CEST)
-Received: from az84smr01.freescale.net (az84smr01.freescale.net [10.64.34.197])
-        by inv1260.na-rdc02.nxp.com (Postfix) with ESMTP id 8A02640A70;
-        Thu,  7 Jun 2018 02:22:23 -0700 (MST)
-Received: from titan.ap.freescale.net ([10.192.208.233])
-        by az84smr01.freescale.net (8.14.3/8.14.0) with ESMTP id w579MJ4g020959;
-        Thu, 7 Jun 2018 02:22:20 -0700
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: netdev@vger.kernel.org, madalin.bucur@nxp.com,
-        Richard Cochran <richardcochran@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>
-Cc: devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Yangbo Lu <yangbo.lu@nxp.com>
-Subject: [v3, 00/10] Support DPAA PTP clock and timestamping
-Date: Thu,  7 Jun 2018 17:20:40 +0800
-Message-Id: <20180607092050.46128-1-yangbo.lu@nxp.com>
-X-Mailer: git-send-email 2.14.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1752626AbeFHJ3q (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 05:29:46 -0400
+Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:49336 "EHLO
+        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751072AbeFHJ3b (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 05:29:31 -0400
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id RDi2fnw0XtLaARDi5fy0XA; Fri, 08 Jun 2018 11:29:30 +0200
+Subject: Re: [PATCH v2 1/2] media: v4l2-ctrl: Add control for VP9 profile
+To: Keiichi Watanabe <keiichiw@chromium.org>,
+        linux-arm-kernel@lists.infradead.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Tiffany Lin <tiffany.lin@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Smitha T Murthy <smitha.t@samsung.com>,
+        Tom Saeger <tom.saeger@oracle.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        Stanimir Varbanov <svarbanov@mm-sol.com>
+References: <20180530071613.125768-1-keiichiw@chromium.org>
+ <20180530071613.125768-2-keiichiw@chromium.org>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <a16dca32-4198-72c1-cf22-83f18a8cfcb6@xs4all.nl>
+Date: Fri, 8 Jun 2018 11:29:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+In-Reply-To: <20180530071613.125768-2-keiichiw@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfGNkpPPY5AGW3xHYdYJguB+6QdcJ5f9jkXJQSchlJOckF5Lte9klcAXHm4SZipXJNqDx6RUAwi10a5DYffEXzu9OzNrVzL0tP415+HZe5SGNlKDuluMW
+ eJFJhWcS9tJsQt0yKfy848QGXeIa+AKzl44jxL1o5wI9Md2fYp1v4siJbrbHKpzvHfV2u/T2Xyjuln2772hwKjphB3Of556h8FZnOou7rCIM1kzIm+pVvVrq
+ 9Ms+a8Prg1IB3MhD2cj6hnQEghY8bJ2KTgn35x+nHM4pCzwzoK+aqQbeF9NL2hdT/eKsJQMYCmLLfeEfqLZck6Cz/SloRec7FZjKjg4s4q7UOqyc0QhXfbtv
+ ri/0WOU82EFJ+qlnMxZEel9qttfsFbRjgkpA7afbEu0zC2Otx1ASG7osxGb+QUmOVOWeWG0OJZZk1Paf+ozJx0dxXdnfkB4oVw+xjmoC4K3wrH+SZJ/RPVbk
+ M7juHQFqdpK8b1rjLZ1/BpghS4HVB1PknQ7eF6jqXg8kPRWa+pviEHM1DXdmtDUjPJBfKOPrAQR8FpKOlXrCLY9ZQ8prQmJa6SY+GDHMQOt+bXxKBDLEsAMd
+ bl/oLUdduPt4TCWUstxjC8KemTfcAW18p/yEPHfP9dNv4PxZtkSdcI3BePOtetYxVwhYnBawABMQ0VJ96iSxvWsfTqk61WgNp5XTMhfIiQiYQA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset is to support DPAA FMAN PTP clock and HW timestamping.
-It had been verified on both ARM platform and PPC platform.
-- The patch #1 to patch #5 are to support DPAA FMAN 1588 timer in
-  ptp_qoriq driver.
-- The patch #6 to patch #10 are to add HW timestamping support in
-  DPAA ethernet driver.
+On 05/30/2018 09:16 AM, Keiichi Watanabe wrote:
+> Add a new control V4L2_CID_MPEG_VIDEO_VP9_PROFILE for selecting desired
+> profile for VP9 encoder and querying for supported profiles by VP9 encoder
+> or decoder.
+> 
+> An existing control V4L2_CID_MPEG_VIDEO_VPX_PROFILE cannot be
+> used for querying since it is not a menu control but an integer
+> control, which cannot return an arbitrary set of supported profiles.
+> 
+> The new control V4L2_CID_MPEG_VIDEO_VP9_PROFILE is a menu control as
+> with controls for other codec profiles. (e.g. H264)
 
-Yangbo Lu (10):
-  fsl/fman: share the event interrupt
-  ptp: support DPAA FMan 1588 timer in ptp_qoriq
-  dt-binding: ptp_qoriq: add DPAA FMan support
-  powerpc/mpc85xx: move ptp timer out of fman in dts
-  arm64: dts: fsl: move ptp timer out of fman
-  fsl/fman: add set_tstamp interface
-  fsl/fman_port: support getting timestamp
-  fsl/fman: define frame description command UPD
-  dpaa_eth: add support for hardware timestamping
-  dpaa_eth: add the get_ts_info interface for ethtool
+Please ignore my reply to patch 2/2. I looked at this a bit more and what you
+should do is to change the type of V4L2_CID_MPEG_VIDEO_VPX_PROFILE to enum.
 
- Documentation/devicetree/bindings/net/fsl-fman.txt |   25 +-----
- .../devicetree/bindings/ptp/ptp-qoriq.txt          |   15 +++-
- arch/arm64/boot/dts/freescale/qoriq-fman3-0.dtsi   |   14 ++-
- arch/powerpc/boot/dts/fsl/qoriq-fman-0.dtsi        |   14 ++-
- arch/powerpc/boot/dts/fsl/qoriq-fman-1.dtsi        |   14 ++-
- arch/powerpc/boot/dts/fsl/qoriq-fman3-0.dtsi       |   14 ++-
- arch/powerpc/boot/dts/fsl/qoriq-fman3-1.dtsi       |   14 ++-
- arch/powerpc/boot/dts/fsl/qoriq-fman3l-0.dtsi      |   14 ++-
- drivers/net/ethernet/freescale/dpaa/dpaa_eth.c     |   88 ++++++++++++++++-
- drivers/net/ethernet/freescale/dpaa/dpaa_eth.h     |    3 +
- drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c |   39 ++++++++
- drivers/net/ethernet/freescale/fman/fman.c         |    3 +-
- drivers/net/ethernet/freescale/fman/fman.h         |    1 +
- drivers/net/ethernet/freescale/fman/fman_dtsec.c   |   27 +++++
- drivers/net/ethernet/freescale/fman/fman_dtsec.h   |    1 +
- drivers/net/ethernet/freescale/fman/fman_memac.c   |    5 +
- drivers/net/ethernet/freescale/fman/fman_memac.h   |    1 +
- drivers/net/ethernet/freescale/fman/fman_port.c    |   12 +++
- drivers/net/ethernet/freescale/fman/fman_port.h    |    2 +
- drivers/net/ethernet/freescale/fman/fman_tgec.c    |   21 ++++
- drivers/net/ethernet/freescale/fman/fman_tgec.h    |    1 +
- drivers/net/ethernet/freescale/fman/mac.c          |    3 +
- drivers/net/ethernet/freescale/fman/mac.h          |    1 +
- drivers/ptp/Kconfig                                |    2 +-
- drivers/ptp/ptp_qoriq.c                            |  104 ++++++++++++-------
- include/linux/fsl/ptp_qoriq.h                      |   38 ++++++--
- 26 files changed, 361 insertions(+), 115 deletions(-)
+All other codec profile controls are all enums, so the fact that VPX_PROFILE
+isn't is a bug. Changing the type should not cause any problems since the same
+control value is used when you set the control.
+
+Sylwester: I see that s5p-mfc uses this control, but it is explicitly added
+as an integer type control, so the s5p-mfc driver should not be affected by
+changing the type of this control.
+
+Stanimir: this will slightly change the venus driver, but since it is a very
+recent driver I think we can get away with changing the core type of the
+VPX_PROFILE control. I think that's better than ending up with two controls
+that do the same thing.
+
+Regards,
+
+	Hans
+
+> 
+> Signed-off-by: Keiichi Watanabe <keiichiw@chromium.org>
+> ---
+>  .../media/uapi/v4l/extended-controls.rst      | 26 +++++++++++++++++++
+>  drivers/media/v4l2-core/v4l2-ctrls.c          | 12 +++++++++
+>  include/uapi/linux/v4l2-controls.h            |  8 ++++++
+>  3 files changed, 46 insertions(+)
+> 
+> diff --git a/Documentation/media/uapi/v4l/extended-controls.rst b/Documentation/media/uapi/v4l/extended-controls.rst
+> index 03931f9b1285..4f7f128a4998 100644
+> --- a/Documentation/media/uapi/v4l/extended-controls.rst
+> +++ b/Documentation/media/uapi/v4l/extended-controls.rst
+> @@ -1959,6 +1959,32 @@ enum v4l2_vp8_golden_frame_sel -
+>      Select the desired profile for VPx encoder. Acceptable values are 0,
+>      1, 2 and 3 corresponding to encoder profiles 0, 1, 2 and 3.
+> 
+> +.. _v4l2-mpeg-video-vp9-profile:
+> +
+> +``V4L2_CID_MPEG_VIDEO_VP9_PROFILE``
+> +    (enum)
+> +
+> +enum v4l2_mpeg_video_vp9_profile -
+> +    This control allows to select the profile for VP9 encoder.
+> +    This is also used to enumerate supported profiles by VP9 encoder or decoder.
+> +    Possible values are:
+> +
+> +
+> +
+> +.. flat-table::
+> +    :header-rows:  0
+> +    :stub-columns: 0
+> +
+> +    * - ``V4L2_MPEG_VIDEO_VP9_PROFILE_0``
+> +      - Profile 0
+> +    * - ``V4L2_MPEG_VIDEO_VP9_PROFILE_1``
+> +      - Profile 1
+> +    * - ``V4L2_MPEG_VIDEO_VP9_PROFILE_2``
+> +      - Profile 2
+> +    * - ``V4L2_MPEG_VIDEO_VP9_PROFILE_3``
+> +      - Profile 3
+> +
+> +
+> 
+>  High Efficiency Video Coding (HEVC/H.265) Control Reference
+>  -----------------------------------------------------------
+> diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
+> index d29e45516eb7..401ce21c2e63 100644
+> --- a/drivers/media/v4l2-core/v4l2-ctrls.c
+> +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
+> @@ -431,6 +431,13 @@ const char * const *v4l2_ctrl_get_menu(u32 id)
+>  		"Use Previous Specific Frame",
+>  		NULL,
+>  	};
+> +	static const char * const vp9_profile[] = {
+> +		"0",
+> +		"1",
+> +		"2",
+> +		"3",
+> +		NULL,
+> +	};
+> 
+>  	static const char * const flash_led_mode[] = {
+>  		"Off",
+> @@ -614,6 +621,8 @@ const char * const *v4l2_ctrl_get_menu(u32 id)
+>  		return mpeg4_profile;
+>  	case V4L2_CID_MPEG_VIDEO_VPX_GOLDEN_FRAME_SEL:
+>  		return vpx_golden_frame_sel;
+> +	case V4L2_CID_MPEG_VIDEO_VP9_PROFILE:
+> +		return vp9_profile;
+>  	case V4L2_CID_JPEG_CHROMA_SUBSAMPLING:
+>  		return jpeg_chroma_subsampling;
+>  	case V4L2_CID_DV_TX_MODE:
+> @@ -841,6 +850,8 @@ const char *v4l2_ctrl_get_name(u32 id)
+>  	case V4L2_CID_MPEG_VIDEO_VPX_P_FRAME_QP:		return "VPX P-Frame QP Value";
+>  	case V4L2_CID_MPEG_VIDEO_VPX_PROFILE:			return "VPX Profile";
+> 
+> +	case V4L2_CID_MPEG_VIDEO_VP9_PROFILE:			return "VP9 Profile";
+> +
+>  	/* HEVC controls */
+>  	case V4L2_CID_MPEG_VIDEO_HEVC_I_FRAME_QP:		return "HEVC I-Frame QP Value";
+>  	case V4L2_CID_MPEG_VIDEO_HEVC_P_FRAME_QP:		return "HEVC P-Frame QP Value";
+> @@ -1180,6 +1191,7 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
+>  	case V4L2_CID_DEINTERLACING_MODE:
+>  	case V4L2_CID_TUNE_DEEMPHASIS:
+>  	case V4L2_CID_MPEG_VIDEO_VPX_GOLDEN_FRAME_SEL:
+> +	case V4L2_CID_MPEG_VIDEO_VP9_PROFILE:
+>  	case V4L2_CID_DETECT_MD_MODE:
+>  	case V4L2_CID_MPEG_VIDEO_HEVC_PROFILE:
+>  	case V4L2_CID_MPEG_VIDEO_HEVC_LEVEL:
+> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
+> index 8d473c979b61..56203b7b715c 100644
+> --- a/include/uapi/linux/v4l2-controls.h
+> +++ b/include/uapi/linux/v4l2-controls.h
+> @@ -589,6 +589,14 @@ enum v4l2_vp8_golden_frame_sel {
+>  #define V4L2_CID_MPEG_VIDEO_VPX_P_FRAME_QP		(V4L2_CID_MPEG_BASE+510)
+>  #define V4L2_CID_MPEG_VIDEO_VPX_PROFILE			(V4L2_CID_MPEG_BASE+511)
+> 
+> +#define V4L2_CID_MPEG_VIDEO_VP9_PROFILE			(V4L2_CID_MPEG_BASE+512)
+> +enum v4l2_mpeg_video_vp9_profile {
+> +	V4L2_MPEG_VIDEO_VP9_PROFILE_0				= 0,
+> +	V4L2_MPEG_VIDEO_VP9_PROFILE_1				= 1,
+> +	V4L2_MPEG_VIDEO_VP9_PROFILE_2				= 2,
+> +	V4L2_MPEG_VIDEO_VP9_PROFILE_3				= 3,
+> +};
+> +
+>  /* CIDs for HEVC encoding. */
+> 
+>  #define V4L2_CID_MPEG_VIDEO_HEVC_MIN_QP		(V4L2_CID_MPEG_BASE + 600)
+> --
+> 2.17.0.921.gf22659ad46-goog
+> 
