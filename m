@@ -1,201 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id TcjkNWdYGlsuVQAAmS7hNA
-	; Fri, 08 Jun 2018 10:21:10 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 6f17Da+UGluhBwAAmS7hNA
+	; Fri, 08 Jun 2018 14:37:49 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 25515606FA; Fri,  8 Jun 2018 10:21:10 +0000 (UTC)
+	id A61CE607A4; Fri,  8 Jun 2018 14:37:49 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 1F6F860590;
-	Fri,  8 Jun 2018 10:21:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1F6F860590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by smtp.codeaurora.org (Postfix) with ESMTP id 2DAD1606FA;
+	Fri,  8 Jun 2018 14:37:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2DAD1606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752371AbeFHKUn (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 06:20:43 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:50063 "EHLO pegase1.c-s.fr"
+        id S1752667AbeFHOhp convert rfc822-to-8bit (ORCPT
+        <rfc822;monsieuricon@codeaurora.org> + 25 others);
+        Fri, 8 Jun 2018 10:37:45 -0400
+Received: from mga01.intel.com ([192.55.52.88]:4761 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750969AbeFHKUj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 06:20:39 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 412JMT1q8lz9txgH;
-        Fri,  8 Jun 2018 12:20:37 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id A_dXiFoL7N19; Fri,  8 Jun 2018 12:20:37 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 412JMT1D3Jz9txft;
-        Fri,  8 Jun 2018 12:20:37 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 6BF3C8BB57;
-        Fri,  8 Jun 2018 12:20:38 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id uXkTyU6lk6cj; Fri,  8 Jun 2018 12:20:38 +0200 (CEST)
-Received: from po14934vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 3D29F8BB51;
-        Fri,  8 Jun 2018 12:20:38 +0200 (CEST)
-Received: by po14934vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 15D5E6F846; Fri,  8 Jun 2018 10:20:37 +0000 (UTC)
-Message-Id: <a348f4ffda6349467e4270e754d12150fa773462.1528452373.git.christophe.leroy@c-s.fr>
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v4 1/4] selftests/powerpc: add test for 32 bits memcmp
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, wei.guo.simon@gmail.com
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Fri,  8 Jun 2018 10:20:37 +0000 (UTC)
+        id S1751140AbeFHOho (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 10:37:44 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jun 2018 07:37:43 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,490,1520924400";
+   d="scan'208";a="235810298"
+Received: from fmsmsx104.amr.corp.intel.com ([10.18.124.202])
+  by fmsmga006.fm.intel.com with ESMTP; 08 Jun 2018 07:37:43 -0700
+Received: from fmsmsx112.amr.corp.intel.com (10.18.116.6) by
+ fmsmsx104.amr.corp.intel.com (10.18.124.202) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Fri, 8 Jun 2018 07:37:43 -0700
+Received: from shsmsx104.ccr.corp.intel.com (10.239.4.70) by
+ FMSMSX112.amr.corp.intel.com (10.18.116.6) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Fri, 8 Jun 2018 07:37:42 -0700
+Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.82]) by
+ SHSMSX104.ccr.corp.intel.com ([169.254.5.87]) with mapi id 14.03.0319.002;
+ Fri, 8 Jun 2018 22:37:41 +0800
+From: "Kang, Luwei" <luwei.kang@intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "chao.p.peng@linux.intel.com" <chao.p.peng@linux.intel.com>,
+        "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
+        "bp@suse.de" <bp@suse.de>, "Liang, Kan" <kan.liang@intel.com>,
+        "Janakarajan.Natarajan@amd.com" <Janakarajan.Natarajan@amd.com>,
+        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "david@redhat.com" <david@redhat.com>,
+        "bsd@redhat.com" <bsd@redhat.com>,
+        "yu.c.zhang@linux.intel.com" <yu.c.zhang@linux.intel.com>,
+        "joro@8bytes.org" <joro@8bytes.org>
+Subject: RE: [PATCH v9 04/12] perf/x86/intel/pt: add new capability for
+ Intel PT
+Thread-Topic: [PATCH v9 04/12] perf/x86/intel/pt: add new capability for
+ Intel PT
+Thread-Index: AQHT8Xi9oYPMthILhkSzx/04cBEj8qRUYT6AgAAC2oCAAiTusA==
+Date: Fri, 8 Jun 2018 14:37:41 +0000
+Message-ID: <82D7661F83C1A047AF7DC287873BF1E167FF0091@SHSMSX101.ccr.corp.intel.com>
+References: <1526964735-16566-1-git-send-email-luwei.kang@intel.com>
+ <1526964735-16566-5-git-send-email-luwei.kang@intel.com>
+ <20180607134051.rwu5pqtz45cgq7ve@um.fi.intel.com>
+ <20180607135103.GN12198@hirez.programming.kicks-ass.net>
+In-Reply-To: <20180607135103.GN12198@hirez.programming.kicks-ass.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch renames memcmp test to memcmp_64 and adds
-a memcmp_32 test for testing the 32 bits version of memcmp()
+> > On Tue, May 22, 2018 at 12:52:07PM +0800, Luwei Kang wrote:
+> > > CPUID(EAX=14H,ECX=0):EBX[bit 3] = 1 indicates support of output to
+> > > Trace Transport subsystem.
+> > > MSR IA32_RTIT_CTL.FabricEn[bit 6] is reserved if CPUID.(EAX=14H,
+> > > ECX=0):ECX[bit 3] = 0.
+> >
+> > This should instead say:
+> >
+> > This adds support for "output to Trace Transport subsystem" capability
+> > of Intel PT, as documented in IA SDM Chapter 36.x.y.z. It means that
+> > PT can output its trace to an MMIO address range rather than system
+> > memory buffer.
+> 
+> The $subject also needs attention.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- v4: new
+A little don't understand. What is "$subject" mean?
 
- tools/testing/selftests/powerpc/stringloops/Makefile    |  14 +++++++++++---
- tools/testing/selftests/powerpc/stringloops/memcmp_32   | Bin 0 -> 9092 bytes
- tools/testing/selftests/powerpc/stringloops/memcmp_32.S |   1 +
- 3 files changed, 12 insertions(+), 3 deletions(-)
- create mode 100755 tools/testing/selftests/powerpc/stringloops/memcmp_32
- create mode 120000 tools/testing/selftests/powerpc/stringloops/memcmp_32.S
-
-diff --git a/tools/testing/selftests/powerpc/stringloops/Makefile b/tools/testing/selftests/powerpc/stringloops/Makefile
-index 1125e489055e..1e7301d4bac9 100644
---- a/tools/testing/selftests/powerpc/stringloops/Makefile
-+++ b/tools/testing/selftests/powerpc/stringloops/Makefile
-@@ -1,10 +1,18 @@
- # SPDX-License-Identifier: GPL-2.0
- # The loops are all 64-bit code
--CFLAGS += -m64
- CFLAGS += -I$(CURDIR)
- 
--TEST_GEN_PROGS := memcmp
--EXTRA_SOURCES := memcmp_64.S ../harness.c
-+EXTRA_SOURCES := ../harness.c
-+
-+$(OUTPUT)/memcmp_64: memcmp.c
-+$(OUTPUT)/memcmp_64: CFLAGS += -m64
-+
-+$(OUTPUT)/memcmp_32: memcmp.c
-+$(OUTPUT)/memcmp_32: CFLAGS += -m32
-+
-+ASFLAGS = $(CFLAGS)
-+
-+TEST_GEN_PROGS := memcmp_32 memcmp_64
- 
- include ../../lib.mk
- 
-diff --git a/tools/testing/selftests/powerpc/stringloops/memcmp_32 b/tools/testing/selftests/powerpc/stringloops/memcmp_32
-new file mode 100755
-index 0000000000000000000000000000000000000000..413a02181daf59b0bdd7f0e2e05b74c4c702e7ad
-GIT binary patch
-literal 9092
-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
-NWdlI3fToj__kRhC;J5$)
-
-literal 0
-HcmV?d00001
-
-diff --git a/tools/testing/selftests/powerpc/stringloops/memcmp_32.S b/tools/testing/selftests/powerpc/stringloops/memcmp_32.S
-new file mode 120000
-index 000000000000..056f2b3af789
---- /dev/null
-+++ b/tools/testing/selftests/powerpc/stringloops/memcmp_32.S
-@@ -0,0 +1 @@
-+../../../../../arch/powerpc/lib/memcmp_32.S
-\ No newline at end of file
--- 
-2.13.3
+Thanks,
+Luwei Kang
