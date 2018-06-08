@@ -1,99 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id YDU0BN3hG1vhcwAAmS7hNA
-	; Sat, 09 Jun 2018 14:19:09 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id u8yoI5nhGlvZMgAAmS7hNA
+	; Fri, 08 Jun 2018 20:05:48 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 00691608BA; Sat,  9 Jun 2018 14:19:08 +0000 (UTC)
+	id 0F93A6089E; Fri,  8 Jun 2018 20:05:48 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="D9duoL2g"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 5BB4F605A5;
-	Sat,  9 Jun 2018 14:19:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5BB4F605A5
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 75F90601D2;
+	Fri,  8 Jun 2018 20:05:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 75F90601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753309AbeFIOTF (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 10:19:05 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:36761 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753207AbeFIOTD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 10:19:03 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w59EIsmw3021735
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 9 Jun 2018 07:18:54 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w59EIswq3021732;
-        Sat, 9 Jun 2018 07:18:54 -0700
-Date: Sat, 9 Jun 2018 07:18:54 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From: tip-bot for Tony Luck <tipbot@zytor.com>
-Message-ID: <tip-1d9f3e20a56d33e55748552aeec597f58542f92d@git.kernel.org>
-Cc: tglx@linutronix.de, hpa@zytor.com, tony.luck@intel.com,
-        vikas.shivappa@linux.intel.com, fenghua.yu@intel.com,
-        mingo@kernel.org, linux-kernel@vger.kernel.org
-Reply-To: vikas.shivappa@linux.intel.com, fenghua.yu@intel.com,
-          linux-kernel@vger.kernel.org, mingo@kernel.org,
-          tglx@linutronix.de, hpa@zytor.com, tony.luck@intel.com
-In-Reply-To: <20180608160732.9842-1-tony.luck@intel.com>
-References: <20180608160732.9842-1-tony.luck@intel.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/intel_rdt: Enable CMT and MBM on new Skylake
- stepping
-Git-Commit-ID: 1d9f3e20a56d33e55748552aeec597f58542f92d
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1753125AbeFHUFq (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 16:05:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49210 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752729AbeFHUFm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 16:05:42 -0400
+Received: from localhost (unknown [150.199.191.185])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A0F920874;
+        Fri,  8 Jun 2018 20:05:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528488342;
+        bh=yQUpVdvD2XXsiyHcnuUJLiJvGI24rcsU8zNG1Ffmgt4=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=D9duoL2gnqPA9B33VNAl41ap9JAEc6ddi515OKgA5seeu8QRKkns17r4pXD2FhQdM
+         ot+15Vt+Ew/FuPCejcsNR4v15DWjb5nZcyLb1352H8sK3vmSFefSul3+RqHAafMPnY
+         Blr4PMsQlZ3+uk++l6NOfKyZ0jCHh4GJ4TBsnuiQ=
+Subject: [PATCH v1 09/13] PCI/AER: Move aer_irq() declaration to portdrv.h
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: linux-pci@vger.kernel.org
+Cc: Keith Busch <keith.busch@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Oza Pawandeep <poza@codeaurora.org>,
+        linux-kernel@vger.kernel.org
+Date: Fri, 08 Jun 2018 15:05:41 -0500
+Message-ID: <152848834128.11888.12263280185471104825.stgit@bhelgaas-glaptop.roam.corp.google.com>
+In-Reply-To: <152848785553.11888.12243539903985770441.stgit@bhelgaas-glaptop.roam.corp.google.com>
+References: <152848785553.11888.12243539903985770441.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: StGit/0.18
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  1d9f3e20a56d33e55748552aeec597f58542f92d
-Gitweb:     https://git.kernel.org/tip/1d9f3e20a56d33e55748552aeec597f58542f92d
-Author:     Tony Luck <tony.luck@intel.com>
-AuthorDate: Fri, 8 Jun 2018 09:07:32 -0700
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sat, 9 Jun 2018 16:04:34 +0200
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-x86/intel_rdt: Enable CMT and MBM on new Skylake stepping
+The aer_irq() declaration is the only thing needed by aer_inject.c.  Move
+it to portdrv.h so we eventually get rid of aerdrv.h completely.  No
+functional change intended.
 
-New stepping of Skylake has fixes for cache occupancy and memory
-bandwidth monitoring.
-
-Update the code to enable these by default on newer steppings.
-
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: stable@vger.kernel.org # v4.14
-Cc: Vikas Shivappa <vikas.shivappa@linux.intel.com>
-Link: https://lkml.kernel.org/r/20180608160732.9842-1-tony.luck@intel.com
-
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
- arch/x86/kernel/cpu/intel_rdt.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/pci/pcie/aer/aer_inject.c |    3 ++-
+ drivers/pci/pcie/aer/aerdrv.h     |    2 --
+ drivers/pci/pcie/portdrv.h        |    4 ++++
+ 3 files changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt.c b/arch/x86/kernel/cpu/intel_rdt.c
-index 589b948e6e01..316a8875bd90 100644
---- a/arch/x86/kernel/cpu/intel_rdt.c
-+++ b/arch/x86/kernel/cpu/intel_rdt.c
-@@ -821,6 +821,8 @@ static __init void rdt_quirks(void)
- 	case INTEL_FAM6_SKYLAKE_X:
- 		if (boot_cpu_data.x86_stepping <= 4)
- 			set_rdt_options("!cmt,!mbmtotal,!mbmlocal,!l3cat");
-+		else
-+			set_rdt_options("!l3cat");
- 	}
- }
+diff --git a/drivers/pci/pcie/aer/aer_inject.c b/drivers/pci/pcie/aer/aer_inject.c
+index a49090935303..6c5fda96778a 100644
+--- a/drivers/pci/pcie/aer/aer_inject.c
++++ b/drivers/pci/pcie/aer/aer_inject.c
+@@ -21,7 +21,8 @@
+ #include <linux/uaccess.h>
+ #include <linux/stddef.h>
+ #include <linux/device.h>
+-#include "aerdrv.h"
++
++#include "../portdrv.h"
  
+ /* Override the existing corrected and uncorrected error masks */
+ static bool aer_mask_override;
+diff --git a/drivers/pci/pcie/aer/aerdrv.h b/drivers/pci/pcie/aer/aerdrv.h
+index b0c4aaa79d9c..9867950635df 100644
+--- a/drivers/pci/pcie/aer/aerdrv.h
++++ b/drivers/pci/pcie/aer/aerdrv.h
+@@ -76,6 +76,4 @@ struct aer_rpc {
+ 					 */
+ };
+ 
+-irqreturn_t aer_irq(int irq, void *context);
+-
+ #endif /* _AERDRV_H_ */
+diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
+index 6a261dc7cd4c..6ffc797a0dc1 100644
+--- a/drivers/pci/pcie/portdrv.h
++++ b/drivers/pci/pcie/portdrv.h
+@@ -121,6 +121,10 @@ static inline int pcie_aer_get_firmware_first(struct pci_dev *pci_dev)
+ }
+ #endif
+ 
++#ifdef CONFIG_PCIEAER
++irqreturn_t aer_irq(int irq, void *context);
++#endif
++
+ struct pcie_port_service_driver *pcie_port_find_service(struct pci_dev *dev,
+ 							u32 service);
+ struct device *pcie_port_find_device(struct pci_dev *dev, u32 service);
