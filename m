@@ -1,104 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id icViDs4lGVsGbwAAmS7hNA
-	; Thu, 07 Jun 2018 12:32:17 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id gdeUD/1mGltqOQAAmS7hNA
+	; Fri, 08 Jun 2018 11:22:37 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id CD1F4608B8; Thu,  7 Jun 2018 12:32:17 +0000 (UTC)
+	id 2DEC86089E; Fri,  8 Jun 2018 11:22:37 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 36C1E601C3;
-	Thu,  7 Jun 2018 12:32:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 36C1E601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=holtmann.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 9B04B607A4;
+	Fri,  8 Jun 2018 11:22:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9B04B607A4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753601AbeFGMcN convert rfc822-to-8bit (ORCPT
-        <rfc822;monsieuricon@codeaurora.org> + 25 others);
-        Thu, 7 Jun 2018 08:32:13 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:39664 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753114AbeFGMcK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 08:32:10 -0400
-Received: from marcel-macpro.fritz.box (p5B3D24B5.dip0.t-ipconnect.de [91.61.36.181])
-        by mail.holtmann.org (Postfix) with ESMTPSA id F2F42CF356;
-        Thu,  7 Jun 2018 14:38:49 +0200 (CEST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.4 \(3445.8.2\))
-Subject: Re: [PATCH 04/19] Bluetooth: hci_nokia: Add serdev_id_table
-From: Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20180607102740.GD4372@localhost>
-Date: Thu, 7 Jun 2018 14:32:08 +0200
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-serial@vger.kernel.org,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
-        linux-bluetooth@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <22CF0FC7-6DC7-4DD2-9EA1-9F51B40F53E5@holtmann.org>
-References: <20180529131014.18641-1-ricardo.ribalda@gmail.com>
- <20180529131014.18641-5-ricardo.ribalda@gmail.com>
- <E848BED5-1D83-47FA-A673-29B366A60227@holtmann.org>
- <20180607102740.GD4372@localhost>
-To: Pavel Machek <pavel@ucw.cz>
-X-Mailer: Apple Mail (2.3445.8.2)
+        id S1751846AbeFHLWe (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 07:22:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37380 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751108AbeFHLWd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 07:22:33 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 0B12DAC7D;
+        Fri,  8 Jun 2018 11:22:32 +0000 (UTC)
+Date: Fri, 8 Jun 2018 13:22:30 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Thierry Escande <thierry.escande@linaro.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Miller <davem@davemloft.net>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        "Tobin C . Harding" <me@tobin.cc>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RESEND] lib/test_printf.c: call wait_for_random_bytes()
+ before plain %p tests
+Message-ID: <20180608112230.77zsd5y7we7hiqei@pathway.suse.cz>
+References: <20180604113708.11554-1-thierry.escande@linaro.org>
+ <20180607122434.i4x7b5ij4p6dpx7w@pathway.suse.cz>
+ <d9ecdf72-7500-66d4-0360-231218cccbb4@linaro.org>
+ <20180608080437.n2b5nv73d3kp6yhb@pathway.suse.cz>
+ <0fa30e13-c16f-95d8-d1ef-fd45e7a99888@linaro.org>
+ <CAHp75Vc5_+Kxsvgws9Oq-hOgbQ8-ocxeKa4AuhC0uJ0oKsu+BA@mail.gmail.com>
+ <a8ab166e-a2b9-b0fc-9717-ffd8fcbcd386@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a8ab166e-a2b9-b0fc-9717-ffd8fcbcd386@linaro.org>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Pavel,
-
->>> Describe which hardware is supported by the current driver.
->>> 
->>> Cc: Marcel Holtmann <marcel@holtmann.org>
->>> Cc: Johan Hedberg <johan.hedberg@gmail.com>
->>> Cc: Rob Herring <robh@kernel.org>
->>> Cc: Johan Hovold <johan@kernel.org>
->>> Cc: linux-bluetooth@vger.kernel.org
->>> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
->>> ---
->>> drivers/bluetooth/hci_nokia.c | 6 ++++++
->>> 1 file changed, 6 insertions(+)
->>> 
->>> diff --git a/drivers/bluetooth/hci_nokia.c b/drivers/bluetooth/hci_nokia.c
->>> index 3539fd03f47e..e32dfcd56b8d 100644
->>> --- a/drivers/bluetooth/hci_nokia.c
->>> +++ b/drivers/bluetooth/hci_nokia.c
->>> @@ -801,6 +801,11 @@ static const struct of_device_id nokia_bluetooth_of_match[] = {
->>> MODULE_DEVICE_TABLE(of, nokia_bluetooth_of_match);
->>> #endif
->>> 
->>> +static struct serdev_device_id nokia_bluetooth_serdev_id[] = {
->>> +	{ "hp4-bluetooth", },
->>> +	{},
->>> +};
->>> +
->>> static struct serdev_device_driver nokia_bluetooth_serdev_driver = {
->>> 	.probe = nokia_bluetooth_serdev_probe,
->>> 	.remove = nokia_bluetooth_serdev_remove,
->>> @@ -809,6 +814,7 @@ static struct serdev_device_driver nokia_bluetooth_serdev_driver = {
->>> 		.pm = &nokia_bluetooth_pm_ops,
->>> 		.of_match_table = of_match_ptr(nokia_bluetooth_of_match),
->>> 	},
->>> +	.id_table = nokia_bluetooth_serdev_id,
->>> };
->> 
->> I would actually skip this hardware. First of all it is such a dedicated custom Nokia transport and hardware, and secondly it is no longer produced anyway.
->> 
+On Fri 2018-06-08 12:32:33, Thierry Escande wrote:
+> On 08/06/2018 11:46, Andy Shevchenko wrote:
+> > On Fri, Jun 8, 2018 at 12:07 PM, Thierry Escande
+> > <thierry.escande@linaro.org> wrote:
+> > 
+> > > But as I type I realize it's not necessary. I will simply enclose the call
+> > > to wait_for_random_bytes() by #if IS_MODULE() #endif so it gets called only
+> > > if built as a module, which is how run_kselftest.sh wants it... If
+> > > test_printf is compiled built-in and the crng is not yet initialized the
+> > > test will fail anyway so there is no need to add an extra check.
+> > 
+> > Unfortunately I can't support this as is.
+> > We have environments where crng will be ready minutes after the boot.
+> > It's unacceptable.
+> > 
+> > So, we need to have means to not delay test for so long.
 > 
-> Would it make sense to cc: sre here? We want good support even for old
-> hardware, and this is n9/n950, it is still on "top ten supported
-> phones" list... Probably even top 5.
+> I agree we can't delay test execution for too long. In my case the crng is
+> ready only a few seconds after the boot. So we may just skip this plain 'p'
+> printf test if crng is not ready then.
 
-but that is not what this patch series is about. We do not need new_id kinda support for the existing hardware. My point is there will be no newly designed hardware using this driver.
+Alternative solution would be to accept
+const char *str = sizeof(ptr) == 8 ? "(____ptrval____)" : "(ptrval)";
+as a valid result. It would make sense to print some warning in that case.
 
-Regards
+In each case, it would look ugly to use add_random_ready_callback()
+wihtout passing a callback. If you really needed to check crng_ready(),
+it would be better to make it public.
 
-Marcel
+Best Regards,
+Petr
