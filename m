@@ -1,11 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id xBE/K1WCHlumCAAAmS7hNA
-	; Mon, 11 Jun 2018 14:09:00 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id uzxtGeWuGltzdQAAmS7hNA
+	; Fri, 08 Jun 2018 16:29:48 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 564B4607E7; Mon, 11 Jun 2018 14:09:00 +0000 (UTC)
+	id 0FCD06089E; Fri,  8 Jun 2018 16:29:48 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KLtue/SJ"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="gaE6zQRE";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nLd54+0Q"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
@@ -13,162 +14,125 @@ X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id B270C60351;
-	Mon, 11 Jun 2018 14:08:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B270C60351
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 50154602FC;
+	Fri,  8 Jun 2018 16:29:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 50154602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933791AbeFKOI5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 10:08:57 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46956 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933645AbeFKOHS (ORCPT
+        id S1752642AbeFHQ3p (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 12:29:45 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:39195 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751244AbeFHQ3n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:07:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=h6tgGjkW1lxec/aGtQG6HYfrR+heEPK7J0OCaY70e34=; b=KLtue/SJDu9kU71yyaOVze26o
-        bC5ou7VhCRkLWjhI5Z+ImhqYog6fWqVOTdYslr/F4qk1/vbkXEhID/dq3p9Mi6RvlWBY3jQdNn3Jf
-        k0JZXR3mG78zda53jqdL96oGZBwGjGG5TxOE0XD7lKkMikFiptFSKLzTv3izy4znUBpvYfxXdu2LX
-        ognZ8Y/0H85vAWmZ6mSvj9BGHG3Q263nyUJKmgzUSrHD+mZ/GDBV1uMEtW3/tVTRaExJTWzxwx7S7
-        WbWUoK0KoSK6zRaqr6WPsvU6W/IAJe5YoBwutHYvN62e69I0RsOM3jDcNFF2/D5vrp5t9eaqEkoy+
-        Z3BiBETjQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSNTZ-00056G-4B; Mon, 11 Jun 2018 14:07:17 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Lukas Czerner <lczerner@redhat.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v13 72/72] radix tree: Remove radix_tree_clear_tags
-Date: Mon, 11 Jun 2018 07:06:39 -0700
-Message-Id: <20180611140639.17215-73-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
-References: <20180611140639.17215-1-willy@infradead.org>
+        Fri, 8 Jun 2018 12:29:43 -0400
+Received: by mail-ua0-f196.google.com with SMTP id n4-v6so9279801uad.6
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 09:29:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=dBPvpm4p9HX5uNhZdZUFQHtFRZG1/nRFT96EthPgtbM=;
+        b=gaE6zQREY+XyJQvL9QUoevvyt5eCmY6UDHy+KHj5S8z4DdtvFPudGyq8po+3/1jOwz
+         D9MnM+BnpKvAEfvcs2/vjc4APlyLKvo+J3fG0tnfD3KYwCoAIFvbtPaoXhKyJupEfIyR
+         sCwHyqJEEA1hsyPr0vcQonflIkhTxKLcSB6+ntKynYU7+w2bdGZRkYL/m3X9/f4cAz5N
+         VzTgHIRRBQ5GMSWaifHMTsi/tUu7rkWXZZwl2NBbvYHvBawsnHbzP+BuENgPBvEHpUYZ
+         GQoi9J3EfX1MjurZtH6p2Dz9uiRQu7449fWl+tcBCihQeodl2QYVU74zJi2YO9lzuNHc
+         3b2g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=dBPvpm4p9HX5uNhZdZUFQHtFRZG1/nRFT96EthPgtbM=;
+        b=nLd54+0QUqzRmCx7hUgA/342cldn7P7lkyRmtf2bPtQer5ELhqq4hd1d3ZChozYYZB
+         IaPLUE3RQw5uUQhL/Dh6lCEqW0EZgyYkB8BKwLfZlYUZe6TodX2n7P8o329rtA4CwwEo
+         qujKDBVo5Jpw2lXKsIq4n7r7fE1HpSpLLDOEo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=dBPvpm4p9HX5uNhZdZUFQHtFRZG1/nRFT96EthPgtbM=;
+        b=uUbkQCdhTMs0ZlCCN82C0EV4HWa4ZaXBHGEZaycolrqhYgrdgtGcj7bwzYzxDzKe1p
+         alt4Pauu2d9Sr6q1e68/Q76qdC2dAhMkVyzgwhklGOm75yxI2jJB8uq9v3r1oLDjRzEW
+         fLGPsLzWdWVW06/2Fga76bDZ3XbKcdVMEbyTTDnbeAFQx08rjGCCFLA97kYU6Hh2muxx
+         WvhxZML30Sg6ry/NWSx43+PLGliwX1vXveNv1mXDg4VGXHkyg1U5Kb2KpBjbwNa0T8pT
+         rK7i8j3VLIMYFRSZtqu3QswfCvUkr4bhAeXm/FhFJyV2Zoaj8S3cBv/wfQCmBcP4qwzZ
+         3DPw==
+X-Gm-Message-State: APt69E1fDiEpgNvivu5GpZbh6dJaSu114YFSqClYsUWE5ZfJZ3W6e/k7
+        skLnXxUzxk3oAAaNnVl4H/7aulD+z0/5g3ujfO1heg==
+X-Google-Smtp-Source: ADUXVKIJYvFK9s8ZPnY7JA3gqSuyq7ePt24ahy4t8GPeK1Fb8bsbgAMzaa7NljEfVwllI370a9jnaLDb6hT5xtRaD9M=
+X-Received: by 2002:a9f:3751:: with SMTP id a17-v6mr4608541uae.83.1528475382781;
+ Fri, 08 Jun 2018 09:29:42 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a1f:a085:0:0:0:0:0 with HTTP; Fri, 8 Jun 2018 09:29:42 -0700 (PDT)
+In-Reply-To: <20180531144949.24995-1-tycho@tycho.ws>
+References: <20180531144949.24995-1-tycho@tycho.ws>
+From: Kees Cook <keescook@chromium.org>
+Date: Fri, 8 Jun 2018 09:29:42 -0700
+X-Google-Sender-Auth: 2TtLY4BR1wzDdb8_vxKf_8paZpw
+Message-ID: <CAGXu5jKsLDSBjB74SrvCvmGy_RTEjBsMtR5dk1CcRFrHEQfM_g@mail.gmail.com>
+Subject: Re: [PATCH v3 0/4] seccomp trap to userspace
+To: Tycho Andersen <tycho@tycho.ws>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        "Tobin C . Harding" <me@tobin.cc>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+On Thu, May 31, 2018 at 7:49 AM, Tycho Andersen <tycho@tycho.ws> wrote:
+> Hi all,
+>
+> Here's a v3 of the seccomp trap to userspace, with all the nits from v2
+> fixed. Open questions from v2 are still:
+>
+> 1. is it ok not to use netlink?
 
-The page cache was the only user of this interface and it has now
-been converted to the XArray.  Transform the test into a test of
-xas_init_tags().
+Yeah, I think there isn't a sensible way to reuse that API, which is
+too bad. Let's just try to keep this interface future-proofed. :)
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
----
- include/linux/radix-tree.h           |  2 --
- lib/radix-tree.c                     | 13 -----------
- tools/testing/radix-tree/tag_check.c | 32 +++++++++++++---------------
- 3 files changed, 15 insertions(+), 32 deletions(-)
+> 2. what should the fd passing API look like? (see patch notes on this
+>    one for details of why the current one might (?) be a problem)
 
-diff --git a/include/linux/radix-tree.h b/include/linux/radix-tree.h
-index f8ef267e4975..27c15990951d 100644
---- a/include/linux/radix-tree.h
-+++ b/include/linux/radix-tree.h
-@@ -252,8 +252,6 @@ void radix_tree_iter_delete(struct radix_tree_root *,
- 			struct radix_tree_iter *iter, void __rcu **slot);
- void *radix_tree_delete_item(struct radix_tree_root *, unsigned long, void *);
- void *radix_tree_delete(struct radix_tree_root *, unsigned long);
--void radix_tree_clear_tags(struct radix_tree_root *, struct radix_tree_node *,
--			   void __rcu **slot);
- unsigned int radix_tree_gang_lookup(const struct radix_tree_root *,
- 			void **results, unsigned long first_index,
- 			unsigned int max_items);
-diff --git a/lib/radix-tree.c b/lib/radix-tree.c
-index ad03dc0c562f..101f1c28e1b6 100644
---- a/lib/radix-tree.c
-+++ b/lib/radix-tree.c
-@@ -1711,19 +1711,6 @@ void *radix_tree_delete(struct radix_tree_root *root, unsigned long index)
- }
- EXPORT_SYMBOL(radix_tree_delete);
- 
--void radix_tree_clear_tags(struct radix_tree_root *root,
--			   struct radix_tree_node *node,
--			   void __rcu **slot)
--{
--	if (node) {
--		unsigned int tag, offset = get_slot_offset(node, slot);
--		for (tag = 0; tag < RADIX_TREE_MAX_TAGS; tag++)
--			node_tag_clear(root, node, tag, offset);
--	} else {
--		root_tag_clear_all(root);
--	}
--}
--
- /**
-  *	radix_tree_tagged - test whether any items in the tree are tagged
-  *	@root:		radix tree root
-diff --git a/tools/testing/radix-tree/tag_check.c b/tools/testing/radix-tree/tag_check.c
-index 543181e4847b..340bc4f72f34 100644
---- a/tools/testing/radix-tree/tag_check.c
-+++ b/tools/testing/radix-tree/tag_check.c
-@@ -331,29 +331,27 @@ static void single_check(void)
- 	item_kill_tree(&tree);
- }
- 
--void radix_tree_clear_tags_test(void)
-+void init_tags_test(void)
- {
-+	DEFINE_XARRAY(tree);
-+	XA_STATE(xas, &tree, 0);
- 	unsigned long index;
--	struct radix_tree_node *node;
--	struct radix_tree_iter iter;
--	void **slot;
-+	void *entry;
- 
--	RADIX_TREE(tree, GFP_KERNEL);
--
--	item_insert(&tree, 0);
--	item_tag_set(&tree, 0, 0);
--	__radix_tree_lookup(&tree, 0, &node, &slot);
--	radix_tree_clear_tags(&tree, node, slot);
--	assert(item_tag_get(&tree, 0, 0) == 0);
-+	xa_store(&tree, 0, xa_mk_value(0), GFP_KERNEL);
-+	item_tag_set(&tree, 0, XA_TAG_0);
-+	xas_load(&xas);
-+	xas_init_tags(&xas);
-+	assert(item_tag_get(&tree, 0, XA_TAG_0) == 0);
- 
- 	for (index = 0; index < 1000; index++) {
--		item_insert(&tree, index);
--		item_tag_set(&tree, index, 0);
-+		xa_store(&tree, index, xa_mk_value(index), GFP_KERNEL);
-+		item_tag_set(&tree, index, XA_TAG_0);
- 	}
- 
--	radix_tree_for_each_slot(slot, &tree, &iter, 0) {
--		radix_tree_clear_tags(&tree, iter.node, slot);
--		assert(item_tag_get(&tree, iter.index, 0) == 0);
-+	xas_for_each(&xas, entry, ULONG_MAX) {
-+		xas_init_tags(&xas);
-+		assert(item_tag_get(&tree, xas.xa_index, XA_TAG_0) == 0);
- 	}
- 
- 	item_kill_tree(&tree);
-@@ -376,5 +374,5 @@ void tag_check(void)
- 	thrash_tags();
- 	rcu_barrier();
- 	printv(2, "after thrash_tags: %d allocated\n", nr_allocated);
--	radix_tree_clear_tags_test();
-+	init_tags_test();
- }
+The only thing in my mind is avoiding the problems with other fd
+passing API (e.g. when do rlimits get checked, etc).
+
+> As an added bonus, I've also written some stress testing, with lots of
+> tasks and listeners (1000 of each) sharing the same notification thread,
+> and not found any issues so far. Code is here:
+> https://github.com/tych0/kernel-utils/blob/master/seccomp/notify_stress.c
+> although I haven't included it in the patchset.
+
+That's excellent, thanks!
+
+> v2: https://lkml.org/lkml/2018/5/17/627
+>
+> Tycho Andersen (4):
+>   seccomp: add a return code to trap to userspace
+>   seccomp: make get_nth_filter available outside of CHECKPOINT_RESTORE
+>   seccomp: add a way to get a listener fd from ptrace
+>   seccomp: add support for passing fds via USER_NOTIF
+
+I'm under a time crunch with the merge window, but after -rc2 I should
+have time to give this some close review. FWIW, I expect this to enter
+-next this cycle and get it into the 4.19 merge window: we need the
+feature and the alternatives have been well explored and don't look
+workable.
+
+Thanks for the series!
+
+-Kees
+
 -- 
-2.17.1
+Kees Cook
+Pixel Security
