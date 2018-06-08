@@ -1,144 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id VA/AJJx5HluEOAAAmS7hNA
-	; Mon, 11 Jun 2018 13:31:10 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id E3L4F3KWGlt9EgAAmS7hNA
+	; Fri, 08 Jun 2018 14:46:30 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 1E548607BB; Mon, 11 Jun 2018 13:31:10 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hu84LKHy"
+	id 283AE6089E; Fri,  8 Jun 2018 14:46:30 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id A045660792;
-	Mon, 11 Jun 2018 13:31:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A045660792
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 94C7E601D2;
+	Fri,  8 Jun 2018 14:46:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 94C7E601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933130AbeFKNbG (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 09:31:06 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:40253 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754224AbeFKNbA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 09:31:00 -0400
-Received: by mail-lf0-f65.google.com with SMTP id q11-v6so30558632lfc.7
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 06:31:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=lDdZ+12ye4H9JsUdu5+2AMHnLkdkF7ofjKyzEJiIn2U=;
-        b=hu84LKHy75/wLhFShXTYOjz0+SniVId4gbnyRZqiEad/oW5UIJ0F4N3k1W1I1Vjhni
-         wem/FGQmtc46tuPLhMCbWoTGhp2EQah59mgKS7o7FF6gPxoA+X4EuBk1WVR1wyfXFMIa
-         hJR8r3MbZySYsolK5ghcneJBgNZWeegwFkkxE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=lDdZ+12ye4H9JsUdu5+2AMHnLkdkF7ofjKyzEJiIn2U=;
-        b=AOm653tE8qixiVr2Zlodk1VF7TOj4u+N/oFqruXhmzYmRzjhIsSNbCLQk3HcE4TPyi
-         XpZSCxKwZ4PSYTmLkTk7gQZ1nj7xdm+8UnEfAgxvbUx1JVXYnft/Mzy6xlB6ABgOsZtk
-         9dOzQwe9ico02P1VLZTERp2DaJW78WxdOaCbuFVoQDQ9Fwkn0pD+8k0oh9Obgik7h/kB
-         vt+30k7VIpa/n2iumNeMoSsXKdILfYkZ/QbdX8PzZz9Ht6GGaxP6sILjph/h5UIKpMQu
-         QiSfXXnWvFEKmJcbw78HpmXFLIzCQe6Yppb37Of99uQQ/d8sbRIFA60CqVp+ey8Dgolm
-         6xcQ==
-X-Gm-Message-State: APt69E0Gz4QhrjGkpWZXMncCeu784tNeIvJ0nJokCHJ9QwxtVqUZADuN
-        5LkscEyNzOi/udOnBPXOwa9rEQ==
-X-Google-Smtp-Source: ADUXVKKPcPhqXPtK987Je+vAohmTXdz1Jo+gG4EoJvae+vh74fJmF54L9NTFKnngjtY1ap/8RKZ72w==
-X-Received: by 2002:a2e:1188:: with SMTP id 8-v6mr12288206ljr.38.1528723859491;
-        Mon, 11 Jun 2018 06:30:59 -0700 (PDT)
-Received: from localhost.localdomain (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
-        by smtp.gmail.com with ESMTPSA id u24-v6sm2617712ljj.96.2018.06.11.06.30.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Jun 2018 06:30:58 -0700 (PDT)
-From: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-To: grygorii.strashko@ti.com, davem@davemloft.net
-Cc: corbet@lwn.net, akpm@linux-foundation.org, netdev@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, vinicius.gomes@intel.com,
-        henrik@austad.us, jesus.sanchez-palencia@intel.com,
-        ilias.apalodimas@linaro.org, p-varis@ti.com, spatton@ti.com,
-        francois.ozog@linaro.org, yogeshs@ti.com, nsekhar@ti.com,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Subject: [PATCH net-next 2/6] net: ethernet: ti: cpdma: fit rated channels in backward order
-Date: Mon, 11 Jun 2018 16:30:43 +0300
-Message-Id: <20180611133047.4818-3-ivan.khoronzhuk@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180611133047.4818-1-ivan.khoronzhuk@linaro.org>
-References: <20180611133047.4818-1-ivan.khoronzhuk@linaro.org>
+        id S1752953AbeFHOq1 convert rfc822-to-8bit (ORCPT
+        <rfc822;monsieuricon@codeaurora.org> + 25 others);
+        Fri, 8 Jun 2018 10:46:27 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:42570 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751576AbeFHOqZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 10:46:25 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 8B9B9207C0; Fri,  8 Jun 2018 16:46:23 +0200 (CEST)
+Received: from xps13 (AAubervilliers-681-1-128-7.w90-88.abo.wanadoo.fr [90.88.9.7])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 0B05320702;
+        Fri,  8 Jun 2018 16:46:23 +0200 (CEST)
+Date: Fri, 8 Jun 2018 16:46:23 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Rob Herring <robh@kernel.org>, Marc Zyngier <marc.zyngier@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>,
+        Haim Boot <hayim@marvell.com>, Hanna Hawa <hannah@marvell.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 13/16] dt-bindings/interrupt-controller: add
+ documentation for Marvell SEI controller
+Message-ID: <20180608164623.0175fc05@xps13>
+In-Reply-To: <20180605205121.GA19249@rob-hp-laptop>
+References: <20180522094042.24770-1-miquel.raynal@bootlin.com>
+        <20180522094042.24770-14-miquel.raynal@bootlin.com>
+        <20180605205121.GA19249@rob-hp-laptop>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to TRM tx rated channels should be in 7..0 order,
-so correct it.
+Hi Rob, Marc,
 
-Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
----
- drivers/net/ethernet/ti/davinci_cpdma.c | 31 ++++++++++++-------------
- 1 file changed, 15 insertions(+), 16 deletions(-)
+On Tue, 5 Jun 2018 14:51:21 -0600, Rob Herring <robh@kernel.org> wrote:
 
-diff --git a/drivers/net/ethernet/ti/davinci_cpdma.c b/drivers/net/ethernet/ti/davinci_cpdma.c
-index cdbddf16dd29..19bb63902997 100644
---- a/drivers/net/ethernet/ti/davinci_cpdma.c
-+++ b/drivers/net/ethernet/ti/davinci_cpdma.c
-@@ -406,37 +406,36 @@ static int cpdma_chan_fit_rate(struct cpdma_chan *ch, u32 rate,
- 	struct cpdma_chan *chan;
- 	u32 old_rate = ch->rate;
- 	u32 new_rmask = 0;
--	int rlim = 1;
-+	int rlim = 0;
- 	int i;
- 
--	*prio_mode = 0;
- 	for (i = tx_chan_num(0); i < tx_chan_num(CPDMA_MAX_CHANNELS); i++) {
- 		chan = ctlr->channels[i];
--		if (!chan) {
--			rlim = 0;
-+		if (!chan)
- 			continue;
--		}
- 
- 		if (chan == ch)
- 			chan->rate = rate;
- 
- 		if (chan->rate) {
--			if (rlim) {
--				new_rmask |= chan->mask;
--			} else {
--				ch->rate = old_rate;
--				dev_err(ctlr->dev, "Prev channel of %dch is not rate limited\n",
--					chan->chan_num);
--				return -EINVAL;
--			}
--		} else {
--			*prio_mode = 1;
--			rlim = 0;
-+			rlim = 1;
-+			new_rmask |= chan->mask;
-+			continue;
- 		}
-+
-+		if (rlim)
-+			goto err;
- 	}
- 
- 	*rmask = new_rmask;
-+	*prio_mode = rlim;
- 	return 0;
-+
-+err:
-+	ch->rate = old_rate;
-+	dev_err(ctlr->dev, "Upper cpdma ch%d is not rate limited\n",
-+		chan->chan_num);
-+	return -EINVAL;
- }
- 
- static u32 cpdma_chan_set_factors(struct cpdma_ctlr *ctlr,
--- 
-2.17.1
+> On Tue, May 22, 2018 at 11:40:39AM +0200, Miquel Raynal wrote:
+> > Describe the System Error Interrupt (SEI) controller. It aggregates two
+> > types of interrupts, wired and MSIs from respectively the AP and the
+> > CPs, into a single SPI interrupt.
+> > 
+> > Suggested-by: Haim Boot <hayim@marvell.com>
+> > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> > ---
+> >  .../bindings/interrupt-controller/marvell,sei.txt  | 50 ++++++++++++++++++++++
+> >  1 file changed, 50 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/marvell,sei.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/interrupt-controller/marvell,sei.txt b/Documentation/devicetree/bindings/interrupt-controller/marvell,sei.txt
+> > new file mode 100644
+> > index 000000000000..689981036c30
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/interrupt-controller/marvell,sei.txt
+> > @@ -0,0 +1,50 @@
+> > +Marvell SEI (System Error Interrupt) Controller
+> > +-----------------------------------------------
+> > +
+> > +Marvell SEI (System Error Interrupt) controller is an interrupt
+> > +aggregator. It receives interrupts from several sources and aggregates
+> > +them to a single interrupt line (an SPI) on the parent interrupt
+> > +controller.
+> > +
+> > +This interrupt controller can handle up to 64 SEIs, a set comes from the
+> > +AP and is wired while a second set comes from the CPs by the mean of
+> > +MSIs. Each 'domain' is represented as a subnode.
+> > +
+> > +Required properties:
+> > +
+> > +- compatible: should be "marvell,armada-8k-sei".
+> > +- reg: SEI registers location and length.
+> > +- interrupts: identifies the parent IRQ that will be triggered.
+> > +
+> > +Child node 'sei-wired-controller' required properties:
+> > +
+> > +- marvell,sei-ranges: ranges of wired interrupts.
+> > +- #interrupt-cells: number of cells to define an SEI wired interrupt
+> > +                    coming from the AP, should be 1. The cell is the IRQ
+> > +                    number.
+> > +- interrupt-controller: identifies the node as an interrupt controller.
+> > +
+> > +Child node 'sei-msi-controller' required properties:
+> > +
+> > +- marvell,sei-ranges: ranges of non-wired interrupts triggered by way of
+> > +                      MSIs.
+> > +- msi-controller: identifies the node as an MSI controller.
+> > +
+> > +Example:
+> > +
+> > +        sei: sei@3f0200 {
+> > +               compatible = "marvell,armada-8k-sei";
+> > +               reg = <0x3f0200 0x40>;
+> > +               interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
+> > +
+> > +               sei_wired_controller: sei-wired-controller@0 {
+> > +                       marvell,sei-ranges = <0 21>;
+> > +                       #interrupt-cells = <1>;
+> > +                       interrupt-controller;
+> > +               };
+> > +
+> > +               sei_msi_controller: sei-msi-controller@21 {
+> > +                       marvell,sei-ranges = <21 43>;
+> > +                       msi-controller;
+> > +               };  
+> 
+> I still think this should just be all one node. There's several examples 
+> in the tree of nodes which are both interrupt-controller and 
+> msi-controller. Marvell MPIC is one example.
+
+I checked Marvell MPIC example (armada 370 XP), it does not use
+hierarchy domains, so I totally understand your point but I'm not sure
+how I could get inspired by this driver (I'm looking for others).
+
+Here I'm stuck. I know from a pure DT point of view the following is
+not a valid argument. But from Linux, there is no easy way to handle
+this situation without two different device nodes due to the internals
+of the irqchip subsystem. There is simply no easy solution and having
+only one node would require consequent changes in the core.
+
+Maybe Marc will have an idea, but I think we already gave up on this
+topic :/
+
+Regards,
+Miquèl
