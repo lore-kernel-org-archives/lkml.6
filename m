@@ -1,170 +1,218 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ahHwIX4MG1vpYQAAmS7hNA
-	; Fri, 08 Jun 2018 23:08:46 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id DsHBKHLbGVtEBAAAmS7hNA
+	; Fri, 08 Jun 2018 01:27:14 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 69FEA6089E; Fri,  8 Jun 2018 23:08:46 +0000 (UTC)
+	id 878F76089E; Fri,  8 Jun 2018 01:27:14 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="m5dftXMW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MaMrZoMW"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id CB72660275;
-	Fri,  8 Jun 2018 23:08:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CB72660275
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+	by smtp.codeaurora.org (Postfix) with ESMTP id 95680601B4;
+	Fri,  8 Jun 2018 01:27:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 95680601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753172AbeFHXIn (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 19:08:43 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:40959 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753140AbeFHXIl (ORCPT
+        id S1752618AbeFHB1L (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 21:27:11 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:41634 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752385AbeFHB1K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 19:08:41 -0400
-Received: by mail-wr0-f195.google.com with SMTP id l41-v6so14809428wre.7
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 16:08:40 -0700 (PDT)
+        Thu, 7 Jun 2018 21:27:10 -0400
+Received: by mail-pf0-f196.google.com with SMTP id a11-v6so5773086pff.8
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 18:27:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=SajILgSWWAJtxWYMhY4L+l225DXzGTWCRJEV7wa1HxM=;
-        b=m5dftXMWOzO64ruQQcnSIRaHhpF4Eg8/k/8YpVITReRyIBbIY8Mf8iChJPpCNOnlb6
-         vqIu+ZBt0ozR3kLeybyHPDVmyNyMcN1yL9pKkNvwvGXVg5B/Y9cuYhWgJO+GBlpYcNIU
-         VWmLNO9y/iBwn1rylGY2Ip7e/FbmQziiZuNn8NxNzK/GGmfsDup05+Ty8iZabMXWZpcJ
-         d8KRmFteD77MGAZJeqcZROSnjYhO584U7VMF1r+vL7Yrm+zlU4d5YgdjKCID904bYvq3
-         /O5FlFOJz0Vp+4JLu1byxW66koo7sgJrI661B/OHw4UT3r861k0anxt39sIxnPl29itt
-         vC3g==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding;
+        bh=wjAdVNBA2U5x1PjU5dbhZ6vgJ8C6ILcAyewR0BZUWyM=;
+        b=MaMrZoMWnbP63FR7slPYXAIh5sfPhVd0SIkIxM3xPUIkytLgKxhmQ7nDmrwBFeT10P
+         fA6zbl8p3mUXA853Uy5Rv1Xv02pl3cauGmyDaor5Bdgl9nDWmj1gUp0maxlYsMRAhaZP
+         Ra2UH/hrSDqfD0yDx1ksZimR+Dhpi1zkI+Gk9J+7YbWBjS97jLGZ0E5S7KSq+L6I1bfQ
+         Z/hPMVWS7ts2IZ7wtYhTgHiZPVqGfOn1QCJxVmoHEY4BNYY0cXNjCCj1vD/MNYupB1X5
+         Drk6EtuINI6R+8dK7hdL951fVFODcQ5sg5opHZ4KV2Sbgc855vyTxdWepjVliX0JTnaL
+         rXHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SajILgSWWAJtxWYMhY4L+l225DXzGTWCRJEV7wa1HxM=;
-        b=Lmte+aIKFvlGfcSG7/UY6NNWdfo2/G3g4O8saZqcS9GG+59zr3AOK7Ddh5aL32DHwA
-         nm+Mz1sdUZfewShlNX7ufgmmGEGyGE4RRHwjLhtCejCa86Gc+GwT76EJnD3GpPkCn3yD
-         TUpgPzbB4QkIPJpv9lmkCGGyD4nUYuzkBWAX5kFNNDvqcBilpf7dV0VkvkTbUarKLd6Y
-         J8BAX3V2SYKMXznzb/esPxcreEBgxvxqLBO7n0HL0NmdSskgQaDOfo/5QgzTQRyikGC+
-         eORx/znzdgc2/F1SSJHu0rrM7hUVpWI7SvhrUnYfpk5kGVnb//JRTioCSqgHIOkKrmMJ
-         MsbQ==
-X-Gm-Message-State: APt69E0Eyr+Kt6c83QD/Q5Jl0L2BAVyaDrVIizsh8jgEuP1CsW5DyvD8
-        aqIPqkABHYBDlT/CB+KuBKQTxw==
-X-Google-Smtp-Source: ADUXVKJ9Ej/iXR2JpArKgsaRFIUgLrZS+9HQnmexrIxQ4l96NYpaUSJ20QOuAug9XJQdoZF0Sf/OzA==
-X-Received: by 2002:adf:bb10:: with SMTP id r16-v6mr6183988wrg.244.1528499319967;
-        Fri, 08 Jun 2018 16:08:39 -0700 (PDT)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id t1-v6sm2275310wmt.40.2018.06.08.16.08.38
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=wjAdVNBA2U5x1PjU5dbhZ6vgJ8C6ILcAyewR0BZUWyM=;
+        b=BvypYGe+Sb1n71zYj9zMonGCIHsmHEDJ1JESeMJRu6AVp8AKaDs5PRwFf2Gzc/Kgq0
+         cboluU0qBHyRzU17eCHoR/fFWAxIFcnOaWBUQuDh75S8Kc0BgEdBuH95Bl3wiux3Bpoe
+         Q4fG2gyLmXsddSZuksF4cZmkhQhkJpyZUAN9VejnlfEYdxsqlM9sAwUEB+knn08JAYmK
+         KNvYUHwJNibkrsQ3MQNuNVAB3q7qTc0pHTEmCdQlz6ZC4MPO9isSiaW4OVpoMqh6zOHc
+         19gDWX8Ho82WtLkhs7UjX0oB+FGMpBi71ovA6xot2BldOgXdNgyw0dcPbVwxPYyW8WPh
+         cj7g==
+X-Gm-Message-State: APt69E1FPQR5tgTbSSaMra2tr13ptkNjNMyDjbtAccrB4jLpamrM7I9m
+        FH7uGnezIY4htlJDiITaR/M=
+X-Google-Smtp-Source: ADUXVKL0Jhf9LhPReMvPhilQ2Pg+All0ve4+7ffG9RjpJYyP+DmWPADUSNYyHdmL+enBGynrB2elyg==
+X-Received: by 2002:a65:4d47:: with SMTP id j7-v6mr3395760pgt.19.1528421229668;
+        Thu, 07 Jun 2018 18:27:09 -0700 (PDT)
+Received: from [0.0.0.0] (67.216.217.169.16clouds.com. [67.216.217.169])
+        by smtp.gmail.com with ESMTPSA id e1-v6sm18790351pgt.71.2018.06.07.18.27.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Jun 2018 16:08:39 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.86_2)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1fRQUl-0006M3-Gz; Fri, 08 Jun 2018 17:08:35 -0600
-Date: Fri, 8 Jun 2018 17:08:35 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Raed Salem <raeds@mellanox.com>, Leon Romanovsky <leon@kernel.org>,
-        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] IB/mlx5: Fix memory leak in mlx5_ib_create_flow
-Message-ID: <20180608230835.GA24392@ziepe.ca>
-References: <20180607191915.GA9092@embeddedor.com>
+        Thu, 07 Jun 2018 18:27:09 -0700 (PDT)
+Subject: Re: [PATCH v2 1/2] KVM: arm/arm64: add WARN_ON if size is not
+ PAGE_SIZE aligned in unmap_stage2_range
+To: Christoffer Dall <christoffer.dall@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
+Cc: Suzuki.Poulose@arm.com, linux-kernel@vger.kernel.org,
+        jia.he@hxt-semitech.com
+References: <1526635630-18917-1-git-send-email-hejianet@gmail.com>
+From: Jia He <hejianet@gmail.com>
+Message-ID: <b3122d5a-ce76-d38c-0524-f0056236f1db@gmail.com>
+Date: Fri, 8 Jun 2018 09:27:02 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180607191915.GA9092@embeddedor.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1526635630-18917-1-git-send-email-hejianet@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 07, 2018 at 02:19:15PM -0500, Gustavo A. R. Silva wrote:
-> In case memory resources for *ucmd* were allocated, release them
-> before return.
+Ping，thanks
+
+-- 
+Cheers,
+Jia
+On 5/18/2018 5:27 PM, Jia He Wrote:
+> There is a panic in armv8a server(QDF2400) under memory pressure tests
+> (start 20 guests and run memhog in the host).
 > 
-> Addresses-Coverity-ID: 1469857 ("Resource leak")
-> Fixes: 3b3233fbf02e ("IB/mlx5: Add flow counters binding support")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->  drivers/infiniband/hw/mlx5/main.c | 33 +++++++++++++++++++++------------
->  1 file changed, 21 insertions(+), 12 deletions(-)
+> ---------------------------------begin--------------------------------
+> [35380.800950] BUG: Bad page state in process qemu-kvm  pfn:dd0b6
+> [35380.805825] page:ffff7fe003742d80 count:-4871 mapcount:-2126053375
+> mapping:          (null) index:0x0
+> [35380.815024] flags: 0x1fffc00000000000()
+> [35380.818845] raw: 1fffc00000000000 0000000000000000 0000000000000000
+> ffffecf981470000
+> [35380.826569] raw: dead000000000100 dead000000000200 ffff8017c001c000
+> 0000000000000000
+> [35380.805825] page:ffff7fe003742d80 count:-4871 mapcount:-2126053375
+> mapping:          (null) index:0x0
+> [35380.815024] flags: 0x1fffc00000000000()
+> [35380.818845] raw: 1fffc00000000000 0000000000000000 0000000000000000
+> ffffecf981470000
+> [35380.826569] raw: dead000000000100 dead000000000200 ffff8017c001c000
+> 0000000000000000
+> [35380.834294] page dumped because: nonzero _refcount
+> [35380.839069] Modules linked in: vhost_net vhost tap ebtable_filter
+> ebtables ip6table_filter ip6_tables iptable_filter fcoe libfcoe libfc
+> 8021q garp mrp stp llc scsi_transport_fc openvswitch nf_conntrack_ipv6
+> nf_nat_ipv6 nf_conntrack_ipv4 nf_defrag_ipv4 nf_nat_ipv4 nf_defrag_ipv6
+> nf_nat nf_conntrack vfat fat rpcrdma ib_isert iscsi_target_mod ib_iser
+> libiscsi scsi_transport_iscsi ib_srpt target_core_mod ib_srp
+> scsi_transport_srp ib_ipoib rdma_ucm ib_ucm ib_uverbs ib_umad rdma_cm
+> ib_cm iw_cm mlx5_ib ib_core crc32_ce ipmi_ssif tpm_tis tpm_tis_core sg
+> nfsd auth_rpcgss nfs_acl lockd grace sunrpc dm_multipath ip_tables xfs
+> libcrc32c mlx5_core mlxfw devlink ahci_platform libahci_platform libahci
+> qcom_emac sdhci_acpi sdhci hdma mmc_core hdma_mgmt i2c_qup dm_mirror
+> dm_region_hash dm_log dm_mod
+> [35380.908341] CPU: 29 PID: 18323 Comm: qemu-kvm Tainted: G W
+> 4.14.15-5.hxt.aarch64 #1
+> [35380.917107] Hardware name: <snip for confidential issues>
+> [35380.930909] Call trace:
+> [35380.933345] [<ffff000008088f00>] dump_backtrace+0x0/0x22c
+> [35380.938723] [<ffff000008089150>] show_stack+0x24/0x2c
+> [35380.943759] [<ffff00000893c078>] dump_stack+0x8c/0xb0
+> [35380.948794] [<ffff00000820ab50>] bad_page+0xf4/0x154
+> [35380.953740] [<ffff000008211ce8>] free_pages_check_bad+0x90/0x9c
+> [35380.959642] [<ffff00000820c430>] free_pcppages_bulk+0x464/0x518
+> [35380.965545] [<ffff00000820db98>] free_hot_cold_page+0x22c/0x300
+> [35380.971448] [<ffff0000082176fc>] __put_page+0x54/0x60
+> [35380.976484] [<ffff0000080b1164>] unmap_stage2_range+0x170/0x2b4
+> [35380.982385] [<ffff0000080b12d8>] kvm_unmap_hva_handler+0x30/0x40
+> [35380.988375] [<ffff0000080b0104>] handle_hva_to_gpa+0xb0/0xec
+> [35380.994016] [<ffff0000080b2644>] kvm_unmap_hva_range+0x5c/0xd0
+> [35380.999833] [<ffff0000080a8054>]
+> kvm_mmu_notifier_invalidate_range_start+0x60/0xb0
+> [35381.007387] [<ffff000008271f44>]
+> __mmu_notifier_invalidate_range_start+0x64/0x8c
+> [35381.014765] [<ffff0000082547c8>] try_to_unmap_one+0x78c/0x7a4
+> [35381.020493] [<ffff000008276d04>] rmap_walk_ksm+0x124/0x1a0
+> [35381.025961] [<ffff0000082551b4>] rmap_walk+0x94/0x98
+> [35381.030909] [<ffff0000082555e4>] try_to_unmap+0x100/0x124
+> [35381.036293] [<ffff00000828243c>] unmap_and_move+0x480/0x6fc
+> [35381.041847] [<ffff000008282b6c>] migrate_pages+0x10c/0x288
+> [35381.047318] [<ffff00000823c164>] compact_zone+0x238/0x954
+> [35381.052697] [<ffff00000823c944>] compact_zone_order+0xc4/0xe8
+> [35381.058427] [<ffff00000823d25c>] try_to_compact_pages+0x160/0x294
+> [35381.064503] [<ffff00000820f074>]
+> __alloc_pages_direct_compact+0x68/0x194
+> [35381.071187] [<ffff000008210138>] __alloc_pages_nodemask+0xc20/0xf7c
+> [35381.077437] [<ffff0000082709e4>] alloc_pages_vma+0x1a4/0x1c0
+> [35381.083080] [<ffff000008285b68>]
+> do_huge_pmd_anonymous_page+0x128/0x324
+> [35381.089677] [<ffff000008248a24>] __handle_mm_fault+0x71c/0x7e8
+> [35381.095492] [<ffff000008248be8>] handle_mm_fault+0xf8/0x194
+> [35381.101049] [<ffff000008240dcc>] __get_user_pages+0x124/0x34c
+> [35381.106777] [<ffff000008241870>] populate_vma_page_range+0x90/0x9c
+> [35381.112941] [<ffff000008241940>] __mm_populate+0xc4/0x15c
+> [35381.118322] [<ffff00000824b294>] SyS_mlockall+0x100/0x164
+> [35381.123705] Exception stack(0xffff800dce5f3ec0 to 0xffff800dce5f4000)
+> [35381.130128] 3ec0: 0000000000000003 d6e6024cc9b87e00 0000aaaabe94f000
+> 0000000000000000
+> [35381.137940] 3ee0: 0000000000000002 0000000000000000 0000000000000000
+> 0000aaaacf6fc3c0
+> [35381.145753] 3f00: 00000000000000e6 0000aaaacf6fc490 0000ffffeeeab0f0
+> d6e6024cc9b87e00
+> [35381.153565] 3f20: 0000000000000000 0000aaaabe81b3c0 0000000000000020
+> 00009e53eff806b5
+> [35381.161379] 3f40: 0000aaaabe94de48 0000ffffa7c269b0 0000000000000011
+> 0000ffffeeeabf68
+> [35381.169190] 3f60: 0000aaaaceacfe60 0000aaaabe94f000 0000aaaabe9ba358
+> 0000aaaabe7ffb80
+> [35381.177003] 3f80: 0000aaaabe9ba000 0000aaaabe959f64 0000000000000000
+> 0000aaaabe94f000
+> [35381.184815] 3fa0: 0000000000000000 0000ffffeeeabdb0 0000aaaabe5f3bf8
+> 0000ffffeeeabdb0
+> [35381.192628] 3fc0: 0000ffffa7c269b8 0000000060000000 0000000000000003
+> 00000000000000e6
+> [35381.200440] 3fe0: 0000000000000000 0000000000000000 0000000000000000
+> 0000000000000000
+> [35381.208254] [<ffff00000808339c>] __sys_trace_return+0x0/0x4
+> [35381.213809] Disabling lock debugging due to kernel taint
+> --------------------------------end--------------------------------------
 > 
-> diff --git a/drivers/infiniband/hw/mlx5/main.c b/drivers/infiniband/hw/mlx5/main.c
-> index e52dd21..0472e6c 100644
-> +++ b/drivers/infiniband/hw/mlx5/main.c
-> @@ -3546,29 +3546,35 @@ static struct ib_flow *mlx5_ib_create_flow(struct ib_qp *qp,
->  			return ERR_PTR(-ENOMEM);
+> The root cause might be what I fixed at [1]. But from arm kvm points of
+> view, it would be better we caught the exception earlier and clearer.
+> 
+> If the size is not PAGE_SIZE aligned, unmap_stage2_range might unmap the
+> wrong(more or less) page range. Hence it caused the "BUG: Bad page
+> state"
+> 
+> [1] https://lkml.org/lkml/2018/5/3/1042
+> 
+> Signed-off-by: jia.he@hxt-semitech.com
+> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+> v2: refine the commit log
+> 
+>  virt/kvm/arm/mmu.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+> index 7f6a944..8dac311 100644
+> --- a/virt/kvm/arm/mmu.c
+> +++ b/virt/kvm/arm/mmu.c
+> @@ -297,6 +297,8 @@ static void unmap_stage2_range(struct kvm *kvm, phys_addr_t start, u64 size)
+>  	phys_addr_t next;
 >  
->  		err = ib_copy_from_udata(ucmd, udata, required_ucmd_sz);
-> -		if (err) {
-> -			kfree(ucmd);
-> -			return ERR_PTR(err);
-> -		}
-> +		if (err)
-> +			goto free_ucmd;
->  	}
->  
-> -	if (flow_attr->priority > MLX5_IB_FLOW_LAST_PRIO)
-> -		return ERR_PTR(-ENOMEM);
-> +	if (flow_attr->priority > MLX5_IB_FLOW_LAST_PRIO) {
-> +		err = -ENOMEM;
-> +		goto free_ucmd;
-> +	}
->  
->  	if (domain != IB_FLOW_DOMAIN_USER ||
->  	    flow_attr->port > dev->num_ports ||
->  	    (flow_attr->flags & ~(IB_FLOW_ATTR_FLAGS_DONT_TRAP |
-> -				  IB_FLOW_ATTR_FLAGS_EGRESS)))
-> -		return ERR_PTR(-EINVAL);
-> +				  IB_FLOW_ATTR_FLAGS_EGRESS))) {
-> +		err = -EINVAL;
-> +		goto free_ucmd;
-> +	}
->  
->  	if (is_egress &&
->  	    (flow_attr->type == IB_FLOW_ATTR_ALL_DEFAULT ||
-> -	     flow_attr->type == IB_FLOW_ATTR_MC_DEFAULT))
-> -		return ERR_PTR(-EINVAL);
-> +	     flow_attr->type == IB_FLOW_ATTR_MC_DEFAULT)) {
-> +		err = -EINVAL;
-> +		goto free_ucmd;
-> +	}
->  
->  	dst = kzalloc(sizeof(*dst), GFP_KERNEL);
-> -	if (!dst)
-> -		return ERR_PTR(-ENOMEM);
-> +	if (!dst) {
-> +		err = -ENOMEM;
-> +		goto free_ucmd;
-> +	}
->  
->  	mutex_lock(&dev->flow_db->lock);
->  
-> @@ -3640,6 +3646,9 @@ static struct ib_flow *mlx5_ib_create_flow(struct ib_qp *qp,
->  	kfree(ucmd);
->  	kfree(handler);
->  	return ERR_PTR(err);
-> +free_ucmd:
-> +	kfree(ucmd);
-> +	return ERR_PTR(err);
->  }
-
-This hunk is a bit wonky, can we do this instead? handle never needs
-to be freed.
-
-destroy_ft:
-	put_flow_table(dev, ft_prio, false);
-	if (ft_prio_tx)
-		put_flow_table(dev, ft_prio_tx, false);
-unlock:
-	mutex_unlock(&dev->flow_db->lock);
-	kfree(dst);
-free_ucmd:
-	kfree(ucmd);
-	return ERR_PTR(err);
-}
-
-
-Jason
+>  	assert_spin_locked(&kvm->mmu_lock);
+> +	WARN_ON(size & ~PAGE_MASK);
+> +
+>  	pgd = kvm->arch.pgd + stage2_pgd_index(addr);
+>  	do {
+>  		/*
+> 
