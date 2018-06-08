@@ -1,163 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id vMduGhvqHFvSPwAAmS7hNA
-	; Sun, 10 Jun 2018 09:07:46 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id PwG+EwJEGltcAQAAmS7hNA
+	; Fri, 08 Jun 2018 08:53:27 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 5CA8E60850; Sun, 10 Jun 2018 09:07:46 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KCYTpmWN"
+	id 5FF9F608BF; Fri,  8 Jun 2018 08:53:27 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id CB9CE60791;
-	Sun, 10 Jun 2018 09:07:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CB9CE60791
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 1B283608BF;
+	Fri,  8 Jun 2018 08:53:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1B283608BF
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932328AbeFJJHn (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sun, 10 Jun 2018 05:07:43 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:43154 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932140AbeFJJHl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 05:07:41 -0400
-Received: by mail-lf0-f66.google.com with SMTP id n15-v6so26112652lfn.10
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Jun 2018 02:07:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=N2GLPRZAT2TXI0ff4Qn5mikf/JcW4TspeMYrSXOhTkI=;
-        b=KCYTpmWN7/VFWWydG9PBr7dHN/UOabVQKktZS9Ufmm2eLqL48Nf79JXi9gvQQzC1po
-         KL+LfUSD6qEY7yEDFe1XHJeO4LOmI09vEK2gjrAYXk38NW2ot2A4+HCtyTbbdMBkZJH5
-         TnuaN6o3JOe1w9OhMQyulKUqX3NBUPy5Hle2I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=N2GLPRZAT2TXI0ff4Qn5mikf/JcW4TspeMYrSXOhTkI=;
-        b=kjDnRl/4eG8xRQGqAC9MqzfCKVT5/sLqRTeRz4Dm772P4Ai/h5ANbVY5zoAkpJtyas
-         GciJQLkCGcLUf5AJWs3CoTp67rhJfQV9X0MivsPhOG1DT+oGEYyBZF2jdgalw+WFhaXm
-         7pZv0SXyquAm7CUM9MhjAa2qNFGOE4Q2SlclwNJn3Om30eHhLd6pp5uZzZ0otB5gaz5K
-         oy1g/b7nUafzdWbNw03phtHcMZf8dxc7pRQ+/mn2BxmksWT/pmyvEM+5mZWbpPhQDZKM
-         lFFt0DIbcZ7ZojWydDhJI1akUSW9LFuMe8FqS+nKEhTv+JuY+i/ZzM2RKvylDrmiiyVE
-         bpJg==
-X-Gm-Message-State: APt69E1gmsbhGXc4kO4nRQw3Kryoaffj85bb9Ok42CW9O3YgS4jS6BxL
-        zMMtQ9pLOeu3dwH4zeZ3xDJlctemZTJKYdI48sF8sQ==
-X-Google-Smtp-Source: ADUXVKKMeQ2juZ64XCgmxALi0LfeyGXpCJCdHHr3CeUvIoBzlY86MOB/5xyRb/mBGQf2wtgDZ7KAi1BH0X6CLSREd7w=
-X-Received: by 2002:a19:8f1d:: with SMTP id r29-v6mr8232797lfd.88.1528621659994;
- Sun, 10 Jun 2018 02:07:39 -0700 (PDT)
+        id S1751141AbeFHIxT (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 04:53:19 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54392 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750922AbeFHIxQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 04:53:16 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7DE5340252E9;
+        Fri,  8 Jun 2018 08:53:15 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-137.pek2.redhat.com [10.72.12.137])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2BAE01116705;
+        Fri,  8 Jun 2018 08:53:08 +0000 (UTC)
+Date: Fri, 8 Jun 2018 16:53:05 +0800
+From: Dave Young <dyoung@redhat.com>
+To: David Howells <dhowells@redhat.com>
+Cc: keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kexec@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>,
+        mathew.j.martineau@linux.intel.com,
+        Laura Abbott <labbott@redhat.com>, jwboyer@redhat.com
+Subject: Re: [PATCH] certs: always use secondary keyring first if possible
+Message-ID: <20180608085305.GA8594@dhcp-128-65.nay.redhat.com>
+References: <20171118044711.GA7352@dhcp-128-65.nay.redhat.com>
+ <20171214102513.GA2371@dhcp-128-65.nay.redhat.com>
+ <20180608072848.GA7773@dhcp-128-65.nay.redhat.com>
 MIME-Version: 1.0
-Received: by 2002:a19:ee14:0:0:0:0:0 with HTTP; Sun, 10 Jun 2018 02:07:39
- -0700 (PDT)
-In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
-References: <20180609145947.679103414@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Sun, 10 Jun 2018 14:37:39 +0530
-Message-ID: <CA+G9fYsWZNWeGeZzknVts5iF5h40y+-tBnoMNL5yZJx3sxfc8Q@mail.gmail.com>
-Subject: Re: [PATCH 4.16 00/48] 4.16.15-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: open list <linux-kernel@vger.kernel.org>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        lkft-triage@lists.linaro.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        linux- stable <stable@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180608072848.GA7773@dhcp-128-65.nay.redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 08 Jun 2018 08:53:15 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 08 Jun 2018 08:53:15 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dyoung@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9 June 2018 at 20:59, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wr=
-ote:
-> This is the start of the stable review cycle for the 4.16.15 release.
-> There are 48 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Mon Jun 11 14:59:28 UTC 2018.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.16.15-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.16.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On 06/08/18 at 03:28pm, Dave Young wrote:
+> On 12/14/17 at 06:25pm, Dave Young wrote:
+> > On 11/18/17 at 12:47pm, Dave Young wrote:
+> > > Commit d3bfe84129f6 introduced secondary_trusted_keys keyring, current
+> > > users of verify_pkcs7_signature are below:
+> > > net/wireless/reg.c : uses its own trusted_keys
+> > > kernel/module_signing.c : pass NULL trusted_keys 
+> > > crypto/asymmetric_keys/verify_pefile.c : pass NULL trusted_keys
+> > > 
+> > > For both module and pefile verification, there is no reason to use builtin
+> > > keys only. Actually in Fedora kernel module signing code passes 1UL, but
+> > > kexec code does not pass 1UL for pefile verification thus we have below bug
+> > > https://bugzilla.redhat.com/show_bug.cgi?id=1470995
+> > > 
+> > > Drop the hard code 1UL checking so that pefile verification can use
+> > > secondary keyring as well.
+> > > 
+> > > Signed-off-by: Dave Young <dyoung@redhat.com>
+> > > ---
+> > >  certs/system_keyring.c |    2 --
+> > >  1 file changed, 2 deletions(-)
+> > > 
+> > > --- linux-x86.orig/certs/system_keyring.c
+> > > +++ linux-x86/certs/system_keyring.c
+> > > @@ -229,8 +229,6 @@ int verify_pkcs7_signature(const void *d
+> > >  		goto error;
+> > >  
+> > >  	if (!trusted_keys) {
+> > > -		trusted_keys = builtin_trusted_keys;
+> > > -	} else if (trusted_keys == (void *)1UL) {
+> > >  #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
+> > >  		trusted_keys = secondary_trusted_keys;
+> > >  #else
+> > 
+> > Another ping.
+> > 
+> > If the (-1UL) is really needed, below file need update to use it
+> > But I think it is ugly..
+> > crypto/asymmetric_keys/verify_pefile.c
+> 
+> Ping again.  Can anyone response to this issue?
+> 
+> Let me describe more details about the problem:
+> 
+> In Fedora kernel there is a patch below which is not upstreamed:
+> https://src.fedoraproject.org/rpms/kernel/blob/master/f/Fix-for-module-sig-verification.patch
+> 
+> It has below changes:
+> 
+> ---
+> diff --git a/kernel/module_signing.c b/kernel/module_signing.c
+> index 937c844..d3d6f95 100644
+> --- a/kernel/module_signing.c
+> +++ b/kernel/module_signing.c
+> @@ -81,6 +81,6 @@ int mod_verify_sig(const void *mod, unsigned long *_modlen)
+>  	}
+> 
+>  	return verify_pkcs7_signature(mod, modlen, mod + modlen, sig_len,
+> -				      NULL, VERIFYING_MODULE_SIGNATURE,
+> +				      (void *)1UL, VERIFYING_MODULE_SIGNATURE,
+>  				      NULL, NULL);
+>  }
+> ---
+> 
+> Above change is needed because the verify_pkcs7_signature is doing
+> below:
+> ---
+>         if (!trusted_keys) {
+>                 trusted_keys = builtin_trusted_keys;
+>         } else if (trusted_keys == (void *)1UL) {
+> #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
+>                 trusted_keys = secondary_trusted_keys;
+> #else
+>                 trusted_keys = builtin_trusted_keys;
+> #endif
+>         }
+> ---
+> 
+> The trusted_keys is an argument passed to verify_pkcs7_signature
+> function. We can see that users of this function must pass "-1UL"
+> as trusted_keys to use secondary keyring.  This "-1UL" is not
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm and x86_64.
+I meant to say "1UL" instead of "-1UL"..
 
-Summary
-------------------------------------------------------------------------
-
-kernel: 4.16.15-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.16.y
-git commit: 0f447b621dc169007a7c7a87db5a5ca0b8070833
-git describe: v4.16.14-49-g0f447b621dc1
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.16-oe/bu=
-ild/v4.16.14-49-g0f447b621dc1
-
-
-No regressions (compared to build v4.16.14)
-
-
-Ran 11375 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
+> documented and it looks a hardcode api.   Besides of the module
+> signing code, actually as I mentioned in the patch log kexec/kdump
+> also need passing "-1UL" to use the secondary keyring.
+> 
+> But why do we need that hack?  If I understand it correctly
+> if use secondary then builtin can still be used, see commit log
+> of d3bfe84129f65e0af2450743ebdab33d161d01c9:
+>     If the secondary keyring is enabled, a link is created from that to
+>     .builtin_trusted_keys so that the the latter will automatically be searched
+>     too if the secondary keyring is searched.
+> 
+> So why not directly use secondary in case trusted_keys == NULL?
+> 
+> I'm not familar with the certs/keyring code, if I'm wrong please
+> correct me.
+> 
+> --
+> Thanks
+> Dave
+> 
