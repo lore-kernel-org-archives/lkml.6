@@ -1,90 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id V29TGoFDGVvtCAAAmS7hNA
-	; Thu, 07 Jun 2018 14:39:58 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id J0YzMoz5GlvYZAAAmS7hNA
+	; Fri, 08 Jun 2018 21:47:56 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id CCE9C608BA; Thu,  7 Jun 2018 14:39:58 +0000 (UTC)
+	id A5BDC607E4; Fri,  8 Jun 2018 21:47:56 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cK62uaBt"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 55E66601C3;
-	Thu,  7 Jun 2018 14:39:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 55E66601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 2F8C0601B4;
+	Fri,  8 Jun 2018 21:47:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2F8C0601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934357AbeFGOjz (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:39:55 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40520 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934347AbeFGOjx (ORCPT
+        id S1753295AbeFHVry (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 17:47:54 -0400
+Received: from mail-it0-f74.google.com ([209.85.214.74]:39976 "EHLO
+        mail-it0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753239AbeFHVrw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:39:53 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbu-0005Zw-4a; Thu, 07 Jun 2018 15:09:54 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb0-0002ne-JR; Thu, 07 Jun 2018 15:08:58 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Fri, 8 Jun 2018 17:47:52 -0400
+Received: by mail-it0-f74.google.com with SMTP id r7-v6so2934570ith.5
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 14:47:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:date:message-id:subject:from:to:cc;
+        bh=G9MTq4awSsB86JSx1LFZR7GxenXD68YGNE1DhM/fISA=;
+        b=cK62uaBtT1vZF/Bd7NQMhorM3o6FGHrUGeiLblZzQj/5cMDmyrgSt0xj6m+noppRkS
+         IQJgR0uu6ttJRhooZcvNBt2MEinZ0UBLcxyl6GDq5De3Jw+MXMqfQjbScROoRvl9tWZx
+         tyGoVCX1y9Wj74TLBr44uvEsn9YAdRp6RMhdXqBgEnX0JT+hKF+trkBUifp7+bVW4noc
+         7je28MODtjFwdOHT1gmrLEMmmTzFAnQ1F1zHFn8pZFGxB5N2slTsvWPaQDWXjEh+EBYD
+         UOb6ZlyLd+HhadD7JtNlawhO3QPSMUDC81d2tUOhBlcjWvhzXWRN34V4YLJZwsCE3zOJ
+         qqIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to:cc;
+        bh=G9MTq4awSsB86JSx1LFZR7GxenXD68YGNE1DhM/fISA=;
+        b=QaYBH/cg5KVXfQyua8gmPhay9981zD1ih2N4CeBTv/P9uYHMMdHx8FmbhSrel0pQT4
+         0YcM3SJNDTKWTvHNF9OAKqWcix2chqghya9KsvzUgSWThfb+CJft5iL5Z+fhTevEQEUe
+         WDqfn16sAX1GmgM5Fy07vGN5yH9O8rt+w25j/2HfzvScYivQtSXanOcMyqVBXMghHHBv
+         uy5X43hDppTtfBoKW4jULHGDeWNNijtn6VEGXLt0mca0mTmLuOiieozXyh1QOvuL7QP5
+         s9cZ6K7WKLcpwIfmuJJb1ZNRckpYy/v+49jubZ2Fo+fIEgstmZ1boCjxEyoBgiUTf87V
+         Mn5w==
+X-Gm-Message-State: APt69E1K9zha0t/ZvxaAe7fBGxh/cN6YSySlOaG8ksbDuG6TeyCzQp1P
+        S6yNwWmNLS+KyCF+XkfXwJHJx0Ljo2gO
+X-Google-Smtp-Source: ADUXVKKTAVv16dNs7F0rU4c9BX6vApkkxnBKk6tqpW+Ug3chMSww/7O2sNnCCJ9EbOViELEjrihzyv+pRiiR
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        "SeongJae Park" <sj38.park@gmail.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.427232458@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 080/410] rcutorture/configinit: Fix build directory
- error message
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+X-Received: by 2002:a24:568a:: with SMTP id o132-v6mr3800793itb.5.1528494471746;
+ Fri, 08 Jun 2018 14:47:51 -0700 (PDT)
+Date: Fri,  8 Jun 2018 14:47:46 -0700
+Message-Id: <20180608214746.136554-1-gthelen@google.com>
+X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a-goog
+Subject: [PATCH] trace: fix SKIP_STACK_VALIDATION=1 build
+From: Greg Thelen <gthelen@google.com>
+To: Andi Kleen <andi@firstfloor.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-kbuild@vger.kernel.org, akpm@linux-foundation.org,
+        Andi Kleen <ak@linux.intel.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Greg Thelen <gthelen@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+Non gcc-5 builds with CONFIG_STACK_VALIDATION=y and
+SKIP_STACK_VALIDATION=1 fail.
+Example output:
+  /bin/sh: init/.tmp_main.o: Permission denied
 
-------------------
+commit 96f60dfa5819 ("trace: Use -mcount-record for dynamic ftrace"),
+added a mismatched endif.  This causes cmd_objtool to get mistakenly
+set.
 
-From: SeongJae Park <sj38.park@gmail.com>
+Relocate endif to balance the newly added -record-mcount check.
 
-commit 2adfa4210f8f35cdfb4e08318cc06b99752964c2 upstream.
-
-The 'configinit.sh' script checks the format of optional argument for the
-build directory, printing an error message if the format is not valid.
-However, the error message uses the wrong variable, indicating an empty
-string even though the user entered a non-empty (but erroneous) string.
-This commit fixes the script to use the correct variable.
-
-Fixes: c87b9c601ac8 ("rcutorture: Add KVM-based test framework")
-
-Signed-off-by: SeongJae Park <sj38.park@gmail.com>
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Fixes: 96f60dfa5819 ("trace: Use -mcount-record for dynamic ftrace")
+Signed-off-by: Greg Thelen <gthelen@google.com>
 ---
- tools/testing/selftests/rcutorture/bin/configinit.sh | 2 +-
+ scripts/Makefile.build | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/testing/selftests/rcutorture/bin/configinit.sh
-+++ b/tools/testing/selftests/rcutorture/bin/configinit.sh
-@@ -51,7 +51,7 @@ then
- 			mkdir $builddir
- 		fi
- 	else
--		echo Bad build directory: \"$builddir\"
-+		echo Bad build directory: \"$buildloc\"
- 		exit 2
- 	fi
- fi
+diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+index 34d9e9ce97c2..e7889f486ca1 100644
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -239,6 +239,7 @@ cmd_record_mcount =						\
+ 	     "$(CC_FLAGS_FTRACE)" ]; then			\
+ 		$(sub_cmd_record_mcount)			\
+ 	fi;
++endif # -record-mcount
+ endif # CONFIG_FTRACE_MCOUNT_RECORD
+ 
+ ifdef CONFIG_STACK_VALIDATION
+@@ -263,7 +264,6 @@ ifneq ($(RETPOLINE_CFLAGS),)
+   objtool_args += --retpoline
+ endif
+ endif
+-endif
+ 
+ 
+ ifdef CONFIG_MODVERSIONS
+-- 
+2.18.0.rc1.242.g61856ae69a-goog
