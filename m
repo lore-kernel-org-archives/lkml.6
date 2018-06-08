@@ -1,173 +1,272 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id yTPsOsSvGVtAUQAAmS7hNA
-	; Thu, 07 Jun 2018 22:26:30 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ER7YOJfPGlsoBAAAmS7hNA
+	; Fri, 08 Jun 2018 18:51:11 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id CA456606FA; Thu,  7 Jun 2018 22:26:30 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="s2d+Z/l9"
+	id D7EA9607E7; Fri,  8 Jun 2018 18:51:10 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 3C3EA602FC;
-	Thu,  7 Jun 2018 22:26:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3C3EA602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 09159601D2;
+	Fri,  8 Jun 2018 18:51:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 09159601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752230AbeFGW02 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 18:26:28 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:52382 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751990AbeFGW00 (ORCPT
+        id S1753165AbeFHSu4 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 14:50:56 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:53826 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752845AbeFHSuW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 18:26:26 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w57MPjPA114689;
-        Thu, 7 Jun 2018 22:26:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2017-10-26;
- bh=bB3GuhlvEdNP+v+Vxad6KlJ8muyqP3xzUMEM3zLYFEQ=;
- b=s2d+Z/l9xhVMD87QIf58vGwtlRIHcLYa5+Y0vTJp3iQuFVfvi0LZc0EGPZcooAaZlPww
- 1VVOnz7YTLSTKLY8qWgRXlJ2hCg5B0LI1aGu4bhxaqivTuWA5OUVcCT7iFy42KtuqgEp
- 0rtPqZLS3KSKth2gXVHsa4QP+1EIxYxxAuz1e0zpuSqMPEbn64yT5m+0Q2qbL0I8SzGR
- FuESOLUBVJ8ojsrx6R7OnS06bilA27GIyDBJAV8BmblO3v/0qO0+Gp51XeJpTuPDN1H8
- OxLa7UoJXuiBzVfnZS5/lx8XxIdb1EQL6/hlaEFNQED52wZ4g0YDoN2KNSA0qoLtue1L Zg==
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2120.oracle.com with ESMTP id 2jbvyptrxx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 07 Jun 2018 22:26:17 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w57MQGma000654
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 7 Jun 2018 22:26:16 GMT
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w57MQEQF014066;
-        Thu, 7 Jun 2018 22:26:14 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 07 Jun 2018 15:26:14 -0700
-Subject: Re: [PATCH v2 7/9] xen/gntdev: Implement dma-buf export functionality
-To: Oleksandr Andrushchenko <andr2000@gmail.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        jgross@suse.com, konrad.wilk@oracle.com
-Cc: daniel.vetter@intel.com, dongwon.kim@intel.com,
-        matthew.d.roper@intel.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180601114132.22596-1-andr2000@gmail.com>
- <20180601114132.22596-8-andr2000@gmail.com>
- <96dd30f5-6ac6-498f-06e7-352e46994576@oracle.com>
- <117e05b3-69f6-b879-50d9-0cddd8e4c313@gmail.com>
- <4b37bbe1-6c5c-1941-bac0-2c7ba88af3e3@oracle.com>
- <d83a356c-f7a5-bce1-cafd-a52e736570fb@gmail.com>
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <b7f27688-f627-3fd9-9298-e02e6f35ca1e@oracle.com>
-Date: Thu, 7 Jun 2018 18:30:06 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <d83a356c-f7a5-bce1-cafd-a52e736570fb@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8917 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806070239
+        Fri, 8 Jun 2018 14:50:22 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1fRMSq-0006ON-OB; Fri, 08 Jun 2018 18:50:20 +0000
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 12/13] get rid of 'opened' argument of ->atomic_open()
+Date: Fri,  8 Jun 2018 19:50:18 +0100
+Message-Id: <20180608185019.24472-12-viro@ZenIV.linux.org.uk>
+X-Mailer: git-send-email 2.9.5
+In-Reply-To: <20180608185019.24472-1-viro@ZenIV.linux.org.uk>
+References: <20180608184842.GD30522@ZenIV.linux.org.uk>
+ <20180608185019.24472-1-viro@ZenIV.linux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/07/2018 04:44 AM, Oleksandr Andrushchenko wrote:
-> On 06/07/2018 12:48 AM, Boris Ostrovsky wrote:
->> On 06/06/2018 08:10 AM, Oleksandr Andrushchenko wrote:
->>> On 06/05/2018 01:07 AM, Boris Ostrovsky wrote:
->>>> On 06/01/2018 07:41 AM, Oleksandr Andrushchenko wrote:
->>
->>>> +
->>>> +static struct sg_table *
->>>> +dmabuf_exp_ops_map_dma_buf(struct dma_buf_attachment *attach,
->>>> +               enum dma_data_direction dir)
->>>> +{
->>>> +    struct gntdev_dmabuf_attachment *gntdev_dmabuf_attach =
->>>> attach->priv;
->>>> +    struct gntdev_dmabuf *gntdev_dmabuf = attach->dmabuf->priv;
->>>> +    struct sg_table *sgt;
->>>> +
->>>> +    pr_debug("Mapping %d pages for dev %p\n",
->>>> gntdev_dmabuf->nr_pages,
->>>> +         attach->dev);
->>>> +
->>>> +    if (WARN_ON(dir == DMA_NONE || !gntdev_dmabuf_attach))
->>>>
->>>> WARN_ON_ONCE. Here and elsewhere.
->>> Why? The UAPI may be used by different applications, thus we might
->>> lose warnings for some of them. Having WARN_ON will show problems
->>> for multiple users, not for the first one.
->>> Does this make sense to still use WARN_ON?
->>
->> Just as with pr_err call somewhere else the concern here is that
->> userland (which I think is where this is eventually called from?) may
->> intentionally trigger the error, flooding the log.
->>
->> And even this is not directly called from userland there is still a
->> possibility of triggering this error multiple times.
-> Ok, will use WARN_ON_ONCE
+From: Al Viro <viro@zeniv.linux.org.uk>
 
+not used anymore
 
-In fact, is there a reason to use WARN at all? Does this condition
-indicate some sort of internal inconsistency/error?
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+ drivers/staging/lustre/lustre/llite/namei.c | 7 +++----
+ fs/9p/vfs_inode.c                           | 3 +--
+ fs/9p/vfs_inode_dotl.c                      | 3 +--
+ fs/bad_inode.c                              | 2 +-
+ fs/ceph/file.c                              | 3 +--
+ fs/ceph/super.h                             | 3 +--
+ fs/cifs/cifsfs.h                            | 3 +--
+ fs/cifs/dir.c                               | 3 +--
+ fs/fuse/dir.c                               | 2 +-
+ fs/gfs2/inode.c                             | 3 +--
+ fs/namei.c                                  | 3 +--
+ fs/nfs/dir.c                                | 2 +-
+ fs/nfs/nfs4_fs.h                            | 2 +-
+ include/linux/fs.h                          | 2 +-
+ 14 files changed, 16 insertions(+), 25 deletions(-)
 
--boris
+diff --git a/drivers/staging/lustre/lustre/llite/namei.c b/drivers/staging/lustre/lustre/llite/namei.c
+index 72376af0d4b5..6de32ef466b1 100644
+--- a/drivers/staging/lustre/lustre/llite/namei.c
++++ b/drivers/staging/lustre/lustre/llite/namei.c
+@@ -678,15 +678,14 @@ static struct dentry *ll_lookup_nd(struct inode *parent, struct dentry *dentry,
+  */
+ static int ll_atomic_open(struct inode *dir, struct dentry *dentry,
+ 			  struct file *file, unsigned int open_flags,
+-			  umode_t mode, int *opened)
++			  umode_t mode)
+ {
+ 	struct lookup_intent *it;
+ 	struct dentry *de;
+ 	int rc = 0;
+ 
+-	CDEBUG(D_VFSTRACE, "VFS Op:name=%pd, dir=" DFID "(%p),file %p,open_flags %x,mode %x opened %d\n",
+-	       dentry, PFID(ll_inode2fid(dir)), dir, file, open_flags, mode,
+-	       *opened);
++	CDEBUG(D_VFSTRACE, "VFS Op:name=%pd, dir=" DFID "(%p),file %p,open_flags %x,mode %x\n",
++	       dentry, PFID(ll_inode2fid(dir)), dir, file, open_flags, mode);
+ 
+ 	/* Only negative dentries enter here */
+ 	LASSERT(!d_inode(dentry));
+diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
+index 6d6af0109cf2..228bc15311d8 100644
+--- a/fs/9p/vfs_inode.c
++++ b/fs/9p/vfs_inode.c
+@@ -864,8 +864,7 @@ struct dentry *v9fs_vfs_lookup(struct inode *dir, struct dentry *dentry,
+ 
+ static int
+ v9fs_vfs_atomic_open(struct inode *dir, struct dentry *dentry,
+-		     struct file *file, unsigned flags, umode_t mode,
+-		     int *opened)
++		     struct file *file, unsigned flags, umode_t mode)
+ {
+ 	int err;
+ 	u32 perm;
+diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
+index c6939b7cb18c..4823e1c46999 100644
+--- a/fs/9p/vfs_inode_dotl.c
++++ b/fs/9p/vfs_inode_dotl.c
+@@ -241,8 +241,7 @@ v9fs_vfs_create_dotl(struct inode *dir, struct dentry *dentry, umode_t omode,
+ 
+ static int
+ v9fs_vfs_atomic_open_dotl(struct inode *dir, struct dentry *dentry,
+-			  struct file *file, unsigned flags, umode_t omode,
+-			  int *opened)
++			  struct file *file, unsigned flags, umode_t omode)
+ {
+ 	int err = 0;
+ 	kgid_t gid;
+diff --git a/fs/bad_inode.c b/fs/bad_inode.c
+index 213b51dbbb60..60f839611c48 100644
+--- a/fs/bad_inode.c
++++ b/fs/bad_inode.c
+@@ -134,7 +134,7 @@ static int bad_inode_update_time(struct inode *inode, struct timespec *time,
+ 
+ static int bad_inode_atomic_open(struct inode *inode, struct dentry *dentry,
+ 				 struct file *file, unsigned int open_flag,
+-				 umode_t create_mode, int *opened)
++				 umode_t create_mode)
+ {
+ 	return -EIO;
+ }
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index 37ab240d4cdf..8ad1602ea97f 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -394,8 +394,7 @@ int ceph_open(struct inode *inode, struct file *file)
+  * file or symlink, return 1 so the VFS can retry.
+  */
+ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
+-		     struct file *file, unsigned flags, umode_t mode,
+-		     int *opened)
++		     struct file *file, unsigned flags, umode_t mode)
+ {
+ 	struct ceph_fs_client *fsc = ceph_sb_to_client(dir->i_sb);
+ 	struct ceph_mds_client *mdsc = fsc->mdsc;
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index a7077a0c989f..971328b99ede 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -1025,8 +1025,7 @@ extern const struct file_operations ceph_file_fops;
+ extern int ceph_renew_caps(struct inode *inode);
+ extern int ceph_open(struct inode *inode, struct file *file);
+ extern int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
+-			    struct file *file, unsigned flags, umode_t mode,
+-			    int *opened);
++			    struct file *file, unsigned flags, umode_t mode);
+ extern int ceph_release(struct inode *inode, struct file *filp);
+ extern void ceph_fill_inline_data(struct inode *inode, struct page *locked_page,
+ 				  char *data, size_t len);
+diff --git a/fs/cifs/cifsfs.h b/fs/cifs/cifsfs.h
+index 013ba2aed8d9..a1a09caa65a2 100644
+--- a/fs/cifs/cifsfs.h
++++ b/fs/cifs/cifsfs.h
+@@ -65,8 +65,7 @@ extern struct inode *cifs_root_iget(struct super_block *);
+ extern int cifs_create(struct inode *, struct dentry *, umode_t,
+ 		       bool excl);
+ extern int cifs_atomic_open(struct inode *, struct dentry *,
+-			    struct file *, unsigned, umode_t,
+-			    int *);
++			    struct file *, unsigned, umode_t);
+ extern struct dentry *cifs_lookup(struct inode *, struct dentry *,
+ 				  unsigned int);
+ extern int cifs_unlink(struct inode *dir, struct dentry *dentry);
+diff --git a/fs/cifs/dir.c b/fs/cifs/dir.c
+index 88a8178f90bb..6d55f666113b 100644
+--- a/fs/cifs/dir.c
++++ b/fs/cifs/dir.c
+@@ -465,8 +465,7 @@ cifs_do_create(struct inode *inode, struct dentry *direntry, unsigned int xid,
+ 
+ int
+ cifs_atomic_open(struct inode *inode, struct dentry *direntry,
+-		 struct file *file, unsigned oflags, umode_t mode,
+-		 int *opened)
++		 struct file *file, unsigned oflags, umode_t mode)
+ {
+ 	int rc;
+ 	unsigned int xid;
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index 31b432a0e70b..c9e1b532f1ff 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -489,7 +489,7 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+ static int fuse_mknod(struct inode *, struct dentry *, umode_t, dev_t);
+ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
+ 			    struct file *file, unsigned flags,
+-			    umode_t mode, int *opened)
++			    umode_t mode)
+ {
+ 	int err;
+ 	struct fuse_conn *fc = get_fuse_conn(dir);
+diff --git a/fs/gfs2/inode.c b/fs/gfs2/inode.c
+index 9cb09f63d831..78df5e3da44e 100644
+--- a/fs/gfs2/inode.c
++++ b/fs/gfs2/inode.c
+@@ -1228,14 +1228,13 @@ static int gfs2_mknod(struct inode *dir, struct dentry *dentry, umode_t mode,
+  * @file: The proposed new struct file
+  * @flags: open flags
+  * @mode: File mode
+- * @opened: Flag to say whether the file has been opened or not
+  *
+  * Returns: error code or 0 for success
+  */
+ 
+ static int gfs2_atomic_open(struct inode *dir, struct dentry *dentry,
+ 			    struct file *file, unsigned flags,
+-			    umode_t mode, int *opened)
++			    umode_t mode)
+ {
+ 	struct dentry *d;
+ 	bool excl = !!(flags & O_EXCL);
+diff --git a/fs/namei.c b/fs/namei.c
+index ce71a69653b1..189ead589811 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3018,8 +3018,7 @@ static int atomic_open(struct nameidata *nd, struct dentry *dentry,
+ 	file->f_path.dentry = DENTRY_NOT_SET;
+ 	file->f_path.mnt = nd->path.mnt;
+ 	error = dir->i_op->atomic_open(dir, dentry, file,
+-				       open_to_namei_flags(open_flag),
+-				       mode, opened);
++				       open_to_namei_flags(open_flag), mode);
+ 	d_lookup_done(dentry);
+ 	if (!error) {
+ 		/*
+diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
+index bc4a045493f5..d4151843f02c 100644
+--- a/fs/nfs/dir.c
++++ b/fs/nfs/dir.c
+@@ -1435,7 +1435,7 @@ static int nfs_finish_open(struct nfs_open_context *ctx,
+ 
+ int nfs_atomic_open(struct inode *dir, struct dentry *dentry,
+ 		    struct file *file, unsigned open_flags,
+-		    umode_t mode, int *opened)
++		    umode_t mode)
+ {
+ 	DECLARE_WAIT_QUEUE_HEAD_ONSTACK(wq);
+ 	struct nfs_open_context *ctx;
+diff --git a/fs/nfs/nfs4_fs.h b/fs/nfs/nfs4_fs.h
+index b374f680830c..562903f5e2a3 100644
+--- a/fs/nfs/nfs4_fs.h
++++ b/fs/nfs/nfs4_fs.h
+@@ -233,7 +233,7 @@ extern const struct dentry_operations nfs4_dentry_operations;
+ 
+ /* dir.c */
+ int nfs_atomic_open(struct inode *, struct dentry *, struct file *,
+-		    unsigned, umode_t, int *);
++		    unsigned, umode_t);
+ 
+ /* super.c */
+ extern struct file_system_type nfs4_fs_type;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 6dafc39987fa..b4af9018785f 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1771,7 +1771,7 @@ struct inode_operations {
+ 	int (*update_time)(struct inode *, struct timespec *, int);
+ 	int (*atomic_open)(struct inode *, struct dentry *,
+ 			   struct file *, unsigned open_flag,
+-			   umode_t create_mode, int *opened);
++			   umode_t create_mode);
+ 	int (*tmpfile) (struct inode *, struct dentry *, umode_t);
+ 	int (*set_acl)(struct inode *, struct posix_acl *, int);
+ } ____cacheline_aligned;
+-- 
+2.11.0
