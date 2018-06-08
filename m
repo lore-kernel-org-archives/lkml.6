@@ -1,105 +1,176 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 5qvdBaVrG1uYMwAAmS7hNA
-	; Sat, 09 Jun 2018 06:06:00 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 74ybIiMhGltjTgAAmS7hNA
+	; Fri, 08 Jun 2018 07:05:20 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 7BEFA607E7; Sat,  9 Jun 2018 06:06:00 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="n+Q1brBE"
+	id 8E24B607DC; Fri,  8 Jun 2018 07:05:20 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,FROM_LOCAL_NOVOWEL,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 063E960290;
-	Sat,  9 Jun 2018 06:06:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 063E960290
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 01F39606FA;
+	Fri,  8 Jun 2018 07:05:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 01F39606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753144AbeFIGF5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 02:05:57 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:32989 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751344AbeFIGF4 (ORCPT
+        id S1751843AbeFHHFO (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 03:05:14 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:45417 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750945AbeFHHFK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 02:05:56 -0400
-Received: by mail-pl0-f66.google.com with SMTP id n10-v6so9435017plp.0;
-        Fri, 08 Jun 2018 23:05:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:user-agent:mime-version
-         :content-transfer-encoding;
-        bh=m+lTtu5pCyGVqhSoKBSwj77hf+J2TDR1gJ5l7A/CQEw=;
-        b=n+Q1brBEo8Wf7vgyNK5BkK264ybPAdO8PMnnUyYAqRM82TRzh2TjYghbfkJMkNTIOG
-         PlADMJmrlj70hpZmBwXYLpL/TgNeKcTua/ustWHUYkLoKtsINTMqcvXvKi67Mu/dznT7
-         NQfWSybSwUrSgUg3+u0EgdQOwp/KFFLWoVgmYP++QqitNIHbiwMgpsB18TOywu76rp8a
-         OiH0K9jJqkUU4nPuslCo2SQv3H7JJwZyDidVNILqcmPXq5ivE6RBaRl0nrZgnGgJe1ne
-         ndlS8okllGjWxE++ObvTxYZVjN0QR/mFZEWyaduX4YbioSp688pSsQ/EVCquumIh6Kbt
-         6dtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:user-agent
-         :mime-version:content-transfer-encoding;
-        bh=m+lTtu5pCyGVqhSoKBSwj77hf+J2TDR1gJ5l7A/CQEw=;
-        b=X/4+U0QrZmhyF8uUpEmzNLGSugPnL1kY3XeJdbgCKmYc6nd7T5IAUoy1HmWgxhVpro
-         wqi3e5KiOwPgQS5GUb0eititebbHW6joTTfHrVPocnAHGDXBnc+P9eaMkSeHmxmraU5L
-         WruKMzfrPeO3XnWO9DClRHdczagzAA1yIhkMM1kD6a+6ufsHC3rMd/p53qa8QMKhl0TR
-         Gsuf468Mvgok2sHT2mYQzeyezr8CSijZgJWEu8Y2G1EU3PBt9xDKTn/eCvwAKtNCIqgE
-         HAGxn2zQgGvn+bWFwQOBu43yb7Dpisyb9XbK8IFYpg4/39r3/dPhYFqVo6roaJdoVhWL
-         VFAg==
-X-Gm-Message-State: APt69E00utDM4AiX6qNdCfElOecCMfu4bBFewswsXBKtJ/WFfaPgnGWC
-        DEok5rSRZo3MAR/EpPvIMu0=
-X-Google-Smtp-Source: ADUXVKINRRWBGDDmIfRbxFzKKfxVoRF+uJTfmDxx7mExhD6CCTOV+W7SJYJhzMvIa6kMgis27ADWBg==
-X-Received: by 2002:a17:902:900a:: with SMTP id a10-v6mr9598160plp.41.1528524355605;
-        Fri, 08 Jun 2018 23:05:55 -0700 (PDT)
-Received: from os-virtualbox.localnet ([220.149.255.57])
-        by smtp.gmail.com with ESMTPSA id 131-v6sm104075239pfa.128.2018.06.08.23.05.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Jun 2018 23:05:54 -0700 (PDT)
-From: thtlwlsmsgkfla@gmail.com
-To: gregkh@linuxfoundation.org
-Cc: davem@davemloft.net, colin.king@canonical.com,
-        johannes.berg@intel.com, Linyu.Yuan@alcatel-sbell.com.cn,
-        keescook@chromium.org, tvboxspy@gmail.com,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH 1/2] staging: rtl8192e: remove brace for single statement
-Date: Sat, 09 Jun 2018 15:05:56 +0900
-Message-ID: <1986308.HpuS17FQ0J@os-virtualbox>
-User-Agent: KMail/5.1.3 (Linux/4.13.0-36-generic; KDE/5.18.0; x86_64; ; )
+        Fri, 8 Jun 2018 03:05:10 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ore@pengutronix.de>)
+        id 1fRBSM-0004rw-0c; Fri, 08 Jun 2018 09:05:06 +0200
+Received: from ore by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ore@pengutronix.de>)
+        id 1fRBSL-0003WX-BB; Fri, 08 Jun 2018 09:05:05 +0200
+Date: Fri, 8 Jun 2018 09:05:05 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: "Jonas Mark (BT-FIR/ENG1)" <Mark.Jonas@de.bosch.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Heiko Schocher <hs@denx.de>,
+        "ZHU Yi (BT-FIR/ENG1-Zhu)" <Yi.Zhu5@cn.bosch.com>
+Subject: Re: [PATCH 2/5] spi: implement companion-spi driver
+Message-ID: <20180608070505.gmirhvtqdr2uzvtw@pengutronix.de>
+References: <bb9540ed90e944c7a8e27287e6df25d5@de.bosch.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="g2iqv75r7rvnlvzl"
+Content-Disposition: inline
+In-Reply-To: <bb9540ed90e944c7a8e27287e6df25d5@de.bosch.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-IRC: #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 09:00:42 up 168 days, 19:38, 88 users,  load average: 0.26, 0.14,
+ 0.04
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* fix checkpatch.pl warning:
-  WARNING: braces { are not necessary for single statement blocks
 
-Signed-off-by: Hyunil Kim <thtlwlsmsgkfla@gmail.com>
----
- drivers/staging/rtl8192e/rtllib_softmac.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+--g2iqv75r7rvnlvzl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/staging/rtl8192e/rtllib_softmac.c b/drivers/staging/rtl8192e/rtllib_softmac.c
-index 919231f..d172e87 100644
---- a/drivers/staging/rtl8192e/rtllib_softmac.c
-+++ b/drivers/staging/rtl8192e/rtllib_softmac.c
-@@ -1355,9 +1355,8 @@ rtllib_association_req(struct rtllib_network *beacon,
- 		rtllib_WMM_Info(ieee, &tag);
- 	}
- 
--	if (wps_ie_len && ieee->wps_ie) {
-+	if (wps_ie_len && ieee->wps_ie)
- 		skb_put_data(skb, ieee->wps_ie, wps_ie_len);
--	}
- 
- 	if (turbo_info_len) {
- 		tag = skb_put(skb, turbo_info_len);
--- 
-2.7.4
+On Fri, Jun 08, 2018 at 06:56:23AM +0000, Jonas Mark (BT-FIR/ENG1) wrote:
+> Hi Oleksij,
+>=20
+> > > > > +               if (slave_is_not_busy(priv))
+> > > > > +                       return 0;
+> > > > > +
+> > > >
+> > > > > +               udelay(READY_POLL_US_GRAN);
+> > > >
+> > > > Should it be atomic?
+> > > > Can it use read_poll_* type of helpers instead?
+> > >
+> > > Yes, it shall be atomic because we need to reduce the latency at
+> > > detecting the de-assertion of the busy signal. We accept that this wi=
+ll
+> > > cost CPU time.
+> > >
+> > > In case the Companion itself is very busy and does not reply quickly =
+we
+> > > are have second polling loop below which sleeps longer and is non-ato=
+mic.
+> >=20
+> > I can confirm, this make huge impact on protocol performance. And this
+> > protocol is not really the speed runner.
+>=20
+> The challenge is that the protocol is synchronous and without back to
+> back transfers.
+>=20
+> > you can send dummy message to set CS.
+> > +	struct spi_transfer t =3D {
+> > +		.len =3D 0,
+> > +		.cs_change =3D 1,
+> > +	};
+> >=20
+> > +	/* send dummy to trigger CS */
+> > +	reinit_completion(&priv->fc_complete);
+> > +	spi_sync_locked(spi, &m);
+> >=20
+> > see my ancient unfinished code:
+> > https://patchwork.kernel.org/patch/9418511/
+>=20
+> We will check it out.
+>=20
+> > In general, this part of the code, can be provided as separate driver
+> > which should be called as "SPI 5wire protocol". 3 wires for data, 1 -
+> > chip select, 1 - busy state. Since, the slave cant fit to normal SPI
+> > requirements, and can't be ready within predictable time, busy signal is
+> > needed. Providing this as separate driver or part of SPI framework
+> > should reduce the code for many different drivers.
+> >=20
+> > The actual datagram on top of your spi companion should go to
+> > separate driver. There are similar (almost identical designs)
+> >=20
+> > can :+
+> > char:+
+> > dw:  +
+> > gpio:+--->some_multi_end_mux_protocol--->spi_5wire_protocol->spi--->
+> >=20
+> > In my knowledge, only data format on top of spi_5wire_protocol is
+> > different. See my notes for similar topics:
+> > https://github.com/olerem/icc
+> > https://github.com/olerem/spi-5wire
+>=20
+> With 5-wire protocol you are referencing to CLK, MISO, MOSI, CS (all
+> standard SPI signals) and an extra BUSY signal. What we implemented is
+> a 6-wire protocol. There is an additional REQUEST line where the SPI
+> slave requests a transfer. It is like a level triggered interrupt
+> request.
+>=20
+> Yes, for making it more generic the code in drivers/spi/companion
+> could be split into a generic 6-wire protocol driver and a multiplexing
+> protocol on top of it.
+>=20
+> How does a slave signal that it has data to be picked up with the
+> 5-wire protocol?
+
+The request and busy signals are multiplexed to one wire. So, it should
+be easy to implement both, 5 and 6 wire protocol in one driver.
+
+--=20
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
+--g2iqv75r7rvnlvzl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAlsaKpcACgkQdQOiSHVI
+77SLVQgAsKUqGPKHriKUVOOkpbR1bLA+4sdqYwgj3oxuRFwKxw1aCiGWsV4r3tZj
+C2wkzpXdHn0rN2ddX7vHscfB9/3+hKJWlTXP9g3b/69ZjGEGS8rfsSYqLf+rysQ4
+C9VtrvxqbhFdU/IvNTUDYJUFF+pAWDDQOBXu8LhlUnaB9ppO9kpDnFDt9d9I9yn9
+cf9EvzFMrS0obQJm0SECPAwI3B/IyAJxUYaUh5leOnsTSlBJO9Tj1FgvRAlSITsU
+Vbxpleq6x7t+Z3RqwyNKUPBzZwPZJxUeDzauZcWjmLdx4ExyJBPSrzEmkHVd2j+z
+JAy7nBstyT3zu8dkQMc1WajABMPETw==
+=Oh2u
+-----END PGP SIGNATURE-----
+
+--g2iqv75r7rvnlvzl--
