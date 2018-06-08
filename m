@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id QfM9MyvvGFvAawAAmS7hNA
-	; Thu, 07 Jun 2018 08:39:07 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id W8GXGUNyGlu9PwAAmS7hNA
+	; Fri, 08 Jun 2018 12:11:22 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id B3846607DC; Thu,  7 Jun 2018 08:39:07 +0000 (UTC)
+	id B3F52607E4; Fri,  8 Jun 2018 12:11:22 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iSVcksJT"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eUzTuj/E"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
@@ -13,90 +13,193 @@ X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 2EF87602FC;
-	Thu,  7 Jun 2018 08:39:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2EF87602FC
+	by smtp.codeaurora.org (Postfix) with ESMTP id 053E860290;
+	Fri,  8 Jun 2018 12:11:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 053E860290
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932550AbeFGIjD (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 04:39:03 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:37129 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753176AbeFGIjA (ORCPT
+        id S932157AbeFHMLT (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 08:11:19 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:40162 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752990AbeFHMKi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 04:39:00 -0400
-Received: by mail-pl0-f65.google.com with SMTP id 31-v6so5674883plc.4
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 01:39:00 -0700 (PDT)
+        Fri, 8 Jun 2018 08:10:38 -0400
+Received: by mail-wm0-f67.google.com with SMTP id n5-v6so3265958wmc.5
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 05:10:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=y45ivCNTlsWYRG9+Y/fXcDkBiv3l1h16vbzMNWhMS5M=;
-        b=iSVcksJTIz4SYDKSwyDAIflUAYo+MHw3SzKMAFrVLetxfWxORF8cNv5emExKx+Ab9D
-         z24CgKQY/oXtE6568ryhtdjQVJtQFeBk986akjkxdnFK0KgXsbzBL9BLUDkXVex2sC4D
-         WzYUmpIoKURn4nS5M/YiYyvghMf8WNGYVKZSU=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=pE+h1VuN59ZRcVvHCdR88kNf6zFNrgFECds97E/YUjc=;
+        b=eUzTuj/EJznv+ZBeXTJveSQv9cLz2aA2lx7toZySZanODcUu27xRotOKHEYQCp6JpV
+         ak68H5qqSQUk5oCOv/+2f2M3/C81vBxB2C6BHzxXz//UeyKqLlHhC80qN1u8qi6IjUyD
+         OtPPs+Ci01sJ06ajI4/k/JjQ2JCUuNZlW5B7A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=y45ivCNTlsWYRG9+Y/fXcDkBiv3l1h16vbzMNWhMS5M=;
-        b=aCLUYSi/MmGnRvLG2ZskgGfT9QRY3Km0z1dB0ntSsWHNQOofGjnSax4EsfJmoxdPa+
-         mzZn/5aawoDmsAsMufmaThM79JXUu8uP3JAFETRR3or3IeksnII9R335r9QyGT3i1wqN
-         HrsKmwLEmI4hXtJT028QUuaH1vt/NFT3EAMORyAlE12mzFimRyTQ24M7bCHD0GSygZpM
-         jsDDcunzUZqYLw5OCKNOXURwTqK9wpy0qSCrV1KMFWqQPbF4ABQ8/F7KfrVbNexJVR4q
-         C1ayu0WbHLUflIxrJqRWImxpMlZc98RmVXbPG1ViqVTJ2yEbndO2WdNJak2Y26U5EkFT
-         0JEQ==
-X-Gm-Message-State: APt69E04wlmRCDChFfrHyLSNIe8dZnEXUwqnyL8/xAUa1kwE+CesTkph
-        2ykpJeIOftFM7D/9RXohqXq/4A==
-X-Google-Smtp-Source: ADUXVKJfEglbF7hlOknzG27utvA1k97PrKKGxDUtkv8Bx9+XN3zH8vS0dh6QlhfKodXYy8EuIdFMzw==
-X-Received: by 2002:a17:902:9307:: with SMTP id bc7-v6mr1074857plb.292.1528360740128;
-        Thu, 07 Jun 2018 01:39:00 -0700 (PDT)
-Received: from localhost ([122.172.167.207])
-        by smtp.gmail.com with ESMTPSA id a9-v6sm39005232pgt.57.2018.06.07.01.38.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Jun 2018 01:38:59 -0700 (PDT)
-Date: Thu, 7 Jun 2018 14:08:56 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: "Du, Changbin" <changbin.du@intel.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, gregkh@linuxfoundation.org,
-        alex.elder@linaro.org, Johan Hovold <johan@kernel.org>,
-        kbuild test robot <lkp@intel.com>,
-        linux-arch@vger.kernel.org, michal.lkml@markovi.net,
-        linux-kernel@vger.kernel.org, arnd@arndb.de,
-        yamada.masahiro@socionext.com, lgirdwood@gmail.com,
-        broonie@kernel.org, rdunlap@infradead.org, x86@kernel.org,
-        linux@armlinux.org.uk, linux-sparse@vger.kernel.org,
-        mingo@redhat.com, kbuild-all@01.org, akpm@linux-foundation.org,
-        changbin.du@gmail.com, tglx@linutronix.de,
-        linux-kbuild@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 2/4] kernel hacking: new config NO_AUTO_INLINE to
- disable compiler auto-inline optimizations
-Message-ID: <20180607083856.ealw62v3wx43zeqz@vireshk-i7>
-References: <1528186420-6615-3-git-send-email-changbin.du@intel.com>
- <201806060501.btF3aJMZ%fengguang.wu@intel.com>
- <20180606095714.1d3c2def@vmware.local.home>
- <20180606142600.GN13775@localhost>
- <20180606142622.2338abf6@vmware.local.home>
- <20180607041718.qpqucjzlvcm5h3gn@vireshk-i7>
- <20180607074628.kd3iyxevwj3ypzbr@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180607074628.kd3iyxevwj3ypzbr@intel.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=pE+h1VuN59ZRcVvHCdR88kNf6zFNrgFECds97E/YUjc=;
+        b=DKIdivLKxmZtprSfWJHKUQU82VO8Uyh+0thkTHX2eCK39msFzJ+J79QcGeH/51Sp8e
+         CO+rhYeNeZqxmn0Y2/tosHEptHduraOBNp9wwuP6Y5K4YVLilu8hNxu+4a3A8cyO1AsV
+         yEprm/gmZsNi6uDgZ8T9l0vOse0eBWfS1hNTH0jig403HwbD4mooyQ7YLwmofIQxMCOn
+         2duWwxGx90zD6QVOfkd3P9RD1lU+UpLTpe2qVJNVS6YDp5jNXrcV07tMeI4UBLJWb+vx
+         70MPCxI8peywJxPQ33HWK861F7m2YAMYdxbiNKfNi9rnQexKj9ovW/GOhpT3GGw+PBgl
+         neGg==
+X-Gm-Message-State: APt69E0M2i9X8h2AaZoGqUsIXTcyBZOz6uAp9zww9CbKgWMr8hpLUuB1
+        z2tlymeW6nVxpy7W33FPaaCP3w==
+X-Google-Smtp-Source: ADUXVKJ1kTxqah6X+UCAnD9F14QCjpjSbWUwbZRJ2vyQMEmkf2cWdXG+ZibYrce5+3X/FGXzu7XByA==
+X-Received: by 2002:a1c:256:: with SMTP id 83-v6mr1498778wmc.41.1528459836902;
+        Fri, 08 Jun 2018 05:10:36 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:e0a:f:6020:6c67:7ea:9f4d:8968])
+        by smtp.gmail.com with ESMTPSA id b204-v6sm1546003wmh.22.2018.06.08.05.10.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 08 Jun 2018 05:10:36 -0700 (PDT)
+From: Vincent Guittot <vincent.guittot@linaro.org>
+To: peterz@infradead.org, mingo@kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: rjw@rjwysocki.net, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+        Morten.Rasmussen@arm.com, viresh.kumar@linaro.org,
+        valentin.schneider@arm.com, patrick.bellasi@arm.com,
+        joel@joelfernandes.org, daniel.lezcano@linaro.org,
+        quentin.perret@arm.com,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: [PATCH v6 09/11] sched: use pelt for scale_rt_capacity()
+Date: Fri,  8 Jun 2018 14:09:52 +0200
+Message-Id: <1528459794-13066-10-git-send-email-vincent.guittot@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1528459794-13066-1-git-send-email-vincent.guittot@linaro.org>
+References: <1528459794-13066-1-git-send-email-vincent.guittot@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07-06-18, 15:46, Du, Changbin wrote:
-> I think if the destination is not a null terminated string (If I understand your
-> description below), memcpy can be used to get rid of such warning. The warning
-> makes sense in general as explained in mannual. Thanks!
+The utilization of the CPU by rt, dl and interrupts are now tracked with
+PELT so we can use these metrics instead of rt_avg to evaluate the remaining
+capacity available for cfs class.
 
-The destination should be a null terminated string eventually, but we first need
-to make sure src is a null terminated string.
+scale_rt_capacity() behavior has been changed and now returns the remaining
+capacity available for cfs instead of a scaling factor because rt, dl and
+interrupt provide now absolute utilization value.
 
+The same formula as schedutil is used:
+  irq util_avg + (1 - irq util_avg / max capacity ) * /Sum rq util_avg
+but the implementation is different because it doesn't return the same value
+and doesn't benefit of the same optimization
+
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+---
+ kernel/sched/deadline.c |  2 --
+ kernel/sched/fair.c     | 41 +++++++++++++++++++----------------------
+ kernel/sched/pelt.c     |  2 +-
+ kernel/sched/rt.c       |  2 --
+ 4 files changed, 20 insertions(+), 27 deletions(-)
+
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index 596097f..c882d156 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -1180,8 +1180,6 @@ static void update_curr_dl(struct rq *rq)
+ 	curr->se.exec_start = now;
+ 	cgroup_account_cputime(curr, delta_exec);
+ 
+-	sched_rt_avg_update(rq, delta_exec);
+-
+ 	if (dl_entity_is_special(dl_se))
+ 		return;
+ 
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index cc7a6e2..fefd71b 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -7551,39 +7551,36 @@ static inline int get_sd_load_idx(struct sched_domain *sd,
+ static unsigned long scale_rt_capacity(int cpu)
+ {
+ 	struct rq *rq = cpu_rq(cpu);
+-	u64 total, used, age_stamp, avg;
+-	s64 delta;
+-
+-	/*
+-	 * Since we're reading these variables without serialization make sure
+-	 * we read them once before doing sanity checks on them.
+-	 */
+-	age_stamp = READ_ONCE(rq->age_stamp);
+-	avg = READ_ONCE(rq->rt_avg);
+-	delta = __rq_clock_broken(rq) - age_stamp;
++	unsigned long max = arch_scale_cpu_capacity(NULL, cpu);
++	unsigned long used, irq, free;
+ 
+-	if (unlikely(delta < 0))
+-		delta = 0;
++#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
++	irq = READ_ONCE(rq->avg_irq.util_avg);
+ 
+-	total = sched_avg_period() + delta;
++	if (unlikely(irq >= max))
++		return 1;
++#endif
+ 
+-	used = div_u64(avg, total);
++	used = READ_ONCE(rq->avg_rt.util_avg);
++	used += READ_ONCE(rq->avg_dl.util_avg);
+ 
+-	if (likely(used < SCHED_CAPACITY_SCALE))
+-		return SCHED_CAPACITY_SCALE - used;
++	if (unlikely(used >= max))
++		return 1;
+ 
+-	return 1;
++	free = max - used;
++#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
++	free *= (max - irq);
++	free /= max;
++#endif
++	return free;
+ }
+ 
+ static void update_cpu_capacity(struct sched_domain *sd, int cpu)
+ {
+-	unsigned long capacity = arch_scale_cpu_capacity(sd, cpu);
++	unsigned long capacity = scale_rt_capacity(cpu);
+ 	struct sched_group *sdg = sd->groups;
+ 
+-	cpu_rq(cpu)->cpu_capacity_orig = capacity;
+-
+-	capacity *= scale_rt_capacity(cpu);
+-	capacity >>= SCHED_CAPACITY_SHIFT;
++	cpu_rq(cpu)->cpu_capacity_orig = arch_scale_cpu_capacity(sd, cpu);
+ 
+ 	if (!capacity)
+ 		capacity = 1;
+diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
+index b43e2af..e2d53a6 100644
+--- a/kernel/sched/pelt.c
++++ b/kernel/sched/pelt.c
+@@ -237,7 +237,7 @@ ___update_load_avg(struct sched_avg *sa, unsigned long load, unsigned long runna
+ 	 */
+ 	sa->load_avg = div_u64(load * sa->load_sum, divider);
+ 	sa->runnable_load_avg =	div_u64(runnable * sa->runnable_load_sum, divider);
+-	sa->util_avg = sa->util_sum / divider;
++	WRITE_ONCE(sa->util_avg, sa->util_sum / divider);
+ }
+ 
+ /*
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index e8c08a8..4fd2b57 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -970,8 +970,6 @@ static void update_curr_rt(struct rq *rq)
+ 	curr->se.exec_start = now;
+ 	cgroup_account_cputime(curr, delta_exec);
+ 
+-	sched_rt_avg_update(rq, delta_exec);
+-
+ 	if (!rt_bandwidth_enabled())
+ 		return;
+ 
 -- 
-viresh
+2.7.4
