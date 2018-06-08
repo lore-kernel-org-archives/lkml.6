@@ -1,127 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id fJRqGqe2GVtHdwAAmS7hNA
-	; Thu, 07 Jun 2018 22:58:54 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id tEMuCeIrGlurJAAAmS7hNA
+	; Fri, 08 Jun 2018 07:11:55 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 8EDC96074D; Thu,  7 Jun 2018 22:58:54 +0000 (UTC)
+	id 85B6B607E4; Fri,  8 Jun 2018 07:11:55 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DNOXji2R"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gODOUihy"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 0B97C601C3;
-	Thu,  7 Jun 2018 22:58:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0B97C601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id DB42A606FA;
+	Fri,  8 Jun 2018 07:11:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DB42A606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752156AbeFGW6v (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 18:58:51 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:51824 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751631AbeFGW6u (ORCPT
+        id S1751636AbeFHHLw (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 03:11:52 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:41083 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751117AbeFHHLv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 18:58:50 -0400
-Received: by mail-wm0-f66.google.com with SMTP id r15-v6so127861wmc.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 15:58:50 -0700 (PDT)
+        Fri, 8 Jun 2018 03:11:51 -0400
+Received: by mail-pl0-f67.google.com with SMTP id az12-v6so7744864plb.8
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 00:11:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id;
-        bh=v+KyweH6c0/5uR+9bkbPp68i2b0syMYrgorFm5gYS1E=;
-        b=DNOXji2RCcCk8AWz91FvXOI+RVuNH++7f9DMiyxpP+hl8YJsyEVRUzm6KSuTg/826i
-         0RV5sdCbOMUZAafqdW7C3D0G2JjbHFwxPVN/M4phbAolpCKSoqCU5fvHWOR+NFyn3TJf
-         MIVA5PekcAaEqXTt6zE8p995DvfM6LrhNnO/a8hoQNCxWOb2t1e6Txq/zvixdSjGcqHf
-         RUziheESv5LFVfwn4MoIhyTdNih3aAeKbB5P6fMf0LkiK2OScHoTW7rXO0mg9KW+r+5f
-         fJAGksr7vIjud32aDO6EA1VplZoMOBT20qv5V/cXc5GkI4QwEpfKVOmjyqLoJZHS1gBw
-         LWgg==
+        bh=8jAQmTuGvAX+EIfu45cbzVZ46i/vDGVTiU+n/4q2ACE=;
+        b=gODOUihyYvnFgbfb4ViIFYxA6u59yecXX99beK4saeMNqG9fKnjt7BSGo+3Woaigz2
+         9G9KtH0hUV/+WFP/MWyiQu1ku3IRo5bOThWplRx9+U2jnUDmTsJ9/pZkdOrPMS07S2AQ
+         vrgRhdxVjlSM1j3kx7fj3+O/T1WTpAQs3KyNw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=v+KyweH6c0/5uR+9bkbPp68i2b0syMYrgorFm5gYS1E=;
-        b=GjNUxJMkM/zGi7Y8ezk7DOlztqIUgi+qSFUZEXq37jdbnR9nbU1amOave0teG59KgZ
-         cFeKXUyy5E1JY1VVPu8pC0Hu27T+Uqe3+Hs4i3XA7PeVCppDMK2DMYv4zCBZqKz2gJrb
-         2Akl7HLv1mLg972+0Q1OJQfyUYD2J04xnyEq+tI5cDBT13HJzQLpuj8LyzNFv4hOWiDe
-         Bnd9i2Isve5AFSpAT2o17dfCfYRO3/UzJZWZ89SzDKyTkxyrYQMYROLgUCXu+wFcnFn+
-         Rttx7mabAUAW536T7WR+meRCMEgwou/8WgEEXR85LcxbmwRVvYGWpj5ZNEd2uQl2bY8L
-         QBmw==
-X-Gm-Message-State: APt69E0Iix28pXUGmVazr8t9/SRbuPB5PgQeLy1Bo5RqYTFefAv/OoSP
-        IQsgcIbcuxvuIJFXoA9lu7H6caH1
-X-Google-Smtp-Source: ADUXVKJwohLx7IwSwx+PCKGRCzCU8fdTjJGb8AePoehAJ4X/Je1ykgfvvDEpFdOgFYr+Rjdj9fK7HQ==
-X-Received: by 2002:a50:a5ec:: with SMTP id b41-v6mr4314330edc.147.1528412329421;
-        Thu, 07 Jun 2018 15:58:49 -0700 (PDT)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id g30-v6sm4195716edb.5.2018.06.07.15.58.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Jun 2018 15:58:48 -0700 (PDT)
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: marc.zyngier@arm.com, Florian Fainelli <f.fainelli@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Tony Lindgren <tony@atomide.com>,
-        Luca Scalabrino <luca.scalabrino@arm.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] ARM: spectre-v2: Try to set IBE bit for Cortex-A15 and Brahma-B15
-Date: Thu,  7 Jun 2018 15:58:02 -0700
-Message-Id: <20180607225804.28771-1-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.14.1
+        bh=8jAQmTuGvAX+EIfu45cbzVZ46i/vDGVTiU+n/4q2ACE=;
+        b=bkP2A5XZ/HDo0H8+Gu49StQJWq8mn0DZxX69S124MicFzlMjP5P+z1wcEtvW05x90d
+         rfY8viwj0hDhAeXvviCPVxH65UYFb8KIwBVD6Tw3znHIKOBTEgWFG3NPq052APRmS2uB
+         waQ7uNXTus3QM3y/kjwyINBTsL42VuoudMxUMQVy65uo0SW44xFVwhOUVKLNMKOm2wwP
+         c3s19MGJuuonzleh2JoXSn21V1Hc9MawavcAKmI83sy5JKUa5ZZNEmIzDQm6RuOJf1uJ
+         SEaY8NZTIb7VRHEVf5FoJH7iM8MZuvysCUBfeXI1WAndxpfN4KvvVt3K8pgp5jGD+fs0
+         geQw==
+X-Gm-Message-State: APt69E1UkcAGufn9puP8rX6fmDPuSgGkyL738pHhpjXTm06Zp/LwwY8W
+        lNEG9loTEK1fEwzjM3aPmib+dA==
+X-Google-Smtp-Source: ADUXVKISNaQ+RYgnsP1sl8ohRVYdvqKMaJdXLrJHmi3JY82kqU/8MENrkrM3987WpqbRG+Yob2rs1A==
+X-Received: by 2002:a17:902:22a:: with SMTP id 39-v6mr5272387plc.146.1528441910951;
+        Fri, 08 Jun 2018 00:11:50 -0700 (PDT)
+Received: from excession.tpe.corp.google.com ([2401:fa00:1:10:3987:9bf6:3352:7574])
+        by smtp.gmail.com with ESMTPSA id a27-v6sm15421764pfc.18.2018.06.08.00.11.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 08 Jun 2018 00:11:50 -0700 (PDT)
+From: Louis Collard <louiscollard@chromium.org>
+To: linux-integrity@vger.kernel.org
+Cc: Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, apronin@chromium.org
+Subject: [PATCH] tpm: Allow tpm_tis drivers to set hwrng quality.
+Date: Fri,  8 Jun 2018 15:11:46 +0800
+Message-Id: <20180608071146.110567-1-louiscollard@chromium.org>
+X-Mailer: git-send-email 2.13.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Per the ARM reference manual for the Cortex-A15, The ACTLR:
+Adds plumbing required for drivers based on tpm_tis to set hwrng quality.
 
- Is a read/write register.
-
- Common to the Secure and Non-secure states.
-
- Is only accessible from PL1 or higher, with access rights that depend
- on the mode:
-
-    * Read/write in Secure PL1 modes.
-
-    * Read-only and write-ignored in Non-secure PL1 and PL2 modes
-      if NSACR.NS_SMP is 0.
-
-    * Read/write in Non-secure PL1 and PL2 modes if NSACR.NS_SMP
-      is 1. In this case, all bits are write-ignored except for the SMP bit.
-
-We can attempt to set this bit from within the kernel, which helps
-avoiding firmware side modifications to set the IBE bit when that is
-impractical. We do this within __v7_ca15mp_setup and __v7_b15mp_setup
-because by then we already took those labels because the processors we
-run on do match.
-
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Louis Collard <louiscollard@chromium.org>
 ---
- arch/arm/mm/proc-v7.S | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/char/tpm/tpm_tis_core.c | 2 ++
+ drivers/char/tpm/tpm_tis_core.h | 1 +
+ 2 files changed, 3 insertions(+)
 
-diff --git a/arch/arm/mm/proc-v7.S b/arch/arm/mm/proc-v7.S
-index 6fe52819e014..a21cf3729efa 100644
---- a/arch/arm/mm/proc-v7.S
-+++ b/arch/arm/mm/proc-v7.S
-@@ -284,10 +284,16 @@ __v7_cr8mp_setup:
- 	b	1f
- __v7_ca7mp_setup:
- __v7_ca12mp_setup:
-+	b	2f
- __v7_ca15mp_setup:
- __v7_b15mp_setup:
-+#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
-+	mrc	p15, 0, r0, c1, c0, 1
-+	orr	r0, r0, #1			@ Enable IBE bit
-+	mcr	p15, 0, r0, c1, c0, 1
-+#endif
- __v7_ca17mp_setup:
--	mov	r10, #0
-+2:	mov	r10, #0
- 1:	adr	r0, __v7_setup_stack_ptr
- 	ldr	r12, [r0]
- 	add	r12, r12, r0			@ the local stack
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index 8b46aaa9e049..d2345d9fd7b5 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -875,6 +875,8 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
+ 	chip->acpi_dev_handle = acpi_dev_handle;
+ #endif
+ 
++	chip->hwrng.quality = priv->rng_quality;
++
+ 	/* Maximum timeouts */
+ 	chip->timeout_a = msecs_to_jiffies(TIS_TIMEOUT_A_MAX);
+ 	chip->timeout_b = msecs_to_jiffies(TIS_TIMEOUT_B_MAX);
+diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
+index f6e1dbe212a7..f48125f1e6e0 100644
+--- a/drivers/char/tpm/tpm_tis_core.h
++++ b/drivers/char/tpm/tpm_tis_core.h
+@@ -99,6 +99,7 @@ struct tpm_tis_data {
+ 	wait_queue_head_t int_queue;
+ 	wait_queue_head_t read_queue;
+ 	const struct tpm_tis_phy_ops *phy_ops;
++	unsigned short rng_quality;
+ };
+ 
+ struct tpm_tis_phy_ops {
 -- 
-2.14.1
+2.13.5
