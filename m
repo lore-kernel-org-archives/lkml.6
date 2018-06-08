@@ -1,109 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 0IlcAo82HlvKIAAAmS7hNA
-	; Mon, 11 Jun 2018 08:45:28 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id gKCsL5GWGlvcEwAAmS7hNA
+	; Fri, 08 Jun 2018 14:45:55 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 25AB060792; Mon, 11 Jun 2018 08:45:28 +0000 (UTC)
+	id AF43E607E4; Fri,  8 Jun 2018 14:45:55 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UAVqjcFU"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 99F48602FC;
-	Mon, 11 Jun 2018 08:45:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 99F48602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 24F4D601D2;
+	Fri,  8 Jun 2018 14:45:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 24F4D601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932651AbeFKIp0 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 04:45:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45828 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932247AbeFKIpX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 04:45:23 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id E088DACCA;
-        Mon, 11 Jun 2018 08:45:21 +0000 (UTC)
-Date: Mon, 11 Jun 2018 10:45:21 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Miroslav Benes <mbenes@suse.cz>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>, jikos@kernel.org,
-        jeyu@kernel.org, live-patching@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] livepatch: Send a fake signal periodically
-Message-ID: <20180611084521.3lq7bjwnj3zpenjw@pathway.suse.cz>
-References: <20180604141636.11523-1-mbenes@suse.cz>
- <20180604141636.11523-2-mbenes@suse.cz>
- <20180604180325.yeewbafxpjkt6gi5@treble>
- <alpine.LSU.2.21.1806050857060.27280@pobox.suse.cz>
- <20180605140040.in2ndsb34o42hert@treble>
- <alpine.LSU.2.21.1806060945350.19628@pobox.suse.cz>
+        id S1752905AbeFHOpx (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 10:45:53 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:45306 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752810AbeFHOpu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 10:45:50 -0400
+Received: by mail-pl0-f65.google.com with SMTP id c23-v6so8443455plz.12
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 07:45:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=Hm/d9Esy1Gf0Mbti+zzOq9pHP3CuBwAAvmjAV/c1OCw=;
+        b=UAVqjcFUO9MZHC40HxtxlYcfx4Ix2X8e7kIKxYZoBi4ep+EDUghaEGB0OCP6BzpN4o
+         fNAdlhrbKtB820+6kJqfq/VlbKgPnQ5LCqWaobTENwFJRiFYIttFtX6l67un/w9JzNCF
+         W38Ad5EFfM67egdigY0crnM967VqWwRFmhOG5QbcCCOMZp4GTp3m6mfHo9X+zgMSW+QV
+         rCozi8gHxXimmIQmE+drX+3Df3QOmPZPmM9RDUmLcAz9MdTmmCmB/QCMCg+mijBa1UNF
+         Q65/xtPKZ2nMLC7VtgMpRhLhGIbvDIoxMkK58tMg2aseUAihVgN34TOxOgD49LD3Hmz7
+         3EHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=Hm/d9Esy1Gf0Mbti+zzOq9pHP3CuBwAAvmjAV/c1OCw=;
+        b=HIu6IPty3eGLAa8iv5b+rjxf+xioLc3D0Hu9oiep6KRdXX4uoOjG032O1sq/ZA0E2E
+         RcuL4XNKTNg8IRZRi3MrGHul9sdc9laYPVAWe6QLnhRvh079eeVJSrvT1aAIWpkO+VC0
+         s0RbBHS1YM4KbquQ2wnYyXEXKPEPV7Pi2CHkBulbFUNqlnROmbOVglNq7TD2uYdHwJiQ
+         lyZ58vqF4+uwZI6SlPDVxiNin/H1GnRNtARGz7bk1/p347I+TFdeY+n1leAScu2/B3h6
+         a6hzJoUkISbVNRe/as6iJBuuOEjlv1HyMxYVbMIbpFNd0CyZJg5PiWqU8qet5VpBt16C
+         2UBQ==
+X-Gm-Message-State: APt69E1ld6wxBNDL6DgrvN/okdtG7mZYzjH9VOP8XJCZ8jASXPAVwEGb
+        ggKRhN27xajDKSrl4zSyBcbsuh0M83UOZtvtosUoPg==
+X-Google-Smtp-Source: ADUXVKK81ZV71TwV7eK3yl0/yJ7TuwTVzwmIcBFwayjvpjKnY9iS06Jpjg/H/05krPTQy19JrR20AMsG1RenrQcAMrs=
+X-Received: by 2002:a17:902:5a4c:: with SMTP id f12-v6mr6935916plm.85.1528469150162;
+ Fri, 08 Jun 2018 07:45:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.21.1806060945350.19628@pobox.suse.cz>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Received: by 2002:a17:90a:d42:0:0:0:0 with HTTP; Fri, 8 Jun 2018 07:45:29
+ -0700 (PDT)
+In-Reply-To: <201806080231.w582VIRn021009@www262.sakura.ne.jp>
+References: <95865cab-e12f-d45b-b6e3-465b624862ba@i-love.sakura.ne.jp>
+ <CACT4Y+byRRtCA9B9bPG9mjrf3UY3OsGeBsoh8dZ0T+V6tKpTHg@mail.gmail.com> <201806080231.w582VIRn021009@www262.sakura.ne.jp>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Fri, 8 Jun 2018 16:45:29 +0200
+Message-ID: <CACT4Y+Y7Mj1JngLst1aRHDhURXQMn-eTjyPFjDdGAT0ZV-dHrw@mail.gmail.com>
+Subject: Re: general protection fault in wb_workfn (2)
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        syzbot <syzbot+4a7438e774b21ddd8eca@syzkaller.appspotmail.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Tejun Heo <tj@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        linux-block@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 2018-06-06 09:49:50, Miroslav Benes wrote:
-> On Tue, 5 Jun 2018, Josh Poimboeuf wrote:
-> 
-> > On Tue, Jun 05, 2018 at 09:17:52AM +0200, Miroslav Benes wrote:
-> > > On Mon, 4 Jun 2018, Josh Poimboeuf wrote:
-> > > 
-> > > > On Mon, Jun 04, 2018 at 04:16:35PM +0200, Miroslav Benes wrote:
-> > > > > An administrator may send a fake signal to all remaining blocking tasks
-> > > > > of a running transition by writing to
-> > > > > /sys/kernel/livepatch/<patch>/signal attribute. Let's do it
-> > > > > automatically after 10 seconds. The timeout is chosen deliberately. It
-> > > > > gives the tasks enough time to transition themselves.
-> > > > > 
-> > > > > Theoretically, sending it once should be more than enough. Better be safe
-> > > > > than sorry, so send it periodically.
-> > > > 
-> > > > This is the part I don't understand.  Why do it periodically?
-> > > 
-> > > I met (rare!) cases when doing it once was not enough due to a race and 
-> > > the signal was missed. However involved testcases were really artificial.
-> > >  
-> > > > Instead, might it make sense to just send the signals once, and if that
-> > > > doesn't work, reverse the transition?  Then we could make patching a
-> > > > synchronous operation.  But then, it might be remotely possible that the
-> > > > reverse operation also stalls (e.g., on a kthread).  So, maybe it's best
-> > > > to just leave all these controls in the hands of the user.
-> > > 
-> > > And there is 'force' option...
-> > > 
-> > > So given all this, I'd call klp_send_signals() once and then leave it up 
-> > > to the user. Would that work for you?
-> > 
-> > Well, I don't know.  Since the patching process will already need to be
-> > managed by user space, what's the benefit of having the kernel doing
-> > only this part of it?
-> 
-> I'm not sure about 'will already need to be managed by user space' part. 
-> Sending the fake signal would unblock transition in certain cases "for 
-> free". No user interaction is really needed and we can do it 
-> automatically. That's why I find it beneficial.
+On Fri, Jun 8, 2018 at 4:31 AM, Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> Dmitry Vyukov wrote:
+>> On Tue, Jun 5, 2018 at 3:45 PM, Tetsuo Handa
+>> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>> > Dmitry, can you assign VM resources for a git tree for this bug? This bug wants to fight
+>> > against https://github.com/google/syzkaller/blob/master/docs/syzbot.md#no-custom-patches ...
+>>
+>> Hi Tetsuo,
+>>
+>> Most of the reasons for not doing it still stand. A syzkaller instance
+>> will produce not just this bug, it will produce hundreds of different
+>> bugs. Then the question is: what to do with these bugs? Report all to
+>> mailing lists?
+>
+> Is it possible to add linux-next.git tree as a target for fuzzing? If yes,
+> we can try debug patches easily, in addition to find bugs earlier than now.
 
-I wonder if several kicks might be necessary to get a kthread patched.
+syzbot tested linux-next and mmotm initially, but they were removed at
+the request of kernel developers. See:
+https://groups.google.com/d/msg/syzkaller/0H0LHW_ayR8/dsK5qGB_AQAJ
+and:
+https://groups.google.com/d/msg/syzkaller-bugs/FeAgni6Atlk/U0JGoR0AAwAJ
+Indeed, linux-next produces around 50 assorted one-off unexplainable
+bug reports.
 
-BTW: This approach has a bit different effect in compare with kGraft.
-In kGraft, it was enough to force kthread going over an explicitly
-defined safe point where it migrated itself. In upstream, the kthread
-must get scheduled outside any patched function. The chance might
-be a bit random.
 
-To make it clear. I believe that sending signal once makes sense for
-sure. And it would make sense to even repeat it.
+>> I think the solution here is just to run syzkaller instance locally.
+>> It's just a program anybody can run it on any kernel with any custom
+>> patches. Moreover for local instance it's also possible to limit set
+>> of tested syscalls to increase probability of hitting this bug and at
+>> the same time filter out most of other bugs.
+>
+> If this bug is reproducible with VM resources individual developer can afford...
+>
+> Since my Linux development environment is VMware guests on a Windows PC, I can't
+> run VM instance which needs KVM acceleration. Also, due to security policy, I can't
+> utilize external VM resources available on the Internet, as well as I can't use ssh
+> and git protocols. Speak of this bug, even with a lot of VM instances, syzbot can
+> reproduce this bug only once or twice per a day. Thus, the question for me boils
+> down to, whether I can reproduce this bug using one VMware guest instance with 4GB
+> of memory. Effectively, I don't have access to environments for running syzkaller
+> instance...
 
-BTW: If we allow to repeat it, we should reset the counter in
-klp_reverse_transition().
+Well, I don't know what to say, it does require some resources.
 
-Best Regards,
-Petr
+>> Do we have any idea about the guilty subsystem? You mentioned
+>> bdi_unregister, why? What would be the set of syscalls to concentrate
+>> on?
+>> I will do a custom run when I get around to it, if nobody else beats me to it.
+>
+> Because bdi_unregister() does "bdi->dev = NULL;" which wb_workfn() is hitting
+> NULL pointer dereference.
+
+Right, wb_workfn is not a generic function, it's fs-specific function.
+
+Trying to reproduce this locally now.
