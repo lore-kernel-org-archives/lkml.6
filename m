@@ -1,135 +1,1139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Jcx3AwM2HlvJEwAAmS7hNA
-	; Mon, 11 Jun 2018 08:42:43 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id f/lZBzXpGVtqcwAAmS7hNA
+	; Fri, 08 Jun 2018 02:25:57 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id DC84A60792; Mon, 11 Jun 2018 08:42:42 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MeUgVhta"
+	id 0D7A96089E; Fri,  8 Jun 2018 02:25:57 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 5BAD7602FC;
-	Mon, 11 Jun 2018 08:42:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5BAD7602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 052C8601B4;
+	Fri,  8 Jun 2018 02:25:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 052C8601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932513AbeFKImj (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 04:42:39 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:35072 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754157AbeFKImh (ORCPT
+        id S1752949AbeFHCZR (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 22:25:17 -0400
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:58592 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752665AbeFHCYa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 04:42:37 -0400
-Received: by mail-io0-f194.google.com with SMTP id u4-v6so22987150iof.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 01:42:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=GpKgh/A4spGNnF4oBp9y+A9uR54MP2ckZxFsDm6K6ww=;
-        b=MeUgVhtaN+JRmeWDblWM8joN231PabmmIOucpC6ida+3UGnmo0uyktEmveqSm4wLex
-         uRyBRGDZm5eI4rHBNNBPnFlfrJME5lMpea76Xx0fGziqOGYUxjiCXR6mMLFXZnSuFoJa
-         KHN91dxh4KkXMr0RBh5UCwflb3uObJD0wTiY0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=GpKgh/A4spGNnF4oBp9y+A9uR54MP2ckZxFsDm6K6ww=;
-        b=ZTkSCo83UAFaNJJqoTUtYMfiolhaddsTnJlYAAM43Au5QpcNZxwBxdt3GjUJIkDD5w
-         2bnpGHllI9y4o7da0x/dohXGEtVHIkSQzoPvfqnMhV50onqbqY6gBamnbNCbBd91iiCf
-         33ZZFlNjB/cha9wGEXHe5ogDHeGDFqw/OqapGM2f3vFyd/lFUvxd/T6JvPkzYQl++Y9c
-         IEnjd/eYIj4/rF5gufCn01ee9W6IMpdGxh5rpzc5qndBxNuGrYY4oTstW07gAzFTOvOv
-         +sLhJRwMcYLIDoFCMaXa+RXAv+g4FuS/V+Ws6gaIIlYdQkpjlk6FV7SfgFCoVQskm44U
-         CYSg==
-X-Gm-Message-State: APt69E0H2Q4z9HMXvEbJK9nwbgi9BHJnegdlNAa3gJNjjjyNham56AGl
-        8ZVKeJes+UqRV4Yq2suPFVKw4dFhHcy1WvHFHq+ZhQ==
-X-Google-Smtp-Source: ADUXVKK/oyqqNftKH+jBZVEi7G5BExQ3f3FMOTVYR4f8fZUpwQRWJioZHHUkWoJe+WrsZeCOHE1TW4TIMW4IJOge3C4=
-X-Received: by 2002:a6b:2401:: with SMTP id k1-v6mr12550656iok.270.1528706556699;
- Mon, 11 Jun 2018 01:42:36 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a4f:78c9:0:0:0:0:0 with HTTP; Mon, 11 Jun 2018 01:42:35
- -0700 (PDT)
-In-Reply-To: <1528377065-647-1-git-send-email-stefan.popa@analog.com>
-References: <1528377065-647-1-git-send-email-stefan.popa@analog.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 11 Jun 2018 10:42:35 +0200
-Message-ID: <CACRpkda5T-nUMoJKUUUDmC_MvQPs=ZP3W3ZwkgfpjozxtrHuoQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] dt-bindings: iio: dac: Add docs for AD5758 DAC
-To: Stefan Popa <stefan.popa@analog.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald <pmeerw@pmeerw.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>, linux-iio@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 7 Jun 2018 22:24:30 -0400
+Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
+        id 5BFD42A338; Thu,  7 Jun 2018 22:24:29 -0400 (EDT)
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Michael Schmitz <schmitzmic@gmail.com>,
+        <linuxppc-dev@lists.ozlabs.org>, <linux-m68k@lists.linux-m68k.org>,
+        <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Message-Id: <12fe93219c3012a297482ac0a7c43a31dc7d32ac.1528423341.git.fthain@telegraphics.com.au>
+In-Reply-To: <cover.1528423341.git.fthain@telegraphics.com.au>
+References: <cover.1528423341.git.fthain@telegraphics.com.au>
+From: Finn Thain <fthain@telegraphics.com.au>
+Subject: [PATCH v2 09/12] macintosh/via-pmu: Replace via-pmu68k driver with
+ via-pmu driver
+Date: Thu,  7 Jun 2018 22:24:29 -0400 (EDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 7, 2018 at 3:11 PM, Stefan Popa <stefan.popa@analog.com> wrote:
+Now that the PowerMac via-pmu driver supports m68k PowerBooks,
+switch over to that driver and remove the via-pmu68k driver.
 
-> + - adi,slew: Array of slewrate settings should contain 3 fields:
-> +       1: Should be either 0 or 1 in order to enable or disable slewrate.
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Tested-by: Stan Johnson <userm57@yahoo.com>
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+---
+ arch/m68k/configs/mac_defconfig   |   2 +-
+ arch/m68k/configs/multi_defconfig |   2 +-
+ arch/m68k/mac/config.c            |   2 +-
+ arch/m68k/mac/misc.c              |  48 +--
+ drivers/macintosh/Kconfig         |  13 +-
+ drivers/macintosh/Makefile        |   1 -
+ drivers/macintosh/adb.c           |   2 +-
+ drivers/macintosh/via-pmu68k.c    | 846 --------------------------------------
+ include/uapi/linux/pmu.h          |   1 -
+ 9 files changed, 13 insertions(+), 904 deletions(-)
+ delete mode 100644 drivers/macintosh/via-pmu68k.c
 
-We have a standard binding in pin control for "slew-rate".
-
-It doesn't have a unit today though.
-
-> +       2: Slew rate clock:
-> +               Valid values for the slew rate update frequency [Hz]:
-> +               * 240000
-> +               * 200000
-> +               * 150000
-> +               * 128000
-> +               * 64000
-> +               * 32000
-> +               * 16000
-> +               * 8000
-> +               * 4000
-> +               * 2000
-> +               * 1000
-> +               * 512
-> +               * 256
-> +               * 128
-> +               * 64
-> +               * 16
-> +       3: Slew rate step:
-> +               Defines by how much the output value changes at each update.
-> +               Valid values for the step size LSBs:
-> +               * 4
-> +               * 12
-> +               * 64
-> +               * 120
-> +               * 256
-> +               * 500
-> +               * 1820
-> +               * 2048
-
-This is pretty idiomatic and just encodes the configuration fields from the
-hardware into the device tree.
-
-The normal slew rate unit is Volts per microsecond.
-
-I get the feeling that we could define that simply, and then calculate
-the slew rate clock and step using that to find the best match for
-a certain slew rate.
-
-Yours,
-Linus Walleij
+diff --git a/arch/m68k/configs/mac_defconfig b/arch/m68k/configs/mac_defconfig
+index 390d4a87441c..ee63f1242e9a 100644
+--- a/arch/m68k/configs/mac_defconfig
++++ b/arch/m68k/configs/mac_defconfig
+@@ -370,7 +370,7 @@ CONFIG_TCM_PSCSI=m
+ CONFIG_ADB=y
+ CONFIG_ADB_MACII=y
+ CONFIG_ADB_IOP=y
+-CONFIG_ADB_PMU68K=y
++CONFIG_ADB_PMU=y
+ CONFIG_ADB_CUDA=y
+ CONFIG_INPUT_ADBHID=y
+ CONFIG_MAC_EMUMOUSEBTN=y
+diff --git a/arch/m68k/configs/multi_defconfig b/arch/m68k/configs/multi_defconfig
+index 77be97d82dc3..6421a3da616c 100644
+--- a/arch/m68k/configs/multi_defconfig
++++ b/arch/m68k/configs/multi_defconfig
+@@ -403,7 +403,7 @@ CONFIG_TCM_PSCSI=m
+ CONFIG_ADB=y
+ CONFIG_ADB_MACII=y
+ CONFIG_ADB_IOP=y
+-CONFIG_ADB_PMU68K=y
++CONFIG_ADB_PMU=y
+ CONFIG_ADB_CUDA=y
+ CONFIG_INPUT_ADBHID=y
+ CONFIG_MAC_EMUMOUSEBTN=y
+diff --git a/arch/m68k/mac/config.c b/arch/m68k/mac/config.c
+index e522307db47c..92e80cf0d8aa 100644
+--- a/arch/m68k/mac/config.c
++++ b/arch/m68k/mac/config.c
+@@ -891,7 +891,7 @@ static void __init mac_identify(void)
+ #ifdef CONFIG_ADB_CUDA
+ 	find_via_cuda();
+ #endif
+-#ifdef CONFIG_ADB_PMU68K
++#ifdef CONFIG_ADB_PMU
+ 	find_via_pmu();
+ #endif
+ }
+diff --git a/arch/m68k/mac/misc.c b/arch/m68k/mac/misc.c
+index 7ccb799eeb57..28090a44fa09 100644
+--- a/arch/m68k/mac/misc.c
++++ b/arch/m68k/mac/misc.c
+@@ -85,7 +85,7 @@ static void cuda_write_pram(int offset, __u8 data)
+ }
+ #endif /* CONFIG_ADB_CUDA */
+ 
+-#ifdef CONFIG_ADB_PMU68K
++#ifdef CONFIG_ADB_PMU
+ static long pmu_read_time(void)
+ {
+ 	struct adb_request req;
+@@ -136,7 +136,7 @@ static void pmu_write_pram(int offset, __u8 data)
+ 	while (!req.complete)
+ 		pmu_poll();
+ }
+-#endif /* CONFIG_ADB_PMU68K */
++#endif /* CONFIG_ADB_PMU */
+ 
+ /*
+  * VIA PRAM/RTC access routines
+@@ -367,38 +367,6 @@ static void cuda_shutdown(void)
+ }
+ #endif /* CONFIG_ADB_CUDA */
+ 
+-#ifdef CONFIG_ADB_PMU68K
+-
+-void pmu_restart(void)
+-{
+-	struct adb_request req;
+-	if (pmu_request(&req, NULL,
+-			2, PMU_SET_INTR_MASK, PMU_INT_ADB|PMU_INT_TICK) < 0)
+-		return;
+-	while (!req.complete)
+-		pmu_poll();
+-	if (pmu_request(&req, NULL, 1, PMU_RESET) < 0)
+-		return;
+-	while (!req.complete)
+-		pmu_poll();
+-}
+-
+-void pmu_shutdown(void)
+-{
+-	struct adb_request req;
+-	if (pmu_request(&req, NULL,
+-			2, PMU_SET_INTR_MASK, PMU_INT_ADB|PMU_INT_TICK) < 0)
+-		return;
+-	while (!req.complete)
+-		pmu_poll();
+-	if (pmu_request(&req, NULL, 5, PMU_SHUTDOWN, 'M', 'A', 'T', 'T') < 0)
+-		return;
+-	while (!req.complete)
+-		pmu_poll();
+-}
+-
+-#endif
+-
+ /*
+  *-------------------------------------------------------------------
+  * Below this point are the generic routines; they'll dispatch to the
+@@ -423,7 +391,7 @@ void mac_pram_read(int offset, __u8 *buffer, int len)
+ 		func = cuda_read_pram;
+ 		break;
+ #endif
+-#ifdef CONFIG_ADB_PMU68K
++#ifdef CONFIG_ADB_PMU
+ 	case MAC_ADB_PB2:
+ 		func = pmu_read_pram;
+ 		break;
+@@ -453,7 +421,7 @@ void mac_pram_write(int offset, __u8 *buffer, int len)
+ 		func = cuda_write_pram;
+ 		break;
+ #endif
+-#ifdef CONFIG_ADB_PMU68K
++#ifdef CONFIG_ADB_PMU
+ 	case MAC_ADB_PB2:
+ 		func = pmu_write_pram;
+ 		break;
+@@ -477,7 +445,7 @@ void mac_poweroff(void)
+ 	           macintosh_config->adb_type == MAC_ADB_CUDA) {
+ 		cuda_shutdown();
+ #endif
+-#ifdef CONFIG_ADB_PMU68K
++#ifdef CONFIG_ADB_PMU
+ 	} else if (macintosh_config->adb_type == MAC_ADB_PB2) {
+ 		pmu_shutdown();
+ #endif
+@@ -518,7 +486,7 @@ void mac_reset(void)
+ 	           macintosh_config->adb_type == MAC_ADB_CUDA) {
+ 		cuda_restart();
+ #endif
+-#ifdef CONFIG_ADB_PMU68K
++#ifdef CONFIG_ADB_PMU
+ 	} else if (macintosh_config->adb_type == MAC_ADB_PB2) {
+ 		pmu_restart();
+ #endif
+@@ -670,7 +638,7 @@ int mac_hwclk(int op, struct rtc_time *t)
+ 			now = cuda_read_time();
+ 			break;
+ #endif
+-#ifdef CONFIG_ADB_PMU68K
++#ifdef CONFIG_ADB_PMU
+ 		case MAC_ADB_PB2:
+ 			now = pmu_read_time();
+ 			break;
+@@ -706,7 +674,7 @@ int mac_hwclk(int op, struct rtc_time *t)
+ 			cuda_write_time(now);
+ 			break;
+ #endif
+-#ifdef CONFIG_ADB_PMU68K
++#ifdef CONFIG_ADB_PMU
+ 		case MAC_ADB_PB2:
+ 			pmu_write_time(now);
+ 			break;
+diff --git a/drivers/macintosh/Kconfig b/drivers/macintosh/Kconfig
+index 26abae4c899d..47c350cdfb12 100644
+--- a/drivers/macintosh/Kconfig
++++ b/drivers/macintosh/Kconfig
+@@ -39,17 +39,6 @@ config ADB_IOP
+ 	  <http://www.angelfire.com/ca2/dev68k/iopdesc.html> to enable direct
+ 	  support for it, say 'Y' here.
+ 
+-config ADB_PMU68K
+-	bool "Include PMU (Powerbook) ADB driver"
+-	depends on ADB && MAC
+-	help
+-	  Say Y here if want your kernel to support the m68k based Powerbooks.
+-	  This includes the PowerBook 140, PowerBook 145, PowerBook 150,
+-	  PowerBook 160, PowerBook 165, PowerBook 165c, PowerBook 170,
+-	  PowerBook 180, PowerBook, 180c, PowerBook 190cs, PowerBook 520,
+-	  PowerBook Duo 210, PowerBook Duo 230, PowerBook Duo 250,
+-	  PowerBook Duo 270c, PowerBook Duo 280 and PowerBook Duo 280c.
+-
+ # we want to change this to something like CONFIG_SYSCTRL_CUDA/PMU
+ config ADB_CUDA
+ 	bool "Support for Cuda/Egret based Macs and PowerMacs"
+@@ -66,7 +55,7 @@ config ADB_CUDA
+ 
+ config ADB_PMU
+ 	bool "Support for PMU based PowerMacs and PowerBooks"
+-	depends on PPC_PMAC
++	depends on PPC_PMAC || MAC
+ 	help
+ 	  On PowerBooks, iBooks, and recent iMacs and Power Macintoshes, the
+ 	  PMU is an embedded microprocessor whose primary function is to
+diff --git a/drivers/macintosh/Makefile b/drivers/macintosh/Makefile
+index ee803638e595..49819b1b6f20 100644
+--- a/drivers/macintosh/Makefile
++++ b/drivers/macintosh/Makefile
+@@ -22,7 +22,6 @@ obj-$(CONFIG_PMAC_SMU)		+= smu.o
+ obj-$(CONFIG_ADB)		+= adb.o
+ obj-$(CONFIG_ADB_MACII)		+= via-macii.o
+ obj-$(CONFIG_ADB_IOP)		+= adb-iop.o
+-obj-$(CONFIG_ADB_PMU68K)	+= via-pmu68k.o
+ obj-$(CONFIG_ADB_MACIO)		+= macio-adb.o
+ 
+ obj-$(CONFIG_THERM_WINDTUNNEL)	+= therm_windtunnel.o
+diff --git a/drivers/macintosh/adb.c b/drivers/macintosh/adb.c
+index 4c8097e0e6fe..76e98f0f7a3e 100644
+--- a/drivers/macintosh/adb.c
++++ b/drivers/macintosh/adb.c
+@@ -65,7 +65,7 @@ static struct adb_driver *adb_driver_list[] = {
+ #ifdef CONFIG_ADB_IOP
+ 	&adb_iop_driver,
+ #endif
+-#if defined(CONFIG_ADB_PMU) || defined(CONFIG_ADB_PMU68K)
++#ifdef CONFIG_ADB_PMU
+ 	&via_pmu_driver,
+ #endif
+ #ifdef CONFIG_ADB_MACIO
+diff --git a/drivers/macintosh/via-pmu68k.c b/drivers/macintosh/via-pmu68k.c
+deleted file mode 100644
+index bec8e1837d7d..000000000000
+--- a/drivers/macintosh/via-pmu68k.c
++++ /dev/null
+@@ -1,846 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * Device driver for the PMU on 68K-based Apple PowerBooks
+- *
+- * The VIA (versatile interface adapter) interfaces to the PMU,
+- * a 6805 microprocessor core whose primary function is to control
+- * battery charging and system power on the PowerBooks.
+- * The PMU also controls the ADB (Apple Desktop Bus) which connects
+- * to the keyboard and mouse, as well as the non-volatile RAM
+- * and the RTC (real time clock) chip.
+- *
+- * Adapted for 68K PMU by Joshua M. Thompson
+- *
+- * Based largely on the PowerMac PMU code by Paul Mackerras and
+- * Fabio Riccardi.
+- *
+- * Also based on the PMU driver from MkLinux by Apple Computer, Inc.
+- * and the Open Software Foundation, Inc.
+- */
+-
+-#include <stdarg.h>
+-#include <linux/types.h>
+-#include <linux/errno.h>
+-#include <linux/kernel.h>
+-#include <linux/delay.h>
+-#include <linux/miscdevice.h>
+-#include <linux/blkdev.h>
+-#include <linux/pci.h>
+-#include <linux/init.h>
+-#include <linux/interrupt.h>
+-
+-#include <linux/adb.h>
+-#include <linux/pmu.h>
+-#include <linux/cuda.h>
+-
+-#include <asm/macintosh.h>
+-#include <asm/macints.h>
+-#include <asm/mac_via.h>
+-
+-#include <asm/pgtable.h>
+-#include <asm/irq.h>
+-#include <linux/uaccess.h>
+-
+-/* Misc minor number allocated for /dev/pmu */
+-#define PMU_MINOR	154
+-
+-/* VIA registers - spaced 0x200 bytes apart */
+-#define RS		0x200		/* skip between registers */
+-#define B		0		/* B-side data */
+-#define A		RS		/* A-side data */
+-#define DIRB		(2*RS)		/* B-side direction (1=output) */
+-#define DIRA		(3*RS)		/* A-side direction (1=output) */
+-#define T1CL		(4*RS)		/* Timer 1 ctr/latch (low 8 bits) */
+-#define T1CH		(5*RS)		/* Timer 1 counter (high 8 bits) */
+-#define T1LL		(6*RS)		/* Timer 1 latch (low 8 bits) */
+-#define T1LH		(7*RS)		/* Timer 1 latch (high 8 bits) */
+-#define T2CL		(8*RS)		/* Timer 2 ctr/latch (low 8 bits) */
+-#define T2CH		(9*RS)		/* Timer 2 counter (high 8 bits) */
+-#define SR		(10*RS)		/* Shift register */
+-#define ACR		(11*RS)		/* Auxiliary control register */
+-#define PCR		(12*RS)		/* Peripheral control register */
+-#define IFR		(13*RS)		/* Interrupt flag register */
+-#define IER		(14*RS)		/* Interrupt enable register */
+-#define ANH		(15*RS)		/* A-side data, no handshake */
+-
+-/* Bits in B data register: both active low */
+-#define TACK		0x02		/* Transfer acknowledge (input) */
+-#define TREQ		0x04		/* Transfer request (output) */
+-
+-/* Bits in ACR */
+-#define SR_CTRL		0x1c		/* Shift register control bits */
+-#define SR_EXT		0x0c		/* Shift on external clock */
+-#define SR_OUT		0x10		/* Shift out if 1 */
+-
+-/* Bits in IFR and IER */
+-#define SR_INT		0x04		/* Shift register full/empty */
+-#define CB1_INT		0x10		/* transition on CB1 input */
+-
+-static enum pmu_state {
+-	idle,
+-	sending,
+-	intack,
+-	reading,
+-	reading_intr,
+-} pmu_state;
+-
+-static struct adb_request *current_req;
+-static struct adb_request *last_req;
+-static struct adb_request *req_awaiting_reply;
+-static unsigned char interrupt_data[32];
+-static unsigned char *reply_ptr;
+-static int data_index;
+-static int data_len;
+-static int adb_int_pending;
+-static int pmu_adb_flags;
+-static int adb_dev_map;
+-static struct adb_request bright_req_1, bright_req_2, bright_req_3;
+-static int pmu_kind = PMU_UNKNOWN;
+-static int pmu_fully_inited;
+-
+-int asleep;
+-
+-static int pmu_probe(void);
+-static int pmu_init(void);
+-static void pmu_start(void);
+-static irqreturn_t pmu_interrupt(int irq, void *arg);
+-static int pmu_send_request(struct adb_request *req, int sync);
+-static int pmu_autopoll(int devs);
+-void pmu_poll(void);
+-static int pmu_reset_bus(void);
+-
+-static int init_pmu(void);
+-static void pmu_start(void);
+-static void send_byte(int x);
+-static void recv_byte(void);
+-static void pmu_done(struct adb_request *req);
+-static void pmu_handle_data(unsigned char *data, int len);
+-static void set_volume(int level);
+-static void pmu_enable_backlight(int on);
+-static void pmu_set_brightness(int level);
+-
+-struct adb_driver via_pmu_driver = {
+-	.name         = "68K PMU",
+-	.probe        = pmu_probe,
+-	.init         = pmu_init,
+-	.send_request = pmu_send_request,
+-	.autopoll     = pmu_autopoll,
+-	.poll         = pmu_poll,
+-	.reset_bus    = pmu_reset_bus,
+-};
+-
+-/*
+- * This table indicates for each PMU opcode:
+- * - the number of data bytes to be sent with the command, or -1
+- *   if a length byte should be sent,
+- * - the number of response bytes which the PMU will return, or
+- *   -1 if it will send a length byte.
+- */
+-static s8 pmu_data_len[256][2] = {
+-/*	   0	   1	   2	   3	   4	   5	   6	   7  */
+-/*00*/	{-1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},
+-/*08*/	{-1,-1},{-1,-1},{-1,-1},{-1,-1},{-1,-1},{-1,-1},{-1,-1},{-1,-1},
+-/*10*/	{ 1, 0},{ 1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},
+-/*18*/	{ 0, 1},{ 0, 1},{-1,-1},{-1,-1},{-1,-1},{-1,-1},{-1,-1},{ 0, 0},
+-/*20*/	{-1, 0},{ 0, 0},{ 2, 0},{ 1, 0},{ 1, 0},{-1, 0},{-1, 0},{-1, 0},
+-/*28*/	{ 0,-1},{ 0,-1},{-1,-1},{-1,-1},{-1,-1},{-1,-1},{-1,-1},{ 0,-1},
+-/*30*/	{ 4, 0},{20, 0},{-1, 0},{ 3, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},
+-/*38*/	{ 0, 4},{ 0,20},{ 2,-1},{ 2, 1},{ 3,-1},{-1,-1},{-1,-1},{ 4, 0},
+-/*40*/	{ 1, 0},{ 1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},
+-/*48*/	{ 0, 1},{ 0, 1},{-1,-1},{ 1, 0},{ 1, 0},{-1,-1},{-1,-1},{-1,-1},
+-/*50*/	{ 1, 0},{ 0, 0},{ 2, 0},{ 2, 0},{-1, 0},{ 1, 0},{ 3, 0},{ 1, 0},
+-/*58*/	{ 0, 1},{ 1, 0},{ 0, 2},{ 0, 2},{ 0,-1},{-1,-1},{-1,-1},{-1,-1},
+-/*60*/	{ 2, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},
+-/*68*/	{ 0, 3},{ 0, 3},{ 0, 2},{ 0, 8},{ 0,-1},{ 0,-1},{-1,-1},{-1,-1},
+-/*70*/	{ 1, 0},{ 1, 0},{ 1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},
+-/*78*/	{ 0,-1},{ 0,-1},{-1,-1},{-1,-1},{-1,-1},{ 5, 1},{ 4, 1},{ 4, 1},
+-/*80*/	{ 4, 0},{-1, 0},{ 0, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},
+-/*88*/	{ 0, 5},{-1,-1},{-1,-1},{-1,-1},{-1,-1},{-1,-1},{-1,-1},{-1,-1},
+-/*90*/	{ 1, 0},{ 2, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},
+-/*98*/	{ 0, 1},{ 0, 1},{-1,-1},{-1,-1},{-1,-1},{-1,-1},{-1,-1},{-1,-1},
+-/*a0*/	{ 2, 0},{ 2, 0},{ 2, 0},{ 4, 0},{-1, 0},{ 0, 0},{-1, 0},{-1, 0},
+-/*a8*/	{ 1, 1},{ 1, 0},{ 3, 0},{ 2, 0},{-1,-1},{-1,-1},{-1,-1},{-1,-1},
+-/*b0*/	{-1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},
+-/*b8*/	{-1,-1},{-1,-1},{-1,-1},{-1,-1},{-1,-1},{-1,-1},{-1,-1},{-1,-1},
+-/*c0*/	{-1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},
+-/*c8*/	{-1,-1},{-1,-1},{-1,-1},{-1,-1},{-1,-1},{-1,-1},{-1,-1},{-1,-1},
+-/*d0*/	{ 0, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},
+-/*d8*/	{ 1, 1},{ 1, 1},{-1,-1},{-1,-1},{ 0, 1},{ 0,-1},{-1,-1},{-1,-1},
+-/*e0*/	{-1, 0},{ 4, 0},{ 0, 1},{-1, 0},{-1, 0},{ 4, 0},{-1, 0},{-1, 0},
+-/*e8*/	{ 3,-1},{-1,-1},{ 0, 1},{-1,-1},{ 0,-1},{-1,-1},{-1,-1},{ 0, 0},
+-/*f0*/	{-1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},{-1, 0},
+-/*f8*/	{-1,-1},{-1,-1},{-1,-1},{-1,-1},{-1,-1},{-1,-1},{-1,-1},{-1,-1},
+-};
+-
+-int __init find_via_pmu(void)
+-{
+-	switch (macintosh_config->adb_type) {
+-	case MAC_ADB_PB2:
+-		pmu_kind = PMU_68K_V2;
+-		break;
+-	default:
+-		pmu_kind = PMU_UNKNOWN;
+-		return -ENODEV;
+-	}
+-
+-	pmu_state = idle;
+-
+-	if (!init_pmu())
+-		goto fail_init;
+-
+-	pr_info("adb: PMU 68K driver v0.5 for Unified ADB\n");
+-
+-	return 1;
+-
+-fail_init:
+-	pmu_kind = PMU_UNKNOWN;
+-	return 0;
+-}
+-
+-static int pmu_probe(void)
+-{
+-	if (pmu_kind == PMU_UNKNOWN)
+-		return -ENODEV;
+-	return 0;
+-}
+-
+-static int pmu_init(void)
+-{
+-	if (pmu_kind == PMU_UNKNOWN)
+-		return -ENODEV;
+-	return 0;
+-}
+-
+-static int __init via_pmu_start(void)
+-{
+-	if (pmu_kind == PMU_UNKNOWN)
+-		return -ENODEV;
+-
+-	if (request_irq(IRQ_MAC_ADB_SR, pmu_interrupt, 0, "PMU_SR",
+-			pmu_interrupt)) {
+-		pr_err("%s: can't get SR irq\n", __func__);
+-		return -ENODEV;
+-	}
+-	if (request_irq(IRQ_MAC_ADB_CL, pmu_interrupt, 0, "PMU_CL",
+-			pmu_interrupt)) {
+-		pr_err("%s: can't get CL irq\n", __func__);
+-		free_irq(IRQ_MAC_ADB_SR, pmu_interrupt);
+-		return -ENODEV;
+-	}
+-
+-	pmu_fully_inited = 1;
+-
+-	/* Enable backlight */
+-	pmu_enable_backlight(1);
+-
+-	return 0;
+-}
+-
+-arch_initcall(via_pmu_start);
+-
+-static int __init init_pmu(void)
+-{
+-	int timeout;
+-	volatile struct adb_request req;
+-
+-	via2[B] |= TREQ;				/* negate TREQ */
+-	via2[DIRB] = (via2[DIRB] | TREQ) & ~TACK;	/* TACK in, TREQ out */
+-
+-	pmu_request((struct adb_request *) &req, NULL, 2, PMU_SET_INTR_MASK, PMU_INT_ADB);
+-	timeout =  100000;
+-	while (!req.complete) {
+-		if (--timeout < 0) {
+-			printk(KERN_ERR "pmu_init: no response from PMU\n");
+-			return -EAGAIN;
+-		}
+-		udelay(10);
+-		pmu_poll();
+-	}
+-
+-	/* ack all pending interrupts */
+-	timeout = 100000;
+-	interrupt_data[0] = 1;
+-	while (interrupt_data[0] || pmu_state != idle) {
+-		if (--timeout < 0) {
+-			printk(KERN_ERR "pmu_init: timed out acking intrs\n");
+-			return -EAGAIN;
+-		}
+-		if (pmu_state == idle) {
+-			adb_int_pending = 1;
+-			pmu_interrupt(0, NULL);
+-		}
+-		pmu_poll();
+-		udelay(10);
+-	}
+-
+-	pmu_request((struct adb_request *) &req, NULL, 2, PMU_SET_INTR_MASK,
+-			PMU_INT_ADB_AUTO|PMU_INT_SNDBRT|PMU_INT_ADB);
+-	timeout =  100000;
+-	while (!req.complete) {
+-		if (--timeout < 0) {
+-			printk(KERN_ERR "pmu_init: no response from PMU\n");
+-			return -EAGAIN;
+-		}
+-		udelay(10);
+-		pmu_poll();
+-	}
+-
+-	bright_req_1.complete = 1;
+-	bright_req_2.complete = 1;
+-	bright_req_3.complete = 1;
+-
+-	return 1;
+-}
+-
+-int
+-pmu_get_model(void)
+-{
+-	return pmu_kind;
+-}
+-
+-/* Send an ADB command */
+-static int 
+-pmu_send_request(struct adb_request *req, int sync)
+-{
+-    int i, ret;
+-
+-    if (!pmu_fully_inited)
+-    {
+- 	req->complete = 1;
+-   	return -ENXIO;
+-   }
+-
+-    ret = -EINVAL;
+-	
+-    switch (req->data[0]) {
+-    case PMU_PACKET:
+-		for (i = 0; i < req->nbytes - 1; ++i)
+-			req->data[i] = req->data[i+1];
+-		--req->nbytes;
+-		if (pmu_data_len[req->data[0]][1] != 0) {
+-			req->reply[0] = ADB_RET_OK;
+-			req->reply_len = 1;
+-		} else
+-			req->reply_len = 0;
+-		ret = pmu_queue_request(req);
+-		break;
+-    case CUDA_PACKET:
+-		switch (req->data[1]) {
+-		case CUDA_GET_TIME:
+-			if (req->nbytes != 2)
+-				break;
+-			req->data[0] = PMU_READ_RTC;
+-			req->nbytes = 1;
+-			req->reply_len = 3;
+-			req->reply[0] = CUDA_PACKET;
+-			req->reply[1] = 0;
+-			req->reply[2] = CUDA_GET_TIME;
+-			ret = pmu_queue_request(req);
+-			break;
+-		case CUDA_SET_TIME:
+-			if (req->nbytes != 6)
+-				break;
+-			req->data[0] = PMU_SET_RTC;
+-			req->nbytes = 5;
+-			for (i = 1; i <= 4; ++i)
+-				req->data[i] = req->data[i+1];
+-			req->reply_len = 3;
+-			req->reply[0] = CUDA_PACKET;
+-			req->reply[1] = 0;
+-			req->reply[2] = CUDA_SET_TIME;
+-			ret = pmu_queue_request(req);
+-			break;
+-		case CUDA_GET_PRAM:
+-			if (req->nbytes != 4)
+-				break;
+-			req->data[0] = PMU_READ_NVRAM;
+-			req->data[1] = req->data[2];
+-			req->data[2] = req->data[3];
+-			req->nbytes = 3;
+-			req->reply_len = 3;
+-			req->reply[0] = CUDA_PACKET;
+-			req->reply[1] = 0;
+-			req->reply[2] = CUDA_GET_PRAM;
+-			ret = pmu_queue_request(req);
+-			break;
+-		case CUDA_SET_PRAM:
+-			if (req->nbytes != 5)
+-				break;
+-			req->data[0] = PMU_WRITE_NVRAM;
+-			req->data[1] = req->data[2];
+-			req->data[2] = req->data[3];
+-			req->data[3] = req->data[4];
+-			req->nbytes = 4;
+-			req->reply_len = 3;
+-			req->reply[0] = CUDA_PACKET;
+-			req->reply[1] = 0;
+-			req->reply[2] = CUDA_SET_PRAM;
+-			ret = pmu_queue_request(req);
+-			break;
+-		}
+-		break;
+-    case ADB_PACKET:
+-		for (i = req->nbytes - 1; i > 1; --i)
+-			req->data[i+2] = req->data[i];
+-		req->data[3] = req->nbytes - 2;
+-		req->data[2] = pmu_adb_flags;
+-		/*req->data[1] = req->data[1];*/
+-		req->data[0] = PMU_ADB_CMD;
+-		req->nbytes += 2;
+-		req->reply_expected = 1;
+-		req->reply_len = 0;
+-		ret = pmu_queue_request(req);
+-		break;
+-    }
+-    if (ret)
+-    {
+-    	req->complete = 1;
+-    	return ret;
+-    }
+-    	
+-    if (sync) {
+-	while (!req->complete)
+-		pmu_poll();
+-    }
+-
+-    return 0;
+-}
+-
+-/* Enable/disable autopolling */
+-static int 
+-pmu_autopoll(int devs)
+-{
+-	struct adb_request req;
+-
+-	if (!pmu_fully_inited) return -ENXIO;
+-
+-	if (devs) {
+-		adb_dev_map = devs;
+-		pmu_request(&req, NULL, 5, PMU_ADB_CMD, 0, 0x86,
+-			    adb_dev_map >> 8, adb_dev_map);
+-		pmu_adb_flags = 2;
+-	} else {
+-		pmu_request(&req, NULL, 1, PMU_ADB_POLL_OFF);
+-		pmu_adb_flags = 0;
+-	}
+-	while (!req.complete)
+-		pmu_poll();
+-	return 0;
+-}
+-
+-/* Reset the ADB bus */
+-static int 
+-pmu_reset_bus(void)
+-{
+-	struct adb_request req;
+-	long timeout;
+-	int save_autopoll = adb_dev_map;
+-
+-	if (!pmu_fully_inited) return -ENXIO;
+-
+-	/* anyone got a better idea?? */
+-	pmu_autopoll(0);
+-
+-	req.nbytes = 5;
+-	req.done = NULL;
+-	req.data[0] = PMU_ADB_CMD;
+-	req.data[1] = 0;
+-	req.data[2] = 3; /* ADB_BUSRESET ??? */
+-	req.data[3] = 0;
+-	req.data[4] = 0;
+-	req.reply_len = 0;
+-	req.reply_expected = 1;
+-	if (pmu_queue_request(&req) != 0)
+-	{
+-		printk(KERN_ERR "pmu_adb_reset_bus: pmu_queue_request failed\n");
+-		return -EIO;
+-	}
+-	while (!req.complete)
+-		pmu_poll();
+-	timeout = 100000;
+-	while (!req.complete) {
+-		if (--timeout < 0) {
+-			printk(KERN_ERR "pmu_adb_reset_bus (reset): no response from PMU\n");
+-			return -EIO;
+-		}
+-		udelay(10);
+-		pmu_poll();
+-	}
+-
+-	if (save_autopoll != 0)
+-		pmu_autopoll(save_autopoll);
+-		
+-	return 0;
+-}
+-
+-/* Construct and send a pmu request */
+-int 
+-pmu_request(struct adb_request *req, void (*done)(struct adb_request *),
+-	    int nbytes, ...)
+-{
+-	va_list list;
+-	int i;
+-
+-	if (nbytes < 0 || nbytes > 32) {
+-		printk(KERN_ERR "pmu_request: bad nbytes (%d)\n", nbytes);
+-		req->complete = 1;
+-		return -EINVAL;
+-	}
+-	req->nbytes = nbytes;
+-	req->done = done;
+-	va_start(list, nbytes);
+-	for (i = 0; i < nbytes; ++i)
+-		req->data[i] = va_arg(list, int);
+-	va_end(list);
+-	if (pmu_data_len[req->data[0]][1] != 0) {
+-		req->reply[0] = ADB_RET_OK;
+-		req->reply_len = 1;
+-	} else
+-		req->reply_len = 0;
+-	req->reply_expected = 0;
+-	return pmu_queue_request(req);
+-}
+-
+-int
+-pmu_queue_request(struct adb_request *req)
+-{
+-	unsigned long flags;
+-	int nsend;
+-
+-	if (req->nbytes <= 0) {
+-		req->complete = 1;
+-		return 0;
+-	}
+-	nsend = pmu_data_len[req->data[0]][0];
+-	if (nsend >= 0 && req->nbytes != nsend + 1) {
+-		req->complete = 1;
+-		return -EINVAL;
+-	}
+-
+-	req->next = NULL;
+-	req->sent = 0;
+-	req->complete = 0;
+-	local_irq_save(flags);
+-
+-	if (current_req != 0) {
+-		last_req->next = req;
+-		last_req = req;
+-	} else {
+-		current_req = req;
+-		last_req = req;
+-		if (pmu_state == idle)
+-			pmu_start();
+-	}
+-
+-	local_irq_restore(flags);
+-	return 0;
+-}
+-
+-static void 
+-send_byte(int x)
+-{
+-	via1[ACR] |= SR_CTRL;
+-	via1[SR] = x;
+-	via2[B] &= ~TREQ;		/* assert TREQ */
+-}
+-
+-static void 
+-recv_byte(void)
+-{
+-	char c;
+-
+-	via1[ACR] = (via1[ACR] | SR_EXT) & ~SR_OUT;
+-	c = via1[SR];		/* resets SR */
+-	via2[B] &= ~TREQ;
+-}
+-
+-static void 
+-pmu_start(void)
+-{
+-	unsigned long flags;
+-	struct adb_request *req;
+-
+-	/* assert pmu_state == idle */
+-	/* get the packet to send */
+-	local_irq_save(flags);
+-	req = current_req;
+-	if (req == 0 || pmu_state != idle
+-	    || (req->reply_expected && req_awaiting_reply))
+-		goto out;
+-
+-	pmu_state = sending;
+-	data_index = 1;
+-	data_len = pmu_data_len[req->data[0]][0];
+-
+-	/* set the shift register to shift out and send a byte */
+-	send_byte(req->data[0]);
+-
+-out:
+-	local_irq_restore(flags);
+-}
+-
+-void 
+-pmu_poll(void)
+-{
+-	unsigned long flags;
+-
+-	local_irq_save(flags);
+-	if (via1[IFR] & SR_INT) {
+-		via1[IFR] = SR_INT;
+-		pmu_interrupt(IRQ_MAC_ADB_SR, NULL);
+-	}
+-	if (via1[IFR] & CB1_INT) {
+-		via1[IFR] = CB1_INT;
+-		pmu_interrupt(IRQ_MAC_ADB_CL, NULL);
+-	}
+-	local_irq_restore(flags);
+-}
+-
+-static irqreturn_t
+-pmu_interrupt(int irq, void *dev_id)
+-{
+-	struct adb_request *req;
+-	int timeout, bite = 0;	/* to prevent compiler warning */
+-
+-#if 0
+-	printk("pmu_interrupt: irq %d state %d acr %02X, b %02X data_index %d/%d adb_int_pending %d\n",
+-		irq, pmu_state, (uint) via1[ACR], (uint) via2[B], data_index, data_len, adb_int_pending);
+-#endif
+-
+-	if (irq == IRQ_MAC_ADB_CL) {		/* CB1 interrupt */
+-		adb_int_pending = 1;
+-	} else if (irq == IRQ_MAC_ADB_SR) {	/* SR interrupt  */
+-		if (via2[B] & TACK) {
+-			printk(KERN_DEBUG "PMU: SR_INT but ack still high! (%x)\n", via2[B]);
+-		}
+-
+-		/* if reading grab the byte */
+-		if ((via1[ACR] & SR_OUT) == 0) bite = via1[SR];
+-
+-		/* reset TREQ and wait for TACK to go high */
+-		via2[B] |= TREQ;
+-		timeout = 3200;
+-		while (!(via2[B] & TACK)) {
+-			if (--timeout < 0) {
+-				printk(KERN_ERR "PMU not responding (!ack)\n");
+-				goto finish;
+-			}
+-			udelay(10);
+-		}
+-
+-		switch (pmu_state) {
+-		case sending:
+-			req = current_req;
+-			if (data_len < 0) {
+-				data_len = req->nbytes - 1;
+-				send_byte(data_len);
+-				break;
+-			}
+-			if (data_index <= data_len) {
+-				send_byte(req->data[data_index++]);
+-				break;
+-			}
+-			req->sent = 1;
+-			data_len = pmu_data_len[req->data[0]][1];
+-			if (data_len == 0) {
+-				pmu_state = idle;
+-				current_req = req->next;
+-				if (req->reply_expected)
+-					req_awaiting_reply = req;
+-				else
+-					pmu_done(req);
+-			} else {
+-				pmu_state = reading;
+-				data_index = 0;
+-				reply_ptr = req->reply + req->reply_len;
+-				recv_byte();
+-			}
+-			break;
+-
+-		case intack:
+-			data_index = 0;
+-			data_len = -1;
+-			pmu_state = reading_intr;
+-			reply_ptr = interrupt_data;
+-			recv_byte();
+-			break;
+-
+-		case reading:
+-		case reading_intr:
+-			if (data_len == -1) {
+-				data_len = bite;
+-				if (bite > 32)
+-					printk(KERN_ERR "PMU: bad reply len %d\n",
+-					       bite);
+-			} else {
+-				reply_ptr[data_index++] = bite;
+-			}
+-			if (data_index < data_len) {
+-				recv_byte();
+-				break;
+-			}
+-
+-			if (pmu_state == reading_intr) {
+-				pmu_handle_data(interrupt_data, data_index);
+-			} else {
+-				req = current_req;
+-				current_req = req->next;
+-				req->reply_len += data_index;
+-				pmu_done(req);
+-			}
+-			pmu_state = idle;
+-
+-			break;
+-
+-		default:
+-			printk(KERN_ERR "pmu_interrupt: unknown state %d?\n",
+-			       pmu_state);
+-		}
+-	}
+-finish:
+-	if (pmu_state == idle) {
+-		if (adb_int_pending) {
+-			pmu_state = intack;
+-			send_byte(PMU_INT_ACK);
+-			adb_int_pending = 0;
+-		} else if (current_req) {
+-			pmu_start();
+-		}
+-	}
+-
+-#if 0
+-	printk("pmu_interrupt: exit state %d acr %02X, b %02X data_index %d/%d adb_int_pending %d\n",
+-		pmu_state, (uint) via1[ACR], (uint) via2[B], data_index, data_len, adb_int_pending);
+-#endif
+-	return IRQ_HANDLED;
+-}
+-
+-static void 
+-pmu_done(struct adb_request *req)
+-{
+-	req->complete = 1;
+-	if (req->done)
+-		(*req->done)(req);
+-}
+-
+-/* Interrupt data could be the result data from an ADB cmd */
+-static void 
+-pmu_handle_data(unsigned char *data, int len)
+-{
+-	static int show_pmu_ints = 1;
+-
+-	asleep = 0;
+-	if (len < 1) {
+-		adb_int_pending = 0;
+-		return;
+-	}
+-	if (data[0] & PMU_INT_ADB) {
+-		if ((data[0] & PMU_INT_ADB_AUTO) == 0) {
+-			struct adb_request *req = req_awaiting_reply;
+-			if (req == 0) {
+-				printk(KERN_ERR "PMU: extra ADB reply\n");
+-				return;
+-			}
+-			req_awaiting_reply = NULL;
+-			if (len <= 2)
+-				req->reply_len = 0;
+-			else {
+-				memcpy(req->reply, data + 1, len - 1);
+-				req->reply_len = len - 1;
+-			}
+-			pmu_done(req);
+-		} else {
+-			adb_input(data+1, len-1, 1);
+-		}
+-	} else {
+-		if (data[0] == 0x08 && len == 3) {
+-			/* sound/brightness buttons pressed */
+-			pmu_set_brightness(data[1] >> 3);
+-			set_volume(data[2]);
+-		} else if (show_pmu_ints
+-			   && !(data[0] == PMU_INT_TICK && len == 1)) {
+-			int i;
+-			printk(KERN_DEBUG "pmu intr");
+-			for (i = 0; i < len; ++i)
+-				printk(" %.2x", data[i]);
+-			printk("\n");
+-		}
+-	}
+-}
+-
+-static int backlight_level = -1;
+-static int backlight_enabled = 0;
+-
+-#define LEVEL_TO_BRIGHT(lev)	((lev) < 1? 0x7f: 0x4a - ((lev) << 1))
+-
+-static void 
+-pmu_enable_backlight(int on)
+-{
+-	struct adb_request req;
+-
+-	if (on) {
+-	    /* first call: get current backlight value */
+-	    if (backlight_level < 0) {
+-		switch(pmu_kind) {
+-		    case PMU_68K_V2:
+-			pmu_request(&req, NULL, 3, PMU_READ_NVRAM, 0x14, 0xe);
+-			while (!req.complete)
+-				pmu_poll();
+-			printk(KERN_DEBUG "pmu: nvram returned bright: %d\n", (int)req.reply[1]);
+-			backlight_level = req.reply[1];
+-			break;
+-		    default:
+-		        backlight_enabled = 0;
+-		        return;
+-		}
+-	    }
+-	    pmu_request(&req, NULL, 2, PMU_BACKLIGHT_BRIGHT,
+-	    	LEVEL_TO_BRIGHT(backlight_level));
+-	    while (!req.complete)
+-		pmu_poll();
+-	}
+-	pmu_request(&req, NULL, 2, PMU_POWER_CTRL,
+-	    PMU_POW_BACKLIGHT | (on ? PMU_POW_ON : PMU_POW_OFF));
+-	while (!req.complete)
+-		pmu_poll();
+-	backlight_enabled = on;
+-}
+-
+-static void 
+-pmu_set_brightness(int level)
+-{
+-	int bright;
+-
+-	backlight_level = level;
+-	bright = LEVEL_TO_BRIGHT(level);
+-	if (!backlight_enabled)
+-		return;
+-	if (bright_req_1.complete)
+-		pmu_request(&bright_req_1, NULL, 2, PMU_BACKLIGHT_BRIGHT,
+-		    bright);
+-	if (bright_req_2.complete)
+-		pmu_request(&bright_req_2, NULL, 2, PMU_POWER_CTRL,
+-		    PMU_POW_BACKLIGHT | (bright < 0x7f ? PMU_POW_ON : PMU_POW_OFF));
+-}
+-
+-void 
+-pmu_enable_irled(int on)
+-{
+-	struct adb_request req;
+-
+-	pmu_request(&req, NULL, 2, PMU_POWER_CTRL, PMU_POW_IRLED |
+-	    (on ? PMU_POW_ON : PMU_POW_OFF));
+-	while (!req.complete)
+-		pmu_poll();
+-}
+-
+-static void 
+-set_volume(int level)
+-{
+-}
+-
+-int
+-pmu_present(void)
+-{
+-	return (pmu_kind != PMU_UNKNOWN);
+-}
+diff --git a/include/uapi/linux/pmu.h b/include/uapi/linux/pmu.h
+index 30f64d46f5db..a2d3c289ed81 100644
+--- a/include/uapi/linux/pmu.h
++++ b/include/uapi/linux/pmu.h
+@@ -93,7 +93,6 @@ enum {
+ 	PMU_HEATHROW_BASED,	/* PowerBook G3 series */
+ 	PMU_PADDINGTON_BASED,	/* 1999 PowerBook G3 */
+ 	PMU_KEYLARGO_BASED,	/* Core99 motherboard (PMU99) */
+-	PMU_68K_V2, 		/* 68K PMU, version 2 */
+ };
+ 
+ /* PMU PMU_POWER_EVENTS commands */
+-- 
+2.16.4
