@@ -1,272 +1,235 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id /IU7NOqEHls4HgAAmS7hNA
-	; Mon, 11 Jun 2018 14:19:25 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id bnVRDYxuGltCCwAAmS7hNA
+	; Fri, 08 Jun 2018 11:55:17 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id A9D9A607A4; Mon, 11 Jun 2018 14:19:25 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GbtDHdqZ"
+	id 10CAE607E4; Fri,  8 Jun 2018 11:55:17 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id EBE0D60351;
-	Mon, 11 Jun 2018 14:19:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EBE0D60351
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id A7707601C3;
+	Fri,  8 Jun 2018 11:55:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A7707601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=iram.es
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934167AbeFKOTW (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 10:19:22 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45564 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933504AbeFKOGz (ORCPT
+        id S1752763AbeFHLzL (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 07:55:11 -0400
+Received: from ci-l1mail3-out05a.puc.rediris.es ([130.206.19.31]:43417 "EHLO
+        ci-l1mail3-out05a.puc.rediris.es" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751485AbeFHLzK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:06:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=/3YzULfexGbua07lmlYiArYoDeRyHrcgR7sKjSVOGIM=; b=GbtDHdqZ7IvPUTrvIL7kwS0o2
-        ryUEDW/nb+3VvPjFBlEqgUmHn0nwzsRpawlmmVZJEayfEzvfmdl9pgphp2tdhqKYyCTuTLNlZ9ZXw
-        IH6DbiEocp+pxaHd49X2BsKI9TEpF6+i7dNeFILwK9nVreW1tE8JLTDLZQJS10iYeCBGw8U4JsXVC
-        mTGYw7QX25nlx1r2/+AYu8+8VihPeX57gALAk4i4W74nhtp/QvVcszCJUIwcUYsKdUK8v024JEt1Z
-        X4CP2ZLHB0oMMx67/xHCYX/UhTDx6JeW7vRQ1fvp8qm6uoh9Dk6DZ+j3/pQdizujEkixo/zNjqagS
-        J+0Epbxig==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSNTC-0004jV-IE; Mon, 11 Jun 2018 14:06:54 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Lukas Czerner <lczerner@redhat.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v13 34/72] mm: Convert page-writeback to XArray
-Date: Mon, 11 Jun 2018 07:06:01 -0700
-Message-Id: <20180611140639.17215-35-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
-References: <20180611140639.17215-1-willy@infradead.org>
+        Fri, 8 Jun 2018 07:55:10 -0400
+X-Greylist: delayed 587 seconds by postgrey-1.27 at vger.kernel.org; Fri, 08 Jun 2018 07:55:09 EDT
+X-IPAS-Result: =?us-ascii?q?A2FyAQCvaxpbly0YzoJdGwEBAQEDAQEBCQEBAYUkKIxbjAe?=
+ =?us-ascii?q?BfpRSFIFkC4RsAoJNITYWAQIBAQEBAQECAgIQAQEBAQEIFgZYhSsBAgM6PxALG?=
+ =?us-ascii?q?AklD0gGE4MiggABq0aISIFoiEOCE4QbhFuFbQKYewmOYIFJhmCFCpEtgSMlBII?=
+ =?us-ascii?q?AMxoIMIJ+gh0RCY4ZbZEwAQE?=
+X-IronPort-AV: E=Sophos;i="5.49,490,1520895600";
+   d="scan'208";a="137862456"
+Received: from mta-out03.sim.rediris.es ([130.206.24.45])
+  by smtpout.puc.rediris.es with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jun 2018 13:45:20 +0200
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by mta-out03.sim.rediris.es (Postfix) with ESMTP id 55E9A99DA9;
+        Fri,  8 Jun 2018 13:45:19 +0200 (CEST)
+Received: from mta-out03.sim.rediris.es ([127.0.0.1])
+        by localhost (mta-out03.sim.rediris.es [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id kXQ8Q71sC3N1; Fri,  8 Jun 2018 13:45:16 +0200 (CEST)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by mta-out03.sim.rediris.es (Postfix) with ESMTP id A64A799DAF;
+        Fri,  8 Jun 2018 13:45:16 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at 
+Received: from mta-out03.sim.rediris.es ([127.0.0.1])
+        by localhost (mta-out03.sim.rediris.es [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 3_AujZDS7FgE; Fri,  8 Jun 2018 13:45:16 +0200 (CEST)
+Received: from lt-gp.iram.es (gra-fw.iram.es [150.214.244.1])
+        by mta-out03.sim.rediris.es (Postfix) with ESMTPA id 0CD1699DA9;
+        Fri,  8 Jun 2018 13:45:15 +0200 (CEST)
+Date: Fri, 8 Jun 2018 13:45:13 +0200
+From: Gabriel Paubert <paubert@iram.es>
+To: Christophe Leroy <christophe.leroy@c-s.fr>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, wei.guo.simon@gmail.com,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/4] powerpc/lib: implement strlen() in assembly
+Message-ID: <20180608114513.gtgg7o4ejcqrjiz4@lt-gp.iram.es>
+References: <a348f4ffda6349467e4270e754d12150fa773462.1528452373.git.christophe.leroy@c-s.fr>
+ <8d65b5876f55efbd2243f6b43c758e452bee3b54.1528452373.git.christophe.leroy@c-s.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8d65b5876f55efbd2243f6b43c758e452bee3b54.1528452373.git.christophe.leroy@c-s.fr>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+On Fri, Jun 08, 2018 at 10:20:41AM +0000, Christophe Leroy wrote:
+> The generic implementation of strlen() reads strings byte per byte.
+> 
+> This patch implements strlen() in assembly based on a read of entire
+> words, in the same spirit as what some other arches and glibc do.
+> 
+> On a 8xx the time spent in strlen is reduced by 2/3 for long strings.
+> 
+> strlen() selftest on an 8xx provides the following values:
+> 
+> Before the patch (ie with the generic strlen() in lib/string.c):
+> 
+> len 256 : time = 0.803648
+> len 16  : time = 0.062989
+> len 4   : time = 0.026269
+> 
+> After the patch:
+> 
+> len 256 : time = 0.267791  ==>  66% improvment
+> len 16  : time = 0.037902  ==>  41% improvment
+> len 4   : time = 0.026124  ==>  no degradation
+> 
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> ---
+> Not tested on PPC64.
+> 
+> Changes in v4:
+>  - Added alignment of the loop
+>  - doing the andc only if still not 0 as it happends only for bytes above 0x7f which is pretty rare in a string
+> 
+> Changes in v3:
+>  - Made it common to PPC32 and PPC64
+> 
+> Changes in v2:
+>  - Moved handling of unaligned strings outside of the main path as it is very unlikely.
+>  - Removed the verification of the fourth byte in case none of the three first ones are NUL.
+> 
+> 
+>  arch/powerpc/include/asm/asm-compat.h |  4 +++
+>  arch/powerpc/include/asm/string.h     |  1 +
+>  arch/powerpc/lib/string.S             | 57 +++++++++++++++++++++++++++++++++++
+>  3 files changed, 62 insertions(+)
+> 
+> diff --git a/arch/powerpc/include/asm/asm-compat.h b/arch/powerpc/include/asm/asm-compat.h
+> index 7f2a7702596c..0e99fe7570c0 100644
+> --- a/arch/powerpc/include/asm/asm-compat.h
+> +++ b/arch/powerpc/include/asm/asm-compat.h
+> @@ -20,8 +20,10 @@
+>  
+>  /* operations for longs and pointers */
+>  #define PPC_LL		stringify_in_c(ld)
+> +#define PPC_LLU		stringify_in_c(ldu)
+>  #define PPC_STL		stringify_in_c(std)
+>  #define PPC_STLU	stringify_in_c(stdu)
+> +#define PPC_ROTLI	stringify_in_c(rotldi)
+>  #define PPC_LCMPI	stringify_in_c(cmpdi)
+>  #define PPC_LCMPLI	stringify_in_c(cmpldi)
+>  #define PPC_LCMP	stringify_in_c(cmpd)
+> @@ -53,8 +55,10 @@
+>  
+>  /* operations for longs and pointers */
+>  #define PPC_LL		stringify_in_c(lwz)
+> +#define PPC_LLU		stringify_in_c(lwzu)
+>  #define PPC_STL		stringify_in_c(stw)
+>  #define PPC_STLU	stringify_in_c(stwu)
+> +#define PPC_ROTLI	stringify_in_c(rotlwi)
+>  #define PPC_LCMPI	stringify_in_c(cmpwi)
+>  #define PPC_LCMPLI	stringify_in_c(cmplwi)
+>  #define PPC_LCMP	stringify_in_c(cmpw)
+> diff --git a/arch/powerpc/include/asm/string.h b/arch/powerpc/include/asm/string.h
+> index 9b8cedf618f4..8fdcb532de72 100644
+> --- a/arch/powerpc/include/asm/string.h
+> +++ b/arch/powerpc/include/asm/string.h
+> @@ -13,6 +13,7 @@
+>  #define __HAVE_ARCH_MEMCHR
+>  #define __HAVE_ARCH_MEMSET16
+>  #define __HAVE_ARCH_MEMCPY_FLUSHCACHE
+> +#define __HAVE_ARCH_STRLEN
+>  
+>  extern char * strcpy(char *,const char *);
+>  extern char * strncpy(char *,const char *, __kernel_size_t);
+> diff --git a/arch/powerpc/lib/string.S b/arch/powerpc/lib/string.S
+> index 4b41970e9ed8..238f61e2024f 100644
+> --- a/arch/powerpc/lib/string.S
+> +++ b/arch/powerpc/lib/string.S
+> @@ -67,3 +67,60 @@ _GLOBAL(memchr)
+>  2:	li	r3,0
+>  	blr
+>  EXPORT_SYMBOL(memchr)
+> +
+> +_GLOBAL(strlen)
+> +	andi.   r9, r3, (SZL - 1)
+> +	addi	r10, r3, -SZL
+> +	bne-	1f
+> +2:	lis	r6, 0x8080
+> +	ori	r6, r6, 0x8080		/* r6 = 0x80808080 (himagic) */
+> +#ifdef CONFIG_PPC64
+> +	rldimi	r6, r6, 32, 0		/* r6 = 0x8080808080808080 (himagic) */
+> +#endif
+> +	PPC_ROTLI  r7, r6, 1 		/* r7 = 0x01010101(01010101) (lomagic)*/
+> +	.balign IFETCH_ALIGN_BYTES
+> +3:	PPC_LLU	r9, SZL(r10)
+> +	/* ((x - lomagic) & ~x & himagic) == 0 means no byte in x is NUL */
+> +	subf	r8, r7, r9
+> +	and.	r8, r8, r6
+> +	beq+	3b
+> +	andc.	r8, r8, r9
+> +	beq+	3b
+> +#ifdef CONFIG_PPC64
+> +	rldicl.	r8, r9, 8, 56
+> +	beq	20f
+> +	rldicl.	r8, r9, 16, 56
+> +	beq	21f
+> +	rldicl.	r8, r9, 24, 56
+> +	beq	22f
+> +	rldicl.	r8, r9, 32, 56
+> +	beq	23f
+> +	addi	r10, r10, 4
+> +#endif
+> +	rlwinm.	r8, r9, 0, 0xff000000
+> +	beq	20f
+> +	rlwinm.	r8, r9, 0, 0x00ff0000
+> +	beq	21f
+> +	rlwinm.	r8, r9, 0, 0x0000ff00
+> +	beq	22f
+> +23:	subf	r3, r3, r10
 
-Includes moving mapping_tagged() to fs.h as a static inline, and
-changing it to return bool.
+Actually these rlwinm. can likely be replaced by a single
+cntlzw /cntlzd; for 32 bit something like:
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
----
- include/linux/fs.h  | 17 ++++++-----
- mm/page-writeback.c | 72 ++++++++++++++++-----------------------------
- 2 files changed, 36 insertions(+), 53 deletions(-)
+	cntlzw  r8,r9
+	subf    r3,r3,r10	
+	srwi	r8,r8,3
+	add	r3,r3,r8
+	blr
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index aec2b05b056f..3f3e717e0d82 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -477,15 +477,18 @@ struct block_device {
- 	struct mutex		bd_fsfreeze_mutex;
- } __randomize_layout;
- 
-+/* XArray tags, for tagging dirty and writeback pages in the pagecache. */
-+#define PAGECACHE_TAG_DIRTY	XA_TAG_0
-+#define PAGECACHE_TAG_WRITEBACK	XA_TAG_1
-+#define PAGECACHE_TAG_TOWRITE	XA_TAG_2
-+
- /*
-- * Radix-tree tags, for tagging dirty and writeback pages within the pagecache
-- * radix trees
-+ * Returns true if any of the pages in the mapping are marked with the tag.
-  */
--#define PAGECACHE_TAG_DIRTY	0
--#define PAGECACHE_TAG_WRITEBACK	1
--#define PAGECACHE_TAG_TOWRITE	2
--
--int mapping_tagged(struct address_space *mapping, int tag);
-+static inline bool mapping_tagged(struct address_space *mapping, xa_tag_t tag)
-+{
-+	return xa_tagged(&mapping->i_pages, tag);
-+}
- 
- static inline void i_mmap_lock_write(struct address_space *mapping)
- {
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index 337c6afb3345..0e502bd13ad9 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -2098,34 +2098,25 @@ void __init page_writeback_init(void)
-  * dirty pages in the file (thus it is important for this function to be quick
-  * so that it can tag pages faster than a dirtying process can create them).
-  */
--/*
-- * We tag pages in batches of WRITEBACK_TAG_BATCH to reduce the i_pages lock
-- * latency.
-- */
- void tag_pages_for_writeback(struct address_space *mapping,
- 			     pgoff_t start, pgoff_t end)
- {
--#define WRITEBACK_TAG_BATCH 4096
--	unsigned long tagged = 0;
--	struct radix_tree_iter iter;
--	void **slot;
-+	XA_STATE(xas, &mapping->i_pages, start);
-+	unsigned int tagged = 0;
-+	void *page;
- 
--	xa_lock_irq(&mapping->i_pages);
--	radix_tree_for_each_tagged(slot, &mapping->i_pages, &iter, start,
--							PAGECACHE_TAG_DIRTY) {
--		if (iter.index > end)
--			break;
--		radix_tree_iter_tag_set(&mapping->i_pages, &iter,
--							PAGECACHE_TAG_TOWRITE);
--		tagged++;
--		if ((tagged % WRITEBACK_TAG_BATCH) != 0)
-+	xas_lock_irq(&xas);
-+	xas_for_each_tagged(&xas, page, end, PAGECACHE_TAG_DIRTY) {
-+		xas_set_tag(&xas, PAGECACHE_TAG_TOWRITE);
-+		if (++tagged % XA_CHECK_SCHED)
- 			continue;
--		slot = radix_tree_iter_resume(slot, &iter);
--		xa_unlock_irq(&mapping->i_pages);
-+
-+		xas_pause(&xas);
-+		xas_unlock_irq(&xas);
- 		cond_resched();
--		xa_lock_irq(&mapping->i_pages);
-+		xas_lock_irq(&xas);
- 	}
--	xa_unlock_irq(&mapping->i_pages);
-+	xas_unlock_irq(&xas);
- }
- EXPORT_SYMBOL(tag_pages_for_writeback);
- 
-@@ -2165,7 +2156,7 @@ int write_cache_pages(struct address_space *mapping,
- 	pgoff_t done_index;
- 	int cycled;
- 	int range_whole = 0;
--	int tag;
-+	xa_tag_t tag;
- 
- 	pagevec_init(&pvec);
- 	if (wbc->range_cyclic) {
-@@ -2446,7 +2437,7 @@ void account_page_cleaned(struct page *page, struct address_space *mapping,
- 
- /*
-  * For address_spaces which do not use buffers.  Just tag the page as dirty in
-- * its radix tree.
-+ * the xarray.
-  *
-  * This is also used when a single buffer is being dirtied: we want to set the
-  * page dirty in that case, but not all the buffers.  This is a "bottom-up"
-@@ -2472,7 +2463,7 @@ int __set_page_dirty_nobuffers(struct page *page)
- 		BUG_ON(page_mapping(page) != mapping);
- 		WARN_ON_ONCE(!PagePrivate(page) && !PageUptodate(page));
- 		account_page_dirtied(page, mapping);
--		radix_tree_tag_set(&mapping->i_pages, page_index(page),
-+		__xa_set_tag(&mapping->i_pages, page_index(page),
- 				   PAGECACHE_TAG_DIRTY);
- 		xa_unlock_irqrestore(&mapping->i_pages, flags);
- 		unlock_page_memcg(page);
-@@ -2635,13 +2626,13 @@ EXPORT_SYMBOL(__cancel_dirty_page);
-  * Returns true if the page was previously dirty.
-  *
-  * This is for preparing to put the page under writeout.  We leave the page
-- * tagged as dirty in the radix tree so that a concurrent write-for-sync
-+ * tagged as dirty in the xarray so that a concurrent write-for-sync
-  * can discover it via a PAGECACHE_TAG_DIRTY walk.  The ->writepage
-  * implementation will run either set_page_writeback() or set_page_dirty(),
-- * at which stage we bring the page's dirty flag and radix-tree dirty tag
-+ * at which stage we bring the page's dirty flag and xarray dirty tag
-  * back into sync.
-  *
-- * This incoherency between the page's dirty flag and radix-tree tag is
-+ * This incoherency between the page's dirty flag and xarray tag is
-  * unfortunate, but it only exists while the page is locked.
-  */
- int clear_page_dirty_for_io(struct page *page)
-@@ -2722,7 +2713,7 @@ int test_clear_page_writeback(struct page *page)
- 		xa_lock_irqsave(&mapping->i_pages, flags);
- 		ret = TestClearPageWriteback(page);
- 		if (ret) {
--			radix_tree_tag_clear(&mapping->i_pages, page_index(page),
-+			__xa_clear_tag(&mapping->i_pages, page_index(page),
- 						PAGECACHE_TAG_WRITEBACK);
- 			if (bdi_cap_account_writeback(bdi)) {
- 				struct bdi_writeback *wb = inode_to_wb(inode);
-@@ -2762,11 +2753,13 @@ int __test_set_page_writeback(struct page *page, bool keep_write)
- 
- 	lock_page_memcg(page);
- 	if (mapping && mapping_use_writeback_tags(mapping)) {
-+		XA_STATE(xas, &mapping->i_pages, page_index(page));
- 		struct inode *inode = mapping->host;
- 		struct backing_dev_info *bdi = inode_to_bdi(inode);
- 		unsigned long flags;
- 
--		xa_lock_irqsave(&mapping->i_pages, flags);
-+		xas_lock_irqsave(&xas, flags);
-+		xas_load(&xas);
- 		ret = TestSetPageWriteback(page);
- 		if (!ret) {
- 			bool on_wblist;
-@@ -2774,8 +2767,7 @@ int __test_set_page_writeback(struct page *page, bool keep_write)
- 			on_wblist = mapping_tagged(mapping,
- 						   PAGECACHE_TAG_WRITEBACK);
- 
--			radix_tree_tag_set(&mapping->i_pages, page_index(page),
--						PAGECACHE_TAG_WRITEBACK);
-+			xas_set_tag(&xas, PAGECACHE_TAG_WRITEBACK);
- 			if (bdi_cap_account_writeback(bdi))
- 				inc_wb_stat(inode_to_wb(inode), WB_WRITEBACK);
- 
-@@ -2788,12 +2780,10 @@ int __test_set_page_writeback(struct page *page, bool keep_write)
- 				sb_mark_inode_writeback(mapping->host);
- 		}
- 		if (!PageDirty(page))
--			radix_tree_tag_clear(&mapping->i_pages, page_index(page),
--						PAGECACHE_TAG_DIRTY);
-+			xas_clear_tag(&xas, PAGECACHE_TAG_DIRTY);
- 		if (!keep_write)
--			radix_tree_tag_clear(&mapping->i_pages, page_index(page),
--						PAGECACHE_TAG_TOWRITE);
--		xa_unlock_irqrestore(&mapping->i_pages, flags);
-+			xas_clear_tag(&xas, PAGECACHE_TAG_TOWRITE);
-+		xas_unlock_irqrestore(&xas, flags);
- 	} else {
- 		ret = TestSetPageWriteback(page);
- 	}
-@@ -2807,16 +2797,6 @@ int __test_set_page_writeback(struct page *page, bool keep_write)
- }
- EXPORT_SYMBOL(__test_set_page_writeback);
- 
--/*
-- * Return true if any of the pages in the mapping are marked with the
-- * passed tag.
-- */
--int mapping_tagged(struct address_space *mapping, int tag)
--{
--	return radix_tree_tagged(&mapping->i_pages, tag);
--}
--EXPORT_SYMBOL(mapping_tagged);
--
- /**
-  * wait_for_stable_page() - wait for writeback to finish, if necessary.
-  * @page:	The page to wait on.
--- 
-2.17.1
+and similar for 64 bit but with cntlzd.
+
+	Gabriel
+
+
+> +	addi	r3, r3, 3
+> +	blr
+> +22:	subf	r3, r3, r10
+> +	addi	r3, r3, 2
+> +	blr
+> +21:	subf	r3, r3, r10
+> +	addi	r3, r3, 1
+> +	blr
+> +19:	addi	r10, r10, (SZL - 1)
+> +20:	subf	r3, r3, r10
+> +	blr
+> +
+> +1:	lbz	r9, SZL(r10)
+> +	addi	r10, r10, 1
+> +	cmpwi	cr1, r9, 0
+> +	andi.	r9, r10, (SZL - 1)
+> +	beq	cr1, 19b
+> +	bne	1b
+> +	b	2b
+> +EXPORT_SYMBOL(strlen)
+> -- 
+> 2.13.3
+> 
