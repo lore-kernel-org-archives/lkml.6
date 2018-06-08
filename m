@@ -1,274 +1,284 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id YodmIeU9GVs4RgAAmS7hNA
-	; Thu, 07 Jun 2018 14:17:24 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Sdz+I6/DGlsHJQAAmS7hNA
+	; Fri, 08 Jun 2018 17:59:14 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id E72D4608B8; Thu,  7 Jun 2018 14:17:23 +0000 (UTC)
+	id 85F88607E7; Fri,  8 Jun 2018 17:59:14 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DKRRSRAv"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 2FDB56063F;
-	Thu,  7 Jun 2018 14:17:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2FDB56063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 937BC601B4;
+	Fri,  8 Jun 2018 17:59:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 937BC601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933245AbeFGOQR (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:16:17 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39597 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753535AbeFGOJP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:09:15 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbF-0005Zm-Q6; Thu, 07 Jun 2018 15:09:13 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbC-0003F7-Nj; Thu, 07 Jun 2018 15:09:10 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        id S1752754AbeFHR7L (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 13:59:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36694 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751244AbeFHR7J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 13:59:09 -0400
+Received: from sstabellini-thinkpad-x260.xlnx.xilinx.com (unknown [149.199.62.254])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D847E20874;
+        Fri,  8 Jun 2018 17:59:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528480749;
+        bh=qGbgms8fdPViuHBi71QQKaQL9lx3DJ0zkRAjD0MjZSI=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=DKRRSRAvK8a00HHimjPs5r+Px6IMWRbLx5Zylg6naV3nuvatUc7W1T+NbX/qWc6LD
+         NAlwqbjneo4/lHKOFzEs5Ua1PIO7llv5jQ6SuBtiM/IluJSFFCQdFk6bAMFYt+Bp5l
+         dzsfC6uH/NjUwG4On669OMU+hU+Zdsu+IJKIDJZc=
+Date: Fri, 8 Jun 2018 10:59:07 -0700 (PDT)
+From: Stefano Stabellini <sstabellini@kernel.org>
+X-X-Sender: sstabellini@sstabellini-ThinkPad-X260
+To: Oleksandr Andrushchenko <andr2000@gmail.com>
+cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        jgross@suse.com, konrad.wilk@oracle.com,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        daniel.vetter@intel.com, matthew.d.roper@intel.com,
+        dongwon.kim@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+        julien.grall@arm.com
+Subject: Re: [Xen-devel] [PATCH v2 5/9] xen/gntdev: Allow mappings for DMA
+ buffers
+In-Reply-To: <4be24882-185d-01e3-6aa1-751e341433c7@gmail.com>
+Message-ID: <alpine.DEB.2.10.1806081025030.14699@sstabellini-ThinkPad-X260>
+References: <20180601114132.22596-1-andr2000@gmail.com> <20180601114132.22596-6-andr2000@gmail.com> <64facf05-0a51-c3d9-9d3b-780893248628@oracle.com> <84217eac-b83b-710f-39ab-c93cad65bf9a@gmail.com> <a172746d-7a97-159f-71a7-511b2d239089@oracle.com>
+ <30fa03c0-1b75-c0b1-b14f-8b52ea584e20@gmail.com> <78dc2fc4-cdac-05b7-2c34-22b69e7e009c@oracle.com> <4be24882-185d-01e3-6aa1-751e341433c7@gmail.com>
+User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
-        "Sabrina Dubroca" <sd@queasysnail.net>,
-        "Stefano Brivio" <sbrivio@redhat.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.381024515@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 353/410] ipv4: lock mtu in fnhe when received PMTU <
- net.ipv4.route.min_pmtu
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: MULTIPART/MIXED; BOUNDARY="8323329-1627656648-1528478825=:14699"
+Content-ID: <alpine.DEB.2.10.1806081027100.14699@sstabellini-ThinkPad-X260>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-------------------
+--8323329-1627656648-1528478825=:14699
+Content-Type: TEXT/PLAIN; CHARSET=UTF-8
+Content-Transfer-Encoding: 8BIT
+Content-ID: <alpine.DEB.2.10.1806081027101.14699@sstabellini-ThinkPad-X260>
 
-From: Sabrina Dubroca <sd@queasysnail.net>
+On Fri, 8 Jun 2018, Oleksandr Andrushchenko wrote:
+> On 06/08/2018 12:46 AM, Boris Ostrovsky wrote:
+> > (Stefano, question for you at the end)
+> > 
+> > On 06/07/2018 02:39 AM, Oleksandr Andrushchenko wrote:
+> > > On 06/07/2018 12:19 AM, Boris Ostrovsky wrote:
+> > > > On 06/06/2018 04:14 AM, Oleksandr Andrushchenko wrote:
+> > > > > On 06/04/2018 11:12 PM, Boris Ostrovsky wrote:
+> > > > > > On 06/01/2018 07:41 AM, Oleksandr Andrushchenko wrote:
+> > > > > > @@ -121,8 +146,27 @@ static void gntdev_free_map(struct grant_map
+> > > > > > *map)
+> > > > > >         if (map == NULL)
+> > > > > >             return;
+> > > > > >     +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
+> > > *Option 1: kfree(map->frames);*
+> > > > > > +    if (map->dma_vaddr) {
+> > > > > > +        struct gnttab_dma_alloc_args args;
+> > > > > > +
+> > > > > > +        args.dev = map->dma_dev;
+> > > > > > +        args.coherent = map->dma_flags & GNTDEV_DMA_FLAG_COHERENT;
+> > > > > > +        args.nr_pages = map->count;
+> > > > > > +        args.pages = map->pages;
+> > > > > > +        args.frames = map->frames;
+> > > > > > +        args.vaddr = map->dma_vaddr;
+> > > > > > +        args.dev_bus_addr = map->dma_bus_addr;
+> > > > > > +
+> > > > > > +        gnttab_dma_free_pages(&args);
+> > > *Option 2: kfree(map->frames);*
+> > > > > > +    } else
+> > > > > > +#endif
+> > > > > >         if (map->pages)
+> > > > > >             gnttab_free_pages(map->count, map->pages);
+> > > > > > +
+> > > > > > +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
+> > > > > > +    kfree(map->frames);
+> > > > > > +#endif
+> > > > > > 
+> > > > > > Can this be done under if (map->dma_vaddr) ?
+> > > > > >     In other words, is it
+> > > > > > possible for dma_vaddr to be NULL and still have unallocated frames
+> > > > > > pointer?
+> > > > > It is possible to have vaddr == NULL and frames != NULL as we
+> > > > > allocate frames outside of gnttab_dma_alloc_pages which
+> > > > > may fail. Calling kfree on NULL pointer is safe,
+> > > > I am not questioning safety of the code, I would like avoid another
+> > > > ifdef.
+> > > Ah, I now understand, so you are asking if we can have
+> > > that kfree(map->frames); in the place *Option 2* I marked above.
+> > > Unfortunately no: map->frames is allocated before we try to
+> > > allocate DMA memory, e.g. before dma_vaddr is set:
+> > > [...]
+> > >          add->frames = kcalloc(count, sizeof(add->frames[0]),
+> > >                        GFP_KERNEL);
+> > >          if (!add->frames)
+> > >              goto err;
+> > > 
+> > > [...]
+> > >          if (gnttab_dma_alloc_pages(&args))
+> > >              goto err;
+> > > 
+> > >          add->dma_vaddr = args.vaddr;
+> > > [...]
+> > > err:
+> > >      gntdev_free_map(add);
+> > > 
+> > > So, it is possible to enter gntdev_free_map with
+> > > frames != NULL and dma_vaddr == NULL. Option 1 above cannot be used
+> > > as map->frames is needed for gnttab_dma_free_pages(&args);
+> > > and Option 2 cannot be used as frames != NULL and dma_vaddr == NULL.
+> > > Thus, I think that unfortunately we need that #ifdef.
+> > > Option 3 below can also be considered, but that seems to be not good
+> > > as we free resources in different places which looks inconsistent.
+> > 
+> > I was only thinking of option 2. But if it is possible to have frames !=
+> > NULL and dma_vaddr == NULL then perhaps we indeed will have to live with
+> > the extra ifdef.
+> ok
+> > 
+> > > Sorry if I'm still missing your point.
+> > > > > so
+> > > > > I see no reason to change this code.
+> > > > > > >         kfree(map->pages);
+> > > > > > >         kfree(map->grants);
+> > > > > > >         kfree(map->map_ops);
+> > > > > > > @@ -132,7 +176,8 @@ static void gntdev_free_map(struct grant_map
+> > > > > > > *map)
+> > > > > > >         kfree(map);
+> > > > > > >     }
+> > > > > > >     -static struct grant_map *gntdev_alloc_map(struct gntdev_priv
+> > > > > > > *priv, int count)
+> > > > > > > +static struct grant_map *gntdev_alloc_map(struct gntdev_priv
+> > > > > > > *priv,
+> > > > > > > int count,
+> > > > > > > +                      int dma_flags)
+> > > > > > >     {
+> > > > > > >         struct grant_map *add;
+> > > > > > >         int i;
+> > > > > > > @@ -155,6 +200,37 @@ static struct grant_map
+> > > > > > > *gntdev_alloc_map(struct gntdev_priv *priv, int count)
+> > > > > > >             NULL == add->pages)
+> > > > > > >             goto err;
+> > > > > > >     +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
+> > > > > > > +    add->dma_flags = dma_flags;
+> > > > > > > +
+> > > > > > > +    /*
+> > > > > > > +     * Check if this mapping is requested to be backed
+> > > > > > > +     * by a DMA buffer.
+> > > > > > > +     */
+> > > > > > > +    if (dma_flags & (GNTDEV_DMA_FLAG_WC |
+> > > > > > > GNTDEV_DMA_FLAG_COHERENT)) {
+> > > > > > > +        struct gnttab_dma_alloc_args args;
+> > > > > > > +
+> > > > > > > +        add->frames = kcalloc(count, sizeof(add->frames[0]),
+> > > > > > > +                      GFP_KERNEL);
+> > > > > > > +        if (!add->frames)
+> > > > > > > +            goto err;
+> > > > > > > +
+> > > > > > > +        /* Remember the device, so we can free DMA memory. */
+> > > > > > > +        add->dma_dev = priv->dma_dev;
+> > > > > > > +
+> > > > > > > +        args.dev = priv->dma_dev;
+> > > > > > > +        args.coherent = dma_flags & GNTDEV_DMA_FLAG_COHERENT;
+> > > > > > > +        args.nr_pages = count;
+> > > > > > > +        args.pages = add->pages;
+> > > > > > > +        args.frames = add->frames;
+> > > > > > > +
+> > > > > > > +        if (gnttab_dma_alloc_pages(&args))
+> > > *Option 3: kfree(map->frames);*
+> > > > > > > +            goto err;
+> > > > > > > +
+> > > > > > > +        add->dma_vaddr = args.vaddr;
+> > > > > > > +        add->dma_bus_addr = args.dev_bus_addr;
+> > > > > > > +    } else
+> > > > > > > +#endif
+> > > > > > >         if (gnttab_alloc_pages(count, add->pages))
+> > > > > > >             goto err;
+> > > > > > >     @@ -325,6 +401,14 @@ static int map_grant_pages(struct
+> > > > > > > grant_map
+> > > > > > > *map)
+> > > > > > >             map->unmap_ops[i].handle = map->map_ops[i].handle;
+> > > > > > >             if (use_ptemod)
+> > > > > > >                 map->kunmap_ops[i].handle =
+> > > > > > > map->kmap_ops[i].handle;
+> > > > > > > +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
+> > > > > > > +        else if (map->dma_vaddr) {
+> > > > > > > +            unsigned long mfn;
+> > > > > > > +
+> > > > > > > +            mfn = __pfn_to_mfn(page_to_pfn(map->pages[i]));
+> > > > > > Not pfn_to_mfn()?
+> > > > > I'd love to, but pfn_to_mfn is only defined for x86, not ARM: [1]
+> > > > > and [2]
+> > > > > Thus,
+> > > > > 
+> > > > > drivers/xen/gntdev.c:408:10: error: implicit declaration of function
+> > > > > ‘pfn_to_mfn’ [-Werror=implicit-function-declaration]
+> > > > >       mfn = pfn_to_mfn(page_to_pfn(map->pages[i]));
+> > > > > 
+> > > > > So, I'll keep __pfn_to_mfn
+> > > > How will this work on non-PV x86?
+> > > So, you mean I need:
+> > > #ifdef CONFIG_X86
+> > > mfn = pfn_to_mfn(page_to_pfn(map->pages[i]));
+> > > #else
+> > > mfn = __pfn_to_mfn(page_to_pfn(map->pages[i]));
+> > > #endif
+> > > 
+> > I'd rather fix it in ARM code. Stefano, why does ARM uses the
+> > underscored version?
+> Do you want me to add one more patch for ARM to wrap __pfn_to_mfn
+> with static inline for ARM? e.g.
+> static inline ...pfn_to_mfn(...)
+> {
+>     __pfn_to_mfn();
+> }
 
-commit d52e5a7e7ca49457dd31fc8b42fb7c0d58a31221 upstream.
 
-Prior to the rework of PMTU information storage in commit
-2c8cec5c10bc ("ipv4: Cache learned PMTU information in inetpeer."),
-when a PMTU event advertising a PMTU smaller than
-net.ipv4.route.min_pmtu was received, we would disable setting the DF
-flag on packets by locking the MTU metric, and set the PMTU to
-net.ipv4.route.min_pmtu.
+A Xen on ARM guest doesn't actually know the mfns behind its own
+pseudo-physical pages. This is why we stopped using pfn_to_mfn and
+started using pfn_to_bfn instead, which will generally return "pfn",
+unless the page is a foreign grant. See include/xen/arm/page.h.
+pfn_to_bfn was also introduced on x86. For example, see the usage of
+pfn_to_bfn in drivers/xen/swiotlb-xen.c. Otherwise, if you don't care
+about other mapped grants, you can just use pfn_to_gfn, that always
+returns pfn.
 
-Since then, we don't disable DF, and set PMTU to
-net.ipv4.route.min_pmtu, so the intermediate router that has this link
-with a small MTU will have to drop the packets.
 
-This patch reestablishes pre-2.6.39 behavior by splitting
-rtable->rt_pmtu into a bitfield with rt_mtu_locked and rt_pmtu.
-rt_mtu_locked indicates that we shouldn't set the DF bit on that path,
-and is checked in ip_dont_fragment().
+Also, for your information, we support different page granularities in
+Linux as a Xen guest, see the comment at include/xen/arm/page.h:
 
-One possible workaround is to set net.ipv4.route.min_pmtu to a value low
-enough to accommodate the lowest MTU encountered.
+  /*
+   * The pseudo-physical frame (pfn) used in all the helpers is always based
+   * on Xen page granularity (i.e 4KB).
+   *
+   * A Linux page may be split across multiple non-contiguous Xen page so we
+   * have to keep track with frame based on 4KB page granularity.
+   *
+   * PV drivers should never make a direct usage of those helpers (particularly
+   * pfn_to_gfn and gfn_to_pfn).
+   */
 
-Fixes: 2c8cec5c10bc ("ipv4: Cache learned PMTU information in inetpeer.")
-Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
-Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[bwh: Backported to 3.16: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- include/net/ip.h        | 11 +++++++++--
- include/net/ip_fib.h    |  1 +
- include/net/route.h     |  3 ++-
- net/ipv4/route.c        | 26 +++++++++++++++++++-------
- net/ipv4/xfrm4_policy.c |  1 +
- 5 files changed, 32 insertions(+), 10 deletions(-)
-
---- a/include/net/ip.h
-+++ b/include/net/ip.h
-@@ -263,12 +263,19 @@ int ip_decrease_ttl(struct iphdr *iph)
- 	return --iph->ttl;
- }
- 
-+static inline int ip_mtu_locked(const struct dst_entry *dst)
-+{
-+	const struct rtable *rt = (const struct rtable *)dst;
-+
-+	return rt->rt_mtu_locked || dst_metric_locked(dst, RTAX_MTU);
-+}
-+
- static inline
- int ip_dont_fragment(struct sock *sk, struct dst_entry *dst)
- {
- 	return  inet_sk(sk)->pmtudisc == IP_PMTUDISC_DO ||
- 		(inet_sk(sk)->pmtudisc == IP_PMTUDISC_WANT &&
--		 !(dst_metric_locked(dst, RTAX_MTU)));
-+		 !ip_mtu_locked(dst));
- }
- 
- static inline bool ip_sk_accept_pmtu(const struct sock *sk)
-@@ -294,7 +301,7 @@ static inline unsigned int ip_dst_mtu_ma
- 	struct net *net = dev_net(dst->dev);
- 
- 	if (net->ipv4.sysctl_ip_fwd_use_pmtu ||
--	    dst_metric_locked(dst, RTAX_MTU) ||
-+	    ip_mtu_locked(dst) ||
- 	    !forwarding)
- 		return dst_mtu(dst);
- 
---- a/include/net/ip_fib.h
-+++ b/include/net/ip_fib.h
-@@ -54,6 +54,7 @@ struct fib_nh_exception {
- 	int				fnhe_genid;
- 	__be32				fnhe_daddr;
- 	u32				fnhe_pmtu;
-+	bool				fnhe_mtu_locked;
- 	__be32				fnhe_gw;
- 	unsigned long			fnhe_expires;
- 	struct rtable __rcu		*fnhe_rth_input;
---- a/include/net/route.h
-+++ b/include/net/route.h
-@@ -61,7 +61,8 @@ struct rtable {
- 	__be32			rt_gateway;
- 
- 	/* Miscellaneous cached information */
--	u32			rt_pmtu;
-+	u32			rt_mtu_locked:1,
-+				rt_pmtu:31;
- 
- 	struct list_head	rt_uncached;
- };
---- a/net/ipv4/route.c
-+++ b/net/ipv4/route.c
-@@ -608,6 +608,7 @@ static inline u32 fnhe_hashfun(__be32 da
- static void fill_route_from_fnhe(struct rtable *rt, struct fib_nh_exception *fnhe)
- {
- 	rt->rt_pmtu = fnhe->fnhe_pmtu;
-+	rt->rt_mtu_locked = fnhe->fnhe_mtu_locked;
- 	rt->dst.expires = fnhe->fnhe_expires;
- 
- 	if (fnhe->fnhe_gw) {
-@@ -618,7 +619,7 @@ static void fill_route_from_fnhe(struct
- }
- 
- static void update_or_create_fnhe(struct fib_nh *nh, __be32 daddr, __be32 gw,
--				  u32 pmtu, unsigned long expires)
-+				  u32 pmtu, bool lock, unsigned long expires)
- {
- 	struct fnhe_hash_bucket *hash;
- 	struct fib_nh_exception *fnhe;
-@@ -655,8 +656,10 @@ static void update_or_create_fnhe(struct
- 			fnhe->fnhe_genid = genid;
- 		if (gw)
- 			fnhe->fnhe_gw = gw;
--		if (pmtu)
-+		if (pmtu) {
- 			fnhe->fnhe_pmtu = pmtu;
-+			fnhe->fnhe_mtu_locked = lock;
-+		}
- 		fnhe->fnhe_expires = max(1UL, expires);
- 		/* Update all cached dsts too */
- 		rt = rcu_dereference(fnhe->fnhe_rth_input);
-@@ -680,6 +683,7 @@ static void update_or_create_fnhe(struct
- 		fnhe->fnhe_daddr = daddr;
- 		fnhe->fnhe_gw = gw;
- 		fnhe->fnhe_pmtu = pmtu;
-+		fnhe->fnhe_mtu_locked = lock;
- 		fnhe->fnhe_expires = expires;
- 
- 		/* Exception created; mark the cached routes for the nexthop
-@@ -761,7 +765,8 @@ static void __ip_do_redirect(struct rtab
- 				struct fib_nh *nh = &FIB_RES_NH(res);
- 
- 				update_or_create_fnhe(nh, fl4->daddr, new_gw,
--						0, jiffies + ip_rt_gc_timeout);
-+						0, false,
-+						jiffies + ip_rt_gc_timeout);
- 			}
- 			if (kill_route)
- 				rt->dst.obsolete = DST_OBSOLETE_KILL;
-@@ -970,15 +975,18 @@ static void __ip_rt_update_pmtu(struct r
- {
- 	struct dst_entry *dst = &rt->dst;
- 	struct fib_result res;
-+	bool lock = false;
- 
--	if (dst_metric_locked(dst, RTAX_MTU))
-+	if (ip_mtu_locked(dst))
- 		return;
- 
- 	if (dst->dev->mtu < mtu)
- 		return;
- 
--	if (mtu < ip_rt_min_pmtu)
-+	if (mtu < ip_rt_min_pmtu) {
-+		lock = true;
- 		mtu = ip_rt_min_pmtu;
-+	}
- 
- 	if (rt->rt_pmtu == mtu &&
- 	    time_before(jiffies, dst->expires - ip_rt_mtu_expires / 2))
-@@ -988,7 +996,7 @@ static void __ip_rt_update_pmtu(struct r
- 	if (fib_lookup(dev_net(dst->dev), fl4, &res) == 0) {
- 		struct fib_nh *nh = &FIB_RES_NH(res);
- 
--		update_or_create_fnhe(nh, fl4->daddr, 0, mtu,
-+		update_or_create_fnhe(nh, fl4->daddr, 0, mtu, lock,
- 				      jiffies + ip_rt_mtu_expires);
- 	}
- 	rcu_read_unlock();
-@@ -1243,7 +1251,7 @@ static unsigned int ipv4_mtu(const struc
- 
- 	mtu = dst->dev->mtu;
- 
--	if (unlikely(dst_metric_locked(dst, RTAX_MTU))) {
-+	if (unlikely(ip_mtu_locked(dst))) {
- 		if (rt->rt_uses_gateway && mtu > 576)
- 			mtu = 576;
- 	}
-@@ -1452,6 +1460,7 @@ static struct rtable *rt_dst_alloc(struc
- 		rt->rt_is_input = 0;
- 		rt->rt_iif = 0;
- 		rt->rt_pmtu = 0;
-+		rt->rt_mtu_locked = 0;
- 		rt->rt_gateway = 0;
- 		rt->rt_uses_gateway = 0;
- 		INIT_LIST_HEAD(&rt->rt_uncached);
-@@ -2308,6 +2317,7 @@ struct dst_entry *ipv4_blackhole_route(s
- 		rt->rt_is_input = ort->rt_is_input;
- 		rt->rt_iif = ort->rt_iif;
- 		rt->rt_pmtu = ort->rt_pmtu;
-+		rt->rt_mtu_locked = ort->rt_mtu_locked;
- 
- 		rt->rt_genid = rt_genid_ipv4(net);
- 		rt->rt_flags = ort->rt_flags;
-@@ -2411,6 +2421,8 @@ static int rt_fill_info(struct net *net,
- 	memcpy(metrics, dst_metrics_ptr(&rt->dst), sizeof(metrics));
- 	if (rt->rt_pmtu && expires)
- 		metrics[RTAX_MTU - 1] = rt->rt_pmtu;
-+	if (rt->rt_mtu_locked && expires)
-+		metrics[RTAX_LOCK - 1] |= BIT(RTAX_MTU);
- 	if (rtnetlink_put_metrics(skb, metrics) < 0)
- 		goto nla_put_failure;
- 
---- a/net/ipv4/xfrm4_policy.c
-+++ b/net/ipv4/xfrm4_policy.c
-@@ -93,6 +93,7 @@ static int xfrm4_fill_dst(struct xfrm_ds
- 	xdst->u.rt.rt_gateway = rt->rt_gateway;
- 	xdst->u.rt.rt_uses_gateway = rt->rt_uses_gateway;
- 	xdst->u.rt.rt_pmtu = rt->rt_pmtu;
-+	xdst->u.rt.rt_mtu_locked = rt->rt_mtu_locked;
- 	INIT_LIST_HEAD(&xdst->u.rt.rt_uncached);
- 
- 	return 0;
+A Linux page could be 64K, but a Xen page is always 4K. A granted page
+is also 4K. We have helpers to take into account the offsets to map
+multiple Xen grants in a single Linux page, see for example
+drivers/xen/grant-table.c:gnttab_foreach_grant. Most PV drivers have
+been converted to be able to work with 64K pages correctly, but if I
+remember correctly gntdev.c is the only remaining driver that doesn't
+support 64K pages yet, so you don't have to deal with it if you don't
+want to.
+--8323329-1627656648-1528478825=:14699--
