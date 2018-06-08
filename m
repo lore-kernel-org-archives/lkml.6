@@ -1,151 +1,160 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id YjGSEkPzG1vfYwAAmS7hNA
-	; Sat, 09 Jun 2018 15:33:23 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id qbk2FnwEGlv4egAAmS7hNA
+	; Fri, 08 Jun 2018 04:22:20 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 2EE59608D4; Sat,  9 Jun 2018 15:33:23 +0000 (UTC)
+	id 3B7FB606FA; Fri,  8 Jun 2018 04:22:20 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ua8WWRIt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X8VxCiK0"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 7E556608BF;
-	Sat,  9 Jun 2018 15:33:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7E556608BF
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id A30D260275;
+	Fri,  8 Jun 2018 04:22:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A30D260275
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932667AbeFIPdT (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 11:33:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35618 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932599AbeFIPdP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 11:33:15 -0400
-Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 80056204EC;
-        Sat,  9 Jun 2018 15:33:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528558395;
-        bh=/DPhUmxOq7335QDeTWuBwSSf/MfEyzjBMaDEtU67/J8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ua8WWRItOSKQvTFdWI5UYUyMNkpyW77wN901PqcSZY1Qs9zCtr5jp8c/WdlblKkRK
-         HW9XEammn0cJ3o9dtO0JY/wGpu0FB/OwBk6kScSNQYmNHHkmGBac+pgPj/pJK+HPTk
-         ng1m+9eu7x7G+S41UPQAbFIHdwfQy5aLz4K2I8qA=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 20/48] net: ethernet: davinci_emac: fix error handling in probe()
-Date: Sat,  9 Jun 2018 17:29:32 +0200
-Message-Id: <20180609145948.966931231@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
-References: <20180609145947.679103414@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1751143AbeFHEWS (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 00:22:18 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:39416 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750837AbeFHEWP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 00:22:15 -0400
+Received: by mail-oi0-f66.google.com with SMTP id t22-v6so10676434oih.6;
+        Thu, 07 Jun 2018 21:22:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=k5mD3v2tbRF39pHp31qH5+ZJN6X27TzDlTaHW4MA27E=;
+        b=X8VxCiK0wD710ngM4miuPE8oC7erX0+/auyhTud8wMhN08vHj0WKADV14OqqRWDN3x
+         4tQXfOMrqBzYEwrQqtf1gzEQzOjEcnDRxIDKTR4L4cPExOtLKIjblwa3NKSEUU5XuGck
+         TgJoV6xMSNK/iqKr1LB2jTKEVIIspvanR5joP4taZEoXg4AUeU4dxrF8m1JqHh6YdVoC
+         fzbVlKOCcK0zQ52bSzDg/sTmGVzP1N5rOKvnruBjhDMozEHzc+Gg9bcPSj7RPjOnPGTy
+         guukJkaopUZ4a52wgD9oazhgUXrCDEeisMNVIVcDSNjq9/3prSJKy4BEPI2mHG+ssSPf
+         eMFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=k5mD3v2tbRF39pHp31qH5+ZJN6X27TzDlTaHW4MA27E=;
+        b=DfJwI79xK8L0LRCsighaYyvc7EQtD12CVwk8+v493WxUfKkZSneHBksKgLo9xOcGWm
+         sYzkuXl3qQjCI/SBdqzn5Wm1Ty3KnnGptDNT4LPXvUBzeZyHW+GykuqzPeuOnkfYeelq
+         Nz+XutcTUVYJ6ZlGb8x+5dxbIff7RbS8cj2zK9vbKCzF6CmtWqFYT4P8KAEDJWfX/AUE
+         kd4LgT0xFWekxGxHYQ+XnKpb5HYvGRQKnDW05z7K8iT8TK0hk5za11WhOWWE8cI3H9PD
+         EHQobIYf3bLFoVjbcTTMD9XwmKSgKJL1hpC9tsG6tumo5B3ac2ngx1vyy/7fHbzbLjNn
+         fOlA==
+X-Gm-Message-State: APt69E2b/fl5c0aeW8UUAmYLcIvsk5SkmXc6LiIowqjOHrY/0aiDUbHs
+        a5SMLo/FrAItFvkrahgD62PVR3pmwNtdw1Ys9Jg=
+X-Google-Smtp-Source: ADUXVKLSUkeQcsoGeBcO7rE3+l4PKlv+gq+/CocAqah6DzInfgYgGd18QabflDrCMpbsM5v6/chbYjOC0CrcqOwvmW4=
+X-Received: by 2002:aca:df54:: with SMTP id w81-v6mr2544697oig.104.1528431734163;
+ Thu, 07 Jun 2018 21:22:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Received: by 2002:a4a:7019:0:0:0:0:0 with HTTP; Thu, 7 Jun 2018 21:22:13 -0700 (PDT)
+In-Reply-To: <CAMe9rOr49V8rqRa_KVsw61PWd+crkQvPDgPKtvowazjmsfgWWQ@mail.gmail.com>
+References: <20180607143807.3611-1-yu-cheng.yu@intel.com> <20180607143807.3611-7-yu-cheng.yu@intel.com>
+ <CALCETrU6axo158CiSCRRkC4GC5hib9hypC98t7LLjA3gDaacsw@mail.gmail.com>
+ <1528403417.5265.35.camel@2b52.sc.intel.com> <CALCETrXz3WWgZwUXJsDTWvmqKUArQFuMH1xJdSLVKFpTysNWxg@mail.gmail.com>
+ <CAMe9rOr49V8rqRa_KVsw61PWd+crkQvPDgPKtvowazjmsfgWWQ@mail.gmail.com>
+From: "H.J. Lu" <hjl.tools@gmail.com>
+Date: Thu, 7 Jun 2018 21:22:13 -0700
+Message-ID: <CAMe9rOphjpPd3HnKAdU-RmG0RGj6c2oAbnq+C2Jd1srsqTA7=w@mail.gmail.com>
+Subject: Re: [PATCH 06/10] x86/cet: Add arch_prctl functions for shadow stack
+To: Andy Lutomirski <luto@kernel.org>
+Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        mike.kravetz@oracle.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+On Thu, Jun 7, 2018 at 3:02 PM, H.J. Lu <hjl.tools@gmail.com> wrote:
+> On Thu, Jun 7, 2018 at 2:01 PM, Andy Lutomirski <luto@kernel.org> wrote:
+>> On Thu, Jun 7, 2018 at 1:33 PM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+>>>
+>>> On Thu, 2018-06-07 at 11:48 -0700, Andy Lutomirski wrote:
+>>> > On Thu, Jun 7, 2018 at 7:41 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+>>> > >
+>>> > > The following operations are provided.
+>>> > >
+>>> > > ARCH_CET_STATUS:
+>>> > >         return the current CET status
+>>> > >
+>>> > > ARCH_CET_DISABLE:
+>>> > >         disable CET features
+>>> > >
+>>> > > ARCH_CET_LOCK:
+>>> > >         lock out CET features
+>>> > >
+>>> > > ARCH_CET_EXEC:
+>>> > >         set CET features for exec()
+>>> > >
+>>> > > ARCH_CET_ALLOC_SHSTK:
+>>> > >         allocate a new shadow stack
+>>> > >
+>>> > > ARCH_CET_PUSH_SHSTK:
+>>> > >         put a return address on shadow stack
+>>> > >
 
-------------------
+>> And why do we need ARCH_CET_EXEC?
+>>
+>> For background, I really really dislike adding new state that persists
+>> across exec().  It's nice to get as close to a clean slate as possible
+>> after exec() so that programs can run in a predictable environment.
+>> exec() is also a security boundary, and anything a task can do to
+>> affect itself after exec() needs to have its security implications
+>> considered very carefully.  (As a trivial example, you should not be
+>> able to use cetcmd ... sudo [malicious options here] to cause sudo to
+>> run with CET off and then try to exploit it via the malicious options.
+>>
+>> If a shutoff is needed for testing, how about teaching ld.so to parse
+>> LD_CET=no or similar and protect it the same way as LD_PRELOAD is
+>> protected.  Or just do LD_PRELOAD=/lib/libdoesntsupportcet.so.
+>>
+>
+> I will take a look.
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+We can use LD_CET to turn off CET.   Since most of legacy binaries
+are compatible with shadow stack,  ARCH_CET_EXEC can be used
+to turn on shadow stack on legacy binaries:
 
-[ Upstream commit 8005b09d99fac78e6f5fb9da30b5ae94840af03b ]
+[hjl@gnu-cet-1 glibc]$ readelf -n /bin/ls| head -10
 
-The current error handling code has an issue where it does:
+Displaying notes found in: .note.ABI-tag
+  Owner                 Data size Description
+  GNU                  0x00000010 NT_GNU_ABI_TAG (ABI version tag)
+    OS: Linux, ABI: 3.2.0
 
-	if (priv->txchan)
-		cpdma_chan_destroy(priv->txchan);
+Displaying notes found in: .note.gnu.property
+  Owner                 Data size Description
+  GNU                  0x00000020 NT_GNU_PROPERTY_TYPE_0
+      Properties: x86 ISA used:
+[hjl@gnu-cet-1 glibc]$ cetcmd --on -- /bin/ls /
+Segmentation fault
+[hjl@gnu-cet-1 glibc]$ cetcmd --on -f shstk -- /bin/ls /
+bin   dev  export  lib   libx32      media  mnt  opt root  sbin  sys  usr
+boot  etc  home    lib64  lost+found  misc   net  proc run   srv   tmp  var
+[hjl@gnu-cet-1 glibc]$ cetcmd --on -f ibt -- /bin/ls /
+Segmentation fault
+[hjl@gnu-cet-1 glibc]$
 
-The problem is that ->txchan is either valid or an error pointer (which
-would lead to an Oops).  I've changed it to use multiple error labels so
-that the test can be removed.
-
-Also there were some missing calls to netif_napi_del().
-
-Fixes: 3ef0fdb2342c ("net: davinci_emac: switch to new cpdma layer")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/ti/davinci_emac.c |   22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
-
---- a/drivers/net/ethernet/ti/davinci_emac.c
-+++ b/drivers/net/ethernet/ti/davinci_emac.c
-@@ -1873,7 +1873,7 @@ static int davinci_emac_probe(struct pla
- 	if (IS_ERR(priv->txchan)) {
- 		dev_err(&pdev->dev, "error initializing tx dma channel\n");
- 		rc = PTR_ERR(priv->txchan);
--		goto no_cpdma_chan;
-+		goto err_free_dma;
- 	}
- 
- 	priv->rxchan = cpdma_chan_create(priv->dma, EMAC_DEF_RX_CH,
-@@ -1881,14 +1881,14 @@ static int davinci_emac_probe(struct pla
- 	if (IS_ERR(priv->rxchan)) {
- 		dev_err(&pdev->dev, "error initializing rx dma channel\n");
- 		rc = PTR_ERR(priv->rxchan);
--		goto no_cpdma_chan;
-+		goto err_free_txchan;
- 	}
- 
- 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
- 	if (!res) {
- 		dev_err(&pdev->dev, "error getting irq res\n");
- 		rc = -ENOENT;
--		goto no_cpdma_chan;
-+		goto err_free_rxchan;
- 	}
- 	ndev->irq = res->start;
- 
-@@ -1914,7 +1914,7 @@ static int davinci_emac_probe(struct pla
- 		pm_runtime_put_noidle(&pdev->dev);
- 		dev_err(&pdev->dev, "%s: failed to get_sync(%d)\n",
- 			__func__, rc);
--		goto no_cpdma_chan;
-+		goto err_napi_del;
- 	}
- 
- 	/* register the network device */
-@@ -1924,7 +1924,7 @@ static int davinci_emac_probe(struct pla
- 		dev_err(&pdev->dev, "error in register_netdev\n");
- 		rc = -ENODEV;
- 		pm_runtime_put(&pdev->dev);
--		goto no_cpdma_chan;
-+		goto err_napi_del;
- 	}
- 
- 
-@@ -1937,11 +1937,13 @@ static int davinci_emac_probe(struct pla
- 
- 	return 0;
- 
--no_cpdma_chan:
--	if (priv->txchan)
--		cpdma_chan_destroy(priv->txchan);
--	if (priv->rxchan)
--		cpdma_chan_destroy(priv->rxchan);
-+err_napi_del:
-+	netif_napi_del(&priv->napi);
-+err_free_rxchan:
-+	cpdma_chan_destroy(priv->rxchan);
-+err_free_txchan:
-+	cpdma_chan_destroy(priv->txchan);
-+err_free_dma:
- 	cpdma_ctlr_destroy(priv->dma);
- no_pdata:
- 	if (of_phy_is_fixed_link(np))
+-- 
+H.J.
