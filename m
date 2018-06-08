@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id gEr0BVg4GVvpeQAAmS7hNA
-	; Thu, 07 Jun 2018 13:51:20 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 71RzKRY8GltJMgAAmS7hNA
+	; Fri, 08 Jun 2018 08:21:07 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id EFD2D607DC; Thu,  7 Jun 2018 13:51:19 +0000 (UTC)
+	id 303BF607E4; Fri,  8 Jun 2018 08:21:07 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="a+pNcpby"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="etDAjx/s"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
@@ -13,76 +13,116 @@ X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 6AB8D601D2;
-	Thu,  7 Jun 2018 13:51:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6AB8D601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 3577560590;
+	Fri,  8 Jun 2018 08:21:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3577560590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932748AbeFGNvQ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 09:51:16 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44120 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932246AbeFGNvP (ORCPT
+        id S1752981AbeFHIVD (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 04:21:03 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:45448 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752734AbeFHIU5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 09:51:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Gcz4oM2AIzL6vsSBSuwthc6IbQXyVtQE8mm5jijtF5M=; b=a+pNcpbyNoOOVrYS/5dBLFuE2
-        XuVWU9u9Yco5fC4UY23b3vifhhB1sonSPfP+ZUu781pWhS+6qaApeWgJcBSivcoPZ1OilOVSfStIk
-        +HTTF6sot7iG3iEBqyyG6Lj5UmvPbELjKBFOCPYmOJaOL6QIOZuxCRFxMQqgNzfUv2kKdjDrwTXja
-        GFHUy1PJSv4t1MBwRBNvtfj0uqr8uwVY/kYF5+p4+7g+IHlbFcPZ1mYglHyhbgHSkliSRnD5zFFb4
-        T9PGnM+9H95VOVtlTNguaAqG5kGgMZLdFuzitjZI80McNqX27n11YlcoGg8VDDn4pmcKIXUhMN2Sv
-        qhvhARhmg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fQvJi-0004i6-Ui; Thu, 07 Jun 2018 13:51:07 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id DE7A2201EA7B0; Thu,  7 Jun 2018 15:51:03 +0200 (CEST)
-Date: Thu, 7 Jun 2018 15:51:03 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Luwei Kang <luwei.kang@intel.com>, kvm@vger.kernel.org,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, chao.p.peng@linux.intel.com,
-        thomas.lendacky@amd.com, bp@suse.de, Kan.liang@intel.com,
-        Janakarajan.Natarajan@amd.com, dwmw@amazon.co.uk,
-        linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
-        kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
-        pbonzini@redhat.com, rkrcmar@redhat.com, david@redhat.com,
-        bsd@redhat.com, yu.c.zhang@linux.intel.com, joro@8bytes.org
-Subject: Re: [PATCH v9 04/12] perf/x86/intel/pt: add new capability for Intel
- PT
-Message-ID: <20180607135103.GN12198@hirez.programming.kicks-ass.net>
-References: <1526964735-16566-1-git-send-email-luwei.kang@intel.com>
- <1526964735-16566-5-git-send-email-luwei.kang@intel.com>
- <20180607134051.rwu5pqtz45cgq7ve@um.fi.intel.com>
+        Fri, 8 Jun 2018 04:20:57 -0400
+Received: by mail-ua0-f193.google.com with SMTP id k14-v6so8317508uao.12;
+        Fri, 08 Jun 2018 01:20:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=NWmvzHPjVAmhSPhpySA9HxGmxP0SkDV4oBWdkqOYiTQ=;
+        b=etDAjx/sQmpwA/3eVSOLe7t73qmFO1x8VW+j3CsBZBP5lVlfHLAuG3jcjK+sUlgxfJ
+         dPu4Kfd+r62dVKY8aIM6MGYh6w8HAHjYy8HY8bwKtAezYnHG50qBdAdxfZHjpoEfarg8
+         WQ1S9g4J44iA4zuweCdlT3KL+hKYM73AhqhRBql5KLuGaclC6bZkgtPpbDo8rvdyuQg9
+         AThOp4iBUneMHxtwz9dOb0HrsJvVQ8rjDiG583J+9IYkedExhcjCnNu+CIy5V4ZBzu4R
+         31HvUYZSyHvOKR+MuJrvMGn3poQwB9YkqYUtcpB7MTINPwfgLjU7gH7xCyljCZthq4l4
+         P2aA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=NWmvzHPjVAmhSPhpySA9HxGmxP0SkDV4oBWdkqOYiTQ=;
+        b=QWNNNtVCdip/rvn6BygSBsy40khpvr209+8kwQRICPwdCf8/N905W7QQ1BVUNE0A9d
+         mrUY4ySsARpKCID0g/Yy7Ff4t/qpcPAel+OOtF5vAsF6SMoQfqAITK5I8RNVzRWGzka7
+         ItTDHVrAawwuTR5UbrlBPOHxUW5QBcMtrB+AEoOytQ1dOUR+whpNnxFlerSGYutb/LAS
+         OdwWcu4ui3hUaSZ1+r7ent1h/kj9te+u3oTHwGlIdHptLznMuGBdEcQ2W+VeNR1b10tg
+         TNhZyVekAeIQ1cxTENJY8H9IvjEbyr+Osrpz4tjOnxIAaCt+Oth+dM8M+EL8znYwRKEn
+         cn6A==
+X-Gm-Message-State: APt69E0IxK5/Rnptxt6gxap6S301xZmhzIYq9Ktc+FdS0NiDLWcL+JSC
+        4X2L785a+O6aHTXv577asEiOPHGQo1dfuoQ6MWc=
+X-Google-Smtp-Source: ADUXVKIOrknkTN2ksupkLe+23JYEb8w890RGQn+eECvkEQEcyQ8s6zW+VuXyVr023ZduRlgOO2Wp4MRa1Bp9arDlPbU=
+X-Received: by 2002:ab0:1446:: with SMTP id c6-v6mr3519615uae.12.1528446056898;
+ Fri, 08 Jun 2018 01:20:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180607134051.rwu5pqtz45cgq7ve@um.fi.intel.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Received: by 2002:a67:8596:0:0:0:0:0 with HTTP; Fri, 8 Jun 2018 01:20:56 -0700 (PDT)
+In-Reply-To: <1528417303-14842-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1528417303-14842-1-git-send-email-yamada.masahiro@socionext.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 8 Jun 2018 10:20:56 +0200
+X-Google-Sender-Auth: TL4l73weN0xTJcJn741o8pQV8A4
+Message-ID: <CAMuHMdX7oyxQKyc-DTXKG+o0SA_eJhKEFznn3bPxD0Gi=sA01A@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: fix endless syncconfig in case arch Makefile sets CROSS_COMPILE
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-kbuild <linux-kbuild@vger.kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 07, 2018 at 04:40:51PM +0300, Alexander Shishkin wrote:
-> On Tue, May 22, 2018 at 12:52:07PM +0800, Luwei Kang wrote:
-> > CPUID(EAX=14H,ECX=0):EBX[bit 3] = 1 indicates support of
-> > output to Trace Transport subsystem.
-> > MSR IA32_RTIT_CTL.FabricEn[bit 6] is reserved if
-> > CPUID.(EAX=14H, ECX=0):ECX[bit 3] = 0.
-> 
-> This should instead say:
-> 
-> This adds support for "output to Trace Transport subsystem" capability
-> of Intel PT, as documented in IA SDM Chapter 36.x.y.z. It means that
-> PT can output its trace to an MMIO address range rather than system
-> memory buffer.
+Hi Yamada-san,
 
-The $subject also needs attention.
+On Fri, Jun 8, 2018 at 2:21 AM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> Commit 21c54b774744 ("kconfig: show compiler version text in the top
+> comment") was intended to detect the compiler upgrade, but Geert
+> reported a breakage on the m68k build.
+>
+> The compiler upgrade is detected by the change of the environment
+> variable, CC_VERSION_TEXT, which contains the first line of the output
+> from $(CC) --version.  Currently, this works well when CROSS_COMPILE
+> is given via the environment variable or the Make command line.
+>
+> However, some architectures such as m68k can specify CROSS_COMPILE
+> from arch/$(SRCARCH)/Makefile as well.  In this case, "make ARCH=m68k"
+> ends up with endless syncconfig loop.
+>
+>   $ make ARCH=m68k defconfig
+>   *** Default configuration is based on 'multi_defconfig'
+>   #
+>   # configuration written to .config
+>   #
+>   $ make ARCH=m68k
+>   scripts/kconfig/conf  --syncconfig Kconfig
+>   scripts/kconfig/conf  --syncconfig Kconfig
+>   scripts/kconfig/conf  --syncconfig Kconfig
+>   scripts/kconfig/conf  --syncconfig Kconfig
+
+[...]
+
+> Fixes: 21c54b774744 ("kconfig: show compiler version text in the top comment")
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+
+Thanks for fixing this quickly!
+
+Tested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
