@@ -1,233 +1,283 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 1qnINC93HlunKgAAmS7hNA
-	; Mon, 11 Jun 2018 13:22:22 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id vNJxEqzXGlv3SgAAmS7hNA
+	; Fri, 08 Jun 2018 19:23:24 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id BA3F8608CA; Mon, 11 Jun 2018 13:22:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-	s=default; t=1528723342;
-	bh=JnTUsLRNFprqvwe91aZukM3e7+DYHsFjHu36S77v9kg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=ehPkyp0gPC2uoe3y4QCJyziOUbmew707ZbDx0+GEl79G7jeumA3eUkJxuiJ3bDkau
-	 Hk7milCTc8pgMSGOY9dt2zDJnVuGwDll41zOF3CJgHLs2qbMRPoDfA6weyd4t4UJql
-	 YXVOoceTytOYOvRTjuiNH+jMjKhwOgm+kB+BxNvo=
+	id 2F931607DC; Fri,  8 Jun 2018 19:23:24 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="SvApyw3T"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 91F7B6090C;
-	Mon, 11 Jun 2018 13:22:19 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cblI8qeU";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FoeBJrMM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 91F7B6090C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 3F3E0605A5;
+	Fri,  8 Jun 2018 19:23:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3F3E0605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933310AbeFKNWQ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 09:22:16 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:35910 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932913AbeFKNWO (ORCPT
+        id S1752969AbeFHTXU (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 15:23:20 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57592 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752775AbeFHTXR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 09:22:14 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 076D7607E4; Mon, 11 Jun 2018 13:22:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528723334;
-        bh=JnTUsLRNFprqvwe91aZukM3e7+DYHsFjHu36S77v9kg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=cblI8qeUQrziLNPH1uoYNeZFt6M3bbKyakbq2NrSk8XmgbIRltsX8SyPPAiEIicqd
-         lOFmUGwitevblYrhWZo/3IgX3zDb5C5pb+srFtjRtzjIZMnOedJskM5jdG7hf6muio
-         YUvHxcyQzBzpxYXr+GVWQ6KLoRPWtdb76JFzDd0s=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 6885E60541;
-        Mon, 11 Jun 2018 13:22:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528723332;
-        bh=JnTUsLRNFprqvwe91aZukM3e7+DYHsFjHu36S77v9kg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=FoeBJrMMXPMarO8q5nja9qh91s/UOifkGGWLVTVSeyzsfJQnq88tyfMwrfSLSIecA
-         31ugUCStFMPbijK76KzMGZPK5xcA1cwTiDvUz5XGpsKWEhQi2B3jZpBLUg5CX6VxEe
-         80x2h/AgdW+yy5GzivF837DEQlpnuPYXhMS/Z8ko=
+        Fri, 8 Jun 2018 15:23:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Content-Type:MIME-Version:
+        Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=2so2QA0nacOOW1HlcNktgtB3gCSCLQsoIyNdd5888Bg=; b=SvApyw3T0rW+AK2TzCCW2EKgO
+        hDNgC4wUpPjNWG+5dlGJYPD/u+rpegEfs1Abu2sizqmJSSIHN2NswVKnGMnuPS5ibVViNk4oAm8Fb
+        2Kgk3Jup9Jl/0/dR320K1xVxQeo5F7zEGsCOy+2zIozJHZeFvlfkuUK+jnSIomXcg+wSI=;
+Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fRMyh-0004Uy-Fk; Fri, 08 Jun 2018 19:23:15 +0000
+Received: from broonie by debutante with local (Exim 4.91)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fRMyg-0004xw-CM; Fri, 08 Jun 2018 20:23:14 +0100
+Date: Fri, 8 Jun 2018 20:23:14 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, lgirdwood@gmail.com
+Subject: [GIT PULL] regulator updates for v4.18
+Message-ID: <20180608192314.GA8616@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Mon, 11 Jun 2018 18:52:12 +0530
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, Andy Gross <andy.gross@linaro.org>,
-        Archit Taneja <architt@codeaurora.org>
-Subject: Re: [PATCH v3 13/16] mtd: rawnand: qcom: minor code reorganization
- for bad block check
-In-Reply-To: <20180607145326.339170fd@xps13>
-References: <1527250904-21988-1-git-send-email-absahu@codeaurora.org>
- <1527250904-21988-14-git-send-email-absahu@codeaurora.org>
- <20180526104629.74315561@xps13>
- <90ae248edf8a06a1d35e2da458f75af5@codeaurora.org>
- <20180528090352.254022ed@xps13>
- <53caff8799d30b6a81ac10f63a7c56c4@codeaurora.org>
- <20180607145326.339170fd@xps13>
-Message-ID: <7179eb382dbd3d49e2066178914636fd@codeaurora.org>
-X-Sender: absahu@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="rwEMma7ioTxnRzrJ"
+Content-Disposition: inline
+X-Cookie: It is your destiny.
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-06-07 18:23, Miquel Raynal wrote:
-> Hi Abhishek,
-> 
-> On Mon, 28 May 2018 15:40:52 +0530, Abhishek Sahu
-> <absahu@codeaurora.org> wrote:
-> 
->> On 2018-05-28 12:33, Miquel Raynal wrote:
->> > Hi Abhishek,
->> > >> >>  /* implements ecc->read_page() */
->> >> >>  static int qcom_nandc_read_page(struct mtd_info *mtd, struct >> nand_chip *chip,
->> >> >>  				uint8_t *buf, int oob_required, int page)
->> >> >> @@ -2118,6 +2083,7 @@ static int qcom_nandc_block_bad(struct mtd_info >> *mtd, loff_t ofs)
->> >> >>  	struct nand_ecc_ctrl *ecc = &chip->ecc;
->> >> >>  	int page, ret, bbpos, bad = 0;
->> >> >>  	u32 flash_status;
->> >> >> +	u8 *bbm_bytes_buf = chip->data_buf;
->> >> >> >>  	page = (int)(ofs >> chip->page_shift) & chip->pagemask;
->> >> >> >> @@ -2128,11 +2094,31 @@ static int qcom_nandc_block_bad(struct >> mtd_info *mtd, loff_t ofs)
->> >> >>  	 * that contains the BBM
->> >> >>  	 */
->> >> >>  	host->use_ecc = false;
->> >> >> +	bbpos = mtd->writesize - host->cw_size * (ecc->steps - 1);
->> >> > > Are we sure there is no layout with only 1 step?
->> >> >>   All the layouts are such that, the BBM will come in
->> >>   first byte of spare area.
->> >> >>   For 4 bit ECC, the cw_size is 528 so for 2K page
->> >> >>    2048 - 528 * 3 = 464
->> > > My question was more about small page NANDs. But I suppose it works
->> > too if ecc->steps == 1.
->> >
->>   Correct Miquel.
->> 
 
+--rwEMma7ioTxnRzrJ
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->> >> >>   So for last CW, the 464 is BBM (i.e 2048th byte) in
->> >>   full page.
->> >> >> > >> >>  	clear_bam_transaction(nandc);
->> >> >> -	ret = copy_last_cw(host, page);
->> >> >> -	if (ret)
->> >> >> +	clear_read_regs(nandc);
->> >> >> +
->> >> >> +	set_address(host, host->cw_size * (ecc->steps - 1), page);
->> >> >> +	update_rw_regs(host, 1, true);
->> >> >> +
->> >> >> +	/*
->> >> >> +	 * The last codeword data will be copied from NAND device to NAND
->> >> >> +	 * controller internal HW buffer. Copy only required BBM size bytes
->> >> >> +	 * from this HW buffer to bbm_bytes_buf which is present at
->> >> >> +	 * bbpos offset.
->> >> >> +	 */
->> >> >> +	nandc_set_read_loc(nandc, 0, bbpos, host->bbm_size, 1);
->> >> >> +	config_nand_single_cw_page_read(nandc);
->> >> >> +	read_data_dma(nandc, FLASH_BUF_ACC + bbpos, bbm_bytes_buf,
->> >> >> +		      host->bbm_size, 0);
->> >> >> +
->> >> >> +	ret = submit_descs(nandc);
->> >> >> +	free_descs(nandc);
->> >> >> +	if (ret) {
->> >> >> +		dev_err(nandc->dev, "failed to copy bad block bytes\n");
->> >> >>  		goto err;
->> >> >> +	}
->> >> >> >>  	flash_status = le32_to_cpu(nandc->reg_read_buf[0]);
->> >> >> >> @@ -2141,12 +2127,10 @@ static int qcom_nandc_block_bad(struct >> mtd_info *mtd, loff_t ofs)
->> >> >>  		goto err;
->> >> >>  	}
->> >> >> >> -	bbpos = mtd->writesize - host->cw_size * (ecc->steps - 1);
->> >> >> -
->> >> >> -	bad = nandc->data_buffer[bbpos] != 0xff;
->> >> >> +	bad = bbm_bytes_buf[0] != 0xff;
->> >> > > This is suspect as it still points to the beginning of the data buffer.
->> >> > Can you please check you did not meant bbm_bytes_buf[bbpos]?
->> >> >
->> >>   The main thing here is
->> >>   nandc_set_read_loc(nandc, 0, bbpos, host->bbm_size, 1);
->> >> >>   After reading one complete CW from NAND, the data will be still
->> >>   in NAND HW buffer.
->> >> >>   The above register tells that we need to read data from
->> >>   bbpos of size host->bbm_size (which is 1 byte for 8 bus witdh
->> >>   and 2 byte for 16 bus width) in bbm_bytes_buf.
->> > > I see: idx 0 in bbm_bytes_buf is the data at offset bbpos. Then
->> > it's ok.
->> > >> >>   So bbm_bytes_buf[0] will contain the BBM first byte.
->> >>   and bbm_bytes_buf[1] will contain the BBM second byte.
->> >> >>   Regards,
->> >>   Abhishek
->> >> >> >> >>  	if (chip->options & NAND_BUSWIDTH_16)
->> >> >> -		bad = bad || (nandc->data_buffer[bbpos + 1] != 0xff);
->> >> >> +		bad = bad || (bbm_bytes_buf[1] != 0xff);
->> > > Sorry, my mistake, I did not see the above line.
->> > > However, technically, the BBM could be located in the first, second or
->> > last page of the block. You should check the three of them are 0xFF
->> > before declaring the block is not bad.
->> > > The more I look at the function, the more I wonder if you actually need
->> > it. Why does the generic nand_block_bad() implementation in the core
->> > do not fit?
->> 
->>   The BBM bytes can be accessed in raw mode only for QCOM NAND
->>   Contoller. We started with following patch for initial patches
->> 
->>   http://patchwork.ozlabs.org/patch/508565/
->> 
->>   I am also not very much sure, how can we go ahead now.
->>   Ideally we need to use generic function only which
->>   requires raw_read.
->> 
-> 
-> I see, thanks for pointing this thread.
-> 
-> Well for now then let's keep our driver-specific implementation.
-> 
-> I will just ask you to do a consistent check as requested above (you
-> can copy code from the core) and add a comment above this function
-> explaining why it is needed (what you just told me).
-> 
+The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
 
-  Hi Miquel,
+  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
 
-  I explored more regarding making custom bad block functions in this
-  thread and it looks like, we can move to generic block_bad function
-  by small changes in QCOM NAND driver
-  only. The main problem was, in read page with ECC, the bad block
-  byte was skipped.
+are available in the Git repository at:
 
-  But controller is copying the bad block bytes in another register
-  with following status bytes.
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tag=
+s/regulator-v4.18
 
-  BAD_BLOCK_STATUS : With every page read operation, when the controller
-  reads a page with a bad block, it writes the bad block status data into
-  this register.
+for you to fetch changes up to 13ed4964057e5ad183da9f7f8160841d261e9517:
 
-  We can update the BBM bytes at start of OOB data in read_oob function
-  with these status bytes. It will help in getting rid of driver-specific
-  implementation for chip->block_bad.
+  Merge branch 'regulator-4.17' into regulator-4.18 merge window (2018-06-0=
+8 16:27:56 +0100)
 
-  For chip->block_markbad, if we want to get rid of
-  driver-specific implementation then we can have
-  following logic
+----------------------------------------------------------------
+regulator: Updates for v4.18
 
-  in write_oob function check for bad block bytes in oob
-  and do the raw write for updating BBM bytes alone in
-  flash if BBM bytes are non 0xff.
+Quite a lot of core work this time around, though not 100% successful.
 
-  Thanks,
-  Abhishek
+We gained support for runtime mode changes thanks to David Collins and
+improved support for write only regulators (ones where we can't read
+back the configuration) from Douglas Anderson.
+
+There's been quite a bit of work from Linus Walleij on converting from
+specfying GPIOs by numbers to descriptors.  Sadly the testing turned out
+to be less good than we had hoped and so a lot of this had to be
+reverted.
+
+We also have the start of updates to use coupled regulators from Maciej
+Purski, unfortunately there are further problems there so the last
+couple of patches have been reverted.
+
+We also have new drivers for BD71837 and SY8106A devices, SAW regulators
+on Qualcomm SPMI and dropped support for some preproduction chips
+that never made it to market from the AB8500 driver.
+
+----------------------------------------------------------------
+
+Probably also worth pointing out that the MFD changes come from Linus'
+descriptor refactoring.
+
+Anson Huang (3):
+      regulator: pfuze100: update voltage setting for pfuze3000 sw1a
+      regulator: pfuze100: add enable/disable for switch
+      regulator: pfuze100: add .is_enable() for pfuze100_swb_regulator_ops
+
+Arnd Bergmann (1):
+      ARM: pxa, regulator: fix building ezx e680
+
+Changbin Du (1):
+      regulator: add dummy function of_find_regulator_by_node
+
+Colin Ian King (1):
+      regulator: wm8350: fix missing increment of loop index i
+
+David Collins (2):
+      regulator: of: add property for allowed modes specification
+      regulator: of: add support for allowed modes configuration
+
+Douglas Anderson (2):
+      regulator: Don't return or expect -errno from of_map_mode()
+      regulator: core: Allow for regulators that can't be read at bootup
+
+Fabio Estevam (6):
+      regulator: pfuze100: Make the node name generic
+      regulator: pfuze100: Switch to SPDX identifier
+      regulator: anatop: Switch to SPDX identifier
+      regulator: mc13783: Switch to SPDX identifier
+      regulator: mc13892: Switch to SPDX identifier
+      regulator: mc13xxx-core: Switch to SPDX identifier
+
+Geert Uytterhoeven (4):
+      dt-bindings: mfd: bd9571mwv: Document DDR Backup Mode properties
+      mfd: bd9571mwv: Add DDR Backup Power register bit definitions
+      mfd: bd9571mwv: Allow DDR Backup Power register access
+      regulator: bd9571mwv: Add support for backup mode
+
+Ilia Lin (2):
+      regulator: qcom_spmi: Add support for SAW
+      dt-bindings: qcom_spmi: Document SAW support
+
+Jagan Teki (1):
+      regulator: axp20x: add drivevbus support for axp803
+
+Keerthy (2):
+      regulator: lp87565: Add margin while populating ramp_delay
+      regulator: lp87565: Enable LP87565_BUCK_CTRL_1_FPWM_MP_0_2
+
+Linus Walleij (14):
+      regulator: ab8500: Drop AB8540/9540 support
+      regulator: arizona-ldo1: Look up a descriptor and pass to the core
+      regulator: max77686: Pass descriptor instead of GPIO number
+      regulator: s2mps11: Pass descriptor instead of GPIO number
+      regulator: wm8994: Pass descriptor instead of GPIO number
+      regulator: max8973: Pass descriptor instead of GPIO number
+      regulator: lm363x: Pass descriptor instead of GPIO number
+      regulator: lp8788-ldo: Pass descriptor instead of GPIO number
+      regulator: max8952: Pass descriptor instead of GPIO number
+      regulator: pfuze100: Delete reference to ena_gpio
+      regulator: s5m8767: Pass descriptor instead of GPIO number
+      regulator: tps65090: Pass descriptor instead of GPIO number
+      regulator: fixed: Convert to use GPIO descriptor only
+      regulator: gpio: Get enable GPIO using GPIO descriptor
+
+Maciej Purski (6):
+      regulator: core: Make locks re-entrant
+      regulator: bindings: Add properties for coupled regulators
+      regulator: core: Parse coupled regulators properties
+      regulator: core: Resolve coupled regulators
+      regulator: core: Add voltage balancing mechanism
+      regulator: core: Change voltage setting path
+
+Marek Vasut (1):
+      regulator: ltc3676: Assure PGOOD mask is set before changing voltage
+
+Mark Brown (7):
+      Merge branch 'topic/bd9571mwv' of https://git.kernel.org/.../broonie/=
+regulator into regulator-4.18
+      regulator: s2mps11: Fix boot on Odroid XU3
+      regulator: max77686: Fix shared GPIOs
+      regulator: wm8994: Fix shared GPIOs
+      regulator: Revert coupled regulator support again
+      regulator: gpio: Revert
+      Merge branch 'regulator-4.17' into regulator-4.18 merge window
+
+Matti Vaittinen (2):
+      regulator: bd71837: Devicetree bindings for BD71837 regulators
+      regulator: bd71837: BD71837 PMIC regulator driver
+
+Ondrej Jirman (2):
+      regulator: add binding for the SY8106A voltage regulator
+      regulator: add support for SY8106A regulator
+
+Pawe=C5=82 Chmiel (1):
+      regulator: max8998: Fix platform data retrieval.
+
+ryang (1):
+      regulator: tps6586x: Add support for TPS658624
+
+ Documentation/devicetree/bindings/mfd/axp20x.txt   |    3 +-
+ .../devicetree/bindings/mfd/bd9571mwv.txt          |   21 +
+ .../devicetree/bindings/regulator/pfuze100.txt     |    6 +-
+ .../bindings/regulator/qcom,spmi-regulator.txt     |   45 +
+ .../devicetree/bindings/regulator/regulator.txt    |   10 +
+ .../bindings/regulator/rohm,bd71837-regulator.txt  |  126 ++
+ .../bindings/regulator/sy8106a-regulator.txt       |   23 +
+ MAINTAINERS                                        |    6 +
+ arch/arm/mach-s3c64xx/mach-crag6410-module.c       |   28 +-
+ drivers/mfd/bd9571mwv.c                            |    2 +
+ drivers/regulator/Kconfig                          |   18 +
+ drivers/regulator/Makefile                         |    3 +-
+ drivers/regulator/ab8500.c                         | 1779 ++--------------=
+----
+ drivers/regulator/anatop-regulator.c               |   22 +-
+ drivers/regulator/arizona-ldo1.c                   |   19 +-
+ drivers/regulator/axp20x-regulator.c               |    2 +
+ drivers/regulator/bd71837-regulator.c              |  640 +++++++
+ drivers/regulator/bd9571mwv-regulator.c            |  127 +-
+ drivers/regulator/core.c                           |  244 ++-
+ drivers/regulator/cpcap-regulator.c                |    2 +-
+ drivers/regulator/internal.h                       |   37 +-
+ drivers/regulator/lm363x-regulator.c               |   20 +-
+ drivers/regulator/lp87565-regulator.c              |   17 +-
+ drivers/regulator/lp8788-ldo.c                     |   32 +-
+ drivers/regulator/ltc3676.c                        |   20 +-
+ drivers/regulator/max8952.c                        |   18 +-
+ drivers/regulator/max8973-regulator.c              |   54 +-
+ drivers/regulator/max8998.c                        |    3 +-
+ drivers/regulator/mc13783-regulator.c              |   18 +-
+ drivers/regulator/mc13892-regulator.c              |   18 +-
+ drivers/regulator/mc13xxx-regulator-core.c         |   28 +-
+ drivers/regulator/of_regulator.c                   |  193 ++-
+ drivers/regulator/pfuze100-regulator.c             |   40 +-
+ drivers/regulator/qcom_spmi-regulator.c            |  133 +-
+ drivers/regulator/s5m8767.c                        |   26 +-
+ drivers/regulator/sy8106a-regulator.c              |  167 ++
+ drivers/regulator/tps65090-regulator.c             |   50 +-
+ drivers/regulator/tps6586x-regulator.c             |    1 +
+ drivers/regulator/twl-regulator.c                  |    2 +-
+ drivers/regulator/wm8350-regulator.c               |    1 +
+ include/linux/mfd/bd9571mwv.h                      |    5 +
+ include/linux/mfd/lp8788.h                         |   16 -
+ include/linux/mfd/samsung/core.h                   |    4 +-
+ include/linux/mfd/tps65090.h                       |    8 +-
+ include/linux/mfd/tps6586x.h                       |    1 +
+ include/linux/regulator/ab8500.h                   |  157 +-
+ include/linux/regulator/arizona-ldo1.h             |    3 -
+ include/linux/regulator/consumer.h                 |    1 +
+ include/linux/regulator/driver.h                   |   27 +-
+ include/linux/regulator/machine.h                  |    4 +
+ include/linux/regulator/max8952.h                  |    1 -
+ 51 files changed, 2196 insertions(+), 2035 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd7183=
+7-regulator.txt
+ create mode 100644 Documentation/devicetree/bindings/regulator/sy8106a-reg=
+ulator.txt
+ create mode 100644 drivers/regulator/bd71837-regulator.c
+ create mode 100644 drivers/regulator/sy8106a-regulator.c
+
+--rwEMma7ioTxnRzrJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsa16EACgkQJNaLcl1U
+h9AVlQf5AbxilgWZsHgPXKknuPUV2PPP7kBFwKxpS6sU6Q4iF35Nzy6A1dvvsj7/
+26cudThGqpav1rUddc86JdGAGslVC+iP1YSHeHPUBllUlp2GTRe0jnQvKnCKmE3T
+aVHHKUNbrxb3ZWGplalvceT5H//BIYdLsWmF2UxaGyRf0KjREB2QuQbsh3CtIhVL
+ndpRT7zom0oxzqTXeqhYcHtR6mPw1RYLUiD5uhxriiTYrGa/kYEgo4fu4BqOMMaZ
++bBNl0y/ok1kwfw1+dF+ASY8rgLZG/xDYZQ9zT8eq5zlp0NzR6PWCRv4kgT/MG14
+vrYs0DZFvN1SnlpmZPOl6oUjzCIzlg==
+=wu1z
+-----END PGP SIGNATURE-----
+
+--rwEMma7ioTxnRzrJ--
