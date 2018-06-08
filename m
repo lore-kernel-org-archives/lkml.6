@@ -1,169 +1,421 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id s8XYHZVeGVuwMQAAmS7hNA
-	; Thu, 07 Jun 2018 16:36:07 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id /IGYM3vQGlvzEwAAmS7hNA
+	; Fri, 08 Jun 2018 18:53:31 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id C6267607E7; Thu,  7 Jun 2018 16:36:07 +0000 (UTC)
+	id 4CD81607A4; Fri,  8 Jun 2018 18:53:31 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=gouders.net header.i=@gouders.net header.b="Cg+SqWVr"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,FROM_LOCAL_HEX,
-	MAILING_LIST_MULTI autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 141BE605A2;
-	Thu,  7 Jun 2018 16:36:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 141BE605A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 239DC601D2;
+	Fri,  8 Jun 2018 18:53:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 239DC601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=gouders.net
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933217AbeFGQgE (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 12:36:04 -0400
-Received: from mail-io0-f198.google.com ([209.85.223.198]:44110 "EHLO
-        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932418AbeFGQgC (ORCPT
+        id S1753302AbeFHSx2 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 14:53:28 -0400
+Received: from services.gouders.net ([141.101.32.176]:45398 "EHLO
+        services.gouders.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753285AbeFHSxZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 12:36:02 -0400
-Received: by mail-io0-f198.google.com with SMTP id f12-v6so7812364iob.11
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 09:36:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=itlYyDWs7KV0k6j8BZZj6L2vvbwsxm1KvR7gpiYTtDA=;
-        b=BB+4fJJLyepA69mxZh8Le8N+zcpE1cU4OHDBibb9lJUdLf38gRvz2qu8OiLuOwIb5z
-         N27gJGpabYFtZop/YlbvD1lFJk2V1jmwYFx42xI+TkZq40o3o6IVDYCcVhDyHGINKTgf
-         nenxwk7//ZDV1i2GbxbGXE++FX/dg2vMDTgliaS46IQoQbqTiJMbmFay1F8viRMH1aOg
-         xbbaWzIztk5ijKCGyG1H0CpMNkGRnNstauv4lt6OX85FKk0S8iwT3KZpmEu4BBM24Pk9
-         wKKahtv12F4pVa7cF19YMQ8k5cZyEh76b3JQFv0KwdsNKNlWIGwiuHCs/MNOdnjVTHZT
-         aecQ==
-X-Gm-Message-State: APt69E1hG3jKxYz+lF87uneLyWCW/ORF52MXNtx91iBrRs6+RkVKqNz7
-        T9PSaDiNZUR2ntlaa7Fu/YWoMagCS5rql6Pmwr6415zHqha+
-X-Google-Smtp-Source: ADUXVKJk+iPPqhPoG3l126POQ3wJGuKTDH0iUx1o4UzdQFYh/OcHzsrFDaKGIOR6Tw+Y/VuYWyHYzjZ+ZMZJsfPWkq0dkO1VtWIQ
-MIME-Version: 1.0
-X-Received: by 2002:a6b:244:: with SMTP id 65-v6mr1041114ioc.76.1528389362129;
- Thu, 07 Jun 2018 09:36:02 -0700 (PDT)
-Date: Thu, 07 Jun 2018 09:36:02 -0700
-In-Reply-To: <00000000000075cc63056e0d0707@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000022448056e0fe15d@google.com>
-Subject: Re: KASAN: slab-out-of-bounds Write in rmd160_final
-From: syzbot <syzbot+d04e58bd384f1fe0b112@syzkaller.appspotmail.com>
-To: davem@davemloft.net, herbert@gondor.apana.org.au,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        Fri, 8 Jun 2018 14:53:25 -0400
+Received: from lena.gouders.net (ltea-047-066-004-082.pools.arcor-ip.net [47.66.4.82])
+        (authenticated bits=0)
+        by services.gouders.net (8.14.8/8.14.8) with ESMTP id w58IkL2T032281
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Fri, 8 Jun 2018 20:46:41 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gouders.net; s=gnet;
+        t=1528483602; bh=fZlzcI5YaJJPPVEkBNFCZi36WwfLqF/fNCn+bCd0B8Q=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=Cg+SqWVrgOnp8LqQ0Pcx6BFZOKiJQSKkcArB+mYrbbzoYN/SSpK9VJYs2QwSIMKBm
+         lPK4z0M7gHdBNm8sJi/qRFjcoAoVyFL6Vp6aLGyrgt+n8BcjBGJSzXW2Iw+lJHd/ga
+         ZJQX5R7YP9pehRSjQJbEigCilZraYItyLuoyxZzs=
+From: Dirk Gouders <dirk@gouders.net>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Sam Ravnborg <sam@ravnborg.org>
+Cc: Dirk Gouders <dirk@gouders.net>
+Subject: [RFC v4 1/1] i-search functionality for mconf
+Date: Fri,  8 Jun 2018 20:46:06 +0200
+Message-Id: <20180608184606.5029-2-dirk@gouders.net>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20180608184606.5029-1-dirk@gouders.net>
+References: <20180608184606.5029-1-dirk@gouders.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+This patch prototypes isearch functionality for mconf based on an idea of
+Sam Ravnborg:
 
-HEAD commit:    1c8c5a9d38f6 Merge git://git.kernel.org/pub/scm/linux/kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14c7f96f800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4f1acdf888c9d4e9
-dashboard link: https://syzkaller.appspot.com/bug?extid=d04e58bd384f1fe0b112
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1432a66f800000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11b5034f800000
+* mconf now distinguishes if the focus is on the menu items or the
+  buttons below it.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+d04e58bd384f1fe0b112@syzkaller.appspotmail.com
+* At startup focus is on the menu items and alphanumeric
+  characters or space entered are used to form a string that is
+  searched for.
 
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-==================================================================
-BUG: KASAN: slab-out-of-bounds in rmd160_final+0x201/0x240  
-crypto/rmd160.c:334
-Write of size 4 at addr ffff8801d88781d8 by task syz-executor724/4532
+* BACKSPACE is used to remove the last character of the search string.
 
-CPU: 1 PID: 4532 Comm: syz-executor724 Not tainted 4.17.0+ #89
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
-  __asan_report_store4_noabort+0x17/0x20 mm/kasan/report.c:437
-  rmd160_final+0x201/0x240 crypto/rmd160.c:334
-  crypto_shash_final+0x104/0x260 crypto/shash.c:152
-  kdf_ctr security/keys/dh.c:186 [inline]
-  keyctl_dh_compute_kdf security/keys/dh.c:217 [inline]
-  __keyctl_dh_compute+0x1184/0x1bc0 security/keys/dh.c:389
-  keyctl_dh_compute+0xb9/0x100 security/keys/dh.c:425
-  __do_sys_keyctl security/keys/keyctl.c:1741 [inline]
-  __se_sys_keyctl security/keys/keyctl.c:1637 [inline]
-  __x64_sys_keyctl+0x12a/0x3b0 security/keys/keyctl.c:1637
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x43ffa9
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 6b 45 00 00 c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffd9be52ed8 EFLAGS: 00000217 ORIG_RAX: 00000000000000fa
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043ffa9
-RDX: 0000000020a53ffb RSI: 0000000020000100 RDI: 0000000000000017
-RBP: 00000000006ca018 R08: 0000000020c61fc8 R09: 00000000004002c8
-R10: 0000000000000005 R11: 0000000000000217 R12: 00000000004018d0
-R13: 0000000000401960 R14: 0000000000000000 R15: 0000000000000000
+* ENTER can be used to enter a submenu.
 
-Allocated by task 4532:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-  __do_kmalloc mm/slab.c:3718 [inline]
-  __kmalloc+0x14e/0x760 mm/slab.c:3727
-  kmalloc include/linux/slab.h:518 [inline]
-  keyctl_dh_compute_kdf security/keys/dh.c:211 [inline]
-  __keyctl_dh_compute+0xfe9/0x1bc0 security/keys/dh.c:389
-  keyctl_dh_compute+0xb9/0x100 security/keys/dh.c:425
-  __do_sys_keyctl security/keys/keyctl.c:1741 [inline]
-  __se_sys_keyctl security/keys/keyctl.c:1637 [inline]
-  __x64_sys_keyctl+0x12a/0x3b0 security/keys/keyctl.c:1637
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+* Horizontal arrow keys put focus on the buttons with the known
+  behavior.
 
-Freed by task 2865:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xd9/0x260 mm/slab.c:3813
-  single_release+0x8f/0xb0 fs/seq_file.c:609
-  __fput+0x353/0x890 fs/file_table.c:209
-  ____fput+0x15/0x20 fs/file_table.c:243
-  task_work_run+0x1e4/0x290 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:192 [inline]
-  exit_to_usermode_loop+0x2bd/0x310 arch/x86/entry/common.c:166
-  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
-  do_syscall_64+0x6ac/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+* The TAB key is now exclusively used to toggle the focus.
 
-The buggy address belongs to the object at ffff8801d88781c0
-  which belongs to the cache kmalloc-32 of size 32
-The buggy address is located 24 bytes inside of
-  32-byte region [ffff8801d88781c0, ffff8801d88781e0)
-The buggy address belongs to the page:
-page:ffffea0007621e00 count:1 mapcount:0 mapping:ffff8801d8878000  
-index:0xffff8801d8878fc1
-flags: 0x2fffc0000000100(slab)
-raw: 02fffc0000000100 ffff8801d8878000 ffff8801d8878fc1 0000000100000018
-raw: ffffea00070e71e0 ffffea00076222a0 ffff8801da8001c0 0000000000000000
-page dumped because: kasan: bad access detected
+* Vertical arrow keys work anywhere.
 
-Memory state around the buggy address:
-  ffff8801d8878080: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-  ffff8801d8878100: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-> ffff8801d8878180: fb fb fb fb fc fc fc fc 00 00 00 fc fc fc fc fc
-                                                     ^
-  ffff8801d8878200: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-  ffff8801d8878280: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-==================================================================
+* When the focus is on the buttons, all keys (e.g. hotkeys) work the
+  same as before this change.
+
+* '\' can be used to search for other occurences of an already entered
+  string.
+
+* To use y|n|m on an item, focus has to be on the buttons.
+
+An example to navigate into the USB support menu under Device Drivers:
+
+   1) de		# Navigates to the item "Device Drivers"
+   2) ENTER		# Enter the submenu
+   3) USB		# Navigate to the item "USB support"
+   4) ENTER		# Enter the submenu
+
+---
+ scripts/kconfig/lxdialog/dialog.h  |   3 +
+ scripts/kconfig/lxdialog/menubox.c | 207 +++++++++++++++++++++++++++++++++----
+ 2 files changed, 189 insertions(+), 21 deletions(-)
+
+diff --git a/scripts/kconfig/lxdialog/dialog.h b/scripts/kconfig/lxdialog/dialog.h
+index 0b00be5abaa6..02b036435919 100644
+--- a/scripts/kconfig/lxdialog/dialog.h
++++ b/scripts/kconfig/lxdialog/dialog.h
+@@ -50,6 +50,8 @@
+ #define TR(params) _tracef params
+ 
+ #define KEY_ESC 27
++#define KEY_CTRL_S 19
++#define KEY_ENTR 10
+ #define TAB 9
+ #define MAX_LEN 2048
+ #define BUF_SIZE (10*1024)
+@@ -238,6 +240,7 @@ int dialog_checklist(const char *title, const char *prompt, int height,
+ 		     int width, int list_height);
+ int dialog_inputbox(const char *title, const char *prompt, int height,
+ 		    int width, const char *init);
++int do_isearch(char *str, int choice, int scroll);
+ 
+ /*
+  * This is the base for fictitious keys, which activate
+diff --git a/scripts/kconfig/lxdialog/menubox.c b/scripts/kconfig/lxdialog/menubox.c
+index d70cab36137e..e49280115b52 100644
+--- a/scripts/kconfig/lxdialog/menubox.c
++++ b/scripts/kconfig/lxdialog/menubox.c
+@@ -56,10 +56,17 @@
+  * fscanf would read in 'scroll', and eventually that value would get used.
+  */
+ 
++#include <string.h>
+ #include "dialog.h"
+ 
++#define ISEARCH_LEN 32
++#define ISEARCH_INDICATOR_LEN (ISEARCH_LEN + 8)
++static char isearch_str[ISEARCH_LEN] = "";
++
+ static int menu_width, item_x;
+ 
++static int focus_on_buttons;
++
+ /*
+  * Print menu item
+  */
+@@ -85,7 +92,10 @@ static void do_print_item(WINDOW * win, const char *item, int line_y,
+ #else
+ 	wclrtoeol(win);
+ #endif
+-	wattrset(win, selected ? dlg.item_selected.atr : dlg.item.atr);
++	if (focus_on_buttons)
++		wattrset(win, selected ? A_UNDERLINE : dlg.item.atr);
++	else
++		wattrset(win, selected ? dlg.item_selected.atr : dlg.item.atr);
+ 	mvwaddstr(win, line_y, item_x, menu_item);
+ 	if (hotkey) {
+ 		wattrset(win, selected ? dlg.tag_key_selected.atr
+@@ -105,6 +115,32 @@ do {									\
+ 	do_print_item(menu, item_str(), choice, selected, !item_is_tag(':')); \
+ } while (0)
+ 
++
++/*
++* Print the isearch indicator.
++*/
++static void print_isearch(WINDOW * win, int y, int x, int height, bool isearch)
++{
++	unsigned char i = 0;
++
++	wmove(win, y, x);
++
++	y = y + height + 1;
++	wmove(win, y, x);
++
++	if (isearch) {
++		wattrset(win, dlg.button_key_inactive.atr);
++		waddstr(win, "isearch: ");
++		waddstr(win, isearch_str);
++		i = ISEARCH_INDICATOR_LEN - strlen(isearch_str);
++	}
++
++	wattrset(win, dlg.menubox_border.atr);
++
++	for ( ; i < ISEARCH_INDICATOR_LEN; i++ )
++		waddch(win, ACS_HLINE);
++}
++
+ /*
+  * Print the scroll indicators.
+  */
+@@ -157,6 +193,9 @@ static void print_buttons(WINDOW * win, int height, int width, int selected)
+ 	int x = width / 2 - 28;
+ 	int y = height - 2;
+ 
++	if (!focus_on_buttons)
++		selected = -1;
++
+ 	print_button(win, "Select", y, x, selected == 0);
+ 	print_button(win, " Exit ", y, x + 12, selected == 1);
+ 	print_button(win, " Help ", y, x + 24, selected == 2);
+@@ -178,6 +217,32 @@ static void do_scroll(WINDOW *win, int *scroll, int n)
+ 	wrefresh(win);
+ }
+ 
++/*
++ * Incremental search for text in dialog menu entries.
++ * The search operates as a ring search, continuing at the top after
++ * the last entry has been visited.
++ *
++ * Returned is -1 if no match was found, else the absolute index of
++ * the matching item.
++ */
++int do_isearch(char *str, int choice, int scroll)
++{
++	int found = 0;
++	int i;
++
++	for (i = 0; i < item_count(); i++) {
++		item_set((choice + scroll + i)%item_count());
++		if (strcasestr(item_str(), str)) {
++			found = 1;
++			break;
++		}
++	}
++
++	if (found)
++		return (choice + scroll + i)%item_count();
++	return -1;
++}
++
+ /*
+  * Display a menu for choosing among a number of options
+  */
+@@ -275,6 +340,7 @@ int dialog_menu(const char *title, const char *prompt,
+ 	print_arrows(dialog, item_count(), scroll,
+ 		     box_y, box_x + item_x + 1, menu_height);
+ 
++	print_isearch(dialog, box_y, box_x + item_x + 5, menu_height, !focus_on_buttons);
+ 	print_buttons(dialog, height, width, 0);
+ 	wmove(menu, choice, item_x + 1);
+ 	wrefresh(menu);
+@@ -285,22 +351,27 @@ int dialog_menu(const char *title, const char *prompt,
+ 		if (key < 256 && isalpha(key))
+ 			key = tolower(key);
+ 
+-		if (strchr("ynmh", key))
+-			i = max_choice;
+-		else {
+-			for (i = choice + 1; i < max_choice; i++) {
+-				item_set(scroll + i);
+-				j = first_alpha(item_str(), "YyNnMmHh");
+-				if (key == tolower(item_str()[j]))
+-					break;
+-			}
+-			if (i == max_choice)
+-				for (i = 0; i < max_choice; i++) {
++		if (focus_on_buttons) {
++			/*
++			 * Find item matching hot key.
++			 */
++			if (strchr("ynmh", key))
++				i = max_choice;
++			else {
++				for (i = choice + 1; i < max_choice; i++) {
+ 					item_set(scroll + i);
+ 					j = first_alpha(item_str(), "YyNnMmHh");
+ 					if (key == tolower(item_str()[j]))
+ 						break;
+ 				}
++				if (i == max_choice)
++					for (i = 0; i < max_choice; i++) {
++						item_set(scroll + i);
++						j = first_alpha(item_str(), "YyNnMmHh");
++						if (key == tolower(item_str()[j]))
++							break;
++					}
++			}
+ 		}
+ 
+ 		if (item_count() != 0 &&
+@@ -370,16 +441,117 @@ int dialog_menu(const char *title, const char *prompt,
+ 			continue;	/* wait for another key press */
+ 		}
+ 
++		if (!focus_on_buttons) {
++			i = -1;
++
++			if (key == '\n') {
++				/* save scroll info */
++				*s_scroll = scroll;
++				delwin(menu);
++				delwin(dialog);
++				item_set(scroll + choice);
++				item_set_selected(1);
++				isearch_str[0] = '\0';
++				return 0; /* 0 means first button "Select" */
++			}
++
++			if ( key == KEY_BACKSPACE && isearch_str[0] ) {
++				isearch_str[i = (strlen(isearch_str) - 1)] = '\0';
++				i = -1;
++			}
++
++			if (key < 256 && (isalnum(key) || key == ' ')) {
++				if (strlen(isearch_str) < ISEARCH_LEN - 1) {
++					isearch_str[i = strlen(isearch_str)] = key;
++					isearch_str[i+1] = '\0';
++				}
++
++				/* Remove highligt of current item */
++				print_item(scroll + choice, choice, FALSE);
++				i = do_isearch(isearch_str, choice, scroll);
++			}
++
++			if (key == '\\') {
++				/* Remove highligt of current item */
++				print_item(scroll + choice, choice, FALSE);
++				i = do_isearch(isearch_str, choice + 1, scroll);
++			}
++
++			/*
++			 * Handle matches
++			 */
++			if (i >= 0) {
++				i -= scroll;
++
++				if (i >= max_choice)
++					/*
++					 * Handle matches below the currently visible menu entries.
++					 */
++					while (i >= max_choice) {
++						do_scroll(menu, &scroll, 1);
++						i--;
++						print_item(max_choice + scroll - 1, max_choice - 1, false);
++					}
++				else if (i < 0)
++					/*
++					 * Handle matches higher in the menu (ring search).
++					 */
++					while (i < 0) {
++						do_scroll(menu, &scroll, -1);
++						i++;
++						print_item(scroll, 0, false);
++					}
++				choice = i;
++			} else {
++				i = choice;
++				goto a;
++			}
++
++			print_item(scroll + choice, choice, TRUE);
++			print_isearch(dialog, box_y, box_x + item_x + 5, menu_height, true);
++			print_arrows(dialog, item_count(), scroll,
++				     box_y, box_x + item_x + 1, menu_height);
++
++			wnoutrefresh(dialog);
++			wrefresh(menu);
++			i = max_choice;
++			continue;
++		}
++	a:
+ 		switch (key) {
+-		case KEY_LEFT:
+ 		case TAB:
++			focus_on_buttons = 1 - focus_on_buttons;
++			print_isearch(dialog, box_y, box_x + item_x + 5, menu_height, !focus_on_buttons);
++
++			print_item(scroll + choice, choice, TRUE);
++			print_buttons(dialog, height, width, button);
++			wrefresh(menu);
++			break;
++		case KEY_LEFT:
+ 		case KEY_RIGHT:
++			focus_on_buttons = 1;
+ 			button = ((key == KEY_LEFT ? --button : ++button) < 0)
+ 			    ? 4 : (button > 4 ? 0 : button);
+ 
++			print_isearch(dialog, box_y, box_x + item_x + 5, menu_height, !focus_on_buttons);
++			print_item(scroll + choice, choice, TRUE);
+ 			print_buttons(dialog, height, width, button);
+ 			wrefresh(menu);
+ 			break;
++		case KEY_ESC:
++			key = on_key_esc(menu);
++			break;
++		case KEY_RESIZE:
++			on_key_resize();
++			delwin(menu);
++			delwin(dialog);
++			goto do_resize;
++		}
++
++		/*
++		 * Focus is on buttons, handle keys appropriately
++		 */
++		switch (key) {
+ 		case ' ':
+ 		case 's':
+ 		case 'y':
+@@ -390,6 +562,7 @@ int dialog_menu(const char *title, const char *prompt,
+ 		case '?':
+ 		case 'z':
+ 		case '\n':
++			isearch_str[0] = '\0';
+ 			/* save scroll info */
+ 			*s_scroll = scroll;
+ 			delwin(menu);
+@@ -421,14 +594,6 @@ int dialog_menu(const char *title, const char *prompt,
+ 		case 'x':
+ 			key = KEY_ESC;
+ 			break;
+-		case KEY_ESC:
+-			key = on_key_esc(menu);
+-			break;
+-		case KEY_RESIZE:
+-			on_key_resize();
+-			delwin(menu);
+-			delwin(dialog);
+-			goto do_resize;
+ 		}
+ 	}
+ 	delwin(menu);
+-- 
+2.16.4
