@@ -1,114 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id TrVnHa6cHlslGAAAmS7hNA
-	; Mon, 11 Jun 2018 16:01:00 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id KRU7LX7IGVuYCAAAmS7hNA
+	; Fri, 08 Jun 2018 00:07:06 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id A3381607A4; Mon, 11 Jun 2018 16:01:00 +0000 (UTC)
+	id 462B36089E; Fri,  8 Jun 2018 00:07:06 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 2B798600D0;
-	Mon, 11 Jun 2018 16:01:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2B798600D0
+	by smtp.codeaurora.org (Postfix) with ESMTP id D42E960452;
+	Fri,  8 Jun 2018 00:07:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D42E960452
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753117AbeFKQA6 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 12:00:58 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50690 "EHLO mx1.redhat.com"
+        id S1752443AbeFHAHE (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 20:07:04 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55440 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751862AbeFKQAz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 12:00:55 -0400
+        id S1752411AbeFHAHC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 20:07:02 -0400
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 49ECD402A580;
-        Mon, 11 Jun 2018 16:00:55 +0000 (UTC)
-Received: from gondolin (ovpn-117-32.ams2.redhat.com [10.36.117.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A4E8D64003;
-        Mon, 11 Jun 2018 16:00:53 +0000 (UTC)
-Date: Mon, 11 Jun 2018 18:00:50 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Halil Pasic <pasic@linux.ibm.com>
-Cc: Pierre Morel <pmorel@linux.ibm.com>, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        qemu-devel@nongnu.org, qemu-s390x@nongnu.org,
-        Dong Jia Shi <bjsdjshi@linux.ibm.com>
-Subject: Re: [qemu-s390x] [PATCH RFC 2/2] vfio-ccw: support for halt/clear
- subchannel
-Message-ID: <20180611180050.792fa5ef.cohuck@redhat.com>
-In-Reply-To: <0c1e1b26-0c6a-fdc2-0c1a-2e2d58c2cb73@linux.ibm.com>
-References: <20180509154822.23510-1-cohuck@redhat.com>
-        <20180509154822.23510-3-cohuck@redhat.com>
-        <c18f9b9f-da00-1a0b-8ef0-7ac223c73d1a@linux.ibm.com>
-        <20180515181006.0cb1dfc2.cohuck@redhat.com>
-        <a5d08fb7-d9c1-b230-fe0c-acebbda2ba65@linux.ibm.com>
-        <20180522145208.310143ea.cohuck@redhat.com>
-        <4e4001cc-540e-0f2b-bbd1-1f82ca594bb3@linux.ibm.com>
-        <20180605151449.22aafbfc.cohuck@redhat.com>
-        <e73038ff-fb2d-5865-8b84-e775990f3983@linux.ibm.com>
-        <20180606142131.74ea2eb7.cohuck@redhat.com>
-        <5b77ec9c-41b8-2e32-ce79-d9005b93fdd0@linux.ibm.com>
-        <20180607115442.6a779ed9.cohuck@redhat.com>
-        <10c8a0ac-fe61-d7c7-c7bb-0fffc6909cb3@linux.ibm.com>
-        <20180607183407.1ea5ab89.cohuck@redhat.com>
-        <0c1e1b26-0c6a-fdc2-0c1a-2e2d58c2cb73@linux.ibm.com>
-Organization: Red Hat GmbH
+        by mx1.redhat.com (Postfix) with ESMTPS id 39F8F400E9BA;
+        Fri,  8 Jun 2018 00:07:02 +0000 (UTC)
+Received: from krava (ovpn-204-19.brq.redhat.com [10.40.204.19])
+        by smtp.corp.redhat.com (Postfix) with SMTP id B1B581C668;
+        Fri,  8 Jun 2018 00:06:57 +0000 (UTC)
+Date: Fri, 8 Jun 2018 02:06:56 +0200
+From: Jiri Olsa <jolsa@redhat.com>
+To: Stephane Eranian <eranian@google.com>
+Cc: Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        "Liang, Kan" <kan.liang@linux.intel.com>, agustinv@codeaurora.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Milian Wolff <milian.wolff@kdab.com>,
+        Andi Kleen <andi@firstfloor.org>, frederic@kernel.org
+Subject: Re: [PATCH 01/10] perf tools: Uniquify the event name if there's no
+ other matched event
+Message-ID: <20180608000656.GA12322@krava>
+References: <20180606221513.11302-1-jolsa@kernel.org>
+ <20180606221513.11302-2-jolsa@kernel.org>
+ <20180606231902.GE7220@tassilo.jf.intel.com>
+ <20180607062239.GA18436@krava>
+ <CABPqkBRCZgPEpcc0SUvefoqAHh=-jTtBr=EgoomDCFTT54aJBg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABPqkBRCZgPEpcc0SUvefoqAHh=-jTtBr=EgoomDCFTT54aJBg@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 11 Jun 2018 16:00:55 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 11 Jun 2018 16:00:55 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 08 Jun 2018 00:07:02 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 08 Jun 2018 00:07:02 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 8 Jun 2018 22:40:39 +0200
-Halil Pasic <pasic@linux.ibm.com> wrote:
-
-[I'm trying to not make the discussion branch out too much. Just
-replying one more time here (and I'll add something to the wiki).]
-
-> One can probably argue that setting cc 0 even if the host device
-> responds to the host ssch with cc 3 because the device is not any more
-> on the given subchannel or simply just disabled. It is probably true
-> that the guest would not have any means to prove that we were 'lying'
-> to it.
-
-I would not frame this as 'lying'. We have an additional layer
-inbetween, adding additional complications. As long as we reflect
-something to the guest that (a) is covered by the architecture, and (b)
-enables the guest to make reasonable decisions, we're fine.
-
+On Thu, Jun 07, 2018 at 09:09:10AM -0700, Stephane Eranian wrote:
+> On Wed, Jun 6, 2018 at 11:22 PM Jiri Olsa <jolsa@redhat.com> wrote:
+> >
+> > On Wed, Jun 06, 2018 at 04:19:02PM -0700, Andi Kleen wrote:
+> > > On Thu, Jun 07, 2018 at 12:15:04AM +0200, Jiri Olsa wrote:
+> > > > Currently by default we try to match the user specified PMU
+> > > > name to all PMU units available and use them to aggregate
+> > > > all matched PMUs event counts into one 'pattern' event.
+> > > >
+> > > > While this is useful for uncore events, it screws up names
+> > > > for other events, where this is not desirable, like:
+> > > >
+> > > > Before:
+> > > >   # perf stat -e cp/cpu-cycles/ kill
+> > >
+> > > I assume you mean cpU/cpu-cycles/
+> > > >
+> > > >    Performance counter stats for 'kill':
+> > > >
+> > > >            1,573,757      cp/cpu-cycles/
+> > > >
+> > > > Keeping the pattern matching logic, but making the name unique
+> > > > in case there's no other match found. That fixes the example
+> > > > above and hopefully does not screw up anything else.
+> > > >
+> And the problem I have with this approach, is that you do not really
+> know what you are measuring.
+> You have not way of knowing that the count comes from multiple PMU instances:
 > 
-> But AFAIR this is not how the current implementation works. The pwrite
-> in qemu basically depends on the cc of the host ssch. So if the host
-> ssch completes with cc 3 the vfio-ccw kernel module map ist to pwrite
-> reporting -ENODEV and vfio_ccw_handle_request makes sure that the
-> guest instruction completes with cc 3 by mapping it to return code
-> IOINST_CC_NOT_OPERATIONAL.
-
-Will need to review the code again. But this behaviour is fine as well
-by my reasoning above :)
-
+> perf stat -a -e uncore_cb/clockticks/ kill
+> 0 uncore_cb/clockticks/
 > 
-> I mentioned xsch in the other thread. I don't think we can tell if
-> cc 0 or cc 2. In my reading xsch in simple words xsch completes with
-> cc 2 and does nothing else if the channel subsystem already started talking
-> to the cu/device. If in time it makes sure we don't start talking to the
-> device, and clear away stuff. So if we don't consider cc of the xsch
-> to be issued by the host the only safe bet seems to be cc 2. But that's
-> effectively getting around implementing the desired functionality of
-> xsch and still staying architecturally correct. Which however might
-> be good enough for vfio-ccw. But I think I demonstrated it's kinda
-> tricky business.
+> I think you need to report that this is aggregated from uncore_cbox_0
+> and uncore_cbox_1.
+> Otherwise it is not clear what I am monitoring. And you hope that what
+> you match in the regex
+> is related.
+> In my example should say:
+> 0 uncore_cbox[0-1]/clockticks/
 
-I'm wondering if we should simply give the guest a cc 2 in any case as
-well.
-> 
-> I prefer to avoid tricky if there is no good reason not to.
+ok, makes sense.. also shouldnt be that hard to do.. will repost
+
+thanks,
+jirka
