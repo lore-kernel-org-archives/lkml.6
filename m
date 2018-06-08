@@ -1,136 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id npsZGRhdGFsKJQAAmS7hNA
-	; Wed, 06 Jun 2018 22:16:33 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id bOkcGUD/Glu7EQAAmS7hNA
+	; Fri, 08 Jun 2018 22:12:16 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 1312160861; Wed,  6 Jun 2018 22:16:33 +0000 (UTC)
+	id 4B483607DC; Fri,  8 Jun 2018 22:12:16 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="olOUMY6u"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 89766605BD;
-	Wed,  6 Jun 2018 22:16:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 89766605BD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id BC1F0605A2;
+	Fri,  8 Jun 2018 22:12:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BC1F0605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752811AbeFFWPl (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 18:15:41 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57742 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752552AbeFFWPd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 18:15:33 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4150ACB9CF;
-        Wed,  6 Jun 2018 22:15:33 +0000 (UTC)
-Received: from krava.redhat.com (ovpn-204-89.brq.redhat.com [10.40.204.89])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D7E842026DEF;
-        Wed,  6 Jun 2018 22:15:30 +0000 (UTC)
-From: Jiri Olsa <jolsa@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Milian Wolff <milian.wolff@kdab.com>,
-        Andi Kleen <andi@firstfloor.org>,
-        Frederic Weisbecker <frederic@kernel.org>
-Subject: [PATCH 05/10] perf stat: Fix metric column display
-Date: Thu,  7 Jun 2018 00:15:08 +0200
-Message-Id: <20180606221513.11302-6-jolsa@kernel.org>
-In-Reply-To: <20180606221513.11302-1-jolsa@kernel.org>
-References: <20180606221513.11302-1-jolsa@kernel.org>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 06 Jun 2018 22:15:33 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 06 Jun 2018 22:15:33 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@kernel.org' RCPT:''
+        id S1753111AbeFHWMN (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 18:12:13 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:35396 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752910AbeFHWML (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 18:12:11 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w58MB3f4153496;
+        Fri, 8 Jun 2018 22:12:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2017-10-26;
+ bh=kl0NOP9YC7OwWK81czVvbFG/vjgUpHmdbmKweljvZ6s=;
+ b=olOUMY6u/fGhrl5F2VvpGpMquw2AfMURhkxLqqeugD/fGQ4oxgrFHRQ8YqJVMSlM0A5V
+ M4yw01N86sBw+ta9HiP7TGOy/V4ZZCXnVxSyYqMyJj6QtAIM8rcTpaLMLsb8GgQreUFJ
+ Y5IMSjeT0D1e1Qp98oLKtJNIOQ1OUdwcqSTpcLKGic12PxjyTMOrESLNlWG9MLq/aNty
+ rzjVvwhPyuuaAdF0vDrPgQ2fSFEBaBpmSXFehn+KvXLtnM0TmO6AoFzjajkgQyXpQ9H7
+ az8rxm9fyAXkrShveIuI9m8ZYlYcumC36IeznFRVlXASGgQ4lF1un9MEBLQ11Cra+rCX tg==
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2130.oracle.com with ESMTP id 2jbvypf2sh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 08 Jun 2018 22:12:07 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w58MC5jR000864
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 8 Jun 2018 22:12:05 GMT
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w58MC5PO007932;
+        Fri, 8 Jun 2018 22:12:05 GMT
+Received: from mwanda (/41.202.241.42)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 08 Jun 2018 15:12:04 -0700
+Date: Sat, 9 Jun 2018 01:11:54 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Chris Opperman <eklikeroomys@gmail.com>
+Cc: devel@driverdev.osuosl.org, Frank Mori Hess <fmh6jj@gmail.com>,
+        Simo Koskinen <koskisoft@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Ian Abbott <abbotti@mev.co.uk>
+Subject: Re: [PATCH] Fixed coding style problems.
+Message-ID: <20180608221154.zghkrw5sc6zjtmaz@mwanda>
+References: <1528483959-23158-1-git-send-email-eklikeroomys@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1528483959-23158-1-git-send-email-eklikeroomys@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8918 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=916
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806080237
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make the metric only display aligned.
+The subject should be:
 
-Before:
-  # perf stat --topdown -I 1000
-  #           time core         cpus retiring             bad speculation      frontend bound       backend bound
-       1.000394323 S0-C0           2     37.4%               12.0%               31.4%               19.2%
-       1.000394323 S0-C1           2     25.1%                9.2%               43.8%               21.9%
-       2.001521204 S0-C0           2     36.4%               11.4%               32.4%               19.8%
-       2.001521204 S0-C1           2     26.2%                9.4%               43.1%               21.3%
-       3.001930208 S0-C0           2     35.1%               10.7%               33.6%               20.6%
-       3.001930208 S0-C1           2     28.9%               10.0%               40.0%               21.1%
+[PATCH] staging: comedi: shorten a long line
 
-After:
-  # perf stat --topdown -I 1000
-  #           time core         cpus             retiring      bad speculation       frontend bound        backend bound
-       1.000303722 S0-C0           2                34.2%                 7.6%                34.2%                24.0%
-       1.000303722 S0-C1           2                33.1%                 6.4%                36.9%                23.6%
-       2.001281055 S0-C0           2                34.6%                 6.7%                36.8%                21.8%
-       2.001281055 S0-C1           2                32.8%                 7.1%                38.1%                22.0%
-       3.001546080 S0-C0           2                39.3%                 5.5%                32.7%                22.5%
-       3.001546080 S0-C1           2                37.8%                 6.0%                33.1%                23.1%
+or something.  You need the subsystem prefix.  Try not to be vague.
 
-Link: http://lkml.kernel.org/n/tip-w26176oxgjojrub2z3hytkqp@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/perf/builtin-stat.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
 
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index 0b1ddd5ef05d..4e7bae4c98d2 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -1001,19 +1001,20 @@ static void print_metric_only(void *ctx, const char *color, const char *fmt,
- {
- 	struct outstate *os = ctx;
- 	FILE *out = os->fh;
--	int n;
--	char buf[1024];
-+	char buf[1024], str[1024];
- 	unsigned mlen = METRIC_ONLY_LEN;
- 
- 	if (!valid_only_metric(unit))
- 		return;
- 	unit = fixunit(buf, os->evsel, unit);
--	n = color_fprintf(out, color ?: "", fmt, val);
--	if (n > METRIC_ONLY_LEN)
--		n = METRIC_ONLY_LEN;
- 	if (mlen < strlen(unit))
- 		mlen = strlen(unit) + 1;
--	fprintf(out, "%*s", mlen - n, "");
-+
-+	if (color)
-+		mlen += strlen(color) + sizeof(PERF_COLOR_RESET) - 1;
-+
-+	color_snprintf(str, sizeof(str), color ?: "", fmt, val);
-+	fprintf(out, "%*s ", mlen, str);
- }
- 
- static void print_metric_only_csv(void *ctx, const char *color __maybe_unused,
-@@ -1053,7 +1054,7 @@ static void print_metric_header(void *ctx, const char *color __maybe_unused,
- 	if (csv_output)
- 		fprintf(os->fh, "%s%s", unit, csv_sep);
- 	else
--		fprintf(os->fh, "%-*s ", METRIC_ONLY_LEN, unit);
-+		fprintf(os->fh, "%*s ", METRIC_ONLY_LEN, unit);
- }
- 
- static void nsec_printout(int id, int nr, struct perf_evsel *evsel, double avg)
-@@ -1730,7 +1731,7 @@ static void print_interval(char *prefix, struct timespec *ts)
- 				fprintf(output, "             counts %*s events\n", unit_width, "unit");
- 			break;
- 		case AGGR_NONE:
--			fprintf(output, "#           time CPU");
-+			fprintf(output, "#           time CPU    ");
- 			if (!metric_only)
- 				fprintf(output, "                counts %*s events\n", unit_width, "unit");
- 			break;
--- 
-2.13.6
+On Fri, Jun 08, 2018 at 08:52:37PM +0200, Chris Opperman wrote:
+> This patch fixes a coding style problem in drivers/staging/comedi/drivers.c
+> and is submitted for task 10 of the eudyptula challenge.
+> Signed-off-by: Chris Opperman <eklikeroomys@gmail.com>
+
+You need a blank line before the Signed-off-by line.
+
+Best not to mention eudyptula.  The patch should be a readability
+improvement which justifies itsefl.
+
+> ---
+>  drivers/staging/comedi/drivers.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/comedi/drivers.c b/drivers/staging/comedi/drivers.c
+> index 9d73347..90ee974 100644
+> --- a/drivers/staging/comedi/drivers.c
+> +++ b/drivers/staging/comedi/drivers.c
+> @@ -475,7 +475,8 @@ unsigned int comedi_nsamples_left(struct comedi_subdevice *s,
+>  	struct comedi_cmd *cmd = &async->cmd;
+>  
+>  	if (cmd->stop_src == TRIG_COUNT) {
+> -		unsigned int scans_left = __comedi_nscans_left(s, cmd->stop_arg);
+> +		unsigned int scans_left =
+> +			__comedi_nscans_left(s, cmd->stop_arg);
+
+This isn't really a readability improvement.  Checkpatch.pl is not the
+king of the world.  It's only useful so far as it improves readability.
+
+We would still have accepted the patch probably but the format wasn't
+right because of the subject line.
+
+>  		unsigned int scan_pos =
+>  		    comedi_bytes_to_samples(s, async->scan_progress);
+>  		unsigned long long samples_left = 0;
+
+regards,
+dan carpenter
