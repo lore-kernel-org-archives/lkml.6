@@ -1,282 +1,224 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id tYsEGweGHlsaMQAAmS7hNA
-	; Mon, 11 Jun 2018 14:24:41 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id sj1HDmzQGltDEwAAmS7hNA
+	; Fri, 08 Jun 2018 18:52:28 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 6B041607BB; Mon, 11 Jun 2018 14:24:41 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GioKHzFj"
+	id 2B942607DC; Fri,  8 Jun 2018 18:52:28 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id B6EED6074D;
-	Mon, 11 Jun 2018 14:24:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B6EED6074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 7B2096074D;
+	Fri,  8 Jun 2018 18:52:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7B2096074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934423AbeFKOYj (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 10:24:39 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44932 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933465AbeFKOGo (ORCPT
+        id S932143AbeFHSvn (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 14:51:43 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:53818 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752763AbeFHSuV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:06:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=GWcO8qHo0kt3ntl8a5jR2Ne+3gIMw/C9E24POVCTyQY=; b=GioKHzFjcfm4M43j3Axf/hlmN
-        VvDdVWDo21wuM9BnbT8CL3KddhQBCmDAd2gXGXOaN0Fm2vGiJtm60nY9eRREVQV988ohoxU86pjym
-        4p6tusbicOfLZ5UWauBN3y/sOWqpwLZ9xV1ZOfZDqa0/rBlL0KYeOWuwB9wdom4FF7RPEJNyZ5S+E
-        cka2w3r9GZs4QPRjDr7mjK760nPO7B6DwIBf3juE9/AI8hu0itHMkRs6j5zZIeoqLuL31m7U6WVj2
-        KiTCpfN554WsYTR9zM9Th9iwSRdY8Av7E2RZ1pPJTlAh4xpRcNsOHK6K3DktRlDs65HI6CPfaajBs
-        As+lRAPkA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSNT1-0004ZL-PS; Mon, 11 Jun 2018 14:06:43 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Lukas Czerner <lczerner@redhat.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v13 11/72] xarray: Add xa_cmpxchg and xa_insert
-Date: Mon, 11 Jun 2018 07:05:38 -0700
-Message-Id: <20180611140639.17215-12-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
-References: <20180611140639.17215-1-willy@infradead.org>
+        Fri, 8 Jun 2018 14:50:21 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1fRMSq-0006OB-Fn; Fri, 08 Jun 2018 18:50:20 +0000
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 10/13] IMA: don't propagate opened through the entire thing
+Date: Fri,  8 Jun 2018 19:50:16 +0100
+Message-Id: <20180608185019.24472-10-viro@ZenIV.linux.org.uk>
+X-Mailer: git-send-email 2.9.5
+In-Reply-To: <20180608185019.24472-1-viro@ZenIV.linux.org.uk>
+References: <20180608184842.GD30522@ZenIV.linux.org.uk>
+ <20180608185019.24472-1-viro@ZenIV.linux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-Like cmpxchg(), xa_cmpxchg will only store to the index if the current
-entry matches the old entry.  It returns the current entry, which is
-usually more useful than the errno returned by radix_tree_insert().
-For the users who really only want the errno, the xa_insert() wrapper
-provides a more convenient calling convention.
+just check ->f_mode in ima_appraise_measurement()
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- include/linux/xarray.h                 | 60 ++++++++++++++++++++++
- lib/xarray.c                           | 71 ++++++++++++++++++++++++++
- tools/testing/radix-tree/xarray-test.c | 10 ++++
- 3 files changed, 141 insertions(+)
+ fs/namei.c                            |  3 +--
+ fs/nfsd/vfs.c                         |  2 +-
+ include/linux/ima.h                   |  4 ++--
+ security/integrity/ima/ima.h          |  4 ++--
+ security/integrity/ima/ima_appraise.c |  4 ++--
+ security/integrity/ima/ima_main.c     | 16 ++++++++--------
+ 6 files changed, 16 insertions(+), 17 deletions(-)
 
-diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-index b5220493652d..c9fc47d28c09 100644
---- a/include/linux/xarray.h
-+++ b/include/linux/xarray.h
-@@ -218,6 +218,8 @@ struct xarray {
- void xa_init_flags(struct xarray *, gfp_t flags);
- void *xa_load(struct xarray *, unsigned long index);
- void *xa_store(struct xarray *, unsigned long index, void *entry, gfp_t);
-+void *xa_cmpxchg(struct xarray *, unsigned long index,
-+			void *old, void *entry, gfp_t);
- bool xa_get_tag(struct xarray *, unsigned long index, xa_tag_t);
- void xa_set_tag(struct xarray *, unsigned long index, xa_tag_t);
- void xa_clear_tag(struct xarray *, unsigned long index, xa_tag_t);
-@@ -277,6 +279,34 @@ static inline bool xa_tagged(const struct xarray *xa, xa_tag_t tag)
- 	return xa->xa_flags & XA_FLAGS_TAG(tag);
+diff --git a/fs/namei.c b/fs/namei.c
+index 592d62a9f549..ce71a69653b1 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3366,8 +3366,7 @@ static int do_last(struct nameidata *nd,
+ 	if (error)
+ 		goto out;
+ opened:
+-	error = ima_file_check(file, op->acc_mode,
+-				file->f_mode & FMODE_CREATED ? FILE_CREATED : 0);
++	error = ima_file_check(file, op->acc_mode);
+ 	if (!error && will_truncate)
+ 		error = handle_truncate(file);
+ out:
+diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+index b0555d7d8200..55a099e47ba2 100644
+--- a/fs/nfsd/vfs.c
++++ b/fs/nfsd/vfs.c
+@@ -763,7 +763,7 @@ nfsd_open(struct svc_rqst *rqstp, struct svc_fh *fhp, umode_t type,
+ 		goto out_nfserr;
+ 	}
+ 
+-	host_err = ima_file_check(file, may_flags, 0);
++	host_err = ima_file_check(file, may_flags);
+ 	if (host_err) {
+ 		fput(file);
+ 		goto out_nfserr;
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index 0e4647e0eb60..d9ba3fc363b7 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -16,7 +16,7 @@ struct linux_binprm;
+ 
+ #ifdef CONFIG_IMA
+ extern int ima_bprm_check(struct linux_binprm *bprm);
+-extern int ima_file_check(struct file *file, int mask, int opened);
++extern int ima_file_check(struct file *file, int mask);
+ extern void ima_file_free(struct file *file);
+ extern int ima_file_mmap(struct file *file, unsigned long prot);
+ extern int ima_read_file(struct file *file, enum kernel_read_file_id id);
+@@ -34,7 +34,7 @@ static inline int ima_bprm_check(struct linux_binprm *bprm)
+ 	return 0;
  }
  
-+/**
-+ * xa_insert() - Store this entry in the XArray unless another entry is
-+ *			already present.
-+ * @xa: XArray.
-+ * @index: Index into array.
-+ * @entry: New entry.
-+ * @gfp: Memory allocation flags.
-+ *
-+ * If you would rather see the existing entry in the array, use xa_cmpxchg().
-+ * This function is for users who don't care what the entry is, only that
-+ * one is present.
-+ *
-+ * Context: Process context.  Takes and releases the xa_lock.
-+ *	    May sleep if the @gfp flags permit.
-+ * Return: 0 if the store succeeded.  -EEXIST if another entry was present.
-+ * 	   -ENOMEM if memory could not be allocated.
-+ */
-+static inline int xa_insert(struct xarray *xa, unsigned long index,
-+		void *entry, gfp_t gfp)
-+{
-+	void *curr = xa_cmpxchg(xa, index, NULL, entry, gfp);
-+	if (!curr)
-+		return 0;
-+	if (xa_is_err(curr))
-+		return xa_err(curr);
-+	return -EEXIST;
-+}
-+
- #define xa_trylock(xa)		spin_trylock(&(xa)->xa_lock)
- #define xa_lock(xa)		spin_lock(&(xa)->xa_lock)
- #define xa_unlock(xa)		spin_unlock(&(xa)->xa_lock)
-@@ -296,9 +326,39 @@ static inline bool xa_tagged(const struct xarray *xa, xa_tag_t tag)
-  */
- void *__xa_erase(struct xarray *, unsigned long index);
- void *__xa_store(struct xarray *, unsigned long index, void *entry, gfp_t);
-+void *__xa_cmpxchg(struct xarray *, unsigned long index, void *old,
-+		void *entry, gfp_t);
- void __xa_set_tag(struct xarray *, unsigned long index, xa_tag_t);
- void __xa_clear_tag(struct xarray *, unsigned long index, xa_tag_t);
- 
-+/**
-+ * __xa_insert() - Store this entry in the XArray unless another entry is
-+ *			already present.
-+ * @xa: XArray.
-+ * @index: Index into array.
-+ * @entry: New entry.
-+ * @gfp: Memory allocation flags.
-+ *
-+ * If you would rather see the existing entry in the array, use __xa_cmpxchg().
-+ * This function is for users who don't care what the entry is, only that
-+ * one is present.
-+ *
-+ * Context: Any context.  Expects xa_lock to be held on entry.  May
-+ *	    release and reacquire xa_lock if the @gfp flags permit.
-+ * Return: 0 if the store succeeded.  -EEXIST if another entry was present.
-+ *	   -ENOMEM if memory could not be allocated.
-+ */
-+static inline int __xa_insert(struct xarray *xa, unsigned long index,
-+		void *entry, gfp_t gfp)
-+{
-+	void *curr = __xa_cmpxchg(xa, index, NULL, entry, gfp);
-+	if (!curr)
-+		return 0;
-+	if (xa_is_err(curr))
-+		return xa_err(curr);
-+	return -EEXIST;
-+}
-+
- /* Everything below here is the Advanced API.  Proceed with caution. */
- 
- /*
-diff --git a/lib/xarray.c b/lib/xarray.c
-index d408627b2479..86b9e00a37a0 100644
---- a/lib/xarray.c
-+++ b/lib/xarray.c
-@@ -976,6 +976,77 @@ void *__xa_store(struct xarray *xa, unsigned long index, void *entry, gfp_t gfp)
- }
- EXPORT_SYMBOL(__xa_store);
- 
-+/**
-+ * xa_cmpxchg() - Conditionally replace an entry in the XArray.
-+ * @xa: XArray.
-+ * @index: Index into array.
-+ * @old: Old value to test against.
-+ * @entry: New value to place in array.
-+ * @gfp: Memory allocation flags.
-+ *
-+ * If the entry at @index is the same as @old, replace it with @entry.
-+ * If the return value is equal to @old, then the exchange was successful.
-+ *
-+ * Context: Process context.  Takes and releases the xa_lock.  May sleep
-+ * if the @gfp flags permit.
-+ * Return: The old value at this index or xa_err() if an error happened.
-+ */
-+void *xa_cmpxchg(struct xarray *xa, unsigned long index,
-+			void *old, void *entry, gfp_t gfp)
-+{
-+	XA_STATE(xas, xa, index);
-+	void *curr;
-+
-+	if (WARN_ON_ONCE(xa_is_internal(entry)))
-+		return XA_ERROR(-EINVAL);
-+
-+	do {
-+		xas_lock(&xas);
-+		curr = xas_load(&xas);
-+		if (curr == old)
-+			xas_store(&xas, entry);
-+		xas_unlock(&xas);
-+	} while (xas_nomem(&xas, gfp));
-+
-+	return xas_result(&xas, curr);
-+}
-+EXPORT_SYMBOL(xa_cmpxchg);
-+
-+/**
-+ * __xa_cmpxchg() - Store this entry in the XArray.
-+ * @xa: XArray.
-+ * @index: Index into array.
-+ * @old: Old value to test against.
-+ * @entry: New entry.
-+ * @gfp: Memory allocation flags.
-+ *
-+ * You must already be holding the xa_lock when calling this function.
-+ * It will drop the lock if needed to allocate memory, and then reacquire
-+ * it afterwards.
-+ *
-+ * Context: Any context.  Expects xa_lock to be held on entry.  May
-+ * release and reacquire xa_lock if @gfp flags permit.
-+ * Return: The old entry at this index or xa_err() if an error happened.
-+ */
-+void *__xa_cmpxchg(struct xarray *xa, unsigned long index,
-+			void *old, void *entry, gfp_t gfp)
-+{
-+	XA_STATE(xas, xa, index);
-+	void *curr;
-+
-+	if (WARN_ON_ONCE(xa_is_internal(entry)))
-+		return XA_ERROR(-EINVAL);
-+
-+	do {
-+		curr = xas_load(&xas);
-+		if (curr == old)
-+			xas_store(&xas, entry);
-+	} while (__xas_nomem(&xas, gfp));
-+
-+	return xas_result(&xas, curr);
-+}
-+EXPORT_SYMBOL(__xa_cmpxchg);
-+
- /**
-  * __xa_set_tag() - Set this tag on this entry while locked.
-  * @xa: XArray.
-diff --git a/tools/testing/radix-tree/xarray-test.c b/tools/testing/radix-tree/xarray-test.c
-index 7bc84d1d6c9a..575f494e17da 100644
---- a/tools/testing/radix-tree/xarray-test.c
-+++ b/tools/testing/radix-tree/xarray-test.c
-@@ -88,6 +88,15 @@ void check_xa_shrink(struct xarray *xa)
- 	assert(xa_load(xa, 0) == xa_mk_value(0));
- }
- 
-+void check_cmpxchg(struct xarray *xa)
-+{
-+	assert(xa_empty(xa));
-+	assert(!xa_store(xa, 12345678, xa_mk_value(12345678), GFP_KERNEL));
-+	assert(!xa_cmpxchg(xa, 5, xa_mk_value(5), NULL, GFP_KERNEL));
-+	assert(xa_erase(xa, 12345678) == xa_mk_value(12345678));
-+	assert(xa_empty(xa));
-+}
-+
- void check_multi_store(struct xarray *xa)
+-static inline int ima_file_check(struct file *file, int mask, int opened)
++static inline int ima_file_check(struct file *file, int mask)
  {
- 	unsigned long i, j, k;
-@@ -158,6 +167,7 @@ void xarray_checks(void)
- 	check_xa_shrink(&array);
- 	item_kill_tree(&array);
- 
-+	check_cmpxchg(&array);
- 	check_multi_store(&array);
- 	item_kill_tree(&array);
+ 	return 0;
  }
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 35fe91aa1fc9..2bd42d03910a 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -239,7 +239,7 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 			     struct integrity_iint_cache *iint,
+ 			     struct file *file, const unsigned char *filename,
+ 			     struct evm_ima_xattr_data *xattr_value,
+-			     int xattr_len, int opened);
++			     int xattr_len);
+ int ima_must_appraise(struct inode *inode, int mask, enum ima_hooks func);
+ void ima_update_xattr(struct integrity_iint_cache *iint, struct file *file);
+ enum integrity_status ima_get_cache_status(struct integrity_iint_cache *iint,
+@@ -255,7 +255,7 @@ static inline int ima_appraise_measurement(enum ima_hooks func,
+ 					   struct file *file,
+ 					   const unsigned char *filename,
+ 					   struct evm_ima_xattr_data *xattr_value,
+-					   int xattr_len, int opened)
++					   int xattr_len)
+ {
+ 	return INTEGRITY_UNKNOWN;
+ }
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 8bd7a0733e51..deec1804a00a 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -212,7 +212,7 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 			     struct integrity_iint_cache *iint,
+ 			     struct file *file, const unsigned char *filename,
+ 			     struct evm_ima_xattr_data *xattr_value,
+-			     int xattr_len, int opened)
++			     int xattr_len)
+ {
+ 	static const char op[] = "appraise_data";
+ 	const char *cause = "unknown";
+@@ -231,7 +231,7 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 		cause = iint->flags & IMA_DIGSIG_REQUIRED ?
+ 				"IMA-signature-required" : "missing-hash";
+ 		status = INTEGRITY_NOLABEL;
+-		if (opened & FILE_CREATED)
++		if (file->f_mode & FMODE_CREATED)
+ 			iint->flags |= IMA_NEW_FILE;
+ 		if ((iint->flags & IMA_NEW_FILE) &&
+ 		    (!(iint->flags & IMA_DIGSIG_REQUIRED) ||
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 74d0bd7e76d7..1a112389b29c 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -173,7 +173,7 @@ void ima_file_free(struct file *file)
+ 
+ static int process_measurement(struct file *file, const struct cred *cred,
+ 			       u32 secid, char *buf, loff_t size, int mask,
+-			       enum ima_hooks func, int opened)
++			       enum ima_hooks func)
+ {
+ 	struct inode *inode = file_inode(file);
+ 	struct integrity_iint_cache *iint = NULL;
+@@ -299,7 +299,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
+ 	if (rc == 0 && (action & IMA_APPRAISE_SUBMASK)) {
+ 		inode_lock(inode);
+ 		rc = ima_appraise_measurement(func, iint, file, pathname,
+-					      xattr_value, xattr_len, opened);
++					      xattr_value, xattr_len);
+ 		inode_unlock(inode);
+ 	}
+ 	if (action & IMA_AUDIT)
+@@ -343,7 +343,7 @@ int ima_file_mmap(struct file *file, unsigned long prot)
+ 	if (file && (prot & PROT_EXEC)) {
+ 		security_task_getsecid(current, &secid);
+ 		return process_measurement(file, current_cred(), secid, NULL,
+-					   0, MAY_EXEC, MMAP_CHECK, 0);
++					   0, MAY_EXEC, MMAP_CHECK);
+ 	}
+ 
+ 	return 0;
+@@ -369,13 +369,13 @@ int ima_bprm_check(struct linux_binprm *bprm)
+ 
+ 	security_task_getsecid(current, &secid);
+ 	ret = process_measurement(bprm->file, current_cred(), secid, NULL, 0,
+-				  MAY_EXEC, BPRM_CHECK, 0);
++				  MAY_EXEC, BPRM_CHECK);
+ 	if (ret)
+ 		return ret;
+ 
+ 	security_cred_getsecid(bprm->cred, &secid);
+ 	return process_measurement(bprm->file, bprm->cred, secid, NULL, 0,
+-				   MAY_EXEC, CREDS_CHECK, 0);
++				   MAY_EXEC, CREDS_CHECK);
+ }
+ 
+ /**
+@@ -388,14 +388,14 @@ int ima_bprm_check(struct linux_binprm *bprm)
+  * On success return 0.  On integrity appraisal error, assuming the file
+  * is in policy and IMA-appraisal is in enforcing mode, return -EACCES.
+  */
+-int ima_file_check(struct file *file, int mask, int opened)
++int ima_file_check(struct file *file, int mask)
+ {
+ 	u32 secid;
+ 
+ 	security_task_getsecid(current, &secid);
+ 	return process_measurement(file, current_cred(), secid, NULL, 0,
+ 				   mask & (MAY_READ | MAY_WRITE | MAY_EXEC |
+-					   MAY_APPEND), FILE_CHECK, opened);
++					   MAY_APPEND), FILE_CHECK);
+ }
+ EXPORT_SYMBOL_GPL(ima_file_check);
+ 
+@@ -497,7 +497,7 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
+ 	func = read_idmap[read_id] ?: FILE_CHECK;
+ 	security_task_getsecid(current, &secid);
+ 	return process_measurement(file, current_cred(), secid, buf, size,
+-				   MAY_READ, func, 0);
++				   MAY_READ, func);
+ }
+ 
+ static int __init init_ima(void)
 -- 
-2.17.1
+2.11.0
