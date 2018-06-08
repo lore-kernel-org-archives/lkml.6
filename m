@@ -1,200 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id cRiYMIIOGVs9CgAAmS7hNA
-	; Thu, 07 Jun 2018 10:53:12 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id U29KBhBzGlsSPwAAmS7hNA
+	; Fri, 08 Jun 2018 12:14:08 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 849AE608B8; Thu,  7 Jun 2018 10:53:12 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="B9I0fe+8"
+	id 09DB5607E4; Fri,  8 Jun 2018 12:14:08 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D898060115;
-	Thu,  7 Jun 2018 10:53:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D898060115
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 6A99B607A4;
+	Fri,  8 Jun 2018 12:14:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6A99B607A4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753213AbeFGKwx (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 06:52:53 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:46802 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752960AbeFGKwu (ORCPT
+        id S1752841AbeFHMOF (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 08:14:05 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38642 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751679AbeFHMOE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 06:52:50 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w57AohXO025529;
-        Thu, 7 Jun 2018 10:52:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
- date : message-id : in-reply-to : references; s=corp-2017-10-26;
- bh=K9BtkV75JM22QTIiHxsHQDSrecEBDRNvGRKz6k6eGek=;
- b=B9I0fe+8wbO3uBRqQj/DiAlX+IabyLfovVExDrcgnD4wm1hygRhPaUYWVFSlZIG2ndcK
- LAWW+dHetbbER8EppFyMWTCxczrIzOwNG1xEpgK4SEuO1q0V3MxTQRZW8i4Yj9mlLBvp
- kFiiC1XgPZ45LH/lfEPiwEG6SWEpGeogQsgfxxp08CGIHl7cok/pIclF62U1X8VpIlqg
- lg3Itbi/y/BNIe5DNDrtSEm9bPKYzdqOn4rcbiYl0GE6VvbDtgGBSJTn0iLN5yowM9Sj
- fmK8Qdlcl8IDsl4wV6BMFiQiuUOFqX7+3IG/YrKYiDO4fxobRS+KVN+8o1UkGLjb+3vx yw==
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2120.oracle.com with ESMTP id 2jbvyprdpk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 07 Jun 2018 10:52:25 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w57AqO5k008067
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 7 Jun 2018 10:52:24 GMT
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w57AqN6w004813;
-        Thu, 7 Jun 2018 10:52:23 GMT
-Received: from lab02.no.oracle.com (/10.172.144.56)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 07 Jun 2018 03:52:22 -0700
-From: Hans Westgaard Ry <hans.westgaard.ry@oracle.com>
-To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Hakon Bugge <haakon.bugge@oracle.com>,
-        Parav Pandit <parav@mellanox.com>,
-        Jack Morgenstein <jackm@dev.mellanox.co.il>,
-        Pravin Shedge <pravin.shedge4linux@gmail.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Wei Wang <wei.w.wang@intel.com>,
-        Chris Mi <chrism@mellanox.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] idr: Add ida_simple_get_cyclic
-Date: Thu,  7 Jun 2018 12:52:07 +0200
-Message-Id: <20180607105208.16332-2-hans.westgaard.ry@oracle.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180607105208.16332-1-hans.westgaard.ry@oracle.com>
-References: <20180529073808.27735-1-hans.westgaard.ry@oracle.com>
- <20180607105208.16332-1-hans.westgaard.ry@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8916 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=966
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806070128
+        Fri, 8 Jun 2018 08:14:04 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w58CDq0e071208
+        for <linux-kernel@vger.kernel.org>; Fri, 8 Jun 2018 08:14:03 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2jfqxwm2gf-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 08:14:03 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <tmricht@linux.ibm.com>;
+        Fri, 8 Jun 2018 13:14:01 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 8 Jun 2018 13:13:59 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w58CDwM731326398
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 8 Jun 2018 12:13:58 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 19C73AE045;
+        Fri,  8 Jun 2018 13:02:54 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C9FDBAE053;
+        Fri,  8 Jun 2018 13:02:53 +0100 (BST)
+Received: from oc3784624756.ibm.com (unknown [9.152.212.222])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  8 Jun 2018 13:02:53 +0100 (BST)
+Subject: Re: regression: "95cde3c59966 debugfs: inode: debugfs_create_dir uses
+ mode permission from parent" terminally annoys libvirt
+To: Mike Galbraith <efault@gmx.de>, LKML <linux-kernel@vger.kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>
+References: <1528442176.4678.10.camel@gmx.de>
+From: Thomas-Mich Richter <tmricht@linux.ibm.com>
+Organization: IBM LTC
+Date: Fri, 8 Jun 2018 14:13:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <1528442176.4678.10.camel@gmx.de>
+Content-Type: text/plain; charset=iso-8859-15
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18060812-0016-0000-0000-000001D98AB1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18060812-0017-0000-0000-0000322CA6B0
+Message-Id: <cba2a66b-e8f7-6bf0-d4c1-8f2ba7d89822@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-08_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=986 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806080140
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Orabug: 25571450
+On 06/08/2018 09:16 AM, Mike Galbraith wrote:
+> Greetings,
+> 
+> $subject bisected and verified via revert.  Box is garden variety
+> i4790, distro is openSUSE Leap 15.0.
+> 
+> Error starting domain: internal error: process exited while connecting to monitor: ioctl(KVM_CREATE_VM) failed: 12 Cannot allocate memory
+> 2018-06-08T03:18:00.453006Z qemu-system-x86_64: failed to initialize KVM: Cannot allocate memory
+> 
+> Traceback (most recent call last):
+>   File "/usr/share/virt-manager/virtManager/asyncjob.py", line 89, in cb_wrapper
+>     callback(asyncjob, *args, **kwargs)
+>   File "/usr/share/virt-manager/virtManager/asyncjob.py", line 125, in tmpcb
+>     callback(*args, **kwargs)
+>   File "/usr/share/virt-manager/virtManager/libvirtobject.py", line 82, in newfn
+>     ret = fn(self, *args, **kwargs)
+>   File "/usr/share/virt-manager/virtManager/domain.py", line 1508, in startup
+>     self._backend.create()
+>   File "/usr/lib64/python3.6/site-packages/libvirt.py", line 1069, in create
+>     if ret == -1: raise libvirtError ('virDomainCreate() failed', dom=self)
+> libvirt.libvirtError: internal error: process exited while connecting to monitor: ioctl(KVM_CREATE_VM) failed: 12 Cannot allocate memory
+> 2018-06-08T03:18:00.453006Z qemu-system-x86_64: failed to initialize KVM: Cannot allocate memory
+> 
+> 95cde3c59966f6371b6bcd9e4e2da2ba64ee9775 is the first bad commit
+> commit 95cde3c59966f6371b6bcd9e4e2da2ba64ee9775
+> Author: Thomas Richter <tmricht@linux.ibm.com>
+> Date:   Fri Apr 27 14:35:47 2018 +0200
+> 
+>     debugfs: inode: debugfs_create_dir uses mode permission from parent
+>     
+...
 
-Signed-off-by: Hans Westgaard Ry <hans.westgaard.ry@oracle.com>
----
- include/linux/idr.h |  8 +++++--
- lib/idr.c           | 66 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 72 insertions(+), 2 deletions(-)
+Hi,
 
-diff --git a/include/linux/idr.h b/include/linux/idr.h
-index e856f4e0ab35..f151ce89124a 100644
---- a/include/linux/idr.h
-+++ b/include/linux/idr.h
-@@ -218,10 +218,12 @@ DECLARE_PER_CPU(struct ida_bitmap *, ida_bitmap);
- 
- struct ida {
- 	struct radix_tree_root	ida_rt;
-+	unsigned int		ida_next;
- };
- 
--#define IDA_INIT(name)	{						\
--	.ida_rt = RADIX_TREE_INIT(name, IDR_RT_MARKER | GFP_NOWAIT),	\
-+#define IDA_INIT(name)	{						     \
-+		.ida_rt = RADIX_TREE_INIT(name, IDR_RT_MARKER | GFP_NOWAIT), \
-+		.ida_next = 0,						     \
- }
- #define DEFINE_IDA(name)	struct ida name = IDA_INIT(name)
- 
-@@ -232,6 +234,8 @@ void ida_destroy(struct ida *ida);
- 
- int ida_simple_get(struct ida *ida, unsigned int start, unsigned int end,
- 		   gfp_t gfp_mask);
-+int ida_simple_get_cyclic(struct ida *ida, unsigned int start, unsigned int end,
-+			  gfp_t gfp_mask);
- void ida_simple_remove(struct ida *ida, unsigned int id);
- 
- static inline void ida_init(struct ida *ida)
-diff --git a/lib/idr.c b/lib/idr.c
-index 823b813f08f8..3374c3fa4027 100644
---- a/lib/idr.c
-+++ b/lib/idr.c
-@@ -599,6 +599,72 @@ int ida_simple_get(struct ida *ida, unsigned int start, unsigned int end,
- 	return ret;
- }
- EXPORT_SYMBOL(ida_simple_get);
-+/**
-+ * ida_simple_get_cyclic - get a new id.
-+ * @ida: the (initialized) ida.
-+ * @start: the minimum id (inclusive, < 0x8000000)
-+ * @end: the maximum id (exclusive, < 0x8000000 or 0)
-+ * @gfp_mask: memory allocation flags
-+ *
-+ * Allocates an id in the range start <= id < end, or returns -ENOSPC.
-+ * On memory allocation failure, returns -ENOMEM.
-+ * The search for an unused id will start at the last id allocated and will
-+ * wrap around to @start if no free ids are found before reaching @end.
-+ *
-+ * Compared to ida_get_new_above() this function does its own locking, and
-+ * should be used unless there are special requirements.
-+ *
-+ * Use ida_simple_remove() to get rid of an id.
-+ */
-+int ida_simple_get_cyclic(struct ida *ida, unsigned int start, unsigned int end,
-+		   gfp_t gfp_mask)
-+{
-+	int ret, id, next;
-+	unsigned int max;
-+	unsigned long flags;
-+
-+	WARN_ON((int)start < 0);
-+	WARN_ON((int)end < 0);
-+
-+	if (end == 0) {
-+		max = 0x80000000;
-+	} else {
-+		WARN_ON(end < start);
-+		max = end - 1;
-+	}
-+
-+again:
-+	if (!ida_pre_get(ida, gfp_mask))
-+		return -ENOMEM;
-+
-+	spin_lock_irqsave(&simple_ida_lock, flags);
-+	next = ida->ida_next;
-+	if (next < start || next >= end)
-+		next = start;
-+
-+	ret = ida_get_new_above(ida, next, &id);
-+	if (likely(!ret)) {
-+		if (unlikely(id >= max)) {
-+			ida_remove(ida, id);
-+			if (next == start) {
-+				ret = -ENOSPC;
-+			} else {
-+				ida->ida_next = start;
-+				spin_unlock_irqrestore(&simple_ida_lock, flags);
-+				goto again;
-+			}
-+		} else {
-+			ida->ida_next = id + 1;
-+			ret = id;
-+		}
-+	}
-+	spin_unlock_irqrestore(&simple_ida_lock, flags);
-+
-+	if (unlikely(ret == -EAGAIN))
-+		goto again;
-+	return ret;
-+}
-+EXPORT_SYMBOL(ida_simple_get_cyclic);
- 
- /**
-  * ida_simple_remove - remove an allocated id.
+that patch does not allocate any memory, it just sets permission on newly
+created subdirectories in /sys/kernel/debug.
+I do not know what ioctl(KVM_CREATE_VM) does, but maybe requires permissions
+for group and others in that directory.
+
+Best thing is to revert this patch.
+
 -- 
-2.14.3
+Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
+--
+Vorsitzende des Aufsichtsrats: Martina Koederitz 
+Geschäftsführung: Dirk Wittkopp
+Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
