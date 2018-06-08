@@ -1,341 +1,221 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id D0V3Bke+GFs0HAAAmS7hNA
-	; Thu, 07 Jun 2018 05:10:31 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id fUA5HEfQGVsROQAAmS7hNA
+	; Fri, 08 Jun 2018 01:10:33 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id EDEEE6089E; Thu,  7 Jun 2018 05:10:30 +0000 (UTC)
+	id D18386074D; Fri,  8 Jun 2018 01:10:32 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="guQzY6w5"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ygqh9NbM"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 1133260115;
-	Thu,  7 Jun 2018 05:10:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1133260115
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id ED521602FC;
+	Fri,  8 Jun 2018 01:10:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org ED521602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752881AbeFGFK2 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 01:10:28 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:40124 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750897AbeFGFKZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 01:10:25 -0400
-Received: by mail-pf0-f196.google.com with SMTP id z24-v6so4276787pfe.7;
-        Wed, 06 Jun 2018 22:10:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=hs/im8Pln2+ChTWItiDXhNE0KEGk6PLNN7wHGwZZLe0=;
-        b=guQzY6w5bZ44mhOcSCbf/9ZM7C8XDw/xup9RFnHdzph3vvCYdbPMRPmvfzddGP9Tlq
-         7t81doBibD39pFEuefzs1in24chOlGbJ6zj9OxrffEwz+VOfdQbRGztKJn9tPevLk10N
-         lEM+vMM2BrYlU7h2lX6JilF8S+jdWAcODo4JjmW/g30S2Jn3cJpLmHeBI/34GvDl94KN
-         TFHQWCOl/Z7yzuqIwUhc5lf2iLt6vALn1uAwfmjrr36B9hBG5bzn2U/ZMb/3RM8FKoYz
-         yevhD9FsClwOnNP17ZRHhbFqi3XfIR2ksVvtflmFkIS+o05ejVXOeFPinbsrH1sdWyY4
-         3Q1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hs/im8Pln2+ChTWItiDXhNE0KEGk6PLNN7wHGwZZLe0=;
-        b=WJ+mSv0F0yz4UFGrPivyIzq/pRyEqLycQ7LXJMAW+d2lc2G+2d6L4gWOUV60rBoK5f
-         0bSu56MXzxoY8yjcET27DRPDcn4I7ZiXTuOKFPu+YLm95Ppg3Utfb6vgSy9ZKzvv5nT5
-         HGDCpPULdkAN0WAFGl/8mwtGaVP76X7VaZqEoxgsGW7JmQNnjQ9dJehfSiZnWkHinZn0
-         EZq9tzPzh8KOBiC0HiMteW592v5VUS9HTHQMeohZMMfYxeEPhw5Q21ZjvrhCm1oOlRGd
-         MCYRsPyjAvsC8b/EUOQwdePv1SJDN1MS4bfu2CK+YKRwTY+eA8tepoUkE8bL4+jIbze1
-         nj2A==
-X-Gm-Message-State: APt69E0i2J7wmU9105CGHjd9j4ldXlBQLFka/P4Ljix3zd8YWuHVrk58
-        WnVjWj8zybFGHfaTQBf6sqhW0HTN
-X-Google-Smtp-Source: ADUXVKJdI161wxYFwaPwke+SxC+ObebbffOmTR3W2g2EPs7sM9VPMB0s+s06ppKQKQ8Mk1trVd3YFA==
-X-Received: by 2002:a65:578c:: with SMTP id b12-v6mr336977pgr.315.1528348224458;
-        Wed, 06 Jun 2018 22:10:24 -0700 (PDT)
-Received: from localhost ([39.7.47.166])
-        by smtp.gmail.com with ESMTPSA id f11-v6sm10788661pgo.62.2018.06.06.22.10.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 06 Jun 2018 22:10:23 -0700 (PDT)
-Date: Thu, 7 Jun 2018 14:10:19 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: syzbot <syzbot+43e93968b964e369db0b@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org, pmladek@suse.com,
-        rostedt@goodmis.org, sergey.senozhatsky@gmail.com,
-        syzkaller-bugs@googlegroups.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: possible deadlock in console_unlock
-Message-ID: <20180607051019.GA10406@jagdpanzerIV>
-References: <00000000000087008b056df8fbb3@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00000000000087008b056df8fbb3@google.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        id S1752625AbeFHBK3 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 21:10:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55906 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752139AbeFHBK2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 21:10:28 -0400
+Received: from devnote (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 596F420895;
+        Fri,  8 Jun 2018 01:10:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528420227;
+        bh=8uiuNxSr2FQJftHn494Y0eFJNxexsV+atg0XWpmfUno=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ygqh9NbMxFLotrBVnfxTaLnbDbKfe8I3rvRoEFzm+owndXQ45pLlqaCyShWT3RyDJ
+         uidgw5m8pZ4gju+aomJAyE1pcSwWvfP9m6kk1yhyGN5cfofQl9qdVY2+ijxhtYPGwV
+         yMon2FjUPhBEbeSMmbil90/6nm3tBOh82trtf9Fo=
+Date: Fri, 8 Jun 2018 10:10:23 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc: oleg@redhat.com, srikar@linux.vnet.ibm.com, rostedt@goodmis.org,
+        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org, ananth@linux.vnet.ibm.com,
+        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com
+Subject: Re: [PATCH 0/7] Uprobes: Support SDT markers having reference count
+ (semaphore)
+Message-Id: <20180608101023.cbf20db485026213d490cb7c@kernel.org>
+In-Reply-To: <20180606083344.31320-1-ravi.bangoria@linux.ibm.com>
+References: <20180606083344.31320-1-ravi.bangoria@linux.ibm.com>
+X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cc-ing more people
-Link: lkml.kernel.org/r/00000000000087008b056df8fbb3@google.com
+On Wed,  6 Jun 2018 14:03:37 +0530
+Ravi Bangoria <ravi.bangoria@linux.ibm.com> wrote:
 
-On (06/06/18 06:17), syzbot wrote:
-> Hello,
+> Why RFC again:
 > 
-> syzbot found the following crash on:
+> This series is different from earlier versions[1]. Earlier series
+> implemented this feature in trace_uprobe while this has implemented
+> the logic in core uprobe. Few reasons for this:
+>  1. One of the major reason was the deadlock between uprobe_lock and
+>  mm->mmap inside trace_uprobe_mmap(). That deadlock was not easy to fix
+>  because mm->mmap is not in control of trace_uprobe_mmap() and it has
+>  to take uprobe_lock to loop over trace_uprobe list. More details can
+>  be found at[2]. With this new approach, there are no deadlocks found
+>  so far.
+>  2. Many of the core uprobe function and data-structures needs to be
+>  exported to make earlier implementation simple. With this new approach,
+>  reference counter logic is been implemented in core uprobe and thus
+>  no need to export anything.
+
+I agree with you. Moreover, since uprobe_register/unregister() are
+exported to modules, this enablement would better be implemented
+inside uprobe so that all uprobe users benefit from this.
+
 > 
-> HEAD commit:    af6c5d5e01ad Merge branch 'for-4.18' of git://git.kernel.o..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=173d93ef800000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=12ff770540994680
-> dashboard link: https://syzkaller.appspot.com/bug?extid=43e93968b964e369db0b
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> userspace arch: i386
-> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=16e00bb7800000
+> Description:
 > 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+43e93968b964e369db0b@syzkaller.appspotmail.com
-
-Thanks a ton!
-
-So tty ioctl is known to be printk-deadlock prone and we don't know
-how to handle this in printk, as of now.
-
-ioctl
- tty_ioctl
-  tty_port->lock
-   printk
-    call_console_driver
-     console_driver
-      uart_port->lock
-
-The problem is that call_console_driver->console_driver also can do
-this thing
-
-   uart_port->lock
-    tty_wakeup
-     tty_port->lock
-
-So we can have the following:
-
-ioctl
- tty_ioctl
-  tty_port->lock
-   printk
-    call_console_driver
-     console_driver
-      uart_port->lock
-       tty_wakeup
-        tty_port->lock      << deadlock
-
-
-But lockdep is complaining about another scenario:
-
-> the existing dependency chain (in reverse order) is:
+> Userspace Statically Defined Tracepoints[3] are dtrace style markers
+> inside userspace applications. Applications like PostgreSQL, MySQL,
+> Pthread, Perl, Python, Java, Ruby, Node.js, libvirt, QEMU, glib etc
+> have these markers embedded in them. These markers are added by developer
+> at important places in the code. Each marker source expands to a single
+> nop instruction in the compiled code but there may be additional
+> overhead for computing the marker arguments which expands to couple of
+> instructions. In case the overhead is more, execution of it can be
+> omitted by runtime if() condition when no one is tracing on the marker:
 > 
-> -> #2 (&(&port->lock)->rlock){-.-.}:
->        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
->        _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
->        tty_port_tty_get+0x20/0x80 drivers/tty/tty_port.c:288
->        tty_port_default_wakeup+0x15/0x40 drivers/tty/tty_port.c:47
->        tty_port_tty_wakeup+0x5d/0x70 drivers/tty/tty_port.c:390
->        uart_write_wakeup+0x44/0x60 drivers/tty/serial/serial_core.c:103
->        serial8250_tx_chars+0x4be/0xb60
-> drivers/tty/serial/8250/8250_port.c:1808
->        serial8250_handle_irq.part.25+0x1ee/0x280
-> drivers/tty/serial/8250/8250_port.c:1881
->        serial8250_handle_irq drivers/tty/serial/8250/8250_port.c:1867
-> [inline]
->        serial8250_default_handle_irq+0xc8/0x150
-> drivers/tty/serial/8250/8250_port.c:1897
->        serial8250_interrupt+0xfa/0x1d0
-> drivers/tty/serial/8250/8250_core.c:125
->        __handle_irq_event_percpu+0x1c0/0xad0 kernel/irq/handle.c:149
->        handle_irq_event_percpu+0x98/0x1c0 kernel/irq/handle.c:189
->        handle_irq_event+0xa7/0x135 kernel/irq/handle.c:206
->        handle_edge_irq+0x20f/0x870 kernel/irq/chip.c:791
->        generic_handle_irq_desc include/linux/irqdesc.h:159 [inline]
->        handle_irq+0x18c/0x2e7 arch/x86/kernel/irq_64.c:77
->        do_IRQ+0x78/0x190 arch/x86/kernel/irq.c:245
->        ret_from_intr+0x0/0x1e
->        native_safe_halt+0x6/0x10 arch/x86/include/asm/irqflags.h:54
->        arch_safe_halt arch/x86/include/asm/paravirt.h:94 [inline]
->        default_idle+0xc2/0x440 arch/x86/kernel/process.c:500
->        arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:491
->        default_idle_call+0x6d/0x90 kernel/sched/idle.c:93
->        cpuidle_idle_call kernel/sched/idle.c:153 [inline]
->        do_idle+0x395/0x560 kernel/sched/idle.c:262
->        cpu_startup_entry+0x104/0x120 kernel/sched/idle.c:368
->        start_secondary+0x42b/0x5c0 arch/x86/kernel/smpboot.c:265
->        secondary_startup_64+0xa5/0xb0 arch/x86/kernel/head_64.S:242
-
-So this one is  IRQ ==> uart_port->lock ==>  tty_port->lock
-
-> -> #1 (&port_lock_key){-.-.}:
->        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
->        _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
->        serial8250_console_write+0x8d5/0xb00
-> drivers/tty/serial/8250/8250_port.c:3230
->        univ8250_console_write+0x5f/0x70
-> drivers/tty/serial/8250/8250_core.c:590
->        call_console_drivers kernel/printk/printk.c:1718 [inline]
->        console_unlock+0xac2/0x1100 kernel/printk/printk.c:2395
->        vprintk_emit+0x6ad/0xdd0 kernel/printk/printk.c:1907
->        vprintk_default+0x28/0x30 kernel/printk/printk.c:1947
->        vprintk_func+0x7a/0xe7 kernel/printk/printk_safe.c:379
->        printk+0x9e/0xba kernel/printk/printk.c:1980
->        register_console+0x7e7/0xc00 kernel/printk/printk.c:2714
->        univ8250_console_init+0x3f/0x4b
-> drivers/tty/serial/8250/8250_core.c:685
->        console_init+0x6d9/0xa38 kernel/printk/printk.c:2798
->        start_kernel+0x608/0x92d init/main.c:661
->        x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:452
->        x86_64_start_kernel+0x76/0x79 arch/x86/kernel/head64.c:433
->        secondary_startup_64+0xa5/0xb0 arch/x86/kernel/head_64.S:242
-
-This one is console_owner/console_sem ==> uart_port->lock
-
-
-> -> #0 (console_owner){-...}:
->        lock_acquire+0x1dc/0x520 kernel/locking/lockdep.c:3924
->        console_lock_spinning_enable kernel/printk/printk.c:1581 [inline]
->        console_unlock+0x5ef/0x1100 kernel/printk/printk.c:2392
->        vprintk_emit+0x6ad/0xdd0 kernel/printk/printk.c:1907
->        vprintk_default+0x28/0x30 kernel/printk/printk.c:1947
->        vprintk_func+0x7a/0xe7 kernel/printk/printk_safe.c:379
->        printk+0x9e/0xba kernel/printk/printk.c:1980
->        fail_dump lib/fault-inject.c:44 [inline]
->        should_fail+0x97a/0xbcd lib/fault-inject.c:149
->        __should_failslab+0x124/0x180 mm/failslab.c:32
->        should_failslab+0x9/0x14 mm/slab_common.c:1522
->        slab_pre_alloc_hook mm/slab.h:423 [inline]
->        slab_alloc mm/slab.c:3378 [inline]
->        __do_kmalloc mm/slab.c:3716 [inline]
->        __kmalloc+0x63/0x760 mm/slab.c:3727
->        kmalloc include/linux/slab.h:517 [inline]
->        tty_buffer_alloc drivers/tty/tty_buffer.c:170 [inline]
->        __tty_buffer_request_room+0x2d2/0x7f0 drivers/tty/tty_buffer.c:268
->        tty_insert_flip_string_fixed_flag+0x8d/0x1f0
-> drivers/tty/tty_buffer.c:313
->        tty_insert_flip_string include/linux/tty_flip.h:37 [inline]
->        pty_write+0x12c/0x1f0 drivers/tty/pty.c:121
->        tty_put_char+0x129/0x150 drivers/tty/tty_io.c:2865
->        __process_echoes+0x4d9/0x8d0 drivers/tty/n_tty.c:703
->        process_echoes+0xfc/0x170 drivers/tty/n_tty.c:781
->        n_tty_set_termios+0xb56/0xe80 drivers/tty/n_tty.c:1837
->        tty_set_termios+0x7a0/0xac0 drivers/tty/tty_ioctl.c:341
->        set_termios+0x41e/0x7d0 drivers/tty/tty_ioctl.c:414
->        tty_mode_ioctl+0x871/0xb50 drivers/tty/tty_ioctl.c:781
->        n_tty_ioctl_helper+0x54/0x3b0 drivers/tty/tty_ioctl.c:940
->        n_tty_ioctl+0x54/0x320 drivers/tty/n_tty.c:2441
->        tty_ioctl+0x5e1/0x1870 drivers/tty/tty_io.c:2655
->        vfs_ioctl fs/ioctl.c:46 [inline]
->        file_ioctl fs/ioctl.c:500 [inline]
->        do_vfs_ioctl+0x1cf/0x16f0 fs/ioctl.c:684
->        __do_compat_sys_ioctl fs/compat_ioctl.c:1483 [inline]
->        __se_compat_sys_ioctl fs/compat_ioctl.c:1407 [inline]
->        __ia32_compat_sys_ioctl+0x43e/0x640 fs/compat_ioctl.c:1407
->        do_syscall_32_irqs_on arch/x86/entry/common.c:323 [inline]
->        do_fast_syscall_32+0x345/0xf9b arch/x86/entry/common.c:394
->        entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-
-This one is tty IOCTL ==> tty_port->lock ==> console_owner/console_sem ==> uart_port->lock
-
->  Possible unsafe locking scenario:
+>     if (reference_counter > 0) {
+>         Execute marker instructions;
+>     }
 > 
->        CPU0                    CPU1
->        ----                    ----
->   lock(&(&port->lock)->rlock);
->                                lock(&port_lock_key);
->                                lock(&(&port->lock)->rlock);
->   lock(console_owner);
+> Default value of reference counter is 0. Tracer has to increment the 
+> reference counter before tracing on a marker and decrement it when
+> done with the tracing.
+> 
+> Currently, perf tool has limited supports for SDT markers. I.e. it
+> can not trace markers surrounded by reference counter. Also, it's
+> not easy to add reference counter logic in userspace tool like perf,
+> so basic idea for this patchset is to add reference counter logic in
+> the trace_uprobe infrastructure. Ex,[4]
+> 
+>   # cat tick.c
+>     ... 
+>     for (i = 0; i < 100; i++) {
+> 	DTRACE_PROBE1(tick, loop1, i);
+>         if (TICK_LOOP2_ENABLED()) {
+>             DTRACE_PROBE1(tick, loop2, i); 
+>         }
+>         printf("hi: %d\n", i); 
+>         sleep(1);
+>     }   
+>     ... 
+> 
+> Here tick:loop1 is marker without reference counter where as tick:loop2
+> is surrounded by reference counter condition.
+> 
+>   # perf buildid-cache --add /tmp/tick
+>   # perf probe sdt_tick:loop1
+>   # perf probe sdt_tick:loop2
+> 
+>   # perf stat -e sdt_tick:loop1,sdt_tick:loop2 -- /tmp/tick
+>   hi: 0
+>   hi: 1
+>   hi: 2
+>   ^C
+>   Performance counter stats for '/tmp/tick':
+>              3      sdt_tick:loop1
+>              0      sdt_tick:loop2
+>      2.747086086 seconds time elapsed
+> 
+> Perf failed to record data for tick:loop2. Same experiment with this
+> patch series:
+> 
+>   # ./perf buildid-cache --add /tmp/tick
+>   # ./perf probe sdt_tick:loop2
+>   # ./perf stat -e sdt_tick:loop2 /tmp/tick
+>     hi: 0
+>     hi: 1
+>     hi: 2
+>     ^C  
+>      Performance counter stats for '/tmp/tick':
+>                  3      sdt_tick:loop2
+>        2.561851452 seconds time elapsed
+> 
+> 
+> Note:
+>  - 'reference counter' is called as 'semaphore' in original Dtrace
+>    (or Systemtap, bcc and even in ELF) documentation and code. But the 
+>    term 'semaphore' is misleading in this context. This is just a counter
+>    used to hold number of tracers tracing on a marker. This is not haeally
+>    used for any synchronization. So we are referring it as 'reference
+>    counter' in kernel / perf code.
+
++1. I like this "reference counter" term :)
+
+>  - This patches still has one issue. If there are multiple instances of
+>    same application running and user wants to trace any particular
+>    instance, trace_uprobe is updating reference counter in all instances.
+>    This is not a problem on user side because instruction is not replaced
+>    with trap/int3 and thus user will only see samples from his interested
+>    process. But still this is more of a correctness issue. I'm working on
+>    a fix for this.
+
+Hmm, it sounds like not a correctness issue, but there maybe a performace
+tradeoff. Tracing one particulear instance, other instances also will get
+a performance loss (Only if the parameter preparation block is heavy,
+because the heaviest part of probing - trap/int3 and recording data - isn't
+executed.)
+
+BTW, why this happens? I thought the refcounter part is just a data which
+is not shared among processes...
+
+Thank you,
 
 
-IOW
-
-    tty ioctl
-    tty_port->lock		IRQ
-    printk			uart_port->lock
-    console_owner
-    uart_port->lock		tty_port->rlock
-
-
-The simplest thing to do [not necessarily the right one, tho]
-would be to break the IOCTL ==> tty_port->lock ==> printk ==> uart_port->lock
-chain.
-
-E.g. by adding __GFP_NOWARN
-
----
-
- drivers/tty/tty_buffer.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/tty/tty_buffer.c b/drivers/tty/tty_buffer.c
-index c996b6859c5e..71958ef6a831 100644
---- a/drivers/tty/tty_buffer.c
-+++ b/drivers/tty/tty_buffer.c
-@@ -167,7 +167,8 @@ static struct tty_buffer *tty_buffer_alloc(struct tty_port *port, size_t size)
- 	   have queued and recycle that ? */
- 	if (atomic_read(&port->buf.mem_used) > port->buf.mem_limit)
- 		return NULL;
--	p = kmalloc(sizeof(struct tty_buffer) + 2 * size, GFP_ATOMIC);
-+	p = kmalloc(sizeof(struct tty_buffer) + 2 * size,
-+			GFP_ATOMIC | __GFP_NOWARN);
- 	if (p == NULL)
- 		return NULL;
-
----
+> 
+> [1] https://lkml.org/lkml/2018/4/17/23
+> [2] https://lkml.org/lkml/2018/5/25/111
+> [3] https://sourceware.org/systemtap/wiki/UserSpaceProbeImplementation
+> [4] https://github.com/iovisor/bcc/issues/327#issuecomment-200576506
+> 
+> Ravi Bangoria (7):
+>   Uprobes: Simplify uprobe_register() body
+>   Uprobes: Support SDT markers having reference count (semaphore)
+>   Uprobes/sdt: Fix multiple update of same reference counter
+>   trace_uprobe/sdt: Prevent multiple reference counter for same uprobe
+>   Uprobes/sdt: Prevent multiple reference counter for same uprobe
+>   Uprobes/sdt: Document about reference counter
+>   perf probe: Support SDT markers having reference counter (semaphore)
+> 
+>  Documentation/trace/uprobetracer.rst |  16 +-
+>  include/linux/uprobes.h              |   5 +
+>  kernel/events/uprobes.c              | 502 +++++++++++++++++++++++++++++++----
+>  kernel/trace/trace.c                 |   2 +-
+>  kernel/trace/trace_uprobe.c          |  74 +++++-
+>  tools/perf/util/probe-event.c        |  39 ++-
+>  tools/perf/util/probe-event.h        |   1 +
+>  tools/perf/util/probe-file.c         |  34 ++-
+>  tools/perf/util/probe-file.h         |   1 +
+>  tools/perf/util/symbol-elf.c         |  46 +++-
+>  tools/perf/util/symbol.h             |   7 +
+>  11 files changed, 643 insertions(+), 84 deletions(-)
+> 
+> -- 
+> 1.8.3.1
+> 
 
 
-Another way could be - switch to printk_safe mode around that
-kmalloc():
-
-	__printk_safe_enter();
-	kmalloc(sizeof(struct tty_buffer) + 2 * size, GFP_ATOMIC);
-	__printk_safe_exit();
-
-This will redirect all printk()-s from kmalloc() to a special per-CPU
-buffer, which will be flushed later from a safe context (irq work).
-
-
-Or, may be, we even can switch to printk_safe mode every time we grab
-tty_port lock.
-
-#define tty_port_lock_irqsave(l,f)				\
-	do {							\
-		spin_lock_irqsave((l), f);			\
-		__printk_safe_enter();				\
-	} while (0)
-
-#define tty_port_unlock_irqrestore(l,f)				\
-	do {							\
-		__printk_safe_exit();				\
-		spin_lock_irqrestore((l),f);			\
-	} while (0)
-
-This will require some "automatic" replacement of all port->lock
-operation in drivers/tty/*.
-
-Perhaps something like this should be done for uart_port->lock
-as well. Because, technically, we can have the following
-
-	IRQ
-	uart_port->lock
-	tty_wakeup
-	printk
-	 call_console_drivers
-	  console_driver
-	   uart_port->lock               << deadlock
-
-Which is totally possible.
-E.g. tty_port_default_wakeup()->tty_port_tty_get()->refcount_inc()->WARN_ONCE()
-
-Any opinions?
-
-	-ss
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
