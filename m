@@ -1,92 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id o9EbKLehG1vIQwAAmS7hNA
-	; Sat, 09 Jun 2018 09:45:27 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id OM10K/iTGlsPfQAAmS7hNA
+	; Fri, 08 Jun 2018 14:34:57 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 88A90607BB; Sat,  9 Jun 2018 09:45:27 +0000 (UTC)
+	id 8B2A6606FA; Fri,  8 Jun 2018 14:34:57 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hYF8q4dG"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 144AF6032D;
-	Sat,  9 Jun 2018 09:45:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 144AF6032D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id ED2A4601D2;
+	Fri,  8 Jun 2018 14:34:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org ED2A4601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753110AbeFIJpX (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 05:45:23 -0400
-Received: from mga07.intel.com ([134.134.136.100]:65015 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751414AbeFIJpW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 05:45:22 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jun 2018 02:45:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,494,1520924400";
-   d="scan'208";a="62627200"
-Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
-  by fmsmga001.fm.intel.com with ESMTP; 09 Jun 2018 02:45:08 -0700
-Received: from kbuild by bee with local (Exim 4.84_2)
-        (envelope-from <lkp@intel.com>)
-        id 1fRaQl-000I5E-RH; Sat, 09 Jun 2018 17:45:07 +0800
-Date: Sat, 9 Jun 2018 17:44:12 +0800
-From: kbuild test robot <fengguang.wu@intel.com>
-To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Cc: kbuild-all@01.org, bhelgaas@google.com, lorenzo.pieralisi@arm.com,
-        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
-        adouglas@cadence.com, jesper.nilsson@axis.com,
-        linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Subject: [RFC PATCH] PCI: dwc: __dw_pcie_ep_find_next_cap() can be static
-Message-ID: <20180609094411.GA86347@cairo>
-References: <299abe22c35db333dca228a48fdb03ecc662e247.1527862777.git.gustavo.pimentel@synopsys.com>
+        id S1752805AbeFHOez (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 10:34:55 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:32865 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752676AbeFHOew (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 10:34:52 -0400
+Received: by mail-lf0-f68.google.com with SMTP id y20-v6so20457187lfy.0;
+        Fri, 08 Jun 2018 07:34:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=7BKoDRRNvG418aZ/I0cOtaRZRkUjaVSOPXsuwmbWVvg=;
+        b=hYF8q4dGNoUis1OmbxRkwSuyX8HxXtT4l9f+asvsgR4shlG/4SpWaC8jvLFb2lfEWc
+         EsyJE3iYmem1R3V2IzVQhY3KJqUupikS/pbGS48nvsTRuV5nvDj1+IFT33PfD8J+sC9T
+         fgnYlTIDrxlux7JxKzgFZrXiE6zJ+gMVKTVnubU/fae/Qxgy/yYDnaW7+c0x5p1XY/PK
+         oVTwjiand2B2IRB9kU/2+omwzPH+p2Mj1yESQKzOQI+fzxZoQFdDNkIPo2ETFaBncdXS
+         WpKFaRJ3Bxllagwu0TXwU38vFVvIc2rTnlS01qEuqZ+CYC9F9hcwEpo2NNQ76tWAdu4q
+         0i4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:in-reply-to:references
+         :from:date:message-id:subject:to:cc;
+        bh=7BKoDRRNvG418aZ/I0cOtaRZRkUjaVSOPXsuwmbWVvg=;
+        b=NuMJKKXGOtqj0V8FU2auOYwz69lM/S6O9Aq/075igWVo17PvFdt/4S1D4SiY2CzZi6
+         45Vohfj4COZlwco1Ef9BZWVIWnrPtdmYsRX8i67OzHajxP/vzMOdEicT7L7GW9BGq133
+         +ZyP7B/pQyYZbVsPEdtuW8N+5f2yS2P9/pGbxLCIPbdMRA3n0NjG8bX//A1DlnjvcQ65
+         9goXTxl+A3vmF+qKMuXPR9tK22egOW07kgXY/ivOIYryAzbDyJeYTvSvlyRRg1ujyIuu
+         sVUSIxYGnkfj1M5P/4RK1rbth6nTIa4ZqQWPPgDWCTyrPuTal+hePk2kYmxFSCmBXP50
+         0Y/A==
+X-Gm-Message-State: APt69E1qnWcwC+TBzkkYsmoYyx4Afz0YYZ6J9D50/vjrSzeONfXurQHz
+        mu7mryF5+5uG7PZocP+fyw5y3icsZJ5L7tn2pfo=
+X-Google-Smtp-Source: ADUXVKKKIXnHK44WQavloInOjS7D1BFCEqG0ZuZmMaMLIrnvKMDXS/lLcGLUU0OZb68ArZ16MmqSDRO4E970FlPtuuI=
+X-Received: by 2002:a19:188a:: with SMTP id 10-v6mr4333256lfy.26.1528468490963;
+ Fri, 08 Jun 2018 07:34:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <299abe22c35db333dca228a48fdb03ecc662e247.1527862777.git.gustavo.pimentel@synopsys.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: lkp@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+Received: by 2002:a19:b87:0:0:0:0:0 with HTTP; Fri, 8 Jun 2018 07:34:50 -0700 (PDT)
+Reply-To: sedat.dilek@gmail.com
+In-Reply-To: <5C97550D-BEF4-4069-9373-F7543E3878FB@zytor.com>
+References: <20180605170532.170361-1-ndesaulniers@google.com>
+ <20180605170532.170361-2-ndesaulniers@google.com> <202492204c2d5bd5ca27307cbca5e44673b739ed.camel@perches.com>
+ <5ad1876557235a089a50e6ed6c558a7dcb0da714.camel@perches.com>
+ <CA+icZUXEpe954z0TSbhSJPdFCfOqsBtpO9mPZBcJ2HWubSo_zQ@mail.gmail.com> <5C97550D-BEF4-4069-9373-F7543E3878FB@zytor.com>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Date: Fri, 8 Jun 2018 16:34:50 +0200
+Message-ID: <CA+icZUUz1Zb1e0LbeccY-3=HY02txe4BiNwhN0vqW_RkQpfLCw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] compiler-gcc.h: add gnu_inline to all inline declarations
+To: hpa@zytor.com
+Cc: Joe Perches <joe@perches.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        akpm@linux-foundation.org, ard.biesheuvel@linaro.org,
+        aryabinin@virtuozzo.com, akataria@vmware.com,
+        boris.ostrovsky@oracle.com, brijesh.singh@amd.com,
+        caoj.fnst@cn.fujitsu.com, gregkh@linuxfoundation.org,
+        jan.kiszka@siemens.com, jarkko.sakkinen@linux.intel.com,
+        jgross@suse.com, jpoimboe@redhat.com,
+        kirill.shutemov@linux.intel.com, mingo@redhat.com,
+        mjg59@google.com, mka@chromium.org, pombredanne@nexb.com,
+        rostedt@goodmis.org, tglx@linutronix.de, thomas.lendacky@amd.com,
+        tweek@google.com, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        virtualization@lists.linux-foundation.org, astrachan@google.com,
+        manojgupta@google.com, ghackmann@google.com, tstellar@redhat.com,
+        keescook@google.com, yamada.masahiro@socionext.com,
+        michal.lkml@markovi.net, linux-kbuild@vger.kernel.org,
+        geert@linux-m68k.org, will.deacon@arm.com, mawilcox@microsoft.com,
+        Arnd Bergmann <arnd@arndb.de>, rientjes@google.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jun 6, 2018 at 6:39 PM,  <hpa@zytor.com> wrote:
+...
+>>Beyond this, a general question: Can someone explain why all these
+>>inline defines are in compiler-gcc.h (as there exists compiler.h and
+>>compiler-clang.h)?
+>>
+>>Thanks.
+>>
+>>Regards,
+>>- Sedat -
+>
+> Because gcc itself also supports both GNU89-style and C99-style inlines, but the kernel was built with the former, and it is not necessarily a trivial modification, except for "static inline" which is the same for both.
+>
+> The other option is to pass -fgnu89-inline on the command line, which is supported by both gcc and clang. The two methods are fully equivalent.
+>
 
-Fixes: 797b96a7422e ("PCI: dwc: Add MSI-X callbacks handler")
-Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
----
- pcie-designware-ep.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+We have...
 
-diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
-index c7f2fa9..a498f1f 100644
---- a/drivers/pci/dwc/pcie-designware-ep.c
-+++ b/drivers/pci/dwc/pcie-designware-ep.c
-@@ -40,8 +40,8 @@ void dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar)
- 	__dw_pcie_ep_reset_bar(pci, bar, 0);
- }
- 
--u8 __dw_pcie_ep_find_next_cap(struct dw_pcie *pci, u8 cap_ptr,
--			      u8 cap)
-+static u8 __dw_pcie_ep_find_next_cap(struct dw_pcie *pci, u8 cap_ptr,
-+				     u8 cap)
- {
- 	u8 cap_id, next_cap_ptr;
- 	u16 reg;
-@@ -59,7 +59,7 @@ u8 __dw_pcie_ep_find_next_cap(struct dw_pcie *pci, u8 cap_ptr,
- 	return __dw_pcie_ep_find_next_cap(pci, next_cap_ptr, cap);
- }
- 
--u8 dw_pcie_ep_find_capability(struct dw_pcie *pci, u8 cap)
-+static u8 dw_pcie_ep_find_capability(struct dw_pcie *pci, u8 cap)
- {
- 	u8 next_cap_ptr;
- 	u16 reg;
+$ ls include/linux/compiler*
+include/linux/compiler-clang.h  include/linux/compiler-gcc.h
+include/linux/compiler.h  include/linux/compiler-intel.h
+include/linux/compiler_types.h
+
+include/linux/compiler_types.h says...
+
+#ifdef __GNUC__
+#include <linux/compiler-gcc.h>
+#endif
+...
+/* Intel compiler defines __GNUC__. So we will overwrite implementations
+ * coming from above header files here
+ */
+#ifdef __INTEL_COMPILER
+# include <linux/compiler-intel.h>
+#endif
+
+/* Clang compiler defines __GNUC__. So we will overwrite implementations
+ * coming from above header files here
+ */
+#ifdef __clang__
+#include <linux/compiler-clang.h>
+#endif
+
+/*
+ * Generic compiler-dependent macros required for kernel
+ * build go below this comment. Actual compiler/compiler version
+ * specific implementations come from the above header files
+ */
+...
+
+include/linux/compiler-clang.h says...
+
+#ifndef __LINUX_COMPILER_TYPES_H
+#error "Please don't include <linux/compiler-clang.h> directly,
+include <linux/compiler.h> instead."
+#endif
+
+So, compiler-clang.h uses defines etc. from compiler-gcc.h but might
+overwrite it.
+Correct?
+I would have expected inline defines in compiler.h as I thought there
+is the place for generic stuff.
+
+Maybe you can clarify on the roles of especially compiler.h and
+compiler_types.h.
+
+Thanks.
+
+- sed@ -
