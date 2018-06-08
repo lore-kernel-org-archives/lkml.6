@@ -1,129 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id p94TF2pGGVuvNwAAmS7hNA
-	; Thu, 07 Jun 2018 14:52:26 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id JPyaDaw9GlsIQwAAmS7hNA
+	; Fri, 08 Jun 2018 08:26:49 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 2E91D608BF; Thu,  7 Jun 2018 14:52:26 +0000 (UTC)
+	id 329F0607E4; Fri,  8 Jun 2018 08:26:49 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="D7A11XC9"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 8A8586074D;
-	Thu,  7 Jun 2018 14:52:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8A8586074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id C07B4601C3;
+	Fri,  8 Jun 2018 08:26:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C07B4601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935206AbeFGOwX (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:52:23 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40909 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932674AbeFGOwT (ORCPT
+        id S1752950AbeFHI0n (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 04:26:43 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:39593 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752804AbeFHITE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:52:19 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbQ-0005Zj-AN; Thu, 07 Jun 2018 15:09:24 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbC-0003EI-HW; Thu, 07 Jun 2018 15:09:10 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Doug Ledford" <dledford@redhat.com>,
-        "syzkaller" <syzkaller@googlegroups.com>,
-        "Leon Romanovsky" <leon@kernel.org>,
-        "Boris Pismenny" <borisp@mellanox.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.828469315@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 347/410] IB/mlx5: Fix integer overflows in
- mlx5_ib_create_srq
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Fri, 8 Jun 2018 04:19:04 -0400
+Received: by mail-pl0-f65.google.com with SMTP id f1-v6so7865979plt.6
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 01:19:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=3FkQjw0tnznQzkqhNl9915wjCXW19DdBddES+/u0pdI=;
+        b=D7A11XC9NRb0A18pNGJQ+MUULMWZ24DD87PMtK1ouKTtEaJlz5CzywJQni4Xxm2vIS
+         uwCkhELfoXJm29QE7Z3ZpglaARof5Vj4hGciCM/MY1teWI+as2nPpms2bkyrOc2hAT1y
+         njLfAxMsQ90LE+oE64Gghv8Nf1B47XSxJn7AM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=3FkQjw0tnznQzkqhNl9915wjCXW19DdBddES+/u0pdI=;
+        b=NRbhH2zZ1KPCmzjusietB8Css/um8CRrxi3hYCkPI4/CcZnNuCprrIlJRTOokN+mIk
+         ubKdkbjQPrs0c4Jo/ePxJHj/CdgRoTrLa1+4Ttre4Qj7KiyaF8qr4plbCbF6/BeD8Mk+
+         bnH7UW7nOZNOX4Wy0/4ZY4GzRs7QFQJJCc31osOpXBVzjIcZv7MsVOW0r8jMlaTpXGw0
+         hXp8Trqx1CPF0Wf54Y4U+Q+Jf8gA/y+itaqD8traywHVi4R01dObt4fQP5TnyqIkHOew
+         kcimQdK9bsyN/KqSdmzFCfUJm4Th75XthN5uJC1MnlzDYUX7G3sITFMWytA0UGpjcrsQ
+         euLg==
+X-Gm-Message-State: APt69E3WpnZXKbiy9KdSyQzrSOpuZuLmb+tq5sTCU5uqggE25lBEWls2
+        dnqjqQ+D53dyeV7ELj34D9wBvg==
+X-Google-Smtp-Source: ADUXVKI99syxtAJwXcZFCSY3fTAlvL/yV4bhYCf+Q/uvMwvLmApHsCbWxIQZDMQaIOR1npSEk0h0LQ==
+X-Received: by 2002:a17:902:6e4:: with SMTP id 91-v6mr5528041plh.63.1528445944162;
+        Fri, 08 Jun 2018 01:19:04 -0700 (PDT)
+Received: from ubt.spreadtrum.com ([117.18.48.102])
+        by smtp.gmail.com with ESMTPSA id s4-v6sm72243947pgp.35.2018.06.08.01.19.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 08 Jun 2018 01:19:03 -0700 (PDT)
+From: Chunyan Zhang <zhang.chunyan@linaro.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Billows Wu <billows.wu@spreadtrum.com>, zhang.lyra@gmail.com
+Subject: [PATCH 1/6] mmc: sdhci: add sd host v4 mode
+Date: Fri,  8 Jun 2018 16:18:08 +0800
+Message-Id: <1528445893-14530-2-git-send-email-zhang.chunyan@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1528445893-14530-1-git-send-email-zhang.chunyan@linaro.org>
+References: <1528445893-14530-1-git-send-email-zhang.chunyan@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+For SD host controller version 4.00 or later ones, there're two
+modes of implementation - Version 3.00 compatible mode or
+Version 4 mode.  This patch introduces a flag to record this.
 
-------------------
-
-From: Boris Pismenny <borisp@mellanox.com>
-
-commit c2b37f76485f073f020e60b5954b6dc4e55f693c upstream.
-
-This patch validates user provided input to prevent integer overflow due
-to integer manipulation in the mlx5_ib_create_srq function.
-
-Cc: syzkaller <syzkaller@googlegroups.com>
-Fixes: e126ba97dba9 ("mlx5: Add driver for Mellanox Connect-IB adapters")
-Signed-off-by: Boris Pismenny <borisp@mellanox.com>
-Signed-off-by: Leon Romanovsky <leon@kernel.org>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
-[bwh: Backported to 3.16: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
 ---
- drivers/infiniband/hw/mlx5/srq.c | 15 +++++++++------
- include/linux/mlx5/driver.h      |  4 ++--
- 2 files changed, 11 insertions(+), 8 deletions(-)
+ drivers/mmc/host/sdhci.c | 6 ++++++
+ drivers/mmc/host/sdhci.h | 6 ++++++
+ 2 files changed, 12 insertions(+)
 
---- a/drivers/infiniband/hw/mlx5/srq.c
-+++ b/drivers/infiniband/hw/mlx5/srq.c
-@@ -234,8 +234,8 @@ struct ib_srq *mlx5_ib_create_srq(struct
- {
- 	struct mlx5_ib_dev *dev = to_mdev(pd->device);
- 	struct mlx5_ib_srq *srq;
--	int desc_size;
--	int buf_size;
-+	size_t desc_size;
-+	size_t buf_size;
- 	int err;
- 	struct mlx5_create_srq_mbox_in *uninitialized_var(in);
- 	int uninitialized_var(inlen);
-@@ -261,15 +261,18 @@ struct ib_srq *mlx5_ib_create_srq(struct
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index 2ededa7f..cf5695f 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -3302,6 +3302,12 @@ void __sdhci_read_caps(struct sdhci_host *host, u16 *ver, u32 *caps, u32 *caps1)
+ 	v = ver ? *ver : sdhci_readw(host, SDHCI_HOST_VERSION);
+ 	host->version = (v & SDHCI_SPEC_VER_MASK) >> SDHCI_SPEC_VER_SHIFT;
  
- 	desc_size = sizeof(struct mlx5_wqe_srq_next_seg) +
- 		    srq->msrq.max_gs * sizeof(struct mlx5_wqe_data_seg);
-+	if (desc_size == 0 || srq->msrq.max_gs > desc_size)
-+		return ERR_PTR(-EINVAL);
- 	desc_size = roundup_pow_of_two(desc_size);
--	desc_size = max_t(int, 32, desc_size);
-+	desc_size = max_t(size_t, 32, desc_size);
-+	if (desc_size < sizeof(struct mlx5_wqe_srq_next_seg))
-+		return ERR_PTR(-EINVAL);
- 	srq->msrq.max_avail_gather = (desc_size - sizeof(struct mlx5_wqe_srq_next_seg)) /
- 		sizeof(struct mlx5_wqe_data_seg);
- 	srq->msrq.wqe_shift = ilog2(desc_size);
- 	buf_size = srq->msrq.max * desc_size;
--	mlx5_ib_dbg(dev, "desc_size 0x%x, req wr 0x%x, srq size 0x%x, max_gs 0x%x, max_avail_gather 0x%x\n",
--		    desc_size, init_attr->attr.max_wr, srq->msrq.max, srq->msrq.max_gs,
--		    srq->msrq.max_avail_gather);
-+	if (buf_size < desc_size)
-+		return ERR_PTR(-EINVAL);
++	if (host->version >= SDHCI_SPEC_400) {
++		if (sdhci_readw(host, SDHCI_HOST_CONTROL2) &
++			SDHCI_CTRL_V4_MODE)
++			host->v4_mode = true;
++	}
++
+ 	if (host->quirks & SDHCI_QUIRK_MISSING_CAPS)
+ 		return;
  
- 	if (pd->uobject)
- 		err = create_srq_user(pd, srq, &in, udata, buf_size, &inlen);
---- a/include/linux/mlx5/driver.h
-+++ b/include/linux/mlx5/driver.h
-@@ -432,8 +432,8 @@ struct mlx5_core_mr {
- struct mlx5_core_srq {
- 	u32		srqn;
- 	int		max;
--	int		max_gs;
--	int		max_avail_gather;
-+	size_t		max_gs;
-+	size_t		max_avail_gather;
- 	int		wqe_shift;
- 	void (*event)	(struct mlx5_core_srq *, enum mlx5_event);
+diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+index c95b0a4..128b0ba 100644
+--- a/drivers/mmc/host/sdhci.h
++++ b/drivers/mmc/host/sdhci.h
+@@ -184,6 +184,7 @@
+ #define   SDHCI_CTRL_DRV_TYPE_D		0x0030
+ #define  SDHCI_CTRL_EXEC_TUNING		0x0040
+ #define  SDHCI_CTRL_TUNED_CLK		0x0080
++#define  SDHCI_CTRL_V4_MODE		0x1000
+ #define  SDHCI_CTRL_PRESET_VAL_ENABLE	0x8000
  
+ #define SDHCI_CAPABILITIES	0x40
+@@ -270,6 +271,8 @@
+ #define   SDHCI_SPEC_100	0
+ #define   SDHCI_SPEC_200	1
+ #define   SDHCI_SPEC_300	2
++#define   SDHCI_SPEC_400	3
++#define   SDHCI_SPEC_410	4
+ 
+ /*
+  * End of controller registers.
+@@ -551,6 +554,9 @@ struct sdhci_host {
+ 	u32			sdma_boundary;
+ 
+ 	unsigned long private[0] ____cacheline_aligned;
++
++	/* Host Version 4 Enable */
++	bool			v4_mode;
+ };
+ 
+ struct sdhci_ops {
+-- 
+2.7.4
