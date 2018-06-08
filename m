@@ -1,117 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id vmhiMQJYGVsVfgAAmS7hNA
-	; Thu, 07 Jun 2018 16:08:47 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id gxxIFVudGlumSAAAmS7hNA
+	; Fri, 08 Jun 2018 15:14:35 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id E204E608B8; Thu,  7 Jun 2018 16:08:46 +0000 (UTC)
+	id 446F7608BA; Fri,  8 Jun 2018 15:14:35 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 5D492605A2;
-	Thu,  7 Jun 2018 16:08:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5D492605A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id D387B601B4;
+	Fri,  8 Jun 2018 15:14:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D387B601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934503AbeFGQFD (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 12:05:03 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39257 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933019AbeFGOJE (ORCPT
+        id S1752428AbeFHPOd (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 11:14:33 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:38907 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751134AbeFHPOb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:09:04 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb4-0005Zn-90; Thu, 07 Jun 2018 15:09:02 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb1-0002on-4k; Thu, 07 Jun 2018 15:08:59 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "Raghava Aditya Renukunta" <RaghavaAditya.Renukunta@microsemi.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.371512497@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 094/410] scsi: aacraid: Fix udev inquiry race condition
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Fri, 8 Jun 2018 11:14:31 -0400
+Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
+ (mreue002 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 0MTsu0-1froAk0v20-00QRSM; Fri, 08 Jun 2018 17:14:18 +0200
+From: Arnd Bergmann <arnd@arndb.de>
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Len Brown <lenb@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Doug Smythies <doug.smythies@gmail.com>,
+        Toshi Kani <toshi.kani@hpe.com>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] cpufreq: intel_pstate: remove incorrect __initconst annotation
+Date: Fri,  8 Jun 2018 17:14:02 +0200
+Message-Id: <20180608151411.3892739-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:+MCNdx+hUjHWWKQBdkzjp68NeYpxiUj0FpwPhKvnPkYeKQnMjz5
+ NyWjne+lLVFsQiUrQlqZGVwPUt9GIVc0luAp/x0QtT9ZM36E2HGAXyg6JGqhQ9t12OTynAi
+ oKfphJ35l7YgvUp6SeP50jT5fUvgduw8YEhY9oC+as+0z0INAtDtkMFA8CT89lYFisSj0Fr
+ RlJP/rE2PRG/b0peq5N7A==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:cVQt4ZAPb24=:I11i/veqz2Lgujd7gXtF52
+ ACZxHLBbJZf5zz4ZxC6syzkSFjFi+wW7txXi0rZwj/cW99MtXcnz2iOY4Q+jqY0y3pM+G4De5
+ MgA25UzkFFXVRlcYjK9Fpru+WO/0dseoJn+jhND1hcjd1bAMd72+YvsK/ryrhQOCtLW9ASrVl
+ sJILVMNBgzO4mISdzzVFabl4Xrfh74sP3a2X9KOPbhPaP+WwH6js6ZZzPBG8zyM/OvGR0+h1b
+ FOcSWj27CAWj7TQ2i4iNL0y4wMPBFzbmwGo4ancda4ZsP88wxiFy7GhakQ1IxkzQSSGfytjVr
+ cMr+/OBZbLtfqcWtb1WKRtEA/m8G9iLF5jLa7CCToLk+WnWcDkWP+rdsTMkbfPJl3GoYA6YD5
+ ovWNGgZRADNtMa4izpZt6FscLzX+dT+2zW7TK2D+o8X7dG+6giIXbNObmp7KX++kIui/rFMag
+ oQIS+BS8EddDn1lrcwzwRo0Zh3CLElOvahp49XS767tLd4ohtW7AeiLqF4+7uIWdMS3TVha+m
+ ScX0TUaat96V2xd09x1mi+1y6BnrFshDOAQQQUhyLmNYSqtLP2ACxH/ez6jsqfAOTZydUmAlm
+ UrgERIhxPCyTfcoLc5IPEh32AC4yJIP0Uuk57duj+pzkcJzwCO2WCSGJq6XlNdbfduyrxlVmh
+ g/K/i1Q7Mby5L4YOZ8g/eKm8L5IihvCfjd+dR6mRp7eou1vnhaDc/zt/TeYH8iU15Du0=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+We get a build warning about the newly introduced code in
+intel_pstate_init_cpu() that references an __initconst variable after
+it has been freed:
 
-------------------
+WARNING: vmlinux.o(.text+0xf9eca2): Section mismatch in reference from the function intel_pstate_init_cpu() to the variable .init.rodata:intel_pstate_hwp_boost_ids
+The function intel_pstate_init_cpu() references
+the variable __initconst intel_pstate_hwp_boost_ids.
+This is often because intel_pstate_init_cpu lacks a __initconst
+annotation or the annotation of intel_pstate_hwp_boost_ids is wrong.
 
-From: Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>
+This removes the annotation to keep the variable around at
+runtime.
 
-commit f4e8708d3104437fd7716e957f38c265b0c509ef upstream.
-
-When udev requests for a devices inquiry string, it might create multiple
-threads causing a race condition on the shared inquiry resource string.
-
-Created a buffer with the string for each thread.
-
-Fixes: 3bc8070fb75b3315 ([SCSI] aacraid: SMC vendor identification)
-Signed-off-by: Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-[bwh: Backported to 3.16:
- - s/sup_adap_info->adapter_type_text/dev->supplement_adapter_info.AdapterTypeText/
- - Adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Fixes: f50f70793d78 ("cpufreq: intel_pstate: enable boost for Skylake Xeon")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
---- a/drivers/scsi/aacraid/aachba.c
-+++ b/drivers/scsi/aacraid/aachba.c
-@@ -770,8 +770,16 @@ static void setinqstr(struct aac_dev *de
- 	memset(str, ' ', sizeof(*str));
+ drivers/cpufreq/intel_pstate.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
+index 2065724dbffc..380936700165 100644
+--- a/drivers/cpufreq/intel_pstate.c
++++ b/drivers/cpufreq/intel_pstate.c
+@@ -1794,7 +1794,7 @@ static const struct x86_cpu_id intel_pstate_cpu_ee_disable_ids[] = {
+ 	{}
+ };
  
- 	if (dev->supplement_adapter_info.AdapterTypeText[0]) {
--		char * cp = dev->supplement_adapter_info.AdapterTypeText;
- 		int c;
-+		char *cp;
-+		char *cname = kmemdup(dev->supplement_adapter_info.AdapterTypeText,
-+				sizeof(dev->supplement_adapter_info.AdapterTypeText),
-+								GFP_ATOMIC);
-+
-+		if (!cname)
-+			return;
-+
-+		cp = cname;
- 		if ((cp[0] == 'A') && (cp[1] == 'O') && (cp[2] == 'C'))
- 			inqstrcpy("SMC", str->vid);
- 		else {
-@@ -780,8 +788,7 @@ static void setinqstr(struct aac_dev *de
- 				++cp;
- 			c = *cp;
- 			*cp = '\0';
--			inqstrcpy (dev->supplement_adapter_info.AdapterTypeText,
--				   str->vid);
-+			inqstrcpy(cname, str->vid);
- 			*cp = c;
- 			while (*cp && *cp != ' ')
- 				++cp;
-@@ -795,8 +802,8 @@ static void setinqstr(struct aac_dev *de
- 			cp[sizeof(str->pid)] = '\0';
- 		}
- 		inqstrcpy (cp, str->pid);
--		if (c)
--			cp[sizeof(str->pid)] = c;
-+
-+		kfree(cname);
- 	} else {
- 		struct aac_driver_ident *mp = aac_get_driver_ident(dev->cardtype);
- 
+-static const struct x86_cpu_id intel_pstate_hwp_boost_ids[] __initconst = {
++static const struct x86_cpu_id intel_pstate_hwp_boost_ids[] = {
+ 	ICPU(INTEL_FAM6_SKYLAKE_X, core_funcs),
+ 	ICPU(INTEL_FAM6_SKYLAKE_DESKTOP, core_funcs),
+ 	{}
+-- 
+2.9.0
