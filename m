@@ -1,120 +1,246 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 8qkmMxljHlvgXAAAmS7hNA
-	; Mon, 11 Jun 2018 11:55:41 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 4xRtItOTGlsbegAAmS7hNA
+	; Fri, 08 Jun 2018 14:33:55 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 92475607A4; Mon, 11 Jun 2018 11:55:41 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pZkRtpBE"
+	id 7CC8D6089E; Fri,  8 Jun 2018 14:33:55 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 06335601C3;
-	Mon, 11 Jun 2018 11:55:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 06335601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id E227C606FA;
+	Fri,  8 Jun 2018 14:33:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E227C606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933314AbeFKLzi (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Mon, 11 Jun 2018 07:55:38 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:39923 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933163AbeFKLxW (ORCPT
+        id S1752609AbeFHOdx (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 10:33:53 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:49845 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751141AbeFHOdv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 07:53:22 -0400
-Received: by mail-lf0-f65.google.com with SMTP id t134-v6so30096670lff.6;
-        Mon, 11 Jun 2018 04:53:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Svktzbq5FqvAsJXKO7DKQjyta45taZAsN5SjSbaMVRs=;
-        b=pZkRtpBEQWmOnaD5hjbE8S5pjp65XKIzZbMyifUaNOaWxPRhqRHBw2SaaUdBMUZIPn
-         DpDBXCKg6zffLwAXmVhnMh1BDrIYZ802QygSytJuCBxmu541FrjYyzMswMYQoAUIbtNi
-         1moihbiRuNoEGX05Ys5sPUMo7+4zHQfl9tGStzJRhSqCiJT0hsfAqsUu4sO6PW/XpqKx
-         wp77E5hzIBd78LNHEhHv4Vv4PyndcmJuhwTnBXG6/MdJuTX2/StdT8HZrlIKfx332ic8
-         g9ivjMsGfgtgJ8oGZJ58cnXX4AVZrU/cgZB8XoJdvI5C5CsEcGRhlH7T7yZC5cmvAvuB
-         G5Ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Svktzbq5FqvAsJXKO7DKQjyta45taZAsN5SjSbaMVRs=;
-        b=QrEo5AxNLzpoaLMcSGaA28RhIs0rPD71yJl7xxm8v7Q8l/i2BfQchO5VBNJDy725r7
-         YvYA3B6Zoc61TDhA69smSvbD3K46NZSEU9Rgvh73BROSjtzmM2z1ESaSk5YnkPJHmuY0
-         EBuYVZabaZej/IOsQnzW6ypqnUD+2EfTlFb53pyA8qxpOkUoPLlEdvkoLNqPIYRCdmQK
-         FGqozGt2PosdRh1zm8EXvXddW9wVtrUJv1+M6bu+/eDzx12ReHm0r772AYj5Ao1qdpW8
-         f3gN7A9qhnzJv9PxSBudqQBHaIbzIM1yoU5CzrkgwauSwxHdku84E4pqH/EWofSGlOAl
-         x4LA==
-X-Gm-Message-State: APt69E3aXunav5zrZk1ZK36V/5wl0ar7d0bG7BK9SaST+1Lc4xvDyYOp
-        CIHSivRIhpVOkAiB1+/8U+s7SYPK
-X-Google-Smtp-Source: ADUXVKJoFtJgaZtfWACaBl6rMqO1LR7Apc/sgzDYMeItwq3BOfLb0WahX/XPFRT6UXP2HnR9sV+0rw==
-X-Received: by 2002:a2e:5818:: with SMTP id m24-v6mr11974291ljb.84.1528718000271;
-        Mon, 11 Jun 2018 04:53:20 -0700 (PDT)
-Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
-        by smtp.gmail.com with ESMTPSA id h90-v6sm8332849ljf.65.2018.06.11.04.53.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Jun 2018 04:53:19 -0700 (PDT)
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-To: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Lino Sanfilippo <LinoSanfilippo@gmx.de>,
-        "David S . Miller" <davem@davemloft.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
-        netdev@vger.kernel.org
-Subject: [PATCH v2 15/24] net: qualcomm: MODULE_DEVICE_TABLE(serdev)
-Date: Mon, 11 Jun 2018 13:52:31 +0200
-Message-Id: <20180611115240.32606-16-ricardo.ribalda@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
-References: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
+        Fri, 8 Jun 2018 10:33:51 -0400
+Received: from weser.hi.pengutronix.de ([2001:67c:670:100:fa0f:41ff:fe58:4010])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1fRISY-0005Qu-Da; Fri, 08 Jun 2018 16:33:46 +0200
+Message-ID: <1528468422.26356.20.camel@pengutronix.de>
+Subject: Re: [PATCH 2/2] PCI: imx: Initial imx7d pm support
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Leonard Crestez <leonard.crestez@nxp.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Richard Zhu <hongxing.zhu@nxp.com>, linux-pci@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Abel Vesa <abel.vesa@nxp.com>
+Date: Fri, 08 Jun 2018 16:33:42 +0200
+In-Reply-To: <a6176c8bcfbca08ce4e93e304bdcd48c4600f8e2.1527621510.git.leonard.crestez@nxp.com>
+References: <cover.1527621510.git.leonard.crestez@nxp.com>
+         <a6176c8bcfbca08ce4e93e304bdcd48c4600f8e2.1527621510.git.leonard.crestez@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:fa0f:41ff:fe58:4010
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Export serdev table to the module header, allowing module autoload via
-udev/modprobe.
+Am Dienstag, den 29.05.2018, 22:39 +0300 schrieb Leonard Crestez:
+> On imx7d the phy is turned off in suspend and must be reset on resume.
+> Right now lspci -v fails after a suspend/resume cycle, fix this by
+> adding minimal suspend/resume code from the nxp vendor tree.
+> 
+> This is currently only enabled for imx7 but the same sequence can be
+> applied to other imx pcie variants.
+> 
+> Tested on imx7d-sabresd with an Intel 5622ANHMW wireless pcie adapter.
+> 
+> > The original author is mostly Richard Zhu <hongxing.zhu@nxp.com>, this
+> patch adjusts the code to the upstream imx7d implemention using reset
+> controls and power domains.
+> 
+> > Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+> ---
+>  drivers/pci/dwc/pci-imx6.c | 94 ++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 89 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/pci/dwc/pci-imx6.c b/drivers/pci/dwc/pci-imx6.c
+> index 4818ef875f8a..ff6077eeb387 100644
+> --- a/drivers/pci/dwc/pci-imx6.c
+> +++ b/drivers/pci/dwc/pci-imx6.c
+> @@ -540,10 +540,27 @@ static int imx6_pcie_wait_for_speed_change(struct imx6_pcie *imx6_pcie)
+>  
+> >  	dev_err(dev, "Speed change timeout\n");
+> >  	return -EINVAL;
+>  }
+>  
+> +static void imx6_pcie_ltssm_enable(struct device *dev)
+> +{
+> > +	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
+> +
+> > +	switch (imx6_pcie->variant) {
+> > +	case IMX6Q:
+> > +	case IMX6SX:
+> > +	case IMX6QP:
+> > +		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
+> > +				   IMX6Q_GPR12_PCIE_CTL_2,
+> > +				   IMX6Q_GPR12_PCIE_CTL_2);
+> > +		break;
+> > +	case IMX7D:
+> > +		reset_control_deassert(imx6_pcie->apps_reset);
+> > +	}
+> +}
+> +
+>  static int imx6_pcie_establish_link(struct imx6_pcie *imx6_pcie)
+>  {
+> >  	struct dw_pcie *pci = imx6_pcie->pci;
+> >  	struct device *dev = pci->dev;
+> >  	u32 tmp;
+> @@ -558,15 +575,11 @@ static int imx6_pcie_establish_link(struct imx6_pcie *imx6_pcie)
+> >  	tmp &= ~PCIE_RC_LCR_MAX_LINK_SPEEDS_MASK;
+> >  	tmp |= PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN1;
+> >  	dw_pcie_writel_dbi(pci, PCIE_RC_LCR, tmp);
+>  
+> >  	/* Start LTSSM. */
+> > -	if (imx6_pcie->variant == IMX7D)
+> > -		reset_control_deassert(imx6_pcie->apps_reset);
+> > -	else
+> > -		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
+> > -				   IMX6Q_GPR12_PCIE_CTL_2, 1 << 10);
+> > +	imx6_pcie_ltssm_enable(dev);
+>  
+> >  	ret = imx6_pcie_wait_for_link(imx6_pcie);
+> >  	if (ret)
+> >  		goto err_reset_phy;
+>  
+> @@ -681,10 +694,80 @@ static int imx6_add_pcie_port(struct imx6_pcie *imx6_pcie,
+>  
+>  static const struct dw_pcie_ops dw_pcie_ops = {
+> >  	.link_up = imx6_pcie_link_up,
+>  };
+>  
+> +#ifdef CONFIG_PM_SLEEP
+> +static int imx6_pcie_suspend_noirq(struct device *dev)
+> +{
+> > +	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
+> +
+> +	if (imx6_pcie->variant == IMX7D) {
 
-Cc: Lino Sanfilippo <LinoSanfilippo@gmx.de>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Johan Hovold <johan@kernel.org>
-Cc: netdev@vger.kernel.org
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
----
- drivers/net/ethernet/qualcomm/qca_uart.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Instead of this large indented block, please just have an early return
+at the start of this function, like:
 
-diff --git a/drivers/net/ethernet/qualcomm/qca_uart.c b/drivers/net/ethernet/qualcomm/qca_uart.c
-index db6068cd7a1f..6d2ac6cae63f 100644
---- a/drivers/net/ethernet/qualcomm/qca_uart.c
-+++ b/drivers/net/ethernet/qualcomm/qca_uart.c
-@@ -405,6 +405,12 @@ static void qca_uart_remove(struct serdev_device *serdev)
- 	free_netdev(qca->net_dev);
- }
- 
-+static struct serdev_device_id qca_uart_serdev_id[] = {
-+	{ QCAUART_DRV_NAME, },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(serdev, qca_uart_serdev_id);
-+
- static struct serdev_device_driver qca_uart_driver = {
- 	.probe = qca_uart_probe,
- 	.remove = qca_uart_remove,
-@@ -412,6 +418,7 @@ static struct serdev_device_driver qca_uart_driver = {
- 		.name = QCAUART_DRV_NAME,
- 		.of_match_table = of_match_ptr(qca_uart_of_match),
- 	},
-+	.id_table = qca_uart_serdev_id,
- };
- 
- module_serdev_device_driver(qca_uart_driver);
--- 
-2.17.1
+if (imx6_pcie->variant != IMX7D)
+	return 0;
+
+Same for the resume function.
+
+> +		/* Disable clks */
+> > +		clk_disable_unprepare(imx6_pcie->pcie);
+> > +		clk_disable_unprepare(imx6_pcie->pcie_phy);
+> > +		clk_disable_unprepare(imx6_pcie->pcie_bus);
+> > +		/* turn off external osc input */
+> > +		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
+> > +				   IMX7D_GPR12_PCIE_PHY_REFCLK_SEL,
+> > +				   IMX7D_GPR12_PCIE_PHY_REFCLK_SEL);
+> > +	}
+> +
+> > +	return 0;
+> +}
+> +
+> +static void imx6_pcie_ltssm_disable(struct device *dev)
+> +{
+> > +	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
+> +
+> > +	switch (imx6_pcie->variant) {
+> > +	case IMX6Q:
+> > +	case IMX6SX:
+> > +	case IMX6QP:
+> > +		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
+> > +				   IMX6Q_GPR12_PCIE_CTL_2, 0);
+> > +		break;
+> > +	case IMX7D:
+> > +		reset_control_assert(imx6_pcie->apps_reset);
+> > +		break;
+> > +	}
+> +}
+> +
+> +static int imx6_pcie_resume_noirq(struct device *dev)
+> +{
+> > +	int ret = 0;
+> > +	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
+> > +	struct pcie_port *pp = &imx6_pcie->pci->pp;
+> +
+> > +	if (imx6_pcie->variant == IMX7D) {
+> > +		imx6_pcie_ltssm_disable(dev);
+
+The LTSSM disable seems misplaced here. I would have expected it to be
+in the suspend function.
+
+> +		imx6_pcie_assert_core_reset(imx6_pcie);
+> > +		imx6_pcie_init_phy(imx6_pcie);
+> > +		imx6_pcie_deassert_core_reset(imx6_pcie);
+> +
+> > +		/*
+> > +		 * controller maybe turn off, re-configure again
+> > +		 */
+> > +		dw_pcie_setup_rc(pp);
+> +
+> > +		imx6_pcie_ltssm_enable(dev);
+> +
+> > +		ret = imx6_pcie_wait_for_link(imx6_pcie);
+> > +		if (ret < 0)
+> +			pr_info("pcie link is down after resume.\n");
+
+If the PHY has been powered down and LTSSM stopped I guess we need to
+do the full imx6_pcie_establish_link() dance again here to reliably re-
+establish the link. The above seems unsafe.
+
+> +	}
+> +
+> > +	return 0;
+> +}
+> +
+> +static const struct dev_pm_ops imx6_pcie_pm_ops = {
+> > +	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(imx6_pcie_suspend_noirq,
+> > +				      imx6_pcie_resume_noirq)
+> +};
+> +#endif
+
+This structure must be outside of the ifdef, or you'll break the build
+on !CONFIG_PM_SLEEP.
+
+>  static int imx6_pcie_probe(struct platform_device *pdev)
+>  {
+> >  	struct device *dev = &pdev->dev;
+> >  	struct dw_pcie *pci;
+> >  	struct imx6_pcie *imx6_pcie;
+> @@ -847,10 +930,11 @@ static const struct of_device_id imx6_pcie_of_match[] = {
+>  static struct platform_driver imx6_pcie_driver = {
+> >  	.driver = {
+> > >  		.name	= "imx6q-pcie",
+> >  		.of_match_table = imx6_pcie_of_match,
+> >  		.suppress_bind_attrs = true,
+> > +		.pm = &imx6_pcie_pm_ops,
+> >  	},
+> >  	.probe    = imx6_pcie_probe,
+> >  	.shutdown = imx6_pcie_shutdown,
+>  };
+>  
+
+Regards,
+Lucas
