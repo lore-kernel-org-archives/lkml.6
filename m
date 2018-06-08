@@ -1,211 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id KO4vHodiHVtbOgAAmS7hNA
-	; Sun, 10 Jun 2018 17:40:36 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 9vzSIup9GlsfIAAAmS7hNA
+	; Fri, 08 Jun 2018 13:00:58 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id C6877607A4; Sun, 10 Jun 2018 17:40:35 +0000 (UTC)
+	id 590D8608BA; Fri,  8 Jun 2018 13:00:58 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gjyWmilk"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eL6e+1p8"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 2E5A9606FA;
-	Sun, 10 Jun 2018 17:40:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2E5A9606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id C01FE607A4;
+	Fri,  8 Jun 2018 13:00:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C01FE607A4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932194AbeFJRkd (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sun, 10 Jun 2018 13:40:33 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:45127 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753680AbeFJRkb (ORCPT
+        id S1752642AbeFHNAz (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 09:00:55 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:39620 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751019AbeFHNAx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 13:40:31 -0400
-Received: by mail-wr0-f193.google.com with SMTP id o12-v6so17985467wrm.12
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Jun 2018 10:40:30 -0700 (PDT)
+        Fri, 8 Jun 2018 09:00:53 -0400
+Received: by mail-ot0-f196.google.com with SMTP id l15-v6so14540462oth.6;
+        Fri, 08 Jun 2018 06:00:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=Sieg/I7LAGGKZUQMKPDEaWE+6n2bxxMDcM7JGVtpWyY=;
-        b=gjyWmilkOuWuG5Y5710dsTdSBQuJOKW1qP9t/lkBJ0bYwcvu4Fcl4SADQzF0z0yb94
-         lsiTf/1P9VY/xyAdj16vGUY9g7Ji1zDWnDg3pBXUEj16ekwZVW/p7EqHF3dNYcIQeKeO
-         RjZqkIiAkRHBMTEEH/gNv1JQt5ghywfFB2BRxM2L9GnOdZP2fYOFas0vWO4BBZet7np5
-         WzSU1l+BKSqpa3Fskzbn2FL1dZeQAtMIDJGtGIFIBHLMKWeyHMFqN2NAlAA7Ft4QnKAd
-         6HCVfyKemtzAW0xZGe52srjz+ol+jyC1j8fU79Afc30Ttk4nXZe2UN97a46D0zEuD08f
-         eydw==
+        bh=oyNNZkJZUgA5gLeRu0atbB6TITEVpJnGOWhvIeCTuCc=;
+        b=eL6e+1p8zVUj7HBwmUyKVSqgpCyYgvV4krsMEXI3OguTIp34k6Uo1pJHDVDNXY9vHl
+         GEvReyzrIxSeI7bnI2nw0Jsw0AxRHHywDcl9V4dgaNlcO9BvlfxkgAKtpY2G9Qn6FQ1u
+         +mwLrcOwjRpPI8Cr2ZB4YNGNYICQHgAdE6c67FqPes4NV9Z8vUMFN18M/t9/uk0i4alj
+         4qDYoLWSlzYE8/1Ngw58yTiiJbFgWsIDCl3UhQiHhqwPqt1BW9R8Tvt4vzI6k+AdhUd7
+         NM70xaN7gLu/693TXHPoDGknvODNQjIUxUutbiRXETn0p6Bpgp8xdZFcbJz1NejCx1Kk
+         BBXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=Sieg/I7LAGGKZUQMKPDEaWE+6n2bxxMDcM7JGVtpWyY=;
-        b=rlBFeWBDjkIh6h13hn4EWqIlviLHq/tDEvPJOAqbEuteXI60PsoaCOWsF7f5mST0/+
-         +QqJg4TxzxVaBNJOJnQhDDdsJh2pytZsgMJFsGmKWaeYJ95i6OcScrfwAQc8GxQAhQuJ
-         EpAq1BszpFA+963COsZSOAnvU9kUrNaqDmp614z8xijHQlv5KKqrmkpSsgRDYTo3u18i
-         SijOYa8BydxATfvhT0ybqfFnT4RTd55nOS+N1tK+Vt9+WPfaSXZVlBlCpEAEC0vzfGxE
-         vco6uCOAkZ9RzlkwX+PfNNo+a19kf9ATR3xIgpHVo00xpBIIwpj+DUUtglnjgRCUe3EC
-         CjeQ==
-X-Gm-Message-State: APt69E2sD1DrdoPyNXOkrH3TBP2iWmvC8pb0VPicDePkWhON8M6yz8zu
-        uj8l5W1OTksZQrgE/vA7AFWWKK32azO4moPEhQRvJA==
-X-Google-Smtp-Source: ADUXVKK/ylPusrOBs+G1y53AycuQQRXajgEMKoGHfWVmzlCbpPLMyF5Lphsiw3/ZULGzB5ZDunZzKVh9lX3rfXadLDY=
-X-Received: by 2002:adf:b3d4:: with SMTP id x20-v6mr10947284wrd.272.1528652429606;
- Sun, 10 Jun 2018 10:40:29 -0700 (PDT)
+        bh=oyNNZkJZUgA5gLeRu0atbB6TITEVpJnGOWhvIeCTuCc=;
+        b=io9aBT4ctw+ZR6CrTrX5IWBAnqMyRv2vANiJpBcfE3HUe5EhjhOekSZW2+voki6DH1
+         DoPjq0eCmHZtwrgjAkk0lHLVSOVJFNoRI210l20Y/y4STxAwlTZBPNKOKaI26rhTq2UQ
+         QqxjB9doWvvLquaK3Ii8rcFnJhuceDoEKmgiHUpMPTY1jbNi2XW8pp0MoR7g0NGKkJ2i
+         0Th5o8GYmx8G4mGSpQ/Cr/INZcjmjfzeAH8H+iX6So7FqFlbZDRLfnN3QmK+P+r3Miw1
+         fE5ftsp29qRzwKVqTsPxgHZy7huttmx/jJneJGksF/pCovRWxzJdmHfUUo9mC4gpEpZU
+         Ww0w==
+X-Gm-Message-State: APt69E227DGMlO0YmULASVNUkaEoCerfD4zSjxfPqkyu5UflLtTb+fjp
+        xSl4d9LSqdNH05ksPakDf1lH9soXHTuXlh7sWhEaJw==
+X-Google-Smtp-Source: ADUXVKLy2MkzBAtVjfntVLcfVJYtrOvMNEEETIkb0WNnyUrAZ3jZCkgtEtrvfi97RJRsfQkyNNvHJAQ3si5FpMHe3ZQ=
+X-Received: by 2002:a9d:62d3:: with SMTP id z19-v6mr3236625otk.159.1528462853207;
+ Fri, 08 Jun 2018 06:00:53 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180530001204.183758-1-shakeelb@google.com> <20180609102027.5vkqucnzvh6nfdxu@esperanza>
- <CALvZod7OrDrq571An-GHeWFNvARWsS+fvX1-G9=nYzxgq2N3UQ@mail.gmail.com> <20180610163420.GK3593@linux.vnet.ibm.com>
-In-Reply-To: <20180610163420.GK3593@linux.vnet.ibm.com>
-From: Shakeel Butt <shakeelb@google.com>
-Date: Sun, 10 Jun 2018 10:40:17 -0700
-Message-ID: <CALvZod5HiwJPkD-_KnV+m=gWYgkb8rZceKoUkBK1KPW8iOzYug@mail.gmail.com>
-Subject: Re: [PATCH v3] mm: fix race between kmem_cache destroy, create and deactivate
-To: paulmck@linux.vnet.ibm.com
-Cc: Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Thelen <gthelen@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>, Linux MM <linux-mm@kvack.org>,
-        Cgroups <cgroups@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+Received: by 2002:a9d:1049:0:0:0:0:0 with HTTP; Fri, 8 Jun 2018 06:00:52 -0700 (PDT)
+In-Reply-To: <20180608101924.31195-1-pp@emlix.com>
+References: <20180608101924.31195-1-pp@emlix.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Fri, 8 Jun 2018 10:00:52 -0300
+Message-ID: <CAOMZO5C8CA02V+oiag5tGpKBWN+UP28KwQ98jQ9PpQ2_aCq_bA@mail.gmail.com>
+Subject: Re: [PATCH] clk: imx6: fix video_27m parent for IMX6QDL_CLK_CKO1_SEL
+To: Philipp Puschmann <pp@emlix.com>
+Cc: Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 10, 2018 at 9:32 AM Paul E. McKenney
-<paulmck@linux.vnet.ibm.com> wrote:
->
-> On Sun, Jun 10, 2018 at 07:52:50AM -0700, Shakeel Butt wrote:
-> > On Sat, Jun 9, 2018 at 3:20 AM Vladimir Davydov <vdavydov.dev@gmail.com> wrote:
-> > >
-> > > On Tue, May 29, 2018 at 05:12:04PM -0700, Shakeel Butt wrote:
-> > > > The memcg kmem cache creation and deactivation (SLUB only) is
-> > > > asynchronous. If a root kmem cache is destroyed whose memcg cache is in
-> > > > the process of creation or deactivation, the kernel may crash.
-> > > >
-> > > > Example of one such crash:
-> > > >       general protection fault: 0000 [#1] SMP PTI
-> > > >       CPU: 1 PID: 1721 Comm: kworker/14:1 Not tainted 4.17.0-smp
-> > > >       ...
-> > > >       Workqueue: memcg_kmem_cache kmemcg_deactivate_workfn
-> > > >       RIP: 0010:has_cpu_slab
-> > > >       ...
-> > > >       Call Trace:
-> > > >       ? on_each_cpu_cond
-> > > >       __kmem_cache_shrink
-> > > >       kmemcg_cache_deact_after_rcu
-> > > >       kmemcg_deactivate_workfn
-> > > >       process_one_work
-> > > >       worker_thread
-> > > >       kthread
-> > > >       ret_from_fork+0x35/0x40
-> > > >
-> > > > To fix this race, on root kmem cache destruction, mark the cache as
-> > > > dying and flush the workqueue used for memcg kmem cache creation and
-> > > > deactivation.
-> > >
-> > > > @@ -845,6 +862,8 @@ void kmem_cache_destroy(struct kmem_cache *s)
-> > > >       if (unlikely(!s))
-> > > >               return;
-> > > >
-> > > > +     flush_memcg_workqueue(s);
-> > > > +
-> > >
-> > > This should definitely help against async memcg_kmem_cache_create(),
-> > > but I'm afraid it doesn't eliminate the race with async destruction,
-> > > unfortunately, because the latter uses call_rcu_sched():
-> > >
-> > >   memcg_deactivate_kmem_caches
-> > >    __kmem_cache_deactivate
-> > >     slab_deactivate_memcg_cache_rcu_sched
-> > >      call_rcu_sched
-> > >                                             kmem_cache_destroy
-> > >                                              shutdown_memcg_caches
-> > >                                               shutdown_cache
-> > >       memcg_deactivate_rcufn
-> > >        <dereference destroyed cache>
-> > >
-> > > Can we somehow flush those pending rcu requests?
-> >
-> > You are right and thanks for catching that. Now I am wondering if
-> > synchronize_sched() just before flush_workqueue() should be enough.
-> > Otherwise we might have to replace call_sched_rcu with
-> > synchronize_sched() in kmemcg_deactivate_workfn which I would not
-> > prefer as that would holdup the kmem_cache workqueue.
-> >
-> > +Paul
-> >
-> > Paul, we have a situation something similar to the following pseudo code.
-> >
-> > CPU0:
-> > lock(l)
-> > if (!flag)
-> >   call_rcu_sched(callback);
-> > unlock(l)
-> > ------
-> > CPU1:
-> > lock(l)
-> > flag = true
-> > unlock(l)
-> > synchronize_sched()
-> > ------
-> >
-> > If CPU0 has called already called call_rchu_sched(callback) then later
-> > if CPU1 calls synchronize_sched(). Is there any guarantee that on
-> > return from synchronize_sched(), the rcu callback scheduled by CPU0
-> > has already been executed?
->
-> No.  There is no such guarantee.
->
-> You instead want rcu_barrier_sched(), which waits for the callbacks from
-> all prior invocations of call_rcu_sched() to be invoked.
->
-> Please note that synchronize_sched() is -not- sufficient.  It is only
-> guaranteed to wait for a grace period, not necessarily for all prior
-> callbacks.  This goes both directions because if there are no callbacks
-> in the system, then rcu_barrier_sched() is within its rights to return
-> immediately.
->
-> So please make sure you use each of synchronize_sched() and
-> rcu_barrier_sched() to do the job that it was intended to do!  ;-)
->
-> If your lock(l) is shorthand for spin_lock(&l), it looks to me like you
-> actually only need rcu_barrier_sched():
->
->         CPU0:
->         spin_lock(&l);
->         if (!flag)
->           call_rcu_sched(callback);
->         spin_unlock(&l);
->
->         CPU1:
->         spin_lock(&l);
->         flag = true;
->         spin_unlock(&l);
->         /* At this point, no more callbacks will be registered. */
->         rcu_barrier_sched();
->         /* At this point, all registered callbacks will have been invoked. */
->
-> On the other hand, if your "lock(l)" was instead shorthand for
-> rcu_read_lock_sched(), then you need -both- synchronize_sched() -and-
-> rcu_barrier().  And even then, you will be broken in -rt kernels.
-> (Which might or might not be a concern, depending on whether your code
-> matters to -rt kernels.
->
-> Make sense?
->
+Hi Philipp,
 
-Thanks a lot, that was really helpful. The lock is actually
-mutex_lock. So, I think rcu_barrier_sched() should be sufficient.
+On Fri, Jun 8, 2018 at 7:19 AM, Philipp Puschmann <pp@emlix.com> wrote:
+> q/dl datasheets list the 5th selection value for ck01_sel as
+> video_27M_clk_root.
+>
+> By replacing the dummy value we then can set IMX6QDL_CLK_VIDEO_27M
+> as parent for IMX6QDL_CLK_CKO1_SEL.
+>
+> Signed-off-by: Philipp Puschmann <pp@emlix.com>
 
-Shakeel
+You could still have added my Reviewed-by tag that I sent previously :-)
+
+Here it goes:
+
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+
+Also in the future, when posting a new version of a patch, please mark
+it as such:
+
+[PATCH v2] clk: imx6: fix video_27m parent for IMX6QDL_CLK_CKO1_SEL
+
+and write below the --- line what are the changes in this new version.
+
+Thanks
