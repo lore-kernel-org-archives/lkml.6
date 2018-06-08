@@ -1,131 +1,170 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id y35aKG28GltXZQAAmS7hNA
-	; Fri, 08 Jun 2018 17:27:44 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ahHwIX4MG1vpYQAAmS7hNA
+	; Fri, 08 Jun 2018 23:08:46 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 7C449608B8; Fri,  8 Jun 2018 17:27:44 +0000 (UTC)
+	id 69FEA6089E; Fri,  8 Jun 2018 23:08:46 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="m5dftXMW"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 0AF49605A5;
-	Fri,  8 Jun 2018 17:27:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0AF49605A5
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id CB72660275;
+	Fri,  8 Jun 2018 23:08:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CB72660275
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752857AbeFHR1l (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 13:27:41 -0400
-Received: from mga04.intel.com ([192.55.52.120]:49388 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752428AbeFHR1j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 13:27:39 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jun 2018 10:27:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,490,1520924400";
-   d="scan'208";a="62969891"
-Received: from ray.jf.intel.com (HELO [10.7.201.145]) ([10.7.201.145])
-  by orsmga001.jf.intel.com with ESMTP; 08 Jun 2018 10:27:38 -0700
-Subject: Re: [PATCH v11 06/13] crypto: aesni: add minimal build option for SGX
- LE
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
-        platform-driver-x86@vger.kernel.org
-References: <20180608171216.26521-1-jarkko.sakkinen@linux.intel.com>
- <20180608171216.26521-7-jarkko.sakkinen@linux.intel.com>
-Cc: sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "open list:CRYPTO API" <linux-crypto@vger.kernel.org>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
-        <linux-kernel@vger.kernel.org>
-From: Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <00750c65-27b5-7851-19f5-9a712686dfb2@intel.com>
-Date: Fri, 8 Jun 2018 10:27:37 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1753172AbeFHXIn (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 19:08:43 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:40959 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753140AbeFHXIl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 19:08:41 -0400
+Received: by mail-wr0-f195.google.com with SMTP id l41-v6so14809428wre.7
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 16:08:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=SajILgSWWAJtxWYMhY4L+l225DXzGTWCRJEV7wa1HxM=;
+        b=m5dftXMWOzO64ruQQcnSIRaHhpF4Eg8/k/8YpVITReRyIBbIY8Mf8iChJPpCNOnlb6
+         vqIu+ZBt0ozR3kLeybyHPDVmyNyMcN1yL9pKkNvwvGXVg5B/Y9cuYhWgJO+GBlpYcNIU
+         VWmLNO9y/iBwn1rylGY2Ip7e/FbmQziiZuNn8NxNzK/GGmfsDup05+Ty8iZabMXWZpcJ
+         d8KRmFteD77MGAZJeqcZROSnjYhO584U7VMF1r+vL7Yrm+zlU4d5YgdjKCID904bYvq3
+         /O5FlFOJz0Vp+4JLu1byxW66koo7sgJrI661B/OHw4UT3r861k0anxt39sIxnPl29itt
+         vC3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=SajILgSWWAJtxWYMhY4L+l225DXzGTWCRJEV7wa1HxM=;
+        b=Lmte+aIKFvlGfcSG7/UY6NNWdfo2/G3g4O8saZqcS9GG+59zr3AOK7Ddh5aL32DHwA
+         nm+Mz1sdUZfewShlNX7ufgmmGEGyGE4RRHwjLhtCejCa86Gc+GwT76EJnD3GpPkCn3yD
+         TUpgPzbB4QkIPJpv9lmkCGGyD4nUYuzkBWAX5kFNNDvqcBilpf7dV0VkvkTbUarKLd6Y
+         J8BAX3V2SYKMXznzb/esPxcreEBgxvxqLBO7n0HL0NmdSskgQaDOfo/5QgzTQRyikGC+
+         eORx/znzdgc2/F1SSJHu0rrM7hUVpWI7SvhrUnYfpk5kGVnb//JRTioCSqgHIOkKrmMJ
+         MsbQ==
+X-Gm-Message-State: APt69E0Eyr+Kt6c83QD/Q5Jl0L2BAVyaDrVIizsh8jgEuP1CsW5DyvD8
+        aqIPqkABHYBDlT/CB+KuBKQTxw==
+X-Google-Smtp-Source: ADUXVKJ9Ej/iXR2JpArKgsaRFIUgLrZS+9HQnmexrIxQ4l96NYpaUSJ20QOuAug9XJQdoZF0Sf/OzA==
+X-Received: by 2002:adf:bb10:: with SMTP id r16-v6mr6183988wrg.244.1528499319967;
+        Fri, 08 Jun 2018 16:08:39 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id t1-v6sm2275310wmt.40.2018.06.08.16.08.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Jun 2018 16:08:39 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.86_2)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1fRQUl-0006M3-Gz; Fri, 08 Jun 2018 17:08:35 -0600
+Date: Fri, 8 Jun 2018 17:08:35 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Raed Salem <raeds@mellanox.com>, Leon Romanovsky <leon@kernel.org>,
+        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] IB/mlx5: Fix memory leak in mlx5_ib_create_flow
+Message-ID: <20180608230835.GA24392@ziepe.ca>
+References: <20180607191915.GA9092@embeddedor.com>
 MIME-Version: 1.0
-In-Reply-To: <20180608171216.26521-7-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180607191915.GA9092@embeddedor.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/08/2018 10:09 AM, Jarkko Sakkinen wrote:
-> --- a/arch/x86/crypto/aesni-intel_asm.S
-> +++ b/arch/x86/crypto/aesni-intel_asm.S
-> @@ -45,6 +45,8 @@
->  #define MOVADQ	movaps
->  #define MOVUDQ	movups
+On Thu, Jun 07, 2018 at 02:19:15PM -0500, Gustavo A. R. Silva wrote:
+> In case memory resources for *ucmd* were allocated, release them
+> before return.
+> 
+> Addresses-Coverity-ID: 1469857 ("Resource leak")
+> Fixes: 3b3233fbf02e ("IB/mlx5: Add flow counters binding support")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>  drivers/infiniband/hw/mlx5/main.c | 33 +++++++++++++++++++++------------
+>  1 file changed, 21 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/infiniband/hw/mlx5/main.c b/drivers/infiniband/hw/mlx5/main.c
+> index e52dd21..0472e6c 100644
+> +++ b/drivers/infiniband/hw/mlx5/main.c
+> @@ -3546,29 +3546,35 @@ static struct ib_flow *mlx5_ib_create_flow(struct ib_qp *qp,
+>  			return ERR_PTR(-ENOMEM);
 >  
-> +#ifndef AESNI_INTEL_MINIMAL
-> +
->  #ifdef __x86_64__
+>  		err = ib_copy_from_udata(ucmd, udata, required_ucmd_sz);
+> -		if (err) {
+> -			kfree(ucmd);
+> -			return ERR_PTR(err);
+> -		}
+> +		if (err)
+> +			goto free_ucmd;
+>  	}
 >  
->  # constants in mergeable sections, linker can reorder and merge
-> @@ -133,6 +135,8 @@ ALL_F:      .octa 0xffffffffffffffffffffffffffffffff
->  #define keysize 2*15*16(%arg1)
->  #endif
+> -	if (flow_attr->priority > MLX5_IB_FLOW_LAST_PRIO)
+> -		return ERR_PTR(-ENOMEM);
+> +	if (flow_attr->priority > MLX5_IB_FLOW_LAST_PRIO) {
+> +		err = -ENOMEM;
+> +		goto free_ucmd;
+> +	}
 >  
-> +#endif /* AESNI_INTEL_MINIMAL */
-> +
+>  	if (domain != IB_FLOW_DOMAIN_USER ||
+>  	    flow_attr->port > dev->num_ports ||
+>  	    (flow_attr->flags & ~(IB_FLOW_ATTR_FLAGS_DONT_TRAP |
+> -				  IB_FLOW_ATTR_FLAGS_EGRESS)))
+> -		return ERR_PTR(-EINVAL);
+> +				  IB_FLOW_ATTR_FLAGS_EGRESS))) {
+> +		err = -EINVAL;
+> +		goto free_ucmd;
+> +	}
+>  
+>  	if (is_egress &&
+>  	    (flow_attr->type == IB_FLOW_ATTR_ALL_DEFAULT ||
+> -	     flow_attr->type == IB_FLOW_ATTR_MC_DEFAULT))
+> -		return ERR_PTR(-EINVAL);
+> +	     flow_attr->type == IB_FLOW_ATTR_MC_DEFAULT)) {
+> +		err = -EINVAL;
+> +		goto free_ucmd;
+> +	}
+>  
+>  	dst = kzalloc(sizeof(*dst), GFP_KERNEL);
+> -	if (!dst)
+> -		return ERR_PTR(-ENOMEM);
+> +	if (!dst) {
+> +		err = -ENOMEM;
+> +		goto free_ucmd;
+> +	}
+>  
+>  	mutex_lock(&dev->flow_db->lock);
+>  
+> @@ -3640,6 +3646,9 @@ static struct ib_flow *mlx5_ib_create_flow(struct ib_qp *qp,
+>  	kfree(ucmd);
+>  	kfree(handler);
+>  	return ERR_PTR(err);
+> +free_ucmd:
+> +	kfree(ucmd);
+> +	return ERR_PTR(err);
+>  }
 
-I'd really prefer that these get moved into a separate file rather than
-a scattered set of #ifdefs.  This just seem fragile to me.
+This hunk is a bit wonky, can we do this instead? handle never needs
+to be freed.
 
-Can we have a "aesni-intel_asm-minimal.S"?  Or, at least bunch the
-minimal set of things *together*?
+destroy_ft:
+	put_flow_table(dev, ft_prio, false);
+	if (ft_prio_tx)
+		put_flow_table(dev, ft_prio_tx, false);
+unlock:
+	mutex_unlock(&dev->flow_db->lock);
+	kfree(dst);
+free_ucmd:
+	kfree(ucmd);
+	return ERR_PTR(err);
+}
+
+
+Jason
