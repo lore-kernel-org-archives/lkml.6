@@ -1,86 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id KfNoD3hMGVu8YQAAmS7hNA
-	; Thu, 07 Jun 2018 15:26:00 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Hl5BMADjGltxOgAAmS7hNA
+	; Fri, 08 Jun 2018 20:12:05 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id E15906074D; Thu,  7 Jun 2018 15:25:59 +0000 (UTC)
+	id BAD8C607DC; Fri,  8 Jun 2018 20:12:05 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XECFSpx0"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id BE22F6063F;
-	Thu,  7 Jun 2018 15:25:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BE22F6063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 51B1F605A5;
+	Fri,  8 Jun 2018 20:12:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 51B1F605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935540AbeFGPZz (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:25:55 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41149 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935273AbeFGO6D (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:58:03 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbV-0005Zm-T9; Thu, 07 Jun 2018 15:09:30 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbB-0003Aj-1E; Thu, 07 Jun 2018 15:09:09 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        id S1752852AbeFHUMD (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 16:12:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51166 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752676AbeFHUMC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 16:12:02 -0400
+Received: from localhost (unknown [150.199.191.185])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB8A9206B7;
+        Fri,  8 Jun 2018 20:12:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528488721;
+        bh=9GGfx1XtxYqqKm6GYFeF5giQdtAFRVNje2CuH/OPu0M=;
+        h=Subject:From:To:Cc:Date:From;
+        b=XECFSpx0PULkvIvon4r2VDckoEuXDNxLUzDs+b45Q81X6zMkQv5dEE8Crew9LR2Fg
+         71pL6nzpAL95rBzTxijvLNjuD/3opqtOc0IIc00WL75s0PCitJBmAcxOiUVo4aB2mw
+         RLTGuohIwvL/hSOtbajSZ2NyCe3jBWbn+21SuVag=
+Subject: [RFC PATCH v1 0/9] PCI/portdrv: Squash into one file
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: linux-pci@vger.kernel.org
+Cc: Oza Pawandeep <poza@codeaurora.org>, linux-kernel@vger.kernel.org
+Date: Fri, 08 Jun 2018 15:12:00 -0500
+Message-ID: <152848853199.14051.12670957565366345798.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: StGit/0.18
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Christian Borntraeger" <borntraeger@de.ibm.com>,
-        "David Hildenbrand" <david@redhat.com>,
-        "Cornelia Huck" <cohuck@redhat.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.38619078@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 313/410] KVM: s390: provide io interrupt kvm_stat
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+The portdrv code is scattered across several files, which makes it a bit of
+a hassle to browse.  Consolidate it all in a single file.
 
-------------------
+This is all pure code moves; no functional changes intended.  Well, there
+is a function rename, but it shouldn't change any behavior.
 
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-
-commit 09a0fb67536a49af19f2bfc632100e9de91fe526 upstream.
-
-We already count io interrupts, but we forgot to print them.
-
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Fixes: d8346b7d9b ("KVM: s390: Support for I/O interrupts.")
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/s390/kvm/kvm-s390.c | 1 +
- 1 file changed, 1 insertion(+)
 
---- a/arch/s390/kvm/kvm-s390.c
-+++ b/arch/s390/kvm/kvm-s390.c
-@@ -62,6 +62,7 @@ struct kvm_stats_debugfs_item debugfs_en
- 	{ "deliver_prefix_signal", VCPU_STAT(deliver_prefix_signal) },
- 	{ "deliver_restart_signal", VCPU_STAT(deliver_restart_signal) },
- 	{ "deliver_program_interruption", VCPU_STAT(deliver_program_int) },
-+	{ "deliver_io_interrupt", VCPU_STAT(deliver_io_int) },
- 	{ "exit_wait_state", VCPU_STAT(exit_wait_state) },
- 	{ "instruction_pfmf", VCPU_STAT(instruction_pfmf) },
- 	{ "instruction_stidp", VCPU_STAT(instruction_stidp) },
+Bjorn Helgaas (9):
+      PCI/portdrv: Rename resume_iter() to prevent name collision
+      PCI/portdrv: Squash pieces of portdrv_core.c into portdrv_pci.c
+      PCI/portdrv: Squash PM-related code into portdrv_pci.c
+      PCI/portdrv: Squash device removal code into portdrv_pci.c
+      PCI/portdrv: Squash lookup interfaces into portdrv_pci.c
+      PCI/portdrv: Squash service driver registration into portdrv_pci.c
+      PCI/portdrv: Move private definitions to portdrv_pci.c
+      PCI/portdrv: Clean up whitespace
+      PCI/portdrv: Rename portdrv_pci.c to portdrv.c
+
+
+ drivers/pci/pcie/Makefile       |    6 
+ drivers/pci/pcie/portdrv.c      |  822 +++++++++++++++++++++++++++++++++++++++
+ drivers/pci/pcie/portdrv.h      |   15 -
+ drivers/pci/pcie/portdrv_core.c |  578 ---------------------------
+ drivers/pci/pcie/portdrv_pci.c  |  261 ------------
+ 5 files changed, 824 insertions(+), 858 deletions(-)
+ create mode 100644 drivers/pci/pcie/portdrv.c
+ delete mode 100644 drivers/pci/pcie/portdrv_core.c
+ delete mode 100644 drivers/pci/pcie/portdrv_pci.c
