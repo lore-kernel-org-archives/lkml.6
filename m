@@ -1,143 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ziKuCMHrGlu5fQAAmS7hNA
-	; Fri, 08 Jun 2018 20:49:05 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Ql2MFgpRGltFAgAAmS7hNA
+	; Fri, 08 Jun 2018 09:48:58 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id F0A93605A5; Fri,  8 Jun 2018 20:49:04 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Lp5Y3P4Y"
+	id 45754606FA; Fri,  8 Jun 2018 09:48:58 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 698D9607E4;
-	Fri,  8 Jun 2018 20:49:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 698D9607E4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id B5DFF60290;
+	Fri,  8 Jun 2018 09:48:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B5DFF60290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753084AbeFHUs7 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 16:48:59 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:40454 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752754AbeFHUs5 (ORCPT
+        id S1751636AbeFHJsz (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 05:48:55 -0400
+Received: from michel.telenet-ops.be ([195.130.137.88]:32806 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751077AbeFHJsy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 16:48:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=AMvOO8LJp9cY9eQOtY5T1+5LaZ0HKdJDmvEW5xYq9lI=; b=Lp5Y3P4Ypk/ZpkBb1a2du8jdK1
-        Wx1PynxKAvr6ABmsQwADnBS7f9/IaYZ5/wwT4jKQ1kEPmAKF4DIe/DPhVYQIx+ijv1Y5XMsg3ZyFe
-        ef6aVIofey1l5Ouor3fWOWW50w7iMx3W3/zkJP7YX9v0Q0Z9O93NjJ+Ag7m/RFadtC5cxcsZpOBqj
-        lXzkb8EOfBYAdEDVIgVXC6hko9aC4rSUtz77GSPZ5s+S97RMTc/u7id9RijHAawnnFCNxRtBamU/r
-        7uFPOQ6i1EOEivh8O4afYolWxDXZx7yB51DnbMRQe45u2aw8mDPxQh28Onc7noyHCyfuHR76ZwKB3
-        4fHbwIWA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fROJb-0000aq-Pf; Fri, 08 Jun 2018 20:48:56 +0000
-Subject: Re: [PATCH] uapi: Make generic uapi headers compile standalone.
-To: Jayant Chowdhary <jchowdhary@google.com>,
-        linux-kernel@vger.kernel.org
-Cc: akpm@linux-foundation.org, kernel-team@android.com,
-        linux-kbuild@vger.kernel.org
-References: <20180606231602.231326-1-jchowdhary@google.com>
- <b6b6dd56-c948-54e8-df95-3d170a3c1e7d@infradead.org>
- <fe1d69e1-1a0f-a3ea-e45f-994698d53dbd@google.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <cf1b59ad-994b-f6ac-8e58-2b24ef346c49@infradead.org>
-Date: Fri, 8 Jun 2018 13:48:50 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <fe1d69e1-1a0f-a3ea-e45f-994698d53dbd@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 8 Jun 2018 05:48:54 -0400
+Received: from ayla.of.borg ([84.194.111.163])
+        by michel.telenet-ops.be with bizsmtp
+        id w9or1x00F3XaVaC069orKp; Fri, 08 Jun 2018 11:48:52 +0200
+Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
+        by ayla.of.borg with esmtp (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1fRE0p-0003Dk-3R; Fri, 08 Jun 2018 11:48:51 +0200
+Received: from geert by ramsan with local (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1fRE0p-0005YZ-6a; Fri, 08 Jun 2018 11:48:51 +0200
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, linuxppc-dev@lists.ozlabs.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH] media: fsl-viu: Use proper check for presence of {out,in}_be32()
+Date: Fri,  8 Jun 2018 11:48:48 +0200
+Message-Id: <1528451328-21316-1-git-send-email-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/08/2018 11:36 AM, Jayant Chowdhary wrote:
-> Hi Randy,
-> 
-> On 06/07/2018 05:07 PM, Randy Dunlap wrote:
->> On 06/06/2018 04:16 PM, Jayant Chowdhary wrote:
->>> In order for static analysis tools to analyze each of the uapi headers,
->>> we need to enable them to compile stand-alone. Some uapi headers were
->>> missing dependencies which would not make them compile stand-alone in
->>> user-land. This patch adds those dependencies.
->>
->> Hi,
->>
->> Thanks for getting started on this.  I see that the kbuild robot and I were
->> still not able to do successful builds even after this patch is applied.
->> We were building different targets though.  robot was doing kernel builds
->> and I was doing a large "all-uapi" build.
->>
->> I started on my all-uapi work about 1 week ago but haven't posted anything yet,
->> but it's posted (attached) below.  It's not yet up to kernel quality yet (for a
->> Makefile), and I have made very little progress toward a successful userspace build.
->>
->> If anyone is interested, just put these 3 files in <kernel_tree>/tools/build
->> and then run:
->>
->> make ARCH=$some_arch O=build_dir headers_check
->> so that the headers will be cleaned up and installed in build_dir/usr/.
->>
->> Then run 'make -f all-uapi.mk'
->> and the userspace program with all header files found in build_dir/usr/include
->> will be built -- i.e., attempted (not successfully).
->>
->> (note: chmod +x hdr-fix-lines.pl)
->>
->>
-> 
-> Thank you for this. This is surely a more formal way of finding out and
-> verifying problems w.r.t the uapi headers, being compiled from user-land. I do
-> have one concern with this approach though: the make target 'all-uapi.o' depends
-> on all-uapi.h, which includes all the uapi headers installed in <build-dir>. So
-> this does make sure that when all the uapi headers are included, a user-land
-> program will be able to compile fine, without adding any additional
-> dependencies. However, this could be masking some cases of dependency exclusion.
-> An example can be seen as follows:
-> 
-> Header dependency chain:
-> A.h->B.h, however A.h doesn't actually include B.h
-> C.h->B.h, C.h does include B.h
-> 
-> all-uapi.h
-> #include<C.h>
-> #include<A.h>
-> 
-> all-uapi.h will compile fine, since the inclusion of C.h before A.h satisfies
-> A.h's dependency on B.h. However, if a user-land program includes just A.h, it
-> will not compile without adding B.h. So the target being built successfully
-> masked an issue with the uapi header, no?
+When compile-testing on m68k or microblaze:
 
-Yes, good point.
+    drivers/media/platform/fsl-viu.c:41:1: warning: "out_be32" redefined
+    drivers/media/platform/fsl-viu.c:42:1: warning: "in_be32" redefined
 
-> I guess it might be better to just have a Makefile which produces a target for
-> each header in the set produced by 'make headers_install' and compile those,
-> with a -I flag as <build-dir>/usr/include ?
+Fix this by replacing the check for PowerPC by checks for the presence
+of {out,in}_be32().
 
-Yes, that makes sense.  Should be fairly straightforward to do that.
+As PowerPC implements the be32 accessors using inline functions instead
+of macros, identity definions are added for all accessors to make the
+above checks work.
 
-> Also, do you think it might be better to do this work in phases ? I'm guessing
-> we'll be seeing many headers to fix (especially arch specific ones). Fixing
-> these separately: first the generic ones, followed by the ones for the arches,
-> might be easier ?
+Fixes: 29d750686331a1a9 ("media: fsl-viu: allow building it with COMPILE_TEST")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+Compile-tested on m68k, microblaze, and powerpc.
+Assembler output before/after compared for powerpc.
+---
+ arch/powerpc/include/asm/io.h    | 14 ++++++++++++++
+ drivers/media/platform/fsl-viu.c |  4 +++-
+ 2 files changed, 17 insertions(+), 1 deletion(-)
 
-Absolutely.  I was planning to just focus on one sub-directory of
-usr/include/choose_one (and begin with a smaller one).
-
-
-thanks,
+diff --git a/arch/powerpc/include/asm/io.h b/arch/powerpc/include/asm/io.h
+index e0331e7545685c5f..3741183ae09349f1 100644
+--- a/arch/powerpc/include/asm/io.h
++++ b/arch/powerpc/include/asm/io.h
+@@ -222,6 +222,20 @@ static inline void out_be64(volatile u64 __iomem *addr, u64 val)
+ #endif
+ #endif /* __powerpc64__ */
+ 
++#define in_be16 in_be16
++#define in_be32 in_be32
++#define in_be64 in_be64
++#define in_le16 in_le16
++#define in_le32 in_le32
++#define in_le64 in_le64
++
++#define out_be16 out_be16
++#define out_be32 out_be32
++#define out_be64 out_be64
++#define out_le16 out_le16
++#define out_le32 out_le32
++#define out_le64 out_le64
++
+ /*
+  * Low level IO stream instructions are defined out of line for now
+  */
+diff --git a/drivers/media/platform/fsl-viu.c b/drivers/media/platform/fsl-viu.c
+index e41510ce69a40815..5d5e030c9c980647 100644
+--- a/drivers/media/platform/fsl-viu.c
++++ b/drivers/media/platform/fsl-viu.c
+@@ -37,8 +37,10 @@
+ #define VIU_VERSION		"0.5.1"
+ 
+ /* Allow building this driver with COMPILE_TEST */
+-#ifndef CONFIG_PPC
++#ifndef out_be32
+ #define out_be32(v, a)	iowrite32be(a, (void __iomem *)v)
++#endif
++#ifndef in_be32
+ #define in_be32(a)	ioread32be((void __iomem *)a)
+ #endif
+ 
 -- 
-~Randy
+2.7.4
