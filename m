@@ -1,109 +1,245 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id iSIMA0w4GFsjZAAAmS7hNA
-	; Wed, 06 Jun 2018 19:38:59 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id cR0nDO66GlsrWwAAmS7hNA
+	; Fri, 08 Jun 2018 17:20:56 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 23304608B8; Wed,  6 Jun 2018 19:38:59 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o/SQzCsG"
+	id E664D607DC; Fri,  8 Jun 2018 17:20:55 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 9F9C76074D;
-	Wed,  6 Jun 2018 19:38:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9F9C76074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=debian.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 3F5D9601D2;
+	Fri,  8 Jun 2018 17:20:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3F5D9601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752898AbeFFTi4 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 15:38:56 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:36982 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752348AbeFFTiU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 15:38:20 -0400
-Received: by mail-wr0-f196.google.com with SMTP id d8-v6so7517419wro.4;
-        Wed, 06 Jun 2018 12:38:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=W8zl4Wx3N0wx2PwRCFxcbADdVeCY6GFY62lJyH1HFmQ=;
-        b=o/SQzCsGc2LsZsWTxf14hTh+1BRvQ5zE7yDbxXnYHLbev6rdbH+pulLLQXjqudx6gJ
-         Ht68HEs8oPLvdg7clQclk0FdQEWXYamrpz9+157rgrq6dREt9FVvCw40yolj3y+69/CU
-         sJUdPMLThzX7Xp8Bav5S/IA8snTO51GOLOXd5vqHHqKDhD73MHAyG9+RoDNoXNRB1Cyn
-         oC4w0mx4HhP+x3sCGBMXn3zwPcoOaZpIO/R2ma94xBe6Q6lGumT4oFolwLrk08G6c2s4
-         lccS1AhU86KSwyt1/HgkZDe+8VKqfpJKJRI3EsvXYACHG0K5FuI4va147zmorbxC6iY4
-         fwRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references;
-        bh=W8zl4Wx3N0wx2PwRCFxcbADdVeCY6GFY62lJyH1HFmQ=;
-        b=Mx2BdBFDHeLNaf3AhjNtJdEUf2cJUtxV2hfDYLqS9oTc6RGSMU5x8AaUcCt5uza8id
-         QT589rXzNH32M8UkB7m0ZjVp2ndwTyBVGc4VqK1uAL5uwXdJmAgzNMZ+fmiIOcMQZqKx
-         f/JsiBm72AwC+CJxYveFc18Vnuwt7ef+vDXvThnOvVvg6QN1U0aWkYY3lJrr/mZCAAOw
-         KmRQrrQxXF603cayLqC+viA6HXNvvAeG+A3Az2xwo9jeeJiYhkjVEFuwpXKjfeTijcLm
-         0cJm+ei8vI/ee+2EQdBMp5v9zkx4iyR8RI8CHKjbMUSvH08dUOaqKbwcqFRdsFwoKkvg
-         Q2eQ==
-X-Gm-Message-State: APt69E2cc1kktWijubNylcx6hH61JmwS4YPyp5/Wkg27Zl71clrcs2+T
-        493FssJqasuIdaMN3I4oJ9U=
-X-Google-Smtp-Source: ADUXVKKAEVz4/yN2Qa/o7Hs76/9Ter7c4hegB0if2tXjfQENkBThCE7XB/+3Qg5f2f903a7rSOOe+A==
-X-Received: by 2002:adf:a706:: with SMTP id c6-v6mr3567029wrd.61.1528313899213;
-        Wed, 06 Jun 2018 12:38:19 -0700 (PDT)
-Received: from macbookpro.malat.net (bru31-1-78-225-226-121.fbx.proxad.net. [78.225.226.121])
-        by smtp.gmail.com with ESMTPSA id f24-v6sm3609046wmc.0.2018.06.06.12.38.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 06 Jun 2018 12:38:18 -0700 (PDT)
-Received: by macbookpro.malat.net (Postfix, from userid 1000)
-        id A039910C2B80; Wed,  6 Jun 2018 21:38:17 +0200 (CEST)
-From: Mathieu Malaterre <malat@debian.org>
-To: James Hogan <jhogan@kernel.org>
-Cc: Mathieu Malaterre <malat@debian.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, devicetree@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: [PATCH 2/3] MIPS: Ci20: Enable SND_JZ4740_SOC driver
-Date: Wed,  6 Jun 2018 21:38:09 +0200
-Message-Id: <20180606193811.16007-2-malat@debian.org>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180606193811.16007-1-malat@debian.org>
-References: <20180606193811.16007-1-malat@debian.org>
+        id S1753165AbeFHRUx (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 13:20:53 -0400
+Received: from mga01.intel.com ([192.55.52.88]:12634 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932130AbeFHRUv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 13:20:51 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jun 2018 10:20:50 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,490,1520924400";
+   d="scan'208";a="231035296"
+Received: from nzou1-mobl1.ccr.corp.intel.com (HELO localhost) ([10.249.254.60])
+  by orsmga005.jf.intel.com with ESMTP; 08 Jun 2018 10:20:42 -0700
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: x86@kernel.org, platform-driver-x86@vger.kernel.org
+Cc: dave.hansen@intel.com, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Vikas Shivappa <vikas.shivappa@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND
+        64-BIT)), intel-sgx-kernel-dev@lists.01.org (open list:INTEL SGX)
+Subject: [PATCH v11 07/13] x86, sgx: detect Intel SGX
+Date: Fri,  8 Jun 2018 19:09:42 +0200
+Message-Id: <20180608171216.26521-8-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180608171216.26521-1-jarkko.sakkinen@linux.intel.com>
+References: <20180608171216.26521-1-jarkko.sakkinen@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the Ci20's defconfig to enable the JZ4780's SND driver.
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
+Intel(R) SGX is a set of CPU instructions that can be used by applications
+to set aside private regions of code and data. The code outside the enclave
+is disallowed to access the memory inside the enclave by the CPU access
+control.
+
+This commit adds the check for SGX to arch/x86 and a new config option,
+INTEL_SGX_CORE. Exposes a boolean variable 'sgx_enabled' to query whether
+or not the SGX support is available.
+
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- arch/mips/configs/ci20_defconfig | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/x86/Kconfig                | 19 ++++++++++++
+ arch/x86/include/asm/sgx.h      | 25 ++++++++++++++++
+ arch/x86/include/asm/sgx_pr.h   | 20 +++++++++++++
+ arch/x86/kernel/cpu/Makefile    |  1 +
+ arch/x86/kernel/cpu/intel_sgx.c | 53 +++++++++++++++++++++++++++++++++
+ 5 files changed, 118 insertions(+)
+ create mode 100644 arch/x86/include/asm/sgx.h
+ create mode 100644 arch/x86/include/asm/sgx_pr.h
+ create mode 100644 arch/x86/kernel/cpu/intel_sgx.c
 
-diff --git a/arch/mips/configs/ci20_defconfig b/arch/mips/configs/ci20_defconfig
-index e1c14f6af824..0c08c7675b42 100644
---- a/arch/mips/configs/ci20_defconfig
-+++ b/arch/mips/configs/ci20_defconfig
-@@ -104,6 +104,10 @@ CONFIG_REGULATOR=y
- CONFIG_REGULATOR_DEBUG=y
- CONFIG_REGULATOR_FIXED_VOLTAGE=y
- # CONFIG_VGA_CONSOLE is not set
-+CONFIG_SOUND=y
-+CONFIG_SND=y
-+CONFIG_SND_SOC=y
-+CONFIG_SND_JZ4740_SOC=y
- # CONFIG_HID is not set
- # CONFIG_USB_SUPPORT is not set
- CONFIG_MMC=y
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index c07f492b871a..42015d5366ef 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1925,6 +1925,25 @@ config X86_INTEL_MEMORY_PROTECTION_KEYS
+ 
+ 	  If unsure, say y.
+ 
++config INTEL_SGX_CORE
++	prompt "Intel SGX core functionality"
++	def_bool n
++	depends on X86_64 && CPU_SUP_INTEL
++	help
++	Intel Software Guard eXtensions (SGX) is a set of CPU instructions
++	that allows ring 3 applications to create enclaves; private regions
++	of memory that are protected, by hardware, from unauthorized access
++	and/or modification.
++
++	This option enables kernel recognition of SGX, high-level management
++	of the Enclave Page Cache (EPC), tracking and writing of SGX Launch
++	Enclave Hash MSRs, and allows for virtualization of SGX via KVM. By
++	iteslf, this option does not provide SGX support to userspace.
++
++	For details, see Documentation/x86/intel_sgx.rst
++
++	If unsure, say N.
++
+ config EFI
+ 	bool "EFI runtime service support"
+ 	depends on ACPI
+diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
+new file mode 100644
+index 000000000000..fa3e6e0eb8af
+--- /dev/null
++++ b/arch/x86/include/asm/sgx.h
+@@ -0,0 +1,25 @@
++// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
++// Copyright(c) 2016-18 Intel Corporation.
++//
++// Authors:
++//
++// Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
++// Suresh Siddha <suresh.b.siddha@intel.com>
++// Sean Christopherson <sean.j.christopherson@intel.com>
++
++#ifndef _ASM_X86_SGX_H
++#define _ASM_X86_SGX_H
++
++#include <linux/types.h>
++
++#define SGX_CPUID 0x12
++
++enum sgx_cpuid {
++	SGX_CPUID_CAPABILITIES	= 0,
++	SGX_CPUID_ATTRIBUTES	= 1,
++	SGX_CPUID_EPC_BANKS	= 2,
++};
++
++extern bool sgx_enabled;
++
++#endif /* _ASM_X86_SGX_H */
+diff --git a/arch/x86/include/asm/sgx_pr.h b/arch/x86/include/asm/sgx_pr.h
+new file mode 100644
+index 000000000000..876dc44c2ccc
+--- /dev/null
++++ b/arch/x86/include/asm/sgx_pr.h
+@@ -0,0 +1,20 @@
++// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
++// Copyright(c) 2016-17 Intel Corporation.
++//
++// Authors:
++//
++// Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
++// Suresh Siddha <suresh.b.siddha@intel.com>
++// Serge Ayoun <serge.ayoun@intel.com>
++// Shay Katz-zamir <shay.katz-zamir@intel.com>
++
++#ifndef _ASM_X86_SGX_PR_H
++#define _ASM_X86_SGX_PR_H
++
++#include <linux/printk.h>
++#include <linux/ratelimit.h>
++
++#undef pr_fmt
++#define pr_fmt(fmt) "intel_sgx: " fmt
++
++#endif /* _ASM_X86_SGX_PR_H */
+diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
+index a66229f51b12..9552ff5b4ec3 100644
+--- a/arch/x86/kernel/cpu/Makefile
++++ b/arch/x86/kernel/cpu/Makefile
+@@ -36,6 +36,7 @@ obj-$(CONFIG_CPU_SUP_TRANSMETA_32)	+= transmeta.o
+ obj-$(CONFIG_CPU_SUP_UMC_32)		+= umc.o
+ 
+ obj-$(CONFIG_INTEL_RDT)	+= intel_rdt.o intel_rdt_rdtgroup.o intel_rdt_monitor.o intel_rdt_ctrlmondata.o
++obj-$(CONFIG_INTEL_SGX_CORE)		+= intel_sgx.o
+ 
+ obj-$(CONFIG_X86_MCE)			+= mcheck/
+ obj-$(CONFIG_MTRR)			+= mtrr/
+diff --git a/arch/x86/kernel/cpu/intel_sgx.c b/arch/x86/kernel/cpu/intel_sgx.c
+new file mode 100644
+index 000000000000..db6b315334f4
+--- /dev/null
++++ b/arch/x86/kernel/cpu/intel_sgx.c
+@@ -0,0 +1,53 @@
++// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
++// Copyright(c) 2016-17 Intel Corporation.
++//
++// Authors:
++//
++// Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
++// Suresh Siddha <suresh.b.siddha@intel.com>
++// Serge Ayoun <serge.ayoun@intel.com>
++// Shay Katz-zamir <shay.katz-zamir@intel.com>
++// Sean Christopherson <sean.j.christopherson@intel.com>
++
++#include <asm/sgx.h>
++#include <asm/sgx_pr.h>
++#include <linux/freezer.h>
++#include <linux/highmem.h>
++#include <linux/kthread.h>
++#include <linux/ratelimit.h>
++#include <linux/sched/signal.h>
++#include <linux/slab.h>
++
++bool sgx_enabled __ro_after_init = false;
++EXPORT_SYMBOL(sgx_enabled);
++
++static __init bool sgx_is_enabled(void)
++{
++	unsigned long fc;
++
++	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL)
++		return false;
++
++	if (!boot_cpu_has(X86_FEATURE_SGX))
++		return false;
++
++	if (!boot_cpu_has(X86_FEATURE_SGX1))
++		return false;
++
++	rdmsrl(MSR_IA32_FEATURE_CONTROL, fc);
++	if (!(fc & FEATURE_CONTROL_LOCKED))
++		return false;
++
++	if (!(fc & FEATURE_CONTROL_SGX_ENABLE))
++		return false;
++
++	return true;
++}
++
++static __init int sgx_init(void)
++{
++	sgx_enabled = sgx_is_enabled();
++	return 0;
++}
++
++arch_initcall(sgx_init);
 -- 
-2.11.0
+2.17.0
