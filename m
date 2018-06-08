@@ -1,105 +1,486 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id QTlFIFrdGFtedAAAmS7hNA
-	; Thu, 07 Jun 2018 07:24:11 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ZX5sA40hGlsJTgAAmS7hNA
+	; Fri, 08 Jun 2018 06:27:13 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id CCD44607E7; Thu,  7 Jun 2018 07:24:11 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gfz1jU2+"
+	id 9423F607E4; Fri,  8 Jun 2018 06:27:13 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 49947602FC;
-	Thu,  7 Jun 2018 07:24:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 49947602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=jms.id.au
+	by smtp.codeaurora.org (Postfix) with ESMTP id 87F00606FA;
+	Fri,  8 Jun 2018 06:27:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 87F00606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753354AbeFGHYJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 03:24:09 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:41402 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753213AbeFGHYG (ORCPT
+        id S1751224AbeFHG1K (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 02:27:10 -0400
+Received: from regular1.263xmail.com ([211.150.99.134]:41422 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751195AbeFHG0W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 03:24:06 -0400
-Received: by mail-pl0-f66.google.com with SMTP id az12-v6so5525513plb.8;
-        Thu, 07 Jun 2018 00:24:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=cfir5d9nY+kHtjjYX58OJl7xlw1mcjEAzGYTWy2Emm4=;
-        b=gfz1jU2+bKH2qmaF3CETlfmz/x+LqlVtdjSVaohFR0210pNjPNSpIyAEnXftwgEuun
-         iTWOvdQdbTOjMJYg5YvyBkEU67bjc4mLo1n8NCcLagesZ0bYalRuyd5xo0z265EIzQOt
-         1p+yrTqWpmZbAmAuBLbRvW3cmefZRKJbYfxfz3SHU+P1jzM4+9RvIGMRas+E3FVF3KWD
-         9JTFPcWfVJuJuMZHqGiukaZWOIxdXsbrocGv3jKBtDDri520SXb/FwsMrvvLiiWO40An
-         HHEqWFKLqsNvOd+Cjd3RRWkQINIFEzan2RHBaK+iZpNaP7WftxC5m7EZlhfBq+lP4TDV
-         zh8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=cfir5d9nY+kHtjjYX58OJl7xlw1mcjEAzGYTWy2Emm4=;
-        b=Y9CWFGwdTlxRHJuF5BUhX6jSkNPsWLihgwarlBjhdY4UZ2GwQRmQCiIiJZB3bZ604s
-         5EG85sH+cClJQXMe8+5+0ESkvxeOA0q+RwlmET3g+GRsPI5OnqHLRcz8qPsXHVVe0/9N
-         ubRz33pvLfqyP91p1ouAS0PVk3L4AENuwEyH5NN54JJ0JDj3u0I0xOb5lcgDSFeljNoX
-         68wkXB1/SWuwKIA+yAJHLJs4qS9Hj7tgeO9JduN/leL551TeLLGK9KPI9a38jN58j+bz
-         +YDmP/dsVrO0Z0zDT374g/yjuChgprCPrlFVSFqCz5ysSN6z4WEURfNX1YfR0UHc9ixe
-         jOFA==
-X-Gm-Message-State: APt69E0issfham3pRSJyfPRWvRWWjJ6aUCNP7N4LPXtzc3Fk4OBKwmQx
-        mmYjfOjNtfnqKfPJq5ordos=
-X-Google-Smtp-Source: ADUXVKInovR5/DhQAx3m/OKH5DK9289f4J7SSY3t+CdCvNS79yHErV1v3DY9txWL2upAvAfQylWPug==
-X-Received: by 2002:a17:902:b604:: with SMTP id b4-v6mr851851pls.18.1528356246254;
-        Thu, 07 Jun 2018 00:24:06 -0700 (PDT)
-Received: from aurora.jms.id.au ([203.0.153.9])
-        by smtp.gmail.com with ESMTPSA id c74-v6sm23195091pfd.19.2018.06.07.00.24.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Jun 2018 00:24:04 -0700 (PDT)
-Received: by aurora.jms.id.au (sSMTP sendmail emulation); Thu, 07 Jun 2018 16:53:57 +0930
-From: Joel Stanley <joel@jms.id.au>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: Andrew Jeffery <andrew@aj.id.au>, linux-clk@vger.kernel.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: [PATCH] clk: aspeed: Mark bclk (PCIe) and dclk (VGA) as critical
-Date: Thu,  7 Jun 2018 16:39:59 +0930
-Message-Id: <20180607070959.31995-1-joel@jms.id.au>
-X-Mailer: git-send-email 2.17.1
+        Fri, 8 Jun 2018 02:26:22 -0400
+Received: from zhangqing?rock-chips.com (unknown [192.168.167.157])
+        by regular1.263xmail.com (Postfix) with ESMTP id DCF6791F1;
+        Fri,  8 Jun 2018 14:26:18 +0800 (CST)
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+Received: from localhost.localdomain (localhost [127.0.0.1])
+        by smtp.263.net (Postfix) with ESMTPA id 75C883EC;
+        Fri,  8 Jun 2018 14:26:12 +0800 (CST)
+X-RL-SENDER: zhangqing@rock-chips.com
+X-FST-TO: heiko@sntech.de
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: zhangqing@rock-chips.com
+X-UNIQUE-TAG: <100f5a34df70ff3d8db671583acf0f37>
+X-ATTACHMENT-NUM: 0
+X-SENDER: zhangqing@rock-chips.com
+X-DNS-TYPE: 0
+Received: from unknown (unknown [58.22.7.114])
+        by smtp.263.net (Postfix) whith SMTP id 19679RSBROA;
+        Fri, 08 Jun 2018 14:26:18 +0800 (CST)
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: heiko@sntech.de
+Cc: sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        cl@rock-chips.com, xxx@rock-chips.com, xf@rock-chips.com,
+        huangtao@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v2 2/4] clk: rockchip: add dt-binding header for px30
+Date: Fri,  8 Jun 2018 14:31:57 +0800
+Message-Id: <1528439519-30135-3-git-send-email-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1528439519-30135-1-git-send-email-zhangqing@rock-chips.com>
+References: <1528439519-30135-1-git-send-email-zhangqing@rock-chips.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is used by the host to talk to the BMC's PCIe slave device. The BMC
-is not involved, but the clock needs to be enabled so the host can use
-the device.
+Add the dt-bindings header for the px30, that gets shared between
+the clock controller and the clock references in the dts.
+Add softreset ID for px30.
 
-Fixes: 15ed8ce5f84e ("clk: aspeed: Register gated clocks")
-Cc: stable@vger.kernel.org # 4.15
-Acked-by: Andrew Jeffery <andrew@aj.id.au>
-Tested-by: Lei YU <mine260309@gmail.com>
-Signed-off-by: Joel Stanley <joel@jms.id.au>
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 ---
- drivers/clk/clk-aspeed.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/dt-bindings/clock/px30-cru.h | 402 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 402 insertions(+)
+ create mode 100644 include/dt-bindings/clock/px30-cru.h
 
-diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-index 4d425594999d..c17032bc853a 100644
---- a/drivers/clk/clk-aspeed.c
-+++ b/drivers/clk/clk-aspeed.c
-@@ -91,8 +91,8 @@ static const struct aspeed_gate_data aspeed_gates[] = {
- 	[ASPEED_CLK_GATE_GCLK] =	{  1,  7, "gclk-gate",		NULL,	0 }, /* 2D engine */
- 	[ASPEED_CLK_GATE_MCLK] =	{  2, -1, "mclk-gate",		"mpll",	CLK_IS_CRITICAL }, /* SDRAM */
- 	[ASPEED_CLK_GATE_VCLK] =	{  3,  6, "vclk-gate",		NULL,	0 }, /* Video Capture */
--	[ASPEED_CLK_GATE_BCLK] =	{  4,  8, "bclk-gate",		"bclk",	0 }, /* PCIe/PCI */
--	[ASPEED_CLK_GATE_DCLK] =	{  5, -1, "dclk-gate",		NULL,	0 }, /* DAC */
-+	[ASPEED_CLK_GATE_BCLK] =	{  4,  8, "bclk-gate",		"bclk",	CLK_IS_CRITICAL }, /* PCIe/PCI */
-+	[ASPEED_CLK_GATE_DCLK] =	{  5, -1, "dclk-gate",		NULL,	CLK_IS_CRITICAL }, /* DAC */
- 	[ASPEED_CLK_GATE_REFCLK] =	{  6, -1, "refclk-gate",	"clkin", CLK_IS_CRITICAL },
- 	[ASPEED_CLK_GATE_USBPORT2CLK] =	{  7,  3, "usb-port2-gate",	NULL,	0 }, /* USB2.0 Host port 2 */
- 	[ASPEED_CLK_GATE_LCLK] =	{  8,  5, "lclk-gate",		NULL,	0 }, /* LPC */
+diff --git a/include/dt-bindings/clock/px30-cru.h b/include/dt-bindings/clock/px30-cru.h
+new file mode 100644
+index 000000000000..6b0b9507597a
+--- /dev/null
++++ b/include/dt-bindings/clock/px30-cru.h
+@@ -0,0 +1,402 @@
++/*
++ * Copyright (c) 2018 Rockchip Electronics Co. Ltd.
++ * Author: Elaine Zhang<zhangqing@rock-chips.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef _DT_BINDINGS_CLK_ROCKCHIP_PX30_H
++#define _DT_BINDINGS_CLK_ROCKCHIP_PX30_H
++
++/* core clocks */
++#define PLL_APLL		1
++#define PLL_DPLL		2
++#define PLL_CPLL		3
++#define PLL_NPLL		4
++#define APLL_BOOST_H		5
++#define APLL_BOOST_L		6
++#define ARMCLK			7
++
++/* sclk gates (special clocks) */
++#define USB480M			14
++#define SCLK_PDM		15
++#define SCLK_I2S0_TX		16
++#define SCLK_I2S0_TX_OUT	17
++#define SCLK_I2S0_RX		18
++#define SCLK_I2S0_RX_OUT	19
++#define SCLK_I2S1		20
++#define SCLK_I2S1_OUT		21
++#define SCLK_I2S2		22
++#define SCLK_I2S2_OUT		23
++#define SCLK_UART1		24
++#define SCLK_UART2		25
++#define SCLK_UART3		26
++#define SCLK_UART4		27
++#define SCLK_UART5		28
++#define SCLK_I2C0		29
++#define SCLK_I2C1		30
++#define SCLK_I2C2		31
++#define SCLK_I2C3		32
++#define SCLK_I2C4		33
++#define SCLK_PWM0		34
++#define SCLK_PWM1		35
++#define SCLK_SPI0		36
++#define SCLK_SPI1		37
++#define SCLK_TIMER0		38
++#define SCLK_TIMER1		39
++#define SCLK_TIMER2		40
++#define SCLK_TIMER3		41
++#define SCLK_TIMER4		42
++#define SCLK_TIMER5		43
++#define SCLK_TSADC		44
++#define SCLK_SARADC		45
++#define SCLK_OTP		46
++#define SCLK_OTP_USR		47
++#define SCLK_CRYPTO		48
++#define SCLK_CRYPTO_APK		49
++#define SCLK_DDRC		50
++#define SCLK_ISP		51
++#define SCLK_CIF_OUT		52
++#define SCLK_RGA_CORE		53
++#define SCLK_VOPB_PWM		54
++#define SCLK_NANDC		55
++#define SCLK_SDIO		56
++#define SCLK_EMMC		57
++#define SCLK_SFC		58
++#define SCLK_SDMMC		59
++#define SCLK_OTG_ADP		60
++#define SCLK_GMAC_SRC		61
++#define SCLK_GMAC		62
++#define SCLK_GMAC_RX_TX		63
++#define SCLK_MAC_REF		64
++#define SCLK_MAC_REFOUT		65
++#define SCLK_MAC_OUT		66
++#define SCLK_SDMMC_DRV		67
++#define SCLK_SDMMC_SAMPLE	68
++#define SCLK_SDIO_DRV		69
++#define SCLK_SDIO_SAMPLE	70
++#define SCLK_EMMC_DRV		71
++#define SCLK_EMMC_SAMPLE	72
++#define SCLK_GPU		73
++#define SCLK_PVTM		74
++#define SCLK_CORE_VPU		75
++#define SCLK_GMAC_RMII		76
++#define SCLK_UART2_SRC		77
++#define SCLK_NANDC_DIV		78
++#define SCLK_NANDC_DIV50	79
++#define SCLK_SDIO_DIV		80
++#define SCLK_SDIO_DIV50		81
++#define SCLK_EMMC_DIV		82
++#define SCLK_EMMC_DIV50		83
++#define SCLK_DDRCLK		84
++#define SCLK_UART1_SRC		85
++
++/* dclk gates */
++#define DCLK_VOPB		150
++#define DCLK_VOPL		151
++
++/* aclk gates */
++#define ACLK_GPU		170
++#define ACLK_BUS_PRE		171
++#define ACLK_CRYPTO		172
++#define ACLK_VI_PRE		173
++#define ACLK_VO_PRE		174
++#define ACLK_VPU		175
++#define ACLK_PERI_PRE		176
++#define ACLK_GMAC		178
++#define ACLK_CIF		179
++#define ACLK_ISP		180
++#define ACLK_VOPB		181
++#define ACLK_VOPL		182
++#define ACLK_RGA		183
++#define ACLK_GIC		184
++#define ACLK_DCF		186
++#define ACLK_DMAC		187
++#define ACLK_BUS_SRC		188
++#define ACLK_PERI_SRC		189
++
++/* hclk gates */
++#define HCLK_BUS_PRE		240
++#define HCLK_CRYPTO		241
++#define HCLK_VI_PRE		242
++#define HCLK_VO_PRE		243
++#define HCLK_VPU		244
++#define HCLK_PERI_PRE		245
++#define HCLK_MMC_NAND		246
++#define HCLK_SDMMC		247
++#define HCLK_USB		248
++#define HCLK_CIF		249
++#define HCLK_ISP		250
++#define HCLK_VOPB		251
++#define HCLK_VOPL		252
++#define HCLK_RGA		253
++#define HCLK_NANDC		254
++#define HCLK_SDIO		255
++#define HCLK_EMMC		256
++#define HCLK_SFC		257
++#define HCLK_OTG		258
++#define HCLK_HOST		259
++#define HCLK_HOST_ARB		260
++#define HCLK_PDM		261
++#define HCLK_I2S0		262
++#define HCLK_I2S1		263
++#define HCLK_I2S2		264
++
++/* pclk gates */
++#define PCLK_BUS_PRE		320
++#define PCLK_DDR		321
++#define PCLK_VO_PRE		322
++#define PCLK_GMAC		323
++#define PCLK_MIPI_DSI		324
++#define PCLK_MIPIDSIPHY		325
++#define PCLK_MIPICSIPHY		326
++#define PCLK_USB_GRF		327
++#define PCLK_DCF		328
++#define PCLK_UART1		329
++#define PCLK_UART2		330
++#define PCLK_UART3		331
++#define PCLK_UART4		332
++#define PCLK_UART5		333
++#define PCLK_I2C0		334
++#define PCLK_I2C1		335
++#define PCLK_I2C2		336
++#define PCLK_I2C3		337
++#define PCLK_I2C4		338
++#define PCLK_PWM0		339
++#define PCLK_PWM1		340
++#define PCLK_SPI0		341
++#define PCLK_SPI1		342
++#define PCLK_SARADC		343
++#define PCLK_TSADC		344
++#define PCLK_TIMER		345
++#define PCLK_OTP_NS		346
++#define PCLK_WDT_NS		347
++#define PCLK_GPIO1		348
++#define PCLK_GPIO2		349
++#define PCLK_GPIO3		350
++#define PCLK_ISP		351
++#define PCLK_CIF		352
++#define PCLK_OTP_PHY		353
++
++#define CLK_NR_CLKS		(PCLK_OTP_PHY + 1)
++
++/* pmu-clocks indices */
++
++#define PLL_GPLL		1
++
++#define SCLK_RTC32K_PMU		4
++#define SCLK_WIFI_PMU		5
++#define SCLK_UART0_PMU		6
++#define SCLK_PVTM_PMU		7
++#define PCLK_PMU_PRE		8
++#define SCLK_REF24M_PMU		9
++#define SCLK_USBPHY_REF		10
++#define SCLK_MIPIDSIPHY_REF	11
++
++#define XIN24M_DIV		12
++
++#define PCLK_GPIO0_PMU		20
++#define PCLK_UART0_PMU		21
++
++#define CLKPMU_NR_CLKS		(PCLK_UART0_PMU + 1)
++
++/* soft-reset indices */
++#define SRST_CORE0_PO		0
++#define SRST_CORE1_PO		1
++#define SRST_CORE2_PO		2
++#define SRST_CORE3_PO		3
++#define SRST_CORE0		4
++#define SRST_CORE1		5
++#define SRST_CORE2		6
++#define SRST_CORE3		7
++#define SRST_CORE0_DBG		8
++#define SRST_CORE1_DBG		9
++#define SRST_CORE2_DBG		10
++#define SRST_CORE3_DBG		11
++#define SRST_TOPDBG		12
++#define SRST_CORE_NOC		13
++#define SRST_STRC_A		14
++#define SRST_L2C		15
++
++#define SRST_DAP		16
++#define SRST_CORE_PVTM		17
++#define SRST_GPU		18
++#define SRST_GPU_NIU		19
++#define SRST_UPCTL2		20
++#define SRST_UPCTL2_A		21
++#define SRST_UPCTL2_P		22
++#define SRST_MSCH		23
++#define SRST_MSCH_P		24
++#define SRST_DDRMON_P		25
++#define SRST_DDRSTDBY_P		26
++#define SRST_DDRSTDBY		27
++#define SRST_DDRGRF_p		28
++#define SRST_AXI_SPLIT_A	29
++#define SRST_AXI_CMD_A		30
++#define SRST_AXI_CMD_P		31
++
++#define SRST_DDRPHY		32
++#define SRST_DDRPHYDIV		33
++#define SRST_DDRPHY_P		34
++#define SRST_VPU_A		36
++#define SRST_VPU_NIU_A		37
++#define SRST_VPU_H		38
++#define SRST_VPU_NIU_H		39
++#define SRST_VI_NIU_A		40
++#define SRST_VI_NIU_H		41
++#define SRST_ISP_H		42
++#define SRST_ISP		43
++#define SRST_CIF_A		44
++#define SRST_CIF_H		45
++#define SRST_CIF_PCLKIN		46
++#define SRST_MIPICSIPHY_P	47
++
++#define SRST_VO_NIU_A		48
++#define SRST_VO_NIU_H		49
++#define SRST_VO_NIU_P		50
++#define SRST_VOPB_A		51
++#define SRST_VOPB_H		52
++#define SRST_VOPB		53
++#define SRST_PWM_VOPB		54
++#define SRST_VOPL_A		55
++#define SRST_VOPL_H		56
++#define SRST_VOPL		57
++#define SRST_RGA_A		58
++#define SRST_RGA_H		59
++#define SRST_RGA		60
++#define SRST_MIPIDSI_HOST_P	61
++#define SRST_MIPIDSIPHY_P	62
++#define SRST_VPU_CORE		63
++
++#define SRST_PERI_NIU_A		64
++#define SRST_USB_NIU_H		65
++#define SRST_USB2OTG_H		66
++#define SRST_USB2OTG		67
++#define SRST_USB2OTG_ADP	68
++#define SRST_USB2HOST_H		69
++#define SRST_USB2HOST_ARB_H	70
++#define SRST_USB2HOST_AUX_H	71
++#define SRST_USB2HOST_EHCI	72
++#define SRST_USB2HOST		73
++#define SRST_USBPHYPOR		74
++#define SRST_USBPHY_OTG_PORT	75
++#define SRST_USBPHY_HOST_PORT	76
++#define SRST_USBPHY_GRF		77
++#define SRST_CPU_BOOST_P	78
++#define SRST_CPU_BOOST		79
++
++#define SRST_MMC_NAND_NIU_H	80
++#define SRST_SDIO_H		81
++#define SRST_EMMC_H		82
++#define SRST_SFC_H		83
++#define SRST_SFC		84
++#define SRST_SDCARD_NIU_H	85
++#define SRST_SDMMC_H		86
++#define SRST_NANDC_H		89
++#define SRST_NANDC		90
++#define SRST_GMAC_NIU_A		92
++#define SRST_GMAC_NIU_P		93
++#define SRST_GMAC_A		94
++
++#define SRST_PMU_NIU_P		96
++#define SRST_PMU_SGRF_P		97
++#define SRST_PMU_GRF_P		98
++#define SRST_PMU		99
++#define SRST_PMU_MEM_P		100
++#define SRST_PMU_GPIO0_P	101
++#define SRST_PMU_UART0_P	102
++#define SRST_PMU_CRU_P		103
++#define SRST_PMU_PVTM		104
++#define SRST_PMU_UART		105
++#define SRST_PMU_NIU_H		106
++#define SRST_PMU_DDR_FAIL_SAVE	107
++#define SRST_PMU_CORE_PERF_A	108
++#define SRST_PMU_CORE_GRF_P	109
++#define SRST_PMU_GPU_PERF_A	110
++#define SRST_PMU_GPU_GRF_P	111
++
++#define SRST_CRYPTO_NIU_A	112
++#define SRST_CRYPTO_NIU_H	113
++#define SRST_CRYPTO_A		114
++#define SRST_CRYPTO_H		115
++#define SRST_CRYPTO		116
++#define SRST_CRYPTO_APK		117
++#define SRST_BUS_NIU_H		120
++#define SRST_USB_NIU_P		121
++#define SRST_BUS_TOP_NIU_P	122
++#define SRST_INTMEM_A		123
++#define SRST_GIC_A		124
++#define SRST_ROM_H		126
++#define SRST_DCF_A		127
++
++#define SRST_DCF_P		128
++#define SRST_PDM_H		129
++#define SRST_PDM		130
++#define SRST_I2S0_H		131
++#define SRST_I2S0_TX		132
++#define SRST_I2S1_H		133
++#define SRST_I2S1		134
++#define SRST_I2S2_H		135
++#define SRST_I2S2		136
++#define SRST_UART1_P		137
++#define SRST_UART1		138
++#define SRST_UART2_P		139
++#define SRST_UART2		140
++#define SRST_UART3_P		141
++#define SRST_UART3		142
++#define SRST_UART4_P		143
++
++#define SRST_UART4		144
++#define SRST_UART5_P		145
++#define SRST_UART5		146
++#define SRST_I2C0_P		147
++#define SRST_I2C0		148
++#define SRST_I2C1_P		149
++#define SRST_I2C1		150
++#define SRST_I2C2_P		151
++#define SRST_I2C2		152
++#define SRST_I2C3_P		153
++#define SRST_I2C3		154
++#define SRST_PWM0_P		157
++#define SRST_PWM0		158
++#define SRST_PWM1_P		159
++
++#define SRST_PWM1		160
++#define SRST_SPI0_P		161
++#define SRST_SPI0		162
++#define SRST_SPI1_P		163
++#define SRST_SPI1		164
++#define SRST_SARADC_P		165
++#define SRST_SARADC		166
++#define SRST_TSADC_P		167
++#define SRST_TSADC		168
++#define SRST_TIMER_P		169
++#define SRST_TIMER0		170
++#define SRST_TIMER1		171
++#define SRST_TIMER2		172
++#define SRST_TIMER3		173
++#define SRST_TIMER4		174
++#define SRST_TIMER5		175
++
++#define SRST_OTP_NS_P		176
++#define SRST_OTP_NS_SBPI	177
++#define SRST_OTP_NS_USR		178
++#define SRST_OTP_PHY_P		179
++#define SRST_OTP_PHY		180
++#define SRST_WDT_NS_P		181
++#define SRST_GPIO1_P		182
++#define SRST_GPIO2_P		183
++#define SRST_GPIO3_P		184
++#define SRST_SGRF_P		185
++#define SRST_GRF_P		186
++#define SRST_I2S0_RX		191
++
++#endif
 -- 
-2.17.1
+1.9.1
