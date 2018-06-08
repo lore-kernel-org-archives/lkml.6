@@ -1,121 +1,170 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id fjkTFGtoGltMSwAAmS7hNA
-	; Fri, 08 Jun 2018 11:29:50 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id +5K4H3AKGluBKwAAmS7hNA
+	; Fri, 08 Jun 2018 04:47:48 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D6A47607E4; Fri,  8 Jun 2018 11:29:49 +0000 (UTC)
+	id C36FD607E4; Fri,  8 Jun 2018 04:47:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+	s=default; t=1528433268;
+	bh=JTFDRi9JpV/X6zb0gov7ly3y105i8yN7RQWXhJ2ZtZY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=fTATh+Rwfz3gd2Hpw+bW+MxDJ7low9TD5afeS3nkW9JYidVcoyDlIritl3auZb9kc
+	 8PTYESd95GWvsjDnV2YBHT/XKoa26W2w63G2QgOTGquqVLr8NMAaBgIiiI4RK6VM8J
+	 RdatOTnP7zYB5oCRObcquozHAgQ1JIAAwbVlMjqk=
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 3F86F607A4;
-	Fri,  8 Jun 2018 11:29:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3F86F607A4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id EB864601C3;
+	Fri,  8 Jun 2018 04:47:47 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gJ42JMY4";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="O4PcSWwe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EB864601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752754AbeFHL3p (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 07:29:45 -0400
-Received: from mga17.intel.com ([192.55.52.151]:32416 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751265AbeFHL3o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 07:29:44 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jun 2018 04:29:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,490,1520924400";
-   d="scan'208";a="62388977"
-Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 08 Jun 2018 04:29:42 -0700
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Guenter Roeck <linux@roeck-us.net>,
-        Hans de Goede <hdegoede@redhat.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jun Li <jun.li@nxp.com>,
-        Mats Karrman <mats.dev.list@gmail.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v4 0/8] usb: typec: Support for Alternate Modes
-Date: Fri,  8 Jun 2018 14:29:33 +0300
-Message-Id: <20180608112941.26332-1-heikki.krogerus@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S1751220AbeFHErp (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 00:47:45 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:55744 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750837AbeFHEro (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 00:47:44 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 8BEDF608C9; Fri,  8 Jun 2018 04:47:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528433263;
+        bh=JTFDRi9JpV/X6zb0gov7ly3y105i8yN7RQWXhJ2ZtZY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=gJ42JMY4D3ExorL2U6YTgk5LQdCjj2CkuI6UyWUhdOiHtDXhgdkHJOF6OHL9OX2LY
+         FH89/WRzEp3CTUQb5yqaFdPhS3oc/FiiSwgIedL5VOl77QhTUX/ML6uFDylc854G5N
+         D6oNhxKuX0XAlbkbiDMYH9qb3v5JFZNRIE//vI8Q=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 6A3FF6063F;
+        Fri,  8 Jun 2018 04:47:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528433262;
+        bh=JTFDRi9JpV/X6zb0gov7ly3y105i8yN7RQWXhJ2ZtZY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=O4PcSWweZY1o+wx9M32BkIcDLpI3f5rQCumCgN79Y5AVX0T2UUN6WN2py5hJJnUmk
+         CpHrAkjIbo+rppS+2ZvGULFfD+cquH7IGXV8jfRuReDF1Le/N6z0Sg5rshngzqCiq2
+         YDwupiOo01fY/RFSEmzLd65ya7xweyJadaa0E+cM=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Fri, 08 Jun 2018 10:17:42 +0530
+From: poza@codeaurora.org
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dongdong Liu <liudongdong3@huawei.com>,
+        Keith Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH NEXT 6/6] PCI/PORTDRV: Remove ERR_FATAL handling from
+ pcie_portdrv_slot_reset()
+In-Reply-To: <20180607213448.GB37077@bhelgaas-glaptop.roam.corp.google.com>
+References: <1528351234-26914-1-git-send-email-poza@codeaurora.org>
+ <1528351234-26914-6-git-send-email-poza@codeaurora.org>
+ <94661add3e71e3694aa22c2a9cabf503@codeaurora.org>
+ <20180607213448.GB37077@bhelgaas-glaptop.roam.corp.google.com>
+Message-ID: <f9a6f1ae2e7c17f87e465e643c8e6dcc@codeaurora.org>
+X-Sender: poza@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 2018-06-08 03:04, Bjorn Helgaas wrote:
+> On Thu, Jun 07, 2018 at 07:18:03PM +0530, poza@codeaurora.org wrote:
+>> On 2018-06-07 11:30, Oza Pawandeep wrote:
+>> > We are handling ERR_FATAL by resetting the Link in software,skipping the
+>> > driver pci_error_handlers callbacks, removing the devices from the PCI
+>> > subsystem, and re-enumerating, as a result of that, no more calling
+>> > pcie_portdrv_slot_reset in ERR_FATAL case.
+>> >
+>> > Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
+>> >
+>> > diff --git a/drivers/pci/pcie/portdrv_pci.c
+>> > b/drivers/pci/pcie/portdrv_pci.c
+>> > index 973f1b8..92f5d330 100644
+>> > --- a/drivers/pci/pcie/portdrv_pci.c
+>> > +++ b/drivers/pci/pcie/portdrv_pci.c
+>> > @@ -42,17 +42,6 @@ __setup("pcie_ports=", pcie_port_setup);
+>> >
+>> >  /* global data */
+>> >
+>> > -static int pcie_portdrv_restore_config(struct pci_dev *dev)
+>> > -{
+>> > -	int retval;
+>> > -
+>> > -	retval = pci_enable_device(dev);
+>> > -	if (retval)
+>> > -		return retval;
+>> > -	pci_set_master(dev);
+>> > -	return 0;
+>> > -}
+>> > -
+>> >  #ifdef CONFIG_PM
+>> >  static int pcie_port_runtime_suspend(struct device *dev)
+>> >  {
+>> > @@ -162,14 +151,6 @@ static pci_ers_result_t
+>> > pcie_portdrv_mmio_enabled(struct pci_dev *dev)
+>> >
+>> >  static pci_ers_result_t pcie_portdrv_slot_reset(struct pci_dev *dev)
+>> >  {
+>> > -	/* If fatal, restore cfg space for possible link reset at upstream */
+>> > -	if (dev->error_state == pci_channel_io_frozen) {
+>> > -		dev->state_saved = true;
+>> > -		pci_restore_state(dev);
+>> > -		pcie_portdrv_restore_config(dev);
+>> > -		pci_enable_pcie_error_reporting(dev);
+>> > -	}
+>> > -
+>> >  	return PCI_ERS_RESULT_RECOVERED;
+>> >  }
+>> 
+>> 
+>> Hi Bjorn,
+>> 
+>> the above patch removes ERR_FATAL handling from 
+>> pcie_portdrv_slot_reset()
+>> because now we are handling ERR_FATAL differently than before.
+>> 
+>> I tried to dig into pcie_portdrv_slot_reset() handling for ERR_FATAL 
+>> case
+>> where it
+>> restores the config space, enable device, set master and enable error
+>> reporting....
+>> and as far as I understand this is being done for upstream link 
+>> (bridges
+>> etc..)
+>> 
+>> why was it done at the first point (I checked the commit description, 
+>> but
+>> could not really get it)
+>> and do we need to handle the same thing in ERR_FATAL now ?
+> 
+> You mean 4bf3392e0bf5 ("PCI-Express AER implemetation: pcie_portdrv
+> error handler"), which added pcie_portdrv_slot_reset()?  I agree, that
+> commit log has no useful information.  I don't know any of the history
+> behind it.
 
-This is the fourth (and hopefully last RFC) of my proposal for more
-complete alternate mode support. In this version the main difference
-compared to the previous versions is the displayport alt mode driver.
+Keith,
 
-For those who have no idea what is this about, the idea is to add a
-bus type for the USB-C alternate modes. All alternate modes, for
-example DisplayPort, require specific communication, so we will need
-separate driver for every alternate mode. For more details please read
-the cover letter of the previous version here:
+do you know why in ERR_FATAL case following was done ?
+have a look at pcie_portdrv_slot_reset() handling (for bridges, switches 
+etc..)
 
-https://lkml.org/lkml/2018/5/11/323
-
-It took some time for me to get permission to publish the displayport
-alt mode driver. Sorry for the delay. I was actually hoping that I
-could include changes also to the drm subsystem already now, but it
-ended up being more complicated than I first though, and I quite
-simply don't have time for that, so let's just start with these.
-
-
-Heikki Krogerus (8):
-  usb: pd: include kernel.h
-  usb: typec: helper for checking cable plug orientation
-  usb: typec: mux: Get the mux identifier from function parameter
-  usb: typec: Register a device for every mode
-  usb: typec: Bus type for alternate modes
-  usb: typec: Add driver for DisplayPort alternate mode
-  usb: typec: pi3usb30532: Start using generic state values
-  usb: typec: tcpm: Support for Alternate Modes
-
- Documentation/ABI/obsolete/sysfs-class-typec  |  48 ++
- Documentation/ABI/testing/sysfs-bus-typec     |  51 ++
- Documentation/ABI/testing/sysfs-class-typec   |  62 +-
- .../testing/sysfs-driver-typec-displayport    |  49 ++
- Documentation/driver-api/usb/typec_bus.rst    | 136 +++++
- MAINTAINERS                                   |  13 +-
- drivers/usb/typec/Kconfig                     |   2 +
- drivers/usb/typec/Makefile                    |   3 +-
- drivers/usb/typec/altmodes/Kconfig            |  14 +
- drivers/usb/typec/altmodes/Makefile           |   2 +
- drivers/usb/typec/altmodes/displayport.c      | 543 ++++++++++++++++++
- drivers/usb/typec/bus.c                       | 401 +++++++++++++
- drivers/usb/typec/bus.h                       |  38 ++
- drivers/usb/typec/class.c                     | 485 ++++++++++------
- drivers/usb/typec/mux.c                       |   6 +-
- drivers/usb/typec/mux/pi3usb30532.c           |  15 +-
- drivers/usb/typec/tcpm.c                      | 184 ++++--
- include/linux/mod_devicetable.h               |  15 +
- include/linux/usb/pd.h                        |   1 +
- include/linux/usb/tcpm.h                      |   9 -
- include/linux/usb/typec.h                     |  52 +-
- include/linux/usb/typec_altmode.h             | 160 ++++++
- include/linux/usb/typec_dp.h                  |  70 +++
- include/linux/usb/typec_mux.h                 |   2 +-
- scripts/mod/devicetable-offsets.c             |   4 +
- scripts/mod/file2alias.c                      |  13 +
- 26 files changed, 2053 insertions(+), 325 deletions(-)
- create mode 100644 Documentation/ABI/obsolete/sysfs-class-typec
- create mode 100644 Documentation/ABI/testing/sysfs-bus-typec
- create mode 100644 Documentation/ABI/testing/sysfs-driver-typec-displayport
- create mode 100644 Documentation/driver-api/usb/typec_bus.rst
- create mode 100644 drivers/usb/typec/altmodes/Kconfig
- create mode 100644 drivers/usb/typec/altmodes/Makefile
- create mode 100644 drivers/usb/typec/altmodes/displayport.c
- create mode 100644 drivers/usb/typec/bus.c
- create mode 100644 drivers/usb/typec/bus.h
- create mode 100644 include/linux/usb/typec_altmode.h
- create mode 100644 include/linux/usb/typec_dp.h
-
--- 
-2.17.1
+Regards,
+Oza.
