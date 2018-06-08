@@ -1,148 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 8KisD7I8GVu8NgAAmS7hNA
-	; Thu, 07 Jun 2018 14:11:09 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id aNSpFWVyGlulPwAAmS7hNA
+	; Fri, 08 Jun 2018 12:12:16 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 2F7A3608BA; Thu,  7 Jun 2018 14:11:09 +0000 (UTC)
+	id F0538607E4; Fri,  8 Jun 2018 12:12:15 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kT37NPXl"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="C9L61ZhJ"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id A2B94607DC;
-	Thu,  7 Jun 2018 14:11:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A2B94607DC
+	by smtp.codeaurora.org (Postfix) with ESMTP id 668C6605A5;
+	Fri,  8 Jun 2018 12:12:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 668C6605A5
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753713AbeFGOLH (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:11:07 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:40835 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753088AbeFGOLE (ORCPT
+        id S1752828AbeFHMKV (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 08:10:21 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35959 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752356AbeFHMKQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:11:04 -0400
-Received: by mail-wm0-f66.google.com with SMTP id n5-v6so19476898wmc.5
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 07:11:04 -0700 (PDT)
+        Fri, 8 Jun 2018 08:10:16 -0400
+Received: by mail-wm0-f65.google.com with SMTP id v131-v6so3297210wma.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 05:10:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=o1Q48xep+oSfSgwhPdpkG4OeimmgXTnAy1K9s3bqo1w=;
-        b=kT37NPXlh43+uj0oiW837j2ZU/IGWPqNeQEKDuI2BmC/PpNHQzVxlpSEvraL3FJgVc
-         QwCIxzGwt2nA0ahezcguIx0YeKXHD7EiQU8UnewS8YZUv5yEfAknbcHHOlqM8Ay2B4nx
-         0Zk0OD3R3rdEb+Njlk36fKG8eaUYcCEk9IB4U=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=BBIn+dyfWNg2BP9P3LhrqhOynHzD7w3d3ReCisqZKME=;
+        b=C9L61ZhJ1Sa5Y6q567YMSeE2NNegSM5WgObtDSG89B7saYRNQQQBxaq05wuD5FwLJT
+         1wQ4LJcx7GASQonynvBrEv1zfjIjHOeDO2A2oiSemnYd+l+OHxH3MaHBEilJjH6Ad5he
+         Lu/TBZWniV7MUesLN7clXhKEgMu25rcHaKZmo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=o1Q48xep+oSfSgwhPdpkG4OeimmgXTnAy1K9s3bqo1w=;
-        b=ImkMKYXBxSvrXobuopH6LCF8Q/i3UtigTPUj0S62n0wPrWZTSAVGeOj+RMF4RHK9Om
-         HZF2PDwEbOAzvMYxFMlCxbK5KAFfETi/g6QGFuBGCAtrgLpYY4z1aB5h8wL/CUlo/C90
-         O/hoHsH2Z8w1d+j3TDJQCjXugI/MBgVG+dUDTaXOFmHu1eTbiGObpVlKEVBEMmAK4fpe
-         yUEmmD0RBSSAq5aYb41RQM85mLYugLvxcelRiWU0fQXNLcjAhOUc21npWPbb0lHiZk4B
-         5r/yvtLm99bLzkdAOThl9w0OpfaiiGetp7ZGz8J314j+qJgCmG6vPZ77vsNZVIIZn1+T
-         zYEw==
-X-Gm-Message-State: APt69E0ch+PJHWqks7Xff/j86Dd9y4XjsdlcxjBzxyC8kX3QXXSBt03M
-        aEXWaMsKhfodsoT/OyGw2htotQ==
-X-Google-Smtp-Source: ADUXVKLbRVU6FCOqdGxEH4o8GjdScabd3tec23spKTy/IJiuYQByw+ZTkbA52l1k62+BAY5oKcmQEg==
-X-Received: by 2002:a1c:448b:: with SMTP id r133-v6mr1659123wma.55.1528380663275;
-        Thu, 07 Jun 2018 07:11:03 -0700 (PDT)
-Received: from [192.168.1.75] (lft31-1-88-121-166-205.fbx.proxad.net. [88.121.166.205])
-        by smtp.googlemail.com with ESMTPSA id g75-v6sm2843578wmd.15.2018.06.07.07.11.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Jun 2018 07:11:02 -0700 (PDT)
-Subject: Re: [PATCH V5] powercap/drivers/idle_injection: Add an idle injection
- framework
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Javi Merino <javi.merino@kernel.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Kevin Wangtao <kevin.wangtao@linaro.org>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=BBIn+dyfWNg2BP9P3LhrqhOynHzD7w3d3ReCisqZKME=;
+        b=sIMqhBYuQXUY7MYaojtg92fkvwFmfLJ6SNGtRqvgzYfRzLqMxTXkqy+uh1RrYK3jOp
+         DrbwxGo054qmYZQ7qR2sT0vHvOyuKAbgRV17wIPOV7xdZ06vFeiO/dgue3VAtBMWwv5F
+         yeF8c37wRC+14xgNS+WL+esypa/bVhdfGUCAgFjO2+6cj5qKb3XSBG6jcAzOpBiNBAzG
+         l8u+NomQY9nfgWHD7KcmzQINrsVhVYVMkbA/gm3lQUyeMWn/bahe+z0PPbflvXWizZd4
+         iz49v+LnQ+/3vQrnlsLZhJM42UkxLndXS1eWo+LcmZYI4Tx5o7qrl52XFrOPaeNfhPOi
+         vo1w==
+X-Gm-Message-State: APt69E1D8HcRVN2LXCDgA99vAcujYQiNC7Gj9CyrO/1GpSbx8ws0frKs
+        UOLNdOz+HyYREikPtbKM1/r9WQ==
+X-Google-Smtp-Source: ADUXVKLeD+2ZyG1lq0lFlDzC9N/ANX6qGgnBAgSeSGe5dpVeGjrWCo0/mBCeSdYY6M18JuxmM21RWg==
+X-Received: by 2002:a1c:9c0b:: with SMTP id f11-v6mr1362187wme.148.1528459815720;
+        Fri, 08 Jun 2018 05:10:15 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:e0a:f:6020:6c67:7ea:9f4d:8968])
+        by smtp.gmail.com with ESMTPSA id b204-v6sm1546003wmh.22.2018.06.08.05.10.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 08 Jun 2018 05:10:15 -0700 (PDT)
+From: Vincent Guittot <vincent.guittot@linaro.org>
+To: peterz@infradead.org, mingo@kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: rjw@rjwysocki.net, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+        Morten.Rasmussen@arm.com, viresh.kumar@linaro.org,
+        valentin.schneider@arm.com, patrick.bellasi@arm.com,
+        joel@joelfernandes.org, daniel.lezcano@linaro.org,
+        quentin.perret@arm.com,
         Vincent Guittot <vincent.guittot@linaro.org>,
-        Rui Zhang <rui.zhang@intel.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        "open list:POWER MANAGEMENT CORE" <linux-pm@vger.kernel.org>
-References: <1528190208-22915-1-git-send-email-daniel.lezcano@linaro.org>
- <20180605103917.pyhhcobdvaivqv6g@vireshk-i7>
- <57d769f8-46ea-512e-8f89-a0439c9d053f@linaro.org>
- <20180606042708.mtwd66ecy2cnjp7a@vireshk-i7>
- <2bebd1bc-e1ad-6d22-ad1e-aee2cf8ba878@linaro.org>
- <20180606104528.nhwcd2qnxeouk6il@vireshk-i7>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <1d542490-fcb5-33fd-ab3b-eddf3d300bd4@linaro.org>
-Date: Thu, 7 Jun 2018 16:11:02 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180606104528.nhwcd2qnxeouk6il@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Ingo Molnar <mingo@redhat.com>
+Subject: [PATCH v6 02/11] sched/pelt: remove blank line
+Date: Fri,  8 Jun 2018 14:09:45 +0200
+Message-Id: <1528459794-13066-3-git-send-email-vincent.guittot@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1528459794-13066-1-git-send-email-vincent.guittot@linaro.org>
+References: <1528459794-13066-1-git-send-email-vincent.guittot@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/06/2018 12:45, Viresh Kumar wrote:
-> On 06-06-18, 12:22, Daniel Lezcano wrote:
->> (mb() are done in the atomic operations AFAICT).
-> 
-> AFAIU, it is required to make sure the operations are seen in a particular order
-> on another CPU and the compiler doesn't reorganize code to optimize it.
-> 
-> For example, in our case what if the compiler reorganizes the atomic-set
-> operation after wakeup-process ? But maybe that wouldn't happen across function
-> calls and we should be safe then.
-> 
->> What about:
->>
->> 	get_online_cpus();
->>
->> 	nr_tasks = cpumask_weight(
->> 		cpumask_and(ii_dev->cpumask, cpu_online_mask);
->> 			
->> 	atomic_set(&ii_dev->count, nr_tasks);
->>
->> 	for_each_cpu_and(cpu, ii_dev->cpumask, cpu_online_mask) {
->> 		iit = per_cpu_ptr(&idle_injection_thread, cpu);
->> 		iit->should_run = 1;
->> 		wake_up_process(iit->tsk);
->> 	}
->>
->> 	put_online_cpus();
->> ?
-> 
-> Looks good this time.
-> 
->> I'm wondering if we can have a CPU hotplugged right after the
->> 'put_online_cpus', resulting in the 'should park' flag set and then the
->> thread goes in the kthread_parkme instead of jumping back the idle
->> injection function and decrease the count, leading up to the timer not
->> being set again.
-> 
-> True. That looks like a valid problem to me as well.
-> 
-> What about starting the hrtimer right from this routine itself, after taking
-> into account running-time, idle-time, delay, etc ? That would get rid of the
-> count stuff, this get_online_cpus(), etc.
-> 
-> Even if we restart the next play-idle cycle a bit early or with some delay, sky
-> wouldn't fall :)
+remove some blank lines in __update_load_avg_se() and __update_load_avg_cfs_rq
 
-We won't be able to call completion() in this case.
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Reported-by: Patrick Bellasi <patrick.bellasi@arm.com>
+Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+---
+ kernel/sched/pelt.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-
-
+diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
+index e6ecbb2..4174582 100644
+--- a/kernel/sched/pelt.c
++++ b/kernel/sched/pelt.c
+@@ -287,7 +287,6 @@ int __update_load_avg_se(u64 now, int cpu, struct cfs_rq *cfs_rq, struct sched_e
+ 
+ 	if (___update_load_sum(now, cpu, &se->avg, !!se->on_rq, !!se->on_rq,
+ 				cfs_rq->curr == se)) {
+-
+ 		___update_load_avg(&se->avg, se_weight(se), se_runnable(se));
+ 		cfs_se_util_change(&se->avg);
+ 		return 1;
+@@ -302,7 +301,6 @@ int __update_load_avg_cfs_rq(u64 now, int cpu, struct cfs_rq *cfs_rq)
+ 				scale_load_down(cfs_rq->load.weight),
+ 				scale_load_down(cfs_rq->runnable_weight),
+ 				cfs_rq->curr != NULL)) {
+-
+ 		___update_load_avg(&cfs_rq->avg, 1, 1);
+ 		return 1;
+ 	}
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+2.7.4
