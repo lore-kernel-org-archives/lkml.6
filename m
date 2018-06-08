@@ -1,112 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 5gxNO1dBGVtmbAAAmS7hNA
-	; Thu, 07 Jun 2018 14:30:39 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id GXRaNUHjGlu9PgAAmS7hNA
+	; Fri, 08 Jun 2018 20:12:58 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 7B643608CF; Thu,  7 Jun 2018 14:30:39 +0000 (UTC)
+	id 0BB2E607E7; Fri,  8 Jun 2018 20:12:58 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZhfPkPxA"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D96DE607DC;
-	Thu,  7 Jun 2018 14:30:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D96DE607DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 7D233605A5;
+	Fri,  8 Jun 2018 20:12:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7D233605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933778AbeFGOaY (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:30:24 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39412 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933062AbeFGOJK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:09:10 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbA-0005hJ-FF; Thu, 07 Jun 2018 15:09:08 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb9-000367-26; Thu, 07 Jun 2018 15:09:07 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        id S932230AbeFHUM4 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 16:12:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51730 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932157AbeFHUMw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 16:12:52 -0400
+Received: from localhost (unknown [150.199.191.185])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3BEA2206B7;
+        Fri,  8 Jun 2018 20:12:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528488771;
+        bh=moG4p2jv7z6x42ibJGPKRA6FLSj/cK6uEl5Z+fTMslA=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=ZhfPkPxAmShPZg41qHxYS6yHnYx6QaYm6tq8u5qJo7JgGScJtNTS0mC19oBOUNuyH
+         GiUXtZmc3jfY4irn9SCxoaevK2wvr/Fw8ZEs5D5RwVWsWDqVssvsqzRm+ekdcUb0/1
+         MqdguSi3Fjt2JE8cJlMnOTHuuDhcrmVBJZHQ5fuk=
+Subject: [PATCH v1 8/9] PCI/portdrv: Clean up whitespace
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: linux-pci@vger.kernel.org
+Cc: Oza Pawandeep <poza@codeaurora.org>, linux-kernel@vger.kernel.org
+Date: Fri, 08 Jun 2018 15:12:50 -0500
+Message-ID: <152848877040.14051.14265851714984144776.stgit@bhelgaas-glaptop.roam.corp.google.com>
+In-Reply-To: <152848853199.14051.12670957565366345798.stgit@bhelgaas-glaptop.roam.corp.google.com>
+References: <152848853199.14051.12670957565366345798.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: StGit/0.18
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Michael Weiser" <michael.weiser@gmx.de>,
-        "Will Deacon" <will.deacon@arm.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.180616774@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 268/410] arm64: Disable unhandled signal log messages
- by default
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-------------------
+Clean up trivial whitespace issues.  No functional change intended.
 
-From: Michael Weiser <michael.weiser@gmx.de>
-
-commit 5ee39a71fd89ab7240c5339d04161c44a8e03269 upstream.
-
-aarch64 unhandled signal kernel messages are very verbose, suggesting
-them to be more of a debugging aid:
-
-sigsegv[33]: unhandled level 2 translation fault (11) at 0x00000000, esr
-0x92000046, in sigsegv[400000+71000]
-CPU: 1 PID: 33 Comm: sigsegv Tainted: G        W        4.15.0-rc3+ #3
-Hardware name: linux,dummy-virt (DT)
-pstate: 60000000 (nZCv daif -PAN -UAO)
-pc : 0x4003f4
-lr : 0x4006bc
-sp : 0000fffffe94a060
-x29: 0000fffffe94a070 x28: 0000000000000000
-x27: 0000000000000000 x26: 0000000000000000
-x25: 0000000000000000 x24: 00000000004001b0
-x23: 0000000000486ac8 x22: 00000000004001c8
-x21: 0000000000000000 x20: 0000000000400be8
-x19: 0000000000400b30 x18: 0000000000484728
-x17: 000000000865ffc8 x16: 000000000000270f
-x15: 00000000000000b0 x14: 0000000000000002
-x13: 0000000000000001 x12: 0000000000000000
-x11: 0000000000000000 x10: 0008000020008008
-x9 : 000000000000000f x8 : ffffffffffffffff
-x7 : 0004000000000000 x6 : ffffffffffffffff
-x5 : 0000000000000000 x4 : 0000000000000000
-x3 : 00000000004003e4 x2 : 0000fffffe94a1e8
-x1 : 000000000000000a x0 : 0000000000000000
-
-Disable them by default, so they can be enabled using
-/proc/sys/debug/exception-trace.
-
-Signed-off-by: Michael Weiser <michael.weiser@gmx.de>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
- arch/arm64/kernel/traps.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pci/pcie/portdrv_pci.c |   12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
---- a/arch/arm64/kernel/traps.c
-+++ b/arch/arm64/kernel/traps.c
-@@ -45,7 +45,7 @@ static const char *handler[]= {
- 	"Error"
+diff --git a/drivers/pci/pcie/portdrv_pci.c b/drivers/pci/pcie/portdrv_pci.c
+index 76ad08e97a6f..4fc86d0eef9d 100644
+--- a/drivers/pci/pcie/portdrv_pci.c
++++ b/drivers/pci/pcie/portdrv_pci.c
+@@ -644,7 +644,7 @@ int pcie_port_device_register(struct pci_dev *dev)
+  * this port device.
+  */
+ static int pcie_portdrv_probe(struct pci_dev *dev,
+-					const struct pci_device_id *id)
++			      const struct pci_device_id *id)
+ {
+ 	int status;
+ 
+@@ -759,13 +759,11 @@ static void pcie_portdrv_err_resume(struct pci_dev *dev)
+ 	device_for_each_child(&dev->dev, NULL, err_resume_iter);
+ }
+ 
+-/*
+- * LINUX Device Driver Model
+- */
+ static const struct pci_device_id port_pci_ids[] = { {
+ 	/* handle any PCI-Express port */
+ 	PCI_DEVICE_CLASS(((PCI_CLASS_BRIDGE_PCI << 8) | 0x00), ~0),
+-	}, { /* end: all zeroes */ }
++	},
++	{ }
  };
  
--int show_unhandled_signals = 1;
-+int show_unhandled_signals = 0;
+ static const struct pci_error_handlers pcie_portdrv_err_handler = {
+@@ -777,7 +775,7 @@ static const struct pci_error_handlers pcie_portdrv_err_handler = {
  
- static void dump_backtrace_entry(unsigned long where, unsigned long stack)
- {
+ static struct pci_driver pcie_portdriver = {
+ 	.name		= "pcieport",
+-	.id_table	= &port_pci_ids[0],
++	.id_table	= port_pci_ids,
+ 
+ 	.probe		= pcie_portdrv_probe,
+ 	.remove		= pcie_portdrv_remove,
+@@ -809,7 +807,7 @@ static const struct dmi_system_id pcie_portdrv_dmi_table[] __initconst = {
+ 		     DMI_MATCH(DMI_PRODUCT_NAME, "U-100"),
+ 		     },
+ 	 },
+-	 {}
++	 { }
+ };
+ 
+ static int __init pcie_portdrv_init(void)
