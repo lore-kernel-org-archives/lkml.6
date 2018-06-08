@@ -1,100 +1,218 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id gGxBIxE6GlulIAAAmS7hNA
-	; Fri, 08 Jun 2018 08:12:38 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 4sNBMLFFGltpEQAAmS7hNA
+	; Fri, 08 Jun 2018 09:00:33 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 1A17B607DC; Fri,  8 Jun 2018 08:12:38 +0000 (UTC)
+	id A6702607DC; Fri,  8 Jun 2018 09:00:33 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=gouders.net header.i=@gouders.net header.b="LpvZ9E1Q"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O1/mmrdh"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 756F3606FA;
-	Fri,  8 Jun 2018 08:12:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 756F3606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=gouders.net
+	by smtp.codeaurora.org (Postfix) with ESMTP id BCF8C602FC;
+	Fri,  8 Jun 2018 09:00:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BCF8C602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752478AbeFHIMd (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 04:12:33 -0400
-Received: from services.gouders.net ([141.101.32.176]:58619 "EHLO
-        services.gouders.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751286AbeFHIMa (ORCPT
+        id S1751298AbeFHJA3 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 05:00:29 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:33264 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751101AbeFHJAZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 04:12:30 -0400
-Received: from localhost ([193.175.198.193])
-        (authenticated bits=0)
-        by services.gouders.net (8.14.8/8.14.8) with ESMTP id w587uvBx026232
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 8 Jun 2018 09:56:57 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gouders.net; s=gnet;
-        t=1528444618; bh=rn4WsR5p6eKW1oS8cXf9fIT7GR+JGxv0x9IWwASqmis=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date;
-        b=LpvZ9E1QbtbTUXcpRGcBYytxoGZPPoMk6cfv7+7wrUORvQvd1jGaj8sg2IEJ+BixK
-         wMkplxZQ80M54YKj2eqMZMdyclli+bWKMXtN30G7sLVHlaJKg9DZlH1hI+l8tYO3GK
-         Lg6f6HYTxJKwkn7SSjFOOS1RNax1CcHRmJywarY4=
-From: Dirk Gouders <dirk@gouders.net>
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Segher Boessenkool <segher@kernel.crashing.org>
-Subject: Re: [RFC 0/1] mconf: Emacs-like isearch
-In-Reply-To: <20180607163208.GA26914@ravnborg.org> (Sam Ravnborg's message of
-        "Thu, 7 Jun 2018 18:32:08 +0200")
-References: <20180606215616.12817-1-dirk@gouders.net>
-        <a594b5a7-d5c8-e938-df4e-dbba93ff3837@infradead.org>
-        <ghzi07v944.fsf@lena.gouders.net>
-        <f833ff8b-75ed-3ca4-ec24-a129a05902d1@infradead.org>
-        <ghr2ljv5c9.fsf@lena.gouders.net>
-        <CAK7LNARWC3J4V=Nx9rypwaWK8Lsv9A6J3LDW7s6E1xjc0JDE4A@mail.gmail.com>
-        <ghmuw7uoku.fsf@lena.gouders.net>
-        <20180607163208.GA26914@ravnborg.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
-Date: Fri, 08 Jun 2018 09:56:50 +0200
-Message-ID: <gha7s5socd.fsf@lena.gouders.net>
+        Fri, 8 Jun 2018 05:00:25 -0400
+Received: by mail-pl0-f67.google.com with SMTP id n10-v6so7929375plp.0
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 02:00:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding;
+        bh=EuPjVB4b6q5QivNf68kJu1Dse6OysxDmEvL+mCDKKtw=;
+        b=O1/mmrdhIWpnYsciZ6ReqT05Cho58keJmGv3G7Vk9hplOB/4W12HUscYaJGotKSw8K
+         bCN4BmkzyV3sCdeYVKd3EASLJuCLsxUqHuRLrn+8GezGuNSmD+FbAdxYz09jt3qPhlnz
+         mMtJ59BUqju/Nwsdb4h0vX0RmoQjLeiV1+YjI2ID1z0R7BdLDstB8HzUG0itrETIR5nV
+         VV50YndTu92OW4vASxZn8vbfcR0/HxKQSxV6okhi57RLJvaRPty8N8rV57yAkE2/a9D/
+         98EOm2O5WSbrsYpT2U0sJ+11C/49joebqBbvITotgjP/DEtomZX6qziMsbkzUrxCSs7b
+         0svQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=EuPjVB4b6q5QivNf68kJu1Dse6OysxDmEvL+mCDKKtw=;
+        b=t32JarTj5B7dvWlDmf65922LiKA/NdAJ7WWH7Hl84TL2oqn0WsnLxPIb26rGSH4nU9
+         VRpU7zXr72WIVm5YfRzaSCu1BhPwTXghrEZLML798sul+d+OlOn6M08TsO9Iqb0GfUJ/
+         NwsFMpQQRKf1arBgejcWQjq6zEajg65w3K3Xt40znnZ0qdist5LpIcHlrwaxblLs1KI2
+         8dWz8txJTlmL/c76dIKVVCeDCZocaWyqSkPoyKw9OFZj0jUWB21boPmAr2bcFzjYX2G0
+         scSKQi3zribT8qdHkxBm9nZBjvyIBqs8nh/tEyK2Mzopm54Kgm9B9XgzAYpyDmS8qAjh
+         Vwgg==
+X-Gm-Message-State: APt69E3VUIszEOU5O82SFhxsley11+K1ou3fMNs1ORpCjxS/Lzjb4for
+        304E3wE+zl7pTP3yyTHRqM3oAnvN
+X-Google-Smtp-Source: ADUXVKIf1fxEi/bQMFcnm6TjW0G4YDmKSt9kRbksrqa3F2PuD5wUz053z2/CHun3SOTPDz1WHejsTw==
+X-Received: by 2002:a17:902:8e87:: with SMTP id bg7-v6mr5667283plb.129.1528448425032;
+        Fri, 08 Jun 2018 02:00:25 -0700 (PDT)
+Received: from [0.0.0.0] (67.216.217.169.16clouds.com. [67.216.217.169])
+        by smtp.gmail.com with ESMTPSA id f11-v6sm14806035pgo.62.2018.06.08.02.00.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Jun 2018 02:00:24 -0700 (PDT)
+Subject: Re: [PATCH v3] KVM: arm/arm64: add WARN_ON if size is not PAGE_SIZE
+ aligned in unmap_stage2_range
+To: Christoffer Dall <christoffer.dall@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
+Cc: Suzuki.Poulose@arm.com, linux-kernel@vger.kernel.org,
+        jia.he@hxt-semitech.com
+References: <1526871930-1231-1-git-send-email-hejianet@gmail.com>
+From: Jia He <hejianet@gmail.com>
+Message-ID: <2c3a60f9-fb75-46bf-e917-005aa85b952c@gmail.com>
+Date: Fri, 8 Jun 2018 17:00:17 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1526871930-1231-1-git-send-email-hejianet@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sam Ravnborg <sam@ravnborg.org> writes:
+Ping
 
->> 
->> I'd say it's not important to start isearch with CTRL-s, I am just so
->> used to it.  So, I am open for suggestions.
->
-> Today we have first or one of the first letters as shortcut to menus.
-> How about considering everything typed as search inputs.
-> Search is then stopped by ESC, arrow keys and maybe more.
->
-> Search is only possible when a menu is selected, not with focus on the buttons.
->
-> This will break the habits of people used to the shortcut variant,
-> but then we have the more flexible i-search variant.
->
-> Idea?
+Cheers,
+Jia
 
-Sounds very interesting, I will see if I can prepare a prototype so that
-users can test it an see if they feel that would be an improvement for
-them.  In mconf, a focus on the buttons would be conceptually new
-and I am anticipating I am not yet realizing all of the consequences.
-
-One situation, I am still thinking about how to handle it (without a
-dedicated search key):
-
-* The user types a string and then doesn't want to enter further string
-  characters but find further occurences of the already entered string.
-
-  (In my imagination, TAB is reserved to change focus to the buttons,
-   ENTER is reserved to stop searching -- and enter a submenu, depending
-   on the item.)
-
-Dirk
+On 5/21/2018 11:05 AM, Jia He Wrote:
+> There is a panic in armv8a server(QDF2400) under memory pressure tests
+> (start 20 guests and run memhog in the host).
+> 
+> ---------------------------------begin--------------------------------
+> [35380.800950] BUG: Bad page state in process qemu-kvm  pfn:dd0b6
+> [35380.805825] page:ffff7fe003742d80 count:-4871 mapcount:-2126053375
+> mapping:          (null) index:0x0
+> [35380.815024] flags: 0x1fffc00000000000()
+> [35380.818845] raw: 1fffc00000000000 0000000000000000 0000000000000000
+> ffffecf981470000
+> [35380.826569] raw: dead000000000100 dead000000000200 ffff8017c001c000
+> 0000000000000000
+> [35380.805825] page:ffff7fe003742d80 count:-4871 mapcount:-2126053375
+> mapping:          (null) index:0x0
+> [35380.815024] flags: 0x1fffc00000000000()
+> [35380.818845] raw: 1fffc00000000000 0000000000000000 0000000000000000
+> ffffecf981470000
+> [35380.826569] raw: dead000000000100 dead000000000200 ffff8017c001c000
+> 0000000000000000
+> [35380.834294] page dumped because: nonzero _refcount
+> [35380.839069] Modules linked in: vhost_net vhost tap ebtable_filter
+> ebtables ip6table_filter ip6_tables iptable_filter fcoe libfcoe libfc
+> 8021q garp mrp stp llc scsi_transport_fc openvswitch nf_conntrack_ipv6
+> nf_nat_ipv6 nf_conntrack_ipv4 nf_defrag_ipv4 nf_nat_ipv4 nf_defrag_ipv6
+> nf_nat nf_conntrack vfat fat rpcrdma ib_isert iscsi_target_mod ib_iser
+> libiscsi scsi_transport_iscsi ib_srpt target_core_mod ib_srp
+> scsi_transport_srp ib_ipoib rdma_ucm ib_ucm ib_uverbs ib_umad rdma_cm
+> ib_cm iw_cm mlx5_ib ib_core crc32_ce ipmi_ssif tpm_tis tpm_tis_core sg
+> nfsd auth_rpcgss nfs_acl lockd grace sunrpc dm_multipath ip_tables xfs
+> libcrc32c mlx5_core mlxfw devlink ahci_platform libahci_platform libahci
+> qcom_emac sdhci_acpi sdhci hdma mmc_core hdma_mgmt i2c_qup dm_mirror
+> dm_region_hash dm_log dm_mod
+> [35380.908341] CPU: 29 PID: 18323 Comm: qemu-kvm Tainted: G W
+> 4.14.15-5.hxt.aarch64 #1
+> [35380.917107] Hardware name: <snip for confidential issues>
+> [35380.930909] Call trace:
+> [35380.933345] [<ffff000008088f00>] dump_backtrace+0x0/0x22c
+> [35380.938723] [<ffff000008089150>] show_stack+0x24/0x2c
+> [35380.943759] [<ffff00000893c078>] dump_stack+0x8c/0xb0
+> [35380.948794] [<ffff00000820ab50>] bad_page+0xf4/0x154
+> [35380.953740] [<ffff000008211ce8>] free_pages_check_bad+0x90/0x9c
+> [35380.959642] [<ffff00000820c430>] free_pcppages_bulk+0x464/0x518
+> [35380.965545] [<ffff00000820db98>] free_hot_cold_page+0x22c/0x300
+> [35380.971448] [<ffff0000082176fc>] __put_page+0x54/0x60
+> [35380.976484] [<ffff0000080b1164>] unmap_stage2_range+0x170/0x2b4
+> [35380.982385] [<ffff0000080b12d8>] kvm_unmap_hva_handler+0x30/0x40
+> [35380.988375] [<ffff0000080b0104>] handle_hva_to_gpa+0xb0/0xec
+> [35380.994016] [<ffff0000080b2644>] kvm_unmap_hva_range+0x5c/0xd0
+> [35380.999833] [<ffff0000080a8054>]
+> kvm_mmu_notifier_invalidate_range_start+0x60/0xb0
+> [35381.007387] [<ffff000008271f44>]
+> __mmu_notifier_invalidate_range_start+0x64/0x8c
+> [35381.014765] [<ffff0000082547c8>] try_to_unmap_one+0x78c/0x7a4
+> [35381.020493] [<ffff000008276d04>] rmap_walk_ksm+0x124/0x1a0
+> [35381.025961] [<ffff0000082551b4>] rmap_walk+0x94/0x98
+> [35381.030909] [<ffff0000082555e4>] try_to_unmap+0x100/0x124
+> [35381.036293] [<ffff00000828243c>] unmap_and_move+0x480/0x6fc
+> [35381.041847] [<ffff000008282b6c>] migrate_pages+0x10c/0x288
+> [35381.047318] [<ffff00000823c164>] compact_zone+0x238/0x954
+> [35381.052697] [<ffff00000823c944>] compact_zone_order+0xc4/0xe8
+> [35381.058427] [<ffff00000823d25c>] try_to_compact_pages+0x160/0x294
+> [35381.064503] [<ffff00000820f074>]
+> __alloc_pages_direct_compact+0x68/0x194
+> [35381.071187] [<ffff000008210138>] __alloc_pages_nodemask+0xc20/0xf7c
+> [35381.077437] [<ffff0000082709e4>] alloc_pages_vma+0x1a4/0x1c0
+> [35381.083080] [<ffff000008285b68>]
+> do_huge_pmd_anonymous_page+0x128/0x324
+> [35381.089677] [<ffff000008248a24>] __handle_mm_fault+0x71c/0x7e8
+> [35381.095492] [<ffff000008248be8>] handle_mm_fault+0xf8/0x194
+> [35381.101049] [<ffff000008240dcc>] __get_user_pages+0x124/0x34c
+> [35381.106777] [<ffff000008241870>] populate_vma_page_range+0x90/0x9c
+> [35381.112941] [<ffff000008241940>] __mm_populate+0xc4/0x15c
+> [35381.118322] [<ffff00000824b294>] SyS_mlockall+0x100/0x164
+> [35381.123705] Exception stack(0xffff800dce5f3ec0 to 0xffff800dce5f4000)
+> [35381.130128] 3ec0: 0000000000000003 d6e6024cc9b87e00 0000aaaabe94f000
+> 0000000000000000
+> [35381.137940] 3ee0: 0000000000000002 0000000000000000 0000000000000000
+> 0000aaaacf6fc3c0
+> [35381.145753] 3f00: 00000000000000e6 0000aaaacf6fc490 0000ffffeeeab0f0
+> d6e6024cc9b87e00
+> [35381.153565] 3f20: 0000000000000000 0000aaaabe81b3c0 0000000000000020
+> 00009e53eff806b5
+> [35381.161379] 3f40: 0000aaaabe94de48 0000ffffa7c269b0 0000000000000011
+> 0000ffffeeeabf68
+> [35381.169190] 3f60: 0000aaaaceacfe60 0000aaaabe94f000 0000aaaabe9ba358
+> 0000aaaabe7ffb80
+> [35381.177003] 3f80: 0000aaaabe9ba000 0000aaaabe959f64 0000000000000000
+> 0000aaaabe94f000
+> [35381.184815] 3fa0: 0000000000000000 0000ffffeeeabdb0 0000aaaabe5f3bf8
+> 0000ffffeeeabdb0
+> [35381.192628] 3fc0: 0000ffffa7c269b8 0000000060000000 0000000000000003
+> 00000000000000e6
+> [35381.200440] 3fe0: 0000000000000000 0000000000000000 0000000000000000
+> 0000000000000000
+> [35381.208254] [<ffff00000808339c>] __sys_trace_return+0x0/0x4
+> [35381.213809] Disabling lock debugging due to kernel taint
+> --------------------------------end--------------------------------------
+> 
+> The root cause might be what I fixed at [1]. But from arm kvm points of
+> view, it would be better we caught the exception earlier and clearer.
+> 
+> If the size is not PAGE_SIZE aligned, unmap_stage2_range might unmap the
+> wrong(more or less) page range. Hence it caused the "BUG: Bad page
+> state"
+> 
+> [1] https://lkml.org/lkml/2018/5/3/1042
+> 
+> Signed-off-by: jia.he@hxt-semitech.com
+> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+> v3: resend after dropping patch 2/2 of the series
+> 
+>  virt/kvm/arm/mmu.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+> index 7f6a944..8dac311 100644
+> --- a/virt/kvm/arm/mmu.c
+> +++ b/virt/kvm/arm/mmu.c
+> @@ -297,6 +297,8 @@ static void unmap_stage2_range(struct kvm *kvm, phys_addr_t start, u64 size)
+>  	phys_addr_t next;
+>  
+>  	assert_spin_locked(&kvm->mmu_lock);
+> +	WARN_ON(size & ~PAGE_MASK);
+> +
+>  	pgd = kvm->arch.pgd + stage2_pgd_index(addr);
+>  	do {
+>  		/*
+> 
