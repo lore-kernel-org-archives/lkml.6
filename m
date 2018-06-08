@@ -1,125 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id jIixBww+GVuMRwAAmS7hNA
-	; Thu, 07 Jun 2018 14:15:40 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 9WlnG5LPGlu6AgAAmS7hNA
+	; Fri, 08 Jun 2018 18:48:50 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 0D778608BF; Thu,  7 Jun 2018 14:15:40 +0000 (UTC)
+	id 5B237607DC; Fri,  8 Jun 2018 18:48:50 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 9CCEC6089E;
-	Thu,  7 Jun 2018 14:15:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9CCEC6089E
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 53C30601D2;
+	Fri,  8 Jun 2018 18:48:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 53C30601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933179AbeFGOPa (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:15:30 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39501 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933155AbeFGOJi (ORCPT
+        id S1752826AbeFHSsp (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 14:48:45 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:53738 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752357AbeFHSso (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:09:38 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbM-0005Zm-8Q; Thu, 07 Jun 2018 15:09:20 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbE-0003IC-7r; Thu, 07 Jun 2018 15:09:12 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Fri, 8 Jun 2018 14:48:44 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1fRMRG-0006Ia-KT; Fri, 08 Jun 2018 18:48:42 +0000
+Date: Fri, 8 Jun 2018 19:48:42 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [RFC][PATCHES] getting rid of int *open in ->atomic_open() and
+ friends
+Message-ID: <20180608184842.GD30522@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "David Woodhouse" <dwmw@amazon.co.uk>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        "Rasmus Villemoes" <rasmus.villemoes@prevas.dk>,
-        "Greg KH" <gregkh@linuxfoundation.org>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Dan Williams" <dan.j.williams@intel.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.813252163@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 389/410] posix-timers: Protect posix clock array
- access against speculation
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+	->atomic_open() calling conventions are nasty; we have
+two bits of state ("has file gotten past ->open()" and "have
+we created a new file here") passed by reference, with rather
+brittle logics in the callers.  In some error cases do_last()
+et.al.  end up doing a full-blow fput() (and destroying the
+struct file they've got), in some they leave that work (a
+trimmed-down subset of it, at that) to path_openat(), with
+the aforementioned state affecting what's going on.
 
-------------------
+	It would be much easier if we stored the "has the
+damn thing been past ->open()" (i.e. does it need fput()
+or put_filp()) in file->f_mode.  It doesn't take a lot
+of massage to do that - mostly it's a matter of leaving
+all struct file freeing in error cases to path_openat()
+itself and preventing the wipeout of all ->f_mode bits
+in do_dentry_open().  Moreover, we can store the "has it
+been created" in the same ->f_mode, killing the 'int *opened'
+mess completely.  The same series gets O_DIRECT checks
+properly centralized in do_dentry_open(), BTW.
 
-From: Thomas Gleixner <tglx@linutronix.de>
+	Other fun stuff possible (but not done yet) is
+unification of put_filp() and fput() and hopefully more
+simple rules regarding those.  Need to sort out some
+things about pipe and ia64 perfmon first, though...
 
-commit 19b558db12f9f4e45a22012bae7b4783e62224da upstream.
+	It's still a work-in-progress; what I've got right
+now is in vfs.git#work.open;
 
-The clockid argument of clockid_to_kclock() comes straight from user space
-via various syscalls and is used as index into the posix_clocks array.
+current shortlog:
+Al Viro (13):
+      drm_mode_create_lease_ioctl(): switch to filp_clone_open()
+      rename filp_clone_open() to file_clone_open()
+      introduce FMODE_OPENED
+      get rid of 'opened' argument of finish_open()
+      pull fput() on late failures into path_openat()
+      switch all remaining checks for FILE_OPENED to FMODE_OPENED
+      now we can fold open_check_o_direct() into do_dentry_open()
+      __gfs2_lookup(), nfs_finish_open() and fuse_create_open() don't need 'opened'
+      introduce FMODE_CREATED and switch to it
+      IMA: don't propagate opened through the entire thing
+      gfs2_create_inode() doesn't need 'opened' anymore
+      get rid of 'opened' argument of ->atomic_open()
+      get rid of 'opened' in path_openat() and the helpers downstream
+diffstat:
+ arch/ia64/kernel/perfmon.c                  |  1 +
+ drivers/gpu/drm/drm_lease.c                 | 16 +-------------
+ drivers/misc/cxl/api.c                      |  2 +-
+ drivers/staging/lustre/lustre/llite/namei.c | 11 +++++-----
+ fs/9p/vfs_inode.c                           |  7 +++---
+ fs/9p/vfs_inode_dotl.c                      |  7 +++---
+ fs/aio.c                                    |  3 ++-
+ fs/anon_inodes.c                            |  2 +-
+ fs/bad_inode.c                              |  2 +-
+ fs/binfmt_misc.c                            |  2 +-
+ fs/ceph/file.c                              |  7 +++---
+ fs/ceph/super.h                             |  3 +--
+ fs/cifs/cifsfs.h                            |  3 +--
+ fs/cifs/dir.c                               |  7 +++---
+ fs/fuse/dir.c                               | 10 ++++-----
+ fs/gfs2/inode.c                             | 32 +++++++++++++--------------
+ fs/hugetlbfs/inode.c                        |  2 +-
+ fs/internal.h                               |  2 --
+ fs/namei.c                                  | 82 ++++++++++++++++++++++++++++------------------------------------------
+ fs/nfs/dir.c                                | 14 ++++++------
+ fs/nfs/nfs4_fs.h                            |  2 +-
+ fs/nfs/nfs4proc.c                           |  2 +-
+ fs/nfsd/vfs.c                               |  2 +-
+ fs/open.c                                   | 48 +++++++++++++++--------------------------
+ fs/pipe.c                                   |  2 ++
+ include/linux/fs.h                          | 10 ++++++---
+ include/linux/ima.h                         |  4 ++--
+ ipc/shm.c                                   |  2 +-
+ mm/shmem.c                                  |  2 +-
+ net/socket.c                                |  2 +-
+ security/integrity/ima/ima.h                |  4 ++--
+ security/integrity/ima/ima_appraise.c       |  4 ++--
+ security/integrity/ima/ima_main.c           | 16 +++++++-------
+ 33 files changed, 135 insertions(+), 180 deletions(-)
 
-Protect it against spectre v1 array out of bounds speculation. Remove the
-redundant check for !posix_clock[id] as this is another source for
-speculation and does not provide any advantage over the return
-posix_clock[id] path which returns NULL in that case anyway.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Dan Williams <dan.j.williams@intel.com>
-Cc: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1802151718320.1296@nanos.tec.linutronix.de
-[bwh: Backported to 3.16:
- - Move the test of the clock_getres field below the lookup using
-   array_index_nospec()
- - Adjust filename, context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
---- a/kernel/posix-timers.c
-+++ b/kernel/posix-timers.c
-@@ -48,6 +48,7 @@
- #include <linux/workqueue.h>
- #include <linux/export.h>
- #include <linux/hashtable.h>
-+#include <linux/nospec.h>
- 
- /*
-  * Management arrays for POSIX timers. Timers are now kept in static hash table
-@@ -578,13 +579,21 @@ static void release_posix_timer(struct k
- 
- static struct k_clock *clockid_to_kclock(const clockid_t id)
- {
--	if (id < 0)
-+	clockid_t idx = id;
-+	struct k_clock *kc;
-+
-+	if (id < 0) {
- 		return (id & CLOCKFD_MASK) == CLOCKFD ?
- 			&clock_posix_dynamic : &clock_posix_cpu;
-+	}
-+
-+	if (id >= ARRAY_SIZE(posix_clocks))
-+		return NULL;
- 
--	if (id >= MAX_CLOCKS || !posix_clocks[id].clock_getres)
-+	kc = &posix_clocks[array_index_nospec(idx, ARRAY_SIZE(posix_clocks))];
-+	if (!kc->clock_getres)
- 		return NULL;
--	return &posix_clocks[id];
-+	return kc;
- }
- 
- static int common_timer_create(struct k_itimer *new_timer)
+and it's been only slightly build-tested.  Review and comments
+would be welcome.
