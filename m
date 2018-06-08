@@ -1,106 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id EgVcNEdWGVt/PQAAmS7hNA
-	; Thu, 07 Jun 2018 15:59:34 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id /mmLN6DhGlsnMwAAmS7hNA
+	; Fri, 08 Jun 2018 20:06:19 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 7B9C6607E7; Thu,  7 Jun 2018 15:59:34 +0000 (UTC)
+	id 7B063605A5; Fri,  8 Jun 2018 20:06:19 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pccpos8/"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id DEDD360590;
-	Thu,  7 Jun 2018 15:59:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DEDD360590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id EF2AA6074D;
+	Fri,  8 Jun 2018 20:06:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EF2AA6074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934440AbeFGP55 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:57:57 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39356 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933056AbeFGOJH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:09:07 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb7-0005Zn-FY; Thu, 07 Jun 2018 15:09:05 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb3-0002vW-Pr; Thu, 07 Jun 2018 15:09:01 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        id S1753232AbeFHUGQ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 16:06:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49572 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753211AbeFHUGH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 16:06:07 -0400
+Received: from localhost (unknown [150.199.191.185])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 21CF82087F;
+        Fri,  8 Jun 2018 20:06:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528488367;
+        bh=d3o3hQnNrTqfrC6bhf3vkYMclBx7Ly1qEh2mckUXG3c=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=pccpos8/z5fBkbPSSfit56WB6ibEooWOab/SqPLHgclXTfJ7NLAd4TowVeej7pk+b
+         +odzKxoVwDS64RIhiP9aqxve3TQc4e/FhGM9MiPzjCO4yILLftE3cXLj2g+gEfehCC
+         ygQc++udjJEvBgg1ktyBmeUz+cjRxXqH/ePJurok=
+Subject: [PATCH v1 13/13] PCI/AER: Use "PCI Express" consistently in Kconfig
+ text
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: linux-pci@vger.kernel.org
+Cc: Keith Busch <keith.busch@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Oza Pawandeep <poza@codeaurora.org>,
+        linux-kernel@vger.kernel.org
+Date: Fri, 08 Jun 2018 15:06:06 -0500
+Message-ID: <152848836627.11888.1434488594162355250.stgit@bhelgaas-glaptop.roam.corp.google.com>
+In-Reply-To: <152848785553.11888.12243539903985770441.stgit@bhelgaas-glaptop.roam.corp.google.com>
+References: <152848785553.11888.12243539903985770441.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: StGit/0.18
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Shuah Khan" <shuahkh@osg.samsung.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.29147083@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 157/410] usbip: list: don't list devices attached to
- vhci_hcd
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-------------------
+Use "PCI Express" consistently in Kconfig text.  No functional change
+intended.
 
-From: Shuah Khan <shuahkh@osg.samsung.com>
-
-commit ef824501f50846589f02173d73ce3fe6021a9d2a upstream.
-
-usbip host lists devices attached to vhci_hcd on the same server
-when user does attach over localhost or specifies the server as the
-remote.
-
-usbip attach -r localhost -b busid
-or
-usbip attach -r servername (or server IP)
-
-Fix it to check and not list devices that are attached to vhci_hcd.
-
-Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.16: adjust filename]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
- drivers/staging/usbip/userspace/src/usbip_list.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/pci/pcie/Kconfig |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/drivers/staging/usbip/userspace/src/usbip_list.c
-+++ b/drivers/staging/usbip/userspace/src/usbip_list.c
-@@ -180,6 +180,7 @@ static int list_devices(bool parsable)
- 	const char *busid;
- 	char product_name[128];
- 	int ret = -1;
-+	const char *devpath;
+diff --git a/drivers/pci/pcie/Kconfig b/drivers/pci/pcie/Kconfig
+index 4a8e26a2b012..0a1e9d379bc5 100644
+--- a/drivers/pci/pcie/Kconfig
++++ b/drivers/pci/pcie/Kconfig
+@@ -24,7 +24,7 @@ config HOTPLUG_PCI_PCIE
+ 	  When in doubt, say N.
  
- 	/* Create libudev context. */
- 	udev = udev_new();
-@@ -202,6 +203,14 @@ static int list_devices(bool parsable)
- 		path = udev_list_entry_get_name(dev_list_entry);
- 		dev = udev_device_new_from_syspath(udev, path);
+ config PCIEAER
+-	bool "Root Port Advanced Error Reporting support"
++	bool "PCI Express Advanced Error Reporting support"
+ 	depends on PCIEPORTBUS
+ 	select RAS
+ 	default y
+@@ -34,15 +34,15 @@ config PCIEAER
+ 	  Port will be handled by PCI Express AER driver.
  
-+		/* Ignore devices attached to vhci_hcd */
-+		devpath = udev_device_get_devpath(dev);
-+		if (strstr(devpath, USBIP_VHCI_DRV_NAME)) {
-+			dbg("Skip the device %s already attached to %s\n",
-+			    devpath, USBIP_VHCI_DRV_NAME);
-+			continue;
-+		}
-+
- 		/* Get device information. */
- 		idVendor = udev_device_get_sysattr_value(dev, "idVendor");
- 		idProduct = udev_device_get_sysattr_value(dev, "idProduct");
+ config PCIEAER_INJECT
+-	tristate "PCIe AER error injector support"
++	tristate "PCI Express error injection support"
+ 	depends on PCIEAER
+ 	default n
+ 	help
+ 	  This enables PCI Express Root Port Advanced Error Reporting
+ 	  (AER) software error injector.
+ 
+-	  Debugging PCIe AER code is quite difficult because it is hard
+-	  to trigger various real hardware errors. Software based
++	  Debugging AER code is quite difficult because it is hard
++	  to trigger various real hardware errors. Software-based
+ 	  error injection can fake almost all kinds of errors with the
+ 	  help of a user space helper tool aer-inject, which can be
+ 	  gotten from:
+@@ -127,7 +127,7 @@ config PCIE_PME
+ 	depends on PCIEPORTBUS && PM
+ 
+ config PCIE_DPC
+-	bool "PCIe Downstream Port Containment support"
++	bool "PCI Express Downstream Port Containment support"
+ 	depends on PCIEPORTBUS && PCIEAER
+ 	default n
+ 	help
+@@ -138,7 +138,7 @@ config PCIE_DPC
+ 	  it is safe to answer N.
+ 
+ config PCIE_PTM
+-	bool "PCIe Precision Time Measurement support"
++	bool "PCI Express Precision Time Measurement support"
+ 	default n
+ 	depends on PCIEPORTBUS
+ 	help
