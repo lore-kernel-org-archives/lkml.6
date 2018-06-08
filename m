@@ -1,140 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id O/VIOKj7GFu/CQAAmS7hNA
-	; Thu, 07 Jun 2018 09:32:24 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id iXcmKSCzGlsrFQAAmS7hNA
+	; Fri, 08 Jun 2018 16:48:04 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id CCF12608B8; Thu,  7 Jun 2018 09:32:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-	s=default; t=1528363944;
-	bh=4kSh2kdSGfUQrKr0i0U66kwNNGOMuejcrRNmx568Its=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=T7B038ujRdx3QioP6lY+auBpwVHO6xam6pxRSWeZjQrCyBGNAGZ2LBLIt2wJ8dEVq
-	 itRQ1yIK+pYXOWeSFQHzPOhOQZxlYgiteDVPDu+16K81q9JqNqhedG/+x7OG4uzqaR
-	 hpdcIPOCT9tVpGVYzZizvgljH2jJemGOGxB9jcQA=
+	id C30B1607A4; Fri,  8 Jun 2018 16:48:03 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kcdM8l8S"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 51A60605A2;
-	Thu,  7 Jun 2018 09:32:24 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IIzDaeQq";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="EHiPzRNg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 51A60605A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 43941601C3;
+	Fri,  8 Jun 2018 16:48:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 43941601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932548AbeFGJcX (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 05:32:23 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:36074 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932326AbeFGJcS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 05:32:18 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 0A625605A2; Thu,  7 Jun 2018 09:32:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528363938;
-        bh=4kSh2kdSGfUQrKr0i0U66kwNNGOMuejcrRNmx568Its=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=IIzDaeQqLeityhHNH+TsuP0BWXSMCAeypzIyFnCX6hbF45eQKQmO3BXNznKQ27TgX
-         ahLYB/GBV9cXHWSdw2fSjQbfljgdCvGXKjruH3278vac83oJR/3/kwTXAXiJK8c53k
-         it72dvG5hL1v66sxOBW+64GCm5lWoIBoAnJVbfJE=
-Received: from [10.201.3.39] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1752708AbeFHQsB (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 12:48:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36258 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751643AbeFHQsA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 12:48:00 -0400
+Received: from jouet.infradead.org (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: sricharan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 296F5605A2;
-        Thu,  7 Jun 2018 09:32:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528363937;
-        bh=4kSh2kdSGfUQrKr0i0U66kwNNGOMuejcrRNmx568Its=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=EHiPzRNglDXkeczAXDFKWv2pozfguw76ZuDcJYvzr+kBpyvWhousNAcqRG2i5AnQv
-         eLf2ptErb6dPHhhTp5jjXbN2y1+bPzI2j4SwsHFzpaRutnxYxTEMnVAdkW8K1OiBNW
-         d+eiV5xmMUfaxnAuPgYoka0Vk2mVMLMRNMefr2f4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 296F5605A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-Subject: Re: [PATCH] remoteproc: qcom: Introduce Hexagon V5 based WCSS driver
-To: Vinod <vkoul@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        andy.gross@linaro.org, david.brown@linaro.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, sibis@codeaurora.org
-References: <1528177361-8883-1-git-send-email-sricharan@codeaurora.org>
- <20180605061919.GQ16230@vkoul-mobl>
- <3a4c102b-7228-153a-c588-b1bf00291fa8@codeaurora.org>
- <20180606161733.GE510@tuxbook-pro> <20180607041134.GF16230@vkoul-mobl>
- <20180607042443.GK510@tuxbook-pro> <20180607084348.GG16230@vkoul-mobl>
-From: Sricharan R <sricharan@codeaurora.org>
-Message-ID: <f5b05d4f-29d6-c698-3618-4ad6e42aef54@codeaurora.org>
-Date: Thu, 7 Jun 2018 15:02:12 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        by mail.kernel.org (Postfix) with ESMTPSA id 8AECF2087F;
+        Fri,  8 Jun 2018 16:47:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528476479;
+        bh=Zt4pA0bZt2ln5n2p51SDn1gAlm/pykQNm7HP5aXbI2o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kcdM8l8SQeF1xWIXy7A5CI3hk3oaK78hi/hHXFH311neni8B4AD/YcQ07CRb4zVwS
+         7fsNO2umv/btOq28MvQH73s7npJSK9aKbJvBGKrTyvQd1bLpqOd8Uj5Jo17UK3Ue5b
+         wKbRu//1M0TfE6F8IJCk1wgbvE28vu/+fnKvhY5Q=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 301401450F4; Fri,  8 Jun 2018 13:47:55 -0300 (-03)
+Date: Fri, 8 Jun 2018 13:47:55 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>
+Cc: peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf script: Show hw-cache events
+Message-ID: <20180608164755.GJ17292@kernel.org>
+References: <1528455748-20087-1-git-send-email-s1seetee@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180607084348.GG16230@vkoul-mobl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Antivirus: Avast (VPS 180607-0, 06/07/2018), Outbound message
-X-Antivirus-Status: Clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1528455748-20087-1-git-send-email-s1seetee@linux.vnet.ibm.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vinod,
-
-On 6/7/2018 2:13 PM, Vinod wrote:
-> On 06-06-18, 21:24, Bjorn Andersson wrote:
->> On Wed 06 Jun 21:11 PDT 2018, Vinod wrote:
->>
->>> So, wouldn't Kconfig syntax something like where we say:
->>>         M if RPMSG_QCOM_GLINK_SMEM=m
->>>         bool if RPMSG_QCOM_GLINK_SMEM=y
->>>
->>
->> If we ignore SMD for a while we have the following combinations:
->>
->> glink/wcss
->> y     y - valid
->> y     m - valid
->> y     n - valid
->> m     y - link failure (invalid)
->> m     m - valid
->> m     n - valid
->> n     y - valid (platform uses wcss, but not glink)
->> n     m - valid (-----"-----)
->> n     n - valid
->>
->> So to distill this we have the two valid cases:
->> module/no if RPMSG_QCOM_GLINK_SMEM=m
->> yes/module/no if RPMSG_QCOM_GLINK_SMEM=y
->>
->> and the way you express that in Kconfig is the somewhat awkward
->>
->>   depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
+Em Fri, Jun 08, 2018 at 04:32:28PM +0530, Seeteena Thoufeek escreveu:
+> perf script fails to report hardware cache events (PERF_TYPE_HW_CACHE)
+> where as perf report shows the samples. Fix it. Ex,
 > 
-> Understood now :) Yes it is awkward..
+>  # perf record -e L1-dcache-loads ./a.out
+>   [ perf record: Woken up 1 times to write data ]
+>   [ perf record: Captured and wrote 0.008 MB perf.data (11 samples)]
 > 
-> Btw we seem to have issue with link fail here when glink is m and wcss
-> is y. Why don't we see link fail for glink being n? Yes I understand that
-> platform uses wcss but am curious how that works out :)
- 
-For glink being n, the stub functions gets linked, and not for glink=m.
+> Before patch:
+>  # perf script | wc -l
+>  0
+> After patch:
+>  # perf script | wc -l
+>  11
 
-Regards,
- Sricharan
+Thanks, tested and applied.
 
--- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
-
----
-This email has been checked for viruses by Avast antivirus software.
-https://www.avast.com/antivirus
+- Arnaldo
