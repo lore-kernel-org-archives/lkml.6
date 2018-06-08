@@ -1,124 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 9WlnG5LPGlu6AgAAmS7hNA
-	; Fri, 08 Jun 2018 18:48:50 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id JFZTOwHoGlsoaAAAmS7hNA
+	; Fri, 08 Jun 2018 20:34:42 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 5B237607DC; Fri,  8 Jun 2018 18:48:50 +0000 (UTC)
+	id 73EE2607E4; Fri,  8 Jun 2018 20:34:42 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="I6GPDD7F"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 53C30601D2;
-	Fri,  8 Jun 2018 18:48:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 53C30601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 09EEA602FC;
+	Fri,  8 Jun 2018 20:34:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 09EEA602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752826AbeFHSsp (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 14:48:45 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:53738 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752357AbeFHSso (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 14:48:44 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fRMRG-0006Ia-KT; Fri, 08 Jun 2018 18:48:42 +0000
-Date: Fri, 8 Jun 2018 19:48:42 +0100
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [RFC][PATCHES] getting rid of int *open in ->atomic_open() and
- friends
-Message-ID: <20180608184842.GD30522@ZenIV.linux.org.uk>
+        id S1753133AbeFHUek (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 16:34:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59452 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752756AbeFHUei (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 16:34:38 -0400
+Received: from localhost (unknown [150.199.191.185])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 056C22087E;
+        Fri,  8 Jun 2018 20:34:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528490078;
+        bh=fAmxTkNMwYqT1EFtqjJPlmE0wbZWZW24OK/SA7v3n18=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=I6GPDD7FQzevQKvqX0886ARgMooFIZaq1vox5wA/6LNCIgmnbfzNGSZTGdKLoLm2i
+         CWmK8nYH8+mlkEqEOcGYxtqlQdltmMaVolZFNDXNdRqkwSwn+lCpwOToyNosT0xzLf
+         iL/iaRF7O7bHIkZCrNoPbNNvHzLGnI8hFIhz0qNQ=
+Date: Fri, 8 Jun 2018 15:34:37 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Keith Busch <keith.busch@intel.com>
+Cc: linux-pci@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
+        Oza Pawandeep <poza@codeaurora.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 09/13] PCI/AER: Move aer_irq() declaration to portdrv.h
+Message-ID: <20180608203437.GA17897@bhelgaas-glaptop.roam.corp.google.com>
+References: <152848785553.11888.12243539903985770441.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <152848834128.11888.12263280185471104825.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <20180608201713.GA24554@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180608201713.GA24554@localhost.localdomain>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-	->atomic_open() calling conventions are nasty; we have
-two bits of state ("has file gotten past ->open()" and "have
-we created a new file here") passed by reference, with rather
-brittle logics in the callers.  In some error cases do_last()
-et.al.  end up doing a full-blow fput() (and destroying the
-struct file they've got), in some they leave that work (a
-trimmed-down subset of it, at that) to path_openat(), with
-the aforementioned state affecting what's going on.
+On Fri, Jun 08, 2018 at 02:17:13PM -0600, Keith Busch wrote:
+> On Fri, Jun 08, 2018 at 03:05:41PM -0500, Bjorn Helgaas wrote:
+> > The aer_irq() declaration is the only thing needed by aer_inject.c.  Move
+> > it to portdrv.h so we eventually get rid of aerdrv.h completely.  No
+> > functional change intended.
+> 
+> Nothing against what you're doing here, but it does seem odd that aer_irq
+> is required to be exported just for the error injection to directly call
+> it. I feel like aer-inject should route it through the irq subsystem,
+> like with generic_handle_irq. ?
 
-	It would be much easier if we stored the "has the
-damn thing been past ->open()" (i.e. does it need fput()
-or put_filp()) in file->f_mode.  It doesn't take a lot
-of massage to do that - mostly it's a matter of leaving
-all struct file freeing in error cases to path_openat()
-itself and preventing the wipeout of all ->f_mode bits
-in do_dentry_open().  Moreover, we can store the "has it
-been created" in the same ->f_mode, killing the 'int *opened'
-mess completely.  The same series gets O_DIRECT checks
-properly centralized in do_dentry_open(), BTW.
+I totally agree, that's ugly, but I don't have a good idea for how to
+fix it yet.
 
-	Other fun stuff possible (but not done yet) is
-unification of put_filp() and fput() and hopefully more
-simple rules regarding those.  Need to sort out some
-things about pipe and ia64 perfmon first, though...
+(And I don't want to do anything more than the simplest possible code
+moves at this stage, since I think restructuring like this would have
+to be done at the end of the merge window to avoid major disruption to
+people working on this code.)
 
-	It's still a work-in-progress; what I've got right
-now is in vfs.git#work.open;
+Thanks for taking a look over it!
 
-current shortlog:
-Al Viro (13):
-      drm_mode_create_lease_ioctl(): switch to filp_clone_open()
-      rename filp_clone_open() to file_clone_open()
-      introduce FMODE_OPENED
-      get rid of 'opened' argument of finish_open()
-      pull fput() on late failures into path_openat()
-      switch all remaining checks for FILE_OPENED to FMODE_OPENED
-      now we can fold open_check_o_direct() into do_dentry_open()
-      __gfs2_lookup(), nfs_finish_open() and fuse_create_open() don't need 'opened'
-      introduce FMODE_CREATED and switch to it
-      IMA: don't propagate opened through the entire thing
-      gfs2_create_inode() doesn't need 'opened' anymore
-      get rid of 'opened' argument of ->atomic_open()
-      get rid of 'opened' in path_openat() and the helpers downstream
-diffstat:
- arch/ia64/kernel/perfmon.c                  |  1 +
- drivers/gpu/drm/drm_lease.c                 | 16 +-------------
- drivers/misc/cxl/api.c                      |  2 +-
- drivers/staging/lustre/lustre/llite/namei.c | 11 +++++-----
- fs/9p/vfs_inode.c                           |  7 +++---
- fs/9p/vfs_inode_dotl.c                      |  7 +++---
- fs/aio.c                                    |  3 ++-
- fs/anon_inodes.c                            |  2 +-
- fs/bad_inode.c                              |  2 +-
- fs/binfmt_misc.c                            |  2 +-
- fs/ceph/file.c                              |  7 +++---
- fs/ceph/super.h                             |  3 +--
- fs/cifs/cifsfs.h                            |  3 +--
- fs/cifs/dir.c                               |  7 +++---
- fs/fuse/dir.c                               | 10 ++++-----
- fs/gfs2/inode.c                             | 32 +++++++++++++--------------
- fs/hugetlbfs/inode.c                        |  2 +-
- fs/internal.h                               |  2 --
- fs/namei.c                                  | 82 ++++++++++++++++++++++++++++------------------------------------------
- fs/nfs/dir.c                                | 14 ++++++------
- fs/nfs/nfs4_fs.h                            |  2 +-
- fs/nfs/nfs4proc.c                           |  2 +-
- fs/nfsd/vfs.c                               |  2 +-
- fs/open.c                                   | 48 +++++++++++++++--------------------------
- fs/pipe.c                                   |  2 ++
- include/linux/fs.h                          | 10 ++++++---
- include/linux/ima.h                         |  4 ++--
- ipc/shm.c                                   |  2 +-
- mm/shmem.c                                  |  2 +-
- net/socket.c                                |  2 +-
- security/integrity/ima/ima.h                |  4 ++--
- security/integrity/ima/ima_appraise.c       |  4 ++--
- security/integrity/ima/ima_main.c           | 16 +++++++-------
- 33 files changed, 135 insertions(+), 180 deletions(-)
-
-and it's been only slightly build-tested.  Review and comments
-would be welcome.
+Bjorn
