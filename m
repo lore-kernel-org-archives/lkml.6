@@ -1,137 +1,221 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id uJacMybtGFs1dgAAmS7hNA
-	; Thu, 07 Jun 2018 08:31:05 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id eLonMa7oGluKawAAmS7hNA
+	; Fri, 08 Jun 2018 20:35:58 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 54F79607F7; Thu,  7 Jun 2018 08:31:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-	s=default; t=1528360265;
-	bh=bOSHevP5ncy1vhwJfLUegQPLcIP0BM7QNGD9iCfkztM=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=M7jMrdf95SV9CkK1bbQXAGexyFpX262mPJa9zeD+BsS+VPdsfddZYCi5OyxHS4URf
-	 TrBDOcWzd9x5am6YWD+3eFZOc12jN+1G1wgZ9Rv5OBfPhyxRGwgKyXn13Thw8RKZ3B
-	 5Ez6misBn9XIPnPLwSHDaLQCgwHJO5LVU39zSY5E=
+	id B3201607E4; Fri,  8 Jun 2018 20:35:58 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id C900860115;
-	Thu,  7 Jun 2018 08:31:04 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ANdqjvYO";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ANdqjvYO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C900860115
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 086A2601C3;
+	Fri,  8 Jun 2018 20:35:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 086A2601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932691AbeFGIbB (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 04:31:01 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41962 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932323AbeFGIa7 (ORCPT
+        id S1753175AbeFHUfz (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 16:35:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52188 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752754AbeFHUfy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 04:30:59 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id D69D6608C8; Thu,  7 Jun 2018 08:30:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528360258;
-        bh=bOSHevP5ncy1vhwJfLUegQPLcIP0BM7QNGD9iCfkztM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ANdqjvYO8BZ8A+FXtRIjccp0GDRnqPSIg/UhEp8fzaL6XULqW623k84SsPveGq5L6
-         GPUq73pAefLWpvWZKRReJlyqJW7K7lrFi0sonQow+RgfJkSrUmfUHw+tsPIrGcBtfq
-         LyOtN+vzzYC53Cob4OL+PZt4y4LnhJE4ma8yEIJg=
-Received: from [10.204.78.68] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: gkohli@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 79B7B60115;
-        Thu,  7 Jun 2018 08:30:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528360258;
-        bh=bOSHevP5ncy1vhwJfLUegQPLcIP0BM7QNGD9iCfkztM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ANdqjvYO8BZ8A+FXtRIjccp0GDRnqPSIg/UhEp8fzaL6XULqW623k84SsPveGq5L6
-         GPUq73pAefLWpvWZKRReJlyqJW7K7lrFi0sonQow+RgfJkSrUmfUHw+tsPIrGcBtfq
-         LyOtN+vzzYC53Cob4OL+PZt4y4LnhJE4ma8yEIJg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 79B7B60115
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=gkohli@codeaurora.org
-Subject: Re: [PATCH v1] kthread/smpboot: Serialize kthread parking against
- wakeup
-To: Peter Zijlstra <peterz@infradead.org>,
-        Oleg Nesterov <oleg@redhat.com>
-Cc: tglx@linutronix.de, mpe@ellerman.id.au, mingo@kernel.org,
-        bigeasy@linutronix.de, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Neeraj Upadhyay <neeraju@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>
-References: <830d7225-af90-a55a-991a-bb2023d538f1@codeaurora.org>
- <cdd5d434-9c11-7c19-2895-0f7f3811eb11@codeaurora.org>
- <55221a5b-dd52-3359-f582-86830dd9f205@codeaurora.org>
- <ba12bc49-33c0-b4ee-05cf-f84124bd66cc@codeaurora.org>
- <20180605150841.GA24053@redhat.com>
- <20180605152212.GY12180@hirez.programming.kicks-ass.net>
- <20180605154053.GB12235@hirez.programming.kicks-ass.net>
- <20180605163515.GB24053@redhat.com>
- <20180605201316.GZ12198@hirez.programming.kicks-ass.net>
- <20180606135115.GA4609@redhat.com>
- <20180606185920.GI12198@hirez.programming.kicks-ass.net>
-From: "Kohli, Gaurav" <gkohli@codeaurora.org>
-Message-ID: <1ebda1e3-dae3-9e86-ad92-e1acdead23be@codeaurora.org>
-Date: Thu, 7 Jun 2018 14:00:53 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180606185920.GI12198@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        Fri, 8 Jun 2018 16:35:54 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 49E3DA7B;
+        Fri,  8 Jun 2018 20:35:53 +0000 (UTC)
+Date: Fri, 8 Jun 2018 13:35:52 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Shakeel Butt <shakeelb@google.com>
+Cc: Michal Hocko <mhocko@kernel.org>, Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Greg Thelen <gthelen@google.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Tejun Heo <tj@kernel.org>, Linux MM <linux-mm@kvack.org>,
+        Cgroups <cgroups@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] mm: fix race between kmem_cache destroy, create and
+  deactivate
+Message-Id: <20180608133552.d9839eb08f6b98ec4d0ad783@linux-foundation.org>
+In-Reply-To: <20180530001204.183758-1-shakeelb@google.com>
+References: <20180530001204.183758-1-shakeelb@google.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HI ,
+On Tue, 29 May 2018 17:12:04 -0700 Shakeel Butt <shakeelb@google.com> wrote:
 
-In the latest patch mentioned, k should be their instead of p:
-
--WARN_ON_ONCE(!wait_task_inactive(p, TASK_PARKED))
-+WARN_ON_ONCE(!wait_task_inactive(k, TASK_PARKED))
-
-Regards
-Gaurav
-
-On 6/7/2018 12:29 AM, Peter Zijlstra wrote:
-> On Wed, Jun 06, 2018 at 03:51:16PM +0200, Oleg Nesterov wrote:
->> IIUC, this will only affect smpboot_update_cpumask_percpu_thread() which can hit
->> an already parked thread, but it doesn't need to wait.
->>
->> And it seems that smpboot_update_cpumask_percpu_thread() in turn needs some cleanups.
->> Hmm. and its single user: kernel/watchdog.c.
->>
->> And speaking of watchdog.c, can't we simply kill the "watchdog/%u" threads? This is
->> off-topic, but can't watchdog_timer_fn() use stop_one_cpu_nowait(watchdog) ?
->>
->> And I really think we should unexport kthread_park/unpark(), only smpboot_thread_fn()
->> should use them. kthread() should not play with __kthread_parkme(). And even
->> KTHREAD_SHOULD_PARK must die, I mean it should live in struct smp_hotplug_thread,
->> not in struct kthread.
->>
->> OK, this is off-topic too.
+> The memcg kmem cache creation and deactivation (SLUB only) is
+> asynchronous. If a root kmem cache is destroyed whose memcg cache is in
+> the process of creation or deactivation, the kernel may crash.
 > 
->> And, let me repeat, can't we avoid complete_all() ?
+> Example of one such crash:
+> 	general protection fault: 0000 [#1] SMP PTI
+> 	CPU: 1 PID: 1721 Comm: kworker/14:1 Not tainted 4.17.0-smp
+> 	...
+> 	Workqueue: memcg_kmem_cache kmemcg_deactivate_workfn
+> 	RIP: 0010:has_cpu_slab
+> 	...
+> 	Call Trace:
+> 	? on_each_cpu_cond
+> 	__kmem_cache_shrink
+> 	kmemcg_cache_deact_after_rcu
+> 	kmemcg_deactivate_workfn
+> 	process_one_work
+> 	worker_thread
+> 	kthread
+> 	ret_from_fork+0x35/0x40
 > 
-> Yes, or at least if that watchdog crap is the only user.
-> 
-> I have most of the patch reworking watchdog.c to use stop_one_cpu*(),
-> and that cleans up lots -- of course, I've not tested it yet, so it
-> could also be breaking lots :-)
-> 
+> To fix this race, on root kmem cache destruction, mark the cache as
+> dying and flush the workqueue used for memcg kmem cache creation and
+> deactivation.
 
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, 
-Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+We have a distinct lack of reviewers and testers on this one.  Please.
+
+Vladimir, v3 replaced the refcounting with workqueue flushing, as you
+suggested...
+
+
+From: Shakeel Butt <shakeelb@google.com>
+Subject: mm: fix race between kmem_cache destroy, create and deactivate
+
+The memcg kmem cache creation and deactivation (SLUB only) is
+asynchronous.  If a root kmem cache is destroyed whose memcg cache is in
+the process of creation or deactivation, the kernel may crash.
+
+Example of one such crash:
+	general protection fault: 0000 [#1] SMP PTI
+	CPU: 1 PID: 1721 Comm: kworker/14:1 Not tainted 4.17.0-smp
+	...
+	Workqueue: memcg_kmem_cache kmemcg_deactivate_workfn
+	RIP: 0010:has_cpu_slab
+	...
+	Call Trace:
+	? on_each_cpu_cond
+	__kmem_cache_shrink
+	kmemcg_cache_deact_after_rcu
+	kmemcg_deactivate_workfn
+	process_one_work
+	worker_thread
+	kthread
+	ret_from_fork+0x35/0x40
+
+To fix this race, on root kmem cache destruction, mark the cache as dying
+and flush the workqueue used for memcg kmem cache creation and
+deactivation.
+
+[shakeelb@google.com: add more documentation, rename fields for readability]
+  Link: http://lkml.kernel.org/r/20180522201336.196994-1-shakeelb@google.com
+[akpm@linux-foundation.org: fix build, per Shakeel]
+[shakeelb@google.com: v3.  Instead of refcount, flush the workqueue]
+  Link: http://lkml.kernel.org/r/20180530001204.183758-1-shakeelb@google.com
+Link: http://lkml.kernel.org/r/20180521174116.171846-1-shakeelb@google.com
+Signed-off-by: Shakeel Butt <shakeelb@google.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Greg Thelen <gthelen@google.com>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: Pekka Enberg <penberg@kernel.org>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
+Cc: Tejun Heo <tj@kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+
+ include/linux/slab.h |    1 +
+ mm/slab_common.c     |   21 ++++++++++++++++++++-
+ 2 files changed, 21 insertions(+), 1 deletion(-)
+
+diff -puN include/linux/slab_def.h~mm-fix-race-between-kmem_cache-destroy-create-and-deactivate include/linux/slab_def.h
+diff -puN include/linux/slab.h~mm-fix-race-between-kmem_cache-destroy-create-and-deactivate include/linux/slab.h
+--- a/include/linux/slab.h~mm-fix-race-between-kmem_cache-destroy-create-and-deactivate
++++ a/include/linux/slab.h
+@@ -600,6 +600,7 @@ struct memcg_cache_params {
+ 			struct memcg_cache_array __rcu *memcg_caches;
+ 			struct list_head __root_caches_node;
+ 			struct list_head children;
++			bool dying;
+ 		};
+ 		struct {
+ 			struct mem_cgroup *memcg;
+diff -puN include/linux/slub_def.h~mm-fix-race-between-kmem_cache-destroy-create-and-deactivate include/linux/slub_def.h
+diff -puN mm/memcontrol.c~mm-fix-race-between-kmem_cache-destroy-create-and-deactivate mm/memcontrol.c
+diff -puN mm/slab.c~mm-fix-race-between-kmem_cache-destroy-create-and-deactivate mm/slab.c
+diff -puN mm/slab_common.c~mm-fix-race-between-kmem_cache-destroy-create-and-deactivate mm/slab_common.c
+--- a/mm/slab_common.c~mm-fix-race-between-kmem_cache-destroy-create-and-deactivate
++++ a/mm/slab_common.c
+@@ -136,6 +136,7 @@ void slab_init_memcg_params(struct kmem_
+ 	s->memcg_params.root_cache = NULL;
+ 	RCU_INIT_POINTER(s->memcg_params.memcg_caches, NULL);
+ 	INIT_LIST_HEAD(&s->memcg_params.children);
++	s->memcg_params.dying = false;
+ }
+ 
+ static int init_memcg_params(struct kmem_cache *s,
+@@ -608,7 +609,7 @@ void memcg_create_kmem_cache(struct mem_
+ 	 * The memory cgroup could have been offlined while the cache
+ 	 * creation work was pending.
+ 	 */
+-	if (memcg->kmem_state != KMEM_ONLINE)
++	if (memcg->kmem_state != KMEM_ONLINE || root_cache->memcg_params.dying)
+ 		goto out_unlock;
+ 
+ 	idx = memcg_cache_id(memcg);
+@@ -712,6 +713,9 @@ void slab_deactivate_memcg_cache_rcu_sch
+ 	    WARN_ON_ONCE(s->memcg_params.deact_fn))
+ 		return;
+ 
++	if (s->memcg_params.root_cache->memcg_params.dying)
++		return;
++
+ 	/* pin memcg so that @s doesn't get destroyed in the middle */
+ 	css_get(&s->memcg_params.memcg->css);
+ 
+@@ -823,11 +827,24 @@ static int shutdown_memcg_caches(struct
+ 		return -EBUSY;
+ 	return 0;
+ }
++
++static void flush_memcg_workqueue(struct kmem_cache *s)
++{
++	mutex_lock(&slab_mutex);
++	s->memcg_params.dying = true;
++	mutex_unlock(&slab_mutex);
++
++	flush_workqueue(memcg_kmem_cache_wq);
++}
+ #else
+ static inline int shutdown_memcg_caches(struct kmem_cache *s)
+ {
+ 	return 0;
+ }
++
++static inline void flush_memcg_workqueue(struct kmem_cache *s)
++{
++}
+ #endif /* CONFIG_MEMCG && !CONFIG_SLOB */
+ 
+ void slab_kmem_cache_release(struct kmem_cache *s)
+@@ -845,6 +862,8 @@ void kmem_cache_destroy(struct kmem_cach
+ 	if (unlikely(!s))
+ 		return;
+ 
++	flush_memcg_workqueue(s);
++
+ 	get_online_cpus();
+ 	get_online_mems();
+ 
+diff -puN mm/slab.h~mm-fix-race-between-kmem_cache-destroy-create-and-deactivate mm/slab.h
+diff -puN mm/slub.c~mm-fix-race-between-kmem_cache-destroy-create-and-deactivate mm/slub.c
+_
