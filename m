@@ -1,208 +1,247 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id GTh7OEC7GlsgXQAAmS7hNA
-	; Fri, 08 Jun 2018 17:22:16 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id qKo0K48ZGlv5GgAAmS7hNA
+	; Fri, 08 Jun 2018 05:52:15 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id E495B608B8; Fri,  8 Jun 2018 17:22:15 +0000 (UTC)
+	id 9FE92607DC; Fri,  8 Jun 2018 05:52:15 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 06AE8605A2;
-	Fri,  8 Jun 2018 17:22:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 06AE8605A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id A32B86074D;
+	Fri,  8 Jun 2018 05:52:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A32B86074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753231AbeFHRWM (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 13:22:12 -0400
-Received: from mga06.intel.com ([134.134.136.31]:7770 "EHLO mga06.intel.com"
+        id S1751079AbeFHFwJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 01:52:09 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:60199 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753071AbeFHRWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 13:22:10 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jun 2018 10:22:10 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,490,1520924400";
-   d="scan'208";a="231035629"
-Received: from nzou1-mobl1.ccr.corp.intel.com (HELO localhost) ([10.249.254.60])
-  by orsmga005.jf.intel.com with ESMTP; 08 Jun 2018 10:22:03 -0700
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: x86@kernel.org, platform-driver-x86@vger.kernel.org
-Cc: dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        intel-sgx-kernel-dev@lists.01.org (open list:INTEL SGX),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v11 11/13] intel_sgx: ptrace() support
-Date: Fri,  8 Jun 2018 19:09:46 +0200
-Message-Id: <20180608171216.26521-12-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180608171216.26521-1-jarkko.sakkinen@linux.intel.com>
-References: <20180608171216.26521-1-jarkko.sakkinen@linux.intel.com>
+        id S1750822AbeFHFwI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 01:52:08 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 5390A20728; Fri,  8 Jun 2018 07:52:06 +0200 (CEST)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id BF934203EB;
+        Fri,  8 Jun 2018 07:51:55 +0200 (CEST)
+Date: Fri, 8 Jun 2018 07:51:55 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Naga Sureshkumar Relli <nagasure@xilinx.com>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "wmw2@infradead.org" <wmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "mmayer@broadcom.com" <mmayer@broadcom.com>,
+        "rogerq@ti.com" <rogerq@ti.com>,
+        "ladis@linux-mips.org" <ladis@linux-mips.org>,
+        "ada@thorsis.com" <ada@thorsis.com>,
+        "honghui.zhang@mediatek.com" <honghui.zhang@mediatek.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "nagasureshkumarrelli@gmail.com" <nagasureshkumarrelli@gmail.com>
+Subject: Re: [LINUX PATCH v9 1/4] Devicetree: Add pl353 smc controller
+ devicetree binding information
+Message-ID: <20180608075155.24915c89@bbrezillon>
+In-Reply-To: <MWHPR02MB2623AA49F71D3D24B997C682AF7B0@MWHPR02MB2623.namprd02.prod.outlook.com>
+References: <1528271382-21690-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <1528271382-21690-2-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <20180607174203.035f187d@xps13>
+        <MWHPR02MB2623AA49F71D3D24B997C682AF7B0@MWHPR02MB2623.namprd02.prod.outlook.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implemented VMA callbacks in order to ptrace() debug enclaves. With
-debug enclaves data can be read and write the memory word at a time by
-using ENCLS(EDBGRD) and ENCLS(EDBGWR) leaf instructions.
+On Fri, 8 Jun 2018 05:20:33 +0000
+Naga Sureshkumar Relli <nagasure@xilinx.com> wrote:
 
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Tested-by: Serge Ayoun <serge.ayoun@intel.com>
----
- drivers/platform/x86/intel_sgx/sgx_encl.c |   2 +-
- drivers/platform/x86/intel_sgx/sgx_vma.c  | 116 ++++++++++++++++++++++
- 2 files changed, 117 insertions(+), 1 deletion(-)
+> Hi Miquel,
+> 
+> Thanks for the review.
+> 
+> > -----Original Message-----
+> > From: Miquel Raynal [mailto:miquel.raynal@bootlin.com]
+> > Sent: Thursday, June 7, 2018 9:12 PM
+> > To: Naga Sureshkumar Relli <nagasure@xilinx.com>
+> > Cc: boris.brezillon@bootlin.com; richard@nod.at; wmw2@infradead.org;
+> > computersforpeace@gmail.com; marek.vasut@gmail.com; f.fainelli@gmail.com;
+> > mmayer@broadcom.com; rogerq@ti.com; ladis@linux-mips.org; ada@thorsis.com;
+> > honghui.zhang@mediatek.com; linux-mtd@lists.infradead.org; linux-kernel@vger.kernel.org;
+> > nagasureshkumarrelli@gmail.com
+> > Subject: Re: [LINUX PATCH v9 1/4] Devicetree: Add pl353 smc controller devicetree
+> > binding information
+> > 
+> > Hi Naga,
+> > 
+> > On Wed, 6 Jun 2018 13:19:39 +0530, Naga Sureshkumar Relli
+> > <naga.sureshkumar.relli@xilinx.com> wrote:
+> >   
+> > > Add pl353 static memory controller devicetree binding information.
+> > >
+> > > Signed-off-by: Naga Sureshkumar Relli
+> > > <naga.sureshkumar.relli@xilinx.com>
+> > > ---
+> > > Changes in v9:
+> > >  - Addressed commens given by Randy Dunlap and Miquel Raynal  
+> > 
+> > Can you please be more specific in your next changelog? I don't remember what I suggested a
+> > few months ago :)  
+> Ok, I will update.
+> 
+> >   
+> > > Changes in v8:
+> > >  - None
+> > > Changes in v7:
+> > > - Corrected clocks description
+> > > - prefixed '#' for address and size cells Changes in v6:
+> > >  - None
+> > > Changes in v5:
+> > >  - Removed timing properties
+> > > Changes in v4:
+> > >  - none
+> > > Changes in v3:
+> > >  - none
+> > > Changes in v2:
+> > >  - modified timing binding info as per onfi timing parameters
+> > >  - add suffix nano second as timing unit
+> > >  - modified the clock names as per the IP spec
+> > > ---
+> > >  .../bindings/memory-controllers/pl353-smc.txt      | 53  
+> > ++++++++++++++++++++++  
+> > >  1 file changed, 53 insertions(+)
+> > >  create mode 100644
+> > > Documentation/devicetree/bindings/memory-controllers/pl353-smc.txt
+> > >
+> > > diff --git
+> > > a/Documentation/devicetree/bindings/memory-controllers/pl353-smc.txt
+> > > b/Documentation/devicetree/bindings/memory-controllers/pl353-smc.txt
+> > > new file mode 100644
+> > > index 0000000..551e66b
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/memory-controllers/pl353-smc.t
+> > > +++ xt
+> > > @@ -0,0 +1,53 @@
+> > > +Device tree bindings for ARM PL353 static memory controller
+> > > +
+> > > +PL353 static memory controller supports two kinds of memory
+> > > +interfaces.i.e NAND and SRAM/NOR interfaces.
+> > > +The actual devices are instantiated from the child nodes of pl353 smc node.
+> > > +
+> > > +Required properties:
+> > > +- compatible		: Should be "arm,pl353-smc-r2p1"  
+> > 
+> > I thing Rob prefers:
+> > 
+> > - compatible: Must be one of:
+> >   * arm, pl353-smc-r2p1  
+> Are you suggesting any other compatibles?
+> Or just a change from "should be to Must be one of"?
+> >   
+> > > +- reg			: Controller registers map and length.
+> > > +- clock-names		: List of input clock names - "ref_clk", "aper_clk"
+> > > +			  (See clock bindings for details).
+> > > +- clocks		: Clock phandles (see clock bindings for details).
+> > > +- address-cells		: Address cells, must be 1.
+> > > +- size-cells		: Size cells. Must be 1.  
+> > 
+> > Please avoid padding, just this is enough:
+> > 
+> > - something: And another thing.  
+> Ok, I will update it.
+> 
+> >   
+> > > +
+> > > +Child nodes:
+> > > + For NAND the "arm,pl353-nand-r2p1" and for NOR the "cfi-flash"
+> > > +drivers are supported as child nodes.
+> > > +
+> > > +Mandatory timing properties for child nodes:
+> > > +- arm,nand-cycle-t0	: Read cycle time(t_rc).
+> > > +- arm,nand-cycle-t1	: Write cycle time(t_wc).
+> > > +- arm,nand-cycle-t2	: re_n assertion delay(t_rea).
+> > > +- arm,nand-cycle-t3	: we_n de-assertion delay(t_wp).
+> > > +- arm,nand-cycle-t4	: Status read time(t_clr)
+> > > +- arm,nand-cycle-t5	: ID read time(t_ar)
+> > > +- arm,nand-cycle-t6	: busy to re_n(t_rr)  
+> > 
+> > I think this has nothing to do in the DT, you should handle timings from the -  
+> > >setup_data_interface() hook. If you need, you may use different compatibles to distinguish  
+> > different platform data.
+> >   
+> This controller is applicable only to Zynq platform. No other platform will use this.
+> Basically pl353-smc.c and pl353-nand.c, both are different drivers.
+> And this data_interface hook is in nand, and to set this timings if we read it from setup_data_interface(), then
+> We need to make call from nand to smc driver.
+> Let me try this.
+> 
+> > > +
+> > > +for nand partition information please refer the below file  
+> > 
+> > s/nand/NAND/  
+> I will update in next version.
+> 
+> >   
+> > > +Documentation/devicetree/bindings/mtd/partition.txt
+> > > +
+> > > +Example:
+> > > +	pl353smcc_0: pl353smcc@e000e000 {  
+> > 
+> > Why not something more explicit with the '-flash-controller' suffix?  
+> Is this ok?
+> smcc: memory-controller@e000e000 {}
+> 
+> >   
+> > > +			compatible = "arm,pl353-smc-r2p1"
+> > > +			clock-names = "memclk", "aclk";
+> > > +			clocks = <&clkc 11>, <&clkc 44>;
+> > > +			reg = <0xe000e000 0x1000>;
+> > > +			#address-cells = <1>;
+> > > +			#size-cells = <1>;
+> > > +			ranges;
+> > > +			nand_0: nand@e1000000 {
+> > > +				compatible = "arm,pl353-nand-r2p1"  
+> > 
+> > NAND chips do not have their own compatible.  
+> As I said above, SMCC controller has two interface(NAND, NOR/SRAM).
+> So to differentiate which interface is selected, we added the compatible.
+> The dts node looks below.
+> smcc: memory-controller@e000e000 {
+> 			#address-cells = <1>;
+> 			#size-cells = <1>;
+> 			clock-names = "memclk", "aclk";
+> 			clocks = <&clkc 11>, <&clkc 44>;
+> 			compatible = "arm,pl353-smc-r2p1";
+> 			interrupt-parent = <&intc>;
+> 			interrupts = <0 18 4>;
+> 			ranges ;
+> 			reg = <0xe000e000 0x1000>;
+> 			nand0: flash@e1000000 {
+> 				compatible = "arm,pl353-nand-r2p1";
+> 				reg = <0xe1000000 0x1000000>;
+> 				#address-cells = <0x1>;
+> 				#size-cells = <0x1>;
+> 			};
+> 			nor0: flash@e2000000 {
+> 				compatible = "cfi-flash";
+> 				reg = <0xe2000000 0x2000000>;
+> 				#address-cells = <1>;
+> 				#size-cells = <1>;
+> 			};
+> 		};
 
-diff --git a/drivers/platform/x86/intel_sgx/sgx_encl.c b/drivers/platform/x86/intel_sgx/sgx_encl.c
-index 562d4ce412d4..35436497530b 100644
---- a/drivers/platform/x86/intel_sgx/sgx_encl.c
-+++ b/drivers/platform/x86/intel_sgx/sgx_encl.c
-@@ -945,7 +945,7 @@ int sgx_encl_load_page(struct sgx_encl_page *encl_page,
- 	ret = __eldu(&pginfo, epc_ptr, va_ptr + va_offset);
- 	if (ret) {
- 		sgx_err(encl, "ELDU returned %d\n", ret);
--		ret = -EFAULT;
-+		ret = ENCLS_TO_ERR(ret);
- 	}
- 
- 	kunmap_atomic((void *)(unsigned long)(pginfo.pcmd - pcmd_offset));
-diff --git a/drivers/platform/x86/intel_sgx/sgx_vma.c b/drivers/platform/x86/intel_sgx/sgx_vma.c
-index ad47383ea7f5..afc02d70c618 100644
---- a/drivers/platform/x86/intel_sgx/sgx_vma.c
-+++ b/drivers/platform/x86/intel_sgx/sgx_vma.c
-@@ -59,8 +59,124 @@ static int sgx_vma_fault(struct vm_fault *vmf)
- 		return VM_FAULT_SIGBUS;
- }
- 
-+static int sgx_edbgrd(struct sgx_encl *encl, struct sgx_encl_page *page,
-+		      unsigned long addr, void *data)
-+{
-+	unsigned long offset;
-+	void *ptr;
-+	int ret;
-+
-+	offset = addr & ~PAGE_MASK;
-+
-+	if ((page->desc & SGX_ENCL_PAGE_TCS) &&
-+            offset > offsetof(struct sgx_tcs, gslimit))
-+		return -ECANCELED;
-+
-+	ptr = sgx_get_page(page->epc_page);
-+	ret = __edbgrd((unsigned long)ptr + offset, data);
-+	sgx_put_page(ptr);
-+	if (ret) {
-+		sgx_dbg(encl, "EDBGRD returned %d\n", ret);
-+		return ENCLS_TO_ERR(ret);
-+	}
-+
-+	return 0;
-+}
-+
-+static int sgx_edbgwr(struct sgx_encl *encl, struct sgx_encl_page *page,
-+		      unsigned long addr, void *data)
-+{
-+	unsigned long offset;
-+	void *ptr;
-+	int ret;
-+
-+	offset = addr & ~PAGE_MASK;
-+
-+	/* Writing anything else than flags will cause #GP */
-+	if ((page->desc & SGX_ENCL_PAGE_TCS) &&
-+	    offset != offsetof(struct sgx_tcs, flags))
-+		return -ECANCELED;
-+
-+	ptr = sgx_get_page(page->epc_page);
-+	ret = __edbgwr((unsigned long)ptr + offset, data);
-+	sgx_put_page(ptr);
-+	if (ret) {
-+		sgx_dbg(encl, "EDBGWR returned %d\n", ret);
-+		return ENCLS_TO_ERR(ret);
-+	}
-+
-+	return 0;
-+}
-+
-+static int sgx_vma_access(struct vm_area_struct *vma, unsigned long addr,
-+			  void *buf, int len, int write)
-+{
-+	struct sgx_encl *encl = vma->vm_private_data;
-+	struct sgx_encl_page *entry = NULL;
-+	unsigned long align;
-+	char data[sizeof(unsigned long)];
-+	int offset;
-+	int cnt;
-+	int ret = 0;
-+	int i;
-+
-+	/* If process was forked, VMA is still there but vm_private_data is set
-+	 * to NULL.
-+	 */
-+	if (!encl)
-+		return -EFAULT;
-+
-+	if (!(encl->flags & SGX_ENCL_DEBUG) ||
-+	    !(encl->flags & SGX_ENCL_INITIALIZED) ||
-+	    (encl->flags & SGX_ENCL_DEAD))
-+		return -EFAULT;
-+
-+	for (i = 0; i < len; i += cnt) {
-+		if (!entry || !((addr + i) & (PAGE_SIZE - 1))) {
-+			if (entry)
-+				entry->desc &= ~SGX_ENCL_PAGE_RESERVED;
-+
-+			entry = sgx_fault_page(vma, (addr + i) & PAGE_MASK,
-+					       true);
-+			if (IS_ERR(entry)) {
-+				ret = PTR_ERR(entry);
-+				entry = NULL;
-+				break;
-+			}
-+		}
-+
-+		/* Locking is not needed because only immutable fields of the
-+		 * page are accessed and page itself is reserved so that it
-+		 * cannot be swapped out in the middle.
-+		 */
-+
-+		align = ALIGN_DOWN(addr + i, sizeof(unsigned long));
-+		offset = (addr + i) & (sizeof(unsigned long) - 1);
-+		cnt = sizeof(unsigned long) - offset;
-+		cnt = min(cnt, len - i);
-+
-+		ret = sgx_edbgrd(encl, entry, align, data);
-+		if (ret)
-+			break;
-+		if (write) {
-+			memcpy(data + offset, buf + i, cnt);
-+			ret = sgx_edbgwr(encl, entry, align, data);
-+			if (ret)
-+				break;
-+		}
-+		else
-+			memcpy(buf + i,data + offset, cnt);
-+	}
-+
-+	if (entry)
-+		entry->desc &= ~SGX_ENCL_PAGE_RESERVED;
-+
-+	return (ret < 0 && ret != -ECANCELED) ? ret : i;
-+}
-+
- const struct vm_operations_struct sgx_vm_ops = {
- 	.close = sgx_vma_close,
- 	.open = sgx_vma_open,
- 	.fault = sgx_vma_fault,
-+	.access = sgx_vma_access,
- };
--- 
-2.17.0
+This looks similar to what we have on at91 SoC with one memory
+controller and inside this memory controller a dedicated logic for NAND
+devices. We used a representation where the NAND controller logic is
+described as a subnode of the memory controller and then NAND chips are
+defined under this subnode [1].
+
+[1]https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree/bindings/mtd/atmel-nand.txt#L84
