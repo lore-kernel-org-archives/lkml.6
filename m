@@ -1,110 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id PxEeNW2HGVulRwAAmS7hNA
-	; Thu, 07 Jun 2018 19:28:55 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id c5McMCZxGlvzNwAAmS7hNA
+	; Fri, 08 Jun 2018 12:06:44 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 60943608C1; Thu,  7 Jun 2018 19:28:55 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I47ecloT"
+	id C36786089E; Fri,  8 Jun 2018 12:06:44 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,FSL_HELO_FAKE,MAILING_LIST_MULTI
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id DDB676074D;
-	Thu,  7 Jun 2018 19:28:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DDB676074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 4EAE3605A5;
+	Fri,  8 Jun 2018 12:06:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4EAE3605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932351AbeFGT2x (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 15:28:53 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:37964 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932124AbeFGT2u (ORCPT
+        id S1751679AbeFHMGm (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 08:06:42 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:45183 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751019AbeFHMGk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 15:28:50 -0400
-Received: by mail-pg0-f67.google.com with SMTP id c9-v6so5221267pgf.5;
-        Thu, 07 Jun 2018 12:28:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Jq4YMJMe/V5XMR5mZN+fjPZ8cGuphVOER0JybDH/Jp4=;
-        b=I47ecloTcQpAv+ZaDQY9WKgZ111NYN9vrS+dw+QNVTX2XTiQ2UbDo+RFG9GN6ZU24v
-         MtCKy2M82x2xekjTll1EySIEjNLpwDUy9mtr5G+ifAENQlf8rs3gzE2+Tdlt2x169W/g
-         n5wFnCi+eIm2QRbQ1OV0mS3pV/Bh1m0RHD9R4+DHSrq1Aeiu6A0F1WnJ4yKaQ3fx+BF0
-         lC1MZ0ma5HNE4Dcyic717qLWXWyyi84zVj6n/Ln0VIrQ8jG7k7CUNVwSRQUVCbrU0o1H
-         FQHkSv/jDg5BviObQq38RnApftU7l8LnzrNm5GjqeEnwqWUTIEcVOwIXMnenZ2jeKwpZ
-         0lWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Jq4YMJMe/V5XMR5mZN+fjPZ8cGuphVOER0JybDH/Jp4=;
-        b=hnLTtn93DWwVzSo+Smy9FEVFq4sXt11YQYN1DdMruq0HgxXvm2fVBVZHjtapAMBzLU
-         twE+kY1lWAs70ngYfAYHepiJE1oRJV1nqS59VrN9+bdKEb/3Jdku2Lor418+SXyWsh5D
-         FcBczMIFRNDPE39sBLn1m9xe21ncaQty2nXuKzhGm4SgJuLCOFYK4QvM8wRUyaGwOzd0
-         /Z/ehmr2HV6m/gftMjaRXEKVa2GoWe7qaC0XdyTOoe64U437sbBsFC+SJeFl1p+QWNgg
-         aCoQCPMSwzJPxSnhJQX6FInq4NDiegweqhghdxXq5FgN/SC/2DDtb2OvhPNo2pfry2dV
-         9s8w==
-X-Gm-Message-State: APt69E0GXqmSxlyaUP4H8VHBZy5ry8KSj3d6ou9862FZ3pz1g/53eJBw
-        vjr+WKpSqeqY5XljoFOJNQg=
-X-Google-Smtp-Source: ADUXVKL3fvFbNR83t9VbdSTuk74CzPqqeMvS+WX6TXB3uaBBCe7UQ+2ZS78hEVxVUDByXrgQGJY0nA==
-X-Received: by 2002:a62:3889:: with SMTP id f131-v6mr2932595pfa.173.1528399730196;
-        Thu, 07 Jun 2018 12:28:50 -0700 (PDT)
-Received: from gmail.com ([2620:15c:17:3:dc28:5c82:b905:e8a8])
-        by smtp.gmail.com with ESMTPSA id u1-v6sm18840364pgc.80.2018.06.07.12.28.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Jun 2018 12:28:49 -0700 (PDT)
-Date: Thu, 7 Jun 2018 12:28:48 -0700
-From: Eric Biggers <ebiggers3@gmail.com>
-To: Kees Cook <keescook@chromium.org>
-Cc: David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>, keyrings@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-crypto <linux-crypto@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com, Tycho Andersen <tycho@tycho.ws>,
-        Stephan Mueller <smueller@chronox.de>,
-        Eric Biggers <ebiggers@google.com>
-Subject: Re: [PATCH] dh key: fix rounding up KDF output length
-Message-ID: <20180607192848.GD29665@gmail.com>
-References: <0000000000009c221d056e0cf53a@google.com>
- <20180607191201.97080-1-ebiggers3@gmail.com>
- <CAGXu5jJf-cW8WkwMoPZT8zM2aUoO6P-EQs7MK6_uUTneZr0ehA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGXu5jJf-cW8WkwMoPZT8zM2aUoO6P-EQs7MK6_uUTneZr0ehA@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Fri, 8 Jun 2018 08:06:40 -0400
+Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fRGAA-0006hM-6c; Fri, 08 Jun 2018 13:06:38 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fRGA4-0001uP-C8; Fri, 08 Jun 2018 13:06:32 +0100
+Message-ID: <9a1eedee747fd7b0f985919a51d11f1b4445a6e6.camel@decadent.org.uk>
+Subject: Re: [PATCH 3.16 191/410] Input: mms114 - fix license module
+ information
+From: Ben Hutchings <ben@decadent.org.uk>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: lkml <linux-kernel@vger.kernel.org>,
+        "3.8+" <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andi Shyti <andi.shyti@samsung.com>,
+        Marcus Folkesson <marcus.folkesson@gmail.com>
+Date: Fri, 08 Jun 2018 13:06:32 +0100
+In-Reply-To: <CAKdAkRRZqayW8AKbjHwBp+RWS5Q1Y6tAW0h9o7cULp+J_bTz8w@mail.gmail.com>
+References: <lsq.1528380320.647747352@decadent.org.uk>
+         <lsq.1528380321.591046177@decadent.org.uk>
+         <CAKdAkRRZqayW8AKbjHwBp+RWS5Q1Y6tAW0h9o7cULp+J_bTz8w@mail.gmail.com>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-Xm9/06tU5Y8e9vEcI9lR"
+X-Mailer: Evolution 3.28.2-1 
+Mime-Version: 1.0
+X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 07, 2018 at 12:16:16PM -0700, Kees Cook wrote:
-> On Thu, Jun 7, 2018 at 12:12 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
-> > From: Eric Biggers <ebiggers@google.com>
-> >
-> > Commit 383203eff718 ("dh key: get rid of stack allocated array") changed
-> > kdf_ctr() to assume that the length of key material to derive is a
-> > multiple of the digest size.  The length was supposed to be rounded up
-> > accordingly.  However, the round_up() macro was used which only gives
-> > the correct result on power-of-2 arguments, whereas not all hash
-> > algorithms have power-of-2 digest sizes.  In some cases this resulted in
-> > a write past the end of the 'outbuf' buffer.
-> >
-> > Fix it by switching to roundup(), which works for non-power-of-2 inputs.
-> 
-> round_up() vs roundup(). Wow, that's not confusing. :( I wonder if we
-> should rename the former to roundup_pow2() or something?
 
-Yes, it's very confusing, and I wish the names were clearer, or that there was
-one macro that just did the right thing (but then the power-of-2 optimization
-could only be done for constants, where it might not be necessary anyway).
-roundup_pow2() would still be confused with roundup_pow_of_two(), unfortunately.
+--=-Xm9/06tU5Y8e9vEcI9lR
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Eric
+On Thu, 2018-06-07 at 14:41 -0700, Dmitry Torokhov wrote:
+> On Thu, Jun 7, 2018 at 7:05 AM, Ben Hutchings <ben@decadent.org.uk> wrote=
+:
+> > 3.16.57-rc1 review patch.  If anyone has any objections, please let me =
+know.
+>=20
+> Not a hard objection, but rather a curiosity: for this to be pulled
+> into stable what user issue does this fix?
+
+I start by selecting anything with a 'Cc: stable' or Fixes tag for a
+commit that's in the stable branch.  If it applies cleanly I might not
+look far beyond that.
+
+This commit doesn't really meet the stable kernel rules, but it's
+fixing documentation and is low risk so I'll keep it.
+
+Ben.
+
+> >=20
+> > ------------------
+> >=20
+> > From: Andi Shyti <andi.shyti@samsung.com>
+> >=20
+> > commit 498e7e7ed1fd72c275a682f0903c4a20cc538658 upstream.
+> >=20
+> > The driver has been released with GNU Public License v2 as stated
+> > in the header, but the module license information has been tagged
+> > as "GPL" (GNU Public License v2 or later).
+> >=20
+> > Fix the module license information so that it matches the one in
+> > the header as "GPL v2".
+> >=20
+> > Fixes: 07b8481d4aff ("Input: add MELFAS mms114 touchscreen driver")
+> > Reported-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+> > Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> > Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+> > ---
+> >  drivers/input/touchscreen/mms114.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > --- a/drivers/input/touchscreen/mms114.c
+> > +++ b/drivers/input/touchscreen/mms114.c
+> > @@ -592,4 +592,4 @@ module_i2c_driver(mms114_driver);
+> >  /* Module information */
+> >  MODULE_AUTHOR("Joonyoung Shim <jy0922.shim@samsung.com>");
+> >  MODULE_DESCRIPTION("MELFAS mms114 Touchscreen driver");
+> > -MODULE_LICENSE("GPL");
+> > +MODULE_LICENSE("GPL v2");
+> >=20
+>=20
+>=20
+>=20
+--=20
+Ben Hutchings
+When in doubt, use brute force. - Ken Thompson
+
+
+--=-Xm9/06tU5Y8e9vEcI9lR
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAlsacUgACgkQ57/I7JWG
+EQkaBBAAguzxBqVPFbcAeI7KVjfUUSEDnBjMX2mC8ZLn2R+SJX1PP0G3pdfgUhey
+WgwJZ/K0pAv552tfEF+oKzm2aGcdgBL5dHNHRFUzzOetOMYC94/MK9/jXo0keotC
+DPoFYofORNoqF/kfjnw2VnWwF59rGsLA2IvpPY8KOLtwZ1GDvaD6xC8EDh2vRBOJ
+dBuoAT837L7mMEDwfWdcSVH2+LtlIuDKQUexJkT/jQq+h1A0RNRF21mAzIijrRAM
+858HBay9f8fIPclvzihVcOI8RZmeagMNKG/wTvhSwR9OO4fcyNLHM9aLMBrhB+ee
+M2NQdoMDGfU0i3pT9hx2kgSijbzaulgVC5+rizPZ3L6CcWydaLdICfCmSBkzn18u
+aMCoHK9rI21mm5Rnlk6+U5mjalCPcW+U9aHbUDbnpNbKaAqM6HCusmev4t3++5RK
+8feMr2Unp44RJxIrYuIK2p2LsREpyM6aQmYewlz2C/DJUIipC8VJzHYyq3YFYoPV
+SE1XHk3SuVREjHgMmrHpmgHztdFpUKYCdm9w67Wzud2Adu6l7wQsnCPFK+CzbFmQ
+5kl98SKrDmLvy3fKHjtttGM5W/wsRw/afcX2r7fgmNArRkVQonVKV7X+4Ohlhpyz
+/Jz4cpl8HL6RGO1T3O2zWYohK77H2ytVD7nnAQAEmjI3rVYkCuk=
+=1ooP
+-----END PGP SIGNATURE-----
+
+--=-Xm9/06tU5Y8e9vEcI9lR--
