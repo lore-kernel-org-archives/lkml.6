@@ -1,261 +1,186 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id pwbZM4I4GVuefAAAmS7hNA
-	; Thu, 07 Jun 2018 13:52:45 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id eLotNdh/Glt1LQAAmS7hNA
+	; Fri, 08 Jun 2018 13:08:40 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 2284D607E7; Thu,  7 Jun 2018 13:52:45 +0000 (UTC)
+	id 71BDD608EA; Fri,  8 Jun 2018 13:08:40 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="orkZj2+u"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_MED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 65F84601D2;
-	Thu,  7 Jun 2018 13:52:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 65F84601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id A8DE3606FA;
+	Fri,  8 Jun 2018 13:08:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A8DE3606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932846AbeFGNwj (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 09:52:39 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42366 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932468AbeFGNwh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 09:52:37 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w57Dj0pB031968
-        for <linux-kernel@vger.kernel.org>; Thu, 7 Jun 2018 09:52:37 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jf5nhs1ah-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 09:52:37 -0400
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.vnet.ibm.com>;
-        Thu, 7 Jun 2018 09:52:36 -0400
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 7 Jun 2018 09:52:32 -0400
-Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w57DqUA410420988
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 7 Jun 2018 13:52:30 GMT
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2EE39124053;
-        Thu,  7 Jun 2018 10:53:55 -0400 (EDT)
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 28B82124058;
-        Thu,  7 Jun 2018 10:53:54 -0400 (EDT)
-Received: from oc8043147753.ibm.com (unknown [9.85.135.133])
-        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  7 Jun 2018 10:53:54 -0400 (EDT)
-Subject: Re: [PATCH v5 11/13] KVM: s390: implement mediated device open
- callback
-To: pmorel@linux.ibm.com, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1525705912-12815-12-git-send-email-akrowiak@linux.vnet.ibm.com>
- <98ea7ce2-2539-e2ff-4bb4-297e784d87bd@linux.ibm.com>
- <7bb480ac-5723-83ff-c797-53c1ab0458c1@linux.vnet.ibm.com>
- <93cd0f46-a410-51c8-00b9-810c1b3d3ae2@linux.ibm.com>
- <0f37dc39-7355-19e5-40c9-a02a1ea58c2d@linux.vnet.ibm.com>
- <736a1346-f81a-7f71-7d13-38729ff78e4f@linux.ibm.com>
- <8f68183d-8385-8025-1898-23cad604ae94@linux.vnet.ibm.com>
- <9e30c9b0-a04c-0c4e-9d3d-37e7a53a7f72@linux.ibm.com>
-From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Date: Thu, 7 Jun 2018 09:52:28 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <9e30c9b0-a04c-0c4e-9d3d-37e7a53a7f72@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        id S1752535AbeFHNIe (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 09:08:34 -0400
+Received: from mail-dm3nam03on0085.outbound.protection.outlook.com ([104.47.41.85]:39010
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751898AbeFHNIa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 09:08:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jMz93C500IfFfRR1vX6/h5pWjWKXBeg5x782LqRfbQc=;
+ b=orkZj2+u/Oi1Mn8nFj7VJC3I/NXGVQMraP9XuejI6INfCjmIGiSsp0hgpojpDK5QK95C6yduYsRl5rwMJDPKOegtgLC79vm8E3LMw9Cz+WG67fgbEzpyLroBrS2cCcsx+oz1Z5cvIL2M0q1R1X5uMacOOPQydMjjm0EELuxCSAM=
+Received: from MWHPR02MB2623.namprd02.prod.outlook.com (10.168.206.9) by
+ MWHPR02MB2462.namprd02.prod.outlook.com (10.168.204.144) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.820.15; Fri, 8 Jun 2018 13:08:25 +0000
+Received: from MWHPR02MB2623.namprd02.prod.outlook.com
+ ([fe80::e826:8d65:9e76:6426]) by MWHPR02MB2623.namprd02.prod.outlook.com
+ ([fe80::e826:8d65:9e76:6426%9]) with mapi id 15.20.0841.015; Fri, 8 Jun 2018
+ 13:08:25 +0000
+From: Naga Sureshkumar Relli <nagasure@xilinx.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+CC: "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "wmw2@infradead.org" <wmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "mmayer@broadcom.com" <mmayer@broadcom.com>,
+        "rogerq@ti.com" <rogerq@ti.com>,
+        "ladis@linux-mips.org" <ladis@linux-mips.org>,
+        "ada@thorsis.com" <ada@thorsis.com>,
+        "honghui.zhang@mediatek.com" <honghui.zhang@mediatek.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "nagasureshkumarrelli@gmail.com" <nagasureshkumarrelli@gmail.com>
+Subject: RE: [LINUX PATCH v9 4/4] mtd: rawnand: pl353: Add basic driver for
+ arm pl353 smc nand interface
+Thread-Topic: [LINUX PATCH v9 4/4] mtd: rawnand: pl353: Add basic driver for
+ arm pl353 smc nand interface
+Thread-Index: AQHT/WsxpMeMuIfugkKfN+bDxEsXmqRVOVeAgACc2LCAAHlwgIAABzcA
+Date: Fri, 8 Jun 2018 13:08:24 +0000
+Message-ID: <MWHPR02MB2623EF92D6498ED7D3C45DFBAF7B0@MWHPR02MB2623.namprd02.prod.outlook.com>
+References: <1528271382-21690-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <1528271382-21690-5-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <20180607215949.58e2d15d@xps13>
+        <MWHPR02MB26238A3344D0F611D8D6B0DAAF7B0@MWHPR02MB2623.namprd02.prod.outlook.com>
+ <20180608143549.04400f92@xps13>
+In-Reply-To: <20180608143549.04400f92@xps13>
+Accept-Language: en-US
 Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18060713-2213-0000-0000-000002B4C604
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009146; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000265; SDB=6.01043514; UDB=6.00534327; IPR=6.00822616;
- MB=3.00021511; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-07 13:52:35
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18060713-2214-0000-0000-00005A64F4FE
-Message-Id: <2b128772-f2c2-25fe-e6a8-358711745a94@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-07_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806070157
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=nagasure@xilinx.com;
+x-originating-ip: [182.72.145.30]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR02MB2462;7:zNvfEGKtsKG+owTOugJKWjCftlJBtPX/LZvrFp+9bBoFwtklhChE99Hb5+3iITDMxG3mn66fysRU9MkZ9BFZ8Z7Ijd99IdAIITPAqAfwKhyxCeQDHWoEfzmUgZblUepvpsRoHgxk5JTAbHu7EUoUWfd3KnHytaU9UcyZuWeL4RSwYv1qsA/Wr2SmvM5zZvjowP0s4IUclKBzJCpf+jpHyXHTU/kDasWaeIVj+IxNR94V2HDwlInkBOLWxtSlbyka
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR02MB2462;
+x-ms-traffictypediagnostic: MWHPR02MB2462:
+x-microsoft-antispam-prvs: <MWHPR02MB2462475AB3C16B48F1786582AF7B0@MWHPR02MB2462.namprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(31051911155226)(9452136761055)(85827821059158)(258649278758335)(192813158149592);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:MWHPR02MB2462;BCL:0;PCL:0;RULEID:;SRVR:MWHPR02MB2462;
+x-forefront-prvs: 06973FFAD3
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(39380400002)(366004)(346002)(376002)(396003)(13464003)(199004)(189003)(86362001)(33656002)(81166006)(6436002)(8676002)(81156014)(5250100002)(2906002)(486006)(8936002)(7416002)(478600001)(97736004)(6116002)(3846002)(2900100001)(14454004)(54906003)(55016002)(6306002)(966005)(106356001)(105586002)(99286004)(93886005)(229853002)(53936002)(316002)(3280700002)(66066001)(74316002)(7736002)(186003)(7696005)(25786009)(68736007)(76176011)(3660700001)(6916009)(102836004)(59450400001)(39060400002)(26005)(9686003)(476003)(11346002)(446003)(4326008)(53546011)(6506007)(55236004)(5660300001)(305945005)(6246003)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR02MB2462;H:MWHPR02MB2623.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: U3/SUhh7bN+gGWUP1DWVIyX4hnh3hTegiHR0onOpGdUiEBrimjfGVuOnHpbjEhomkvP+DPb78RYOm0JU9tqc0v8WRj6B6YQlgbYqfA0sdc5DTCbwJ8/EHab624r1V3uh0TqwWnJs2ZKeg+zQDxoOIZNcXIC0ZGdml7OCrOSHudbutUCB7mJ1nATpcg2SotDC
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Office365-Filtering-Correlation-Id: ccd72a9d-29d5-4561-59f6-08d5cd40eb32
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ccd72a9d-29d5-4561-59f6-08d5cd40eb32
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jun 2018 13:08:24.9402
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR02MB2462
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/06/2018 12:08 PM, Pierre Morel wrote:
-> On 06/06/2018 16:28, Tony Krowiak wrote:
->> On 06/05/2018 08:19 AM, Pierre Morel wrote:
->>> On 30/05/2018 16:33, Tony Krowiak wrote:
->>>> On 05/24/2018 05:08 AM, Pierre Morel wrote:
->>>>> On 23/05/2018 16:45, Tony Krowiak wrote:
->>>>>> On 05/16/2018 04:03 AM, Pierre Morel wrote:
->>>>>>> On 07/05/2018 17:11, Tony Krowiak wrote:
->>>>>>>> Implements the open callback on the mediated matrix device.
->>>>>>>> The function registers a group notifier to receive notification
->>>>>>>> of the VFIO_GROUP_NOTIFY_SET_KVM event. When notified,
->>>>>>>> the vfio_ap device driver will get access to the guest's
->>>>>>>> kvm structure. With access to this structure the driver will:
->>>>>>>>
->>>>>>>> 1. Ensure that only one mediated device is opened for the guest
->>>>>
->>>>> You should explain why.
->>>>>
->>>>>>>>
->>>>>>>> 2. Configure access to the AP devices for the guest.
->>>>>>>>
->>>>> ...snip...
->>>>>>>> +void kvm_ap_refcount_inc(struct kvm *kvm)
->>>>>>>> +{
->>>>>>>> +    atomic_inc(&kvm->arch.crypto.aprefs);
->>>>>>>> +}
->>>>>>>> +EXPORT_SYMBOL(kvm_ap_refcount_inc);
->>>>>>>> +
->>>>>>>> +void kvm_ap_refcount_dec(struct kvm *kvm)
->>>>>>>> +{
->>>>>>>> +    atomic_dec(&kvm->arch.crypto.aprefs);
->>>>>>>> +}
->>>>>>>> +EXPORT_SYMBOL(kvm_ap_refcount_dec);
->>>>>>>
->>>>>>> Why are these functions inside kvm-ap ?
->>>>>>> Will anyone use this outer of vfio-ap ?
->>>>>>
->>>>>> As I've stated before, I made the choice to contain all 
->>>>>> interfaces that
->>>>>> access KVM in kvm-ap because I don't think it is appropriate for 
->>>>>> the device
->>>>>> driver to have to have "knowledge" of the inner workings of KVM. 
->>>>>> Why does
->>>>>> it matter whether any entity outside of the vfio_ap device driver 
->>>>>> calls
->>>>>> these functions? I could ask a similar question if the interfaces 
->>>>>> were
->>>>>> contained in vfio-ap; what if another device driver needs access 
->>>>>> to these
->>>>>> interfaces?
->>>>>
->>>>> This is very driver specific and only used during initialization.
->>>>> It is not a common property of the cryptographic interface.
->>>>>
->>>>> I really think you should handle this inside the driver.
->>>>
->>>> We are going to have to agree to disagree on this one. Is it not 
->>>> possible
->>>> that future drivers - e.g., when full virtualization is implemented 
->>>> - will
->>>> require access to KVM?
->>>
->>> I do not think that an access to KVM is required for full 
->>> virtualization.
->>
->> You may be right, but at this point, there is no guarantee. I stand 
->> by my
->> design on this one.
->
-> I really regret that we abandoned the initial design with the matrix 
-> bus and one
-> single parent matrix device per guest.
-
-This is an interesting time to be bringing this up.
-
-> We would not have the problem of these KVM dependencies.
-
-How does that eliminate these KVM dependencies? We would still have to 
-configure
-the guest's SIE state description - i.e., ECA.28 and the CRYCB - regardless
-of the number or purpose of the matrix devices. To what KVM dependencies are
-you referring?
-
->
->
-> It had the advantage of taking care of having only one device per guest
-> (available_instance = 1), 
-
-Maybe you didn't state this as you intended, but when you refer to
-available_instances, you are referring to mediated devices. We allow
-only one mediated device per guest in the current design. I suspect
-that is not what you meant here.
-
-> could take care of provisioning as you have
-> sysfs entries available for a matrix without having a guest and a 
-> mediated
-> device.
-
-I assume here that you are saying that the matrix configuration would be
-done via sysfs files for the matrix device as opposed to the mediated
-device?
-
->
->
-> it also had advantage for virtualization to keep host side and guest 
-> side matrix
-> separate inside parent (host side) and mediated device (guest side).
-
-In my opinion, since the AP devices assigned to the matrix device are 
-used only by
-a guest (i.e., pass-through) and never by the host, it is all guest side 
-configuration.
-Even if we map virtual AP devices to real AP devices, the mapping is still
-guest side configuration from my perspective. I think this can all be 
-handled
-by using differing mediated device types for pass-through, virtualized 
-and emulated
-devices. In fact, early on I prototyped the mediated device sysfs 
-structures for
-configuring all three mediated device types if you recall. I see no 
-advantage
-to keeping separate configurations for host and guest sides and in fact 
-think it
-complicates things.
-
-
->
->
-> Shouldn't we treat this problem with a design using standard interfaces
-> Instead of adding new dedicated interfaces?
-
-I do not understand this question. I believe we are using standard 
-interfaces.
-We use the bind/unbind interface to reserve queues for use by guests and 
-have
-sysfs attributes for the mediated devices that map directly to the APM, AQM
-and ADM. What do you mean by dedicated interfaces?
-
-In fact, I think the design about which you speak introduces a need for
-non-standard and confusing interfaces. For example, think about securing
-AP queues; you'd have to unbind the queues from a device driver on the
-AP bus and bind them to a driver on a different bus, the matrix bus.
-This would require radical design changes to and/or introduction of 
-non-standard
-interfaces on the AP bus. It would also introduce some unusual sysfs 
-interfaces
-on the matrix driver to validate and commit the matrix - i.e., APM, AQM 
-- created
-from the queues bound to it.
-
->
-> Regards,
->
-> Pierre
->
->
+SGkgTWlxdWVsLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IE1pcXVl
+bCBSYXluYWwgW21haWx0bzptaXF1ZWwucmF5bmFsQGJvb3RsaW4uY29tXQ0KPiBTZW50OiBGcmlk
+YXksIEp1bmUgOCwgMjAxOCA2OjA2IFBNDQo+IFRvOiBOYWdhIFN1cmVzaGt1bWFyIFJlbGxpIDxu
+YWdhc3VyZUB4aWxpbnguY29tPg0KPiBDYzogYm9yaXMuYnJlemlsbG9uQGJvb3RsaW4uY29tOyBy
+aWNoYXJkQG5vZC5hdDsgd213MkBpbmZyYWRlYWQub3JnOw0KPiBjb21wdXRlcnNmb3JwZWFjZUBn
+bWFpbC5jb207IG1hcmVrLnZhc3V0QGdtYWlsLmNvbTsgZi5mYWluZWxsaUBnbWFpbC5jb207DQo+
+IG1tYXllckBicm9hZGNvbS5jb207IHJvZ2VycUB0aS5jb207IGxhZGlzQGxpbnV4LW1pcHMub3Jn
+OyBhZGFAdGhvcnNpcy5jb207DQo+IGhvbmdodWkuemhhbmdAbWVkaWF0ZWsuY29tOyBsaW51eC1t
+dGRAbGlzdHMuaW5mcmFkZWFkLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsNCj4g
+bmFnYXN1cmVzaGt1bWFycmVsbGlAZ21haWwuY29tDQo+IFN1YmplY3Q6IFJlOiBbTElOVVggUEFU
+Q0ggdjkgNC80XSBtdGQ6IHJhd25hbmQ6IHBsMzUzOiBBZGQgYmFzaWMgZHJpdmVyIGZvciBhcm0g
+cGwzNTMNCj4gc21jIG5hbmQgaW50ZXJmYWNlDQo+IA0KPiBIaSBOYWdhLA0KPiANCj4gPiA+ID4g
+KwkJZWNjLT5yZWFkX3BhZ2UgPSBwbDM1M19uYW5kX3JlYWRfcGFnZV9od2VjYzsNCj4gPiA+ID4g
+KwkJZWNjLT5zaXplID0gUEwzNTNfTkFORF9FQ0NfU0laRTsNCj4gPiA+ID4gKwkJZWNjLT53cml0
+ZV9wYWdlID0gcGwzNTNfbmFuZF93cml0ZV9wYWdlX2h3ZWNjOw0KPiA+ID4gPiArCQlwbDM1M19z
+bWNfc2V0X2VjY19wZ19zaXplKG10ZC0+d3JpdGVzaXplKTsNCj4gPiA+ID4gKwkJc3dpdGNoICht
+dGQtPndyaXRlc2l6ZSkgew0KPiA+ID4gPiArCQljYXNlIFNaXzUxMjoNCj4gPiA+ID4gKwkJY2Fz
+ZSBTWl8xSzoNCj4gPiA+ID4gKwkJY2FzZSBTWl8ySzoNCj4gPiA+ID4gKwkJCXBsMzUzX3NtY19z
+ZXRfZWNjX21vZGUoUEwzNTNfU01DX0VDQ01PREVfQVBCKTsNCj4gPiA+ID4gKwkJCWJyZWFrOw0K
+PiA+ID4gPiArCQlkZWZhdWx0Og0KPiA+ID4gPiArCQkJLyoNCj4gPiA+ID4gKwkJCSAqIFRoZSBz
+b2Z0d2FyZSBFQ0Mgcm91dGluZXMgd29uJ3Qgd29yayB3aXRoIHRoZQ0KPiA+ID4gPiArCQkJICog
+U01DIGNvbnRyb2xsZXINCj4gPiA+ID4gKwkJCSAqLw0KPiA+ID4gPiArCQkJZWNjLT5jYWxjdWxh
+dGUgPSBuYW5kX2NhbGN1bGF0ZV9lY2M7DQo+ID4gPiA+ICsJCQllY2MtPmNvcnJlY3QgPSBuYW5k
+X2NvcnJlY3RfZGF0YTsNCj4gPiA+ID4gKwkJCWVjYy0+c2l6ZSA9IDI1NjsNCj4gPiA+ID4gKwkJ
+CWJyZWFrOw0KPiA+ID4gPiArCQl9DQo+ID4gPiA+ICsJCWlmIChtdGQtPndyaXRlc2l6ZSA8PSBT
+Wl81MTIpDQo+ID4gPiA+ICsJCQl4bmFuZC0+YWRkcl9jeWNsZXMgPSAxOw0KPiA+ID4gPiArCQll
+bHNlDQo+ID4gPiA+ICsJCQl4bmFuZC0+YWRkcl9jeWNsZXMgPSAyOw0KPiA+ID4gPiArDQo+ID4g
+PiA+ICsJCWlmIChjaGlwLT5vcHRpb25zICYgTkFORF9ST1dfQUREUl8zKQ0KPiA+ID4gPiArCQkJ
+eG5hbmQtPmFkZHJfY3ljbGVzICs9IDM7DQo+ID4gPiA+ICsJCWVsc2UNCj4gPiA+ID4gKwkJCXhu
+YW5kLT5hZGRyX2N5Y2xlcyArPSAyOw0KPiA+ID4gPiArDQo+ID4gPiA+ICsJCWlmIChtdGQtPm9v
+YnNpemUgPT0gMTYpDQo+ID4gPiA+ICsJCQltdGRfc2V0X29vYmxheW91dChtdGQsICZwbDM1M19l
+Y2Nfb29ibGF5b3V0MTZfb3BzKTsNCj4gPiA+ID4gKwkJZWxzZSBpZiAobXRkLT5vb2JzaXplID09
+IDY0KQ0KPiA+ID4gPiArCQkJbXRkX3NldF9vb2JsYXlvdXQobXRkLCAmcGwzNTNfZWNjX29vYmxh
+eW91dDY0X29wcyk7DQo+ID4gPg0KPiA+ID4gZWxzZT8NCj4gPiBZb3UgbWVhbiB0byBzYXksIGFk
+ZCBhbiBlcnJvciBjb25kaXRpb24/DQo+IA0KPiBJIGRvLg0KT2ssIEkgd2lsbCBhZGQgaXQgaW4g
+bmV4dCB2ZXJzaW9uLg0KPiANCj4gPiA+DQo+ID4gPiA+ICsJfQ0KPiA+ID4gPiArfQ0KPiA+ID4g
+PiArDQo+ID4gPiA+ICsvKioNCj4gPiA+ID4gKyAqIHBsMzUzX25hbmRfcHJvYmUgLSBQcm9iZSBt
+ZXRob2QgZm9yIHRoZSBOQU5EIGRyaXZlcg0KPiA+ID4gPiArICogQHBkZXY6CVBvaW50ZXIgdG8g
+dGhlIHBsYXRmb3JtX2RldmljZSBzdHJ1Y3R1cmUNCj4gPiA+ID4gKyAqDQo+ID4gPiA+ICsgKiBU
+aGlzIGZ1bmN0aW9uIGluaXRpYWxpemVzIHRoZSBkcml2ZXIgZGF0YSBzdHJ1Y3R1cmVzIGFuZCB0
+aGUgaGFyZHdhcmUuDQo+ID4gPiA+ICsgKg0KPiA+ID4gPiArICogUmV0dXJuOgkwIG9uIHN1Y2Nl
+c3Mgb3IgZXJyb3IgdmFsdWUgb24gZmFpbHVyZQ0KPiA+ID4gPiArICovDQo+ID4gPiA+ICtzdGF0
+aWMgaW50IHBsMzUzX25hbmRfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikgew0K
+PiA+ID4gPiArCXN0cnVjdCBwbDM1M19uYW5kX2luZm8gKnhuYW5kOw0KPiA+ID4NCj4gPiA+IHhu
+YW5kIGlzIGEgc3RyYW5nZSBuYW1lLCBtb3JlIGFuZCBtb3JlIGJlY2F1c2UgaXRzIGEgYm91dCBO
+QU5EDQo+ID4gPiBjb250cm9sbGVyIGRhdGEsIG5vdCBOQU5EIGNoaXAuDQo+ID4gV2UgYWRkZWQg
+dGhpcyBuYW1lIHRvIHJlcHJlc2VudCBYaWxpbnggTmFuZCh4bmFuZCksDQo+ID4gPg0KPiANCj4g
+SSBzZWUgd2hlcmUgdGhlIHggY29tZXMgZnJvbS4NCj4gDQo+IE1heWJlIGp1c3QgbmZjIChmb3Ig
+TkFORCBmbGFzaCBjb250cm9sbGVyKSBvciB4bmZjIGlmIHlvdSBwcmVmZXIuIFdoYXQNCj4gSSB3
+YW50IGlzIHRvIGNsZWFybHkgbWFrZSB0aGUgZGlzdGluY3Rpb24gYmV0d2VlbiB3aGF0IGlzIGEg
+TkFORCBjaGlwLA0KPiB3aGF0IGlzIGEgTkFORCBjb250cm9sbGVyLg0KT2ssIGdvdCBpdC4gSSB3
+aWxsIHVwZGF0ZSBsaWtlIHhuZmMuDQo+IA0KPiA+ID4gPiArCXN0cnVjdCBtdGRfaW5mbyAqbXRk
+Ow0KPiA+ID4gPiArCXN0cnVjdCBuYW5kX2NoaXAgKm5hbmRfY2hpcDsNCj4gPiA+DQo+ID4gPiBU
+aGlzIG9uZSB5b3UgY2FuIGNhbGwgaXQganVzdCAibmFuZCIgb3IgImNoaXAiLg0KPiA+IE9rLCBJ
+IHdpbGwgdXBkYXRlLg0KPiA+DQo+ID4gPg0KPiA+ID4gPiArCXN0cnVjdCByZXNvdXJjZSAqcmVz
+Ow0KPiA+ID4gPiArDQo+ID4gPiA+ICsJeG5hbmQgPSBkZXZtX2t6YWxsb2MoJnBkZXYtPmRldiwg
+c2l6ZW9mKCp4bmFuZCksIEdGUF9LRVJORUwpOw0KPiA+ID4gPiArCWlmICgheG5hbmQpDQo+ID4g
+PiA+ICsJCXJldHVybiAtRU5PTUVNOw0KPiA+ID4gPiArDQo+ID4gPiA+ICsJLyogTWFwIHBoeXNp
+Y2FsIGFkZHJlc3Mgb2YgTkFORCBmbGFzaCAqLw0KPiA+ID4gPiArCXJlcyA9IHBsYXRmb3JtX2dl
+dF9yZXNvdXJjZShwZGV2LCBJT1JFU09VUkNFX01FTSwgMCk7DQo+ID4gPiA+ICsJeG5hbmQtPm5h
+bmRfYmFzZSA9IGRldm1faW9yZW1hcF9yZXNvdXJjZSgmcGRldi0+ZGV2LCByZXMpOw0KPiA+ID4g
+PiArCWlmIChJU19FUlIoeG5hbmQtPm5hbmRfYmFzZSkpDQo+ID4gPiA+ICsJCXJldHVybiBQVFJf
+RVJSKHhuYW5kLT5uYW5kX2Jhc2UpOw0KPiA+ID4gPiArDQo+ID4gPiA+ICsJbmFuZF9jaGlwID0g
+JnhuYW5kLT5jaGlwOw0KPiA+ID4gPiArCW10ZCA9IG5hbmRfdG9fbXRkKG5hbmRfY2hpcCk7DQo+
+ID4gPiA+ICsJbmFuZF9jaGlwLT5leGVjX29wID0gcGwzNTNfbmZjX2V4ZWNfb3A7DQo+ID4gPiA+
+ICsJbmFuZF9zZXRfY29udHJvbGxlcl9kYXRhKG5hbmRfY2hpcCwgeG5hbmQpOw0KPiA+ID4gPiAr
+CW10ZC0+cHJpdiA9IG5hbmRfY2hpcDsNCj4gPiA+ID4gKwltdGQtPm93bmVyID0gVEhJU19NT0RV
+TEU7DQo+ID4gPiA+ICsJbXRkLT5uYW1lID0gUEwzNTNfTkFORF9EUklWRVJfTkFNRTsNCj4gPiA+
+DQo+ID4gPiBBIGxhYmVsIHByb3BlcnR5IGluIHRoZSBEVCBtaWdodCBvdmVyd3JpdGUgdGhpcyB2
+YWx1ZS4NCj4gPiBDb3VsZCB5b3UgcGxlYXNlIGV4cGxhaW4gYSBiaXQgbW9yZSA/DQo+ID4NCj4g
+DQo+IEkgbWVhbnQgc29tZXRoaW5nIGxpa2UgdGhpczoNCj4gDQo+IGh0dHBzOi8vZWxpeGlyLmJv
+b3RsaW4uY29tL2xpbnV4L2xhdGVzdC9zb3VyY2UvZHJpdmVycy9tdGQvbmFuZC9yYXcvbWFydmVs
+bF9uYW5kLmMjTDI1MQ0KPiA1DQpVbmRlcnN0b29kLiBUaGFua3MuDQpJIHdpbGwgdXBkYXRlIGlu
+IG5leHQgdmVyc2lvbi4NCg0KVGhhbmtzLA0KTmFnYSBTdXJlc2hrdW1hciBSZWxsaS4NCj4gDQo+
+IFRoYW5rcywNCj4gTWlxdcOobA0K
