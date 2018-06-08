@@ -1,144 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id LjNsIPtIGVuPTAAAmS7hNA
-	; Thu, 07 Jun 2018 15:02:22 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id rGThExh+GluwIQAAmS7hNA
+	; Fri, 08 Jun 2018 13:02:01 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 27BC7607E7; Thu,  7 Jun 2018 15:02:22 +0000 (UTC)
+	id B4A68607E4; Fri,  8 Jun 2018 13:02:01 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wvtm7+jO"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 823D26074D;
-	Thu,  7 Jun 2018 15:02:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 823D26074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 3237F606FA;
+	Fri,  8 Jun 2018 13:02:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3237F606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964922AbeFGPCT (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:02:19 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41434 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S964868AbeFGPCO (ORCPT
+        id S1752758AbeFHNB6 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 09:01:58 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:51322 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751043AbeFHNB5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:02:14 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbG-0005Zw-70; Thu, 07 Jun 2018 15:09:14 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbC-0003FZ-Ri; Thu, 07 Jun 2018 15:09:10 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Tejun Heo" <tj@kernel.org>, "Benjamin LaHaise" <bcrl@kvack.org>,
-        "Jann Horn" <jannh@google.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.335516866@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 358/410] fs/aio: Use RCU accessors for
- kioctx_table->table[]
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Fri, 8 Jun 2018 09:01:57 -0400
+Received: by mail-wm0-f66.google.com with SMTP id r15-v6so3219846wmc.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 06:01:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=a6MbZKt5Rk7aLT+i8yfO+IulC1JEMSIiSs5XQ8pH9dg=;
+        b=Wvtm7+jOpAkMFvnziNfQ6+v29D+dygwnE8bna+R7zIrdGxWCqJF+VQg10NsuZAvRB3
+         wrxqFn7UWcrFR2gmZr7yKuOEHwZKlitUMpqMp1toto4jWEmyLEgARmGUZ6d5CozRe77T
+         fKRnENa0Ymov+SciomcxCzoYeMAjO4/66vjl3h3Sbequ8ZPlXDiV07yUq22Kh6DW/txH
+         BUFvJO2nunzNbrzSWOO5KqODUfTQDs5THbYIvMGql3hEhyyAstK/REjEwzttq6fq+Dwp
+         ayZKG4NVVqNIuwzGLnsEIyfWfFCH1n3aoyIriEVJ+2vWFvRbs/R6B/xlqVsQiNUhGOgj
+         bXuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=a6MbZKt5Rk7aLT+i8yfO+IulC1JEMSIiSs5XQ8pH9dg=;
+        b=c7S+jE1KBPmLN4xb351L3zaNMb4z5s//D/GnAqWyv9dysvmlu9Y7eV5wIiPA8bwWAI
+         IeOQUsB+1XIqCJ/9zakRvQUUoj/todr3WOPA7tWxIXr+bE3ktkWQEFXFRIw7rK3BTrMs
+         iE4D8FNLV41d3sGsouS4SvnUoO8oZ8Ife5pYo/Izcb0aSNhaTq7gBh+WmwL+N5ZHBXrl
+         4tDBkX3ZjxIlyYPITYZfNRRCDAQjoe1Y513NlEqLs8R7ji491Q9sT5C80kP+iCc9FXv4
+         UjY51V1sZRgtVskZn+6c9qw4G7ZsDDorq//yFlzprePqszTYFS6njjiyM/a7O2D+41rv
+         n3Qg==
+X-Gm-Message-State: APt69E1lJ0AO6vg7O/uyFeuzdvBPHlsHJlMLpUbUnCbNNXSfQpk7vmdE
+        jOtzuW3eosLSTYiyil5LZYg=
+X-Google-Smtp-Source: ADUXVKLK9Ewt3BpdApVcVk4asxoby7XKzwRE7fWG0rA2y9vCJLjTAETWM3mH3obCJ1oPsDO7drr2sw==
+X-Received: by 2002:a1c:16ca:: with SMTP id 193-v6mr1459500wmw.37.1528462916007;
+        Fri, 08 Jun 2018 06:01:56 -0700 (PDT)
+Received: from localhost.localdomain (host86-190-130-185.range86-190.btcentralplus.com. [86.190.130.185])
+        by smtp.gmail.com with ESMTPSA id w3-v6sm10986610wrr.88.2018.06.08.06.01.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Jun 2018 06:01:54 -0700 (PDT)
+From: John Whitmore <johnfwhitmore@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: tglx@linutronix.de, pombredanne@nexb.com,
+        kstewart@linuxfoundation.org, colin.king@canonical.com,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        dan.carpenter@oracle.com, John Whitmore <johnfwhitmore@gmail.com>
+Subject: [PATCH v7 8/8] staging: rtl8192e: remove unnecessary parentheses - Coding Style
+Date: Fri,  8 Jun 2018 14:01:37 +0100
+Message-Id: <20180608130137.4822-1-johnfwhitmore@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+Remove unneccessary parentheses, and removed unnecessary (void *) cast
 
-------------------
-
-From: Tejun Heo <tj@kernel.org>
-
-commit d0264c01e7587001a8c4608a5d1818dba9a4c11a upstream.
-
-While converting ioctx index from a list to a table, db446a08c23d
-("aio: convert the ioctx list to table lookup v3") missed tagging
-kioctx_table->table[] as an array of RCU pointers and using the
-appropriate RCU accessors.  This introduces a small window in the
-lookup path where init and access may race.
-
-Mark kioctx_table->table[] with __rcu and use the approriate RCU
-accessors when using the field.
-
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Reported-by: Jann Horn <jannh@google.com>
-Fixes: db446a08c23d ("aio: convert the ioctx list to table lookup v3")
-Cc: Benjamin LaHaise <bcrl@kvack.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-[bwh: Backported to 3.16:
- - Drop changes to aio_ring_mremap()
- - 
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- fs/aio.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+ drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -68,9 +68,9 @@ struct aio_ring {
- #define AIO_RING_PAGES	8
+diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
+index 9cca4a8f1cf5..5a48693e2cf3 100644
+--- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
++++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
+@@ -529,7 +529,7 @@ void HTConstructCapabilityElement(struct ieee80211_device *ieee, u8 *posHTCap, u
+ 		u8	EWC11NHTCap[] = {0x00, 0x90, 0x4c, 0x33};	// For 11n EWC definition, 2007.07.17, by Emily
  
- struct kioctx_table {
--	struct rcu_head	rcu;
--	unsigned	nr;
--	struct kioctx	*table[];
-+	struct rcu_head		rcu;
-+	unsigned		nr;
-+	struct kioctx __rcu	*table[];
- };
+ 		memcpy(posHTCap, EWC11NHTCap, sizeof(EWC11NHTCap));
+-		pCapELE = (PHT_CAPABILITY_ELE)&(posHTCap[4]);
++		pCapELE = (PHT_CAPABILITY_ELE)&posHTCap[4];
+ 	} else {
+ 		pCapELE = (PHT_CAPABILITY_ELE)posHTCap;
+ 	}
+@@ -1072,10 +1072,10 @@ void HTInitializeHTInfo(struct ieee80211_device *ieee)
+ 	pHTInfo->CurrentAMPDUFactor = pHTInfo->AMPDU_Factor;
  
- struct kioctx_cpu {
-@@ -588,9 +588,9 @@ static int ioctx_add_table(struct kioctx
- 	while (1) {
- 		if (table)
- 			for (i = 0; i < table->nr; i++)
--				if (!table->table[i]) {
-+				if (!rcu_access_pointer(table->table[i])) {
- 					ctx->id = i;
--					table->table[i] = ctx;
-+					rcu_assign_pointer(table->table[i], ctx);
- 					spin_unlock(&mm->ioctx_lock);
+ 	// Initialize all of the parameters related to 11n
+-	memset((void *)(&(pHTInfo->SelfHTCap)), 0, sizeof(pHTInfo->SelfHTCap));
+-	memset((void *)(&(pHTInfo->SelfHTInfo)), 0, sizeof(pHTInfo->SelfHTInfo));
+-	memset((void *)(&(pHTInfo->PeerHTCapBuf)), 0, sizeof(pHTInfo->PeerHTCapBuf));
+-	memset((void *)(&(pHTInfo->PeerHTInfoBuf)), 0, sizeof(pHTInfo->PeerHTInfoBuf));
++	memset(&pHTInfo->SelfHTCap, 0, sizeof(pHTInfo->SelfHTCap));
++	memset(&pHTInfo->SelfHTInfo, 0, sizeof(pHTInfo->SelfHTInfo));
++	memset(&pHTInfo->PeerHTCapBuf, 0, sizeof(pHTInfo->PeerHTCapBuf));
++	memset(&pHTInfo->PeerHTInfoBuf, 0, sizeof(pHTInfo->PeerHTInfoBuf));
  
- 					/* While kioctx setup is in progress,
-@@ -765,8 +765,8 @@ static int kill_ioctx(struct mm_struct *
+ 	pHTInfo->bSwBwInProgress = false;
+ 	pHTInfo->ChnlOp = CHNLOP_NONE;
+@@ -1091,7 +1091,7 @@ void HTInitializeHTInfo(struct ieee80211_device *ieee)
  
- 	spin_lock(&mm->ioctx_lock);
- 	table = rcu_dereference_raw(mm->ioctx_table);
--	WARN_ON(ctx != table->table[ctx->id]);
--	table->table[ctx->id] = NULL;
-+	WARN_ON(ctx != rcu_access_pointer(table->table[ctx->id]));
-+	RCU_INIT_POINTER(table->table[ctx->id], NULL);
- 	spin_unlock(&mm->ioctx_lock);
+ 	//MCS rate initialized here
+ 	{
+-		u8 *RegHTSuppRateSets = &(ieee->RegHTSuppRateSet[0]);
++		u8 *RegHTSuppRateSets = &ieee->RegHTSuppRateSet[0];
  
- 	/* free_ioctx_reqs() will do the necessary RCU synchronization */
-@@ -827,7 +827,8 @@ void exit_aio(struct mm_struct *mm)
- 
- 	skipped = 0;
- 	for (i = 0; i < table->nr; ++i) {
--		struct kioctx *ctx = table->table[i];
-+		struct kioctx *ctx =
-+			rcu_dereference_protected(table->table[i], true);
- 
- 		if (!ctx) {
- 			skipped++;
-@@ -1022,7 +1023,7 @@ static struct kioctx *lookup_ioctx(unsig
- 	if (!table || id >= table->nr)
- 		goto out;
- 
--	ctx = table->table[id];
-+	ctx = rcu_dereference(table->table[id]);
- 	if (ctx && ctx->user_id == ctx_id) {
- 		percpu_ref_get(&ctx->users);
- 		ret = ctx;
+ 		RegHTSuppRateSets[0] = 0xFF;	//support MCS 0~7
+ 		RegHTSuppRateSets[1] = 0xFF;	//support MCS 8~15
+-- 
+2.17.0
