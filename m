@@ -1,269 +1,165 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 4R/yDqNpGltHVQAAmS7hNA
-	; Fri, 08 Jun 2018 11:33:55 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Fr62AqznGVsHfQAAmS7hNA
+	; Fri, 08 Jun 2018 02:25:02 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 023C4607DC; Fri,  8 Jun 2018 11:33:54 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QbZqLQwI"
+	id DB0B7608BF; Fri,  8 Jun 2018 02:25:01 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id E9E9D607A4;
-	Fri,  8 Jun 2018 11:33:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E9E9D607A4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 3FCE360290;
+	Fri,  8 Jun 2018 02:25:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3FCE360290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752794AbeFHLdw (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 07:33:52 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:45536 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751176AbeFHLdu (ORCPT
+        id S1752853AbeFHCY7 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 22:24:59 -0400
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:58598 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752673AbeFHCYb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 07:33:50 -0400
-Received: by mail-lf0-f65.google.com with SMTP id n3-v6so19542789lfe.12;
-        Fri, 08 Jun 2018 04:33:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=JgZ/ul28uqQfT9tgD1LT5tQNwVBWuuUwaCej6LduFXQ=;
-        b=QbZqLQwIFoYFBRoR1gB0aSmO0E8LZJU9GxUXq9l8ExF5Uw9bYUk5ILJjMtVlf/QJ7E
-         yDO+1/oKfZT7N3+aGTxt3qX3FB61D6S/UbsQy62uOOZgOnRr5l1WSqZjYfjAz3wuhIIx
-         B9j/X0bzLS/lZb/6P3QU7WWkdUkZdiOVgm9HxTJpK0n+sB0nWGA8Je0yGngrWRqfbq+E
-         nxVF+Y7OUrhmCmY0x/XGKvo3LbItfPR56tN+/2LanZy19cWc+EMcHhUaWrSMuEVHTF2Y
-         qUw3y7RvrLEZnb2NxKlypdZv3BzZDFfcaF5xRAnfpCU+qp+/KdLmKYlAc8MazYCCUi1Q
-         clFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=JgZ/ul28uqQfT9tgD1LT5tQNwVBWuuUwaCej6LduFXQ=;
-        b=F8ATtns/3LK8Te5sTXRdZ4+umXfbbeRhZ/8a1Sh6MGRbAu7gdwYRtC73DnNCjV9BAf
-         /nQWXQqoEU1GhB6tSFrcIbsaZVxzop5lLLzarcfnZuA2tRIkmar2Hjr6kcRK+//emfxe
-         tJQ4m1p4p+LdBOLbtdEHyWBletMkZZDdr/mbWVEp31SjyHO2JLLRbcZilAdxmTly5G2C
-         QlpSFeWIpqOneqVhXmXxg8taGcRttf+8HkHeKha3s6EJu1HeJ2QXVL2fADhOQqbYtxHP
-         74+mMOI1H4BNw/tdKQukL8Bj87iwmEdN+4LYPVTJE1snRVoUnfqXI4wCuw/C0qh6Rj+s
-         1iPg==
-X-Gm-Message-State: APt69E2B1hQp/Vtv6U4e3N8uNs06Yoin1ovTDb1S+EeocGGNn+h+huK0
-        YuvYjGR3BjGTiEdXtXPmOtI=
-X-Google-Smtp-Source: ADUXVKJ1kBjz9x2YsAtFMwd+MyIbgHqTaBikT3vgIyz9iwndhQAbOahHOSJmJAPNsxsnzhm7mXx91A==
-X-Received: by 2002:a2e:7d10:: with SMTP id y16-v6mr4254470ljc.29.1528457628098;
-        Fri, 08 Jun 2018 04:33:48 -0700 (PDT)
-Received: from [10.17.182.9] (ll-74.141.223.85.sovam.net.ua. [85.223.141.74])
-        by smtp.gmail.com with ESMTPSA id i21-v6sm3581697lfa.18.2018.06.08.04.33.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Jun 2018 04:33:47 -0700 (PDT)
-Subject: Re: [Xen-devel] [PATCH v2 5/9] xen/gntdev: Allow mappings for DMA
- buffers
-To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        jgross@suse.com, konrad.wilk@oracle.com,
-        Stefano Stabellini <sstabellini@kernel.org>
-Cc: daniel.vetter@intel.com, matthew.d.roper@intel.com,
-        dongwon.kim@intel.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180601114132.22596-1-andr2000@gmail.com>
- <20180601114132.22596-6-andr2000@gmail.com>
- <64facf05-0a51-c3d9-9d3b-780893248628@oracle.com>
- <84217eac-b83b-710f-39ab-c93cad65bf9a@gmail.com>
- <a172746d-7a97-159f-71a7-511b2d239089@oracle.com>
- <30fa03c0-1b75-c0b1-b14f-8b52ea584e20@gmail.com>
- <78dc2fc4-cdac-05b7-2c34-22b69e7e009c@oracle.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <4be24882-185d-01e3-6aa1-751e341433c7@gmail.com>
-Date: Fri, 8 Jun 2018 14:33:46 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <78dc2fc4-cdac-05b7-2c34-22b69e7e009c@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        Thu, 7 Jun 2018 22:24:31 -0400
+Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
+        id 9C4742A33B; Thu,  7 Jun 2018 22:24:29 -0400 (EDT)
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Michael Schmitz <schmitzmic@gmail.com>,
+        <linuxppc-dev@lists.ozlabs.org>, <linux-m68k@lists.linux-m68k.org>,
+        <linux-kernel@vger.kernel.org>
+Message-Id: <2b0138faa6313416576fcf760226ef70e8655cd3.1528423341.git.fthain@telegraphics.com.au>
+In-Reply-To: <cover.1528423341.git.fthain@telegraphics.com.au>
+References: <cover.1528423341.git.fthain@telegraphics.com.au>
+From: Finn Thain <fthain@telegraphics.com.au>
+Subject: [PATCH v2 12/12] macintosh/via-pmu: Disambiguate interrupt statistics
+Date: Thu,  7 Jun 2018 22:24:29 -0400 (EDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/08/2018 12:46 AM, Boris Ostrovsky wrote:
-> (Stefano, question for you at the end)
->
-> On 06/07/2018 02:39 AM, Oleksandr Andrushchenko wrote:
->> On 06/07/2018 12:19 AM, Boris Ostrovsky wrote:
->>> On 06/06/2018 04:14 AM, Oleksandr Andrushchenko wrote:
->>>> On 06/04/2018 11:12 PM, Boris Ostrovsky wrote:
->>>>> On 06/01/2018 07:41 AM, Oleksandr Andrushchenko wrote:
->>>>> @@ -121,8 +146,27 @@ static void gntdev_free_map(struct grant_map
->>>>> *map)
->>>>>         if (map == NULL)
->>>>>             return;
->>>>>     +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
->> *Option 1: kfree(map->frames);*
->>>>> +    if (map->dma_vaddr) {
->>>>> +        struct gnttab_dma_alloc_args args;
->>>>> +
->>>>> +        args.dev = map->dma_dev;
->>>>> +        args.coherent = map->dma_flags & GNTDEV_DMA_FLAG_COHERENT;
->>>>> +        args.nr_pages = map->count;
->>>>> +        args.pages = map->pages;
->>>>> +        args.frames = map->frames;
->>>>> +        args.vaddr = map->dma_vaddr;
->>>>> +        args.dev_bus_addr = map->dma_bus_addr;
->>>>> +
->>>>> +        gnttab_dma_free_pages(&args);
->> *Option 2: kfree(map->frames);*
->>>>> +    } else
->>>>> +#endif
->>>>>         if (map->pages)
->>>>>             gnttab_free_pages(map->count, map->pages);
->>>>> +
->>>>> +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
->>>>> +    kfree(map->frames);
->>>>> +#endif
->>>>>
->>>>> Can this be done under if (map->dma_vaddr) ?
->>>>>     In other words, is it
->>>>> possible for dma_vaddr to be NULL and still have unallocated frames
->>>>> pointer?
->>>> It is possible to have vaddr == NULL and frames != NULL as we
->>>> allocate frames outside of gnttab_dma_alloc_pages which
->>>> may fail. Calling kfree on NULL pointer is safe,
->>> I am not questioning safety of the code, I would like avoid another
->>> ifdef.
->> Ah, I now understand, so you are asking if we can have
->> that kfree(map->frames); in the place *Option 2* I marked above.
->> Unfortunately no: map->frames is allocated before we try to
->> allocate DMA memory, e.g. before dma_vaddr is set:
->> [...]
->>          add->frames = kcalloc(count, sizeof(add->frames[0]),
->>                        GFP_KERNEL);
->>          if (!add->frames)
->>              goto err;
->>
->> [...]
->>          if (gnttab_dma_alloc_pages(&args))
->>              goto err;
->>
->>          add->dma_vaddr = args.vaddr;
->> [...]
->> err:
->>      gntdev_free_map(add);
->>
->> So, it is possible to enter gntdev_free_map with
->> frames != NULL and dma_vaddr == NULL. Option 1 above cannot be used
->> as map->frames is needed for gnttab_dma_free_pages(&args);
->> and Option 2 cannot be used as frames != NULL and dma_vaddr == NULL.
->> Thus, I think that unfortunately we need that #ifdef.
->> Option 3 below can also be considered, but that seems to be not good
->> as we free resources in different places which looks inconsistent.
->
-> I was only thinking of option 2. But if it is possible to have frames !=
-> NULL and dma_vaddr == NULL then perhaps we indeed will have to live with
-> the extra ifdef.
-ok
->
->> Sorry if I'm still missing your point.
->>>> so
->>>> I see no reason to change this code.
->>>>>>         kfree(map->pages);
->>>>>>         kfree(map->grants);
->>>>>>         kfree(map->map_ops);
->>>>>> @@ -132,7 +176,8 @@ static void gntdev_free_map(struct grant_map
->>>>>> *map)
->>>>>>         kfree(map);
->>>>>>     }
->>>>>>     -static struct grant_map *gntdev_alloc_map(struct gntdev_priv
->>>>>> *priv, int count)
->>>>>> +static struct grant_map *gntdev_alloc_map(struct gntdev_priv *priv,
->>>>>> int count,
->>>>>> +                      int dma_flags)
->>>>>>     {
->>>>>>         struct grant_map *add;
->>>>>>         int i;
->>>>>> @@ -155,6 +200,37 @@ static struct grant_map
->>>>>> *gntdev_alloc_map(struct gntdev_priv *priv, int count)
->>>>>>             NULL == add->pages)
->>>>>>             goto err;
->>>>>>     +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
->>>>>> +    add->dma_flags = dma_flags;
->>>>>> +
->>>>>> +    /*
->>>>>> +     * Check if this mapping is requested to be backed
->>>>>> +     * by a DMA buffer.
->>>>>> +     */
->>>>>> +    if (dma_flags & (GNTDEV_DMA_FLAG_WC |
->>>>>> GNTDEV_DMA_FLAG_COHERENT)) {
->>>>>> +        struct gnttab_dma_alloc_args args;
->>>>>> +
->>>>>> +        add->frames = kcalloc(count, sizeof(add->frames[0]),
->>>>>> +                      GFP_KERNEL);
->>>>>> +        if (!add->frames)
->>>>>> +            goto err;
->>>>>> +
->>>>>> +        /* Remember the device, so we can free DMA memory. */
->>>>>> +        add->dma_dev = priv->dma_dev;
->>>>>> +
->>>>>> +        args.dev = priv->dma_dev;
->>>>>> +        args.coherent = dma_flags & GNTDEV_DMA_FLAG_COHERENT;
->>>>>> +        args.nr_pages = count;
->>>>>> +        args.pages = add->pages;
->>>>>> +        args.frames = add->frames;
->>>>>> +
->>>>>> +        if (gnttab_dma_alloc_pages(&args))
->> *Option 3: kfree(map->frames);*
->>>>>> +            goto err;
->>>>>> +
->>>>>> +        add->dma_vaddr = args.vaddr;
->>>>>> +        add->dma_bus_addr = args.dev_bus_addr;
->>>>>> +    } else
->>>>>> +#endif
->>>>>>         if (gnttab_alloc_pages(count, add->pages))
->>>>>>             goto err;
->>>>>>     @@ -325,6 +401,14 @@ static int map_grant_pages(struct grant_map
->>>>>> *map)
->>>>>>             map->unmap_ops[i].handle = map->map_ops[i].handle;
->>>>>>             if (use_ptemod)
->>>>>>                 map->kunmap_ops[i].handle = map->kmap_ops[i].handle;
->>>>>> +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
->>>>>> +        else if (map->dma_vaddr) {
->>>>>> +            unsigned long mfn;
->>>>>> +
->>>>>> +            mfn = __pfn_to_mfn(page_to_pfn(map->pages[i]));
->>>>> Not pfn_to_mfn()?
->>>> I'd love to, but pfn_to_mfn is only defined for x86, not ARM: [1]
->>>> and [2]
->>>> Thus,
->>>>
->>>> drivers/xen/gntdev.c:408:10: error: implicit declaration of function
->>>> ‘pfn_to_mfn’ [-Werror=implicit-function-declaration]
->>>>       mfn = pfn_to_mfn(page_to_pfn(map->pages[i]));
->>>>
->>>> So, I'll keep __pfn_to_mfn
->>> How will this work on non-PV x86?
->> So, you mean I need:
->> #ifdef CONFIG_X86
->> mfn = pfn_to_mfn(page_to_pfn(map->pages[i]));
->> #else
->> mfn = __pfn_to_mfn(page_to_pfn(map->pages[i]));
->> #endif
->>
-> I'd rather fix it in ARM code. Stefano, why does ARM uses the
-> underscored version?
-Do you want me to add one more patch for ARM to wrap __pfn_to_mfn
-with static inline for ARM? e.g.
-static inline ...pfn_to_mfn(...)
-{
-     __pfn_to_mfn();
-}
->
-> -boris
->
-Thank you,
-Oleksandr
+Some of the event counters are overloaded which makes it very
+difficult to interpret their values.
+
+Counter 0 is supposed to report CB1 interrupts but it can also count
+PMU_INT_WAITING_CHARGER events.
+
+Counter 1 is supposed to report GPIO interrupts but it can also count
+other events (depending upon the value of the PMU_INT_ADB bit).
+
+Disambiguate these statistics with dedicated counters for GPIO and
+CB1 interrupts.
+
+Comments in the MkLinux source code say that the type 0 and type 1
+interrupts are model-specific. Label them as "unknown".
+
+This change to the contents of /proc/pmu/interrupts is by necessity
+visible in userland. However, packages which interact with the PMU
+(that is, pbbuttonsd, pmac-utils and pmud) don't open this file.
+AFAIK, user software has no need to poll these counters.
+
+Tested-by: Stan Johnson <userm57@yahoo.com>
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+---
+The file now looks like this,
+
+  0:          0 (Unknown interrupt (type 0))
+  1:          0 (Unknown interrupt (type 1))
+  2:          0 (PC-Card eject button)
+  3:         23 (Sound/Brightness button)
+  4:         74 (ADB message)
+  5:          0 (Battery state change)
+  6:          0 (Environment interrupt)
+  7:        121 (Tick timer)
+  8:          0 (Ghost interrupt (zero len))
+  9:          1 (Empty interrupt (empty mask))
+ 10:          2 (Max irqs in a row)
+ 11:        194 (Total CB1 triggered events)
+ 12:          0 (Total GPIO1 triggered events)
+
+rather than this,
+
+  0:        194 (Total CB1 triggered events)
+  1:          0 (Total GPIO1 triggered events)
+  2:          0 (PC-Card eject button)
+  3:         23 (Sound/Brightness button)
+  4:         74 (ADB message)
+  5:          0 (Battery state change)
+  6:          0 (Environment interrupt)
+  7:        121 (Tick timer)
+  8:          0 (Ghost interrupt (zero len))
+  9:          1 (Empty interrupt (empty mask))
+ 10:          2 (Max irqs in a row)
+
+If some parser exists for this file, and if this change is problematic,
+we could increment the driver version number in /proc/pmu/info, to
+correspond with the format change.
+---
+ drivers/macintosh/via-pmu.c | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/macintosh/via-pmu.c b/drivers/macintosh/via-pmu.c
+index 730c10f7fbb7..44919b3b56e0 100644
+--- a/drivers/macintosh/via-pmu.c
++++ b/drivers/macintosh/via-pmu.c
+@@ -172,7 +172,9 @@ static int drop_interrupts;
+ static int option_lid_wakeup = 1;
+ #endif /* CONFIG_SUSPEND && CONFIG_PPC32 */
+ static unsigned long async_req_locks;
+-static unsigned int pmu_irq_stats[11];
++
++#define NUM_IRQ_STATS 13
++static unsigned int pmu_irq_stats[NUM_IRQ_STATS];
+ 
+ static struct proc_dir_entry *proc_pmu_root;
+ static struct proc_dir_entry *proc_pmu_info;
+@@ -884,9 +886,9 @@ static const struct file_operations pmu_info_proc_fops = {
+ static int pmu_irqstats_proc_show(struct seq_file *m, void *v)
+ {
+ 	int i;
+-	static const char *irq_names[] = {
+-		"Total CB1 triggered events",
+-		"Total GPIO1 triggered events",
++	static const char *irq_names[NUM_IRQ_STATS] = {
++		"Unknown interrupt (type 0)",
++		"Unknown interrupt (type 1)",
+ 		"PC-Card eject button",
+ 		"Sound/Brightness button",
+ 		"ADB message",
+@@ -895,10 +897,12 @@ static int pmu_irqstats_proc_show(struct seq_file *m, void *v)
+ 		"Tick timer",
+ 		"Ghost interrupt (zero len)",
+ 		"Empty interrupt (empty mask)",
+-		"Max irqs in a row"
++		"Max irqs in a row",
++		"Total CB1 triggered events",
++		"Total GPIO1 triggered events",
+         };
+ 
+-	for (i=0; i<11; i++) {
++	for (i = 0; i < NUM_IRQ_STATS; i++) {
+ 		seq_printf(m, " %2u: %10u (%s)\n",
+ 			     i, pmu_irq_stats[i], irq_names[i]);
+ 	}
+@@ -1659,7 +1663,7 @@ via_pmu_interrupt(int irq, void *arg)
+ 		}
+ 		if (intr & CB1_INT) {
+ 			adb_int_pending = 1;
+-			pmu_irq_stats[0]++;
++			pmu_irq_stats[11]++;
+ 		}
+ 		if (intr & SR_INT) {
+ 			req = pmu_sr_intr();
+@@ -1746,7 +1750,7 @@ gpio1_interrupt(int irq, void *arg)
+ 			disable_irq_nosync(gpio_irq);
+ 			gpio_irq_enabled = 0;
+ 		}
+-		pmu_irq_stats[1]++;
++		pmu_irq_stats[12]++;
+ 		adb_int_pending = 1;
+ 		spin_unlock_irqrestore(&pmu_lock, flags);
+ 		via_pmu_interrupt(0, NULL);
+-- 
+2.16.4
