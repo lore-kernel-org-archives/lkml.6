@@ -1,116 +1,157 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Qx2wKorYGFsZUgAAmS7hNA
-	; Thu, 07 Jun 2018 07:05:51 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 57yTGpemGlsyFAAAmS7hNA
+	; Fri, 08 Jun 2018 15:53:59 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 7E5FD607F7; Thu,  7 Jun 2018 07:05:51 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Bdqhfx3T"
+	id 55B36608B8; Fri,  8 Jun 2018 15:53:59 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 19CB5601B4;
-	Thu,  7 Jun 2018 07:05:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 19CB5601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id BD38D605A5;
+	Fri,  8 Jun 2018 15:53:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BD38D605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753159AbeFGHFq (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 03:05:46 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:37182 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752669AbeFGHFo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 03:05:44 -0400
-Received: by mail-wr0-f193.google.com with SMTP id d8-v6so8814637wro.4
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 00:05:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=NX5z+GtLd1Tu8fMuWoM7tlJ7QpgpqhgGyJx9Qqic6vM=;
-        b=Bdqhfx3ToZSP15pBuAMLljNU7aHD8HhaDZ+KKrr2mpj/I4LOyaZZFNAMUFkmk1i+q+
-         tcy2AZUXKwJY2BlqfZd6AFlWZbaRa88ZT0Twl6QGDqqm0nknMmw8sh2Ua5J3jKQYqgO5
-         dbhUcU+zkz07RJUTHnWwnBrezdeGhlbq8t4v4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=NX5z+GtLd1Tu8fMuWoM7tlJ7QpgpqhgGyJx9Qqic6vM=;
-        b=MjhGtNT6PLK3wo0S3lKT4DMPJwQfORmRb5EjPMiDxwBhQYxKXfa3FURJYdpyzEkKCq
-         v3RgUfFTsdJh5q2vBut63K37aC0YuorTpLtnmigxxNaFs+f/MavogRdreF6378ojlumZ
-         wfYaeAFCHDHlQp59CGyoMtrPopPHHOEMaK2/4Aa6iNoJ7NKBBXIeadzI4VO5fdexh0KE
-         n6IS3Nq6jgbghbbpDUw//KUDWFG8HBL/YQo0cgQU00YBpzW+tQK1hLyWIajiOkSC4BJk
-         iEMnSQm1YfJb8s2VehMV10TpZQfl0aYbM77EYUFVin/xV1bP/P7oyCngmS5N/ZJaq5Ne
-         sF4g==
-X-Gm-Message-State: APt69E1DiacxolqfZUocNlgwMm48rCfY3VPp9hhut+6YfBgfmzajt1mf
-        Itz1ziwxOtHrpM800yglvINYGg==
-X-Google-Smtp-Source: ADUXVKKzlMib7lfTahKFo0A90hHBq0OzmQFNu1y7JbKKgPLYuILzTF0Yv174T89y+6Teg1FckmbVHA==
-X-Received: by 2002:adf:eb8f:: with SMTP id t15-v6mr597933wrn.243.1528355143636;
-        Thu, 07 Jun 2018 00:05:43 -0700 (PDT)
-Received: from dell ([2.31.163.53])
-        by smtp.gmail.com with ESMTPSA id q7-v6sm51278861wrf.0.2018.06.07.00.05.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Jun 2018 00:05:42 -0700 (PDT)
-Date: Thu, 7 Jun 2018 08:05:40 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v5 04/14] mfd: da9063: Use REGMAP_IRQ_REG
-Message-ID: <20180607070540.GA22841@dell>
-References: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
- <20180606100003.17067-4-marek.vasut+renesas@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+        id S1752674AbeFHPx5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 11:53:57 -0400
+Received: from mga07.intel.com ([134.134.136.100]:24105 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751134AbeFHPxx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 11:53:53 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jun 2018 08:53:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,490,1520924400";
+   d="scan'208";a="57644959"
+Received: from 2b52.sc.intel.com (HELO [143.183.136.147]) ([143.183.136.147])
+  by orsmga003.jf.intel.com with ESMTP; 08 Jun 2018 08:53:52 -0700
+Message-ID: <1528473039.8058.11.camel@2b52.sc.intel.com>
+Subject: Re: [PATCH 04/10] x86/cet: Handle thread shadow stack
+From: Yu-cheng Yu <yu-cheng.yu@intel.com>
+To: Andy Lutomirski <luto@kernel.org>
+Cc: Florian Weimer <fweimer@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        mike.kravetz@oracle.com
+Date: Fri, 08 Jun 2018 08:50:39 -0700
+In-Reply-To: <CALCETrV_V68nVhCpUSGXrwUKCu4utbdp01snmG=G=+_xAo0KJA@mail.gmail.com>
+References: <20180607143807.3611-1-yu-cheng.yu@intel.com>
+         <20180607143807.3611-5-yu-cheng.yu@intel.com>
+         <CALCETrUqXvh2FDXe6bveP10TFpzptEyQe2=mdfZFGKU0T+NXsA@mail.gmail.com>
+         <3c1bdf85-0c52-39ed-a799-e26ac0e52391@redhat.com>
+         <CALCETrWPDXpbVcuFK_1M5DtaCOW_LSf-XHFAD0vpc735oFWLPg@mail.gmail.com>
+         <6ee29e8b-4a0a-3459-a1ee-03923ba4e15d@redhat.com>
+         <CALCETrV_V68nVhCpUSGXrwUKCu4utbdp01snmG=G=+_xAo0KJA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180606100003.17067-4-marek.vasut+renesas@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 06 Jun 2018, Marek Vasut wrote:
-
-> Convert the regmap_irq table to use REGMAP_IRQ_REG().
+On Fri, 2018-06-08 at 08:01 -0700, Andy Lutomirski wrote:
+> On Fri, Jun 8, 2018 at 7:53 AM Florian Weimer <fweimer@redhat.com> wrote:
+> >
+> > On 06/07/2018 10:53 PM, Andy Lutomirski wrote:
+> > > On Thu, Jun 7, 2018 at 12:47 PM Florian Weimer <fweimer@redhat.com> wrote:
+> > >>
+> > >> On 06/07/2018 08:21 PM, Andy Lutomirski wrote:
+> > >>> On Thu, Jun 7, 2018 at 7:41 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+> > >>>>
+> > >>>> When fork() specifies CLONE_VM but not CLONE_VFORK, the child
+> > >>>> needs a separate program stack and a separate shadow stack.
+> > >>>> This patch handles allocation and freeing of the thread shadow
+> > >>>> stack.
+> > >>>
+> > >>> Aha -- you're trying to make this automatic.  I'm not convinced this
+> > >>> is a good idea.  The Linux kernel has a long and storied history of
+> > >>> enabling new hardware features in ways that are almost entirely
+> > >>> useless for userspace.
+> > >>>
+> > >>> Florian, do you have any thoughts on how the user/kernel interaction
+> > >>> for the shadow stack should work?
+> > >>
+> > >> I have not looked at this in detail, have not played with the emulator,
+> > >> and have not been privy to any discussions before these patches have
+> > >> been posted, however …
+> > >>
+> > >> I believe that we want as little code in userspace for shadow stack
+> > >> management as possible.  One concern I have is that even with the code
+> > >> we arguably need for various kinds of stack unwinding, we might have
+> > >> unwittingly built a generic trampoline that leads to full CET bypass.
+> > >
+> > > I was imagining an API like "allocate a shadow stack for the current
+> > > thread, fail if the current thread already has one, and turn on the
+> > > shadow stack".  glibc would call clone and then call this ABI pretty
+> > > much immediately (i.e. before making any calls from which it expects
+> > > to return).
+> >
+> > Ahh.  So you propose not to enable shadow stack enforcement on the new
+> > thread even if it is enabled for the current thread?  For the cases
+> > where CLONE_VM is involved?
+> >
+> > It will still need a new assembler wrapper which sets up the shadow
+> > stack, and it's probably required to disable signals.
+> >
+> > I think it should be reasonable safe and actually implementable.  But
+> > the benefits are not immediately obvious to me.
 > 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Cc: linux-renesas-soc@vger.kernel.org
-> Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
-> ---
-> V3: New patch
-> Note: A sed oneliner was used:
->       sed -i "/\[DA9063_IRQ_/ {N;N;N;s/\n//g;s/.*\[\(DA9063_IRQ_[^]]\+\)].*reg_offset = \([^,]\+\),.* = \([^,]\+\),.*/\tREGMAP_IRQ_REG(\1, \2, \3),/}" drivers/mfd/da9063-irq.c
-> V4: Formatting fixes with "s/,/&\r\t\t      /" on the array
->     Drop extra newline in da9063_irq_chip
-> V5: No change
-> ---
->  drivers/mfd/da9063-irq.c | 175 ++++++++++++++++-------------------------------
->  1 file changed, 58 insertions(+), 117 deletions(-)
+> Doing it this way would have been my first incliniation.  It would
+> avoid all the oddities of the kernel magically creating a VMA when
+> clone() is called, guessing the shadow stack size, etc.  But I'm okay
+> with having the kernel do it automatically, too.
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+HJ wanted to add a arch_prctl that allocates a new shadow stack and
+switches to it.  That was mainly for swapcontext.  Perhaps we can also
+use that for threads?  HJ, can you comment on this?
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+> I think it would be
+> very nice to have a way for user code to find out the size of the
+> shadow stack and change it, though.  (And relocate it, but maybe
+> that's impossible.  The CET documentation doesn't have a clear
+> description of the shadow stack layout.)
+
+The shadow stack is vm_mmap'ed from memory and does not have any special
+layout.  We can add a arch_prctl to find out shadow stack's address and
+size.
+
+> >
+> > > We definitely want strong enough user control that tools like CRIU can
+> > > continue to work.  I haven't looked at the SDM recently enough to
+> > > remember for sure, but I'm reasonably confident that user code can
+> > > learn the address of its own shadow stack.  If nothing else, CRIU
+> > > needs to be able to restore from a context where there's a signal on
+> > > the stack and the signal frame contains a shadow stack pointer.
+> >
+> > CRIU also needs the shadow stack *contents*, which shouldn't be directly
+> > available to the process.  So it needs very special interfaces anyway.
+> 
+> True.  I proposed in a different email that ptrace() have full control
+> of the shadow stack (read, write, lock, unlock, etc).
+
+PTRACE can do PTRACE_POKEDATA on shadow stack.  We can add lock/unlock.
+
+> >
+> > Does CRIU implement MPX support?
+> 
+> Dunno.  But given that MPX seems to be dying, I'm not sure it matters.
+> 
+> --Andy
