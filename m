@@ -1,92 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id t+BdINi8GlteZwAAmS7hNA
-	; Fri, 08 Jun 2018 17:28:56 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 49ZuMqAgGlvSSQAAmS7hNA
+	; Fri, 08 Jun 2018 06:26:32 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 6753D607E4; Fri,  8 Jun 2018 17:28:56 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mqyiqfH4"
+	id 173D1607E4; Fri,  8 Jun 2018 06:26:28 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id E65A8601D2;
-	Fri,  8 Jun 2018 17:28:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E65A8601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=emwesoft.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 6F65F608CF;
+	Fri,  8 Jun 2018 06:26:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6F65F608CF
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752936AbeFHR2x (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 13:28:53 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:46931 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751244AbeFHR2v (ORCPT
+        id S1751565AbeFHG0Y (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 02:26:24 -0400
+Received: from regular1.263xmail.com ([211.150.99.140]:60335 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750909AbeFHG0V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 13:28:51 -0400
-Received: by mail-lf0-f66.google.com with SMTP id j13-v6so21184353lfb.13;
-        Fri, 08 Jun 2018 10:28:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=r1SroL1oFO2xXT8Kv6Cqp8UhQoQzCZ95VI5vccQylU0=;
-        b=mqyiqfH4NmtALN7xsU4aRRRlhy/OXCzt9X9EYPraZoCVf08F0HiihFouHRhQhBVDaB
-         qSjLeiFcESYoUxPP2YAYKAF86Zw/mj/0ChLuiQWessvcWI0RabmWFNVuepCIPXi510M3
-         9389tlk0/nnJv+b2uDDOeZqVfghNnHZE6muxgUrssmJlzwqAW81J7iBMCuC6CfqRo5O5
-         XnpzL6Sd8Ck569iUlJSDJfCRWFxhOm7kLItoZbZiLbs135OPLjNgrM9mjuPunBLL04Wk
-         PLACIq45zjQ50k8yi3GrTG9LsKyfBQY6d9NwYmx+3QEF2d+AZ/7VRRUyJOnfTDZLDjY5
-         fyhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=r1SroL1oFO2xXT8Kv6Cqp8UhQoQzCZ95VI5vccQylU0=;
-        b=nBf3/GSQyXlGCQDfUQoP6ziITMG+qQpzUso8LuW3X/BxRMQHADkKlgaLw9lzTR9UZ+
-         lcFB7t6N8kYvuVaN0Y5JSLQ+oAsR9484i3WEOEGuyRINJxNWudFeU5U0W02VlNfn5XHB
-         x0bPzgND2J44j/Jto1iUFRmLy9XO9lykttpxfTSIJ/5mVhV2hnCWKRy3xhUH5VDYgfHm
-         vXY+m6+UevrqJlzyWoSsfuyiEbuFfb1NHq94PCqWc7BglGD05YLmK8oDjz8RypvPvQY8
-         CI7Yu3leOe8E6PfQdAsSDDSUy6YI6EH8ZzgXphDofV1fP+Gvbscx6qpsgTU7mhgecdpT
-         j1Cw==
-X-Gm-Message-State: APt69E1w4qIy5ZJkpzk4BmT4GHWv7i8WT/4Npes9bW42ZywVdSDtUc7P
-        XJDSpPeBAhPb2Ms/K6HGqKE4rUeCoUjGVHndYXRiZg==
-X-Google-Smtp-Source: ADUXVKJfdnwrBloGA9sTpr1aucRwuLY5YSpC/Er2Vg9+KfYIdscCttyqkhduMYxBslZF8O7FS4UnP1JmjbyOaGR2KUI=
-X-Received: by 2002:a2e:1790:: with SMTP id 16-v6mr5325185ljx.101.1528478930051;
- Fri, 08 Jun 2018 10:28:50 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a2e:4d46:0:0:0:0:0 with HTTP; Fri, 8 Jun 2018 10:28:49 -0700 (PDT)
-In-Reply-To: <73c3d354-8aa8-e0c2-c4c4-658a65154394@bitmath.org>
-References: <40764439.8xGR6LbaWR@positron.chronox.de> <2305311.UGlXl2onVb@positron.chronox.de>
- <1566223.3I8hjEaRec@tauon.chronox.de> <2373130.0OS7LSYeBT@tauon.chronox.de> <73c3d354-8aa8-e0c2-c4c4-658a65154394@bitmath.org>
-From: Marek Wyborski <marek.wyborski@emwesoft.com>
-Date: Fri, 8 Jun 2018 19:28:49 +0200
-X-Google-Sender-Auth: i3tNuDy5VOqxZ08F5pyhgzQnEVc
-Message-ID: <CAMBc8znYhLsQ3EXa_H7L-+ypVzOSHiKUQqnR6gSCfjOLkdCp8g@mail.gmail.com>
-Subject: Re: [PATCH v3] input: bcm5974 - Add driver for Apple Magic Trackpad 2
-To: Henrik Rydberg <rydberg@bitmath.org>
-Cc: Stephan Mueller <smueller@chronox.de>,
-        Jiri Kosina <jikos@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 8 Jun 2018 02:26:21 -0400
+Received: from zhangqing?rock-chips.com (unknown [192.168.167.157])
+        by regular1.263xmail.com (Postfix) with ESMTP id A78F34B96;
+        Fri,  8 Jun 2018 14:26:15 +0800 (CST)
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+Received: from localhost.localdomain (localhost [127.0.0.1])
+        by smtp.263.net (Postfix) with ESMTPA id D2EC4412;
+        Fri,  8 Jun 2018 14:26:05 +0800 (CST)
+X-RL-SENDER: zhangqing@rock-chips.com
+X-FST-TO: heiko@sntech.de
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: zhangqing@rock-chips.com
+X-UNIQUE-TAG: <3f6f938933a6dddf59c7effdd130f069>
+X-ATTACHMENT-NUM: 0
+X-SENDER: zhangqing@rock-chips.com
+X-DNS-TYPE: 0
+Received: from unknown (unknown [58.22.7.114])
+        by smtp.263.net (Postfix) whith SMTP id 19679Z2RU4D;
+        Fri, 08 Jun 2018 14:26:11 +0800 (CST)
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: heiko@sntech.de
+Cc: sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        cl@rock-chips.com, xxx@rock-chips.com, xf@rock-chips.com,
+        huangtao@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v2 1/4] dt-bindings: add bindings for px30 clock controller
+Date: Fri,  8 Jun 2018 14:31:56 +0800
+Message-Id: <1528439519-30135-2-git-send-email-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1528439519-30135-1-git-send-email-zhangqing@rock-chips.com>
+References: <1528439519-30135-1-git-send-email-zhangqing@rock-chips.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Henrik!
+Add devicetree bindings for Rockchip cru which found on
+Rockchip SoCs.
 
-I think you have been absolutely right about the MT2 support and that
-it should be in hid-magicmouse and not in bcm5974. The more i am
-working on the driver, the more i see your awesome work for multitouch
-in the kernel and in xf86-mtrack as well. So i try to keep close to
-the event reporting in bcm5974 and added the MT2 support to the
-hid-magicmouse with USB and bluetooth support through the HID layer.
-It already seems to do the trick, but some people are testing and i
-will have to clean up the code. Then i will send in a new patch until
-end of this month. It would be great if you could have a look at the
-new patch, when i send it in.
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ .../bindings/clock/rockchip,px30-cru.txt           | 67 ++++++++++++++++++++++
+ 1 file changed, 67 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt
 
-Marek
+diff --git a/Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt
+new file mode 100644
+index 000000000000..af5a45b680d0
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt
+@@ -0,0 +1,67 @@
++* Rockchip PX30 Clock and Reset Unit
++
++The PX30 clock controller generates and supplies clock to various
++controllers within the SoC and also implements a reset controller for SoC
++peripherals.
++
++Required Properties:
++
++- compatible: PMU for CRU should be "rockchip,px30-pmu-cru"
++- compatible: CRU should be "rockchip,px30-cru"
++- reg: physical base address of the controller and length of memory mapped
++  region.
++- #clock-cells: should be 1.
++- #reset-cells: should be 1.
++
++Optional Properties:
++
++- rockchip,grf: phandle to the syscon managing the "general register files"
++  If missing, pll rates are not changeable, due to the missing pll lock status.
++
++Each clock is assigned an identifier and client nodes can use this identifier
++to specify the clock which they consume. All available clocks are defined as
++preprocessor macros in the dt-bindings/clock/px30-cru.h headers and can be
++used in device tree sources. Similar macros exist for the reset sources in
++these files.
++
++External clocks:
++
++There are several clocks that are generated outside the SoC. It is expected
++that they are defined using standard clock bindings with following
++clock-output-names:
++ - "xin24m" - crystal input - required,
++ - "xin32k" - rtc clock - optional,
++ - "i2sx_clkin" - external I2S clock - optional,
++ - "gmac_clkin" - external GMAC clock - optional
++
++Example: Clock controller node:
++
++	pmucru: pmu-clock-controller@ff2bc000 {
++		compatible = "rockchip,px30-pmucru";
++		reg = <0x0 0xff2bc000 0x0 0x1000>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++	};
++
++	cru: clock-controller@ff2b0000 {
++		compatible = "rockchip,px30-cru";
++		reg = <0x0 0xff2b0000 0x0 0x1000>;
++		rockchip,grf = <&grf>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++	};
++
++Example: UART controller node that consumes the clock generated by the clock
++  controller:
++
++	uart0: serial@ff030000 {
++		compatible = "rockchip,px30-uart", "snps,dw-apb-uart";
++		reg = <0x0 0xff030000 0x0 0x100>;
++		interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&pmucru SCLK_UART0_PMU>, <&pmucru PCLK_UART0_PMU>;
++		clock-names = "baudclk", "apb_pclk";
++		reg-shift = <2>;
++		reg-io-width = <4>;
++		status = "disabled";
++	};
++
+-- 
+1.9.1
