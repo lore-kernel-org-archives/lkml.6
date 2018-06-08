@@ -1,88 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id EHw+FOFHGVuIQQAAmS7hNA
-	; Thu, 07 Jun 2018 14:59:04 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id d5McMCZxGlvzNwAAmS7hNA
+	; Fri, 08 Jun 2018 12:07:00 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D41F6608BF; Thu,  7 Jun 2018 14:59:03 +0000 (UTC)
+	id 480A76089E; Fri,  8 Jun 2018 12:07:00 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 6912B606DD;
-	Thu,  7 Jun 2018 14:59:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6912B606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 5BC0E605A5;
+	Fri,  8 Jun 2018 12:06:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5BC0E605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935600AbeFGO7B (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:59:01 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41235 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935471AbeFGO65 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:58:57 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbs-0005Zm-N7; Thu, 07 Jun 2018 15:09:52 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb1-0002pb-Hl; Thu, 07 Jun 2018 15:08:59 +0100
-Content-Type: text/plain; charset="UTF-8"
+        id S1752642AbeFHMG4 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 08:06:56 -0400
+Received: from gate.crashing.org ([63.228.1.57]:33556 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751171AbeFHMGz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 08:06:55 -0400
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w58C5j4N020111;
+        Fri, 8 Jun 2018 07:05:47 -0500
+Received: (from segher@localhost)
+        by gate.crashing.org (8.14.1/8.14.1/Submit) id w58C5Yii020108;
+        Fri, 8 Jun 2018 07:05:34 -0500
+Date: Fri, 8 Jun 2018 07:05:32 -0500
+From: Segher Boessenkool <segher@kernel.crashing.org>
+To: Gabriel Paubert <paubert@iram.es>
+Cc: Christophe Leroy <christophe.leroy@c-s.fr>,
+        wei.guo.simon@gmail.com, linux-kernel@vger.kernel.org,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v4 3/4] powerpc/lib: implement strlen() in assembly
+Message-ID: <20180608120532.GD17342@gate.crashing.org>
+References: <a348f4ffda6349467e4270e754d12150fa773462.1528452373.git.christophe.leroy@c-s.fr> <8d65b5876f55efbd2243f6b43c758e452bee3b54.1528452373.git.christophe.leroy@c-s.fr> <20180608114513.gtgg7o4ejcqrjiz4@lt-gp.iram.es>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Theodore Ts'o" <tytso@mit.edu>,
-        "Zhouyi Zhou" <zhouzhouyi@gmail.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.76482324@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 104/410] ext4: save error to disk in __ext4_grp_locked_error()
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+In-Reply-To: <20180608114513.gtgg7o4ejcqrjiz4@lt-gp.iram.es>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+On Fri, Jun 08, 2018 at 01:45:13PM +0200, Gabriel Paubert wrote:
+> On Fri, Jun 08, 2018 at 10:20:41AM +0000, Christophe Leroy wrote:
+> > +	rlwinm.	r8, r9, 0, 0xff000000
+> > +	beq	20f
+> > +	rlwinm.	r8, r9, 0, 0x00ff0000
+> > +	beq	21f
+> > +	rlwinm.	r8, r9, 0, 0x0000ff00
+> > +	beq	22f
+> > +23:	subf	r3, r3, r10
+> 
+> Actually these rlwinm. can likely be replaced by a single
+> cntlzw /cntlzd; for 32 bit something like:
+> 
+> 	cntlzw  r8,r9
+> 	subf    r3,r3,r10	
+> 	srwi	r8,r8,3
+> 	add	r3,r3,r8
+> 	blr
 
-------------------
+The code is finding the first zero byte in the word, not how many leading
+zero bytes there are.
 
-From: Zhouyi Zhou <zhouzhouyi@gmail.com>
 
-commit 06f29cc81f0350261f59643a505010531130eea0 upstream.
-
-In the function __ext4_grp_locked_error(), __save_error_info()
-is called to save error info in super block block, but does not sync
-that information to disk to info the subsequence fsck after reboot.
-
-This patch writes the error information to disk.  After this patch,
-I think there is no obvious EXT4 error handle branches which leads to
-"Remounting filesystem read-only" will leave the disk partition miss
-the subsequence fsck.
-
-Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- fs/ext4/super.c | 1 +
- 1 file changed, 1 insertion(+)
-
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -678,6 +678,7 @@ __acquires(bitlock)
- 	}
- 
- 	ext4_unlock_group(sb, grp);
-+	ext4_commit_super(sb, 1);
- 	ext4_handle_error(sb);
- 	/*
- 	 * We only get here in the ERRORS_RO case; relocking the group
+Segher
