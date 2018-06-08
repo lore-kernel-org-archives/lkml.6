@@ -1,170 +1,194 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id J/viBtF4G1vVDAAAmS7hNA
-	; Sat, 09 Jun 2018 06:51:50 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id eUhWAeg7GlsDGAAAmS7hNA
+	; Fri, 08 Jun 2018 08:18:48 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id DC1C8608B8; Sat,  9 Jun 2018 06:51:49 +0000 (UTC)
+	id DDF0D607DC; Fri,  8 Jun 2018 08:18:47 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="N78owXG7"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gHO8lKPG"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 5835760290;
-	Sat,  9 Jun 2018 06:51:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5835760290
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	by smtp.codeaurora.org (Postfix) with ESMTP id CC80D60590;
+	Fri,  8 Jun 2018 08:18:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CC80D60590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753159AbeFIGvr (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 02:51:47 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:44630 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752610AbeFIGvo (ORCPT
+        id S1752734AbeFHISo (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 04:18:44 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:43969 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751898AbeFHISk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 02:51:44 -0400
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id E5A465C0070;
-        Sat,  9 Jun 2018 08:51:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1528527102;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=i/eHT0B2Fac225wqrjQVepsRB+mY1mynviM/vLg168A=;
-        b=N78owXG7azWV22OYe4Cjy8WR5n2R+wZmExXdk/dMqAmIYvhPORM20lf0NjVyt7lLzMexM5
-        gE9MOwe/RGi2Zium7+R63qDnnKY2JhGfkBAwuKTl8r3ZyDcs4eESxSTKssogZcgF9ss1Wq
-        KyH2sWLlrFIQHv9U3Gq8lPNRmfnpnNQ=
+        Fri, 8 Jun 2018 04:18:40 -0400
+Received: by mail-pf0-f195.google.com with SMTP id j20-v6so6247393pff.10
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 01:18:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=mhgb8sSguj0EYxH7CLsDSa3+QwuEcssr+gLqC4aDDjQ=;
+        b=gHO8lKPGO2Bv1zPt8cZUmpccKEcKm16sYxHiKcjuFyJIHhX9d5jtgA4BHOtUQpo9dR
+         Q7z4M4xZdt3T4s8gCR0sNXmISVJl/A3d3zbIqCB2KdBGSUYhGFLSJLu4o5f/yFoQAtBf
+         StBF77Z6S7MeUCV6gi8XSaSH7SG7iIxyz3DxyArQlDZ3uqZMcl+AMfUwRjkkjtYgFUbQ
+         HGrkcJ9Di8vW6qUT9dFR819d98+Xlc44t9rBCm4+bRynRoAwWbh+gJM2DxBnyFWkJeWt
+         9k0yq65HqNq9r5Gg1Rj+bQi4HvxC9F7qaJPjL7vMPmLM5VxF50GsaV6HQxS1295WcftH
+         k3yQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=mhgb8sSguj0EYxH7CLsDSa3+QwuEcssr+gLqC4aDDjQ=;
+        b=jgcLYybt7ux49rMZjXSZ+v7tpTryBsXcKuumu6iKUQlLawg+oALRNe+mi1kdoGdUnp
+         fhvQ11wjf9nQqj4uCfPn9/3AdohknrGZYLeMiMMYzcnTQD4tZ1zNqYMOpnepHDoCJveh
+         fBTXEoRBVni1SnwAdnCRGWnP/oMmSthzD40PcVCDbu3bNc2sDkju/2Nq+JfMeS9SZtGD
+         ILhZp16kVUhuESy+jM4iDUZF5AlU0+Ow19639QQTP9laQfAcqKdbvsuH4b3D2cjznh7p
+         CxXxjq+GroVy36Tn81+Ng8zjscktT+tYorNufVAEDK0uJcPEoDrOzkLggQa4ejCes5IP
+         yLwA==
+X-Gm-Message-State: APt69E2Ey7tN+aEoaOeM/ZIgPjdwQQ/aMqO0ekRZ/LEBED+hyas2nLJp
+        6KeQemwTR8U88xZanYoCOZjX+nPCGzdVZBmyRfZYZA==
+X-Google-Smtp-Source: ADUXVKJ9qWdU/YU7P8wnuHs4a6rLKulgXicXXWfa72B7CeK9MEfLcAftGNG8eX9y1j0AvA4QO1tTlEG8j5UZHTo4b3Q=
+X-Received: by 2002:a62:3e9a:: with SMTP id y26-v6mr4999516pfj.98.1528445919356;
+ Fri, 08 Jun 2018 01:18:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date: Sat, 09 Jun 2018 08:51:42 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Dmitry Osipenko <digetx@gmail.com>, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
-        dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
-        marcel@ziswiler.com, krzk@kernel.org, benjamin.lindqvist@endian.se,
-        jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        mirza.krak@gmail.com, linux-mtd@lists.infradead.org,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/6] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-In-Reply-To: <20180609084157.0c2f12e6@bbrezillon>
-References: <20180531221637.6017-1-stefan@agner.ch>
- <20180531221637.6017-5-stefan@agner.ch>
- <cdca329f-0b8d-0604-4cfb-b95baf84c867@gmail.com>
- <d625dd8ca816543e03668b74921563c1@agner.ch>
- <20180609075256.725354d6@bbrezillon>
- <792ee71847f6f4752b8bcba65d22bf81@agner.ch>
- <20180609084157.0c2f12e6@bbrezillon>
-Message-ID: <5090966399e4b22eec5d3ac3f381d29a@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-1.77 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[22];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
-         RCVD_TLS_ALL(0.00)[];
-         BAYES_HAM(-1.67)[92.96%];
-         ARC_NA(0.00)[]
+Received: by 2002:a17:90a:d42:0:0:0:0 with HTTP; Fri, 8 Jun 2018 01:18:18
+ -0700 (PDT)
+In-Reply-To: <6b14e8b9-c335-dd46-98a6-7f58a624fcea@virtuozzo.com>
+References: <0000000000006e4595056dd23c16@google.com> <CACT4Y+ZmxgKvgD2RWD1=KEZQqY=vwdhrAZfqMT-gGuj8k8eKKg@mail.gmail.com>
+ <cf729ce5-7948-d475-1b20-f31fb313df88@virtuozzo.com> <CACT4Y+bPrdK7xSeUk=pgVVyaseDZUAvArBA4bEWPsUi7CE3EVw@mail.gmail.com>
+ <e71c0df1-d83c-030c-7c97-13a923aca1b3@virtuozzo.com> <CACT4Y+YBY2yGJBHgqGhAcOguag9JUkGkeOz1acgKd=KR3q+noQ@mail.gmail.com>
+ <04b6ee08-7919-bf2d-5b77-bd346a0bff48@virtuozzo.com> <CACT4Y+b8FkwFe1PCEVDZcTufB4HKVy+ekk=1_YcFH6-RoBGY-w@mail.gmail.com>
+ <6b14e8b9-c335-dd46-98a6-7f58a624fcea@virtuozzo.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Fri, 8 Jun 2018 10:18:18 +0200
+Message-ID: <CACT4Y+a57xaVfph_u78Z+kM8xUF=8fVk-VSA+xqok38Zm4bhFw@mail.gmail.com>
+Subject: Re: INFO: task hung in ip6gre_exit_batch_net
+To: Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc: syzbot <syzbot+bf78a74f82c1cf19069e@syzkaller.appspotmail.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        David Miller <davem@davemloft.net>,
+        David Ahern <dsahern@gmail.com>,
+        Florian Westphal <fw@strlen.de>, Jiri Benc <jbenc@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Xin Long <lucien.xin@gmail.com>,
+        mschiffer@universe-factory.net, netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Vladislav Yasevich <vyasevich@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09.06.2018 08:41, Boris Brezillon wrote:
-> On Sat, 09 Jun 2018 08:23:51 +0200
-> Stefan Agner <stefan@agner.ch> wrote:
-> 
->> On 09.06.2018 07:52, Boris Brezillon wrote:
->> > On Fri, 08 Jun 2018 23:51:01 +0200
->> > Stefan Agner <stefan@agner.ch> wrote:
->> >
->> >
->> >> >
->> >> > void tegra_nand_controller_reset(struct tegra_nand_controller *ctrl)
->> >> > {
->> >> > 	int err;
->> >> >
->> >> > 	disable_irq(ctrl->irq);
->> >> >
->> >> > 	err = reset_control_reset(ctrl->rst);
->> >> > 	if (err) {
->> >> > 		dev_err(ctrl->dev, "Failed to reset HW: %d\n", err);
->> >> > 		msleep(HW_TIMEOUT);
->> >> > 	}
->> >> >
->> >> > 	writel_relaxed(NAND_CMD_STATUS, ctrl->regs + HWSTATUS_CMD);
->> >> > 	writel_relaxed(HWSTATUS_MASK, ctrl->regs + HWSTATUS_MASK);
->> >> > 	writel_relaxed(INT_MASK, ctrl->regs + ISR);
->> >>
->> >> If we do a controller reset, there is much more state than that which
->> >> needs to be restored. A lot of it is not readily available currently
->> >> (timing, ECC settings...)
->> >
->> > This is actually a good test to detect what is not properly initialized
->> > by the driver. Timings should be configured correctly through
->> > ->setup_data_interface(). ECC engine should be disabled by default and
->> > only enabled when ->{read,write}_page() is called.
->> >
+On Thu, Jun 7, 2018 at 9:59 PM, Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+> On 07.06.2018 22:03, Dmitry Vyukov wrote:
+>> On Thu, Jun 7, 2018 at 8:54 PM, Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+>>>>>>> Hi, Dmirty!
+>>>>>>>
+>>>>>>> On 04.06.2018 18:22, Dmitry Vyukov wrote:
+>>>>>>>> On Mon, Jun 4, 2018 at 5:03 PM, syzbot
+>>>>>>>> <syzbot+bf78a74f82c1cf19069e@syzkaller.appspotmail.com> wrote:
+>>>>>>>>> Hello,
+>>>>>>>>>
+>>>>>>>>> syzbot found the following crash on:
+>>>>>>>>>
+>>>>>>>>> HEAD commit:    bc2dbc5420e8 Merge branch 'akpm' (patches from Andrew)
+>>>>>>>>> git tree:       upstream
+>>>>>>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=164e42b7800000
+>>>>>>>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=982e2df1b9e60b02
+>>>>>>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=bf78a74f82c1cf19069e
+>>>>>>>>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>>>>>>>>>
+>>>>>>>>> Unfortunately, I don't have any reproducer for this crash yet.
+>>>>>>>>>
+>>>>>>>>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>>>>>>>>> Reported-by: syzbot+bf78a74f82c1cf19069e@syzkaller.appspotmail.com
+>>>>>>>>
+>>>>>>>> Another hang on rtnl lock:
+>>>>>>>>
+>>>>>>>> #syz dup: INFO: task hung in netdev_run_todo
+>>>>>>>>
+>>>>>>>> May be related to "unregister_netdevice: waiting for DEV to become free":
+>>>>>>>> https://syzkaller.appspot.com/bug?id=1a97a5bd119fd97995f752819fd87840ab9479a9
+>>>>>>
+>>>>>> netdev_wait_allrefs does not hold rtnl lock during waiting, so it must
+>>>>>> be something different.
+>>>>>>
+>>>>>>
+>>>>>>>> Any other explanations for massive hangs on rtnl lock for minutes?
+>>>>>>>
+>>>>>>> To exclude the situation, when a task exists with rtnl_mutex held:
+>>>>>>>
+>>>>>>> would the pr_warn() from print_held_locks_bug() be included in the console output
+>>>>>>> if they appear?
+>>>>>>
+>>>>>> Yes, everything containing "WARNING:" is detected as bug.
+>>>>>
+>>>>> OK, then dead task not releasing the lock is excluded.
+>>>>>
+>>>>> One more assumption: someone corrupted memory around rtnl_mutex and it looks like locked.
+>>>>> (I track lockdep "(rtnl_mutex){+.+.}" prints in initial message as "nobody owns rtnl_mutex").
+>>>>> There may help a crash dump of the VM.
+>>>>
+>>>> I can't find any legend for these +'s and .'s, but {+.+.} is present
+>>>> in large amounts in just any task hung report for different mutexes,
+>>>> so I would not expect that it means corruption.
+>>>>
+>>>> Are dozens of known corruptions that syzkaller can trigger. But
+>>>> usually they are reliably caught by KASAN. If any of them would lead
+>>>> to silent memory corruption, we would got dozens of assorted crashes
+>>>> throughout the kernel. We've seen that at some points, but not
+>>>> recently. So I would assume that memory is not corrupted in all these
+>>>> cases:
+>>>> https://syzkaller.appspot.com/bug?id=2503c576cabb08d41812e732b390141f01a59545
+>>>
+>>> This BUG clarifies the {+.+.}:
+>>>
+>>> 4 locks held by kworker/0:145/381:
+>>>  #0:  ((wq_completion)"hwsim_wq"){+.+.}, at: [<000000003f9487f0>] work_static include/linux/workqueue.h:198 [inline]
+>>>  #0:  ((wq_completion)"hwsim_wq"){+.+.}, at: [<000000003f9487f0>] set_work_data kernel/workqueue.c:619 [inline]
+>>>  #0:  ((wq_completion)"hwsim_wq"){+.+.}, at: [<000000003f9487f0>] set_work_pool_and_clear_pending kernel/workqueue.c:646 [inline]
+>>>  #0:  ((wq_completion)"hwsim_wq"){+.+.}, at: [<000000003f9487f0>] process_one_work+0xb12/0x1bb0 kernel/workqueue.c:2084
+>>>  #1:  ((work_completion)(&data->destroy_work)){+.+.}, at: [<00000000bbdd2115>] process_one_work+0xb89/0x1bb0 kernel/workqueue.c:2088
+>>>  #2:  (rtnl_mutex){+.+.}, at: [<000000009c9d14f8>] rtnl_lock+0x17/0x20 net/core/rtnetlink.c:74
+>>>  #3:  (rcu_sched_state.exp_mutex){+.+.}, at: [<000000001ba1a807>] exp_funnel_lock kernel/rcu/tree_exp.h:272 [inline]
+>>>  #3:  (rcu_sched_state.exp_mutex){+.+.}, at: [<000000001ba1a807>] _synchronize_rcu_expedited.constprop.72+0x9fa/0xac0 kernel/rcu/tree_exp.h:596
+>>>
+>>> There we have rtnl_mutex locked and the {..} is like above. It's definitely locked
+>>> since there is one more lock after it.
+>>>
+>>> This BUG happen because of there are many rtnl_mutex waiters while owner
+>>> is synchronizing RCU. Rather clear for me in comparison to the topic's hung.
 >>
->> Is setup_data_interface guaranteed to be called after a failed
->> ->exec_op()/{read,write}_page()?
-> 
-> No. Maybe I misunderstood when tegra_nand_controller_reset() was
-> supposed to be called. That's something I would call only once, early
-> in the probe function, so that the controller is placed in a well-known
-> state before we start using it. Definitely not something you should
-> call after each error.
-> 
-
-Dmitry suggests to make use of it in the error handling path in case the
-command/DMA  timed out.
-
-Which makes sense in general I guess, just to make sure that the state
-is properly set. It just isn't entirely trivial to do, since state is
-setup during probe, chip detect and timing setup...
-
 >>
->> >>
->> >> That seems a lot of work for a code path I do not intend to ever use :-)
->> >>
->> >
->> > Not so sure it's a lot of work. If ECC and timing settings are the
->> > only thing you need to initialize then it should work just fine.
->> > Try with a controller reset and you'll know if you miss something ;-).
->>
->> Currently the setting gets written directly to the registers. Only the
->> enable flag is set in the HW ECC {read,write}_page() functions. So I
->> will have to store the complete register in the chip structure and write
->> them on every {read,write}_page()?
-> 
-> Well, your solution works as long as you only have one chip connected
-> to the controller. What we usually set the ECC config in
-> ->select_chip() (or at least make sure the current setting matches the
-> one we expect) and then enable the engine in read/write_page() (as you
-> seem to already do).
+>> You mean that it's not hanged, but rather needs more than 2 minutes to
+>> complete, right?
+>
+> Yeah, I think, this is possible. I've seen the situations like that.
+> Let synchronize_rcu_expedited() is executed for X seconds. Then,
+> it's need just 120/x calls of "this function under rtnl_mutex" to make
+> a soft lockup of someone else who wants the mutex too.
+>
+> Also, despite the CFS is fair scheduler, in case of the calls are
+> made from workqueue, every work will cause sleep. So, every work
+> will be executed in separate worker task. Every worker will haved its
+> own time slice. This increases the probability these tasks will
+> take cpu time before the task in the header of the hang.
 
-I did not plan to make the driver multi chip capable, as I am not aware
-of any real hardware using it.
 
-But to properly reset state, we would have to have all the chip settings
-stored somewhere...
+OK, let's stick with this theory for now. Looking at the crash frequencies here:
+https://syzkaller.appspot.com/bug?id=2503c576cabb08d41812e732b390141f01a59545
+I can actually believe that this is just flakes due to too slow execution.
 
---
-Stefan
+I've noted that we need either reduce load and/or increase timeouts:
+https://github.com/google/syzkaller/issues/516#issuecomment-395685629
+
+Let's keep duping new such reports onto "INFO: task hung in
+netdev_run_todo" so that they are all collected at a single location.
+
+Thanks for help
