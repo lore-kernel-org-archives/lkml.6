@@ -1,213 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id TukwHcomHFsOZQAAmS7hNA
-	; Sun, 10 Jun 2018 00:10:39 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id om33NEqXGlsRHAAAmS7hNA
+	; Fri, 08 Jun 2018 14:53:15 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id E5394608BA; Sun, 10 Jun 2018 00:10:38 +0000 (UTC)
+	id A5F326089E; Fri,  8 Jun 2018 14:53:15 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D32E66032D;
-	Sun, 10 Jun 2018 00:10:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D32E66032D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=interlog.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 251B8601D2;
+	Fri,  8 Jun 2018 14:53:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 251B8601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753549AbeFJAKf (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 20:10:35 -0400
-Received: from smtp.infotech.no ([82.134.31.41]:46952 "EHLO smtp.infotech.no"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753231AbeFJAKd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 20:10:33 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smtp.infotech.no (Postfix) with ESMTP id 23900204237;
-        Sun, 10 Jun 2018 02:10:31 +0200 (CEST)
-X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
-Received: from smtp.infotech.no ([127.0.0.1])
-        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id ehu1H1OXMlAl; Sun, 10 Jun 2018 02:10:28 +0200 (CEST)
-Received: from [192.168.48.23] (host-45-58-196-245.dyn.295.ca [45.58.196.245])
-        by smtp.infotech.no (Postfix) with ESMTPA id EB68220414C;
-        Sun, 10 Jun 2018 02:10:27 +0200 (CEST)
-Reply-To: dgilbert@interlog.com
-Subject: Re: sd 6:0:0:0: [sdb] Unaligned partial completion (resid=12,
- sector_sz=512)
-To: Christoph Anton Mitterer <calestyo@scientia.net>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel@vger.kernel.org,
-        linux-scsi <linux-scsi@vger.kernel.org>
-References: <c35dacb574365736229ff04d587abc0390ef7b78.camel@scientia.net>
- <f96c1329-929b-44a1-4c3a-74dbcedbbafe@infradead.org>
- <2cbab96cfb722ef8ad8f9fe6f5060226108cf033.camel@scientia.net>
-From: Douglas Gilbert <dgilbert@interlog.com>
-Message-ID: <071361b8-96c0-17cd-d1d7-61ea6357eb83@interlog.com>
-Date: Sat, 9 Jun 2018 20:10:25 -0400
+        id S1752730AbeFHOxN (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 10:53:13 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42054 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751152AbeFHOxL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 10:53:11 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AE047401EF06;
+        Fri,  8 Jun 2018 14:53:10 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (dhcp-192-212.str.redhat.com [10.33.192.212])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4CEBF1C70A;
+        Fri,  8 Jun 2018 14:53:04 +0000 (UTC)
+Subject: Re: [PATCH 04/10] x86/cet: Handle thread shadow stack
+To: Andy Lutomirski <luto@kernel.org>
+Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        mike.kravetz@oracle.com
+References: <20180607143807.3611-1-yu-cheng.yu@intel.com>
+ <20180607143807.3611-5-yu-cheng.yu@intel.com>
+ <CALCETrUqXvh2FDXe6bveP10TFpzptEyQe2=mdfZFGKU0T+NXsA@mail.gmail.com>
+ <3c1bdf85-0c52-39ed-a799-e26ac0e52391@redhat.com>
+ <CALCETrWPDXpbVcuFK_1M5DtaCOW_LSf-XHFAD0vpc735oFWLPg@mail.gmail.com>
+From: Florian Weimer <fweimer@redhat.com>
+Message-ID: <6ee29e8b-4a0a-3459-a1ee-03923ba4e15d@redhat.com>
+Date: Fri, 8 Jun 2018 16:53:03 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <2cbab96cfb722ef8ad8f9fe6f5060226108cf033.camel@scientia.net>
+In-Reply-To: <CALCETrWPDXpbVcuFK_1M5DtaCOW_LSf-XHFAD0vpc735oFWLPg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 08 Jun 2018 14:53:10 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 08 Jun 2018 14:53:10 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'fweimer@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-06-09 07:50 PM, Christoph Anton Mitterer wrote:
-> Thanks for CCing me to the right list.
-> 
-> Some further info:
-> 
-> I had two disks attached via the following USB/SATA bridge (twice the
-> same, which in turn is connected via a USB3.0 hub):
-> Jun 09 23:16:11 heisenberg kernel: usb 2-2.2: new SuperSpeed USB device number 23 using xhci_hcd
-> Jun 09 23:16:11 heisenberg kernel: usb 2-2.2: New USB device found, idVendor=174c, idProduct=55aa
-> Jun 09 23:16:11 heisenberg kernel: usb 2-2.2: New USB device strings: Mfr=2, Product=3, SerialNumber=1
-> Jun 09 23:16:11 heisenberg kernel: usb 2-2.2: Product: ASMT1053
-> Jun 09 23:16:11 heisenberg kernel: usb 2-2.2: Manufacturer: asmedia
-> Jun 09 23:16:11 heisenberg kernel: usb 2-2.2: SerialNumber: 123456789012
-> Jun 09 23:16:11 heisenberg kernel: usb 2-2.2: Device is not authorized for usage
-> Jun 09 23:16:15 heisenberg kernel: usb-storage 2-2.2:1.0: USB Mass Storage device detected
-> Jun 09 23:16:15 heisenberg kernel: usb-storage 2-2.2:1.0: Quirks match for vid 174c pid 55aa: 400000
-> Jun 09 23:16:15 heisenberg kernel: scsi host7: usb-storage 2-2.2:1.0
-> Jun 09 23:16:15 heisenberg kernel: usb 2-2.2: authorized to connect
-> Jun 09 23:16:16 heisenberg kernel: scsi 7:0:0:0: Direct-Access     ASMT     2105             0    PQ: 0 ANSI: 6
-> Jun 09 23:16:16 heisenberg kernel: sd 7:0:0:0: Attached scsi generic sg2 type 0
-> Jun 09 23:16:16 heisenberg kernel: sd 7:0:0:0: [sdc] Spinning up disk...
-> Jun 09 23:16:25 heisenberg kernel: ........ready
-> Jun 09 23:16:25 heisenberg kernel: sd 7:0:0:0: [sdc] 15628053168 512-byte logical blocks: (8.00 TB/7.28 TiB)
-> Jun 09 23:16:25 heisenberg kernel: sd 7:0:0:0: [sdc] 4096-byte physical blocks
-> Jun 09 23:16:25 heisenberg kernel: sd 7:0:0:0: [sdc] Write Protect is off
-> Jun 09 23:16:25 heisenberg kernel: sd 7:0:0:0: [sdc] Mode Sense: 43 00 00 00
-> Jun 09 23:16:25 heisenberg kernel: sd 7:0:0:0: [sdc] Write cache: enabled, read cache: enabled, doesn't support DPO or FUA
-> Jun 09 23:16:25 heisenberg kernel:  sdc: sdc1 sdc2
-> Jun 09 23:16:25 heisenberg kernel: sd 7:0:0:0: [sdc] Attached SCSI disk
-> 
-> 
-> The errors only occurred on one of the two disks... but few times when
-> I swapped the USB/SATA bridges between the two disks, because I wanted
-> to see whether it's the bridge which is faulty.
-> Since it happened with USB/SATA bridges swapped, I thought it couldn't
-> be that, but rather the HDD.
-> I tried again with the USB3.0 hub removed (and the bridges directly
-> connected to USB3.0 ports of the notebook)... and the errors still
-> appeared (on the same disk).
-> 
-> 
-> Then, they suddenly went away, and despite quite some swapping around
-> of bridges, cables, etc. ... it hasn't appeared again (though I stopped
-> copying for today some 2 hours ago).
-> 
-> Another interesting fact: While I was copying in the first place, where
-> the error occurred quite frequently,... the data must have been read
-> correctly.
-> The fs is btrfs (so there is checksumming) and in addition I have my
-> own SHA512 sums, attached as XATTRs to the files, and for those that
-> were already copied, they verified correctly.
-> 
-> 
-> So my naive assumption would be that either I have some pretty new but
-> somehow weirdly failing HDD, which sometimes shows these errors and
-> sometimes not (yet, so far, giving the correct data)... or...
-> there were some (also strange) connectivity issues (maybe something
-> with the cables?) and when I swapped things around these got finally
-> "resolved".
-> 
-> 
-> So in addition to the basic question: What would the "Unaligned partial
-> completion" mean, I wonder: Would any errors on the USB level (or
-> below) show up as the block device level errors that I've seen?
-> And what could explain that I still got the right data out? Retries
-> that succeed? ECC?
-> 
-> Or should I rather backup ASAP and throw the device with the error
-> messages away, too?
-
-Hmmm, probably yes. But before you throw it away, try running 'smartctl -a'
-(or 'smartctl -x') on it and record the output. Also try 'smartctl -t short'
-(a short self-test) on it and then re-run '-a' to see what the self-test log
-says. The disk should keep logs of the number of unrecovered read errors
-(and recovered ones as well).
-
-If the disk is only one year old, perhaps it might be covered by a warranty
-from the manufacturer.
-
-Doug Gilbert
-
-
-> On Sat, 2018-06-09 at 15:21 -0700, Randy Dunlap wrote:
->> [adding linux-scsi mailing list]
+On 06/07/2018 10:53 PM, Andy Lutomirski wrote:
+> On Thu, Jun 7, 2018 at 12:47 PM Florian Weimer <fweimer@redhat.com> wrote:
 >>
+>> On 06/07/2018 08:21 PM, Andy Lutomirski wrote:
+>>> On Thu, Jun 7, 2018 at 7:41 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+>>>>
+>>>> When fork() specifies CLONE_VM but not CLONE_VFORK, the child
+>>>> needs a separate program stack and a separate shadow stack.
+>>>> This patch handles allocation and freeing of the thread shadow
+>>>> stack.
+>>>
+>>> Aha -- you're trying to make this automatic.  I'm not convinced this
+>>> is a good idea.  The Linux kernel has a long and storied history of
+>>> enabling new hardware features in ways that are almost entirely
+>>> useless for userspace.
+>>>
+>>> Florian, do you have any thoughts on how the user/kernel interaction
+>>> for the shadow stack should work?
 >>
->> On 06/09/2018 12:23 PM, Christoph Anton Mitterer wrote:
->>> Hey.
->>>
->>> I'm seeing these errors:
->>> Jun 09 21:13:22 heisenberg kernel: sd 6:0:0:0: [sdb] Unaligned
->>> partial completion (resid=16, sector_sz=512)
->>> Jun 09 21:13:22 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 FAILED
->>> Result: hostbyte=DID_OK driverbyte=DRIVER_SENSE
->>> Jun 09 21:13:22 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 Sense
->>> Key : Medium Error [current]
->>> Jun 09 21:13:22 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 Add.
->>> Sense: Unrecovered read error
->>> Jun 09 21:13:22 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 CDB:
->>> Read(16) 88 00 00 00 00 01 cd e6 de 40 00 00 00 e0 00 00
->>> Jun 09 21:13:22 heisenberg kernel: print_req_error: critical medium
->>> error, dev sdb, sector 7749426752
->>> Jun 09 21:13:31 heisenberg kernel: sd 6:0:0:0: [sdb] Unaligned
->>> partial completion (resid=12, sector_sz=512)
->>> Jun 09 21:13:31 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 FAILED
->>> Result: hostbyte=DID_OK driverbyte=DRIVER_SENSE
->>> Jun 09 21:13:31 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 Sense
->>> Key : Medium Error [current]
->>> Jun 09 21:13:31 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 Add.
->>> Sense: Unrecovered read error
->>> Jun 09 21:13:31 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 CDB:
->>> Read(16) 88 00 00 00 00 00 00 14 59 60 00 00 01 00 00 00
->>> Jun 09 21:13:31 heisenberg kernel: print_req_error: critical medium
->>> error, dev sdb, sector 1333600
->>> Jun 09 21:13:53 heisenberg kernel: sd 6:0:0:0: [sdb] Unaligned
->>> partial completion (resid=12, sector_sz=512)
->>> Jun 09 21:13:53 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 FAILED
->>> Result: hostbyte=DID_OK driverbyte=DRIVER_SENSE
->>> Jun 09 21:13:53 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 Sense
->>> Key : Medium Error [current]
->>> Jun 09 21:13:53 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 Add.
->>> Sense: Unrecovered read error
->>> Jun 09 21:13:53 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 CDB:
->>> Read(16) 88 00 00 00 00 00 c3 a2 56 80 00 00 01 00 00 00
->>> Jun 09 21:13:53 heisenberg kernel: print_req_error: critical medium
->>> error, dev sdb, sector 3282196096
->>>
->>> (many of them) on a Seagate 8TB Archive HDD.
->>> The disk is only a year old and barely used (since it's just one of
->>> the
->>> backups of my main data disks - and the primary disk another
->>> Seagate
->>> 8TB HDD broke just few days ago).
->>>
->>> I have connected them via USB/SATA bridge... and when I now started
->>> copying from the backup (which is sdb) to a fresh HDD I started
->>> seeing
->>> vast numbers of these errors.
->>>
->>> However, fsck, cp seem to do fine, and the data (as far as it has
->>> been
->>> copied) seems good (I have sha512 sums of all of it).
->>>
->>>
->>> Any ideas what "Unaligned partial completion" and these errors
->>> mean?
->>>
->>>
->>> Thanks,
->>> Chris.
->>>
+>> I have not looked at this in detail, have not played with the emulator,
+>> and have not been privy to any discussions before these patches have
+>> been posted, however …
 >>
->>
+>> I believe that we want as little code in userspace for shadow stack
+>> management as possible.  One concern I have is that even with the code
+>> we arguably need for various kinds of stack unwinding, we might have
+>> unwittingly built a generic trampoline that leads to full CET bypass.
 > 
+> I was imagining an API like "allocate a shadow stack for the current
+> thread, fail if the current thread already has one, and turn on the
+> shadow stack".  glibc would call clone and then call this ABI pretty
+> much immediately (i.e. before making any calls from which it expects
+> to return).
+
+Ahh.  So you propose not to enable shadow stack enforcement on the new 
+thread even if it is enabled for the current thread?  For the cases 
+where CLONE_VM is involved?
+
+It will still need a new assembler wrapper which sets up the shadow 
+stack, and it's probably required to disable signals.
+
+I think it should be reasonable safe and actually implementable.  But 
+the benefits are not immediately obvious to me.
+
+> We definitely want strong enough user control that tools like CRIU can
+> continue to work.  I haven't looked at the SDM recently enough to
+> remember for sure, but I'm reasonably confident that user code can
+> learn the address of its own shadow stack.  If nothing else, CRIU
+> needs to be able to restore from a context where there's a signal on
+> the stack and the signal frame contains a shadow stack pointer.
+
+CRIU also needs the shadow stack *contents*, which shouldn't be directly 
+available to the process.  So it needs very special interfaces anyway.
+
+Does CRIU implement MPX support?
+
+Thanks,
+Florian
