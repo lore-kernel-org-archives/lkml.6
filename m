@@ -1,217 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id sA1gOmKYGlsjLAAAmS7hNA
-	; Fri, 08 Jun 2018 14:57:07 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id IUV+KwHeGVsoFAAAmS7hNA
+	; Fri, 08 Jun 2018 01:38:19 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 20C0F607E4; Fri,  8 Jun 2018 14:57:07 +0000 (UTC)
+	id CBC9E6074D; Fri,  8 Jun 2018 01:38:18 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cS+nx1af"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 6CB9B60290;
-	Fri,  8 Jun 2018 14:57:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6CB9B60290
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 4C95160290;
+	Fri,  8 Jun 2018 01:38:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4C95160290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752680AbeFHO5E convert rfc822-to-8bit (ORCPT
-        <rfc822;monsieuricon@codeaurora.org> + 25 others);
-        Fri, 8 Jun 2018 10:57:04 -0400
-Received: from mga17.intel.com ([192.55.52.151]:39451 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751141AbeFHO5C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 10:57:02 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jun 2018 07:57:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,490,1520924400";
-   d="scan'208";a="235813907"
-Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
-  by fmsmga006.fm.intel.com with ESMTP; 08 Jun 2018 07:57:01 -0700
-Received: from fmsmsx125.amr.corp.intel.com (10.18.125.40) by
- FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Fri, 8 Jun 2018 07:57:01 -0700
-Received: from shsmsx152.ccr.corp.intel.com (10.239.6.52) by
- FMSMSX125.amr.corp.intel.com (10.18.125.40) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Fri, 8 Jun 2018 07:57:01 -0700
-Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.82]) by
- SHSMSX152.ccr.corp.intel.com ([169.254.6.70]) with mapi id 14.03.0319.002;
- Fri, 8 Jun 2018 22:56:59 +0800
-From: "Kang, Luwei" <luwei.kang@intel.com>
-To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "chao.p.peng@linux.intel.com" <chao.p.peng@linux.intel.com>,
-        "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
-        "bp@suse.de" <bp@suse.de>, "Liang, Kan" <kan.liang@intel.com>,
-        "Janakarajan.Natarajan@amd.com" <Janakarajan.Natarajan@amd.com>,
-        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "david@redhat.com" <david@redhat.com>,
-        "bsd@redhat.com" <bsd@redhat.com>,
-        "yu.c.zhang@linux.intel.com" <yu.c.zhang@linux.intel.com>,
-        "joro@8bytes.org" <joro@8bytes.org>
-Subject: RE: [PATCH v9 09/12] KVM: x86: Introduce a function to initialize
- the PT configuration
-Thread-Topic: [PATCH v9 09/12] KVM: x86: Introduce a function to initialize
- the PT configuration
-Thread-Index: AQHT8XjSLLwXysx4vEGD1TmP05zIF6RUZbMAgAIkH6A=
-Date: Fri, 8 Jun 2018 14:56:58 +0000
-Message-ID: <82D7661F83C1A047AF7DC287873BF1E167FF0140@SHSMSX101.ccr.corp.intel.com>
-References: <1526964735-16566-1-git-send-email-luwei.kang@intel.com>
- <1526964735-16566-10-git-send-email-luwei.kang@intel.com>
- <20180607135648.mkciyfrd2wgvdxze@um.fi.intel.com>
-In-Reply-To: <20180607135648.mkciyfrd2wgvdxze@um.fi.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
+        id S1752674AbeFHBiQ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 21:38:16 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:36372 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752139AbeFHBiO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 21:38:14 -0400
+Received: by mail-pf0-f195.google.com with SMTP id a12-v6so5797304pfi.3
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 18:38:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=1U/liwz4F/Xy961ksalRBAfgSmg5iLR83HVgM45wYfs=;
+        b=cS+nx1afDhXhCzTzjKT/h+ckzq5+vUnKLtkkwELgNa4CMH4SeoC5tvpDliIQMVOf2k
+         9NSrXajIElo1GpcT2krvPD5vUMaHaU7zSIwWHzh6SUWQWYkgVzbr8/5OnAMVefeuRYMO
+         byYvf+iZVaJs7zHTtRBdyBX7hgsCSXD+wGc0wBL/Z2dKDuy4DXls9UxtTh1oUYTy0Czh
+         CR7TS99mdxXYq+xppmGKnTjnFJC+uYScUDabJXS48fD3Z6uc5WTTWxqzMncgdFmubROk
+         kDhKHSo82KyPPj5hdlXE7v6o3+dQDH+jX76J7LkR8UPZ6UThu86kuYHUU7vKI0yepvqM
+         cUig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=1U/liwz4F/Xy961ksalRBAfgSmg5iLR83HVgM45wYfs=;
+        b=bioho8s8E5wcF3pbgVebECMSy/3Za2PB+74RPeBp7DAekb+ZsxMBsimamyt590pmx0
+         tnNbqyCnktW9DxUG7tv3dBoNA9Xh5YdAg5uDXGTI585JB60ofhQwVfVxedkkWH2lMAcK
+         VSYGBqjL7pe085QZzCM+ScxgkgLrgSqR0Qw0uEslSyPWkJEqfX06kOlCZsGIEVJrei/B
+         /hQ7sjRFSTdkPgmXx4JE+SC2/TQdguNpg3WdO3JKJeTB50XwrNfqASLd0WlOJOtPnkP7
+         3KGn9E5ti92u7C6r0fYBZxQAOhsdmX9MzguKUbhNtd+hliIpYc0jnu0wLayQYR/0mcHj
+         nWnQ==
+X-Gm-Message-State: APt69E2ZUo1BvCaflpNs8o5OKo2OYQIaOCrNJ/c5ZXI2+OZAxmz7Z9wu
+        1iSV4eLRxemhW6z9J07bvWN4BkLomgM=
+X-Google-Smtp-Source: ADUXVKK7tcBYy4hHA1lQNaogjgxhhsoDG+EVZ2uqnfYiwsfblInhFY+Pt2q/IJ1PeUX7E9i1pLGuGw==
+X-Received: by 2002:a63:6647:: with SMTP id a68-v6mr1687924pgc.82.1528421893993;
+        Thu, 07 Jun 2018 18:38:13 -0700 (PDT)
+Received: from shakeelb.mtv.corp.google.com ([2620:15c:2cb:201:3a5f:3a4f:fa44:6b63])
+        by smtp.gmail.com with ESMTPSA id j19-v6sm11971449pfi.84.2018.06.07.18.38.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Jun 2018 18:38:12 -0700 (PDT)
+From: Shakeel Butt <shakeelb@google.com>
+To: Jan Kara <jack@suse.com>
+Cc: Greg Thelen <gthelen@google.com>, linux-kernel@vger.kernel.org,
+        Shakeel Butt <shakeelb@google.com>
+Subject: [PATCH] fs: reclaim least recently used dquots
+Date: Thu,  7 Jun 2018 18:37:59 -0700
+Message-Id: <20180608013759.46315-1-shakeelb@google.com>
+X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a-goog
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Tue, May 22, 2018 at 12:52:12PM +0800, Luwei Kang wrote:
-> > Initialize the Intel PT configuration when cpuid update.
-> 
-> Is it the CPUID configuration? Is it the MSR configuration? Is it both?
-> Kind of looks like both. Not sure what is the cpuid update, though.
-> 
-> > Include cpuid inforamtion, rtit_ctl bit mask and the number of address
-> > ranges.
-> >
-> > Signed-off-by: Luwei Kang <luwei.kang@intel.com>
-> > ---
-> >  arch/x86/kvm/vmx.c | 70
-> > ++++++++++++++++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 70 insertions(+)
-> >
-> > diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c index
-> > 11fb90a..952ddf4 100644
-> > --- a/arch/x86/kvm/vmx.c
-> > +++ b/arch/x86/kvm/vmx.c
-> > @@ -10411,6 +10411,72 @@ static void
-> > nested_vmx_cr_fixed1_bits_update(struct kvm_vcpu *vcpu)  #undef
-> > cr4_fixed1_update  }
-> >
-> > +static void update_intel_pt_cfg(struct kvm_vcpu *vcpu) {
-> > +	struct vcpu_vmx *vmx = to_vmx(vcpu);
-> > +	struct kvm_cpuid_entry2 *best = NULL;
-> > +	int i;
-> > +
-> > +	for (i = 0; i < PT_CPUID_LEAVES; i++) {
-> > +		best = kvm_find_cpuid_entry(vcpu, 0x14, i);
-> > +		if (!best)
-> > +			return;
-> > +		vmx->pt_desc.caps[CPUID_EAX + i*PT_CPUID_REGS_NUM]
-> = best->eax;
-> > +		vmx->pt_desc.caps[CPUID_EBX + i*PT_CPUID_REGS_NUM]
-> = best->ebx;
-> > +		vmx->pt_desc.caps[CPUID_ECX + i*PT_CPUID_REGS_NUM]
-> = best->ecx;
-> > +		vmx->pt_desc.caps[CPUID_EDX + i*PT_CPUID_REGS_NUM]
-> = best->edx;
-> > +	}
-> > +
-> > +	/* Get the number of configurable Address Ranges for filtering */
-> > +	vmx->pt_desc.addr_range = pt_cap_decode(vmx->pt_desc.caps,
-> > +
-> 	PT_CAP_num_address_ranges);
-> > +
-> > +	/* Initialize and clear the no dependency bits */
-> > +	vmx->pt_desc.ctl_bitmask = ~0ULL;
-> 
-> This looks redundant, doesn't it?
+From: Greg Thelen <gthelen@google.com>
 
-This is a bit mask for RTIT_CTL MSR and it will make & with the value of RTIT_CLT from guest.
-The reserved bits will be 1 in this bit mask and the setable  bits are 0.
+The dquots in the free_dquots list are not reclaimed in LRU way.
+put_dquot_last() puts entries to the tail and dqcache_shrink_scan()
+frees from the tail. Free unreferenced dquots in LRU order because it
+seems more reasonable than freeing most recently used.
 
-> 
-> > +	vmx->pt_desc.ctl_bitmask = ~(RTIT_CTL_TRACEEN | RTIT_CTL_OS |
-> > +			RTIT_CTL_USR | RTIT_CTL_TSC_EN |
-> RTIT_CTL_DISRETC);
-> > +
-> > +	/* If CPUID.(EAX=14H,ECX=0):EBX[0]=1 CR3Filter can be set */
-> 
-> This comment makes it less clear than it would have been otherwise.
+Signed-off-by: Greg Thelen <gthelen@google.com>
+Signed-off-by: Shakeel Butt <shakeelb@google.com>
+---
+ fs/quota/dquot.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-What about like this?
-/* If CPUID.(EAX=14H,ECX=0):EBX[0]=1 CR3Filter can be set otherwise will inject an #GP */
-
-> 
-> > +	if (pt_cap_decode(vmx->pt_desc.caps, PT_CAP_cr3_filtering))
-> > +		vmx->pt_desc.ctl_bitmask &= ~RTIT_CTL_CR3EN;
-> > +
-> > +	/*
-> > +	 * If CPUID.(EAX=14H,ECX=0):EBX[1]=1 CYCEn, CycThresh and
-> > +	 * PSBFreq can be set
-> > +	 */
-> > +	if (pt_cap_decode(vmx->pt_desc.caps, PT_CAP_psb_cyc))
-> > +		vmx->pt_desc.ctl_bitmask &= ~(RTIT_CTL_CYCLEACC |
-> > +			RTIT_CTL_CYC_THRESH | RTIT_CTL_PSB_FREQ);
-> > +
-> > +	/*
-> > +	 * If CPUID.(EAX=14H,ECX=0):EBX[3]=1 MTCEn BranchEn and
-> > +	 * MTCFreq can be set
-> > +	 */
-> > +	if (pt_cap_decode(vmx->pt_desc.caps, PT_CAP_mtc))
-> > +		vmx->pt_desc.ctl_bitmask &= ~(RTIT_CTL_MTC_EN |
-> > +			RTIT_CTL_BRANCH_EN | RTIT_CTL_MTC_RANGE);
-> > +
-> > +	/* If CPUID.(EAX=14H,ECX=0):EBX[4]=1 FUPonPTW and PTWEn can
-> be set */
-> > +	if (pt_cap_decode(vmx->pt_desc.caps, PT_CAP_ptwrite))
-> > +		vmx->pt_desc.ctl_bitmask &= ~(RTIT_CTL_FUP_ON_PTW |
-> > +						RTIT_CTL_PTW_EN);
-> > +
-> > +	/* If CPUID.(EAX=14H,ECX=0):EBX[5]=1 PwrEvEn can be set */
-> > +	if (pt_cap_decode(vmx->pt_desc.caps,
-> PT_CAP_power_event_trace))
-> > +		vmx->pt_desc.ctl_bitmask &= ~RTIT_CTL_PWR_EVT_EN;
-> > +
-> > +	/* If CPUID.(EAX=14H,ECX=0):ECX[0]=1 ToPA can be set */
-> > +	if (pt_cap_decode(vmx->pt_desc.caps, PT_CAP_topa_output))
-> > +		vmx->pt_desc.ctl_bitmask &= ~RTIT_CTL_TOPA;
-> 
-> If you want to be thorough, there's also PT_CAP_single_range_output,
-> which tells us if RTIT_CTL_TOPA can be *unset*. Otherwise it's required.
-
-Following the description in SDM, the default value of this bit (RTIT_CTL.ToPA) is 0. So I think we don't need to touch this bit when TOPA is not supported.
-
-> 
-> > +	/* If CPUID.(EAX=14H,ECX=0):ECX[3]=1 FabircEn can be set */
-> > +	if (pt_cap_decode(vmx->pt_desc.caps, PT_CAP_output_subsys))
-> > +		vmx->pt_desc.ctl_bitmask &= ~RTIT_CTL_FABRIC_EN;
-> 
-> Are we sure we want to virtualize this and that it's safe?
-
-It depend on the CPUID information virtualization in guest. I think it can works (e.g. we can pass through the PCI card to guest and stream the trace to a MMIO address).
-
-> 
-> > +
-> > +	/* unmask address range configure area */
-> > +	for (i = 0; i < vmx->pt_desc.addr_range; i++)
-> > +		vmx->pt_desc.ctl_bitmask &= ~(0xf << (32 + i * 4));
-> 
-> So, the ctl_bitmask is all the bits that are not allowed?
-
-Yes, you are right.
-
-Thanks,
-Luwei Kang
+diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+index d88231e3b2be..241b00f835b9 100644
+--- a/fs/quota/dquot.c
++++ b/fs/quota/dquot.c
+@@ -716,7 +716,7 @@ dqcache_shrink_scan(struct shrinker *shrink, struct shrink_control *sc)
+ 	unsigned long freed = 0;
+ 
+ 	spin_lock(&dq_list_lock);
+-	head = free_dquots.prev;
++	head = free_dquots.next;
+ 	while (head != &free_dquots && sc->nr_to_scan) {
+ 		dquot = list_entry(head, struct dquot, dq_free);
+ 		remove_dquot_hash(dquot);
+@@ -725,7 +725,7 @@ dqcache_shrink_scan(struct shrinker *shrink, struct shrink_control *sc)
+ 		do_destroy_dquot(dquot);
+ 		sc->nr_to_scan--;
+ 		freed++;
+-		head = free_dquots.prev;
++		head = free_dquots.next;
+ 	}
+ 	spin_unlock(&dq_list_lock);
+ 	return freed;
+-- 
+2.18.0.rc1.242.g61856ae69a-goog
