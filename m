@@ -1,104 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id cw4iOpI/GVtTXAAAmS7hNA
-	; Thu, 07 Jun 2018 14:22:11 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id b/H0GylkGlumIQAAmS7hNA
+	; Fri, 08 Jun 2018 11:11:04 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id DDEDD608BF; Thu,  7 Jun 2018 14:22:10 +0000 (UTC)
+	id 88086608B8; Fri,  8 Jun 2018 11:11:04 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eXQqx4va"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,FROM_EXCESS_BASE64,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 559DF6063F;
-	Thu,  7 Jun 2018 14:22:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 559DF6063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id F270A605A5;
+	Fri,  8 Jun 2018 11:11:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F270A605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933624AbeFGOWI (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:22:08 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39429 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933068AbeFGOJK (ORCPT
+        id S1752152AbeFHLLC (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 07:11:02 -0400
+Received: from mail-wr0-f173.google.com ([209.85.128.173]:46014 "EHLO
+        mail-wr0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751154AbeFHLLA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:09:10 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbA-0005Zo-Ju; Thu, 07 Jun 2018 15:09:08 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb7-00032y-83; Thu, 07 Jun 2018 15:09:05 +0100
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 8 Jun 2018 07:11:00 -0400
+Received: by mail-wr0-f173.google.com with SMTP id o12-v6so12956255wrm.12;
+        Fri, 08 Jun 2018 04:10:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :content-transfer-encoding:user-agent;
+        bh=Y5jdx0IWvaegn9iqEdmgZfEbQV5BOnpbYbUzTBsWm7w=;
+        b=eXQqx4vamKJ3R01KIG+0Q5/L55veMjviwD/m//vGjD04uFeHwt75dg/L5+rA4dCOaF
+         vrTr5E1JO6T30BpQghAk+vDiKi/51L4eh+/0kumAiorWSHemlh6CfPxQLlKgcdc2Q2Ld
+         hed9ZuaLoHjUXSePLLsvt/gUl5n9assHt2g5MNu0bHE1EH8ziG6kaaFa4UvHo7Q0oweh
+         r+4hQ4dfMX5dpghx354WpJLusDECcwYiu413DQ4Da534ltn4LhRstMktkiMjAfcUrF0V
+         aDeKiPCtKmiG3I1dXYwbuqJtc9k0B+eQVbo+Y1kj2n2uMZH4oSJR4iI1iRgnldH0sx3X
+         uaxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:content-transfer-encoding:user-agent;
+        bh=Y5jdx0IWvaegn9iqEdmgZfEbQV5BOnpbYbUzTBsWm7w=;
+        b=k7dNm5wML5nxsvSIcHUwgGs6uNJx7UK+C0mEYWHIEg+kR0LlIHeOxZWkQBfaYHvZaW
+         Mm5FWB4vTnbg3qnCn/pmrTAtO7s22B78A+Fyk36gfvg74+fmqXq371/XcPvKa9gJCQPn
+         KReZSgTwtTrBbpFj6B6kt+gyBvaRClErtinIxypTopcxnxc7NGpkx0d7jTWrCNZYfT83
+         d387pVbKa1S2KxelxSkQgT6CIGOTRwCDVHRnRA6vKjd/bNSohH47Cojc7qLAzFene7hJ
+         I07RsATSw6JsXbJPQ7CvkDOVfepaEONXcR6a0IvJ5VdpW0hjx8E+w/DU5j/AfHzLoIW2
+         0uPQ==
+X-Gm-Message-State: APt69E3ECEvADkokUEph0vzW5PY/CtXuDC/zM6jYoy0ypmv8iipQ7g3D
+        uT0UGqtiZ7aEvKWbjSFcjP4=
+X-Google-Smtp-Source: ADUXVKJAraZ3LQtU2JPY+l3PHKtY7esOdqMe3L8s2jj0VRML8ibG4rFs1+hA1lXviy98APTAqYIrog==
+X-Received: by 2002:adf:9950:: with SMTP id x74-v6mr4484109wrb.135.1528456258882;
+        Fri, 08 Jun 2018 04:10:58 -0700 (PDT)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id c131-v6sm1300934wma.41.2018.06.08.04.10.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 08 Jun 2018 04:10:58 -0700 (PDT)
+Date: Fri, 8 Jun 2018 13:10:57 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To: Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
+        ibm-acpi-devel@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: ThinkPad T480s & LED_MUTE, LED_MICMUTE
+Message-ID: <20180608111057.4wxpg7m7nm7suf6n@pali>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        syzbot+f7b556d1766502a69d85071d2ff08bd87be53d0f@syzkaller.appspotmail.com,
-        "Eric Biggers" <ebiggers@google.com>, "Tejun Heo" <tj@kernel.org>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.992094030@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 229/410] libata: remove WARN() for DMA or PIO command
- without data
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+Hi! With up-to-date thinkpad_acpi.ko driver on ThinkPad T480s I'm seeing
+a strange behavior of LEDs which are integrated into mic mute (Fn+F4)
+and mute (Fn+F1) keys.
 
-------------------
+When thinkpad_acpi.ko is not loaded, then mute key is working fine. When
+pressed, it correctly generates KEY_MUTE on AT Translated Set 2 keyboard
+input device and also turn on/of mute led. But when micmute key is
+pressed then, nothing happen. No key event is reported and also led is
+not turned on/off.
 
-From: Eric Biggers <ebiggers@google.com>
+On the other hand, when thinkpad_acpi.ko is loaded, then both buttons
+mute and micmute correctly generates input events; mute via AT keyboard
+and micmute via ThinkPad Extra Buttons. But led is not changed. When
+thinkpad_acpi.ko is loaded it turn off both leds (mute and micmute) and
+leds after pressing any of those buttons, leds are not turned on again.
 
-commit 9173e5e80729c8434b8d27531527c5245f4a5594 upstream.
+When thinkpad_acpi.ko is unloaded, then pressing mute button again start
+switching led on/off.
 
-syzkaller hit a WARN() in ata_qc_issue() when writing to /dev/sg0.  This
-happened because it issued a READ_6 command with no data buffer.
+So it seems that some init sequence of thinkpad_acpi.ko breaks mute led.
+And fini sequence of thinkpad_acpi.ko makes mute led working again.
 
-Just remove the WARN(), as it doesn't appear indicate a kernel bug.  The
-expected behavior is to fail the command, which the code does.
-
-Here's a reproducer that works in QEMU when /dev/sg0 refers to a disk of
-the default type ("82371SB PIIX3 IDE"):
-
-    #include <fcntl.h>
-    #include <unistd.h>
-
-    int main()
-    {
-            char buf[42] = { [36] = 0x8 /* READ_6 */ };
-
-            write(open("/dev/sg0", O_RDWR), buf, sizeof(buf));
-    }
-
-Fixes: f92a26365a72 ("libata: change ATA_QCFLAG_DMAMAP semantics")
-Reported-by: syzbot+f7b556d1766502a69d85071d2ff08bd87be53d0f@syzkaller.appspotmail.com
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- drivers/ata/libata-core.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -5139,8 +5139,7 @@ void ata_qc_issue(struct ata_queued_cmd
- 	 * We guarantee to LLDs that they will have at least one
- 	 * non-zero sg if the command is a data command.
- 	 */
--	if (WARN_ON_ONCE(ata_is_data(prot) &&
--			 (!qc->sg || !qc->n_elem || !qc->nbytes)))
-+	if (ata_is_data(prot) && (!qc->sg || !qc->n_elem || !qc->nbytes))
- 		goto sys_err;
- 
- 	if (ata_is_dma(prot) || (ata_is_pio(prot) &&
+-- 
+Pali Rohár
+pali.rohar@gmail.com
