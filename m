@@ -1,170 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id OTlmCtJ3GVs2LQAAmS7hNA
-	; Thu, 07 Jun 2018 18:23:08 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id rra3AQ0/Glv9SgAAmS7hNA
+	; Fri, 08 Jun 2018 08:32:13 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id BC1F56089E; Thu,  7 Jun 2018 18:23:08 +0000 (UTC)
+	id E8AA8607E4; Fri,  8 Jun 2018 08:32:12 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 3C12F60290;
-	Thu,  7 Jun 2018 18:23:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3C12F60290
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 6A36F601C3;
+	Fri,  8 Jun 2018 08:32:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6A36F601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935775AbeFGSXF (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 14:23:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51481 "EHLO mx2.suse.de"
+        id S1753031AbeFHIcJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 04:32:09 -0400
+Received: from mga06.intel.com ([134.134.136.31]:57721 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932775AbeFGSXC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 14:23:02 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 225B9AD73;
-        Thu,  7 Jun 2018 18:23:00 +0000 (UTC)
-Date: Thu, 7 Jun 2018 20:22:56 +0200
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Martijn Coenen <maco@android.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Vikram Mulukutla <markivx@codeaurora.org>,
-        Arve Hj?nnev?g <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-security-module@vger.kernel.org,
-        Chris Wright <chrisw@sous-sol.org>,
-        David Howells <dhowells@redhat.com>,
-        Alan Cox <alan@linux.intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        platform-driver-x86@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Jones <pjones@redhat.com>,
-        Dave Olsthoorn <dave@bewaar.me>,
-        Will Deacon <will.deacon@arm.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Josh Triplett <josh@joshtriplett.org>,
-        dmitry.torokhov@gmail.com, mfuzzey@parkeon.com,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Arend Van Spriel <arend.vanspriel@broadcom.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        nbroeking@me.com, Torsten Duwe <duwe@suse.de>, x86@kernel.org,
-        linux-efi <linux-efi@vger.kernel.org>,
-        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] efi: Add embedded peripheral firmware support
-Message-ID: <20180607182256.GE5527@wotan.suse.de>
-References: <20180423211143.GZ14440@wotan.suse.de>
- <71e6a45a-398d-b7a4-dab0-8b9936683226@redhat.com>
- <1524586021.3364.20.camel@linux.vnet.ibm.com>
- <20180424234219.GX14440@wotan.suse.de>
- <1524632409.3371.48.camel@linux.vnet.ibm.com>
- <20180425175557.GY14440@wotan.suse.de>
- <CAB0TPYGnCu+anWHBGvkaigxD--8uHQaQJ2c62kegJ7mTqvkmnA@mail.gmail.com>
- <20180508153805.GC27853@wotan.suse.de>
- <20180508161037.GE27853@wotan.suse.de>
- <20180607164950.GP510@tuxbook-pro>
+        id S1752886AbeFHIcC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 04:32:02 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jun 2018 01:32:01 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,490,1520924400";
+   d="scan'208";a="47753071"
+Received: from debian.sh.intel.com (HELO debian) ([10.67.104.203])
+  by orsmga008.jf.intel.com with ESMTP; 08 Jun 2018 01:32:00 -0700
+Date: Fri, 8 Jun 2018 16:32:13 +0800
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        wexu@redhat.com, jfreimann@redhat.com
+Subject: Re: [RFC v6 4/5] virtio_ring: add event idx support in packed ring
+Message-ID: <20180608083213.GA8512@debian>
+References: <20180605074046.20709-1-tiwei.bie@intel.com>
+ <20180605074046.20709-5-tiwei.bie@intel.com>
+ <c0621b16-3143-0bf7-f44f-3d1173577734@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180607164950.GP510@tuxbook-pro>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c0621b16-3143-0bf7-f44f-3d1173577734@redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 07, 2018 at 09:49:50AM -0700, Bjorn Andersson wrote:
-> On Tue 08 May 09:10 PDT 2018, Luis R. Rodriguez wrote:
+On Thu, Jun 07, 2018 at 05:50:32PM +0800, Jason Wang wrote:
+> On 2018年06月05日 15:40, Tiwei Bie wrote:
+> >   static bool virtqueue_enable_cb_delayed_packed(struct virtqueue *_vq)
+> >   {
+> >   	struct vring_virtqueue *vq = to_vvq(_vq);
+> > +	u16 bufs, used_idx, wrap_counter;
+> >   	START_USE(vq);
+> >   	/* We optimistically turn back on interrupts, then check if there was
+> >   	 * more to do. */
+> > +	/* Depending on the VIRTIO_RING_F_EVENT_IDX feature, we need to
+> > +	 * either clear the flags bit or point the event index at the next
+> > +	 * entry. Always update the event index to keep code simple. */
+> > +
 > 
-> > On Tue, May 08, 2018 at 03:38:05PM +0000, Luis R. Rodriguez wrote:
-> > > On Fri, May 04, 2018 at 12:44:37PM -0700, Martijn Coenen wrote:
-> > > > On Wed, Apr 25, 2018 at 10:55 AM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
-> [..]
-> > > > 2) Most of those paths are not mounted by the time the corresponding
-> > > > drivers are loaded, because pretty much all Android kernels today are
-> > > > built without module support, and therefore drivers are loaded well
-> > > > before the firmware partition is mounted
-> > 
-> > I've given this some more thought and you can address this with initramfs,
-> > this is how other Linux distributions are addressing this. One way to
-> > address this automatically is to scrape the drivers built-in or needed early on
-> > boot in initamfs and if the driver has a MODULE_FIRMWARE() its respective
-> > firmware is added to initramfs as well.
-> > 
+> Maybe for packed ring, it's time to treat event index separately to avoid a
+> virtio_wmb() for event idx is off.
+
+Okay. I'll do it.
+
 > 
-> That could be done, but it would not change the fact that the
-> /sys/class/firmware is ABI and you may not break it.
-
-Right, this is now well documented and also the latest changes to the firmware
-API have made the sysfs fallback loader an option through a sysctl knob. The
-code should be much easier to follow and test now.
-
-> And it doesn't change the fact that the ramdisk would have to be over
-> 100mb to facilitate this.
-
-Indeed, this is now acknowledged in the latest Kconfig for the firmware loader.
-
-> > If you *don't* use initramfs, then yes you can obviously run into issues
-> > where your firmware may not be accessible if the driver is somehow loaded
-> > early.
-> > 
+> > +	/* TODO: tune this threshold */
+> > +	if (vq->next_avail_idx < vq->last_used_idx)
+> > +		bufs = (vq->vring_packed.num + vq->next_avail_idx -
+> > +				vq->last_used_idx) * 3 / 4;
+> > +	else
+> > +		bufs = (vq->next_avail_idx - vq->last_used_idx) * 3 / 4;
 > 
-> This is still a problem that lacks a solution.
-
-The firmwared solution capturing uevents and using the sysfs fallback
-mechanism should resolve this. Its also now properly documented on the
-firmware loader Kconfig.
-
-> > > > 3) I think we use _FALLBACK because doing this with uevents is just
-> > > > the easiest thing to do; our init code has a firmware helper that
-> > > > deals with this and searches the paths that we care about
-> > > > 
-> > > > 2) will change at some point, because Android is moving towards a
-> > > > model where device-specific peripheral drivers will be loaded as
-> > > > modules, and since those modules would likely come from the same
-> > > > partition as the firmware, it's possible that the direct load would
-> > > > succeed (depending on whether the custom path is configured there or
-> > > > not). But I don't think we can rely on the direct loader even in those
-> > > > cases, unless we could configure it with multiple custom paths.
-> > 
-> > Using initramfs will help, but because of the custom path needs -- you're
-> > right, we don't have anything for that yet, its also a bit unclear if
-> > something nice and clean can be drawn up for it. So perhaps dealing with
-> > the fallback mechanism is the way to go for this for sure, since we already
-> > have support for it.
-> > 
-> > Just keep in mind that the fallback mechanism costs you about ~13436 bytes.
-> > 
+> vq->next_avail-idx could be equal to vq->last_usd_idx when the ring is full.
+> Though virito-net is the only user now and it can guarantee this won't
+> happen. But consider this is a core API, we should make sure it can work for
+> any cases.
 > 
-> Remember that putting the firmware in the ramdisk would cost about
-> 10000x (yes, ten thousand times) more ram.
+> It looks to me that bufs is just vq->vring_packed.num - vq->num_free?
 
-Indeed, this is now documented on the Kconfig too.
+I'll try it! Thanks for the suggestion! :)
 
-> > So, if someone comes up with a clean interface for custom paths I'd love
-> > to consider it to avoid those 13436 bytes.
-> > 
 > 
-> Combined with a way of synchronizing this with the availability of the
-> firmware, this would be a nice thing!
+> > +
+> > +	wrap_counter = vq->used_wrap_counter;
+> > +
+> > +	used_idx = vq->last_used_idx + bufs;
+> > +	if (used_idx >= vq->vring_packed.num) {
+> > +		used_idx -= vq->vring_packed.num;
+> > +		wrap_counter ^= 1;
+> > +	}
+> > +
+> > +	vq->vring_packed.driver->off_wrap = cpu_to_virtio16(_vq->vdev,
+> > +			used_idx | (wrap_counter << 15));
+> >   	if (vq->event_flags_shadow == VRING_EVENT_F_DISABLE) {
+> > -		vq->event_flags_shadow = VRING_EVENT_F_ENABLE;
+> > +		/* We need to update event offset and event wrap
+> > +		 * counter first before updating event flags. */
+> > +		virtio_wmb(vq->weak_barriers);
+> > +		vq->event_flags_shadow = vq->event ? VRING_EVENT_F_DESC :
+> > +						     VRING_EVENT_F_ENABLE;
+> >   		vq->vring_packed.driver->flags = cpu_to_virtio16(_vq->vdev,
+> >   							vq->event_flags_shadow);
+> > -		/* We need to enable interrupts first before re-checking
+> > -		 * for more used buffers. */
+> > -		virtio_mb(vq->weak_barriers);
+> >   	}
+> > +	/* We need to update event suppression structure first
+> > +	 * before re-checking for more used buffers. */
+> > +	virtio_mb(vq->weak_barriers);
+> > +
+> >   	if (more_used_packed(vq)) {
+> >   		END_USE(vq);
+> >   		return false;
+> 
+> I think what we need to to make sure the descriptor used_idx is used?
+> Otherwise we may stop and restart qdisc too frequently?
 
-The firmwared solution seems to be the way to go for now.
+Good catch! Yeah. It's not the best choice to check the
+descriptor at last_used_idx. I'll try to fix this!
 
-  Luis
+Best regards,
+Tiwei Bie
+
+> 
+> Thanks
+> 
+> > -- 
+> 
