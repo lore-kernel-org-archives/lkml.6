@@ -1,163 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id dj9FDPeYGVv7CQAAmS7hNA
-	; Thu, 07 Jun 2018 20:43:35 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Ng2jDyd+Glu7IgAAmS7hNA
+	; Fri, 08 Jun 2018 13:01:27 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id DD77A6074D; Thu,  7 Jun 2018 20:43:34 +0000 (UTC)
+	id 22BD1607E4; Fri,  8 Jun 2018 13:01:27 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b/ncoeyY"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id AD995608C9;
-	Thu,  7 Jun 2018 20:43:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AD995608C9
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 99D71607A4;
+	Fri,  8 Jun 2018 13:01:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 99D71607A4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932582AbeFGUna (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 16:43:30 -0400
-Received: from mga09.intel.com ([134.134.136.24]:55802 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750892AbeFGUn2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 16:43:28 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 13:43:28 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,488,1520924400";
-   d="scan'208";a="47626651"
-Received: from 2b52.sc.intel.com (HELO [143.183.136.51]) ([143.183.136.51])
-  by orsmga008.jf.intel.com with ESMTP; 07 Jun 2018 13:43:27 -0700
-Message-ID: <1528404016.5646.0.camel@2b52.sc.intel.com>
-Subject: Re: [PATCH 05/10] x86/cet: ELF header parsing of Control Flow
- Enforcement
-From: Yu-cheng Yu <yu-cheng.yu@intel.com>
-To: Andy Lutomirski <luto@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. J. Lu" <hjl.tools@gmail.com>,
-        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        mike.kravetz@oracle.com
-Date: Thu, 07 Jun 2018 13:40:16 -0700
-In-Reply-To: <CALCETrVyGdWnU1B5vZK4QP2TGVjTCg5wsPX8iAQRGzpcGNGr5g@mail.gmail.com>
-References: <20180607143807.3611-1-yu-cheng.yu@intel.com>
-         <20180607143807.3611-6-yu-cheng.yu@intel.com>
-         <CALCETrVyGdWnU1B5vZK4QP2TGVjTCg5wsPX8iAQRGzpcGNGr5g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1752739AbeFHNBY (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 09:01:24 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:39201 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751121AbeFHNBX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 09:01:23 -0400
+Received: by mail-wm0-f65.google.com with SMTP id p11-v6so3572295wmc.4
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 06:01:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=uTSb9cByM8YYk/fN/4PH+wGvVztNDaXvvav89susguk=;
+        b=b/ncoeyY1W7JWbJvFa07mM/eStfNaXlNVCNj0fryp6fl/KSGDKoxP+Le5F8jj1Zrol
+         IR9qhRjvpfrcJP9wslttoGFz2PTrrmmtzKnKDx36TUOLH6v5XynirTfVunNiGg9ygZwV
+         jwMQpPBQmkazTm15ilWVCLlKkkuf0AnRtfCawI+QqVX1pAQQIhjBH6eYVOMPwR+DJ1RZ
+         r3lxnD6gSH9sXDDzOsFuJBU6OVq77FdOU1XRKh7zjBCANkLZtbHxaPWS36Log4MEOpi0
+         s7/gYJHJy0YTRzS56ZMhNPCJOtIOc5Bbc52HrfI0kTKHXIvrKLf7TMwaWgoyryTwAGFW
+         Lczg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=uTSb9cByM8YYk/fN/4PH+wGvVztNDaXvvav89susguk=;
+        b=iyWmsq5UYmfy2cw1WWjg13nsuchsGKYLFZnlZz/Lbj4CdmIvlg5LAWVSbKhAPZI3fM
+         9YdHNMq/Lqn6R/PtC679IgJzNhECk5c26uwty50ObP/sHRWDSUzChD/1hnjg5NVswTwH
+         yzaWz9WFyK0oDTO2+6jD0rN45hNwgg0gJMXNbzr8+gQ40pBYr6PpYoKRndMKEtN3bPX1
+         lcPGHARYN/p8mUdszhxE1gNJuTA4w89SrwggZO3HVYr08S0wuCEN9ltufB8tvh5ooWez
+         U3koIPl09t5uF3ci8CBPWRHOXrpUnqiN6TDGr4+7gSPRMj9Owo/p/8VECTlysLKK1JiI
+         00cw==
+X-Gm-Message-State: APt69E3wD8fpKgxrzFmEMcszruxtOD2nDMbr+ZL590mfRd54j4kxMKoJ
+        kPFDCzoBiTRR0p4kg1k0kXA=
+X-Google-Smtp-Source: ADUXVKLRSdRjX4syc1Anx3PhNAUu9qpYIIPxoZyiVi07sUj1m0pNgXM0MTUECyZGN1hpt0vLRA+CjQ==
+X-Received: by 2002:a1c:64d7:: with SMTP id y206-v6mr1504731wmb.43.1528462882003;
+        Fri, 08 Jun 2018 06:01:22 -0700 (PDT)
+Received: from linux-08lc (host86-190-130-185.range86-190.btcentralplus.com. [86.190.130.185])
+        by smtp.gmail.com with ESMTPSA id u108-v6sm77862841wrc.40.2018.06.08.06.01.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 08 Jun 2018 06:01:20 -0700 (PDT)
+Date: Fri, 8 Jun 2018 14:01:29 +0100
+From: John Whitmore <arigead@gmail.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: John Whitmore <johnfwhitmore@gmail.com>,
+        linux-kernel@vger.kernel.org, kstewart@linuxfoundation.org,
+        devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
+        colin.king@canonical.com, tglx@linutronix.de
+Subject: Re: [PATCH v6 8/8] staging: rtl8192e: remove unnecessary parentheses
+ - Coding Style
+Message-ID: <20180608130127.koojqozbasmef2gd@linux-08lc>
+References: <20180606114003.22654-1-johnfwhitmore@gmail.com>
+ <20180606114003.22654-9-johnfwhitmore@gmail.com>
+ <20180608121851.o7m3iihg2ibbgmxh@mwanda>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180608121851.o7m3iihg2ibbgmxh@mwanda>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-06-07 at 11:38 -0700, Andy Lutomirski wrote:
-> On Thu, Jun 7, 2018 at 7:41 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
-> >
-> > Look in .note.gnu.property of an ELF file and check if shadow stack needs
-> > to be enabled for the task.
+On Fri, Jun 08, 2018 at 03:18:51PM +0300, Dan Carpenter wrote:
+> On Wed, Jun 06, 2018 at 12:40:03PM +0100, John Whitmore wrote:
+> > @@ -1072,10 +1072,10 @@ void HTInitializeHTInfo(struct ieee80211_device *ieee)
+> >  	pHTInfo->CurrentAMPDUFactor = pHTInfo->AMPDU_Factor;
+> >  
+> >  	// Initialize all of the parameters related to 11n
+> > -	memset((void *)(&(pHTInfo->SelfHTCap)), 0, sizeof(pHTInfo->SelfHTCap));
+> > -	memset((void *)(&(pHTInfo->SelfHTInfo)), 0, sizeof(pHTInfo->SelfHTInfo));
+> > -	memset((void *)(&(pHTInfo->PeerHTCapBuf)), 0, sizeof(pHTInfo->PeerHTCapBuf));
+> > -	memset((void *)(&(pHTInfo->PeerHTInfoBuf)), 0, sizeof(pHTInfo->PeerHTInfoBuf));
+> > +	memset((void *)(&pHTInfo->SelfHTCap), 0, sizeof(pHTInfo->SelfHTCap));
+> > +	memset((void *)(&pHTInfo->SelfHTInfo), 0, sizeof(pHTInfo->SelfHTInfo));
+> > +	memset((void *)(&pHTInfo->PeerHTCapBuf), 0, sizeof(pHTInfo->PeerHTCapBuf));
+> > +	memset((void *)(&pHTInfo->PeerHTInfoBuf), 0, sizeof(pHTInfo->PeerHTInfoBuf));
 > 
-> Nice!  But please structure it so it's one function that parses out
-> all the ELF notes and some other code (a table or a switch statement)
-> that handles them.  We will probably want to add more kernel-parsed
-> ELF notes some day, so let's structure the code to make it easier.
+> You should write these like so:
 > 
-> > +static int find_cet(u8 *buf, u32 size, u32 align, int *shstk, int *ibt)
-> > +{
-> > +       unsigned long start = (unsigned long)buf;
-> > +       struct elf_note *note = (struct elf_note *)buf;
-> > +
-> > +       *shstk = 0;
-> > +       *ibt = 0;
-> > +
-> > +       /*
-> > +        * Go through the x86_note_gnu_property array pointed by
-> > +        * buf and look for shadow stack and indirect branch
-> > +        * tracking features.
-> > +        * The GNU_PROPERTY_X86_FEATURE_1_AND entry contains only
-> > +        * one u32 as data.  Do not go beyond buf_size.
-> > +        */
-> > +
-> > +       while ((unsigned long) (note + 1) - start < size) {
-> > +               /* Find the NT_GNU_PROPERTY_TYPE_0 note. */
-> > +               if (note->n_namesz == 4 &&
-> > +                   note->n_type == NT_GNU_PROPERTY_TYPE_0 &&
-> > +                   memcmp(note + 1, "GNU", 4) == 0) {
-> > +                       u8 *ptr, *ptr_end;
-> > +
-> > +                       /* Check for invalid property. */
-> > +                       if (note->n_descsz < 8 ||
-> > +                          (note->n_descsz % align) != 0)
-> > +                               return 0;
-> > +
-> > +                       /* Start and end of property array. */
-> > +                       ptr = (u8 *)(note + 1) + 4;
-> > +                       ptr_end = ptr + note->n_descsz;
+> 	memset(&pHTInfo->PeerHTInfoBuf, 0, sizeof(pHTInfo->PeerHTInfoBuf));
 > 
-> Exploitable bug here?  You haven't checked that ptr is in bounds or
-> that ptr + ptr_end is in bounds (or that ptr_end > ptr, for that
-> matter).
+> The first 7 patches look fine, but can you resend this last one?
 > 
-> > +
-> > +                       while (1) {
-> > +                               u32 type = *(u32 *)ptr;
-> > +                               u32 datasz = *(u32 *)(ptr + 4);
-> > +
-> > +                               ptr += 8;
-> > +                               if ((ptr + datasz) > ptr_end)
-> > +                                       break;
-> > +
-> > +                               if (type == GNU_PROPERTY_X86_FEATURE_1_AND &&
-> > +                                   datasz == 4) {
-> > +                                       u32 p = *(u32 *)ptr;
-> > +
-> > +                                       if (p & GNU_PROPERTY_X86_FEATURE_1_SHSTK)
-> > +                                               *shstk = 1;
-> > +                                       if (p & GNU_PROPERTY_X86_FEATURE_1_IBT)
-> > +                                               *ibt = 1;
-> > +                                       return 1;
-> > +                               }
-> > +                       }
-> > +               }
-> > +
-> > +               /*
-> > +                * Note sections like .note.ABI-tag and .note.gnu.build-id
-> > +                * are aligned to 4 bytes in 64-bit ELF objects.
-> > +                */
-> > +               note = (void *)note + ELF_NOTE_NEXT_OFFSET(note, align);
+> regards,
+> dan carpenter
 > 
-> A malicious value here will probably just break out of the while
-> statement, but it's still scary.
-> 
-> > +       }
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static int check_pt_note_segment(struct file *file,
-> > +                                unsigned long note_size, loff_t *pos,
-> > +                                u32 align, int *shstk, int *ibt)
-> > +{
-> > +       int retval;
-> > +       char *note_buf;
-> > +
-> > +       /*
-> > +        * Try to read in the whole PT_NOTE segment.
-> > +        */
-> > +       note_buf = kmalloc(note_size, GFP_KERNEL);
-> 
-> kmalloc() with fully user-controlled, unchecked size is not a good idea.
 
-I will fix these problems.  Thanks!
+I can certainly try. I've bumped it to v7 so here goes...
+
+John
