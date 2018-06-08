@@ -1,313 +1,274 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id x4NzOukUG1vaDgAAmS7hNA
-	; Fri, 08 Jun 2018 23:45:07 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id naRBBvRxGltQPQAAmS7hNA
+	; Fri, 08 Jun 2018 12:10:26 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 2D0086090B; Fri,  8 Jun 2018 23:45:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-	s=default; t=1528501507;
-	bh=X0/1GiKzpCR28Vnanq698e1V/dc7Xt7aLWgU/YBdV/k=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-	 References:List-ID:From;
-	b=FqUZSgCGI8R/VUm1S5fEXzhgb4eF/ikmFVoUwZ8Ol0wxUdYB/TQGwoL/vAY5aynb6
-	 jXzp7ME6vD7MKac1dM2UxFrpAevmKqJi2EN7MKu/ZuNI7Raf61d7/+h3Hqz+tOnmcM
-	 mA/aWxzVRqkXxZhrBeEwWosyzNeW4ghSFXzqpMBA=
+	id 4D8046089E; Fri,  8 Jun 2018 12:10:26 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mfqu9C+o"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id DA6D7608CA;
-	Fri,  8 Jun 2018 23:45:05 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="goN8zGfJ";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oEdfvcvA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DA6D7608CA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 6E457605A5;
+	Fri,  8 Jun 2018 12:10:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6E457605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753209AbeFHXoq (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 19:44:46 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33300 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753123AbeFHXon (ORCPT
+        id S1752852AbeFHMKX (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 08:10:23 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:33799 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752609AbeFHMKT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 19:44:43 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id BE870608D2; Fri,  8 Jun 2018 23:44:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528501482;
-        bh=X0/1GiKzpCR28Vnanq698e1V/dc7Xt7aLWgU/YBdV/k=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=goN8zGfJAI2EKX/FFp8KsCNYR8ArLZK5VMCrQ+Jkbgf+lLzsC2zQAGbWr/HOQW7Qp
-         pMExGNbiMaAYBlXIsmAqTJRr47aqW59HnMMTFoQOOR4TIDJ7wAWKfARw5PEZIaatFi
-         k9U85gnaDhAem+u98DjCIVkgLC6GCuzJZ9WFyusw=
-Received: from codeaurora.org (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: collinsd@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 06F08605A2;
-        Fri,  8 Jun 2018 23:44:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528501481;
-        bh=X0/1GiKzpCR28Vnanq698e1V/dc7Xt7aLWgU/YBdV/k=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=oEdfvcvAKWR9BxP96wECW0yr2zEqq3iaBYngTvLeZAVTPLimmIbHZSxvDH7gKqqLQ
-         AJOZ2eKCexcTex6gHkIwMeBBKyHI6QcmdKa6/mZAFId3Z56j/prs7PArfWLwhQRC8/
-         oMrHsShSG3uJdmnnxnpTu/FScQMUTQ9G/3lPLjOE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 06F08605A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
-From: David Collins <collinsd@codeaurora.org>
-To: broonie@kernel.org, lgirdwood@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: David Collins <collinsd@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, rnayak@codeaurora.org,
-        sboyd@kernel.org, dianders@chromium.org, mka@chromium.org
-Subject: [PATCH v7 1/2] regulator: dt-bindings: add QCOM RPMh regulator bindings
-Date: Fri,  8 Jun 2018 16:44:14 -0700
-Message-Id: <c052314645147a152bf0e6bc99bcf31f68b36a91.1528498807.git.collinsd@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <cover.1528498807.git.collinsd@codeaurora.org>
-References: <cover.1528498807.git.collinsd@codeaurora.org>
-In-Reply-To: <cover.1528498807.git.collinsd@codeaurora.org>
-References: <cover.1528498807.git.collinsd@codeaurora.org>
+        Fri, 8 Jun 2018 08:10:19 -0400
+Received: by mail-wr0-f193.google.com with SMTP id a12-v6so13170753wro.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 05:10:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=E+UXXuIxLDd2ExlgZRDY0Sm8MkqDcF4HECh9MjCADl4=;
+        b=Mfqu9C+oMzK8izfYwe5RwEWYqNAtjERs2X512exH3/fFYosiFTwNao2lFF3jYz4QFW
+         LKB4YjUNAFuOyjLIwX0i40pErQQ2xnE8w3n9vKHKqVGCNKlPy+CRvziJzudaBl9HNrmg
+         e9z0OBCPd4dD7Bq8m9aH/N1YH72y907PMLSko=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=E+UXXuIxLDd2ExlgZRDY0Sm8MkqDcF4HECh9MjCADl4=;
+        b=OWN9kVbMJfdCD/7I76KI0RckrXG0BgbD4eYxDAJGR1ip4yeVLR8NrvrfxXmkNp2QAw
+         t/SsKnI56aPnVlZvavpl0/xT4HYI1QQNk4qJY11cdzc1DLWBXhltnpTJOFOUyFWGBxLd
+         +w0eUiLBLL3BBSBQCCZB7+ATL+KO73R73N6xAtTz671QsRdtOBw70lK2vjENRpLYy9uA
+         MDDlqnZvOji1yLawy7+ltzh9vnaxI5RhlZeO9NmQgIq//JddwMoXS1q/Vbk5qlvmQzj7
+         sY/uygsseLt0aLgaEbg/jac9SFavL/7upuOgXVpGeMFscBXohq3ZdJDUv3aM2s6SN8ox
+         fMRA==
+X-Gm-Message-State: APt69E1itx9aAR5fqVGRXipAWzzhM2OkIkwoS3L0e38B4MYLD1geTzAY
+        DxCRcmqmaQ321GUc1Ukm8NxY8w==
+X-Google-Smtp-Source: ADUXVKImSEo161ZNLGBtKAVm2TbnPx2y1rECskI4gpFY/dZgE8puilrhjMXuJg/LQ/wWNw6dq5cVtw==
+X-Received: by 2002:adf:b89b:: with SMTP id i27-v6mr4592332wrf.163.1528459817717;
+        Fri, 08 Jun 2018 05:10:17 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:e0a:f:6020:6c67:7ea:9f4d:8968])
+        by smtp.gmail.com with ESMTPSA id b204-v6sm1546003wmh.22.2018.06.08.05.10.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 08 Jun 2018 05:10:17 -0700 (PDT)
+From: Vincent Guittot <vincent.guittot@linaro.org>
+To: peterz@infradead.org, mingo@kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: rjw@rjwysocki.net, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+        Morten.Rasmussen@arm.com, viresh.kumar@linaro.org,
+        valentin.schneider@arm.com, patrick.bellasi@arm.com,
+        joel@joelfernandes.org, daniel.lezcano@linaro.org,
+        quentin.perret@arm.com,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: [PATCH v6 03/11] sched/rt: add rt_rq utilization tracking
+Date: Fri,  8 Jun 2018 14:09:46 +0200
+Message-Id: <1528459794-13066-4-git-send-email-vincent.guittot@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1528459794-13066-1-git-send-email-vincent.guittot@linaro.org>
+References: <1528459794-13066-1-git-send-email-vincent.guittot@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce bindings for RPMh regulator devices found on some
-Qualcomm Technlogies, Inc. SoCs.  These devices allow a given
-processor within the SoC to make PMIC regulator requests which
-are aggregated within the RPMh hardware block along with requests
-from other processors in the SoC to determine the final PMIC
-regulator hardware state.
+schedutil governor relies on cfs_rq's util_avg to choose the OPP when cfs
+tasks are running. When the CPU is overloaded by cfs and rt tasks, cfs tasks
+are preempted by rt tasks and in this case util_avg reflects the remaining
+capacity but not what cfs want to use. In such case, schedutil can select a
+lower OPP whereas the CPU is overloaded. In order to have a more accurate
+view of the utilization of the CPU, we track the utilization of rt tasks.
 
-Signed-off-by: David Collins <collinsd@codeaurora.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+rt_rq uses rq_clock_task and cfs_rq uses cfs_rq_clock_task but they are
+the same at the root group level, so the PELT windows of the util_sum are
+aligned.
+
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 ---
- .../bindings/regulator/qcom,rpmh-regulator.txt     | 160 +++++++++++++++++++++
- .../dt-bindings/regulator/qcom,rpmh-regulator.h    |  36 +++++
- 2 files changed, 196 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
- create mode 100644 include/dt-bindings/regulator/qcom,rpmh-regulator.h
+ kernel/sched/fair.c  | 15 ++++++++++++++-
+ kernel/sched/pelt.c  | 22 ++++++++++++++++++++++
+ kernel/sched/pelt.h  |  7 +++++++
+ kernel/sched/rt.c    | 13 +++++++++++++
+ kernel/sched/sched.h |  7 +++++++
+ 5 files changed, 63 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt b/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
-new file mode 100644
-index 0000000..7ef2dbe
---- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
-@@ -0,0 +1,160 @@
-+Qualcomm Technologies, Inc. RPMh Regulators
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 6390c66..e471fae 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -7290,6 +7290,14 @@ static inline bool cfs_rq_has_blocked(struct cfs_rq *cfs_rq)
+ 	return false;
+ }
+ 
++static inline bool rt_rq_has_blocked(struct rq *rq)
++{
++	if (READ_ONCE(rq->avg_rt.util_avg))
++		return true;
 +
-+rpmh-regulator devices support PMIC regulator management via the Voltage
-+Regulator Manager (VRM) and Oscillator Buffer (XOB) RPMh accelerators.  The APPS
-+processor communicates with these hardware blocks via a Resource State
-+Coordinator (RSC) using command packets.  The VRM allows changing three
-+parameters for a given regulator: enable state, output voltage, and operating
-+mode.  The XOB allows changing only a single parameter for a given regulator:
-+its enable state.  Despite its name, the XOB is capable of controlling the
-+enable state of any PMIC peripheral.  It is used for clock buffers, low-voltage
-+switches, and LDO/SMPS regulators which have a fixed voltage and mode.
++	return false;
++}
 +
-+=======================
-+Required Node Structure
-+=======================
-+
-+RPMh regulators must be described in two levels of device nodes.  The first
-+level describes the PMIC containing the regulators and must reside within an
-+RPMh device node.  The second level describes each regulator within the PMIC
-+which is to be used on the board.  Each of these regulators maps to a single
-+RPMh resource.
-+
-+The names used for regulator nodes must match those supported by a given PMIC.
-+Supported regulator node names:
-+	PM8998:		smps1 - smps13, ldo1 - ldo28, lvs1 - lvs2
-+	PMI8998:	bob
-+	PM8005:		smps1 - smps4
-+
-+========================
-+First Level Nodes - PMIC
-+========================
-+
-+- compatible
-+	Usage:      required
-+	Value type: <string>
-+	Definition: Must be one of: "qcom,pm8998-rpmh-regulators",
-+		    "qcom,pmi8998-rpmh-regulators" or
-+		    "qcom,pm8005-rpmh-regulators".
-+
-+- qcom,pmic-id
-+	Usage:      required
-+	Value type: <string>
-+	Definition: RPMh resource name suffix used for the regulators found on
-+		    this PMIC.  Typical values: "a", "b", "c", "d", "e", "f".
-+
-+- vdd-s1-supply
-+- vdd-s2-supply
-+- vdd-s3-supply
-+- vdd-s4-supply
-+	Usage:      optional (PM8998 and PM8005 only)
-+	Value type: <phandle>
-+	Definition: phandle of the parent supply regulator of one or more of the
-+		    regulators for this PMIC.
-+
-+- vdd-s5-supply
-+- vdd-s6-supply
-+- vdd-s7-supply
-+- vdd-s8-supply
-+- vdd-s9-supply
-+- vdd-s10-supply
-+- vdd-s11-supply
-+- vdd-s12-supply
-+- vdd-s13-supply
-+- vdd-l1-l27-supply
-+- vdd-l2-l8-l17-supply
-+- vdd-l3-l11-supply
-+- vdd-l4-l5-supply
-+- vdd-l6-supply
-+- vdd-l7-l12-l14-l15-supply
-+- vdd-l9-supply
-+- vdd-l10-l23-l25-supply
-+- vdd-l13-l19-l21-supply
-+- vdd-l16-l28-supply
-+- vdd-l18-l22-supply
-+- vdd-l20-l24-supply
-+- vdd-l26-supply
-+- vin-lvs-1-2-supply
-+	Usage:      optional (PM8998 only)
-+	Value type: <phandle>
-+	Definition: phandle of the parent supply regulator of one or more of the
-+		    regulators for this PMIC.
-+
-+- vdd-bob-supply
-+	Usage:      optional (PMI8998 only)
-+	Value type: <phandle>
-+	Definition: BOB regulator parent supply phandle
-+
-+===============================
-+Second Level Nodes - Regulators
-+===============================
-+
-+- qcom,always-wait-for-ack
-+	Usage:      optional
-+	Value type: <empty>
-+	Definition: Boolean flag which indicates that the application processor
-+		    must wait for an ACK or a NACK from RPMh for every request
-+		    sent for this regulator including those which are for a
-+		    strictly lower power state.
-+
-+Other properties defined in Documentation/devicetree/bindings/regulator.txt
-+may also be used.  regulator-initial-mode and regulator-allowed-modes may be
-+specified for VRM regulators using mode values from
-+include/dt-bindings/regulator/qcom,rpmh-regulator.h.  regulator-allow-bypass
-+may be specified for BOB type regulators managed via VRM.
-+regulator-allow-set-load may be specified for LDO type regulators managed via
-+VRM.
-+
-+========
-+Examples
-+========
-+
-+#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
-+
-+&apps_rsc {
-+	pm8998-rpmh-regulators {
-+		compatible = "qcom,pm8998-rpmh-regulators";
-+		qcom,pmic-id = "a";
-+
-+		vdd-l7-l12-l14-l15-supply = <&pm8998_s5>;
-+
-+		smps2 {
-+			regulator-min-microvolt = <1100000>;
-+			regulator-max-microvolt = <1100000>;
-+		};
-+
-+		pm8998_s5: smps5 {
-+			regulator-min-microvolt = <1904000>;
-+			regulator-max-microvolt = <2040000>;
-+		};
-+
-+		ldo7 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+			regulator-allowed-modes =
-+				<RPMH_REGULATOR_MODE_LPM
-+				 RPMH_REGULATOR_MODE_HPM>;
-+			regulator-allow-set-load;
-+		};
-+
-+		lvs1 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+	};
-+
-+	pmi8998-rpmh-regulators {
-+		compatible = "qcom,pmi8998-rpmh-regulators";
-+		qcom,pmic-id = "b";
-+
-+		bob {
-+			regulator-min-microvolt = <3312000>;
-+			regulator-max-microvolt = <3600000>;
-+			regulator-allowed-modes =
-+				<RPMH_REGULATOR_MODE_AUTO
-+				 RPMH_REGULATOR_MODE_HPM>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_AUTO>;
-+		};
-+	};
-+};
-diff --git a/include/dt-bindings/regulator/qcom,rpmh-regulator.h b/include/dt-bindings/regulator/qcom,rpmh-regulator.h
-new file mode 100644
-index 0000000..86713dc
---- /dev/null
-+++ b/include/dt-bindings/regulator/qcom,rpmh-regulator.h
-@@ -0,0 +1,36 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (c) 2018, The Linux Foundation. All rights reserved. */
-+
-+#ifndef __QCOM_RPMH_REGULATOR_H
-+#define __QCOM_RPMH_REGULATOR_H
+ #ifdef CONFIG_FAIR_GROUP_SCHED
+ 
+ static inline bool cfs_rq_is_decayed(struct cfs_rq *cfs_rq)
+@@ -7349,6 +7357,10 @@ static void update_blocked_averages(int cpu)
+ 		if (cfs_rq_has_blocked(cfs_rq))
+ 			done = false;
+ 	}
++	update_rt_rq_load_avg(rq_clock_task(rq), rq, 0);
++	/* Don't need periodic decay once load/util_avg are null */
++	if (rt_rq_has_blocked(rq))
++		done = false;
+ 
+ #ifdef CONFIG_NO_HZ_COMMON
+ 	rq->last_blocked_load_update_tick = jiffies;
+@@ -7414,9 +7426,10 @@ static inline void update_blocked_averages(int cpu)
+ 	rq_lock_irqsave(rq, &rf);
+ 	update_rq_clock(rq);
+ 	update_cfs_rq_load_avg(cfs_rq_clock_task(cfs_rq), cfs_rq);
++	update_rt_rq_load_avg(rq_clock_task(rq), rq, 0);
+ #ifdef CONFIG_NO_HZ_COMMON
+ 	rq->last_blocked_load_update_tick = jiffies;
+-	if (!cfs_rq_has_blocked(cfs_rq))
++	if (!cfs_rq_has_blocked(cfs_rq) && !rt_rq_has_blocked(rq))
+ 		rq->has_blocked_load = 0;
+ #endif
+ 	rq_unlock_irqrestore(rq, &rf);
+diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
+index 4174582..81c0d7e 100644
+--- a/kernel/sched/pelt.c
++++ b/kernel/sched/pelt.c
+@@ -307,3 +307,25 @@ int __update_load_avg_cfs_rq(u64 now, int cpu, struct cfs_rq *cfs_rq)
+ 
+ 	return 0;
+ }
 +
 +/*
-+ * These mode constants may be used to specify modes for various RPMh regulator
-+ * device tree properties (e.g. regulator-initial-mode).  Each type of regulator
-+ * supports a subset of the possible modes.
++ * rt_rq:
 + *
-+ * %RPMH_REGULATOR_MODE_RET:	Retention mode in which only an extremely small
-+ *				load current is allowed.  This mode is supported
-+ *				by LDO and SMPS type regulators.
-+ * %RPMH_REGULATOR_MODE_LPM:	Low power mode in which a small load current is
-+ *				allowed.  This mode corresponds to PFM for SMPS
-+ *				and BOB type regulators.  This mode is supported
-+ *				by LDO, HFSMPS, BOB, and PMIC4 FTSMPS type
-+ *				regulators.
-+ * %RPMH_REGULATOR_MODE_AUTO:	Auto mode in which the regulator hardware
-+ *				automatically switches between LPM and HPM based
-+ *				upon the real-time load current.  This mode is
-+ *				supported by HFSMPS, BOB, and PMIC4 FTSMPS type
-+ *				regulators.
-+ * %RPMH_REGULATOR_MODE_HPM:	High power mode in which the full rated current
-+ *				of the regulator is allowed.  This mode
-+ *				corresponds to PWM for SMPS and BOB type
-+ *				regulators.  This mode is supported by all types
-+ *				of regulators.
++ *   util_sum = \Sum se->avg.util_sum but se->avg.util_sum is not tracked
++ *   util_sum = cpu_scale * load_sum
++ *   runnable_load_sum = load_sum
++ *
 + */
-+#define RPMH_REGULATOR_MODE_RET		0
-+#define RPMH_REGULATOR_MODE_LPM		1
-+#define RPMH_REGULATOR_MODE_AUTO	2
-+#define RPMH_REGULATOR_MODE_HPM		3
 +
-+#endif
++int update_rt_rq_load_avg(u64 now, struct rq *rq, int running)
++{
++	if (___update_load_sum(now, rq->cpu, &rq->avg_rt,
++				running,
++				running,
++				running)) {
++		___update_load_avg(&rq->avg_rt, 1, 1);
++		return 1;
++	}
++
++	return 0;
++}
+diff --git a/kernel/sched/pelt.h b/kernel/sched/pelt.h
+index 9cac73e..b2983b7 100644
+--- a/kernel/sched/pelt.h
++++ b/kernel/sched/pelt.h
+@@ -3,6 +3,7 @@
+ int __update_load_avg_blocked_se(u64 now, int cpu, struct sched_entity *se);
+ int __update_load_avg_se(u64 now, int cpu, struct cfs_rq *cfs_rq, struct sched_entity *se);
+ int __update_load_avg_cfs_rq(u64 now, int cpu, struct cfs_rq *cfs_rq);
++int update_rt_rq_load_avg(u64 now, struct rq *rq, int running);
+ 
+ /*
+  * When a task is dequeued, its estimated utilization should not be update if
+@@ -38,6 +39,12 @@ update_cfs_rq_load_avg(u64 now, struct cfs_rq *cfs_rq)
+ 	return 0;
+ }
+ 
++static inline int
++update_rt_rq_load_avg(u64 now, struct rq *rq, int running)
++{
++	return 0;
++}
++
+ #endif
+ 
+ 
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index ef3c4e6..e8c08a8 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -5,6 +5,8 @@
+  */
+ #include "sched.h"
+ 
++#include "pelt.h"
++
+ int sched_rr_timeslice = RR_TIMESLICE;
+ int sysctl_sched_rr_timeslice = (MSEC_PER_SEC / HZ) * RR_TIMESLICE;
+ 
+@@ -1572,6 +1574,14 @@ pick_next_task_rt(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+ 
+ 	rt_queue_push_tasks(rq);
+ 
++	/*
++	 * If prev task was rt, put_prev_task() has already updated the
++	 * utilization. We only care of the case where we start to schedule a
++	 * rt task
++	 */
++	if (rq->curr->sched_class != &rt_sched_class)
++		update_rt_rq_load_avg(rq_clock_task(rq), rq, 0);
++
+ 	return p;
+ }
+ 
+@@ -1579,6 +1589,8 @@ static void put_prev_task_rt(struct rq *rq, struct task_struct *p)
+ {
+ 	update_curr_rt(rq);
+ 
++	update_rt_rq_load_avg(rq_clock_task(rq), rq, 1);
++
+ 	/*
+ 	 * The previous task needs to be made eligible for pushing
+ 	 * if it is still active
+@@ -2308,6 +2320,7 @@ static void task_tick_rt(struct rq *rq, struct task_struct *p, int queued)
+ 	struct sched_rt_entity *rt_se = &p->rt;
+ 
+ 	update_curr_rt(rq);
++	update_rt_rq_load_avg(rq_clock_task(rq), rq, 1);
+ 
+ 	watchdog(rq, p);
+ 
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 757a3ee..7a16de9 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -592,6 +592,7 @@ struct rt_rq {
+ 	unsigned long		rt_nr_total;
+ 	int			overloaded;
+ 	struct plist_head	pushable_tasks;
++
+ #endif /* CONFIG_SMP */
+ 	int			rt_queued;
+ 
+@@ -847,6 +848,7 @@ struct rq {
+ 
+ 	u64			rt_avg;
+ 	u64			age_stamp;
++	struct sched_avg	avg_rt;
+ 	u64			idle_stamp;
+ 	u64			avg_idle;
+ 
+@@ -2205,4 +2207,9 @@ static inline unsigned long cpu_util_cfs(struct rq *rq)
+ 
+ 	return util;
+ }
++
++static inline unsigned long cpu_util_rt(struct rq *rq)
++{
++	return rq->avg_rt.util_avg;
++}
+ #endif
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
