@@ -1,243 +1,834 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id zfuTAf03GFtoXwAAmS7hNA
-	; Wed, 06 Jun 2018 19:38:15 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id zgbnKGQVGlu5bwAAmS7hNA
+	; Fri, 08 Jun 2018 05:46:05 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 2A31F608B8; Wed,  6 Jun 2018 19:38:15 +0000 (UTC)
+	id 16C5D607E4; Fri,  8 Jun 2018 05:46:05 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fHoGxvl7"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="FYYDfH6S"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=2.0 tests=BAYES_00,DATE_IN_FUTURE_06_12,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 8DCAA607F7;
-	Wed,  6 Jun 2018 19:38:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8DCAA607F7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 726E060275;
+	Fri,  8 Jun 2018 05:46:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 726E060275
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752609AbeFFTiN (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 15:38:13 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:43681 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752517AbeFFTiK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 15:38:10 -0400
-Received: by mail-qt0-f196.google.com with SMTP id y89-v6so7646446qtd.10;
-        Wed, 06 Jun 2018 12:38:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=lmXqksawfcVlUptD0kz6x4A07KLDvEUWZSXqhUK3zaA=;
-        b=fHoGxvl7yTLMAD/eVuAkkwvRg2RyF3Zl62JW+tteLRJNj2pFp3IZmXGfjRoZzGDDzw
-         XT2scvdzf1QGvq4bmRAWS1wbceEYPZDJ2RKxDlW8F//zt95fEBNduP3QzRT7CSMptDHV
-         d/1XqhuaqU9DNTFbH8FUG/2dq3SGoMLbINl4UX8BgCAHbcvqtolq6QnokImJ9OcbK1jK
-         ZNVcLhWmBjRZKpuJVHIQECL0j7/DGd9EDcBsFLPRgn4CNoxnWUDOShcwp/bKb/mcuGoj
-         I2hKTAtmV/d6JBs6AFsFXpy/86Fs1dp4eVHX9wqic8KiEn5zUBOnrrWPk2ZGeBBf3Kgj
-         lA3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=lmXqksawfcVlUptD0kz6x4A07KLDvEUWZSXqhUK3zaA=;
-        b=bPyixWMxbCljPL57VF8Lc0EAxSLKItOcviPP/6wXmWN4fCMvfgFQRnjsmBFEo7K2Cg
-         3TTayY6hcvApKB4d1TYEkXLfA8LX/uR7uI+r8WbAd8YF3rEk/x7hCkRwuqV7YJQPgVzF
-         et53b2IA00Tin/dHtHyxDMqtcd1M953PWPtU02zSVF4OTPauploHb5iCStiLUsXbg/NH
-         705Dj4QW8MwCJAMsqETUG1QjIhi9kMmnaTVtvLXWQz7fiXtO+Vx3qkuHs3k9nOOXZEDq
-         TYGabHxbMpsRgoehJt4vwR+1i8ofnn4tmnXDCkedJaU9AH0lYko16CpDfeRIjwDXkkUi
-         38hA==
-X-Gm-Message-State: APt69E1stD+MyCeYKq5kkNaI+7fTy4/C1oDCvB+xikDt9/0xUeu/9bPb
-        niAtYG0Dn2EMfy/TGsJ9FSM=
-X-Google-Smtp-Source: ADUXVKK8o2Sy5yk+4oepjvwOeideACXNwP9EaZ/nAmmurxMxCMzx2Ltzq9e9WY2G97zX9VJ1aGgMXQ==
-X-Received: by 2002:a0c:e28a:: with SMTP id r10-v6mr3978350qvl.172.1528313889227;
-        Wed, 06 Jun 2018 12:38:09 -0700 (PDT)
-Received: from [10.69.41.93] ([192.19.223.250])
-        by smtp.googlemail.com with ESMTPSA id 34-v6sm16022989qtt.76.2018.06.06.12.38.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 06 Jun 2018 12:38:08 -0700 (PDT)
-Subject: Re: [PATCH v4 2/3] arm: shmobile: Add the R9A06G032 SMP enabler
- driver
-To: Frank Rowand <frowand.list@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>
-Cc: Michel Pollet <buserror+upstream@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Douglas Anderson <dianders@chromium.org>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Carlo Caione <carlo@endlessm.com>,
-        =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
-        Frank Rowand <frank.rowand@sony.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-References: <1528198148-23308-1-git-send-email-michel.pollet@bp.renesas.com>
- <1528198148-23308-3-git-send-email-michel.pollet@bp.renesas.com>
- <0481173f-6384-98d6-707c-89dc5ef103f0@gmail.com>
- <OSBPR01MB2054E3A1E383495F3534B551D2650@OSBPR01MB2054.jpnprd01.prod.outlook.com>
- <bbbd287c-437e-d7bd-d40f-6bb914d96860@gmail.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <7e49c265-e332-29c5-5d91-4b5d5da6cb37@gmail.com>
-Date: Wed, 6 Jun 2018 12:37:58 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1751500AbeFHFp5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 01:45:57 -0400
+Received: from mail-db5eur01on0067.outbound.protection.outlook.com ([104.47.2.67]:28736
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751116AbeFHFpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 01:45:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HUbjUmXz/Do8HhTTs/JDxWEXXkbyr24ZUCQqCntohlE=;
+ b=FYYDfH6S2YXdSO3XjScQ2LdxDPa+AxR90Btb3Ka0EoPamYDTRuKdqPNErmepNe2gVT3f9/GvhY39lj25BgbNcy1ltxRfo0oUWg01T1Rj8tiamcKRzEogNhyt4Mj18NpCUOeQF0+CzyF8aWlkClP31WcOiZK0SvK+olLEBabbitc=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=yibin.gong@nxp.com;
+Received: from robin-OptiPlex-790.ap.freescale.net (119.31.174.66) by
+ VI1PR04MB3232.eurprd04.prod.outlook.com (2603:10a6:802:6::29) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.820.14; Fri, 8 Jun 2018 05:45:43 +0000
+From: Robin Gong <yibin.gong@nxp.com>
+To: vkoul@kernel.org, s.hauer@pengutronix.de, dan.j.williams@intel.com
+Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com
+Subject: [PATCH v2 1/5] dmaengine: imx-sdma: add virt-dma support
+Date: Fri,  8 Jun 2018 21:44:46 +0800
+Message-Id: <1528465490-19684-2-git-send-email-yibin.gong@nxp.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1528465490-19684-1-git-send-email-yibin.gong@nxp.com>
+References: <1528465490-19684-1-git-send-email-yibin.gong@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <bbbd287c-437e-d7bd-d40f-6bb914d96860@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [119.31.174.66]
+X-ClientProxiedBy: HK2PR0401CA0014.apcprd04.prod.outlook.com
+ (2603:1096:202:2::24) To VI1PR04MB3232.eurprd04.prod.outlook.com
+ (2603:10a6:802:6::29)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB3232;
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB3232;3:ingMeTGU/qA+lNEeyiqGTmBu4FPB6E4/AQyXpVwETQscY1feyAxdqeGpRjgMKisRuvx8l5sPZaIPtiCXGNCESlBXumiizpNGzcyRYw+QU8lpRPQ2HPgLbW4udxC0hna/6ir2vLc6+xdQfBjoNepk2mL6oIUXQSrnUDJPs6KD6sKjndQt2npskzdXHSAwn01g/pRwAhQGmczo9ZH4gqsE3YJnQivxYAgfRo79we5wAm5pwcej0cPNhDofuK9PLXnR;25:GyLKp5UNbOiR1UmdgU0DWs5x6fv5oHLeh1Q+ICN/FBvp8TnTX0ZOF/6G0oRr70Gp86bbo/igwY9ucGNmGRqVB3OBdZVnbJTwu36PO8qjREp4JzFrzdA6HUCmH4BuU1Mpg+M5xlA21d+ThQF7VMcYFKfZtkxF/2WCJF9CSmN7whtAOILQDux0M4oh4yxNeNz175tC12Rt8JppTmVTWh4fTEvWuS+IALnDezhxc93gpcbMs6EO+h9mzCAhbKOHl20Hx5piFoGNW1dsXkSz8cNIwK/rQW8hxU90ArTKCBNkJmT9vaGbynlHG1aHUMRvFZ8IgmiZDcwjhmNTaM23fMhmsA==;31:zd4MFUrUC/H1lvLwKdNb91NcIDS8urf1jGPNRf0RMt6g9PAH3B5Q5leFwYCWZEVEx7ymdGsZjHMnc4VekkZsInogeAEXLTiQ52Z+Nl8C7r6H3PxMMx6PJtIR9sCwwa1hqJIn5/IKclkuGRespws3TpeyT/lmA+QFq5QdJXbKVu+yxvf08GgWjWB1Fw82kkmBXhW7frH/FgOnJDrz9W6pfNhWBnfGYLC1z5JPjJKY0vM=
+X-MS-TrafficTypeDiagnostic: VI1PR04MB3232:
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB3232;20:TPhJcDPMXSQD9x35d5RR+mJC4NGKd5wMNc68IOL9/6REQpHbCx2f/dkAxiQuyNf4bXjqJfVLqi50vZvO+UTXr0n5AAjT5ue/cQF+oWwKhAsD2hsntp67Pr/4Dp1pk44LzQRPTwVyJD+4nyya0/HGI4qIJ4htvRrfGy32ymNxdRIj/jrpcMLADqOuUwaoYdq0u41/r+9bFGeNWpaPKdbIavCxr28us8fyb8ifEQlb1jyxAiXziNmofnYde7jpzYGHFsfbgEB0sGA+G25nrsPMh77YR0GjR8yfvEAtM/6jS5C/jczimp4JXKWt6M8mAJyOtN/bVKiAwb+EtW+V7Hvm2KFk+o7T8pFx3SGZojCxRHHwulxiakEpyZq7qpqRyPhl8E3hobAN2WQcc5sfvXY1xCGL4Td1PFj0lubgN4gAGzuGshBNFvu/sAsp6drOcDmmF0HY2jH0kLCyEyMIVlO5l2Hmnxe21z4pl6q34CbyqOGaESRGGvgvEjhDdds/FxbG;4:HCYWk/PXKaPtHrw/Px0C5RpwR9G858BnY4e23wb5ICls44rBavtbF1zJd78B7Ann7b1RkUkOgQi4999G5v6H5mU1vS22CS6JSzAkMs1oDBWqu859vN6CKnBnDiFsU3uXX+nPFpzc6lIaSsC2CX01gEW3t/cBBCtE4VJP3tjC1P5xxJNC09iLY6wNDxT8V1C8dr2iPuBokUmR9XSQM1UYvDtARd4mGILx8wSww3Bmvoh0ZznmiO72BFfQuMoSQSFCF6T2pdJZMEBAA80orYKifit6x/LPcPTbmmvzfgAI+6On7Di1RpiUcEUCbucAAxl7
+X-Microsoft-Antispam-PRVS: <VI1PR04MB32327D560054E38498727DFD897B0@VI1PR04MB3232.eurprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231254)(944501410)(52105095)(10201501046)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:VI1PR04MB3232;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB3232;
+X-Forefront-PRVS: 06973FFAD3
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(366004)(376002)(39380400002)(39860400002)(346002)(199004)(189003)(11346002)(6512007)(386003)(186003)(66066001)(48376002)(2906002)(3846002)(6116002)(68736007)(16586007)(52116002)(36756003)(97736004)(53936002)(76176011)(86362001)(25786009)(51416003)(26005)(59450400001)(316002)(4326008)(81156014)(2616005)(956004)(446003)(476003)(50226002)(486006)(575784001)(81166006)(6506007)(106356001)(7736002)(8936002)(8676002)(5660300001)(478600001)(16526019)(6486002)(47776003)(105586002)(50466002)(305945005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB3232;H:robin-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR04MB3232;23:VV0Wg8xKiKNSUZNkUy95Q1+Uti052qy6/nZebAQW2?=
+ =?us-ascii?Q?1i6ux8bhsHoOMWoU1WlTYoXM9uBST2n76NgJ1bKO/Gp4ar28KX8/wVdK//YU?=
+ =?us-ascii?Q?ZSx68ipqv0dYWmbY4tJBQ4mtAfo0GB2B1qa3eSot1HZauPeYriEMSodYtAzC?=
+ =?us-ascii?Q?/8briFuh/vRf9pxbFTUM8h+UzZIZjmtaN0/VosulKu3gdPzb74WsK9XyMmVg?=
+ =?us-ascii?Q?UtsJdTUqxCfhV+rPZtN0zF+bDmZ4uDQQ8pUKlHYQg/qe57Y/Xrw6u5oxQbqZ?=
+ =?us-ascii?Q?mcKkhTYh67sn4XQ0FNGhB3qV0s8Vj4q1ARCjRWRLAmPy406zF+rvTbsqpp1j?=
+ =?us-ascii?Q?NUDXxcf6qk5SubTWBAO4FSPBGnnVt+Hpx5vzszeKodQCFFRKfUwbsQq3XlNK?=
+ =?us-ascii?Q?NeWhhs1Vc00wxfIA+1MKExzVj1QsTlcbnT57ebES9F5r8sW6KYUdRuZX3HxA?=
+ =?us-ascii?Q?rI9n6l3mscCV1O19J6kt6BjPYRF04Gf2iaYCjnWysvCkyQkqP9qR4qizPAot?=
+ =?us-ascii?Q?mkE6uN15CW26lXGZGYO/3ZI6rD/BvIfOMDcRZvtR/AzxHHnIX1ptFCOqdqGQ?=
+ =?us-ascii?Q?MgSNvxIpdqMnCxEB+is9eHaE3b/gMKb9T7UpxU8ZuiSwqwle1q4f483ZbxcN?=
+ =?us-ascii?Q?FPGgwVf+iX96+wpycOCsRlwxaZh2TxnB3XDB9BCyXYu5aqbQSMQQR3pkd+T0?=
+ =?us-ascii?Q?ewmjAMsAGS8xAZWy/1ubF3w5haZUaCljp1NgUqTE+ZW9fvM3XkSE2pRW3S6m?=
+ =?us-ascii?Q?VksEmBfTOejidDUcQCWqCONlLJpTGvGfizCELGYL1UlLlgIn9bz8a7hTnv+G?=
+ =?us-ascii?Q?EXaIA39MFMMZisfTl/gfSLsD+Qd4X9c14h4sQ1b7SYyFb//DG1XOIkV9hB+p?=
+ =?us-ascii?Q?OzxxNa21vdjVKXb8kDXFGbRJiIwniYC6SGTU0mU7DIrqnEo9UNihD78gBmy8?=
+ =?us-ascii?Q?k9j4t+jklvZuGlKycasJxVmPJt8P8KO3PLLQxjFmnkq4E8bxVOoI2O2RtACE?=
+ =?us-ascii?Q?FqQOkjvL/Ds4a2Hf7EXakqSRp4Yk+kgyUV+TVhna9SObAi5sTV92TFx/41I9?=
+ =?us-ascii?Q?FCNM2ofvRlxpJMoFUYUKhbk6yi/IPPanZVQvRgzzjkpbE8/y+Nti6oopblNm?=
+ =?us-ascii?Q?Cqeufin3NfzyM6FxLHk1lFTeg+CtxVVvdhxbnOJqH1a2kEkgXY0hmT/exeHi?=
+ =?us-ascii?Q?C1E+gXHVhzmoV8=3D?=
+X-Microsoft-Antispam-Message-Info: peWJOssuQu6ExR4ANI7IUgTphpyp69vAMiLKlBER1WNin9WFBQ0yaLMvXBCiJVrOP0fxgm6tNIQHebZ3pwxEbZW0mKdcpPnrIgrhlWgVQ2ktf8gTewbW6HowFJtN+7AfnEUWCW6zqs93skv1q43poThcXQYaM0ak0l4NkUTsGgDaiuo0KFsJzcCthERm5nE4
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB3232;6:MOechM63uPChhJ9EIC44r8R85gTK18STnN7FUMnV36jxTp7Bzxyxb5jQmxyZbrOlBJJtLsmSwFbZsBsmuEEBqKrdAFy/wungkrRQo1RTje9STzclsMhZaYJu5KA6cjkcijjWD7KUySwYaWi5t3xV6qJFiypSt/s9Gp5JrUaZDizXbdSK6OvBgB3LX97Zm5sgzAzkPQi37jJPm2yEBH/4+WFr1vXFa1QfASn7bFY1rDwJgCT7k3FiLuGBBpbwZZr4yftFVBm+/47SLiIuLRks7k87YLqp8fw6nKiH+Eay2OQry84uvuhDTHVFfQanwaS48x6SLtMcNjfesl1q7Voxgu+Nt5OSq6AFSj8WxVq5IU1D/6xf8fwDcGBS8Y3ywRa8n8OmjijIXtdqV5CdQzUJcq1GKi0psGb74o1d9J1kzSZQK1rK+oyp2YghYw1Uh3I2GUFjqQM2589515hu1VWrzA==;5:pEqVUuAcdduPGNSt/uedPkkZTkPQR9PBx311uITxbTrvc2tEj+r80duwiZ+8pHO423YHy7IV/R/GLjq/LJh68GofpZKMKcNtrdW+ecj1UBX83QUN8yijhz3c0l0kt1lnLQwlj04q+lCnk5devmdSjFActqgvxjgIWcvcgw5Vuz0=;24:PRyBEDA4neGl9jR5BBy6yW/k5i32yEcurboRIpxvq0vVFag7NLxSSljaKNmWLUCFDZ8Jt5MLjUEjTYIM7uiIEkygtrbp52N31HSZmD0wmww=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB3232;7:gS243xfYLBrkUCgUl8r45/kq5HGiwaaXf2YGF7aOlC3MHa437+pJDto/wV+i7CEvSCIRWDi6GT6hStoIbLh+X70JNQerTK5hMK2C+J7vVxAAsOfqghQUcl9Nge+IrgsESXA9qVBuguQjXATU/toebwqfIQ03hHjYZxDS1AUClqxwjvGSOBQW3ESk415x3bgSCtXnkU94iH8ff8ONkGpeoAj72yQZYGXopz5vgs9R1TZkGpMqa0JY1TUvhybCjx6u
+X-MS-Office365-Filtering-Correlation-Id: 4d9ede44-2725-49c9-8a90-08d5cd0314c5
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jun 2018 05:45:43.6129
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4d9ede44-2725-49c9-8a90-08d5cd0314c5
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB3232
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/06/2018 12:30 PM, Frank Rowand wrote:
-> Hi Michel,
-> 
-> On 06/05/18 23:36, Michel Pollet wrote:
->> Hi Frank,
->>
->> On 05 June 2018 18:34, Frank wrote:
->>> On 06/05/18 04:28, Michel Pollet wrote:
->>>> The Renesas R9A06G032 second CA7 is parked in a ROM pen at boot time,
->>>> it requires a special enable method to get it started.
->>>>
->>>> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
->>>> ---
->>>>  arch/arm/mach-shmobile/Makefile        |  1 +
->>>>  arch/arm/mach-shmobile/smp-r9a06g032.c | 79
->>>> ++++++++++++++++++++++++++++++++++
->>>>  2 files changed, 80 insertions(+)
->>>>  create mode 100644 arch/arm/mach-shmobile/smp-r9a06g032.c
->>>>
->>>> diff --git a/arch/arm/mach-shmobile/Makefile
->>>> b/arch/arm/mach-shmobile/Makefile index 1939f52..d7fc98f 100644
->>>> --- a/arch/arm/mach-shmobile/Makefile
->>>> +++ b/arch/arm/mach-shmobile/Makefile
->>>> @@ -34,6 +34,7 @@ smp-$(CONFIG_ARCH_SH73A0)+= smp-sh73a0.o
->>> headsmp-scu.o platsmp-scu.o
->>>>  smp-$(CONFIG_ARCH_R8A7779)+= smp-r8a7779.o headsmp-scu.o
->>> platsmp-scu.o
->>>>  smp-$(CONFIG_ARCH_R8A7790)+= smp-r8a7790.o
->>>>  smp-$(CONFIG_ARCH_R8A7791)+= smp-r8a7791.o
->>>> +smp-$(CONFIG_ARCH_R9A06G032)+= smp-r9a06g032.o
->>>>  smp-$(CONFIG_ARCH_EMEV2)+= smp-emev2.o headsmp-scu.o
->>> platsmp-scu.o
->>>>
->>>>  # PM objects
->>>> diff --git a/arch/arm/mach-shmobile/smp-r9a06g032.c
->>>> b/arch/arm/mach-shmobile/smp-r9a06g032.c
->>>> new file mode 100644
->>>> index 0000000..cd40e6e
->>>> --- /dev/null
->>>> +++ b/arch/arm/mach-shmobile/smp-r9a06g032.c
->>>> @@ -0,0 +1,79 @@
->>>> +// SPDX-License-Identifier: GPL-2.0
->>>> +/*
->>>> + * R9A06G032 Second CA7 enabler.
->>>> + *
->>>> + * Copyright (C) 2018 Renesas Electronics Europe Limited
->>>> + *
->>>> + * Michel Pollet <michel.pollet@bp.renesas.com>,
->>> <buserror@gmail.com>
->>>> + * Derived from action,s500-smp
->>>> + */
->>>> +
->>>> +#include <linux/io.h>
->>>> +#include <linux/of.h>
->>>> +#include <linux/of_address.h>
->>>> +#include <linux/smp.h>
->>>> +
->>>> +/*
->>>> + * The second CPU is parked in ROM at boot time. It requires waking
->>>> +it after
->>>> + * writing an address into the BOOTADDR register of sysctrl.
->>>> + *
->>>> + * So the default value of the "cpu-release-addr" corresponds to
->>> BOOTADDR...
->>>> + *
->>>> + * *However* the BOOTADDR register is not available when the kernel
->>>> + * starts in NONSEC mode.
->>>> + *
->>>> + * So for NONSEC mode, the bootloader re-parks the second CPU into a
->>>> +pen
->>>> + * in SRAM, and changes the "cpu-release-addr" of linux's DT to a
->>>> +SRAM address,
->>>> + * which is not restricted.
->>>
->>> The binding document for cpu-release-addr does not have a definition for 32
->>> bit arm.  The existing definition is only 64 bit arm.  Please add the definition
->>> for 32 bit arm to patch 1.
->>
->> Hmmm I do find a definition in
->> Documentation/devicetree/bindings/arm/cpus.txt -- just under where I
->> added my 'enable-method' -- And it is already used as 32 bits in at least
->> arch/arm/boot/dts/stih407-family.dtsi.
-> 
-> From cpus.txt:
-> 
->         - cpu-release-addr
->                 Usage: required for systems that have an "enable-method"
->                        property value of "spin-table".
->                 Value type: <prop-encoded-array>
->                 Definition:
->                         # On ARM v8 64-bit systems must be a two cell
->                           property identifying a 64-bit zero-initialised
->                           memory location.
-> 
-> The definition specifies a two cell property for 64-bit systems.
-> 
-> Please add to the definition that cpu-release-addr is a one cell property
-> for 32-bit systems.
+The legacy sdma driver has below limitations or drawbacks:
+  1. Hardcode the max BDs number as "PAGE_SIZE / sizeof(*)", and alloc
+     one page size for one channel regardless of only few BDs needed
+     most time. But in few cases, the max PAGE_SIZE maybe not enough.
+  2. One SDMA channel can't stop immediatley once channel disabled which
+     means SDMA interrupt may come in after this channel terminated.There
+     are some patches for this corner case such as commit "2746e2c389f9",
+     but not cover non-cyclic.
 
-Or maybe phrase it such that the number of cells encoded in
-cpu-release-addr must exactly match the CPU node's #address-cells size?
+The common virt-dma overcomes the above limitations. It can alloc bd
+dynamically and free bd once this tx transfer done. No memory wasted or
+maximum limititation here, only depends on how many memory can be requested
+from kernel. For No.2, such issue can be workaround by checking if there
+is available descript("sdmac->desc") now once the unwanted interrupt
+coming. At last the common virt-dma is easier for sdma driver maintain.
+
+The main changes as below:
+  --new "sdma_desc" structure containing virt_dma_desc and some members
+    which moved from "sdma_channel" such as "num_bd","bd_phys","bd",etc,
+    since multi descriptors may exist on virtual dma framework
+    rather than only one as before.
+  --remove some members of "sdma_channel" structure since it's handled
+    by virtual dma common framework, such as "tasklet", "dma_chan",etc.
+  --add specific BD0 for channel0 since such bd descriptor is must and
+    basic for other dma channel, no need alloc/free as other channel,so
+    request it during probe.
+  --remove sdma_request_channel(),sdma_tx_submit(),etc.
+  --alloc/free bd descriptor added and code changes for virtual dma.
+
+Signed-off-by: Robin Gong <yibin.gong@nxp.com>
+---
+ drivers/dma/Kconfig    |   1 +
+ drivers/dma/imx-sdma.c | 332 ++++++++++++++++++++++++++++++++-----------------
+ 2 files changed, 220 insertions(+), 113 deletions(-)
+
+diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
+index ca1680a..d4a4230 100644
+--- a/drivers/dma/Kconfig
++++ b/drivers/dma/Kconfig
+@@ -250,6 +250,7 @@ config IMX_SDMA
+ 	tristate "i.MX SDMA support"
+ 	depends on ARCH_MXC
+ 	select DMA_ENGINE
++	select DMA_VIRTUAL_CHANNELS
+ 	help
+ 	  Support the i.MX SDMA engine. This engine is integrated into
+ 	  Freescale i.MX25/31/35/51/53/6 chips.
+diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
+index ccd03c3..8d0c1fd 100644
+--- a/drivers/dma/imx-sdma.c
++++ b/drivers/dma/imx-sdma.c
+@@ -48,6 +48,7 @@
+ #include <linux/mfd/syscon/imx6q-iomuxc-gpr.h>
+ 
+ #include "dmaengine.h"
++#include "virt-dma.h"
+ 
+ /* SDMA registers */
+ #define SDMA_H_C0PTR		0x000
+@@ -296,6 +297,31 @@ struct sdma_context_data {
+ struct sdma_engine;
+ 
+ /**
++ * struct sdma_desc - descriptor structor for one transfer
++ * @vd			descriptor for virt dma
++ * @num_bd		max NUM_BD. number of descriptors currently handling
++ * @buf_tail		ID of the buffer that was processed
++ * @buf_ptail		ID of the previous buffer that was processed
++ * @period_len		period length, used in cyclic.
++ * @chn_real_count	the real count updated from bd->mode.count
++ * @chn_count		the transfer count setuped
++ * @sdmac		sdma_channel pointer
++ * @bd			pointer of alloced bd
++ */
++struct sdma_desc {
++	struct virt_dma_desc	vd;
++	unsigned int		num_bd;
++	dma_addr_t		bd_phys;
++	unsigned int		buf_tail;
++	unsigned int		buf_ptail;
++	unsigned int		period_len;
++	unsigned int		chn_real_count;
++	unsigned int		chn_count;
++	struct sdma_channel	*sdmac;
++	struct sdma_buffer_descriptor *bd;
++};
++
++/**
+  * struct sdma_channel - housekeeping for a SDMA channel
+  *
+  * @sdma		pointer to the SDMA engine for this channel
+@@ -305,11 +331,10 @@ struct sdma_engine;
+  * @event_id0		aka dma request line
+  * @event_id1		for channels that use 2 events
+  * @word_size		peripheral access size
+- * @buf_tail		ID of the buffer that was processed
+- * @buf_ptail		ID of the previous buffer that was processed
+- * @num_bd		max NUM_BD. number of descriptors currently handling
+  */
+ struct sdma_channel {
++	struct virt_dma_chan		vc;
++	struct sdma_desc		*desc;
+ 	struct sdma_engine		*sdma;
+ 	unsigned int			channel;
+ 	enum dma_transfer_direction		direction;
+@@ -317,12 +342,6 @@ struct sdma_channel {
+ 	unsigned int			event_id0;
+ 	unsigned int			event_id1;
+ 	enum dma_slave_buswidth		word_size;
+-	unsigned int			buf_tail;
+-	unsigned int			buf_ptail;
+-	unsigned int			num_bd;
+-	unsigned int			period_len;
+-	struct sdma_buffer_descriptor	*bd;
+-	dma_addr_t			bd_phys;
+ 	unsigned int			pc_from_device, pc_to_device;
+ 	unsigned int			device_to_device;
+ 	unsigned long			flags;
+@@ -330,13 +349,10 @@ struct sdma_channel {
+ 	unsigned long			event_mask[2];
+ 	unsigned long			watermark_level;
+ 	u32				shp_addr, per_addr;
+-	struct dma_chan			chan;
+ 	spinlock_t			lock;
+-	struct dma_async_tx_descriptor	desc;
+ 	enum dma_status			status;
+ 	unsigned int			chn_count;
+ 	unsigned int			chn_real_count;
+-	struct tasklet_struct		tasklet;
+ 	struct imx_dma_data		data;
+ 	bool				enabled;
+ };
+@@ -398,6 +414,8 @@ struct sdma_engine {
+ 	u32				spba_start_addr;
+ 	u32				spba_end_addr;
+ 	unsigned int			irq;
++	dma_addr_t			bd0_phys;
++	struct sdma_buffer_descriptor	*bd0;
+ };
+ 
+ static struct sdma_driver_data sdma_imx31 = {
+@@ -632,7 +650,7 @@ static int sdma_run_channel0(struct sdma_engine *sdma)
+ static int sdma_load_script(struct sdma_engine *sdma, void *buf, int size,
+ 		u32 address)
+ {
+-	struct sdma_buffer_descriptor *bd0 = sdma->channel[0].bd;
++	struct sdma_buffer_descriptor *bd0 = sdma->bd0;
+ 	void *buf_virt;
+ 	dma_addr_t buf_phys;
+ 	int ret;
+@@ -688,6 +706,35 @@ static void sdma_event_disable(struct sdma_channel *sdmac, unsigned int event)
+ 	writel_relaxed(val, sdma->regs + chnenbl);
+ }
+ 
++static struct sdma_desc *to_sdma_desc(struct dma_async_tx_descriptor *t)
++{
++	return container_of(t, struct sdma_desc, vd.tx);
++}
++
++static void sdma_start_desc(struct sdma_channel *sdmac)
++{
++	struct virt_dma_desc *vd = vchan_next_desc(&sdmac->vc);
++	struct sdma_desc *desc;
++	struct sdma_engine *sdma = sdmac->sdma;
++	int channel = sdmac->channel;
++
++	if (!vd) {
++		sdmac->desc = NULL;
++		return;
++	}
++	sdmac->desc = desc = to_sdma_desc(&vd->tx);
++	/*
++	 * Do not delete the node in desc_issued list in cyclic mode, otherwise
++	 * the desc alloced will never be freed in vchan_dma_desc_free_list
++	 */
++	if (!(sdmac->flags & IMX_DMA_SG_LOOP))
++		list_del(&vd->node);
++
++	sdma->channel_control[channel].base_bd_ptr = desc->bd_phys;
++	sdma->channel_control[channel].current_bd_ptr = desc->bd_phys;
++	sdma_enable_channel(sdma, sdmac->channel);
++}
++
+ static void sdma_update_channel_loop(struct sdma_channel *sdmac)
+ {
+ 	struct sdma_buffer_descriptor *bd;
+@@ -706,8 +753,10 @@ static void sdma_update_channel_loop(struct sdma_channel *sdmac)
+ 	 * loop mode. Iterate over descriptors, re-setup them and
+ 	 * call callback function.
+ 	 */
+-	while (1) {
+-		bd = &sdmac->bd[sdmac->buf_tail];
++	while (sdmac->desc) {
++		struct sdma_desc *desc = sdmac->desc;
++
++		bd = &desc->bd[desc->buf_tail];
+ 
+ 		if (bd->mode.status & BD_DONE)
+ 			break;
+@@ -723,11 +772,11 @@ static void sdma_update_channel_loop(struct sdma_channel *sdmac)
+ 		* the number of bytes present in the current buffer descriptor.
+ 		*/
+ 
+-		sdmac->chn_real_count = bd->mode.count;
++		desc->chn_real_count = bd->mode.count;
+ 		bd->mode.status |= BD_DONE;
+-		bd->mode.count = sdmac->period_len;
+-		sdmac->buf_ptail = sdmac->buf_tail;
+-		sdmac->buf_tail = (sdmac->buf_tail + 1) % sdmac->num_bd;
++		bd->mode.count = desc->period_len;
++		desc->buf_ptail = desc->buf_tail;
++		desc->buf_tail = (desc->buf_tail + 1) % desc->num_bd;
+ 
+ 		/*
+ 		 * The callback is called from the interrupt context in order
+@@ -736,40 +785,36 @@ static void sdma_update_channel_loop(struct sdma_channel *sdmac)
+ 		 * executed.
+ 		 */
+ 
+-		dmaengine_desc_get_callback_invoke(&sdmac->desc, NULL);
++		dmaengine_desc_get_callback_invoke(&desc->vd.tx, NULL);
+ 
+ 		if (error)
+ 			sdmac->status = old_status;
+ 	}
+ }
+ 
+-static void mxc_sdma_handle_channel_normal(unsigned long data)
++static void mxc_sdma_handle_channel_normal(struct sdma_channel *data)
+ {
+ 	struct sdma_channel *sdmac = (struct sdma_channel *) data;
+ 	struct sdma_buffer_descriptor *bd;
+ 	int i, error = 0;
+ 
+-	sdmac->chn_real_count = 0;
++	sdmac->desc->chn_real_count = 0;
+ 	/*
+ 	 * non loop mode. Iterate over all descriptors, collect
+ 	 * errors and call callback function
+ 	 */
+-	for (i = 0; i < sdmac->num_bd; i++) {
+-		bd = &sdmac->bd[i];
++	for (i = 0; i < sdmac->desc->num_bd; i++) {
++		bd = &sdmac->desc->bd[i];
+ 
+ 		 if (bd->mode.status & (BD_DONE | BD_RROR))
+ 			error = -EIO;
+-		 sdmac->chn_real_count += bd->mode.count;
++		 sdmac->desc->chn_real_count += bd->mode.count;
+ 	}
+ 
+ 	if (error)
+ 		sdmac->status = DMA_ERROR;
+ 	else
+ 		sdmac->status = DMA_COMPLETE;
+-
+-	dma_cookie_complete(&sdmac->desc);
+-
+-	dmaengine_desc_get_callback_invoke(&sdmac->desc, NULL);
+ }
+ 
+ static irqreturn_t sdma_int_handler(int irq, void *dev_id)
+@@ -785,13 +830,22 @@ static irqreturn_t sdma_int_handler(int irq, void *dev_id)
+ 	while (stat) {
+ 		int channel = fls(stat) - 1;
+ 		struct sdma_channel *sdmac = &sdma->channel[channel];
+-
+-		if (sdmac->flags & IMX_DMA_SG_LOOP)
+-			sdma_update_channel_loop(sdmac);
+-		else
+-			tasklet_schedule(&sdmac->tasklet);
++		struct sdma_desc *desc;
++
++		spin_lock(&sdmac->vc.lock);
++		desc = sdmac->desc;
++		if (desc) {
++			if (sdmac->flags & IMX_DMA_SG_LOOP) {
++				sdma_update_channel_loop(sdmac);
++			} else {
++				mxc_sdma_handle_channel_normal(sdmac);
++				vchan_cookie_complete(&desc->vd);
++				sdma_start_desc(sdmac);
++			}
++		}
+ 
+ 		__clear_bit(channel, &stat);
++		spin_unlock(&sdmac->vc.lock);
+ 	}
+ 
+ 	return IRQ_HANDLED;
+@@ -897,7 +951,7 @@ static int sdma_load_context(struct sdma_channel *sdmac)
+ 	int channel = sdmac->channel;
+ 	int load_address;
+ 	struct sdma_context_data *context = sdma->context;
+-	struct sdma_buffer_descriptor *bd0 = sdma->channel[0].bd;
++	struct sdma_buffer_descriptor *bd0 = sdma->bd0;
+ 	int ret;
+ 	unsigned long flags;
+ 
+@@ -946,7 +1000,7 @@ static int sdma_load_context(struct sdma_channel *sdmac)
+ 
+ static struct sdma_channel *to_sdma_chan(struct dma_chan *chan)
+ {
+-	return container_of(chan, struct sdma_channel, chan);
++	return container_of(chan, struct sdma_channel, vc.chan);
+ }
+ 
+ static int sdma_disable_channel(struct dma_chan *chan)
+@@ -968,7 +1022,16 @@ static int sdma_disable_channel(struct dma_chan *chan)
+ 
+ static int sdma_disable_channel_with_delay(struct dma_chan *chan)
+ {
++	struct sdma_channel *sdmac = to_sdma_chan(chan);
++	unsigned long flags;
++	LIST_HEAD(head);
++
+ 	sdma_disable_channel(chan);
++	spin_lock_irqsave(&sdmac->vc.lock, flags);
++	vchan_get_all_descriptors(&sdmac->vc, &head);
++	sdmac->desc = NULL;
++	spin_unlock_irqrestore(&sdmac->vc.lock, flags);
++	vchan_dma_desc_free_list(&sdmac->vc, &head);
+ 
+ 	/*
+ 	 * According to NXP R&D team a delay of one BD SDMA cost time
+@@ -1097,42 +1160,55 @@ static int sdma_set_channel_priority(struct sdma_channel *sdmac,
+ 	return 0;
+ }
+ 
+-static int sdma_request_channel(struct sdma_channel *sdmac)
++static int sdma_request_channel0(struct sdma_engine *sdma)
+ {
+-	struct sdma_engine *sdma = sdmac->sdma;
+-	int channel = sdmac->channel;
+-	int ret = -EBUSY;
++	int ret = 0;
+ 
+-	sdmac->bd = dma_zalloc_coherent(NULL, PAGE_SIZE, &sdmac->bd_phys,
++	sdma->bd0 = dma_zalloc_coherent(NULL, PAGE_SIZE, &sdma->bd0_phys,
+ 					GFP_KERNEL);
+-	if (!sdmac->bd) {
++	if (!sdma->bd0) {
+ 		ret = -ENOMEM;
+ 		goto out;
+ 	}
+ 
+-	sdma->channel_control[channel].base_bd_ptr = sdmac->bd_phys;
+-	sdma->channel_control[channel].current_bd_ptr = sdmac->bd_phys;
++	sdma->channel_control[0].base_bd_ptr = sdma->bd0_phys;
++	sdma->channel_control[0].current_bd_ptr = sdma->bd0_phys;
+ 
+-	sdma_set_channel_priority(sdmac, MXC_SDMA_DEFAULT_PRIORITY);
++	sdma_set_channel_priority(&sdma->channel[0], MXC_SDMA_DEFAULT_PRIORITY);
+ 	return 0;
+ out:
+-
+ 	return ret;
+ }
+ 
+-static dma_cookie_t sdma_tx_submit(struct dma_async_tx_descriptor *tx)
++static int sdma_alloc_bd(struct sdma_desc *desc)
+ {
+-	unsigned long flags;
+-	struct sdma_channel *sdmac = to_sdma_chan(tx->chan);
+-	dma_cookie_t cookie;
++	u32 bd_size = desc->num_bd * sizeof(struct sdma_buffer_descriptor);
++	int ret = 0;
+ 
+-	spin_lock_irqsave(&sdmac->lock, flags);
++	desc->bd = dma_zalloc_coherent(NULL, bd_size, &desc->bd_phys,
++					GFP_KERNEL);
++	if (!desc->bd) {
++		ret = -ENOMEM;
++		goto out;
++	}
++out:
++
++	return ret;
++}
+ 
+-	cookie = dma_cookie_assign(tx);
++static void sdma_free_bd(struct sdma_desc *desc)
++{
++	u32 bd_size = desc->num_bd * sizeof(struct sdma_buffer_descriptor);
+ 
+-	spin_unlock_irqrestore(&sdmac->lock, flags);
++	dma_free_coherent(NULL, bd_size, desc->bd, desc->bd_phys);
++}
++
++static void sdma_desc_free(struct virt_dma_desc *vd)
++{
++	struct sdma_desc *desc = container_of(vd, struct sdma_desc, vd);
+ 
+-	return cookie;
++	sdma_free_bd(desc);
++	kfree(desc);
+ }
+ 
+ static int sdma_alloc_chan_resources(struct dma_chan *chan)
+@@ -1168,19 +1244,10 @@ static int sdma_alloc_chan_resources(struct dma_chan *chan)
+ 	if (ret)
+ 		goto disable_clk_ipg;
+ 
+-	ret = sdma_request_channel(sdmac);
+-	if (ret)
+-		goto disable_clk_ahb;
+-
+ 	ret = sdma_set_channel_priority(sdmac, prio);
+ 	if (ret)
+ 		goto disable_clk_ahb;
+ 
+-	dma_async_tx_descriptor_init(&sdmac->desc, chan);
+-	sdmac->desc.tx_submit = sdma_tx_submit;
+-	/* txd.flags will be overwritten in prep funcs */
+-	sdmac->desc.flags = DMA_CTRL_ACK;
+-
+ 	return 0;
+ 
+ disable_clk_ahb:
+@@ -1195,7 +1262,7 @@ static void sdma_free_chan_resources(struct dma_chan *chan)
+ 	struct sdma_channel *sdmac = to_sdma_chan(chan);
+ 	struct sdma_engine *sdma = sdmac->sdma;
+ 
+-	sdma_disable_channel(chan);
++	sdma_disable_channel_with_delay(chan);
+ 
+ 	if (sdmac->event_id0)
+ 		sdma_event_disable(sdmac, sdmac->event_id0);
+@@ -1207,8 +1274,6 @@ static void sdma_free_chan_resources(struct dma_chan *chan)
+ 
+ 	sdma_set_channel_priority(sdmac, 0);
+ 
+-	dma_free_coherent(NULL, PAGE_SIZE, sdmac->bd, sdmac->bd_phys);
+-
+ 	clk_disable(sdma->clk_ipg);
+ 	clk_disable(sdma->clk_ahb);
+ }
+@@ -1223,6 +1288,7 @@ static struct dma_async_tx_descriptor *sdma_prep_slave_sg(
+ 	int ret, i, count;
+ 	int channel = sdmac->channel;
+ 	struct scatterlist *sg;
++	struct sdma_desc *desc;
+ 
+ 	if (sdmac->status == DMA_IN_PROGRESS)
+ 		return NULL;
+@@ -1230,9 +1296,20 @@ static struct dma_async_tx_descriptor *sdma_prep_slave_sg(
+ 
+ 	sdmac->flags = 0;
+ 
+-	sdmac->buf_tail = 0;
+-	sdmac->buf_ptail = 0;
+-	sdmac->chn_real_count = 0;
++	desc = kzalloc((sizeof(*desc)), GFP_KERNEL);
++	if (!desc)
++		goto err_out;
++
++	desc->buf_tail = 0;
++	desc->buf_ptail = 0;
++	desc->sdmac = sdmac;
++	desc->num_bd = sg_len;
++	desc->chn_real_count = 0;
++
++	if (sdma_alloc_bd(desc)) {
++		kfree(desc);
++		goto err_out;
++	}
+ 
+ 	dev_dbg(sdma->dev, "setting up %d entries for channel %d.\n",
+ 			sg_len, channel);
+@@ -1240,18 +1317,18 @@ static struct dma_async_tx_descriptor *sdma_prep_slave_sg(
+ 	sdmac->direction = direction;
+ 	ret = sdma_load_context(sdmac);
+ 	if (ret)
+-		goto err_out;
++		goto err_bd_out;
+ 
+ 	if (sg_len > NUM_BD) {
+ 		dev_err(sdma->dev, "SDMA channel %d: maximum number of sg exceeded: %d > %d\n",
+ 				channel, sg_len, NUM_BD);
+ 		ret = -EINVAL;
+-		goto err_out;
++		goto err_bd_out;
+ 	}
+ 
+-	sdmac->chn_count = 0;
++	desc->chn_count = 0;
+ 	for_each_sg(sgl, sg, sg_len, i) {
+-		struct sdma_buffer_descriptor *bd = &sdmac->bd[i];
++		struct sdma_buffer_descriptor *bd = &desc->bd[i];
+ 		int param;
+ 
+ 		bd->buffer_addr = sg->dma_address;
+@@ -1262,33 +1339,33 @@ static struct dma_async_tx_descriptor *sdma_prep_slave_sg(
+ 			dev_err(sdma->dev, "SDMA channel %d: maximum bytes for sg entry exceeded: %d > %d\n",
+ 					channel, count, 0xffff);
+ 			ret = -EINVAL;
+-			goto err_out;
++			goto err_bd_out;
+ 		}
+ 
+ 		bd->mode.count = count;
+-		sdmac->chn_count += count;
++		desc->chn_count += count;
+ 
+ 		if (sdmac->word_size > DMA_SLAVE_BUSWIDTH_4_BYTES) {
+ 			ret =  -EINVAL;
+-			goto err_out;
++			goto err_bd_out;
+ 		}
+ 
+ 		switch (sdmac->word_size) {
+ 		case DMA_SLAVE_BUSWIDTH_4_BYTES:
+ 			bd->mode.command = 0;
+ 			if (count & 3 || sg->dma_address & 3)
+-				return NULL;
++				goto err_bd_out;
+ 			break;
+ 		case DMA_SLAVE_BUSWIDTH_2_BYTES:
+ 			bd->mode.command = 2;
+ 			if (count & 1 || sg->dma_address & 1)
+-				return NULL;
++				goto err_bd_out;
+ 			break;
+ 		case DMA_SLAVE_BUSWIDTH_1_BYTE:
+ 			bd->mode.command = 1;
+ 			break;
+ 		default:
+-			return NULL;
++			goto err_bd_out;
+ 		}
+ 
+ 		param = BD_DONE | BD_EXTD | BD_CONT;
+@@ -1307,10 +1384,10 @@ static struct dma_async_tx_descriptor *sdma_prep_slave_sg(
+ 		bd->mode.status = param;
+ 	}
+ 
+-	sdmac->num_bd = sg_len;
+-	sdma->channel_control[channel].current_bd_ptr = sdmac->bd_phys;
+-
+-	return &sdmac->desc;
++	return vchan_tx_prep(&sdmac->vc, &desc->vd, flags);
++err_bd_out:
++	sdma_free_bd(desc);
++	kfree(desc);
+ err_out:
+ 	sdmac->status = DMA_ERROR;
+ 	return NULL;
+@@ -1326,6 +1403,7 @@ static struct dma_async_tx_descriptor *sdma_prep_dma_cyclic(
+ 	int num_periods = buf_len / period_len;
+ 	int channel = sdmac->channel;
+ 	int ret, i = 0, buf = 0;
++	struct sdma_desc *desc;
+ 
+ 	dev_dbg(sdma->dev, "%s channel: %d\n", __func__, channel);
+ 
+@@ -1334,31 +1412,43 @@ static struct dma_async_tx_descriptor *sdma_prep_dma_cyclic(
+ 
+ 	sdmac->status = DMA_IN_PROGRESS;
+ 
+-	sdmac->buf_tail = 0;
+-	sdmac->buf_ptail = 0;
+-	sdmac->chn_real_count = 0;
+-	sdmac->period_len = period_len;
++	desc = kzalloc((sizeof(*desc)), GFP_KERNEL);
++	if (!desc)
++		goto err_out;
++
++	desc->buf_tail = 0;
++	desc->buf_ptail = 0;
++	desc->sdmac = sdmac;
++	desc->num_bd = num_periods;
++	desc->chn_real_count = 0;
++	desc->period_len = period_len;
+ 
+ 	sdmac->flags |= IMX_DMA_SG_LOOP;
+ 	sdmac->direction = direction;
++
++	if (sdma_alloc_bd(desc)) {
++		kfree(desc);
++		goto err_out;
++	}
++
+ 	ret = sdma_load_context(sdmac);
+ 	if (ret)
+-		goto err_out;
++		goto err_bd_out;
+ 
+ 	if (num_periods > NUM_BD) {
+ 		dev_err(sdma->dev, "SDMA channel %d: maximum number of sg exceeded: %d > %d\n",
+ 				channel, num_periods, NUM_BD);
+-		goto err_out;
++		goto err_bd_out;
+ 	}
+ 
+ 	if (period_len > 0xffff) {
+ 		dev_err(sdma->dev, "SDMA channel %d: maximum period size exceeded: %zu > %d\n",
+ 				channel, period_len, 0xffff);
+-		goto err_out;
++		goto err_bd_out;
+ 	}
+ 
+ 	while (buf < buf_len) {
+-		struct sdma_buffer_descriptor *bd = &sdmac->bd[i];
++		struct sdma_buffer_descriptor *bd = &desc->bd[i];
+ 		int param;
+ 
+ 		bd->buffer_addr = dma_addr;
+@@ -1366,7 +1456,7 @@ static struct dma_async_tx_descriptor *sdma_prep_dma_cyclic(
+ 		bd->mode.count = period_len;
+ 
+ 		if (sdmac->word_size > DMA_SLAVE_BUSWIDTH_4_BYTES)
+-			goto err_out;
++			goto err_bd_out;
+ 		if (sdmac->word_size == DMA_SLAVE_BUSWIDTH_4_BYTES)
+ 			bd->mode.command = 0;
+ 		else
+@@ -1389,10 +1479,10 @@ static struct dma_async_tx_descriptor *sdma_prep_dma_cyclic(
+ 		i++;
+ 	}
+ 
+-	sdmac->num_bd = num_periods;
+-	sdma->channel_control[channel].current_bd_ptr = sdmac->bd_phys;
+-
+-	return &sdmac->desc;
++	return vchan_tx_prep(&sdmac->vc, &desc->vd, flags);
++err_bd_out:
++	sdma_free_bd(desc);
++	kfree(desc);
+ err_out:
+ 	sdmac->status = DMA_ERROR;
+ 	return NULL;
+@@ -1432,12 +1522,30 @@ static enum dma_status sdma_tx_status(struct dma_chan *chan,
+ {
+ 	struct sdma_channel *sdmac = to_sdma_chan(chan);
+ 	u32 residue;
++	struct virt_dma_desc *vd;
++	struct sdma_desc *desc;
++	enum dma_status ret;
++	unsigned long flags;
+ 
+-	if (sdmac->flags & IMX_DMA_SG_LOOP)
+-		residue = (sdmac->num_bd - sdmac->buf_ptail) *
+-			   sdmac->period_len - sdmac->chn_real_count;
+-	else
+-		residue = sdmac->chn_count - sdmac->chn_real_count;
++	ret = dma_cookie_status(chan, cookie, txstate);
++	if (ret == DMA_COMPLETE || !txstate)
++		return ret;
++
++	spin_lock_irqsave(&sdmac->vc.lock, flags);
++	vd = vchan_find_desc(&sdmac->vc, cookie);
++	if (vd) {
++		desc = to_sdma_desc(&vd->tx);
++		if (sdmac->flags & IMX_DMA_SG_LOOP)
++			residue = (desc->num_bd - desc->buf_ptail) *
++				desc->period_len - desc->chn_real_count;
++		else
++			residue = desc->chn_count - desc->chn_real_count;
++	} else if (sdmac->desc && sdmac->desc->vd.tx.cookie == cookie) {
++		residue = sdmac->desc->chn_count - sdmac->desc->chn_real_count;
++	} else {
++		residue = 0;
++	}
++	spin_unlock_irqrestore(&sdmac->vc.lock, flags);
+ 
+ 	dma_set_tx_state(txstate, chan->completed_cookie, chan->cookie,
+ 			 residue);
+@@ -1448,10 +1556,12 @@ static enum dma_status sdma_tx_status(struct dma_chan *chan,
+ static void sdma_issue_pending(struct dma_chan *chan)
+ {
+ 	struct sdma_channel *sdmac = to_sdma_chan(chan);
+-	struct sdma_engine *sdma = sdmac->sdma;
++	unsigned long flags;
+ 
+-	if (sdmac->status == DMA_IN_PROGRESS)
+-		sdma_enable_channel(sdma, sdmac->channel);
++	spin_lock_irqsave(&sdmac->vc.lock, flags);
++	if (vchan_issue_pending(&sdmac->vc) && !sdmac->desc)
++		sdma_start_desc(sdmac);
++	spin_unlock_irqrestore(&sdmac->vc.lock, flags);
+ }
+ 
+ #define SDMA_SCRIPT_ADDRS_ARRAY_SIZE_V1	34
+@@ -1657,7 +1767,7 @@ static int sdma_init(struct sdma_engine *sdma)
+ 	for (i = 0; i < MAX_DMA_CHANNELS; i++)
+ 		writel_relaxed(0, sdma->regs + SDMA_CHNPRI_0 + i * 4);
+ 
+-	ret = sdma_request_channel(&sdma->channel[0]);
++	ret = sdma_request_channel0(sdma);
+ 	if (ret)
+ 		goto err_dma_alloc;
+ 
+@@ -1821,20 +1931,15 @@ static int sdma_probe(struct platform_device *pdev)
+ 		sdmac->sdma = sdma;
+ 		spin_lock_init(&sdmac->lock);
+ 
+-		sdmac->chan.device = &sdma->dma_device;
+-		dma_cookie_init(&sdmac->chan);
+ 		sdmac->channel = i;
+-
+-		tasklet_init(&sdmac->tasklet, mxc_sdma_handle_channel_normal,
+-			     (unsigned long) sdmac);
++		sdmac->vc.desc_free = sdma_desc_free;
+ 		/*
+ 		 * Add the channel to the DMAC list. Do not add channel 0 though
+ 		 * because we need it internally in the SDMA driver. This also means
+ 		 * that channel 0 in dmaengine counting matches sdma channel 1.
+ 		 */
+ 		if (i)
+-			list_add_tail(&sdmac->chan.device_node,
+-					&sdma->dma_device.channels);
++			vchan_init(&sdmac->vc, &sdma->dma_device);
+ 	}
+ 
+ 	ret = sdma_init(sdma);
+@@ -1939,7 +2044,8 @@ static int sdma_remove(struct platform_device *pdev)
+ 	for (i = 0; i < MAX_DMA_CHANNELS; i++) {
+ 		struct sdma_channel *sdmac = &sdma->channel[i];
+ 
+-		tasklet_kill(&sdmac->tasklet);
++		tasklet_kill(&sdmac->vc.task);
++		sdma_free_chan_resources(&sdmac->vc.chan);
+ 	}
+ 
+ 	platform_set_drvdata(pdev, NULL);
 -- 
-Florian
+2.7.4
