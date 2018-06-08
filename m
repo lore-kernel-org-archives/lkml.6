@@ -1,101 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 5uGuEJpOGVv4eAAAmS7hNA
-	; Thu, 07 Jun 2018 15:27:28 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id B2SMLPu3GltfPQAAmS7hNA
+	; Fri, 08 Jun 2018 17:09:32 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 039B0608B8; Thu,  7 Jun 2018 15:27:28 +0000 (UTC)
+	id 43D6D607E4; Fri,  8 Jun 2018 17:09:32 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gbA5tF1K"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B4t3Ndbp"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 7E28E60115;
-	Thu,  7 Jun 2018 15:27:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7E28E60115
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 99B73601C3;
+	Fri,  8 Jun 2018 17:09:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 99B73601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935754AbeFGP1Z (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:27:25 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60212 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933417AbeFGO51 (ORCPT
+        id S1752706AbeFHRJ3 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 13:09:29 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:55196 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751286AbeFHRJ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:57:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=p+lQr6bAugSImnC9444JxiiPjhXApjVlWYwVp+W2KAI=; b=gbA5tF1KgJmlJfbYcAgk0bwux
-        Svd3q/JqkBzlvA9QdOWP9G4JL/32nXM8Sw27EIvRN4TviGguTLfQB0pPbup33NzFeB+davpWZOMrP
-        kE0eEPsYbQptIJ1g7x+yTeUabDG4s/ayTfpxe3TJCKyjG3gL5g2gQWjIpJZuyqHy/pCHCJt8GsFQF
-        v981eKjb76d/HsvXnr8jkZab19KMCLOn3bLgYI2hYgu5W5lvfEREU595P9SrFWZkTgJP4EY1un4bk
-        1rOBBksdq6/JoMCuK0X7NKPZfjPmg830ZwI3RHyZDskD2ZGSrB5qdiVFKBRdyEIrA6BiidOduIlkJ
-        y6lz6w2VA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fQwLs-0005tn-OG; Thu, 07 Jun 2018 14:57:24 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Kees Cook <keescook@chromium.org>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
-Subject: [PATCH 2/6] Convert infiniband uverbs to struct_size
-Date: Thu,  7 Jun 2018 07:57:16 -0700
-Message-Id: <20180607145720.22590-3-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180607145720.22590-1-willy@infradead.org>
-References: <20180607145720.22590-1-willy@infradead.org>
+        Fri, 8 Jun 2018 13:09:28 -0400
+Received: by mail-wm0-f67.google.com with SMTP id o13-v6so4511195wmf.4
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 10:09:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pdcuS6LtC8qdLf8L60bKm6PUeKDjJHtPmEoxcZtVvBE=;
+        b=B4t3NdbpTgL+4Emq5eau/ZF3sUPt0MnkQIKRA7JT0Vy9eo929WgnCdIfeGvyKRMSlw
+         Xt4Wbzq4WfOlXwhuKWtMZLNDFCJm5bNDx1u35dI9GdaUMspRJS3VIANHXNSd0IhjW9x9
+         FMF4e7a1UcBwRK32lLyENOAlkOnqkO+dgrFj4wX26hdPe2JuWhX13IswEK1jqoOd4hYB
+         QFxe1xGMa7fu9qnMBklPHrN/4H50aN4056+r4SfDJzAYHMUUXOk7JgNqv5dVBwD0ETwi
+         ZapiagyhQ3F1Ku3+YWfgOx9ghOD/otiMNtgWRfviqXCJHY4ZkQTW5uDeOFgNZZ4Yy3Dt
+         vGyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pdcuS6LtC8qdLf8L60bKm6PUeKDjJHtPmEoxcZtVvBE=;
+        b=Kf/WhJ7Iah7hauzcETxqe/wWsYi3euk6Baxyf0KikeXTvfeJmZKO/D5eVfECd8rOcL
+         cwQ0zHqzuYorYCQ81Zpvw7eoVAJwLAkyZLNO1iSlrDQvmC8/5z7JRmLib8fub5QD+v9p
+         RBOPf6YraWDB/cxBpT9nwwOEwAOAXupY1XudWnD9ySmE3vCrT3EZtjSgnjJZpdhLidaz
+         TtgGkzy7/ozU8HnCU0+xSHODpoIE23pWvyhCI1Bhhyh0FWDKf2yom0bqRSy5VaJI2zN9
+         C4kVJKxQQ0/Omr5xA6sG941w221EtwX0RZHHVWJH4+diBjHHGheuKQE6lxONdIrwHkvl
+         K8lQ==
+X-Gm-Message-State: APt69E1o5wwlkDb+b8fe0hxAPzPg1j60OVXSaknYMXBtZ8dc34Izz7xh
+        x30Z2uZWAokdoRSohh+cVnQ4gZJDBV3sK1Bublm32A==
+X-Google-Smtp-Source: ADUXVKIFHfuHytO13lIWadsQP6zeXvNnCXN88zjYKLmx8yII+KvTlvV8vYUb4YeqaOVgdgP1pKUHL0SbfG2PDD4wNpI=
+X-Received: by 2002:a1c:1c8f:: with SMTP id c137-v6mr2091516wmc.142.1528477766923;
+ Fri, 08 Jun 2018 10:09:26 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180608170607.29120-1-guro@fb.com>
+In-Reply-To: <20180608170607.29120-1-guro@fb.com>
+From: Shakeel Butt <shakeelb@google.com>
+Date: Fri, 8 Jun 2018 10:09:14 -0700
+Message-ID: <CALvZod5Ci-eNjp0y+tN-GF-B_Nsknjtv_mdm4QZJYh1P9Y7Oqg@mail.gmail.com>
+Subject: Re: [PATCH] mm: fix null pointer dereference in mem_cgroup_protected
+To: Roman Gushchin <guro@fb.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, kernel-team@fb.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+On Fri, Jun 8, 2018 at 10:06 AM Roman Gushchin <guro@fb.com> wrote:
+>
+> Shakeel reported a crash in mem_cgroup_protected(), which
+> can be triggered by memcg reclaim if the legacy cgroup v1
+> use_hierarchy=0 mode is used:
+>
+> [  226.060572] BUG: unable to handle kernel NULL pointer dereference
+> at 0000000000000120
+> [  226.068310] PGD 8000001ff55da067 P4D 8000001ff55da067 PUD 1fdc7df067 PMD 0
+> [  226.075191] Oops: 0000 [#4] SMP PTI
+> [  226.078637] CPU: 0 PID: 15581 Comm: bash Tainted: G      D
+>  4.17.0-smp-clean #5
+> [  226.086635] Hardware name: ...
+> [  226.094546] RIP: 0010:mem_cgroup_protected+0x54/0x130
+> [  226.099533] Code: 4c 8b 8e 00 01 00 00 4c 8b 86 08 01 00 00 48 8d
+> 8a 08 ff ff ff 48 85 d2 ba 00 00 00 00 48 0f 44 ca 48 39 c8 0f 84 cf
+> 00 00 00 <48> 8b 81 20 01 00 00 4d 89 ca 4c 39 c8 4c 0f 46 d0 4d 85 d2
+> 74 05
+> [  226.118194] RSP: 0000:ffffabe64dfafa58 EFLAGS: 00010286
+> [  226.123358] RAX: ffff9fb6ff03d000 RBX: ffff9fb6f5b1b000 RCX: 0000000000000000
+> [  226.130406] RDX: 0000000000000000 RSI: ffff9fb6f5b1b000 RDI: ffff9fb6f5b1b000
+> [  226.137454] RBP: ffffabe64dfafb08 R08: 0000000000000000 R09: 0000000000000000
+> [  226.144503] R10: 0000000000000000 R11: 000000000000c800 R12: ffffabe64dfafb88
+> [  226.151551] R13: ffff9fb6f5b1b000 R14: ffffabe64dfafb88 R15: ffff9fb77fffe000
+> [  226.158602] FS:  00007fed1f8ac700(0000) GS:ffff9fb6ff400000(0000)
+> knlGS:0000000000000000
+> [  226.166594] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  226.172270] CR2: 0000000000000120 CR3: 0000001fdcf86003 CR4: 00000000001606f0
+> [  226.179317] Call Trace:
+> [  226.181732]  ? shrink_node+0x194/0x510
+> [  226.185435]  do_try_to_free_pages+0xfd/0x390
+> [  226.189653]  try_to_free_mem_cgroup_pages+0x123/0x210
+> [  226.194643]  try_charge+0x19e/0x700
+> [  226.198088]  mem_cgroup_try_charge+0x10b/0x1a0
+> [  226.202478]  wp_page_copy+0x134/0x5b0
+> [  226.206094]  do_wp_page+0x90/0x460
+> [  226.209453]  __handle_mm_fault+0x8e3/0xf30
+> [  226.213498]  handle_mm_fault+0xfe/0x220
+> [  226.217285]  __do_page_fault+0x262/0x500
+> [  226.221158]  do_page_fault+0x28/0xd0
+> [  226.224689]  ? page_fault+0x8/0x30
+> [  226.228048]  page_fault+0x1e/0x30
+> [  226.231323] RIP: 0033:0x485b72
+>
+> The problem happens because parent_mem_cgroup() returns a NULL
+> pointer, which is dereferenced later without a check.
+>
+> As cgroup v1 has no memory guarantee support, let's make
+> mem_cgroup_protected() immediately return MEMCG_PROT_NONE,
+> if the given cgroup has no parent (non-hierarchical mode is used).
+>
+> Reported-by: Shakeel Butt <shakeelb@google.com>
+> Signed-off-by: Roman Gushchin <guro@fb.com>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
 
-The flows were hidden from the C compiler; expose them as a zero-length
-array to allow struct_size to work.
+Tested-by: Shakeel Butt <shakeelb@google.com>
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
----
- drivers/infiniband/core/uverbs_cmd.c | 4 ++--
- include/rdma/ib_verbs.h              | 5 +----
- 2 files changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/infiniband/core/uverbs_cmd.c b/drivers/infiniband/core/uverbs_cmd.c
-index e3662a8ee465..67cab6102f7a 100644
---- a/drivers/infiniband/core/uverbs_cmd.c
-+++ b/drivers/infiniband/core/uverbs_cmd.c
-@@ -3478,8 +3478,8 @@ int ib_uverbs_ex_create_flow(struct ib_uverbs_file *file,
- 		goto err_uobj;
- 	}
- 
--	flow_attr = kzalloc(sizeof(*flow_attr) + cmd.flow_attr.num_of_specs *
--			    sizeof(union ib_flow_spec), GFP_KERNEL);
-+	flow_attr = kzalloc(struct_size(flow_attr, flows,
-+				cmd.flow_attr.num_of_specs), GFP_KERNEL);
- 	if (!flow_attr) {
- 		err = -ENOMEM;
- 		goto err_put;
-diff --git a/include/rdma/ib_verbs.h b/include/rdma/ib_verbs.h
-index 9fc8a825aa28..bb6125ceb187 100644
---- a/include/rdma/ib_verbs.h
-+++ b/include/rdma/ib_verbs.h
-@@ -2035,10 +2035,7 @@ struct ib_flow_attr {
- 	u32	     flags;
- 	u8	     num_of_specs;
- 	u8	     port;
--	/* Following are the optional layers according to user request
--	 * struct ib_flow_spec_xxx
--	 * struct ib_flow_spec_yyy
--	 */
-+	union ib_flow_spec flows[];
- };
- 
- struct ib_flow {
--- 
-2.17.0
+> ---
+>  mm/memcontrol.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 6c9fb4e47be3..6205ba512928 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -5750,6 +5750,9 @@ enum mem_cgroup_protection mem_cgroup_protected(struct mem_cgroup *root,
+>         elow = memcg->memory.low;
+>
+>         parent = parent_mem_cgroup(memcg);
+> +       if (!parent)
+> +               return MEMCG_PROT_NONE;
+> +
+>         if (parent == root_mem_cgroup)
+>                 goto exit;
+>
+> --
+> 2.14.3
+>
