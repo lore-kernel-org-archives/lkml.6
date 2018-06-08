@@ -1,181 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id SNq6Ht3CGFu2RgAAmS7hNA
-	; Thu, 07 Jun 2018 05:30:09 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id +KO1A3N7Gls/AgAAmS7hNA
+	; Fri, 08 Jun 2018 12:50:00 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 46E90608BA; Thu,  7 Jun 2018 05:30:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-	s=default; t=1528349409;
-	bh=NXYPMdstNUadT3rj+nnRQqW1HGGBC7HRT84vatrQTIk=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=hFsh+kKxLFQVPASb6w4hXLDocaMBVBnfIeuzcJa7mv2TkX/g58CQIhvjKeZZ2DJG4
-	 HwRNq/y71LuK0RDMHYn8roxuyPhwcMLKSFv0630iDfpJnbLvn0cv+KbWFTd8S6fjG5
-	 Twjffp4YS32n9RKbeCQu9JLS63k4CGA0APdblTws=
+	id 1B5D7608B8; Fri,  8 Jun 2018 12:50:00 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sqQp4Gtv"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id AFDC4607DC;
-	Thu,  7 Jun 2018 05:30:08 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oTNAt0X6";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZPyoaUKn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AFDC4607DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 90CCD606FA;
+	Fri,  8 Jun 2018 12:49:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 90CCD606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753044AbeFGFaH (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 01:30:07 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33740 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751353AbeFGFaF (ORCPT
+        id S1752920AbeFHMt4 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 08:49:56 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:44880 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751846AbeFHMty (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 01:30:05 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 7CE71608B8; Thu,  7 Jun 2018 05:30:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528349404;
-        bh=NXYPMdstNUadT3rj+nnRQqW1HGGBC7HRT84vatrQTIk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=oTNAt0X6zjHOdIVFdMS6Zy9/AAXWIc+M6OaiXYboasjdHNtYE/uQLvZ6RCOD02AYQ
-         RF4ZjwgRnSYbtO9Ne5CkaQ06wfWbJxQotfu+oBR08MKXyv91lSeVCabbk9nt3e1lAo
-         xe6U4MiaIs2WGhbaNpo8VpvJjsKX4bpnDu7qoa6U=
-Received: from [10.201.3.39] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sricharan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5EB39607DC;
-        Thu,  7 Jun 2018 05:30:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528349403;
-        bh=NXYPMdstNUadT3rj+nnRQqW1HGGBC7HRT84vatrQTIk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ZPyoaUKnw/+Ygi9uCfVFomOScZcvuLU+ndpyPLZj2RBjK7Gs6IG6/rMCdZpek+Emf
-         TsPcmwiIdBoaVdXFzPpO6HkNCi1EBqc7Y0eqYl1Tp4cnTvnGS0LGI23LDo/phMzn/v
-         PG5R/3Me2bJZGcmaGcogbUuOxYE3CuTgqCPXrrQI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5EB39607DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-Subject: Re: [PATCH] remoteproc: qcom: Introduce Hexagon V5 based WCSS driver
-To: Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod <vkoul@kernel.org>
-Cc: ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        andy.gross@linaro.org, david.brown@linaro.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, sibis@codeaurora.org
-References: <1528177361-8883-1-git-send-email-sricharan@codeaurora.org>
- <20180605061919.GQ16230@vkoul-mobl>
- <3a4c102b-7228-153a-c588-b1bf00291fa8@codeaurora.org>
- <20180606161733.GE510@tuxbook-pro> <20180607041134.GF16230@vkoul-mobl>
- <20180607042443.GK510@tuxbook-pro>
-From: Sricharan R <sricharan@codeaurora.org>
-Message-ID: <d01d6819-3f95-0b65-1251-aead88fe86cc@codeaurora.org>
-Date: Thu, 7 Jun 2018 10:59:58 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180607042443.GK510@tuxbook-pro>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Antivirus: Avast (VPS 180606-4, 06/06/2018), Outbound message
-X-Antivirus-Status: Clean
+        Fri, 8 Jun 2018 08:49:54 -0400
+Received: by mail-pg0-f68.google.com with SMTP id p21-v6so6352457pgd.11
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 05:49:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=QbCpKA5auRQCtpvi2En1bDrPZ5zG/N+QDTapvB0H/bQ=;
+        b=sqQp4Gtv/LpRKBq+h0Gyc+Dq0/9ByREOvuuk2B5ngay8HWd6zXic4JiKMfw8WWSFyn
+         VmMcSzIzBYy0kHPWj6vbOfJw+Ogofs4a/onB/6FMUFtfmWPPXNMCYopiccoBGc2MLVZk
+         p1te6Vlq7+7ccitM5wqe+rsYJ7pmwj45x0fPRFFTacjMX4rmHMQJrHGLbitopZvIB/Kw
+         XsUSyxTmPyBaOfyQYq1wr9XGRGSZmW9P4CeSeCNOcZgCfwx9/0SjvY+vdjXKC9LFXpoK
+         1jKKsTyD+16fELRNSxyjxSqk/xQxgqG7UG+UzvIdDmZc/LQ7wMTetSdG025WnwkrDfOO
+         giDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=QbCpKA5auRQCtpvi2En1bDrPZ5zG/N+QDTapvB0H/bQ=;
+        b=TgPukkryvR9M75k/GFdkDWffoWdk5jHBWufrJkO0xxMedEj31AcIdjDBeZt3kVrSDs
+         dUBILhSJSnOVfKy/LMkqBBVeZjkpje9u5wOIrXxhh1mwFPiTz6r1FHPoFPg8HGb+n4RE
+         qHXE2JnZKBwS4m1gAmtP9bX5nKV6B9UFaoDW9jrwcLbqGZXnNcGx+0YWwE4hOqQuR6WC
+         t6ki+R9RuCZ1pzBbvyRUjgE988erpDP+mAjMqilX+hHjUzcCN3OacoCy06EwgWIm1j1L
+         oDN8U9lLfpSwpIaR27ekzf5MCcehe3FC2lEJ4F2Ci1TZurBbJ5lXwz2+vDo25peU3Dmp
+         Fb+w==
+X-Gm-Message-State: APt69E0mgWw1KpWi6BLiiGVhjoIrksCYO9EcsMRsuGeMsijMIMBpxJ/3
+        /DzU/egTOOAUiqnLjWUHvMI=
+X-Google-Smtp-Source: ADUXVKKKgxdbBpqCygb6IfZ+yelFJJgUbJnGOMQLQoYGMDLUPcv17eQq6EXBGhrQOsGGHz1wIIowLQ==
+X-Received: by 2002:a65:418b:: with SMTP id a11-v6mr5199323pgq.118.1528462194351;
+        Fri, 08 Jun 2018 05:49:54 -0700 (PDT)
+Received: from dest.didichuxing.com ([13.94.31.177])
+        by smtp.gmail.com with ESMTPSA id h8-v6sm72530396pgq.56.2018.06.08.05.49.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Jun 2018 05:49:53 -0700 (PDT)
+From: ufo19890607@gmail.com
+To: akpm@linux-foundation.org, mhocko@suse.com, rientjes@google.com,
+        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
+        penguin-kernel@I-love.SAKURA.ne.jp, guro@fb.com,
+        yang.s@alibaba-inc.com, yuzhoujian@didichuxing.com
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        ufo19890607 <ufo19890607@gmail.com>
+Subject: [PATCH v8 0/1] Refactor part of the oom report in dump_header
+Date: Fri,  8 Jun 2018 20:49:37 +0800
+Message-Id: <1528462178-29250-1-git-send-email-ufo19890607@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
+From: ufo19890607 <ufo19890607@gmail.com>
 
-On 6/7/2018 9:54 AM, Bjorn Andersson wrote:
-> On Wed 06 Jun 21:11 PDT 2018, Vinod wrote:
-> 
->> On 06-06-18, 09:17, Bjorn Andersson wrote:
->>> On Tue 05 Jun 05:56 PDT 2018, Sricharan R wrote:
->>>
->>>> Hi Vinod,
->>>>
->>>> On 6/5/2018 11:49 AM, Vinod wrote:
->>>>> On 05-06-18, 11:12, Sricharan R wrote:
->>>>>
->>>>>> +config QCOM_Q6V5_WCSS
->>>>>> +	tristate "Qualcomm Hexagon based WCSS Peripheral Image Loader"
->>>>>> +	depends on OF && ARCH_QCOM
->>>>>> +	depends on QCOM_SMEM
->>>>>> +	depends on RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)
->>>>>> +	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
->>>>>
->>>>> Is there a reason why it depends on RPMSG_QCOM_GLINK_SMEM=n? What would
->>>>> happen if distro wants both this and RPMSG_QCOM_GLINK_SMEM
->>>>>
->>>
->>> It says that QCOM_Q6V5_WCSS either must have a compatible state (i.e.
->>> builtin vs builtin, module vs builtin, but not builtin vs module) or
->>> that it's disabled, in which case we will hit the stub functions in
->>> qcom_glink.h.
->>>
->>> I.e. this prevents QCOM_Q6V5_WCSS to be compiled builtin when
->>> RPMSG_QCOM_GLINK_SMEM is module, as this would give us both stubs and
->>> the module.
->>
->> IIUC, you want to have QCOM_Q6V5_WCSS and RPMSG_QCOM_GLINK_SMEM as
->> modules or builtin
->>
-> 
-> RPMSG_QCOM_SMD, RPMSG_QCOM_GLINK_SMEM and QCOM_Q6V5_WCSS are all
-> tristate.
-> 
->> So, wouldn't Kconfig syntax something like where we say:
->>         M if RPMSG_QCOM_GLINK_SMEM=m
->>         bool if RPMSG_QCOM_GLINK_SMEM=y
->>
-> 
-> If we ignore SMD for a while we have the following combinations:
-> 
-> glink/wcss
-> y     y - valid
-> y     m - valid
-> y     n - valid
-> m     y - link failure (invalid)
-> m     m - valid
-> m     n - valid
-> n     y - valid (platform uses wcss, but not glink)
-> n     m - valid (-----"-----)
-> n     n - valid
-> 
-> So to distill this we have the two valid cases:
-> module/no if RPMSG_QCOM_GLINK_SMEM=m
-> yes/module/no if RPMSG_QCOM_GLINK_SMEM=y
-> 
-> and the way you express that in Kconfig is the somewhat awkward
-> 
->   depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
-> 
+Some users complains that system-wide oom report does not print memcg's
+name which contains the task killed by the oom-killer. The current system
+wide oom report prints the task's command, gfp_mask, order ,oom_score_adj 
+and shows the memory info, but misses some important information, etc. the 
+memcg that has reached its limit and the memcg to which the killed process 
+is attached.
 
- ok, Having "depends on RPMSG_QCOM_GLINK_SMEM" takes care of the
- first 6 cases in the above list.
+I follow the advices of David Rientjes and Michal Hocko, and refactor
+part of the oom report. After this patch, users can get the memcg's 
+path from the oom report and check the certain container more quickly.
 
- But just was thinking that by allowing the last three combinations,
- there is a chance that some config that really needs GLINK_SMEM and WCSS,
- but selects only Q6V5_WCSS and misses to select GLINK_SMEM,
- would still built and make it non-functional, right ?
+Below is the part of the oom report in the dmesg
+...
+[  142.158316] panic cpuset=/ mems_allowed=0-1
+[  142.158983] CPU: 15 PID: 8682 Comm: panic Not tainted 4.17.0-rc6+ #13
+[  142.159659] Hardware name: Inspur SA5212M4/YZMB-00370-107, BIOS 4.1.10 11/14/2016
+[  142.160342] Call Trace:
+[  142.161037]  dump_stack+0x78/0xb3
+[  142.161734]  dump_header+0x7d/0x334
+[  142.162433]  oom_kill_process+0x228/0x490
+[  142.163126]  ? oom_badness+0x2a/0x130
+[  142.163821]  out_of_memory+0xf0/0x280
+[  142.164532]  __alloc_pages_slowpath+0x711/0xa07
+[  142.165241]  __alloc_pages_nodemask+0x23f/0x260
+[  142.165947]  alloc_pages_vma+0x73/0x180
+[  142.166665]  do_anonymous_page+0xed/0x4e0
+[  142.167388]  __handle_mm_fault+0xbd2/0xe00
+[  142.168114]  handle_mm_fault+0x116/0x250
+[  142.168841]  __do_page_fault+0x233/0x4d0
+[  142.169567]  do_page_fault+0x32/0x130
+[  142.170303]  ? page_fault+0x8/0x30
+[  142.171036]  page_fault+0x1e/0x30
+[  142.171764] RIP: 0033:0x7f403000a860
+[  142.172517] RSP: 002b:00007ffc9f745c28 EFLAGS: 00010206
+[  142.173268] RAX: 00007f3f6fd7d000 RBX: 0000000000000000 RCX: 00007f3f7f5cd000
+[  142.174040] RDX: 00007f3fafd7d000 RSI: 0000000000000000 RDI: 00007f3f6fd7d000
+[  142.174806] RBP: 00007ffc9f745c50 R08: ffffffffffffffff R09: 0000000000000000
+[  142.175623] R10: 0000000000000022 R11: 0000000000000246 R12: 0000000000400490
+[  142.176542] R13: 00007ffc9f745d30 R14: 0000000000000000 R15: 0000000000000000
+[  142.177709] oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),origin_memcg=(null),kill_memcg=/test/test1/test2,task=panic,pid= 8622,uid=    0
+...
 
-Regards,
- Sricharan
+ufo19890607 (1):
+  Refactor part of the oom report in dump_header
 
->> Which makes it clear that both these have to be same type?
->>
-> 
-> They don't have to be of the same type, only of a compatible type.
-> 
+ include/linux/memcontrol.h | 29 ++++++++++++++++++++++++++---
+ mm/memcontrol.c            | 43 ++++++++++++++++++++++++++++++++-----------
+ mm/oom_kill.c              | 26 +++++++++++---------------
+ 3 files changed, 69 insertions(+), 29 deletions(-)
 
 -- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
-
----
-This email has been checked for viruses by Avast antivirus software.
-https://www.avast.com/antivirus
+2.14.1
