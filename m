@@ -1,673 +1,1228 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id gwY/I1zGG1t6LQAAmS7hNA
-	; Sat, 09 Jun 2018 12:21:54 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id gIRwFKQhGlvaUwAAmS7hNA
+	; Fri, 08 Jun 2018 06:26:44 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 1384F607BB; Sat,  9 Jun 2018 12:21:54 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jZvab8K7"
+	id 3CED2608C1; Fri,  8 Jun 2018 06:26:44 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id B9651607A4;
-	Sat,  9 Jun 2018 12:21:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B9651607A4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 7B5B46089E;
+	Fri,  8 Jun 2018 06:26:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7B5B46089E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753265AbeFIMVu (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 08:21:50 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:34601 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753101AbeFIMVr (ORCPT
+        id S1752428AbeFHG0k (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 02:26:40 -0400
+Received: from regular1.263xmail.com ([211.150.99.136]:37428 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751694AbeFHG0g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 08:21:47 -0400
-Received: by mail-lf0-f65.google.com with SMTP id o9-v6so23956355lfk.1;
-        Sat, 09 Jun 2018 05:21:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=YAMaZL2nJVSi4E6XxqhOv744trkYuvTD8x0/AoylvjI=;
-        b=jZvab8K7uO/RH+qFxyQEQPupyNlREML+YNAExOn3E8MTQkGkwWZ8P2enaIka8m3FVs
-         zFnR2jsVB9DclD3aN0eIW7+/FpFahNb1sIfR+R103QD6gzqirQzlqduuYu4crUxLcevH
-         iWAiO7HyapQhW2VP/SySQyYtsbMqnhT2VNISXJFegQRd+3ru8gX7/WfJXz8wA+qETOX0
-         PUMh5GtJk8ZPpqAxI4HDmgrXpS4dteqIPDClnD1jDL78zNQeAgAXd6anQfS5jpahSBdo
-         a0UW95pZ724qsw9KK1Msuy55/x9x0IgbkSsDAiVz1Av00XzPcKn1nzAkwGM+uFlb2s3a
-         ARow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=YAMaZL2nJVSi4E6XxqhOv744trkYuvTD8x0/AoylvjI=;
-        b=DYi6kMZ1322gfONuWREMcsGJKwI27C9r44LsBhtJmsscA2bqSINfwKIC4s+FaHlySA
-         Jk16vNifgVXBFS+dJwhvfcGrwVMLo2Ihd+PuEZXe97NnhMEEsh8n7J0q4flG1ge/JORJ
-         zX7lQI5LQf780cz2v8ln6IWWDNfwFrto9s9u21QVAwTbd7arYq3nxHxdCruvRZg9dfIT
-         wMO4jkeIU2w/DySRiest3b4UQorRPYVaSGTT7dAXzsA27NUzd1xnpuUoSdtNDnlZxSPZ
-         cmR+Q+mmzHcpN0A8gI5l0CO0guQQbzv5vut5FCcq3qABWPqSE2FiV0SBm+g6N200AgdL
-         qpow==
-X-Gm-Message-State: APt69E10wvkV1GrJemnmLvc/udd7z+/t80v9lk9JlryvDRIuLf05MY4H
-        JcUQkww3oTGS4B4xILrl/Iw=
-X-Google-Smtp-Source: ADUXVKJBN7iEhQgvsX+Kp4pzEyxIhUAvmoUHz2PFUADRlj+3fgXX6HC9/g9mVrLj4dfoEhnTcvPNrg==
-X-Received: by 2002:a2e:7403:: with SMTP id p3-v6mr7010068ljc.59.1528546904859;
-        Sat, 09 Jun 2018 05:21:44 -0700 (PDT)
-Received: from dimapc.localnet ([109.252.91.41])
-        by smtp.gmail.com with ESMTPSA id p85-v6sm6100915lje.29.2018.06.09.05.21.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 09 Jun 2018 05:21:43 -0700 (PDT)
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Stefan Agner <stefan@agner.ch>
-Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
-        dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
-        marcel@ziswiler.com, krzk@kernel.org, benjamin.lindqvist@endian.se,
-        jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        mirza.krak@gmail.com, linux-mtd@lists.infradead.org,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/6] mtd: rawnand: add NVIDIA Tegra NAND Flash controller driver
-Date: Sat, 09 Jun 2018 15:21:38 +0300
-Message-ID: <22478634.OSqaXHucyu@dimapc>
-In-Reply-To: <d625dd8ca816543e03668b74921563c1@agner.ch>
-References: <20180531221637.6017-1-stefan@agner.ch> <cdca329f-0b8d-0604-4cfb-b95baf84c867@gmail.com> <d625dd8ca816543e03668b74921563c1@agner.ch>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Fri, 8 Jun 2018 02:26:36 -0400
+Received: from zhangqing?rock-chips.com (unknown [192.168.167.157])
+        by regular1.263xmail.com (Postfix) with ESMTP id 54B7858;
+        Fri,  8 Jun 2018 14:26:27 +0800 (CST)
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+Received: from localhost.localdomain (localhost [127.0.0.1])
+        by smtp.263.net (Postfix) with ESMTPA id 3651F401;
+        Fri,  8 Jun 2018 14:26:22 +0800 (CST)
+X-RL-SENDER: zhangqing@rock-chips.com
+X-FST-TO: heiko@sntech.de
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: zhangqing@rock-chips.com
+X-UNIQUE-TAG: <7c7f0337ca7121bae3e88d9c8ac4c53e>
+X-ATTACHMENT-NUM: 0
+X-SENDER: zhangqing@rock-chips.com
+X-DNS-TYPE: 0
+Received: from unknown (unknown [58.22.7.114])
+        by smtp.263.net (Postfix) whith SMTP id 19679DN1CGQ;
+        Fri, 08 Jun 2018 14:26:25 +0800 (CST)
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: heiko@sntech.de
+Cc: sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        cl@rock-chips.com, xxx@rock-chips.com, xf@rock-chips.com,
+        huangtao@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v2 4/4] clk: rockchip: add clock controller for px30
+Date: Fri,  8 Jun 2018 14:31:59 +0800
+Message-Id: <1528439519-30135-5-git-send-email-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1528439519-30135-1-git-send-email-zhangqing@rock-chips.com>
+References: <1528439519-30135-1-git-send-email-zhangqing@rock-chips.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Saturday, 9 June 2018 00:51:01 MSK Stefan Agner wrote:
-> On 01.06.2018 11:20, Dmitry Osipenko wrote:
-> > On 01.06.2018 01:16, Stefan Agner wrote:
-> >> Add support for the NAND flash controller found on NVIDIA
-> >> Tegra 2 SoCs. This implementation does not make use of the
-> >> command queue feature. Regular operations/data transfers are
-> >> done in PIO mode. Page read/writes with hardware ECC make
-> >> use of the DMA for data transfer.
-> >> 
-> >> Signed-off-by: Lucas Stach <dev@lynxeye.de>
-> >> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> >> ---
-> >> 
-> >>  MAINTAINERS                       |    7 +
-> >>  drivers/mtd/nand/raw/Kconfig      |    6 +
-> >>  drivers/mtd/nand/raw/Makefile     |    1 +
-> >>  drivers/mtd/nand/raw/tegra_nand.c | 1143 +++++++++++++++++++++++++++++
-> >>  4 files changed, 1157 insertions(+)
-> >>  create mode 100644 drivers/mtd/nand/raw/tegra_nand.c
-> >> 
-> >> diff --git a/MAINTAINERS b/MAINTAINERS
-> >> index 58b9861ccf99..c2e5571c85d4 100644
-> >> --- a/MAINTAINERS
-> >> +++ b/MAINTAINERS
-> >> @@ -13844,6 +13844,13 @@ M:	Laxman Dewangan <ldewangan@nvidia.com>
-> >> 
-> >>  S:	Supported
-> >>  F:	drivers/input/keyboard/tegra-kbc.c
-> >> 
-> >> +TEGRA NAND DRIVER
-> >> +M:	Stefan Agner <stefan@agner.ch>
-> >> +M:	Lucas Stach <dev@lynxeye.de>
-> >> +S:	Maintained
-> >> +F:	Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
-> >> +F:	drivers/mtd/nand/raw/tegra_nand.c
-> >> +
-> >> 
-> >>  TEGRA PWM DRIVER
-> >>  M:	Thierry Reding <thierry.reding@gmail.com>
-> >>  S:	Supported
-> >> 
-> >> diff --git a/drivers/mtd/nand/raw/Kconfig b/drivers/mtd/nand/raw/Kconfig
-> >> index 19a2b283fbbe..e9093f52371e 100644
-> >> --- a/drivers/mtd/nand/raw/Kconfig
-> >> +++ b/drivers/mtd/nand/raw/Kconfig
-> >> @@ -534,4 +534,10 @@ config MTD_NAND_MTK
-> >> 
-> >>  	  Enables support for NAND controller on MTK SoCs.
-> >>  	  This controller is found on mt27xx, mt81xx, mt65xx SoCs.
-> >> 
-> >> +config MTD_NAND_TEGRA
-> >> +	tristate "Support for NAND controller on NVIDIA Tegra"
-> >> +	depends on ARCH_TEGRA || COMPILE_TEST
-> >> +	help
-> >> +	  Enables support for NAND flash controller on NVIDIA Tegra SoC.
-> >> +
-> >> 
-> >>  endif # MTD_NAND
-> >> 
-> >> diff --git a/drivers/mtd/nand/raw/Makefile
-> >> b/drivers/mtd/nand/raw/Makefile
-> >> index 165b7ef9e9a1..d5a5f9832b88 100644
-> >> --- a/drivers/mtd/nand/raw/Makefile
-> >> +++ b/drivers/mtd/nand/raw/Makefile
-> >> @@ -56,6 +56,7 @@ obj-$(CONFIG_MTD_NAND_HISI504)	        +=
-> >> hisi504_nand.o
-> >> 
-> >>  obj-$(CONFIG_MTD_NAND_BRCMNAND)		+= brcmnand/
-> >>  obj-$(CONFIG_MTD_NAND_QCOM)		+= qcom_nandc.o
-> >>  obj-$(CONFIG_MTD_NAND_MTK)		+= mtk_ecc.o mtk_nand.o
-> >> 
-> >> +obj-$(CONFIG_MTD_NAND_TEGRA)		+= tegra_nand.o
-> >> 
-> >>  nand-objs := nand_base.o nand_bbt.o nand_timings.o nand_ids.o
-> >>  nand-objs += nand_amd.o
-> >> 
-> >> diff --git a/drivers/mtd/nand/raw/tegra_nand.c
-> >> b/drivers/mtd/nand/raw/tegra_nand.c new file mode 100644
-> >> index 000000000000..e9664f2938a3
-> >> --- /dev/null
-> >> +++ b/drivers/mtd/nand/raw/tegra_nand.c
-> >> @@ -0,0 +1,1143 @@
-> >> +// SPDX-License-Identifier: GPL-2.0
-> >> +/*
-> >> + * Copyright (C) 2018 Stefan Agner <stefan@agner.ch>
-> >> + * Copyright (C) 2014-2015 Lucas Stach <dev@lynxeye.de>
-> >> + * Copyright (C) 2012 Avionic Design GmbH
-> >> + */
-> >> +
-> >> +#include <linux/clk.h>
-> >> +#include <linux/completion.h>
-> >> +#include <linux/delay.h>
-> >> +#include <linux/dma-mapping.h>
-> >> +#include <linux/err.h>
-> >> +#include <linux/gpio/consumer.h>
-> >> +#include <linux/interrupt.h>
-> >> +#include <linux/io.h>
-> >> +#include <linux/module.h>
-> >> +#include <linux/mtd/partitions.h>
-> >> +#include <linux/mtd/rawnand.h>
-> >> +#include <linux/of.h>
-> >> +#include <linux/platform_device.h>
-> >> +#include <linux/reset.h>
-> >> +
-> >> +#define CMD					0x00
-> >> +#define   CMD_GO				BIT(31)
-> >> +#define   CMD_CLE				BIT(30)
-> >> +#define   CMD_ALE				BIT(29)
-> >> +#define   CMD_PIO				BIT(28)
-> >> +#define   CMD_TX				BIT(27)
-> >> +#define   CMD_RX				BIT(26)
-> >> +#define   CMD_SEC_CMD				BIT(25)
-> >> +#define   CMD_AFT_DAT				BIT(24)
-> >> +#define   CMD_TRANS_SIZE(x)			(((x - 1) & 0xf) << 20)
-> >> +#define   CMD_A_VALID				BIT(19)
-> >> +#define   CMD_B_VALID				BIT(18)
-> >> +#define   CMD_RD_STATUS_CHK			BIT(17)
-> >> +#define   CMD_RBSY_CHK				BIT(16)
-> >> +#define   CMD_CE(x)				BIT((8 + ((x) & 0x7)))
-> >> +#define   CMD_CLE_SIZE(x)			(((x - 1) & 0x3) << 4)
-> >> +#define   CMD_ALE_SIZE(x)			(((x - 1) & 0xf) << 0)
-> >> +
-> >> +#define STATUS					0x04
-> >> +
-> >> +#define ISR					0x08
-> >> +#define   ISR_CORRFAIL_ERR			BIT(24)
-> >> +#define   ISR_UND				BIT(7)
-> >> +#define   ISR_OVR				BIT(6)
-> >> +#define   ISR_CMD_DONE				BIT(5)
-> >> +#define   ISR_ECC_ERR				BIT(4)
-> >> +
-> >> +#define IER					0x0c
-> >> +#define   IER_ERR_TRIG_VAL(x)			(((x) & 0xf) << 16)
-> >> +#define   IER_UND				BIT(7)
-> >> +#define   IER_OVR				BIT(6)
-> >> +#define   IER_CMD_DONE				BIT(5)
-> >> +#define   IER_ECC_ERR				BIT(4)
-> >> +#define   IER_GIE				BIT(0)
-> >> +
-> >> +#define CFG					0x10
-> >> +#define   CFG_HW_ECC				BIT(31)
-> >> +#define   CFG_ECC_SEL				BIT(30)
-> >> +#define   CFG_ERR_COR				BIT(29)
-> >> +#define   CFG_PIPE_EN				BIT(28)
-> >> +#define   CFG_TVAL_4				(0 << 24)
-> >> +#define   CFG_TVAL_6				(1 << 24)
-> >> +#define   CFG_TVAL_8				(2 << 24)
-> >> +#define   CFG_SKIP_SPARE			BIT(23)
-> >> +#define   CFG_BUS_WIDTH_16			BIT(21)
-> >> +#define   CFG_COM_BSY				BIT(20)
-> >> +#define   CFG_PS_256				(0 << 16)
-> >> +#define   CFG_PS_512				(1 << 16)
-> >> +#define   CFG_PS_1024				(2 << 16)
-> >> +#define   CFG_PS_2048				(3 << 16)
-> >> +#define   CFG_PS_4096				(4 << 16)
-> >> +#define   CFG_SKIP_SPARE_SIZE_4			(0 << 14)
-> >> +#define   CFG_SKIP_SPARE_SIZE_8			(1 << 14)
-> >> +#define   CFG_SKIP_SPARE_SIZE_12		(2 << 14)
-> >> +#define   CFG_SKIP_SPARE_SIZE_16		(3 << 14)
-> >> +#define   CFG_TAG_BYTE_SIZE(x)			((x) & 0xff)
-> >> +
-> >> +#define TIMING_1				0x14
-> >> +#define   TIMING_TRP_RESP(x)			(((x) & 0xf) << 28)
-> >> +#define   TIMING_TWB(x)				(((x) & 0xf) << 24)
-> >> +#define   TIMING_TCR_TAR_TRR(x)			(((x) & 0xf) << 20)
-> >> +#define   TIMING_TWHR(x)			(((x) & 0xf) << 16)
-> >> +#define   TIMING_TCS(x)				(((x) & 0x3) << 14)
-> >> +#define   TIMING_TWH(x)				(((x) & 0x3) << 12)
-> >> +#define   TIMING_TWP(x)				(((x) & 0xf) <<  8)
-> >> +#define   TIMING_TRH(x)				(((x) & 0x3) <<  4)
-> >> +#define   TIMING_TRP(x)				(((x) & 0xf) <<  0)
-> >> +
-> >> +#define RESP					0x18
-> >> +
-> >> +#define TIMING_2				0x1c
-> >> +#define   TIMING_TADL(x)			((x) & 0xf)
-> >> +
-> >> +#define CMD_1					0x20
-> >> +#define CMD_2					0x24
-> >> +#define ADDR_1					0x28
-> >> +#define ADDR_2					0x2c
-> >> +
-> >> +#define DMA_CTRL				0x30
-> >> +#define   DMA_CTRL_GO				BIT(31)
-> >> +#define   DMA_CTRL_IN				(0 << 30)
-> >> +#define   DMA_CTRL_OUT				BIT(30)
-> >> +#define   DMA_CTRL_PERF_EN			BIT(29)
-> >> +#define   DMA_CTRL_IE_DONE			BIT(28)
-> >> +#define   DMA_CTRL_REUSE			BIT(27)
-> >> +#define   DMA_CTRL_BURST_1			(2 << 24)
-> >> +#define   DMA_CTRL_BURST_4			(3 << 24)
-> >> +#define   DMA_CTRL_BURST_8			(4 << 24)
-> >> +#define   DMA_CTRL_BURST_16			(5 << 24)
-> >> +#define   DMA_CTRL_IS_DONE			BIT(20)
-> >> +#define   DMA_CTRL_EN_A				BIT(2)
-> >> +#define   DMA_CTRL_EN_B				BIT(1)
-> >> +
-> >> +#define DMA_CFG_A				0x34
-> >> +#define DMA_CFG_B				0x38
-> >> +
-> >> +#define FIFO_CTRL				0x3c
-> >> +#define   FIFO_CTRL_CLR_ALL			BIT(3)
-> >> +
-> >> +#define DATA_PTR				0x40
-> >> +#define TAG_PTR					0x44
-> >> +#define ECC_PTR					0x48
-> >> +
-> >> +#define DEC_STATUS				0x4c
-> >> +#define   DEC_STATUS_A_ECC_FAIL			BIT(1)
-> >> +#define   DEC_STATUS_ERR_COUNT_MASK		0x00ff0000
-> >> +#define   DEC_STATUS_ERR_COUNT_SHIFT		16
-> >> +
-> >> +#define HWSTATUS_CMD				0x50
-> >> +#define HWSTATUS_MASK				0x54
-> >> +#define   HWSTATUS_RDSTATUS_MASK(x)		(((x) & 0xff) << 24)
-> >> +#define   HWSTATUS_RDSTATUS_VALUE(x)		(((x) & 0xff) << 16)
-> >> +#define   HWSTATUS_RBSY_MASK(x)			(((x) & 0xff) << 8)
-> >> +#define   HWSTATUS_RBSY_VALUE(x)		(((x) & 0xff) << 0)
-> >> +
-> >> +#define BCH_CONFIG				0xcc
-> >> +#define   BCH_ENABLE				BIT(0)
-> >> +#define   BCH_TVAL_4				(0 << 4)
-> >> +#define   BCH_TVAL_8				(1 << 4)
-> >> +#define   BCH_TVAL_14				(2 << 4)
-> >> +#define   BCH_TVAL_16				(3 << 4)
-> >> +
-> >> +#define DEC_STAT_RESULT				0xd0
-> >> +#define DEC_STAT_BUF				0xd4
-> >> +#define   DEC_STAT_BUF_FAIL_SEC_FLAG_MASK	0xff000000
-> >> +#define   DEC_STAT_BUF_FAIL_SEC_FLAG_SHIFT	24
-> >> +#define   DEC_STAT_BUF_CORR_SEC_FLAG_MASK	0x00ff0000
-> >> +#define   DEC_STAT_BUF_CORR_SEC_FLAG_SHIFT	16
-> >> +#define   DEC_STAT_BUF_MAX_CORR_CNT_MASK	0x00001f00
-> >> +#define   DEC_STAT_BUF_MAX_CORR_CNT_SHIFT	8
-> >> +
-> >> +#define OFFSET(val, off)		((val) < (off) ? 0 : (val) - (off))
-> >> +
-> >> +#define SKIP_SPARE_BYTES	4
-> >> +#define BITS_PER_STEP_RS	18
-> >> +#define BITS_PER_STEP_BCH	13
-> >> +
-> >> +struct tegra_nand_controller {
-> >> +	struct nand_hw_control controller;
-> >> +	void __iomem *regs;
-> >> +	struct clk *clk;
-> >> +	struct device *dev;
-> >> +	struct completion command_complete;
-> >> +	struct completion dma_complete;
-> >> +	bool last_read_error;
-> >> +	int cur_chip;
-> >> +	struct nand_chip *chip;
-> >> +};
-> >> +
-> >> +struct tegra_nand_chip {
-> >> +	struct nand_chip chip;
-> >> +	struct gpio_desc *wp_gpio;
-> >> +	struct mtd_oob_region tag;
-> >> +};
-> >> +
-> >> +static inline struct tegra_nand_controller *to_tegra_ctrl(
-> >> +						struct nand_hw_control *hw_ctrl)
-> >> +{
-> >> +	return container_of(hw_ctrl, struct tegra_nand_controller, 
-controller);
-> >> +}
-> >> +
-> >> +static inline struct tegra_nand_chip *to_tegra_chip(struct nand_chip
-> >> *chip) +{
-> >> +	return container_of(chip, struct tegra_nand_chip, chip);
-> >> +}
-> >> +
-> >> +static int tegra_nand_ooblayout_rs_ecc(struct mtd_info *mtd, int
-> >> section,
-> >> +				       struct mtd_oob_region *oobregion)
-> >> +{
-> >> +	struct nand_chip *chip = mtd_to_nand(mtd);
-> >> +	int bytes_per_step = DIV_ROUND_UP(BITS_PER_STEP_RS *
-> >> chip->ecc.strength,
-> >> +					  BITS_PER_BYTE);
-> >> +
-> >> +	if (section > 0)
-> >> +		return -ERANGE;
-> >> +
-> >> +	oobregion->offset = SKIP_SPARE_BYTES;
-> >> +	oobregion->length = round_up(bytes_per_step * chip->ecc.steps, 4);
-> >> +
-> >> +	return 0;
-> >> +}
-> >> +
-> >> +static int tegra_nand_ooblayout_rs_free(struct mtd_info *mtd, int
-> >> section,
-> >> +					struct mtd_oob_region *oobregion)
-> >> +{
-> >> +	struct nand_chip *chip = mtd_to_nand(mtd);
-> >> +	int bytes_per_step = DIV_ROUND_UP(BITS_PER_STEP_RS *
-> >> chip->ecc.strength,
-> >> +					  BITS_PER_BYTE);
-> >> +
-> >> +	if (section > 0)
-> >> +		return -ERANGE;
-> >> +
-> >> +	oobregion->offset = SKIP_SPARE_BYTES +
-> >> +			    round_up(bytes_per_step * chip->ecc.steps, 4);
-> >> +	oobregion->length = mtd->oobsize - oobregion->offset;
-> >> +
-> >> +	return 0;
-> >> +}
-> >> +
-> >> +static const struct mtd_ooblayout_ops tegra_nand_oob_rs_ops = {
-> >> +	.ecc = tegra_nand_ooblayout_rs_ecc,
-> >> +	.free = tegra_nand_ooblayout_rs_free,
-> >> +};
-> >> +
-> >> +static int tegra_nand_ooblayout_bch_ecc(struct mtd_info *mtd, int
-> >> section,
-> >> +				       struct mtd_oob_region *oobregion)
-> >> +{
-> >> +	struct nand_chip *chip = mtd_to_nand(mtd);
-> >> +	int bytes_per_step = DIV_ROUND_UP(BITS_PER_STEP_BCH *
-> >> chip->ecc.strength,
-> >> +					  BITS_PER_BYTE);
-> >> +
-> >> +	if (section > 0)
-> >> +		return -ERANGE;
-> >> +
-> >> +	oobregion->offset = SKIP_SPARE_BYTES;
-> >> +	oobregion->length = round_up(bytes_per_step * chip->ecc.steps, 4);
-> >> +
-> >> +	return 0;
-> >> +}
-> >> +
-> >> +static int tegra_nand_ooblayout_bch_free(struct mtd_info *mtd, int
-> >> section, +					struct mtd_oob_region *oobregion)
-> >> +{
-> >> +	struct nand_chip *chip = mtd_to_nand(mtd);
-> >> +	int bytes_per_step = DIV_ROUND_UP(BITS_PER_STEP_BCH *
-> >> chip->ecc.strength,
-> >> +					  BITS_PER_BYTE);
-> >> +
-> >> +	if (section > 0)
-> >> +		return -ERANGE;
-> >> +
-> >> +	oobregion->offset = SKIP_SPARE_BYTES +
-> >> +			    round_up(bytes_per_step * chip->ecc.steps, 4);
-> >> +	oobregion->length = mtd->oobsize - oobregion->offset;
-> >> +
-> >> +	return 0;
-> >> +}
-> >> +
-> >> +/*
-> >> + * Layout with tag bytes is
-> >> + *
-> >> + *
-> >> ------------------------------------------------------------------------
-> >> -- + * | main area                       | skip bytes | tag bytes |
-> >> parity | .. | + *
-> >> ------------------------------------------------------------------------
-> >> -- + *
-> >> + * If not tag bytes are written, parity moves right after skip bytes!
-> >> + */
-> >> +static const struct mtd_ooblayout_ops tegra_nand_oob_bch_ops = {
-> >> +	.ecc = tegra_nand_ooblayout_bch_ecc,
-> >> +	.free = tegra_nand_ooblayout_bch_free,
-> >> +};
-> >> +
-> >> +static irqreturn_t tegra_nand_irq(int irq, void *data)
-> >> +{
-> >> +	struct tegra_nand_controller *ctrl = data;
-> >> +	u32 isr, dma;
-> >> +
-> >> +	isr = readl_relaxed(ctrl->regs + ISR);
-> >> +	dma = readl_relaxed(ctrl->regs + DMA_CTRL);
-> >> +	dev_dbg(ctrl->dev, "isr %08x\n", isr);
-> >> +
-> >> +	if (!isr && !(dma & DMA_CTRL_IS_DONE))
-> >> +		return IRQ_NONE;
-> >> +
-> >> +	/*
-> >> +	 * The bit name is somewhat missleading: This is also set when
-> >> +	 * HW ECC was successful. The data sheet states:
-> >> +	 * Correctable OR Un-correctable errors occurred in the DMA 
-transfer...
-> >> +	 */
-> >> +	if (isr & ISR_CORRFAIL_ERR)
-> >> +		ctrl->last_read_error = true;
-> >> +
-> >> +	if (isr & ISR_CMD_DONE)
-> >> +		complete(&ctrl->command_complete);
-> >> +
-> >> +	if (isr & ISR_UND)
-> >> +		dev_err(ctrl->dev, "FIFO underrun\n");
-> >> +
-> >> +	if (isr & ISR_OVR)
-> >> +		dev_err(ctrl->dev, "FIFO overrun\n");
-> >> +
-> >> +	/* handle DMA interrupts */
-> >> +	if (dma & DMA_CTRL_IS_DONE) {
-> >> +		writel_relaxed(dma, ctrl->regs + DMA_CTRL);
-> >> +		complete(&ctrl->dma_complete);
-> >> +	}
-> >> +
-> >> +	/* clear interrupts */
-> >> +	writel_relaxed(isr, ctrl->regs + ISR);
-> >> +
-> >> +	return IRQ_HANDLED;
-> >> +}
-> >> +
-> >> +static const char * const tegra_nand_reg_names[] = {
-> >> +	"COMMAND",
-> >> +	"STATUS",
-> >> +	"ISR",
-> >> +	"IER",
-> >> +	"CONFIG",
-> >> +	"TIMING",
-> >> +	NULL,
-> >> +	"TIMING2",
-> >> +	"CMD_REG1",
-> >> +	"CMD_REG2",
-> >> +	"ADDR_REG1",
-> >> +	"ADDR_REG2",
-> >> +	"DMA_MST_CTRL",
-> >> +	"DMA_CFG_A",
-> >> +	"DMA_CFG_B",
-> >> +	"FIFO_CTRL",
-> >> +};
-> >> +
-> >> +static void tegra_nand_dump_reg(struct tegra_nand_controller *ctrl)
-> >> +{
-> >> +	u32 reg;
-> >> +	int i;
-> >> +
-> >> +	dev_err(ctrl->dev, "Tegra NAND controller register dump\n");
-> >> +	for (i = 0; i < ARRAY_SIZE(tegra_nand_reg_names); i++) {
-> >> +		const char *reg_name = tegra_nand_reg_names[i];
-> >> +
-> >> +		if (!reg_name)
-> >> +			continue;
-> >> +
-> >> +		reg = readl_relaxed(ctrl->regs + (i * 4));
-> >> +		dev_err(ctrl->dev, "%s: 0x%08x\n", reg_name, reg);
-> >> +	}
-> >> +}
-> >> +
-> >> +static int tegra_nand_cmd(struct nand_chip *chip,
-> >> +			 const struct nand_subop *subop)
-> >> +{
-> >> +	const struct nand_op_instr *instr;
-> >> +	const struct nand_op_instr *instr_data_in = NULL;
-> >> +	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip->controller);
-> >> +	unsigned int op_id, size = 0, offset = 0;
-> >> +	bool first_cmd = true;
-> >> +	u32 reg, cmd = 0;
-> >> +	int ret;
-> >> +
-> >> +	for (op_id = 0; op_id < subop->ninstrs; op_id++) {
-> >> +		unsigned int naddrs, i;
-> >> +		const u8 *addrs;
-> >> +		u32 addr1 = 0, addr2 = 0;
-> >> +
-> >> +		instr = &subop->instrs[op_id];
-> >> +
-> >> +		switch (instr->type) {
-> >> +		case NAND_OP_CMD_INSTR:
-> >> +			if (first_cmd) {
-> >> +				cmd |= CMD_CLE;
-> >> +				writel_relaxed(instr->ctx.cmd.opcode,
-> >> +					       ctrl->regs + CMD_1);
-> >> +			} else {
-> >> +				cmd |= CMD_SEC_CMD;
-> >> +				writel_relaxed(instr->ctx.cmd.opcode,
-> >> +					       ctrl->regs + CMD_2);
-> >> +			}
-> >> +			first_cmd = false;
-> >> +			break;
-> >> +		case NAND_OP_ADDR_INSTR:
-> >> +			offset = nand_subop_get_addr_start_off(subop, op_id);
-> >> +			naddrs = nand_subop_get_num_addr_cyc(subop, op_id);
-> >> +			addrs = &instr->ctx.addr.addrs[offset];
-> >> +
-> >> +			cmd |= CMD_ALE | CMD_ALE_SIZE(naddrs);
-> >> +			for (i = 0; i < min_t(unsigned int, 4, naddrs); i++)
-> >> +				addr1 |= *addrs++ << (BITS_PER_BYTE * i);
-> >> +			naddrs -= i;
-> >> +			for (i = 0; i < min_t(unsigned int, 4, naddrs); i++)
-> >> +				addr2 |= *addrs++ << (BITS_PER_BYTE * i);
-> >> +			writel_relaxed(addr1, ctrl->regs + ADDR_1);
-> >> +			writel_relaxed(addr2, ctrl->regs + ADDR_2);
-> >> +			break;
-> >> +
-> >> +		case NAND_OP_DATA_IN_INSTR:
-> >> +			size = nand_subop_get_data_len(subop, op_id);
-> >> +			offset = nand_subop_get_data_start_off(subop, op_id);
-> >> +
-> >> +			cmd |= CMD_TRANS_SIZE(size) | CMD_PIO | CMD_RX |
-> >> +				CMD_A_VALID;
-> >> +
-> >> +			instr_data_in = instr;
-> >> +			break;
-> >> +
-> >> +		case NAND_OP_DATA_OUT_INSTR:
-> >> +			size = nand_subop_get_data_len(subop, op_id);
-> >> +			offset = nand_subop_get_data_start_off(subop, op_id);
-> >> +
-> >> +			cmd |= CMD_TRANS_SIZE(size) | CMD_PIO | CMD_TX |
-> >> +				CMD_A_VALID;
-> >> +
-> >> +			memcpy(&reg, instr->ctx.data.buf.out + offset, size);
-> >> +			writel_relaxed(reg, ctrl->regs + RESP);
-> >> +
-> >> +			break;
-> >> +		case NAND_OP_WAITRDY_INSTR:
-> >> +			cmd |= CMD_RBSY_CHK;
-> >> +			break;
-> >> +
-> >> +		}
-> >> +	}
-> >> +
-> >> +	cmd |= CMD_GO | CMD_CE(ctrl->cur_chip);
-> >> +	writel_relaxed(cmd, ctrl->regs + CMD);
-> >> +	ret = wait_for_completion_timeout(&ctrl->command_complete,
-> >> +					  msecs_to_jiffies(500));
-> >> +	if (!ret) {
-> >> +		dev_err(ctrl->dev, "CMD timeout\n");
-> >> +		tegra_nand_dump_reg(ctrl);
-> >> +		return -ETIMEDOUT;
-> >> +	}
-> > 
-> > - wait_for_completion_timeout() could fail
-> 
-> Not according to:
-> https://elixir.bootlin.com/linux/latest/source/kernel/sched/completion.c#L14
-> 0 https://www.kernel.org/doc/Documentation/scheduler/completion.txt
-> 
-> Afaik, only the _interruptible variant can fail.
+Add the clock tree definition for the new px30 SoC.
 
-Okay.
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ drivers/clk/rockchip/Makefile   |    1 +
+ drivers/clk/rockchip/clk-px30.c | 1080 +++++++++++++++++++++++++++++++++++++++
+ drivers/clk/rockchip/clk.h      |   41 +-
+ 3 files changed, 1121 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/rockchip/clk-px30.c
 
-> Btw, maybe we should use the _io variant?
-
-Looks like the _io variant is something specific to block/FS subsys and 
-shouldn't be used by the drivers.
-
-> > - HW shall be reset
-> > - completion shall be re-inited because IRQ could fire just after the
-> > completion timeout
-> > 
-> > I'd write it something like this:
-> > 
-> > #define INT_MASK	(IER_UND | IER_OVR | IER_CMD_DONE | IER_GIE)
-> > 
-> > #define HWSTATUS_MASK	(HWSTATUS_RDSTATUS_MASK(1) |		 \
-> > 
-> > 			 HWSTATUS_RDSTATUS_VALUE(0) |		 \
-> > 			 HWSTATUS_RBSY_MASK(NAND_STATUS_READY) | \
-> > 			 HWSTATUS_RBSY_VALUE(NAND_STATUS_READY))
-> > 
-> > #define HW_TIMEOUT	500
-> > 
-> > void tegra_nand_controller_reset(struct tegra_nand_controller *ctrl)
-> > {
-> > 
-> > 	int err;
-> > 	
-> > 	disable_irq(ctrl->irq);
-> > 	
-> > 	err = reset_control_reset(ctrl->rst);
-> > 	if (err) {
-> > 	
-> > 		dev_err(ctrl->dev, "Failed to reset HW: %d\n", err);
-> > 		msleep(HW_TIMEOUT);
-> > 	
-> > 	}
-> > 	
-> > 	writel_relaxed(NAND_CMD_STATUS, ctrl->regs + HWSTATUS_CMD);
-> > 	writel_relaxed(HWSTATUS_MASK, ctrl->regs + HWSTATUS_MASK);
-> > 	writel_relaxed(INT_MASK, ctrl->regs + ISR);
-> 
-> If we do a controller reset, there is much more state than that which
-> needs to be restored. A lot of it is not readily available currently
-> (timing, ECC settings...)
-> 
-> That seems a lot of work for a code path I do not intend to ever use :-)
-
-Are you sure that resetting HW resets the timing and other registers 
-configuration? Reset implementation is HW-specific, like for example in a case 
-of a video decoder the registers state is re-intialized on HW reset, but 
-registers configuration is untouched in a case of resetting GPU. I'd suggest 
-to check whether NAND controller resetting affects the HW configuration.
+diff --git a/drivers/clk/rockchip/Makefile b/drivers/clk/rockchip/Makefile
+index 023f83ad3429..82ab6f515179 100644
+--- a/drivers/clk/rockchip/Makefile
++++ b/drivers/clk/rockchip/Makefile
+@@ -14,6 +14,7 @@ obj-y	+= clk-muxgrf.o
+ obj-y	+= clk-ddr.o
+ obj-$(CONFIG_RESET_CONTROLLER)	+= softrst.o
+ 
++obj-y   += clk-px30.o
+ obj-y	+= clk-rv1108.o
+ obj-y	+= clk-rk3036.o
+ obj-y	+= clk-rk3128.o
+diff --git a/drivers/clk/rockchip/clk-px30.c b/drivers/clk/rockchip/clk-px30.c
+new file mode 100644
+index 000000000000..07105fe1ff6c
+--- /dev/null
++++ b/drivers/clk/rockchip/clk-px30.c
+@@ -0,0 +1,1080 @@
++/*
++ * Copyright (c) 2016 Rockchip Electronics Co. Ltd.
++ * Author: Elaine <zhangqing@rock-chips.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/syscore_ops.h>
++#include <dt-bindings/clock/px30-cru.h>
++#include "clk.h"
++
++#define PX30_GRF_SOC_STATUS0		0x480
++
++enum px30_plls {
++	apll, dpll, cpll, npll, apll_b_h, apll_b_l,
++};
++
++enum px30_pmu_plls {
++	gpll,
++};
++
++static struct rockchip_pll_rate_table px30_pll_rates[] = {
++	/* _mhz, _refdiv, _fbdiv, _postdiv1, _postdiv2, _dsmpd, _frac */
++	RK3036_PLL_RATE(1608000000, 1, 67, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1584000000, 1, 66, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1560000000, 1, 65, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1536000000, 1, 64, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1512000000, 1, 63, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1488000000, 1, 62, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1464000000, 1, 61, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1440000000, 1, 60, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1416000000, 1, 59, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1392000000, 1, 58, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1368000000, 1, 57, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1344000000, 1, 56, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1320000000, 1, 55, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1296000000, 1, 54, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1272000000, 1, 53, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1248000000, 1, 52, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1200000000, 1, 50, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1188000000, 2, 99, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1104000000, 1, 46, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1100000000, 12, 550, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1008000000, 1, 84, 2, 1, 1, 0),
++	RK3036_PLL_RATE(1000000000, 6, 500, 2, 1, 1, 0),
++	RK3036_PLL_RATE(984000000, 1, 82, 2, 1, 1, 0),
++	RK3036_PLL_RATE(960000000, 1, 80, 2, 1, 1, 0),
++	RK3036_PLL_RATE(936000000, 1, 78, 2, 1, 1, 0),
++	RK3036_PLL_RATE(912000000, 1, 76, 2, 1, 1, 0),
++	RK3036_PLL_RATE(900000000, 4, 300, 2, 1, 1, 0),
++	RK3036_PLL_RATE(888000000, 1, 74, 2, 1, 1, 0),
++	RK3036_PLL_RATE(864000000, 1, 72, 2, 1, 1, 0),
++	RK3036_PLL_RATE(840000000, 1, 70, 2, 1, 1, 0),
++	RK3036_PLL_RATE(816000000, 1, 68, 2, 1, 1, 0),
++	RK3036_PLL_RATE(800000000, 6, 400, 2, 1, 1, 0),
++	RK3036_PLL_RATE(700000000, 6, 350, 2, 1, 1, 0),
++	RK3036_PLL_RATE(696000000, 1, 58, 2, 1, 1, 0),
++	RK3036_PLL_RATE(624000000, 1, 52, 2, 1, 1, 0),
++	RK3036_PLL_RATE(600000000, 1, 75, 3, 1, 1, 0),
++	RK3036_PLL_RATE(594000000, 2, 99, 2, 1, 1, 0),
++	RK3036_PLL_RATE(504000000, 1, 63, 3, 1, 1, 0),
++	RK3036_PLL_RATE(500000000, 6, 250, 2, 1, 1, 0),
++	RK3036_PLL_RATE(408000000, 1, 68, 2, 2, 1, 0),
++	RK3036_PLL_RATE(312000000, 1, 52, 2, 2, 1, 0),
++	RK3036_PLL_RATE(216000000, 1, 72, 4, 2, 1, 0),
++	RK3036_PLL_RATE(96000000, 1, 64, 4, 4, 1, 0),
++	{ /* sentinel */ },
++};
++
++#define PX30_DIV_ACLKM_MASK		0x7
++#define PX30_DIV_ACLKM_SHIFT		12
++#define PX30_DIV_PCLK_DBG_MASK	0xf
++#define PX30_DIV_PCLK_DBG_SHIFT	8
++
++#define PX30_CLKSEL0(_aclk_core, _pclk_dbg)				\
++{									\
++	.reg = PX30_CLKSEL_CON(0),					\
++	.val = HIWORD_UPDATE(_aclk_core, PX30_DIV_ACLKM_MASK,		\
++			     PX30_DIV_ACLKM_SHIFT) |			\
++	       HIWORD_UPDATE(_pclk_dbg, PX30_DIV_PCLK_DBG_MASK,	\
++			     PX30_DIV_PCLK_DBG_SHIFT),		\
++}
++
++#define PX30_CPUCLK_RATE(_prate, _aclk_core, _pclk_dbg)		\
++{									\
++	.prate = _prate,						\
++	.divs = {							\
++		PX30_CLKSEL0(_aclk_core, _pclk_dbg),			\
++	},								\
++}
++
++static struct rockchip_cpuclk_rate_table px30_cpuclk_rates[] __initdata = {
++	PX30_CPUCLK_RATE(1608000000, 1, 7),
++	PX30_CPUCLK_RATE(1584000000, 1, 7),
++	PX30_CPUCLK_RATE(1560000000, 1, 7),
++	PX30_CPUCLK_RATE(1536000000, 1, 7),
++	PX30_CPUCLK_RATE(1512000000, 1, 7),
++	PX30_CPUCLK_RATE(1488000000, 1, 5),
++	PX30_CPUCLK_RATE(1464000000, 1, 5),
++	PX30_CPUCLK_RATE(1440000000, 1, 5),
++	PX30_CPUCLK_RATE(1416000000, 1, 5),
++	PX30_CPUCLK_RATE(1392000000, 1, 5),
++	PX30_CPUCLK_RATE(1368000000, 1, 5),
++	PX30_CPUCLK_RATE(1344000000, 1, 5),
++	PX30_CPUCLK_RATE(1320000000, 1, 5),
++	PX30_CPUCLK_RATE(1296000000, 1, 5),
++	PX30_CPUCLK_RATE(1272000000, 1, 5),
++	PX30_CPUCLK_RATE(1248000000, 1, 5),
++	PX30_CPUCLK_RATE(1224000000, 1, 5),
++	PX30_CPUCLK_RATE(1200000000, 1, 5),
++	PX30_CPUCLK_RATE(1104000000, 1, 5),
++	PX30_CPUCLK_RATE(1008000000, 1, 5),
++	PX30_CPUCLK_RATE(912000000, 1, 5),
++	PX30_CPUCLK_RATE(816000000, 1, 3),
++	PX30_CPUCLK_RATE(696000000, 1, 3),
++	PX30_CPUCLK_RATE(600000000, 1, 3),
++	PX30_CPUCLK_RATE(408000000, 1, 1),
++	PX30_CPUCLK_RATE(312000000, 1, 1),
++	PX30_CPUCLK_RATE(216000000,  1, 1),
++	PX30_CPUCLK_RATE(96000000, 1, 1),
++};
++
++static const struct rockchip_cpuclk_reg_data px30_cpuclk_data = {
++	.core_reg = PX30_CLKSEL_CON(0),
++	.div_core_shift = 0,
++	.div_core_mask = 0xf,
++	.mux_core_alt = 1,
++	.mux_core_main = 0,
++	.mux_core_shift = 7,
++	.mux_core_mask = 0x1,
++};
++
++PNAME(mux_pll_p)		= { "xin24m"};
++PNAME(mux_usb480m_p)		= { "xin24m", "usb480m_phy", "clk_rtc32k_pmu" };
++PNAME(mux_armclk_p)		= { "apll_core", "gpll_core" };
++PNAME(mux_ddrphy_p)		= { "dpll_ddr", "gpll_ddr" };
++PNAME(mux_ddrstdby_p)		= { "clk_ddrphy1x", "clk_stdby_2wrap" };
++PNAME(mux_4plls_p)		= { "gpll", "dummy_cpll", "usb480m", "npll" };
++PNAME(mux_cpll_npll_p)		= { "cpll", "npll" };
++PNAME(mux_npll_cpll_p)		= { "npll", "cpll" };
++PNAME(mux_gpll_cpll_p)		= { "gpll", "dummy_cpll" };
++PNAME(mux_gpll_npll_p)		= { "gpll", "npll" };
++PNAME(mux_gpll_xin24m_p)		= { "gpll", "xin24m"};
++PNAME(mux_gpll_cpll_npll_p)		= { "gpll", "dummy_cpll", "npll" };
++PNAME(mux_gpll_cpll_npll_xin24m_p)	= { "gpll", "dummy_cpll", "npll", "xin24m" };
++PNAME(mux_gpll_xin24m_npll_p)		= { "gpll", "xin24m", "npll"};
++PNAME(mux_pdm_p)		= { "clk_pdm_src", "clk_pdm_frac" };
++PNAME(mux_i2s0_tx_p)		= { "clk_i2s0_tx_src", "clk_i2s0_tx_frac", "mclk_i2s0_tx_in", "xin12m"};
++PNAME(mux_i2s0_rx_p)		= { "clk_i2s0_rx_src", "clk_i2s0_rx_frac", "mclk_i2s0_rx_in", "xin12m"};
++PNAME(mux_i2s1_p)		= { "clk_i2s1_src", "clk_i2s1_frac", "i2s1_clkin", "xin12m"};
++PNAME(mux_i2s2_p)		= { "clk_i2s2_src", "clk_i2s2_frac", "i2s2_clkin", "xin12m"};
++PNAME(mux_i2s0_tx_out_p)	= { "clk_i2s0_tx", "xin12m", "clk_i2s0_rx"};
++PNAME(mux_i2s0_rx_out_p)	= { "clk_i2s0_rx", "xin12m", "clk_i2s0_tx"};
++PNAME(mux_i2s1_out_p)		= { "clk_i2s1", "xin12m"};
++PNAME(mux_i2s2_out_p)		= { "clk_i2s2", "xin12m"};
++PNAME(mux_i2s0_tx_rx_p)		= { "clk_i2s0_tx_mux", "clk_i2s0_rx_mux"};
++PNAME(mux_i2s0_rx_tx_p)		= { "clk_i2s0_rx_mux", "clk_i2s0_tx_mux"};
++PNAME(mux_uart_src_p)		= { "gpll", "xin24m", "usb480m", "npll" };
++PNAME(mux_uart1_p)		= { "clk_uart1_src", "clk_uart1_np5", "clk_uart1_frac" };
++PNAME(mux_uart2_p)		= { "clk_uart2_src", "clk_uart2_np5", "clk_uart2_frac" };
++PNAME(mux_uart3_p)		= { "clk_uart3_src", "clk_uart3_np5", "clk_uart3_frac" };
++PNAME(mux_uart4_p)		= { "clk_uart4_src", "clk_uart4_np5", "clk_uart4_frac" };
++PNAME(mux_uart5_p)		= { "clk_uart5_src", "clk_uart5_np5", "clk_uart5_frac" };
++PNAME(mux_cif_out_p)		= { "xin24m", "dummy_cpll", "npll", "usb480m" };
++PNAME(mux_dclk_vopb_p)		= { "dclk_vopb_src", "dclk_vopb_frac", "xin24m" };
++PNAME(mux_dclk_vopl_p)		= { "dclk_vopl_src", "dclk_vopl_frac", "xin24m" };
++PNAME(mux_gmac_p)		= { "clk_gmac_src", "gmac_clkin" };
++PNAME(mux_gmac_rmii_sel_p)	= { "clk_gmac_rx_tx_div20", "clk_gmac_rx_tx_div2" };
++PNAME(mux_rtc32k_pmu_p)		= { "xin32k", "pmu_pvtm_32k", "clk_rtc32k_frac", };
++PNAME(mux_wifi_pmu_p)		= { "xin24m", "clk_wifi_pmu_src" };
++PNAME(mux_uart0_pmu_p)		= { "clk_uart0_pmu_src", "clk_uart0_np5", "clk_uart0_frac" };
++PNAME(mux_usbphy_ref_p)		= { "xin24m", "clk_ref24m_pmu" };
++PNAME(mux_mipidsiphy_ref_p)	= { "xin24m", "clk_ref24m_pmu" };
++PNAME(mux_gpu_p)	= { "clk_gpu_div", "clk_gpu_np5" };
++
++static struct rockchip_pll_clock px30_pll_clks[] __initdata = {
++	[apll] = PLL(pll_rk3328, PLL_APLL, "apll", mux_pll_p,
++		     0, PX30_PLL_CON(0),
++		     PX30_MODE_CON, 0, 0, 0, px30_pll_rates),
++	[dpll] = PLL(pll_rk3328, PLL_DPLL, "dpll", mux_pll_p,
++		     0, PX30_PLL_CON(8),
++		     PX30_MODE_CON, 4, 1, 0, NULL),
++	[cpll] = PLL(pll_rk3328, PLL_CPLL, "cpll", mux_pll_p,
++		     0, PX30_PLL_CON(16),
++		     PX30_MODE_CON, 2, 2, 0, px30_pll_rates),
++	[npll] = PLL(pll_rk3328, PLL_NPLL, "npll", mux_pll_p,
++		     0, PX30_PLL_CON(24),
++		     PX30_MODE_CON, 6, 4, 0, px30_pll_rates),
++};
++
++static struct rockchip_pll_clock px30_pmu_pll_clks[] __initdata = {
++	[gpll] = PLL(pll_rk3328, PLL_GPLL, "gpll",  mux_pll_p, 0, PX30_PMU_PLL_CON(0),
++		     PX30_PMU_MODE, 0, 3, 0, px30_pll_rates),
++};
++
++#define MFLAGS CLK_MUX_HIWORD_MASK
++#define DFLAGS CLK_DIVIDER_HIWORD_MASK
++#define GFLAGS (CLK_GATE_HIWORD_MASK | CLK_GATE_SET_TO_DISABLE)
++
++static struct rockchip_clk_branch px30_pdm_fracmux __initdata =
++	MUX(0, "clk_pdm_mux", mux_pdm_p, CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(26), 15, 1, MFLAGS);
++
++static struct rockchip_clk_branch px30_i2s0_tx_fracmux __initdata =
++	MUX(0, "clk_i2s0_tx_mux", mux_i2s0_tx_p, CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(28), 10, 2, MFLAGS);
++
++static struct rockchip_clk_branch px30_i2s0_rx_fracmux __initdata =
++	MUX(0, "clk_i2s0_rx_mux", mux_i2s0_rx_p, CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(58), 10, 2, MFLAGS);
++
++static struct rockchip_clk_branch px30_i2s1_fracmux __initdata =
++	MUX(0, "clk_i2s1_mux", mux_i2s1_p, CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(30), 10, 2, MFLAGS);
++
++static struct rockchip_clk_branch px30_i2s2_fracmux __initdata =
++	MUX(0, "clk_i2s2_mux", mux_i2s2_p, CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(32), 10, 2, MFLAGS);
++
++static struct rockchip_clk_branch px30_uart1_fracmux __initdata =
++	MUX(0, "clk_uart1_mux", mux_uart1_p, CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(35), 14, 2, MFLAGS);
++
++static struct rockchip_clk_branch px30_uart2_fracmux __initdata =
++	MUX(0, "clk_uart2_mux", mux_uart2_p, CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(38), 14, 2, MFLAGS);
++
++static struct rockchip_clk_branch px30_uart3_fracmux __initdata =
++	MUX(0, "clk_uart3_mux", mux_uart3_p, CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(41), 14, 2, MFLAGS);
++
++static struct rockchip_clk_branch px30_uart4_fracmux __initdata =
++	MUX(0, "clk_uart4_mux", mux_uart4_p, CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(44), 14, 2, MFLAGS);
++
++static struct rockchip_clk_branch px30_uart5_fracmux __initdata =
++	MUX(0, "clk_uart5_mux", mux_uart5_p, CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(47), 14, 2, MFLAGS);
++
++static struct rockchip_clk_branch px30_dclk_vopb_fracmux __initdata =
++	MUX(0, "dclk_vopb_mux", mux_dclk_vopb_p, CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(5), 14, 2, MFLAGS);
++
++static struct rockchip_clk_branch px30_dclk_vopl_fracmux __initdata =
++	MUX(0, "dclk_vopl_mux", mux_dclk_vopl_p, CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(8), 14, 2, MFLAGS);
++
++static struct rockchip_clk_branch px30_rtc32k_pmu_fracmux __initdata =
++	MUX(SCLK_RTC32K_PMU, "clk_rtc32k_pmu", mux_rtc32k_pmu_p, CLK_SET_RATE_PARENT,
++			PX30_PMU_CLKSEL_CON(0), 14, 2, MFLAGS);
++
++static struct rockchip_clk_branch px30_uart0_pmu_fracmux __initdata =
++	MUX(0, "clk_uart0_pmu_mux", mux_uart0_pmu_p, CLK_SET_RATE_PARENT,
++			PX30_PMU_CLKSEL_CON(4), 14, 2, MFLAGS);
++
++static struct rockchip_clk_branch px30_clk_branches[] __initdata = {
++	/*
++	 * Clock-Architecture Diagram 1
++	 */
++
++	MUX(USB480M, "usb480m", mux_usb480m_p, CLK_SET_RATE_PARENT,
++			PX30_MODE_CON, 8, 2, MFLAGS),
++	FACTOR(0, "xin12m", "xin24m", 0, 1, 2),
++
++	/*
++	 * Clock-Architecture Diagram 3
++	 */
++
++	/* PD_CORE */
++	GATE(0, "apll_core", "apll", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(0), 0, GFLAGS),
++	GATE(0, "gpll_core", "gpll", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(0), 0, GFLAGS),
++	COMPOSITE_NOMUX(0, "pclk_dbg", "armclk", CLK_IGNORE_UNUSED,
++			PX30_CLKSEL_CON(0), 8, 4, DFLAGS | CLK_DIVIDER_READ_ONLY,
++			PX30_CLKGATE_CON(0), 2, GFLAGS),
++	COMPOSITE_NOMUX(0, "aclk_core", "armclk", CLK_IGNORE_UNUSED,
++			PX30_CLKSEL_CON(0), 12, 3, DFLAGS | CLK_DIVIDER_READ_ONLY,
++			PX30_CLKGATE_CON(0), 1, GFLAGS),
++	GATE(0, "aclk_core_niu", "aclk_core", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(0), 4, GFLAGS),
++	GATE(0, "aclk_core_prf", "aclk_core", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(17), 5, GFLAGS),
++	GATE(0, "pclk_dbg_niu", "pclk_dbg", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(0), 5, GFLAGS),
++	GATE(0, "pclk_core_dbg", "pclk_dbg", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(0), 6, GFLAGS),
++	GATE(0, "pclk_core_grf", "pclk_dbg", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(17), 6, GFLAGS),
++
++	GATE(0, "clk_jtag", "jtag_clkin", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(0), 3, GFLAGS),
++	GATE(SCLK_PVTM, "clk_pvtm", "xin24m", 0,
++			PX30_CLKGATE_CON(17), 4, GFLAGS),
++
++	/* PD_GPU */
++	COMPOSITE_NODIV(0, "clk_gpu_src", mux_4plls_p, 0,
++			PX30_CLKSEL_CON(1), 6, 2, MFLAGS,
++			PX30_CLKGATE_CON(0), 8, GFLAGS),
++	COMPOSITE_NOMUX(0, "clk_gpu_div", "clk_gpu_src", 0,
++			PX30_CLKSEL_CON(1), 0, 4, DFLAGS,
++			PX30_CLKGATE_CON(0), 12, GFLAGS),
++	COMPOSITE_NOMUX_HALFDIV(0, "clk_gpu_np5", "clk_gpu_src", 0,
++			PX30_CLKSEL_CON(1), 8, 4, DFLAGS,
++			PX30_CLKGATE_CON(0), 9, GFLAGS),
++	COMPOSITE_NODIV(SCLK_GPU, "clk_gpu", mux_gpu_p, CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(1), 15, 1, MFLAGS,
++			PX30_CLKGATE_CON(0), 10, GFLAGS),
++	COMPOSITE_NOMUX(0, "aclk_gpu", "clk_gpu", CLK_IGNORE_UNUSED,
++			PX30_CLKSEL_CON(1), 13, 2, DFLAGS,
++			PX30_CLKGATE_CON(17), 10, GFLAGS),
++	GATE(0, "aclk_gpu_niu", "aclk_gpu", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(0), 11, GFLAGS),
++	GATE(0, "aclk_gpu_prf", "aclk_gpu", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(17), 8, GFLAGS),
++	GATE(0, "pclk_gpu_grf", "aclk_gpu", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(17), 9, GFLAGS),
++
++	/*
++	 * Clock-Architecture Diagram 4
++	 */
++
++	/* PD_DDR */
++	GATE(0, "dpll_ddr", "dpll", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(0), 7, GFLAGS),
++	GATE(0, "gpll_ddr", "gpll", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(0), 13, GFLAGS),
++	COMPOSITE_NOGATE(SCLK_DDRCLK, "sclk_ddrc", mux_ddrphy_p, CLK_IGNORE_UNUSED,
++			PX30_CLKSEL_CON(2), 7, 1, MFLAGS, 0, 3, DFLAGS | CLK_DIVIDER_POWER_OF_TWO),
++	COMPOSITE_NOGATE(0, "clk_ddrphy4x", mux_ddrphy_p, CLK_IGNORE_UNUSED,
++			PX30_CLKSEL_CON(2), 7, 1, MFLAGS, 0, 3, DFLAGS),
++	FACTOR_GATE(0, "clk_ddrphy1x", "clk_ddrphy4x", CLK_IGNORE_UNUSED, 1, 4,
++			PX30_CLKGATE_CON(0), 14, GFLAGS),
++	FACTOR_GATE(0, "clk_stdby_2wrap", "clk_ddrphy4x", CLK_IGNORE_UNUSED, 1, 4,
++			PX30_CLKGATE_CON(1), 0, GFLAGS),
++	COMPOSITE_NODIV(0, "clk_ddrstdby", mux_ddrstdby_p, CLK_IGNORE_UNUSED,
++			PX30_CLKSEL_CON(2), 4, 1, MFLAGS,
++			PX30_CLKGATE_CON(1), 13, GFLAGS),
++	GATE(0, "aclk_split", "clk_ddrphy1x", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(1), 15, GFLAGS),
++	GATE(0, "clk_msch", "clk_ddrphy1x", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(1), 8, GFLAGS),
++	GATE(0, "aclk_ddrc", "clk_ddrphy1x", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(1), 5, GFLAGS),
++	GATE(0, "clk_core_ddrc", "clk_ddrphy1x", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(1), 6, GFLAGS),
++	GATE(0, "aclk_cmd_buff", "clk_ddrphy1x", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(1), 6, GFLAGS),
++	GATE(0, "clk_ddrmon", "clk_ddrphy1x", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(1), 11, GFLAGS),
++
++	GATE(0, "clk_ddrmon_timer", "xin24m", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(0), 15, GFLAGS),
++
++	COMPOSITE_NOMUX(PCLK_DDR, "pclk_ddr", "gpll", CLK_IGNORE_UNUSED,
++			PX30_CLKSEL_CON(2), 8, 5, DFLAGS,
++			PX30_CLKGATE_CON(1), 1, GFLAGS),
++	GATE(0, "pclk_ddrmon", "pclk_ddr", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(1), 10, GFLAGS),
++	GATE(0, "pclk_ddrc", "pclk_ddr", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(1), 7, GFLAGS),
++	GATE(0, "pclk_msch", "pclk_ddr", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(1), 9, GFLAGS),
++	GATE(0, "pclk_stdby", "pclk_ddr", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(1), 12, GFLAGS),
++	GATE(0, "pclk_ddr_grf", "pclk_ddr", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(1), 14, GFLAGS),
++	GATE(0, "pclk_cmdbuff", "pclk_ddr", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(1), 3, GFLAGS),
++
++	/*
++	 * Clock-Architecture Diagram 5
++	 */
++
++	/* PD_VI */
++	COMPOSITE(ACLK_VI_PRE, "aclk_vi_pre", mux_gpll_cpll_npll_p, 0,
++			PX30_CLKSEL_CON(11), 6, 2, MFLAGS, 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(4), 8, GFLAGS),
++	COMPOSITE_NOMUX(HCLK_VI_PRE, "hclk_vi_pre", "aclk_vi_pre", 0,
++			PX30_CLKSEL_CON(11), 8, 4, DFLAGS,
++			PX30_CLKGATE_CON(4), 12, GFLAGS),
++	COMPOSITE(SCLK_ISP, "clk_isp", mux_gpll_cpll_npll_p, 0,
++			PX30_CLKSEL_CON(12), 6, 2, MFLAGS, 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(4), 9, GFLAGS),
++	COMPOSITE(SCLK_CIF_OUT, "clk_cif_out", mux_cif_out_p, 0,
++			PX30_CLKSEL_CON(13), 6, 2, MFLAGS, 0, 6, DFLAGS,
++			PX30_CLKGATE_CON(4), 11, GFLAGS),
++	GATE(PCLK_ISP, "pclkin_isp", "ext_pclkin", 0,
++			PX30_CLKGATE_CON(4), 13, GFLAGS),
++	GATE(PCLK_CIF, "pclkin_cif", "ext_pclkin", 0,
++			PX30_CLKGATE_CON(4), 14, GFLAGS),
++
++	/*
++	 * Clock-Architecture Diagram 6
++	 */
++
++	/* PD_VO */
++	COMPOSITE(ACLK_VO_PRE, "aclk_vo_pre", mux_gpll_cpll_npll_p, 0,
++			PX30_CLKSEL_CON(3), 6, 2, MFLAGS, 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(2), 0, GFLAGS),
++	COMPOSITE_NOMUX(HCLK_VO_PRE, "hclk_vo_pre", "aclk_vo_pre", 0,
++			PX30_CLKSEL_CON(3), 8, 4, DFLAGS,
++			PX30_CLKGATE_CON(2), 12, GFLAGS),
++	COMPOSITE_NOMUX(PCLK_VO_PRE, "pclk_vo_pre", "aclk_vo_pre", 0,
++			PX30_CLKSEL_CON(3), 12, 4, DFLAGS,
++			PX30_CLKGATE_CON(2), 13, GFLAGS),
++	COMPOSITE(SCLK_RGA_CORE, "clk_rga_core", mux_gpll_cpll_npll_p, 0,
++			PX30_CLKSEL_CON(4), 6, 2, MFLAGS, 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(2), 1, GFLAGS),
++
++	COMPOSITE(SCLK_VOPB_PWM, "clk_vopb_pwm", mux_gpll_xin24m_p, 0,
++			PX30_CLKSEL_CON(7), 7, 1, MFLAGS, 0, 7, DFLAGS,
++			PX30_CLKGATE_CON(2), 5, GFLAGS),
++	COMPOSITE(0, "dclk_vopb_src", mux_cpll_npll_p, CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT,
++			PX30_CLKSEL_CON(5), 11, 1, MFLAGS, 0, 8, DFLAGS,
++			PX30_CLKGATE_CON(2), 2, GFLAGS),
++	COMPOSITE_FRACMUX(0, "dclk_vopb_frac", "dclk_vopb_src", CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(6), 0,
++			PX30_CLKGATE_CON(2), 3, GFLAGS,
++			&px30_dclk_vopb_fracmux),
++	GATE(DCLK_VOPB, "dclk_vopb", "dclk_vopb_mux", CLK_SET_RATE_PARENT,
++			PX30_CLKGATE_CON(2), 4, GFLAGS),
++	COMPOSITE(0, "dclk_vopl_src", mux_npll_cpll_p, 0,
++			PX30_CLKSEL_CON(8), 11, 1, MFLAGS, 0, 8, DFLAGS,
++			PX30_CLKGATE_CON(2), 6, GFLAGS),
++	COMPOSITE_FRACMUX(0, "dclk_vopl_frac", "dclk_vopl_src", CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(9), 0,
++			PX30_CLKGATE_CON(2), 7, GFLAGS,
++			&px30_dclk_vopl_fracmux),
++	GATE(DCLK_VOPL, "dclk_vopl", "dclk_vopl_mux", CLK_SET_RATE_PARENT,
++			PX30_CLKGATE_CON(2), 8, GFLAGS),
++
++	/* PD_VPU */
++	COMPOSITE(0, "aclk_vpu_pre", mux_gpll_cpll_npll_p, 0,
++			PX30_CLKSEL_CON(10), 6, 2, MFLAGS, 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(4), 0, GFLAGS),
++	COMPOSITE_NOMUX(0, "hclk_vpu_pre", "aclk_vpu_pre", 0,
++			PX30_CLKSEL_CON(10), 8, 4, DFLAGS,
++			PX30_CLKGATE_CON(4), 2, GFLAGS),
++	COMPOSITE(SCLK_CORE_VPU, "sclk_core_vpu", mux_gpll_cpll_npll_p, 0,
++			PX30_CLKSEL_CON(13), 14, 2, MFLAGS, 8, 5, DFLAGS,
++			PX30_CLKGATE_CON(4), 1, GFLAGS),
++
++	/*
++	 * Clock-Architecture Diagram 7
++	 */
++
++	COMPOSITE_NODIV(ACLK_PERI_SRC, "aclk_peri_src", mux_gpll_cpll_p, 0,
++			PX30_CLKSEL_CON(14), 15, 1, MFLAGS,
++			PX30_CLKGATE_CON(5), 7, GFLAGS),
++	COMPOSITE_NOMUX(ACLK_PERI_PRE, "aclk_peri_pre", "aclk_peri_src", CLK_IGNORE_UNUSED,
++			PX30_CLKSEL_CON(14), 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(5), 8, GFLAGS),
++	DIV(HCLK_PERI_PRE, "hclk_peri_pre", "aclk_peri_src", CLK_IGNORE_UNUSED,
++			PX30_CLKSEL_CON(14), 8, 5, DFLAGS),
++
++	/* PD_MMC_NAND */
++	GATE(HCLK_MMC_NAND, "hclk_mmc_nand", "hclk_peri_pre", 0,
++			PX30_CLKGATE_CON(6), 0, GFLAGS),
++	COMPOSITE(SCLK_NANDC, "clk_nandc", mux_gpll_cpll_npll_p, 0,
++			PX30_CLKSEL_CON(15), 6, 2, MFLAGS, 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(5), 13, GFLAGS),
++
++	COMPOSITE(SCLK_SDIO, "clk_sdio", mux_gpll_cpll_npll_xin24m_p, 0,
++			PX30_CLKSEL_CON(18), 14, 2, MFLAGS, 0, 8, DFLAGS,
++			PX30_CLKGATE_CON(6), 3, GFLAGS),
++
++	COMPOSITE(SCLK_EMMC, "clk_emmc", mux_gpll_cpll_npll_xin24m_p, 0,
++			PX30_CLKSEL_CON(20), 14, 2, MFLAGS, 0, 8, DFLAGS,
++			PX30_CLKGATE_CON(6), 6, GFLAGS),
++
++	COMPOSITE(SCLK_SFC, "clk_sfc", mux_gpll_cpll_p, 0,
++			PX30_CLKSEL_CON(22), 7, 1, MFLAGS, 0, 7, DFLAGS,
++			PX30_CLKGATE_CON(6), 7, GFLAGS),
++
++	MMC(SCLK_SDMMC_DRV, "sdmmc_drv", "clk_sdmmc",
++	    PX30_SDMMC_CON0, 1),
++	MMC(SCLK_SDMMC_SAMPLE, "sdmmc_sample", "clk_sdmmc",
++	    PX30_SDMMC_CON1, 1),
++
++	MMC(SCLK_SDIO_DRV, "sdio_drv", "clk_sdio",
++	    PX30_SDIO_CON0, 1),
++	MMC(SCLK_SDIO_SAMPLE, "sdio_sample", "clk_sdio",
++	    PX30_SDIO_CON1, 1),
++
++	MMC(SCLK_EMMC_DRV, "emmc_drv", "clk_emmc",
++	    PX30_EMMC_CON0, 1),
++	MMC(SCLK_EMMC_SAMPLE, "emmc_sample", "clk_emmc",
++	    PX30_EMMC_CON1, 1),
++
++	/* PD_SDCARD */
++	GATE(0, "hclk_sdmmc_pre", "hclk_peri_pre", 0,
++			PX30_CLKGATE_CON(6), 12, GFLAGS),
++	COMPOSITE(SCLK_SDMMC, "clk_sdmmc", mux_gpll_cpll_npll_xin24m_p, 0,
++			PX30_CLKSEL_CON(16), 14, 2, MFLAGS, 0, 8, DFLAGS,
++			PX30_CLKGATE_CON(6), 15, GFLAGS),
++
++	/* PD_USB */
++	GATE(HCLK_USB, "hclk_usb", "hclk_peri_pre", 0,
++			PX30_CLKGATE_CON(7), 2, GFLAGS),
++	GATE(SCLK_OTG_ADP, "clk_otg_adp", "clk_rtc32k_pmu", 0,
++			PX30_CLKGATE_CON(7), 3, GFLAGS),
++
++	/* PD_GMAC */
++	COMPOSITE(SCLK_GMAC_SRC, "clk_gmac_src", mux_gpll_cpll_npll_p, 0,
++			PX30_CLKSEL_CON(22), 14, 2, MFLAGS, 8, 5, DFLAGS,
++			PX30_CLKGATE_CON(7), 11, GFLAGS),
++	MUX(SCLK_GMAC, "clk_gmac", mux_gmac_p,  CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(23), 6, 1, MFLAGS),
++	GATE(SCLK_MAC_REF, "clk_mac_ref", "clk_gmac", 0,
++			PX30_CLKGATE_CON(7), 15, GFLAGS),
++	GATE(SCLK_GMAC_RX_TX, "clk_gmac_rx_tx", "clk_gmac", 0,
++			PX30_CLKGATE_CON(7), 13, GFLAGS),
++	FACTOR(0, "clk_gmac_rx_tx_div2", "clk_gmac_rx_tx", 0, 1, 2),
++	FACTOR(0, "clk_gmac_rx_tx_div20", "clk_gmac_rx_tx", 0, 1, 20),
++	MUX(SCLK_GMAC_RMII, "clk_gmac_rmii_sel", mux_gmac_rmii_sel_p,  CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(23), 7, 1, MFLAGS),
++
++	GATE(0, "aclk_gmac_pre", "aclk_peri_pre", 0,
++			PX30_CLKGATE_CON(7), 10, GFLAGS),
++	COMPOSITE_NOMUX(0, "pclk_gmac_pre", "aclk_gmac_pre", 0,
++			PX30_CLKSEL_CON(23), 0, 4, DFLAGS,
++			PX30_CLKGATE_CON(7), 12, GFLAGS),
++
++	COMPOSITE(SCLK_MAC_OUT, "clk_mac_out", mux_gpll_cpll_npll_p, 0,
++			PX30_CLKSEL_CON(12), 14, 2, MFLAGS, 8, 5, DFLAGS,
++			PX30_CLKGATE_CON(8), 5, GFLAGS),
++
++	/*
++	 * Clock-Architecture Diagram 8
++	 */
++
++	/* PD_BUS */
++	COMPOSITE_NODIV(ACLK_BUS_SRC, "aclk_bus_src", mux_gpll_cpll_p, CLK_IGNORE_UNUSED,
++			PX30_CLKSEL_CON(23), 15, 1, MFLAGS,
++			PX30_CLKGATE_CON(8), 6, GFLAGS),
++	COMPOSITE_NOMUX(HCLK_BUS_PRE, "hclk_bus_pre", "aclk_bus_src", CLK_IGNORE_UNUSED,
++			PX30_CLKSEL_CON(24), 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(8), 8, GFLAGS),
++	COMPOSITE_NOMUX(ACLK_BUS_PRE, "aclk_bus_pre", "aclk_bus_src", CLK_IGNORE_UNUSED,
++			PX30_CLKSEL_CON(23), 8, 5, DFLAGS,
++			PX30_CLKGATE_CON(8), 7, GFLAGS),
++	COMPOSITE_NOMUX(PCLK_BUS_PRE, "pclk_bus_pre", "aclk_bus_pre", CLK_IGNORE_UNUSED,
++			PX30_CLKSEL_CON(24), 8, 2, DFLAGS,
++			PX30_CLKGATE_CON(8), 9, GFLAGS),
++	GATE(0, "pclk_top_pre", "pclk_bus_pre", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(8), 10, GFLAGS),
++
++	COMPOSITE(0, "clk_pdm_src", mux_gpll_xin24m_npll_p, 0,
++			PX30_CLKSEL_CON(26), 8, 2, MFLAGS, 0, 7, DFLAGS,
++			PX30_CLKGATE_CON(9), 9, GFLAGS),
++	COMPOSITE_FRACMUX(0, "clk_pdm_frac", "clk_pdm_src", CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(27), 0,
++			PX30_CLKGATE_CON(9), 10, GFLAGS,
++			&px30_pdm_fracmux),
++	GATE(SCLK_PDM, "clk_pdm", "clk_pdm_mux", CLK_SET_RATE_PARENT,
++			PX30_CLKGATE_CON(9), 11, GFLAGS),
++
++	COMPOSITE(0, "clk_i2s0_tx_src", mux_gpll_npll_p, 0,
++			PX30_CLKSEL_CON(28), 8, 1, MFLAGS, 0, 7, DFLAGS,
++			PX30_CLKGATE_CON(9), 12, GFLAGS),
++	COMPOSITE_FRACMUX(0, "clk_i2s0_tx_frac", "clk_i2s0_tx_src", CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(29), 0,
++			PX30_CLKGATE_CON(9), 13, GFLAGS,
++			&px30_i2s0_tx_fracmux),
++	COMPOSITE_NODIV(SCLK_I2S0_TX, "clk_i2s0_tx", mux_i2s0_tx_rx_p, CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(28), 12, 1, MFLAGS,
++			PX30_CLKGATE_CON(9), 14, GFLAGS),
++	COMPOSITE_NODIV(0, "clk_i2s0_tx_out_pre", mux_i2s0_tx_out_p, 0,
++			PX30_CLKSEL_CON(28), 14, 2, MFLAGS,
++			PX30_CLKGATE_CON(9), 15, GFLAGS),
++	GATE(SCLK_I2S0_TX_OUT, "clk_i2s0_tx_out", "clk_i2s0_tx_out_pre", CLK_SET_RATE_PARENT,
++			PX30_CLKGATE_CON(10), 8, CLK_GATE_HIWORD_MASK),
++
++	COMPOSITE(0, "clk_i2s0_rx_src", mux_gpll_npll_p, 0,
++			PX30_CLKSEL_CON(58), 8, 1, MFLAGS, 0, 7, DFLAGS,
++			PX30_CLKGATE_CON(17), 0, GFLAGS),
++	COMPOSITE_FRACMUX(0, "clk_i2s0_rx_frac", "clk_i2s0_rx_src", CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(59), 0,
++			PX30_CLKGATE_CON(17), 1, GFLAGS,
++			&px30_i2s0_rx_fracmux),
++	COMPOSITE_NODIV(SCLK_I2S0_RX, "clk_i2s0_rx", mux_i2s0_rx_tx_p, CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(58), 12, 1, MFLAGS,
++			PX30_CLKGATE_CON(17), 2, GFLAGS),
++	COMPOSITE_NODIV(0, "clk_i2s0_rx_out_pre", mux_i2s0_rx_out_p, 0,
++			PX30_CLKSEL_CON(58), 14, 2, MFLAGS,
++			PX30_CLKGATE_CON(17), 3, GFLAGS),
++	GATE(SCLK_I2S0_RX_OUT, "clk_i2s0_rx_out", "clk_i2s0_rx_out_pre", CLK_SET_RATE_PARENT,
++			PX30_CLKGATE_CON(10), 11, CLK_GATE_HIWORD_MASK),
++
++	COMPOSITE(0, "clk_i2s1_src", mux_gpll_npll_p, 0,
++			PX30_CLKSEL_CON(30), 8, 1, MFLAGS, 0, 7, DFLAGS,
++			PX30_CLKGATE_CON(10), 0, GFLAGS),
++	COMPOSITE_FRACMUX(0, "clk_i2s1_frac", "clk_i2s1_src", CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(31), 0,
++			PX30_CLKGATE_CON(10), 1, GFLAGS,
++			&px30_i2s1_fracmux),
++	GATE(SCLK_I2S1, "clk_i2s1", "clk_i2s1_mux", CLK_SET_RATE_PARENT,
++			PX30_CLKGATE_CON(10), 2, GFLAGS),
++	COMPOSITE_NODIV(0, "clk_i2s1_out_pre", mux_i2s1_out_p, 0,
++			PX30_CLKSEL_CON(30), 15, 1, MFLAGS,
++			PX30_CLKGATE_CON(10), 3, GFLAGS),
++	GATE(SCLK_I2S1_OUT, "clk_i2s1_out", "clk_i2s1_out_pre", CLK_SET_RATE_PARENT,
++			PX30_CLKGATE_CON(10), 9, CLK_GATE_HIWORD_MASK),
++
++	COMPOSITE(0, "clk_i2s2_src", mux_gpll_npll_p, 0,
++			PX30_CLKSEL_CON(32), 8, 1, MFLAGS, 0, 7, DFLAGS,
++			PX30_CLKGATE_CON(10), 4, GFLAGS),
++	COMPOSITE_FRACMUX(0, "clk_i2s2_frac", "clk_i2s2_src", CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(33), 0,
++			PX30_CLKGATE_CON(10), 5, GFLAGS,
++			&px30_i2s2_fracmux),
++	GATE(SCLK_I2S2, "clk_i2s2", "clk_i2s2_mux", CLK_SET_RATE_PARENT,
++			PX30_CLKGATE_CON(10), 6, GFLAGS),
++	COMPOSITE_NODIV(0, "clk_i2s2_out_pre", mux_i2s2_out_p, 0,
++			PX30_CLKSEL_CON(32), 15, 1, MFLAGS,
++			PX30_CLKGATE_CON(10), 7, GFLAGS),
++	GATE(SCLK_I2S2_OUT, "clk_i2s2_out", "clk_i2s2_out_pre", CLK_SET_RATE_PARENT,
++			PX30_CLKGATE_CON(10), 10, CLK_GATE_HIWORD_MASK),
++
++	COMPOSITE(SCLK_UART1_SRC, "clk_uart1_src", mux_uart_src_p, CLK_SET_RATE_NO_REPARENT,
++			PX30_CLKSEL_CON(34), 14, 2, MFLAGS, 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(10), 12, GFLAGS),
++	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart1_np5", "clk_uart1_src", 0,
++			PX30_CLKSEL_CON(35), 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(10), 13, GFLAGS),
++	COMPOSITE_FRACMUX(0, "clk_uart1_frac", "clk_uart1_src", CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(36), 0,
++			PX30_CLKGATE_CON(10), 14, GFLAGS,
++			&px30_uart1_fracmux),
++	GATE(SCLK_UART1, "clk_uart1", "clk_uart1_mux", CLK_SET_RATE_PARENT,
++			PX30_CLKGATE_CON(10), 15, GFLAGS),
++
++	COMPOSITE(SCLK_UART2_SRC, "clk_uart2_src", mux_uart_src_p, 0,
++			PX30_CLKSEL_CON(37), 14, 2, MFLAGS, 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(11), 0, GFLAGS),
++	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart2_np5", "clk_uart2_src", 0,
++			PX30_CLKSEL_CON(38), 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(11), 1, GFLAGS),
++	COMPOSITE_FRACMUX(0, "clk_uart2_frac", "clk_uart2_src", CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(39), 0,
++			PX30_CLKGATE_CON(11), 2, GFLAGS,
++			&px30_uart2_fracmux),
++	GATE(SCLK_UART2, "clk_uart2", "clk_uart2_mux", CLK_SET_RATE_PARENT,
++			PX30_CLKGATE_CON(11), 3, GFLAGS),
++
++	COMPOSITE(0, "clk_uart3_src", mux_uart_src_p, 0,
++			PX30_CLKSEL_CON(40), 14, 2, MFLAGS, 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(11), 4, GFLAGS),
++	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart3_np5", "clk_uart3_src", 0,
++			PX30_CLKSEL_CON(41), 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(11), 5, GFLAGS),
++	COMPOSITE_FRACMUX(0, "clk_uart3_frac", "clk_uart3_src", CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(42), 0,
++			PX30_CLKGATE_CON(11), 6, GFLAGS,
++			&px30_uart3_fracmux),
++	GATE(SCLK_UART3, "clk_uart3", "clk_uart3_mux", CLK_SET_RATE_PARENT,
++			PX30_CLKGATE_CON(11), 7, GFLAGS),
++
++	COMPOSITE(0, "clk_uart4_src", mux_uart_src_p, 0,
++			PX30_CLKSEL_CON(43), 14, 2, MFLAGS, 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(11), 8, GFLAGS),
++	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart4_np5", "clk_uart4_src", 0,
++			PX30_CLKSEL_CON(44), 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(11), 9, GFLAGS),
++	COMPOSITE_FRACMUX(0, "clk_uart4_frac", "clk_uart4_src", CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(45), 0,
++			PX30_CLKGATE_CON(11), 10, GFLAGS,
++			&px30_uart4_fracmux),
++	GATE(SCLK_UART4, "clk_uart4", "clk_uart4_mux", CLK_SET_RATE_PARENT,
++			PX30_CLKGATE_CON(11), 11, GFLAGS),
++
++	COMPOSITE(0, "clk_uart5_src", mux_uart_src_p, 0,
++			PX30_CLKSEL_CON(46), 14, 2, MFLAGS, 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(11), 12, GFLAGS),
++	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart5_np5", "clk_uart5_src", 0,
++			PX30_CLKSEL_CON(47), 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(11), 13, GFLAGS),
++	COMPOSITE_FRACMUX(0, "clk_uart5_frac", "clk_uart5_src", CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(48), 0,
++			PX30_CLKGATE_CON(11), 14, GFLAGS,
++			&px30_uart5_fracmux),
++	GATE(SCLK_UART5, "clk_uart5", "clk_uart5_mux", CLK_SET_RATE_PARENT,
++			PX30_CLKGATE_CON(11), 15, GFLAGS),
++
++	COMPOSITE(SCLK_I2C0, "clk_i2c0", mux_gpll_xin24m_p, 0,
++			PX30_CLKSEL_CON(49), 7, 1, MFLAGS, 0, 7, DFLAGS,
++			PX30_CLKGATE_CON(12), 0, GFLAGS),
++	COMPOSITE(SCLK_I2C1, "clk_i2c1", mux_gpll_xin24m_p, 0,
++			PX30_CLKSEL_CON(49), 15, 1, MFLAGS, 8, 7, DFLAGS,
++			PX30_CLKGATE_CON(12), 1, GFLAGS),
++	COMPOSITE(SCLK_I2C2, "clk_i2c2", mux_gpll_xin24m_p, 0,
++			PX30_CLKSEL_CON(50), 7, 1, MFLAGS, 0, 7, DFLAGS,
++			PX30_CLKGATE_CON(12), 2, GFLAGS),
++	COMPOSITE(SCLK_I2C3, "clk_i2c3", mux_gpll_xin24m_p, 0,
++			PX30_CLKSEL_CON(50), 15, 1, MFLAGS, 8, 7, DFLAGS,
++			PX30_CLKGATE_CON(12), 3, GFLAGS),
++	COMPOSITE(SCLK_PWM0, "clk_pwm0", mux_gpll_xin24m_p, 0,
++			PX30_CLKSEL_CON(52), 7, 1, MFLAGS, 0, 7, DFLAGS,
++			PX30_CLKGATE_CON(12), 5, GFLAGS),
++	COMPOSITE(SCLK_PWM1, "clk_pwm1", mux_gpll_xin24m_p, 0,
++			PX30_CLKSEL_CON(52), 15, 1, MFLAGS, 8, 7, DFLAGS,
++			PX30_CLKGATE_CON(12), 6, GFLAGS),
++	COMPOSITE(SCLK_SPI0, "clk_spi0", mux_gpll_xin24m_p, 0,
++			PX30_CLKSEL_CON(53), 7, 1, MFLAGS, 0, 7, DFLAGS,
++			PX30_CLKGATE_CON(12), 7, GFLAGS),
++	COMPOSITE(SCLK_SPI1, "clk_spi1", mux_gpll_xin24m_p, 0,
++			PX30_CLKSEL_CON(53), 15, 1, MFLAGS, 8, 7, DFLAGS,
++			PX30_CLKGATE_CON(12), 8, GFLAGS),
++
++	GATE(SCLK_TIMER0, "sclk_timer0", "xin24m", 0,
++			PX30_CLKGATE_CON(13), 0, GFLAGS),
++	GATE(SCLK_TIMER1, "sclk_timer1", "xin24m", 0,
++			PX30_CLKGATE_CON(13), 1, GFLAGS),
++	GATE(SCLK_TIMER2, "sclk_timer2", "xin24m", 0,
++			PX30_CLKGATE_CON(13), 2, GFLAGS),
++	GATE(SCLK_TIMER3, "sclk_timer3", "xin24m", 0,
++			PX30_CLKGATE_CON(13), 3, GFLAGS),
++	GATE(SCLK_TIMER4, "sclk_timer4", "xin24m", 0,
++			PX30_CLKGATE_CON(13), 4, GFLAGS),
++	GATE(SCLK_TIMER5, "sclk_timer5", "xin24m", 0,
++			PX30_CLKGATE_CON(13), 5, GFLAGS),
++
++	COMPOSITE_NOMUX(SCLK_TSADC, "clk_tsadc", "xin24m", 0,
++			PX30_CLKSEL_CON(54), 0, 11, DFLAGS,
++			PX30_CLKGATE_CON(12), 9, GFLAGS),
++	COMPOSITE_NOMUX(SCLK_SARADC, "clk_saradc", "xin24m", 0,
++			PX30_CLKSEL_CON(55), 0, 11, DFLAGS,
++			PX30_CLKGATE_CON(12), 10, GFLAGS),
++	COMPOSITE_NOMUX(SCLK_OTP, "clk_otp", "xin24m", 0,
++			PX30_CLKSEL_CON(56), 0, 3, DFLAGS,
++			PX30_CLKGATE_CON(12), 11, GFLAGS),
++	COMPOSITE_NOMUX(SCLK_OTP_USR, "clk_otp_usr", "clk_otp", 0,
++			PX30_CLKSEL_CON(56), 4, 2, DFLAGS,
++			PX30_CLKGATE_CON(13), 6, GFLAGS),
++
++	GATE(0, "clk_cpu_boost", "xin24m", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(12), 12, GFLAGS),
++
++	/* PD_CRYPTO */
++	GATE(0, "aclk_crypto_pre", "aclk_bus_pre", 0,
++			PX30_CLKGATE_CON(8), 12, GFLAGS),
++	GATE(0, "hclk_crypto_pre", "hclk_bus_pre", 0,
++			PX30_CLKGATE_CON(8), 13, GFLAGS),
++	COMPOSITE(SCLK_CRYPTO, "clk_crypto", mux_gpll_cpll_npll_p, 0,
++			PX30_CLKSEL_CON(25), 6, 2, MFLAGS, 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(8), 14, GFLAGS),
++	COMPOSITE(SCLK_CRYPTO_APK, "clk_crypto_apk", mux_gpll_cpll_npll_p, 0,
++			PX30_CLKSEL_CON(25), 14, 2, MFLAGS, 8, 5, DFLAGS,
++			PX30_CLKGATE_CON(8), 15, GFLAGS),
++
++	/*
++	 * Clock-Architecture Diagram 9
++	 */
++
++	/* PD_BUS_TOP */
++	GATE(0, "pclk_top_niu", "pclk_top_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(16), 0, GFLAGS),
++	GATE(0, "pclk_top_cru", "pclk_top_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(16), 1, GFLAGS),
++	GATE(PCLK_OTP_PHY, "pclk_otp_phy", "pclk_top_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(16), 2, GFLAGS),
++	GATE(0, "pclk_ddrphy", "pclk_top_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(16), 3, GFLAGS),
++	GATE(PCLK_MIPIDSIPHY, "pclk_mipidsiphy", "pclk_top_pre", 0, PX30_CLKGATE_CON(16), 4, GFLAGS),
++	GATE(PCLK_MIPICSIPHY, "pclk_mipicsiphy", "pclk_top_pre", 0, PX30_CLKGATE_CON(16), 5, GFLAGS),
++	GATE(PCLK_USB_GRF, "pclk_usb_grf", "pclk_top_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(16), 6, GFLAGS),
++	GATE(0, "pclk_cpu_hoost", "pclk_top_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(16), 7, GFLAGS),
++
++	/* PD_VI */
++	GATE(0, "aclk_vi_niu", "aclk_vi_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(4), 15, GFLAGS),
++	GATE(ACLK_CIF, "aclk_cif", "aclk_vi_pre", 0, PX30_CLKGATE_CON(5), 1, GFLAGS),
++	GATE(ACLK_ISP, "aclk_isp", "aclk_vi_pre", 0, PX30_CLKGATE_CON(5), 3, GFLAGS),
++	GATE(0, "hclk_vi_niu", "hclk_vi_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(5), 0, GFLAGS),
++	GATE(HCLK_CIF, "hclk_cif", "hclk_vi_pre", 0, PX30_CLKGATE_CON(5), 2, GFLAGS),
++	GATE(HCLK_ISP, "hclk_isp", "hclk_vi_pre", 0, PX30_CLKGATE_CON(5), 4, GFLAGS),
++
++	/* PD_VO */
++	GATE(0, "aclk_vo_niu", "aclk_vo_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(3), 0, GFLAGS),
++	GATE(ACLK_VOPB, "aclk_vopb", "aclk_vo_pre", 0, PX30_CLKGATE_CON(3), 3, GFLAGS),
++	GATE(ACLK_RGA, "aclk_rga", "aclk_vo_pre", 0, PX30_CLKGATE_CON(3), 7, GFLAGS),
++	GATE(ACLK_VOPL, "aclk_vopl", "aclk_vo_pre", 0, PX30_CLKGATE_CON(3), 5, GFLAGS),
++
++	GATE(0, "hclk_vo_niu", "hclk_vo_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(3), 1, GFLAGS),
++	GATE(HCLK_VOPB, "hclk_vopb", "hclk_vo_pre", 0, PX30_CLKGATE_CON(3), 4, GFLAGS),
++	GATE(HCLK_RGA, "hclk_rga", "hclk_vo_pre", 0, PX30_CLKGATE_CON(3), 8, GFLAGS),
++	GATE(HCLK_VOPL, "hclk_vopl", "hclk_vo_pre", 0, PX30_CLKGATE_CON(3), 6, GFLAGS),
++
++	GATE(0, "pclk_vo_niu", "pclk_vo_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(3), 2, GFLAGS),
++	GATE(PCLK_MIPI_DSI, "pclk_mipi_dsi", "pclk_vo_pre", 0, PX30_CLKGATE_CON(3), 9, GFLAGS),
++
++	/* PD_BUS */
++	GATE(0, "aclk_bus_niu", "aclk_bus_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(13), 8, GFLAGS),
++	GATE(0, "aclk_intmem", "aclk_bus_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(13), 11, GFLAGS),
++	GATE(ACLK_GIC, "aclk_gic", "aclk_bus_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(13), 12, GFLAGS),
++	GATE(ACLK_DCF, "aclk_dcf", "aclk_bus_pre", 0, PX30_CLKGATE_CON(13), 15, GFLAGS),
++
++	GATE(0, "hclk_bus_niu", "hclk_bus_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(13), 9, GFLAGS),
++	GATE(0, "hclk_rom", "hclk_bus_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(13), 14, GFLAGS),
++	GATE(HCLK_PDM, "hclk_pdm", "hclk_bus_pre", 0, PX30_CLKGATE_CON(14), 1, GFLAGS),
++	GATE(HCLK_I2S0, "hclk_i2s0", "hclk_bus_pre", 0, PX30_CLKGATE_CON(14), 2, GFLAGS),
++	GATE(HCLK_I2S1, "hclk_i2s1", "hclk_bus_pre", 0, PX30_CLKGATE_CON(14), 3, GFLAGS),
++	GATE(HCLK_I2S2, "hclk_i2s2", "hclk_bus_pre", 0, PX30_CLKGATE_CON(14), 4, GFLAGS),
++
++	GATE(0, "pclk_bus_niu", "pclk_bus_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(13), 10, GFLAGS),
++	GATE(PCLK_DCF, "pclk_dcf", "pclk_bus_pre", 0, PX30_CLKGATE_CON(14), 0, GFLAGS),
++	GATE(PCLK_UART1, "pclk_uart1", "pclk_bus_pre", 0, PX30_CLKGATE_CON(14), 5, GFLAGS),
++	GATE(PCLK_UART2, "pclk_uart2", "pclk_bus_pre", 0, PX30_CLKGATE_CON(14), 6, GFLAGS),
++	GATE(PCLK_UART3, "pclk_uart3", "pclk_bus_pre", 0, PX30_CLKGATE_CON(14), 7, GFLAGS),
++	GATE(PCLK_UART4, "pclk_uart4", "pclk_bus_pre", 0, PX30_CLKGATE_CON(14), 8, GFLAGS),
++	GATE(PCLK_UART5, "pclk_uart5", "pclk_bus_pre", 0, PX30_CLKGATE_CON(14), 9, GFLAGS),
++	GATE(PCLK_I2C0, "pclk_i2c0", "pclk_bus_pre", 0, PX30_CLKGATE_CON(14), 10, GFLAGS),
++	GATE(PCLK_I2C1, "pclk_i2c1", "pclk_bus_pre", 0, PX30_CLKGATE_CON(14), 11, GFLAGS),
++	GATE(PCLK_I2C2, "pclk_i2c2", "pclk_bus_pre", 0, PX30_CLKGATE_CON(14), 12, GFLAGS),
++	GATE(PCLK_I2C3, "pclk_i2c3", "pclk_bus_pre", 0, PX30_CLKGATE_CON(14), 13, GFLAGS),
++	GATE(PCLK_I2C4, "pclk_i2c4", "pclk_bus_pre", 0, PX30_CLKGATE_CON(14), 14, GFLAGS),
++	GATE(PCLK_PWM0, "pclk_pwm0", "pclk_bus_pre", 0, PX30_CLKGATE_CON(14), 15, GFLAGS),
++	GATE(PCLK_PWM1, "pclk_pwm1", "pclk_bus_pre", 0, PX30_CLKGATE_CON(15), 0, GFLAGS),
++	GATE(PCLK_SPI0, "pclk_spi0", "pclk_bus_pre", 0, PX30_CLKGATE_CON(15), 1, GFLAGS),
++	GATE(PCLK_SPI1, "pclk_spi1", "pclk_bus_pre", 0, PX30_CLKGATE_CON(15), 2, GFLAGS),
++	GATE(PCLK_SARADC, "pclk_saradc", "pclk_bus_pre", 0, PX30_CLKGATE_CON(15), 3, GFLAGS),
++	GATE(PCLK_TSADC, "pclk_tsadc", "pclk_bus_pre", 0, PX30_CLKGATE_CON(15), 4, GFLAGS),
++	GATE(PCLK_TIMER, "pclk_timer", "pclk_bus_pre", 0, PX30_CLKGATE_CON(15), 5, GFLAGS),
++	GATE(PCLK_OTP_NS, "pclk_otp_ns", "pclk_bus_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(15), 6, GFLAGS),
++	GATE(PCLK_WDT_NS, "pclk_wdt_ns", "pclk_bus_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(15), 7, GFLAGS),
++	GATE(PCLK_GPIO1, "pclk_gpio1", "pclk_bus_pre", 0, PX30_CLKGATE_CON(15), 8, GFLAGS),
++	GATE(PCLK_GPIO2, "pclk_gpio2", "pclk_bus_pre", 0, PX30_CLKGATE_CON(15), 9, GFLAGS),
++	GATE(PCLK_GPIO3, "pclk_gpio3", "pclk_bus_pre", 0, PX30_CLKGATE_CON(15), 10, GFLAGS),
++	GATE(0, "pclk_grf", "pclk_bus_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(15), 11, GFLAGS),
++	GATE(0, "pclk_sgrf", "pclk_bus_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(15), 12, GFLAGS),
++
++	/* PD_VPU */
++	GATE(0, "hclk_vpu_niu", "hclk_vpu_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(4), 7, GFLAGS),
++	GATE(HCLK_VPU, "hclk_vpu", "hclk_vpu_pre", 0, PX30_CLKGATE_CON(4), 6, GFLAGS),
++	GATE(0, "aclk_vpu_niu", "aclk_vpu_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(4), 5, GFLAGS),
++	GATE(ACLK_VPU, "aclk_vpu", "aclk_vpu_pre", 0, PX30_CLKGATE_CON(4), 4, GFLAGS),
++
++	/* PD_CRYPTO */
++	GATE(0, "hclk_crypto_niu", "hclk_crypto_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(9), 3, GFLAGS),
++	GATE(HCLK_CRYPTO, "hclk_crypto", "hclk_crypto_pre", 0, PX30_CLKGATE_CON(9), 5, GFLAGS),
++	GATE(0, "aclk_crypto_niu", "aclk_crypto_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(9), 2, GFLAGS),
++	GATE(ACLK_CRYPTO, "aclk_crypto", "aclk_crypto_pre", 0, PX30_CLKGATE_CON(9), 4, GFLAGS),
++
++	/* PD_SDCARD */
++	GATE(0, "hclk_sdmmc_niu", "hclk_sdmmc_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(7), 0, GFLAGS),
++	GATE(HCLK_SDMMC, "hclk_sdmmc", "hclk_sdmmc_pre", 0, PX30_CLKGATE_CON(7), 1, GFLAGS),
++
++	/* PD_PERI */
++	GATE(0, "aclk_peri_niu", "aclk_peri_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(5), 9, GFLAGS),
++
++	/* PD_MMC_NAND */
++	GATE(HCLK_NANDC, "hclk_nandc", "hclk_mmc_nand", 0, PX30_CLKGATE_CON(5), 15, GFLAGS),
++	GATE(0, "hclk_mmc_nand_niu", "hclk_mmc_nand", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(6), 8, GFLAGS),
++	GATE(HCLK_SDIO, "hclk_sdio", "hclk_mmc_nand", 0, PX30_CLKGATE_CON(6), 9, GFLAGS),
++	GATE(HCLK_EMMC, "hclk_emmc", "hclk_mmc_nand", 0, PX30_CLKGATE_CON(6), 10, GFLAGS),
++	GATE(HCLK_SFC, "hclk_sfc", "hclk_mmc_nand", 0, PX30_CLKGATE_CON(6), 11, GFLAGS),
++
++	/* PD_USB */
++	GATE(0, "hclk_usb_niu", "hclk_usb", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(7), 4, GFLAGS),
++	GATE(HCLK_OTG, "hclk_otg", "hclk_usb", 0, PX30_CLKGATE_CON(7), 5, GFLAGS),
++	GATE(HCLK_HOST, "hclk_host", "hclk_usb", 0, PX30_CLKGATE_CON(7), 6, GFLAGS),
++	GATE(HCLK_HOST_ARB, "hclk_host_arb", "hclk_usb", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(7), 8, GFLAGS),
++
++	/* PD_GMAC */
++	GATE(0, "aclk_gmac_niu", "aclk_gmac_pre", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(8), 0, GFLAGS),
++	GATE(ACLK_GMAC, "aclk_gmac", "aclk_gmac_pre", 0,
++			PX30_CLKGATE_CON(8), 2, GFLAGS),
++	GATE(0, "pclk_gmac_niu", "pclk_gmac_pre", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(8), 1, GFLAGS),
++	GATE(PCLK_GMAC, "pclk_gmac", "pclk_gmac_pre", 0,
++			PX30_CLKGATE_CON(8), 3, GFLAGS),
++};
++
++static struct rockchip_clk_branch px30_clk_pmu_branches[] __initdata = {
++	/*
++	 * Clock-Architecture Diagram 2
++	 */
++
++	COMPOSITE_FRACMUX(0, "clk_rtc32k_frac", "xin24m", CLK_IGNORE_UNUSED,
++			PX30_PMU_CLKSEL_CON(1), 0,
++			PX30_PMU_CLKGATE_CON(0), 13, GFLAGS,
++			&px30_rtc32k_pmu_fracmux),
++
++	COMPOSITE_NOMUX(XIN24M_DIV, "xin24m_div", "xin24m", CLK_IGNORE_UNUSED,
++			PX30_PMU_CLKSEL_CON(0), 8, 5, DFLAGS,
++			PX30_PMU_CLKGATE_CON(0), 12, GFLAGS),
++
++	COMPOSITE_NOMUX(0, "clk_wifi_pmu_src", "gpll", 0,
++			PX30_PMU_CLKSEL_CON(2), 8, 6, DFLAGS,
++			PX30_PMU_CLKGATE_CON(0), 14, GFLAGS),
++	COMPOSITE_NODIV(SCLK_WIFI_PMU, "clk_wifi_pmu", mux_wifi_pmu_p, CLK_SET_RATE_PARENT,
++			PX30_PMU_CLKSEL_CON(2), 15, 1, MFLAGS,
++			PX30_PMU_CLKGATE_CON(0), 15, GFLAGS),
++
++	COMPOSITE(0, "clk_uart0_pmu_src", mux_uart_src_p, 0,
++			PX30_PMU_CLKSEL_CON(3), 14, 2, MFLAGS, 0, 5, DFLAGS,
++			PX30_PMU_CLKGATE_CON(1), 0, GFLAGS),
++	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart0_np5", "clk_uart0_pmu_src", 0,
++			PX30_PMU_CLKSEL_CON(4), 0, 5, DFLAGS,
++			PX30_PMU_CLKGATE_CON(1), 1, GFLAGS),
++	COMPOSITE_FRACMUX(0, "clk_uart0_frac", "clk_uart0_pmu_src", CLK_SET_RATE_PARENT,
++			PX30_PMU_CLKSEL_CON(5), 0,
++			PX30_PMU_CLKGATE_CON(1), 2, GFLAGS,
++			&px30_uart0_pmu_fracmux),
++	GATE(SCLK_UART0_PMU, "clk_uart0_pmu", "clk_uart0_pmu_mux", CLK_SET_RATE_PARENT,
++			PX30_PMU_CLKGATE_CON(1), 3, GFLAGS),
++
++	GATE(SCLK_PVTM_PMU, "clk_pvtm_pmu", "xin24m", 0,
++			PX30_PMU_CLKGATE_CON(1), 4, GFLAGS),
++
++	COMPOSITE_NOMUX(PCLK_PMU_PRE, "pclk_pmu_pre", "gpll", 0,
++			PX30_PMU_CLKSEL_CON(0), 0, 5, DFLAGS,
++			PX30_PMU_CLKGATE_CON(0), 0, GFLAGS),
++
++	COMPOSITE_NOMUX(SCLK_REF24M_PMU, "clk_ref24m_pmu", "gpll", 0,
++			PX30_PMU_CLKSEL_CON(2), 0, 6, DFLAGS,
++			PX30_PMU_CLKGATE_CON(1), 8, GFLAGS),
++	COMPOSITE_NODIV(SCLK_USBPHY_REF, "clk_usbphy_ref", mux_usbphy_ref_p, CLK_SET_RATE_PARENT,
++			PX30_PMU_CLKSEL_CON(2), 6, 1, MFLAGS,
++			PX30_PMU_CLKGATE_CON(1), 9, GFLAGS),
++	COMPOSITE_NODIV(SCLK_MIPIDSIPHY_REF, "clk_mipidsiphy_ref", mux_mipidsiphy_ref_p, CLK_SET_RATE_PARENT,
++			PX30_PMU_CLKSEL_CON(2), 7, 1, MFLAGS,
++			PX30_PMU_CLKGATE_CON(1), 10, GFLAGS),
++
++	/*
++	 * Clock-Architecture Diagram 9
++	 */
++
++	/* PD_PMU */
++	GATE(0, "pclk_pmu_niu", "pclk_pmu_pre", CLK_IGNORE_UNUSED, PX30_PMU_CLKGATE_CON(0), 1, GFLAGS),
++	GATE(0, "pclk_pmu_sgrf", "pclk_pmu_pre", CLK_IGNORE_UNUSED, PX30_PMU_CLKGATE_CON(0), 2, GFLAGS),
++	GATE(0, "pclk_pmu_grf", "pclk_pmu_pre", CLK_IGNORE_UNUSED, PX30_PMU_CLKGATE_CON(0), 3, GFLAGS),
++	GATE(0, "pclk_pmu", "pclk_pmu_pre", CLK_IGNORE_UNUSED, PX30_PMU_CLKGATE_CON(0), 4, GFLAGS),
++	GATE(0, "pclk_pmu_mem", "pclk_pmu_pre", CLK_IGNORE_UNUSED, PX30_PMU_CLKGATE_CON(0), 5, GFLAGS),
++	GATE(PCLK_GPIO0_PMU, "pclk_gpio0_pmu", "pclk_pmu_pre", 0, PX30_PMU_CLKGATE_CON(0), 6, GFLAGS),
++	GATE(PCLK_UART0_PMU, "pclk_uart0_pmu", "pclk_pmu_pre", 0, PX30_PMU_CLKGATE_CON(0), 7, GFLAGS),
++	GATE(0, "pclk_cru_pmu", "pclk_pmu_pre", CLK_IGNORE_UNUSED, PX30_PMU_CLKGATE_CON(0), 8, GFLAGS),
++};
++
++static const char *const px30_pmucru_critical_clocks[] __initconst = {
++	"aclk_bus_pre",
++	"pclk_bus_pre",
++	"hclk_bus_pre",
++	"aclk_peri_pre",
++	"hclk_peri_pre",
++	"aclk_gpu_niu",
++	"pclk_top_pre",
++	"pclk_pmu_pre",
++	"hclk_usb_niu",
++	"pll_npll",
++	"usb480m",
++	"clk_uart2",
++	"pclk_uart2",
++};
++
++static void __iomem *px30_cru_base;
++static void __iomem *px30_pmucru_base;
++
++void px30_dump_cru(void)
++{
++	if (px30_cru_base) {
++		pr_warn("CRU:\n");
++		print_hex_dump(KERN_WARNING, "", DUMP_PREFIX_OFFSET,
++			       32, 4, px30_cru_base,
++			       0x400, false);
++	}
++	if (px30_pmucru_base) {
++		pr_warn("PMU CRU:\n");
++		print_hex_dump(KERN_WARNING, "", DUMP_PREFIX_OFFSET,
++			       32, 4, px30_pmucru_base,
++			       0x90, false);
++	}
++}
++EXPORT_SYMBOL_GPL(px30_dump_cru);
++
++static int px30_clk_panic(struct notifier_block *this,
++			  unsigned long ev, void *ptr)
++{
++	px30_dump_cru();
++	return NOTIFY_DONE;
++}
++
++static struct notifier_block px30_clk_panic_block = {
++	.notifier_call = px30_clk_panic,
++};
++
++static void __init px30_clk_init(struct device_node *np)
++{
++	struct rockchip_clk_provider *ctx;
++	void __iomem *reg_base;
++	struct clk *clk;
++
++	reg_base = of_iomap(np, 0);
++	if (!reg_base) {
++		pr_err("%s: could not map cru region\n", __func__);
++		return;
++	}
++
++	px30_cru_base = reg_base;
++
++	ctx = rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
++	if (IS_ERR(ctx)) {
++		pr_err("%s: rockchip clk init failed\n", __func__);
++		iounmap(reg_base);
++		return;
++	}
++
++	/* aclk_dmac is controlled by sgrf_soc_con1[11]. */
++	clk = clk_register_fixed_factor(NULL, "aclk_dmac", "aclk_bus_pre", 0, 1, 1);
++	if (IS_ERR(clk))
++		pr_warn("%s: could not register clock aclk_dmac: %ld\n",
++			__func__, PTR_ERR(clk));
++	else
++		rockchip_clk_add_lookup(ctx, clk, ACLK_DMAC);
++
++	rockchip_clk_register_plls(ctx, px30_pll_clks,
++				   ARRAY_SIZE(px30_pll_clks),
++				   PX30_GRF_SOC_STATUS0);
++	rockchip_clk_register_branches(ctx, px30_clk_branches,
++				       ARRAY_SIZE(px30_clk_branches));
++
++	rockchip_clk_register_armclk(ctx, ARMCLK, "armclk",
++				     mux_armclk_p, ARRAY_SIZE(mux_armclk_p),
++				     &px30_cpuclk_data, px30_cpuclk_rates,
++				     ARRAY_SIZE(px30_cpuclk_rates));
++
++	rockchip_register_softrst(np, 12, reg_base + PX30_SOFTRST_CON(0),
++				  ROCKCHIP_SOFTRST_HIWORD_MASK);
++
++	rockchip_register_restart_notifier(ctx, PX30_GLB_SRST_FST, NULL);
++
++	rockchip_clk_of_add_provider(np, ctx);
++
++	atomic_notifier_chain_register(&panic_notifier_list,
++				       &px30_clk_panic_block);
++}
++
++CLK_OF_DECLARE(px30_cru, "rockchip,px30-cru", px30_clk_init);
++
++static void __init px30_pmu_clk_init(struct device_node *np)
++{
++	struct rockchip_clk_provider *ctx;
++	void __iomem *reg_base;
++
++	reg_base = of_iomap(np, 0);
++	if (!reg_base) {
++		pr_err("%s: could not map cru pmu region\n", __func__);
++		return;
++	}
++
++	px30_pmucru_base = reg_base;
++
++	ctx = rockchip_clk_init(np, reg_base, CLKPMU_NR_CLKS);
++	if (IS_ERR(ctx)) {
++		pr_err("%s: rockchip pmu clk init failed\n", __func__);
++		return;
++	}
++
++	rockchip_clk_register_plls(ctx, px30_pmu_pll_clks,
++				   ARRAY_SIZE(px30_pmu_pll_clks), PX30_GRF_SOC_STATUS0);
++
++	rockchip_clk_register_branches(ctx, px30_clk_pmu_branches,
++				       ARRAY_SIZE(px30_clk_pmu_branches));
++
++	rockchip_clk_protect_critical(px30_pmucru_critical_clocks,
++				      ARRAY_SIZE(px30_pmucru_critical_clocks));
++
++	rockchip_clk_of_add_provider(np, ctx);
++}
++
++CLK_OF_DECLARE(px30_cru_pmu, "rockchip,px30-pmucru", px30_pmu_clk_init);
++
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index 7a3660c2bbb5..6b480b9921e3 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -34,7 +34,46 @@
+ #define HIWORD_UPDATE(val, mask, shift) \
+ 		((val) << (shift) | (mask) << ((shift) + 16))
+ 
+-/* register positions shared by RV1108, RK2928, RK3036, RK3066, RK3188 and RK3228 */
++/* register positions shared by PX30, RV1108, RK2928, RK3036, RK3066, RK3188 and RK3228 */
++#define BOOST_PLL_H_CON(x)		((x) * 0x4)
++#define BOOST_CLK_CON			0x0008
++#define BOOST_BOOST_CON			0x000c
++#define BOOST_SWITCH_CNT		0x0010
++#define BOOST_HIGH_PERF_CNT0		0x0014
++#define BOOST_HIGH_PERF_CNT1		0x0018
++#define BOOST_STATIS_THRESHOLD		0x001c
++#define BOOST_SHORT_SWITCH_CNT		0x0020
++#define BOOST_SWITCH_THRESHOLD		0x0024
++#define BOOST_FSM_STATUS		0x0028
++#define BOOST_PLL_L_CON(x)		((x) * 0x4 + 0x2c)
++#define BOOST_RECOVERY_MASK		0x1
++#define BOOST_RECOVERY_SHIFT		1
++#define BOOST_SW_CTRL_MASK		0x1
++#define BOOST_SW_CTRL_SHIFT		2
++#define BOOST_LOW_FREQ_EN_MASK		0x1
++#define BOOST_LOW_FREQ_EN_SHIFT		3
++#define BOOST_BUSY_STATE		BIT(8)
++
++#define PX30_PLL_CON(x)			((x) * 0x4)
++#define PX30_CLKSEL_CON(x)		((x) * 0x4 + 0x100)
++#define PX30_CLKGATE_CON(x)		((x) * 0x4 + 0x200)
++#define PX30_GLB_SRST_FST		0xb8
++#define PX30_GLB_SRST_SND		0xbc
++#define PX30_SOFTRST_CON(x)		((x) * 0x4 + 0x300)
++#define PX30_MODE_CON			0xa0
++#define PX30_MISC_CON			0xa4
++#define PX30_SDMMC_CON0			0x380
++#define PX30_SDMMC_CON1			0x384
++#define PX30_SDIO_CON0			0x388
++#define PX30_SDIO_CON1			0x38c
++#define PX30_EMMC_CON0			0x390
++#define PX30_EMMC_CON1			0x394
++
++#define PX30_PMU_PLL_CON(x)		((x) * 0x4)
++#define PX30_PMU_CLKSEL_CON(x)		((x) * 0x4 + 0x40)
++#define PX30_PMU_CLKGATE_CON(x)		((x) * 0x4 + 0x80)
++#define PX30_PMU_MODE			0x0020
++
+ #define RV1108_PLL_CON(x)		((x) * 0x4)
+ #define RV1108_CLKSEL_CON(x)		((x) * 0x4 + 0x60)
+ #define RV1108_CLKGATE_CON(x)		((x) * 0x4 + 0x120)
+-- 
+1.9.1
