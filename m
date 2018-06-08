@@ -1,139 +1,185 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id HExWC/5HGVtUQQAAmS7hNA
-	; Thu, 07 Jun 2018 14:59:07 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id vhIdNrkqGlt8HQAAmS7hNA
+	; Fri, 08 Jun 2018 07:05:29 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id E93D9608B8; Thu,  7 Jun 2018 14:59:06 +0000 (UTC)
+	id BCA536089E; Fri,  8 Jun 2018 07:05:29 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="XPhKEMqs"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 4CADA601C3;
-	Thu,  7 Jun 2018 14:59:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4CADA601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 5B0B6601C3;
+	Fri,  8 Jun 2018 07:05:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5B0B6601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935615AbeFGO7E (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:59:04 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41230 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935571AbeFGO6z (ORCPT
+        id S1752660AbeFHHF0 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 03:05:26 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:55009 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752311AbeFHHFX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:58:55 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbm-0005Zj-3u; Thu, 07 Jun 2018 15:09:46 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb4-0002wx-Bn; Thu, 07 Jun 2018 15:09:02 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Fri, 8 Jun 2018 03:05:23 -0400
+Received: from mail-ua0-f171.google.com (mail-ua0-f171.google.com [209.85.217.171]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id w5875GbI016134;
+        Fri, 8 Jun 2018 16:05:16 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w5875GbI016134
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1528441517;
+        bh=Iim/hvEk6SUMUm4EpSSRY/yFf9WjF+25JvqsSfbmWGk=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=XPhKEMqsIavUf5as7Kfxpxsnwg/frZTtgu4KJrMaTSiK2IDj/gfu7RkZ9LuoPcA8M
+         aGqjlg8Uirq1uXoK1V2wQvQQ1J7Q0DEi1VNZLORLHD9efjIuzy/KE5k0qkbvH1TbMM
+         bqH20seDVYTsb/DSKQcDK4KqT8X1Ssd85cEebr84R+peslPUg3f+30thjI6NZnKBa7
+         nQkVJ7j9edLJZkOfPB4V4DGgc30SRIZ9a3I2T/CoRd2NPEQ7bHBP9nGWC3jWB+oGkK
+         xiDpFNzLl+w06w7cbVaajocfMIgTPQ7fCXuZr5MxnHV8DMsYIbrqCEarsSvfgWyYlu
+         Oi6b1mz24EpIw==
+X-Nifty-SrcIP: [209.85.217.171]
+Received: by mail-ua0-f171.google.com with SMTP id c23-v6so8219210uan.3;
+        Fri, 08 Jun 2018 00:05:16 -0700 (PDT)
+X-Gm-Message-State: APt69E0Zm0B9ijVTcYIaVqVMsjeiW/WeLv/yA35WLWls2SvM8wduGmwL
+        ey+z5M7m0AYJ4f6LXwyUHQp/VMnvMFdiW4O0gUA=
+X-Google-Smtp-Source: ADUXVKIgN14FKphlNPaQLTFoxFlhkOaK1LMHxH8NFR4DmJQb9V8GE52tgGF7T6QZ4jAZC+3V8a4HfInhjCSxNE7eccM=
+X-Received: by 2002:ab0:7089:: with SMTP id m9-v6mr3329230ual.141.1528441515784;
+ Fri, 08 Jun 2018 00:05:15 -0700 (PDT)
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Al Viro" <viro@zeniv.linux.org.uk>,
-        "Richard Weinberger" <richard@nod.at>,
-        "Jake Daryll Obina" <jake.obina@gmail.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.404342975@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 169/410] jffs2: Fix use-after-free bug in
- jffs2_iget()'s error handling path
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Received: by 2002:ab0:20ab:0:0:0:0:0 with HTTP; Fri, 8 Jun 2018 00:04:35 -0700 (PDT)
+In-Reply-To: <CAK7LNAQxS7xkqja2J5FNkRfhCtQpeKqJVsQXFggQrJT6cL_2Cw@mail.gmail.com>
+References: <1527499328-13213-1-git-send-email-yamada.masahiro@socionext.com>
+ <1527499328-13213-22-git-send-email-yamada.masahiro@socionext.com>
+ <CAMuHMdUDCtnyqydZan9Q-+hOQacWGJrrMbw4LshjYSjn2=yBjw@mail.gmail.com> <CAK7LNAQxS7xkqja2J5FNkRfhCtQpeKqJVsQXFggQrJT6cL_2Cw@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Fri, 8 Jun 2018 16:04:35 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAR5f+ZU+W9hUZJW+78rATsUjmgSnq31f-iZkMgPEhaoBw@mail.gmail.com>
+Message-ID: <CAK7LNAR5f+ZU+W9hUZJW+78rATsUjmgSnq31f-iZkMgPEhaoBw@mail.gmail.com>
+Subject: Re: [PATCH v5 21/31] kconfig: show compiler version text in the top comment
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Luis R . Rodriguez" <mcgrof@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+Hi Geert,
 
-------------------
 
-From: Jake Daryll Obina <jake.obina@gmail.com>
+2018-06-07 17:58 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+> Hi Geert,
+>
+>
+> 2018-06-07 17:42 GMT+09:00 Geert Uytterhoeven <geert@linux-m68k.org>:
+>> Hi Yamada-san,
+>>
+>> On Mon, May 28, 2018 at 11:21 AM, Masahiro Yamada
+>> <yamada.masahiro@socionext.com> wrote:
+>>> The kernel configuration phase is now tightly coupled with the compiler
+>>> in use.  It will be nice to show the compiler information in Kconfig.
+>>>
+>>> The compiler information will be displayed like this:
+>>>
+>>>   $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- config
+>>>   scripts/kconfig/conf  --oldaskconfig Kconfig
+>>>   *
+>>>   * Linux/arm64 4.16.0-rc1 Kernel Configuration
+>>>   *
+>>>   *
+>>>   * Compiler: aarch64-linux-gnu-gcc (Linaro GCC 7.2-2017.11) 7.2.1 20171011
+>>>   *
+>>>   *
+>>>   * General setup
+>>>   *
+>>>   Compile also drivers which will not load (COMPILE_TEST) [N/y/?]
+>>>
+>>> If you use GUI methods such as menuconfig, it will be displayed in the
+>>> top menu.
+>>>
+>>> This is simply implemented by using the 'comment' statement.  So, it
+>>> will be saved into the .config file as well.
+>>>
+>>> This commit has a very important meaning.  If the compiler is upgraded,
+>>> Kconfig must be re-run since different compilers have different sets
+>>> of supported options.
+>>>
+>>> All referenced environments are written to include/config/auto.conf.cmd
+>>> so that any environment change triggers syncconfig, and prompt the user
+>>> to input new values if needed.
+>>>
+>>> With this commit, something like follows will be added to
+>>> include/config/auto.conf.cmd
+>>>
+>>>   ifneq "$(CC_VERSION_TEXT)" "aarch64-linux-gnu-gcc (Linaro GCC 7.2-2017.11) 7.2.1 20171011"
+>>>   include/config/auto.conf: FORCE
+>>>   endif
+>>>
+>>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>>> Reviewed-by: Kees Cook <keescook@chromium.org>
+>>
+>> This is now commit 21c54b774744719c ("kconfig: show compiler version text
+>> in the top comment") upstream.
+>>
+>> This commit broke cross-compilation for me:
+>>
+>>     $ make ARCH=m68k
+>>     scripts/kconfig/conf  --syncconfig Kconfig
+>>     scripts/kconfig/conf  --syncconfig Kconfig
+>>     scripts/kconfig/conf  --syncconfig Kconfig
+>>     scripts/kconfig/conf  --syncconfig Kconfig
+>>     ...
+>>
+>> with O=:
+>>
+>>       GEN     ./Makefile
+>>      scripts/kconfig/conf  --syncconfig Kconfig
+>>       GEN     ./Makefile
+>>     scripts/kconfig/conf  --syncconfig Kconfig
+>>       GEN     ./Makefile
+>>     scripts/kconfig/conf  --syncconfig Kconfig
+>>       GEN     ./Makefile
+>>     ...
+>>
+>> .config gained (both with/without O=):
+>>
+>>     #
+>>     # Compiler: gcc (Ubuntu 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+>>     #
+>>
+>> which is definitely wrong when cross-compiling for m68k.
+>>
+>> Reverting the commit, and fixing up the conflicts, fixes the issue for me
+>>
+>> Do you have a clue?
+>> Thanks!
+>
+>
+> Agh, I missed the case where CROSS_COMPILE is
+> set by arch/$(SRCARCH)/Makefile.
+>
+>
+> I will fix it.  Thanks for the report!
 
-commit 5bdd0c6f89fba430e18d636493398389dadc3b17 upstream.
 
-If jffs2_iget() fails for a newly-allocated inode, jffs2_do_clear_inode()
-can get called twice in the error handling path, the first call in
-jffs2_iget() itself and the second through iget_failed(). This can result
-to a use-after-free error in the second jffs2_do_clear_inode() call, such
-as shown by the oops below wherein the second jffs2_do_clear_inode() call
-was trying to free node fragments that were already freed in the first
-jffs2_do_clear_inode() call.
+I posted a patch.
+https://patchwork.kernel.org/patch/10453685/
 
-[   78.178860] jffs2: error: (1904) jffs2_do_read_inode_internal: CRC failed for read_inode of inode 24 at physical location 0x1fc00c
-[   78.178914] Unable to handle kernel paging request at virtual address 6b6b6b6b6b6b6b7b
-[   78.185871] pgd = ffffffc03a567000
-[   78.188794] [6b6b6b6b6b6b6b7b] *pgd=0000000000000000, *pud=0000000000000000
-[   78.194968] Internal error: Oops: 96000004 [#1] PREEMPT SMP
-...
-[   78.513147] PC is at rb_first_postorder+0xc/0x28
-[   78.516503] LR is at jffs2_kill_fragtree+0x28/0x90 [jffs2]
-[   78.520672] pc : [<ffffff8008323d28>] lr : [<ffffff8000eb1cc8>] pstate: 60000105
-[   78.526757] sp : ffffff800cea38f0
-[   78.528753] x29: ffffff800cea38f0 x28: ffffffc01f3f8e80
-[   78.532754] x27: 0000000000000000 x26: ffffff800cea3c70
-[   78.536756] x25: 00000000dc67c8ae x24: ffffffc033d6945d
-[   78.540759] x23: ffffffc036811740 x22: ffffff800891a5b8
-[   78.544760] x21: 0000000000000000 x20: 0000000000000000
-[   78.548762] x19: ffffffc037d48910 x18: ffffff800891a588
-[   78.552764] x17: 0000000000000800 x16: 0000000000000c00
-[   78.556766] x15: 0000000000000010 x14: 6f2065646f6e695f
-[   78.560767] x13: 6461657220726f66 x12: 2064656c69616620
-[   78.564769] x11: 435243203a6c616e x10: 7265746e695f6564
-[   78.568771] x9 : 6f6e695f64616572 x8 : ffffffc037974038
-[   78.572774] x7 : bbbbbbbbbbbbbbbb x6 : 0000000000000008
-[   78.576775] x5 : 002f91d85bd44a2f x4 : 0000000000000000
-[   78.580777] x3 : 0000000000000000 x2 : 000000403755e000
-[   78.584779] x1 : 6b6b6b6b6b6b6b6b x0 : 6b6b6b6b6b6b6b6b
-...
-[   79.038551] [<ffffff8008323d28>] rb_first_postorder+0xc/0x28
-[   79.042962] [<ffffff8000eb5578>] jffs2_do_clear_inode+0x88/0x100 [jffs2]
-[   79.048395] [<ffffff8000eb9ddc>] jffs2_evict_inode+0x3c/0x48 [jffs2]
-[   79.053443] [<ffffff8008201ca8>] evict+0xb0/0x168
-[   79.056835] [<ffffff8008202650>] iput+0x1c0/0x200
-[   79.060228] [<ffffff800820408c>] iget_failed+0x30/0x3c
-[   79.064097] [<ffffff8000eba0c0>] jffs2_iget+0x2d8/0x360 [jffs2]
-[   79.068740] [<ffffff8000eb0a60>] jffs2_lookup+0xe8/0x130 [jffs2]
-[   79.073434] [<ffffff80081f1a28>] lookup_slow+0x118/0x190
-[   79.077435] [<ffffff80081f4708>] walk_component+0xfc/0x28c
-[   79.081610] [<ffffff80081f4dd0>] path_lookupat+0x84/0x108
-[   79.085699] [<ffffff80081f5578>] filename_lookup+0x88/0x100
-[   79.089960] [<ffffff80081f572c>] user_path_at_empty+0x58/0x6c
-[   79.094396] [<ffffff80081ebe14>] vfs_statx+0xa4/0x114
-[   79.098138] [<ffffff80081ec44c>] SyS_newfstatat+0x58/0x98
-[   79.102227] [<ffffff800808354c>] __sys_trace_return+0x0/0x4
-[   79.106489] Code: d65f03c0 f9400001 b40000e1 aa0103e0 (f9400821)
+I hope it will fix your problem.
 
-The jffs2_do_clear_inode() call in jffs2_iget() is unnecessary since
-iget_failed() will eventually call jffs2_do_clear_inode() if needed, so
-just remove it.
 
-Fixes: 5451f79f5f81 ("iget: stop JFFS2 from using iget() and read_inode()")
-Reviewed-by: Richard Weinberger <richard@nod.at>
-Signed-off-by: Jake Daryll Obina <jake.obina@gmail.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- fs/jffs2/fs.c | 1 -
- 1 file changed, 1 deletion(-)
+Thanks,
 
---- a/fs/jffs2/fs.c
-+++ b/fs/jffs2/fs.c
-@@ -363,7 +363,6 @@ error_io:
- 	ret = -EIO;
- error:
- 	mutex_unlock(&f->sem);
--	jffs2_do_clear_inode(c, f);
- 	iget_failed(inode);
- 	return ERR_PTR(ret);
- }
+-- 
+Best Regards
+Masahiro Yamada
