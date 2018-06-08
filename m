@@ -1,79 +1,188 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Pun+CdNmGVubEgAAmS7hNA
-	; Thu, 07 Jun 2018 17:10:09 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id P+jJBPUUG1sgDwAAmS7hNA
+	; Fri, 08 Jun 2018 23:45:19 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 32EBF6089E; Thu,  7 Jun 2018 17:10:09 +0000 (UTC)
+	id DEDC6607E7; Fri,  8 Jun 2018 23:45:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+	s=default; t=1528501518;
+	bh=AjRUXevwG/euX9sG4pk6V0lPwvAVHhHEX+4hv65lZNg=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=N71CNqcWveaMMckPR/wJR7ob0zYU+PuJ19r1s7+G98cjjj92nHvQHe4+RwWCcStBA
+	 T/RUD7N5wHCE5N4yWHTbtFqed4ErvUHAPAh6quoZrYhGbyEpGXnFN+eF3rQWpGR4tu
+	 PcwTeE3g7Qz6WzyNeSl8/AIiuFrK7eAGNrVLRzuc=
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	SORTED_RECIPS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 9A6CA606DD;
-	Thu,  7 Jun 2018 17:10:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9A6CA606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id C83D2607E7;
+	Fri,  8 Jun 2018 23:45:17 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="AxwmGR2e";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gxqwpqgS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C83D2607E7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933659AbeFGRKG (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 13:10:06 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43330 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932957AbeFGRKF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 13:10:05 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1753175AbeFHXop (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 19:44:45 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33224 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753119AbeFHXom (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 19:44:42 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 35BAF608CD; Fri,  8 Jun 2018 23:44:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528501482;
+        bh=AjRUXevwG/euX9sG4pk6V0lPwvAVHhHEX+4hv65lZNg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=AxwmGR2e/xHdijEm89q4rHP7KSmDrTuaEtmKkaUrqVkd2SbbFRUuRC8G2qcC6cD3a
+         Zwbhr8OGWLneC509mASLX0Gg3sDyw6WVYZG7epK8StEx2mWp2f8w302T/zEj1CPtEd
+         /YZKmcSOTneG6rAvd3ndxXxfFq3hlCmvFQcUeNgg=
+Received: from codeaurora.org (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3322C406E8C4;
-        Thu,  7 Jun 2018 17:10:04 +0000 (UTC)
-Received: from redhat.com (ovpn-120-226.rdu2.redhat.com [10.10.120.226])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 1BBE81C668;
-        Thu,  7 Jun 2018 17:10:01 +0000 (UTC)
-Date: Thu, 7 Jun 2018 20:10:01 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: syzbot <syzbot+87cfa083e727a224754b@syzkaller.appspotmail.com>
-Cc: avagin@openvz.org, davem@davemloft.net, dingtianhong@huawei.com,
-        edumazet@google.com, elena.reshetova@intel.com,
-        jasowang@redhat.com, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, matthew@mjdsystems.ca,
-        mingo@kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        virtualization@lists.linux-foundation.org, willemb@google.com
-Subject: Re: KMSAN: uninit-value in _copy_to_iter (2)
-Message-ID: <20180607183629-mutt-send-email-mst@kernel.org>
-References: <000000000000a5b2b1056a86e98c@google.com>
- <000000000000cf4578056ab12452@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000cf4578056ab12452@google.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 07 Jun 2018 17:10:04 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 07 Jun 2018 17:10:04 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+        (Authenticated sender: collinsd@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 529B6601B4;
+        Fri,  8 Jun 2018 23:44:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528501480;
+        bh=AjRUXevwG/euX9sG4pk6V0lPwvAVHhHEX+4hv65lZNg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=gxqwpqgSGjN+IFNV2Gpopfx7gdhmKmdUDX7oMW2YY5guAzPb5bprG7mBYzwEPUa65
+         +cu0b732w2lyDnGPeCrs2njWaX6De/I/bnMHGRiE4XrL04jt4m1rb58m1eJdG93LP9
+         /P4MTETIIxCyBhaOdiuG/AKJecfbnTx5ZXnAVvF4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 529B6601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
+From: David Collins <collinsd@codeaurora.org>
+To: broonie@kernel.org, lgirdwood@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: David Collins <collinsd@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, rnayak@codeaurora.org,
+        sboyd@kernel.org, dianders@chromium.org, mka@chromium.org
+Subject: [PATCH v7 0/2] regulator: add QCOM RPMh regulator driver
+Date: Fri,  8 Jun 2018 16:44:13 -0700
+Message-Id: <cover.1528498807.git.collinsd@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-#syz test: https://github.com/google/kmsan.git master
+This patch series adds a driver and device tree binding documentation for
+PMIC regulator control via Resource Power Manager-hardened (RPMh) on some
+Qualcomm Technologies, Inc. SoCs such as SDM845.  RPMh is a hardware block
+which contains several accelerators which are used to manage various
+hardware resources that are shared between the processors of the SoC.  The
+final hardware state of a regulator is determined within RPMh by performing
+max aggregation of the requests made by all of the processors.
 
-Subject: vhost: fix info leak
+The RPMh regulator driver depends upon the RPMh driver [1] and command DB
+driver [2] which are both still undergoing review.  It also depends upon
+three recent regulator changes: [3], [4], and [5].
 
-Fixes: CVE-2018-1118
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
----
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index f0be5f35ab28..9beefa6ed1ce 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -2345,6 +2345,9 @@ struct vhost_msg_node *vhost_new_msg(struct vhost_virtqueue *vq, int type)
- 	struct vhost_msg_node *node = kmalloc(sizeof *node, GFP_KERNEL);
- 	if (!node)
- 		return NULL;
-+
-+	/* Make sure all padding within the structure is initialized. */
-+	memset(&node->msg, 0, sizeof node->msg);
- 	node->vq = vq;
- 	node->msg.type = type;
- 	return node;
+Changes since v6 [6]:
+ - Removed 'count' parameter from rpmh_regulator_send_request() since
+   it is always 1
+ - Fixed _rpmh_regulator_vrm_set_voltage_sel() return value
+ - Added a helper function to capture common code between
+   rpmh_regulator_enable() and rpmh_regulator_disable()
+ - Added an iterator for pmic_rpmh_data in rpmh_regulator_init_vreg()
+ - Added Reviewed-by tag for both patches
+
+Changes since v5 [7]:
+ - Removed unused constants
+ - Added Reviewed-by tag for DT patch 1/2
+
+Changes since v4 [8]:
+ - Removed support for DT properties qcom,regulator-drms-modes and
+   qcom,drms-mode-max-microamps
+ - Specified fixed DRMS high power mode minimum limits for LDO type
+   regulators
+ - Removed DRMS support for SMPS and BOB type regulators
+ - Simplified voltage caching logic
+
+Changes since v3 [9]:
+ - Removed support for DT properties qcom,regulator-initial-microvolt
+   and qcom,headroom-microvolt
+ - Renamed DT property qcom,allowed-drms-modes to be
+   qcom,regulator-drms-modes
+ - Updated DT binding documentation to mention which common regulator
+   bindings can be used for qcom-rpmh-regulator devices
+ - Added voltage caching so that voltage requests are only sent to RPMh
+   after the regulator has been enabled at least once
+ - Changed 'voltage_selector' default value to be -ENOTRECOVERABLE to
+   interact with [5]
+ - Initialized 'enabled' to -EINVAL so that unused regulators are
+   disabled by regulator_late_cleanup()
+ - Removed rpmh_regulator_load_default_parameters() as it is no longer
+   needed
+ - Updated the mode usage description in qcom,rpmh-regulator.h
+
+Changes since v2 [10]:
+ - Replaced '_' with '-' in device tree supply property names
+ - Renamed qcom_rpmh-regulator.c to be qcom-rpmh-regulator.c
+ - Updated various DT property names to use "microvolt" and "microamp"
+ - Moved allowed modes constraint specification out of the driver [4]
+ - Replaced rpmh_client with device pointer to match new RPMh API [1]
+ - Corrected drms mode threshold checking
+ - Initialized voltage_selector to -EINVAL when not specified in DT
+ - Added constants for PMIC regulator hardware modes
+ - Corrected type sign of mode mapping tables
+ - Made variable names for mode arrays plural
+ - Simplified Kconfig depends on
+ - Removed unnecessary constants and struct fields
+ - Added some descriptive comments
+
+Changes since v1 [11]:
+ - Addressed review feedback from Doug, Mark, and Stephen
+ - Replaced set_voltage()/get_voltage() callbacks with set_voltage_sel()/
+   get_voltage_sel()
+ - Added set_bypass()/get_bypass() callbacks for BOB pass-through mode
+   control
+ - Removed top-level PMIC data structures
+ - Removed initialization variables from structs and passed them as
+   function parameters
+ - Removed various comments and error messages
+ - Simplified mode handling
+ - Refactored per-PMIC rpmh-regulator data specification
+ - Simplified probe function
+ - Moved header into DT patch
+ - Removed redundant property listings from DT binding documentation
+
+[1]: https://lkml.org/lkml/2018/5/9/729
+[2]: https://lkml.org/lkml/2018/4/10/714
+[3]: https://lkml.org/lkml/2018/4/18/556
+[4]: https://lkml.org/lkml/2018/5/11/696
+[5]: https://lkml.org/lkml/2018/5/15/1005
+[6]: https://lkml.org/lkml/2018/6/4/879
+[7]: https://lkml.org/lkml/2018/6/1/895
+[8]: https://lkml.org/lkml/2018/5/22/1168
+[9]: https://lkml.org/lkml/2018/5/11/701
+[10]: https://lkml.org/lkml/2018/4/13/687
+[11]: https://lkml.org/lkml/2018/3/16/1431
+
+David Collins (2):
+  regulator: dt-bindings: add QCOM RPMh regulator bindings
+  regulator: add QCOM RPMh regulator driver
+
+ .../bindings/regulator/qcom,rpmh-regulator.txt     | 160 +++++
+ drivers/regulator/Kconfig                          |   9 +
+ drivers/regulator/Makefile                         |   1 +
+ drivers/regulator/qcom-rpmh-regulator.c            | 753 +++++++++++++++++++++
+ .../dt-bindings/regulator/qcom,rpmh-regulator.h    |  36 +
+ 5 files changed, 959 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
+ create mode 100644 drivers/regulator/qcom-rpmh-regulator.c
+ create mode 100644 include/dt-bindings/regulator/qcom,rpmh-regulator.h
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
