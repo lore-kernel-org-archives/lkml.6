@@ -1,116 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id J3RPDIViHlvYVgAAmS7hNA
-	; Mon, 11 Jun 2018 11:53:04 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id mSepGD21GlsfLQAAmS7hNA
+	; Fri, 08 Jun 2018 16:56:29 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 585D7607E4; Mon, 11 Jun 2018 11:53:04 +0000 (UTC)
+	id 3197F607A4; Fri,  8 Jun 2018 16:56:29 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MvTq/gJl"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GOxFW0UO"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FROM,MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id A2B5F60351;
-	Mon, 11 Jun 2018 11:53:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A2B5F60351
+	by smtp.codeaurora.org (Postfix) with ESMTP id C4D02607DC;
+	Fri,  8 Jun 2018 16:56:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C4D02607DC
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933047AbeFKLxB (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Mon, 11 Jun 2018 07:53:01 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:39856 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932906AbeFKLw4 (ORCPT
+        id S1752609AbeFHQ4Z (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 12:56:25 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:36340 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751141AbeFHQ4Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 07:52:56 -0400
-Received: by mail-lf0-f65.google.com with SMTP id t134-v6so30094774lff.6;
-        Mon, 11 Jun 2018 04:52:55 -0700 (PDT)
+        Fri, 8 Jun 2018 12:56:24 -0400
+Received: by mail-wr0-f193.google.com with SMTP id f16-v6so14070978wrm.3
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 09:56:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=/S43JM0aR6vOjw8Olf0gQR7oAHEIWj9FfxhZtXD/Wz0=;
-        b=MvTq/gJlNEaycTKvLvHp3NlZrk2bIbZ3Q9xR6e8JUbAen1LFEiNaIIvTfuXLBExCj/
-         Pj+ZFCkZ/LNa3BjdzoADiZcrvR7yiDnI421iy8eQGcxlWu+BR5wcvALWhb0oWt+FjLAS
-         72DnXN8KSykFVdtXTtu+AT3lTaKDz/Hlea6f7uNytH0jBABgPgjQINHNJ2viFluFXpDb
-         YsqEatymFjdx3ZdPWXDgIIURp6V0etrkU/kaZqJvOFN3hXSL0883FEZLhhM0/I1yPBCR
-         sBfOFWoDlKt0iT2+bb4UhrzuUjcc5D4YH218WY5ksJ+jw5vraUuTBFxISv/Igm9vbZt0
-         /baA==
+        h=from:to:cc:subject:date:message-id;
+        bh=nKyDvEcogVelZCrIwXds53gKJoZYN36JnIDsL/Uab2Y=;
+        b=GOxFW0UOPEWPoZle8lptLaQ0RuBRx3NzSCEB2ThYRLdC8bnHa7ypKSRSc7sKI3uTm0
+         lxsyIHUwpelkGdO05a5H8YJrCWZY2xExWpyostTMufRsMq9Ma/VvIX28tw8c1QzsUgyx
+         Me4qa8FyfBAZ7O8Om+/KpkUcX5o9nTSeEbNPl3w6t2qUsl4HrXm3Toq8Ybzt08B4F7hU
+         AIggTGWDjLK7G8P9iDDC6tZylLkAsz8BiAI0i/v/Wj0T3dwfxT1wi7qyDlonezPUET+9
+         ljPF6aQg/9JfsNo0kN764t1CnxjP0/kIWuitgD6zr9jC08nq97SDxQZD8r2Wolr5DXbx
+         z7BA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=/S43JM0aR6vOjw8Olf0gQR7oAHEIWj9FfxhZtXD/Wz0=;
-        b=BUOIrzK4sTJj//QAXKOejeFKPbTwku/W1er8AH8TSgXUnAEr8sUsE2U5T4zSj2Opo8
-         I2GTmBR4dR6ng8iSMYaqcrztAmGxHlcMUsjGQb6/7sBIYFo2UcgFEVxom+DPYXyylP7p
-         WqEG9p5fZ62moPELrI13HQRg3Xx51CbcSqmLD3I11Gq7CRp+/79b4H0iDlzYPTNfVpuX
-         ysGX752Wq1cjVWYzYWIlVMgB9QG1aJqauYTLJkVvHsgKHCZYeM8pHqNOFJJiNLwGvEIH
-         qdiwmyrKl9A8p41N2JfjQqgl2X76etCfL+i/cM24uoScV2RfnBSUrodmpr0Syyyb4rDL
-         HUOQ==
-X-Gm-Message-State: APt69E3wy84ryMfKXHG0d1WrcaD2mLM+6UnqhkUPli53Y9k6DDDVptES
-        0Qyu51Ab+zUvW91HKF7zZYaZz51m
-X-Google-Smtp-Source: ADUXVKJOTg0pfpkPy71Fk5hdNz4XL8Q/rRFg9/fpkTZZOALldFB6dQ7e9it4RrEXN6JzcOd7DXM1zA==
-X-Received: by 2002:a2e:55cf:: with SMTP id g76-v6mr9165066lje.4.1528717974087;
-        Mon, 11 Jun 2018 04:52:54 -0700 (PDT)
-Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
-        by smtp.gmail.com with ESMTPSA id h90-v6sm8332849ljf.65.2018.06.11.04.52.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Jun 2018 04:52:52 -0700 (PDT)
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-To: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
-        linux-bluetooth@vger.kernel.org
-Subject: [PATCH v2 02/24] Bluetooth: hci_bcm: Add serdev_id_table
-Date: Mon, 11 Jun 2018 13:52:18 +0200
-Message-Id: <20180611115240.32606-3-ricardo.ribalda@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
-References: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=nKyDvEcogVelZCrIwXds53gKJoZYN36JnIDsL/Uab2Y=;
+        b=jN//9w2pAI1raNptzPjWkc+ECXrnGTPW57CQtyNctGVWMg+Cf9ZfMu412XswdphXSQ
+         Ahqjeuth1WJCJiOsVhoiS2a+tb6ETSXz/nE7zkDUMgy8LIHoQeBvsjQQxNBYccfDLV5a
+         m8OWZXN5l+rCiVHfeXpUu21aXOv46asVo5cTTQUggfLQA+UvjLSrhe1KvzEVZoAbzOtz
+         uWSWYViebLyXTczrBLw9oZbdsNvhHY2OXOqnPtpcNjiMQvP8i6TVSBwLAfSWBnAW6FFg
+         ypTooa61VwjbDx+GHAh4Low0Kb/+4+d7gCrS8WOWPi+0mfGY48PzlWcWckgkPVCCHD0w
+         qugA==
+X-Gm-Message-State: APt69E3fythjzNp51soLHXe4Xa0K+OWzSNEpjM6AbWmRqrazHTIQ4uvl
+        kyvy4yTFWPWod+NTfQzhAkMByVMn
+X-Google-Smtp-Source: ADUXVKLSDRKrIic5l8pUkJPIKUprYQDyt8Zhol0XXU7f49hVoe9GS7hbaNsssMZd2ykbiMg+IN1Eig==
+X-Received: by 2002:adf:81c2:: with SMTP id 60-v6mr5632054wra.13.1528476983425;
+        Fri, 08 Jun 2018 09:56:23 -0700 (PDT)
+Received: from localhost.localdomain (8ta-150-94-26.telkomadsl.co.za. [41.150.94.26])
+        by smtp.googlemail.com with ESMTPSA id a203-v6sm2845938wme.46.2018.06.08.09.56.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 08 Jun 2018 09:56:22 -0700 (PDT)
+From: Chris Opperman <eklikeroomys@gmail.com>
+Cc: eklikeroomys@gmail.com, Ian Abbott <abbotti@mev.co.uk>,
+        H Hartley Sweeten <hsweeten@visionengravers.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Simo Koskinen <koskisoft@gmail.com>,
+        Frank Mori Hess <fmh6jj@gmail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] Fixed coding style problems.
+Date: Fri,  8 Jun 2018 20:52:37 +0200
+Message-Id: <1528483959-23158-1-git-send-email-eklikeroomys@gmail.com>
+X-Mailer: git-send-email 2.1.4
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Describe which hardware is supported by the current driver.
-
-Cc: Marcel Holtmann <marcel@holtmann.org>
-Cc: Johan Hedberg <johan.hedberg@gmail.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Johan Hovold <johan@kernel.org>
-Cc: linux-bluetooth@vger.kernel.org
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+This patch fixes a coding style problem in drivers/staging/comedi/drivers.c
+and is submitted for task 10 of the eudyptula challenge.
+Signed-off-by: Chris Opperman <eklikeroomys@gmail.com>
 ---
- drivers/bluetooth/hci_bcm.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/staging/comedi/drivers.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
-index 441f5e1deb11..f4d7846c06b8 100644
---- a/drivers/bluetooth/hci_bcm.c
-+++ b/drivers/bluetooth/hci_bcm.c
-@@ -1325,6 +1325,11 @@ static const struct of_device_id bcm_bluetooth_of_match[] = {
- MODULE_DEVICE_TABLE(of, bcm_bluetooth_of_match);
- #endif
+diff --git a/drivers/staging/comedi/drivers.c b/drivers/staging/comedi/drivers.c
+index 9d73347..90ee974 100644
+--- a/drivers/staging/comedi/drivers.c
++++ b/drivers/staging/comedi/drivers.c
+@@ -475,7 +475,8 @@ unsigned int comedi_nsamples_left(struct comedi_subdevice *s,
+ 	struct comedi_cmd *cmd = &async->cmd;
  
-+static const struct serdev_device_id bcm_serdev_id[] = {
-+	{ "bcm43438-bt", },
-+	{}
-+};
-+
- static struct serdev_device_driver bcm_serdev_driver = {
- 	.probe = bcm_serdev_probe,
- 	.remove = bcm_serdev_remove,
-@@ -1334,6 +1339,7 @@ static struct serdev_device_driver bcm_serdev_driver = {
- 		.acpi_match_table = ACPI_PTR(bcm_acpi_match),
- 		.pm = &bcm_pm_ops,
- 	},
-+	.id_table = bcm_serdev_id,
- };
- 
- int __init bcm_init(void)
+ 	if (cmd->stop_src == TRIG_COUNT) {
+-		unsigned int scans_left = __comedi_nscans_left(s, cmd->stop_arg);
++		unsigned int scans_left =
++			__comedi_nscans_left(s, cmd->stop_arg);
+ 		unsigned int scan_pos =
+ 		    comedi_bytes_to_samples(s, async->scan_progress);
+ 		unsigned long long samples_left = 0;
 -- 
-2.17.1
+2.1.4
