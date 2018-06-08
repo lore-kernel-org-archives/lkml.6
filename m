@@ -1,179 +1,792 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id JcFpHwV5GFveYgAAmS7hNA
-	; Thu, 07 Jun 2018 00:15:01 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id IRXtB3PzGlvGQAAAmS7hNA
+	; Fri, 08 Jun 2018 21:46:14 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 5DB786089E; Thu,  7 Jun 2018 00:15:01 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="YvgjEyx1"
+	id 7B540607E7; Fri,  8 Jun 2018 21:46:14 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,URIBL_SBL,
-	URIBL_SBL_A autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id B0D86607F7;
-	Thu,  7 Jun 2018 00:15:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B0D86607F7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id E82EA601B4;
+	Fri,  8 Jun 2018 21:46:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E82EA601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752520AbeFGAO7 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 20:14:59 -0400
-Received: from mail-pu1apc01on0093.outbound.protection.outlook.com ([104.47.126.93]:15369
-        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
+        id S1753241AbeFHVqK (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 17:46:10 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43862 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752213AbeFGAO5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 20:14:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AptLwHSunMkUed8bSwit4tAXP9VE5YqjHUXBIAfCZBY=;
- b=YvgjEyx12kEZ2G7YKdmFZSDLLnlSzV/4ajJSZOMjSv4RE+MYqQUrT05FSP52nKkVumBfC2Y86UXh6+y0T3A3Pg8fyEjfFaOgeYMKMQhbDfkQRDVydwSWUt1EQrgDnzdG8RbpNQJ4EgTmhxhn+xUSltTxnPHNK3UQtCpu/A1hw2I=
-Received: from KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM (10.170.167.17) by
- KL1P15301MB0054.APCP153.PROD.OUTLOOK.COM (10.170.168.19) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.863.2; Thu, 7 Jun 2018 00:14:40 +0000
-Received: from KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM ([10.170.167.17]) by
- KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM ([10.170.167.17]) with mapi id
- 15.20.0863.004; Thu, 7 Jun 2018 00:14:40 +0000
-From: Dexuan Cui <decui@microsoft.com>
-To: Haiyang Zhang <haiyangz@microsoft.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        KY Srinivasan <kys@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "olaf@aepfle.de" <olaf@aepfle.de>,
-        "apw@canonical.com" <apw@canonical.com>,
-        "jasowang@redhat.com" <jasowang@redhat.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "driverdev-devel@linuxdriverproject.org"
-        <driverdev-devel@linuxdriverproject.org>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>
-Subject: RE: [PATCH] PCI: hv: Fix a __local_bh_enable_ip warning in
- hv_compose_msi_msg()
-Thread-Topic: [PATCH] PCI: hv: Fix a __local_bh_enable_ip warning in
- hv_compose_msi_msg()
-Thread-Index: AdPyKucLHxE0xn3+RTSKXedSJeHHcgCNtVtQAmSYQFA=
-Date: Thu, 7 Jun 2018 00:14:39 +0000
-Message-ID: <KL1P15301MB0006D8314C8B40A939598056BF640@KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM>
-References: <KL1P15301MB0006EE546A7C2567B61EA783BF6B0@KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM>
- <BN6PR21MB016112A4E32D76EC669818C3CA690@BN6PR21MB0161.namprd21.prod.outlook.com>
-In-Reply-To: <BN6PR21MB016112A4E32D76EC669818C3CA690@BN6PR21MB0161.namprd21.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-05-23T00:18:18.8931354Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
- Sensitivity=General
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=decui@microsoft.com;
-x-originating-ip: [2001:4898:80e8:0:512f:6303:d09e:a11f]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;KL1P15301MB0054;7:wVzuXfuw1kHDyysSWN7ljOFu32WMu71vqketLcS2aQh1aPuKLjJHir22PK8XNbvC6wp/3xf/0G2QO1DeVNxWaLSstc8QLQMo6FQ57L2flBBYJosMfu1rin7AQN5WSmMfTplcoh63ZvRkVIY6jWJUMavvvX7sPDOhrLXAz+gkxl7wiKMlZ6hOonvr9u+5fh/U+iPSWtdtqrpVqO+aOKMff9sNEe579VJO1wt2p+KZmVSFXEcct/KKWnRaVo6kSH9k
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(2017052603328)(7193020);SRVR:KL1P15301MB0054;
-x-ms-traffictypediagnostic: KL1P15301MB0054:
-x-microsoft-antispam-prvs: <KL1P15301MB0054C4456C35BE291135BDFFBF640@KL1P15301MB0054.APCP153.PROD.OUTLOOK.COM>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(180628864354917)(89211679590171)(9452136761055)(211936372134217)(153496737603132)(198206253151910);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231254)(944501410)(52105095)(10201501046)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:KL1P15301MB0054;BCL:0;PCL:0;RULEID:;SRVR:KL1P15301MB0054;
-x-forefront-prvs: 06968FD8C4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(396003)(39860400002)(366004)(346002)(376002)(199004)(189003)(105586002)(106356001)(77096007)(10290500003)(14454004)(10090500001)(22452003)(2906002)(316002)(6246003)(1511001)(3280700002)(3660700001)(8990500004)(4326008)(33656002)(2900100001)(68736007)(7416002)(6116002)(478600001)(5660300001)(53936002)(9686003)(11346002)(97736004)(54906003)(476003)(6506007)(53546011)(59450400001)(446003)(76176011)(486006)(102836004)(110136005)(46003)(99286004)(86612001)(81156014)(2201001)(86362001)(25786009)(8936002)(8676002)(74316002)(6436002)(7736002)(305945005)(81166006)(575784001)(55016002)(229853002)(7696005)(2501003);DIR:OUT;SFP:1102;SCL:1;SRVR:KL1P15301MB0054;H:KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: Zv3+ZLqmvGj7YCVaf9TJUVMQ2y3uXVmFg+RvQjPnld0QZBL8fN18A8ku2Qxr+uzDSHa79Z8Xgn8wrS4t0ebhY4fAv76f97Z+hSaVyC40w/E8yX05x+xgepsQP4ffiEeVe25puVOsPD6GLBe+0ba25m+dZyauli4f/v5NiCUL2bTuV0S447vS3CSYchVlHsXc
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 0e3ce6f9-2009-46a2-35af-08d5cc0ba99d
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0e3ce6f9-2009-46a2-35af-08d5cc0ba99d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Jun 2018 00:14:39.9987
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1P15301MB0054
+        id S1753031AbeFHVqG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 17:46:06 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 50A69BB42F;
+        Fri,  8 Jun 2018 21:46:06 +0000 (UTC)
+Received: from dhcp-44-202.space.revspace.nl (ovpn-116-56.ams2.redhat.com [10.36.116.56])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B584B83B72;
+        Fri,  8 Jun 2018 21:46:04 +0000 (UTC)
+From: Hans de Goede <hdegoede@redhat.com>
+To: Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/4] platform/x86: silead_dmi: Sort entries alphabetically
+Date: Fri,  8 Jun 2018 23:45:56 +0200
+Message-Id: <20180608214558.30717-2-hdegoede@redhat.com>
+In-Reply-To: <20180608214558.30717-1-hdegoede@redhat.com>
+References: <20180608214558.30717-1-hdegoede@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 08 Jun 2018 21:46:06 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 08 Jun 2018 21:46:06 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'hdegoede@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Haiyang Zhang
-> Sent: Friday, May 25, 2018 12:52
-> To: Dexuan Cui <decui@microsoft.com>; Lorenzo Pieralisi
-> <lorenzo.pieralisi@arm.com>; Bjorn Helgaas <bhelgaas@google.com>;
-> linux-pci@vger.kernel.org; KY Srinivasan <kys@microsoft.com>; Stephen
-> Hemminger <sthemmin@microsoft.com>; olaf@aepfle.de;
-> apw@canonical.com; jasowang@redhat.com
-> Cc: linux-kernel@vger.kernel.org; driverdev-devel@linuxdriverproject.org;
-> vkuznets@redhat.com; marcelo.cerri@canonical.com
-> Subject: RE: [PATCH] PCI: hv: Fix a __local_bh_enable_ip warning in
-> hv_compose_msi_msg()
->=20
-> > From: Dexuan Cui
-> > Sent: Tuesday, May 22, 2018 8:18 PM
-> > To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>; Bjorn Helgaas
-> > <bhelgaas@google.com>; linux-pci@vger.kernel.org; KY Srinivasan
-> > <kys@microsoft.com>; Stephen Hemminger <sthemmin@microsoft.com>;
-> > olaf@aepfle.de; apw@canonical.com; jasowang@redhat.com
-> > Cc: linux-kernel@vger.kernel.org; driverdev-devel@linuxdriverproject.or=
-g;
-> > Haiyang Zhang <haiyangz@microsoft.com>; vkuznets@redhat.com;
-> > marcelo.cerri@canonical.com
-> > Subject: [PATCH] PCI: hv: Fix a __local_bh_enable_ip warning in
-> > hv_compose_msi_msg()
-> >
-> >
-> > Commit de0aa7b2f97d ("PCI: hv: Fix 2 hang issues in
-> hv_compose_msi_msg()")
-> > uses local_bh_disable()/enable(), because hv_pci_onchannelcallback() ca=
-n
-> also
-> > run in tasklet context as the channel event callback.
-> >
-> > With CONFIG_PROVE_LOCKING=3Dy in the latest mainline, or old kernels th=
-at
-> > don't have commit f71b74bca637 ("irq/softirqs: Use lockdep to assert IR=
-Qs
-> are
-> > disabled/enabled"), it turns out can we trigger a warning at the beginn=
-ing of
-> > __local_bh_enable_ip(), because the upper layer irq code can call
-> > hv_compose_msi_msg() with local irqs disabled.
-> >
-> > Let's fix the warning by switching to local_irq_save()/restore(). This =
-is not an
-> > issue because hv_pci_onchannelcallback() is not slow, and it not a hot =
-path.
-> >
-> > Fixes: de0aa7b2f97d ("PCI: hv: Fix 2 hang issues in hv_compose_msi_msg(=
-)")
-> > Signed-off-by: Dexuan Cui <decui@microsoft.com>
-> > Cc: <stable@vger.kernel.org>
-> > Cc: Stephen Hemminger <sthemmin@microsoft.com>
-> > Cc: K. Y. Srinivasan <kys@microsoft.com>
-> > ---
->=20
-> Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
->=20
-> Thanks you.
+We have so much entries now that it is good to bring some form of order
+to them. This should also reduce conflicts when multiple patches make
+changes at the same time (compared to tagging all new entries at the end).
 
-Hi Lorenzo,
+Note this commit purely moves stuff around and adds 2 comments about
+keeping the data and table alphabetically sorted. There are no functional
+changes.
 
-Can I have your reply to this patch?
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ drivers/platform/x86/silead_dmi.c | 507 +++++++++++++++---------------
+ 1 file changed, 255 insertions(+), 252 deletions(-)
 
--- Dexuan
+diff --git a/drivers/platform/x86/silead_dmi.c b/drivers/platform/x86/silead_dmi.c
+index 1f0246e69967..e466e6d8226f 100644
+--- a/drivers/platform/x86/silead_dmi.c
++++ b/drivers/platform/x86/silead_dmi.c
+@@ -25,46 +25,63 @@ struct silead_ts_dmi_data {
+ 	const struct property_entry *properties;
+ };
+ 
+-static const struct property_entry cube_iwork8_air_props[] = {
+-	PROPERTY_ENTRY_U32("touchscreen-size-x", 1660),
+-	PROPERTY_ENTRY_U32("touchscreen-size-y", 900),
++/* NOTE: Please keep all entries sorted alphabetically */
++
++static const struct property_entry chuwi_hi8_props[] = {
++	PROPERTY_ENTRY_U32("touchscreen-size-x", 1665),
++	PROPERTY_ENTRY_U32("touchscreen-size-y", 1140),
+ 	PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
+-	PROPERTY_ENTRY_STRING("firmware-name", "gsl3670-cube-iwork8-air.fw"),
+-	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
++	PROPERTY_ENTRY_BOOL("silead,home-button"),
++	PROPERTY_ENTRY_STRING("firmware-name", "gsl1680-chuwi-hi8.fw"),
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data cube_iwork8_air_data = {
+-	.acpi_name	= "MSSL1680:00",
+-	.properties	= cube_iwork8_air_props,
++static const struct silead_ts_dmi_data chuwi_hi8_data = {
++	.acpi_name      = "MSSL0001:00",
++	.properties     = chuwi_hi8_props,
+ };
+ 
+-static const struct property_entry jumper_ezpad_mini3_props[] = {
+-	PROPERTY_ENTRY_U32("touchscreen-size-x", 1700),
+-	PROPERTY_ENTRY_U32("touchscreen-size-y", 1150),
++static const struct property_entry chuwi_hi8_pro_props[] = {
++	PROPERTY_ENTRY_U32("touchscreen-size-x", 1728),
++	PROPERTY_ENTRY_U32("touchscreen-size-y", 1148),
+ 	PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
+-	PROPERTY_ENTRY_STRING("firmware-name", "gsl3676-jumper-ezpad-mini3.fw"),
+-	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
++	PROPERTY_ENTRY_STRING("firmware-name", "gsl3680-chuwi-hi8-pro.fw"),
++	PROPERTY_ENTRY_BOOL("silead,home-button"),
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data jumper_ezpad_mini3_data = {
++static const struct silead_ts_dmi_data chuwi_hi8_pro_data = {
+ 	.acpi_name	= "MSSL1680:00",
+-	.properties	= jumper_ezpad_mini3_props,
++	.properties	= chuwi_hi8_pro_props,
+ };
+ 
+-static const struct property_entry jumper_ezpad_6_pro_props[] = {
+-	PROPERTY_ENTRY_U32("touchscreen-size-x", 1980),
+-	PROPERTY_ENTRY_U32("touchscreen-size-y", 1500),
+-	PROPERTY_ENTRY_STRING("firmware-name", "gsl3692-jumper-ezpad-6-pro.fw"),
++static const struct property_entry chuwi_vi8_props[] = {
++	PROPERTY_ENTRY_U32("touchscreen-size-x", 1724),
++	PROPERTY_ENTRY_U32("touchscreen-size-y", 1140),
++	PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
++	PROPERTY_ENTRY_STRING("firmware-name", "gsl3676-chuwi-vi8.fw"),
+ 	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
+ 	PROPERTY_ENTRY_BOOL("silead,home-button"),
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data jumper_ezpad_6_pro_data = {
++static const struct silead_ts_dmi_data chuwi_vi8_data = {
++	.acpi_name      = "MSSL1680:00",
++	.properties     = chuwi_vi8_props,
++};
++
++static const struct property_entry cube_iwork8_air_props[] = {
++	PROPERTY_ENTRY_U32("touchscreen-size-x", 1660),
++	PROPERTY_ENTRY_U32("touchscreen-size-y", 900),
++	PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
++	PROPERTY_ENTRY_STRING("firmware-name", "gsl3670-cube-iwork8-air.fw"),
++	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
++	{ }
++};
++
++static const struct silead_ts_dmi_data cube_iwork8_air_data = {
+ 	.acpi_name	= "MSSL1680:00",
+-	.properties	= jumper_ezpad_6_pro_props,
++	.properties	= cube_iwork8_air_props,
+ };
+ 
+ static const struct property_entry dexp_ursus_7w_props[] = {
+@@ -81,34 +98,20 @@ static const struct silead_ts_dmi_data dexp_ursus_7w_data = {
+ 	.properties	= dexp_ursus_7w_props,
+ };
+ 
+-static const struct property_entry trekstor_surftab_twin_10_1_props[] = {
+-	PROPERTY_ENTRY_U32("touchscreen-size-x", 1900),
+-	PROPERTY_ENTRY_U32("touchscreen-size-y", 1280),
+-	PROPERTY_ENTRY_U32("touchscreen-inverted-y", 1),
+-	PROPERTY_ENTRY_STRING("firmware-name",
+-			      "gsl3670-surftab-twin-10-1-st10432-8.fw"),
+-	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
+-	{ }
+-};
+-
+-static const struct silead_ts_dmi_data trekstor_surftab_twin_10_1_data = {
+-	.acpi_name	= "MSSL1680:00",
+-	.properties	= trekstor_surftab_twin_10_1_props,
+-};
+-
+-static const struct property_entry trekstor_surftab_wintron70_props[] = {
+-	PROPERTY_ENTRY_U32("touchscreen-size-x", 884),
+-	PROPERTY_ENTRY_U32("touchscreen-size-y", 632),
++static const struct property_entry digma_citi_e200_props[] = {
++	PROPERTY_ENTRY_U32("touchscreen-size-x", 1980),
++	PROPERTY_ENTRY_U32("touchscreen-size-y", 1500),
++	PROPERTY_ENTRY_BOOL("touchscreen-inverted-y"),
+ 	PROPERTY_ENTRY_STRING("firmware-name",
+-			      "gsl1686-surftab-wintron70-st70416-6.fw"),
++			      "gsl1686-digma_citi_e200.fw"),
+ 	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
+ 	PROPERTY_ENTRY_BOOL("silead,home-button"),
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data trekstor_surftab_wintron70_data = {
++static const struct silead_ts_dmi_data digma_citi_e200_data = {
+ 	.acpi_name	= "MSSL1680:00",
+-	.properties	= trekstor_surftab_wintron70_props,
++	.properties	= digma_citi_e200_props,
+ };
+ 
+ static const struct property_entry gp_electronic_t701_props[] = {
+@@ -126,157 +129,142 @@ static const struct silead_ts_dmi_data gp_electronic_t701_data = {
+ 	.properties	= gp_electronic_t701_props,
+ };
+ 
+-static const struct property_entry pipo_w2s_props[] = {
+-	PROPERTY_ENTRY_U32("touchscreen-size-x", 1660),
+-	PROPERTY_ENTRY_U32("touchscreen-size-y", 880),
+-	PROPERTY_ENTRY_BOOL("touchscreen-inverted-x"),
++static const struct property_entry itworks_tw891_props[] = {
++	PROPERTY_ENTRY_U32("touchscreen-size-x", 1600),
++	PROPERTY_ENTRY_U32("touchscreen-size-y", 890),
++	PROPERTY_ENTRY_BOOL("touchscreen-inverted-y"),
+ 	PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
+-	PROPERTY_ENTRY_STRING("firmware-name",
+-			      "gsl1680-pipo-w2s.fw"),
++	PROPERTY_ENTRY_STRING("firmware-name", "gsl3670-itworks-tw891.fw"),
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data pipo_w2s_data = {
++static const struct silead_ts_dmi_data itworks_tw891_data = {
+ 	.acpi_name	= "MSSL1680:00",
+-	.properties	= pipo_w2s_props,
++	.properties	= itworks_tw891_props,
+ };
+ 
+-static const struct property_entry pov_mobii_wintab_p800w_v20_props[] = {
+-	PROPERTY_ENTRY_U32("touchscreen-min-x", 32),
+-	PROPERTY_ENTRY_U32("touchscreen-min-y", 16),
+-	PROPERTY_ENTRY_U32("touchscreen-size-x", 1692),
+-	PROPERTY_ENTRY_U32("touchscreen-size-y", 1146),
+-	PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
+-	PROPERTY_ENTRY_STRING("firmware-name",
+-			      "gsl3680-pov-mobii-wintab-p800w-v20.fw"),
++static const struct property_entry jumper_ezpad_6_pro_props[] = {
++	PROPERTY_ENTRY_U32("touchscreen-size-x", 1980),
++	PROPERTY_ENTRY_U32("touchscreen-size-y", 1500),
++	PROPERTY_ENTRY_STRING("firmware-name", "gsl3692-jumper-ezpad-6-pro.fw"),
+ 	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
+ 	PROPERTY_ENTRY_BOOL("silead,home-button"),
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data pov_mobii_wintab_p800w_v20_data = {
++static const struct silead_ts_dmi_data jumper_ezpad_6_pro_data = {
+ 	.acpi_name	= "MSSL1680:00",
+-	.properties	= pov_mobii_wintab_p800w_v20_props,
++	.properties	= jumper_ezpad_6_pro_props,
+ };
+ 
+-static const struct property_entry pov_mobii_wintab_p800w_v21_props[] = {
+-	PROPERTY_ENTRY_U32("touchscreen-size-x", 1800),
++static const struct property_entry jumper_ezpad_mini3_props[] = {
++	PROPERTY_ENTRY_U32("touchscreen-size-x", 1700),
+ 	PROPERTY_ENTRY_U32("touchscreen-size-y", 1150),
+ 	PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
+-	PROPERTY_ENTRY_STRING("firmware-name",
+-			      "gsl3692-pov-mobii-wintab-p800w.fw"),
+-	PROPERTY_ENTRY_BOOL("silead,home-button"),
+-	{ }
+-};
+-
+-static const struct silead_ts_dmi_data pov_mobii_wintab_p800w_v21_data = {
+-	.acpi_name	= "MSSL1680:00",
+-	.properties	= pov_mobii_wintab_p800w_v21_props,
+-};
+-
+-static const struct property_entry itworks_tw891_props[] = {
+-	PROPERTY_ENTRY_U32("touchscreen-size-x", 1600),
+-	PROPERTY_ENTRY_U32("touchscreen-size-y", 890),
+-	PROPERTY_ENTRY_BOOL("touchscreen-inverted-y"),
+-	PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
+-	PROPERTY_ENTRY_STRING("firmware-name", "gsl3670-itworks-tw891.fw"),
++	PROPERTY_ENTRY_STRING("firmware-name", "gsl3676-jumper-ezpad-mini3.fw"),
++	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data itworks_tw891_data = {
++static const struct silead_ts_dmi_data jumper_ezpad_mini3_data = {
+ 	.acpi_name	= "MSSL1680:00",
+-	.properties	= itworks_tw891_props,
++	.properties	= jumper_ezpad_mini3_props,
+ };
+ 
+-static const struct property_entry chuwi_hi8_pro_props[] = {
++static const struct property_entry onda_obook_20_plus_props[] = {
+ 	PROPERTY_ENTRY_U32("touchscreen-size-x", 1728),
+ 	PROPERTY_ENTRY_U32("touchscreen-size-y", 1148),
++	PROPERTY_ENTRY_BOOL("touchscreen-inverted-x"),
++	PROPERTY_ENTRY_BOOL("touchscreen-inverted-y"),
+ 	PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
+-	PROPERTY_ENTRY_STRING("firmware-name", "gsl3680-chuwi-hi8-pro.fw"),
++	PROPERTY_ENTRY_STRING("firmware-name", "gsl3676-onda-obook-20-plus.fw"),
++	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
+ 	PROPERTY_ENTRY_BOOL("silead,home-button"),
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data chuwi_hi8_pro_data = {
++static const struct silead_ts_dmi_data onda_obook_20_plus_data = {
+ 	.acpi_name	= "MSSL1680:00",
+-	.properties	= chuwi_hi8_pro_props,
++	.properties	= onda_obook_20_plus_props,
+ };
+ 
+-static const struct property_entry digma_citi_e200_props[] = {
+-	PROPERTY_ENTRY_U32("touchscreen-size-x", 1980),
+-	PROPERTY_ENTRY_U32("touchscreen-size-y", 1500),
+-	PROPERTY_ENTRY_BOOL("touchscreen-inverted-y"),
++static const struct property_entry onda_v891w_v1_props[] = {
++	PROPERTY_ENTRY_U32("touchscreen-min-x", 46),
++	PROPERTY_ENTRY_U32("touchscreen-min-y",  8),
++	PROPERTY_ENTRY_U32("touchscreen-size-x", 1676),
++	PROPERTY_ENTRY_U32("touchscreen-size-y", 1130),
+ 	PROPERTY_ENTRY_STRING("firmware-name",
+-			      "gsl1686-digma_citi_e200.fw"),
++			      "gsl3680-onda-v891w-v1.fw"),
+ 	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
+ 	PROPERTY_ENTRY_BOOL("silead,home-button"),
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data digma_citi_e200_data = {
++static const struct silead_ts_dmi_data onda_v891w_v1_data = {
+ 	.acpi_name	= "MSSL1680:00",
+-	.properties	= digma_citi_e200_props,
++	.properties	= onda_v891w_v1_props,
+ };
+ 
+-static const struct property_entry onda_obook_20_plus_props[] = {
+-	PROPERTY_ENTRY_U32("touchscreen-size-x", 1728),
+-	PROPERTY_ENTRY_U32("touchscreen-size-y", 1148),
++static const struct property_entry pipo_w2s_props[] = {
++	PROPERTY_ENTRY_U32("touchscreen-size-x", 1660),
++	PROPERTY_ENTRY_U32("touchscreen-size-y", 880),
+ 	PROPERTY_ENTRY_BOOL("touchscreen-inverted-x"),
+-	PROPERTY_ENTRY_BOOL("touchscreen-inverted-y"),
+ 	PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
+-	PROPERTY_ENTRY_STRING("firmware-name", "gsl3676-onda-obook-20-plus.fw"),
+-	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
+-	PROPERTY_ENTRY_BOOL("silead,home-button"),
++	PROPERTY_ENTRY_STRING("firmware-name",
++			      "gsl1680-pipo-w2s.fw"),
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data onda_obook_20_plus_data = {
++static const struct silead_ts_dmi_data pipo_w2s_data = {
+ 	.acpi_name	= "MSSL1680:00",
+-	.properties	= onda_obook_20_plus_props,
++	.properties	= pipo_w2s_props,
+ };
+ 
+-static const struct property_entry chuwi_hi8_props[] = {
+-	PROPERTY_ENTRY_U32("touchscreen-size-x", 1665),
+-	PROPERTY_ENTRY_U32("touchscreen-size-y", 1140),
++static const struct property_entry pov_mobii_wintab_p800w_v20_props[] = {
++	PROPERTY_ENTRY_U32("touchscreen-min-x", 32),
++	PROPERTY_ENTRY_U32("touchscreen-min-y", 16),
++	PROPERTY_ENTRY_U32("touchscreen-size-x", 1692),
++	PROPERTY_ENTRY_U32("touchscreen-size-y", 1146),
+ 	PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
++	PROPERTY_ENTRY_STRING("firmware-name",
++			      "gsl3680-pov-mobii-wintab-p800w-v20.fw"),
++	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
+ 	PROPERTY_ENTRY_BOOL("silead,home-button"),
+-	PROPERTY_ENTRY_STRING("firmware-name", "gsl1680-chuwi-hi8.fw"),
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data chuwi_hi8_data = {
+-	.acpi_name      = "MSSL0001:00",
+-	.properties     = chuwi_hi8_props,
++static const struct silead_ts_dmi_data pov_mobii_wintab_p800w_v20_data = {
++	.acpi_name	= "MSSL1680:00",
++	.properties	= pov_mobii_wintab_p800w_v20_props,
+ };
+ 
+-static const struct property_entry chuwi_vi8_props[] = {
+-	PROPERTY_ENTRY_U32("touchscreen-size-x", 1724),
+-	PROPERTY_ENTRY_U32("touchscreen-size-y", 1140),
++static const struct property_entry pov_mobii_wintab_p800w_v21_props[] = {
++	PROPERTY_ENTRY_U32("touchscreen-size-x", 1800),
++	PROPERTY_ENTRY_U32("touchscreen-size-y", 1150),
+ 	PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
+-	PROPERTY_ENTRY_STRING("firmware-name", "gsl3676-chuwi-vi8.fw"),
+-	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
++	PROPERTY_ENTRY_STRING("firmware-name",
++			      "gsl3692-pov-mobii-wintab-p800w.fw"),
+ 	PROPERTY_ENTRY_BOOL("silead,home-button"),
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data chuwi_vi8_data = {
+-	.acpi_name      = "MSSL1680:00",
+-	.properties     = chuwi_vi8_props,
++static const struct silead_ts_dmi_data pov_mobii_wintab_p800w_v21_data = {
++	.acpi_name	= "MSSL1680:00",
++	.properties	= pov_mobii_wintab_p800w_v21_props,
+ };
+ 
+-static const struct property_entry trekstor_primebook_c13_props[] = {
+-	PROPERTY_ENTRY_U32("touchscreen-size-x", 2624),
+-	PROPERTY_ENTRY_U32("touchscreen-size-y", 1920),
+-	PROPERTY_ENTRY_STRING("firmware-name",
+-			      "gsl1680-trekstor-primebook-c13.fw"),
++static const struct property_entry teclast_x3_plus_props[] = {
++	PROPERTY_ENTRY_U32("touchscreen-size-x", 1980),
++	PROPERTY_ENTRY_U32("touchscreen-size-y", 1500),
++	PROPERTY_ENTRY_STRING("firmware-name", "gsl1680-teclast-x3-plus.fw"),
+ 	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
+ 	PROPERTY_ENTRY_BOOL("silead,home-button"),
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data trekstor_primebook_c13_data = {
++static const struct silead_ts_dmi_data teclast_x3_plus_data = {
+ 	.acpi_name	= "MSSL1680:00",
+-	.properties	= trekstor_primebook_c13_props,
++	.properties	= teclast_x3_plus_props,
+ };
+ 
+ static const struct property_entry teclast_x98plus2_props[] = {
+@@ -295,38 +283,87 @@ static const struct silead_ts_dmi_data teclast_x98plus2_data = {
+ 	.properties	= teclast_x98plus2_props,
+ };
+ 
+-static const struct property_entry teclast_x3_plus_props[] = {
+-	PROPERTY_ENTRY_U32("touchscreen-size-x", 1980),
+-	PROPERTY_ENTRY_U32("touchscreen-size-y", 1500),
+-	PROPERTY_ENTRY_STRING("firmware-name", "gsl1680-teclast-x3-plus.fw"),
++static const struct property_entry trekstor_primebook_c13_props[] = {
++	PROPERTY_ENTRY_U32("touchscreen-size-x", 2624),
++	PROPERTY_ENTRY_U32("touchscreen-size-y", 1920),
++	PROPERTY_ENTRY_STRING("firmware-name",
++			      "gsl1680-trekstor-primebook-c13.fw"),
+ 	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
+ 	PROPERTY_ENTRY_BOOL("silead,home-button"),
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data teclast_x3_plus_data = {
++static const struct silead_ts_dmi_data trekstor_primebook_c13_data = {
+ 	.acpi_name	= "MSSL1680:00",
+-	.properties	= teclast_x3_plus_props,
++	.properties	= trekstor_primebook_c13_props,
+ };
+ 
+-static const struct property_entry onda_v891w_v1_props[] = {
+-	PROPERTY_ENTRY_U32("touchscreen-min-x", 46),
+-	PROPERTY_ENTRY_U32("touchscreen-min-y",  8),
+-	PROPERTY_ENTRY_U32("touchscreen-size-x", 1676),
+-	PROPERTY_ENTRY_U32("touchscreen-size-y", 1130),
++static const struct property_entry trekstor_surftab_twin_10_1_props[] = {
++	PROPERTY_ENTRY_U32("touchscreen-size-x", 1900),
++	PROPERTY_ENTRY_U32("touchscreen-size-y", 1280),
++	PROPERTY_ENTRY_U32("touchscreen-inverted-y", 1),
+ 	PROPERTY_ENTRY_STRING("firmware-name",
+-			      "gsl3680-onda-v891w-v1.fw"),
++			      "gsl3670-surftab-twin-10-1-st10432-8.fw"),
++	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
++	{ }
++};
++
++static const struct silead_ts_dmi_data trekstor_surftab_twin_10_1_data = {
++	.acpi_name	= "MSSL1680:00",
++	.properties	= trekstor_surftab_twin_10_1_props,
++};
++
++static const struct property_entry trekstor_surftab_wintron70_props[] = {
++	PROPERTY_ENTRY_U32("touchscreen-size-x", 884),
++	PROPERTY_ENTRY_U32("touchscreen-size-y", 632),
++	PROPERTY_ENTRY_STRING("firmware-name",
++			      "gsl1686-surftab-wintron70-st70416-6.fw"),
+ 	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
+ 	PROPERTY_ENTRY_BOOL("silead,home-button"),
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data onda_v891w_v1_data = {
++static const struct silead_ts_dmi_data trekstor_surftab_wintron70_data = {
+ 	.acpi_name	= "MSSL1680:00",
+-	.properties	= onda_v891w_v1_props,
++	.properties	= trekstor_surftab_wintron70_props,
+ };
+ 
++/* NOTE: Please keep this table sorted alphabetically */
+ static const struct dmi_system_id silead_ts_dmi_table[] = {
++	{
++		/* Chuwi Hi8 */
++		.driver_data = (void *)&chuwi_hi8_data,
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "ilife"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "S806"),
++		},
++	},
++	{
++		/* Chuwi Hi8 (H1D_S806_206) */
++		.driver_data = (void *)&chuwi_hi8_data,
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Insyde"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "BayTrail"),
++			DMI_MATCH(DMI_BIOS_VERSION, "H1D_S806_206"),
++		},
++	},
++	{
++		/* Chuwi Hi8 Pro (CWI513) */
++		.driver_data = (void *)&chuwi_hi8_pro_data,
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Hampoo"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "X1D3_C806N"),
++		},
++	},
++	{
++		/* Chuwi Vi8 (CWI506) */
++		.driver_data = (void *)&chuwi_vi8_data,
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Insyde"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "i86"),
++			DMI_MATCH(DMI_BIOS_VERSION, "CHUWI.D86JLBNR"),
++		},
++	},
+ 	{
+ 		/* CUBE iwork8 Air */
+ 		.driver_data = (void *)&cube_iwork8_air_data,
+@@ -337,12 +374,46 @@ static const struct dmi_system_id silead_ts_dmi_table[] = {
+ 		},
+ 	},
+ 	{
+-		/* Jumper EZpad mini3 */
+-		.driver_data = (void *)&jumper_ezpad_mini3_data,
++		/* DEXP Ursus 7W */
++		.driver_data = (void *)&dexp_ursus_7w_data,
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "Insyde"),
+-			/* jumperx.T87.KFBNEEA02 with the version-nr dropped */
+-			DMI_MATCH(DMI_BIOS_VERSION, "jumperx.T87.KFBNEEA"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "7W"),
++		},
++	},
++	{
++		/* Digma Citi E200 */
++		.driver_data = (void *)&digma_citi_e200_data,
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Digma"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "CITI E200"),
++			DMI_MATCH(DMI_BOARD_NAME, "Cherry Trail CR"),
++		},
++	},
++	{
++		/* GP-electronic T701 */
++		.driver_data = (void *)&gp_electronic_t701_data,
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Insyde"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "T701"),
++			DMI_MATCH(DMI_BIOS_VERSION, "BYT70A.YNCHENG.WIN.007"),
++		},
++	},
++	{
++		/* I.T.Works TW701 (same hardware as the Trekstor ST70416-6) */
++		.driver_data = (void *)&trekstor_surftab_wintron70_data,
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Insyde"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "i71c"),
++			DMI_MATCH(DMI_BIOS_VERSION, "itWORKS.G.WI71C.JGBMRB"),
++		},
++	},
++	{
++		/* I.T.Works TW891 */
++		.driver_data = (void *)&itworks_tw891_data,
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "To be filled by O.E.M."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "TW891"),
+ 		},
+ 	},
+ 	{
+@@ -357,40 +428,39 @@ static const struct dmi_system_id silead_ts_dmi_table[] = {
+ 		},
+ 	},
+ 	{
+-		/* DEXP Ursus 7W */
+-		.driver_data = (void *)&dexp_ursus_7w_data,
++		/* Jumper EZpad mini3 */
++		.driver_data = (void *)&jumper_ezpad_mini3_data,
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "Insyde"),
+-			DMI_MATCH(DMI_PRODUCT_NAME, "7W"),
++			/* jumperx.T87.KFBNEEA02 with the version-nr dropped */
++			DMI_MATCH(DMI_BIOS_VERSION, "jumperx.T87.KFBNEEA"),
+ 		},
+ 	},
+ 	{
+-		/* TrekStor SurfTab twin 10.1 ST10432-8 */
+-		.driver_data = (void *)&trekstor_surftab_twin_10_1_data,
++		/* Onda oBook 20 Plus */
++		.driver_data = (void *)&onda_obook_20_plus_data,
+ 		.matches = {
+-			DMI_MATCH(DMI_SYS_VENDOR, "TrekStor"),
+-			DMI_MATCH(DMI_PRODUCT_NAME, "SurfTab twin 10.1"),
++			DMI_MATCH(DMI_SYS_VENDOR, "ONDA"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "OBOOK 20 PLUS"),
+ 		},
+ 	},
+ 	{
+-		/* Trekstor Surftab Wintron 7.0 ST70416-6 */
+-		.driver_data = (void *)&trekstor_surftab_wintron70_data,
++		/* ONDA V891w revision P891WBEBV1B00 aka v1 */
++		.driver_data = (void *)&onda_v891w_v1_data,
+ 		.matches = {
+-			DMI_MATCH(DMI_SYS_VENDOR, "Insyde"),
+-			DMI_MATCH(DMI_PRODUCT_NAME, "ST70416-6"),
++			DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "ONDA"),
++			DMI_EXACT_MATCH(DMI_BOARD_NAME, "ONDA Tablet"),
++			DMI_EXACT_MATCH(DMI_BOARD_VERSION, "V001"),
+ 			/* Exact match, different versions need different fw */
+-			DMI_MATCH(DMI_BIOS_VERSION, "TREK.G.WI71C.JGBMRBA04"),
++			DMI_EXACT_MATCH(DMI_BIOS_VERSION, "ONDA.W89EBBN08"),
+ 		},
+ 	},
+ 	{
+-		/* Trekstor Surftab Wintron 7.0 ST70416-6, newer BIOS */
+-		.driver_data = (void *)&trekstor_surftab_wintron70_data,
++		/* Pipo W2S */
++		.driver_data = (void *)&pipo_w2s_data,
+ 		.matches = {
+-			DMI_MATCH(DMI_SYS_VENDOR, "TrekStor"),
+-			DMI_MATCH(DMI_PRODUCT_NAME,
+-					     "SurfTab wintron 7.0 ST70416-6"),
+-			/* Exact match, different versions need different fw */
+-			DMI_MATCH(DMI_BIOS_VERSION, "TREK.G.WI71C.JGBMRBA05"),
++			DMI_MATCH(DMI_SYS_VENDOR, "PIPO"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "W2S"),
+ 		},
+ 	},
+ 	{
+@@ -403,23 +473,6 @@ static const struct dmi_system_id silead_ts_dmi_table[] = {
+ 			DMI_MATCH(DMI_BIOS_VERSION, "MOMO.G.WI71C.MABMRBA02"),
+ 		},
+ 	},
+-	{
+-		/* GP-electronic T701 */
+-		.driver_data = (void *)&gp_electronic_t701_data,
+-		.matches = {
+-			DMI_MATCH(DMI_SYS_VENDOR, "Insyde"),
+-			DMI_MATCH(DMI_PRODUCT_NAME, "T701"),
+-			DMI_MATCH(DMI_BIOS_VERSION, "BYT70A.YNCHENG.WIN.007"),
+-		},
+-	},
+-	{
+-		/* Pipo W2S */
+-		.driver_data = (void *)&pipo_w2s_data,
+-		.matches = {
+-			DMI_MATCH(DMI_SYS_VENDOR, "PIPO"),
+-			DMI_MATCH(DMI_PRODUCT_NAME, "W2S"),
+-		},
+-	},
+ 	{
+ 		/* Point of View mobii wintab p800w (v2.0) */
+ 		.driver_data = (void *)&pov_mobii_wintab_p800w_v20_data,
+@@ -443,62 +496,20 @@ static const struct dmi_system_id silead_ts_dmi_table[] = {
+ 		},
+ 	},
+ 	{
+-		/* I.T.Works TW891 */
+-		.driver_data = (void *)&itworks_tw891_data,
+-		.matches = {
+-			DMI_MATCH(DMI_SYS_VENDOR, "To be filled by O.E.M."),
+-			DMI_MATCH(DMI_PRODUCT_NAME, "TW891"),
+-		},
+-	},
+-	{
+-		/* Chuwi Hi8 Pro */
+-		.driver_data = (void *)&chuwi_hi8_pro_data,
+-		.matches = {
+-			DMI_MATCH(DMI_SYS_VENDOR, "Hampoo"),
+-			DMI_MATCH(DMI_PRODUCT_NAME, "X1D3_C806N"),
+-		},
+-	},
+-	{
+-		/* Digma Citi E200 */
+-		.driver_data = (void *)&digma_citi_e200_data,
+-		.matches = {
+-			DMI_MATCH(DMI_SYS_VENDOR, "Digma"),
+-			DMI_MATCH(DMI_PRODUCT_NAME, "CITI E200"),
+-			DMI_MATCH(DMI_BOARD_NAME, "Cherry Trail CR"),
+-		},
+-	},
+-	{
+-		/* Onda oBook 20 Plus */
+-		.driver_data = (void *)&onda_obook_20_plus_data,
+-		.matches = {
+-			DMI_MATCH(DMI_SYS_VENDOR, "ONDA"),
+-			DMI_MATCH(DMI_PRODUCT_NAME, "OBOOK 20 PLUS"),
+-		},
+-	},
+-	{
+-		/* Chuwi Hi8 */
+-		.driver_data = (void *)&chuwi_hi8_data,
+-		.matches = {
+-			DMI_MATCH(DMI_SYS_VENDOR, "ilife"),
+-			DMI_MATCH(DMI_PRODUCT_NAME, "S806"),
+-		},
+-	},
+-	{
+-		/* Chuwi Hi8 (H1D_S806_206) */
+-		.driver_data = (void *)&chuwi_hi8_data,
++		/* Teclast X3 Plus */
++		.driver_data = (void *)&teclast_x3_plus_data,
+ 		.matches = {
+-			DMI_MATCH(DMI_SYS_VENDOR, "Insyde"),
+-			DMI_MATCH(DMI_PRODUCT_NAME, "BayTrail"),
+-			DMI_MATCH(DMI_BIOS_VERSION, "H1D_S806_206"),
++			DMI_MATCH(DMI_SYS_VENDOR, "TECLAST"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "X3 Plus"),
++			DMI_MATCH(DMI_BOARD_NAME, "X3 Plus"),
+ 		},
+ 	},
+ 	{
+-		/* Chuwi Vi8 (CWI506) */
+-		.driver_data = (void *)&chuwi_vi8_data,
++		/* Teclast X98 Plus II */
++		.driver_data = (void *)&teclast_x98plus2_data,
+ 		.matches = {
+-			DMI_MATCH(DMI_SYS_VENDOR, "Insyde"),
+-			DMI_MATCH(DMI_PRODUCT_NAME, "i86"),
+-			DMI_MATCH(DMI_BIOS_VERSION, "CHUWI.D86JLBNR"),
++			DMI_MATCH(DMI_SYS_VENDOR, "TECLAST"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "X98 Plus II"),
+ 		},
+ 	},
+ 	{
+@@ -510,29 +521,32 @@ static const struct dmi_system_id silead_ts_dmi_table[] = {
+ 		},
+ 	},
+ 	{
+-		/* Teclast X98 Plus II */
+-		.driver_data = (void *)&teclast_x98plus2_data,
++		/* TrekStor SurfTab twin 10.1 ST10432-8 */
++		.driver_data = (void *)&trekstor_surftab_twin_10_1_data,
+ 		.matches = {
+-			DMI_MATCH(DMI_SYS_VENDOR, "TECLAST"),
+-			DMI_MATCH(DMI_PRODUCT_NAME, "X98 Plus II"),
++			DMI_MATCH(DMI_SYS_VENDOR, "TrekStor"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "SurfTab twin 10.1"),
+ 		},
+ 	},
+ 	{
+-		/* Teclast X3 Plus */
+-		.driver_data = (void *)&teclast_x3_plus_data,
++		/* Trekstor Surftab Wintron 7.0 ST70416-6 */
++		.driver_data = (void *)&trekstor_surftab_wintron70_data,
+ 		.matches = {
+-			DMI_MATCH(DMI_SYS_VENDOR, "TECLAST"),
+-			DMI_MATCH(DMI_PRODUCT_NAME, "X3 Plus"),
+-			DMI_MATCH(DMI_BOARD_NAME, "X3 Plus"),
++			DMI_MATCH(DMI_SYS_VENDOR, "Insyde"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "ST70416-6"),
++			/* Exact match, different versions need different fw */
++			DMI_MATCH(DMI_BIOS_VERSION, "TREK.G.WI71C.JGBMRBA04"),
+ 		},
+ 	},
+ 	{
+-		/* I.T.Works TW701 */
++		/* Trekstor Surftab Wintron 7.0 ST70416-6, newer BIOS */
+ 		.driver_data = (void *)&trekstor_surftab_wintron70_data,
+ 		.matches = {
+-			DMI_MATCH(DMI_SYS_VENDOR, "Insyde"),
+-			DMI_MATCH(DMI_PRODUCT_NAME, "i71c"),
+-			DMI_MATCH(DMI_BIOS_VERSION, "itWORKS.G.WI71C.JGBMRB"),
++			DMI_MATCH(DMI_SYS_VENDOR, "TrekStor"),
++			DMI_MATCH(DMI_PRODUCT_NAME,
++					     "SurfTab wintron 7.0 ST70416-6"),
++			/* Exact match, different versions need different fw */
++			DMI_MATCH(DMI_BIOS_VERSION, "TREK.G.WI71C.JGBMRBA05"),
+ 		},
+ 	},
+ 	{
+@@ -543,17 +557,6 @@ static const struct dmi_system_id silead_ts_dmi_table[] = {
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "Y8W81"),
+ 		},
+ 	},
+-	{
+-		/* ONDA V891w revision P891WBEBV1B00 aka v1 */
+-		.driver_data = (void *)&onda_v891w_v1_data,
+-		.matches = {
+-			DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "ONDA"),
+-			DMI_EXACT_MATCH(DMI_BOARD_NAME, "ONDA Tablet"),
+-			DMI_EXACT_MATCH(DMI_BOARD_VERSION, "V001"),
+-			/* Exact match, different versions need different fw */
+-			DMI_EXACT_MATCH(DMI_BIOS_VERSION, "ONDA.W89EBBN08"),
+-		},
+-	},
+ 	{ },
+ };
+ 
+-- 
+2.17.0
