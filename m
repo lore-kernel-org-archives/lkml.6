@@ -1,134 +1,210 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id /aSnFSdcGVuiIgAAmS7hNA
-	; Thu, 07 Jun 2018 16:24:22 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 8Va3Ccp/GltBLAAAmS7hNA
+	; Fri, 08 Jun 2018 13:08:26 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 0F036608BF; Thu,  7 Jun 2018 16:24:22 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="jQnaZWKL"
+	id 0BBFF608BA; Fri,  8 Jun 2018 13:08:26 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_MED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 89891601B4;
-	Thu,  7 Jun 2018 16:24:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 89891601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	by smtp.codeaurora.org (Postfix) with ESMTP id 65E18607E4;
+	Fri,  8 Jun 2018 13:08:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 65E18607E4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753764AbeFGQYT (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 12:24:19 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:35220 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753510AbeFGQYR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 12:24:17 -0400
-Received: by mail-wr0-f193.google.com with SMTP id l10-v6so10495361wrn.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 09:24:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YzZMET5ITA4C5FM/Jlp0Cq66m2LLOOU87w3BEMwQ7lA=;
-        b=jQnaZWKLkn4LVU+VAIZxhcbFqtb6eH1oH6Knpt31ma5bwJWcILnvN1N5Zrbw5bN2jd
-         HHDDI402uLH0PR/91qydpHRUWkGobfWWI+VJlnRgJEvFAuuThe5BFu+Xr9/OFq5h5IHi
-         3Rv1E0PX7C0bzSp89Uhe0cv3yrcRGvWdwfaYLEG6J1rzFJJT/Rx4BfOhGJdkAbGFTwez
-         iW3dk1M0iwfAYwdQHrn/y3ixzeq299m4sY99ZRP6V5lL9Ejky+cFC98mo2lMuu7v5eqd
-         qwIRoJ7FPKFHHWvXus/oGa1m/TpHWKnmFbxnwhoKB20UyYSmut7ICB+P63OxSCjD9aVA
-         73Sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YzZMET5ITA4C5FM/Jlp0Cq66m2LLOOU87w3BEMwQ7lA=;
-        b=GsYbWXGUnlzsfA+Mx6+Q6bfQPklWs9MPeMTAMj/1oFtVGNM2NI1meOYqBh3bh8Pmrr
-         Ye9KK5idetaEsFJtftjCCbKPvNGqZW76qJqD1OYKgaUkTov9xJZkhID+lLt0hzuz+2LS
-         DkKomG9oht/GbmiJ5J6V7LdHk3SrQnlAZsVvPcbw6w3wH+DjFT1DyO0GU0GyXJFgGt0b
-         JzsTt2A8fyOs7zWq/A+u/zsEKDVgkYBrzmNBdj64QymEVyRk7EhYeWr/D4gnIlAFVqm1
-         Dy8tWMemJhT0AZU9iiBasoJmWGMSZtjeFVLDUwVEa57opwkQde/8ssabDYFYky3YhhNx
-         kLFQ==
-X-Gm-Message-State: APt69E3X3Y1Ulb/4ykqmZFUsSmPR3cFtBjldZjvhKsPu90KcgtsThSvi
-        wskEq6abxg0T5yK/0lQUyQ60oR5TI0Ec1ISDjn2TpQ==
-X-Google-Smtp-Source: ADUXVKJHJwjfi6EBhMlHHI6HHlfXeWl3nerZb/RjehsgeSilBC90gAK9qfegX3KogMDUdi4rJJpzMxi9Ep8iY7hz/w4=
-X-Received: by 2002:adf:b445:: with SMTP id v5-v6mr2210625wrd.67.1528388655645;
- Thu, 07 Jun 2018 09:24:15 -0700 (PDT)
+        id S1751843AbeFHNIW convert rfc822-to-8bit (ORCPT
+        <rfc822;monsieuricon@codeaurora.org> + 25 others);
+        Fri, 8 Jun 2018 09:08:22 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:40730 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751043AbeFHNIV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 09:08:21 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 4CE272069C; Fri,  8 Jun 2018 15:08:19 +0200 (CEST)
+Received: from xps13 (AAubervilliers-681-1-128-7.w90-88.abo.wanadoo.fr [90.88.9.7])
+        by mail.bootlin.com (Postfix) with ESMTPSA id CE0B8203EB;
+        Fri,  8 Jun 2018 15:08:08 +0200 (CEST)
+Date: Fri, 8 Jun 2018 15:08:08 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>,
+        Haim Boot <hayim@marvell.com>, Hanna Hawa <hannah@marvell.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 11/16] irqchip/irq-mvebu-icu: add support for System
+ Error Interrupts (SEI)
+Message-ID: <20180608150808.7af98f18@xps13>
+In-Reply-To: <cd000f57-e01f-e5b9-77f6-baf4e8f45551@arm.com>
+References: <20180522094042.24770-1-miquel.raynal@bootlin.com>
+        <20180522094042.24770-12-miquel.raynal@bootlin.com>
+        <cd000f57-e01f-e5b9-77f6-baf4e8f45551@arm.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20180607143705.3531-1-yu-cheng.yu@intel.com> <20180607143705.3531-7-yu-cheng.yu@intel.com>
-In-Reply-To: <20180607143705.3531-7-yu-cheng.yu@intel.com>
-From: Andy Lutomirski <luto@amacapital.net>
-Date: Thu, 7 Jun 2018 09:24:03 -0700
-Message-ID: <CALCETrVa8MtxP9iqYkZLnetaQiN4UaWb=jGz1+rLsCuETHKydg@mail.gmail.com>
-Subject: Re: [PATCH 6/9] x86/mm: Introduce ptep_set_wrprotect_flush and
- related functions
-To: Yu-cheng Yu <yu-cheng.yu@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. J. Lu" <hjl.tools@gmail.com>,
-        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        mike.kravetz@oracle.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 7, 2018 at 7:40 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
->
-> The function ptep_set_wrprotect()/huge_ptep_set_wrprotect() is
-> used by copy_page_range()/copy_hugetlb_page_range() to copy
-> PTEs.
->
-> On x86, when the shadow stack is enabled, only a shadow stack
-> PTE has the read-only and _PAGE_DIRTY_HW combination.  Upon
-> making a dirty PTE read-only, we move its _PAGE_DIRTY_HW to
-> _PAGE_DIRTY_SW.
->
-> When ptep_set_wrprotect() moves _PAGE_DIRTY_HW to _PAGE_DIRTY_SW,
-> if the PTE is writable and the mm is shared, another task could
-> race to set _PAGE_DIRTY_HW again.
->
-> Introduce ptep_set_wrprotect_flush(), pmdp_set_wrprotect_flush(),
-> and huge_ptep_set_wrprotect_flush() to make sure this does not
-> happen.
->
+Hi Marc,
 
-This patch adds flushes where they didn't previously exist.
+Thank you for the review.
 
-> +static inline void ptep_set_wrprotect_flush(struct vm_area_struct *vma,
-> +                                           unsigned long addr, pte_t *ptep)
-> +{
-> +       bool rw;
-> +
-> +       rw = test_and_clear_bit(_PAGE_BIT_RW, (unsigned long *)&ptep->pte);
-> +       if (IS_ENABLED(CONFIG_X86_INTEL_SHADOW_STACK_USER)) {
-> +               struct mm_struct *mm = vma->vm_mm;
-> +               pte_t pte;
-> +
-> +               if (rw && (atomic_read(&mm->mm_users) > 1))
-> +                       pte = ptep_clear_flush(vma, addr, ptep);
+On Wed, 23 May 2018 15:23:48 +0100, Marc Zyngier <marc.zyngier@arm.com>
+wrote:
 
-Why are you clearing the pte?
+> On 22/05/18 10:40, Miquel Raynal wrote:
+> > An SEI driver provides an MSI domain through which it is possible to
+> > raise SEIs.
+> > 
+> > Handle the NSR probe function in a more generic way to support other
+> > type of interrupts (ie. the SEIs).
+> > 
+> > For clarity we do not use tree IRQ domains for now but linear ones
+> > instead, allocating the 207 ICU lines for each interrupt group.  
+> 
+> What's the rational for not using trees? Because that's effectively a
+> 100% overhead...
 
-> -#define __HAVE_ARCH_PMDP_SET_WRPROTECT
-> -static inline void pmdp_set_wrprotect(struct mm_struct *mm,
-> -                                     unsigned long addr, pmd_t *pmdp)
-> +#define __HAVE_ARCH_HUGE_PTEP_SET_WRPROTECT_FLUSH
-> +static inline void huge_ptep_set_wrprotect_flush(struct vm_area_struct *vma,
-> +                                                unsigned long addr, pte_t *ptep)
->  {
-> -       clear_bit(_PAGE_BIT_RW, (unsigned long *)pmdp);
-> +       ptep_set_wrprotect_flush(vma, addr, ptep);
+There is none.
 
-Maybe I'm just missing something, but you're changed the semantics of
-this function significantly.
+I had a look at how to do it.
+
+In the ICU driver I would like to just drop the nvec parameter (number
+of interrupts in the domain) when calling
+platform_msi_create_device_domain().
+
+The above function would call irq_domain_create_hierarchy() which would
+create a tree domain instead of a linear one because of nvec being 0.
+
+However, there is a check in platform_msi_alloc_priv_data() (also
+called by platform_msi_create_device_domain()) that will error out if
+nvec is null.
+
+I'm not 100% sure this is safe but I don't see the point of
+prohibiting nvec to be null here. So would you accept this
+change?
+
+--- a/drivers/base/platform-msi.c
++++ b/drivers/base/platform-msi.c
+@@ -203,7 +203,7 @@ platform_msi_alloc_priv_data(struct device *dev,
+unsigned int nvec,
+         * accordingly (which would impact the max number of MSI
+         * capable devices).
+         */
+-       if (!dev->msi_domain || !write_msi_msg || !nvec || nvec > MAX_DEV_MSIS)
++       if (!dev->msi_domain || !write_msi_msg || nvec > MAX_DEV_MSIS)
+                return ERR_PTR(-EINVAL);
+ 
+        if (dev->msi_domain->bus_token != DOMAIN_BUS_PLATFORM_MSI) {
+
+> 
+> > Reallocating an ICU slot is prevented by the use of an ICU-wide bitmap.
+> > 
+> > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> > ---
+
+[...]
+
+> > @@ -131,7 +160,8 @@ static int
+> >  mvebu_icu_irq_domain_translate(struct irq_domain *d, struct irq_fwspec *fwspec,
+> >  			       unsigned long *hwirq, unsigned int *type)
+> >  {
+> > -	struct mvebu_icu *icu = platform_msi_get_host_data(d);
+> > +	struct mvebu_icu_msi_data *msi_data = platform_msi_get_host_data(d);
+> > +	struct mvebu_icu *icu = msi_data->icu;
+> >  	unsigned int param_count = icu->legacy_bindings ? 3 : 2;
+> >  
+> >  	/* Check the count of the parameters in dt */
+> > @@ -172,7 +202,9 @@ mvebu_icu_irq_domain_alloc(struct irq_domain *domain, unsigned int virq,
+> >  	int err;
+> >  	unsigned long hwirq;
+> >  	struct irq_fwspec *fwspec = args;
+> > -	struct mvebu_icu *icu = platform_msi_get_host_data(domain);
+> > +	struct mvebu_icu_msi_data *msi_data =
+> > +		platform_msi_get_host_data(domain);
+> > +	struct mvebu_icu *icu = msi_data->icu;
+> >  	struct mvebu_icu_irq_data *icu_irqd;
+> >  
+> >  	icu_irqd = kmalloc(sizeof(*icu_irqd), GFP_KERNEL);
+> > @@ -186,16 +218,22 @@ mvebu_icu_irq_domain_alloc(struct irq_domain *domain, unsigned int virq,
+> >  		goto free_irqd;
+> >  	}
+> >  
+> > +	spin_lock(&icu->msi_lock);
+> > +	err = bitmap_allocate_region(icu->msi_bitmap, hwirq, 0);
+> > +	spin_unlock(&icu->msi_lock);  
+> 
+> This (and the freeing counterpart) could deserve a couple of helpers.
+
+Sure.
+
+> 
+> > +	if (err < 0)
+> > +		goto free_irqd;
+> > +
+> >  	if (icu->legacy_bindings)
+> >  		icu_irqd->icu_group = fwspec->param[0];
+> >  	else
+> > -		icu_irqd->icu_group = ICU_GRP_NSR;
+> > +		icu_irqd->icu_group = msi_data->subset_data->icu_group;
+> >  	icu_irqd->icu = icu;
+> >  
+> >  	err = platform_msi_domain_alloc(domain, virq, nr_irqs);
+> >  	if (err) {
+> >  		dev_err(icu->dev, "failed to allocate ICU interrupt in parent domain\n");
+> > -		goto free_irqd;
+> > +		goto free_bitmap;
+> >  	}
+> >  
+> >  	/* Make sure there is no interrupt left pending by the firmware */
+
+[...]
+
+> > @@ -268,9 +332,30 @@ static int mvebu_icu_subset_probe(struct platform_device *pdev)
+> >  	return 0;
+> >  }
+> >  
+> > +static const struct mvebu_icu_subset_data mvebu_icu_nsr_subset_data = {
+> > +	.icu_group = ICU_GRP_NSR,
+> > +	.offset_set_ah = ICU_SETSPI_NSR_AH,
+> > +	.offset_set_al = ICU_SETSPI_NSR_AL,
+> > +	.offset_clr_ah = ICU_CLRSPI_NSR_AH,
+> > +	.offset_clr_al = ICU_CLRSPI_NSR_AL,
+> > +};
+> > +
+> > +static const struct mvebu_icu_subset_data mvebu_icu_sei_subset_data = {
+> > +	.icu_group = ICU_GRP_SEI,
+> > +	.offset_set_ah = ICU_SET_SEI_AH,
+> > +	.offset_set_al = ICU_SET_SEI_AL,
+> > +	.offset_clr_ah = ICU_CLR_SEI_AH,
+> > +	.offset_clr_al = ICU_CLR_SEI_AL,  
+> 
+> I thought SEI was edge only, given what you do in mvebu_icu_init.
+> Confused...
+
+AFAIK, the ICU can produce both level and edge MSI. Currently,
+when it comes to SEI, we don't use the .offset_clr_a[hl] entries
+because the SEI block expects edge-MSIs, but I thought useful to fill
+them anyway. I will remove them both to avoid the confusion.
+
+Thanks,
+Miquèl
