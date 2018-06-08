@@ -1,137 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id k0KlMnWZHlsmSgAAmS7hNA
-	; Mon, 11 Jun 2018 15:47:22 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id vcyoI5nhGlvZMgAAmS7hNA
+	; Fri, 08 Jun 2018 20:06:02 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 7B364607E4; Mon, 11 Jun 2018 15:47:22 +0000 (UTC)
+	id 3CBD4607E4; Fri,  8 Jun 2018 20:06:02 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="N+yCrtJr"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id BFBF3607A4;
-	Mon, 11 Jun 2018 15:47:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BFBF3607A4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=holtmann.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id E47836074D;
+	Fri,  8 Jun 2018 20:06:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E47836074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933051AbeFKPrU convert rfc822-to-8bit (ORCPT
-        <rfc822;monsieuricon@codeaurora.org> + 20 others);
-        Mon, 11 Jun 2018 11:47:20 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:43311 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932399AbeFKPrR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 11:47:17 -0400
-Received: from marcel-macpro.fritz.box (p5B3D24B5.dip0.t-ipconnect.de [91.61.36.181])
-        by mail.holtmann.org (Postfix) with ESMTPSA id 0D537CF186;
-        Mon, 11 Jun 2018 17:53:58 +0200 (CEST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.4 \(3445.8.2\))
-Subject: Re: [PATCH] Bluetooth: hci_bcm: Configure SCO routing automatically
-From: Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <CAL_Jsq+a93Rpf3UAPBQ5QmA8KavberGXz76WCiZ7feHH5GgcDA@mail.gmail.com>
-Date: Mon, 11 Jun 2018 17:47:14 +0200
-Cc: =?utf-8?B?QXR0aWxhIFTFkWvDqXM=?= <attitokes@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Artiom Vaskov <velemas@gmail.com>,
-        netdev <netdev@vger.kernel.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <4F0D6729-AE77-47D4-9765-FBC44181D4DE@holtmann.org>
-References: <280FCB2C-6DF1-4790-A89F-AF5BE3513AE5@holtmann.org>
- <20180608162009.22762-1-attitokes@gmail.com>
- <CAL_JsqKGeCEBBLNQNdymQovknRM7zt4+nNJy0YSkxRicOxkCSg@mail.gmail.com>
- <CAMoM21HshLyv+Np1vOKYTAunsPCazyP-WESiaheNXHsC078S8g@mail.gmail.com>
- <CAL_Jsq+a93Rpf3UAPBQ5QmA8KavberGXz76WCiZ7feHH5GgcDA@mail.gmail.com>
-To: Rob Herring <robh+dt@kernel.org>
-X-Mailer: Apple Mail (2.3445.8.2)
+        id S1753180AbeFHUF7 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 16:05:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49316 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752708AbeFHUFz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 16:05:55 -0400
+Received: from localhost (unknown [150.199.191.185])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7430C206B7;
+        Fri,  8 Jun 2018 20:05:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528488354;
+        bh=xMoU2gL3to3paFeEx0APhyEdHG1yffZbUidSoVDpXmw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=N+yCrtJrG37jPIQQJZ7eig9o/15Hs4kQIAecIhBuufsYr7J1W/NKufijNTKWIhUTS
+         Q42yVknH5mb7ZfF1sMm0KCM/igUX2MJ0h6fxcdqSaqm2irrqLteOR7DLGkLCVbdbdE
+         XTjIpBCInFuIH/PH0BTUd1PUhzvEIrX9yN1gROFQ=
+Subject: [PATCH v1 11/13] PCI/AER: Squash Kconfig.debug into Kconfig
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: linux-pci@vger.kernel.org
+Cc: Keith Busch <keith.busch@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Oza Pawandeep <poza@codeaurora.org>,
+        linux-kernel@vger.kernel.org
+Date: Fri, 08 Jun 2018 15:05:53 -0500
+Message-ID: <152848835367.11888.14087620046663002613.stgit@bhelgaas-glaptop.roam.corp.google.com>
+In-Reply-To: <152848785553.11888.12243539903985770441.stgit@bhelgaas-glaptop.roam.corp.google.com>
+References: <152848785553.11888.12243539903985770441.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: StGit/0.18
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+From: Bjorn Helgaas <bhelgaas@google.com>
 
->>>> Added support to automatically configure the SCO packet routing at the
->>>> device setup. The SCO packets are used with the HSP / HFP profiles, but in
->>>> some devices (ex. CYW43438) they are routed to a PCM output by default. This
->>>> change allows sending the vendor specific HCI command to configure the SCO
->>>> routing. The parameters of the command are loaded from the device tree.
->>> 
->>> Please wrap your commit msg.
->> 
->> 
->> Sure.
->>> 
->>> 
->>>> 
->>>> Signed-off-by: Attila Tőkés <attitokes@gmail.com>
->>>> ---
->>>> .../bindings/net/broadcom-bluetooth.txt       |  7 ++
->>> 
->>> Please split bindings to separate patch.
->> 
->> 
->> Ok, I will split this in two.
->>> 
->>> 
->>> 
->>> 
->>>> drivers/bluetooth/hci_bcm.c                   | 72 +++++++++++++++++++
->>>> 2 files changed, 79 insertions(+)
->>>> 
->>>> diff --git
->>>> a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
->>>> b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
->>>> index 4194ff7e..aea3a094 100644
->>>> --- a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
->>>> +++ b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
->>>> @@ -21,6 +21,12 @@ Optional properties:
->>>>  - clocks: clock specifier if external clock provided to the controller
->>>>  - clock-names: should be "extclk"
->>>> 
->>>> + SCO routing parameters:
->>>> + - sco-routing: 0-3 (PCM, Transport, Codec, I2S)
->>>> + - pcm-interface-rate: 0-4 (128 Kbps - 2048 Kbps)
->>>> + - pcm-frame-type: 0 (short), 1 (long)
->>>> + - pcm-sync-mode: 0 (slave), 1 (master)
->>>> + - pcm-clock-mode: 0 (slave), 1 (master)
->>> 
->>> Are these Broadcom specific? Properties need either vendor prefix or
->>> to be documented in a common location. I think these look like the
->>> latter.
->> 
->> 
->> These will be used as parameters of a vendor specific (Broadcom/Cypress)
->> command configuring the SCO packet routing. See the Write_SCO_PCM_Int_Param
->> command from: http://www.cypress.com/file/298311/download.
-> 
-> The DT should just describe how the h/w is hooked-up. What the s/w has
-> to do based on that is the driver's problem which is certainly
-> vendor/chip specific, but that is all irrelevant to the binding.
-> 
->> What would be the property names with a Broadcom / Cypress vendor prefix?
->> 
->>    brcm,sco-routing
->>    brcm,pcm-interface-rate
->>    brcm,pcm-frame-type
->>    brcm,pcm-sync-mode
->>    brcm,pcm-clock-mode
->> 
->> ?
-> 
-> Yes.
+Squash Kconfig.debug into Kconfig.  No functional change intended.
 
-we can do this. However all pcm-* are optional if you switch the HCI transport. And sco-routing should default to HCI if that is not present. Meaning a driver should actively trying to change this. Nevertheless, it would be good if a driver reads the current settings.
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+---
+ drivers/pci/pcie/aer/Kconfig       |   16 ++++++++++++++--
+ drivers/pci/pcie/aer/Kconfig.debug |   19 -------------------
+ 2 files changed, 14 insertions(+), 21 deletions(-)
+ delete mode 100644 drivers/pci/pcie/aer/Kconfig.debug
 
-In theory we could make sco-routing generic, but so many vendors have different modes, that we better keep this vendor specific.
-
-Regards
-
-Marcel
+diff --git a/drivers/pci/pcie/aer/Kconfig b/drivers/pci/pcie/aer/Kconfig
+index 5a64eb3d6c7a..1996df082e89 100644
+--- a/drivers/pci/pcie/aer/Kconfig
++++ b/drivers/pci/pcie/aer/Kconfig
+@@ -13,6 +13,20 @@ config PCIEAER
+ 	  (AER) driver support. Error reporting messages sent to Root
+ 	  Port will be handled by PCI Express AER driver.
+ 
++config PCIEAER_INJECT
++	tristate "PCIe AER error injector support"
++	depends on PCIEAER
++	default n
++	help
++	  This enables PCI Express Root Port Advanced Error Reporting
++	  (AER) software error injector.
++
++	  Debugging PCIe AER code is quite difficult because it is hard
++	  to trigger various real hardware errors. Software based
++	  error injection can fake almost all kinds of errors with the
++	  help of a user space helper tool aer-inject, which can be
++	  gotten from:
++	     http://www.kernel.org/pub/linux/utils/pci/aer-inject/
+ 
+ #
+ # PCI Express ECRC
+@@ -25,5 +39,3 @@ config PCIE_ECRC
+ 	  (transaction layer end-to-end CRC checking).
+ 
+ 	  When in doubt, say N.
+-
+-source "drivers/pci/pcie/aer/Kconfig.debug"
+diff --git a/drivers/pci/pcie/aer/Kconfig.debug b/drivers/pci/pcie/aer/Kconfig.debug
+deleted file mode 100644
+index 67e02174b65b..000000000000
+--- a/drivers/pci/pcie/aer/Kconfig.debug
++++ /dev/null
+@@ -1,19 +0,0 @@
+-# SPDX-License-Identifier: GPL-2.0
+-#
+-# PCI Express Root Port Device AER Debug Configuration
+-#
+-
+-config PCIEAER_INJECT
+-	tristate "PCIe AER error injector support"
+-	depends on PCIEAER
+-	default n
+-	help
+-	  This enables PCI Express Root Port Advanced Error Reporting
+-	  (AER) software error injector.
+-
+-	  Debugging PCIe AER code is quite difficult because it is hard
+-	  to trigger various real hardware errors. Software based
+-	  error injection can fake almost all kinds of errors with the
+-	  help of a user space helper tool aer-inject, which can be
+-	  gotten from:
+-	     http://www.kernel.org/pub/linux/utils/pci/aer-inject/
