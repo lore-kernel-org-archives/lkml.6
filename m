@@ -1,161 +1,297 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 91qIGNVeGVv9MgAAmS7hNA
-	; Thu, 07 Jun 2018 16:35:58 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id d84zMhDmGVs4awAAmS7hNA
+	; Fri, 08 Jun 2018 02:12:32 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 844136089E; Thu,  7 Jun 2018 16:35:58 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VXt50F6f"
+	id AF2AA6074D; Fri,  8 Jun 2018 02:12:32 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 05CE6605A2;
-	Thu,  7 Jun 2018 16:35:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 05CE6605A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 4284E601B4;
+	Fri,  8 Jun 2018 02:12:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4284E601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933034AbeFGQfz (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 12:35:55 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:36238 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932418AbeFGQfx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 12:35:53 -0400
-Received: by mail-qt0-f195.google.com with SMTP id o9-v6so10477814qtp.3;
-        Thu, 07 Jun 2018 09:35:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=lzZWRNcCJPPshpZcZFmS4b2C4AaYc+1wXz8mab7cLyI=;
-        b=VXt50F6fXkho8iBoHLlBpUjhw3dGIcR0+Y3D8XHAvRPw1JUBn+29MgDFuXVYQqYD8O
-         atdeRG4OpIe2277N0+WlRhRjk5O24PPwiiZI95UbpBp7pB1nFSUNWqZ/v9qg9Y1pra/N
-         rhHeuSl0MJsUkxu1tX0gCNXWGvweVVC4dosMI2muykKzfMy/MJVs8135Un+Wr4kt+IPz
-         9Skq4vyKfa0GxYjol6D4V7ZpuDDJkcSHurmD+S1foxaYdMFiIkxhMsEbolOqlWZdZFKY
-         eR74ZreR7pPbQWtqw3jIT6Uz0EKOTYd4GiKa5tEnUWZx6qyTyXI6RASBNPMUCcHkCoTY
-         nijQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=lzZWRNcCJPPshpZcZFmS4b2C4AaYc+1wXz8mab7cLyI=;
-        b=B+KLv5QlksUylgS+94mVbezWcLePvwTZO5AlraQHMUD3Eadg5Q5JhCBEUsUfprbXMY
-         NW/cHr0QWQw61n1F+0QsZlzMqPshTIpvlv/8w54/pnETKZEujzRMuwosgwvvBWRTRzDs
-         kHMkWMcYWgT8/maqkk0ASZhAjvXv1E3R2x2sziSyeZamCWUvpxZIRZXK2uaq79lvoImq
-         b9s6EjtdiPRvWTZa4isuN9sFVzP0ZtczBurQnd45Z1BJ646AR1d9lvoCwFiYZOoALRoG
-         VJFarRzoJAQBK86S7oFLqFdKq2sWxVwt8H/CH9rxGjpAtOsPEAarSBn4PEQufrBe0dik
-         HUZA==
-X-Gm-Message-State: APt69E0nA9OOkluODhQ6bElBDglvO6iXPl++vtRsxgOpnDsYQLHJ+WQG
-        wI6UuRgOdLXoNVZjfDVAUzE=
-X-Google-Smtp-Source: ADUXVKLXkT7AVeQDvKIW9gro/lcOOwWqxgRmVwThtvIiRt5qtsSMMZPIDh4ExAydaxWGMeQcF7Q1Ow==
-X-Received: by 2002:ac8:2238:: with SMTP id o53-v6mr2460682qto.355.1528389352267;
-        Thu, 07 Jun 2018 09:35:52 -0700 (PDT)
-Received: from [10.69.41.93] ([192.19.223.250])
-        by smtp.googlemail.com with ESMTPSA id e63-v6sm8473007qkj.62.2018.06.07.09.35.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Jun 2018 09:35:50 -0700 (PDT)
-Subject: Re: [PATCH v2 1/1] ARM: dts: cygnus: enable iproc-hwrng
-To: Scott Branden <scott.branden@broadcom.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Clement Peron <peron.clem@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Cc: BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Mohamed Ismail Abdul Packir Mohamed
-        <mohamed-ismail.abdul@broadcom.com>
-References: <1528309291-25579-1-git-send-email-scott.branden@broadcom.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <c0b4d69d-2826-320e-974e-c7cdbf341747@gmail.com>
-Date: Thu, 7 Jun 2018 09:35:42 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1752863AbeFHCM3 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 22:12:29 -0400
+Received: from mga01.intel.com ([192.55.52.88]:50039 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752341AbeFHCM1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 22:12:27 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 19:12:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,489,1520924400";
+   d="scan'208";a="61385080"
+Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
+  by fmsmga004.fm.intel.com with ESMTP; 07 Jun 2018 19:12:25 -0700
+Received: from kbuild by bee with local (Exim 4.84_2)
+        (envelope-from <lkp@intel.com>)
+        id 1fR6t6-000QuR-S5; Fri, 08 Jun 2018 10:12:24 +0800
+Date: Fri, 8 Jun 2018 10:11:36 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Jayant Chowdhary <jchowdhary@google.com>
+Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org,
+        Jayant Chowdhary <jchowdhary@google.com>,
+        akpm@linux-foundation.org, kernel-team@android.com,
+        linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH] uapi: Make generic uapi headers compile standalone.
+Message-ID: <201806081029.TZxwIw0e%fengguang.wu@intel.com>
+References: <20180606231602.231326-1-jchowdhary@google.com>
 MIME-Version: 1.0
-In-Reply-To: <1528309291-25579-1-git-send-email-scott.branden@broadcom.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180606231602.231326-1-jchowdhary@google.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: lkp@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/06/2018 11:21 AM, Scott Branden wrote:
-> From: Mohamed Ismail Abdul Packir Mohamed <mohamed-ismail.abdul@broadcom.com>
-> 
-> Enable the HW rng driver "iproc-rng200" for all cygnus platforms.
-> 
-> Signed-off-by: Mohamed Ismail Abdul Packir Mohamed <mohamed-ismail.abdul@broadcom.com>
-> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+Hi Jayant,
 
-Clement, do you want to test this and reported back?
+Thank you for the patch! Perhaps something to improve:
 
-> ---
->  arch/arm/boot/dts/bcm-cygnus.dtsi | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/bcm-cygnus.dtsi b/arch/arm/boot/dts/bcm-cygnus.dtsi
-> index 9fe4f5a..b0e38fa 100644
-> --- a/arch/arm/boot/dts/bcm-cygnus.dtsi
-> +++ b/arch/arm/boot/dts/bcm-cygnus.dtsi
-> @@ -417,6 +417,11 @@
->  			status = "disabled";
->  		};
->  
-> +		rng: rng@18032000 {
-> +			compatible = "brcm,iproc-rng200";
-> +			reg = <0x18032000 0x28>;
-> +		};
-> +
->  		sdhci0: sdhci@18041000 {
->  			compatible = "brcm,sdhci-iproc-cygnus";
->  			reg = <0x18041000 0x100>;
-> 
+[auto build test WARNING on linus/master]
+[also build test WARNING on v4.17 next-20180607]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/Jayant-Chowdhary/uapi-Make-generic-uapi-headers-compile-standalone/20180608-014548
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
 
--- 
-Florian
+sparse warnings: (new ones prefixed by >>)
+
+   /usr/lib/gcc/x86_64-linux-gnu/7/include/stddef.h:417:9: sparse: preprocessor token offsetof redefined
+   include/linux/stddef.h:17:9: this was the original definition
+>> drivers/hv/hv_fcopy.c:160:34: sparse: incorrect type in argument 1 (different type sizes) @@    expected unsigned short const [usertype] *pwcs @@    got nst [usertype] *pwcs @@
+   drivers/hv/hv_fcopy.c:160:34:    expected unsigned short const [usertype] *pwcs
+   drivers/hv/hv_fcopy.c:160:34:    got int [usertype] *<noident>
+   drivers/hv/hv_fcopy.c:164:34: sparse: incorrect type in argument 1 (different type sizes) @@    expected unsigned short const [usertype] *pwcs @@    got nst [usertype] *pwcs @@
+   drivers/hv/hv_fcopy.c:164:34:    expected unsigned short const [usertype] *pwcs
+   drivers/hv/hv_fcopy.c:164:34:    got int [usertype] *<noident>
+--
+   /usr/lib/gcc/x86_64-linux-gnu/7/include/stddef.h:417:9: sparse: preprocessor token offsetof redefined
+   include/linux/stddef.h:17:9: this was the original definition
+   drivers/hwmon/asc7621.c:194:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:194:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:194:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:194:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:194:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:194:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:194:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:227:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:227:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:227:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:227:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:227:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:227:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:227:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:227:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:277:37: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:277:37: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:277:37: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:277:37: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:277:37: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:277:37: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:277:37: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:346:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:346:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:346:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:346:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:346:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:346:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:346:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:350:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:350:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:350:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:350:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:350:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:350:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:350:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:379:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:379:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:379:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:379:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:379:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:379:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:379:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:435:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:435:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:435:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:435:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:435:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:435:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:435:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:471:48: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:471:48: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:471:48: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:471:48: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:471:48: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:471:48: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:471:48: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:492:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:492:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:492:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:492:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:492:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:492:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:492:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:492:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:492:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:492:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:492:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:492:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:492:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:492:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:526:41: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:526:41: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:526:41: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:526:41: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:526:41: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:526:41: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:526:41: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:665:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:665:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:665:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:665:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:665:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:665:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:665:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:713:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:713:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:713:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:713:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:713:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:713:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:713:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:761:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:761:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:761:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:761:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:761:18: sparse: expression using sizeof(void)
+   drivers/hwmon/asc7621.c:761:18: sparse: expression using sizeof(void)
+>> drivers/hwmon/asc7621.c:761:18: sparse: too many warnings
+--
+   /usr/lib/gcc/x86_64-linux-gnu/7/include/stddef.h:417:9: sparse: preprocessor token offsetof redefined
+   include/linux/stddef.h:17:9: this was the original definition
+>> fs/hfs/trans.c:52:73: sparse: incorrect type in argument 3 (different type sizes) @@    expected unsigned short [usertype] *uni @@    got pe] *uni @@
+   fs/hfs/trans.c:52:73:    expected unsigned short [usertype] *uni
+   fs/hfs/trans.c:52:73:    got int *<noident>
+   fs/hfs/trans.c:113:63: sparse: incorrect type in argument 3 (different type sizes) @@    expected unsigned short [usertype] *uni @@    got pe] *uni @@
+   fs/hfs/trans.c:113:63:    expected unsigned short [usertype] *uni
+   fs/hfs/trans.c:113:63:    got int *<noident>
+--
+   /usr/lib/gcc/x86_64-linux-gnu/7/include/stddef.h:417:9: sparse: preprocessor token offsetof redefined
+   include/linux/stddef.h:17:9: this was the original definition
+   fs/hfsplus/unicode.c:77:20: sparse: expression using sizeof(void)
+   fs/hfsplus/unicode.c:77:20: sparse: expression using sizeof(void)
+>> fs/hfsplus/unicode.c:259:61: sparse: incorrect type in argument 3 (different type sizes) @@    expected unsigned short [usertype] *uni @@    got ort [usertype] *uni @@
+   fs/hfsplus/unicode.c:259:61:    expected unsigned short [usertype] *uni
+   fs/hfsplus/unicode.c:259:61:    got int [usertype] *uc
+>> fs/hfsplus/unicode.c:259:61: sparse: incorrect type in argument 3 (different type sizes) @@    expected unsigned short [usertype] *uni @@    got ort [usertype] *uni @@
+   fs/hfsplus/unicode.c:259:61:    expected unsigned short [usertype] *uni
+   fs/hfsplus/unicode.c:259:61:    got int [usertype] *uc
+>> fs/hfsplus/unicode.c:259:61: sparse: incorrect type in argument 3 (different type sizes) @@    expected unsigned short [usertype] *uni @@    got ort [usertype] *uni @@
+   fs/hfsplus/unicode.c:259:61:    expected unsigned short [usertype] *uni
+   fs/hfsplus/unicode.c:259:61:    got int [usertype] *uc
+>> fs/hfsplus/unicode.c:259:61: sparse: incorrect type in argument 3 (different type sizes) @@    expected unsigned short [usertype] *uni @@    got ort [usertype] *uni @@
+   fs/hfsplus/unicode.c:259:61:    expected unsigned short [usertype] *uni
+   fs/hfsplus/unicode.c:259:61:    got int [usertype] *uc
+--
+   /usr/lib/gcc/x86_64-linux-gnu/7/include/stddef.h:417:9: sparse: preprocessor token offsetof redefined
+   include/linux/stddef.h:17:9: this was the original definition
+>> fs/isofs/joliet.c:52:40: sparse: incorrect type in argument 1 (different type sizes) @@    expected unsigned short const [usertype] *pwcs @@    got ort const [usertype] *pwcs @@
+   fs/isofs/joliet.c:52:40:    expected unsigned short const [usertype] *pwcs
+   fs/isofs/joliet.c:52:40:    got int const [usertype] *<noident>
+
+vim +160 drivers/hv/hv_fcopy.c
+
+01325476d K. Y. Srinivasan 2014-02-16  130  
+c7e490fc2 Vitaly Kuznetsov 2015-04-11  131  static void fcopy_send_data(struct work_struct *dummy)
+01325476d K. Y. Srinivasan 2014-02-16  132  {
+25ef06fe2 Vitaly Kuznetsov 2015-08-01  133  	struct hv_start_fcopy *smsg_out = NULL;
+01325476d K. Y. Srinivasan 2014-02-16  134  	int operation = fcopy_transaction.fcopy_msg->operation;
+01325476d K. Y. Srinivasan 2014-02-16  135  	struct hv_start_fcopy *smsg_in;
+c7e490fc2 Vitaly Kuznetsov 2015-04-11  136  	void *out_src;
+c7e490fc2 Vitaly Kuznetsov 2015-04-11  137  	int rc, out_len;
+01325476d K. Y. Srinivasan 2014-02-16  138  
+01325476d K. Y. Srinivasan 2014-02-16  139  	/*
+01325476d K. Y. Srinivasan 2014-02-16  140  	 * The  strings sent from the host are encoded in
+01325476d K. Y. Srinivasan 2014-02-16  141  	 * in utf16; convert it to utf8 strings.
+01325476d K. Y. Srinivasan 2014-02-16  142  	 * The host assures us that the utf16 strings will not exceed
+01325476d K. Y. Srinivasan 2014-02-16  143  	 * the max lengths specified. We will however, reserve room
+01325476d K. Y. Srinivasan 2014-02-16  144  	 * for the string terminating character - in the utf16s_utf8s()
+01325476d K. Y. Srinivasan 2014-02-16  145  	 * function we limit the size of the buffer where the converted
+01325476d K. Y. Srinivasan 2014-02-16  146  	 * string is placed to W_MAX_PATH -1 to guarantee
+01325476d K. Y. Srinivasan 2014-02-16  147  	 * that the strings can be properly terminated!
+01325476d K. Y. Srinivasan 2014-02-16  148  	 */
+01325476d K. Y. Srinivasan 2014-02-16  149  
+01325476d K. Y. Srinivasan 2014-02-16  150  	switch (operation) {
+01325476d K. Y. Srinivasan 2014-02-16  151  	case START_FILE_COPY:
+c7e490fc2 Vitaly Kuznetsov 2015-04-11  152  		out_len = sizeof(struct hv_start_fcopy);
+25ef06fe2 Vitaly Kuznetsov 2015-08-01  153  		smsg_out = kzalloc(sizeof(*smsg_out), GFP_KERNEL);
+25ef06fe2 Vitaly Kuznetsov 2015-08-01  154  		if (!smsg_out)
+25ef06fe2 Vitaly Kuznetsov 2015-08-01  155  			return;
+25ef06fe2 Vitaly Kuznetsov 2015-08-01  156  
+25ef06fe2 Vitaly Kuznetsov 2015-08-01  157  		smsg_out->hdr.operation = operation;
+01325476d K. Y. Srinivasan 2014-02-16  158  		smsg_in = (struct hv_start_fcopy *)fcopy_transaction.fcopy_msg;
+01325476d K. Y. Srinivasan 2014-02-16  159  
+01325476d K. Y. Srinivasan 2014-02-16 @160  		utf16s_to_utf8s((wchar_t *)smsg_in->file_name, W_MAX_PATH,
+01325476d K. Y. Srinivasan 2014-02-16  161  				UTF16_LITTLE_ENDIAN,
+25ef06fe2 Vitaly Kuznetsov 2015-08-01  162  				(__u8 *)&smsg_out->file_name, W_MAX_PATH - 1);
+01325476d K. Y. Srinivasan 2014-02-16  163  
+01325476d K. Y. Srinivasan 2014-02-16  164  		utf16s_to_utf8s((wchar_t *)smsg_in->path_name, W_MAX_PATH,
+01325476d K. Y. Srinivasan 2014-02-16  165  				UTF16_LITTLE_ENDIAN,
+25ef06fe2 Vitaly Kuznetsov 2015-08-01  166  				(__u8 *)&smsg_out->path_name, W_MAX_PATH - 1);
+01325476d K. Y. Srinivasan 2014-02-16  167  
+25ef06fe2 Vitaly Kuznetsov 2015-08-01  168  		smsg_out->copy_flags = smsg_in->copy_flags;
+25ef06fe2 Vitaly Kuznetsov 2015-08-01  169  		smsg_out->file_size = smsg_in->file_size;
+25ef06fe2 Vitaly Kuznetsov 2015-08-01  170  		out_src = smsg_out;
+01325476d K. Y. Srinivasan 2014-02-16  171  		break;
+01325476d K. Y. Srinivasan 2014-02-16  172  
+549e658a0 Olaf Hering      2017-09-21  173  	case WRITE_TO_FILE:
+549e658a0 Olaf Hering      2017-09-21  174  		out_src = fcopy_transaction.fcopy_msg;
+549e658a0 Olaf Hering      2017-09-21  175  		out_len = sizeof(struct hv_do_fcopy);
+549e658a0 Olaf Hering      2017-09-21  176  		break;
+01325476d K. Y. Srinivasan 2014-02-16  177  	default:
+c7e490fc2 Vitaly Kuznetsov 2015-04-11  178  		out_src = fcopy_transaction.fcopy_msg;
+c7e490fc2 Vitaly Kuznetsov 2015-04-11  179  		out_len = fcopy_transaction.recv_len;
+01325476d K. Y. Srinivasan 2014-02-16  180  		break;
+01325476d K. Y. Srinivasan 2014-02-16  181  	}
+c7e490fc2 Vitaly Kuznetsov 2015-04-11  182  
+c7e490fc2 Vitaly Kuznetsov 2015-04-11  183  	fcopy_transaction.state = HVUTIL_USERSPACE_REQ;
+e0fa3e5e7 Vitaly Kuznetsov 2016-06-09  184  	rc = hvutil_transport_send(hvt, out_src, out_len, NULL);
+c7e490fc2 Vitaly Kuznetsov 2015-04-11  185  	if (rc) {
+c7e490fc2 Vitaly Kuznetsov 2015-04-11  186  		pr_debug("FCP: failed to communicate to the daemon: %d\n", rc);
+c7e490fc2 Vitaly Kuznetsov 2015-04-11  187  		if (cancel_delayed_work_sync(&fcopy_timeout_work)) {
+c7e490fc2 Vitaly Kuznetsov 2015-04-11  188  			fcopy_respond_to_host(HV_E_FAIL);
+c7e490fc2 Vitaly Kuznetsov 2015-04-11  189  			fcopy_transaction.state = HVUTIL_READY;
+c7e490fc2 Vitaly Kuznetsov 2015-04-11  190  		}
+c7e490fc2 Vitaly Kuznetsov 2015-04-11  191  	}
+25ef06fe2 Vitaly Kuznetsov 2015-08-01  192  	kfree(smsg_out);
+01325476d K. Y. Srinivasan 2014-02-16  193  }
+01325476d K. Y. Srinivasan 2014-02-16  194  
+
+:::::: The code at line 160 was first introduced by commit
+:::::: 01325476d6e46185031be4a9bc6443832dbc807c Drivers: hv: Implement the file copy service
+
+:::::: TO: K. Y. Srinivasan <kys@microsoft.com>
+:::::: CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
