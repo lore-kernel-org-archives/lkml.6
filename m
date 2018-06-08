@@ -1,215 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Y43gJlzoGFu8TwAAmS7hNA
-	; Thu, 07 Jun 2018 08:10:04 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Y4/LJlywGltOAgAAmS7hNA
+	; Fri, 08 Jun 2018 16:36:09 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 81C0E6089E; Thu,  7 Jun 2018 08:10:04 +0000 (UTC)
+	id B3D10608BA; Fri,  8 Jun 2018 16:36:09 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id BF3B2607E7;
-	Thu,  7 Jun 2018 08:10:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BF3B2607E7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 3C82B607A4;
+	Fri,  8 Jun 2018 16:36:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3C82B607A4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932279AbeFGIKA (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 04:10:00 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:46533 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753028AbeFGIJ6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 04:09:58 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5789nBk2124650
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 7 Jun 2018 01:09:49 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5789nbC2124647;
-        Thu, 7 Jun 2018 01:09:49 -0700
-Date: Thu, 7 Jun 2018 01:09:49 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-2d7d1nzd3ksqornloqeer99r@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, jolsa@kernel.org, hpa@zytor.com,
-        mingo@kernel.org, adrian.hunter@intel.com, tglx@linutronix.de,
-        acme@redhat.com, namhyung@kernel.org, dsahern@gmail.com,
-        wangnan0@huawei.com
-Reply-To: wangnan0@huawei.com, dsahern@gmail.com, acme@redhat.com,
-          namhyung@kernel.org, tglx@linutronix.de, adrian.hunter@intel.com,
-          mingo@kernel.org, jolsa@kernel.org, hpa@zytor.com,
-          linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf srcline: Introduce map__srcline() to make
- code more compact
-Git-Commit-ID: e2d88aaa649e65851463426b133d87b61d3accbd
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1752653AbeFHQgG (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 12:36:06 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45914 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751244AbeFHQgF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 12:36:05 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5AC204187E3E;
+        Fri,  8 Jun 2018 16:36:04 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 0F9861C679;
+        Fri,  8 Jun 2018 16:36:01 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Fri,  8 Jun 2018 18:36:04 +0200 (CEST)
+Date: Fri, 8 Jun 2018 18:36:01 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc: srikar@linux.vnet.ibm.com, rostedt@goodmis.org,
+        mhiramat@kernel.org, peterz@infradead.org, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org, ananth@linux.vnet.ibm.com,
+        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com
+Subject: Re: [PATCH 0/7] Uprobes: Support SDT markers having reference count
+ (semaphore)
+Message-ID: <20180608163600.GA9030@redhat.com>
+References: <20180606083344.31320-1-ravi.bangoria@linux.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180606083344.31320-1-ravi.bangoria@linux.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 08 Jun 2018 16:36:04 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 08 Jun 2018 16:36:04 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'oleg@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e2d88aaa649e65851463426b133d87b61d3accbd
-Gitweb:     https://git.kernel.org/tip/e2d88aaa649e65851463426b133d87b61d3accbd
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Mon, 28 May 2018 11:05:20 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 4 Jun 2018 10:28:52 -0300
+Hello,
 
-perf srcline: Introduce map__srcline() to make code more compact
+I am travelling till the end of the next week, can't read this version
+until I return. Just one question,
 
-Replacing a common open coded sequence.
+On 06/06, Ravi Bangoria wrote:
+>
+>  1. One of the major reason was the deadlock between uprobe_lock and
+>  mm->mmap inside trace_uprobe_mmap(). That deadlock was not easy to fix
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-2d7d1nzd3ksqornloqeer99r@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/map.c  | 12 ++++++----
- tools/perf/util/map.h  |  1 +
- tools/perf/util/sort.c | 60 +++++++++++---------------------------------------
- 3 files changed, 22 insertions(+), 51 deletions(-)
+Could you remind what exactly was wrong?
 
-diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
-index 6ae97eda370b..92abc8e248c5 100644
---- a/tools/perf/util/map.c
-+++ b/tools/perf/util/map.c
-@@ -415,16 +415,20 @@ size_t map__fprintf_dsoname(struct map *map, FILE *fp)
- 	return fprintf(fp, "%s", dsoname);
- }
- 
-+char *map__srcline(struct map *map, u64 addr, struct symbol *sym)
-+{
-+	if (map == NULL)
-+		return SRCLINE_UNKNOWN;
-+	return get_srcline(map->dso, map__rip_2objdump(map, addr), sym, true, true, addr);
-+}
-+
- int map__fprintf_srcline(struct map *map, u64 addr, const char *prefix,
- 			 FILE *fp)
- {
--	char *srcline;
- 	int ret = 0;
- 
- 	if (map && map->dso) {
--		srcline = get_srcline(map->dso,
--				      map__rip_2objdump(map, addr), NULL,
--				      true, true, addr);
-+		char *srcline = map__srcline(map, addr, NULL);
- 		if (srcline != SRCLINE_UNKNOWN)
- 			ret = fprintf(fp, "%s%s", prefix, srcline);
- 		free_srcline(srcline);
-diff --git a/tools/perf/util/map.h b/tools/perf/util/map.h
-index 97e2a063bd65..4cb90f242bed 100644
---- a/tools/perf/util/map.h
-+++ b/tools/perf/util/map.h
-@@ -169,6 +169,7 @@ static inline void __map__zput(struct map **map)
- int map__overlap(struct map *l, struct map *r);
- size_t map__fprintf(struct map *map, FILE *fp);
- size_t map__fprintf_dsoname(struct map *map, FILE *fp);
-+char *map__srcline(struct map *map, u64 addr, struct symbol *sym);
- int map__fprintf_srcline(struct map *map, u64 addr, const char *prefix,
- 			 FILE *fp);
- 
-diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
-index 4058ade352a5..71096dbfeb88 100644
---- a/tools/perf/util/sort.c
-+++ b/tools/perf/util/sort.c
-@@ -333,13 +333,7 @@ struct sort_entry sort_sym = {
- 
- char *hist_entry__get_srcline(struct hist_entry *he)
- {
--	struct map *map = he->ms.map;
--
--	if (!map)
--		return SRCLINE_UNKNOWN;
--
--	return get_srcline(map->dso, map__rip_2objdump(map, he->ip),
--			   he->ms.sym, true, true, he->ip);
-+	return map__srcline(he->ms.map, he->ip, he->ms.sym);
- }
- 
- static int64_t
-@@ -375,28 +369,14 @@ static int64_t
- sort__srcline_from_cmp(struct hist_entry *left, struct hist_entry *right)
- {
- 	if (!left->branch_info->srcline_from) {
--		struct map *map = left->branch_info->from.map;
--		if (!map)
--			left->branch_info->srcline_from = SRCLINE_UNKNOWN;
--		else
--			left->branch_info->srcline_from = get_srcline(map->dso,
--					   map__rip_2objdump(map,
--							     left->branch_info->from.al_addr),
--							 left->branch_info->from.sym,
--							 true, true,
--							 left->branch_info->from.al_addr);
-+		left->branch_info->srcline_from = map__srcline(left->branch_info->from.map,
-+							       left->branch_info->from.al_addr,
-+							       left->branch_info->from.sym);
- 	}
- 	if (!right->branch_info->srcline_from) {
--		struct map *map = right->branch_info->from.map;
--		if (!map)
--			right->branch_info->srcline_from = SRCLINE_UNKNOWN;
--		else
--			right->branch_info->srcline_from = get_srcline(map->dso,
--					     map__rip_2objdump(map,
--							       right->branch_info->from.al_addr),
--						     right->branch_info->from.sym,
--						     true, true,
--						     right->branch_info->from.al_addr);
-+		right->branch_info->srcline_from = map__srcline(right->branch_info->from.map,
-+								right->branch_info->from.al_addr,
-+								right->branch_info->from.sym);
- 	}
- 	return strcmp(right->branch_info->srcline_from, left->branch_info->srcline_from);
- }
-@@ -420,28 +400,14 @@ static int64_t
- sort__srcline_to_cmp(struct hist_entry *left, struct hist_entry *right)
- {
- 	if (!left->branch_info->srcline_to) {
--		struct map *map = left->branch_info->to.map;
--		if (!map)
--			left->branch_info->srcline_to = SRCLINE_UNKNOWN;
--		else
--			left->branch_info->srcline_to = get_srcline(map->dso,
--					   map__rip_2objdump(map,
--							     left->branch_info->to.al_addr),
--							 left->branch_info->from.sym,
--							 true, true,
--							 left->branch_info->to.al_addr);
-+		left->branch_info->srcline_to = map__srcline(left->branch_info->to.map,
-+							     left->branch_info->to.al_addr,
-+							     left->branch_info->to.sym);
- 	}
- 	if (!right->branch_info->srcline_to) {
--		struct map *map = right->branch_info->to.map;
--		if (!map)
--			right->branch_info->srcline_to = SRCLINE_UNKNOWN;
--		else
--			right->branch_info->srcline_to = get_srcline(map->dso,
--					     map__rip_2objdump(map,
--							       right->branch_info->to.al_addr),
--						     right->branch_info->to.sym,
--						     true, true,
--						     right->branch_info->to.al_addr);
-+		right->branch_info->srcline_to = map__srcline(right->branch_info->to.map,
-+							      right->branch_info->to.al_addr,
-+							      right->branch_info->to.sym);
- 	}
- 	return strcmp(right->branch_info->srcline_to, left->branch_info->srcline_to);
- }
+I can't find your previous email about this problem, but iirc you didn't
+explain the deadlock in details, just copied some traces from lockdep...
+
+Oleg.
