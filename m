@@ -1,102 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ZebICNvdGFt2cwAAmS7hNA
-	; Thu, 07 Jun 2018 07:25:20 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id IevjGSkzGlujUgAAmS7hNA
+	; Fri, 08 Jun 2018 07:41:53 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 351C8607E7; Thu,  7 Jun 2018 07:25:20 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kP7TmKA8"
+	id 7AE29607E4; Fri,  8 Jun 2018 07:41:53 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id B8DD3605A2;
-	Thu,  7 Jun 2018 07:25:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B8DD3605A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id DB06160590;
+	Fri,  8 Jun 2018 07:41:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DB06160590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753379AbeFGHZR (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 03:25:17 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:44473 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753085AbeFGHZO (ORCPT
+        id S1752806AbeFHHlu (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 03:41:50 -0400
+Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:41253 "EHLO
+        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751195AbeFHHlt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 03:25:14 -0400
-Received: by mail-io0-f194.google.com with SMTP id g7-v6so10658824ioh.11
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 00:25:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=N0zCOep2IMmMvU+TRrqvIWq9/q3BCyvmptabR2ICIyQ=;
-        b=kP7TmKA8IUdBAyEiXJ/E5AA8PBMsaMHv2bWCFZSdbp+vIiHCT4QYNN1EGWlIawkEqF
-         QwRqRIdsnMS6BwR0iqVzo5zogUwNnyXiQQkldQ9vlRpssTbKX8A8RkgMWlGuDXOaqyvH
-         ieT/0w/ebUZdh1gIykKvQUi5kuV03LRP0dJEI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=N0zCOep2IMmMvU+TRrqvIWq9/q3BCyvmptabR2ICIyQ=;
-        b=UmdQh4Fq1naj/vMHW4PnoekUreTigF7kgN62fzMP1x6YQp9RSoi+fedY9xyVTK32X+
-         rpH11ES9Ay7ct5Ah9WVrs9l5q2q4jV4x/o0aVxFQAOGpp7kpNhyLVKMH4zvmvZ0ppz4A
-         4TZt0g3+qDgrrlQ1ZCtCvQH64tnc+ZtKup8PfpGV+nitATH9i6b88OVq2/+LY6DxRf2f
-         t6+T1b2OrghhfppYcWB6icCpBj6aJq1jvgBp09Aun2s2k8Wt/7cZT7hEUqLHkcNABOZV
-         21MLqpt2UIX07xLLzH37BArPNmElZ56LJtAT6aRkiY4bHfdOX8OVJm8Vulhoo5ApMXa8
-         cJOA==
-X-Gm-Message-State: APt69E0lLr5gOAGluF/ex4dO7EQwMXG6csiyO1/ldOtlAhGT3HycImQH
-        bxD4DJDjbFch71mPJITw5z+lHCTeOGBbDoty93BQIi5aiWk=
-X-Google-Smtp-Source: ADUXVKJrf12+d0SfOsSOH2rUNi7LXsesvVMnzMjnJf+Km+RQzRyZD96j3l8fH1t//2k0KsHCiAf0+Ni/600+0Jdlm3o=
-X-Received: by 2002:a6b:8b91:: with SMTP id n139-v6mr535705iod.109.1528356313624;
- Thu, 07 Jun 2018 00:25:13 -0700 (PDT)
+        Fri, 8 Jun 2018 03:41:49 -0400
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id RC1nfnIqCtLaARC1qfxXOl; Fri, 08 Jun 2018 09:41:47 +0200
+Subject: Re: [PATCH v10 4/4] [media] platform: Add Synopsys DesignWare HDMI RX
+ Controller Driver
+To: Jose Abreu <Jose.Abreu@synopsys.com>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Joao Pinto <Joao.Pinto@synopsys.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Philippe Ombredanne <pombredanne@nexb.com>
+References: <cover.1513013948.git.joabreu@synopsys.com>
+ <5f9eedfd6f91ed73ef0bb6d3977588d01478909f.1513013948.git.joabreu@synopsys.com>
+ <108e2c3c-243f-cd67-2df7-57541b28ca39@xs4all.nl>
+ <635e7d70-0edb-7506-c268-9ebbae1eb39e@synopsys.com>
+ <ca5b3cf7-c7d0-36d4-08ac-32a7a00afd7d@xs4all.nl>
+ <f5341c4b-43e2-12f6-9c9f-2385d47bb2fd@synopsys.com>
+ <86a5787d-6ed6-7674-35f9-c77341b4c36b@xs4all.nl>
+ <3c15b537-33b3-f786-369e-5d82ab9eeb9c@synopsys.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <ed3dabc0-66b2-d069-99f9-75b742709e9f@xs4all.nl>
+Date: Fri, 8 Jun 2018 09:41:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Received: by 2002:a4f:78c9:0:0:0:0:0 with HTTP; Thu, 7 Jun 2018 00:25:12 -0700 (PDT)
-In-Reply-To: <7c34ccef-2fa8-8b53-2677-29f6fbe71a04@dd-wrt.com>
-References: <20180528100240.256525891@linuxfoundation.org> <20180528100302.722883806@linuxfoundation.org>
- <7c34ccef-2fa8-8b53-2677-29f6fbe71a04@dd-wrt.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 7 Jun 2018 09:25:12 +0200
-Message-ID: <CACRpkdZghHkbyKrP=QAT5DSPEJ07hp07wU+UvrZFs7z2oOLtXg@mail.gmail.com>
-Subject: Re: [PATCH 4.16 269/272] pinctrl: msm: Use dynamic GPIO numbering
-To: Sebastian Gottschall <s.gottschall@dd-wrt.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Timur Tabi <timur@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <3c15b537-33b3-f786-369e-5d82ab9eeb9c@synopsys.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfLnkcEXQ+27UsnfZYQZI21+kMBxrjulWiA/PnHE3QCHIUeitIWa8qv67AYjt84M5Z39DGstdOONFhs0erqr4HDjQmw/vKX6d77Petz8uelYLACfiOrij
+ Z+6ogN6zctWRKnkjMFxf+vTqDHjNeIFBlqWveXWjC5CpVz4ZwDD2aJ2h/mRuFFgCH4kORC48b+bRzNEftI7GY7lqAXSAG9EGMzwGTEF5IF7WXkNbHTipm25z
+ api0r7+OFTIJB4mHJGBEFhZd5Iv5InLhsnVZ6dyTVWJijt2GGh7ylAvaUBeueNLRe+klr6dWVxgKqdBSvpNutt5ZeK4awNrrAkOX0FFu/WWj6dJLi/gFsf6f
+ tO2NEXKqW2+fz+vk8LAL2tfOPLnVCNVHiiR8kOHkBqE+OmZ87KCtuEM+M7Y3L+J/YZAp9rymbf34qQw2o/6JUCd57MMXGMkN6ka12JlJz1OAiH/OxUU=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 1:21 PM, Sebastian Gottschall
-<s.gottschall@dd-wrt.com> wrote:
+Hi Jose,
 
-> this patch creates a regression for me. on ipq8064 the systems gpios now
-> start somewhere in the sky
-(...)
-> this broke my userspace gpio handling. i can override this, but still it
-> doesnt look correct since there is a hole at the beginng likelly reserved by
-> unused arm gpios
+I have not seen any updates for this series. What is the status? I thought we
+were close to merging this...
 
-Out of curiosity: what is this userspace?
+Regards,
 
-We do not break userspace, so I guess we should put in some hack
-to keep the base 0 on ipq8064 then, but as pointed out by Bjorn
-there will be problems when we get multiple gpiochips in later
-platforms so it is just a stopgap solution.
+	Hans
 
-Have you looked into using the new character device with your
-userspace, either as shown in the examples:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/gpio
-
-or using libgpiod:
-https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/
-
-Yours,
-Linus Walleij
+On 12/15/2017 12:23 PM, Jose Abreu wrote:
+> Hi Hans,
+> 
+> On 13-12-2017 20:49, Hans Verkuil wrote:
+>> On 13/12/17 15:00, Jose Abreu wrote:
+>>>
+>>> Indeed. I compared the values with the spec and they are not
+>>> correct. Even hsync is wrong. I already corrected in the code the
+>>> hsync but regarding interlace I'm not seeing an easy way to do
+>>> this without using interrupts in each vsync because the register
+>>> I was toggling does not behave as I expected (I misunderstood the
+>>> databook). Maybe we should not detect interlaced modes for now?
+>>> Or not fill the il_ fields?
+>> As I mentioned above you as long as you get a good backporch value you
+>> can deduce from whether it is an odd or even number to which field it
+>> belongs and fill in the other values. So I think you only need to read
+>> these values for one field.
+>>
+>> Filling in good values here (at least as far as is possible since not all
+>> hardware can give it) will help debugging issues, even if you otherwise do
+>> not support interlaced.
+> 
+> Ok, I will fill the fields.
+> 
+> Until the end of January I will be quite busy in another project
+> so if you could review the remaining patches of this series I
+> would appreciate very much ... This way when I have the time I
+> can code all the changes and send them at once.
+> 
+> Thanks and Best Regards,
+> Jose Miguel Abreu
+> 
+>>
+>> Regards,
+>>
+>> 	Hans
+> 
+> 
