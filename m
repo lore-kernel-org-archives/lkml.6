@@ -1,203 +1,257 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id OYjTN+/0G1tDbgAAmS7hNA
-	; Sat, 09 Jun 2018 15:49:29 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id x8oWLVzpGVv6EwAAmS7hNA
+	; Fri, 08 Jun 2018 02:27:18 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id A378B608C1; Sat,  9 Jun 2018 15:49:29 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vj/brmTD"
+	id CC4F5608BA; Fri,  8 Jun 2018 02:27:18 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id C7CC5606FA;
-	Sat,  9 Jun 2018 15:49:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C7CC5606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 1E1DF601B4;
+	Fri,  8 Jun 2018 02:27:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1E1DF601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932593AbeFIPt1 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 11:49:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34982 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753358AbeFIPcc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 11:32:32 -0400
-Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 63AAA208A3;
-        Sat,  9 Jun 2018 15:32:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528558352;
-        bh=BxvuB0a40zmscZj9d6AvwfwTXKVIej+E1FPL9gz0rZg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vj/brmTDWREp22Ch6rRqNTiKJJ1Hh8rO1JW9812ChktqyL1Iad+LGk3ydVyn/N1i8
-         s/egsH/EeJLsluxW4mrE4z+ywSsD87ihZJR2T722Mu8zjddyQotK1ZkiXovj17Q/wg
-         P3b61URqErkSPIdAFwini0JVDK3eSGDiVDszGR5o=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guillaume Nault <g.nault@alphalink.fr>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 17/48] l2tp: fix refcount leakage on PPPoL2TP sockets
-Date: Sat,  9 Jun 2018 17:29:29 +0200
-Message-Id: <20180609145948.751522209@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
-References: <20180609145947.679103414@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        id S1752936AbeFHC1E (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 22:27:04 -0400
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:58530 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752461AbeFHCY3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 22:24:29 -0400
+Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
+        id 1205D2A334; Thu,  7 Jun 2018 22:24:29 -0400 (EDT)
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Michael Schmitz <schmitzmic@gmail.com>,
+        <linuxppc-dev@lists.ozlabs.org>, <linux-m68k@lists.linux-m68k.org>,
+        <linux-kernel@vger.kernel.org>
+Message-Id: <36d753a57f26d248531ea3a6487b1b134b9b9906.1528423341.git.fthain@telegraphics.com.au>
+In-Reply-To: <cover.1528423341.git.fthain@telegraphics.com.au>
+References: <cover.1528423341.git.fthain@telegraphics.com.au>
+From: Finn Thain <fthain@telegraphics.com.au>
+Subject: [PATCH v2 04/12] macintosh/via-pmu: Enhance state machine with new
+ 'uninitialized' state
+Date: Thu,  7 Jun 2018 22:24:29 -0400 (EDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+On 68k Macs, the via/vias pointer can't be used to determine whether
+the PMU driver has been initialized. For portability, add a new state
+to indicate that via_find_pmu() succeeded.
 
-------------------
+After via_find_pmu() executes, testing vias == NULL is equivalent to
+testing via == NULL. Replace these tests with pmu_state == uninitialized
+which is simpler and more consistent. No functional change.
 
-From: Guillaume Nault <g.nault@alphalink.fr>
-
-[ Upstream commit 3d609342cc04129ff7568e19316ce3d7451a27e8 ]
-
-Commit d02ba2a6110c ("l2tp: fix race in pppol2tp_release with session
-object destroy") tried to fix a race condition where a PPPoL2TP socket
-would disappear while the L2TP session was still using it. However, it
-missed the root issue which is that an L2TP session may accept to be
-reconnected if its associated socket has entered the release process.
-
-The tentative fix makes the session hold the socket it is connected to.
-That saves the kernel from crashing, but introduces refcount leakage,
-preventing the socket from completing the release process. Once stalled,
-everything the socket depends on can't be released anymore, including
-the L2TP session and the l2tp_ppp module.
-
-The root issue is that, when releasing a connected PPPoL2TP socket, the
-session's ->sk pointer (RCU-protected) is reset to NULL and we have to
-wait for a grace period before destroying the socket. The socket drops
-the session in its ->sk_destruct callback function, so the session
-will exist until the last reference on the socket is dropped.
-Therefore, there is a time frame where pppol2tp_connect() may accept
-reconnecting a session, as it only checks ->sk to figure out if the
-session is connected. This time frame is shortened by the fact that
-pppol2tp_release() calls l2tp_session_delete(), making the session
-unreachable before resetting ->sk. However, pppol2tp_connect() may
-grab the session before it gets unhashed by l2tp_session_delete(), but
-it may test ->sk after the later got reset. The race is not so hard to
-trigger and syzbot found a pretty reliable reproducer:
-https://syzkaller.appspot.com/bug?id=418578d2a4389074524e04d641eacb091961b2cf
-
-Before d02ba2a6110c, another race could let pppol2tp_release()
-overwrite the ->__sk pointer of an L2TP session, thus tricking
-pppol2tp_put_sk() into calling sock_put() on a socket that is different
-than the one for which pppol2tp_release() was originally called. To get
-there, we had to trigger the race described above, therefore having one
-PPPoL2TP socket being released, while the session it is connected to is
-reconnecting to a different PPPoL2TP socket. When releasing this new
-socket fast enough, pppol2tp_release() overwrites the session's
-->__sk pointer with the address of the new socket, before the first
-pppol2tp_put_sk() call gets scheduled. Then the pppol2tp_put_sk() call
-invoked by the original socket will sock_put() the new socket,
-potentially dropping its last reference. When the second
-pppol2tp_put_sk() finally runs, its socket has already been freed.
-
-With d02ba2a6110c, the session takes a reference on both sockets.
-Furthermore, the session's ->sk pointer is reset in the
-pppol2tp_session_close() callback function rather than in
-pppol2tp_release(). Therefore, ->__sk can't be overwritten and
-pppol2tp_put_sk() is called only once (l2tp_session_delete() will only
-run pppol2tp_session_close() once, to protect the session against
-concurrent deletion requests). Now pppol2tp_put_sk() will properly
-sock_put() the original socket, but the new socket will remain, as
-l2tp_session_delete() prevented the release process from completing.
-Here, we don't depend on the ->__sk race to trigger the bug. Getting
-into the pppol2tp_connect() race is enough to leak the reference, no
-matter when new socket is released.
-
-So it all boils down to pppol2tp_connect() failing to realise that the
-session has already been connected. This patch drops the unneeded extra
-reference counting (mostly reverting d02ba2a6110c) and checks that
-neither ->sk nor ->__sk is set before allowing a session to be
-connected.
-
-Fixes: d02ba2a6110c ("l2tp: fix race in pppol2tp_release with session object destroy")
-Signed-off-by: Guillaume Nault <g.nault@alphalink.fr>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Tested-by: Stan Johnson <userm57@yahoo.com>
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 ---
- net/l2tp/l2tp_ppp.c |   35 +++++++++++++++++------------------
- 1 file changed, 17 insertions(+), 18 deletions(-)
+ drivers/macintosh/via-pmu.c | 44 ++++++++++++++++++++++----------------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
 
---- a/net/l2tp/l2tp_ppp.c
-+++ b/net/l2tp/l2tp_ppp.c
-@@ -428,16 +428,6 @@ static void pppol2tp_put_sk(struct rcu_h
-  */
- static void pppol2tp_session_close(struct l2tp_session *session)
- {
--	struct pppol2tp_session *ps;
--
--	ps = l2tp_session_priv(session);
--	mutex_lock(&ps->sk_lock);
--	ps->__sk = rcu_dereference_protected(ps->sk,
--					     lockdep_is_held(&ps->sk_lock));
--	RCU_INIT_POINTER(ps->sk, NULL);
--	if (ps->__sk)
--		call_rcu(&ps->rcu, pppol2tp_put_sk);
--	mutex_unlock(&ps->sk_lock);
+diff --git a/drivers/macintosh/via-pmu.c b/drivers/macintosh/via-pmu.c
+index 4c1bae5380c2..c4c324fb5fa6 100644
+--- a/drivers/macintosh/via-pmu.c
++++ b/drivers/macintosh/via-pmu.c
+@@ -114,6 +114,7 @@ static volatile unsigned char __iomem *via;
+ #define CB1_INT		0x10		/* transition on CB1 input */
+ 
+ static volatile enum pmu_state {
++	uninitialized = 0,
+ 	idle,
+ 	sending,
+ 	intack,
+@@ -274,7 +275,7 @@ int __init find_via_pmu(void)
+ 	u64 taddr;
+ 	const u32 *reg;
+ 
+-	if (via != 0)
++	if (pmu_state != uninitialized)
+ 		return 1;
+ 	vias = of_find_node_by_name(NULL, "via-pmu");
+ 	if (vias == NULL)
+@@ -369,20 +370,19 @@ int __init find_via_pmu(void)
+  fail:
+ 	of_node_put(vias);
+ 	vias = NULL;
++	pmu_state = uninitialized;
+ 	return 0;
  }
  
- /* Really kill the session socket. (Called from sock_put() if
-@@ -480,15 +470,24 @@ static int pppol2tp_release(struct socke
- 	sock_orphan(sk);
- 	sock->sk = NULL;
+ #ifdef CONFIG_ADB
+ static int pmu_probe(void)
+ {
+-	return vias == NULL? -ENODEV: 0;
++	return pmu_state == uninitialized ? -ENODEV : 0;
+ }
  
--	/* If the socket is associated with a session,
--	 * l2tp_session_delete will call pppol2tp_session_close which
--	 * will drop the session's ref on the socket.
--	 */
- 	session = pppol2tp_sock_to_session(sk);
- 	if (session) {
-+		struct pppol2tp_session *ps;
-+
- 		l2tp_session_delete(session);
--		/* drop the ref obtained by pppol2tp_sock_to_session */
--		sock_put(sk);
-+
-+		ps = l2tp_session_priv(session);
-+		mutex_lock(&ps->sk_lock);
-+		ps->__sk = rcu_dereference_protected(ps->sk,
-+						     lockdep_is_held(&ps->sk_lock));
-+		RCU_INIT_POINTER(ps->sk, NULL);
-+		mutex_unlock(&ps->sk_lock);
-+		call_rcu(&ps->rcu, pppol2tp_put_sk);
-+
-+		/* Rely on the sock_put() call at the end of the function for
-+		 * dropping the reference held by pppol2tp_sock_to_session().
-+		 * The last reference will be dropped by pppol2tp_put_sk().
-+		 */
+ static int pmu_init(void)
+ {
+-	if (vias == NULL)
+-		return -ENODEV;
+-	return 0;
++	return pmu_state == uninitialized ? -ENODEV : 0;
+ }
+ #endif /* CONFIG_ADB */
+ 
+@@ -397,7 +397,7 @@ static int __init via_pmu_start(void)
+ {
+ 	unsigned int irq;
+ 
+-	if (vias == NULL)
++	if (pmu_state == uninitialized)
+ 		return -ENODEV;
+ 
+ 	batt_req.complete = 1;
+@@ -463,7 +463,7 @@ arch_initcall(via_pmu_start);
+  */
+ static int __init via_pmu_dev_init(void)
+ {
+-	if (vias == NULL)
++	if (pmu_state == uninitialized)
+ 		return -ENODEV;
+ 
+ #ifdef CONFIG_PMAC_BACKLIGHT
+@@ -966,7 +966,7 @@ static int pmu_send_request(struct adb_request *req, int sync)
+ {
+ 	int i, ret;
+ 
+-	if ((vias == NULL) || (!pmu_fully_inited)) {
++	if (pmu_state == uninitialized || !pmu_fully_inited) {
+ 		req->complete = 1;
+ 		return -ENXIO;
  	}
+@@ -1060,7 +1060,7 @@ static int __pmu_adb_autopoll(int devs)
  
- 	release_sock(sk);
-@@ -742,7 +741,8 @@ static int pppol2tp_connect(struct socke
- 		 */
- 		mutex_lock(&ps->sk_lock);
- 		if (rcu_dereference_protected(ps->sk,
--					      lockdep_is_held(&ps->sk_lock))) {
-+					      lockdep_is_held(&ps->sk_lock)) ||
-+		    ps->__sk) {
- 			mutex_unlock(&ps->sk_lock);
- 			error = -EEXIST;
- 			goto end;
-@@ -803,7 +803,6 @@ static int pppol2tp_connect(struct socke
+ static int pmu_adb_autopoll(int devs)
+ {
+-	if ((vias == NULL) || (!pmu_fully_inited) || !pmu_has_adb)
++	if (pmu_state == uninitialized || !pmu_fully_inited || !pmu_has_adb)
+ 		return -ENXIO;
  
- out_no_ppp:
- 	/* This is how we get the session context from the socket. */
--	sock_hold(sk);
- 	sk->sk_user_data = session;
- 	rcu_assign_pointer(ps->sk, sk);
- 	mutex_unlock(&ps->sk_lock);
+ 	adb_dev_map = devs;
+@@ -1073,7 +1073,7 @@ static int pmu_adb_reset_bus(void)
+ 	struct adb_request req;
+ 	int save_autopoll = adb_dev_map;
+ 
+-	if ((vias == NULL) || (!pmu_fully_inited) || !pmu_has_adb)
++	if (pmu_state == uninitialized || !pmu_fully_inited || !pmu_has_adb)
+ 		return -ENXIO;
+ 
+ 	/* anyone got a better idea?? */
+@@ -1109,7 +1109,7 @@ pmu_request(struct adb_request *req, void (*done)(struct adb_request *),
+ 	va_list list;
+ 	int i;
+ 
+-	if (vias == NULL)
++	if (pmu_state == uninitialized)
+ 		return -ENXIO;
+ 
+ 	if (nbytes < 0 || nbytes > 32) {
+@@ -1134,7 +1134,7 @@ pmu_queue_request(struct adb_request *req)
+ 	unsigned long flags;
+ 	int nsend;
+ 
+-	if (via == NULL) {
++	if (pmu_state == uninitialized) {
+ 		req->complete = 1;
+ 		return -ENXIO;
+ 	}
+@@ -1247,7 +1247,7 @@ pmu_start(void)
+ void
+ pmu_poll(void)
+ {
+-	if (!via)
++	if (pmu_state == uninitialized)
+ 		return;
+ 	if (disable_poll)
+ 		return;
+@@ -1257,7 +1257,7 @@ pmu_poll(void)
+ void
+ pmu_poll_adb(void)
+ {
+-	if (!via)
++	if (pmu_state == uninitialized)
+ 		return;
+ 	if (disable_poll)
+ 		return;
+@@ -1272,7 +1272,7 @@ pmu_poll_adb(void)
+ void
+ pmu_wait_complete(struct adb_request *req)
+ {
+-	if (!via)
++	if (pmu_state == uninitialized)
+ 		return;
+ 	while((pmu_state != idle && pmu_state != locked) || !req->complete)
+ 		via_pmu_interrupt(0, NULL);
+@@ -1288,7 +1288,7 @@ pmu_suspend(void)
+ {
+ 	unsigned long flags;
+ 
+-	if (!via)
++	if (pmu_state == uninitialized)
+ 		return;
+ 	
+ 	spin_lock_irqsave(&pmu_lock, flags);
+@@ -1319,7 +1319,7 @@ pmu_resume(void)
+ {
+ 	unsigned long flags;
+ 
+-	if (!via || (pmu_suspended < 1))
++	if (pmu_state == uninitialized || pmu_suspended < 1)
+ 		return;
+ 
+ 	spin_lock_irqsave(&pmu_lock, flags);
+@@ -1681,7 +1681,7 @@ pmu_enable_irled(int on)
+ {
+ 	struct adb_request req;
+ 
+-	if (vias == NULL)
++	if (pmu_state == uninitialized)
+ 		return ;
+ 	if (pmu_kind == PMU_KEYLARGO_BASED)
+ 		return ;
+@@ -1696,7 +1696,7 @@ pmu_restart(void)
+ {
+ 	struct adb_request req;
+ 
+-	if (via == NULL)
++	if (pmu_state == uninitialized)
+ 		return;
+ 
+ 	local_irq_disable();
+@@ -1721,7 +1721,7 @@ pmu_shutdown(void)
+ {
+ 	struct adb_request req;
+ 
+-	if (via == NULL)
++	if (pmu_state == uninitialized)
+ 		return;
+ 
+ 	local_irq_disable();
+@@ -1749,7 +1749,7 @@ pmu_shutdown(void)
+ int
+ pmu_present(void)
+ {
+-	return via != 0;
++	return pmu_state != uninitialized;
+ }
+ 
+ #if defined(CONFIG_SUSPEND) && defined(CONFIG_PPC32)
+@@ -2415,7 +2415,7 @@ static struct miscdevice pmu_device = {
+ 
+ static int pmu_device_init(void)
+ {
+-	if (!via)
++	if (pmu_state == uninitialized)
+ 		return 0;
+ 	if (misc_register(&pmu_device) < 0)
+ 		printk(KERN_ERR "via-pmu: cannot register misc device.\n");
+-- 
+2.16.4
