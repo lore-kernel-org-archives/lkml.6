@@ -1,178 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id uuNhJZF5GVtLNQAAmS7hNA
-	; Thu, 07 Jun 2018 18:32:47 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id RXtpDkjLGVs2FQAAmS7hNA
+	; Fri, 08 Jun 2018 00:22:19 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 252CF6089E; Thu,  7 Jun 2018 18:32:47 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HEY9qXL0"
+	id 72E5B6074D; Fri,  8 Jun 2018 00:22:19 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 7E052606DD;
-	Thu,  7 Jun 2018 18:32:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7E052606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id E66E9601D2;
+	Fri,  8 Jun 2018 00:22:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E66E9601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936332AbeFGScp (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 14:32:45 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:47025 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936302AbeFGScm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 14:32:42 -0400
-Received: by mail-pg0-f65.google.com with SMTP id d2-v6so5145500pga.13
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 11:32:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=yGeT2z0TEJiRxrbez/GsuqB8RgVtytCBVtTQ7JK4sXk=;
-        b=HEY9qXL0YcX2J/MicPECY+V3ZoGxJP/xLAozSfgprvI3D92IZpm8v4ObDuMESHGzaZ
-         OjxTgmRCC9Zmem1Llyw95kbepoh7KsvzS6MNlWBfgPk1gcn0MQy3nnC1xqtu74v+l2qU
-         IfOsjUYoY/RR7vT641Im4/kZtTR81HpVoaeEoVEV7zWiWDw7hTPmWFpWJnMZmxleJ4S6
-         200zJnowE8s2fQ/pcvbjKK0LyIBGS3kXaDSMq7bgvSe7/FHc2AlkWds4Sc0+au6/FVz/
-         CTee8j0BE4xELO9CeEUBqUnprYHSh+Vhr2+xG5OKV1IqAnydbk67U73nsuV+lod5xp26
-         JbMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=yGeT2z0TEJiRxrbez/GsuqB8RgVtytCBVtTQ7JK4sXk=;
-        b=sb+VoINXdXb68AmUpq1suNSSAyuje2PAI3cIrSxaZqzjoeSuwN1yc5DJEX+L+xDjrN
-         J7Qz/3EfLIIJF6owa8VcLEa896pyiqVkkHeZHZecusx6ElTUeyoPFg+dmXkcR4vHNixN
-         AnGl8lRQejvM8PAhZ2X5DwGjqwvdf+Eyi9ZB5YxmjsvZl3+/Okgb9Z0lK99heES1e3oB
-         /n45TTtpr1P2PXKUobSGibS9WS9ghUHBSI38nLrGKa+tntV47KI1sIxUDI9qglD+x+mh
-         n4DNhx+VbrC1NkCaupqnQIbYXztDudvMlylEvTJmpfvKuFxhPN103I0niAuhvtCAGR90
-         qUZg==
-X-Gm-Message-State: APt69E1pRKmIYqQsuQUGD2ZPzJ+PfE3Zk2D+zI/sCo4CzOSXKGQBYdLo
-        gDJ7pwMXcjfZjTXxHh6K5ucFPQ==
-X-Google-Smtp-Source: ADUXVKIGM8arhElcDh7dZYE268X/tBQJDJ/k5GqXsRFnnWciR39Ccu/nvu8o2N7d99EPc3yHTG8JLw==
-X-Received: by 2002:a62:418b:: with SMTP id g11-v6mr2801235pfd.51.1528396360716;
-        Thu, 07 Jun 2018 11:32:40 -0700 (PDT)
-Received: from ndesaulniers0.svl.corp.google.com ([2620:15c:2a3:1:d33:166f:5b79:14b3])
-        by smtp.gmail.com with ESMTPSA id n76-v6sm6932739pfg.98.2018.06.07.11.32.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Jun 2018 11:32:39 -0700 (PDT)
-From: Nick Desaulniers <ndesaulniers@google.com>
-To: akpm@linux-foundation.org, hpa@zytor.com, mingo@redhat.com,
-        tglx@linutronix.de
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, virtualization@lists.linux-foundation.org,
-        astrachan@google.com, manojgupta@google.com, ghackmann@google.com,
-        sedat.dilek@gmail.com, tstellar@redhat.com, keescook@google.com,
-        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        linux-kbuild@vger.kernel.org, geert@linux-m68k.org,
-        will.deacon@arm.com, mawilcox@microsoft.com, arnd@arndb.de,
-        rientjes@google.com, acme@redhat.com, pombredanne@nexb.com,
-        aryabinin@virtuozzo.com, kstewart@linuxfoundation.org,
-        boris.ostrovsky@oracle.com, jan.kiszka@siemens.com,
-        rostedt@goodmis.org, kirill.shutemov@linux.intel.com,
-        ard.biesheuvel@linaro.org, akataria@vmware.com,
-        brijesh.singh@amd.com, caoj.fnst@cn.fujitsu.com,
-        gregkh@linuxfoundation.org, jarkko.sakkinen@linux.intel.com,
-        jgross@suse.com, jpoimboe@redhat.com, mka@chromium.org,
-        ndesaulniers@google.com, thomas.lendacky@amd.com, tweek@google.com,
-        mjg59@google.com, joe@perches.com,
-        "H. Peter Anvin" <hpa@linux.intel.com>
-Subject: [PATCH v3 2/3] x86/asm: add _ASM_ARG* constants for argument registers to <asm/asm.h>
-Date: Thu,  7 Jun 2018 11:32:18 -0700
-Message-Id: <20180607183219.192973-3-ndesaulniers@google.com>
-X-Mailer: git-send-email 2.17.1.1185.g55be947832-goog
-In-Reply-To: <20180607183219.192973-1-ndesaulniers@google.com>
-References: <20180607183219.192973-1-ndesaulniers@google.com>
+        id S1752610AbeFHAWO (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 20:22:14 -0400
+Received: from mga07.intel.com ([134.134.136.100]:60267 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752300AbeFHAWN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 20:22:13 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 17:22:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,488,1520924400";
+   d="scan'208";a="235370015"
+Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.61])
+  by fmsmga005.fm.intel.com with ESMTP; 07 Jun 2018 17:22:09 -0700
+Date: Fri, 8 Jun 2018 08:11:08 +0800
+From: Wu Hao <hao.wu@intel.com>
+To: Alan Tull <atull@kernel.org>
+Cc: Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api@vger.kernel.org, "Kang, Luwei" <luwei.kang@intel.com>,
+        "Zhang, Yi Z" <yi.z.zhang@intel.com>,
+        Tim Whisonant <tim.whisonant@intel.com>,
+        Enno Luebbers <enno.luebbers@intel.com>,
+        Shiva Rao <shiva.rao@intel.com>,
+        Christopher Rauer <christopher.rauer@intel.com>,
+        Xiao Guangrong <guangrong.xiao@linux.intel.com>
+Subject: Re: [PATCH v5 07/28] fpga: dfl: add chardev support for feature
+ devices
+Message-ID: <20180608001108.GA20571@hao-dev>
+References: <1525229431-3087-1-git-send-email-hao.wu@intel.com>
+ <1525229431-3087-8-git-send-email-hao.wu@intel.com>
+ <CANk1AXRQx=QtwmSKuWiGprMcfjNnUWcBHNy-hTfP+JaQZsJLLA@mail.gmail.com>
+ <20180606122457.GB7681@hao-dev>
+ <CANk1AXTmpa1P55qCwZhyn=CGoa3v_hJ-KFCQsy7kMTBpULc6hQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANk1AXTmpa1P55qCwZhyn=CGoa3v_hJ-KFCQsy7kMTBpULc6hQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "H. Peter Anvin" <hpa@linux.intel.com>
+On Thu, Jun 07, 2018 at 01:03:18PM -0500, Alan Tull wrote:
+> On Wed, Jun 6, 2018 at 7:24 AM, Wu Hao <hao.wu@intel.com> wrote:
+> 
+> Hi Hao,
+> 
+> One more...
+> 
+> >> > +static dev_t dfl_get_devt(enum dfl_fpga_devt_type type, int id)
+> >> > +{
+> >> > +       WARN_ON(type >= DFL_FPGA_DEVT_MAX);
+> >> > +
+> >> > +       return MKDEV(MAJOR(dfl_chrdevs[type].devt), id);
+> >> > +}
+> >> > +
+> >> > +/**
+> >> > + * dfl_fpga_register_dev_ops - register cdev ops for feature dev
+> >> > + *
+> >> > + * @pdev: feature dev.
+> >> > + * @fops: file operations for feature dev's cdev.
+> >> > + * @owner: owning module/driver.
+> >> > + *
+> >> > + * Return: 0 on success, negative error code otherwise.
+> >> > + */
+> >> > +int dfl_fpga_register_dev_ops(struct platform_device *pdev,
+> >> > +                             const struct file_operations *fops,
+> >> > +                             struct module *owner)
+> >> > +{
+> >> > +       struct dfl_feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
+> >> > +
+> >> > +       cdev_init(&pdata->cdev, fops);
+> >> > +       pdata->cdev.owner = owner;
+> >> > +
+> >> > +       /*
+> >> > +        * set parent to the feature device so that its refcount is
+> >> > +        * decreased after the last refcount of cdev is gone, that
+> >> > +        * makes sure the feature device is valid during device
+> >> > +        * file's life-cycle.
+> >> > +        */
+> >> > +       pdata->cdev.kobj.parent = &pdev->dev.kobj;
+> >> > +
+> >> > +       return cdev_add(&pdata->cdev, pdev->dev.devt, 1);
+> >> > +}
+> >> > +EXPORT_SYMBOL_GPL(dfl_fpga_register_dev_ops);
+> >> > +
+> >> > +/**
+> >> > + * dfl_fpga_unregister_dev_ops - unregister cdev ops for feature dev
+> >> > + * @pdev: feature dev.
+> >> > + */
+> >> > +void dfl_fpga_unregister_dev_ops(struct platform_device *pdev)
+> >> > +{
+> >> > +       struct dfl_feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
+> >> > +
+> >> > +       cdev_del(&pdata->cdev);
+> >> > +}
+> >> > +EXPORT_SYMBOL_GPL(dfl_fpga_unregister_dev_ops);
+> 
+> How about dfl_fpga_dev_ops_register/unregister?
 
-i386 and x86-64 uses different registers for arguments; make them
-available so we don't have to #ifdef in the actual code.
+Sure, will fix this in the v6. Thanks.
 
-Native size and specified size (q, l, w, b) versions are provided.
+Hao
 
-Suggested-by: Sedat Dilek <sedat.dilek@gmail.com>
-Signed-off-by: H. Peter Anvin <hpa@linux.intel.com>
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
----
- arch/x86/include/asm/asm.h | 59 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
-
-diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
-index 219faaec51df..990770f9e76b 100644
---- a/arch/x86/include/asm/asm.h
-+++ b/arch/x86/include/asm/asm.h
-@@ -46,6 +46,65 @@
- #define _ASM_SI		__ASM_REG(si)
- #define _ASM_DI		__ASM_REG(di)
- 
-+#ifndef __x86_64__
-+/* 32 bit */
-+
-+#define _ASM_ARG1	_ASM_AX
-+#define _ASM_ARG2	_ASM_DX
-+#define _ASM_ARG3	_ASM_CX
-+
-+#define _ASM_ARG1L	eax
-+#define _ASM_ARG2L	edx
-+#define _ASM_ARG3L	ecx
-+
-+#define _ASM_ARG1W	ax
-+#define _ASM_ARG2W	dx
-+#define _ASM_ARG3W	cx
-+
-+#define _ASM_ARG1B	al
-+#define _ASM_ARG2B	dl
-+#define _ASM_ARG3B	cl
-+
-+#else
-+/* 64 bit */
-+
-+#define _ASM_ARG1	_ASM_DI
-+#define _ASM_ARG2	_ASM_SI
-+#define _ASM_ARG3	_ASM_DX
-+#define _ASM_ARG4	_ASM_CX
-+#define _ASM_ARG5	r8
-+#define _ASM_ARG6	r9
-+
-+#define _ASM_ARG1Q	rdi
-+#define _ASM_ARG2Q	rsi
-+#define _ASM_ARG3Q	rdx
-+#define _ASM_ARG4Q	rcx
-+#define _ASM_ARG5Q	r8
-+#define _ASM_ARG6Q	r9
-+
-+#define _ASM_ARG1L	edi
-+#define _ASM_ARG2L	esi
-+#define _ASM_ARG3L	edx
-+#define _ASM_ARG4L	ecx
-+#define _ASM_ARG5L	r8d
-+#define _ASM_ARG6L	r9d
-+
-+#define _ASM_ARG1W	di
-+#define _ASM_ARG2W	si
-+#define _ASM_ARG3W	dx
-+#define _ASM_ARG4W	cx
-+#define _ASM_ARG5W	r8w
-+#define _ASM_ARG6W	r9w
-+
-+#define _ASM_ARG1B	dil
-+#define _ASM_ARG2B	sil
-+#define _ASM_ARG3B	dl
-+#define _ASM_ARG4B	cl
-+#define _ASM_ARG5B	r8b
-+#define _ASM_ARG6B	r9b
-+
-+#endif
-+
- /*
-  * Macros to generate condition code outputs from inline assembly,
-  * The output operand must be type "bool".
--- 
-2.17.1.1185.g55be947832-goog
+> 
+> Thanks,
+> Alan
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-fpga" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
