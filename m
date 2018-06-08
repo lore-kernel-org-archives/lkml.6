@@ -1,153 +1,158 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id xcE3AaUQHlvCTQAAmS7hNA
-	; Mon, 11 Jun 2018 06:03:20 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ZIfkIWuaGlv3OAAAmS7hNA
+	; Fri, 08 Jun 2018 15:02:03 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 47B88607A4; Mon, 11 Jun 2018 06:03:20 +0000 (UTC)
+	id 6D981607E4; Fri,  8 Jun 2018 15:02:03 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="f/mJNZNH"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xI0dNiot"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 9C43C60791;
-	Mon, 11 Jun 2018 06:03:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9C43C60791
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id D2D97601D2;
+	Fri,  8 Jun 2018 15:02:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D2D97601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932295AbeFKGDO (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 02:03:14 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:54430 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753899AbeFKGDM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 02:03:12 -0400
-Received: by mail-wm0-f66.google.com with SMTP id o13-v6so12416263wmf.4
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Jun 2018 23:03:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=HcadxBjlA8VuO8oHYdJZPtEhCagymzn/NpDt8l6U0Jo=;
-        b=f/mJNZNHXXSeOq7zM58BFJv4cNveLVmq6OdCj8wTuYAPkfbaw7haoWnXv7QSpfKi4M
-         9hnpS8o2dykS1QzhotT/pCfjkTmj5q9+QOZbHyVNxwYiYq4Zk2Zg89CYcUd0y4rQqaus
-         PAckXqmXGK8+A+8LFXGain7gA1Bvm8RRoUm3w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=HcadxBjlA8VuO8oHYdJZPtEhCagymzn/NpDt8l6U0Jo=;
-        b=KTH70ehip9/WC0Hw3xsTh+b2ZemhU7f8pruCKF7iAaDuN4VQjFAQI/jEVkE6beVN4i
-         c82+8lY7GR5mpWRgXFKEvZOltQLPh9ahH4dmswk1w8oGv9Txkpx3dTuJiLZBTlYJevdt
-         BGDicC8Z+5GGeXViQpfJsshXu3ePf5QmKdxC4mHJ7lEpWHW9VRnuYxRKBs4Im0R4piDo
-         XiOUiTLMn5bCOVK8yiB/J06XCFbAW9T18xmp23PkgpXCjh5QCuqcW4S6EctO+coYqr6B
-         cIPM2rWlXK5H1+h3jQl/sG8PkXWUGanxAiyHAUiOVGwXwOOroMABv/yvnLp5AQEY4qop
-         KWPA==
-X-Gm-Message-State: APt69E1ON1GyJF5KWRFejAnVwEQW/I0wmIxcMcH+XP/8LJ8WS0FcaETQ
-        Y0vCJ2kCjo4VmA/BCDcLhp3laA==
-X-Google-Smtp-Source: ADUXVKJ7RVBbdm3BU8pmSVV0uhIGKng4uUnPGuWclITfinmsQUsrmwSoJaAlQsm1kS5K1VWYF5XK6g==
-X-Received: by 2002:a1c:3682:: with SMTP id y2-v6mr6656323wmh.59.1528696990843;
-        Sun, 10 Jun 2018 23:03:10 -0700 (PDT)
-Received: from dell ([2.31.163.53])
-        by smtp.gmail.com with ESMTPSA id i46-v6sm79421342wra.36.2018.06.10.23.03.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 10 Jun 2018 23:03:10 -0700 (PDT)
-Date: Mon, 11 Jun 2018 07:03:08 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Hans Verkuil <hansverk@cisco.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, airlied@linux.ie,
-        hans.verkuil@cisco.com, olof@lixom.net, seanpaul@google.com,
-        sadolfsson@google.com, felixe@google.com, bleung@google.com,
-        darekm@google.com, marcheu@chromium.org, fparent@baylibre.com,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        eballetbo@gmail.com
-Subject: Re: [PATCH v7 0/6] Add ChromeOS EC CEC Support
-Message-ID: <20180611060308.GB5278@dell>
-References: <1527841154-24832-1-git-send-email-narmstrong@baylibre.com>
- <04598b47-5099-6695-da43-6e7148145cfa@xs4all.nl>
- <55c2c02d-5675-0821-97ec-6a805659b807@baylibre.com>
- <898f025f-9c59-be61-a2b4-5fbbcbc659c2@cisco.com>
+        id S1752805AbeFHPCA (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 11:02:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40592 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751905AbeFHPB6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 11:01:58 -0400
+Received: from mail-wm0-f53.google.com (mail-wm0-f53.google.com [74.125.82.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7EB35208B1
+        for <linux-kernel@vger.kernel.org>; Fri,  8 Jun 2018 15:01:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528470117;
+        bh=oPC86fbNyuCunakBiXdzs4ozNJN/bNwMdMGWPHNb150=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=xI0dNiotMzCPNZPDpj/0DJ9Q/X8Sz02E8yHMaV6zKfk3KD53WLRFXkh90pIjXKcc6
+         qDMglo/XAednt71wV4NsmnKjmh1CBCjw1xWYSE/9bhs7MU4AGijngrjD9Dc/2+yKSa
+         hLmXJWseiPLJcIOObF+jrDQZXzi3v0HRgp4HhhKs=
+Received: by mail-wm0-f53.google.com with SMTP id e16-v6so3893776wmd.0
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 08:01:57 -0700 (PDT)
+X-Gm-Message-State: APt69E1Ldt1gCorJoL1KBT8U+fBZ1L3wNOL+kRcPvYIHjtHOPPjYWfjv
+        cwjwepEBhOmhLqmC637EuitfUo8phXjvPb8SlNVEaw==
+X-Google-Smtp-Source: ADUXVKJGVKopITVyJftddJYgYLjZM0xr023R2eMHWBuya+yLL1g6NNia5jOuU/uBUwr4wTyg7cFwZLI2dkibGAJ9b2Q=
+X-Received: by 2002:a1c:f902:: with SMTP id x2-v6mr1705545wmh.116.1528470115793;
+ Fri, 08 Jun 2018 08:01:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <898f025f-9c59-be61-a2b4-5fbbcbc659c2@cisco.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20180607143807.3611-1-yu-cheng.yu@intel.com> <20180607143807.3611-5-yu-cheng.yu@intel.com>
+ <CALCETrUqXvh2FDXe6bveP10TFpzptEyQe2=mdfZFGKU0T+NXsA@mail.gmail.com>
+ <3c1bdf85-0c52-39ed-a799-e26ac0e52391@redhat.com> <CALCETrWPDXpbVcuFK_1M5DtaCOW_LSf-XHFAD0vpc735oFWLPg@mail.gmail.com>
+ <6ee29e8b-4a0a-3459-a1ee-03923ba4e15d@redhat.com>
+In-Reply-To: <6ee29e8b-4a0a-3459-a1ee-03923ba4e15d@redhat.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Fri, 8 Jun 2018 08:01:43 -0700
+X-Gmail-Original-Message-ID: <CALCETrV_V68nVhCpUSGXrwUKCu4utbdp01snmG=G=+_xAo0KJA@mail.gmail.com>
+Message-ID: <CALCETrV_V68nVhCpUSGXrwUKCu4utbdp01snmG=G=+_xAo0KJA@mail.gmail.com>
+Subject: Re: [PATCH 04/10] x86/cet: Handle thread shadow stack
+To: Florian Weimer <fweimer@redhat.com>
+Cc: Andrew Lutomirski <luto@kernel.org>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        mike.kravetz@oracle.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 08 Jun 2018, Hans Verkuil wrote:
-> On 08/06/18 10:17, Neil Armstrong wrote:
-> > On 08/06/2018 09:53, Hans Verkuil wrote:
-> >> On 06/01/2018 10:19 AM, Neil Armstrong wrote:
-> >>> Hi All,
+On Fri, Jun 8, 2018 at 7:53 AM Florian Weimer <fweimer@redhat.com> wrote:
+>
+> On 06/07/2018 10:53 PM, Andy Lutomirski wrote:
+> > On Thu, Jun 7, 2018 at 12:47 PM Florian Weimer <fweimer@redhat.com> wro=
+te:
+> >>
+> >> On 06/07/2018 08:21 PM, Andy Lutomirski wrote:
+> >>> On Thu, Jun 7, 2018 at 7:41 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wr=
+ote:
+> >>>>
+> >>>> When fork() specifies CLONE_VM but not CLONE_VFORK, the child
+> >>>> needs a separate program stack and a separate shadow stack.
+> >>>> This patch handles allocation and freeing of the thread shadow
+> >>>> stack.
 > >>>
-> >>> The new Google "Fizz" Intel-based ChromeOS device is gaining CEC support
-> >>> through it's Embedded Controller, to enable the Linux CEC Core to communicate
-> >>> with it and get the CEC Physical Address from the correct HDMI Connector, the
-> >>> following must be added/changed:
-> >>> - Add the CEC sub-device registration in the ChromeOS EC MFD Driver
-> >>> - Add the CEC related commands and events definitions into the EC MFD driver
-> >>> - Add a way to get a CEC notifier with it's (optional) connector name
-> >>> - Add the CEC notifier to the i915 HDMI driver
-> >>> - Add the proper ChromeOS EC CEC Driver
+> >>> Aha -- you're trying to make this automatic.  I'm not convinced this
+> >>> is a good idea.  The Linux kernel has a long and storied history of
+> >>> enabling new hardware features in ways that are almost entirely
+> >>> useless for userspace.
 > >>>
-> >>> The CEC notifier with the connector name is the tricky point, since even on
-> >>> Device-Tree platforms, there is no way to distinguish between multiple HDMI
-> >>> connectors from the same DRM driver. The solution I implemented is pretty
-> >>> simple and only adds an optional connector name to eventually distinguish
-> >>> an HDMI connector notifier from another if they share the same device.
+> >>> Florian, do you have any thoughts on how the user/kernel interaction
+> >>> for the shadow stack should work?
 > >>
-> >> This looks good to me, which brings me to the next question: how to merge
-> >> this?
+> >> I have not looked at this in detail, have not played with the emulator=
+,
+> >> and have not been privy to any discussions before these patches have
+> >> been posted, however =E2=80=A6
 > >>
-> >> It touches on three subsystems (media, drm, mfd), so that makes this
-> >> tricky.
-> >>
-> >> I think there are two options: either the whole series goes through the
-> >> media tree, or patches 1+2 go through drm and 3-6 through media. If there
-> >> is a high chance of conflicts in the mfd code, then it is also an option to
-> >> have patches 3-6 go through the mfd subsystem.
-> > 
-> > I think patches 3-6 should go in the mfd tree, Lee is used to handle this,
-> > then I think the rest could go in the media tree.
-> > 
-> > Lee, do you think it would be possible to have an immutable branch with patches 3-6 ?
-> > 
-> > Could we have an immutable branch from media tree with patch 1 to be merged in
-> > the i915 tree for patch 2 ?
-> > 
-> > Or patch 1+2 could me merged into the i915 tree and generate an immutable branch
-> 
-> I think patches 1+2 can just go to the i915 tree. The i915 driver changes often,
-> so going through that tree makes sense. The cec-notifier code is unlikely to change,
-> and I am fine with that patch going through i915.
-> 
-> > for media to merge the mfd branch + patch 7 ?
-> 
-> Patch 7? I only count 6?
-> 
-> If 1+2 go through drm and 3-6 go through mfd, then media isn't affected at all.
-> There is chance of a conflict when this is eventually pushed to mainline for
-> the media Kconfig, but that's all.
+> >> I believe that we want as little code in userspace for shadow stack
+> >> management as possible.  One concern I have is that even with the code
+> >> we arguably need for various kinds of stack unwinding, we might have
+> >> unwittingly built a generic trampoline that leads to full CET bypass.
+> >
+> > I was imagining an API like "allocate a shadow stack for the current
+> > thread, fail if the current thread already has one, and turn on the
+> > shadow stack".  glibc would call clone and then call this ABI pretty
+> > much immediately (i.e. before making any calls from which it expects
+> > to return).
+>
+> Ahh.  So you propose not to enable shadow stack enforcement on the new
+> thread even if it is enabled for the current thread?  For the cases
+> where CLONE_VM is involved?
+>
+> It will still need a new assembler wrapper which sets up the shadow
+> stack, and it's probably required to disable signals.
+>
+> I think it should be reasonable safe and actually implementable.  But
+> the benefits are not immediately obvious to me.
 
-What are the *build* dependencies within the set?
+Doing it this way would have been my first incliniation.  It would
+avoid all the oddities of the kernel magically creating a VMA when
+clone() is called, guessing the shadow stack size, etc.  But I'm okay
+with having the kernel do it automatically, too.  I think it would be
+very nice to have a way for user code to find out the size of the
+shadow stack and change it, though.  (And relocate it, but maybe
+that's impossible.  The CET documentation doesn't have a clear
+description of the shadow stack layout.)
 
-I'd be happy to send out a pull-request for either all of the patches,
-or just the MFD changes once I've had chance to review them.
+>
+> > We definitely want strong enough user control that tools like CRIU can
+> > continue to work.  I haven't looked at the SDM recently enough to
+> > remember for sure, but I'm reasonably confident that user code can
+> > learn the address of its own shadow stack.  If nothing else, CRIU
+> > needs to be able to restore from a context where there's a signal on
+> > the stack and the signal frame contains a shadow stack pointer.
+>
+> CRIU also needs the shadow stack *contents*, which shouldn't be directly
+> available to the process.  So it needs very special interfaces anyway.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+True.  I proposed in a different email that ptrace() have full control
+of the shadow stack (read, write, lock, unlock, etc).
+
+>
+> Does CRIU implement MPX support?
+
+Dunno.  But given that MPX seems to be dying, I'm not sure it matters.
+
+--Andy
