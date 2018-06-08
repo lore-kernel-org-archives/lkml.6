@@ -1,275 +1,170 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id LHRlIyLeG1vkUgAAmS7hNA
-	; Sat, 09 Jun 2018 14:03:30 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id WDMCDzZ4GlugbQAAmS7hNA
+	; Fri, 08 Jun 2018 12:36:06 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 4C292608C9; Sat,  9 Jun 2018 14:03:30 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PCDkJURh"
+	id C48C4608BA; Fri,  8 Jun 2018 12:36:05 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 9950C601D2;
-	Sat,  9 Jun 2018 14:03:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9950C601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 9FE85608C1;
+	Fri,  8 Jun 2018 12:36:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9FE85608C1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753503AbeFIOD1 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 10:03:27 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:45833 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753478AbeFIODX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 10:03:23 -0400
-Received: by mail-lf0-f66.google.com with SMTP id n3-v6so24169283lfe.12;
-        Sat, 09 Jun 2018 07:03:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+QPyrYS4WwtnWSitmH1oh1ZsjI4BS+MGw3iyHI7mubc=;
-        b=PCDkJURhMh7lxQrUlpcUWQLc3zgH9D+8bIDJ/b/LX5HiG9nkV6PiuWUZcz5sceqacH
-         jMs8b+P3Zk7ozrAFmVnGePR9c8NZ0OIEgxERW8jl7ZDPPr+nkRt9RRVI8GIkD2rQsIw4
-         oMVHCvwsMtbzdYo2O15ASgLlLxrOuTfuTUnX+teBE11mVvRsrn0mYKcYijp38vbEXDOf
-         lP2LiVb/lfvxAoYZVK3lw72fJqyZieGY1J2Duo1FHsxItQwTxjl/Tptr7Hqm54zCareC
-         dHAYi7PWJnQ78y/mCXzBNuRLm+NBqaVz0VGAYO20aQTUWHySCrFVBmvm/Pi2NoKCksae
-         cByA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=+QPyrYS4WwtnWSitmH1oh1ZsjI4BS+MGw3iyHI7mubc=;
-        b=dgmMekNJsAaTloSMqYIX21lVo1l7JujG+z6x2xg1oCweiw3OfJmxHwmJK1pb+pxE8C
-         p3PHYdMkjOdojzY7JdMzbqv9jq5r1oUN8SNb4hf42nAy226yrSFpUGA409kEKFSFZbHm
-         IUl7ojEChDFap/9GF8lsO79LJC4pQPtWEgg2Hqs9400VdwbgrDfsJFboUgTuVWVRm1nF
-         m8ZOmdY+o8BxaLDj9li4y7qDBVmnD9nOhNIDkevP2GgrOuDRvMAz976xph2gyawahc9T
-         VGF754BfYI5XTl1zt50U1756TjZrEStMNJIY4Nuh7wPvp50JcjxfyP8BnUK/cwSJLc4P
-         2Azg==
-X-Gm-Message-State: APt69E0qt31oTp30M/vNzlxBjMjSz53oBr8ybPac7H9XN/fUtKhoIRXP
-        q2xDJ9VEp+WA6J9NfB37CIk=
-X-Google-Smtp-Source: ADUXVKJd/7+MMEInWPMeQgAKEkv2DQ+OewK+CjeSMVYWgZqgKMJH7hJQymCMN9KtzXPsHxhp37RdvA==
-X-Received: by 2002:a19:1c5:: with SMTP id 188-v6mr6705941lfb.67.1528553000773;
-        Sat, 09 Jun 2018 07:03:20 -0700 (PDT)
-Received: from localhost.localdomain (apn-31-0-40-98.dynamic.gprs.plus.pl. [31.0.40.98])
-        by smtp.gmail.com with ESMTPSA id n84-v6sm4477727lfi.19.2018.06.09.07.03.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 09 Jun 2018 07:03:20 -0700 (PDT)
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc: "David S . Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: [PATCH 09/10] Input: ams_delta_serio: use IRQ resource
-Date: Sat,  9 Jun 2018 16:02:23 +0200
-Message-Id: <20180609140224.32606-9-jmkrzyszt@gmail.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180609140224.32606-1-jmkrzyszt@gmail.com>
-References: <20180609140224.32606-1-jmkrzyszt@gmail.com>
+        id S1752356AbeFHMgC convert rfc822-to-8bit (ORCPT
+        <rfc822;monsieuricon@codeaurora.org> + 25 others);
+        Fri, 8 Jun 2018 08:36:02 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:40166 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751565AbeFHMgB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 08:36:01 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 94AA4207C0; Fri,  8 Jun 2018 14:35:59 +0200 (CEST)
+Received: from xps13 (AAubervilliers-681-1-128-7.w90-88.abo.wanadoo.fr [90.88.9.7])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 228DD2069C;
+        Fri,  8 Jun 2018 14:35:49 +0200 (CEST)
+Date: Fri, 8 Jun 2018 14:35:49 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Naga Sureshkumar Relli <nagasure@xilinx.com>
+Cc: "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "wmw2@infradead.org" <wmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "mmayer@broadcom.com" <mmayer@broadcom.com>,
+        "rogerq@ti.com" <rogerq@ti.com>,
+        "ladis@linux-mips.org" <ladis@linux-mips.org>,
+        "ada@thorsis.com" <ada@thorsis.com>,
+        "honghui.zhang@mediatek.com" <honghui.zhang@mediatek.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "nagasureshkumarrelli@gmail.com" <nagasureshkumarrelli@gmail.com>
+Subject: Re: [LINUX PATCH v9 4/4] mtd: rawnand: pl353: Add basic driver for
+ arm pl353 smc nand interface
+Message-ID: <20180608143549.04400f92@xps13>
+In-Reply-To: <MWHPR02MB26238A3344D0F611D8D6B0DAAF7B0@MWHPR02MB2623.namprd02.prod.outlook.com>
+References: <1528271382-21690-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <1528271382-21690-5-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <20180607215949.58e2d15d@xps13>
+        <MWHPR02MB26238A3344D0F611D8D6B0DAAF7B0@MWHPR02MB2623.namprd02.prod.outlook.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver still obtains IRQ number from a hardcoded GPIO.  Use IRQ
-resource instead.
+Hi Naga,
 
-For this to work on Amstrad Delta, add the IRQ resource to
-ams-delta-serio platform device structure.  Obtain the IRQ number
-assigned to "keyboard_clk" GPIO pin from FIQ initialization routine.
+> > > +		ecc->read_page = pl353_nand_read_page_hwecc;
+> > > +		ecc->size = PL353_NAND_ECC_SIZE;
+> > > +		ecc->write_page = pl353_nand_write_page_hwecc;
+> > > +		pl353_smc_set_ecc_pg_size(mtd->writesize);
+> > > +		switch (mtd->writesize) {
+> > > +		case SZ_512:
+> > > +		case SZ_1K:
+> > > +		case SZ_2K:
+> > > +			pl353_smc_set_ecc_mode(PL353_SMC_ECCMODE_APB);
+> > > +			break;
+> > > +		default:
+> > > +			/*
+> > > +			 * The software ECC routines won't work with the
+> > > +			 * SMC controller
+> > > +			 */
+> > > +			ecc->calculate = nand_calculate_ecc;
+> > > +			ecc->correct = nand_correct_data;
+> > > +			ecc->size = 256;
+> > > +			break;
+> > > +		}
+> > > +		if (mtd->writesize <= SZ_512)
+> > > +			xnand->addr_cycles = 1;
+> > > +		else
+> > > +			xnand->addr_cycles = 2;
+> > > +
+> > > +		if (chip->options & NAND_ROW_ADDR_3)
+> > > +			xnand->addr_cycles += 3;
+> > > +		else
+> > > +			xnand->addr_cycles += 2;
+> > > +
+> > > +		if (mtd->oobsize == 16)
+> > > +			mtd_set_ooblayout(mtd, &pl353_ecc_ooblayout16_ops);
+> > > +		else if (mtd->oobsize == 64)
+> > > +			mtd_set_ooblayout(mtd, &pl353_ecc_ooblayout64_ops);  
+> > 
+> > else?  
+> You mean to say, add an error condition?
 
-As a benefit, the driver no longer needs to include
-<mach/board-ams-delta.h>.
+I do.
 
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
----
- arch/arm/mach-omap1/ams-delta-fiq.c   |  8 +++++++-
- arch/arm/mach-omap1/ams-delta-fiq.h   |  3 ++-
- arch/arm/mach-omap1/board-ams-delta.c | 17 ++++++++++++++++-
- drivers/input/serio/ams_delta_serio.c | 28 ++++++++++------------------
- 4 files changed, 35 insertions(+), 21 deletions(-)
+> >   
+> > > +	}
+> > > +}
+> > > +
+> > > +/**
+> > > + * pl353_nand_probe - Probe method for the NAND driver
+> > > + * @pdev:	Pointer to the platform_device structure
+> > > + *
+> > > + * This function initializes the driver data structures and the hardware.
+> > > + *
+> > > + * Return:	0 on success or error value on failure
+> > > + */
+> > > +static int pl353_nand_probe(struct platform_device *pdev) {
+> > > +	struct pl353_nand_info *xnand;  
+> > 
+> > xnand is a strange name, more and more because its a bout NAND controller data, not NAND
+> > chip.  
+> We added this name to represent Xilinx Nand(xnand), 
+> >   
 
-diff --git a/arch/arm/mach-omap1/ams-delta-fiq.c b/arch/arm/mach-omap1/ams-delta-fiq.c
-index e72935034d42..e9d350117240 100644
---- a/arch/arm/mach-omap1/ams-delta-fiq.c
-+++ b/arch/arm/mach-omap1/ams-delta-fiq.c
-@@ -20,6 +20,7 @@
- #include <linux/module.h>
- #include <linux/io.h>
- #include <linux/platform_data/ams-delta-fiq.h>
-+#include <linux/platform_device.h>
- 
- #include <mach/board-ams-delta.h>
- 
-@@ -84,7 +85,8 @@ static irqreturn_t deferred_fiq(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
--void __init ams_delta_init_fiq(struct gpio_chip *chip)
-+void __init ams_delta_init_fiq(struct gpio_chip *chip,
-+			       struct platform_device *serio)
- {
- 	struct gpio_desc *gpiod, *data = NULL, *clk = NULL;
- 	void *fiqhandler_start;
-@@ -201,6 +203,10 @@ void __init ams_delta_init_fiq(struct gpio_chip *chip)
- 	val = omap_readl(OMAP_IH1_BASE + offset) | 1;
- 	omap_writel(val, OMAP_IH1_BASE + offset);
- 
-+	/* Initialize serio device IRQ resource */
-+	serio->resource[0].start = gpiod_to_irq(clk);
-+	serio->resource[0].end = serio->resource[0].start;
-+
- 	return;
- 
- out_gpio:
-diff --git a/arch/arm/mach-omap1/ams-delta-fiq.h b/arch/arm/mach-omap1/ams-delta-fiq.h
-index 3f691d68aa62..fd76df3cce37 100644
---- a/arch/arm/mach-omap1/ams-delta-fiq.h
-+++ b/arch/arm/mach-omap1/ams-delta-fiq.h
-@@ -35,7 +35,8 @@
- #ifndef __ASSEMBLER__
- extern unsigned char qwerty_fiqin_start, qwerty_fiqin_end;
- 
--extern void __init ams_delta_init_fiq(struct gpio_chip *chip);
-+extern void __init ams_delta_init_fiq(struct gpio_chip *chip,
-+				      struct platform_device *pdev);
- #endif
- 
- #endif
-diff --git a/arch/arm/mach-omap1/board-ams-delta.c b/arch/arm/mach-omap1/board-ams-delta.c
-index fe9a3e7cbfeb..84177ba3e39a 100644
---- a/arch/arm/mach-omap1/board-ams-delta.c
-+++ b/arch/arm/mach-omap1/board-ams-delta.c
-@@ -504,9 +504,24 @@ static struct platform_device cx20442_codec_device = {
- 	.id     = -1,
- };
- 
-+static struct resource ams_delta_serio_resources[] = {
-+	{
-+		.flags	= IORESOURCE_IRQ,
-+		/*
-+		 * Initialize IRQ resource with invalid IRQ number.
-+		 * It will be replaced with dynamically allocated GPIO IRQ
-+		 * obtained from GPIO chip as soon as the chip is available.
-+		 */
-+		.start	= -EINVAL,
-+		.end	= -EINVAL,
-+	},
-+};
-+
- static struct platform_device ams_delta_serio_device = {
- 	.name		= "ams-delta-serio",
- 	.id		= PLATFORM_DEVID_NONE,
-+	.num_resources	= ARRAY_SIZE(ams_delta_serio_resources),
-+	.resource	= ams_delta_serio_resources,
- };
- 
- static struct regulator_consumer_supply keybrd_pwr_consumers[] = {
-@@ -615,7 +630,7 @@ static void __init omap_gpio_deps_init(void)
- 		return;
- 	}
- 
--	ams_delta_init_fiq(chip);
-+	ams_delta_init_fiq(chip, &ams_delta_serio_device);
- }
- 
- static void __init ams_delta_init(void)
-diff --git a/drivers/input/serio/ams_delta_serio.c b/drivers/input/serio/ams_delta_serio.c
-index 5d0bd2005648..03640b171516 100644
---- a/drivers/input/serio/ams_delta_serio.c
-+++ b/drivers/input/serio/ams_delta_serio.c
-@@ -20,7 +20,6 @@
-  * However, when used with the E3 mailboard that producecs non-standard
-  * scancodes, a custom key table must be prepared and loaded from userspace.
-  */
--#include <linux/gpio.h>
- #include <linux/irq.h>
- #include <linux/platform_data/ams-delta-fiq.h>
- #include <linux/platform_device.h>
-@@ -29,8 +28,6 @@
- #include <linux/slab.h>
- #include <linux/module.h>
- 
--#include <mach/board-ams-delta.h>
--
- #define DRIVER_NAME	"ams-delta-serio"
- 
- MODULE_AUTHOR("Matt Callow");
-@@ -113,7 +110,7 @@ static int ams_delta_serio_init(struct platform_device *pdev)
- {
- 	struct ams_delta_serio *priv;
- 	struct serio *serio;
--	int err;
-+	int irq, err;
- 
- 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
-@@ -129,9 +126,12 @@ static int ams_delta_serio_init(struct platform_device *pdev)
- 		return err;
- 	}
- 
--	err = request_irq(gpio_to_irq(AMS_DELTA_GPIO_PIN_KEYBRD_CLK),
--			ams_delta_serio_interrupt, IRQ_TYPE_EDGE_RISING,
--			DRIVER_NAME, priv);
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0)
-+		return -ENXIO;
-+
-+	err = devm_request_irq(&pdev->dev, irq, ams_delta_serio_interrupt,
-+			       IRQ_TYPE_EDGE_RISING, DRIVER_NAME, priv);
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "IRQ request failed (%d)\n", err);
- 		return err;
-@@ -141,14 +141,11 @@ static int ams_delta_serio_init(struct platform_device *pdev)
- 	 * at FIQ level, switch back from edge to simple interrupt handler
- 	 * to avoid bad interaction.
- 	 */
--	irq_set_handler(gpio_to_irq(AMS_DELTA_GPIO_PIN_KEYBRD_CLK),
--			handle_simple_irq);
-+	irq_set_handler(irq, handle_simple_irq);
- 
- 	serio = kzalloc(sizeof(*serio), GFP_KERNEL);
--	if (!serio) {
--		err = -ENOMEM;
--		goto irq;
--	}
-+	if (!serio)
-+		return -ENOMEM;
- 
- 	priv->serio = serio;
- 
-@@ -167,10 +164,6 @@ static int ams_delta_serio_init(struct platform_device *pdev)
- 	dev_info(&serio->dev, "%s\n", serio->name);
- 
- 	return 0;
--
--irq:
--	free_irq(gpio_to_irq(AMS_DELTA_GPIO_PIN_KEYBRD_CLK), priv);
--	return err;
- }
- 
- static int ams_delta_serio_exit(struct platform_device *pdev)
-@@ -178,7 +171,6 @@ static int ams_delta_serio_exit(struct platform_device *pdev)
- 	struct ams_delta_serio *priv = platform_get_drvdata(pdev);
- 
- 	serio_unregister_port(priv->serio);
--	free_irq(gpio_to_irq(AMS_DELTA_GPIO_PIN_KEYBRD_CLK), 0);
- 
- 	return 0;
- }
--- 
-2.16.1
+I see where the x comes from.
+
+Maybe just nfc (for NAND flash controller) or xnfc if you prefer. What
+I want is to clearly make the distinction between what is a NAND chip,
+what is a NAND controller.
+
+> > > +	struct mtd_info *mtd;
+> > > +	struct nand_chip *nand_chip;  
+> > 
+> > This one you can call it just "nand" or "chip".  
+> Ok, I will update.
+> 
+> >   
+> > > +	struct resource *res;
+> > > +
+> > > +	xnand = devm_kzalloc(&pdev->dev, sizeof(*xnand), GFP_KERNEL);
+> > > +	if (!xnand)
+> > > +		return -ENOMEM;
+> > > +
+> > > +	/* Map physical address of NAND flash */
+> > > +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > > +	xnand->nand_base = devm_ioremap_resource(&pdev->dev, res);
+> > > +	if (IS_ERR(xnand->nand_base))
+> > > +		return PTR_ERR(xnand->nand_base);
+> > > +
+> > > +	nand_chip = &xnand->chip;
+> > > +	mtd = nand_to_mtd(nand_chip);
+> > > +	nand_chip->exec_op = pl353_nfc_exec_op;
+> > > +	nand_set_controller_data(nand_chip, xnand);
+> > > +	mtd->priv = nand_chip;
+> > > +	mtd->owner = THIS_MODULE;
+> > > +	mtd->name = PL353_NAND_DRIVER_NAME;  
+> > 
+> > A label property in the DT might overwrite this value.  
+> Could you please explain a bit more ?
+> 
+
+I meant something like this:
+
+https://elixir.bootlin.com/linux/latest/source/drivers/mtd/nand/raw/marvell_nand.c#L2515
+
+Thanks,
+Miquèl
