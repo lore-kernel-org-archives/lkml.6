@@ -1,91 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id zlrcJye4G1snTwAAmS7hNA
-	; Sat, 09 Jun 2018 11:22:17 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id dWniE07hGlsCLgAAmS7hNA
+	; Fri, 08 Jun 2018 20:05:44 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id AE93B607A4; Sat,  9 Jun 2018 11:22:17 +0000 (UTC)
+	id 28E8E60909; Fri,  8 Jun 2018 20:05:42 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BuHMqQtb"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VJ0HS1Ia"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 34267601D3;
-	Sat,  9 Jun 2018 11:22:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 34267601D3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 1CB2A608FC;
+	Fri,  8 Jun 2018 20:05:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1CB2A608FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753188AbeFILWP (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 07:22:15 -0400
-Received: from mail-wr0-f169.google.com ([209.85.128.169]:40171 "EHLO
-        mail-wr0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752923AbeFILWN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 07:22:13 -0400
-Received: by mail-wr0-f169.google.com with SMTP id l41-v6so15752129wre.7
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Jun 2018 04:22:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2p6JHalsl4KFZhXlgTJqJCOBjeszzGoUJDMQUa2OW18=;
-        b=BuHMqQtbBVhIqhbew6D7eOZeIcRJS1c2mNNesRPeHDqtuA/Iy1e+cCO8mnZqG+cgRj
-         7XwpFUlBopGp9PkVX4KChz5Up8kv6f3KwOA5VPiUyM6bwjV40RthsLXSreDEVVrRgsCC
-         YClZm2S1XtYo87UbcQH1jiPgOpEAzC6CuRyElePAeUvKq6yHkG8uAmeDOEKzoBYPIjXI
-         2TI30oMfTarHmoUbGeZCficTuw4l/grieKsgdFXudhdBgsQ31Lde45aCkpPpuEcg8LuN
-         wxty66zf3pWGWLpiv8kdUOX3h0ogBYH9aGvxUdZs4MFo7Osoct5D/feqAceiA4HSMeBk
-         K2DA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2p6JHalsl4KFZhXlgTJqJCOBjeszzGoUJDMQUa2OW18=;
-        b=EphwFicGB2uY2KJAV86CqDKgnb47uzseDWeLMgUjoHKDFz/RGU/AP296Gv7dhfc1HB
-         r2xl8SF6zsoOWY431pLlqa01+3WZa7eXmGWfZL/pIs+b3qT3KJu6jWAYMRrNZQg+PHvL
-         ZQs98gxpNcsq13wXJzLDMJ3P/7+f5ZQeZSJwztTsYSMlhqJ+JiAMszyFkvAh3IZ3/u/p
-         8ujk7hUkOP65Tnu/dnmzGY/It+YIhu5nA3OiTQZ3qNRR4eGbkAP9MBu75O3n6zQC1JxZ
-         B3U5vB9LNiB0QDY0Z3Z/f2E/SxQHp/gFRLYaOR0n5dUbkewNTFb4ZpgqHT4dbzhuiIjF
-         psyg==
-X-Gm-Message-State: APt69E0WV2Ub8zFD2gfmujh97DDcDd5lvhMw2T/6MxsOUBBzaB0UGoYB
-        eeWMjbfzsj6NOZKx5RosB6Q=
-X-Google-Smtp-Source: ADUXVKK5kc+zPgfRTIhS+lrXICWqVWDOtgZYZrRw13CCP4WpLuW2NNwpMX953ZN/UYr3x2j8fh2FrA==
-X-Received: by 2002:adf:ad2f:: with SMTP id p44-v6mr7944261wrc.164.1528543332700;
-        Sat, 09 Jun 2018 04:22:12 -0700 (PDT)
-Received: from localhost (8ta-150-94-26.telkomadsl.co.za. [41.150.94.26])
-        by smtp.gmail.com with ESMTPSA id g105-v6sm43417725wrd.37.2018.06.09.04.22.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 09 Jun 2018 04:22:11 -0700 (PDT)
-Date: Sat, 9 Jun 2018 15:20:50 +0200
-From: chris <eklikeroomys@gmail.com>
-To: Joe Perches <joe@perches.com>
-Cc: Ian Abbott <abbotti@mev.co.uk>,
-        H Hartley Sweeten <hsweeten@visionengravers.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Frank Mori Hess <fmh6jj@gmail.com>,
-        Simo Koskinen <koskisoft@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: comedi: shortened a long line
-Message-ID: <20180609132050.GA26085@kerdev>
-References: <1528541720-1853-1-git-send-email-eklikeroomys@gmail.com>
- <86ccd1d2471b4541c2242d71173734cdbb99f247.camel@perches.com>
+        id S932204AbeFHUFj (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 16:05:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49128 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932146AbeFHUFg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 16:05:36 -0400
+Received: from localhost (unknown [150.199.191.185])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE80B20874;
+        Fri,  8 Jun 2018 20:05:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528488336;
+        bh=o7Bjuhz6mlNkxN04uXXq9urmSNLANHw+KAxxiniKvq4=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=VJ0HS1IacLWM5jULpW2KuuVLWJwYX3VVW5bR7GdCEThFMM/VGhwU2cu8T/fZ7m088
+         /w7sfGVyIBVvagsUCfDT9RqpghXkKqxLP65Xy/SOwViovbhUKYXcQO6PGIQwPXMEyg
+         stLUr3R3ADyCOOpjdY8UqW08EHZlbOjlcqeG0tMI=
+Subject: [PATCH v1 08/13] PCI/AER: Move pcie_aer_get_firmware_first() to
+ portdrv.h
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: linux-pci@vger.kernel.org
+Cc: Keith Busch <keith.busch@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Oza Pawandeep <poza@codeaurora.org>,
+        linux-kernel@vger.kernel.org
+Date: Fri, 08 Jun 2018 15:05:35 -0500
+Message-ID: <152848833510.11888.13834530632280301120.stgit@bhelgaas-glaptop.roam.corp.google.com>
+In-Reply-To: <152848785553.11888.12243539903985770441.stgit@bhelgaas-glaptop.roam.corp.google.com>
+References: <152848785553.11888.12243539903985770441.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: StGit/0.18
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <86ccd1d2471b4541c2242d71173734cdbb99f247.camel@perches.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joe,
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-Thank you for the feedback! I understand better now and will resend
-the patch.
+Move pcie_aer_get_firmware_first() to portdrv.h, where it can be more
+easily shared between AER and DPC.  Then DPC no longer needs to include
+aer/aerdrv.h.  No functional change intended.
 
-Regards,
-Chris Opperman
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+---
+ drivers/pci/pcie/aer/aerdrv.h |   10 ----------
+ drivers/pci/pcie/dpc.c        |    1 -
+ drivers/pci/pcie/portdrv.h    |   11 +++++++++++
+ 3 files changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/pci/pcie/aer/aerdrv.h b/drivers/pci/pcie/aer/aerdrv.h
+index f4fc71119cf2..b0c4aaa79d9c 100644
+--- a/drivers/pci/pcie/aer/aerdrv.h
++++ b/drivers/pci/pcie/aer/aerdrv.h
+@@ -78,14 +78,4 @@ struct aer_rpc {
+ 
+ irqreturn_t aer_irq(int irq, void *context);
+ 
+-#ifdef CONFIG_ACPI_APEI
+-int pcie_aer_get_firmware_first(struct pci_dev *pci_dev);
+-#else
+-static inline int pcie_aer_get_firmware_first(struct pci_dev *pci_dev)
+-{
+-	if (pci_dev->__aer_firmware_first_valid)
+-		return pci_dev->__aer_firmware_first;
+-	return 0;
+-}
+-#endif
+ #endif /* _AERDRV_H_ */
+diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
+index d6436681c535..921ed979109d 100644
+--- a/drivers/pci/pcie/dpc.c
++++ b/drivers/pci/pcie/dpc.c
+@@ -13,7 +13,6 @@
+ 
+ #include "portdrv.h"
+ #include "../pci.h"
+-#include "aer/aerdrv.h"
+ 
+ struct dpc_dev {
+ 	struct pcie_device	*dev;
+diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
+index 2bb5db7b53e6..6a261dc7cd4c 100644
+--- a/drivers/pci/pcie/portdrv.h
++++ b/drivers/pci/pcie/portdrv.h
+@@ -110,6 +110,17 @@ static inline bool pcie_pme_no_msi(void) { return false; }
+ static inline void pcie_pme_interrupt_enable(struct pci_dev *dev, bool en) {}
+ #endif /* !CONFIG_PCIE_PME */
+ 
++#ifdef CONFIG_ACPI_APEI
++int pcie_aer_get_firmware_first(struct pci_dev *pci_dev);
++#else
++static inline int pcie_aer_get_firmware_first(struct pci_dev *pci_dev)
++{
++	if (pci_dev->__aer_firmware_first_valid)
++		return pci_dev->__aer_firmware_first;
++	return 0;
++}
++#endif
++
+ struct pcie_port_service_driver *pcie_port_find_service(struct pci_dev *dev,
+ 							u32 service);
+ struct device *pcie_port_find_device(struct pci_dev *dev, u32 service);
