@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id KsTbItecGVtxRQAAmS7hNA
-	; Thu, 07 Jun 2018 21:00:07 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 7XLuGa/oGlusawAAmS7hNA
+	; Fri, 08 Jun 2018 20:41:42 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 6FBDB6089E; Thu,  7 Jun 2018 21:00:07 +0000 (UTC)
+	id E9011607E4; Fri,  8 Jun 2018 20:41:41 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="R9kAhxHD"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ql7+qDP5"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
@@ -13,139 +13,213 @@ X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id DC5DA601C3;
-	Thu,  7 Jun 2018 21:00:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DC5DA601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 3C368602FC;
+	Fri,  8 Jun 2018 20:41:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3C368602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933186AbeFGVAF (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 17:00:05 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:51284 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932351AbeFGVAD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 17:00:03 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w57Koxta007551;
-        Thu, 7 Jun 2018 20:59:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2017-10-26;
- bh=b2EOFKlkzYbJtAU7toAOslOIHWH7o7NjJ/7HqWyDcUk=;
- b=R9kAhxHD/GckBAhymcE3jMHvOdczhtqd6JouOwRku5WbABd61wo2XIb90vmgUgJGU0OP
- n0UsptT8vDsS+Pm+jX18FqJ36bdwKLnnzF+lDNFotrrbv194ilvLI4cJpMp0sGoGalq+
- eq+zOU34h41jl6eKHYlxgZW3if7Is/uv1rE+b+EZ9sKBJvNSkPbHih1duoc9+2HTEfku
- q4JnBk7NEe24Ez7c4xgl73hWSFnrBsxkMwIuDGLxJPDmrBDvfnybgNU3BFRFLSLqAXff
- uclMQ+zULXQgrmcXbCzQaeXbMFy17vuJr9+jjZyvticltT9bNk0tGtd85si1+o3F2/id sQ==
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2120.oracle.com with ESMTP id 2jbvyptm8v-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 07 Jun 2018 20:59:51 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w57KxoOH007449
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 7 Jun 2018 20:59:50 GMT
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w57Kxoqh008486;
-        Thu, 7 Jun 2018 20:59:50 GMT
-Received: from [10.211.203.83] (/10.211.203.83)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 07 Jun 2018 13:59:50 -0700
-Subject: Re: [PATCH 4.4 010/268] xen-swiotlb: fix the check condition for
- xen_swiotlb_free_coherent
-To: Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        John Sobecki <john.sobecki@oracle.com>,
-        Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: stable@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-References: <20180528100202.045206534@linuxfoundation.org>
- <20180528100203.277622038@linuxfoundation.org>
- <1528403323.2289.84.camel@codethink.co.uk>
-From: Joe Jin <joe.jin@oracle.com>
-Message-ID: <90be58ac-fd9a-abb1-3bf6-8f5001c39a0b@oracle.com>
-Date: Thu, 7 Jun 2018 13:59:49 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.8.0
+        id S1753115AbeFHUli (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 16:41:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33922 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752841AbeFHUlg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 16:41:36 -0400
+Received: from mail-it0-f42.google.com (mail-it0-f42.google.com [209.85.214.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1EB2D208AF;
+        Fri,  8 Jun 2018 20:41:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528490496;
+        bh=fhNAKCTDRHx3SDwM3i8hf2hS3S58Czspn4zVrjK0Mgo=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=Ql7+qDP5TFAYr1VcvwbdmXerDFzMK2XsDkXgpr+gGTfcerp8KAm35Gx5pdAFSQyIt
+         vOB2w+6h7L+dDK1jFNs4UOFDvhfOW+0+D637veieE2VZWqAh9yoUKCeGMrSUuf9nPl
+         +XKEWkVSw6PT1QHw8nxTiIF5cxXaz/SOpTV2i+1g=
+Received: by mail-it0-f42.google.com with SMTP id 188-v6so3028280ita.5;
+        Fri, 08 Jun 2018 13:41:36 -0700 (PDT)
+X-Gm-Message-State: APt69E3rG2yOTytHY6uFAFGWz3Eg9cXM4xs7vl7jBw4lhCy3i0QSUXr4
+        S0x4D87eJal9icaAvPJ9Iq50soO0fuE/GdrTuQ==
+X-Google-Smtp-Source: ADUXVKJsaHfbKESZP36AuzJC6cTjiYC933SEwJxxmNSWhPfiqATR7BjwMpvGK+2BzHBNOCZ+OiqnRUGJM7yrmLSxnf0=
+X-Received: by 2002:a24:798f:: with SMTP id z137-v6mr3002350itc.19.1528490495357;
+ Fri, 08 Jun 2018 13:41:35 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1528403323.2289.84.camel@codethink.co.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8917 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806070221
+Received: by 2002:a4f:5505:0:0:0:0:0 with HTTP; Fri, 8 Jun 2018 13:41:14 -0700 (PDT)
+In-Reply-To: <CAMuHMdUOqLhmb8kXOxriQ5mt_4rDQJbUqGsQiJBSkq5J5FWG7w@mail.gmail.com>
+References: <1528198148-23308-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1528198148-23308-3-git-send-email-michel.pollet@bp.renesas.com>
+ <0481173f-6384-98d6-707c-89dc5ef103f0@gmail.com> <OSBPR01MB2054E3A1E383495F3534B551D2650@OSBPR01MB2054.jpnprd01.prod.outlook.com>
+ <9cef7124-3020-5741-f3a2-6925a6c8f0f3@gmail.com> <79c0899e-7df1-1fe7-9681-ad3bd51feda7@gmail.com>
+ <OSBPR01MB205442B483C792125E6A6AF7D2640@OSBPR01MB2054.jpnprd01.prod.outlook.com>
+ <CAL_JsqLn+x0JCkjwABU7XkPsgvyVdiCRq=gZTfUBbbR4-c+1bQ@mail.gmail.com>
+ <OSBPR01MB2054A701CF65784FAB947692D27B0@OSBPR01MB2054.jpnprd01.prod.outlook.com>
+ <CAMuHMdUOqLhmb8kXOxriQ5mt_4rDQJbUqGsQiJBSkq5J5FWG7w@mail.gmail.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Fri, 8 Jun 2018 14:41:14 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqK6Pb5ZbqAATpQNK-C=iVNA655H__5RERMmPTUOrX3Few@mail.gmail.com>
+Message-ID: <CAL_JsqK6Pb5ZbqAATpQNK-C=iVNA655H__5RERMmPTUOrX3Few@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] arm: shmobile: Add the R9A06G032 SMP enabler driver
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michel Pollet <michel.pollet@bp.renesas.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Douglas Anderson <dianders@chromium.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Carlo Caione <carlo@endlessm.com>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Frank Rowand <frank.rowand@sony.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/7/18 1:28 PM, Ben Hutchings wrote:
-> On Mon, 2018-05-28 at 11:59 +0200, Greg Kroah-Hartman wrote:
->> 4.4-stable review patch.  If anyone has any objections, please let me know.
+On Fri, Jun 8, 2018 at 2:47 AM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On Fri, Jun 8, 2018 at 8:50 AM, Michel Pollet
+> <michel.pollet@bp.renesas.com> wrote:
+>> On 07 June 2018 16:55, Rob wrote:
+>>> On Thu, Jun 7, 2018 at 1:59 AM, Michel Pollet
+>>> <michel.pollet@bp.renesas.com> wrote:
+>>> > On 06 June 2018 22:53, Frank wrote:
+>>> >> On 06/06/18 14:48, Frank Rowand wrote:
+>>> >> > On 06/05/18 23:36, Michel Pollet wrote:
+>>> >> >> On 05 June 2018 18:34, Frank wrote:
+>>> >> >>> On 06/05/18 04:28, Michel Pollet wrote:
+>>> >> >>>> The Renesas R9A06G032 second CA7 is parked in a ROM pen at boot
+>>> >> >>>> time, it requires a special enable method to get it started.
+>>>
+>>> [...]
+>>>
+>>> >> >>>> + * The second CPU is parked in ROM at boot time. It requires
+>>> >> >>>> +waking it after
+>>> >> >>>> + * writing an address into the BOOTADDR register of sysctrl.
+>>> >> >>>> + *
+>>> >> >>>> + * So the default value of the "cpu-release-addr" corresponds
+>>> >> >>>> +to
+>>> >> >>> BOOTADDR...
+>>> >> >>>> + *
+>>> >> >>>> + * *However* the BOOTADDR register is not available when the
+>>> >> >>>> +kernel
+>>> >> >>>> + * starts in NONSEC mode.
+>>> >> >>>> + *
+>>> >> >>>> + * So for NONSEC mode, the bootloader re-parks the second CPU
+>>> >> >>>> +into a pen
+>>> >> >>>> + * in SRAM, and changes the "cpu-release-addr" of linux's DT to
+>>> >> >>>> +a SRAM address,
+>>> >> >>>> + * which is not restricted.
+>>> >> >>>
+>>> >> >>> The binding document for cpu-release-addr does not have a
+>>> >> >>> definition for 32 bit arm.  The existing definition is only 64
+>>> >> >>> bit arm.  Please add the definition for 32 bit arm to patch 1.
+>>> >> >>
+>>> >> >> Hmmm I do find a definition in
+>>> >> >> Documentation/devicetree/bindings/arm/cpus.txt -- just under where
+>>> >> >> I added my 'enable-method' -- And it is already used as 32 bits in
+>>> >> >> at least arch/arm/boot/dts/stih407-family.dtsi.
+>>> >> >
+>>> >> > If the correct answer is for cpu-release-addr to be 64 bits in
+>>> >> > certain cases (that discussion is ongoing further downthread) then
+>>> >> > one approach to maintain compatibility _and_ to fix the devicetree
+>>> >> > source files is to change the source code that currently gets
+>>> >> > cpu-release-addr as a
+>>> >> > 32 bit object to check the size of the property and get it as
+>>> >> > either a
+>>> >> > 32 bit or 64 bit object, based on the actual size of the property
+>>> >> > in the device tree and then change the value in the devicetree
+>>> >> > source files to be two cells.  BUT this does not consider the
+>>> >> > bootloader complication.  arch/arm/boot/dts/axm5516-cpus.dtsi has a
+>>> >> > note "// Fixed by the boot loader", so the boot loader also has to
+>>> >> > be modified to be able to handle the possibility that the property
+>>> >> > could be either
+>>> >> > 32 bits or 64 bits.  I don't know how to maintain compatibility
+>>> >> > with the boot loader since we can't force it to change
+>>> >> > synchronously with changes in the kernel.
+>>> >> >
+>>> >> > You can consider this comment to be a drive-by observation.  I
+>>> >> > think Rob and Geert and people like that are likely to be more
+>>> >> > helpful with what to actually do, and you can treat my comment more
+>>> >> > as pointing out the issue than as providing the perfect solution.
+>>> >>
+>>> >> Darn it, hit <send> too quickly.
+>>> >>
+>>> >> I meant to mention that there are several devicetree source files
+>>> >> that have a single cell value for cpu-release-addr, and thus
+>>> >> potentially face the same situation, depending on what the final
+>>> >> decision is on the proper size for cpu- release-addr. As of v4.17, a git grep
+>>> shows one cell values in:
+>>> >>
+>>> >>   arch/arm/boot/dts/axm5516-cpus.dtsi
+>>> >>   arch/arm/boot/dts/stih407-family.dtsi
+>>> >>   arch/arm/boot/dts/stih418.dtsi
+>>> >
+>>> > Yes, I had grepped before I used 32 bits on mine...
+>>> >
+>>> > Now, what is the decision here? Our bootloader is already modified to
+>>> > set it to 32 bits, so I propose that
+>>>
+>>> And too late to fix the bootloader?
 >>
->> ------------------
 >>
->> From: Joe Jin <joe.jin@oracle.com>
+>> Well not too late, but read further on...
 >>
->> commit 4855c92dbb7b3b85c23e88ab7ca04f99b9677b41 upstream.
+>>>
+>>> >
+>>> > + I change the driver to handle 32 and 64 bits properties
+>>>
+>>> That's fine if you can't fix the bootloader.
+>>>
+>>> > + I add this to the cpu.txt, as a separate patch:
+>>> > # On other systems, the property can be either
+>>> >   32 bits or 64 bits, it is the driver's responsibility
+>>> >   to deal with either sizes.
+>>>
+>>> That is definitely not what we want to say. Use of 32-bit should be
+>>> considered out of spec. Yes, we have a few platforms in that category, but
+>>> they already handle that themselves. Would be nice to fix them, but at least
+>>> the STi platforms don't seem too active.
+>>>
+>>> IMO, we should delete whatever text we can here and at most just refer to
+>>> the spec.
 >>
->> When run raidconfig from Dom0 we found that the Xen DMA heap is reduced,
->> but Dom Heap is increased by the same size. Tracing raidconfig we found
->> that the related ioctl() in megaraid_sas will call dma_alloc_coherent()
->> to apply memory. If the memory allocated by Dom0 is not in the DMA area,
->> it will exchange memory with Xen to meet the requiment. Later drivers
->> call dma_free_coherent() to free the memory, on xen_swiotlb_free_coherent()
->> the check condition (dev_addr + size - 1 <= dma_mask) is always false,
-> 
-> I think this was meant to say (dev_addr + size - 1 > dma_mask), i.e.
+>> So actually I didn't use 32 bits by plain chance, I read the cpu.txt file which says
+>> that 64 bits systems use 64 bits property, concluded that in my case I ought to
+>> use 32 bits, then grepped around and found other systems using 32 bits, therefore
+>> I went forward and used it..
+>>
+>> Nothing said here that it should be 64 bits everywhere -- So the documentation
+>> needs fixing somehow. Right now it certainly led me wrong.
+>
+> Perhaps we should add to Documentation/devicetree/bindings/ the standard
+> bindings from ePAPR and successors, too?
 
-Hi Ben,
+I hope you mean *reference* here, not duplicate the bindings here. We
+want to move in the other direction and move the common bindings out
+of the kernel and into the spec.
 
-Yes you are right, sorry I made the mistake, thanks for catch it.
-Is there any way to fix description from git repo?
+The real solution here is validation which I'm working on. I had
+already converted cpus.txt. Here's an example of the results of the
+validation:
 
-Regards,
-Joe
+arch/arm/boot/dts/stih410-b2120.dt.yaml:1962:7: cpu@0: 'enable-method'
+is a dependency of 'cpu-release-addr'
+arch/arm/boot/dts/stih410-b2120.dt.yaml:1965:26:
+cpu@0:cpu-release-addr: [155254948] is too short
 
-> the condition that is replaced by this commit.  If that's always false,
-> the new condition (the logical inverse) must always be true.
-> 
-> [...]
->> --- a/drivers/xen/swiotlb-xen.c
->> +++ b/drivers/xen/swiotlb-xen.c
->> @@ -359,7 +359,7 @@ xen_swiotlb_free_coherent(struct device
->>  	 * physical address */
->>  	phys = xen_bus_to_phys(dev_addr);
->>  
->> -	if (((dev_addr + size - 1 > dma_mask)) ||
->> +	if (((dev_addr + size - 1 <= dma_mask)) ||
->>  	    range_straddles_page_boundary(phys, size))
->>  		xen_destroy_contiguous_region(phys, order);
->>  
-> 
-> So now we will always call xen_destroy_contiguous_region(), whether or
-> not xen_create_contiguous_region() was called during allocation.  Is
-> that really the intent?  If so, the entire condition could be removed
-> to make this clear.
-> 
-> Alternately, if the commit message is correct, the condition could be
-> simplified to range_straddles_page_boundary(...).
-> 
-> But I'm not at all convinced that either of these is correct.  It seems
-> like you need to either find a way of distinguishing between memory
-> allocated with or without the use of xen_create_contiguous_region(), or
-> to use it unconditionally.
-> 
-> Ben.
-> 
+The schema is up on my yaml-bindings branch. Will send out more details soon.
 
-
--- 
-Oracle <http://www.oracle.com>
-Joe Jin | IT Director 
-ORACLE | Production Engineering and Operations
-600 Oracle Parkway Redwood City, CA US 94065
+Rob
