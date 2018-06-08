@@ -1,177 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id dXt3AHJ0GluITQAAmS7hNA
-	; Fri, 08 Jun 2018 12:20:31 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id WNn5GIK9Glu8bAAAmS7hNA
+	; Fri, 08 Jun 2018 17:32:21 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id B25AB6089E; Fri,  8 Jun 2018 12:20:31 +0000 (UTC)
+	id 6A9D2607DC; Fri,  8 Jun 2018 17:32:21 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 0F23C605A5;
-	Fri,  8 Jun 2018 12:20:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0F23C605A5
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id F0124605A2;
+	Fri,  8 Jun 2018 17:32:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F0124605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752626AbeFHMU2 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 08:20:28 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59164 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751143AbeFHMU0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 08:20:26 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3DF1D8163C5F;
-        Fri,  8 Jun 2018 12:20:26 +0000 (UTC)
-Received: from gondolin (dhcp-192-215.str.redhat.com [10.33.192.215])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D58A5ED17B;
-        Fri,  8 Jun 2018 12:20:24 +0000 (UTC)
-Date: Fri, 8 Jun 2018 14:20:22 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Pierre Morel <pmorel@linux.ibm.com>
-Cc: Dong Jia Shi <bjsdjshi@linux.ibm.com>,
-        Halil Pasic <pasic@linux.ibm.com>, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        qemu-s390x@nongnu.org, qemu-devel@nongnu.org
-Subject: Re: [PATCH RFC 2/2] vfio-ccw: support for halt/clear subchannel
-Message-ID: <20180608142022.7dd6a658.cohuck@redhat.com>
-In-Reply-To: <86d57698-3ea7-a390-2217-07c6d41ca9ed@linux.ibm.com>
-References: <20180509154822.23510-1-cohuck@redhat.com>
-        <20180509154822.23510-3-cohuck@redhat.com>
-        <c18f9b9f-da00-1a0b-8ef0-7ac223c73d1a@linux.ibm.com>
-        <20180515181006.0cb1dfc2.cohuck@redhat.com>
-        <a5d08fb7-d9c1-b230-fe0c-acebbda2ba65@linux.ibm.com>
-        <20180522145208.310143ea.cohuck@redhat.com>
-        <4e4001cc-540e-0f2b-bbd1-1f82ca594bb3@linux.ibm.com>
-        <20180605151449.22aafbfc.cohuck@redhat.com>
-        <e73038ff-fb2d-5865-8b84-e775990f3983@linux.ibm.com>
-        <20180606142131.74ea2eb7.cohuck@redhat.com>
-        <5b77ec9c-41b8-2e32-ce79-d9005b93fdd0@linux.ibm.com>
-        <20180607115442.6a779ed9.cohuck@redhat.com>
-        <86d57698-3ea7-a390-2217-07c6d41ca9ed@linux.ibm.com>
-Organization: Red Hat GmbH
+        id S1752734AbeFHRcS (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 13:32:18 -0400
+Received: from foss.arm.com ([217.140.101.70]:36120 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751241AbeFHRcP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 13:32:15 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5BF6B1529;
+        Fri,  8 Jun 2018 10:32:15 -0700 (PDT)
+Received: from armageddon.cambridge.arm.com (armageddon.cambridge.arm.com [10.1.206.84])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1E91A3F557;
+        Fri,  8 Jun 2018 10:32:09 -0700 (PDT)
+Date: Fri, 8 Jun 2018 18:32:07 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Yury Norov <ynorov@caviumnetworks.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-api@vger.kernel.org, Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Philipp Tomsich <philipp.tomsich@theobroma-systems.com>,
+        Joseph Myers <joseph@codesourcery.com>,
+        Steve Ellcey <sellcey@caviumnetworks.com>,
+        Prasun Kapoor <Prasun.Kapoor@caviumnetworks.com>,
+        Andreas Schwab <schwab@suse.de>,
+        Alexander Graf <agraf@suse.de>,
+        Bamvor Zhangjian <bamv2005@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Adam Borowski <kilobyte@angband.pl>,
+        Manuel Montezelo <manuel.montezelo@gmail.com>,
+        James Hogan <james.hogan@imgtec.com>,
+        Chris Metcalf <cmetcalf@mellanox.com>,
+        Andrew Pinski <pinskia@gmail.com>,
+        Lin Yongting <linyongting@huawei.com>,
+        Alexey Klimov <klimov.linux@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Maxim Kuvyrkov <maxim.kuvyrkov@linaro.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Nathan_Lynch <Nathan_Lynch@mentor.com>,
+        James Morse <james.morse@arm.com>,
+        Ramana Radhakrishnan <ramana.gcc@googlemail.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Christoph Muellner <christoph.muellner@theobroma-systems.com>
+Subject: Re: [PATCH 04/24] 32-bit userspace ABI: introduce ARCH_32BIT_OFF_T
+ config option
+Message-ID: <20180608173207.nwoi25jee52gpdwy@armageddon.cambridge.arm.com>
+References: <20180516081910.10067-1-ynorov@caviumnetworks.com>
+ <20180516081910.10067-5-ynorov@caviumnetworks.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 08 Jun 2018 12:20:26 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 08 Jun 2018 12:20:26 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180516081910.10067-5-ynorov@caviumnetworks.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 7 Jun 2018 18:37:16 +0200
-Pierre Morel <pmorel@linux.ibm.com> wrote:
+On Wed, May 16, 2018 at 11:18:49AM +0300, Yury Norov wrote:
+> diff --git a/arch/Kconfig b/arch/Kconfig
+> index 76c0b54443b1..ee079244dc3c 100644
+> --- a/arch/Kconfig
+> +++ b/arch/Kconfig
+> @@ -264,6 +264,21 @@ config ARCH_THREAD_STACK_ALLOCATOR
+>  config ARCH_WANTS_DYNAMIC_TASK_STRUCT
+>  	bool
+>  
+> +config ARCH_32BIT_OFF_T
+> +	bool
+> +	depends on !64BIT
+> +	help
+> +	  All new 32-bit architectures should have 64-bit off_t type on
+> +	  userspace side which corresponds to the loff_t kernel type. This
+> +	  is the requirement for modern ABIs. Some existing architectures
+> +	  already have 32-bit off_t. This option is enabled for all such
+> +	  architectures explicitly. Namely: arc, arm, blackfin, cris, frv,
+> +	  h8300, hexagon, m32r, m68k, metag, microblaze, mips32, mn10300,
+> +	  nios2, openrisc, parisc32, powerpc32, score, sh, sparc, tile32,
+> +	  unicore32, x86_32 and xtensa. This is the complete list. Any
+> +	  new 32-bit architecture should declare 64-bit off_t type on user
+> +	  side and so should not enable this option.
 
-> On 07/06/2018 11:54, Cornelia Huck wrote:
+Do you know if this is the case for riscv and nds32, merged in the
+meantime? If not, I suggest you drop this patch altogether and just
+define force_o_largefile() for arm64/ilp32 as we don't seem to stick to
+"all new 32-bit architectures should have 64-bit off_t".
 
-> > --------------
-> > |   scsw(g)  |  ssch
-> > --------------   |
-> >                   |                                       guest
-> > --------------------------------------------------------------
-> >                   |                                        qemu
-> > --------------   v
-> > |   scsw(q)  | emulate
-> > --------------   |
-> >                   |
-> > --------------   v
-> > |   scsw(r)  | pwrite()
-> > --------------   |
-> >                   |
-> > --------------------------------------------------------------
-> >                   |                                        vfio
-> >                   v
-> >                  ssch
-> >                   |
-> > --------------------------------------------------------------
-> >                   |                                    hardware
-> > --------------   v
-> > |   scsw(h)  | actually do something
-> > --------------
-> >
-> > The guest issues a ssch (which gets intercepted; it won't get control
-> > back until ssch finishes with a cc set.) scsw(g) won't change, unless
-> > the guest does a stsch for the subchannel on another vcpu, in which
-> > case it will get whatever information qemu holds in scsw(q) at that
-> > point in time.
-> >
-> > When qemu starts to emulate the guest's ssch, it will set the start
-> > function bit in the fctl field of scsw(q). It then copies scsw(q) to
-> > scsw(r) in the vfio region.
-> >
-> > The vfio code will then proceed to call ssch on the real subchannel.
-> > This is the first time we get really asynchronous, as the ssch will
-> > return with cc set and the start function will be performed at some
-> > point in time. If we would do a stsch on the real subchannel, we would
-> > see that scsw(h) now has the start function bit set.
-> >
-> > Currently, we won't return back up the chain until we get an interrupt
-> > from the hardware, at which time we update the scsw(r) from the irb.  
-> 
-> I do not find where the thread waits for interrupt inside the
-> write->fsm_io_request->fsm_io_helper->ssch chain.
-> 
-> I must have miss it ten times. Can you point it to me?
-
-I'm not surprised you did not find it, because it isn't there :)
-
-I've let myself be confused by the /* Start channel program and wait
-for I/O interrupt. */ comment -- it is wrong and should be removed (but
-we did have that waiting initially). So we already have the async
-situation :)
-
-> 
-> > This will propagate into the scsw(q). At the time we finish handling
-> > the guest's ssch and return control to it, we're all done and if the
-> > guest does a stsch to update its scsw(g), it will get the current
-> > scsw(q) which will already contain the scsw from the interrupt's irb
-> > (indicating that the start function is already finished).
-> >
-> > Now let's imagine we have a future implementation that handles actually
-> > performing the start on the hardware asynchronously, i.e. it returns
-> > control to the guest without the interrupt having been posted (let's
-> > say that it is a longer-running I/O request). If the guest now did a
-> > stsch to update scsw(g), it would get the current state of scsw(q),
-> > which would be "start function set, but not done yet".
-> >
-> > If the guest now does a hsch, it would trap in the same way as the ssch
-> > before. When qemu gets control, it adds the halt bit in scsw(q) (which
-> > is in accordance with the architecture).  
-> 
-> This I agree.
-> The scsw(q) is part of the QEMU device.
-> 
-> >   My proposal is to do the same
-> > copying to scsw(r) again, which would mean we get a request with both
-> > the halt and the start bit set. The vfio code now needs to do a hsch
-> > (instead of a ssch). The real channel subsystem should figure this out,
-> > as we can't reliably check whether the start function has concluded
-> > already (there's always a race window).  
-> 
-> This I do not agree scsw(r) is part of the driver.
-> The interface here is not a device interface anymore but a driver 
-> interface.
-> SCSW is a status, it is at its place in QEMU device interface with the 
-> guest
-> but here pwrite() sends a command.
-
-Hm, I rather consider that "we write a status, and the backend figures
-out what to do based on that status".
-
-> 
-> 
-> Since we do not do a STSCH on each command, scsw(q), should be
-> updated by QEMU depending on syscall return value.
-> This is not done currently, only the success path is right
-> because it is set before the call.
-> 
-> If I read right and the IRQ is asynchronous, the scsw(q) is not right,
-> because not updated, after the interrupt is received from the guest.
-
-Yes, we're probably missing some updates.
+-- 
+Catalin
