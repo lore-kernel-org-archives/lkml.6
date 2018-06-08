@@ -1,210 +1,617 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id +4JFK8SEGVujMQAAmS7hNA
-	; Thu, 07 Jun 2018 19:18:16 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id KospNsmMGltTOwAAmS7hNA
+	; Fri, 08 Jun 2018 14:04:29 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D6B5F608B8; Thu,  7 Jun 2018 19:18:15 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EmY5Zu4P"
+	id 98909607E4; Fri,  8 Jun 2018 14:04:29 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,FSL_HELO_FAKE,MAILING_LIST_MULTI
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D0E066063F;
-	Thu,  7 Jun 2018 19:18:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D0E066063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 26CA660290;
+	Fri,  8 Jun 2018 14:04:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 26CA660290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753379AbeFGTSM (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 15:18:12 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:45392 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751938AbeFGTSK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 15:18:10 -0400
-Received: by mail-pg0-f68.google.com with SMTP id z1-v6so5202009pgv.12;
-        Thu, 07 Jun 2018 12:18:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+s9zovoq5uH7dXyX6A9v5LCP05dTm3gqcVhfqwAfO0s=;
-        b=EmY5Zu4PfF/qmarMCKTe1mh+gqMNDBnDSdxwNe8shT63l3iyJDKjyFJIcyHo1lAQ3g
-         F9ivWJZCPNeqrGcxKnD8/drjNRPEy7pu3GXniYgFcLsH4bRhlOLH13Eubk6uVBlDwKHn
-         R/BXR6Tmd3L9vuJQw2JG9ORMJeliwgIpEoDfuS2Tu9qNMrm8r7RWJHgCKPWpPtRkdNa6
-         1wTC67idXaeQGsi35bhyw0hvMq6K78/fwCvtJb8YOQXXPsgX5ikapV6nSv6A8WRWz3u3
-         E/ax/Aqwh+9+LXOdWGkQEQzl0n3tN9c4At+GCR3wx9ak3cGU2c4XEawpYwC90gVQjVIW
-         gnqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+s9zovoq5uH7dXyX6A9v5LCP05dTm3gqcVhfqwAfO0s=;
-        b=BCa05U8TlQUK2sPe7xn4quR0Na0IHVslTKylfnNFqBazhbwufZ6Tk32E1ghPo0kRny
-         FvsjPER2UYPcjCNMYduTCUqDovKHWpa7Ig04KZuUAAnzEw2V3hTLH4JP24w/2KNLAHN1
-         9m47gtHaufv6/XbG/S9ZK6Wc8M+NMbOrmTdA2OngKsfKjJIAMx0dsWYAarXlEnTptB65
-         nru75XULx0RBCAL0s5/4RICfGcsTGf3gAeGrUjTnBlHP36pJVKFscPF4BOmSbiKLgpmm
-         sLYxM9peAGrRGUOAsFYoYqTeiQwJjRG7Xea7+xpT6gsTxtGEoFjO7U8IAZkvzMA0J6Al
-         DoWA==
-X-Gm-Message-State: APt69E3CTzn28xfqE4/v4BdV+R7xzgtWzyUunjRbNJkAmPgtssaeTw+s
-        ZUImaHAuH7WdxsNkq8fPQ6A=
-X-Google-Smtp-Source: ADUXVKKkSquVr7sDkuIXlmiN8lgnFizFH6kBswdmVfirA4lingv7LqT1BDK+mddmyoX6cnkaxOoc9Q==
-X-Received: by 2002:a62:3e11:: with SMTP id l17-v6mr2953322pfa.18.1528399089758;
-        Thu, 07 Jun 2018 12:18:09 -0700 (PDT)
-Received: from gmail.com ([2620:15c:17:3:dc28:5c82:b905:e8a8])
-        by smtp.gmail.com with ESMTPSA id f9-v6sm3900913pgt.79.2018.06.07.12.18.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Jun 2018 12:18:09 -0700 (PDT)
-Date: Thu, 7 Jun 2018 12:18:07 -0700
-From: Eric Biggers <ebiggers3@gmail.com>
-To: syzbot <syzbot+d04e58bd384f1fe0b112@syzkaller.appspotmail.com>
-Cc: davem@davemloft.net, herbert@gondor.apana.org.au,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: KASAN: slab-out-of-bounds Write in rmd160_final
-Message-ID: <20180607191807.GC29665@gmail.com>
-References: <00000000000075cc63056e0d0707@google.com>
+        id S1752604AbeFHOE0 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 10:04:26 -0400
+Received: from mga01.intel.com ([192.55.52.88]:1081 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751121AbeFHOEY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 10:04:24 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jun 2018 07:04:24 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,490,1520924400";
+   d="scan'208";a="62422209"
+Received: from kuha.fi.intel.com ([10.237.72.189])
+  by fmsmga001.fm.intel.com with SMTP; 08 Jun 2018 07:04:21 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Fri, 08 Jun 2018 17:04:20 +0300
+Date: Fri, 8 Jun 2018 17:04:20 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Guenter Roeck <linux@roeck-us.net>,
+        Hans de Goede <hdegoede@redhat.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jun Li <jun.li@nxp.com>,
+        Mats Karrman <mats.dev.list@gmail.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v4 6/8] usb: typec: Add driver for DisplayPort
+ alternate mode
+Message-ID: <20180608140420.GE17155@kuha.fi.intel.com>
+References: <20180608112941.26332-1-heikki.krogerus@linux.intel.com>
+ <20180608112941.26332-7-heikki.krogerus@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <00000000000075cc63056e0d0707@google.com>
+In-Reply-To: <20180608112941.26332-7-heikki.krogerus@linux.intel.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 07, 2018 at 06:12:02AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    1c8c5a9d38f6 Merge git://git.kernel.org/pub/scm/linux/kern..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17f025df800000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=2e1a31e8576e013a
-> dashboard link: https://syzkaller.appspot.com/bug?extid=d04e58bd384f1fe0b112
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> 
-> Unfortunately, I don't have any reproducer for this crash yet.
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+d04e58bd384f1fe0b112@syzkaller.appspotmail.com
-> 
-> ==================================================================
-> BUG: KASAN: slab-out-of-bounds in rmd160_final+0x201/0x240
-> crypto/rmd160.c:334
-> Write of size 4 at addr ffff8801b00585d8 by task syz-executor1/15928
-> 
-> CPU: 0 PID: 15928 Comm: syz-executor1 Not tainted 4.17.0+ #88
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
->  print_address_description+0x6c/0x20b mm/kasan/report.c:256
->  kasan_report_error mm/kasan/report.c:354 [inline]
->  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
->  __asan_report_store4_noabort+0x17/0x20 mm/kasan/report.c:437
->  rmd160_final+0x201/0x240 crypto/rmd160.c:334
->  crypto_shash_final+0x104/0x260 crypto/shash.c:152
->  kdf_ctr security/keys/dh.c:186 [inline]
->  keyctl_dh_compute_kdf security/keys/dh.c:217 [inline]
->  __keyctl_dh_compute+0x1184/0x1bc0 security/keys/dh.c:389
->  keyctl_dh_compute+0xb9/0x100 security/keys/dh.c:425
->  __do_sys_keyctl security/keys/keyctl.c:1741 [inline]
->  __se_sys_keyctl security/keys/keyctl.c:1637 [inline]
->  __x64_sys_keyctl+0x12a/0x3b0 security/keys/keyctl.c:1637
->  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x455a09
-> Code: 1d ba fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
-> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff
-> 0f 83 eb b9 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007f2e9de49c68 EFLAGS: 00000246 ORIG_RAX: 00000000000000fa
-> RAX: ffffffffffffffda RBX: 00007f2e9de4a6d4 RCX: 0000000000455a09
-> RDX: 0000000020a53ffb RSI: 0000000020000140 RDI: 0000000000000017
-> RBP: 000000000072bea0 R08: 0000000020c61fc8 R09: 0000000000000000
-> R10: 0000000000000005 R11: 0000000000000246 R12: 00000000ffffffff
-> R13: 0000000000000499 R14: 00000000006fbef8 R15: 0000000000000000
-> 
-> Allocated by task 15928:
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->  set_track mm/kasan/kasan.c:460 [inline]
->  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
->  __do_kmalloc mm/slab.c:3718 [inline]
->  __kmalloc+0x14e/0x760 mm/slab.c:3727
->  kmalloc include/linux/slab.h:518 [inline]
->  keyctl_dh_compute_kdf security/keys/dh.c:211 [inline]
->  __keyctl_dh_compute+0xfe9/0x1bc0 security/keys/dh.c:389
->  keyctl_dh_compute+0xb9/0x100 security/keys/dh.c:425
->  __do_sys_keyctl security/keys/keyctl.c:1741 [inline]
->  __se_sys_keyctl security/keys/keyctl.c:1637 [inline]
->  __x64_sys_keyctl+0x12a/0x3b0 security/keys/keyctl.c:1637
->  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> 
-> Freed by task 4605:
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->  set_track mm/kasan/kasan.c:460 [inline]
->  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
->  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
->  __cache_free mm/slab.c:3498 [inline]
->  kfree+0xd9/0x260 mm/slab.c:3813
->  kvfree+0x61/0x70 mm/util.c:440
->  translate_table+0xc24/0x1780 net/ipv4/netfilter/ip_tables.c:714
->  do_replace net/ipv4/netfilter/ip_tables.c:1138 [inline]
->  do_ipt_set_ctl+0x3c7/0x645 net/ipv4/netfilter/ip_tables.c:1674
->  nf_sockopt net/netfilter/nf_sockopt.c:106 [inline]
->  nf_setsockopt+0x7d/0xd0 net/netfilter/nf_sockopt.c:115
->  ip_setsockopt+0xd8/0xf0 net/ipv4/ip_sockglue.c:1258
->  tcp_setsockopt+0x93/0xe0 net/ipv4/tcp.c:3047
->  sock_common_setsockopt+0x9a/0xe0 net/core/sock.c:3053
->  __sys_setsockopt+0x1bd/0x390 net/socket.c:1935
->  __do_sys_setsockopt net/socket.c:1946 [inline]
->  __se_sys_setsockopt net/socket.c:1943 [inline]
->  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1943
->  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> 
-> The buggy address belongs to the object at ffff8801b00585c0
->  which belongs to the cache kmalloc-32 of size 32
-> The buggy address is located 24 bytes inside of
->  32-byte region [ffff8801b00585c0, ffff8801b00585e0)
-> The buggy address belongs to the page:
-> page:ffffea0006c01600 count:1 mapcount:0 mapping:ffff8801b0058000
-> index:0xffff8801b0058fc1
-> flags: 0x2fffc0000000100(slab)
-> raw: 02fffc0000000100 ffff8801b0058000 ffff8801b0058fc1 0000000100000031
-> raw: ffffea00073f66a0 ffffea0007209620 ffff8801da8001c0 0000000000000000
-> page dumped because: kasan: bad access detected
-> 
-> Memory state around the buggy address:
->  ffff8801b0058480: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
->  ffff8801b0058500: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-> > ffff8801b0058580: 05 fc fc fc fc fc fc fc 00 00 00 fc fc fc fc fc
->                                                     ^
->  ffff8801b0058600: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
->  ffff8801b0058680: 00 00 01 fc fc fc fc fc 00 00 03 fc fc fc fc fc
-> ==================================================================
-> 
-> 
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
-> 
+On Fri, Jun 08, 2018 at 02:29:39PM +0300, Heikki Krogerus wrote:
+> diff --git a/drivers/usb/typec/altmodes/displayport.c b/drivers/usb/typec/altmodes/displayport.c
+> new file mode 100644
+> index 000000000000..a5054d86a4d9
+> --- /dev/null
+> +++ b/drivers/usb/typec/altmodes/displayport.c
+> @@ -0,0 +1,543 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/**
+> + * USB Typec-C DisplayPort Alternate Mode driver
+> + *
+> + * Copyright (C) 2018 Intel Corporation
+> + * Author: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> + *
+> + * DisplayPort is trademark of VESA (www.vesa.org)
+> + */
+> +
+> +#include <linux/delay.h>
+> +#include <linux/mutex.h>
+> +#include <linux/module.h>
+> +#include <linux/usb/pd_vdo.h>
+> +#include <linux/usb/typec_dp.h>
+> +
+> +#define DP_HEADER(cmd)			(VDO(USB_TYPEC_DP_SID, 1, cmd) | \
+> +					 VDO_OPOS(USB_TYPEC_DP_MODE))
+> +
+> +/* DisplayPort alt mode specific commands */
+> +#define DP_CMD_STATUS_UPDATE		VDO_CMD_VENDOR(0)
+> +#define DP_CMD_CONFIGURE		VDO_CMD_VENDOR(1)
+> +
+> +enum {
+> +	DP_CONF_USB,
+> +	DP_CONF_DFP_D,
+> +	DP_CONF_UFP_D,
+> +	DP_CONF_DUAL_D,
+> +};
+> +
+> +/* DisplayPort Capabilities VDO bits */
+> +#define DP_CAP_CAPABILITY(_cap_)	((_cap_) & 3)
+> +#define   DP_CAP_UFP_D			1
+> +#define   DP_CAP_DFP_D			2
+> +#define   DP_CAP_DFP_D_AND_UFP_D	3
+> +#define DP_CAP_DP_SIGNALING		BIT(2) /* Always set */
+> +#define DP_CAP_GEN2			BIT(3) /* Reserved after v1.0b */
+> +#define DP_CAP_RECEPTACLE		BIT(6)
+> +#define DP_CAP_USB			BIT(7)
+> +#define DP_CAP_DFP_D_PIN_ASSIGN(_cap_)	(((_cap_) & GENMASK(15, 8)) >> 8)
+> +#define DP_CAP_UFP_D_PIN_ASSIGN(_cap_)	(((_cap_) & GENMASK(23, 16)) >> 16)
+> +
+> +enum {
+> +	DP_PIN_ASSIGN_A, /* Not supported after v1.0b */
+> +	DP_PIN_ASSIGN_B, /* Not supported after v1.0b */
+> +	DP_PIN_ASSIGN_C,
+> +	DP_PIN_ASSIGN_D,
+> +	DP_PIN_ASSIGN_E,
+> +	DP_PIN_ASSIGN_F, /* Not supported after v1.0b */
+> +};
+> +
+> +/* Helper for setting/getting the pin assignement value to the configuration */
+> +#define DP_CONF_SET_PIN_ASSIGN(_a_)	((_a_) << 8)
+> +#define DP_CONF_GET_PIN_ASSIGN(_conf_)	(((_conf_) & GENMASK(15, 8)) >> 8)
+> +
+> +/* Pin assignments that use USB3.1 Gen2 signaling to carry DP protocol */
+> +#define DP_PIN_ASSIGN_GEN2_BR_MASK	(BIT(DP_PIN_ASSIGN_A) | \
+> +					 BIT(DP_PIN_ASSIGN_B))
+> +
+> +/* Pin assignments that use DP v1.3 signaling to carry DP protocol */
+> +#define DP_PIN_ASSIGN_DP_BR_MASK	(BIT(DP_PIN_ASSIGN_C) | \
+> +					 BIT(DP_PIN_ASSIGN_D) | \
+> +					 BIT(DP_PIN_ASSIGN_E) | \
+> +					 BIT(DP_PIN_ASSIGN_F))
+> +
+> +/* DP only pin assignments */
+> +#define DP_PIN_ASSIGN_DP_ONLY_MASK	(BIT(DP_PIN_ASSIGN_A) | \
+> +					 BIT(DP_PIN_ASSIGN_C) | \
+> +					 BIT(DP_PIN_ASSIGN_E))
+> +
+> +/* Pin assignments where one channel is for USB */
+> +#define DP_PIN_ASSIGN_MULTI_FUNC_MASK	(BIT(DP_PIN_ASSIGN_B) | \
+> +					 BIT(DP_PIN_ASSIGN_D) | \
+> +					 BIT(DP_PIN_ASSIGN_F))
+> +
+> +enum dp_state {
+> +	DP_STATE_NONE,
+> +	DP_STATE_ENTER,
+> +	DP_STATE_UPDATE,
+> +	DP_STATE_CONFIGURE,
+> +	DP_STATE_EXIT,
+> +};
+> +
+> +struct dp_altmode {
+> +	struct typec_displayport_data data;
+> +
+> +	enum dp_state state;
+> +
+> +	struct mutex lock;
+> +	struct work_struct work;
+> +	struct typec_altmode *alt;
+> +	const struct typec_altmode *port;
+> +};
+> +
+> +static int dp_altmode_configure(struct dp_altmode *dp, u8 con)
+> +{
+> +	u32 conf = DP_CONF_SIGNALING_DP; /* Only DP signaling supported */
+> +	u8 pin_assign = 0;
+> +
+> +	switch (con) {
+> +	case DP_STATUS_CON_DISABLED:
+> +		dp->data.conf = 0;
+> +		return 0;
+> +	case DP_STATUS_CON_DFP_D:
+> +		conf |= DP_CONF_UFP_U_AS_DFP_D;
+> +		pin_assign = DP_CAP_UFP_D_PIN_ASSIGN(dp->alt->vdo) &
+> +			     DP_CAP_DFP_D_PIN_ASSIGN(dp->port->vdo);
+> +		break;
+> +	case DP_STATUS_CON_UFP_D:
+> +	case DP_STATUS_CON_BOTH: /* NOTE: First acting as DP source */
+> +		conf |= DP_CONF_UFP_U_AS_UFP_D;
+> +		pin_assign = DP_CAP_DFP_D_PIN_ASSIGN(dp->alt->vdo) &
+> +			     DP_CAP_UFP_D_PIN_ASSIGN(dp->port->vdo);
+> +		break;
+> +	default:
+> +		break;
+> +	}
+> +
+> +	/* Determining the initial pin assignment. */
+> +	if (!DP_CONF_GET_PIN_ASSIGN(dp->data.conf)) {
+> +		/* Is USB together with DP preferred */
+> +		if (dp->data.status & DP_STATUS_PREFER_MULTI_FUNC &&
+> +		    pin_assign & DP_PIN_ASSIGN_MULTI_FUNC_MASK)
+> +			pin_assign &= DP_PIN_ASSIGN_MULTI_FUNC_MASK;
+> +		else
+> +			pin_assign &= DP_PIN_ASSIGN_DP_ONLY_MASK;
+> +
+> +		if (!pin_assign)
+> +			return -EINVAL;
+> +
+> +		conf |= DP_CONF_SET_PIN_ASSIGN(pin_assign);
+> +	}
+> +
+> +	dp->data.conf |= conf;
+> +
+> +	return 0;
+> +}
+> +
+> +static int dp_altmode_status_update(struct dp_altmode *dp)
+> +{
+> +	bool configured = !!DP_CONF_GET_PIN_ASSIGN(dp->data.conf);
+> +	u8 con = DP_STATUS_CONNECTION(dp->data.status);
+> +	int ret = 0;
+> +
+> +	if (configured && (dp->data.status & DP_STATUS_SWITCH_TO_USB)) {
+> +		dp->data.conf = 0;
+> +		dp->state = DP_STATE_CONFIGURE;
+> +	} else if (dp->data.status & DP_STATUS_EXIT_DP_MODE) {
+> +		dp->state = DP_STATE_EXIT;
+> +	} else if (!(con & DP_CONF_CURRENTLY(dp->data.conf))) {
+> +		ret = dp_altmode_configure(dp, con);
+> +		if (!ret)
+> +			dp->state = DP_STATE_CONFIGURE;
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static int dp_altmode_configured(struct dp_altmode *dp)
+> +{
+> +	u8 state;
+> +	int ret;
+> +
+> +	sysfs_notify(&dp->alt->dev.kobj, "displayport", "configuration");
+> +
+> +	if (!dp->data.conf)
+> +		return typec_altmode_notify(dp->alt, TYPEC_STATE_USB,
+> +					    &dp->data);
+> +
+> +	state = get_count_order(DP_CONF_GET_PIN_ASSIGN(dp->data.conf));
+> +	ret = typec_altmode_notify(dp->alt, TYPEC_MODAL_STATE(state),
+> +				   &dp->data);
+> +	if (ret)
+> +		return ret;
+> +
+> +	sysfs_notify(&dp->alt->dev.kobj, "displayport", "pin_assignment");
+> +
+> +	return 0;
+> +}
+> +
+> +static void dp_altmode_work(struct work_struct *work)
+> +{
+> +	struct dp_altmode *dp = container_of(work, struct dp_altmode, work);
+> +	u32 header = 0;
+> +	u32 vdo;
+> +	int ret;
+> +
+> +	mutex_lock(&dp->lock);
+> +
+> +	switch (dp->state) {
+> +	case DP_STATE_ENTER:
+> +		ret = typec_altmode_enter(dp->alt);
+> +		if (ret)
+> +			dev_err(&dp->alt->dev, "failed to enter mode\n");
+> +		break;
+> +	case DP_STATE_UPDATE:
+> +		header = DP_HEADER(DP_CMD_STATUS_UPDATE);
+> +		vdo = 1;
+> +		break;
+> +	case DP_STATE_CONFIGURE:
+> +		ret = typec_altmode_notify(dp->alt, TYPEC_STATE_SAFE,
+> +					   &dp->data);
+> +		if (ret) {
+> +			dev_err(&dp->alt->dev,
+> +				"unable to put to connector to safe mode\n");
+> +			break;
+> +		}
+> +		header = DP_HEADER(DP_CMD_CONFIGURE);
+> +		vdo = dp->data.conf;
+> +		break;
+> +	case DP_STATE_EXIT:
+> +		if (typec_altmode_exit(dp->alt))
+> +			dev_err(&dp->alt->dev, "Exit Mode Failed!\n");
+> +		break;
+> +	default:
+> +		break;
+> +	}
+> +
+> +	if (header) {
+> +		if (typec_altmode_vdm(dp->alt, header, &vdo, 2))
+> +			dev_err(&dp->alt->dev, "unable to send VDM\n");
+> +	}
+> +
+> +	mutex_unlock(&dp->lock);
+> +}
 
-Duplicate:
+FYI. Currently this little state machine is horribly racy. It needs to
+be fixed.
 
-#syz dup: KASAN: slab-out-of-bounds Write in sha1_finup
+> +static void dp_altmode_attention(struct typec_altmode *alt, const u32 vdo)
+> +{
+> +	struct dp_altmode *dp = typec_altmode_get_drvdata(alt);
+> +	u8 state;
+> +
+> +	mutex_lock(&dp->lock);
+> +
+> +	dp->state = DP_STATE_NONE;
+> +	dp->data.status = vdo;
+> +	dp_altmode_status_update(dp);
+> +
+> +	if (dp->state == DP_STATE_NONE) {
+> +		state = get_count_order(DP_CONF_GET_PIN_ASSIGN(dp->data.conf));
+> +		if (typec_altmode_notify(dp->alt, TYPEC_MODAL_STATE(state),
+> +					 &dp->data))
+> +			dev_err(&alt->dev, "%s: notification failed\n",
+> +				__func__);
+> +	} else {
+> +		schedule_work(&dp->work);
+> +	}
+> +
+> +	mutex_unlock(&dp->lock);
+> +}
+> +
+> +static int dp_altmode_vdm(struct typec_altmode *alt,
+> +			  const u32 hdr, const u32 *vdo, int count)
+> +{
+> +	struct dp_altmode *dp = typec_altmode_get_drvdata(alt);
+> +	int cmd_type = PD_VDO_CMDT(hdr);
+> +	int cmd = PD_VDO_CMD(hdr);
+> +	int ret = 0;
+> +
+> +	mutex_lock(&dp->lock);
+> +
+> +	dp->state = DP_STATE_NONE;
+> +
+> +	switch (cmd_type) {
+> +	case CMDT_RSP_ACK:
+> +		switch (cmd) {
+> +		case CMD_ENTER_MODE:
+> +			dp->state = DP_STATE_UPDATE;
+> +			break;
+> +		case CMD_EXIT_MODE:
+> +			dp->data.status = 0;
+> +			dp->data.conf = 0;
+> +			break;
+> +		case DP_CMD_STATUS_UPDATE:
+> +			dp->data.status = *vdo;
+> +			ret = dp_altmode_status_update(dp);
+> +			break;
+> +		case DP_CMD_CONFIGURE:
+> +			ret = dp_altmode_configured(dp);
+> +			break;
+> +		default:
+> +			break;
+> +		}
+> +		break;
+> +	case CMDT_RSP_NAK:
+> +		switch (cmd) {
+> +		case DP_CMD_CONFIGURE:
+> +			dp->data.conf = 0;
+> +			ret = dp_altmode_configured(dp);
+> +			break;
+> +		default:
+> +			break;
+> +		}
+> +		break;
+> +	default:
+> +		break;
+> +	}
+> +
+> +	if (dp->state != DP_STATE_NONE)
+> +		schedule_work(&dp->work);
+> +
+> +	mutex_unlock(&dp->lock);
+> +	return ret;
+> +}
+> +
+> +static int dp_altmode_activate(struct typec_altmode *alt, int activate)
+> +{
+> +	return activate ? typec_altmode_enter(alt) : typec_altmode_exit(alt);
+> +}
+> +
+> +static const struct typec_altmode_ops dp_altmode_ops = {
+> +	.attention = dp_altmode_attention,
+> +	.vdm = dp_altmode_vdm,
+> +	.activate = dp_altmode_activate,
+> +};
+> +
+> +static const char * const configurations[] = {
+> +	[DP_CONF_USB]	= "USB",
+> +	[DP_CONF_DFP_D]	= "source",
+> +	[DP_CONF_UFP_D]	= "sink",
+> +};
+> +
+> +static ssize_t
+> +configuration_store(struct device *dev, struct device_attribute *attr,
+> +		    const char *buf, size_t size)
+> +{
+> +	struct dp_altmode *dp = dev_get_drvdata(dev);
+> +	int conf;
+> +	int ret;
+> +
+> +	conf = sysfs_match_string(configurations, buf);
+> +	if (conf < 0)
+> +		return conf;
+> +
+> +	mutex_lock(&dp->lock);
+> +
+> +	ret = dp_altmode_configure(dp, conf);
+> +	if (!ret && dp->alt->active) {
+> +		dp->state = DP_STATE_CONFIGURE;
+> +		schedule_work(&dp->work);
+> +	}
+> +
+> +	mutex_unlock(&dp->lock);
+> +
+> +	return ret ? ret : size;
+> +}
+> +
+> +static ssize_t configuration_show(struct device *dev,
+> +				  struct device_attribute *attr, char *buf)
+> +{
+> +	struct dp_altmode *dp = dev_get_drvdata(dev);
+> +	int len;
+> +	u8 cap;
+> +	u8 cur;
+> +	int i;
+> +
+> +	mutex_lock(&dp->lock);
+> +
+> +	cap = DP_CAP_CAPABILITY(dp->alt->vdo);
+> +	cur = DP_CONF_CURRENTLY(dp->data.conf);
+> +
+> +	len = sprintf(buf, "%s ", cur ? "USB" : "[USB]");
+> +
+> +	for (i = 1; i < ARRAY_SIZE(configurations); i++) {
+> +		if (i == cur)
+> +			len += sprintf(buf + len, "[%s] ", configurations[i]);
+> +		else if ((i == DP_CONF_DFP_D && cap & DP_CAP_DFP_D) ||
+> +			 (i == DP_CONF_UFP_D && cap & DP_CAP_UFP_D))
+> +			len += sprintf(buf + len, "%s ", configurations[i]);
+> +	}
+> +
+> +	mutex_unlock(&dp->lock);
+> +
+> +	buf[len - 1] = '\n';
+> +	return len;
+> +}
+> +static DEVICE_ATTR_RW(configuration);
+> +
+> +static const char * const pin_assignments[] = {
+> +	[DP_PIN_ASSIGN_A] = "A",
+> +	[DP_PIN_ASSIGN_B] = "B",
+> +	[DP_PIN_ASSIGN_C] = "C",
+> +	[DP_PIN_ASSIGN_D] = "D",
+> +	[DP_PIN_ASSIGN_E] = "E",
+> +	[DP_PIN_ASSIGN_F] = "F",
+> +};
+> +
+> +static ssize_t
+> +pin_assignment_store(struct device *dev, struct device_attribute *attr,
+> +		     const char *buf, size_t size)
+> +{
+> +	struct dp_altmode *dp = dev_get_drvdata(dev);
+> +	u8 assignments;
+> +	u32 conf;
+> +	int ret;
+> +
+> +	ret = sysfs_match_string(pin_assignments, buf);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	conf = DP_CONF_SET_PIN_ASSIGN(BIT(ret));
+> +	ret = 0;
+> +
+> +	mutex_lock(&dp->lock);
+> +
+> +	if (conf & dp->data.conf)
+> +		goto out_unlock;
+> +
+> +	if (DP_CONF_CURRENTLY(dp->data.conf) == DP_CONF_DFP_D)
+> +		assignments = DP_CAP_UFP_D_PIN_ASSIGN(dp->alt->vdo);
+> +	else
+> +		assignments = DP_CAP_DFP_D_PIN_ASSIGN(dp->alt->vdo);
+> +
+> +	if (!(DP_CONF_GET_PIN_ASSIGN(conf) & assignments)) {
+> +		ret = -EINVAL;
+> +		goto out_unlock;
+> +	}
+> +
+> +	/* Only send Configure command if a configuration has been set */
+> +	if (dp->alt->active && DP_CONF_CURRENTLY(dp->data.conf)) {
+> +		dp->state = DP_STATE_CONFIGURE;
+> +		schedule_work(&dp->work);
+> +	}
+> +
+> +	dp->data.conf &= ~DP_CONF_PIN_ASSIGNEMENT_MASK;
+> +	dp->data.conf |= conf;
+> +
+> +out_unlock:
+> +	mutex_unlock(&dp->lock);
+> +
+> +	return ret ? ret : size;
+> +}
+> +
+> +static ssize_t pin_assignment_show(struct device *dev,
+> +				   struct device_attribute *attr, char *buf)
+> +{
+> +	struct dp_altmode *dp = dev_get_drvdata(dev);
+> +	u8 assignments;
+> +	int len = 0;
+> +	u8 cur;
+> +	int i;
+> +
+> +	mutex_lock(&dp->lock);
+> +
+> +	cur = get_count_order(DP_CONF_GET_PIN_ASSIGN(dp->data.conf));
+> +
+> +	if (DP_CONF_CURRENTLY(dp->data.conf) == DP_CONF_DFP_D)
+> +		assignments = DP_CAP_UFP_D_PIN_ASSIGN(dp->alt->vdo);
+> +	else
+> +		assignments = DP_CAP_DFP_D_PIN_ASSIGN(dp->alt->vdo);
+> +
+> +	for (i = 0; assignments; assignments >>= 1, i++) {
+> +		if (assignments & 1) {
+> +			if (i == cur)
+> +				len += sprintf(buf + len, "[%s] ",
+> +					       pin_assignments[i]);
+> +			else
+> +				len += sprintf(buf + len, "%s ",
+> +					       pin_assignments[i]);
+> +		}
+> +	}
+> +
+> +	mutex_unlock(&dp->lock);
+> +
+> +	buf[len - 1] = '\n';
+> +	return len;
+> +}
+> +static DEVICE_ATTR_RW(pin_assignment);
+> +
+> +static struct attribute *dp_altmode_attrs[] = {
+> +	&dev_attr_configuration.attr,
+> +	&dev_attr_pin_assignment.attr,
+> +	NULL
+> +};
+> +
+> +static const struct attribute_group dp_altmode_group = {
+> +	.name = "displayport",
+> +	.attrs = dp_altmode_attrs,
+> +};
+> +
+> +static int dp_altmode_probe(struct typec_altmode *alt)
+> +{
+> +	const struct typec_altmode *port = typec_altmode_get_partner(alt);
+> +	struct dp_altmode *dp;
+> +	int ret;
+> +
+> +	/* FIXME: Port can only be DFP_U. */
+> +
+> +	/* Make sure we have compatiple pin configurations */
+> +	if (!(DP_CAP_DFP_D_PIN_ASSIGN(port->vdo) &
+> +	      DP_CAP_UFP_D_PIN_ASSIGN(alt->vdo)) &&
+> +	    !(DP_CAP_UFP_D_PIN_ASSIGN(port->vdo) &
+> +	      DP_CAP_DFP_D_PIN_ASSIGN(alt->vdo)))
+> +		return -ENODEV;
+> +
+> +	ret = sysfs_create_group(&alt->dev.kobj, &dp_altmode_group);
+> +	if (ret)
+> +		return ret;
+> +
+> +	dp = devm_kzalloc(&alt->dev, sizeof(*dp), GFP_KERNEL);
+> +	if (!dp)
+> +		return -ENOMEM;
+> +
+> +	INIT_WORK(&dp->work, dp_altmode_work);
+> +	mutex_init(&dp->lock);
+> +	dp->port = port;
+> +	dp->alt = alt;
+> +
+> +	alt->desc = "DisplayPort";
+> +	alt->ops = &dp_altmode_ops;
+> +
+> +	typec_altmode_set_drvdata(alt, dp);
+> +
+> +	dp->state = DP_STATE_ENTER;
+> +	schedule_work(&dp->work);
+> +
+> +	return 0;
+> +}
+> +
+> +static void dp_altmode_remove(struct typec_altmode *alt)
+> +{
+> +	sysfs_remove_group(&alt->dev.kobj, &dp_altmode_group);
+> +}
+> +
+> +static const struct typec_device_id dp_typec_id[] = {
+> +	{ USB_TYPEC_DP_SID, USB_TYPEC_DP_MODE },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(typec, dp_typec_id);
+> +
+> +static struct typec_altmode_driver dp_altmode_driver = {
+> +	.id_table = dp_typec_id,
+> +	.probe = dp_altmode_probe,
+> +	.remove = dp_altmode_remove,
+> +	.driver = {
+> +		.name = "typec_displayport",
+> +		.owner = THIS_MODULE,
+> +	},
+> +};
+> +module_typec_altmode_driver(dp_altmode_driver);
+> +
+> +MODULE_AUTHOR("Heikki Krogerus <heikki.krogerus@linux.intel.com>");
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_DESCRIPTION("DisplayPort Alternate Mode");
 
-Tentative fix is "[PATCH] dh key: fix rounding up KDF output length".
+
+Br,
+
+-- 
+heikki
