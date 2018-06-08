@@ -1,98 +1,173 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id pbBhJ3RlGVu2CAAAmS7hNA
-	; Thu, 07 Jun 2018 17:03:48 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id WyjQEoqLGlsfKwAAmS7hNA
+	; Fri, 08 Jun 2018 13:58:34 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 874DB6074D; Thu,  7 Jun 2018 17:03:48 +0000 (UTC)
+	id 30F8C607E4; Fri,  8 Jun 2018 13:58:34 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VvgAjqN4"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="efbZyI3K"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,FROM_EXCESS_BASE64,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id F34B460590;
-	Thu,  7 Jun 2018 17:03:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F34B460590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 807AD60590;
+	Fri,  8 Jun 2018 13:58:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 807AD60590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932957AbeFGRDq (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 13:03:46 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:46466 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932795AbeFGRDo (ORCPT
+        id S1752936AbeFHN6b (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 09:58:31 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:38157 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751121AbeFHN63 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 13:03:44 -0400
-Received: by mail-pl0-f67.google.com with SMTP id 30-v6so6500320pld.13
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 10:03:44 -0700 (PDT)
+        Fri, 8 Jun 2018 09:58:29 -0400
+Received: by mail-wm0-f68.google.com with SMTP id 69-v6so3936475wmf.3;
+        Fri, 08 Jun 2018 06:58:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=xsjoZgRXjxQ8GyaM/oIN55sRv5uHuoBSO16j0HE09Qo=;
-        b=VvgAjqN46h/XmFNbWGBhnnWO5j1LZNnI2HV+dvcKNj713tiQOtgEXhU+Tdsrdhnub9
-         XO+Bbcr1a653P/5rRtZYsZlbaXYF7FC77nQetKJ3PkUEmG+ch+QuluaN5pXm19z1tHv4
-         rT+JLKbSk5YYkrjJhqin09gqDLaClENP6Rbq/nthg6/1g+8thEflJW3WOrihGrhqswhI
-         HJz3a+pamG7EJ+7Ay6FY4pT1WjNW6HTlZ4rQm/Uvl3Ulm1NQJDnWo2DW3QvD+gSrNUCA
-         lKUj3/f94zB4XBBAFDzTu2RESEOq83oDXGOf34asITHQZWJKyQJC6sZOeMJbW+3TPPrc
-         n2sw==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=KxfyuhdAqC5qT7B1/lRSmwGtyVfEnauWoZtcu5T+Ucs=;
+        b=efbZyI3KoSVuQFHY8K+JX0qsNvvfwIyJ3k+7rl0PnE8vFNvoK/FCZW5XF+AerVTWgc
+         PLtLzknBHHasst9BIkZnoW7sLFz8IN33F66OhqvCx7GC75OScvYQLPfvguAe/NUMqFND
+         8ueQcFAPf9iLh4Q5LgcEPkaPEUflnLtbWEQcpRdC6mqxg2e2ip8Hm1eJDvViGwLadlpd
+         DEs7x6XTu0trDORe8XMbC3G62thqAGndlPd6dQovQf/Gi7j7et4mvU5vT3Wn6WcL+lO3
+         5K+vMSEIqkGIanPbl3qMdnnz9Ql18XeuRVWRygTN7qZFJp/ljDnzWu2PvBKf24gwrRQz
+         bJ5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=xsjoZgRXjxQ8GyaM/oIN55sRv5uHuoBSO16j0HE09Qo=;
-        b=CfX9AqUNL9U++QR8Fu2yQJQ0OHGngeu3yz8xK9OTd6Ur85SE3IlKB7EfniorTZ+9T+
-         xxErGg1rtRkVrENphaO1Y5guFgM4HIYUtG+Xg2XJrk7feSvC2AT6rUKpNVRaZnYSiIHp
-         lltkTKXi5EvpJ8hxB5UxMWNrsrN1eAZQaIYZ4pTPBw34AIUPmigBl+zfPwYSWp4iHFS7
-         lvKYxgzqLlPlOMgMOTcQHFv9L+Ml9UhoLQdkBDtbgV062J9GVmn0Emvgtp7zpWM8Gw8K
-         FDjRoAynWLJ+CSnHyYkekjNsol0HZ1MquV5w6dvtNDV5SSTPUOeHY3DArVQv2uUa5ci1
-         3GDQ==
-X-Gm-Message-State: APt69E32utktx3CFb+6OMJcawo7V3taXAgv1YVZjQaaHYX9z2it3aJu6
-        gupV1VzI0WVQHEOyxpmqS2Vd7rLZfoWTmNFy2+SIIA==
-X-Google-Smtp-Source: ADUXVKLpYr9y7wfRkCI2BeZV84WNOOe4Dr9ChLqQm2Edw/iwqGIBAX0hqJI8Vp1jAjm86Zont6T2E+I9AHVjse9ofS8=
-X-Received: by 2002:a17:902:264:: with SMTP id 91-v6mr2804261plc.341.1528391023949;
- Thu, 07 Jun 2018 10:03:43 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=KxfyuhdAqC5qT7B1/lRSmwGtyVfEnauWoZtcu5T+Ucs=;
+        b=sZs+b3hTaQPQ2oQTumxWp3qho0eAVmA5YogrA9wX1850s5Sm5gXHIQfH7G1BunVm2c
+         /3D9awsLtwtgr1dwmD0C9uj21sS1KXfwJLVII9C9hODbfrF+2wRQ1ju6EkMdTkelx58n
+         aWOEAb+IUB9b6fFYbTFPetfsM46DGYykx259Qm7i4ApKJkE39voXN9aU6xTKb2UjjSLo
+         tlRMD1f9XmWAw/ZaoBL5Ns9b+w/8ppKsBCC9iGph9+xbaFjyAh/wfRX81CQqGPDxzeGK
+         HNzbnBVOFUaH15kRir+QK/J6DGKZQsH5KbiIZyQhMsmmDVO1y97kJNP8RfNO1GdJqDLu
+         mkFw==
+X-Gm-Message-State: APt69E2VgNgu58bMGVaUVmQgn5rG7WaXK3Gv6NjKi4XPq8HYTYV8enEi
+        dCNhp+dcpjkWisv/v1LpHqg=
+X-Google-Smtp-Source: ADUXVKIi24q5YEO1kdjNTkTrtLr10DjLb8804vqJcyzKkRo9mb7ARuRNB3Se4mB4Xvp+bFarEe0ifA==
+X-Received: by 2002:a1c:30d7:: with SMTP id w206-v6mr1551195wmw.153.1528466307753;
+        Fri, 08 Jun 2018 06:58:27 -0700 (PDT)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id t17-v6sm11395637wrr.82.2018.06.08.06.58.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 08 Jun 2018 06:58:26 -0700 (PDT)
+Date: Fri, 8 Jun 2018 15:58:26 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Helge Eichelberg <kernelorg@elchenberg.name>,
+        Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hwmon: (dell-smm) Disable fan support for Dell XPS13 9333
+Message-ID: <20180608135826.u22gb4ggvgfnifzq@pali>
+References: <20180605173833.27003-1-kernelorg@elchenberg.name>
+ <20180606152134.sw77aborznfy6mrj@pali>
+ <20180607080455.daccaaab8a7e2f2a35b68873@elchenberg.name>
+ <20180607082542.gvc7oz7qvrpodkus@pali>
+ <20180608135155.GA30453@roeck-us.net>
 MIME-Version: 1.0
-Received: by 2002:a17:90a:d42:0:0:0:0 with HTTP; Thu, 7 Jun 2018 10:03:23
- -0700 (PDT)
-In-Reply-To: <0dff7b42-65d2-a29e-2086-938031859004@oracle.com>
-References: <000000000000832e70056df8fb38@google.com> <0dff7b42-65d2-a29e-2086-938031859004@oracle.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Thu, 7 Jun 2018 19:03:23 +0200
-Message-ID: <CACT4Y+Yv4_TjyJtNxso9CLBZPXCUkYZy_1RG_o6ASJdTsLO2Ng@mail.gmail.com>
-Subject: Re: general protection fault in open_fs_devices
-To: Anand Jain <anand.jain@oracle.com>
-Cc: syzbot <syzbot+909a5177749d7990ffa4@syzkaller.appspotmail.com>,
-        clm@fb.com, dsterba@suse.com, Josef Bacik <jbacik@fb.com>,
-        linux-btrfs@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180608135155.GA30453@roeck-us.net>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 6, 2018 at 6:28 PM, Anand Jain <anand.jain@oracle.com> wrote:
->
->
-> On 06/06/2018 09:17 PM, syzbot wrote:
->
->
->
->  Which means there was some other thread which freed our %fs_devices.
->  As this thread is still in open_ctree() so the contending thread can't
->  be the ioctl(). So btrfs_free_stale_devices() is the only thread which
->  can free our %fs_devices in this case.
->
->  This is fixed in [1] in the mailing list.
->
->  [1]
->    [PATCH 3/3] btrfs: fix race between mkfs and mount
+On Friday 08 June 2018 06:51:55 Guenter Roeck wrote:
+> On Thu, Jun 07, 2018 at 10:25:42AM +0200, Pali Rohár wrote:
+> > On Thursday 07 June 2018 08:04:55 Helge Eichelberg wrote:
+> > > On Wed, 6 Jun 2018 17:21:34 +0200
+> > > Pali Rohár <pali.rohar@gmail.com> wrote:
+> > > 
+> > > > On Tuesday 05 June 2018 19:38:32 Helge Eichelberg wrote:
+> > > > > Calling fan related SMM functions implemented by Dell BIOS firmware on Dell
+> > > > > XPS13 9333 freeze kernel for about 500ms. Until Dell fixes it we need to
+> > > > > disable fan support for Dell XPS13 9333.
+> > > > 
+> > > > Hi! Have you reported this firmware bug to Dell?
+> > > 
+> > > No, I haven't.
+> > 
+> > Mario (from @Dell) wrote on github, that we should start reporting
+> > firmware bugs to Dell as "voice of the customer is the most important".
+> > https://github.com/dell/libsmbios/issues/48#issuecomment-393527813
+> > 
+> > > > Also we should probably match also BIOS version and do not apply this
+> > > > blacklist quirk for BIOS versions in which Dell fixed it.
+> > > 
+> > > The BIOS hasn't been updated since 08/31/2015 and I'm running the latest version (A08). I wonder if Dell cares anymore about the 9333 which has been replaced by the 9343 in early 2015. Nevertheless, should I add a line matching the BIOS version and should it look like this?
+> > 
+> > Ok, I was in impression that it was fixed or was going to be fixed. This
+> > looks like that laptop does not have any support. In this case would
+> > need to blacklist it for all bios version and forever. So no match for
+> > bios version. Maybe you should re-phrase commit message to indicate that
+> > Dell probably does not fix it. Or drop that sentence "Until Dell...".
+> > 
+> Those would just be assumptions and not add any value to the commit log.
+> I don't recall similar comments for previous patches either, and it is not
+> as if Dell stopped supporting Linux only recently. I'll apply the patch
+> as-is; I don't see value in a respin.
 
+Ok. I have no objections. That was only suggestion. Also you can add my
 
-Let's tell about this syzbot:
+Reviewed-by: Pali Rohár <pali.rohar@gmail.com>
 
-#syz fix: btrfs: fix race between mkfs and mount
+Anyway, if last version of Bios was released 3 years ago, I really doubt
+that something is going to be fixed...
+
+> Guenter
+> 
+> > > DMI_EXACT_MATCH(DMI_BIOS_VERSION, "A08")
+> > > 
+> > > Helge
+> > > 
+> > > > > Via "force" module param fan support can be enabled.
+> > > > > 
+> > > > > Link: https://bugzilla.kernel.org/show_bug.cgi?id=195751
+> > > > > Signed-off-by: Helge Eichelberg <kernelorg@elchenberg.name>
+> > > > > ---
+> > > > >  drivers/hwmon/dell-smm-hwmon.c | 7 +++++++
+> > > > >  1 file changed, 7 insertions(+)
+> > > > > 
+> > > > > diff --git a/drivers/hwmon/dell-smm-hwmon.c b/drivers/hwmon/dell-smm-hwmon.c
+> > > > > index bf3bb7e1adab..9d3ef879dc51 100644
+> > > > > --- a/drivers/hwmon/dell-smm-hwmon.c
+> > > > > +++ b/drivers/hwmon/dell-smm-hwmon.c
+> > > > > @@ -1074,6 +1074,13 @@ static struct dmi_system_id i8k_blacklist_fan_support_dmi_table[] __initdata = {
+> > > > >  			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Vostro 3360"),
+> > > > >  		},
+> > > > >  	},
+> > > > > +	{
+> > > > > +		.ident = "Dell XPS13 9333",
+> > > > > +		.matches = {
+> > > > > +			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
+> > > > > +			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "XPS13 9333"),
+> > > > > +		},
+> > > > > +	},
+> > > > >  	{ }
+> > > > >  };
+> > > > >  
+> > > > 
+> > > > -- 
+> > > > Pali Rohár
+> > > > pali.rohar@gmail.com
+> > 
+> > -- 
+> > Pali Rohár
+> > pali.rohar@gmail.com
+
+-- 
+Pali Rohár
+pali.rohar@gmail.com
