@@ -1,109 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id FfBzKJq3Glv7OAAAmS7hNA
-	; Fri, 08 Jun 2018 17:08:12 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 0eKlDSYkGls5awAAmS7hNA
+	; Fri, 08 Jun 2018 06:37:26 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 4201F607E4; Fri,  8 Jun 2018 17:08:12 +0000 (UTC)
+	id 089D5607DC; Fri,  8 Jun 2018 06:37:26 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="S6UxBUF+"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 833ED601D2;
-	Fri,  8 Jun 2018 17:08:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 833ED601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=anholt.net
+	by smtp.codeaurora.org (Postfix) with ESMTP id 091D460275;
+	Fri,  8 Jun 2018 06:37:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 091D460275
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752881AbeFHRII (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 13:08:08 -0400
-Received: from anholt.net ([50.246.234.109]:40140 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752411AbeFHRIF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 13:08:05 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id D4FE910A1860;
-        Fri,  8 Jun 2018 10:08:04 -0700 (PDT)
-X-Virus-Scanned: Debian amavisd-new at anholt.net
-Received: from anholt.net ([127.0.0.1])
-        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id ImP5RkL9H6_f; Fri,  8 Jun 2018 10:08:03 -0700 (PDT)
-Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id B502710A01F9;
-        Fri,  8 Jun 2018 10:08:03 -0700 (PDT)
-Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id E89062FE462E; Fri,  8 Jun 2018 10:08:02 -0700 (PDT)
-From: Eric Anholt <eric@anholt.net>
-To: Lucas Stach <l.stach@pengutronix.de>,
-        dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org
-Subject: Re: [PATCH 3/3] drm/v3d: Add a note about locking of v3d_fence_create().
-In-Reply-To: <1528453446.26356.12.camel@pengutronix.de>
-References: <20180605190302.18279-1-eric@anholt.net> <20180605190302.18279-3-eric@anholt.net> <1528453446.26356.12.camel@pengutronix.de>
-User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
-Date: Fri, 08 Jun 2018 10:08:02 -0700
-Message-ID: <87vaatxl3h.fsf@anholt.net>
+        id S1752459AbeFHGhX (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 02:37:23 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:47059 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751862AbeFHGhV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 02:37:21 -0400
+Received: by mail-wr0-f196.google.com with SMTP id v13-v6so12137597wrp.13
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 23:37:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=F1yY6br/DCsQAg3+VfOEVYqQ3V8ENlZ+kX4xg6J/K6w=;
+        b=S6UxBUF+xRw64XcPzlrIyGQNpE+iO3L4hCC46lJ7V4s3UhHSKV3nPenap9nw7PS5xn
+         +FEeveAaqafxShzO/+sS3K5EAk3tzy0QOayxU349AwkaJxZjyKWtP/Y0i/o748D/S8Y/
+         BUCKnqg6LIoHgff1Tucjgbjrcdb0uOK1AGZlc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=F1yY6br/DCsQAg3+VfOEVYqQ3V8ENlZ+kX4xg6J/K6w=;
+        b=IqnrgqORtW9HuklMCkj/ZUXqkgWMLWS7v0v63nzE/80WkXJdnH/2RaXXZY59ICmysQ
+         91X8YjiFj7GyBMpBivZI5Zwklt/IxuBIEVMkcdAu6KuF9cht0Zyj8yrujRcLIoGdPPDY
+         Aihtbe/VRhgGCddTiwBy2Hlr7bLCAEN6GxMQJ5UHsUmj4dar2PJIr1oEnZ4ZxWesjTOz
+         O0yEvvXJcYw2KY0OTUs1DjDPHXqGEfg/w/mqlj+0HClwOL27Jr1FaxzilvP1Xpx3yvtE
+         caR3G2TrnIYhZcfQJTAYeLC+OuN6Ll5JlyW4xcnPTZXeLQUMNPBF7/3pQ6pKREKuYObo
+         nHjA==
+X-Gm-Message-State: APt69E1IdqokA5xNImh36KM9kkc89M/pDTonhxeLdKJKqDEr55pKXljV
+        8EMa+xxJoyOA8krmiBLCqSfvEw==
+X-Google-Smtp-Source: ADUXVKIrSdMMPYjXdZtpHjzuBzjKR6VREHdQdx+bya3qMRcqp13lypCkSlRUkJkUjGRryD8EqfKM6A==
+X-Received: by 2002:adf:a032:: with SMTP id k47-v6mr3831920wrk.202.1528439839930;
+        Thu, 07 Jun 2018 23:37:19 -0700 (PDT)
+Received: from dell ([2.31.163.53])
+        by smtp.gmail.com with ESMTPSA id s132-v6sm840040wmf.5.2018.06.07.23.37.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 07 Jun 2018 23:37:18 -0700 (PDT)
+Date: Fri, 8 Jun 2018 07:37:16 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v5 01/14] mfd: da9063: Replace regmap_add_irq_chip with
+ devm counterpart
+Message-ID: <20180608063716.GA5278@dell>
+References: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
+ <019675f0-13ff-d381-87d1-891316cbfd83@gmail.com>
+ <20180607124159.GD22841@dell>
+ <d62db199-0255-fcde-1de0-5d335d596dc1@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d62db199-0255-fcde-1de0-5d335d596dc1@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+On Thu, 07 Jun 2018, Marek Vasut wrote:
 
-Lucas Stach <l.stach@pengutronix.de> writes:
+> On 06/07/2018 02:41 PM, Lee Jones wrote:
+> > On Thu, 07 Jun 2018, Marek Vasut wrote:
+> > 
+> >> On 06/06/2018 11:59 AM, Marek Vasut wrote:
+> >>> Use devm_regmap_add_irq_chip() instead of plain regmap_add_irq_chip(),
+> >>> which removes the need for da9063_irq_exit() altogether and also
+> >>> fixes a bug in da9063_device_init() where the da9063_irq_exit() was
+> >>> not called in a failpath.
+> >>>
+> >>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> >>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> >>> Cc: Lee Jones <lee.jones@linaro.org>
+> >>> Cc: Mark Brown <broonie@kernel.org>
+> >>> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+> >>> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> >>> Cc: linux-renesas-soc@vger.kernel.org
+> >>
+> >> So it's just this one patch that's missing AB/RB and the series should
+> >> be good?
+> > 
+> > Looks fine. Although we'll let it sit for a while in case anyone else
+> > has any thoughts.
+> 
+> Fine by me.
+> 
+> > The merge window is currently open, so there is no rush to apply.
+> 
+> This is still 4.18 material ? Hum, OK.
 
-> Am Dienstag, den 05.06.2018, 12:03 -0700 schrieb Eric Anholt:
->> This isn't the first time I've had to argue to myself why the '++' was
->> safe.
->
-> And now you need to do the same thing with me...
->
->> Signed-off-by: Eric Anholt <eric@anholt.net>
->> ---
->> =C2=A0drivers/gpu/drm/v3d/v3d_fence.c | 3 +++
->> =C2=A01 file changed, 3 insertions(+)
->>=20
->> diff --git a/drivers/gpu/drm/v3d/v3d_fence.c b/drivers/gpu/drm/v3d/v3d_f=
-ence.c
->> index bfe31a89668b..6265e9ab4a13 100644
->> --- a/drivers/gpu/drm/v3d/v3d_fence.c
->> +++ b/drivers/gpu/drm/v3d/v3d_fence.c
->> @@ -3,6 +3,9 @@
->> =C2=A0
->> =C2=A0#include "v3d_drv.h"
->> =C2=A0
->> +/* Note that V3D fences are created during v3d_job_run(), so we're
->> + * already implictly locked.
->> + */
-> I don't see where you would be locked in the job_run path. I think what
-> you mean is that this path needs no locks, as it is driven by a single
-> scheduler thread, right?
+You mean this could be added to v4.18?  If so, not a chance.  I
+normally cut off accepting trivial patches at around -rc6(ish).  Large
+sets like this require a longer soak in -next for all of the build
+bots and testers to have their wicked way with them and for potential
+merge conflicts to show.
 
-Yeah, it's only called from run_job, and run_job can't reenter.
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlsat/IACgkQtdYpNtH8
-nug0mQ/+IMSetfCyvK+L46SrA8It0CnDp54NK9KeuBk/mjj6CbZG0Ej/Savq5mJN
-xJZSDNx6uMYSe4gpOwlfD8qzAWtXtFf3H8RJMx1ijqRet42e6v6oDHY3y3C/2LtN
-A4sopkjFut7hGdVvahwvR/HiVFO8SSpVPS+HPWlgRECoYAYCc1/9hnYxq+XELCK6
-1ux3ekduqDcDZ/WOTNa3VY0Hr2aDFkKyTYeULkGtamh57IXso3RN7rYnuXuE29Yd
-T3NehonlofNVjhcHau6VEknCaki+lsQjJ5owXgL/Q61HBFMIzdXA3cK5Q2G84Rew
-6Gmo9//vBUfvhg/Dt2rO8ul+N1VvLz77UTUHMdEo3FdfaKGSsIRY2xosBQ268RCk
-g48sKpw90rH3G0Wa0Dc2ycp20c9m0EJXq7rTUD7uSCDzfB3NicVONKATBRTVRw6T
-FtNH4FYi8HzeQS9ydK7tXVlDc4y5YUHCTIo6kbqVlwZLUXSDgZOljzBlQZWwjdc/
-9Elgs3noZeZMytbR9Kv8FYCvjgqFH6lT8MfR3XL3H3RBJxp0+ufHw7TjOy5TgCLC
-TGwr/aKWiQRmgBl1AtYx4Q7c+KhHWyEQ20TmCmQmlF6BMNLnQHbeRa+XaXHvzD5N
-W7l4ltptfQzvMFto2KMPJja8gGB94oJHsnhp9Bv+BVYWVz2wD38=
-=5GKX
------END PGP SIGNATURE-----
---=-=-=--
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
