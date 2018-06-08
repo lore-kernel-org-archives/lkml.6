@@ -1,131 +1,179 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id LoAwE/IQHVu0dAAAmS7hNA
-	; Sun, 10 Jun 2018 11:53:08 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id KssJCSQGGlvwBgAAmS7hNA
+	; Fri, 08 Jun 2018 04:29:26 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 25E52608B8; Sun, 10 Jun 2018 11:53:08 +0000 (UTC)
+	id 177C96074D; Fri,  8 Jun 2018 04:29:26 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pZiNS491"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="L1BfT0kA"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 48FBE60791;
-	Sun, 10 Jun 2018 11:53:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 48FBE60791
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 882C460290;
+	Fri,  8 Jun 2018 04:29:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 882C460290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753934AbeFJLw6 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sun, 10 Jun 2018 07:52:58 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:46007 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753891AbeFJLw4 (ORCPT
+        id S1751152AbeFHE3X (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 00:29:23 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:44122 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750859AbeFHE3V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 07:52:56 -0400
-Received: by mail-pg0-f65.google.com with SMTP id z1-v6so8422889pgv.12
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Jun 2018 04:52:56 -0700 (PDT)
+        Fri, 8 Jun 2018 00:29:21 -0400
+Received: by mail-pg0-f67.google.com with SMTP id p21-v6so5766593pgd.11
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 21:29:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=2hlrKDP0eiPoD9M/bjAFnVtnaw6G0riqYguxq1ehoEE=;
-        b=pZiNS491Vx9neo+/tv39TCXlrVb7pTuXWsYx0hY/xjcXqRt3rlCEQU++ALFTk469MV
-         kXDlDNvu0BepoW0mJDY+IDZ7UlhCspQ25QSciq85XCzqpv+p03Es+/br8UOZ5s/mSW5U
-         k9KapbCYu8RsFVj0mdvViQpRF55haUSDQAthCTD6LzazM2Tp5Z1tUj0NCKSwi26xFfqt
-         4kEaLEPf3dNnsxs2ETB3hrV3xFQRqPjbW/va4mc7S89wYh/tKGW1Wj9DqKBLDNjriUl6
-         EgDWi9WZ5OACm1mhOlk9/1wRjLDrf6j+9ZlxyIkzXafacaoQTbSe/l9T5DgRrBvWg1gS
-         KevA==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=DXA69csit/S+qXuxygjuAEUvNn+Jw/K1u34cJ5J37nA=;
+        b=L1BfT0kAuqk7tyqYt6pVJlGgz9ehRwiB0UkuHJT3aF5RheWVPnQoUx4UFsj8++b/Ho
+         qgCNVNhe01tQyRiw7S4X/0RcZNDOmSBrQWiqt8D6+k4cj+8QDy4L+DYYQ1JW7J7kMeJ4
+         xa2nCksxz3sbm3TGFo1s3KDVuGb5ffUyuvZww=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=2hlrKDP0eiPoD9M/bjAFnVtnaw6G0riqYguxq1ehoEE=;
-        b=uTa3KM2U6DnheNw7aLRt2vl9ogvVwe0lSr4S+IirKnhe5GDFPh2upzMVg8w3th9H64
-         f33tfuIEvJPqlDQxZlPXbdvXSwzTiQXG0/m54fEXMureG+OTNmyH/kZLciNXvYAlQTN4
-         1x3daTktGbz4HZEcD8TXNbiSTF6AGLUtgDO+sHtvahROphhGqE/Yhe+joQRAvLCM0yR6
-         L0CQjSjiSCttY9XcZrbvq/TEjxyD8QLOtnsRYc1q6QiX6twcDyyZ88bZSssmQwS/g3Jd
-         tGFYLgf1zp4h4DyR2+NnvZq9YAaCuYPfiN3rrCEPFFovLOz1ciWCqXdcAzRWrx33PaFi
-         hf/g==
-X-Gm-Message-State: APt69E11Gnd+nRDSiJRsfDwEZjIkNh2rByw8zvWhCjpwFlb5/qx7tQIF
-        K2v8XlWqpF2DkChkH1VxV7yWCERmYAryH4zPfYfMjQ==
-X-Google-Smtp-Source: ADUXVKK/cAYZApDKg3rITqsZRBn53YyXWZ1XsLt43JZIAW9iUGUIc8l3yGzpDr1GYQfBQtkVjBG8gEcOtpUL1XUWrOQ=
-X-Received: by 2002:a65:4bcd:: with SMTP id p13-v6mr11404146pgr.114.1528631575874;
- Sun, 10 Jun 2018 04:52:55 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=DXA69csit/S+qXuxygjuAEUvNn+Jw/K1u34cJ5J37nA=;
+        b=FpvyJLqrzNb6A7m/Ap17bCyfHqmDRbIasyRfxvg2FB2tK6GSkGGqBRsuTp2i+SdFaI
+         P3frquSuHRuqU3X5xI/b46VThoZIl4gippiEdhdByc7uIA6VoT/loxlUn8Se95E2pEz3
+         eTkm7YAYH6rD6cscnRL66A3UL2JWgSFbqqWjLjXZyiDGjkWywtmkAdxWFSC0M9PhxT0F
+         1FUH3xhSNjlk8ShoXWL3NhM8nXI0AExZqnk/780vBnDdpUPnzENkXbHO/ZqLUe9DClMI
+         u9T5NHi5NnlEOG+ka2L9BwpJSFkOEXuUjfruvKm0AiFO4ZTDxL9CXBU1lRuNa8w13rBd
+         dYAw==
+X-Gm-Message-State: APt69E1Zye56JViGDm/xhZfJSNePv4LsbxtfWbj0MBiRiZDt4raIJshP
+        +Ao9VGLxSwt6KsN7jc0gmhuRCQ==
+X-Google-Smtp-Source: ADUXVKIXlDrfWX2ryVk+48HRtc18umH61VR2ckF990wktUZShiSESt8aR5lRtVqN7YtGfofhdh+60w==
+X-Received: by 2002:a63:6383:: with SMTP id x125-v6mr3744611pgb.277.1528432160970;
+        Thu, 07 Jun 2018 21:29:20 -0700 (PDT)
+Received: from localhost ([223.226.91.101])
+        by smtp.gmail.com with ESMTPSA id p12-v6sm74780978pgn.26.2018.06.07.21.29.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Jun 2018 21:29:19 -0700 (PDT)
+Date: Fri, 8 Jun 2018 09:59:17 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: ilia.lin@gmail.com
+Cc: Ilia Lin <ilialin@codeaurora.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: kryo: Add module remove and exit
+Message-ID: <20180608042917.2t3el22xgwaezuqe@vireshk-i7>
+References: <20180607205827.1588-1-ilia.lin@gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a17:90a:d42:0:0:0:0 with HTTP; Sun, 10 Jun 2018 04:52:35
- -0700 (PDT)
-In-Reply-To: <CAJ+HfNhnmvTHsE7cgi8pROjprsYvCZuzZDmYmpiUx4jqtHboUw@mail.gmail.com>
-References: <00000000000092de58056e3d4b96@google.com> <10d6b170-b820-3077-8737-c9d06e98d0fb@I-love.SAKURA.ne.jp>
- <CAJ+HfNhnmvTHsE7cgi8pROjprsYvCZuzZDmYmpiUx4jqtHboUw@mail.gmail.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Sun, 10 Jun 2018 13:52:35 +0200
-Message-ID: <CACT4Y+bfZK6yucoDrXPPW3Tc40RYq61u0Zcb=CKtdao8E+v1cQ@mail.gmail.com>
-Subject: Re: WARNING: kmalloc bug in xdp_umem_create
-To: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@gmail.com>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        syzbot+4abadc5d69117b346506@syzkaller.appspotmail.com,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        "Karlsson, Magnus" <magnus.karlsson@intel.com>,
-        David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180607205827.1588-1-ilia.lin@gmail.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 10, 2018 at 11:31 AM, Bj=C3=B6rn T=C3=B6pel <bjorn.topel@gmail.=
-com> wrote:
-> Den s=C3=B6n 10 juni 2018 kl 04:53 skrev Tetsuo Handa
-> <penguin-kernel@i-love.sakura.ne.jp>:
->>
->> On 2018/06/10 7:47, syzbot wrote:
->> > Hello,
->> >
->> > syzbot found the following crash on:
->> >
->> > HEAD commit:    7d3bf613e99a Merge tag 'libnvdimm-for-4.18' of git://g=
-it.k..
->> > git tree:       upstream
->> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D1073f68f80=
-0000
->> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3Df04d8d0a2a=
-fb789a
->> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D4abadc5d6911=
-7b346506
->> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->> > syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=3D13c9756f=
-800000
->> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D16366f9f80=
-0000
->> >
->> > IMPORTANT: if you fix the bug, please add the following tag to the com=
-mit:
->> > Reported-by: syzbot+4abadc5d69117b346506@syzkaller.appspotmail.com
->> >
->> > random: sshd: uninitialized urandom read (32 bytes read)
->> > random: sshd: uninitialized urandom read (32 bytes read)
->> > random: sshd: uninitialized urandom read (32 bytes read)
->> > random: sshd: uninitialized urandom read (32 bytes read)
->> > random: sshd: uninitialized urandom read (32 bytes read)
->> > WARNING: CPU: 1 PID: 4537 at mm/slab_common.c:996 kmalloc_slab+0x56/0x=
-70 mm/slab_common.c:996
->> > Kernel panic - not syncing: panic_on_warn set ...
->>
->> syzbot gave up upon kmalloc(), but actually error handling path has
->> NULL pointer dereference bug.
->>
->
-> Thanks Tetsuo! This crash has been fixed by Daniel Borkmann in commit
-> c09290c56376 ("bpf, xdp: fix crash in xdp_umem_unaccount_pages").
+On 07-06-18, 20:58, ilia.lin@gmail.com wrote:
+> From: Ilia Lin <ilia.lin@gmail.com>
+> 
+> Add device remove and module exit code to make the driver
+> functioning as a loadable module.
+> 
+> Fixes: ac28927659be (cpufreq: kryo: allow building as a loadable module)
+> Signed-off-by: Ilia Lin <ilia.lin@gmail.com>
+> ---
+>  drivers/cpufreq/qcom-cpufreq-kryo.c | 24 +++++++++++++++++++++---
+>  1 file changed, 21 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/qcom-cpufreq-kryo.c b/drivers/cpufreq/qcom-cpufreq-kryo.c
+> index d049fe4b80c4..a08de0253169 100644
+> --- a/drivers/cpufreq/qcom-cpufreq-kryo.c
+> +++ b/drivers/cpufreq/qcom-cpufreq-kryo.c
+> @@ -71,10 +71,10 @@ static enum _msm8996_version __init qcom_cpufreq_kryo_get_msm_id(void)
+>  	return version;
+>  }
+>  
+> +struct platform_device *cpufreq_dt_pdev;
 
-Let's tell syzbot about this:
+Move this and the other platform device pointer at the top of the file after the
+enum declarations. They don't look nice in the middle of nowhere.
 
-#syz fix: bpf, xdp: fix crash in xdp_umem_unaccount_pages
+>  static int qcom_cpufreq_kryo_probe(struct platform_device *pdev)
+>  {
+>  	struct opp_table *opp_tables[NR_CPUS] = {0};
+> -	struct platform_device *cpufreq_dt_pdev;
+>  	enum _msm8996_version msm8996_version;
+>  	struct nvmem_cell *speedbin_nvmem;
+>  	struct device_node *np;
+> @@ -115,6 +115,8 @@ static int qcom_cpufreq_kryo_probe(struct platform_device *pdev)
+>  
+>  	speedbin = nvmem_cell_read(speedbin_nvmem, &len);
+>  	nvmem_cell_put(speedbin_nvmem);
+> +	if (IS_ERR(speedbin))
+> +		return PTR_ERR(speedbin);
+
+This doesn't look related to this patch. Should it be a different commit ?
+
+And I just saw definition of nvmem_cell_read() and it says the returned buffer
+must be freed by caller using kfree(). I dont' see you doing that. Please also
+check if any other such resources are there which you forgot to free.
+
+>  
+>  	switch (msm8996_version) {
+>  	case MSM8996_V3:
+> @@ -162,8 +164,15 @@ static int qcom_cpufreq_kryo_probe(struct platform_device *pdev)
+>  	return ret;
+>  }
+>  
+> +static int qcom_cpufreq_kryo_remove(struct platform_device *pdev)
+> +{
+> +	platform_device_unregister(cpufreq_dt_pdev);
+> +	return 0;
+> +}
+> +
+>  static struct platform_driver qcom_cpufreq_kryo_driver = {
+>  	.probe = qcom_cpufreq_kryo_probe,
+> +	.remove = qcom_cpufreq_kryo_remove,
+>  	.driver = {
+>  		.name = "qcom-cpufreq-kryo",
+>  	},
+> @@ -174,6 +183,7 @@ static const struct of_device_id qcom_cpufreq_kryo_match_list[] __initconst = {
+>  	{ .compatible = "qcom,msm8996", },
+>  };
+>  
+> +struct platform_device *kryo_cpufreq_pdev;
+>  /*
+>   * Since the driver depends on smem and nvmem drivers, which may
+>   * return EPROBE_DEFER, all the real activity is done in the probe,
+> @@ -198,8 +208,9 @@ static int __init qcom_cpufreq_kryo_init(void)
+>  	if (unlikely(ret < 0))
+>  		return ret;
+>  
+> -	ret = PTR_ERR_OR_ZERO(platform_device_register_simple(
+> -		"qcom-cpufreq-kryo", -1, NULL, 0));
+> +	kryo_cpufreq_pdev = platform_device_register_simple(
+> +		"qcom-cpufreq-kryo", -1, NULL, 0);
+> +	ret = PTR_ERR_OR_ZERO(kryo_cpufreq_pdev);
+>  	if (0 == ret)
+>  		return 0;
+>  
+> @@ -208,5 +219,12 @@ static int __init qcom_cpufreq_kryo_init(void)
+>  }
+>  module_init(qcom_cpufreq_kryo_init);
+>  
+> +static void __init qcom_cpufreq_kryo_exit(void)
+> +{
+> +	platform_device_unregister(kryo_cpufreq_pdev);
+> +	platform_driver_unregister(&qcom_cpufreq_kryo_driver);
+> +}
+> +module_exit(qcom_cpufreq_kryo_exit);
+> +
+>  MODULE_DESCRIPTION("Qualcomm Technologies, Inc. Kryo CPUfreq driver");
+>  MODULE_LICENSE("GPL v2");
+
+-- 
+viresh
