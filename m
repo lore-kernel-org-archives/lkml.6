@@ -1,94 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id a/GdBItGGVtTOAAAmS7hNA
-	; Thu, 07 Jun 2018 14:58:09 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id L8ReBHvQGlsSFAAAmS7hNA
+	; Fri, 08 Jun 2018 18:53:55 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id A83C8608B8; Thu,  7 Jun 2018 14:58:09 +0000 (UTC)
+	id 47CC0607DC; Fri,  8 Jun 2018 18:53:55 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 295836074D;
-	Thu,  7 Jun 2018 14:58:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 295836074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id BF8E1601D2;
+	Fri,  8 Jun 2018 18:53:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BF8E1601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935462AbeFGO6H (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:58:07 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41153 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935342AbeFGO6E (ORCPT
+        id S1753172AbeFHSxO (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 14:53:14 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:53800 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752708AbeFHSuV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:58:04 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbo-0005a0-DI; Thu, 07 Jun 2018 15:09:48 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb2-0002sL-UF; Thu, 07 Jun 2018 15:09:00 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "J. Bruce Fields" <bfields@redhat.com>,
-        "Trond Myklebust" <trond.myklebust@primarydata.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.525524252@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 137/410] NFS: commit direct writes even if they fail
- partially
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Fri, 8 Jun 2018 14:50:21 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1fRMSp-0006Nn-W2; Fri, 08 Jun 2018 18:50:20 +0000
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 06/13] switch all remaining checks for FILE_OPENED to FMODE_OPENED
+Date: Fri,  8 Jun 2018 19:50:12 +0100
+Message-Id: <20180608185019.24472-6-viro@ZenIV.linux.org.uk>
+X-Mailer: git-send-email 2.9.5
+In-Reply-To: <20180608185019.24472-1-viro@ZenIV.linux.org.uk>
+References: <20180608184842.GD30522@ZenIV.linux.org.uk>
+ <20180608185019.24472-1-viro@ZenIV.linux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-------------------
-
-From: "J. Bruce Fields" <bfields@redhat.com>
-
-commit 1b8d97b0a837beaf48a8449955b52c650a7114b4 upstream.
-
-If some of the WRITE calls making up an O_DIRECT write syscall fail,
-we neglect to commit, even if some of the WRITEs succeed.
-
-We also depend on the commit code to free the reference count on the
-nfs_page taken in the "if (request_commit)" case at the end of
-nfs_direct_write_completion().  The problem was originally noticed
-because ENOSPC's encountered partway through a write would result in a
-closed file being sillyrenamed when it should have been unlinked.
-
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
-Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
-[bwh: Backported to 3.16: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/nfs/direct.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ fs/namei.c | 13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
 
---- a/fs/nfs/direct.c
-+++ b/fs/nfs/direct.c
-@@ -732,10 +732,8 @@ static void nfs_direct_write_completion(
+diff --git a/fs/namei.c b/fs/namei.c
+index 2abd00079b26..3034c97df757 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3027,8 +3027,6 @@ static int atomic_open(struct nameidata *nd, struct dentry *dentry,
+ 		 * permission here.
+ 		 */
+ 		int acc_mode = op->acc_mode;
+-		if (file->f_mode & FMODE_OPENED)
+-			*opened |= FILE_OPENED;
+ 		if (*opened & FILE_CREATED) {
+ 			WARN_ON(!(open_flag & O_CREAT));
+ 			fsnotify_create(dir, dentry);
+@@ -3363,11 +3361,10 @@ static int do_last(struct nameidata *nd,
+ 	error = may_open(&nd->path, acc_mode, open_flag);
+ 	if (error)
+ 		goto out;
+-	BUG_ON(*opened & FILE_OPENED); /* once it's opened, it's opened */
++	BUG_ON(file->f_mode & FMODE_OPENED); /* once it's opened, it's opened */
+ 	error = vfs_open(&nd->path, file, current_cred());
+ 	if (error)
+ 		goto out;
+-	*opened |= FILE_OPENED;
+ opened:
+ 	error = open_check_o_direct(file);
+ 	if (!error)
+@@ -3449,8 +3446,6 @@ static int do_tmpfile(struct nameidata *nd, unsigned flags,
+ 	error = finish_open(file, child, NULL);
+ 	if (error)
+ 		goto out2;
+-	if (file->f_mode & FMODE_OPENED)
+-		*opened |= FILE_OPENED;
+ 	error = open_check_o_direct(file);
+ out2:
+ 	mnt_drop_write(path.mnt);
+@@ -3492,8 +3487,6 @@ static struct file *path_openat(struct nameidata *nd,
  
- 	spin_lock(&dreq->lock);
+ 	if (unlikely(file->f_flags & O_PATH)) {
+ 		error = do_o_path(nd, flags, file);
+-		if (!error)
+-			opened |= FILE_OPENED;
+ 		goto out2;
+ 	}
  
--	if (test_bit(NFS_IOHDR_ERROR, &hdr->flags)) {
--		dreq->flags = 0;
-+	if (test_bit(NFS_IOHDR_ERROR, &hdr->flags))
- 		dreq->error = hdr->error;
--	}
- 	if (dreq->error != 0)
- 		bit = NFS_IOHDR_ERROR;
- 	else {
+@@ -3514,12 +3507,12 @@ static struct file *path_openat(struct nameidata *nd,
+ 	terminate_walk(nd);
+ out2:
+ 	if (likely(!error)) {
+-		if (likely(opened & FILE_OPENED))
++		if (likely(file->f_mode & FMODE_OPENED))
+ 			return file;
+ 		WARN_ON(1);
+ 		error = -EINVAL;
+ 	}
+-	if (opened & FILE_OPENED)
++	if (file->f_mode & FMODE_OPENED)
+ 		fput(file);
+ 	else
+ 		put_filp(file);
+-- 
+2.11.0
