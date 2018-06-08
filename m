@@ -1,113 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id wEsfKCxOGVsZdgAAmS7hNA
-	; Thu, 07 Jun 2018 15:24:35 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id KEfOBg/VGVt/WQAAmS7hNA
+	; Fri, 08 Jun 2018 01:02:39 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id ABBD5608B8; Thu,  7 Jun 2018 15:24:35 +0000 (UTC)
+	id 175A26074D; Fri,  8 Jun 2018 01:02:39 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 2AB2E60115;
-	Thu,  7 Jun 2018 15:24:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2AB2E60115
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 7FD57605A5;
+	Fri,  8 Jun 2018 01:02:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7FD57605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935891AbeFGPYc (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:24:32 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41198 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932716AbeFGO6h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:58:37 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbk-0005Zs-3S; Thu, 07 Jun 2018 15:09:44 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb4-0002xq-Tt; Thu, 07 Jun 2018 15:09:02 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "syzbot" <syzkaller@googlegroups.com>,
-        "Pablo Neira Ayuso" <pablo@netfilter.org>,
-        "Dmitry Vyukov" <dvyukov@google.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.388958158@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 180/410] netfilter: ipt_CLUSTERIP: fix out-of-bounds
- accesses in clusterip_tg_check()
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        id S1752413AbeFHBCf (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 21:02:35 -0400
+Received: from mga01.intel.com ([192.55.52.88]:47612 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752174AbeFHBCd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 21:02:33 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 18:02:33 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,488,1520924400";
+   d="scan'208";a="61374574"
+Received: from sandybridge-desktop.sh.intel.com ([10.239.160.116])
+  by fmsmga004.fm.intel.com with ESMTP; 07 Jun 2018 18:02:32 -0700
+From: Chen Yu <yu.c.chen@intel.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-kernel@vger.kernel.org, Chen Yu <yu.c.chen@intel.com>,
+        Artem S Tashkinov <t.artem@mailcity.com>,
+        linux-pm@vger.kernel.org
+Subject: [PATCH][v2] sched: cpufreq: Fix long idle judgement logic in load calculation
+Date: Fri,  8 Jun 2018 09:07:33 +0800
+Message-Id: <1528420053-22884-1-git-send-email-yu.c.chen@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+According to current code implementation, detecting the long
+idle period is done by checking if the interval between two
+adjacent utilization update handers is long enough. Although
+this mechanism can detect if the idle period is long enough
+(no utilization hooks invoked during idle period), it might
+not contain a corner case: if the task has occupied the cpu
+for too long which causes no context switch during that
+period, then no utilization handler will be launched until this
+high prio task is switched out. As a result, the idle_periods
+field might be calculated incorrectly because it regards the
+100% load as 0% and makes the conservative governor who uses
+this field confusing.
 
-------------------
+Change the judgement to compare the idle_time with sampling_rate
+directly.
 
-From: Dmitry Vyukov <dvyukov@google.com>
-
-commit 1a38956cce5eabd7b74f94bab70265e4df83165e upstream.
-
-Commit 136e92bbec0a switched local_nodes from an array to a bitmask
-but did not add proper bounds checks. As the result
-clusterip_config_init_nodelist() can both over-read
-ipt_clusterip_tgt_info.local_nodes and over-write
-clusterip_config.local_nodes.
-
-Add bounds checks for both.
-
-Fixes: 136e92bbec0a ("[NETFILTER] CLUSTERIP: use a bitmap to store node responsibility data")
-Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Reported-by: Artem S. Tashkinov <t.artem@mailcity.com>
+Cc: Artem S Tashkinov <t.artem@mailcity.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-pm@vger.kernel.org
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
 ---
- net/ipv4/netfilter/ipt_CLUSTERIP.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+v2: Per Viresh's suggestion, ignore idle_time longer than 30mins and
+    simplify the code.
+---
+ drivers/cpufreq/cpufreq_governor.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
---- a/net/ipv4/netfilter/ipt_CLUSTERIP.c
-+++ b/net/ipv4/netfilter/ipt_CLUSTERIP.c
-@@ -366,7 +366,7 @@ static int clusterip_tg_check(const stru
- 	struct ipt_clusterip_tgt_info *cipinfo = par->targinfo;
- 	const struct ipt_entry *e = par->entryinfo;
- 	struct clusterip_config *config;
--	int ret;
-+	int ret, i;
+diff --git a/drivers/cpufreq/cpufreq_governor.c b/drivers/cpufreq/cpufreq_governor.c
+index 871bf9c..1d50e97 100644
+--- a/drivers/cpufreq/cpufreq_governor.c
++++ b/drivers/cpufreq/cpufreq_governor.c
+@@ -165,7 +165,7 @@ unsigned int dbs_update(struct cpufreq_policy *policy)
+ 			 * calls, so the previous load value can be used then.
+ 			 */
+ 			load = j_cdbs->prev_load;
+-		} else if (unlikely(time_elapsed > 2 * sampling_rate &&
++		} else if (unlikely((int)idle_time > 2 * sampling_rate &&
+ 				    j_cdbs->prev_load)) {
+ 			/*
+ 			 * If the CPU had gone completely idle and a task has
+@@ -185,10 +185,8 @@ unsigned int dbs_update(struct cpufreq_policy *policy)
+ 			 * clear prev_load to guarantee that the load will be
+ 			 * computed again next time.
+ 			 *
+-			 * Detecting this situation is easy: the governor's
+-			 * utilization update handler would not have run during
+-			 * CPU-idle periods.  Hence, an unusually large
+-			 * 'time_elapsed' (as compared to the sampling rate)
++			 * Detecting this situation is easy: an unusually large
++			 * 'idle_time' (as compared to the sampling rate)
+ 			 * indicates this scenario.
+ 			 */
+ 			load = j_cdbs->prev_load;
+@@ -217,8 +215,8 @@ unsigned int dbs_update(struct cpufreq_policy *policy)
+ 			j_cdbs->prev_load = load;
+ 		}
  
- 	if (cipinfo->hash_mode != CLUSTERIP_HASHMODE_SIP &&
- 	    cipinfo->hash_mode != CLUSTERIP_HASHMODE_SIP_SPT &&
-@@ -380,8 +380,18 @@ static int clusterip_tg_check(const stru
- 		pr_info("Please specify destination IP\n");
- 		return -EINVAL;
- 	}
--
--	/* FIXME: further sanity checks */
-+	if (cipinfo->num_local_nodes > ARRAY_SIZE(cipinfo->local_nodes)) {
-+		pr_info("bad num_local_nodes %u\n", cipinfo->num_local_nodes);
-+		return -EINVAL;
-+	}
-+	for (i = 0; i < cipinfo->num_local_nodes; i++) {
-+		if (cipinfo->local_nodes[i] - 1 >=
-+		    sizeof(config->local_nodes) * 8) {
-+			pr_info("bad local_nodes[%d] %u\n",
-+				i, cipinfo->local_nodes[i]);
-+			return -EINVAL;
-+		}
-+	}
+-		if (time_elapsed > 2 * sampling_rate) {
+-			unsigned int periods = time_elapsed / sampling_rate;
++		if (unlikely((int)idle_time > 2 * sampling_rate)) {
++			unsigned int periods = idle_time / sampling_rate;
  
- 	config = clusterip_config_find_get(par->net, e->ip.dst.s_addr, 1);
- 	if (!config) {
+ 			if (periods < idle_periods)
+ 				idle_periods = periods;
+-- 
+2.7.4
