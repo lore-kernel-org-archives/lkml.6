@@ -1,116 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id esWtMdRIGVumSgAAmS7hNA
-	; Thu, 07 Jun 2018 15:01:40 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 60WeEMFzGltpPwAAmS7hNA
+	; Fri, 08 Jun 2018 12:19:21 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id B9841608B8; Thu,  7 Jun 2018 15:01:40 +0000 (UTC)
+	id 98D55607E4; Fri,  8 Jun 2018 12:19:21 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="AQg64rcl"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 2AC66601C3;
-	Thu,  7 Jun 2018 15:01:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2AC66601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 14EBC601C3;
+	Fri,  8 Jun 2018 12:19:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 14EBC601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964824AbeFGPBh (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:01:37 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41396 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934945AbeFGPBd (ORCPT
+        id S1752148AbeFHMTS (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 08:19:18 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:55556 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751143AbeFHMTR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:01:33 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbu-0005Zl-55; Thu, 07 Jun 2018 15:09:54 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb0-0002mB-7A; Thu, 07 Jun 2018 15:08:58 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Fri, 8 Jun 2018 08:19:17 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w58CGQgJ119174;
+        Fri, 8 Jun 2018 12:19:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2017-10-26;
+ bh=yE0sKg2cLyfX+ZDu6bomiqkMYEtiX3wAmwG0VZiun9M=;
+ b=AQg64rclA8JBj0ormVwo7QSkOqQBvTn2axK9KWZ7eQ/7x3KC0KhIU9VfQ6EKmhME7ilm
+ HSNXWI5wHKZ6267JbSZdCaCU02H9sQZ6eJozPbwJkLoXg6jxh2DYV4Vd3ybLhnSG/jEU
+ IKcq4djQJlDg82X2NC1W3V6ncz/0p/t18LtI/VQ57NZqSuf6JIuy24TQfFA2f6CrWvhN
+ qcIKFKBwPlGx1VBgAYaSsTcEDo21yS0xhZQChfd6/JogelIwdB1ygHLDpv7G6jzyO++v
+ 3P14jma+79aCUYnEhUm8AsI3IB8Wf+vTT6j7YwIiSkPfJ4LQKxyGxCUt/S+k5qIHDnAu lA==
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2130.oracle.com with ESMTP id 2jbvypcwv0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 08 Jun 2018 12:19:03 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w58CJ2t9028617
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 8 Jun 2018 12:19:02 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w58CJ16T016992;
+        Fri, 8 Jun 2018 12:19:01 GMT
+Received: from mwanda (/41.202.241.42)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 08 Jun 2018 05:19:00 -0700
+Date: Fri, 8 Jun 2018 15:18:51 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: John Whitmore <johnfwhitmore@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kstewart@linuxfoundation.org,
+        devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
+        colin.king@canonical.com, tglx@linutronix.de
+Subject: Re: [PATCH v6 8/8] staging: rtl8192e: remove unnecessary parentheses
+ - Coding Style
+Message-ID: <20180608121851.o7m3iihg2ibbgmxh@mwanda>
+References: <20180606114003.22654-1-johnfwhitmore@gmail.com>
+ <20180606114003.22654-9-johnfwhitmore@gmail.com>
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Benjamin Tissoires" <benjamin.tissoires@redhat.com>,
-        "Jiri Kosina" <jkosina@suse.cz>, "Dave Young" <dyoung@redhat.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.491013154@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 074/410] HID: add quirk for another PIXART OEM mouse
- used by HP
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180606114003.22654-9-johnfwhitmore@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8917 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=796
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806080141
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+On Wed, Jun 06, 2018 at 12:40:03PM +0100, John Whitmore wrote:
+> @@ -1072,10 +1072,10 @@ void HTInitializeHTInfo(struct ieee80211_device *ieee)
+>  	pHTInfo->CurrentAMPDUFactor = pHTInfo->AMPDU_Factor;
+>  
+>  	// Initialize all of the parameters related to 11n
+> -	memset((void *)(&(pHTInfo->SelfHTCap)), 0, sizeof(pHTInfo->SelfHTCap));
+> -	memset((void *)(&(pHTInfo->SelfHTInfo)), 0, sizeof(pHTInfo->SelfHTInfo));
+> -	memset((void *)(&(pHTInfo->PeerHTCapBuf)), 0, sizeof(pHTInfo->PeerHTCapBuf));
+> -	memset((void *)(&(pHTInfo->PeerHTInfoBuf)), 0, sizeof(pHTInfo->PeerHTInfoBuf));
+> +	memset((void *)(&pHTInfo->SelfHTCap), 0, sizeof(pHTInfo->SelfHTCap));
+> +	memset((void *)(&pHTInfo->SelfHTInfo), 0, sizeof(pHTInfo->SelfHTInfo));
+> +	memset((void *)(&pHTInfo->PeerHTCapBuf), 0, sizeof(pHTInfo->PeerHTCapBuf));
+> +	memset((void *)(&pHTInfo->PeerHTInfoBuf), 0, sizeof(pHTInfo->PeerHTInfoBuf));
 
-------------------
+You should write these like so:
 
-From: Dave Young <dyoung@redhat.com>
+	memset(&pHTInfo->PeerHTInfoBuf, 0, sizeof(pHTInfo->PeerHTInfoBuf));
 
-commit 01cffe9ded15c0d664e0beb33c594e00c0d57bba upstream.
+The first 7 patches look fine, but can you resend this last one?
 
-This mouse keep disconnecting in runleve 3 like below, add it needs the
-quirk to mute the anoying messages.
-
-[  111.230555] usb 2-2: USB disconnect, device number 6
-[  112.718156] usb 2-2: new low-speed USB device number 7 using xhci_hcd
-[  112.941594] usb 2-2: New USB device found, idVendor=03f0, idProduct=094a
-[  112.984866] usb 2-2: New USB device strings: Mfr=1, Product=2, SerialNumber=0
-[  113.027731] usb 2-2: Product: HP USB Optical Mouse
-[  113.069977] usb 2-2: Manufacturer: PixArt
-[  113.113500] input: PixArt HP USB Optical Mouse as /devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/0003:03F0:094A.0002/input/input14
-[  113.156787] hid-generic 0003:03F0:094A.0002: input: USB HID v1.11 Mouse [PixArt HP USB Optical Mouse] on usb-0000:00:14.0-2/input0
-[  173.262642] usb 2-2: USB disconnect, device number 7
-[  174.750244] usb 2-2: new low-speed USB device number 8 using xhci_hcd
-[  174.935740] usb 2-2: New USB device found, idVendor=03f0, idProduct=094a
-[  174.990435] usb 2-2: New USB device strings: Mfr=1, Product=2, SerialNumber=0
-[  175.014984] usb 2-2: Product: HP USB Optical Mouse
-[  175.037886] usb 2-2: Manufacturer: PixArt
-[  175.061794] input: PixArt HP USB Optical Mouse as /devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/0003:03F0:094A.0003/input/input15
-[  175.084946] hid-generic 0003:03F0:094A.0003: input: USB HID v1.11 Mouse [PixArt HP USB Optical Mouse] on usb-0000:00:14.0-2/input0
-
-Signed-off-by: Dave Young <dyoung@redhat.com>
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-[bwh: Backported to 3.16:
- - Don't use HID_USB_DEVICE()
- - Adjust filename, context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- drivers/hid/hid-ids.h           | 1 +
- drivers/hid/usbhid/hid-quirks.c | 1 +
- 2 files changed, 2 insertions(+)
-
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -488,6 +488,7 @@
- #define USB_PRODUCT_ID_HP_LOGITECH_OEM_USB_OPTICAL_MOUSE_0A4A	0x0a4a
- #define USB_PRODUCT_ID_HP_LOGITECH_OEM_USB_OPTICAL_MOUSE_0B4A	0x0b4a
- #define USB_PRODUCT_ID_HP_PIXART_OEM_USB_OPTICAL_MOUSE		0x134a
-+#define USB_PRODUCT_ID_HP_PIXART_OEM_USB_OPTICAL_MOUSE_094A	0x094a
- 
- #define USB_VENDOR_ID_HUION		0x256c
- #define USB_DEVICE_ID_HUION_580		0x006e
---- a/drivers/hid/usbhid/hid-quirks.c
-+++ b/drivers/hid/usbhid/hid-quirks.c
-@@ -99,6 +99,7 @@ static const struct hid_blacklist {
- 	{ USB_VENDOR_ID_HP, USB_PRODUCT_ID_HP_LOGITECH_OEM_USB_OPTICAL_MOUSE_0A4A, HID_QUIRK_ALWAYS_POLL },
- 	{ USB_VENDOR_ID_HP, USB_PRODUCT_ID_HP_LOGITECH_OEM_USB_OPTICAL_MOUSE_0B4A, HID_QUIRK_ALWAYS_POLL },
- 	{ USB_VENDOR_ID_HP, USB_PRODUCT_ID_HP_PIXART_OEM_USB_OPTICAL_MOUSE, HID_QUIRK_ALWAYS_POLL },
-+	{ USB_VENDOR_ID_HP, USB_PRODUCT_ID_HP_PIXART_OEM_USB_OPTICAL_MOUSE_094A, HID_QUIRK_ALWAYS_POLL },
- 	{ USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_C077, HID_QUIRK_ALWAYS_POLL },
- 	{ USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_KEYBOARD_G710_PLUS, HID_QUIRK_NOGET },
- 	{ USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_MOUSE_C01A, HID_QUIRK_ALWAYS_POLL },
+regards,
+dan carpenter
