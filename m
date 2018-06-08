@@ -1,113 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id OWMxLPI7GluNKwAAmS7hNA
-	; Fri, 08 Jun 2018 08:19:24 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id xRIlDOdAGluJWAAAmS7hNA
+	; Fri, 08 Jun 2018 08:40:07 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 49B17608BA; Fri,  8 Jun 2018 08:19:24 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eMu3uV+F"
+	id 146B5607E4; Fri,  8 Jun 2018 08:40:07 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id B581760590;
-	Fri,  8 Jun 2018 08:19:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B581760590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 84E9060290;
+	Fri,  8 Jun 2018 08:40:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 84E9060290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752948AbeFHITV (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 04:19:21 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:44239 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752897AbeFHITP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 04:19:15 -0400
-Received: by mail-pl0-f67.google.com with SMTP id z9-v6so7854833plk.11
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 01:19:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=2kKdK2qZqm7YxqxQreraVLLw0s8TN4UgsB3k/YpdPQI=;
-        b=eMu3uV+FIFUH5dBfHJQiTcF0H8MCPRxIB+C1Z8BezzykBY/c9VijVF7D+18wXIupGp
-         9aY28w3zMYMd9f4wZZWE//C9ccivy+hltm8SjDk5jBnJGI5a+lUBK1LuAlkY6UTSbi+2
-         lt+JsJqsQ9mWalp1GrUydWKAmewnFKaXj9XeM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=2kKdK2qZqm7YxqxQreraVLLw0s8TN4UgsB3k/YpdPQI=;
-        b=c4zpc+GFUNIe6tBlQNg/q0Qku/FJe2oS73AVap+aWE53uKPq9Ug5Y51oUOsHh6SgAr
-         9bZLZOtkNKyCj4++w/VrURnXKb0oUz7U7jeRFFsDVVMATSMKTmNxWiSmEWzdVXp9ee5B
-         26tQdfQ7/thZ/9PbAKDvNPl/NlD4ZwTgWMMxO95zB3C/PPbn3DgYFictaxnNsN50Wt9i
-         9DTRQfiDrbn2TvQwb/rGni2vxG2wc1kzCmI+QDFTZwWlZnTabeU1tu2TivS3baENv7MN
-         MAG8Qmk8f497A3wxuChK50Ebbz0Op9ba8GmtYUVP9mX7m+7ga72U+dBpMeRqVk6KvJ1z
-         Lcrw==
-X-Gm-Message-State: APt69E3CBhpRDd2xaI7uV0Uwff7MP9Mqp12HhGgjBJLJuU5E/Yw7Ym9E
-        RK2BjpAsqAxNIVeyQZn6W/JDwQ==
-X-Google-Smtp-Source: ADUXVKIUuLi1glU/e8hqbQE0DObSJSYswciFEi/IT+z1kGiHRXqdrtgswWoPT4Q7+dU+qS46Y13jBA==
-X-Received: by 2002:a17:902:8f8b:: with SMTP id z11-v6mr5516405plo.203.1528445954765;
-        Fri, 08 Jun 2018 01:19:14 -0700 (PDT)
-Received: from ubt.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id s4-v6sm72243947pgp.35.2018.06.08.01.19.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 08 Jun 2018 01:19:13 -0700 (PDT)
-From: Chunyan Zhang <zhang.chunyan@linaro.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Billows Wu <billows.wu@spreadtrum.com>, zhang.lyra@gmail.com
-Subject: [PATCH 4/6] mmc: sdhci: add 32-bit block count support for v4 mode
-Date: Fri,  8 Jun 2018 16:18:11 +0800
-Message-Id: <1528445893-14530-5-git-send-email-zhang.chunyan@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528445893-14530-1-git-send-email-zhang.chunyan@linaro.org>
-References: <1528445893-14530-1-git-send-email-zhang.chunyan@linaro.org>
+        id S932238AbeFHIkE (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 04:40:04 -0400
+Received: from mga17.intel.com ([192.55.52.151]:5992 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752769AbeFHIkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 04:40:02 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jun 2018 01:40:01 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,490,1520924400";
+   d="scan'208";a="46218022"
+Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
+  by fmsmga008.fm.intel.com with ESMTP; 08 Jun 2018 01:39:59 -0700
+Received: from kbuild by bee with local (Exim 4.84_2)
+        (envelope-from <lkp@intel.com>)
+        id 1fRCwA-000GLt-N8; Fri, 08 Jun 2018 16:39:58 +0800
+Date: Fri, 8 Jun 2018 16:39:41 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Yangbo Lu <yangbo.lu@nxp.com>
+Cc: kbuild-all@01.org, netdev@vger.kernel.org, madalin.bucur@nxp.com,
+        Richard Cochran <richardcochran@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Yangbo Lu <yangbo.lu@nxp.com>
+Subject: Re: [v3, 07/10] fsl/fman_port: support getting timestamp
+Message-ID: <201806081628.UCdhDsEg%fengguang.wu@intel.com>
+References: <20180607092050.46128-8-yangbo.lu@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180607092050.46128-8-yangbo.lu@nxp.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: lkp@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When Host Version 4 is enabled, SDMA System Address register is
-re-defined as 32-bit Block Count, and SDMA uses ADMA System
-Address register (05Fh-058h) instead.
+Hi Yangbo,
 
-Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
+I love your patch! Perhaps something to improve:
+
+[auto build test WARNING on net-next/master]
+[also build test WARNING on next-20180608]
+[cannot apply to v4.17]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/Yangbo-Lu/Support-DPAA-PTP-clock-and-timestamping/20180608-131649
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
+
+
+sparse warnings: (new ones prefixed by >>)
+
+   drivers/net/ethernet/freescale/fman/fman_port.c:879:26: sparse: expression using sizeof(void)
+   drivers/net/ethernet/freescale/fman/fman_port.c:879:26: sparse: expression using sizeof(void)
+   drivers/net/ethernet/freescale/fman/fman_port.c:1035:36: sparse: expression using sizeof(void)
+   drivers/net/ethernet/freescale/fman/fman_port.c:1247:17: sparse: expression using sizeof(void)
+   drivers/net/ethernet/freescale/fman/fman_port.c:1249:17: sparse: expression using sizeof(void)
+   drivers/net/ethernet/freescale/fman/fman_port.c:1249:17: sparse: expression using sizeof(void)
+>> drivers/net/ethernet/freescale/fman/fman_port.c:1739:19: sparse: cast to restricted __be64
+>> drivers/net/ethernet/freescale/fman/fman_port.c:1739:19: sparse: cast to restricted __be64
+>> drivers/net/ethernet/freescale/fman/fman_port.c:1739:19: sparse: cast to restricted __be64
+>> drivers/net/ethernet/freescale/fman/fman_port.c:1739:19: sparse: cast to restricted __be64
+>> drivers/net/ethernet/freescale/fman/fman_port.c:1739:19: sparse: cast to restricted __be64
+>> drivers/net/ethernet/freescale/fman/fman_port.c:1739:19: sparse: cast to restricted __be64
+>> drivers/net/ethernet/freescale/fman/fman_port.c:1739:19: sparse: cast to restricted __be64
+>> drivers/net/ethernet/freescale/fman/fman_port.c:1739:19: sparse: cast to restricted __be64
+>> drivers/net/ethernet/freescale/fman/fman_port.c:1739:19: sparse: cast to restricted __be64
+>> drivers/net/ethernet/freescale/fman/fman_port.c:1739:19: sparse: cast to restricted __be64
+
+vim +1739 drivers/net/ethernet/freescale/fman/fman_port.c
+
+  1733	
+  1734	int fman_port_get_tstamp(struct fman_port *port, const void *data, u64 *tstamp)
+  1735	{
+  1736		if (port->buffer_offsets.time_stamp_offset == ILLEGAL_BASE)
+  1737			return -EINVAL;
+  1738	
+> 1739		*tstamp = be64_to_cpu(*(u64 *)(data +
+  1740				port->buffer_offsets.time_stamp_offset));
+  1741	
+  1742		return 0;
+  1743	}
+  1744	EXPORT_SYMBOL(fman_port_get_tstamp);
+  1745	
+
 ---
- drivers/mmc/host/sdhci.c | 3 ++-
- drivers/mmc/host/sdhci.h | 1 +
- 2 files changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index 5d3b0d8..b8ee124 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -943,7 +943,8 @@ static void sdhci_prepare_data(struct sdhci_host *host, struct mmc_command *cmd)
- 	/* Set the DMA boundary value and block size */
- 	sdhci_writew(host, SDHCI_MAKE_BLKSZ(host->sdma_boundary, data->blksz),
- 		     SDHCI_BLOCK_SIZE);
--	sdhci_writew(host, data->blocks, SDHCI_BLOCK_COUNT);
-+	reg = host->v4_mode ? SDHCI_32BIT_BLK_CNT : SDHCI_BLOCK_COUNT;
-+	sdhci_writew(host, data->blocks, reg);
- }
- 
- static inline bool sdhci_auto_cmd12(struct sdhci_host *host,
-diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-index 820a863..1e84539 100644
---- a/drivers/mmc/host/sdhci.h
-+++ b/drivers/mmc/host/sdhci.h
-@@ -28,6 +28,7 @@
- 
- #define SDHCI_DMA_ADDRESS	0x00
- #define SDHCI_ARGUMENT2		SDHCI_DMA_ADDRESS
-+#define SDHCI_32BIT_BLK_CNT	SDHCI_DMA_ADDRESS
- 
- #define SDHCI_BLOCK_SIZE	0x04
- #define  SDHCI_MAKE_BLKSZ(dma, blksz) (((dma & 0x7) << 12) | (blksz & 0xFFF))
--- 
-2.7.4
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
