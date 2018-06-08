@@ -1,126 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Cx+ZO96BHlv5fgAAmS7hNA
-	; Mon, 11 Jun 2018 14:07:10 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 0D/zBS4EG1v9LwAAmS7hNA
+	; Fri, 08 Jun 2018 22:33:43 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 212D9608B8; Mon, 11 Jun 2018 14:07:10 +0000 (UTC)
+	id 3D3186089E; Fri,  8 Jun 2018 22:33:43 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IlC4BzX2"
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="btu2DB+i"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 5F8DF608D2;
-	Mon, 11 Jun 2018 14:07:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5F8DF608D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id A1C84601C3;
+	Fri,  8 Jun 2018 22:33:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A1C84601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933615AbeFKOHF (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 10:07:05 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45026 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933480AbeFKOGr (ORCPT
+        id S1753093AbeFHWdh (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 18:33:37 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:42734 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752774AbeFHWdg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:06:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=rzcF3hO6XLxL1/X+Qfq4B5Sb1mRT7xWTj3jwSQZnKAY=; b=IlC4BzX2BUIPttCfGDa0MuHBd
-        sD223X+RrLG5ghncJf7hAIf7tuAt7/O2sOzB8gok99ra8ROxmbf5/fvjMcQ5RwtSZFxso8L00YhOW
-        EcBlBOZinbt4WRWaXOcFGBq+bahGYwHXWEd7jkqGIt8TS8YqTAP7Fg/r7E8keDBeqpWE5GlecKGWd
-        fgfQM4S16OhVwiqe7tK/OgwgwHbWVsGCy9eTufPD/7UdLXYpj2siBjdyJY9bP5WHxIy6ORMFidiPm
-        R2MoR44s+FogOy47TC8m0Twe4mucgilfBnd7rr0SUhWvVWnw1IqvvrPONn9t+sgUZtl9b18YwPisd
-        G7j8SeYvw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSNT4-0004cv-Bs; Mon, 11 Jun 2018 14:06:46 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Lukas Czerner <lczerner@redhat.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v13 17/72] xarray: Add xas_create_range
-Date: Mon, 11 Jun 2018 07:05:44 -0700
-Message-Id: <20180611140639.17215-18-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
-References: <20180611140639.17215-1-willy@infradead.org>
+        Fri, 8 Jun 2018 18:33:36 -0400
+Received: by mail-pl0-f68.google.com with SMTP id w17-v6so9045859pll.9
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 15:33:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=frfIJEP+NRzVrDZfmlheglP3ayxvEKuSbkSIg1XYuE4=;
+        b=btu2DB+iw6+Nae5eJQQhILSZe5Msy/8ASEiNAnQEpvecKyjPM6dNMpBU1IZHgObIrt
+         yOqhzBrptYrRPcMAA1uqBthMNBqGJ0M+GfhvntHWml4FM7PKoEMi583eqtRa8jREKLZ7
+         OAmv3NnYyPqXv3HXS8Dna2irHWIa7hIMcVeqZ1PBxXrCsVcLGHMoGbxzUiISheGUiCqO
+         2lSjFmILJAv28j4qAe3UpF1SAMDqvbWRY4A7IlpVgbfGU3OWCHAqIA9L4REy3peRVnTB
+         uICJgf1/vn/Y9/3Mb+9aekM1BHNseNLR7jCFwcQ1EVeFnaGA78Xr0nqypFEVJ3AnVSaS
+         5w5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=frfIJEP+NRzVrDZfmlheglP3ayxvEKuSbkSIg1XYuE4=;
+        b=onqm6qzW3ZSPToJyRQvnLHbGeY9w2d5eB2oB7i2B9cdW8USXCrvKLGEzSmgtvAsnA4
+         mgLszQ6/bgYYV2P8pL3a9YVLh1pFTeldVLhxUxYIBBlCUP8NtiKyiysHhpV1I0PQmK0s
+         fJuAt7MyzIb2kop0fbGdPP7xTRPLkO12ApUKFm6I52LC39E9J6uhJEjNoLjn6PQRH+e2
+         1Flegg6lDHw2CC7utYpHhrm8gPDEF/LJWbkRPbMesMD+yAVKEUxNa/xzglY+lE81gybA
+         cMQO6qdINaYInQ2aVwwzZdLeQp/J6QdArjDIhBf9r4EqaQ/rrY/JsY4Er7RIf5XitoGQ
+         cu3A==
+X-Gm-Message-State: APt69E0HJthjG54zdAb7hTh3ehxq/sHTX+bMwNXXGHH3MjoCgofbIfsA
+        kNNglKq+MlJ+8kIuQosGSjP6yw==
+X-Google-Smtp-Source: ADUXVKJWzMFUhyi2xW/g/OPqJD09gUW/NzD7HpfWqTf7BqmkSeNU1dy84aRoq1NpLBcOUO41UtN4eg==
+X-Received: by 2002:a17:902:4101:: with SMTP id e1-v6mr8359229pld.205.1528497215690;
+        Fri, 08 Jun 2018 15:33:35 -0700 (PDT)
+Received: from localhost ([73.93.152.77])
+        by smtp.gmail.com with ESMTPSA id x2-v6sm124917658pfk.113.2018.06.08.15.33.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Jun 2018 15:33:35 -0700 (PDT)
+Date: Fri, 08 Jun 2018 15:33:35 -0700 (PDT)
+X-Google-Original-Date: Fri, 08 Jun 2018 11:57:10 PDT (-0700)
+Subject: Re: [PATCH] RISC-V: Handle R_RISCV_32 in modules
+In-Reply-To: <mvm7enaki28.fsf@suse.de>
+CC: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Palmer Dabbelt <palmer@sifive.com>
+To: schwab@suse.de
+Message-ID: <mhng-3f91f2da-55ae-41b8-b5b2-956ea638bed0@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+On Thu, 07 Jun 2018 03:27:27 PDT (-0700), schwab@suse.de wrote:
+> With CONFIG_MODVERSIONS=y the R_RISCV_32 relocation is used by the
+> __kcrctab section.
+>
+> Signed-off-by: Andreas Schwab <schwab@suse.de>
+> ---
+>  arch/riscv/kernel/module.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+>
+> diff --git a/arch/riscv/kernel/module.c b/arch/riscv/kernel/module.c
+> index 5dddba301d..1d5e9b934b 100644
+> --- a/arch/riscv/kernel/module.c
+> +++ b/arch/riscv/kernel/module.c
+> @@ -17,6 +17,17 @@
+>  #include <linux/errno.h>
+>  #include <linux/moduleloader.h>
+>
+> +static int apply_r_riscv_32_rela(struct module *me, u32 *location, Elf_Addr v)
+> +{
+> +	if (v != (u32)v) {
 
-This hopefully temporary function is useful for users who have not yet
-been converted to multi-index entries.
+My worry with this kind of check is that it relies on some sort of undefined 
+behavior in C and that at some point in the future GCC will just go decide the 
+check can never fail.  I checked and GCC doesn't elide these checks now, so I 
+might be wrong.
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
----
- include/linux/xarray.h |  2 ++
- lib/xarray.c           | 22 ++++++++++++++++++++++
- 2 files changed, 24 insertions(+)
+Is this defined to do what it looks like it's doing?
 
-diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-index 6a61aab11038..907ecb1d3077 100644
---- a/include/linux/xarray.h
-+++ b/include/linux/xarray.h
-@@ -761,6 +761,8 @@ void xas_init_tags(const struct xa_state *);
- bool xas_nomem(struct xa_state *, gfp_t);
- void xas_pause(struct xa_state *);
- 
-+void xas_create_range(struct xa_state *, unsigned long max);
-+
- /**
-  * xas_reload() - Refetch an entry from the xarray.
-  * @xas: XArray operation state.
-diff --git a/lib/xarray.c b/lib/xarray.c
-index d76db0ff17cf..566c4e233c05 100644
---- a/lib/xarray.c
-+++ b/lib/xarray.c
-@@ -638,6 +638,28 @@ static void *xas_create(struct xa_state *xas)
- 	return entry;
- }
- 
-+/**
-+ * xas_create_range() - Ensure that stores to this range will succeed
-+ * @xas: XArray operation state.
-+ * @max: The highest index to create a slot for.
-+ *
-+ * Creates all of the slots in the range between the current position of
-+ * @xas and @max.  This is for the benefit of users who have not yet been
-+ * converted to multi-index entries.
-+ *
-+ * The implementation is naive.
-+ */
-+void xas_create_range(struct xa_state *xas, unsigned long max)
-+{
-+	XA_STATE(tmp, xas->xa, xas->xa_index);
-+
-+	do {
-+		xas_create(&tmp);
-+		xas_set(&tmp, tmp.xa_index + XA_CHUNK_SIZE);
-+	} while (tmp.xa_index < max);
-+}
-+EXPORT_SYMBOL_GPL(xas_create_range);
-+
- static void update_node(struct xa_state *xas, struct xa_node *node,
- 		int count, int values)
- {
--- 
-2.17.1
+> +		pr_err("%s: value %016llx out of range for 32-bit field\n",
+> +		       me->name, v);
+> +		return -EINVAL;
+> +	}
+> +	*location = v;
+> +	return 0;
+> +}
+> +
+>  static int apply_r_riscv_64_rela(struct module *me, u32 *location, Elf_Addr v)
+>  {
+>  	*(u64 *)location = v;
+> @@ -265,6 +276,7 @@ static int apply_r_riscv_sub32_rela(struct module *me, u32 *location,
+>
+>  static int (*reloc_handlers_rela[]) (struct module *me, u32 *location,
+>  				Elf_Addr v) = {
+> +	[R_RISCV_32]			= apply_r_riscv_32_rela,
+>  	[R_RISCV_64]			= apply_r_riscv_64_rela,
+>  	[R_RISCV_BRANCH]		= apply_r_riscv_branch_rela,
+>  	[R_RISCV_JAL]			= apply_r_riscv_jal_rela,
+
+Thanks!
