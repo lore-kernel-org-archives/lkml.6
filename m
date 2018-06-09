@@ -1,168 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id APwUAyk/GVvBVwAAmS7hNA
-	; Thu, 07 Jun 2018 14:20:57 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id VlPcGt1SHFt2OQAAmS7hNA
+	; Sat, 09 Jun 2018 22:21:17 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 0A0176089E; Thu,  7 Jun 2018 14:20:57 +0000 (UTC)
+	id 56B0B607DC; Sat,  9 Jun 2018 22:21:17 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 54C736063F;
-	Thu,  7 Jun 2018 14:20:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 54C736063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 90528600D0;
+	Sat,  9 Jun 2018 22:21:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 90528600D0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=ispras.ru
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933450AbeFGOTX (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:19:23 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39496 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933085AbeFGOJN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:09:13 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbD-0005hJ-3i; Thu, 07 Jun 2018 15:09:11 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbA-00039C-4c; Thu, 07 Jun 2018 15:09:08 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "James Chapman" <jchapman@katalix.com>,
-        "David S. Miller" <davem@davemloft.net>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.226259883@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 294/410] l2tp: fix tunnel lookup use-after-free race
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        id S1753487AbeFIWVO (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 18:21:14 -0400
+Received: from mail.ispras.ru ([83.149.199.45]:58122 "EHLO mail.ispras.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753408AbeFIWVN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 18:21:13 -0400
+Received: from localhost.localdomain (ppp85-140-176-5.pppoe.mtu-net.ru [85.140.176.5])
+        by mail.ispras.ru (Postfix) with ESMTPSA id 4A47C54010F;
+        Sun, 10 Jun 2018 01:21:10 +0300 (MSK)
+From: Alexey Khoroshilov <khoroshilov@ispras.ru>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Cc: Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Heiko Stuebner <heiko@sntech.de>, alsa-devel@alsa-project.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        ldv-project@linuxtesting.org, Julia Lawall <julia.lawall@lip6.fr>,
+        sil2review@lists.osadl.org
+Subject: [PATCH] ASoC: rockchip: put device_node on remove
+Date: Sun, 10 Jun 2018 01:20:54 +0300
+Message-Id: <1528582854-8402-1-git-send-email-khoroshilov@ispras.ru>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+snd_rk_mc_probe() gets a couple of device nodes with of_parse_phandle(),
+but there is no release of them.
 
-------------------
+The patch adds remove handler and proper error handling in the probe.
 
-From: James Chapman <jchapman@katalix.com>
+Found by Linux Driver Verification project (linuxtesting.org).
 
-commit 28f5bfb819195ad9c2eb9486babe7b0e4efe925f upstream.
-
-l2tp_tunnel_get walks the tunnel list to find a matching tunnel
-instance and if a match is found, its refcount is increased before
-returning the tunnel pointer. But when tunnel objects are destroyed,
-they are on the tunnel list after their refcount hits zero. Fix this
-by moving the code that removes the tunnel from the tunnel list from
-the tunnel socket destructor into in the l2tp_tunnel_delete path,
-before the tunnel refcount is decremented.
-
-refcount_t: increment on 0; use-after-free.
-WARNING: CPU: 3 PID: 13507 at lib/refcount.c:153 refcount_inc+0x47/0x50
-Modules linked in:
-CPU: 3 PID: 13507 Comm: syzbot_6e6a5ec8 Not tainted 4.16.0-rc2+ #36
-Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-RIP: 0010:refcount_inc+0x47/0x50
-RSP: 0018:ffff8800136ffb20 EFLAGS: 00010286
-RAX: dffffc0000000008 RBX: ffff880017068e68 RCX: ffffffff814d3333
-RDX: 0000000000000000 RSI: ffff88001a59f6d8 RDI: ffff88001a59f6d8
-RBP: ffff8800136ffb28 R08: 0000000000000000 R09: 0000000000000000
-R10: ffff8800136ffab0 R11: 0000000000000000 R12: ffff880017068e50
-R13: 0000000000000000 R14: ffff8800174da800 R15: 0000000000000004
-FS:  00007f403ab1e700(0000) GS:ffff88001a580000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000205fafd2 CR3: 0000000016770000 CR4: 00000000000006e0
-Call Trace:
- l2tp_tunnel_get+0x2dd/0x4e0
- pppol2tp_connect+0x428/0x13c0
- ? pppol2tp_session_create+0x170/0x170
- ? __might_fault+0x115/0x1d0
- ? lock_downgrade+0x860/0x860
- ? __might_fault+0xe5/0x1d0
- ? security_socket_connect+0x8e/0xc0
- SYSC_connect+0x1b6/0x310
- ? SYSC_bind+0x280/0x280
- ? __do_page_fault+0x5d1/0xca0
- ? up_read+0x1f/0x40
- ? __do_page_fault+0x3c8/0xca0
- SyS_connect+0x29/0x30
- ? SyS_accept+0x40/0x40
- do_syscall_64+0x1e0/0x730
- ? trace_hardirqs_off_thunk+0x1a/0x1c
- entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x7f403a42f259
-RSP: 002b:00007f403ab1dee8 EFLAGS: 00000296 ORIG_RAX: 000000000000002a
-RAX: ffffffffffffffda RBX: 00000000205fafe4 RCX: 00007f403a42f259
-RDX: 000000000000002e RSI: 00000000205fafd2 RDI: 0000000000000004
-RBP: 00007f403ab1df20 R08: 00007f403ab1e700 R09: 0000000000000000
-R10: 00007f403ab1e700 R11: 0000000000000296 R12: 0000000000000000
-R13: 00007ffc81906cbf R14: 0000000000000000 R15: 00007f403ab2b040
-Code: 3b ff 5b 5d c3 e8 ca 5f 3b ff 80 3d 49 8e 66 04 00 75 ea e8 bc 5f 3b ff 48 c7 c7 60 69 64 85 c6 05 34 8e 66 04 01 e8 59 49 15 ff <0f> 0b eb ce 0f 1f 44 00 00 55 48 89 e5 41 56 41 55 41 54 53 49
-
-Fixes: f8ccac0e44934 ("l2tp: put tunnel socket release on a workqueue")
-Reported-and-tested-by: syzbot+19c09769f14b48810113@syzkaller.appspotmail.com
-Reported-and-tested-by: syzbot+347bd5acde002e353a36@syzkaller.appspotmail.com
-Reported-and-tested-by: syzbot+6e6a5ec8de31a94cd015@syzkaller.appspotmail.com
-Reported-and-tested-by: syzbot+9df43faf09bd400f2993@syzkaller.appspotmail.com
-Signed-off-by: James Chapman <jchapman@katalix.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
 ---
- net/l2tp/l2tp_core.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ sound/soc/rockchip/rockchip_rt5645.c | 27 ++++++++++++++++++++++++---
+ 1 file changed, 24 insertions(+), 3 deletions(-)
 
---- a/net/l2tp/l2tp_core.c
-+++ b/net/l2tp/l2tp_core.c
-@@ -1249,7 +1249,6 @@ EXPORT_SYMBOL_GPL(l2tp_xmit_skb);
- static void l2tp_tunnel_destruct(struct sock *sk)
- {
- 	struct l2tp_tunnel *tunnel = l2tp_tunnel(sk);
--	struct l2tp_net *pn;
- 
- 	if (tunnel == NULL)
- 		goto end;
-@@ -1272,12 +1271,6 @@ static void l2tp_tunnel_destruct(struct
- 	sk->sk_destruct = tunnel->old_sk_destruct;
- 	sk->sk_user_data = NULL;
- 
--	/* Remove the tunnel struct from the tunnel list */
--	pn = l2tp_pernet(tunnel->l2tp_net);
--	spin_lock_bh(&pn->l2tp_tunnel_list_lock);
--	list_del_rcu(&tunnel->list);
--	spin_unlock_bh(&pn->l2tp_tunnel_list_lock);
--
- 	/* Call the original destructor */
- 	if (sk->sk_destruct)
- 		(*sk->sk_destruct)(sk);
-@@ -1359,6 +1352,7 @@ static void l2tp_tunnel_del_work(struct
- 						  del_work);
- 	struct sock *sk = tunnel->sock;
- 	struct socket *sock = sk->sk_socket;
-+	struct l2tp_net *pn;
- 
- 	l2tp_tunnel_closeall(tunnel);
- 
-@@ -1371,6 +1365,12 @@ static void l2tp_tunnel_del_work(struct
- 		sk_release_kernel(sk);
+diff --git a/sound/soc/rockchip/rockchip_rt5645.c b/sound/soc/rockchip/rockchip_rt5645.c
+index 4db4fd56db35..881c32498808 100644
+--- a/sound/soc/rockchip/rockchip_rt5645.c
++++ b/sound/soc/rockchip/rockchip_rt5645.c
+@@ -181,7 +181,8 @@ static int snd_rk_mc_probe(struct platform_device *pdev)
+ 	if (!rk_dailink.cpu_of_node) {
+ 		dev_err(&pdev->dev,
+ 			"Property 'rockchip,i2s-controller' missing or invalid\n");
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto put_codec_of_node;
  	}
  
-+	/* Remove the tunnel struct from the tunnel list */
-+	pn = l2tp_pernet(tunnel->l2tp_net);
-+	spin_lock_bh(&pn->l2tp_tunnel_list_lock);
-+	list_del_rcu(&tunnel->list);
-+	spin_unlock_bh(&pn->l2tp_tunnel_list_lock);
-+
- 	/* drop initial ref */
- 	l2tp_tunnel_dec_refcount(tunnel);
+ 	rk_dailink.platform_of_node = rk_dailink.cpu_of_node;
+@@ -190,17 +191,36 @@ static int snd_rk_mc_probe(struct platform_device *pdev)
+ 	if (ret) {
+ 		dev_err(&pdev->dev,
+ 			"Soc parse card name failed %d\n", ret);
+-		return ret;
++		goto put_cpu_of_node;
+ 	}
  
+ 	ret = devm_snd_soc_register_card(&pdev->dev, card);
+ 	if (ret) {
+ 		dev_err(&pdev->dev,
+ 			"Soc register card failed %d\n", ret);
+-		return ret;
++		goto put_cpu_of_node;
+ 	}
+ 
+ 	return ret;
++
++put_cpu_of_node:
++	of_node_put(rk_dailink.cpu_of_node);
++	rk_dailink.cpu_of_node = NULL;
++put_codec_of_node:
++	of_node_put(rk_dailink.codec_of_node);
++	rk_dailink.codec_of_node = NULL;
++
++	return ret;
++}
++
++static int snd_rk_mc_remove(struct platform_device *pdev)
++{
++	of_node_put(rk_dailink.cpu_of_node);
++	rk_dailink.cpu_of_node = NULL;
++	of_node_put(rk_dailink.codec_of_node);
++	rk_dailink.codec_of_node = NULL;
++
++	return 0;
+ }
+ 
+ static const struct of_device_id rockchip_rt5645_of_match[] = {
+@@ -212,6 +232,7 @@ MODULE_DEVICE_TABLE(of, rockchip_rt5645_of_match);
+ 
+ static struct platform_driver snd_rk_mc_driver = {
+ 	.probe = snd_rk_mc_probe,
++	.remove = snd_rk_mc_remove,
+ 	.driver = {
+ 		.name = DRV_NAME,
+ 		.pm = &snd_soc_pm_ops,
+-- 
+2.7.4
