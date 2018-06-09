@@ -1,87 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id /4KrKhbVGVsLVQAAmS7hNA
-	; Fri, 08 Jun 2018 01:00:06 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id WsHEGBrzG1t5YgAAmS7hNA
+	; Sat, 09 Jun 2018 15:33:36 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 8B9466074D; Fri,  8 Jun 2018 01:00:06 +0000 (UTC)
+	id 197A4608C8; Sat,  9 Jun 2018 15:33:36 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="en6B6tRM"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CPi3z4N4"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 0D21F606DD;
-	Fri,  8 Jun 2018 01:00:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0D21F606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 8431A608B8;
+	Sat,  9 Jun 2018 15:33:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8431A608B8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752434AbeFHBAC (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 21:00:02 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:59512 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752129AbeFHA74 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 20:59:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
-        Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=cGo64+aYU0ET3IX9k6ZFGvrPUwXgZXTkpobwYKE2Z58=; b=en6B6tRMmecShKgyvcV9ecYqcM
-        dgnMeAUBUUeAhj5avfNYtBXjk8sSy0TxgeZSPgjdWAiisBsUaHNehdsPRkPxlvSXbLizGL4BFVAv/
-        CIzYzLFdMC03h7k+C8vw2qGzEVs/k6wp7E8WsZ+JxA5r6MmAg8IEXlEfokpyP2emFnSUFRtf5U8rT
-        SMIXY0NRplDoA5vtKGcbFSZQwKOmUa1UMgjabuZweQzDhz8jCTRD5XrPJNuHfWgMyFhfrLjCf44eK
-        d4tMsXcArNTRKBOqdGGWvm9KSBW5Tip1sN4felSMBJQpavK22buuufI6GI0g1rF+4X/1YghUEv5YZ
-        jH5SUcfQ==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fR5kt-00048U-5W; Fri, 08 Jun 2018 00:59:51 +0000
-Subject: Re: mmotm 2018-06-07-16-59 uploaded (fs/fat/ and fs/dax/)
-To: akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz,
-        sfr@canb.auug.org.au, linux-next@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org
-References: <20180607235947.xWQtg%akpm@linux-foundation.org>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <7d9fbe5c-7865-dfd1-ce7a-7b2ceaa000fa@infradead.org>
-Date: Thu, 7 Jun 2018 17:59:47 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1753614AbeFIPdd (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:33:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35862 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932668AbeFIPd2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:33:28 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4EBC204EC;
+        Sat,  9 Jun 2018 15:33:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558408;
+        bh=8vLXlutL0WuEimOYpNWbi8HS2OJQJduAlmoAUhIKGQo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=CPi3z4N4kMSksO137WMJN8tmfwaSUPXmQ4AiQMSoLwyStP4UHMjTflWH6Yn8Xu++A
+         ojr0mk0hsQpNcOvDEcaSKOp+/2v89IDFeS0QI1OsxR2Z8Dj6nUGWwL6y+UJ9dEU5Ww
+         TEjj8J/aBX+tsRuyGsHZGaECs4rfT3dJEAt+GMYo=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 24/48] net: phy: broadcom: Fix bcm_write_exp()
+Date: Sat,  9 Jun 2018 17:29:36 +0200
+Message-Id: <20180609145949.246570343@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
+References: <20180609145947.679103414@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-In-Reply-To: <20180607235947.xWQtg%akpm@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/07/2018 04:59 PM, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2018-06-07-16-59 has been uploaded to
-> 
->    http://www.ozlabs.org/~akpm/mmotm/
-> 
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-(on i386:)
+------------------
 
-../fs/fat/inode.c: In function '__fat_get_block':
-../fs/fat/inode.c:162:3: warning: format '%ld' expects argument of type 'long int', but argument 5 has type 'sector_t' [-Wformat=]
-   fat_fs_error(sb,
-   ^
+From: Florian Fainelli <f.fainelli@gmail.com>
 
+[ Upstream commit 79fb218d97980d4fee9a64f4c8ff05289364ba25 ]
 
-../fs/dax.c: In function 'dax_load_hole':
-../fs/dax.c:1031:2: error: 'entry2' undeclared (first use in this function)
-  entry2 = dax_insert_mapping_entry(mapping, vmf, entry, pfn,
-  ^
+On newer PHYs, we need to select the expansion register to write with
+setting bits [11:8] to 0xf. This was done correctly by bcm7xxx.c prior
+to being migrated to generic code under bcm-phy-lib.c which
+unfortunately used the older implementation from the BCM54xx days.
 
+Fix this by creating an inline stub: bcm_write_exp_sel() which adds the
+correct value (MII_BCM54XX_EXP_SEL_ER) and update both the Cygnus PHY
+and BCM7xxx PHY drivers which require setting these bits.
 
-Easy fixes... :)
--- 
-~Randy
+broadcom.c is unchanged because some PHYs even use a different selector
+method, so let them specify it directly (e.g: SerDes secondary selector).
+
+Fixes: a1cba5613edf ("net: phy: Add Broadcom phy library for common interfaces")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/net/phy/bcm-cygnus.c  |    6 +++---
+ drivers/net/phy/bcm-phy-lib.h |    7 +++++++
+ drivers/net/phy/bcm7xxx.c     |    4 ++--
+ 3 files changed, 12 insertions(+), 5 deletions(-)
+
+--- a/drivers/net/phy/bcm-cygnus.c
++++ b/drivers/net/phy/bcm-cygnus.c
+@@ -61,17 +61,17 @@ static int bcm_cygnus_afe_config(struct
+ 		return rc;
+ 
+ 	/* make rcal=100, since rdb default is 000 */
+-	rc = bcm_phy_write_exp(phydev, MII_BRCM_CORE_EXPB1, 0x10);
++	rc = bcm_phy_write_exp_sel(phydev, MII_BRCM_CORE_EXPB1, 0x10);
+ 	if (rc < 0)
+ 		return rc;
+ 
+ 	/* CORE_EXPB0, Reset R_CAL/RC_CAL Engine */
+-	rc = bcm_phy_write_exp(phydev, MII_BRCM_CORE_EXPB0, 0x10);
++	rc = bcm_phy_write_exp_sel(phydev, MII_BRCM_CORE_EXPB0, 0x10);
+ 	if (rc < 0)
+ 		return rc;
+ 
+ 	/* CORE_EXPB0, Disable Reset R_CAL/RC_CAL Engine */
+-	rc = bcm_phy_write_exp(phydev, MII_BRCM_CORE_EXPB0, 0x00);
++	rc = bcm_phy_write_exp_sel(phydev, MII_BRCM_CORE_EXPB0, 0x00);
+ 
+ 	return 0;
+ }
+--- a/drivers/net/phy/bcm-phy-lib.h
++++ b/drivers/net/phy/bcm-phy-lib.h
+@@ -14,11 +14,18 @@
+ #ifndef _LINUX_BCM_PHY_LIB_H
+ #define _LINUX_BCM_PHY_LIB_H
+ 
++#include <linux/brcmphy.h>
+ #include <linux/phy.h>
+ 
+ int bcm_phy_write_exp(struct phy_device *phydev, u16 reg, u16 val);
+ int bcm_phy_read_exp(struct phy_device *phydev, u16 reg);
+ 
++static inline int bcm_phy_write_exp_sel(struct phy_device *phydev,
++					u16 reg, u16 val)
++{
++	return bcm_phy_write_exp(phydev, reg | MII_BCM54XX_EXP_SEL_ER, val);
++}
++
+ int bcm54xx_auxctl_write(struct phy_device *phydev, u16 regnum, u16 val);
+ int bcm54xx_auxctl_read(struct phy_device *phydev, u16 regnum);
+ 
+--- a/drivers/net/phy/bcm7xxx.c
++++ b/drivers/net/phy/bcm7xxx.c
+@@ -65,10 +65,10 @@ struct bcm7xxx_phy_priv {
+ static void r_rc_cal_reset(struct phy_device *phydev)
+ {
+ 	/* Reset R_CAL/RC_CAL Engine */
+-	bcm_phy_write_exp(phydev, 0x00b0, 0x0010);
++	bcm_phy_write_exp_sel(phydev, 0x00b0, 0x0010);
+ 
+ 	/* Disable Reset R_AL/RC_CAL Engine */
+-	bcm_phy_write_exp(phydev, 0x00b0, 0x0000);
++	bcm_phy_write_exp_sel(phydev, 0x00b0, 0x0000);
+ }
+ 
+ static int bcm7xxx_28nm_b0_afe_config_init(struct phy_device *phydev)
