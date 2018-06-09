@@ -1,96 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id GyxuNnBIGVt+SAAAmS7hNA
-	; Thu, 07 Jun 2018 15:01:49 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id xgiLDc7yG1uAYAAAmS7hNA
+	; Sat, 09 Jun 2018 15:34:47 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 5ABC2608BA; Thu,  7 Jun 2018 15:01:49 +0000 (UTC)
+	id 47132608CA; Sat,  9 Jun 2018 15:34:47 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ym7o3Spf"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id CB1B0601C3;
-	Thu,  7 Jun 2018 15:01:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CB1B0601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id A74B3606FA;
+	Sat,  9 Jun 2018 15:34:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A74B3606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964836AbeFGPBr (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:01:47 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41400 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934986AbeFGPBg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:01:36 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbj-0005Zn-8y; Thu, 07 Jun 2018 15:09:43 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb5-0002yV-9l; Thu, 07 Jun 2018 15:09:03 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        id S932903AbeFIPep (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:34:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36908 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932614AbeFIPeh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:34:37 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B81A4208A3;
+        Sat,  9 Jun 2018 15:34:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558477;
+        bh=gK5KAmoWpsTGS4l+qphcgJv/UD7Cw+u4TkctYxkSoVg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Ym7o3SpfhywFRujaU253SaT8pbsdfAsCkA46ZnUqEVqGF1WgssxY2R70jby+X3F/p
+         i6WOrtelxqxftvfL8mbr/ltnfEEccoeDdCcM3M9D6YG8vdiDR6ZMXA6gE9iV4U3lA0
+         UeFqgDYyZRHWaA3fesmYru79xBLdL+HAIWw4wUYY=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 04/41] mmap: relax file size limit for regular files
+Date: Sat,  9 Jun 2018 17:29:36 +0200
+Message-Id: <20180609152926.662160563@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609152926.389750182@linuxfoundation.org>
+References: <20180609152926.389750182@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Liu Bo" <bo.li.liu@oracle.com>,
-        "Josef Bacik" <jbacik@fb.com>, "David Sterba" <dsterba@suse.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.863556567@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 188/410] Btrfs: fix extent state leak from tree log
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Liu Bo <bo.li.liu@oracle.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit 55237a5f2431a72435e3ed39e4306e973c0446b7 upstream.
+commit 423913ad4ae5b3e8fb8983f70969fb522261ba26 upstream.
 
-It's possible that btrfs_sync_log() bails out after one of the two
-btrfs_write_marked_extents() which convert extent state's state bit into
-EXTENT_NEED_WAIT from EXTENT_DIRTY/EXTENT_NEW, however only EXTENT_DIRTY
-and EXTENT_NEW are searched by free_log_tree() so that those extent states
-with EXTENT_NEED_WAIT lead to memory leak.
+Commit be83bbf80682 ("mmap: introduce sane default mmap limits") was
+introduced to catch problems in various ad-hoc character device drivers
+doing mmap and getting the size limits wrong.  In the process, it used
+"known good" limits for the normal cases of mapping regular files and
+block device drivers.
 
-Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
-Reviewed-by: Josef Bacik <jbacik@fb.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-[bwh: Backported to 3.16: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+It turns out that the "s_maxbytes" limit was less "known good" than I
+thought.  In particular, /proc doesn't set it, but exposes one regular
+file to mmap: /proc/vmcore.  As a result, that file got limited to the
+default MAX_INT s_maxbytes value.
+
+This went unnoticed for a while, because apparently the only thing that
+needs it is the s390 kernel zfcpdump, but there might be other tools
+that use this too.
+
+Vasily suggested just changing s_maxbytes for all of /proc, which isn't
+wrong, but makes me nervous at this stage.  So instead, just make the
+new mmap limit always be MAX_LFS_FILESIZE for regular files, which won't
+affect anything else.  It wasn't the regular file case I was worried
+about.
+
+I'd really prefer for maxsize to have been per-inode, but that is not
+how things are today.
+
+Fixes: be83bbf80682 ("mmap: introduce sane default mmap limits")
+Reported-by: Vasily Gorbik <gor@linux.ibm.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- fs/btrfs/tree-log.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ mm/mmap.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -2731,13 +2731,14 @@ static void free_log_tree(struct btrfs_t
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -1318,7 +1318,7 @@ static inline int mlock_future_check(str
+ static inline u64 file_mmap_size_max(struct file *file, struct inode *inode)
+ {
+ 	if (S_ISREG(inode->i_mode))
+-		return inode->i_sb->s_maxbytes;
++		return MAX_LFS_FILESIZE;
  
- 	while (1) {
- 		ret = find_first_extent_bit(&log->dirty_log_pages,
--				0, &start, &end, EXTENT_DIRTY | EXTENT_NEW,
-+				0, &start, &end,
-+				EXTENT_DIRTY | EXTENT_NEW | EXTENT_NEED_WAIT,
- 				NULL);
- 		if (ret)
- 			break;
- 
- 		clear_extent_bits(&log->dirty_log_pages, start, end,
--				  EXTENT_DIRTY | EXTENT_NEW, GFP_NOFS);
-+				  EXTENT_DIRTY | EXTENT_NEW | EXTENT_NEED_WAIT, GFP_NOFS);
- 	}
- 
- 	/*
+ 	if (S_ISBLK(inode->i_mode))
+ 		return MAX_LFS_FILESIZE;
