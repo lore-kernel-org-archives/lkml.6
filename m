@@ -1,73 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Kb9XHHNIHlsVFQAAmS7hNA
-	; Mon, 11 Jun 2018 10:03:09 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 3x/5F270G1u0agAAmS7hNA
+	; Sat, 09 Jun 2018 15:39:49 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 5255660792; Mon, 11 Jun 2018 10:03:09 +0000 (UTC)
+	id 50D40608C1; Sat,  9 Jun 2018 15:39:49 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z0raN0kd"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id B94C7606FA;
-	Mon, 11 Jun 2018 10:03:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B94C7606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id BA726605A5;
+	Sat,  9 Jun 2018 15:39:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BA726605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932815AbeFKKDH (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 06:03:07 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:56089 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932453AbeFKKDE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 06:03:04 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id E28B6972C86D3;
-        Mon, 11 Jun 2018 18:02:59 +0800 (CST)
-Received: from SZV1000284525.huawei.com (10.120.216.130) by
- DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
- 14.3.382.0; Mon, 11 Jun 2018 18:02:52 +0800
-From: Chao Yu <yuchao0@huawei.com>
-To: <jaegeuk@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 2/2] f2fs: fix error path of fill_super
-Date: Mon, 11 Jun 2018 18:02:02 +0800
-Message-ID: <20180611100202.68674-2-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
-In-Reply-To: <20180611100202.68674-1-yuchao0@huawei.com>
-References: <20180611100202.68674-1-yuchao0@huawei.com>
+        id S933243AbeFIPjr (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:39:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37906 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753725AbeFIPfj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:35:39 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A1266208A4;
+        Sat,  9 Jun 2018 15:35:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558539;
+        bh=0Lb91kqQwDT802IW4gsVTvG3/LVG/jZXiaTzAg0mzFQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Z0raN0kddrtGg/XUcYmxH0Bc9jyMXZLPtBfGkwpOtHznpzjIJ+ktczqQXFGJ8mhxA
+         SvnpvE1+sjWFdd2reQUhB2eW0rAX4b52ZB7jGQdZFO90SWbMh8IC5n/bI3xpzByT/7
+         isLRA/nyivKdG3bnkVPZZLsyrhpWEL/nh7umK8I8=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 18/41] netdev-FAQ: clarify DaveMs position for stable backports
+Date: Sat,  9 Jun 2018 17:29:50 +0200
+Message-Id: <20180609152927.414008842@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609152926.389750182@linuxfoundation.org>
+References: <20180609152926.389750182@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In fill_super, if root inode's attribute is incorrect, we need to
-call f2fs_destroy_stats to release stats memory.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+------------------
+
+From: Cong Wang <xiyou.wangcong@gmail.com>
+
+[ Upstream commit 75d4e704fa8d2cf33ff295e5b441317603d7f9fd ]
+
+Per discussion with David at netconf 2018, let's clarify
+DaveM's position of handling stable backports in netdev-FAQ.
+
+This is important for people relying on upstream -stable
+releases.
+
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/networking/netdev-FAQ.txt |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 19ef966a99e9..a790dae6c16f 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2914,7 +2914,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	if (!S_ISDIR(root->i_mode) || !root->i_blocks || !root->i_size) {
- 		iput(root);
- 		err = -EINVAL;
--		goto free_node_inode;
-+		goto free_stats;
- 	}
+--- a/Documentation/networking/netdev-FAQ.txt
++++ b/Documentation/networking/netdev-FAQ.txt
+@@ -176,6 +176,15 @@ A: No.  See above answer.  In short, if
+    dash marker line as described in Documentation/process/submitting-patches.rst to
+    temporarily embed that information into the patch that you send.
  
- 	sb->s_root = d_make_root(root); /* allocate root dentry */
--- 
-2.18.0.rc1
++Q: Are all networking bug fixes backported to all stable releases?
++
++A: Due to capacity, Dave could only take care of the backports for the last
++   2 stable releases. For earlier stable releases, each stable branch maintainer
++   is supposed to take care of them. If you find any patch is missing from an
++   earlier stable branch, please notify stable@vger.kernel.org with either a
++   commit ID or a formal patch backported, and CC Dave and other relevant
++   networking developers.
++
+ Q: Someone said that the comment style and coding convention is different
+    for the networking content.  Is this true?
+ 
