@@ -1,149 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id I6OAAwNfHlv4NwAAmS7hNA
-	; Mon, 11 Jun 2018 11:37:46 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id OEGJM/fIG1srOwAAmS7hNA
+	; Sat, 09 Jun 2018 12:33:25 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 0062D607BB; Mon, 11 Jun 2018 11:37:45 +0000 (UTC)
+	id 500DB607A4; Sat,  9 Jun 2018 12:33:25 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 6D85860541;
-	Mon, 11 Jun 2018 11:37:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6D85860541
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=lucaceresoli.net
+	by smtp.codeaurora.org (Postfix) with ESMTP id D9E206032D;
+	Sat,  9 Jun 2018 12:33:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D9E206032D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933128AbeFKLhn (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Mon, 11 Jun 2018 07:37:43 -0400
-Received: from srv-hp10-72.netsons.net ([94.141.22.72]:37226 "EHLO
-        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932952AbeFKLgP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 07:36:15 -0400
-Received: from [109.168.11.45] (port=54392 helo=pc-ceresoli.dev.aim)
-        by srv-hp10.netsons.net with esmtpa (Exim 4.89_1)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1fSL7M-00B1A2-OQ; Mon, 11 Jun 2018 13:36:12 +0200
-From: Luca Ceresoli <luca@lucaceresoli.net>
-To: linux-media@vger.kernel.org
-Cc: Luca Ceresoli <luca@lucaceresoli.net>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Leon Luo <leonl@leopardimaging.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/8] media: imx274: get rid of mode_index
-Date: Mon, 11 Jun 2018 13:35:34 +0200
-Message-Id: <1528716939-17015-4-git-send-email-luca@lucaceresoli.net>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528716939-17015-1-git-send-email-luca@lucaceresoli.net>
-References: <1528716939-17015-1-git-send-email-luca@lucaceresoli.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        id S1753493AbeFIMdX (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 08:33:23 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38876 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753356AbeFIMdR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 08:33:17 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 41BC34022414;
+        Sat,  9 Jun 2018 12:33:17 +0000 (UTC)
+Received: from localhost (ovpn-12-40.pek2.redhat.com [10.72.12.40])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CE90C422BA;
+        Sat,  9 Jun 2018 12:33:06 +0000 (UTC)
+From: Ming Lei <ming.lei@redhat.com>
+To: Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kent Overstreet <kent.overstreet@gmail.com>
+Cc: David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Theodore Ts'o <tytso@mit.edu>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Coly Li <colyli@suse.de>, Filipe Manana <fdmanana@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ming Lei <ming.lei@redhat.com>
+Subject: [PATCH V6 13/30] block: introduce rq_for_each_chunk()
+Date: Sat,  9 Jun 2018 20:29:57 +0800
+Message-Id: <20180609123014.8861-14-ming.lei@redhat.com>
+In-Reply-To: <20180609123014.8861-1-ming.lei@redhat.com>
+References: <20180609123014.8861-1-ming.lei@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Sat, 09 Jun 2018 12:33:17 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Sat, 09 Jun 2018 12:33:17 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After restructuring struct imx274_frmfmt, the mode_index field is
-still in use only for two dev_dbg() calls in imx274_s_stream(). Let's
-remove it and avoid duplicated information.
+There are still cases in which rq_for_each_chunk() is required, for
+example, loop.
 
-Replacing the first usage requires some rather annoying but trivial
-pointer math. The other one can be removed entirely since it would
-print the same value anyway.
-
-Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
-
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
 ---
-Changed v3 -> v4: nothing
+ include/linux/blkdev.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Changed v2 -> v3:
- - really fix dev_dbg() format mismatch warning for both 32 and 64 bit
-
-Changed v1 -> v2:
- - add "media: " prefix to commit message
- - fix dev_dbg() format mismatch warning
-   ("warning: format ‘%ld’ expects argument of type ‘long int’, but argument 6 has type ‘int’")
- - slightly improve commit message
----
- drivers/media/i2c/imx274.c | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
-index 2ec31ae4e60d..f075715ffced 100644
---- a/drivers/media/i2c/imx274.c
-+++ b/drivers/media/i2c/imx274.c
-@@ -553,8 +553,6 @@ struct imx274_ctrls {
-  * @reset_gpio: Pointer to reset gpio
-  * @lock: Mutex structure
-  * @mode: Parameters for the selected readout mode
-- *        (points to imx274_formats[mode_index])
-- * @mode_index: Resolution mode index
-  */
- struct stimx274 {
- 	struct v4l2_subdev sd;
-@@ -567,7 +565,6 @@ struct stimx274 {
- 	struct gpio_desc *reset_gpio;
- 	struct mutex lock; /* mutex lock for operations */
- 	const struct imx274_frmfmt *mode;
--	u32 mode_index;
- };
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index bca3a92eb55f..4eaba73c784a 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -941,6 +941,10 @@ struct req_iterator {
+ 	__rq_for_each_bio(_iter.bio, _rq)			\
+ 		bio_for_each_segment(bvl, _iter.bio, _iter.iter)
  
- /*
-@@ -880,7 +877,6 @@ static int imx274_set_fmt(struct v4l2_subdev *sd,
- 		index = 0;
- 	}
- 
--	imx274->mode_index = index;
- 	imx274->mode = &imx274_formats[index];
- 
- 	if (fmt->width > IMX274_MAX_WIDTH)
-@@ -1028,8 +1024,9 @@ static int imx274_s_stream(struct v4l2_subdev *sd, int on)
- 	struct stimx274 *imx274 = to_imx274(sd);
- 	int ret = 0;
- 
--	dev_dbg(&imx274->client->dev, "%s : %s, mode index = %d\n", __func__,
--		on ? "Stream Start" : "Stream Stop", imx274->mode_index);
-+	dev_dbg(&imx274->client->dev, "%s : %s, mode index = %td\n", __func__,
-+		on ? "Stream Start" : "Stream Stop",
-+		imx274->mode - &imx274_formats[0]);
- 
- 	mutex_lock(&imx274->lock);
- 
-@@ -1068,8 +1065,7 @@ static int imx274_s_stream(struct v4l2_subdev *sd, int on)
- 	}
- 
- 	mutex_unlock(&imx274->lock);
--	dev_dbg(&imx274->client->dev,
--		"%s : Done: mode = %d\n", __func__, imx274->mode_index);
-+	dev_dbg(&imx274->client->dev, "%s : Done\n", __func__);
- 	return 0;
- 
- fail:
-@@ -1625,8 +1621,7 @@ static int imx274_probe(struct i2c_client *client,
- 	mutex_init(&imx274->lock);
- 
- 	/* initialize format */
--	imx274->mode_index = IMX274_MODE_3840X2160;
--	imx274->mode = &imx274_formats[imx274->mode_index];
-+	imx274->mode = &imx274_formats[IMX274_MODE_3840X2160];
- 	imx274->format.width = imx274->mode->size.width;
- 	imx274->format.height = imx274->mode->size.height;
- 	imx274->format.field = V4L2_FIELD_NONE;
++#define rq_for_each_chunk(bvl, _rq, _iter)			\
++	__rq_for_each_bio(_iter.bio, _rq)			\
++		bio_for_each_chunk(bvl, _iter.bio, _iter.iter)
++
+ #define rq_iter_last(bvec, _iter)				\
+ 		(_iter.bio->bi_next == NULL &&			\
+ 		 bio_iter_last(bvec, _iter.iter))
 -- 
-2.7.4
+2.9.5
