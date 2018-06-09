@@ -1,87 +1,310 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id pFG9G584GlvCFAAAmS7hNA
-	; Fri, 08 Jun 2018 08:04:47 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id xE+oJS/eG1vGUgAAmS7hNA
+	; Sat, 09 Jun 2018 14:03:27 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 55DDB607A4; Fri,  8 Jun 2018 08:04:47 +0000 (UTC)
+	id 80F88608BA; Sat,  9 Jun 2018 14:03:27 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hwn3EpAA"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id C5765602FC;
-	Fri,  8 Jun 2018 08:04:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C5765602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id AC5C26074D;
+	Sat,  9 Jun 2018 14:03:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AC5C26074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751639AbeFHIEn (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 04:04:43 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40914 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751138AbeFHIEk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 04:04:40 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id E9DA5AE54;
-        Fri,  8 Jun 2018 08:04:38 +0000 (UTC)
-Date: Fri, 8 Jun 2018 10:04:37 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Thierry Escande <thierry.escande@linaro.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        David Miller <davem@davemloft.net>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "Tobin C . Harding" <me@tobin.cc>, linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH RESEND] lib/test_printf.c: call wait_for_random_bytes()
- before plain %p tests
-Message-ID: <20180608080437.n2b5nv73d3kp6yhb@pathway.suse.cz>
-References: <20180604113708.11554-1-thierry.escande@linaro.org>
- <20180607122434.i4x7b5ij4p6dpx7w@pathway.suse.cz>
- <d9ecdf72-7500-66d4-0360-231218cccbb4@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d9ecdf72-7500-66d4-0360-231218cccbb4@linaro.org>
-User-Agent: NeoMutt/20170421 (1.8.2)
+        id S1753477AbeFIODV (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 10:03:21 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:38224 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753432AbeFIODR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 10:03:17 -0400
+Received: by mail-lf0-f65.google.com with SMTP id i83-v6so24179168lfh.5;
+        Sat, 09 Jun 2018 07:03:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=DIwkmllE5OHi+wZIxuaETUTsL/3AgjHsyvkIR+Slbw4=;
+        b=Hwn3EpAAkTsxP0lgqX727eQ0EM3ivKfltLVeosDZmRQR0IZ7loGZF9zRDBi5YxqHVv
+         orZCsItRrsiyN9YX5UDL7E6QPP6ooeFCMBdgFg2dMoib+0uJ0nGlmYk5jkMF5gvI8Ddz
+         ITbXh3eMrmtQcetN5f05NAf9GKeAeesziw4gGyxUtpHpRghPmOxpM5l1zcWjyAQfVdb1
+         YpNwRuHecIoU5UmWtc3uGnVQtIb8PokkYEpq4zKGgYonCI2t7THj0K8/TgSpBMlrFfro
+         p2kplV2U3iy8GJp7OFn3zHmQhUtsAfZKY4YQCNjPNH4IZPw1I+fV3c4KTumYFdmdLI9j
+         niQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=DIwkmllE5OHi+wZIxuaETUTsL/3AgjHsyvkIR+Slbw4=;
+        b=ZgSs+3pv8dgvFcUMEmQml/Kxbv8yfQCZ6PcCwI3CpMuf5eo7w6t7nqLF1jFmO3h/zY
+         AcWPLR7RVpsx6Gsq8z7l11n9N0fIyb0n4flXI17Vl7QzrRdalitMvuB8Mka/7q8P6BTH
+         I2s4uLU3gxeuYHgwLpulPoN1YvT+IcB+7dtXoSyIr2zmJjvfdzTRD/2dzJZyDv3eQMhD
+         6ktA3CNTeJPGym9VXsLWJqqZ2jDcTe0Nt7XGS1bfMW38RhX8IHqWPJPJ1LSrVrh50h4v
+         FxfFENiALTMXoE79ZjtoSPTijJTLwgHcAmFmyH9yjUgtG0kY1lTzsCGkR4uSrLi3zdcR
+         A3ng==
+X-Gm-Message-State: APt69E0S9hygIXqLT7O+tkZq/YBv2MHAI1CbuDzF4GZ4tVxcRu0JAL27
+        vJhN87jxxtNKiW4IL9YtTkw=
+X-Google-Smtp-Source: ADUXVKIe4dDaHGGme7N1vNWwyxYTzojkwejOQLgjd8EfYOShOD/tU8ho6HKVv3fyRNWqKqQs47pbWQ==
+X-Received: by 2002:a19:c608:: with SMTP id w8-v6mr5647173lff.64.1528552995558;
+        Sat, 09 Jun 2018 07:03:15 -0700 (PDT)
+Received: from localhost.localdomain (apn-31-0-40-98.dynamic.gprs.plus.pl. [31.0.40.98])
+        by smtp.gmail.com with ESMTPSA id n84-v6sm4477727lfi.19.2018.06.09.07.03.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 09 Jun 2018 07:03:14 -0700 (PDT)
+From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc: "David S . Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Subject: [PATCH 08/10] ARM: OMAP1: Get rid of <mach/ams-delta-fiq.h>
+Date: Sat,  9 Jun 2018 16:02:22 +0200
+Message-Id: <20180609140224.32606-8-jmkrzyszt@gmail.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180609140224.32606-1-jmkrzyszt@gmail.com>
+References: <20180609140224.32606-1-jmkrzyszt@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2018-06-07 20:47:25, Thierry Escande wrote:
-> Hi Petr,
-> 
-> On 07/06/2018 14:24, Petr Mladek wrote:
-> > On Mon 2018-06-04 13:37:08, Thierry Escande wrote:
-> > > If the test_printf module is loaded before the crng is initialized, the
-> > > plain 'p' tests will fail because the printed address will not be hashed
-> > > and the buffer will contain '(ptrval)' instead.
-> > > This patch adds a call to wait_for_random_bytes() before plain 'p' tests
-> > > to make sure the crng is initialized.
-> > 
-> > Hmm, my system did not boot with this patch and
-> > CONFIG_TEST_PRINTF=y
-> > 
-> > I guess that there was not enough entropy. It is basically a deadlock.
-> > The build-in module init calls are called when SMP is enabled but
-> > there is no real activity and the init calls are called sequentially.
-> > Therefore there is nothing that could produce some entropy, ...
-> > 
-> > I suggest to skip the test when crng is not ready.
-> 
-> Thanks for pointing this out.
-> 
-> The issue is that the crng_ready() is not available outside of random.c.
-> I'll leave the call to wait_for_random_bytes() if test_printf is compiled as
-> a module and use add_random_ready_callback() to check if crng is initialized
-> otherwise. Does that sound ok to you?
+Split the header file into two parts and move them to directories where
+they belong.
 
-Great, I was not aware of add_random_ready_callback().
+Information on internal structure of FIQ buffer is moved to
+<linux/platform_data/ams-delta-fiq.h>, to be used by ams-delta-serio
+driver.
 
-I suggest to make the decision in test_printf_init()
-and run all tests either as the callback or immediately.
+Other information used by ams-delta board init file and FIQ code is
+made local to mach-omap1 root directory.
 
-Best Regards,
-Petr
+Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+---
+ MAINTAINERS                                        |  1 +
+ arch/arm/mach-omap1/ams-delta-fiq-handler.S        |  5 +--
+ arch/arm/mach-omap1/ams-delta-fiq.c                |  7 ++--
+ arch/arm/mach-omap1/ams-delta-fiq.h                | 41 ++++++++++++++++++++++
+ arch/arm/mach-omap1/board-ams-delta.c              |  2 +-
+ drivers/input/serio/ams_delta_serio.c              |  3 +-
+ .../linux/platform_data}/ams-delta-fiq.h           | 27 +++-----------
+ 7 files changed, 56 insertions(+), 30 deletions(-)
+ create mode 100644 arch/arm/mach-omap1/ams-delta-fiq.h
+ rename {arch/arm/mach-omap1/include/mach => include/linux/platform_data}/ams-delta-fiq.h (71%)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 14fbc6e94774..c487348da38c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10391,6 +10391,7 @@ F:	arch/arm/plat-omap/
+ F:	arch/arm/configs/omap1_defconfig
+ F:	drivers/i2c/busses/i2c-omap.c
+ F:	include/linux/platform_data/i2c-omap.h
++F:	include/linux/platform_data/ams-delta-fiq.h
+ 
+ OMAP2+ SUPPORT
+ M:	Tony Lindgren <tony@atomide.com>
+diff --git a/arch/arm/mach-omap1/ams-delta-fiq-handler.S b/arch/arm/mach-omap1/ams-delta-fiq-handler.S
+index bf608441b357..ddc27638ba2a 100644
+--- a/arch/arm/mach-omap1/ams-delta-fiq-handler.S
++++ b/arch/arm/mach-omap1/ams-delta-fiq-handler.S
+@@ -14,11 +14,12 @@
+  */
+ 
+ #include <linux/linkage.h>
+-#include <asm/assembler.h>
++#include <linux/platform_data/ams-delta-fiq.h>
+ 
++#include <asm/assembler.h>
+ #include <mach/board-ams-delta.h>
+-#include <mach/ams-delta-fiq.h>
+ 
++#include "ams-delta-fiq.h"
+ #include "iomap.h"
+ #include "soc.h"
+ 
+diff --git a/arch/arm/mach-omap1/ams-delta-fiq.c b/arch/arm/mach-omap1/ams-delta-fiq.c
+index 5a6c59ac9b5f..e72935034d42 100644
+--- a/arch/arm/mach-omap1/ams-delta-fiq.c
++++ b/arch/arm/mach-omap1/ams-delta-fiq.c
+@@ -19,12 +19,13 @@
+ #include <linux/irq.h>
+ #include <linux/module.h>
+ #include <linux/io.h>
++#include <linux/platform_data/ams-delta-fiq.h>
+ 
+ #include <mach/board-ams-delta.h>
+ 
+ #include <asm/fiq.h>
+ 
+-#include <mach/ams-delta-fiq.h>
++#include "ams-delta-fiq.h"
+ 
+ static struct fiq_handler fh = {
+ 	.name	= "ams-delta-fiq"
+@@ -35,8 +36,8 @@ static struct fiq_handler fh = {
+  * The FIQ and IRQ isrs can both read and write it.
+  * It is structured as a header section several 32bit slots,
+  * followed by the circular buffer where the FIQ isr stores
+- * keystrokes received from the qwerty keyboard.
+- * See ams-delta-fiq.h for details of offsets.
++ * keystrokes received from the qwerty keyboard.  See
++ * <linux/platform_data/ams-delta-fiq.h> for details of offsets.
+  */
+ unsigned int fiq_buffer[1024];
+ EXPORT_SYMBOL(fiq_buffer);
+diff --git a/arch/arm/mach-omap1/ams-delta-fiq.h b/arch/arm/mach-omap1/ams-delta-fiq.h
+new file mode 100644
+index 000000000000..3f691d68aa62
+--- /dev/null
++++ b/arch/arm/mach-omap1/ams-delta-fiq.h
+@@ -0,0 +1,41 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++/*
++ * arch/arm/mach-omap1/ams-delta-fiq.h
++ *
++ * Taken from the original Amstrad modifications to fiq.h
++ *
++ * Copyright (c) 2004 Amstrad Plc
++ * Copyright (c) 2006 Matt Callow
++ * Copyright (c) 2010 Janusz Krzysztofik
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++#ifndef __AMS_DELTA_FIQ_H
++#define __AMS_DELTA_FIQ_H
++
++#include <mach/irqs.h>
++
++/*
++ * Interrupt number used for passing control from FIQ to IRQ.
++ * IRQ12, described as reserved, has been selected.
++ */
++#define INT_DEFERRED_FIQ	INT_1510_RES12
++/*
++ * Base address of an interrupt handler that the INT_DEFERRED_FIQ belongs to.
++ */
++#if (INT_DEFERRED_FIQ < IH2_BASE)
++#define DEFERRED_FIQ_IH_BASE	OMAP_IH1_BASE
++#else
++#define DEFERRED_FIQ_IH_BASE	OMAP_IH2_BASE
++#endif
++
++#ifndef __ASSEMBLER__
++extern unsigned char qwerty_fiqin_start, qwerty_fiqin_end;
++
++extern void __init ams_delta_init_fiq(struct gpio_chip *chip);
++#endif
++
++#endif
+diff --git a/arch/arm/mach-omap1/board-ams-delta.c b/arch/arm/mach-omap1/board-ams-delta.c
+index f15c0793c34b..fe9a3e7cbfeb 100644
+--- a/arch/arm/mach-omap1/board-ams-delta.c
++++ b/arch/arm/mach-omap1/board-ams-delta.c
+@@ -41,10 +41,10 @@
+ #include <mach/mux.h>
+ 
+ #include <mach/hardware.h>
+-#include <mach/ams-delta-fiq.h>
+ #include "camera.h"
+ #include <mach/usb.h>
+ 
++#include "ams-delta-fiq.h"
+ #include "iomap.h"
+ #include "common.h"
+ 
+diff --git a/drivers/input/serio/ams_delta_serio.c b/drivers/input/serio/ams_delta_serio.c
+index a83d8b3cd838..5d0bd2005648 100644
+--- a/drivers/input/serio/ams_delta_serio.c
++++ b/drivers/input/serio/ams_delta_serio.c
+@@ -22,6 +22,7 @@
+  */
+ #include <linux/gpio.h>
+ #include <linux/irq.h>
++#include <linux/platform_data/ams-delta-fiq.h>
+ #include <linux/platform_device.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/serio.h>
+@@ -30,8 +31,6 @@
+ 
+ #include <mach/board-ams-delta.h>
+ 
+-#include <mach/ams-delta-fiq.h>
+-
+ #define DRIVER_NAME	"ams-delta-serio"
+ 
+ MODULE_AUTHOR("Matt Callow");
+diff --git a/arch/arm/mach-omap1/include/mach/ams-delta-fiq.h b/include/linux/platform_data/ams-delta-fiq.h
+similarity index 71%
+rename from arch/arm/mach-omap1/include/mach/ams-delta-fiq.h
+rename to include/linux/platform_data/ams-delta-fiq.h
+index a9769ff396bc..dc0f835ea918 100644
+--- a/arch/arm/mach-omap1/include/mach/ams-delta-fiq.h
++++ b/include/linux/platform_data/ams-delta-fiq.h
+@@ -1,5 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
+ /*
+- * arch/arm/mach-omap1/include/ams-delta-fiq.h
++ * include/linux/platform_data/ams-delta-fiq.h
+  *
+  * Taken from the original Amstrad modifications to fiq.h
+  *
+@@ -11,24 +13,8 @@
+  * it under the terms of the GNU General Public License version 2 as
+  * published by the Free Software Foundation.
+  */
+-#ifndef __AMS_DELTA_FIQ_H
+-#define __AMS_DELTA_FIQ_H
+-
+-#include <mach/irqs.h>
+-
+-/*
+- * Interrupt number used for passing control from FIQ to IRQ.
+- * IRQ12, described as reserved, has been selected.
+- */
+-#define INT_DEFERRED_FIQ	INT_1510_RES12
+-/*
+- * Base address of an interrupt handler that the INT_DEFERRED_FIQ belongs to.
+- */
+-#if (INT_DEFERRED_FIQ < IH2_BASE)
+-#define DEFERRED_FIQ_IH_BASE	OMAP_IH1_BASE
+-#else
+-#define DEFERRED_FIQ_IH_BASE	OMAP_IH2_BASE
+-#endif
++#ifndef __LINUX_PLATFORM_DATA_AMS_DELTA_FIQ_H
++#define __LINUX_PLATFORM_DATA_AMS_DELTA_FIQ_H
+ 
+ /*
+  * These are the offsets from the beginning of the fiq_buffer. They are put here
+@@ -71,9 +57,6 @@
+ 
+ #ifndef __ASSEMBLER__
+ extern unsigned int fiq_buffer[];
+-extern unsigned char qwerty_fiqin_start, qwerty_fiqin_end;
+-
+-extern void __init ams_delta_init_fiq(struct gpio_chip *chip);
+ #endif
+ 
+ #endif
+-- 
+2.16.1
