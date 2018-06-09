@@ -1,104 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id F9HmDqLIGVumCQAAmS7hNA
-	; Fri, 08 Jun 2018 00:15:04 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id h/mnD+oBHFvoagAAmS7hNA
+	; Sat, 09 Jun 2018 16:49:34 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 49DAA6074D; Fri,  8 Jun 2018 00:15:04 +0000 (UTC)
+	id AB4D4608BA; Sat,  9 Jun 2018 16:49:34 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NqD3vaqQ"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="N8Q5hEa5"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id B78A960290;
-	Fri,  8 Jun 2018 00:15:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B78A960290
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 979C5605A2;
+	Sat,  9 Jun 2018 16:49:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 979C5605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752437AbeFHAPB (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 20:15:01 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:44097 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752246AbeFHAO7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 20:14:59 -0400
-Received: by mail-pg0-f66.google.com with SMTP id p21-v6so5516994pgd.11
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 17:14:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=TYKaJkpTCYGsbfpwKeHID7wfzbW4tYdKoFQ/IvO472U=;
-        b=NqD3vaqQk5rcSi8IaWQI6WL0ld/TeZO4FCpAXF3BpuhVpgd5+3GZ6TrMLwoJb2bjbU
-         OKZv/x7S2fK0E2TrNMkxjmvCfJDHhU40IwGEDimg4cJcwzeAUZKXJK3FlFCOwp2PBLsz
-         JGNmDrzcD4Nxh4atyjW8yp4XbaEi28JKpZL4o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=TYKaJkpTCYGsbfpwKeHID7wfzbW4tYdKoFQ/IvO472U=;
-        b=qN1eDvxtEwbBTUg0f/d2AzQunz4PqwQI9wtYUPDGn/+gN3a0VF6cTtM1bNTKU/Z+E3
-         mvMzO826N6fLIOcG8U0MsZsUGlURDaK23CitnQcPyEjSoXleZGIHlx6QLUXo+vRpOIMB
-         w6cH1G7OWCGJLO6AuyoPVyAFSsb3kqSbEgIvVLmbkjn1cTscPmI8XnhNnfZCKG++VwWI
-         I3BNHh60n0ll2ij5hkp7ykdqDoce2i/jWEtKak4boDb0D32+lMU1+urrDE2Lf5OIiTyt
-         ykiJv3vXBtUkBkuFDzAQg7gjY6GSL3rTLlc+ZsOVHOTksu8sVaWkhHFSTMTv+NFGbV3s
-         6Jvw==
-X-Gm-Message-State: APt69E0iseZkxuOS0YfIegdOzvmMNiwOKyn0dTbMQi8lwuQPtvFDRbI4
-        FI1vqBGNgzeMecr999k19uaegHnrq48=
-X-Google-Smtp-Source: ADUXVKKDdGyfLZxIhzfGfgtKjtQ88lV6gHYUTUfbvnBTMsBVdnUeTGHobMHqRImokyXkA9FiVTCbzA==
-X-Received: by 2002:a62:121a:: with SMTP id a26-v6mr3712477pfj.104.1528416898545;
-        Thu, 07 Jun 2018 17:14:58 -0700 (PDT)
-Received: from drinkcat.tpe.corp.google.com ([2401:fa00:1:b:9ba:cd16:d555:bacf])
-        by smtp.gmail.com with ESMTPSA id n76-v6sm7493419pfg.98.2018.06.07.17.14.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Jun 2018 17:14:57 -0700 (PDT)
-From: Nicolas Boichat <drinkcat@chromium.org>
-To: Jiri Kosina <jikos@kernel.org>
-Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] HID: google: Add support for whiskers
-Date: Fri,  8 Jun 2018 08:14:50 +0800
-Message-Id: <20180608001450.76836-1-drinkcat@chromium.org>
-X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a-goog
+        id S1753439AbeFIQtb (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 12:49:31 -0400
+Received: from imap.thunk.org ([74.207.234.97]:52944 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753188AbeFIQt3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 12:49:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=HdjQ7sMz1uc7uUnYAzRVD7EL+tk9AD5nsOdKZewhQlY=; b=N8Q5hEa5gi2yosG6S29/igGJG0
+        7MrkQtWcjNpdqvJMAq1QHk0+dAK54Odtp65yv8x6JcLOhxznHMW0YEg3OiQFbL1szvufuI8vHRDVa
+        UuXxcNl2u2iuzsjT4vgjcuxsYdEqwgThTg9Yq2B1iytTrv56pJMV7VHePYM/eaZu/SRg=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1fRh3K-0008Dn-Mt; Sat, 09 Jun 2018 16:49:22 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 0E81E7A4474; Sat,  9 Jun 2018 12:49:22 -0400 (EDT)
+Date: Sat, 9 Jun 2018 12:49:21 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Michal Kubecek <mkubecek@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Backlund <tmb@mageia.org>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: building in 32bit chroot on x86_64 host broken
+Message-ID: <20180609164921.GA5020@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Kubecek <mkubecek@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Backlund <tmb@mageia.org>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <daf0fbba-6357-1748-d583-bcb5edf067ec@mageia.org>
+ <CA+55aFwiyuA4fKztofM-fdDSc+ZH9aAR1xksL8ZWRDE-pdXruw@mail.gmail.com>
+ <CAK7LNAS=PvYVrLczeJT0utq3UHNL5YtSE_w=RjJYJ3SD9ALrYA@mail.gmail.com>
+ <CA+55aFzNCQZHEz9P2a4ZSyWB0RxZcTkh5TVfwTmup-Y-6b8qjw@mail.gmail.com>
+ <CA+55aFwAwoDdZRP6n9xXDPkeCUm35mmGH3fXv=r1HOZq1bpiGw@mail.gmail.com>
+ <CAK7LNAS4Xb_CQ31t_cqt3q0zRFZ-O2n3+qkxXfxZB_jmqvFmWQ@mail.gmail.com>
+ <f1f35cdf-bd03-54bb-7196-c13131f7d0fc@mageia.org>
+ <CA+55aFxe+LooLzpvBLwW9Ehwomp45zdJ3a-P71ipHJzdMmtDkQ@mail.gmail.com>
+ <20180608091227.jbigan3vplns2oxk@unicorn.suse.cz>
+ <CAK7LNAQrhBukG14-ggBWPBauB1shAiuZvESo70KrFxuOwhRJjg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK7LNAQrhBukG14-ggBWPBauB1shAiuZvESo70KrFxuOwhRJjg@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Another device in the hammer class, with USB id 0x5030.
+On Sat, Jun 09, 2018 at 09:23:55PM +0900, Masahiro Yamada wrote:
+> Just a note.
+> 
+> In case of cross-compiling, not only ARCH but also CROSS_COMPILE
+> must be passed when you do "make *config".
 
-Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
----
- drivers/hid/hid-google-hammer.c | 2 ++
- drivers/hid/hid-ids.h           | 1 +
- 2 files changed, 3 insertions(+)
+Sure, what was being discussed was people who build 32-bit x86 kernels
+on a 64-bit platform.  I do this occasionally to check and make sure
+that 32-compat ioctl handling is working correctly, etc.  I suspect
+there are more developers setting just ARCH= and not CROSS_COMPILE
+because they are building 32-bit x86 kernels (which can then be
+trivially tested using qemu) than there are building cross-compiled
+kernels for a completely different architecture.
 
-diff --git a/drivers/hid/hid-google-hammer.c b/drivers/hid/hid-google-hammer.c
-index 7b8e17b03cb86..6bf4da7ad63a5 100644
---- a/drivers/hid/hid-google-hammer.c
-+++ b/drivers/hid/hid-google-hammer.c
-@@ -124,6 +124,8 @@ static const struct hid_device_id hammer_devices[] = {
- 		     USB_VENDOR_ID_GOOGLE, USB_DEVICE_ID_GOOGLE_STAFF) },
- 	{ HID_DEVICE(BUS_USB, HID_GROUP_GENERIC,
- 		     USB_VENDOR_ID_GOOGLE, USB_DEVICE_ID_GOOGLE_WAND) },
-+	{ HID_DEVICE(BUS_USB, HID_GROUP_GENERIC,
-+		     USB_VENDOR_ID_GOOGLE, USB_DEVICE_ID_GOOGLE_WHISKERS) },
- 	{ }
- };
- MODULE_DEVICE_TABLE(hid, hammer_devices);
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index a85634fe033f0..c7981ddd87763 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -452,6 +452,7 @@
- #define USB_DEVICE_ID_GOOGLE_TOUCH_ROSE	0x5028
- #define USB_DEVICE_ID_GOOGLE_STAFF	0x502b
- #define USB_DEVICE_ID_GOOGLE_WAND	0x502d
-+#define USB_DEVICE_ID_GOOGLE_WHISKERS	0x5030
- 
- #define USB_VENDOR_ID_GOTOP		0x08f2
- #define USB_DEVICE_ID_SUPER_Q2		0x007f
--- 
-2.18.0.rc1.242.g61856ae69a-goog
+I saw this thread and decided I didn't care because I use a standard
+"kbuild32" script (I also have a "kbuild" script for building normal
+64-bit kernels), and it always passes ARCH=i386.
+
+					- Ted
+
+#!/bin/bash
+
+N=$(getconf _NPROCESSORS_ONLN)
+
+if test -f .git/kbuild/config ; then
+    . .git/kbuild/config
+else
+    echo "Missing kbuild configuration file!"
+    exit 1
+fi
+
+if test ! -d "$BLD_DIR_32" ; then
+    mkdir -p "$BLD_DIR_32"
+    if test -f .git/kbuild/kernel-config ; then
+	cp .git/kbuild/kernel-config-32 "$BLD_DIR_32/.config"
+    fi
+    for i in x509.genkey signing_key.pem signing_key.x509
+    do
+	if test -f ".git/kbuild/$i" ; then
+	    mkdir -p "$BLD_DIR_32/certs"
+	    cp ".git/kbuild/$i" "$BLD_DIR_32/certs"
+	fi
+    done
+fi
+
+time nice make O="$BLD_DIR_32" ARCH=i386 -j$N $*
+
+cp "$BLD_DIR_32/.config" .git/kbuild/kernel-config-32
