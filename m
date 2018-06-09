@@ -1,238 +1,292 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id QXp6J0xOGVtXdwAAmS7hNA
-	; Thu, 07 Jun 2018 15:25:00 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id CYJzB373G1sLBgAAmS7hNA
+	; Sat, 09 Jun 2018 15:52:13 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 90010608B8; Thu,  7 Jun 2018 15:25:00 +0000 (UTC)
+	id D05F9608C1; Sat,  9 Jun 2018 15:52:12 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vv2x33PH"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id A844C6074D;
-	Thu,  7 Jun 2018 15:24:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A844C6074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 1AC8B606FA;
+	Sat,  9 Jun 2018 15:52:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1AC8B606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964830AbeFGPYr (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:24:47 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41178 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933575AbeFGO6P (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:58:15 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvby-0005Zm-4a; Thu, 07 Jun 2018 15:09:58 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvay-0002jo-T6; Thu, 07 Jun 2018 15:08:56 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, tim.c.chen@linux.intel.com,
-        pbonzini@redhat.com,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, bp@alien8.de,
-        "David Woodhouse" <dwmw@amazon.co.uk>, ashok.raj@intel.com,
-        peterz@infradead.org, dave.hansen@intel.com,
-        gregkh@linux-foundation.org, ak@linux.intel.com,
-        gnomes@lxorguk.ukuu.org.uk, arjan@linux.intel.com,
-        torvalds@linux-foundation.org,
-        "Thomas Gleixner" <tglx@linutronix.de>, karahmed@amazon.de
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.802504492@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 046/410] x86/cpufeature: Blacklist SPEC_CTRL/PRED_CMD
- on early Spectre v2  microcodes
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        id S1753586AbeFIPwB (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:52:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34226 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932136AbeFIPbm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:31:42 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 673B420896;
+        Sat,  9 Jun 2018 15:31:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558302;
+        bh=znBoMNbbZxaAw446y4sWkS9rSCGqV/UdNOh/8FUlBGY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=vv2x33PHdAuvwkWryS3TAJ5mcwkv3khtIzP/3Sey3REScdGpJWfPRwm7U2lvH3u02
+         Zvz3u6TuInEgNG08pQVUy9tdn8dPQ4irEBdcSnrV05Yp1fnvVWB85l++M7KujPZWNJ
+         V5mUJlRjftFNiWW+EVN4WhDar5ZhM6vzyUIzlZT4=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 4.16 00/48] 4.16.15-stable review
+Date: Sat,  9 Jun 2018 17:29:12 +0200
+Message-Id: <20180609145947.679103414@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+User-Agent: quilt/0.65
+X-stable: review
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.16.15-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.16.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.16.15-rc1
+X-KernelTest-Deadline: 2018-06-11T14:59+00:00
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+This is the start of the stable review cycle for the 4.16.15 release.
+There are 48 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-------------------
+Responses should be made by Mon Jun 11 14:59:28 UTC 2018.
+Anything received after that time might be too late.
 
-From: David Woodhouse <dwmw@amazon.co.uk>
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.16.15-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.16.y
+and the diffstat can be found below.
 
-commit a5b2966364538a0e68c9fa29bc0a3a1651799035 upstream.
+thanks,
 
-This doesn't refuse to load the affected microcodes; it just refuses to
-use the Spectre v2 mitigation features if they're detected, by clearing
-the appropriate feature bits.
+greg k-h
 
-The AMD CPUID bits are handled here too, because hypervisors *may* have
-been exposing those bits even on Intel chips, for fine-grained control
-of what's available.
+-------------
+Pseudo-Shortlog of commits:
 
-It is non-trivial to use x86_match_cpu() for this table because that
-doesn't handle steppings. And the approach taken in commit bd9240a18
-almost made me lose my lunch.
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.16.15-rc1
 
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: gnomes@lxorguk.ukuu.org.uk
-Cc: ak@linux.intel.com
-Cc: ashok.raj@intel.com
-Cc: dave.hansen@intel.com
-Cc: karahmed@amazon.de
-Cc: arjan@linux.intel.com
-Cc: torvalds@linux-foundation.org
-Cc: peterz@infradead.org
-Cc: bp@alien8.de
-Cc: pbonzini@redhat.com
-Cc: tim.c.chen@linux.intel.com
-Cc: gregkh@linux-foundation.org
-Link: https://lkml.kernel.org/r/1516896855-7642-7-git-send-email-dwmw@amazon.co.uk
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.16: Add #include <asm/intel-family.h>]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- arch/x86/include/asm/intel-family.h |  7 ++-
- arch/x86/kernel/cpu/intel.c         | 67 +++++++++++++++++++++++++++++
- 2 files changed, 72 insertions(+), 2 deletions(-)
+Dexuan Cui <decui@microsoft.com>
+    PCI: hv: Do not wait forever on a device that has disappeared
 
---- a/arch/x86/include/asm/intel-family.h
-+++ b/arch/x86/include/asm/intel-family.h
-@@ -12,6 +12,7 @@
-  */
- 
- #define INTEL_FAM6_CORE_YONAH		0x0E
-+
- #define INTEL_FAM6_CORE2_MEROM		0x0F
- #define INTEL_FAM6_CORE2_MEROM_L	0x16
- #define INTEL_FAM6_CORE2_PENRYN		0x17
-@@ -21,6 +22,7 @@
- #define INTEL_FAM6_NEHALEM_G		0x1F /* Auburndale / Havendale */
- #define INTEL_FAM6_NEHALEM_EP		0x1A
- #define INTEL_FAM6_NEHALEM_EX		0x2E
-+
- #define INTEL_FAM6_WESTMERE		0x25
- #define INTEL_FAM6_WESTMERE_EP		0x2C
- #define INTEL_FAM6_WESTMERE_EX		0x2F
-@@ -36,9 +38,9 @@
- #define INTEL_FAM6_HASWELL_GT3E		0x46
- 
- #define INTEL_FAM6_BROADWELL_CORE	0x3D
--#define INTEL_FAM6_BROADWELL_XEON_D	0x56
- #define INTEL_FAM6_BROADWELL_GT3E	0x47
- #define INTEL_FAM6_BROADWELL_X		0x4F
-+#define INTEL_FAM6_BROADWELL_XEON_D	0x56
- 
- #define INTEL_FAM6_SKYLAKE_MOBILE	0x4E
- #define INTEL_FAM6_SKYLAKE_DESKTOP	0x5E
-@@ -57,9 +59,10 @@
- #define INTEL_FAM6_ATOM_SILVERMONT2	0x4D /* Avaton/Rangely */
- #define INTEL_FAM6_ATOM_AIRMONT		0x4C /* CherryTrail / Braswell */
- #define INTEL_FAM6_ATOM_MERRIFIELD	0x4A /* Tangier */
--#define INTEL_FAM6_ATOM_MOOREFIELD	0x5A /* Annidale */
-+#define INTEL_FAM6_ATOM_MOOREFIELD	0x5A /* Anniedale */
- #define INTEL_FAM6_ATOM_GOLDMONT	0x5C
- #define INTEL_FAM6_ATOM_DENVERTON	0x5F /* Goldmont Microserver */
-+#define INTEL_FAM6_ATOM_GEMINI_LAKE	0x7A
- 
- /* Xeon Phi */
- 
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -13,6 +13,7 @@
- #include <asm/msr.h>
- #include <asm/bugs.h>
- #include <asm/cpu.h>
-+#include <asm/intel-family.h>
- 
- #ifdef CONFIG_X86_64
- #include <linux/topology.h>
-@@ -25,6 +26,59 @@
- #include <asm/apic.h>
- #endif
- 
-+/*
-+ * Early microcode releases for the Spectre v2 mitigation were broken.
-+ * Information taken from;
-+ * - https://newsroom.intel.com/wp-content/uploads/sites/11/2018/01/microcode-update-guidance.pdf
-+ * - https://kb.vmware.com/s/article/52345
-+ * - Microcode revisions observed in the wild
-+ * - Release note from 20180108 microcode release
-+ */
-+struct sku_microcode {
-+	u8 model;
-+	u8 stepping;
-+	u32 microcode;
-+};
-+static const struct sku_microcode spectre_bad_microcodes[] = {
-+	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x0B,	0x84 },
-+	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x0A,	0x84 },
-+	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x09,	0x84 },
-+	{ INTEL_FAM6_KABYLAKE_MOBILE,	0x0A,	0x84 },
-+	{ INTEL_FAM6_KABYLAKE_MOBILE,	0x09,	0x84 },
-+	{ INTEL_FAM6_SKYLAKE_X,		0x03,	0x0100013e },
-+	{ INTEL_FAM6_SKYLAKE_X,		0x04,	0x0200003c },
-+	{ INTEL_FAM6_SKYLAKE_MOBILE,	0x03,	0xc2 },
-+	{ INTEL_FAM6_SKYLAKE_DESKTOP,	0x03,	0xc2 },
-+	{ INTEL_FAM6_BROADWELL_CORE,	0x04,	0x28 },
-+	{ INTEL_FAM6_BROADWELL_GT3E,	0x01,	0x1b },
-+	{ INTEL_FAM6_BROADWELL_XEON_D,	0x02,	0x14 },
-+	{ INTEL_FAM6_BROADWELL_XEON_D,	0x03,	0x07000011 },
-+	{ INTEL_FAM6_BROADWELL_X,	0x01,	0x0b000025 },
-+	{ INTEL_FAM6_HASWELL_ULT,	0x01,	0x21 },
-+	{ INTEL_FAM6_HASWELL_GT3E,	0x01,	0x18 },
-+	{ INTEL_FAM6_HASWELL_CORE,	0x03,	0x23 },
-+	{ INTEL_FAM6_HASWELL_X,		0x02,	0x3b },
-+	{ INTEL_FAM6_HASWELL_X,		0x04,	0x10 },
-+	{ INTEL_FAM6_IVYBRIDGE_X,	0x04,	0x42a },
-+	/* Updated in the 20180108 release; blacklist until we know otherwise */
-+	{ INTEL_FAM6_ATOM_GEMINI_LAKE,	0x01,	0x22 },
-+	/* Observed in the wild */
-+	{ INTEL_FAM6_SANDYBRIDGE_X,	0x06,	0x61b },
-+	{ INTEL_FAM6_SANDYBRIDGE_X,	0x07,	0x712 },
-+};
-+
-+static bool bad_spectre_microcode(struct cpuinfo_x86 *c)
-+{
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(spectre_bad_microcodes); i++) {
-+		if (c->x86_model == spectre_bad_microcodes[i].model &&
-+		    c->x86_mask == spectre_bad_microcodes[i].stepping)
-+			return (c->microcode <= spectre_bad_microcodes[i].microcode);
-+	}
-+	return false;
-+}
-+
- static void early_init_intel(struct cpuinfo_x86 *c)
- {
- 	u64 misc_enable;
-@@ -51,6 +105,19 @@ static void early_init_intel(struct cpui
- 		rdmsr(MSR_IA32_UCODE_REV, lower_word, c->microcode);
- 	}
- 
-+	if ((cpu_has(c, X86_FEATURE_SPEC_CTRL) ||
-+	     cpu_has(c, X86_FEATURE_STIBP) ||
-+	     cpu_has(c, X86_FEATURE_AMD_SPEC_CTRL) ||
-+	     cpu_has(c, X86_FEATURE_AMD_PRED_CMD) ||
-+	     cpu_has(c, X86_FEATURE_AMD_STIBP)) && bad_spectre_microcode(c)) {
-+		pr_warn("Intel Spectre v2 broken microcode detected; disabling SPEC_CTRL\n");
-+		clear_cpu_cap(c, X86_FEATURE_SPEC_CTRL);
-+		clear_cpu_cap(c, X86_FEATURE_STIBP);
-+		clear_cpu_cap(c, X86_FEATURE_AMD_SPEC_CTRL);
-+		clear_cpu_cap(c, X86_FEATURE_AMD_PRED_CMD);
-+		clear_cpu_cap(c, X86_FEATURE_AMD_STIBP);
-+	}
-+
- 	/*
- 	 * Atom erratum AAE44/AAF40/AAG38/AAH41:
- 	 *
+Jason Wang <jasowang@redhat.com>
+    vhost_net: flush batched heads before trying to busy polling
+
+Ard Biesheuvel <ard.biesheuvel@linaro.org>
+    net: netsec: reduce DMA mask to 40 bits
+
+Nicolas Dichtel <nicolas.dichtel@6wind.com>
+    ip_tunnel: restore binding to ifaces with a large mtu
+
+Jason Wang <jasowang@redhat.com>
+    virtio-net: correctly redirect linearized packet
+
+Or Gerlitz <ogerlitz@mellanox.com>
+    net : sched: cls_api: deal with egdev path only if needed
+
+Arun Parameswaran <arun.parameswaran@broadcom.com>
+    net: dsa: b53: Fix for brcm tag issue in Cygnus SoC
+
+Jason Wang <jasowang@redhat.com>
+    virtio-net: correctly check num_buf during err path
+
+Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+    tun: Fix NULL pointer dereference in XDP redirect
+
+Eran Ben Elisha <eranbe@mellanox.com>
+    net/mlx5e: When RXFCS is set, add FCS data into checksum calculation
+
+Jack Morgenstein <jackm@dev.mellanox.co.il>
+    net/mlx4: Fix irq-unsafe spinlock usage
+
+Jason Wang <jasowang@redhat.com>
+    virtio-net: fix leaking page for gso packet during mergeable XDP
+
+Jason Wang <jasowang@redhat.com>
+    virtio-net: correctly transmit XDP buff after linearizing
+
+Alexander Duyck <alexander.h.duyck@intel.com>
+    net-sysfs: Fix memory leak in XPS configuration
+
+Florian Fainelli <f.fainelli@gmail.com>
+    net: phy: broadcom: Fix auxiliary control register reads
+
+Mathieu Xhonneux <m.xhonneux@gmail.com>
+    ipv6: sr: fix memory OOB access in seg6_do_srh_encap/inline
+
+Stephen Suryaputra <ssuryaextr@gmail.com>
+    vrf: check the original netdevice for generating redirect
+
+Jason Wang <jasowang@redhat.com>
+    vhost: synchronize IOTLB message with dev cleanup
+
+Dan Carpenter <dan.carpenter@oracle.com>
+    team: use netdev_features_t instead of u32
+
+Xin Long <lucien.xin@gmail.com>
+    sctp: not allow transport timeout value less than HZ/5 for hb_timer
+
+Eric Dumazet <edumazet@google.com>
+    rtnetlink: validate attributes in do_setlink()
+
+Shahed Shaikh <shahed.shaikh@cavium.com>
+    qed: Fix mask for physical address in ILT entry
+
+Willem de Bruijn <willemb@google.com>
+    packet: fix reserve calculation
+
+Daniele Palmas <dnlplm@gmail.com>
+    net: usb: cdc_mbim: add flag FLAG_SEND_ZLP
+
+Florian Fainelli <f.fainelli@gmail.com>
+    net: phy: broadcom: Fix bcm_write_exp()
+
+Eric Dumazet <edumazet@google.com>
+    net/packet: refine check for priv area size
+
+Eric Dumazet <edumazet@google.com>
+    net: metrics: add proper netlink validation
+
+Roopa Prabhu <roopa@cumulusnetworks.com>
+    net: ipv4: add missing RTA_TABLE to rtm_ipv4_policy
+
+Dan Carpenter <dan.carpenter@oracle.com>
+    net: ethernet: davinci_emac: fix error handling in probe()
+
+Cong Wang <xiyou.wangcong@gmail.com>
+    netdev-FAQ: clarify DaveM's position for stable backports
+
+Petr Machata <petrm@mellanox.com>
+    mlxsw: spectrum: Forbid creation of VLAN 1 over port/LAG
+
+Guillaume Nault <g.nault@alphalink.fr>
+    l2tp: fix refcount leakage on PPPoL2TP sockets
+
+Kirill Tkhai <ktkhai@virtuozzo.com>
+    kcm: Fix use-after-free caused by clonned sockets
+
+Wenwen Wang <wang6495@umn.edu>
+    isdn: eicon: fix a missing-check bug
+
+Michal Kubecek <mkubecek@suse.cz>
+    ipv6: omit traffic class when calculating flow hash
+
+Willem de Bruijn <willemb@google.com>
+    ipv4: remove warning in ip_recv_error
+
+Eric Dumazet <edumazet@google.com>
+    ipmr: properly check rhltable_init() return value
+
+Nicolas Dichtel <nicolas.dichtel@6wind.com>
+    ip6_tunnel: remove magic mtu value 0xFFF8
+
+Sabrina Dubroca <sd@queasysnail.net>
+    ip6mr: only set ip6mr_table from setsockopt when ip6mr_new_table succeeds
+
+Govindarajulu Varadarajan <gvaradar@cisco.com>
+    enic: set DMA mask to 47 bit
+
+Alexey Kodanev <alexey.kodanev@oracle.com>
+    dccp: don't free ccid2_hc_tx_sock struct in dccp_disconnect()
+
+Paul Blakey <paulb@mellanox.com>
+    cls_flower: Fix incorrect idr release when failing to modify rule
+
+Julia Lawall <Julia.Lawall@lip6.fr>
+    bnx2x: use the right constant
+
+Suresh Reddy <suresh.reddy@broadcom.com>
+    be2net: Fix error detection logic for BE3
+
+Nathan Chancellor <natechancellor@gmail.com>
+    kconfig: Avoid format overflow warning from GCC 8.1
+
+Jason A. Donenfeld <Jason@zx2c4.com>
+    netfilter: nf_flow_table: attach dst to skbs
+
+Linus Torvalds <torvalds@linux-foundation.org>
+    mmap: relax file size limit for regular files
+
+Linus Torvalds <torvalds@linux-foundation.org>
+    mmap: introduce sane default mmap limits
+
+
+-------------
+
+Diffstat:
+
+ Documentation/networking/netdev-FAQ.txt          |  9 +++++
+ Makefile                                         |  4 +--
+ drivers/isdn/hardware/eicon/diva.c               | 22 ++++++++----
+ drivers/isdn/hardware/eicon/diva.h               |  5 +--
+ drivers/isdn/hardware/eicon/divasmain.c          | 18 ++++++----
+ drivers/net/dsa/b53/b53_common.c                 | 15 +++++++-
+ drivers/net/dsa/b53/b53_priv.h                   |  2 ++
+ drivers/net/dsa/b53/b53_srab.c                   |  4 +--
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c |  2 +-
+ drivers/net/ethernet/cisco/enic/enic_main.c      |  8 ++---
+ drivers/net/ethernet/emulex/benet/be_main.c      |  4 ++-
+ drivers/net/ethernet/mellanox/mlx4/qp.c          |  4 +--
+ drivers/net/ethernet/mellanox/mlx5/core/en_rx.c  | 42 ++++++++++++++++++++++
+ drivers/net/ethernet/mellanox/mlxsw/spectrum.c   |  5 +++
+ drivers/net/ethernet/qlogic/qed/qed_cxt.c        |  2 +-
+ drivers/net/ethernet/socionext/netsec.c          |  4 +--
+ drivers/net/ethernet/ti/davinci_emac.c           | 22 ++++++------
+ drivers/net/phy/bcm-cygnus.c                     |  6 ++--
+ drivers/net/phy/bcm-phy-lib.c                    |  2 +-
+ drivers/net/phy/bcm-phy-lib.h                    |  7 ++++
+ drivers/net/phy/bcm7xxx.c                        |  4 +--
+ drivers/net/team/team.c                          |  3 +-
+ drivers/net/tun.c                                | 15 ++++----
+ drivers/net/usb/cdc_mbim.c                       |  2 +-
+ drivers/net/virtio_net.c                         | 21 ++++++-----
+ drivers/pci/host/pci-hyperv.c                    | 46 +++++++++++++++++-------
+ drivers/vhost/net.c                              | 37 ++++++++++++-------
+ drivers/vhost/vhost.c                            |  3 ++
+ include/net/ipv6.h                               |  5 +++
+ mm/mmap.c                                        | 32 +++++++++++++++++
+ net/core/flow_dissector.c                        |  2 +-
+ net/core/net-sysfs.c                             |  6 ++--
+ net/core/rtnetlink.c                             |  8 ++---
+ net/dccp/proto.c                                 |  2 --
+ net/ipv4/fib_frontend.c                          |  1 +
+ net/ipv4/fib_semantics.c                         |  4 +++
+ net/ipv4/ip_sockglue.c                           |  2 --
+ net/ipv4/ip_tunnel.c                             |  8 ++---
+ net/ipv4/ipmr.c                                  |  7 +++-
+ net/ipv4/netfilter/nf_flow_table_ipv4.c          |  5 +--
+ net/ipv6/ip6_output.c                            |  3 +-
+ net/ipv6/ip6_tunnel.c                            | 11 ++++--
+ net/ipv6/ip6mr.c                                 |  3 +-
+ net/ipv6/ndisc.c                                 |  6 ++++
+ net/ipv6/netfilter/nf_flow_table_ipv6.c          |  1 +
+ net/ipv6/route.c                                 |  2 +-
+ net/ipv6/seg6_iptunnel.c                         |  4 +--
+ net/ipv6/sit.c                                   |  5 +--
+ net/kcm/kcmsock.c                                |  2 +-
+ net/l2tp/l2tp_ppp.c                              | 35 +++++++++---------
+ net/packet/af_packet.c                           |  4 +--
+ net/sched/cls_api.c                              |  2 +-
+ net/sched/cls_flower.c                           |  2 +-
+ net/sctp/transport.c                             |  2 +-
+ scripts/kconfig/confdata.c                       |  2 +-
+ 55 files changed, 338 insertions(+), 146 deletions(-)
