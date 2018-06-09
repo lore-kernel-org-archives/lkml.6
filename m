@@ -1,137 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id vEFQAxxaHlvODAAAmS7hNA
-	; Mon, 11 Jun 2018 11:16:44 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id oHNKEFP2G1skdQAAmS7hNA
+	; Sat, 09 Jun 2018 15:46:27 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id E70BA60792; Mon, 11 Jun 2018 11:16:43 +0000 (UTC)
+	id 28599608C1; Sat,  9 Jun 2018 15:46:27 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hyri2Jsb"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZTurBSn7"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 5778360351;
-	Mon, 11 Jun 2018 11:16:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5778360351
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 6D083608B8;
+	Sat,  9 Jun 2018 15:46:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6D083608B8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932845AbeFKLQl (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 07:16:41 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:38992 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932604AbeFKLQk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 07:16:40 -0400
-Received: by mail-pf0-f193.google.com with SMTP id r11-v6so10070701pfl.6
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 04:16:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=OPy3l4kMxvfzEYla4ZEFuKahBnUdOVuZtsdxSkKNw/I=;
-        b=hyri2JsbYZURrqT1ZRMP1hWbyPcVZV2Z/GdIjcm8PoojHfvjpoXtsX6AEBg90lS+Ru
-         qNPzgwNBbutzbWnYPtW/3jHxaZ1z973fmPrjg+uicwq6R/29c9HasMKeRrAENliEI8zK
-         k3dtVonw4duGNM8NK+5XGrf9pcOYi4J2R67Ceg3tE+7Zwe2h0XLBVLimrtodGudwqvt0
-         L5U7sDV8JWXQGsat8n704093xUG+CQPRVR36QJBdn1tt6oVITFwNMGd6Doa0nuPR+xhd
-         jXEbVou80sfAnQh+MuXvY1p5lkFLSHKsyJQpdXMMf8JiXHRv/keoLcS2uNl5bBJqQ5Ec
-         4ryw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=OPy3l4kMxvfzEYla4ZEFuKahBnUdOVuZtsdxSkKNw/I=;
-        b=NQ3v3fDSPWGjm++6Xi+94dnzS5dXj8IsvLcYZSG7YIuPkhwlZilbl8B1ITdvS4ze4g
-         wN3zmLxWDXRDcIsZpc/sJq+9+KawsKimsAA9hRuTre3x7Y6YAKSplDfPi/wPzd3hD5Tf
-         mcDUKe01uJDE918Seo2jGVMUSdFw2kPjZoLN7zuT3u/P2BPc0X027E5Xb5LVLW+m9F4U
-         WtFMrmRhv8xcnTX1qt3Nd5WcAqluLFqI2daFK84J1uCyuu/O48PdLw6y7WH6+iGyRewD
-         j6wVG1UBi9ShWvw3IZ7WUVx8MnWmP/18o/NO75bsmGZbmpmT5TLlbWYC8VztDCVgcsNq
-         JNfQ==
-X-Gm-Message-State: APt69E0SYQXKocJBWMvpGCLuQ4MdrToqBqow2Gm0nTm08Ngd8qC1yG2o
-        CVe7YVucoEs0ILxBxxjDWa4KE0rBWkLe4xXGV3iTcw==
-X-Google-Smtp-Source: ADUXVKLwPSGVUAgW48GNEizbcXGIzay/re2Adaw6PpUr4b4KTVHNGZrYwwHu9WhsUqxMUGvhpSANEwceHshIaSaqPmQ=
-X-Received: by 2002:a62:b612:: with SMTP id j18-v6mr17217625pff.199.1528715799290;
- Mon, 11 Jun 2018 04:16:39 -0700 (PDT)
+        id S1753686AbeFIPqY (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:46:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35806 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932658AbeFIPdZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:33:25 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 58564208A3;
+        Sat,  9 Jun 2018 15:33:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558405;
+        bh=GtV7McukCZfZBtcnGzzyxkmMefrg/jFuZSr3Af/7uxg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ZTurBSn7rBd+iJ3C28547ysbvpA3OwI02iLSinTegze8ZLxOCFcsQ0ezHUcBBrVX8
+         Yk/ougsgUoX4TWqsLTwHvy5SA60+RH0fsDZwkp8wWkNw1JBZoXSqCWKtiwKwtOSAuL
+         5GtvlYLNdmODGUCUUnuTYLA5M4/h5O8L0+gD6NO4=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 23/48] net/packet: refine check for priv area size
+Date: Sat,  9 Jun 2018 17:29:35 +0200
+Message-Id: <20180609145949.180235682@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
+References: <20180609145947.679103414@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Received: by 2002:a17:90a:de2:0:0:0:0 with HTTP; Mon, 11 Jun 2018 04:16:18
- -0700 (PDT)
-In-Reply-To: <4d9f8cd8-1b2c-28ef-1705-2400e5af9b51@i-love.sakura.ne.jp>
-References: <20180608133043.203744-1-dvyukov@google.com> <20180608145821.ec20a15944d1d19b683695e7@linux-foundation.org>
- <4d9f8cd8-1b2c-28ef-1705-2400e5af9b51@i-love.sakura.ne.jp>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Mon, 11 Jun 2018 13:16:18 +0200
-Message-ID: <CACT4Y+adbYJdmgzuLVV+iy+Q+tii_cnKm=VwCfdkr8uKWbww+Q@mail.gmail.com>
-Subject: Re: [PATCH] kernel/hung_task.c: allow to set period separately from timeout
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller <syzkaller@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 9, 2018 at 9:00 AM, Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
-> On 2018/06/09 6:58, Andrew Morton wrote:
->> On Fri,  8 Jun 2018 15:30:43 +0200 Dmitry Vyukov <dvyukov@google.com> wrote:
->>
->>> Currently task hung checking period is equal to timeout,
->>> as the result hung is detected anywhere between timeout and 2*timeout.
->>> This is fine for most interactive environments, but this hurts automated
->>> testing setups (syzbot). In an automated setup we need to strictly order
->>> CPU lockup < RCU stall < workqueue lockup < task hung < silent loss,
->>> so that RCU stall is not detected as task hung and task hung is not
->>> detected as silent machine loss. The large variance in task hung
->>> detection timeout requires setting silent machine loss timeout to
->>> a very large value (e.g. if task hung is 3 mins, then silent loss
->>> need to be set to ~7 mins). The additional 3 minutes significantly
->>> reduce testing efficiency because usually we crash kernel within
->>> a minute, and this can add hours to bug localization process as it
->>> needs to do dozens of tests.
->>>
->>> Allow setting checking period separately from timeout.
->>> This allows to set timeout to, say, 3 minutes, but period to 10 secs.
->>>
->>> The period is controlled via a new hung_task_period_secs sysctl,
->>> similar to the existing hung_task_timeout_secs sysctl.
->>> The default value of 0 results in the current behavior.
->>
->> I'm rather struggling to understand the difference between "period" and
->> "timeout".  We would benefit from a clear description of what these two
->> things do.  An appropriate place for this description is
->> Documentation/sysctl/kernel.txt, which this patch forgot to update.
->
-> My understanding is that "period" is "how frequently we should check"
-> and "timeout" is "how long a thread remained uninterruptible". Maybe
-> hung_task_check_interval_secs would be better than hung_task_period_secs.
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-Hi Tetsuo, Andrew,
+------------------
 
-I've just mailed v2:
+From: Eric Dumazet <edumazet@google.com>
 
-    Changes since v1:
-     - add entry to Documentation/sysctl/kernel.txt
-     - rename hung_task_period_secs sysctl to hung_task_check_interval_sec
+[ Upstream commit eb73190f4fbeedf762394e92d6a4ec9ace684c88 ]
 
-Hopefully now it's more clear what's the difference and what it is doing.
+syzbot was able to trick af_packet again [1]
 
+Various commits tried to address the problem in the past,
+but failed to take into account V3 header size.
 
+[1]
 
-> timeout = 60 and period = 1 would allow hung task to be reported as soon
-> as it remained uninterruptible for 60 seconds. That makes me easier to
-> narrow down relevant kernel messages and syzbot program.
->
-> Well, showing exact slept time, along with all threads which slept more
-> than some threshold (e.g. timeout / 2), might be helpful.
+tpacket_rcv: packet too big, clamped from 72 to 4294967224. macoff=96
+BUG: KASAN: use-after-free in prb_run_all_ft_ops net/packet/af_packet.c:1016 [inline]
+BUG: KASAN: use-after-free in prb_fill_curr_block.isra.59+0x4e5/0x5c0 net/packet/af_packet.c:1039
+Write of size 2 at addr ffff8801cb62000e by task kworker/1:2/2106
 
-You mean if we report any task, then scan all tasks second time and
-additionally report tasks that are blocked for (timeout/2 : timeout)?
+CPU: 1 PID: 2106 Comm: kworker/1:2 Not tainted 4.17.0-rc7+ #77
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: ipv6_addrconf addrconf_dad_work
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+ print_address_description+0x6c/0x20b mm/kasan/report.c:256
+ kasan_report_error mm/kasan/report.c:354 [inline]
+ kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+ __asan_report_store2_noabort+0x17/0x20 mm/kasan/report.c:436
+ prb_run_all_ft_ops net/packet/af_packet.c:1016 [inline]
+ prb_fill_curr_block.isra.59+0x4e5/0x5c0 net/packet/af_packet.c:1039
+ __packet_lookup_frame_in_block net/packet/af_packet.c:1094 [inline]
+ packet_current_rx_frame net/packet/af_packet.c:1117 [inline]
+ tpacket_rcv+0x1866/0x3340 net/packet/af_packet.c:2282
+ dev_queue_xmit_nit+0x891/0xb90 net/core/dev.c:2018
+ xmit_one net/core/dev.c:3049 [inline]
+ dev_hard_start_xmit+0x16b/0xc10 net/core/dev.c:3069
+ __dev_queue_xmit+0x2724/0x34c0 net/core/dev.c:3584
+ dev_queue_xmit+0x17/0x20 net/core/dev.c:3617
+ neigh_resolve_output+0x679/0xad0 net/core/neighbour.c:1358
+ neigh_output include/net/neighbour.h:482 [inline]
+ ip6_finish_output2+0xc9c/0x2810 net/ipv6/ip6_output.c:120
+ ip6_finish_output+0x5fe/0xbc0 net/ipv6/ip6_output.c:154
+ NF_HOOK_COND include/linux/netfilter.h:277 [inline]
+ ip6_output+0x227/0x9b0 net/ipv6/ip6_output.c:171
+ dst_output include/net/dst.h:444 [inline]
+ NF_HOOK include/linux/netfilter.h:288 [inline]
+ ndisc_send_skb+0x100d/0x1570 net/ipv6/ndisc.c:491
+ ndisc_send_ns+0x3c1/0x8d0 net/ipv6/ndisc.c:633
+ addrconf_dad_work+0xbef/0x1340 net/ipv6/addrconf.c:4033
+ process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
+ worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
+ kthread+0x345/0x410 kernel/kthread.c:240
+ ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
 
-Should we do this when hung_task_show_lock? Or only when
-sysctl_hung_task_panic? Or when?
+The buggy address belongs to the page:
+page:ffffea00072d8800 count:0 mapcount:-127 mapping:0000000000000000 index:0xffff8801cb620e80
+flags: 0x2fffc0000000000()
+raw: 02fffc0000000000 0000000000000000 ffff8801cb620e80 00000000ffffff80
+raw: ffffea00072e3820 ffffea0007132d20 0000000000000002 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff8801cb61ff00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff8801cb61ff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff8801cb620000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+                      ^
+ ffff8801cb620080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ ffff8801cb620100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+
+Fixes: 2b6867c2ce76 ("net/packet: fix overflow in check for priv area size")
+Fixes: dc808110bb62 ("packet: handle too big packets for PACKET_V3")
+Fixes: f6fb8f100b80 ("af-packet: TPACKET_V3 flexible buffer implementation.")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/packet/af_packet.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -4284,7 +4284,7 @@ static int packet_set_ring(struct sock *
+ 			goto out;
+ 		if (po->tp_version >= TPACKET_V3 &&
+ 		    req->tp_block_size <=
+-			  BLK_PLUS_PRIV((u64)req_u->req3.tp_sizeof_priv))
++		    BLK_PLUS_PRIV((u64)req_u->req3.tp_sizeof_priv) + sizeof(struct tpacket3_hdr))
+ 			goto out;
+ 		if (unlikely(req->tp_frame_size < po->tp_hdrlen +
+ 					po->tp_reserve))
