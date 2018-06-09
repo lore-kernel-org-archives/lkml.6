@@ -1,123 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id BLrUDsB2G1tgcgAAmS7hNA
-	; Sat, 09 Jun 2018 06:42:08 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id xPyeNtHyG1tfYAAAmS7hNA
+	; Sat, 09 Jun 2018 15:32:38 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 0EF85607E7; Sat,  9 Jun 2018 06:42:08 +0000 (UTC)
+	id 10165608C1; Sat,  9 Jun 2018 15:32:38 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oAYWBE6z"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 62254606FA;
-	Sat,  9 Jun 2018 06:42:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 62254606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 9BC6A608BF;
+	Sat,  9 Jun 2018 15:32:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9BC6A608BF
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753173AbeFIGmC (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 02:42:02 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:50576 "EHLO mail.bootlin.com"
+        id S932513AbeFIPce (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:32:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752272AbeFIGmA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 02:42:00 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id EE3ED20799; Sat,  9 Jun 2018 08:41:57 +0200 (CEST)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 6419920702;
-        Sat,  9 Jun 2018 08:41:57 +0200 (CEST)
-Date: Sat, 9 Jun 2018 08:41:57 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Stefan Agner <stefan@agner.ch>
-Cc: Dmitry Osipenko <digetx@gmail.com>, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
-        dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
-        marcel@ziswiler.com, krzk@kernel.org, benjamin.lindqvist@endian.se,
-        jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        mirza.krak@gmail.com, linux-mtd@lists.infradead.org,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/6] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-Message-ID: <20180609084157.0c2f12e6@bbrezillon>
-In-Reply-To: <792ee71847f6f4752b8bcba65d22bf81@agner.ch>
-References: <20180531221637.6017-1-stefan@agner.ch>
-        <20180531221637.6017-5-stefan@agner.ch>
-        <cdca329f-0b8d-0604-4cfb-b95baf84c867@gmail.com>
-        <d625dd8ca816543e03668b74921563c1@agner.ch>
-        <20180609075256.725354d6@bbrezillon>
-        <792ee71847f6f4752b8bcba65d22bf81@agner.ch>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S932463AbeFIPc3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:32:29 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 085B6204EC;
+        Sat,  9 Jun 2018 15:32:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558348;
+        bh=JFdf2M2c3BYfP2nvi91JcrmlBXfdXRGSQpsLUKHoHIc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=oAYWBE6zgtxwiJ+YS89/4mJB/5IqOzC1QUwKxUhzzeYZlJwVWtx7jjv86CQGMu7sg
+         UID2Smvi8nlvo1Ta25QzC59mrEqiNkgXtMiIjGm2LzCnirDSeAAGf/lfv33bA0FNm4
+         Acrhujpvm/lsQK6090h8b7c3CO/bE4Zk7vOGUGgE=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.16 02/48] mmap: relax file size limit for regular files
+Date: Sat,  9 Jun 2018 17:29:14 +0200
+Message-Id: <20180609145947.847276798@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
+References: <20180609145947.679103414@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 09 Jun 2018 08:23:51 +0200
-Stefan Agner <stefan@agner.ch> wrote:
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-> On 09.06.2018 07:52, Boris Brezillon wrote:
-> > On Fri, 08 Jun 2018 23:51:01 +0200
-> > Stefan Agner <stefan@agner.ch> wrote:
-> > 
-> >   
-> >> >
-> >> > void tegra_nand_controller_reset(struct tegra_nand_controller *ctrl)
-> >> > {
-> >> > 	int err;
-> >> >
-> >> > 	disable_irq(ctrl->irq);
-> >> >
-> >> > 	err = reset_control_reset(ctrl->rst);
-> >> > 	if (err) {
-> >> > 		dev_err(ctrl->dev, "Failed to reset HW: %d\n", err);
-> >> > 		msleep(HW_TIMEOUT);
-> >> > 	}
-> >> >
-> >> > 	writel_relaxed(NAND_CMD_STATUS, ctrl->regs + HWSTATUS_CMD);
-> >> > 	writel_relaxed(HWSTATUS_MASK, ctrl->regs + HWSTATUS_MASK);
-> >> > 	writel_relaxed(INT_MASK, ctrl->regs + ISR);  
-> >>
-> >> If we do a controller reset, there is much more state than that which
-> >> needs to be restored. A lot of it is not readily available currently
-> >> (timing, ECC settings...)  
-> > 
-> > This is actually a good test to detect what is not properly initialized
-> > by the driver. Timings should be configured correctly through  
-> > ->setup_data_interface(). ECC engine should be disabled by default and  
-> > only enabled when ->{read,write}_page() is called.
-> >   
-> 
-> Is setup_data_interface guaranteed to be called after a failed
-> ->exec_op()/{read,write}_page()?
+------------------
 
-No. Maybe I misunderstood when tegra_nand_controller_reset() was
-supposed to be called. That's something I would call only once, early
-in the probe function, so that the controller is placed in a well-known
-state before we start using it. Definitely not something you should
-call after each error.
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-> 
-> >>
-> >> That seems a lot of work for a code path I do not intend to ever use :-)
-> >>  
-> > 
-> > Not so sure it's a lot of work. If ECC and timing settings are the
-> > only thing you need to initialize then it should work just fine.
-> > Try with a controller reset and you'll know if you miss something ;-).  
-> 
-> Currently the setting gets written directly to the registers. Only the
-> enable flag is set in the HW ECC {read,write}_page() functions. So I
-> will have to store the complete register in the chip structure and write
-> them on every {read,write}_page()?
+commit 423913ad4ae5b3e8fb8983f70969fb522261ba26 upstream.
 
-Well, your solution works as long as you only have one chip connected
-to the controller. What we usually set the ECC config in
-->select_chip() (or at least make sure the current setting matches the
-one we expect) and then enable the engine in read/write_page() (as you
-seem to already do).
+Commit be83bbf80682 ("mmap: introduce sane default mmap limits") was
+introduced to catch problems in various ad-hoc character device drivers
+doing mmap and getting the size limits wrong.  In the process, it used
+"known good" limits for the normal cases of mapping regular files and
+block device drivers.
+
+It turns out that the "s_maxbytes" limit was less "known good" than I
+thought.  In particular, /proc doesn't set it, but exposes one regular
+file to mmap: /proc/vmcore.  As a result, that file got limited to the
+default MAX_INT s_maxbytes value.
+
+This went unnoticed for a while, because apparently the only thing that
+needs it is the s390 kernel zfcpdump, but there might be other tools
+that use this too.
+
+Vasily suggested just changing s_maxbytes for all of /proc, which isn't
+wrong, but makes me nervous at this stage.  So instead, just make the
+new mmap limit always be MAX_LFS_FILESIZE for regular files, which won't
+affect anything else.  It wasn't the regular file case I was worried
+about.
+
+I'd really prefer for maxsize to have been per-inode, but that is not
+how things are today.
+
+Fixes: be83bbf80682 ("mmap: introduce sane default mmap limits")
+Reported-by: Vasily Gorbik <gor@linux.ibm.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ mm/mmap.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -1318,7 +1318,7 @@ static inline int mlock_future_check(str
+ static inline u64 file_mmap_size_max(struct file *file, struct inode *inode)
+ {
+ 	if (S_ISREG(inode->i_mode))
+-		return inode->i_sb->s_maxbytes;
++		return MAX_LFS_FILESIZE;
+ 
+ 	if (S_ISBLK(inode->i_mode))
+ 		return MAX_LFS_FILESIZE;
