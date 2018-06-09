@@ -1,103 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id dI0QEpTsHVtMLAAAmS7hNA
-	; Mon, 11 Jun 2018 03:31:18 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id xg9DFsgvHFvrfwAAmS7hNA
+	; Sat, 09 Jun 2018 19:51:36 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id C0FC5606DD; Mon, 11 Jun 2018 03:31:18 +0000 (UTC)
+	id 3B985608C1; Sat,  9 Jun 2018 19:51:36 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id EB92060792;
-	Mon, 11 Jun 2018 03:31:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EB92060792
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 9A60B601D3;
+	Sat,  9 Jun 2018 19:51:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9A60B601D3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932659AbeFKDbC (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Sun, 10 Jun 2018 23:31:02 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:61031 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932070AbeFKD1B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 23:27:01 -0400
-X-UUID: ed10fcdb4f844024be429a4902a44d34-20180611
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <stu.hsieh@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 909188786; Mon, 11 Jun 2018 11:26:59 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Mon, 11 Jun 2018 11:26:56 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Mon, 11 Jun 2018 11:26:57 +0800
-From: Stu Hsieh <stu.hsieh@mediatek.com>
-To: CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>
-CC: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, Stu Hsieh <stu.hsieh@mediatek.com>
-Subject: [PATCH 14/28] drm/mediatek: add connection from RDMA1 to DPI1
-Date: Mon, 11 Jun 2018 11:26:06 +0800
-Message-ID: <1528687580-549-15-git-send-email-stu.hsieh@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
-References: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+        id S932611AbeFITvb (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 15:51:31 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49614 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753449AbeFITva (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 15:51:30 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 899F0857A7;
+        Sat,  9 Jun 2018 19:51:29 +0000 (UTC)
+Received: from dhcp-12-107.nay.redhat.com (unknown [10.66.12.107])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B4AC52156601;
+        Sat,  9 Jun 2018 19:51:27 +0000 (UTC)
+From: Chunyu Hu <chuhu@redhat.com>
+To: viro@zeniv.linux.org.uk, hch@lst.de
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] proc: add proc_seq_release
+Date: Sun, 10 Jun 2018 03:51:24 +0800
+Message-Id: <1528573884-9133-1-git-send-email-chuhu@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Sat, 09 Jun 2018 19:51:29 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Sat, 09 Jun 2018 19:51:29 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'chuhu@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add the connection from RDMA1 to DPI1
+kmemleak reported some memory leak on reading proc files. After adding
+some debug lines, find that proc_seq_fops is using seq_release as
+release handler, which won't handle the free of 'private' field of
+seq_file, while in fact the open handler proc_seq_open could create
+the private data with __seq_open_private when state_size is greater
+than zero. So after reading files created with proc_create_seq_private,
+such as /proc/timer_list and /proc/vmallocinfo, the private mem of a
+seq_file is not freed. Fix it by adding the paired proc_seq_release
+as the default release handler of proc_seq_ops instead of seq_release.
 
-Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+Fixes: 44414d82cfe0 ("proc: introduce proc_create_seq_private")
+CC: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Chunyu Hu <chuhu@redhat.com>
 ---
- drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ fs/proc/generic.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-index fed1b5704355..4abd5dabeccf 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-@@ -85,7 +85,9 @@
- #define RDMA0_MOUT_DSI2			0x4
- #define RDMA0_MOUT_DSI3			0x5
- #define RDMA1_MOUT_DPI0			0x2
-+#define RDMA1_MOUT_DPI1			0x3
- #define DPI0_SEL_IN_RDMA1		0x1
-+#define DPI1_SEL_IN_RDMA1		(0x1 << 8)
- #define COLOR1_SEL_IN_OVL1		0x1
+diff --git a/fs/proc/generic.c b/fs/proc/generic.c
+index 7b4d971..021acc5 100644
+--- a/fs/proc/generic.c
++++ b/fs/proc/generic.c
+@@ -564,11 +564,20 @@ static int proc_seq_open(struct inode *inode, struct file *file)
+ 	return seq_open(file, de->seq_ops);
+ }
  
- #define OVL_MOUT_EN_RDMA		0x1
-@@ -171,6 +173,9 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
- 	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DPI0) {
- 		*addr = DISP_REG_CONFIG_DISP_RDMA1_MOUT_EN;
- 		value = RDMA1_MOUT_DPI0;
-+	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DPI1) {
-+		*addr = DISP_REG_CONFIG_DISP_RDMA1_MOUT_EN;
-+		value = RDMA1_MOUT_DPI1;
- 	} else {
- 		value = 0;
- 	}
-@@ -190,6 +195,9 @@ static unsigned int mtk_ddp_sel_in(enum mtk_ddp_comp_id cur,
- 	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DPI0) {
- 		*addr = DISP_REG_CONFIG_DPI_SEL_IN;
- 		value = DPI0_SEL_IN_RDMA1;
-+	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DPI1) {
-+		*addr = DISP_REG_CONFIG_DPI_SEL_IN;
-+		value = DPI1_SEL_IN_RDMA1;
- 	} else if (cur == DDP_COMPONENT_OVL1 && next == DDP_COMPONENT_COLOR1) {
- 		*addr = DISP_REG_CONFIG_DISP_COLOR1_SEL_IN;
- 		value = COLOR1_SEL_IN_OVL1;
++static int proc_seq_release(struct inode *inode, struct file *file)
++{
++	struct proc_dir_entry *de = PDE(inode);
++
++	if (de->state_size)
++		return seq_release_private(inode, file);
++	return seq_release(inode, file);
++}
++
+ static const struct file_operations proc_seq_fops = {
+ 	.open		= proc_seq_open,
+ 	.read		= seq_read,
+ 	.llseek		= seq_lseek,
+-	.release	= seq_release,
++	.release	= proc_seq_release,
+ };
+ 
+ struct proc_dir_entry *proc_create_seq_private(const char *name, umode_t mode,
 -- 
-2.12.5
+1.8.3.1
