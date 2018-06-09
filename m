@@ -1,113 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 8HsDGR+5Gls6RQAAmS7hNA
-	; Fri, 08 Jun 2018 17:13:29 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id PKy0HxvzG1vjYgAAmS7hNA
+	; Sat, 09 Jun 2018 15:32:50 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D17ED6089E; Fri,  8 Jun 2018 17:13:28 +0000 (UTC)
+	id 3FA26608B8; Sat,  9 Jun 2018 15:32:50 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="XyXVS+t7"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hf8muNbL"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 3F0AF60590;
-	Fri,  8 Jun 2018 17:13:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3F0AF60590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id A196F608B8;
+	Sat,  9 Jun 2018 15:32:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A196F608B8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752712AbeFHRNC (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 13:13:02 -0400
-Received: from conuserg-10.nifty.com ([210.131.2.77]:19838 "EHLO
-        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751719AbeFHRNB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 13:13:01 -0400
-Received: from grover.sesame (FL1-125-199-20-195.osk.mesh.ad.jp [125.199.20.195]) (authenticated)
-        by conuserg-10.nifty.com with ESMTP id w58HCbWF008555;
-        Sat, 9 Jun 2018 02:12:40 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w58HCbWF008555
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1528477960;
-        bh=sFOR8yPtAuS5GqeUxlJjV5u9vMKxeK8qrl3vZ67e+B8=;
+        id S1753459AbeFIPcs (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:32:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35174 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753646AbeFIPcp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:32:45 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9743B208A4;
+        Sat,  9 Jun 2018 15:32:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558365;
+        bh=3XCaPL1Q7hc94Cfg06xWSc+JpoGtRLdrU9L43F2j8Wk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XyXVS+t7bL0S4pTNtX4JYs8XZw7iQqbNG/93vjhxGbk4g0299O91tGr2RyE0RRPfN
-         9CyEpQ/4nLuTtTupdchKKmiIeLbK/1Vc5AUikQNk7/UaAMuuWA+OtZ7U+cAwk7t118
-         aTSP6XnA7hFZSLxJgg58BvL3moI75Rz+xNASLUCaVAZcSuRNTVBC4CzTbgtCChaByJ
-         BL3K28mJT6kqNO+qdGCx+sN4Ru9g01AilX6E3r6PP58TdLoixZSecu+TANRk9XFi+E
-         ch3lJM043w/GXpL2NJYsb4LIdDFXQKFS5YfXd4ARxGCdYjDB3k2v7Il/1tJ7+U6upn
-         XcjEAyvQ3Of2w==
-X-Nifty-SrcIP: [125.199.20.195]
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: netdev@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-kernel@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH 3/3] bpfilter: do not (ab)use host-program build rule
-Date: Sat,  9 Jun 2018 02:12:10 +0900
-Message-Id: <1528477930-7342-4-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528477930-7342-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1528477930-7342-1-git-send-email-yamada.masahiro@socionext.com>
+        b=Hf8muNbLO2PuGAgzb8iXqMFb/3nmrsFlHH5i6WJrfTJVgqnuGTL2u6KZNNHy3rpVa
+         eINTg5R525XZvR2pdlBsAp0f4D2vGHiXqy96pc49z31SEPpa2K1wUFOvB5PLo5b6v0
+         FH5xL2bK38MvCU8W9eeibN1hSGdIkJL6BzSzvJLU=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        syzbot+3dcd59a1f907245f891f@syzkaller.appspotmail.com,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Xin Long <lucien.xin@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 29/48] sctp: not allow transport timeout value less than HZ/5 for hb_timer
+Date: Sat,  9 Jun 2018 17:29:41 +0200
+Message-Id: <20180609145949.660211633@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
+References: <20180609145947.679103414@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is an ugly hack to overwrite $(HOSTCC) with $(CC) to reuse the
-build rules from scripts/Makefile.host.  It should not be tedious
-to write a build rule for its own.
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+------------------
+
+From: Xin Long <lucien.xin@gmail.com>
+
+[ Upstream commit 1d88ba1ebb2763aa86172cd7ca05dedbeccc0d35 ]
+
+syzbot reported a rcu_sched self-detected stall on CPU which is caused
+by too small value set on rto_min with SCTP_RTOINFO sockopt. With this
+value, hb_timer will get stuck there, as in its timer handler it starts
+this timer again with this value, then goes to the timer handler again.
+
+This problem is there since very beginning, and thanks to Eric for the
+reproducer shared from a syzbot mail.
+
+This patch fixes it by not allowing sctp_transport_timeout to return a
+smaller value than HZ/5 for hb_timer, which is based on TCP's min rto.
+
+Note that it doesn't fix this issue by limiting rto_min, as some users
+are still using small rto and no proper value was found for it yet.
+
+Reported-by: syzbot+3dcd59a1f907245f891f@syzkaller.appspotmail.com
+Suggested-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
+ net/sctp/transport.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- net/bpfilter/Makefile                   | 17 +++++++++++------
- net/bpfilter/{main.c => bpfilter_umh.c} |  0
- 2 files changed, 11 insertions(+), 6 deletions(-)
- rename net/bpfilter/{main.c => bpfilter_umh.c} (100%)
-
-diff --git a/net/bpfilter/Makefile b/net/bpfilter/Makefile
-index 39c6980..6571b30 100644
---- a/net/bpfilter/Makefile
-+++ b/net/bpfilter/Makefile
-@@ -3,18 +3,23 @@
- # Makefile for the Linux BPFILTER layer.
- #
+--- a/net/sctp/transport.c
++++ b/net/sctp/transport.c
+@@ -634,7 +634,7 @@ unsigned long sctp_transport_timeout(str
+ 	    trans->state != SCTP_PF)
+ 		timeout += trans->hbinterval;
  
--hostprogs-y := bpfilter_umh
--bpfilter_umh-objs := main.o
--HOSTCFLAGS += -I. -Itools/include/ -Itools/include/uapi
--HOSTCC := $(CC)
--
- ifeq ($(CONFIG_BPFILTER_UMH), y)
- # builtin bpfilter_umh should be compiled with -static
- # since rootfs isn't mounted at the time of __init
- # function is called and do_execv won't find elf interpreter
--HOSTLDFLAGS += -static
-+STATIC := -static
- endif
+-	return timeout;
++	return max_t(unsigned long, timeout, HZ / 5);
+ }
  
-+quiet_cmd_cc_user = CC      $@
-+      cmd_cc_user = $(CC) -Wall -Wmissing-prototypes -O2 -std=gnu89 \
-+		    -I$(srctree) -I$(srctree)/tools/include/ \
-+		    -I$(srctree)/tools/include/uapi $(STATIC) -o $@ $<
-+
-+$(obj)/bpfilter_umh: $(src)/bpfilter_umh.c FORCE
-+	$(call if_changed,cc_user)
-+
-+targets += bpfilter_umh
-+
- $(obj)/bpfilter_umh_blob.o: $(obj)/bpfilter_umh
- 
- obj-$(CONFIG_BPFILTER_UMH) += bpfilter.o
-diff --git a/net/bpfilter/main.c b/net/bpfilter/bpfilter_umh.c
-similarity index 100%
-rename from net/bpfilter/main.c
-rename to net/bpfilter/bpfilter_umh.c
--- 
-2.7.4
+ /* Reset transport variables to their initial values */
