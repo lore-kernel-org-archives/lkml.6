@@ -1,94 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id wpovIhjrGFuwZwAAmS7hNA
-	; Thu, 07 Jun 2018 08:23:21 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id /7Y3ES/JG1szOwAAmS7hNA
+	; Sat, 09 Jun 2018 12:34:35 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 81D686089E; Thu,  7 Jun 2018 08:23:21 +0000 (UTC)
+	id 4BF01607BB; Sat,  9 Jun 2018 12:34:35 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 03DFD60115;
-	Thu,  7 Jun 2018 08:23:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 03DFD60115
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id C4E15602FC;
+	Sat,  9 Jun 2018 12:34:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C4E15602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932616AbeFGIXR (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 04:23:17 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:40435 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932530AbeFGIXO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 04:23:14 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w578N8Y32126364
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 7 Jun 2018 01:23:08 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w578N8Ls2126361;
-        Thu, 7 Jun 2018 01:23:08 -0700
-Date: Thu, 7 Jun 2018 01:23:08 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From: tip-bot for Adrian Hunter <tipbot@zytor.com>
-Message-ID: <tip-dd27b87ab5fcf3ea1c060b5e3ab5d31cc78e9f4c@git.kernel.org>
-Cc: hpa@zytor.com, linux-kernel@vger.kernel.org,
-        adrian.hunter@intel.com, tglx@linutronix.de, acme@redhat.com,
-        mingo@kernel.org
-Reply-To: hpa@zytor.com, adrian.hunter@intel.com,
-          linux-kernel@vger.kernel.org, tglx@linutronix.de,
-          mingo@kernel.org, acme@redhat.com
-In-Reply-To: <1527762225-26024-4-git-send-email-adrian.hunter@intel.com>
-References: <1527762225-26024-4-git-send-email-adrian.hunter@intel.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf intel-pt: Fix MTC timing after overflow
-Git-Commit-ID: dd27b87ab5fcf3ea1c060b5e3ab5d31cc78e9f4c
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        id S1753584AbeFIMed (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 08:34:33 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42436 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753388AbeFIMea (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 08:34:30 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C0AB4BB42D;
+        Sat,  9 Jun 2018 12:34:29 +0000 (UTC)
+Received: from localhost (ovpn-12-40.pek2.redhat.com [10.72.12.40])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C7C17210C6D4;
+        Sat,  9 Jun 2018 12:34:23 +0000 (UTC)
+From: Ming Lei <ming.lei@redhat.com>
+To: Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kent Overstreet <kent.overstreet@gmail.com>
+Cc: David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Theodore Ts'o <tytso@mit.edu>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Coly Li <colyli@suse.de>, Filipe Manana <fdmanana@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ming Lei <ming.lei@redhat.com>
+Subject: [PATCH V6 20/30] fs: conver to bio_for_each_chunk_segment_all()
+Date: Sat,  9 Jun 2018 20:30:04 +0800
+Message-Id: <20180609123014.8861-21-ming.lei@redhat.com>
+In-Reply-To: <20180609123014.8861-1-ming.lei@redhat.com>
+References: <20180609123014.8861-1-ming.lei@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Sat, 09 Jun 2018 12:34:29 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Sat, 09 Jun 2018 12:34:29 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  dd27b87ab5fcf3ea1c060b5e3ab5d31cc78e9f4c
-Gitweb:     https://git.kernel.org/tip/dd27b87ab5fcf3ea1c060b5e3ab5d31cc78e9f4c
-Author:     Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate: Thu, 31 May 2018 13:23:44 +0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 6 Jun 2018 12:52:08 -0300
+bio_for_each_segment_all() can't be used any more after multipage bvec is
+enabled, so we have to convert to bio_for_each_chunk_segment_all().
 
-perf intel-pt: Fix MTC timing after overflow
-
-On some platforms, overflows will clear before MTC wraparound, and there
-is no following TSC/TMA packet. In that case the previous TMA is valid.
-Since there will be a valid TMA either way, stop setting 'have_tma' to
-false upon overflow.
-
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/1527762225-26024-4-git-send-email-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
 ---
- tools/perf/util/intel-pt-decoder/intel-pt-decoder.c | 1 -
- 1 file changed, 1 deletion(-)
+ fs/block_dev.c  | 6 ++++--
+ fs/crypto/bio.c | 3 ++-
+ fs/direct-io.c  | 4 +++-
+ fs/iomap.c      | 3 ++-
+ fs/mpage.c      | 3 ++-
+ 5 files changed, 13 insertions(+), 6 deletions(-)
 
-diff --git a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-index e5eb91777383..881d7c5e5e2a 100644
---- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-+++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-@@ -1376,7 +1376,6 @@ static int intel_pt_overflow(struct intel_pt_decoder *decoder)
+diff --git a/fs/block_dev.c b/fs/block_dev.c
+index bef6934b6189..6726f8297a7b 100644
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -197,6 +197,7 @@ __blkdev_direct_IO_simple(struct kiocb *iocb, struct iov_iter *iter,
+ 	ssize_t ret;
+ 	blk_qc_t qc;
+ 	int i;
++	struct bvec_chunk_iter citer;
+ 
+ 	if ((pos | iov_iter_alignment(iter)) &
+ 	    (bdev_logical_block_size(bdev) - 1))
+@@ -242,7 +243,7 @@ __blkdev_direct_IO_simple(struct kiocb *iocb, struct iov_iter *iter,
+ 	}
+ 	__set_current_state(TASK_RUNNING);
+ 
+-	bio_for_each_segment_all(bvec, &bio, i) {
++	bio_for_each_chunk_segment_all(bvec, &bio, i, citer) {
+ 		if (should_dirty && !PageCompound(bvec->bv_page))
+ 			set_page_dirty_lock(bvec->bv_page);
+ 		put_page(bvec->bv_page);
+@@ -309,8 +310,9 @@ static void blkdev_bio_end_io(struct bio *bio)
+ 	} else {
+ 		struct bio_vec *bvec;
+ 		int i;
++		struct bvec_chunk_iter citer;
+ 
+-		bio_for_each_segment_all(bvec, bio, i)
++		bio_for_each_chunk_segment_all(bvec, bio, i, citer)
+ 			put_page(bvec->bv_page);
+ 		bio_put(bio);
+ 	}
+diff --git a/fs/crypto/bio.c b/fs/crypto/bio.c
+index 0d5e6a569d58..13bcbdbf3440 100644
+--- a/fs/crypto/bio.c
++++ b/fs/crypto/bio.c
+@@ -37,8 +37,9 @@ static void completion_pages(struct work_struct *work)
+ 	struct bio *bio = ctx->r.bio;
+ 	struct bio_vec *bv;
+ 	int i;
++	struct bvec_chunk_iter citer;
+ 
+-	bio_for_each_segment_all(bv, bio, i) {
++	bio_for_each_chunk_segment_all(bv, bio, i, citer) {
+ 		struct page *page = bv->bv_page;
+ 		int ret = fscrypt_decrypt_page(page->mapping->host, page,
+ 				PAGE_SIZE, 0, page->index);
+diff --git a/fs/direct-io.c b/fs/direct-io.c
+index 093fb54cd316..8f7fd985450a 100644
+--- a/fs/direct-io.c
++++ b/fs/direct-io.c
+@@ -551,7 +551,9 @@ static blk_status_t dio_bio_complete(struct dio *dio, struct bio *bio)
+ 	if (dio->is_async && dio->op == REQ_OP_READ && dio->should_dirty) {
+ 		bio_check_pages_dirty(bio);	/* transfers ownership */
+ 	} else {
+-		bio_for_each_segment_all(bvec, bio, i) {
++		struct bvec_chunk_iter citer;
++
++		bio_for_each_chunk_segment_all(bvec, bio, i, citer) {
+ 			struct page *page = bvec->bv_page;
+ 
+ 			if (dio->op == REQ_OP_READ && !PageCompound(page) &&
+diff --git a/fs/iomap.c b/fs/iomap.c
+index 206539d369a8..dbc35c40a1c4 100644
+--- a/fs/iomap.c
++++ b/fs/iomap.c
+@@ -934,8 +934,9 @@ static void iomap_dio_bio_end_io(struct bio *bio)
+ 	} else {
+ 		struct bio_vec *bvec;
+ 		int i;
++		struct bvec_chunk_iter citer;
+ 
+-		bio_for_each_segment_all(bvec, bio, i)
++		bio_for_each_chunk_segment_all(bvec, bio, i, citer)
+ 			put_page(bvec->bv_page);
+ 		bio_put(bio);
+ 	}
+diff --git a/fs/mpage.c b/fs/mpage.c
+index b7e7f570733a..78b372607650 100644
+--- a/fs/mpage.c
++++ b/fs/mpage.c
+@@ -48,8 +48,9 @@ static void mpage_end_io(struct bio *bio)
  {
- 	intel_pt_log("ERROR: Buffer overflow\n");
- 	intel_pt_clear_tx_flags(decoder);
--	decoder->have_tma = false;
- 	decoder->cbr = 0;
- 	decoder->timestamp_insn_cnt = 0;
- 	decoder->pkt_state = INTEL_PT_STATE_ERR_RESYNC;
+ 	struct bio_vec *bv;
+ 	int i;
++	struct bvec_chunk_iter citer;
+ 
+-	bio_for_each_segment_all(bv, bio, i) {
++	bio_for_each_chunk_segment_all(bv, bio, i, citer) {
+ 		struct page *page = bv->bv_page;
+ 		page_endio(page, op_is_write(bio_op(bio)),
+ 				blk_status_to_errno(bio->bi_status));
+-- 
+2.9.5
