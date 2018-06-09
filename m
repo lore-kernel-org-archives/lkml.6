@@ -1,109 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id B3TPMP3rHVt6IwAAmS7hNA
-	; Mon, 11 Jun 2018 03:27:26 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 5FOJHub2G1tjcAAAmS7hNA
+	; Sat, 09 Jun 2018 15:48:54 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 05FCA60792; Mon, 11 Jun 2018 03:27:26 +0000 (UTC)
+	id 5F21C608C1; Sat,  9 Jun 2018 15:48:54 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qKAq7dE9"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 775B4604D4;
-	Mon, 11 Jun 2018 03:27:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 775B4604D4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id CA242601C3;
+	Sat,  9 Jun 2018 15:48:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CA242601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932534AbeFKD1W (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Sun, 10 Jun 2018 23:27:22 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:31939 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753966AbeFKD1R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 23:27:17 -0400
-X-UUID: 5ca256802bf440599c9f09b40c6584de-20180611
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
-        (envelope-from <stu.hsieh@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 590964821; Mon, 11 Jun 2018 11:27:11 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Mon, 11 Jun 2018 11:27:06 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Mon, 11 Jun 2018 11:27:06 +0800
-From: Stu Hsieh <stu.hsieh@mediatek.com>
-To: CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>
-CC: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, Stu Hsieh <stu.hsieh@mediatek.com>
-Subject: [PATCH 21/28] drm/mediatek: add connection from RDMA2 to DSI2
-Date: Mon, 11 Jun 2018 11:26:13 +0800
-Message-ID: <1528687580-549-22-git-send-email-stu.hsieh@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
-References: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
+        id S932697AbeFIPsw (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:48:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35074 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932515AbeFIPcj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:32:39 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 102CF208A4;
+        Sat,  9 Jun 2018 15:32:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558358;
+        bh=K+Vt0Pu3CyDILBwbtcej5rVHTWk46KCOVl04WdnAME0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=qKAq7dE9eUsJ/zA8DbA29RZAlDbLZ9ScXRWv2otFH8mtwqXDw4cxBBtfnPWhH+Zcf
+         cYoadnHtCVj1Svg2Co8ei2Ie2ngyP/Hv4ZMQ8J5YOiiOGysLxh1bpP/grzbeVFG1lX
+         S1coTL3hNHWjKhFA1YD90xZRia2NEg2KvDYncoqM=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Shahed Shaikh <shahed.shaikh@cavium.com>,
+        Ariel Elior <ariel.elior@cavium.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 27/48] qed: Fix mask for physical address in ILT entry
+Date: Sat,  9 Jun 2018 17:29:39 +0200
+Message-Id: <20180609145949.470381691@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
+References: <20180609145947.679103414@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add the connection from RDMA2 to DSI2
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+------------------
+
+From: Shahed Shaikh <shahed.shaikh@cavium.com>
+
+[ Upstream commit fdd13dd350dda1826579eb5c333d76b14513b812 ]
+
+ILT entry requires 12 bit right shifted physical address.
+Existing mask for ILT entry of physical address i.e.
+ILT_ENTRY_PHY_ADDR_MASK is not sufficient to handle 64bit
+address because upper 8 bits of 64 bit address were getting
+masked which resulted in completer abort error on
+PCIe bus due to invalid address.
+
+Fix that mask to handle 64bit physical address.
+
+Fixes: fe56b9e6a8d9 ("qed: Add module with basic common support")
+Signed-off-by: Shahed Shaikh <shahed.shaikh@cavium.com>
+Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/net/ethernet/qlogic/qed/qed_cxt.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-index ae10f8f1e140..ce89a1d86b93 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-@@ -95,6 +95,7 @@
- #define RDMA2_MOUT_DPI0			0x2
- #define RDMA2_MOUT_DPI1			0x3
- #define RDMA2_MOUT_DSI1			0x1
-+#define RDMA2_MOUT_DSI2			0x4
- #define DPI0_SEL_IN_RDMA1		0x1
- #define DPI0_SEL_IN_RDMA2		0x3
- #define DPI1_SEL_IN_RDMA1		(0x1 << 8)
-@@ -102,6 +103,7 @@
- #define DSI1_SEL_IN_RDMA1		0x1
- #define DSI1_SEL_IN_RDMA2		0x4
- #define DSI2_SEL_IN_RDMA1		(0x1 << 16)
-+#define DSI2_SEL_IN_RDMA2		(0x4 << 16)
- #define DSI3_SEL_IN_RDMA1		(0x1 << 16)
- #define COLOR1_SEL_IN_OVL1		0x1
+--- a/drivers/net/ethernet/qlogic/qed/qed_cxt.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_cxt.c
+@@ -77,7 +77,7 @@
+ #define ILT_CFG_REG(cli, reg)	PSWRQ2_REG_ ## cli ## _ ## reg ## _RT_OFFSET
  
-@@ -209,6 +211,9 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
- 	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI1) {
- 		*addr = DISP_REG_CONFIG_DISP_RDMA2_SOUT;
- 		value = RDMA2_MOUT_DPI1;
-+	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DSI2) {
-+		*addr = DISP_REG_CONFIG_DISP_RDMA2_SOUT;
-+		value = RDMA2_MOUT_DSI2;
- 	} else {
- 		value = 0;
- 	}
-@@ -249,6 +254,9 @@ static unsigned int mtk_ddp_sel_in(enum mtk_ddp_comp_id cur,
- 	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DSI1) {
- 		*addr = DISP_REG_CONFIG_DSIE_SEL_IN;
- 		value = DSI1_SEL_IN_RDMA2;
-+	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DSI2) {
-+		*addr = DISP_REG_CONFIG_DSIE_SEL_IN;
-+		value = DSI2_SEL_IN_RDMA2;
- 	} else if (cur == DDP_COMPONENT_OVL1 && next == DDP_COMPONENT_COLOR1) {
- 		*addr = DISP_REG_CONFIG_DISP_COLOR1_SEL_IN;
- 		value = COLOR1_SEL_IN_OVL1;
--- 
-2.12.5
+ /* ILT entry structure */
+-#define ILT_ENTRY_PHY_ADDR_MASK		0x000FFFFFFFFFFFULL
++#define ILT_ENTRY_PHY_ADDR_MASK		(~0ULL >> 12)
+ #define ILT_ENTRY_PHY_ADDR_SHIFT	0
+ #define ILT_ENTRY_VALID_MASK		0x1ULL
+ #define ILT_ENTRY_VALID_SHIFT		52
