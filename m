@@ -1,143 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id BHw+FOFHGVuIQQAAmS7hNA
-	; Thu, 07 Jun 2018 14:58:22 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id v97oMXPWG1v2HwAAmS7hNA
+	; Sat, 09 Jun 2018 13:31:54 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 81C9B607E7; Thu,  7 Jun 2018 14:58:22 +0000 (UTC)
+	id 427E5608BA; Sat,  9 Jun 2018 13:31:54 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id C16BF606DD;
-	Thu,  7 Jun 2018 14:58:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C16BF606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id C318F608B8;
+	Sat,  9 Jun 2018 13:31:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C318F608B8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=hygon.cn
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935534AbeFGO6T (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:58:19 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41172 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933329AbeFGO6M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:58:12 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbV-0005hJ-T9; Thu, 07 Jun 2018 15:09:30 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbB-0003Ao-2V; Thu, 07 Jun 2018 15:09:09 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Naohiro Aota" <naohiro.aota@wdc.com>,
-        "Hans van Kranenburg" <hans.van.kranenburg@mendix.com>,
-        "David Sterba" <dsterba@suse.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.238070794@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 314/410] btrfs: alloc_chunk: fix DUP stripe size handling
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        id S1753393AbeFINa1 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 09:30:27 -0400
+Received: from smtp21.cstnet.cn ([159.226.251.21]:44129 "EHLO cstnet.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753232AbeFINaV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 09:30:21 -0400
+Received: from pw-vbox.higon.com (unknown [182.150.46.145])
+        by APP-01 (Coremail) with SMTP id qwCowAB3fS3c1BtbE1BEBA--.1072S2;
+        Sat, 09 Jun 2018 21:23:45 +0800 (CST)
+From: Pu Wen <puwen@hygon.cn>
+To: boris.ostrovsky@oracle.com, jgross@suse.com, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        zhangpanyong@hygon.cn
+Cc: thomas.lendacky@amd.com, peterz@infradead.org, tony.luck@intel.com,
+        bp@alien8.de, pbonzini@redhat.com, rkrcmar@redhat.com,
+        rjw@rjwysocki.net, lenb@kernel.org, viresh.kumar@linaro.org,
+        mchehab@kernel.org, trenn@suse.com, shuah@kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-x86_64@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-edac@vger.kernel.org,
+        linux-pm@vger.kernel.org, kvm@vger.kernel.org,
+        xen-devel@lists.xenproject.org, Pu Wen <puwen@hygon.cn>
+Subject: [PATCH 07/11] x86/xen: Add support for Hygon's Dhyana Family 18h processor
+Date: Sat,  9 Jun 2018 21:23:37 +0800
+Message-Id: <1528550617-28395-1-git-send-email-puwen@hygon.cn>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID: qwCowAB3fS3c1BtbE1BEBA--.1072S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7tFyfXw45Zr47ury5Ar47Jwb_yoW8urWDpa
+        y3AF48JrsYqan7X3s5Xrs7XrW8Zr1vqa1rKrZxJa4ftF4kZ3W3XrZFy3Wrtr4j9348CF40
+        qa18Jw4qga95ZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUva14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+        1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+        JVWxJr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
+        1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
+        7VC0I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Cr0_Gr1UMcvjeVCFs4IE7xkEbV
+        WUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7Cj
+        xVA2Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+        Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a
+        6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6x
+        kF7I0E14v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6r4j6FyUMIIF0xvEx4A2jsIE
+        14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyT
+        uYvjfUFa0PUUUUU
+X-Originating-IP: [182.150.46.145]
+X-CM-SenderInfo: psxzv046klw03qof0z/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+This patch enables the Xen Hypervisor support to Hygon
+Family 18h CPU:
+- Add Hygon support in Xen PMU arch init codes.
+- Add Hygon support in PMU MSR read/write codes.
+- Add Hygon support in read PMC codes.
 
-------------------
-
-From: Hans van Kranenburg <hans.van.kranenburg@mendix.com>
-
-commit 92e222df7b8f05c565009c7383321b593eca488b upstream.
-
-In case of using DUP, we search for enough unallocated disk space on a
-device to hold two stripes.
-
-The devices_info[ndevs-1].max_avail that holds the amount of unallocated
-space found is directly assigned to stripe_size, while it's actually
-twice the stripe size.
-
-Later on in the code, an unconditional division of stripe_size by
-dev_stripes corrects the value, but in the meantime there's a check to
-see if the stripe_size does not exceed max_chunk_size. Since during this
-check stripe_size is twice the amount as intended, the check will reduce
-the stripe_size to max_chunk_size if the actual correct to be used
-stripe_size is more than half the amount of max_chunk_size.
-
-The unconditional division later tries to correct stripe_size, but will
-actually make sure we can't allocate more than half the max_chunk_size.
-
-Fix this by moving the division by dev_stripes before the max chunk size
-check, so it always contains the right value, instead of putting a duct
-tape division in further on to get it fixed again.
-
-Since in all other cases than DUP, dev_stripes is 1, this change only
-affects DUP.
-
-Other attempts in the past were made to fix this:
-* 37db63a400 "Btrfs: fix max chunk size check in chunk allocator" tried
-to fix the same problem, but still resulted in part of the code acting
-on a wrongly doubled stripe_size value.
-* 86db25785a "Btrfs: fix max chunk size on raid5/6" unintentionally
-broke this fix again.
-
-The real problem was already introduced with the rest of the code in
-73c5de0051.
-
-The user visible result however will be that the max chunk size for DUP
-will suddenly double, while it's actually acting according to the limits
-in the code again like it was 5 years ago.
-
-Reported-by: Naohiro Aota <naohiro.aota@wdc.com>
-Link: https://www.spinics.net/lists/linux-btrfs/msg69752.html
-Fixes: 73c5de0051 ("btrfs: quasi-round-robin for chunk allocation")
-Fixes: 86db25785a ("Btrfs: fix max chunk size on raid5/6")
-Signed-off-by: Hans van Kranenburg <hans.van.kranenburg@mendix.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-[ update comment ]
-Signed-off-by: David Sterba <dsterba@suse.com>
-[bwh: Backported to 3.16: We were using do_div() here]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Pu Wen <puwen@hygon.cn>
 ---
- fs/btrfs/volumes.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ arch/x86/xen/pmu.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -4241,10 +4241,13 @@ static int __btrfs_alloc_chunk(struct bt
- 	if (devs_max && ndevs > devs_max)
- 		ndevs = devs_max;
- 	/*
--	 * the primary goal is to maximize the number of stripes, so use as many
--	 * devices as possible, even if the stripes are not maximum sized.
-+	 * The primary goal is to maximize the number of stripes, so use as
-+	 * many devices as possible, even if the stripes are not maximum sized.
-+	 *
-+	 * The DUP profile stores more than one stripe per device, the
-+	 * max_avail is the total size so we have to adjust.
- 	 */
--	stripe_size = devices_info[ndevs-1].max_avail;
-+	stripe_size = div_u64(devices_info[ndevs - 1].max_avail, dev_stripes);
- 	num_stripes = ndevs * dev_stripes;
+diff --git a/arch/x86/xen/pmu.c b/arch/x86/xen/pmu.c
+index 7d00d4a..e2bee70 100644
+--- a/arch/x86/xen/pmu.c
++++ b/arch/x86/xen/pmu.c
+@@ -68,7 +68,8 @@ static __read_mostly int intel_num_arch_counters, intel_num_fixed_counters;
  
- 	/*
-@@ -4284,8 +4287,6 @@ static int __btrfs_alloc_chunk(struct bt
- 			stripe_size = devices_info[ndevs-1].max_avail;
- 	}
+ static void xen_pmu_arch_init(void)
+ {
+-	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD) {
++	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
++	    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON) {
  
--	do_div(stripe_size, dev_stripes);
--
- 	/* align to BTRFS_STRIPE_LEN */
- 	do_div(stripe_size, raid_stripe_len);
- 	stripe_size *= raid_stripe_len;
+ 		switch (boot_cpu_data.x86) {
+ 		case 0x15:
+@@ -285,7 +286,8 @@ static bool xen_amd_pmu_emulate(unsigned int msr, u64 *val, bool is_read)
+ 
+ bool pmu_msr_read(unsigned int msr, uint64_t *val, int *err)
+ {
+-	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD) {
++	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
++	    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON) {
+ 		if (is_amd_pmu_msr(msr)) {
+ 			if (!xen_amd_pmu_emulate(msr, val, 1))
+ 				*val = native_read_msr_safe(msr, err);
+@@ -308,7 +310,8 @@ bool pmu_msr_write(unsigned int msr, uint32_t low, uint32_t high, int *err)
+ {
+ 	uint64_t val = ((uint64_t)high << 32) | low;
+ 
+-	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD) {
++	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
++	    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON) {
+ 		if (is_amd_pmu_msr(msr)) {
+ 			if (!xen_amd_pmu_emulate(msr, &val, 0))
+ 				*err = native_write_msr_safe(msr, low, high);
+@@ -379,7 +382,8 @@ static unsigned long long xen_intel_read_pmc(int counter)
+ 
+ unsigned long long xen_read_pmc(int counter)
+ {
+-	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
++	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
++	    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
+ 		return xen_amd_read_pmc(counter);
+ 	else
+ 		return xen_intel_read_pmc(counter);
+-- 
+2.7.4
