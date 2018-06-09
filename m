@@ -1,301 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ejE7I3qDHlsvFQAAmS7hNA
-	; Mon, 11 Jun 2018 14:13:49 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id QJ1NBxT0G1ubaAAAmS7hNA
+	; Sat, 09 Jun 2018 15:37:20 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 3AE58607A4; Mon, 11 Jun 2018 14:13:49 +0000 (UTC)
+	id 12CE1608C1; Sat,  9 Jun 2018 15:37:20 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mZpnL+aR"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ICAbN6Ll"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 8D0EF60791;
-	Mon, 11 Jun 2018 14:13:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8D0EF60791
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 76382608B8;
+	Sat,  9 Jun 2018 15:37:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 76382608B8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933898AbeFKOLf (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 10:11:35 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46610 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933627AbeFKOHM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:07:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=2u6+qgyveiDkqLJM8FJpbQoqNhFUWbl8SL25NGa49r4=; b=mZpnL+aRY2gJ/21PALfF2FW1X
-        2e11UTeU4GSb/Yl2U93jG5tF/7LeFk/A99SFeONNGtImef7jCcP8kh0CnW5NrrvrrXs9JK0Dydcp6
-        gsENHgsQMBuBSb03fIIwL/JYCSa93YZRFt8CpzPhsyDNY2+QqHf3dxp6K7Ll5SHzCbK/2Y4RmwOWp
-        X5AqVsXKwMrP5cAcYrxiv2yd45A2CfxQOY71h2pC3qYd59M9XV1qhxn5TgyyXn9g1GC5AqsnGbnfA
-        611okxWktqdfGTuJIA4T7Xlf5AxBDQM2MAeKSYlnltMj5LOYrbyOsM4Cud8v9cPCE/FB/BRWUP2kj
-        LC5RaeBzw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSNTT-00051J-IR; Mon, 11 Jun 2018 14:07:11 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Lukas Czerner <lczerner@redhat.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v13 63/72] dax: Convert dax_insert_pfn_mkwrite to XArray
-Date: Mon, 11 Jun 2018 07:06:30 -0700
-Message-Id: <20180611140639.17215-64-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
-References: <20180611140639.17215-1-willy@infradead.org>
+        id S933262AbeFIPhR (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:37:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38434 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753585AbeFIPgT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:36:19 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 06BCF208A3;
+        Sat,  9 Jun 2018 15:36:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558578;
+        bh=JnscUSqoci0Wz4I4zRvXdWCxQr5Nd484Xh1nssq2DVk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ICAbN6LlqF5tPnPYHfjB+hzEQhGGxo4QCNtv971xTQ6sipwFXO/zdqZY/Q1Pyzro7
+         JFRfGe7pV9pbk6ke+60yzZ7iJgHQ7I4wrhUR+TFWXDyrGbOp08q1UzGbu3fdIdbKm6
+         g9DaW9fjJH4b2hfqcHNKNSRCiuTIpiPD40Sz2hxo=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Eran Ben Elisha <eranbe@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.14 37/41] net/mlx5e: When RXFCS is set, add FCS data into checksum calculation
+Date: Sat,  9 Jun 2018 17:30:09 +0200
+Message-Id: <20180609152928.452685114@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609152926.389750182@linuxfoundation.org>
+References: <20180609152926.389750182@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Add some XArray-based helper functions to replace the radix tree based
-metaphors currently in use.  The biggest change is that converted code
-doesn't see its own lock bit; get_unlocked_entry() always returns an
-entry with the lock bit clear, and locking the entry now returns void.
-So we don't have to mess around loading the current entry and clearing
-the lock bit; we can just store the entry that we were using.
+------------------
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+From: Eran Ben Elisha <eranbe@mellanox.com>
+
+[ Upstream commit 902a545904c71d719ed144234d67df75f31db63b ]
+
+When RXFCS feature is enabled, the HW do not strip the FCS data,
+however it is not present in the checksum calculated by the HW.
+
+Fix that by manually calculating the FCS checksum and adding it to the SKB
+checksum field.
+
+Add helper function to find the FCS data for all SKB forms (linear,
+one fragment or more).
+
+Fixes: 102722fc6832 ("net/mlx5e: Add support for RXFCS feature flag")
+Signed-off-by: Eran Ben Elisha <eranbe@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/dax.c | 145 +++++++++++++++++++++++++++++++++++++++++++------------
- 1 file changed, 113 insertions(+), 32 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_rx.c |   42 ++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-diff --git a/fs/dax.c b/fs/dax.c
-index 7d0712c45da5..1c9b736147d3 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -38,6 +38,17 @@
- #define CREATE_TRACE_POINTS
- #include <trace/events/fs_dax.h>
- 
-+static inline unsigned int pe_order(enum page_entry_size pe_size)
-+{
-+	if (pe_size == PE_SIZE_PTE)
-+		return PAGE_SHIFT - PAGE_SHIFT;
-+	if (pe_size == PE_SIZE_PMD)
-+		return PMD_SHIFT - PAGE_SHIFT;
-+	if (pe_size == PE_SIZE_PUD)
-+		return PUD_SHIFT - PAGE_SHIFT;
-+	return ~0;
-+}
-+
- /* We choose 4096 entries - same as per-zone page wait tables */
- #define DAX_WAIT_TABLE_BITS 12
- #define DAX_WAIT_TABLE_ENTRIES (1 << DAX_WAIT_TABLE_BITS)
-@@ -46,6 +57,9 @@
- #define PG_PMD_COLOUR	((PMD_SIZE >> PAGE_SHIFT) - 1)
- #define PG_PMD_NR	(PMD_SIZE >> PAGE_SHIFT)
- 
-+/* The order of a PMD entry */
-+#define PMD_ORDER	(PMD_SHIFT - PAGE_SHIFT)
-+
- static wait_queue_head_t wait_table[DAX_WAIT_TABLE_ENTRIES];
- 
- static int __init init_dax_wait_table(void)
-@@ -85,10 +99,15 @@ static void *dax_make_locked(unsigned long pfn, unsigned long flags)
- 			DAX_LOCKED);
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
+@@ -635,6 +635,45 @@ static inline bool is_first_ethertype_ip
+ 	return (ethertype == htons(ETH_P_IP) || ethertype == htons(ETH_P_IPV6));
  }
  
-+static bool dax_is_locked(void *entry)
++static __be32 mlx5e_get_fcs(struct sk_buff *skb)
 +{
-+	return xa_to_value(entry) & DAX_LOCKED;
-+}
++	int last_frag_sz, bytes_in_prev, nr_frags;
++	u8 *fcs_p1, *fcs_p2;
++	skb_frag_t *last_frag;
++	__be32 fcs_bytes;
 +
- static unsigned int dax_entry_order(void *entry)
- {
- 	if (xa_to_value(entry) & DAX_PMD)
--		return PMD_SHIFT - PAGE_SHIFT;
-+		return PMD_ORDER;
- 	return 0;
- }
- 
-@@ -181,6 +200,77 @@ static void dax_wake_mapping_entry_waiter(struct xarray *xa,
- 		__wake_up(wq, TASK_NORMAL, wake_all ? 0 : 1, &key);
- }
- 
-+static void dax_wake_entry(struct xa_state *xas, void *entry, bool wake_all)
-+{
-+	return dax_wake_mapping_entry_waiter(xas->xa, xas->xa_index, entry,
-+								wake_all);
-+}
++	if (!skb_is_nonlinear(skb))
++		return *(__be32 *)(skb->data + skb->len - ETH_FCS_LEN);
 +
-+/*
-+ * Look up entry in page cache, wait for it to become unlocked if it
-+ * is a DAX entry and return it.  The caller must subsequently call
-+ * put_unlocked_entry() if it did not lock the entry or put_locked_entry()
-+ * if it did.
-+ *
-+ * Must be called with the i_pages lock held.
-+ */
-+static void *get_unlocked_entry(struct xa_state *xas)
-+{
-+	void *entry;
-+	struct wait_exceptional_entry_queue ewait;
-+	wait_queue_head_t *wq;
++	nr_frags = skb_shinfo(skb)->nr_frags;
++	last_frag = &skb_shinfo(skb)->frags[nr_frags - 1];
++	last_frag_sz = skb_frag_size(last_frag);
 +
-+	init_wait(&ewait.wait);
-+	ewait.wait.func = wake_exceptional_entry_func;
++	/* If all FCS data is in last frag */
++	if (last_frag_sz >= ETH_FCS_LEN)
++		return *(__be32 *)(skb_frag_address(last_frag) +
++				   last_frag_sz - ETH_FCS_LEN);
 +
-+	for (;;) {
-+		entry = xas_load(xas);
-+		if (!entry || WARN_ON_ONCE(!xa_is_value(entry)) ||
-+				!dax_is_locked(entry))
-+			return entry;
++	fcs_p2 = (u8 *)skb_frag_address(last_frag);
++	bytes_in_prev = ETH_FCS_LEN - last_frag_sz;
 +
-+		wq = dax_entry_waitqueue(xas->xa, xas->xa_index, entry,
-+				&ewait.key);
-+		prepare_to_wait_exclusive(wq, &ewait.wait,
-+					  TASK_UNINTERRUPTIBLE);
-+		xas_unlock_irq(xas);
-+		xas_reset(xas);
-+		schedule();
-+		finish_wait(wq, &ewait.wait);
-+		xas_lock_irq(xas);
++	/* Find where the other part of the FCS is - Linear or another frag */
++	if (nr_frags == 1) {
++		fcs_p1 = skb_tail_pointer(skb);
++	} else {
++		skb_frag_t *prev_frag = &skb_shinfo(skb)->frags[nr_frags - 2];
++
++		fcs_p1 = skb_frag_address(prev_frag) +
++			    skb_frag_size(prev_frag);
 +	}
++	fcs_p1 -= bytes_in_prev;
++
++	memcpy(&fcs_bytes, fcs_p1, bytes_in_prev);
++	memcpy(((u8 *)&fcs_bytes) + bytes_in_prev, fcs_p2, last_frag_sz);
++
++	return fcs_bytes;
 +}
 +
-+static void put_unlocked_entry(struct xa_state *xas, void *entry)
-+{
-+	/* If we were the only waiter woken, wake the next one */
-+	if (entry)
-+		dax_wake_entry(xas, entry, false);
-+}
-+
-+/*
-+ * We used the xa_state to get the entry, but then we locked the entry and
-+ * dropped the xa_lock, so we know the xa_state is stale and must be reset
-+ * before use.
-+ */
-+static void put_locked_entry(struct xa_state *xas, void *entry)
-+{
-+	void *old;
-+
-+	xas_reset(xas);
-+	xas_lock_irq(xas);
-+	old = xas_store(xas, entry);
-+	xas_unlock_irq(xas);
-+	BUG_ON(!dax_is_locked(old));
-+	dax_wake_entry(xas, entry, false);
-+}
-+
-+static void dax_lock_entry(struct xa_state *xas, void *entry)
-+{
-+	unsigned long v = xa_to_value(entry);
-+	xas_store(xas, xa_mk_value(v | DAX_LOCKED));
-+}
-+
- /*
-  * Check whether the given slot is locked.  Must be called with the i_pages
-  * lock held.
-@@ -1629,50 +1719,46 @@ EXPORT_SYMBOL_GPL(dax_iomap_fault);
- /*
-  * dax_insert_pfn_mkwrite - insert PTE or PMD entry into page tables
-  * @vmf: The description of the fault
-- * @pe_size: Size of entry to be inserted
-  * @pfn: PFN to insert
-+ * @order: Order of entry to insert.
-  *
-  * This function inserts a writeable PTE or PMD entry into the page tables
-  * for an mmaped DAX file.  It also marks the page cache entry as dirty.
-  */
--static vm_fault_t dax_insert_pfn_mkwrite(struct vm_fault *vmf,
--				  enum page_entry_size pe_size,
--				  pfn_t pfn)
-+static vm_fault_t
-+dax_insert_pfn_mkwrite(struct vm_fault *vmf, pfn_t pfn, unsigned int order)
- {
- 	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
--	void *entry, **slot;
--	pgoff_t index = vmf->pgoff;
-+	XA_STATE_ORDER(xas, &mapping->i_pages, vmf->pgoff, order);
-+	void *entry;
- 	vm_fault_t ret;
- 
--	xa_lock_irq(&mapping->i_pages);
--	entry = get_unlocked_mapping_entry(mapping, index, &slot);
-+	xas_lock_irq(&xas);
-+	entry = get_unlocked_entry(&xas);
- 	/* Did we race with someone splitting entry or so? */
- 	if (!entry ||
--	    (pe_size == PE_SIZE_PTE && !dax_is_pte_entry(entry)) ||
--	    (pe_size == PE_SIZE_PMD && !dax_is_pmd_entry(entry))) {
--		put_unlocked_mapping_entry(mapping, index, entry);
--		xa_unlock_irq(&mapping->i_pages);
-+	    (order == 0 && !dax_is_pte_entry(entry)) ||
-+	    (order == PMD_ORDER && (xa_is_internal(entry) ||
-+				    !dax_is_pmd_entry(entry)))) {
-+		put_unlocked_entry(&xas, entry);
-+		xas_unlock_irq(&xas);
- 		trace_dax_insert_pfn_mkwrite_no_entry(mapping->host, vmf,
- 						      VM_FAULT_NOPAGE);
- 		return VM_FAULT_NOPAGE;
+ static inline void mlx5e_handle_csum(struct net_device *netdev,
+ 				     struct mlx5_cqe64 *cqe,
+ 				     struct mlx5e_rq *rq,
+@@ -653,6 +692,9 @@ static inline void mlx5e_handle_csum(str
+ 	if (is_first_ethertype_ip(skb)) {
+ 		skb->ip_summed = CHECKSUM_COMPLETE;
+ 		skb->csum = csum_unfold((__force __sum16)cqe->check_sum);
++		if (unlikely(netdev->features & NETIF_F_RXFCS))
++			skb->csum = csum_add(skb->csum,
++					     (__force __wsum)mlx5e_get_fcs(skb));
+ 		rq->stats.csum_complete++;
+ 		return;
  	}
--	radix_tree_tag_set(&mapping->i_pages, index, PAGECACHE_TAG_DIRTY);
--	entry = lock_slot(mapping, slot);
--	xa_unlock_irq(&mapping->i_pages);
--	switch (pe_size) {
--	case PE_SIZE_PTE:
-+	xas_set_tag(&xas, PAGECACHE_TAG_DIRTY);
-+	dax_lock_entry(&xas, entry);
-+	xas_unlock_irq(&xas);
-+	if (order == 0)
- 		ret = vmf_insert_mixed_mkwrite(vmf->vma, vmf->address, pfn);
--		break;
- #ifdef CONFIG_FS_DAX_PMD
--	case PE_SIZE_PMD:
-+	else if (order == PMD_ORDER)
- 		ret = vmf_insert_pfn_pmd(vmf->vma, vmf->address, vmf->pmd,
- 			pfn, true);
--		break;
- #endif
--	default:
-+	else
- 		ret = VM_FAULT_FALLBACK;
--	}
--	put_locked_mapping_entry(mapping, index);
-+	put_locked_entry(&xas, entry);
- 	trace_dax_insert_pfn_mkwrite(mapping->host, vmf, ret);
- 	return ret;
- }
-@@ -1692,17 +1778,12 @@ vm_fault_t dax_finish_sync_fault(struct vm_fault *vmf,
- {
- 	int err;
- 	loff_t start = ((loff_t)vmf->pgoff) << PAGE_SHIFT;
--	size_t len = 0;
-+	unsigned int order = pe_order(pe_size);
-+	size_t len = PAGE_SIZE << order;
- 
--	if (pe_size == PE_SIZE_PTE)
--		len = PAGE_SIZE;
--	else if (pe_size == PE_SIZE_PMD)
--		len = PMD_SIZE;
--	else
--		WARN_ON_ONCE(1);
- 	err = vfs_fsync_range(vmf->vma->vm_file, start, start + len - 1, 1);
- 	if (err)
- 		return VM_FAULT_SIGBUS;
--	return dax_insert_pfn_mkwrite(vmf, pe_size, pfn);
-+	return dax_insert_pfn_mkwrite(vmf, pfn, order);
- }
- EXPORT_SYMBOL_GPL(dax_finish_sync_fault);
--- 
-2.17.1
