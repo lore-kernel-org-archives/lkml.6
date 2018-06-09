@@ -1,113 +1,139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id VgByOR5WGVscPAAAmS7hNA
-	; Thu, 07 Jun 2018 15:58:23 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id jV86LoL2G1uhdQAAmS7hNA
+	; Sat, 09 Jun 2018 15:47:14 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D8CAE6074D; Thu,  7 Jun 2018 15:58:22 +0000 (UTC)
+	id 940DE608C1; Sat,  9 Jun 2018 15:47:14 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qcQ4RUm2"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 62A1360590;
-	Thu,  7 Jun 2018 15:58:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 62A1360590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id DC641608B8;
+	Sat,  9 Jun 2018 15:47:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DC641608B8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934752AbeFGP6U (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:58:20 -0400
-Received: from foss.arm.com ([217.140.101.70]:53874 "EHLO foss.arm.com"
+        id S1753698AbeFIPrM (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:47:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35536 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933050AbeFGP6P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:58:15 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8CE3D80D;
-        Thu,  7 Jun 2018 08:58:15 -0700 (PDT)
-Received: from [192.168.0.102] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F03B53F59D;
-        Thu,  7 Jun 2018 08:58:10 -0700 (PDT)
-Subject: Re: [RFC PATCH v3 03/10] PM: Introduce an Energy Model management
- framework
-To: Quentin Perret <quentin.perret@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>
-Cc: peterz@infradead.org, rjw@rjwysocki.net,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, mingo@redhat.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joelaf@google.com,
-        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
-        pkondeti@codeaurora.org, edubezval@gmail.com,
-        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
-        javi.merino@kernel.org
-References: <20180521142505.6522-1-quentin.perret@arm.com>
- <20180521142505.6522-4-quentin.perret@arm.com>
- <b47cb1f1-6ca1-7674-903f-724be43a57a0@arm.com>
- <20180606143739.GF10870@e108498-lin.cambridge.arm.com>
- <20180606152000.GB15894@localhost.localdomain>
- <20180606152950.GH10870@e108498-lin.cambridge.arm.com>
- <20180606162647.GI10870@e108498-lin.cambridge.arm.com>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <2802df66-8947-dc2c-a99f-cf872ddaeddb@arm.com>
-Date: Thu, 7 Jun 2018 17:58:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S932608AbeFIPdJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:33:09 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EBF0F204EC;
+        Sat,  9 Jun 2018 15:33:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558388;
+        bh=5U2VKFA6/9ukO2d67iCm9+S05ShXNCFqkOYSemviVrY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=qcQ4RUm251QDQwuvHjRmeYdET+edIDTktA9rty3yf6cn5pNGNfEoUxi3vI6Qby2V4
+         LnC28xAJt+gkGJSd4VzcQLXpB7rieuXMazahNfr/1lop5E794lusChSsKOD5Fx9UCK
+         Jf/wTdNvTdD2glRGfKby3ZmBMNpyjp+LnORK5DLw=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>,
+        Petr Machata <petrm@mellanox.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 18/48] mlxsw: spectrum: Forbid creation of VLAN 1 over port/LAG
+Date: Sat,  9 Jun 2018 17:29:30 +0200
+Message-Id: <20180609145948.830230443@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
+References: <20180609145947.679103414@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-In-Reply-To: <20180606162647.GI10870@e108498-lin.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/06/2018 06:26 PM, Quentin Perret wrote:
-> On Wednesday 06 Jun 2018 at 16:29:50 (+0100), Quentin Perret wrote:
->> On Wednesday 06 Jun 2018 at 17:20:00 (+0200), Juri Lelli wrote:
->>>>> This brings me to another question. Let's say there are multiple users of
->>>>> the Energy Model in the system. Shouldn't the units of frequency and power
->>>>> not standardized, maybe Mhz and mW?
->>>>> The task scheduler doesn't care since it is only interested in power diffs
->>>>> but other user might do.
->>>>
->>>> So the good thing about specifying units is that we can probably assume
->>>> ranges on the values. If the power is in mW, assuming that we're talking
->>>> about a single CPU, it'll probably fit in 16 bits. 65W/core should be
->>>> a reasonable upper-bound ?
->>>> But there are also vendors who might not be happy with disclosing absolute
->>>> values ... These are sometimes considered sensitive and only relative
->>>> numbers are discussed publicly. Now, you can also argue that we already
->>>> have units specified in IPA for ex, and that it doesn't really matter if
->>>> a driver "lies" about the real value, as long as the ratios are correct.
->>>> And I guess that anyone can do measurement on the hardware and get those
->>>> values anyway. So specifying a unit (mW) for the power is probably a
->>>> good idea.
->>>
->>> Mmm, I remember we fought quite a bit while getting capacity-dmpis-mhz
->>> binding accepted, and one of the musts was that the values were going to
->>> be normalized. So, normalized power values again maybe?
->>
->> Hmmm, that's a very good point ... There should be no problems on the
->> scheduler side -- we're only interested in correct ratios. But I'm not
->> sure on the thermal side ... I will double check that.
-> 
-> So, IPA needs to compare the power of the CPUs with the power of other
-> things (e.g. GPUs). So we can't normalize the power of the CPUs without
-> normalizing in the same scale the power of the other devices. I see two
-> possibilities:
-> 
-> 1) we don't normalize the CPU power values, we specify them in mW, and
->     we document (and maybe throw a warning if we see an issue at runtime)
->     the max range of values. The max expected power for a single core
->     could be 65K for ex (16bits). And based on that we can verify
->     overflow and precision issues in the algorithms, and we keep it easy
->     to compare the CPU power numbers with other devices.
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-I would say we need 1). 32bit values with units and proper documentation 
-of the possible ranges.
+------------------
 
-[...]
+From: Petr Machata <petrm@mellanox.com>
+
+[ Upstream commit 47bf9df2e8201d07c40670e093629f8dfd1b5d9f ]
+
+VLAN 1 is internally used for untagged traffic. Prevent creation of
+explicit netdevice for that VLAN, because that currently isn't supported
+and leads to the NULL pointer dereference cited below.
+
+Fix by preventing creation of VLAN devices with VID of 1 over mlxsw
+devices or LAG devices that involve mlxsw devices.
+
+[  327.175816] ================================================================================
+[  327.184544] UBSAN: Undefined behaviour in drivers/net/ethernet/mellanox/mlxsw/spectrum_fid.c:200:12
+[  327.193667] member access within null pointer of type 'const struct mlxsw_sp_fid'
+[  327.201226] CPU: 0 PID: 8983 Comm: ip Not tainted 4.17.0-rc4-petrm_net_ip6gre_headroom-custom-140 #11
+[  327.210496] Hardware name: Mellanox Technologies Ltd. "MSN2410-CB2F"/"SA000874", BIOS 4.6.5 03/08/2016
+[  327.219872] Call Trace:
+[  327.222384]  dump_stack+0xc3/0x12b
+[  327.234007]  ubsan_epilogue+0x9/0x49
+[  327.237638]  ubsan_type_mismatch_common+0x1f9/0x2d0
+[  327.255769]  __ubsan_handle_type_mismatch+0x90/0xa7
+[  327.264716]  mlxsw_sp_fid_type+0x35/0x50 [mlxsw_spectrum]
+[  327.270255]  mlxsw_sp_port_vlan_router_leave+0x46/0xc0 [mlxsw_spectrum]
+[  327.277019]  mlxsw_sp_inetaddr_port_vlan_event+0xe1/0x340 [mlxsw_spectrum]
+[  327.315031]  mlxsw_sp_netdevice_vrf_event+0xa8/0x100 [mlxsw_spectrum]
+[  327.321626]  mlxsw_sp_netdevice_event+0x276/0x430 [mlxsw_spectrum]
+[  327.367863]  notifier_call_chain+0x4c/0x150
+[  327.372128]  __netdev_upper_dev_link+0x1b3/0x260
+[  327.399450]  vrf_add_slave+0xce/0x170 [vrf]
+[  327.403703]  do_setlink+0x658/0x1d70
+[  327.508998]  rtnl_newlink+0x908/0xf20
+[  327.559128]  rtnetlink_rcv_msg+0x50c/0x720
+[  327.571720]  netlink_rcv_skb+0x16a/0x1f0
+[  327.583450]  netlink_unicast+0x2ca/0x3e0
+[  327.599305]  netlink_sendmsg+0x3e2/0x7f0
+[  327.616655]  sock_sendmsg+0x76/0xc0
+[  327.620207]  ___sys_sendmsg+0x494/0x5d0
+[  327.666117]  __sys_sendmsg+0xc2/0x130
+[  327.690953]  do_syscall_64+0x66/0x370
+[  327.694677]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[  327.699782] RIP: 0033:0x7f4c2f3f8037
+[  327.703393] RSP: 002b:00007ffe8c389708 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+[  327.711035] RAX: ffffffffffffffda RBX: 000000005b03f53e RCX: 00007f4c2f3f8037
+[  327.718229] RDX: 0000000000000000 RSI: 00007ffe8c389760 RDI: 0000000000000003
+[  327.725431] RBP: 00007ffe8c389760 R08: 0000000000000000 R09: 00007f4c2f443630
+[  327.732632] R10: 00000000000005eb R11: 0000000000000246 R12: 0000000000000000
+[  327.739833] R13: 00000000006774e0 R14: 00007ffe8c3897e8 R15: 0000000000000000
+[  327.747096] ================================================================================
+
+Fixes: 9589a7b5d7d9 ("mlxsw: spectrum: Handle VLAN devices linking / unlinking")
+Suggested-by: Ido Schimmel <idosch@mellanox.com>
+Signed-off-by: Petr Machata <petrm@mellanox.com>
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/net/ethernet/mellanox/mlxsw/spectrum.c |    5 +++++
+ 1 file changed, 5 insertions(+)
+
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
+@@ -4870,6 +4870,11 @@ static int mlxsw_sp_netdevice_port_upper
+ 				       "spectrum: Can not put a VLAN on an OVS port");
+ 			return -EINVAL;
+ 		}
++		if (is_vlan_dev(upper_dev) &&
++		    vlan_dev_vlan_id(upper_dev) == 1) {
++			NL_SET_ERR_MSG_MOD(extack, "Creating a VLAN device with VID 1 is unsupported: VLAN 1 carries untagged traffic");
++			return -EINVAL;
++		}
+ 		break;
+ 	case NETDEV_CHANGEUPPER:
+ 		upper_dev = info->upper_dev;
