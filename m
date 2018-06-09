@@ -1,88 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id EVqBMwIWHltKdgAAmS7hNA
-	; Mon, 11 Jun 2018 06:26:22 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id m7eMNY9mG1vvHAAAmS7hNA
+	; Sat, 09 Jun 2018 05:33:03 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 1203A60791; Mon, 11 Jun 2018 06:26:22 +0000 (UTC)
+	id C4D856089E; Sat,  9 Jun 2018 05:33:03 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 7FDB360385;
-	Mon, 11 Jun 2018 06:26:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7FDB360385
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 55DB2607A4;
+	Sat,  9 Jun 2018 05:33:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 55DB2607A4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753990AbeFKG0T (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 02:26:19 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:38330 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753926AbeFKG0S (ORCPT
+        id S1751528AbeFIFdB (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 01:33:01 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:16527 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751257AbeFIFdA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 02:26:18 -0400
-Received: from mail-pg0-f72.google.com ([74.125.83.72])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1fSGHR-0001FG-7c
-        for linux-kernel@vger.kernel.org; Mon, 11 Jun 2018 06:26:17 +0000
-Received: by mail-pg0-f72.google.com with SMTP id d2-v6so2302260pgq.22
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Jun 2018 23:26:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:content-transfer-encoding:mime-version
-         :subject:message-id:date:cc:to;
-        bh=qOQKzYYxEDKUPAe6+ipKXvO11GL/2Fj0MGEGacU09tw=;
-        b=mBBg9DlVVGymFbkyuPsw/y2Ip1NgKcm4SkWdZHOTplOcl/QyTjmJxd8CQ5WuOZslkr
-         Ly2N80R3HhIbW4l86wFuhvsPlX/MK0FA/xm0UoBxJn2xYDa1G7+YmXKlcNv1IX65cNve
-         J3wOBqdxQsSdQS09+278ICQ5etkNNuN05rQjj1PiZEI6lTI96Zenw/BjshC3DJ1FmgE5
-         t5hml5mc9LA8KEJhUlMyz9AzyJ+3XiwbL83CUsBWPESSBGh6MUAPouiOyZu+CWRfs+3b
-         R37KZAMgZQu1G8X16nVzJ7ytJ5fgOxDLdL2Dk4JwERM27mbfwmPoqR/UpLNX1i5A/lCT
-         GF0A==
-X-Gm-Message-State: APt69E0DilYlMIUf/YgAalF8C78X6ncniL+iD4kELfMZCUk2qyTCMlub
-        BfLV1PhoreAc/j1byK0E6YnwxfEbu4oYQXWMlHD+27hCzGu3/fQIpOMd5djsbVfOvfpqPsTdNPE
-        WvFTtWf9TQ99pk2LHbQQ0l/jnJ/8NmsYpFa5+jH04ZQ==
-X-Received: by 2002:a62:9804:: with SMTP id q4-v6mr16173074pfd.65.1528698375956;
-        Sun, 10 Jun 2018 23:26:15 -0700 (PDT)
-X-Google-Smtp-Source: ADUXVKKU53slhice0vSYOiEz/PDLKVvtoIyZPtwJmD2SEmrjgu4iz0Vq4gzb852kebnKq7EE2CwH+g==
-X-Received: by 2002:a62:9804:: with SMTP id q4-v6mr16173063pfd.65.1528698375720;
-        Sun, 10 Jun 2018 23:26:15 -0700 (PDT)
-Received: from [192.168.1.206] (220-133-187-190.HINET-IP.hinet.net. [220.133.187.190])
-        by smtp.gmail.com with ESMTPSA id r20-v6sm1408923pgu.25.2018.06.10.23.26.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 10 Jun 2018 23:26:15 -0700 (PDT)
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Content-Type: text/plain;
-        charset=us-ascii;
-        delsp=yes;
-        format=flowed
+        Sat, 9 Jun 2018 01:33:00 -0400
+Received: from fsav305.sakura.ne.jp (fsav305.sakura.ne.jp [153.120.85.136])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w595UleC074809;
+        Sat, 9 Jun 2018 14:30:47 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav305.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp);
+ Sat, 09 Jun 2018 14:30:47 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w595Ugl3074791
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Sat, 9 Jun 2018 14:30:47 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: general protection fault in wb_workfn (2)
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        syzbot <syzbot+4a7438e774b21ddd8eca@syzkaller.appspotmail.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Tejun Heo <tj@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        linux-block@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <95865cab-e12f-d45b-b6e3-465b624862ba@i-love.sakura.ne.jp>
+ <CACT4Y+byRRtCA9B9bPG9mjrf3UY3OsGeBsoh8dZ0T+V6tKpTHg@mail.gmail.com>
+ <201806080231.w582VIRn021009@www262.sakura.ne.jp>
+ <CACT4Y+Y7Mj1JngLst1aRHDhURXQMn-eTjyPFjDdGAT0ZV-dHrw@mail.gmail.com>
+ <CACT4Y+bBfwpcP2h0URpqwiNMQ5SFJdPDHThUu2xetmrxgC+3BQ@mail.gmail.com>
+ <CACT4Y+bHDWDapwOonO1EpR6TiRa=qf9nSDtHArq75yCGuHf=gg@mail.gmail.com>
+ <CACT4Y+Z4i=bD49cb4pJ5zOMxVu675NT8wCNk+c2n2XJVOXG2bg@mail.gmail.com>
+From: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <2b437c6f-3e10-3d83-bdf3-82075d3eaa1a@i-love.sakura.ne.jp>
+Date: Sat, 9 Jun 2018 14:30:41 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <CACT4Y+Z4i=bD49cb4pJ5zOMxVu675NT8wCNk+c2n2XJVOXG2bg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Mime-Version: 1.0 (Mac OS X Mail 11.4 \(3445.8.2\))
-Subject: Possible regression caused by commit a192aa923b66a
-Message-Id: <DEA1AE84-B0FD-481E-8E0D-788CD4EF59AE@canonical.com>
-Date: Mon, 11 Jun 2018 14:26:12 +0800
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, perryhelionsemail@gmail.com,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-X-Mailer: Apple Mail (2.3445.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rafael,
+Dmitry Vyukov wrote:
+> Here we go:
 
-There's a regression report [1] that says commit a192aa923b66a ("ACPI /  
-LPSS: Consolidate runtime PM and system sleep handling") is the first bad  
-commit.
+Great. Thank you.
 
- From the looks of it, it didn't introduce any behavioral change. So your  
-help is appreciated.
+> 
+> [ 2853.033175] WARNING: wb_workfn: device is NULL
+> [ 2853.034709] wb->state=2
+> 
 
-[1] https://bugs.launchpad.net/bugs/1774950
+It is surprising that wb->state == WB_shutting_down .
 
-Kai-Heng
+WB_shutting_down is set by only wb_shutdown() and is always cleared
+before leaving wb_shutdown(). This means that someone was calling
+wb_shutdown() on this wb object. And bdi->dev == NULL means that
+bdi_unregister() already did bdi->dev = NULL while someone was still
+inside wb_shutdown().
+
+Since we call wb_shutdown() from bdi_unregister() for each wb object
+on this bdi object, this should not happen. But since "INFO: task hung
+in wb_shutdown (2)" found that it is possible that wb_shutdown() is
+concurrently called on the same wb object, there might be something
+complicated concurrency.
+
+Well, is it really true that "we call wb_shutdown() from bdi_unregister()
+for each wb object on this bdi object"? It seems it is not always true...
+
+While cgwb_bdi_unregister() from bdi_unregister() calls wb_shutdown() on
+each wb object reachable from bdi->wb_list, wb_shutdown() firstly calls
+list_del_rcu(&wb->bdi_node) (which was added by
+list_add_tail_rcu(&wb->bdi_node, &bdi->wb_list) from cgwb_create()) and
+then starts waiting for that wb object by calling
+mod_delayed_work()/flush_delayed_work() and then clears WB_shutting_down.
+
+Then, it is possible that cgwb_bdi_unregister() from calls wb_shutdown()
+fails to find a wb object which already passed list_del_rcu() from
+wb_shutdown(), and cgwb_bdi_unregister() can return without waiting for
+somebody who is waiting inside wb_shutdown(). Hence, allows doing
+bdi->dev = NULL before a wb object which somebody is waiting inside
+wb_shutdown() completes wb_workfn(), and NULL pointer dereference...
