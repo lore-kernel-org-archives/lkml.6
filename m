@@ -1,303 +1,170 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id qVoUFqr/GFs0CgAAmS7hNA
-	; Thu, 07 Jun 2018 09:49:30 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id J/viBtF4G1vVDAAAmS7hNA
+	; Sat, 09 Jun 2018 06:51:50 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 345A7607F7; Thu,  7 Jun 2018 09:49:30 +0000 (UTC)
+	id DC1C8608B8; Sat,  9 Jun 2018 06:51:49 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="N78owXG7"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 2F5AB606DD;
-	Thu,  7 Jun 2018 09:49:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2F5AB606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by smtp.codeaurora.org (Postfix) with ESMTP id 5835760290;
+	Sat,  9 Jun 2018 06:51:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5835760290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932381AbeFGJt0 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 05:49:26 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:33104 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932206AbeFGJtY (ORCPT
+        id S1753159AbeFIGvr (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 02:51:47 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:44630 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752610AbeFIGvo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 05:49:24 -0400
-Received: by mail-wm0-f68.google.com with SMTP id z6-v6so2375766wma.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 02:49:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=wxhtLeiKtzA2M5nqc7WgBTFG9m/IDaLoXi0vhPEEM0c=;
-        b=a2HWQ9WWT1UlZzxSokF7dgN3cOh7coV+hzhSOsyCFZ2oeP73b2YG/71ASJLuaa2JSq
-         eVilwfgdZz02OHgerN5cbq8ipdLL0z+YW2FU6VmS2Dsaa4oarPzGZGNRTHjeBxaJKQRJ
-         9pFXBWLPVzyKjCq5gdo3QSBg++HxSc2/RM7/TZACwNVEJF0mGhYLBQo+kidEl87xi/qM
-         F9kIR8uDRY0wVNrYrHWKuQmayBkvCzeoePCCfN9WcMV+F8vgq+C1vat4ffhqa1oaNT88
-         8XbOAXqLJX6GZlZS6i1k9aCNTH/Qb25jbIycx4Dk2lgcoMkKSEaXHIMrOSRBnwtabH9j
-         GTbA==
-X-Gm-Message-State: APt69E0a/0wC0KeTmYIGWrf/6YX6r0GChEJKldmRkGKCPpDt4heuIywB
-        g4BXN8R2/zP832dmyemruP4=
-X-Google-Smtp-Source: ADUXVKJBAdzXr53S638pqFQ/BgN5xbyfEn6RyY52at7hATFVs0yDngSxnjRg7UAwSR5B8QF2jf7Hjg==
-X-Received: by 2002:a1c:934e:: with SMTP id v75-v6mr1218478wmd.52.1528364963078;
-        Thu, 07 Jun 2018 02:49:23 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id g75-v6sm1931626wmd.15.2018.06.07.02.49.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Jun 2018 02:49:22 -0700 (PDT)
-Received: by techadventures.net (Postfix, from userid 1000)
-        id 58B0C123258; Thu,  7 Jun 2018 11:49:21 +0200 (CEST)
-Date: Thu, 7 Jun 2018 11:49:21 +0200
-From: Oscar Salvador <osalvador@techadventures.net>
-To: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        "mingo@kernel.org" <mingo@kernel.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>
-Subject: Re: kernel panic in reading /proc/kpageflags when enabling
- RAM-simulated PMEM
-Message-ID: <20180607094921.GA8545@techadventures.net>
-References: <20180605005402.GA22975@hori1.linux.bs1.fc.nec.co.jp>
- <20180605011836.GA32444@bombadil.infradead.org>
- <20180605073500.GA23766@hori1.linux.bs1.fc.nec.co.jp>
- <20180606051624.GA16021@hori1.linux.bs1.fc.nec.co.jp>
- <20180606080408.GA31794@techadventures.net>
- <20180606085319.GA32052@techadventures.net>
- <20180606090630.GA27065@hori1.linux.bs1.fc.nec.co.jp>
- <20180606092405.GA6562@hori1.linux.bs1.fc.nec.co.jp>
- <20180607062218.GB22554@hori1.linux.bs1.fc.nec.co.jp>
- <20180607065940.GA7334@techadventures.net>
+        Sat, 9 Jun 2018 02:51:44 -0400
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id E5A465C0070;
+        Sat,  9 Jun 2018 08:51:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1528527102;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=i/eHT0B2Fac225wqrjQVepsRB+mY1mynviM/vLg168A=;
+        b=N78owXG7azWV22OYe4Cjy8WR5n2R+wZmExXdk/dMqAmIYvhPORM20lf0NjVyt7lLzMexM5
+        gE9MOwe/RGi2Zium7+R63qDnnKY2JhGfkBAwuKTl8r3ZyDcs4eESxSTKssogZcgF9ss1Wq
+        KyH2sWLlrFIQHv9U3Gq8lPNRmfnpnNQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180607065940.GA7334@techadventures.net>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date: Sat, 09 Jun 2018 08:51:42 +0200
+From: Stefan Agner <stefan@agner.ch>
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Dmitry Osipenko <digetx@gmail.com>, dwmw2@infradead.org,
+        computersforpeace@gmail.com, marek.vasut@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
+        dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
+        marcel@ziswiler.com, krzk@kernel.org, benjamin.lindqvist@endian.se,
+        jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        mirza.krak@gmail.com, linux-mtd@lists.infradead.org,
+        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 4/6] mtd: rawnand: add NVIDIA Tegra NAND Flash
+ controller driver
+In-Reply-To: <20180609084157.0c2f12e6@bbrezillon>
+References: <20180531221637.6017-1-stefan@agner.ch>
+ <20180531221637.6017-5-stefan@agner.ch>
+ <cdca329f-0b8d-0604-4cfb-b95baf84c867@gmail.com>
+ <d625dd8ca816543e03668b74921563c1@agner.ch>
+ <20180609075256.725354d6@bbrezillon>
+ <792ee71847f6f4752b8bcba65d22bf81@agner.ch>
+ <20180609084157.0c2f12e6@bbrezillon>
+Message-ID: <5090966399e4b22eec5d3ac3f381d29a@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.4
+X-Spamd-Result: default: False [-1.77 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MID_RHS_MATCH_FROM(0.00)[];
+         RCPT_COUNT_TWELVE(0.00)[22];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_HAS_DN(0.00)[];
+         FROM_EQ_ENVFROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         TO_DN_SOME(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
+         RCVD_TLS_ALL(0.00)[];
+         BAYES_HAM(-1.67)[92.96%];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 07, 2018 at 08:59:40AM +0200, Oscar Salvador wrote:
-> On Thu, Jun 07, 2018 at 06:22:19AM +0000, Naoya Horiguchi wrote:
-> > On Wed, Jun 06, 2018 at 09:24:05AM +0000, Horiguchi Naoya(堀口 直也) wrote:
-> > > On Wed, Jun 06, 2018 at 09:06:30AM +0000, Horiguchi Naoya(堀口 直也) wrote:
-> > > > On Wed, Jun 06, 2018 at 10:53:19AM +0200, Oscar Salvador wrote:
-> > > > > On Wed, Jun 06, 2018 at 10:04:08AM +0200, Oscar Salvador wrote:
-> > > > > > On Wed, Jun 06, 2018 at 05:16:24AM +0000, Naoya Horiguchi wrote:
-> > > > > > > On Tue, Jun 05, 2018 at 07:35:01AM +0000, Horiguchi Naoya(堀口 直也) wrote:
-> > > > > > > > On Mon, Jun 04, 2018 at 06:18:36PM -0700, Matthew Wilcox wrote:
-> > > > > > > > > On Tue, Jun 05, 2018 at 12:54:03AM +0000, Naoya Horiguchi wrote:
-> > > > > > > > > > Reproduction precedure is like this:
-> > > > > > > > > >  - enable RAM based PMEM (with a kernel boot parameter like memmap=1G!4G)
-> > > > > > > > > >  - read /proc/kpageflags (or call tools/vm/page-types with no arguments)
-> > > > > > > > > >  (- my kernel config is attached)
-> > > > > > > > > >
-> > > > > > > > > > I spent a few days on this, but didn't reach any solutions.
-> > > > > > > > > > So let me report this with some details below ...
-> > > > > > > > > >
-> > > > > > > > > > In the critial page request, stable_page_flags() is called with an argument
-> > > > > > > > > > page whose ->compound_head was somehow filled with '0xffffffffffffffff'.
-> > > > > > > > > > And compound_head() returns (struct page *)(head - 1), which explains the
-> > > > > > > > > > address 0xfffffffffffffffe in the above message.
-> > > > > > > > >
-> > > > > > > > > Hm.  compound_head shares with:
-> > > > > > > > >
-> > > > > > > > >                         struct list_head lru;
-> > > > > > > > >                                 struct list_head slab_list;     /* uses lru */
-> > > > > > > > >                                 struct {        /* Partial pages */
-> > > > > > > > >                                         struct page *next;
-> > > > > > > > >                         unsigned long _compound_pad_1;  /* compound_head */
-> > > > > > > > >                         unsigned long _pt_pad_1;        /* compound_head */
-> > > > > > > > >                         struct dev_pagemap *pgmap;
-> > > > > > > > >                 struct rcu_head rcu_head;
-> > > > > > > > >
-> > > > > > > > > None of them should be -1.
-> > > > > > > > >
-> > > > > > > > > > It seems that this kernel panic happens when reading kpageflags of pfn range
-> > > > > > > > > > [0xbffd7, 0xc0000), which coresponds to a 'reserved' range.
-> > > > > > > > > >
-> > > > > > > > > > [    0.000000] user-defined physical RAM map:
-> > > > > > > > > > [    0.000000] user: [mem 0x0000000000000000-0x000000000009fbff] usable
-> > > > > > > > > > [    0.000000] user: [mem 0x000000000009fc00-0x000000000009ffff] reserved
-> > > > > > > > > > [    0.000000] user: [mem 0x00000000000f0000-0x00000000000fffff] reserved
-> > > > > > > > > > [    0.000000] user: [mem 0x0000000000100000-0x00000000bffd6fff] usable
-> > > > > > > > > > [    0.000000] user: [mem 0x00000000bffd7000-0x00000000bfffffff] reserved
-> > > > > > > > > > [    0.000000] user: [mem 0x00000000feffc000-0x00000000feffffff] reserved
-> > > > > > > > > > [    0.000000] user: [mem 0x00000000fffc0000-0x00000000ffffffff] reserved
-> > > > > > > > > > [    0.000000] user: [mem 0x0000000100000000-0x000000013fffffff] persistent (type 12)
-> > > > > > > > > >
-> > > > > > > > > > So I guess 'memmap=' parameter might badly affect the memory initialization process.
-> > > > > > > > > >
-> > > > > > > > > > This problem doesn't reproduce on v4.17, so some pre-released patch introduces it.
-> > > > > > > > > > I hope this info helps you find the solution/workaround.
-> > > > > > > > >
-> > > > > > > > > Can you try bisecting this?  It could be one of my patches to reorder struct
-> > > > > > > > > page, or it could be one of Pavel's deferred page initialisation patches.
-> > > > > > > > > Or something else ;-)
-> > > > > > > >
-> > > > > > > > Thank you for the comment. I'm trying bisecting now, let you know the result later.
-> > > > > > > >
-> > > > > > > > And I found that my statement "not reproduce on v4.17" was wrong (I used
-> > > > > > > > different kvm guests, which made some different test condition and misguided me),
-> > > > > > > > this seems an older (at least < 4.15) bug.
-> > > > > > >
-> > > > > > > (Cc: Pavel)
-> > > > > > >
-> > > > > > > Bisection showed that the following commit introduced this issue:
-> > > > > > >
-> > > > > > >   commit f7f99100d8d95dbcf09e0216a143211e79418b9f
-> > > > > > >   Author: Pavel Tatashin <pasha.tatashin@oracle.com>
-> > > > > > >   Date:   Wed Nov 15 17:36:44 2017 -0800
-> > > > > > >
-> > > > > > >       mm: stop zeroing memory during allocation in vmemmap
-> > > > > > >
-> > > > > > > This patch postpones struct page zeroing to later stage of memory initialization.
-> > > > > > > My kernel config disabled CONFIG_DEFERRED_STRUCT_PAGE_INIT so two callsites of
-> > > > > > > __init_single_page() were never reached. So in such case, struct pages populated
-> > > > > > > by vmemmap_pte_populate() could be left uninitialized?
-> > > > > > > And I'm not sure yet how this issue becomes visible with memmap= setting.
-> > > > > >
-> > > > > > I think that this becomes visible because memmap=x!y creates a persistent memory region:
-> > > > > >
-> > > > > > parse_memmap_one
-> > > > > > {
-> > > > > > 	...
-> > > > > >         } else if (*p == '!') {
-> > > > > >                 start_at = memparse(p+1, &p);
-> > > > > >                 e820__range_add(start_at, mem_size, E820_TYPE_PRAM);
-> > > > > > 	...
-> > > > > > }
-> > > > > >
-> > > > > > and this region it is not added neither in memblock.memory nor in memblock.reserved.
-> > > > > > Ranges in memblock.memory get zeroed in memmap_init_zone(), while memblock.reserved get zeroed
-> > > > > > in free_low_memory_core_early():
-> > > > > >
-> > > > > > static unsigned long __init free_low_memory_core_early(void)
-> > > > > > {
-> > > > > > 	...
-> > > > > > 	for_each_reserved_mem_region(i, &start, &end)
-> > > > > > 		reserve_bootmem_region(start, end);
-> > > > > > 	...
-> > > > > > }
-> > > > > >
-> > > > > >
-> > > > > > Maybe I am mistaken, but I think that persistent memory regions should be marked as reserved.
-> > > > > > A comment in do_mark_busy() suggests this:
-> > > > > >
-> > > > > > static bool __init do_mark_busy(enum e820_type type, struct resource *res)
-> > > > > > {
-> > > > > >
-> > > > > > 	...
-> > > > > >         /*
-> > > > > >          * Treat persistent memory like device memory, i.e. reserve it
-> > > > > >          * for exclusive use of a driver
-> > > > > >          */
-> > > > > > 	...
-> > > > > > }
-> > > > > >
-> > > > > >
-> > > > > > I wonder if something like this could work and if so, if it is right (i haven't tested it yet):
-> > > > > >
-> > > > > > diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
-> > > > > > index 71c11ad5643e..3c9686ef74e5 100644
-> > > > > > --- a/arch/x86/kernel/e820.c
-> > > > > > +++ b/arch/x86/kernel/e820.c
-> > > > > > @@ -1247,6 +1247,11 @@ void __init e820__memblock_setup(void)
-> > > > > >                 if (end != (resource_size_t)end)
-> > > > > >                         continue;
-> > > > > >
-> > > > > > +               if (entry->type == E820_TYPE_PRAM || entry->type == E820_TYPE_PMEM) {
-> > > > > > +                       memblock_reserve(entry->addr, entry->size);
-> > > > > > +                       continue;
-> > > > > > +               }
-> > > > > > +
-> > > > > >                 if (entry->type != E820_TYPE_RAM && entry->type != E820_TYPE_RESERVED_KERN)
-> > > > > >                         continue;
-> > > > >
-> > > > > It does not seem to work, so the reasoning might be incorrect.
-> > > > 
-> > > > Thank you for the comment.
-> > > > 
-> > > > One note is that the memory region with "broken struct page" is a typical
-> > > > reserved region, not a pmem region. Strangely reading offset 0xbffd7 of
-> > > > /proc/kpageflags is OK if pmem region does not exist, but NG if pmem region exists.
-> > > > Reading the offset like 0x100000 (on pmem region) does not cause the crash,
-> > > > so pmem region seems properly set up.
-> > > > 
-> > > > [    0.000000] user-defined physical RAM map:
-> > > > [    0.000000] user: [mem 0x0000000000000000-0x000000000009fbff] usable
-> > > > [    0.000000] user: [mem 0x000000000009fc00-0x000000000009ffff] reserved
-> > > > [    0.000000] user: [mem 0x00000000000f0000-0x00000000000fffff] reserved
-> > > > [    0.000000] user: [mem 0x0000000000100000-0x00000000bffd6fff] usable
-> > > > [    0.000000] user: [mem 0x00000000bffd7000-0x00000000bfffffff] reserved   ===> "broken struct page" region
-> > > > [    0.000000] user: [mem 0x00000000feffc000-0x00000000feffffff] reserved
-> > > > [    0.000000] user: [mem 0x00000000fffc0000-0x00000000ffffffff] reserved
-> > > > [    0.000000] user: [mem 0x0000000100000000-0x000000013fffffff] persistent (type 12) => pmem region
-> > > > [    0.000000] user: [mem 0x0000000140000000-0x000000023fffffff] usable
-> > > > 
-> > > 
-> > > I have another note:
-> > > 
-> > > > My kernel config disabled CONFIG_DEFERRED_STRUCT_PAGE_INIT so two callsites of
-> > > > __init_single_page() were never reached. So in such case, struct pages populated
-> > > > by vmemmap_pte_populate() could be left uninitialized?
-> > > 
-> > > I quickly checked whether enabling CONFIG_DEFERRED_STRUCT_PAGE_INIT affect
-> > > the issue. And found that the kernel panic happens even with this config enabled.
-> > > So I'm still confused...
-> > 
-> > Let me share some new facts:
-> > 
-> > I gave accidentally an inconvenient memmap layout like 'memmap=1G!4G' in
-> > 2 NUMA node with 8 GB memory.
-> > While I didn't intended this, but 4GB is the address starting some memory
-> > block when no "memmap=" option is provided.
-> > 
-> >   (messages from free_area_init_nodes() for no "memmap=" case
-> >   [    0.000000] Early memory node ranges
-> >   [    0.000000]   node   0: [mem 0x0000000000001000-0x000000000009efff]
-> >   [    0.000000]   node   0: [mem 0x0000000000100000-0x00000000bffd6fff]
-> >   [    0.000000]   node   0: [mem 0x0000000100000000-0x000000013fffffff] // <---
-> >   [    0.000000]   node   1: [mem 0x0000000140000000-0x000000023fffffff]
-> > 
-> > When "memmap=1G!4G" is given, the range [0x0000000100000000-0x000000013fffffff]
-> > disappears and kernel messages are like below:
-> > 
-> >   (messages from free_area_init_nodes() for "memmap=1G!4G" case
-> >   [    0.000000] Early memory node ranges
-> >   [    0.000000]   node   0: [mem 0x0000000000001000-0x000000000009efff]
-> >   [    0.000000]   node   0: [mem 0x0000000000100000-0x00000000bffd6fff]
-> >   [    0.000000]   node   1: [mem 0x0000000140000000-0x000000023fffffff]
-> > 
-> > This makes kernel think that the end pfn of node 0 is 0 0xbffd7
-> > instead of 0x140000, which affects the memory initialization process.
-> > memmap_init_zone() calls __init_single_page() for each page within a zone,
-> > so if zone->spanned_pages are underestimated, some pages are left uninitialized.
-> > 
-> > If I provide 'memmap=1G!7G', the kernel panic does not reproduce and
-> > kernel messages are like below.
-> >   
-> >   (messages from free_area_init_nodes() for "memmap=1G!7G" case
-> >   [    0.000000] Early memory node ranges
-> >   [    0.000000]   node   0: [mem 0x0000000000001000-0x000000000009efff]
-> >   [    0.000000]   node   0: [mem 0x0000000000100000-0x00000000bffd6fff]
-> >   [    0.000000]   node   0: [mem 0x0000000100000000-0x000000013fffffff]
-> >   [    0.000000]   node   1: [mem 0x0000000140000000-0x00000001bfffffff]
-> >   [    0.000000]   node   1: [mem 0x0000000200000000-0x000000023fffffff]
-> > 
-> > 
-> > I think that in order to fix this, we need some conditions and/or prechecks
-> > for memblock layout, does it make sense? Or any other better approaches?
+On 09.06.2018 08:41, Boris Brezillon wrote:
+> On Sat, 09 Jun 2018 08:23:51 +0200
+> Stefan Agner <stefan@agner.ch> wrote:
+> 
+>> On 09.06.2018 07:52, Boris Brezillon wrote:
+>> > On Fri, 08 Jun 2018 23:51:01 +0200
+>> > Stefan Agner <stefan@agner.ch> wrote:
+>> >
+>> >
+>> >> >
+>> >> > void tegra_nand_controller_reset(struct tegra_nand_controller *ctrl)
+>> >> > {
+>> >> > 	int err;
+>> >> >
+>> >> > 	disable_irq(ctrl->irq);
+>> >> >
+>> >> > 	err = reset_control_reset(ctrl->rst);
+>> >> > 	if (err) {
+>> >> > 		dev_err(ctrl->dev, "Failed to reset HW: %d\n", err);
+>> >> > 		msleep(HW_TIMEOUT);
+>> >> > 	}
+>> >> >
+>> >> > 	writel_relaxed(NAND_CMD_STATUS, ctrl->regs + HWSTATUS_CMD);
+>> >> > 	writel_relaxed(HWSTATUS_MASK, ctrl->regs + HWSTATUS_MASK);
+>> >> > 	writel_relaxed(INT_MASK, ctrl->regs + ISR);
+>> >>
+>> >> If we do a controller reset, there is much more state than that which
+>> >> needs to be restored. A lot of it is not readily available currently
+>> >> (timing, ECC settings...)
+>> >
+>> > This is actually a good test to detect what is not properly initialized
+>> > by the driver. Timings should be configured correctly through
+>> > ->setup_data_interface(). ECC engine should be disabled by default and
+>> > only enabled when ->{read,write}_page() is called.
+>> >
+>>
+>> Is setup_data_interface guaranteed to be called after a failed
+>> ->exec_op()/{read,write}_page()?
+> 
+> No. Maybe I misunderstood when tegra_nand_controller_reset() was
+> supposed to be called. That's something I would call only once, early
+> in the probe function, so that the controller is placed in a well-known
+> state before we start using it. Definitely not something you should
+> call after each error.
+> 
 
-Could you share the "e820: BIOS-provided physical RAM map" and "e820: user-defined physical RAM map"
-output with both memmap= args (1G!4G and 1G!7G)?
+Dmitry suggests to make use of it in the error handling path in case the
+command/DMA  timed out.
 
-thanks
-Oscar Salvador
+Which makes sense in general I guess, just to make sure that the state
+is properly set. It just isn't entirely trivial to do, since state is
+setup during probe, chip detect and timing setup...
+
+>>
+>> >>
+>> >> That seems a lot of work for a code path I do not intend to ever use :-)
+>> >>
+>> >
+>> > Not so sure it's a lot of work. If ECC and timing settings are the
+>> > only thing you need to initialize then it should work just fine.
+>> > Try with a controller reset and you'll know if you miss something ;-).
+>>
+>> Currently the setting gets written directly to the registers. Only the
+>> enable flag is set in the HW ECC {read,write}_page() functions. So I
+>> will have to store the complete register in the chip structure and write
+>> them on every {read,write}_page()?
+> 
+> Well, your solution works as long as you only have one chip connected
+> to the controller. What we usually set the ECC config in
+> ->select_chip() (or at least make sure the current setting matches the
+> one we expect) and then enable the engine in read/write_page() (as you
+> seem to already do).
+
+I did not plan to make the driver multi chip capable, as I am not aware
+of any real hardware using it.
+
+But to properly reset state, we would have to have all the chip settings
+stored somewhere...
+
+--
+Stefan
