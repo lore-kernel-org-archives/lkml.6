@@ -1,239 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id j8A+ApyZHVswEQAAmS7hNA
-	; Sun, 10 Jun 2018 21:35:47 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id WfbJC0yhHVuFNgAAmS7hNA
+	; Sun, 10 Jun 2018 22:08:12 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 24E9860791; Sun, 10 Jun 2018 21:35:47 +0000 (UTC)
+	id 1D08760792; Sun, 10 Jun 2018 22:08:12 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.4 required=2.0 tests=BAYES_00,DATE_IN_PAST_06_12,
-	MAILING_LIST_MULTI autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 6D71D604D4;
-	Sun, 10 Jun 2018 21:35:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6D71D604D4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=vmware.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id B846B601D2;
+	Sun, 10 Jun 2018 22:08:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B846B601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=donation.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932401AbeFJVfp (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Sun, 10 Jun 2018 17:35:45 -0400
-Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:16964 "EHLO
-        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753487AbeFJVeI (ORCPT
+        id S1753596AbeFJWIK convert rfc822-to-8bit (ORCPT
+        <rfc822;monsieuricon@codeaurora.org> + 21 others);
+        Sun, 10 Jun 2018 18:08:10 -0400
+Received: from vm019.jbrj.gov.br ([200.20.168.199]:37326 "EHLO
+        vm019.jbrj.gov.br" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753297AbeFJWIH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 17:34:08 -0400
-Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
- 15.0.1156.6; Sun, 10 Jun 2018 14:33:44 -0700
-Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 008E44070F;
-        Sun, 10 Jun 2018 14:34:06 -0700 (PDT)
-From: Nadav Amit <namit@vmware.com>
-To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>
-CC: Nadav Amit <namit@vmware.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jan Beulich <JBeulich@suse.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH v3 3/9] x86: refcount: prevent gcc distortions
-Date: Sun, 10 Jun 2018 07:19:05 -0700
-Message-ID: <20180610141911.52948-4-namit@vmware.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180610141911.52948-1-namit@vmware.com>
-References: <20180610141911.52948-1-namit@vmware.com>
+        Sun, 10 Jun 2018 18:08:07 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by vm019.jbrj.gov.br (Postfix) with ESMTP id 8E9FAFCB12;
+        Sat,  9 Jun 2018 10:08:20 -0300 (BRT)
+Received: from vm019.jbrj.gov.br ([127.0.0.1])
+        by localhost (vm019.jbrj.gov.br [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 56EqDbVxR89Z; Sat,  9 Jun 2018 10:08:20 -0300 (BRT)
+Received: from localhost (localhost [127.0.0.1])
+        by vm019.jbrj.gov.br (Postfix) with ESMTP id C06ABFCA12;
+        Sat,  9 Jun 2018 10:06:42 -0300 (BRT)
+X-Virus-Scanned: amavisd-new at vm019.jbrj.gov.br
+Received: from vm019.jbrj.gov.br ([127.0.0.1])
+        by localhost (vm019.jbrj.gov.br [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id sowTiefV3-hW; Sat,  9 Jun 2018 10:06:42 -0300 (BRT)
+Received: from [172.20.10.2] (unknown [105.112.98.107])
+        by vm019.jbrj.gov.br (Postfix) with ESMTPSA id DEA4DFC887;
+        Sat,  9 Jun 2018 10:04:36 -0300 (BRT)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
- designate permitted sender hosts)
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: Re: Grant-
+To: Recipients <info@donation.com>
+From: "M. M. Fridman" <info@donation.com>
+Date: Sat, 09 Jun 2018 16:03:15 +0300
+Reply-To: mikh.fridman@gmail.com
+Message-Id: <20180609130437.DEA4DFC887@vm019.jbrj.gov.br>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GCC considers the number of statements in inlined assembly blocks,
-according to new-lines and semicolons, as an indication to the cost of
-the block in time and space. This data is distorted by the kernel code,
-which puts information in alternative sections. As a result, the
-compiler may perform incorrect inlining and branch optimizations.
+I Mikhail Fridman. has selected you specially as one of my beneficiaries
+for my Charitable Donation, Just as I have declared on May 23, 2016 to give
+my fortune as charity.
 
-The solution is to set an assembly macro and call it from the inlined
-assembly block. As a result GCC considers the inline assembly block as
-a single instruction.
+Check the link below for confirmation:
 
-This patch allows to inline functions such as __get_seccomp_filter().
-Interestingly, this allows more aggressive inlining while reducing the
-kernel size.
+http://www.ibtimes.co.uk/russias-second-wealthiest-man-mikhail-fridman-plans-leaving-14-2bn-fortune-charity-1561604
 
-   text	   data	    bss	    dec	    hex	filename
-18140970 10225412 2957312 31323694 1ddf62e ./vmlinux before
-18140140 10225284 2957312 31322736 1ddf270 ./vmlinux after (-958)
+Reply as soon as possible with further directives.
 
-Static text symbols:
-Before:	40302
-After:	40286	(-16)
-
-Functions such as kref_get(), free_user(), fuse_file_get() now get
-inlined.
-
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: x86@kernel.org
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Jan Beulich <JBeulich@suse.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-
-Signed-off-by: Nadav Amit <namit@vmware.com>
----
- arch/x86/include/asm/refcount.h | 74 ++++++++++++++++++++-------------
- arch/x86/kernel/macros.S        |  1 +
- 2 files changed, 46 insertions(+), 29 deletions(-)
-
-diff --git a/arch/x86/include/asm/refcount.h b/arch/x86/include/asm/refcount.h
-index 4cf11d88d3b3..6b2809a4d8e9 100644
---- a/arch/x86/include/asm/refcount.h
-+++ b/arch/x86/include/asm/refcount.h
-@@ -4,6 +4,41 @@
-  * x86-specific implementation of refcount_t. Based on PAX_REFCOUNT from
-  * PaX/grsecurity.
-  */
-+
-+#ifdef __ASSEMBLY__
-+
-+#include <asm/asm.h>
-+#include <asm/bug.h>
-+
-+.macro REFCOUNT_EXCEPTION counter:req
-+	.pushsection .text..refcount
-+111:	lea \counter, %_ASM_CX
-+112:	ud2
-+	ASM_UNREACHABLE
-+	.popsection
-+113:	_ASM_EXTABLE_REFCOUNT(112b, 113b)
-+.endm
-+
-+/* Trigger refcount exception if refcount result is negative. */
-+.macro REFCOUNT_CHECK_LT_ZERO counter:req
-+	js 111f
-+	REFCOUNT_EXCEPTION counter="\counter"
-+.endm
-+
-+/* Trigger refcount exception if refcount result is zero or negative. */
-+.macro REFCOUNT_CHECK_LE_ZERO counter:req
-+	jz 111f
-+	REFCOUNT_CHECK_LT_ZERO counter="\counter"
-+.endm
-+
-+/* Trigger refcount exception unconditionally. */
-+.macro REFCOUNT_ERROR counter:req
-+	jmp 111f
-+	REFCOUNT_EXCEPTION counter="\counter"
-+.endm
-+
-+#else /* __ASSEMBLY__ */
-+
- #include <linux/refcount.h>
- 
- /*
-@@ -14,34 +49,11 @@
-  * central refcount exception. The fixup address for the exception points
-  * back to the regular execution flow in .text.
-  */
--#define _REFCOUNT_EXCEPTION				\
--	".pushsection .text..refcount\n"		\
--	"111:\tlea %[counter], %%" _ASM_CX "\n"		\
--	"112:\t" ASM_UD2 "\n"				\
--	ASM_UNREACHABLE					\
--	".popsection\n"					\
--	"113:\n"					\
--	_ASM_EXTABLE_REFCOUNT(112b, 113b)
--
--/* Trigger refcount exception if refcount result is negative. */
--#define REFCOUNT_CHECK_LT_ZERO				\
--	"js 111f\n\t"					\
--	_REFCOUNT_EXCEPTION
--
--/* Trigger refcount exception if refcount result is zero or negative. */
--#define REFCOUNT_CHECK_LE_ZERO				\
--	"jz 111f\n\t"					\
--	REFCOUNT_CHECK_LT_ZERO
--
--/* Trigger refcount exception unconditionally. */
--#define REFCOUNT_ERROR					\
--	"jmp 111f\n\t"					\
--	_REFCOUNT_EXCEPTION
- 
- static __always_inline void refcount_add(unsigned int i, refcount_t *r)
- {
- 	asm volatile(LOCK_PREFIX "addl %1,%0\n\t"
--		REFCOUNT_CHECK_LT_ZERO
-+		"REFCOUNT_CHECK_LT_ZERO counter=\"%[counter]\""
- 		: [counter] "+m" (r->refs.counter)
- 		: "ir" (i)
- 		: "cc", "cx");
-@@ -50,7 +62,7 @@ static __always_inline void refcount_add(unsigned int i, refcount_t *r)
- static __always_inline void refcount_inc(refcount_t *r)
- {
- 	asm volatile(LOCK_PREFIX "incl %0\n\t"
--		REFCOUNT_CHECK_LT_ZERO
-+		"REFCOUNT_CHECK_LT_ZERO counter=\"%[counter]\""
- 		: [counter] "+m" (r->refs.counter)
- 		: : "cc", "cx");
- }
-@@ -58,7 +70,7 @@ static __always_inline void refcount_inc(refcount_t *r)
- static __always_inline void refcount_dec(refcount_t *r)
- {
- 	asm volatile(LOCK_PREFIX "decl %0\n\t"
--		REFCOUNT_CHECK_LE_ZERO
-+		"REFCOUNT_CHECK_LE_ZERO counter=\"%[counter]\""
- 		: [counter] "+m" (r->refs.counter)
- 		: : "cc", "cx");
- }
-@@ -66,13 +78,15 @@ static __always_inline void refcount_dec(refcount_t *r)
- static __always_inline __must_check
- bool refcount_sub_and_test(unsigned int i, refcount_t *r)
- {
--	GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl", REFCOUNT_CHECK_LT_ZERO,
-+	GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl",
-+				  "REFCOUNT_CHECK_LT_ZERO counter=\"%0\"",
- 				  r->refs.counter, "er", i, "%0", e, "cx");
- }
- 
- static __always_inline __must_check bool refcount_dec_and_test(refcount_t *r)
- {
--	GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl", REFCOUNT_CHECK_LT_ZERO,
-+	GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl",
-+				 "REFCOUNT_CHECK_LT_ZERO counter=\"%0\"",
- 				 r->refs.counter, "%0", e, "cx");
- }
- 
-@@ -90,7 +104,7 @@ bool refcount_add_not_zero(unsigned int i, refcount_t *r)
- 
- 		/* Did we try to increment from/to an undesirable state? */
- 		if (unlikely(c < 0 || c == INT_MAX || result < c)) {
--			asm volatile(REFCOUNT_ERROR
-+			asm volatile("REFCOUNT_ERROR counter=\"%[counter]\""
- 				     : : [counter] "m" (r->refs.counter)
- 				     : "cc", "cx");
- 			break;
-@@ -106,4 +120,6 @@ static __always_inline __must_check bool refcount_inc_not_zero(refcount_t *r)
- 	return refcount_add_not_zero(1, r);
- }
- 
-+#endif /* __ASSEMBLY__ */
-+
- #endif
-diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
-index cee28c3246dc..f1fe1d570365 100644
---- a/arch/x86/kernel/macros.S
-+++ b/arch/x86/kernel/macros.S
-@@ -7,3 +7,4 @@
-  */
- 
- #include <linux/compiler.h>
-+#include <asm/refcount.h>
--- 
-2.17.0
+Best Regards,
+Mikhail Fridman.
