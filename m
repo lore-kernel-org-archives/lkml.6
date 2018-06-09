@@ -1,105 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id L0yYNnN/GVudfAAAmS7hNA
-	; Thu, 07 Jun 2018 18:54:59 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 8t+0JBS8G1vRGAAAmS7hNA
+	; Sat, 09 Jun 2018 11:37:56 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 231526074D; Thu,  7 Jun 2018 18:54:59 +0000 (UTC)
+	id 7C9B0607A4; Sat,  9 Jun 2018 11:37:56 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dW88lbQY"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="coUHMR3q"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=2.0 tests=BAYES_00,DATE_IN_FUTURE_06_12,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 699EB601C3;
-	Thu,  7 Jun 2018 18:54:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 699EB601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 467EF6032D;
+	Sat,  9 Jun 2018 11:37:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 467EF6032D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933174AbeFGSyz (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 14:54:55 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:41661 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932415AbeFGSyx (ORCPT
+        id S1753207AbeFILhw (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 07:37:52 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:33655 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752979AbeFILhu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 14:54:53 -0400
-Received: by mail-pf0-f195.google.com with SMTP id a11-v6so5345383pff.8
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 11:54:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=jiPl2EMttVFt16on49GND/kt1rQOx5pA0A0dTzzB/q0=;
-        b=dW88lbQYsWMn5hBzdXeXx2bSn2JDhNljrjH0CMpHAyWokvs8HoDX1c5fAS83KyjqzV
-         t2FvJjKUf/w0ZsWpWupu7rjSIQDGo5hDAmwPrn9yBbyV0p9NvuP83sis7RtmsCIYH4wl
-         fcRjpy/kQ0twZB1U2lFEvCXhnMIa3jCV/rVP9CU9LBq54FJBmu8yCb6x6ouUz/teKX+a
-         O3WlheFgA65g0wpjMtPYFmVkJvC+E2cbZYlp3MqboypCqJZzTn9FjcTtx9zhS7Nh+fhS
-         nCHvPBLp0Lz1hu+9wPVf8F100t30yPUn3VM1UZooVVKutQ5tatIB19qsuVNDbMiXv0+/
-         Gzxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=jiPl2EMttVFt16on49GND/kt1rQOx5pA0A0dTzzB/q0=;
-        b=P1UCOila0t1LJTE54SKDTGlYJwvLobAdaC8PJXUp6eWVrhN/po9wK/q43tlcH0XUvA
-         1umYtNk1ZDjGoVY7mIPWXUnd2UfdHMN45rVM1vYQ+Q/JDd1iCoYqlc2n4QxlXfFXVM47
-         FNKxdegpOBRW0Uo05nhZXlxRwyL2MFvYzy2h4ZxoDV37ex1f/dNm25RhD05xsFqO8TX9
-         ldI9GUT9zYF0l3hbRjhZ0oGx9UBPTE3nFI0b1GnFeAYdSZ8o8fPTdtuc+enV1c8Zbryq
-         DIGn7Rm/a/N/W2P6KuDhhU6cgoXCtvYkt5sshKaubVfXtIuYevUiOAUycbsu44e3GGpM
-         3iLQ==
-X-Gm-Message-State: APt69E0Dtygnr5Osx08TSdvleEazI01OyEXTEzUVD8RL4WCIMByv61q7
-        OBW9Jj0NUts08JL+0F0bR/I=
-X-Google-Smtp-Source: ADUXVKLoRIjn/NItJbf/zxCvRBnjhdtD0rowL1fkXPdQyRl7Xa+PYRWNVbRE/8cUJ9DNrGRs5ggEgw==
-X-Received: by 2002:a63:618f:: with SMTP id v137-v6mr2568529pgb.145.1528397693284;
-        Thu, 07 Jun 2018 11:54:53 -0700 (PDT)
-Received: from localhost.localdomain ([27.62.191.206])
-        by smtp.gmail.com with ESMTPSA id q68-v6sm97186521pfb.182.2018.06.07.11.54.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 07 Jun 2018 11:54:52 -0700 (PDT)
-From: Janani Sankara Babu <jananis37@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: johannes.berg@intel.com, davem@davemloft.net,
-        keescook@chromium.org, Rene.Hickersberger@gmx.at,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Janani Sankara Babu <jananis37@gmail.com>
-Subject: [PATCH 3/4] Staging:rtl8192e Fix Comparison to true is error prone
-Date: Fri,  8 Jun 2018 00:34:19 -0400
-Message-Id: <1528432459-9696-1-git-send-email-jananis37@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        Sat, 9 Jun 2018 07:37:50 -0400
+Received: from mail-ua0-f180.google.com (mail-ua0-f180.google.com [209.85.217.180]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id w59BbbaV019129;
+        Sat, 9 Jun 2018 20:37:38 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w59BbbaV019129
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1528544258;
+        bh=1nyHRSUyl1WDsBKbPwAyFI8GEivpfbQhxiu5fnhBuYs=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=coUHMR3qjW8iBPGcvAgWjUd0/zYlf9tBwo+XD+9GEW1n+hUCYHemCmSoQGnTQVv6P
+         YLngU6HFr/R/FNkfxIl/JwYY7pK1Kfr6t4a4jaWB2GNhRbHPj/nFVAduoxRhteUL4G
+         nsCfeafAQfLTM7Ke6lsNII1T8WkqntBNTtgxC5EHfh1bXGIZT0PBG+m/BdToq/NKAE
+         JVoSOcKDHsddqgsNnL4nwTdPMWCvtprh92SwvLu7ggD8ZOsHSAKXcTFujnP3quNZys
+         40irT/kHHvUBgd3Tim4heE1IJB0S1iLDI8AxwuDGMOQDvWLM4eCuGV8/hPMUiQ79Re
+         yIQfAn3LoymUQ==
+X-Nifty-SrcIP: [209.85.217.180]
+Received: by mail-ua0-f180.google.com with SMTP id k14-v6so10580222uao.12;
+        Sat, 09 Jun 2018 04:37:38 -0700 (PDT)
+X-Gm-Message-State: APt69E2wtTeBpOdBAHO6DQ75eGZFkrU8x9Rlq+oWOn5qKfWOW2878lIi
+        ZviNhtIiDAsd0bC3vOFtqTpWWjb7owMUuRZvYg0=
+X-Google-Smtp-Source: ADUXVKLOo+0cV3JFFffiB98EM3SEgG4bMqOEQG3CwZkpmOec2E/rczVDq4SrJg+Zs/98/KBjrAw8CzNN7Wvr6yoZwpw=
+X-Received: by 2002:ab0:1048:: with SMTP id g8-v6mr6258937uab.52.1528544257099;
+ Sat, 09 Jun 2018 04:37:37 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:ab0:20ab:0:0:0:0:0 with HTTP; Sat, 9 Jun 2018 04:36:56 -0700 (PDT)
+In-Reply-To: <CAMuHMdX7oyxQKyc-DTXKG+o0SA_eJhKEFznn3bPxD0Gi=sA01A@mail.gmail.com>
+References: <1528417303-14842-1-git-send-email-yamada.masahiro@socionext.com> <CAMuHMdX7oyxQKyc-DTXKG+o0SA_eJhKEFznn3bPxD0Gi=sA01A@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Sat, 9 Jun 2018 20:36:56 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATYmFiCgB8jxOxKtPxjMeVqgXOspE+72B4=uLmuLSyyjw@mail.gmail.com>
+Message-ID: <CAK7LNATYmFiCgB8jxOxKtPxjMeVqgXOspE+72B4=uLmuLSyyjw@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: fix endless syncconfig in case arch Makefile sets CROSS_COMPILE
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-kbuild <linux-kbuild@vger.kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch removes the comaprison to bool value in the code
+2018-06-08 17:20 GMT+09:00 Geert Uytterhoeven <geert@linux-m68k.org>:
+> Hi Yamada-san,
+>
+> On Fri, Jun 8, 2018 at 2:21 AM, Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+>> Commit 21c54b774744 ("kconfig: show compiler version text in the top
+>> comment") was intended to detect the compiler upgrade, but Geert
+>> reported a breakage on the m68k build.
+>>
+>> The compiler upgrade is detected by the change of the environment
+>> variable, CC_VERSION_TEXT, which contains the first line of the output
+>> from $(CC) --version.  Currently, this works well when CROSS_COMPILE
+>> is given via the environment variable or the Make command line.
+>>
+>> However, some architectures such as m68k can specify CROSS_COMPILE
+>> from arch/$(SRCARCH)/Makefile as well.  In this case, "make ARCH=m68k"
+>> ends up with endless syncconfig loop.
+>>
+>>   $ make ARCH=m68k defconfig
+>>   *** Default configuration is based on 'multi_defconfig'
+>>   #
+>>   # configuration written to .config
+>>   #
+>>   $ make ARCH=m68k
+>>   scripts/kconfig/conf  --syncconfig Kconfig
+>>   scripts/kconfig/conf  --syncconfig Kconfig
+>>   scripts/kconfig/conf  --syncconfig Kconfig
+>>   scripts/kconfig/conf  --syncconfig Kconfig
+>
+> [...]
+>
+>> Fixes: 21c54b774744 ("kconfig: show compiler version text in the top comment")
+>> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>
+> Thanks for fixing this quickly!
+>
+> Tested-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Signed-off-by: Janani Sankara Babu <jananis37@gmail.com>
----
- drivers/staging/rtl8192e/rtl819x_BAProc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/rtl8192e/rtl819x_BAProc.c b/drivers/staging/rtl8192e/rtl819x_BAProc.c
-index ccd898a..c6de34a 100644
---- a/drivers/staging/rtl8192e/rtl819x_BAProc.c
-+++ b/drivers/staging/rtl8192e/rtl819x_BAProc.c
-@@ -365,7 +365,7 @@ int rtllib_rx_ADDBARsp(struct rtllib_device *ieee, struct sk_buff *skb)
- 	pAdmittedBA = &pTS->TxAdmittedBARecord;
+Applied to linux-kbuild.
 
 
--	if (pAdmittedBA->bValid == true) {
-+	if (pAdmittedBA->bValid) {
- 		netdev_dbg(ieee->dev, "%s(): ADDBA response already admitted\n",
- 			   __func__);
- 		return -1;
-@@ -485,7 +485,7 @@ void TsInitAddBA(struct rtllib_device *ieee, struct tx_ts_record *pTS,
- {
- 	struct ba_record *pBA = &pTS->TxPendingBARecord;
 
--	if (pBA->bValid == true && bOverwritePending == false)
-+	if (pBA->bValid && !bOverwritePending)
- 		return;
-
- 	DeActivateBAEntry(ieee, pBA);
---
-1.9.1
+-- 
+Best Regards
+Masahiro Yamada
