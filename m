@@ -1,80 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id PpcKDPJOGVuzegAAmS7hNA
-	; Thu, 07 Jun 2018 15:27:46 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id heZHB/h5G1s2DwAAmS7hNA
+	; Sat, 09 Jun 2018 06:55:52 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 1285F6089E; Thu,  7 Jun 2018 15:27:46 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sOgQKHIB"
+	id 06C00607E7; Sat,  9 Jun 2018 06:55:52 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 9A45860115;
-	Thu,  7 Jun 2018 15:27:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9A45860115
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 81115601D3;
+	Sat,  9 Jun 2018 06:55:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 81115601D3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753785AbeFGP1a (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:27:30 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60214 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933409AbeFGO51 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:57:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=dsa6ThT7gJQj3Ut/gWAzUKn6yLlkNfnBJLsuPvCngig=; b=sOgQKHIBw/iveujMEslcvBZ8W
-        NB/53bpDMlpuIeBlqLkYv/sm0tdyNz+1e5Ew0WwddUtGhwqJeo7h5QEASuSgvV+y+nK0J+wxz4TYi
-        G/6UKnE8tDk/Eglhj/V5TpstkR69Rt4GTJT1aMEABqgyy5vGO/fN9UBupCHZpstcbZ7ZLDJQZKs/U
-        3IM67p/B+4YQDTDDr4oX3FlNpGu/F6PQ6782NyiaPbwzMP+GA0mpjsAKP7+LJyd8cW+selugppQMs
-        6xteMiMa5qXeRlVwpv14OXFvR4hjh8kbIUvFywS1P/GLsPrPTUPjDPfsMpkqybeQhzhHvb0BM7Mh/
-        aHyYbr35w==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fQwLt-0005tx-9b; Thu, 07 Jun 2018 14:57:25 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Kees Cook <keescook@chromium.org>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
-Subject: [PATCH 4/6] Convert vhost to struct_size
-Date: Thu,  7 Jun 2018 07:57:18 -0700
-Message-Id: <20180607145720.22590-5-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180607145720.22590-1-willy@infradead.org>
-References: <20180607145720.22590-1-willy@infradead.org>
+        id S1753139AbeFIGzt (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 02:55:49 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:50781 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752599AbeFIGzr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 02:55:47 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 12AC9207C0; Sat,  9 Jun 2018 08:55:45 +0200 (CEST)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 82AF220702;
+        Sat,  9 Jun 2018 08:55:44 +0200 (CEST)
+Date: Sat, 9 Jun 2018 08:55:44 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Stefan Agner <stefan@agner.ch>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
+        pgaikwad@nvidia.com, dev@lynxeye.de, mirza.krak@gmail.com,
+        benjamin.lindqvist@endian.se, pdeschrijver@nvidia.com,
+        miquel.raynal@bootlin.com, linux-kernel@vger.kernel.org,
+        krzk@kernel.org, jonathanh@nvidia.com, marek.vasut@gmail.com,
+        robh+dt@kernel.org, thierry.reding@gmail.com, marcel@ziswiler.com,
+        richard@nod.at, linux-tegra@vger.kernel.org,
+        linux-mtd@lists.infradead.org, Dmitry Osipenko <digetx@gmail.com>,
+        computersforpeace@gmail.com, dwmw2@infradead.org
+Subject: Re: [PATCH v3 4/6] mtd: rawnand: add NVIDIA Tegra NAND Flash
+ controller driver
+Message-ID: <20180609085544.073d803d@bbrezillon>
+In-Reply-To: <20180609084615.6fba31ec@bbrezillon>
+References: <20180531221637.6017-1-stefan@agner.ch>
+        <20180531221637.6017-5-stefan@agner.ch>
+        <cdca329f-0b8d-0604-4cfb-b95baf84c867@gmail.com>
+        <d625dd8ca816543e03668b74921563c1@agner.ch>
+        <20180609075256.725354d6@bbrezillon>
+        <792ee71847f6f4752b8bcba65d22bf81@agner.ch>
+        <20180609084157.0c2f12e6@bbrezillon>
+        <20180609084615.6fba31ec@bbrezillon>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+On Sat, 9 Jun 2018 08:46:15 +0200
+Boris Brezillon <boris.brezillon@bootlin.com> wrote:
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
----
- drivers/vhost/vhost.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> On Sat, 9 Jun 2018 08:41:57 +0200
+> Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+> 
+> > On Sat, 09 Jun 2018 08:23:51 +0200
+> > Stefan Agner <stefan@agner.ch> wrote:
+> >   
+> > > On 09.06.2018 07:52, Boris Brezillon wrote:  
+> > > > On Fri, 08 Jun 2018 23:51:01 +0200
+> > > > Stefan Agner <stefan@agner.ch> wrote:
+> > > > 
+> > > >     
+> > > >> >
+> > > >> > void tegra_nand_controller_reset(struct tegra_nand_controller *ctrl)
+> > > >> > {
+> > > >> > 	int err;
+> > > >> >
+> > > >> > 	disable_irq(ctrl->irq);
+> > > >> >
+> > > >> > 	err = reset_control_reset(ctrl->rst);
+> > > >> > 	if (err) {
+> > > >> > 		dev_err(ctrl->dev, "Failed to reset HW: %d\n", err);
+> > > >> > 		msleep(HW_TIMEOUT);
+> > > >> > 	}
+> > > >> >
+> > > >> > 	writel_relaxed(NAND_CMD_STATUS, ctrl->regs + HWSTATUS_CMD);
+> > > >> > 	writel_relaxed(HWSTATUS_MASK, ctrl->regs + HWSTATUS_MASK);
+> > > >> > 	writel_relaxed(INT_MASK, ctrl->regs + ISR);    
+> > > >>
+> > > >> If we do a controller reset, there is much more state than that which
+> > > >> needs to be restored. A lot of it is not readily available currently
+> > > >> (timing, ECC settings...)    
+> > > > 
+> > > > This is actually a good test to detect what is not properly initialized
+> > > > by the driver. Timings should be configured correctly through    
+> > > > ->setup_data_interface(). ECC engine should be disabled by default and    
+> > > > only enabled when ->{read,write}_page() is called.
+> > > >     
+> > > 
+> > > Is setup_data_interface guaranteed to be called after a failed  
+> > > ->exec_op()/{read,write}_page()?  
+> > 
+> > No. Maybe I misunderstood when tegra_nand_controller_reset() was
+> > supposed to be called. That's something I would call only once, early
+> > in the probe function, so that the controller is placed in a well-known
+> > state before we start using it. Definitely not something you should
+> > call after each error.  
+> 
+> Note that if you really want to reset the controller after an error,
+> you should also iterate over all chips and call nand_reset() on them.
 
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index 895eaa25807c..f9bce818da11 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -1286,7 +1286,8 @@ static long vhost_set_memory(struct vhost_dev *d, struct vhost_memory __user *m)
- 		return -EOPNOTSUPP;
- 	if (mem.nregions > max_mem_regions)
- 		return -E2BIG;
--	newmem = kvzalloc(size + mem.nregions * sizeof(*m->regions), GFP_KERNEL);
-+	newmem = kvzalloc(struct_size(newmem, regions, mem.nregions),
-+			GFP_KERNEL);
- 	if (!newmem)
- 		return -ENOMEM;
- 
--- 
-2.17.0
+And that's clearly not possible to call nand_reset() from ->exec_op(),
+otherwise you might recurse indefinitely in ->exec_op() if it keeps
+failing, because nand_reset() relies on ->exec_op() to reset the chip.
+So, as you said initially, not a good idea to reset the controller in
+this case. But maybe you can clear the interrupts, mask them and cancel
+the current operation (if any).
