@@ -1,115 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id i8WwMvuPGFunGwAAmS7hNA
-	; Thu, 07 Jun 2018 01:52:59 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id nZdhOZNtG1uzTAAAmS7hNA
+	; Sat, 09 Jun 2018 06:04:28 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id B4C846089E; Thu,  7 Jun 2018 01:52:59 +0000 (UTC)
+	id 07E86608B8; Sat,  9 Jun 2018 06:04:28 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="KgZU6b4/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O1T+bJUk"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_MED autolearn=unavailable
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 41EE5601D2;
-	Thu,  7 Jun 2018 01:52:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 41EE5601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 7B93960290;
+	Sat,  9 Jun 2018 06:04:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7B93960290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752963AbeFGBw5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 21:52:57 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:54722 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752729AbeFGBwz (ORCPT
+        id S1753101AbeFIGEZ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 02:04:25 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:39692 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752858AbeFIGEY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 21:52:55 -0400
-Received: by mail-it0-f68.google.com with SMTP id 76-v6so10787686itx.4
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Jun 2018 18:52:54 -0700 (PDT)
+        Sat, 9 Jun 2018 02:04:24 -0400
+Received: by mail-pf0-f196.google.com with SMTP id r11-v6so7644127pfl.6;
+        Fri, 08 Jun 2018 23:04:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=R6dN60/v1VfATXh32y0xGDxE3VZXR4QJnJJGxuLiqQU=;
-        b=KgZU6b4/+7Sajo+RIKtYRWjK5l5t3Uh6jv5tS5/7yy7D2zW0EpVSkoyq9Ytm1eOi/6
-         eFQ3uBR3Ndg5BRAO4ROyVHEmDsQs9HflreX7ZsSroFqSgQYu/2RC+qnCHj4VdCce0XZr
-         Zd/JsaRNfU6n69pfB5Q9RZbSYQp50wMVYO8Y8NThOWS5dqWuHwNvHZwkhE13EWnOqDii
-         /dmSfxU+agOaXVUU48wVviStwmtI57eAvC04zvT8WUrHtR6PWQNokptUwWI0ZG4dbImk
-         EoPqOId08VgGstMnvtwj9wltoAmVztKskxD3+KdO7BgaG0pW1PM8T9NFy2adxJn91P3w
-         ZQdQ==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lqpCV6I/zxEEob+QMPJjkt6PRG/TH6uL89zWXeFMJ+A=;
+        b=O1T+bJUkLwyMZyxx5AeNOBZ0tscg7sGYZjW9KaGiDsto1+4y+6x8QeV8/wCCKn1I/6
+         XZnoWphi1xAgcNSKpswaPbC+ZdxGfR81Ic8NOugoW3yrkMfn3r5dxBsylns7sbCmfKvX
+         OWeSpND4j2a0BGHRXE4fCDwZsts3c9WquFvVon+ZH+681iN88zNRRVRMKEmRRRN93iKr
+         vSTWyNJY3KdFt8AIRuaepnZsRhS+oO+2hOmDtvRHfjuldf0AteQXTctm7vzD9WaAHasL
+         /xI9tgXEbZ2m4yBj5jOgNfc9dwmYfA5XltXBJAOO6DFXAumgzuIkE2DIttnZTeG1mq0X
+         Wzuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=R6dN60/v1VfATXh32y0xGDxE3VZXR4QJnJJGxuLiqQU=;
-        b=sYcKgl+BccmPZaEyH4bSw/k57Xkm5UdvmM1DqZq/xWXcexV0DJyYxZ2tr2AAU4OpDG
-         NA4v6znJz1TqaFSrBX7WJV4+cXx3D0kFzExv8qmMr8tsLRTqXWINwWmfFcOoiWfaYZ5Q
-         zvzpARXXyoAze5zQ0LDVHxLwPFmb8BoQOEqnxyGd35siB0cWLd660RMQqGA2ij5JibUV
-         tvPqRRBWAP8p9cE+OEfxPN6hw1iMYHDI36R5GJR+QBzVJw4R7mlLFmAokIzU2zR+vWU6
-         +weQSTVQM6S4AEycYWKhlvJwWFisEDjh0NEXg9OfzC/6NerHKkUtxKwxJnNvzX6HmbFY
-         M8Kg==
-X-Gm-Message-State: APt69E14gvEWY0QpOHUSQedwuQ0SstJmE2f8mrOUVCKxmcHbxj9nDHVc
-        YhLT1I/DTLpGKPZGMxY0sc8qQg==
-X-Google-Smtp-Source: ADUXVKJa1wM15Wd9ZQVvKSHJVMV+WH+p0ycSDC1OFmWYuO1ZRaDasQZtva3tvz3YR46vlewIskWBfg==
-X-Received: by 2002:a24:cf57:: with SMTP id y84-v6mr255616itf.98.1528336374267;
-        Wed, 06 Jun 2018 18:52:54 -0700 (PDT)
-Received: from [192.168.1.212] (107.191.0.158.static.utbb.net. [107.191.0.158])
-        by smtp.gmail.com with ESMTPSA id e18-v6sm239213itc.3.2018.06.06.18.52.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 06 Jun 2018 18:52:53 -0700 (PDT)
-Subject: Re: [PATCH] block: Add block level changes for inline encryption
-To: Ladvine D Almeida <Ladvine.DAlmeida@synopsys.com>,
-        Christoph Hellwig <hch@infradead.org>
-Cc: Hannes Reinecke <hare@suse.com>,
-        "ming.lei@redhat.com" <ming.lei@redhat.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Manjunath M Bettegowda <manjumb@synopsys.com>,
-        Prabu Thangamuthu <prabut@synopsys.com>,
-        Tejas Joglekar <joglekar@synopsys.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>
-References: <d3624fab-e6fc-f14d-c780-db703c809068@synopsys.com>
- <20180601081330.GA13067@infradead.org>
- <BD7FB879CC136E419544C8E2AE7B9C3020C566@IN01WEMBXA.internal.synopsys.com>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <918609fa-8721-0ee1-801e-4c29b64ac9ae@kernel.dk>
-Date: Wed, 6 Jun 2018 19:52:51 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        bh=lqpCV6I/zxEEob+QMPJjkt6PRG/TH6uL89zWXeFMJ+A=;
+        b=G8WwNjIpMlTPFMgw2uzQ2CUVNwhEsPfZu/+izS+/eD971v60taV+65q9kSAnijBe52
+         zlhWSuBfn67QJ8WgI0REQMR48mcjDh9D7Cstg6/L3z6oUCRE6P8Xws5SuPSGQS3s8RV/
+         KJUETxDHSwTIUp7Mr85Ci8MEocCIPP08AouRHmGe6pKqoESPZ7AdJ9Pe9qVTZraKDlY1
+         WIaOS1/PStIGgeGccA60QFoUVgRHRk0OayaCOA1Ra01/3SfBHpqztUgOI8EKMgG8CN0x
+         Rn6pCSTHr/xHKapFCrMR0p3Z8ZEZIUZ1BCzx8KM5GaKEBtoPd4bOSMEnP3dCbmqL6gvh
+         sB5g==
+X-Gm-Message-State: APt69E3UtlIHK85ajfV18RMmGBb32BlSv3WHhtolTey5IM8rkZcqQPjn
+        yLJNvksXMI4WkdFkYlyIsu8=
+X-Google-Smtp-Source: ADUXVKLHHIK1hwXSh0yffj+F2y/TzBww/mi1IuzMDLL5Ng73hT+9icpm0bwszVV3F3cBm6J7X6PQ6w==
+X-Received: by 2002:a65:5c02:: with SMTP id u2-v6mr7742932pgr.304.1528524263603;
+        Fri, 08 Jun 2018 23:04:23 -0700 (PDT)
+Received: from joonhwan-virtualbox.localnet ([220.149.255.57])
+        by smtp.gmail.com with ESMTPSA id p22-v6sm54777924pfj.166.2018.06.08.23.04.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 08 Jun 2018 23:04:23 -0700 (PDT)
+From: "JoonHwan.Kim" <spilit464@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: neil@brown.name, blogic@openwrt.org, christian@lkamp.de,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH 2/2] staging: mt7621-spi: fix indentation for switch statement
+Date: Sat, 09 Jun 2018 15:04:21 +0900
+Message-ID: <2677421.r3Zvpk0yfm@joonhwan-virtualbox>
 MIME-Version: 1.0
-In-Reply-To: <BD7FB879CC136E419544C8E2AE7B9C3020C566@IN01WEMBXA.internal.synopsys.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/6/18 1:35 AM, Ladvine D Almeida wrote:
-> On Friday 01 June 2018 09:13 AM, Christoph Hellwig wrote:
->> On Mon, May 28, 2018 at 02:43:09PM +0100, Ladvine D Almeida wrote:
->>> This patch introduces new variable under bio structure to
->>> facilitate inline encryption. This variable is used to
->>> associate I/O requests to crypto information.
->> This seems to be missing a whole lot of context.  Where is the whole
->> series showing what you are trying to do?
->>
-> Christoph,
-> 
-> The patches are generated in the below > manner, with a thought of
-> sending separately to the MAINTAINERS responsible for each.
+* fix checkpatch.pl error:
+  ERROR: switch and case should be at the same indent
 
-What both Christoph and I have said is that it's _impossible_ to review
-changes when you don't know what is being built on top of it. The block
-change, by itself, is utterly useless. The use case needs to be seen.
-But apart from that, my comments on why it's doing it completely
-backwards still apply, and I've outlined how you need to fix it. The
-patch, in its current form, isn't going anywhere.
+Signed-off-by: Joonhwan Kim <spilit464@gmail.com>
+---
+ drivers/staging/mt7621-spi/spi-mt7621.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
+diff --git a/drivers/staging/mt7621-spi/spi-mt7621.c b/drivers/staging/mt7621-spi/spi-mt7621.c
+index a11cca3e2304..11a65ec48178 100644
+--- a/drivers/staging/mt7621-spi/spi-mt7621.c
++++ b/drivers/staging/mt7621-spi/spi-mt7621.c
+@@ -139,17 +139,17 @@ static int mt7621_spi_prepare(struct spi_device *spi, unsigned int speed)
+ 
+ 	reg &= ~(MT7621_CPHA | MT7621_CPOL);
+ 	switch(spi->mode & (SPI_CPOL | SPI_CPHA)) {
+-		case SPI_MODE_0:
+-			break;
+-		case SPI_MODE_1:
+-			reg |= MT7621_CPHA;
+-			break;
+-		case SPI_MODE_2:
+-			reg |= MT7621_CPOL;
+-			break;
+-		case SPI_MODE_3:
+-			reg |= MT7621_CPOL | MT7621_CPHA;
+-			break;
++	case SPI_MODE_0:
++		break;
++	case SPI_MODE_1:
++		reg |= MT7621_CPHA;
++		break;
++	case SPI_MODE_2:
++		reg |= MT7621_CPOL;
++		break;
++	case SPI_MODE_3:
++		reg |= MT7621_CPOL | MT7621_CPHA;
++		break;
+ 	}
+ 	mt7621_spi_write(rs, MT7621_SPI_MASTER, reg);
+ 
 -- 
-Jens Axboe
+2.17.0
