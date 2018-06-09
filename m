@@ -1,95 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id YJw0JPaOHluVAgAAmS7hNA
-	; Mon, 11 Jun 2018 15:02:14 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id k/YFLbHzG1sRZwAAmS7hNA
+	; Sat, 09 Jun 2018 15:35:28 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 82B2060791; Mon, 11 Jun 2018 15:02:14 +0000 (UTC)
+	id A0D0F608C8; Sat,  9 Jun 2018 15:35:28 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pRRNlHpU"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 0E1F060351;
-	Mon, 11 Jun 2018 15:02:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0E1F060351
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 144BF606FA;
+	Sat,  9 Jun 2018 15:35:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 144BF606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754012AbeFKPCM (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 11:02:12 -0400
-Received: from mga05.intel.com ([192.55.52.43]:43617 "EHLO mga05.intel.com"
+        id S933053AbeFIPfZ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:35:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37608 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751968AbeFKPCK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 11:02:10 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2018 08:02:09 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,502,1520924400";
-   d="scan'208";a="63614978"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.135])
-  by orsmga001.jf.intel.com with ESMTP; 11 Jun 2018 08:02:09 -0700
-Message-ID: <1528729329.9779.28.camel@intel.com>
-Subject: Re: [PATCH v11 11/13] intel_sgx: ptrace() support
-From: Sean Christopherson <sean.j.christopherson@intel.com>
-To: Dave Hansen <dave.hansen@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        x86@kernel.org, platform-driver-x86@vger.kernel.org
-Cc: nhorman@redhat.com, npmccallum@redhat.com,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        "open list:INTEL SGX" <intel-sgx-kernel-dev@lists.01.org>,
-        open list <linux-kernel@vger.kernel.org>
-Date: Mon, 11 Jun 2018 08:02:09 -0700
-In-Reply-To: <91e35b3e-b42d-b3d5-752c-031973e69273@intel.com>
-References: <20180608171216.26521-1-jarkko.sakkinen@linux.intel.com>
-         <20180608171216.26521-12-jarkko.sakkinen@linux.intel.com>
-         <91e35b3e-b42d-b3d5-752c-031973e69273@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S932343AbeFIPfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:35:20 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E0147208A3;
+        Sat,  9 Jun 2018 15:35:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558519;
+        bh=BLyaWLQk7TLQjI/2EbevoVZ4H7Lt6HDmVSPFNc7TT/8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=pRRNlHpURyzoXAFRSF2XG99seblXq9cJg2A61KtbgbnxQB75v8AFO3j0DlnksNWlx
+         dFUvMXlYaf18Ra5Akf2xNdFNeOxws7/gJh1teIMR/ISLPC9aSFP5gsIHFbYXr80To3
+         kJwDwdBGAUhYUSIycLuquu92QUXJ0iEWTho10XeA=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, DaeRyong Jeong <threeearcat@gmail.com>,
+        Jason Wang <jasowang@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 28/41] vhost: synchronize IOTLB message with dev cleanup
+Date: Sat,  9 Jun 2018 17:30:00 +0200
+Message-Id: <20180609152927.953792954@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609152926.389750182@linuxfoundation.org>
+References: <20180609152926.389750182@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-06-08 at 11:34 -0700, Dave Hansen wrote:
-> On 06/08/2018 10:09 AM, Jarkko Sakkinen wrote:
-> > 
-> > +		ret = sgx_edbgrd(encl, entry, align, data);
-> > +		if (ret)
-> > +			break;
-> > +		if (write) {
-> > +			memcpy(data + offset, buf + i, cnt);
-> > +			ret = sgx_edbgwr(encl, entry, align, data);
-> > +			if (ret)
-> > +				break;
-> > +		}
-> > +		else
-> > +			memcpy(buf + i,data + offset, cnt);
-> > +	}
-> The SGX instructions like "edbgrd" be great to put on a license plat,
-> but we can do better in the kernel.  Can you give these reasonable
-> english names, please?  sgx_debug_write(), maybe?
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-IMO the function names for ENCLS leafs are appropriate.  The real
-issue is the lack of documentation of the ENCLS helpers and their
-naming conventions.
+------------------
 
-The sgx_<leaf> functions, e.g. sgx_edbgrd(), are essentially direct
-invocations of the specific leaf, i.e. they are dumb wrappers to
-the lower level leaf functions, e.g. __edbgrd().  The wrappers exist
-primarily to deal with the boilerplate necessary to access a page in
-the EPC.  sgx_<leaf> conveys that the function contains the preamble
-and/or postamble needed to execute its leaf, but otherwise does not
-contain any logic.
+From: Jason Wang <jasowang@redhat.com>
 
-Functions with actual logic do have English names, e.g.
-sgx_encl_init(), sgx_encl_add_page(), sgx_encl_modify_pages() etc...
+[ Upstream commit 1b15ad683ab42a203f98b67045b40720e99d0e9a ]
 
-> Note that we have plenty of incomprehensible instruction names in the
-> kernel like "wrpkru", but we do our best to keep them as confined as
-> possible and make sure they don't hurt code readability.
+DaeRyong Jeong reports a race between vhost_dev_cleanup() and
+vhost_process_iotlb_msg():
+
+Thread interleaving:
+CPU0 (vhost_process_iotlb_msg)			CPU1 (vhost_dev_cleanup)
+(In the case of both VHOST_IOTLB_UPDATE and
+VHOST_IOTLB_INVALIDATE)
+
+=====						=====
+						vhost_umem_clean(dev->iotlb);
+if (!dev->iotlb) {
+	        ret = -EFAULT;
+		        break;
+}
+						dev->iotlb = NULL;
+
+The reason is we don't synchronize between them, fixing by protecting
+vhost_process_iotlb_msg() with dev mutex.
+
+Reported-by: DaeRyong Jeong <threeearcat@gmail.com>
+Fixes: 6b1e6cc7855b0 ("vhost: new device IOTLB API")
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/vhost/vhost.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/drivers/vhost/vhost.c
++++ b/drivers/vhost/vhost.c
+@@ -993,6 +993,7 @@ static int vhost_process_iotlb_msg(struc
+ {
+ 	int ret = 0;
+ 
++	mutex_lock(&dev->mutex);
+ 	vhost_dev_lock_vqs(dev);
+ 	switch (msg->type) {
+ 	case VHOST_IOTLB_UPDATE:
+@@ -1024,6 +1025,8 @@ static int vhost_process_iotlb_msg(struc
+ 	}
+ 
+ 	vhost_dev_unlock_vqs(dev);
++	mutex_unlock(&dev->mutex);
++
+ 	return ret;
+ }
+ ssize_t vhost_chr_write_iter(struct vhost_dev *dev,
