@@ -1,139 +1,192 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id QwmzOs/SGVt2TgAAmS7hNA
-	; Fri, 08 Jun 2018 00:51:28 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id DnxnFgLzG1tQYAAAmS7hNA
+	; Sat, 09 Jun 2018 15:34:06 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 1FE9F6089E; Fri,  8 Jun 2018 00:51:28 +0000 (UTC)
+	id C4E77608CA; Sat,  9 Jun 2018 15:34:06 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Zht5tz7v"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UsyTzyC/"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id A12D7605A5;
-	Fri,  8 Jun 2018 00:51:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A12D7605A5
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by smtp.codeaurora.org (Postfix) with ESMTP id 24CA8607DC;
+	Sat,  9 Jun 2018 15:34:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 24CA8607DC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752459AbeFHAvZ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 20:51:25 -0400
-Received: from ozlabs.org ([203.11.71.1]:48395 "EHLO ozlabs.org"
+        id S932781AbeFIPeC (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:34:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36176 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751914AbeFHAvY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 20:51:24 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        id S932769AbeFIPds (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:33:48 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 4123kd3wPPz9ry1;
-        Fri,  8 Jun 2018 10:51:21 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1528419082;
-        bh=OAKoX5U3kzs9ANU+k7ZvBVMycbwKFM+K6Qic4ao3wm0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Zht5tz7vlPbOGxJME4rPuo7ShFX2F9mbVMXL4pCVUd60GPE6joZp/LDA67QmLPjLy
-         Dsj2Q0+LEBFSUI3Z7UklBEdUOdPjYW5YwQWREDgG6hHH/O8gG8PMILwO4+PcdMF1aT
-         DijEk+OJUfEyttQfoHlGPK56Rr9fhBovujHq8w4oJMXDAFZRg4y8eBTReI3+/MOqMD
-         t0KSkHaPWiVhNTkm6l8erW3O4mn6+h0DE5haD6eTFhg/3FD7uG7xPZmLyRWhg1D1fq
-         lbZgmc9WzNM3OdF1SF5HNLLBNMRw/BssXh+jfd6z4USucJEyjn5e8JcD4r/WmXw1M6
-         uwtTO5TI+UhPw==
-Date: Fri, 8 Jun 2018 10:51:20 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Eduardo Valentin <edubezval@gmail.com>
-Subject: linux-next: build failure after merge of the thermal tree
-Message-ID: <20180608105120.2e232f44@canb.auug.org.au>
+        by mail.kernel.org (Postfix) with ESMTPSA id 91F7E204EC;
+        Sat,  9 Jun 2018 15:33:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558428;
+        bh=U1dAjqJ2MEjTz9Ny+lPLWFyvnfEdhWFuYNLo9WYJtc8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=UsyTzyC/s7n2jwsGV8Z2QDOARVa1PmVWh7AK2yQrrgEAqwOwVK4PQ7k0LJkJ1cljY
+         m6xPYs72xWzZuiOFIJDyBnaHecczryqAC7NE4bIEiCr3VY8kPrQpDRXHbyXbeLeIgy
+         8jUnxXP4NVWDIXXsOePPe3cMdLKKXsnOPs8lndpw=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>
+Subject: [PATCH 4.16 48/48] PCI: hv: Do not wait forever on a device that has disappeared
+Date: Sat,  9 Jun 2018 17:30:00 +0200
+Message-Id: <20180609145951.076280982@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
+References: <20180609145947.679103414@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/OfKy.SFc+sZS2y_ArD9scpd"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/OfKy.SFc+sZS2y_ArD9scpd
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-Hi Zhang,
+------------------
 
-After merging the thermal tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+From: Dexuan Cui <decui@microsoft.com>
 
-drivers/thermal/qcom/tsens.c: In function 'tsens_probe':
-drivers/thermal/qcom/tsens.c:144:31: error: 's' undeclared (first use in th=
-is function)
-         num_sensors * sizeof(*s), GFP_KERNEL);
-                               ^
+commit c3635da2a336441253c33298b87b3042db100725 upstream.
 
-Caused by commit
+Before the guest finishes the device initialization, the device can be
+removed anytime by the host, and after that the host won't respond to
+the guest's request, so the guest should be prepared to handle this
+case.
 
-  6d7c70d1cd65 ("thermal: qcom: tsens: Allow number of sensors to come from=
- DT")
+Add a polling mechanism to detect device presence.
 
-interacting with commit
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+[lorenzo.pieralisi@arm.com: edited commit log]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: K. Y. Srinivasan <kys@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-  0ed2dd03b94b ("treewide: Use struct_size() for devm_kmalloc() and friends=
-")
-
-from Linus' tree.  It looks like git somehow screwed up the automatic
-conflict resolution.
-
-I have added the following patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 8 Jun 2018 10:46:46 +1000
-Subject: [PATCH] thermal: gcom: fix up bad git conflict resolution
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- drivers/thermal/qcom/tsens.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pci/host/pci-hyperv.c |   46 +++++++++++++++++++++++++++++++-----------
+ 1 file changed, 34 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/thermal/qcom/tsens.c b/drivers/thermal/qcom/tsens.c
-index fb8c87f55240..6164fd36dda3 100644
---- a/drivers/thermal/qcom/tsens.c
-+++ b/drivers/thermal/qcom/tsens.c
-@@ -140,8 +140,8 @@ static int tsens_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
-=20
--	tmdev =3D devm_kzalloc(dev, sizeof(*tmdev) +
--			     num_sensors * sizeof(*s), GFP_KERNEL);
-+	tmdev =3D devm_kzalloc(dev, struct_size(tmdev, sensor, num_sensors),
-+			     GFP_KERNEL);
- 	if (!tmdev)
- 		return -ENOMEM;
-=20
---=20
-2.17.1
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/OfKy.SFc+sZS2y_ArD9scpd
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsZ0wgACgkQAVBC80lX
-0Gyvtgf/XFkDsz5595Bs/FzL4PZATY+ULoGjE68Fn/WpGqbNzDMY49vut2SNCPdF
-gFxjRwUrb7Z0s14HuAh7uq0RUAzzEvW+xVZgnq/gF8UHziol/wYjSCQiwQE+QPw7
-dyn9PlUrcgytU0W6GZakeLjoWRMigDfTFkiFSDiPbqHirXBXtZXE5rBWk+QQH8ye
-nmADXINOpco+MxNdtn4fWMgc1IdbQD7jaip0tuehQHbB88UI5IihPXISWnSUpl1K
-t5xLUEK+/+Q+e4H6HB1ExTj5xJSVUzXJrfKIH63qzHHgFC6oKFpAdQGQcTNglz5o
-fEsLnp0T98bgzOjJ23LYgqk5Yr37Tg==
-=KzrQ
------END PGP SIGNATURE-----
-
---Sig_/OfKy.SFc+sZS2y_ArD9scpd--
+--- a/drivers/pci/host/pci-hyperv.c
++++ b/drivers/pci/host/pci-hyperv.c
+@@ -556,6 +556,26 @@ static void put_pcichild(struct hv_pci_d
+ static void get_hvpcibus(struct hv_pcibus_device *hv_pcibus);
+ static void put_hvpcibus(struct hv_pcibus_device *hv_pcibus);
+ 
++/*
++ * There is no good way to get notified from vmbus_onoffer_rescind(),
++ * so let's use polling here, since this is not a hot path.
++ */
++static int wait_for_response(struct hv_device *hdev,
++			     struct completion *comp)
++{
++	while (true) {
++		if (hdev->channel->rescind) {
++			dev_warn_once(&hdev->device, "The device is gone.\n");
++			return -ENODEV;
++		}
++
++		if (wait_for_completion_timeout(comp, HZ / 10))
++			break;
++	}
++
++	return 0;
++}
++
+ /**
+  * devfn_to_wslot() - Convert from Linux PCI slot to Windows
+  * @devfn:	The Linux representation of PCI slot
+@@ -1568,7 +1588,8 @@ static struct hv_pci_dev *new_pcichild_d
+ 	if (ret)
+ 		goto error;
+ 
+-	wait_for_completion(&comp_pkt.host_event);
++	if (wait_for_response(hbus->hdev, &comp_pkt.host_event))
++		goto error;
+ 
+ 	hpdev->desc = *desc;
+ 	refcount_set(&hpdev->refs, 1);
+@@ -2061,15 +2082,16 @@ static int hv_pci_protocol_negotiation(s
+ 				sizeof(struct pci_version_request),
+ 				(unsigned long)pkt, VM_PKT_DATA_INBAND,
+ 				VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED);
++		if (!ret)
++			ret = wait_for_response(hdev, &comp_pkt.host_event);
++
+ 		if (ret) {
+ 			dev_err(&hdev->device,
+-				"PCI Pass-through VSP failed sending version reqquest: %#x",
++				"PCI Pass-through VSP failed to request version: %d",
+ 				ret);
+ 			goto exit;
+ 		}
+ 
+-		wait_for_completion(&comp_pkt.host_event);
+-
+ 		if (comp_pkt.completion_status >= 0) {
+ 			pci_protocol_version = pci_protocol_versions[i];
+ 			dev_info(&hdev->device,
+@@ -2278,11 +2300,12 @@ static int hv_pci_enter_d0(struct hv_dev
+ 	ret = vmbus_sendpacket(hdev->channel, d0_entry, sizeof(*d0_entry),
+ 			       (unsigned long)pkt, VM_PKT_DATA_INBAND,
+ 			       VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED);
++	if (!ret)
++		ret = wait_for_response(hdev, &comp_pkt.host_event);
++
+ 	if (ret)
+ 		goto exit;
+ 
+-	wait_for_completion(&comp_pkt.host_event);
+-
+ 	if (comp_pkt.completion_status < 0) {
+ 		dev_err(&hdev->device,
+ 			"PCI Pass-through VSP failed D0 Entry with status %x\n",
+@@ -2322,11 +2345,10 @@ static int hv_pci_query_relations(struct
+ 
+ 	ret = vmbus_sendpacket(hdev->channel, &message, sizeof(message),
+ 			       0, VM_PKT_DATA_INBAND, 0);
+-	if (ret)
+-		return ret;
++	if (!ret)
++		ret = wait_for_response(hdev, &comp);
+ 
+-	wait_for_completion(&comp);
+-	return 0;
++	return ret;
+ }
+ 
+ /**
+@@ -2396,11 +2418,11 @@ static int hv_send_resources_allocated(s
+ 				size_res, (unsigned long)pkt,
+ 				VM_PKT_DATA_INBAND,
+ 				VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED);
++		if (!ret)
++			ret = wait_for_response(hdev, &comp_pkt.host_event);
+ 		if (ret)
+ 			break;
+ 
+-		wait_for_completion(&comp_pkt.host_event);
+-
+ 		if (comp_pkt.completion_status < 0) {
+ 			ret = -EPROTO;
+ 			dev_err(&hdev->device,
