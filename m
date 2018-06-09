@@ -1,129 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id +8UtGKWCGFviQgAAmS7hNA
-	; Thu, 07 Jun 2018 01:00:32 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 5qvdBaVrG1uYMwAAmS7hNA
+	; Sat, 09 Jun 2018 06:06:00 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 9AD946089E; Thu,  7 Jun 2018 01:00:32 +0000 (UTC)
+	id 7BEFA607E7; Sat,  9 Jun 2018 06:06:00 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="n+Q1brBE"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+X-Spam-Status: No, score=-2.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,FROM_LOCAL_NOVOWEL,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 1E402605BD;
-	Thu,  7 Jun 2018 01:00:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1E402605BD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 063E960290;
+	Sat,  9 Jun 2018 06:06:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 063E960290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752676AbeFGBA3 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 21:00:29 -0400
-Received: from mga11.intel.com ([192.55.52.93]:40678 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752295AbeFGBA2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 21:00:28 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2018 18:00:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,485,1520924400";
-   d="scan'208";a="54597682"
-Received: from yjin15-mobl.ccr.corp.intel.com (HELO [10.239.161.30]) ([10.239.161.30])
-  by fmsmga002.fm.intel.com with ESMTP; 06 Jun 2018 18:00:26 -0700
-Subject: Re: [PATCH v2 2/3] perf script python: Add more PMU fields
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andi Kleen <andi@firstfloor.org>,
-        Kan Liang <kan.liang@intel.com>
-References: <1527843663-32288-1-git-send-email-yao.jin@linux.intel.com>
- <1527843663-32288-3-git-send-email-yao.jin@linux.intel.com>
- <20180606183657.GI24381@kernel.org>
-From: "Jin, Yao" <yao.jin@linux.intel.com>
-Message-ID: <08e12673-848e-eedb-fb01-38fb9f760c8b@linux.intel.com>
-Date: Thu, 7 Jun 2018 09:00:25 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1753144AbeFIGF5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 02:05:57 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:32989 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751344AbeFIGF4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 02:05:56 -0400
+Received: by mail-pl0-f66.google.com with SMTP id n10-v6so9435017plp.0;
+        Fri, 08 Jun 2018 23:05:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=m+lTtu5pCyGVqhSoKBSwj77hf+J2TDR1gJ5l7A/CQEw=;
+        b=n+Q1brBEo8Wf7vgyNK5BkK264ybPAdO8PMnnUyYAqRM82TRzh2TjYghbfkJMkNTIOG
+         PlADMJmrlj70hpZmBwXYLpL/TgNeKcTua/ustWHUYkLoKtsINTMqcvXvKi67Mu/dznT7
+         NQfWSybSwUrSgUg3+u0EgdQOwp/KFFLWoVgmYP++QqitNIHbiwMgpsB18TOywu76rp8a
+         OiH0K9jJqkUU4nPuslCo2SQv3H7JJwZyDidVNILqcmPXq5ivE6RBaRl0nrZgnGgJe1ne
+         ndlS8okllGjWxE++ObvTxYZVjN0QR/mFZEWyaduX4YbioSp688pSsQ/EVCquumIh6Kbt
+         6dtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=m+lTtu5pCyGVqhSoKBSwj77hf+J2TDR1gJ5l7A/CQEw=;
+        b=X/4+U0QrZmhyF8uUpEmzNLGSugPnL1kY3XeJdbgCKmYc6nd7T5IAUoy1HmWgxhVpro
+         wqi3e5KiOwPgQS5GUb0eititebbHW6joTTfHrVPocnAHGDXBnc+P9eaMkSeHmxmraU5L
+         WruKMzfrPeO3XnWO9DClRHdczagzAA1yIhkMM1kD6a+6ufsHC3rMd/p53qa8QMKhl0TR
+         Gsuf468Mvgok2sHT2mYQzeyezr8CSijZgJWEu8Y2G1EU3PBt9xDKTn/eCvwAKtNCIqgE
+         HAGxn2zQgGvn+bWFwQOBu43yb7Dpisyb9XbK8IFYpg4/39r3/dPhYFqVo6roaJdoVhWL
+         VFAg==
+X-Gm-Message-State: APt69E00utDM4AiX6qNdCfElOecCMfu4bBFewswsXBKtJ/WFfaPgnGWC
+        DEok5rSRZo3MAR/EpPvIMu0=
+X-Google-Smtp-Source: ADUXVKINRRWBGDDmIfRbxFzKKfxVoRF+uJTfmDxx7mExhD6CCTOV+W7SJYJhzMvIa6kMgis27ADWBg==
+X-Received: by 2002:a17:902:900a:: with SMTP id a10-v6mr9598160plp.41.1528524355605;
+        Fri, 08 Jun 2018 23:05:55 -0700 (PDT)
+Received: from os-virtualbox.localnet ([220.149.255.57])
+        by smtp.gmail.com with ESMTPSA id 131-v6sm104075239pfa.128.2018.06.08.23.05.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Jun 2018 23:05:54 -0700 (PDT)
+From: thtlwlsmsgkfla@gmail.com
+To: gregkh@linuxfoundation.org
+Cc: davem@davemloft.net, colin.king@canonical.com,
+        johannes.berg@intel.com, Linyu.Yuan@alcatel-sbell.com.cn,
+        keescook@chromium.org, tvboxspy@gmail.com,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH 1/2] staging: rtl8192e: remove brace for single statement
+Date: Sat, 09 Jun 2018 15:05:56 +0900
+Message-ID: <1986308.HpuS17FQ0J@os-virtualbox>
+User-Agent: KMail/5.1.3 (Linux/4.13.0-36-generic; KDE/5.18.0; x86_64; ; )
 MIME-Version: 1.0
-In-Reply-To: <20180606183657.GI24381@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+* fix checkpatch.pl warning:
+  WARNING: braces { are not necessary for single statement blocks
 
+Signed-off-by: Hyunil Kim <thtlwlsmsgkfla@gmail.com>
+---
+ drivers/staging/rtl8192e/rtllib_softmac.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-On 6/7/2018 2:36 AM, Arnaldo Carvalho de Melo wrote:
-> Em Fri, Jun 01, 2018 at 05:01:02PM +0800, Jin Yao escreveu:
-> 
-> <SNIP>
-> 
->> +static int get_symoff(struct symbol *sym, struct addr_location *al,
->> +		      bool print_off, char *bf, int size)
->> +{
->> +	unsigned long offset;
->> +
->> +	if (!sym || !sym->name)
->> +		return scnprintf(bf, size, "%s", "[unknown]");
-> 
->    52    54.22 ubuntu:17.04                  : FAIL gcc (Ubuntu 6.3.0-12ubuntu2) 6.3.0 20170406
-> 
->    CC       /tmp/build/perf/util/scripting-engines/trace-event-python.o
-> util/scripting-engines/trace-event-python.c:534:20: error: address of array 'sym->name' will always evaluate to 'true' [-Werror,-Wpointer-bool-conversion]
->          if (!sym || !sym->name)
->                      ~~~~~~^~~~
-> 1 error generated.
-> mv: cannot stat '/tmp/build/perf/util/scripting-engines/.trace-event-python.o.tmp': No such file or directory
-> /git/linux/tools/build/Makefile.build:96: recipe for target '/tmp/build/perf/util/scripting-engines/trace-event-python.o' failed
-> make[5]: *** [/tmp/build/perf/util/scripting-engines/trace-event-python.o] Error 1
-> 
-> Because:
-> 
-> struct symbol {
->          struct rb_node  rb_node;
->          u64             start;
->          u64             end;
->          u16             namelen;
-> <SNIP>
->          char            name[0];
-> };
-> 
-> It sym->name is not a pointer, in symbol's constructor we have:
-> 
-> struct symbol *symbol__new(u64 start, u64 len, u8 binding, u8 type, const char *name)
-> {
->          size_t namelen = strlen(name) + 1;
->          struct symbol *sym = calloc(1, (symbol_conf.priv_size +
->                                          sizeof(*sym) + namelen));
->          if (sym == NULL)
->                  return NULL;
-> <SNIP>
->          sym->namelen = namelen - 1;
->          memcpy(sym->name, name, namelen);
-> 
->          return sym;
-> }
-> 
-> So it is at least 1 char long, the test above should be:
-> 
-> 	if (!sym || !sym->name[0])
-> 		return scnprintf(bf, size, "%s", "[unknown]");
-> 
-> I'm fixing this up here.
-> 
-> - Arnaldo
-> 
-
-Oh, yes, my mistake, very sorry about that.
-
-Thanks for helping me to fix this.
-
-Thanks
-Jin Yao
+diff --git a/drivers/staging/rtl8192e/rtllib_softmac.c b/drivers/staging/rtl8192e/rtllib_softmac.c
+index 919231f..d172e87 100644
+--- a/drivers/staging/rtl8192e/rtllib_softmac.c
++++ b/drivers/staging/rtl8192e/rtllib_softmac.c
+@@ -1355,9 +1355,8 @@ rtllib_association_req(struct rtllib_network *beacon,
+ 		rtllib_WMM_Info(ieee, &tag);
+ 	}
+ 
+-	if (wps_ie_len && ieee->wps_ie) {
++	if (wps_ie_len && ieee->wps_ie)
+ 		skb_put_data(skb, ieee->wps_ie, wps_ie_len);
+-	}
+ 
+ 	if (turbo_info_len) {
+ 		tag = skb_put(skb, turbo_info_len);
+-- 
+2.7.4
