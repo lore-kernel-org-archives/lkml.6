@@ -1,136 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id zmOJAQmaGVu7EQAAmS7hNA
-	; Thu, 07 Jun 2018 20:49:48 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id iwfqI6pwG1veWAAAmS7hNA
+	; Sat, 09 Jun 2018 06:16:10 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 68887608CA; Thu,  7 Jun 2018 20:49:48 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gnkqtkUL"
+	id 7EA77608B8; Sat,  9 Jun 2018 06:16:10 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 900FD6063F;
-	Thu,  7 Jun 2018 20:49:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 900FD6063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id BE06A607E7;
+	Sat,  9 Jun 2018 06:16:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BE06A607E7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932471AbeFGUtn (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 16:49:43 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:40819 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932251AbeFGUtk (ORCPT
+        id S1753125AbeFIGP7 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 02:15:59 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59560 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752756AbeFIGP6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 16:49:40 -0400
-Received: by mail-pl0-f67.google.com with SMTP id t12-v6so6863446plo.7
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 13:49:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=1mzbwQWjqDOTCo5dN3Uk9vpaDn6rpIdjVL4+gGWXNM0=;
-        b=gnkqtkULTZcm/hxul1tIfrTjkdBKMHn8P/YS9eIzWvtwzyky3IZMlhPXpt386FT8jV
-         uuCRSJnn3VO0EsgwfCGJC/pvORkBn0YI0GT/d5+uReZjsGytdbgUCcyLKTDCTLgc+WDz
-         HIuZkGTONZEFboosS5KtEtG4/3sErCLAfuisZQgGG6pnVOJbJsvaruhJFQ3hVZPuYKAy
-         ft9zcifTICB+ebXHYse1e8RKkkddWLPpgBVwQ4AntmKE6s2eUynnrNeX3PxD4yCF6JWS
-         faxMGluWAXYkkPfPRCcB6ZC3PVqVLw6CIQ7n493VehYsM0A7DBiRrRsRMLt14oW1405f
-         /xIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=1mzbwQWjqDOTCo5dN3Uk9vpaDn6rpIdjVL4+gGWXNM0=;
-        b=sL5lPYICxHUJOsdjC/DJo0m+oEJuDTWumaBKbxxo/uvEnw+bSS8GAwceFi/LjV3uYP
-         dUQb8yU3kye1HdXO9d8U+nOqUkPp23MVaHKGcGJY8yVQb6YSX1Ala8YTZYpnCVc61Yg3
-         RkiwlQBifwbsaU+JM/B9cFtW73uwXNZ/z1Oo0HYyFtENkgXEAZFTBQS8aXJpcYYo3nxF
-         STCNs+aXhrhyuHiovfgkRVyOSGV7tSDcgOhzuiqcPI08P1NtH79O+tDxz40cPiGGFUiv
-         8CvzSuqBnNQv4Z+XuRYS/uaj0VaWELFXeekFby7Ftr1oiuZqrf7pPPRDtc8bC0FDhkgI
-         rc/A==
-X-Gm-Message-State: APt69E0F/VMiyGc6QoKUAIjMm3zpYZyUNAhtz3m8Q9q3eQbxFSICkL/I
-        Xi2Y6qDti+u0dWOcDhZN6ufN/Q==
-X-Google-Smtp-Source: ADUXVKKhisXedgUjv7GV8j0yHnA1ZEBa5unXTSWU+yFEN1QzlsCPHCCmdPQSzDfx4QMONierctfmyw==
-X-Received: by 2002:a17:902:2983:: with SMTP id h3-v6mr3567145plb.232.1528404579831;
-        Thu, 07 Jun 2018 13:49:39 -0700 (PDT)
-Received: from ndesaulniers0.svl.corp.google.com ([2620:15c:2a3:1:d33:166f:5b79:14b3])
-        by smtp.gmail.com with ESMTPSA id w18-v6sm3780460pgq.1.2018.06.07.13.49.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Jun 2018 13:49:38 -0700 (PDT)
-From: Nick Desaulniers <ndesaulniers@google.com>
-To: akpm@linux-foundation.org, hpa@zytor.com, mingo@redhat.com,
-        tglx@linutronix.de
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, virtualization@lists.linux-foundation.org,
-        astrachan@google.com, manojgupta@google.com, ghackmann@google.com,
-        sedat.dilek@gmail.com, tstellar@redhat.com, keescook@google.com,
-        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        linux-kbuild@vger.kernel.org, geert@linux-m68k.org,
-        will.deacon@arm.com, mawilcox@microsoft.com, arnd@arndb.de,
-        rientjes@google.com, acme@redhat.com, pombredanne@nexb.com,
-        aryabinin@virtuozzo.com, kstewart@linuxfoundation.org,
-        boris.ostrovsky@oracle.com, jan.kiszka@siemens.com,
-        rostedt@goodmis.org, kirill.shutemov@linux.intel.com,
-        ard.biesheuvel@linaro.org, akataria@vmware.com,
-        brijesh.singh@amd.com, caoj.fnst@cn.fujitsu.com,
-        gregkh@linuxfoundation.org, jarkko.sakkinen@linux.intel.com,
-        jgross@suse.com, jpoimboe@redhat.com, mka@chromium.org,
-        ndesaulniers@google.com, thomas.lendacky@amd.com, tweek@google.com,
-        mjg59@google.com, joe@perches.com
-Subject: [PATCH v4 0/3] extern inline native_save_fl for paravirt
-Date: Thu,  7 Jun 2018 13:49:24 -0700
-Message-Id: <20180607204927.219329-1-ndesaulniers@google.com>
-X-Mailer: git-send-email 2.17.1.1185.g55be947832-goog
+        Sat, 9 Jun 2018 02:15:58 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w596E7bV036870
+        for <linux-kernel@vger.kernel.org>; Sat, 9 Jun 2018 02:15:58 -0400
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jg4j87b50-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Jun 2018 02:15:58 -0400
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Sat, 9 Jun 2018 02:15:56 -0400
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sat, 9 Jun 2018 02:15:54 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w596FrWo9044380
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sat, 9 Jun 2018 06:15:53 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id ADAE3B2064;
+        Sat,  9 Jun 2018 03:17:21 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7D890B205F;
+        Sat,  9 Jun 2018 03:17:21 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.80.216.44])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Sat,  9 Jun 2018 03:17:21 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 0A6CC16C998C; Fri,  8 Jun 2018 23:17:44 -0700 (PDT)
+Date: Fri, 8 Jun 2018 23:17:44 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: kbuild test robot <lkp@intel.com>
+Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org
+Subject: Re: [rcu:rcu/dev 114/116] drivers/iommu/amd_iommu.c:3566:21: sparse:
+ symbol 'stupid_workaround' was not declared. Should it be static?
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <201806090402.ONNRpjQE%fengguang.wu@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201806090402.ONNRpjQE%fengguang.wu@intel.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18060906-2213-0000-0000-000002B61269
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009156; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000265; SDB=6.01044319; UDB=6.00534726; IPR=6.00823355;
+ MB=3.00021546; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-09 06:15:55
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18060906-2214-0000-0000-00005A6AAF56
+Message-Id: <20180609061743.GE3593@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-09_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=730 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806090048
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-paravirt depends on a custom calling convention (callee saved), but
-expects this from a static inline function that it then forces to be
-outlined. This is problematic because different compilers or flags can
-then add a stack guard that violates the calling conventions.
+On Sat, Jun 09, 2018 at 04:11:26AM +0800, kbuild test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git rcu/dev
+> head:   f20dfe840ba05efdc4071106cffa31cb67cf6bc8
+> commit: 814ee31d1f906ad00daccb58944ab16fa279690c [114/116] fixup! EXP iommu: Placeholder for fix in mainline
+> reproduce:
+>         # apt-get install sparse
+>         git checkout 814ee31d1f906ad00daccb58944ab16fa279690c
+>         make ARCH=x86_64 allmodconfig
+>         make C=1 CF=-D__CHECK_ENDIAN__
+> 
+> 
+> sparse warnings: (new ones prefixed by >>)
+> 
+>    drivers/iommu/amd_iommu.c:3539:30: sparse: expression using sizeof(void)
+>    drivers/iommu/amd_iommu.c:3542:36: sparse: expression using sizeof(void)
+>    drivers/iommu/amd_iommu.c:3542:36: sparse: expression using sizeof(void)
+> >> drivers/iommu/amd_iommu.c:3566:21: sparse: symbol 'stupid_workaround' was not declared. Should it be static?
+> 
+> Please review and possibly fold the followup patch.
 
-Uses extern inline with the out-of-line definition in assembly to
-prevent compilers from adding stack guards to the outlined version.
+This whole thing disappears when I rebase to v4.18-rc1.  ;-)
 
-Other parts of the codebase overwrite KBUILD_CFLAGS, which is *extremely
-problematic* for extern inline, as the sematics are completely the
-opposite depending on what C standard is used.
-http://blahg.josefsipek.net/?p=529
-
-Changes since v3:
-  Take Joe's suggestion to hoist __inline__ and __inline out of
-  conditional block.
-
-Changes since v2:
-  Take hpa's _ASM_ARG patch into the set in order to simplify cross
-  32b/64b x86 assembly and rebase my final patch to use it.  Apply
-  Sedat's typo fix to commit message and sign off on it. Take Joe's
-  suggestion to simplify __inline__ and __inline. Add Arnd to list of
-  folks who made helpful suggestions.
-
-Changes since v1:
-  Prefer gnu_inline function attribute instead of explicitly setting C
-  standard compiler flag in problematic Makefiles. We should instead
-  carefully evaluate if those Makefiles should be overwriting
-  KBUILD_CFLAGS at all. Dropped the previous first two patches and added
-  a new first patch.
-
-H. Peter Anvin (1):
-  x86/asm: add _ASM_ARG* constants for argument registers to <asm/asm.h>
-
-Nick Desaulniers (2):
-  compiler-gcc.h: add gnu_inline to all inline declarations
-  x86: paravirt: make native_save_fl extern inline
-
- arch/x86/include/asm/asm.h      | 59 +++++++++++++++++++++++++++++++++
- arch/x86/include/asm/irqflags.h |  2 +-
- arch/x86/kernel/Makefile        |  1 +
- arch/x86/kernel/irqflags.S      | 26 +++++++++++++++
- include/linux/compiler-gcc.h    | 17 ++++++----
- 5 files changed, 97 insertions(+), 8 deletions(-)
- create mode 100644 arch/x86/kernel/irqflags.S
-
--- 
-2.17.1.1185.g55be947832-goog
+							Thanx, Paul
