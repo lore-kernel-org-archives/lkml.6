@@ -1,132 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id MdjdA/RYGVvPBAAAmS7hNA
-	; Thu, 07 Jun 2018 16:10:56 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 6/x/F4OGG1uXSgAAmS7hNA
+	; Sat, 09 Jun 2018 07:49:23 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id A4FEE6089E; Thu,  7 Jun 2018 16:10:56 +0000 (UTC)
+	id 44CEB607A4; Sat,  9 Jun 2018 07:49:23 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=gouders.net header.i=@gouders.net header.b="gOpkyI9p"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 1A71D60115;
-	Thu,  7 Jun 2018 16:10:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1A71D60115
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 3C544605A2;
+	Sat,  9 Jun 2018 07:49:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3C544605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=gouders.net
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936098AbeFGQKy (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 12:10:54 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39175 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932973AbeFGOJB (ORCPT
+        id S1753221AbeFIHtT (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 03:49:19 -0400
+Received: from services.gouders.net ([141.101.32.176]:46112 "EHLO
+        services.gouders.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751751AbeFIHtR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:09:01 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb1-0005Zi-FR; Thu, 07 Jun 2018 15:08:59 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvax-0002hd-Mg; Thu, 07 Jun 2018 15:08:55 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Sat, 9 Jun 2018 03:49:17 -0400
+Received: from localhost (ltea-047-066-004-082.pools.arcor-ip.net [47.66.4.82])
+        (authenticated bits=0)
+        by services.gouders.net (8.14.8/8.14.8) with ESMTP id w597eTQh006010
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 9 Jun 2018 09:40:29 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gouders.net; s=gnet;
+        t=1528530030; bh=6EuxRHhsRDd+latK7IjAnTp99PB0cDF0juX3KXWpsjs=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date;
+        b=gOpkyI9pU9Byf92w/dnJHbjZkdYwp0gUvF1DuBLFofkt+GkvyVvTzETt1wIyLxwJM
+         HRoCqhQNzggolOQ/p/UD61S9YliLAT7fpHnTZlJQmtyEccjGG57UwJpRtCNbemeNnG
+         MLjwJA2S4qGmagcgjYB+KVYv7GgrytBnBnb1ydQ0=
+From: Dirk Gouders <dirk@gouders.net>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Segher Boessenkool <segher@kernel.crashing.org>
+Subject: Re: [RFC v4 0/1] i-search functionality for mconf
+In-Reply-To: <20180608215655.GB28473@ravnborg.org> (Sam Ravnborg's message of
+        "Fri, 8 Jun 2018 23:56:55 +0200")
+References: <20180608184606.5029-1-dirk@gouders.net>
+        <20180608215655.GB28473@ravnborg.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+Date: Sat, 09 Jun 2018 09:40:27 +0200
+Message-ID: <ghlgbo5rx0.fsf@lena.gouders.net>
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Theodore Ts'o" <tytso@mit.edu>,
-        "Ilya Dryomov" <idryomov@gmail.com>,
-        "Lukas Czerner" <lczerner@redhat.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.749965963@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 020/410] ext4: fix bitmap position validation
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+Sam Ravnborg <sam@ravnborg.org> writes:
 
-------------------
+> Hi Dirk.
+>
+> On Fri, Jun 08, 2018 at 08:46:05PM +0200, Dirk Gouders wrote:
+>> Hello,
+>> 
+>> this version is a prototype of the idea, Sam suggested -- I hope I
+>> undestood it correctly.
+>> 
+>> This is a remarkable change to mconf in it's behavior; mainly it now
+>> differentiates two focuses and operates differently, depending on the
+>> focus.  When the focus is on the menu, mconf is in i-search mode, for
+>> a detailed description see 1/1.
+>> 
+>> As stated earlier, this is just a prototype, documentation is missing
+>> and the code is not ready for a real commit.
+>
+> When trying this out it started to work as envisioned.
+> But somehw I manage to get stuck in the menus and cannot navigate to
+> the buttons.
+>
+> Consider to remove the old short-cut for the menus.
+> (Most/all the first_alph thingy in menubox.c)
+> That will avoid two confliting navigations principles and likely
+> make the code simpler to read.
+>
+> I am not sure, but maybe you can get rid of all the hotkey
+> support in print_item with this change too.
 
-From: Lukas Czerner <lczerner@redhat.com>
+Hi Sam,
 
-commit 22be37acce25d66ecf6403fc8f44df9c5ded2372 upstream.
+thank you (and also to Randy) for having a look at it.
 
-Currently in ext4_valid_block_bitmap() we expect the bitmap to be
-positioned anywhere between 0 and s_blocksize clusters, but that's
-wrong because the bitmap can be placed anywhere in the block group. This
-causes false positives when validating bitmaps on perfectly valid file
-system layouts. Fix it by checking whether the bitmap is within the group
-boundary.
+Next, I will prepare a patch, more thorougly tested,
+documentation included and with hotkey support removed.
 
-The problem can be reproduced using the following
+You are right, trying to support two navigation principles makes
+everything too complex and I was too eager to keep as much of today's
+functionality as possible.
 
-mkfs -t ext3 -E stride=256 /dev/vdb1
-mount /dev/vdb1 /mnt/test
-cd /mnt/test
-wget https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.16.3.tar.xz
-tar xf linux-4.16.3.tar.xz
-
-This will result in the warnings in the logs
-
-EXT4-fs error (device vdb1): ext4_validate_block_bitmap:399: comm tar: bg 84: block 2774529: invalid block bitmap
-
-[ Changed slightly for clarity and to not drop a overflow test -- TYT ]
-
-Signed-off-by: Lukas Czerner <lczerner@redhat.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reported-by: Ilya Dryomov <idryomov@gmail.com>
-Fixes: 7dac4a1726a9 ("ext4: add validity checks for bitmap block numbers")
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- fs/ext4/balloc.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
---- a/fs/ext4/balloc.c
-+++ b/fs/ext4/balloc.c
-@@ -323,6 +323,7 @@ static ext4_fsblk_t ext4_valid_block_bit
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	ext4_grpblk_t offset;
- 	ext4_grpblk_t next_zero_bit;
-+	ext4_grpblk_t max_bit = EXT4_CLUSTERS_PER_GROUP(sb);
- 	ext4_fsblk_t blk;
- 	ext4_fsblk_t group_first_block;
- 
-@@ -340,7 +341,7 @@ static ext4_fsblk_t ext4_valid_block_bit
- 	/* check whether block bitmap block number is set */
- 	blk = ext4_block_bitmap(sb, desc);
- 	offset = blk - group_first_block;
--	if (offset < 0 || EXT4_B2C(sbi, offset) >= sb->s_blocksize ||
-+	if (offset < 0 || EXT4_B2C(sbi, offset) >= max_bit ||
- 	    !ext4_test_bit(EXT4_B2C(sbi, offset), bh->b_data))
- 		/* bad block bitmap */
- 		return blk;
-@@ -348,7 +349,7 @@ static ext4_fsblk_t ext4_valid_block_bit
- 	/* check whether the inode bitmap block number is set */
- 	blk = ext4_inode_bitmap(sb, desc);
- 	offset = blk - group_first_block;
--	if (offset < 0 || EXT4_B2C(sbi, offset) >= sb->s_blocksize ||
-+	if (offset < 0 || EXT4_B2C(sbi, offset) >= max_bit ||
- 	    !ext4_test_bit(EXT4_B2C(sbi, offset), bh->b_data))
- 		/* bad block bitmap */
- 		return blk;
-@@ -356,8 +357,8 @@ static ext4_fsblk_t ext4_valid_block_bit
- 	/* check whether the inode table block number is set */
- 	blk = ext4_inode_table(sb, desc);
- 	offset = blk - group_first_block;
--	if (offset < 0 || EXT4_B2C(sbi, offset) >= sb->s_blocksize ||
--	    EXT4_B2C(sbi, offset + sbi->s_itb_per_group) >= sb->s_blocksize)
-+	if (offset < 0 || EXT4_B2C(sbi, offset) >= max_bit ||
-+	    EXT4_B2C(sbi, offset + sbi->s_itb_per_group) >= max_bit)
- 		return blk;
- 	next_zero_bit = ext4_find_next_zero_bit(bh->b_data,
- 			EXT4_B2C(sbi, offset + EXT4_SB(sb)->s_itb_per_group),
+Dirk
