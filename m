@@ -1,108 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id vSJhAHWVGVv4aQAAmS7hNA
-	; Thu, 07 Jun 2018 20:28:37 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id BQXHIkPzG1t1ZAAAmS7hNA
+	; Sat, 09 Jun 2018 15:33:28 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D97B06074D; Thu,  7 Jun 2018 20:28:36 +0000 (UTC)
+	id 5C0FA608C1; Sat,  9 Jun 2018 15:33:28 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="K+RmU80A"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CLQepCqA"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_MED autolearn=ham
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 463D960452;
-	Thu,  7 Jun 2018 20:28:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 463D960452
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	by smtp.codeaurora.org (Postfix) with ESMTP id B0F40606FA;
+	Sat,  9 Jun 2018 15:33:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B0F40606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932317AbeFGU2e (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 16:28:34 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:34762 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753103AbeFGU2c (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 16:28:32 -0400
-Received: by mail-pf0-f195.google.com with SMTP id a63-v6so5470339pfl.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 13:28:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=92TvZsl494ypeys0WXaV5Ta4QMESlp1LXmzzwDQAXIE=;
-        b=K+RmU80AU4LXSIoCjIvyKcu7x25t+n0qbxkZPLVn5sPqNQz/J66x3GlKIBi51v+e+9
-         Cz20QYXZmLXkPGJrlQnyeWOmoU0Dy28F9GrM+RPyfGJXlPdYMR5fZUxUu84LLBQC4W7a
-         m1r5LLiH0ukeRBCBI2XE8R2wZDoiGfYkK7Qt/eRpHRS1yRVVdQMpnm/geIZY+or4A+XI
-         NUF6bFfc9OEh9sRMeglHHKbeUTJRcTifIZsf3+HyDjfd1hwU0YN4gkx+S2OQZGZVTVUY
-         sVM0BaQ1VAQ/m2LUxb4jckYuFfVwsECKnykyEwmfO1+pfxCq0dsEgQOjwdJmF2Y1i79w
-         MHhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=92TvZsl494ypeys0WXaV5Ta4QMESlp1LXmzzwDQAXIE=;
-        b=rduZ0JPmV+zUJzT9vSOSVbwo2iySHKHUtwoTIpNSH+EZRhpX6KajMx2TZhAvTLuZ/+
-         GhBADEDCkzIJMiOoRPFoCycpoMiHBN7NOVYwtBsgEwCkQWUihMnNba+1ch7yiqJuZJHk
-         /fQPpahEGBunNwitnzTdT+rKWKXNHhXOD5HYcjL/mfU0qjB5xP7SWGu62uuX80fo5zQY
-         fnFgAhYHwXOZBoWpr5xddTtqoF1KdXd1aqD/GHQGh0h9amyuYhYOAZl2jYuK+RY3RzeM
-         4Pa0U9aCWlEnZocStu0V6QLxVMvR0w1sIPoMlC8CwZfvf36sMSgq05nf9JX/uFiH9ofR
-         kcSg==
-X-Gm-Message-State: APt69E3emkuA30Vh0zJX5VMK6CMLnTWTHpclPuSRiK1z62F/ts5ZEyvX
-        hQp2JALq03+qmXsNJDRHKu7w9i5kdLA=
-X-Google-Smtp-Source: ADUXVKLRf4FBBjdx7+bpJpPC/XMSduC4QCi9DX7i7BosMTLcXtiRiZE23fCknZ7L2lyjejEIvhqlVA==
-X-Received: by 2002:a65:53cc:: with SMTP id z12-v6mr2764381pgr.350.1528403311720;
-        Thu, 07 Jun 2018 13:28:31 -0700 (PDT)
-Received: from cisco ([128.107.241.177])
-        by smtp.gmail.com with ESMTPSA id r26-v6sm72405546pfj.180.2018.06.07.13.28.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Jun 2018 13:28:30 -0700 (PDT)
-Date: Thu, 7 Jun 2018 14:28:31 -0600
-From: Tycho Andersen <tycho@tycho.ws>
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, Kees Cook <keescook@chromium.org>,
-        Stephan Mueller <smueller@chronox.de>,
-        Eric Biggers <ebiggers@google.com>
-Subject: Re: [PATCH] dh key: fix rounding up KDF output length
-Message-ID: <20180607202831.GG9999@cisco>
-References: <0000000000009c221d056e0cf53a@google.com>
- <20180607191201.97080-1-ebiggers3@gmail.com>
+        id S932689AbeFIPdZ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:33:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35690 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932658AbeFIPdS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:33:18 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE8E5204EC;
+        Sat,  9 Jun 2018 15:33:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558398;
+        bh=eGiYm5ojXWMEQz30qJ8JkObCugEhCn5VqS1p+gKmwRE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=CLQepCqAQQ0ZJXEEDiPUWPfzlyTPibhA7k2QPMQDD1LIb/8IVXk6J9L6hOfQOhX5A
+         eT0mCCYm3xAoCa73y4EMfSkJByy30hZMq/P1zAyb5Eji2nG4n+hwK0VYqerhQuxQ3q
+         wM7ey6VZRAvvjSgPsPtP0nHxYrEIEF/XzagKr8vc=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Roopa Prabhu <roopa@cumulusnetworks.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 21/48] net: ipv4: add missing RTA_TABLE to rtm_ipv4_policy
+Date: Sat,  9 Jun 2018 17:29:33 +0200
+Message-Id: <20180609145949.040517632@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
+References: <20180609145947.679103414@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180607191201.97080-1-ebiggers3@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 07, 2018 at 12:12:01PM -0700, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> Commit 383203eff718 ("dh key: get rid of stack allocated array") changed
-> kdf_ctr() to assume that the length of key material to derive is a
-> multiple of the digest size.  The length was supposed to be rounded up
-> accordingly.  However, the round_up() macro was used which only gives
-> the correct result on power-of-2 arguments, whereas not all hash
-> algorithms have power-of-2 digest sizes.  In some cases this resulted in
-> a write past the end of the 'outbuf' buffer.
-> 
-> Fix it by switching to roundup(), which works for non-power-of-2 inputs.
-> 
-> Reported-by: syzbot+486f97f892efeb2075a3@syzkaller.appspotmail.com
-> Reported-by: syzbot+29d17b7898b41ee120a5@syzkaller.appspotmail.com
-> Reported-by: syzbot+8a608baf8751184ec727@syzkaller.appspotmail.com
-> Reported-by: syzbot+d04e58bd384f1fe0b112@syzkaller.appspotmail.com
-> Fixes: 383203eff718 ("dh key: get rid of stack allocated array")
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-Arg, thanks.
+------------------
 
-Acked-by: Tycho Andersen <tycho@tycho.ws>
+From: Roopa Prabhu <roopa@cumulusnetworks.com>
+
+[ Upstream commit 2eabd764cb5512f1338d06ffc054c8bc9fbe9104 ]
+
+Signed-off-by: Roopa Prabhu <roopa@cumulusnetworks.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/ipv4/fib_frontend.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/net/ipv4/fib_frontend.c
++++ b/net/ipv4/fib_frontend.c
+@@ -643,6 +643,7 @@ const struct nla_policy rtm_ipv4_policy[
+ 	[RTA_ENCAP]		= { .type = NLA_NESTED },
+ 	[RTA_UID]		= { .type = NLA_U32 },
+ 	[RTA_MARK]		= { .type = NLA_U32 },
++	[RTA_TABLE]		= { .type = NLA_U32 },
+ };
+ 
+ static int rtm_to_fib_config(struct net *net, struct sk_buff *skb,
