@@ -1,106 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id KlpxOtKrGVs9MgAAmS7hNA
-	; Thu, 07 Jun 2018 22:04:03 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 9IiAEDT1G1t2GwAAmS7hNA
+	; Sat, 09 Jun 2018 15:41:40 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D4C0F6063F; Thu,  7 Jun 2018 22:04:02 +0000 (UTC)
+	id 2B092608C1; Sat,  9 Jun 2018 15:41:40 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="q3XFwavH"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kl3bFnnL"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 635D360452;
-	Thu,  7 Jun 2018 22:04:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 635D360452
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 890F9606FA;
+	Sat,  9 Jun 2018 15:41:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 890F9606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752201AbeFGWEA (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 18:04:00 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:35938 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751631AbeFGWD6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 18:03:58 -0400
-Received: by mail-ot0-f196.google.com with SMTP id c15-v6so3538532otl.3;
-        Thu, 07 Jun 2018 15:03:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=LHwiXGTDOH7nVeZGDgYlZpmSyJin1x2ftVwUJU2VzVg=;
-        b=q3XFwavHeM6SJYSXvPL3UHVuY97vTLNFEMRNEV0sXVs6ENomnjGxEHgYOgWltnmqbK
-         dC/pxq/OVUu9Q9wTei3ywAxVeODQE0Pt9a22e3Jr4LpRnpd2bcfdV8uxrdlsXrzVYKcR
-         7q3+KiRQu3cQSFhdK6OJvQE/MEN3RJw85prAE9x7MSautljg0iYpaQuc0oSokSvRT1f4
-         1IqAkxGBm7iiAsfZvUTUWRvTrIs2mDUGzyP/8WfszIy3MY8zkheLqeCb8hUznq9KtAiz
-         y+3uHg9E/qltXf0OwdNVEf031a6levHt19ESImzJCA4/U9xrWmvuJD/o1xXhwohhBShi
-         RcTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=LHwiXGTDOH7nVeZGDgYlZpmSyJin1x2ftVwUJU2VzVg=;
-        b=BAx3wzmio49/CfrnNvB0TeCZteIX1S0CqzmG/9V+b6QUwn7cALiUKsmcF945b7yqoU
-         J6hjHd6XGjastEXnc2nFYc8qhuCFMnXp9wpTr9zMLreN0HV6hQYJC36R7xeGvNY7hEw7
-         jGLnkwUej8WL/7k9MCaIf1Ls41nHmk3e4J8jWuoZnZ3oiq3lbiWk6QxlXI/S5jXxyoOm
-         IB0Jqpx4qoUqFyVpfXOOF2ixgtm9tjmkFXlRZTyhuogxzL0pQBpqSLurqy5C/OqV8R2C
-         3oIZr7lLNbEzWSgAXVMQg9lWjFHwVuWtlHD59MqyDcEhowb7lvAC7Yp92CejG8G5xjIE
-         XIiQ==
-X-Gm-Message-State: APt69E1fwe2tM/dKuz9bem9P1dVm1RZ5tSPnL24+9c2/tY1TcYrRRBr+
-        +7Yy/ZF//52w3ySq4VMM/ajfcTyQVa1jvAcAG/k=
-X-Google-Smtp-Source: ADUXVKJfeU5EuGLm/7AfID5ohBIuBJWshdSAf43jy7EKKHvmZsmEOuUHlAU8Q8Zp231QnH3YZ1GrKrb/15Xn4ycBJYM=
-X-Received: by 2002:a9d:322f:: with SMTP id t47-v6mr2314232otc.7.1528409037712;
- Thu, 07 Jun 2018 15:03:57 -0700 (PDT)
+        id S932982AbeFIPfI (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:35:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37328 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932969AbeFIPfB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:35:01 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 752F82087B;
+        Sat,  9 Jun 2018 15:35:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558501;
+        bh=27Tj35fNe/BUTthlahUEZZKU3ChcbZ06gJWTW7v5b2Q=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Kl3bFnnLz+WkKks0ouaMz7qdFsh+pZafNtVhflwrZzfy+uymbDuQB42twVmp18zQx
+         cc6rbWMFeQxxW6Dh9SGWUu9s+zbu1U3hihcg5UWmLV6QeyHZtsLr5emWVNj4r4YFm6
+         RFwmNKMUZctSeTzi9dUVX0m1AcOdYRsgTxac8+iQ=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 22/41] net: phy: broadcom: Fix bcm_write_exp()
+Date: Sat,  9 Jun 2018 17:29:54 +0200
+Message-Id: <20180609152927.626540279@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609152926.389750182@linuxfoundation.org>
+References: <20180609152926.389750182@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Received: by 2002:a4a:7019:0:0:0:0:0 with HTTP; Thu, 7 Jun 2018 15:03:56 -0700 (PDT)
-In-Reply-To: <CALCETrVRH8LeYoo7V1VBPqg4WS0Enxtizt=T7dPvgoeWfJrdzA@mail.gmail.com>
-References: <20180607143855.3681-1-yu-cheng.yu@intel.com> <20180607143855.3681-6-yu-cheng.yu@intel.com>
- <CALCETrVRH8LeYoo7V1VBPqg4WS0Enxtizt=T7dPvgoeWfJrdzA@mail.gmail.com>
-From: "H.J. Lu" <hjl.tools@gmail.com>
-Date: Thu, 7 Jun 2018 15:03:56 -0700
-Message-ID: <CAMe9rOp9YtNnTzsDPFXukK6ps7VNa2MU6o0GwnoES5Ma_AC65A@mail.gmail.com>
-Subject: Re: [PATCH 5/7] x86: Insert endbr32/endbr64 to vDSO
-To: Andy Lutomirski <luto@kernel.org>
-Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        mike.kravetz@oracle.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 7, 2018 at 1:50 PM, Andy Lutomirski <luto@kernel.org> wrote:
-> On Thu, Jun 7, 2018 at 7:42 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
->>
->> From: "H.J. Lu" <hjl.tools@gmail.com>
->>
->> When Intel indirect branch tracking is enabled, functions in vDSO which
->> may be called indirectly should have endbr32 or endbr64 as the first
->> instruction.  We try to compile vDSO with -fcf-protection=branch -mibt
->> if possible.  Otherwise, we insert endbr32 or endbr64 by hand to assembly
->> codes generated by the compiler.
->
-> Wow, that's... a genuine abomination.  Do we really need to support
-> CET on kernels built with old toolchains?
->
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Yes.  GCC 7 should be able to build CET kernel.
+------------------
 
+From: Florian Fainelli <f.fainelli@gmail.com>
 
--- 
-H.J.
+[ Upstream commit 79fb218d97980d4fee9a64f4c8ff05289364ba25 ]
+
+On newer PHYs, we need to select the expansion register to write with
+setting bits [11:8] to 0xf. This was done correctly by bcm7xxx.c prior
+to being migrated to generic code under bcm-phy-lib.c which
+unfortunately used the older implementation from the BCM54xx days.
+
+Fix this by creating an inline stub: bcm_write_exp_sel() which adds the
+correct value (MII_BCM54XX_EXP_SEL_ER) and update both the Cygnus PHY
+and BCM7xxx PHY drivers which require setting these bits.
+
+broadcom.c is unchanged because some PHYs even use a different selector
+method, so let them specify it directly (e.g: SerDes secondary selector).
+
+Fixes: a1cba5613edf ("net: phy: Add Broadcom phy library for common interfaces")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/net/phy/bcm-cygnus.c  |    6 +++---
+ drivers/net/phy/bcm-phy-lib.h |    7 +++++++
+ drivers/net/phy/bcm7xxx.c     |    4 ++--
+ 3 files changed, 12 insertions(+), 5 deletions(-)
+
+--- a/drivers/net/phy/bcm-cygnus.c
++++ b/drivers/net/phy/bcm-cygnus.c
+@@ -61,17 +61,17 @@ static int bcm_cygnus_afe_config(struct
+ 		return rc;
+ 
+ 	/* make rcal=100, since rdb default is 000 */
+-	rc = bcm_phy_write_exp(phydev, MII_BRCM_CORE_EXPB1, 0x10);
++	rc = bcm_phy_write_exp_sel(phydev, MII_BRCM_CORE_EXPB1, 0x10);
+ 	if (rc < 0)
+ 		return rc;
+ 
+ 	/* CORE_EXPB0, Reset R_CAL/RC_CAL Engine */
+-	rc = bcm_phy_write_exp(phydev, MII_BRCM_CORE_EXPB0, 0x10);
++	rc = bcm_phy_write_exp_sel(phydev, MII_BRCM_CORE_EXPB0, 0x10);
+ 	if (rc < 0)
+ 		return rc;
+ 
+ 	/* CORE_EXPB0, Disable Reset R_CAL/RC_CAL Engine */
+-	rc = bcm_phy_write_exp(phydev, MII_BRCM_CORE_EXPB0, 0x00);
++	rc = bcm_phy_write_exp_sel(phydev, MII_BRCM_CORE_EXPB0, 0x00);
+ 
+ 	return 0;
+ }
+--- a/drivers/net/phy/bcm-phy-lib.h
++++ b/drivers/net/phy/bcm-phy-lib.h
+@@ -14,11 +14,18 @@
+ #ifndef _LINUX_BCM_PHY_LIB_H
+ #define _LINUX_BCM_PHY_LIB_H
+ 
++#include <linux/brcmphy.h>
+ #include <linux/phy.h>
+ 
+ int bcm_phy_write_exp(struct phy_device *phydev, u16 reg, u16 val);
+ int bcm_phy_read_exp(struct phy_device *phydev, u16 reg);
+ 
++static inline int bcm_phy_write_exp_sel(struct phy_device *phydev,
++					u16 reg, u16 val)
++{
++	return bcm_phy_write_exp(phydev, reg | MII_BCM54XX_EXP_SEL_ER, val);
++}
++
+ int bcm54xx_auxctl_write(struct phy_device *phydev, u16 regnum, u16 val);
+ int bcm54xx_auxctl_read(struct phy_device *phydev, u16 regnum);
+ 
+--- a/drivers/net/phy/bcm7xxx.c
++++ b/drivers/net/phy/bcm7xxx.c
+@@ -65,10 +65,10 @@ struct bcm7xxx_phy_priv {
+ static void r_rc_cal_reset(struct phy_device *phydev)
+ {
+ 	/* Reset R_CAL/RC_CAL Engine */
+-	bcm_phy_write_exp(phydev, 0x00b0, 0x0010);
++	bcm_phy_write_exp_sel(phydev, 0x00b0, 0x0010);
+ 
+ 	/* Disable Reset R_AL/RC_CAL Engine */
+-	bcm_phy_write_exp(phydev, 0x00b0, 0x0000);
++	bcm_phy_write_exp_sel(phydev, 0x00b0, 0x0000);
+ }
+ 
+ static int bcm7xxx_28nm_b0_afe_config_init(struct phy_device *phydev)
