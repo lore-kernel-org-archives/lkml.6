@@ -1,242 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id p9KMHGk9GVv2QAAAmS7hNA
-	; Thu, 07 Jun 2018 14:13:14 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id utl4O+byG1vpXwAAmS7hNA
+	; Sat, 09 Jun 2018 15:35:58 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 75C91607DC; Thu,  7 Jun 2018 14:13:14 +0000 (UTC)
+	id 702F9608C8; Sat,  9 Jun 2018 15:35:58 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Os4eDzLx"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 837D7602FC;
-	Thu,  7 Jun 2018 14:13:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 837D7602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id B43BE608B8;
+	Sat,  9 Jun 2018 15:35:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B43BE608B8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933169AbeFGOLw (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:11:52 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39551 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933167AbeFGOJk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:09:40 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbF-0005hK-OD; Thu, 07 Jun 2018 15:09:13 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbC-0003Ed-JU; Thu, 07 Jun 2018 15:09:10 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        id S933134AbeFIPfy (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:35:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38058 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933117AbeFIPfs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:35:48 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A11CB208A4;
+        Sat,  9 Jun 2018 15:35:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558548;
+        bh=jClUQGXoa4ZXDe3UCaAiZBtaMrkjIJBccOLXa6H+6tw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Os4eDzLxITZ5tsSMUqHNYn06JBYS51aRXusD7x7LKymaaMBgqoxJHo4kiZ4b7RWIF
+         ZAMMB9r+yGNAd3EPdPHgrorDWeXrjgMbFHSEzEh+ug6bnk2z6LPt5n1b1wCaXuPnYZ
+         +mXP2NlbvwgWaMJ9L37sgRiqIpxWzZzWeP7civ7Y=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 21/41] net/packet: refine check for priv area size
+Date: Sat,  9 Jun 2018 17:29:53 +0200
+Message-Id: <20180609152927.572367458@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609152926.389750182@linuxfoundation.org>
+References: <20180609152926.389750182@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Richard Weinberger" <richard@nod.at>,
-        "Andri Yngvason" <andri.yngvason@marel.com>,
-        "Marc Kleine-Budde" <mkl@pengutronix.de>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.83161550@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 349/410] can: cc770: Fix queue stall & dropped RTR reply
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Andri Yngvason <andri.yngvason@marel.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 746201235b3f876792099079f4c6fea941d76183 upstream.
+[ Upstream commit eb73190f4fbeedf762394e92d6a4ec9ace684c88 ]
 
-While waiting for the TX object to send an RTR, an external message with a
-matching id can overwrite the TX data. In this case we must call the rx
-routine and then try transmitting the message that was overwritten again.
+syzbot was able to trick af_packet again [1]
 
-The queue was being stalled because the RX event did not generate an
-interrupt to wake up the queue again and the TX event did not happen
-because the TXRQST flag is reset by the chip when new data is received.
+Various commits tried to address the problem in the past,
+but failed to take into account V3 header size.
 
-According to the CC770 datasheet the id of a message object should not be
-changed while the MSGVAL bit is set. This has been fixed by resetting the
-MSGVAL bit before modifying the object in the transmit function and setting
-it after. It is not enough to set & reset CPUUPD.
+[1]
 
-It is important to keep the MSGVAL bit reset while the message object is
-being modified. Otherwise, during RTR transmission, a frame with matching
-id could trigger an rx-interrupt, which would cause a race condition
-between the interrupt routine and the transmit function.
+tpacket_rcv: packet too big, clamped from 72 to 4294967224. macoff=96
+BUG: KASAN: use-after-free in prb_run_all_ft_ops net/packet/af_packet.c:1016 [inline]
+BUG: KASAN: use-after-free in prb_fill_curr_block.isra.59+0x4e5/0x5c0 net/packet/af_packet.c:1039
+Write of size 2 at addr ffff8801cb62000e by task kworker/1:2/2106
 
-Signed-off-by: Andri Yngvason <andri.yngvason@marel.com>
-Tested-by: Richard Weinberger <richard@nod.at>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+CPU: 1 PID: 2106 Comm: kworker/1:2 Not tainted 4.17.0-rc7+ #77
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: ipv6_addrconf addrconf_dad_work
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+ print_address_description+0x6c/0x20b mm/kasan/report.c:256
+ kasan_report_error mm/kasan/report.c:354 [inline]
+ kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+ __asan_report_store2_noabort+0x17/0x20 mm/kasan/report.c:436
+ prb_run_all_ft_ops net/packet/af_packet.c:1016 [inline]
+ prb_fill_curr_block.isra.59+0x4e5/0x5c0 net/packet/af_packet.c:1039
+ __packet_lookup_frame_in_block net/packet/af_packet.c:1094 [inline]
+ packet_current_rx_frame net/packet/af_packet.c:1117 [inline]
+ tpacket_rcv+0x1866/0x3340 net/packet/af_packet.c:2282
+ dev_queue_xmit_nit+0x891/0xb90 net/core/dev.c:2018
+ xmit_one net/core/dev.c:3049 [inline]
+ dev_hard_start_xmit+0x16b/0xc10 net/core/dev.c:3069
+ __dev_queue_xmit+0x2724/0x34c0 net/core/dev.c:3584
+ dev_queue_xmit+0x17/0x20 net/core/dev.c:3617
+ neigh_resolve_output+0x679/0xad0 net/core/neighbour.c:1358
+ neigh_output include/net/neighbour.h:482 [inline]
+ ip6_finish_output2+0xc9c/0x2810 net/ipv6/ip6_output.c:120
+ ip6_finish_output+0x5fe/0xbc0 net/ipv6/ip6_output.c:154
+ NF_HOOK_COND include/linux/netfilter.h:277 [inline]
+ ip6_output+0x227/0x9b0 net/ipv6/ip6_output.c:171
+ dst_output include/net/dst.h:444 [inline]
+ NF_HOOK include/linux/netfilter.h:288 [inline]
+ ndisc_send_skb+0x100d/0x1570 net/ipv6/ndisc.c:491
+ ndisc_send_ns+0x3c1/0x8d0 net/ipv6/ndisc.c:633
+ addrconf_dad_work+0xbef/0x1340 net/ipv6/addrconf.c:4033
+ process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
+ worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
+ kthread+0x345/0x410 kernel/kthread.c:240
+ ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+
+The buggy address belongs to the page:
+page:ffffea00072d8800 count:0 mapcount:-127 mapping:0000000000000000 index:0xffff8801cb620e80
+flags: 0x2fffc0000000000()
+raw: 02fffc0000000000 0000000000000000 ffff8801cb620e80 00000000ffffff80
+raw: ffffea00072e3820 ffffea0007132d20 0000000000000002 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff8801cb61ff00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff8801cb61ff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff8801cb620000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+                      ^
+ ffff8801cb620080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ ffff8801cb620100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+
+Fixes: 2b6867c2ce76 ("net/packet: fix overflow in check for priv area size")
+Fixes: dc808110bb62 ("packet: handle too big packets for PACKET_V3")
+Fixes: f6fb8f100b80 ("af-packet: TPACKET_V3 flexible buffer implementation.")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/can/cc770/cc770.c | 94 ++++++++++++++++++++++++-----------
- drivers/net/can/cc770/cc770.h |  2 +
- 2 files changed, 68 insertions(+), 28 deletions(-)
+ net/packet/af_packet.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/can/cc770/cc770.c
-+++ b/drivers/net/can/cc770/cc770.c
-@@ -390,37 +390,23 @@ static int cc770_get_berr_counter(const
- 	return 0;
- }
- 
--static netdev_tx_t cc770_start_xmit(struct sk_buff *skb, struct net_device *dev)
-+static void cc770_tx(struct net_device *dev, int mo)
- {
- 	struct cc770_priv *priv = netdev_priv(dev);
--	struct net_device_stats *stats = &dev->stats;
--	struct can_frame *cf = (struct can_frame *)skb->data;
--	unsigned int mo = obj2msgobj(CC770_OBJ_TX);
-+	struct can_frame *cf = (struct can_frame *)priv->tx_skb->data;
- 	u8 dlc, rtr;
- 	u32 id;
- 	int i;
- 
--	if (can_dropped_invalid_skb(dev, skb))
--		return NETDEV_TX_OK;
--
--	if ((cc770_read_reg(priv,
--			    msgobj[mo].ctrl1) & TXRQST_UNC) == TXRQST_SET) {
--		netdev_err(dev, "TX register is still occupied!\n");
--		return NETDEV_TX_BUSY;
--	}
--
--	netif_stop_queue(dev);
--
- 	dlc = cf->can_dlc;
- 	id = cf->can_id;
--	if (cf->can_id & CAN_RTR_FLAG)
--		rtr = 0;
--	else
--		rtr = MSGCFG_DIR;
-+	rtr = cf->can_id & CAN_RTR_FLAG ? 0 : MSGCFG_DIR;
-+
-+	cc770_write_reg(priv, msgobj[mo].ctrl0,
-+			MSGVAL_RES | TXIE_RES | RXIE_RES | INTPND_RES);
- 	cc770_write_reg(priv, msgobj[mo].ctrl1,
- 			RMTPND_RES | TXRQST_RES | CPUUPD_SET | NEWDAT_RES);
--	cc770_write_reg(priv, msgobj[mo].ctrl0,
--			MSGVAL_SET | TXIE_SET | RXIE_RES | INTPND_RES);
-+
- 	if (id & CAN_EFF_FLAG) {
- 		id &= CAN_EFF_MASK;
- 		cc770_write_reg(priv, msgobj[mo].config,
-@@ -439,13 +425,30 @@ static netdev_tx_t cc770_start_xmit(stru
- 	for (i = 0; i < dlc; i++)
- 		cc770_write_reg(priv, msgobj[mo].data[i], cf->data[i]);
- 
--	/* Store echo skb before starting the transfer */
--	can_put_echo_skb(skb, dev, 0);
--
- 	cc770_write_reg(priv, msgobj[mo].ctrl1,
--			RMTPND_RES | TXRQST_SET | CPUUPD_RES | NEWDAT_UNC);
-+			RMTPND_UNC | TXRQST_SET | CPUUPD_RES | NEWDAT_UNC);
-+	cc770_write_reg(priv, msgobj[mo].ctrl0,
-+			MSGVAL_SET | TXIE_SET | RXIE_SET | INTPND_UNC);
-+}
-+
-+static netdev_tx_t cc770_start_xmit(struct sk_buff *skb, struct net_device *dev)
-+{
-+	struct cc770_priv *priv = netdev_priv(dev);
-+	unsigned int mo = obj2msgobj(CC770_OBJ_TX);
-+
-+	if (can_dropped_invalid_skb(dev, skb))
-+		return NETDEV_TX_OK;
-+
-+	netif_stop_queue(dev);
-+
-+	if ((cc770_read_reg(priv,
-+			    msgobj[mo].ctrl1) & TXRQST_UNC) == TXRQST_SET) {
-+		netdev_err(dev, "TX register is still occupied!\n");
-+		return NETDEV_TX_BUSY;
-+	}
- 
--	stats->tx_bytes += dlc;
-+	priv->tx_skb = skb;
-+	cc770_tx(dev, mo);
- 
- 	return NETDEV_TX_OK;
- }
-@@ -670,13 +673,47 @@ static void cc770_tx_interrupt(struct ne
- 	struct cc770_priv *priv = netdev_priv(dev);
- 	struct net_device_stats *stats = &dev->stats;
- 	unsigned int mo = obj2msgobj(o);
-+	struct can_frame *cf;
-+	u8 ctrl1;
-+
-+	ctrl1 = cc770_read_reg(priv, msgobj[mo].ctrl1);
- 
--	/* Nothing more to send, switch off interrupts */
- 	cc770_write_reg(priv, msgobj[mo].ctrl0,
- 			MSGVAL_RES | TXIE_RES | RXIE_RES | INTPND_RES);
-+	cc770_write_reg(priv, msgobj[mo].ctrl1,
-+			RMTPND_RES | TXRQST_RES | MSGLST_RES | NEWDAT_RES);
- 
--	stats->tx_packets++;
-+	if (unlikely(!priv->tx_skb)) {
-+		netdev_err(dev, "missing tx skb in tx interrupt\n");
-+		return;
-+	}
-+
-+	if (unlikely(ctrl1 & MSGLST_SET)) {
-+		stats->rx_over_errors++;
-+		stats->rx_errors++;
-+	}
-+
-+	/* When the CC770 is sending an RTR message and it receives a regular
-+	 * message that matches the id of the RTR message, it will overwrite the
-+	 * outgoing message in the TX register. When this happens we must
-+	 * process the received message and try to transmit the outgoing skb
-+	 * again.
-+	 */
-+	if (unlikely(ctrl1 & NEWDAT_SET)) {
-+		cc770_rx(dev, mo, ctrl1);
-+		cc770_tx(dev, mo);
-+		return;
-+	}
-+
-+	can_put_echo_skb(priv->tx_skb, dev, 0);
- 	can_get_echo_skb(dev, 0);
-+
-+	cf = (struct can_frame *)priv->tx_skb->data;
-+	stats->tx_bytes += cf->can_dlc;
-+	stats->tx_packets++;
-+
-+	priv->tx_skb = NULL;
-+
- 	netif_wake_queue(dev);
- }
- 
-@@ -788,6 +825,7 @@ struct net_device *alloc_cc770dev(int si
- 	priv->can.do_set_bittiming = cc770_set_bittiming;
- 	priv->can.do_set_mode = cc770_set_mode;
- 	priv->can.ctrlmode_supported = CAN_CTRLMODE_3_SAMPLES;
-+	priv->tx_skb = NULL;
- 
- 	memcpy(priv->obj_flags, cc770_obj_flags, sizeof(cc770_obj_flags));
- 
---- a/drivers/net/can/cc770/cc770.h
-+++ b/drivers/net/can/cc770/cc770.h
-@@ -193,6 +193,8 @@ struct cc770_priv {
- 	u8 cpu_interface;	/* CPU interface register */
- 	u8 clkout;		/* Clock out register */
- 	u8 bus_config;		/* Bus conffiguration register */
-+
-+	struct sk_buff *tx_skb;
- };
- 
- struct net_device *alloc_cc770dev(int sizeof_priv);
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -4293,7 +4293,7 @@ static int packet_set_ring(struct sock *
+ 			goto out;
+ 		if (po->tp_version >= TPACKET_V3 &&
+ 		    req->tp_block_size <=
+-			  BLK_PLUS_PRIV((u64)req_u->req3.tp_sizeof_priv))
++		    BLK_PLUS_PRIV((u64)req_u->req3.tp_sizeof_priv) + sizeof(struct tpacket3_hdr))
+ 			goto out;
+ 		if (unlikely(req->tp_frame_size < po->tp_hdrlen +
+ 					po->tp_reserve))
