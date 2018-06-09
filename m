@@ -1,128 +1,201 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 7PazCFyMGVu/bgAAmS7hNA
-	; Thu, 07 Jun 2018 19:50:53 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id lAzLCMxnHFv2EAAAmS7hNA
+	; Sat, 09 Jun 2018 23:50:36 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id C2CB96074D; Thu,  7 Jun 2018 19:50:53 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="hFsWlild"
+	id 10DE9607DC; Sat,  9 Jun 2018 23:50:36 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_MED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id EEEDC601B4;
-	Thu,  7 Jun 2018 19:50:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EEEDC601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id E5434605A2;
+	Sat,  9 Jun 2018 23:50:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E5434605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=scientia.net
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932889AbeFGTuv (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 15:50:51 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:41728 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932448AbeFGTut (ORCPT
+        id S1753551AbeFIXuc (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 19:50:32 -0400
+Received: from mailgw-02.dd24.net ([193.46.215.43]:35279 "EHLO
+        mailgw-02.dd24.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753516AbeFIXub (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 15:50:49 -0400
-Received: by mail-wr0-f194.google.com with SMTP id h10-v6so11020931wrq.8
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 12:50:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=Oj/8xGcBb9F2VBvvxNIuM3OguCdqAj12BGhJ1uZrshc=;
-        b=hFsWlildEbTJ8BYMx6OLzkmMZBJ9k0ZSvES1m1ae6TZ5TpYGMFnwgEYxZ2JtSb3/a/
-         Y2uvAlHsQmm63+7bIvKlkxCaDFr6GBhxtDmXSJTGdZAMQ+A+AZ0UaRdXZllmoyDnpLLG
-         OLeJxOwlbjTsU7AG1Hq4Mg2d6k0FpOEzEFeG3z6+9GrSxbpoJgugvGGiE8VuRgDdN8Ba
-         p5opF41e8QYRs12NccVMaqFAp8nGfMqRxWPd3KlelOCBmuJKaKhZRVj1pAArzldAjEJ4
-         Gfih1BJHVRFwZI0dQXHzUHUNH6IId9oCa2LsTkiJeJJt9aI6z2Hig6MvtBkskVuCcR99
-         P3Ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Oj/8xGcBb9F2VBvvxNIuM3OguCdqAj12BGhJ1uZrshc=;
-        b=NpxOYvTf1X2TT7A45cKwkIEI75e0o+yHk6FioXYbQOYbQ145IGpnZfznycE1oTCV3n
-         XVk0PFKvGvhopTelTfgxmhQJ4Jz3tO3V4Nrrk0yB3qlciEbuheS36Kjn91/mep4FWr/8
-         VvOe1IuSuwCFrZVrXtn53sNm+zAhd6Vm04Cr7TF9FL8GhMrnO2lMdlwgV/sX/XZuNZjF
-         OuBMRVbYjlMQZYYHMT+hdEkUltGnCUPzHRcaGZVu/AxGTwPHs6K6/JuYtR7SLWrBSodH
-         NQyoTiHBV59bmPAxajxGdQXulr8EYm7tF5AXQYYobyBfVhZ1RA3l81fy0gWHqRt+ujyj
-         Tu/w==
-X-Gm-Message-State: APt69E2wvdLr8cHWUr4Wz9e9bMf1uXu48ChX4zQq/A6KFOrKgNqLHYaN
-        YXXXaUWIYp8l2GGmvAbSRpLqDA==
-X-Google-Smtp-Source: ADUXVKIJL+Kwx2EbtqtL4xqkrLKkfo6t/WQFfri3S0ZGpjiCOqGTsocxSNmKoZdpU2fy8ZHkP93qJg==
-X-Received: by 2002:adf:9025:: with SMTP id h34-v6mr2954713wrh.123.1528401048766;
-        Thu, 07 Jun 2018 12:50:48 -0700 (PDT)
-Received: from localhost.localdomain ([51.15.160.169])
-        by smtp.googlemail.com with ESMTPSA id s9-v6sm1501627wmc.34.2018.06.07.12.50.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 07 Jun 2018 12:50:48 -0700 (PDT)
-From: Corentin Labbe <clabbe@baylibre.com>
-To: marcel@holtmann.org, johan.hedberg@gmail.com
-Cc: linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH] bluetooth: remove unused bt-nokia-h4p.h header
-Date: Thu,  7 Jun 2018 19:50:38 +0000
-Message-Id: <1528401038-36287-1-git-send-email-clabbe@baylibre.com>
-X-Mailer: git-send-email 2.7.4
+        Sat, 9 Jun 2018 19:50:31 -0400
+Received: from mailpolicy-01.live.igb.homer.key-systems.net (mailpolicy-01.live.igb.homer.key-systems.net [192.168.1.26])
+        by mailgw-02.dd24.net (Postfix) with ESMTP id DB9DE5FC40;
+        Sat,  9 Jun 2018 23:50:29 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at
+        mailpolicy-01.live.igb.homer.key-systems.net
+Received: from mailgw-02.dd24.net ([192.168.1.36])
+        by mailpolicy-01.live.igb.homer.key-systems.net (mailpolicy-01.live.igb.homer.key-systems.net [192.168.1.25]) (amavisd-new, port 10236)
+        with ESMTP id xvO7miEpDBC7; Sat,  9 Jun 2018 23:50:27 +0000 (UTC)
+Received: from [192.168.0.102] (p54B6DCC8.dip0.t-ipconnect.de [84.182.220.200])
+        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailgw-02.dd24.net (Postfix) with ESMTPSA;
+        Sat,  9 Jun 2018 23:50:27 +0000 (UTC)
+Message-ID: <2cbab96cfb722ef8ad8f9fe6f5060226108cf033.camel@scientia.net>
+Subject: Re: sd 6:0:0:0: [sdb] Unaligned partial completion (resid=12,
+ sector_sz=512)
+From: Christoph Anton Mitterer <calestyo@scientia.net>
+To: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
+        linux-scsi <linux-scsi@vger.kernel.org>
+Date: Sun, 10 Jun 2018 01:50:27 +0200
+In-Reply-To: <f96c1329-929b-44a1-4c3a-74dbcedbbafe@infradead.org>
+References: <c35dacb574365736229ff04d587abc0390ef7b78.camel@scientia.net>
+         <f96c1329-929b-44a1-4c3a-74dbcedbbafe@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.2-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nothing in tree use this header which seems a remains of a staging
-driver.
-This patch remove it.
+Thanks for CCing me to the right list.
 
-Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
----
- include/linux/platform_data/bt-nokia-h4p.h | 38 ------------------------------
- 1 file changed, 38 deletions(-)
- delete mode 100644 include/linux/platform_data/bt-nokia-h4p.h
+Some further info:
 
-diff --git a/include/linux/platform_data/bt-nokia-h4p.h b/include/linux/platform_data/bt-nokia-h4p.h
-deleted file mode 100644
-index 30d169dfadf3..000000000000
---- a/include/linux/platform_data/bt-nokia-h4p.h
-+++ /dev/null
-@@ -1,38 +0,0 @@
--/*
-- * This file is part of Nokia H4P bluetooth driver
-- *
-- * Copyright (C) 2010 Nokia Corporation.
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * version 2 as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful, but
-- * WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-- * General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
-- * 02110-1301 USA
-- *
-- */
--
--
--/**
-- * struct hci_h4p_platform data - hci_h4p Platform data structure
-- */
--struct hci_h4p_platform_data {
--	int chip_type;
--	int bt_sysclk;
--	unsigned int bt_wakeup_gpio;
--	unsigned int host_wakeup_gpio;
--	unsigned int reset_gpio;
--	int reset_gpio_shared;
--	unsigned int uart_irq;
--	phys_addr_t uart_base;
--	const char *uart_iclk;
--	const char *uart_fclk;
--	void (*set_pm_limits)(struct device *dev, bool set);
--};
--- 
-2.16.4
+I had two disks attached via the following USB/SATA bridge (twice the
+same, which in turn is connected via a USB3.0 hub):
+Jun 09 23:16:11 heisenberg kernel: usb 2-2.2: new SuperSpeed USB device number 23 using xhci_hcd
+Jun 09 23:16:11 heisenberg kernel: usb 2-2.2: New USB device found, idVendor=174c, idProduct=55aa
+Jun 09 23:16:11 heisenberg kernel: usb 2-2.2: New USB device strings: Mfr=2, Product=3, SerialNumber=1
+Jun 09 23:16:11 heisenberg kernel: usb 2-2.2: Product: ASMT1053
+Jun 09 23:16:11 heisenberg kernel: usb 2-2.2: Manufacturer: asmedia
+Jun 09 23:16:11 heisenberg kernel: usb 2-2.2: SerialNumber: 123456789012
+Jun 09 23:16:11 heisenberg kernel: usb 2-2.2: Device is not authorized for usage
+Jun 09 23:16:15 heisenberg kernel: usb-storage 2-2.2:1.0: USB Mass Storage device detected
+Jun 09 23:16:15 heisenberg kernel: usb-storage 2-2.2:1.0: Quirks match for vid 174c pid 55aa: 400000
+Jun 09 23:16:15 heisenberg kernel: scsi host7: usb-storage 2-2.2:1.0
+Jun 09 23:16:15 heisenberg kernel: usb 2-2.2: authorized to connect
+Jun 09 23:16:16 heisenberg kernel: scsi 7:0:0:0: Direct-Access     ASMT     2105             0    PQ: 0 ANSI: 6
+Jun 09 23:16:16 heisenberg kernel: sd 7:0:0:0: Attached scsi generic sg2 type 0
+Jun 09 23:16:16 heisenberg kernel: sd 7:0:0:0: [sdc] Spinning up disk...
+Jun 09 23:16:25 heisenberg kernel: ........ready
+Jun 09 23:16:25 heisenberg kernel: sd 7:0:0:0: [sdc] 15628053168 512-byte logical blocks: (8.00 TB/7.28 TiB)
+Jun 09 23:16:25 heisenberg kernel: sd 7:0:0:0: [sdc] 4096-byte physical blocks
+Jun 09 23:16:25 heisenberg kernel: sd 7:0:0:0: [sdc] Write Protect is off
+Jun 09 23:16:25 heisenberg kernel: sd 7:0:0:0: [sdc] Mode Sense: 43 00 00 00
+Jun 09 23:16:25 heisenberg kernel: sd 7:0:0:0: [sdc] Write cache: enabled, read cache: enabled, doesn't support DPO or FUA
+Jun 09 23:16:25 heisenberg kernel:  sdc: sdc1 sdc2
+Jun 09 23:16:25 heisenberg kernel: sd 7:0:0:0: [sdc] Attached SCSI disk
+
+
+The errors only occurred on one of the two disks... but few times when
+I swapped the USB/SATA bridges between the two disks, because I wanted
+to see whether it's the bridge which is faulty.
+Since it happened with USB/SATA bridges swapped, I thought it couldn't
+be that, but rather the HDD.
+I tried again with the USB3.0 hub removed (and the bridges directly
+connected to USB3.0 ports of the notebook)... and the errors still
+appeared (on the same disk).
+
+
+Then, they suddenly went away, and despite quite some swapping around
+of bridges, cables, etc. ... it hasn't appeared again (though I stopped
+copying for today some 2 hours ago).
+
+Another interesting fact: While I was copying in the first place, where
+the error occurred quite frequently,... the data must have been read
+correctly.
+The fs is btrfs (so there is checksumming) and in addition I have my
+own SHA512 sums, attached as XATTRs to the files, and for those that
+were already copied, they verified correctly.
+
+
+So my naive assumption would be that either I have some pretty new but
+somehow weirdly failing HDD, which sometimes shows these errors and
+sometimes not (yet, so far, giving the correct data)... or...
+there were some (also strange) connectivity issues (maybe something
+with the cables?) and when I swapped things around these got finally
+"resolved".
+
+
+So in addition to the basic question: What would the "Unaligned partial
+completion" mean, I wonder: Would any errors on the USB level (or
+below) show up as the block device level errors that I've seen?
+And what could explain that I still got the right data out? Retries
+that succeed? ECC?
+
+Or should I rather backup ASAP and throw the device with the error
+messages away, too?
+
+
+Thanks,
+Chris.
+
+On Sat, 2018-06-09 at 15:21 -0700, Randy Dunlap wrote:
+> [adding linux-scsi mailing list]
+> 
+> 
+> On 06/09/2018 12:23 PM, Christoph Anton Mitterer wrote:
+> > Hey.
+> > 
+> > I'm seeing these errors:
+> > Jun 09 21:13:22 heisenberg kernel: sd 6:0:0:0: [sdb] Unaligned
+> > partial completion (resid=16, sector_sz=512)
+> > Jun 09 21:13:22 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 FAILED
+> > Result: hostbyte=DID_OK driverbyte=DRIVER_SENSE
+> > Jun 09 21:13:22 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 Sense
+> > Key : Medium Error [current] 
+> > Jun 09 21:13:22 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 Add.
+> > Sense: Unrecovered read error
+> > Jun 09 21:13:22 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 CDB:
+> > Read(16) 88 00 00 00 00 01 cd e6 de 40 00 00 00 e0 00 00
+> > Jun 09 21:13:22 heisenberg kernel: print_req_error: critical medium
+> > error, dev sdb, sector 7749426752
+> > Jun 09 21:13:31 heisenberg kernel: sd 6:0:0:0: [sdb] Unaligned
+> > partial completion (resid=12, sector_sz=512)
+> > Jun 09 21:13:31 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 FAILED
+> > Result: hostbyte=DID_OK driverbyte=DRIVER_SENSE
+> > Jun 09 21:13:31 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 Sense
+> > Key : Medium Error [current] 
+> > Jun 09 21:13:31 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 Add.
+> > Sense: Unrecovered read error
+> > Jun 09 21:13:31 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 CDB:
+> > Read(16) 88 00 00 00 00 00 00 14 59 60 00 00 01 00 00 00
+> > Jun 09 21:13:31 heisenberg kernel: print_req_error: critical medium
+> > error, dev sdb, sector 1333600
+> > Jun 09 21:13:53 heisenberg kernel: sd 6:0:0:0: [sdb] Unaligned
+> > partial completion (resid=12, sector_sz=512)
+> > Jun 09 21:13:53 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 FAILED
+> > Result: hostbyte=DID_OK driverbyte=DRIVER_SENSE
+> > Jun 09 21:13:53 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 Sense
+> > Key : Medium Error [current] 
+> > Jun 09 21:13:53 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 Add.
+> > Sense: Unrecovered read error
+> > Jun 09 21:13:53 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 CDB:
+> > Read(16) 88 00 00 00 00 00 c3 a2 56 80 00 00 01 00 00 00
+> > Jun 09 21:13:53 heisenberg kernel: print_req_error: critical medium
+> > error, dev sdb, sector 3282196096
+> > 
+> > (many of them) on a Seagate 8TB Archive HDD.
+> > The disk is only a year old and barely used (since it's just one of
+> > the
+> > backups of my main data disks - and the primary disk another
+> > Seagate
+> > 8TB HDD broke just few days ago).
+> > 
+> > I have connected them via USB/SATA bridge... and when I now started
+> > copying from the backup (which is sdb) to a fresh HDD I started
+> > seeing
+> > vast numbers of these errors.
+> > 
+> > However, fsck, cp seem to do fine, and the data (as far as it has
+> > been
+> > copied) seems good (I have sha512 sums of all of it).
+> > 
+> > 
+> > Any ideas what "Unaligned partial completion" and these errors
+> > mean?
+> > 
+> > 
+> > Thanks,
+> > Chris.
+> > 
+> 
+> 
