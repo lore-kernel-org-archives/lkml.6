@@ -1,169 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id gS4QM6w5GVtNCwAAmS7hNA
-	; Thu, 07 Jun 2018 13:57:00 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id stl4O+byG1vpXwAAmS7hNA
+	; Sat, 09 Jun 2018 15:35:20 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id BCD53607DC; Thu,  7 Jun 2018 13:57:00 +0000 (UTC)
+	id 9E335608C9; Sat,  9 Jun 2018 15:35:20 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SiB3fZwQ"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 2F6CF601B4;
-	Thu,  7 Jun 2018 13:57:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2F6CF601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id EB6C3606FA;
+	Sat,  9 Jun 2018 15:35:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EB6C3606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753720AbeFGN46 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 09:56:58 -0400
-Received: from mga14.intel.com ([192.55.52.115]:14882 "EHLO mga14.intel.com"
+        id S1753774AbeFIPfR (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:35:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753421AbeFGN44 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 09:56:56 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 06:56:56 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
-   d="scan'208";a="54811932"
-Received: from um.fi.intel.com (HELO um) ([10.237.72.212])
-  by fmsmga002.fm.intel.com with ESMTP; 07 Jun 2018 06:56:50 -0700
-Received: from ash by um with local (Exim 4.91)
-        (envelope-from <alexander.shishkin@linux.intel.com>)
-        id 1fQvPE-0004rJ-Ic; Thu, 07 Jun 2018 16:56:48 +0300
-Date: Thu, 7 Jun 2018 16:56:48 +0300
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To: Luwei Kang <luwei.kang@intel.com>
-Cc: kvm@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, chao.p.peng@linux.intel.com,
-        thomas.lendacky@amd.com, bp@suse.de, Kan.liang@intel.com,
-        Janakarajan.Natarajan@amd.com, dwmw@amazon.co.uk,
-        linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com,
-        peterz@infradead.org, mathieu.poirier@linaro.org,
-        kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
-        pbonzini@redhat.com, rkrcmar@redhat.com, david@redhat.com,
-        bsd@redhat.com, yu.c.zhang@linux.intel.com, joro@8bytes.org
-Subject: Re: [PATCH v9 09/12] KVM: x86: Introduce a function to initialize
- the PT configuration
-Message-ID: <20180607135648.mkciyfrd2wgvdxze@um.fi.intel.com>
-References: <1526964735-16566-1-git-send-email-luwei.kang@intel.com>
- <1526964735-16566-10-git-send-email-luwei.kang@intel.com>
+        id S933011AbeFIPfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:35:13 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A7F722087B;
+        Sat,  9 Jun 2018 15:35:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558513;
+        bh=FbkNr10BuLDNQAwrELH+m+BoTvPenbniKQEYH9mmTRs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=SiB3fZwQque9vKF6G3numnqNxDC1oGK5v9aC0FIBG5KkIaT7A6mfs3PAymzcy+4YF
+         schDyhTATLlqQI5VcPvNxtkt5hddq5R1aRw1/ZvbAOUUPA9iy5rRZa0/u61ypOsUdV
+         WL0edn0WlWKVotmNqH9qoD3ecOqSwkEPxdU1pmIU=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        syzbot+3dcd59a1f907245f891f@syzkaller.appspotmail.com,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Xin Long <lucien.xin@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 26/41] sctp: not allow transport timeout value less than HZ/5 for hb_timer
+Date: Sat,  9 Jun 2018 17:29:58 +0200
+Message-Id: <20180609152927.841010824@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609152926.389750182@linuxfoundation.org>
+References: <20180609152926.389750182@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526964735-16566-10-git-send-email-luwei.kang@intel.com>
-User-Agent: NeoMutt/20180323
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 12:52:12PM +0800, Luwei Kang wrote:
-> Initialize the Intel PT configuration when cpuid update.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Is it the CPUID configuration? Is it the MSR configuration? Is it both?
-Kind of looks like both. Not sure what is the cpuid update, though.
+------------------
 
-> Include cpuid inforamtion, rtit_ctl bit mask and the number of
-> address ranges.
->
-> Signed-off-by: Luwei Kang <luwei.kang@intel.com>
-> ---
->  arch/x86/kvm/vmx.c | 70 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 70 insertions(+)
-> 
-> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> index 11fb90a..952ddf4 100644
-> --- a/arch/x86/kvm/vmx.c
-> +++ b/arch/x86/kvm/vmx.c
-> @@ -10411,6 +10411,72 @@ static void nested_vmx_cr_fixed1_bits_update(struct kvm_vcpu *vcpu)
->  #undef cr4_fixed1_update
->  }
->  
-> +static void update_intel_pt_cfg(struct kvm_vcpu *vcpu)
-> +{
-> +	struct vcpu_vmx *vmx = to_vmx(vcpu);
-> +	struct kvm_cpuid_entry2 *best = NULL;
-> +	int i;
-> +
-> +	for (i = 0; i < PT_CPUID_LEAVES; i++) {
-> +		best = kvm_find_cpuid_entry(vcpu, 0x14, i);
-> +		if (!best)
-> +			return;
-> +		vmx->pt_desc.caps[CPUID_EAX + i*PT_CPUID_REGS_NUM] = best->eax;
-> +		vmx->pt_desc.caps[CPUID_EBX + i*PT_CPUID_REGS_NUM] = best->ebx;
-> +		vmx->pt_desc.caps[CPUID_ECX + i*PT_CPUID_REGS_NUM] = best->ecx;
-> +		vmx->pt_desc.caps[CPUID_EDX + i*PT_CPUID_REGS_NUM] = best->edx;
-> +	}
-> +
-> +	/* Get the number of configurable Address Ranges for filtering */
-> +	vmx->pt_desc.addr_range = pt_cap_decode(vmx->pt_desc.caps,
-> +						PT_CAP_num_address_ranges);
-> +
-> +	/* Initialize and clear the no dependency bits */
-> +	vmx->pt_desc.ctl_bitmask = ~0ULL;
+From: Xin Long <lucien.xin@gmail.com>
 
-This looks redundant, doesn't it?
+[ Upstream commit 1d88ba1ebb2763aa86172cd7ca05dedbeccc0d35 ]
 
-> +	vmx->pt_desc.ctl_bitmask = ~(RTIT_CTL_TRACEEN | RTIT_CTL_OS |
-> +			RTIT_CTL_USR | RTIT_CTL_TSC_EN | RTIT_CTL_DISRETC);
-> +
-> +	/* If CPUID.(EAX=14H,ECX=0):EBX[0]=1 CR3Filter can be set */
+syzbot reported a rcu_sched self-detected stall on CPU which is caused
+by too small value set on rto_min with SCTP_RTOINFO sockopt. With this
+value, hb_timer will get stuck there, as in its timer handler it starts
+this timer again with this value, then goes to the timer handler again.
 
-This comment makes it less clear than it would have been otherwise.
+This problem is there since very beginning, and thanks to Eric for the
+reproducer shared from a syzbot mail.
 
-> +	if (pt_cap_decode(vmx->pt_desc.caps, PT_CAP_cr3_filtering))
-> +		vmx->pt_desc.ctl_bitmask &= ~RTIT_CTL_CR3EN;
-> +
-> +	/*
-> +	 * If CPUID.(EAX=14H,ECX=0):EBX[1]=1 CYCEn, CycThresh and
-> +	 * PSBFreq can be set
-> +	 */
-> +	if (pt_cap_decode(vmx->pt_desc.caps, PT_CAP_psb_cyc))
-> +		vmx->pt_desc.ctl_bitmask &= ~(RTIT_CTL_CYCLEACC |
-> +			RTIT_CTL_CYC_THRESH | RTIT_CTL_PSB_FREQ);
-> +
-> +	/*
-> +	 * If CPUID.(EAX=14H,ECX=0):EBX[3]=1 MTCEn BranchEn and
-> +	 * MTCFreq can be set
-> +	 */
-> +	if (pt_cap_decode(vmx->pt_desc.caps, PT_CAP_mtc))
-> +		vmx->pt_desc.ctl_bitmask &= ~(RTIT_CTL_MTC_EN |
-> +			RTIT_CTL_BRANCH_EN | RTIT_CTL_MTC_RANGE);
-> +
-> +	/* If CPUID.(EAX=14H,ECX=0):EBX[4]=1 FUPonPTW and PTWEn can be set */
-> +	if (pt_cap_decode(vmx->pt_desc.caps, PT_CAP_ptwrite))
-> +		vmx->pt_desc.ctl_bitmask &= ~(RTIT_CTL_FUP_ON_PTW |
-> +						RTIT_CTL_PTW_EN);
-> +
-> +	/* If CPUID.(EAX=14H,ECX=0):EBX[5]=1 PwrEvEn can be set */
-> +	if (pt_cap_decode(vmx->pt_desc.caps, PT_CAP_power_event_trace))
-> +		vmx->pt_desc.ctl_bitmask &= ~RTIT_CTL_PWR_EVT_EN;
-> +
-> +	/* If CPUID.(EAX=14H,ECX=0):ECX[0]=1 ToPA can be set */
-> +	if (pt_cap_decode(vmx->pt_desc.caps, PT_CAP_topa_output))
-> +		vmx->pt_desc.ctl_bitmask &= ~RTIT_CTL_TOPA;
+This patch fixes it by not allowing sctp_transport_timeout to return a
+smaller value than HZ/5 for hb_timer, which is based on TCP's min rto.
 
-If you want to be thorough, there's also PT_CAP_single_range_output, which
-tells us if RTIT_CTL_TOPA can be *unset*. Otherwise it's required.
+Note that it doesn't fix this issue by limiting rto_min, as some users
+are still using small rto and no proper value was found for it yet.
 
-> +	/* If CPUID.(EAX=14H,ECX=0):ECX[3]=1 FabircEn can be set */
-> +	if (pt_cap_decode(vmx->pt_desc.caps, PT_CAP_output_subsys))
-> +		vmx->pt_desc.ctl_bitmask &= ~RTIT_CTL_FABRIC_EN;
+Reported-by: syzbot+3dcd59a1f907245f891f@syzkaller.appspotmail.com
+Suggested-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/sctp/transport.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Are we sure we want to virtualize this and that it's safe?
-
-> +
-> +	/* unmask address range configure area */
-> +	for (i = 0; i < vmx->pt_desc.addr_range; i++)
-> +		vmx->pt_desc.ctl_bitmask &= ~(0xf << (32 + i * 4));
-
-So, the ctl_bitmask is all the bits that are not allowed?
-
-Regards,
---
-Alex
+--- a/net/sctp/transport.c
++++ b/net/sctp/transport.c
+@@ -637,7 +637,7 @@ unsigned long sctp_transport_timeout(str
+ 	    trans->state != SCTP_PF)
+ 		timeout += trans->hbinterval;
+ 
+-	return timeout;
++	return max_t(unsigned long, timeout, HZ / 5);
+ }
+ 
+ /* Reset transport variables to their initial values */
