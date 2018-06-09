@@ -1,121 +1,199 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id heZHB/h5G1s2DwAAmS7hNA
-	; Sat, 09 Jun 2018 06:55:52 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id uPyeNtHyG1tfYAAAmS7hNA
+	; Sat, 09 Jun 2018 15:31:29 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 06C00607E7; Sat,  9 Jun 2018 06:55:52 +0000 (UTC)
+	id C29D5608C9; Sat,  9 Jun 2018 15:31:29 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eC3F1/q3"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 81115601D3;
-	Sat,  9 Jun 2018 06:55:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 81115601D3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id F0702602FC;
+	Sat,  9 Jun 2018 15:31:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F0702602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753139AbeFIGzt (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 02:55:49 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:50781 "EHLO mail.bootlin.com"
+        id S1753589AbeFIPb1 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:31:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33882 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752599AbeFIGzr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 02:55:47 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 12AC9207C0; Sat,  9 Jun 2018 08:55:45 +0200 (CEST)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 82AF220702;
-        Sat,  9 Jun 2018 08:55:44 +0200 (CEST)
-Date: Sat, 9 Jun 2018 08:55:44 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Stefan Agner <stefan@agner.ch>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
-        pgaikwad@nvidia.com, dev@lynxeye.de, mirza.krak@gmail.com,
-        benjamin.lindqvist@endian.se, pdeschrijver@nvidia.com,
-        miquel.raynal@bootlin.com, linux-kernel@vger.kernel.org,
-        krzk@kernel.org, jonathanh@nvidia.com, marek.vasut@gmail.com,
-        robh+dt@kernel.org, thierry.reding@gmail.com, marcel@ziswiler.com,
-        richard@nod.at, linux-tegra@vger.kernel.org,
-        linux-mtd@lists.infradead.org, Dmitry Osipenko <digetx@gmail.com>,
-        computersforpeace@gmail.com, dwmw2@infradead.org
-Subject: Re: [PATCH v3 4/6] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-Message-ID: <20180609085544.073d803d@bbrezillon>
-In-Reply-To: <20180609084615.6fba31ec@bbrezillon>
-References: <20180531221637.6017-1-stefan@agner.ch>
-        <20180531221637.6017-5-stefan@agner.ch>
-        <cdca329f-0b8d-0604-4cfb-b95baf84c867@gmail.com>
-        <d625dd8ca816543e03668b74921563c1@agner.ch>
-        <20180609075256.725354d6@bbrezillon>
-        <792ee71847f6f4752b8bcba65d22bf81@agner.ch>
-        <20180609084157.0c2f12e6@bbrezillon>
-        <20180609084615.6fba31ec@bbrezillon>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1753330AbeFIPbW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:31:22 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C746204EC;
+        Sat,  9 Jun 2018 15:31:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558282;
+        bh=fomyoMI+wu9XYg9sqy+0RUjFr7y14M4D4e6L5n5wGGU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=eC3F1/q3+dgs7VwmTbJdH9RrfkbUdj3rXxf09D48OoaAFWIMgqSYrtKhg5CLERL2T
+         FQ355qxhpQwkJgV85kDOA76Kqvt+ivvdjSlCDgj/G1JgZNUT0NMr9liXZsZVW6pnoP
+         ht3iPQH0zUmNAAsXjv/iU21kdI0VFvh7otnNoZfo=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.17 09/15] rtnetlink: validate attributes in do_setlink()
+Date: Sat,  9 Jun 2018 17:29:44 +0200
+Message-Id: <20180609150001.222297718@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609150000.746833461@linuxfoundation.org>
+References: <20180609150000.746833461@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 9 Jun 2018 08:46:15 +0200
-Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
-> On Sat, 9 Jun 2018 08:41:57 +0200
-> Boris Brezillon <boris.brezillon@bootlin.com> wrote:
-> 
-> > On Sat, 09 Jun 2018 08:23:51 +0200
-> > Stefan Agner <stefan@agner.ch> wrote:
-> >   
-> > > On 09.06.2018 07:52, Boris Brezillon wrote:  
-> > > > On Fri, 08 Jun 2018 23:51:01 +0200
-> > > > Stefan Agner <stefan@agner.ch> wrote:
-> > > > 
-> > > >     
-> > > >> >
-> > > >> > void tegra_nand_controller_reset(struct tegra_nand_controller *ctrl)
-> > > >> > {
-> > > >> > 	int err;
-> > > >> >
-> > > >> > 	disable_irq(ctrl->irq);
-> > > >> >
-> > > >> > 	err = reset_control_reset(ctrl->rst);
-> > > >> > 	if (err) {
-> > > >> > 		dev_err(ctrl->dev, "Failed to reset HW: %d\n", err);
-> > > >> > 		msleep(HW_TIMEOUT);
-> > > >> > 	}
-> > > >> >
-> > > >> > 	writel_relaxed(NAND_CMD_STATUS, ctrl->regs + HWSTATUS_CMD);
-> > > >> > 	writel_relaxed(HWSTATUS_MASK, ctrl->regs + HWSTATUS_MASK);
-> > > >> > 	writel_relaxed(INT_MASK, ctrl->regs + ISR);    
-> > > >>
-> > > >> If we do a controller reset, there is much more state than that which
-> > > >> needs to be restored. A lot of it is not readily available currently
-> > > >> (timing, ECC settings...)    
-> > > > 
-> > > > This is actually a good test to detect what is not properly initialized
-> > > > by the driver. Timings should be configured correctly through    
-> > > > ->setup_data_interface(). ECC engine should be disabled by default and    
-> > > > only enabled when ->{read,write}_page() is called.
-> > > >     
-> > > 
-> > > Is setup_data_interface guaranteed to be called after a failed  
-> > > ->exec_op()/{read,write}_page()?  
-> > 
-> > No. Maybe I misunderstood when tegra_nand_controller_reset() was
-> > supposed to be called. That's something I would call only once, early
-> > in the probe function, so that the controller is placed in a well-known
-> > state before we start using it. Definitely not something you should
-> > call after each error.  
-> 
-> Note that if you really want to reset the controller after an error,
-> you should also iterate over all chips and call nand_reset() on them.
+------------------
 
-And that's clearly not possible to call nand_reset() from ->exec_op(),
-otherwise you might recurse indefinitely in ->exec_op() if it keeps
-failing, because nand_reset() relies on ->exec_op() to reset the chip.
-So, as you said initially, not a good idea to reset the controller in
-this case. But maybe you can clear the interrupts, mask them and cancel
-the current operation (if any).
+From: Eric Dumazet <edumazet@google.com>
+
+[ Upstream commit 644c7eebbfd59e72982d11ec6cc7d39af12450ae ]
+
+It seems that rtnl_group_changelink() can call do_setlink
+while a prior call to validate_linkmsg(dev = NULL, ...) could
+not validate IFLA_ADDRESS / IFLA_BROADCAST
+
+Make sure do_setlink() calls validate_linkmsg() instead
+of letting its callers having this responsibility.
+
+With help from Dmitry Vyukov, thanks a lot !
+
+BUG: KMSAN: uninit-value in is_valid_ether_addr include/linux/etherdevice.h:199 [inline]
+BUG: KMSAN: uninit-value in eth_prepare_mac_addr_change net/ethernet/eth.c:275 [inline]
+BUG: KMSAN: uninit-value in eth_mac_addr+0x203/0x2b0 net/ethernet/eth.c:308
+CPU: 1 PID: 8695 Comm: syz-executor3 Not tainted 4.17.0-rc5+ #103
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x185/0x1d0 lib/dump_stack.c:113
+ kmsan_report+0x149/0x260 mm/kmsan/kmsan.c:1084
+ __msan_warning_32+0x6e/0xc0 mm/kmsan/kmsan_instr.c:686
+ is_valid_ether_addr include/linux/etherdevice.h:199 [inline]
+ eth_prepare_mac_addr_change net/ethernet/eth.c:275 [inline]
+ eth_mac_addr+0x203/0x2b0 net/ethernet/eth.c:308
+ dev_set_mac_address+0x261/0x530 net/core/dev.c:7157
+ do_setlink+0xbc3/0x5fc0 net/core/rtnetlink.c:2317
+ rtnl_group_changelink net/core/rtnetlink.c:2824 [inline]
+ rtnl_newlink+0x1fe9/0x37a0 net/core/rtnetlink.c:2976
+ rtnetlink_rcv_msg+0xa32/0x1560 net/core/rtnetlink.c:4646
+ netlink_rcv_skb+0x378/0x600 net/netlink/af_netlink.c:2448
+ rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4664
+ netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+ netlink_unicast+0x1678/0x1750 net/netlink/af_netlink.c:1336
+ netlink_sendmsg+0x104f/0x1350 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:629 [inline]
+ sock_sendmsg net/socket.c:639 [inline]
+ ___sys_sendmsg+0xec0/0x1310 net/socket.c:2117
+ __sys_sendmsg net/socket.c:2155 [inline]
+ __do_sys_sendmsg net/socket.c:2164 [inline]
+ __se_sys_sendmsg net/socket.c:2162 [inline]
+ __x64_sys_sendmsg+0x331/0x460 net/socket.c:2162
+ do_syscall_64+0x152/0x230 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x455a09
+RSP: 002b:00007fc07480ec68 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007fc07480f6d4 RCX: 0000000000455a09
+RDX: 0000000000000000 RSI: 00000000200003c0 RDI: 0000000000000014
+RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000000005d0 R14: 00000000006fdc20 R15: 0000000000000000
+
+Uninit was stored to memory at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:279 [inline]
+ kmsan_save_stack mm/kmsan/kmsan.c:294 [inline]
+ kmsan_internal_chain_origin+0x12b/0x210 mm/kmsan/kmsan.c:685
+ kmsan_memcpy_origins+0x11d/0x170 mm/kmsan/kmsan.c:527
+ __msan_memcpy+0x109/0x160 mm/kmsan/kmsan_instr.c:478
+ do_setlink+0xb84/0x5fc0 net/core/rtnetlink.c:2315
+ rtnl_group_changelink net/core/rtnetlink.c:2824 [inline]
+ rtnl_newlink+0x1fe9/0x37a0 net/core/rtnetlink.c:2976
+ rtnetlink_rcv_msg+0xa32/0x1560 net/core/rtnetlink.c:4646
+ netlink_rcv_skb+0x378/0x600 net/netlink/af_netlink.c:2448
+ rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4664
+ netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+ netlink_unicast+0x1678/0x1750 net/netlink/af_netlink.c:1336
+ netlink_sendmsg+0x104f/0x1350 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:629 [inline]
+ sock_sendmsg net/socket.c:639 [inline]
+ ___sys_sendmsg+0xec0/0x1310 net/socket.c:2117
+ __sys_sendmsg net/socket.c:2155 [inline]
+ __do_sys_sendmsg net/socket.c:2164 [inline]
+ __se_sys_sendmsg net/socket.c:2162 [inline]
+ __x64_sys_sendmsg+0x331/0x460 net/socket.c:2162
+ do_syscall_64+0x152/0x230 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Uninit was created at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:279 [inline]
+ kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:189
+ kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:315
+ kmsan_slab_alloc+0x10/0x20 mm/kmsan/kmsan.c:322
+ slab_post_alloc_hook mm/slab.h:446 [inline]
+ slab_alloc_node mm/slub.c:2753 [inline]
+ __kmalloc_node_track_caller+0xb32/0x11b0 mm/slub.c:4395
+ __kmalloc_reserve net/core/skbuff.c:138 [inline]
+ __alloc_skb+0x2cb/0x9e0 net/core/skbuff.c:206
+ alloc_skb include/linux/skbuff.h:988 [inline]
+ netlink_alloc_large_skb net/netlink/af_netlink.c:1182 [inline]
+ netlink_sendmsg+0x76e/0x1350 net/netlink/af_netlink.c:1876
+ sock_sendmsg_nosec net/socket.c:629 [inline]
+ sock_sendmsg net/socket.c:639 [inline]
+ ___sys_sendmsg+0xec0/0x1310 net/socket.c:2117
+ __sys_sendmsg net/socket.c:2155 [inline]
+ __do_sys_sendmsg net/socket.c:2164 [inline]
+ __se_sys_sendmsg net/socket.c:2162 [inline]
+ __x64_sys_sendmsg+0x331/0x460 net/socket.c:2162
+ do_syscall_64+0x152/0x230 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Fixes: e7ed828f10bd ("netlink: support setting devgroup parameters")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/core/rtnetlink.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+--- a/net/core/rtnetlink.c
++++ b/net/core/rtnetlink.c
+@@ -2256,6 +2256,10 @@ static int do_setlink(const struct sk_bu
+ 	const struct net_device_ops *ops = dev->netdev_ops;
+ 	int err;
+ 
++	err = validate_linkmsg(dev, tb);
++	if (err < 0)
++		return err;
++
+ 	if (tb[IFLA_NET_NS_PID] || tb[IFLA_NET_NS_FD] || tb[IFLA_IF_NETNSID]) {
+ 		struct net *net = rtnl_link_get_net_capable(skb, dev_net(dev),
+ 							    tb, CAP_NET_ADMIN);
+@@ -2619,10 +2623,6 @@ static int rtnl_setlink(struct sk_buff *
+ 		goto errout;
+ 	}
+ 
+-	err = validate_linkmsg(dev, tb);
+-	if (err < 0)
+-		goto errout;
+-
+ 	err = do_setlink(skb, dev, ifm, extack, tb, ifname, 0);
+ errout:
+ 	return err;
