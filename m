@@ -1,178 +1,166 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id pvP6AsxEGVthGQAAmS7hNA
-	; Thu, 07 Jun 2018 14:44:49 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ZDN4IVGMG1vQaAAAmS7hNA
+	; Sat, 09 Jun 2018 08:24:18 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id AAACB6089E; Thu,  7 Jun 2018 14:44:49 +0000 (UTC)
+	id A95FC6089E; Sat,  9 Jun 2018 08:24:18 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 5FA1A607DC;
-	Thu,  7 Jun 2018 14:44:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5FA1A607DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id D6D0360290;
+	Sat,  9 Jun 2018 08:24:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D6D0360290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934936AbeFGOon (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:44:43 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40716 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934070AbeFGOoh (ORCPT
+        id S1753251AbeFIIYN (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 04:24:13 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:55703 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753192AbeFIIYK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:44:37 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvby-0005hJ-4I; Thu, 07 Jun 2018 15:09:58 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvaz-0002k3-0L; Thu, 07 Jun 2018 15:08:57 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Sat, 9 Jun 2018 04:24:10 -0400
+Received: by mail-wm0-f66.google.com with SMTP id v16-v6so6839678wmh.5;
+        Sat, 09 Jun 2018 01:24:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Sh0bcqL+6/IYXQKK1OlJ3pPD6BMrLeOULZEwOQ3Yw0U=;
+        b=dXioIY6XQDR+OK5vQSGglsVLNyKZhESHauENiUpzVJGSuVcd/12J8eYN78O5q5rYbC
+         BYI0yxhDjyZ4hzvxjwplo9XRRHfvDb+KkZ1TOAqHMB4AnlUWsPwI2cp9sKWWzkNoSOam
+         QEjOGNtTucLcVKokUGaAk89eORMNvqn60tBqp7lxzyOR9SPSAlyIP4DMXI3+EleRM0pY
+         RZDE+64XQAPzDGT017a854A9sBWx0gzs6y9coszQ7UNjfuaxESKiFy6pmS8eL0FCIf9o
+         /xHRtHOIZWL1hDeWa+dD+vmxO4Ffzd+1vabcE+pJTLKAd5YO6GXndIskAg/VGxNE9PwQ
+         SA2w==
+X-Gm-Message-State: APt69E2T3LoMouXIPbg+we4f0CCb6gwL301tbxz9KO70776HFfun/1Cr
+        3jPhPV0vgkkGl8otDHufMQ==
+X-Google-Smtp-Source: ADUXVKIwpqVBnUglw2M+og5NCTde+Uc6CDj4D7xvr1AI1kQRllOOrh+O0kq2jClZryEs5jUIFciWmg==
+X-Received: by 2002:a1c:20c7:: with SMTP id g190-v6mr3692628wmg.2.1528532649236;
+        Sat, 09 Jun 2018 01:24:09 -0700 (PDT)
+Received: from tesla (2.154.108.25.dyn.user.ono.com. [2.154.108.25])
+        by smtp.googlemail.com with ESMTPSA id u11-v6sm4333018wrq.68.2018.06.09.01.24.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 09 Jun 2018 01:24:07 -0700 (PDT)
+Received: from javi by tesla with local (Exim 4.91)
+        (envelope-from <javi@tesla>)
+        id 1fRZAM-0006I8-LC; Sat, 09 Jun 2018 10:24:06 +0200
+Date: Sat, 9 Jun 2018 10:24:06 +0200
+From: Javi Merino <javi.merino@kernel.org>
+To: Quentin Perret <quentin.perret@arm.com>
+Cc: Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        peterz@infradead.org, rjw@rjwysocki.net,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, mingo@redhat.com,
+        morten.rasmussen@arm.com, chris.redpath@arm.com,
+        patrick.bellasi@arm.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
+        viresh.kumar@linaro.org, tkjos@google.com, joelaf@google.com,
+        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
+        pkondeti@codeaurora.org, edubezval@gmail.com,
+        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net
+Subject: Re: [RFC PATCH v3 03/10] PM: Introduce an Energy Model management
+ framework
+Message-ID: <20180609082406.GD4359@tesla>
+References: <20180521142505.6522-1-quentin.perret@arm.com>
+ <20180521142505.6522-4-quentin.perret@arm.com>
+ <b47cb1f1-6ca1-7674-903f-724be43a57a0@arm.com>
+ <20180606143739.GF10870@e108498-lin.cambridge.arm.com>
+ <20180606152000.GB15894@localhost.localdomain>
+ <20180606152950.GH10870@e108498-lin.cambridge.arm.com>
+ <20180606162647.GI10870@e108498-lin.cambridge.arm.com>
+ <20180608133942.GB4359@tesla>
+ <20180608154738.GB7838@e108498-lin.cambridge.arm.com>
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, bp@alien8.de,
-        "David Woodhouse" <dwmw@amazon.co.uk>, peterz@infradead.org,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>, karahmed@amazon.de
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.455756317@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 049/410] x86/cpuid: Fix up "virtual" IBRS/IBPB/STIBP
- feature bits on Intel
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180608154738.GB7838@e108498-lin.cambridge.arm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+On Fri, Jun 08, 2018 at 04:47:39PM +0100, Quentin Perret wrote:
+> Hi Javi,
+> 
+> On Friday 08 Jun 2018 at 14:39:42 (+0100), Javi Merino wrote:
+> > On Wed, Jun 06, 2018 at 05:26:47PM +0100, Quentin Perret wrote:
+> > > On Wednesday 06 Jun 2018 at 16:29:50 (+0100), Quentin Perret wrote:
+> > > > On Wednesday 06 Jun 2018 at 17:20:00 (+0200), Juri Lelli wrote:
+> > > > > > > This brings me to another question. Let's say there are multiple users of
+> > > > > > > the Energy Model in the system. Shouldn't the units of frequency and power
+> > > > > > > not standardized, maybe Mhz and mW?
+> > > > > > > The task scheduler doesn't care since it is only interested in power diffs
+> > > > > > > but other user might do.
+> > > > > > 
+> > > > > > So the good thing about specifying units is that we can probably assume
+> > > > > > ranges on the values. If the power is in mW, assuming that we're talking
+> > > > > > about a single CPU, it'll probably fit in 16 bits. 65W/core should be
+> > > > > > a reasonable upper-bound ?
+> > > > > > But there are also vendors who might not be happy with disclosing absolute
+> > > > > > values ... These are sometimes considered sensitive and only relative
+> > > > > > numbers are discussed publicly. Now, you can also argue that we already
+> > > > > > have units specified in IPA for ex, and that it doesn't really matter if
+> > > > > > a driver "lies" about the real value, as long as the ratios are correct.
+> > > > > > And I guess that anyone can do measurement on the hardware and get those
+> > > > > > values anyway. So specifying a unit (mW) for the power is probably a
+> > > > > > good idea.
+> > > > > 
+> > > > > Mmm, I remember we fought quite a bit while getting capacity-dmpis-mhz
+> > > > > binding accepted, and one of the musts was that the values were going to
+> > > > > be normalized. So, normalized power values again maybe?
+> > > > 
+> > > > Hmmm, that's a very good point ... There should be no problems on the
+> > > > scheduler side -- we're only interested in correct ratios. But I'm not
+> > > > sure on the thermal side ... I will double check that.
+> > > 
+> > > So, IPA needs to compare the power of the CPUs with the power of other
+> > > things (e.g. GPUs). So we can't normalize the power of the CPUs without
+> > > normalizing in the same scale the power of the other devices. I see two
+> > > possibilities:
+> > > 
+> > > 1) we don't normalize the CPU power values, we specify them in mW, and
+> > >    we document (and maybe throw a warning if we see an issue at runtime)
+> > >    the max range of values. The max expected power for a single core
+> > >    could be 65K for ex (16bits). And based on that we can verify
+> > >    overflow and precision issues in the algorithms, and we keep it easy
+> > >    to compare the CPU power numbers with other devices.
+> > > 
+> > > 2) we normalize the power values, but that means that the EM framework
+> > >    has to manage not only CPUs, but also other types of devices, and
+> > >    normalized their power values as well. That's required to keep the
+> > >    scale consistent across all of them, and keep comparisons doable.
+> > >    But if we do this, we still have to keep a normalized and a "raw"
+> > >    version of the power for all devices. And the "raw" power must still
+> > >    be in the same unit across all devices, otherwise the re-scaling is
+> > >    broken. The main benefit of doing this is that the range of
+> > >    acceptable "raw" power values can be larger, probably 32bits, and
+> > >    that the precision of the normalized range is arbitrary.
+> > > 
+> > > I feel like 2) involves a lot of complexity, and not so many benefits,
+> > > so I'd be happy to go with 1). Unless I forgot something ?
+> > 
+> > From the thermal point of view, the power values don't need to have
+> > any given unit, as long as the values are comparable to each other.
+> 
+> OK, thanks for confirming that :-)
+> 
+> > Do we need to normalize anything in the kernel though?  Can't we just
+> > assume that whatever the platform is telling us is correct?  Quentin
+> > mentioned it earlier: sometimes absolute values are considered
+> > sensitive and we only get ones that are correct relative to the rest
+> > of the system.
+> 
+> I'm happy to specify the units as mW and let the drivers lie about the
+> true values. At least that helps them lie coherently if another
+> subsystem requires power in uW for example.
 
-------------------
+I think this is a good option.
 
-From: David Woodhouse <dwmw@amazon.co.uk>
-
-commit 7fcae1118f5fd44a862aa5c3525248e35ee67c3b upstream.
-
-Despite the fact that all the other code there seems to be doing it, just
-using set_cpu_cap() in early_intel_init() doesn't actually work.
-
-For CPUs with PKU support, setup_pku() calls get_cpu_cap() after
-c->c_init() has set those feature bits. That resets those bits back to what
-was queried from the hardware.
-
-Turning the bits off for bad microcode is easy to fix. That can just use
-setup_clear_cpu_cap() to force them off for all CPUs.
-
-I was less keen on forcing the feature bits *on* that way, just in case
-of inconsistencies. I appreciate that the kernel is going to get this
-utterly wrong if CPU features are not consistent, because it has already
-applied alternatives by the time secondary CPUs are brought up.
-
-But at least if setup_force_cpu_cap() isn't being used, we might have a
-chance of *detecting* the lack of the corresponding bit and either
-panicking or refusing to bring the offending CPU online.
-
-So ensure that the appropriate feature bits are set within get_cpu_cap()
-regardless of how many extra times it's called.
-
-Fixes: 2961298e ("x86/cpufeatures: Clean up Spectre v2 related CPUID flags")
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: karahmed@amazon.de
-Cc: peterz@infradead.org
-Cc: bp@alien8.de
-Link: https://lkml.kernel.org/r/1517322623-15261-1-git-send-email-dwmw@amazon.co.uk
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- arch/x86/kernel/cpu/common.c | 21 +++++++++++++++++++++
- arch/x86/kernel/cpu/intel.c  | 27 ++++++++-------------------
- 2 files changed, 29 insertions(+), 19 deletions(-)
-
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -682,6 +682,26 @@ static void apply_forced_caps(struct cpu
- 	}
- }
- 
-+static void init_speculation_control(struct cpuinfo_x86 *c)
-+{
-+	/*
-+	 * The Intel SPEC_CTRL CPUID bit implies IBRS and IBPB support,
-+	 * and they also have a different bit for STIBP support. Also,
-+	 * a hypervisor might have set the individual AMD bits even on
-+	 * Intel CPUs, for finer-grained selection of what's available.
-+	 *
-+	 * We use the AMD bits in 0x8000_0008 EBX as the generic hardware
-+	 * features, which are visible in /proc/cpuinfo and used by the
-+	 * kernel. So set those accordingly from the Intel bits.
-+	 */
-+	if (cpu_has(c, X86_FEATURE_SPEC_CTRL)) {
-+		set_cpu_cap(c, X86_FEATURE_IBRS);
-+		set_cpu_cap(c, X86_FEATURE_IBPB);
-+	}
-+	if (cpu_has(c, X86_FEATURE_INTEL_STIBP))
-+		set_cpu_cap(c, X86_FEATURE_STIBP);
-+}
-+
- void get_cpu_cap(struct cpuinfo_x86 *c)
- {
- 	u32 tfms, xlvl;
-@@ -735,6 +755,7 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
- 		c->x86_power = cpuid_edx(0x80000007);
- 
- 	init_scattered_cpuid_features(c);
-+	init_speculation_control(c);
- }
- 
- static void identify_cpu_without_cpuid(struct cpuinfo_x86 *c)
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -105,28 +105,17 @@ static void early_init_intel(struct cpui
- 		rdmsr(MSR_IA32_UCODE_REV, lower_word, c->microcode);
- 	}
- 
--	/*
--	 * The Intel SPEC_CTRL CPUID bit implies IBRS and IBPB support,
--	 * and they also have a different bit for STIBP support. Also,
--	 * a hypervisor might have set the individual AMD bits even on
--	 * Intel CPUs, for finer-grained selection of what's available.
--	 */
--	if (cpu_has(c, X86_FEATURE_SPEC_CTRL)) {
--		set_cpu_cap(c, X86_FEATURE_IBRS);
--		set_cpu_cap(c, X86_FEATURE_IBPB);
--	}
--	if (cpu_has(c, X86_FEATURE_INTEL_STIBP))
--		set_cpu_cap(c, X86_FEATURE_STIBP);
--
- 	/* Now if any of them are set, check the blacklist and clear the lot */
--	if ((cpu_has(c, X86_FEATURE_IBRS) || cpu_has(c, X86_FEATURE_IBPB) ||
-+	if ((cpu_has(c, X86_FEATURE_SPEC_CTRL) ||
-+	     cpu_has(c, X86_FEATURE_INTEL_STIBP) ||
-+	     cpu_has(c, X86_FEATURE_IBRS) || cpu_has(c, X86_FEATURE_IBPB) ||
- 	     cpu_has(c, X86_FEATURE_STIBP)) && bad_spectre_microcode(c)) {
- 		pr_warn("Intel Spectre v2 broken microcode detected; disabling Speculation Control\n");
--		clear_cpu_cap(c, X86_FEATURE_IBRS);
--		clear_cpu_cap(c, X86_FEATURE_IBPB);
--		clear_cpu_cap(c, X86_FEATURE_STIBP);
--		clear_cpu_cap(c, X86_FEATURE_SPEC_CTRL);
--		clear_cpu_cap(c, X86_FEATURE_INTEL_STIBP);
-+		setup_clear_cpu_cap(X86_FEATURE_IBRS);
-+		setup_clear_cpu_cap(X86_FEATURE_IBPB);
-+		setup_clear_cpu_cap(X86_FEATURE_STIBP);
-+		setup_clear_cpu_cap(X86_FEATURE_SPEC_CTRL);
-+		setup_clear_cpu_cap(X86_FEATURE_INTEL_STIBP);
- 	}
- 
- 	/*
+Cheers,
+Javi
