@@ -1,195 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ivmKABXjGlvpPAAAmS7hNA
-	; Fri, 08 Jun 2018 20:12:28 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id SCWLAKkaG1sUXgAAmS7hNA
+	; Sat, 09 Jun 2018 00:09:37 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 7F01C607A4; Fri,  8 Jun 2018 20:12:28 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NdgDig1h"
+	id 62DFC608B8; Sat,  9 Jun 2018 00:09:37 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id E2CD7601D2;
-	Fri,  8 Jun 2018 20:12:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E2CD7601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id DC082602FC;
+	Sat,  9 Jun 2018 00:09:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DC082602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753058AbeFHUMZ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 16:12:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51370 "EHLO mail.kernel.org"
+        id S1753304AbeFIAJe (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 20:09:34 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:60550 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753006AbeFHUMV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 16:12:21 -0400
-Received: from localhost (unknown [150.199.191.185])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 55B7E206B7;
-        Fri,  8 Jun 2018 20:12:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528488740;
-        bh=UyFlL7ZqgKpuL5/QcM/qc7SfCwMF20wWYiwZQ3uqEWI=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=NdgDig1hs4iR4ghnAWjO/vv/JPCRCDijkC60AcLZDOd4OVKwCOzrmhpQsQtNIiIrb
-         N26VTT1yI+vkfpsXeb49tGvZVEU3j5T5R6/R7VleyiokKEQ/KS6aJauFvEZy42dRup
-         PBfRinT7WZ3F2bXgYz53XUrFTc5TWHCPvDS4Xl8s=
-Subject: [PATCH v1 3/9] PCI/portdrv: Squash PM-related code into
- portdrv_pci.c
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: linux-pci@vger.kernel.org
-Cc: Oza Pawandeep <poza@codeaurora.org>, linux-kernel@vger.kernel.org
-Date: Fri, 08 Jun 2018 15:12:19 -0500
-Message-ID: <152848873956.14051.11535152653562634346.stgit@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <152848853199.14051.12670957565366345798.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <152848853199.14051.12670957565366345798.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: StGit/0.18
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S1752945AbeFIAI1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 20:08:27 -0400
+Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
+        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1fRRQd-00043u-2S; Fri, 08 Jun 2018 18:08:25 -0600
+Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1fRRQc-0003d8-AJ; Fri, 08 Jun 2018 18:08:22 -0600
+From: Logan Gunthorpe <logang@deltatee.com>
+To: linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com
+Cc: Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>,
+        Allen Hubbe <allenbh@gmail.com>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Logan Gunthorpe <logang@deltatee.com>
+Date: Fri,  8 Jun 2018 18:08:18 -0600
+Message-Id: <20180609000819.13883-9-logang@deltatee.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180609000819.13883-1-logang@deltatee.com>
+References: <20180609000819.13883-1-logang@deltatee.com>
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com, jdmason@kudzu.us, dave.jiang@intel.com, allenbh@gmail.com, fancer.lancer@gmail.com, Shyam-sundar.S-k@amd.com, shuah@kernel.org, logang@deltatee.com
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+Subject: [PATCH 7/8] NTB: perf: Fix race condition when run with ntb_test
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+When running ntb_test, the script tries to run the ntb_perf test
+immediately after probing the modules. Since adding multi-port support,
+this fails seeing the new initialization procedure in ntb_perf
+can not complete instantly.
 
-pcie_port_device_suspend() and pcie_port_device_resume() were defined in
-portdrv_core.c and only used in portdrv_pci.c.  Move them there and make
-them static.  No functional change intended.
+To fix this we add a completion which is waited on when a test is
+started. In this way, run can be written any time after the module is
+loaded and it will wait for the initialization to complete instead of
+sending an error.
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Fixes: 5648e56d03fa ("NTB: ntb_perf: Add full multi-port NTB API support")
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
 ---
- drivers/pci/pcie/portdrv.h      |    4 ---
- drivers/pci/pcie/portdrv_core.c |   45 ---------------------------------------
- drivers/pci/pcie/portdrv_pci.c  |   43 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 43 insertions(+), 49 deletions(-)
+ drivers/ntb/test/ntb_perf.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
-index 7a2e5f0dfb53..cb2a33ea68a5 100644
---- a/drivers/pci/pcie/portdrv.h
-+++ b/drivers/pci/pcie/portdrv.h
-@@ -79,10 +79,6 @@ void pcie_port_service_unregister(struct pcie_port_service_driver *new);
- #define get_descriptor_id(type, service) (((type - 4) << 8) | service)
- 
- extern struct bus_type pcie_port_bus_type;
--#ifdef CONFIG_PM
--int pcie_port_device_suspend(struct device *dev);
--int pcie_port_device_resume(struct device *dev);
--#endif
- void pcie_port_device_remove(struct pci_dev *dev);
- int __must_check pcie_port_bus_register(void);
- void pcie_port_bus_unregister(void);
-diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
-index 747a58d6aaf4..9bcc856738ff 100644
---- a/drivers/pci/pcie/portdrv_core.c
-+++ b/drivers/pci/pcie/portdrv_core.c
-@@ -25,51 +25,6 @@ struct portdrv_service_data {
- 	u32 service;
+diff --git a/drivers/ntb/test/ntb_perf.c b/drivers/ntb/test/ntb_perf.c
+index 6285cb8515ac..8e2b7630ecc9 100644
+--- a/drivers/ntb/test/ntb_perf.c
++++ b/drivers/ntb/test/ntb_perf.c
+@@ -158,6 +158,8 @@ struct perf_peer {
+ 	/* NTB connection setup service */
+ 	struct work_struct	service;
+ 	unsigned long		sts;
++
++	struct completion init_comp;
  };
+ #define to_peer_service(__work) \
+ 	container_of(__work, struct perf_peer, service)
+@@ -549,6 +551,7 @@ static int perf_setup_outbuf(struct perf_peer *peer)
  
--#ifdef CONFIG_PM
--static int suspend_iter(struct device *dev, void *data)
--{
--	struct pcie_port_service_driver *service_driver;
--
--	if ((dev->bus == &pcie_port_bus_type) && dev->driver) {
--		service_driver = to_service_driver(dev->driver);
--		if (service_driver->suspend)
--			service_driver->suspend(to_pcie_device(dev));
--	}
--	return 0;
--}
--
--/**
-- * pcie_port_device_suspend - suspend port services associated with a PCIe port
-- * @dev: PCI Express port to handle
-- */
--int pcie_port_device_suspend(struct device *dev)
--{
--	return device_for_each_child(dev, NULL, suspend_iter);
--}
--
--static int resume_iter(struct device *dev, void *data)
--{
--	struct pcie_port_service_driver *service_driver;
--
--	if ((dev->bus == &pcie_port_bus_type) &&
--	    (dev->driver)) {
--		service_driver = to_service_driver(dev->driver);
--		if (service_driver->resume)
--			service_driver->resume(to_pcie_device(dev));
--	}
--	return 0;
--}
--
--/**
-- * pcie_port_device_resume - resume port services associated with a PCIe port
-- * @dev: PCI Express port to handle
-- */
--int pcie_port_device_resume(struct device *dev)
--{
--	return device_for_each_child(dev, NULL, resume_iter);
--}
--#endif /* PM */
--
- static int remove_iter(struct device *dev, void *data)
- {
- 	if (dev->bus == &pcie_port_bus_type)
-diff --git a/drivers/pci/pcie/portdrv_pci.c b/drivers/pci/pcie/portdrv_pci.c
-index 08c605734d98..1b7855a062ff 100644
---- a/drivers/pci/pcie/portdrv_pci.c
-+++ b/drivers/pci/pcie/portdrv_pci.c
-@@ -54,6 +54,49 @@ static int pcie_portdrv_restore_config(struct pci_dev *dev)
+ 	/* Initialization is finally done */
+ 	set_bit(PERF_STS_DONE, &peer->sts);
++	complete_all(&peer->init_comp);
+ 
+ 	return 0;
  }
+@@ -639,6 +642,7 @@ static void perf_service_work(struct work_struct *work)
+ 		perf_setup_outbuf(peer);
  
- #ifdef CONFIG_PM
-+static int suspend_iter(struct device *dev, void *data)
-+{
-+	struct pcie_port_service_driver *service_driver;
-+
-+	if ((dev->bus == &pcie_port_bus_type) && dev->driver) {
-+		service_driver = to_service_driver(dev->driver);
-+		if (service_driver->suspend)
-+			service_driver->suspend(to_pcie_device(dev));
-+	}
-+	return 0;
-+}
-+
-+/**
-+ * pcie_port_device_suspend - suspend port services associated with a PCIe port
-+ * @dev: PCI Express port to handle
-+ */
-+static int pcie_port_device_suspend(struct device *dev)
-+{
-+	return device_for_each_child(dev, NULL, suspend_iter);
-+}
-+
-+static int resume_iter(struct device *dev, void *data)
-+{
-+	struct pcie_port_service_driver *service_driver;
-+
-+	if ((dev->bus == &pcie_port_bus_type) &&
-+	    (dev->driver)) {
-+		service_driver = to_service_driver(dev->driver);
-+		if (service_driver->resume)
-+			service_driver->resume(to_pcie_device(dev));
-+	}
-+	return 0;
-+}
-+
-+/**
-+ * pcie_port_device_resume - resume port services associated with a PCIe port
-+ * @dev: PCI Express port to handle
-+ */
-+static int pcie_port_device_resume(struct device *dev)
-+{
-+	return device_for_each_child(dev, NULL, resume_iter);
-+}
-+
- static int pcie_port_runtime_suspend(struct device *dev)
- {
- 	return to_pci_dev(dev)->bridge_d3 ? 0 : -EBUSY;
+ 	if (test_and_clear_bit(PERF_CMD_CLEAR, &peer->sts)) {
++		init_completion(&peer->init_comp);
+ 		clear_bit(PERF_STS_DONE, &peer->sts);
+ 		if (test_bit(0, &peer->perf->busy_flag) &&
+ 		    peer == peer->perf->test_peer) {
+@@ -1046,8 +1050,9 @@ static int perf_submit_test(struct perf_peer *peer)
+ 	struct perf_thread *pthr;
+ 	int tidx, ret;
+ 
+-	if (!test_bit(PERF_STS_DONE, &peer->sts))
+-		return -ENOLINK;
++	ret = wait_for_completion_interruptible(&peer->init_comp);
++	if (ret < 0)
++		return ret;
+ 
+ 	if (test_and_set_bit_lock(0, &perf->busy_flag))
+ 		return -EBUSY;
+@@ -1413,6 +1418,7 @@ static int perf_init_peers(struct perf_ctx *perf)
+ 			peer->gidx = pidx;
+ 		}
+ 		INIT_WORK(&peer->service, perf_service_work);
++		init_completion(&peer->init_comp);
+ 	}
+ 	if (perf->gidx == -1)
+ 		perf->gidx = pidx;
+-- 
+2.11.0
