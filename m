@@ -1,174 +1,166 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 7zpCKQ4PGVsCCwAAmS7hNA
-	; Thu, 07 Jun 2018 10:55:22 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 61LxJM4xHFu+CQAAmS7hNA
+	; Sat, 09 Jun 2018 20:00:14 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 6490B6089E; Thu,  7 Jun 2018 10:55:22 +0000 (UTC)
+	id 7B659608C1; Sat,  9 Jun 2018 20:00:14 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="H42bA/cg"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id A725F6063F;
-	Thu,  7 Jun 2018 10:55:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A725F6063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id DB537600D0;
+	Sat,  9 Jun 2018 20:00:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DB537600D0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753529AbeFGKzT (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 06:55:19 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35733 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753394AbeFGKzR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 06:55:17 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id C372AAC3A;
-        Thu,  7 Jun 2018 10:55:15 +0000 (UTC)
-Date: Thu, 7 Jun 2018 12:55:14 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Will Deacon <will.deacon@arm.com>, xiexiuqi@huawei.com,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-arm <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hanjun Guo <guohanjun@huawei.com>, wanghuiqiang@huawei.com,
-        tnowicki@caviumnetworks.com, linux-pci@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Subject: Re: [PATCH 1/2] arm64: avoid alloc memory on offline node
-Message-ID: <20180607105514.GA13139@dhcp22.suse.cz>
-References: <1527768879-88161-1-git-send-email-xiexiuqi@huawei.com>
- <1527768879-88161-2-git-send-email-xiexiuqi@huawei.com>
- <20180606154516.GL6631@arm.com>
- <CAErSpo6S0qtR42tjGZrFu4aMFFyThx1hkHTSowTt6t3XerpHnA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAErSpo6S0qtR42tjGZrFu4aMFFyThx1hkHTSowTt6t3XerpHnA@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S932950AbeFIUAL (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 16:00:11 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:36465 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932157AbeFIUAJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 16:00:09 -0400
+Received: by mail-pl0-f65.google.com with SMTP id a7-v6so7606975plp.3
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Jun 2018 13:00:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DiYFxDvpqRVFiFokfbm4aZzqVbaUgwSqjfDGyraqZ3k=;
+        b=H42bA/cgL91pqYueLRb5vTdn9MA2lRbSGjpJ7nhiKmnMwUlE33HF5w1bhlITu4qoSe
+         Y0IabMEZI9rn3h/Vykd1j00b9E1wi6I/5D/UBNJnlIucSZkZwfkbGATor3Qj7pIbPvIF
+         n1M00RqmouCEGgMht74V9DH0Gf62p/Wuccj2/Q0LWgpTlurWkyNYospxAsMfJP37TUc7
+         QUfcoK65mkwja6+ZIGOHLW6wwJMbXeplJjrQL91lFV++TBnC3N7q3x9uNZRBmfaVWw0x
+         nWo5nA6E1Pto2nuTct88y0iIIdjO1ubxUsCQv4NJi/tVNOmqgngOPcsuAvhVs8gJPPBr
+         ZZ5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=DiYFxDvpqRVFiFokfbm4aZzqVbaUgwSqjfDGyraqZ3k=;
+        b=Pp3728k9HXdV1zu8ESbpwM/ZvfgxB+87d8n13jyw2R0JpxYkKhnbCTMpveiOcTraGs
+         BaqM3HE2eeOov46bzn4NoWAB/QtGM+kyJpow7a4P1YtNtC4+gUu1PgYOAErHGpyHgYKh
+         cnIQgzfuV03FL2eS5MCCW6QPJzOmo+6tUvIgUyZnwojHFiSCFNjgVoXyj7QzVU2xNGaS
+         ukWZuvOcEGZs+DZo4rV7EZykVcElAMTefbOGIlP+O9ynfiho0W+WgJ97R1UIJnjhQy8X
+         5hE/MYD50w+B18o5d6VqPuQcXBi6j+iC6WwQjWgg4oHN7PqHnH/BUImVHPyKekbahYx1
+         k48g==
+X-Gm-Message-State: APt69E2LY4eAYSe+EGwelWaGADggl8C4qy3N2ykkZchgqTAz5dk0Fh5l
+        K0KpgATTFcWKDjGw9Ixjn2gcKA==
+X-Google-Smtp-Source: ADUXVKJnEDZJu3R/F7gXtmt8p/rCjehrKTdO+dt2MX9i5nBJXf9bVGBTjcNGa/it/fJdd6AstOvBgw==
+X-Received: by 2002:a17:902:543:: with SMTP id 61-v6mr12004792plf.47.1528574409277;
+        Sat, 09 Jun 2018 13:00:09 -0700 (PDT)
+Received: from localhost (c-67-161-15-180.hsd1.ca.comcast.net. [67.161.15.180])
+        by smtp.gmail.com with ESMTPSA id e17-v6sm34213003pfd.15.2018.06.09.13.00.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 09 Jun 2018 13:00:08 -0700 (PDT)
+Date: Sat, 09 Jun 2018 13:00:08 -0700 (PDT)
+X-Google-Original-Date: Sat, 09 Jun 2018 12:33:18 PDT (-0700)
+Subject: Re: [PATCH 3/3] riscv: fix __user annotation for __copy_user()
+In-Reply-To: <20180609001310.jxzcqtdacu4uiz6b@ltop.local>
+CC: atish.patra@wdc.com, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org, albert@sifive.com
+From: Palmer Dabbelt <palmer@sifive.com>
+To: luc.vanoostenryck@gmail.com
+Message-ID: <mhng-34378b5f-fa64-4886-b454-a2cb319d6abb@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 06-06-18 15:39:34, Bjorn Helgaas wrote:
-> [+cc akpm, linux-mm, linux-pci]
-> 
-> On Wed, Jun 6, 2018 at 10:44 AM Will Deacon <will.deacon@arm.com> wrote:
-> >
-> > On Thu, May 31, 2018 at 08:14:38PM +0800, Xie XiuQi wrote:
-> > > A numa system may return node which is not online.
-> > > For example, a numa node:
-> > > 1) without memory
-> > > 2) NR_CPUS is very small, and the cpus on the node are not brought up
-> > >
-> > > In this situation, we use NUMA_NO_NODE to avoid oops.
-> > >
-> > > [   25.732905] Unable to handle kernel NULL pointer dereference at virtual address 00001988
-> > > [   25.740982] Mem abort info:
-> > > [   25.743762]   ESR = 0x96000005
-> > > [   25.746803]   Exception class = DABT (current EL), IL = 32 bits
-> > > [   25.752711]   SET = 0, FnV = 0
-> > > [   25.755751]   EA = 0, S1PTW = 0
-> > > [   25.758878] Data abort info:
-> > > [   25.761745]   ISV = 0, ISS = 0x00000005
-> > > [   25.765568]   CM = 0, WnR = 0
-> > > [   25.768521] [0000000000001988] user address but active_mm is swapper
-> > > [   25.774861] Internal error: Oops: 96000005 [#1] SMP
-> > > [   25.779724] Modules linked in:
-> > > [   25.782768] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.17.0-rc6-mpam+ #115
-> > > [   25.789714] Hardware name: Huawei D06/D06, BIOS Hisilicon D06 EC UEFI Nemo 2.0 RC0 - B305 05/28/2018
-> > > [   25.798831] pstate: 80c00009 (Nzcv daif +PAN +UAO)
-> > > [   25.803612] pc : __alloc_pages_nodemask+0xf0/0xe70
-> > > [   25.808389] lr : __alloc_pages_nodemask+0x184/0xe70
-> > > [   25.813252] sp : ffff00000996f660
-> > > [   25.816553] x29: ffff00000996f660 x28: 0000000000000000
-> > > [   25.821852] x27: 00000000014012c0 x26: 0000000000000000
-> > > [   25.827150] x25: 0000000000000003 x24: ffff000008099eac
-> > > [   25.832449] x23: 0000000000400000 x22: 0000000000000000
-> > > [   25.837747] x21: 0000000000000001 x20: 0000000000000000
-> > > [   25.843045] x19: 0000000000400000 x18: 0000000000010e00
-> > > [   25.848343] x17: 000000000437f790 x16: 0000000000000020
-> > > [   25.853641] x15: 0000000000000000 x14: 6549435020524541
-> > > [   25.858939] x13: 20454d502067756c x12: 0000000000000000
-> > > [   25.864237] x11: ffff00000996f6f0 x10: 0000000000000006
-> > > [   25.869536] x9 : 00000000000012a4 x8 : ffff8023c000ff90
-> > > [   25.874834] x7 : 0000000000000000 x6 : ffff000008d73c08
-> > > [   25.880132] x5 : 0000000000000000 x4 : 0000000000000081
-> > > [   25.885430] x3 : 0000000000000000 x2 : 0000000000000000
-> > > [   25.890728] x1 : 0000000000000001 x0 : 0000000000001980
-> > > [   25.896027] Process swapper/0 (pid: 1, stack limit = 0x        (ptrval))
-> > > [   25.902712] Call trace:
-> > > [   25.905146]  __alloc_pages_nodemask+0xf0/0xe70
-> > > [   25.909577]  allocate_slab+0x94/0x590
-> > > [   25.913225]  new_slab+0x68/0xc8
-> > > [   25.916353]  ___slab_alloc+0x444/0x4f8
-> > > [   25.920088]  __slab_alloc+0x50/0x68
-> > > [   25.923562]  kmem_cache_alloc_node_trace+0xe8/0x230
-> > > [   25.928426]  pci_acpi_scan_root+0x94/0x278
-> > > [   25.932510]  acpi_pci_root_add+0x228/0x4b0
-> > > [   25.936593]  acpi_bus_attach+0x10c/0x218
-> > > [   25.940501]  acpi_bus_attach+0xac/0x218
-> > > [   25.944323]  acpi_bus_attach+0xac/0x218
-> > > [   25.948144]  acpi_bus_scan+0x5c/0xc0
-> > > [   25.951708]  acpi_scan_init+0xf8/0x254
-> > > [   25.955443]  acpi_init+0x310/0x37c
-> > > [   25.958831]  do_one_initcall+0x54/0x208
-> > > [   25.962653]  kernel_init_freeable+0x244/0x340
-> > > [   25.966999]  kernel_init+0x18/0x118
-> > > [   25.970474]  ret_from_fork+0x10/0x1c
-> > > [   25.974036] Code: 7100047f 321902a4 1a950095 b5000602 (b9400803)
-> > > [   25.980162] ---[ end trace 64f0893eb21ec283 ]---
-> > > [   25.984765] Kernel panic - not syncing: Fatal exception
-> > >
-> > > Signed-off-by: Xie XiuQi <xiexiuqi@huawei.com>
-> > > Tested-by: Huiqiang Wang <wanghuiqiang@huawei.com>
-> > > Cc: Hanjun Guo <hanjun.guo@linaro.org>
-> > > Cc: Tomasz Nowicki <Tomasz.Nowicki@caviumnetworks.com>
-> > > Cc: Xishi Qiu <qiuxishi@huawei.com>
-> > > ---
-> > >  arch/arm64/kernel/pci.c | 3 +++
-> > >  1 file changed, 3 insertions(+)
-> > >
-> > > diff --git a/arch/arm64/kernel/pci.c b/arch/arm64/kernel/pci.c
-> > > index 0e2ea1c..e17cc45 100644
-> > > --- a/arch/arm64/kernel/pci.c
-> > > +++ b/arch/arm64/kernel/pci.c
-> > > @@ -170,6 +170,9 @@ struct pci_bus *pci_acpi_scan_root(struct acpi_pci_root *root)
-> > >       struct pci_bus *bus, *child;
-> > >       struct acpi_pci_root_ops *root_ops;
-> > >
-> > > +     if (node != NUMA_NO_NODE && !node_online(node))
-> > > +             node = NUMA_NO_NODE;
-> > > +
-> >
-> > This really feels like a bodge, but it does appear to be what other
-> > architectures do, so:
-> >
-> > Acked-by: Will Deacon <will.deacon@arm.com>
-> 
-> I agree, this doesn't feel like something we should be avoiding in the
-> caller of kzalloc_node().
-> 
-> I would not expect kzalloc_node() to return memory that's offline, no
-> matter what node we told it to allocate from.  I could imagine it
-> returning failure, or returning memory from a node that *is* online,
-> but returning a pointer to offline memory seems broken.
-> 
-> Are we putting memory that's offline in the free list?  I don't know
-> where to look to figure this out.
+On Fri, 08 Jun 2018 17:13:12 PDT (-0700), luc.vanoostenryck@gmail.com wrote:
+> On Fri, Jun 08, 2018 at 03:33:36PM -0700, Palmer Dabbelt wrote:
+>> On Thu, 07 Jun 2018 09:51:33 PDT (-0700), luc.vanoostenryck@gmail.com wrote:
+>> > On Thu, Jun 07, 2018 at 09:30:19AM -0700, Palmer Dabbelt wrote:
+>> > > diff --git a/arch/riscv/lib/uaccess.S b/arch/riscv/lib/uaccess.S
+>> > > index 58fb2877c865..bd51e47ebd44 100644
+>> > > --- a/arch/riscv/lib/uaccess.S
+>> > > +++ b/arch/riscv/lib/uaccess.S
+>> > > @@ -13,7 +13,15 @@ _epc:
+>> > > 	.previous
+>> > > 	.endm
+>> > >
+>> > > -ENTRY(__copy_user)
+>> > > +/* __asm_copy_to_user and __asm_copy_from_user are actually the same function,
+>> > > + * they're just provided as two different symbols to C code so sparse doesn't
+>> > > + * yell about casting between two different address spaces. */
+>> > > +.global __asm_copy_to_user
+>> > > +.set __asm_copy_to_user,__asm_copy_tofrom_user
+>> > > +.global __asm_copy_from_user
+>> > > +.set __asm_copy_from_user,__asm_copy_tofrom_user
+>> > > +
+>> > > +ENTRY(__asm_copy_tofrom_user)
+>> >
+>> > I don't think that the size (as reported by objdump, for example) will
+>> > be correct or even present for __asm_copy_to_user & __asm_copy_to_user.
+>> >
+>> > What can be done is:
+>> > 	ENTRY(__asm_copy_to_user)
+>> > 	ENTRY(__asm_copy_from_user)
+>> >
+>> > 	<function definition>
+>> >
+>> > 	ENDPROC(__asm_copy_to_user)
+>> > 	ENDPROC(__asm_copy_from_user)
+>> >
+>> Thanks.  Do you mind checking to make sure this works and submitting a patch?
+>
+> Not at all.
+> I should have done it already when I sent the previous email.
+>
+> I tried it and ... the preprocessed asm is as expected:
+> 	.globl __asm_copy_to_user ; .balign 4 ; __asm_copy_to_user:
+> 	.globl __asm_copy_from_user ; .balign 4 ; __asm_copy_from_user:
+>
+>
+> 	 li t6, 0x00040000
+> 	 csrs sstatus, t6
+> 	 ...
+>
+> But the nm -S returns different sizes for them:
+> 	0000000000000004 000000000000006c T __asm_copy_from_user
+> 	0000000000000002 000000000000006e T __asm_copy_to_user
+>
+> and the object code is:
+> 	0000000000000000 <__asm_copy_to_user-0x2>:
+> 	   0:   0001                    nop
+>
+> 	0000000000000002 <__asm_copy_to_user>:
+> 	   2:   0001                    nop
+>
+> 	0000000000000004 <__asm_copy_from_user>:
+> 	   4:   00040fb7                lui     t6,0x40
+> 	   8:   100fa073                csrs    sstatus,t6
+> 	   ...
+>
+> Why these unnneded nops?
+> Is this a known problem of my toolchain (I use a plain gcc 7.3 +
+> binutils 2.29, both configured as riscv64-none-elf)?
+>
+> If I remove the two ENTRY() and use instead:
+> 	.globl __asm_copy_to_user ; __asm_copy_to_user:
+> 	.globl __asm_copy_from_user ; __asm_copy_from_user:
+> (IOW, I drop the .balign) then I get the expected result.
+> But well, this seems unrelated to the double ENTRY.
+>
+> I can't test it more for now because I've some link errors (which,
+> I understand are probably solved in the riscv tree of binutils).
+>
+> I'll send you the patch anyway since, as far as I understand the changes
+> specific to this copy_to/from_user is OK.
 
-I am not sure I have the full context but pci_acpi_scan_root calls
-kzalloc_node(sizeof(*info), GFP_KERNEL, node)
-and that should fall back to whatever node that is online. Offline node
-shouldn't keep any pages behind. So there must be something else going
-on here and the patch is not the right way to handle it. What does
-faddr2line __alloc_pages_nodemask+0xf0 tells on this kernel?
+I think it's probably a bug in binutils-2.29 that should be fixed by 2.30 -- 
+IIRC we had some bugs that looked like this and they got fixed, though it might 
+be just in master (so 2.31).
 
--- 
-Michal Hocko
-SUSE Labs
+Either way it looks innocuous WRT the patch.
+
+Thanks!
