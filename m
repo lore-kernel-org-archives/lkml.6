@@ -1,137 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id lyLyFstAGFvuQgAAmS7hNA
-	; Wed, 06 Jun 2018 20:15:28 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ZXSBJWADHFvAcAAAmS7hNA
+	; Sat, 09 Jun 2018 16:44:20 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 5FD796089E; Wed,  6 Jun 2018 20:15:28 +0000 (UTC)
+	id DF29C608C1; Sat,  9 Jun 2018 16:44:19 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D7BEF60290;
-	Wed,  6 Jun 2018 20:15:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D7BEF60290
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 79255605A2;
+	Sat,  9 Jun 2018 16:44:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 79255605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=ispras.ru
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752800AbeFFUP0 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 16:15:26 -0400
-Received: from mga02.intel.com ([134.134.136.20]:10537 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752114AbeFFUPD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 16:15:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2018 13:15:02 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,484,1520924400";
-   d="scan'208";a="205903726"
-Received: from jacob-builder.jf.intel.com ([10.7.199.155])
-  by orsmga004.jf.intel.com with ESMTP; 06 Jun 2018 13:15:02 -0700
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-To: LKML <linux-kernel@vger.kernel.org>,
-        iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>
-Cc: Raj Ashok <ashok.raj@intel.com>,
-        "Lu Baolu" <baolu.lu@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH 2/2] iommu/vt-d: fix dev iotlb pfsid use
-Date: Wed,  6 Jun 2018 13:18:00 -0700
-Message-Id: <1528316280-24307-3-git-send-email-jacob.jun.pan@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528316280-24307-1-git-send-email-jacob.jun.pan@linux.intel.com>
-References: <1528316280-24307-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        id S1753437AbeFIQoP (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 12:44:15 -0400
+Received: from bran.ispras.ru ([83.149.199.196]:23747 "EHLO smtp.ispras.ru"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753357AbeFIQoO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 12:44:14 -0400
+X-Greylist: delayed 320 seconds by postgrey-1.27 at vger.kernel.org; Sat, 09 Jun 2018 12:44:14 EDT
+Received: from myklebust.intra.ispras.ru (unknown [10.10.2.207])
+        by smtp.ispras.ru (Postfix) with ESMTP id 56976203BF;
+        Sat,  9 Jun 2018 11:11:59 +0300 (MSK)
+From: Anton Vasilyev <vasilyev@ispras.ru>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Anton Vasilyev <vasilyev@ispras.ru>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Gaurav Pathak <gauravpathak129@gmail.com>,
+        Hannes Reinecke <hare@suse.de>,
+        Sinan Kaya <okaya@codeaurora.org>, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org
+Subject: [PATCH] staging: rts5208: add check on NULL before dereference
+Date: Sat,  9 Jun 2018 19:38:29 +0300
+Message-Id: <20180609163829.30619-1-vasilyev@ispras.ru>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PFSID should be used in the invalidation descriptor for flushing
-device IOTLBs on SRIOV VFs.
+If rtsx_probe fails to allocate dev->chip, then NULL pointer
+dereference occurs at rtsx_release_resources().
 
-Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Patch adds checks chip on NULL before its dereference at
+rtsx_release_resources and passing with dereference inside
+rtsx_release_chip.
+
+Found by Linux Driver Verification project (linuxtesting.org).
+
+Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
 ---
- drivers/iommu/dmar.c        |  6 +++---
- drivers/iommu/intel-iommu.c | 16 +++++++++++++++-
- include/linux/intel-iommu.h |  5 ++---
- 3 files changed, 20 insertions(+), 7 deletions(-)
+ drivers/staging/rts5208/rtsx.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
-index 460bed4..7852678 100644
---- a/drivers/iommu/dmar.c
-+++ b/drivers/iommu/dmar.c
-@@ -1339,8 +1339,8 @@ void qi_flush_iotlb(struct intel_iommu *iommu, u16 did, u64 addr,
- 	qi_submit_sync(&desc, iommu);
+diff --git a/drivers/staging/rts5208/rtsx.c b/drivers/staging/rts5208/rtsx.c
+index 70e0b8623110..952dd0d580cf 100644
+--- a/drivers/staging/rts5208/rtsx.c
++++ b/drivers/staging/rts5208/rtsx.c
+@@ -623,12 +623,13 @@ static void rtsx_release_resources(struct rtsx_dev *dev)
+ 
+ 	if (dev->irq > 0)
+ 		free_irq(dev->irq, (void *)dev);
+-	if (dev->chip->msi_en)
++	if (dev->chip && dev->chip->msi_en)
+ 		pci_disable_msi(dev->pci);
+ 	if (dev->remap_addr)
+ 		iounmap(dev->remap_addr);
++	if (dev->chip)
++		rtsx_release_chip(dev->chip);
+ 
+-	rtsx_release_chip(dev->chip);
+ 	kfree(dev->chip);
  }
  
--void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 qdep,
--			u64 addr, unsigned mask)
-+void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 pfsid,
-+			u16 qdep, u64 addr, unsigned mask)
- {
- 	struct qi_desc desc;
- 
-@@ -1355,7 +1355,7 @@ void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 qdep,
- 		qdep = 0;
- 
- 	desc.low = QI_DEV_IOTLB_SID(sid) | QI_DEV_IOTLB_QDEP(qdep) |
--		   QI_DIOTLB_TYPE;
-+		   QI_DIOTLB_TYPE | QI_DEV_IOTLB_PFSID(pfsid);
- 
- 	qi_submit_sync(&desc, iommu);
- }
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 3d77d61..e0e80c3 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -1503,6 +1503,19 @@ static void iommu_enable_dev_iotlb(struct device_domain_info *info)
- 		return;
- 
- 	pdev = to_pci_dev(info->dev);
-+	/* For IOMMU that supports device IOTLB throttling (DIT), we assign
-+	 * PFSID to the invalidation desc of a VF such that IOMMU HW can gauge
-+	 * queue depth at PF level. If DIT is not set, PFSID will be treated as
-+	 * reserved, which should be set to 0.
-+	 */
-+	if (!ecap_dit(info->iommu->ecap))
-+		info->pfsid = 0;
-+	else if (pdev && pdev->is_virtfn) {
-+		if (ecap_dit(info->iommu->ecap))
-+			dev_warn(&pdev->dev, "SRIOV VF device IOTLB enabled without flow control\n");
-+		info->pfsid = PCI_DEVID(pdev->physfn->bus->number, pdev->physfn->devfn);
-+	} else
-+		info->pfsid = PCI_DEVID(info->bus, info->devfn);
- 
- #ifdef CONFIG_INTEL_IOMMU_SVM
- 	/* The PCIe spec, in its wisdom, declares that the behaviour of
-@@ -1568,7 +1581,8 @@ static void iommu_flush_dev_iotlb(struct dmar_domain *domain,
- 
- 		sid = info->bus << 8 | info->devfn;
- 		qdep = info->ats_qdep;
--		qi_flush_dev_iotlb(info->iommu, sid, qdep, addr, mask);
-+		qi_flush_dev_iotlb(info->iommu, sid, info->pfsid,
-+				qdep, addr, mask);
- 	}
- 	spin_unlock_irqrestore(&device_domain_lock, flags);
- }
-diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-index af1c05f..7fd9fbae 100644
---- a/include/linux/intel-iommu.h
-+++ b/include/linux/intel-iommu.h
-@@ -456,9 +456,8 @@ extern void qi_flush_context(struct intel_iommu *iommu, u16 did, u16 sid,
- 			     u8 fm, u64 type);
- extern void qi_flush_iotlb(struct intel_iommu *iommu, u16 did, u64 addr,
- 			  unsigned int size_order, u64 type);
--extern void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 qdep,
--			       u64 addr, unsigned mask);
--
-+extern void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 pfsid,
-+			u16 qdep, u64 addr, unsigned mask);
- extern int qi_submit_sync(struct qi_desc *desc, struct intel_iommu *iommu);
- 
- extern int dmar_ir_support(void);
 -- 
-2.7.4
+2.17.1
