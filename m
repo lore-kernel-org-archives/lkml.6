@@ -1,129 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id +KO1A3N7Gls/AgAAmS7hNA
-	; Fri, 08 Jun 2018 12:50:00 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id pAiLDc7yG1uAYAAAmS7hNA
+	; Sat, 09 Jun 2018 15:31:26 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 1B5D7608B8; Fri,  8 Jun 2018 12:50:00 +0000 (UTC)
+	id 19591608C1; Sat,  9 Jun 2018 15:31:26 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sqQp4Gtv"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FYExySaN"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 90CCD606FA;
-	Fri,  8 Jun 2018 12:49:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 90CCD606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 593CE602FC;
+	Sat,  9 Jun 2018 15:31:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 593CE602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752920AbeFHMt4 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 08:49:56 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:44880 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751846AbeFHMty (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 08:49:54 -0400
-Received: by mail-pg0-f68.google.com with SMTP id p21-v6so6352457pgd.11
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 05:49:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=QbCpKA5auRQCtpvi2En1bDrPZ5zG/N+QDTapvB0H/bQ=;
-        b=sqQp4Gtv/LpRKBq+h0Gyc+Dq0/9ByREOvuuk2B5ngay8HWd6zXic4JiKMfw8WWSFyn
-         VmMcSzIzBYy0kHPWj6vbOfJw+Ogofs4a/onB/6FMUFtfmWPPXNMCYopiccoBGc2MLVZk
-         p1te6Vlq7+7ccitM5wqe+rsYJ7pmwj45x0fPRFFTacjMX4rmHMQJrHGLbitopZvIB/Kw
-         XsUSyxTmPyBaOfyQYq1wr9XGRGSZmW9P4CeSeCNOcZgCfwx9/0SjvY+vdjXKC9LFXpoK
-         1jKKsTyD+16fELRNSxyjxSqk/xQxgqG7UG+UzvIdDmZc/LQ7wMTetSdG025WnwkrDfOO
-         giDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=QbCpKA5auRQCtpvi2En1bDrPZ5zG/N+QDTapvB0H/bQ=;
-        b=TgPukkryvR9M75k/GFdkDWffoWdk5jHBWufrJkO0xxMedEj31AcIdjDBeZt3kVrSDs
-         dUBILhSJSnOVfKy/LMkqBBVeZjkpje9u5wOIrXxhh1mwFPiTz6r1FHPoFPg8HGb+n4RE
-         qHXE2JnZKBwS4m1gAmtP9bX5nKV6B9UFaoDW9jrwcLbqGZXnNcGx+0YWwE4hOqQuR6WC
-         t6ki+R9RuCZ1pzBbvyRUjgE988erpDP+mAjMqilX+hHjUzcCN3OacoCy06EwgWIm1j1L
-         oDN8U9lLfpSwpIaR27ekzf5MCcehe3FC2lEJ4F2Ci1TZurBbJ5lXwz2+vDo25peU3Dmp
-         Fb+w==
-X-Gm-Message-State: APt69E0mgWw1KpWi6BLiiGVhjoIrksCYO9EcsMRsuGeMsijMIMBpxJ/3
-        /DzU/egTOOAUiqnLjWUHvMI=
-X-Google-Smtp-Source: ADUXVKKKgxdbBpqCygb6IfZ+yelFJJgUbJnGOMQLQoYGMDLUPcv17eQq6EXBGhrQOsGGHz1wIIowLQ==
-X-Received: by 2002:a65:418b:: with SMTP id a11-v6mr5199323pgq.118.1528462194351;
-        Fri, 08 Jun 2018 05:49:54 -0700 (PDT)
-Received: from dest.didichuxing.com ([13.94.31.177])
-        by smtp.gmail.com with ESMTPSA id h8-v6sm72530396pgq.56.2018.06.08.05.49.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Jun 2018 05:49:53 -0700 (PDT)
-From: ufo19890607@gmail.com
-To: akpm@linux-foundation.org, mhocko@suse.com, rientjes@google.com,
-        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
-        penguin-kernel@I-love.SAKURA.ne.jp, guro@fb.com,
-        yang.s@alibaba-inc.com, yuzhoujian@didichuxing.com
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        ufo19890607 <ufo19890607@gmail.com>
-Subject: [PATCH v8 0/1] Refactor part of the oom report in dump_header
-Date: Fri,  8 Jun 2018 20:49:37 +0800
-Message-Id: <1528462178-29250-1-git-send-email-ufo19890607@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S1753563AbeFIPbV (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:31:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33818 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753330AbeFIPbT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:31:19 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2EF6120896;
+        Sat,  9 Jun 2018 15:31:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558278;
+        bh=gOyrXjcLpcOmQ1z3/GrR1hVnONQ8swLggKmgAEW23rI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=FYExySaNffsh3lrskj5UjXjOWTB+gyO/AnmVZ9d0LzhMysgQzNRIQalEk99g98oXi
+         OKx/Yq+3YDwhCF3IA92DW53bXNVMIXa3ErNRvHMG10kbMWaBBXycJMlJC+p2Wv7upl
+         bevyaQoeVwFIjMqnPNxeq1UimjlPN+JhAz0t0Vvg=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.17 08/15] net/packet: refine check for priv area size
+Date: Sat,  9 Jun 2018 17:29:43 +0200
+Message-Id: <20180609150001.162825346@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609150000.746833461@linuxfoundation.org>
+References: <20180609150000.746833461@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: ufo19890607 <ufo19890607@gmail.com>
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
-Some users complains that system-wide oom report does not print memcg's
-name which contains the task killed by the oom-killer. The current system
-wide oom report prints the task's command, gfp_mask, order ,oom_score_adj 
-and shows the memory info, but misses some important information, etc. the 
-memcg that has reached its limit and the memcg to which the killed process 
-is attached.
+------------------
 
-I follow the advices of David Rientjes and Michal Hocko, and refactor
-part of the oom report. After this patch, users can get the memcg's 
-path from the oom report and check the certain container more quickly.
+From: Eric Dumazet <edumazet@google.com>
 
-Below is the part of the oom report in the dmesg
-...
-[  142.158316] panic cpuset=/ mems_allowed=0-1
-[  142.158983] CPU: 15 PID: 8682 Comm: panic Not tainted 4.17.0-rc6+ #13
-[  142.159659] Hardware name: Inspur SA5212M4/YZMB-00370-107, BIOS 4.1.10 11/14/2016
-[  142.160342] Call Trace:
-[  142.161037]  dump_stack+0x78/0xb3
-[  142.161734]  dump_header+0x7d/0x334
-[  142.162433]  oom_kill_process+0x228/0x490
-[  142.163126]  ? oom_badness+0x2a/0x130
-[  142.163821]  out_of_memory+0xf0/0x280
-[  142.164532]  __alloc_pages_slowpath+0x711/0xa07
-[  142.165241]  __alloc_pages_nodemask+0x23f/0x260
-[  142.165947]  alloc_pages_vma+0x73/0x180
-[  142.166665]  do_anonymous_page+0xed/0x4e0
-[  142.167388]  __handle_mm_fault+0xbd2/0xe00
-[  142.168114]  handle_mm_fault+0x116/0x250
-[  142.168841]  __do_page_fault+0x233/0x4d0
-[  142.169567]  do_page_fault+0x32/0x130
-[  142.170303]  ? page_fault+0x8/0x30
-[  142.171036]  page_fault+0x1e/0x30
-[  142.171764] RIP: 0033:0x7f403000a860
-[  142.172517] RSP: 002b:00007ffc9f745c28 EFLAGS: 00010206
-[  142.173268] RAX: 00007f3f6fd7d000 RBX: 0000000000000000 RCX: 00007f3f7f5cd000
-[  142.174040] RDX: 00007f3fafd7d000 RSI: 0000000000000000 RDI: 00007f3f6fd7d000
-[  142.174806] RBP: 00007ffc9f745c50 R08: ffffffffffffffff R09: 0000000000000000
-[  142.175623] R10: 0000000000000022 R11: 0000000000000246 R12: 0000000000400490
-[  142.176542] R13: 00007ffc9f745d30 R14: 0000000000000000 R15: 0000000000000000
-[  142.177709] oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),origin_memcg=(null),kill_memcg=/test/test1/test2,task=panic,pid= 8622,uid=    0
-...
+[ Upstream commit eb73190f4fbeedf762394e92d6a4ec9ace684c88 ]
 
-ufo19890607 (1):
-  Refactor part of the oom report in dump_header
+syzbot was able to trick af_packet again [1]
 
- include/linux/memcontrol.h | 29 ++++++++++++++++++++++++++---
- mm/memcontrol.c            | 43 ++++++++++++++++++++++++++++++++-----------
- mm/oom_kill.c              | 26 +++++++++++---------------
- 3 files changed, 69 insertions(+), 29 deletions(-)
+Various commits tried to address the problem in the past,
+but failed to take into account V3 header size.
 
--- 
-2.14.1
+[1]
+
+tpacket_rcv: packet too big, clamped from 72 to 4294967224. macoff=96
+BUG: KASAN: use-after-free in prb_run_all_ft_ops net/packet/af_packet.c:1016 [inline]
+BUG: KASAN: use-after-free in prb_fill_curr_block.isra.59+0x4e5/0x5c0 net/packet/af_packet.c:1039
+Write of size 2 at addr ffff8801cb62000e by task kworker/1:2/2106
+
+CPU: 1 PID: 2106 Comm: kworker/1:2 Not tainted 4.17.0-rc7+ #77
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: ipv6_addrconf addrconf_dad_work
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+ print_address_description+0x6c/0x20b mm/kasan/report.c:256
+ kasan_report_error mm/kasan/report.c:354 [inline]
+ kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+ __asan_report_store2_noabort+0x17/0x20 mm/kasan/report.c:436
+ prb_run_all_ft_ops net/packet/af_packet.c:1016 [inline]
+ prb_fill_curr_block.isra.59+0x4e5/0x5c0 net/packet/af_packet.c:1039
+ __packet_lookup_frame_in_block net/packet/af_packet.c:1094 [inline]
+ packet_current_rx_frame net/packet/af_packet.c:1117 [inline]
+ tpacket_rcv+0x1866/0x3340 net/packet/af_packet.c:2282
+ dev_queue_xmit_nit+0x891/0xb90 net/core/dev.c:2018
+ xmit_one net/core/dev.c:3049 [inline]
+ dev_hard_start_xmit+0x16b/0xc10 net/core/dev.c:3069
+ __dev_queue_xmit+0x2724/0x34c0 net/core/dev.c:3584
+ dev_queue_xmit+0x17/0x20 net/core/dev.c:3617
+ neigh_resolve_output+0x679/0xad0 net/core/neighbour.c:1358
+ neigh_output include/net/neighbour.h:482 [inline]
+ ip6_finish_output2+0xc9c/0x2810 net/ipv6/ip6_output.c:120
+ ip6_finish_output+0x5fe/0xbc0 net/ipv6/ip6_output.c:154
+ NF_HOOK_COND include/linux/netfilter.h:277 [inline]
+ ip6_output+0x227/0x9b0 net/ipv6/ip6_output.c:171
+ dst_output include/net/dst.h:444 [inline]
+ NF_HOOK include/linux/netfilter.h:288 [inline]
+ ndisc_send_skb+0x100d/0x1570 net/ipv6/ndisc.c:491
+ ndisc_send_ns+0x3c1/0x8d0 net/ipv6/ndisc.c:633
+ addrconf_dad_work+0xbef/0x1340 net/ipv6/addrconf.c:4033
+ process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
+ worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
+ kthread+0x345/0x410 kernel/kthread.c:240
+ ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+
+The buggy address belongs to the page:
+page:ffffea00072d8800 count:0 mapcount:-127 mapping:0000000000000000 index:0xffff8801cb620e80
+flags: 0x2fffc0000000000()
+raw: 02fffc0000000000 0000000000000000 ffff8801cb620e80 00000000ffffff80
+raw: ffffea00072e3820 ffffea0007132d20 0000000000000002 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff8801cb61ff00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff8801cb61ff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff8801cb620000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+                      ^
+ ffff8801cb620080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ ffff8801cb620100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+
+Fixes: 2b6867c2ce76 ("net/packet: fix overflow in check for priv area size")
+Fixes: dc808110bb62 ("packet: handle too big packets for PACKET_V3")
+Fixes: f6fb8f100b80 ("af-packet: TPACKET_V3 flexible buffer implementation.")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/packet/af_packet.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -4282,7 +4282,7 @@ static int packet_set_ring(struct sock *
+ 			goto out;
+ 		if (po->tp_version >= TPACKET_V3 &&
+ 		    req->tp_block_size <=
+-			  BLK_PLUS_PRIV((u64)req_u->req3.tp_sizeof_priv))
++		    BLK_PLUS_PRIV((u64)req_u->req3.tp_sizeof_priv) + sizeof(struct tpacket3_hdr))
+ 			goto out;
+ 		if (unlikely(req->tp_frame_size < po->tp_hdrlen +
+ 					po->tp_reserve))
