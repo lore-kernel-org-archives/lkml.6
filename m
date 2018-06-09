@@ -1,230 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id XQhGHdTWG1tuIwAAmS7hNA
-	; Sat, 09 Jun 2018 13:32:09 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id J00PCI1nHFvXMQAAmS7hNA
+	; Sat, 09 Jun 2018 23:49:33 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D4E4B608C8; Sat,  9 Jun 2018 13:32:09 +0000 (UTC)
+	id ED7F3608B8; Sat,  9 Jun 2018 23:49:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+	s=default; t=1528588173;
+	bh=GN+RRCIckXg7GR7Fm7LmVoQmY2BgpSRfPCOcPkzc54g=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=I0y8uvaD/yXAUUE+wAYt9y/bvNnNojZmbYJg7gjjfZf7IVPZN6prUm0XY3Gu3WC0+
+	 b80maAHmrOYZbVufYWukmD9rtrzeC3e7Oe1hCEMtibT/df4Hq/xEaUebDxeIHBdUDX
+	 Y2agdX+JjLM7jMis+VzNLSQnhKGefTcEaRNgJ9jM=
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 42952608B8;
-	Sat,  9 Jun 2018 13:32:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 42952608B8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=hygon.cn
+	by smtp.codeaurora.org (Postfix) with ESMTP id 68621607DC;
+	Sat,  9 Jun 2018 23:49:32 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DHyFrSb5";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dk1RepfD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 68621607DC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753350AbeFINaY (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 09:30:24 -0400
-Received: from smtp21.cstnet.cn ([159.226.251.21]:44131 "EHLO cstnet.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753171AbeFINaV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 09:30:21 -0400
-Received: from pw-vbox.higon.com (unknown [182.150.46.145])
-        by APP-01 (Coremail) with SMTP id qwCowAAHPbl11Btb+TxEBA--.1110S2;
-        Sat, 09 Jun 2018 21:22:02 +0800 (CST)
-From: Pu Wen <puwen@hygon.cn>
-To: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, zhangpanyong@hygon.cn
-Cc: thomas.lendacky@amd.com, peterz@infradead.org, tony.luck@intel.com,
-        bp@alien8.de, pbonzini@redhat.com, rkrcmar@redhat.com,
-        boris.ostrovsky@oracle.com, jgross@suse.com, rjw@rjwysocki.net,
-        lenb@kernel.org, viresh.kumar@linaro.org, mchehab@kernel.org,
-        trenn@suse.com, shuah@kernel.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-x86_64@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-edac@vger.kernel.org, linux-pm@vger.kernel.org,
-        kvm@vger.kernel.org, xen-devel@lists.xenproject.org,
-        Pu Wen <puwen@hygon.cn>
-Subject: [PATCH 02/11] x86/pci: Add support for Hygon's Dhyana Family 18h processor
-Date: Sat,  9 Jun 2018 21:21:46 +0800
-Message-Id: <1528550506-28173-1-git-send-email-puwen@hygon.cn>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: qwCowAAHPbl11Btb+TxEBA--.1110S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxKF13Gry7tw4xXw43trW7CFg_yoW7KFy8pr
-        WYyr4ktr4ft347Ga4ktr1kWr97ZF1kGa42kasxK3ySqayUuF15WF9xAw45Aw12gw4kXw40
-        q3Z8Xa18XanFyaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUv214x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-        1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-        6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
-        0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-        6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWxJVW8Jr1lOx8S6xCaFVCjc4AY6r
-        1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02
-        628vn2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
-        02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_
-        WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
-        CjxVAFwI0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVW8JVW3JwCI42IY6I8E87Iv67AK
-        xVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa
-        7VU1v38UUUUUU==
-X-Originating-IP: [182.150.46.145]
-X-CM-SenderInfo: psxzv046klw03qof0z/
+        id S1753532AbeFIXta (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 19:49:30 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:54724 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753516AbeFIXt2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 19:49:28 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 439FA608BF; Sat,  9 Jun 2018 23:49:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528588168;
+        bh=GN+RRCIckXg7GR7Fm7LmVoQmY2BgpSRfPCOcPkzc54g=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=DHyFrSb5INHC1k3Ak96PYS9eBBdso6+lJ0yVS7OpdFWKfA1zsLU8oPYmm2OmxqZDQ
+         Sa9Hc22OFpgIQtghzpYFNtMJXmZrw/xMV5f2uBk3Ay3C/w/ofnFaGSsg3MCN8VHmHL
+         uRbDJenrVRh+YHq9dUyi1dRRLDlzGvf3DvLEOvJU=
+Received: from [192.168.0.106] (cpe-174-109-247-98.nc.res.rr.com [174.109.247.98])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: okaya@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id C0412605A2;
+        Sat,  9 Jun 2018 23:49:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528588167;
+        bh=GN+RRCIckXg7GR7Fm7LmVoQmY2BgpSRfPCOcPkzc54g=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=dk1RepfD6QAmq0XBvp67UznhkWYnEA68n74Xe7Q6wNzZ5XRFd2/UcfN1eEghsQcbN
+         VZB9Gfvo+VzUsWsSPWItJarPDu64zOxeqVDjIO1UHgiMLcocve0MdugKs5xIXGNSVV
+         Zy+SkpE0l1v1JIYtu7oBzmCZBnKRDMB3RPsf4TFI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C0412605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH v2] pci/aspm: Remove CONFIG_PCIEASPM_DEBUG
+To: Rajat Jain <rajatja@google.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "Busch, Keith" <keith.busch@intel.com>,
+        Vidya Sagar <vidyas@nvidia.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Frederick Lawler <fred@fredlawl.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Patel, Mayurkumar" <mayurkumar.patel@intel.com>
+Cc: Rajat Jain <rajatxjain@gmail.com>
+References: <20180508230148.121852-1-rajatja@google.com>
+ <20180510233912.96454-1-rajatja@google.com>
+ <CACK8Z6H0PE-xBiNxhS+-P=-SyqAzKQi87xQoLGzgh6sgyt8zGA@mail.gmail.com>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <d856a2c3-2f75-8e79-f791-d5c0787a9018@codeaurora.org>
+Date: Sat, 9 Jun 2018 19:49:23 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <CACK8Z6H0PE-xBiNxhS+-P=-SyqAzKQi87xQoLGzgh6sgyt8zGA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch enables the x86 PCI support to Hygon Family 18h CPU:
-- AMD Northbridge
-  - Add PCI_DEVICE_ID_HYGON_18H_ROOT, PCI_DEVICE_ID_HYGON_18H_DF_F3
-    and PCI_DEVICE_ID_HYGON_18H_DF_F4 support in amd_nb.c
-- PCI for X86
-  - Add Hygon Vendor ID(0x1D94) support.
-  - Add Hygon irq router support in pirq_routers arrays.
-  - Add Hygon support in amd_postcore_init(), early_root_info_init().
-- APIC for X86
-  - Add Hygon support in modern_apic() and sync_Arb_IDs() as Hygon
-    processors are modern processors.
-  - Add Hygon support in detect_init_API().
+> On Thu, May 10, 2018 at 4:39 PM Rajat Jain <rajatja@google.com> wrote:
+>>
+>> Currently, the linux kernel disables ASPM when a device is
+>> removed from the kernel. But it is not enabled again when
+>> a new device is added on that slot even if it was originally
+>> enabled (by the BIOS) when the system booted up (assuming
+>> POLICY_DEFAULT).
+>>
+>> This was earlier discussed here:
+>> https://www.spinics.net/lists/linux-pci/msg60212.html
+>>
+>> And some suggestions from Bjorn here:
+>> https://www.spinics.net/lists/linux-pci/msg60541.html
+>>
+>> This patch picks up one of the suggestion, to remove the
+>> CONFIG_PCIEASPM_DEBUG and thus make the code always
+>> avilable. This provides control to userspace to control
+>> ASPM on a per slot / device basis using sysfs interface.
+>>
+>> Signed-off-by: Rajat Jain <rajatja@google.com>
+>> ---
+>> v2: provide function definitions for !CONFIG_PCIEASPM case
 
-Signed-off-by: Pu Wen <puwen@hygon.cn>
----
- arch/x86/kernel/amd_nb.c    | 11 ++++++++++-
- arch/x86/kernel/apic/apic.c | 13 +++++++++++--
- arch/x86/pci/amd_bus.c      |  6 ++++--
- arch/x86/pci/irq.c          |  1 +
- include/linux/pci_ids.h     |  2 ++
- 5 files changed, 28 insertions(+), 5 deletions(-)
+Reviewed-by: Sinan Kaya <okaya@codeaurora.org>
 
-diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
-index b481b95..054b7fa 100644
---- a/arch/x86/kernel/amd_nb.c
-+++ b/arch/x86/kernel/amd_nb.c
-@@ -20,6 +20,11 @@
- #define PCI_DEVICE_ID_AMD_17H_M10H_DF_F3 0x15eb
- #define PCI_DEVICE_ID_AMD_17H_M10H_DF_F4 0x15ec
- 
-+/* Hygon Family 18h follow AMD Family 17h's Device ID definition */
-+#define PCI_DEVICE_ID_HYGON_18H_ROOT     PCI_DEVICE_ID_AMD_17H_ROOT
-+#define PCI_DEVICE_ID_HYGON_18H_DF_F3    PCI_DEVICE_ID_AMD_17H_DF_F3
-+#define PCI_DEVICE_ID_HYGON_18H_DF_F4    PCI_DEVICE_ID_AMD_17H_DF_F4
-+
- /* Protect the PCI config register pairs used for SMN and DF indirect access. */
- static DEFINE_MUTEX(smn_mutex);
- 
-@@ -28,6 +33,7 @@ static u32 *flush_words;
- static const struct pci_device_id amd_root_ids[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_ROOT) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_M10H_ROOT) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_HYGON, PCI_DEVICE_ID_HYGON_18H_ROOT) },
- 	{}
- };
- 
-@@ -45,6 +51,7 @@ const struct pci_device_id amd_nb_misc_ids[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_DF_F3) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_M10H_DF_F3) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_CNB17H_F3) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_HYGON, PCI_DEVICE_ID_HYGON_18H_DF_F3) },
- 	{}
- };
- EXPORT_SYMBOL_GPL(amd_nb_misc_ids);
-@@ -58,6 +65,7 @@ static const struct pci_device_id amd_nb_link_ids[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_DF_F4) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_M10H_DF_F4) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_CNB17H_F4) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_HYGON, PCI_DEVICE_ID_HYGON_18H_DF_F4) },
- 	{}
- };
- 
-@@ -277,7 +285,8 @@ struct resource *amd_get_mmconfig_range(struct resource *res)
- 	u64 base, msr;
- 	unsigned int segn_busn_bits;
- 
--	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD)
-+	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD &&
-+	    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON)
- 		return NULL;
- 
- 	/* assume all cpus from fam10h have mmconfig */
-diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-index 2aabd4c..d8b7ac1 100644
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -223,6 +223,11 @@ static int modern_apic(void)
- 	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD &&
- 	    boot_cpu_data.x86 >= 0xf)
- 		return 1;
-+
-+	/* Hygon systems use modern APIC */
-+	if (boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
-+		return 1;
-+
- 	return lapic_get_version() >= 0x14;
- }
- 
-@@ -1207,9 +1212,11 @@ void __init sync_Arb_IDs(void)
- {
- 	/*
- 	 * Unsupported on P4 - see Intel Dev. Manual Vol. 3, Ch. 8.6.1 And not
--	 * needed on AMD.
-+	 * needed on AMD or Hygon.
- 	 */
--	if (modern_apic() || boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
-+	if (modern_apic() ||
-+	    boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
-+	    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
- 		return;
- 
- 	/*
-@@ -1908,6 +1915,8 @@ static int __init detect_init_APIC(void)
- 		    (boot_cpu_data.x86 >= 15))
- 			break;
- 		goto no_apic;
-+	case X86_VENDOR_HYGON:
-+		break;
- 	case X86_VENDOR_INTEL:
- 		if (boot_cpu_data.x86 == 6 || boot_cpu_data.x86 == 15 ||
- 		    (boot_cpu_data.x86 == 5 && boot_cpu_has(X86_FEATURE_APIC)))
-diff --git a/arch/x86/pci/amd_bus.c b/arch/x86/pci/amd_bus.c
-index 649bdde..bfa50e6 100644
---- a/arch/x86/pci/amd_bus.c
-+++ b/arch/x86/pci/amd_bus.c
-@@ -93,7 +93,8 @@ static int __init early_root_info_init(void)
- 		vendor = id & 0xffff;
- 		device = (id>>16) & 0xffff;
- 
--		if (vendor != PCI_VENDOR_ID_AMD)
-+		if (vendor != PCI_VENDOR_ID_AMD &&
-+		    vendor != PCI_VENDOR_ID_HYGON)
- 			continue;
- 
- 		if (hb_probes[i].device == device) {
-@@ -390,7 +391,8 @@ static int __init pci_io_ecs_init(void)
- 
- static int __init amd_postcore_init(void)
- {
--	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD)
-+	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD &&
-+	    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON)
- 		return 0;
- 
- 	early_root_info_init();
-diff --git a/arch/x86/pci/irq.c b/arch/x86/pci/irq.c
-index 52e5510..63ff5e3 100644
---- a/arch/x86/pci/irq.c
-+++ b/arch/x86/pci/irq.c
-@@ -804,6 +804,7 @@ static __initdata struct irq_router_handler pirq_routers[] = {
- 	{ PCI_VENDOR_ID_VLSI, vlsi_router_probe },
- 	{ PCI_VENDOR_ID_SERVERWORKS, serverworks_router_probe },
- 	{ PCI_VENDOR_ID_AMD, amd_router_probe },
-+	{ PCI_VENDOR_ID_HYGON, amd_router_probe },
- 	{ PCI_VENDOR_ID_PICOPOWER, pico_router_probe },
- 	/* Someone with docs needs to add the ATI Radeon IGP */
- 	{ 0, NULL }
-diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-index cc608fc5..efb5dfd 100644
---- a/include/linux/pci_ids.h
-+++ b/include/linux/pci_ids.h
-@@ -511,6 +511,8 @@
- #define PCI_DEVICE_ID_AMI_MEGARAID	0x9010
- #define PCI_DEVICE_ID_AMI_MEGARAID2	0x9060
- 
-+#define PCI_VENDOR_ID_HYGON		0x1d94
-+
- #define PCI_VENDOR_ID_AMD		0x1022
- #define PCI_DEVICE_ID_AMD_K8_NB		0x1100
- #define PCI_DEVICE_ID_AMD_K8_NB_ADDRMAP	0x1101
 -- 
-2.7.4
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
