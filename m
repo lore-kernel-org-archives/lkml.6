@@ -1,429 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id tg26BD0hGlsqTgAAmS7hNA
-	; Fri, 08 Jun 2018 06:26:36 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id o9EbKLehG1vIQwAAmS7hNA
+	; Sat, 09 Jun 2018 09:45:27 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 50CFF608BA; Fri,  8 Jun 2018 06:26:36 +0000 (UTC)
+	id 88A90607BB; Sat,  9 Jun 2018 09:45:27 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 63BC260908;
-	Fri,  8 Jun 2018 06:26:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 63BC260908
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 144AF6032D;
+	Sat,  9 Jun 2018 09:45:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 144AF6032D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752152AbeFHG0c (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 02:26:32 -0400
-Received: from regular1.263xmail.com ([211.150.99.138]:40380 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750909AbeFHG02 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 02:26:28 -0400
-Received: from zhangqing?rock-chips.com (unknown [192.168.167.157])
-        by regular1.263xmail.com (Postfix) with ESMTP id D59877A36;
-        Fri,  8 Jun 2018 14:26:21 +0800 (CST)
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        by smtp.263.net (Postfix) with ESMTPA id 218C93DB;
-        Fri,  8 Jun 2018 14:26:18 +0800 (CST)
-X-RL-SENDER: zhangqing@rock-chips.com
-X-FST-TO: heiko@sntech.de
-X-SENDER-IP: 58.22.7.114
-X-LOGIN-NAME: zhangqing@rock-chips.com
-X-UNIQUE-TAG: <52d62f9dc8ba256ef2cde07eee5e962f>
-X-ATTACHMENT-NUM: 0
-X-SENDER: zhangqing@rock-chips.com
-X-DNS-TYPE: 0
-Received: from unknown (unknown [58.22.7.114])
-        by smtp.263.net (Postfix) whith SMTP id 19679EAZ6BX;
-        Fri, 08 Jun 2018 14:26:21 +0800 (CST)
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: heiko@sntech.de
-Cc: sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        cl@rock-chips.com, xxx@rock-chips.com, xf@rock-chips.com,
-        huangtao@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v2 3/4] clk: rockchip: add support for half divider
-Date: Fri,  8 Jun 2018 14:31:58 +0800
-Message-Id: <1528439519-30135-4-git-send-email-zhangqing@rock-chips.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1528439519-30135-1-git-send-email-zhangqing@rock-chips.com>
-References: <1528439519-30135-1-git-send-email-zhangqing@rock-chips.com>
+        id S1753110AbeFIJpX (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 05:45:23 -0400
+Received: from mga07.intel.com ([134.134.136.100]:65015 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751414AbeFIJpW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 05:45:22 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jun 2018 02:45:20 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,494,1520924400";
+   d="scan'208";a="62627200"
+Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
+  by fmsmga001.fm.intel.com with ESMTP; 09 Jun 2018 02:45:08 -0700
+Received: from kbuild by bee with local (Exim 4.84_2)
+        (envelope-from <lkp@intel.com>)
+        id 1fRaQl-000I5E-RH; Sat, 09 Jun 2018 17:45:07 +0800
+Date: Sat, 9 Jun 2018 17:44:12 +0800
+From: kbuild test robot <fengguang.wu@intel.com>
+To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Cc: kbuild-all@01.org, bhelgaas@google.com, lorenzo.pieralisi@arm.com,
+        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
+        adouglas@cadence.com, jesper.nilsson@axis.com,
+        linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Subject: [RFC PATCH] PCI: dwc: __dw_pcie_ep_find_next_cap() can be static
+Message-ID: <20180609094411.GA86347@cairo>
+References: <299abe22c35db333dca228a48fdb03ecc662e247.1527862777.git.gustavo.pimentel@synopsys.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <299abe22c35db333dca228a48fdb03ecc662e247.1527862777.git.gustavo.pimentel@synopsys.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: lkp@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The new Rockchip socs have optional half divider:
-The formula is shown as:
-	freq_out = 2*freq_in / (2*div + 3)
-Is this the same for all of new SoCs.
 
-So we use "branch_half_divider" + "COMPOSITE_NOMUX_HALFDIV \ DIV_HALF"
-to hook that special divider clock-type into our clock-tree.
-
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+Fixes: 797b96a7422e ("PCI: dwc: Add MSI-X callbacks handler")
+Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
 ---
- drivers/clk/rockchip/Makefile           |   1 +
- drivers/clk/rockchip/clk-half-divider.c | 235 ++++++++++++++++++++++++++++++++
- drivers/clk/rockchip/clk.c              |  10 ++
- drivers/clk/rockchip/clk.h              |  45 ++++++
- 4 files changed, 291 insertions(+)
- create mode 100644 drivers/clk/rockchip/clk-half-divider.c
+ pcie-designware-ep.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/rockchip/Makefile b/drivers/clk/rockchip/Makefile
-index 59b8d320960a..023f83ad3429 100644
---- a/drivers/clk/rockchip/Makefile
-+++ b/drivers/clk/rockchip/Makefile
-@@ -7,6 +7,7 @@ obj-y	+= clk-rockchip.o
- obj-y	+= clk.o
- obj-y	+= clk-pll.o
- obj-y	+= clk-cpu.o
-+obj-y   += clk-half-divider.o
- obj-y	+= clk-inverter.o
- obj-y	+= clk-mmc-phase.o
- obj-y	+= clk-muxgrf.o
-diff --git a/drivers/clk/rockchip/clk-half-divider.c b/drivers/clk/rockchip/clk-half-divider.c
-new file mode 100644
-index 000000000000..23830de254ec
---- /dev/null
-+++ b/drivers/clk/rockchip/clk-half-divider.c
-@@ -0,0 +1,235 @@
-+/*
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/slab.h>
-+#include <linux/bitops.h>
-+#include <linux/regmap.h>
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include "clk.h"
-+
-+#define div_mask(width)	((1 << (width)) - 1)
-+
-+static bool _is_best_half_div(unsigned long rate, unsigned long now,
-+			      unsigned long best, unsigned long flags)
-+{
-+	if (flags & CLK_DIVIDER_ROUND_CLOSEST)
-+		return abs(rate - now) < abs(rate - best);
-+
-+	return now <= rate && now > best;
-+}
-+
-+static unsigned long clk_half_divider_recalc_rate(struct clk_hw *hw,
-+						  unsigned long parent_rate)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+	unsigned int val;
-+
-+	val = clk_readl(divider->reg) >> divider->shift;
-+	val &= div_mask(divider->width);
-+	val = val * 2 + 3;
-+
-+	return DIV_ROUND_UP_ULL((u64)(parent_rate * 2), val);
-+}
-+
-+static int clk_half_divider_bestdiv(struct clk_hw *hw, unsigned long rate,
-+				    unsigned long *best_parent_rate, u8 width,
-+				    unsigned long flags)
-+{
-+	int i, bestdiv = 0;
-+	unsigned long parent_rate, best = 0, now, maxdiv;
-+	unsigned long parent_rate_saved = *best_parent_rate;
-+
-+	if (!rate)
-+		rate = 1;
-+
-+	maxdiv = div_mask(width);
-+
-+	if (!(clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT)) {
-+		parent_rate = *best_parent_rate;
-+		bestdiv = DIV_ROUND_UP_ULL((u64)(parent_rate * 2), rate);
-+		if (bestdiv < 3)
-+			bestdiv = 0;
-+		else
-+			bestdiv = (bestdiv - 3) / 2;
-+		bestdiv = bestdiv > maxdiv ? maxdiv : bestdiv;
-+		return bestdiv;
-+	}
-+
-+	/*
-+	 * The maximum divider we can use without overflowing
-+	 * unsigned long in rate * i below
-+	 */
-+	maxdiv = min(ULONG_MAX / rate, maxdiv);
-+
-+	for (i = 0; i <= maxdiv; i++) {
-+		if ((rate * (i * 2 + 3)) == (parent_rate_saved * 2)) {
-+			/*
-+			 * It's the most ideal case if the requested rate can be
-+			 * divided from parent clock without needing to change
-+			 * parent rate, so return the divider immediately.
-+			 */
-+			*best_parent_rate = parent_rate_saved;
-+			return i;
-+		}
-+		parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw),
-+						(rate * (i * 2 + 3)) / 2);
-+		now = DIV_ROUND_UP_ULL((u64)(parent_rate * 2), (i * 2 + 3));
-+		if (_is_best_half_div(rate, now, best, flags)) {
-+			bestdiv = i;
-+			best = now;
-+			*best_parent_rate = parent_rate;
-+		}
-+	}
-+
-+	if (!bestdiv) {
-+		bestdiv = div_mask(width);
-+		*best_parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw), 1);
-+	}
-+
-+	return bestdiv;
-+}
-+
-+static long clk_half_divider_round_rate(struct clk_hw *hw, unsigned long rate,
-+					unsigned long *prate)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+	int div;
-+
-+	div = clk_half_divider_bestdiv(hw, rate, prate,
-+				       divider->width,
-+				       divider->flags);
-+
-+	return DIV_ROUND_UP_ULL((u64)(*prate * 2), div * 2 + 3);
-+}
-+
-+static int clk_half_divider_set_rate(struct clk_hw *hw, unsigned long rate,
-+				     unsigned long parent_rate)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+	unsigned int value;
-+	unsigned long flags = 0;
-+	u32 val;
-+
-+	value = DIV_ROUND_UP_ULL((u64)(2 * parent_rate), rate);
-+	value = (value - 3) / 2;
-+	value =  min_t(unsigned int, value, div_mask(divider->width));
-+
-+	if (divider->lock)
-+		spin_lock_irqsave(divider->lock, flags);
-+	else
-+		__acquire(divider->lock);
-+
-+	if (divider->flags & CLK_DIVIDER_HIWORD_MASK) {
-+		val = div_mask(divider->width) << (divider->shift + 16);
-+	} else {
-+		val = clk_readl(divider->reg);
-+		val &= ~(div_mask(divider->width) << divider->shift);
-+	}
-+	val |= value << divider->shift;
-+	clk_writel(val, divider->reg);
-+
-+	if (divider->lock)
-+		spin_unlock_irqrestore(divider->lock, flags);
-+	else
-+		__release(divider->lock);
-+
-+	return 0;
-+}
-+
-+const struct clk_ops clk_half_divider_ops = {
-+	.recalc_rate = clk_half_divider_recalc_rate,
-+	.round_rate = clk_half_divider_round_rate,
-+	.set_rate = clk_half_divider_set_rate,
-+};
-+EXPORT_SYMBOL_GPL(clk_half_divider_ops);
-+
-+/**
-+ * Register a clock branch.
-+ * Most clock branches have a form like
-+ *
-+ * src1 --|--\
-+ *        |M |--[GATE]-[DIV]-
-+ * src2 --|--/
-+ *
-+ * sometimes without one of those components.
-+ */
-+struct clk *rockchip_clk_register_halfdiv(const char *name,
-+					  const char *const *parent_names,
-+					  u8 num_parents, void __iomem *base,
-+					  int muxdiv_offset, u8 mux_shift,
-+					  u8 mux_width, u8 mux_flags,
-+					  u8 div_shift, u8 div_width,
-+					  u8 div_flags, int gate_offset,
-+					  u8 gate_shift, u8 gate_flags,
-+					  unsigned long flags,
-+					  spinlock_t *lock)
-+{
-+	struct clk *clk;
-+	struct clk_mux *mux = NULL;
-+	struct clk_gate *gate = NULL;
-+	struct clk_divider *div = NULL;
-+	const struct clk_ops *mux_ops = NULL, *div_ops = NULL,
-+			     *gate_ops = NULL;
-+
-+	if (num_parents > 1) {
-+		mux = kzalloc(sizeof(*mux), GFP_KERNEL);
-+		if (!mux)
-+			return ERR_PTR(-ENOMEM);
-+
-+		mux->reg = base + muxdiv_offset;
-+		mux->shift = mux_shift;
-+		mux->mask = BIT(mux_width) - 1;
-+		mux->flags = mux_flags;
-+		mux->lock = lock;
-+		mux_ops = (mux_flags & CLK_MUX_READ_ONLY) ? &clk_mux_ro_ops
-+							: &clk_mux_ops;
-+	}
-+
-+	if (gate_offset >= 0) {
-+		gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-+		if (!gate)
-+			goto err_gate;
-+
-+		gate->flags = gate_flags;
-+		gate->reg = base + gate_offset;
-+		gate->bit_idx = gate_shift;
-+		gate->lock = lock;
-+		gate_ops = &clk_gate_ops;
-+	}
-+
-+	if (div_width > 0) {
-+		div = kzalloc(sizeof(*div), GFP_KERNEL);
-+		if (!div)
-+			goto err_div;
-+
-+		div->flags = div_flags;
-+		div->reg = base + muxdiv_offset;
-+		div->shift = div_shift;
-+		div->width = div_width;
-+		div->lock = lock;
-+		div_ops = &clk_half_divider_ops;
-+	}
-+
-+	clk = clk_register_composite(NULL, name, parent_names, num_parents,
-+				     mux ? &mux->hw : NULL, mux_ops,
-+				     div ? &div->hw : NULL, div_ops,
-+				     gate ? &gate->hw : NULL, gate_ops,
-+				     flags);
-+
-+	return clk;
-+err_div:
-+	kfree(gate);
-+err_gate:
-+	kfree(mux);
-+	return ERR_PTR(-ENOMEM);
-+}
-diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index 3cd8ad59e0b7..cd1474c05c91 100644
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@ -498,6 +498,16 @@ void __init rockchip_clk_register_branches(
- 				list->gate_flags, flags, list->child,
- 				&ctx->lock);
- 			break;
-+		case branch_half_divider:
-+			clk = rockchip_clk_register_halfdiv(list->name,
-+				list->parent_names, list->num_parents,
-+				ctx->reg_base, list->muxdiv_offset,
-+				list->mux_shift, list->mux_width,
-+				list->mux_flags, list->div_shift,
-+				list->div_width, list->div_flags,
-+				list->gate_offset, list->gate_shift,
-+				list->gate_flags, flags, &ctx->lock);
-+			break;
- 		case branch_gate:
- 			flags |= CLK_SET_RATE_PARENT;
+diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
+index c7f2fa9..a498f1f 100644
+--- a/drivers/pci/dwc/pcie-designware-ep.c
++++ b/drivers/pci/dwc/pcie-designware-ep.c
+@@ -40,8 +40,8 @@ void dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar)
+ 	__dw_pcie_ep_reset_bar(pci, bar, 0);
+ }
  
-diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index ef601dded32c..7a3660c2bbb5 100644
---- a/drivers/clk/rockchip/clk.h
-+++ b/drivers/clk/rockchip/clk.h
-@@ -354,6 +354,7 @@ enum rockchip_clk_branch_type {
- 	branch_inverter,
- 	branch_factor,
- 	branch_ddrclk,
-+	branch_half_divider,
- };
+-u8 __dw_pcie_ep_find_next_cap(struct dw_pcie *pci, u8 cap_ptr,
+-			      u8 cap)
++static u8 __dw_pcie_ep_find_next_cap(struct dw_pcie *pci, u8 cap_ptr,
++				     u8 cap)
+ {
+ 	u8 cap_id, next_cap_ptr;
+ 	u16 reg;
+@@ -59,7 +59,7 @@ u8 __dw_pcie_ep_find_next_cap(struct dw_pcie *pci, u8 cap_ptr,
+ 	return __dw_pcie_ep_find_next_cap(pci, next_cap_ptr, cap);
+ }
  
- struct rockchip_clk_branch {
-@@ -684,6 +685,39 @@ struct rockchip_clk_branch {
- 		.gate_flags	= gf,				\
- 	}
- 
-+#define COMPOSITE_NOMUX_HALFDIV(_id, cname, pname, f, mo, ds, dw, df,	\
-+			go, gs, gf)				\
-+	{							\
-+		.id		= _id,				\
-+		.branch_type	= branch_half_divider,		\
-+		.name		= cname,			\
-+		.parent_names	= (const char *[]){ pname },	\
-+		.num_parents	= 1,				\
-+		.flags		= f,				\
-+		.muxdiv_offset	= mo,				\
-+		.div_shift	= ds,				\
-+		.div_width	= dw,				\
-+		.div_flags	= df,				\
-+		.gate_offset	= go,				\
-+		.gate_shift	= gs,				\
-+		.gate_flags	= gf,				\
-+	}
-+
-+#define DIV_HALF(_id, cname, pname, f, o, s, w, df)			\
-+	{							\
-+		.id		= _id,				\
-+		.branch_type	= branch_half_divider,		\
-+		.name		= cname,			\
-+		.parent_names	= (const char *[]){ pname },	\
-+		.num_parents	= 1,				\
-+		.flags		= f,				\
-+		.muxdiv_offset	= o,				\
-+		.div_shift	= s,				\
-+		.div_width	= w,				\
-+		.div_flags	= df,				\
-+		.gate_offset	= -1,				\
-+	}
-+
- struct rockchip_clk_provider *rockchip_clk_init(struct device_node *np,
- 			void __iomem *base, unsigned long nr_clks);
- void rockchip_clk_of_add_provider(struct device_node *np,
-@@ -708,6 +742,17 @@ void rockchip_register_restart_notifier(struct rockchip_clk_provider *ctx,
- 
- #define ROCKCHIP_SOFTRST_HIWORD_MASK	BIT(0)
- 
-+struct clk *rockchip_clk_register_halfdiv(const char *name,
-+					  const char *const *parent_names,
-+					  u8 num_parents, void __iomem *base,
-+					  int muxdiv_offset, u8 mux_shift,
-+					  u8 mux_width, u8 mux_flags,
-+					  u8 div_shift, u8 div_width,
-+					  u8 div_flags, int gate_offset,
-+					  u8 gate_shift, u8 gate_flags,
-+					  unsigned long flags,
-+					  spinlock_t *lock);
-+
- #ifdef CONFIG_RESET_CONTROLLER
- void rockchip_register_softrst(struct device_node *np,
- 			       unsigned int num_regs,
--- 
-1.9.1
+-u8 dw_pcie_ep_find_capability(struct dw_pcie *pci, u8 cap)
++static u8 dw_pcie_ep_find_capability(struct dw_pcie *pci, u8 cap)
+ {
+ 	u8 next_cap_ptr;
+ 	u16 reg;
