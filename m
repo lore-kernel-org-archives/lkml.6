@@ -1,84 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id FHw+FOFHGVuIQQAAmS7hNA
-	; Thu, 07 Jun 2018 14:59:20 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id rAiLDc7yG1uAYAAAmS7hNA
+	; Sat, 09 Jun 2018 15:32:00 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 1777B608BF; Thu,  7 Jun 2018 14:59:20 +0000 (UTC)
+	id 0B3DD608C1; Sat,  9 Jun 2018 15:32:00 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KmiOSIVU"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 8CF83601C3;
-	Thu,  7 Jun 2018 14:59:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8CF83601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 7B978608B8;
+	Sat,  9 Jun 2018 15:31:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7B978608B8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935642AbeFGO7P (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:59:15 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41250 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935293AbeFGO7M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:59:12 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbm-0005Zq-4i; Thu, 07 Jun 2018 15:09:46 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb3-0002u9-C3; Thu, 07 Jun 2018 15:09:01 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        id S932337AbeFIPb5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:31:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34416 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932295AbeFIPbw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:31:52 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5BF08208A6;
+        Sat,  9 Jun 2018 15:31:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558312;
+        bh=ptSzXYOcNsTR/0I5nu+kt4zf8xJ1nSqIaQaW5JMccag=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=KmiOSIVUYuDg3WQHFgCaz6C4uilgY2bHyTTjX9uyMivuM5RMaV9RMmrvn2UzrUfW8
+         BGYzr7oPwD8aiWqZ6BmleUbu/fUwWSwSt/QGCAQG963kYjvaQm6PHPZbZ0QQOMLNb4
+         8qTA/VaCtihf8NuaLDQbXMV/PTs7RS2ZV3et5ddE=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, DaeRyong Jeong <threeearcat@gmail.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Willem de Bruijn <willemb@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 13/48] ipv4: remove warning in ip_recv_error
+Date: Sat,  9 Jun 2018 17:29:25 +0200
+Message-Id: <20180609145948.497060176@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
+References: <20180609145947.679103414@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Mikulas Patocka" <mpatocka@redhat.com>,
-        "Matt Turner" <mattst88@gmail.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.327853688@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 146/410] alpha: fix reboot on Avanti platform
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Willem de Bruijn <willemb@google.com>
 
-commit 55fc633c41a08ce9244ff5f528f420b16b1e04d6 upstream.
+[ Upstream commit 730c54d59403658a62af6517338fa8d4922c1b28 ]
 
-We need to define NEED_SRM_SAVE_RESTORE on the Avanti, otherwise we get
-machine check exception when attempting to reboot the machine.
+A precondition check in ip_recv_error triggered on an otherwise benign
+race. Remove the warning.
 
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Signed-off-by: Matt Turner <mattst88@gmail.com>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+The warning triggers when passing an ipv6 socket to this ipv4 error
+handling function. RaceFuzzer was able to trigger it due to a race
+in setsockopt IPV6_ADDRFORM.
+
+  ---
+  CPU0
+    do_ipv6_setsockopt
+      sk->sk_socket->ops = &inet_dgram_ops;
+
+  ---
+  CPU1
+    sk->sk_prot->recvmsg
+      udp_recvmsg
+        ip_recv_error
+          WARN_ON_ONCE(sk->sk_family == AF_INET6);
+
+  ---
+  CPU0
+    do_ipv6_setsockopt
+      sk->sk_family = PF_INET;
+
+This socket option converts a v6 socket that is connected to a v4 peer
+to an v4 socket. It updates the socket on the fly, changing fields in
+sk as well as other structs. This is inherently non-atomic. It races
+with the lockless udp_recvmsg path.
+
+No other code makes an assumption that these fields are updated
+atomically. It is benign here, too, as ip_recv_error cares only about
+the protocol of the skbs enqueued on the error queue, for which
+sk_family is not a precise predictor (thanks to another isue with
+IPV6_ADDRFORM).
+
+Link: http://lkml.kernel.org/r/20180518120826.GA19515@dragonet.kaist.ac.kr
+Fixes: 7ce875e5ecb8 ("ipv4: warn once on passing AF_INET6 socket to ip_recv_error")
+Reported-by: DaeRyong Jeong <threeearcat@gmail.com>
+Suggested-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Willem de Bruijn <willemb@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/alpha/kernel/pci_impl.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/ipv4/ip_sockglue.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/arch/alpha/kernel/pci_impl.h
-+++ b/arch/alpha/kernel/pci_impl.h
-@@ -143,7 +143,8 @@ struct pci_iommu_arena
- };
+--- a/net/ipv4/ip_sockglue.c
++++ b/net/ipv4/ip_sockglue.c
+@@ -511,8 +511,6 @@ int ip_recv_error(struct sock *sk, struc
+ 	int err;
+ 	int copied;
  
- #if defined(CONFIG_ALPHA_SRM) && \
--    (defined(CONFIG_ALPHA_CIA) || defined(CONFIG_ALPHA_LCA))
-+    (defined(CONFIG_ALPHA_CIA) || defined(CONFIG_ALPHA_LCA) || \
-+     defined(CONFIG_ALPHA_AVANTI))
- # define NEED_SRM_SAVE_RESTORE
- #else
- # undef NEED_SRM_SAVE_RESTORE
+-	WARN_ON_ONCE(sk->sk_family == AF_INET6);
+-
+ 	err = -EAGAIN;
+ 	skb = sock_dequeue_err_skb(sk);
+ 	if (!skb)
