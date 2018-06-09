@@ -1,83 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id qxw7OeZeHltkNwAAmS7hNA
-	; Mon, 11 Jun 2018 11:37:28 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id LX7+F4Q7HFtzPAAAmS7hNA
+	; Sat, 09 Jun 2018 20:41:40 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 38F6D607BB; Mon, 11 Jun 2018 11:37:28 +0000 (UTC)
+	id 4BB1F605A2; Sat,  9 Jun 2018 20:41:40 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id B6351601C3;
-	Mon, 11 Jun 2018 11:37:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B6351601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=lucaceresoli.net
+	by smtp.codeaurora.org (Postfix) with ESMTP id CD39D602FC;
+	Sat,  9 Jun 2018 20:41:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CD39D602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933085AbeFKLh0 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Mon, 11 Jun 2018 07:37:26 -0400
-Received: from srv-hp10-72.netsons.net ([94.141.22.72]:47205 "EHLO
-        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932958AbeFKLgQ (ORCPT
+        id S1753553AbeFIUlh (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 16:41:37 -0400
+Received: from www62.your-server.de ([213.133.104.62]:59786 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753221AbeFIUlf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 07:36:16 -0400
-Received: from [109.168.11.45] (port=54392 helo=pc-ceresoli.dev.aim)
-        by srv-hp10.netsons.net with esmtpa (Exim 4.89_1)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1fSL7N-00B1A2-ND; Mon, 11 Jun 2018 13:36:13 +0200
-From: Luca Ceresoli <luca@lucaceresoli.net>
-To: linux-media@vger.kernel.org
-Cc: Luca Ceresoli <luca@lucaceresoli.net>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Leon Luo <leonl@leopardimaging.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 7/8] media: imx274: fix typo
-Date: Mon, 11 Jun 2018 13:35:38 +0200
-Message-Id: <1528716939-17015-8-git-send-email-luca@lucaceresoli.net>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528716939-17015-1-git-send-email-luca@lucaceresoli.net>
-References: <1528716939-17015-1-git-send-email-luca@lucaceresoli.net>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        Sat, 9 Jun 2018 16:41:35 -0400
+Received: from [178.197.248.12] (helo=linux.home)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-SHA:256)
+        (Exim 4.85_2)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fRkfx-0003Lc-4m; Sat, 09 Jun 2018 22:41:29 +0200
+Subject: Re: WARNING in do_dentry_open
+From: Daniel Borkmann <daniel@iogearbox.net>
+To: Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+2e7fcab0f56fdbb330b8@syzkaller.appspotmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        netdev <netdev@vger.kernel.org>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+References: <000000000000bd54dd056e212189@google.com>
+ <CACT4Y+b+6XrNfHmZSBitOKqVHYaq-aOgMDnHhp3vKEVs117iJA@mail.gmail.com>
+ <92b8621b-cf57-5fe9-23d1-e06b83ee0c78@iogearbox.net>
+Message-ID: <0e958174-aa25-7a95-f651-edb8b47fd0eb@iogearbox.net>
+Date: Sat, 9 Jun 2018 22:41:28 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
+MIME-Version: 1.0
+In-Reply-To: <92b8621b-cf57-5fe9-23d1-e06b83ee0c78@iogearbox.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.99.3/24647/Sat Jun  9 14:35:33 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pd -> pad
+On 06/08/2018 03:47 PM, Daniel Borkmann wrote:
+> On 06/08/2018 03:34 PM, Dmitry Vyukov wrote:
+>> On Fri, Jun 8, 2018 at 3:11 PM, syzbot
+>> <syzbot+2e7fcab0f56fdbb330b8@syzkaller.appspotmail.com> wrote:
+>>> Hello,
+>>>
+>>> syzbot found the following crash on:
+>>>
+>>> HEAD commit:    68abbe729567 Merge branch 'akpm' (patches from Andrew)
+>>> git tree:       upstream
+>>> console output: https://syzkaller.appspot.com/x/log.txt?x=130146af800000
+>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=e5a4673d4582131c
+>>> dashboard link: https://syzkaller.appspot.com/bug?extid=2e7fcab0f56fdbb330b8
+>>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>>> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1591756f800000
+>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=152236af800000
+>>
+>> Looking at the reproducer this seems to be related to bpf.
+>> +bpf maintainers
+> 
+> Indeed, thanks! Already working on a fix right now.
 
-Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
-
----
-Changed v3 -> v4: nothing
----
- drivers/media/i2c/imx274.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
-index e5ba19b97083..2c13961e9764 100644
---- a/drivers/media/i2c/imx274.c
-+++ b/drivers/media/i2c/imx274.c
-@@ -544,7 +544,7 @@ struct imx274_ctrls {
- /*
-  * struct stim274 - imx274 device structure
-  * @sd: V4L2 subdevice structure
-- * @pd: Media pad structure
-+ * @pad: Media pad structure
-  * @client: Pointer to I2C client
-  * @ctrls: imx274 control structure
-  * @format: V4L2 media bus frame format structure
--- 
-2.7.4
+#syz fix: bpf: implement dummy fops for bpf objects
