@@ -1,209 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id LvdOCEsQGVvhFwAAmS7hNA
-	; Thu, 07 Jun 2018 11:01:59 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id LhWOBprzG1sRZgAAmS7hNA
+	; Sat, 09 Jun 2018 15:34:50 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 7D97D608B8; Thu,  7 Jun 2018 11:01:59 +0000 (UTC)
+	id F0CBF608C8; Sat,  9 Jun 2018 15:34:49 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bpjxszoe"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id DD2A7607DC;
-	Thu,  7 Jun 2018 11:01:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DD2A7607DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by smtp.codeaurora.org (Postfix) with ESMTP id 6017F606FA;
+	Sat,  9 Jun 2018 15:34:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6017F606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932754AbeFGLB5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 07:01:57 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:38339 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932637AbeFGLBy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 07:01:54 -0400
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1fQsfu-00042S-6C; Thu, 07 Jun 2018 13:01:50 +0200
-Message-ID: <1528369308.3308.9.camel@pengutronix.de>
-Subject: Re: [RFC PATCH 1/2] media: docs-rst: Add decoder UAPI specification
- to Codec Interfaces
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Hans Verkuil <hverkuil@xs4all.nl>,
-        Tomasz Figa <tfiga@chromium.org>, linux-media@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        =?UTF-8?Q?Pawe=C5=82_O=C5=9Bciak?= <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Kamil Debski <kamil@wypas.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Jeongtae Park <jtp.park@samsung.com>,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Nicolas Dufresne <nicolas@ndufresne.ca>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Thu, 07 Jun 2018 13:01:48 +0200
-In-Reply-To: <83bebfbc-6cd4-fb9b-48c3-7b82846837be@xs4all.nl>
-References: <20180605103328.176255-1-tfiga@chromium.org>
-         <20180605103328.176255-2-tfiga@chromium.org>
-         <83bebfbc-6cd4-fb9b-48c3-7b82846837be@xs4all.nl>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        id S932917AbeFIPeq (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:34:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36976 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932651AbeFIPek (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:34:40 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B141A208A4;
+        Sat,  9 Jun 2018 15:34:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558480;
+        bh=V/MUsPim6Mrx9KZYUCCfFVL/6PPnVU7bUtOf7ij8Jqg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=bpjxszoeydmU9jFFGPKpiJkiYkxGVuKCAwI/eqFqqnEfwJjYnvxObgZ5KyZnsMVNY
+         yAxbTEQsBeNcdm4axB1VswKKTU8KGVNmfh4fcV7YIIWvM3Pj213dBmqg+7bGw61XoI
+         MbVc8Hu3p6O68CYLlqamMdBA4WJbyWT4YF9UP/A4=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Anand Jain <anand.jain@oracle.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.14 05/41] btrfs: define SUPER_FLAG_METADUMP_V2
+Date: Sat,  9 Jun 2018 17:29:37 +0200
+Message-Id: <20180609152926.728290666@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609152926.389750182@linuxfoundation.org>
+References: <20180609152926.389750182@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-06-07 at 10:47 +0200, Hans Verkuil wrote:
-> Hi Tomasz,
-> 
-> First of all: thank you very much for working on this. It's a big missing piece of
-> information, so filling this in is very helpful.
-[...]
-> > diff --git a/Documentation/media/uapi/v4l/dev-codec.rst b/Documentation/media/uapi/v4l/dev-codec.rst
-> > index c61e938bd8dc..0483b10c205e 100644
-> > --- a/Documentation/media/uapi/v4l/dev-codec.rst
-> > +++ b/Documentation/media/uapi/v4l/dev-codec.rst
-> > @@ -34,3 +34,774 @@ the codec and reprogram it whenever another file handler gets access.
-> >  This is different from the usual video node behavior where the video
-> >  properties are global to the device (i.e. changing something through one
-> >  file handle is visible through another file handle).
-> 
-> To what extent does the information in this patch series apply specifically to
-> video (de)compression hardware and to what extent it is applicable for any m2m
-> device? It looks like most if not all is specific to video (de)compression hw
-> and not to e.g. a simple deinterlacer.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Most of this is specific to codecs, or at least to mem2mem devices that
-are not simple 1 input frame -> 1 output frame converters, and where
-some parameters (resolution, colorspace) can be unknown in advance.
+------------------
 
-> Ideally there would be a common section first describing the requirements for
-> all m2m devices, followed by an encoder and decoder section going into details
-> for those specific devices.
-> 
-> I also think that we need an additional paragraph somewhere at the beginning
-> of the Codec Interface chapter that explains more clearly that OUTPUT buffers
-> send data to the hardware to be processed and that CAPTURE buffers contains
-> the processed data. It is always confusing for newcomers to understand that
-> in V4L2 this is seen from the point of view of the CPU.
+From: Anand Jain <Anand.Jain@oracle.com>
 
-Yes, please!
+commit e2731e55884f2138a252b0a3d7b24d57e49c3c59 upstream.
 
-> > +EOS
-> > +   end of stream
-> > +
-> > +input height
-> > +   height in pixels for given input resolution
-> 
-> 'input' is a confusing name. Because I think this refers to the resolution
-> set for the OUTPUT buffer. How about renaming this to 'source'?
->
-> I.e.: an OUTPUT buffer contains the source data for the hardware. The capture
-> buffer contains the sink data from the hardware.
+btrfs-progs uses super flag bit BTRFS_SUPER_FLAG_METADUMP_V2 (1ULL << 34).
+So just define that in kernel so that we know its been used.
 
-This could be confusing as well to people used to the v4l2_subdev
-sink/source pad model.
+Signed-off-by: Anand Jain <anand.jain@oracle.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-[...]
-> > +Initialization sequence
-> > +-----------------------
-> > +
-> > +1. (optional) Enumerate supported OUTPUT formats and resolutions. See
-> > +   capability enumeration.
-> > +
-> > +2. Set a coded format on the source queue via :c:func:`VIDIOC_S_FMT`
-> > +
-> > +   a. Required fields:
-> > +
-> > +      i.   type = OUTPUT
-> > +
-> > +      ii.  fmt.pix_mp.pixelformat set to a coded format
-> > +
-> > +      iii. fmt.pix_mp.width, fmt.pix_mp.height only if cannot be
-> > +           parsed from the stream for the given coded format;
-> > +           ignored otherwise;
-> > +
-> > +   b. Return values:
-> > +
-> > +      i.  EINVAL: unsupported format.
-> > +
-> > +      ii. Others: per spec
-> > +
-> > +   .. note::
-> > +
-> > +      The driver must not adjust pixelformat, so if
-> > +      ``V4L2_PIX_FMT_H264`` is passed but only
-> > +      ``V4L2_PIX_FMT_H264_SLICE`` is supported, S_FMT will return
-> > +      -EINVAL. If both are acceptable by client, calling S_FMT for
-> > +      the other after one gets rejected may be required (or use
-> > +      :c:func:`VIDIOC_ENUM_FMT` to discover beforehand, see Capability
-> > +      enumeration).
-> 
-> This needs to be documented in S_FMT as well.
-> 
-> What will TRY_FMT do? Return EINVAL as well, or replace the pixelformat?
-> 
-> Should this be a general rule for output devices that S_FMT (and perhaps TRY_FMT)
-> fail with EINVAL if the pixelformat is not supported? There is something to be
-> said for that.
+---
+ fs/btrfs/disk-io.c              |    3 ++-
+ include/uapi/linux/btrfs_tree.h |    1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-Why is trying to set an unsupported pixelformat an error, but trying to
-set an unsupported resolution is not?
-
-[...]
-> > +5.  Begin parsing the stream for stream metadata via :c:func:`VIDIOC_STREAMON` on
-> > +    OUTPUT queue. This step allows the driver to parse/decode
-> > +    initial stream metadata until enough information to allocate
-> > +    CAPTURE buffers is found. This is indicated by the driver by
-> > +    sending a ``V4L2_EVENT_SOURCE_CHANGE`` event, which the client
-> > +    must handle.
-> > +
-> > +    a. Required fields: as per spec.
-> > +
-> > +    b. Return values: as per spec.
-> > +
-> > +    .. note::
-> > +
-> > +       Calling :c:func:`VIDIOC_REQBUFS`, :c:func:`VIDIOC_STREAMON`
-> > +       or :c:func:`VIDIOC_G_FMT` on the CAPTURE queue at this time is not
-> > +       allowed and must return EINVAL.
-> 
-> I dislike EINVAL here. It is too generic. Also, the passed arguments can be
-> perfectly valid, you just aren't in the right state. EPERM might be better.
-[...]
-> > +
-> > +    a. Required fields: as per spec.
-> > +
-> > +    b. Return values: as per spec.
-> > +
-> > +    c. If data in a buffer that triggers the event is required to decode
-> > +       the first frame, the driver must not return it to the client,
-> > +       but must retain it for further decoding.
-> > +
-> > +    d. Until the resolution source event is sent to the client, calling
-> > +       :c:func:`VIDIOC_G_FMT` on the CAPTURE queue must return -EINVAL.
-> 
-> EPERM?
-
-I dislike returning an error here at all. If the queues are independent,
-why can't the capture queue STREAMON and just not produce any frames?
-
-If we guessed format and frame size correctly (maybe we know something
-about the stream from container metadata), the capture queue can just
-start producing images. If not, we get a source change event.
-
-regards
-Philipp
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -59,7 +59,8 @@
+ 				 BTRFS_HEADER_FLAG_RELOC |\
+ 				 BTRFS_SUPER_FLAG_ERROR |\
+ 				 BTRFS_SUPER_FLAG_SEEDING |\
+-				 BTRFS_SUPER_FLAG_METADUMP)
++				 BTRFS_SUPER_FLAG_METADUMP |\
++				 BTRFS_SUPER_FLAG_METADUMP_V2)
+ 
+ static const struct extent_io_ops btree_extent_io_ops;
+ static void end_workqueue_fn(struct btrfs_work *work);
+--- a/include/uapi/linux/btrfs_tree.h
++++ b/include/uapi/linux/btrfs_tree.h
+@@ -456,6 +456,7 @@ struct btrfs_free_space_header {
+ 
+ #define BTRFS_SUPER_FLAG_SEEDING	(1ULL << 32)
+ #define BTRFS_SUPER_FLAG_METADUMP	(1ULL << 33)
++#define BTRFS_SUPER_FLAG_METADUMP_V2	(1ULL << 34)
+ 
+ 
+ /*
