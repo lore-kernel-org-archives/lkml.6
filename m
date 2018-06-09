@@ -1,105 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id cS3YFUfMGFuMdwAAmS7hNA
-	; Thu, 07 Jun 2018 06:22:47 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id w4DmClZ4G1v8fAAAmS7hNA
+	; Sat, 09 Jun 2018 06:48:54 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 9882E6089E; Thu,  7 Jun 2018 06:22:47 +0000 (UTC)
+	id 10F6060290; Sat,  9 Jun 2018 06:48:54 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 3D8EA6063F;
-	Thu,  7 Jun 2018 06:22:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3D8EA6063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 708D360290;
+	Sat,  9 Jun 2018 06:48:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 708D360290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752616AbeFGGWp (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 02:22:45 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52976 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751372AbeFGGWn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 02:22:43 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2F8A340BC05B;
-        Thu,  7 Jun 2018 06:22:43 +0000 (UTC)
-Received: from krava (unknown [10.43.17.157])
-        by smtp.corp.redhat.com (Postfix) with SMTP id C6BF01002957;
-        Thu,  7 Jun 2018 06:22:40 +0000 (UTC)
-Date: Thu, 7 Jun 2018 08:22:39 +0200
-From: Jiri Olsa <jolsa@redhat.com>
-To: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Agustin Vega-Frias <agustinv@codeaurora.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Milian Wolff <milian.wolff@kdab.com>,
-        Andi Kleen <andi@firstfloor.org>,
-        Frederic Weisbecker <frederic@kernel.org>
-Subject: Re: [PATCH 01/10] perf tools: Uniquify the event name if there's no
- other matched event
-Message-ID: <20180607062239.GA18436@krava>
-References: <20180606221513.11302-1-jolsa@kernel.org>
- <20180606221513.11302-2-jolsa@kernel.org>
- <20180606231902.GE7220@tassilo.jf.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180606231902.GE7220@tassilo.jf.intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 07 Jun 2018 06:22:43 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 07 Jun 2018 06:22:43 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
+        id S1753125AbeFIGsv (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 02:48:51 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35960 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751528AbeFIGsu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 02:48:50 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id E3EB3ACB2;
+        Sat,  9 Jun 2018 06:48:48 +0000 (UTC)
+Date: Sat, 09 Jun 2018 08:48:48 +0200
+Message-ID: <s5ha7s43167.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Davidlohr Bueso <dbueso@suse.de>, linux-kernel@vger.kernel.org,
+        Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH] ipc: Limit sysctl value to IPCMNI
+In-Reply-To: <20180608141659.8a517b128c756b4d0b813c9e@linux-foundation.org>
+References: <20180608134949.12672-1-tiwai@suse.de>
+        <20180608141659.8a517b128c756b4d0b813c9e@linux-foundation.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 06, 2018 at 04:19:02PM -0700, Andi Kleen wrote:
-> On Thu, Jun 07, 2018 at 12:15:04AM +0200, Jiri Olsa wrote:
-> > Currently by default we try to match the user specified PMU
-> > name to all PMU units available and use them to aggregate
-> > all matched PMUs event counts into one 'pattern' event.
-> > 
-> > While this is useful for uncore events, it screws up names
-> > for other events, where this is not desirable, like:
-> > 
-> > Before:
-> >   # perf stat -e cp/cpu-cycles/ kill
+On Fri, 08 Jun 2018 23:16:59 +0200,
+Andrew Morton wrote:
 > 
-> I assume you mean cpU/cpu-cycles/
-> > 
-> >    Performance counter stats for 'kill':
-> > 
-> >            1,573,757      cp/cpu-cycles/
-> > 
-> > Keeping the pattern matching logic, but making the name unique
-> > in case there's no other match found. That fixes the example
-> > above and hopefully does not screw up anything else.
-> > 
-> > After:
-> >   # perf stat -e cp/cpu-cycles/ kill
-> > 
-> >    Performance counter stats for 'kill':
-> > 
-> >            1,573,757      cpu/cpu-cycles/
+> On Fri,  8 Jun 2018 15:49:49 +0200 Takashi Iwai <tiwai@suse.de> wrote:
 > 
+> > Currently shmmni proc entry accepts all entered integer values, but
+> > the practical limit is IPCMNI (32768).  This confuses user as if a
+> > bigger value were accepted but not applied correctly.
+> > 
+> > This patch changes the proc entry to use *_minmax variant to limit the
+> > accepted values accordingly.
 > 
-> The output is 100% identical?
+> Waiman Long was working on a (vastly more complicated) patchset to
+> address this.
 
-nope, the U is actualy missing.. that's the thing, the patern
-matching allows you to put 'cp' instead of 'cpu' and the final
-output is screwed.. also the metrics won't match the proper event
+That's great.  Any patch available for testing?
 
-jirka
+
+> > --- a/ipc/ipc_sysctl.c
+> > +++ b/ipc/ipc_sysctl.c
+> > @@ -99,6 +99,7 @@ static int proc_ipc_auto_msgmni(struct ctl_table *table, int write,
+> >  static int zero;
+> >  static int one = 1;
+> >  static int int_max = INT_MAX;
+> > +static int ipcmni = IPCMNI;
+> >  
+> >  static struct ctl_table ipc_kern_table[] = {
+> >  	{
+> > @@ -120,7 +121,9 @@ static struct ctl_table ipc_kern_table[] = {
+> >  		.data		= &init_ipc_ns.shm_ctlmni,
+> >  		.maxlen		= sizeof(init_ipc_ns.shm_ctlmni),
+> >  		.mode		= 0644,
+> > -		.proc_handler	= proc_ipc_dointvec,
+> > +		.proc_handler	= proc_ipc_dointvec_minmax,
+> > +		.extra1		= &zero,
+> > +		.extra2		= &ipcmni,
+> >  	},
+> >  	{
+> >  		.procname	= "shm_rmid_forced",
+> 
+> What is the back-compatibility situation here?
+
+It's obviously an error to set such a high value and suppose that it
+were accepted.  So relying on that behavior must be broken in
+anyway...
+
+
+thanks,
+
+Takashi
