@@ -1,154 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id SSvqFGQMHlt2MQAAmS7hNA
-	; Mon, 11 Jun 2018 05:48:06 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id c37qGTH3G1v6AwAAmS7hNA
+	; Sat, 09 Jun 2018 15:50:09 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 98EFA60791; Mon, 11 Jun 2018 05:48:06 +0000 (UTC)
+	id 502BC608C1; Sat,  9 Jun 2018 15:50:09 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="K2H4yh2m"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,FROM_LOCAL_HEX,
-	MAILING_LIST_MULTI autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id E2D1260351;
-	Mon, 11 Jun 2018 05:48:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E2D1260351
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id A7ADC606FA;
+	Sat,  9 Jun 2018 15:50:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A7ADC606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753968AbeFKFsE (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Mon, 11 Jun 2018 01:48:04 -0400
-Received: from mail-it0-f69.google.com ([209.85.214.69]:39823 "EHLO
-        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753797AbeFKFsC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 01:48:02 -0400
-Received: by mail-it0-f69.google.com with SMTP id 201-v6so8322769itj.4
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Jun 2018 22:48:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=Pxw7nhEd/C14Re8EKph4L0YBB62tp9ldq9ymnG0gKlY=;
-        b=Ao9o1ZT7lSRaId1Ka49ffuuLzUjCeeAY1q5d0PsbZjsZWQUwo+CEKEwn/A65d7EVzl
-         Pq8jH9TWvSbGN5OV/gDkW4ZcdVULDbCCG1ZKA4CBsvCkjawwM49h9siVEWpMVvD+x/s/
-         yYdFI12QR+GA/08pktHt+f8x5DvBGi+nhw1owHYwoMsBeHHchqiG8qivQxsIuQDETgHF
-         OjL08zQiDdcA1CGFaOzJNPD53foUpkM4Yh/pZJ1S46VzV5Wo6ryMT5fBAbIuDAHLZe6w
-         T81iWIsf+nYk1MTUTjA0u5zEdYLYnNk8GBHqW+UctU/wBw2lWI8f0IW2R+g140ouU01q
-         3WJg==
-X-Gm-Message-State: APt69E1cXxWUK7vQtnbC+goR0cVstEs7vx5Q33zdlbd3p50vvtLJuYBl
-        uo5x0ZyIAtEJD0XlsQe4I61M7Oa9iUGWSOcMtVt1yZiy0g/Z
-X-Google-Smtp-Source: ADUXVKLw7wW+YSPH0riVAPGMgM1U8fAg+PaFfAt6ZSs/NAXtM3jNdgXMwBHF4Q8DwqnN9B6gDlrZmjQ+KDgnkaHG6AAUIyOHLqw9
+        id S932618AbeFIPuH (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:50:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34804 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932427AbeFIPcS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:32:18 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C2A63204EC;
+        Sat,  9 Jun 2018 15:32:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558338;
+        bh=xfJxZGHcnpyu3kuEDlU0oGwDGzmaonglihIm6B90aAM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=K2H4yh2mVprc1u1LesWiEOFbXeQi2iQpkdOZ6DP6tHfPaius9I7ivE+EPlunCfVKf
+         FTPyzTHbhBkq8LHJ+pCM0gx8xvgmGkYWKdk0gK6jCe96bOjLvGiSAGKz7iTmwZCUcN
+         vR+BO25wkhSH5vKtwA0l3q+6XXpd0dAqG2GnVP6w=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Govindarajulu Varadarajan <gvaradar@cisco.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 09/48] enic: set DMA mask to 47 bit
+Date: Sat,  9 Jun 2018 17:29:21 +0200
+Message-Id: <20180609145948.279639702@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
+References: <20180609145947.679103414@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-X-Received: by 2002:a6b:c885:: with SMTP id y127-v6mr7768718iof.41.1528696082199;
- Sun, 10 Jun 2018 22:48:02 -0700 (PDT)
-Date: Sun, 10 Jun 2018 22:48:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f2fd7c056e574a40@google.com>
-Subject: WARNING in destroy_workqueue
-From: syzbot <syzbot+ed2b6bee3bb95389611d@syzkaller.appspotmail.com>
-To: darrick.wong@oracle.com, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-syzbot found the following crash on:
+------------------
 
-HEAD commit:    a16afaf7928b Merge tag 'for-v4.18' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15f66f9f800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=314f2150f36c16ca
-dashboard link: https://syzkaller.appspot.com/bug?extid=ed2b6bee3bb95389611d
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+From: Govindarajulu Varadarajan <gvaradar@cisco.com>
 
-Unfortunately, I don't have any reproducer for this crash yet.
+[ Upstream commit 322eaa06d55ebc1402a4a8d140945cff536638b4 ]
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+ed2b6bee3bb95389611d@syzkaller.appspotmail.com
+In commit 624dbf55a359b ("driver/net: enic: Try DMA 64 first, then
+failover to DMA") DMA mask was changed from 40 bits to 64 bits.
+Hardware actually supports only 47 bits.
 
-000000003ed4096b: 00 00 00 00 00 ec 00 00 0c 09 0a 02 0c 00 00  
-00  ................
-XFS (loop5): SB validate failed with error -117.
-binder: 21818:21820 ioctl 40046207 0 returned -16
-binder: 21818:21861 ioctl c0306201 20000040 returned -22
-binder: 21818:21820 BC_CLEAR_DEATH_NOTIFICATION death notification cookie  
-mismatch 0000000000000000 != 0000000000000002
-WARNING: CPU: 0 PID: 21819 at kernel/workqueue.c:4155  
-destroy_workqueue+0x2d2/0x9b0 kernel/workqueue.c:4155
-binder: 21818:21864 ioctl 8 20000000 returned -22
-Kernel panic - not syncing: panic_on_warn set ...
-
-CPU: 0 PID: 21819 Comm: syz-executor5 Not tainted 4.17.0+ #93
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  panic+0x22f/0x4de kernel/panic.c:184
-binder_alloc: 21818: binder_alloc_buf, no vma
-  __warn.cold.8+0x163/0x1b3 kernel/panic.c:536
-  report_bug+0x252/0x2d0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x1fc/0x4d0 arch/x86/kernel/traps.c:296
-  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:316
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
-RIP: 0010:destroy_workqueue+0x2d2/0x9b0 kernel/workqueue.c:4155
-Code:
-binder: 21818:21820 transaction failed 29189/-3, size 0-0 line 2967
-0f 8e fe 05 00 00 48 8b 85 30
-binder: undelivered TRANSACTION_ERROR: 29189
-fe
-binder: undelivered TRANSACTION_ERROR: 29201
-ff ff bf 01 00 00 00 8b 58 18 89 de e8 6c c4 2a 00 83 fb 01 0f 8e 91 00 00  
-00 e8 4e c3 2a 00 <0f> 0b e8 47 c3 2a 00 48 8b bd 18 fe ff ff e8 ab 13 32  
-06 e8 46 f3
-RSP: 0018:ffff8801b61276b0 EFLAGS: 00010216
-RAX: 0000000000040000 RBX: 0000000000000002 RCX: ffffc900036a8000
-RDX: 000000000002824e RSI: ffffffff814f7a12 RDI: 0000000000000005
-RBP: ffff8801b61278a0 R08: ffff8801c6fa6680 R09: ffffed003b5c46d6
-R10: ffffed003b5c46d6 R11: ffff8801dae236b3 R12: 000000000000000f
-R13: dffffc0000000000 R14: ffff8801d653cd40 R15: 0000000000000000
-  xfs_destroy_mount_workqueues+0x171/0x1c0 fs/xfs/xfs_super.c:936
-  xfs_fs_fill_super+0xa10/0x1700 fs/xfs/xfs_super.c:1777
-  mount_bdev+0x30c/0x3e0 fs/super.c:1174
-  xfs_fs_mount+0x34/0x40 fs/xfs/xfs_super.c:1825
-  mount_fs+0xae/0x328 fs/super.c:1277
-  vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
-  vfs_kern_mount fs/namespace.c:1027 [inline]
-  do_new_mount fs/namespace.c:2518 [inline]
-  do_mount+0x564/0x30b0 fs/namespace.c:2848
-  ksys_mount+0x12d/0x140 fs/namespace.c:3064
-  __do_sys_mount fs/namespace.c:3078 [inline]
-  __se_sys_mount fs/namespace.c:3075 [inline]
-  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3075
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x45842a
-Code: b8 a6 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 dd 8f fb ff c3 66 2e 0f  
-1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 ba 8f fb ff c3 66 0f 1f 84 00 00 00 00 00
-RSP: 002b:00007f367396bba8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000020000180 RCX: 000000000045842a
-RDX: 0000000020000180 RSI: 0000000020000140 RDI: 00007f367396bbf0
-RBP: 0000000000000001 R08: 0000000020000040 R09: 0000000020000180
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000013
-R13: 0000000000000001 R14: 00000000004d2d70 R15: 0000000000000000
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
+Fixes: 624dbf55a359b ("driver/net: enic: Try DMA 64 first, then failover to DMA")
+Signed-off-by: Govindarajulu Varadarajan <gvaradar@cisco.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/net/ethernet/cisco/enic/enic_main.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+--- a/drivers/net/ethernet/cisco/enic/enic_main.c
++++ b/drivers/net/ethernet/cisco/enic/enic_main.c
+@@ -2704,11 +2704,11 @@ static int enic_probe(struct pci_dev *pd
+ 	pci_set_master(pdev);
+ 
+ 	/* Query PCI controller on system for DMA addressing
+-	 * limitation for the device.  Try 64-bit first, and
++	 * limitation for the device.  Try 47-bit first, and
+ 	 * fail to 32-bit.
+ 	 */
+ 
+-	err = pci_set_dma_mask(pdev, DMA_BIT_MASK(64));
++	err = pci_set_dma_mask(pdev, DMA_BIT_MASK(47));
+ 	if (err) {
+ 		err = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
+ 		if (err) {
+@@ -2722,10 +2722,10 @@ static int enic_probe(struct pci_dev *pd
+ 			goto err_out_release_regions;
+ 		}
+ 	} else {
+-		err = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64));
++		err = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(47));
+ 		if (err) {
+ 			dev_err(dev, "Unable to obtain %u-bit DMA "
+-				"for consistent allocations, aborting\n", 64);
++				"for consistent allocations, aborting\n", 47);
+ 			goto err_out_release_regions;
+ 		}
+ 		using_dac = 1;
