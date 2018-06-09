@@ -1,74 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 0566KQkkGVvnXwAAmS7hNA
-	; Thu, 07 Jun 2018 12:25:50 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id EQXHIkPzG1t1ZAAAmS7hNA
+	; Sat, 09 Jun 2018 15:34:15 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id A99416089E; Thu,  7 Jun 2018 12:25:50 +0000 (UTC)
+	id 7CEE1608C9; Sat,  9 Jun 2018 15:34:15 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QhjYOJvt"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id E7F2760115;
-	Thu,  7 Jun 2018 12:25:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E7F2760115
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id D47D4606FA;
+	Sat,  9 Jun 2018 15:34:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D47D4606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932433AbeFGMZr (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 08:25:47 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:53148 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932124AbeFGMZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 08:25:46 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 85F11350E14D6;
-        Thu,  7 Jun 2018 20:25:42 +0800 (CST)
-Received: from [127.0.0.1] (10.177.223.23) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.382.0; Thu, 7 Jun 2018
- 20:25:35 +0800
-Subject: Re: [PATCH v2] irqchip/gic-v3-its: fix ITS queue timeout
-To: Marc Zyngier <marc.zyngier@arm.com>,
-        Yang Yingliang <yangyingliang@huawei.com>
-CC: <julien.thierry@arm.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <1528252824-15144-1-git-send-email-yangyingliang@huawei.com>
- <86a7s89t13.wl-marc.zyngier@arm.com>
-From: Hanjun Guo <guohanjun@huawei.com>
-Message-ID: <fc0393df-22d4-0334-91ce-8ddcdbf5ec21@huawei.com>
-Date: Thu, 7 Jun 2018 20:25:26 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        id S932813AbeFIPeM (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:34:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36498 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932774AbeFIPeJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:34:09 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2BDC5204EC;
+        Sat,  9 Jun 2018 15:34:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558448;
+        bh=U0DY9SVaXcjB5WYRj85Z1UQiNG81oncdN7qbmaE/k9A=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=QhjYOJvtL56wrmOVs7fV3tlfkSAj+0sRfBXiKhtMpuhyKQf65gN1fNNuOZQr6S6C+
+         zjGTbKrSgis7y5ixzm4WYAwoR1Ow5dyhzf7dG68nLI+8xSeoh0HRh0/vk1pm29Ubvp
+         rYSpXWwdFhl5sqOKuY27lkEOGp0oETPLUf9d6vHM=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Or Gerlitz <ogerlitz@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 43/48] net : sched: cls_api: deal with egdev path only if needed
+Date: Sat,  9 Jun 2018 17:29:55 +0200
+Message-Id: <20180609145950.731645550@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
+References: <20180609145947.679103414@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-In-Reply-To: <86a7s89t13.wl-marc.zyngier@arm.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.223.23]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-On 2018/6/6 17:13, Marc Zyngier wrote:
-[...]
-> 
-> Wouldn't it be better to just return that the affinity setting request
-> is impossible to satisfy? And more to the point, how comes we end-up
-> in such a case?
+------------------
 
-The system is booted with a NUMA node has no memory attaching to it
-(memory-less NUMA node), also with NR_CPUS less than CPUs presented
-in MADT, so CPUs on this memory-less node are not brought up, and
-this NUMA node will not be online too. But the ITS attaching to this NUMA
-domain is still valid and represented via SRAT to ITS driver.
+From: Or Gerlitz <ogerlitz@mellanox.com>
 
-This is really the corner case which is triggered by the boot testing
-when enabling our D06 boards, but it's a bug :)
+[ Upstream commit f8f4bef322e4600c5856911c7a632c0e3da920d6 ]
 
-Thanks
-Hanjun
+When dealing with ingress rule on a netdev, if we did fine through the
+conventional path, there's no need to continue into the egdev route,
+and we can stop right there.
+
+Not doing so may cause a 2nd rule to be added by the cls api layer
+with the ingress being the egdev.
+
+For example, under sriov switchdev scheme, a user rule of VFR A --> VFR B
+will end up with two HW rules (1) VF A --> VF B and (2) uplink --> VF B
+
+Fixes: 208c0f4b5237 ('net: sched: use tc_setup_cb_call to call per-block callbacks')
+Signed-off-by: Or Gerlitz <ogerlitz@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/sched/cls_api.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/net/sched/cls_api.c
++++ b/net/sched/cls_api.c
+@@ -1587,7 +1587,7 @@ int tc_setup_cb_call(struct tcf_block *b
+ 		return ret;
+ 	ok_count = ret;
+ 
+-	if (!exts)
++	if (!exts || ok_count)
+ 		return ok_count;
+ 	ret = tc_exts_setup_cb_egdev_call(exts, type, type_data, err_stop);
+ 	if (ret < 0)
