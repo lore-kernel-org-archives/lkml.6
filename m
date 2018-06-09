@@ -1,159 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id IWh6Bn1LGVsZXAAAmS7hNA
-	; Thu, 07 Jun 2018 15:13:33 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id AIKaGmzuG1tJQQAAmS7hNA
+	; Sat, 09 Jun 2018 15:14:47 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 6920A6063F; Thu,  7 Jun 2018 15:13:33 +0000 (UTC)
+	id F0492608BA; Sat,  9 Jun 2018 15:14:46 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="I+m+bv9R"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id BA339601C3;
-	Thu,  7 Jun 2018 15:13:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BA339601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 4184D602FC;
+	Sat,  9 Jun 2018 15:14:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4184D602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753785AbeFGPN0 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:13:26 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41436 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S964886AbeFGPCQ (ORCPT
+        id S1753343AbeFIPOn (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:14:43 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:36294 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753062AbeFIPOl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:02:16 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvby-0005hL-44; Thu, 07 Jun 2018 15:09:58 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvay-0002jt-UQ; Thu, 07 Jun 2018 15:08:56 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Sat, 9 Jun 2018 11:14:41 -0400
+Received: from mail-ua0-f182.google.com (mail-ua0-f182.google.com [209.85.217.182]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id w59FEPE0004434;
+        Sun, 10 Jun 2018 00:14:25 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w59FEPE0004434
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1528557266;
+        bh=JtqmXgZmGQLWc20JtKxl1L4gRS/HUDsWmU986FQ4TNA=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=I+m+bv9RSDayd8rtLzURZjwEoO/3vUorv/CskKYP+cbCgy1M5U6+sXUngd84xNn3b
+         2m/M6hedHMIaeg8bpsJRzvJ+iPwJXoQ5JWrSItbTO8G/P2rFUWBHnt6X1g5DZ0CxXc
+         Ah7plgbNSQBWYjYsKbaVS/grO0sd6OvcysaeUHY534mtLkyeISCsZXS750Kk47RDQh
+         fgFedLisvoYn0pzjwEgiYdr7kj9NiL1M33Po0CmB2/J4bK4vVbN+66D3dzFJ6lIjay
+         Hc/jZ/OQcxTIybwudnAOWSTmf/CKrG5I7vonGB/BTvoJsoOSO7q3KchMttMXLj+et3
+         qvYXYusW8CXuQ==
+X-Nifty-SrcIP: [209.85.217.182]
+Received: by mail-ua0-f182.google.com with SMTP id e8-v6so10805129uam.13;
+        Sat, 09 Jun 2018 08:14:25 -0700 (PDT)
+X-Gm-Message-State: APt69E126atr34nhgt/Uewucvs9st1v5+TUmgPnvZIRRjaaBhX6R5Utu
+        X6+EgZjc5bSAPyq/pLT4erivWOtm/VoAaLO9qXU=
+X-Google-Smtp-Source: ADUXVKJ+LK+hTxfPOp/CyKLzvWmwHPTZU5fVu0gZ8/QsSll6xUNFiw6pmvH8VT2dmdqytNnTosSnMJfMsfsC73GHDLA=
+X-Received: by 2002:ab0:13c8:: with SMTP id n8-v6mr1152708uae.140.1528557264453;
+ Sat, 09 Jun 2018 08:14:24 -0700 (PDT)
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        pbonzini@redhat.com, tim.c.chen@linux.intel.com,
-        peterz@infradead.org, ashok.raj@intel.com,
-        "David Woodhouse" <dwmw@amazon.co.uk>, bp@alien8.de,
-        ak@linux.intel.com, gregkh@linux-foundation.org,
-        dave.hansen@intel.com, "KarimAllah Ahmed" <karahmed@amazon.de>,
-        torvalds@linux-foundation.org, arjan@linux.intel.com,
-        gnomes@lxorguk.ukuu.org.uk
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.974775658@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 047/410] x86/speculation: Add basic IBPB (Indirect
- Branch Prediction Barrier)  support
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Received: by 2002:ab0:20ab:0:0:0:0:0 with HTTP; Sat, 9 Jun 2018 08:13:43 -0700 (PDT)
+In-Reply-To: <20180608205256.cpniquglftmie5vl@ast-mbp.dhcp.thefacebook.com>
+References: <1528477930-7342-1-git-send-email-yamada.masahiro@socionext.com>
+ <1528477930-7342-4-git-send-email-yamada.masahiro@socionext.com> <20180608205256.cpniquglftmie5vl@ast-mbp.dhcp.thefacebook.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Sun, 10 Jun 2018 00:13:43 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATjAKbVW4-STxTOmrfDzJLaJz9Yu_T_1C=T-0x3p4fmoA@mail.gmail.com>
+Message-ID: <CAK7LNATjAKbVW4-STxTOmrfDzJLaJz9Yu_T_1C=T-0x3p4fmoA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] bpfilter: do not (ab)use host-program build rule
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: netdev@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+2018-06-09 5:52 GMT+09:00 Alexei Starovoitov <alexei.starovoitov@gmail.com>:
+> On Sat, Jun 09, 2018 at 02:12:10AM +0900, Masahiro Yamada wrote:
+>> It is an ugly hack to overwrite $(HOSTCC) with $(CC) to reuse the
+>> build rules from scripts/Makefile.host.  It should not be tedious
+>> to write a build rule for its own.
+>>
+>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>> ---
+>>
+>>  net/bpfilter/Makefile                   | 17 +++++++++++------
+>>  net/bpfilter/{main.c => bpfilter_umh.c} |  0
+>>  2 files changed, 11 insertions(+), 6 deletions(-)
+>>  rename net/bpfilter/{main.c => bpfilter_umh.c} (100%)
+>>
+>> diff --git a/net/bpfilter/Makefile b/net/bpfilter/Makefile
+>> index 39c6980..6571b30 100644
+>> --- a/net/bpfilter/Makefile
+>> +++ b/net/bpfilter/Makefile
+>> @@ -3,18 +3,23 @@
+>>  # Makefile for the Linux BPFILTER layer.
+>>  #
+>>
+>> -hostprogs-y := bpfilter_umh
+>> -bpfilter_umh-objs := main.o
+>> -HOSTCFLAGS += -I. -Itools/include/ -Itools/include/uapi
+>> -HOSTCC := $(CC)
+>
+> that is a hack indeed. I don't like it either, but see below.
+>
+>> -
+>>  ifeq ($(CONFIG_BPFILTER_UMH), y)
+>>  # builtin bpfilter_umh should be compiled with -static
+>>  # since rootfs isn't mounted at the time of __init
+>>  # function is called and do_execv won't find elf interpreter
+>> -HOSTLDFLAGS += -static
+>> +STATIC := -static
+>>  endif
+>>
+>> +quiet_cmd_cc_user = CC      $@
+>> +      cmd_cc_user = $(CC) -Wall -Wmissing-prototypes -O2 -std=gnu89 \
+>> +                 -I$(srctree) -I$(srctree)/tools/include/ \
+>> +                 -I$(srctree)/tools/include/uapi $(STATIC) -o $@ $<
+>> +
+>> +$(obj)/bpfilter_umh: $(src)/bpfilter_umh.c FORCE
+>> +     $(call if_changed,cc_user)
+>
+> Does this scale?
+> Please see two top patches here:
+> https://git.kernel.org/pub/scm/linux/kernel/git/ast/bpf.git/log/?h=ipt_bpf
+> that add more meat to bpfilter and a lot more files.
 
-------------------
+Oh, I just thought main.c was the only user-program file.
 
-From: David Woodhouse <dwmw@amazon.co.uk>
+> Recompiling all of them at once isn't nice either.
 
-commit 20ffa1caecca4db8f79fe665acdeaa5af815a24d upstream.
+Indeed.
 
-Expose indirect_branch_prediction_barrier() for use in subsequent patches.
+It should be able to compile .c -> .o separately.
 
-[ tglx: Add IBPB status to spectre_v2 sysfs file ]
+> This Makefile needs different .c -> .o rules for bpfilter_kern.c files
+> that get compiled into kernel module and for the rest of umh files:
+> main.c ctor.c init.c gen.c etc
+> that need to be compiled .c -> .o differently.
+> I don't see how to do it without ugly hacks in Makefile.
+> In that sense HOSTCC = CC hack looked the least ugly to me that's
+> why I went with it.
+> Better ideas?
 
-Co-developed-by: KarimAllah Ahmed <karahmed@amazon.de>
-Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Cc: gnomes@lxorguk.ukuu.org.uk
-Cc: ak@linux.intel.com
-Cc: ashok.raj@intel.com
-Cc: dave.hansen@intel.com
-Cc: arjan@linux.intel.com
-Cc: torvalds@linux-foundation.org
-Cc: peterz@infradead.org
-Cc: bp@alien8.de
-Cc: pbonzini@redhat.com
-Cc: tim.c.chen@linux.intel.com
-Cc: gregkh@linux-foundation.org
-Link: https://lkml.kernel.org/r/1516896855-7642-8-git-send-email-dwmw@amazon.co.uk
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.16:
- - Renumber the feature bit
- - Adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- arch/x86/include/asm/cpufeature.h    |  2 ++
- arch/x86/include/asm/nospec-branch.h | 13 +++++++++++++
- arch/x86/kernel/cpu/bugs.c           | 10 +++++++++-
- 3 files changed, 24 insertions(+), 1 deletion(-)
 
---- a/arch/x86/include/asm/cpufeature.h
-+++ b/arch/x86/include/asm/cpufeature.h
-@@ -189,6 +189,8 @@
- #define X86_FEATURE_INVPCID_SINGLE (7*32+10) /* Effectively INVPCID && CR4.PCIDE=1 */
- #define X86_FEATURE_RSB_CTXSW	(7*32+11) /* "" Fill RSB on context switches */
- 
-+#define X86_FEATURE_IBPB	(7*32+12) /* Indirect Branch Prediction Barrier enabled*/
-+
- #define X86_FEATURE_RETPOLINE	(7*32+29) /* "" Generic Retpoline mitigation for Spectre variant 2 */
- #define X86_FEATURE_RETPOLINE_AMD (7*32+30) /* "" AMD Retpoline mitigation for Spectre variant 2 */
- /* Because the ALTERNATIVE scheme is for members of the X86_FEATURE club... */
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -194,5 +194,18 @@ static inline void vmexit_fill_RSB(void)
- #endif
- }
- 
-+static inline void indirect_branch_prediction_barrier(void)
-+{
-+	asm volatile(ALTERNATIVE("",
-+				 "movl %[msr], %%ecx\n\t"
-+				 "movl %[val], %%eax\n\t"
-+				 "movl $0, %%edx\n\t"
-+				 "wrmsr",
-+				 X86_FEATURE_IBPB)
-+		     : : [msr] "i" (MSR_IA32_PRED_CMD),
-+			 [val] "i" (PRED_CMD_IBPB)
-+		     : "eax", "ecx", "edx", "memory");
-+}
-+
- #endif /* __ASSEMBLY__ */
- #endif /* _ASM_X86_NOSPEC_BRANCH_H_ */
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -358,6 +358,13 @@ retpoline_auto:
- 		setup_force_cpu_cap(X86_FEATURE_RSB_CTXSW);
- 		pr_info("Filling RSB on context switch\n");
- 	}
-+
-+	/* Initialize Indirect Branch Prediction Barrier if supported */
-+	if (boot_cpu_has(X86_FEATURE_SPEC_CTRL) ||
-+	    boot_cpu_has(X86_FEATURE_AMD_PRED_CMD)) {
-+		setup_force_cpu_cap(X86_FEATURE_IBPB);
-+		pr_info("Enabling Indirect Branch Prediction Barrier\n");
-+	}
- }
- 
- #undef pr_fmt
-@@ -387,7 +394,8 @@ ssize_t cpu_show_spectre_v2(struct devic
- 	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
- 		return sprintf(buf, "Not affected\n");
- 
--	return sprintf(buf, "%s%s\n", spectre_v2_strings[spectre_v2_enabled],
-+	return sprintf(buf, "%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
-+		       boot_cpu_has(X86_FEATURE_IBPB) ? ", IPBP" : "",
- 		       spectre_v2_module_string());
- }
- #endif
+I will think about it after your patches land.
+
+I will drop this for now.
+
+
+-- 
+Best Regards
+Masahiro Yamada
