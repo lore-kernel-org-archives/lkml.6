@@ -1,99 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id lY7vHHtIGVttSAAAmS7hNA
-	; Thu, 07 Jun 2018 15:01:37 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id SuzlEVr1G1socAAAmS7hNA
+	; Sat, 09 Jun 2018 15:43:34 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id F221B607E7; Thu,  7 Jun 2018 15:01:36 +0000 (UTC)
+	id 360D0608C1; Sat,  9 Jun 2018 15:43:34 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TWiG/PPB"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D00A56074D;
-	Thu,  7 Jun 2018 15:01:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D00A56074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id AC73D605A5;
+	Sat,  9 Jun 2018 15:43:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AC73D605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935882AbeFGPBd (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:01:33 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41388 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934809AbeFGPB2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:01:28 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbv-0005hJ-CS; Thu, 07 Jun 2018 15:09:55 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvaz-0002lV-S4; Thu, 07 Jun 2018 15:08:57 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        id S932849AbeFIPe3 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:34:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36630 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753739AbeFIPeT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:34:19 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2EC2920856;
+        Sat,  9 Jun 2018 15:34:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558458;
+        bh=b056RM7rhbXpANOdK/6LVs12tbqUVQTDVzxOiCXvlKQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=TWiG/PPBAkR4VZqhlqp7bfWOIktaQHyrDVd6ZrVmiAghFPlwBzIPQ0C0KPq/WD355
+         9phEwkr6bZ0iE6IF6wWRWpIC7bk7T660aWI8E239EhWZWJ2EFmy9mq21vsnIHFNkA2
+         p6kQfCIA4hRs2wKVIwo/RfqE+WWg6ZE3Jhl0eyas=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, John Fastabend <john.fastabend@gmail.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 36/48] virtio-net: correctly transmit XDP buff after linearizing
+Date: Sat,  9 Jun 2018 17:29:48 +0200
+Message-Id: <20180609145950.328781164@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
+References: <20180609145947.679103414@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "linux-edac" <linux-edac@vger.kernel.org>,
-        "David Daney" <david.daney@cavium.com>, linux-mips@linux-mips.org,
-        "James Hogan" <jhogan@kernel.org>, "Borislav Petkov" <bp@suse.de>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.280586232@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 067/410] EDAC, octeon: Fix an uninitialized variable
- warning
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: James Hogan <jhogan@kernel.org>
+From: Jason Wang <jasowang@redhat.com>
 
-commit 544e92581a2ac44607d7cc602c6b54d18656f56d upstream.
+[ Upstream commit 5d458a13dd59d04b4d6658a6d5b94d42732b15ae ]
 
-Fix an uninitialized variable warning in the Octeon EDAC driver, as seen
-in MIPS cavium_octeon_defconfig builds since v4.14 with Codescape GNU
-Tools 2016.05-03:
+We should not go for the error path after successfully transmitting a
+XDP buffer after linearizing. Since the error path may try to pop and
+drop next packet and increase the drop counters. Fixing this by simply
+drop the refcnt of original page and go for xmit path.
 
-  drivers/edac/octeon_edac-lmc.c In function ‘octeon_lmc_edac_poll_o2’:
-  drivers/edac/octeon_edac-lmc.c:87:24: warning: ‘((long unsigned int*)&int_reg)[1]’ may \
-    be used uninitialized in this function [-Wmaybe-uninitialized]
-    if (int_reg.s.sec_err || int_reg.s.ded_err) {
-                        ^
-Iinitialise the whole int_reg variable to zero before the conditional
-assignments in the error injection case.
-
-Signed-off-by: James Hogan <jhogan@kernel.org>
-Acked-by: David Daney <david.daney@cavium.com>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Cc: linux-mips@linux-mips.org
-Fixes: 1bc021e81565 ("EDAC: Octeon: Add error injection support")
-Link: http://lkml.kernel.org/r/20171113161206.20990-1-james.hogan@mips.com
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Fixes: 72979a6c3590 ("virtio_net: xdp, add slowpath case for non contiguous buffers")
+Cc: John Fastabend <john.fastabend@gmail.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/edac/octeon_edac-lmc.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/virtio_net.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/edac/octeon_edac-lmc.c
-+++ b/drivers/edac/octeon_edac-lmc.c
-@@ -79,6 +79,7 @@ static void octeon_lmc_edac_poll_o2(stru
- 	if (!pvt->inject)
- 		int_reg.u64 = cvmx_read_csr(CVMX_LMCX_INT(mci->mc_idx));
- 	else {
-+		int_reg.u64 = 0;
- 		if (pvt->error_type == 1)
- 			int_reg.s.sec_err = 1;
- 		if (pvt->error_type == 2)
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -775,7 +775,7 @@ static struct sk_buff *receive_mergeable
+ 			}
+ 			*xdp_xmit = true;
+ 			if (unlikely(xdp_page != page))
+-				goto err_xdp;
++				put_page(page);
+ 			rcu_read_unlock();
+ 			goto xdp_xmit;
+ 		case XDP_REDIRECT:
