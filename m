@@ -1,127 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id D0hkGyZkHlu+YgAAmS7hNA
-	; Mon, 11 Jun 2018 11:59:43 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id oNl4O+byG1vpXwAAmS7hNA
+	; Sat, 09 Jun 2018 15:31:54 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 0E951607A4; Mon, 11 Jun 2018 11:59:43 +0000 (UTC)
+	id B327D608CA; Sat,  9 Jun 2018 15:31:54 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aFA2SFro"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="j9C9u1pp"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 720A3601C3;
-	Mon, 11 Jun 2018 11:59:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 720A3601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id E6765608B8;
+	Sat,  9 Jun 2018 15:31:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E6765608B8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933440AbeFKL7j (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Mon, 11 Jun 2018 07:59:39 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:38280 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933093AbeFKL7X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 07:59:23 -0400
-Received: by mail-wr0-f193.google.com with SMTP id e18-v6so11854792wrs.5;
-        Mon, 11 Jun 2018 04:59:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=1b3T00LT776cjws/7uRu1+/NoUBBVjylLXcQSc5tQnY=;
-        b=aFA2SFrodI/AIU+2WMIItf6lmRZfuGP4cWMLYTSKEMJjv7gT2cdTl//qtJEGMdv5in
-         MwChWJz5hwF6GJR6X9MPV3ICXKLxifvGMHNZN04FBqfOBsMmRdbaSDgSLrhD/bloC+/r
-         0PDyULcVjn8X5VrzgkQFs8qI9IlSDUgwe36RDWJ0v0z0mmio4PWHHEIpcVmyobiJXtFG
-         BLo/R9xRzvY2qcUJ60kVODz09OKhiVDiWk8Yid/YBphlArcM+2BJDpXi3DKQfif0qJ9S
-         VPjdukShEksksOVHabKPl/YvYl/wewcRaPOmSf8SZDSyBjfo5/DkcvYcZWv2jvkOHKcg
-         pNtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=1b3T00LT776cjws/7uRu1+/NoUBBVjylLXcQSc5tQnY=;
-        b=pEYZSIALK3wge43i8eAXZatudukVFDgIH2dC5ns5RamUT/37JDOGuHcLcfxigIgVhf
-         mKq/MPHYWdurnGLner5+TLmY9md09Fz61twYW6pYgv6w3lFVhtCMs8UgWQP2ygnxiDAM
-         UZM0bI5raZ2Cxw/C0l6XGgwwWWIcZW2naUFTaMbtJqqo9RExOcqNUY5k+sFiyltujSOI
-         zwm5WOV9ncJaFqhi+M67vBLuIKnm8JzUdcQ+6YDDFLs135X5zx7M7NJmdwPBew0VTbJv
-         WHxdsLHlmWQj3huipogrE7nUMJtHm8i5uxgvy2mLFS8s87ypf6mMEISC7RIcQP/Bngfp
-         gAUA==
-X-Gm-Message-State: APt69E0mYJ8EQF5dBi6JtYxcP0me9n0uSe/0Y8ayUUAMKMLBueoPXfLv
-        IuMh06OUvWtida1F8m9jJLTC2Vhl
-X-Google-Smtp-Source: ADUXVKJ2H4szoYlkTl4hxnUpBvLMcp43Beofl1eIeTfNR8Mn52BCNzALSQYz3UtA843bekV3cjbQjQ==
-X-Received: by 2002:adf:85ec:: with SMTP id 41-v6mr12756727wru.120.1528718361596;
-        Mon, 11 Jun 2018 04:59:21 -0700 (PDT)
-Received: from kurokawa.lan (ip-86-49-107-50.net.upcbroadband.cz. [86.49.107.50])
-        by smtp.gmail.com with ESMTPSA id t124-v6sm7974796wmt.29.2018.06.11.04.59.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Jun 2018 04:59:20 -0700 (PDT)
-From: Marek Vasut <marek.vasut@gmail.com>
-X-Google-Original-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+        id S932299AbeFIPbw (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:31:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34348 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932254AbeFIPbt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:31:49 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F2A68208A4;
+        Sat,  9 Jun 2018 15:31:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558308;
+        bh=AeRB+jiaMFMpaPMjuddl7KO5CLaJMPDRz76jICA4ECU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=j9C9u1ppHZwVgL0ZoHnqqNXT2b00k8RJHaOrkCzoGjw2OZPo0DvNRnz5f3JtiCUYA
+         z2lu7NPHCBzX7nDjIT3JedMdom3pzXAUkW7vfkOI2jLEx4Gg+hCSPR42tIUl/Zdmsq
+         OsPjmX76PsBxMCzPagzWxsU9K+ifUW7bfHxYiRrc=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v6 14/14] mfd: da9063: Add DA9063L support
-Date: Mon, 11 Jun 2018 13:58:51 +0200
-Message-Id: <20180611115851.1987-14-marek.vasut+renesas@gmail.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
-References: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
+        Yuval Mintz <yuvalm@mellanox.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 12/48] ipmr: properly check rhltable_init() return value
+Date: Sat,  9 Jun 2018 17:29:24 +0200
+Message-Id: <20180609145948.452469272@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
+References: <20180609145947.679103414@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for DA9063L, which is a reduced variant of the DA9063
-with less regulators and without RTC.
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Acked-by: Mark Brown <broonie@kernel.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
----
-V2: No change
-V3: No change
-V4: No change
-V5: No change
-V6: No change
----
- drivers/mfd/da9063-i2c.c | 2 ++
- 1 file changed, 2 insertions(+)
+------------------
 
-diff --git a/drivers/mfd/da9063-i2c.c b/drivers/mfd/da9063-i2c.c
-index a449a9263dd7..50a24b1921d0 100644
---- a/drivers/mfd/da9063-i2c.c
-+++ b/drivers/mfd/da9063-i2c.c
-@@ -186,6 +186,7 @@ static struct regmap_config da9063_regmap_config = {
+From: Eric Dumazet <edumazet@google.com>
+
+[ Upstream commit 66fb33254f45df4b049f487aff1cbde1ef919390 ]
+
+commit 8fb472c09b9d ("ipmr: improve hash scalability")
+added a call to rhltable_init() without checking its return value.
+
+This problem was then later copied to IPv6 and factorized in commit
+0bbbf0e7d0e7 ("ipmr, ip6mr: Unite creation of new mr_table")
+
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+   (ftrace buffer empty)
+Modules linked in:
+CPU: 1 PID: 31552 Comm: syz-executor7 Not tainted 4.17.0-rc5+ #60
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:rht_key_hashfn include/linux/rhashtable.h:277 [inline]
+RIP: 0010:__rhashtable_lookup include/linux/rhashtable.h:630 [inline]
+RIP: 0010:rhltable_lookup include/linux/rhashtable.h:716 [inline]
+RIP: 0010:mr_mfc_find_parent+0x2ad/0xbb0 net/ipv4/ipmr_base.c:63
+RSP: 0018:ffff8801826aef70 EFLAGS: 00010203
+RAX: 0000000000000001 RBX: 0000000000000001 RCX: ffffc90001ea0000
+RDX: 0000000000000079 RSI: ffffffff8661e859 RDI: 000000000000000c
+RBP: ffff8801826af1c0 R08: ffff8801b2212000 R09: ffffed003b5e46c2
+R10: ffffed003b5e46c2 R11: ffff8801daf23613 R12: dffffc0000000000
+R13: ffff8801826af198 R14: ffff8801cf8225c0 R15: ffff8801826af658
+FS:  00007ff7fa732700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000003ffffff9c CR3: 00000001b0210000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ ip6mr_cache_find_parent net/ipv6/ip6mr.c:981 [inline]
+ ip6mr_mfc_delete+0x1fe/0x6b0 net/ipv6/ip6mr.c:1221
+ ip6_mroute_setsockopt+0x15c6/0x1d70 net/ipv6/ip6mr.c:1698
+ do_ipv6_setsockopt.isra.9+0x422/0x4660 net/ipv6/ipv6_sockglue.c:163
+ ipv6_setsockopt+0xbd/0x170 net/ipv6/ipv6_sockglue.c:922
+ rawv6_setsockopt+0x59/0x140 net/ipv6/raw.c:1060
+ sock_common_setsockopt+0x9a/0xe0 net/core/sock.c:3039
+ __sys_setsockopt+0x1bd/0x390 net/socket.c:1903
+ __do_sys_setsockopt net/socket.c:1914 [inline]
+ __se_sys_setsockopt net/socket.c:1911 [inline]
+ __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1911
+ do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Fixes: 8fb472c09b9d ("ipmr: improve hash scalability")
+Fixes: 0bbbf0e7d0e7 ("ipmr, ip6mr: Unite creation of new mr_table")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Cc: Yuval Mintz <yuvalm@mellanox.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Acked-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/ipv4/ipmr.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+--- a/net/ipv4/ipmr.c
++++ b/net/ipv4/ipmr.c
+@@ -356,6 +356,7 @@ static const struct rhashtable_params ip
+ static struct mr_table *ipmr_new_table(struct net *net, u32 id)
+ {
+ 	struct mr_table *mrt;
++	int err;
  
- static const struct of_device_id da9063_dt_ids[] = {
- 	{ .compatible = "dlg,da9063", },
-+	{ .compatible = "dlg,da9063l", },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, da9063_dt_ids);
-@@ -231,6 +232,7 @@ static int da9063_i2c_probe(struct i2c_client *i2c,
+ 	/* "pimreg%u" should not exceed 16 bytes (IFNAMSIZ) */
+ 	if (id != RT_TABLE_DEFAULT && id >= 1000000000)
+@@ -371,7 +372,11 @@ static struct mr_table *ipmr_new_table(s
+ 	write_pnet(&mrt->net, net);
+ 	mrt->id = id;
  
- static const struct i2c_device_id da9063_i2c_id[] = {
- 	{ "da9063", PMIC_TYPE_DA9063 },
-+	{ "da9063l", PMIC_TYPE_DA9063L },
- 	{},
- };
- MODULE_DEVICE_TABLE(i2c, da9063_i2c_id);
--- 
-2.16.2
+-	rhltable_init(&mrt->mfc_hash, &ipmr_rht_params);
++	err = rhltable_init(&mrt->mfc_hash, &ipmr_rht_params);
++	if (err) {
++		kfree(mrt);
++		return ERR_PTR(err);
++	}
+ 	INIT_LIST_HEAD(&mrt->mfc_cache_list);
+ 	INIT_LIST_HEAD(&mrt->mfc_unres_queue);
+ 
