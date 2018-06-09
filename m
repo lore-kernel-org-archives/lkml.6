@@ -1,93 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id I4XCEGZCGVulfAAAmS7hNA
-	; Thu, 07 Jun 2018 14:36:14 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ptl4O+byG1vpXwAAmS7hNA
+	; Sat, 09 Jun 2018 15:34:57 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 83C2E607DC; Thu,  7 Jun 2018 14:36:14 +0000 (UTC)
+	id F0887608C1; Sat,  9 Jun 2018 15:34:56 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FDcL7eiz"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 0E008601D2;
-	Thu,  7 Jun 2018 14:36:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0E008601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 697A8606FA;
+	Sat,  9 Jun 2018 15:34:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 697A8606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934070AbeFGOgM (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:36:12 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40402 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933394AbeFGOgK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:36:10 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbG-0005dI-Af; Thu, 07 Jun 2018 15:09:14 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbD-0003GO-9i; Thu, 07 Jun 2018 15:09:11 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        id S932951AbeFIPex (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:34:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37110 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932930AbeFIPet (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:34:49 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A7F70208A4;
+        Sat,  9 Jun 2018 15:34:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558489;
+        bh=dVo4NvyCkTg7ZAxs9a1VF9JrkVoxX34QKKpzFw39OYk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=FDcL7eizRT2+wdM0PmlSSwxjFb3gq7TkDq7qjWDNuYj2nsoAB/uA7185pccai3s1H
+         Cre6lgfbj6aVvr5yZh8hxdtS/KKLRYV/Oquq/HvrA2I/6JCaTXl+jr5qUSviJpfDxq
+         B9Vwakwk4tXSNrMSR6MBa96kQB+tL4w0JGH9XnKE=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 08/41] bnx2x: use the right constant
+Date: Sat,  9 Jun 2018 17:29:40 +0200
+Message-Id: <20180609152926.907536975@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609152926.389750182@linuxfoundation.org>
+References: <20180609152926.389750182@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Randy E. Witt" <randy.e.witt@intel.com>,
-        "Vinicius Costa Gomes" <vinicius.gomes@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Eric Dumazet" <edumazet@google.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.412936680@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 368/410] skbuff: Fix not waking applications when
- errors are enqueued
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-commit 6e5d58fdc9bedd0255a8781b258f10bbdc63e975 upstream.
+[ Upstream commit dd612f18a49b63af8b3a5f572d999bdb197385bc ]
 
-When errors are enqueued to the error queue via sock_queue_err_skb()
-function, it is possible that the waiting application is not notified.
+Nearby code that also tests port suggests that the P0 constant should be
+used when port is zero.
 
-Calling 'sk->sk_data_ready()' would not notify applications that
-selected only POLLERR events in poll() (for example).
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Reported-by: Randy E. Witt <randy.e.witt@intel.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+// <smpl>
+@@
+expression e,e1;
+@@
+
+* e ? e1 : e1
+// </smpl>
+
+Fixes: 6c3218c6f7e5 ("bnx2x: Adjust ETS to 578xx")
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/skbuff.c | 2 +-
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -3512,7 +3512,7 @@ int sock_queue_err_skb(struct sock *sk,
- 
- 	skb_queue_tail(&sk->sk_error_queue, skb);
- 	if (!sock_flag(sk, SOCK_DEAD))
--		sk->sk_data_ready(sk);
-+		sk->sk_error_report(sk);
- 	return 0;
- }
- EXPORT_SYMBOL(sock_queue_err_skb);
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
+@@ -588,7 +588,7 @@ static void bnx2x_ets_e3b0_nig_disabled(
+ 	 * slots for the highest priority.
+ 	 */
+ 	REG_WR(bp, (port) ? NIG_REG_P1_TX_ARB_NUM_STRICT_ARB_SLOTS :
+-		   NIG_REG_P1_TX_ARB_NUM_STRICT_ARB_SLOTS, 0x100);
++		   NIG_REG_P0_TX_ARB_NUM_STRICT_ARB_SLOTS, 0x100);
+ 	/* Mapping between the CREDIT_WEIGHT registers and actual client
+ 	 * numbers
+ 	 */
