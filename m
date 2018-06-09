@@ -1,170 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id nt2bD7BLGVsDXQAAmS7hNA
-	; Thu, 07 Jun 2018 15:14:46 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id lnSrAGHGG1t5LAAAmS7hNA
+	; Sat, 09 Jun 2018 12:25:32 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 259386063F; Thu,  7 Jun 2018 15:14:46 +0000 (UTC)
+	id D71A1607A4; Sat,  9 Jun 2018 12:25:31 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L136H06t"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FROM,MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 95E6F60290;
-	Thu,  7 Jun 2018 15:14:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 95E6F60290
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 5A4E0602FC;
+	Sat,  9 Jun 2018 12:25:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5A4E0602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935904AbeFGPOK (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:14:10 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60990 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935044AbeFGPB6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:01:58 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6419330832EF;
-        Thu,  7 Jun 2018 15:01:58 +0000 (UTC)
-Received: from w520.home (ovpn-116-135.phx2.redhat.com [10.3.116.135])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D90FC5D6A3;
-        Thu,  7 Jun 2018 15:01:57 +0000 (UTC)
-Date: Thu, 7 Jun 2018 09:01:57 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: "Tian, Kevin" <kevin.tian@intel.com>
-Cc: "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "shameerali.kolothum.thodi@huawei.com"
-        <shameerali.kolothum.thodi@huawei.com>
-Subject: Re: [RFC PATCH] iommu/vt-d: Exclude known RMRRs from reserved
- ranges
-Message-ID: <20180607090157.5458a2ae@w520.home>
-In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D1911F88AD@SHSMSX101.ccr.corp.intel.com>
-References: <20180605190400.22732.2998.stgit@gimli.home>
-        <AADFC41AFE54684AB9EE6CBC0274A5D1911F88AD@SHSMSX101.ccr.corp.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 07 Jun 2018 15:01:58 +0000 (UTC)
+        id S1753297AbeFIMZ3 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 08:25:29 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:54015 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753175AbeFIMZ2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 08:25:28 -0400
+Received: by mail-wm0-f66.google.com with SMTP id x6-v6so7397023wmc.3
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Jun 2018 05:25:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=oG4rlrJygGoH1GSxzzHI1kTkKCXWlMaevMpd0LTAJGI=;
+        b=L136H06tpXAU8jPDq/H4Wvpfb/6Jn6Am9C6Tosxr0OoFsClmo3MvGgjPISVqyY/YSO
+         l+nDbIuCj60vBYpB494Dc0B3Zr6hKuaEaMqxHKATDF/XRqFdAF871U7EQwm+um73wAuy
+         Obg58rKuuUGJFyriT/XAU2MbuTU1357A2agmYJEOCpoMzhRxm8v810zspVAcC3wSp3K7
+         7tpVtWijMP3J1bMrxFhyEA9YpSBkKV4QGnsbxm6+x4QA3SGJd214ihbFKIdLj8UGF7uh
+         1bViy4qbBhyOZ5XzfvqOmwWbrUbuDFeay0CpJM0kqk26UPzEbYSB35o4cjDx4smxzOvO
+         wzYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=oG4rlrJygGoH1GSxzzHI1kTkKCXWlMaevMpd0LTAJGI=;
+        b=ArWoE59Iq6eQwoAHXy4G9vnLYVFDBmRQiFSAHEPjK8bmbnNLUFyVbhbxCXcayHsU91
+         iAZTAUdY3aq9UKEpRg51jSKo/JsOEDwnkw4GThTBu7qtvTVDHWRvzJ285JG9SXKKCxSh
+         Rky94yOMnhIjT9FAhYRbOzkB44KPi68jTcsobU7/r0hp4LcINkZXWHn3Vc7d+yrplRV+
+         pn6xBHTrd4n+ad+FL5CMlRxMukk+hgbqvVQjT7GiRpuhyC7QZONODxziXlI1ugCUFCLh
+         cYJrLMQcpAVR30CkFvcuQ1QsnJTq7NHMm5PcWmV7wqEv6Rq6UtsyQEsx8avm97BOzLsK
+         6veQ==
+X-Gm-Message-State: APt69E1JrP5FI+gQ9Jx1FSMwSTwKmX2ft3ynYE+ebWEqPjWZGYrfxxdW
+        GgDme5MR9KDduMzZlLY7l/Q=
+X-Google-Smtp-Source: ADUXVKKoIQy3M1zKWIcm7MPwGvB3NK8ad7OCbh2fPaTk9X+vWLxqxFzc1Lj2SJWSvzmt8YLccSnKrw==
+X-Received: by 2002:a1c:4a5d:: with SMTP id x90-v6mr3839518wma.67.1528547126994;
+        Sat, 09 Jun 2018 05:25:26 -0700 (PDT)
+Received: from localhost.localdomain (8ta-150-94-26.telkomadsl.co.za. [41.150.94.26])
+        by smtp.googlemail.com with ESMTPSA id l69-v6sm15691992wma.45.2018.06.09.05.25.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sat, 09 Jun 2018 05:25:26 -0700 (PDT)
+From: Chris Opperman <eklikeroomys@gmail.com>
+Cc: eklikeroomys@gmail.com, Ian Abbott <abbotti@mev.co.uk>,
+        H Hartley Sweeten <hsweeten@visionengravers.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Simo Koskinen <koskisoft@gmail.com>,
+        Frank Mori Hess <fmh6jj@gmail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: comedi: Improved readability of function comedi_nsamples_left.
+Date: Sat,  9 Jun 2018 16:23:21 +0200
+Message-Id: <1528554204-4388-1-git-send-email-eklikeroomys@gmail.com>
+X-Mailer: git-send-email 2.1.4
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 6 Jun 2018 05:29:58 +0000
-"Tian, Kevin" <kevin.tian@intel.com> wrote:
+Signed-off-by: Chris Opperman <eklikeroomys@gmail.com>
+---
+ drivers/staging/comedi/drivers.c | 29 ++++++++++++++---------------
+ 1 file changed, 14 insertions(+), 15 deletions(-)
 
-> > From: Alex Williamson
-> > Sent: Wednesday, June 6, 2018 3:07 AM
-> > 
-> > device_is_rmrr_locked() allows graphics and USB devices to participate
-> > in the IOMMU API despite, and ignoring their RMRR association, however
-> > intel_iommu_get_resv_regions() still includes the RMRRs as unavailable
-> > IOVA space for the device.  Are we ignoring the RMRR for these devices
-> > or are we not?  If vfio starts consuming reserved regions, perhaps we
-> > no longer need to consider devices with RMRRs excluded from the IOMMU
-> > API interface, but we have a transitional problem that these allowed
-> > devices still impose incompatible IOVA restrictions per the reserved
-> > region reporting.  Dive further down the rabbit hole by also ignoring
-> > RMRRs for "known" devices in the reserved region reporting.  
-> 
-> intel_iommu_get_resv_regions is used not just for IOMMU API. I'm
-> afraid doing so will make RMRR completely ignored, even in normal
-> DMA API path...
-
-Well, I'm a bit stuck then, we have existing IOMMU API users that
-ignore these ranges and in fact conflict with these ranges blocking us
-from restricting mappings within these ranges.  My impression is that
-IOMMU reserved ranges should only be ranges which have some fundamental
-limitation in the IOMMU, not simply mappings for which firmware has
-requested an identity mapped range.  The latter should simply be a
-pre-allocation of the IOVA space, for the cases where we choose to
-honor the RMRR.  Thanks,
-
-Alex
-
-> > Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
-> > ---
-> >  drivers/iommu/intel-iommu.c |   35 +++++++++++++++++++++--------------
-> >  1 file changed, 21 insertions(+), 14 deletions(-)
-> > 
-> > If this is the approach we want to take, I could pull this in via the
-> > vfio tree, along with Shameer's patches which expose an IOVA list and
-> > enforce it to userspace, otherwise I'm afraid Shameer's patches will
-> > be blocked a while longer.  Thanks,
-> > 
-> > Alex
-> > 
-> > diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-> > index 749d8f235346..f312f93199c5 100644
-> > --- a/drivers/iommu/intel-iommu.c
-> > +++ b/drivers/iommu/intel-iommu.c
-> > @@ -2864,19 +2864,24 @@ static bool device_has_rmrr(struct device *dev)
-> >   * any use of the RMRR regions will be torn down before assigning the
-> > device
-> >   * to a guest.
-> >   */
-> > -static bool device_is_rmrr_locked(struct device *dev)
-> > +static bool rmrr_is_ignored(struct device *dev)
-> >  {
-> > -	if (!device_has_rmrr(dev))
-> > -		return false;
-> > -
-> >  	if (dev_is_pci(dev)) {
-> >  		struct pci_dev *pdev = to_pci_dev(dev);
-> > 
-> >  		if (IS_USB_DEVICE(pdev) || IS_GFX_DEVICE(pdev))
-> > -			return false;
-> > +			return true;
-> >  	}
-> > 
-> > -	return true;
-> > +	return false;
-> > +}
-> > +
-> > +static bool device_is_rmrr_locked(struct device *dev)
-> > +{
-> > +	if (!device_has_rmrr(dev))
-> > +		return false;
-> > +
-> > +	return !rmrr_is_ignored(dev);
-> >  }
-> > 
-> >  static int iommu_should_identity_map(struct device *dev, int startup)
-> > @@ -5141,17 +5146,19 @@ static void
-> > intel_iommu_get_resv_regions(struct device *device,
-> >  	struct device *i_dev;
-> >  	int i;
-> > 
-> > -	rcu_read_lock();
-> > -	for_each_rmrr_units(rmrr) {
-> > -		for_each_active_dev_scope(rmrr->devices, rmrr-  
-> > >devices_cnt,  
-> > -					  i, i_dev) {
-> > -			if (i_dev != device)
-> > -				continue;
-> > +	if (!rmrr_is_ignored(device)) {
-> > +		rcu_read_lock();
-> > +		for_each_rmrr_units(rmrr) {
-> > +			for_each_active_dev_scope(rmrr->devices,
-> > +						  rmrr->devices_cnt, i, i_dev)
-> > {
-> > +				if (i_dev != device)
-> > +					continue;
-> > 
-> > -			list_add_tail(&rmrr->resv->list, head);
-> > +				list_add_tail(&rmrr->resv->list, head);
-> > +			}
-> >  		}
-> > +		rcu_read_unlock();
-> >  	}
-> > -	rcu_read_unlock();
-> > 
-> >  	reg = iommu_alloc_resv_region(IOAPIC_RANGE_START,
-> >  				      IOAPIC_RANGE_END -
-> > IOAPIC_RANGE_START + 1,  
-> 
+diff --git a/drivers/staging/comedi/drivers.c b/drivers/staging/comedi/drivers.c
+index 9d73347..3207ae2 100644
+--- a/drivers/staging/comedi/drivers.c
++++ b/drivers/staging/comedi/drivers.c
+@@ -468,26 +468,25 @@ EXPORT_SYMBOL_GPL(comedi_nscans_left);
+  * Returns the number of samples remaining to complete the command, or the
+  * specified expected number of samples (@nsamples), whichever is fewer.
+  */
+-unsigned int comedi_nsamples_left(struct comedi_subdevice *s,
+-				  unsigned int nsamples)
++u32 comedi_nsamples_left(struct comedi_subdevice *s, u32 nsamples)
+ {
+ 	struct comedi_async *async = s->async;
+ 	struct comedi_cmd *cmd = &async->cmd;
++	u32 scans_left;
++	u64 samples_left;
+ 
+-	if (cmd->stop_src == TRIG_COUNT) {
+-		unsigned int scans_left = __comedi_nscans_left(s, cmd->stop_arg);
+-		unsigned int scan_pos =
+-		    comedi_bytes_to_samples(s, async->scan_progress);
+-		unsigned long long samples_left = 0;
+-
+-		if (scans_left) {
+-			samples_left = ((unsigned long long)scans_left *
+-					cmd->scan_end_arg) - scan_pos;
+-		}
++	if (cmd->stop_src != TRIG_COUNT)
++		return nsamples;
+ 
+-		if (samples_left < nsamples)
+-			nsamples = samples_left;
+-	}
++	scans_left = __comedi_nscans_left(s, cmd->stop_arg);
++	if (!scans_left)
++		return 0;
++
++	samples_left = ((u64)scans_left * cmd->scan_end_arg) -
++		comedi_bytes_to_samples(s, async->scan_progress);
++
++	if (samples_left < nsamples)
++		return samples_left;
+ 	return nsamples;
+ }
+ EXPORT_SYMBOL_GPL(comedi_nsamples_left);
+-- 
+2.1.4
