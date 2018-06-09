@@ -1,107 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id u2xVMrDqGVsYHgAAmS7hNA
-	; Fri, 08 Jun 2018 02:32:16 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Tqy0HxvzG1vjYgAAmS7hNA
+	; Sat, 09 Jun 2018 15:34:07 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id B1BEC6089E; Fri,  8 Jun 2018 02:32:16 +0000 (UTC)
+	id A8800608C1; Sat,  9 Jun 2018 15:34:07 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xjgj1gYR"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 28EC360290;
-	Fri,  8 Jun 2018 02:32:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 28EC360290
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by smtp.codeaurora.org (Postfix) with ESMTP id 28FB3607DC;
+	Sat,  9 Jun 2018 15:34:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 28FB3607DC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752705AbeFHCcO (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 22:32:14 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:61003 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752385AbeFHCcM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 22:32:12 -0400
-Received: from fsav103.sakura.ne.jp (fsav103.sakura.ne.jp [27.133.134.230])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w582VIoF021014;
-        Fri, 8 Jun 2018 11:31:18 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav103.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp);
- Fri, 08 Jun 2018 11:31:18 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w582VIWu021010;
-        Fri, 8 Jun 2018 11:31:18 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: (from i-love@localhost)
-        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id w582VIRn021009;
-        Fri, 8 Jun 2018 11:31:18 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Message-Id: <201806080231.w582VIRn021009@www262.sakura.ne.jp>
-X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
-Subject: Re: general protection fault in =?ISO-2022-JP?B?d2Jfd29ya2ZuICgyKQ==?=
-From: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
-        syzbot <syzbot+4a7438e774b21ddd8eca@syzkaller.appspotmail.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Tejun Heo <tj@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-block@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
+        id S932795AbeFIPeF (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:34:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36358 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932774AbeFIPeC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:34:02 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C187204EC;
+        Sat,  9 Jun 2018 15:34:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558442;
+        bh=y5q4UPrDOqU7uDBsplSzlQkeMhj7wQUgjZEWKs6fjvc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=xjgj1gYRK/76iAKDsrpsFqNnx7IdxuXZ2fLx9mSfyap0m+XZJ1XRieTMOK/JZ2Sg2
+         WmsARTcVsFAwQFP8SxrDZRD9MTgDjnrQtezQACP2Fng7/lk36HAlPvEaEXuz0FEmT8
+         f6+Yt26WNVEmIJ3QD/GiyDi9XbUnp35KQGKnTix8=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Jason Wang <jasowang@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 41/48] virtio-net: correctly check num_buf during err path
+Date: Sat,  9 Jun 2018 17:29:53 +0200
+Message-Id: <20180609145950.621334566@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
+References: <20180609145947.679103414@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Date: Fri, 08 Jun 2018 11:31:18 +0900
-References: <95865cab-e12f-d45b-b6e3-465b624862ba@i-love.sakura.ne.jp> <CACT4Y+byRRtCA9B9bPG9mjrf3UY3OsGeBsoh8dZ0T+V6tKpTHg@mail.gmail.com>
-In-Reply-To: <CACT4Y+byRRtCA9B9bPG9mjrf3UY3OsGeBsoh8dZ0T+V6tKpTHg@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-2022-JP"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dmitry Vyukov wrote:
-> On Tue, Jun 5, 2018 at 3:45 PM, Tetsuo Handa
-> <penguin-kernel@i-love.sakura.ne.jp> wrote:
-> > Dmitry, can you assign VM resources for a git tree for this bug? This bug wants to fight
-> > against https://github.com/google/syzkaller/blob/master/docs/syzbot.md#no-custom-patches ...
-> 
-> Hi Tetsuo,
-> 
-> Most of the reasons for not doing it still stand. A syzkaller instance
-> will produce not just this bug, it will produce hundreds of different
-> bugs. Then the question is: what to do with these bugs? Report all to
-> mailing lists?
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-Is it possible to add linux-next.git tree as a target for fuzzing? If yes,
-we can try debug patches easily, in addition to find bugs earlier than now.
+------------------
 
-> I think the solution here is just to run syzkaller instance locally.
-> It's just a program anybody can run it on any kernel with any custom
-> patches. Moreover for local instance it's also possible to limit set
-> of tested syscalls to increase probability of hitting this bug and at
-> the same time filter out most of other bugs.
+From: Jason Wang <jasowang@redhat.com>
 
-If this bug is reproducible with VM resources individual developer can afford...
+[ Upstream commit 850e088d5bbb333342fd4def08d0a4035f2b7126 ]
 
-Since my Linux development environment is VMware guests on a Windows PC, I can't
-run VM instance which needs KVM acceleration. Also, due to security policy, I can't
-utilize external VM resources available on the Internet, as well as I can't use ssh
-and git protocols. Speak of this bug, even with a lot of VM instances, syzbot can
-reproduce this bug only once or twice per a day. Thus, the question for me boils
-down to, whether I can reproduce this bug using one VMware guest instance with 4GB
-of memory. Effectively, I don't have access to environments for running syzkaller
-instance...
+If we successfully linearize the packet, num_buf will be set to zero
+which may confuse error handling path which assumes num_buf is at
+least 1 and this can lead the code tries to pop the descriptor of next
+buffer. Fixing this by checking num_buf against 1 before decreasing.
 
-> 
-> Do we have any idea about the guilty subsystem? You mentioned
-> bdi_unregister, why? What would be the set of syscalls to concentrate
-> on?
-> I will do a custom run when I get around to it, if nobody else beats me to it.
+Fixes: 4941d472bf95 ("virtio-net: do not reset during XDP set")
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/net/virtio_net.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Because bdi_unregister() does "bdi->dev = NULL;" which wb_workfn() is hitting
-NULL pointer dereference.
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -874,7 +874,7 @@ err_xdp:
+ 	rcu_read_unlock();
+ err_skb:
+ 	put_page(page);
+-	while (--num_buf) {
++	while (num_buf-- > 1) {
+ 		buf = virtqueue_get_buf(rq->vq, &len);
+ 		if (unlikely(!buf)) {
+ 			pr_debug("%s: rx error: %d buffers missing\n",
