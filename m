@@ -1,106 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 53rMFnmJGlujBwAAmS7hNA
-	; Fri, 08 Jun 2018 13:54:08 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id tSAgLYTTG1u/AQAAmS7hNA
+	; Sat, 09 Jun 2018 13:19:29 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id F3400607E4; Fri,  8 Jun 2018 13:54:07 +0000 (UTC)
+	id AD2AF608BF; Sat,  9 Jun 2018 13:19:29 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 72D84606FA;
-	Fri,  8 Jun 2018 13:54:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 72D84606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 267C76074D;
+	Sat,  9 Jun 2018 13:19:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 267C76074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752356AbeFHNyF (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 09:54:05 -0400
-Received: from esa4.microchip.iphmx.com ([68.232.154.123]:31178 "EHLO
-        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751133AbeFHNyE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 09:54:04 -0400
-X-IronPort-AV: E=Sophos;i="5.49,490,1520924400";
-   d="scan'208";a="14762806"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 08 Jun 2018 06:54:04 -0700
-Received: from [10.159.245.163] (10.10.76.4) by chn-sv-exch06.mchp-main.com
- (10.10.76.107) with Microsoft SMTP Server id 14.3.352.0; Fri, 8 Jun 2018
- 06:54:03 -0700
-Subject: Re: [PATCH] add support to non-uniform SFDP SPI NOR flash memories
-To: Tudor Ambarus <tudor.ambarus@microchip.com>,
-        <marek.vasut@gmail.com>, <dwmw2@infradead.org>,
-        <computersforpeace@gmail.com>, <boris.brezillon@bootlin.com>,
-        <richard@nod.at>
-CC: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <nicolas.ferre@microchip.com>, <Cristian.Birsan@microchip.com>
-References: <20180608134818.21387-1-tudor.ambarus@microchip.com>
-From: Cyrille Pitchen <cyrille.pitchen@microchip.com>
-Message-ID: <d171a525-e2bd-be61-1fd4-d6ffeecdc9b4@microchip.com>
-Date: Fri, 8 Jun 2018 15:54:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180608134818.21387-1-tudor.ambarus@microchip.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1753291AbeFINT1 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 09:19:27 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40462 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753259AbeFINTZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 09:19:25 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 477671435;
+        Sat,  9 Jun 2018 06:19:25 -0700 (PDT)
+Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BAFC23F557;
+        Sat,  9 Jun 2018 06:19:19 -0700 (PDT)
+Date: Sat, 09 Jun 2018 14:19:10 +0100
+Message-ID: <86wov885dd.wl-marc.zyngier@arm.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+To: Jon Masters <jcm@jonmasters.org>
+Cc: <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <kvmarm@lists.cs.columbia.edu>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Julien Grall <julien.grall@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v2 05/17] arm64: Add 'ssbd' command-line option
+In-Reply-To: <e1b89362-ba94-ead9-a930-eac0e1b3ffba@jonmasters.org>
+References: <20180529121121.24927-1-marc.zyngier@arm.com>
+        <20180529121121.24927-6-marc.zyngier@arm.com>
+        <e1b89362-ba94-ead9-a930-eac0e1b3ffba@jonmasters.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tudor,
+On Sat, 09 Jun 2018 13:53:08 +0100,
+Jon Masters wrote:
+> 
+> On 05/29/2018 08:11 AM, Marc Zyngier wrote:
+> 
+> > +	ssbd=		[ARM64,HW]
+> > +			Speculative Store Bypass Disable control
+> > +
+> > +			On CPUs that are vulnerable to the Speculative
+> > +			Store Bypass vulnerability and offer a
+> > +			firmware based mitigation, this parameter
+> > +			indicates how the mitigation should be used:
+> > +
+> > +			force-on:  Unconditionally enable mitigation for
+> > +				   for both kernel and userspace
+> > +			force-off: Unconditionally disable mitigation for
+> > +				   for both kernel and userspace
+> > +			kernel:    Always enable mitigation in the
+> > +				   kernel, and offer a prctl interface
+> > +				   to allow userspace to register its
+> > +				   interest in being mitigated too.
+> 
+> This should be "spec_store_bypass_disable" and it should have the same
+> parameters as on x86: "on", "off", "auto". Why not just add
+> "kernel"?
 
-Le 08/06/2018 à 15:48, Tudor Ambarus a écrit :
-> The commit message became wall-of-text, my feeling is that I heavily
-> reworked the code so I changed the author. If someone thinks differently,
-> please say and I'll change back to the initial authorship. What I've done:
+Feel free to propose a patch that adds the x86 compat option if you
+want, but I don't think this option deserves that many letters, and it
+is also worth realising the semantics of the mitigation *are*
+different. That's the real reason why we have different options.
 
-It's obvious that you're the author of the patch so I'm totally fine with
-this change :)
+> (we had a "kernel" early on for x86 as well, and it might still end up
+> coming back anyway). If there's a /compelling/ reason to have the Arm
+> parameter differ, then it should still recognize the x86 parameter,
+> similarly to how POWER also does that for cross-arch consistency.
 
-Best regards,
+Well, we should then aim for real consistency (seccomp or not seccomp?
+mitigated kernel or not?), and not at the cosmetic level. Once all
+arches implement identical behaviours, we'll be in a position to
+safely have a common option naming scheme which would encompass the
+actual meaning of "on" and "off" (which have opposite meaning between
+x86 and arm64).
 
-Cyrille
+> We'll add the x86 parameter way of doing it to RHEL anyway.
 
-> 
-> - minimize the amount of erase() calls by using the best sequence of erase
->   type commands depending on alignment.
-> 
-> - build the list of best fitted erase commands to be executed once we
->   validate that the erase can be performed.
-> 
-> - add improvements on how the erase map is handled. The regions are
->   consecutive in the address space, walk through the regions incrementally.
-> 
-> - speed up finding the best erase type command. Order erase types by
->   size, iterate them from the biggest to the smallest and stop when best
->   fitted command is found.
-> 
-> - determine at init if there are erase types that can erase the entire
->   memory
-> 
-> - fix the erase size in overlaid regions. S25FS512S states that 'if a sector
->   erase command is applied to a 256KB range that is overlaid by 4KB secors,
->   the overlaid 4kB sectors are not affected by the erase'
-> 
-> Backward compatibility test done on MX25L25673G.
-> 
-> Changes since RFC PATCH:
-> - build a list of erase commands to be executed once we validate
->   that the erase can be performed
-> - fix walking through the address space in overlaid regions
-> - drop wall-of-text description commit message, change author
-> 
-> 
-> Tudor Ambarus (1):
->   mtd: spi-nor: add support to non-uniform SFDP SPI NOR flash memories
-> 
->  drivers/mtd/spi-nor/spi-nor.c | 357 ++++++++++++++++++++++++++++++++++++++++--
->  include/linux/mtd/spi-nor.h   | 108 +++++++++++++
->  2 files changed, 451 insertions(+), 14 deletions(-)
-> 
+Great!
+
+	M.
+
+-- 
+Jazz is not dead, it just smell funny.
