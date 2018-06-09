@@ -1,105 +1,205 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 2IpwFcr4HVsxNgAAmS7hNA
-	; Mon, 11 Jun 2018 04:21:33 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id RuzlEVr1G1socAAAmS7hNA
+	; Sat, 09 Jun 2018 15:42:22 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id CD45D607A4; Mon, 11 Jun 2018 04:21:32 +0000 (UTC)
+	id BCEF9607DC; Sat,  9 Jun 2018 15:42:22 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dfd5R1f2"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TjJQi1on"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 5C2EC602FC;
-	Mon, 11 Jun 2018 04:21:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5C2EC602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id D956B605A5;
+	Sat,  9 Jun 2018 15:42:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D956B605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753919AbeFKEVa (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Mon, 11 Jun 2018 00:21:30 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:34267 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753801AbeFKEV2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 00:21:28 -0400
-Received: by mail-pl0-f66.google.com with SMTP id g20-v6so11565771plq.1
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Jun 2018 21:21:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5zhAVZKwMMeKB/iTBpRxyK0hRyebu1oigRIY94Ajy24=;
-        b=dfd5R1f2whh5pQX9sHuICSHOgF0zCFq3Cx2d3YuLj9m3PSCmub045kEaS2OsuuAMhe
-         Bki/0Ivxl0weRVyTz9JKWlFHR5ZLmTlovE4pglkIm3aXZw8wPED7ru0Aez3LceX0cf0N
-         Vj9uWF5R/3S3edneyOaGnnROQrlhkRQWPh0UA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5zhAVZKwMMeKB/iTBpRxyK0hRyebu1oigRIY94Ajy24=;
-        b=MHkZe8AtcXckVBr7iAwQN7iHfxzvfpyHtSl9aOR5IMUWwTeV9mOQHgfTmksGVZvWvW
-         CjcyL1HTb19x53G1sfgkOOROdcz6ilHpfdPBQwleFtVcYcfKLVWJ2ocBsPJJQL7ItTb2
-         0BJ00xUevPuP3+8+ngYDSffvtOeg+KmtXp4OqV7P0msOJkSvHiblqTdJ75+ZBsiAkZO4
-         ippZuw1aYSjVfpQPm41GlQQP6t2IrhspaN+s3h/4V2TjKeQK7ne9FeJVVlJtcbUDQJd3
-         wj5ZDFBVa1dQv7hAECe5V+7uKa6abORCXmQK6/zgJGVoGDSvmfhEAmTDEQ4NMhi942pT
-         fpZQ==
-X-Gm-Message-State: APt69E2tNjF+mqwmvvKRz98Bg1XQWnFkTcNXDOc0EKHrGlS4EdWJediH
-        A0o9/++wX7yZ8L7oGz68TlB/Dw==
-X-Google-Smtp-Source: ADUXVKK/xypmAN6/Uf4AZY2VprBs+vYpKPkVmL8USTQKguSJbyvLNl9AKb/wZM2ZRWYryBq8id8srg==
-X-Received: by 2002:a17:902:a416:: with SMTP id p22-v6mr16708510plq.228.1528690887878;
-        Sun, 10 Jun 2018 21:21:27 -0700 (PDT)
-Received: from localhost ([106.201.98.91])
-        by smtp.gmail.com with ESMTPSA id n22-v6sm26683280pgv.60.2018.06.10.21.21.26
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 10 Jun 2018 21:21:27 -0700 (PDT)
-Date: Mon, 11 Jun 2018 09:51:25 +0530
-From: Vinod Koul <vinod.koul@linaro.org>
-To: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Vinod Koul <vinod.koul@intel.com>,
-        linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [RESEND v2] dmaengine: pxa: add a default requestor policy
-Message-ID: <20180611042125.GD2452@vkoul-mobl>
-References: <20180530201249.26972-1-robert.jarzmik@free.fr>
- <878t7oruya.fsf@belgarion.home>
+        id S933087AbeFIPmT (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:42:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37166 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932915AbeFIPew (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:34:52 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A00CE208A4;
+        Sat,  9 Jun 2018 15:34:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558492;
+        bh=VsY5ZXkdRzhnnC/e4LVNGBhMJfrD/4IhdAM76uwQWR4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=TjJQi1on+oph3wYGpFO/kieLOt0VNKPyStdiqVx2rMMkfBGVvsJhueDeBTtW/ilFB
+         qm1xabbMfxugUynNYBDtHC0RxCE1qUpDiOGWjESE7IQ0/yuKIRTeqU7mZqfLgv0SS8
+         ecwt23/ddriMJD8D+I9MeJa19dUjzl1aYrGBPeDo=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        syzbot+5d47e9ec91a6f15dbd6f@syzkaller.appspotmail.com,
+        Alexey Kodanev <alexey.kodanev@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 09/41] dccp: dont free ccid2_hc_tx_sock struct in dccp_disconnect()
+Date: Sat,  9 Jun 2018 17:29:41 +0200
+Message-Id: <20180609152926.955710817@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609152926.389750182@linuxfoundation.org>
+References: <20180609152926.389750182@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <878t7oruya.fsf@belgarion.home>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09-06-18, 14:43, Robert Jarzmik wrote:
-> Robert Jarzmik <robert.jarzmik@free.fr> writes:
-> 
-> > As what former drcmr -1 value meant, add a this as a default to each
-> > channel, ie. that by default no requestor line is used.
-> >
-> > This is specifically used for network drivers smc91x and smc911x, and
-> > needed for their port to slave maps.
-> >
-> > Cc: Arnd Bergmann <arnd@arndb.de>
-> > Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
-> > ---
-> > Since v1: changed -1 to U32_MAX
-> Hi Vinod,
-> 
-> Could I have your ack on this so that I add this one to the dma slave map serie
-> after the merge window is closed please ?
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Sorry I was thinking it would go thru dmaengine tree, please do
-indicate if that is not the case. Nevertheless
+------------------
 
-Acked-by: Vinod Koul <vkoul@kernel.org>
+From: Alexey Kodanev <alexey.kodanev@oracle.com>
 
--- 
-~Vinod
+[ Upstream commit 2677d20677314101293e6da0094ede7b5526d2b1 ]
+
+Syzbot reported the use-after-free in timer_is_static_object() [1].
+
+This can happen because the structure for the rto timer (ccid2_hc_tx_sock)
+is removed in dccp_disconnect(), and ccid2_hc_tx_rto_expire() can be
+called after that.
+
+The report [1] is similar to the one in commit 120e9dabaf55 ("dccp:
+defer ccid_hc_tx_delete() at dismantle time"). And the fix is the same,
+delay freeing ccid2_hc_tx_sock structure, so that it is freed in
+dccp_sk_destruct().
+
+[1]
+
+==================================================================
+BUG: KASAN: use-after-free in timer_is_static_object+0x80/0x90
+kernel/time/timer.c:607
+Read of size 8 at addr ffff8801bebb5118 by task syz-executor2/25299
+
+CPU: 1 PID: 25299 Comm: syz-executor2 Not tainted 4.17.0-rc5+ #54
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+Google 01/01/2011
+Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  timer_is_static_object+0x80/0x90 kernel/time/timer.c:607
+  debug_object_activate+0x2d9/0x670 lib/debugobjects.c:508
+  debug_timer_activate kernel/time/timer.c:709 [inline]
+  debug_activate kernel/time/timer.c:764 [inline]
+  __mod_timer kernel/time/timer.c:1041 [inline]
+  mod_timer+0x4d3/0x13b0 kernel/time/timer.c:1102
+  sk_reset_timer+0x22/0x60 net/core/sock.c:2742
+  ccid2_hc_tx_rto_expire+0x587/0x680 net/dccp/ccids/ccid2.c:147
+  call_timer_fn+0x230/0x940 kernel/time/timer.c:1326
+  expire_timers kernel/time/timer.c:1363 [inline]
+  __run_timers+0x79e/0xc50 kernel/time/timer.c:1666
+  run_timer_softirq+0x4c/0x70 kernel/time/timer.c:1692
+  __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
+  invoke_softirq kernel/softirq.c:365 [inline]
+  irq_exit+0x1d1/0x200 kernel/softirq.c:405
+  exiting_irq arch/x86/include/asm/apic.h:525 [inline]
+  smp_apic_timer_interrupt+0x17e/0x710 arch/x86/kernel/apic/apic.c:1052
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
+  </IRQ>
+...
+Allocated by task 25374:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
+  kmem_cache_alloc+0x12e/0x760 mm/slab.c:3554
+  ccid_new+0x25b/0x3e0 net/dccp/ccid.c:151
+  dccp_hdlr_ccid+0x27/0x150 net/dccp/feat.c:44
+  __dccp_feat_activate+0x184/0x270 net/dccp/feat.c:344
+  dccp_feat_activate_values+0x3a7/0x819 net/dccp/feat.c:1538
+  dccp_create_openreq_child+0x472/0x610 net/dccp/minisocks.c:128
+  dccp_v4_request_recv_sock+0x12c/0xca0 net/dccp/ipv4.c:408
+  dccp_v6_request_recv_sock+0x125d/0x1f10 net/dccp/ipv6.c:415
+  dccp_check_req+0x455/0x6a0 net/dccp/minisocks.c:197
+  dccp_v4_rcv+0x7b8/0x1f3f net/dccp/ipv4.c:841
+  ip_local_deliver_finish+0x2e3/0xd80 net/ipv4/ip_input.c:215
+  NF_HOOK include/linux/netfilter.h:288 [inline]
+  ip_local_deliver+0x1e1/0x720 net/ipv4/ip_input.c:256
+  dst_input include/net/dst.h:450 [inline]
+  ip_rcv_finish+0x81b/0x2200 net/ipv4/ip_input.c:396
+  NF_HOOK include/linux/netfilter.h:288 [inline]
+  ip_rcv+0xb70/0x143d net/ipv4/ip_input.c:492
+  __netif_receive_skb_core+0x26f5/0x3630 net/core/dev.c:4592
+  __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:4657
+  process_backlog+0x219/0x760 net/core/dev.c:5337
+  napi_poll net/core/dev.c:5735 [inline]
+  net_rx_action+0x7b7/0x1930 net/core/dev.c:5801
+  __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
+
+Freed by task 25374:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kmem_cache_free+0x86/0x2d0 mm/slab.c:3756
+  ccid_hc_tx_delete+0xc3/0x100 net/dccp/ccid.c:190
+  dccp_disconnect+0x130/0xc66 net/dccp/proto.c:286
+  dccp_close+0x3bc/0xe60 net/dccp/proto.c:1045
+  inet_release+0x104/0x1f0 net/ipv4/af_inet.c:427
+  inet6_release+0x50/0x70 net/ipv6/af_inet6.c:460
+  sock_release+0x96/0x1b0 net/socket.c:594
+  sock_close+0x16/0x20 net/socket.c:1149
+  __fput+0x34d/0x890 fs/file_table.c:209
+  ____fput+0x15/0x20 fs/file_table.c:243
+  task_work_run+0x1e4/0x290 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:191 [inline]
+  exit_to_usermode_loop+0x2bd/0x310 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
+  do_syscall_64+0x6ac/0x800 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8801bebb4cc0
+  which belongs to the cache ccid2_hc_tx_sock of size 1240
+The buggy address is located 1112 bytes inside of
+  1240-byte region [ffff8801bebb4cc0, ffff8801bebb5198)
+The buggy address belongs to the page:
+page:ffffea0006faed00 count:1 mapcount:0 mapping:ffff8801bebb41c0
+index:0xffff8801bebb5240 compound_mapcount: 0
+flags: 0x2fffc0000008100(slab|head)
+raw: 02fffc0000008100 ffff8801bebb41c0 ffff8801bebb5240 0000000100000003
+raw: ffff8801cdba3138 ffffea0007634120 ffff8801cdbaab40 0000000000000000
+page dumped because: kasan: bad access detected
+...
+==================================================================
+
+Reported-by: syzbot+5d47e9ec91a6f15dbd6f@syzkaller.appspotmail.com
+Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/dccp/proto.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+--- a/net/dccp/proto.c
++++ b/net/dccp/proto.c
+@@ -280,9 +280,7 @@ int dccp_disconnect(struct sock *sk, int
+ 
+ 	dccp_clear_xmit_timers(sk);
+ 	ccid_hc_rx_delete(dp->dccps_hc_rx_ccid, sk);
+-	ccid_hc_tx_delete(dp->dccps_hc_tx_ccid, sk);
+ 	dp->dccps_hc_rx_ccid = NULL;
+-	dp->dccps_hc_tx_ccid = NULL;
+ 
+ 	__skb_queue_purge(&sk->sk_receive_queue);
+ 	__skb_queue_purge(&sk->sk_write_queue);
