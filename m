@@ -1,99 +1,158 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id VoW/EjtPHVtFVQAAmS7hNA
-	; Sun, 10 Jun 2018 16:18:03 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 9KpnK4AaG1vVWwAAmS7hNA
+	; Sat, 09 Jun 2018 00:08:32 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 24C5D6074D; Sun, 10 Jun 2018 16:18:03 +0000 (UTC)
+	id 942756089E; Sat,  9 Jun 2018 00:08:32 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 8C582605A5;
-	Sun, 10 Jun 2018 16:18:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8C582605A5
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=osadl.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 32DE7607A4;
+	Sat,  9 Jun 2018 00:08:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 32DE7607A4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753682AbeFJQR5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sun, 10 Jun 2018 12:17:57 -0400
-Received: from www.osadl.org ([62.245.132.105]:46520 "EHLO www.osadl.org"
+        id S1753214AbeFIAI2 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Fri, 8 Jun 2018 20:08:28 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:60556 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753516AbeFJQR4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 12:17:56 -0400
-X-Greylist: delayed 3139 seconds by postgrey-1.27 at vger.kernel.org; Sun, 10 Jun 2018 12:17:55 EDT
-Received: from debian01.hofrr.at (178.115.242.59.static.drei.at [178.115.242.59] (may be forged))
-        by www.osadl.org (8.13.8/8.13.8/OSADL-2007092901) with ESMTP id w5AFO5IM017365;
-        Sun, 10 Jun 2018 17:24:05 +0200
-From: Nicholas Mc Guire <hofrat@osadl.org>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Hugues Fruchet <hugues.fruchet@st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>
-Subject: [PATCH] media: stm32-dcmi: simplify of_node_put usage
-Date: Sun, 10 Jun 2018 17:23:53 +0200
-Message-Id: <1528644233-10371-1-git-send-email-hofrat@osadl.org>
-X-Mailer: git-send-email 2.1.4
+        id S1752779AbeFIAI1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Jun 2018 20:08:27 -0400
+Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
+        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1fRRQd-00043o-2Q; Fri, 08 Jun 2018 18:08:26 -0600
+Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1fRRQb-0003cq-Mp; Fri, 08 Jun 2018 18:08:21 -0600
+From: Logan Gunthorpe <logang@deltatee.com>
+To: linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com
+Cc: Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>,
+        Allen Hubbe <allenbh@gmail.com>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Logan Gunthorpe <logang@deltatee.com>
+Date: Fri,  8 Jun 2018 18:08:12 -0600
+Message-Id: <20180609000819.13883-3-logang@deltatee.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180609000819.13883-1-logang@deltatee.com>
+References: <20180609000819.13883-1-logang@deltatee.com>
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com, jdmason@kudzu.us, dave.jiang@intel.com, allenbh@gmail.com, fancer.lancer@gmail.com, Shyam-sundar.S-k@amd.com, shuah@kernel.org, logang@deltatee.com
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+Subject: [PATCH 2/8] NTB: Setup the DMA mask globally for all drivers
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This does not fix any bug - this is just a code simplification. As
-np is not used after passing it to v4l2_fwnode_endpoint_parse() its
-refcount can be decremented immediately and at one location.
+Commit  417cf39cfea9 ("NTB: Set dma mask and dma coherent mask to NTB
+devices") added code to set the DMA mask for the NTB device
+to each driver individually. However, it neglected to set it for the
+Switchtec driver. So when the monolithic commit 7f46c8b3a552 ("NTB:
+ntb_tool: Add full multi-port NTB API support") started allocating
+DMA memory against the NTB device it broke the Switchtec driver.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Seeing this is setting up a property of the NTB device, it should be
+done by the common NTB code (inside ntb_register_device()) so we can be
+sure it's done properly for all drivers. This avoids each driver needing
+to duplicate the code and helps prevent us from inadvertently breaking
+one of the drivers in the future if we have to make changes in this area.
+
+Fixes: 7f46c8b3a552 ("NTB: ntb_tool: Add full multi-port NTB API support")
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
 ---
+ drivers/ntb/hw/amd/ntb_hw_amd.c     |  4 ----
+ drivers/ntb/hw/idt/ntb_hw_idt.c     |  6 ------
+ drivers/ntb/hw/intel/ntb_hw_intel.c |  4 ----
+ drivers/ntb/ntb.c                   | 13 ++++++++++++-
+ 4 files changed, 12 insertions(+), 15 deletions(-)
 
-Issue found during code reading.
-
-Patch was compile tested with: x86_64_defconfig, MEDIA_SUPPORT=y
-MEDIA_CAMERA_SUPPORT=y, V4L_PLATFORM_DRIVERS=y, OF=y, COMPILE_TEST=y
-CONFIG_VIDEO_STM32_DCMI=y
-(There are a few sparse warnings - but unrelated to the lines changed)
-
-Patch is against 4.17.0 (localversion-next is next-20180608)
-
- drivers/media/platform/stm32/stm32-dcmi.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
-index 2e1933d..0b61042 100644
---- a/drivers/media/platform/stm32/stm32-dcmi.c
-+++ b/drivers/media/platform/stm32/stm32-dcmi.c
-@@ -1696,23 +1696,20 @@ static int dcmi_probe(struct platform_device *pdev)
+diff --git a/drivers/ntb/hw/amd/ntb_hw_amd.c b/drivers/ntb/hw/amd/ntb_hw_amd.c
+index 3cfa46876239..f0788aae05c9 100644
+--- a/drivers/ntb/hw/amd/ntb_hw_amd.c
++++ b/drivers/ntb/hw/amd/ntb_hw_amd.c
+@@ -1020,10 +1020,6 @@ static int amd_ntb_init_pci(struct amd_ntb_dev *ndev,
+ 			goto err_dma_mask;
+ 		dev_warn(&pdev->dev, "Cannot DMA consistent highmem\n");
  	}
+-	rc = dma_coerce_mask_and_coherent(&ndev->ntb.dev,
+-					  dma_get_mask(&pdev->dev));
+-	if (rc)
+-		goto err_dma_mask;
  
- 	ret = v4l2_fwnode_endpoint_parse(of_fwnode_handle(np), &ep);
-+	of_node_put(np);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Could not parse the endpoint\n");
--		of_node_put(np);
- 		return -ENODEV;
+ 	ndev->self_mmio = pci_iomap(pdev, 0, 0);
+ 	if (!ndev->self_mmio) {
+diff --git a/drivers/ntb/hw/idt/ntb_hw_idt.c b/drivers/ntb/hw/idt/ntb_hw_idt.c
+index 8d98872d0983..1918a2db1c43 100644
+--- a/drivers/ntb/hw/idt/ntb_hw_idt.c
++++ b/drivers/ntb/hw/idt/ntb_hw_idt.c
+@@ -2447,12 +2447,6 @@ static int idt_init_pci(struct idt_ntb_dev *ndev)
+ 		dev_warn(&pdev->dev,
+ 			"Cannot set consistent DMA highmem bit mask\n");
  	}
+-	ret = dma_coerce_mask_and_coherent(&ndev->ntb.dev,
+-					   dma_get_mask(&pdev->dev));
+-	if (ret != 0) {
+-		dev_err(&pdev->dev, "Failed to set NTB device DMA bit mask\n");
+-		return ret;
+-	}
  
- 	if (ep.bus_type == V4L2_MBUS_CSI2) {
- 		dev_err(&pdev->dev, "CSI bus not supported\n");
--		of_node_put(np);
- 		return -ENODEV;
+ 	/*
+ 	 * Enable the device advanced error reporting. It's not critical to
+diff --git a/drivers/ntb/hw/intel/ntb_hw_intel.c b/drivers/ntb/hw/intel/ntb_hw_intel.c
+index 156b45cd4a19..341a3d5baa3f 100644
+--- a/drivers/ntb/hw/intel/ntb_hw_intel.c
++++ b/drivers/ntb/hw/intel/ntb_hw_intel.c
+@@ -2334,10 +2334,6 @@ static int intel_ntb_init_pci(struct intel_ntb_dev *ndev, struct pci_dev *pdev)
+ 			goto err_dma_mask;
+ 		dev_warn(&pdev->dev, "Cannot DMA consistent highmem\n");
  	}
- 	dcmi->bus.flags = ep.bus.parallel.flags;
- 	dcmi->bus.bus_width = ep.bus.parallel.bus_width;
- 	dcmi->bus.data_shift = ep.bus.parallel.data_shift;
+-	rc = dma_coerce_mask_and_coherent(&ndev->ntb.dev,
+-					  dma_get_mask(&pdev->dev));
+-	if (rc)
+-		goto err_dma_mask;
  
--	of_node_put(np);
--
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq <= 0) {
- 		dev_err(&pdev->dev, "Could not get irq\n");
+ 	ndev->self_mmio = pci_iomap(pdev, 0, 0);
+ 	if (!ndev->self_mmio) {
+diff --git a/drivers/ntb/ntb.c b/drivers/ntb/ntb.c
+index 2581ab724c34..93f24440d11d 100644
+--- a/drivers/ntb/ntb.c
++++ b/drivers/ntb/ntb.c
+@@ -100,6 +100,8 @@ EXPORT_SYMBOL(ntb_unregister_client);
+ 
+ int ntb_register_device(struct ntb_dev *ntb)
+ {
++	int ret;
++
+ 	if (!ntb)
+ 		return -EINVAL;
+ 	if (!ntb->pdev)
+@@ -120,7 +122,16 @@ int ntb_register_device(struct ntb_dev *ntb)
+ 	ntb->ctx_ops = NULL;
+ 	spin_lock_init(&ntb->ctx_lock);
+ 
+-	return device_register(&ntb->dev);
++	device_initialize(&ntb->dev);
++
++	ret = dma_coerce_mask_and_coherent(&ntb->dev,
++					   dma_get_mask(&ntb->pdev->dev));
++	if (ret != 0) {
++		dev_err(&ntb->dev, "Failed to set NTB device DMA bit mask\n");
++		return ret;
++	}
++
++	return device_add(&ntb->dev);
+ }
+ EXPORT_SYMBOL(ntb_register_device);
+ 
 -- 
-2.1.4
+2.11.0
