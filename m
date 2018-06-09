@@ -1,145 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id xxTSIcJOGVvaeQAAmS7hNA
-	; Thu, 07 Jun 2018 15:28:53 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id IfFbCp/JG1voQAAAmS7hNA
+	; Sat, 09 Jun 2018 12:35:43 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 6B78B608C8; Thu,  7 Jun 2018 15:28:53 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m4jnILOf"
+	id 1840D6032D; Sat,  9 Jun 2018 12:35:43 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 59608608B8;
-	Thu,  7 Jun 2018 15:28:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 59608608B8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id A5F166032D;
+	Sat,  9 Jun 2018 12:35:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A5F166032D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935493AbeFGP2u (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:28:50 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48898 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933421AbeFGP2r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:28:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=OHhd7rG7BMkCzvANgs87/s2j3ktNKhlqJfrGAT1BJpI=; b=m4jnILOfKvWYx6geicDpR9+/B
-        o1mp+vD5wZrbfvXhDc2VAGGyMbiC3X+KBT78Rrs8J9FiQsd4jKDq60TGQTfYM/XfLuzh9h2/zV1nz
-        l/dT9ErZvn+sZ65WRLuMU+XHjTHn9SkWTwEPtGHxC5yRHd3dJ94JgJmw4W8m9Gj9UOvujwrRPZbKs
-        M2rl52fh6C7nCWO7UpV4ziR7nlw+07T/BO+XbXyDA8nipvpBc/Z0aoaooe6+lsg76Pd/Kby2rqTN3
-        5bczzjuPFHruZ1QzNASiaC8N7zdzOETtFm/TKi+fpTOFno8L9SH4yAmHuku+r/EZ3ZV7kUbU8XV6Z
-        H6eDAzENQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fQwqE-0005Yd-7i; Thu, 07 Jun 2018 15:28:46 +0000
-Date: Thu, 7 Jun 2018 08:28:46 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: syzbot <syzbot+7ade6c94abb2774c0fee@syzkaller.appspotmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, netdev@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Subject: Re: general protection fault in __vfs_write
-Message-ID: <20180607152846.GB27079@bombadil.infradead.org>
-References: <000000000000973c2c056e0ecddd@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000973c2c056e0ecddd@google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S932285AbeFIMfk (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 08:35:40 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51664 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932081AbeFIMfh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 08:35:37 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 88265406E897;
+        Sat,  9 Jun 2018 12:35:36 +0000 (UTC)
+Received: from localhost (ovpn-12-40.pek2.redhat.com [10.72.12.40])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 94F052166BB2;
+        Sat,  9 Jun 2018 12:35:28 +0000 (UTC)
+From: Ming Lei <ming.lei@redhat.com>
+To: Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kent Overstreet <kent.overstreet@gmail.com>
+Cc: David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Theodore Ts'o <tytso@mit.edu>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Coly Li <colyli@suse.de>, Filipe Manana <fdmanana@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ming Lei <ming.lei@redhat.com>
+Subject: [PATCH V6 27/30] block: kill bio_for_each_segment_all()
+Date: Sat,  9 Jun 2018 20:30:11 +0800
+Message-Id: <20180609123014.8861-28-ming.lei@redhat.com>
+In-Reply-To: <20180609123014.8861-1-ming.lei@redhat.com>
+References: <20180609123014.8861-1-ming.lei@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Sat, 09 Jun 2018 12:35:36 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Sat, 09 Jun 2018 12:35:36 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+No one uses it any more, so kill it now.
 
-I would suggest this is a BPF problem, not a VFS problem.
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+---
+ include/linux/bio.h  | 5 +----
+ include/linux/bvec.h | 2 +-
+ 2 files changed, 2 insertions(+), 5 deletions(-)
 
-On Thu, Jun 07, 2018 at 08:19:01AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    7170e6045a6a strparser: Add __strp_unpause and use it in k..
-> git tree:       net-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=14bde74f800000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=a601a80fec461d44
-> dashboard link: https://syzkaller.appspot.com/bug?extid=7ade6c94abb2774c0fee
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> 
-> Unfortunately, I don't have any reproducer for this crash yet.
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+7ade6c94abb2774c0fee@syzkaller.appspotmail.com
-> 
-> bpfilter: read fail -512
-> kasan: GPF could be caused by NULL-ptr deref or user memory access
-> general protection fault: 0000 [#1] SMP KASAN
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Modules linked in:
-> CPU: 1 PID: 4590 Comm: syz-executor7 Not tainted 4.17.0-rc7+ #82
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> RIP: 0010:file_write_hint include/linux/fs.h:1925 [inline]
-> RIP: 0010:init_sync_kiocb include/linux/fs.h:1935 [inline]
-> RIP: 0010:new_sync_write fs/read_write.c:470 [inline]
-> RIP: 0010:__vfs_write+0x4a6/0x960 fs/read_write.c:487
-> RSP: 0018:ffff88019b5c7850 EFLAGS: 00010202
-> RAX: dffffc0000000000 RBX: ffff8801d2117c80 RCX: ffffffff81bfc6bb
-> RDX: 0000000000000019 RSI: ffffffff81bfc6ca RDI: 00000000000000c8
-> RBP: ffff88019b5c79c8 R08: ffff88019b5ba540 R09: fffffbfff12cae69
-> R10: ffff88019b5c7a10 R11: ffffffff8965734b R12: 0000000000000000
-> R13: ffff88019b5c79a0 R14: 0000000000000000 R15: ffff88019b5c7a88
-> FS:  0000000002a11940(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000700138 CR3: 000000019b410000 CR4: 00000000001406e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  __kernel_write+0x10c/0x380 fs/read_write.c:506
->  __bpfilter_process_sockopt+0x1d8/0x35b net/bpfilter/bpfilter_kern.c:66
->  bpfilter_mbox_request+0x4d/0xb0 net/ipv4/bpfilter/sockopt.c:25
->  bpfilter_ip_get_sockopt+0x6b/0x90 net/ipv4/bpfilter/sockopt.c:42
->  ip_getsockopt+0x238/0x2a0 net/ipv4/ip_sockglue.c:1563
->  tcp_getsockopt+0x93/0xe0 net/ipv4/tcp.c:3543
->  sock_common_getsockopt+0x9a/0xe0 net/core/sock.c:3018
->  __sys_getsockopt+0x1a5/0x370 net/socket.c:1940
->  __do_sys_getsockopt net/socket.c:1951 [inline]
->  __se_sys_getsockopt net/socket.c:1948 [inline]
->  __x64_sys_getsockopt+0xbe/0x150 net/socket.c:1948
->  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x4584ea
-> RSP: 002b:0000000000a3e328 EFLAGS: 00000246 ORIG_RAX: 0000000000000037
-> RAX: ffffffffffffffda RBX: 0000000000a3e350 RCX: 00000000004584ea
-> RDX: 0000000000000040 RSI: 0000000000000000 RDI: 0000000000000013
-> RBP: 0000000000705f20 R08: 0000000000a3e34c R09: 0000000000004000
-> R10: 0000000000a3e350 R11: 0000000000000246 R12: 0000000000000013
-> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000705860
-> Code: 48 c1 ea 03 80 3c 02 00 0f 85 1b 04 00 00 48 b8 00 00 00 00 00 fc ff
-> df 4c 8b 63 20 49 8d bc 24 c8 00 00 00 48 89 fa 48 c1 ea 03 <0f> b6 04 02 84
-> c0 74 08 3c 03 0f 8e ec 02 00 00 41 8b 84 24 c8
-> RIP: file_write_hint include/linux/fs.h:1925 [inline] RSP: ffff88019b5c7850
-> RIP: init_sync_kiocb include/linux/fs.h:1935 [inline] RSP: ffff88019b5c7850
-> RIP: new_sync_write fs/read_write.c:470 [inline] RSP: ffff88019b5c7850
-> RIP: __vfs_write+0x4a6/0x960 fs/read_write.c:487 RSP: ffff88019b5c7850
-> ---[ end trace 556c3fc867e1de54 ]---
-> 
-> 
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index c22b8be961ce..69ef05dc7019 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -165,11 +165,8 @@ static inline bool bio_full(struct bio *bio)
+  * drivers should _never_ use the all version - the bio may have been split
+  * before it got to the driver and the driver won't own all of it
+  */
+-#define bio_for_each_segment_all(bvl, bio, i)				\
+-	for (i = 0, bvl = (bio)->bi_io_vec; i < (bio)->bi_vcnt; i++, bvl++)
+-
+ #define bio_for_each_chunk_all(bvl, bio, i)		\
+-	bio_for_each_segment_all(bvl, bio, i)
++	for (i = 0, bvl = (bio)->bi_io_vec; i < (bio)->bi_vcnt; i++, bvl++)
+ 
+ #define chunk_for_each_segment(bv, bvl, i, citer)			\
+ 	for (bv = bvec_init_chunk_iter(&citer);				\
+diff --git a/include/linux/bvec.h b/include/linux/bvec.h
+index d4eaa0c26bb5..58267bde111e 100644
+--- a/include/linux/bvec.h
++++ b/include/linux/bvec.h
+@@ -47,7 +47,7 @@
+  *   page, so we keep the sp interface not changed, for example,
+  *   bio_for_each_segment() still returns bvec with single page
+  *
+- * - bio_for_each_segment_all() will be changed to return singlepage
++ * - bio_for_each_chunk_all() will be changed to return singlepage
+  *   bvec too
+  *
+  * - during iterating, iterator variable(struct bvec_iter) is always
+-- 
+2.9.5
