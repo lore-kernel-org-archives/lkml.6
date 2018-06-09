@@ -1,109 +1,192 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 0oRUHm6WGlvZEgAAmS7hNA
-	; Fri, 08 Jun 2018 14:45:23 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id qE53A+DzG1uFaAAAmS7hNA
+	; Sat, 09 Jun 2018 15:36:08 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 43FB06089E; Fri,  8 Jun 2018 14:45:23 +0000 (UTC)
+	id 59CFA608C1; Sat,  9 Jun 2018 15:36:08 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NPMk9sqD"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id BB943606FA;
-	Fri,  8 Jun 2018 14:45:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BB943606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id A9C3D606FA;
+	Sat,  9 Jun 2018 15:36:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A9C3D606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752758AbeFHOpU (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 10:45:20 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48804 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752328AbeFHOpS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 10:45:18 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S933172AbeFIPgG (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:36:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38224 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933117AbeFIPgB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:36:01 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4472B8A6FA;
-        Fri,  8 Jun 2018 14:45:18 +0000 (UTC)
-Received: from gondolin (dhcp-192-215.str.redhat.com [10.33.192.215])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0F7C52026609;
-        Fri,  8 Jun 2018 14:45:16 +0000 (UTC)
-Date: Fri, 8 Jun 2018 16:45:14 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Halil Pasic <pasic@linux.ibm.com>
-Cc: Pierre Morel <pmorel@linux.ibm.com>,
-        Dong Jia Shi <bjsdjshi@linux.ibm.com>,
-        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, qemu-s390x@nongnu.org,
-        qemu-devel@nongnu.org
-Subject: Re: [PATCH RFC 2/2] vfio-ccw: support for halt/clear subchannel
-Message-ID: <20180608164514.2e8248f4.cohuck@redhat.com>
-In-Reply-To: <d68340a2-bb1b-cef9-e394-f0d55983c0bb@linux.ibm.com>
-References: <20180509154822.23510-1-cohuck@redhat.com>
-        <20180509154822.23510-3-cohuck@redhat.com>
-        <c18f9b9f-da00-1a0b-8ef0-7ac223c73d1a@linux.ibm.com>
-        <20180515181006.0cb1dfc2.cohuck@redhat.com>
-        <a5d08fb7-d9c1-b230-fe0c-acebbda2ba65@linux.ibm.com>
-        <20180522145208.310143ea.cohuck@redhat.com>
-        <4e4001cc-540e-0f2b-bbd1-1f82ca594bb3@linux.ibm.com>
-        <20180605151449.22aafbfc.cohuck@redhat.com>
-        <e73038ff-fb2d-5865-8b84-e775990f3983@linux.ibm.com>
-        <20180606142131.74ea2eb7.cohuck@redhat.com>
-        <5b77ec9c-41b8-2e32-ce79-d9005b93fdd0@linux.ibm.com>
-        <20180607115442.6a779ed9.cohuck@redhat.com>
-        <86d57698-3ea7-a390-2217-07c6d41ca9ed@linux.ibm.com>
-        <20180608142022.7dd6a658.cohuck@redhat.com>
-        <d68340a2-bb1b-cef9-e394-f0d55983c0bb@linux.ibm.com>
-Organization: Red Hat GmbH
+        by mail.kernel.org (Postfix) with ESMTPSA id 30716208A4;
+        Sat,  9 Jun 2018 15:36:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558560;
+        bh=Ki3W04sg0iW051dHKXWpc8m6qM4JucLVemLhyA3xSJA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=NPMk9sqDfJJVwAvkTY4MV+/tMujYwbj4r/c86hwr7rI4j+V/YDpSYaojabYnua0RZ
+         1SzsGZNM2KYkyxiMVGj18hrXdDdFzPa8u5g0haz/C98o2VKoKO6R6UXB0Uxox6NP/A
+         H2MPb0sU2huDhR3AGnwDhScWBYzkMJJFA4iONlvM=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>
+Subject: [PATCH 4.14 41/41] PCI: hv: Do not wait forever on a device that has disappeared
+Date: Sat,  9 Jun 2018 17:30:13 +0200
+Message-Id: <20180609152928.651515651@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609152926.389750182@linuxfoundation.org>
+References: <20180609152926.389750182@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 08 Jun 2018 14:45:18 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 08 Jun 2018 14:45:18 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 8 Jun 2018 15:13:28 +0200
-Halil Pasic <pasic@linux.ibm.com> wrote:
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-> On 06/08/2018 02:20 PM, Cornelia Huck wrote:
-> >>> My proposal is to do the same
-> >>> copying to scsw(r) again, which would mean we get a request with both
-> >>> the halt and the start bit set. The vfio code now needs to do a hsch
-> >>> (instead of a ssch). The real channel subsystem should figure this out,
-> >>> as we can't reliably check whether the start function has concluded
-> >>> already (there's always a race window).  
-> >> This I do not agree scsw(r) is part of the driver.
-> >> The interface here is not a device interface anymore but a driver
-> >> interface.
-> >> SCSW is a status, it is at its place in QEMU device interface with the
-> >> guest
-> >> but here pwrite() sends a command.  
-> > Hm, I rather consider that "we write a status, and the backend figures
-> > out what to do based on that status".
-> >   
-> 
-> The status of what? Kind of a target status?
-> 
-> I think this approach is the source of lots of complications. For instance
-> take xsch. How are we supposed to react to a guest xsch (in QEMU and
-> in the kernel module)? My guess is that the right thing to do is to issue
-> an xsch in the vfio-ccw kernel module on the passed through subchannel.
-> But there is no bit in fctl for cancel.
-> 
-> Bottom line is: I'm not happy with the current design but I'm not sure
-> if it's practical to do something about it (i.e. change it radically).
+------------------
 
-It might make sense to keep this for ssch, maybe reuse it for hsch/csch,
-and think about something else for other things we want to handle
-(xsch, channel monitoring, the path handling stuff for which we already
-had a prototype etc.) It's probably not practical to do radical surgery
-on the existing code.
+From: Dexuan Cui <decui@microsoft.com>
 
-[Speaking of which: Is there any current effort on the path handling
-things?]
+commit c3635da2a336441253c33298b87b3042db100725 upstream.
+
+Before the guest finishes the device initialization, the device can be
+removed anytime by the host, and after that the host won't respond to
+the guest's request, so the guest should be prepared to handle this
+case.
+
+Add a polling mechanism to detect device presence.
+
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+[lorenzo.pieralisi@arm.com: edited commit log]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: K. Y. Srinivasan <kys@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/pci/host/pci-hyperv.c |   46 +++++++++++++++++++++++++++++++-----------
+ 1 file changed, 34 insertions(+), 12 deletions(-)
+
+--- a/drivers/pci/host/pci-hyperv.c
++++ b/drivers/pci/host/pci-hyperv.c
+@@ -566,6 +566,26 @@ static void put_pcichild(struct hv_pci_d
+ static void get_hvpcibus(struct hv_pcibus_device *hv_pcibus);
+ static void put_hvpcibus(struct hv_pcibus_device *hv_pcibus);
+ 
++/*
++ * There is no good way to get notified from vmbus_onoffer_rescind(),
++ * so let's use polling here, since this is not a hot path.
++ */
++static int wait_for_response(struct hv_device *hdev,
++			     struct completion *comp)
++{
++	while (true) {
++		if (hdev->channel->rescind) {
++			dev_warn_once(&hdev->device, "The device is gone.\n");
++			return -ENODEV;
++		}
++
++		if (wait_for_completion_timeout(comp, HZ / 10))
++			break;
++	}
++
++	return 0;
++}
++
+ /**
+  * devfn_to_wslot() - Convert from Linux PCI slot to Windows
+  * @devfn:	The Linux representation of PCI slot
+@@ -1582,7 +1602,8 @@ static struct hv_pci_dev *new_pcichild_d
+ 	if (ret)
+ 		goto error;
+ 
+-	wait_for_completion(&comp_pkt.host_event);
++	if (wait_for_response(hbus->hdev, &comp_pkt.host_event))
++		goto error;
+ 
+ 	hpdev->desc = *desc;
+ 	refcount_set(&hpdev->refs, 1);
+@@ -2075,15 +2096,16 @@ static int hv_pci_protocol_negotiation(s
+ 				sizeof(struct pci_version_request),
+ 				(unsigned long)pkt, VM_PKT_DATA_INBAND,
+ 				VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED);
++		if (!ret)
++			ret = wait_for_response(hdev, &comp_pkt.host_event);
++
+ 		if (ret) {
+ 			dev_err(&hdev->device,
+-				"PCI Pass-through VSP failed sending version reqquest: %#x",
++				"PCI Pass-through VSP failed to request version: %d",
+ 				ret);
+ 			goto exit;
+ 		}
+ 
+-		wait_for_completion(&comp_pkt.host_event);
+-
+ 		if (comp_pkt.completion_status >= 0) {
+ 			pci_protocol_version = pci_protocol_versions[i];
+ 			dev_info(&hdev->device,
+@@ -2292,11 +2314,12 @@ static int hv_pci_enter_d0(struct hv_dev
+ 	ret = vmbus_sendpacket(hdev->channel, d0_entry, sizeof(*d0_entry),
+ 			       (unsigned long)pkt, VM_PKT_DATA_INBAND,
+ 			       VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED);
++	if (!ret)
++		ret = wait_for_response(hdev, &comp_pkt.host_event);
++
+ 	if (ret)
+ 		goto exit;
+ 
+-	wait_for_completion(&comp_pkt.host_event);
+-
+ 	if (comp_pkt.completion_status < 0) {
+ 		dev_err(&hdev->device,
+ 			"PCI Pass-through VSP failed D0 Entry with status %x\n",
+@@ -2336,11 +2359,10 @@ static int hv_pci_query_relations(struct
+ 
+ 	ret = vmbus_sendpacket(hdev->channel, &message, sizeof(message),
+ 			       0, VM_PKT_DATA_INBAND, 0);
+-	if (ret)
+-		return ret;
++	if (!ret)
++		ret = wait_for_response(hdev, &comp);
+ 
+-	wait_for_completion(&comp);
+-	return 0;
++	return ret;
+ }
+ 
+ /**
+@@ -2410,11 +2432,11 @@ static int hv_send_resources_allocated(s
+ 				size_res, (unsigned long)pkt,
+ 				VM_PKT_DATA_INBAND,
+ 				VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED);
++		if (!ret)
++			ret = wait_for_response(hdev, &comp_pkt.host_event);
+ 		if (ret)
+ 			break;
+ 
+-		wait_for_completion(&comp_pkt.host_event);
+-
+ 		if (comp_pkt.completion_status < 0) {
+ 			ret = -EPROTO;
+ 			dev_err(&hdev->device,
