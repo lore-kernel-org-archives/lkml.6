@@ -1,75 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id OeC+GP1sHlt4TgAAmS7hNA
-	; Mon, 11 Jun 2018 12:38:01 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 7nDSOYZyG1slaQAAmS7hNA
+	; Sat, 09 Jun 2018 06:39:30 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 54AAF607A4; Mon, 11 Jun 2018 12:38:01 +0000 (UTC)
+	id E0A89607E7; Sat,  9 Jun 2018 06:39:29 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
-X-Spam-Flag: YES
-X-Spam-Level: **
-X-Spam-Status: Yes, score=2.6 required=2.0 tests=BAYES_20,MAILING_LIST_MULTI,
-	URIBL_DBL_PHISH,URI_HEX autolearn=no autolearn_force=no version=3.4.0
-X-Spam-Report: 
-	*  2.5 URIBL_DBL_PHISH Contains a Phishing URL listed in the Spamhaus DBL
-	*      blocklist
-	*      [URIs: 000webhostapp.com]
-	*  1.1 URI_HEX URI: URI hostname has long hexadecimal sequence
-	* -0.0 BAYES_20 BODY: Bayes spam probability is 5 to 20%
-	*      [score: 0.0516]
-	* -1.0 MAILING_LIST_MULTI Multiple indicators imply a widely-seen list
-	*      manager
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id A73E16089E;
-	Mon, 11 Jun 2018 12:38:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A73E16089E
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=cleanharbors.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id E0401600D0;
+	Sat,  9 Jun 2018 06:39:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E0401600D0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933162AbeFKMh7 convert rfc822-to-8bit (ORCPT
-        <rfc822;monsieuricon@codeaurora.org> + 21 others);
-        Mon, 11 Jun 2018 08:37:59 -0400
-Received: from smtp1.cleanharbors.com ([12.15.160.241]:52232 "EHLO
-        smtp1.cleanharbors.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932910AbeFKMh5 (ORCPT
+        id S1753139AbeFIGjY (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 02:39:24 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:48548 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752272AbeFIGhC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 08:37:57 -0400
-From: "Vogele, Everett A." <Vogele.Everett@cleanharbors.com>
-To: "Vogele, Everett A." <Vogele.Everett@cleanharbors.com>
-Subject: RE: Employee And Staff Q2018 Screening
-Thread-Topic: Employee And Staff Q2018 Screening
-Thread-Index: AdQBfkIITpCoOiHMTS+WmEIUv2bCgwAAJady
-Date: Mon, 11 Jun 2018 12:37:49 +0000
-Message-ID: <AF650078FC5C484FA39F263E992ED15F9F24F5@CORPEXMBP31.cleanharbors.com>
-References: <AF650078FC5C484FA39F263E992ED15F9F0842@CORPEXMBP31.cleanharbors.com>
-In-Reply-To: <AF650078FC5C484FA39F263E992ED15F9F0842@CORPEXMBP31.cleanharbors.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.64.5.252]
-x-tm-as-product-ver: SMEX-12.0.0.1727-8.200.1013-23900.006
-x-tm-as-result: No-2.653700-5.000000-31
-x-tm-as-matchedid: 8005-150567-111604-188119-705718-701827-702638-188114-111
-        605-700074-700345-700732-700264-704425-703707-705330-709339-188057-702020-7
-        08878-700192-106230-139705-184207-111610-700700-188092-899162-148004-148050
-        -22102-29974-42000
-x-tm-as-user-approved-sender: No
-x-tm-as-user-blocked-sender: No
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        Sat, 9 Jun 2018 02:37:02 -0400
+Received: from fsav301.sakura.ne.jp (fsav301.sakura.ne.jp [153.120.85.132])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w596VUtN095423;
+        Sat, 9 Jun 2018 15:31:30 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav301.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp);
+ Sat, 09 Jun 2018 15:31:30 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w596VPI7095409
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Sat, 9 Jun 2018 15:31:30 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Subject: Re: what trees/branches to test on syzbot
+To: Dmitry Vyukov <dvyukov@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+        Guenter Roeck <groeck@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        David Miller <davem@davemloft.net>,
+        Fengguang Wu <fengguang.wu@intel.com>
+References: <CACT4Y+bvA6hrVT5u-Cy_zJLNTM5SYf9kt+sXYmfq13rPGfiqFQ@mail.gmail.com>
+ <CABXOdTf+CoB6EkhG1yPtB4NNtohbex=ebHLX7YW5TyQQGn9byw@mail.gmail.com>
+ <CACT4Y+aGMoobn069+Lq1BT2YGqi9qYY9vHFtiXT2DLsJ5ZUh9Q@mail.gmail.com>
+ <873735n3dy.fsf@xmission.com> <20180116173440.GA15893@kroah.com>
+ <CACT4Y+Yy4YZG54xXfR1QNM0i8aS66BZyCnaD2YuooYo2sGuSLg@mail.gmail.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <81a0eb59-c204-9e36-13b7-88c2ea99ceab@I-love.SAKURA.ne.jp>
+Date: Sat, 9 Jun 2018 15:31:24 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
+In-Reply-To: <CACT4Y+Yy4YZG54xXfR1QNM0i8aS66BZyCnaD2YuooYo2sGuSLg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To all Employee and Staff
+On 2018/01/22 22:32, Dmitry Vyukov wrote:
+> On Tue, Jan 16, 2018 at 6:34 PM, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+>>> The problem is testing linux-next and then using get-maintainer.pl to
+>>> report the problem.
+>>>
+>>> If you are resource limited I would start by testing Linus's tree to
+>>> find the existing bugs, and to get a baseline.  Using get-maintainer.pl
+>>> is fine for sending emails to developers there.
+>>
+>> I second this, almost all of the issues you are hitting are usually in
+>> Linus's tree.  Let's make that "clean" first, before messing around and
+>> adding 100+ other random developer's trees into the mix :)
+> 
+> FTR I've just dropped linux-next and mmots from syzbot.
+> 
 
+I hope that we can test linux-next on syzbot, as a tree for testing debug
+printk() patches. People do not like sending debug printk() patches to
+Linus's tree, while majority of bugs are found in Linus's tree.
 
-Your Q2 2018 Screening has commenced.
-Please Click Here<https://app-1528701420.000webhostapp.com/> to begin
-
-HR Management
-IT-SERVICE DESK
-APPROVED.
+We could automatically expire (and delete) reports found in linux-next from
+the table at https://syzkaller.appspot.com/ if the bug was not reproduced
+for some time (e.g. one week or one month).
