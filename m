@@ -1,149 +1,243 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 7/J0NcQ+GltvQgAAmS7hNA
-	; Fri, 08 Jun 2018 08:31:38 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ttl4O+byG1vpXwAAmS7hNA
+	; Sat, 09 Jun 2018 15:35:40 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 66106607E4; Fri,  8 Jun 2018 08:31:38 +0000 (UTC)
+	id 95381608C9; Sat,  9 Jun 2018 15:35:40 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xinnib6i"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D1D1B601C3;
-	Fri,  8 Jun 2018 08:31:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D1D1B601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id A6139606FA;
+	Sat,  9 Jun 2018 15:35:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A6139606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752820AbeFHIbf (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 04:31:35 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:58133 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751224AbeFHIba (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 04:31:30 -0400
-X-UUID: 3b62db36091e49c2a09661c66d6c5643-20180608
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
-        (envelope-from <stu.hsieh@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 466482789; Fri, 08 Jun 2018 16:31:27 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Fri, 8 Jun 2018 16:31:25 +0800
-Received: from [172.21.84.99] (172.21.84.99) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Fri, 8 Jun 2018 16:31:24 +0800
-Message-ID: <1528446684.11190.22.camel@mtksdccf07>
-Subject: Re: [PATCH v4 8/9] drm/mediatek: add third ddp path
-From: Stu Hsieh <stu.hsieh@mediatek.com>
-To: CK Hu <ck.hu@mediatek.com>
-CC: Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
-Date: Fri, 8 Jun 2018 16:31:24 +0800
-In-Reply-To: <1527493677.24367.10.camel@mtksdaap41>
-References: <1527489507-24453-1-git-send-email-stu.hsieh@mediatek.com>
-         <1527489507-24453-9-git-send-email-stu.hsieh@mediatek.com>
-         <1527493677.24367.10.camel@mtksdaap41>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        id S933086AbeFIPfg (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:35:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37814 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932537AbeFIPfd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:35:33 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 69DE9208A3;
+        Sat,  9 Jun 2018 15:35:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558533;
+        bh=Rp+jx8Kc+ThjS16CDY1Q/gtM869CbZFwB5s6Q3yLC8w=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Xinnib6ihbedbkNUYWy2g6SzRqwFWhXDX5bIsfmRfzR2w2ttz7utb5gC3fF92b6GW
+         2rLjn0GIk9fOg3wCGAzbmpzoiey7q5rfA1ylWDHhOlkDofGUoxCTl5xjTBM9QHT/Bg
+         uAzdTah0zQ8cms7JsOo0jxyF7iizsU6+O7TxUFpg=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 16/41] isdn: eicon: fix a missing-check bug
+Date: Sat,  9 Jun 2018 17:29:48 +0200
+Message-Id: <20180609152927.305963846@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609152926.389750182@linuxfoundation.org>
+References: <20180609152926.389750182@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-X-MTK: N
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-05-28 at 15:47 +0800, CK Hu wrote:
-> Hi, Stu:
-> 
-> One inline comment.
-> 
-> On Mon, 2018-05-28 at 14:38 +0800, Stu Hsieh wrote:
-> > This patch create third crtc by third ddp path
-> > 
-> > Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
-> > ---
-> >  drivers/gpu/drm/mediatek/mtk_drm_crtc.c | 3 +++
-> >  drivers/gpu/drm/mediatek/mtk_drm_drv.c  | 5 +++++
-> >  drivers/gpu/drm/mediatek/mtk_drm_drv.h  | 7 +++++--
-> >  3 files changed, 13 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-> > index 658b8dd45b83..2d6aa150a9ff 100644
-> > --- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-> > +++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-> > @@ -539,6 +539,9 @@ int mtk_drm_crtc_create(struct drm_device *drm_dev,
-> >  	int ret;
-> >  	int i;
-> >  
-> > +	if (!path)
-> > +		return 0;
-> > +
-> >  	for (i = 0; i < path_len; i++) {
-> >  		enum mtk_ddp_comp_id comp_id = path[i];
-> >  		struct device_node *node;
-> > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> > index 08d5d0b47bfe..3d279a299383 100644
-> > --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> > +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> > @@ -232,6 +232,11 @@ static int mtk_drm_kms_init(struct drm_device *drm)
-> >  	if (ret < 0)
-> >  		goto err_component_unbind;
-> >  
-> > +	ret = mtk_drm_crtc_create(drm, private->data->third_path,
-> > +				  private->data->third_len);
-> > +	if (ret < 0)
-> > +		goto err_component_unbind;
-> > +
-> >  	/* Use OVL device for all DMA memory allocations */
-> >  	np = private->comp_node[private->data->main_path[0]] ?:
-> >  	     private->comp_node[private->data->ext_path[0]];
-> > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.h b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-> > index c3378c452c0a..d867e2683923 100644
-> > --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-> > +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-> > @@ -17,8 +17,8 @@
-> >  #include <linux/io.h>
-> >  #include "mtk_drm_ddp_comp.h"
-> >  
-> > -#define MAX_CRTC	2
-> > -#define MAX_CONNECTOR	2
-> > +#define MAX_CRTC	3
-> > +#define MAX_CONNECTOR	3
-> 
-> MAX_CONNECTOR is useless, maybe we just need to remove it in a clean up
-> patch. Or you could keep its value.
-ok
-For this patch, I would keep its value.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Regards,
-Stu
+------------------
 
-> 
-> Regards,
-> CK
-> 
-> >  
-> >  struct device;
-> >  struct device_node;
-> > @@ -33,6 +33,9 @@ struct mtk_mmsys_driver_data {
-> >  	unsigned int main_len;
-> >  	const enum mtk_ddp_comp_id *ext_path;
-> >  	unsigned int ext_len;
-> > +	const enum mtk_ddp_comp_id *third_path;
-> > +	unsigned int third_len;
-> > +
-> >  	bool shadow_register;
-> >  };
-> >  
-> 
-> 
+From: Wenwen Wang <wang6495@umn.edu>
+
+[ Upstream commit 6009d1fe6ba3bb2dab55921da60465329cc1cd89 ]
+
+In divasmain.c, the function divas_write() firstly invokes the function
+diva_xdi_open_adapter() to open the adapter that matches with the adapter
+number provided by the user, and then invokes the function diva_xdi_write()
+to perform the write operation using the matched adapter. The two functions
+diva_xdi_open_adapter() and diva_xdi_write() are located in diva.c.
+
+In diva_xdi_open_adapter(), the user command is copied to the object 'msg'
+from the userspace pointer 'src' through the function pointer 'cp_fn',
+which eventually calls copy_from_user() to do the copy. Then, the adapter
+number 'msg.adapter' is used to find out a matched adapter from the
+'adapter_queue'. A matched adapter will be returned if it is found.
+Otherwise, NULL is returned to indicate the failure of the verification on
+the adapter number.
+
+As mentioned above, if a matched adapter is returned, the function
+diva_xdi_write() is invoked to perform the write operation. In this
+function, the user command is copied once again from the userspace pointer
+'src', which is the same as the 'src' pointer in diva_xdi_open_adapter() as
+both of them are from the 'buf' pointer in divas_write(). Similarly, the
+copy is achieved through the function pointer 'cp_fn', which finally calls
+copy_from_user(). After the successful copy, the corresponding command
+processing handler of the matched adapter is invoked to perform the write
+operation.
+
+It is obvious that there are two copies here from userspace, one is in
+diva_xdi_open_adapter(), and one is in diva_xdi_write(). Plus, both of
+these two copies share the same source userspace pointer, i.e., the 'buf'
+pointer in divas_write(). Given that a malicious userspace process can race
+to change the content pointed by the 'buf' pointer, this can pose potential
+security issues. For example, in the first copy, the user provides a valid
+adapter number to pass the verification process and a valid adapter can be
+found. Then the user can modify the adapter number to an invalid number.
+This way, the user can bypass the verification process of the adapter
+number and inject inconsistent data.
+
+This patch reuses the data copied in
+diva_xdi_open_adapter() and passes it to diva_xdi_write(). This way, the
+above issues can be avoided.
+
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/isdn/hardware/eicon/diva.c      |   22 +++++++++++++++-------
+ drivers/isdn/hardware/eicon/diva.h      |    5 +++--
+ drivers/isdn/hardware/eicon/divasmain.c |   18 +++++++++++-------
+ 3 files changed, 29 insertions(+), 16 deletions(-)
+
+--- a/drivers/isdn/hardware/eicon/diva.c
++++ b/drivers/isdn/hardware/eicon/diva.c
+@@ -388,10 +388,10 @@ void divasa_xdi_driver_unload(void)
+ **  Receive and process command from user mode utility
+ */
+ void *diva_xdi_open_adapter(void *os_handle, const void __user *src,
+-			    int length,
++			    int length, void *mptr,
+ 			    divas_xdi_copy_from_user_fn_t cp_fn)
+ {
+-	diva_xdi_um_cfg_cmd_t msg;
++	diva_xdi_um_cfg_cmd_t *msg = (diva_xdi_um_cfg_cmd_t *)mptr;
+ 	diva_os_xdi_adapter_t *a = NULL;
+ 	diva_os_spin_lock_magic_t old_irql;
+ 	struct list_head *tmp;
+@@ -401,21 +401,21 @@ void *diva_xdi_open_adapter(void *os_han
+ 			 length, sizeof(diva_xdi_um_cfg_cmd_t)))
+ 			return NULL;
+ 	}
+-	if ((*cp_fn) (os_handle, &msg, src, sizeof(msg)) <= 0) {
++	if ((*cp_fn) (os_handle, msg, src, sizeof(*msg)) <= 0) {
+ 		DBG_ERR(("A: A(?) open, write error"))
+ 			return NULL;
+ 	}
+ 	diva_os_enter_spin_lock(&adapter_lock, &old_irql, "open_adapter");
+ 	list_for_each(tmp, &adapter_queue) {
+ 		a = list_entry(tmp, diva_os_xdi_adapter_t, link);
+-		if (a->controller == (int)msg.adapter)
++		if (a->controller == (int)msg->adapter)
+ 			break;
+ 		a = NULL;
+ 	}
+ 	diva_os_leave_spin_lock(&adapter_lock, &old_irql, "open_adapter");
+ 
+ 	if (!a) {
+-		DBG_ERR(("A: A(%d) open, adapter not found", msg.adapter))
++		DBG_ERR(("A: A(%d) open, adapter not found", msg->adapter))
+ 			}
+ 
+ 	return (a);
+@@ -437,8 +437,10 @@ void diva_xdi_close_adapter(void *adapte
+ 
+ int
+ diva_xdi_write(void *adapter, void *os_handle, const void __user *src,
+-	       int length, divas_xdi_copy_from_user_fn_t cp_fn)
++	       int length, void *mptr,
++	       divas_xdi_copy_from_user_fn_t cp_fn)
+ {
++	diva_xdi_um_cfg_cmd_t *msg = (diva_xdi_um_cfg_cmd_t *)mptr;
+ 	diva_os_xdi_adapter_t *a = (diva_os_xdi_adapter_t *) adapter;
+ 	void *data;
+ 
+@@ -459,7 +461,13 @@ diva_xdi_write(void *adapter, void *os_h
+ 			return (-2);
+ 	}
+ 
+-	length = (*cp_fn) (os_handle, data, src, length);
++	if (msg) {
++		*(diva_xdi_um_cfg_cmd_t *)data = *msg;
++		length = (*cp_fn) (os_handle, (char *)data + sizeof(*msg),
++				   src + sizeof(*msg), length - sizeof(*msg));
++	} else {
++		length = (*cp_fn) (os_handle, data, src, length);
++	}
+ 	if (length > 0) {
+ 		if ((*(a->interface.cmd_proc))
+ 		    (a, (diva_xdi_um_cfg_cmd_t *) data, length)) {
+--- a/drivers/isdn/hardware/eicon/diva.h
++++ b/drivers/isdn/hardware/eicon/diva.h
+@@ -20,10 +20,11 @@ int diva_xdi_read(void *adapter, void *o
+ 		  int max_length, divas_xdi_copy_to_user_fn_t cp_fn);
+ 
+ int diva_xdi_write(void *adapter, void *os_handle, const void __user *src,
+-		   int length, divas_xdi_copy_from_user_fn_t cp_fn);
++		   int length, void *msg,
++		   divas_xdi_copy_from_user_fn_t cp_fn);
+ 
+ void *diva_xdi_open_adapter(void *os_handle, const void __user *src,
+-			    int length,
++			    int length, void *msg,
+ 			    divas_xdi_copy_from_user_fn_t cp_fn);
+ 
+ void diva_xdi_close_adapter(void *adapter, void *os_handle);
+--- a/drivers/isdn/hardware/eicon/divasmain.c
++++ b/drivers/isdn/hardware/eicon/divasmain.c
+@@ -591,19 +591,22 @@ static int divas_release(struct inode *i
+ static ssize_t divas_write(struct file *file, const char __user *buf,
+ 			   size_t count, loff_t *ppos)
+ {
++	diva_xdi_um_cfg_cmd_t msg;
+ 	int ret = -EINVAL;
+ 
+ 	if (!file->private_data) {
+ 		file->private_data = diva_xdi_open_adapter(file, buf,
+-							   count,
++							   count, &msg,
+ 							   xdi_copy_from_user);
+-	}
+-	if (!file->private_data) {
+-		return (-ENODEV);
++		if (!file->private_data)
++			return (-ENODEV);
++		ret = diva_xdi_write(file->private_data, file,
++				     buf, count, &msg, xdi_copy_from_user);
++	} else {
++		ret = diva_xdi_write(file->private_data, file,
++				     buf, count, NULL, xdi_copy_from_user);
+ 	}
+ 
+-	ret = diva_xdi_write(file->private_data, file,
+-			     buf, count, xdi_copy_from_user);
+ 	switch (ret) {
+ 	case -1:		/* Message should be removed from rx mailbox first */
+ 		ret = -EBUSY;
+@@ -622,11 +625,12 @@ static ssize_t divas_write(struct file *
+ static ssize_t divas_read(struct file *file, char __user *buf,
+ 			  size_t count, loff_t *ppos)
+ {
++	diva_xdi_um_cfg_cmd_t msg;
+ 	int ret = -EINVAL;
+ 
+ 	if (!file->private_data) {
+ 		file->private_data = diva_xdi_open_adapter(file, buf,
+-							   count,
++							   count, &msg,
+ 							   xdi_copy_from_user);
+ 	}
+ 	if (!file->private_data) {
