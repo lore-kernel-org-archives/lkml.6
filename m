@@ -1,128 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id lnSrAGHGG1t5LAAAmS7hNA
-	; Sat, 09 Jun 2018 12:25:32 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 5FmOK+LvG1trSAAAmS7hNA
+	; Sat, 09 Jun 2018 15:48:09 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D71A1607A4; Sat,  9 Jun 2018 12:25:31 +0000 (UTC)
+	id D5551608C8; Sat,  9 Jun 2018 15:48:08 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L136H06t"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mKadMrTJ"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FROM,MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 5A4E0602FC;
-	Sat,  9 Jun 2018 12:25:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5A4E0602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 5617F608B8;
+	Sat,  9 Jun 2018 15:48:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5617F608B8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753297AbeFIMZ3 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 08:25:29 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:54015 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753175AbeFIMZ2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 08:25:28 -0400
-Received: by mail-wm0-f66.google.com with SMTP id x6-v6so7397023wmc.3
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Jun 2018 05:25:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=oG4rlrJygGoH1GSxzzHI1kTkKCXWlMaevMpd0LTAJGI=;
-        b=L136H06tpXAU8jPDq/H4Wvpfb/6Jn6Am9C6Tosxr0OoFsClmo3MvGgjPISVqyY/YSO
-         l+nDbIuCj60vBYpB494Dc0B3Zr6hKuaEaMqxHKATDF/XRqFdAF871U7EQwm+um73wAuy
-         Obg58rKuuUGJFyriT/XAU2MbuTU1357A2agmYJEOCpoMzhRxm8v810zspVAcC3wSp3K7
-         7tpVtWijMP3J1bMrxFhyEA9YpSBkKV4QGnsbxm6+x4QA3SGJd214ihbFKIdLj8UGF7uh
-         1bViy4qbBhyOZ5XzfvqOmwWbrUbuDFeay0CpJM0kqk26UPzEbYSB35o4cjDx4smxzOvO
-         wzYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=oG4rlrJygGoH1GSxzzHI1kTkKCXWlMaevMpd0LTAJGI=;
-        b=ArWoE59Iq6eQwoAHXy4G9vnLYVFDBmRQiFSAHEPjK8bmbnNLUFyVbhbxCXcayHsU91
-         iAZTAUdY3aq9UKEpRg51jSKo/JsOEDwnkw4GThTBu7qtvTVDHWRvzJ285JG9SXKKCxSh
-         Rky94yOMnhIjT9FAhYRbOzkB44KPi68jTcsobU7/r0hp4LcINkZXWHn3Vc7d+yrplRV+
-         pn6xBHTrd4n+ad+FL5CMlRxMukk+hgbqvVQjT7GiRpuhyC7QZONODxziXlI1ugCUFCLh
-         cYJrLMQcpAVR30CkFvcuQ1QsnJTq7NHMm5PcWmV7wqEv6Rq6UtsyQEsx8avm97BOzLsK
-         6veQ==
-X-Gm-Message-State: APt69E1JrP5FI+gQ9Jx1FSMwSTwKmX2ft3ynYE+ebWEqPjWZGYrfxxdW
-        GgDme5MR9KDduMzZlLY7l/Q=
-X-Google-Smtp-Source: ADUXVKKoIQy3M1zKWIcm7MPwGvB3NK8ad7OCbh2fPaTk9X+vWLxqxFzc1Lj2SJWSvzmt8YLccSnKrw==
-X-Received: by 2002:a1c:4a5d:: with SMTP id x90-v6mr3839518wma.67.1528547126994;
-        Sat, 09 Jun 2018 05:25:26 -0700 (PDT)
-Received: from localhost.localdomain (8ta-150-94-26.telkomadsl.co.za. [41.150.94.26])
-        by smtp.googlemail.com with ESMTPSA id l69-v6sm15691992wma.45.2018.06.09.05.25.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 09 Jun 2018 05:25:26 -0700 (PDT)
-From: Chris Opperman <eklikeroomys@gmail.com>
-Cc: eklikeroomys@gmail.com, Ian Abbott <abbotti@mev.co.uk>,
-        H Hartley Sweeten <hsweeten@visionengravers.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Simo Koskinen <koskisoft@gmail.com>,
-        Frank Mori Hess <fmh6jj@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: comedi: Improved readability of function comedi_nsamples_left.
-Date: Sat,  9 Jun 2018 16:23:21 +0200
-Message-Id: <1528554204-4388-1-git-send-email-eklikeroomys@gmail.com>
-X-Mailer: git-send-email 2.1.4
-To: unlisted-recipients:; (no To-header on input)
+        id S932703AbeFIPsH (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:48:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35364 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932335AbeFIPcz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:32:55 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B9771204EC;
+        Sat,  9 Jun 2018 15:32:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558375;
+        bh=/HoD78kDGCl8rUehahanx74LjI3635V1O/wuHzA8/PQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=mKadMrTJsJQv2x3QShtTDLvmb+Pw6ky8X+gXRPHaHTSYjgOfIKWAaRGt1qq1ir4OZ
+         xYn/FaQ3t7aIGjQLDKGBeJp6U0SGIIzyaAKPMD0k/f+ZI498v7wBiE2N1lLYM9QlEt
+         6pV5X/BQofjgbxVU/vdMe8joUGIy5pMAyJ/4kZYA=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Stephen Suryaputra <ssuryaextr@gmail.com>,
+        David Ahern <dsahern@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 32/48] vrf: check the original netdevice for generating redirect
+Date: Sat,  9 Jun 2018 17:29:44 +0200
+Message-Id: <20180609145949.894480951@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
+References: <20180609145947.679103414@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Chris Opperman <eklikeroomys@gmail.com>
----
- drivers/staging/comedi/drivers.c | 29 ++++++++++++++---------------
- 1 file changed, 14 insertions(+), 15 deletions(-)
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-diff --git a/drivers/staging/comedi/drivers.c b/drivers/staging/comedi/drivers.c
-index 9d73347..3207ae2 100644
---- a/drivers/staging/comedi/drivers.c
-+++ b/drivers/staging/comedi/drivers.c
-@@ -468,26 +468,25 @@ EXPORT_SYMBOL_GPL(comedi_nscans_left);
-  * Returns the number of samples remaining to complete the command, or the
-  * specified expected number of samples (@nsamples), whichever is fewer.
-  */
--unsigned int comedi_nsamples_left(struct comedi_subdevice *s,
--				  unsigned int nsamples)
-+u32 comedi_nsamples_left(struct comedi_subdevice *s, u32 nsamples)
- {
- 	struct comedi_async *async = s->async;
- 	struct comedi_cmd *cmd = &async->cmd;
-+	u32 scans_left;
-+	u64 samples_left;
+------------------
+
+From: Stephen Suryaputra <ssuryaextr@gmail.com>
+
+[ Upstream commit 2f17becfbea5e9a0529b51da7345783e96e69516 ]
+
+Use the right device to determine if redirect should be sent especially
+when using vrf. Same as well as when sending the redirect.
+
+Signed-off-by: Stephen Suryaputra <ssuryaextr@gmail.com>
+Acked-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/ipv6/ip6_output.c |    3 ++-
+ net/ipv6/ndisc.c      |    6 ++++++
+ 2 files changed, 8 insertions(+), 1 deletion(-)
+
+--- a/net/ipv6/ip6_output.c
++++ b/net/ipv6/ip6_output.c
+@@ -507,7 +507,8 @@ int ip6_forward(struct sk_buff *skb)
+ 	   send redirects to source routed frames.
+ 	   We don't send redirects to frames decapsulated from IPsec.
+ 	 */
+-	if (skb->dev == dst->dev && opt->srcrt == 0 && !skb_sec_path(skb)) {
++	if (IP6CB(skb)->iif == dst->dev->ifindex &&
++	    opt->srcrt == 0 && !skb_sec_path(skb)) {
+ 		struct in6_addr *target = NULL;
+ 		struct inet_peer *peer;
+ 		struct rt6_info *rt;
+--- a/net/ipv6/ndisc.c
++++ b/net/ipv6/ndisc.c
+@@ -1576,6 +1576,12 @@ void ndisc_send_redirect(struct sk_buff
+ 	   ops_data_buf[NDISC_OPS_REDIRECT_DATA_SPACE], *ops_data = NULL;
+ 	bool ret;
  
--	if (cmd->stop_src == TRIG_COUNT) {
--		unsigned int scans_left = __comedi_nscans_left(s, cmd->stop_arg);
--		unsigned int scan_pos =
--		    comedi_bytes_to_samples(s, async->scan_progress);
--		unsigned long long samples_left = 0;
--
--		if (scans_left) {
--			samples_left = ((unsigned long long)scans_left *
--					cmd->scan_end_arg) - scan_pos;
--		}
-+	if (cmd->stop_src != TRIG_COUNT)
-+		return nsamples;
- 
--		if (samples_left < nsamples)
--			nsamples = samples_left;
--	}
-+	scans_left = __comedi_nscans_left(s, cmd->stop_arg);
-+	if (!scans_left)
-+		return 0;
++	if (netif_is_l3_master(skb->dev)) {
++		dev = __dev_get_by_index(dev_net(skb->dev), IPCB(skb)->iif);
++		if (!dev)
++			return;
++	}
 +
-+	samples_left = ((u64)scans_left * cmd->scan_end_arg) -
-+		comedi_bytes_to_samples(s, async->scan_progress);
-+
-+	if (samples_left < nsamples)
-+		return samples_left;
- 	return nsamples;
- }
- EXPORT_SYMBOL_GPL(comedi_nsamples_left);
--- 
-2.1.4
+ 	if (ipv6_get_lladdr(dev, &saddr_buf, IFA_F_TENTATIVE)) {
+ 		ND_PRINTK(2, warn, "Redirect: no link-local address on %s\n",
+ 			  dev->name);
