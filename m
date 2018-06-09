@@ -1,226 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id dj+ABcRHGVuRPwAAmS7hNA
-	; Thu, 07 Jun 2018 14:57:19 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 1GOvBgXfG1sOYQAAmS7hNA
+	; Sat, 09 Jun 2018 14:07:01 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 25D7A607E7; Thu,  7 Jun 2018 14:57:19 +0000 (UTC)
+	id 0A4C5608B8; Sat,  9 Jun 2018 14:07:01 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 3B464601C3;
-	Thu,  7 Jun 2018 14:57:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3B464601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 7C1C96074D;
+	Sat,  9 Jun 2018 14:07:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7C1C96074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933161AbeFGO5Q (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:57:16 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41117 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932520AbeFGO5O (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:57:14 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbG-0005Zk-6H; Thu, 07 Jun 2018 15:09:14 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbD-0003G9-50; Thu, 07 Jun 2018 15:09:11 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Jason Gunthorpe" <jgg@mellanox.com>,
-        "Sean Hefty" <sean.hefty@intel.com>,
-        "" <syzbot+1d8c43206853b369d00c@syzkaller.appspotmail.com>,
-        "Leon Romanovsky" <leonro@mellanox.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.411789711@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 365/410] RDMA/ucma: Check AF family prior resolving
- address
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        id S1753357AbeFIOG5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 10:06:57 -0400
+Received: from foss.arm.com ([217.140.101.70]:40928 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753225AbeFIOG4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 10:06:56 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D59B080D;
+        Sat,  9 Jun 2018 07:06:55 -0700 (PDT)
+Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 611823F59D;
+        Sat,  9 Jun 2018 07:06:51 -0700 (PDT)
+Date: Sat, 09 Jun 2018 15:06:41 +0100
+Message-ID: <86sh5w8366.wl-marc.zyngier@arm.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+To: Jon Masters <jcm@jonmasters.org>
+Cc: <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <kvmarm@lists.cs.columbia.edu>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jon Masters <jcm@redhat.com>, christoffer.dall@arm.com
+Subject: Re: [PATCH v2 00/16] arm64: Add SMCCC v1.1 support and CVE-2017-5715 (Spectre variant 2) mitigation
+In-Reply-To: <f6da84f8-b01e-f8cd-521b-6f2348b963be@jonmasters.org>
+References: <20180129174559.1866-1-marc.zyngier@arm.com>
+        <f6da84f8-b01e-f8cd-521b-6f2348b963be@jonmasters.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+Hi Jon,
 
-------------------
+On Sat, 09 Jun 2018 14:22:27 +0100,
+Jon Masters wrote:
+> 
+> Hi Marc,
+> 
+> On 01/29/2018 12:45 PM, Marc Zyngier wrote:
+> 
+> > ARM has recently published a SMC Calling Convention (SMCCC)
+> > specification update[1] that provides an optimised calling convention
+> > and optional, discoverable support for mitigating CVE-2017-5715. ARM
+> > Trusted Firmware (ATF) has already gained such an implementation[2].
+> 
+> Some questions:
+> 
+> 1). What's the plan to implement the boot time on/off control for
+> spectre_v2 mitigations?
 
-From: Leon Romanovsky <leonro@mellanox.com>
+None so far. It can only be disabled at compile time.
 
-commit 2975d5de6428ff6d9317e9948f0968f7d42e5d74 upstream.
+> 2). What's the plan to handle live migration of VMs?
 
-Garbage supplied by user will cause to UCMA module provide zero
-memory size for memcpy(), because it wasn't checked, it will
-produce unpredictable results in rdma_resolve_addr().
+[I assume that by "migration of VMs, you actually mean migration of
+the mitigation state]
 
-[   42.873814] BUG: KASAN: null-ptr-deref in rdma_resolve_addr+0xc8/0xfb0
-[   42.874816] Write of size 28 at addr 00000000000000a0 by task resaddr/1044
-[   42.876765]
-[   42.876960] CPU: 1 PID: 1044 Comm: resaddr Not tainted 4.16.0-rc1-00057-gaa56a5293d7e #34
-[   42.877840] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.0-0-g63451fca13-prebuilt.qemu-project.org 04/01/2014
-[   42.879691] Call Trace:
-[   42.880236]  dump_stack+0x5c/0x77
-[   42.880664]  kasan_report+0x163/0x380
-[   42.881354]  ? rdma_resolve_addr+0xc8/0xfb0
-[   42.881864]  memcpy+0x34/0x50
-[   42.882692]  rdma_resolve_addr+0xc8/0xfb0
-[   42.883366]  ? deref_stack_reg+0x88/0xd0
-[   42.883856]  ? vsnprintf+0x31a/0x770
-[   42.884686]  ? rdma_bind_addr+0xc40/0xc40
-[   42.885327]  ? num_to_str+0x130/0x130
-[   42.885773]  ? deref_stack_reg+0x88/0xd0
-[   42.886217]  ? __read_once_size_nocheck.constprop.6+0x10/0x10
-[   42.887698]  ? unwind_get_return_address_ptr+0x50/0x50
-[   42.888302]  ? replace_slot+0x147/0x170
-[   42.889176]  ? delete_node+0x12c/0x340
-[   42.890223]  ? __radix_tree_lookup+0xa9/0x160
-[   42.891196]  ? ucma_resolve_ip+0xb7/0x110
-[   42.891917]  ucma_resolve_ip+0xb7/0x110
-[   42.893003]  ? ucma_resolve_addr+0x190/0x190
-[   42.893531]  ? _copy_from_user+0x5e/0x90
-[   42.894204]  ucma_write+0x174/0x1f0
-[   42.895162]  ? ucma_resolve_route+0xf0/0xf0
-[   42.896309]  ? dequeue_task_fair+0x67e/0xd90
-[   42.897192]  ? put_prev_entity+0x7d/0x170
-[   42.897870]  ? ring_buffer_record_is_on+0xd/0x20
-[   42.898439]  ? tracing_record_taskinfo_skip+0x20/0x50
-[   42.899686]  __vfs_write+0xc4/0x350
-[   42.900142]  ? kernel_read+0xa0/0xa0
-[   42.900602]  ? firmware_map_remove+0xdf/0xdf
-[   42.901135]  ? do_task_dead+0x5d/0x60
-[   42.901598]  ? do_exit+0xcc6/0x1220
-[   42.902789]  ? __fget+0xa8/0xf0
-[   42.903190]  vfs_write+0xf7/0x280
-[   42.903600]  SyS_write+0xa1/0x120
-[   42.904206]  ? SyS_read+0x120/0x120
-[   42.905710]  ? compat_start_thread+0x60/0x60
-[   42.906423]  ? SyS_read+0x120/0x120
-[   42.908716]  do_syscall_64+0xeb/0x250
-[   42.910760]  entry_SYSCALL_64_after_hwframe+0x21/0x86
-[   42.912735] RIP: 0033:0x7f138b0afe99
-[   42.914734] RSP: 002b:00007f138b799e98 EFLAGS: 00000287 ORIG_RAX: 0000000000000001
-[   42.917134] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f138b0afe99
-[   42.919487] RDX: 000000000000002e RSI: 0000000020000c40 RDI: 0000000000000004
-[   42.922393] RBP: 00007f138b799ec0 R08: 00007f138b79a700 R09: 0000000000000000
-[   42.925266] R10: 00007f138b79a700 R11: 0000000000000287 R12: 00007f138b799fc0
-[   42.927570] R13: 0000000000000000 R14: 00007ffdbae757c0 R15: 00007f138b79a9c0
-[   42.930047]
-[   42.932681] Disabling lock debugging due to kernel taint
-[   42.934795] BUG: unable to handle kernel NULL pointer dereference at 00000000000000a0
-[   42.936939] IP: memcpy_erms+0x6/0x10
-[   42.938864] PGD 80000001bea92067 P4D 80000001bea92067 PUD 1bea96067 PMD 0
-[   42.941576] Oops: 0002 [#1] SMP KASAN PTI
-[   42.943952] CPU: 1 PID: 1044 Comm: resaddr Tainted: G    B 4.16.0-rc1-00057-gaa56a5293d7e #34
-[   42.946964] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.0-0-g63451fca13-prebuilt.qemu-project.org 04/01/2014
-[   42.952336] RIP: 0010:memcpy_erms+0x6/0x10
-[   42.954707] RSP: 0018:ffff8801c8b479c8 EFLAGS: 00010286
-[   42.957227] RAX: 00000000000000a0 RBX: ffff8801c8b47ba0 RCX: 000000000000001c
-[   42.960543] RDX: 000000000000001c RSI: ffff8801c8b47bbc RDI: 00000000000000a0
-[   42.963867] RBP: ffff8801c8b47b60 R08: 0000000000000000 R09: ffffed0039168ed1
-[   42.967303] R10: 0000000000000001 R11: ffffed0039168ed0 R12: ffff8801c8b47bbc
-[   42.970685] R13: 00000000000000a0 R14: 1ffff10039168f4a R15: 0000000000000000
-[   42.973631] FS:  00007f138b79a700(0000) GS:ffff8801e5d00000(0000) knlGS:0000000000000000
-[   42.976831] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   42.979239] CR2: 00000000000000a0 CR3: 00000001be908002 CR4: 00000000003606a0
-[   42.982060] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[   42.984877] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[   42.988033] Call Trace:
-[   42.990487]  rdma_resolve_addr+0xc8/0xfb0
-[   42.993202]  ? deref_stack_reg+0x88/0xd0
-[   42.996055]  ? vsnprintf+0x31a/0x770
-[   42.998707]  ? rdma_bind_addr+0xc40/0xc40
-[   43.000985]  ? num_to_str+0x130/0x130
-[   43.003410]  ? deref_stack_reg+0x88/0xd0
-[   43.006302]  ? __read_once_size_nocheck.constprop.6+0x10/0x10
-[   43.008780]  ? unwind_get_return_address_ptr+0x50/0x50
-[   43.011178]  ? replace_slot+0x147/0x170
-[   43.013517]  ? delete_node+0x12c/0x340
-[   43.016019]  ? __radix_tree_lookup+0xa9/0x160
-[   43.018755]  ? ucma_resolve_ip+0xb7/0x110
-[   43.021270]  ucma_resolve_ip+0xb7/0x110
-[   43.023968]  ? ucma_resolve_addr+0x190/0x190
-[   43.026312]  ? _copy_from_user+0x5e/0x90
-[   43.029384]  ucma_write+0x174/0x1f0
-[   43.031861]  ? ucma_resolve_route+0xf0/0xf0
-[   43.034782]  ? dequeue_task_fair+0x67e/0xd90
-[   43.037483]  ? put_prev_entity+0x7d/0x170
-[   43.040215]  ? ring_buffer_record_is_on+0xd/0x20
-[   43.042990]  ? tracing_record_taskinfo_skip+0x20/0x50
-[   43.045595]  __vfs_write+0xc4/0x350
-[   43.048624]  ? kernel_read+0xa0/0xa0
-[   43.051604]  ? firmware_map_remove+0xdf/0xdf
-[   43.055379]  ? do_task_dead+0x5d/0x60
-[   43.058000]  ? do_exit+0xcc6/0x1220
-[   43.060783]  ? __fget+0xa8/0xf0
-[   43.063133]  vfs_write+0xf7/0x280
-[   43.065677]  SyS_write+0xa1/0x120
-[   43.068647]  ? SyS_read+0x120/0x120
-[   43.071179]  ? compat_start_thread+0x60/0x60
-[   43.074025]  ? SyS_read+0x120/0x120
-[   43.076705]  do_syscall_64+0xeb/0x250
-[   43.079006]  entry_SYSCALL_64_after_hwframe+0x21/0x86
-[   43.081606] RIP: 0033:0x7f138b0afe99
-[   43.083679] RSP: 002b:00007f138b799e98 EFLAGS: 00000287 ORIG_RAX: 0000000000000001
-[   43.086802] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f138b0afe99
-[   43.089989] RDX: 000000000000002e RSI: 0000000020000c40 RDI: 0000000000000004
-[   43.092866] RBP: 00007f138b799ec0 R08: 00007f138b79a700 R09: 0000000000000000
-[   43.096233] R10: 00007f138b79a700 R11: 0000000000000287 R12: 00007f138b799fc0
-[   43.098913] R13: 0000000000000000 R14: 00007ffdbae757c0 R15: 00007f138b79a9c0
-[   43.101809] Code: 90 90 90 90 90 eb 1e 0f 1f 00 48 89 f8 48 89 d1 48
-c1 e9 03 83 e2 07 f3 48 a5 89 d1 f3 a4 c3 66 0f 1f 44 00 00 48 89 f8 48
-89 d1 <f3> a4 c3 0f 1f 80 00 00 00 00 48 89 f8 48 83 fa 20 72 7e 40 38
-[   43.107950] RIP: memcpy_erms+0x6/0x10 RSP: ffff8801c8b479c8
+As I mentioned in response to your comment on the variant-4 series,
+this is a work in progress, and is mentioned in the cover letter of
+that series. Hopefully I'll find time to work on it next week.
 
-Reported-by: <syzbot+1d8c43206853b369d00c@syzkaller.appspotmail.com>
-Fixes: 75216638572f ("RDMA/cma: Export rdma cm interface to userspace")
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Reviewed-by: Sean Hefty <sean.hefty@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- drivers/infiniband/core/ucma.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+	M.
 
---- a/drivers/infiniband/core/ucma.c
-+++ b/drivers/infiniband/core/ucma.c
-@@ -560,19 +560,23 @@ static ssize_t ucma_resolve_ip(struct uc
- 			       int in_len, int out_len)
- {
- 	struct rdma_ucm_resolve_ip cmd;
-+	struct sockaddr *src, *dst;
- 	struct ucma_context *ctx;
- 	int ret;
- 
- 	if (copy_from_user(&cmd, inbuf, sizeof(cmd)))
- 		return -EFAULT;
- 
-+	src = (struct sockaddr *) &cmd.src_addr;
-+	dst = (struct sockaddr *) &cmd.dst_addr;
-+	if (!rdma_addr_size(src) || !rdma_addr_size(dst))
-+		return -EINVAL;
-+
- 	ctx = ucma_get_ctx(file, cmd.id);
- 	if (IS_ERR(ctx))
- 		return PTR_ERR(ctx);
- 
--	ret = rdma_resolve_addr(ctx->cm_id, (struct sockaddr *) &cmd.src_addr,
--				(struct sockaddr *) &cmd.dst_addr,
--				cmd.timeout_ms);
-+	ret = rdma_resolve_addr(ctx->cm_id, src, dst, cmd.timeout_ms);
- 	ucma_put_ctx(ctx);
- 	return ret;
- }
+-- 
+Jazz is not dead, it just smell funny.
