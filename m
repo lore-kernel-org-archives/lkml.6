@@ -1,178 +1,199 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id /J05DfKFGlsFfQAAmS7hNA
-	; Fri, 08 Jun 2018 13:34:42 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id PJ1NBxT0G1ubaAAAmS7hNA
+	; Sat, 09 Jun 2018 15:36:52 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 16511607A4; Fri,  8 Jun 2018 13:34:42 +0000 (UTC)
+	id 01FDF608C1; Sat,  9 Jun 2018 15:36:52 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cZiCqzeN"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kiCktNGI"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 49969607DC;
-	Fri,  8 Jun 2018 13:34:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 49969607DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 22FD3608B8;
+	Sat,  9 Jun 2018 15:36:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 22FD3608B8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752627AbeFHNej (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 09:34:39 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:40236 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751133AbeFHNeh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 09:34:37 -0400
-Received: by mail-pg0-f67.google.com with SMTP id l2-v6so6405725pgc.7
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 06:34:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=lmKOxpSp+i046D+BW0ji3ZPshUmkSSXneeZh65ztyBk=;
-        b=cZiCqzeNTFkRvO5dSn4E0xQpp+4/hB9pfiFkp5I++myq7euR2Bu7qibmv4Q37BlmOQ
-         iKR2IoRR0Aq+fgMMEOjJWM0kE9oBG3msPFV6qwYLYK74NbS/w4yabey0Mq1P3WwlX458
-         Ak1Jnvgy3I6CzHgbTu8sW2W+VAUmMYOWG3Cqa+zzRKNLVBkTC0VWGiG+mXGzO0BSqlAG
-         LFo+vA7SOhRzlqXkhbKxdgcx2GnzImMXDSEeeLAucsXYJNLdh9wgr8dvG5iikZ1RHkp2
-         O27WDeL1HNrDdT6TMRg0TqgFetpoz2oNxbf3Xyornh4hJa9OMe4C44w8Q7Maq9jT0y6z
-         EvqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=lmKOxpSp+i046D+BW0ji3ZPshUmkSSXneeZh65ztyBk=;
-        b=f+TuB90DdQ78W5FEuP44wbpT7t2qiqxrsjeYuADU3tnp7IrRHjivL/XoOHOYRGwchp
-         O/IU3LXhBEGPxkkr1ZvtluttFaX//m6+mORfzncmH4nH28R75oJQiBpXht9qONUbaAdZ
-         4RPtVh/qchpbWfAZcNOv6qumUIdXxlddzcDdIUMDWBuUe92XXJt2xSYKqZ01K1YG8duG
-         cDaRGnF+kiF8HYXbTGZFaQ5wfPtmPLOJ9X2LEiQHvmJRZ8Mk2WpzrDvkllllbyBkbKIa
-         H9eQihW8s0OoOytJ51SxHg1zOqo34a471K7vMWNUfNmwkaQMpZfTPLPnOG8yXT2tp/Bk
-         01Fg==
-X-Gm-Message-State: APt69E2cC3sJsx3KhmT4zy1pkRC3wMgKtzf3lh1XFI2PMYk8u5BNWyhU
-        ZDAn0KFpDvyd4tPCW/3Oj+r0uD5OYWN2jYxHRJ74fA==
-X-Google-Smtp-Source: ADUXVKJEjURz+A83zKMMbMXxISxbH7YTURjz+Gw7MS+/rZBbXf+xcdTYloNZU0YT7sxFfhLiKXxr8xTIJptHAOU0PrY=
-X-Received: by 2002:a63:70a:: with SMTP id 10-v6mr5498083pgh.216.1528464876259;
- Fri, 08 Jun 2018 06:34:36 -0700 (PDT)
+        id S933260AbeFIPgt (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:36:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38518 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933229AbeFIPgZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:36:25 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 007B82087B;
+        Sat,  9 Jun 2018 15:36:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558584;
+        bh=4o57Sp14C/EeRTmROCsgQo1OdCdapWis/fTE8R8ovs0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=kiCktNGIb0b/lNg8GHlu/pnRSX0YjNFEvozsvIWZFDgB8W2UGWdLvdQ+3EYD4cyFI
+         7jPtkVBL8VNovR02Xj5rjwN+9pGQsOTmARHuNHtCCvXxvF4f65TrnhYYSrpT+wWy0Z
+         b4AWXPQLD7UIRWLozW8eKcLOWHBIrV+j7R2XQ4mw=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 39/41] rtnetlink: validate attributes in do_setlink()
+Date: Sat,  9 Jun 2018 17:30:11 +0200
+Message-Id: <20180609152928.546313343@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609152926.389750182@linuxfoundation.org>
+References: <20180609152926.389750182@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Received: by 2002:a17:90a:d42:0:0:0:0 with HTTP; Fri, 8 Jun 2018 06:34:15
- -0700 (PDT)
-In-Reply-To: <000000000000bd54dd056e212189@google.com>
-References: <000000000000bd54dd056e212189@google.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Fri, 8 Jun 2018 15:34:15 +0200
-Message-ID: <CACT4Y+b+6XrNfHmZSBitOKqVHYaq-aOgMDnHhp3vKEVs117iJA@mail.gmail.com>
-Subject: Re: WARNING in do_dentry_open
-To: syzbot <syzbot+2e7fcab0f56fdbb330b8@syzkaller.appspotmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        netdev <netdev@vger.kernel.org>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 8, 2018 at 3:11 PM, syzbot
-<syzbot+2e7fcab0f56fdbb330b8@syzkaller.appspotmail.com> wrote:
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    68abbe729567 Merge branch 'akpm' (patches from Andrew)
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=130146af800000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=e5a4673d4582131c
-> dashboard link: https://syzkaller.appspot.com/bug?extid=2e7fcab0f56fdbb330b8
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1591756f800000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=152236af800000
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Looking at the reproducer this seems to be related to bpf.
-+bpf maintainers
+------------------
 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+2e7fcab0f56fdbb330b8@syzkaller.appspotmail.com
->
-> random: sshd: uninitialized urandom read (32 bytes read)
-> random: sshd: uninitialized urandom read (32 bytes read)
-> random: sshd: uninitialized urandom read (32 bytes read)
-> random: sshd: uninitialized urandom read (32 bytes read)
-> random: sshd: uninitialized urandom read (32 bytes read)
-> WARNING: CPU: 1 PID: 4508 at fs/open.c:778 do_dentry_open+0x4ad/0xe40
-> fs/open.c:778
-> Kernel panic - not syncing: panic_on_warn set ...
->
-> CPU: 1 PID: 4508 Comm: syz-executor867 Not tainted 4.17.0+ #90
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
->  panic+0x22f/0x4de kernel/panic.c:184
->  __warn.cold.8+0x163/0x1b3 kernel/panic.c:536
->  report_bug+0x252/0x2d0 lib/bug.c:186
->  fixup_bug arch/x86/kernel/traps.c:178 [inline]
->  do_error_trap+0x1fc/0x4d0 arch/x86/kernel/traps.c:296
->  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:316
->  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
-> RIP: 0010:do_dentry_open+0x4ad/0xe40 fs/open.c:778
-> Code: 7b 28 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00
-> 0f 85 15 08 00 00 48 c7 43 28 00 00 00 00 e8 f3 6d ba ff <0f> 0b e8 ec 6d ba
-> ff 48 8d 43 18 41 be ed ff ff ff 48 89 45 c0 e9
-> RSP: 0018:ffff8801afcaf7c8 EFLAGS: 00010293
-> RAX: ffff8801afe08400 RBX: ffff8801b099e0c0 RCX: ffffffff81bfccf6
-> RDX: 0000000000000000 RSI: ffffffff81bfcf6d RDI: ffff8801b099e0e8
-> RBP: ffff8801afcaf840 R08: ffff8801afe08400 R09: ffffed0036aa2afc
-> R10: ffffed0036aa2afc R11: ffff8801b55157e3 R12: ffff8801ab28d4b0
-> R13: ffff8801ab28d6a8 R14: 0000000000000000 R15: ffff8801b099e13c
->  vfs_open+0x139/0x230 fs/open.c:908
->  do_last fs/namei.c:3370 [inline]
->  path_openat+0x1717/0x4dc0 fs/namei.c:3511
->  do_filp_open+0x249/0x350 fs/namei.c:3545
->  do_sys_open+0x56f/0x740 fs/open.c:1101
->  __do_sys_openat fs/open.c:1128 [inline]
->  __se_sys_openat fs/open.c:1122 [inline]
->  __x64_sys_openat+0x9d/0x100 fs/open.c:1122
->  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x43ff09
-> Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7
-> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff
-> 0f 83 6b 45 00 00 c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007ffe4eafe4f8 EFLAGS: 00000217 ORIG_RAX: 0000000000000101
-> RAX: ffffffffffffffda RBX: 2f30656c69662f2e RCX: 000000000043ff09
-> RDX: 0000000000000040 RSI: 0000000020000100 RDI: ffffffffffffff9c
-> RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
-> R10: 0000000000000004 R11: 0000000000000217 R12: 0000000000401830
-> R13: 00000000004018c0 R14: 0000000000000000 R15: 0000000000000000
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
->
-> --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/000000000000bd54dd056e212189%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+From: Eric Dumazet <edumazet@google.com>
+
+[ Upstream commit 644c7eebbfd59e72982d11ec6cc7d39af12450ae ]
+
+It seems that rtnl_group_changelink() can call do_setlink
+while a prior call to validate_linkmsg(dev = NULL, ...) could
+not validate IFLA_ADDRESS / IFLA_BROADCAST
+
+Make sure do_setlink() calls validate_linkmsg() instead
+of letting its callers having this responsibility.
+
+With help from Dmitry Vyukov, thanks a lot !
+
+BUG: KMSAN: uninit-value in is_valid_ether_addr include/linux/etherdevice.h:199 [inline]
+BUG: KMSAN: uninit-value in eth_prepare_mac_addr_change net/ethernet/eth.c:275 [inline]
+BUG: KMSAN: uninit-value in eth_mac_addr+0x203/0x2b0 net/ethernet/eth.c:308
+CPU: 1 PID: 8695 Comm: syz-executor3 Not tainted 4.17.0-rc5+ #103
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x185/0x1d0 lib/dump_stack.c:113
+ kmsan_report+0x149/0x260 mm/kmsan/kmsan.c:1084
+ __msan_warning_32+0x6e/0xc0 mm/kmsan/kmsan_instr.c:686
+ is_valid_ether_addr include/linux/etherdevice.h:199 [inline]
+ eth_prepare_mac_addr_change net/ethernet/eth.c:275 [inline]
+ eth_mac_addr+0x203/0x2b0 net/ethernet/eth.c:308
+ dev_set_mac_address+0x261/0x530 net/core/dev.c:7157
+ do_setlink+0xbc3/0x5fc0 net/core/rtnetlink.c:2317
+ rtnl_group_changelink net/core/rtnetlink.c:2824 [inline]
+ rtnl_newlink+0x1fe9/0x37a0 net/core/rtnetlink.c:2976
+ rtnetlink_rcv_msg+0xa32/0x1560 net/core/rtnetlink.c:4646
+ netlink_rcv_skb+0x378/0x600 net/netlink/af_netlink.c:2448
+ rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4664
+ netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+ netlink_unicast+0x1678/0x1750 net/netlink/af_netlink.c:1336
+ netlink_sendmsg+0x104f/0x1350 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:629 [inline]
+ sock_sendmsg net/socket.c:639 [inline]
+ ___sys_sendmsg+0xec0/0x1310 net/socket.c:2117
+ __sys_sendmsg net/socket.c:2155 [inline]
+ __do_sys_sendmsg net/socket.c:2164 [inline]
+ __se_sys_sendmsg net/socket.c:2162 [inline]
+ __x64_sys_sendmsg+0x331/0x460 net/socket.c:2162
+ do_syscall_64+0x152/0x230 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x455a09
+RSP: 002b:00007fc07480ec68 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007fc07480f6d4 RCX: 0000000000455a09
+RDX: 0000000000000000 RSI: 00000000200003c0 RDI: 0000000000000014
+RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000000005d0 R14: 00000000006fdc20 R15: 0000000000000000
+
+Uninit was stored to memory at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:279 [inline]
+ kmsan_save_stack mm/kmsan/kmsan.c:294 [inline]
+ kmsan_internal_chain_origin+0x12b/0x210 mm/kmsan/kmsan.c:685
+ kmsan_memcpy_origins+0x11d/0x170 mm/kmsan/kmsan.c:527
+ __msan_memcpy+0x109/0x160 mm/kmsan/kmsan_instr.c:478
+ do_setlink+0xb84/0x5fc0 net/core/rtnetlink.c:2315
+ rtnl_group_changelink net/core/rtnetlink.c:2824 [inline]
+ rtnl_newlink+0x1fe9/0x37a0 net/core/rtnetlink.c:2976
+ rtnetlink_rcv_msg+0xa32/0x1560 net/core/rtnetlink.c:4646
+ netlink_rcv_skb+0x378/0x600 net/netlink/af_netlink.c:2448
+ rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4664
+ netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+ netlink_unicast+0x1678/0x1750 net/netlink/af_netlink.c:1336
+ netlink_sendmsg+0x104f/0x1350 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:629 [inline]
+ sock_sendmsg net/socket.c:639 [inline]
+ ___sys_sendmsg+0xec0/0x1310 net/socket.c:2117
+ __sys_sendmsg net/socket.c:2155 [inline]
+ __do_sys_sendmsg net/socket.c:2164 [inline]
+ __se_sys_sendmsg net/socket.c:2162 [inline]
+ __x64_sys_sendmsg+0x331/0x460 net/socket.c:2162
+ do_syscall_64+0x152/0x230 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Uninit was created at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:279 [inline]
+ kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:189
+ kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:315
+ kmsan_slab_alloc+0x10/0x20 mm/kmsan/kmsan.c:322
+ slab_post_alloc_hook mm/slab.h:446 [inline]
+ slab_alloc_node mm/slub.c:2753 [inline]
+ __kmalloc_node_track_caller+0xb32/0x11b0 mm/slub.c:4395
+ __kmalloc_reserve net/core/skbuff.c:138 [inline]
+ __alloc_skb+0x2cb/0x9e0 net/core/skbuff.c:206
+ alloc_skb include/linux/skbuff.h:988 [inline]
+ netlink_alloc_large_skb net/netlink/af_netlink.c:1182 [inline]
+ netlink_sendmsg+0x76e/0x1350 net/netlink/af_netlink.c:1876
+ sock_sendmsg_nosec net/socket.c:629 [inline]
+ sock_sendmsg net/socket.c:639 [inline]
+ ___sys_sendmsg+0xec0/0x1310 net/socket.c:2117
+ __sys_sendmsg net/socket.c:2155 [inline]
+ __do_sys_sendmsg net/socket.c:2164 [inline]
+ __se_sys_sendmsg net/socket.c:2162 [inline]
+ __x64_sys_sendmsg+0x331/0x460 net/socket.c:2162
+ do_syscall_64+0x152/0x230 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Fixes: e7ed828f10bd ("netlink: support setting devgroup parameters")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/core/rtnetlink.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+--- a/net/core/rtnetlink.c
++++ b/net/core/rtnetlink.c
+@@ -1958,6 +1958,10 @@ static int do_setlink(const struct sk_bu
+ 	const struct net_device_ops *ops = dev->netdev_ops;
+ 	int err;
+ 
++	err = validate_linkmsg(dev, tb);
++	if (err < 0)
++		return err;
++
+ 	if (tb[IFLA_NET_NS_PID] || tb[IFLA_NET_NS_FD]) {
+ 		struct net *net = rtnl_link_get_net(dev_net(dev), tb);
+ 		if (IS_ERR(net)) {
+@@ -2296,10 +2300,6 @@ static int rtnl_setlink(struct sk_buff *
+ 		goto errout;
+ 	}
+ 
+-	err = validate_linkmsg(dev, tb);
+-	if (err < 0)
+-		goto errout;
+-
+ 	err = do_setlink(skb, dev, ifm, extack, tb, ifname, 0);
+ errout:
+ 	return err;
