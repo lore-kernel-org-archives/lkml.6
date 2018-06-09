@@ -1,137 +1,243 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id FSXGHufIGlt2RwAAmS7hNA
-	; Fri, 08 Jun 2018 18:20:23 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id wPyeNtHyG1tfYAAAmS7hNA
+	; Sat, 09 Jun 2018 15:32:08 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 63395607A4; Fri,  8 Jun 2018 18:20:23 +0000 (UTC)
+	id 72A2F608C8; Sat,  9 Jun 2018 15:32:08 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ujblgUQD"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mJRK8ZZb"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id AC8B660275;
-	Fri,  8 Jun 2018 18:20:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AC8B660275
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 9D0FF608BF;
+	Sat,  9 Jun 2018 15:32:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9D0FF608BF
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752775AbeFHSUC (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 14:20:02 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:34139 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752253AbeFHSUA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 14:20:00 -0400
-Received: by mail-pg0-f68.google.com with SMTP id q4-v6so5694276pgr.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 11:20:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Vs5iRt1VrW2/DX4LXyPEofd3+5kf1B5DMCidrSCfh1E=;
-        b=ujblgUQDJC/Hsh8ovk/SRg5bLMP4IrzQg1S59zZFTeUBuVSi/VHeiunid/6YeYMouF
-         iAyOuTd5sZ5alXSebfjjF4ZXS/jHKzQw6P/0sLcO/n/t+wp5cl8xyG1CP92IcYFGhBnZ
-         OrylogGRGDjy1q9tH6XcDXrvK6P4YS4C8LyLuEBDGsHiVI1Lg3ywAevSkK7uJGxZ3pNi
-         CC15lm5iwpxrWAoawbRhpKDmJ4dshVhFR/9VZu1GfIpUGfJG+IABiWqkMPf04BJKXaj6
-         T/QPg9K2hzlKHw0aFn7jxoXdyzO7cEzKlz7hIVMsz+q+THfPUeExoX/Sc4xjKHMlssTS
-         ZpbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Vs5iRt1VrW2/DX4LXyPEofd3+5kf1B5DMCidrSCfh1E=;
-        b=ue+p5qem6dk1cJxnLkkMB3e0Ob1ULHqJOcNowH2LVtAZLnpoKB9IxI7tZE3wtsRCOp
-         QO7APZIweuhoTkVcgwCgr1MpuERbv65oWOucabt8m4LEkvujkNqZqEyvV2Y/PCmGd/ud
-         QeA5TW3QN3aA4CJDsAjve3sWbkr8zYIcezxQu04wAlxhiJaddgn7DLH03bai6XxNYoi2
-         2+OSExeYpcwiRaI8J4UhoDAg8LZ06XHcKLwzmd7oBh9vixmYIeFlE5PYcKHLvP5/uBcF
-         sYMEN4QiuxrsUGApxn17tpdWtCBnp35lXY6LTdT/XzvMyl+/Ub5RbuCeDwm0hyMyfH19
-         O3ZA==
-X-Gm-Message-State: APt69E0GSAL76mp9eRvTxyaWhJxL3qT1z3euA1VcOF0+9VRUsjdHSAFw
-        03MYYOLbsUYzOkwq56xDOa37Kg==
-X-Google-Smtp-Source: ADUXVKKTIDlrBCAYruwZUmGEZ+5uBHL+KSIqa6ZpfmaqXkwekmyDmHIOzIsCGp7H3TwMBEMI0BRarQ==
-X-Received: by 2002:a62:f407:: with SMTP id r7-v6mr7053562pff.47.1528481999673;
-        Fri, 08 Jun 2018 11:19:59 -0700 (PDT)
-Received: from decatoncale.mtv.corp.google.com ([2620:0:1000:1501:e4e8:e3c6:19f1:ae51])
-        by smtp.gmail.com with ESMTPSA id r5-v6sm73943900pgp.81.2018.06.08.11.19.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 08 Jun 2018 11:19:58 -0700 (PDT)
-Date: Fri, 8 Jun 2018 11:19:56 -0700
-From: Benson Leung <bleung@google.com>
-To: Arnd Bergmann <arnd@arndb.de>,
-        Gwendal Grignou <gwendal@chromium.org>
-Cc: Lee Jones <lee.jones@linaro.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Benson Leung <bleung@chromium.org>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mfd: cros_ec: remove unused __remove function
-Message-ID: <20180608181956.GA110395@decatoncale.mtv.corp.google.com>
-References: <20180608144834.3003465-1-arnd@arndb.de>
+        id S932368AbeFIPcD (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:32:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34500 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932341AbeFIPb7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:31:59 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38D6420896;
+        Sat,  9 Jun 2018 15:31:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558318;
+        bh=4ocQXgM48gCYYi6FjY2tJfR/++12OwPpAlwpW++3Jm4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=mJRK8ZZb8EhREMVRnyxnKIa2gvfRwjxd/sgWNAYyWp6K9kMlKmuC2GEErjKXPt/PF
+         eCqm2koF1eAmNTj+cqpVOBjYR8jTXhfBHxplF0knyRLS5Lvpm5/ktss/iuNsuqgMdQ
+         xk1tA6NE1qqi6z6FrJFYHCFKTFSdn1t1rpHeSeRI=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 15/48] isdn: eicon: fix a missing-check bug
+Date: Sat,  9 Jun 2018 17:29:27 +0200
+Message-Id: <20180609145948.612797449@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
+References: <20180609145947.679103414@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="VS++wcV0S1rZb1Fb"
-Content-Disposition: inline
-In-Reply-To: <20180608144834.3003465-1-arnd@arndb.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
---VS++wcV0S1rZb1Fb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+------------------
 
+From: Wenwen Wang <wang6495@umn.edu>
 
-On Fri, Jun 08, 2018 at 04:48:06PM +0200, Arnd Bergmann wrote:
-> This function is no longer called, so we get a harmless
-> warning until it is removed as well:
->=20
-> drivers/mfd/cros_ec_dev.c:265:13: error: '__remove' defined but not used =
-[-Werror=3Dunused-function]
->=20
-> Fixes: 3aa2177e4787 ("mfd: cros_ec: Use devm_kzalloc for private data")
+[ Upstream commit 6009d1fe6ba3bb2dab55921da60465329cc1cd89 ]
 
-Gwendal, in PATCH v2 of https://patchwork.kernel.org/patch/10439449/
-you mentioned that you readded the __remove to avoid a warning when built
-as a module. Can you explain what's going on?
+In divasmain.c, the function divas_write() firstly invokes the function
+diva_xdi_open_adapter() to open the adapter that matches with the adapter
+number provided by the user, and then invokes the function diva_xdi_write()
+to perform the write operation using the matched adapter. The two functions
+diva_xdi_open_adapter() and diva_xdi_write() are located in diva.c.
 
-Benson
+In diva_xdi_open_adapter(), the user command is copied to the object 'msg'
+from the userspace pointer 'src' through the function pointer 'cp_fn',
+which eventually calls copy_from_user() to do the copy. Then, the adapter
+number 'msg.adapter' is used to find out a matched adapter from the
+'adapter_queue'. A matched adapter will be returned if it is found.
+Otherwise, NULL is returned to indicate the failure of the verification on
+the adapter number.
 
---=20
-Benson Leung
-Staff Software Engineer
-Chrome OS Kernel
-Google Inc.
-bleung@google.com
-Chromium OS Project
-bleung@chromium.org
+As mentioned above, if a matched adapter is returned, the function
+diva_xdi_write() is invoked to perform the write operation. In this
+function, the user command is copied once again from the userspace pointer
+'src', which is the same as the 'src' pointer in diva_xdi_open_adapter() as
+both of them are from the 'buf' pointer in divas_write(). Similarly, the
+copy is achieved through the function pointer 'cp_fn', which finally calls
+copy_from_user(). After the successful copy, the corresponding command
+processing handler of the matched adapter is invoked to perform the write
+operation.
 
---VS++wcV0S1rZb1Fb
-Content-Type: application/pgp-signature; name="signature.asc"
+It is obvious that there are two copies here from userspace, one is in
+diva_xdi_open_adapter(), and one is in diva_xdi_write(). Plus, both of
+these two copies share the same source userspace pointer, i.e., the 'buf'
+pointer in divas_write(). Given that a malicious userspace process can race
+to change the content pointed by the 'buf' pointer, this can pose potential
+security issues. For example, in the first copy, the user provides a valid
+adapter number to pass the verification process and a valid adapter can be
+found. Then the user can modify the adapter number to an invalid number.
+This way, the user can bypass the verification process of the adapter
+number and inject inconsistent data.
 
------BEGIN PGP SIGNATURE-----
+This patch reuses the data copied in
+diva_xdi_open_adapter() and passes it to diva_xdi_write(). This way, the
+above issues can be avoided.
 
-iQIzBAABCgAdFiEE6gYDF28Li+nEiKLaHwn1ewov5lgFAlsayMwACgkQHwn1ewov
-5lhSoQ/+P+/xLWQgcMugSg+mU0KLOBdsgfYbfVVA3ya03Ymj0bfBQT4JxTbN2a82
-WG14YCsDSiU+3KPDyGo9OAWTEZ4mkqaJtnxRtRjpVz/HgYnD8QfuEm0PpfVoJglJ
-3yE7ClFt/g8DrxlMY5i0Lpl4/ZZVa1D8hkTcvUvdeTENItI17OnH27CWn2mVN3BU
-F6XASvbTipNWGjebP4W9lYEOyU0vn9G0Jt+lUTXGJLPZfdArXR+0O1ziO0wN1JD7
-FJDi6Fd9BZx1bIy9qqpK9kY1tSp57ZGzCCWFDDSZPhfXvG4QX0iWny6AhYbkS2SN
-ztI3i4LiYYnKJOWEZWKHO1wO4+v2omFURzHcyKzi/p48mF46ikxLhLRl/K4ps731
-GtMSM85apguL2WCygovgCI55Dlq50I2t3ma1lDESR6bCpSARhkvMvNnEu+djh6bb
-4HNu1fr4bGfqSVT/UHwEQmvgns9oGB6CyRz8NhHFGRf/y2Bje7CPQPotepBqXAh/
-1UG+ENgVMoLOfA4VeF/ZTLxiBcGWthlaG5lpeKi8mH7qqWBowg+A5BOnSbCd0a6Y
-XtrFISZxATK28PL7dKGt+0n0xkj94LyByuZL6dI0C+6cCqYT+MolRfXu4WWj3Qt3
-eCYbcp8mi3zI1VHtvvhIhiJ5/aWaWCbV4+bd4bxBX6FohLngwuk=
-=ft7/
------END PGP SIGNATURE-----
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/isdn/hardware/eicon/diva.c      |   22 +++++++++++++++-------
+ drivers/isdn/hardware/eicon/diva.h      |    5 +++--
+ drivers/isdn/hardware/eicon/divasmain.c |   18 +++++++++++-------
+ 3 files changed, 29 insertions(+), 16 deletions(-)
 
---VS++wcV0S1rZb1Fb--
+--- a/drivers/isdn/hardware/eicon/diva.c
++++ b/drivers/isdn/hardware/eicon/diva.c
+@@ -388,10 +388,10 @@ void divasa_xdi_driver_unload(void)
+ **  Receive and process command from user mode utility
+ */
+ void *diva_xdi_open_adapter(void *os_handle, const void __user *src,
+-			    int length,
++			    int length, void *mptr,
+ 			    divas_xdi_copy_from_user_fn_t cp_fn)
+ {
+-	diva_xdi_um_cfg_cmd_t msg;
++	diva_xdi_um_cfg_cmd_t *msg = (diva_xdi_um_cfg_cmd_t *)mptr;
+ 	diva_os_xdi_adapter_t *a = NULL;
+ 	diva_os_spin_lock_magic_t old_irql;
+ 	struct list_head *tmp;
+@@ -401,21 +401,21 @@ void *diva_xdi_open_adapter(void *os_han
+ 			 length, sizeof(diva_xdi_um_cfg_cmd_t)))
+ 			return NULL;
+ 	}
+-	if ((*cp_fn) (os_handle, &msg, src, sizeof(msg)) <= 0) {
++	if ((*cp_fn) (os_handle, msg, src, sizeof(*msg)) <= 0) {
+ 		DBG_ERR(("A: A(?) open, write error"))
+ 			return NULL;
+ 	}
+ 	diva_os_enter_spin_lock(&adapter_lock, &old_irql, "open_adapter");
+ 	list_for_each(tmp, &adapter_queue) {
+ 		a = list_entry(tmp, diva_os_xdi_adapter_t, link);
+-		if (a->controller == (int)msg.adapter)
++		if (a->controller == (int)msg->adapter)
+ 			break;
+ 		a = NULL;
+ 	}
+ 	diva_os_leave_spin_lock(&adapter_lock, &old_irql, "open_adapter");
+ 
+ 	if (!a) {
+-		DBG_ERR(("A: A(%d) open, adapter not found", msg.adapter))
++		DBG_ERR(("A: A(%d) open, adapter not found", msg->adapter))
+ 			}
+ 
+ 	return (a);
+@@ -437,8 +437,10 @@ void diva_xdi_close_adapter(void *adapte
+ 
+ int
+ diva_xdi_write(void *adapter, void *os_handle, const void __user *src,
+-	       int length, divas_xdi_copy_from_user_fn_t cp_fn)
++	       int length, void *mptr,
++	       divas_xdi_copy_from_user_fn_t cp_fn)
+ {
++	diva_xdi_um_cfg_cmd_t *msg = (diva_xdi_um_cfg_cmd_t *)mptr;
+ 	diva_os_xdi_adapter_t *a = (diva_os_xdi_adapter_t *) adapter;
+ 	void *data;
+ 
+@@ -459,7 +461,13 @@ diva_xdi_write(void *adapter, void *os_h
+ 			return (-2);
+ 	}
+ 
+-	length = (*cp_fn) (os_handle, data, src, length);
++	if (msg) {
++		*(diva_xdi_um_cfg_cmd_t *)data = *msg;
++		length = (*cp_fn) (os_handle, (char *)data + sizeof(*msg),
++				   src + sizeof(*msg), length - sizeof(*msg));
++	} else {
++		length = (*cp_fn) (os_handle, data, src, length);
++	}
+ 	if (length > 0) {
+ 		if ((*(a->interface.cmd_proc))
+ 		    (a, (diva_xdi_um_cfg_cmd_t *) data, length)) {
+--- a/drivers/isdn/hardware/eicon/diva.h
++++ b/drivers/isdn/hardware/eicon/diva.h
+@@ -20,10 +20,11 @@ int diva_xdi_read(void *adapter, void *o
+ 		  int max_length, divas_xdi_copy_to_user_fn_t cp_fn);
+ 
+ int diva_xdi_write(void *adapter, void *os_handle, const void __user *src,
+-		   int length, divas_xdi_copy_from_user_fn_t cp_fn);
++		   int length, void *msg,
++		   divas_xdi_copy_from_user_fn_t cp_fn);
+ 
+ void *diva_xdi_open_adapter(void *os_handle, const void __user *src,
+-			    int length,
++			    int length, void *msg,
+ 			    divas_xdi_copy_from_user_fn_t cp_fn);
+ 
+ void diva_xdi_close_adapter(void *adapter, void *os_handle);
+--- a/drivers/isdn/hardware/eicon/divasmain.c
++++ b/drivers/isdn/hardware/eicon/divasmain.c
+@@ -591,19 +591,22 @@ static int divas_release(struct inode *i
+ static ssize_t divas_write(struct file *file, const char __user *buf,
+ 			   size_t count, loff_t *ppos)
+ {
++	diva_xdi_um_cfg_cmd_t msg;
+ 	int ret = -EINVAL;
+ 
+ 	if (!file->private_data) {
+ 		file->private_data = diva_xdi_open_adapter(file, buf,
+-							   count,
++							   count, &msg,
+ 							   xdi_copy_from_user);
+-	}
+-	if (!file->private_data) {
+-		return (-ENODEV);
++		if (!file->private_data)
++			return (-ENODEV);
++		ret = diva_xdi_write(file->private_data, file,
++				     buf, count, &msg, xdi_copy_from_user);
++	} else {
++		ret = diva_xdi_write(file->private_data, file,
++				     buf, count, NULL, xdi_copy_from_user);
+ 	}
+ 
+-	ret = diva_xdi_write(file->private_data, file,
+-			     buf, count, xdi_copy_from_user);
+ 	switch (ret) {
+ 	case -1:		/* Message should be removed from rx mailbox first */
+ 		ret = -EBUSY;
+@@ -622,11 +625,12 @@ static ssize_t divas_write(struct file *
+ static ssize_t divas_read(struct file *file, char __user *buf,
+ 			  size_t count, loff_t *ppos)
+ {
++	diva_xdi_um_cfg_cmd_t msg;
+ 	int ret = -EINVAL;
+ 
+ 	if (!file->private_data) {
+ 		file->private_data = diva_xdi_open_adapter(file, buf,
+-							   count,
++							   count, &msg,
+ 							   xdi_copy_from_user);
+ 	}
+ 	if (!file->private_data) {
