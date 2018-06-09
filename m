@@ -1,92 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id gr8KCia/G1tpfAAAmS7hNA
-	; Sat, 09 Jun 2018 11:51:04 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id TwSdB7PzG1sTZwAAmS7hNA
+	; Sat, 09 Jun 2018 15:35:33 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id ADDBC607A4; Sat,  9 Jun 2018 11:51:04 +0000 (UTC)
+	id B5786608BF; Sat,  9 Jun 2018 15:35:33 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GibFu6/u"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 3328F602FC;
-	Sat,  9 Jun 2018 11:51:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3328F602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 27080608B8;
+	Sat,  9 Jun 2018 15:35:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 27080608B8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753230AbeFILvB (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 07:51:01 -0400
-Received: from mga14.intel.com ([192.55.52.115]:54010 "EHLO mga14.intel.com"
+        id S933068AbeFIPfb (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:35:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753143AbeFILu7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 07:50:59 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jun 2018 04:50:58 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,494,1520924400";
-   d="scan'208";a="45847041"
-Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
-  by fmsmga007.fm.intel.com with ESMTP; 09 Jun 2018 04:50:56 -0700
-Received: from kbuild by bee with local (Exim 4.84_2)
-        (envelope-from <lkp@intel.com>)
-        id 1fRcOV-00017M-RC; Sat, 09 Jun 2018 19:50:55 +0800
-Date: Sat, 9 Jun 2018 19:50:42 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Sayali Lokhande <sayalil@codeaurora.org>
-Cc: kbuild-all@01.org, subhashj@codeaurora.org, cang@codeaurora.org,
-        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
-        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, asutoshd@codeaurora.org,
-        evgreen@chromium.org, linux-scsi@vger.kernel.org,
-        Sayali Lokhande <sayalil@codeaurora.org>,
-        Stanislav Nijnikov <stanislav.nijnikov@wdc.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2 3/3] scsi: ufs: Add sysfs support for ufs provision
-Message-ID: <201806091753.98roOzz9%fengguang.wu@intel.com>
-References: <1528455990-24572-4-git-send-email-sayalil@codeaurora.org>
+        id S932783AbeFIPf1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:35:27 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A2E6208A3;
+        Sat,  9 Jun 2018 15:35:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558526;
+        bh=hhGinPM0qWJzceoDQdEcahjBbuxqmzXNKU9kSC3Rt1U=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GibFu6/uofDQE6pPfDA3DcdEOltppoZqj3XnyIY2hoj7zvlFcAyc+UkeoO5rNDnaD
+         8Mgs1NDFSPBjNsKdKEu+xx9UiAUhZeC8+LLdNnCIc0BwQVtHGDhLIkDLpSP4FceGWn
+         4Ec62we16+DT40x576dTGEkQFsy5n1h4zJQVC4pQ=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, DaeRyong Jeong <threeearcat@gmail.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Willem de Bruijn <willemb@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 14/41] ipv4: remove warning in ip_recv_error
+Date: Sat,  9 Jun 2018 17:29:46 +0200
+Message-Id: <20180609152927.205702978@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609152926.389750182@linuxfoundation.org>
+References: <20180609152926.389750182@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1528455990-24572-4-git-send-email-sayalil@codeaurora.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: lkp@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sayali,
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Thank you for the patch! Perhaps something to improve:
+------------------
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on v4.17 next-20180608]
-[cannot apply to mkp-scsi/for-next scsi/for-next]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+From: Willem de Bruijn <willemb@google.com>
 
-url:    https://github.com/0day-ci/linux/commits/Sayali-Lokhande/Add-ufs-provisioning-support-in-driver/20180609-151315
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
+[ Upstream commit 730c54d59403658a62af6517338fa8d4922c1b28 ]
 
+A precondition check in ip_recv_error triggered on an otherwise benign
+race. Remove the warning.
 
-sparse warnings: (new ones prefixed by >>)
+The warning triggers when passing an ipv6 socket to this ipv4 error
+handling function. RaceFuzzer was able to trigger it due to a race
+in setsockopt IPV6_ADDRFORM.
 
->> drivers/scsi/ufs/ufs-sysfs.c:267:1: sparse: symbol 'dev_attr_ufs_provision' was not declared. Should it be static?
+  ---
+  CPU0
+    do_ipv6_setsockopt
+      sk->sk_socket->ops = &inet_dgram_ops;
 
-Please review and possibly fold the followup patch.
+  ---
+  CPU1
+    sk->sk_prot->recvmsg
+      udp_recvmsg
+        ip_recv_error
+          WARN_ON_ONCE(sk->sk_family == AF_INET6);
 
+  ---
+  CPU0
+    do_ipv6_setsockopt
+      sk->sk_family = PF_INET;
+
+This socket option converts a v6 socket that is connected to a v4 peer
+to an v4 socket. It updates the socket on the fly, changing fields in
+sk as well as other structs. This is inherently non-atomic. It races
+with the lockless udp_recvmsg path.
+
+No other code makes an assumption that these fields are updated
+atomically. It is benign here, too, as ip_recv_error cares only about
+the protocol of the skbs enqueued on the error queue, for which
+sk_family is not a precise predictor (thanks to another isue with
+IPV6_ADDRFORM).
+
+Link: http://lkml.kernel.org/r/20180518120826.GA19515@dragonet.kaist.ac.kr
+Fixes: 7ce875e5ecb8 ("ipv4: warn once on passing AF_INET6 socket to ip_recv_error")
+Reported-by: DaeRyong Jeong <threeearcat@gmail.com>
+Suggested-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Willem de Bruijn <willemb@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ net/ipv4/ip_sockglue.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+--- a/net/ipv4/ip_sockglue.c
++++ b/net/ipv4/ip_sockglue.c
+@@ -511,8 +511,6 @@ int ip_recv_error(struct sock *sk, struc
+ 	int err;
+ 	int copied;
+ 
+-	WARN_ON_ONCE(sk->sk_family == AF_INET6);
+-
+ 	err = -EAGAIN;
+ 	skb = sock_dequeue_err_skb(sk);
+ 	if (!skb)
