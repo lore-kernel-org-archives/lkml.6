@@ -1,320 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id +LNHEnBDGVsXCAAAmS7hNA
-	; Thu, 07 Jun 2018 14:42:40 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id YAqPFSHzG1v0YgAAmS7hNA
+	; Sat, 09 Jun 2018 15:33:42 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id E6604608D4; Thu,  7 Jun 2018 14:42:39 +0000 (UTC)
+	id 945CE608CA; Sat,  9 Jun 2018 15:33:42 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qqr7HUhT"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 71FC6608CD;
-	Thu,  7 Jun 2018 14:42:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 71FC6608CD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id EACC4606FA;
+	Sat,  9 Jun 2018 15:33:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EACC4606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934746AbeFGOmf (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:42:35 -0400
-Received: from mga17.intel.com ([192.55.52.151]:61234 "EHLO mga17.intel.com"
+        id S932727AbeFIPdj (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:33:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35958 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933527AbeFGOmb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:42:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 07:42:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
-   d="scan'208";a="235505941"
-Received: from 2b52.sc.intel.com ([143.183.136.51])
-  by fmsmga006.fm.intel.com with ESMTP; 07 Jun 2018 07:42:29 -0700
-From: Yu-cheng Yu <yu-cheng.yu@intel.com>
-To: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [PATCH 2/7] x86/cet: User-mode indirect branch tracking support
-Date: Thu,  7 Jun 2018 07:38:50 -0700
-Message-Id: <20180607143855.3681-3-yu-cheng.yu@intel.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180607143855.3681-1-yu-cheng.yu@intel.com>
-References: <20180607143855.3681-1-yu-cheng.yu@intel.com>
+        id S1753618AbeFIPdf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:33:35 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4554B204EC;
+        Sat,  9 Jun 2018 15:33:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558415;
+        bh=pfhckHhAqVX3mpjbfo0o7hpPMhQ840WnmIlH7NBU0OE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=qqr7HUhTysnfvbNajUqF8lNRUK4lkzGrINT6SLwp4YS+b9ZniQ1nBHN9n44MYQB7Z
+         bUoVmj76viP3gx8pJDeQUxgmvmFe2ncJ1FoXbA7blAHhRBIn3GbmI73DGk+SfNbtlf
+         O0b7INzE1NF9oXFBZMVH+1edL1T9mfi52puoP3fg=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        syzbot+5f1a04e374a635efc426@syzkaller.appspotmail.com,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 16/48] kcm: Fix use-after-free caused by clonned sockets
+Date: Sat,  9 Jun 2018 17:29:28 +0200
+Message-Id: <20180609145948.683183279@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
+References: <20180609145947.679103414@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add user-mode indirect branch tracking enabling/disabling
-and supporting routines.
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
-Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+------------------
+
+From: Kirill Tkhai <ktkhai@virtuozzo.com>
+
+[ Upstream commit eb7f54b90bd8f469834c5e86dcf72ebf9a629811 ]
+
+(resend for properly queueing in patchwork)
+
+kcm_clone() creates kernel socket, which does not take net counter.
+Thus, the net may die before the socket is completely destructed,
+i.e. kcm_exit_net() is executed before kcm_done().
+
+Reported-by: syzbot+5f1a04e374a635efc426@syzkaller.appspotmail.com
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/cet.h               |  8 ++++
- arch/x86/include/asm/disabled-features.h |  8 +++-
- arch/x86/kernel/cet.c                    | 73 ++++++++++++++++++++++++++++++++
- arch/x86/kernel/cpu/common.c             | 20 ++++++++-
- arch/x86/kernel/elf.c                    | 15 ++++++-
- arch/x86/kernel/process.c                |  1 +
- 6 files changed, 122 insertions(+), 3 deletions(-)
+ net/kcm/kcmsock.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/cet.h b/arch/x86/include/asm/cet.h
-index a2a53fe4d5e6..d07bdeb27db4 100644
---- a/arch/x86/include/asm/cet.h
-+++ b/arch/x86/include/asm/cet.h
-@@ -13,7 +13,10 @@ struct cet_stat {
- 	unsigned long	shstk_base;
- 	unsigned long	shstk_size;
- 	unsigned long	exec_shstk_size;
-+	unsigned long	ibt_bitmap_addr;
-+	unsigned long	ibt_bitmap_size;
- 	unsigned int	shstk_enabled:1;
-+	unsigned int	ibt_enabled:1;
- 	unsigned int	locked:1;
- 	unsigned int	exec_shstk:2;
- };
-@@ -29,6 +32,9 @@ void cet_disable_shstk(void);
- void cet_disable_free_shstk(struct task_struct *p);
- int cet_restore_signal(unsigned long ssp);
- int cet_setup_signal(int ia32, unsigned long addr);
-+int cet_setup_ibt(void);
-+int cet_setup_ibt_bitmap(void);
-+void cet_disable_ibt(void);
- #else
- static inline int prctl_cet(int option, unsigned long arg2) { return 0; }
- static inline unsigned long cet_get_shstk_ptr(void) { return 0; }
-@@ -41,6 +47,8 @@ static inline void cet_disable_shstk(void) {}
- static inline void cet_disable_free_shstk(struct task_struct *p) {}
- static inline int cet_restore_signal(unsigned long ssp) { return 0; }
- static inline int cet_setup_signal(int ia32, unsigned long addr) { return 0; }
-+static inline int cet_setup_ibt(void) { return 0; }
-+static inline void cet_disable_ibt(void) {}
- #endif
+--- a/net/kcm/kcmsock.c
++++ b/net/kcm/kcmsock.c
+@@ -1671,7 +1671,7 @@ static struct file *kcm_clone(struct soc
+ 	__module_get(newsock->ops->owner);
  
- #endif /* __ASSEMBLY__ */
-diff --git a/arch/x86/include/asm/disabled-features.h b/arch/x86/include/asm/disabled-features.h
-index 3624a11e5ba6..ce5bdaf0f1ff 100644
---- a/arch/x86/include/asm/disabled-features.h
-+++ b/arch/x86/include/asm/disabled-features.h
-@@ -62,6 +62,12 @@
- #define DISABLE_SHSTK	(1<<(X86_FEATURE_SHSTK & 31))
- #endif
- 
-+#ifdef CONFIG_X86_INTEL_BRANCH_TRACKING_USER
-+#define DISABLE_IBT	0
-+#else
-+#define DISABLE_IBT	(1<<(X86_FEATURE_IBT & 31))
-+#endif
-+
- /*
-  * Make sure to add features to the correct mask
-  */
-@@ -72,7 +78,7 @@
- #define DISABLED_MASK4	(DISABLE_PCID)
- #define DISABLED_MASK5	0
- #define DISABLED_MASK6	0
--#define DISABLED_MASK7	(DISABLE_PTI)
-+#define DISABLED_MASK7	(DISABLE_PTI|DISABLE_IBT)
- #define DISABLED_MASK8	0
- #define DISABLED_MASK9	(DISABLE_MPX)
- #define DISABLED_MASK10	0
-diff --git a/arch/x86/kernel/cet.c b/arch/x86/kernel/cet.c
-index 1b7089dcf1ea..4df4b583311f 100644
---- a/arch/x86/kernel/cet.c
-+++ b/arch/x86/kernel/cet.c
-@@ -12,6 +12,8 @@
- #include <linux/slab.h>
- #include <linux/uaccess.h>
- #include <linux/sched/signal.h>
-+#include <linux/vmalloc.h>
-+#include <linux/bitops.h>
- #include <asm/msr.h>
- #include <asm/user.h>
- #include <asm/fpu/xstate.h>
-@@ -222,3 +224,74 @@ int cet_setup_signal(int ia32, unsigned long rstor_addr)
- 
- 	return cet_push_shstk(ia32, ssp, rstor_addr);
- }
-+
-+static unsigned long ibt_mmap(unsigned long addr, unsigned long len)
-+{
-+	struct mm_struct *mm = current->mm;
-+	unsigned long populate;
-+
-+	down_write(&mm->mmap_sem);
-+	addr = do_mmap(NULL, addr, len, PROT_READ | PROT_WRITE,
-+		       MAP_ANONYMOUS | MAP_PRIVATE,
-+		       VM_DONTDUMP, 0, &populate, NULL);
-+	up_write(&mm->mmap_sem);
-+
-+	if (populate)
-+		mm_populate(addr, populate);
-+
-+	return addr;
-+}
-+
-+int cet_setup_ibt(void)
-+{
-+	u64 r;
-+
-+	if (!cpu_feature_enabled(X86_FEATURE_IBT))
-+		return -EOPNOTSUPP;
-+
-+	rdmsrl(MSR_IA32_U_CET, r);
-+	r |= (MSR_IA32_CET_ENDBR_EN | MSR_IA32_CET_NO_TRACK_EN);
-+	wrmsrl(MSR_IA32_U_CET, r);
-+	current->thread.cet.ibt_enabled = 1;
-+	return 0;
-+}
-+
-+int cet_setup_ibt_bitmap(void)
-+{
-+	u64 r;
-+	unsigned long bitmap;
-+	unsigned long size;
-+
-+	if (!cpu_feature_enabled(X86_FEATURE_IBT))
-+		return -EOPNOTSUPP;
-+
-+	size = TASK_SIZE / PAGE_SIZE / BITS_PER_BYTE;
-+	bitmap = ibt_mmap(0, size);
-+
-+	if (bitmap >= TASK_SIZE)
-+		return -ENOMEM;
-+
-+	bitmap &= PAGE_MASK;
-+
-+	rdmsrl(MSR_IA32_U_CET, r);
-+	r |= (MSR_IA32_CET_LEG_IW_EN | bitmap);
-+	wrmsrl(MSR_IA32_U_CET, r);
-+
-+	current->thread.cet.ibt_bitmap_addr = bitmap;
-+	current->thread.cet.ibt_bitmap_size = size;
-+	return 0;
-+}
-+
-+void cet_disable_ibt(void)
-+{
-+	u64 r;
-+
-+	if (!cpu_feature_enabled(X86_FEATURE_IBT))
-+		return;
-+
-+	rdmsrl(MSR_IA32_U_CET, r);
-+	r &= ~(MSR_IA32_CET_ENDBR_EN | MSR_IA32_CET_LEG_IW_EN |
-+	       MSR_IA32_CET_NO_TRACK_EN);
-+	wrmsrl(MSR_IA32_U_CET, r);
-+	current->thread.cet.ibt_enabled = 0;
-+}
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index f54fabdaef60..4041d6b94455 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -403,7 +403,8 @@ __setup("nopku", setup_disable_pku);
- 
- static __always_inline void setup_cet(struct cpuinfo_x86 *c)
- {
--	if (cpu_feature_enabled(X86_FEATURE_SHSTK))
-+	if (cpu_feature_enabled(X86_FEATURE_SHSTK) ||
-+	    cpu_feature_enabled(X86_FEATURE_IBT))
- 		cr4_set_bits(X86_CR4_CET);
- }
- 
-@@ -424,6 +425,23 @@ static __init int setup_disable_shstk(char *s)
- __setup("noshstk", setup_disable_shstk);
- #endif
- 
-+#ifdef CONFIG_X86_INTEL_BRANCH_TRACKING_USER
-+static __init int setup_disable_ibt(char *s)
-+{
-+	/* require an exact match without trailing characters */
-+	if (strlen(s))
-+		return 0;
-+
-+	if (!boot_cpu_has(X86_FEATURE_IBT))
-+		return 1;
-+
-+	setup_clear_cpu_cap(X86_FEATURE_IBT);
-+	pr_info("x86: 'noibt' specified, disabling Branch Tracking\n");
-+	return 1;
-+}
-+__setup("noibt", setup_disable_ibt);
-+#endif
-+
- /*
-  * Some CPU features depend on higher CPUID levels, which may not always
-  * be available due to CPUID level capping or broken virtualization
-diff --git a/arch/x86/kernel/elf.c b/arch/x86/kernel/elf.c
-index de08d41971f6..a3995c8c2fc2 100644
---- a/arch/x86/kernel/elf.c
-+++ b/arch/x86/kernel/elf.c
-@@ -18,6 +18,7 @@
- #include <linux/fs.h>
- #include <linux/uaccess.h>
- #include <linux/string.h>
-+#include <linux/compat.h>
- 
- #define ELF_NOTE_DESC_OFFSET(n, align) \
- 	round_up(sizeof(*n) + n->n_namesz, (align))
-@@ -183,7 +184,8 @@ int arch_setup_features(void *ehdr_p, void *phdr_p,
- 
- 	struct elf64_hdr *ehdr64 = ehdr_p;
- 
--	if (!cpu_feature_enabled(X86_FEATURE_SHSTK))
-+	if (!cpu_feature_enabled(X86_FEATURE_SHSTK) &&
-+	    !cpu_feature_enabled(X86_FEATURE_IBT))
- 		return 0;
- 
- 	if (ehdr64->e_ident[EI_CLASS] == ELFCLASS64) {
-@@ -211,6 +213,9 @@ int arch_setup_features(void *ehdr_p, void *phdr_p,
- 	current->thread.cet.shstk_enabled = 0;
- 	current->thread.cet.shstk_base = 0;
- 	current->thread.cet.shstk_size = 0;
-+	current->thread.cet.ibt_enabled = 0;
-+	current->thread.cet.ibt_bitmap_addr = 0;
-+	current->thread.cet.ibt_bitmap_size = 0;
- 	current->thread.cet.locked = 0;
- 	if (cpu_feature_enabled(X86_FEATURE_SHSTK)) {
- 		int exec = current->thread.cet.exec_shstk;
-@@ -224,6 +229,14 @@ int arch_setup_features(void *ehdr_p, void *phdr_p,
- 		}
- 	}
- 
-+	if (cpu_feature_enabled(X86_FEATURE_IBT)) {
-+		if (ibt) {
-+			err = cet_setup_ibt();
-+			if (err < 0)
-+				goto out;
-+		}
-+	}
-+
- 	/*
- 	 * Lockout CET features if no interpreter
- 	 */
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index 54ad1863c6d2..9bec164e7958 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -139,6 +139,7 @@ void flush_thread(void)
- 	memset(tsk->thread.tls_array, 0, sizeof(tsk->thread.tls_array));
- 
- 	cet_disable_shstk();
-+	cet_disable_ibt();
- 	fpu__clear(&tsk->thread.fpu);
- }
- 
--- 
-2.15.1
+ 	newsk = sk_alloc(sock_net(osock->sk), PF_KCM, GFP_KERNEL,
+-			 &kcm_proto, true);
++			 &kcm_proto, false);
+ 	if (!newsk) {
+ 		sock_release(newsock);
+ 		return ERR_PTR(-ENOMEM);
