@@ -1,173 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id gU5CCto9GVvtRQAAmS7hNA
-	; Thu, 07 Jun 2018 14:16:22 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 1qqJAIfVG1s6SQAAmS7hNA
+	; Sat, 09 Jun 2018 13:26:34 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id A4F48608BA; Thu,  7 Jun 2018 14:16:22 +0000 (UTC)
+	id C25BA608B8; Sat,  9 Jun 2018 13:26:34 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 055256063F;
-	Thu,  7 Jun 2018 14:16:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 055256063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 39862607BB;
+	Sat,  9 Jun 2018 13:26:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 39862607BB
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=hygon.cn
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933326AbeFGOQU (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:16:20 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39592 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933103AbeFGOJP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:09:15 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbF-0005hL-QP; Thu, 07 Jun 2018 15:09:13 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbC-0003FC-OX; Thu, 07 Jun 2018 15:09:10 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Oleg Nesterov" <oleg@redhat.com>,
-        "Benjamin LaHaise" <bcrl@kvack.org>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.102450320@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 354/410] aio: change exit_aio() to load
- mm->ioctx_table once and avoid rcu_read_lock()
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        id S1753301AbeFIN0a (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 09:26:30 -0400
+Received: from smtp21.cstnet.cn ([159.226.251.21]:39232 "EHLO cstnet.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753171AbeFIN01 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 09:26:27 -0400
+X-Greylist: delayed 308 seconds by postgrey-1.27 at vger.kernel.org; Sat, 09 Jun 2018 09:26:25 EDT
+Received: from pw-vbox.higon.com (unknown [182.150.46.145])
+        by APP-01 (Coremail) with SMTP id qwCowAB3V5g11RtbSWFEBA--.860S2;
+        Sat, 09 Jun 2018 21:26:04 +0800 (CST)
+From: Pu Wen <puwen@hygon.cn>
+To: trenn@suse.com, shuah@kernel.org, tglx@linutronix.de,
+        zhangpanyong@hygon.cn
+Cc: bp@alien8.de, mchehab@kernel.org, rjw@rjwysocki.net,
+        viresh.kumar@linaro.org, lenb@kernel.org, mingo@redhat.com,
+        hpa@zytor.com, x86@kernel.org, thomas.lendacky@amd.com,
+        peterz@infradead.org, tony.luck@intel.com, pbonzini@redhat.com,
+        rkrcmar@redhat.com, boris.ostrovsky@oracle.com, jgross@suse.com,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-x86_64@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-edac@vger.kernel.org,
+        linux-pm@vger.kernel.org, kvm@vger.kernel.org,
+        xen-devel@lists.xenproject.org, Pu Wen <puwen@hygon.cn>
+Subject: [PATCH 11/11] tools/cpupower: Add support for Hygon's Dhyana Family 18h processor
+Date: Sat,  9 Jun 2018 21:25:00 +0800
+Message-Id: <1528550700-28580-1-git-send-email-puwen@hygon.cn>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID: qwCowAB3V5g11RtbSWFEBA--.860S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAF15Zr4fAr4fGFWkAw1kXwb_yoWrZry5p3
+        9YkrZ8t3y8tw1DGa4ktr1UWa15Gr4kZ3y2g3s7Cw1rAF4UZF4vqr4DtFy5Kr9rXas7JF4F
+        vas5Kw10qanrGaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUvS14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+        1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+        JVWxJr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
+        1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
+        7VC0I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Cr0_Gr1UMcvjeVCFs4IE7xkEbV
+        WUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7Cj
+        xVA2Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+        Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a
+        6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6x
+        kF7I0E14v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6Fyj6rWUJwCI42IY6I8E87Iv
+        67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43
+        ZEXa7VU1s2-UUUUUU==
+X-Originating-IP: [182.150.46.145]
+X-CM-SenderInfo: psxzv046klw03qof0z/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+This patch enables the cpupower tool support to Hygon Family 18h CPU:
+- Add "HygonGenuine" in cpu_vendor_table[] to match Hygon vendor ID.
+- Add definition X86_VENDOR_HYGON in enum cpupower_cpu_vendor.
+- Add Hygon Family 18h support in get_boost_mode(), get_cpu_info(),
+  init_maxfreq_mode().
 
-------------------
-
-From: Oleg Nesterov <oleg@redhat.com>
-
-commit 4b70ac5fd9b58bfaa5f25b4ea48f528aefbf3308 upstream.
-
-On 04/30, Benjamin LaHaise wrote:
->
-> > -		ctx->mmap_size = 0;
-> > -
-> > -		kill_ioctx(mm, ctx, NULL);
-> > +		if (ctx) {
-> > +			ctx->mmap_size = 0;
-> > +			kill_ioctx(mm, ctx, NULL);
-> > +		}
->
-> Rather than indenting and moving the two lines changing mmap_size and the
-> kill_ioctx() call, why not just do "if (!ctx) ... continue;"?  That reduces
-> the number of lines changed and avoid excessive indentation.
-
-OK. To me the code looks better/simpler with "if (ctx)", but this is subjective
-of course, I won't argue.
-
-The patch still removes the empty line between mmap_size = 0 and kill_ioctx(),
-we reset mmap_size only for kill_ioctx(). But feel free to remove this change.
-
--------------------------------------------------------------------------------
-Subject: [PATCH v3 1/2] aio: change exit_aio() to load mm->ioctx_table once and avoid rcu_read_lock()
-
-1. We can read ->ioctx_table only once and we do not read rcu_read_lock()
-   or even rcu_dereference().
-
-   This mm has no users, nobody else can play with ->ioctx_table. Otherwise
-   the code is buggy anyway, if we need rcu_read_lock() in a loop because
-   ->ioctx_table can be updated then kfree(table) is obviously wrong.
-
-2. Update the comment. "exit_mmap(mm) is coming" is the good reason to avoid
-   munmap(), but another reason is that we simply can't do vm_munmap() unless
-   current->mm == mm and this is not true in general, the caller is mmput().
-
-3. We do not really need to nullify mm->ioctx_table before return, probably
-   the current code does this to catch the potential problems. But in this
-   case RCU_INIT_POINTER(NULL) looks better.
-
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
-Signed-off-by: Benjamin LaHaise <bcrl@kvack.org>
-[bwh: Backported to 3.16: Adjust context to apply after backport of commit
- 6098b45b32e6 "aio: block exit_aio() until all context requests are completed"]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Pu Wen <puwen@hygon.cn>
 ---
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -803,46 +803,35 @@ EXPORT_SYMBOL(wait_on_sync_kiocb);
-  */
- void exit_aio(struct mm_struct *mm)
- {
--	struct kioctx_table *table;
--	struct kioctx *ctx;
--	unsigned i = 0;
-+	struct kioctx_table *table = rcu_dereference_raw(mm->ioctx_table);
-+	int i;
+ tools/power/cpupower/utils/cpufreq-info.c               | 6 ++++--
+ tools/power/cpupower/utils/helpers/cpuid.c              | 6 ++++--
+ tools/power/cpupower/utils/helpers/helpers.h            | 2 +-
+ tools/power/cpupower/utils/idle_monitor/mperf_monitor.c | 3 ++-
+ 4 files changed, 11 insertions(+), 6 deletions(-)
+
+diff --git a/tools/power/cpupower/utils/cpufreq-info.c b/tools/power/cpupower/utils/cpufreq-info.c
+index df43cd4..75c2140 100644
+--- a/tools/power/cpupower/utils/cpufreq-info.c
++++ b/tools/power/cpupower/utils/cpufreq-info.c
+@@ -170,6 +170,7 @@ static int get_boost_mode(unsigned int cpu)
+ 	unsigned long pstates[MAX_HW_PSTATES] = {0,};
  
--	while (1) {
-+	if (!table)
-+		return;
-+
-+	for (i = 0; i < table->nr; ++i) {
-+		struct kioctx *ctx = table->table[i];
- 		struct completion requests_done =
- 			COMPLETION_INITIALIZER_ONSTACK(requests_done);
+ 	if (cpupower_cpu_info.vendor != X86_VENDOR_AMD &&
++	    cpupower_cpu_info.vendor != X86_VENDOR_HYGON &&
+ 	    cpupower_cpu_info.vendor != X86_VENDOR_INTEL)
+ 		return 0;
  
--		rcu_read_lock();
--		table = rcu_dereference(mm->ioctx_table);
--
--		do {
--			if (!table || i >= table->nr) {
--				rcu_read_unlock();
--				rcu_assign_pointer(mm->ioctx_table, NULL);
--				if (table)
--					kfree(table);
--				return;
--			}
--
--			ctx = table->table[i++];
--		} while (!ctx);
--
--		rcu_read_unlock();
--
-+		if (!ctx)
-+			continue;
- 		/*
--		 * We don't need to bother with munmap() here -
--		 * exit_mmap(mm) is coming and it'll unmap everything.
--		 * Since aio_free_ring() uses non-zero ->mmap_size
--		 * as indicator that it needs to unmap the area,
--		 * just set it to 0; aio_free_ring() is the only
--		 * place that uses ->mmap_size, so it's safe.
-+		 * We don't need to bother with munmap() here - exit_mmap(mm)
-+		 * is coming and it'll unmap everything. And we simply can't,
-+		 * this is not necessarily our ->mm.
-+		 * Since kill_ioctx() uses non-zero ->mmap_size as indicator
-+		 * that it needs to unmap the area, just set it to 0.
- 		 */
- 		ctx->mmap_size = 0;
--
- 		kill_ioctx(mm, ctx, &requests_done);
+@@ -190,8 +191,9 @@ static int get_boost_mode(unsigned int cpu)
+ 	printf(_("    Supported: %s\n"), support ? _("yes") : _("no"));
+ 	printf(_("    Active: %s\n"), active ? _("yes") : _("no"));
  
- 		/* Wait until all IO for the context are done. */
- 		wait_for_completion(&requests_done);
- 	}
-+
-+	RCU_INIT_POINTER(mm->ioctx_table, NULL);
-+	kfree(table);
- }
+-	if (cpupower_cpu_info.vendor == X86_VENDOR_AMD &&
+-	    cpupower_cpu_info.family >= 0x10) {
++	if ((cpupower_cpu_info.vendor == X86_VENDOR_AMD ||
++	     cpupower_cpu_info.vendor == X86_VENDOR_HYGON) &&
++	     cpupower_cpu_info.family >= 0x10) {
+ 		ret = decode_pstates(cpu, cpupower_cpu_info.family, b_states,
+ 				     pstates, &pstate_no);
+ 		if (ret)
+diff --git a/tools/power/cpupower/utils/helpers/cpuid.c b/tools/power/cpupower/utils/helpers/cpuid.c
+index 732b0b4..0e513b1 100644
+--- a/tools/power/cpupower/utils/helpers/cpuid.c
++++ b/tools/power/cpupower/utils/helpers/cpuid.c
+@@ -8,7 +8,7 @@
+ #include "helpers/helpers.h"
  
- static void put_reqs_available(struct kioctx *ctx, unsigned nr)
+ static const char *cpu_vendor_table[X86_VENDOR_MAX] = {
+-	"Unknown", "GenuineIntel", "AuthenticAMD",
++	"Unknown", "GenuineIntel", "AuthenticAMD", "HygonGenuine",
+ };
+ 
+ #if defined(__i386__) || defined(__x86_64__)
+@@ -109,6 +109,7 @@ int get_cpu_info(struct cpupower_cpu_info *cpu_info)
+ 	fclose(fp);
+ 	/* Get some useful CPU capabilities from cpuid */
+ 	if (cpu_info->vendor != X86_VENDOR_AMD &&
++	    cpu_info->vendor != X86_VENDOR_HYGON &&
+ 	    cpu_info->vendor != X86_VENDOR_INTEL)
+ 		return ret;
+ 
+@@ -125,7 +126,8 @@ int get_cpu_info(struct cpupower_cpu_info *cpu_info)
+ 		cpu_info->caps |= CPUPOWER_CAP_APERF;
+ 
+ 	/* AMD Boost state enable/disable register */
+-	if (cpu_info->vendor == X86_VENDOR_AMD) {
++	if (cpu_info->vendor == X86_VENDOR_AMD ||
++	    cpu_info->vendor == X86_VENDOR_HYGON) {
+ 		if (ext_cpuid_level >= 0x80000007 &&
+ 		    (cpuid_edx(0x80000007) & (1 << 9)))
+ 			cpu_info->caps |= CPUPOWER_CAP_AMD_CBP;
+diff --git a/tools/power/cpupower/utils/helpers/helpers.h b/tools/power/cpupower/utils/helpers/helpers.h
+index 41da392..9021396 100644
+--- a/tools/power/cpupower/utils/helpers/helpers.h
++++ b/tools/power/cpupower/utils/helpers/helpers.h
+@@ -61,7 +61,7 @@ extern int be_verbose;
+ 
+ /* cpuid and cpuinfo helpers  **************************/
+ enum cpupower_cpu_vendor {X86_VENDOR_UNKNOWN = 0, X86_VENDOR_INTEL,
+-			  X86_VENDOR_AMD, X86_VENDOR_MAX};
++			  X86_VENDOR_AMD, X86_VENDOR_HYGON, X86_VENDOR_MAX};
+ 
+ #define CPUPOWER_CAP_INV_TSC		0x00000001
+ #define CPUPOWER_CAP_APERF		0x00000002
+diff --git a/tools/power/cpupower/utils/idle_monitor/mperf_monitor.c b/tools/power/cpupower/utils/idle_monitor/mperf_monitor.c
+index d7c2a6d..f2a7e9c 100644
+--- a/tools/power/cpupower/utils/idle_monitor/mperf_monitor.c
++++ b/tools/power/cpupower/utils/idle_monitor/mperf_monitor.c
+@@ -241,7 +241,8 @@ static int init_maxfreq_mode(void)
+ 	if (!(cpupower_cpu_info.caps & CPUPOWER_CAP_INV_TSC))
+ 		goto use_sysfs;
+ 
+-	if (cpupower_cpu_info.vendor == X86_VENDOR_AMD) {
++	if (cpupower_cpu_info.vendor == X86_VENDOR_AMD ||
++	    cpupower_cpu_info.vendor == X86_VENDOR_HYGON) {
+ 		/* MSR_AMD_HWCR tells us whether TSC runs at P0/mperf
+ 		 * freq.
+ 		 * A test whether hwcr is accessable/available would be:
+-- 
+2.7.4
