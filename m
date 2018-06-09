@@ -1,89 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id uFMlEelXGVtTfQAAmS7hNA
-	; Thu, 07 Jun 2018 16:06:13 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ytf5DKBuG1smUAAAmS7hNA
+	; Sat, 09 Jun 2018 06:07:54 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id DC832607E7; Thu,  7 Jun 2018 16:06:12 +0000 (UTC)
+	id AA3FC607E7; Sat,  9 Jun 2018 06:07:54 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XVGmu0yY"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,FROM_LOCAL_NOVOWEL,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 6643760590;
-	Thu,  7 Jun 2018 16:06:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6643760590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 2B459606FA;
+	Sat,  9 Jun 2018 06:07:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2B459606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935935AbeFGQFL (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 12:05:11 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39246 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933012AbeFGOJE (ORCPT
+        id S1753122AbeFIGHw (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 02:07:52 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:33861 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751505AbeFIGHu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:09:04 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb4-0005Zi-7L; Thu, 07 Jun 2018 15:09:02 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb0-0002o4-QJ; Thu, 07 Jun 2018 15:08:58 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Sat, 9 Jun 2018 02:07:50 -0400
+Received: by mail-pl0-f65.google.com with SMTP id g20-v6so9444760plq.1;
+        Fri, 08 Jun 2018 23:07:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=bexOj58cbjxIeWYQA/ZB4CDXFUx2xdbcBiKYQ5RdlvU=;
+        b=XVGmu0yYiTsWog1NTA4N5gHMxpRs86OE73i15phwe4rpV2PaM39Gw0k/YGhyJr/ict
+         tHAgkrp9uim0USbNQGckjoSsRs2tIpQ22lHAf3CBuTKL4g5Z5c0D1JHGLVnbo29UH8SV
+         9WfM8VJuVIJM8I0L0PH3P8/t/snjj7CxRoL9vOfLLxmi4iHRIKcW+p5trcvKxirUTNpP
+         jxt3MD+Kk4WCPgFUi9R6fhaezsepVPqDv5vNe4WUVWAwIHfmwHdtTSFVeTEv949WWD4q
+         iMenrEG+F9Ikc/C3Jbv/vpd0MYqYnlgixF3KALRnT5mRFESV8pZdLJTsm3DEvpQDIGmD
+         nK2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=bexOj58cbjxIeWYQA/ZB4CDXFUx2xdbcBiKYQ5RdlvU=;
+        b=DrujTFOe7R6lz2y4aFKdrbkRf2V2zAOPIxuicv9ZSjt3BBFx3FcTebX4ODZKzhmckS
+         hpKMyHL0lMzDp8H7ZB45jEurdLfbzFOrSz5Nc23300kJD0ytUCeddIfZNOL13Hd2innH
+         tQh9n96RevThDvQwf9vXvDC7/vdLPzOdqImpIg7Kh/2yhBdKFrUnjMFD0reWDT5PjPmE
+         iY8Jlpb5f3B2pS9sMXUJPtiou9p7L6efu4x+82/cO5zFwnsdCRRNyula7a7k4rUimlWu
+         NavZqPWsdSAigxVIejs44QLs+TTpT5h/s3+zEA/tIf5NFNL1knupeZ0npXIejWdMPL79
+         rrAA==
+X-Gm-Message-State: APt69E2N94QvQMhH9JRv39875I+g0mYF03u5tnEab+52oorOm+Sa+uGc
+        7TGcIKHeU/ShUSTXA0VuDNk=
+X-Google-Smtp-Source: ADUXVKLTUAxk227MI2enB2CYz8h0yDkL7v/Wi17O4U86fLOzHS63vref/tCycpqKuznrDTMSHeEgqQ==
+X-Received: by 2002:a17:902:4101:: with SMTP id e1-v6mr9583788pld.205.1528524470253;
+        Fri, 08 Jun 2018 23:07:50 -0700 (PDT)
+Received: from os-virtualbox.localnet ([220.149.255.57])
+        by smtp.gmail.com with ESMTPSA id i71-v6sm23332860pgd.22.2018.06.08.23.07.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Jun 2018 23:07:49 -0700 (PDT)
+From: thtlwlsmsgkfla@gmail.com
+To: gregkh@linuxfoundation.org
+Cc: davem@davemloft.net, colin.king@canonical.com,
+        johannes.berg@intel.com, Linyu.Yuan@alcatel-sbell.com.cn,
+        keescook@chromium.org, tvboxspy@gmail.com,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH 2/2] staging: rtl8192e: fix line over 80 characters
+Date: Sat, 09 Jun 2018 15:07:51 +0900
+Message-ID: <1667235.oI4jP7xdTe@os-virtualbox>
+User-Agent: KMail/5.1.3 (Linux/4.13.0-36-generic; KDE/5.18.0; x86_64; ; )
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>,
-        "Mauro Carvalho Chehab" <mchehab@s-opensource.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.484614565@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 085/410] media: bt8xx: Fix err 'bt878_probe()'
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+*fix checkpatch.pl warnings:
+ WARNING: line over 80 characters
 
-------------------
-
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-commit 45392ff6881dbe56d41ef0b17c2e576065f8ffa1 upstream.
-
-This is odd to call 'pci_disable_device()' in an error path before a
-coresponding successful 'pci_enable_device()'.
-
-Return directly instead.
-
-Fixes: 77e0be12100a ("V4L/DVB (4176): Bug-fix: Fix memory overflow")
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Hyunil Kim <thtlwlsmsgkfla@gmail.com>
 ---
- drivers/media/pci/bt8xx/bt878.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/staging/rtl8192e/rtllib_softmac.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/media/pci/bt8xx/bt878.c
-+++ b/drivers/media/pci/bt8xx/bt878.c
-@@ -433,8 +433,7 @@ static int bt878_probe(struct pci_dev *d
- 	       bt878_num);
- 	if (bt878_num >= BT878_MAX) {
- 		printk(KERN_ERR "bt878: Too many devices inserted\n");
--		result = -ENOMEM;
--		goto fail0;
-+		return -ENOMEM;
+diff --git a/drivers/staging/rtl8192e/rtllib_softmac.c b/drivers/staging/rtl8192e/rtllib_softmac.c
+index d172e87..3c5def2 100644
+--- a/drivers/staging/rtl8192e/rtllib_softmac.c
++++ b/drivers/staging/rtl8192e/rtllib_softmac.c
+@@ -2596,7 +2596,8 @@ static void rtllib_start_ibss_wq(void *data)
+ 
+ 	if (ieee->current_network.ssid_len == 0) {
+ 		strcpy(ieee->current_network.ssid, RTLLIB_DEFAULT_TX_ESSID);
+-		ieee->current_network.ssid_len = strlen(RTLLIB_DEFAULT_TX_ESSID);
++		ieee->current_network.ssid_len =
++			strlen(RTLLIB_DEFAULT_TX_ESSID);
+ 		ieee->ssid_set = 1;
  	}
- 	if (pci_enable_device(dev))
- 		return -EIO;
+ 
+-- 
+2.7.4
