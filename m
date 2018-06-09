@@ -1,169 +1,281 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id G8woO7XnHVszBwAAmS7hNA
-	; Mon, 11 Jun 2018 03:08:48 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id pNl4O+byG1vpXwAAmS7hNA
+	; Sat, 09 Jun 2018 15:34:42 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 0B446607E4; Mon, 11 Jun 2018 03:08:48 +0000 (UTC)
+	id 15E45608C1; Sat,  9 Jun 2018 15:34:42 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PoYvma/U"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id F3340604D4;
-	Mon, 11 Jun 2018 03:08:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F3340604D4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 6F7BD606FA;
+	Sat,  9 Jun 2018 15:34:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6F7BD606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753922AbeFKDIg (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Sun, 10 Jun 2018 23:08:36 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50540 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753884AbeFKDIf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 23:08:35 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S932863AbeFIPee (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:34:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36790 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753767AbeFIPeb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:34:31 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B5C8879D36;
-        Mon, 11 Jun 2018 03:08:34 +0000 (UTC)
-Received: from redhat.com (ovpn-120-77.rdu2.redhat.com [10.10.120.77])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 60C5B63F32;
-        Mon, 11 Jun 2018 03:08:34 +0000 (UTC)
-Date: Mon, 11 Jun 2018 06:08:34 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] vhost_net: remove VHOST_NET_F_VIRTIO_NET_HDR support
-Message-ID: <20180611060759-mutt-send-email-mst@kernel.org>
-References: <1528429842-22835-1-git-send-email-jasowang@redhat.com>
- <20180608074115-mutt-send-email-mst@kernel.org>
- <23efe110-f61a-5aee-c0b4-bd3dc5426438@redhat.com>
- <20180611050741-mutt-send-email-mst@kernel.org>
- <90e9b3ea-e9d2-d60d-8355-42d447c67452@redhat.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 8552A208A4;
+        Sat,  9 Jun 2018 15:34:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558471;
+        bh=oX1CxPfIF3THFsBTNaktBwtV1nF4wxN+vioCU2xQ2QA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=PoYvma/Ukt9vFkniL5LBMjFCHPRE6b80JdDkwvAaL/zALjhh+/kIWMrikkS6gfXvx
+         ElOtUeNjwFH5/mTvzhAeMgA9wYI4W8jvJgQ2C4eeRJgouldzxdu/XQjA0/Ug5AGguo
+         esQy+uEj5dQdX28srNBQf1bmfiMC7B21nCNsNsHM=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Hannes Reinecke <hare@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.14 02/41] scsi: sd_zbc: Avoid that resetting a zone fails sporadically
+Date: Sat,  9 Jun 2018 17:29:34 +0200
+Message-Id: <20180609152926.534377413@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609152926.389750182@linuxfoundation.org>
+References: <20180609152926.389750182@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <90e9b3ea-e9d2-d60d-8355-42d447c67452@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 11 Jun 2018 03:08:34 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 11 Jun 2018 03:08:34 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 11, 2018 at 10:29:36AM +0800, Jason Wang wrote:
-> 
-> 
-> On 2018年06月11日 10:12, Michael S. Tsirkin wrote:
-> > On Fri, Jun 08, 2018 at 01:07:09PM +0800, Jason Wang wrote:
-> > > 
-> > > On 2018年06月08日 12:46, Michael S. Tsirkin wrote:
-> > > > On Fri, Jun 08, 2018 at 11:50:42AM +0800, Jason Wang wrote:
-> > > > > This feature bit is duplicated with VIRTIO_F_ANY_LAYOUT, this means if
-> > > > > a userpsace want to enable VRITIO_F_ANY_LAYOUT,
-> > > > > VHOST_NET_F_VIRTIO_NET_HDR will be implied too. This is wrong and will
-> > > > > break networking.
-> > > > What breaks networking exactly? VHOST_NET supported ANY_LAYOUT
-> > > > from day one. For this reason it does not need to know about
-> > > > VRITIO_F_ANY_LAYOUT and we reused the bit for other purposes.
-> > > It's the knowledge of vhost_net code it self but not userspace. For
-> > > userspace, it should depends on the value of returned by VHOST_GET_FEATURES.
-> > > So when userspace can set_features with ANY_LAYOUT, vhost may think it wants
-> > > VHOST_NET_F_VIRTIO_NET_HDR.
-> > Yes but that's the admittedly ugly API that we have now.
-> > userspace is supposed to know VRITIO_F_ANY_LAYOUT does
-> > not make sense for vhost.
-> 
-> Ok.
-> 
-> > 
-> > 
-> > 
-> > > > 
-> > > > 
-> > > > > Fixing this by safely removing
-> > > > > VHOST_NET_F_VIRTIO_NET_HDR support. There should be very few or even
-> > > > > no userspace can use this.
-> > > > Quite possibly, but it is hard to be sure. It seems safer to
-> > > > maintain it unless there's an actual reason something's broken.
-> > > I think not since the feature is negotiated not mandatory?
-> > That doesn't mean much.
-> > 
-> > > > > Further cleanups could be done for
-> > > > > -net-next for safety.
-> > > > > 
-> > > > > In the future, we need a vhost dedicated feature set/get ioctl()
-> > > > > instead of reusing virtio ones.
-> > > > Not just in the future, we might want to switch iommu
-> > > > to a sane structure without the 64 bit padding bug
-> > > > right now.
-> > > Yes, I hit this bug when introducing V2 of msg IOTLB message.
-> > Sounds good, so if you like, reserve a bit for
-> > VHOST_NET_F_VIRTIO_NET_HDR in the new ioctl mask and
-> > do not enable it there.
-> 
-> Ok, and maybe VHOST_F_LOG_ALL.
-> 
-> > 
-> > > > > Fixes: 4e9fa50c6ccbe ("vhost: move features to core")
-> > > > This tag makes no sense here IMHO. Looks like people are using some tool
-> > > > that just looks at the earliest version where patch won't apply. The
-> > > > commit in question just moved some code around.
-> > > Looks not, before this commit, vhost_net won't return ANY_LAYOUT.
-> > > 
-> > > Thanks
-> > Well ANY_LAYOUT just happens to be same as VHOST_NET_F_VIRTIO_NET_HDR
-> > and that has been set since forever.
-> 
-> So do you still want this patch? If not we need to document that ANY_LAYOUT
-> could not be passed through SET_FEATURES somewhere.
-> 
-> Thanks
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Let's document this, yes. I don't think we should drop
-VHOST_NET_F_VIRTIO_NET_HDR now.
+------------------
 
-> > 
-> > > > > Signed-off-by: Jason Wang <jasowang@redhat.com>
-> > > > > ---
-> > > > >    drivers/vhost/net.c | 15 +++++----------
-> > > > >    1 file changed, 5 insertions(+), 10 deletions(-)
-> > > > > 
-> > > > > diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-> > > > > index 986058a..83eef52 100644
-> > > > > --- a/drivers/vhost/net.c
-> > > > > +++ b/drivers/vhost/net.c
-> > > > > @@ -69,7 +69,6 @@ MODULE_PARM_DESC(experimental_zcopytx, "Enable Zero Copy TX;"
-> > > > >    enum {
-> > > > >    	VHOST_NET_FEATURES = VHOST_FEATURES |
-> > > > > -			 (1ULL << VHOST_NET_F_VIRTIO_NET_HDR) |
-> > > > >    			 (1ULL << VIRTIO_NET_F_MRG_RXBUF) |
-> > > > >    			 (1ULL << VIRTIO_F_IOMMU_PLATFORM)
-> > > > >    };
-> > > > > @@ -1255,15 +1254,11 @@ static int vhost_net_set_features(struct vhost_net *n, u64 features)
-> > > > >    			       (1ULL << VIRTIO_F_VERSION_1))) ?
-> > > > >    			sizeof(struct virtio_net_hdr_mrg_rxbuf) :
-> > > > >    			sizeof(struct virtio_net_hdr);
-> > > > > -	if (features & (1 << VHOST_NET_F_VIRTIO_NET_HDR)) {
-> > > > > -		/* vhost provides vnet_hdr */
-> > > > > -		vhost_hlen = hdr_len;
-> > > > > -		sock_hlen = 0;
-> > > > > -	} else {
-> > > > > -		/* socket provides vnet_hdr */
-> > > > > -		vhost_hlen = 0;
-> > > > > -		sock_hlen = hdr_len;
-> > > > > -	}
-> > > > > +
-> > > > > +        /* socket provides vnet_hdr */
-> > > > > +	vhost_hlen = 0;
-> > > > > +	sock_hlen = hdr_len;
-> > > > > +
-> > > > >    	mutex_lock(&n->dev.mutex);
-> > > > >    	if ((features & (1 << VHOST_F_LOG_ALL)) &&
-> > > > >    	    !vhost_log_access_ok(&n->dev))
-> > > > > -- 
-> > > > > 2.7.4
+From: Bart Van Assche <bart.vanassche@wdc.com>
+
+commit ccce20fc7968d546fb1e8e147bf5cdc8afc4278a upstream.
+
+Since SCSI scanning occurs asynchronously, since sd_revalidate_disk() is
+called from sd_probe_async() and since sd_revalidate_disk() calls
+sd_zbc_read_zones() it can happen that sd_zbc_read_zones() is called
+concurrently with blkdev_report_zones() and/or blkdev_reset_zones().  That can
+cause these functions to fail with -EIO because sd_zbc_read_zones() e.g. sets
+q->nr_zones to zero before restoring it to the actual value, even if no drive
+characteristics have changed.  Avoid that this can happen by making the
+following changes:
+
+- Protect the code that updates zone information with blk_queue_enter()
+  and blk_queue_exit().
+- Modify sd_zbc_setup_seq_zones_bitmap() and sd_zbc_setup() such that
+  these functions do not modify struct scsi_disk before all zone
+  information has been obtained.
+
+Note: since commit 055f6e18e08f ("block: Make q_usage_counter also track
+legacy requests"; kernel v4.15) the request queue freezing mechanism also
+affects legacy request queues.
+
+Fixes: 89d947561077 ("sd: Implement support for ZBC devices")
+Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Damien Le Moal <damien.lemoal@wdc.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Hannes Reinecke <hare@suse.com>
+Cc: stable@vger.kernel.org # v4.16
+Reviewed-by: Damien Le Moal <damien.lemoal@wdc.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/scsi/sd_zbc.c |   98 ++++++++++++++++++++++++++++++++------------------
+ 1 file changed, 63 insertions(+), 35 deletions(-)
+
+--- a/drivers/scsi/sd_zbc.c
++++ b/drivers/scsi/sd_zbc.c
+@@ -423,7 +423,16 @@ static int sd_zbc_check_capacity(struct
+ 
+ #define SD_ZBC_BUF_SIZE 131072
+ 
+-static int sd_zbc_check_zone_size(struct scsi_disk *sdkp)
++/**
++ * sd_zbc_check_zone_size - Check the device zone sizes
++ * @sdkp: Target disk
++ *
++ * Check that all zones of the device are equal. The last zone can however
++ * be smaller. The zone size must also be a power of two number of LBAs.
++ *
++ * Returns the zone size in bytes upon success or an error code upon failure.
++ */
++static s64 sd_zbc_check_zone_size(struct scsi_disk *sdkp)
+ {
+ 	u64 zone_blocks = 0;
+ 	sector_t block = 0;
+@@ -434,8 +443,6 @@ static int sd_zbc_check_zone_size(struct
+ 	int ret;
+ 	u8 same;
+ 
+-	sdkp->zone_blocks = 0;
+-
+ 	/* Get a buffer */
+ 	buf = kmalloc(SD_ZBC_BUF_SIZE, GFP_KERNEL);
+ 	if (!buf)
+@@ -470,16 +477,17 @@ static int sd_zbc_check_zone_size(struct
+ 
+ 		/* Parse zone descriptors */
+ 		while (rec < buf + buf_len) {
+-			zone_blocks = get_unaligned_be64(&rec[8]);
+-			if (sdkp->zone_blocks == 0) {
+-				sdkp->zone_blocks = zone_blocks;
+-			} else if (zone_blocks != sdkp->zone_blocks &&
+-				   (block + zone_blocks < sdkp->capacity
+-				    || zone_blocks > sdkp->zone_blocks)) {
++			u64 this_zone_blocks = get_unaligned_be64(&rec[8]);
++
++			if (zone_blocks == 0) {
++				zone_blocks = this_zone_blocks;
++			} else if (this_zone_blocks != zone_blocks &&
++				   (block + this_zone_blocks < sdkp->capacity
++				    || this_zone_blocks > zone_blocks)) {
+ 				zone_blocks = 0;
+ 				goto out;
+ 			}
+-			block += zone_blocks;
++			block += this_zone_blocks;
+ 			rec += 64;
+ 		}
+ 
+@@ -492,8 +500,6 @@ static int sd_zbc_check_zone_size(struct
+ 
+ 	} while (block < sdkp->capacity);
+ 
+-	zone_blocks = sdkp->zone_blocks;
+-
+ out:
+ 	if (!zone_blocks) {
+ 		if (sdkp->first_scan)
+@@ -513,8 +519,7 @@ out:
+ 				  "Zone size too large\n");
+ 		ret = -ENODEV;
+ 	} else {
+-		sdkp->zone_blocks = zone_blocks;
+-		sdkp->zone_shift = ilog2(zone_blocks);
++		ret = zone_blocks;
+ 	}
+ 
+ out_free:
+@@ -523,23 +528,44 @@ out_free:
+ 	return ret;
+ }
+ 
+-static int sd_zbc_setup(struct scsi_disk *sdkp)
++static int sd_zbc_setup(struct scsi_disk *sdkp, u32 zone_blocks)
+ {
++	struct request_queue *q = sdkp->disk->queue;
++	u32 zone_shift = ilog2(zone_blocks);
++	u32 nr_zones;
+ 
+ 	/* chunk_sectors indicates the zone size */
+-	blk_queue_chunk_sectors(sdkp->disk->queue,
+-			logical_to_sectors(sdkp->device, sdkp->zone_blocks));
+-	sdkp->zone_shift = ilog2(sdkp->zone_blocks);
+-	sdkp->nr_zones = sdkp->capacity >> sdkp->zone_shift;
+-	if (sdkp->capacity & (sdkp->zone_blocks - 1))
+-		sdkp->nr_zones++;
+-
+-	if (!sdkp->zones_wlock) {
+-		sdkp->zones_wlock = kcalloc(BITS_TO_LONGS(sdkp->nr_zones),
+-					    sizeof(unsigned long),
+-					    GFP_KERNEL);
+-		if (!sdkp->zones_wlock)
+-			return -ENOMEM;
++	blk_queue_chunk_sectors(q,
++			logical_to_sectors(sdkp->device, zone_blocks));
++	nr_zones = round_up(sdkp->capacity, zone_blocks) >> zone_shift;
++
++	/*
++	 * Initialize the disk zone write lock bitmap if the number
++	 * of zones changed.
++	 */
++	if (nr_zones != sdkp->nr_zones) {
++		unsigned long *zones_wlock = NULL;
++
++		if (nr_zones) {
++			zones_wlock = kcalloc(BITS_TO_LONGS(nr_zones),
++					      sizeof(unsigned long),
++					      GFP_KERNEL);
++			if (!zones_wlock)
++				return -ENOMEM;
++		}
++
++		blk_mq_freeze_queue(q);
++		sdkp->zone_blocks = zone_blocks;
++		sdkp->zone_shift = zone_shift;
++		sdkp->nr_zones = nr_zones;
++		swap(sdkp->zones_wlock, zones_wlock);
++		blk_mq_unfreeze_queue(q);
++
++		kfree(zones_wlock);
++
++		/* READ16/WRITE16 is mandatory for ZBC disks */
++		sdkp->device->use_16_for_rw = 1;
++		sdkp->device->use_10_for_rw = 0;
+ 	}
+ 
+ 	return 0;
+@@ -548,6 +574,7 @@ static int sd_zbc_setup(struct scsi_disk
+ int sd_zbc_read_zones(struct scsi_disk *sdkp,
+ 		      unsigned char *buf)
+ {
++	int64_t zone_blocks;
+ 	int ret;
+ 
+ 	if (!sd_is_zoned(sdkp))
+@@ -585,19 +612,19 @@ int sd_zbc_read_zones(struct scsi_disk *
+ 	 * Check zone size: only devices with a constant zone size (except
+ 	 * an eventual last runt zone) that is a power of 2 are supported.
+ 	 */
+-	ret = sd_zbc_check_zone_size(sdkp);
+-	if (ret)
++	zone_blocks = sd_zbc_check_zone_size(sdkp);
++	ret = -EFBIG;
++	if (zone_blocks != (u32)zone_blocks)
++		goto err;
++	ret = zone_blocks;
++	if (ret < 0)
+ 		goto err;
+ 
+ 	/* The drive satisfies the kernel restrictions: set it up */
+-	ret = sd_zbc_setup(sdkp);
++	ret = sd_zbc_setup(sdkp, zone_blocks);
+ 	if (ret)
+ 		goto err;
+ 
+-	/* READ16/WRITE16 is mandatory for ZBC disks */
+-	sdkp->device->use_16_for_rw = 1;
+-	sdkp->device->use_10_for_rw = 0;
+-
+ 	return 0;
+ 
+ err:
+@@ -610,6 +637,7 @@ void sd_zbc_remove(struct scsi_disk *sdk
+ {
+ 	kfree(sdkp->zones_wlock);
+ 	sdkp->zones_wlock = NULL;
++	sdkp->nr_zones = 0;
+ }
+ 
+ void sd_zbc_print_zones(struct scsi_disk *sdkp)
