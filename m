@@ -1,128 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id v6FSJaRTGVt6HwAAmS7hNA
-	; Thu, 07 Jun 2018 15:50:04 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id tSD2CODzG1s6XgAAmS7hNA
+	; Sat, 09 Jun 2018 15:36:22 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id B8B556089E; Thu,  7 Jun 2018 15:50:04 +0000 (UTC)
+	id 35A73608C9; Sat,  9 Jun 2018 15:36:22 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ijZO2pKT"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 2DBF360590;
-	Thu,  7 Jun 2018 15:50:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2DBF360590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 89BEC606FA;
+	Sat,  9 Jun 2018 15:36:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 89BEC606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934508AbeFGPuC (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:50:02 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:36520 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933302AbeFGPuA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:50:00 -0400
-Received: from [148.252.241.226] (helo=xylophone)
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1fQxAj-0006oX-MA; Thu, 07 Jun 2018 16:49:57 +0100
-Message-ID: <1528386597.2289.75.camel@codethink.co.uk>
-Subject: Re: [PATCH 4.4 08/56] ath10k: fix rfc1042 header retrieval in
- QCA4019 with eth decap mode
-From: Ben Hutchings <ben.hutchings@codethink.co.uk>
-To: Sriram R <srirrama@codeaurora.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org,
-        Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>,
-        Kalle Valo <kvalo@qca.qualcomm.com>,
-        linux-kernel@vger.kernel.org
-Date: Thu, 07 Jun 2018 16:49:57 +0100
-In-Reply-To: <133624c2c44831fd70edb18c01508f64@codeaurora.org>
-References: <20180514064754.853201981@linuxfoundation.org>
-         <20180514064755.718467503@linuxfoundation.org>
-         <1528134761.2289.45.camel@codethink.co.uk>
-         <133624c2c44831fd70edb18c01508f64@codeaurora.org>
-Organization: Codethink Ltd.
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S933211AbeFIPgQ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:36:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38340 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933117AbeFIPgK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:36:10 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 232A3208A3;
+        Sat,  9 Jun 2018 15:36:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558569;
+        bh=8SbQyL1RFn3ekZKzgkxqeOA7wyvZZ0BiZwQl8/hvDNU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ijZO2pKTYZKJ1jRiX5G++bCxRZM9xlRV1ZvvHgHQ2TdChHZRF+t1CAn/E4zzgNPU8
+         6JT6SP4rH1hQhdoihgYVePnwWYPAXcd8FAsWn3OfXzNzCUvA/+vauxsv4fmW8HW7NG
+         I8R006vAESGY6fUFPSlySo02n7xr1USul7+r3zX0=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 34/41] net/mlx4: Fix irq-unsafe spinlock usage
+Date: Sat,  9 Jun 2018 17:30:06 +0200
+Message-Id: <20180609152928.292799855@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609152926.389750182@linuxfoundation.org>
+References: <20180609152926.389750182@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-06-07 at 17:22 +0530, Sriram R wrote:
-> Hi Ben,
-> 
-> On 2018-06-04 23:22, Ben Hutchings wrote:
-> > On Mon, 2018-05-14 at 08:48 +0200, Greg Kroah-Hartman wrote:
-> > > 4.4-stable review patch.  If anyone has any objections, please let me 
-> > > know.
-> > > 
-> > > ------------------
-> > > 
-> > > From: Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>
-> > > 
-> > > commit 2f38c3c01de945234d23dd163e3528ccb413066d upstream.
-> > > 
-> > > Chipset from QCA99X0 onwards (QCA99X0, QCA9984, QCA4019 & future)
-> > > rx_hdr_status is not padded to align in 4-byte boundary. Define a
-> > > new hw_params field to handle different alignment behaviour between
-> > > different hw. This patch fixes improper retrieval of rfc1042 header
-> > > with QCA4019. This patch along with "ath10k: Properly remove padding
-> > > from the start of rx payload" will fix traffic failure in ethernet
-> > > decap mode for QCA4019.
-> > > 
-> > > Signed-off-by: Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>
-> > > Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
-> > > Signed-off-by: Sriram R <srirrama@codeaurora.org>
-> > > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > 
-> > [...]
-> > 
-> > I'm curious as to why this backport doesn't include the change to
-> > ath10k_htt_rx_h_find_rfc1042().  I understand that the addition of the
-> > new field is a dependency for the following patch, but shouldn't the
-> > fix included in the upstream commit also be applied to 4.4?
-> > 
-> 
->    Our main intention with this patchset [1] was to provide fix for 
-> replay detection security issue seen in ath10k driver which needed to be 
-> in the stable releases.
-> 
-> And, as per stable tree guidelines we wanted the patchset to have only 
-> one and this important fix .
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-OK, I think the problem here is that the rules say "must" when what's
-really meant is "should".  So the rule "It must fix only one thing."
-really means that commits that each make a single logical change are
-strongly preferred.
+------------------
 
-It does not mean that upstream commits should be trimmed down to
-conform to this.  Greg generally considers it more important to avoid
-changes to the upstream commit, where possible.  Right, Greg?
+From: Jack Morgenstein <jackm@dev.mellanox.co.il>
 
-And speaking only for myself, I particularly dislike stable backports
-that are significantly different from the original upstream commit but
-don't mention this difference in the commit message.
+[ Upstream commit d546b67cda015fb92bfee93d5dc0ceadb91deaee ]
 
-Ben.
+spin_lock/unlock was used instead of spin_un/lock_irq
+in a procedure used in process space, on a spinlock
+which can be grabbed in an interrupt.
 
-> Also we felt the change in ath10k_htt_rx_h_find_rfc1042() is currently 
-> not  a must-have fix in 4.4 stable tree .
-> 
-> [1]
-> https://patchwork.kernel.org/patch/10370863/
-> https://patchwork.kernel.org/patch/10370865/
-> 
-> Thanks and Regards,
-> Sriram.R
-> 
-> > Ben.
-> 
-> 
--- 
-Ben Hutchings, Software Developer                         Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
+This caused the stack trace below to be displayed (on kernel
+4.17.0-rc1 compiled with Lock Debugging enabled):
+
+[  154.661474] WARNING: SOFTIRQ-safe -> SOFTIRQ-unsafe lock order detected
+[  154.668909] 4.17.0-rc1-rdma_rc_mlx+ #3 Tainted: G          I
+[  154.675856] -----------------------------------------------------
+[  154.682706] modprobe/10159 [HC0[0]:SC0[0]:HE0:SE1] is trying to acquire:
+[  154.690254] 00000000f3b0e495 (&(&qp_table->lock)->rlock){+.+.}, at: mlx4_qp_remove+0x20/0x50 [mlx4_core]
+[  154.700927]
+and this task is already holding:
+[  154.707461] 0000000094373b5d (&(&cq->lock)->rlock/1){....}, at: destroy_qp_common+0x111/0x560 [mlx4_ib]
+[  154.718028] which would create a new lock dependency:
+[  154.723705]  (&(&cq->lock)->rlock/1){....} -> (&(&qp_table->lock)->rlock){+.+.}
+[  154.731922]
+but this new dependency connects a SOFTIRQ-irq-safe lock:
+[  154.740798]  (&(&cq->lock)->rlock){..-.}
+[  154.740800]
+... which became SOFTIRQ-irq-safe at:
+[  154.752163]   _raw_spin_lock_irqsave+0x3e/0x50
+[  154.757163]   mlx4_ib_poll_cq+0x36/0x900 [mlx4_ib]
+[  154.762554]   ipoib_tx_poll+0x4a/0xf0 [ib_ipoib]
+...
+to a SOFTIRQ-irq-unsafe lock:
+[  154.815603]  (&(&qp_table->lock)->rlock){+.+.}
+[  154.815604]
+... which became SOFTIRQ-irq-unsafe at:
+[  154.827718] ...
+[  154.827720]   _raw_spin_lock+0x35/0x50
+[  154.833912]   mlx4_qp_lookup+0x1e/0x50 [mlx4_core]
+[  154.839302]   mlx4_flow_attach+0x3f/0x3d0 [mlx4_core]
+
+Since mlx4_qp_lookup() is called only in process space, we can
+simply replace the spin_un/lock calls with spin_un/lock_irq calls.
+
+Fixes: 6dc06c08bef1 ("net/mlx4: Fix the check in attaching steering rules")
+Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/net/ethernet/mellanox/mlx4/qp.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/drivers/net/ethernet/mellanox/mlx4/qp.c
++++ b/drivers/net/ethernet/mellanox/mlx4/qp.c
+@@ -393,11 +393,11 @@ struct mlx4_qp *mlx4_qp_lookup(struct ml
+ 	struct mlx4_qp_table *qp_table = &mlx4_priv(dev)->qp_table;
+ 	struct mlx4_qp *qp;
+ 
+-	spin_lock(&qp_table->lock);
++	spin_lock_irq(&qp_table->lock);
+ 
+ 	qp = __mlx4_qp_lookup(dev, qpn);
+ 
+-	spin_unlock(&qp_table->lock);
++	spin_unlock_irq(&qp_table->lock);
+ 	return qp;
+ }
+ 
