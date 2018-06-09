@@ -1,113 +1,238 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ovxtA2jmGFs/QgAAmS7hNA
-	; Thu, 07 Jun 2018 08:02:23 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 3bvjLP/zG1uUaAAAmS7hNA
+	; Sat, 09 Jun 2018 15:36:33 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 1AD47607E7; Thu,  7 Jun 2018 08:02:23 +0000 (UTC)
+	id 995D6608CA; Sat,  9 Jun 2018 15:36:33 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0YinuQfo"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 8CE41605A2;
-	Thu,  7 Jun 2018 08:02:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8CE41605A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id D0AAF606FA;
+	Sat,  9 Jun 2018 15:36:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D0AAF606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753187AbeFGICT (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 04:02:19 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:55359 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751974AbeFGICR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 04:02:17 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5781x5V2122140
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 7 Jun 2018 01:01:59 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5781x0v2122137;
-        Thu, 7 Jun 2018 01:01:59 -0700
-Date: Thu, 7 Jun 2018 01:01:59 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-xnvd07rdxliy04oi062samik@git.kernel.org>
-Cc: dsahern@gmail.com, linux-kernel@vger.kernel.org,
-        namhyung@kernel.org, jolsa@kernel.org, wangnan0@huawei.com,
-        adrian.hunter@intel.com, tglx@linutronix.de, eranian@google.com,
-        acme@redhat.com, mingo@kernel.org, hpa@zytor.com
-Reply-To: mingo@kernel.org, hpa@zytor.com, acme@redhat.com,
-          adrian.hunter@intel.com, eranian@google.com, tglx@linutronix.de,
-          wangnan0@huawei.com, linux-kernel@vger.kernel.org,
-          namhyung@kernel.org, jolsa@kernel.org, dsahern@gmail.com
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf cgroup: Make evlist__find_cgroup() more
- compact
-Git-Commit-ID: 5dbe23e8772299f227f1ac974752bc853e9814bb
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S933247AbeFIPgb (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:36:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38546 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932913AbeFIPg2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:36:28 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E6A26208A3;
+        Sat,  9 Jun 2018 15:36:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558587;
+        bh=Uf4B9bsgCzXwWG3qVzyg4UCvYURQ+wl9xkpzC2gCR6k=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=0YinuQfo7fB+tl9+GRklg7n97oQGXDi3rNWesrI/CwzuavATVG3u1iDF+tThwooF2
+         To28XtcYAif+pMrnlvWydIsXRwK+1k99ntbRpUH6QbBphHLsEI1dEH+UlzR1t7ubWM
+         CS8pVY7iyphANpqRnO11HI1pY+tNfCR8DrSX7PT4=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, David Lebrun <dlebrun@google.com>,
+        Mathieu Xhonneux <m.xhonneux@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 30/41] ipv6: sr: fix memory OOB access in seg6_do_srh_encap/inline
+Date: Sat,  9 Jun 2018 17:30:02 +0200
+Message-Id: <20180609152928.070917073@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609152926.389750182@linuxfoundation.org>
+References: <20180609152926.389750182@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5dbe23e8772299f227f1ac974752bc853e9814bb
-Gitweb:     https://git.kernel.org/tip/5dbe23e8772299f227f1ac974752bc853e9814bb
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Thu, 24 May 2018 11:29:07 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 4 Jun 2018 10:28:50 -0300
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-perf cgroup: Make evlist__find_cgroup() more compact
+------------------
 
-By taking advantage that __get() routines return the pointer to the
-object for which a reference count is being get.
+From: Mathieu Xhonneux <m.xhonneux@gmail.com>
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-xnvd07rdxliy04oi062samik@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+[ Upstream commit bbb40a0b75209734ff9286f3326171638c9f6569 ]
+
+seg6_do_srh_encap and seg6_do_srh_inline can possibly do an
+out-of-bounds access when adding the SRH to the packet. This no longer
+happen when expanding the skb not only by the size of the SRH (+
+outer IPv6 header), but also by skb->mac_len.
+
+[   53.793056] BUG: KASAN: use-after-free in seg6_do_srh_encap+0x284/0x620
+[   53.794564] Write of size 14 at addr ffff88011975ecfa by task ping/674
+
+[   53.796665] CPU: 0 PID: 674 Comm: ping Not tainted 4.17.0-rc3-ARCH+ #90
+[   53.796670] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+BIOS 1.11.0-20171110_100015-anatol 04/01/2014
+[   53.796673] Call Trace:
+[   53.796679]  <IRQ>
+[   53.796689]  dump_stack+0x71/0xab
+[   53.796700]  print_address_description+0x6a/0x270
+[   53.796707]  kasan_report+0x258/0x380
+[   53.796715]  ? seg6_do_srh_encap+0x284/0x620
+[   53.796722]  memmove+0x34/0x50
+[   53.796730]  seg6_do_srh_encap+0x284/0x620
+[   53.796741]  ? seg6_do_srh+0x29b/0x360
+[   53.796747]  seg6_do_srh+0x29b/0x360
+[   53.796756]  seg6_input+0x2e/0x2e0
+[   53.796765]  lwtunnel_input+0x93/0xd0
+[   53.796774]  ipv6_rcv+0x690/0x920
+[   53.796783]  ? ip6_input+0x170/0x170
+[   53.796791]  ? eth_gro_receive+0x2d0/0x2d0
+[   53.796800]  ? ip6_input+0x170/0x170
+[   53.796809]  __netif_receive_skb_core+0xcc0/0x13f0
+[   53.796820]  ? netdev_info+0x110/0x110
+[   53.796827]  ? napi_complete_done+0xb6/0x170
+[   53.796834]  ? e1000_clean+0x6da/0xf70
+[   53.796845]  ? process_backlog+0x129/0x2a0
+[   53.796853]  process_backlog+0x129/0x2a0
+[   53.796862]  net_rx_action+0x211/0x5c0
+[   53.796870]  ? napi_complete_done+0x170/0x170
+[   53.796887]  ? run_rebalance_domains+0x11f/0x150
+[   53.796891]  __do_softirq+0x10e/0x39e
+[   53.796894]  do_softirq_own_stack+0x2a/0x40
+[   53.796895]  </IRQ>
+[   53.796898]  do_softirq.part.16+0x54/0x60
+[   53.796900]  __local_bh_enable_ip+0x5b/0x60
+[   53.796903]  ip6_finish_output2+0x416/0x9f0
+[   53.796906]  ? ip6_dst_lookup_flow+0x110/0x110
+[   53.796909]  ? ip6_sk_dst_lookup_flow+0x390/0x390
+[   53.796911]  ? __rcu_read_unlock+0x66/0x80
+[   53.796913]  ? ip6_mtu+0x44/0xf0
+[   53.796916]  ? ip6_output+0xfc/0x220
+[   53.796918]  ip6_output+0xfc/0x220
+[   53.796921]  ? ip6_finish_output+0x2b0/0x2b0
+[   53.796923]  ? memcpy+0x34/0x50
+[   53.796926]  ip6_send_skb+0x43/0xc0
+[   53.796929]  rawv6_sendmsg+0x1216/0x1530
+[   53.796932]  ? __orc_find+0x6b/0xc0
+[   53.796934]  ? rawv6_rcv_skb+0x160/0x160
+[   53.796937]  ? __rcu_read_unlock+0x66/0x80
+[   53.796939]  ? __rcu_read_unlock+0x66/0x80
+[   53.796942]  ? is_bpf_text_address+0x1e/0x30
+[   53.796944]  ? kernel_text_address+0xec/0x100
+[   53.796946]  ? __kernel_text_address+0xe/0x30
+[   53.796948]  ? unwind_get_return_address+0x2f/0x50
+[   53.796950]  ? __save_stack_trace+0x92/0x100
+[   53.796954]  ? save_stack+0x89/0xb0
+[   53.796956]  ? kasan_kmalloc+0xa0/0xd0
+[   53.796958]  ? kmem_cache_alloc+0xd2/0x1f0
+[   53.796961]  ? prepare_creds+0x23/0x160
+[   53.796963]  ? __x64_sys_capset+0x252/0x3e0
+[   53.796966]  ? do_syscall_64+0x69/0x160
+[   53.796968]  ? entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[   53.796971]  ? __alloc_pages_nodemask+0x170/0x380
+[   53.796973]  ? __alloc_pages_slowpath+0x12c0/0x12c0
+[   53.796977]  ? tty_vhangup+0x20/0x20
+[   53.796979]  ? policy_nodemask+0x1a/0x90
+[   53.796982]  ? __mod_node_page_state+0x8d/0xa0
+[   53.796986]  ? __check_object_size+0xe7/0x240
+[   53.796989]  ? __sys_sendto+0x229/0x290
+[   53.796991]  ? rawv6_rcv_skb+0x160/0x160
+[   53.796993]  __sys_sendto+0x229/0x290
+[   53.796996]  ? __ia32_sys_getpeername+0x50/0x50
+[   53.796999]  ? commit_creds+0x2de/0x520
+[   53.797002]  ? security_capset+0x57/0x70
+[   53.797004]  ? __x64_sys_capset+0x29f/0x3e0
+[   53.797007]  ? __x64_sys_rt_sigsuspend+0xe0/0xe0
+[   53.797011]  ? __do_page_fault+0x664/0x770
+[   53.797014]  __x64_sys_sendto+0x74/0x90
+[   53.797017]  do_syscall_64+0x69/0x160
+[   53.797019]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[   53.797022] RIP: 0033:0x7f43b7a6714a
+[   53.797023] RSP: 002b:00007ffd891bd368 EFLAGS: 00000246 ORIG_RAX:
+000000000000002c
+[   53.797026] RAX: ffffffffffffffda RBX: 00000000006129c0 RCX: 00007f43b7a6714a
+[   53.797028] RDX: 0000000000000040 RSI: 00000000006129c0 RDI: 0000000000000004
+[   53.797029] RBP: 00007ffd891be640 R08: 0000000000610940 R09: 000000000000001c
+[   53.797030] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000040
+[   53.797032] R13: 000000000060e6a0 R14: 0000000000008004 R15: 000000000040b661
+
+[   53.797171] Allocated by task 642:
+[   53.797460]  kasan_kmalloc+0xa0/0xd0
+[   53.797463]  kmem_cache_alloc+0xd2/0x1f0
+[   53.797465]  getname_flags+0x40/0x210
+[   53.797467]  user_path_at_empty+0x1d/0x40
+[   53.797469]  do_faccessat+0x12a/0x320
+[   53.797471]  do_syscall_64+0x69/0x160
+[   53.797473]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+[   53.797607] Freed by task 642:
+[   53.797869]  __kasan_slab_free+0x130/0x180
+[   53.797871]  kmem_cache_free+0xa8/0x230
+[   53.797872]  filename_lookup+0x15b/0x230
+[   53.797874]  do_faccessat+0x12a/0x320
+[   53.797876]  do_syscall_64+0x69/0x160
+[   53.797878]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+[   53.798014] The buggy address belongs to the object at ffff88011975e600
+                which belongs to the cache names_cache of size 4096
+[   53.799043] The buggy address is located 1786 bytes inside of
+                4096-byte region [ffff88011975e600, ffff88011975f600)
+[   53.800013] The buggy address belongs to the page:
+[   53.800414] page:ffffea000465d600 count:1 mapcount:0
+mapping:0000000000000000 index:0x0 compound_mapcount: 0
+[   53.801259] flags: 0x17fff0000008100(slab|head)
+[   53.801640] raw: 017fff0000008100 0000000000000000 0000000000000000
+0000000100070007
+[   53.803147] raw: dead000000000100 dead000000000200 ffff88011b185a40
+0000000000000000
+[   53.803787] page dumped because: kasan: bad access detected
+
+[   53.804384] Memory state around the buggy address:
+[   53.804788]  ffff88011975eb80: fb fb fb fb fb fb fb fb fb fb fb fb
+fb fb fb fb
+[   53.805384]  ffff88011975ec00: fb fb fb fb fb fb fb fb fb fb fb fb
+fb fb fb fb
+[   53.805979] >ffff88011975ec80: fb fb fb fb fb fb fb fb fb fb fb fb
+fb fb fb fb
+[   53.806577]                                                                 ^
+[   53.807165]  ffff88011975ed00: fb fb fb fb fb fb fb fb fb fb fb fb
+fb fb fb fb
+[   53.807762]  ffff88011975ed80: fb fb fb fb fb fb fb fb fb fb fb fb
+fb fb fb fb
+[   53.808356] ==================================================================
+[   53.808949] Disabling lock debugging due to kernel taint
+
+Fixes: 6c8702c60b88 ("ipv6: sr: add support for SRH encapsulation and injection with lwtunnels")
+Signed-off-by: David Lebrun <dlebrun@google.com>
+Signed-off-by: Mathieu Xhonneux <m.xhonneux@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/util/cgroup.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ net/ipv6/seg6_iptunnel.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/cgroup.c b/tools/perf/util/cgroup.c
-index decb91f9da82..ccd02634a616 100644
---- a/tools/perf/util/cgroup.c
-+++ b/tools/perf/util/cgroup.c
-@@ -93,20 +93,17 @@ static int open_cgroup(const char *name)
- static struct cgroup *evlist__find_cgroup(struct perf_evlist *evlist, const char *str)
- {
- 	struct perf_evsel *counter;
--	struct cgroup *cgrp = NULL;
- 	/*
- 	 * check if cgrp is already defined, if so we reuse it
- 	 */
- 	evlist__for_each_entry(evlist, counter) {
- 		if (!counter->cgrp)
- 			continue;
--		if (!strcmp(counter->cgrp->name, str)) {
--			cgrp = cgroup__get(counter->cgrp);
--			break;
--		}
-+		if (!strcmp(counter->cgrp->name, str))
-+			return cgroup__get(counter->cgrp);
- 	}
+--- a/net/ipv6/seg6_iptunnel.c
++++ b/net/ipv6/seg6_iptunnel.c
+@@ -103,7 +103,7 @@ int seg6_do_srh_encap(struct sk_buff *sk
+ 	hdrlen = (osrh->hdrlen + 1) << 3;
+ 	tot_len = hdrlen + sizeof(*hdr);
  
--	return cgrp;
-+	return NULL;
- }
+-	err = skb_cow_head(skb, tot_len);
++	err = skb_cow_head(skb, tot_len + skb->mac_len);
+ 	if (unlikely(err))
+ 		return err;
  
- static struct cgroup *cgroup__new(const char *name)
+@@ -161,7 +161,7 @@ int seg6_do_srh_inline(struct sk_buff *s
+ 
+ 	hdrlen = (osrh->hdrlen + 1) << 3;
+ 
+-	err = skb_cow_head(skb, hdrlen);
++	err = skb_cow_head(skb, hdrlen + skb->mac_len);
+ 	if (unlikely(err))
+ 		return err;
+ 
