@@ -1,250 +1,451 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id jvhgCIj5GFtaagAAmS7hNA
-	; Thu, 07 Jun 2018 09:23:20 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 1s5wHI+tG1vbCwAAmS7hNA
+	; Sat, 09 Jun 2018 11:17:53 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 0DAE8607DC; Thu,  7 Jun 2018 09:23:20 +0000 (UTC)
+	id E3B28607BB; Sat,  9 Jun 2018 11:17:52 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 57A9760115;
-	Thu,  7 Jun 2018 09:23:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 57A9760115
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id D9869607A4;
+	Sat,  9 Jun 2018 11:17:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D9869607A4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932945AbeFGJW7 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 05:22:59 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:46346 "EHLO inva020.nxp.com"
+        id S1753215AbeFILRu (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 07:17:50 -0400
+Received: from foss.arm.com ([217.140.101.70]:39782 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932861AbeFGJWx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 05:22:53 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9CA841A02A7;
-        Thu,  7 Jun 2018 11:22:51 +0200 (CEST)
-Received: from smtp.na-rdc02.nxp.com (inv1260.us-phx01.nxp.com [134.27.49.11])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 380EF1A0019;
-        Thu,  7 Jun 2018 11:22:51 +0200 (CEST)
-Received: from az84smr01.freescale.net (az84smr01.freescale.net [10.64.34.197])
-        by inv1260.na-rdc02.nxp.com (Postfix) with ESMTP id 98CDF40A56;
-        Thu,  7 Jun 2018 02:22:50 -0700 (MST)
-Received: from titan.ap.freescale.net ([10.192.208.233])
-        by az84smr01.freescale.net (8.14.3/8.14.0) with ESMTP id w579MJ4p020959;
-        Thu, 7 Jun 2018 02:22:48 -0700
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: netdev@vger.kernel.org, madalin.bucur@nxp.com,
-        Richard Cochran <richardcochran@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>
-Cc: devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        id S1753110AbeFILRs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 07:17:48 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9EB971435;
+        Sat,  9 Jun 2018 04:17:47 -0700 (PDT)
+Received: from localhost (unknown [10.37.8.168])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D70EB3F5A0;
+        Sat,  9 Jun 2018 04:17:46 -0700 (PDT)
+Date: Sat, 9 Jun 2018 13:17:45 +0200
+From: Christoffer Dall <christoffer.dall@arm.com>
+To: Dongjiu Geng <gengdongjiu@huawei.com>
+Cc: rkrcmar@redhat.com, corbet@lwn.net, marc.zyngier@arm.com,
+        linux@armlinux.org.uk, catalin.marinas@arm.com,
+        will.deacon@arm.com, kvm@vger.kernel.org,
+        linux-doc@vger.kernel.org, james.morse@arm.com,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Yangbo Lu <yangbo.lu@nxp.com>
-Subject: [v3, 09/10] dpaa_eth: add support for hardware timestamping
-Date: Thu,  7 Jun 2018 17:20:49 +0800
-Message-Id: <20180607092050.46128-10-yangbo.lu@nxp.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180607092050.46128-1-yangbo.lu@nxp.com>
-References: <20180607092050.46128-1-yangbo.lu@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        linux-acpi@vger.kernel.org
+Subject: Re: [PATCH RESEND v4 2/2] arm/arm64: KVM: Add KVM_GET/SET_VCPU_EVENTS
+Message-ID: <20180609111745.GJ5097@C02W217FHV2R.local>
+References: <1528487320-2873-1-git-send-email-gengdongjiu@huawei.com>
+ <1528487320-2873-3-git-send-email-gengdongjiu@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1528487320-2873-3-git-send-email-gengdongjiu@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch is to add hardware timestamping support
-for dpaa_eth. On Rx, timestamping is enabled for
-all frames. On Tx, we only instruct the hardware
-to timestamp the frames marked accordingly by the
-stack.
+On Sat, Jun 09, 2018 at 03:48:40AM +0800, Dongjiu Geng wrote:
+> For the migrating VMs, user space may need to know the exception
+> state. For example, in the machine A, KVM make an SError pending,
+> when migrate to B, KVM also needs to pend an SError.
+> 
+> This new IOCTL exports user-invisible states related to SError.
+> Together with appropriate user space changes, user space can get/set
+> the SError exception state to do migrate/snapshot/suspend.
+> 
+> Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
+> ---
+> change since v3:
+> 1. Fix the memset() issue in the kvm_arm_vcpu_get_events()
+> 
+> change since v2:
+> 1. Add kvm_vcpu_events structure definition for arm platform to avoid the build errors.
+> 
+> change since v1:
+> Address Marc's comments, thanks Marc's review
+> 1. serror_has_esr always true when ARM64_HAS_RAS_EXTN is set
+> 2. remove Spurious blank line in kvm_arm_vcpu_set_events()
+> 3. rename pend_guest_serror() to kvm_set_sei_esr()
+> 4. Make kvm_arm_vcpu_get_events() did all the work rather than having this split responsibility.
+> 5.  using sizeof(events) instead of sizeof(struct kvm_vcpu_events)
+> 
+> this series patch is separated from https://www.spinics.net/lists/kvm/msg168917.html
+> The user space patch is here: https://lists.gnu.org/archive/html/qemu-devel/2018-05/msg06965.html
+> 
+> change since V12:
+> 1. change (vcpu->arch.hcr_el2 & HCR_VSE) to !!(vcpu->arch.hcr_el2 & HCR_VSE) in kvm_arm_vcpu_get_events()
+> 
+> Change since V11:
+> Address James's comments, thanks James
+> 1. Align the struct of kvm_vcpu_events to 64 bytes
+> 2. Avoid exposing the stale ESR value in the kvm_arm_vcpu_get_events()
+> 3. Change variables 'injected' name to 'serror_pending' in the kvm_arm_vcpu_set_events()
+> 4. Change to sizeof(events) from sizeof(struct kvm_vcpu_events) in kvm_arch_vcpu_ioctl()
+> 
+> Change since V10:
+> Address James's comments, thanks James
+> 1. Merge the helper function with the user.
+> 2. Move the ISS_MASK into pend_guest_serror() to clear top bits
+> 3. Make kvm_vcpu_events struct align to 4 bytes
+> 4. Add something check in the kvm_arm_vcpu_set_events()
+> 5. Check kvm_arm_vcpu_get/set_events()'s return value.
+> 6. Initialise kvm_vcpu_events to 0 so that padding transferred to user-space doesn't
+>    contain kernel stack.
+> ---
+>  Documentation/virtual/kvm/api.txt    | 31 ++++++++++++++++++++++++++++---
+>  arch/arm/include/asm/kvm_host.h      |  6 ++++++
+>  arch/arm/include/uapi/asm/kvm.h      | 12 ++++++++++++
+>  arch/arm/kvm/guest.c                 | 12 ++++++++++++
+>  arch/arm64/include/asm/kvm_emulate.h |  5 +++++
+>  arch/arm64/include/asm/kvm_host.h    |  7 +++++++
+>  arch/arm64/include/uapi/asm/kvm.h    | 13 +++++++++++++
+>  arch/arm64/kvm/guest.c               | 36 ++++++++++++++++++++++++++++++++++++
+>  arch/arm64/kvm/inject_fault.c        |  6 +++---
+>  arch/arm64/kvm/reset.c               |  1 +
+>  virt/kvm/arm/arm.c                   | 19 +++++++++++++++++++
+>  11 files changed, 142 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
+> index fdac969..8896737 100644
+> --- a/Documentation/virtual/kvm/api.txt
+> +++ b/Documentation/virtual/kvm/api.txt
+> @@ -835,11 +835,13 @@ struct kvm_clock_data {
+>  
+>  Capability: KVM_CAP_VCPU_EVENTS
+>  Extended by: KVM_CAP_INTR_SHADOW
+> -Architectures: x86
+> +Architectures: x86, arm, arm64
+>  Type: vm ioctl
+>  Parameters: struct kvm_vcpu_event (out)
+>  Returns: 0 on success, -1 on error
+>  
+> +X86:
+> +
+>  Gets currently pending exceptions, interrupts, and NMIs as well as related
+>  states of the vcpu.
+>  
+> @@ -881,15 +883,32 @@ Only two fields are defined in the flags field:
+>  - KVM_VCPUEVENT_VALID_SMM may be set in the flags field to signal that
+>    smi contains a valid state.
+>  
+> +ARM, ARM64:
+> +
+> +Gets currently pending SError exceptions as well as related states of the vcpu.
+> +
+> +struct kvm_vcpu_events {
+> +	struct {
+> +		__u8 serror_pending;
+> +		__u8 serror_has_esr;
+> +		/* Align it to 8 bytes */
+> +		__u8 pad[6];
+> +		__u64 serror_esr;
+> +	} exception;
+> +	__u32 reserved[12];
+> +};
+> +
+>  4.32 KVM_SET_VCPU_EVENTS
+>  
+> -Capability: KVM_CAP_VCPU_EVENTS
+> +Capebility: KVM_CAP_VCPU_EVENTS
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
----
-Changes for v2:
-	- Removed ifdef for timestamp code.
-	- Minor fixes for code style.
-Changes for v3:
-	- Moved tstamp endianness conversion to fman API.
-	- Fixed fm.cmd endianness.
----
- drivers/net/ethernet/freescale/dpaa/dpaa_eth.c |   88 ++++++++++++++++++++++--
- drivers/net/ethernet/freescale/dpaa/dpaa_eth.h |    3 +
- 2 files changed, 86 insertions(+), 5 deletions(-)
+nit: unintended change?
 
-diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-index fd43f98..6a1c58a 100644
---- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-+++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-@@ -1168,7 +1168,7 @@ static int dpaa_eth_init_tx_port(struct fman_port *port, struct dpaa_fq *errq,
- 	buf_prefix_content.priv_data_size = buf_layout->priv_data_size;
- 	buf_prefix_content.pass_prs_result = true;
- 	buf_prefix_content.pass_hash_result = true;
--	buf_prefix_content.pass_time_stamp = false;
-+	buf_prefix_content.pass_time_stamp = true;
- 	buf_prefix_content.data_align = DPAA_FD_DATA_ALIGNMENT;
- 
- 	params.specific_params.non_rx_params.err_fqid = errq->fqid;
-@@ -1210,7 +1210,7 @@ static int dpaa_eth_init_rx_port(struct fman_port *port, struct dpaa_bp **bps,
- 	buf_prefix_content.priv_data_size = buf_layout->priv_data_size;
- 	buf_prefix_content.pass_prs_result = true;
- 	buf_prefix_content.pass_hash_result = true;
--	buf_prefix_content.pass_time_stamp = false;
-+	buf_prefix_content.pass_time_stamp = true;
- 	buf_prefix_content.data_align = DPAA_FD_DATA_ALIGNMENT;
- 
- 	rx_p = &params.specific_params.rx_params;
-@@ -1607,14 +1607,28 @@ static int dpaa_eth_refill_bpools(struct dpaa_priv *priv)
- {
- 	const enum dma_data_direction dma_dir = DMA_TO_DEVICE;
- 	struct device *dev = priv->net_dev->dev.parent;
-+	struct skb_shared_hwtstamps shhwtstamps;
- 	dma_addr_t addr = qm_fd_addr(fd);
- 	const struct qm_sg_entry *sgt;
- 	struct sk_buff **skbh, *skb;
- 	int nr_frags, i;
-+	u64 ns;
- 
- 	skbh = (struct sk_buff **)phys_to_virt(addr);
- 	skb = *skbh;
- 
-+	if (priv->tx_tstamp && skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) {
-+		memset(&shhwtstamps, 0, sizeof(shhwtstamps));
-+
-+		if (!fman_port_get_tstamp(priv->mac_dev->port[TX], (void *)skbh,
-+					  &ns)) {
-+			shhwtstamps.hwtstamp = ns_to_ktime(ns);
-+			skb_tstamp_tx(skb, &shhwtstamps);
-+		} else {
-+			dev_warn(dev, "fman_port_get_tstamp failed!\n");
-+		}
-+	}
-+
- 	if (unlikely(qm_fd_get_format(fd) == qm_fd_sg)) {
- 		nr_frags = skb_shinfo(skb)->nr_frags;
- 		dma_unmap_single(dev, addr, qm_fd_get_offset(fd) +
-@@ -2086,6 +2100,11 @@ static int dpaa_start_xmit(struct sk_buff *skb, struct net_device *net_dev)
- 	if (unlikely(err < 0))
- 		goto skb_to_fd_failed;
- 
-+	if (priv->tx_tstamp && skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) {
-+		fd.cmd |= cpu_to_be32(FM_FD_CMD_UPD);
-+		skb_shinfo(skb)->tx_flags |= SKBTX_IN_PROGRESS;
-+	}
-+
- 	if (likely(dpaa_xmit(priv, percpu_stats, queue_mapping, &fd) == 0))
- 		return NETDEV_TX_OK;
- 
-@@ -2227,6 +2246,7 @@ static enum qman_cb_dqrr_result rx_default_dqrr(struct qman_portal *portal,
- 						struct qman_fq *fq,
- 						const struct qm_dqrr_entry *dq)
- {
-+	struct skb_shared_hwtstamps *shhwtstamps;
- 	struct rtnl_link_stats64 *percpu_stats;
- 	struct dpaa_percpu_priv *percpu_priv;
- 	const struct qm_fd *fd = &dq->fd;
-@@ -2240,6 +2260,7 @@ static enum qman_cb_dqrr_result rx_default_dqrr(struct qman_portal *portal,
- 	struct sk_buff *skb;
- 	int *count_ptr;
- 	void *vaddr;
-+	u64 ns;
- 
- 	fd_status = be32_to_cpu(fd->status);
- 	fd_format = qm_fd_get_format(fd);
-@@ -2304,6 +2325,16 @@ static enum qman_cb_dqrr_result rx_default_dqrr(struct qman_portal *portal,
- 	if (!skb)
- 		return qman_cb_dqrr_consume;
- 
-+	if (priv->rx_tstamp) {
-+		shhwtstamps = skb_hwtstamps(skb);
-+		memset(shhwtstamps, 0, sizeof(*shhwtstamps));
-+
-+		if (!fman_port_get_tstamp(priv->mac_dev->port[RX], vaddr, &ns))
-+			shhwtstamps->hwtstamp = ns_to_ktime(ns);
-+		else
-+			dev_warn(net_dev->dev.parent, "fman_port_get_tstamp failed!\n");
-+	}
-+
- 	skb->protocol = eth_type_trans(skb, net_dev);
- 
- 	if (net_dev->features & NETIF_F_RXHASH && priv->keygen_in_use &&
-@@ -2523,11 +2554,58 @@ static int dpaa_eth_stop(struct net_device *net_dev)
- 	return err;
- }
- 
-+static int dpaa_ts_ioctl(struct net_device *dev, struct ifreq *rq, int cmd)
-+{
-+	struct dpaa_priv *priv = netdev_priv(dev);
-+	struct hwtstamp_config config;
-+
-+	if (copy_from_user(&config, rq->ifr_data, sizeof(config)))
-+		return -EFAULT;
-+
-+	switch (config.tx_type) {
-+	case HWTSTAMP_TX_OFF:
-+		/* Couldn't disable rx/tx timestamping separately.
-+		 * Do nothing here.
-+		 */
-+		priv->tx_tstamp = false;
-+		break;
-+	case HWTSTAMP_TX_ON:
-+		priv->mac_dev->set_tstamp(priv->mac_dev->fman_mac, true);
-+		priv->tx_tstamp = true;
-+		break;
-+	default:
-+		return -ERANGE;
-+	}
-+
-+	if (config.rx_filter == HWTSTAMP_FILTER_NONE) {
-+		/* Couldn't disable rx/tx timestamping separately.
-+		 * Do nothing here.
-+		 */
-+		priv->rx_tstamp = false;
-+	} else {
-+		priv->mac_dev->set_tstamp(priv->mac_dev->fman_mac, true);
-+		priv->rx_tstamp = true;
-+		/* TS is set for all frame types, not only those requested */
-+		config.rx_filter = HWTSTAMP_FILTER_ALL;
-+	}
-+
-+	return copy_to_user(rq->ifr_data, &config, sizeof(config)) ?
-+			-EFAULT : 0;
-+}
-+
- static int dpaa_ioctl(struct net_device *net_dev, struct ifreq *rq, int cmd)
- {
--	if (!net_dev->phydev)
--		return -EINVAL;
--	return phy_mii_ioctl(net_dev->phydev, rq, cmd);
-+	int ret = -EINVAL;
-+
-+	if (cmd == SIOCGMIIREG) {
-+		if (net_dev->phydev)
-+			return phy_mii_ioctl(net_dev->phydev, rq, cmd);
-+	}
-+
-+	if (cmd == SIOCSHWTSTAMP)
-+		return dpaa_ts_ioctl(net_dev, rq, cmd);
-+
-+	return ret;
- }
- 
- static const struct net_device_ops dpaa_ops = {
-diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.h b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.h
-index bd94220..af320f8 100644
---- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.h
-+++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.h
-@@ -182,6 +182,9 @@ struct dpaa_priv {
- 
- 	struct dpaa_buffer_layout buf_layout[2];
- 	u16 rx_headroom;
-+
-+	bool tx_tstamp; /* Tx timestamping enabled */
-+	bool rx_tstamp; /* Rx timestamping enabled */
- };
- 
- /* from dpaa_ethtool.c */
--- 
-1.7.1
+>  Extended by: KVM_CAP_INTR_SHADOW
+> -Architectures: x86
+> +Architectures: x86, arm, arm64
+>  Type: vm ioctl
+>  Parameters: struct kvm_vcpu_event (in)
+>  Returns: 0 on success, -1 on error
+>  
+> +X86:
+> +
+>  Set pending exceptions, interrupts, and NMIs as well as related states of the
+>  vcpu.
+>  
+> @@ -910,6 +929,12 @@ shall be written into the VCPU.
+>  
+>  KVM_VCPUEVENT_VALID_SMM can only be set if KVM_CAP_X86_SMM is available.
+>  
+> +ARM, ARM64:
+> +
+> +Set pending SError exceptions as well as related states of the vcpu.
+> +
+> +See KVM_GET_VCPU_EVENTS for the data structure.
+> +
+>  
+>  4.33 KVM_GET_DEBUGREGS
+>  
+> diff --git a/arch/arm/include/asm/kvm_host.h b/arch/arm/include/asm/kvm_host.h
+> index c7c28c8..39f9901 100644
+> --- a/arch/arm/include/asm/kvm_host.h
+> +++ b/arch/arm/include/asm/kvm_host.h
+> @@ -213,6 +213,12 @@ unsigned long kvm_arm_num_regs(struct kvm_vcpu *vcpu);
+>  int kvm_arm_copy_reg_indices(struct kvm_vcpu *vcpu, u64 __user *indices);
+>  int kvm_arm_get_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg);
+>  int kvm_arm_set_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg);
+> +int kvm_arm_vcpu_get_events(struct kvm_vcpu *vcpu,
+> +			struct kvm_vcpu_events *events);
+> +
+> +int kvm_arm_vcpu_set_events(struct kvm_vcpu *vcpu,
+> +			struct kvm_vcpu_events *events);
+> +
+>  unsigned long kvm_call_hyp(void *hypfn, ...);
+>  void force_vm_exit(const cpumask_t *mask);
+>  
+> diff --git a/arch/arm/include/uapi/asm/kvm.h b/arch/arm/include/uapi/asm/kvm.h
+> index caae484..c3e6975 100644
+> --- a/arch/arm/include/uapi/asm/kvm.h
+> +++ b/arch/arm/include/uapi/asm/kvm.h
+> @@ -124,6 +124,18 @@ struct kvm_sync_regs {
+>  struct kvm_arch_memory_slot {
+>  };
+>  
+> +/* for KVM_GET/SET_VCPU_EVENTS */
+> +struct kvm_vcpu_events {
+> +	struct {
+> +		__u8 serror_pending;
+> +		__u8 serror_has_esr;
+> +		/* Align it to 8 bytes */
+> +		__u8 pad[6];
+> +		__u64 serror_esr;
+> +	} exception;
+> +	__u32 reserved[12];
+> +};
+> +
+>  /* If you need to interpret the index values, here is the key: */
+>  #define KVM_REG_ARM_COPROC_MASK		0x000000000FFF0000
+>  #define KVM_REG_ARM_COPROC_SHIFT	16
+> diff --git a/arch/arm/kvm/guest.c b/arch/arm/kvm/guest.c
+> index a18f33e..c685f0e 100644
+> --- a/arch/arm/kvm/guest.c
+> +++ b/arch/arm/kvm/guest.c
+> @@ -261,6 +261,18 @@ int kvm_arch_vcpu_ioctl_set_sregs(struct kvm_vcpu *vcpu,
+>  	return -EINVAL;
+>  }
+>  
+> +int kvm_arm_vcpu_get_events(struct kvm_vcpu *vcpu,
+> +			struct kvm_vcpu_events *events)
+> +{
+> +	return -EINVAL;
+> +}
+> +
+> +int kvm_arm_vcpu_set_events(struct kvm_vcpu *vcpu,
+> +			struct kvm_vcpu_events *events)
+> +{
+> +	return -EINVAL;
+> +}
+> +
+>  int __attribute_const__ kvm_target_cpu(void)
+>  {
+>  	switch (read_cpuid_part()) {
+> diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/include/asm/kvm_emulate.h
+> index 1dab3a9..18f61ff 100644
+> --- a/arch/arm64/include/asm/kvm_emulate.h
+> +++ b/arch/arm64/include/asm/kvm_emulate.h
+> @@ -81,6 +81,11 @@ static inline unsigned long *vcpu_hcr(struct kvm_vcpu *vcpu)
+>  	return (unsigned long *)&vcpu->arch.hcr_el2;
+>  }
+>  
+> +static inline unsigned long vcpu_get_vsesr(struct kvm_vcpu *vcpu)
+> +{
+> +	return vcpu->arch.vsesr_el2;
+> +}
+> +
+>  static inline void vcpu_set_vsesr(struct kvm_vcpu *vcpu, u64 vsesr)
+>  {
+>  	vcpu->arch.vsesr_el2 = vsesr;
+> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> index 469de8a..357304a 100644
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@ -335,6 +335,11 @@ unsigned long kvm_arm_num_regs(struct kvm_vcpu *vcpu);
+>  int kvm_arm_copy_reg_indices(struct kvm_vcpu *vcpu, u64 __user *indices);
+>  int kvm_arm_get_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg);
+>  int kvm_arm_set_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg);
+> +int kvm_arm_vcpu_get_events(struct kvm_vcpu *vcpu,
+> +			struct kvm_vcpu_events *events);
+> +
+> +int kvm_arm_vcpu_set_events(struct kvm_vcpu *vcpu,
+> +			struct kvm_vcpu_events *events);
+>  
+>  #define KVM_ARCH_WANT_MMU_NOTIFIER
+>  int kvm_unmap_hva(struct kvm *kvm, unsigned long hva);
+> @@ -363,6 +368,8 @@ void handle_exit_early(struct kvm_vcpu *vcpu, struct kvm_run *run,
+>  int kvm_perf_init(void);
+>  int kvm_perf_teardown(void);
+>  
+> +void kvm_set_sei_esr(struct kvm_vcpu *vcpu, u64 syndrome);
+> +
+>  struct kvm_vcpu *kvm_mpidr_to_vcpu(struct kvm *kvm, unsigned long mpidr);
+>  
+>  void __kvm_set_tpidr_el2(u64 tpidr_el2);
+> diff --git a/arch/arm64/include/uapi/asm/kvm.h b/arch/arm64/include/uapi/asm/kvm.h
+> index 04b3256..df4faee 100644
+> --- a/arch/arm64/include/uapi/asm/kvm.h
+> +++ b/arch/arm64/include/uapi/asm/kvm.h
+> @@ -39,6 +39,7 @@
+>  #define __KVM_HAVE_GUEST_DEBUG
+>  #define __KVM_HAVE_IRQ_LINE
+>  #define __KVM_HAVE_READONLY_MEM
+> +#define __KVM_HAVE_VCPU_EVENTS
+>  
+>  #define KVM_COALESCED_MMIO_PAGE_OFFSET 1
+>  
+> @@ -153,6 +154,18 @@ struct kvm_sync_regs {
+>  struct kvm_arch_memory_slot {
+>  };
+>  
+> +/* for KVM_GET/SET_VCPU_EVENTS */
+> +struct kvm_vcpu_events {
+> +	struct {
+> +		__u8 serror_pending;
+> +		__u8 serror_has_esr;
+> +		/* Align it to 8 bytes */
+> +		__u8 pad[6];
+> +		__u64 serror_esr;
+> +	} exception;
+> +	__u32 reserved[12];
+> +};
+> +
+>  /* If you need to interpret the index values, here is the key: */
+>  #define KVM_REG_ARM_COPROC_MASK		0x000000000FFF0000
+>  #define KVM_REG_ARM_COPROC_SHIFT	16
+> diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c
+> index 56a0260..4426915 100644
+> --- a/arch/arm64/kvm/guest.c
+> +++ b/arch/arm64/kvm/guest.c
+> @@ -289,6 +289,42 @@ int kvm_arch_vcpu_ioctl_set_sregs(struct kvm_vcpu *vcpu,
+>  	return -EINVAL;
+>  }
+>  
+> +int kvm_arm_vcpu_get_events(struct kvm_vcpu *vcpu,
+> +			struct kvm_vcpu_events *events)
+> +{
+> +	memset(events, 0, sizeof(*events));
+> +
+> +	events->exception.serror_pending = !!(vcpu->arch.hcr_el2 & HCR_VSE);
+> +	events->exception.serror_has_esr =
+> +					cpus_have_const_cap(ARM64_HAS_RAS_EXTN);
+
+nit: no need to wrap this line so strangely, just keep it on a single
+line (regardless of going slightly over the 80 chars limit).
+
+> +
+> +	if (events->exception.serror_pending &&
+> +		events->exception.serror_has_esr)
+
+same here
+
+> +		events->exception.serror_esr = vcpu_get_vsesr(vcpu);
+> +	else
+> +		events->exception.serror_esr = 0;
+> +
+> +	return 0;
+> +}
+> +
+> +int kvm_arm_vcpu_set_events(struct kvm_vcpu *vcpu,
+> +			struct kvm_vcpu_events *events)
+> +{
+> +	bool serror_pending = events->exception.serror_pending;
+> +	bool has_esr = events->exception.serror_has_esr;
+> +
+> +	if (serror_pending && has_esr) {
+> +		if (!cpus_have_const_cap(ARM64_HAS_RAS_EXTN))
+> +			return -EINVAL;
+> +
+> +		kvm_set_sei_esr(vcpu, events->exception.serror_esr);
+> +	} else if (serror_pending) {
+> +		kvm_inject_vabt(vcpu);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  int __attribute_const__ kvm_target_cpu(void)
+>  {
+>  	unsigned long implementor = read_cpuid_implementor();
+> diff --git a/arch/arm64/kvm/inject_fault.c b/arch/arm64/kvm/inject_fault.c
+> index d8e7165..a55e91d 100644
+> --- a/arch/arm64/kvm/inject_fault.c
+> +++ b/arch/arm64/kvm/inject_fault.c
+> @@ -164,9 +164,9 @@ void kvm_inject_undefined(struct kvm_vcpu *vcpu)
+>  		inject_undef64(vcpu);
+>  }
+>  
+> -static void pend_guest_serror(struct kvm_vcpu *vcpu, u64 esr)
+> +void kvm_set_sei_esr(struct kvm_vcpu *vcpu, u64 esr)
+>  {
+> -	vcpu_set_vsesr(vcpu, esr);
+> +	vcpu_set_vsesr(vcpu, esr & ESR_ELx_ISS_MASK);
+>  	*vcpu_hcr(vcpu) |= HCR_VSE;
+>  }
+>  
+> @@ -184,5 +184,5 @@ static void pend_guest_serror(struct kvm_vcpu *vcpu, u64 esr)
+>   */
+>  void kvm_inject_vabt(struct kvm_vcpu *vcpu)
+>  {
+> -	pend_guest_serror(vcpu, ESR_ELx_ISV);
+> +	kvm_set_sei_esr(vcpu, ESR_ELx_ISV);
+>  }
+> diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
+> index 38c8a64..20e919a 100644
+> --- a/arch/arm64/kvm/reset.c
+> +++ b/arch/arm64/kvm/reset.c
+> @@ -82,6 +82,7 @@ int kvm_arch_dev_ioctl_check_extension(struct kvm *kvm, long ext)
+>  		break;
+>  	case KVM_CAP_SET_GUEST_DEBUG:
+>  	case KVM_CAP_VCPU_ATTRIBUTES:
+> +	case KVM_CAP_VCPU_EVENTS:
+>  		r = 1;
+>  		break;
+>  	default:
+> diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
+> index a4c1b76..79ecba9 100644
+> --- a/virt/kvm/arm/arm.c
+> +++ b/virt/kvm/arm/arm.c
+> @@ -1107,6 +1107,25 @@ long kvm_arch_vcpu_ioctl(struct file *filp,
+>  		r = kvm_arm_vcpu_has_attr(vcpu, &attr);
+>  		break;
+>  	}
+> +	case KVM_GET_VCPU_EVENTS: {
+> +		struct kvm_vcpu_events events;
+> +
+> +		if (kvm_arm_vcpu_get_events(vcpu, &events))
+> +			return -EINVAL;
+> +
+> +		if (copy_to_user(argp, &events, sizeof(events)))
+> +			return -EFAULT;
+> +
+> +		return 0;
+> +	}
+> +	case KVM_SET_VCPU_EVENTS: {
+> +		struct kvm_vcpu_events events;
+> +
+> +		if (copy_from_user(&events, argp, sizeof(events)))
+> +			return -EFAULT;
+> +
+> +		return kvm_arm_vcpu_set_events(vcpu, &events);
+> +	}
+>  	default:
+>  		r = -EINVAL;
+>  	}
+> -- 
+> 2.7.4
+> 
+
+I'll leave it to James to comment on the specifics of the RAS
+interaction, but I think the two patches should be re-ordered, so that
+the capability patch comes last, after the functionality has been
+introduced.
+
+Otherwise this looks reasonable enough.
+
+Thanks,
+-Christoffer
