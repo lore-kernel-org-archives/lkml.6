@@ -1,89 +1,239 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id /8cUHP03GFuBXwAAmS7hNA
-	; Wed, 06 Jun 2018 19:38:34 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id QrQhHvH1G1vIcwAAmS7hNA
+	; Sat, 09 Jun 2018 15:45:09 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id F3591607E4; Wed,  6 Jun 2018 19:38:33 +0000 (UTC)
+	id 5C632608BF; Sat,  9 Jun 2018 15:45:09 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0+RX5i8l"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 989CA60861;
-	Wed,  6 Jun 2018 19:38:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 989CA60861
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 49D7C608B8;
+	Sat,  9 Jun 2018 15:45:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 49D7C608B8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752850AbeFFTib (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 15:38:31 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:34410 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752641AbeFFTi2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 15:38:28 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mailout.easymail.ca (Postfix) with ESMTP id F027841E7E;
-        Wed,  6 Jun 2018 19:38:27 +0000 (UTC)
-Received: from mailout.easymail.ca ([127.0.0.1])
-        by localhost (emo03-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id AJA3Ljv5NyZs; Wed,  6 Jun 2018 19:38:27 +0000 (UTC)
-Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S932869AbeFIPpG (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:45:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36320 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753703AbeFIPd7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:33:59 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mailout.easymail.ca (Postfix) with ESMTPSA id 5E1A340D79;
-        Wed,  6 Jun 2018 19:38:20 +0000 (UTC)
-Subject: Re: [PATCH] selftests/ftrace: Add ppc support for kprobe args tests
-To: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Shuah Khan <shuah@kernel.org>
-References: <20180606093154.10408-1-naveen.n.rao@linux.vnet.ibm.com>
- <20180606203752.7768487691f4a85a56f82978@kernel.org>
- <20180606132006.7bcd1d38@vmware.local.home>
-From: Shuah Khan <shuah@kernel.org>
-Message-ID: <2b5669b5-8b97-8de1-fe85-00d5cd307ac3@kernel.org>
-Date: Wed, 6 Jun 2018 13:38:12 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        by mail.kernel.org (Postfix) with ESMTPSA id DD89D204EC;
+        Sat,  9 Jun 2018 15:33:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558438;
+        bh=OI6nC0qTTKaPwBFAAVf/95OxSvxGSyu0wU6lJ5jypLw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=0+RX5i8lH9zPViZaq+YudxYmKIuJkzkqTPl9hQXu7kSqYK9GxLK7xBG1g+WdPSjVi
+         pv2iZlOxGaNvKm12Hh5aiHuXVWzaKZrZt0d480RRAIIXPB0hQPrLFJNSAySYbX9Tdc
+         eDrtZ5xbWoJmw0qz+XQcjsJp6Bt8eLI07uxTcMGQ=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>,
+        Jason Wang <jasowang@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 40/48] tun: Fix NULL pointer dereference in XDP redirect
+Date: Sat,  9 Jun 2018 17:29:52 +0200
+Message-Id: <20180609145950.562127877@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
+References: <20180609145947.679103414@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-In-Reply-To: <20180606132006.7bcd1d38@vmware.local.home>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/06/2018 11:20 AM, Steven Rostedt wrote:
-> 
-> Shuah,
-> 
-> Can you take this in your tree?
-> 
-> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> 
-> -- Steve
-> 
-> 
-> On Wed, 6 Jun 2018 20:37:52 +0900
-> Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> 
->> On Wed,  6 Jun 2018 15:01:54 +0530
->> "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> wrote:
->>
->>> Add powerpc support for the recently added kprobe args tests.  
->>
->> Thank you for adding powerpc support!
->>
->> Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
->>
-> 
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-Yes. I will get this in.
+------------------
 
-thanks,
--- Shuah
+From: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+
+[ Upstream commit 6547e387d7f52f2ba681a229de3c13e5b9e01ee1 ]
+
+Calling XDP redirection requires bh disabled. Softirq can call another
+XDP function and redirection functions, then the percpu static variable
+ri->map can be overwritten to NULL.
+
+This is a generic XDP case called from tun.
+
+[ 3535.736058] BUG: unable to handle kernel NULL pointer dereference at 0000000000000018
+[ 3535.743974] PGD 0 P4D 0
+[ 3535.746530] Oops: 0000 [#1] SMP PTI
+[ 3535.750049] Modules linked in: vhost_net vhost tap tun bridge stp llc ebtable_filter ebtables ip6table_filter ip6_tables iptable_filter sunrpc vfat fat ext4 mbcache jbd2 intel_rapl skx_edac nfit libnvdimm x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel kvm ipmi_ssif irqbypass crct10dif_pclmul crc32_pclmul ghash_clmulni_intel pcbc ses aesni_intel crypto_simd cryptd enclosure hpwdt hpilo glue_helper ipmi_si pcspkr wmi mei_me ioatdma mei ipmi_devintf shpchp dca ipmi_msghandler lpc_ich acpi_power_meter sch_fq_codel ip_tables xfs libcrc32c sd_mod mgag200 i2c_algo_bit drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops ttm drm smartpqi i40e crc32c_intel scsi_transport_sas tg3 i2c_core ptp pps_core
+[ 3535.813456] CPU: 5 PID: 1630 Comm: vhost-1614 Not tainted 4.17.0-rc4 #2
+[ 3535.820127] Hardware name: HPE ProLiant DL360 Gen10/ProLiant DL360 Gen10, BIOS U32 11/14/2017
+[ 3535.828732] RIP: 0010:__xdp_map_lookup_elem+0x5/0x30
+[ 3535.833740] RSP: 0018:ffffb4bc47bf7c58 EFLAGS: 00010246
+[ 3535.839009] RAX: ffff9fdfcfea1c40 RBX: 0000000000000000 RCX: ffff9fdf27fe3100
+[ 3535.846205] RDX: ffff9fdfca769200 RSI: 0000000000000000 RDI: 0000000000000000
+[ 3535.853402] RBP: ffffb4bc491d9000 R08: 00000000000045ad R09: 0000000000000ec0
+[ 3535.860597] R10: 0000000000000001 R11: ffff9fdf26c3ce4e R12: ffff9fdf9e72c000
+[ 3535.867794] R13: 0000000000000000 R14: fffffffffffffff2 R15: ffff9fdfc82cdd00
+[ 3535.874990] FS:  0000000000000000(0000) GS:ffff9fdfcfe80000(0000) knlGS:0000000000000000
+[ 3535.883152] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 3535.888948] CR2: 0000000000000018 CR3: 0000000bde724004 CR4: 00000000007626e0
+[ 3535.896145] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[ 3535.903342] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[ 3535.910538] PKRU: 55555554
+[ 3535.913267] Call Trace:
+[ 3535.915736]  xdp_do_generic_redirect+0x7a/0x310
+[ 3535.920310]  do_xdp_generic.part.117+0x285/0x370
+[ 3535.924970]  tun_get_user+0x5b9/0x1260 [tun]
+[ 3535.929279]  tun_sendmsg+0x52/0x70 [tun]
+[ 3535.933237]  handle_tx+0x2ad/0x5f0 [vhost_net]
+[ 3535.937721]  vhost_worker+0xa5/0x100 [vhost]
+[ 3535.942030]  kthread+0xf5/0x130
+[ 3535.945198]  ? vhost_dev_ioctl+0x3b0/0x3b0 [vhost]
+[ 3535.950031]  ? kthread_bind+0x10/0x10
+[ 3535.953727]  ret_from_fork+0x35/0x40
+[ 3535.957334] Code: 0e 74 15 83 f8 10 75 05 e9 49 aa b3 ff f3 c3 0f 1f 80 00 00 00 00 f3 c3 e9 29 9d b3 ff 66 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 <8b> 47 18 83 f8 0e 74 0d 83 f8 10 75 05 e9 49 a9 b3 ff 31 c0 c3
+[ 3535.976387] RIP: __xdp_map_lookup_elem+0x5/0x30 RSP: ffffb4bc47bf7c58
+[ 3535.982883] CR2: 0000000000000018
+[ 3535.987096] ---[ end trace 383b299dd1430240 ]---
+[ 3536.131325] Kernel panic - not syncing: Fatal exception
+[ 3536.137484] Kernel Offset: 0x26a00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+[ 3536.281406] ---[ end Kernel panic - not syncing: Fatal exception ]---
+
+And a kernel with generic case fixed still panics in tun driver XDP
+redirect, because it disabled only preemption, but not bh.
+
+[ 2055.128746] BUG: unable to handle kernel NULL pointer dereference at 0000000000000018
+[ 2055.136662] PGD 0 P4D 0
+[ 2055.139219] Oops: 0000 [#1] SMP PTI
+[ 2055.142736] Modules linked in: vhost_net vhost tap tun bridge stp llc ebtable_filter ebtables ip6table_filter ip6_tables iptable_filter sunrpc vfat fat ext4 mbcache jbd2 intel_rapl skx_edac nfit libnvdimm x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel kvm irqbypass crct10dif_pclmul crc32_pclmul ghash_clmulni_intel pcbc ses aesni_intel ipmi_ssif crypto_simd enclosure cryptd hpwdt glue_helper ioatdma hpilo wmi dca pcspkr ipmi_si acpi_power_meter ipmi_devintf shpchp mei_me ipmi_msghandler mei lpc_ich sch_fq_codel ip_tables xfs libcrc32c sd_mod mgag200 i2c_algo_bit drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops ttm drm i40e smartpqi tg3 scsi_transport_sas crc32c_intel i2c_core ptp pps_core
+[ 2055.206142] CPU: 6 PID: 1693 Comm: vhost-1683 Tainted: G        W         4.17.0-rc5-fix-tun+ #1
+[ 2055.215011] Hardware name: HPE ProLiant DL360 Gen10/ProLiant DL360 Gen10, BIOS U32 11/14/2017
+[ 2055.223617] RIP: 0010:__xdp_map_lookup_elem+0x5/0x30
+[ 2055.228624] RSP: 0018:ffff998b07607cc0 EFLAGS: 00010246
+[ 2055.233892] RAX: ffff8dbd8e235700 RBX: ffff8dbd8ff21c40 RCX: 0000000000000004
+[ 2055.241089] RDX: ffff998b097a9000 RSI: 0000000000000000 RDI: 0000000000000000
+[ 2055.248286] RBP: 0000000000000000 R08: 00000000000065a8 R09: 0000000000005d80
+[ 2055.255483] R10: 0000000000000040 R11: ffff8dbcf0100000 R12: ffff998b097a9000
+[ 2055.262681] R13: ffff8dbd8c98c000 R14: 0000000000000000 R15: ffff998b07607d78
+[ 2055.269879] FS:  0000000000000000(0000) GS:ffff8dbd8ff00000(0000) knlGS:0000000000000000
+[ 2055.278039] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 2055.283834] CR2: 0000000000000018 CR3: 0000000c0c8cc005 CR4: 00000000007626e0
+[ 2055.291030] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[ 2055.298227] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[ 2055.305424] PKRU: 55555554
+[ 2055.308153] Call Trace:
+[ 2055.310624]  xdp_do_redirect+0x7b/0x380
+[ 2055.314499]  tun_get_user+0x10fe/0x12a0 [tun]
+[ 2055.318895]  tun_sendmsg+0x52/0x70 [tun]
+[ 2055.322852]  handle_tx+0x2ad/0x5f0 [vhost_net]
+[ 2055.327337]  vhost_worker+0xa5/0x100 [vhost]
+[ 2055.331646]  kthread+0xf5/0x130
+[ 2055.334813]  ? vhost_dev_ioctl+0x3b0/0x3b0 [vhost]
+[ 2055.339646]  ? kthread_bind+0x10/0x10
+[ 2055.343343]  ret_from_fork+0x35/0x40
+[ 2055.346950] Code: 0e 74 15 83 f8 10 75 05 e9 e9 aa b3 ff f3 c3 0f 1f 80 00 00 00 00 f3 c3 e9 c9 9d b3 ff 66 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 <8b> 47 18 83 f8 0e 74 0d 83 f8 10 75 05 e9 e9 a9 b3 ff 31 c0 c3
+[ 2055.366004] RIP: __xdp_map_lookup_elem+0x5/0x30 RSP: ffff998b07607cc0
+[ 2055.372500] CR2: 0000000000000018
+[ 2055.375856] ---[ end trace 2a2dcc5e9e174268 ]---
+[ 2055.523626] Kernel panic - not syncing: Fatal exception
+[ 2055.529796] Kernel Offset: 0x2e000000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+[ 2055.677539] ---[ end Kernel panic - not syncing: Fatal exception ]---
+
+v2:
+ - Removed preempt_disable/enable since local_bh_disable will prevent
+   preemption as well, feedback from Jason Wang.
+
+Fixes: 761876c857cb ("tap: XDP support")
+Signed-off-by: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+Acked-by: Jason Wang <jasowang@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/net/tun.c |   15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
+
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -1632,7 +1632,7 @@ static struct sk_buff *tun_build_skb(str
+ 	else
+ 		*skb_xdp = 0;
+ 
+-	preempt_disable();
++	local_bh_disable();
+ 	rcu_read_lock();
+ 	xdp_prog = rcu_dereference(tun->xdp_prog);
+ 	if (xdp_prog && !*skb_xdp) {
+@@ -1657,7 +1657,7 @@ static struct sk_buff *tun_build_skb(str
+ 			if (err)
+ 				goto err_redirect;
+ 			rcu_read_unlock();
+-			preempt_enable();
++			local_bh_enable();
+ 			return NULL;
+ 		case XDP_TX:
+ 			xdp_xmit = true;
+@@ -1679,7 +1679,7 @@ static struct sk_buff *tun_build_skb(str
+ 	skb = build_skb(buf, buflen);
+ 	if (!skb) {
+ 		rcu_read_unlock();
+-		preempt_enable();
++		local_bh_enable();
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+ 
+@@ -1692,12 +1692,12 @@ static struct sk_buff *tun_build_skb(str
+ 		skb->dev = tun->dev;
+ 		generic_xdp_tx(skb, xdp_prog);
+ 		rcu_read_unlock();
+-		preempt_enable();
++		local_bh_enable();
+ 		return NULL;
+ 	}
+ 
+ 	rcu_read_unlock();
+-	preempt_enable();
++	local_bh_enable();
+ 
+ 	return skb;
+ 
+@@ -1705,7 +1705,7 @@ err_redirect:
+ 	put_page(alloc_frag->page);
+ err_xdp:
+ 	rcu_read_unlock();
+-	preempt_enable();
++	local_bh_enable();
+ 	this_cpu_inc(tun->pcpu_stats->rx_dropped);
+ 	return NULL;
+ }
+@@ -1901,16 +1901,19 @@ static ssize_t tun_get_user(struct tun_s
+ 		struct bpf_prog *xdp_prog;
+ 		int ret;
+ 
++		local_bh_disable();
+ 		rcu_read_lock();
+ 		xdp_prog = rcu_dereference(tun->xdp_prog);
+ 		if (xdp_prog) {
+ 			ret = do_xdp_generic(xdp_prog, skb);
+ 			if (ret != XDP_PASS) {
+ 				rcu_read_unlock();
++				local_bh_enable();
+ 				return total_len;
+ 			}
+ 		}
+ 		rcu_read_unlock();
++		local_bh_enable();
+ 	}
+ 
+ 	rcu_read_lock();
