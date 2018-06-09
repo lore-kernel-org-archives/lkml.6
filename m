@@ -1,77 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id SrVnHa6cHlslGAAAmS7hNA
-	; Mon, 11 Jun 2018 16:00:46 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id yvyeNtHyG1tfYAAAmS7hNA
+	; Sat, 09 Jun 2018 15:32:55 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 69BC7607BB; Mon, 11 Jun 2018 16:00:46 +0000 (UTC)
+	id 8054E608C9; Sat,  9 Jun 2018 15:32:55 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tic0fy3D"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id EA3C3600D0;
-	Mon, 11 Jun 2018 16:00:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EA3C3600D0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id EE3FD608BF;
+	Sat,  9 Jun 2018 15:32:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EE3FD608BF
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752814AbeFKQAn (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 12:00:43 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:48410 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751862AbeFKQAl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 12:00:41 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1fSPFG-00024V-2E; Mon, 11 Jun 2018 16:00:38 +0000
-From: Colin King <colin.king@canonical.com>
-To: Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/i915/guc: remove redundant GEM_BUG_ON check
-Date: Mon, 11 Jun 2018 17:00:37 +0100
-Message-Id: <20180611160037.23402-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        id S1753680AbeFIPcw (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:32:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35240 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932335AbeFIPct (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:32:49 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 19631208A3;
+        Sat,  9 Jun 2018 15:32:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558368;
+        bh=WiOsTxEs8arInEGw//GwP5ZwtN5YpX0uTnmDSK9rfl8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=tic0fy3DUG5fGABDH342vjaKBtdeYUESTYJqqXVvzwWup/DDtbd9l32Ez9ducfs1y
+         xDsDcd2iVWnStrGsJWgMIHAweElrtUwRDmAFP+4ZUpykLeQ4P9onOVqTjs/xr+eAV9
+         exV+D37YK1tou20um8RUiowML6CFES65HRjHTH8c=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 30/48] team: use netdev_features_t instead of u32
+Date: Sat,  9 Jun 2018 17:29:42 +0200
+Message-Id: <20180609145949.720586555@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
+References: <20180609145947.679103414@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-The check for level being less than zero is redundant as level
-is an unsigned u32 and hence will never be less than zero.
-Remove this redundant check.
+------------------
 
-Detected by CoverityScan, CID#1468363 ("Macro compares unsigned to 0")
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+[ Upstream commit 25ea66544bfd1d9df1b7e1502f8717e85fa1e6e6 ]
+
+This code was introduced in 2011 around the same time that we made
+netdev_features_t a u64 type.  These days a u32 is not big enough to
+hold all the potential features.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/i915/intel_guc.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/net/team/team.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/i915/intel_guc.c b/drivers/gpu/drm/i915/intel_guc.c
-index 116f4ccf1bbd..a2f782a4f97d 100644
---- a/drivers/gpu/drm/i915/intel_guc.c
-+++ b/drivers/gpu/drm/i915/intel_guc.c
-@@ -208,8 +208,6 @@ static u32 get_log_control_flags(void)
- 	u32 level = i915_modparams.guc_log_level;
- 	u32 flags = 0;
- 
--	GEM_BUG_ON(level < 0);
--
- 	if (!GUC_LOG_LEVEL_IS_ENABLED(level))
- 		flags |= GUC_LOG_DEFAULT_DISABLED;
- 
--- 
-2.17.0
+--- a/drivers/net/team/team.c
++++ b/drivers/net/team/team.c
+@@ -1004,7 +1004,8 @@ static void team_port_disable(struct tea
+ static void __team_compute_features(struct team *team)
+ {
+ 	struct team_port *port;
+-	u32 vlan_features = TEAM_VLAN_FEATURES & NETIF_F_ALL_FOR_ALL;
++	netdev_features_t vlan_features = TEAM_VLAN_FEATURES &
++					  NETIF_F_ALL_FOR_ALL;
+ 	netdev_features_t enc_features  = TEAM_ENC_FEATURES;
+ 	unsigned short max_hard_header_len = ETH_HLEN;
+ 	unsigned int dst_release_flag = IFF_XMIT_DST_RELEASE |
