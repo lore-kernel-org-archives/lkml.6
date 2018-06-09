@@ -1,127 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id aRiEGJFAGVv2YwAAmS7hNA
-	; Thu, 07 Jun 2018 14:27:27 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id qk53A+DzG1uFaAAAmS7hNA
+	; Sat, 09 Jun 2018 15:36:23 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 47ECB607E7; Thu,  7 Jun 2018 14:27:27 +0000 (UTC)
+	id 242CE608C1; Sat,  9 Jun 2018 15:36:23 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rmJ/tKLn"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 950276063F;
-	Thu,  7 Jun 2018 14:27:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 950276063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 94004606FA;
+	Sat,  9 Jun 2018 15:36:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 94004606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933494AbeFGO1Z (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:27:25 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40186 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933406AbeFGO0p (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:26:45 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbT-0005Zx-Kz; Thu, 07 Jun 2018 15:09:28 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbB-0003Bc-Jp; Thu, 07 Jun 2018 15:09:09 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        id S933222AbeFIPgU (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 11:36:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38414 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933206AbeFIPgQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 11:36:16 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 106D5208A3;
+        Sat,  9 Jun 2018 15:36:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528558575;
+        bh=mrdyaNWR2xxUG4uDqCpw6UTqJBuSjh6+0qwK2le9bhM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=rmJ/tKLnSkyaaEyVNsuvwq42qA5rJ7puuvYRzA2xDZ43ht5NnB2BZ18yd0K6kJZO1
+         WPDX855mS7H9kY5dl+Ed04188k0KizgDjxgfCXr5fc1Zh7d6x6obhehhOVu48mLsx9
+         opZM7p+MLz3h3HWKzIyOcDCj56EbWUSjdGEDZRBc=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Jason Wang <jasowang@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 36/41] virtio-net: correctly check num_buf during err path
+Date: Sat,  9 Jun 2018 17:30:08 +0200
+Message-Id: <20180609152928.397880125@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180609152926.389750182@linuxfoundation.org>
+References: <20180609152926.389750182@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Tony Luck" <tony.luck@intel.com>,
-        "Corentin Labbe" <clabbe@baylibre.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.844521797@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 324/410] ia64: convert unwcheck.py to python3
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Corentin Labbe <clabbe@baylibre.com>
+From: Jason Wang <jasowang@redhat.com>
 
-commit bd5edbe677948d0883f59d9625c444818d5284b1 upstream.
+[ Upstream commit 850e088d5bbb333342fd4def08d0a4035f2b7126 ]
 
-Since my system use python3 as default, arch/ia64/scripts/unwcheck.py no
-longer run.
+If we successfully linearize the packet, num_buf will be set to zero
+which may confuse error handling path which assumes num_buf is at
+least 1 and this can lead the code tries to pop the descriptor of next
+buffer. Fixing this by checking num_buf against 1 before decreasing.
 
-This patch convert it to the python3 syntax.
-I have ran it with python2/python3 while printing values of
-start/end/rlen_sum which could be impacted by this change and I see no difference.
-
-Fixes: 94a47083522e ("scripts: change scripts to use system python instead of env")
-Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Fixes: 4941d472bf95 ("virtio-net: do not reset during XDP set")
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/ia64/scripts/unwcheck.py | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/net/virtio_net.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/ia64/scripts/unwcheck.py
-+++ b/arch/ia64/scripts/unwcheck.py
-@@ -15,7 +15,7 @@ import re
- import sys
- 
- if len(sys.argv) != 2:
--    print "Usage: %s FILE" % sys.argv[0]
-+    print("Usage: %s FILE" % sys.argv[0])
-     sys.exit(2)
- 
- readelf = os.getenv("READELF", "readelf")
-@@ -28,7 +28,7 @@ def check_func (func, slots, rlen_sum):
-         global num_errors
-         num_errors += 1
-         if not func: func = "[%#x-%#x]" % (start, end)
--        print "ERROR: %s: %lu slots, total region length = %lu" % (func, slots, rlen_sum)
-+        print("ERROR: %s: %lu slots, total region length = %lu" % (func, slots, rlen_sum))
-     return
- 
- num_funcs = 0
-@@ -42,23 +42,23 @@ for line in os.popen("%s -u %s" % (reade
-         check_func(func, slots, rlen_sum)
- 
-         func  = m.group(1)
--        start = long(m.group(2), 16)
--        end   = long(m.group(3), 16)
-+        start = int(m.group(2), 16)
-+        end   = int(m.group(3), 16)
-         slots = 3 * (end - start) / 16
--        rlen_sum = 0L
-+        rlen_sum = 0
-         num_funcs += 1
-     else:
-         m = rlen_pattern.match(line)
-         if m:
--            rlen_sum += long(m.group(1))
-+            rlen_sum += int(m.group(1))
- check_func(func, slots, rlen_sum)
- 
- if num_errors == 0:
--    print "No errors detected in %u functions." % num_funcs
-+    print("No errors detected in %u functions." % num_funcs)
- else:
-     if num_errors > 1:
-         err="errors"
-     else:
-         err="error"
--    print "%u %s detected in %u functions." % (num_errors, err, num_funcs)
-+    print("%u %s detected in %u functions." % (num_errors, err, num_funcs))
-     sys.exit(1)
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -777,7 +777,7 @@ err_xdp:
+ 	rcu_read_unlock();
+ err_skb:
+ 	put_page(page);
+-	while (--num_buf) {
++	while (num_buf-- > 1) {
+ 		buf = virtqueue_get_buf(rq->vq, &len);
+ 		if (unlikely(!buf)) {
+ 			pr_debug("%s: rx error: %d buffers missing\n",
