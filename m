@@ -1,165 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id sgSyGeV0HlsoFAAAmS7hNA
-	; Mon, 11 Jun 2018 13:11:23 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 1kOpCGB+G1vQegAAmS7hNA
+	; Sat, 09 Jun 2018 07:14:40 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 9B0B9607E4; Mon, 11 Jun 2018 13:11:23 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JSJA9cUi"
+	id 13201608B8; Sat,  9 Jun 2018 07:14:40 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 04734601C3;
-	Mon, 11 Jun 2018 13:11:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 04734601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 21C62606FA;
+	Sat,  9 Jun 2018 07:14:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 21C62606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933229AbeFKNLU (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 09:11:20 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:39459 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932516AbeFKNLQ (ORCPT
+        id S1753209AbeFIHOg (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 03:14:36 -0400
+Received: from mail-out.m-online.net ([212.18.0.10]:52364 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753094AbeFIHOe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 09:11:16 -0400
-Received: by mail-it0-f66.google.com with SMTP id p185-v6so10797431itp.4
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 06:11:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=eYZlrUF/pnSTAI6/KINBFuxtfAfPBvPKaN9O9UZcImA=;
-        b=JSJA9cUi0L5503vqc7zu6mrxFmDEBxOB1glXLvI+pOEhnqiSXxS+SVir8TuPyWxZVt
-         coh5Z745LMs3Ue6GZ2As/iaEm81+IfZkQF3RJJNfYAfce2tEciOv9FC6Y+9PZgwX57XM
-         qdpI7yGk1FlKBJhJPYLa/1/jL7OmlegZxMeBM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=eYZlrUF/pnSTAI6/KINBFuxtfAfPBvPKaN9O9UZcImA=;
-        b=E6UH+IbdvHgZtSnvdjyx1lxdL40iNY/A6RVMDz4BHeNIc4sFgsk6NY33LFTZ8k5pVQ
-         nApKpVXs7PYy51j3sNS6l7UwcnQ/kPJpl7Sfh5NhJm86IGH4UAG0G+sPCloGdTh66G21
-         GQ8G6Ja0MieedTX/tEEQP5Bt4fsWPYX2666CWP37rKpssVjbPW7Aan5DzQSiiUGdewU3
-         8P8TBWDACapW2JhHZk+1bbJE7VQslXaofwJvp5n1Yd6Othwz3i0C8OQUHh/Cb1HvQK0j
-         /IAJl8raRBAG9tCfPwv1wlG5lweSqO5rIpvPRZSQTsIu2dXA3Ekoh+f3/0MS/2cvZJH8
-         RhQA==
-X-Gm-Message-State: APt69E3M4dWahoC77oVa/x5pM5XFPBThkQvVehWPL2GSVNvRielL7bHM
-        uv1LKxMQaHPe5jrQpLFqNXrbyQgAUSW4+NwLrZOYbw==
-X-Google-Smtp-Source: ADUXVKKvcGYgZkTSKh8RUAYPg8+VJHmVDVhsVG86cvfP0hmUZnOPui/tLxYuwYaHIiOeFXeL2WWOk66OtUxyIZ5o/Vo=
-X-Received: by 2002:a24:690f:: with SMTP id e15-v6mr10199738itc.70.1528722675963;
- Mon, 11 Jun 2018 06:11:15 -0700 (PDT)
+        Sat, 9 Jun 2018 03:14:34 -0400
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 412rBG6xz3z1qtXt;
+        Sat,  9 Jun 2018 09:14:30 +0200 (CEST)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 412rBG6DSPz1qsLM;
+        Sat,  9 Jun 2018 09:14:30 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id sqtrsOnV8Lgs; Sat,  9 Jun 2018 09:14:30 +0200 (CEST)
+X-Auth-Info: nmqTsSBidXdt5XXRhG1YURyZ1NC2bgIoP/kSwRavZOflz7p00pWuhNLheQdkZwel
+Received: from linux.local (ppp-188-174-144-94.dynamic.mnet-online.de [188.174.144.94])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Sat,  9 Jun 2018 09:14:30 +0200 (CEST)
+Received: by linux.local (Postfix, from userid 501)
+        id 41AD81E5885; Sat,  9 Jun 2018 09:14:27 +0200 (CEST)
+From: Andreas Schwab <schwab@linux-m68k.org>
+To: Michael Schmitz <schmitzmic@gmail.com>
+Cc: Finn Thain <fthain@telegraphics.com.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-m68k@lists.linux-m68k.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v2 08/12] macintosh/via-pmu68k: Don't load driver on unsupported hardware
+References: <cover.1528423341.git.fthain@telegraphics.com.au>
+        <d9d626ca4e7ac9c7e81b24a34f5fbcae9d1d5046.1528423341.git.fthain@telegraphics.com.au>
+        <9f015684-4d91-70e4-d2a4-89fe167ff8ab@gmail.com>
+X-Yow: Should I start with the time I SWITCHED personalities with a BEATNIK
+ hair stylist or my failure to refer five TEENAGERS to a good OCULIST?
+Date: Sat, 09 Jun 2018 09:14:27 +0200
+In-Reply-To: <9f015684-4d91-70e4-d2a4-89fe167ff8ab@gmail.com> (Michael
+        Schmitz's message of "Sat, 9 Jun 2018 18:42:25 +1200")
+Message-ID: <m2h8mc4ejw.fsf@linux-m68k.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Received: by 2002:a4f:78c9:0:0:0:0:0 with HTTP; Mon, 11 Jun 2018 06:11:14
- -0700 (PDT)
-In-Reply-To: <20180601093511.GA11734@ulmo>
-References: <20180514080640.12515-1-linus.walleij@linaro.org>
- <20180514080640.12515-2-linus.walleij@linaro.org> <20180601093511.GA11734@ulmo>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 11 Jun 2018 15:11:14 +0200
-Message-ID: <CACRpkdZEMPfxHc8dZOvyYN+S4o_zwKuYCTBbMiXMLsCZRz_f6A@mail.gmail.com>
-Subject: Re: [PATCH 01/19 v3] regulator: fixed: Convert to use GPIO descriptor only
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Alexander Shiyan <shc_work@mail.ru>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Tony Lindgren <tony@atomide.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Philipp Zabel <philipp.zabel@gmail.com>,
-        Daniel Mack <zonque@gmail.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Russell King <rmk+kernel@armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 1, 2018 at 11:35 AM, Thierry Reding
-<thierry.reding@gmail.com> wrote:
-> On Mon, May 14, 2018 at 10:06:22AM +0200, Linus Walleij wrote:
+On Jun 09 2018, Michael Schmitz <schmitzmic@gmail.com> wrote:
 
->> As we augmented the regulator core to accept a GPIO descriptor instead
->> of a GPIO number, we can augment the fixed GPIO regulator to look up
->> and pass that descriptor directly from device tree or board GPIO
->> descriptor look up tables.
-(...)
-> This causes an HDMI display regression on Jetson TK1. From what I can
-> tell, the problem is that we now get a double-inversion for low-active
-> GPIOs. For example, we have this in the Jetson TK1 device tree:
+> Hi Finn,
 >
->                 vdd_hdmi_pll: regulator@11 {
->                         compatible = "regulator-fixed";
->                         reg = <11>;
->                         regulator-name = "+1.05V_RUN_AVDD_HDMI_PLL";
->                         regulator-min-microvolt = <1050000>;
->                         regulator-max-microvolt = <1050000>;
->                         gpio = <&gpio TEGRA_GPIO(H, 7) GPIO_ACTIVE_LOW>;
->                         vin-supply = <&vdd_1v05_run>;
->                 };
+> Am 08.06.2018 um 14:24 schrieb Finn Thain:
+>> Don't load the via-pmu68k driver on early PowerBooks. The M50753 PMU
+>> device found in those models was never supported by this driver.
+>> Attempting to load the driver usually causes a boot hang.
+>>
+>> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+>> Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+>> ---
+>>  arch/m68k/mac/misc.c           | 6 ++----
+>>  drivers/macintosh/via-pmu68k.c | 4 ----
+>>  include/uapi/linux/pmu.h       | 1 -
+>>  3 files changed, 2 insertions(+), 9 deletions(-)
+> ...
+>> diff --git a/include/uapi/linux/pmu.h b/include/uapi/linux/pmu.h
+>> index 89cb1acea93a..30f64d46f5db 100644
+>> --- a/include/uapi/linux/pmu.h
+>> +++ b/include/uapi/linux/pmu.h
+>> @@ -93,7 +93,6 @@ enum {
+>>  	PMU_HEATHROW_BASED,	/* PowerBook G3 series */
+>>  	PMU_PADDINGTON_BASED,	/* 1999 PowerBook G3 */
+>>  	PMU_KEYLARGO_BASED,	/* Core99 motherboard (PMU99) */
+>> -	PMU_68K_V1,		/* 68K PMU, version 1 */
+>>  	PMU_68K_V2, 		/* 68K PMU, version 2 */
+>>  };
 >
-> We've got GPIO_ACTIVE_LOW for the regulator's enable GPIO and since we
-> don't have enable-active-high, the regulator core will treat the GPIO as
-> low active. The presence of the GPIO_ACTIVE_LOW flag will cause the GPIO
-> polarity to be inversed, transparently in gpiolib, and the lack of the
-> enable-active-high property causes the GPIO polarity to inversed as
-> well, so we effectively end up with a high-active enable GPIO for one
-> which should really be low-active.
+> Is this enum used by any user space code? If so, perhaps rather leave the
+> PMU_68K_V1 in there to avoid upsetting that?
 
-I dug into this. It turns out there are some layers of mess....
+It also changes the value of PMU_68K_V2, which is an ABI break.
 
-The DT binding for "regulator-fixed" specifies that enable-active-high
-should be set for polarity inversion. For historical reasons, I guess,
-we screwed up. The example in the binding uses that.
+Andreas.
 
-I interpreted the binding such that also specifying GPIO_ACTIVE_LOW
-was essentially illegal, so I patched gpiolib in commit
-a603a2b8d86ee93ee2107da8ca75fd854fd4ff32
-"gpio: of: Add special quirk to parse regulator flags"
-so it looks like that:
-
-+       if (IS_ENABLED(CONFIG_REGULATOR) &&
-+           (of_device_is_compatible(np, "reg-fixed-voltage") ||
-+            of_device_is_compatible(np, "regulator-gpio"))) {
-+               /*
-+                * The regulator GPIO handles are specified such that the
-+                * presence or absence of "enable-active-high" solely controls
-+                * the polarity of the GPIO line. Any phandle flags must
-+                * be actively ignored.
-+                */
-+               if (*flags & OF_GPIO_ACTIVE_LOW) {
-+                       pr_warn("%s GPIO handle specifies active low -
-ignored\n",
-+                               of_node_full_name(np));
-+                       *flags &= ~OF_GPIO_ACTIVE_LOW;
-+               }
-+               if (!of_property_read_bool(np, "enable-active-high"))
-+                       *flags |= OF_GPIO_ACTIVE_LOW;
-+       }
-
-This means no matter if you specify active low, the GPIO
-will be treated as active low, as this is the default behaviour.
-We will warn if things are overspecified as active low on the
-flag as well.
-
-The second clause (notice nagation!) specifies that
-if enable-acive-high flag is NOT specified, we will be active
-low.
-
-Sadly this only handled the undocumented fixed
-regulator binding "reg-fixed-voltage". So I need to fix it
-for "regulator-fixed" as well, and then it "should work".
-
-I will follow up with a patch.
-
-Yours,
-Linus Walleij
+-- 
+Andreas Schwab, schwab@linux-m68k.org
+GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
+"And now for something completely different."
