@@ -1,96 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id xUOFMNLqGFuyZgAAmS7hNA
-	; Thu, 07 Jun 2018 08:22:20 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 2mi3K/GGHFs/ZwAAmS7hNA
+	; Sun, 10 Jun 2018 02:11:44 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 4BA63607F7; Thu,  7 Jun 2018 08:22:20 +0000 (UTC)
+	id 0D592608BF; Sun, 10 Jun 2018 02:11:44 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 7D563601B4;
-	Thu,  7 Jun 2018 08:22:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7D563601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 76EE8608B8;
+	Sun, 10 Jun 2018 02:11:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 76EE8608B8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932589AbeFGIWQ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 04:22:16 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:42381 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932198AbeFGIWO (ORCPT
+        id S1753634AbeFJCLj (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 22:11:39 -0400
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:48604 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753611AbeFJCLi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 04:22:14 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w578M96t2126295
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 7 Jun 2018 01:22:09 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w578M8a42126290;
-        Thu, 7 Jun 2018 01:22:08 -0700
-Date: Thu, 7 Jun 2018 01:22:08 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From: tip-bot for Adrian Hunter <tipbot@zytor.com>
-Message-ID: <tip-dbcb82b93f3e8322891e47472c89e63058b81e99@git.kernel.org>
-Cc: mingo@kernel.org, acme@redhat.com, adrian.hunter@intel.com,
-        hpa@zytor.com, linux-kernel@vger.kernel.org, tglx@linutronix.de
-Reply-To: acme@redhat.com, mingo@kernel.org, hpa@zytor.com,
-          adrian.hunter@intel.com, linux-kernel@vger.kernel.org,
-          tglx@linutronix.de
-In-Reply-To: <1527762225-26024-2-git-send-email-adrian.hunter@intel.com>
-References: <1527762225-26024-2-git-send-email-adrian.hunter@intel.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf intel-pt: Fix sync_switch
- INTEL_PT_SS_NOT_TRACING
-Git-Commit-ID: dbcb82b93f3e8322891e47472c89e63058b81e99
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sat, 9 Jun 2018 22:11:38 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by kvm5.telegraphics.com.au (Postfix) with ESMTP id D9FD927620;
+        Sat,  9 Jun 2018 22:11:09 -0400 (EDT)
+Date: Sun, 10 Jun 2018 12:11:36 +1000 (AEST)
+From: Finn Thain <fthain@telegraphics.com.au>
+To: Andreas Schwab <schwab@linux-m68k.org>,
+        "Joshua M. Thompson" <funaho@jurai.org>
+cc: Michael Schmitz <schmitzmic@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-m68k@lists.linux-m68k.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v2 08/12] macintosh/via-pmu68k: Don't load driver on
+ unsupported hardware
+In-Reply-To: <87a7s4854x.fsf@igel.home>
+Message-ID: <alpine.LNX.2.21.1806101139130.29@nippy.intranet>
+References: <cover.1528423341.git.fthain@telegraphics.com.au> <d9d626ca4e7ac9c7e81b24a34f5fbcae9d1d5046.1528423341.git.fthain@telegraphics.com.au> <9f015684-4d91-70e4-d2a4-89fe167ff8ab@gmail.com> <m2h8mc4ejw.fsf@linux-m68k.org> <e1006b0a-a429-4744-7525-203cb91f1d5f@gmail.com>
+ <alpine.LNX.2.21.1806092140410.26@nippy.intranet> <87a7s4854x.fsf@igel.home>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  dbcb82b93f3e8322891e47472c89e63058b81e99
-Gitweb:     https://git.kernel.org/tip/dbcb82b93f3e8322891e47472c89e63058b81e99
-Author:     Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate: Thu, 31 May 2018 13:23:42 +0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 6 Jun 2018 12:52:07 -0300
+On Sat, 9 Jun 2018, Andreas Schwab wrote:
 
-perf intel-pt: Fix sync_switch INTEL_PT_SS_NOT_TRACING
+> On Jun 09 2018, Finn Thain <fthain@telegraphics.com.au> wrote:
+> 
+> > There is no ABI issue AFAIK. The value of pmu_kind is visible to userland 
+> > only on powerpc. /dev/pmu and /proc/pmu/* do not exist on m68k.
+> 
+> Then why are PMU_68K_V1 and PMU_68K_V2 defined in the first place?
+> 
 
-sync_switch is a facility to synchronize decoding more closely with the
-point in the kernel when the context actually switched.
+I think your question is academic. Mistakes were made, and dead code 
+appears in the kernel headers.
 
-In one case, INTEL_PT_SS_NOT_TRACING state was not correctly
-transitioning to INTEL_PT_SS_TRACING state due to a missing case clause.
-Add it.
+The author of via-pmu68k.c (apparently Joshua M. Thompson) may have a 
+better answer, but if you want my guess, it is simply that pmu_kind was 
+cut and pasted from via-pmu.c, and then given values corresponding to 
+internal kernel system controller type values. See via-pmu68k.c:
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/1527762225-26024-2-git-send-email-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/intel-pt.c | 1 +
- 1 file changed, 1 insertion(+)
+        case MAC_ADB_PB1:
+                pmu_kind = PMU_68K_V1;
+                break;
+        case MAC_ADB_PB2:
+                pmu_kind = PMU_68K_V2;
+                break;
 
-diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
-index 492986a25ef6..3db7f0ee52a8 100644
---- a/tools/perf/util/intel-pt.c
-+++ b/tools/perf/util/intel-pt.c
-@@ -1521,6 +1521,7 @@ static int intel_pt_sample(struct intel_pt_queue *ptq)
- 
- 	if (intel_pt_is_switch_ip(ptq, state->to_ip)) {
- 		switch (ptq->switch_state) {
-+		case INTEL_PT_SS_NOT_TRACING:
- 		case INTEL_PT_SS_UNKNOWN:
- 		case INTEL_PT_SS_EXPECTING_SWITCH_IP:
- 			err = intel_pt_next_tid(pt, ptq);
+Note that the MAC_ADB_PB1 and MAC_ADB_PB2 categories are quite artificial 
+and were never useful to userland and were never visible to userland. The 
+same applies to PMU_68K_V1 and PMU_68K_V2.
+
+The MAC_ADB_PB1 and MAC_ADB_PB2 categories are used internally by the 
+kernel to distinguish the M50753 devices which have no built-in RTC 
+(MAC_ADB_PB1) from the M68HC05 devices which do have a built-in RTC 
+(MAC_ADB_PB2). This distinction is completely hidden by the kernel behind 
+the RTC UAPIs. It is not useful to userland.
+
+With this patch series, MAC_ADB_PB1/PMU_68K_V1 models will have no PMU 
+driver loaded at all, while MAC_ADB_PB2/PMU_68K_V2 models will have 
+pmu_kind set to PMU_UNKNOWN, and this will become visible to userland for 
+the first time.
+
+Can please you explain why this change is problematic? You seem to be 
+worried about breaking code which doesn't exist, and which, if it did 
+exist, is already broken for other reasons.
+
+-- 
+
+> Andreas.
+> 
+> 
