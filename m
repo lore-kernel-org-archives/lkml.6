@@ -1,101 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 0wIHHJRAHluGawAAmS7hNA
-	; Mon, 11 Jun 2018 09:28:34 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 7gOrONMZHVv1JQAAmS7hNA
+	; Sun, 10 Jun 2018 12:30:12 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 80052607A4; Mon, 11 Jun 2018 09:28:34 +0000 (UTC)
+	id C9C2D607E7; Sun, 10 Jun 2018 12:30:11 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nhU1puW6"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 1BF63600D0;
-	Mon, 11 Jun 2018 09:28:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1BF63600D0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 41CE6604D4;
+	Sun, 10 Jun 2018 12:30:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 41CE6604D4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932709AbeFKJ2c (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 05:28:32 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34146 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932590AbeFKJ2a (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 05:28:30 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5B9OA6R069129
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 05:28:30 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jhp7prp42-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 05:28:29 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <tmricht@linux.ibm.com>;
-        Mon, 11 Jun 2018 10:28:26 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 11 Jun 2018 10:28:24 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5B9SNiE32243852
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 11 Jun 2018 09:28:23 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CF6614203F;
-        Mon, 11 Jun 2018 10:18:36 +0100 (BST)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 98D924204B;
-        Mon, 11 Jun 2018 10:18:36 +0100 (BST)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 11 Jun 2018 10:18:36 +0100 (BST)
-From: Thomas Richter <tmricht@linux.ibm.com>
-To: linux-kernel@vger.kernel.org
-Cc: efault@gmx.de, Thomas Richter <tmricht@linux.ibm.com>
-Subject: [PATCH] Revert "debugfs: inode: debugfs_create_dir uses mode permission from parent"
-Date: Mon, 11 Jun 2018 11:28:10 +0200
-X-Mailer: git-send-email 2.16.3
-X-TM-AS-GCONF: 00
-x-cbid: 18061109-4275-0000-0000-0000028C5DA0
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18061109-4276-0000-0000-000037937BE0
-Message-Id: <20180611092810.21886-1-tmricht@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-11_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=923 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806110114
+        id S1753937AbeFJMZL (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sun, 10 Jun 2018 08:25:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51200 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753899AbeFJMZJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Jun 2018 08:25:09 -0400
+Received: from localhost (unknown [193.47.165.251])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 621A320858;
+        Sun, 10 Jun 2018 12:25:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528633509;
+        bh=xJq0wIlGVkcvIwc8xZOFLUreEwnzLuyg/umrNdSnZ9Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nhU1puW66AHfD5TPMjuQWdkyCIltFJxuZWVHQd3tZgY0iqNkrUVPfiHlyfK0PL3AN
+         g68PTqNML3r4G74+ss6DivdxrQCCfEHl+iuy8wRsLCvyhowRg6LsmD1jKocM1gOonX
+         QWjqmzyi409DZ9D8hlcF1A1JWQsNhZ0YYU5Nugo0=
+Date: Sun, 10 Jun 2018 15:25:05 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: hans.westgaard.ry@oracle.com, Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        linux-rdma@vger.kernel.org,
+        =?iso-8859-1?Q?H=E5kon?= Bugge <haakon.bugge@oracle.com>,
+        Parav Pandit <parav@mellanox.com>,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Pravin Shedge <pravin.shedge4linux@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] IB/mad: Use IDR for agent IDs
+Message-ID: <20180610122505.GM12407@mtr-leonro.mtl.com>
+References: <20180608174218.32455-1-willy@infradead.org>
+ <20180608174218.32455-3-willy@infradead.org>
+ <20180610063028.GH12407@mtr-leonro.mtl.com>
+ <20180610104305.GA9284@bombadil.infradead.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="L2Brqb15TUChFOBK"
+Content-Disposition: inline
+In-Reply-To: <20180610104305.GA9284@bombadil.infradead.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 95cde3c59966f6371b6bcd9e4e2da2ba64ee9775.
-It breaks the ioctl(KVM_CREATE_VM) interface.
 
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
----
- fs/debugfs/inode.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+--L2Brqb15TUChFOBK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
-index a913b12fc7f8..13b01351dd1c 100644
---- a/fs/debugfs/inode.c
-+++ b/fs/debugfs/inode.c
-@@ -512,9 +512,7 @@ struct dentry *debugfs_create_dir(const char *name, struct dentry *parent)
- 	if (unlikely(!inode))
- 		return failed_creating(dentry);
- 
--	if (!parent)
--		parent = debugfs_mount->mnt_root;
--	inode->i_mode = S_IFDIR | ((d_inode(parent)->i_mode & 0770));
-+	inode->i_mode = S_IFDIR | S_IRWXU | S_IRUGO | S_IXUGO;
- 	inode->i_op = &simple_dir_inode_operations;
- 	inode->i_fop = &simple_dir_operations;
- 
--- 
-2.14.3
+On Sun, Jun 10, 2018 at 03:43:05AM -0700, Matthew Wilcox wrote:
+> On Sun, Jun 10, 2018 at 09:30:28AM +0300, Leon Romanovsky wrote:
+> > 1. IBTA spec doesn't talk at all about the size of TransactionID, more
+> > on that in section "13.4.6.4 TRANSACTION ID USAGE", the specification
+> > says: "The contents of the TransactionID (TID) field are implementation-
+> > dependent. So let's don't call it mlx4 bug.
+>
+> I was loosely paraphrasing the original bug report; suggested rewording
+> of the comments gratefully accepted.
+
+Just replace "mlx4 bug" with something like "to comply with mlx4
+implementation".
+
+>
+> > 2. The current implementation means that in mlx5-only network we will
+> > still have upto (1 << 24) TIDs. I don't know if it is really important,
+> > but worth to mention.
+>
+> Actually, the TIDs will be up to 2^56.  We're limited to 2^24 clients,
+> each of which can send up to 2^32 messages.
+
+It sounds like more than enough.
+
+Thanks
+
+>
+
+--L2Brqb15TUChFOBK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJbHRihAAoJEORje4g2clinYlkP/0vfiftoDnbAo2tWAQm2FfxV
+y0PPkTiSeI0o+uFp0R37d0iQnaUoiAqTnfEE48rDY7OEzIvp39+CE5KDuTKH3H0T
+jIEuTKSEZoVyWkNIg+ukL1ihgQdBVFB4v9N+LWyj3ZqxP0DCtOA/QegNel99DPFR
+nLFPWJNeGAVMCQTSxuhZrmY5ms3pC83N7PjdddHT2BSXDAFFRjRRa+Q9gG7QcrGV
+vH+YFs3QOvipR2dCOOIcS797FxSYbtTHQTceooNjp+IoC5Vf/Uu3vYSshsQALvZT
+piCo+RUBbQbBdKIqh/OQBw+bIxSiUWNbUVMFNw74aehXhLJld9BBw+Y8ldNDlUkN
+scGeuT3ODU/fqcLtOurpbJ4Kt2m8C3itGRDhKFwJzLqBwpMJwGCcBwN1SPUf5Fti
+eJLpWkP9e74Uypx981f41GooC9SApsEGG80t7QZ1pa7Xief5yRbAI9PcrvNV5xxz
+9w1/5LiFwL0jF7mYzzqytorKun/lfxIkP2FI2AQoDkedQTaa+q3/Kll10rYvLo9m
+OeSHsPtpyKhGbiHXQLHpgm0Rsl1ss77xlNKEhsSVFO62rwoeJQCobHfUfwPGkzOp
+tlyrH3c1O+yQqH21U25YrZz1qWJ66gUTJYER7oAD2XpgLj/+xwj+ZNGl5STv5qgP
+eNr1RB5Ci9qra1cpHlgO
+=x3xM
+-----END PGP SIGNATURE-----
+
+--L2Brqb15TUChFOBK--
