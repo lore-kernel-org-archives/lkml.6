@@ -1,112 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id JkUtD58mHltMfwAAmS7hNA
-	; Mon, 11 Jun 2018 07:37:03 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 8/AHE/i3HFuHSgAAmS7hNA
+	; Sun, 10 Jun 2018 05:32:40 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 2FDFA607A4; Mon, 11 Jun 2018 07:37:03 +0000 (UTC)
+	id 33FF360795; Sun, 10 Jun 2018 05:32:40 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2OuMiWyr"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 9600D606FA;
-	Mon, 11 Jun 2018 07:37:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9600D606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 9D1A5602FC;
+	Sun, 10 Jun 2018 05:32:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9D1A5602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754075AbeFKHhA (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 03:37:00 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:43828 "EHLO mail.bootlin.com"
+        id S932153AbeFJFch (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sun, 10 Jun 2018 01:32:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753955AbeFKHg7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 03:36:59 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 63B3A20981; Mon, 11 Jun 2018 09:36:57 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-128-7.w90-88.abo.wanadoo.fr [90.88.9.7])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 3353B207A5;
-        Mon, 11 Jun 2018 09:36:47 +0200 (CEST)
-Date: Mon, 11 Jun 2018 09:36:47 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-media <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH -next] media/platform/cadence: add <linux/slab.h> to fix
- build error
-Message-ID: <20180611073647.6j4wsvoh4ceavpih@flea>
-References: <2feda2a7-8008-f36d-67fa-a4aa38ea75ae@infradead.org>
+        id S932086AbeFJFcf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Jun 2018 01:32:35 -0400
+Received: from mail-wm0-f47.google.com (mail-wm0-f47.google.com [74.125.82.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A696A208AD
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Jun 2018 05:32:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528608755;
+        bh=+J5x0eICSCLh2R1EzuQmwIt2G+wxvbQvWCYGLBeq5yg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=2OuMiWyr3RarJeBBxJlivlu/bKKa/bNUdkfQTLLpB4RcVFpu3x8aFEejZTNhX93mP
+         niOeTRSM/pKPBGqdbjC7Grl+Evli/pDnOl23MnsMDd8Y+5eNarycjjzvtnJB4SzfuD
+         eW4/6O5ViOD/YbNeHRWiSHeQmh8pjpRMrXXptEdU=
+Received: by mail-wm0-f47.google.com with SMTP id r15-v6so9289421wmc.1
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Jun 2018 22:32:34 -0700 (PDT)
+X-Gm-Message-State: APt69E26qHAh1MQWf/zXh0/0PsqZ0mgykkmUj6O0w9XCwzfYoufvfCIn
+        EM7QyffoJACGB/pgfbXDtpj1YCRjfH/RIMwZWhtmlw==
+X-Google-Smtp-Source: ADUXVKJWEnt2SfGYs0oNdezAX2vQwRz4ngA0uVg9TrpAoBV2IG9o3ZeYW4baDUig8h5egNfzvRIGcZgDmyrt6aCL7T4=
+X-Received: by 2002:a1c:34c9:: with SMTP id b192-v6mr5467743wma.21.1528608753151;
+ Sat, 09 Jun 2018 22:32:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7s22rh25vss7iztt"
-Content-Disposition: inline
-In-Reply-To: <2feda2a7-8008-f36d-67fa-a4aa38ea75ae@infradead.org>
-User-Agent: NeoMutt/20180512
+References: <20180608171216.26521-1-jarkko.sakkinen@linux.intel.com> <20180608171216.26521-10-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20180608171216.26521-10-jarkko.sakkinen@linux.intel.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Sat, 9 Jun 2018 22:32:21 -0700
+X-Gmail-Original-Message-ID: <CALCETrVUGubKSS00aH5JJoc0vNkqLGPqCoaG2br2yn5cxWXz-Q@mail.gmail.com>
+Message-ID: <CALCETrVUGubKSS00aH5JJoc0vNkqLGPqCoaG2br2yn5cxWXz-Q@mail.gmail.com>
+Subject: Re: [intel-sgx-kernel-dev] [PATCH v11 09/13] x86, sgx: basic routines
+ for enclave page cache
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        intel-sgx-kernel-dev@lists.01.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jun 8, 2018 at 10:22 AM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> SGX has a set of data structures to maintain information about the enclaves
+> and their security properties. BIOS reserves a fixed size region of
+> physical memory for these structures by setting Processor Reserved Memory
+> Range Registers (PRMRR). This memory area is called Enclave Page Cache
+> (EPC).
+>
 
---7s22rh25vss7iztt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> +/**
+> + * sgx_einit - EINIT an enclave with the appropriate LE pubkey hash
+> + * @sigstruct:         a pointer to the enclave's sigstruct
+> + * @token:             a pointer to the enclave's EINIT token
+> + * @secs_page:         a pointer to the enclave's SECS EPC page
+> + * @le_pubkey_hash:    the desired LE pubkey hash for EINIT
+> + */
+> +int sgx_einit(struct sgx_sigstruct *sigstruct, struct sgx_einittoken *token,
+> +             struct sgx_epc_page *secs_page, u64 le_pubkey_hash[4])
+> +{
+> +       u64 __percpu *cache;
+> +       void *secs;
+> +       int i, ret;
+> +
+> +       secs = sgx_get_page(secs_page);
+> +
+> +       if (!sgx_lc_enabled) {
 
-On Fri, Jun 08, 2018 at 02:19:06PM -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@infradead.org>
->=20
-> Add #include <linux/slab.h> to fix build errors.
-> This driver uses kzalloc() and kfree() so it needs to #include
-> the appropriate header file for those interfaces.
->=20
-> Fixes these build errors:
->=20
-> ../drivers/media/platform/cadence/cdns-csi2rx.c: In function 'csi2rx_prob=
-e':
-> ../drivers/media/platform/cadence/cdns-csi2rx.c:421:2: error: implicit de=
-claration of function 'kzalloc' [-Werror=3Dimplicit-function-declaration]
->   csi2rx =3D kzalloc(sizeof(*csi2rx), GFP_KERNEL);
-> ../drivers/media/platform/cadence/cdns-csi2rx.c:421:9: warning: assignmen=
-t makes pointer from integer without a cast [enabled by default]
->   csi2rx =3D kzalloc(sizeof(*csi2rx), GFP_KERNEL);
-> ../drivers/media/platform/cadence/cdns-csi2rx.c:466:2: error: implicit de=
-claration of function 'kfree' [-Werror=3Dimplicit-function-declaration]
->   kfree(csi2rx);
->=20
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+I'm confused.  What does this code path do?  It kind of looks like the
+driver will load and just malfunction if we don't have write access to
+the MSRs.  What is the intended behavior?
 
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---7s22rh25vss7iztt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlseJnUACgkQ0rTAlCFN
-r3Q4Dg//VP8T3jxM0rblJGasy9u4CCkqiuQVD4ca88Rl2ULtOu2N5SVrvpId9BY3
-GcqEdnl8NGvNxh6+pE0mATcZ+Tyf2p5WNHOfQCfaTA9y4uHVdBFwrHY+uGdFc2+M
-xd1goA2Arkm/kaLg2en1G0t9K5PzN7Gueg7ZW91vNv+sYJMTkNK1U79kM2zUs0EV
-N8+2oEzDuaQEl9hBcyceGZyRVZj6bDjUPV+uHP9PIOTXsH091vkGWOfdkK1+a2qW
-QE2i1Kqmfoc2qfkoSjdk8LqFyvO+N24Zp6mJ2LAX8GNC7OyLPkygjA0mWMYX+mva
-ZERPiftXdkC58IQrn+Cfy4vUA/9uJfbUO2cv8oWety4xb738sHvCUzCQQ2BbFUWi
-NsFL7mjCm0l96l7gn+HW/R3f6wEuiB7yDPngNPtluYGOhOtdXGW5O/vE7OmNu27w
-EB2ML83bkym7HRPrYb7I9NjMOGYBusM1LlRKHFYq2X/iKWz4DM3ytDz4A/l9tUEM
-HKE01juiXaa/tCG05R1GegD6monzYQI+LCXV1umcUrqZaQNrKfQcQ7/szm82Tdl4
-nEnRY1dPwoIPt/zNCqjiyz1XyGseu8WYw3Z+j7ZusWGmdkFlNMHOK21eha5WgYgm
-V6RzMJ1WLqoQxT63U7jA3z0BF7NGqaMQCxbT3v1CLUyd1euRLqs=
-=olOh
------END PGP SIGNATURE-----
-
---7s22rh25vss7iztt--
+> +               ret = __einit(sigstruct, token, secs);
+> +               goto out;
+> +       }
+> +
+> +       cache = per_cpu(sgx_le_pubkey_hash_cache, smp_processor_id());
+> +
+> +       preempt_disable();
+> +       for (i = 0; i < 4; i++) {
+> +               if (le_pubkey_hash[i] == cache[i])
+> +                       continue;
+> +
+> +               wrmsrl(MSR_IA32_SGXLEPUBKEYHASH0 + i, le_pubkey_hash[i]);
+> +               cache[i] = le_pubkey_hash[i];
+> +       }
+> +       ret = __einit(sigstruct, token, secs);
+> +       preempt_enable();
+> +
+> +out:
+> +       sgx_put_page(secs);
+> +       return ret;
+> +}
+> +EXPORT_SYMBOL(sgx_einit);
+> +
