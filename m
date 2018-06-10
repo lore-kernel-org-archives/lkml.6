@@ -1,127 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id SRfAFC8LHlttJwAAmS7hNA
-	; Mon, 11 Jun 2018 05:39:59 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Oi0eOJ2hHVtnNwAAmS7hNA
+	; Sun, 10 Jun 2018 22:09:36 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 4310F60792; Mon, 11 Jun 2018 05:39:59 +0000 (UTC)
+	id 53A6860791; Sun, 10 Jun 2018 22:09:36 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MMbx12dD"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id A88E3606FA;
-	Mon, 11 Jun 2018 05:39:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A88E3606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id DB49E6032D;
+	Sun, 10 Jun 2018 22:09:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DB49E6032D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753982AbeFKFj4 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Mon, 11 Jun 2018 01:39:56 -0400
-Received: from mx.socionext.com ([202.248.49.38]:20223 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753750AbeFKFjz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 01:39:55 -0400
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 11 Jun 2018 14:39:54 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 57F5A6006F;
-        Mon, 11 Jun 2018 14:39:54 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Mon, 11 Jun 2018 14:39:54 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id E409740389;
-        Mon, 11 Jun 2018 14:39:53 +0900 (JST)
-Received: from DESKTOPFLNNJ4T (unknown [10.213.132.95])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id BBE1F120139;
-        Mon, 11 Jun 2018 14:39:53 +0900 (JST)
-From: "Katsuhiro Suzuki" <suzuki.katsuhiro@socionext.com>
-To: "'Kuninori Morimoto'" <kuninori.morimoto.gx@renesas.com>
-Cc: "Mark Brown" <broonie@kernel.org>, <alsa-devel@alsa-project.org>,
-        "Masami Hiramatsu" <masami.hiramatsu@linaro.org>,
-        "Jassi Brar" <jaswinder.singh@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20180611051559.18082-1-suzuki.katsuhiro@socionext.com>     <20180611051559.18082-2-suzuki.katsuhiro@socionext.com> <87tvq96gnm.wl-kuninori.morimoto.gx@renesas.com>
-In-Reply-To: <87tvq96gnm.wl-kuninori.morimoto.gx@renesas.com>
-Subject: Re: [PATCH v2 2/3] ASoC: simple-card: move hp and mic detection to soc_card probe
-Date: Mon, 11 Jun 2018 14:39:50 +0900
-Message-ID: <007401d40146$9ddaaec0$d9900c40$@socionext.com>
-MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="iso-2022-jp"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHUAUNKMw3htV1h6EmRYccv/MXyMaRZ8EuAgACXr0A=
-Content-Language: ja
-x-securitypolicycheck: OK by SHieldMailChecker v2.5.2
-x-shieldmailcheckerpolicyversion: POLICY180220
+        id S932153AbeFJWJd (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Sun, 10 Jun 2018 18:09:33 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:54908 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753692AbeFJWJb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Jun 2018 18:09:31 -0400
+Received: by mail-wm0-f67.google.com with SMTP id o13-v6so11434559wmf.4;
+        Sun, 10 Jun 2018 15:09:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=+Ryou1q5Q3g/roVK0v7fUP83I81z53Iy7orrPMdRuUM=;
+        b=MMbx12dD4auWrfcO0iyvCPGZXwwYEpzCWRIkG9CNx5r9Lkyt+wKrI+z7nmB5/iBymN
+         lOAV2MPgaNTSkKvEdaxhE+Pv9FGTQcW9Z6sm/6vhRGU9EER4xo7BEDX+I7Th4PSTAewj
+         nkqCKXOjSxGniHAZ8vYHhBlj87b5S6J+LbbvR/8DNk2pOc4Gh6m5YVLhZDBpX08r4+Yy
+         KQjk+YrhicjQJ86+NL4rJJrsreNaOosbVb6CfYywadXcTraRZP4KL61uCfl0zF7fFrjr
+         Bh5sv0ex2i6wmwVTjHT0kdpMhzVMwMhcDZ5T4LStJzGgy60TMJpjkAYO4UimDxQ0z4Rd
+         ErrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=+Ryou1q5Q3g/roVK0v7fUP83I81z53Iy7orrPMdRuUM=;
+        b=P+ZBcQTwXbgcvnf/UrIAFUNeP4/IUAdL5l5KSsh9mDLEFtzVvCJGhlzTqHRXUlz82y
+         4ad65YwBvyZtO05qNvAtGUYPpQ1iqY13uiyymImtq5juPjUWTlz2FVIKym09n9Cy7epK
+         TB1rym/CS7WBSrv0YuZCYVA1dH4p3rSywNaX6F0eAPGflAVtpqkbIKZsU+WMtggfagZZ
+         YJxGNU15Lx3RuYC+RhxaaPrzNFbGzxsNm4JfvQ+gVHW1Lb5PvoIlr/OOrC1MfxYdcMsf
+         Tearv6kLcC1sGNAWe5UWNm271HnQJSasPqBPuaoCoDqwAgAUA+8MT7k+Qr1E5WFms7yV
+         B/iQ==
+X-Gm-Message-State: APt69E3SUXW4wCp9bMGbTjsaLQUM6ICDcLQViyfYwV3sPWjVeeASaxgG
+        I1h9drDpoqlS+Lh9uN8Ikbo=
+X-Google-Smtp-Source: ADUXVKKXJ0zv7PzPTpFWGDNrLAg4uNRKzO93BHHpkhAK/qkySt0QSVIw0ltoLIuZwt884jMxBY/INQ==
+X-Received: by 2002:a1c:c342:: with SMTP id t63-v6mr7066365wmf.123.1528668570445;
+        Sun, 10 Jun 2018 15:09:30 -0700 (PDT)
+Received: from localhost.localdomain ([156.219.244.88])
+        by smtp.gmail.com with ESMTPSA id v138-v6sm11049162wmd.47.2018.06.10.15.09.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 10 Jun 2018 15:09:29 -0700 (PDT)
+From: Karim Eshapa <karim.eshapa@gmail.com>
+To: lars@metafoo.de
+Cc: Michael.Hennerich@analog.com, jic23@kernel.org, knaack.h@gmx.de,
+        pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, Karim Eshapa <karim.eshapa@gmail.com>
+Subject: [PATCH] staging:iio:accel: use sign extend function avoiding code duplication
+Date: Mon, 11 Jun 2018 00:09:20 +0200
+Message-Id: <20180610220920.12244-1-karim.eshapa@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Morimoto-san,
+Use sign_extend32 kernel function instead of code duplication.
+This function is also safe for 16 bits.
 
-> -----Original Message-----
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Sent: Monday, June 11, 2018 2:27 PM
-> To: Suzuki, Katsuhiro <suzuki.katsuhiro@socionext.com>
-> Cc: Mark Brown <broonie@kernel.org>; alsa-devel@alsa-project.org; Masami
-Hiramatsu
-> <masami.hiramatsu@linaro.org>; Jassi Brar <jaswinder.singh@linaro.org>;
-> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH v2 2/3] ASoC: simple-card: move hp and mic detection to
-soc_card
-> probe
-> 
-> 
-> Hi Katsuhiro-san
-> 
-> > This patch moves headphone and microphone detection to probe() of
-> > snd_soc_card from init() of snd_soc_dai_link. This is because init()
-> > is called (and an input device /dev/input/eventX is created too)
-> > twice or above if simple card has two or more DAI links.
-> >
-> > Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-> 
-> or above ?
-> 
+Signed-off-by: Karim Eshapa <karim.eshapa@gmail.com>
+---
+ drivers/staging/iio/accel/adis16201.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-It seems if simple card has multiple DAI links, it creates multiple input 
-devices.
-
-For example simple card has 3-links, 3 input devices /dev/input/event0,
-event1, event2 are created. Is it correct?
-
-
-> > -	ret = asoc_simple_card_init_hp(rtd->card, &priv->hp_jack, PREFIX);
-> > -	if (ret < 0)
-> > -		return ret;
-> > -
-> > -	ret = asoc_simple_card_init_mic(rtd->card, &priv->mic_jack, PREFIX);
-> > -	if (ret < 0)
-> > -		return ret;
-> (snip)
-> > +	ret = asoc_simple_card_init_hp(card, &priv->hp_jack, NULL);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	ret = asoc_simple_card_init_mic(card, &priv->mic_jack, NULL);
-> > +	if (ret < 0)
-> > +		return ret;
-> 
-> I think we want to keep "PREFIX" ?
-> 
-
-Oops... Thank you. I'll fix it.
-
-
-Regards,
---
-Katsuhiro Suzuki
-
-
-> 
-> Best regards
-> ---
-> Kuninori Morimoto
+diff --git a/drivers/staging/iio/accel/adis16201.c b/drivers/staging/iio/accel/adis16201.c
+index 0fae8aaf1cf4..fe4494e65395 100644
+--- a/drivers/staging/iio/accel/adis16201.c
++++ b/drivers/staging/iio/accel/adis16201.c
+@@ -227,9 +227,7 @@ static int adis16201_read_raw(struct iio_dev *indio_dev,
+ 		ret = adis_read_reg_16(st, addr, &val16);
+ 		if (ret)
+ 			return ret;
+-		val16 &= (1 << bits) - 1;
+-		val16 = (s16)(val16 << (16 - bits)) >> (16 - bits);
+-		*val = val16;
++		*val = sign_extend32(val16, bits);
+ 		return IIO_VAL_INT;
+ 	}
+ 
+-- 
+2.17.1
