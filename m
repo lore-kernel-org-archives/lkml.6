@@ -1,136 +1,270 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id WsorHTXTG1sWfAAAmS7hNA
-	; Sat, 09 Jun 2018 13:17:15 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id KsKuNxbwHFsjRwAAmS7hNA
+	; Sun, 10 Jun 2018 09:32:17 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 51DEA608B8; Sat,  9 Jun 2018 13:17:15 +0000 (UTC)
+	id EB33E60850; Sun, 10 Jun 2018 09:32:16 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y6KzIgvp"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+X-Spam-Status: No, score=-2.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,FROM_EXCESS_BASE64,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id CDE7F6074D;
-	Sat,  9 Jun 2018 13:17:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CDE7F6074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=jonmasters.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id BCFA86074D;
+	Sun, 10 Jun 2018 09:32:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BCFA86074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753231AbeFINRM (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 09:17:12 -0400
-Received: from edison.jonmasters.org ([173.255.233.168]:36590 "EHLO
-        edison.jonmasters.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753175AbeFINRL (ORCPT
+        id S1753801AbeFJJcM (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sun, 10 Jun 2018 05:32:12 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:36704 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932119AbeFJJcI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 09:17:11 -0400
-Received: from [104.153.224.165] (helo=washington.bos.jonmasters.org)
-        by edison.jonmasters.org with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.71)
-        (envelope-from <jcm@jonmasters.org>)
-        id 1fRdjo-0001m3-D8; Sat, 09 Jun 2018 13:17:01 +0000
-To: Marc Zyngier <marc.zyngier@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu
-Cc: Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Julien Grall <julien.grall@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>
-References: <20180529121121.24927-1-marc.zyngier@arm.com>
-From: Jon Masters <jcm@jonmasters.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jcm@jonmasters.org; prefer-encrypt=mutual; keydata=
- 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
- yrXvw9qg2waGcnb8WuoS+g==
-Organization: World Organi{s,z}ation Of Broken Dreams
-Message-ID: <3f90aca2-d693-5f3e-4f2b-51e9509af8fe@jonmasters.org>
-Date: Sat, 9 Jun 2018 09:16:03 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Sun, 10 Jun 2018 05:32:08 -0400
+Received: by mail-qt0-f195.google.com with SMTP id o9-v6so17656973qtp.3;
+        Sun, 10 Jun 2018 02:32:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=kx0Pmwg1V1sEJscsbWIR2QakZiZZu+NKiODMrKxnyIs=;
+        b=Y6KzIgvpLwu4xN2x0Bbhh3ciwIgggMVHX/8qPc56jTj5xJEfrrW7q9axeYpZH5oIFJ
+         FJNPvWwFvY904YNvLJOPSsiBPSy8lqZfcEjHb+mdPsMb7lxyK4hczlnUHrIINHIrA+MW
+         pWpbFwrABzPuDqFOodFjN4JHl+G4AobIkk9bgVX8sT7Zy2ip4rEOAYr0xDyedHWPR9fB
+         vimAKHSWHkoMJtmjD+nDnIPRt6KkUpZFc0f3Yt6l+MLKa8Ldqa81vwqx/x2K9bS0uKLy
+         +cLUFFUs560d7DUJwyOQGqCjV4w5DsqPyNAFLus7QS6IY7v92Wmk7hR3A3h3FV2SipT9
+         PhOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=kx0Pmwg1V1sEJscsbWIR2QakZiZZu+NKiODMrKxnyIs=;
+        b=l5XOOEGXecnVAegAq4Ong2qqN/QokAUBeGs/q3q79g5X57nTJC1RZ61NZKluN/IW0U
+         SVImss8wxwsbsYFR+XCTmRKDi9MxkPtsRGNXCX7ILFveVQm4kKYC2p1dxvvBSYfUD9jT
+         qzedbLnXq7S/kbSirIDzMRGQjkfCZLTfTULZ3E4c7FKnnkH4aI8nSOhvC3C5EZ+0fY5k
+         A2gcHq4SCBqejMs1epwpTghvB+1pxRSGO3WFxC4HDkPVQ+XrezmwABOyT0lnFP1irehg
+         5YZ7ZehzHIYizoD23p6oWK0W/Ovuv+yw97Yxt5apVFEwY/Anl88AGupAj0HawG8aARd0
+         H7cg==
+X-Gm-Message-State: APt69E0xAI8jszxGbySEoqM2h97QCk284IpYgIKDTIyx7U2tlzS5kohe
+        ycycRrIlzWiafgn9HbVfFNnzItxQQSoMtpRJvgQ=
+X-Google-Smtp-Source: ADUXVKJPtE+/DBsQQ7It5tHyeL+ST1QeDoYr2eHx6qiEluzJDGgUr0Eh4jSSuhm76jtga1NAgYp90RsR1+GiuGdEAuA=
+X-Received: by 2002:ac8:72d0:: with SMTP id o16-v6mr11839795qtp.7.1528623128003;
+ Sun, 10 Jun 2018 02:32:08 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180529121121.24927-1-marc.zyngier@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 104.153.224.165
-X-SA-Exim-Mail-From: jcm@jonmasters.org
-Subject: Re: [PATCH v2 00/17] arm64 SSBD (aka Spectre-v4) mitigation
-X-SA-Exim-Version: 4.2.1 (built Sun, 08 Nov 2009 07:31:22 +0000)
-X-SA-Exim-Scanned: Yes (on edison.jonmasters.org)
+References: <00000000000092de58056e3d4b96@google.com> <10d6b170-b820-3077-8737-c9d06e98d0fb@I-love.SAKURA.ne.jp>
+In-Reply-To: <10d6b170-b820-3077-8737-c9d06e98d0fb@I-love.SAKURA.ne.jp>
+From: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@gmail.com>
+Date: Sun, 10 Jun 2018 11:31:55 +0200
+Message-ID: <CAJ+HfNhnmvTHsE7cgi8pROjprsYvCZuzZDmYmpiUx4jqtHboUw@mail.gmail.com>
+Subject: Re: WARNING: kmalloc bug in xdp_umem_create
+To: penguin-kernel@i-love.sakura.ne.jp
+Cc: syzbot+4abadc5d69117b346506@syzkaller.appspotmail.com,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        "Karlsson, Magnus" <magnus.karlsson@intel.com>,
+        David Miller <davem@davemloft.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/29/2018 08:11 AM, Marc Zyngier wrote:
+Den s=C3=B6n 10 juni 2018 kl 04:53 skrev Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp>:
+>
+> On 2018/06/10 7:47, syzbot wrote:
+> > Hello,
+> >
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    7d3bf613e99a Merge tag 'libnvdimm-for-4.18' of git://gi=
+t.k..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D1073f68f800=
+000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3Df04d8d0a2af=
+b789a
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D4abadc5d69117=
+b346506
+> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> > syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=3D13c9756f8=
+00000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D16366f9f800=
+000
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the comm=
+it:
+> > Reported-by: syzbot+4abadc5d69117b346506@syzkaller.appspotmail.com
+> >
+> > random: sshd: uninitialized urandom read (32 bytes read)
+> > random: sshd: uninitialized urandom read (32 bytes read)
+> > random: sshd: uninitialized urandom read (32 bytes read)
+> > random: sshd: uninitialized urandom read (32 bytes read)
+> > random: sshd: uninitialized urandom read (32 bytes read)
+> > WARNING: CPU: 1 PID: 4537 at mm/slab_common.c:996 kmalloc_slab+0x56/0x7=
+0 mm/slab_common.c:996
+> > Kernel panic - not syncing: panic_on_warn set ...
+>
+> syzbot gave up upon kmalloc(), but actually error handling path has
+> NULL pointer dereference bug.
+>
 
-> This patch series implements the Linux kernel side of the "Spectre-v4"
-> (CVE-2018-3639) mitigation known as "Speculative Store Bypass Disable"
-> (SSBD).
+Thanks Tetsuo! This crash has been fixed by Daniel Borkmann in commit
+c09290c56376 ("bpf, xdp: fix crash in xdp_umem_unaccount_pages").
 
-Looks good, with the exception of the naming in patch 5, and a question
-about how you're handling live migration of VMs (which needs to preserve
-mitigation state). Once those are answered I think it's good.
 
-> For all released Arm Cortex-A CPUs that are affected by this issue, then
-> the preferred mitigation is simply to set a chicken bit in the firmware
-> during CPU initialisation and therefore no change to Linux is required.
-> Other CPUs may require the chicken bit to be toggled dynamically (for
-> example, when switching between user-mode and kernel-mode) and this is
-> achieved by calling into EL3 via an SMC which has been published as part
-> of the latest SMCCC specification:
+Bj=C3=B6rn
 
-We're asking (server) silicon vendors that can do so inexpensively to
-implement both a firmware knob to control the chicken bit and the ATF
-interface. This allows some users to disable the mitigation if they want
-to, for example in closed lab environments doing CONFIG_BENCHMARKING
-comparisons to other arches which might have mitigations disabled. Not
-that I like that, but I want Arm to be on an equal footing at least ;)
 
-Jon.
+> ----------
+> #include <sys/socket.h>
+> #include <unistd.h>
+> #define PF_XDP 44
+> #define SOL_XDP 283
+> #define XDP_UMEM_REG 4
+>
+> int main(int argc, char *argv[])
+> {
+>         int fd =3D socket(PF_XDP, SOCK_RAW, 0);
+>         struct xdp_umem_reg {
+>                 unsigned long long addr;
+>                 unsigned long long len;
+>                 unsigned int chunk_size;
+>                 unsigned int headroom;
+>         } arg =3D {
+>                 0x20000000,
+>                 0x200002000,
+>                 0x800,
+>                 2
+>         };
+>         setsockopt(fd, SOL_XDP, XDP_UMEM_REG, &arg, sizeof(arg));
+>         return 0;
+> }
+> ----------
+>
+> [   95.172962] WARNING: CPU: 3 PID: 2891 at mm/page_alloc.c:4065 __alloc_=
+pages_nodemask+0x283/0xdf0
+> [   95.175179] Modules linked in: pcspkr sg vmw_vmci i2c_piix4 sd_mod ata=
+_generic pata_acpi ahci libahci vmwgfx drm_kms_helper syscopyarea sysfillre=
+ct sysimgblt fb_sys_fops ttm drm ata_piix mptspi scsi_transport_spi i2c_cor=
+e mptscsih e1000 mptbase libata serio_raw
+> [   95.180614] CPU: 3 PID: 2891 Comm: a.out Kdump: loaded Not tainted 4.1=
+7.0+ #421
+> [   95.182351] Hardware name: VMware, Inc. VMware Virtual Platform/440BX =
+Desktop Reference Platform, BIOS 6.00 05/19/2017
+> [   95.184909] RIP: 0010:__alloc_pages_nodemask+0x283/0xdf0
+> [   95.186319] Code: 00 00 04 00 41 0f 44 c6 48 3b 5c 24 78 c6 84 24 90 0=
+0 00 00 00 0f 85 50 0b 00 00 41 83 fd 0a 76 1d f6 c4 02 0f 85 3b ff ff ff <=
+0f> 0b e9 34 ff ff ff 0f 0b 0f 1f 40 00 e9 10 fe ff ff 0f 0b 89 c2
+> [   95.190997] RSP: 0018:ffffc900008efd20 EFLAGS: 00010246
+> [   95.192257] RAX: 000000000060c0c0 RBX: 0000000000000000 RCX: ffff88013=
+f7fe920
+> [   95.194005] RDX: 0000000000000000 RSI: 0000000000000002 RDI: 000000000=
+0000000
+> [   95.195697] RBP: 000000000060c0c0 R08: 0000000000000001 R09: fffffffff=
+fffef81
+> [   95.197393] R10: 000000000000000d R11: 0000000000000e8c R12: 000000000=
+0000001
+> [   95.199084] R13: 000000000000000d R14: 000000000060c0c0 R15: 000000000=
+0000000
+> [   95.200735] FS:  00007f8387e61740(0000) GS:ffff88013f4c0000(0000) knlG=
+S:0000000000000000
+> [   95.203441] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   95.205726] CR2: 0000000020000040 CR3: 0000000133e2c006 CR4: 000000000=
+01606e0
+> [   95.207743] Call Trace:
+> [   95.208427]  ? __lock_acquire+0x22a/0x1830
+> [   95.209391]  ? kmalloc_order+0x15/0x60
+> [   95.210266]  ? __kmalloc+0x20a/0x210
+> [   95.211104]  ? xdp_umem_create+0x16e/0x3c0
+> [   95.212095]  ? xsk_setsockopt+0x153/0x1a0
+> [   95.213143]  ? __sys_setsockopt+0x67/0xb0
+> [   95.214058]  ? __x64_sys_setsockopt+0x1b/0x20
+> [   95.215040]  ? do_syscall_64+0x4f/0x1f0
+> [   95.215890]  ? entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> [   95.217079] irq event stamp: 5296
+> [   95.217785] hardirqs last  enabled at (5295): [<ffffffff810b2a77>] __r=
+aw_spin_lock_init+0x17/0x50
+> [   95.220381] hardirqs last disabled at (5296): [<ffffffff81800f33>] err=
+or_entry+0x73/0xc0
+> [   95.222447] softirqs last  enabled at (5284): [<ffffffff81a00183>] __d=
+o_softirq+0x183/0x204
+> [   95.224328] softirqs last disabled at (5277): [<ffffffff81061bcd>] irq=
+_exit+0xcd/0xf0
+> [   95.226065] ---[ end trace 75b6f67917663997 ]---
+> [   95.227250] BUG: unable to handle kernel NULL pointer dereference at 0=
+000000000000060
+> [   95.229101] PGD 1342eb067 P4D 1342eb067 PUD 1314a2067 PMD 0
+> [   95.230398] Oops: 0002 [#1] SMP DEBUG_PAGEALLOC
+> [   95.231418] CPU: 3 PID: 2891 Comm: a.out Kdump: loaded Tainted: G     =
+   W         4.17.0+ #421
+> [   95.233474] Hardware name: VMware, Inc. VMware Virtual Platform/440BX =
+Desktop Reference Platform, BIOS 6.00 05/19/2017
+> [   95.236636] RIP: 0010:xdp_umem_create+0x228/0x3c0
+> [   95.237867] Code: f4 ff ff ff e8 b9 f9 ff ff 48 8b bb 90 00 00 00 e8 3=
+d d9 a7 ff 48 c7 83 90 00 00 00 00 00 00 00 48 8b 43 30 8b 93 98 00 00 00 <=
+f0> 48 29 50 60 48 8b 7b 30 49 63 ec e8 57 10 92 ff 48 8b 7b 38 e8
+> [   95.241945] RSP: 0018:ffffc900008efe88 EFLAGS: 00010246
+> [   95.243236] RAX: 0000000000000000 RBX: ffff880133401288 RCX: 000000000=
+060c0c0
+> [   95.244789] RDX: 0000000000200002 RSI: 0000000001000010 RDI: 000000000=
+0000000
+> [   95.247382] RBP: 0000000000200002 R08: 0000000000000001 R09: fffffffff=
+fffef81
+> [   95.249735] R10: 000000000000000d R11: 0000000000000e8c R12: 00000000f=
+ffffff4
+> [   95.252391] R13: 0000000000000040 R14: 0000000020000000 R15: 000000000=
+00007c0
+> [   95.255280] FS:  00007f8387e61740(0000) GS:ffff88013f4c0000(0000) knlG=
+S:0000000000000000
+> [   95.257918] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   95.260068] CR2: 0000000000000060 CR3: 0000000133e2c006 CR4: 000000000=
+01606e0
+> [   95.262535] Call Trace:
+> [   95.263900]  ? xsk_setsockopt+0x153/0x1a0
+> [   95.265495]  ? __sys_setsockopt+0x67/0xb0
+> [   95.267108]  ? __x64_sys_setsockopt+0x1b/0x20
+> [   95.269532]  ? do_syscall_64+0x4f/0x1f0
+> [   95.271474]  ? entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> [   95.273292] Modules linked in: pcspkr sg vmw_vmci i2c_piix4 sd_mod ata=
+_generic pata_acpi ahci libahci vmwgfx drm_kms_helper syscopyarea sysfillre=
+ct sysimgblt fb_sys_fops ttm drm ata_piix mptspi scsi_transport_spi i2c_cor=
+e mptscsih e1000 mptbase libata serio_raw
+> [   95.279548] CR2: 0000000000000060
+> [   95.281044] ---[ end trace 75b6f67917663998 ]---
+> [   95.283132] RIP: 0010:xdp_umem_create+0x228/0x3c0
+> [   95.285257] Code: f4 ff ff ff e8 b9 f9 ff ff 48 8b bb 90 00 00 00 e8 3=
+d d9 a7 ff 48 c7 83 90 00 00 00 00 00 00 00 48 8b 43 30 8b 93 98 00 00 00 <=
+f0> 48 29 50 60 48 8b 7b 30 49 63 ec e8 57 10 92 ff 48 8b 7b 38 e8
+> [   95.291487] RSP: 0018:ffffc900008efe88 EFLAGS: 00010246
+> [   95.293429] RAX: 0000000000000000 RBX: ffff880133401288 RCX: 000000000=
+060c0c0
+> [   95.295761] RDX: 0000000000200002 RSI: 0000000001000010 RDI: 000000000=
+0000000
+> [   95.298072] RBP: 0000000000200002 R08: 0000000000000001 R09: fffffffff=
+fffef81
+> [   95.300403] R10: 000000000000000d R11: 0000000000000e8c R12: 00000000f=
+ffffff4
+> [   95.303699] R13: 0000000000000040 R14: 0000000020000000 R15: 000000000=
+00007c0
+> [   95.306178] FS:  00007f8387e61740(0000) GS:ffff88013f4c0000(0000) knlG=
+S:0000000000000000
+> [   95.308645] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   95.310782] CR2: 0000000000000060 CR3: 0000000133e2c006 CR4: 000000000=
+01606e0
+>
+> xdp_umem_create+0x228/0x3c0:
+> arch_atomic64_sub at arch/x86/include/asm/atomic64_64.h:60
+> (inlined by) atomic64_sub at include/asm-generic/atomic-instrumented.h:14=
+5
+> (inlined by) atomic_long_sub at include/asm-generic/atomic-long.h:199
+> (inlined by) xdp_umem_unaccount_pages at net/xdp/xdp_umem.c:135
+> (inlined by) xdp_umem_reg at net/xdp/xdp_umem.c:334
+> (inlined by) xdp_umem_create at net/xdp/xdp_umem.c:349
