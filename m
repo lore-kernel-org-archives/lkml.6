@@ -1,194 +1,202 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id QK36JHO+GlvwcwAAmS7hNA
-	; Fri, 08 Jun 2018 17:36:21 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id FsGjNEiYHVttCQAAmS7hNA
+	; Sun, 10 Jun 2018 21:35:06 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id DE2FD607DC; Fri,  8 Jun 2018 17:36:20 +0000 (UTC)
+	id 042E660791; Sun, 10 Jun 2018 21:35:06 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.4 required=2.0 tests=BAYES_00,DATE_IN_PAST_06_12,
+	MAILING_LIST_MULTI autolearn=no autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 45E86605A2;
-	Fri,  8 Jun 2018 17:36:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 45E86605A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 3477B604D4;
+	Sun, 10 Jun 2018 21:35:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3477B604D4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752852AbeFHRgS (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 13:36:18 -0400
-Received: from mga02.intel.com ([134.134.136.20]:61107 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752623AbeFHRgP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 13:36:15 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jun 2018 10:36:15 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,490,1520924400";
-   d="scan'208";a="62971612"
-Received: from ray.jf.intel.com (HELO [10.7.201.145]) ([10.7.201.145])
-  by orsmga001.jf.intel.com with ESMTP; 08 Jun 2018 10:36:14 -0700
-Subject: Re: [PATCH v11 07/13] x86, sgx: detect Intel SGX
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
-        platform-driver-x86@vger.kernel.org
-References: <20180608171216.26521-1-jarkko.sakkinen@linux.intel.com>
- <20180608171216.26521-8-jarkko.sakkinen@linux.intel.com>
-Cc: sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, Thomas Gleixner <tglx@linutronix.de>,
+        id S932341AbeFJVfB (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Sun, 10 Jun 2018 17:35:01 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:16964 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751573AbeFJVeJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Jun 2018 17:34:09 -0400
+Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Sun, 10 Jun 2018 14:33:45 -0700
+Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 2BF32406F6;
+        Sun, 10 Jun 2018 14:34:06 -0700 (PDT)
+From: Nadav Amit <namit@vmware.com>
+To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>
+CC: Nadav Amit <namit@vmware.com>, Juergen Gross <jgross@suse.com>,
+        Alok Kataria <akataria@vmware.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
         "H. Peter Anvin" <hpa@zytor.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Vikas Shivappa <vikas.shivappa@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
-        <linux-kernel@vger.kernel.org>,
-        "open list:INTEL SGX" <intel-sgx-kernel-dev@lists.01.org>
-From: Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzShEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gPGRhdmVAc3I3MS5uZXQ+wsF7BBMBAgAlAhsDBgsJCAcDAgYVCAIJ
- CgsEFgIDAQIeAQIXgAUCTo3k0QIZAQAKCRBoNZUwcMmSsMO2D/421Xg8pimb9mPzM5N7khT0
- 2MCnaGssU1T59YPE25kYdx2HntwdO0JA27Wn9xx5zYijOe6B21ufrvsyv42auCO85+oFJWfE
- K2R/IpLle09GDx5tcEmMAHX6KSxpHmGuJmUPibHVbfep2aCh9lKaDqQR07gXXWK5/yU1Dx0r
- VVFRaHTasp9fZ9AmY4K9/BSA3VkQ8v3OrxNty3OdsrmTTzO91YszpdbjjEFZK53zXy6tUD2d
- e1i0kBBS6NLAAsqEtneplz88T/v7MpLmpY30N9gQU3QyRC50jJ7LU9RazMjUQY1WohVsR56d
- ORqFxS8ChhyJs7BI34vQusYHDTp6PnZHUppb9WIzjeWlC7Jc8lSBDlEWodmqQQgp5+6AfhTD
- kDv1a+W5+ncq+Uo63WHRiCPuyt4di4/0zo28RVcjtzlGBZtmz2EIC3vUfmoZbO/Gn6EKbYAn
- rzz3iU/JWV8DwQ+sZSGu0HmvYMt6t5SmqWQo/hyHtA7uF5Wxtu1lCgolSQw4t49ZuOyOnQi5
- f8R3nE7lpVCSF1TT+h8kMvFPv3VG7KunyjHr3sEptYxQs4VRxqeirSuyBv1TyxT+LdTm6j4a
- mulOWf+YtFRAgIYyyN5YOepDEBv4LUM8Tz98lZiNMlFyRMNrsLV6Pv6SxhrMxbT6TNVS5D+6
- UorTLotDZKp5+M7BTQRUY85qARAAsgMW71BIXRgxjYNCYQ3Xs8k3TfAvQRbHccky50h99TUY
- sqdULbsb3KhmY29raw1bgmyM0a4DGS1YKN7qazCDsdQlxIJp9t2YYdBKXVRzPCCsfWe1dK/q
- 66UVhRPP8EGZ4CmFYuPTxqGY+dGRInxCeap/xzbKdvmPm01Iw3YFjAE4PQ4hTMr/H76KoDbD
- cq62U50oKC83ca/PRRh2QqEqACvIH4BR7jueAZSPEDnzwxvVgzyeuhwqHY05QRK/wsKuhq7s
- UuYtmN92Fasbxbw2tbVLZfoidklikvZAmotg0dwcFTjSRGEg0Gr3p/xBzJWNavFZZ95Rj7Et
- db0lCt0HDSY5q4GMR+SrFbH+jzUY/ZqfGdZCBqo0cdPPp58krVgtIGR+ja2Mkva6ah94/oQN
- lnCOw3udS+Eb/aRcM6detZr7XOngvxsWolBrhwTQFT9D2NH6ryAuvKd6yyAFt3/e7r+HHtkU
- kOy27D7IpjngqP+b4EumELI/NxPgIqT69PQmo9IZaI/oRaKorYnDaZrMXViqDrFdD37XELwQ
- gmLoSm2VfbOYY7fap/AhPOgOYOSqg3/Nxcapv71yoBzRRxOc4FxmZ65mn+q3rEM27yRztBW9
- AnCKIc66T2i92HqXCw6AgoBJRjBkI3QnEkPgohQkZdAb8o9WGVKpfmZKbYBo4pEAEQEAAcLB
- XwQYAQIACQUCVGPOagIbDAAKCRBoNZUwcMmSsJeCEACCh7P/aaOLKWQxcnw47p4phIVR6pVL
- e4IEdR7Jf7ZL00s3vKSNT+nRqdl1ugJx9Ymsp8kXKMk9GSfmZpuMQB9c6io1qZc6nW/3TtvK
- pNGz7KPPtaDzvKA4S5tfrWPnDr7n15AU5vsIZvgMjU42gkbemkjJwP0B1RkifIK60yQqAAlT
- YZ14P0dIPdIPIlfEPiAWcg5BtLQU4Wg3cNQdpWrCJ1E3m/RIlXy/2Y3YOVVohfSy+4kvvYU3
- lXUdPb04UPw4VWwjcVZPg7cgR7Izion61bGHqVqURgSALt2yvHl7cr68NYoFkzbNsGsye9ft
- M9ozM23JSgMkRylPSXTeh5JIK9pz2+etco3AfLCKtaRVysjvpysukmWMTrx8QnI5Nn5MOlJj
- 1Ov4/50JY9pXzgIDVSrgy6LYSMc4vKZ3QfCY7ipLRORyalFDF3j5AGCMRENJjHPD6O7bl3Xo
- 4DzMID+8eucbXxKiNEbs21IqBZbbKdY1GkcEGTE7AnkA3Y6YB7I/j9mQ3hCgm5muJuhM/2Fr
- OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
- ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
- z5cecg==
-Message-ID: <4fc3b6b0-6e4b-3d5f-4d54-2bf7539c7a17@intel.com>
-Date: Fri, 8 Jun 2018 10:36:14 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        <virtualization@lists.linux-foundation.org>
+Subject: [PATCH v3 6/9] x86: prevent inline distortion by paravirt ops
+Date: Sun, 10 Jun 2018 07:19:08 -0700
+Message-ID: <20180610141911.52948-7-namit@vmware.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180610141911.52948-1-namit@vmware.com>
+References: <20180610141911.52948-1-namit@vmware.com>
 MIME-Version: 1.0
-In-Reply-To: <20180608171216.26521-8-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
+ designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +config INTEL_SGX_CORE
-> +	prompt "Intel SGX core functionality
-> +	depends on X86_64 && CPU_SUP_INTEL
-> +	help
-> +	Intel Software Guard eXtensions (SGX) is a set of CPU instructions
-> +	that allows ring 3 applications to create enclaves; private regions
-> +	of memory that are protected, by hardware, from unauthorized access
-> +	and/or modification.
+GCC considers the number of statements in inlined assembly blocks,
+according to new-lines and semicolons, as an indication to the cost of
+the block in time and space. This data is distorted by the kernel code,
+which puts information in alternative sections. As a result, the
+compiler may perform incorrect inlining and branch optimizations.
 
-That semicolon needs to be a colon.  The second half of that sentence is
-not a stand-alone statement.
+The solution is to set an assembly macro and call it from the inlined
+assembly block. As a result GCC considers the inline assembly block as
+a single instruction.
 
-> +	This option enables kernel recognition of SGX, high-level management
-> +	of the Enclave Page Cache (EPC), tracking and writing of SGX Launch
-> +	Enclave Hash MSRs, and allows for virtualization of SGX via KVM. By
-> +	iteslf, this option does not provide SGX support to userspace.
-> +
-> +	For details, see Documentation/x86/intel_sgx.rst
-> +
-> +	If unsure, say N.
-> +
->  config EFI
->  	bool "EFI runtime service support"
->  	depends on ACPI
-> diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
-> new file mode 100644
-> index 000000000000..fa3e6e0eb8af
-> --- /dev/null
-> +++ b/arch/x86/include/asm/sgx.h
-> @@ -0,0 +1,25 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
-> +// Copyright(c) 2016-18 Intel Corporation.
-> +//
-> +// Authors:
-> +//
-> +// Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> +// Suresh Siddha <suresh.b.siddha@intel.com>
-> +// Sean Christopherson <sean.j.christopherson@intel.com>
-> +
-> +#ifndef _ASM_X86_SGX_H
-> +#define _ASM_X86_SGX_H
-> +
-> +#include <linux/types.h>
-> +
-> +#define SGX_CPUID 0x12
+The effect of the patch is a more aggressive inlining, which also
+causes a size increase of kernel.
 
-Hey, I just saw 0x12 as a magic, hard-coded number earlier in these
-patches.  It seems cruel to hard-code it, and then also have a #define
-that isn't used.
+   text	   data	    bss	    dec	    hex	filename
+18147336 10226688 2957312 31331336 1de1408 ./vmlinux before
+18162555 10226288 2957312 31346155 1de4deb ./vmlinux after (+14819)
 
-> +enum sgx_cpuid {
-> +	SGX_CPUID_CAPABILITIES	= 0,
-> +	SGX_CPUID_ATTRIBUTES	= 1,
-> +	SGX_CPUID_EPC_BANKS	= 2,
-> +};
+Static text symbols:
+Before:	40053
+After:	39942	(-111)
 
-These are cpuid *leaves*, right?  Please make this clear that these are
-hardware-defined values and not some kind of software construct.
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Alok Kataria <akataria@vmware.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: virtualization@lists.linux-foundation.org
 
-> +bool sgx_enabled __ro_after_init = false;
-> +EXPORT_SYMBOL(sgx_enabled);
-> +
-> +static __init bool sgx_is_enabled(void)
-> +{
-> +	unsigned long fc;
-> +
-> +	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL)
-> +		return false;
+Signed-off-by: Nadav Amit <namit@vmware.com>
+---
+ arch/x86/include/asm/paravirt_types.h | 54 +++++++++++++++------------
+ arch/x86/kernel/macros.S              |  1 +
+ 2 files changed, 31 insertions(+), 24 deletions(-)
 
-Not necessary. CPUID does this part for you.
-
-> +	if (!boot_cpu_has(X86_FEATURE_SGX))
-> +		return false;
-> +
-> +	if (!boot_cpu_has(X86_FEATURE_SGX1))
-> +		return false;
-> +
-> +	rdmsrl(MSR_IA32_FEATURE_CONTROL, fc);
-> +	if (!(fc & FEATURE_CONTROL_LOCKED))
-> +		return false;
-> +
-> +	if (!(fc & FEATURE_CONTROL_SGX_ENABLE))
-> +		return false;
-
-Comments, please.  Why would this happen?  What would it mean?
+diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
+index 180bc0bff0fb..2a9c53f64f1a 100644
+--- a/arch/x86/include/asm/paravirt_types.h
++++ b/arch/x86/include/asm/paravirt_types.h
+@@ -347,19 +347,15 @@ extern struct pv_lock_ops pv_lock_ops;
+  * Generate some code, and mark it as patchable by the
+  * apply_paravirt() alternate instruction patcher.
+  */
+-#define _paravirt_alt(insn_string, type, clobber)	\
+-	"771:\n\t" insn_string "\n" "772:\n"		\
+-	".pushsection .parainstructions,\"a\"\n"	\
+-	_ASM_ALIGN "\n"					\
+-	_ASM_PTR " 771b\n"				\
+-	"  .byte " type "\n"				\
+-	"  .byte 772b-771b\n"				\
+-	"  .short " clobber "\n"			\
+-	".popsection\n"
++#define _paravirt_alt(type, clobber, pv_opptr)				\
++	"PARAVIRT_ALT type=" __stringify(type)				\
++	" clobber=" __stringify(clobber)				\
++	" pv_opptr=" __stringify(pv_opptr) "\n\t"
+ 
+ /* Generate patchable code, with the default asm parameters. */
+-#define paravirt_alt(insn_string)					\
+-	_paravirt_alt(insn_string, "%c[paravirt_typenum]", "%c[paravirt_clobber]")
++#define paravirt_alt							\
++	_paravirt_alt("%c[paravirt_typenum]", "%c[paravirt_clobber]",	\
++		      "%c[paravirt_opptr]")
+ 
+ /* Simple instruction patching code. */
+ #define NATIVE_LABEL(a,x,b) "\n\t.globl " a #x "_" #b "\n" a #x "_" #b ":\n\t"
+@@ -387,16 +383,6 @@ unsigned native_patch(u8 type, u16 clobbers, void *ibuf,
+ 
+ int paravirt_disable_iospace(void);
+ 
+-/*
+- * This generates an indirect call based on the operation type number.
+- * The type number, computed in PARAVIRT_PATCH, is derived from the
+- * offset into the paravirt_patch_template structure, and can therefore be
+- * freely converted back into a structure offset.
+- */
+-#define PARAVIRT_CALL					\
+-	ANNOTATE_RETPOLINE_SAFE				\
+-	"call *%c[paravirt_opptr];"
+-
+ /*
+  * These macros are intended to wrap calls through one of the paravirt
+  * ops structs, so that they can be later identified and patched at
+@@ -534,7 +520,7 @@ int paravirt_disable_iospace(void);
+ 		/* since this condition will never hold */		\
+ 		if (sizeof(rettype) > sizeof(unsigned long)) {		\
+ 			asm volatile(pre				\
+-				     paravirt_alt(PARAVIRT_CALL)	\
++				     paravirt_alt			\
+ 				     post				\
+ 				     : call_clbr, ASM_CALL_CONSTRAINT	\
+ 				     : paravirt_type(op),		\
+@@ -544,7 +530,7 @@ int paravirt_disable_iospace(void);
+ 			__ret = (rettype)((((u64)__edx) << 32) | __eax); \
+ 		} else {						\
+ 			asm volatile(pre				\
+-				     paravirt_alt(PARAVIRT_CALL)	\
++				     paravirt_alt			\
+ 				     post				\
+ 				     : call_clbr, ASM_CALL_CONSTRAINT	\
+ 				     : paravirt_type(op),		\
+@@ -571,7 +557,7 @@ int paravirt_disable_iospace(void);
+ 		PVOP_VCALL_ARGS;					\
+ 		PVOP_TEST_NULL(op);					\
+ 		asm volatile(pre					\
+-			     paravirt_alt(PARAVIRT_CALL)		\
++			     paravirt_alt				\
+ 			     post					\
+ 			     : call_clbr, ASM_CALL_CONSTRAINT		\
+ 			     : paravirt_type(op),			\
+@@ -691,6 +677,26 @@ struct paravirt_patch_site {
+ extern struct paravirt_patch_site __parainstructions[],
+ 	__parainstructions_end[];
+ 
++#else	/* __ASSEMBLY__ */
++
++/*
++ * This generates an indirect call based on the operation type number.
++ * The type number, computed in PARAVIRT_PATCH, is derived from the
++ * offset into the paravirt_patch_template structure, and can therefore be
++ * freely converted back into a structure offset.
++ */
++.macro PARAVIRT_ALT type:req clobber:req pv_opptr:req
++771:	ANNOTATE_RETPOLINE_SAFE
++	call *\pv_opptr
++772:	.pushsection .parainstructions,"a"
++	_ASM_ALIGN
++	_ASM_PTR 771b
++	.byte \type
++	.byte 772b-771b
++	.short \clobber
++	.popsection
++.endm
++
+ #endif	/* __ASSEMBLY__ */
+ 
+ #endif	/* _ASM_X86_PARAVIRT_TYPES_H */
+diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
+index 66ccb8e823b1..71d8b716b111 100644
+--- a/arch/x86/kernel/macros.S
++++ b/arch/x86/kernel/macros.S
+@@ -10,3 +10,4 @@
+ #include <asm/refcount.h>
+ #include <asm/alternative-asm.h>
+ #include <asm/bug.h>
++#include <asm/paravirt.h>
+-- 
+2.17.0
