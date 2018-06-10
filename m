@@ -1,299 +1,190 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id xR/0FpLkGlvRRgAAmS7hNA
-	; Fri, 08 Jun 2018 20:18:38 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 2l8ZNdkbHVvzOQAAmS7hNA
+	; Sun, 10 Jun 2018 12:38:49 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id EE6E3607E4; Fri,  8 Jun 2018 20:18:37 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="X9U4EZEn"
+	id C3AB960850; Sun, 10 Jun 2018 12:38:49 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 32475607A4;
-	Fri,  8 Jun 2018 20:18:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 32475607A4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 2F6AB606DD;
+	Sun, 10 Jun 2018 12:38:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2F6AB606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752896AbeFHUSf (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 16:18:35 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:40258 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752730AbeFHUSd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 16:18:33 -0400
-Received: by mail-pf0-f194.google.com with SMTP id z24-v6so7167036pfe.7
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 13:18:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=lJdXY4DKaBXBRhX78sWTOtsjl7CuwfJYUgYovSlUirI=;
-        b=X9U4EZEnRyq9NelAEaacjrQqJxe3TdnDl+k3embrHbDuoEVrYsMmEyebi+MWrXg/3T
-         JjDeJk7duKgEEyhDns8VqaPLkLY8/QqQBONNcWpeUnyAi3ZWY1NDFepROojB8/SJppQ9
-         CiW/yHdYWU5vQSQr/kQtAMVN7yqPaD/iQcr4A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lJdXY4DKaBXBRhX78sWTOtsjl7CuwfJYUgYovSlUirI=;
-        b=G2rK37IOBhcI58vclmVvGOK1j8Uba2no7Y2ZS7mqWNm4SMKavwOS8sJXiSolzrwa9R
-         rEK0f4TFEN09ZIOG3Ic3xhHcZFdopTooXKkVQFJqFzfOFh0AsElA7FMm7d1a9V7Sn+uW
-         YYzeumsLeCStdsaW9HcOqmknwXvka8iNiSe4vPxp0DBDwOMj0FAhVvb5lNc0+f81cYjU
-         A7z56tRhLRDCHapycoXXj4PHEd1L5TAfUU6RpHEoZczPuHyAcuy7V23KZ3K00KBpHxCS
-         9nFGaMMvMg8ab+r97CK6TUKVx2JoDbSc/io3l27ddTh9GFGLjjNw5kiZx10HeFn+znTw
-         jvMA==
-X-Gm-Message-State: APt69E0KPmOS3nL2qSAvIgxS6p7UWz1jRKLTD/4plNU5qEvGUhobXHYf
-        mc2bNVxja3P597sW+AWIWYsc7Q==
-X-Google-Smtp-Source: ADUXVKJMdDM08ULhk/HCdrBI7/B3h1NnFkG7ktP52JJfiYEKQmjnlkDWGa59jTZej8ku4/qQQ4N8mw==
-X-Received: by 2002:a63:7341:: with SMTP id d1-v6mr6366496pgn.404.1528489112599;
-        Fri, 08 Jun 2018 13:18:32 -0700 (PDT)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id m83-v6sm51022666pfi.188.2018.06.08.13.18.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Jun 2018 13:18:31 -0700 (PDT)
-Date: Fri, 8 Jun 2018 14:18:29 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, robh@kernel.org,
-        frowand.list@gmail.com, mark.rutland@arm.com, sudeep.holla@arm.com,
-        arm@kernel.org, linux-kernel@vger.kernel.org, matt.sealey@arm.com,
-        john.horley@arm.com, charles.garcia-tobin@arm.com,
-        coresight@lists.linaro.org, devicetree@vger.kernel.org,
-        mike.leach@linaro.org
-Subject: Re: [PATCH 05/20] coresight: platform: Cleanup coresight connection
- handling
-Message-ID: <20180608201829.GD30587@xps15>
-References: <1528235011-30691-1-git-send-email-suzuki.poulose@arm.com>
- <1528235011-30691-6-git-send-email-suzuki.poulose@arm.com>
+        id S1753898AbeFJMir (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sun, 10 Jun 2018 08:38:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51818 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753431AbeFJMio (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Jun 2018 08:38:44 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 56B7EACA3;
+        Sun, 10 Jun 2018 12:38:42 +0000 (UTC)
+Subject: Re: [PATCH V6 19/30] md/dm/bcache: conver to
+ bio_for_each_chunk_segment_all and bio_for_each_chunk_all
+To: Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kent Overstreet <kent.overstreet@gmail.com>
+Cc: David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Theodore Ts'o <tytso@mit.edu>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Filipe Manana <fdmanana@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>
+References: <20180609123014.8861-1-ming.lei@redhat.com>
+ <20180609123014.8861-20-ming.lei@redhat.com>
+From: Coly Li <colyli@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=colyli@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <5467522a-4bf6-1ec6-6aad-545d9b3da15e@suse.de>
+Date: Sun, 10 Jun 2018 20:38:28 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1528235011-30691-6-git-send-email-suzuki.poulose@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180609123014.8861-20-ming.lei@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 10:43:16PM +0100, Suzuki K Poulose wrote:
-> The platform code parses the component connections and populates
-> a platform-description of the output connections in arrays of fields
-> (which is never freed). This is later copied in the coresight_register
-> to a newly allocated area, represented by coresight_connection(s).
+On 2018/6/9 8:30 PM, Ming Lei wrote:
+> In bch_bio_alloc_pages(), bio_for_each_chunk_all() is fine because this
+> helper can only be used on a freshly new bio.
 > 
-> This patch cleans up the code dealing with connections by making
-> use of the "coresight_connection" structure right at the platform
-> code and lets the generic driver simply re-use information provided
-> by the platform.
+> For other cases, we conver to bio_for_each_chunk_segment_all() since they needn't
+> to update bvec table.
 > 
-> Thus making it reader friendly as well as avoiding the wastage of
-> unused memory.
+> bio_for_each_segment_all() can't be used any more after multipage bvec is
+> enabled, so we have to convert to bio_for_each_chunk_segment_all().
 > 
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Ming Lei <ming.lei@redhat.com>
+
+I am OK with the bcache part. Acked-by: Coly Li <colyli@suse.de>
+
+Thanks.
+
+Coly Li
+
 > ---
->  drivers/hwtracing/coresight/coresight.c    | 21 +-----------
->  drivers/hwtracing/coresight/of_coresight.c | 51 ++++++++++++------------------
->  include/linux/coresight.h                  |  9 ++----
->  3 files changed, 23 insertions(+), 58 deletions(-)
+>  drivers/md/bcache/btree.c | 3 ++-
+>  drivers/md/bcache/util.c  | 2 +-
+>  drivers/md/dm-crypt.c     | 3 ++-
+>  drivers/md/raid1.c        | 3 ++-
+>  4 files changed, 7 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/hwtracing/coresight/coresight.c b/drivers/hwtracing/coresight/coresight.c
-> index 2893cfe..69e9136 100644
-> --- a/drivers/hwtracing/coresight/coresight.c
-> +++ b/drivers/hwtracing/coresight/coresight.c
-> @@ -953,13 +953,11 @@ postcore_initcall(coresight_init);
+> diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+> index 2a0968c04e21..dc0747c37bdf 100644
+> --- a/drivers/md/bcache/btree.c
+> +++ b/drivers/md/bcache/btree.c
+> @@ -423,8 +423,9 @@ static void do_btree_node_write(struct btree *b)
+>  		int j;
+>  		struct bio_vec *bv;
+>  		void *base = (void *) ((unsigned long) i & ~(PAGE_SIZE - 1));
+> +		struct bvec_chunk_iter citer;
 >  
->  struct coresight_device *coresight_register(struct coresight_desc *desc)
+> -		bio_for_each_segment_all(bv, b->bio, j)
+> +		bio_for_each_chunk_segment_all(bv, b->bio, j, citer)
+>  			memcpy(page_address(bv->bv_page),
+>  			       base + j * PAGE_SIZE, PAGE_SIZE);
+>  
+> diff --git a/drivers/md/bcache/util.c b/drivers/md/bcache/util.c
+> index fc479b026d6d..2f05199f7edb 100644
+> --- a/drivers/md/bcache/util.c
+> +++ b/drivers/md/bcache/util.c
+> @@ -268,7 +268,7 @@ int bch_bio_alloc_pages(struct bio *bio, gfp_t gfp_mask)
+>  	int i;
+>  	struct bio_vec *bv;
+>  
+> -	bio_for_each_segment_all(bv, bio, i) {
+> +	bio_for_each_chunk_all(bv, bio, i) {
+>  		bv->bv_page = alloc_page(gfp_mask);
+>  		if (!bv->bv_page) {
+>  			while (--bv >= bio->bi_io_vec)
+> diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
+> index da02f4d8e4b9..637ef1b1dc43 100644
+> --- a/drivers/md/dm-crypt.c
+> +++ b/drivers/md/dm-crypt.c
+> @@ -1450,8 +1450,9 @@ static void crypt_free_buffer_pages(struct crypt_config *cc, struct bio *clone)
 >  {
-> -	int i;
->  	int ret;
->  	int link_subtype;
->  	int nr_refcnts = 1;
->  	atomic_t *refcnts = NULL;
->  	struct coresight_device *csdev;
-> -	struct coresight_connection *conns = NULL;
+>  	unsigned int i;
+>  	struct bio_vec *bv;
+> +	struct bvec_chunk_iter citer;
 >  
->  	csdev = kzalloc(sizeof(*csdev), GFP_KERNEL);
->  	if (!csdev) {
-> @@ -988,22 +986,7 @@ struct coresight_device *coresight_register(struct coresight_desc *desc)
->  	csdev->nr_inport = desc->pdata->nr_inport;
->  	csdev->nr_outport = desc->pdata->nr_outport;
+> -	bio_for_each_segment_all(bv, clone, i) {
+> +	bio_for_each_chunk_segment_all(bv, clone, i, citer) {
+>  		BUG_ON(!bv->bv_page);
+>  		mempool_free(bv->bv_page, &cc->page_pool);
+>  	}
+> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+> index bad28520719b..2a4f1037c680 100644
+> --- a/drivers/md/raid1.c
+> +++ b/drivers/md/raid1.c
+> @@ -2116,13 +2116,14 @@ static void process_checks(struct r1bio *r1_bio)
+>  		struct page **spages = get_resync_pages(sbio)->pages;
+>  		struct bio_vec *bi;
+>  		int page_len[RESYNC_PAGES] = { 0 };
+> +		struct bvec_chunk_iter citer;
 >  
-> -	/* Initialise connections if there is at least one outport */
-> -	if (csdev->nr_outport) {
-> -		conns = kcalloc(csdev->nr_outport, sizeof(*conns), GFP_KERNEL);
-> -		if (!conns) {
-> -			ret = -ENOMEM;
-> -			goto err_kzalloc_conns;
-> -		}
-> -
-> -		for (i = 0; i < csdev->nr_outport; i++) {
-> -			conns[i].outport = desc->pdata->outports[i];
-> -			conns[i].child_name = desc->pdata->child_names[i];
-> -			conns[i].child_port = desc->pdata->child_ports[i];
-> -		}
-> -	}
-> -
-> -	csdev->conns = conns;
-> +	csdev->conns = desc->pdata->conns;
+>  		if (sbio->bi_end_io != end_sync_read)
+>  			continue;
+>  		/* Now we can 'fixup' the error value */
+>  		sbio->bi_status = 0;
 >  
->  	csdev->type = desc->type;
->  	csdev->subtype = desc->subtype;
-> @@ -1032,8 +1015,6 @@ struct coresight_device *coresight_register(struct coresight_desc *desc)
+> -		bio_for_each_segment_all(bi, sbio, j)
+> +		bio_for_each_chunk_segment_all(bi, sbio, j, citer)
+>  			page_len[j] = bi->bv_len;
 >  
->  	return csdev;
->  
-> -err_kzalloc_conns:
-> -	kfree(refcnts);
->  err_kzalloc_refcnts:
->  	kfree(csdev);
->  err_kzalloc_csdev:
-> diff --git a/drivers/hwtracing/coresight/of_coresight.c b/drivers/hwtracing/coresight/of_coresight.c
-> index ada4f07..d01a9ce 100644
-> --- a/drivers/hwtracing/coresight/of_coresight.c
-> +++ b/drivers/hwtracing/coresight/of_coresight.c
-> @@ -70,26 +70,13 @@ static void of_coresight_get_ports(const struct device_node *node,
->  static int of_coresight_alloc_memory(struct device *dev,
->  			struct coresight_platform_data *pdata)
->  {
-> -	/* List of output port on this component */
-> -	pdata->outports = devm_kzalloc(dev, pdata->nr_outport *
-> -				       sizeof(*pdata->outports),
-> -				       GFP_KERNEL);
-> -	if (!pdata->outports)
-> -		return -ENOMEM;
-> -
-> -	/* Children connected to this component via @outports */
-> -	pdata->child_names = devm_kzalloc(dev, pdata->nr_outport *
-> -					  sizeof(*pdata->child_names),
-> -					  GFP_KERNEL);
-> -	if (!pdata->child_names)
-> -		return -ENOMEM;
-> -
-> -	/* Port number on the child this component is connected to */
-> -	pdata->child_ports = devm_kzalloc(dev, pdata->nr_outport *
-> -					  sizeof(*pdata->child_ports),
-> -					  GFP_KERNEL);
-> -	if (!pdata->child_ports)
-> -		return -ENOMEM;
-> +	if (pdata->nr_outport) {
-> +		pdata->conns = devm_kzalloc(dev, pdata->nr_outport *
-> +					    sizeof(*pdata->conns),
-> +					    GFP_KERNEL);
-> +		if (!pdata->conns)
-> +			return -ENOMEM;
-> +	}
->  
->  	return 0;
->  }
-> @@ -113,24 +100,24 @@ EXPORT_SYMBOL_GPL(of_coresight_get_cpu);
->  
->  /*
->   * of_coresight_parse_endpoint : Parse the given output endpoint @ep
-> - * and fill the connection information in @pdata[*@i].
-> + * and fill the connection information in *@pconn.
->   *
->   * Parses the local port, remote device name and the remote port. Also
-> - * updates *@i to point to the next index, when an entry is added.
-> + * updates *@pconn to point to the next record, when an entry is added.
->   *
->   * Returns :
->   *	 0	- If the parsing completed without any fatal errors.
->   *	-Errno	- Fatal error, abort the scanning.
->   */
->  static int of_coresight_parse_endpoint(struct device_node *ep,
-> -				       struct coresight_platform_data *pdata,
-> -				       int *i)
-> +				       struct coresight_connection **pconn)
->  {
->  	int ret = 0;
->  	struct of_endpoint endpoint, rendpoint;
->  	struct device_node *rparent = NULL;
->  	struct device_node *rep = NULL;
->  	struct device *rdev = NULL;
-> +	struct coresight_connection *conn = *pconn;
->  
->  	do {
->  		/*
-> @@ -163,11 +150,11 @@ static int of_coresight_parse_endpoint(struct device_node *ep,
->  			break;
->  		}
->  
-> -		pdata->outports[*i] = endpoint.port;
-> -		pdata->child_names[*i] = dev_name(rdev);
-> -		pdata->child_ports[*i] = rendpoint.port;
-> -		/* Move the index */
-> -		(*i)++;
-> +		conn->outport = endpoint.port;
-> +		conn->child_name = dev_name(rdev);
-> +		conn->child_port = rendpoint.port;
-> +		/* Move the connection record */
-> +		(*pconn)++;
->  	} while (0);
->  
->  	if (rparent)
-> @@ -182,8 +169,9 @@ struct coresight_platform_data *
->  of_get_coresight_platform_data(struct device *dev,
->  			       const struct device_node *node)
->  {
-> -	int i = 0, ret = 0;
-> +	int ret = 0;
->  	struct coresight_platform_data *pdata;
-> +	struct coresight_connection *conn;
->  	struct device_node *ep = NULL;
->  
->  	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
-> @@ -205,13 +193,14 @@ of_get_coresight_platform_data(struct device *dev,
->  	if (ret)
->  		return ERR_PTR(ret);
->  
-> +	conn = pdata->conns;
->  	/* Iterate through each port to discover topology */
->  	do {
->  		/* Get a handle on a port */
->  		ep = of_graph_get_next_endpoint(node, ep);
->  		if (!ep)
->  			break;
-> -		ret = of_coresight_parse_endpoint(ep, pdata, &i);
-> +		ret = of_coresight_parse_endpoint(ep, &conn);
->  		if (ret)
->  			return ERR_PTR(ret);
->  	} while (ep);
-> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-> index 69a5c9f..2a75a15 100644
-> --- a/include/linux/coresight.h
-> +++ b/include/linux/coresight.h
-> @@ -82,20 +82,15 @@ struct coresight_dev_subtype {
->   * @cpu:	the CPU a source belongs to. Only applicable for ETM/PTMs.
->   * @name:	name of the component as shown under sysfs.
->   * @nr_inport:	number of input ports for this component.
-> - * @outports:	list of remote endpoint port number.
-> - * @child_names:name of all child components connected to this device.
-> - * @child_ports:child component port number the current component is
-> -		connected  to.
->   * @nr_outport:	number of output ports for this component.
-> + * @conns:	Array of nr_outport connections from this component
->   */
->  struct coresight_platform_data {
->  	int cpu;
->  	const char *name;
->  	int nr_inport;
-> -	int *outports;
-> -	const char **child_names;
-> -	int *child_ports;
->  	int nr_outport;
-> +	struct coresight_connection *conns;
->  };
-
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-
->  
->  /**
-> -- 
-> 2.7.4
+>  		if (!status) {
 > 
