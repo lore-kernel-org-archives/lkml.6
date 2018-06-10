@@ -1,89 +1,195 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Z0HRCT7kGVuoWQAAmS7hNA
-	; Fri, 08 Jun 2018 02:04:51 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id bI+KNlqZHVsMEAAAmS7hNA
+	; Sun, 10 Jun 2018 21:34:18 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id AF7CC608C1; Fri,  8 Jun 2018 02:04:51 +0000 (UTC)
+	id CCF1160795; Sun, 10 Jun 2018 21:34:18 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.4 required=2.0 tests=BAYES_00,DATE_IN_PAST_06_12,
+	MAILING_LIST_MULTI autolearn=no autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 3A1A0606DD;
-	Fri,  8 Jun 2018 02:04:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3A1A0606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 306A3604D4;
+	Sun, 10 Jun 2018 21:34:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 306A3604D4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752443AbeFHCEs (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 22:04:48 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44426 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752268AbeFHCEq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 22:04:46 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5AA2640200A0;
-        Fri,  8 Jun 2018 02:04:46 +0000 (UTC)
-Received: from localhost (ovpn-8-19.pek2.redhat.com [10.72.8.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B0BA92026DEF;
-        Fri,  8 Jun 2018 02:04:44 +0000 (UTC)
-Date: Fri, 8 Jun 2018 10:04:41 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Christopher Lameter <cl@linux.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com,
-        akpm@linux-foundation.org
-Subject: Re: [PATCH] slab: Clean up the code comment in slab kmem_cache struct
-Message-ID: <20180608020441.GA16231@MiWiFi-R3L-srv>
-References: <20180603032402.27526-1-bhe@redhat.com>
- <01000163d0e8083c-096b06d6-7202-4ce2-b41c-0f33784afcda-000000@email.amazonses.com>
- <20180606012624.GA19425@MiWiFi-R3L-srv>
- <01000163d7803909-286c20d2-9928-4e07-94fc-ee6552e04c67-000000@email.amazonses.com>
+        id S932223AbeFJVeP (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Sun, 10 Jun 2018 17:34:15 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:16964 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753726AbeFJVeM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Jun 2018 17:34:12 -0400
+Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Sun, 10 Jun 2018 14:33:45 -0700
+Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 49CFE406F4;
+        Sun, 10 Jun 2018 14:34:06 -0700 (PDT)
+From: Nadav Amit <namit@vmware.com>
+To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>
+CC: Nadav Amit <namit@vmware.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH v3 8/9] x86: cpufeature: use macros instead of inline assembly
+Date: Sun, 10 Jun 2018 07:19:10 -0700
+Message-ID: <20180610141911.52948-9-namit@vmware.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180610141911.52948-1-namit@vmware.com>
+References: <20180610141911.52948-1-namit@vmware.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <01000163d7803909-286c20d2-9928-4e07-94fc-ee6552e04c67-000000@email.amazonses.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 08 Jun 2018 02:04:46 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 08 Jun 2018 02:04:46 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+Content-Type: text/plain
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
+ designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/06/18 at 11:48pm, Christopher Lameter wrote:
-> On Wed, 6 Jun 2018, Baoquan He wrote:
-> 
-> > I am back porting Thomas's sl[a|u]b freelist randomization feature to
-> > our distros, need go through slab code for better understanding. From
-> > git log history, they were 'obj_offset' and 'obj_size'. Later on
-> > 'obj_size' was renamed to 'object_size' in commit 3b0efdfa1e("mm, sl[aou]b:
-> > Extract common fields from struct kmem_cache") which is from your patch.
-> > With my understanding, I guess you changed that on purpose because
-> > object_size is size of each object, obj_offset is for the whole cache,
-> > representing the offset the real object starts to be stored. And putting
-> > them separately is for better desribing them in code comment and
-> > distinction, e.g 'object_size' is in "4) cache creation/removal",
-> > while 'obj_offset' is put alone to indicate it's for the whole.
-> 
-> obj_offset only applies when CONFIG_SLAB_DEBUG is set. Ok so that screwy
-> name also indicates that something special goes on.
+Use assembly macros for static_cpu_has() and call them from inline
+assembly.  This not only makes the code more readable, but also improves
+compilation decision, specifically inline decisions which GCC base on
+the number of new lines in inline assembly.
 
-They are a little confusing when combine SLAB with SLUB, 
+The patch slightly increases the kernel size:
 
-SLAB			SLUB
-size                    size
-object_size             object_size
-obj_offset              offset
+   text	   data	    bss	    dec	    hex	filename
+18162879 10226256 2957312 31346447 1de4f0f ./vmlinux before
+18163528 10226300 2957312 31347140 1de51c4 ./vmlinux after (+693)
 
-object_size also only applies when CONFIG_SLAB_DEBUG is set,
-otherwise it's equal to size in SLAB case. Whereas SLUB always has
-object plus freeptr for each object space.
+And enables the inlining of function such as free_ldt_pgtables().
 
-Thought to add code comment to make them clearer, on second thought,
-anyone who want to understand slab/slub code well, has to go through the
-whole header file and souce code, this pain need be borne.
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>
+
+Signed-off-by: Nadav Amit <namit@vmware.com>
+---
+ arch/x86/include/asm/cpufeature.h | 82 ++++++++++++++++++-------------
+ arch/x86/kernel/macros.S          |  1 +
+ 2 files changed, 48 insertions(+), 35 deletions(-)
+
+diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
+index aced6c9290d6..7d442722ef24 100644
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -2,10 +2,10 @@
+ #ifndef _ASM_X86_CPUFEATURE_H
+ #define _ASM_X86_CPUFEATURE_H
+ 
+-#include <asm/processor.h>
+-
+-#if defined(__KERNEL__) && !defined(__ASSEMBLY__)
++#ifdef __KERNEL__
++#ifndef __ASSEMBLY__
+ 
++#include <asm/processor.h>
+ #include <asm/asm.h>
+ #include <linux/bitops.h>
+ 
+@@ -161,37 +161,10 @@ extern void clear_cpu_cap(struct cpuinfo_x86 *c, unsigned int bit);
+  */
+ static __always_inline __pure bool _static_cpu_has(u16 bit)
+ {
+-	asm_volatile_goto("1: jmp 6f\n"
+-		 "2:\n"
+-		 ".skip -(((5f-4f) - (2b-1b)) > 0) * "
+-			 "((5f-4f) - (2b-1b)),0x90\n"
+-		 "3:\n"
+-		 ".section .altinstructions,\"a\"\n"
+-		 " .long 1b - .\n"		/* src offset */
+-		 " .long 4f - .\n"		/* repl offset */
+-		 " .word %P[always]\n"		/* always replace */
+-		 " .byte 3b - 1b\n"		/* src len */
+-		 " .byte 5f - 4f\n"		/* repl len */
+-		 " .byte 3b - 2b\n"		/* pad len */
+-		 ".previous\n"
+-		 ".section .altinstr_replacement,\"ax\"\n"
+-		 "4: jmp %l[t_no]\n"
+-		 "5:\n"
+-		 ".previous\n"
+-		 ".section .altinstructions,\"a\"\n"
+-		 " .long 1b - .\n"		/* src offset */
+-		 " .long 0\n"			/* no replacement */
+-		 " .word %P[feature]\n"		/* feature bit */
+-		 " .byte 3b - 1b\n"		/* src len */
+-		 " .byte 0\n"			/* repl len */
+-		 " .byte 0\n"			/* pad len */
+-		 ".previous\n"
+-		 ".section .altinstr_aux,\"ax\"\n"
+-		 "6:\n"
+-		 " testb %[bitnum],%[cap_byte]\n"
+-		 " jnz %l[t_yes]\n"
+-		 " jmp %l[t_no]\n"
+-		 ".previous\n"
++	asm_volatile_goto("STATIC_CPU_HAS bitnum=%[bitnum] "
++			  "cap_byte=\"%[cap_byte]\" "
++			  "feature=%P[feature] t_yes=%l[t_yes] "
++			  "t_no=%l[t_no] always=%P[always]"
+ 		 : : [feature]  "i" (bit),
+ 		     [always]   "i" (X86_FEATURE_ALWAYS),
+ 		     [bitnum]   "i" (1 << (bit & 7)),
+@@ -226,5 +199,44 @@ static __always_inline __pure bool _static_cpu_has(u16 bit)
+ #define CPU_FEATURE_TYPEVAL		boot_cpu_data.x86_vendor, boot_cpu_data.x86, \
+ 					boot_cpu_data.x86_model
+ 
+-#endif /* defined(__KERNEL__) && !defined(__ASSEMBLY__) */
++#else /* __ASSEMBLY__ */
++
++.macro STATIC_CPU_HAS bitnum:req cap_byte:req feature:req t_yes:req t_no:req always:req
++1:
++	jmp 6f
++2:
++	.skip -(((5f-4f) - (2b-1b)) > 0) * ((5f-4f) - (2b-1b)),0x90
++3:
++	.section .altinstructions,"a"
++	.long 1b - .		/* src offset */
++	.long 4f - .		/* repl offset */
++	.word \always		/* always replace */
++	.byte 3b - 1b		/* src len */
++	.byte 5f - 4f		/* repl len */
++	.byte 3b - 2b		/* pad len */
++	.previous
++	.section .altinstr_replacement,"ax"
++4:
++	jmp \t_no
++5:
++	.previous
++	.section .altinstructions,"a"
++	.long 1b - .		/* src offset */
++	.long 0			/* no replacement */
++	.word \feature		/* feature bit */
++	.byte 3b - 1b		/* src len */
++	.byte 0			/* repl len */
++	.byte 0			/* pad len */
++	.previous
++	.section .altinstr_aux,"ax"
++6:
++	testb \bitnum,\cap_byte
++	jnz \t_yes
++	jmp \t_no
++	.previous
++.endm
++
++#endif /* __ASSEMBLY__ */
++
++#endif /* __KERNEL__ */
+ #endif /* _ASM_X86_CPUFEATURE_H */
+diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
+index 7baa40d5bf16..bf8b9c93e255 100644
+--- a/arch/x86/kernel/macros.S
++++ b/arch/x86/kernel/macros.S
+@@ -12,3 +12,4 @@
+ #include <asm/bug.h>
+ #include <asm/paravirt.h>
+ #include <asm/asm.h>
++#include <asm/cpufeature.h>
+-- 
+2.17.0
