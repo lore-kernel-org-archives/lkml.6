@@ -1,110 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 6hYkDyFEGVtrEAAAmS7hNA
-	; Thu, 07 Jun 2018 14:41:37 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id TjdGJGulHFvDZgAAmS7hNA
+	; Sun, 10 Jun 2018 04:13:31 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 9212F608CA; Thu,  7 Jun 2018 14:41:36 +0000 (UTC)
+	id 68D78607BB; Sun, 10 Jun 2018 04:13:31 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id EAA57601C3;
-	Thu,  7 Jun 2018 14:41:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EAA57601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 549736074D;
+	Sun, 10 Jun 2018 04:13:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 549736074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934599AbeFGOlc (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:41:32 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40590 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932931AbeFGOl2 (ORCPT
+        id S1753683AbeFJENZ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sun, 10 Jun 2018 00:13:25 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:53114 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750744AbeFJENX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:41:28 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbj-0005a0-5W; Thu, 07 Jun 2018 15:09:43 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb5-0002yz-JY; Thu, 07 Jun 2018 15:09:03 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Sun, 10 Jun 2018 00:13:23 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1fRriu-0001rF-Uv; Sun, 10 Jun 2018 04:13:06 +0000
+Date: Sun, 10 Jun 2018 05:13:00 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 14/39] ovl: stack file ops
+Message-ID: <20180610041243.GJ30522@ZenIV.linux.org.uk>
+References: <20180529144339.16538-1-mszeredi@redhat.com>
+ <20180529144339.16538-15-mszeredi@redhat.com>
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Juergen Gross" <jgross@suse.com>,
-        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
-        "Chris Patterson" <cjp256@gmail.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.786314262@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 194/410] x86/xen: init %gs very early to avoid page
- faults with stack protector
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180529144339.16538-15-mszeredi@redhat.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+On Tue, May 29, 2018 at 04:43:14PM +0200, Miklos Szeredi wrote:
+> Implement file operations on a regular overlay file.  The underlying file
+> is opened separately and cached in ->private_data.
+> 
+> It might be worth making an exception for such files when accounting in
+> nr_file to confirm to userspace expectations.  We are only adding a small
+> overhead (248bytes for the struct file) since the real inode and dentry are
+> pinned by overlayfs anyway.
+> 
+> This patch doesn't have any effect, since the vfs will use d_real() to find
+> the real underlying file to open.  The patch at the end of the series will
+> actually enable this functionality.
 
-------------------
+> +static struct file *ovl_open_realfile(const struct file *file)
+> +{
+> +	struct inode *inode = file_inode(file);
+> +	struct inode *upperinode = ovl_inode_upper(inode);
+> +	struct inode *realinode = upperinode ?: ovl_inode_lower(inode);
+> +	struct file *realfile;
+> +	const struct cred *old_cred;
+> +
+> +	old_cred = ovl_override_creds(inode->i_sb);
+> +	realfile = path_open(&file->f_path, file->f_flags | O_NOATIME,
+> +			     realinode, current_cred(), false);
+> +	revert_creds(old_cred);
+> +
+> +	pr_debug("open(%p[%pD2/%c], 0%o) -> (%p, 0%o)\n",
+> +		 file, file, upperinode ? 'u' : 'l', file->f_flags,
+> +		 realfile, IS_ERR(realfile) ? 0 : realfile->f_flags);
+> +
+> +	return realfile;
+> +}
 
-From: Juergen Gross <jgross@suse.com>
+IDGI.  OK, you open a file in the layer you want; good, but why the hell do you
+*not* use the dentry/vfsmount from the same layer?
 
-commit 4f277295e54c5b7340e48efea3fc5cc21a2872b7 upstream.
+IOW, why does your path_open() get an explicit inode argument at all?  With the
+rest of the work done in that series it looks like you should be able to use
+vfs_open() instead...  Sure, for ovlfs file you want ->f_path on overlayfs and
+not in a layer, but why do the same for those?
 
-When running as Xen pv guest %gs is initialized some time after
-C code is started. Depending on stack protector usage this might be
-too late, resulting in page faults.
-
-So setup %gs and MSR_GS_BASE in assembly code already.
-
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Tested-by: Chris Patterson <cjp256@gmail.com>
-Signed-off-by: Juergen Gross <jgross@suse.com>
-[bwh: Backported to 3.16: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
---- a/arch/x86/xen/xen-head.S
-+++ b/arch/x86/xen/xen-head.S
-@@ -8,7 +8,9 @@
- 
- #include <asm/boot.h>
- #include <asm/asm.h>
-+#include <asm/msr.h>
- #include <asm/page_types.h>
-+#include <asm/percpu.h>
- 
- #include <xen/interface/elfnote.h>
- #include <xen/interface/features.h>
-@@ -42,7 +44,20 @@ ENTRY(startup_xen)
- #else
- 	mov %rsi,xen_start_info
- 	mov $init_thread_union+THREAD_SIZE,%rsp
-+
-+	/* Set up %gs.
-+	 *
-+	 * The base of %gs always points to the bottom of the irqstack
-+	 * union.  If the stack protector canary is enabled, it is
-+	 * located at %gs:40.  Note that, on SMP, the boot cpu uses
-+	 * init data section till per cpu areas are set up.
-+	 */
-+	movl	$MSR_GS_BASE,%ecx
-+	movq	$INIT_PER_CPU_VAR(irq_stack_union),%rax
-+	cdq
-+	wrmsr
- #endif
-+
- 	jmp xen_start_kernel
- 
- 	__FINIT
+And why bother with override_creds at all?  What's wrong with simply passing
+->creator_cred to path_open()/vfs_open()/whatnot?
