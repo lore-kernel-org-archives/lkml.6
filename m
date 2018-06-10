@@ -1,80 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id U7/SF0ucGVuXOwAAmS7hNA
-	; Thu, 07 Jun 2018 20:58:00 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 3qsmFdYZHVv5JgAAmS7hNA
+	; Sun, 10 Jun 2018 12:30:14 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 780176074D; Thu,  7 Jun 2018 20:58:00 +0000 (UTC)
+	id 35997608BA; Sun, 10 Jun 2018 12:30:14 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eyya5+hb"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 0320E60452;
-	Thu,  7 Jun 2018 20:58:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0320E60452
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by smtp.codeaurora.org (Postfix) with ESMTP id AA9CC60791;
+	Sun, 10 Jun 2018 12:30:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AA9CC60791
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933225AbeFGU5e (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 16:57:34 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:34422 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933067AbeFGU5b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 16:57:31 -0400
-Received: from localhost (unknown [66.187.232.66])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 967781086A89D;
-        Thu,  7 Jun 2018 13:57:29 -0700 (PDT)
-Date: Thu, 07 Jun 2018 16:57:27 -0400 (EDT)
-Message-Id: <20180607.165727.864700268719773969.davem@davemloft.net>
-To: ast@kernel.org
-Cc: daniel@iogearbox.net, mcgrof@kernel.org, netdev@vger.kernel.org,
-        dvyukov@google.com, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH net-next] umh: fix race condition
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180607172310.3121039-1-ast@kernel.org>
-References: <20180607172310.3121039-1-ast@kernel.org>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        id S1753467AbeFJMaJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sun, 10 Jun 2018 08:30:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51428 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751573AbeFJMaH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Jun 2018 08:30:07 -0400
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2CD5C2089C;
+        Sun, 10 Jun 2018 12:30:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528633806;
+        bh=r+meuC0uX3i0Q5of/LutMJigiFULkM7c3PoA930Ud4Y=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=eyya5+hbMcfAAYNBeCyh1+Hg686P5AoLSWqZtMeOgqCKNelcfWyELfHwak5dAwMbQ
+         mGQa202BgU0GWUTckkDLpCmJKcX7GGgZLA8rtrjrNidAvw1wqVqK0XxnEj9qhCpNwZ
+         zACsKSiz5mSE8YWUUTcEvn6ilxDmSLPoxXqq1Tds=
+Date: Sun, 10 Jun 2018 13:30:00 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Eugen Hristev <eugen.hristev@microchip.com>
+Cc: <ludovic.desroches@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>, <linux-input@vger.kernel.org>,
+        <nicolas.ferre@microchip.com>, <dmitry.torokhov@gmail.com>,
+        <robh@kernel.org>
+Subject: Re: [PATCH v7 1/9] MAINTAINERS: add generic resistive touchscreen
+ adc
+Message-ID: <20180610133000.35bf0344@archlinux>
+In-Reply-To: <1526975559-18966-2-git-send-email-eugen.hristev@microchip.com>
+References: <1526975559-18966-1-git-send-email-eugen.hristev@microchip.com>
+        <1526975559-18966-2-git-send-email-eugen.hristev@microchip.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 07 Jun 2018 13:57:31 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexei Starovoitov <ast@kernel.org>
-Date: Thu, 7 Jun 2018 10:23:10 -0700
+On Tue, 22 May 2018 10:52:31 +0300
+Eugen Hristev <eugen.hristev@microchip.com> wrote:
 
-> kasan reported use-after-free:
-> BUG: KASAN: use-after-free in call_usermodehelper_exec_work+0x2d3/0x310 kernel/umh.c:195
-> Write of size 4 at addr ffff8801d9202370 by task kworker/u4:2/50
-> Workqueue: events_unbound call_usermodehelper_exec_work
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
->  print_address_description+0x6c/0x20b mm/kasan/report.c:256
->  kasan_report_error mm/kasan/report.c:354 [inline]
->  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
->  __asan_report_store4_noabort+0x17/0x20 mm/kasan/report.c:437
->  call_usermodehelper_exec_work+0x2d3/0x310 kernel/umh.c:195
->  process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
->  worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
->  kthread+0x345/0x410 kernel/kthread.c:240
->  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+> Add MAINTAINERS entry for generic resistive touchscreen adc
 > 
-> The reason is that 'sub_info' cannot be accessed out of parent task
-> context, since it will be freed by the child.
-> Instead remember the pid in the child task.
-> 
-> Fixes: 449325b52b7a ("umh: introduce fork_usermode_blob() helper")
-> Reported-by: syzbot+2c73319c406f1987d156@syzkaller.appspotmail.com
-> Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+Applied to the togreg branch of iio.git after a rebase brought
+in the missing fix that was stalling this.  Note these are
+now going to be heading upstream at the next merge window,
+not the one currently open.
 
-Applied.
+Pushed out as testing for the autobuilders to play with it.
+
+Thanks,
+
+Jonathan
+
+> ---
+> Changes in v3:
+>  - Changed source file name
+> 
+>  MAINTAINERS | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 3bdc260..ce9720f 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -5943,6 +5943,12 @@ F:	drivers/base/power/domain*.c
+>  F:	include/linux/pm_domain.h
+>  F:	Documentation/devicetree/bindings/power/power_domain.txt
+>  
+> +GENERIC RESISTIVE TOUCHSCREEN ADC DRIVER
+> +M:	Eugen Hristev <eugen.hristev@microchip.com>
+> +L:	linux-input@vger.kernel.org
+> +S:	Maintained
+> +F:	drivers/input/touchscreen/resistive-adc-touch.c
+> +
+>  GENERIC UIO DRIVER FOR PCI DEVICES
+>  M:	"Michael S. Tsirkin" <mst@redhat.com>
+>  L:	kvm@vger.kernel.org
