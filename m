@@ -1,90 +1,179 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id cOusIIdAGVvfYwAAmS7hNA
-	; Thu, 07 Jun 2018 14:26:54 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 7YrCL2eZHVsIDAAAmS7hNA
+	; Sun, 10 Jun 2018 21:34:31 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id F177C6089E; Thu,  7 Jun 2018 14:26:53 +0000 (UTC)
+	id AA10960795; Sun, 10 Jun 2018 21:34:31 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.4 required=2.0 tests=BAYES_00,DATE_IN_PAST_06_12,
+	MAILING_LIST_MULTI autolearn=no autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 6F2126063F;
-	Thu,  7 Jun 2018 14:26:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6F2126063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 1BDFD604D4;
+	Sun, 10 Jun 2018 21:34:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1BDFD604D4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933674AbeFGO0v (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:26:51 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40190 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932814AbeFGO0s (ORCPT
+        id S932307AbeFJVe2 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Sun, 10 Jun 2018 17:34:28 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:16964 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753743AbeFJVeM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:26:48 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbr-0005dI-VG; Thu, 07 Jun 2018 15:09:52 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb1-0002pv-Ns; Thu, 07 Jun 2018 15:08:59 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Sun, 10 Jun 2018 17:34:12 -0400
+Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Sun, 10 Jun 2018 14:33:45 -0700
+Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 3BDAB406F7;
+        Sun, 10 Jun 2018 14:34:06 -0700 (PDT)
+From: Nadav Amit <namit@vmware.com>
+To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>
+CC: Nadav Amit <namit@vmware.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: [PATCH v3 7/9] x86: extable: use macros instead of inline assembly
+Date: Sun, 10 Jun 2018 07:19:09 -0700
+Message-ID: <20180610141911.52948-8-namit@vmware.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180610141911.52948-1-namit@vmware.com>
+References: <20180610141911.52948-1-namit@vmware.com>
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Tejun Heo" <tj@kernel.org>,
-        "Alexandra Yates" <alexandra.yates@linux.intel.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.938312527@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 108/410] ahci: add new Intel device IDs
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
+ designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+Use assembly macros for exception-tables and call them from inline
+assembly.  This not only makes the code more readable and allows to
+avoid the duplicate implementation, but also improves compilation
+decision, specifically inline decisions which GCC base on the number of
+new lines in inline assembly.
 
-------------------
+   text	   data	    bss	    dec	    hex	filename
+18162555 10226288 2957312 31346155 1de4deb ./vmlinux before
+18162879 10226256 2957312 31346447 1de4f0f ./vmlinux after (+292)
 
-From: Alexandra Yates <alexandra.yates@linux.intel.com>
+This allows to inline functions such as nested_vmx_exit_reflected(),
+set_segment_reg(), __copy_xstate_to_user().
 
-commit 56e74338a535cbcc2f2da08b1ea1a92920194364 upstream.
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 
-Adding Intel codename Lewisburg platform device IDs for SATA.
-
-Signed-off-by: Alexandra Yates <alexandra.yates@linux.intel.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- drivers/ata/ahci.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/x86/include/asm/asm.h | 61 +++++++++++++++++---------------------
+ arch/x86/kernel/macros.S   |  1 +
+ 2 files changed, 28 insertions(+), 34 deletions(-)
 
---- a/drivers/ata/ahci.c
-+++ b/drivers/ata/ahci.c
-@@ -332,6 +332,16 @@ static const struct pci_device_id ahci_p
- 	{ PCI_VDEVICE(INTEL, 0x1f37), board_ahci_avn }, /* Avoton RAID */
- 	{ PCI_VDEVICE(INTEL, 0x1f3e), board_ahci_avn }, /* Avoton RAID */
- 	{ PCI_VDEVICE(INTEL, 0x1f3f), board_ahci_avn }, /* Avoton RAID */
-+	{ PCI_VDEVICE(INTEL, 0xa182), board_ahci }, /* Lewisburg AHCI*/
-+	{ PCI_VDEVICE(INTEL, 0xa202), board_ahci }, /* Lewisburg AHCI*/
-+	{ PCI_VDEVICE(INTEL, 0xa184), board_ahci }, /* Lewisburg RAID*/
-+	{ PCI_VDEVICE(INTEL, 0xa204), board_ahci }, /* Lewisburg RAID*/
-+	{ PCI_VDEVICE(INTEL, 0xa186), board_ahci }, /* Lewisburg RAID*/
-+	{ PCI_VDEVICE(INTEL, 0xa206), board_ahci }, /* Lewisburg RAID*/
-+	{ PCI_VDEVICE(INTEL, 0x2822), board_ahci }, /* Lewisburg RAID*/
-+	{ PCI_VDEVICE(INTEL, 0x2826), board_ahci }, /* Lewisburg RAID*/
-+	{ PCI_VDEVICE(INTEL, 0xa18e), board_ahci }, /* Lewisburg RAID*/
-+	{ PCI_VDEVICE(INTEL, 0xa20e), board_ahci }, /* Lewisburg RAID*/
- 	{ PCI_VDEVICE(INTEL, 0x2823), board_ahci }, /* Wellsburg RAID */
- 	{ PCI_VDEVICE(INTEL, 0x2827), board_ahci }, /* Wellsburg RAID */
- 	{ PCI_VDEVICE(INTEL, 0x8d02), board_ahci }, /* Wellsburg AHCI */
+diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
+index 219faaec51df..30bc1b0058ef 100644
+--- a/arch/x86/include/asm/asm.h
++++ b/arch/x86/include/asm/asm.h
+@@ -58,28 +58,44 @@
+ # define CC_OUT(c) [_cc_ ## c] "=qm"
+ #endif
+ 
+-/* Exception table entry */
+ #ifdef __ASSEMBLY__
+ # define _ASM_EXTABLE_HANDLE(from, to, handler)			\
+-	.pushsection "__ex_table","a" ;				\
+-	.balign 4 ;						\
+-	.long (from) - . ;					\
+-	.long (to) - . ;					\
+-	.long (handler) - . ;					\
+-	.popsection
++	ASM_EXTABLE_HANDLE from to handler
++
++#else /* __ASSEMBLY__ */
++
++# define _ASM_EXTABLE_HANDLE(from, to, handler)			\
++	"ASM_EXTABLE_HANDLE from=" #from " to=" #to		\
++	" handler=\"" #handler "\"\n\t"
++
++/* For C file, we already have NOKPROBE_SYMBOL macro */
++
++#endif /* __ASSEMBLY__ */
+ 
+-# define _ASM_EXTABLE(from, to)					\
++#define _ASM_EXTABLE(from, to)					\
+ 	_ASM_EXTABLE_HANDLE(from, to, ex_handler_default)
+ 
+-# define _ASM_EXTABLE_FAULT(from, to)				\
++#define _ASM_EXTABLE_FAULT(from, to)				\
+ 	_ASM_EXTABLE_HANDLE(from, to, ex_handler_fault)
+ 
+-# define _ASM_EXTABLE_EX(from, to)				\
++#define _ASM_EXTABLE_EX(from, to)				\
+ 	_ASM_EXTABLE_HANDLE(from, to, ex_handler_ext)
+ 
+-# define _ASM_EXTABLE_REFCOUNT(from, to)			\
++#define _ASM_EXTABLE_REFCOUNT(from, to)				\
+ 	_ASM_EXTABLE_HANDLE(from, to, ex_handler_refcount)
+ 
++/* Exception table entry */
++#ifdef __ASSEMBLY__
++
++.macro ASM_EXTABLE_HANDLE from:req to:req handler:req
++	.pushsection "__ex_table","a"
++	.balign 4
++	.long (\from) - .
++	.long (\to) - .
++	.long (\handler) - .
++	.popsection
++.endm
++
+ # define _ASM_NOKPROBE(entry)					\
+ 	.pushsection "_kprobe_blacklist","aw" ;			\
+ 	_ASM_ALIGN ;						\
+@@ -110,29 +126,6 @@
+ 	_ASM_EXTABLE(101b,103b)
+ 	.endm
+ 
+-#else
+-# define _EXPAND_EXTABLE_HANDLE(x) #x
+-# define _ASM_EXTABLE_HANDLE(from, to, handler)			\
+-	" .pushsection \"__ex_table\",\"a\"\n"			\
+-	" .balign 4\n"						\
+-	" .long (" #from ") - .\n"				\
+-	" .long (" #to ") - .\n"				\
+-	" .long (" _EXPAND_EXTABLE_HANDLE(handler) ") - .\n"	\
+-	" .popsection\n"
+-
+-# define _ASM_EXTABLE(from, to)					\
+-	_ASM_EXTABLE_HANDLE(from, to, ex_handler_default)
+-
+-# define _ASM_EXTABLE_FAULT(from, to)				\
+-	_ASM_EXTABLE_HANDLE(from, to, ex_handler_fault)
+-
+-# define _ASM_EXTABLE_EX(from, to)				\
+-	_ASM_EXTABLE_HANDLE(from, to, ex_handler_ext)
+-
+-# define _ASM_EXTABLE_REFCOUNT(from, to)			\
+-	_ASM_EXTABLE_HANDLE(from, to, ex_handler_refcount)
+-
+-/* For C file, we already have NOKPROBE_SYMBOL macro */
+ #endif
+ 
+ #ifndef __ASSEMBLY__
+diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
+index 71d8b716b111..7baa40d5bf16 100644
+--- a/arch/x86/kernel/macros.S
++++ b/arch/x86/kernel/macros.S
+@@ -11,3 +11,4 @@
+ #include <asm/alternative-asm.h>
+ #include <asm/bug.h>
+ #include <asm/paravirt.h>
++#include <asm/asm.h>
+-- 
+2.17.0
