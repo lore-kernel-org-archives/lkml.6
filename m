@@ -1,183 +1,172 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id PGbjNdKFHlu4LwAAmS7hNA
-	; Mon, 11 Jun 2018 14:24:02 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Bf/oOVeZHVurDgAAmS7hNA
+	; Sun, 10 Jun 2018 21:34:16 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id ED729607E4; Mon, 11 Jun 2018 14:24:01 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RnaMWJcS"
+	id DD35060791; Sun, 10 Jun 2018 21:34:15 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.4 required=2.0 tests=BAYES_00,DATE_IN_PAST_06_12,
+	MAILING_LIST_MULTI autolearn=no autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 6EA2860541;
-	Mon, 11 Jun 2018 14:24:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6EA2860541
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 4DDE5605A5;
+	Sun, 10 Jun 2018 21:34:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4DDE5605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934346AbeFKOWY (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 10:22:24 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45438 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933500AbeFKOGx (ORCPT
+        id S1753552AbeFJVeJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Sun, 10 Jun 2018 17:34:09 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:16964 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751573AbeFJVeG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:06:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=SEKhh9tEySLT3DK6sNrlXzWkfXE7JM5uLwDQy4eqfzg=; b=RnaMWJcSdqsx60dv3lyYDZitM
-        5csUaOl0AXVOY8v8s2KM5XzAVAZSMjL6zE3g9K3rTdSwdmAGoCuoIxxTk5GwdGNDtWbvE1rxNMzGk
-        NdT+Nsy4rWu0sDmy3fmNfPNPlMX+1/jwILHUDXy8KgdeUBdPCw2+3oJecaPl9+OUANANTeKXc9rfx
-        nNfD/eqt6Fs2ulrlfonm+hsgvtMprDoqdbpgE28p+ChxnO1REMALI2nusYPRswbx212AvorDUlZzb
-        Iz64YO4A4o8aqYJAgBtn/PftGs/aIIVd2Scb2cO2Ku5ptS/GxvJ0cBy7qcb/vozqyr84iY2yMVK8R
-        pQScC4V4g==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSNTA-0004iC-RQ; Mon, 11 Jun 2018 14:06:52 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Lukas Czerner <lczerner@redhat.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v13 30/72] radix tree test suite: Convert regression1 to XArray
-Date: Mon, 11 Jun 2018 07:05:57 -0700
-Message-Id: <20180611140639.17215-31-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
-References: <20180611140639.17215-1-willy@infradead.org>
+        Sun, 10 Jun 2018 17:34:06 -0400
+Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Sun, 10 Jun 2018 14:33:44 -0700
+Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id E7B4140707;
+        Sun, 10 Jun 2018 14:34:05 -0700 (PDT)
+From: Nadav Amit <namit@vmware.com>
+To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>
+CC: Nadav Amit <namit@vmware.com>, Christopher Li <sparse@chrisli.org>,
+        <linux-sparse@vger.kernel.org>
+Subject: [PATCH v3 2/9] x86: objtool: use asm macro for better compiler decisions
+Date: Sun, 10 Jun 2018 07:19:04 -0700
+Message-ID: <20180610141911.52948-3-namit@vmware.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180610141911.52948-1-namit@vmware.com>
+References: <20180610141911.52948-1-namit@vmware.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
+ designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+GCC considers the number of statements in inlined assembly blocks,
+according to new-lines and semicolons, as an indication to the cost of
+the block in time and space. This data is distorted by the kernel code,
+which puts information in alternative sections. As a result, the
+compiler may perform incorrect inlining and branch optimizations.
 
-Now the page cache lookup is using the XArray, let's convert this
-regression test from the radix tree API to the XArray so it's testing
-roughly the same thing it was testing before.
+In the case of objtool, this distortion is extreme, since anyhow the
+annotations of objtool are discarded during linkage.
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+The solution is to set an assembly macro and call it from the inline
+assembly block. As a result GCC considers the inline assembly block as
+a single instruction.
+
+This patch slightly increases the kernel size.
+
+   text	   data	    bss	    dec	    hex	filename
+18140829 10224724 2957312 31322865 1ddf2f1 ./vmlinux before
+18140970 10225412 2957312 31323694 1ddf62e ./vmlinux after (+829)
+
+Static text symbols:
+Before:	40321
+After:	40302	(-19)
+
+Cc: Christopher Li <sparse@chrisli.org>
+Cc: linux-sparse@vger.kernel.org
+
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- tools/testing/radix-tree/regression1.c | 58 +++++++++-----------------
- 1 file changed, 19 insertions(+), 39 deletions(-)
+ arch/x86/kernel/macros.S |  2 ++
+ include/linux/compiler.h | 56 ++++++++++++++++++++++++++++++----------
+ 2 files changed, 45 insertions(+), 13 deletions(-)
 
-diff --git a/tools/testing/radix-tree/regression1.c b/tools/testing/radix-tree/regression1.c
-index 0aece092f40e..b4a4a7168986 100644
---- a/tools/testing/radix-tree/regression1.c
-+++ b/tools/testing/radix-tree/regression1.c
-@@ -53,12 +53,12 @@ struct page {
- 	unsigned long index;
- };
- 
--static struct page *page_alloc(void)
-+static struct page *page_alloc(int index)
- {
- 	struct page *p;
- 	p = malloc(sizeof(struct page));
- 	p->count = 1;
--	p->index = 1;
-+	p->index = index;
- 	pthread_mutex_init(&p->lock, NULL);
- 
- 	return p;
-@@ -80,53 +80,33 @@ static void page_free(struct page *p)
- static unsigned find_get_pages(unsigned long start,
- 			    unsigned int nr_pages, struct page **pages)
- {
--	unsigned int i;
--	unsigned int ret;
--	unsigned int nr_found;
-+	XA_STATE(xas, &mt_tree, start);
-+	struct page *page;
-+	unsigned int ret = 0;
- 
- 	rcu_read_lock();
--restart:
--	nr_found = radix_tree_gang_lookup_slot(&mt_tree,
--				(void ***)pages, NULL, start, nr_pages);
--	ret = 0;
--	for (i = 0; i < nr_found; i++) {
--		struct page *page;
--repeat:
--		page = radix_tree_deref_slot((void **)pages[i]);
--		if (unlikely(!page))
-+	xas_for_each(&xas, page, ULONG_MAX) {
-+		if (xas_retry(&xas, page))
- 			continue;
- 
--		if (radix_tree_exception(page)) {
--			if (radix_tree_deref_retry(page)) {
--				/*
--				 * Transient condition which can only trigger
--				 * when entry at index 0 moves out of or back
--				 * to root: none yet gotten, safe to restart.
--				 */
--				assert((start | i) == 0);
--				goto restart;
--			}
--			/*
--			 * No exceptional entries are inserted in this test.
--			 */
--			assert(0);
--		}
--
- 		pthread_mutex_lock(&page->lock);
--		if (!page->count) {
--			pthread_mutex_unlock(&page->lock);
--			goto repeat;
--		}
-+		if (!page->count)
-+			goto unlock;
+diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
+index cfc1c7d1a6eb..cee28c3246dc 100644
+--- a/arch/x86/kernel/macros.S
++++ b/arch/x86/kernel/macros.S
+@@ -5,3 +5,5 @@
+  * commonly used. The macros are precompiled into assmebly file which is later
+  * assembled together with each compiled file.
+  */
 +
- 		/* don't actually update page refcount */
- 		pthread_mutex_unlock(&page->lock);
++#include <linux/compiler.h>
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index ab4711c63601..3efd85334774 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -99,22 +99,13 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+  * unique, to convince GCC not to merge duplicate inline asm statements.
+  */
+ #define annotate_reachable() ({						\
+-	asm volatile("%c0:\n\t"						\
+-		     ".pushsection .discard.reachable\n\t"		\
+-		     ".long %c0b - .\n\t"				\
+-		     ".popsection\n\t" : : "i" (__COUNTER__));		\
++	asm volatile("ANNOTATE_REACHABLE counter=%c0"			\
++		     : : "i" (__COUNTER__));				\
+ })
+ #define annotate_unreachable() ({					\
+-	asm volatile("%c0:\n\t"						\
+-		     ".pushsection .discard.unreachable\n\t"		\
+-		     ".long %c0b - .\n\t"				\
+-		     ".popsection\n\t" : : "i" (__COUNTER__));		\
++	asm volatile("ANNOTATE_UNREACHABLE counter=%c0"			\
++		     : : "i" (__COUNTER__));				\
+ })
+-#define ASM_UNREACHABLE							\
+-	"999:\n\t"							\
+-	".pushsection .discard.unreachable\n\t"				\
+-	".long 999b - .\n\t"						\
+-	".popsection\n\t"
+ #else
+ #define annotate_reachable()
+ #define annotate_unreachable()
+@@ -280,6 +271,45 @@ unsigned long read_word_at_a_time(const void *addr)
  
- 		/* Has the page moved? */
--		if (unlikely(page != *((void **)pages[i]))) {
--			goto repeat;
--		}
-+		if (unlikely(page != xas_reload(&xas)))
-+			goto put_page;
+ #endif /* __KERNEL__ */
  
- 		pages[ret] = page;
- 		ret++;
-+		continue;
-+unlock:
-+		pthread_mutex_unlock(&page->lock);
-+put_page:
-+		xas_reset(&xas);
- 	}
- 	rcu_read_unlock();
- 	return ret;
-@@ -145,12 +125,12 @@ static void *regression1_fn(void *arg)
- 		for (j = 0; j < 1000000; j++) {
- 			struct page *p;
++#else /* __ASSEMBLY__ */
++
++#ifdef __KERNEL__
++#ifndef LINKER_SCRIPT
++
++#ifdef CONFIG_STACK_VALIDATION
++.macro ANNOTATE_UNREACHABLE counter:req
++\counter:
++	.pushsection .discard.unreachable
++	.long \counter\()b -.
++	.popsection
++.endm
++
++.macro ANNOTATE_REACHABLE counter:req
++\counter:
++	.pushsection .discard.reachable
++	.long \counter\()b -.
++	.popsection
++.endm
++
++.macro ASM_UNREACHABLE
++999:
++	.pushsection .discard.unreachable
++	.long 999b - .
++	.popsection
++.endm
++#else /* CONFIG_STACK_VALIDATION */
++.macro ANNOTATE_UNREACHABLE counter:req
++.endm
++
++.macro ANNOTATE_REACHABLE counter:req
++.endm
++
++.macro ASM_UNREACHABLE
++.endm
++#endif /* CONFIG_STACK_VALIDATION */
++
++#endif /* LINKER_SCRIPT */
++#endif /* __KERNEL__ */
+ #endif /* __ASSEMBLY__ */
  
--			p = page_alloc();
-+			p = page_alloc(0);
- 			pthread_mutex_lock(&mt_lock);
- 			radix_tree_insert(&mt_tree, 0, p);
- 			pthread_mutex_unlock(&mt_lock);
- 
--			p = page_alloc();
-+			p = page_alloc(1);
- 			pthread_mutex_lock(&mt_lock);
- 			radix_tree_insert(&mt_tree, 1, p);
- 			pthread_mutex_unlock(&mt_lock);
+ #ifndef __optimize
 -- 
-2.17.1
+2.17.0
