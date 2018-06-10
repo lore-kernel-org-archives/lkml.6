@@ -1,175 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id F8g3Iz9DGVvWBgAAmS7hNA
-	; Thu, 07 Jun 2018 14:37:51 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id DObqG1v1HFtHXwAAmS7hNA
+	; Sun, 10 Jun 2018 09:54:35 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 7E423602FC; Thu,  7 Jun 2018 14:37:51 +0000 (UTC)
+	id 443FC608BA; Sun, 10 Jun 2018 09:54:35 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PW1c74Az"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D9AE1601D2;
-	Thu,  7 Jun 2018 14:37:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D9AE1601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id BFDA460791;
+	Sun, 10 Jun 2018 09:54:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BFDA460791
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934159AbeFGOhs (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:37:48 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40452 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933532AbeFGOhp (ORCPT
+        id S1753736AbeFJJyT (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sun, 10 Jun 2018 05:54:19 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:41948 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751368AbeFJJyS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:37:45 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbP-0005hO-Es; Thu, 07 Jun 2018 15:09:23 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbD-0003GE-6n; Thu, 07 Jun 2018 15:09:11 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Sun, 10 Jun 2018 05:54:18 -0400
+Received: by mail-pg0-f66.google.com with SMTP id l65-v6so8358730pgl.8;
+        Sun, 10 Jun 2018 02:54:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=jOn1S//3kdeoiOLI3DD4eXSbBaGE113CjTJEr1d9x/A=;
+        b=PW1c74AzqypFMS9D4zckANof6ZxroziuVUyHuO9ff+r46Hd0X4VjeOcU8U+2P0+K3N
+         a2JptxdkkH7moLq/sVRohrmcAlRUGAq4P90/X8QdUbT4boUxFOz3Vkja/HKCTANm74Rf
+         78NZycbs45ZuHxnMvg1Sj6PliL8cEa73ZAvo6V0L8HJ/i/p1vPTeoJLdVnPbNlztcw7q
+         OI/cwbZ1iPLpU58FuvVCn25LqdGkGuVLTG0CJzuRSxVc0Tt/PEQMkO+oGvllYtMw/bgw
+         b8MBDEOyUgjFkQOGwZ3EdOi805Ley6xBDPtOb5M5txqWMiv2AsUtp04b/RGP6J8vRe60
+         Q7DA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=jOn1S//3kdeoiOLI3DD4eXSbBaGE113CjTJEr1d9x/A=;
+        b=q2XzDdxmzQBCOdVqZa7rlB34g2ikAbDU1Djzp7Wja9FxzYPJFosuucl3miuZMEv5pU
+         JDlyRH5S1zzKSCf+cx6Rwl6V6yRGaLa/xDOjfbistURATqH5FHHVxP2x33HP5q1QxZOx
+         jr6ONf0dZnIAiNJ/SKEe7C5ivnp7tTylYV17ir6uoaldVsaip/vu7Kuup+qTe5A9seJs
+         qC6zEgJv+Y77gLR5cIzb9TiL/ieUA2zSPctXwaV5jdo7QYe+biXYni/bM4zce7C/aWY7
+         kfbEtdIPfxa/eyr5vt/BCO1/l2O6IhZJWnrbsYENy05fIZa75F5w+qDs6ocNWpIBLlAd
+         XryA==
+X-Gm-Message-State: APt69E1q/zz8pvWM6Rmk7x3sRMv2NHEsHo5pYD30HwirhELqfkBWmAeP
+        CWLvoHFAdK8soMGk4HcLL9Iv3Q==
+X-Google-Smtp-Source: ADUXVKIKIxR/c9o8tCKzcQQyUs4pkDpCSmOGVbaIXKv/TJHeU9W9ViDtB+oOJ/CVD477kMfjNp/VwA==
+X-Received: by 2002:a65:57c6:: with SMTP id q6-v6mr11103017pgr.160.1528624456953;
+        Sun, 10 Jun 2018 02:54:16 -0700 (PDT)
+Received: from jordon-HP-15-Notebook-PC ([49.205.219.149])
+        by smtp.gmail.com with ESMTPSA id i4-v6sm51482453pfk.133.2018.06.10.02.54.14
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 10 Jun 2018 02:54:15 -0700 (PDT)
+Date: Sun, 10 Jun 2018 15:26:40 +0530
+From: Souptick Joarder <jrdr.linux@gmail.com>
+To: ericvh@gmail.com, rminnich@sandia.gov, lucho@ionkov.net
+Cc: v9fs-developer@lists.sourceforge.net, willy@infradead.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] fs: 9p: Adding new return type vm_fault_t
+Message-ID: <20180610095640.GA4061@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Brandon Carpenter" <brandon.carpenter@cypherpath.com>,
-        "Toshiaki Makita" <makita.toshiaki@lab.ntt.co.jp>,
-        "David S. Miller" <davem@davemloft.net>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.981971124@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 366/410] net: Fix vlan untag for bridge and vlan_dev
- with reorder_hdr off
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+Use new return type vm_fault_t for page_mkwrite
+handler.
 
-------------------
-
-From: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
-
-commit 4bbb3e0e8239f9079bf1fe20b3c0cb598714ae61 upstream.
-
-When we have a bridge with vlan_filtering on and a vlan device on top of
-it, packets would be corrupted in skb_vlan_untag() called from
-br_dev_xmit().
-
-The problem sits in skb_reorder_vlan_header() used in skb_vlan_untag(),
-which makes use of skb->mac_len. In this function mac_len is meant for
-handling rx path with vlan devices with reorder_header disabled, but in
-tx path mac_len is typically 0 and cannot be used, which is the problem
-in this case.
-
-The current code even does not properly handle rx path (skb_vlan_untag()
-called from __netif_receive_skb_core()) with reorder_header off actually.
-
-In rx path single tag case, it works as follows:
-
-- Before skb_reorder_vlan_header()
-
- mac_header                                data
-   v                                        v
-   +-------------------+-------------+------+----
-   |        ETH        |    VLAN     | ETH  |
-   |       ADDRS       | TPID | TCI  | TYPE |
-   +-------------------+-------------+------+----
-   <-------- mac_len --------->
-                       <------------->
-                        to be removed
-
-- After skb_reorder_vlan_header()
-
-            mac_header                     data
-                 v                          v
-                 +-------------------+------+----
-                 |        ETH        | ETH  |
-                 |       ADDRS       | TYPE |
-                 +-------------------+------+----
-                 <-------- mac_len --------->
-
-This is ok, but in rx double tag case, it corrupts packets:
-
-- Before skb_reorder_vlan_header()
-
- mac_header                                              data
-   v                                                      v
-   +-------------------+-------------+-------------+------+----
-   |        ETH        |    VLAN     |    VLAN     | ETH  |
-   |       ADDRS       | TPID | TCI  | TPID | TCI  | TYPE |
-   +-------------------+-------------+-------------+------+----
-   <--------------- mac_len ---------------->
-                                     <------------->
-                                    should be removed
-                       <--------------------------->
-                         actually will be removed
-
-- After skb_reorder_vlan_header()
-
-            mac_header                                   data
-                 v                                        v
-                               +-------------------+------+----
-                               |        ETH        | ETH  |
-                               |       ADDRS       | TYPE |
-                               +-------------------+------+----
-                 <--------------- mac_len ---------------->
-
-So, two of vlan tags are both removed while only inner one should be
-removed and mac_header (and mac_len) is broken.
-
-skb_vlan_untag() is meant for removing the vlan header at (skb->data - 2),
-so use skb->data and skb->mac_header to calculate the right offset.
-
-Reported-by: Brandon Carpenter <brandon.carpenter@cypherpath.com>
-Fixes: a6e18ff11170 ("vlan: Fix untag operations of stacked vlans with REORDER_HEADER off")
-Signed-off-by: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- include/uapi/linux/if_ether.h | 1 +
- net/core/skbuff.c             | 7 +++++--
- 2 files changed, 6 insertions(+), 2 deletions(-)
+ fs/9p/vfs_file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/include/uapi/linux/if_ether.h
-+++ b/include/uapi/linux/if_ether.h
-@@ -29,6 +29,7 @@
-  */
- 
- #define ETH_ALEN	6		/* Octets in one ethernet addr	 */
-+#define ETH_TLEN	2		/* Octets in ethernet type field */
- #define ETH_HLEN	14		/* Total octets in header.	 */
- #define ETH_ZLEN	60		/* Min. octets in frame sans FCS */
- #define ETH_DATA_LEN	1500		/* Max. octets in payload	 */
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -3994,13 +3994,16 @@ EXPORT_SYMBOL_GPL(skb_gso_transport_segl
- 
- static struct sk_buff *skb_reorder_vlan_header(struct sk_buff *skb)
- {
-+	int mac_len;
-+
- 	if (skb_cow(skb, skb_headroom(skb)) < 0) {
- 		kfree_skb(skb);
- 		return NULL;
- 	}
- 
--	memmove(skb->data - ETH_HLEN, skb->data - skb->mac_len - VLAN_HLEN,
--		2 * ETH_ALEN);
-+	mac_len = skb->data - skb_mac_header(skb);
-+	memmove(skb_mac_header(skb) + VLAN_HLEN, skb_mac_header(skb),
-+		mac_len - VLAN_HLEN - ETH_TLEN);
- 	skb->mac_header += VLAN_HLEN;
- 	return skb;
+diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
+index 03c9e32..5f2e48d 100644
+--- a/fs/9p/vfs_file.c
++++ b/fs/9p/vfs_file.c
+@@ -533,7 +533,7 @@ int v9fs_file_fsync_dotl(struct file *filp, loff_t start, loff_t end,
+ 	return retval;
  }
+
+-static int
++static vm_fault_t
+ v9fs_vm_page_mkwrite(struct vm_fault *vmf)
+ {
+ 	struct v9fs_inode *v9inode;
+--
+1.9.1
