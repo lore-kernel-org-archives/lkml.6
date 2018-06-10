@@ -1,316 +1,603 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id TMY6IHoDGltHbAAAmS7hNA
-	; Fri, 08 Jun 2018 04:19:03 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id T+wBJ1B0HVsENwAAmS7hNA
+	; Sun, 10 Jun 2018 18:56:16 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id C1662607DC; Fri,  8 Jun 2018 04:19:03 +0000 (UTC)
+	id 7FFE360791; Sun, 10 Jun 2018 18:56:16 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="ZFxjb+vs"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 1052160290;
-	Fri,  8 Jun 2018 04:19:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1052160290
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id A0EB0600D0;
+	Sun, 10 Jun 2018 18:56:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A0EB0600D0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751137AbeFHETB (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 00:19:01 -0400
-Received: from mga12.intel.com ([192.55.52.136]:36779 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750859AbeFHES6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 00:18:58 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 21:18:58 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,489,1520924400";
-   d="gz'50?scan'50,208,50";a="235412663"
-Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
-  by fmsmga005.fm.intel.com with ESMTP; 07 Jun 2018 21:18:55 -0700
-Received: from kbuild by bee with local (Exim 4.84_2)
-        (envelope-from <lkp@intel.com>)
-        id 1fR8rW-000J4L-8S; Fri, 08 Jun 2018 12:18:54 +0800
-Date: Fri, 8 Jun 2018 12:18:22 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Yu-cheng Yu <yu-cheng.yu@intel.com>
-Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: Re: [PATCH 1/9] x86/cet: Control protection exception handler
-Message-ID: <201806081216.5vaA5ieM%fengguang.wu@intel.com>
-References: <20180607143705.3531-2-yu-cheng.yu@intel.com>
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="pf9I7BMVVzbSWLtt"
-Content-Disposition: inline
-In-Reply-To: <20180607143705.3531-2-yu-cheng.yu@intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: lkp@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+        id S1753752AbeFJS4M (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sun, 10 Jun 2018 14:56:12 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:54530 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753721AbeFJS4J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Jun 2018 14:56:09 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 165BB8EE1E9;
+        Sun, 10 Jun 2018 11:56:09 -0700 (PDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id qpWHdcn7YbSG; Sun, 10 Jun 2018 11:56:08 -0700 (PDT)
+Received: from [153.66.254.194] (unknown [50.35.70.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 3D4BE8EE0D3;
+        Sun, 10 Jun 2018 11:56:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1528656968;
+        bh=tTlfDNyBTuqhdX4RaqYujsh2gUs8KDljfhibtMSLK+c=;
+        h=Subject:From:To:Cc:Date:From;
+        b=ZFxjb+vsX4a8auBIFpZ+wvY55W4BU2Nzu9uwK0BRF0Ik/Y9B5/9Am/PDZZfoMPxYp
+         ez6T7SgfYdJQ4SebCoOvVI3jTFqMkzM8lIIxBPqVrQVBtBCysWTSW9Hl+5V/i/tVDz
+         R5OyrLaWDQ0kuyIaH/pr4gSQdB3/52jlg6MD3mpI=
+Message-ID: <1528656966.4064.3.camel@HansenPartnership.com>
+Subject: [GIT PULL] first round of SCSI updates for the 4.17+ merge window
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date: Sun, 10 Jun 2018 11:56:06 -0700
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This is mostly updates to the usual drivers: ufs, qedf, mpt3sas, lpfc,
+xfcp, hisi_sas, cxlflash, qla2xxx.  In the absence of Nic, we're also
+taking target updates which are mostly minor except for the tcmu
+refactor. The only real core change to worry about is the removal of
+high page bouncing (in sas, storvsc and iscsi).  This has been well
+tested and no problems have shown up so far.
 
---pf9I7BMVVzbSWLtt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+There's a minor merge conflict in drivers/scsi/qedf.h where both we and
+the net-next tree have added prototypes to the same part of the file,
+but I'm sure you can sort it out.
 
-Hi Yu-cheng,
+The patch is available here:
 
-Thank you for the patch! Yet something to improve:
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-misc
 
-[auto build test ERROR on asm-generic/master]
-[also build test ERROR on v4.17 next-20180607]
-[cannot apply to tip/x86/core mmotm/master]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+The short changelog is:
 
-url:    https://github.com/0day-ci/linux/commits/Yu-cheng-Yu/Control-Flow-Enforcement-Part-2/20180608-111152
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git master
-config: i386-tinyconfig (attached as .config)
-compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=i386 
+Alim Akhtar (4):
+      scsi: ufs: make ufshcd_config_pwr_mode of non-static func
+      scsi: ufs: add quirk to enable host controller without hce
+      scsi: ufs: add quirk to disallow reset of interrupt aggregation
+      scsi: ufs: add quirk to fix mishandling utrlclr/utmrlclr
 
-All errors (new ones prefixed by >>):
+Andrei Vagin (2):
+      scsi: target: target/file: Add support of direct and async I/O
+      scsi: qla2xxx: remove the unused tcm_qla2xxx_cmd_wq
 
-   In file included from arch/x86/include/asm/thread_info.h:53:0,
-                    from include/linux/thread_info.h:38,
-                    from arch/x86/include/asm/preempt.h:7,
-                    from include/linux/preempt.h:81,
-                    from include/linux/rcupdate.h:40,
-                    from include/linux/rculist.h:11,
-                    from include/linux/pid.h:5,
-                    from include/linux/sched.h:14,
-                    from include/linux/context_tracking.h:5,
-                    from arch/x86/kernel/traps.c:15:
-   arch/x86/kernel/traps.c: In function 'do_control_protection':
->> arch/x86/kernel/traps.c:605:27: error: 'X86_FEATURE_SHSTK' undeclared (first use in this function); did you mean 'X86_FEATURE_EST'?
-     if (!cpu_feature_enabled(X86_FEATURE_SHSTK) &&
-                              ^
-   arch/x86/include/asm/cpufeature.h:127:24: note: in definition of macro 'cpu_feature_enabled'
-     (__builtin_constant_p(bit) && DISABLED_MASK_BIT_SET(bit) ? 0 : static_cpu_has(bit))
-                           ^~~
-   arch/x86/kernel/traps.c:605:27: note: each undeclared identifier is reported only once for each function it appears in
-     if (!cpu_feature_enabled(X86_FEATURE_SHSTK) &&
-                              ^
-   arch/x86/include/asm/cpufeature.h:127:24: note: in definition of macro 'cpu_feature_enabled'
-     (__builtin_constant_p(bit) && DISABLED_MASK_BIT_SET(bit) ? 0 : static_cpu_has(bit))
-                           ^~~
->> arch/x86/kernel/traps.c:606:27: error: 'X86_FEATURE_IBT' undeclared (first use in this function); did you mean 'X86_FEATURE_IBS'?
-         !cpu_feature_enabled(X86_FEATURE_IBT)) {
-                              ^
-   arch/x86/include/asm/cpufeature.h:127:24: note: in definition of macro 'cpu_feature_enabled'
-     (__builtin_constant_p(bit) && DISABLED_MASK_BIT_SET(bit) ? 0 : static_cpu_has(bit))
-                           ^~~
+Arnd Bergmann (2):
+      scsi: ips: fix firmware timestamps for 32-bit
+      scsi: esas2r: use ktime_get_real_seconds()
 
-vim +605 arch/x86/kernel/traps.c
+Bart Van Assche (2):
+      scsi: sd_zbc: Let the SCSI core handle ILLEGAL REQUEST / ASC 0x21
+      scsi: sd_zbc: Change the type of the ZBC fields into u32
 
-   589	
-   590	/*
-   591	 * When a control protection exception occurs, send a signal
-   592	 * to the responsible application.  Currently, control
-   593	 * protection is only enabled for the user mode.  This
-   594	 * exception should not come from the kernel mode.
-   595	 */
-   596	dotraplinkage void
-   597	do_control_protection(struct pt_regs *regs, long error_code)
-   598	{
-   599		struct task_struct *tsk;
-   600	
-   601		RCU_LOCKDEP_WARN(!rcu_is_watching(), "entry code didn't wake RCU");
-   602		cond_local_irq_enable(regs);
-   603	
-   604		tsk = current;
- > 605		if (!cpu_feature_enabled(X86_FEATURE_SHSTK) &&
- > 606		    !cpu_feature_enabled(X86_FEATURE_IBT)) {
-   607			goto exit;
-   608		}
-   609	
-   610		if (!user_mode(regs)) {
-   611			tsk->thread.error_code = error_code;
-   612			tsk->thread.trap_nr = X86_TRAP_CP;
-   613			if (notify_die(DIE_TRAP, "control protection fault", regs,
-   614				       error_code, X86_TRAP_CP, SIGSEGV) != NOTIFY_STOP)
-   615				die("control protection fault", regs, error_code);
-   616			return;
-   617		}
-   618	
-   619		tsk->thread.error_code = error_code;
-   620		tsk->thread.trap_nr = X86_TRAP_CP;
-   621	
-   622		if (show_unhandled_signals && unhandled_signal(tsk, SIGSEGV) &&
-   623		    printk_ratelimit()) {
-   624			unsigned int max_idx, err_idx;
-   625	
-   626			max_idx = ARRAY_SIZE(control_protection_err) - 1;
-   627			err_idx = min((unsigned int)error_code - 1, max_idx);
-   628			pr_info("%s[%d] control protection ip:%lx sp:%lx error:%lx(%s)",
-   629				tsk->comm, task_pid_nr(tsk),
-   630				regs->ip, regs->sp, error_code,
-   631				control_protection_err[err_idx]);
-   632			print_vma_addr(" in ", regs->ip);
-   633			pr_cont("\n");
-   634		}
-   635	
-   636	exit:
-   637		force_sig_info(SIGSEGV, SEND_SIG_PRIV, tsk);
-   638	}
-   639	NOKPROBE_SYMBOL(do_control_protection);
-   640	
+Bjorn Andersson (2):
+      scsi: ufs: Use freq table with devfreq
+      scsi: ufs: Extract devfreq registration
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Chad Dupuis (20):
+      scsi: qedf: Update version number to 8.33.16.20
+      scsi: qedf: Update copyright for 2018
+      scsi: qedf: Add more defensive checks for concurrent error conditions
+      scsi: qedf: Set the UNLOADING flag when removing a vport
+      scsi: qedf: Add additional checks when restarting an rport due to ABTS timeout
+      scsi: qedf: If qed fails to enable MSI-X fail PCI probe
+      scsi: qedf: Honor default_prio module parameter even if DCBX does not converge
+      scsi: qedf: Improve firmware debug dump handling
+      scsi: qedf: Add task id to kref_get_unless_zero() debug messages when flushing requests
+      scsi: qedf: Check if link is already up when receiving a link up event from qed
+      scsi: qedf: Return request as DID_NO_CONNECT if MSI-X is not enabled
+      scsi: qedf: Release RRQ reference correctly when RRQ command times out
+      scsi: qedf: Honor priority from DCBX FCoE App tag
+      scsi: qedf: Add dcbx_not_wait module parameter so we won't wait for DCBX convergence to start discovery
+      scsi: qedf: Sanity check FCoE/FIP priority value to make sure it's between 0 and 7
+      scsi: qedf: Add check for offload before flushing I/Os for target
+      scsi: qedf: Fix VLAN display when printing sent FIP frames
+      scsi: qedf: Add missing skb frees in error path
+      scsi: qedf: Increase the number of default FIP VLAN request retries to 60
+      scsi: qedf: Synchronize rport restarts when multiple ELS commands time out
 
---pf9I7BMVVzbSWLtt
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
+Chaitra P B (14):
+      scsi: mpt3sas: Update driver version "25.100.00.00"
+      scsi: mpt3sas: fix possible memory leak.
+      scsi: mpt3sas: For NVME device, issue a protocol level reset
+      scsi: mpt3sas: Update MPI Headers
+      scsi: mpt3sas: Report Firmware Package Version from HBA Driver.
+      scsi: mpt3sas: Cache enclosure pages during enclosure add.
+      scsi: mpt3sas: Allow processing of events during driver unload.
+      scsi: mpt3sas: Increase event log buffer to support 24 port HBA's.
+      scsi: mpt3sas: Added support for SAS Device Discovery Error Event.
+      scsi: mpt3sas: Enhanced handling of Sense Buffer.
+      scsi: mpt3sas: Optimize I/O memory consumption in driver.
+      scsi: mpt3sas: Lockless access for chain buffers.
+      scsi: mpt3sas: Pre-allocate RDPQ Array at driver boot time.
+      scsi: mpt3sas: Bug fix for big endian systems.
 
-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
-F0/njkA8JpDswTBmN+L4/Ad5PGBNS2AAAA==
+Christoph Hellwig (3):
+      scsi: scsi_transport_sas: don't bounce highmem pages for the smp handler
+      scsi: storsvc: don't set a bounce limit
+      scsi: iscsi_tcp: don't set a bounce limit
 
---pf9I7BMVVzbSWLtt--
+Christophe Jaillet (1):
+      scsi: qlogicpti: Fix an error handling path in 'qpti_sbus_probe()'
+
+Colin Ian King (12):
+      scsi: target: fix spelling mistake "Uknown" -> "Unknown"
+      scsi: pm80xx: fix spelling mistake "UNSORPORTED" -> "SUPPORTED"
+      scsi: snic: fix a couple of spelling mistakes: "COMPLETE"
+      scsi: esas2r: fix spelling mistake: "requestss" -> "requests"
+      scsi: mptsas: fix spelling mistake: "matchs" -> "matches"
+      scsi: lpfc: fix spelling mistakes: "mabilbox" and "maibox"
+      scsi: mptfusion: fix spelling mistake: "initators" -> "initiators"
+      scsi: mpt3sas: fix spelling mistake: "disbale" -> "disable"
+      scsi: megaraid_sas: fix spelling mistake: "disbale" -> "disable"
+      scsi: esas2r: fix spelling mistake: "asynchromous" -> "asynchronous"
+      scsi: isci: remove redundant check on in_connection_align_insertion_frequency
+      scsi: mptfc: fix spelling mistake in macro names
+
+Dan Carpenter (1):
+      scsi: megaraid: silence a static checker bug
+
+Douglas Gilbert (1):
+      scsi: core: sanitize++ in progress
+
+Himanshu Jha (1):
+      scsi: megaraid_sas: Use zeroing memory allocator than allocator/memset
+
+James Smart (28):
+      scsi: lpfc: update driver version to 12.0.0.4
+      scsi: lpfc: Fix port initialization failure.
+      scsi: lpfc: Fix 16gb hbas failing cq create.
+      scsi: lpfc: Fix crash in blk_mq layer when executing modprobe -r lpfc
+      scsi: lpfc: correct oversubscription of nvme io requests for an adapter
+      scsi: lpfc: Fix MDS diagnostics failure (Rx < Tx)
+      scsi: lpfc: Comment cleanup regarding Broadcom copyright header
+      scsi: lpfc: update driver version to 12.0.0.3
+      scsi: lpfc: Enhance log messages when reporting CQE errors
+      scsi: lpfc: Fix up log messages and stats counters in IO submit code path
+      scsi: lpfc: Driver NVME load fails when CPU cnt > WQ resource cnt
+      scsi: lpfc: Handle new link fault code returned by adapter firmware.
+      scsi: lpfc: Correct fw download error message
+      scsi: lpfc: enhance LE data structure copies to hardware
+      scsi: lpfc: Change IO submit return to EBUSY if remote port is recovering
+      scsi: lpfc: update driver version to 12.0.0.2
+      scsi: lpfc: Correct missing remoteport registration during link bounces
+      scsi: lpfc: Fix NULL pointer reference when resetting adapter
+      scsi: lpfc: Fix nvme remoteport registration race conditions
+      scsi: lpfc: Fix driver not recovering NVME rports during target link faults
+      scsi: lpfc: Fix WQ/CQ creation for older asic's.
+      scsi: lpfc: Fix NULL pointer access in lpfc_nvme_info_show
+      scsi: lpfc: Fix lingering lpfc_wq resource after driver unload
+      scsi: lpfc: Fix Abort request WQ selection
+      scsi: lpfc: Enlarge nvmet asynchronous receive buffer counts
+      scsi: lpfc: Add per io channel NVME IO statistics
+      scsi: lpfc: Correct target queue depth application changes
+      scsi: lpfc: Fix multiple PRLI completion error path
+
+Jason Yan (1):
+      scsi: libsas: add transport class for ATA devices
+
+Jens Remus (3):
+      scsi: zfcp: enhance comments on fc_link_speed and supported_speed
+      scsi: zfcp: add port speed capabilities
+      scsi: zfcp: assert that the ERP lock is held when tracing a recovery trigger
+
+Jia-Ju Bai (2):
+      scsi: st: Replace GFP_ATOMIC with GFP_KERNEL in new_tape_buffer
+      scsi: st: Replace GFP_ATOMIC with GFP_KERNEL in st_probe
+
+John Garry (5):
+      scsi: hisi_sas: Introduce hisi_sas_phy_set_linkrate()
+      scsi: hisi_sas: add readl poll timeout helper wrappers
+      scsi: hisi_sas: stop controller timer for reset
+      scsi: hisi_sas: remove some unneeded structure members
+      scsi: hisi_sas: print device id for errors
+
+Kees Cook (3):
+      scsi: dpt_i2o: Remove VLA usage
+      scsi: ufs: ufshcd: Remove VLA usage
+      scsi: libosd: Remove VLA usage
+
+Lee Duncan (2):
+      scsi: target: transport should handle st FM/EOM/ILI reads
+      scsi: target: prefer dbroot of /etc/target over /var/target
+
+Long Li (3):
+      scsi: storvsc: Select channel based on available percentage of ring buffer to write
+      scsi: netvsc: Use the vmbus function to calculate ring buffer percentage
+      scsi: vmbus: Add function to report available ring buffer to write in total ring size percentage
+
+Luc Van Oostenryck (1):
+      scsi: mptlan: Fix mpt_lan_sdu_send()'s return type
+
+Martin Wilck (6):
+      scsi: devinfo: BLIST_RETRY_ASC_C1 for Fujitsu ETERNUS
+      scsi: devinfo: add BLIST_RETRY_ITF for EMC Symmetrix
+      scsi: devinfo: warn on undefined blist flags
+      scsi: devinfo: change blist_flag_t to 64bit
+      scsi: devinfo: use const_ilog2 for array indices
+      scsi: ilog2: create truly constant version for sparse
+
+Matthew R. Ochs (2):
+      scsi: cxlflash: Use local mutex for AFU serialization
+      scsi: cxlflash: Avoid clobbering context control register value
+
+Maya Erez (1):
+      scsi: ufs: fix exception event handling
+
+Michael Kelley (1):
+      scsi: storvsc: Avoid allocating memory for temp cpumasks
+
+Michael Schmitz (1):
+      scsi: zorro_esp: New driver for Amiga Zorro NCR53C9x boards
+
+Quinn Tran (9):
+      scsi: qla2xxx: Fix TMF and Multi-Queue config
+      scsi: qla2xxx: Remove stale debug value for login_retry flag
+      scsi: qla2xxx: Use predefined get_datalen_for_atio() inline function
+      scsi: qla2xxx: Fix Inquiry command being dropped in Target mode
+      scsi: qla2xxx: Move GPSC and GFPNID out of session management
+      scsi: qla2xxx: Reduce redundant ADISC command for RSCNs
+      scsi: qla2xxx: Delete session for nport id change
+      scsi: qla2xxx: Fix Rport and session state getting out of sync
+      scsi: qla2xxx: Fix sending ADISC command for login
+
+Randy Dunlap (4):
+      scsi: target: add driver-api document
+      scsi: target: target_core_user.[ch]: convert comments into DOC:
+      scsi: target: target_core_transport.c: enable+fix kernel-doc
+      scsi: target: target_core_transport.c: fix kernel-doc warnings
+
+Saurav Kashyap (1):
+      scsi: qedf: Remove setting DCBX pending during soft context reset
+
+Shivasharan S (2):
+      scsi: megaraid_sas: driver version upgrade
+      scsi: megaraid_sas: Increase timeout by 1 sec for non-RAID fastpath IOs
+
+Souptick Joarder (2):
+      scsi: target: Change return type to vm_fault_t
+      scsi: sg: Change return type to vm_fault_t
+
+Steffen Maier (22):
+      scsi: zfcp: cleanup indentation for posting FC events
+      scsi: zfcp: support SCSI_ADAPTER_RESET via scsi_host sysfs attribute host_reset
+      scsi: zfcp: explicitly support initiator in scsi_host_template
+      scsi: zfcp: remove unused return values of ERP trigger functions
+      scsi: zfcp: zfcp_erp_action_exists() does only check for running
+      scsi: zfcp: remove unused ERP enum values
+      scsi: zfcp: consistently use function name space prefix
+      scsi: zfcp: workqueue: set description for port work items with their WWPN as context
+      scsi: zfcp: decouple our scsi_eh callbacks from scsi_cmnd
+      scsi: zfcp: decouple TMFs from scsi_cmnd by using fc_block_rport
+      scsi: zfcp: decouple SCSI setup of TMF from scsi_cmnd
+      scsi: zfcp: decouple FSF request setup of TMF from scsi_cmnd
+      scsi: zfcp: split FCP_CMND IU setup between SCSI I/O and TMF again
+      scsi: zfcp: decouple TMF response handler from scsi_cmnd
+      scsi: zfcp: decouple SCSI traces for scsi_eh / TMF from scsi_cmnd
+      scsi: zfcp: fix missing REC trigger trace on enqueue without ERP thread
+      scsi: zfcp: fix missing REC trigger trace for all objects in ERP_FAILED
+      scsi: zfcp: fix missing REC trigger trace on terminate_rport_io for ERP_FAILED
+      scsi: zfcp: fix missing REC trigger trace on terminate_rport_io early return
+      scsi: zfcp: fix misleading REC trigger trace where erp_action setup failed
+      scsi: zfcp: fix missing SCSI trace for retry of abort / scsi_eh TMF
+      scsi: zfcp: fix missing SCSI trace for result of eh_host_reset_handler
+
+Subhash Jadavani (3):
+      scsi: ufs: ufs-qcom: remove broken hci version quirk
+      scsi: ufs: add reference counting for scsi block requests
+      scsi: ufs: ufshcd: fix possible unclocked register access
+
+Tomohiro Kusumi (2):
+      scsi: mpt3sas: fix header path in ioctl documentation
+      scsi: mpt3sas: remove obsolete path "drivers/scsi/mpt2sas/" from MAINTAINERS
+
+Uma Krishnan (46):
+      scsi: cxlflash: Isolate external module dependencies
+      scsi: cxlflash: Abstract hardware dependent assignments
+      scsi: cxlflash: Add include guards to backend.h
+      scsi: cxlflash: Acquire semaphore before invoking ioctl services
+      scsi: cxlflash: Limit the debug logs in the IO path
+      scsi: cxlflash: Yield to active send threads
+      scsi: cxlflash: Handle spurious interrupts
+      scsi: cxlflash: Remove commmands from pending list on timeout
+      scsi: cxlflash: Synchronize reset and remove ops
+      scsi: cxlflash: Enable OCXL operations
+      scsi: cxlflash: Support AFU reset
+      scsi: cxlflash: Register for translation errors
+      scsi: cxlflash: Introduce OCXL context state machine
+      scsi: cxlflash: Update synchronous interrupt status bits
+      scsi: cxlflash: Setup LISNs for master contexts
+      scsi: cxlflash: Setup LISNs for user contexts
+      scsi: cxlflash: Introduce object handle fop
+      scsi: cxlflash: Support file descriptor mapping
+      scsi: cxlflash: Support adapter context mmap and release
+      scsi: cxlflash: Support adapter context reading
+      scsi: cxlflash: Support adapter context polling
+      scsi: cxlflash: Support starting user contexts
+      scsi: cxlflash: Support AFU interrupt mapping and registration
+      scsi: cxlflash: Support AFU interrupt management
+      scsi: cxlflash: Support process element lifecycle
+      scsi: cxlflash: Setup OCXL transaction layer
+      scsi: cxlflash: Setup function OCXL link
+      scsi: cxlflash: Support reading adapter VPD data
+      scsi: cxlflash: Support AFU state toggling
+      scsi: cxlflash: Support process specific mappings
+      scsi: cxlflash: Support starting an adapter context
+      scsi: cxlflash: MMIO map the AFU
+      scsi: cxlflash: Support image reload policy modification
+      scsi: cxlflash: Support adapter context discovery
+      scsi: cxlflash: Support adapter file descriptors for OCXL
+      scsi: cxlflash: Use IDR to manage adapter contexts
+      scsi: cxlflash: Adapter context support for OCXL
+      scsi: cxlflash: Setup AFU PASID
+      scsi: cxlflash: Setup AFU acTag range
+      scsi: cxlflash: Read host AFU configuration
+      scsi: cxlflash: Setup function acTag range
+      scsi: cxlflash: Read host function configuration
+      scsi: cxlflash: Hardware AFU for OCXL
+      scsi: cxlflash: Introduce OCXL backend
+      scsi: cxlflash: Add argument identifier names
+      scsi: cxlflash: Preserve number of interrupts for master contexts
+
+Venkat Gopalakrishnan (1):
+      scsi: ufs: make sure all interrupts are processed
+
+Vijay Viswanath (1):
+      scsi: ufs: Add clock ungating to a separate workqueue
+
+Wei Yongjun (1):
+      scsi: hisi_sas: fix a typo in hisi_sas_task_prep()
+
+Wen Xiong (1):
+      scsi: ipr: new IOASC update
+
+Wenwen Wang (2):
+      scsi: 3w-xxxx: fix a missing-check bug
+      scsi: 3w-9xxx: fix a missing-check bug
+
+Xiang Chen (20):
+      scsi: hisi_sas: Mark PHY as in reset for nexus reset
+      scsi: hisi_sas: Create a scsi_host_template per HW module
+      scsi: hisi_sas: Reset disks when discovered
+      scsi: hisi_sas: Change common allocation mode of device id
+      scsi: hisi_sas: change slot index allocation mode
+      scsi: hisi_sas: Use device lock to protect slot alloc/free
+      scsi: hisi_sas: Don't lock DQ for complete task sending
+      scsi: hisi_sas: allocate slot buffer earlier
+      scsi: hisi_sas: make return type of prep functions void
+      scsi: hisi_sas: relocate smp sg map
+      scsi: hisi_sas: config ATA de-reset as an constrained command for v3 hw
+      scsi: hisi_sas: update PHY linkrate after a controller reset
+      scsi: hisi_sas: check sas_dev gone earlier in hisi_sas_abort_task()
+      scsi: hisi_sas: fix PI memory size
+      scsi: hisi_sas: check host frozen before calling "done" function
+      scsi: hisi_sas: Add some checks to avoid free'ing a sas_task twice
+      scsi: hisi_sas: optimise the usage of DQ locking
+      scsi: hisi_sas: use dma_zalloc_coherent()
+      scsi: hisi_sas: delete timer when removing hisi_sas driver
+      scsi: hisi_sas: make SAS address of SATA disks unique
+
+Xiaofei Tan (13):
+      scsi: hisi_sas: Fix return value when get_free_slot() failed
+      scsi: hisi_sas: Terminate STP reject quickly for v2 hw
+      scsi: hisi_sas: Add v2 hw force PHY function for internal ATA command
+      scsi: hisi_sas: Include TMF elements in struct hisi_sas_slot
+      scsi: hisi_sas: Try wait commands before before controller reset
+      scsi: hisi_sas: Init disks after controller reset
+      scsi: hisi_sas: Add LED feature for v3 hw
+      scsi: hisi_sas: add check of device in hisi_sas_task_exec()
+      scsi: hisi_sas: workaround a v3 hw hilink bug
+      scsi: hisi_sas: remove redundant handling to event95 for v3
+      scsi: hisi_sas: check IPTT is valid before using it for v3 hw
+      scsi: hisi_sas: consolidate command check in hisi_sas_get_ata_protocol()
+      scsi: hisi_sas: update RAS feature for later revision of v3 HW
+
+Xose Vazquez Perez (2):
+      scsi: scsi_dh: replace too broad "TP9" string with the exact models
+      scsi: devinfo: delete duplicate "Generic"/"USB Storage-SMC" device
+
+YueHaibing (4):
+      scsi: a100u2w: Use module_pci_driver
+      scsi: wd719x: Use module_pci_driver
+      scsi: am53c974: Use module_pci_driver
+      scsi: mvumi: Using module_pci_driver
+
+Zhu Lingshan (6):
+      scsi: tcmu: refactor nl wr_cache attr with new helpers
+      scsi: tcmu: refactor nl dev_size attr with new helpers
+      scsi: tcmu: refactor nl dev_cfg attr with new nl helpers
+      scsi: tcmu: refactor rm_device cmd with new nl helpers
+      scsi: tcmu: refactor add_device cmd with new nl helpers
+      scsi: tcmu: add new netlink events helpers
+
+himanshu.madhani@cavium.com (2):
+      scsi: qla2xxx: Update driver version to 10.00.00.07-k
+      scsi: qla2xxx: Prevent relogin loop by removing stale code
+
+And the diffstat:
+
+ Documentation/driver-api/index.rst          |    1 +
+ Documentation/driver-api/scsi.rst           |    2 +-
+ Documentation/driver-api/target.rst         |   64 ++
+ Documentation/ioctl/ioctl-number.txt        |    2 +-
+ MAINTAINERS                                 |    1 -
+ drivers/ata/libata-scsi.c                   |   12 +
+ drivers/hv/ring_buffer.c                    |    2 +
+ drivers/message/fusion/lsi/mpi_cnfg.h       |    4 +-
+ drivers/message/fusion/mptbase.c            |    2 +-
+ drivers/message/fusion/mptfc.c              |    2 +-
+ drivers/message/fusion/mptlan.c             |    2 +-
+ drivers/message/fusion/mptsas.c             |    2 +-
+ drivers/net/hyperv/hyperv_net.h             |    1 -
+ drivers/net/hyperv/netvsc.c                 |   18 +-
+ drivers/net/hyperv/netvsc_drv.c             |    3 -
+ drivers/s390/scsi/zfcp_dbf.c                |   90 +-
+ drivers/s390/scsi/zfcp_dbf.h                |   21 +-
+ drivers/s390/scsi/zfcp_erp.c                |  194 ++--
+ drivers/s390/scsi/zfcp_ext.h                |   16 +-
+ drivers/s390/scsi/zfcp_fc.c                 |   11 +-
+ drivers/s390/scsi/zfcp_fc.h                 |   22 +-
+ drivers/s390/scsi/zfcp_fsf.c                |   61 +-
+ drivers/s390/scsi/zfcp_fsf.h                |    6 +-
+ drivers/s390/scsi/zfcp_scsi.c               |  141 ++-
+ drivers/s390/scsi/zfcp_sysfs.c              |    5 +-
+ drivers/scsi/3w-9xxx.c                      |    5 +
+ drivers/scsi/3w-xxxx.c                      |    3 +
+ drivers/scsi/Kconfig                        |   14 +
+ drivers/scsi/Makefile                       |    3 +-
+ drivers/scsi/a100u2w.c                      |   13 +-
+ drivers/scsi/am53c974.c                     |   13 +-
+ drivers/scsi/cxlflash/Kconfig               |    2 +-
+ drivers/scsi/cxlflash/Makefile              |    4 +-
+ drivers/scsi/cxlflash/backend.h             |   55 +-
+ drivers/scsi/cxlflash/common.h              |   12 +-
+ drivers/scsi/cxlflash/cxl_hw.c              |   13 +
+ drivers/scsi/cxlflash/lunmgt.c              |    4 +-
+ drivers/scsi/cxlflash/main.c                |   97 +-
+ drivers/scsi/cxlflash/main.h                |   21 +
+ drivers/scsi/cxlflash/ocxl_hw.c             | 1436 +++++++++++++++++++++++++++
+ drivers/scsi/cxlflash/ocxl_hw.h             |   77 ++
+ drivers/scsi/cxlflash/sislite.h             |   41 +-
+ drivers/scsi/cxlflash/superpipe.c           |   23 +-
+ drivers/scsi/cxlflash/vlun.c                |    3 +-
+ drivers/scsi/dpt_i2o.c                      |   21 +-
+ drivers/scsi/esas2r/esas2r_init.c           |    5 +-
+ drivers/scsi/esas2r/esas2r_ioctl.c          |    2 +-
+ drivers/scsi/esas2r/esas2r_main.c           |    2 +-
+ drivers/scsi/hisi_sas/hisi_sas.h            |   52 +-
+ drivers/scsi/hisi_sas/hisi_sas_main.c       |  638 ++++++++----
+ drivers/scsi/hisi_sas/hisi_sas_v1_hw.c      |  164 ++-
+ drivers/scsi/hisi_sas/hisi_sas_v2_hw.c      |  284 +++---
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c      |  452 ++++++---
+ drivers/scsi/ipr.c                          |    2 +
+ drivers/scsi/ips.c                          |   78 +-
+ drivers/scsi/ips.h                          |   11 +-
+ drivers/scsi/isci/init.c                    |    3 -
+ drivers/scsi/iscsi_tcp.c                    |    1 -
+ drivers/scsi/libsas/sas_ata.c               |    5 +
+ drivers/scsi/libsas/sas_discover.c          |    1 +
+ drivers/scsi/lpfc/lpfc.h                    |    9 +-
+ drivers/scsi/lpfc/lpfc_attr.c               |  124 ++-
+ drivers/scsi/lpfc/lpfc_bsg.c                |   20 +-
+ drivers/scsi/lpfc/lpfc_ct.c                 |   10 +
+ drivers/scsi/lpfc/lpfc_debugfs.c            |   98 +-
+ drivers/scsi/lpfc/lpfc_els.c                |    1 -
+ drivers/scsi/lpfc/lpfc_hbadisc.c            |    7 +-
+ drivers/scsi/lpfc/lpfc_hw4.h                |    7 +-
+ drivers/scsi/lpfc/lpfc_init.c               |  153 ++-
+ drivers/scsi/lpfc/lpfc_nportdisc.c          |   35 +-
+ drivers/scsi/lpfc/lpfc_nvme.c               |  238 +++--
+ drivers/scsi/lpfc/lpfc_nvme.h               |   17 +-
+ drivers/scsi/lpfc/lpfc_nvmet.h              |    6 +-
+ drivers/scsi/lpfc/lpfc_scsi.c               |   33 +-
+ drivers/scsi/lpfc/lpfc_scsi.h               |    2 +-
+ drivers/scsi/lpfc/lpfc_sli.c                |  116 ++-
+ drivers/scsi/lpfc/lpfc_version.h            |    4 +-
+ drivers/scsi/megaraid.c                     |    3 +
+ drivers/scsi/megaraid/megaraid_sas.h        |    4 +-
+ drivers/scsi/megaraid/megaraid_sas_base.c   |   27 +-
+ drivers/scsi/megaraid/megaraid_sas_fusion.c |    8 +-
+ drivers/scsi/mpt3sas/mpi/mpi2.h             |    9 +-
+ drivers/scsi/mpt3sas/mpi/mpi2_cnfg.h        |   30 +-
+ drivers/scsi/mpt3sas/mpi/mpi2_init.h        |    2 +-
+ drivers/scsi/mpt3sas/mpi/mpi2_ioc.h         |    7 +-
+ drivers/scsi/mpt3sas/mpt3sas_base.c         |  477 ++++++---
+ drivers/scsi/mpt3sas/mpt3sas_base.h         |   60 +-
+ drivers/scsi/mpt3sas/mpt3sas_ctl.c          |   33 +-
+ drivers/scsi/mpt3sas/mpt3sas_ctl.h          |    2 +-
+ drivers/scsi/mpt3sas/mpt3sas_scsih.c        |  491 ++++++---
+ drivers/scsi/mpt3sas/mpt3sas_warpdrive.c    |    3 +-
+ drivers/scsi/mvumi.c                        |   20 +-
+ drivers/scsi/osd/osd_initiator.c            |   16 +-
+ drivers/scsi/pm8001/pm8001_hwi.c            |    2 +-
+ drivers/scsi/qedf/drv_fcoe_fw_funcs.c       |    2 +-
+ drivers/scsi/qedf/drv_fcoe_fw_funcs.h       |    2 +-
+ drivers/scsi/qedf/drv_scsi_fw_funcs.c       |    2 +-
+ drivers/scsi/qedf/drv_scsi_fw_funcs.h       |    2 +-
+ drivers/scsi/qedf/qedf.h                    |    6 +-
+ drivers/scsi/qedf/qedf_attr.c               |    2 +-
+ drivers/scsi/qedf/qedf_dbg.c                |    4 +-
+ drivers/scsi/qedf/qedf_dbg.h                |    2 +-
+ drivers/scsi/qedf/qedf_debugfs.c            |    2 +-
+ drivers/scsi/qedf/qedf_els.c                |   35 +-
+ drivers/scsi/qedf/qedf_fip.c                |    5 +-
+ drivers/scsi/qedf/qedf_hsi.h                |    2 +-
+ drivers/scsi/qedf/qedf_io.c                 |   87 +-
+ drivers/scsi/qedf/qedf_main.c               |  130 ++-
+ drivers/scsi/qedf/qedf_version.h            |    6 +-
+ drivers/scsi/qla2xxx/qla_def.h              |    4 +-
+ drivers/scsi/qla2xxx/qla_gbl.h              |    3 +-
+ drivers/scsi/qla2xxx/qla_gs.c               |   41 +-
+ drivers/scsi/qla2xxx/qla_init.c             |  105 +-
+ drivers/scsi/qla2xxx/qla_os.c               |    4 +
+ drivers/scsi/qla2xxx/qla_target.c           |  192 +++-
+ drivers/scsi/qla2xxx/qla_target.h           |    4 +-
+ drivers/scsi/qla2xxx/qla_version.h          |    2 +-
+ drivers/scsi/qla2xxx/tcm_qla2xxx.c          |   37 +-
+ drivers/scsi/qlogicpti.c                    |    6 +-
+ drivers/scsi/scsi_debugfs.c                 |    2 +-
+ drivers/scsi/scsi_devinfo.c                 |   31 +-
+ drivers/scsi/scsi_dh.c                      |    5 +-
+ drivers/scsi/scsi_error.c                   |    7 +
+ drivers/scsi/scsi_lib.c                     |    4 +
+ drivers/scsi/scsi_sysfs.c                   |    2 +-
+ drivers/scsi/scsi_transport_sas.c           |    4 -
+ drivers/scsi/sd.h                           |   12 +-
+ drivers/scsi/sd_zbc.c                       |   10 -
+ drivers/scsi/sg.c                           |    2 +-
+ drivers/scsi/snic/snic_scsi.c               |    6 +-
+ drivers/scsi/st.c                           |    6 +-
+ drivers/scsi/storvsc_drv.c                  |   85 +-
+ drivers/scsi/ufs/ufs-qcom.c                 |    2 +-
+ drivers/scsi/ufs/ufshcd.c                   |  308 +++++-
+ drivers/scsi/ufs/ufshcd.h                   |   21 +
+ drivers/scsi/wd719x.c                       |   13 +-
+ drivers/scsi/zorro_esp.c                    | 1172 ++++++++++++++++++++++
+ drivers/target/target_core_configfs.c       |   25 +
+ drivers/target/target_core_file.c           |  137 ++-
+ drivers/target/target_core_file.h           |    1 +
+ drivers/target/target_core_internal.h       |    1 +
+ drivers/target/target_core_pscsi.c          |   26 +-
+ drivers/target/target_core_transport.c      |   64 +-
+ drivers/target/target_core_user.c           |  160 ++-
+ include/linux/hyperv.h                      |   12 +
+ include/linux/libata.h                      |    2 +
+ include/linux/log2.h                        |   35 +-
+ include/scsi/scsi_device.h                  |    2 +-
+ include/scsi/scsi_devinfo.h                 |   75 +-
+ include/target/target_core_base.h           |    1 +
+ include/uapi/linux/target_core_user.h       |   11 +-
+ kernel/workqueue.c                          |    1 +
+ 152 files changed, 7234 insertions(+), 2017 deletions(-)
+ create mode 100644 Documentation/driver-api/target.rst
+ create mode 100644 drivers/scsi/cxlflash/ocxl_hw.c
+ create mode 100644 drivers/scsi/cxlflash/ocxl_hw.h
+ create mode 100644 drivers/scsi/zorro_esp.c
+
+James
