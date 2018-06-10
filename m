@@ -1,233 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id hEK/ISCCHlubBAAAmS7hNA
-	; Mon, 11 Jun 2018 14:07:28 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id IoMlJ4soHVvefgAAmS7hNA
+	; Sun, 10 Jun 2018 13:33:40 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 6FEE360791; Mon, 11 Jun 2018 14:07:28 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="O+u+ZFiw"
+	id 32960607BB; Sun, 10 Jun 2018 13:33:40 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id C21C4600D0;
-	Mon, 11 Jun 2018 14:07:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C21C4600D0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id AF9DA605A5;
+	Sun, 10 Jun 2018 13:33:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AF9DA605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=kaiser.cx
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933745AbeFKOH0 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 10:07:26 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46442 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933623AbeFKOHJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:07:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=D6Nq+q//o9H6X1dq/PwQbU/ZsmpxD/JiFSdlUUlc5Dc=; b=O+u+ZFiwIvLk3e5zFGmndfuSL
-        /MQGF1eAUWKNWK9+eypVSJiKH70pAn0SPMWidprPm79HoyYyPeA2xJZgBX9mER+PGhDzdHhnPySbw
-        oN/9ITrFRkdHmKTdAEq1GAUHAU4tF2tOgeTVzyk3tCFHJK6oP8R533upqSgNTLNNv996hkznkEMLH
-        4vGBJV6A3I5TXCJJuaoCx5o56fMdo2h7ePfT6rQ5205gr/slGBCtecZgApvEKlqEH4K0nLegG5yTD
-        qDKX01N4nKXCbfZ6w8fHVAaK2XaZmKhHmiHhnVTw/I0IdC0rNi+opSaHahugUBK0yqJqL1jvZiR+c
-        Ss5Qg2kIQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSNTQ-0004yN-Pn; Mon, 11 Jun 2018 14:07:08 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Lukas Czerner <lczerner@redhat.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v13 59/72] nilfs2: Convert to XArray
-Date: Mon, 11 Jun 2018 07:06:26 -0700
-Message-Id: <20180611140639.17215-60-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
-References: <20180611140639.17215-1-willy@infradead.org>
+        id S932204AbeFJNdh (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sun, 10 Jun 2018 09:33:37 -0400
+Received: from botnar.kaiser.cx ([176.28.20.183]:53676 "EHLO botnar.kaiser.cx"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753462AbeFJNdf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Jun 2018 09:33:35 -0400
+Received: from dslb-084-058-101-183.084.058.pools.vodafone-ip.de ([84.58.101.183] helo=reykholt.kaiser.cx)
+        by botnar.kaiser.cx with esmtpsa (TLSv1:AES128-SHA:128)
+        (Exim 4.72)
+        (envelope-from <martin@kaiser.cx>)
+        id 1fS0S8-0002y8-BV; Sun, 10 Jun 2018 15:32:16 +0200
+From: Martin Kaiser <martin@kaiser.cx>
+To: Boris Brezillon <boris.brezillon@bootlin.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Martin Kaiser <martin@kaiser.cx>, stable@vger.kernel.org
+Subject: [PATCH v2] mtd: rawnand: mxc: set spare area size register explicitly
+Date: Sun, 10 Jun 2018 15:31:27 +0200
+Message-Id: <1528637487-25172-1-git-send-email-martin@kaiser.cx>
+X-Mailer: git-send-email 2.1.4
+In-Reply-To: <1528025495-14443-1-git-send-email-martin@kaiser.cx>
+References: <1528025495-14443-1-git-send-email-martin@kaiser.cx>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+The v21 version of the NAND flash controller contains a Spare Area Size
+Register (SPAS) at offset 0x10. Its setting defaults to the maximum
+spare area size of 218 bytes. The size that is set in this register is
+used by the controller when it calculates the ECC bytes internally in
+hardware.
 
-This is close to a 1:1 replacement of radix tree APIs with their XArray
-equivalents.  It would be possible to optimise nilfs_copy_back_pages(),
-but that doesn't seem to be in the performance path.  Also, I think
-it has a pre-existing bug, and I've added a note to that effect in the
-source code.
+Usually, this register is updated from settings in the IIM fuses when
+the system is booting from NAND flash. For other boot media, however,
+the SPAS register remains at the default setting, which may not work for
+the particular flash chip on the board. The same goes for flash chips
+whose configuration cannot be set in the IIM fuses (e.g. chips with 2k
+sector size and 128 bytes spare area size can't be configured in the IIM
+fuses on imx25 systems).
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+Set the SPAS register explicitly during the preset operation. Derive the
+register value from mtd->oobsize that was detected during probe by
+decoding the flash chip's ID bytes.
+
+While at it, rename the define for the spare area register's offset to
+NFC_V21_RSLTSPARE_AREA. The register at offset 0x10 on v1 controllers is
+different from the register on v21 controllers.
+
+Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+Reviewed-by: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: stable@vger.kernel.org
 ---
- fs/nilfs2/btnode.c | 26 +++++++++-----------------
- fs/nilfs2/page.c   | 29 +++++++++++++----------------
- 2 files changed, 22 insertions(+), 33 deletions(-)
+changes in v2
+   - fix the commit message
+   - use '/ 2' instead of shift operator for division
 
-diff --git a/fs/nilfs2/btnode.c b/fs/nilfs2/btnode.c
-index dec98cab729d..e9fcffb3a15c 100644
---- a/fs/nilfs2/btnode.c
-+++ b/fs/nilfs2/btnode.c
-@@ -177,24 +177,18 @@ int nilfs_btnode_prepare_change_key(struct address_space *btnc,
- 	ctxt->newbh = NULL;
+BTW is it ok to keep a Reviewed-by tag when updating the patch?
+
+ drivers/mtd/nand/raw/mxc_nand.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mtd/nand/raw/mxc_nand.c b/drivers/mtd/nand/raw/mxc_nand.c
+index 45786e7..26cef21 100644
+--- a/drivers/mtd/nand/raw/mxc_nand.c
++++ b/drivers/mtd/nand/raw/mxc_nand.c
+@@ -48,7 +48,7 @@
+ #define NFC_V1_V2_CONFIG		(host->regs + 0x0a)
+ #define NFC_V1_V2_ECC_STATUS_RESULT	(host->regs + 0x0c)
+ #define NFC_V1_V2_RSLTMAIN_AREA		(host->regs + 0x0e)
+-#define NFC_V1_V2_RSLTSPARE_AREA	(host->regs + 0x10)
++#define NFC_V21_RSLTSPARE_AREA		(host->regs + 0x10)
+ #define NFC_V1_V2_WRPROT		(host->regs + 0x12)
+ #define NFC_V1_UNLOCKSTART_BLKADDR	(host->regs + 0x14)
+ #define NFC_V1_UNLOCKEND_BLKADDR	(host->regs + 0x16)
+@@ -1274,6 +1274,9 @@ static void preset_v2(struct mtd_info *mtd)
+ 	writew(config1, NFC_V1_V2_CONFIG1);
+ 	/* preset operation */
  
- 	if (inode->i_blkbits == PAGE_SHIFT) {
--		lock_page(obh->b_page);
--		/*
--		 * We cannot call radix_tree_preload for the kernels older
--		 * than 2.6.23, because it is not exported for modules.
--		 */
-+		struct page *opage = obh->b_page;
-+		lock_page(opage);
- retry:
--		err = radix_tree_preload(GFP_NOFS & ~__GFP_HIGHMEM);
--		if (err)
--			goto failed_unlock;
- 		/* BUG_ON(oldkey != obh->b_page->index); */
--		if (unlikely(oldkey != obh->b_page->index))
--			NILFS_PAGE_BUG(obh->b_page,
-+		if (unlikely(oldkey != opage->index))
-+			NILFS_PAGE_BUG(opage,
- 				       "invalid oldkey %lld (newkey=%lld)",
- 				       (unsigned long long)oldkey,
- 				       (unsigned long long)newkey);
++	/* spare area size in 16-bit half-words */
++	writew(mtd->oobsize / 2, NFC_V21_RSLTSPARE_AREA);
++
+ 	/* Unlock the internal RAM Buffer */
+ 	writew(0x2, NFC_V1_V2_CONFIG);
  
- 		xa_lock_irq(&btnc->i_pages);
--		err = radix_tree_insert(&btnc->i_pages, newkey, obh->b_page);
-+		err = __xa_insert(&btnc->i_pages, newkey, opage, GFP_NOFS);
- 		xa_unlock_irq(&btnc->i_pages);
- 		/*
- 		 * Note: page->index will not change to newkey until
-@@ -202,7 +196,6 @@ int nilfs_btnode_prepare_change_key(struct address_space *btnc,
- 		 * To protect the page in intermediate state, the page lock
- 		 * is held.
- 		 */
--		radix_tree_preload_end();
- 		if (!err)
- 			return 0;
- 		else if (err != -EEXIST)
-@@ -212,7 +205,7 @@ int nilfs_btnode_prepare_change_key(struct address_space *btnc,
- 		if (!err)
- 			goto retry;
- 		/* fallback to copy mode */
--		unlock_page(obh->b_page);
-+		unlock_page(opage);
- 	}
- 
- 	nbh = nilfs_btnode_create_block(btnc, newkey);
-@@ -252,9 +245,8 @@ void nilfs_btnode_commit_change_key(struct address_space *btnc,
- 		mark_buffer_dirty(obh);
- 
- 		xa_lock_irq(&btnc->i_pages);
--		radix_tree_delete(&btnc->i_pages, oldkey);
--		radix_tree_tag_set(&btnc->i_pages, newkey,
--				   PAGECACHE_TAG_DIRTY);
-+		__xa_erase(&btnc->i_pages, oldkey);
-+		__xa_set_tag(&btnc->i_pages, newkey, PAGECACHE_TAG_DIRTY);
- 		xa_unlock_irq(&btnc->i_pages);
- 
- 		opage->index = obh->b_blocknr = newkey;
-@@ -284,7 +276,7 @@ void nilfs_btnode_abort_change_key(struct address_space *btnc,
- 
- 	if (nbh == NULL) {	/* blocksize == pagesize */
- 		xa_lock_irq(&btnc->i_pages);
--		radix_tree_delete(&btnc->i_pages, newkey);
-+		__xa_erase(&btnc->i_pages, newkey);
- 		xa_unlock_irq(&btnc->i_pages);
- 		unlock_page(ctxt->bh->b_page);
- 	} else
-diff --git a/fs/nilfs2/page.c b/fs/nilfs2/page.c
-index 4cb850a6f1c2..8384473b98b8 100644
---- a/fs/nilfs2/page.c
-+++ b/fs/nilfs2/page.c
-@@ -298,7 +298,7 @@ int nilfs_copy_dirty_pages(struct address_space *dmap,
-  * @dmap: destination page cache
-  * @smap: source page cache
-  *
-- * No pages must no be added to the cache during this process.
-+ * No pages must be added to the cache during this process.
-  * This must be ensured by the caller.
-  */
- void nilfs_copy_back_pages(struct address_space *dmap,
-@@ -307,7 +307,6 @@ void nilfs_copy_back_pages(struct address_space *dmap,
- 	struct pagevec pvec;
- 	unsigned int i, n;
- 	pgoff_t index = 0;
--	int err;
- 
- 	pagevec_init(&pvec);
- repeat:
-@@ -322,35 +321,34 @@ void nilfs_copy_back_pages(struct address_space *dmap,
- 		lock_page(page);
- 		dpage = find_lock_page(dmap, offset);
- 		if (dpage) {
--			/* override existing page on the destination cache */
-+			/* overwrite existing page in the destination cache */
- 			WARN_ON(PageDirty(dpage));
- 			nilfs_copy_page(dpage, page, 0);
- 			unlock_page(dpage);
- 			put_page(dpage);
-+			/* Do we not need to remove page from smap here? */
- 		} else {
--			struct page *page2;
-+			struct page *p;
- 
- 			/* move the page to the destination cache */
- 			xa_lock_irq(&smap->i_pages);
--			page2 = radix_tree_delete(&smap->i_pages, offset);
--			WARN_ON(page2 != page);
--
-+			p = __xa_erase(&smap->i_pages, offset);
-+			WARN_ON(page != p);
- 			smap->nrpages--;
- 			xa_unlock_irq(&smap->i_pages);
- 
- 			xa_lock_irq(&dmap->i_pages);
--			err = radix_tree_insert(&dmap->i_pages, offset, page);
--			if (unlikely(err < 0)) {
--				WARN_ON(err == -EEXIST);
-+			p = __xa_store(&dmap->i_pages, offset, page, GFP_NOFS);
-+			if (unlikely(p)) {
-+				/* Probably -ENOMEM */
- 				page->mapping = NULL;
--				put_page(page); /* for cache */
-+				put_page(page);
- 			} else {
- 				page->mapping = dmap;
- 				dmap->nrpages++;
- 				if (PageDirty(page))
--					radix_tree_tag_set(&dmap->i_pages,
--							   offset,
--							   PAGECACHE_TAG_DIRTY);
-+					__xa_set_tag(&dmap->i_pages, offset,
-+							PAGECACHE_TAG_DIRTY);
- 			}
- 			xa_unlock_irq(&dmap->i_pages);
- 		}
-@@ -476,8 +474,7 @@ int __nilfs_clear_page_dirty(struct page *page)
- 	if (mapping) {
- 		xa_lock_irq(&mapping->i_pages);
- 		if (test_bit(PG_dirty, &page->flags)) {
--			radix_tree_tag_clear(&mapping->i_pages,
--					     page_index(page),
-+			__xa_clear_tag(&mapping->i_pages, page_index(page),
- 					     PAGECACHE_TAG_DIRTY);
- 			xa_unlock_irq(&mapping->i_pages);
- 			return clear_page_dirty_for_io(page);
 -- 
-2.17.1
+2.1.4
