@@ -1,150 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id JZxVF3BTGVtUHgAAmS7hNA
-	; Thu, 07 Jun 2018 15:47:34 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id NO4vMjcyHVsDNwAAmS7hNA
+	; Sun, 10 Jun 2018 14:16:26 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id CFD25607E7; Thu,  7 Jun 2018 15:47:33 +0000 (UTC)
+	id 98A26607A4; Sun, 10 Jun 2018 14:16:26 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DnWAJsvR"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 16BAE60590;
-	Thu,  7 Jun 2018 15:47:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 16BAE60590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 230A76074D;
+	Sun, 10 Jun 2018 14:16:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 230A76074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934544AbeFGPrb (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:47:31 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:50331 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932578AbeFGPra (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:47:30 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 3DA8520799; Thu,  7 Jun 2018 17:47:28 +0200 (CEST)
-Received: from xps13 (AAubervilliers-681-1-128-7.w90-88.abo.wanadoo.fr [90.88.9.7])
-        by mail.bootlin.com (Postfix) with ESMTPSA id C646920012;
-        Thu,  7 Jun 2018 17:47:27 +0200 (CEST)
-Date: Thu, 7 Jun 2018 17:47:27 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
-Cc: <boris.brezillon@bootlin.com>, <richard@nod.at>,
-        <wmw2@infradead.org>, <computersforpeace@gmail.com>,
-        <marek.vasut@gmail.com>, <f.fainelli@gmail.com>,
-        <mmayer@broadcom.com>, <rogerq@ti.com>, <ladis@linux-mips.org>,
-        <ada@thorsis.com>, <honghui.zhang@mediatek.com>,
-        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <nagasureshkumarrelli@gmail.com>
-Subject: Re: [LINUX PATCH v9 1/4] Devicetree: Add pl353 smc controller
- devicetree binding information
-Message-ID: <20180607174727.6fcebde2@xps13>
-In-Reply-To: <20180607174203.035f187d@xps13>
-References: <1528271382-21690-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
-        <1528271382-21690-2-git-send-email-naga.sureshkumar.relli@xilinx.com>
-        <20180607174203.035f187d@xps13>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1753886AbeFJOQX (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sun, 10 Jun 2018 10:16:23 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:43662 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753671AbeFJOQV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Jun 2018 10:16:21 -0400
+Received: by mail-lf0-f68.google.com with SMTP id n15-v6so26701732lfn.10;
+        Sun, 10 Jun 2018 07:16:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=d+jRrk3v/ZhzVrxb7TQ2GkxIBsjVoZVhqkGGdLt1XhA=;
+        b=DnWAJsvRCLwK8z3lahtlHm0tlb9Zqgq2InK7KoQjx2Oi+PIpcZMhR/ukyxLLORJb2t
+         gECZvMVQHVEdaSP9qO1UPd5a5e26JkvFAcSno4Ru5fmY28IOSWyEzkDbmAIa/5ZmvKFi
+         8VjqRgHqUi7ONDhaj0VZ5fpqpVucddCkdwSgt08c3qKUWnXVmX9po9E3EmC1i7NeSZT9
+         5WJse7Fs8N3hyR7yPMcsEGhWJbVv7Zv78eKAeLkxpnnR+qeWg1HjRHB2asQUAHwSo6R4
+         PWgz0k87yuJn3imWOMAbRKKqF4QCksgDpiyg6sexV5QeWKtRvrY1y2wYzJjPfHelsnz5
+         w8VA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=d+jRrk3v/ZhzVrxb7TQ2GkxIBsjVoZVhqkGGdLt1XhA=;
+        b=YxgwPzCuDYuALvmlwBjKopBdD/eSInAMdsoXNoQ/m4V8CGuO22TeBT0lqWYKRUAgrk
+         3Mug+RUJMBjMRVmPtMqqElmQm4ZBaLxulHbvUsoafiHSGC9rmqMW4B4/h1sb4EHiEGy/
+         5t+rqYnjpKqksvGB5fPoV1x+izUtwRUdkmXVtdAGX5uQ7O7q33KGv/SddPxULYJMd3J2
+         wGO+Y0OVXev3/7pZ0P9n9pywhs5TZO4NPQQwbu42fMzmtHKGeNskQQzMaV37joR563Qo
+         JdmEenzvooKyk/brV7HkeT7YqFEYmKCjkElwdd5E7K3H8ZwoDNuHZGH6zhRifXPX7xEz
+         pDrw==
+X-Gm-Message-State: APt69E0cUwkkLN85ES2rKM+Xp5qp4qqa9pt9yx6QL2qplo++jGuBB2Ck
+        pQIebqFg71MR/sJevKC4XVs=
+X-Google-Smtp-Source: ADUXVKLcFRwOrlmpIPKlCMG5EKqPfGymrTDGOoG5T60hlSPr7Ifrb6pl61JTiTmuc50PesK7ijTP9Q==
+X-Received: by 2002:a2e:cf:: with SMTP id e76-v6mr9178046lji.82.1528640179957;
+        Sun, 10 Jun 2018 07:16:19 -0700 (PDT)
+Received: from localhost.localdomain (user-94-254-173-75.play-internet.pl. [94.254.173.75])
+        by smtp.googlemail.com with ESMTPSA id t12-v6sm1769243ljb.7.2018.06.10.07.16.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 10 Jun 2018 07:16:19 -0700 (PDT)
+From: =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+To: kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH 1/1] ARM: dts: s5pv210: Add missing interrupt-controller property to gph2
+Date: Sun, 10 Jun 2018 16:15:49 +0200
+Message-Id: <1528640149-2195-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Miquel,
+This commit adds missing interrupt-controller property to gph2 block,
+to silence following warnings during build
+  /soc/pinctrl@e0200000/gph2: Missing interrupt-controller or interrupt-map property
 
-On Thu, 7 Jun 2018 17:42:03 +0200, Miquel Raynal
-<miquel.raynal@bootlin.com> wrote:
+Observed on not yet mainlined, an S5PV210 based
+Samsung Galaxy S (i9000) phone.
 
-> Hi Naga,
-> 
-> On Wed, 6 Jun 2018 13:19:39 +0530, Naga Sureshkumar Relli
-> <naga.sureshkumar.relli@xilinx.com> wrote:
-> 
-> > Add pl353 static memory controller devicetree binding information.
-> > 
-> > Signed-off-by: Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
-> > ---
-> > Changes in v9:
-> >  - Addressed commens given by Randy Dunlap and Miquel Raynal  
-> 
-> Can you please be more specific in your next changelog? I don't
-> remember what I suggested a few months ago :)
-> 
-> > Changes in v8:
-> >  - None
-> > Changes in v7:
-> > - Corrected clocks description
-> > - prefixed '#' for address and size cells 
-> > Changes in v6:
-> >  - None
-> > Changes in v5:
-> >  - Removed timing properties
-> > Changes in v4:
-> >  - none
-> > Changes in v3:
-> >  - none
-> > Changes in v2:
-> >  - modified timing binding info as per onfi timing parameters
-> >  - add suffix nano second as timing unit
-> >  - modified the clock names as per the IP spec
-> > ---
-> >  .../bindings/memory-controllers/pl353-smc.txt      | 53 ++++++++++++++++++++++
-> >  1 file changed, 53 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/memory-controllers/pl353-smc.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/memory-controllers/pl353-smc.txt b/Documentation/devicetree/bindings/memory-controllers/pl353-smc.txt
-> > new file mode 100644
-> > index 0000000..551e66b
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/memory-controllers/pl353-smc.txt
-> > @@ -0,0 +1,53 @@
-> > +Device tree bindings for ARM PL353 static memory controller
-> > +
-> > +PL353 static memory controller supports two kinds of memory
-> > +interfaces.i.e NAND and SRAM/NOR interfaces.
-> > +The actual devices are instantiated from the child nodes of pl353 smc node.
-> > +
-> > +Required properties:
-> > +- compatible		: Should be "arm,pl353-smc-r2p1"  
-> 
-> I thing Rob prefers:
-> 
-> - compatible: Must be one of:
->   * arm, pl353-smc-r2p1
-> 
-> > +- reg			: Controller registers map and length.
-> > +- clock-names		: List of input clock names - "ref_clk", "aper_clk"
-> > +			  (See clock bindings for details).
-> > +- clocks		: Clock phandles (see clock bindings for details).
-> > +- address-cells		: Address cells, must be 1.
-> > +- size-cells		: Size cells. Must be 1.  
-> 
-> Please avoid padding, just this is enough:
-> 
-> - something: And another thing.
-> 
-> > +
-> > +Child nodes:
-> > + For NAND the "arm,pl353-nand-r2p1" and for NOR the "cfi-flash" drivers are
-> > +supported as child nodes.
-> > +
-> > +Mandatory timing properties for child nodes:
-> > +- arm,nand-cycle-t0	: Read cycle time(t_rc).
-> > +- arm,nand-cycle-t1	: Write cycle time(t_wc).
-> > +- arm,nand-cycle-t2	: re_n assertion delay(t_rea).
-> > +- arm,nand-cycle-t3	: we_n de-assertion delay(t_wp).
-> > +- arm,nand-cycle-t4	: Status read time(t_clr)
-> > +- arm,nand-cycle-t5	: ID read time(t_ar)
-> > +- arm,nand-cycle-t6	: busy to re_n(t_rr)  
-> 
-> I think this has nothing to do in the DT, you should handle timings
-> from the ->setup_data_interface() hook. If you need, you may use
-> different compatibles to distinguish different platform data.
+Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+---
+ arch/arm/boot/dts/s5pv210-pinctrl.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Actually these are NAND-chip dependant and should be derived from the
-timings given by the core in the SDR interface structure by
-->setup_data_interface().
+diff --git a/arch/arm/boot/dts/s5pv210-pinctrl.dtsi b/arch/arm/boot/dts/s5pv210-pinctrl.dtsi
+index 3a79feab11c3..7f0c9d447871 100644
+--- a/arch/arm/boot/dts/s5pv210-pinctrl.dtsi
++++ b/arch/arm/boot/dts/s5pv210-pinctrl.dtsi
+@@ -258,6 +258,8 @@
+ 	gph2: gph2 {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
++
++		interrupt-controller;
+ 		#interrupt-cells = <2>;
+ 	};
+ 
+-- 
+2.7.4
