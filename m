@@ -1,192 +1,213 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 9IDVCapiHluoVwAAmS7hNA
-	; Mon, 11 Jun 2018 11:53:35 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id TukwHcomHFsOZQAAmS7hNA
+	; Sun, 10 Jun 2018 00:10:39 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id F2E02607E4; Mon, 11 Jun 2018 11:53:34 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sa4C1+ch"
+	id E5394608BA; Sun, 10 Jun 2018 00:10:38 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 2EDFF601C3;
-	Mon, 11 Jun 2018 11:53:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2EDFF601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id D32E66032D;
+	Sun, 10 Jun 2018 00:10:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D32E66032D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=interlog.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933215AbeFKLxa (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Mon, 11 Jun 2018 07:53:30 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:44644 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933193AbeFKLx1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 07:53:27 -0400
-Received: by mail-lf0-f65.google.com with SMTP id 36-v6so30058756lfr.11;
-        Mon, 11 Jun 2018 04:53:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=x3j8Fs15IS+dl+eVI+x+JnCjz8Ngw6xJEDChdEEgmsc=;
-        b=Sa4C1+chrObCBlRMOXQYnUBhBNXe2j1d7+6MpXAYLygojmLwcN8bN639evfPFyXuAU
-         bftu4WH+SXCiSI9c4ii3KExgPoQWa0JGihBOxGgVSG+VPcLuZa9LEeUmpGs7xd/7+ugH
-         BOb4tQeIor47VezYOKZqBnD2GAY62wTKouKzJ4ZBdNy7pIgIhK2TgjE/lckwmbZJwKxO
-         /gEscSI0/pFPYaatdeOSHkh2FtNw0a5itELp74lnHDeN3FhJHX/pSVVflUIK3sh2Uqjc
-         tAEmTZjULZHGZZ41GjPVskyCXLFDV+Ik224Q6woEXDGFpbT1nJX+uqYw69EeWiZSY0cC
-         1XUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=x3j8Fs15IS+dl+eVI+x+JnCjz8Ngw6xJEDChdEEgmsc=;
-        b=GSkU6LGvs4Q/aWsldyF/L6ALfYefzYkryFmL1z+aYcIz0CQCwBsQlUA3UWvlbFHC4F
-         NvfIi5zemOK7VeY3JR7wUU/jKXYXL3acncuuzBTw75hSQrPowoP2REiEFoNZCR10YLdn
-         yzDyFQLpr/4Vq0J22RNzpAGwhuMbUT9EA9BOMA986DKvWN1byxCd6LN9g/E6eBxzrUB9
-         9lpU2E8q9cOgJyWGif6rtfMAjZktcpFq3yseecttAnVKCHxeVn204x+zT1/7XvCowaS0
-         CkbjRIcVF0H2zbr0bGL3WC8CEqxf47WSAM6fX4ib6M+pogPe/NTQV3HYM6zX6DSsRWKE
-         HznA==
-X-Gm-Message-State: APt69E35d5aEsT2mwlrOGD8DkdSZ+tVcYyVbiAqzTZovITd82s00JseQ
-        kAqbluJoTsu7sFJs95HrW9m9F1Fa
-X-Google-Smtp-Source: ADUXVKK8UQBzp+GxyvgPS+uSvRmlK+fjhPNo3bgH4YtiJn93hBsb5L1Zda777dSZtPLoBEc+m+LdPg==
-X-Received: by 2002:a2e:9890:: with SMTP id b16-v6mr11341876ljj.80.1528718005328;
-        Mon, 11 Jun 2018 04:53:25 -0700 (PDT)
-Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
-        by smtp.gmail.com with ESMTPSA id h90-v6sm8332849ljf.65.2018.06.11.04.53.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Jun 2018 04:53:24 -0700 (PDT)
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-To: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v2 18/24] serdev: ttydev: Serdev driver that creates an standard TTY port
-Date: Mon, 11 Jun 2018 13:52:34 +0200
-Message-Id: <20180611115240.32606-19-ricardo.ribalda@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
-References: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
+        id S1753549AbeFJAKf (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 20:10:35 -0400
+Received: from smtp.infotech.no ([82.134.31.41]:46952 "EHLO smtp.infotech.no"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753231AbeFJAKd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 20:10:33 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smtp.infotech.no (Postfix) with ESMTP id 23900204237;
+        Sun, 10 Jun 2018 02:10:31 +0200 (CEST)
+X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
+Received: from smtp.infotech.no ([127.0.0.1])
+        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id ehu1H1OXMlAl; Sun, 10 Jun 2018 02:10:28 +0200 (CEST)
+Received: from [192.168.48.23] (host-45-58-196-245.dyn.295.ca [45.58.196.245])
+        by smtp.infotech.no (Postfix) with ESMTPA id EB68220414C;
+        Sun, 10 Jun 2018 02:10:27 +0200 (CEST)
+Reply-To: dgilbert@interlog.com
+Subject: Re: sd 6:0:0:0: [sdb] Unaligned partial completion (resid=12,
+ sector_sz=512)
+To: Christoph Anton Mitterer <calestyo@scientia.net>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org,
+        linux-scsi <linux-scsi@vger.kernel.org>
+References: <c35dacb574365736229ff04d587abc0390ef7b78.camel@scientia.net>
+ <f96c1329-929b-44a1-4c3a-74dbcedbbafe@infradead.org>
+ <2cbab96cfb722ef8ad8f9fe6f5060226108cf033.camel@scientia.net>
+From: Douglas Gilbert <dgilbert@interlog.com>
+Message-ID: <071361b8-96c0-17cd-d1d7-61ea6357eb83@interlog.com>
+Date: Sat, 9 Jun 2018 20:10:25 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <2cbab96cfb722ef8ad8f9fe6f5060226108cf033.camel@scientia.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Standard TTY port that can be loaded/unloaded via serdev sysfs. This
-serdev driver can only be used by serdev controllers that are compatible
-with ttyport.
+On 2018-06-09 07:50 PM, Christoph Anton Mitterer wrote:
+> Thanks for CCing me to the right list.
+> 
+> Some further info:
+> 
+> I had two disks attached via the following USB/SATA bridge (twice the
+> same, which in turn is connected via a USB3.0 hub):
+> Jun 09 23:16:11 heisenberg kernel: usb 2-2.2: new SuperSpeed USB device number 23 using xhci_hcd
+> Jun 09 23:16:11 heisenberg kernel: usb 2-2.2: New USB device found, idVendor=174c, idProduct=55aa
+> Jun 09 23:16:11 heisenberg kernel: usb 2-2.2: New USB device strings: Mfr=2, Product=3, SerialNumber=1
+> Jun 09 23:16:11 heisenberg kernel: usb 2-2.2: Product: ASMT1053
+> Jun 09 23:16:11 heisenberg kernel: usb 2-2.2: Manufacturer: asmedia
+> Jun 09 23:16:11 heisenberg kernel: usb 2-2.2: SerialNumber: 123456789012
+> Jun 09 23:16:11 heisenberg kernel: usb 2-2.2: Device is not authorized for usage
+> Jun 09 23:16:15 heisenberg kernel: usb-storage 2-2.2:1.0: USB Mass Storage device detected
+> Jun 09 23:16:15 heisenberg kernel: usb-storage 2-2.2:1.0: Quirks match for vid 174c pid 55aa: 400000
+> Jun 09 23:16:15 heisenberg kernel: scsi host7: usb-storage 2-2.2:1.0
+> Jun 09 23:16:15 heisenberg kernel: usb 2-2.2: authorized to connect
+> Jun 09 23:16:16 heisenberg kernel: scsi 7:0:0:0: Direct-Access     ASMT     2105             0    PQ: 0 ANSI: 6
+> Jun 09 23:16:16 heisenberg kernel: sd 7:0:0:0: Attached scsi generic sg2 type 0
+> Jun 09 23:16:16 heisenberg kernel: sd 7:0:0:0: [sdc] Spinning up disk...
+> Jun 09 23:16:25 heisenberg kernel: ........ready
+> Jun 09 23:16:25 heisenberg kernel: sd 7:0:0:0: [sdc] 15628053168 512-byte logical blocks: (8.00 TB/7.28 TiB)
+> Jun 09 23:16:25 heisenberg kernel: sd 7:0:0:0: [sdc] 4096-byte physical blocks
+> Jun 09 23:16:25 heisenberg kernel: sd 7:0:0:0: [sdc] Write Protect is off
+> Jun 09 23:16:25 heisenberg kernel: sd 7:0:0:0: [sdc] Mode Sense: 43 00 00 00
+> Jun 09 23:16:25 heisenberg kernel: sd 7:0:0:0: [sdc] Write cache: enabled, read cache: enabled, doesn't support DPO or FUA
+> Jun 09 23:16:25 heisenberg kernel:  sdc: sdc1 sdc2
+> Jun 09 23:16:25 heisenberg kernel: sd 7:0:0:0: [sdc] Attached SCSI disk
+> 
+> 
+> The errors only occurred on one of the two disks... but few times when
+> I swapped the USB/SATA bridges between the two disks, because I wanted
+> to see whether it's the bridge which is faulty.
+> Since it happened with USB/SATA bridges swapped, I thought it couldn't
+> be that, but rather the HDD.
+> I tried again with the USB3.0 hub removed (and the bridges directly
+> connected to USB3.0 ports of the notebook)... and the errors still
+> appeared (on the same disk).
+> 
+> 
+> Then, they suddenly went away, and despite quite some swapping around
+> of bridges, cables, etc. ... it hasn't appeared again (though I stopped
+> copying for today some 2 hours ago).
+> 
+> Another interesting fact: While I was copying in the first place, where
+> the error occurred quite frequently,... the data must have been read
+> correctly.
+> The fs is btrfs (so there is checksumming) and in addition I have my
+> own SHA512 sums, attached as XATTRs to the files, and for those that
+> were already copied, they verified correctly.
+> 
+> 
+> So my naive assumption would be that either I have some pretty new but
+> somehow weirdly failing HDD, which sometimes shows these errors and
+> sometimes not (yet, so far, giving the correct data)... or...
+> there were some (also strange) connectivity issues (maybe something
+> with the cables?) and when I swapped things around these got finally
+> "resolved".
+> 
+> 
+> So in addition to the basic question: What would the "Unaligned partial
+> completion" mean, I wonder: Would any errors on the USB level (or
+> below) show up as the block device level errors that I've seen?
+> And what could explain that I still got the right data out? Retries
+> that succeed? ECC?
+> 
+> Or should I rather backup ASAP and throw the device with the error
+> messages away, too?
 
-Cc: Rob Herring <robh@kernel.org>
-Cc: Johan Hovold <johan@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
----
- drivers/tty/serdev/Kconfig         | 10 +++++
- drivers/tty/serdev/Makefile        |  2 +
- drivers/tty/serdev/serdev-ttydev.c | 60 ++++++++++++++++++++++++++++++
- 3 files changed, 72 insertions(+)
- create mode 100644 drivers/tty/serdev/serdev-ttydev.c
+Hmmm, probably yes. But before you throw it away, try running 'smartctl -a'
+(or 'smartctl -x') on it and record the output. Also try 'smartctl -t short'
+(a short self-test) on it and then re-run '-a' to see what the self-test log
+says. The disk should keep logs of the number of unrecovered read errors
+(and recovered ones as well).
 
-diff --git a/drivers/tty/serdev/Kconfig b/drivers/tty/serdev/Kconfig
-index 1dbc8352e027..848692caabd6 100644
---- a/drivers/tty/serdev/Kconfig
-+++ b/drivers/tty/serdev/Kconfig
-@@ -21,4 +21,14 @@ config SERIAL_DEV_CTRL_TTYPORT
- 	depends on SERIAL_DEV_BUS != m
- 	default y
- 
-+config SERIAL_DEV_CTRL_TTYDEV
-+	tristate "TTY port dynamically loaded by the Serial Device Bus"
-+	help
-+	  Say Y here if you want to create a bridge driver between the Serial
-+	  device bus and the TTY chardevice. This driver can be dynamically
-+	  loaded/unloaded by the Serial Device Bus.
-+
-+	  If unsure, say N.
-+	depends on SERIAL_DEV_CTRL_TTYPORT
-+
- endif
-diff --git a/drivers/tty/serdev/Makefile b/drivers/tty/serdev/Makefile
-index 0cbdb9444d9d..5c807b77d12d 100644
---- a/drivers/tty/serdev/Makefile
-+++ b/drivers/tty/serdev/Makefile
-@@ -3,3 +3,5 @@ serdev-objs := core.o
- obj-$(CONFIG_SERIAL_DEV_BUS) += serdev.o
- 
- obj-$(CONFIG_SERIAL_DEV_CTRL_TTYPORT) += serdev-ttyport.o
-+
-+obj-$(CONFIG_SERIAL_DEV_CTRL_TTYDEV) += serdev-ttydev.o
-diff --git a/drivers/tty/serdev/serdev-ttydev.c b/drivers/tty/serdev/serdev-ttydev.c
-new file mode 100644
-index 000000000000..180035e101dc
---- /dev/null
-+++ b/drivers/tty/serdev/serdev-ttydev.c
-@@ -0,0 +1,60 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018 Ricardo Ribalda <ricardo.ribalda@gmail.com>
-+ *
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/errno.h>
-+#include <linux/module.h>
-+#include <linux/serdev.h>
-+#include <linux/tty.h>
-+#include "serport.h"
-+
-+static int ttydev_serdev_probe(struct serdev_device *serdev)
-+{
-+	struct serdev_controller *ctrl = serdev->ctrl;
-+	struct serport *serport;
-+	struct device *dev;
-+
-+	if (!ctrl->is_ttyport)
-+		return -ENODEV;
-+
-+	serport = serdev_controller_get_drvdata(ctrl);
-+
-+	dev = tty_register_device_attr(serport->tty_drv, serport->tty_idx,
-+					&serdev->dev, NULL, NULL);
-+
-+	return dev ? 0 : PTR_ERR(dev);
-+}
-+
-+static void ttydev_serdev_remove(struct serdev_device *serdev)
-+{
-+	struct serdev_controller *ctrl = serdev->ctrl;
-+	struct serport *serport;
-+
-+	serport = serdev_controller_get_drvdata(ctrl);
-+	tty_unregister_device(serport->tty_drv, serport->tty_idx);
-+}
-+
-+static const struct serdev_device_id ttydev_serdev_id[] = {
-+	{ "ttydev", },
-+	{ "ttydev_serdev", },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(serdev, ttydev_serdev_id);
-+
-+static struct serdev_device_driver ttydev_serdev_driver = {
-+	.probe = ttydev_serdev_probe,
-+	.remove = ttydev_serdev_remove,
-+	.driver = {
-+		.name = "ttydev_serdev",
-+	},
-+	.id_table = ttydev_serdev_id,
-+};
-+
-+module_serdev_device_driver(ttydev_serdev_driver);
-+
-+MODULE_AUTHOR("Ricardo Ribalda <ricardo.ribalda@gmail.com>");
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("Serdev to ttydev module");
--- 
-2.17.1
+If the disk is only one year old, perhaps it might be covered by a warranty
+from the manufacturer.
+
+Doug Gilbert
+
+
+> On Sat, 2018-06-09 at 15:21 -0700, Randy Dunlap wrote:
+>> [adding linux-scsi mailing list]
+>>
+>>
+>> On 06/09/2018 12:23 PM, Christoph Anton Mitterer wrote:
+>>> Hey.
+>>>
+>>> I'm seeing these errors:
+>>> Jun 09 21:13:22 heisenberg kernel: sd 6:0:0:0: [sdb] Unaligned
+>>> partial completion (resid=16, sector_sz=512)
+>>> Jun 09 21:13:22 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 FAILED
+>>> Result: hostbyte=DID_OK driverbyte=DRIVER_SENSE
+>>> Jun 09 21:13:22 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 Sense
+>>> Key : Medium Error [current]
+>>> Jun 09 21:13:22 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 Add.
+>>> Sense: Unrecovered read error
+>>> Jun 09 21:13:22 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 CDB:
+>>> Read(16) 88 00 00 00 00 01 cd e6 de 40 00 00 00 e0 00 00
+>>> Jun 09 21:13:22 heisenberg kernel: print_req_error: critical medium
+>>> error, dev sdb, sector 7749426752
+>>> Jun 09 21:13:31 heisenberg kernel: sd 6:0:0:0: [sdb] Unaligned
+>>> partial completion (resid=12, sector_sz=512)
+>>> Jun 09 21:13:31 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 FAILED
+>>> Result: hostbyte=DID_OK driverbyte=DRIVER_SENSE
+>>> Jun 09 21:13:31 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 Sense
+>>> Key : Medium Error [current]
+>>> Jun 09 21:13:31 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 Add.
+>>> Sense: Unrecovered read error
+>>> Jun 09 21:13:31 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 CDB:
+>>> Read(16) 88 00 00 00 00 00 00 14 59 60 00 00 01 00 00 00
+>>> Jun 09 21:13:31 heisenberg kernel: print_req_error: critical medium
+>>> error, dev sdb, sector 1333600
+>>> Jun 09 21:13:53 heisenberg kernel: sd 6:0:0:0: [sdb] Unaligned
+>>> partial completion (resid=12, sector_sz=512)
+>>> Jun 09 21:13:53 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 FAILED
+>>> Result: hostbyte=DID_OK driverbyte=DRIVER_SENSE
+>>> Jun 09 21:13:53 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 Sense
+>>> Key : Medium Error [current]
+>>> Jun 09 21:13:53 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 Add.
+>>> Sense: Unrecovered read error
+>>> Jun 09 21:13:53 heisenberg kernel: sd 6:0:0:0: [sdb] tag#0 CDB:
+>>> Read(16) 88 00 00 00 00 00 c3 a2 56 80 00 00 01 00 00 00
+>>> Jun 09 21:13:53 heisenberg kernel: print_req_error: critical medium
+>>> error, dev sdb, sector 3282196096
+>>>
+>>> (many of them) on a Seagate 8TB Archive HDD.
+>>> The disk is only a year old and barely used (since it's just one of
+>>> the
+>>> backups of my main data disks - and the primary disk another
+>>> Seagate
+>>> 8TB HDD broke just few days ago).
+>>>
+>>> I have connected them via USB/SATA bridge... and when I now started
+>>> copying from the backup (which is sdb) to a fresh HDD I started
+>>> seeing
+>>> vast numbers of these errors.
+>>>
+>>> However, fsck, cp seem to do fine, and the data (as far as it has
+>>> been
+>>> copied) seems good (I have sha512 sums of all of it).
+>>>
+>>>
+>>> Any ideas what "Unaligned partial completion" and these errors
+>>> mean?
+>>>
+>>>
+>>> Thanks,
+>>> Chris.
+>>>
+>>
+>>
+> 
