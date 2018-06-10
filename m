@@ -1,80 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id mt7pOuZOGVtmegAAmS7hNA
-	; Thu, 07 Jun 2018 15:27:35 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id IjUeAcACHVvFKgAAmS7hNA
+	; Sun, 10 Jun 2018 11:13:58 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id C9DD4608BF; Thu,  7 Jun 2018 15:27:34 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dmZRTYzI"
+	id 9AB08608D2; Sun, 10 Jun 2018 11:13:58 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 620AC601B4;
-	Thu,  7 Jun 2018 15:27:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 620AC601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id E7464608FB;
+	Sun, 10 Jun 2018 11:13:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E7464608FB
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753803AbeFGP1c (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:27:32 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60218 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933434AbeFGO51 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:57:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=xsb0j3/KujJNiCnPZvcvW92k5DtDb55gHp7c0RLDjgA=; b=dmZRTYzIwVu26IZrJChBPkz8y
-        vNKA3qg4ZSVUdN+IYrtxAruYr9DAJ3D+MYfJ9CabNI5+VNOa0Az/qOUCBYOxv/7ocH6mhVEk4VFBj
-        NBg8vxtRdubQPip6QfnLQrjt9uzb50wfqHjCS2OwUv+GbuO+g6TIjJRoLfHoHpWUPNBlAJCVmo/Rn
-        3MJBROaL9nDKxSVMJhLbJ/UDIYto8z9hj35c34TKyYFmSmD04zu+2fb0n84lOSxzUdnBR5pwAC7FN
-        YLyzPP+LRnouQQAaout6hh/gu5pBWvnAkmPfoZtr2ufXhWzuPWnD7pucBBtlCnqlb8IMPXX6eADik
-        t0nV1w63w==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fQwLt-0005tr-0u; Thu, 07 Jun 2018 14:57:25 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Kees Cook <keescook@chromium.org>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
-Subject: [PATCH 3/6] Convert v4l2 event to struct_size
-Date: Thu,  7 Jun 2018 07:57:17 -0700
-Message-Id: <20180607145720.22590-4-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180607145720.22590-1-willy@infradead.org>
-References: <20180607145720.22590-1-willy@infradead.org>
+        id S1753901AbeFJLNz (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sun, 10 Jun 2018 07:13:55 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:36412 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753864AbeFJLNx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Jun 2018 07:13:53 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 057C074FE7E31;
+        Sun, 10 Jun 2018 19:13:20 +0800 (CST)
+Received: from [127.0.0.1] (10.177.23.164) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.382.0; Sun, 10 Jun 2018
+ 19:13:14 +0800
+Subject: Re: [PATCH 0/7] add non-strict mode support for arm-smmu-v3
+To: Robin Murphy <robin.murphy@arm.com>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        linux-mediatek <linux-mediatek@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        iommu <iommu@lists.linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <1527752569-18020-1-git-send-email-thunder.leizhen@huawei.com>
+ <d65f87a4-db61-3cd2-1a6f-0322025840a8@arm.com>
+ <96cc25b9-b21f-6067-384d-f52e6b8b25e7@huawei.com>
+ <92b240f5-596e-87a9-863a-b18475042cce@arm.com> <5B10ECBB.209@huawei.com>
+CC: Libin <huawei.libin@huawei.com>,
+        Guozhu Li <liguozhu@hisilicon.com>,
+        Xinwei Hu <huxinwei@huawei.com>
+From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+Message-ID: <5B1D07C9.6090507@huawei.com>
+Date: Sun, 10 Jun 2018 19:13:13 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
+MIME-Version: 1.0
+In-Reply-To: <5B10ECBB.209@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.23.164]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
----
- drivers/media/v4l2-core/v4l2-event.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/media/v4l2-core/v4l2-event.c b/drivers/media/v4l2-core/v4l2-event.c
-index 968c2eb08b5a..127fe6eb91d9 100644
---- a/drivers/media/v4l2-core/v4l2-event.c
-+++ b/drivers/media/v4l2-core/v4l2-event.c
-@@ -215,8 +215,7 @@ int v4l2_event_subscribe(struct v4l2_fh *fh,
- 	if (elems < 1)
- 		elems = 1;
- 
--	sev = kvzalloc(sizeof(*sev) + sizeof(struct v4l2_kevent) * elems,
--		       GFP_KERNEL);
-+	sev = kvzalloc(struct_size(sev, events, elems), GFP_KERNEL);
- 	if (!sev)
- 		return -ENOMEM;
- 	for (i = 0; i < elems; i++)
+On 2018/6/1 14:50, Leizhen (ThunderTown) wrote:
+> 
+> 
+> On 2018/5/31 22:25, Robin Murphy wrote:
+>> On 31/05/18 14:49, Hanjun Guo wrote:
+>>> Hi Robin,
+>>>
+>>> On 2018/5/31 19:24, Robin Murphy wrote:
+>>>> On 31/05/18 08:42, Zhen Lei wrote:
+>>>>> In common, a IOMMU unmap operation follow the below steps:
+>>>>> 1. remove the mapping in page table of the specified iova range
+>>>>> 2. execute tlbi command to invalid the mapping which is cached in TLB
+>>>>> 3. wait for the above tlbi operation to be finished
+>>>>> 4. free the IOVA resource
+>>>>> 5. free the physical memory resource
+>>>>>
+>>>>> This maybe a problem when unmap is very frequently, the combination of tlbi
+>>>>> and wait operation will consume a lot of time. A feasible method is put off
+>>>>> tlbi and iova-free operation, when accumulating to a certain number or
+>>>>> reaching a specified time, execute only one tlbi_all command to clean up
+>>>>> TLB, then free the backup IOVAs. Mark as non-strict mode.
+>>>>>
+>>>>> But it must be noted that, although the mapping has already been removed in
+>>>>> the page table, it maybe still exist in TLB. And the freed physical memory
+>>>>> may also be reused for others. So a attacker can persistent access to memory
+>>>>> based on the just freed IOVA, to obtain sensible data or corrupt memory. So
+>>>>> the VFIO should always choose the strict mode.
+>>>>>
+>>>>> Some may consider put off physical memory free also, that will still follow
+>>>>> strict mode. But for the map_sg cases, the memory allocation is not controlled
+>>>>> by IOMMU APIs, so it is not enforceable.
+>>>>>
+>>>>> Fortunately, Intel and AMD have already applied the non-strict mode, and put
+>>>>> queue_iova() operation into the common file dma-iommu.c., and my work is based
+>>>>> on it. The difference is that arm-smmu-v3 driver will call IOMMU common APIs to
+>>>>> unmap, but Intel and AMD IOMMU drivers are not.
+>>>>>
+>>>>> Below is the performance data of strict vs non-strict for NVMe device:
+>>>>> Randomly Read  IOPS: 146K(strict) vs 573K(non-strict)
+>>>>> Randomly Write IOPS: 143K(strict) vs 513K(non-strict)
+>>>>
+>>>> What hardware is this on? If it's SMMUv3 without MSIs (e.g. D05), then you'll still be using the rubbish globally-blocking sync implementation. If that is the case, I'd be very interested to see how much there is to gain from just improving that - I've had a patch kicking around for a while[1] (also on a rebased branch at [2]), but don't have the means for serious performance testing.
+> I will try your patch to see how much it can improve. I think the best way
+Hi Robin,
+
+I applied your patch and got below improvemnet.
+
+Randomly Read  IOPS: 146K --> 214K
+Randomly Write IOPS: 143K --> 212K
+
+> to resovle the globally-blocking sync is that the hardware provide 64bits
+> CONS regitster, so that it can never be wrapped, and the spinlock can also
+> be removed.
+> 
+>>>
+>>> The hardware is the new D06 which the SMMU with MSIs,
+>>
+>> Cool! Now that profiling is fairly useful since we got rid of most of the locks, are you able to get an idea of how the overhead in the normal case is distributed between arm_smmu_cmdq_insert_cmd() and __arm_smmu_sync_poll_msi()? We're always trying to improve our understanding of where command-queue-related overheads turn out to be in practice, and there's still potentially room to do nicer things than TLBI_NH_ALL ;)
+> Even if the software has no overhead, there may still be a problem, because
+> the smmu need to execute the commands in sequence, especially before
+> globally-blocking sync has been removed. Base on the actually execute time
+> of single tlbi and sync, we can get the upper limit in theory.
+> 
+> BTW, I will reply the reset of mail next week. I'm busy with other things now.
+> 
+>>
+>> Robin.
+>>
+>>> it's not D05 :)
+>>>
+>>> Thanks
+>>> Hanjun
+>>>
+>>
+>> .
+>>
+> 
+
 -- 
-2.17.0
+Thanks!
+BestRegards
