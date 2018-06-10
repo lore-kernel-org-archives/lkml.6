@@ -1,175 +1,239 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id aguYCfnIG1sCOwAAmS7hNA
-	; Sat, 09 Jun 2018 12:33:42 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id j8A+ApyZHVswEQAAmS7hNA
+	; Sun, 10 Jun 2018 21:35:47 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id C399B607A4; Sat,  9 Jun 2018 12:33:42 +0000 (UTC)
+	id 24E9860791; Sun, 10 Jun 2018 21:35:47 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.4 required=2.0 tests=BAYES_00,DATE_IN_PAST_06_12,
+	MAILING_LIST_MULTI autolearn=no autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 474C5602FC;
-	Sat,  9 Jun 2018 12:33:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 474C5602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 6D71D604D4;
+	Sun, 10 Jun 2018 21:35:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6D71D604D4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753521AbeFIMdl (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 08:33:41 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42300 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753263AbeFIMdj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 08:33:39 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 563C5BB42D;
-        Sat,  9 Jun 2018 12:33:38 +0000 (UTC)
-Received: from localhost (ovpn-12-40.pek2.redhat.com [10.72.12.40])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3B94D210C6D4;
-        Sat,  9 Jun 2018 12:33:29 +0000 (UTC)
-From: Ming Lei <ming.lei@redhat.com>
-To: Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kent Overstreet <kent.overstreet@gmail.com>
-Cc: David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Theodore Ts'o <tytso@mit.edu>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Coly Li <colyli@suse.de>, Filipe Manana <fdmanana@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH V6 15/30] block: introduce bio_clone_chunk_bioset()
-Date: Sat,  9 Jun 2018 20:29:59 +0800
-Message-Id: <20180609123014.8861-16-ming.lei@redhat.com>
-In-Reply-To: <20180609123014.8861-1-ming.lei@redhat.com>
-References: <20180609123014.8861-1-ming.lei@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Sat, 09 Jun 2018 12:33:38 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Sat, 09 Jun 2018 12:33:38 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
+        id S932401AbeFJVfp (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Sun, 10 Jun 2018 17:35:45 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:16964 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753487AbeFJVeI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Jun 2018 17:34:08 -0400
+Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Sun, 10 Jun 2018 14:33:44 -0700
+Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 008E44070F;
+        Sun, 10 Jun 2018 14:34:06 -0700 (PDT)
+From: Nadav Amit <namit@vmware.com>
+To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>
+CC: Nadav Amit <namit@vmware.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jan Beulich <JBeulich@suse.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: [PATCH v3 3/9] x86: refcount: prevent gcc distortions
+Date: Sun, 10 Jun 2018 07:19:05 -0700
+Message-ID: <20180610141911.52948-4-namit@vmware.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180610141911.52948-1-namit@vmware.com>
+References: <20180610141911.52948-1-namit@vmware.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
+ designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is one use case(DM) which requires to clone bio chunk by
-chunk, so introduce this API.
+GCC considers the number of statements in inlined assembly blocks,
+according to new-lines and semicolons, as an indication to the cost of
+the block in time and space. This data is distorted by the kernel code,
+which puts information in alternative sections. As a result, the
+compiler may perform incorrect inlining and branch optimizations.
 
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
+The solution is to set an assembly macro and call it from the inlined
+assembly block. As a result GCC considers the inline assembly block as
+a single instruction.
+
+This patch allows to inline functions such as __get_seccomp_filter().
+Interestingly, this allows more aggressive inlining while reducing the
+kernel size.
+
+   text	   data	    bss	    dec	    hex	filename
+18140970 10225412 2957312 31323694 1ddf62e ./vmlinux before
+18140140 10225284 2957312 31322736 1ddf270 ./vmlinux after (-958)
+
+Static text symbols:
+Before:	40302
+After:	40286	(-16)
+
+Functions such as kref_get(), free_user(), fuse_file_get() now get
+inlined.
+
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Jan Beulich <JBeulich@suse.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+
+Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- block/bio.c         | 56 +++++++++++++++++++++++++++++++++++++++--------------
- include/linux/bio.h |  1 +
- 2 files changed, 43 insertions(+), 14 deletions(-)
+ arch/x86/include/asm/refcount.h | 74 ++++++++++++++++++++-------------
+ arch/x86/kernel/macros.S        |  1 +
+ 2 files changed, 46 insertions(+), 29 deletions(-)
 
-diff --git a/block/bio.c b/block/bio.c
-index cb0f46e2752b..60219f82ddab 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -644,21 +644,13 @@ struct bio *bio_clone_fast(struct bio *bio, gfp_t gfp_mask, struct bio_set *bs)
- }
- EXPORT_SYMBOL(bio_clone_fast);
+diff --git a/arch/x86/include/asm/refcount.h b/arch/x86/include/asm/refcount.h
+index 4cf11d88d3b3..6b2809a4d8e9 100644
+--- a/arch/x86/include/asm/refcount.h
++++ b/arch/x86/include/asm/refcount.h
+@@ -4,6 +4,41 @@
+  * x86-specific implementation of refcount_t. Based on PAX_REFCOUNT from
+  * PaX/grsecurity.
+  */
++
++#ifdef __ASSEMBLY__
++
++#include <asm/asm.h>
++#include <asm/bug.h>
++
++.macro REFCOUNT_EXCEPTION counter:req
++	.pushsection .text..refcount
++111:	lea \counter, %_ASM_CX
++112:	ud2
++	ASM_UNREACHABLE
++	.popsection
++113:	_ASM_EXTABLE_REFCOUNT(112b, 113b)
++.endm
++
++/* Trigger refcount exception if refcount result is negative. */
++.macro REFCOUNT_CHECK_LT_ZERO counter:req
++	js 111f
++	REFCOUNT_EXCEPTION counter="\counter"
++.endm
++
++/* Trigger refcount exception if refcount result is zero or negative. */
++.macro REFCOUNT_CHECK_LE_ZERO counter:req
++	jz 111f
++	REFCOUNT_CHECK_LT_ZERO counter="\counter"
++.endm
++
++/* Trigger refcount exception unconditionally. */
++.macro REFCOUNT_ERROR counter:req
++	jmp 111f
++	REFCOUNT_EXCEPTION counter="\counter"
++.endm
++
++#else /* __ASSEMBLY__ */
++
+ #include <linux/refcount.h>
  
--/**
-- * 	bio_clone_bioset - clone a bio
-- * 	@bio_src: bio to clone
-- *	@gfp_mask: allocation priority
-- *	@bs: bio_set to allocate from
-- *
-- *	Clone bio. Caller will own the returned bio, but not the actual data it
-- *	points to. Reference count of returned bio will be one.
-- */
--struct bio *bio_clone_bioset(struct bio *bio_src, gfp_t gfp_mask,
--			     struct bio_set *bs)
-+static struct bio *__bio_clone_bioset(struct bio *bio_src, gfp_t gfp_mask,
-+				      struct bio_set *bs, bool seg)
+ /*
+@@ -14,34 +49,11 @@
+  * central refcount exception. The fixup address for the exception points
+  * back to the regular execution flow in .text.
+  */
+-#define _REFCOUNT_EXCEPTION				\
+-	".pushsection .text..refcount\n"		\
+-	"111:\tlea %[counter], %%" _ASM_CX "\n"		\
+-	"112:\t" ASM_UD2 "\n"				\
+-	ASM_UNREACHABLE					\
+-	".popsection\n"					\
+-	"113:\n"					\
+-	_ASM_EXTABLE_REFCOUNT(112b, 113b)
+-
+-/* Trigger refcount exception if refcount result is negative. */
+-#define REFCOUNT_CHECK_LT_ZERO				\
+-	"js 111f\n\t"					\
+-	_REFCOUNT_EXCEPTION
+-
+-/* Trigger refcount exception if refcount result is zero or negative. */
+-#define REFCOUNT_CHECK_LE_ZERO				\
+-	"jz 111f\n\t"					\
+-	REFCOUNT_CHECK_LT_ZERO
+-
+-/* Trigger refcount exception unconditionally. */
+-#define REFCOUNT_ERROR					\
+-	"jmp 111f\n\t"					\
+-	_REFCOUNT_EXCEPTION
+ 
+ static __always_inline void refcount_add(unsigned int i, refcount_t *r)
  {
- 	struct bvec_iter iter;
- 	struct bio_vec bv;
- 	struct bio *bio;
-+	int nr_vecs = seg ? bio_segments(bio_src) : bio_chunks(bio_src);
- 
- 	/*
- 	 * Pre immutable biovecs, __bio_clone() used to just do a memcpy from
-@@ -682,7 +674,7 @@ struct bio *bio_clone_bioset(struct bio *bio_src, gfp_t gfp_mask,
- 	 *    __bio_clone_fast() anyways.
- 	 */
- 
--	bio = bio_alloc_bioset(gfp_mask, bio_segments(bio_src), bs);
-+	bio = bio_alloc_bioset(gfp_mask, nr_vecs, bs);
- 	if (!bio)
- 		return NULL;
- 	bio->bi_disk		= bio_src->bi_disk;
-@@ -700,8 +692,13 @@ struct bio *bio_clone_bioset(struct bio *bio_src, gfp_t gfp_mask,
- 		bio->bi_io_vec[bio->bi_vcnt++] = bio_src->bi_io_vec[0];
- 		break;
- 	default:
--		bio_for_each_segment(bv, bio_src, iter)
--			bio->bi_io_vec[bio->bi_vcnt++] = bv;
-+		if (seg) {
-+			bio_for_each_segment(bv, bio_src, iter)
-+				bio->bi_io_vec[bio->bi_vcnt++] = bv;
-+		} else {
-+			bio_for_each_chunk(bv, bio_src, iter)
-+				bio->bi_io_vec[bio->bi_vcnt++] = bv;
-+		}
- 		break;
- 	}
- 
-@@ -719,9 +716,40 @@ struct bio *bio_clone_bioset(struct bio *bio_src, gfp_t gfp_mask,
- 
- 	return bio;
+ 	asm volatile(LOCK_PREFIX "addl %1,%0\n\t"
+-		REFCOUNT_CHECK_LT_ZERO
++		"REFCOUNT_CHECK_LT_ZERO counter=\"%[counter]\""
+ 		: [counter] "+m" (r->refs.counter)
+ 		: "ir" (i)
+ 		: "cc", "cx");
+@@ -50,7 +62,7 @@ static __always_inline void refcount_add(unsigned int i, refcount_t *r)
+ static __always_inline void refcount_inc(refcount_t *r)
+ {
+ 	asm volatile(LOCK_PREFIX "incl %0\n\t"
+-		REFCOUNT_CHECK_LT_ZERO
++		"REFCOUNT_CHECK_LT_ZERO counter=\"%[counter]\""
+ 		: [counter] "+m" (r->refs.counter)
+ 		: : "cc", "cx");
  }
+@@ -58,7 +70,7 @@ static __always_inline void refcount_inc(refcount_t *r)
+ static __always_inline void refcount_dec(refcount_t *r)
+ {
+ 	asm volatile(LOCK_PREFIX "decl %0\n\t"
+-		REFCOUNT_CHECK_LE_ZERO
++		"REFCOUNT_CHECK_LE_ZERO counter=\"%[counter]\""
+ 		: [counter] "+m" (r->refs.counter)
+ 		: : "cc", "cx");
+ }
+@@ -66,13 +78,15 @@ static __always_inline void refcount_dec(refcount_t *r)
+ static __always_inline __must_check
+ bool refcount_sub_and_test(unsigned int i, refcount_t *r)
+ {
+-	GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl", REFCOUNT_CHECK_LT_ZERO,
++	GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl",
++				  "REFCOUNT_CHECK_LT_ZERO counter=\"%0\"",
+ 				  r->refs.counter, "er", i, "%0", e, "cx");
+ }
+ 
+ static __always_inline __must_check bool refcount_dec_and_test(refcount_t *r)
+ {
+-	GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl", REFCOUNT_CHECK_LT_ZERO,
++	GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl",
++				 "REFCOUNT_CHECK_LT_ZERO counter=\"%0\"",
+ 				 r->refs.counter, "%0", e, "cx");
+ }
+ 
+@@ -90,7 +104,7 @@ bool refcount_add_not_zero(unsigned int i, refcount_t *r)
+ 
+ 		/* Did we try to increment from/to an undesirable state? */
+ 		if (unlikely(c < 0 || c == INT_MAX || result < c)) {
+-			asm volatile(REFCOUNT_ERROR
++			asm volatile("REFCOUNT_ERROR counter=\"%[counter]\""
+ 				     : : [counter] "m" (r->refs.counter)
+ 				     : "cc", "cx");
+ 			break;
+@@ -106,4 +120,6 @@ static __always_inline __must_check bool refcount_inc_not_zero(refcount_t *r)
+ 	return refcount_add_not_zero(1, r);
+ }
+ 
++#endif /* __ASSEMBLY__ */
 +
-+/**
-+ * 	bio_clone_bioset - clone a bio
-+ * 	@bio_src: bio to clone
-+ *	@gfp_mask: allocation priority
-+ *	@bs: bio_set to allocate from
-+ *
-+ *	Clone bio. Caller will own the returned bio, but not the actual data it
-+ *	points to. Reference count of returned bio will be one.
-+ */
-+struct bio *bio_clone_bioset(struct bio *bio_src, gfp_t gfp_mask,
-+			     struct bio_set *bs)
-+{
-+	return __bio_clone_bioset(bio_src, gfp_mask, bs, true);
-+}
- EXPORT_SYMBOL(bio_clone_bioset);
+ #endif
+diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
+index cee28c3246dc..f1fe1d570365 100644
+--- a/arch/x86/kernel/macros.S
++++ b/arch/x86/kernel/macros.S
+@@ -7,3 +7,4 @@
+  */
  
- /**
-+ * 	bio_clone_seg_bioset - clone a bio segment by segment
-+ * 	@bio_src: bio to clone
-+ *	@gfp_mask: allocation priority
-+ *	@bs: bio_set to allocate from
-+ *
-+ *	Clone bio. Caller will own the returned bio, but not the actual data it
-+ *	points to. Reference count of returned bio will be one.
-+ */
-+struct bio *bio_clone_chunk_bioset(struct bio *bio_src, gfp_t gfp_mask,
-+				   struct bio_set *bs)
-+{
-+	return __bio_clone_bioset(bio_src, gfp_mask, bs, false);
-+}
-+EXPORT_SYMBOL(bio_clone_chunk_bioset);
-+
-+/**
-  *	bio_add_pc_page	-	attempt to add page to bio
-  *	@q: the target queue
-  *	@bio: destination bio
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index 13fd7bc30390..0fa1035dde38 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -483,6 +483,7 @@ extern void bio_put(struct bio *);
- extern void __bio_clone_fast(struct bio *, struct bio *);
- extern struct bio *bio_clone_fast(struct bio *, gfp_t, struct bio_set *);
- extern struct bio *bio_clone_bioset(struct bio *, gfp_t, struct bio_set *bs);
-+extern struct bio *bio_clone_chunk_bioset(struct bio *, gfp_t, struct bio_set *bs);
- 
- extern struct bio_set fs_bio_set;
- 
+ #include <linux/compiler.h>
++#include <asm/refcount.h>
 -- 
-2.9.5
+2.17.0
