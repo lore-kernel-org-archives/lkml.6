@@ -1,369 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id AdltOWJjGlsZHgAAmS7hNA
-	; Fri, 08 Jun 2018 11:07:27 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id XRiPG6saHVtEMwAAmS7hNA
+	; Sun, 10 Jun 2018 12:34:13 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 31AE2608B8; Fri,  8 Jun 2018 11:07:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-	s=default; t=1528456047;
-	bh=vq4YLa96YDNU6umS2ACZIJNMzFMsLRw3kHctm5LHJaQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OiSj2kIeSKpfuYAAVyK4Nqa76rmyYxxB5g5hvZEOgZAo2b+Zdy9D7shR9tF1QB4Al
-	 N0FNw3Zyz3kaB0x4QtSHsJrWGzf2OSHa41zjL4ZaE534gil/0N+PEIuJCev87nIZqB
-	 3bsI36ZY7FWz15mdUmEE7GNe3h+aId5TyuJ6sI9I=
+	id 91489608BA; Sun, 10 Jun 2018 12:34:13 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zmN5k34X"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 5288D60590;
-	Fri,  8 Jun 2018 11:07:26 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Hpd7T6D/";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="keisc0xj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5288D60590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 0FD6A604D4;
+	Sun, 10 Jun 2018 12:34:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0FD6A604D4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752738AbeFHLHY (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 07:07:24 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48562 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751073AbeFHLHV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 07:07:21 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 85EB3608C1; Fri,  8 Jun 2018 11:07:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528456040;
-        bh=vq4YLa96YDNU6umS2ACZIJNMzFMsLRw3kHctm5LHJaQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Hpd7T6D/gZ3fIi/RTlNGvpSMy/JrYZO34BF3Eknp0GUjUv1uIG6CqsssCPPEu6Hda
-         0ca03SJTEDdh8Tp9B5BTVGwiHO2IiwZ3lm05Th4JA3aeu4qdyq7odJvSlb9plINxIr
-         DsLQ+TkTlPpa2vfYSZbIL1/i79KvEO7S/30nVACM=
-Received: from sayalil-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S1753888AbeFJMeL (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sun, 10 Jun 2018 08:34:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53444 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753451AbeFJMeJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Jun 2018 08:34:09 -0400
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: sayalil@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1FE1D60590;
-        Fri,  8 Jun 2018 11:07:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528456039;
-        bh=vq4YLa96YDNU6umS2ACZIJNMzFMsLRw3kHctm5LHJaQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=keisc0xjfHg6D0yKw3FgKFZDSfyX/1rDN6JgJ6qSpNYxQCDEZXGhngfq7l0dFHtsZ
-         jqtwIY6iFv41c7ZmA5w3y9oVAaxa+hyapgyiT7ROTWA4WbEqVhA8vHEkd2ADU7uI+/
-         wWUse9nkktYVJZjSD7Ipb3jhRtf2mHVB3Dugdwgw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1FE1D60590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
-From: Sayali Lokhande <sayalil@codeaurora.org>
-To: subhashj@codeaurora.org, cang@codeaurora.org,
-        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
-        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, asutoshd@codeaurora.org,
-        evgreen@chromium.org
-Cc: linux-scsi@vger.kernel.org,
-        Sayali Lokhande <sayalil@codeaurora.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH V2 2/3] scsi: ufs: Add ufs provisioning support
-Date: Fri,  8 Jun 2018 16:36:29 +0530
-Message-Id: <1528455990-24572-3-git-send-email-sayalil@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1528455990-24572-1-git-send-email-sayalil@codeaurora.org>
-References: <1528455990-24572-1-git-send-email-sayalil@codeaurora.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id 06F8620660;
+        Sun, 10 Jun 2018 12:34:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528634049;
+        bh=FZdpxTaNysHjmfUpSMgEIFQ9h+hiX87odS6q8B1HfHM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=zmN5k34XJvVJ9saTGMWGj0LWbjDmvB6wugwovMXccz+0KLpkKhHrTFiZ5qk9WUx69
+         5TP1Xi4F7lvNSpM1ZXEslqeCT8szuPPArXgDHcSoLQ0Z6tqiz4W2TIUIhZ2EZFRddw
+         Ty6PFITrEE1R+W7cHMig000r/+pGjmCSHdN7kwt0=
+Date: Sun, 10 Jun 2018 13:34:03 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Ludovic Desroches <ludovic.desroches@microchip.com>
+Cc: Eugen Hristev <eugen.hristev@microchip.com>,
+        <alexandre.belloni@bootlin.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>, <linux-input@vger.kernel.org>,
+        <nicolas.ferre@microchip.com>, <dmitry.torokhov@gmail.com>,
+        <robh@kernel.org>
+Subject: Re: [PATCH v7 7/9] dt-bindings: iio: adc: at91-sama5d2_adc: add
+ channel specific consumer info
+Message-ID: <20180610133403.533cfe38@archlinux>
+In-Reply-To: <20180522122319.GN22971@rfolt0960.corp.atmel.com>
+References: <1526975559-18966-1-git-send-email-eugen.hristev@microchip.com>
+        <1526975559-18966-8-git-send-email-eugen.hristev@microchip.com>
+        <20180522122319.GN22971@rfolt0960.corp.atmel.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A new api ufshcd_do_config_device() is added in driver
-to support UFS provisioning at runtime. Sysfs support
-is added to trigger provisioning.
-Device and Unit configurable parameters are parsed from
-vendor specific provisioning data or file and
-passed via sysfs at runtime to provision ufs device.
+On Tue, 22 May 2018 14:23:19 +0200
+Ludovic Desroches <ludovic.desroches@microchip.com> wrote:
 
-Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
----
- drivers/scsi/ufs/ufs.h    |  28 +++++++
- drivers/scsi/ufs/ufshcd.c | 181 ++++++++++++++++++++++++++++++++++++++++++++++
- drivers/scsi/ufs/ufshcd.h |   1 +
- 3 files changed, 210 insertions(+)
+> On Tue, May 22, 2018 at 10:52:37AM +0300, Eugen Hristev wrote:
+> > Added defines for channel consumer device-tree binding
+> > 
+> > Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+> > Reviewed-by: Rob Herring <robh@kernel.org>  
+> Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+Applied to the togreg branch of iio.git and pushed out as testing for
+the autobuilders to play with it.
 
-diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
-index e15deb0..1f99904 100644
---- a/drivers/scsi/ufs/ufs.h
-+++ b/drivers/scsi/ufs/ufs.h
-@@ -333,6 +333,7 @@ enum {
- 	UFSHCD_AMP		= 3,
- };
- 
-+#define UFS_BLOCK_SIZE	4096
- #define POWER_DESC_MAX_SIZE			0x62
- #define POWER_DESC_MAX_ACTV_ICC_LVLS		16
- 
-@@ -425,6 +426,33 @@ enum {
- 	MASK_TM_SERVICE_RESP		= 0xFF,
- };
- 
-+struct ufs_unit_desc {
-+	u8     bLUEnable;              /* 1 for enabled LU */
-+	u8     bBootLunID;             /* 0 for using this LU for boot */
-+	u8     bLUWriteProtect;        /* 1 = power on WP, 2 = permanent WP */
-+	u8     bMemoryType;            /* 0 for enhanced memory type */
-+	u32    dNumAllocUnits;         /* Number of alloc unit for this LU */
-+	u8     bDataReliability;       /* 0 for reliable write support */
-+	u8     bLogicalBlockSize;      /* See section 13.2.3 of UFS standard */
-+	u8     bProvisioningType;      /* 0 for thin provisioning */
-+	u16    wContextCapabilities;   /* refer Unit Descriptor Description */
-+};
-+
-+struct ufs_config_descr {
-+	u8     bNumberLU;              /* Total number of active LUs */
-+	u8     bBootEnable;            /* enabling device for partial init */
-+	u8     bDescrAccessEn;         /* desc access during partial init */
-+	u8     bInitPowerMode;         /* Initial device power mode */
-+	u8     bHighPriorityLUN;       /* LUN of the high priority LU */
-+	u8     bSecureRemovalType;     /* Erase config for data removal */
-+	u8     bInitActiveICCLevel;    /* ICC level after reset */
-+	u16    wPeriodicRTCUpdate;     /* 0 to set a priodic RTC update rate */
-+	u32     bConfigDescrLock;      /* 1 to lock Configation Descriptor */
-+	u32    qVendorConfigCode;      /* Vendor specific configuration code */
-+	struct ufs_unit_desc unit[8];
-+	u8	lun_to_grow;
-+};
-+
- /* Task management service response */
- enum {
- 	UPIU_TASK_MANAGEMENT_FUNC_COMPL		= 0x00,
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 4abc7ae..8975449 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -42,6 +42,7 @@
- #include <linux/nls.h>
- #include <linux/of.h>
- #include <linux/bitfield.h>
-+#include <asm/unaligned.h>
- #include "ufshcd.h"
- #include "ufs_quirks.h"
- #include "unipro.h"
-@@ -237,6 +238,7 @@ static int ufshcd_config_pwr_mode(struct ufs_hba *hba,
- 		struct ufs_pa_layer_attr *desired_pwr_mode);
- static int ufshcd_change_power_mode(struct ufs_hba *hba,
- 			     struct ufs_pa_layer_attr *pwr_mode);
-+static int ufshcd_do_config_device(struct ufs_hba *hba);
- static inline bool ufshcd_valid_tag(struct ufs_hba *hba, int tag)
- {
- 	return tag >= 0 && tag < hba->nutrs;
-@@ -3063,6 +3065,14 @@ static inline int ufshcd_read_power_desc(struct ufs_hba *hba,
- 	return ufshcd_read_desc(hba, QUERY_DESC_IDN_POWER, 0, buf, size);
- }
- 
-+static inline int ufshcd_read_geometry_desc(struct ufs_hba *hba,
-+					 u8 *buf,
-+					 u32 size)
-+{
-+	return ufshcd_read_desc(hba, QUERY_DESC_IDN_GEOMETRY, 0, buf, size);
-+}
-+
-+
- static int ufshcd_read_device_desc(struct ufs_hba *hba, u8 *buf, u32 size)
- {
- 	return ufshcd_read_desc(hba, QUERY_DESC_IDN_DEVICE, 0, buf, size);
-@@ -6344,6 +6354,177 @@ static int ufshcd_set_dev_ref_clk(struct ufs_hba *hba)
- }
- 
- /**
-+ * ufshcd_do_config_device - API function for UFS provisioning
-+ * hba: per-adapter instance
-+ * Returns 0 for success, non-zero in case of failure.
-+ */
-+static int ufshcd_do_config_device(struct ufs_hba *hba)
-+{
-+	struct ufs_config_descr *cfg = &hba->cfgs;
-+	int buff_len = QUERY_DESC_CONFIGURATION_DEF_SIZE;
-+	u8 desc_buf[QUERY_DESC_CONFIGURATION_DEF_SIZE] = {0};
-+	int i, ret = 0;
-+	int lun_to_grow = -1;
-+	u64 qTotalRawDeviceCapacity;
-+	u16 wEnhanced1CapAdjFac, wEnhanced2CapAdjFac;
-+	u32 dEnhanced1MaxNAllocU, dEnhanced2MaxNAllocU;
-+	size_t alloc_units, units_to_create = 0;
-+	size_t capacity_to_alloc_factor;
-+	size_t enhanced1_units = 0, enhanced2_units = 0;
-+	size_t conversion_ratio = 1;
-+	u8 *pt;
-+	u32 blocks_per_alloc_unit = 1024;
-+	int geo_len = hba->desc_size.geom_desc;
-+	u8 geo_buf[hba->desc_size.geom_desc];
-+	unsigned int max_partitions = 8;
-+
-+	WARN_ON(!hba || !cfg);
-+
-+	ret = ufshcd_read_geometry_desc(hba, geo_buf, geo_len);
-+	if (ret) {
-+		dev_err(hba->dev, "%s: Failed getting geometry_desc %d\n",
-+			__func__, ret);
-+		return ret;
-+	}
-+
-+	/*
-+	 * Get Geomtric parameters like total configurable memory
-+	 * quantity (Offset 0x04 to 0x0b), Capacity Adjustment
-+	 * Factors (Offset 0x30, 0x31, 0x36, 0x37), Max allocation
-+	 * units (Offset 0x2c to 0x2f, 0x32 to 0x35) used to configure
-+	 * the device logical units.
-+	 */
-+	qTotalRawDeviceCapacity = get_unaligned_be64(&geo_buf[0x04]);
-+	wEnhanced1CapAdjFac = get_unaligned_be16(&geo_buf[0x30]);
-+	wEnhanced2CapAdjFac = get_unaligned_be16(&geo_buf[0x36]);
-+	dEnhanced1MaxNAllocU = get_unaligned_be32(&geo_buf[0x2c]);
-+	dEnhanced2MaxNAllocU = get_unaligned_be32(&geo_buf[0x32]);
-+
-+	capacity_to_alloc_factor =
-+		(blocks_per_alloc_unit * UFS_BLOCK_SIZE) / 512;
-+
-+	if (qTotalRawDeviceCapacity % capacity_to_alloc_factor != 0) {
-+		dev_err(hba->dev,
-+			"%s: Raw capacity(%llu) not multiple of alloc factor(%zu)\n",
-+			__func__, qTotalRawDeviceCapacity,
-+			capacity_to_alloc_factor);
-+		return -EINVAL;
-+	}
-+	alloc_units = (qTotalRawDeviceCapacity / capacity_to_alloc_factor);
-+	units_to_create = 0;
-+	enhanced1_units = enhanced2_units = 0;
-+
-+	/*
-+	 * Calculate number of allocation units to be assigned to a logical unit
-+	 * considering the capacity adjustment factor of respective memory type.
-+	 */
-+	for (i = 0; i < (max_partitions - 1) &&
-+		units_to_create <= alloc_units; i++) {
-+		if ((cfg->unit[i].dNumAllocUnits % blocks_per_alloc_unit) == 0)
-+			cfg->unit[i].dNumAllocUnits /= blocks_per_alloc_unit;
-+		else
-+			cfg->unit[i].dNumAllocUnits =
-+			cfg->unit[i].dNumAllocUnits / blocks_per_alloc_unit + 1;
-+
-+		if (cfg->unit[i].bMemoryType == 0)
-+			units_to_create += cfg->unit[i].dNumAllocUnits;
-+		else if (cfg->unit[i].bMemoryType == 3) {
-+			enhanced1_units += cfg->unit[i].dNumAllocUnits;
-+			cfg->unit[i].dNumAllocUnits *=
-+				(wEnhanced1CapAdjFac / 0x100);
-+			units_to_create += cfg->unit[i].dNumAllocUnits;
-+		} else if (cfg->unit[i].bMemoryType == 4) {
-+			enhanced2_units += cfg->unit[i].dNumAllocUnits;
-+			cfg->unit[i].dNumAllocUnits *=
-+				(wEnhanced1CapAdjFac / 0x100);
-+			units_to_create += cfg->unit[i].dNumAllocUnits;
-+		} else {
-+			dev_err(hba->dev, "%s: Unsupported memory type %d\n",
-+				__func__, cfg->unit[i].bMemoryType);
-+			return -EINVAL;
-+		}
-+	}
-+	if (enhanced1_units > dEnhanced1MaxNAllocU) {
-+		dev_err(hba->dev, "%s: size %zu exceeds max enhanced1 area size %u\n",
-+			__func__, enhanced1_units, dEnhanced1MaxNAllocU);
-+		return -ERANGE;
-+	}
-+	if (enhanced2_units > dEnhanced2MaxNAllocU) {
-+		dev_err(hba->dev, "%s: size %zu exceeds max enhanced2 area size %u\n",
-+			__func__, enhanced2_units, dEnhanced2MaxNAllocU);
-+		return -ERANGE;
-+	}
-+	if (units_to_create > alloc_units) {
-+		dev_err(hba->dev, "%s: Specified size %zu exceeds device size %zu\n",
-+			__func__, units_to_create, alloc_units);
-+		return -ERANGE;
-+	}
-+	lun_to_grow = cfg->lun_to_grow;
-+	if (lun_to_grow != -1) {
-+		if (cfg->unit[i].bMemoryType == 0)
-+			conversion_ratio = 1;
-+		else if (cfg->unit[i].bMemoryType == 3)
-+			conversion_ratio = (wEnhanced1CapAdjFac / 0x100);
-+		else if (cfg->unit[i].bMemoryType == 4)
-+			conversion_ratio = (wEnhanced2CapAdjFac / 0x100);
-+
-+		cfg->unit[lun_to_grow].dNumAllocUnits +=
-+		((alloc_units - units_to_create) / conversion_ratio);
-+		dev_dbg(hba->dev, "%s: conversion_ratio %zu for lun %d\n",
-+			__func__, conversion_ratio, i);
-+	}
-+
-+	/* Fill in the buffer with configuration data */
-+	pt = desc_buf;
-+	*pt++ = 0x90;        // bLength
-+	*pt++ = 0x01;        // bDescriptorType
-+	*pt++ = 0;           // Reserved in UFS2.0 and onward
-+	*pt++ = cfg->bBootEnable;
-+	*pt++ = cfg->bDescrAccessEn;
-+	*pt++ = cfg->bInitPowerMode;
-+	*pt++ = cfg->bHighPriorityLUN;
-+	*pt++ = cfg->bSecureRemovalType;
-+	*pt++ = cfg->bInitActiveICCLevel;
-+	put_unaligned_be16(cfg->wPeriodicRTCUpdate, pt);
-+	pt = pt + 7; // Reserved fields set to 0
-+
-+	/* Fill in the buffer with per logical unit data */
-+	for (i = 0; i < UFS_UPIU_MAX_GENERAL_LUN; i++) {
-+		*pt++ = cfg->unit[i].bLUEnable;
-+		*pt++ = cfg->unit[i].bBootLunID;
-+		*pt++ = cfg->unit[i].bLUWriteProtect;
-+		*pt++ = cfg->unit[i].bMemoryType;
-+		put_unaligned_be32(cfg->unit[i].dNumAllocUnits, pt);
-+		pt = pt + 4;
-+		*pt++ = cfg->unit[i].bDataReliability;
-+		*pt++ = cfg->unit[i].bLogicalBlockSize;
-+		*pt++ = cfg->unit[i].bProvisioningType;
-+		put_unaligned_be16(cfg->unit[i].wContextCapabilities, pt);
-+		pt = pt + 5; // Reserved fields set to 0
-+	}
-+
-+	ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_WRITE_DESC,
-+		QUERY_DESC_IDN_CONFIGURATION, 0, 0, desc_buf, &buff_len);
-+
-+	if (ret) {
-+		dev_err(hba->dev, "%s: Failed writing descriptor. desc_idn %d, opcode %x ret %d\n",
-+		__func__, QUERY_DESC_IDN_CONFIGURATION,
-+		UPIU_QUERY_OPCODE_WRITE_DESC, ret);
-+		return ret;
-+	}
-+
-+	if (cfg->bConfigDescrLock == 1) {
-+		ret = ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
-+		QUERY_ATTR_IDN_CONF_DESC_LOCK, 0, 0, &cfg->bConfigDescrLock);
-+		if (ret)
-+			dev_err(hba->dev, "%s: Failed writing bConfigDescrLock %d\n",
-+				__func__, ret);
-+	}
-+
-+	return ret;
-+}
-+
-+/**
-  * ufshcd_probe_hba - probe hba to detect device and initialize
-  * @hba: per-adapter instance
-  *
-diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-index b026ad8..982bfdf 100644
---- a/drivers/scsi/ufs/ufshcd.h
-+++ b/drivers/scsi/ufs/ufshcd.h
-@@ -549,6 +549,7 @@ struct ufs_hba {
- 	unsigned int irq;
- 	bool is_irq_enabled;
- 	u32 dev_ref_clk_freq;
-+	struct ufs_config_descr cfgs;
- 
- 	/* Interrupt aggregation support is broken */
- 	#define UFSHCD_QUIRK_BROKEN_INTR_AGGR			0x1
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks,
+
+Jonathan
+
+> 
+> > ---
+> >  .../devicetree/bindings/iio/adc/at91-sama5d2_adc.txt     |  9 +++++++++
+> >  include/dt-bindings/iio/adc/at91-sama5d2_adc.h           | 16 ++++++++++++++++
+> >  2 files changed, 25 insertions(+)
+> >  create mode 100644 include/dt-bindings/iio/adc/at91-sama5d2_adc.h
+> > 
+> > diff --git a/Documentation/devicetree/bindings/iio/adc/at91-sama5d2_adc.txt b/Documentation/devicetree/bindings/iio/adc/at91-sama5d2_adc.txt
+> > index 6469a4c..4a3c1d4 100644
+> > --- a/Documentation/devicetree/bindings/iio/adc/at91-sama5d2_adc.txt
+> > +++ b/Documentation/devicetree/bindings/iio/adc/at91-sama5d2_adc.txt
+> > @@ -21,6 +21,14 @@ Optional properties:
+> >    - dmas: Phandle to dma channel for the ADC.
+> >    - dma-names: Must be "rx" when dmas property is being used.
+> >    See ../../dma/dma.txt for details.
+> > +  - #io-channel-cells: in case consumer drivers are attached, this must be 1.
+> > +  See <Documentation/devicetree/bindings/iio/iio-bindings.txt> for details.
+> > +
+> > +Properties for consumer drivers:
+> > +  - Consumer drivers can be connected to this producer device, as specified
+> > +  in <Documentation/devicetree/bindings/iio/iio-bindings.txt>
+> > +  - Channels exposed are specified in:
+> > +  <dt-bindings/iio/adc/at91-sama5d2_adc.txt>
+> >  
+> >  Example:
+> >  
+> > @@ -38,4 +46,5 @@ adc: adc@fc030000 {
+> >  	atmel,trigger-edge-type = <IRQ_TYPE_EDGE_BOTH>;
+> >  	dmas = <&dma0 (AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) | AT91_XDMAC_DT_PERID(25))>;
+> >  	dma-names = "rx";
+> > +	#io-channel-cells = <1>;
+> >  }
+> > diff --git a/include/dt-bindings/iio/adc/at91-sama5d2_adc.h b/include/dt-bindings/iio/adc/at91-sama5d2_adc.h
+> > new file mode 100644
+> > index 0000000..70f99db
+> > --- /dev/null
+> > +++ b/include/dt-bindings/iio/adc/at91-sama5d2_adc.h
+> > @@ -0,0 +1,16 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +/*
+> > + * This header provides constants for configuring the AT91 SAMA5D2 ADC
+> > + */
+> > +
+> > +#ifndef _DT_BINDINGS_IIO_ADC_AT91_SAMA5D2_ADC_H
+> > +#define _DT_BINDINGS_IIO_ADC_AT91_SAMA5D2_ADC_H
+> > +
+> > +/* X relative position channel index */
+> > +#define AT91_SAMA5D2_ADC_X_CHANNEL		24
+> > +/* Y relative position channel index */
+> > +#define AT91_SAMA5D2_ADC_Y_CHANNEL		25
+> > +/* pressure channel index */
+> > +#define AT91_SAMA5D2_ADC_P_CHANNEL		26
+> > +
+> > +#endif
+> > -- 
+> > 2.7.4
+> >   
