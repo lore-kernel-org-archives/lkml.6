@@ -1,189 +1,154 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id bBFRLwxZGVuABgAAmS7hNA
-	; Thu, 07 Jun 2018 16:13:55 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id IQvNL1uZHVscEAAAmS7hNA
+	; Sun, 10 Jun 2018 21:35:33 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 16BB76074D; Thu,  7 Jun 2018 16:13:55 +0000 (UTC)
+	id 9155360791; Sun, 10 Jun 2018 21:35:33 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.4 required=2.0 tests=BAYES_00,DATE_IN_PAST_06_12,
+	MAILING_LIST_MULTI autolearn=no autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id F126F608BA;
-	Thu,  7 Jun 2018 16:13:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F126F608BA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 0E01F604D4;
+	Sun, 10 Jun 2018 21:35:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0E01F604D4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935987AbeFGQNf (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 12:13:35 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39133 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932929AbeFGOI7 (ORCPT
+        id S1753762AbeFJVfb (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Sun, 10 Jun 2018 17:35:31 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:16964 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753531AbeFJVeI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:08:59 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvay-0005Zw-Eg; Thu, 07 Jun 2018 15:08:56 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvax-0002h9-GR; Thu, 07 Jun 2018 15:08:55 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Sun, 10 Jun 2018 17:34:08 -0400
+Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Sun, 10 Jun 2018 14:33:44 -0700
+Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 0F4CA406D6;
+        Sun, 10 Jun 2018 14:34:06 -0700 (PDT)
+From: Nadav Amit <namit@vmware.com>
+To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>
+CC: Nadav Amit <namit@vmware.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: [PATCH v3 4/9] x86: alternatives: macrofy locks for better inlining
+Date: Sun, 10 Jun 2018 07:19:06 -0700
+Message-ID: <20180610141911.52948-5-namit@vmware.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180610141911.52948-1-namit@vmware.com>
+References: <20180610141911.52948-1-namit@vmware.com>
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Steve French" <sfrench@samba.org>,
-        linux-cifs@vger.kernel.org, "Dan Aloni" <dan@kernelim.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.274417251@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 014/410] cifs: empty TargetInfo leads to crash on
- recovery
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
+ designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+GCC considers the number of statements in inlined assembly blocks,
+according to new-lines and semicolons, as an indication to the cost of
+the block in time and space. This data is distorted by the kernel code,
+which puts information in alternative sections. As a result, the
+compiler may perform incorrect inlining and branch optimizations.
 
-------------------
+The solution is to set an assembly macro and call it from the inlined
+assembly block. As a result GCC considers the inline assembly block as
+a single instruction.
 
-From: Dan Aloni <dan@kernelim.com>
+This patch handles the LOCK prefix, allowing more aggresive inlining.
 
-commit cabfb3680f78981d26c078a26e5c748531257ebb upstream.
+   text	   data	    bss	    dec	    hex	filename
+18140140 10225284 2957312 31322736 1ddf270 ./vmlinux before
+18146889 10225380 2957312 31329581 1de0d2d ./vmlinux after (+6845)
 
-[ resend from Oct 20, 2014, see [1] ]
+Static text symbols:
+Before:	40286
+After:	40218	(-68)
 
-A trivially patched Samba server (see [2] [3]) can cause a remote kernel
-crash (see [4]) in a client's CIFS kernel module upon session recovery,
-under kernels prior to v4.11.  The server patch can made by a single
-source line modification - returning an empty TargetInfo in an NTLMSSP
-setup negotiation response.
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 
-To reproduce at the client side, the CIFS client can be instructed to
-mount with SMB 2.0, on a share without user/password credentials, e.g:
-
-     mount -t cifs //[host]/[share] -o vers=2.0,guest [mountpoint]
-
-(It may also reproduce with credentials, but I used a simpler
- configuration for the reproduction)
-
-An demo patch to Samba 4.7.4 is provided in the links provided.
-
-As for the client crash itself:
-
-When the session is recovered (after a server start/stop, for example),
-the following condition turns out to be true:
-
-     ses->auth_key.len != 0  &&  ses->auth_key.response == NULL
-
-This will cause the following memcpy() in setup_ntlmv2_rsp() to GPF,
-because tiblob == NULL and tilen != 0 (these are the old auth_key values):
-
-     memcpy(ses->auth_key.response + baselen, tiblob, tilen);
-
-By bisecting, upstream commit cabfb3680f78 ("CIFS: Enable encryption
-during session setup phase") from v4.11 have fixed this issue.
-
-According to my tests, LTS kernels versions 4.4.x and 4.9.x are affected.
-The patch below applies for 4.4.x however a similar patch can be applied
-to 4.9.x and older kernels.
-
-Signed-off-by: Dan Aloni <dan@kernelim.com>
-CC: Steve French <sfrench@samba.org>
-CC: linux-cifs@vger.kernel.org
-CC: linux-kernel@vger.kernel.org
-
-[1]
-https://patchwork.kernel.org/patch/5106391/
-
-[2] (temporary url)
-http://copr-dist-git.fedorainfracloud.org/cgit/alonid/samba-for-client-crash-repro/samba.git/tree/0001-Patch.patch?id=43229c84abe008bfc11aa86f5bacb03a1e54f88c
-
-[3] (temporary url)
-https://copr.fedorainfracloud.org/coprs/alonid/samba-for-client-crash-repro/
-
-[4]
-[ 3414.518134] BUG: unable to handle kernel NULL pointer dereference at           (null)
-[ 3414.518200] IP: memcpy_erms+0x6/0x10
-[ 3414.518227] PGD 0
-
-[ 3414.518252] Oops: 0000 [#1] SMP
-[ 3414.518272] Modules linked in: arc4 md4 cifs rpcsec_gss_krb5 nfsv4 dns_resolver nfs fscache ip6t_rpfilter ip6t_REJECT nf_reject_ipv6 xt_conntrack ip_set nfnetlink ebtable_nat ebtable_broute bridge stp llc ip6table_nat nf_conntrack_ipv6 nf_defrag_ipv6 nf_nat_ipv6 ip6table_mangle ip6table_security ip6table_raw iptable_nat nf_conntrack_ipv4 nf_defrag_ipv4 nf_nat_ipv4 nf_nat nf_conntrack iptable_mangle iptable_security iptable_raw ebtable_filter ebtables ip6table_filter ip6_tables snd_hda_codec_generic ppdev snd_hda_intel snd_hda_codec crct10dif_pclmul crc32_pclmul snd_hwdep snd_hda_core ghash_clmulni_intel snd_seq snd_seq_device snd_pcm joydev parport_pc tpm_tis parport tpm_tis_core tpm snd_timer snd soundcore qemu_fw_cfg virtio_balloon i2c_piix4 nfsd auth_rpcgss nfs_acl lockd grace sunrpc xfs libcrc32c
-[ 3414.518708]  virtio_blk virtio_console virtio_net qxl drm_kms_helper ttm crc32c_intel drm ata_generic nvme serio_raw nvme_core virtio_pci virtio_ring virtio pata_acpi
-[ 3414.518803] CPU: 3 PID: 1697 Comm: kworker/3:1 Not tainted 4.10.0-rc6-dan-00097-ge765a3d89ede #20
-[ 3414.518852] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-2.fc27 04/01/2014
-[ 3414.518927] Workqueue: cifsiod smb2_reconnect_server [cifs]
-[ 3414.518960] task: ffff8cc6764a4000 task.stack: ffff9bc548808000
-[ 3414.518997] RIP: 0010:memcpy_erms+0x6/0x10
-[ 3414.519021] RSP: 0018:ffff9bc54880bbc8 EFLAGS: 00010296
-[ 3414.519051] RAX: ffff8cc6ba00d8dc RBX: ffff8cc676190400 RCX: 0000000000000010
-[ 3414.519091] RDX: 0000000000000010 RSI: 0000000000000000 RDI: ffff8cc6ba00d8dc
-[ 3414.519130] RBP: ffff9bc54880bc30 R08: ffff9bc54880bb58 R09: ffff9bc54880bb58
-[ 3414.519170] R10: 000000004619520e R11: 00000000f46cd8cf R12: 0000000000000000
-[ 3414.519209] R13: 0000000000000000 R14: ffff8cc6ba00d8a0 R15: 0000000000000010
-[ 3414.519250] FS:  0000000000000000(0000) GS:ffff8cc6bfd80000(0000) knlGS:0000000000000000
-[ 3414.519314] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 3414.519347] CR2: 0000000000000000 CR3: 000000007992a000 CR4: 00000000003406e0
-[ 3414.519392] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[ 3414.519431] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[ 3414.519470] Call Trace:
-[ 3414.519510]  ? setup_ntlmv2_rsp+0x124/0xa10 [cifs]
-[ 3414.519553]  build_ntlmssp_auth_blob+0x36/0x310 [cifs]
-[ 3414.519597]  SMB2_sess_auth_rawntlmssp_authenticate+0xc7/0x300 [cifs]
-[ 3414.519646]  SMB2_sess_setup+0x9a/0x140 [cifs]
-[ 3414.519685]  cifs_setup_session+0x78/0x100 [cifs]
-[ 3414.519722]  ? cifs_negotiate_protocol+0x84/0xd0 [cifs]
-[ 3414.519763]  smb2_reconnect+0x308/0x3e0 [cifs]
-[ 3414.519793]  ? __internal_add_timer+0x1f/0x60
-[ 3414.519831]  smb2_reconnect_server+0x187/0x260 [cifs]
-[ 3414.519863]  process_one_work+0x19e/0x440
-[ 3414.519887]  worker_thread+0x4e/0x4a0
-[ 3414.519910]  ? process_one_work+0x440/0x440
-[ 3414.519936]  kthread+0x11e/0x140
-[ 3414.520493]  ? kthread_park+0x90/0x90
-[ 3414.520989]  ret_from_fork+0x2c/0x40
-[ 3414.521450] Code: 78 ff ff ff 90 eb 1e 0f 1f 00 48 89 f8 48 89 d1 48 c1 e9 03 83 e2 07 f3 48 a5 89 d1 f3 a4 c3 66 0f 1f 44 00 00 48 89 f8 48 89 d1 <f3> a4 c3 0f 1f 80 00 00 00 00 48 89 f8 48 83 fa 20 72 7e 40 38
-[ 3414.522488] RIP: memcpy_erms+0x6/0x10 RSP: ffff9bc54880bbc8
-[ 3414.522964] CR2: 0000000000000000
-[ 3414.526127] ---[ end trace bbe4aa1e45cc6c17 ]---
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- fs/cifs/smb2pdu.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/include/asm/alternative-asm.h | 20 ++++++++++++++------
+ arch/x86/include/asm/alternative.h     | 11 ++---------
+ arch/x86/kernel/macros.S               |  1 +
+ 3 files changed, 17 insertions(+), 15 deletions(-)
 
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -596,6 +596,7 @@ SMB2_sess_setup(const unsigned int xid,
- 	 */
- 	kfree(ses->auth_key.response);
- 	ses->auth_key.response = NULL;
-+	ses->auth_key.len = 0;
+diff --git a/arch/x86/include/asm/alternative-asm.h b/arch/x86/include/asm/alternative-asm.h
+index 31b627b43a8e..8e4ea39e55d0 100644
+--- a/arch/x86/include/asm/alternative-asm.h
++++ b/arch/x86/include/asm/alternative-asm.h
+@@ -7,16 +7,24 @@
+ #include <asm/asm.h>
  
- 	/*
- 	 * If memory allocation is successful, caller of this function
-@@ -756,6 +757,7 @@ ssetup_exit:
- 			rc = server->ops->generate_signingkey(ses);
- 			kfree(ses->auth_key.response);
- 			ses->auth_key.response = NULL;
-+			ses->auth_key.len = 0;
- 			if (rc) {
- 				cifs_dbg(FYI,
- 					"SMB3 session key generation failed\n");
-@@ -780,6 +782,7 @@ keygen_exit:
- 	if (!server->sign) {
- 		kfree(ses->auth_key.response);
- 		ses->auth_key.response = NULL;
-+		ses->auth_key.len = 0;
- 	}
- 	kfree(ses->ntlmssp);
+ #ifdef CONFIG_SMP
+-	.macro LOCK_PREFIX
+-672:	lock
++.macro LOCK_PREFIX_HERE
+ 	.pushsection .smp_locks,"a"
+ 	.balign 4
+-	.long 672b - .
++	.long 671f - .		# offset
+ 	.popsection
+-	.endm
++671:
++.endm
++
++.macro LOCK_PREFIX insn:vararg
++	LOCK_PREFIX_HERE
++	lock \insn
++.endm
+ #else
+-	.macro LOCK_PREFIX
+-	.endm
++.macro LOCK_PREFIX_HERE
++.endm
++
++.macro LOCK_PREFIX insn:vararg
++.endm
+ #endif
  
+ /*
+diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
+index 4cd6a3b71824..d7faa16622d8 100644
+--- a/arch/x86/include/asm/alternative.h
++++ b/arch/x86/include/asm/alternative.h
+@@ -31,15 +31,8 @@
+  */
+ 
+ #ifdef CONFIG_SMP
+-#define LOCK_PREFIX_HERE \
+-		".pushsection .smp_locks,\"a\"\n"	\
+-		".balign 4\n"				\
+-		".long 671f - .\n" /* offset */		\
+-		".popsection\n"				\
+-		"671:"
+-
+-#define LOCK_PREFIX LOCK_PREFIX_HERE "\n\tlock; "
+-
++#define LOCK_PREFIX_HERE "LOCK_PREFIX_HERE\n\t"
++#define LOCK_PREFIX "LOCK_PREFIX "
+ #else /* ! CONFIG_SMP */
+ #define LOCK_PREFIX_HERE ""
+ #define LOCK_PREFIX ""
+diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
+index f1fe1d570365..852487a9fc56 100644
+--- a/arch/x86/kernel/macros.S
++++ b/arch/x86/kernel/macros.S
+@@ -8,3 +8,4 @@
+ 
+ #include <linux/compiler.h>
+ #include <asm/refcount.h>
++#include <asm/alternative-asm.h>
+-- 
+2.17.0
