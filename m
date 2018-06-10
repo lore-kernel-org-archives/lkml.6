@@ -1,125 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id HoTpDI29GVukJAAAmS7hNA
-	; Thu, 07 Jun 2018 23:19:59 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id D4tRDSzMHFszLgAAmS7hNA
+	; Sun, 10 Jun 2018 07:10:30 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id C31EC60452; Thu,  7 Jun 2018 23:19:59 +0000 (UTC)
+	id 9D679608BA; Sun, 10 Jun 2018 07:10:30 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HdRmpZvi"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 5B6DA60452;
-	Thu,  7 Jun 2018 23:19:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5B6DA60452
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 2F90D606DD;
+	Sun, 10 Jun 2018 07:10:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2F90D606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752276AbeFGXT4 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 19:19:56 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54300 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751752AbeFGXTy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 19:19:54 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 26ED140BC068;
-        Thu,  7 Jun 2018 23:19:54 +0000 (UTC)
-Received: from redhat.com (ovpn-120-126.rdu2.redhat.com [10.10.120.126])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 431241C710;
-        Thu,  7 Jun 2018 23:19:53 +0000 (UTC)
-Date: Fri, 8 Jun 2018 02:19:53 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        kvm@vger.kernel.org
-Subject: [PATCH] kvm: fix typo in flag name
-Message-ID: <20180607231944.248594-1-mst@redhat.com>
+        id S1753802AbeFJHK0 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sun, 10 Jun 2018 03:10:26 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:45383 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753722AbeFJHKY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Jun 2018 03:10:24 -0400
+Received: by mail-pf0-f194.google.com with SMTP id a22-v6so8621734pfo.12;
+        Sun, 10 Jun 2018 00:10:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=7LZwXe/N931nWnf1U4gEmmuEbRFmdZoEZUvI1dpGlf0=;
+        b=HdRmpZviCXTygLh6YYs+WHpZJhj+ClpO3tdhDUKIqsvjCXi0OF+iCkQ/nxfwmSjG/X
+         1XJg6tUSET4f5ZWbz8CZopa0snrlHvpHDqrCO/9sY6hYDzYSu/Vw5CjFmhZmzHDGRxuU
+         RuIwk+YTx4unMGkTzBxSmkkaGxtm26nGvjGjnDLPcLXw8QXHGLza459+J6/bW2SH8XoW
+         MnU99Xk210xoOaaysrUEesYUZf/0feq5/BDLFSMTbmxAMckyh3w3ANkZ95VaOzIcJw1K
+         InrrVYegPC/53SWdSahSNubufXBpWCShkwLK/OIoEAH3pnnQUgp19In0HE7gnI6D8Yq1
+         bJQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=7LZwXe/N931nWnf1U4gEmmuEbRFmdZoEZUvI1dpGlf0=;
+        b=KWtNOorDfRoBQyeyx9lZt/v9xhr9tZzK0WGJaZ1+b16iZXeC01ic8W8130U5OMDSR9
+         ujLSIeI+/KSwPGmgIe40M63OHKtD5z1yumB+KO0Q8f61a/Yu3+brZeaTjyjxX13TA6iV
+         htuDoyUpGxQsaORiO9Eg2ey5xal2HcTYusDx70jpNaYyCvI1uV2IXZBv4EzKqST659lF
+         lTUCTUG7JQYxRjzB9HnUpJVjGbYRi59qqUohaMdzVkARlZzHM2uXmNiTfUoxQ9Se8w3f
+         hkNVq+5TPpbpozEcXN6zPlynwAeh5ie9mTaDiUXwuCk/GvbvolbnidxVEuXINfxYnW8z
+         3ncw==
+X-Gm-Message-State: APt69E37WXYkP/HOLz26iK7H4xQOYT8dWVC2nthPwUslNJNukMkl7pG0
+        UTYots0LxWmBSIIQmyxxZAaeoHLh
+X-Google-Smtp-Source: ADUXVKI9x5fm0z+8sxuyA1qhZoH6KJFcpooxnmqeL1WsNdmV6fU2X+rgWX/sPEj1vxOamgf8heNIzA==
+X-Received: by 2002:a63:931c:: with SMTP id b28-v6mr10836418pge.167.1528614623964;
+        Sun, 10 Jun 2018 00:10:23 -0700 (PDT)
+Received: from nishad ([106.51.24.189])
+        by smtp.gmail.com with ESMTPSA id e189-v6sm25943278pfc.134.2018.06.10.00.10.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 10 Jun 2018 00:10:23 -0700 (PDT)
+Date: Sun, 10 Jun 2018 12:40:17 +0530
+From: Nishad Kamdar <nishadkamdar@gmail.com>
+To: Aditya Shankar <aditya.shankar@microchip.com>,
+        Ganesh Krishna <ganesh.krishna@microchip.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: wilc1000: Fix type of argument in
+ ieee80211_is_action()
+Message-ID: <20180610071013.GA8771@nishad>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mutt-Fcc: =sent
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 07 Jun 2018 23:19:54 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 07 Jun 2018 23:19:54 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-KVM_X86_DISABLE_EXITS_HTL really refers to exit on halt.
-Obviously a typo: should be named KVM_X86_DISABLE_EXITS_HLT.
+Type used is unsigned char but expected is restricted __le16.
+Warning reported by sparse. Part of eudyptula challenge.
 
-Fixes: caa057a2cad ("KVM: X86: Provide a capability to disable HLT intercepts")
-Cc: stable@vger.kernel.org
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
 ---
- arch/x86/kvm/x86.c             | 4 ++--
- include/uapi/linux/kvm.h       | 4 ++--
- tools/include/uapi/linux/kvm.h | 4 ++--
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/staging/wilc1000/wilc_wfi_cfgoperations.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 71e7cda6d014..dcc64e7d946d 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -2894,7 +2894,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
- 		r = KVM_CLOCK_TSC_STABLE;
- 		break;
- 	case KVM_CAP_X86_DISABLE_EXITS:
--		r |=  KVM_X86_DISABLE_EXITS_HTL | KVM_X86_DISABLE_EXITS_PAUSE;
-+		r |=  KVM_X86_DISABLE_EXITS_HLT | KVM_X86_DISABLE_EXITS_PAUSE;
- 		if(kvm_can_mwait_in_guest())
- 			r |= KVM_X86_DISABLE_EXITS_MWAIT;
- 		break;
-@@ -4248,7 +4248,7 @@ static int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
- 		if ((cap->args[0] & KVM_X86_DISABLE_EXITS_MWAIT) &&
- 			kvm_can_mwait_in_guest())
- 			kvm->arch.mwait_in_guest = true;
--		if (cap->args[0] & KVM_X86_DISABLE_EXITS_HTL)
-+		if (cap->args[0] & KVM_X86_DISABLE_EXITS_HLT)
- 			kvm->arch.hlt_in_guest = true;
- 		if (cap->args[0] & KVM_X86_DISABLE_EXITS_PAUSE)
- 			kvm->arch.pause_in_guest = true;
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index b02c41e53d56..39e364c70caf 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -677,10 +677,10 @@ struct kvm_ioeventfd {
- };
+diff --git a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
+index e248702ee519..745bf5ca2622 100644
+--- a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
++++ b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
+@@ -1431,7 +1431,7 @@ void wilc_wfi_p2p_rx(struct net_device *dev, u8 *buff, u32 size)
  
- #define KVM_X86_DISABLE_EXITS_MWAIT          (1 << 0)
--#define KVM_X86_DISABLE_EXITS_HTL            (1 << 1)
-+#define KVM_X86_DISABLE_EXITS_HLT            (1 << 1)
- #define KVM_X86_DISABLE_EXITS_PAUSE          (1 << 2)
- #define KVM_X86_DISABLE_VALID_EXITS          (KVM_X86_DISABLE_EXITS_MWAIT | \
--                                              KVM_X86_DISABLE_EXITS_HTL | \
-+                                              KVM_X86_DISABLE_EXITS_HLT | \
-                                               KVM_X86_DISABLE_EXITS_PAUSE)
+ 	freq = ieee80211_channel_to_frequency(curr_channel, NL80211_BAND_2GHZ);
  
- /* for KVM_ENABLE_CAP */
-diff --git a/tools/include/uapi/linux/kvm.h b/tools/include/uapi/linux/kvm.h
-index b02c41e53d56..39e364c70caf 100644
---- a/tools/include/uapi/linux/kvm.h
-+++ b/tools/include/uapi/linux/kvm.h
-@@ -677,10 +677,10 @@ struct kvm_ioeventfd {
- };
- 
- #define KVM_X86_DISABLE_EXITS_MWAIT          (1 << 0)
--#define KVM_X86_DISABLE_EXITS_HTL            (1 << 1)
-+#define KVM_X86_DISABLE_EXITS_HLT            (1 << 1)
- #define KVM_X86_DISABLE_EXITS_PAUSE          (1 << 2)
- #define KVM_X86_DISABLE_VALID_EXITS          (KVM_X86_DISABLE_EXITS_MWAIT | \
--                                              KVM_X86_DISABLE_EXITS_HTL | \
-+                                              KVM_X86_DISABLE_EXITS_HLT | \
-                                               KVM_X86_DISABLE_EXITS_PAUSE)
- 
- /* for KVM_ENABLE_CAP */
+-	if (!ieee80211_is_action(buff[FRAME_TYPE_ID])) {
++	if (!ieee80211_is_action(cpu_to_le16(buff[FRAME_TYPE_ID]))) {
+ 		cfg80211_rx_mgmt(priv->wdev, freq, 0, buff, size, 0);
+ 		return;
+ 	}
 -- 
-MST
+2.17.0
