@@ -1,91 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id sqVBCMpDGVtfDAAAmS7hNA
-	; Thu, 07 Jun 2018 14:42:12 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id vpWZGTW1HVsQGwAAmS7hNA
+	; Sun, 10 Jun 2018 23:33:09 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 9ED3D608C8; Thu,  7 Jun 2018 14:42:12 +0000 (UTC)
+	id 49A4B60795; Sun, 10 Jun 2018 23:33:09 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 693FE601C3;
-	Thu,  7 Jun 2018 14:42:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 693FE601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id D71D1600D0;
+	Sun, 10 Jun 2018 23:33:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D71D1600D0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934730AbeFGOmJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:42:09 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40620 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933843AbeFGOmE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:42:04 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbu-0005Zi-6f; Thu, 07 Jun 2018 15:09:54 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb0-0002mH-8S; Thu, 07 Jun 2018 15:08:58 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        id S1753703AbeFJXdE (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Sun, 10 Jun 2018 19:33:04 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59150 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753531AbeFJXdD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Jun 2018 19:33:03 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3BCD6401EF03;
+        Sun, 10 Jun 2018 23:33:03 +0000 (UTC)
+Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 658E16B409;
+        Sun, 10 Jun 2018 23:32:59 +0000 (UTC)
+Date: Mon, 11 Jun 2018 07:32:56 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        pagupta@redhat.com, linux-mm@kvack.org,
+        kirill.shutemov@linux.intel.com
+Subject: Re: [PATCH v4 3/4] mm/sparse: Add a new parameter 'data_unit_size'
+ for alloc_usemap_and_memmap
+Message-ID: <20180610233256.GF16231@MiWiFi-R3L-srv>
+References: <20180521101555.25610-1-bhe@redhat.com>
+ <20180521101555.25610-4-bhe@redhat.com>
+ <8ff7638c-d3ee-a40c-e5cf-deded8d19e93@intel.com>
+ <20180608062733.GB16231@MiWiFi-R3L-srv>
+ <74359df3-76a8-6dc7-51c5-27019130224f@intel.com>
+ <20180608151748.GE16231@MiWiFi-R3L-srv>
+ <6cb5f16f-68a6-84af-c7e6-1a563133fac8@intel.com>
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Mark Brown" <broonie@kernel.org>,
-        "Maxime Ripard" <maxime.ripard@free-electrons.com>,
-        "Tobias Jordan" <Tobias.Jordan@elektrobit.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.473083023@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 075/410] spi: sun6i: disable/unprepare clocks on remove
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6cb5f16f-68a6-84af-c7e6-1a563133fac8@intel.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Sun, 10 Jun 2018 23:33:03 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Sun, 10 Jun 2018 23:33:03 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+On 06/08/18 at 09:13am, Dave Hansen wrote:
+> On 06/08/2018 08:17 AM, Baoquan He wrote:
+> > 
+> > Then inside alloc_usemap_and_memmap(), For each node, we get how many
+> > present sections on this node, call hook alloc_func(). Then we update
+> > the pointer to point at a new position of usemap_map[] or map_map[].
+> 
+> I think this is the key.
+> 
+> alloc_usemap_and_memmap() is passed in a "void *" that it needs to
+> update as things get consumed.  But, it knows only the quantity of
+> objects consumed and not the type.  This effectively tells it enough
+> about the type to let it update the pointer as objects are consumed.
+> 
+> Right?
+> 
+> Can we get that in the changelog?
 
-------------------
+Hmm, I like above sentences very much, thanks.
 
-From: Tobias Jordan <Tobias.Jordan@elektrobit.com>
+Do you means putting it in changelog, but not commit log of patch 3/4,
+right? I can do this when repost.
 
-commit 2d9bbd02c54094ceffa555143b0d68cd06504d63 upstream.
-
-sun6i_spi_probe() uses sun6i_spi_runtime_resume() to prepare/enable
-clocks, so sun6i_spi_remove() should use sun6i_spi_runtime_suspend() to
-disable/unprepare them if we're not suspended.
-Replacing pm_runtime_disable() by pm_runtime_force_suspend() will ensure
-that sun6i_spi_runtime_suspend() is called if needed.
-
-Found by Linux Driver Verification project (linuxtesting.org).
-
-Fixes: 3558fe900e8af (spi: sunxi: Add Allwinner A31 SPI controller driver)
-Signed-off-by: Tobias Jordan <Tobias.Jordan@elektrobit.com>
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- drivers/spi/spi-sun6i.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/drivers/spi/spi-sun6i.c
-+++ b/drivers/spi/spi-sun6i.c
-@@ -457,7 +457,7 @@ err_free_master:
- 
- static int sun6i_spi_remove(struct platform_device *pdev)
- {
--	pm_runtime_disable(&pdev->dev);
-+	pm_runtime_force_suspend(&pdev->dev);
- 
- 	return 0;
- }
+Thanks
+Baoquan
