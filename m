@@ -1,120 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Z2irE/ShGVvHbwAAmS7hNA
-	; Thu, 07 Jun 2018 21:41:45 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 6L1VMbkZHVtyJwAAmS7hNA
+	; Sun, 10 Jun 2018 20:37:19 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 98EA5606FA; Thu,  7 Jun 2018 21:41:45 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ijRwxVq7"
+	id 8C8AD60791; Sun, 10 Jun 2018 20:37:19 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 22348601B4;
-	Thu,  7 Jun 2018 21:41:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 22348601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 99BF46032D;
+	Sun, 10 Jun 2018 20:37:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 99BF46032D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=nod.at
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752712AbeFGVlm (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 17:41:42 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:40879 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751066AbeFGVll (ORCPT
+        id S1753882AbeFJUhQ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sun, 10 Jun 2018 16:37:16 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:36910 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752723AbeFJUhP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 17:41:41 -0400
-Received: by mail-lf0-f67.google.com with SMTP id q11-v6so16924030lfc.7;
-        Thu, 07 Jun 2018 14:41:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=BCi01bymTfk5hvb9/ZLF7us51r1uDygto53ywhGQvRA=;
-        b=ijRwxVq7EnbbBc1PQ8VYP20xd5Uf1h8a9bEoiFwCZrtxqoMYfXYuo0dV+652xyS+aE
-         250YZfw5o3FoEGwytOqcxQ2nwBPGkWWD6fTCYrFGENZAOLcLCS6O1XKMGYEQYyj7X6Q4
-         067zQM2zX1UQogEE1qp/ILFdU7Z2YM5AI8J51I9F1ArIVqLN1J9sHEThXQPFe615Qzx4
-         WmT7KSEWLIBdj2QP692aP33sG81Bt97/cDJev+Wx985SqrMQZCPuoTU43FHiytVEOGu5
-         uVBccrGB6C+Hv5OzRX9e/ytibkKAM6p/LaaALTZu9Eu8/e0AL37h+5cf1BxZho6VaNNd
-         dFOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=BCi01bymTfk5hvb9/ZLF7us51r1uDygto53ywhGQvRA=;
-        b=F2W+epF2JfeVdA8Vg22HCCHFMLNJcjJzSYXs8bZ1uBQNpJS9CRr+Vdl2S4ehTpmcsF
-         drry4tzU2bOGVFG8jJH0Kdypt/D91vCKonfCfr/oxAB+zPxEadirUnyFbrPtG9OHiH1B
-         BCzWNUveVvGcCUOWC/RC5dGOP+QFm4yGFR6C8nfEq3iC7GbKKcwDrSd6FoVhJmUM4bPg
-         E/E7kws7OKfO1/C1l5rYyFPeWmwXgFJIr7B83adeqyohvYzB1TjukydHbTUc+qVTdm5I
-         +Da1B3mdWuoFmDhL1kLJCbK5XQwqZMb90a51OjxyA+HJ+ksDZ+nSy+WkM1jR3hTnad6L
-         9ogg==
-X-Gm-Message-State: APt69E3itDy+UKO+ewli1k2vjQO5VY+7ionTWT2+Q0R5lwhyLGjGp5T8
-        Gqcw1IcvKrP2e/0VQFr6VmFif+3Fj++K1/strhw=
-X-Google-Smtp-Source: ADUXVKLkfXSOYTkhOzOYlKppO24W3Fh/ejmAsQKSE4+1u8pURsJ/vP9fQznGXovVLsBt9oVjpBy3E0pQM41DKDNq+zc=
-X-Received: by 2002:a2e:28b:: with SMTP id y11-v6mr2583735lje.27.1528407699070;
- Thu, 07 Jun 2018 14:41:39 -0700 (PDT)
+        Sun, 10 Jun 2018 16:37:15 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 37FE4609197B;
+        Sun, 10 Jun 2018 22:37:13 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id ZsqZjo35RpNw; Sun, 10 Jun 2018 22:37:12 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id D8DD96091989;
+        Sun, 10 Jun 2018 22:37:12 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 5JbtEo9xJ36O; Sun, 10 Jun 2018 22:37:12 +0200 (CEST)
+Received: from blindfold.localnet (213-47-184-186.cable.dynamic.surfer.at [213.47.184.186])
+        by lithops.sigma-star.at (Postfix) with ESMTPSA id B1FC4609197B;
+        Sun, 10 Jun 2018 22:37:12 +0200 (CEST)
+From: Richard Weinberger <richard@nod.at>
+To: Linus <torvalds@linux-foundation.org>
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] UBI/UBIFS updates for 4.18-rc1
+Date: Sun, 10 Jun 2018 22:37:11 +0200
+Message-ID: <3354112.NtT4H96kfh@blindfold>
 MIME-Version: 1.0
-Received: by 2002:a2e:700e:0:0:0:0:0 with HTTP; Thu, 7 Jun 2018 14:41:38 -0700 (PDT)
-In-Reply-To: <lsq.1528380321.591046177@decadent.org.uk>
-References: <lsq.1528380320.647747352@decadent.org.uk> <lsq.1528380321.591046177@decadent.org.uk>
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Thu, 7 Jun 2018 14:41:38 -0700
-Message-ID: <CAKdAkRRZqayW8AKbjHwBp+RWS5Q1Y6tAW0h9o7cULp+J_bTz8w@mail.gmail.com>
-Subject: Re: [PATCH 3.16 191/410] Input: mms114 - fix license module information
-To: Ben Hutchings <ben@decadent.org.uk>
-Cc: lkml <linux-kernel@vger.kernel.org>,
-        "3.8+" <stable@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andi Shyti <andi.shyti@samsung.com>,
-        Marcus Folkesson <marcus.folkesson@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 7, 2018 at 7:05 AM, Ben Hutchings <ben@decadent.org.uk> wrote:
-> 3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+Linus,
 
-Not a hard objection, but rather a curiosity: for this to be pulled
-into stable what user issue does this fix?
+The following changes since commit 29dcea88779c856c7dc92040a0c01233263101d4:
 
->
-> ------------------
->
-> From: Andi Shyti <andi.shyti@samsung.com>
->
-> commit 498e7e7ed1fd72c275a682f0903c4a20cc538658 upstream.
->
-> The driver has been released with GNU Public License v2 as stated
-> in the header, but the module license information has been tagged
-> as "GPL" (GNU Public License v2 or later).
->
-> Fix the module license information so that it matches the one in
-> the header as "GPL v2".
->
-> Fixes: 07b8481d4aff ("Input: add MELFAS mms114 touchscreen driver")
-> Reported-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-> ---
->  drivers/input/touchscreen/mms114.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> --- a/drivers/input/touchscreen/mms114.c
-> +++ b/drivers/input/touchscreen/mms114.c
-> @@ -592,4 +592,4 @@ module_i2c_driver(mms114_driver);
->  /* Module information */
->  MODULE_AUTHOR("Joonyoung Shim <jy0922.shim@samsung.com>");
->  MODULE_DESCRIPTION("MELFAS mms114 Touchscreen driver");
-> -MODULE_LICENSE("GPL");
-> +MODULE_LICENSE("GPL v2");
->
+  Linux 4.17 (2018-06-03 14:15:21 -0700)
 
+are available in the git repository at:
 
+  git://git.infradead.org/linux-ubifs.git tags/upstream-4.18-rc1
 
--- 
-Dmitry
+for you to fetch changes up to f5a926dd529870de4bd19199ce7b36985f130d70:
+
+  mtd: ubi: Update ubi-media.h to dual license (2018-06-07 15:53:17 +0200)
+
+----------------------------------------------------------------
+This pull request contains updates for both UBI and UBIFS:
+- The UBI on-disk format header file is now dual licensed
+- New way to detect Fastmap problems during runtime
+- Bugfix for Fastmap
+- Minor updates for UBIFS (spelling, comments, vm_fault_t, ...)
+
+----------------------------------------------------------------
+Lionel Debieve (1):
+      mtd: ubi: Update ubi-media.h to dual license
+
+Richard Weinberger (4):
+      ubi: fastmap: Cancel work upon detach
+      ubi: fastmap: Correctly handle interrupted erasures in EBA
+      ubi: fastmap: Check each mapping only once
+      ubi: fastmap: Detect EBA mismatches on-the-fly
+
+Sascha Hauer (6):
+      ubifs: remove set but never used variable
+      ubifs: journal: Remove wrong comment
+      ubifs: Spelling fix someting -> something
+      ubifs: log: Some spelling fixes
+      ubifs: gc: Fix typo
+      ubifs: lpt: Fix wrong pnode number range in comment
+
+Souptick Joarder (1):
+      fs: ubifs: Adding new return type vm_fault_t
+
+Wang Shilong (1):
+      ubifs, xattr: remove misguided quota flags
+
+ drivers/mtd/ubi/build.c     |   4 ++
+ drivers/mtd/ubi/eba.c       | 111 +++++++++++++++++++++++++++++++++++++++++++-
+ drivers/mtd/ubi/fastmap.c   |  20 ++++++++
+ drivers/mtd/ubi/ubi-media.h |  22 ++-------
+ drivers/mtd/ubi/ubi.h       |  11 +++++
+ drivers/mtd/ubi/vmt.c       |   1 +
+ drivers/mtd/ubi/vtbl.c      |  16 ++++++-
+ drivers/mtd/ubi/wl.c        |   4 +-
+ fs/ubifs/file.c             |  11 ++---
+ fs/ubifs/gc.c               |   2 +-
+ fs/ubifs/journal.c          |   5 +-
+ fs/ubifs/log.c              |   6 +--
+ fs/ubifs/lpt_commit.c       |   2 +-
+ fs/ubifs/replay.c           |   5 +-
+ fs/ubifs/ubifs.h            |   2 -
+ fs/ubifs/xattr.c            |   2 +-
+ 16 files changed, 178 insertions(+), 46 deletions(-)
