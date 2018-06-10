@@ -1,227 +1,716 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ZxovITvjGlt9PAAAmS7hNA
-	; Fri, 08 Jun 2018 20:12:43 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 3xcyAfgEHVuiLAAAmS7hNA
+	; Sun, 10 Jun 2018 11:09:35 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 6E959608BF; Fri,  8 Jun 2018 20:12:43 +0000 (UTC)
+	id 86F7B606FA; Sun, 10 Jun 2018 11:09:35 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TLVlI2EK"
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="GvJwQyKi"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 25FC66089E;
-	Fri,  8 Jun 2018 20:12:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 25FC66089E
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id DE331606FA;
+	Sun, 10 Jun 2018 11:09:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DE331606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932086AbeFHUMg (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 16:12:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51546 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753115AbeFHUMd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 16:12:33 -0400
-Received: from localhost (unknown [150.199.191.185])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A4883206B7;
-        Fri,  8 Jun 2018 20:12:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528488752;
-        bh=/79RUPsUPmX/JEhrn52CHxbCa+WggclOBN9rJRnnvYk=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=TLVlI2EK3raVbEvBEaNPdUgcG0g1uHWhMQdUKIOHKqimdIP0Phl+QxepUSeKB0UH2
-         rAuxIJSFv80ATraHJ+jQ9astAySFeSuirk9DkALlTzcxJ0vaP/bMlRVbDy2GuzXzqx
-         L9AKVDMBVBoMlHO3khX6hCRVYx+oeleN1nmJdsuY=
-Subject: [PATCH v1 5/9] PCI/portdrv: Squash lookup interfaces into
- portdrv_pci.c
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: linux-pci@vger.kernel.org
-Cc: Oza Pawandeep <poza@codeaurora.org>, linux-kernel@vger.kernel.org
-Date: Fri, 08 Jun 2018 15:12:31 -0500
-Message-ID: <152848875188.14051.2166609505666979991.stgit@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <152848853199.14051.12670957565366345798.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <152848853199.14051.12670957565366345798.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: StGit/0.18
+        id S1753983AbeFJLJc (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sun, 10 Jun 2018 07:09:32 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:52630 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753944AbeFJLJ2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Jun 2018 07:09:28 -0400
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 7332C5C004D;
+        Sun, 10 Jun 2018 13:09:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1528628965;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=QqcOGOUAjAHRIP8ifdeFyMNt7wRiUFK8bV89UesmOxk=;
+        b=GvJwQyKiIXDTGB14UXlEm1gjtE8pt4pB/waZh/Znbptrm1Dvk/A+WhLSncGMr6C4s/baky
+        9HE27Jd0cFL9ssQww5GKSXtdeJD8GjaiWP5+2gKkWH9idgdNCQTgPZeKR9m+qdH2J0x5kY
+        P8l+r5zKkjbqfNrvUjSITZynUfhuRDk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+Date: Sun, 10 Jun 2018 13:09:24 +0200
+From: Stefan Agner <stefan@agner.ch>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org,
+        computersforpeace@gmail.com, marek.vasut@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
+        dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
+        marcel@ziswiler.com, krzk@kernel.org, benjamin.lindqvist@endian.se,
+        jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        mirza.krak@gmail.com, linux-mtd@lists.infradead.org,
+        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 4/6] mtd: rawnand: add NVIDIA Tegra NAND Flash
+ controller driver
+In-Reply-To: <22478634.OSqaXHucyu@dimapc>
+References: <20180531221637.6017-1-stefan@agner.ch>
+ <cdca329f-0b8d-0604-4cfb-b95baf84c867@gmail.com>
+ <d625dd8ca816543e03668b74921563c1@agner.ch> <22478634.OSqaXHucyu@dimapc>
+Message-ID: <5751ef697130ba93ce9fb7722a1ce117@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.4
+X-Spamd-Result: default: False [-3.10 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MID_RHS_MATCH_FROM(0.00)[];
+         RCPT_COUNT_TWELVE(0.00)[22];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_HAS_DN(0.00)[];
+         FROM_EQ_ENVFROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         TO_DN_SOME(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
+         RCVD_TLS_ALL(0.00)[];
+         BAYES_HAM(-3.00)[100.00%];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+On 09.06.2018 14:21, Dmitry Osipenko wrote:
+> On Saturday, 9 June 2018 00:51:01 MSK Stefan Agner wrote:
+>> On 01.06.2018 11:20, Dmitry Osipenko wrote:
+>> > On 01.06.2018 01:16, Stefan Agner wrote:
+>> >> Add support for the NAND flash controller found on NVIDIA
+>> >> Tegra 2 SoCs. This implementation does not make use of the
+>> >> command queue feature. Regular operations/data transfers are
+>> >> done in PIO mode. Page read/writes with hardware ECC make
+>> >> use of the DMA for data transfer.
+>> >>
+>> >> Signed-off-by: Lucas Stach <dev@lynxeye.de>
+>> >> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>> >> ---
+>> >>
+>> >>  MAINTAINERS                       |    7 +
+>> >>  drivers/mtd/nand/raw/Kconfig      |    6 +
+>> >>  drivers/mtd/nand/raw/Makefile     |    1 +
+>> >>  drivers/mtd/nand/raw/tegra_nand.c | 1143 +++++++++++++++++++++++++++++
+>> >>  4 files changed, 1157 insertions(+)
+>> >>  create mode 100644 drivers/mtd/nand/raw/tegra_nand.c
+>> >>
+>> >> diff --git a/MAINTAINERS b/MAINTAINERS
+>> >> index 58b9861ccf99..c2e5571c85d4 100644
+>> >> --- a/MAINTAINERS
+>> >> +++ b/MAINTAINERS
+>> >> @@ -13844,6 +13844,13 @@ M:	Laxman Dewangan <ldewangan@nvidia.com>
+>> >>
+>> >>  S:	Supported
+>> >>  F:	drivers/input/keyboard/tegra-kbc.c
+>> >>
+>> >> +TEGRA NAND DRIVER
+>> >> +M:	Stefan Agner <stefan@agner.ch>
+>> >> +M:	Lucas Stach <dev@lynxeye.de>
+>> >> +S:	Maintained
+>> >> +F:	Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
+>> >> +F:	drivers/mtd/nand/raw/tegra_nand.c
+>> >> +
+>> >>
+>> >>  TEGRA PWM DRIVER
+>> >>  M:	Thierry Reding <thierry.reding@gmail.com>
+>> >>  S:	Supported
+>> >>
+>> >> diff --git a/drivers/mtd/nand/raw/Kconfig b/drivers/mtd/nand/raw/Kconfig
+>> >> index 19a2b283fbbe..e9093f52371e 100644
+>> >> --- a/drivers/mtd/nand/raw/Kconfig
+>> >> +++ b/drivers/mtd/nand/raw/Kconfig
+>> >> @@ -534,4 +534,10 @@ config MTD_NAND_MTK
+>> >>
+>> >>  	  Enables support for NAND controller on MTK SoCs.
+>> >>  	  This controller is found on mt27xx, mt81xx, mt65xx SoCs.
+>> >>
+>> >> +config MTD_NAND_TEGRA
+>> >> +	tristate "Support for NAND controller on NVIDIA Tegra"
+>> >> +	depends on ARCH_TEGRA || COMPILE_TEST
+>> >> +	help
+>> >> +	  Enables support for NAND flash controller on NVIDIA Tegra SoC.
+>> >> +
+>> >>
+>> >>  endif # MTD_NAND
+>> >>
+>> >> diff --git a/drivers/mtd/nand/raw/Makefile
+>> >> b/drivers/mtd/nand/raw/Makefile
+>> >> index 165b7ef9e9a1..d5a5f9832b88 100644
+>> >> --- a/drivers/mtd/nand/raw/Makefile
+>> >> +++ b/drivers/mtd/nand/raw/Makefile
+>> >> @@ -56,6 +56,7 @@ obj-$(CONFIG_MTD_NAND_HISI504)	        +=
+>> >> hisi504_nand.o
+>> >>
+>> >>  obj-$(CONFIG_MTD_NAND_BRCMNAND)		+= brcmnand/
+>> >>  obj-$(CONFIG_MTD_NAND_QCOM)		+= qcom_nandc.o
+>> >>  obj-$(CONFIG_MTD_NAND_MTK)		+= mtk_ecc.o mtk_nand.o
+>> >>
+>> >> +obj-$(CONFIG_MTD_NAND_TEGRA)		+= tegra_nand.o
+>> >>
+>> >>  nand-objs := nand_base.o nand_bbt.o nand_timings.o nand_ids.o
+>> >>  nand-objs += nand_amd.o
+>> >>
+>> >> diff --git a/drivers/mtd/nand/raw/tegra_nand.c
+>> >> b/drivers/mtd/nand/raw/tegra_nand.c new file mode 100644
+>> >> index 000000000000..e9664f2938a3
+>> >> --- /dev/null
+>> >> +++ b/drivers/mtd/nand/raw/tegra_nand.c
+>> >> @@ -0,0 +1,1143 @@
+>> >> +// SPDX-License-Identifier: GPL-2.0
+>> >> +/*
+>> >> + * Copyright (C) 2018 Stefan Agner <stefan@agner.ch>
+>> >> + * Copyright (C) 2014-2015 Lucas Stach <dev@lynxeye.de>
+>> >> + * Copyright (C) 2012 Avionic Design GmbH
+>> >> + */
+>> >> +
+>> >> +#include <linux/clk.h>
+>> >> +#include <linux/completion.h>
+>> >> +#include <linux/delay.h>
+>> >> +#include <linux/dma-mapping.h>
+>> >> +#include <linux/err.h>
+>> >> +#include <linux/gpio/consumer.h>
+>> >> +#include <linux/interrupt.h>
+>> >> +#include <linux/io.h>
+>> >> +#include <linux/module.h>
+>> >> +#include <linux/mtd/partitions.h>
+>> >> +#include <linux/mtd/rawnand.h>
+>> >> +#include <linux/of.h>
+>> >> +#include <linux/platform_device.h>
+>> >> +#include <linux/reset.h>
+>> >> +
+>> >> +#define CMD					0x00
+>> >> +#define   CMD_GO				BIT(31)
+>> >> +#define   CMD_CLE				BIT(30)
+>> >> +#define   CMD_ALE				BIT(29)
+>> >> +#define   CMD_PIO				BIT(28)
+>> >> +#define   CMD_TX				BIT(27)
+>> >> +#define   CMD_RX				BIT(26)
+>> >> +#define   CMD_SEC_CMD				BIT(25)
+>> >> +#define   CMD_AFT_DAT				BIT(24)
+>> >> +#define   CMD_TRANS_SIZE(x)			(((x - 1) & 0xf) << 20)
+>> >> +#define   CMD_A_VALID				BIT(19)
+>> >> +#define   CMD_B_VALID				BIT(18)
+>> >> +#define   CMD_RD_STATUS_CHK			BIT(17)
+>> >> +#define   CMD_RBSY_CHK				BIT(16)
+>> >> +#define   CMD_CE(x)				BIT((8 + ((x) & 0x7)))
+>> >> +#define   CMD_CLE_SIZE(x)			(((x - 1) & 0x3) << 4)
+>> >> +#define   CMD_ALE_SIZE(x)			(((x - 1) & 0xf) << 0)
+>> >> +
+>> >> +#define STATUS					0x04
+>> >> +
+>> >> +#define ISR					0x08
+>> >> +#define   ISR_CORRFAIL_ERR			BIT(24)
+>> >> +#define   ISR_UND				BIT(7)
+>> >> +#define   ISR_OVR				BIT(6)
+>> >> +#define   ISR_CMD_DONE				BIT(5)
+>> >> +#define   ISR_ECC_ERR				BIT(4)
+>> >> +
+>> >> +#define IER					0x0c
+>> >> +#define   IER_ERR_TRIG_VAL(x)			(((x) & 0xf) << 16)
+>> >> +#define   IER_UND				BIT(7)
+>> >> +#define   IER_OVR				BIT(6)
+>> >> +#define   IER_CMD_DONE				BIT(5)
+>> >> +#define   IER_ECC_ERR				BIT(4)
+>> >> +#define   IER_GIE				BIT(0)
+>> >> +
+>> >> +#define CFG					0x10
+>> >> +#define   CFG_HW_ECC				BIT(31)
+>> >> +#define   CFG_ECC_SEL				BIT(30)
+>> >> +#define   CFG_ERR_COR				BIT(29)
+>> >> +#define   CFG_PIPE_EN				BIT(28)
+>> >> +#define   CFG_TVAL_4				(0 << 24)
+>> >> +#define   CFG_TVAL_6				(1 << 24)
+>> >> +#define   CFG_TVAL_8				(2 << 24)
+>> >> +#define   CFG_SKIP_SPARE			BIT(23)
+>> >> +#define   CFG_BUS_WIDTH_16			BIT(21)
+>> >> +#define   CFG_COM_BSY				BIT(20)
+>> >> +#define   CFG_PS_256				(0 << 16)
+>> >> +#define   CFG_PS_512				(1 << 16)
+>> >> +#define   CFG_PS_1024				(2 << 16)
+>> >> +#define   CFG_PS_2048				(3 << 16)
+>> >> +#define   CFG_PS_4096				(4 << 16)
+>> >> +#define   CFG_SKIP_SPARE_SIZE_4			(0 << 14)
+>> >> +#define   CFG_SKIP_SPARE_SIZE_8			(1 << 14)
+>> >> +#define   CFG_SKIP_SPARE_SIZE_12		(2 << 14)
+>> >> +#define   CFG_SKIP_SPARE_SIZE_16		(3 << 14)
+>> >> +#define   CFG_TAG_BYTE_SIZE(x)			((x) & 0xff)
+>> >> +
+>> >> +#define TIMING_1				0x14
+>> >> +#define   TIMING_TRP_RESP(x)			(((x) & 0xf) << 28)
+>> >> +#define   TIMING_TWB(x)				(((x) & 0xf) << 24)
+>> >> +#define   TIMING_TCR_TAR_TRR(x)			(((x) & 0xf) << 20)
+>> >> +#define   TIMING_TWHR(x)			(((x) & 0xf) << 16)
+>> >> +#define   TIMING_TCS(x)				(((x) & 0x3) << 14)
+>> >> +#define   TIMING_TWH(x)				(((x) & 0x3) << 12)
+>> >> +#define   TIMING_TWP(x)				(((x) & 0xf) <<  8)
+>> >> +#define   TIMING_TRH(x)				(((x) & 0x3) <<  4)
+>> >> +#define   TIMING_TRP(x)				(((x) & 0xf) <<  0)
+>> >> +
+>> >> +#define RESP					0x18
+>> >> +
+>> >> +#define TIMING_2				0x1c
+>> >> +#define   TIMING_TADL(x)			((x) & 0xf)
+>> >> +
+>> >> +#define CMD_1					0x20
+>> >> +#define CMD_2					0x24
+>> >> +#define ADDR_1					0x28
+>> >> +#define ADDR_2					0x2c
+>> >> +
+>> >> +#define DMA_CTRL				0x30
+>> >> +#define   DMA_CTRL_GO				BIT(31)
+>> >> +#define   DMA_CTRL_IN				(0 << 30)
+>> >> +#define   DMA_CTRL_OUT				BIT(30)
+>> >> +#define   DMA_CTRL_PERF_EN			BIT(29)
+>> >> +#define   DMA_CTRL_IE_DONE			BIT(28)
+>> >> +#define   DMA_CTRL_REUSE			BIT(27)
+>> >> +#define   DMA_CTRL_BURST_1			(2 << 24)
+>> >> +#define   DMA_CTRL_BURST_4			(3 << 24)
+>> >> +#define   DMA_CTRL_BURST_8			(4 << 24)
+>> >> +#define   DMA_CTRL_BURST_16			(5 << 24)
+>> >> +#define   DMA_CTRL_IS_DONE			BIT(20)
+>> >> +#define   DMA_CTRL_EN_A				BIT(2)
+>> >> +#define   DMA_CTRL_EN_B				BIT(1)
+>> >> +
+>> >> +#define DMA_CFG_A				0x34
+>> >> +#define DMA_CFG_B				0x38
+>> >> +
+>> >> +#define FIFO_CTRL				0x3c
+>> >> +#define   FIFO_CTRL_CLR_ALL			BIT(3)
+>> >> +
+>> >> +#define DATA_PTR				0x40
+>> >> +#define TAG_PTR					0x44
+>> >> +#define ECC_PTR					0x48
+>> >> +
+>> >> +#define DEC_STATUS				0x4c
+>> >> +#define   DEC_STATUS_A_ECC_FAIL			BIT(1)
+>> >> +#define   DEC_STATUS_ERR_COUNT_MASK		0x00ff0000
+>> >> +#define   DEC_STATUS_ERR_COUNT_SHIFT		16
+>> >> +
+>> >> +#define HWSTATUS_CMD				0x50
+>> >> +#define HWSTATUS_MASK				0x54
+>> >> +#define   HWSTATUS_RDSTATUS_MASK(x)		(((x) & 0xff) << 24)
+>> >> +#define   HWSTATUS_RDSTATUS_VALUE(x)		(((x) & 0xff) << 16)
+>> >> +#define   HWSTATUS_RBSY_MASK(x)			(((x) & 0xff) << 8)
+>> >> +#define   HWSTATUS_RBSY_VALUE(x)		(((x) & 0xff) << 0)
+>> >> +
+>> >> +#define BCH_CONFIG				0xcc
+>> >> +#define   BCH_ENABLE				BIT(0)
+>> >> +#define   BCH_TVAL_4				(0 << 4)
+>> >> +#define   BCH_TVAL_8				(1 << 4)
+>> >> +#define   BCH_TVAL_14				(2 << 4)
+>> >> +#define   BCH_TVAL_16				(3 << 4)
+>> >> +
+>> >> +#define DEC_STAT_RESULT				0xd0
+>> >> +#define DEC_STAT_BUF				0xd4
+>> >> +#define   DEC_STAT_BUF_FAIL_SEC_FLAG_MASK	0xff000000
+>> >> +#define   DEC_STAT_BUF_FAIL_SEC_FLAG_SHIFT	24
+>> >> +#define   DEC_STAT_BUF_CORR_SEC_FLAG_MASK	0x00ff0000
+>> >> +#define   DEC_STAT_BUF_CORR_SEC_FLAG_SHIFT	16
+>> >> +#define   DEC_STAT_BUF_MAX_CORR_CNT_MASK	0x00001f00
+>> >> +#define   DEC_STAT_BUF_MAX_CORR_CNT_SHIFT	8
+>> >> +
+>> >> +#define OFFSET(val, off)		((val) < (off) ? 0 : (val) - (off))
+>> >> +
+>> >> +#define SKIP_SPARE_BYTES	4
+>> >> +#define BITS_PER_STEP_RS	18
+>> >> +#define BITS_PER_STEP_BCH	13
+>> >> +
+>> >> +struct tegra_nand_controller {
+>> >> +	struct nand_hw_control controller;
+>> >> +	void __iomem *regs;
+>> >> +	struct clk *clk;
+>> >> +	struct device *dev;
+>> >> +	struct completion command_complete;
+>> >> +	struct completion dma_complete;
+>> >> +	bool last_read_error;
+>> >> +	int cur_chip;
+>> >> +	struct nand_chip *chip;
+>> >> +};
+>> >> +
+>> >> +struct tegra_nand_chip {
+>> >> +	struct nand_chip chip;
+>> >> +	struct gpio_desc *wp_gpio;
+>> >> +	struct mtd_oob_region tag;
+>> >> +};
+>> >> +
+>> >> +static inline struct tegra_nand_controller *to_tegra_ctrl(
+>> >> +						struct nand_hw_control *hw_ctrl)
+>> >> +{
+>> >> +	return container_of(hw_ctrl, struct tegra_nand_controller,
+> controller);
+>> >> +}
+>> >> +
+>> >> +static inline struct tegra_nand_chip *to_tegra_chip(struct nand_chip
+>> >> *chip) +{
+>> >> +	return container_of(chip, struct tegra_nand_chip, chip);
+>> >> +}
+>> >> +
+>> >> +static int tegra_nand_ooblayout_rs_ecc(struct mtd_info *mtd, int
+>> >> section,
+>> >> +				       struct mtd_oob_region *oobregion)
+>> >> +{
+>> >> +	struct nand_chip *chip = mtd_to_nand(mtd);
+>> >> +	int bytes_per_step = DIV_ROUND_UP(BITS_PER_STEP_RS *
+>> >> chip->ecc.strength,
+>> >> +					  BITS_PER_BYTE);
+>> >> +
+>> >> +	if (section > 0)
+>> >> +		return -ERANGE;
+>> >> +
+>> >> +	oobregion->offset = SKIP_SPARE_BYTES;
+>> >> +	oobregion->length = round_up(bytes_per_step * chip->ecc.steps, 4);
+>> >> +
+>> >> +	return 0;
+>> >> +}
+>> >> +
+>> >> +static int tegra_nand_ooblayout_rs_free(struct mtd_info *mtd, int
+>> >> section,
+>> >> +					struct mtd_oob_region *oobregion)
+>> >> +{
+>> >> +	struct nand_chip *chip = mtd_to_nand(mtd);
+>> >> +	int bytes_per_step = DIV_ROUND_UP(BITS_PER_STEP_RS *
+>> >> chip->ecc.strength,
+>> >> +					  BITS_PER_BYTE);
+>> >> +
+>> >> +	if (section > 0)
+>> >> +		return -ERANGE;
+>> >> +
+>> >> +	oobregion->offset = SKIP_SPARE_BYTES +
+>> >> +			    round_up(bytes_per_step * chip->ecc.steps, 4);
+>> >> +	oobregion->length = mtd->oobsize - oobregion->offset;
+>> >> +
+>> >> +	return 0;
+>> >> +}
+>> >> +
+>> >> +static const struct mtd_ooblayout_ops tegra_nand_oob_rs_ops = {
+>> >> +	.ecc = tegra_nand_ooblayout_rs_ecc,
+>> >> +	.free = tegra_nand_ooblayout_rs_free,
+>> >> +};
+>> >> +
+>> >> +static int tegra_nand_ooblayout_bch_ecc(struct mtd_info *mtd, int
+>> >> section,
+>> >> +				       struct mtd_oob_region *oobregion)
+>> >> +{
+>> >> +	struct nand_chip *chip = mtd_to_nand(mtd);
+>> >> +	int bytes_per_step = DIV_ROUND_UP(BITS_PER_STEP_BCH *
+>> >> chip->ecc.strength,
+>> >> +					  BITS_PER_BYTE);
+>> >> +
+>> >> +	if (section > 0)
+>> >> +		return -ERANGE;
+>> >> +
+>> >> +	oobregion->offset = SKIP_SPARE_BYTES;
+>> >> +	oobregion->length = round_up(bytes_per_step * chip->ecc.steps, 4);
+>> >> +
+>> >> +	return 0;
+>> >> +}
+>> >> +
+>> >> +static int tegra_nand_ooblayout_bch_free(struct mtd_info *mtd, int
+>> >> section, +					struct mtd_oob_region *oobregion)
+>> >> +{
+>> >> +	struct nand_chip *chip = mtd_to_nand(mtd);
+>> >> +	int bytes_per_step = DIV_ROUND_UP(BITS_PER_STEP_BCH *
+>> >> chip->ecc.strength,
+>> >> +					  BITS_PER_BYTE);
+>> >> +
+>> >> +	if (section > 0)
+>> >> +		return -ERANGE;
+>> >> +
+>> >> +	oobregion->offset = SKIP_SPARE_BYTES +
+>> >> +			    round_up(bytes_per_step * chip->ecc.steps, 4);
+>> >> +	oobregion->length = mtd->oobsize - oobregion->offset;
+>> >> +
+>> >> +	return 0;
+>> >> +}
+>> >> +
+>> >> +/*
+>> >> + * Layout with tag bytes is
+>> >> + *
+>> >> + *
+>> >> ------------------------------------------------------------------------
+>> >> -- + * | main area                       | skip bytes | tag bytes |
+>> >> parity | .. | + *
+>> >> ------------------------------------------------------------------------
+>> >> -- + *
+>> >> + * If not tag bytes are written, parity moves right after skip bytes!
+>> >> + */
+>> >> +static const struct mtd_ooblayout_ops tegra_nand_oob_bch_ops = {
+>> >> +	.ecc = tegra_nand_ooblayout_bch_ecc,
+>> >> +	.free = tegra_nand_ooblayout_bch_free,
+>> >> +};
+>> >> +
+>> >> +static irqreturn_t tegra_nand_irq(int irq, void *data)
+>> >> +{
+>> >> +	struct tegra_nand_controller *ctrl = data;
+>> >> +	u32 isr, dma;
+>> >> +
+>> >> +	isr = readl_relaxed(ctrl->regs + ISR);
+>> >> +	dma = readl_relaxed(ctrl->regs + DMA_CTRL);
+>> >> +	dev_dbg(ctrl->dev, "isr %08x\n", isr);
+>> >> +
+>> >> +	if (!isr && !(dma & DMA_CTRL_IS_DONE))
+>> >> +		return IRQ_NONE;
+>> >> +
+>> >> +	/*
+>> >> +	 * The bit name is somewhat missleading: This is also set when
+>> >> +	 * HW ECC was successful. The data sheet states:
+>> >> +	 * Correctable OR Un-correctable errors occurred in the DMA
+> transfer...
+>> >> +	 */
+>> >> +	if (isr & ISR_CORRFAIL_ERR)
+>> >> +		ctrl->last_read_error = true;
+>> >> +
+>> >> +	if (isr & ISR_CMD_DONE)
+>> >> +		complete(&ctrl->command_complete);
+>> >> +
+>> >> +	if (isr & ISR_UND)
+>> >> +		dev_err(ctrl->dev, "FIFO underrun\n");
+>> >> +
+>> >> +	if (isr & ISR_OVR)
+>> >> +		dev_err(ctrl->dev, "FIFO overrun\n");
+>> >> +
+>> >> +	/* handle DMA interrupts */
+>> >> +	if (dma & DMA_CTRL_IS_DONE) {
+>> >> +		writel_relaxed(dma, ctrl->regs + DMA_CTRL);
+>> >> +		complete(&ctrl->dma_complete);
+>> >> +	}
+>> >> +
+>> >> +	/* clear interrupts */
+>> >> +	writel_relaxed(isr, ctrl->regs + ISR);
+>> >> +
+>> >> +	return IRQ_HANDLED;
+>> >> +}
+>> >> +
+>> >> +static const char * const tegra_nand_reg_names[] = {
+>> >> +	"COMMAND",
+>> >> +	"STATUS",
+>> >> +	"ISR",
+>> >> +	"IER",
+>> >> +	"CONFIG",
+>> >> +	"TIMING",
+>> >> +	NULL,
+>> >> +	"TIMING2",
+>> >> +	"CMD_REG1",
+>> >> +	"CMD_REG2",
+>> >> +	"ADDR_REG1",
+>> >> +	"ADDR_REG2",
+>> >> +	"DMA_MST_CTRL",
+>> >> +	"DMA_CFG_A",
+>> >> +	"DMA_CFG_B",
+>> >> +	"FIFO_CTRL",
+>> >> +};
+>> >> +
+>> >> +static void tegra_nand_dump_reg(struct tegra_nand_controller *ctrl)
+>> >> +{
+>> >> +	u32 reg;
+>> >> +	int i;
+>> >> +
+>> >> +	dev_err(ctrl->dev, "Tegra NAND controller register dump\n");
+>> >> +	for (i = 0; i < ARRAY_SIZE(tegra_nand_reg_names); i++) {
+>> >> +		const char *reg_name = tegra_nand_reg_names[i];
+>> >> +
+>> >> +		if (!reg_name)
+>> >> +			continue;
+>> >> +
+>> >> +		reg = readl_relaxed(ctrl->regs + (i * 4));
+>> >> +		dev_err(ctrl->dev, "%s: 0x%08x\n", reg_name, reg);
+>> >> +	}
+>> >> +}
+>> >> +
+>> >> +static int tegra_nand_cmd(struct nand_chip *chip,
+>> >> +			 const struct nand_subop *subop)
+>> >> +{
+>> >> +	const struct nand_op_instr *instr;
+>> >> +	const struct nand_op_instr *instr_data_in = NULL;
+>> >> +	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip->controller);
+>> >> +	unsigned int op_id, size = 0, offset = 0;
+>> >> +	bool first_cmd = true;
+>> >> +	u32 reg, cmd = 0;
+>> >> +	int ret;
+>> >> +
+>> >> +	for (op_id = 0; op_id < subop->ninstrs; op_id++) {
+>> >> +		unsigned int naddrs, i;
+>> >> +		const u8 *addrs;
+>> >> +		u32 addr1 = 0, addr2 = 0;
+>> >> +
+>> >> +		instr = &subop->instrs[op_id];
+>> >> +
+>> >> +		switch (instr->type) {
+>> >> +		case NAND_OP_CMD_INSTR:
+>> >> +			if (first_cmd) {
+>> >> +				cmd |= CMD_CLE;
+>> >> +				writel_relaxed(instr->ctx.cmd.opcode,
+>> >> +					       ctrl->regs + CMD_1);
+>> >> +			} else {
+>> >> +				cmd |= CMD_SEC_CMD;
+>> >> +				writel_relaxed(instr->ctx.cmd.opcode,
+>> >> +					       ctrl->regs + CMD_2);
+>> >> +			}
+>> >> +			first_cmd = false;
+>> >> +			break;
+>> >> +		case NAND_OP_ADDR_INSTR:
+>> >> +			offset = nand_subop_get_addr_start_off(subop, op_id);
+>> >> +			naddrs = nand_subop_get_num_addr_cyc(subop, op_id);
+>> >> +			addrs = &instr->ctx.addr.addrs[offset];
+>> >> +
+>> >> +			cmd |= CMD_ALE | CMD_ALE_SIZE(naddrs);
+>> >> +			for (i = 0; i < min_t(unsigned int, 4, naddrs); i++)
+>> >> +				addr1 |= *addrs++ << (BITS_PER_BYTE * i);
+>> >> +			naddrs -= i;
+>> >> +			for (i = 0; i < min_t(unsigned int, 4, naddrs); i++)
+>> >> +				addr2 |= *addrs++ << (BITS_PER_BYTE * i);
+>> >> +			writel_relaxed(addr1, ctrl->regs + ADDR_1);
+>> >> +			writel_relaxed(addr2, ctrl->regs + ADDR_2);
+>> >> +			break;
+>> >> +
+>> >> +		case NAND_OP_DATA_IN_INSTR:
+>> >> +			size = nand_subop_get_data_len(subop, op_id);
+>> >> +			offset = nand_subop_get_data_start_off(subop, op_id);
+>> >> +
+>> >> +			cmd |= CMD_TRANS_SIZE(size) | CMD_PIO | CMD_RX |
+>> >> +				CMD_A_VALID;
+>> >> +
+>> >> +			instr_data_in = instr;
+>> >> +			break;
+>> >> +
+>> >> +		case NAND_OP_DATA_OUT_INSTR:
+>> >> +			size = nand_subop_get_data_len(subop, op_id);
+>> >> +			offset = nand_subop_get_data_start_off(subop, op_id);
+>> >> +
+>> >> +			cmd |= CMD_TRANS_SIZE(size) | CMD_PIO | CMD_TX |
+>> >> +				CMD_A_VALID;
+>> >> +
+>> >> +			memcpy(&reg, instr->ctx.data.buf.out + offset, size);
+>> >> +			writel_relaxed(reg, ctrl->regs + RESP);
+>> >> +
+>> >> +			break;
+>> >> +		case NAND_OP_WAITRDY_INSTR:
+>> >> +			cmd |= CMD_RBSY_CHK;
+>> >> +			break;
+>> >> +
+>> >> +		}
+>> >> +	}
+>> >> +
+>> >> +	cmd |= CMD_GO | CMD_CE(ctrl->cur_chip);
+>> >> +	writel_relaxed(cmd, ctrl->regs + CMD);
+>> >> +	ret = wait_for_completion_timeout(&ctrl->command_complete,
+>> >> +					  msecs_to_jiffies(500));
+>> >> +	if (!ret) {
+>> >> +		dev_err(ctrl->dev, "CMD timeout\n");
+>> >> +		tegra_nand_dump_reg(ctrl);
+>> >> +		return -ETIMEDOUT;
+>> >> +	}
+>> >
+>> > - wait_for_completion_timeout() could fail
+>>
+>> Not according to:
+>> https://elixir.bootlin.com/linux/latest/source/kernel/sched/completion.c#L14
+>> 0 https://www.kernel.org/doc/Documentation/scheduler/completion.txt
+>>
+>> Afaik, only the _interruptible variant can fail.
+> 
+> Okay.
+> 
+>> Btw, maybe we should use the _io variant?
+> 
+> Looks like the _io variant is something specific to block/FS subsys and 
+> shouldn't be used by the drivers.
+> 
+>> > - HW shall be reset
+>> > - completion shall be re-inited because IRQ could fire just after the
+>> > completion timeout
+>> >
+>> > I'd write it something like this:
+>> >
+>> > #define INT_MASK	(IER_UND | IER_OVR | IER_CMD_DONE | IER_GIE)
+>> >
+>> > #define HWSTATUS_MASK	(HWSTATUS_RDSTATUS_MASK(1) |		 \
+>> >
+>> > 			 HWSTATUS_RDSTATUS_VALUE(0) |		 \
+>> > 			 HWSTATUS_RBSY_MASK(NAND_STATUS_READY) | \
+>> > 			 HWSTATUS_RBSY_VALUE(NAND_STATUS_READY))
+>> >
+>> > #define HW_TIMEOUT	500
+>> >
+>> > void tegra_nand_controller_reset(struct tegra_nand_controller *ctrl)
+>> > {
+>> >
+>> > 	int err;
+>> >
+>> > 	disable_irq(ctrl->irq);
+>> >
+>> > 	err = reset_control_reset(ctrl->rst);
+>> > 	if (err) {
+>> >
+>> > 		dev_err(ctrl->dev, "Failed to reset HW: %d\n", err);
+>> > 		msleep(HW_TIMEOUT);
+>> >
+>> > 	}
+>> >
+>> > 	writel_relaxed(NAND_CMD_STATUS, ctrl->regs + HWSTATUS_CMD);
+>> > 	writel_relaxed(HWSTATUS_MASK, ctrl->regs + HWSTATUS_MASK);
+>> > 	writel_relaxed(INT_MASK, ctrl->regs + ISR);
+>>
+>> If we do a controller reset, there is much more state than that which
+>> needs to be restored. A lot of it is not readily available currently
+>> (timing, ECC settings...)
+>>
+>> That seems a lot of work for a code path I do not intend to ever use :-)
+> 
+> Are you sure that resetting HW resets the timing and other registers 
+> configuration? Reset implementation is HW-specific, like for example in a case 
+> of a video decoder the registers state is re-intialized on HW reset, but 
+> registers configuration is untouched in a case of resetting GPU. I'd suggest 
+> to check whether NAND controller resetting affects the HW configuration.
 
-Squash lookup interfaces into portdrv_pci.c.  No functional change
-intended.
+It seems all registers are set back to their documented reset value:
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/pcie/portdrv_core.c |   69 ---------------------------------------
- drivers/pci/pcie/portdrv_pci.c  |   68 ++++++++++++++++++++++++++++++++++++++
- 2 files changed, 68 insertions(+), 69 deletions(-)
+[boot loader/ROM initialized values]
+[    1.270253] tegra-nand 70008000.nand: Tegra NAND controller register
+dump
+[    1.277051] tegra-nand 70008000.nand: COMMAND: 0x66880104
+[    1.282457] tegra-nand 70008000.nand: STATUS: 0x00000101
+[    1.287763] tegra-nand 70008000.nand: ISR: 0x01000120
+[    1.292818] tegra-nand 70008000.nand: IER: 0x00000000
+[    1.297863] tegra-nand 70008000.nand: CONFIG: 0x00840000
+[    1.303181] tegra-nand 70008000.nand: TIMING: 0x05040000
+[    1.308486] tegra-nand 70008000.nand: TIMING2: 0x00000003
+[    1.313897] tegra-nand 70008000.nand: CMD_REG1: 0x00000000
+[    1.319377] tegra-nand 70008000.nand: CMD_REG2: 0x00000030
+[    1.324868] tegra-nand 70008000.nand: ADDR_REG1: 0x03000000
+[    1.330435] tegra-nand 70008000.nand: ADDR_REG2: 0x00000000
+[    1.336011] tegra-nand 70008000.nand: DMA_MST_CTRL: 0x04100004
+[    1.341838] tegra-nand 70008000.nand: DMA_CFG_A: 0x00000fff
+[    1.347415] tegra-nand 70008000.nand: DMA_CFG_B: 0x0000001b
+[    1.352991] tegra-nand 70008000.nand: FIFO_CTRL: 0x0000aa00
+[reset]
+[    1.358559] tegra-nand 70008000.nand: Tegra NAND controller register
+dump
+[    1.365352] tegra-nand 70008000.nand: COMMAND: 0x00800004
+[    1.370744] tegra-nand 70008000.nand: STATUS: 0x00000101
+[    1.376060] tegra-nand 70008000.nand: ISR: 0x00000100
+[    1.381105] tegra-nand 70008000.nand: IER: 0x00000000
+[    1.386161] tegra-nand 70008000.nand: CONFIG: 0x10030000
+[    1.391466] tegra-nand 70008000.nand: TIMING: 0x00000000
+[    1.396782] tegra-nand 70008000.nand: TIMING2: 0x00000000
+[    1.402174] tegra-nand 70008000.nand: CMD_REG1: 0x00000000
+[    1.407664] tegra-nand 70008000.nand: CMD_REG2: 0x00000000
+[    1.413156] tegra-nand 70008000.nand: ADDR_REG1: 0x00000000
+[    1.418722] tegra-nand 70008000.nand: ADDR_REG2: 0x00000000
+[    1.424297] tegra-nand 70008000.nand: DMA_MST_CTRL: 0x24000000
+[    1.430123] tegra-nand 70008000.nand: DMA_CFG_A: 0x00000000
+[    1.435698] tegra-nand 70008000.nand: DMA_CFG_B: 0x00000000
+[    1.441264] tegra-nand 70008000.nand: FIFO_CTRL: 0x0000aa00
 
-diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
-index 2ef046af08d2..77b1c1ea8885 100644
---- a/drivers/pci/pcie/portdrv_core.c
-+++ b/drivers/pci/pcie/portdrv_core.c
-@@ -19,75 +19,6 @@
- #include "../pci.h"
- #include "portdrv.h"
- 
--struct portdrv_service_data {
--	struct pcie_port_service_driver *drv;
--	struct device *dev;
--	u32 service;
--};
--
--static int find_service_iter(struct device *device, void *data)
--{
--	struct pcie_port_service_driver *service_driver;
--	struct portdrv_service_data *pdrvs;
--	u32 service;
--
--	pdrvs = (struct portdrv_service_data *) data;
--	service = pdrvs->service;
--
--	if (device->bus == &pcie_port_bus_type && device->driver) {
--		service_driver = to_service_driver(device->driver);
--		if (service_driver->service == service) {
--			pdrvs->drv = service_driver;
--			pdrvs->dev = device;
--			return 1;
--		}
--	}
--
--	return 0;
--}
--
--/**
-- * pcie_port_find_service - find the service driver
-- * @dev: PCI Express port the service is associated with
-- * @service: Service to find
-- *
-- * Find PCI Express port service driver associated with given service
-- */
--struct pcie_port_service_driver *pcie_port_find_service(struct pci_dev *dev,
--							u32 service)
--{
--	struct pcie_port_service_driver *drv;
--	struct portdrv_service_data pdrvs;
--
--	pdrvs.drv = NULL;
--	pdrvs.service = service;
--	device_for_each_child(&dev->dev, &pdrvs, find_service_iter);
--
--	drv = pdrvs.drv;
--	return drv;
--}
--
--/**
-- * pcie_port_find_device - find the struct device
-- * @dev: PCI Express port the service is associated with
-- * @service: For the service to find
-- *
-- * Find the struct device associated with given service on a pci_dev
-- */
--struct device *pcie_port_find_device(struct pci_dev *dev,
--				      u32 service)
--{
--	struct device *device;
--	struct portdrv_service_data pdrvs;
--
--	pdrvs.dev = NULL;
--	pdrvs.service = service;
--	device_for_each_child(&dev->dev, &pdrvs, find_service_iter);
--
--	device = pdrvs.dev;
--	return device;
--}
--
- /**
-  * pcie_port_probe_service - probe driver for given PCI Express port service
-  * @dev: PCI Express port service device to probe against
-diff --git a/drivers/pci/pcie/portdrv_pci.c b/drivers/pci/pcie/portdrv_pci.c
-index ab5e3a63981b..b019af97f14e 100644
---- a/drivers/pci/pcie/portdrv_pci.c
-+++ b/drivers/pci/pcie/portdrv_pci.c
-@@ -42,6 +42,74 @@ __setup("pcie_ports=", pcie_port_setup);
- 
- /* global data */
- 
-+struct portdrv_service_data {
-+	struct pcie_port_service_driver *drv;
-+	struct device *dev;
-+	u32 service;
-+};
-+
-+static int find_service_iter(struct device *device, void *data)
-+{
-+	struct pcie_port_service_driver *service_driver;
-+	struct portdrv_service_data *pdrvs;
-+	u32 service;
-+
-+	pdrvs = (struct portdrv_service_data *) data;
-+	service = pdrvs->service;
-+
-+	if (device->bus == &pcie_port_bus_type && device->driver) {
-+		service_driver = to_service_driver(device->driver);
-+		if (service_driver->service == service) {
-+			pdrvs->drv = service_driver;
-+			pdrvs->dev = device;
-+			return 1;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * pcie_port_find_service - find the service driver
-+ * @dev: PCI Express port the service is associated with
-+ * @service: Service to find
-+ *
-+ * Find PCI Express port service driver associated with given service
-+ */
-+struct pcie_port_service_driver *pcie_port_find_service(struct pci_dev *dev,
-+							u32 service)
-+{
-+	struct pcie_port_service_driver *drv;
-+	struct portdrv_service_data pdrvs;
-+
-+	pdrvs.drv = NULL;
-+	pdrvs.service = service;
-+	device_for_each_child(&dev->dev, &pdrvs, find_service_iter);
-+
-+	drv = pdrvs.drv;
-+	return drv;
-+}
-+
-+/**
-+ * pcie_port_find_device - find the struct device
-+ * @dev: PCI Express port the service is associated with
-+ * @service: For the service to find
-+ *
-+ * Find the struct device associated with given service on a pci_dev
-+ */
-+struct device *pcie_port_find_device(struct pci_dev *dev, u32 service)
-+{
-+	struct device *device;
-+	struct portdrv_service_data pdrvs;
-+
-+	pdrvs.dev = NULL;
-+	pdrvs.service = service;
-+	device_for_each_child(&dev->dev, &pdrvs, find_service_iter);
-+
-+	device = pdrvs.dev;
-+	return device;
-+}
-+
- static int pcie_portdrv_restore_config(struct pci_dev *dev)
- {
- 	int retval;
+--
+Stefan
