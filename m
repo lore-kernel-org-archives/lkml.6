@@ -1,121 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id nwwVK5XrGFunZwAAmS7hNA
-	; Thu, 07 Jun 2018 08:24:25 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id MDUeAcACHVvFKgAAmS7hNA
+	; Sun, 10 Jun 2018 14:37:55 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id E9194608C8; Thu,  7 Jun 2018 08:24:24 +0000 (UTC)
+	id 97C7160795; Sun, 10 Jun 2018 14:37:55 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cduXCgea"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id B26C860115;
-	Thu,  7 Jun 2018 08:24:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B26C860115
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 0DA506070A;
+	Sun, 10 Jun 2018 14:37:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0DA506070A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932657AbeFGIYV (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 04:24:21 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:37729 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932551AbeFGIYS (ORCPT
+        id S1753539AbeFJOhv (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sun, 10 Jun 2018 10:37:51 -0400
+Received: from mail-pl0-f47.google.com ([209.85.160.47]:37493 "EHLO
+        mail-pl0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751845AbeFJOht (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 04:24:18 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w578O80l2127939
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 7 Jun 2018 01:24:08 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w578O8AQ2127936;
-        Thu, 7 Jun 2018 01:24:08 -0700
-Date: Thu, 7 Jun 2018 01:24:08 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-ndfjtpiop3tdcnyjgp320ra8@git.kernel.org>
-Cc: wangnan0@huawei.com, dsahern@gmail.com,
-        linux-kernel@vger.kernel.org, acme@redhat.com,
-        adrian.hunter@intel.com, mingo@kernel.org, hpa@zytor.com,
-        jolsa@kernel.org, tglx@linutronix.de, namhyung@kernel.org
-Reply-To: tglx@linutronix.de, namhyung@kernel.org, jolsa@kernel.org,
-          hpa@zytor.com, mingo@kernel.org, adrian.hunter@intel.com,
-          acme@redhat.com, linux-kernel@vger.kernel.org, dsahern@gmail.com,
-          wangnan0@huawei.com
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf annnotate: Make __symbol__inc_addr_samples
- handle src->histograms == NULL
-Git-Commit-ID: 8d628d26b997e6b2e93bf31cfc09e42cc496922e
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sun, 10 Jun 2018 10:37:49 -0400
+Received: by mail-pl0-f47.google.com with SMTP id 31-v6so10851313plc.4;
+        Sun, 10 Jun 2018 07:37:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=djTtPuvzHaNMeZhp+RqeOusWEYZrLNs/CFDa0Axjdb0=;
+        b=cduXCgeaB/qqoWFcE7u5cAAbBpcbdtUlVMkwsX8tqZp9jFKUatmIr5MmBKskPNMl3o
+         TaGp3xl2PpEJ1o8stpUE5vr4gU6hEIJfF0w7PpAc0VGlHWb/eUa5V+hhi0/BxpWNdLoJ
+         Yh7+SX5RG/v5yKHcgl4vUXmxxwNt04Rtfn3QrrpGECe1Qc6JG+JVZHQIzcOB6LpIpP0v
+         Z8ZgmewWqvGRyEE57NbtKd6q1wsghsHS82uUFtblE6Hz6n697Nk/P76mGQNl8qGxupMy
+         hG2PEdLZDpuKEGAkAtO2c0JjEYfPZS/94Falzjnbjc5p5FW7XV66VxmwuIY5Ti1EucSF
+         qjWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=djTtPuvzHaNMeZhp+RqeOusWEYZrLNs/CFDa0Axjdb0=;
+        b=tPlyOtEqdEb9rrI9lnvUOKM3YqCiLS8l0mDuJK2ihVmgbeCasmpy9qWR/NldKS2KA9
+         b8OQ34/2hqo6RgFOJHKRrouZpLlgGjhOHnnPJ5v25Umj+mMcb5GPFjjJUpcv/6iy1UVR
+         ymZ2x+KWXvklt6l839MB4dZFdn6dVIltpmRTfMc9K5LD9pZL9aT2Fcpu6uIec7n/PVyb
+         Qex+OdP0QwW++pcCWWLOD3x0brKrFCjFZq73u7ZagLKH7DFcN5093Nam1D9N58/iaPiu
+         XyrSv7zBs/pizavoz2g5rwhGmSpiSKB5cd74TZ7G/pliR09yAd8Ge4P5CkCyvpKlisN3
+         BR8Q==
+X-Gm-Message-State: APt69E27Omp/xq1Vxf7nbxE4AcPiH11iAscNbvsT2h4aiv3z+JDFFWZX
+        dzPQu8gXmNcW0HhdGEEztJ4pFQyLnUnzCYQIIsbLqQ==
+X-Google-Smtp-Source: ADUXVKJ/2qcgMO5sQnc3O/vu+GznQbB1xE9cdFd4aDA1e6wdUPV1T8F+cSjuq6hIycJ8DPeCs61uggkXvKl6U0you4Q=
+X-Received: by 2002:a17:902:6bc7:: with SMTP id m7-v6mr14690085plt.162.1528641468776;
+ Sun, 10 Jun 2018 07:37:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Received: by 2002:a17:90a:a081:0:0:0:0 with HTTP; Sun, 10 Jun 2018 07:37:48
+ -0700 (PDT)
+From: Masanari Iida <standby24x7@gmail.com>
+Date: Sun, 10 Jun 2018 23:37:48 +0900
+Message-ID: <CALLJCT2K9Tkj1d-xq6-zmNhOwLjQiStnMaE7PJCTDDT+Pi=L1w@mail.gmail.com>
+Subject: [BUG] make htmldocs failed with error after add converted RST file.
+To: linux-kernel@vger.kernel.org, jeffrey.t.kirsher@intel.com,
+        netdev@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        linux-doc <linux-doc@vger.kernel.org>,
+        intel-wired-lan@lists.osuosl.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8d628d26b997e6b2e93bf31cfc09e42cc496922e
-Gitweb:     https://git.kernel.org/tip/8d628d26b997e6b2e93bf31cfc09e42cc496922e
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Tue, 5 Jun 2018 16:31:21 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 6 Jun 2018 12:52:08 -0300
+After merger a patch,  make htmldocs  and make xmldocs
+failed with error.
 
-perf annnotate: Make __symbol__inc_addr_samples handle src->histograms == NULL
+reST markup error:
+/home/iida/Repo/linux-2.6/Documentation/networking/e100.rst:90:
+(SEVERE/4) Unexpected section title.
 
-Making it a bit more robust, this took place here when a sample appeared
-right after:
+Configuring the Driver on Different Distributions
+-------------------------------------------------
+Documentation/Makefile:68: recipe for target 'htmldocs' failed
+make[1]: *** [htmldocs] Error 1
+Makefile:1542: recipe for target 'htmldocs' failed
+make: *** [htmldocs] Error 2
 
-  ffffffff8a925000 D __nosave_end
 
-And before the next considered symbol, which, using kallsyms make us
-over guess the size of __nosave_end, and then the sequence:
+85d63445f41125dafeddda74e5b13b7eefac9407 is the first bad commit
+commit 85d63445f41125dafeddda74e5b13b7eefac9407
+Author: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Date:   Thu May 10 12:20:13 2018 -0700
 
-  hist_entry__inc_addr_samples ->
-    symbol__inc_addr_samples ->
-      symbol__hists ->
-        annotated_source__alloc_histograms
+    Documentation: e100: Update the Intel 10/100 driver doc
 
-Ends up not liking to allocate gigabytes of ram for annotation...
 
-This will be alleviated by considering BSS symbols, which we should but
-don't so far, and then we should investigate those samples further.
+Reported-by: Masanari Iida <standby24x7@gmail.com>
 
-The testcase was to have:
-
-   perf top -e cycles/call-graph=fp/,cache-misses/call-graph=dwarf/,instructions
-
-Running for a while till it segfaulted trying to access NULL notes->src->histograms.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-ndfjtpiop3tdcnyjgp320ra8@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/annotate.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 2baa22933b0e..f91775b4bc3c 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -819,6 +819,11 @@ static int __symbol__inc_addr_samples(struct symbol *sym, struct map *map,
- 
- 	offset = addr - sym->start;
- 	h = annotated_source__histogram(src, evidx);
-+	if (h == NULL) {
-+		pr_debug("%s(%d): ENOMEM! sym->name=%s, start=%#" PRIx64 ", addr=%#" PRIx64 ", end=%#" PRIx64 ", func: %d\n",
-+			 __func__, __LINE__, sym->name, sym->start, addr, sym->end, sym->type == STT_FUNC);
-+		return -ENOMEM;
-+	}
- 	h->nr_samples++;
- 	h->addr[offset].nr_samples++;
- 	h->period += sample->period;
+Masanari Iida
