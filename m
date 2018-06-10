@@ -1,103 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 89FXKhdVGVtsMgAAmS7hNA
-	; Thu, 07 Jun 2018 15:54:24 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id cv4tEI2nHVuEVgAAmS7hNA
+	; Sun, 10 Jun 2018 22:34:53 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 9511A607E7; Thu,  7 Jun 2018 15:54:24 +0000 (UTC)
+	id 2D28460792; Sun, 10 Jun 2018 22:34:53 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id F3AA060590;
-	Thu,  7 Jun 2018 15:54:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F3AA060590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id AB31A601D2;
+	Sun, 10 Jun 2018 22:34:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AB31A601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934340AbeFGPyW (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:54:22 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40336 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933751AbeFGOeH (ORCPT
+        id S1753624AbeFJWeu (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Sun, 10 Jun 2018 18:34:50 -0400
+Received: from smtprelay0062.hostedemail.com ([216.40.44.62]:50168 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753486AbeFJWes (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:34:07 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbm-0005Zs-Pt; Thu, 07 Jun 2018 15:09:47 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb3-0002sa-31; Thu, 07 Jun 2018 15:09:01 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Wei Yongjun" <weiyongjun1@huawei.com>,
-        "Richard Weinberger" <richard@nod.at>,
-        "Boris Brezillon" <boris.brezillon@free-electrons.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.327600273@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 140/410] mtd: ubi: wl: Fix error return code in
- ubi_wl_init()
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Sun, 10 Jun 2018 18:34:48 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 92C24100E86C3;
+        Sun, 10 Jun 2018 22:34:47 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: cast97_c79105329649
+X-Filterd-Recvd-Size: 2945
+Received: from XPS-9350.home (unknown [47.151.150.235])
+        (Authenticated sender: joe@perches.com)
+        by omf04.hostedemail.com (Postfix) with ESMTPA;
+        Sun, 10 Jun 2018 22:34:45 +0000 (UTC)
+Message-ID: <f32e6e86a92c76ca2fab2abbf3ae3f454afbe72e.camel@perches.com>
+Subject: Re: [PATCH] staging:iio:accel: use sign extend function avoiding
+ code duplication
+From: Joe Perches <joe@perches.com>
+To: Karim Eshapa <karim.eshapa@gmail.com>, lars@metafoo.de,
+        Himanshu Jha <himanshujha199640@gmail.com>
+Cc: Michael.Hennerich@analog.com, jic23@kernel.org, knaack.h@gmx.de,
+        pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Date: Sun, 10 Jun 2018 15:34:44 -0700
+In-Reply-To: <20180610220920.12244-1-karim.eshapa@gmail.com>
+References: <20180610220920.12244-1-karim.eshapa@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+On Mon, 2018-06-11 at 00:09 +0200, Karim Eshapa wrote:
+> Use sign_extend32 kernel function instead of code duplication.
+> This function is also safe for 16 bits.
 
-------------------
+Firstly:
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+This file is not in staging anymore.
+Please use the -next tree for patches.
 
-commit 7233982ade15eeac05c6f351e8d347406e6bcd2f upstream.
+> diff --git a/drivers/staging/iio/accel/adis16201.c b/drivers/staging/iio/accel/adis16201.c
+[]
+> @@ -227,9 +227,7 @@ static int adis16201_read_raw(struct iio_dev *indio_dev,
+>  		ret = adis_read_reg_16(st, addr, &val16);
+>  		if (ret)
+>  			return ret;
+> -		val16 &= (1 << bits) - 1;
+> -		val16 = (s16)(val16 << (16 - bits)) >> (16 - bits);
+> -		*val = val16;
+> +		*val = sign_extend32(val16, bits);
+>  		return IIO_VAL_INT;
+>  	}
 
-Fix to return error code -ENOMEM from the kmem_cache_alloc() error
-handling case instead of 0, as done elsewhere in this function.
+Secondly:
 
-Fixes: f78e5623f45b ("ubi: fastmap: Erase outdated anchor PEBs during
-attach")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Reviewed-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Signed-off-by: Richard Weinberger <richard@nod.at>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+A similar patch with a different bits value was
+already applied.
+
+Please verify the appropriate bits value.
+
+commit e7f3bfb7eb7d9307c0c157f82fceb228f0aec1d9
+Author: Himanshu Jha <himanshujha199640@gmail.com>
+Date:   Sat Mar 17 01:36:23 2018 +0530
+
+    Staging: iio: accel: adis16201: Use sign_extend32 function
+    
+    Use sign_extned32() for 32 bit sign extending rather than hard coding.
+    
+    Signed-off-by: Himanshu Jha <himanshujha199640@gmail.com>
+    Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 ---
- drivers/mtd/ubi/wl.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/staging/iio/accel/adis16201.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/drivers/mtd/ubi/wl.c
-+++ b/drivers/mtd/ubi/wl.c
-@@ -1925,8 +1925,10 @@ int ubi_wl_init(struct ubi_device *ubi,
- 		cond_resched();
+diff --git a/drivers/staging/iio/accel/adis16201.c b/drivers/staging/iio/accel/adis16201.c
+index 87ad3d421c12..526dde481f84 100644
+--- a/drivers/staging/iio/accel/adis16201.c
++++ b/drivers/staging/iio/accel/adis16201.c
+@@ -173,9 +173,8 @@ static int adis16201_read_raw(struct iio_dev *indio_dev,
+ 		ret = adis_read_reg_16(st, addr, &val16);
+ 		if (ret)
+ 			return ret;
+-		val16 &= (1 << bits) - 1;
+-		val16 = (s16)(val16 << (16 - bits)) >> (16 - bits);
+-		*val = val16;
++
++		*val = sign_extend32(val16, bits - 1);
+                return IIO_VAL_INT;
+        }
  
- 		e = kmem_cache_alloc(ubi_wl_entry_slab, GFP_KERNEL);
--		if (!e)
-+		if (!e) {
-+			err = -ENOMEM;
- 			goto out_free;
-+		}
- 
- 		e->pnum = aeb->pnum;
- 		e->ec = aeb->ec;
-@@ -1966,8 +1968,10 @@ int ubi_wl_init(struct ubi_device *ubi,
- 			cond_resched();
- 
- 			e = kmem_cache_alloc(ubi_wl_entry_slab, GFP_KERNEL);
--			if (!e)
-+			if (!e) {
-+				err = -ENOMEM;
- 				goto out_free;
-+			}
- 
- 			e->pnum = aeb->pnum;
- 			e->ec = aeb->ec;
