@@ -1,206 +1,199 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id rhl5Cj1CGVtHeQAAmS7hNA
-	; Thu, 07 Jun 2018 14:33:59 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id O04AO0e4HVvWJAAAmS7hNA
+	; Sun, 10 Jun 2018 23:46:16 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id A5520607E7; Thu,  7 Jun 2018 14:33:59 +0000 (UTC)
+	id D0FE960791; Sun, 10 Jun 2018 23:46:15 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ex9SLnpi"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 05C59601D2;
-	Thu,  7 Jun 2018 14:33:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 05C59601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 35D1F604D4;
+	Sun, 10 Jun 2018 23:46:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 35D1F604D4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933935AbeFGOd5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:33:57 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49134 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933398AbeFGOdx (ORCPT
+        id S932165AbeFJXqL (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Sun, 10 Jun 2018 19:46:11 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:40716 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753557AbeFJXp6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:33:53 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w57EXpRa072536
-        for <linux-kernel@vger.kernel.org>; Thu, 7 Jun 2018 10:33:53 -0400
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jf4n5f305-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 10:33:52 -0400
-Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.vnet.ibm.com>;
-        Thu, 7 Jun 2018 10:33:51 -0400
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 7 Jun 2018 10:33:47 -0400
-Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w57EXjse65929268
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 7 Jun 2018 14:33:45 GMT
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1CE93124058;
-        Thu,  7 Jun 2018 11:35:10 -0400 (EDT)
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0A1EA12405A;
-        Thu,  7 Jun 2018 11:35:09 -0400 (EDT)
-Received: from oc8043147753.ibm.com (unknown [9.85.135.133])
-        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  7 Jun 2018 11:35:08 -0400 (EDT)
-Subject: Re: [PATCH v5 10/13] s390: vfio-ap: sysfs interface to view matrix
- mdev matrix
-To: Halil Pasic <pasic@linux.ibm.com>, pmorel@linux.ibm.com,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1525705912-12815-11-git-send-email-akrowiak@linux.vnet.ibm.com>
- <a6bba129-8a3c-a848-65aa-b67816bf2d25@linux.ibm.com>
- <53275110-45fb-d50f-c97e-93141378f094@linux.vnet.ibm.com>
- <89bda651-d465-af50-a737-1900a54b01c8@linux.ibm.com>
- <6f67a282-773d-3fca-5b36-cc23ad49ba5b@linux.vnet.ibm.com>
- <32340d2a-bea6-bdb1-38a6-76afe3d54672@linux.ibm.com>
- <624dcbbf-5f40-6f27-b173-a4c533dd7781@linux.vnet.ibm.com>
- <4f42fa11-e9cc-20a9-3068-b103a8ead644@linux.ibm.com>
- <525163cf-d656-b146-05b6-2efbbd2f5a9d@linux.vnet.ibm.com>
- <adc6b4cd-e104-98fa-6d1b-29bd2a638e5c@linux.ibm.com>
-From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Date: Thu, 7 Jun 2018 10:33:43 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <adc6b4cd-e104-98fa-6d1b-29bd2a638e5c@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18060714-0060-0000-0000-00000279CC30
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009146; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000265; SDB=6.01043529; UDB=6.00534332; IPR=6.00822627;
- MB=3.00021513; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-07 14:33:49
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18060714-0061-0000-0000-0000455F14CE
-Message-Id: <93e5df44-8f31-7a3e-227e-8e6425062892@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-07_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806070165
+        Sun, 10 Jun 2018 19:45:58 -0400
+Received: by mail-pf0-f196.google.com with SMTP id z24-v6so9280309pfe.7
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Jun 2018 16:45:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=sAsnYkTBYc+FGHe6cSqvPL8irZtOAqC+0fBuLqZw7qQ=;
+        b=ex9SLnpiWtQqGhQDsbr62ypGjipmAICpR9OMSplBc8735rzzIHDSo2cf1bnPGVQB3p
+         C1D8PwOi+Lw+m7VvJsggV+56wuCCdMgpcPKjTe05PCmYLBSarMKowj33umZX88hKkFWr
+         KbBx1QjOGyVPOzzIMTZMiMIxdzR6xlhXH0bR0orny6Pta/75t+hWV/eWSZvinjYGG+Jc
+         bi9wgKvSevNPBtYaxvkRIBdUT93d2QRujZVM52je/T5LkiIbzcswUm0wMWsdEI2PweWg
+         fat1W+YpQgUv2vMsFXFw9nPWfOfj8fMvM0/dnmRnpIEp3xZcjcFNbXEbbVA8ytZqwhVl
+         oBXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=sAsnYkTBYc+FGHe6cSqvPL8irZtOAqC+0fBuLqZw7qQ=;
+        b=sXib8W237KI9vFFkrkaGda1oLW+RjX2YcIBMf4DZJW9rgKkijII2g4a+/qBcWTzeZN
+         B+XtDl7ZnanWiOIv3gvhzsWaocJ9V+8fF5jgvO/Kn98rjMMu10XpJsOqmmAuy4GARQvE
+         7C74ouBgtrMV97kj2Dmy+OsvfOnqQGn2xF+H+0yxwk2vntINw44jw10qOo8gPGIC/oio
+         wy9Tbk0zyjXBcnhBWoDSlcSTzO6vfc2uI4hn3Mb4zdaov7BNkXxOTIca/xLy2gcDn3V+
+         ZmBb7sOH2Cd6cCc80tr1FH6VOgHr9iv65MBYuFFKsu6s3Pd7M0Om06SEowtNftWFwpJe
+         WPvw==
+X-Gm-Message-State: APt69E12v6ni6PsKkZPA7ABO/0YGeJ8Dmxltvjq/6G8o7PDSdwwybowf
+        79fRmWLBcv5A1lptgfjtZakC19TMXoQ=
+X-Google-Smtp-Source: ADUXVKI+jYbh2ztVguJJquHDe3HRSsKgL0RLfTGo8IXAY2qVfBIxqzd4ucRQAQZDxOCW5UWsj/roCg==
+X-Received: by 2002:a63:6501:: with SMTP id z1-v6mr12693397pgb.452.1528674357550;
+        Sun, 10 Jun 2018 16:45:57 -0700 (PDT)
+Received: from joelaf.mtv.corp.google.com ([2620:0:1000:1600:3122:ea9c:d178:eb])
+        by smtp.gmail.com with ESMTPSA id x72-v6sm64939133pff.176.2018.06.10.16.45.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 10 Jun 2018 16:45:57 -0700 (PDT)
+From: Joel Fernandes <joelaf@google.com>
+X-Google-Original-From: Joel Fernandes <joel@joelfernandes.org>
+To: linux-kernel@vger.kernel.org
+Cc: kernel-team@android.com,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        mingo@redhat.com, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, tglx@linutronix.de
+Subject: [PATCH 2/2] rcutorture: Make boost test more robust
+Date: Sun, 10 Jun 2018 16:45:44 -0700
+Message-Id: <20180610234544.150933-2-joel@joelfernandes.org>
+X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a-goog
+In-Reply-To: <20180610234544.150933-1-joel@joelfernandes.org>
+References: <20180610234544.150933-1-joel@joelfernandes.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/07/2018 09:16 AM, Halil Pasic wrote:
->
->
-> On 06/07/2018 02:53 PM, Tony Krowiak wrote:
->>>>> 2) As I said above, what you show is not the effective mask used 
->>>>> by the guest
->>>>
->>>> Why would a sysfs attribute for the mediated matrix device show the 
->>>> effective
->>>> mask used by the guest?
->>>
->>> OK, bad word, "effective", replace with "really".
->>>
->>> We do not implement any kind of provisioning nor do we implement update
->>> of the CRYCB at any point after the first mediated device open.
->>
->> I think this is a way we might be able to hot plug/unplug devices.
->>
->>>
->>>
->>> Binding a queue and updating the mask can be done at any time (may 
->>> be we should change this ?)
->>
->> As I said above, I think we can utilize this as a means of hot 
->> plugging/unplugging AP
->> adapters and domains. If the guest is running when an adapter or 
->> domain is assigned,
->> we can update the guest's CRYCB at that time.
->>
->>>
->>>
->>> What is the point of showing a matrix which will never be used by 
->>> the guest?
->>
->> That is simply not true. The matrix WILL be used by a guest the next time a 
->>
->> guest is configured with a vfio-ap device referencing the path to the
->> mediated matrix device - i.e., -device vfio-ap,sysfsdev=$PATH. The point
->> is to show the matrix assigned to the mediated matrix device. In my 
->> mind, the
->> mediated matrix device is a separate object from the guest. Sure it is used 
->>
->> to configure a guest's matrix when the guest is started, but it could 
->> be used
->> to configure the matrix for any guest; it has no direct connection to a
->> particular guest until a guest using the device is started. IMHO the sysfs 
->>
->> attributes for the mediated matrix device reflect only the attributes of
->> the device, not the attributes of a guest.
->
-> So bottom line is what? Is the interface going to change so that 
-> modifications
-> to the mdev's matrix will be reflected immediately -- to support 
-> hotplug of
-> domains and ap cards?
->
->
-> Or are you intending to keep the interface as is?
+From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 
+Currently, with RCU_BOOST disabled, I get no failures when forcing
+rcutorture to test RCU boost priority inversion. The reason seems to be
+that we don't check for failures if the callback never ran at all for
+the duration of the boost-test loop.
 
-I have been looking in to hot plug/unplug. I am in the exploratory phase and
-have not yet come up with a concrete plan, but I believe we will be able to
-hot plug/unplug adapters and domains using the sysfs attributes interfaces
-for the mediated matrix device.
+Further, the 'rtb' and 'rtbf' counters seem to be used inconsistently.
+'rtb' is incremented at the start of each test and 'rtbf' is incremented
+per-cpu on each failure of call_rcu. So its possible 'rtbf' > 'rtb'.
 
->
->
-> If the matrix assigned to the mediated device can differ from the matrix
-> of the guest (that is the masks in the CRYCB, and I'm talking about a 
-> running
-> guest) do you provide a way for the host admin to examine the matrix 
-> of the
-> guest? If not, why do you think that information is irrelevant to the 
-> host
-> admin?
+To test the boost with rcutorture, I did following on a 4-CPU x86 machine:
 
-I never said the information contained in the CRYCB is irrelevant to the 
-host
-admin. What I said was that the sysfs attributes apply to the mediated 
-device,
-not the guest. There may or may not be a guest using the mediated device at
-any given point in time. I do not currently provide a way to examine the 
-matrix
-of the guest. I'm not sure whether a sysfs attribute of the mediated
-device is the appropriate venue for displaying what's in the guest's CRYCB.
-I suppose we could use the mediated device matrix attribute for this purpose
-if you and Pierre insist, but I think we still need to
-display the matrix or devices configured for the mediated device. It 
-does beg
-the question, are there interfaces an admin can use to display all of 
-the other
-devices being used by a guest? The only surefire way to see which AP devices
-are actually used by the guest is to execute lszcrypt on the guest itself.
+modprobe rcutorture  test_boost=2
+sleep 20
+rmmod rcutorture
 
->
->
-> Regards,
-> Halil
+With patch:
+rtbf: 8 rtb: 12
+
+Without patch:
+rtbf: 0 rtb: 2
+
+In summary this patch:
+ - Increments failed and total test counters once per boost-test.
+ - Checks for failure cases correctly.
+
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+---
+ kernel/rcu/rcutorture.c | 45 +++++++++++++++++++++++++++++++++++------
+ 1 file changed, 39 insertions(+), 6 deletions(-)
+
+diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+index 00e06349d7bb..0040cc2b836b 100644
+--- a/kernel/rcu/rcutorture.c
++++ b/kernel/rcu/rcutorture.c
+@@ -799,6 +799,18 @@ static void rcu_torture_enable_rt_throttle(void)
+ 	old_rt_runtime = -1;
+ }
+ 
++static bool rcu_torture_boost_failed(unsigned long start, unsigned long end)
++{
++	if (end - start > test_boost_duration * HZ - HZ / 2) {
++		VERBOSE_TOROUT_STRING("rcu_torture_boost boosting failed");
++		n_rcu_torture_boost_failure++;
++
++		return true; /* failed */
++	}
++
++	return false; /* passed */
++}
++
+ static int rcu_torture_boost(void *arg)
+ {
+ 	unsigned long call_rcu_time;
+@@ -819,6 +831,21 @@ static int rcu_torture_boost(void *arg)
+ 	init_rcu_head_on_stack(&rbi.rcu);
+ 	/* Each pass through the following loop does one boost-test cycle. */
+ 	do {
++		/* Track if the test failed already in this test interval? */
++		bool failed = false;
++
++		/* Increment n_rcu_torture_boosts once per boost-test */
++		while (!kthread_should_stop()) {
++			if (mutex_trylock(&boost_mutex)) {
++				n_rcu_torture_boosts++;
++				mutex_unlock(&boost_mutex);
++				break;
++			}
++			schedule_timeout_uninterruptible(1);
++		}
++		if (kthread_should_stop())
++			goto checkwait;
++
+ 		/* Wait for the next test interval. */
+ 		oldstarttime = boost_starttime;
+ 		while (ULONG_CMP_LT(jiffies, oldstarttime)) {
+@@ -837,11 +864,10 @@ static int rcu_torture_boost(void *arg)
+ 				/* RCU core before ->inflight = 1. */
+ 				smp_store_release(&rbi.inflight, 1);
+ 				call_rcu(&rbi.rcu, rcu_torture_boost_cb);
+-				if (jiffies - call_rcu_time >
+-					 test_boost_duration * HZ - HZ / 2) {
+-					VERBOSE_TOROUT_STRING("rcu_torture_boost boosting failed");
+-					n_rcu_torture_boost_failure++;
+-				}
++				/* Check if the boost test failed */
++				failed = failed ||
++					 rcu_torture_boost_failed(call_rcu_time,
++								 jiffies);
+ 				call_rcu_time = jiffies;
+ 			}
+ 			stutter_wait("rcu_torture_boost");
+@@ -849,6 +875,14 @@ static int rcu_torture_boost(void *arg)
+ 				goto checkwait;
+ 		}
+ 
++		/*
++		 * If boost never happened, then inflight will always be 1, in
++		 * this case the boost check would never happen in the above
++		 * loop so do another one here.
++		 */
++		if (!failed && smp_load_acquire(&rbi.inflight))
++			rcu_torture_boost_failed(call_rcu_time, jiffies);
++
+ 		/*
+ 		 * Set the start time of the next test interval.
+ 		 * Yes, this is vulnerable to long delays, but such
+@@ -861,7 +895,6 @@ static int rcu_torture_boost(void *arg)
+ 			if (mutex_trylock(&boost_mutex)) {
+ 				boost_starttime = jiffies +
+ 						  test_boost_interval * HZ;
+-				n_rcu_torture_boosts++;
+ 				mutex_unlock(&boost_mutex);
+ 				break;
+ 			}
+-- 
+2.18.0.rc1.242.g61856ae69a-goog
