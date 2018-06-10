@@ -1,113 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 6jPnNUtIGVtCRwAAmS7hNA
-	; Thu, 07 Jun 2018 15:00:43 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id osH3BhIaHVtYKgAAmS7hNA
+	; Sun, 10 Jun 2018 12:32:21 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 8E68A608B8; Thu,  7 Jun 2018 15:00:43 +0000 (UTC)
+	id E4B3460850; Sun, 10 Jun 2018 12:32:20 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zzcseBF3"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id DEC5D601C3;
-	Thu,  7 Jun 2018 15:00:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DEC5D601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 63114606DD;
+	Sun, 10 Jun 2018 12:32:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 63114606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935812AbeFGPAl (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:00:41 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41349 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932536AbeFGPAh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:00:37 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbs-0005hK-Ml; Thu, 07 Jun 2018 15:09:52 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb1-0002pW-G0; Thu, 07 Jun 2018 15:08:59 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        id S1753717AbeFJMcT (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sun, 10 Jun 2018 08:32:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51962 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753407AbeFJMcR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Jun 2018 08:32:17 -0400
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CEA742087E;
+        Sun, 10 Jun 2018 12:32:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528633937;
+        bh=rkpklQWrnOMt+YsXbpQmQf6uTWTxLRoH1Zb4qZNNohg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=zzcseBF3PbwbEqexhDCtr0KE6E5eYUYxrNr0fz5/bN3p4EcG/7WzrglYdG9pmW7x+
+         pIVzkIPomiBmipaCB6WbaLKzOf3dRukZGh0U/y04SsWhv5giwBl3QHS3R56xaL7Zh1
+         mgXDe2B0qNq6AOpN5irABlsLdMjPeZNfTHJaAr/M=
+Date: Sun, 10 Jun 2018 13:32:11 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Eugen Hristev <eugen.hristev@microchip.com>
+Cc: <ludovic.desroches@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>, <linux-input@vger.kernel.org>,
+        <nicolas.ferre@microchip.com>, <dmitry.torokhov@gmail.com>,
+        <robh@kernel.org>
+Subject: Re: [PATCH v7 4/9] dt-bindings: input: touchscreen:
+ resistive-adc-touch: create bindings
+Message-ID: <20180610133211.675209de@archlinux>
+In-Reply-To: <1526975559-18966-5-git-send-email-eugen.hristev@microchip.com>
+References: <1526975559-18966-1-git-send-email-eugen.hristev@microchip.com>
+        <1526975559-18966-5-git-send-email-eugen.hristev@microchip.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "John Stultz" <john.stultz@linaro.org>,
-        "Felipe Balbi" <balbi@kernel.org>,
-        "Android Kernel Team" <kernel-team@android.com>,
-        "Michal Nazarewicz" <mina86@mina86.com>,
-        "Badhri" <badhri@google.com>,
-        "Greg KH" <gregkh@linux-foundation.org>,
-        "Dmitry Shmidt" <dimitrysh@google.com>,
-        "Amit Pundir" <amit.pundir@linaro.org>,
-        "Hemant Kumar" <hemantk@codeaurora.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.31224834@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 103/410] usb: f_fs: Prevent gadget unbind if it is
- already unbound
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+On Tue, 22 May 2018 10:52:34 +0300
+Eugen Hristev <eugen.hristev@microchip.com> wrote:
 
-------------------
+> Added bindings for generic resistive touchscreen ADC.
+> 
+> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+Applied, thanks
 
-From: Hemant Kumar <hemantk@codeaurora.org>
-
-commit ce5bf9a50daf2d9078b505aca1cea22e88ecb94a upstream.
-
-Upon usb composition switch there is possibility of ep0 file
-release happening after gadget driver bind. In case of composition
-switch from adb to a non-adb composition gadget will never gets
-bound again resulting into failure of usb device enumeration. Fix
-this issue by checking FFS_FL_BOUND flag and avoid extra
-gadget driver unbind if it is already done as part of composition
-switch.
-
-This fixes adb reconnection error reported on Android running
-v4.4 and above kernel versions. Verified on Hikey running vanilla
-v4.15-rc7 + few out of tree Mali patches.
-
-Reviewed-at: https://android-review.googlesource.com/#/c/582632/
-
-Cc: Felipe Balbi <balbi@kernel.org>
-Cc: Greg KH <gregkh@linux-foundation.org>
-Cc: Michal Nazarewicz <mina86@mina86.com>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Dmitry Shmidt <dimitrysh@google.com>
-Cc: Badhri <badhri@google.com>
-Cc: Android Kernel Team <kernel-team@android.com>
-Signed-off-by: Hemant Kumar <hemantk@codeaurora.org>
-[AmitP: Cherry-picked it from android-4.14 and updated the commit log]
-Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- drivers/usb/gadget/f_fs.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
---- a/drivers/usb/gadget/f_fs.c
-+++ b/drivers/usb/gadget/f_fs.c
-@@ -3019,7 +3019,8 @@ static void ffs_closed(struct ffs_data *
- 	ci = ffs_obj->opts->func_inst.group.cg_item.ci_parent->ci_parent;
- 	ffs_dev_unlock();
- 
--	unregister_gadget_item(ci);
-+	if (test_bit(FFS_FL_BOUND, &ffs->flags))
-+		unregister_gadget_item(ci);
- 	return;
- done:
- 	ffs_dev_unlock();
+Jonathan
+> ---
+> Changes in v5:
+>  - changed property name touchscreen-threshold-pressure to
+> touchscreen-min-pressure
+> 
+> Changes in v3:
+>  - renamed file and compatible to exclude "generic" keyword
+>  - removed the pressure threshold property, added it as a common
+> touchscreen property in the touchscreen common bindings in a separate
+> commit.
+> 
+> Changes in v2:
+>  - modified bindings to have a generic resistive touchscreen adc driver
+> instead of specific architecture one.
+> 
+>  .../input/touchscreen/resistive-adc-touch.txt      | 30 ++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/input/touchscreen/resistive-adc-touch.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/input/touchscreen/resistive-adc-touch.txt b/Documentation/devicetree/bindings/input/touchscreen/resistive-adc-touch.txt
+> new file mode 100644
+> index 0000000..51456c0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/input/touchscreen/resistive-adc-touch.txt
+> @@ -0,0 +1,30 @@
+> +Generic resistive touchscreen ADC
+> +
+> +Required properties:
+> +
+> + - compatible: must be "resistive-adc-touch"
+> +The device must be connected to an ADC device that provides channels for
+> +position measurement and optional pressure.
+> +Refer to ../iio/iio-bindings.txt for details
+> + - iio-channels: must have at least two channels connected to an ADC device.
+> +These should correspond to the channels exposed by the ADC device and should
+> +have the right index as the ADC device registers them. These channels
+> +represent the relative position on the "x" and "y" axes.
+> + - iio-channel-names: must have all the channels' names. Mandatory channels
+> +are "x" and "y".
+> +
+> +Optional properties:
+> + - iio-channels: The third channel named "pressure" is optional and can be
+> +used if the ADC device also measures pressure besides position.
+> +If this channel is missing, pressure will be ignored and the touchscreen
+> +will only report position.
+> + - iio-channel-names: optional channel named "pressure".
+> +
+> +Example:
+> +
+> +	resistive_touch: resistive_touch {
+> +		compatible = "resistive-adc-touch";
+> +		touchscreen-min-pressure = <50000>;
+> +		io-channels = <&adc 24>, <&adc 25>, <&adc 26>;
+> +		io-channel-names = "x", "y", "pressure";
+> +	};
