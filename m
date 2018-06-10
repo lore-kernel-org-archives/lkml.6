@@ -1,225 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id sRteL5xeHlshNAAAmS7hNA
-	; Mon, 11 Jun 2018 11:37:12 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id vMduGhvqHFvSPwAAmS7hNA
+	; Sun, 10 Jun 2018 09:07:46 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id E62BF607BB; Mon, 11 Jun 2018 11:37:11 +0000 (UTC)
+	id 5CA8E60850; Sun, 10 Jun 2018 09:07:46 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KCYTpmWN"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 3FCC960541;
-	Mon, 11 Jun 2018 11:37:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3FCC960541
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=lucaceresoli.net
+	by smtp.codeaurora.org (Postfix) with ESMTP id CB9CE60791;
+	Sun, 10 Jun 2018 09:07:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CB9CE60791
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933067AbeFKLhK (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Mon, 11 Jun 2018 07:37:10 -0400
-Received: from srv-hp10-72.netsons.net ([94.141.22.72]:40109 "EHLO
-        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932957AbeFKLgQ (ORCPT
+        id S932328AbeFJJHn (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sun, 10 Jun 2018 05:07:43 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:43154 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932140AbeFJJHl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 07:36:16 -0400
-Received: from [109.168.11.45] (port=54392 helo=pc-ceresoli.dev.aim)
-        by srv-hp10.netsons.net with esmtpa (Exim 4.89_1)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1fSL7N-00B1A2-FQ; Mon, 11 Jun 2018 13:36:13 +0200
-From: Luca Ceresoli <luca@lucaceresoli.net>
-To: linux-media@vger.kernel.org
-Cc: Luca Ceresoli <luca@lucaceresoli.net>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Leon Luo <leonl@leopardimaging.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 6/8] media: imx274: add helper function to fill a reg_8 table chunk
-Date: Mon, 11 Jun 2018 13:35:37 +0200
-Message-Id: <1528716939-17015-7-git-send-email-luca@lucaceresoli.net>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528716939-17015-1-git-send-email-luca@lucaceresoli.net>
-References: <1528716939-17015-1-git-send-email-luca@lucaceresoli.net>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        Sun, 10 Jun 2018 05:07:41 -0400
+Received: by mail-lf0-f66.google.com with SMTP id n15-v6so26112652lfn.10
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Jun 2018 02:07:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=N2GLPRZAT2TXI0ff4Qn5mikf/JcW4TspeMYrSXOhTkI=;
+        b=KCYTpmWN7/VFWWydG9PBr7dHN/UOabVQKktZS9Ufmm2eLqL48Nf79JXi9gvQQzC1po
+         KL+LfUSD6qEY7yEDFe1XHJeO4LOmI09vEK2gjrAYXk38NW2ot2A4+HCtyTbbdMBkZJH5
+         TnuaN6o3JOe1w9OhMQyulKUqX3NBUPy5Hle2I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=N2GLPRZAT2TXI0ff4Qn5mikf/JcW4TspeMYrSXOhTkI=;
+        b=kjDnRl/4eG8xRQGqAC9MqzfCKVT5/sLqRTeRz4Dm772P4Ai/h5ANbVY5zoAkpJtyas
+         GciJQLkCGcLUf5AJWs3CoTp67rhJfQV9X0MivsPhOG1DT+oGEYyBZF2jdgalw+WFhaXm
+         7pZv0SXyquAm7CUM9MhjAa2qNFGOE4Q2SlclwNJn3Om30eHhLd6pp5uZzZ0otB5gaz5K
+         oy1g/b7nUafzdWbNw03phtHcMZf8dxc7pRQ+/mn2BxmksWT/pmyvEM+5mZWbpPhQDZKM
+         lFFt0DIbcZ7ZojWydDhJI1akUSW9LFuMe8FqS+nKEhTv+JuY+i/ZzM2RKvylDrmiiyVE
+         bpJg==
+X-Gm-Message-State: APt69E1gmsbhGXc4kO4nRQw3Kryoaffj85bb9Ok42CW9O3YgS4jS6BxL
+        zMMtQ9pLOeu3dwH4zeZ3xDJlctemZTJKYdI48sF8sQ==
+X-Google-Smtp-Source: ADUXVKKMeQ2juZ64XCgmxALi0LfeyGXpCJCdHHr3CeUvIoBzlY86MOB/5xyRb/mBGQf2wtgDZ7KAi1BH0X6CLSREd7w=
+X-Received: by 2002:a19:8f1d:: with SMTP id r29-v6mr8232797lfd.88.1528621659994;
+ Sun, 10 Jun 2018 02:07:39 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a19:ee14:0:0:0:0:0 with HTTP; Sun, 10 Jun 2018 02:07:39
+ -0700 (PDT)
+In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
+References: <20180609145947.679103414@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Sun, 10 Jun 2018 14:37:39 +0530
+Message-ID: <CA+G9fYsWZNWeGeZzknVts5iF5h40y+-tBnoMNL5yZJx3sxfc8Q@mail.gmail.com>
+Subject: Re: [PATCH 4.16 00/48] 4.16.15-stable review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: open list <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        lkft-triage@lists.linaro.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        linux- stable <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tables of struct reg_8 are used to simplify multi-byte register
-assignment. However filling these snippets with values computed at
-runtime is currently implemented by very similar functions doing the
-needed shift & mask manipulation.
+On 9 June 2018 at 20:59, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wr=
+ote:
+> This is the start of the stable review cycle for the 4.16.15 release.
+> There are 48 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Mon Jun 11 14:59:28 UTC 2018.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.16.15-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.16.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Replace all those functions with a unique helper function to fill
-reg_8 tables in a simple and clean way.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm and x86_64.
 
-Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+Summary
+------------------------------------------------------------------------
 
----
-Changed v3 -> v4: nothing
+kernel: 4.16.15-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.16.y
+git commit: 0f447b621dc169007a7c7a87db5a5ca0b8070833
+git describe: v4.16.14-49-g0f447b621dc1
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.16-oe/bu=
+ild/v4.16.14-49-g0f447b621dc1
 
-Changed v2 -> v3:
- - minor reformatting in prepare_reg() documentation
 
-Changed v1 -> v2:
- - add "media: " prefix to commit message
----
- drivers/media/i2c/imx274.c | 90 ++++++++++++++++++++++++++++------------------
- 1 file changed, 55 insertions(+), 35 deletions(-)
+No regressions (compared to build v4.16.14)
 
-diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
-index 48343c2ade83..e5ba19b97083 100644
---- a/drivers/media/i2c/imx274.c
-+++ b/drivers/media/i2c/imx274.c
-@@ -597,6 +597,58 @@ static inline struct stimx274 *to_imx274(struct v4l2_subdev *sd)
- }
- 
- /*
-+ * Fill consecutive reg_8 items in order to set a multibyte register.
-+ *
-+ * The sensor has many 2-bytes registers and a 3-byte register. This
-+ * simplifies code to set them by filling consecutive entries of a
-+ * struct reg_8 table with the data to set a register.
-+ *
-+ * The number of table entries that is filled is the minimum needed
-+ * for the given number of bits (i.e. nbits / 8, rounded up). If nbits
-+ * is not a multiple of 8, extra bits in the most significant byte are
-+ * zeroed.
-+ *
-+ * Example:
-+ *   Calling prepare_reg(&regs[10], 0x3000, 0xcafe, 12) will set:
-+ *   regs[10] = { .addr = 0x3000, .val = 0xfe }
-+ *   regs[11] = { .addr = 0x3001, .val = 0x0a }
-+ *
-+ * @table_base: Pointer to the first reg_8 struct to be filled.  The
-+ *              following entries will also be set, make sure they are
-+ *              properly allocated!
-+ * @addr_lsb: Address of the LSB register.  Other registers must be
-+ *            consecutive, least-to-most significant.
-+ * @value: Value to be written to the register.
-+ * @nbits: Number of bits to write (range: [1..24])
-+ */
-+static void prepare_reg(struct reg_8 *table_base,
-+			u16 addr_lsb,
-+			u32 value,
-+			size_t nbits)
-+{
-+	struct reg_8 *cmd = table_base;
-+	u16 addr = addr_lsb;
-+	size_t bits; /* how many bits at this round */
-+
-+	WARN_ON(nbits > 24);
-+
-+	if (nbits > 24)
-+		nbits = 24;
-+
-+	while (nbits > 0) {
-+		bits = min_t(size_t, 8, nbits);
-+
-+		cmd->addr = addr;
-+		cmd->val = value & ((1 << bits) - 1);
-+
-+		nbits -= bits;
-+		value >>= 8;
-+		addr++;
-+		cmd++;
-+	}
-+}
-+
-+/*
-  * Writing a register table
-  *
-  * @priv: Pointer to device
-@@ -1163,15 +1215,6 @@ static int imx274_set_digital_gain(struct stimx274 *priv, u32 dgain)
- 				reg_val & IMX274_MASK_LSB_4_BITS);
- }
- 
--static inline void imx274_calculate_gain_regs(struct reg_8 regs[2], u16 gain)
--{
--	regs->addr = IMX274_ANALOG_GAIN_ADDR_MSB;
--	regs->val = (gain >> IMX274_SHIFT_8_BITS) & IMX274_MASK_LSB_3_BITS;
--
--	(regs + 1)->addr = IMX274_ANALOG_GAIN_ADDR_LSB;
--	(regs + 1)->val = (gain) & IMX274_MASK_LSB_8_BITS;
--}
--
- /*
-  * imx274_set_gain - Function called when setting gain
-  * @priv: Pointer to device structure
-@@ -1229,7 +1272,7 @@ static int imx274_set_gain(struct stimx274 *priv, struct v4l2_ctrl *ctrl)
- 	if (gain_reg > IMX274_GAIN_REG_MAX)
- 		gain_reg = IMX274_GAIN_REG_MAX;
- 
--	imx274_calculate_gain_regs(reg_list, (u16)gain_reg);
-+	prepare_reg(reg_list, IMX274_ANALOG_GAIN_ADDR_LSB, gain_reg, 11);
- 
- 	for (i = 0; i < ARRAY_SIZE(reg_list); i++) {
- 		err = imx274_write_reg(priv, reg_list[i].addr,
-@@ -1258,16 +1301,6 @@ static int imx274_set_gain(struct stimx274 *priv, struct v4l2_ctrl *ctrl)
- 	return err;
- }
- 
--static inline void imx274_calculate_coarse_time_regs(struct reg_8 regs[2],
--						     u32 coarse_time)
--{
--	regs->addr = IMX274_SHR_REG_MSB;
--	regs->val = (coarse_time >> IMX274_SHIFT_8_BITS)
--			& IMX274_MASK_LSB_8_BITS;
--	(regs + 1)->addr = IMX274_SHR_REG_LSB;
--	(regs + 1)->val = (coarse_time) & IMX274_MASK_LSB_8_BITS;
--}
--
- /*
-  * imx274_set_coarse_time - Function called when setting SHR value
-  * @priv: Pointer to device structure
-@@ -1292,7 +1325,7 @@ static int imx274_set_coarse_time(struct stimx274 *priv, u32 *val)
- 		goto fail;
- 
- 	/* prepare SHR registers */
--	imx274_calculate_coarse_time_regs(reg_list, coarse_time);
-+	prepare_reg(reg_list, IMX274_SHR_REG_LSB, coarse_time, 16);
- 
- 	/* write to SHR registers */
- 	for (i = 0; i < ARRAY_SIZE(reg_list); i++) {
-@@ -1429,19 +1462,6 @@ static int imx274_set_test_pattern(struct stimx274 *priv, int val)
- 	return err;
- }
- 
--static inline void imx274_calculate_frame_length_regs(struct reg_8 regs[3],
--						      u32 frame_length)
--{
--	regs->addr = IMX274_VMAX_REG_1;
--	regs->val = (frame_length >> IMX274_SHIFT_16_BITS)
--			& IMX274_MASK_LSB_4_BITS;
--	(regs + 1)->addr = IMX274_VMAX_REG_2;
--	(regs + 1)->val = (frame_length >> IMX274_SHIFT_8_BITS)
--			& IMX274_MASK_LSB_8_BITS;
--	(regs + 2)->addr = IMX274_VMAX_REG_3;
--	(regs + 2)->val = (frame_length) & IMX274_MASK_LSB_8_BITS;
--}
--
- /*
-  * imx274_set_frame_length - Function called when setting frame length
-  * @priv: Pointer to device structure
-@@ -1463,7 +1483,7 @@ static int imx274_set_frame_length(struct stimx274 *priv, u32 val)
- 
- 	frame_length = (u32)val;
- 
--	imx274_calculate_frame_length_regs(reg_list, frame_length);
-+	prepare_reg(reg_list, IMX274_VMAX_REG_3, frame_length, 20);
- 	for (i = 0; i < ARRAY_SIZE(reg_list); i++) {
- 		err = imx274_write_reg(priv, reg_list[i].addr,
- 				       reg_list[i].val);
--- 
-2.7.4
+
+Ran 11375 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* boot
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
