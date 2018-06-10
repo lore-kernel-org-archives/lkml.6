@@ -1,115 +1,192 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id aF+/KI6SGVsROwAAmS7hNA
-	; Thu, 07 Jun 2018 20:16:14 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id k8A+ApyZHVswEQAAmS7hNA
+	; Sun, 10 Jun 2018 21:36:02 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 8955B6089E; Thu,  7 Jun 2018 20:16:14 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ku+w0Ps+"
+	id C27B1606FA; Sun, 10 Jun 2018 21:36:02 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.4 required=2.0 tests=BAYES_00,DATE_IN_PAST_06_12,
+	MAILING_LIST_MULTI autolearn=no autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 0BA2460452;
-	Thu,  7 Jun 2018 20:16:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0BA2460452
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 374D060791;
+	Sun, 10 Jun 2018 21:36:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 374D060791
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753535AbeFGUQM (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 16:16:12 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:32852 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753038AbeFGUQJ (ORCPT
+        id S932430AbeFJVgA (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Sun, 10 Jun 2018 17:36:00 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:16964 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753345AbeFJVeH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 16:16:09 -0400
-Received: by mail-pg0-f67.google.com with SMTP id e11-v6so5282615pgq.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 13:16:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PndY8nt6hDX2QEieL/x341vl4p6ilpI0NckdBwu1Ens=;
-        b=ku+w0Ps+Ofn7mq6JmFt8mRBP3XcSawR1n5qVoQqW9A8l3g/tOJfT5400Z1w601FDgO
-         tqEk48opUSYG6n2qps1k2ETC83XBG2xoG9UNvAUEW2lhpZzEbN576Tnq/V9DvU1W5XU5
-         7X0Z6MqmzFPLfGuop66fv5pAwfuRQ4imFL5Eu+cxJ228g9HVuBfEWG6lBJU4NtIRJUbq
-         UwIG12ZUoDZzs24tpeE7iGFoXJtKf1/XLZ6bkZuzfIuzQPmuX0XXnA2+/6kPIsMwmxmC
-         O4iwBAA36cu15BYygNBM6fbZJTtJoaVaEqF6ueUDv1JA+kJRKm7oN1Nd2G2Ys2DqUmSN
-         Qxeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PndY8nt6hDX2QEieL/x341vl4p6ilpI0NckdBwu1Ens=;
-        b=kfpbKZXxK0TU4T+08WMNibf90CHXORi1ytGAOQlkfZEfngyy2keDl0bTU64K2hGQyU
-         Tr4q3ktSvWfHq+CAb05Z8dfjK6AIIW9KSt5YzJsBIei8zxThqmf3mTEdwgHw1k1Bi+cX
-         +Kcmss8r0tFLWYOyApw9zx7Fu7owk24LBblgXqSCreQ6EL56WbnWuuhqMzCxapmPXuAJ
-         +azYxrk2/Ox0sVM6dj/xKYjmvbvd3cHtBSqHtX3qyZvBGCdsCQJD53oQi9tM2xa/30H8
-         8ZkFjFO4JkjzNMzfVMAeTUIrVTRpnyvkFo7QixXv75Ca1Gvr/tG7t/9s4i07otmK7F9i
-         hjDw==
-X-Gm-Message-State: APt69E2YzAPzF0pVaJaUzL0BkscLqA5cO+g3+2NuiuEZ7qIWQHRwoMT+
-        etfYE8oQX0vQl99XL2IlSJ7UNzMHnZsjgCcWmx9n2Q==
-X-Google-Smtp-Source: ADUXVKLHcMlAiIyiWQuNfar3V/y2/1TDeserioU50WLey5Uav6zRGufvayVOjQhYtaIObFbJ5qVAUlwIKa7k/zXwC4M=
-X-Received: by 2002:a63:ad46:: with SMTP id y6-v6mr2733682pgo.10.1528402568646;
- Thu, 07 Jun 2018 13:16:08 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180607183219.192973-1-ndesaulniers@google.com>
- <20180607183219.192973-3-ndesaulniers@google.com> <2f7fc4bf-d0fe-0d3a-ffdd-02cc82c83747@linux.intel.com>
-In-Reply-To: <2f7fc4bf-d0fe-0d3a-ffdd-02cc82c83747@linux.intel.com>
-From: Nick Desaulniers <ndesaulniers@google.com>
-Date: Thu, 7 Jun 2018 13:15:55 -0700
-Message-ID: <CAKwvOdkhoOG=Ki-hLL-GtE_++TJ_fy6G_D+xER_vS-aZSjH61A@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] x86/asm: add _ASM_ARG* constants for argument
- registers to <asm/asm.h>
-To: "H. Peter Anvin" <hpa@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, hpa@zytor.com,
-        mingo@redhat.com, Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        x86@kernel.org, virtualization@lists.linux-foundation.org,
-        Alistair Strachan <astrachan@google.com>,
-        Manoj Gupta <manojgupta@google.com>,
-        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
-        tstellar@redhat.com, Kees Cook <keescook@google.com>,
+        Sun, 10 Jun 2018 17:34:07 -0400
+Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Sun, 10 Jun 2018 14:33:44 -0700
+Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id E2D0A406F6;
+        Sun, 10 Jun 2018 14:34:05 -0700 (PDT)
+From: Nadav Amit <namit@vmware.com>
+To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>
+CC: Nadav Amit <namit@vmware.com>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        geert@linux-m68k.org, Will Deacon <will.deacon@arm.com>,
-        mawilcox@microsoft.com, Arnd Bergmann <arnd@arndb.de>,
-        David Rientjes <rientjes@google.com>, acme@redhat.com,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        boris.ostrovsky@oracle.com, "J. Kiszka" <jan.kiszka@siemens.com>,
-        rostedt@goodmis.org, kirill.shutemov@linux.intel.com,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        akataria@vmware.com, brijesh.singh@amd.com,
-        Cao jin <caoj.fnst@cn.fujitsu.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        jarkko.sakkinen@linux.intel.com, jgross@suse.com,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Matthias Kaehlcke <mka@chromium.org>, thomas.lendacky@amd.com,
-        Thiebaud Weksteen <tweek@google.com>, mjg59@google.com,
-        joe@perches.com
-Content-Type: text/plain; charset="UTF-8"
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, <linux-kbuild@vger.kernel.org>
+Subject: [PATCH v3 1/9] Makefile: Prepare for using macros for inline asm
+Date: Sun, 10 Jun 2018 07:19:03 -0700
+Message-ID: <20180610141911.52948-2-namit@vmware.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180610141911.52948-1-namit@vmware.com>
+References: <20180610141911.52948-1-namit@vmware.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
+ designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 7, 2018 at 1:14 PM H. Peter Anvin <hpa@linux.intel.com> wrote:
->
-> On 06/07/18 11:32, Nick Desaulniers wrote:
-> >
-> > Suggested-by: Sedat Dilek <sedat.dilek@gmail.com>
->
-> If this was suggested by Sedat, I didn't see that suggestion...
+Using macros for inline assembly improves both readability and
+compilation decisions that are distorted by big assembly blocks that use
+alternative sections. Compile macros.S and use it to assemble all C
+files. Currently, only x86 will use it.
 
-I took his suggestion which was to fix the typo in the commit message.
-https://lkml.org/lkml/2018/6/5/776
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Michal Marek <michal.lkml@markovi.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: linux-kbuild@vger.kernel.org
 
+Signed-off-by: Nadav Amit <namit@vmware.com>
+---
+ Makefile                 |  9 +++++++--
+ arch/x86/Makefile        | 11 +++++++++--
+ arch/x86/kernel/Makefile |  6 ++++++
+ arch/x86/kernel/macros.S |  7 +++++++
+ scripts/Kbuild.include   |  4 +++-
+ 5 files changed, 32 insertions(+), 5 deletions(-)
+ create mode 100644 arch/x86/kernel/macros.S
+
+diff --git a/Makefile b/Makefile
+index 554dcaddbce4..026586db2f26 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1085,7 +1085,7 @@ scripts: scripts_basic include/config/auto.conf include/config/tristate.conf \
+ # version.h and scripts_basic is processed / created.
+ 
+ # Listed in dependency order
+-PHONY += prepare archprepare prepare0 prepare1 prepare2 prepare3
++PHONY += prepare archprepare macroprepare prepare0 prepare1 prepare2 prepare3
+ 
+ # prepare3 is used to check if we are building in a separate output directory,
+ # and if so do:
+@@ -1109,7 +1109,9 @@ prepare1: prepare2 $(version_h) $(autoksyms_h) include/generated/utsrelease.h \
+                    include/config/auto.conf
+ 	$(cmd_crmodverdir)
+ 
+-archprepare: archheaders archscripts prepare1 scripts_basic
++macroprepare: prepare1 archmacros
++
++archprepare: archheaders archscripts macroprepare scripts_basic
+ 
+ prepare0: archprepare gcc-plugins
+ 	$(Q)$(MAKE) $(build)=.
+@@ -1214,6 +1216,9 @@ archheaders:
+ PHONY += archscripts
+ archscripts:
+ 
++PHONY += archmacros
++archmacros:
++
+ PHONY += __headers
+ __headers: $(version_h) scripts_basic uapi-asm-generic archheaders archscripts
+ 	$(Q)$(MAKE) $(build)=scripts build_unifdef
+diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+index 60135cbd905c..6b82314776fd 100644
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -235,8 +235,8 @@ ifdef CONFIG_X86_64
+ LDFLAGS += $(call ld-option, -z max-page-size=0x200000)
+ endif
+ 
+-# Speed up the build
+-KBUILD_CFLAGS += -pipe
++# We cannot use -pipe flag since we give an additional .s file to the compiler
++#KBUILD_CFLAGS += -pipe
+ # Workaround for a gcc prelease that unfortunately was shipped in a suse release
+ KBUILD_CFLAGS += -Wno-sign-compare
+ #
+@@ -258,11 +258,18 @@ archscripts: scripts_basic
+ archheaders:
+ 	$(Q)$(MAKE) $(build)=arch/x86/entry/syscalls all
+ 
++archmacros:
++	$(Q)$(MAKE) $(build)=arch/x86/kernel macros
++
+ archprepare:
+ ifeq ($(CONFIG_KEXEC_FILE),y)
+ 	$(Q)$(MAKE) $(build)=arch/x86/purgatory arch/x86/purgatory/kexec-purgatory.c
+ endif
+ 
++ASM_MACRO_FLAGS = -Wa,arch/x86/kernel/macros.s
++export ASM_MACRO_FLAGS
++KBUILD_CFLAGS += $(ASM_MACRO_FLAGS)
++
+ ###
+ # Kernel objects
+ 
+diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
+index 02d6f5cf4e70..fdb6c5b2a922 100644
+--- a/arch/x86/kernel/Makefile
++++ b/arch/x86/kernel/Makefile
+@@ -9,6 +9,12 @@ extra-y	+= ebda.o
+ extra-y	+= platform-quirks.o
+ extra-y	+= vmlinux.lds
+ 
++$(obj)/macros.s: $(obj)/macros.S FORCE
++	$(call if_changed_dep,cpp_s_S)
++
++macros: $(obj)/macros.s
++	@:
++
+ CPPFLAGS_vmlinux.lds += -U$(UTS_MACHINE)
+ 
+ ifdef CONFIG_FUNCTION_TRACER
+diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
+new file mode 100644
+index 000000000000..cfc1c7d1a6eb
+--- /dev/null
++++ b/arch/x86/kernel/macros.S
+@@ -0,0 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++/*
++ * This file includes headers whose assembly part includes macros which are
++ * commonly used. The macros are precompiled into assmebly file which is later
++ * assembled together with each compiled file.
++ */
+diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
+index 50cee534fd64..ad2c02062aa4 100644
+--- a/scripts/Kbuild.include
++++ b/scripts/Kbuild.include
+@@ -189,7 +189,9 @@ __cc-option = $(call try-run-cached,\
+ 
+ # Do not attempt to build with gcc plugins during cc-option tests.
+ # (And this uses delayed resolution so the flags will be up to date.)
+-CC_OPTION_CFLAGS = $(filter-out $(GCC_PLUGINS_CFLAGS),$(KBUILD_CFLAGS))
++# In addition, do not include the asm macros which are built later.
++CC_OPTION_FILTERED = $(GCC_PLUGINS_CFLAGS) $(ASM_MACRO_FLAGS)
++CC_OPTION_CFLAGS = $(filter-out $(CC_OPTION_FILTERED),$(KBUILD_CFLAGS))
+ 
+ # cc-option
+ # Usage: cflags-y += $(call cc-option,-march=winchip-c6,-march=i586)
 -- 
-Thanks,
-~Nick Desaulniers
+2.17.0
