@@ -1,198 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id CUinKOcTGVuPNgAAmS7hNA
-	; Thu, 07 Jun 2018 11:15:51 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id pb/EDdLLHFvdKwAAmS7hNA
+	; Sun, 10 Jun 2018 06:57:34 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 88AAA608BF; Thu,  7 Jun 2018 11:15:51 +0000 (UTC)
+	id DDDBA60850; Sun, 10 Jun 2018 06:57:33 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="u8EgIu8l"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XmyG/kfm"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D84FC60290;
-	Thu,  7 Jun 2018 11:15:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D84FC60290
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 3209C606DD;
+	Sun, 10 Jun 2018 06:57:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3209C606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932463AbeFGLPt (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 07:15:49 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:36956 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932256AbeFGLPo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 07:15:44 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w57BBU9a185243;
-        Thu, 7 Jun 2018 11:15:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
- date : message-id : in-reply-to : references; s=corp-2017-10-26;
- bh=DbwfPskUskBZ0RpfrFCyEuNfBIYsClKZCLhAphoXbO4=;
- b=u8EgIu8lXzzi8Ve4eCxCsnTHV+q8rg7BiURF+ypWG3dzeZqusDum6iGzO9qJt/Twg6z0
- A1tpyvweyD5+vwvfvdt1IgjjK9rPEqLNOVK6y2G8Ueruv5D9ribaxdqtiPzAXgzqEWH8
- UF/i8Z1G3s+/yL4I6sG0bwPvyd34eDETPdVMPl+5oclW5UbTvzPxxPRpIF+mz75qYstq
- 0ZZ4ltPXZ+tS/Vrj1YVjbiQE5DGIRuqaHHMuirtGc7vsKF/pfPd+Q/EJDROaMVhr7kF9
- WPNVpQtWZGeuTkj6ITgXSlUG05nM9m+V9HgZvLxSYuGY/KqEnPBk/ttz63MI2a/UZXPO SA==
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2120.oracle.com with ESMTP id 2jbvyprgfy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 07 Jun 2018 11:15:15 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w57BFE6q003006
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 7 Jun 2018 11:15:15 GMT
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w57BFD6L015992;
-        Thu, 7 Jun 2018 11:15:13 GMT
-Received: from lab02.no.oracle.com (/10.172.144.56)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 07 Jun 2018 04:15:13 -0700
-From: Hans Westgaard Ry <hans.westgaard.ry@oracle.com>
-To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Hakon Bugge <haakon.bugge@oracle.com>,
-        Parav Pandit <parav@mellanox.com>,
-        Jack Morgenstein <jackm@dev.mellanox.co.il>,
-        Pravin Shedge <pravin.shedge4linux@gmail.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Wei Wang <wei.w.wang@intel.com>,
-        Chris Mi <chrism@mellanox.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] IB/mad: Use ID allocator routines to allocate agent number
-Date: Thu,  7 Jun 2018 13:14:35 +0200
-Message-Id: <20180607111435.17538-3-hans.westgaard.ry@oracle.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180607111435.17538-1-hans.westgaard.ry@oracle.com>
-References: <20180529073808.27735-1-hans.westgaard.ry@oracle.com>
- <20180607111435.17538-1-hans.westgaard.ry@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8916 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806070132
+        id S1753783AbeFJG5b (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sun, 10 Jun 2018 02:57:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56894 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753674AbeFJG5a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Jun 2018 02:57:30 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EFE6A20858;
+        Sun, 10 Jun 2018 06:57:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528613849;
+        bh=yHQxeCcINGqHjrcxLuXhn13oS2byisnX04xhjsKOpF8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XmyG/kfmqrLDmpY3dY+tYkNcxF1o1hw+u0yi+vLEXCSqaAZIgNzxHzDofc/+gbNc6
+         vmbf5nnejMn2GjIiFJDJzw0UDjuRv2kl5X9d/HlqU2eLwjqnLPP4GomFiRiPGcYO8d
+         6bprL+DcEYAYILWL7sn+lQ4dpl5D322IQCt5DJXY=
+Date: Sun, 10 Jun 2018 08:57:06 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Joel Stanley <joel@jms.id.au>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jeremy Kerr <jk@ozlabs.org>,
+        Christopher Bostic <cbostic@linux.vnet.ibm.com>
+Subject: Re: [PATCH 00/15] fsi: Overall improvements and new SBE fifo driver
+Message-ID: <20180610065706.GA17389@kroah.com>
+References: <20180529013044.23815-1-benh@kernel.crashing.org>
+ <CACPK8XdvnGHz6Om2RQmgu+7F4h9AEh+Ay=A_b4+3vDGqD4SKbA@mail.gmail.com>
+ <626a3d2bc30dac29c06ab44fb2c56d17095fca51.camel@kernel.crashing.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <626a3d2bc30dac29c06ab44fb2c56d17095fca51.camel@kernel.crashing.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The agent TID is a 64 bit value split in two dwords.  The least
-significant dword is the TID running counter. The most significant
-dword is the agent number. In the CX-3 shared port model, the mlx4
-driver uses the most significant byte of the agent number to store the
-slave number, making agent numbers greater and equal to 2^24 (3 bytes)
-unusable.  The current codebase uses a variable which is incremented
-atomically for each new agent number giving too large agent numbers
-over time.  The IDA set of functions are used instead of the simple
-counter approach. This allows re-use of agent numbers.
+On Sun, Jun 10, 2018 at 04:46:53PM +1000, Benjamin Herrenschmidt wrote:
+> (Greg, see below)
+> 
+> On Tue, 2018-05-29 at 22:00 +0930, Joel Stanley wrote:
+> > On 29 May 2018 at 11:00, Benjamin Herrenschmidt
+> > <benh@kernel.crashing.org> wrote:
+> > > This series brings in a number of improvements to our FSI stack
+> > > (one of the service interfaces for communicating between a BMC chip and
+> > > our POWER processors).
+> > > 
+> > > The GPIO based "Soft FSI" performance is significantly improved, and
+> > > it's reliability as well.
+> > > 
+> > > The SBE fifo driver provides the interface to the processor "Self Boot
+> > > Engine"
+> > > 
+> > > Some of these patches have been simmering for a while in the OpenBMC
+> > > tree.
+> > 
+> > I run this series atop of 4.17-rc7 today, and they look solid.
+> > 
+> > Tested-by: Joel Stanley <joel@jms.id.au>
+> 
+> So how do we proceed ? I have more coming on top of this, but we should
+> start with getting this series merged.
+> 
+> Greg, should we create a FSI git repo with a 3-member maintainer team
+> (Jeremy, Chris and myself) and send you pull requests ? Or are you
+> happy to continue picking up patches ?
 
-The signature of the bug is a MAD layer that stops working and the
-console is flooded with messages like:
- mlx4_ib: egress mad has non-null tid msb:1 class:4 slave:0
+Which ever is best/easiest for you is fine with me, I can work either
+way just fine.
 
-Signed-off-by: Hans Westgaard Ry <hans.westgaard.ry@oracle.com>
----
- drivers/infiniband/core/mad.c | 25 +++++++++++++++++++++----
- 1 file changed, 21 insertions(+), 4 deletions(-)
+> We have more stuff to come in there, including support for a HW master
+> contoller in a future BMC chip, some more slave drivers, etc..
+> 
+> It also looks like the s390 guys might start using some of that as well
+> (their chips use FSI as well, so far they used our old service
+> processor which uses an ancient non-uptream set of drivers & stack, but
+> that's likely to change).
 
-diff --git a/drivers/infiniband/core/mad.c b/drivers/infiniband/core/mad.c
-index b28452a55a08..c01a2d63ffa2 100644
---- a/drivers/infiniband/core/mad.c
-+++ b/drivers/infiniband/core/mad.c
-@@ -41,6 +41,7 @@
- #include <linux/slab.h>
- #include <linux/module.h>
- #include <linux/security.h>
-+#include <linux/idr.h>
- #include <rdma/ib_cache.h>
- 
- #include "mad_priv.h"
-@@ -59,8 +60,7 @@ module_param_named(recv_queue_size, mad_recvq_size, int, 0444);
- MODULE_PARM_DESC(recv_queue_size, "Size of receive queue in number of work requests");
- 
- static struct list_head ib_mad_port_list;
--static atomic_t ib_mad_client_id = ATOMIC_INIT(0);
--
-+static DEFINE_IDA(ib_mad_client_ids);
- /* Port list lock */
- static DEFINE_SPINLOCK(ib_mad_port_list_lock);
- 
-@@ -212,7 +212,7 @@ struct ib_mad_agent *ib_register_mad_agent(struct ib_device *device,
- 	int ret2, qpn;
- 	unsigned long flags;
- 	u8 mgmt_class, vclass;
--
-+	u32 ib_mad_client_id;
- 	/* Validate parameters */
- 	qpn = get_spl_qp_index(qp_type);
- 	if (qpn == -1) {
-@@ -375,9 +375,19 @@ struct ib_mad_agent *ib_register_mad_agent(struct ib_device *device,
- 		ret = ERR_PTR(ret2);
- 		goto error4;
- 	}
-+	ib_mad_client_id = ida_simple_get_cyclic(&ib_mad_client_ids,
-+						1,
-+						BIT(24) - 1,
-+						GFP_KERNEL);
-+	if (ib_mad_client_id < 0) {
-+		pr_err("Couldn't allocate agent tid; errcode: %#x\n",
-+			ib_mad_client_id);
-+		ret = ERR_PTR(ib_mad_client_id);
-+		goto error4;
-+	}
-+	mad_agent_priv->agent.hi_tid = ib_mad_client_id;
- 
- 	spin_lock_irqsave(&port_priv->reg_lock, flags);
--	mad_agent_priv->agent.hi_tid = atomic_inc_return(&ib_mad_client_id);
- 
- 	/*
- 	 * Make sure MAD registration (if supplied)
-@@ -428,6 +438,8 @@ struct ib_mad_agent *ib_register_mad_agent(struct ib_device *device,
- error5:
- 	spin_unlock_irqrestore(&port_priv->reg_lock, flags);
- 	ib_mad_agent_security_cleanup(&mad_agent_priv->agent);
-+	ida_simple_remove(&ib_mad_client_ids, ib_mad_client_id);
-+
- error4:
- 	kfree(reg_req);
- error3:
-@@ -576,6 +588,7 @@ static void unregister_mad_agent(struct ib_mad_agent_private *mad_agent_priv)
- {
- 	struct ib_mad_port_private *port_priv;
- 	unsigned long flags;
-+	u32 ib_mad_client_id;
- 
- 	/* Note that we could still be handling received MADs */
- 
-@@ -587,6 +600,8 @@ static void unregister_mad_agent(struct ib_mad_agent_private *mad_agent_priv)
- 	port_priv = mad_agent_priv->qp_info->port_priv;
- 	cancel_delayed_work(&mad_agent_priv->timed_work);
- 
-+	ib_mad_client_id = mad_agent_priv->agent.hi_tid;
-+
- 	spin_lock_irqsave(&port_priv->reg_lock, flags);
- 	remove_mad_reg_req(mad_agent_priv);
- 	list_del(&mad_agent_priv->agent_list);
-@@ -602,6 +617,7 @@ static void unregister_mad_agent(struct ib_mad_agent_private *mad_agent_priv)
- 
- 	kfree(mad_agent_priv->reg_req);
- 	kfree(mad_agent_priv);
-+	ida_simple_remove(&ib_mad_client_ids, ib_mad_client_id);
- }
- 
- static void unregister_mad_snoop(struct ib_mad_snoop_private *mad_snoop_priv)
-@@ -3347,4 +3363,5 @@ int ib_mad_init(void)
- void ib_mad_cleanup(void)
- {
- 	ib_unregister_client(&mad_client);
-+	ida_destroy(&ib_mad_client_ids);
- }
--- 
-2.14.3
+Then maybe a git tree is easiest for all of you to work against?
+
+thanks,
+
+greg k-h
