@@ -1,109 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id F1NdOGTyGluuLgAAmS7hNA
-	; Fri, 08 Jun 2018 21:17:54 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id FN0KDfsZHVuBKgAAmS7hNA
+	; Sun, 10 Jun 2018 12:30:54 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 6A495607E7; Fri,  8 Jun 2018 21:17:54 +0000 (UTC)
+	id 79E7B607BB; Sun, 10 Jun 2018 12:30:54 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="R3p+FDzd"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Evcg28V1"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_MED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D2857605A2;
-	Fri,  8 Jun 2018 21:17:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D2857605A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by smtp.codeaurora.org (Postfix) with ESMTP id E14B2604D4;
+	Sun, 10 Jun 2018 12:30:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E14B2604D4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753235AbeFHVRt (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 17:17:49 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:55601 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752756AbeFHVRs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 17:17:48 -0400
-Received: by mail-it0-f65.google.com with SMTP id x25-v6so2559030ith.5
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 14:17:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Mos0gfpd6w10j36phegu4oQKBIBl9TOnyIwdVPZ7BXg=;
-        b=R3p+FDzdacbMIi3UDOi/g29WjxiDZMjN9rvZzUZTA2KkyvdikEofBuTUXhZXb8TRu8
-         bBvF1PwQ04wNBiqKjGvNM0wCMXnrgra07njJLYVIYOP3BudxMdIGa1d23uDPWXo9XDIh
-         TsaljeSWaRc10oY0b7teNexS0VUSth/C/aMwd5Ogwn4FXCTB4VW02RZbANNoZ9Rx0X7F
-         dgtTCqnEU7XhFDIO35RhWbkuiXFYoIxkGg7MdFF97ReffgX6DfJBDQcFUTdUmt2KNY7k
-         z8kAwYevF1IVuivf2ga2VgHKNIhh8fkbLoekmrXDMhARwavPXEtBQhq2IV5L5T9hBYx7
-         68Gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Mos0gfpd6w10j36phegu4oQKBIBl9TOnyIwdVPZ7BXg=;
-        b=aUPXAdzlCnwv/kvDJpglZfPHdHUTbK0VLuJOre4zEDscZcFMMqLYNiuzhU/Qf/0kvc
-         QuHYScou8z3aRYuBXjxwlh8vc0YxXER3T0Euxo+L1j+cX90kUSOQyD1+61sgDE54h4Jk
-         YYQwtqoGeaehvhUKwytVXBXBs7KAtMZtMbk4r9cqYvNVgSUsDJx+eVlqarMsqsPFxhlu
-         1Bt157KBzMT6SPoE1Dho/qMBHLjZIEnB0p738CmC3v3R2IYkxdigM6cnTtu5/PXsm0/f
-         P/jgyAKi85cnUYkFjduIfbroJQLvOtatvZ0VQj1H3jK33c8QmNExB1jccv3sIazV0xXT
-         OYbg==
-X-Gm-Message-State: APt69E0aSQk6+siBb9A6ljbKdH0V4AaE4FKl4tju3pfj7cP0DEf/YJyh
-        UauOTaPKgnzcUhrKuzmqe7NKKw==
-X-Google-Smtp-Source: ADUXVKIDksPTWXmmkO5Vacgc9crRjpGykCRiOY/Sg1yWA28j85/ZNiYUPgio9+ZBkM8TWsBJQvFmcQ==
-X-Received: by 2002:a24:6285:: with SMTP id d127-v6mr3373825itc.52.1528492667765;
-        Fri, 08 Jun 2018 14:17:47 -0700 (PDT)
-Received: from [192.168.1.212] (107.191.0.158.static.utbb.net. [107.191.0.158])
-        by smtp.gmail.com with ESMTPSA id r6-v6sm8249451ioj.74.2018.06.08.14.17.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Jun 2018 14:17:45 -0700 (PDT)
-Subject: Re: next-20180605 - kernel tried to execute NX-protected page -
- exploit attempt?
-To: valdis.kletnieks@vt.edu, Mike Snitzer <snitzer@redhat.com>,
-        Alasdair Kergon <agk@redhat.com>
-Cc: linux-kernel@vger.kernel.org, dm-devel@redhat.com
-References: <21051.1528404057@turing-police.cc.vt.edu>
- <20180607211401.GD4481@redhat.com>
- <136327.1528411295@turing-police.cc.vt.edu>
- <248061.1528488439@turing-police.cc.vt.edu>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <4d8ac96b-8537-6f6a-1223-5bf6f75769e5@kernel.dk>
-Date: Fri, 8 Jun 2018 15:17:43 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        id S1753580AbeFJMav (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sun, 10 Jun 2018 08:30:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51668 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751573AbeFJMas (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Jun 2018 08:30:48 -0400
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC1272089C;
+        Sun, 10 Jun 2018 12:30:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528633848;
+        bh=7qsJo5RzNkzb6/eTTXSIz+G29xM72gvW+0o3e1MiCDU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Evcg28V1SrpjSYnunWZtKvZMXS5plVn/NhRTc6+z1FkT3gUpwZ120EVFYGY+NgROr
+         V2QIGuDRztInmmJkpEJ6BH/Bw5JKxYMlazx5LZCasKGJNxVlAg6yh5B9TehmwBjkLF
+         yVhE4G7WXyOaEq6EPX2L1kOqtJQWFsetZEVI8obw=
+Date: Sun, 10 Jun 2018 13:30:42 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Eugen Hristev <eugen.hristev@microchip.com>
+Cc: <ludovic.desroches@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>, <linux-input@vger.kernel.org>,
+        <nicolas.ferre@microchip.com>, <dmitry.torokhov@gmail.com>,
+        <robh@kernel.org>
+Subject: Re: [PATCH v7 2/9] iio: Add channel for Position Relative
+Message-ID: <20180610133042.55e21e5b@archlinux>
+In-Reply-To: <1526975559-18966-3-git-send-email-eugen.hristev@microchip.com>
+References: <1526975559-18966-1-git-send-email-eugen.hristev@microchip.com>
+        <1526975559-18966-3-git-send-email-eugen.hristev@microchip.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <248061.1528488439@turing-police.cc.vt.edu>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/8/18 2:07 PM, valdis.kletnieks@vt.edu wrote:
-> On Thu, 07 Jun 2018 18:41:35 -0400, valdis.kletnieks@vt.edu said:
->> On Thu, 07 Jun 2018 17:14:01 -0400, Mike Snitzer said:
->>> Can you please share what you test is?  We've gotten lots of reports
->>> with failure following wake_up but I don't have a canned test to trigger
->>
->> Just a laptop with 16G of RAM, no clear reproducer -  Chrome with a lot of
->> tabs, a mail reader, a bunch of SSH windows, and the next thing I know, it's
->> locked up good and solid with wreckage in /sys/fs/pstore :)
->>
->> I got bit a third time a little while ago.  Will test the patches and see if
->> they help - looks like I'm averaging two hours or so of active use before it
->> hits, so it shouldn't take long before I know if the issue is swatted...
+On Tue, 22 May 2018 10:52:32 +0300
+Eugen Hristev <eugen.hristev@microchip.com> wrote:
+
+> Add new channel type for relative position on a pad.
 > 
-> Looks like those two patches from Jens fixed the issue - this build has been up for
-> 20 hours, and has survived a kernel build, an OpenWRT/Lede build, and a backup,
-> along with a bunch of other stuff.
+> These type of analog sensor offers the position of a pen
+> on a touchpad, and is represented as a voltage, which can be
+> converted to a position on X and Y axis on the pad.
+> The channel will hand the relative position on the pad in both directions.
+> 
+> The channel can then be consumed by a touchscreen driver or
+> read as-is for a raw indication of the touchpen on a touchpad.
+> 
+> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+Applied - with a trivial amount of fuzz.
 
-Thanks for testing - I've sent the pull request to Linus, so hopefully it'll
-soon be fixed in mainline as well.
+Thanks,
 
--- 
-Jens Axboe
+Jonathan
+> ---
+> Changes in v2:
+>  - modified channel name to relative position as suggested.
+>  - modified kernel version to 4.18 (presumable)
+> 
+>  Documentation/ABI/testing/sysfs-bus-iio | 12 ++++++++++++
+>  drivers/iio/industrialio-core.c         |  1 +
+>  include/uapi/linux/iio/types.h          |  1 +
+>  tools/iio/iio_event_monitor.c           |  2 ++
+>  4 files changed, 16 insertions(+)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
+> index 6a5f34b..42a9287 100644
+> --- a/Documentation/ABI/testing/sysfs-bus-iio
+> +++ b/Documentation/ABI/testing/sysfs-bus-iio
+> @@ -190,6 +190,18 @@ Description:
+>  		but should match other such assignments on device).
+>  		Units after application of scale and offset are m/s^2.
+>  
+> +What:		/sys/bus/iio/devices/iio:deviceX/in_positionrelative_x_raw
+> +What:		/sys/bus/iio/devices/iio:deviceX/in_positionrelative_y_raw
+> +KernelVersion:	4.18
+> +Contact:	linux-iio@vger.kernel.org
+> +Description:
+> +		Relative position in direction x or y on a pad (may be
+> +		arbitrarily assigned but should match other such assignments on
+> +		device).
+> +		Units after application of scale and offset are milli percents
+> +		from the pad's size in both directions. Should be calibrated by
+> +		the consumer.
+> +
+>  What:		/sys/bus/iio/devices/iio:deviceX/in_anglvel_x_raw
+>  What:		/sys/bus/iio/devices/iio:deviceX/in_anglvel_y_raw
+>  What:		/sys/bus/iio/devices/iio:deviceX/in_anglvel_z_raw
+> diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
+> index 19bdf3d..14bf3d24 100644
+> --- a/drivers/iio/industrialio-core.c
+> +++ b/drivers/iio/industrialio-core.c
+> @@ -85,6 +85,7 @@ static const char * const iio_chan_type_name_spec[] = {
+>  	[IIO_COUNT] = "count",
+>  	[IIO_INDEX] = "index",
+>  	[IIO_GRAVITY]  = "gravity",
+> +	[IIO_POSITIONRELATIVE]  = "positionrelative",
+>  };
+>  
+>  static const char * const iio_modifier_names[] = {
+> diff --git a/include/uapi/linux/iio/types.h b/include/uapi/linux/iio/types.h
+> index 4213cdf..033c7d2 100644
+> --- a/include/uapi/linux/iio/types.h
+> +++ b/include/uapi/linux/iio/types.h
+> @@ -44,6 +44,7 @@ enum iio_chan_type {
+>  	IIO_COUNT,
+>  	IIO_INDEX,
+>  	IIO_GRAVITY,
+> +	IIO_POSITIONRELATIVE,
+>  };
+>  
+>  enum iio_modifier {
+> diff --git a/tools/iio/iio_event_monitor.c b/tools/iio/iio_event_monitor.c
+> index b61245e..148f69d 100644
+> --- a/tools/iio/iio_event_monitor.c
+> +++ b/tools/iio/iio_event_monitor.c
+> @@ -58,6 +58,7 @@ static const char * const iio_chan_type_name_spec[] = {
+>  	[IIO_PH] = "ph",
+>  	[IIO_UVINDEX] = "uvindex",
+>  	[IIO_GRAVITY] = "gravity",
+> +	[IIO_POSITIONRELATIVE] = "positionrelative",
+>  };
+>  
+>  static const char * const iio_ev_type_text[] = {
+> @@ -151,6 +152,7 @@ static bool event_is_known(struct iio_event_data *event)
+>  	case IIO_PH:
+>  	case IIO_UVINDEX:
+>  	case IIO_GRAVITY:
+> +	case IIO_POSITIONRELATIVE:
+>  		break;
+>  	default:
+>  		return false;
