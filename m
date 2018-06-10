@@ -1,130 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 8ifTCNR8GlttFwAAmS7hNA
-	; Fri, 08 Jun 2018 12:56:14 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id UN2zA+DhHFuTHgAAmS7hNA
+	; Sun, 10 Jun 2018 08:31:28 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 349206089E; Fri,  8 Jun 2018 12:56:14 +0000 (UTC)
+	id DF8F960850; Sun, 10 Jun 2018 08:31:27 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CMNuUJOr"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NWCBACC8"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id AE1DC606FA;
-	Fri,  8 Jun 2018 12:56:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AE1DC606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 65021600D0;
+	Sun, 10 Jun 2018 08:31:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 65021600D0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752730AbeFHM4J (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 08:56:09 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:40675 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752092AbeFHM4H (ORCPT
+        id S932307AbeFJIbY (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sun, 10 Jun 2018 04:31:24 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:38337 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751518AbeFJIbW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 08:56:07 -0400
-Received: by mail-wr0-f195.google.com with SMTP id l41-v6so13299753wre.7
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 05:56:07 -0700 (PDT)
+        Sun, 10 Jun 2018 04:31:22 -0400
+Received: by mail-wm0-f65.google.com with SMTP id 69-v6so10862923wmf.3
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Jun 2018 01:31:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=rgwhMFeqPU2cHPKoJVFBYpBUce4YVH0kPTyi3IJl3vE=;
-        b=CMNuUJOrFr/542bLiC38dGo7EAYJ3ntddiq10/U2xhSWkQSzXJUn0/H95fI1hAzIkF
-         DrqeEnfaXiNxZs3OB4yQama5xHQ0Ffc0KOFBnL8BRH1lKMedRHnaOUmA1HEoU1gTVyT6
-         anFSCk/acKnt6fLfAYpfT80HHVkgfmLPNFabE=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=m31xckP+r6X4YVNkBnZUfEz62rLbyUMJe66iL8DB8us=;
+        b=NWCBACC8bNg9aGdvtWZ/M2zEUI9L/GM+O7gm9uzLVJAp1xnkCpo7GIDZTvfSreDMIx
+         iE9MhOZxz/EQN0oKMMS2YILNwAKV0Hy7fwF1CH28lLwSSja+5/uBPKTBoRqytTJJj9Ni
+         8e73wRzRrJdvPLa5AyomKAm5pXQvr3zhfawgab3UgTMGkmbh8bEr6dzd0WynlkHlP9cs
+         TdxMC1DT8XE0hr99eu+jqP03KIRugUTYPHL04r+ezTeyxkP1OO7R18gT7bP+ay61AMOs
+         kun8cw2cJZsudJAEeRWg0sEWxiEISfw50oAsBmh1dRlnZfXNxzirFdLQ6lQmb4VDgZAH
+         MZBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=rgwhMFeqPU2cHPKoJVFBYpBUce4YVH0kPTyi3IJl3vE=;
-        b=h7BHE+r6YcfEpH5SmPY0rb5z3QV9bnln56G/Jf38HIqDPhsom99Yh8s0aIqch5wA28
-         Rn6D9/4ISZKRMJnZVfuNWq9+r+Xk8YXnqJ2lBKam9FDR4VBnon2T5sTlwI7l7/YhDUtc
-         9rBd5+QT7KixWFBQk9XFe3qkQQyuZQaGzNcVyzQo3Ertgng1hSJ8L8l+PfH/m3T6EaG0
-         IOP4YDbCZ2duRo2RTF2gxZLFjETmWAWZcd3b4JXAEVi60kRP0cEeXXOFg2XwQs9noOkA
-         RfSzjMuwT7Ca/rlJNPGWdzh7k9gz4EgEvn5kzo4ocr31L88eARphzc8LnpRzEQ4b/dQL
-         3Baw==
-X-Gm-Message-State: APt69E2ouJifKtRPGrrTwUiOuc36oqc/OwADn7uG0v+SQh8MwE7Mgrpg
-        J9mXpIwDdJCvd4hlYbauSlWlKT9lfqE=
-X-Google-Smtp-Source: ADUXVKJXcD8LJaFOWbY9dPlf44xO9Rj6DewZ/fhNiHboPuEQzfadw2L1wvG1AHuLGabZeMcIk6/OIg==
-X-Received: by 2002:adf:ea0f:: with SMTP id q15-v6mr5407629wrm.9.1528462566694;
-        Fri, 08 Jun 2018 05:56:06 -0700 (PDT)
-Received: from [192.168.27.209] ([37.157.136.206])
-        by smtp.googlemail.com with ESMTPSA id v68-v6sm2328214wmd.12.2018.06.08.05.56.04
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=m31xckP+r6X4YVNkBnZUfEz62rLbyUMJe66iL8DB8us=;
+        b=L89sGdOaaM98diQ+EGwPAFV38+S8FCo0FkQ//fpST3rL+RaUU54J+0yOPtmfOa2ERU
+         QpRB3iwQwKb1xevtxUWx1AkJSRVPmTaTUt541EWsSxpP4vAfzq01X+N6YqZferCTuhDC
+         m0sKEwe90DUtl3RTvD80EKT99T5gunsKImARbgO1xdAGpWad6RydPrLHqiQpNDRJLd7c
+         hrzhm8Ah83WmehzghT5hJ3LiC9TKdsCLsNcG9LUSYuP7sQqJWr9UHKP4+rQhpnmy+Amh
+         Ckb4YuT24OKntgJpINcDcPV0DfJtfGuKbLy3A7ymbnyZV7bcJ+qBlI/ZV2T1tGzV13uF
+         uFOQ==
+X-Gm-Message-State: APt69E2vVPbr5E+wr4cAo9Vkln4mWbJmv7g8s0tFRguZcitYi9IGh/NZ
+        1pJNAE4RMEqipLqQwmmqWSw=
+X-Google-Smtp-Source: ADUXVKJ4Pz9uRNqp8CvPUuyxcLxHd2WipPiB5UWVKNzHoP9dcFh+jgN+C1Q6xvHKwsSlyik4m4r4LQ==
+X-Received: by 2002:a1c:eacd:: with SMTP id g74-v6mr4999468wmi.103.1528619481083;
+        Sun, 10 Jun 2018 01:31:21 -0700 (PDT)
+Received: from localhost (8ta-150-94-26.telkomadsl.co.za. [41.150.94.26])
+        by smtp.gmail.com with ESMTPSA id h65-v6sm4582834wmf.7.2018.06.10.01.31.19
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Jun 2018 05:56:05 -0700 (PDT)
-Subject: Re: [PATCH v2 1/2] media: v4l2-ctrl: Add control for VP9 profile
-To: Hans Verkuil <hverkuil@xs4all.nl>,
-        Keiichi Watanabe <keiichiw@chromium.org>,
-        linux-arm-kernel@lists.infradead.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Smitha T Murthy <smitha.t@samsung.com>,
-        Tom Saeger <tom.saeger@oracle.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org
-References: <20180530071613.125768-1-keiichiw@chromium.org>
- <20180530071613.125768-2-keiichiw@chromium.org>
- <a16dca32-4198-72c1-cf22-83f18a8cfcb6@xs4all.nl>
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <bd56e330-91d2-dfde-4cfb-40b466953dad@linaro.org>
-Date: Fri, 8 Jun 2018 15:56:03 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Sun, 10 Jun 2018 01:31:20 -0700 (PDT)
+Date: Sun, 10 Jun 2018 12:30:01 +0200
+From: chris <eklikeroomys@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: devel@driverdev.osuosl.org, Frank Mori Hess <fmh6jj@gmail.com>,
+        Simo Koskinen <koskisoft@gmail.com>,
+        linux-kernel@vger.kernel.org, Ian Abbott <abbotti@mev.co.uk>
+Subject: Re: [PATCH] staging: comedi: Improved readability of function
+ comedi_nsamples_left.
+Message-ID: <20180610103001.GA7804@kerdev>
+References: <1528554204-4388-1-git-send-email-eklikeroomys@gmail.com>
+ <20180609140527.GC28854@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <a16dca32-4198-72c1-cf22-83f18a8cfcb6@xs4all.nl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180609140527.GC28854@kroah.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hans,
+Hi Greg,
+I've added changelog text to the patch below. Appreciate your 
+feedback!
+Regards,
+Chris Opperman
 
-On 06/08/2018 12:29 PM, Hans Verkuil wrote:
-> On 05/30/2018 09:16 AM, Keiichi Watanabe wrote:
->> Add a new control V4L2_CID_MPEG_VIDEO_VP9_PROFILE for selecting desired
->> profile for VP9 encoder and querying for supported profiles by VP9 encoder
->> or decoder.
->>
->> An existing control V4L2_CID_MPEG_VIDEO_VPX_PROFILE cannot be
->> used for querying since it is not a menu control but an integer
->> control, which cannot return an arbitrary set of supported profiles.
->>
->> The new control V4L2_CID_MPEG_VIDEO_VP9_PROFILE is a menu control as
->> with controls for other codec profiles. (e.g. H264)
-> 
-> Please ignore my reply to patch 2/2. I looked at this a bit more and what you
-> should do is to change the type of V4L2_CID_MPEG_VIDEO_VPX_PROFILE to enum.
-> 
-> All other codec profile controls are all enums, so the fact that VPX_PROFILE
-> isn't is a bug. Changing the type should not cause any problems since the same
-> control value is used when you set the control.
-> 
-> Sylwester: I see that s5p-mfc uses this control, but it is explicitly added
-> as an integer type control, so the s5p-mfc driver should not be affected by
-> changing the type of this control.
-> 
-> Stanimir: this will slightly change the venus driver, but since it is a very
-> recent driver I think we can get away with changing the core type of the
-> VPX_PROFILE control. I think that's better than ending up with two controls
-> that do the same thing.
+>8----------------------------------------------------------------------8<
 
-I agree. Actually the changes shouldn't be so much in venus driver.
+Improved the readability of comedi_nsamples_left:
+a) Reduced nesting by using more return calls.
+b) Separated variable declarations from code.
+c) Using kernel integer types.
 
+Signed-off-by: Chris Opperman <eklikeroomys@gmail.com>
+---
+ drivers/staging/comedi/drivers.c | 29 ++++++++++++++---------------
+ 1 file changed, 14 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/staging/comedi/drivers.c b/drivers/staging/comedi/drivers.c
+index 9d73347..3207ae2 100644
+--- a/drivers/staging/comedi/drivers.c
++++ b/drivers/staging/comedi/drivers.c
+@@ -468,26 +468,25 @@ EXPORT_SYMBOL_GPL(comedi_nscans_left);
+  * Returns the number of samples remaining to complete the command, or the
+  * specified expected number of samples (@nsamples), whichever is fewer.
+  */
+-unsigned int comedi_nsamples_left(struct comedi_subdevice *s,
+-				  unsigned int nsamples)
++u32 comedi_nsamples_left(struct comedi_subdevice *s, u32 nsamples)
+ {
+ 	struct comedi_async *async = s->async;
+ 	struct comedi_cmd *cmd = &async->cmd;
++	u32 scans_left;
++	u64 samples_left;
+ 
+-	if (cmd->stop_src == TRIG_COUNT) {
+-		unsigned int scans_left = __comedi_nscans_left(s, cmd->stop_arg);
+-		unsigned int scan_pos =
+-		    comedi_bytes_to_samples(s, async->scan_progress);
+-		unsigned long long samples_left = 0;
+-
+-		if (scans_left) {
+-			samples_left = ((unsigned long long)scans_left *
+-					cmd->scan_end_arg) - scan_pos;
+-		}
++	if (cmd->stop_src != TRIG_COUNT)
++		return nsamples;
+ 
+-		if (samples_left < nsamples)
+-			nsamples = samples_left;
+-	}
++	scans_left = __comedi_nscans_left(s, cmd->stop_arg);
++	if (!scans_left)
++		return 0;
++
++	samples_left = ((u64)scans_left * cmd->scan_end_arg) -
++		comedi_bytes_to_samples(s, async->scan_progress);
++
++	if (samples_left < nsamples)
++		return samples_left;
+ 	return nsamples;
+ }
+ EXPORT_SYMBOL_GPL(comedi_nsamples_left);
 -- 
-regards,
-Stan
+2.1.4
