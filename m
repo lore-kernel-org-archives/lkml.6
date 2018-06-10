@@ -1,321 +1,193 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id jXDPC8JhHlttSAAAmS7hNA
-	; Mon, 11 Jun 2018 11:50:04 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id gY7FDhbwHFtbZgAAmS7hNA
+	; Sun, 10 Jun 2018 09:32:06 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id A9BDB60541; Mon, 11 Jun 2018 11:50:04 +0000 (UTC)
+	id 1E279608CD; Sun, 10 Jun 2018 09:32:06 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="oP/FhYqj";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="IJ+CDy+L"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_MED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 2A21D60541;
-	Mon, 11 Jun 2018 11:50:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2A21D60541
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 4C2AB608B8;
+	Sun, 10 Jun 2018 09:32:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4C2AB608B8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=wdc.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932968AbeFKLuA (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Mon, 11 Jun 2018 07:50:00 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59918 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932940AbeFKLty (ORCPT
+        id S1753786AbeFJJbv (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sun, 10 Jun 2018 05:31:51 -0400
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:29254 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753703AbeFJJbs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 07:49:54 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5BBn8qf134512
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 07:49:53 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jhp6s6h2a-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 07:49:53 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <frankja@linux.ibm.com>;
-        Mon, 11 Jun 2018 12:49:50 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 11 Jun 2018 12:49:46 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5BBnjtV22741124
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 11 Jun 2018 11:49:45 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AAB72AE045;
-        Mon, 11 Jun 2018 12:38:37 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E0F6FAE051;
-        Mon, 11 Jun 2018 12:38:36 +0100 (BST)
-Received: from [9.152.224.155] (unknown [9.152.224.155])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 11 Jun 2018 12:38:36 +0100 (BST)
-Subject: Re: [PATCH v5 11/13] KVM: s390: implement mediated device open
- callback
-To: Halil Pasic <pasic@linux.ibm.com>, pmorel@linux.ibm.com,
-        Tony Krowiak <akrowiak@linux.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        Janosch Frank <frankja@linux.vnet.ibm.com>
-References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1525705912-12815-12-git-send-email-akrowiak@linux.vnet.ibm.com>
- <98ea7ce2-2539-e2ff-4bb4-297e784d87bd@linux.ibm.com>
- <7bb480ac-5723-83ff-c797-53c1ab0458c1@linux.vnet.ibm.com>
- <93cd0f46-a410-51c8-00b9-810c1b3d3ae2@linux.ibm.com>
- <0f37dc39-7355-19e5-40c9-a02a1ea58c2d@linux.vnet.ibm.com>
- <736a1346-f81a-7f71-7d13-38729ff78e4f@linux.ibm.com>
- <8f68183d-8385-8025-1898-23cad604ae94@linux.vnet.ibm.com>
- <9e30c9b0-a04c-0c4e-9d3d-37e7a53a7f72@linux.ibm.com>
- <d6455b0b-804f-b58e-41bc-83731979911a@linux.ibm.com>
- <f74f2d2d-36d3-7910-5511-3691a483b89f@linux.vnet.ibm.com>
- <ea5c2c2f-27fe-b2bf-2aa8-fbe80e77ce81@linux.ibm.com>
- <5f9c3f97-34e2-bf68-b8ca-ac9288ea5efa@linux.vnet.ibm.com>
- <b7215f0e-6ceb-2738-4584-1af7c30bd595@linux.ibm.com>
- <f1cc0d71-d2ff-6461-c450-07cc73a2973c@linux.ibm.com>
- <010679ed-bd80-42f8-3f6f-e4dee10e82f5@linux.ibm.com>
- <a5a72aad-303b-8bc9-f48b-e44aba2af27e@linux.ibm.com>
-From: Janosch Frank <frankja@linux.ibm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=frankja@linux.ibm.com; prefer-encrypt=mutual; keydata=
- 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
- lFM6NIuMAY1Y
-Date: Mon, 11 Jun 2018 13:49:31 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Sun, 10 Jun 2018 05:31:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1528623108; x=1560159108;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=STujZL+cuzFG80NvU5fO3pT8fcywy/uQWrykjgeq/3c=;
+  b=oP/FhYqj7nGh4wn8Fvd21sSz+9vRXCCRGKknsvcDMHMOeCrVV9INIwfU
+   iChSnVahLT83PpzzMEqTlULcCc8n2vWHO9Bu+MQPiSmaRmD2oK9XCUtQ7
+   +2qn2rbLIQKQlo6ullZLboM3O7NNcy7Khb/Q8vSs3c+9FoKSNw8SVecc8
+   iN7PAqGhSqF9L5Z7pZgrJPOQ2qonlDfHdXwY2y29wNWg23KRIqCjqAqYe
+   qToKJnOJ5zT8FfHer0OiROYjbh8fxJrjWolUg4RofQ/s+sPcAdRHLKaF2
+   BMh8EIBOZ5Y4e807f9gBoJGA/m+NQNUdJVSDSxcFagpJH31385nfTyvvx
+   g==;
+X-IronPort-AV: E=Sophos;i="5.49,497,1520870400";
+   d="scan'208";a="80472460"
+Received: from mail-co1nam05lp0080.outbound.protection.outlook.com (HELO NAM05-CO1-obe.outbound.protection.outlook.com) ([216.32.181.80])
+  by ob1.hgst.iphmx.com with ESMTP; 10 Jun 2018 17:31:47 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=STujZL+cuzFG80NvU5fO3pT8fcywy/uQWrykjgeq/3c=;
+ b=IJ+CDy+L85ZdIC1y3+m4u6McDbLAoZKuHQoBER4EUdQXfgG+2vmeqbD8uWCrECp6mEZcRlDCsdIzGTH+nSXDifjP0QJufB4oK80YOm8GCv+0WWwMeUuz4NGdMPBLLLoZVmAUdVloZbwoT124rUSMLV5Uamtx7s+jrjrmHuyApuo=
+Received: from MWHPR04MB1137.namprd04.prod.outlook.com (10.173.51.151) by
+ MWHPR04MB1007.namprd04.prod.outlook.com (10.174.250.14) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id
+ 15.20.797.11; Sun, 10 Jun 2018 09:31:45 +0000
+Received: from MWHPR04MB1137.namprd04.prod.outlook.com
+ ([fe80::b928:3117:cd49:eae]) by MWHPR04MB1137.namprd04.prod.outlook.com
+ ([fe80::b928:3117:cd49:eae%2]) with mapi id 15.20.0841.019; Sun, 10 Jun 2018
+ 09:31:45 +0000
+From: Stanislav Nijnikov <Stanislav.Nijnikov@wdc.com>
+To: Adrian Hunter <adrian.hunter@intel.com>,
+        Evan Green <evgreen@chromium.org>
+CC: Vinayak Holikatti <vinholikatti@gmail.com>,
+        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Alex Lemberg <Alex.Lemberg@wdc.com>,
+        Avri Altman <Avri.Altman@wdc.com>
+Subject: RE: [PATCH 0/7] Enable UFS provisioning via Linux
+Thread-Topic: [PATCH 0/7] Enable UFS provisioning via Linux
+Thread-Index: AQHT93lpGmTFqrK/4k6nSxRetFdr1aRJmw1AgAHj/gCAAtT7sIAB5jsAgAYf3wCAAuSwoA==
+Date: Sun, 10 Jun 2018 09:31:45 +0000
+Message-ID: <MWHPR04MB1137E9FA44BAC5EBE097589C9A790@MWHPR04MB1137.namprd04.prod.outlook.com>
+References: <20180529181740.195362-1-evgreen@chromium.org>
+ <MWHPR04MB11372C75BFC9416BAF5E81A19A630@MWHPR04MB1137.namprd04.prod.outlook.com>
+ <CAE=gft4LoNiRtxgTA_ZPghZGEVOzu_GAwMgqhs-8NCYVgj_AVw@mail.gmail.com>
+ <MWHPR04MB11370AED823FB608218CB9AD9A600@MWHPR04MB1137.namprd04.prod.outlook.com>
+ <CAE=gft5Vk3neDkyvmVf4CkBQQPVK=wXp=5jJ8n0uaosEwWUOAg@mail.gmail.com>
+ <b844b80f-9f6f-10f7-6dfd-f92d905738e3@intel.com>
+In-Reply-To: <b844b80f-9f6f-10f7-6dfd-f92d905738e3@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Stanislav.Nijnikov@wdc.com;
+x-originating-ip: [212.25.79.133]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR04MB1007;7:XazicdiQ8d5Af152S6NVxlzgJIZxKOJ8UUJy/QkbRxdhAHzgOgwMCS27OgXfQRbsEiPoXNRu4IPk/KNR9xNWdInY/ymKSoZO3piTX/OgJcX5VVw9srVcCqnALEYZ6zztPFh+CiEtBQoBR4jvxRNTT9kC2LIx6A7QAI2pJM7PMF9cH7lgjn0vbVq5pttTKUBEPdmwF4XluJct1fCIWJ5jDXbcGROrZNNC41N3tm48ZFjjRUIEwjyMO/XfkshBLtiT;20:vVBobAMJfya2o1M988B99TeRgTlsJnWQ3kRXMPJMF8BGm7T51xQuFvGyogHUQWDbZP24UuWfuWTQ+lAizqpmTPjvvPHtLxQOEs2HvFnMIPaH29B8uoLzD+KLhCdn30jtgs1DioXO0zC86hORidU5WI23EAvNzgJvtJwweTBNbLE=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB1007;
+x-ms-traffictypediagnostic: MWHPR04MB1007:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <MWHPR04MB1007025BC266D5A5E1429CDB9A790@MWHPR04MB1007.namprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(85827821059158)(104084551191319)(146099531331640)(228905959029699);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3002001)(3231254)(944501410)(52105095)(10201501046)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:MWHPR04MB1007;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB1007;
+x-forefront-prvs: 0699FCD394
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(39860400002)(346002)(376002)(39380400002)(13464003)(199004)(189003)(53936002)(7736002)(74316002)(6506007)(76176011)(53546011)(14454004)(6116002)(11346002)(54906003)(110136005)(446003)(59450400001)(99286004)(66066001)(8936002)(5250100002)(4326008)(478600001)(81156014)(25786009)(3846002)(3660700001)(39060400002)(305945005)(93886005)(3280700002)(86362001)(6246003)(68736007)(72206003)(5660300001)(229853002)(97736004)(55016002)(476003)(316002)(8676002)(2900100001)(9686003)(81166006)(7696005)(6436002)(26005)(102836004)(486006)(106356001)(105586002)(186003)(2906002)(33656002)(5890100001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB1007;H:MWHPR04MB1137.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: YLffNrjERXcS8TvmWvhMWSBbznzqkcWPrSlYT4LiV/+uayq/tpwC0kD3wmjIYsWLHk70aCkxjR974D6Rjksl0P81rLTgIe0ZRfyF0TdclAKpq6g47GvRs1SoAVituVEQkur7TfsySoo1TCw++eZfx5GRpPEbgx5xa+ZMEcBS+QJvHHe0WI5nRXUxIwHh51s2
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <a5a72aad-303b-8bc9-f48b-e44aba2af27e@linux.ibm.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="p5WSB1KGON5tNXD1JZuJXkKMiYD44HYdo"
-X-TM-AS-GCONF: 00
-x-cbid: 18061111-0028-0000-0000-000002CF822F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18061111-0029-0000-0000-00002386985C
-Message-Id: <dd81f313-a8c2-bf2a-da4c-4669db170401@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-11_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=973 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806110140
+X-MS-Office365-Filtering-Correlation-Id: bf3058f0-d141-4fca-5b9f-08d5ceb4fbd8
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bf3058f0-d141-4fca-5b9f-08d5ceb4fbd8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jun 2018 09:31:45.6395
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB1007
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---p5WSB1KGON5tNXD1JZuJXkKMiYD44HYdo
-Content-Type: multipart/mixed; boundary="0bQrGcgO62KKUu7NthEmnKLGUSMRsJ8rm";
- protected-headers="v1"
-From: Janosch Frank <frankja@linux.ibm.com>
-To: Halil Pasic <pasic@linux.ibm.com>, pmorel@linux.ibm.com,
- Tony Krowiak <akrowiak@linux.ibm.com>, linux-s390@vger.kernel.org,
- linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
- borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
- bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
- alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
- alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
- jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
- berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
- Janosch Frank <frankja@linux.vnet.ibm.com>
-Message-ID: <dd81f313-a8c2-bf2a-da4c-4669db170401@linux.ibm.com>
-Subject: Re: [PATCH v5 11/13] KVM: s390: implement mediated device open
- callback
-References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1525705912-12815-12-git-send-email-akrowiak@linux.vnet.ibm.com>
- <98ea7ce2-2539-e2ff-4bb4-297e784d87bd@linux.ibm.com>
- <7bb480ac-5723-83ff-c797-53c1ab0458c1@linux.vnet.ibm.com>
- <93cd0f46-a410-51c8-00b9-810c1b3d3ae2@linux.ibm.com>
- <0f37dc39-7355-19e5-40c9-a02a1ea58c2d@linux.vnet.ibm.com>
- <736a1346-f81a-7f71-7d13-38729ff78e4f@linux.ibm.com>
- <8f68183d-8385-8025-1898-23cad604ae94@linux.vnet.ibm.com>
- <9e30c9b0-a04c-0c4e-9d3d-37e7a53a7f72@linux.ibm.com>
- <d6455b0b-804f-b58e-41bc-83731979911a@linux.ibm.com>
- <f74f2d2d-36d3-7910-5511-3691a483b89f@linux.vnet.ibm.com>
- <ea5c2c2f-27fe-b2bf-2aa8-fbe80e77ce81@linux.ibm.com>
- <5f9c3f97-34e2-bf68-b8ca-ac9288ea5efa@linux.vnet.ibm.com>
- <b7215f0e-6ceb-2738-4584-1af7c30bd595@linux.ibm.com>
- <f1cc0d71-d2ff-6461-c450-07cc73a2973c@linux.ibm.com>
- <010679ed-bd80-42f8-3f6f-e4dee10e82f5@linux.ibm.com>
- <a5a72aad-303b-8bc9-f48b-e44aba2af27e@linux.ibm.com>
-In-Reply-To: <a5a72aad-303b-8bc9-f48b-e44aba2af27e@linux.ibm.com>
-
---0bQrGcgO62KKUu7NthEmnKLGUSMRsJ8rm
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-
-On 11.06.2018 13:32, Halil Pasic wrote:
->=20
->=20
-> On 06/11/2018 11:23 AM, Pierre Morel wrote:
->> On 08/06/2018 23:59, Tony Krowiak wrote:
->>> On 06/07/2018 01:15 PM, Pierre Morel wrote:
->>>>
->>
->> ...snip...
->>
->>>>>>
->>>>>>>
->>>>>>> Why maintain a list of kvm_ap_matrix structures if we don't have =
-to; it is stored
->>>>>>> with the mediated matrix device which is passed in to all of the =
-vfio_ap driver
->>>>>>> callbacks.
->>>>>>
->>>>>> Because using the vm_list which is a static in kvm makes you stick=
- inside the kvm code.
->>>
->>> I understand your point here, but even if we did maintain a list of k=
-vm_ap_matrix structures,
->>> we still need the kvm code to configure the guest's CRYCB and eventua=
-lly ECA.28. There is
->>> also code in kvm-ap.c that is called from KVM.
->>
->> The only code from kvm-ap which is called from KVM is temporary code
->> waiting for Harald to offer the clean interface to AP instructions.
->>
->>> The idea behind kvm-ap.c is that all code
->>> related to configuration of AP structures in KVM is in this one spot.=
-
->>
->> This I understand, but the code can be in one spot inside VFIO_AP inst=
-ead
->> of inside KVM.
->> Putting the code inside KVM induce dependencies between KVM and AP
->> while the kvm/vfio interface allows to avoid this dependency.
->>
->> The purpose of VFIO_AP is to handle the CRYCB, all get/clear/set crycb=
- masks
->> functions should be in VFIO AP.
->>
->> If we use wrappers in KVM, since the CRYCB is an a SIE extension,
->> it is legitimate, the KVM interface to the CRYCB should only
->> handle bitmaps and be unaware of the vfio_ap internal structures.
-
-Yes, please!
-
->>
->> Another concern, the kvm_ap_validate_queue_sharing() should not be
->> inside KVM because it is a decision of current VFIO_AP driver
->> to not share the queues between guest of level 2.
->>
->> The Z architecture does not allow to share AP queues between
->> guests of level 1 but we could re-engineer the AP bus and the '
->> VFIO AP to offer queue sharing for guest level 2.
->>
->> This would be a new VFIO_AP driver (and an AP bus extension).
->> We should not have to change KVM for this.
->>
->=20
->=20
-> Pierre's proposal makes a lot of sense to me. We would not need to take=
-
-> the kvm_lock (which we need to traverse the vm_list safely) for the
-> validation, and we could have immediate validation (which is in my opin=
-ion
-> better).
-
-Please do not use the kvm_lock if possible.
-
->=20
-> Also your refcount (which is not a refcout) could go away. You simply
-> traverse your list and check for duplicates when hooking up the mdev
-> with KVM.
->=20
-> And my opinion is if we don't have to add code to the kvm module we
-> better not.
->=20
-> @Janosch: Does core KVM share my opinion?
-
-At least I do.
-
-KVM does not care about who has which crypto queue/card.
-I'd like to have a driver that does internal bookkeeping and then
-registers the crycb with KVM, so the VM can use it.
-
->=20
-> Regards,
-> Halil
->=20
-
-
-
---0bQrGcgO62KKUu7NthEmnKLGUSMRsJ8rm--
-
---p5WSB1KGON5tNXD1JZuJXkKMiYD44HYdo
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJbHmHYAAoJEBcO/8Q8ZEV5AS4QAIwpHJh6L9SUp6BQhM5Sz1iN
-uA8Gz3HJ8mg7zr7EJg3ExIejQlgCG9kjVwDDZcGOIyEltPD7CuCznrXZh24gq+bv
-w/uqo5XAeuUCFWSffPRHJLqRu7pUxcPYT1a7z2h6PqC6RV7L1ndiXtMZx5enYC5D
-Kath9KuFaPGZ6xHP73ms9i4BU7STsFbKxZXBFlDosUBk+e2nSdCh/zV1sTlv8B16
-TgrvSqpkhIkLOf8+63tvZDnejg/iIlTmQQf4kA8hDQIXY1v9gyyanabsz5qlP3r/
-o13fAxd1a/qfUkWN0H+skPv37ngWcALvm/1lsY9XCvkmioe49BSt3jeMe1LG+oT8
-Dm1GaPrQ3gTtl7K2tUj7l9+OFihCBJFnhtDDERVXlDD6Hp9qnF2PrjyVYvmBHyPh
-xBTyQ5V91PZc++8OqZb/nOyifxteso8qgwiOK3NJKVmj7wZFXPSpX8uxDYP16x+H
-m0BCPPswiAed3DQjk7+n2ga7mHEb4zoCSAYUzwqQhFkdqKwzYMW5aYO4xhQW0wi7
-C2oL9Ke7FgXaNIY1Hs9nEFB5M5hFpKqwtWAYk4f25gvorfG+rGAhwKBPQQSShCRr
-77M9T3+ycLpGEOQh7wTZGeG2SmmzYgnC8gTnJ5tz57jWbHplxt8BGlLg35aJ1Tmk
-/R8ew/jcll6tDwF2yA2/
-=UnoK
------END PGP SIGNATURE-----
-
---p5WSB1KGON5tNXD1JZuJXkKMiYD44HYdo--
+SGkgQWRyaWFuLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEFkcmlh
+biBIdW50ZXIgPGFkcmlhbi5odW50ZXJAaW50ZWwuY29tPg0KPiBTZW50OiBGcmlkYXksIEp1bmUg
+OCwgMjAxOCAzOjMxIFBNDQo+IFRvOiBFdmFuIEdyZWVuIDxldmdyZWVuQGNocm9taXVtLm9yZz47
+IFN0YW5pc2xhdiBOaWpuaWtvdiA8U3RhbmlzbGF2Lk5pam5pa292QHdkYy5jb20+DQo+IENjOiBW
+aW5heWFrIEhvbGlrYXR0aSA8dmluaG9saWthdHRpQGdtYWlsLmNvbT47IGplamJAbGludXgudm5l
+dC5pYm0uY29tOyBtYXJ0aW4ucGV0ZXJzZW5Ab3JhY2xlLmNvbTsgbGludXgtDQo+IGtlcm5lbEB2
+Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LXNjc2lAdmdlci5rZXJuZWwub3JnOyBHd2VuZGFsIEdyaWdu
+b3UgPGd3ZW5kYWxAY2hyb21pdW0ub3JnPjsgQWxleCBMZW1iZXJnDQo+IDxBbGV4LkxlbWJlcmdA
+d2RjLmNvbT47IEF2cmkgQWx0bWFuIDxBdnJpLkFsdG1hbkB3ZGMuY29tPg0KPiBTdWJqZWN0OiBS
+ZTogW1BBVENIIDAvN10gRW5hYmxlIFVGUyBwcm92aXNpb25pbmcgdmlhIExpbnV4DQo+IA0KPiBP
+biAwNC8wNi8xOCAxNzo1OSwgRXZhbiBHcmVlbiB3cm90ZToNCj4gPiBPbiBTdW4sIEp1biAzLCAy
+MDE4IGF0IDM6MjEgQU0gU3RhbmlzbGF2IE5pam5pa292DQo+ID4gPFN0YW5pc2xhdi5OaWpuaWtv
+dkB3ZGMuY29tPiB3cm90ZToNCj4gPj4NCj4gPj4NCj4gPj4NCj4gPj4+IC0tLS0tT3JpZ2luYWwg
+TWVzc2FnZS0tLS0tDQo+ID4+PiBGcm9tOiBsaW51eC1zY3NpLW93bmVyQHZnZXIua2VybmVsLm9y
+ZyA8bGludXgtc2NzaS1vd25lckB2Z2VyLmtlcm5lbC5vcmc+IE9uIEJlaGFsZiBPZiBFdmFuIEdy
+ZWVuDQo+ID4+PiBTZW50OiBGcmlkYXksIEp1bmUgMSwgMjAxOCA1OjQ0IFBNDQo+ID4+PiBUbzog
+U3RhbmlzbGF2IE5pam5pa292IDxTdGFuaXNsYXYuTmlqbmlrb3ZAd2RjLmNvbT4NCj4gPj4+IENj
+OiBWaW5heWFrIEhvbGlrYXR0aSA8dmluaG9saWthdHRpQGdtYWlsLmNvbT47IGplamJAbGludXgu
+dm5ldC5pYm0uY29tOyBtYXJ0aW4ucGV0ZXJzZW5Ab3JhY2xlLmNvbTsgbGludXgtDQo+ID4+PiBr
+ZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaW51eC1zY3NpQHZnZXIua2VybmVsLm9yZzsgR3dlbmRh
+bCBHcmlnbm91IDxnd2VuZGFsQGNocm9taXVtLm9yZz47IEFsZXggTGVtYmVyZw0KPiA+Pj4gPEFs
+ZXguTGVtYmVyZ0B3ZGMuY29tPjsgQXZyaSBBbHRtYW4gPEF2cmkuQWx0bWFuQHdkYy5jb20+DQo+
+ID4+PiBTdWJqZWN0OiBSZTogW1BBVENIIDAvN10gRW5hYmxlIFVGUyBwcm92aXNpb25pbmcgdmlh
+IExpbnV4DQo+ID4+Pg0KPiA+Pj4gSGkgU3RhbmlzbGF2LiBUaGFua3MgZm9yIHRha2luZyBhIGxv
+b2suIFJlc3BvbnNlcyBiZWxvdy4NCj4gPj4+DQo+ID4+PiBPbiBUaHUsIE1heSAzMSwgMjAxOCBh
+dCAzOjA0IEFNIFN0YW5pc2xhdiBOaWpuaWtvdg0KPiA+Pj4gPFN0YW5pc2xhdi5OaWpuaWtvdkB3
+ZGMuY29tPiB3cm90ZToNCj4gPj4+Pg0KPiA+Pj4+IEhpIEV2YW4sDQo+ID4+Pj4gSSBoYXZlIHNv
+bWUgZ2VuZXJpYyBub3RlczoNCj4gPj4+PiAtIFdoeSB0byBjcmVhdGUgbmV3IHN5c2ZzIGVudHJp
+ZXMgZm9yIHRoZSBjb25maWd1cmF0aW9uIGRlc2NyaXB0b3IgZmllbGRzIGlmIHRoZXkgYXJlIGp1
+c3QgZHVwbGljYXRpb24gb2YgZmllbGRzIGluIHRoZSBkZXZpY2UgYW5kIHVuaXQNCj4gPj4+IGRl
+c2NyaXB0b3JzPyBBbmQgdGhlIHN5c2ZzIHJlcHJlc2VudGF0aW9uIG9mIHRoZSBkZXZpY2UgYW5k
+IHVuaXQgZGVzY3JpcHRvcnMgaXMgZXhpc3RpbmcgYWxyZWFkeS4NCj4gPj4+DQo+ID4+PiBXZWxs
+LCBVRlMgZGVzY3JpYmVzIHRoZW0gYXMgZGlmZmVyZW50IGRlc2NyaXB0b3JzLiBJIHdvcnJ5IHRo
+YXQgaWYgSQ0KPiA+Pj4gYWRkIGEgYnVuY2ggb2YgY2xldmVyIGxvZ2ljIHRvIGhpZGUgdGhlIGNv
+bmZpZyBkZXNjcmlwdG9yIGJlaGluZCBvdGhlcg0KPiA+Pj4gZGVzY3JpcHRvcnMsIHRoZXJlIG1p
+Z2h0IGJlIHRyb3VibGUgbGF0ZXIgaWYgMSkgdGhlcmUgaXMgYSBxdWlya3kNCj4gPj4+IGRldmlj
+ZSB0aGF0IGRvZXNuJ3QgcmVmbGVjdCB0aGUgdmFsdWVzIGJldHdlZW4gZGVzY3JpcHRvcnMgcXVp
+dGUgdGhlDQo+ID4+PiBzYW1lIHdheSBvciBhdCB0aGUgc2FtZSB0aW1lLCBvciAyKSBpZiBhIGxh
+dGVyIFVGUyBzcGVjIGFkZHMgbW9yZQ0KPiA+Pj4gY29uZmlndXJhdGlvbiBkZXNjcmlwdG9yIGZp
+ZWxkcyB0aGF0IGRvbid0IGV4YWN0bHkgcmVmbGVjdCBpbnRvIG90aGVyDQo+ID4+PiBub24tY29u
+ZmlnIGRlc2NyaXB0b3JzLCB0aGUgY2xldmVybmVzcyB3aWxsIGxvb2sgYXdrd2FyZC4NCj4gPj4N
+Cj4gPj4gTm8gYWRkaXRpb25hbCBsb2dpYyB3aWxsIGJlIHJlcXVpcmVkIHRvIGF0dGFjaCB3cml0
+ZSBmdW5jdGlvbmFsaXR5IHRvIHRoZQ0KPiA+PiBleGlzdGluZyBlbnRyaWVzIGluc3RlYWQgb2Yg
+bmV3IGRlZmluZWQgb25lcy4gSXQgd2lsbCByZWR1Y2UgdGhlIHBhdGNoDQo+ID4+IHNpemUgc2ln
+bmlmaWNhbnRseS4gQW5kIHRoZXJlIHdpbGwgYmUgbm8gbmVlZCBmb3IgdGhlIHVuaXQgc2VsZWN0
+b3INCj4gPj4gbWVjaGFuaXNtIHdoaWNoIEknbSBub3Qgc3VyZSB3aWxsIGJlIGFjY2VwdGVkIGJ5
+IHRoZSBTQ1NJIGNvbW11bml0eS4NCj4gPj4NCj4gPg0KPiA+IFNvIHRoaXMgd291bGQgYmUgbW9k
+aWZ5aW5nIHRoZSBleGlzdGluZyBzeXNmcyBlbnRyaWVzIHNvIHRoYXQgcmVhZHMNCj4gPiBzdGls
+bCBjb21lIGZyb20gdGhlIGRldmljZSBhbmQgdW5pdCBkZXNjcmlwdG9ycywgYnV0IHdyaXRlcyBn
+byB0bw0KPiA+IGVxdWl2YWxlbnQgZmllbGRzIGluIHRoZSBjb25maWcgZGVzY3JpcHRvcj8gSSBj
+YW4gZXhwbG9yZSB0aGF0DQo+ID4gYXBwcm9hY2guIEFsdGVybmF0aXZlbHksIGlmIHRoZSB1bml0
+IHNlbGVjdG9yIG1lY2hhbmlzbSBpcyBub3QNCj4gPiBkZXNpcmVkLCBJIGNvdWxkIGR5bmFtaWNh
+bGx5IGNyZWF0ZSBzeXNmcyBkaXJlY3RvcmllcyBmb3IgZWFjaCB1bml0IGluDQo+ID4gdGhlIGNv
+bmZpZyBkZXNjcmlwdG9yLCBidXQgc3RpbGwgYnJpbmcgb3V0IHRoZSBjb25maWcgZGVzY3JpcHRv
+cg0KPiA+IHZhbHVlcyBhcyBzZXBhcmF0ZSBlbnRyaWVzLiAoSSBzdGlsbCB3b3JyeSBhIGJpdCBh
+Ym91dCBzbWFzaGluZyB0aGUNCj4gPiBkZXNjcmlwdG9ycyB0b2dldGhlciBhcyB0aGUgVUZTIHNw
+ZWMgY2FsbGVkIHRoZW0gb3V0IGFzIGRpZmZlcmVudCkuDQo+IA0KPiBJZiB5b3UgdXNlIHRoZSB1
+bml0IGF0dHJpYnV0ZXMsIGhvdyBkbyB5b3UgY29uZmlndXJlIHVuaXRzIHRoYXQgZG8gbm90IHll
+dA0KPiBleGlzdD8NCg0KRm9yIGV4YW1wbGUgYnkgYWRkaW5nIHRoZSBlbmFibGVfbHVuIHdyaXRl
+YWJsZSBzeXNmcyBlbnRyeS4gSSB0aGluayBib3RoIHdheXMgYXJlDQp2aWFibGUgYW5kIHRoZXJl
+IGFyZSBzZXZlcmFsIHBpdGZhbGxzIGluIGVhY2ggb2YgdGhlbS4gTm93IGl0J3MgdXAgdG8gRXZh
+biB0byBkZWNpZGUNCmhvdyB0byBpbXBsZW1lbnQgdGhpcy4NCg0KPiANCj4gUGVyaGFwcyBpdCBp
+cyBiZXR0ZXIgdG8gcmVwcmVzZW50IHRoZSBjb25maWd1cmF0aW9uIGRlc2NyaXB0b3JzIGV4YWN0
+bHkgYXMNCj4gdGhleSBhcmUgZGVmaW5lZCBpbiB0aGUgc3BlY2lmaWNhdGlvbi4gIFByb2JhYmx5
+IG5vdCB3b3J0aCBleHBvc2luZyB0aGVtIGF0DQo+IGFsbCBpZiB0aGUgY29uZmlndXJhdGlvbiBp
+cyBsb2NrZWQgKGF0dHJpYnV0ZSBiQ29uZmlnRGVzY3JMb2NrID09IDEpLg0KPiANCj4gTm90ZSBh
+bHNvIHRoYXQgdGhlIDIuMSBzcGVjLiBkZWZpbmVzICBiQ29uZkRlc2NDb250aW51ZSB3aGljaCBh
+bGxvd3MgdXBkYXRlcw0KPiB0byBiZSBncm91cGVkIGFuZCBjb21taXR0ZWQgdG9nZXRoZXIuDQoN
+ClRoZSBvbmx5IHF1ZXN0aW9uIGlzIGhvdyBtYW55IGRldmljZXMgYXJlIHJlYWR5IHRvIGdldCBk
+b3plbnMgb2YgY29uZmlndXJhdGlvbg0KZGVzY3JpcHRvcnMgcmVsYXRlZCB0byBmaXJzdCBlaWdo
+dCBMVU5zIGluc3RlYWQganVzdCBvbmUgd2hlbiB0aGlzIGxvY2sgaXMgZW5hYmxlZC4NCg0KUmVn
+YXJkcw0KU3RhbmlzbGF2DQo=
