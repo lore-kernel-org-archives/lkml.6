@@ -1,103 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id cP3HCAZzGVvdVAAAmS7hNA
-	; Thu, 07 Jun 2018 19:38:23 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id L00PCI1nHFvXMQAAmS7hNA
+	; Sun, 10 Jun 2018 00:05:43 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id AE1196074D; Thu,  7 Jun 2018 19:38:23 +0000 (UTC)
+	id 5A97F6074D; Sun, 10 Jun 2018 00:05:43 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="qVS8Qxup"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QxOxbkGa"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_MED autolearn=ham
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id DD94D601D2;
-	Thu,  7 Jun 2018 19:38:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DD94D601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id B9F40605A2;
+	Sun, 10 Jun 2018 00:05:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B9F40605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753420AbeFGTiV (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 15:38:21 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:38583 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751956AbeFGTiT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 15:38:19 -0400
-Received: by mail-wm0-f65.google.com with SMTP id 69-v6so8359868wmf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 12:38:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=CiSIiqV4WQ+QOpQO21lmsZ3iZl+daa6ujnjnGsFTJqg=;
-        b=qVS8QxupwD9v8Hz682BYIhc6Q+AJG7/O2X6lBdRdx6LHBxrXwjZkHNLrkByK5+59EX
-         +yujTGDjialsadDQ8d6rAPVb28RzsWxqWBaozmhwqj3hdp18p79+6alyd6Q6UkUYCK/w
-         6OpCmQZ8XL40l+hAY2tF/AcnVv7AxpHvVyDGdt6JZRhwRGZLh0Ip+Lyi6WhBP0Ix5VGi
-         Ah3iZyDinlu7z9grZAgLk5yQtoErG5gXepG0etdNKHxs8NYKydsq6KEL9aeuEhQ5qH2e
-         lWB3fezwVfP+RrJEE7aYTEO2C+QfOLOxHTv2DfOVTaIOnnEQ+ECjMNBxt+R/J4EeoSnk
-         a2Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=CiSIiqV4WQ+QOpQO21lmsZ3iZl+daa6ujnjnGsFTJqg=;
-        b=gXQ77CFHq8k5XoMcqwm172iQ+9Fcd7wobTtoL8hk5zEoVQrfEYaSq+VNWnOqg3P7rO
-         ITwUV7pZOYpMxrtmFgSotmNKiymTy5TSK0UaZxiwcM6fcI/5vA3KGu+ni6TFshwuw1Qh
-         nJ7W6zgbxlsc6lgZXSRIWxvMoP5ZA9xgKBeY9wZj/ZRiL/6rKf/nMzObY82Z6OhZF/uc
-         +aTxXmQvtoHGUe3CTAAUBumtFPUMO733hMBdtNVxu3rm5ddyjdjOjTFkfIY8p9iEAzKe
-         h0pw4kAZukwgb5Jdq+Sgrqq0x9rEQrCd87jANP13wbNOHZn6P1nzKVVB9zTL5/Zu5Me9
-         M8vw==
-X-Gm-Message-State: APt69E0JAfwhDxplzw1vWCPVc50SToXo+IU4nnHwkWGWVR/oBnTkf0f7
-        AlEU3jnHMi2Ty7MnrrHi4orMUw==
-X-Google-Smtp-Source: ADUXVKJ/X7JPng9dLiP3cY6WR3Vas3Lhvt4I8NY+MxIN5fkLRwkGzjYWQaNZJGxcevJXhUE++9yW1w==
-X-Received: by 2002:a1c:da4e:: with SMTP id r75-v6mr2486312wmg.64.1528400297974;
-        Thu, 07 Jun 2018 12:38:17 -0700 (PDT)
-Received: from localhost.localdomain ([51.15.160.169])
-        by smtp.googlemail.com with ESMTPSA id o138-v6sm3253342wmg.10.2018.06.07.12.38.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 07 Jun 2018 12:38:16 -0700 (PDT)
-From: Corentin Labbe <clabbe@baylibre.com>
-To: davem@davemloft.net, fw@strlen.de, kadlec@blackhole.kfki.hu,
-        pablo@netfilter.org
-Cc: coreteam@netfilter.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH] netfilter: remove include/net/netfilter/nft_dup.h
-Date: Thu,  7 Jun 2018 19:38:09 +0000
-Message-Id: <1528400289-28004-1-git-send-email-clabbe@baylibre.com>
-X-Mailer: git-send-email 2.7.4
+        id S1753558AbeFJAFk (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Sat, 9 Jun 2018 20:05:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36038 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753486AbeFJAFj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Jun 2018 20:05:39 -0400
+Received: from mail.kernel.org (host-091-097-086-238.ewe-ip-backbone.de [91.97.86.238])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35D1320874;
+        Sun, 10 Jun 2018 00:05:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528589138;
+        bh=Pk2EdMQYBsya8NHHAWlKOj5eZBEuvaEfiRymv5c2xmo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QxOxbkGafZq3I7pzb2Z1yqShYWaZG6SRCyLw32Fnw44VYCzP8OCObi/9EAotR4y3z
+         c4XGCKLsHkUvn0J1+BdMXwoC6YnHTh+KZZpNfxv6c4Trbkrg7DEd8MgqOqfez7Ek2S
+         SXY1k747tWXfl3NA+2pHxVJJR2CINTw55IF4PziI=
+Date: Sun, 10 Jun 2018 02:05:35 +0200
+From: Sebastian Reichel <sre@kernel.org>
+To: Javier Martinez Canillas <javierm@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org
+Subject: Re: [PATCH v2] media: omap3isp: zero-initialize the isp
+ cam_xclk{a,b} initial data
+Message-ID: <20180610000535.32ouofio7n5b6rmj@earth.universe>
+References: <20180609122245.29636-1-javierm@redhat.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="gmtdtfxmf372mvgo"
+Content-Disposition: inline
+In-Reply-To: <20180609122245.29636-1-javierm@redhat.com>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-include/net/netfilter/nft_dup.h was introduced in d877f07112f1 ("netfilter: nf_tables: add nft_dup expression")
-but was never user since this date.
 
-Furthermore, the only struct in this file is unused elsewhere.
+--gmtdtfxmf372mvgo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
----
- include/net/netfilter/nft_dup.h | 10 ----------
- 1 file changed, 10 deletions(-)
- delete mode 100644 include/net/netfilter/nft_dup.h
+Hi,
 
-diff --git a/include/net/netfilter/nft_dup.h b/include/net/netfilter/nft_dup.h
-deleted file mode 100644
-index 4d9d512984b2..000000000000
---- a/include/net/netfilter/nft_dup.h
-+++ /dev/null
-@@ -1,10 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef _NFT_DUP_H_
--#define _NFT_DUP_H_
--
--struct nft_dup_inet {
--	enum nft_registers	sreg_addr:8;
--	enum nft_registers	sreg_dev:8;
--};
--
--#endif /* _NFT_DUP_H_ */
--- 
-2.16.4
+On Sat, Jun 09, 2018 at 02:22:45PM +0200, Javier Martinez Canillas wrote:
+> The struct clk_init_data init variable is declared in the isp_xclk_init()
+> function so is an automatic variable allocated in the stack. But it's not
+> explicitly zero-initialized, so some init fields are left uninitialized.
+>=20
+> This causes the data structure to have undefined values that may confuse
+> the common clock framework when the clock is registered.
+>=20
+> For example, the uninitialized .flags field could have the CLK_IS_CRITICAL
+> bit set, causing the framework to wrongly prepare the clk on registration.
+> This leads to the isp_xclk_prepare() callback being called, which in turn
+> calls to the omap3isp_get() function that increments the isp dev refcount.
+>=20
+> Since this omap3isp_get() call is unexpected, this leads to an unbalanced
+> omap3isp_get() call that prevents the requested IRQ to be later enabled,
+> due the refcount not being 0 when the correct omap3isp_get() call happens.
+>=20
+> Fixes: 9b28ee3c9122 ("[media] omap3isp: Use the common clock framework")
+> Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+
+good catch!
+
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+
+-- Sebastian
+
+>=20
+> ---
+>=20
+> Changes in v2:
+> - Correct some typos in the commit message.
+>=20
+>  drivers/media/platform/omap3isp/isp.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/media/platform/omap3isp/isp.c b/drivers/media/platfo=
+rm/omap3isp/isp.c
+> index f22cf351e3e..ae0ef8b241a 100644
+> --- a/drivers/media/platform/omap3isp/isp.c
+> +++ b/drivers/media/platform/omap3isp/isp.c
+> @@ -300,7 +300,7 @@ static struct clk *isp_xclk_src_get(struct of_phandle=
+_args *clkspec, void *data)
+>  static int isp_xclk_init(struct isp_device *isp)
+>  {
+>  	struct device_node *np =3D isp->dev->of_node;
+> -	struct clk_init_data init;
+> +	struct clk_init_data init =3D { 0 };
+>  	unsigned int i;
+> =20
+>  	for (i =3D 0; i < ARRAY_SIZE(isp->xclks); ++i)
+> --=20
+> 2.17.1
+>=20
+
+--gmtdtfxmf372mvgo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlsca0wACgkQ2O7X88g7
++pqSBxAAhvow3XuAgndl8DsB0DuK/iyz7Hjk7nqsaGMkHyG8bCv+q/d0+WwGhEq7
+S7gg4GMz/qBKU4dBJDbzBFSULNmwrJOCE3zTMNLx2sub/MeRL/zTIwt4v9Ue8uRx
+C9ldukWJmxuElvBSchmWdyAbgFGOCePjWvxxQumL3pTIzAGGoXU1JuwAcydThV+2
+d3l4ZnRrRIhU6vcPbRi0T+6r5tFJbjJ5s7dpsDlqFsGISLE0WL4EoXx//eGnhoSS
+hNmUwvkHsFJuBdMndNFGScCXNeR0CtvteSjGoDuxm1ziXdgupd/xZ2Wlf0OMt+9K
+FdPGflCR8PTD4runnSFJaGm6Gf7cDl8ciZPoqKG2Z0hu13NtJ10hOvfuVN29sjx1
+HdLuyqFwcQhlcafGZ8ZQ6OJw2EwbQq3EtXZm9zjcPsVFSi+1GYIYxM9w3r+RbZWd
+ezjz/2XI0SdRiG4xNULQ2sGj8553aBzAdP313JHHso3f4EOyWgOTY7D1YjH4k30y
+kmQ2RUF4ONAKX78BE4t8Xj9UximfJyk11MMHc0uum7AvxmqkOZjv/wHv3jGoJZ/P
+18rnrcmbaG42fz+pYBqemVidoscmXPNdDx1L2qiAEbTU0Mp/QMnGbsbe6zmjx8XI
+AW9wktfxYWLxszFambJtvHFNvoq+l9XtjBgRVWdLfNVHlJfHUOc=
+=MbGL
+-----END PGP SIGNATURE-----
+
+--gmtdtfxmf372mvgo--
