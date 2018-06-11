@@ -1,69 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id nUOGAuzvGFtYCgAAmS7hNA
-	; Thu, 07 Jun 2018 08:42:52 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 8zjFFYGDHltLFQAAmS7hNA
+	; Mon, 11 Jun 2018 14:13:21 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id C5396608CD; Thu,  7 Jun 2018 08:42:45 +0000 (UTC)
+	id 41A786089E; Mon, 11 Jun 2018 14:13:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+	s=default; t=1528726401;
+	bh=6pV9nM/ms03Th2XfcV+bAA998oenkeFuUjYw2oKzlXQ=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:List-ID:From;
+	b=XplMILK7m/YRy55boUKlTf04vT/dyYtmtAlVo/CM5LH6QT9CpEMMAwGjO1KY1cTDg
+	 Rbk0GKbBmLd+Sp2zGZtEnToD/+hD8Zn91nFqQOQDGgXl2IctHX8U+8x+rubadB+Qo1
+	 A/4qk3PtJ/HPDaqbFe6pFskfSQOXZGY1lSbKIIw8=
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 852A6608FF;
-	Thu,  7 Jun 2018 08:42:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 852A6608FF
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id B4D97607A4;
+	Mon, 11 Jun 2018 14:13:20 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jtSXiLuN";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jtSXiLuN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B4D97607A4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932591AbeFGIla (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 04:41:30 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:36202 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753240AbeFGIl1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 04:41:27 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 5A494207CB; Thu,  7 Jun 2018 10:41:25 +0200 (CEST)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 77720203B4;
-        Thu,  7 Jun 2018 10:41:11 +0200 (CEST)
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 0/4] Fix suspend resume on at91sam9261 and at91sam9263
-Date: Thu,  7 Jun 2018 10:41:03 +0200
-Message-Id: <20180607084107.4461-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.17.1
+        id S933870AbeFKONT (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 10:13:19 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41272 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933483AbeFKONP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 10:13:15 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 9E21860351; Mon, 11 Jun 2018 14:13:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528726394;
+        bh=6pV9nM/ms03Th2XfcV+bAA998oenkeFuUjYw2oKzlXQ=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=jtSXiLuNBIT/AJAav+gNxDBdzXc3bRK/gNOqvHvehYidNkZ1c9VAdsMWOmDKcyuZI
+         N0njiBdjjTznM/8QC9UG9ddm8v5fl0c9WwobnHKYHH6M42j68s3dK4+i711MPAn3QC
+         T8SV7dj8XVjL32AFF//TQqwJpE3Cd2R94mI4bWKw=
+Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3373860351;
+        Mon, 11 Jun 2018 14:13:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528726394;
+        bh=6pV9nM/ms03Th2XfcV+bAA998oenkeFuUjYw2oKzlXQ=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=jtSXiLuNBIT/AJAav+gNxDBdzXc3bRK/gNOqvHvehYidNkZ1c9VAdsMWOmDKcyuZI
+         N0njiBdjjTznM/8QC9UG9ddm8v5fl0c9WwobnHKYHH6M42j68s3dK4+i711MPAn3QC
+         T8SV7dj8XVjL32AFF//TQqwJpE3Cd2R94mI4bWKw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3373860351
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From: Kalle Valo <kvalo@codeaurora.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Eyal Ilsar <eilsar@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Arnd Bergmann <arnd@arndb.de>, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+        wcn36xx@lists.infradead.org
+Subject: Re: [PATCH] wcn36xx: Remove Unicode Byte Order Mark from testcode
+References: <1528375527-22761-1-git-send-email-geert@linux-m68k.org>
+Date: Mon, 11 Jun 2018 17:13:09 +0300
+In-Reply-To: <1528375527-22761-1-git-send-email-geert@linux-m68k.org> (Geert
+        Uytterhoeven's message of "Thu, 7 Jun 2018 14:45:27 +0200")
+Message-ID: <877en5v2bu.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-USB clock detection may not work properly on at91sam9261 and at91sam9263
-because they currently use the same bit mask as at91rm9200 instead of
-the one for at91sam9260.
+Geert Uytterhoeven <geert@linux-m68k.org> writes:
 
-Take the opportunity to also change the PMC compatible strings for all
-the other SoCs in preparation for the new clock bindings.
+> Older gcc (< 4.4) doesn't like files starting with a Unicode BOM:
+>
+>     drivers/net/wireless/ath/wcn36xx/testmode.c:1: error: stray =E2=80=98=
+\357=E2=80=99 in program
+>     drivers/net/wireless/ath/wcn36xx/testmode.c:1: error: stray =E2=80=98=
+\273=E2=80=99 in program
+>     drivers/net/wireless/ath/wcn36xx/testmode.c:1: error: stray =E2=80=98=
+\277=E2=80=99 in program
+>
+> Remove the BOM, the rest of the file is plain ASCII anyway.
+>
+> Output of "file drivers/net/wireless/ath/wcn36xx/testmode.c" before:
+>
+>     drivers/net/wireless/ath/wcn36xx/testmode.c: C source, UTF-8 Unicode =
+(with BOM) text
+>
+> and after:
+>
+>     drivers/net/wireless/ath/wcn36xx/testmode.c: C source, ASCII text
+>
+> Fixes: 87f825e6e246cee0 ("wcn36xx: Add support for Factory Test Mode (FTM=
+)")
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Alexandre Belloni (4):
-  dt-bindings: arm: remove PMC bindings
-  dt-bindings: clk: at91: Document all the PMC compatibles
-  ARM: at91: fix USB clock detection handling
-  ARM: dts: fix PMC compatible
+I'll queue this for 4.18.
 
- .../devicetree/bindings/arm/atmel-pmc.txt          | 14 --------------
- .../devicetree/bindings/clock/at91-clock.txt       |  9 ++++-----
- arch/arm/boot/dts/at91sam9261.dtsi                 |  2 +-
- arch/arm/boot/dts/at91sam9263.dtsi                 |  2 +-
- arch/arm/boot/dts/at91sam9rl.dtsi                  |  2 +-
- arch/arm/boot/dts/sama5d4.dtsi                     |  2 +-
- arch/arm/mach-at91/pm.c                            |  5 +++++
- 7 files changed, 13 insertions(+), 23 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/atmel-pmc.txt
-
--- 
-2.17.1
+--=20
+Kalle Valo
