@@ -1,176 +1,258 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id r4t7C3+GGluSegAAmS7hNA
-	; Fri, 08 Jun 2018 13:37:06 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id RFosEL7eHVtQKQAAmS7hNA
+	; Mon, 11 Jun 2018 02:39:29 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 76E61608B8; Fri,  8 Jun 2018 13:37:06 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EReX0McQ"
+	id E705760791; Mon, 11 Jun 2018 02:39:28 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id C2B08607DC;
-	Fri,  8 Jun 2018 13:37:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C2B08607DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 060936070A;
+	Mon, 11 Jun 2018 02:39:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 060936070A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=us.ibm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752789AbeFHNg7 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 09:36:59 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:41177 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751549AbeFHNg5 (ORCPT
+        id S1753903AbeFKCjZ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Sun, 10 Jun 2018 22:39:25 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44968 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753785AbeFKCjY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 09:36:57 -0400
-Received: by mail-pl0-f66.google.com with SMTP id az12-v6so8341219plb.8
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 06:36:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=TU9bsZcLF9Jww4G0zNWf/69CizzLZxM/Lvm2LFDcYOQ=;
-        b=EReX0McQ2+AE8TS8idBPlAB+ANkPJqCOxyhq8ksu4cNHWa0FMgN9eS3QKUukmWK5w1
-         OpgApsfLAPIqzLWiVlaulUvOw6MQqSX5S4i5mDfO1EC3jBnCJbbRxfTuFUDM9aGWICJI
-         Oc8ptUzDHQcMBidoW1K0cBpDyORj0W5GsNnuVZBcBWvn4fMwHNUAFUY9GDKWKlkcmQzS
-         /sbeALZ5TNK9ZSLvYZESRLZpXeo/e86V1tvqL6+tQ2cHPxw8tWOuiRT/3WhEibNCUqFR
-         0ieRajwFgj6c4H75o7Zp9NVhtTSXliIwf4RSipXfhHiJ4EkI81mMn4Ihm6PArQbDqDwH
-         xd7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=TU9bsZcLF9Jww4G0zNWf/69CizzLZxM/Lvm2LFDcYOQ=;
-        b=mrWWRP5K0zK3DDFTW9krx+y7IRwOdoSBTnfk1WPSnh9SU7JRElJM2UCHFGXYt7vlfa
-         dooIGscJz1Jf8p+gp8oKxCK753hvqMIGOR7lCbLCs2GPp+ExlfbG3D1gtUHfmBDDiVJy
-         Tgx8DB2i9DZKV/S9KbfXubiPf40BleSXafLUvNlaPJyhRNr2vkzKTRw/qitK/W/QSYnT
-         cYXyxJMuQ6FjXDwRKxkcAtQ+smgFQI8mEA/ROC2MsNQlmaR1iZFwu+BWz/DisQS0Plad
-         Z/V+vHIqvM7cD5c1FGMczN9nadLV7rFQITqp84hbWCDIUKc2fxOxaPmBBBE4p4OiZrF9
-         6FDQ==
-X-Gm-Message-State: APt69E0z+QAQEpDfACLoAhKsZGaQxE2S3eCYXCGhlqe/qXYBOGBbKk7C
-        1Gc3ld6b59BSsYMboAMnxBepajj26+BwAbAaIJfvYA==
-X-Google-Smtp-Source: ADUXVKJYpqy6AX2nbtAXsv0ce/Vyea8rq92uLbe8o05qsYx6xM+kjRLitNZedfA0HmTzIefMkI393nyKIGsoZsloSQQ=
-X-Received: by 2002:a17:902:8d85:: with SMTP id v5-v6mr6706336plo.93.1528465016845;
- Fri, 08 Jun 2018 06:36:56 -0700 (PDT)
+        Sun, 10 Jun 2018 22:39:24 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5B2dAGj039359
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Jun 2018 22:39:23 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2jhcf3x12m-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Jun 2018 22:39:23 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <linuxram@us.ibm.com>;
+        Mon, 11 Jun 2018 03:39:21 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 11 Jun 2018 03:39:16 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5B2dFJl29753460
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 11 Jun 2018 02:39:15 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 10F3942041;
+        Mon, 11 Jun 2018 03:29:30 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D979A4203F;
+        Mon, 11 Jun 2018 03:29:26 +0100 (BST)
+Received: from ram.oc3035372033.ibm.com (unknown [9.85.200.197])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon, 11 Jun 2018 03:29:26 +0100 (BST)
+Date: Sun, 10 Jun 2018 19:39:09 -0700
+From: Ram Pai <linuxram@us.ibm.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Christoph Hellwig <hch@infradead.org>, robh@kernel.org,
+        pawel.moll@arm.com, Tom Lendacky <thomas.lendacky@amd.com>,
+        aik@ozlabs.ru, jasowang@redhat.com, cohuck@redhat.com,
+        linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, joe@perches.com,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        david@gibson.dropbear.id.au, linuxppc-dev@lists.ozlabs.org,
+        elfring@users.sourceforge.net,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        benh@kernel.crashing.org
+Subject: Re: [RFC V2] virtio: Add platform specific DMA API translation for
+ virito devices
+Reply-To: Ram Pai <linuxram@us.ibm.com>
+References: <20180522063317.20956-1-khandual@linux.vnet.ibm.com>
+ <20180523213703-mutt-send-email-mst@kernel.org>
+ <20180524072104.GD6139@ram.oc3035372033.ibm.com>
+ <0c508eb2-08df-3f76-c260-90cf7137af80@linux.vnet.ibm.com>
+ <20180531204320-mutt-send-email-mst@kernel.org>
+ <20180607052306.GA1532@infradead.org>
+ <20180607185234-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
-Received: by 2002:a17:90a:d42:0:0:0:0 with HTTP; Fri, 8 Jun 2018 06:36:36
- -0700 (PDT)
-In-Reply-To: <000000000000c109af056e2121a4@google.com>
-References: <000000000000c109af056e2121a4@google.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Fri, 8 Jun 2018 15:36:36 +0200
-Message-ID: <CACT4Y+Zt7WEnnY4H+XC+DasLHRcgSF6V9f373N0LA-c7WcG4YA@mail.gmail.com>
-Subject: Re: general protection fault in pipe_write
-To: syzbot <syzbot+772c951c5f15d2f1df03@syzkaller.appspotmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        netdev <netdev@vger.kernel.org>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180607185234-mutt-send-email-mst@kernel.org>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-TM-AS-GCONF: 00
+x-cbid: 18061102-0008-0000-0000-000002463BD9
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18061102-0009-0000-0000-000021AC5C3C
+Message-Id: <20180611023909.GA5726@ram.oc3035372033.ibm.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-11_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806110030
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 8, 2018 at 3:11 PM, syzbot
-<syzbot+772c951c5f15d2f1df03@syzkaller.appspotmail.com> wrote:
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    7170e6045a6a strparser: Add __strp_unpause and use it in k..
-> git tree:       net-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=15b5c8cf800000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=a601a80fec461d44
-> dashboard link: https://syzkaller.appspot.com/bug?extid=772c951c5f15d2f1df03
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=13ad0b6f800000
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+772c951c5f15d2f1df03@syzkaller.appspotmail.com
+On Thu, Jun 07, 2018 at 07:28:35PM +0300, Michael S. Tsirkin wrote:
+> On Wed, Jun 06, 2018 at 10:23:06PM -0700, Christoph Hellwig wrote:
+> > On Thu, May 31, 2018 at 08:43:58PM +0300, Michael S. Tsirkin wrote:
+> > > Pls work on a long term solution. Short term needs can be served by
+> > > enabling the iommu platform in qemu.
+> > 
+> > So, I spent some time looking at converting virtio to dma ops overrides,
+> > and the current virtio spec, and the sad through I have to tell is that
+> > both the spec and the Linux implementation are complete and utterly fucked
+> > up.
+> 
+> Let me restate it: DMA API has support for a wide range of hardware, and
+> hardware based virtio implementations likely won't benefit from all of
+> it.
+> 
+> And given virtio right now is optimized for specific workloads, improving
+> portability without regressing performance isn't easy.
+> 
+> I think it's unsurprising since it started a strictly a guest/host
+> mechanism.  People did implement offloads on specific platforms though,
+> and they are known to work. To improve portability even further,
+> we might need to make spec and code changes.
+> 
+> I'm not really sympathetic to people complaining that they can't even
+> set a flag in qemu though. If that's the case the stack in question is
+> way too inflexible.
 
-This seems to be same as the splash of other crashes in bpfilter:
+We did consider your suggestion. But can't see how it will work.
+Maybe you can guide us here. 
 
-#syz fix: bpfilter: fix race in pipe access
+In our case qemu has absolutely no idea if the VM will switch itself to
+secure mode or not.  Its a dynamic decision made entirely by the VM
+through direct interaction with the hardware/firmware; no
+qemu/hypervisor involved.
+
+If the administrator, who invokes qemu, enables the flag, the DMA ops
+associated with the virito devices will be called, and hence will be
+able to do the right things. Yes we might incur performance hit due to
+the IOMMU translations, but lets ignore that for now; the functionality
+will work. Good till now.
+
+However if the administrator
+ignores/forgets/deliberatey-decides/is-constrained to NOT enable the
+flag, virtio will not be able to pass control to the DMA ops associated
+with the virtio devices. Which means, we have no opportunity to share
+the I/O buffers with the hypervisor/qemu.
+
+How do you suggest, we handle this case?
+
+> 
+> 
+> 
+> > Both in the flag naming and the implementation there is an implication
+> > of DMA API == IOMMU, which is fundamentally wrong.
+> 
+> Maybe we need to extend the meaning of PLATFORM_IOMMU or rename it.
+> 
+> It's possible that some setups will benefit from a more
+> fine-grained approach where some aspects of the DMA
+> API are bypassed, others aren't.
+> 
+> This seems to be what was being asked for in this thread,
+> with comments claiming IOMMU flag adds too much overhead.
+> 
+> 
+> > The DMA API does a few different things:
+> > 
+> >  a) address translation
+> > 
+> > 	This does include IOMMUs.  But it also includes random offsets
+> > 	between PCI bars and system memory that we see on various
+> > 	platforms.
+> 
+> I don't think you mean bars. That's unrelated to DMA.
+> 
+> >  Worse so some of these offsets might be based on
+> > 	banks, e.g. on the broadcom bmips platform.  It also deals
+> > 	with bitmask in physical addresses related to memory encryption
+> > 	like AMD SEV.  I'd be really curious how for example the
+> > 	Intel virtio based NIC is going to work on any of those
+> > 	plaforms.
+> 
+> SEV guys report that they just set the iommu flag and then it all works.
+
+This is one of the fundamental difference between SEV architecture and
+the ultravisor architecture. In SEV, qemu is aware of SEV.  In
+ultravisor architecture, only the VM that runs within qemu is aware of
+ultravisor;  hypervisor/qemu/administrator are untrusted entities.
+
+I hope, we can make virtio subsystem flexibe enough to support various
+security paradigms.
+
+Apart from the above reason, Christoph and Ben point to so many other
+reasons to make it flexibe. So why not, make it happen?
 
 
-> 8021q: adding VLAN 0 to HW filter on device team0
-> 8021q: adding VLAN 0 to HW filter on device team0
-> bpfilter: read fail -512
-> kasan: CONFIG_KASAN_INLINE enabled
-> kasan: GPF could be caused by NULL-ptr deref or user memory access
-> general protection fault: 0000 [#1] SMP KASAN
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Modules linked in:
-> CPU: 1 PID: 6572 Comm: syz-executor5 Not tainted 4.17.0-rc7+ #82
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> RIP: 0010:pipe_write+0xa49/0xeb0 fs/pipe.c:480
-> RSP: 0000:ffff8801ac6b7858 EFLAGS: 00010206
-> RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff81c22b3b
-> RDX: 0000000000000005 RSI: ffffffff81c22b49 RDI: 0000000000000028
-> RBP: ffff8801ac6b78d8 R08: ffff8801b3796080 R09: 0000000000000006
-> R10: ffff8801b3796080 R11: 0000000000000000 R12: ffff8801cdbaa820
-> R13: ffff8801cdb31a40 R14: 0000000000000000 R15: dffffc0000000000
-> FS:  00007fe12b0e9700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007fe01b0f9af0 CR3: 00000001c43e7000 CR4: 00000000001406e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  call_write_iter include/linux/fs.h:1784 [inline]
->  new_sync_write fs/read_write.c:474 [inline]
->  __vfs_write+0x64d/0x960 fs/read_write.c:487
->  __kernel_write+0x10c/0x380 fs/read_write.c:506
->  __bpfilter_process_sockopt+0x1d8/0x35b net/bpfilter/bpfilter_kern.c:66
->  bpfilter_mbox_request+0x4d/0xb0 net/ipv4/bpfilter/sockopt.c:25
->  bpfilter_ip_set_sockopt+0x33/0x40 net/ipv4/bpfilter/sockopt.c:31
->  ip_setsockopt+0x124/0x140 net/ipv4/ip_sockglue.c:1250
->  raw_setsockopt+0xe2/0x100 net/ipv4/raw.c:868
->  sock_common_setsockopt+0x9a/0xe0 net/core/sock.c:3059
->  __sys_setsockopt+0x1bd/0x390 net/socket.c:1903
->  __do_sys_setsockopt net/socket.c:1914 [inline]
->  __se_sys_setsockopt net/socket.c:1911 [inline]
->  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1911
->  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x4559f9
-> RSP: 002b:00007fe12b0e8c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-> RAX: ffffffffffffffda RBX: 00007fe12b0e96d4 RCX: 00000000004559f9
-> RDX: 0000000000000040 RSI: 0000000000000000 RDI: 0000000000000004
-> RBP: 000000000072bf50 R08: 0000000000000370 R09: 0000000000000000
-> R10: 00000000200003c0 R11: 0000000000000246 R12: 00000000ffffffff
-> R13: 00000000004c0d8b R14: 00000000004d0828 R15: 0000000000000001
-> Code: 48 c1 ea 03 80 3c 02 00 0f 85 fc 03 00 00 48 8b 45 c8 48 8b 58 20 48
-> b8 00 00 00 00 00 fc ff df 48 8d 7b 28 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f
-> 85 ef 03 00 00 48 8b 7b 28 31 d2 be 01 00 00 00
-> RIP: pipe_write+0xa49/0xeb0 fs/pipe.c:480 RSP: ffff8801ac6b7858
-> ---[ end trace 7e44f4b8135e2e72 ]---
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
->
-> --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/000000000000c109af056e2121a4%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+> I guess if there's translation we can think of this as a kind of iommu.
+> Maybe we should rename PLATFORM_IOMMU to PLARTFORM_TRANSLATION?
+> 
+> And apparently some people complain that just setting that flag makes
+> qemu check translation on each access with an unacceptable performance
+> overhead.  Forcing same behaviour for everyone on general principles
+> even without the flag is unlikely to make them happy.
+> 
+> >   b) coherency
+> > 
+> > 	On many architectures DMA is not cache coherent, and we need
+> > 	to invalidate and/or write back cache lines before doing
+> > 	DMA.  Again, I wonder how this is every going to work with
+> > 	hardware based virtio implementations.
+> 
+> 
+> You mean dma_Xmb and friends?
+> There's a new feature VIRTIO_F_IO_BARRIER that's being proposed
+> for that.
+> 
+> 
+> >  Even worse I think this
+> > 	is actually broken at least for VIVT event for virtualized
+> > 	implementations.  E.g. a KVM guest is going to access memory
+> > 	using different virtual addresses than qemu, vhost might throw
+> > 	in another different address space.
+> 
+> I don't really know what VIVT is. Could you help me please?
+> 
+> >   c) bounce buffering
+> > 
+> > 	Many DMA implementations can not address all physical memory
+> > 	due to addressing limitations.  In such cases we copy the
+> > 	DMA memory into a known addressable bounc buffer and DMA
+> > 	from there.
+> 
+> Don't do it then?
+> 
+> 
+> >   d) flushing write combining buffers or similar
+> > 
+> > 	On some hardware platforms we need workarounds to e.g. read
+> > 	from a certain mmio address to make sure DMA can actually
+> > 	see memory written by the host.
+> 
+> I guess it isn't an issue as long as WC isn't actually used.
+> It will become an issue when virtio spec adds some WC capability -
+> I suspect we can ignore this for now.
+> 
+> > 
+> > All of this is bypassed by virtio by default despite generally being
+> > platform issues, not particular to a given device.
+> 
+> It's both a device and a platform issue. A PV device is often more like
+> another CPU than like a PCI device.
+> 
+> 
+> 
+> -- 
+> MST
+
+-- 
+Ram Pai
