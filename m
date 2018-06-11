@@ -1,107 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id knlCEroRHlsAVQAAmS7hNA
-	; Mon, 11 Jun 2018 06:08:26 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id zqm0NbR8HlsxUQAAmS7hNA
+	; Mon, 11 Jun 2018 14:16:39 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 9EFBF60791; Mon, 11 Jun 2018 06:08:26 +0000 (UTC)
+	id 06FF0607A4; Mon, 11 Jun 2018 14:16:39 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y+hKhTa7"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XkMgaY6A"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 18EA1601D2;
-	Mon, 11 Jun 2018 06:08:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 18EA1601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 8F2C860351;
+	Mon, 11 Jun 2018 14:16:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8F2C860351
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754022AbeFKGIY (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 02:08:24 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:33662 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753899AbeFKGIW (ORCPT
+        id S933557AbeFKOG7 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 10:06:59 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45042 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933486AbeFKOGr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 02:08:22 -0400
-Received: by mail-wr0-f193.google.com with SMTP id k16-v6so18988413wro.0
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Jun 2018 23:08:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=l6tEjtqAuhx4ZeeZk4L+PI6scv/gpK1JTNd7q/+7EmM=;
-        b=Y+hKhTa7zPN3NQwSXYyYJNLdvDOa829nSRT10EaOT3h9V5F81d2Qu8xWC9N4QiAN+V
-         CRNzf5tkijkqBCCRAokb3RTwZx0RCtFP6XtT00HEL8gakRQ1dBy+fYXOfUmVhUQTKDaR
-         MVWSFXm+EzderTRH/YMUr/F3qs2CV8rwa9QyQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=l6tEjtqAuhx4ZeeZk4L+PI6scv/gpK1JTNd7q/+7EmM=;
-        b=RexO5N2ZAlI6K4/fD2ESryVRLK7uhKEI7otFaxRKrKYwTsJqJHPr4Vnfk4OuMAOxW1
-         zHLLvzDtT+m5MDH6JIxP+4J9e6hYDDDLWmrtKACwCuinLnz0Z4VqZAiRAnTBzCc/p5NF
-         lLh9prksR9Gb34SunkKV+bLyJG2HLUXsF5JwGT1INxluD0zMRJMkCGX2ypXiIjKjBGyR
-         LgV0hD853F0VS/okB8shyumuuS8+dIpA1y4FcGsofiRYEVlv95KwgDd5XsVjmsjuSajc
-         OJXEylK2CsEsdVN9pABkl+H3W+MKEp6uOvBhkJeVDmyXX6KweVddHOdcLvtYJKtkMF0x
-         ivSQ==
-X-Gm-Message-State: APt69E3dKji1m7MFF1OxPvwNCJqBjY+jZ9ByVblFlRbppOy80PEOV6m8
-        GfqMmQkQJfzVkKHSxFAfBTS7jw==
-X-Google-Smtp-Source: ADUXVKLfUc4LVywaeLDJrn2D+uAQPTA7wRZuMHse27NuA7IgxpxOjhI2sIKBG2dIuDAfeG0sSuTQnA==
-X-Received: by 2002:adf:c444:: with SMTP id a4-v6mr12444263wrg.20.1528697301797;
-        Sun, 10 Jun 2018 23:08:21 -0700 (PDT)
-Received: from dell ([2.31.163.53])
-        by smtp.gmail.com with ESMTPSA id z5-v6sm22475465wrh.10.2018.06.10.23.08.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 10 Jun 2018 23:08:20 -0700 (PDT)
-Date: Mon, 11 Jun 2018 07:08:19 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Benson Leung <bleung@google.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Benson Leung <bleung@chromium.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Mon, 11 Jun 2018 10:06:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
+        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=dGkzfC0RM7gc5d0orX2hU4DPQ3QLXn+i7TNcZAss9dw=; b=XkMgaY6AkOoFJHfIkcQxrYlMO
+        dlWV9Rg5erA1rsPqNft1xX8dPajTtdB+gjPNxrcuCqHlIYzXwFLIQGMdBuReV63+atIWOt6yBlShi
+        tgEPlcuW7gt3Yh2n6/QeJauiX1o5746sAc8My6YKcdHy7+m1rq0bNlg8+XLFpN+1nj1/Aj4zpuInK
+        2+EWJE5mb4nqNshK/sIAIAVorQzWsEM/c5CzNE/HIYo9FL90KABaL9ApCD7opp0YuRy8vTgiUL+v/
+        g8I3Be4GM3RfGfqbmuZT7JlbSh/yX4PDebgn7wHQMhRjJ/T0AB9FHFc3ZckzlTywspmfvxZXNNv0j
+        CcuJvsE+Q==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fSNT4-0004dU-Py; Mon, 11 Jun 2018 14:06:46 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mfd: cros_ec: remove unused __remove function
-Message-ID: <20180611060819.GD5278@dell>
-References: <20180608144834.3003465-1-arnd@arndb.de>
- <20180608181956.GA110395@decatoncale.mtv.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180608181956.GA110395@decatoncale.mtv.corp.google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@redhat.com>,
+        Lukas Czerner <lczerner@redhat.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH v13 18/72] xarray: Add MAINTAINERS entry
+Date: Mon, 11 Jun 2018 07:05:45 -0700
+Message-Id: <20180611140639.17215-19-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
+References: <20180611140639.17215-1-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 08 Jun 2018, Benson Leung wrote:
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-> 
-> On Fri, Jun 08, 2018 at 04:48:06PM +0200, Arnd Bergmann wrote:
-> > This function is no longer called, so we get a harmless
-> > warning until it is removed as well:
-> > 
-> > drivers/mfd/cros_ec_dev.c:265:13: error: '__remove' defined but not used [-Werror=unused-function]
-> > 
-> > Fixes: 3aa2177e4787 ("mfd: cros_ec: Use devm_kzalloc for private data")
-> 
-> Gwendal, in PATCH v2 of https://patchwork.kernel.org/patch/10439449/
-> you mentioned that you readded the __remove to avoid a warning when built
-> as a module. Can you explain what's going on?
+Add myself as XArray and IDR maintainer.
 
-Yes please, and quickly.  I'm going to sent the patch-set today.  If I
-don't hear from you promptly, I'll probably pull the patch!
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+ MAINTAINERS | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 14fbc6e94774..afb6678188b1 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15598,6 +15598,18 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/vdso
+ S:	Maintained
+ F:	arch/x86/entry/vdso/
+ 
++XARRAY
++M:	Matthew Wilcox <mawilcox@microsoft.com>
++M:	Matthew Wilcox <willy@infradead.org>
++L:	linux-fsdevel@vger.kernel.org
++S:	Supported
++F:	Documentation/core-api/xarray.rst
++F:	lib/idr.c
++F:	lib/xarray.c
++F:	include/linux/idr.h
++F:	include/linux/xarray.h
++F:	tools/testing/radix-tree
++
+ XC2028/3028 TUNER DRIVER
+ M:	Mauro Carvalho Chehab <mchehab@kernel.org>
+ L:	linux-media@vger.kernel.org
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.17.1
