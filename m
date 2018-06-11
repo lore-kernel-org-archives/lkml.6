@@ -1,213 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id NpjBHus8GlvmPAAAmS7hNA
-	; Fri, 08 Jun 2018 08:23:55 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id pM88MGo8HltKRwAAmS7hNA
+	; Mon, 11 Jun 2018 09:10:02 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 34D016089E; Fri,  8 Jun 2018 08:23:55 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="lJrrgRWB"
+	id B475F607A4; Mon, 11 Jun 2018 09:10:02 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 8C7A060590;
-	Fri,  8 Jun 2018 08:23:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8C7A060590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 779F360791;
+	Mon, 11 Jun 2018 09:10:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 779F360791
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932489AbeFHIXu (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 04:23:50 -0400
-Received: from smtprelay.synopsys.com ([198.182.37.59]:47736 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932163AbeFHITg (ORCPT
+        id S932538AbeFKJKA (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 20 others); Mon, 11 Jun 2018 05:10:00 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:32845 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754083AbeFKJJ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 04:19:36 -0400
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id B1A4C1E137F;
-        Fri,  8 Jun 2018 10:19:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1528445973; bh=s0SY2uOlVJ0alDC6OD9teEy2sW9WSrhp8LrOQJhmOnQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=lJrrgRWBXmShDZF67tfpNGG65f/pvRXZPqw+uQkTUUL3WQdQIwP/AJ2sqyexBPep8
-         3uyzVBSj/RC2866cb0bsOmvyTu3ufmA0E7EPtMvjCOKA0FwZHCtr9pmfGY58vfQPpN
-         j2bfuAEULV2T64TJkZt0xv4TsSTiYGuX/g5TXsck0SMWoG4WtLEBCD4w2fhRV370/s
-         CbjEzBNUFJqE8vY9wKi2mCtm5Bmi2h/EBQWWff8flTmAvZtHOOQYQeWp6/aWLD5uBl
-         f/9us6Ol2DZHbbMR2Sn82JyRzqlqlHMrwnK8RDtm0/oZFfQC4UK6XmKJe6pBwYRs6J
-         WANxnhJXWZd+w==
-Received: from pt02.synopsys.com (pt02.internal.synopsys.com [10.107.23.240])
-        by mailhost.synopsys.com (Postfix) with ESMTP id A18853403;
-        Fri,  8 Jun 2018 01:19:32 -0700 (PDT)
-Received: from UbuntuMate-64Bits.internal.synopsys.com (gustavo-e7480.internal.synopsys.com [10.107.25.102])
-        by pt02.synopsys.com (Postfix) with ESMTP id 06B243E922;
-        Fri,  8 Jun 2018 09:19:32 +0100 (WEST)
-From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
-        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
-        adouglas@cadence.com, jesper.nilsson@axis.com
-Cc: linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Subject: [PATCH v3 04/10] PCI: dwc: Rework MSI callbacks handler
-Date: Fri,  8 Jun 2018 09:19:20 +0100
-Message-Id:
- <a300c2c7ca631bf4df41de4f9e0c6428c9e1c6c6.1527862777.git.gustavo.pimentel@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1527862777.git.gustavo.pimentel@synopsys.com>
-References: <cover.1527862777.git.gustavo.pimentel@synopsys.com>
-In-Reply-To: <cover.1527862777.git.gustavo.pimentel@synopsys.com>
-References: <cover.1527862777.git.gustavo.pimentel@synopsys.com>
+        Mon, 11 Jun 2018 05:09:58 -0400
+Received: by mail-ua0-f195.google.com with SMTP id m21-v6so13057702uan.0;
+        Mon, 11 Jun 2018 02:09:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yUwOeTLsw6vLCJAdkNMLBMN5py7rxS7EW1wp2CAtkHU=;
+        b=J16k1ob2rCGYy4QnYIHXnPZ3543Iy3OYwnE/m+kec3g9vZFrqNx95ghu/mNRzzvNOp
+         3mBHiKJvNhhPwLnOLGKcO5ay12HmghNQ+Z3C/a4Ism9YCFwve+yfjNw0a9sw+3o+SpyR
+         jsEGglsx3Ahwp7n9bEDV/yEFUbMNXPwhA/In9qBuv8eDwZg9nFbDfWPROJporcDEQTjE
+         lVxOcWSQLX2Wlg4Eg6ssAlNwRi910WMdD2EMBF8jTfNBTOxgE8RnoaE33M3eMeW6zIp1
+         fJR9WJN17In8/iZW25KRggbGEssSb0yyhJsp6z2sowPG4mLQ6XoEPCOudoszZZ61hBso
+         Fb+g==
+X-Gm-Message-State: APt69E087s8vMD/yKGvjjul3ddgA4FbIzCcivV1vZSdw6FZ5GOgqdpOd
+        aguwfo/LP9BPgDgIA9KfBWEnSZgfnwTDPwmwFKc=
+X-Google-Smtp-Source: ADUXVKLAQ0vWoPew7P3UiCQzTLb2p0B3mTbXsWn5HTrxG4zgtvjXQ9JM76mCF4rp5gHW3sIIH0PqLRarGVjP9ODQ7Zw=
+X-Received: by 2002:ab0:96:: with SMTP id 22-v6mr10647389uaj.4.1528708197541;
+ Mon, 11 Jun 2018 02:09:57 -0700 (PDT)
+MIME-Version: 1.0
+References: <1528706663-20670-1-git-send-email-geert@linux-m68k.org> <CAK8P3a0CJmpf0L-OXDmqP=kRLGCokR=v6jUPaCSpnFuCwHa7WA@mail.gmail.com>
+In-Reply-To: <CAK8P3a0CJmpf0L-OXDmqP=kRLGCokR=v6jUPaCSpnFuCwHa7WA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 11 Jun 2018 11:09:46 +0200
+Message-ID: <CAMuHMdWozfKt87Gmy0yuZ+tUOv2ohTybkrb88evgWoyG8xfdgg@mail.gmail.com>
+Subject: Re: [PATCH 0/3] Legacy clock drivers: Normalize clk API
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg Ungerer <gerg@linux-m68k.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Corentin Labbe <clabbe@baylibre.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
+        netdev <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Message-ID: <20180608081920.3eIY4NzwYrA9mhSiRyTJJQectKFVV-Kxp8wTRIMvxfc@z>
 
-Remove duplicate defines located on pcie-designware.h file already
-available on /include/uapi/linux/pci-regs.h file.
+Hi Arnd,
 
-Add pci_epc_set_msi() maximum 32 interrupts validation.
+On Mon, Jun 11, 2018 at 11:02 AM Arnd Bergmann <arnd@arndb.de> wrote:
+> On Mon, Jun 11, 2018 at 10:44 AM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+> > When seeing commit bde4975310eb1982 ("net: stmmac: fix build failure due
+> > to missing COMMON_CLK dependency"), I wondered why this dependency is
+> > needed, as all implementations of the clock API should implement all
+> > required functionality, or provide dummies.
+> >
+> > It turns out there were still two implementations that lacked the
+> > clk_set_rate() function: Coldfire and AR7.
+> >
+> > This series contains three patches:
+> >   - The first two patches add dummies for clk_set_rate(),
+> >     clk_set_rate(), clk_set_parent(), and clk_get_parent() to the
+> >     Coldfire and AR7, like Arnd has done for other legacy clock
+> >     implementations a while ago.
+> >   - The second patch removes the COMMON_CLK dependency from the stmmac
+> >     network drivers again, as it is no longer needed.
+> >     Obviously this patch has a hard dependency on the first two patches.
+>
+> Yes, good idea.
+>
+> Acked-by: Arnd Bergmann <arnd@arnd.de>
 
-Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
----
-Change v1->v2:
- - Nothing changed, just to follow the patch set version.
-Change v2->v3:
- - Replaced wrong return value 0 to -EINVAL.
+Thanks!
 
- drivers/pci/dwc/pcie-designware-ep.c | 49 ++++++++++++++++++++++++------------
- drivers/pci/dwc/pcie-designware.h    | 11 --------
- drivers/pci/endpoint/pci-epc-core.c  |  3 ++-
- 3 files changed, 35 insertions(+), 28 deletions(-)
+> One question: what happens on machines that don't support any CLK
+> interface, i.e.
+> that don't have any of COMMON_CLK/HAVE_CLK/CLKDEV_LOOKUP?
+>
+> I guess those are already hopelessly broken for many drivers, right?
 
-diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
-index c7f2fa9..3ba7059 100644
---- a/drivers/pci/dwc/pcie-designware-ep.c
-+++ b/drivers/pci/dwc/pcie-designware-ep.c
-@@ -246,29 +246,38 @@ static int dw_pcie_ep_map_addr(struct pci_epc *epc, u8 func_no,
- 
- static int dw_pcie_ep_get_msi(struct pci_epc *epc, u8 func_no)
- {
--	int val;
- 	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
- 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+	u32 val, reg;
-+
-+	if (!ep->msi_cap)
-+		return -EINVAL;
- 
--	val = dw_pcie_readw_dbi(pci, MSI_MESSAGE_CONTROL);
--	if (!(val & MSI_CAP_MSI_EN_MASK))
-+	reg = ep->msi_cap + PCI_MSI_FLAGS;
-+	val = dw_pcie_readw_dbi(pci, reg);
-+	if (!(val & PCI_MSI_FLAGS_ENABLE))
- 		return -EINVAL;
- 
--	val = (val & MSI_CAP_MME_MASK) >> MSI_CAP_MME_SHIFT;
-+	val = (val & PCI_MSI_FLAGS_QSIZE) >> 4;
-+
- 	return val;
- }
- 
--static int dw_pcie_ep_set_msi(struct pci_epc *epc, u8 func_no, u8 encode_int)
-+static int dw_pcie_ep_set_msi(struct pci_epc *epc, u8 func_no, u8 interrupts)
- {
--	int val;
- 	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
- 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+	u32 val, reg;
- 
--	val = dw_pcie_readw_dbi(pci, MSI_MESSAGE_CONTROL);
--	val &= ~MSI_CAP_MMC_MASK;
--	val |= (encode_int << MSI_CAP_MMC_SHIFT) & MSI_CAP_MMC_MASK;
-+	if (!ep->msi_cap)
-+		return -EINVAL;
-+
-+	reg = ep->msi_cap + PCI_MSI_FLAGS;
-+	val = dw_pcie_readw_dbi(pci, reg);
-+	val &= ~PCI_MSI_FLAGS_QMASK;
-+	val |= (interrupts << 1) & PCI_MSI_FLAGS_QMASK;
- 	dw_pcie_dbi_ro_wr_en(pci);
--	dw_pcie_writew_dbi(pci, MSI_MESSAGE_CONTROL, val);
-+	dw_pcie_writew_dbi(pci, reg, val);
- 	dw_pcie_dbi_ro_wr_dis(pci);
- 
- 	return 0;
-@@ -367,21 +376,29 @@ int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
- 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
- 	struct pci_epc *epc = ep->epc;
- 	u16 msg_ctrl, msg_data;
--	u32 msg_addr_lower, msg_addr_upper;
-+	u32 msg_addr_lower, msg_addr_upper, reg;
- 	u64 msg_addr;
- 	bool has_upper;
- 	int ret;
- 
-+	if (!ep->msi_cap)
-+		return -EINVAL;
-+
- 	/* Raise MSI per the PCI Local Bus Specification Revision 3.0, 6.8.1. */
--	msg_ctrl = dw_pcie_readw_dbi(pci, MSI_MESSAGE_CONTROL);
-+	reg = ep->msi_cap + PCI_MSI_FLAGS;
-+	msg_ctrl = dw_pcie_readw_dbi(pci, reg);
- 	has_upper = !!(msg_ctrl & PCI_MSI_FLAGS_64BIT);
--	msg_addr_lower = dw_pcie_readl_dbi(pci, MSI_MESSAGE_ADDR_L32);
-+	reg = ep->msi_cap + PCI_MSI_ADDRESS_LO;
-+	msg_addr_lower = dw_pcie_readl_dbi(pci, reg);
- 	if (has_upper) {
--		msg_addr_upper = dw_pcie_readl_dbi(pci, MSI_MESSAGE_ADDR_U32);
--		msg_data = dw_pcie_readw_dbi(pci, MSI_MESSAGE_DATA_64);
-+		reg = ep->msi_cap + PCI_MSI_ADDRESS_HI;
-+		msg_addr_upper = dw_pcie_readl_dbi(pci, reg);
-+		reg = ep->msi_cap + PCI_MSI_DATA_64;
-+		msg_data = dw_pcie_readw_dbi(pci, reg);
- 	} else {
- 		msg_addr_upper = 0;
--		msg_data = dw_pcie_readw_dbi(pci, MSI_MESSAGE_DATA_32);
-+		reg = ep->msi_cap + PCI_MSI_DATA_32;
-+		msg_data = dw_pcie_readw_dbi(pci, reg);
- 	}
- 	msg_addr = ((u64) msg_addr_upper) << 32 | msg_addr_lower;
- 	ret = dw_pcie_ep_map_addr(epc, func_no, ep->msi_mem_phys, msg_addr,
-diff --git a/drivers/pci/dwc/pcie-designware.h b/drivers/pci/dwc/pcie-designware.h
-index b22c5bb..a0ab12f 100644
---- a/drivers/pci/dwc/pcie-designware.h
-+++ b/drivers/pci/dwc/pcie-designware.h
-@@ -96,17 +96,6 @@
- #define PCIE_GET_ATU_INB_UNR_REG_OFFSET(region)				\
- 			((0x3 << 20) | ((region) << 9) | (0x1 << 8))
- 
--#define MSI_MESSAGE_CONTROL		0x52
--#define MSI_CAP_MMC_SHIFT		1
--#define MSI_CAP_MMC_MASK		(7 << MSI_CAP_MMC_SHIFT)
--#define MSI_CAP_MME_SHIFT		4
--#define MSI_CAP_MSI_EN_MASK		0x1
--#define MSI_CAP_MME_MASK		(7 << MSI_CAP_MME_SHIFT)
--#define MSI_MESSAGE_ADDR_L32		0x54
--#define MSI_MESSAGE_ADDR_U32		0x58
--#define MSI_MESSAGE_DATA_32		0x58
--#define MSI_MESSAGE_DATA_64		0x5C
--
- #define MAX_MSI_IRQS			256
- #define MAX_MSI_IRQS_PER_CTRL		32
- #define MAX_MSI_CTRLS			(MAX_MSI_IRQS / MAX_MSI_IRQS_PER_CTRL)
-diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
-index c72e656..094dcc3 100644
---- a/drivers/pci/endpoint/pci-epc-core.c
-+++ b/drivers/pci/endpoint/pci-epc-core.c
-@@ -201,7 +201,8 @@ int pci_epc_set_msi(struct pci_epc *epc, u8 func_no, u8 interrupts)
- 	u8 encode_int;
- 	unsigned long flags;
- 
--	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions)
-+	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions ||
-+	    interrupts > 32)
- 		return -EINVAL;
- 
- 	if (!epc->ops->set_msi)
+Nope, they (e.g. m68k allmodconfig) build fine, as they don't define
+CONFIG_HAVE_CLK.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
