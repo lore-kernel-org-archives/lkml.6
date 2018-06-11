@@ -1,111 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id KRU7LX7IGVuYCAAAmS7hNA
-	; Fri, 08 Jun 2018 00:07:06 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id J95LKJFPHlspRwAAmS7hNA
+	; Mon, 11 Jun 2018 10:31:45 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 462B36089E; Fri,  8 Jun 2018 00:07:06 +0000 (UTC)
+	id 9791D607BB; Mon, 11 Jun 2018 10:31:45 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D42E960452;
-	Fri,  8 Jun 2018 00:07:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D42E960452
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 0E83B60385;
+	Mon, 11 Jun 2018 10:31:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0E83B60385
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752443AbeFHAHE (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 20:07:04 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55440 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752411AbeFHAHC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 20:07:02 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 39F8F400E9BA;
-        Fri,  8 Jun 2018 00:07:02 +0000 (UTC)
-Received: from krava (ovpn-204-19.brq.redhat.com [10.40.204.19])
-        by smtp.corp.redhat.com (Postfix) with SMTP id B1B581C668;
-        Fri,  8 Jun 2018 00:06:57 +0000 (UTC)
-Date: Fri, 8 Jun 2018 02:06:56 +0200
-From: Jiri Olsa <jolsa@redhat.com>
-To: Stephane Eranian <eranian@google.com>
-Cc: Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        "Liang, Kan" <kan.liang@linux.intel.com>, agustinv@codeaurora.org,
+        id S932802AbeFKKbm (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 06:31:42 -0400
+Received: from www62.your-server.de ([213.133.104.62]:55252 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932526AbeFKKbl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 06:31:41 -0400
+Received: from [188.63.75.139] (helo=linux.home)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-SHA:256)
+        (Exim 4.85_2)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fSK6r-0005j8-Gx; Mon, 11 Jun 2018 12:31:37 +0200
+Subject: Re: KASAN: slab-out-of-bounds Read in bpf_skb_change_proto
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: syzbot <syzbot+d2d729bdde65dee3eae6@syzkaller.appspotmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        David Miller <davem@davemloft.net>,
         LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Milian Wolff <milian.wolff@kdab.com>,
-        Andi Kleen <andi@firstfloor.org>, frederic@kernel.org
-Subject: Re: [PATCH 01/10] perf tools: Uniquify the event name if there's no
- other matched event
-Message-ID: <20180608000656.GA12322@krava>
-References: <20180606221513.11302-1-jolsa@kernel.org>
- <20180606221513.11302-2-jolsa@kernel.org>
- <20180606231902.GE7220@tassilo.jf.intel.com>
- <20180607062239.GA18436@krava>
- <CABPqkBRCZgPEpcc0SUvefoqAHh=-jTtBr=EgoomDCFTT54aJBg@mail.gmail.com>
+        netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+References: <000000000000c64842056e4b4326@google.com>
+ <76483220-226b-bf3c-d529-ea839d6624c6@iogearbox.net>
+ <CACT4Y+boO990R6a9kGtx-UZpZPeB2bwhgvyUjPvEFOpbzxJKrg@mail.gmail.com>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <170ef50b-6895-d7fa-a9ae-80915741971b@iogearbox.net>
+Date: Mon, 11 Jun 2018 12:31:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABPqkBRCZgPEpcc0SUvefoqAHh=-jTtBr=EgoomDCFTT54aJBg@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 08 Jun 2018 00:07:02 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 08 Jun 2018 00:07:02 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
+In-Reply-To: <CACT4Y+boO990R6a9kGtx-UZpZPeB2bwhgvyUjPvEFOpbzxJKrg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.99.3/24652/Mon Jun 11 06:34:15 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 07, 2018 at 09:09:10AM -0700, Stephane Eranian wrote:
-> On Wed, Jun 6, 2018 at 11:22 PM Jiri Olsa <jolsa@redhat.com> wrote:
-> >
-> > On Wed, Jun 06, 2018 at 04:19:02PM -0700, Andi Kleen wrote:
-> > > On Thu, Jun 07, 2018 at 12:15:04AM +0200, Jiri Olsa wrote:
-> > > > Currently by default we try to match the user specified PMU
-> > > > name to all PMU units available and use them to aggregate
-> > > > all matched PMUs event counts into one 'pattern' event.
-> > > >
-> > > > While this is useful for uncore events, it screws up names
-> > > > for other events, where this is not desirable, like:
-> > > >
-> > > > Before:
-> > > >   # perf stat -e cp/cpu-cycles/ kill
-> > >
-> > > I assume you mean cpU/cpu-cycles/
-> > > >
-> > > >    Performance counter stats for 'kill':
-> > > >
-> > > >            1,573,757      cp/cpu-cycles/
-> > > >
-> > > > Keeping the pattern matching logic, but making the name unique
-> > > > in case there's no other match found. That fixes the example
-> > > > above and hopefully does not screw up anything else.
-> > > >
-> And the problem I have with this approach, is that you do not really
-> know what you are measuring.
-> You have not way of knowing that the count comes from multiple PMU instances:
+On 06/11/2018 11:52 AM, Dmitry Vyukov wrote:
+> On Mon, Jun 11, 2018 at 11:42 AM, Daniel Borkmann <daniel@iogearbox.net> wrote:
+>> On 06/10/2018 05:27 PM, syzbot wrote:
+>>> Hello,
+>>>
+>>> syzbot found the following crash on:
+>>>
+>>> HEAD commit:    a16afaf7928b Merge tag 'for-v4.18' of git://git.kernel.org..
+>>> git tree:       upstream
+>>> console output: https://syzkaller.appspot.com/x/log.txt?x=1338f6bf800000
+>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=314f2150f36c16ca
+>>> dashboard link: https://syzkaller.appspot.com/bug?extid=d2d729bdde65dee3eae6
+>>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>>> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1173381f800000
+>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=171f90cf800000
+>>>
+>>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>>> Reported-by: syzbot+d2d729bdde65dee3eae6@syzkaller.appspotmail.com
+>>
+>> #syz fix: bpf: reject passing modified ctx to helper functions
 > 
-> perf stat -a -e uncore_cb/clockticks/ kill
-> 0 uncore_cb/clockticks/
-> 
-> I think you need to report that this is aggregated from uncore_cbox_0
-> and uncore_cbox_1.
-> Otherwise it is not clear what I am monitoring. And you hope that what
-> you match in the regex
-> is related.
-> In my example should say:
-> 0 uncore_cbox[0-1]/clockticks/
+> On a related note, it seems that it still can unwind past
+> bpf_skb_change_proto. I think the "net.core.bpf_jit_kallsyms = 1"
+> sysctl should have been reached syzbot by the time of crash. Are you
+> sure that's the only thing requires? We are using frame pointer
+> unwinder just in case.
 
-ok, makes sense.. also shouldnt be that hard to do.. will repost
+Nah, I know what happened; just sent a PR fix for syzkaller.
 
-thanks,
-jirka
+Thanks,
+Daniel
