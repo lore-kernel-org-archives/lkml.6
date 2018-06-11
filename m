@@ -1,110 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id L8ReBHvQGlsSFAAAmS7hNA
-	; Fri, 08 Jun 2018 18:53:55 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 4fF3DtdhHluDSAAAmS7hNA
+	; Mon, 11 Jun 2018 11:49:54 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 47CC0607DC; Fri,  8 Jun 2018 18:53:55 +0000 (UTC)
+	id 3D33460791; Mon, 11 Jun 2018 11:49:54 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dy9DhUMZ"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id BF8E1601D2;
-	Fri,  8 Jun 2018 18:53:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BF8E1601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id B9A79601C3;
+	Mon, 11 Jun 2018 11:49:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B9A79601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753172AbeFHSxO (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 14:53:14 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:53800 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752708AbeFHSuV (ORCPT
+        id S932931AbeFKLtv (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 07:49:51 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:55230 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932886AbeFKLtt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 14:50:21 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fRMSp-0006Nn-W2; Fri, 08 Jun 2018 18:50:20 +0000
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 06/13] switch all remaining checks for FILE_OPENED to FMODE_OPENED
-Date: Fri,  8 Jun 2018 19:50:12 +0100
-Message-Id: <20180608185019.24472-6-viro@ZenIV.linux.org.uk>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20180608185019.24472-1-viro@ZenIV.linux.org.uk>
-References: <20180608184842.GD30522@ZenIV.linux.org.uk>
- <20180608185019.24472-1-viro@ZenIV.linux.org.uk>
+        Mon, 11 Jun 2018 07:49:49 -0400
+Received: by mail-it0-f67.google.com with SMTP id 76-v6so9947901itx.4
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 04:49:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=Evugzbf/39Mp+0nAJkQydOBUYb1fU6syGu+lM3R963U=;
+        b=Dy9DhUMZrHvpXNxtOC/UdAuIzNIUQrJfwHQlCbFlnG//UFNqRf3fcNClVe0u+8HFqZ
+         xvMDGHLC/My/SCtmXskHvdg784j32HmkC/F9lGT30xdQ3DX01C2A4KVnqUumqo1mRdYh
+         tG2+tpTOXOoy51Hpypqswc35NEPiDE3+uKYlI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=Evugzbf/39Mp+0nAJkQydOBUYb1fU6syGu+lM3R963U=;
+        b=d0t9FpJkY/R24APGrUngrSik9mWQZELQ6cvXk1deylkXW3OilJ68YIj+M6jCWKi6M3
+         ycM5abChXqYNoO6DcI2JbVddhBYTOsLeqE6RV+XQDAKsKLTS7MZgj8ZNXqAvLU9auC1A
+         6wvmKmj/jah7Syywb1e1MT/M51N2JBGAZ9CBvWccE7ZWadwM0S+5cMm6hH4mF6l+5qSp
+         whHQ8PQ45LPf2EOZYiFOgGD3b+hQk3u7LeQTKuLULh/sXnP25+9hEya+dnpn4Poo85HH
+         BXc9VBrQabcmhMr/iIERzjjTu30qy0jjNDJ3dQiAJP7yPldbbxyUa96ug95vupsK6KBQ
+         GE5Q==
+X-Gm-Message-State: APt69E3fj7jdQuPEcVm3hA5fgo+FCcIDKXWeRX2mRgX1lTEQGa6hXi3s
+        uWvB4pgw4AjRYSbytCuVyu9CQ7BrIx7Xg6c8GKwtKg==
+X-Google-Smtp-Source: ADUXVKIFSoBFFPP0Ex929oLGTTKg4pP2Lh0ecqfJpaPtXgJnQNN3Uqp3r1TDpvi8Yw+iC8REqTrbq0AXBTsjps5LbwU=
+X-Received: by 2002:a24:19ca:: with SMTP id b193-v6mr10270782itb.135.1528717789074;
+ Mon, 11 Jun 2018 04:49:49 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a4f:78c9:0:0:0:0:0 with HTTP; Mon, 11 Jun 2018 04:49:47
+ -0700 (PDT)
+In-Reply-To: <20180604104642.GC7536@sirena.org.uk>
+References: <20180530150711.2c7c1fe9@canb.auug.org.au> <CACRpkdaotBXbA4pPFHRH0S1SF7-XX_T6yAOwZcbsR3RBcj+-=Q@mail.gmail.com>
+ <2564792.sYBGPVz9u3@z50> <20180604104642.GC7536@sirena.org.uk>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 11 Jun 2018 13:49:47 +0200
+Message-ID: <CACRpkdaUQkjM3nFWn2aO-Jxy=tWEKWkEUmCA11Xuji2p2x82gg@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the regulator tree with the arm-soc tree
+To: Mark Brown <broonie@kernel.org>
+Cc: Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tony Lindgren <tony@atomide.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+On Mon, Jun 4, 2018 at 12:46 PM, Mark Brown <broonie@kernel.org> wrote:
+> On Fri, Jun 01, 2018 at 12:49:53AM +0200, Janusz Krzysztofik wrote:
+>
+>> I confirm the fix by Stephen works for me, however, the conflicting patch by
+>> Linus breaks things a bit.
+>
+>> Lookup tables added to board files use function name "enable" while the
+>> regulator uses NULL. As a result, GPIO descriptor is not matched and not
+>> assigned to the regulator which ends up running with no control over GPIO pin.
+>
+>> Either the regulator driver should use the function name "enable" or that name
+>> should be removed from lookup tables.
+>
+> I'll revert this one as well :(
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- fs/namei.c | 13 +++----------
- 1 file changed, 3 insertions(+), 10 deletions(-)
+I see this is a generic problem, no idea why I didn't pass these
+unnamed as NULL in the first place, probably my ignorance as usual.
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 2abd00079b26..3034c97df757 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3027,8 +3027,6 @@ static int atomic_open(struct nameidata *nd, struct dentry *dentry,
- 		 * permission here.
- 		 */
- 		int acc_mode = op->acc_mode;
--		if (file->f_mode & FMODE_OPENED)
--			*opened |= FILE_OPENED;
- 		if (*opened & FILE_CREATED) {
- 			WARN_ON(!(open_flag & O_CREAT));
- 			fsnotify_create(dir, dentry);
-@@ -3363,11 +3361,10 @@ static int do_last(struct nameidata *nd,
- 	error = may_open(&nd->path, acc_mode, open_flag);
- 	if (error)
- 		goto out;
--	BUG_ON(*opened & FILE_OPENED); /* once it's opened, it's opened */
-+	BUG_ON(file->f_mode & FMODE_OPENED); /* once it's opened, it's opened */
- 	error = vfs_open(&nd->path, file, current_cred());
- 	if (error)
- 		goto out;
--	*opened |= FILE_OPENED;
- opened:
- 	error = open_check_o_direct(file);
- 	if (!error)
-@@ -3449,8 +3446,6 @@ static int do_tmpfile(struct nameidata *nd, unsigned flags,
- 	error = finish_open(file, child, NULL);
- 	if (error)
- 		goto out2;
--	if (file->f_mode & FMODE_OPENED)
--		*opened |= FILE_OPENED;
- 	error = open_check_o_direct(file);
- out2:
- 	mnt_drop_write(path.mnt);
-@@ -3492,8 +3487,6 @@ static struct file *path_openat(struct nameidata *nd,
- 
- 	if (unlikely(file->f_flags & O_PATH)) {
- 		error = do_o_path(nd, flags, file);
--		if (!error)
--			opened |= FILE_OPENED;
- 		goto out2;
- 	}
- 
-@@ -3514,12 +3507,12 @@ static struct file *path_openat(struct nameidata *nd,
- 	terminate_walk(nd);
- out2:
- 	if (likely(!error)) {
--		if (likely(opened & FILE_OPENED))
-+		if (likely(file->f_mode & FMODE_OPENED))
- 			return file;
- 		WARN_ON(1);
- 		error = -EINVAL;
- 	}
--	if (opened & FILE_OPENED)
-+	if (file->f_mode & FMODE_OPENED)
- 		fput(file);
- 	else
- 		put_filp(file);
--- 
-2.11.0
+I fixed it up in my patch making them all anonymous and rebasing
+the rest as well. Let's see how it looks after the merge window.
+
+I will also need to rebase on top of Janusz changes and then it
+will look even better.
+
+Janusz: would be super if you could test my patches after that!
+
+Yours,
+Linus Walleij
