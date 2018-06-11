@@ -1,101 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 8KtdMKOhGVtkbQAAmS7hNA
-	; Thu, 07 Jun 2018 21:21:24 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id VA/AJJx5HluEOAAAmS7hNA
+	; Mon, 11 Jun 2018 13:31:10 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 7310A608BA; Thu,  7 Jun 2018 21:21:24 +0000 (UTC)
+	id 1E548607BB; Mon, 11 Jun 2018 13:31:10 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hu84LKHy"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id EEA5760115;
-	Thu,  7 Jun 2018 21:21:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EEA5760115
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id A045660792;
+	Mon, 11 Jun 2018 13:31:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A045660792
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752632AbeFGVVW (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 17:21:22 -0400
-Received: from mga11.intel.com ([192.55.52.93]:28726 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751365AbeFGVVU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 17:21:20 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 14:21:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,488,1520924400";
-   d="scan'208";a="48167652"
-Received: from 2b52.sc.intel.com (HELO [143.183.136.51]) ([143.183.136.51])
-  by orsmga006.jf.intel.com with ESMTP; 07 Jun 2018 14:21:19 -0700
-Message-ID: <1528406288.5794.1.camel@2b52.sc.intel.com>
-Subject: Re: [PATCH 09/10] mm: Prevent madvise from changing shadow stack
-From: Yu-cheng Yu <yu-cheng.yu@intel.com>
-To: Nadav Amit <nadav.amit@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-doc@vger.kernel.org,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        linux-arch@vger.kernel.org,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Date: Thu, 07 Jun 2018 14:18:08 -0700
-In-Reply-To: <D1A84B62-E971-4ECD-A873-2072F2692382@gmail.com>
-References: <20180607143807.3611-1-yu-cheng.yu@intel.com>
-         <20180607143807.3611-10-yu-cheng.yu@intel.com>
-         <D1A84B62-E971-4ECD-A873-2072F2692382@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S933130AbeFKNbG (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 09:31:06 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:40253 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754224AbeFKNbA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 09:31:00 -0400
+Received: by mail-lf0-f65.google.com with SMTP id q11-v6so30558632lfc.7
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 06:31:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=lDdZ+12ye4H9JsUdu5+2AMHnLkdkF7ofjKyzEJiIn2U=;
+        b=hu84LKHy75/wLhFShXTYOjz0+SniVId4gbnyRZqiEad/oW5UIJ0F4N3k1W1I1Vjhni
+         wem/FGQmtc46tuPLhMCbWoTGhp2EQah59mgKS7o7FF6gPxoA+X4EuBk1WVR1wyfXFMIa
+         hJR8r3MbZySYsolK5ghcneJBgNZWeegwFkkxE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=lDdZ+12ye4H9JsUdu5+2AMHnLkdkF7ofjKyzEJiIn2U=;
+        b=AOm653tE8qixiVr2Zlodk1VF7TOj4u+N/oFqruXhmzYmRzjhIsSNbCLQk3HcE4TPyi
+         XpZSCxKwZ4PSYTmLkTk7gQZ1nj7xdm+8UnEfAgxvbUx1JVXYnft/Mzy6xlB6ABgOsZtk
+         9dOzQwe9ico02P1VLZTERp2DaJW78WxdOaCbuFVoQDQ9Fwkn0pD+8k0oh9Obgik7h/kB
+         vt+30k7VIpa/n2iumNeMoSsXKdILfYkZ/QbdX8PzZz9Ht6GGaxP6sILjph/h5UIKpMQu
+         QiSfXXnWvFEKmJcbw78HpmXFLIzCQe6Yppb37Of99uQQ/d8sbRIFA60CqVp+ey8Dgolm
+         6xcQ==
+X-Gm-Message-State: APt69E0Gz4QhrjGkpWZXMncCeu784tNeIvJ0nJokCHJ9QwxtVqUZADuN
+        5LkscEyNzOi/udOnBPXOwa9rEQ==
+X-Google-Smtp-Source: ADUXVKKPcPhqXPtK987Je+vAohmTXdz1Jo+gG4EoJvae+vh74fJmF54L9NTFKnngjtY1ap/8RKZ72w==
+X-Received: by 2002:a2e:1188:: with SMTP id 8-v6mr12288206ljr.38.1528723859491;
+        Mon, 11 Jun 2018 06:30:59 -0700 (PDT)
+Received: from localhost.localdomain (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
+        by smtp.gmail.com with ESMTPSA id u24-v6sm2617712ljj.96.2018.06.11.06.30.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Jun 2018 06:30:58 -0700 (PDT)
+From: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+To: grygorii.strashko@ti.com, davem@davemloft.net
+Cc: corbet@lwn.net, akpm@linux-foundation.org, netdev@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, vinicius.gomes@intel.com,
+        henrik@austad.us, jesus.sanchez-palencia@intel.com,
+        ilias.apalodimas@linaro.org, p-varis@ti.com, spatton@ti.com,
+        francois.ozog@linaro.org, yogeshs@ti.com, nsekhar@ti.com,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Subject: [PATCH net-next 2/6] net: ethernet: ti: cpdma: fit rated channels in backward order
+Date: Mon, 11 Jun 2018 16:30:43 +0300
+Message-Id: <20180611133047.4818-3-ivan.khoronzhuk@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180611133047.4818-1-ivan.khoronzhuk@linaro.org>
+References: <20180611133047.4818-1-ivan.khoronzhuk@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-06-07 at 14:09 -0700, Nadav Amit wrote:
-> Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
-> 
-> > Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
-> > ---
-> > mm/madvise.c | 9 +++++++++
-> > 1 file changed, 9 insertions(+)
-> > 
-> > diff --git a/mm/madvise.c b/mm/madvise.c
-> > index 4d3c922ea1a1..2a6988badd6b 100644
-> > --- a/mm/madvise.c
-> > +++ b/mm/madvise.c
-> > @@ -839,6 +839,14 @@ SYSCALL_DEFINE3(madvise, unsigned long, start, size_t, len_in, int, behavior)
-> > 	if (vma && start > vma->vm_start)
-> > 		prev = vma;
-> > 
-> > +	/*
-> > +	 * Don't do anything on shadow stack.
-> > +	 */
-> > +	if (vma->vm_flags & VM_SHSTK) {
-> > +		error = -EINVAL;
-> > +		goto out_no_plug;
-> > +	}
-> > +
-> > 	blk_start_plug(&plug);
-> > 	for (;;) {
-> > 		/* Still start < end. */
-> 
-> What happens if the madvise() revolves multiple VMAs, the first one is not
-> VM_SHSTK, but the another one is? Shouldn’t the test be done inside the
-> loop, potentially in madvise_vma() ?
-> 
+According to TRM tx rated channels should be in 7..0 order,
+so correct it.
 
-I will fix it.  Thanks!
+Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+---
+ drivers/net/ethernet/ti/davinci_cpdma.c | 31 ++++++++++++-------------
+ 1 file changed, 15 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/davinci_cpdma.c b/drivers/net/ethernet/ti/davinci_cpdma.c
+index cdbddf16dd29..19bb63902997 100644
+--- a/drivers/net/ethernet/ti/davinci_cpdma.c
++++ b/drivers/net/ethernet/ti/davinci_cpdma.c
+@@ -406,37 +406,36 @@ static int cpdma_chan_fit_rate(struct cpdma_chan *ch, u32 rate,
+ 	struct cpdma_chan *chan;
+ 	u32 old_rate = ch->rate;
+ 	u32 new_rmask = 0;
+-	int rlim = 1;
++	int rlim = 0;
+ 	int i;
+ 
+-	*prio_mode = 0;
+ 	for (i = tx_chan_num(0); i < tx_chan_num(CPDMA_MAX_CHANNELS); i++) {
+ 		chan = ctlr->channels[i];
+-		if (!chan) {
+-			rlim = 0;
++		if (!chan)
+ 			continue;
+-		}
+ 
+ 		if (chan == ch)
+ 			chan->rate = rate;
+ 
+ 		if (chan->rate) {
+-			if (rlim) {
+-				new_rmask |= chan->mask;
+-			} else {
+-				ch->rate = old_rate;
+-				dev_err(ctlr->dev, "Prev channel of %dch is not rate limited\n",
+-					chan->chan_num);
+-				return -EINVAL;
+-			}
+-		} else {
+-			*prio_mode = 1;
+-			rlim = 0;
++			rlim = 1;
++			new_rmask |= chan->mask;
++			continue;
+ 		}
++
++		if (rlim)
++			goto err;
+ 	}
+ 
+ 	*rmask = new_rmask;
++	*prio_mode = rlim;
+ 	return 0;
++
++err:
++	ch->rate = old_rate;
++	dev_err(ctlr->dev, "Upper cpdma ch%d is not rate limited\n",
++		chan->chan_num);
++	return -EINVAL;
+ }
+ 
+ static u32 cpdma_chan_set_factors(struct cpdma_ctlr *ctlr,
+-- 
+2.17.1
