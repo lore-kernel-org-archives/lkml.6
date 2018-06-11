@@ -1,139 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 0QQuAok8GVvANAAAmS7hNA
-	; Thu, 07 Jun 2018 14:09:13 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id lXDPC8JhHlttSAAAmS7hNA
+	; Mon, 11 Jun 2018 11:50:31 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id DBEB8608BF; Thu,  7 Jun 2018 14:09:12 +0000 (UTC)
+	id 83FA2607A4; Mon, 11 Jun 2018 11:50:31 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id EA0C76063F;
-	Thu,  7 Jun 2018 14:09:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EA0C76063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id F074060541;
+	Mon, 11 Jun 2018 11:50:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F074060541
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933044AbeFGOJG (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:09:06 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39108 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932878AbeFGOI6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:08:58 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvay-0005Zz-KV; Thu, 07 Jun 2018 15:08:56 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvax-0002hO-Jf; Thu, 07 Jun 2018 15:08:55 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        id S933023AbeFKLu2 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 07:50:28 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:49661 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932942AbeFKLu0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 07:50:26 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id E858820981; Mon, 11 Jun 2018 13:50:23 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-37-30.w90-88.abo.wanadoo.fr [90.88.156.30])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 70F36207A5;
+        Mon, 11 Jun 2018 13:50:13 +0200 (CEST)
+Date: Mon, 11 Jun 2018 13:50:13 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Stefan Agner <stefan@agner.ch>, dwmw2@infradead.org,
+        computersforpeace@gmail.com, marek.vasut@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
+        dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
+        marcel@ziswiler.com, krzk@kernel.org, benjamin.lindqvist@endian.se,
+        jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        mirza.krak@gmail.com, linux-mtd@lists.infradead.org,
+        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 4/6] mtd: rawnand: add NVIDIA Tegra NAND Flash
+ controller driver
+Message-ID: <20180611135013.7bb5b59b@bbrezillon>
+In-Reply-To: <1862022.905gDpZtpO@dimapc>
+References: <20180531221637.6017-1-stefan@agner.ch>
+        <1868760.y7shk6NfjH@dimapc>
+        <20180610173202.680d2ee8@bbrezillon>
+        <1862022.905gDpZtpO@dimapc>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Andy Lutomirski" <luto@kernel.org>,
-        "Paolo Bonzini" <pbonzini@redhat.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.921181256@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 017/410] kvm/x86: fix icebp instruction handling
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+On Mon, 11 Jun 2018 14:45:45 +0300
+Dmitry Osipenko <digetx@gmail.com> wrote:
 
-------------------
+> On Sunday, 10 June 2018 18:32:02 MSK Boris Brezillon wrote:
+> > On Sun, 10 Jun 2018 18:00:06 +0300
+> > 
+> > Dmitry Osipenko <digetx@gmail.com> wrote:  
+> > > > >> That seems a lot of work for a code path I do not intend to ever use
+> > > > >> :-)  
+> > > > > 
+> > > > > Are you sure that resetting HW resets the timing and other registers
+> > > > > configuration? Reset implementation is HW-specific, like for example
+> > > > > in a
+> > > > > case of a video decoder the registers state is re-intialized on HW
+> > > > > reset,
+> > > > > but registers configuration is untouched in a case of resetting GPU.
+> > > > > I'd
+> > > > > suggest to check whether NAND controller resetting affects the HW
+> > > > > configuration.  
+> > > > 
+> > > > It seems all registers are set back to their documented reset value:
+> > > > 
+> > > > [boot loader/ROM initialized values]
+> > > > [    1.270253] tegra-nand 70008000.nand: Tegra NAND controller register
+> > > > dump
+> > > > [    1.277051] tegra-nand 70008000.nand: COMMAND: 0x66880104
+> > > > [    1.282457] tegra-nand 70008000.nand: STATUS: 0x00000101
+> > > > [    1.287763] tegra-nand 70008000.nand: ISR: 0x01000120
+> > > > [    1.292818] tegra-nand 70008000.nand: IER: 0x00000000
+> > > > [    1.297863] tegra-nand 70008000.nand: CONFIG: 0x00840000
+> > > > [    1.303181] tegra-nand 70008000.nand: TIMING: 0x05040000
+> > > > [    1.308486] tegra-nand 70008000.nand: TIMING2: 0x00000003
+> > > > [    1.313897] tegra-nand 70008000.nand: CMD_REG1: 0x00000000
+> > > > [    1.319377] tegra-nand 70008000.nand: CMD_REG2: 0x00000030
+> > > > [    1.324868] tegra-nand 70008000.nand: ADDR_REG1: 0x03000000
+> > > > [    1.330435] tegra-nand 70008000.nand: ADDR_REG2: 0x00000000
+> > > > [    1.336011] tegra-nand 70008000.nand: DMA_MST_CTRL: 0x04100004
+> > > > [    1.341838] tegra-nand 70008000.nand: DMA_CFG_A: 0x00000fff
+> > > > [    1.347415] tegra-nand 70008000.nand: DMA_CFG_B: 0x0000001b
+> > > > [    1.352991] tegra-nand 70008000.nand: FIFO_CTRL: 0x0000aa00
+> > > > [reset]
+> > > > [    1.358559] tegra-nand 70008000.nand: Tegra NAND controller register
+> > > > dump
+> > > > [    1.365352] tegra-nand 70008000.nand: COMMAND: 0x00800004
+> > > > [    1.370744] tegra-nand 70008000.nand: STATUS: 0x00000101
+> > > > [    1.376060] tegra-nand 70008000.nand: ISR: 0x00000100
+> > > > [    1.381105] tegra-nand 70008000.nand: IER: 0x00000000
+> > > > [    1.386161] tegra-nand 70008000.nand: CONFIG: 0x10030000
+> > > > [    1.391466] tegra-nand 70008000.nand: TIMING: 0x00000000
+> > > > [    1.396782] tegra-nand 70008000.nand: TIMING2: 0x00000000
+> > > > [    1.402174] tegra-nand 70008000.nand: CMD_REG1: 0x00000000
+> > > > [    1.407664] tegra-nand 70008000.nand: CMD_REG2: 0x00000000
+> > > > [    1.413156] tegra-nand 70008000.nand: ADDR_REG1: 0x00000000
+> > > > [    1.418722] tegra-nand 70008000.nand: ADDR_REG2: 0x00000000
+> > > > [    1.424297] tegra-nand 70008000.nand: DMA_MST_CTRL: 0x24000000
+> > > > [    1.430123] tegra-nand 70008000.nand: DMA_CFG_A: 0x00000000
+> > > > [    1.435698] tegra-nand 70008000.nand: DMA_CFG_B: 0x00000000
+> > > > [    1.441264] tegra-nand 70008000.nand: FIFO_CTRL: 0x0000aa00  
+> > > 
+> > > Alright, then indeed it's not really worth to bother with HW resetting
+> > > here. Probably only a kernel module reload or a reboot will help if HW is
+> > > hung. Maybe NAND controller / chip recovering is something that NAND core
+> > > should be handling in a such case by providing a nand_controller_reset()
+> > > hook?  
+> > I don't see what the core could do to help with that. We'd end up with
+> > a new hook implemented by the controller that would be called by the
+> > controller driver when it knows it's safe to reset the controller. So,
+> > why bother exposing that in the core?  
+> 
+> Giving a driver more flexibility is always a good thing. I'm not really 
+> familiar with mtd/ and maybe indeed it doesn't make much sense to move HW 
+> resetting to NAND core, though it looked to me that it should be always safe 
+> for NAND core to initiate HW resetting after IO failure and hence would be 
+> cleaner and nicer to have a unified HW reset management rather than to have 
+> each driver to do its own thing.
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
-
-commit 32d43cd391bacb5f0814c2624399a5dad3501d09 upstream.
-
-The undocumented 'icebp' instruction (aka 'int1') works pretty much like
-'int3' in the absense of in-circuit probing equipment (except,
-obviously, that it raises #DB instead of raising #BP), and is used by
-some validation test-suites as such.
-
-But Andy Lutomirski noticed that his test suite acted differently in kvm
-than on bare hardware.
-
-The reason is that kvm used an inexact test for the icebp instruction:
-it just assumed that an all-zero VM exit qualification value meant that
-the VM exit was due to icebp.
-
-That is not unlike the guess that do_debug() does for the actual
-exception handling case, but it's purely a heuristic, not an absolute
-rule.  do_debug() does it because it wants to ascribe _some_ reasons to
-the #DB that happened, and an empty %dr6 value means that 'icebp' is the
-most likely casue and we have no better information.
-
-But kvm can just do it right, because unlike the do_debug() case, kvm
-actually sees the real reason for the #DB in the VM-exit interruption
-information field.
-
-So instead of relying on an inexact heuristic, just use the actual VM
-exit information that says "it was 'icebp'".
-
-Right now the 'icebp' instruction isn't technically documented by Intel,
-but that will hopefully change.  The special "privileged software
-exception" information _is_ actually mentioned in the Intel SDM, even
-though the cause of it isn't enumerated.
-
-Reported-by: Andy Lutomirski <luto@kernel.org>
-Tested-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-[carnil: Backport to 3.16: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- arch/x86/include/asm/vmx.h | 1 +
- arch/x86/kvm/vmx.c         | 9 ++++++++-
- 2 files changed, 9 insertions(+), 1 deletion(-)
-
---- a/arch/x86/include/asm/vmx.h
-+++ b/arch/x86/include/asm/vmx.h
-@@ -296,6 +296,7 @@ enum vmcs_field {
- #define INTR_TYPE_NMI_INTR		(2 << 8) /* NMI */
- #define INTR_TYPE_HARD_EXCEPTION	(3 << 8) /* processor exception */
- #define INTR_TYPE_SOFT_INTR             (4 << 8) /* software interrupt */
-+#define INTR_TYPE_PRIV_SW_EXCEPTION	(5 << 8) /* ICE breakpoint - undocumented */
- #define INTR_TYPE_SOFT_EXCEPTION	(6 << 8) /* software exception */
- 
- /* GUEST_INTERRUPTIBILITY_INFO flags. */
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -868,6 +868,13 @@ static inline bool is_machine_check(u32
- 		(INTR_TYPE_HARD_EXCEPTION | MC_VECTOR | INTR_INFO_VALID_MASK);
- }
- 
-+/* Undocumented: icebp/int1 */
-+static inline bool is_icebp(u32 intr_info)
-+{
-+	return (intr_info & (INTR_INFO_INTR_TYPE_MASK | INTR_INFO_VALID_MASK))
-+		== (INTR_TYPE_PRIV_SW_EXCEPTION | INTR_INFO_VALID_MASK);
-+}
-+
- static inline bool cpu_has_vmx_msr_bitmap(void)
- {
- 	return vmcs_config.cpu_based_exec_ctrl & CPU_BASED_USE_MSR_BITMAPS;
-@@ -4915,7 +4922,7 @@ static int handle_exception(struct kvm_v
- 		      (KVM_GUESTDBG_SINGLESTEP | KVM_GUESTDBG_USE_HW_BP))) {
- 			vcpu->arch.dr6 &= ~15;
- 			vcpu->arch.dr6 |= dr6;
--			if (!(dr6 & ~DR6_RESERVED)) /* icebp */
-+			if (is_icebp(intr_info))
- 				skip_emulated_instruction(vcpu);
- 
- 			kvm_queue_exception(vcpu, DB_VECTOR);
+No really, the NAND core can't know when it's appropriate to reset the
+controller, and what this reset will do, hence it doesn't know if the
+chips connected to the controller should also be reset.
