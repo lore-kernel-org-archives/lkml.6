@@ -1,429 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id LgkPNBNsGlt8cQAAmS7hNA
-	; Fri, 08 Jun 2018 11:44:19 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 90hkMyDsHVt+JgAAmS7hNA
+	; Mon, 11 Jun 2018 03:27:28 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id C37B36089E; Fri,  8 Jun 2018 11:44:19 +0000 (UTC)
+	id C275D6089E; Mon, 11 Jun 2018 03:27:28 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=BAYES_00,DATE_IN_FUTURE_06_12,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI,
+	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id C5B20601D2;
-	Fri,  8 Jun 2018 11:44:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C5B20601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 4AFC7606DD;
+	Mon, 11 Jun 2018 03:27:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4AFC7606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752850AbeFHLoQ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 07:44:16 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:8654 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751298AbeFHLnl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 07:43:41 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 519F0628CECE2;
-        Fri,  8 Jun 2018 19:43:26 +0800 (CST)
-Received: from localhost.localdomain (10.143.28.90) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.382.0; Fri, 8 Jun 2018 19:43:19 +0800
-From: Dongjiu Geng <gengdongjiu@huawei.com>
-To: <rkrcmar@redhat.com>, <corbet@lwn.net>, <christoffer.dall@arm.com>,
-        <marc.zyngier@arm.com>, <linux@armlinux.org.uk>,
-        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
-        <kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <james.morse@arm.com>, <gengdongjiu@huawei.com>,
+        id S932552AbeFKD1Y (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Sun, 10 Jun 2018 23:27:24 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:4815 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932522AbeFKD1W (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Jun 2018 23:27:22 -0400
+X-UUID: acfb174981424e0bb55673e9e4db3ff5-20180611
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        (envelope-from <stu.hsieh@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 100581108; Mon, 11 Jun 2018 11:27:20 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Mon, 11 Jun 2018 11:27:11 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Mon, 11 Jun 2018 11:27:12 +0800
+From: Stu Hsieh <stu.hsieh@mediatek.com>
+To: CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>
+CC: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>
-Subject: [PATCH RESEND v4 2/2] arm/arm64: KVM: Add KVM_GET/SET_VCPU_EVENTS
-Date: Sat, 9 Jun 2018 03:48:40 +0800
-Message-ID: <1528487320-2873-3-git-send-email-gengdongjiu@huawei.com>
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, Stu Hsieh <stu.hsieh@mediatek.com>
+Subject: [PATCH 27/28] drm/mediatek: add third ddp path
+Date: Mon, 11 Jun 2018 11:26:19 +0800
+Message-ID: <1528687580-549-28-git-send-email-stu.hsieh@mediatek.com>
 X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1528487320-2873-1-git-send-email-gengdongjiu@huawei.com>
-References: <1528487320-2873-1-git-send-email-gengdongjiu@huawei.com>
+In-Reply-To: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
+References: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.143.28.90]
-X-CFilter-Loop: Reflected
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For the migrating VMs, user space may need to know the exception
-state. For example, in the machine A, KVM make an SError pending,
-when migrate to B, KVM also needs to pend an SError.
+This patch create third crtc by third ddp path
 
-This new IOCTL exports user-invisible states related to SError.
-Together with appropriate user space changes, user space can get/set
-the SError exception state to do migrate/snapshot/suspend.
-
-Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
+Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
 ---
-change since v3:
-1. Fix the memset() issue in the kvm_arm_vcpu_get_events()
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.c | 3 +++
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c  | 5 +++++
+ drivers/gpu/drm/mediatek/mtk_drm_drv.h  | 5 ++++-
+ 3 files changed, 12 insertions(+), 1 deletion(-)
 
-change since v2:
-1. Add kvm_vcpu_events structure definition for arm platform to avoid the build errors.
-
-change since v1:
-Address Marc's comments, thanks Marc's review
-1. serror_has_esr always true when ARM64_HAS_RAS_EXTN is set
-2. remove Spurious blank line in kvm_arm_vcpu_set_events()
-3. rename pend_guest_serror() to kvm_set_sei_esr()
-4. Make kvm_arm_vcpu_get_events() did all the work rather than having this split responsibility.
-5.  using sizeof(events) instead of sizeof(struct kvm_vcpu_events)
-
-this series patch is separated from https://www.spinics.net/lists/kvm/msg168917.html
-The user space patch is here: https://lists.gnu.org/archive/html/qemu-devel/2018-05/msg06965.html
-
-change since V12:
-1. change (vcpu->arch.hcr_el2 & HCR_VSE) to !!(vcpu->arch.hcr_el2 & HCR_VSE) in kvm_arm_vcpu_get_events()
-
-Change since V11:
-Address James's comments, thanks James
-1. Align the struct of kvm_vcpu_events to 64 bytes
-2. Avoid exposing the stale ESR value in the kvm_arm_vcpu_get_events()
-3. Change variables 'injected' name to 'serror_pending' in the kvm_arm_vcpu_set_events()
-4. Change to sizeof(events) from sizeof(struct kvm_vcpu_events) in kvm_arch_vcpu_ioctl()
-
-Change since V10:
-Address James's comments, thanks James
-1. Merge the helper function with the user.
-2. Move the ISS_MASK into pend_guest_serror() to clear top bits
-3. Make kvm_vcpu_events struct align to 4 bytes
-4. Add something check in the kvm_arm_vcpu_set_events()
-5. Check kvm_arm_vcpu_get/set_events()'s return value.
-6. Initialise kvm_vcpu_events to 0 so that padding transferred to user-space doesn't
-   contain kernel stack.
----
- Documentation/virtual/kvm/api.txt    | 31 ++++++++++++++++++++++++++++---
- arch/arm/include/asm/kvm_host.h      |  6 ++++++
- arch/arm/include/uapi/asm/kvm.h      | 12 ++++++++++++
- arch/arm/kvm/guest.c                 | 12 ++++++++++++
- arch/arm64/include/asm/kvm_emulate.h |  5 +++++
- arch/arm64/include/asm/kvm_host.h    |  7 +++++++
- arch/arm64/include/uapi/asm/kvm.h    | 13 +++++++++++++
- arch/arm64/kvm/guest.c               | 36 ++++++++++++++++++++++++++++++++++++
- arch/arm64/kvm/inject_fault.c        |  6 +++---
- arch/arm64/kvm/reset.c               |  1 +
- virt/kvm/arm/arm.c                   | 19 +++++++++++++++++++
- 11 files changed, 142 insertions(+), 6 deletions(-)
-
-diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
-index fdac969..8896737 100644
---- a/Documentation/virtual/kvm/api.txt
-+++ b/Documentation/virtual/kvm/api.txt
-@@ -835,11 +835,13 @@ struct kvm_clock_data {
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+index 658b8dd45b83..2d6aa150a9ff 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+@@ -539,6 +539,9 @@ int mtk_drm_crtc_create(struct drm_device *drm_dev,
+ 	int ret;
+ 	int i;
  
- Capability: KVM_CAP_VCPU_EVENTS
- Extended by: KVM_CAP_INTR_SHADOW
--Architectures: x86
-+Architectures: x86, arm, arm64
- Type: vm ioctl
- Parameters: struct kvm_vcpu_event (out)
- Returns: 0 on success, -1 on error
- 
-+X86:
-+
- Gets currently pending exceptions, interrupts, and NMIs as well as related
- states of the vcpu.
- 
-@@ -881,15 +883,32 @@ Only two fields are defined in the flags field:
- - KVM_VCPUEVENT_VALID_SMM may be set in the flags field to signal that
-   smi contains a valid state.
- 
-+ARM, ARM64:
-+
-+Gets currently pending SError exceptions as well as related states of the vcpu.
-+
-+struct kvm_vcpu_events {
-+	struct {
-+		__u8 serror_pending;
-+		__u8 serror_has_esr;
-+		/* Align it to 8 bytes */
-+		__u8 pad[6];
-+		__u64 serror_esr;
-+	} exception;
-+	__u32 reserved[12];
-+};
-+
- 4.32 KVM_SET_VCPU_EVENTS
- 
--Capability: KVM_CAP_VCPU_EVENTS
-+Capebility: KVM_CAP_VCPU_EVENTS
- Extended by: KVM_CAP_INTR_SHADOW
--Architectures: x86
-+Architectures: x86, arm, arm64
- Type: vm ioctl
- Parameters: struct kvm_vcpu_event (in)
- Returns: 0 on success, -1 on error
- 
-+X86:
-+
- Set pending exceptions, interrupts, and NMIs as well as related states of the
- vcpu.
- 
-@@ -910,6 +929,12 @@ shall be written into the VCPU.
- 
- KVM_VCPUEVENT_VALID_SMM can only be set if KVM_CAP_X86_SMM is available.
- 
-+ARM, ARM64:
-+
-+Set pending SError exceptions as well as related states of the vcpu.
-+
-+See KVM_GET_VCPU_EVENTS for the data structure.
-+
- 
- 4.33 KVM_GET_DEBUGREGS
- 
-diff --git a/arch/arm/include/asm/kvm_host.h b/arch/arm/include/asm/kvm_host.h
-index c7c28c8..39f9901 100644
---- a/arch/arm/include/asm/kvm_host.h
-+++ b/arch/arm/include/asm/kvm_host.h
-@@ -213,6 +213,12 @@ unsigned long kvm_arm_num_regs(struct kvm_vcpu *vcpu);
- int kvm_arm_copy_reg_indices(struct kvm_vcpu *vcpu, u64 __user *indices);
- int kvm_arm_get_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg);
- int kvm_arm_set_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg);
-+int kvm_arm_vcpu_get_events(struct kvm_vcpu *vcpu,
-+			struct kvm_vcpu_events *events);
-+
-+int kvm_arm_vcpu_set_events(struct kvm_vcpu *vcpu,
-+			struct kvm_vcpu_events *events);
-+
- unsigned long kvm_call_hyp(void *hypfn, ...);
- void force_vm_exit(const cpumask_t *mask);
- 
-diff --git a/arch/arm/include/uapi/asm/kvm.h b/arch/arm/include/uapi/asm/kvm.h
-index caae484..c3e6975 100644
---- a/arch/arm/include/uapi/asm/kvm.h
-+++ b/arch/arm/include/uapi/asm/kvm.h
-@@ -124,6 +124,18 @@ struct kvm_sync_regs {
- struct kvm_arch_memory_slot {
- };
- 
-+/* for KVM_GET/SET_VCPU_EVENTS */
-+struct kvm_vcpu_events {
-+	struct {
-+		__u8 serror_pending;
-+		__u8 serror_has_esr;
-+		/* Align it to 8 bytes */
-+		__u8 pad[6];
-+		__u64 serror_esr;
-+	} exception;
-+	__u32 reserved[12];
-+};
-+
- /* If you need to interpret the index values, here is the key: */
- #define KVM_REG_ARM_COPROC_MASK		0x000000000FFF0000
- #define KVM_REG_ARM_COPROC_SHIFT	16
-diff --git a/arch/arm/kvm/guest.c b/arch/arm/kvm/guest.c
-index a18f33e..c685f0e 100644
---- a/arch/arm/kvm/guest.c
-+++ b/arch/arm/kvm/guest.c
-@@ -261,6 +261,18 @@ int kvm_arch_vcpu_ioctl_set_sregs(struct kvm_vcpu *vcpu,
- 	return -EINVAL;
- }
- 
-+int kvm_arm_vcpu_get_events(struct kvm_vcpu *vcpu,
-+			struct kvm_vcpu_events *events)
-+{
-+	return -EINVAL;
-+}
-+
-+int kvm_arm_vcpu_set_events(struct kvm_vcpu *vcpu,
-+			struct kvm_vcpu_events *events)
-+{
-+	return -EINVAL;
-+}
-+
- int __attribute_const__ kvm_target_cpu(void)
- {
- 	switch (read_cpuid_part()) {
-diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/include/asm/kvm_emulate.h
-index 1dab3a9..18f61ff 100644
---- a/arch/arm64/include/asm/kvm_emulate.h
-+++ b/arch/arm64/include/asm/kvm_emulate.h
-@@ -81,6 +81,11 @@ static inline unsigned long *vcpu_hcr(struct kvm_vcpu *vcpu)
- 	return (unsigned long *)&vcpu->arch.hcr_el2;
- }
- 
-+static inline unsigned long vcpu_get_vsesr(struct kvm_vcpu *vcpu)
-+{
-+	return vcpu->arch.vsesr_el2;
-+}
-+
- static inline void vcpu_set_vsesr(struct kvm_vcpu *vcpu, u64 vsesr)
- {
- 	vcpu->arch.vsesr_el2 = vsesr;
-diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-index 469de8a..357304a 100644
---- a/arch/arm64/include/asm/kvm_host.h
-+++ b/arch/arm64/include/asm/kvm_host.h
-@@ -335,6 +335,11 @@ unsigned long kvm_arm_num_regs(struct kvm_vcpu *vcpu);
- int kvm_arm_copy_reg_indices(struct kvm_vcpu *vcpu, u64 __user *indices);
- int kvm_arm_get_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg);
- int kvm_arm_set_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg);
-+int kvm_arm_vcpu_get_events(struct kvm_vcpu *vcpu,
-+			struct kvm_vcpu_events *events);
-+
-+int kvm_arm_vcpu_set_events(struct kvm_vcpu *vcpu,
-+			struct kvm_vcpu_events *events);
- 
- #define KVM_ARCH_WANT_MMU_NOTIFIER
- int kvm_unmap_hva(struct kvm *kvm, unsigned long hva);
-@@ -363,6 +368,8 @@ void handle_exit_early(struct kvm_vcpu *vcpu, struct kvm_run *run,
- int kvm_perf_init(void);
- int kvm_perf_teardown(void);
- 
-+void kvm_set_sei_esr(struct kvm_vcpu *vcpu, u64 syndrome);
-+
- struct kvm_vcpu *kvm_mpidr_to_vcpu(struct kvm *kvm, unsigned long mpidr);
- 
- void __kvm_set_tpidr_el2(u64 tpidr_el2);
-diff --git a/arch/arm64/include/uapi/asm/kvm.h b/arch/arm64/include/uapi/asm/kvm.h
-index 04b3256..df4faee 100644
---- a/arch/arm64/include/uapi/asm/kvm.h
-+++ b/arch/arm64/include/uapi/asm/kvm.h
-@@ -39,6 +39,7 @@
- #define __KVM_HAVE_GUEST_DEBUG
- #define __KVM_HAVE_IRQ_LINE
- #define __KVM_HAVE_READONLY_MEM
-+#define __KVM_HAVE_VCPU_EVENTS
- 
- #define KVM_COALESCED_MMIO_PAGE_OFFSET 1
- 
-@@ -153,6 +154,18 @@ struct kvm_sync_regs {
- struct kvm_arch_memory_slot {
- };
- 
-+/* for KVM_GET/SET_VCPU_EVENTS */
-+struct kvm_vcpu_events {
-+	struct {
-+		__u8 serror_pending;
-+		__u8 serror_has_esr;
-+		/* Align it to 8 bytes */
-+		__u8 pad[6];
-+		__u64 serror_esr;
-+	} exception;
-+	__u32 reserved[12];
-+};
-+
- /* If you need to interpret the index values, here is the key: */
- #define KVM_REG_ARM_COPROC_MASK		0x000000000FFF0000
- #define KVM_REG_ARM_COPROC_SHIFT	16
-diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c
-index 56a0260..4426915 100644
---- a/arch/arm64/kvm/guest.c
-+++ b/arch/arm64/kvm/guest.c
-@@ -289,6 +289,42 @@ int kvm_arch_vcpu_ioctl_set_sregs(struct kvm_vcpu *vcpu,
- 	return -EINVAL;
- }
- 
-+int kvm_arm_vcpu_get_events(struct kvm_vcpu *vcpu,
-+			struct kvm_vcpu_events *events)
-+{
-+	memset(events, 0, sizeof(*events));
-+
-+	events->exception.serror_pending = !!(vcpu->arch.hcr_el2 & HCR_VSE);
-+	events->exception.serror_has_esr =
-+					cpus_have_const_cap(ARM64_HAS_RAS_EXTN);
-+
-+	if (events->exception.serror_pending &&
-+		events->exception.serror_has_esr)
-+		events->exception.serror_esr = vcpu_get_vsesr(vcpu);
-+	else
-+		events->exception.serror_esr = 0;
-+
-+	return 0;
-+}
-+
-+int kvm_arm_vcpu_set_events(struct kvm_vcpu *vcpu,
-+			struct kvm_vcpu_events *events)
-+{
-+	bool serror_pending = events->exception.serror_pending;
-+	bool has_esr = events->exception.serror_has_esr;
-+
-+	if (serror_pending && has_esr) {
-+		if (!cpus_have_const_cap(ARM64_HAS_RAS_EXTN))
-+			return -EINVAL;
-+
-+		kvm_set_sei_esr(vcpu, events->exception.serror_esr);
-+	} else if (serror_pending) {
-+		kvm_inject_vabt(vcpu);
-+	}
-+
-+	return 0;
-+}
-+
- int __attribute_const__ kvm_target_cpu(void)
- {
- 	unsigned long implementor = read_cpuid_implementor();
-diff --git a/arch/arm64/kvm/inject_fault.c b/arch/arm64/kvm/inject_fault.c
-index d8e7165..a55e91d 100644
---- a/arch/arm64/kvm/inject_fault.c
-+++ b/arch/arm64/kvm/inject_fault.c
-@@ -164,9 +164,9 @@ void kvm_inject_undefined(struct kvm_vcpu *vcpu)
- 		inject_undef64(vcpu);
- }
- 
--static void pend_guest_serror(struct kvm_vcpu *vcpu, u64 esr)
-+void kvm_set_sei_esr(struct kvm_vcpu *vcpu, u64 esr)
- {
--	vcpu_set_vsesr(vcpu, esr);
-+	vcpu_set_vsesr(vcpu, esr & ESR_ELx_ISS_MASK);
- 	*vcpu_hcr(vcpu) |= HCR_VSE;
- }
- 
-@@ -184,5 +184,5 @@ static void pend_guest_serror(struct kvm_vcpu *vcpu, u64 esr)
-  */
- void kvm_inject_vabt(struct kvm_vcpu *vcpu)
- {
--	pend_guest_serror(vcpu, ESR_ELx_ISV);
-+	kvm_set_sei_esr(vcpu, ESR_ELx_ISV);
- }
-diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
-index 38c8a64..20e919a 100644
---- a/arch/arm64/kvm/reset.c
-+++ b/arch/arm64/kvm/reset.c
-@@ -82,6 +82,7 @@ int kvm_arch_dev_ioctl_check_extension(struct kvm *kvm, long ext)
- 		break;
- 	case KVM_CAP_SET_GUEST_DEBUG:
- 	case KVM_CAP_VCPU_ATTRIBUTES:
-+	case KVM_CAP_VCPU_EVENTS:
- 		r = 1;
- 		break;
- 	default:
-diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
-index a4c1b76..79ecba9 100644
---- a/virt/kvm/arm/arm.c
-+++ b/virt/kvm/arm/arm.c
-@@ -1107,6 +1107,25 @@ long kvm_arch_vcpu_ioctl(struct file *filp,
- 		r = kvm_arm_vcpu_has_attr(vcpu, &attr);
- 		break;
- 	}
-+	case KVM_GET_VCPU_EVENTS: {
-+		struct kvm_vcpu_events events;
-+
-+		if (kvm_arm_vcpu_get_events(vcpu, &events))
-+			return -EINVAL;
-+
-+		if (copy_to_user(argp, &events, sizeof(events)))
-+			return -EFAULT;
-+
++	if (!path)
 +		return 0;
-+	}
-+	case KVM_SET_VCPU_EVENTS: {
-+		struct kvm_vcpu_events events;
 +
-+		if (copy_from_user(&events, argp, sizeof(events)))
-+			return -EFAULT;
+ 	for (i = 0; i < path_len; i++) {
+ 		enum mtk_ddp_comp_id comp_id = path[i];
+ 		struct device_node *node;
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+index 08d5d0b47bfe..3d279a299383 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+@@ -232,6 +232,11 @@ static int mtk_drm_kms_init(struct drm_device *drm)
+ 	if (ret < 0)
+ 		goto err_component_unbind;
+ 
++	ret = mtk_drm_crtc_create(drm, private->data->third_path,
++				  private->data->third_len);
++	if (ret < 0)
++		goto err_component_unbind;
 +
-+		return kvm_arm_vcpu_set_events(vcpu, &events);
-+	}
- 	default:
- 		r = -EINVAL;
- 	}
+ 	/* Use OVL device for all DMA memory allocations */
+ 	np = private->comp_node[private->data->main_path[0]] ?:
+ 	     private->comp_node[private->data->ext_path[0]];
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.h b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+index c3378c452c0a..ecc00ca3221d 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.h
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+@@ -17,7 +17,7 @@
+ #include <linux/io.h>
+ #include "mtk_drm_ddp_comp.h"
+ 
+-#define MAX_CRTC	2
++#define MAX_CRTC	3
+ #define MAX_CONNECTOR	2
+ 
+ struct device;
+@@ -33,6 +33,9 @@ struct mtk_mmsys_driver_data {
+ 	unsigned int main_len;
+ 	const enum mtk_ddp_comp_id *ext_path;
+ 	unsigned int ext_len;
++	const enum mtk_ddp_comp_id *third_path;
++	unsigned int third_len;
++
+ 	bool shadow_register;
+ };
+ 
 -- 
-2.7.4
+2.12.5
