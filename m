@@ -6,192 +6,90 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 360B4C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 21:51:18 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9D9F2C004E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 21:51:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB6D32087E
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 21:51:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49D412086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 21:51:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VXl3UgtT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB6D32087E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="V0dLBdCr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49D412086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934588AbeFKVvP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 17:51:15 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:35584 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934508AbeFKVvN (ORCPT
+        id S934648AbeFKVv0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 17:51:26 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:32807 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934508AbeFKVvY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 17:51:13 -0400
-Received: by mail-wm0-f66.google.com with SMTP id j15-v6so19400299wme.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 14:51:12 -0700 (PDT)
+        Mon, 11 Jun 2018 17:51:24 -0400
+Received: by mail-pl0-f66.google.com with SMTP id n10-v6so13084704plp.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 14:51:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=cDfYUgcbqdWDJ4VcyTWS+v9n0G4kAUF/CFANjJEwcBU=;
-        b=VXl3UgtTpO2BSM1Z7g5fiefMbdWwEfGyF4232joL4A1g9ZCZiAN6ngUGvMkxIYuwUV
-         bBiqLqreHBUQbrDRcWvLCFGMQFwWZVpI1utwd8Y8bNjY32J+dlmLhaLPEvCj0frh/uyJ
-         me7FtJNgS0mUj5YoV5/F4EfYB3IJR8JvMpSic=
+        d=sifive.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=nbRfi1DqzuU2+C610KN0oKbD2xVholLrrhMtfij4Q64=;
+        b=V0dLBdCriLigGV9ZC3WwUeaEQuZLN8Vm4PnnZrHb4B0sAIRFmgGUR/7MqpEWtI1rLw
+         5bKiFvJJaouxJRMOq0wUbPp4wcn++ETB62/bKPY4Dvj6zZXd9QwxIkWcI+O67BfYB7K5
+         D8VPXKms6YUX5+LtU3uOuzKBvFLfI5N5582HZKAQdV7OtbR5cmHqgGbH3khcCJJAMzbB
+         R8fjKCcNolKuBtAChV1FSWctLzyHC+oRWGP38UiyRSDISfbtht/mYQbhberpMmRucZMH
+         M58pkEw9m5W0Lb/XXFIGmRcu1dyMMMf9lzoJQM2L5NI22se6ZuOX5nlHJM0oYxSpsxVq
+         aNqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=cDfYUgcbqdWDJ4VcyTWS+v9n0G4kAUF/CFANjJEwcBU=;
-        b=pdzrQCzlUih00sTyrMHoVuwE/KzbIOb63oj9+Y3yYL8URv0oathQ0+//QV2mkMAGGr
-         5VbQo4PbyVKdV9v2KT/HG6hcAj/gLiBhfB1o4rTP1Ls30KwNkWLJ56NZJ7UNbV8a9AY6
-         mWNsAaQHXlhn3+bhYx/Lj+MDpdrq8g562uCsZFSGfEM28Mskd9bneWrFUh8lhF/uj+rp
-         R9kJ0ekjFJMYEVVv7JmWxaBy6Ow8HHxoTP5VtyRgmex/nXMGorDJBa8oB0UGC3gl8e2l
-         s6HbnlU22J4QTzH87RWePcMwZdSXCxeSxNMHZhYJSnLazNXB5n7CAfKHG6QtukRBXsKC
-         IQEg==
-X-Gm-Message-State: APt69E0iQ0zQkeopiUhsq1k7EQ/J4gN3hZESAHRtxHTTRYpcRilYIm1T
-        9mtdNFpDBY67GrePR0OcO6Tg7IzoqdcN4VlxUtS6WQ==
-X-Google-Smtp-Source: ADUXVKJ3z83GdMNFonCcHJFwHH6Us7sE4QyDXjaVg31Y1AyyXfEvF4jtaa1+lMhQwvf0Yr3ZCSnSDYOyGkxotFlPUmo=
-X-Received: by 2002:a50:b608:: with SMTP id b8-v6mr759412ede.255.1528753872140;
- Mon, 11 Jun 2018 14:51:12 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a50:a48a:0:0:0:0:0 with HTTP; Mon, 11 Jun 2018 14:51:11
- -0700 (PDT)
-In-Reply-To: <0a213578-c7d7-0ed3-ffc1-afc97d8d1516@arm.com>
-References: <1528235011-30691-1-git-send-email-suzuki.poulose@arm.com>
- <1528235011-30691-9-git-send-email-suzuki.poulose@arm.com>
- <20180608212211.GG30587@xps15> <f616c825-b459-397d-3e61-70c1f1790f4f@arm.com>
- <CANLsYkwGmUpHKRZYJ=pGbEKOAGT6O=+u0_mpAJOyoONuqpXO4g@mail.gmail.com> <0a213578-c7d7-0ed3-ffc1-afc97d8d1516@arm.com>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Mon, 11 Jun 2018 15:51:11 -0600
-Message-ID: <CANLsYkyuLVkRWtnVCej2ovDx9RJiA_hADy1XVD+tStFmq0fNrQ@mail.gmail.com>
-Subject: Re: [PATCH 08/20] coresight: dts: Cleanup device tree graph bindings
-To:     Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Rob Herring <robh@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>, arm@kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matt Sealey <matt.sealey@arm.com>,
-        John Horley <john.horley@arm.com>,
-        Charles Garcia-Tobin <charles.garcia-tobin@arm.com>,
-        coresight@lists.linaro.org, devicetree@vger.kernel.org,
-        Mike Leach <mike.leach@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=nbRfi1DqzuU2+C610KN0oKbD2xVholLrrhMtfij4Q64=;
+        b=Z7uTwzQ50U+qVRCfMEsTXQ8hLjY28dxJN7shAiT37Q377ZtL5J005nB7kMCmHBf1Vd
+         sSczPgXRK3L62WD+b9M6T4ybmsGoBDXuoC4EjnNWvoAiz51g4T6fSb4Fo7CwOklcLydr
+         LXfhrpS2xZbnFFnNtk7cIvCm2Rmd3t8V78anvrI1fl8brLskSiqHw4KDkM1yo0F8Ck/W
+         zEq8prgUHiWb2X8lxHCGTVEV+KKZ+LUmb2RruI7/T5hKsIGMipKrG6nVjwBXvcOJgpyG
+         OOHbFs14ZfeduyqrJoI1QUDrbCQzYdNUuGl3ETkGy2i8baE/65rCiXV8g+YlKChLYamk
+         vhbg==
+X-Gm-Message-State: APt69E0LE6y5qlhqHrOLXkw1apjyLjDcHX91yjElu4L2TuqXXJm2qvqu
+        ux6fq/IeSsoQe6hyZzsLWG4J5A==
+X-Google-Smtp-Source: ADUXVKJN9mUx+8OcQeTS/EX2fT7xkzpT9RFJHuWvot7voJaoUqiEhocIu8sRD5/KUuEtyawCOThefA==
+X-Received: by 2002:a17:902:530e:: with SMTP id b14-v6mr948989pli.316.1528753883858;
+        Mon, 11 Jun 2018 14:51:23 -0700 (PDT)
+Received: from rohan.internal.sifive.com ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id d9-v6sm72740859pfg.183.2018.06.11.14.51.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Jun 2018 14:51:22 -0700 (PDT)
+From:   Jim Wilson <jimw@sifive.com>
+To:     linux-riscv@lists.infradead.org
+Cc:     jimw@sifive.com, Oleg Nesterov <oleg@redhat.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <albert@sifive.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH] RISC-V: Fix PTRACE_SETREGSET bug.
+Date:   Mon, 11 Jun 2018 14:48:22 -0700
+Message-Id: <20180611214822.8539-1-jimw@sifive.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11 June 2018 at 10:55, Suzuki K Poulose <Suzuki.Poulose@arm.com> wrote:
-> On 11/06/18 17:52, Mathieu Poirier wrote:
->>
->> On 11 June 2018 at 03:22, Suzuki K Poulose <Suzuki.Poulose@arm.com> wrote:
->>>
->>> On 08/06/18 22:22, Mathieu Poirier wrote:
->>>>
->>>>
->>>> On Tue, Jun 05, 2018 at 10:43:19PM +0100, Suzuki K Poulose wrote:
->>>>>
->>>>>
->>>>> The coresight drivers relied on default bindings for graph
->>>>> in DT, while reusing the "reg" field of the "ports" to indicate
->>>>> the actual hardware port number for the connections. However,
->>>>> with the rules getting stricter w.r.t to the address mismatch
->>>>> with the label, it is no longer possible to use the port address
->>>>> field for the hardware port number. Hence, we add an explicit
->>>>> property to denote the hardware port number, "coresight,hwid"
->>>>> which must be specified for each "endpoint".
->>>>>
->>>>> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
->>>>> Cc: Sudeep Holla <sudeep.holla@arm.com>
->>>>> Cc: Rob Herring <robh@kernel.org>
->>>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->>>>> ---
->>>>>    .../devicetree/bindings/arm/coresight.txt          | 29
->>>>> ++++++++++---
->>>>>    drivers/hwtracing/coresight/of_coresight.c         | 49
->>>>> +++++++++++++++++-----
->>>>>    2 files changed, 62 insertions(+), 16 deletions(-)
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/arm/coresight.txt
->>>>> b/Documentation/devicetree/bindings/arm/coresight.txt
->>>>> index ed6b555..bf75ab3 100644
->>>>> --- a/Documentation/devicetree/bindings/arm/coresight.txt
->>>>> +++ b/Documentation/devicetree/bindings/arm/coresight.txt
->>>>> @@ -108,8 +108,13 @@ following properties to uniquely identify the
->>>>> connection details.
->>>>>          "slave-mode"
->>>
->>>
->>>
->>>
->>>>>          };
->>>>
->>>>
->>>>
->>>> For the binding part:
->>>> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
->
->
-> ...
->
->>>>> @@ -140,9 +166,6 @@ static int of_coresight_parse_endpoint(struct
->>>>> device_node *ep,
->>>>>                  rparent = of_graph_get_port_parent(rep);
->>>>>                  if (!rparent)
->>>>>                          break;
->>>>> -               if (of_graph_parse_endpoint(rep, &rendpoint))
->>>>> -                       break;
->>>>> -
->>>>>                  /* If the remote device is not available, defer
->>>>> probing
->>>>> */
->>>>>                  rdev = of_coresight_get_endpoint_device(rparent);
->>>>>                  if (!rdev) {
->>>>> @@ -150,9 +173,15 @@ static int of_coresight_parse_endpoint(struct
->>>>> device_node *ep,
->>>>>                          break;
->>>>>                  }
->>>>>    -             conn->outport = endpoint.port;
->>>>> +               child_port = of_coresight_endpoint_get_port_id(rdev,
->>>>> rep);
->>>>> +               if (child_port < 0) {
->>>>> +                       ret = 0;
->>>>
->>>>
->>>>
->>>> Why returning '0' on an error condition?  Same for 'local_port' above.
->>>>
->>>
->>> If we are unable to parse a port, we can simply ignore the port and
->>> continue, which
->>> is what we have today with the existing code. I didn't change it and
->>> still
->>> think
->>> it is the best effort thing. We could spit a warning for such cases, if
->>> really needed.
->>> Also, the parsing code almost never fails at the moment. If it fails to
->>> find
->>> "reg" field,
->>> it is assumed to be '0'. Either way ignoring it seems harmless. That said
->>> I
->>> am open
->>> to suggestions.
->>
->>
->> Looking at the original code I remember not mandating enpoints to be
->> valid for debugging purposes.  That certainly helps when building up a
->> device tree file but also has the side effect of silently overlooking
->> specification problems.  Fortunately the revamping you did on that
->> part of the code makes it very easy to change that, something I think
->> we should take advantage of (it can only lead to positive scenarios
->> where defective specifications get pointed out).
->>
->> That being said and because the original behaviour is just as
->> permissive, you can leave as is.
->
->
-> Thanks. So can I assume the Reviewed-by applies for the code now ?
+In riscv_gpr_set, pass regs instead of &regs to user_regset_copyin to fix
+gdb segfault.
 
-Yes
+Signed-off-by: Jim Wilson <jimw@sifive.com>
+---
+ arch/riscv/kernel/ptrace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->
-> Suzuki
+diff --git a/arch/riscv/kernel/ptrace.c b/arch/riscv/kernel/ptrace.c
+index ba3e80712797..9f82a7e34c64 100644
+--- a/arch/riscv/kernel/ptrace.c
++++ b/arch/riscv/kernel/ptrace.c
+@@ -50,7 +50,7 @@ static int riscv_gpr_set(struct task_struct *target,
+ 	struct pt_regs *regs;
+ 
+ 	regs = task_pt_regs(target);
+-	ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &regs, 0, -1);
++	ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, regs, 0, -1);
+ 	return ret;
+ }
+ 
+-- 
+2.17.1
+
