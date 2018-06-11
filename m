@@ -1,252 +1,185 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id bRwxNnQ6HVsyWQAAmS7hNA
-	; Sun, 10 Jun 2018 14:49:24 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id u6cOI3dIHlvnFQAAmS7hNA
+	; Mon, 11 Jun 2018 10:01:51 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id C02616074D; Sun, 10 Jun 2018 14:49:24 +0000 (UTC)
+	id 3406860792; Mon, 11 Jun 2018 10:01:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+	s=default; t=1528711311;
+	bh=ozHNCfECRVbX+1IAzFUy+aeG+G4dkqJnMQo3lOSFgAI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=UcUtcJJztUD5lkjA0gnKaeUUEakpMUN1vjpAPekWsnM5QraGCGx2JH2mueD0IYPSJ
+	 KyuHuMaGujHWA2jee3S1Qg4uNPaZIOK/K1f4w9VhvRclXdfmPI6qdbFBSiD4Q74sp2
+	 7MnZ80vyWAlSsDQkhgWL5UeFOuqEXWM+YgGyUGtw=
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 784FD604D4;
-	Sun, 10 Jun 2018 14:49:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 784FD604D4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+	by smtp.codeaurora.org (Postfix) with ESMTP id A1D4660385;
+	Mon, 11 Jun 2018 10:01:50 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="R3UJGOch";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="J88dwj29"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A1D4660385
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753518AbeFJOtV (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sun, 10 Jun 2018 10:49:21 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:51578 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750744AbeFJOtT (ORCPT
+        id S932763AbeFKKBs (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 06:01:48 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:44000 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932405AbeFKKBq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 10:49:19 -0400
-Received: from fsav104.sakura.ne.jp (fsav104.sakura.ne.jp [27.133.134.231])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w5AEm2iQ046127;
-        Sun, 10 Jun 2018 23:48:02 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav104.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp);
- Sun, 10 Jun 2018 23:48:02 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w5AEluAR046069
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Sun, 10 Jun 2018 23:48:01 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Subject: Re: INFO: task hung in __sb_start_write
-To: Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>
-References: <000000000000283c37056b4a81a5@google.com>
-Cc: syzbot <syzbot+7b2866454055e43c21e5@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <ee29ad1e-8bd0-3eef-f49e-793bfadcbea7@I-love.SAKURA.ne.jp>
-Date: Sun, 10 Jun 2018 23:47:56 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 11 Jun 2018 06:01:46 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 0F248608B8; Mon, 11 Jun 2018 10:01:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528711306;
+        bh=ozHNCfECRVbX+1IAzFUy+aeG+G4dkqJnMQo3lOSFgAI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=R3UJGOchjM2XoAVj/tgPIgjqyF15EF+4u9m+/IKmDI+FztCZC8PzsHOlv3HDezVYb
+         rKqaHvj08epWht816p5tJeX43VlNoLvtV5LfgMe2ZzCoMtcraQc1SMPFbsbHHzHlff
+         KGjWP+N0RQt/z3aasEcS1WsUhIoKbPrWtaN1ukrE=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id CF13760791;
+        Mon, 11 Jun 2018 10:01:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528711304;
+        bh=ozHNCfECRVbX+1IAzFUy+aeG+G4dkqJnMQo3lOSFgAI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=J88dwj293M0OSN5kj2pDXHMJf+gOiuAQGGId08qY6YR+2SPc/aAjuy52IWyxjeDrl
+         tJdyhYZQoJMGyCNp1ez5MIv8C1kRYfUQ7BDvpCzW4LuEsCsagJC8LN+Y16RtOQ4nVD
+         LqB2ZPMfcTxXMelPCuECd4hk/OYhE2QEuzYr39TU=
 MIME-Version: 1.0
-In-Reply-To: <000000000000283c37056b4a81a5@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date: Mon, 11 Jun 2018 15:31:44 +0530
+From: poza@codeaurora.org
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dongdong Liu <liudongdong3@huawei.com>,
+        Keith Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH NEXT 6/6] PCI/PORTDRV: Remove ERR_FATAL handling from
+ pcie_portdrv_slot_reset()
+In-Reply-To: <20180607213448.GB37077@bhelgaas-glaptop.roam.corp.google.com>
+References: <1528351234-26914-1-git-send-email-poza@codeaurora.org>
+ <1528351234-26914-6-git-send-email-poza@codeaurora.org>
+ <94661add3e71e3694aa22c2a9cabf503@codeaurora.org>
+ <20180607213448.GB37077@bhelgaas-glaptop.roam.corp.google.com>
+Message-ID: <50f38cb058b29f84ca60a19825efd28a@codeaurora.org>
+X-Sender: poza@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello.
+On 2018-06-08 03:04, Bjorn Helgaas wrote:
+> On Thu, Jun 07, 2018 at 07:18:03PM +0530, poza@codeaurora.org wrote:
+>> On 2018-06-07 11:30, Oza Pawandeep wrote:
+>> > We are handling ERR_FATAL by resetting the Link in software,skipping the
+>> > driver pci_error_handlers callbacks, removing the devices from the PCI
+>> > subsystem, and re-enumerating, as a result of that, no more calling
+>> > pcie_portdrv_slot_reset in ERR_FATAL case.
+>> >
+>> > Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
+>> >
+>> > diff --git a/drivers/pci/pcie/portdrv_pci.c
+>> > b/drivers/pci/pcie/portdrv_pci.c
+>> > index 973f1b8..92f5d330 100644
+>> > --- a/drivers/pci/pcie/portdrv_pci.c
+>> > +++ b/drivers/pci/pcie/portdrv_pci.c
+>> > @@ -42,17 +42,6 @@ __setup("pcie_ports=", pcie_port_setup);
+>> >
+>> >  /* global data */
+>> >
+>> > -static int pcie_portdrv_restore_config(struct pci_dev *dev)
+>> > -{
+>> > -	int retval;
+>> > -
+>> > -	retval = pci_enable_device(dev);
+>> > -	if (retval)
+>> > -		return retval;
+>> > -	pci_set_master(dev);
+>> > -	return 0;
+>> > -}
+>> > -
+>> >  #ifdef CONFIG_PM
+>> >  static int pcie_port_runtime_suspend(struct device *dev)
+>> >  {
+>> > @@ -162,14 +151,6 @@ static pci_ers_result_t
+>> > pcie_portdrv_mmio_enabled(struct pci_dev *dev)
+>> >
+>> >  static pci_ers_result_t pcie_portdrv_slot_reset(struct pci_dev *dev)
+>> >  {
+>> > -	/* If fatal, restore cfg space for possible link reset at upstream */
+>> > -	if (dev->error_state == pci_channel_io_frozen) {
+>> > -		dev->state_saved = true;
+>> > -		pci_restore_state(dev);
+>> > -		pcie_portdrv_restore_config(dev);
+>> > -		pci_enable_pcie_error_reporting(dev);
+>> > -	}
+>> > -
+>> >  	return PCI_ERS_RESULT_RECOVERED;
+>> >  }
+>> 
+>> 
+>> Hi Bjorn,
+>> 
+>> the above patch removes ERR_FATAL handling from 
+>> pcie_portdrv_slot_reset()
+>> because now we are handling ERR_FATAL differently than before.
+>> 
+>> I tried to dig into pcie_portdrv_slot_reset() handling for ERR_FATAL 
+>> case
+>> where it
+>> restores the config space, enable device, set master and enable error
+>> reporting....
+>> and as far as I understand this is being done for upstream link 
+>> (bridges
+>> etc..)
+>> 
+>> why was it done at the first point (I checked the commit description, 
+>> but
+>> could not really get it)
+>> and do we need to handle the same thing in ERR_FATAL now ?
+> 
+> You mean 4bf3392e0bf5 ("PCI-Express AER implemetation: pcie_portdrv
+> error handler"), which added pcie_portdrv_slot_reset()?  I agree, that
+> commit log has no useful information.  I don't know any of the history
+> behind it.
 
-Commits
+Hi Bjorn and Keith,
 
-  401c636a0eeb0d51 "kernel/hung_task.c: show all hung tasks before panic"
-  8cc05c71ba5f7936 "locking/lockdep: Move sanity check to inside lockdep_print_held_locks()"
+broadcast_error_message()
+if (dev->hdr_type == PCI_HEADER_TYPE_BRIDGE) {
+         .....
+         pci_walk_bus(dev->subordinate, cb, &result_data);
 
-arrived at linux.git and syzbot started giving us more hints.
 
-Quoting from https://syzkaller.appspot.com/text?tag=CrashReport&x=1477e81f800000 :
-----------------------------------------
-2 locks held by rs:main Q:Reg/4416:
- #0: 00000000dff3f899 (&f->f_pos_lock){+.+.}, at: __fdget_pos+0x1a9/0x1e0 fs/file.c:766
- #1: 00000000c4a96cb8 (sb_writers#6){++++}, at: file_start_write include/linux/fs.h:2737 [inline]
- #1: 00000000c4a96cb8 (sb_writers#6){++++}, at: vfs_write+0x452/0x560 fs/read_write.c:548
+so in case of ERR_FATAL, the walk bus is happening on subordinates, and 
+if I understand the walk right
+then, pcie_portdrv_slot_reset() is called only on BRIDGES/Switches
 
-1 lock held by rsyslogd/4418:
- #0: 000000007f0c215c (&f->f_pos_lock){+.+.}, at: __fdget_pos+0x1a9/0x1e0 fs/file.c:766
+If is never called on Root-Ports
 
-syz-executor4   D22224  4597   4588 0x00000000
-Call Trace:
- context_switch kernel/sched/core.c:2856 [inline]
- __schedule+0x801/0x1e30 kernel/sched/core.c:3498
- schedule+0xef/0x430 kernel/sched/core.c:3542
- __rwsem_down_read_failed_common kernel/locking/rwsem-xadd.c:269 [inline]
- rwsem_down_read_failed+0x350/0x5e0 kernel/locking/rwsem-xadd.c:286
- call_rwsem_down_read_failed+0x18/0x30 arch/x86/lib/rwsem.S:94
- __down_read arch/x86/include/asm/rwsem.h:83 [inline]
- __percpu_down_read+0x15d/0x200 kernel/locking/percpu-rwsem.c:85
- percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:49 [inline]
- percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
- __sb_start_write+0x2d7/0x300 fs/super.c:1403
- sb_start_write include/linux/fs.h:1552 [inline]
- mnt_want_write+0x3f/0xc0 fs/namespace.c:386
- do_unlinkat+0x2a3/0xa10 fs/namei.c:4026
- __do_sys_unlink fs/namei.c:4091 [inline]
- __se_sys_unlink fs/namei.c:4089 [inline]
- __x64_sys_unlink+0x42/0x50 fs/namei.c:4089
- do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-1 lock held by syz-executor4/4597:
- #0: 00000000c4a96cb8 (sb_writers#6){++++}, at: sb_start_write include/linux/fs.h:1552 [inline]
- #0: 00000000c4a96cb8 (sb_writers#6){++++}, at: mnt_want_write+0x3f/0xc0 fs/namespace.c:386
+having said that, now since we are removing the devices (compare to 
+previous error callback handling in ERR_FATAL)
+I dont see the need of the above code anymore.
 
-syz-executor6   D21536  4600   4591 0x00000000
-Call Trace:
- context_switch kernel/sched/core.c:2856 [inline]
- __schedule+0x801/0x1e30 kernel/sched/core.c:3498
- schedule+0xef/0x430 kernel/sched/core.c:3542
- __rwsem_down_read_failed_common kernel/locking/rwsem-xadd.c:269 [inline]
- rwsem_down_read_failed+0x350/0x5e0 kernel/locking/rwsem-xadd.c:286
- call_rwsem_down_read_failed+0x18/0x30 arch/x86/lib/rwsem.S:94
- __down_read arch/x86/include/asm/rwsem.h:83 [inline]
- __percpu_down_read+0x15d/0x200 kernel/locking/percpu-rwsem.c:85
- percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:49 [inline]
- percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
- __sb_start_write+0x2d7/0x300 fs/super.c:1403
- sb_start_write include/linux/fs.h:1552 [inline]
- mnt_want_write+0x3f/0xc0 fs/namespace.c:386
- do_unlinkat+0x2a3/0xa10 fs/namei.c:4026
- __do_sys_unlink fs/namei.c:4091 [inline]
- __se_sys_unlink fs/namei.c:4089 [inline]
- __x64_sys_unlink+0x42/0x50 fs/namei.c:4089
- do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-1 lock held by syz-executor6/4600:
- #0: 00000000c4a96cb8 (sb_writers#6){++++}, at: sb_start_write include/linux/fs.h:1552 [inline]
- #0: 00000000c4a96cb8 (sb_writers#6){++++}, at: mnt_want_write+0x3f/0xc0 fs/namespace.c:386
+because there is nothing to restore to any more. as we are initiating 
+re-enumeration.
 
-syz-executor3   D21536  7320   7261 0x00000000
-Call Trace:
- context_switch kernel/sched/core.c:2856 [inline]
- __schedule+0x801/0x1e30 kernel/sched/core.c:3498
- schedule+0xef/0x430 kernel/sched/core.c:3542
- __rwsem_down_read_failed_common kernel/locking/rwsem-xadd.c:269 [inline]
- rwsem_down_read_failed+0x350/0x5e0 kernel/locking/rwsem-xadd.c:286
- call_rwsem_down_read_failed+0x18/0x30 arch/x86/lib/rwsem.S:94
- __down_read arch/x86/include/asm/rwsem.h:83 [inline]
- __percpu_down_read+0x15d/0x200 kernel/locking/percpu-rwsem.c:85
- percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:49 [inline]
- percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
- __sb_start_write+0x2d7/0x300 fs/super.c:1403
- sb_start_write include/linux/fs.h:1552 [inline]
- mnt_want_write+0x3f/0xc0 fs/namespace.c:386
- do_unlinkat+0x2a3/0xa10 fs/namei.c:4026
- __do_sys_unlink fs/namei.c:4091 [inline]
- __se_sys_unlink fs/namei.c:4089 [inline]
- __x64_sys_unlink+0x42/0x50 fs/namei.c:4089
- do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-1 lock held by syz-executor3/7320:
- #0: 00000000c4a96cb8 (sb_writers#6){++++}, at: sb_start_write include/linux/fs.h:1552 [inline]
- #0: 00000000c4a96cb8 (sb_writers#6){++++}, at: mnt_want_write+0x3f/0xc0 fs/namespace.c:386
-
-syz-executor2   D24032 13221   4593 0x00000004
-Call Trace:
- context_switch kernel/sched/core.c:2856 [inline]
- __schedule+0x801/0x1e30 kernel/sched/core.c:3498
- schedule+0xef/0x430 kernel/sched/core.c:3542
- __rwsem_down_read_failed_common kernel/locking/rwsem-xadd.c:269 [inline]
- rwsem_down_read_failed+0x350/0x5e0 kernel/locking/rwsem-xadd.c:286
- call_rwsem_down_read_failed+0x18/0x30 arch/x86/lib/rwsem.S:94
- __down_read arch/x86/include/asm/rwsem.h:83 [inline]
- __percpu_down_read+0x15d/0x200 kernel/locking/percpu-rwsem.c:85
- percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:49 [inline]
- percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
- __sb_start_write+0x2d7/0x300 fs/super.c:1403
- sb_start_pagefault include/linux/fs.h:1581 [inline]
- ext4_page_mkwrite+0x1c8/0x1420 fs/ext4/inode.c:6125
- do_page_mkwrite+0x146/0x500 mm/memory.c:2380
- do_shared_fault mm/memory.c:3706 [inline]
- do_fault mm/memory.c:3745 [inline]
- handle_pte_fault mm/memory.c:3972 [inline]
- __handle_mm_fault+0x2acb/0x4390 mm/memory.c:4096
- handle_mm_fault+0x53a/0xc70 mm/memory.c:4133
- __do_page_fault+0x60b/0xe40 arch/x86/mm/fault.c:1403
- do_page_fault+0xee/0x8a7 arch/x86/mm/fault.c:1478
- page_fault+0x1e/0x30 arch/x86/entry/entry_64.S:1160
-2 locks held by syz-executor2/13221:
- #0: 000000002618cb0b (&mm->mmap_sem){++++}, at: __do_page_fault+0x381/0xe40 arch/x86/mm/fault.c:1332
- #1: 00000000a50d0f8c (sb_pagefaults){++++}, at: sb_start_pagefault include/linux/fs.h:1581 [inline]
- #1: 00000000a50d0f8c (sb_pagefaults){++++}, at: ext4_page_mkwrite+0x1c8/0x1420 fs/ext4/inode.c:6125
-
-syz-executor5   D24696 13225   4598 0x00000004
-Call Trace:
- context_switch kernel/sched/core.c:2856 [inline]
- __schedule+0x801/0x1e30 kernel/sched/core.c:3498
- schedule+0xef/0x430 kernel/sched/core.c:3542
- __rwsem_down_read_failed_common kernel/locking/rwsem-xadd.c:269 [inline]
- rwsem_down_read_failed+0x350/0x5e0 kernel/locking/rwsem-xadd.c:286
- call_rwsem_down_read_failed+0x18/0x30 arch/x86/lib/rwsem.S:94
- __down_read arch/x86/include/asm/rwsem.h:83 [inline]
- __percpu_down_read+0x15d/0x200 kernel/locking/percpu-rwsem.c:85
- percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:49 [inline]
- percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
- __sb_start_write+0x2d7/0x300 fs/super.c:1403
- sb_start_pagefault include/linux/fs.h:1581 [inline]
- ext4_page_mkwrite+0x1c8/0x1420 fs/ext4/inode.c:6125
- do_page_mkwrite+0x146/0x500 mm/memory.c:2380
- wp_page_shared mm/memory.c:2676 [inline]
- do_wp_page+0xf5d/0x1990 mm/memory.c:2776
- handle_pte_fault mm/memory.c:3988 [inline]
- __handle_mm_fault+0x29f5/0x4390 mm/memory.c:4096
- handle_mm_fault+0x53a/0xc70 mm/memory.c:4133
- __do_page_fault+0x60b/0xe40 arch/x86/mm/fault.c:1403
- do_page_fault+0xee/0x8a7 arch/x86/mm/fault.c:1478
- page_fault+0x1e/0x30 arch/x86/entry/entry_64.S:1160
-2 locks held by syz-executor5/13225:
- #0: 000000000aa505ed (&mm->mmap_sem){++++}, at: __do_page_fault+0x381/0xe40 arch/x86/mm/fault.c:1332
- #1: 00000000a50d0f8c (sb_pagefaults){++++}, at: sb_start_pagefault include/linux/fs.h:1581 [inline]
- #1: 00000000a50d0f8c (sb_pagefaults){++++}, at: ext4_page_mkwrite+0x1c8/0x1420 fs/ext4/inode.c:6125
-
-syz-executor1   D23432 13236   4594 0x00000004
-Call Trace:
- context_switch kernel/sched/core.c:2856 [inline]
- __schedule+0x801/0x1e30 kernel/sched/core.c:3498
- schedule+0xef/0x430 kernel/sched/core.c:3542
- __rwsem_down_read_failed_common kernel/locking/rwsem-xadd.c:269 [inline]
- rwsem_down_read_failed+0x350/0x5e0 kernel/locking/rwsem-xadd.c:286
- call_rwsem_down_read_failed+0x18/0x30 arch/x86/lib/rwsem.S:94
- __down_read arch/x86/include/asm/rwsem.h:83 [inline]
- __percpu_down_read+0x15d/0x200 kernel/locking/percpu-rwsem.c:85
- percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:49 [inline]
- percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
- __sb_start_write+0x2d7/0x300 fs/super.c:1403
- sb_start_pagefault include/linux/fs.h:1581 [inline]
- ext4_page_mkwrite+0x1c8/0x1420 fs/ext4/inode.c:6125
- do_page_mkwrite+0x146/0x500 mm/memory.c:2380
- wp_page_shared mm/memory.c:2676 [inline]
- do_wp_page+0xf5d/0x1990 mm/memory.c:2776
- handle_pte_fault mm/memory.c:3988 [inline]
- __handle_mm_fault+0x29f5/0x4390 mm/memory.c:4096
- handle_mm_fault+0x53a/0xc70 mm/memory.c:4133
- __do_page_fault+0x60b/0xe40 arch/x86/mm/fault.c:1403
- do_page_fault+0xee/0x8a7 arch/x86/mm/fault.c:1478
- page_fault+0x1e/0x30 arch/x86/entry/entry_64.S:1160
-2 locks held by syz-executor1/13236:
- #0: 0000000079279c9c (&mm->mmap_sem){++++}, at: __do_page_fault+0x381/0xe40 arch/x86/mm/fault.c:1332
- #1: 00000000a50d0f8c (sb_pagefaults){++++}, at: sb_start_pagefault include/linux/fs.h:1581 [inline]
- #1: 00000000a50d0f8c (sb_pagefaults){++++}, at: ext4_page_mkwrite+0x1c8/0x1420 fs/ext4/inode.c:6125
-----------------------------------------
-
-This looks quite strange that nobody is holding percpu_rw_semaphore for
-write but everybody is stuck trying to hold it for read. (Since there
-is no "X locks held by ..." line without followup "#0:" line, there is
-no possibility that somebody is in TASK_RUNNING state while holding
-percpu_rw_semaphore for write.)
-
-I feel that either API has a bug or API usage is wrong.
-Any idea for debugging this?
+Regards,
+Oza.
