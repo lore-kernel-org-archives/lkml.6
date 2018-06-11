@@ -2,171 +2,80 @@ Return-Path: <SRS0=KDb5=I5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0D702C5CFF0
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:41:59 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 80D41C5CFF0
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:43:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C070C208B0
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:41:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C070C208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 37911208B9
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:43:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="WP/xxIbU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37911208B9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933807AbeFKRlz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 13:41:55 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54292 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933401AbeFKRly (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 13:41:54 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CB5491435;
-        Mon, 11 Jun 2018 10:41:53 -0700 (PDT)
-Received: from [192.168.43.63] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 70F253F59D;
-        Mon, 11 Jun 2018 10:41:50 -0700 (PDT)
-Subject: Re: [Xen-devel] [PATCH v2 5/9] xen/gntdev: Allow mappings for DMA
- buffers
-To:     Stefano Stabellini <sstabellini@kernel.org>,
-        Oleksandr Andrushchenko <andr2000@gmail.com>
-Cc:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        jgross@suse.com, konrad.wilk@oracle.com, daniel.vetter@intel.com,
-        matthew.d.roper@intel.com, dongwon.kim@intel.com
-References: <20180601114132.22596-1-andr2000@gmail.com>
- <20180601114132.22596-6-andr2000@gmail.com>
- <64facf05-0a51-c3d9-9d3b-780893248628@oracle.com>
- <84217eac-b83b-710f-39ab-c93cad65bf9a@gmail.com>
- <a172746d-7a97-159f-71a7-511b2d239089@oracle.com>
- <30fa03c0-1b75-c0b1-b14f-8b52ea584e20@gmail.com>
- <78dc2fc4-cdac-05b7-2c34-22b69e7e009c@oracle.com>
- <4be24882-185d-01e3-6aa1-751e341433c7@gmail.com>
- <alpine.DEB.2.10.1806081025030.14699@sstabellini-ThinkPad-X260>
- <c6e1820a-fb57-b213-aa2f-05787dae06ad@oracle.com>
- <06eff3fe-3ffc-47f6-6bd6-d8f2f823b382@gmail.com>
- <alpine.DEB.2.10.1806110949050.14695@sstabellini-ThinkPad-X260>
-From:   Julien Grall <julien.grall@arm.com>
-Message-ID: <a58b5309-c742-eefb-182c-17ff2aa05bd6@arm.com>
-Date:   Mon, 11 Jun 2018 18:41:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S933401AbeFKRnX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 13:43:23 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:35108 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932409AbeFKRnV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 13:43:21 -0400
+Received: by mail-it0-f67.google.com with SMTP id a3-v6so12011910itd.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 10:43:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=P83Bmz+I3dA6j+126fEbMec0gGUTZgb/XDKFeFQ9khk=;
+        b=WP/xxIbUn63GP3ak6QbX3o2DeQlXjT/SwX7G14lVsjWWLiCQUoCFNEaonjIXqhQ+ky
+         e8lU1YO+oTwnXx0zp940PFCdw/C9nI3fO9ZW96wu4VJjW2SuZKNlrRDIa/edsPxOedcM
+         I9hfPsIDIG6FI8ghmUb1c6GG3faOIAP/0G0v0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=P83Bmz+I3dA6j+126fEbMec0gGUTZgb/XDKFeFQ9khk=;
+        b=YpWr7m4qbW2kj5qSlKr9sODFUJhQW0+tx3MHZAhhBohLXkyH3I4micfTc4qKcARL6P
+         vpPuqHkcYaF/vt4SxztUe5yWCi8o1Dzdyt9m9A5h02A6H00WF7PkXr4UjUMaPem0X7Di
+         TTjjF/x0DnzUmSt+7YgF4zGcNVpbhkemmnk4cDhsIP51GtltkwER6bHCi8mW034nnMNy
+         PBlugLvSV39KsYRc+bSzmPr2QnXE1UNwPx5sWlzffM9h3m7jSNin/W/WLez0YJR3z/5q
+         Ac87eSegMK+roilYyCFTZ5fP18usR47ygeLWuRJGGDqai2+ASyQLqKjuGTBnWQoT71aG
+         q1iw==
+X-Gm-Message-State: APt69E2aTPrryyx/PYQZIX6nG4BNqdYntIPSa4yNPrdE8hxfqToAeVPh
+        +f/ZCMkCLwG8M7HM4GGqopBGoqZ5/JbO6pMR23w=
+X-Google-Smtp-Source: ADUXVKKESP76UwdjVcJT1PgGCxXYarqwuZjncIxaMTDXNxx8+i0EpZ20TV0DS21/fKQ3rpEDhqkScSimO73OgBnEw1o=
+X-Received: by 2002:a24:5b81:: with SMTP id g123-v6mr135218itb.1.1528739001155;
+ Mon, 11 Jun 2018 10:43:21 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.10.1806110949050.14695@sstabellini-ThinkPad-X260>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20180611165212.GA6783@jaegeuk-macbookpro.roam.corp.google.com>
+ <CA+55aFznP4aEy7DkVfeQ_e6eXgLnswVnSJS3C51UHD_k8qYZCA@mail.gmail.com> <20180611174010.GC6783@jaegeuk-macbookpro.roam.corp.google.com>
+In-Reply-To: <20180611174010.GC6783@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 11 Jun 2018 10:43:10 -0700
+Message-ID: <CA+55aFxWh55LDOjZo03hwG645rdc+fFe6CM-B+C8Nbi7+p_+AA@mail.gmail.com>
+Subject: Re: [GIT PULL] f2fs update for 4.18-rc1
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+Cc:     Matthew Wilcox <mawilcox@microsoft.com>,
+        "Linux F2FS DEV, Mailing List" 
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stefano,
+On Mon, Jun 11, 2018 at 10:40 AM Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+>
+> Heh, I forgot to link the latest results. The MM fix was merged by:
 
-On 06/11/2018 05:51 PM, Stefano Stabellini wrote:
-> On Mon, 11 Jun 2018, Oleksandr Andrushchenko wrote:
->> On 06/08/2018 10:21 PM, Boris Ostrovsky wrote:
->>> On 06/08/2018 01:59 PM, Stefano Stabellini wrote:
->>>>>>>>>>>       @@ -325,6 +401,14 @@ static int map_grant_pages(struct
->>>>>>>>>>> grant_map
->>>>>>>>>>> *map)
->>>>>>>>>>>               map->unmap_ops[i].handle =
->>>>>>>>>>> map->map_ops[i].handle;
->>>>>>>>>>>               if (use_ptemod)
->>>>>>>>>>>                   map->kunmap_ops[i].handle =
->>>>>>>>>>> map->kmap_ops[i].handle;
->>>>>>>>>>> +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
->>>>>>>>>>> +        else if (map->dma_vaddr) {
->>>>>>>>>>> +            unsigned long mfn;
->>>>>>>>>>> +
->>>>>>>>>>> +            mfn = __pfn_to_mfn(page_to_pfn(map->pages[i]));
->>>>>>>>>> Not pfn_to_mfn()?
->>>>>>>>> I'd love to, but pfn_to_mfn is only defined for x86, not ARM:
->>>>>>>>> [1]
->>>>>>>>> and [2]
->>>>>>>>> Thus,
->>>>>>>>>
->>>>>>>>> drivers/xen/gntdev.c:408:10: error: implicit declaration of
->>>>>>>>> function
->>>>>>>>> ‘pfn_to_mfn’ [-Werror=implicit-function-declaration]
->>>>>>>>>         mfn = pfn_to_mfn(page_to_pfn(map->pages[i]));
->>>>>>>>>
->>>>>>>>> So, I'll keep __pfn_to_mfn
->>>>>>>> How will this work on non-PV x86?
->>>>>>> So, you mean I need:
->>>>>>> #ifdef CONFIG_X86
->>>>>>> mfn = pfn_to_mfn(page_to_pfn(map->pages[i]));
->>>>>>> #else
->>>>>>> mfn = __pfn_to_mfn(page_to_pfn(map->pages[i]));
->>>>>>> #endif
->>>>>>>
->>>>>> I'd rather fix it in ARM code. Stefano, why does ARM uses the
->>>>>> underscored version?
->>>>> Do you want me to add one more patch for ARM to wrap __pfn_to_mfn
->>>>> with static inline for ARM? e.g.
->>>>> static inline ...pfn_to_mfn(...)
->>>>> {
->>>>>       __pfn_to_mfn();
->>>>> }
->>>> A Xen on ARM guest doesn't actually know the mfns behind its own
->>>> pseudo-physical pages. This is why we stopped using pfn_to_mfn and
->>>> started using pfn_to_bfn instead, which will generally return "pfn",
->>>> unless the page is a foreign grant. See include/xen/arm/page.h.
->>>> pfn_to_bfn was also introduced on x86. For example, see the usage of
->>>> pfn_to_bfn in drivers/xen/swiotlb-xen.c. Otherwise, if you don't care
->>>> about other mapped grants, you can just use pfn_to_gfn, that always
->>>> returns pfn.
->>>
->>> I think then this code needs to use pfn_to_bfn().
->> Ok
->>>
->>>
->>>> Also, for your information, we support different page granularities in
->>>> Linux as a Xen guest, see the comment at include/xen/arm/page.h:
->>>>
->>>>     /*
->>>>      * The pseudo-physical frame (pfn) used in all the helpers is always
->>>> based
->>>>      * on Xen page granularity (i.e 4KB).
->>>>      *
->>>>      * A Linux page may be split across multiple non-contiguous Xen page so
->>>> we
->>>>      * have to keep track with frame based on 4KB page granularity.
->>>>      *
->>>>      * PV drivers should never make a direct usage of those helpers
->>>> (particularly
->>>>      * pfn_to_gfn and gfn_to_pfn).
->>>>      */
->>>>
->>>> A Linux page could be 64K, but a Xen page is always 4K. A granted page
->>>> is also 4K. We have helpers to take into account the offsets to map
->>>> multiple Xen grants in a single Linux page, see for example
->>>> drivers/xen/grant-table.c:gnttab_foreach_grant. Most PV drivers have
->>>> been converted to be able to work with 64K pages correctly, but if I
->>>> remember correctly gntdev.c is the only remaining driver that doesn't
->>>> support 64K pages yet, so you don't have to deal with it if you don't
->>>> want to.
->>>
->>> I believe somewhere in this series there is a test for PAGE_SIZE vs.
->>> XEN_PAGE_SIZE. Right, Oleksandr?
->> Not in gntdev. You might have seen this in xen-drmfront/xen-sndfront,
->> but I didn't touch gntdev for that. Do you want me to add yet another patch
->> in the series to check for that?
-> 
-> gntdev.c is already not capable of handling PAGE_SIZE != XEN_PAGE_SIZE,
-> so you are not going to break anything that is not already broken :-) If
-> your new gntdev.c code relies on PAGE_SIZE == XEN_PAGE_SIZE, it might be
-> good to add an in-code comment about it, just to make it easier to fix
-> the whole of gntdev.c in the future.
+Ahh. Different fix. I did check that that original patch you mentioned
+wasn't merged, and didn't react to the other patches.
 
-Well, I think gntdev is capable of handling PAGE_SIZE != XEN_PAGE_SIZE.
-Let's imagine Linux is built with 64K pages. gntdev will map each grant 
-at a 64K alignment. Although, I am not sure if patches for QEMU ever 
-make it upstream (I think it is in Centos).
+Thanks,
 
-Cheers,
-
--- 
-Julien Grall
+                 Linus
