@@ -2,175 +2,121 @@ Return-Path: <SRS0=KDb5=I5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id BFA77C5CFF0
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:47:02 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D6288C5CFF0
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:47:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70830208AF
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:47:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70830208AF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 875D3208B0
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:47:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ieir3JK9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 875D3208B0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933371AbeFKRrA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 13:47:00 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54346 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932300AbeFKRq7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 13:46:59 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E56AE1435;
-        Mon, 11 Jun 2018 10:46:58 -0700 (PDT)
-Received: from [192.168.43.63] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 04A2B3F59D;
-        Mon, 11 Jun 2018 10:46:51 -0700 (PDT)
-Subject: Re: [Xen-devel] [PATCH v2 5/9] xen/gntdev: Allow mappings for DMA
- buffers
-To:     Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Oleksandr Andrushchenko <andr2000@gmail.com>
-Cc:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        jgross@suse.com, konrad.wilk@oracle.com, daniel.vetter@intel.com,
-        matthew.d.roper@intel.com, dongwon.kim@intel.com
-References: <20180601114132.22596-1-andr2000@gmail.com>
- <20180601114132.22596-6-andr2000@gmail.com>
- <64facf05-0a51-c3d9-9d3b-780893248628@oracle.com>
- <84217eac-b83b-710f-39ab-c93cad65bf9a@gmail.com>
- <a172746d-7a97-159f-71a7-511b2d239089@oracle.com>
- <30fa03c0-1b75-c0b1-b14f-8b52ea584e20@gmail.com>
- <78dc2fc4-cdac-05b7-2c34-22b69e7e009c@oracle.com>
- <4be24882-185d-01e3-6aa1-751e341433c7@gmail.com>
- <alpine.DEB.2.10.1806081025030.14699@sstabellini-ThinkPad-X260>
- <c6e1820a-fb57-b213-aa2f-05787dae06ad@oracle.com>
- <06eff3fe-3ffc-47f6-6bd6-d8f2f823b382@gmail.com>
- <alpine.DEB.2.10.1806110949050.14695@sstabellini-ThinkPad-X260>
- <baab493d-bcba-f053-4b48-0f97fb5723b2@epam.com>
-From:   Julien Grall <julien.grall@arm.com>
-Message-ID: <33984b9b-966a-78bb-0472-37af23b8ba9d@arm.com>
-Date:   Mon, 11 Jun 2018 18:46:45 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S933471AbeFKRrN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 13:47:13 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:42174 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933385AbeFKRrK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 13:47:10 -0400
+Received: by mail-yb0-f193.google.com with SMTP id d123-v6so6976022ybh.9;
+        Mon, 11 Jun 2018 10:47:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=WLGScaBHVojP48okyhDwHpJ3zAItkqtwn11jZTDqoZ4=;
+        b=Ieir3JK99yUQpKykwFf0CYacR4wQgpY5n1suq0me6mZwjfR2iene9gRBDRHk3Bbfqg
+         PKw1MsIvG4Eq8P2SVNcHxnmJY4HoHemgJCQ42hYajWsnITGoQCi1e7uyRMqAh8Pcx16V
+         dy3ifTxOgd2znhNor87DKKvHajJsbPRtCf9b5ofttgHqChq56qpYbrj4VRvsUX/L9e+s
+         ouPKal/yCRmG0AuAlcWDwHpsP0tGz7v9SbIgCM3jMjMymw/hnjkVGgXjDQmtN2TqK9BN
+         PffB548IlS6+N/gzFUn8EtZVjO64NX1pGeElzirx+wFM1MEShJ3/zKjQ1pG567M9aGNM
+         xSAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=WLGScaBHVojP48okyhDwHpJ3zAItkqtwn11jZTDqoZ4=;
+        b=uROqfmRnuxxztLXKqh6YWvX0ox27mol1q+cTLLngOJFoieenJ3dkqM5yXms09eWLvg
+         +s3kpaiPk/iZAgW/huJ9nGXlD/mCrix3jRp+JuTosCxqxl27ecUDcx3T8V+VkPXXVa3w
+         cbsCTAYfoIndR0E4K7gP4EQwJJ+ysm0KBb6HrQr3/p0oW5MjOBLYiAG3xJFT4RbF4gUn
+         7ZQmi9Jaui/GQz4K3dnMUQdEYR/rMpBttrbGqUDFHt17zJAXUpA+sdx2Q0OMDmW3eUes
+         AjY+x/whSiZUiPusgjLD936L4K5XLTQ6RKI3BOKirh31eBcSrNAXdn6lt4Pa6JZV/smt
+         6KbQ==
+X-Gm-Message-State: APt69E25hOchfmLWxiC2fzZWtBswOlFfVqdspBkciWL0xAxsk9pwDO+t
+        yDF8WACZJQwvPrZJcQ0QkCLZIFWSD13vL5LPli8=
+X-Google-Smtp-Source: ADUXVKImNLv7/LpZFEFCtTOiMf1RABQybPNCVZHFKmndLaK81m3NoKcAYmOBYnWCmqdjYDPaP1kb5WOakKll5KdqGac=
+X-Received: by 2002:a25:ac12:: with SMTP id w18-v6mr82939ybi.77.1528739229728;
+ Mon, 11 Jun 2018 10:47:09 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <baab493d-bcba-f053-4b48-0f97fb5723b2@epam.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a81:a0cb:0:0:0:0:0 with HTTP; Mon, 11 Jun 2018 10:47:09
+ -0700 (PDT)
+In-Reply-To: <01000163ef24c875-daa2c00e-611e-4383-99a6-c8c72ef04a14-000000@email.amazonses.com>
+References: <01000163ef24c875-daa2c00e-611e-4383-99a6-c8c72ef04a14-000000@email.amazonses.com>
+From:   Diego Viola <diego.viola@gmail.com>
+Date:   Mon, 11 Jun 2018 14:47:09 -0300
+Message-ID: <CA+ToGPGtMfzMYEgS=y+CxwYDAzjmRbvr1JE-i6PeVGpfm_7wOA@mail.gmail.com>
+Subject: Re: Regression: x86/tsc: Fix mark_tsc_unstable()
+To:     Jeremy Cline <jeremy@jcline.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        rui.zhang@intel.com, len.brown@intel.com, stable@vger.kernel.org,
+        linux-kernel@vger.kernel.org, regressions@leemhuis.info
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, Jun 11, 2018 at 10:59 AM, Jeremy Cline <jeremy@jcline.org> wrote:
+> Hi folks,
+>
+> A few Fedora users have reported[0] a regression starting in v4.16.8
+> where the boot will hang ~1/3 of the time with the following RCU stall
+> warning:
+>
+> INFO: rcu_sched detected stalls on CPUs/tasks:
+> o1-...!: (0 ticks this GP) idle=688/0/0 softirq=171/171 fqs=0
+> o(detected by 0, t=60002 jiffies, g=-142, c=-143, q=9)
+> Sending NMI from CPU 0 to CPU 1:
+> NMI backtrace for cpu 1 skipped: idling at
+> acpi_processor_ffh_cstate_enter+0x65/0xb0
+> rcu_sched kthread starved for 60002 jiffies! g18446744073709551474
+> c1844674407370955143 f0x0 RCU_GP_WAIT_FQS(3) ->state=0x402 -> cpu=1
+> RCU grace-period kthread stack dump:
+> rcu_sched       I    0     9      2 0x80000000
+> Call Trace:
+>  ? __schedule+0x234/0x850
+>  schedule+0x28/0x80
+>  schedule_timeout+0x166/0x380
+>  ? __next_timer_interrupt+0xc0/0xc0
+>  rcu_gp_kthread+0x368/0x830
+>  ? rcu_process_callbacks+0x4f0/0x4f0
+>  kthread+0x112/0x130
+>  ? kthread_create_worker_on_cpu+0x70/0x70
+>  ret_from_fork+0x35/0x40
+>
+> A user has bisected the problem to the v4.16 commit 1ab4ca7c59d4
+> ("x86/tsc: Fix mark_tsc_unstable()"). According to the reporter,
+> explicitly setting "tsc=" on the kernel command line causes the boot to
+> always succeed. All the users have Thinkpad T500s or T400s (Core 2 Duos)
+>
+> [0] https://bugzilla.redhat.com/show_bug.cgi?id=1579925
+>
+>
+> Thanks,
+> Jeremy
 
-On 06/11/2018 06:16 PM, Oleksandr Andrushchenko wrote:
-> On 06/11/2018 07:51 PM, Stefano Stabellini wrote:
->> On Mon, 11 Jun 2018, Oleksandr Andrushchenko wrote:
->>> On 06/08/2018 10:21 PM, Boris Ostrovsky wrote:
->>>> On 06/08/2018 01:59 PM, Stefano Stabellini wrote:
->>>>>>>>>>>>       @@ -325,6 +401,14 @@ static int map_grant_pages(struct
->>>>>>>>>>>> grant_map
->>>>>>>>>>>> *map)
->>>>>>>>>>>>               map->unmap_ops[i].handle =
->>>>>>>>>>>> map->map_ops[i].handle;
->>>>>>>>>>>>               if (use_ptemod)
->>>>>>>>>>>>                   map->kunmap_ops[i].handle =
->>>>>>>>>>>> map->kmap_ops[i].handle;
->>>>>>>>>>>> +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
->>>>>>>>>>>> +        else if (map->dma_vaddr) {
->>>>>>>>>>>> +            unsigned long mfn;
->>>>>>>>>>>> +
->>>>>>>>>>>> +            mfn = __pfn_to_mfn(page_to_pfn(map->pages[i]));
->>>>>>>>>>> Not pfn_to_mfn()?
->>>>>>>>>> I'd love to, but pfn_to_mfn is only defined for x86, not ARM:
->>>>>>>>>> [1]
->>>>>>>>>> and [2]
->>>>>>>>>> Thus,
->>>>>>>>>>
->>>>>>>>>> drivers/xen/gntdev.c:408:10: error: implicit declaration of
->>>>>>>>>> function
->>>>>>>>>> ‘pfn_to_mfn’ [-Werror=implicit-function-declaration]
->>>>>>>>>>         mfn = pfn_to_mfn(page_to_pfn(map->pages[i]));
->>>>>>>>>>
->>>>>>>>>> So, I'll keep __pfn_to_mfn
->>>>>>>>> How will this work on non-PV x86?
->>>>>>>> So, you mean I need:
->>>>>>>> #ifdef CONFIG_X86
->>>>>>>> mfn = pfn_to_mfn(page_to_pfn(map->pages[i]));
->>>>>>>> #else
->>>>>>>> mfn = __pfn_to_mfn(page_to_pfn(map->pages[i]));
->>>>>>>> #endif
->>>>>>>>
->>>>>>> I'd rather fix it in ARM code. Stefano, why does ARM uses the
->>>>>>> underscored version?
->>>>>> Do you want me to add one more patch for ARM to wrap __pfn_to_mfn
->>>>>> with static inline for ARM? e.g.
->>>>>> static inline ...pfn_to_mfn(...)
->>>>>> {
->>>>>>       __pfn_to_mfn();
->>>>>> }
->>>>> A Xen on ARM guest doesn't actually know the mfns behind its own
->>>>> pseudo-physical pages. This is why we stopped using pfn_to_mfn and
->>>>> started using pfn_to_bfn instead, which will generally return "pfn",
->>>>> unless the page is a foreign grant. See include/xen/arm/page.h.
->>>>> pfn_to_bfn was also introduced on x86. For example, see the usage of
->>>>> pfn_to_bfn in drivers/xen/swiotlb-xen.c. Otherwise, if you don't care
->>>>> about other mapped grants, you can just use pfn_to_gfn, that always
->>>>> returns pfn.
->>>> I think then this code needs to use pfn_to_bfn().
->>> Ok
->>>>
->>>>> Also, for your information, we support different page granularities in
->>>>> Linux as a Xen guest, see the comment at include/xen/arm/page.h:
->>>>>
->>>>>     /*
->>>>>      * The pseudo-physical frame (pfn) used in all the helpers is 
->>>>> always
->>>>> based
->>>>>      * on Xen page granularity (i.e 4KB).
->>>>>      *
->>>>>      * A Linux page may be split across multiple non-contiguous Xen 
->>>>> page so
->>>>> we
->>>>>      * have to keep track with frame based on 4KB page granularity.
->>>>>      *
->>>>>      * PV drivers should never make a direct usage of those helpers
->>>>> (particularly
->>>>>      * pfn_to_gfn and gfn_to_pfn).
->>>>>      */
->>>>>
->>>>> A Linux page could be 64K, but a Xen page is always 4K. A granted page
->>>>> is also 4K. We have helpers to take into account the offsets to map
->>>>> multiple Xen grants in a single Linux page, see for example
->>>>> drivers/xen/grant-table.c:gnttab_foreach_grant. Most PV drivers have
->>>>> been converted to be able to work with 64K pages correctly, but if I
->>>>> remember correctly gntdev.c is the only remaining driver that doesn't
->>>>> support 64K pages yet, so you don't have to deal with it if you don't
->>>>> want to.
->>>> I believe somewhere in this series there is a test for PAGE_SIZE vs.
->>>> XEN_PAGE_SIZE. Right, Oleksandr?
->>> Not in gntdev. You might have seen this in xen-drmfront/xen-sndfront,
->>> but I didn't touch gntdev for that. Do you want me to add yet another 
->>> patch
->>> in the series to check for that?
->> gntdev.c is already not capable of handling PAGE_SIZE != XEN_PAGE_SIZE,
->> so you are not going to break anything that is not already broken :-) If
->> your new gntdev.c code relies on PAGE_SIZE == XEN_PAGE_SIZE, it might be
->> good to add an in-code comment about it, just to make it easier to fix
->> the whole of gntdev.c in the future.
->>
-> Yes, I just mean I can add something like [1] as a separate patch to the 
-> series,
-> so we are on the safe side here
+Everything works fine here with 4.16.8+ on my desktop with E5500 CPU.
 
-See my comment on Stefano's e-mail. I believe gntdev is able to handle 
-PAGE_SIZE != XEN_PAGE_SIZE. So I would rather keep the behavior we have 
-today for such case.
-
-Cheers,
-
--- 
-Julien Grall
+[diego@dualcore ~]$ uname -a
+Linux dualcore 4.16.13-2-ARCH #1 SMP PREEMPT Fri Jun 1 18:46:11 UTC
+2018 x86_64 GNU/Linux
+[diego@dualcore ~]$
