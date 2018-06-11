@@ -1,140 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id +PsUAyk/GVvBVwAAmS7hNA
-	; Thu, 07 Jun 2018 14:20:25 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 2CpGEcc0HltFFgAAmS7hNA
+	; Mon, 11 Jun 2018 08:37:36 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 29603608BA; Thu,  7 Jun 2018 14:20:12 +0000 (UTC)
+	id 6AD8C607BB; Mon, 11 Jun 2018 08:37:36 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="gTIZlnal"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_MED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 873126063F;
-	Thu,  7 Jun 2018 14:20:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 873126063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id B7B8A60385;
+	Mon, 11 Jun 2018 08:37:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B7B8A60385
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933468AbeFGOT2 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:19:28 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39498 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933086AbeFGOJN (ORCPT
+        id S1754121AbeFKIhd (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 20 others); Mon, 11 Jun 2018 04:37:33 -0400
+Received: from relmlor3.renesas.com ([210.160.252.173]:36840 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754010AbeFKIhb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:09:13 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbC-0005hL-Vo; Thu, 07 Jun 2018 15:09:11 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb9-00038s-WF; Thu, 07 Jun 2018 15:09:08 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "James Chapman" <jchapman@katalix.com>,
-        "David S. Miller" <davem@davemloft.net>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.837512026@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 290/410] l2tp: don't use inet_shutdown on tunnel destroy
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Mon, 11 Jun 2018 04:37:31 -0400
+Received: from unknown (HELO relmlir2.idc.renesas.com) ([10.200.68.152])
+  by relmlie2.idc.renesas.com with ESMTP; 11 Jun 2018 17:37:30 +0900
+Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
+        by relmlir2.idc.renesas.com (Postfix) with ESMTP id 3DE598B0FB;
+        Mon, 11 Jun 2018 17:37:30 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.49,501,1520866800";
+   d="scan'208";a="283662749"
+Received: from mail-ty1jpn01lp0176.outbound.protection.outlook.com (HELO JPN01-TY1-obe.outbound.protection.outlook.com) ([23.103.139.176])
+  by relmlii2.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 11 Jun 2018 17:37:29 +0900
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=j8CNzr9q8gG44bZ/l8uxjLTXFgO4Muj7AIUfruOYvNw=;
+ b=gTIZlnalGH7kRi3aIYMWj7lbfZ3O8y7z/m6l/+UmeTZz56aqov4xigaI2S6pcBAhp7xgULFvTqq7StAV8dAbagdYodNRWVXi9g4odv8twmKPbo1kCf1V1QPLltEKnohM6aw73CtY2O0o0hJaqqUMa5yZy31LOYIDjEyMTRwxKVk=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=kuninori.morimoto.gx@renesas.com;
+Received: from morimoto-PC.renesas.com (211.11.155.138) by
+ OSAPR01MB2065.jpnprd01.prod.outlook.com (2603:1096:603:18::12) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.841.17; Mon, 11 Jun 2018 08:37:28 +0000
+Message-ID: <87r2ld67un.wl-kuninori.morimoto.gx@renesas.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Cc: Mark Brown <broonie@kernel.org>, <alsa-devel@alsa-project.org>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 1/3] ASoC: simple-card-utils: move hp and mic detect gpios from simple-card
+In-Reply-To: <20180611083214.16858-1-suzuki.katsuhiro@socionext.com>
+References: <20180611083214.16858-1-suzuki.katsuhiro@socionext.com>
+User-Agent: Wanderlust/2.15.9 Emacs/25.2 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+Date: Mon, 11 Jun 2018 08:37:28 +0000
+X-Originating-IP: [211.11.155.138]
+X-ClientProxiedBy: TYAPR01CA0086.jpnprd01.prod.outlook.com
+ (2603:1096:404:2c::26) To OSAPR01MB2065.jpnprd01.prod.outlook.com
+ (2603:1096:603:18::12)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:OSAPR01MB2065;
+X-Microsoft-Exchange-Diagnostics: 1;OSAPR01MB2065;3:m6lyZxRlQYcM9/keuGbkorWuEWFDcldaTtReOnJCTvhZnx4g2I1veQKISNGOz12M/L96JuejhcH9BDLnjfYi8+9OzOivDbxP9CRJm9mC8MZNeD8Fn+nfcxPLhPj0Dh9/uSlzIlxSzvHvvVeOCI94pa0V1v9vivucfn458pqK1dbAhiD9DtGHDnUt07XSiXvO0JqR8DM3lvgRiBPxcUtRTyP9aLeOaAbfGcpinIFwSChyWXpyIxadY1odsmNs4pFb;25:Iml8/n20kwPNdrFNfTX9keWoc8dLJz1HEYIdWhROachhvZjlOWDUhG0IJW2wv+Cq5ioiLI0cZ4FAN3Q3RL0tP4QrKTWN7+n1aDa1iZIev43NNTekqOo3dIPgdTFTt2DuvOuV7WNV58vsAIFUgqr2BpRjJ1/osttM4Fd0saSD7AaI0kqFyOQdrIo493u9uBiaPSCOZQC+Q533umaqge1WQC2xsMQkXocus4fw5MOI/js+zoYv3RHWJrwfsuH4SjfrC15e5/OnXqzI3BaburfeewBpg4PCTXBlgjhYvsnZmyt2xeucIURY+iALo3W9eJN2NVfVoxgUkOL+vjgqud3ffw==;31:E5WnF4rAwmTJIT0pcGAjBLVt09b2AZifiaShsZ73+9ToNqwM6mYkC6T+HtLNPT18y2Jr5oA/A5QJE/Z1vbd18/PWSclJ0DBC4qjboYhoo89pecM9IrVziHxOFHovnS1/SRoMbnBVoyaY2T6eDFIT9Zf4lqez3ywLREELY3VApWndo42YrQmEa8mdG+sq+RMGEvr1gNPfRqtwEfI9QJIvguGDUyGtdEMscvsKXfwGlqo=
+X-MS-TrafficTypeDiagnostic: OSAPR01MB2065:
+X-Microsoft-Exchange-Diagnostics: 1;OSAPR01MB2065;20:h4UWBQfCSDKu/k8J94CSyEYuSsZ5UkuRUH0AU9fDnR4X4Q5yvSMHkrkr/WRKzbLK9JOUxmBJwXuvkRqCG7U6DbD0C+aX1Kln+ay7TJbvJxxveTmEjIFwp9M2TYPo1yxAFvpw2GFppw/PZh8c9L7bW5jcz2a1VIrTk8cuUunn9KM+QOdWZhMi61tBz4Z0rzRqfCwm+Jyi5et45x8bWq8oIYYxzC7fkeMbfp7XqVOSNlxNCTBE/qNFBarDynfyIyA/tDSIHtjEdgkFNWnsXAoeWucgXV2hvHO6ulZF+pnv9gBpv3xvWP1H+oazKHCSLYwo3uB57/QGIZMWpxa4+D8oEpKcjdCQu7j3MhiWEhXldNFExI5l9Yd4HydvzFbrktQtKTPN+2RIrUcwEfauNL8Fnmww9b60HlNEfGiAvrPQ/UmwGGLvvm9pEJ2hDBUTlz+G36sTfi9E2bvDDibkreGXqUvRGkGo+O/bgs13ojRF5dzs1T1x0h6qoXzql9xZkWWC;4:VFb9PNG7ITJLAn2zB0UByUJxOl3xcqVcdARey7zoXdFuyBvCFvt9PElpMw3dLHeDuF5EfvgLwgkSlsdsCLpgbmHWWBHiD3GFKG8KOi9Zavd528ufkxyyiHQTYilSboJFVaU+05KF88HzL/pD+T5SQUBmwe3TiJL6537aG+QIYZ/X/8Fwxii9PMfhT86SbFu3Lzf7Os/Qum1isn2fdwUS94O9oXE1uX4LWoXl7UTDWSM8jd82lVG7L2K20VgyxwoS/UWEVzHv55Wcyi/ND5NciA==
+X-Microsoft-Antispam-PRVS: <OSAPR01MB2065911ED07579531F07FEE1D4780@OSAPR01MB2065.jpnprd01.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(10201501046)(93006095)(93001095)(3002001)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:OSAPR01MB2065;BCL:0;PCL:0;RULEID:;SRVR:OSAPR01MB2065;
+X-Forefront-PRVS: 070092A9D3
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(346002)(366004)(39860400002)(376002)(39380400002)(189003)(199004)(36756003)(6246003)(7736002)(58126008)(2906002)(6916009)(8936002)(53936002)(81156014)(8676002)(68736007)(4326008)(86362001)(3846002)(81166006)(50466002)(66066001)(69596002)(16586007)(186003)(6486002)(26005)(5660300001)(54906003)(229853002)(106356001)(25786009)(316002)(76176011)(105586002)(476003)(2616005)(956004)(53416004)(446003)(11346002)(97736004)(486006)(47776003)(23726003)(52116002)(6116002)(305945005)(16526019)(7696005)(386003)(478600001)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:OSAPR01MB2065;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;OSAPR01MB2065;23:Nipv00M1P5+DcLNJkpuEJ4JbiuB9Fu18AaKYQHQgl?=
+ =?us-ascii?Q?rRjIf4rIFvavdHHP9NVRO/uwI7VM0f9cKq2MMP5uY3kjHGDBNv4S2GZS8Rad?=
+ =?us-ascii?Q?Sb3g0fh/ykoy6xNnH3oFUFvwl4eQIvZCNjzA4PiVcSMPHqL55SUsl8KYXjq3?=
+ =?us-ascii?Q?+HJKt1dAbhBsa/qpIoCmtPIEkXXaQWLrP2+mMFuW1ZxlgHc5FSAx9JpIHugs?=
+ =?us-ascii?Q?2QRAtyobWViZDI24bb3k0T6Rfu/vD4Jf3BiSnTEdl+9jWVePhL6CUebBLsCp?=
+ =?us-ascii?Q?TmXEQHL3lWfE7AwnrXHhJnupIEblZwQhj7xRBz2sbvvFXQU0NXX36Vnoznok?=
+ =?us-ascii?Q?7VShPi08teYvo6FxMpd/n9Hv+9pQLtvOo3AEio6ZSjNM8H1IDnxtvv+7Jp4X?=
+ =?us-ascii?Q?lmeT3NVxMJcg+uRfsONdQa4TM0kHyFHrXrawwySK537VUU96va3iTUhwDvSN?=
+ =?us-ascii?Q?WfqdX6zIlzQHHhGKogILIcUBBR7/wtSjniMxmB3yn+L7Q2crIJIELXQTT6Of?=
+ =?us-ascii?Q?yuShdPcdZPftHMxu3N6gYiC0WgfqhlnEQWjPrGAHYWe79iwc+zYNKE7XwtEH?=
+ =?us-ascii?Q?e4z7A1h2yuFqOwF6U4EtvZSHOFlh1HhXFxsr0PVgbH/62EhB7tRbdj8xNVgQ?=
+ =?us-ascii?Q?Wylk5rzbsK3zbdsjthvwl3YH/s4rlr6PbHVexSxmyZL/5nmhSijY2/qMbwrp?=
+ =?us-ascii?Q?ipVY6iEQ2ckRyVJMDI8lJoJWn6i2MXnWOm4cs9AzlEF4VJH2qe9MQesq6zXn?=
+ =?us-ascii?Q?/GxAUcEerl9dti6v23+7jhIBk093smMqT0DA3AwDHslqlvwzmbj/HvLx14SS?=
+ =?us-ascii?Q?9RM/mmRSzuaXbx2grAfh17zM++iutsWWWJdCiUUjbjGBiXZtmGAt6i/MEZXi?=
+ =?us-ascii?Q?6SJaJ08HbKVdVBHQ6xDS6UmqluemyrPor/a1Ic9DsB+IOBY2Ag2lcYquvtu3?=
+ =?us-ascii?Q?o2VrkgPyrnk/BzWVek+VlBEMXHMt80oDC5zsR5i0PccH+6q/phWjHNqRCQpD?=
+ =?us-ascii?Q?+l7J188KInQgmKh/LYQ16GzNggg2I/7p4ekTTHLzJPON6SfIBUkedGRxMGc3?=
+ =?us-ascii?Q?7/6B6TUWU5hgKl32CVBdzC/w8q0apn3Wf9mFG4XNksee50JfJ4HaUIw7p7/a?=
+ =?us-ascii?Q?x6w0x5a1kcoE+KplhKCOSThmNKkmcrFuyFDV5wYUsPy0Oi/rZLu/yRijZLnz?=
+ =?us-ascii?Q?ZdVFKZ5SfO3wCVCjuNYiDXUg3RYuZ5BwfBBuEerz/A6dJlYzcsyFe5o2Hmu7?=
+ =?us-ascii?Q?biYFQNlhCLpnZQbMVo=3D?=
+X-Microsoft-Antispam-Message-Info: j6eFpe649XuSnTBbsjyMHfyxGzg9ziPq7mnbcglb/vS2UjmSxeTevbreH0FEpOdlMgkeWcdJgzK+pBLkFHUG6oYVN8VvdkQ0R34coJLC+Fuui715bNfm7oOnj3rHSPBjgLThY+whVGJxhtqKcCeMiF5mY/uCkg/s2oWXEWTTDm8/TWm6ople6nopz49GE83T
+X-Microsoft-Exchange-Diagnostics: 1;OSAPR01MB2065;6:4d4QwAlB+Oyl6VHbITPTdwemaxUEnOuHEUKsYpQKWiiA512BiLiEPxu2d7Klf+NS2BoIgUQzE2wuJFYLZqAWKlcQexNpwZnjBXdofaB7UQ5Lll3aHJbbD/KJwN3znoELA//8AzcxzZfWIKbOu+xWHhvOpQQjR1udERZyCfsbcqdTnzNk9Gx/5teA8gfFDt3FO6zUodoRxdefLUIn+cFEhMUVeXT6Kb/UEEkXCM5/6ytHmjJSy+MGmSrabjlHbc8YzVSWxiSEVSA06/2wWgr1JSvmMi+rvtnPJbZHLOEYx+nMKm+nsWIoQRg/ZG/hkZXGa9tFdfHb+QVKAtoHUH6EZdTG6ezBALwlfUoGyZeLPprPNKOfQJt6Hymah2AmHKAHgDkwmHWRbH+66xP1dhFAZXEIZ9pykUXpsnL964vfx905HQEss7U7Q/fYO7rELt65qcQysfc7EzKNUcA1aqHH+Q==;5:EYJZE39C0Y8y5vu1+J8meJtcFhycHb71A0W0CIyYzyh9NHNBx6AYMdxTHlZ3ca0YblBunLHTi/aqEaLQpevkQelBxvq1VPlqyf46zPnzrO7opqFVIdTpdxrDa7VmIsdNagM4v1SB8/tcjsCyj7+0I46YXbN3ET7w2FDZsB5SiTQ=;24:r+tW1WBliM0nvSnw1H32BBOeT3TTTlMEUSZtQoxs73JN2SzW8JTpUHlKSTVd9NyMm3ePl+QfiChPtc8DSfIb6mGXzW3PfOYIf/rG7Y2S7Xw=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;OSAPR01MB2065;7:prbhna9iIsdsvhggVB9yKw8p56X8JwYHmEdbBsWbqbnAyT87uRQS4JSYuH7KxNHlSg+8IkePu+cXwbFxmfV+9I2U5nL8iWs0z+aMEubvtVPpQTcSKEzt3TvnyDnSzxkISlmxflxDeh++nUj5qU/Q4qA/kD+CVwAmjb+HqVy4NgObixXl6flMYElxWr+8lZzpLBVZx8mFGq+sPIZEHXO31DyI9k3W3x1bMbeJKLE3MV2WVRIZVz9f7PSCNlfaonEa;20:dKz0OOnYeyY5MCw1Djtl4YZDJ5z9xvtkfAHIG8tJHJu2q1tRBkmzgsu+EiUxJRORgk2ZlbIaCmDUtSX2fbUbTjkLOwi59Ma56f6CJnX8wUurmnOAW++fkgz7qrcGswZyA58tnhvNXZ67vLOKOwk6F5Cz/d91717rvWAvYLrxGsY=
+X-MS-Office365-Filtering-Correlation-Id: 661050e1-baa2-4e41-83b1-08d5cf7690c4
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2018 08:37:28.2860 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 661050e1-baa2-4e41-83b1-08d5cf7690c4
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB2065
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-------------------
+Hi
 
-From: James Chapman <jchapman@katalix.com>
+> This patch moves headphone and microphone jack detection gpios from
+> simple-card driver. It is preparing for using this feature from other
+> drivers.
+> 
+> Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+> ---
 
-commit 76a6abdb2513ad4ea0ded55d2c66160491f2e848 upstream.
+For all patches
 
-Previously, if a tunnel was closed, we called inet_shutdown to mark
-the socket as unconnected such that userspace would get errors and
-then close the socket. This could race with userspace closing the
-socket. Instead, leave userspace to close the socket in its own time
-(our tunnel will be detached anyway).
-
-BUG: unable to handle kernel NULL pointer dereference at 00000000000000a0
-IP: __lock_acquire+0x263/0x1630
-PGD 0 P4D 0
-Oops: 0000 [#1] SMP KASAN
-Modules linked in:
-CPU: 2 PID: 42 Comm: kworker/u8:2 Not tainted 4.15.0-rc7+ #129
-Workqueue: l2tp l2tp_tunnel_del_work
-RIP: 0010:__lock_acquire+0x263/0x1630
-RSP: 0018:ffff88001a37fc70 EFLAGS: 00010002
-RAX: 0000000000000001 RBX: 0000000000000088 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffff88001a37fd18 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 00000000000076fd R12: 00000000000000a0
-R13: ffff88001a3722c0 R14: 0000000000000001 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff88001ad00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000000000a0 CR3: 000000001730b000 CR4: 00000000000006e0
-Call Trace:
- ? __lock_acquire+0xc77/0x1630
- ? console_trylock+0x11/0xa0
- lock_acquire+0x117/0x230
- ? lock_sock_nested+0x3a/0xa0
- _raw_spin_lock_bh+0x3a/0x50
- ? lock_sock_nested+0x3a/0xa0
- lock_sock_nested+0x3a/0xa0
- inet_shutdown+0x33/0xf0
- l2tp_tunnel_del_work+0x60/0xef
- process_one_work+0x1ea/0x5f0
- ? process_one_work+0x162/0x5f0
- worker_thread+0x48/0x3e0
- ? trace_hardirqs_on+0xd/0x10
- kthread+0x108/0x140
- ? process_one_work+0x5f0/0x5f0
- ? kthread_stop+0x2a0/0x2a0
- ret_from_fork+0x24/0x30
-Code: 00 41 81 ff ff 1f 00 00 0f 87 7a 13 00 00 45 85 f6 49 8b 85
-68 08 00 00 0f 84 ae 03 00 00 c7 44 24 18 00 00 00 00 e9 f0 00 00 00 <49> 81 3c
-24 80 93 3f 83 b8 00 00 00 00 44 0f 44 c0 83 fe 01 0f
-RIP: __lock_acquire+0x263/0x1630 RSP: ffff88001a37fc70
-CR2: 00000000000000a0
-
-Fixes: 309795f4bec2d ("l2tp: Add netlink control API for L2TP")
-Signed-off-by: James Chapman <jchapman@katalix.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[bwh: Backported to 3.16: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- net/l2tp/l2tp_core.c | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
-
---- a/net/l2tp/l2tp_core.c
-+++ b/net/l2tp/l2tp_core.c
-@@ -1415,17 +1415,10 @@ static void l2tp_tunnel_del_work(struct
- 
- 	sock = sk->sk_socket;
- 
--	/* If the tunnel socket was created by userspace, then go through the
--	 * inet layer to shut the socket down, and let userspace close it.
--	 * Otherwise, if we created the socket directly within the kernel, use
-+	/* If the tunnel socket was created within the kernel, use
- 	 * the sk API to release it here.
--	 * In either case the tunnel resources are freed in the socket
--	 * destructor when the tunnel socket goes away.
- 	 */
--	if (tunnel->fd >= 0) {
--		if (sock)
--			inet_shutdown(sock, 2);
--	} else {
-+	if (tunnel->fd < 0) {
- 		if (sock)
- 			kernel_sock_shutdown(sock, SHUT_RDWR);
- 		sk_release_kernel(sk);
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
