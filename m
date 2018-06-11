@@ -1,170 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id OeKlLhJKGVt7UwAAmS7hNA
-	; Thu, 07 Jun 2018 15:07:28 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id uJX/I1mFHlsJLAAAmS7hNA
+	; Mon, 11 Jun 2018 14:21:46 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 7D9D9608B8; Thu,  7 Jun 2018 15:07:28 +0000 (UTC)
+	id 0DC2A60791; Mon, 11 Jun 2018 14:21:46 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mSlf1ufG"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 826CC6074D;
-	Thu,  7 Jun 2018 15:07:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 826CC6074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 8F6B860351;
+	Mon, 11 Jun 2018 14:21:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8F6B860351
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935999AbeFGPD5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:03:57 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41542 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935981AbeFGPDw (ORCPT
+        id S934262AbeFKOU3 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 10:20:29 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45218 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933494AbeFKOGu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:03:52 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbd-0005dI-Sh; Thu, 07 Jun 2018 15:09:38 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb7-00033c-Iu; Thu, 07 Jun 2018 15:09:05 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Pablo Neira Ayuso" <pablo@netfilter.org>,
-        "Paolo Abeni" <pabeni@redhat.com>,
-        syzbot+8012e198bd037f4871e5@syzkaller.appspotmail.com
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.846637422@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 237/410] netfilter: nat: cope with negative port range
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Mon, 11 Jun 2018 10:06:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
+        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=twa7itpLIU58lfU+MddoEIWcRCNFcsboeQJXmsXbu6U=; b=mSlf1ufG8UA2KgMlNo35S+NaM
+        4CjH391z2F6+7znnZEMPVL7go8HO+W+TN2hpsuDyFrxz2OPuWskz/wYlj552FIvE4Hpog7SO9kcxg
+        DrprQ4hWv0/bDKjgatLik6LF4krDh/OsLmsXbm3H/eM8s/VqgBF6Jv98EvDxXszTyk12YNiqF1xpv
+        d66vJwkvlPIKpNzbuT1hNaXfa2tF/8BtSOYLkWCuBKfTJPDSloDiG5SlNPm2EyWEqL2jml1g7woV7
+        cFqwjvs/OUsSqOtb6Q7OeV9m5zQAHgFlN7ay+NhOW5o6BjmAeP1/XMJC3yq2oo1UX/WygmkKtIClE
+        3CWvgUinA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fSNT7-0004fa-G9; Mon, 11 Jun 2018 14:06:49 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@redhat.com>,
+        Lukas Czerner <lczerner@redhat.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH v13 24/72] page cache: Convert find_get_entries to XArray
+Date: Mon, 11 Jun 2018 07:05:51 -0700
+Message-Id: <20180611140639.17215-25-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
+References: <20180611140639.17215-1-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-------------------
+Slightly shorter and simpler code.
 
-From: Paolo Abeni <pabeni@redhat.com>
-
-commit db57ccf0f2f4624b4c4758379f8165277504fbd7 upstream.
-
-syzbot reported a division by 0 bug in the netfilter nat code:
-
-divide error: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 1 PID: 4168 Comm: syzkaller034710 Not tainted 4.16.0-rc1+ #309
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-Google 01/01/2011
-RIP: 0010:nf_nat_l4proto_unique_tuple+0x291/0x530
-net/netfilter/nf_nat_proto_common.c:88
-RSP: 0018:ffff8801b2466778 EFLAGS: 00010246
-RAX: 000000000000f153 RBX: ffff8801b2466dd8 RCX: ffff8801b2466c7c
-RDX: 0000000000000000 RSI: ffff8801b2466c58 RDI: ffff8801db5293ac
-RBP: ffff8801b24667d8 R08: ffff8801b8ba6dc0 R09: ffffffff88af5900
-R10: ffff8801b24666f0 R11: 0000000000000000 R12: 000000002990f153
-R13: 0000000000000001 R14: 0000000000000000 R15: ffff8801b2466c7c
-FS:  00000000017e3880(0000) GS:ffff8801db500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000208fdfe4 CR3: 00000001b5340002 CR4: 00000000001606e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  dccp_unique_tuple+0x40/0x50 net/netfilter/nf_nat_proto_dccp.c:30
-  get_unique_tuple+0xc28/0x1c10 net/netfilter/nf_nat_core.c:362
-  nf_nat_setup_info+0x1c2/0xe00 net/netfilter/nf_nat_core.c:406
-  nf_nat_redirect_ipv6+0x306/0x730 net/netfilter/nf_nat_redirect.c:124
-  redirect_tg6+0x7f/0xb0 net/netfilter/xt_REDIRECT.c:34
-  ip6t_do_table+0xc2a/0x1a30 net/ipv6/netfilter/ip6_tables.c:365
-  ip6table_nat_do_chain+0x65/0x80 net/ipv6/netfilter/ip6table_nat.c:41
-  nf_nat_ipv6_fn+0x594/0xa80 net/ipv6/netfilter/nf_nat_l3proto_ipv6.c:302
-  nf_nat_ipv6_local_fn+0x33/0x5d0
-net/ipv6/netfilter/nf_nat_l3proto_ipv6.c:407
-  ip6table_nat_local_fn+0x2c/0x40 net/ipv6/netfilter/ip6table_nat.c:69
-  nf_hook_entry_hookfn include/linux/netfilter.h:120 [inline]
-  nf_hook_slow+0xba/0x1a0 net/netfilter/core.c:483
-  nf_hook include/linux/netfilter.h:243 [inline]
-  NF_HOOK include/linux/netfilter.h:286 [inline]
-  ip6_xmit+0x10ec/0x2260 net/ipv6/ip6_output.c:277
-  inet6_csk_xmit+0x2fc/0x580 net/ipv6/inet6_connection_sock.c:139
-  dccp_transmit_skb+0x9ac/0x10f0 net/dccp/output.c:142
-  dccp_connect+0x369/0x670 net/dccp/output.c:564
-  dccp_v6_connect+0xe17/0x1bf0 net/dccp/ipv6.c:946
-  __inet_stream_connect+0x2d4/0xf00 net/ipv4/af_inet.c:620
-  inet_stream_connect+0x58/0xa0 net/ipv4/af_inet.c:684
-  SYSC_connect+0x213/0x4a0 net/socket.c:1639
-  SyS_connect+0x24/0x30 net/socket.c:1620
-  do_syscall_64+0x282/0x940 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x26/0x9b
-RIP: 0033:0x441c69
-RSP: 002b:00007ffe50cc0be8 EFLAGS: 00000217 ORIG_RAX: 000000000000002a
-RAX: ffffffffffffffda RBX: ffffffffffffffff RCX: 0000000000441c69
-RDX: 000000000000001c RSI: 00000000208fdfe4 RDI: 0000000000000003
-RBP: 00000000006cc018 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000538 R11: 0000000000000217 R12: 0000000000403590
-R13: 0000000000403620 R14: 0000000000000000 R15: 0000000000000000
-Code: 48 89 f0 83 e0 07 83 c0 01 38 d0 7c 08 84 d2 0f 85 46 02 00 00 48 8b
-45 c8 44 0f b7 20 e8 88 97 04 fd 31 d2 41 0f b7 c4 4c 89 f9 <41> f7 f6 48
-c1 e9 03 48 b8 00 00 00 00 00 fc ff df 0f b6 0c 01
-RIP: nf_nat_l4proto_unique_tuple+0x291/0x530
-net/netfilter/nf_nat_proto_common.c:88 RSP: ffff8801b2466778
-
-The problem is that currently we don't have any check on the
-configured port range. A port range == -1 triggers the bug, while
-other negative values may require a very long time to complete the
-following loop.
-
-This commit addresses the issue swapping the two ends on negative
-ranges. The check is performed in nf_nat_l4proto_unique_tuple() since
-the nft nat loads the port values from nft registers at runtime.
-
-v1 -> v2: use the correct 'Fixes' tag
-v2 -> v3: update commit message, drop unneeded READ_ONCE()
-
-Fixes: 5b1158e909ec ("[NETFILTER]: Add NAT support for nf_conntrack")
-Reported-by: syzbot+8012e198bd037f4871e5@syzkaller.appspotmail.com
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- net/netfilter/nf_nat_proto_common.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ mm/filemap.c | 51 +++++++++++++++++++++++----------------------------
+ 1 file changed, 23 insertions(+), 28 deletions(-)
 
---- a/net/netfilter/nf_nat_proto_common.c
-+++ b/net/netfilter/nf_nat_proto_common.c
-@@ -41,7 +41,7 @@ void nf_nat_l4proto_unique_tuple(const s
- 				 const struct nf_conn *ct,
- 				 u16 *rover)
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 6db3d35ff5f6..b49290131e85 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -1578,53 +1578,48 @@ unsigned find_get_entries(struct address_space *mapping,
+ 			  pgoff_t start, unsigned int nr_entries,
+ 			  struct page **entries, pgoff_t *indices)
  {
--	unsigned int range_size, min, i;
-+	unsigned int range_size, min, max, i;
- 	__be16 *portptr;
- 	u_int16_t off;
+-	void **slot;
++	XA_STATE(xas, &mapping->i_pages, start);
++	struct page *page;
+ 	unsigned int ret = 0;
+-	struct radix_tree_iter iter;
  
-@@ -71,7 +71,10 @@ void nf_nat_l4proto_unique_tuple(const s
- 		}
- 	} else {
- 		min = ntohs(range->min_proto.all);
--		range_size = ntohs(range->max_proto.all) - min + 1;
-+		max = ntohs(range->max_proto.all);
-+		if (unlikely(max < min))
-+			swap(max, min);
-+		range_size = max - min + 1;
+ 	if (!nr_entries)
+ 		return 0;
+ 
+ 	rcu_read_lock();
+-	radix_tree_for_each_slot(slot, &mapping->i_pages, &iter, start) {
+-		struct page *head, *page;
+-repeat:
+-		page = radix_tree_deref_slot(slot);
+-		if (unlikely(!page))
++	xas_for_each(&xas, page, ULONG_MAX) {
++		struct page *head;
++		if (xas_retry(&xas, page))
+ 			continue;
+-		if (radix_tree_exception(page)) {
+-			if (radix_tree_deref_retry(page)) {
+-				slot = radix_tree_iter_retry(&iter);
+-				continue;
+-			}
+-			/*
+-			 * A shadow entry of a recently evicted page, a swap
+-			 * entry from shmem/tmpfs or a DAX entry.  Return it
+-			 * without attempting to raise page count.
+-			 */
++		/*
++		 * A shadow entry of a recently evicted page, a swap
++		 * entry from shmem/tmpfs or a DAX entry.  Return it
++		 * without attempting to raise page count.
++		 */
++		if (xa_is_value(page))
+ 			goto export;
+-		}
+ 
+ 		head = compound_head(page);
+ 		if (!page_cache_get_speculative(head))
+-			goto repeat;
++			goto retry;
+ 
+ 		/* The page was split under us? */
+-		if (compound_head(page) != head) {
+-			put_page(head);
+-			goto repeat;
+-		}
++		if (compound_head(page) != head)
++			goto put_page;
+ 
+ 		/* Has the page moved? */
+-		if (unlikely(page != *slot)) {
+-			put_page(head);
+-			goto repeat;
+-		}
++		if (unlikely(page != xas_reload(&xas)))
++			goto put_page;
++
+ export:
+-		indices[ret] = iter.index;
++		indices[ret] = xas.xa_index;
+ 		entries[ret] = page;
+ 		if (++ret == nr_entries)
+ 			break;
++		continue;
++put_page:
++		put_page(head);
++retry:
++		xas_reset(&xas);
  	}
- 
- 	if (range->flags & NF_NAT_RANGE_PROTO_RANDOM) {
+ 	rcu_read_unlock();
+ 	return ret;
+-- 
+2.17.1
