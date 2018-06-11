@@ -2,114 +2,215 @@ Return-Path: <SRS0=KDb5=I5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,
+	FROM_LOCAL_NOVOWEL,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	T_DKIM_INVALID,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D7950C5CFF0
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:21:12 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7516AC5CFF0
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:26:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8791C20660
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:21:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C0EF20660
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:26:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YAOfTVxM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8791C20660
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dghS29vC";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="BqPiMCDj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C0EF20660
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934201AbeFKRVK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 13:21:10 -0400
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:37151 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934102AbeFKRU4 (ORCPT
+        id S934204AbeFKR0Z (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 13:26:25 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51768 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933350AbeFKR0W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 13:20:56 -0400
-Received: by mail-yw0-f194.google.com with SMTP id j190-v6so6568559ywe.4;
-        Mon, 11 Jun 2018 10:20:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=VVPhSHixEWhv8h5McR/3udtDxX6Z3plH1+G+1tS5m5Y=;
-        b=YAOfTVxM5NiTtBvqvcOE+JMzwU5dAg51mEw+27RhLzR5JS24DE6Qjs941/aKsV8De/
-         PG9EisM1iEVC1oewODh2xMO4o9KtoZavz74pY3DxUOaT7VaMkPf9R0ALMLyA5EuhXklP
-         /QKsMa6ZIwnfeJsqdnrv4PjjtzStHeY/Z7MODetra2CouPjtBx5KuFDPTyk9tdDopllI
-         IQSH9KoMK+jKeinOYz8yPX4qlMu2Fltk8PTNtWSDgmkyDItB6FK+M/gX4ahEG44tPJte
-         5GFJ7d5YGjXTkX+auWupwL3bzETYcUSxXCb/L9uhtJljvLNWGI5JohnUazi8amQG8HYn
-         L27A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VVPhSHixEWhv8h5McR/3udtDxX6Z3plH1+G+1tS5m5Y=;
-        b=JyZUYNSjMwagLwDa/ElXVBveZStVSJ0wZDDBs9o6kYxyEjkLRb/6g3brJ0b7jYSymt
-         g/wYDWsP8RB0r6dC3pcuDkdTY9EKt+ww5ueGHflqwil4IU86Ps5X3ob65uOJ39thQ+y5
-         sQL55Ym4dJCAozlem/70U6r5geYPWs6IVM9EOcV92Lk0mZcGTl9C/fv+/vlezCsHLMg8
-         VCsMIjpvm4vThQr26plmAHl3AFqmd/7icUDk5n7/5wBddD88LkVA+9NJi9KHFNBtoy54
-         sYXpwVKgttdY9oDxvRV26blMzqBM5Z45ziTqLN2UCKzD82Ew7hI0rGDRBac1mM6l5KXF
-         THGw==
-X-Gm-Message-State: APt69E3+xlTxuU2vBgw1QjblW1H4rhRQDfYCJQKQYlFYL0smxaA34OMy
-        l6CBHm1MZLN+HtCidtBtlZE=
-X-Google-Smtp-Source: ADUXVKJ2rxckf/J8vM+VrrQgJVKPkQGUNQbSg48YITY76MrlXoqztgzEMQqS4+nViBGFAt3w1qMmNA==
-X-Received: by 2002:a0d:cd46:: with SMTP id p67-v6mr65305ywd.44.1528737656044;
-        Mon, 11 Jun 2018 10:20:56 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:200::fd2a])
-        by smtp.gmail.com with ESMTPSA id d22-v6sm30355809ywh.27.2018.06.11.10.20.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Jun 2018 10:20:54 -0700 (PDT)
-Date:   Mon, 11 Jun 2018 10:20:53 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        syzbot <syzbot+4a7438e774b21ddd8eca@syzkaller.appspotmail.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-block@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH] bdi: Fix another oops in wb_workfn()
-Message-ID: <20180611172053.GR1351649@devbig577.frc2.facebook.com>
-References: <201806080231.w582VIRn021009@www262.sakura.ne.jp>
- <CACT4Y+Y7Mj1JngLst1aRHDhURXQMn-eTjyPFjDdGAT0ZV-dHrw@mail.gmail.com>
- <CACT4Y+bBfwpcP2h0URpqwiNMQ5SFJdPDHThUu2xetmrxgC+3BQ@mail.gmail.com>
- <CACT4Y+bHDWDapwOonO1EpR6TiRa=qf9nSDtHArq75yCGuHf=gg@mail.gmail.com>
- <CACT4Y+Z4i=bD49cb4pJ5zOMxVu675NT8wCNk+c2n2XJVOXG2bg@mail.gmail.com>
- <2b437c6f-3e10-3d83-bdf3-82075d3eaa1a@i-love.sakura.ne.jp>
- <3cf4b0e3-31b6-8cdc-7c1e-15ba575a7879@i-love.sakura.ne.jp>
- <20180611091248.2i6nt27h5mxrodm2@quack2.suse.cz>
- <20180611160131.GQ1351649@devbig577.frc2.facebook.com>
- <20180611162920.mwapvuqotvhkntt3@quack2.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180611162920.mwapvuqotvhkntt3@quack2.suse.cz>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Mon, 11 Jun 2018 13:26:22 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 4E496607E7; Mon, 11 Jun 2018 17:26:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528737982;
+        bh=O+0eCRdefnLHmE8fkQxdyCVhzbuAaSz1GhnwHQe8bsU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=dghS29vCp4Usjo6Kf7Uoo92BUHC2UUj6mVNpkEumAAJgEfI34gd1Goo56eCF8uPML
+         y0hevSw7mkpHKinJOJQJKTU1uqv+Cfhibtrgl+I+/Q0IpJzKrArc1TAzybSWMHsuYW
+         IEf9/MwDCWMzKYI9gr+wiI/lV8pVBgGBlvenv+5A=
+Received: from rplsssn-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rplsssn@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id C3A8A6074D;
+        Mon, 11 Jun 2018 17:26:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528737981;
+        bh=O+0eCRdefnLHmE8fkQxdyCVhzbuAaSz1GhnwHQe8bsU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=BqPiMCDj6rG568xwuYwmB6MnPObpzErcQl7HXCq/Aqwj801v21uqabDsT9lMcpquW
+         TfVMddIPi8mOlDuRlJJDflOB2e3m9n1LA7lRSore5wP/uWXPjZpzFam8t+poycZNz1
+         qjyGXczUbnDlDo7K91qh8BPIcpB1dhZpphfKZmMU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C3A8A6074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
+From:   Raju P L S S S N <rplsssn@codeaurora.org>
+To:     andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Cc:     rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org,
+        evgreen@chromium.org, dianders@chromium.org, mka@chromium.org,
+        ilina@codeaurora.org, "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
+Subject: [PATCH v10 00/10] drivers/qcom: add RPMH communication support
+Date:   Mon, 11 Jun 2018 22:55:39 +0530
+Message-Id: <1528737949-17495-1-git-send-email-rplsssn@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+From: "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
 
-On Mon, Jun 11, 2018 at 06:29:20PM +0200, Jan Kara wrote:
-> > Would something like the following work or am I missing the point
-> > entirely?
-> 
-> I was pondering the same solution for a while but I think it won't work.
-> The problem is that e.g. wb_memcg_offline() could have already removed
-> wb from the radix tree but it is still pending in bdi->wb_list
-> (wb_shutdown() has not run yet) and so we'd drop reference we didn't get.
+Changes in v10:
+- Remove export.h inclusion as suggested by Doug
+- Remove rsc_drv_list
+- Add EXPORT_SYMBOL
+- Remove wait_count as suggested by Doug
+- Free memory if cache_batch returns error as suggested by Doug
+- Add batch requests to list and simplify error handling as
+- return ERR_PTR if invalidate fails
 
-Yeah, right, so the root cause is that we're walking the wb_list while
-holding lock and expecting the object to stay there even after lock is
-released.  Hmm... we can use a mutex to synchronize the two
-destruction paths.  It's not like they're hot paths anyway.
+Changes in v9:
+- Remove EXPORT_SYMBOL as suggested by Doug
+- Add Reviewed-by tags
+- Rename lock variable as suggested by Doug
+- Add WARN_ON if completion timeout occurs as suggested by Doug
+- Fix the bound checks as suggested by Matthias
+- Improve comments as suggested by Doug
+- Add check for freeing dynamically allocated request object
+- Rename label as suggested by Doug
+- Fix IS_ERR_OR_NULL check to IS_ERR as suggested by Doug
+- Add check to call rpmh_rsc_invalidate if -EAGAIN is retured
+  as suggested by Doug
 
-Thanks.
+Changes in v8:
+- Bounds check for cmd_cache
+- Describe interrupts to other DRVs in DT bindings
+- Rebase on top of 4.17-rc3
+
+Changes in v7:
+- Rename 'm' and 'n' and use tcs_id and cmd_id instead
+- Bug fix in find_match() and other review comments from Matthias
+- Spinlock around get_rpmh_ctrlr()
+- DT documentation example fixes
+- Rebase on top of 4.16-rc2
+
+Changes in v6:
+- Remove tasklet in rpmh-rsc.c
+- Remove rpmh_client and use struct device * instead
+- Variable changes and bug fixes
+- DT binding changes to describe all DRVs in the RSC
+- Documentation and comment fixes
+
+Changes in v5:
+- Add Reviewed-by tags
+- Rebase on top of 4.16
+
+Changes in v4:
+- Rename variables as suggested by Stephen and Evan
+- Lot of minor syntax and style fixes
+- Fix FTRACE compilation error
+- Improve doc comments and DT description
+
+Changes in v3:
+- Address Steven's comments in FTRACE
+- Fix DT documentation as suggested by Rob H
+- Fix error handling in IRQ handler as suggested by Evan
+- Remove locks in rpmh_flush()
+- Improve comments
+
+Changes in v2:
+- Added sleep/wake, async and batch requests support
+- Addressed Bjorn's comments
+- Private FTRACE for drivers/soc/qcom as suggested by Steven
+- Sparse checked on these patches
+- Use SPDX license commenting sytle
+
+This set of patches add the ability for platform drivers to make use of shared
+resources in newer Qualcomm SoCs like SDM845. Resources that are shared between
+multiple processors in a SoC are generally controlled by a dedicated remote
+processor. The remote processor (Resource Power Manager or RPM in previous QCOM
+SoCs) receives requests for resource state from other processors using the
+shared resource, aggregates the request and applies the result on the shared
+resource. SDM845 advances this concept and uses h/w (hardened I/P) blocks for
+aggregating requests and applying the result on the resource. The resources
+could be clocks, regulators or bandwidth requests for buses. This new
+architecture is called RPM-hardened or RPMH in short.
+
+Since this communication mechanism is completely hardware driven without a
+processor intervention on the remote end, existing mechanisms like RPM-SMD are
+no longer useful. Also, there is no serialization of data or is data is written
+to a shared memory in this new format. The data used is different, unsigned 32
+bits are used for representing an address, data and header. Each resource's
+property is a unique u32 address and have pre-defined set of property specific
+valid values. A request that comprises of <header, addr, data> is sent by
+writing to a set of registers from Linux and transmitted to the remote slave
+through an internal bus. The remote end aggregates this request along with
+requests from other processors for the <addr> and applies the result.
+
+The hardware block that houses this functionality is called Resource State
+Coordinator or RSC. Inside the RSC are set of slots for sending RPMH requests
+called Trigger Commands Sets (TCS). The set of patches are for writing the
+requests into these TCSes and sending them to hardened IP blocks.
+
+The driver design is split into two components. The RSC driver housed in
+rpmh-rsc.c and the set of library functions in rpmh.c that frame the request and
+transmit it using the controller. This first set of patches allow a simple
+synchronous request to be made by the platform drivers. Future patches will add
+more functionality that cater to complex drivers and use cases.
+
+Please consider reviewing this patchset.
+
+v1: https://www.spinics.net/lists/devicetree/msg210980.html
+v2: https://lkml.org/lkml/2018/2/15/852
+v3: https://lkml.org/lkml/2018/3/2/801
+v4: https://lkml.org/lkml/2018/3/9/979
+v5: https://lkml.org/lkml/2018/4/5/480
+v6: https://lkml.org/lkml/2018/4/19/914
+v7: https://lkml.org/lkml/2018/5/2/779
+v8: https://lkml.org/lkml/2018/5/9/729
+v9: https://lkml.org/lkml/2018/5/24/530
+
+Lina Iyer (10):
+  drivers: qcom: rpmh-rsc: add RPMH controller for QCOM SoCs
+  dt-bindings: introduce RPMH RSC bindings for Qualcomm SoCs
+  drivers: qcom: rpmh-rsc: log RPMH requests in FTRACE
+  drivers: qcom: rpmh: add RPMH helper functions
+  drivers: qcom: rpmh-rsc: write sleep/wake requests to TCS
+  drivers: qcom: rpmh-rsc: allow invalidation of sleep/wake TCS
+  drivers: qcom: rpmh: cache sleep/wake state requests
+  drivers: qcom: rpmh: allow requests to be sent asynchronously
+  drivers: qcom: rpmh: add support for batch RPMH request
+  drivers: qcom: rpmh-rsc: allow active requests from wake TCS
+
+ .../devicetree/bindings/soc/qcom/rpmh-rsc.txt      | 137 +++++
+ drivers/soc/qcom/Kconfig                           |  10 +
+ drivers/soc/qcom/Makefile                          |   4 +
+ drivers/soc/qcom/rpmh-internal.h                   |  79 +++
+ drivers/soc/qcom/rpmh-rsc.c                        | 678 +++++++++++++++++++++
+ drivers/soc/qcom/rpmh.c                            | 586 ++++++++++++++++++
+ drivers/soc/qcom/trace-rpmh.h                      |  82 +++
+ include/dt-bindings/soc/qcom,rpmh-rsc.h            |  14 +
+ include/soc/qcom/rpmh.h                            |  51 ++
+ include/soc/qcom/tcs.h                             |  56 ++
+ 10 files changed, 1697 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
+ create mode 100644 drivers/soc/qcom/rpmh-internal.h
+ create mode 100644 drivers/soc/qcom/rpmh-rsc.c
+ create mode 100644 drivers/soc/qcom/rpmh.c
+ create mode 100644 drivers/soc/qcom/trace-rpmh.h
+ create mode 100644 include/dt-bindings/soc/qcom,rpmh-rsc.h
+ create mode 100644 include/soc/qcom/rpmh.h
+ create mode 100644 include/soc/qcom/tcs.h
 
 -- 
-tejun
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,\na Linux Foundation Collaborative Project
+
