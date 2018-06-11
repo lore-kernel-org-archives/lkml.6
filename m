@@ -1,113 +1,213 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id RgFtK7TXGFuZRQAAmS7hNA
-	; Thu, 07 Jun 2018 07:01:53 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id IuEWHYhPHlsgRwAAmS7hNA
+	; Mon, 11 Jun 2018 10:33:55 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 42627607F7; Thu,  7 Jun 2018 07:01:53 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HketVEMU"
+	id 7DC13607A4; Mon, 11 Jun 2018 10:33:55 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 83A2D6063F;
-	Thu,  7 Jun 2018 07:01:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 83A2D6063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 4F2F160351;
+	Mon, 11 Jun 2018 10:33:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4F2F160351
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753149AbeFGHBu (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 03:01:50 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:43754 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752577AbeFGHBs (ORCPT
+        id S932836AbeFKKdw (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 06:33:52 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:36843 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932332AbeFKKdu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 03:01:48 -0400
-Received: by mail-wr0-f196.google.com with SMTP id d2-v6so8772187wrm.10
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 00:01:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=W2asmIcVuhk04xlo6ROyQ06702MDiBdzgfWurSsLxTk=;
-        b=HketVEMUFFIQYBOUpUspoLGSbBRfAVR3PoEznfGn4cRKKFtQEELrJQeVF2eA7Zeqby
-         +ij7VRqu753H6sZyLiY2CRwNl10CaJCbr9oDumI7kWoGIJIY0+sC8FSVUddj829BBH9v
-         LIpTnm+QM4hwdiiFPV2GzQ7RiBS/j50UcIm4Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=W2asmIcVuhk04xlo6ROyQ06702MDiBdzgfWurSsLxTk=;
-        b=HhEgYzlQewYKdpArN4E7XYuoo4YSOV9h77XYI8iNQksfZ1DgIhuGUR6TddrC3fo55n
-         YvFXAviJ0zoFi47L4SErxCynEySEP/dtA5gGIOiU2sNlqW7wKo7+QD0pG3gSU4OPnERd
-         mjIeOwammKj/wumL38zJh4IlKFXpB7e5lmKKwXO0bsTrdjCg8zw054CmpvapToTR4Uwn
-         Ue1TpTXUFqIOQZlwTmUhGqry5/Gx+T/9PvVqs1Il7ustP0haBdnm6ytY1uQuLBJ2Bp61
-         OjY7c8rGmYwjoJ7608PqulxFRyRVeincVXgCtH/EUyRtz/auepYiWTghwwVEQizjCZ73
-         oG4A==
-X-Gm-Message-State: APt69E2L4zE39eSMUkwIEGxB5wFEFfkTWzBaHJFg5VDrl3rmtzSDJ+3v
-        N7K+dIzdU/JLhRbDXgrWfAae9Eo1elE=
-X-Google-Smtp-Source: ADUXVKIhee2bWXv2n2Q28+SExSbzGAlP4Ro3KdJjbKN8Du0eEpbm2SmMthldSCP/rbcqcuCL8a2FAA==
-X-Received: by 2002:adf:e687:: with SMTP id r7-v6mr561703wrm.14.1528354907772;
-        Thu, 07 Jun 2018 00:01:47 -0700 (PDT)
-Received: from dell ([2.31.163.53])
-        by smtp.gmail.com with ESMTPSA id s132-v6sm936767wmf.5.2018.06.07.00.01.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Jun 2018 00:01:46 -0700 (PDT)
-Date: Thu, 7 Jun 2018 08:01:44 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v5 04/14] mfd: da9063: Use REGMAP_IRQ_REG
-Message-ID: <20180607070144.GE21163@dell>
-References: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
- <20180606100003.17067-4-marek.vasut+renesas@gmail.com>
- <CAMuHMdXdoAaBbx+_G3+n=e+zki3z20t7ATXttDUnmYRu95HMVA@mail.gmail.com>
- <3317638e-8688-35ef-ab61-7281312f2c3f@gmail.com>
+        Mon, 11 Jun 2018 06:33:50 -0400
+Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w5BAXfuV045895;
+        Mon, 11 Jun 2018 19:33:41 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp);
+ Mon, 11 Jun 2018 19:33:41 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w5BAXavn045876
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Mon, 11 Jun 2018 19:33:41 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Subject: Re: WARNING in notify_change
+To: syzbot <syzbot+2b74da47f048a5046135@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+References: <94eb2c0ce3aa7551d30569658325@google.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org
+Message-ID: <96c750b3-fcb0-3d7f-45eb-45459078ef83@I-love.SAKURA.ne.jp>
+Date: Mon, 11 Jun 2018 19:33:36 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
+In-Reply-To: <94eb2c0ce3aa7551d30569658325@google.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3317638e-8688-35ef-ab61-7281312f2c3f@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 06 Jun 2018, Marek Vasut wrote:
+I haven't succeeded reproducing this bug using original C reproducer.
+Instead, I'm observing XFS warning using modified reproducer shown below.
 
-> On 06/06/2018 01:31 PM, Geert Uytterhoeven wrote:
-> > Hi Marek,
-> > 
-> > On Wed, Jun 6, 2018 at 11:59 AM, Marek Vasut <marek.vasut@gmail.com> wrote:
-> >> Convert the regmap_irq table to use REGMAP_IRQ_REG().
-> >>
-> >> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> > 
-> > Again:
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> Added.
-> 
-> And the obvious question is, what do you all use to collect these tags?
-> Doing it manually sucks.
+----------------------------------------
+// autogenerated by syzkaller (http://github.com/google/syzkaller)
 
-Manually for me.  Copy paste.
+#include <fcntl.h>
+#include <linux/futex.h>
+#include <pthread.h>
+#include <sys/stat.h>
+#include <sys/syscall.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/xattr.h>
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+struct thread_t {
+	int created, running, call;
+	pthread_t th;
+};
+
+static struct thread_t threads[16];
+static void execute_call(int call);
+static int running;
+static int collide;
+
+static void* thr(void* arg)
+{
+	struct thread_t* th = (struct thread_t*)arg;
+	for (;;) {
+		while (!__atomic_load_n(&th->running, __ATOMIC_ACQUIRE))
+			syscall(SYS_futex, &th->running, FUTEX_WAIT, 0, 0);
+		execute_call(th->call);
+		__atomic_fetch_sub(&running, 1, __ATOMIC_RELAXED);
+		__atomic_store_n(&th->running, 0, __ATOMIC_RELEASE);
+		syscall(SYS_futex, &th->running, FUTEX_WAKE);
+	}
+	return 0;
+}
+
+static void execute(int num_calls)
+{
+	int call, thread;
+	running = 0;
+	for (call = 0; call < num_calls; call++) {
+		for (thread = 0; thread < sizeof(threads) / sizeof(threads[0]); thread++) {
+			struct thread_t* th = &threads[thread];
+			if (!th->created) {
+				th->created = 1;
+				pthread_attr_t attr;
+				pthread_attr_init(&attr);
+				pthread_attr_setstacksize(&attr, 128 << 10);
+				pthread_create(&th->th, &attr, thr, th);
+			}
+			if (!__atomic_load_n(&th->running, __ATOMIC_ACQUIRE)) {
+				th->call = call;
+				__atomic_fetch_add(&running, 1, __ATOMIC_RELAXED);
+				__atomic_store_n(&th->running, 1, __ATOMIC_RELEASE);
+				syscall(SYS_futex, &th->running, FUTEX_WAKE);
+				if (collide && call % 2)
+					break;
+				struct timespec ts;
+				ts.tv_sec = 0;
+				ts.tv_nsec = 20 * 1000 * 1000;
+				syscall(SYS_futex, &th->running, FUTEX_WAIT, 1, &ts);
+				if (running)
+					usleep((call == num_calls - 1) ? 10000 : 1000);
+				break;
+			}
+		}
+	}
+}
+
+static void execute_call(int call)
+{
+	switch (call) {
+	case 0:
+		creat("file0", 0x20000080);
+		break;
+	case 1:
+		lsetxattr("file0", "security.capability",
+			  "\x00\x00\x00\x02\x01\x00\x00\x00\x00\x00\x00\x01"
+			  "\x04\x00\x00\x00\x00\x00\x00\x00", 20, 0);
+		break;
+	}
+}
+
+int main(int argc, char *argv[])
+{
+	execute_call(0);
+	execute_call(1);
+	execute(2);
+	return 0;
+}
+----------------------------------------
+
+When lsetxattr() is called in parallel (with CONFIG_XFS_WARN=y),
+XFS emits below warning due to ATTR_KILL_PRIV not cleared yet.
+
+----------------------------------------
+[   33.347151] XFS: Assertion failed: (iattr->ia_valid & (ATTR_UID|ATTR_GID|ATTR_ATIME|ATTR_ATIME_SET| ATTR_MTIME_SET|ATTR_KILL_PRIV|ATTR_TIMES_SET)) == 0, file: fs/xfs/xfs_iops.c, line: 792
+[   33.353353] ------------[ cut here ]------------
+[   33.355376] WARNING: CPU: 0 PID: 5355 at fs/xfs/xfs_message.c:105 asswarn+0x2c/0x30 [xfs]
+[   33.358501] Modules linked in: ip6t_rpfilter ipt_REJECT nf_reject_ipv4 ip6t_REJECT nf_reject_ipv6 xt_conntrack ip_set nfnetlink ebtable_nat ebtable_broute bridge stp llc ip6table_nat nf_conntrack_ipv6 nf_defrag_ipv6 nf_nat_ipv6 ip6table_mangle ip6table_raw iptable_nat nf_conntrack_ipv4 nf_defrag_ipv4 nf_nat_ipv4 nf_nat nf_conntrack iptable_mangle iptable_raw ebtable_filter ebtables ip6table_filter ip6_tables iptable_filter vmw_balloon intel_powerclamp pcspkr vmw_vmci i2c_piix4 sg ppdev parport_pc parport ip_tables xfs libcrc32c sd_mod sr_mod cdrom ata_generic pata_acpi serio_raw vmwgfx drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops mptspi e1000 ttm scsi_transport_spi ahci mptscsih libahci drm ata_piix mptbase i2c_core libata
+[   33.385636] CPU: 0 PID: 5355 Comm: a.out Not tainted 4.9.0-rc1+ #55
+[   33.389051] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
+[   33.393952]  ffffae56d0dafb78 ffffffff8f30c3ed 0000000000000000 0000000000000000
+[   33.398032]  ffffae56d0dafbb8 ffffffff8f075431 00000069d0dafbd8 ffff9e5ca0ea1040
+[   33.401454]  ffffae56d0dafcd8 ffff9e5ca0e9f778 0000000000000000 ffff9e5ca0ea1318
+[   33.404603] Call Trace:
+[   33.406183]  [<ffffffff8f30c3ed>] dump_stack+0x8e/0xd1
+[   33.408541]  [<ffffffff8f075431>] __warn+0xc1/0xe0
+[   33.410781]  [<ffffffff8f075508>] warn_slowpath_null+0x18/0x20
+[   33.413358]  [<ffffffffc06ac33c>] asswarn+0x2c/0x30 [xfs]
+[   33.415856]  [<ffffffffc06a49b4>] xfs_setattr_size+0xc4/0x3a0 [xfs]
+[   33.418549]  [<ffffffffc06a4cb7>] xfs_vn_setattr_size+0x27/0x30 [xfs]
+[   33.421409]  [<ffffffffc06a4d18>] xfs_vn_setattr+0x58/0x80 [xfs]
+[   33.421413]  [<ffffffff8f203aa3>] notify_change+0x313/0x430
+[   33.421415]  [<ffffffff8f1dfc48>] do_truncate+0x58/0x90
+[   33.421417]  [<ffffffff8f1f2e33>] path_openat+0xbc3/0xd20
+[   33.421419]  [<ffffffff8f1f42eb>] do_filp_open+0x7b/0xd0
+[   33.421422]  [<ffffffff8f6aa162>] ? _raw_spin_unlock+0x22/0x30
+[   33.421424]  [<ffffffff8f204e13>] ? __alloc_fd+0xf3/0x200
+[   33.421425]  [<ffffffff8f1e11ad>] do_sys_open+0x19d/0x230
+[   33.421426]  [<ffffffff8f1e1299>] SyS_creat+0x19/0x20
+[   33.421429]  [<ffffffff8f0036a7>] do_syscall_64+0x67/0x1f0
+[   33.421430]  [<ffffffff8f6aa949>] entry_SYSCALL64_slow_path+0x25/0x25
+[   33.421481] ---[ end trace be3bb63a2a7fe0de ]---
+----------------------------------------
+
+Bisection reached commit 030b533c4fd4d2ec "fs: Avoid premature clearing of capabilities".
+Since that commit changed whether ATTR_KILL_PRIV is removed from attr->ia_valid,
+it is possible that ATTR_KILL_PRIV is delivered to xfs_setattr_size().
+And making below change solves the XFS warning.
+
+----------------------------------------
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index 3b4be06..a67af5b 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -832,7 +832,7 @@
+ 	ASSERT(xfs_isilocked(ip, XFS_MMAPLOCK_EXCL));
+ 	ASSERT(S_ISREG(inode->i_mode));
+ 	ASSERT((iattr->ia_valid & (ATTR_UID|ATTR_GID|ATTR_ATIME|ATTR_ATIME_SET|
+-		ATTR_MTIME_SET|ATTR_KILL_PRIV|ATTR_TIMES_SET)) == 0);
++		ATTR_MTIME_SET|ATTR_TIMES_SET)) == 0);
+ 
+ 	oldsize = inode->i_size;
+ 	newsize = iattr->ia_size;
+----------------------------------------
+
+But I have no idea why executing in parallel makes such difference.
+Maybe parallel execution is something related to why syzbot is hitting
+WARN_ON_ONCE(!inode_is_locked(inode)) in notify_change()...
