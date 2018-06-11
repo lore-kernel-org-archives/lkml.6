@@ -1,367 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id QLe+BUSDHlshEwAAmS7hNA
-	; Mon, 11 Jun 2018 14:12:43 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id XWXmJPfKHVuxFQAAmS7hNA
+	; Mon, 11 Jun 2018 01:16:06 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D811E607A4; Mon, 11 Jun 2018 14:12:42 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Xg3+GxNs"
+	id 8564460795; Mon, 11 Jun 2018 01:16:06 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id DCAC660351;
-	Mon, 11 Jun 2018 14:12:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DCAC660351
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 7BA27600D0;
+	Mon, 11 Jun 2018 01:16:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7BA27600D0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933933AbeFKOLj (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 10:11:39 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46502 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933624AbeFKOHK (ORCPT
+        id S1753765AbeFKBQA (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Sun, 10 Jun 2018 21:16:00 -0400
+Received: from smtprelay0091.hostedemail.com ([216.40.44.91]:37886 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753699AbeFKBP6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:07:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=oP621M3ADTC/9PEAuzdvY/BoQBybqRM4JKGi3rlV1P4=; b=Xg3+GxNsYX9u+dr1ZCZdADV2z
-        HWva6LqBTKM6x+YI/Cx/3wx8dzV0W30EMP64YOR++34IFGOtK+n6amUxK+6AHBbqzOHtrw2WeDBBq
-        tv0I9s3XCoN1fTd/oMm9L33KNOOg7MMmwon9rzeAN4va8uEcLfWgPwNMZjSc2FTezbGdIphftuVkz
-        we514HB57aTxqVTYrRYd4VA11rkFU/lfMVZgaJu/hq1f/Zg3pH6f2fCpZ+0sOwdCtEW4r8d6KSUlc
-        iLvolZqbZTIDEcJHqnPLvJeA9uELSyRYfza6H4wC/iURAcIDLp435dJ4lX2gm3goiXUo0uPxiXRIl
-        zy75yTTnA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSNTR-0004zd-Rt; Mon, 11 Jun 2018 14:07:09 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Lukas Czerner <lczerner@redhat.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v13 61/72] dax: Rename some functions
-Date: Mon, 11 Jun 2018 07:06:28 -0700
-Message-Id: <20180611140639.17215-62-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
-References: <20180611140639.17215-1-willy@infradead.org>
+        Sun, 10 Jun 2018 21:15:58 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id E87CDAE840
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 01:15:57 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: rifle31_6e368d1497c2d
+X-Filterd-Recvd-Size: 7355
+Received: from XPS-9350.home (unknown [47.151.150.235])
+        (Authenticated sender: joe@perches.com)
+        by omf07.hostedemail.com (Postfix) with ESMTPA
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 01:15:57 +0000 (UTC)
+Message-ID: <aaceb61167066638053effca274df6cf409c65db.camel@perches.com>
+Subject: Bad MAINTAINERS patterns
+From: Joe Perches <joe@perches.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Date: Sun, 10 Jun 2018 18:15:55 -0700
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+Given various renames and removals, the MAINTAINERS
+file patterns get out of sync with the actual files.
 
-Remove mentions of 'radix' and 'radix tree'.  Simplify some names by
-dropping the word 'mapping'.
+It'd be nice if the various maintainers could fix
+these file patterns.
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
----
- fs/dax.c | 86 +++++++++++++++++++++++++++-----------------------------
- 1 file changed, 42 insertions(+), 44 deletions(-)
-
-diff --git a/fs/dax.c b/fs/dax.c
-index 988bd7b4a971..97e8931541f1 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -74,18 +74,18 @@ fs_initcall(init_dax_wait_table);
- #define DAX_ZERO_PAGE	(1UL << 2)
- #define DAX_EMPTY	(1UL << 3)
- 
--static unsigned long dax_radix_pfn(void *entry)
-+static unsigned long dax_to_pfn(void *entry)
- {
- 	return xa_to_value(entry) >> DAX_SHIFT;
- }
- 
--static void *dax_radix_locked_entry(unsigned long pfn, unsigned long flags)
-+static void *dax_make_locked(unsigned long pfn, unsigned long flags)
- {
- 	return xa_mk_value(flags | ((unsigned long)pfn << DAX_SHIFT) |
- 			DAX_LOCKED);
- }
- 
--static unsigned int dax_radix_order(void *entry)
-+static unsigned int dax_entry_order(void *entry)
- {
- 	if (xa_to_value(entry) & DAX_PMD)
- 		return PMD_SHIFT - PAGE_SHIFT;
-@@ -113,7 +113,7 @@ static int dax_is_empty_entry(void *entry)
- }
- 
- /*
-- * DAX radix tree locking
-+ * DAX page cache entry locking
-  */
- struct exceptional_entry_key {
- 	struct address_space *mapping;
-@@ -217,7 +217,7 @@ static inline void *unlock_slot(struct address_space *mapping, void **slot)
- }
- 
- /*
-- * Lookup entry in radix tree, wait for it to become unlocked if it is
-+ * Lookup entry in page cache, wait for it to become unlocked if it is
-  * a DAX entry and return it. The caller must call
-  * put_unlocked_mapping_entry() when he decided not to lock the entry or
-  * put_locked_mapping_entry() when he locked the entry and now wants to
-@@ -280,7 +280,7 @@ static void put_locked_mapping_entry(struct address_space *mapping,
- }
- 
- /*
-- * Called when we are done with radix tree entry we looked up via
-+ * Called when we are done with page cache entry we looked up via
-  * get_unlocked_mapping_entry() and which we didn't lock in the end.
-  */
- static void put_unlocked_mapping_entry(struct address_space *mapping,
-@@ -289,7 +289,7 @@ static void put_unlocked_mapping_entry(struct address_space *mapping,
- 	if (!entry)
- 		return;
- 
--	/* We have to wake up next waiter for the radix tree entry lock */
-+	/* We have to wake up next waiter for the page cache entry lock */
- 	dax_wake_mapping_entry_waiter(mapping, index, entry, false);
- }
- 
-@@ -305,9 +305,9 @@ static unsigned long dax_entry_size(void *entry)
- 		return PAGE_SIZE;
- }
- 
--static unsigned long dax_radix_end_pfn(void *entry)
-+static unsigned long dax_end_pfn(void *entry)
- {
--	return dax_radix_pfn(entry) + dax_entry_size(entry) / PAGE_SIZE;
-+	return dax_to_pfn(entry) + dax_entry_size(entry) / PAGE_SIZE;
- }
- 
- /*
-@@ -315,8 +315,8 @@ static unsigned long dax_radix_end_pfn(void *entry)
-  * 'empty' and 'zero' entries.
-  */
- #define for_each_mapped_pfn(entry, pfn) \
--	for (pfn = dax_radix_pfn(entry); \
--			pfn < dax_radix_end_pfn(entry); pfn++)
-+	for (pfn = dax_to_pfn(entry); \
-+			pfn < dax_end_pfn(entry); pfn++)
- 
- /*
-  * TODO: for reflink+dax we need a way to associate a single page with
-@@ -374,9 +374,9 @@ static struct page *dax_busy_page(void *entry)
- }
- 
- /*
-- * Find radix tree entry at given index. If it is a DAX entry, return it
-- * with the radix tree entry locked. If the radix tree doesn't contain the
-- * given index, create an empty entry for the index and return with it locked.
-+ * Find page cache entry at given index. If it is a DAX entry, return it
-+ * with the entry locked. If the page cache doesn't contain an entry at
-+ * that index, add a locked empty entry.
-  *
-  * When requesting an entry with size DAX_PMD, grab_mapping_entry() will
-  * either return that locked entry or will return an error.  This error will
-@@ -485,10 +485,10 @@ static void *grab_mapping_entry(struct address_space *mapping, pgoff_t index,
- 					true);
- 		}
- 
--		entry = dax_radix_locked_entry(0, size_flag | DAX_EMPTY);
-+		entry = dax_make_locked(0, size_flag | DAX_EMPTY);
- 
- 		err = __radix_tree_insert(&mapping->i_pages, index,
--				dax_radix_order(entry), entry);
-+				dax_entry_order(entry), entry);
- 		radix_tree_preload_end();
- 		if (err) {
- 			xa_unlock_irq(&mapping->i_pages);
-@@ -597,7 +597,7 @@ struct page *dax_layout_busy_page(struct address_space *mapping)
- }
- EXPORT_SYMBOL_GPL(dax_layout_busy_page);
- 
--static int __dax_invalidate_mapping_entry(struct address_space *mapping,
-+static int __dax_invalidate_entry(struct address_space *mapping,
- 					  pgoff_t index, bool trunc)
- {
- 	int ret = 0;
-@@ -627,12 +627,12 @@ static int __dax_invalidate_mapping_entry(struct address_space *mapping,
-  */
- int dax_delete_mapping_entry(struct address_space *mapping, pgoff_t index)
- {
--	int ret = __dax_invalidate_mapping_entry(mapping, index, true);
-+	int ret = __dax_invalidate_entry(mapping, index, true);
- 
- 	/*
- 	 * This gets called from truncate / punch_hole path. As such, the caller
- 	 * must hold locks protecting against concurrent modifications of the
--	 * radix tree (usually fs-private i_mmap_sem for writing). Since the
-+	 * page cache (usually fs-private i_mmap_sem for writing). Since the
- 	 * caller has seen a DAX entry for this index, we better find it
- 	 * at that index as well...
- 	 */
-@@ -646,7 +646,7 @@ int dax_delete_mapping_entry(struct address_space *mapping, pgoff_t index)
- int dax_invalidate_mapping_entry_sync(struct address_space *mapping,
- 				      pgoff_t index)
- {
--	return __dax_invalidate_mapping_entry(mapping, index, false);
-+	return __dax_invalidate_entry(mapping, index, false);
- }
- 
- static int copy_user_dax(struct block_device *bdev, struct dax_device *dax_dev,
-@@ -683,10 +683,9 @@ static int copy_user_dax(struct block_device *bdev, struct dax_device *dax_dev,
-  * already in the tree, we will skip the insertion and just dirty the PMD as
-  * appropriate.
-  */
--static void *dax_insert_mapping_entry(struct address_space *mapping,
--				      struct vm_fault *vmf,
--				      void *entry, pfn_t pfn_t,
--				      unsigned long flags, bool dirty)
-+static void *dax_insert_entry(struct address_space *mapping,
-+		struct vm_fault *vmf,
-+		void *entry, pfn_t pfn_t, unsigned long flags, bool dirty)
- {
- 	struct radix_tree_root *pages = &mapping->i_pages;
- 	unsigned long pfn = pfn_t_to_pfn(pfn_t);
-@@ -706,7 +705,7 @@ static void *dax_insert_mapping_entry(struct address_space *mapping,
- 	}
- 
- 	xa_lock_irq(pages);
--	new_entry = dax_radix_locked_entry(pfn, flags);
-+	new_entry = dax_make_locked(pfn, flags);
- 	if (dax_entry_size(entry) != dax_entry_size(new_entry)) {
- 		dax_disassociate_entry(entry, mapping, false);
- 		dax_associate_entry(new_entry, mapping, vmf->vma, vmf->address);
-@@ -714,9 +713,9 @@ static void *dax_insert_mapping_entry(struct address_space *mapping,
- 
- 	if (dax_is_zero_entry(entry) || dax_is_empty_entry(entry)) {
- 		/*
--		 * Only swap our new entry into the radix tree if the current
-+		 * Only swap our new entry into the page cache if the current
- 		 * entry is a zero page or an empty entry.  If a normal PTE or
--		 * PMD entry is already in the tree, we leave it alone.  This
-+		 * PMD entry is already in the cache, we leave it alone.  This
- 		 * means that if we are trying to insert a PTE and the
- 		 * existing entry is a PMD, we will just leave the PMD in the
- 		 * tree and dirty it if necessary.
-@@ -739,8 +738,8 @@ static void *dax_insert_mapping_entry(struct address_space *mapping,
- 	return entry;
- }
- 
--static inline unsigned long
--pgoff_address(pgoff_t pgoff, struct vm_area_struct *vma)
-+static inline
-+unsigned long pgoff_address(pgoff_t pgoff, struct vm_area_struct *vma)
- {
- 	unsigned long address;
- 
-@@ -750,8 +749,8 @@ pgoff_address(pgoff_t pgoff, struct vm_area_struct *vma)
- }
- 
- /* Walk all mappings of a given index of a file and writeprotect them */
--static void dax_mapping_entry_mkclean(struct address_space *mapping,
--				      pgoff_t index, unsigned long pfn)
-+static void dax_entry_mkclean(struct address_space *mapping, pgoff_t index,
-+		unsigned long pfn)
- {
- 	struct vm_area_struct *vma;
- 	pte_t pte, *ptep = NULL;
-@@ -847,7 +846,7 @@ static int dax_writeback_one(struct dax_device *dax_dev,
- 	 * compare pfns as we must not bail out due to difference in lockbit
- 	 * or entry type.
- 	 */
--	if (dax_radix_pfn(entry2) != dax_radix_pfn(entry))
-+	if (dax_to_pfn(entry2) != dax_to_pfn(entry))
- 		goto put_unlocked;
- 	if (WARN_ON_ONCE(dax_is_empty_entry(entry) ||
- 				dax_is_zero_entry(entry))) {
-@@ -877,10 +876,10 @@ static int dax_writeback_one(struct dax_device *dax_dev,
- 	 * This allows us to flush for PMD_SIZE and not have to worry about
- 	 * partial PMD writebacks.
- 	 */
--	pfn = dax_radix_pfn(entry);
--	size = PAGE_SIZE << dax_radix_order(entry);
-+	pfn = dax_to_pfn(entry);
-+	size = PAGE_SIZE << dax_entry_order(entry);
- 
--	dax_mapping_entry_mkclean(mapping, index, pfn);
-+	dax_entry_mkclean(mapping, index, pfn);
- 	dax_flush(dax_dev, page_address(pfn_to_page(pfn)), size);
- 	/*
- 	 * After we have flushed the cache, we can clear the dirty tag. There
-@@ -1018,7 +1017,7 @@ static vm_fault_t dax_load_hole(struct address_space *mapping, void *entry,
- 	pfn_t pfn = pfn_to_pfn_t(my_zero_pfn(vaddr));
- 	vm_fault_t ret;
- 
--	dax_insert_mapping_entry(mapping, vmf, entry, pfn,
-+	dax_insert_entry(mapping, vmf, entry, pfn,
- 			DAX_ZERO_PAGE, false);
- 
- 	ret = vmf_insert_mixed(vmf->vma, vaddr, pfn);
-@@ -1332,7 +1331,7 @@ static vm_fault_t dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 		if (error < 0)
- 			goto error_finish_iomap;
- 
--		entry = dax_insert_mapping_entry(mapping, vmf, entry, pfn,
-+		entry = dax_insert_entry(mapping, vmf, entry, pfn,
- 						 0, write && !sync);
- 
- 		/*
-@@ -1412,7 +1411,7 @@ static vm_fault_t dax_pmd_load_hole(struct vm_fault *vmf, struct iomap *iomap,
- 		goto fallback;
- 
- 	pfn = page_to_pfn_t(zero_page);
--	ret = dax_insert_mapping_entry(mapping, vmf, entry, pfn,
-+	ret = dax_insert_entry(mapping, vmf, entry, pfn,
- 			DAX_PMD | DAX_ZERO_PAGE, false);
- 
- 	ptl = pmd_lock(vmf->vma->vm_mm, vmf->pmd);
-@@ -1465,7 +1464,7 @@ static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 	 * Make sure that the faulting address's PMD offset (color) matches
- 	 * the PMD offset from the start of the file.  This is necessary so
- 	 * that a PMD range in the page table overlaps exactly with a PMD
--	 * range in the radix tree.
-+	 * range in the page cache.
- 	 */
- 	if ((vmf->pgoff & PG_PMD_COLOUR) !=
- 	    ((vmf->address >> PAGE_SHIFT) & PG_PMD_COLOUR))
-@@ -1533,7 +1532,7 @@ static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 		if (error < 0)
- 			goto finish_iomap;
- 
--		entry = dax_insert_mapping_entry(mapping, vmf, entry, pfn,
-+		entry = dax_insert_entry(mapping, vmf, entry, pfn,
- 						DAX_PMD, write && !sync);
- 
- 		/*
-@@ -1626,15 +1625,14 @@ vm_fault_t dax_iomap_fault(struct vm_fault *vmf, enum page_entry_size pe_size,
- }
- EXPORT_SYMBOL_GPL(dax_iomap_fault);
- 
--/**
-+/*
-  * dax_insert_pfn_mkwrite - insert PTE or PMD entry into page tables
-  * @vmf: The description of the fault
-  * @pe_size: Size of entry to be inserted
-  * @pfn: PFN to insert
-  *
-- * This function inserts writeable PTE or PMD entry into page tables for mmaped
-- * DAX file.  It takes care of marking corresponding radix tree entry as dirty
-- * as well.
-+ * This function inserts a writeable PTE or PMD entry into the page tables
-+ * for an mmaped DAX file.  It also marks the page cache entry as dirty.
-  */
- static vm_fault_t dax_insert_pfn_mkwrite(struct vm_fault *vmf,
- 				  enum page_entry_size pe_size,
--- 
-2.17.1
+$ ./scripts/get_maintainer.pl --self-test=patterns
+./MAINTAINERS:1733: warning: no file matches	F:	include/dt-bindings/clock/nuvoton,npcm7xx-clks.h
+./MAINTAINERS:1958: warning: no file matches	F:	arch/arm/plat-samsung/s5p-dev-mfc.c
+./MAINTAINERS:2056: warning: no file matches	F:	arch/arm64/boot/dts/marvell/berlin*
+./MAINTAINERS:2435: warning: no file matches	F:	include/media/atmel-isi.h
+./MAINTAINERS:2973: warning: no file matches	F:	arch/arm64/boot/dts/broadcom/ns2*
+./MAINTAINERS:3082: warning: no file matches	F:	Documentation/sound/alsa/Bt87x.txt
+./MAINTAINERS:3378: warning: no file matches	F:	Documentation/module-signing.txt
+./MAINTAINERS:3800: warning: no file matches	F:	drivers/media/i2c/cs3308.h
+./MAINTAINERS:3831: warning: no file matches	F:	include/media/cx2341x*
+./MAINTAINERS:3938: warning: no file matches	F:	include/uapi/scsi/cxlflash_ioctls.h
+./MAINTAINERS:3981: warning: no file matches	F:	drivers/input/dlink-dir685-touchkeys.c
+./MAINTAINERS:4516: warning: no file matches	F:	Documentation/devicetree/bindings/display/ili9225.txt
+./MAINTAINERS:4602: warning: no file matches	F:	Documentation/devicetree/bindings/display/st7586.txt
+./MAINTAINERS:4608: warning: no file matches	F:	Documentation/devicetree/bindings/display/st7735r.txt
+./MAINTAINERS:4641: warning: no file matches	F:	Documentation/devicetree/bindings/video/
+./MAINTAINERS:4686: warning: no file matches	F:	Documentation/devicetree/bindings/drm/atmel/
+./MAINTAINERS:4717: warning: no file matches	F:	Documentation/devicetree/bindings/display/panel/nec,nl4827hc19_05b.txt
+./MAINTAINERS:4827: warning: no file matches	F:	Documentation/devicetree/bindings/display/brcm,bcm-v3d.txt
+./MAINTAINERS:5635: warning: no file matches	F:	Documentation/fpga/
+./MAINTAINERS:5738: warning: no file matches	F:	Documentation/devicetree/bindings/powerpc/fsl/fman.txt
+./MAINTAINERS:6144: warning: no file matches	F:	drivers/staging/greybus/fw-managament.c
+./MAINTAINERS:6157: warning: no file matches	F:	drivers/staging/greybus/timesync.c
+./MAINTAINERS:6158: warning: no file matches	F:	drivers/staging/greybus/timesync_platform.c
+./MAINTAINERS:6504: warning: no file matches	F:	Documentation/vm/hmm.txt
+./MAINTAINERS:6796: warning: no file matches	F:	drivers/crypto/nx/nx_debugfs.h
+./MAINTAINERS:6817: warning: no file matches	F:	arch/powerpc/include/uapi/asm/vas.h
+./MAINTAINERS:6969: warning: no file matches	F:	Documentation/devicetree/bindings/iio/multiplexer/iio-mux.txt
+./MAINTAINERS:7031: warning: no file matches	F:	Documentation/devicetree/bindings/i2c/ina209.txt
+./MAINTAINERS:7313: warning: no file matches	F:	arch/x86/include/asm/pmc_core.h
+./MAINTAINERS:7404: warning: no file matches	F:	Documentation/trace/intel_th.txt
+./MAINTAINERS:7428: warning: no file matches	F:	Documentation/devicetree/bindings/iio/gyroscope/inv,mpu3050.txt
+./MAINTAINERS:7499: warning: no file matches	F:	drivers/staging/ipx/
+./MAINTAINERS:7951: warning: no file matches	F:	include/linux/keyctl.h
+./MAINTAINERS:8426: warning: no file matches	F:	arch/*/include/asm/mutex*.h
+./MAINTAINERS:8572: warning: no file matches	F:	linux/platform_data/mv88e6xxx.h
+./MAINTAINERS:8680: warning: no file matches	F:	drivers/hwmon/max20751.c
+./MAINTAINERS:8703: warning: no file matches	F:	Documentation/devicetree/bindings/i2c/max6697.txt
+./MAINTAINERS:9083: warning: no file matches	F:	Documentation/devicetree/bindings/video/bridge/megachips-stdpxxxx-ge-b850v3-fw.txt
+./MAINTAINERS:9151: warning: no file matches	F:	drivers/net/ethernet/mellanox/mlx5/core/en_ipsec/*
+./MAINTAINERS:9152: warning: no file matches	F:	drivers/net/ethernet/mellanox/mlx5/core/ipsec*
+./MAINTAINERS:9346: warning: no file matches	F:	devicetree/bindings/media/atmel-isc.txt
+./MAINTAINERS:9462: warning: no file matches	F:	arch/mips/loongson64/*{2e/2f}*
+./MAINTAINERS:9465: warning: no file matches	F:	drivers/*/*/*loongson2*
+./MAINTAINERS:9474: warning: no file matches	F:	drivers/*/*loongson3*
+./MAINTAINERS:9475: warning: no file matches	F:	drivers/*/*/*loongson3*
+./MAINTAINERS:9666: warning: no file matches	F:	Documentation/ABI/testing/mux/sysfs-class-mux*
+./MAINTAINERS:9668: warning: no file matches	F:	include/linux/dt-bindings/mux/
+./MAINTAINERS:9697: warning: no file matches	F:	Documentation/devicetree/bindings/display/mxsfb-drm.txt
+./MAINTAINERS:9733: warning: no file matches	F:	drivers/staging/ncpfs/
+./MAINTAINERS:9768: warning: no file matches	F:	driver/net/net_failover.c
+./MAINTAINERS:9919: warning: no file matches	F:	net/core/flow.c
+./MAINTAINERS:10245: warning: no file matches	F:	Documentation/accelerators/ocxl.txt
+./MAINTAINERS:10729: warning: no file matches	F:	Documentation/misc-devices/lcd-panel-cgram.txt
+./MAINTAINERS:10730: warning: no file matches	F:	drivers/misc/panel.c
+./MAINTAINERS:11069: warning: no file matches	F:	Documentation/devicetree/bindings/pci/pcie-kirin.txt
+./MAINTAINERS:12114: warning: no file matches	F:	drivers/iio/adc/rcar_gyro_adc.c
+./MAINTAINERS:12443: warning: no file matches	F:	include/media/saa7146*
+./MAINTAINERS:12460: warning: no file matches	F:	Documentation/devicetree/bindings/crypto/samsung,exynos-rng4.txt
+./MAINTAINERS:12467: warning: no file matches	F:	Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.txt
+./MAINTAINERS:13058: warning: no file matches	F:	kernel/rcu/srcu.c
+./MAINTAINERS:13191: warning: no file matches	F:	include/linux/sdei.h
+./MAINTAINERS:13192: warning: no file matches	F:	include/uapi/linux/sdei.h
+./MAINTAINERS:13294: warning: no file matches	F:	Documentation/sound/alsa/compress_offload.txt
+./MAINTAINERS:13315: warning: no file matches	F:	Documentation/sound/alsa/soc/
+./MAINTAINERS:13471: warning: no file matches	F:	drivers/staging/ft1000/
+./MAINTAINERS:13557: warning: no file matches	F:	drivers/staging/media/st-cec/
+./MAINTAINERS:13728: warning: no file matches	F:	drivers/dma/dwi-axi-dmac/
+./MAINTAINERS:13797: warning: no file matches	F:	Documentation/trace/stm.txt
+./MAINTAINERS:14082: warning: no file matches	F:	include/dt-bindings/genpd/k2g.h
+./MAINTAINERS:14474: warning: no file matches	F:	Documentation/trace/ftrace.txt
+./MAINTAINERS:14943: warning: no file matches	F:	Documentation/usb/typec.rst
+./MAINTAINERS:15019: warning: no file matches	F:	fs/hppfs/
+./MAINTAINERS:15143: warning: no file matches	F:	drivers/media/v4l2-core/videobuf2-*
+./MAINTAINERS:15177: warning: no file matches	F:	drivers/vhost/vsock.h
+./MAINTAINERS:15773: warning: no file matches	F:	Documentation/input/yealink.rst
