@@ -2,157 +2,197 @@ Return-Path: <SRS0=KDb5=I5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id EE12EC07D5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:56:22 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1FAF9C07D5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:57:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99075208B2
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:56:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=jcline.org header.i=@jcline.org header.b="cwoXwGyX";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="cZErAtr4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99075208B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jcline.org
+	by mail.kernel.org (Postfix) with ESMTP id C9EC5208B2
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:57:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9EC5208B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934090AbeFKR4U (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 13:56:20 -0400
-Received: from a8-57.smtp-out.amazonses.com ([54.240.8.57]:42324 "EHLO
-        a8-57.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932292AbeFKR4S (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 13:56:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=rdybrs3533vx7mghocfwl3vdwgpl2v5u; d=jcline.org; t=1528739777;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-        bh=2etOOeTS/DUkeB06XUkHFR4WV2UjD2YnXzwYrsv7AuY=;
-        b=cwoXwGyXUc55cmAwJr61MpLcsQrapFBe/YbJeNstk3XI0OlBXYs7WgJHgIpCm5Gb
-        qoLrCDg1UYb3EAWTWYmXkxHy0X7jVHHSqg7wqjJK0PHl2Kz48R9ybyal33jCFvAiCSZ
-        78VPgvUZSrMtNrU6uk4zHegFkaCyG4qcJBWUiJD0=
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1528739777;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
-        bh=2etOOeTS/DUkeB06XUkHFR4WV2UjD2YnXzwYrsv7AuY=;
-        b=cZErAtr4aQx/sbqYCR28M4Xj4gY75mJIYf0yAB/fEAL0cApVLD0ag3xCtJV4D9Fo
-        jUdbQTJRoDPhi0tZdPFcB7b3HxIvv3Z8vwRsTfi2L7AUMg69UN8v/cgOdIn4LOo/aqe
-        3iuzigCxsCB086Rs5fF+RXwD5DmNNJJLjbMja4gM=
-X-Virus-Scanned: amavisd-new at jcline.org
-Subject: Re: Regression: x86/tsc: Fix mark_tsc_unstable()
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        rui.zhang@intel.com, len.brown@intel.com, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org, regressions@leemhuis.info,
-        Diego Viola <diego.viola@gmail.com>,
-        mmarget@physik.tu-berlin.de
-References: <01000163ef24c875-daa2c00e-611e-4383-99a6-c8c72ef04a14-000000@email.amazonses.com>
- <20180611141742.GP12198@hirez.programming.kicks-ass.net>
- <20180611143801.GH12235@hirez.programming.kicks-ass.net>
- <20180611153042.GI12235@hirez.programming.kicks-ass.net>
-From:   Jeremy Cline <jeremy@jcline.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jeremy@jcline.org; prefer-encrypt=mutual; keydata=
- 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
- X/87hZ4pdW/aOXUAgQ==
-Message-ID: <01000163effdcb29-f886b68d-bdb4-44c0-a68e-f749e10280fd-000000@email.amazonses.com>
-Date:   Mon, 11 Jun 2018 17:56:17 +0000
+        id S934114AbeFKR5K (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 13:57:10 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54522 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932292AbeFKR5J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 13:57:09 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AC1811435;
+        Mon, 11 Jun 2018 10:57:08 -0700 (PDT)
+Received: from [192.168.43.63] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A5C303F59D;
+        Mon, 11 Jun 2018 10:57:01 -0700 (PDT)
+Subject: Re: [Xen-devel] [PATCH v2 5/9] xen/gntdev: Allow mappings for DMA
+ buffers
+To:     Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Oleksandr Andrushchenko <andr2000@gmail.com>
+Cc:     jgross@suse.com, dongwon.kim@intel.com,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        daniel.vetter@intel.com, xen-devel@lists.xenproject.org,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        matthew.d.roper@intel.com, linux-media@vger.kernel.org
+References: <20180601114132.22596-1-andr2000@gmail.com>
+ <20180601114132.22596-6-andr2000@gmail.com>
+ <64facf05-0a51-c3d9-9d3b-780893248628@oracle.com>
+ <84217eac-b83b-710f-39ab-c93cad65bf9a@gmail.com>
+ <a172746d-7a97-159f-71a7-511b2d239089@oracle.com>
+ <30fa03c0-1b75-c0b1-b14f-8b52ea584e20@gmail.com>
+ <78dc2fc4-cdac-05b7-2c34-22b69e7e009c@oracle.com>
+ <4be24882-185d-01e3-6aa1-751e341433c7@gmail.com>
+ <alpine.DEB.2.10.1806081025030.14699@sstabellini-ThinkPad-X260>
+ <c6e1820a-fb57-b213-aa2f-05787dae06ad@oracle.com>
+ <06eff3fe-3ffc-47f6-6bd6-d8f2f823b382@gmail.com>
+ <alpine.DEB.2.10.1806110949050.14695@sstabellini-ThinkPad-X260>
+ <baab493d-bcba-f053-4b48-0f97fb5723b2@epam.com>
+ <33984b9b-966a-78bb-0472-37af23b8ba9d@arm.com>
+ <c5a94f8e-4b9f-a5e5-aac2-fc9fbd5503de@epam.com>
+From:   Julien Grall <julien.grall@arm.com>
+Message-ID: <c45aa6c9-cc0e-63db-e97a-0518497eb78b@arm.com>
+Date:   Mon, 11 Jun 2018 18:56:57 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180611153042.GI12235@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <c5a94f8e-4b9f-a5e5-aac2-fc9fbd5503de@epam.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-SES-Outgoing: 2018.06.11-54.240.8.57
-Feedback-ID: 1.us-east-1.z18Isoc/FaoPOvCyJyi1mnTt8STwoRuibXVNoUcvG6g=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/11/2018 11:30 AM, Peter Zijlstra wrote:
-> On Mon, Jun 11, 2018 at 04:38:01PM +0200, Peter Zijlstra wrote:
->> On Mon, Jun 11, 2018 at 04:17:42PM +0200, Peter Zijlstra wrote:
->>> On Mon, Jun 11, 2018 at 01:59:15PM +0000, Jeremy Cline wrote:
->>>> A user has bisected the problem to the v4.16 commit 1ab4ca7c59d4
->>>> ("x86/tsc: Fix mark_tsc_unstable()"). According to the reporter,
->>>> explicitly setting "tsc=" on the kernel command line causes the boot to
->>>> always succeed. All the users have Thinkpad T500s or T400s (Core 2 Duos)
->>>
->>> Weird. So Core2 typically triggers mark_tsc_unstable() in either
->>> intel_idle or processor_idle. ISTR testing that when I did the patches.
->>>
->>> When I make that mark_tsc_unstable() in the idle drivers unconditional
->>> and boot my ivb with that, it doesn't want to fail. I've booted the
->>> machine 5 consequctive times without issue.
->>>
->>> Let me try and checkout -stable, maybe something's up with that.
+Hi,
+
+On 06/11/2018 06:49 PM, Oleksandr Andrushchenko wrote:
+> On 06/11/2018 08:46 PM, Julien Grall wrote:
+>> Hi,
 >>
->> Nope -stable seems to be working as well on the IVB (with modification).
->> I just dug up my T500 and that's actually still running the test kernel.
->> Let me try and build the -stable kernel for that.
-> 
-> 4.16.8 works without issue on my T500 with a debian/ubuntu like distro
-> config.
-> 
+>> On 06/11/2018 06:16 PM, Oleksandr Andrushchenko wrote:
+>>> On 06/11/2018 07:51 PM, Stefano Stabellini wrote:
+>>>> On Mon, 11 Jun 2018, Oleksandr Andrushchenko wrote:
+>>>>> On 06/08/2018 10:21 PM, Boris Ostrovsky wrote:
+>>>>>> On 06/08/2018 01:59 PM, Stefano Stabellini wrote:
+>>>>>>>>>>>>>>       @@ -325,6 +401,14 @@ static int map_grant_pages(struct
+>>>>>>>>>>>>>> grant_map
+>>>>>>>>>>>>>> *map)
+>>>>>>>>>>>>>>               map->unmap_ops[i].handle =
+>>>>>>>>>>>>>> map->map_ops[i].handle;
+>>>>>>>>>>>>>>               if (use_ptemod)
+>>>>>>>>>>>>>> map->kunmap_ops[i].handle =
+>>>>>>>>>>>>>> map->kmap_ops[i].handle;
+>>>>>>>>>>>>>> +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
+>>>>>>>>>>>>>> +        else if (map->dma_vaddr) {
+>>>>>>>>>>>>>> +            unsigned long mfn;
+>>>>>>>>>>>>>> +
+>>>>>>>>>>>>>> +            mfn = __pfn_to_mfn(page_to_pfn(map->pages[i]));
+>>>>>>>>>>>>> Not pfn_to_mfn()?
+>>>>>>>>>>>> I'd love to, but pfn_to_mfn is only defined for x86, not ARM:
+>>>>>>>>>>>> [1]
+>>>>>>>>>>>> and [2]
+>>>>>>>>>>>> Thus,
+>>>>>>>>>>>>
+>>>>>>>>>>>> drivers/xen/gntdev.c:408:10: error: implicit declaration of
+>>>>>>>>>>>> function
+>>>>>>>>>>>> ‘pfn_to_mfn’ [-Werror=implicit-function-declaration]
+>>>>>>>>>>>>         mfn = pfn_to_mfn(page_to_pfn(map->pages[i]));
+>>>>>>>>>>>>
+>>>>>>>>>>>> So, I'll keep __pfn_to_mfn
+>>>>>>>>>>> How will this work on non-PV x86?
+>>>>>>>>>> So, you mean I need:
+>>>>>>>>>> #ifdef CONFIG_X86
+>>>>>>>>>> mfn = pfn_to_mfn(page_to_pfn(map->pages[i]));
+>>>>>>>>>> #else
+>>>>>>>>>> mfn = __pfn_to_mfn(page_to_pfn(map->pages[i]));
+>>>>>>>>>> #endif
+>>>>>>>>>>
+>>>>>>>>> I'd rather fix it in ARM code. Stefano, why does ARM uses the
+>>>>>>>>> underscored version?
+>>>>>>>> Do you want me to add one more patch for ARM to wrap __pfn_to_mfn
+>>>>>>>> with static inline for ARM? e.g.
+>>>>>>>> static inline ...pfn_to_mfn(...)
+>>>>>>>> {
+>>>>>>>>       __pfn_to_mfn();
+>>>>>>>> }
+>>>>>>> A Xen on ARM guest doesn't actually know the mfns behind its own
+>>>>>>> pseudo-physical pages. This is why we stopped using pfn_to_mfn and
+>>>>>>> started using pfn_to_bfn instead, which will generally return "pfn",
+>>>>>>> unless the page is a foreign grant. See include/xen/arm/page.h.
+>>>>>>> pfn_to_bfn was also introduced on x86. For example, see the usage of
+>>>>>>> pfn_to_bfn in drivers/xen/swiotlb-xen.c. Otherwise, if you don't 
+>>>>>>> care
+>>>>>>> about other mapped grants, you can just use pfn_to_gfn, that always
+>>>>>>> returns pfn.
+>>>>>> I think then this code needs to use pfn_to_bfn().
+>>>>> Ok
+>>>>>>
+>>>>>>> Also, for your information, we support different page 
+>>>>>>> granularities in
+>>>>>>> Linux as a Xen guest, see the comment at include/xen/arm/page.h:
+>>>>>>>
+>>>>>>>     /*
+>>>>>>>      * The pseudo-physical frame (pfn) used in all the helpers is 
+>>>>>>> always
+>>>>>>> based
+>>>>>>>      * on Xen page granularity (i.e 4KB).
+>>>>>>>      *
+>>>>>>>      * A Linux page may be split across multiple non-contiguous 
+>>>>>>> Xen page so
+>>>>>>> we
+>>>>>>>      * have to keep track with frame based on 4KB page granularity.
+>>>>>>>      *
+>>>>>>>      * PV drivers should never make a direct usage of those helpers
+>>>>>>> (particularly
+>>>>>>>      * pfn_to_gfn and gfn_to_pfn).
+>>>>>>>      */
+>>>>>>>
+>>>>>>> A Linux page could be 64K, but a Xen page is always 4K. A granted 
+>>>>>>> page
+>>>>>>> is also 4K. We have helpers to take into account the offsets to map
+>>>>>>> multiple Xen grants in a single Linux page, see for example
+>>>>>>> drivers/xen/grant-table.c:gnttab_foreach_grant. Most PV drivers have
+>>>>>>> been converted to be able to work with 64K pages correctly, but if I
+>>>>>>> remember correctly gntdev.c is the only remaining driver that 
+>>>>>>> doesn't
+>>>>>>> support 64K pages yet, so you don't have to deal with it if you 
+>>>>>>> don't
+>>>>>>> want to.
+>>>>>> I believe somewhere in this series there is a test for PAGE_SIZE vs.
+>>>>>> XEN_PAGE_SIZE. Right, Oleksandr?
+>>>>> Not in gntdev. You might have seen this in xen-drmfront/xen-sndfront,
+>>>>> but I didn't touch gntdev for that. Do you want me to add yet 
+>>>>> another patch
+>>>>> in the series to check for that?
+>>>> gntdev.c is already not capable of handling PAGE_SIZE != XEN_PAGE_SIZE,
+>>>> so you are not going to break anything that is not already broken 
+>>>> :-) If
+>>>> your new gntdev.c code relies on PAGE_SIZE == XEN_PAGE_SIZE, it 
+>>>> might be
+>>>> good to add an in-code comment about it, just to make it easier to fix
+>>>> the whole of gntdev.c in the future.
+>>>>
+>>> Yes, I just mean I can add something like [1] as a separate patch to 
+>>> the series,
+>>> so we are on the safe side here
+>>
+>> See my comment on Stefano's e-mail. I believe gntdev is able to handle 
+>> PAGE_SIZE != XEN_PAGE_SIZE. So I would rather keep the behavior we 
+>> have today for such case.
+>>
+> Sure, with a note that we waste most of a 64KiB page ;)
 
-Adding mmarget (who bisected the problem) to the CC.
+That's the second definition of "64KB page" ;). In the case of grants, 
+it is actually quite hard to merge them in a single page. So quite a few 
+places still allocate 64KB but only map the first 4KB.
 
-It might well be something Fedora-specific, then. I just noticed mmarget
-commented over the weekend noting that they couldn't reproduce the
-problem without using the initramfs generated during the RPM install of
-the kernel. mmarget's theory was that it's a race condition that doesn't
-occur when the initramfs takes long enough to unpack, but I don't know
-enough about the early boot process *or* how Fedora's generating the
-initramfs for RPM installs vs "make install" yet to know how likely that
-is. I'm going to have to do some research.
+You would need to rework most the grant framework (not only gntdev) to 
+avoid that waste. Patches are welcomed.
 
-Thanks for looking into this so quickly and also sorry if this turns out
-to be a Fedora problem :(
+Cheers,
 
-Thanks,
-Jeremy
+-- 
+Julien Grall
