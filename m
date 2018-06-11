@@ -1,130 +1,157 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 9iJGB6ndG1vPSQAAmS7hNA
-	; Sat, 09 Jun 2018 14:01:13 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id UlPYMtOFHlvALwAAmS7hNA
+	; Mon, 11 Jun 2018 14:23:28 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 0AC26608BA; Sat,  9 Jun 2018 14:01:13 +0000 (UTC)
+	id C52F0607BB; Mon, 11 Jun 2018 14:23:28 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QsSqvfde"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 7D8C66074D;
-	Sat,  9 Jun 2018 14:01:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7D8C66074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by smtp.codeaurora.org (Postfix) with ESMTP id 4F72C6074D;
+	Mon, 11 Jun 2018 14:23:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4F72C6074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753285AbeFIOBJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 10:01:09 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:38770 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753062AbeFIOBH (ORCPT
+        id S934229AbeFKOW3 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 10:22:29 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45464 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933501AbeFKOGx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 10:01:07 -0400
-Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w59E0BIc067745;
-        Sat, 9 Jun 2018 23:00:11 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp);
- Sat, 09 Jun 2018 23:00:11 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w59E06c1067715
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Sat, 9 Jun 2018 23:00:11 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: [PATCH] bdi: Fix another oops in wb_workfn()
-From: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
-        syzbot <syzbot+4a7438e774b21ddd8eca@syzkaller.appspotmail.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Tejun Heo <tj@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-block@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <95865cab-e12f-d45b-b6e3-465b624862ba@i-love.sakura.ne.jp>
- <CACT4Y+byRRtCA9B9bPG9mjrf3UY3OsGeBsoh8dZ0T+V6tKpTHg@mail.gmail.com>
- <201806080231.w582VIRn021009@www262.sakura.ne.jp>
- <CACT4Y+Y7Mj1JngLst1aRHDhURXQMn-eTjyPFjDdGAT0ZV-dHrw@mail.gmail.com>
- <CACT4Y+bBfwpcP2h0URpqwiNMQ5SFJdPDHThUu2xetmrxgC+3BQ@mail.gmail.com>
- <CACT4Y+bHDWDapwOonO1EpR6TiRa=qf9nSDtHArq75yCGuHf=gg@mail.gmail.com>
- <CACT4Y+Z4i=bD49cb4pJ5zOMxVu675NT8wCNk+c2n2XJVOXG2bg@mail.gmail.com>
- <2b437c6f-3e10-3d83-bdf3-82075d3eaa1a@i-love.sakura.ne.jp>
-Message-ID: <3cf4b0e3-31b6-8cdc-7c1e-15ba575a7879@i-love.sakura.ne.jp>
-Date: Sat, 9 Jun 2018 23:00:05 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <2b437c6f-3e10-3d83-bdf3-82075d3eaa1a@i-love.sakura.ne.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 11 Jun 2018 10:06:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
+        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=vztI3PFiV1oRpjbw6Dx7xbzxLIG1vQILFc4ZeoFT7jQ=; b=QsSqvfde7ULwth2/m6sPiXpMt
+        IHoKK9JldhZgUv1uX6GqtD/jcVdTFowlPB8z+YoYA/1sR7qNihZCVGzTxrMdjK5t1uXF5dgp0uNfz
+        QFte+gkPYdclv+rHvRU70CeK8okGF9zQUn4F6AlTWEcPHfTFX7PZtc8K56PlBSl4pws142u6owaf9
+        CHBfIthvND2uMWcRTFy+2B7tiA9f2JeKbbxpdzw8/oleG/HNzlVSucd/p2OAqagyUmYGGtH9CYuoK
+        7T+fs7kPfZ6ArfvErXR6DfuKH2BwKUzTyN64LEuinRfIhA5sbx56fwj6KpiT47efgeKRxLm0eMUhA
+        meG6MLCvA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fSNTB-0004ic-6u; Mon, 11 Jun 2018 14:06:53 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@redhat.com>,
+        Lukas Czerner <lczerner@redhat.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH v13 31/72] page cache: Convert delete_batch to XArray
+Date: Mon, 11 Jun 2018 07:05:58 -0700
+Message-Id: <20180611140639.17215-32-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
+References: <20180611140639.17215-1-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->From 014c4149f2e24cd26b278b32d5dfda056eecf093 Mon Sep 17 00:00:00 2001
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date: Sat, 9 Jun 2018 22:47:52 +0900
-Subject: [PATCH] bdi: Fix another oops in wb_workfn()
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-syzbot is reporting NULL pointer dereference at wb_workfn() [1] due to
-wb->bdi->dev being NULL. And Dmitry confirmed that wb->state was
-WB_shutting_down after wb->bdi->dev became NULL. This indicates that
-unregister_bdi() failed to call wb_shutdown() on one of wb objects.
+Rename the function from page_cache_tree_delete_batch to just
+page_cache_delete_batch.
 
-Since cgwb_bdi_unregister() from bdi_unregister() cannot call wb_shutdown()
-on wb objects which have already passed list_del_rcu() in wb_shutdown(),
-cgwb_bdi_unregister() from bdi_unregister() can return and set wb->bdi->dev
-to NULL before such wb objects enter final round of wb_workfn() via
-mod_delayed_work()/flush_delayed_work().
-
-Since WB_registered is already cleared by wb_shutdown(), only wb_shutdown()
-can schedule for final round of wb_workfn(). Since concurrent calls to
-wb_shutdown() on the same wb object is safe because of WB_shutting_down
-state, I think that wb_shutdown() can safely keep a wb object in the
-bdi->wb_list until that wb object leaves final round of wb_workfn().
-Thus, make wb_shutdown() call list_del_rcu() after flush_delayed_work().
-
-[1] https://syzkaller.appspot.com/bug?id=e0818ccb7e46190b3f1038b0c794299208ed4206
-
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+4a7438e774b21ddd8eca@syzkaller.appspotmail.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Jens Axboe <axboe@fb.com>
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- mm/backing-dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/filemap.c | 28 +++++++++++++---------------
+ 1 file changed, 13 insertions(+), 15 deletions(-)
 
-diff --git a/mm/backing-dev.c b/mm/backing-dev.c
-index 347cc83..bef4b25 100644
---- a/mm/backing-dev.c
-+++ b/mm/backing-dev.c
-@@ -370,7 +370,6 @@ static void wb_shutdown(struct bdi_writeback *wb)
- 	set_bit(WB_shutting_down, &wb->state);
- 	spin_unlock_bh(&wb->work_lock);
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 4204d9df003b..025077bc82be 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -272,7 +272,7 @@ void delete_from_page_cache(struct page *page)
+ EXPORT_SYMBOL(delete_from_page_cache);
  
--	cgwb_remove_from_bdi_list(wb);
- 	/*
- 	 * Drain work list and shutdown the delayed_work.  !WB_registered
- 	 * tells wb_workfn() that @wb is dying and its work_list needs to
-@@ -379,6 +378,7 @@ static void wb_shutdown(struct bdi_writeback *wb)
- 	mod_delayed_work(bdi_wq, &wb->dwork, 0);
- 	flush_delayed_work(&wb->dwork);
- 	WARN_ON(!list_empty(&wb->work_list));
-+	cgwb_remove_from_bdi_list(wb);
- 	/*
- 	 * Make sure bit gets cleared after shutdown is finished. Matches with
- 	 * the barrier provided by test_and_clear_bit() above.
+ /*
+- * page_cache_tree_delete_batch - delete several pages from page cache
++ * page_cache_delete_batch - delete several pages from page cache
+  * @mapping: the mapping to which pages belong
+  * @pvec: pagevec with pages to delete
+  *
+@@ -285,23 +285,18 @@ EXPORT_SYMBOL(delete_from_page_cache);
+  *
+  * The function expects the i_pages lock to be held.
+  */
+-static void
+-page_cache_tree_delete_batch(struct address_space *mapping,
++static void page_cache_delete_batch(struct address_space *mapping,
+ 			     struct pagevec *pvec)
+ {
+-	struct radix_tree_iter iter;
+-	void **slot;
++	XA_STATE(xas, &mapping->i_pages, pvec->pages[0]->index);
+ 	int total_pages = 0;
+ 	int i = 0, tail_pages = 0;
+ 	struct page *page;
+-	pgoff_t start;
+ 
+-	start = pvec->pages[0]->index;
+-	radix_tree_for_each_slot(slot, &mapping->i_pages, &iter, start) {
++	mapping_set_update(&xas, mapping);
++	xas_for_each(&xas, page, ULONG_MAX) {
+ 		if (i >= pagevec_count(pvec) && !tail_pages)
+ 			break;
+-		page = radix_tree_deref_slot_protected(slot,
+-						       &mapping->i_pages.xa_lock);
+ 		if (xa_is_value(page))
+ 			continue;
+ 		if (!tail_pages) {
+@@ -310,8 +305,11 @@ page_cache_tree_delete_batch(struct address_space *mapping,
+ 			 * have our pages locked so they are protected from
+ 			 * being removed.
+ 			 */
+-			if (page != pvec->pages[i])
++			if (page != pvec->pages[i]) {
++				VM_BUG_ON_PAGE(page->index >
++						pvec->pages[i]->index, page);
+ 				continue;
++			}
+ 			WARN_ON_ONCE(!PageLocked(page));
+ 			if (PageTransHuge(page) && !PageHuge(page))
+ 				tail_pages = HPAGE_PMD_NR - 1;
+@@ -322,11 +320,11 @@ page_cache_tree_delete_batch(struct address_space *mapping,
+ 			 */
+ 			i++;
+ 		} else {
++			VM_BUG_ON_PAGE(page->index + HPAGE_PMD_NR - tail_pages
++					!= pvec->pages[i]->index, page);
+ 			tail_pages--;
+ 		}
+-		radix_tree_clear_tags(&mapping->i_pages, iter.node, slot);
+-		__radix_tree_replace(&mapping->i_pages, iter.node, slot, NULL,
+-				workingset_lookup_update(mapping));
++		xas_store(&xas, NULL);
+ 		total_pages++;
+ 	}
+ 	mapping->nrpages -= total_pages;
+@@ -347,7 +345,7 @@ void delete_from_page_cache_batch(struct address_space *mapping,
+ 
+ 		unaccount_page_cache_page(mapping, pvec->pages[i]);
+ 	}
+-	page_cache_tree_delete_batch(mapping, pvec);
++	page_cache_delete_batch(mapping, pvec);
+ 	xa_unlock_irqrestore(&mapping->i_pages, flags);
+ 
+ 	for (i = 0; i < pagevec_count(pvec); i++)
 -- 
-1.8.3.1
+2.17.1
