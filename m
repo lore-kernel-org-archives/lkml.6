@@ -1,411 +1,220 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 1pLsN8NgGFsQPwAAmS7hNA
-	; Wed, 06 Jun 2018 22:31:31 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id GlUFOK4SHlu3VwAAmS7hNA
+	; Mon, 11 Jun 2018 06:11:58 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D53B5608B8; Wed,  6 Jun 2018 22:31:31 +0000 (UTC)
+	id CAF9C605A5; Mon, 11 Jun 2018 06:11:58 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bgrlFgiS"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.9 required=2.0 tests=BAYES_00,FROM_EXCESS_BASE64,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id E4D21607E4;
-	Wed,  6 Jun 2018 22:31:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E4D21607E4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=siol.net
+	by smtp.codeaurora.org (Postfix) with ESMTP id F249860791;
+	Mon, 11 Jun 2018 06:11:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F249860791
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753083AbeFFWb3 convert rfc822-to-8bit (ORCPT
-        <rfc822;monsieuricon@codeaurora.org> + 25 others);
-        Wed, 6 Jun 2018 18:31:29 -0400
-Received: from mailoutvs11.siol.net ([185.57.226.202]:57451 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753058AbeFFWb1 (ORCPT
+        id S1754023AbeFKGL4 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 20 others); Mon, 11 Jun 2018 02:11:56 -0400
+Received: from mail-qk0-f169.google.com ([209.85.220.169]:39221 "EHLO
+        mail-qk0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753947AbeFKGLy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 18:31:27 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTP id 36BD0522274;
-        Thu,  7 Jun 2018 00:31:24 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta12.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta12.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id A6dcOTwoK201; Thu,  7 Jun 2018 00:31:22 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTPS id C43375223C1;
-        Thu,  7 Jun 2018 00:31:22 +0200 (CEST)
-Received: from jernej-laptop.localnet (unknown [194.152.15.144])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Zimbra) with ESMTPA id CB6ED522274;
-        Thu,  7 Jun 2018 00:31:19 +0200 (CEST)
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH 06/15] drm/sun4i: tcon: Add support for tcon-top
-Date: Thu, 07 Jun 2018 00:30:24 +0200
-Message-ID: <1557047.0h10P8OJYS@jernej-laptop>
-In-Reply-To: <20180604162357.rige4rcsiowdl725@flea>
-References: <20180519183127.2718-1-jernej.skrabec@siol.net> <8937075.mEvrCV6laa@jernej-laptop> <20180604162357.rige4rcsiowdl725@flea>
+        Mon, 11 Jun 2018 02:11:54 -0400
+Received: by mail-qk0-f169.google.com with SMTP id g14-v6so12312351qkm.6
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Jun 2018 23:11:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=4JTor9nGtoXZaBlFVFn5TLwKX6QNXzvO1+IYUJzzTAE=;
+        b=bgrlFgiS8eMLoRGvIiB6jfl5g9ESZY6XhoYjQUdH02ajKTOuSBlJXnI0dDF7SJdigm
+         w6oJ+OWrFTlnv0JFIjwe6zbe5UxlOJ6cqJmKYnaDfxTLJaEurDO8nDEvi9hzAFZGMfXB
+         HvzSRHuaGNG7+SblQSwJpojT2vDTQowPQDA2am6MbgvUEaW5APUGJkqSXro3FsjjSPeQ
+         9sYK/LvaNiIdbQYTBPkEw464vqx7FikQcxZS/VYjr0nRc32ktgEXiPwqHFlle6J3+YKj
+         CTzZwo7LM9870usDEx0un+XqrGlFrg6NMD7iOD8S6FsaJprRj78jFKmRKRHev9WBFRNi
+         pLcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=4JTor9nGtoXZaBlFVFn5TLwKX6QNXzvO1+IYUJzzTAE=;
+        b=mW9Asri63qPvU2hiSraUE/j0gPeR+NpnGSv4b3DUcYqgROLtGumbPq636tWMxs6QvQ
+         yn1WqY4tQ6QsPF/UzhbocxForL6roQ6RkBW/OlLjacWRhw2W/HHm7wtOBo6ZgK5exhgl
+         upfEFWG+8j6F0l76UdL36c4jN155oxrLTFoWiJb73+8KansMWwq5uGexv14bg99eRTqV
+         ik1OyYueIYr/Ib5HRkBf01QXa39AtNO0TjNHSj2I14DE0XLcsfnCXjhF9WF0KjGpsHiJ
+         zwuix9S9LFWOPlihSkCrEr5U8al9ZHonNCS3eUhXJRc9Pmx+1hTTYZHPQDCXpHOutu4S
+         N/4A==
+X-Gm-Message-State: APt69E2S9qT32KwyJkfATMGkheaEw6nSL0uAsgYacJLyQRvOZl5trvtv
+        HlMpy+1C1N4mioiPCsHdK4EJhkkXHlMe3ugNtBK+ow==
+X-Google-Smtp-Source: ADUXVKIofOzoeNAS/8VIb4ggCLw6zHFRBhv3JoMk6ByLHJDh0cXq2h78yVMhN/5K1xhiBk1C6U9NS12jy5PtPqwaKvU=
+X-Received: by 2002:a37:9241:: with SMTP id u62-v6mr13955887qkd.179.1528697513817;
+ Sun, 10 Jun 2018 23:11:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
+Received: by 2002:aed:3f3d:0:0:0:0:0 with HTTP; Sun, 10 Jun 2018 23:11:53
+ -0700 (PDT)
+From: Dave Airlie <airlied@gmail.com>
+Date: Mon, 11 Jun 2018 16:11:53 +1000
+Message-ID: <CAPM=9twGJmQ8gNt53-qTg5Spb35NSwGR5j4xFduJVsYkuKVERg@mail.gmail.com>
+Subject: [git pull] drm next (msm) + fixes
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne ponedeljek, 04. junij 2018 ob 18:23:57 CEST je Maxime Ripard napisal(a):
-> On Mon, Jun 04, 2018 at 05:09:56PM +0200, Jernej Škrabec wrote:
-> > Dne ponedeljek, 04. junij 2018 ob 13:50:34 CEST je Maxime Ripard 
-napisal(a):
-> > > On Fri, Jun 01, 2018 at 09:19:43AM -0700, Chen-Yu Tsai wrote:
-> > > > On Fri, Jun 1, 2018 at 8:29 AM, Maxime Ripard
-> > > > <maxime.ripard@bootlin.com>
-> > 
-> > wrote:
-> > > > > On Thu, May 31, 2018 at 07:54:08PM +0200, Jernej Škrabec wrote:
-> > > > >> Dne četrtek, 31. maj 2018 ob 11:21:33 CEST je Maxime Ripard 
-napisal(a):
-> > > > >> > On Thu, May 24, 2018 at 03:01:09PM -0700, Chen-Yu Tsai wrote:
-> > > > >> > > >> > > + if (tcon->quirks->needs_tcon_top) {
-> > > > >> > > >> > > +         struct device_node *np;
-> > > > >> > > >> > > +
-> > > > >> > > >> > > +         np = of_parse_phandle(dev->of_node,
-> > > > >> > > >> > > "allwinner,tcon-top",
-> > > > >> > > >> > > 0);
-> > > > >> > > >> > > +         if (np) {
-> > > > >> > > >> > > +                 struct platform_device *pdev;
-> > > > >> > > >> > > +
-> > > > >> > > >> > > +                 pdev = of_find_device_by_node(np);
-> > > > >> > > >> > > +                 if (pdev)
-> > > > >> > > >> > > +                         tcon->tcon_top =
-> > > > >> > > >> > > platform_get_drvdata(pdev);
-> > > > >> > > >> > > +                 of_node_put(np);
-> > > > >> > > >> > > +
-> > > > >> > > >> > > +                 if (!tcon->tcon_top)
-> > > > >> > > >> > > +                         return -EPROBE_DEFER;
-> > > > >> > > >> > > +         }
-> > > > >> > > >> > > + }
-> > > > >> > > >> > > +
-> > > > >> > > >> > 
-> > > > >> > > >> > I might have missed it, but I've not seen the bindings
-> > > > >> > > >> > additions for
-> > > > >> > > >> > that property. This shouldn't really be done that way
-> > > > >> > > >> > anyway,
-> > > > >> > > >> > instead
-> > > > >> > > >> > of using a direct phandle, you should be using the
-> > > > >> > > >> > of-graph,
-> > > > >> > > >> > with the
-> > > > >> > > >> > TCON-top sitting where it belongs in the flow of data.
-> > > > >> > > >> 
-> > > > >> > > >> Just to answer to the first question, it did describe it in
-> > > > >> > > >> "[PATCH
-> > > > >> > > >> 07/15] dt- bindings: display: sun4i-drm: Add R40 HDMI
-> > > > >> > > >> pipeline".
-> > > > >> > > >> 
-> > > > >> > > >> As why I designed it that way - HW representation could be
-> > > > >> > > >> described
-> > > > >> > > >> that way> >>
-> > > > >> > > >> 
-> > > > >> > > >> (ASCII art makes sense when fixed width font is used to view
-> > 
-> > it):
-> > > > >> > > >>                             / LCD0/LVDS0
-> > > > >> > > >>                 
-> > > > >> > > >>                 / TCON-LCD0
-> > > > >> > > >>                 
-> > > > >> > > >>                 |           \ MIPI DSI
-> > > > >> > > >> 
-> > > > >> > > >> mixer0          |
-> > > > >> > > >> 
-> > > > >> > > >>        \        / TCON-LCD1 - LCD1/LVDS1
-> > > > >> > > >>        
-> > > > >> > > >>         TCON-TOP
-> > > > >> > > >>        
-> > > > >> > > >>        /        \ TCON-TV0 - TVE0/RGB
-> > > > >> > > >> 
-> > > > >> > > >> mixer1          |          \
-> > > > >> > > >> 
-> > > > >> > > >>                 |           TCON-TOP - HDMI
-> > > > >> > > >>                 |          
-> > > > >> > > >>                 |          /
-> > > > >> > > >>                 
-> > > > >> > > >>                 \ TCON-TV1 - TVE1/RGB
-> > > > >> > > >> 
-> > > > >> > > >> This is a bit simplified, since there is also TVE-TOP, which
-> > > > >> > > >> is
-> > > > >> > > >> responsible
-> > > > >> > > >> for sharing 4 DACs between both TVE encoders. You can have
-> > > > >> > > >> two
-> > > > >> > > >> TV outs
-> > > > >> > > >> (PAL/ NTSC) or TVE0 as TV out and TVE1 as RGB or vice versa.
-> > > > >> > > >> It
-> > > > >> > > >> even
-> > > > >> > > >> seems that you can arbitrarly choose which DAC is
-> > > > >> > > >> responsible
-> > > > >> > > >> for
-> > > > >> > > >> which signal, so there is a ton of possible end
-> > > > >> > > >> combinations,
-> > > > >> > > >> but I'm
-> > > > >> > > >> not 100% sure.
-> > > > >> > > >> 
-> > > > >> > > >> Even though I wrote TCON-TOP twice, this is same unit in HW.
-> > > > >> > > >> R40
-> > > > >> > > >> manual
-> > > > >> > > >> suggest more possibilities, although some of them seem
-> > > > >> > > >> wrong,
-> > > > >> > > >> like RGB
-> > > > >> > > >> feeding from LCD TCON. That is confirmed to be wrong when
-> > > > >> > > >> checking BSP
-> > > > >> > > >> code.
-> > > > >> > > >> 
-> > > > >> > > >> Additionally, TCON-TOP comes in the middle of TVE0 and LCD0,
-> > > > >> > > >> TVE1 and
-> > > > >> > > >> LCD1 for pin muxing, although I'm not sure why is that
-> > > > >> > > >> needed at
-> > > > >> > > >> all,
-> > > > >> > > >> since according to R40 datasheet, TVE0 and TVE1 pins are
-> > > > >> > > >> dedicated and
-> > > > >> > > >> not on PORT D and PORT H, respectively, as TCON-TOP
-> > > > >> > > >> documentation
-> > > > >> > > >> suggest. However, HSYNC and PSYNC lines might be shared
-> > > > >> > > >> between
-> > > > >> > > >> TVE
-> > > > >> > > >> (when it works in RGB mode) and LCD. But that is just my
-> > > > >> > > >> guess
-> > > > >> > > >> since
-> > > > >> > > >> I'm not really familiar with RGB and LCD interfaces.
-> > > > >> > > >> 
-> > > > >> > > >> I'm really not sure what would be the best representation in
-> > > > >> > > >> OF-graph.
-> > > > >> > > >> Can you suggest one?
-> > > > >> > > > 
-> > > > >> > > > Rob might disagree on this one, but I don't see anything
-> > > > >> > > > wrong
-> > > > >> > > > with
-> > > > >> > > > having loops in the graph. If the TCON-TOP can be both the
-> > > > >> > > > input
-> > > > >> > > > and
-> > > > >> > > > output of the TCONs, then so be it, and have it described
-> > > > >> > > > that
-> > > > >> > > > way in
-> > > > >> > > > the graph.
-> > > > >> > > > 
-> > > > >> > > > The code is already able to filter out nodes that have
-> > > > >> > > > already
-> > > > >> > > > been
-> > > > >> > > > added to the list of devices we need to wait for in the
-> > > > >> > > > component
-> > > > >> > > > framework, so that should work as well.
-> > > > >> > > > 
-> > > > >> > > > And we'd need to describe TVE-TOP as well, even though we
-> > > > >> > > > don't
-> > > > >> > > > have a
-> > > > >> > > > driver for it yet. That will simplify the backward
-> > > > >> > > > compatibility
-> > > > >> > > > later
-> > > > >> > > > on.
-> > > > >> > > 
-> > > > >> > > I'm getting the feeling that TCON-TOP / TVE-TOP is the glue
-> > > > >> > > layer
-> > > > >> > > that
-> > > > >> > > binds everything together, and provides signal routing, kind of
-> > > > >> > > like
-> > > > >> > > DE-TOP on A64. So the signal mux controls that were originally
-> > > > >> > > found
-> > > > >> > > in TCON0 and TVE0 were moved out.
-> > > > >> > > 
-> > > > >> > > The driver needs to know about that, but the graph about
-> > > > >> > > doesn't
-> > > > >> > > make
-> > > > >> > > much sense directly. Without looking at the manual, I
-> > > > >> > > understand it
-> > > > >> > > to
-> > > > >> > > likely be one mux between the mixers and TCONs, and one between
-> > > > >> > > the
-> > > > >> > > TCON-TVs and HDMI. Would it make more sense to just have the
-> > > > >> > > graph
-> > > > >> > > connections between the muxed components, and remove TCON-TOP
-> > > > >> > > from
-> > > > >> > > it, like we had in the past? A phandle could be used to
-> > > > >> > > reference
-> > > > >> > > the TCON-TOP for mux controls, in addition to the clocks and
-> > > > >> > > resets.
-> > > > >> > > 
-> > > > >> > > For TVE, we would need something to represent each of the
-> > > > >> > > output
-> > > > >> > > pins,
-> > > > >> > > so the device tree can actually describe what kind of signal,
-> > > > >> > > be it
-> > > > >> > > each component of RGB/YUV or composite video, is wanted on each
-> > > > >> > > pin,
-> > > > >> > > if any. This is also needed on the A20 for the Cubietruck, so
-> > > > >> > > we
-> > > > >> > > can
-> > > > >> > > describe which pins are tied to the VGA connector, and which
-> > > > >> > > one
-> > > > >> > > does
-> > > > >> > > R, G, or B.
-> > > > >> > 
-> > > > >> > I guess we'll see how the DT maintainers feel about this, but my
-> > > > >> > impression is that the OF graph should model the flow of data
-> > > > >> > between
-> > > > >> > the devices. If there's a mux somewhere, then the data is
-> > > > >> > definitely
-> > > > >> > going through it, and as such it should be part of the graph.
-> > > > >> 
-> > > > >> I concur, but I spent few days thinking how to represent this
-> > > > >> sanely in
-> > > > >> graph, but I didn't find any good solution. I'll represent here my
-> > > > >> idea and please tell your opinion before I start implementing it.
-> > > > >> 
-> > > > >> First, let me be clear that mixer0 and mixer1 don't have same
-> > > > >> capabilities
-> > > > >> (different number of planes, mixer0 supports writeback, mixer1 does
-> > > > >> not,
-> > > > >> etc.). Thus, it does matter which mixer is connected to which
-> > > > >> TCON/encoder.
-> > > > >> mixer0 is meant to be connected to main display and mixer1 to
-> > > > >> auxiliary. That obviously depends on end system.
-> > > > >> 
-> > > > >> So, TCON TOP has 3 muxes, which have to be represented in graph.
-> > > > >> Two of
-> > > > >> them are for mixer/TCON relationship (each of them 1 input and 4
-> > > > >> possible outputs) and one for TV TCON/HDMI pair selection (2
-> > > > >> possible
-> > > > >> inputs, 1 output).
-> > > > >> 
-> > > > >> According to current practice in sun4i-drm driver, graph has to
-> > > > >> have
-> > > > >> port 0, representing input and port 1, representing output. This
-> > > > >> would
-> > > > >> mean that graph looks something like that:
-> > > > >> 
-> > > > >> tcon_top: tcon-top@1c70000 {
-> > > > >> 
-> > > > >>       compatible = "allwinner,sun8i-r40-tcon-top";
-> > > > >>       ...
-> > > > >>       ports {
-> > > > >>       
-> > > > >>               #address-cells = <1>;
-> > > > >>               #size-cells = <0>;
-> > > > >>               
-> > > > >>               tcon_top_in: port@0 {
-> > > > >>               
-> > > > >>                       #address-cells = <1>;
-> > > > >>                       #size-cells = <0>;
-> > > > >>                       reg = <0>;
-> > > > >>                       
-> > > > >>                       tcon_top_in_mixer0: endpoint@0 {
-> > > > >>                       
-> > > > >>                               reg = <0>;
-> > > > >>                               remote-endpoint =
-> > > > >>                               <&mixer0_out_tcon_top>;
-> > > > >>                       
-> > > > >>                       };
-> > > > >>                       
-> > > > >>                       tcon_top_in_mixer1: endpoint@1 {
-> > > > >>                       
-> > > > >>                               reg = <1>;
-> > > > >>                               remote-endpoint =
-> > > > >>                               <&mixer1_out_tcon_top>;
-> > > > >>                       
-> > > > >>                       };
-> > > > >>                       
-> > > > >>                       tcon_top_in_tcon_tv: endpoint@2 {
-> > > > >>                       
-> > > > >>                               reg = <2>;
-> > > > >>                               // here is HDMI input connection,
-> > > > >>                               part of
-> > > > >>                               board DTS
-> > > > >>                               remote-endpoint = <board specific
-> > > > >>                               phandle
-> > > > >>                               to TV TCON output>;
-> > > > >>                       
-> > > > >>                       };
-> > > > >>               
-> > > > >>               };
-> > > > >>               
-> > > > >>               tcon_top_out: port@1 {
-> > > > >>               
-> > > > >>                       #address-cells = <1>;
-> > > > >>                       #size-cells = <0>;
-> > > > >>                       reg = <1>;
-> > > > >>                       
-> > > > >>                       tcon_top_out_tcon0: endpoint@0 {
-> > > > >>                       
-> > > > >>                               reg = <0>;
-> > > > >>                               // here is mixer0 output connection,
-> > > > >>                               part
-> > > > >>                               of board DTS
-> > > > >>                               remote-endpoint = <board specific
-> > > > >>                               phandle
-> > > > >>                               to TCON>;
-> > > > >>                       
-> > > > >>                       };
-> > > > >>                       
-> > > > >>                       tcon_top_out_tcon1: endpoint@1 {
-> > > > >>                       
-> > > > >>                               reg = <1>;
-> > > > >>                               // here is mixer1 output connection,
-> > > > >>                               part
-> > > > >>                               of board DTS
-> > > > >>                               remote-endpoint = <board specific
-> > > > >>                               phandle
-> > > > >>                               to TCON>;
-> > > > >>                       
-> > > > >>                       };
-> > > > >>                       
-> > > > >>                       tcon_top_out_hdmi: endpoint@2 {
-> > > > >>                       
-> > > > >>                               reg = <2>;
-> > > > >>                               remote-endpoint =
-> > > > >>                               <&hdmi_in_tcon_top>;
-> > > > >>                       
-> > > > >>                       };
-> > > > >>               
-> > > > >>               };
-> > > > >>       
-> > > > >>       };
-> > > > >> 
-> > > > >> };
-> > > > > 
-> > > > > IIRC, each port is supposed to be one route for the data, so we
-> > > > > would
-> > > > > have multiple ports, one for the mixers in input and for the tcon in
-> > > > > output, and one for the TCON in input and for the HDMI/TV in
-> > > > > output. Rob might correct me here.
-> > 
-> > Ok, that seems more clean approach. I'll have to extend graph traversing
-> > algorithm in sun4i_drv.c, but that's no problem.
-> > 
-> > Just to be clear, you have in mind 3 pairs of ports (0/1 for mixer0 mux,
-> > 2/3 for mixer1 and 4/5 for HDMI input), right? That way each mux is
-> > represented with one pair of ports, even numbered for input and odd
-> > numbered for output.
-> Yep, unless Rob feels otherwise.
+Hi Linus,
 
-I found an issue with this concept.
+I looked at Rob's msm tree, he kept it small due to being late, and it
+was in -next for a while before he was ill, so I think it should be
+fine. Otherwise this contains a set of i915 fixes and a v3d build fix,
+and vc4 leak fix.
 
-HDMI driver (sun8i_dw_hdmi.c) uses drm_of_find_possible_crtcs() to find 
-connected crtcs (TCONs) to HDMI. This function assumes that crtc and encoder 
-are directly connected through of_graph, but that is not the case with TCON 
-TOP HDMI mux anymore. 
-I could give TCON TOP node as an input to this function, but that won't work, 
-since TCON TOP can have connections to other crtcs, not only that of HDMI and 
-they will also be picked up by drm_of_find_possible_crtcs().
+Thanks,
+Dave.
 
-Any suggestion how to solve this nicely? I think creating my own version of 
-drm_of_find_possible_crtcs() which considers that case is one way, but not 
-very nice solution. Alternatively, we can fix possible_crtcs to BIT(0), since 
-it always has only one input. This is done in meson_dw_hdmi.c for example. 
+drm-next-2018-06-11:
+msm next, i915, vc4, v3d fixes
+The following changes since commit 568cf2e6aa0c762f14d2d0d481a006f93c63ab7a=
+:
 
-Best regards,
-Jernej
+  Merge tag 'drm-amdkfd-next-2018-05-28' of
+git://people.freedesktop.org/~gabbayo/linux into drm-next (2018-05-30
+11:12:22 +1000)
+
+are available in the Git repository at:
+
+  git://anongit.freedesktop.org/drm/drm tags/drm-next-2018-06-11
+
+for you to fetch changes up to 33ce21d6a2491ef9adb8dc395e3f5bbbfcdc95b5:
+
+  Merge tag 'drm-intel-next-fixes-2018-06-08-2' of
+git://anongit.freedesktop.org/drm/drm-intel into drm-next (2018-06-09
+06:34:51 +1000)
+
+----------------------------------------------------------------
+msm next, i915, vc4, v3d fixes
+
+----------------------------------------------------------------
+Abhinav Kumar (3):
+      drm/msm/dsi: check return value for video done waits
+      drm/msm/dsi: check video mode engine status before waiting
+      drm/msm/dsi: implement auto PHY timing calculator for 10nm PHY
+
+Archit Taneja (3):
+      drm/msm/mdp5: Add global state as a private atomic object
+      drm/msm/mdp5: Use the new private_obj state
+      drm/msm: Don't subclass drm_atomic_state anymore
+
+Arnd Bergmann (1):
+      drm/v3d: add CONFIG_MMU dependency
+
+Ben Hutchings (1):
+      drm/msm: Fix possible null dereference on failure of get_pages()
+
+Changbin Du (2):
+      drm/i915/gvt: Fix the validation on size field of dp aux header
+      drm/i915/kvmgt: Check the pfn got from vfio_pin_pages
+
+Chris Wilson (2):
+      drm/i915: Nul-terminate legacy debug string
+      drm/i915: Remove stale asserts from i915_gem_find_active_request()
+
+Colin Ian King (1):
+      drm/i915/gvt: fix memory leak of a cmd_entry struct on error exit pat=
+h
+
+Daniel Mack (2):
+      drm/msm: remove unbalanced mutex unlock
+      drm/msm: use correct aspace pointer in msm_gem_put_iova()
+
+Dave Airlie (3):
+      Merge tag 'drm-msm-next-2018-06-04' of
+git://people.freedesktop.org/~robclark/linux into drm-next
+      Merge tag 'drm-misc-next-fixes-2018-05-31' of
+git://anongit.freedesktop.org/drm/drm-misc into drm-next
+      Merge tag 'drm-intel-next-fixes-2018-06-08-2' of
+git://anongit.freedesktop.org/drm/drm-intel into drm-next
+
+Emil Velikov (1):
+      drm/msm: don't deref error pointer in the msm_fbdev_create error path
+
+Eric Anholt (1):
+      drm/vc4: Fix leak of the file_priv that stored the perfmon.
+
+Jani Nikula (2):
+      Revert "drm/i915/edp: Allow alternate fixed mode for eDP if available=
+."
+      Merge tag 'gvt-fixes-2018-04-19' of
+https://github.com/intel/gvt-linux into drm-intel-next-fixes
+
+Jeykumar Sankaran (1):
+      drm/msm: Add modifier to mdp_get_format arguments
+
+Mahesh Kumar (2):
+      drm/i915/icl: fix icl_unmap/map_plls_to_ports
+      drm/i915/icl: Don't update enabled dbuf slices struct until updated i=
+n hw
+
+Sean Paul (7):
+      drm/msm: Mark the crtc->state->event consumed
+      drm/msm: Refactor complete_commit() to look more the helpers
+      drm/msm: Move implicit sync handling to prepare_fb
+      drm/msm: Issue queued events when disabling crtc
+      drm/msm: Remove msm_commit/worker, use atomic helper commit
+      drm/msm: Switch to atomic_helper_commit()
+      drm/msm: Fix NULL deref on bind/probe deferral
+
+Stefan Agner (1):
+      drm/msm/dsi: use correct enum in dsi_get_cmd_fmt
+
+Ville Syrj=C3=A4l=C3=A4 (1):
+      drm/i915: Remove bogus NV12 PLANE_COLOR_CTL setup
+
+Xiong Zhang (1):
+      drm/i915/gvt: Dereference msi eventfd_ctx when it isn't used anymore
+
+Zhenyu Wang (1):
+      Back merge 'drm-intel-fixes' into gvt-fixes
+
+ drivers/gpu/drm/i915/gvt/cmd_parser.c      |   1 +
+ drivers/gpu/drm/i915/gvt/display.h         |   2 +-
+ drivers/gpu/drm/i915/gvt/handlers.c        |  13 +-
+ drivers/gpu/drm/i915/gvt/kvmgt.c           |  34 +++-
+ drivers/gpu/drm/i915/i915_gem.c            |  17 +-
+ drivers/gpu/drm/i915/intel_ddi.c           |   6 +-
+ drivers/gpu/drm/i915/intel_display.c       |   7 +-
+ drivers/gpu/drm/i915/intel_dp.c            |  38 +----
+ drivers/gpu/drm/i915/intel_drv.h           |   2 -
+ drivers/gpu/drm/i915/intel_dsi.c           |   2 +-
+ drivers/gpu/drm/i915/intel_dvo.c           |   2 +-
+ drivers/gpu/drm/i915/intel_engine_cs.c     |   2 +-
+ drivers/gpu/drm/i915/intel_lvds.c          |   3 +-
+ drivers/gpu/drm/i915/intel_panel.c         |   6 -
+ drivers/gpu/drm/i915/intel_pm.c            |   1 -
+ drivers/gpu/drm/msm/disp/mdp4/mdp4_plane.c |  17 +-
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c  |   9 +
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c   | 105 ++++++++----
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.h   |  27 +--
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_mixer.c |  12 +-
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_pipe.c  |  20 ++-
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_plane.c |  16 +-
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c   |  17 +-
+ drivers/gpu/drm/msm/dsi/dsi_host.c         |  14 +-
+ drivers/gpu/drm/msm/msm_atomic.c           | 258 +++----------------------=
+----
+ drivers/gpu/drm/msm/msm_drv.c              |  11 +-
+ drivers/gpu/drm/msm/msm_drv.h              |   9 +-
+ drivers/gpu/drm/msm/msm_kms.h              |  14 --
+ drivers/gpu/drm/v3d/Kconfig                |   1 +
+ drivers/gpu/drm/vc4/vc4_drv.c              |   1 +
+ 30 files changed, 245 insertions(+), 422 deletions(-)
