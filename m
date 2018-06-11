@@ -1,136 +1,252 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 98soIDXgGFuSBgAAmS7hNA
-	; Thu, 07 Jun 2018 07:36:05 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ykpIKw73HVtRIQAAmS7hNA
+	; Mon, 11 Jun 2018 04:14:06 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 1FA246089E; Thu,  7 Jun 2018 07:36:05 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DfpQE/Z0"
+	id 89B1F607A4; Mon, 11 Jun 2018 04:14:06 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 7CB06607E7;
-	Thu,  7 Jun 2018 07:36:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7CB06607E7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id B570C60541;
+	Mon, 11 Jun 2018 04:14:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B570C60541
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753441AbeFGHgC (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 03:36:02 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:40522 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753083AbeFGHf7 (ORCPT
+        id S1753889AbeFKEOC (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 00:14:02 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46400 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751358AbeFKEOB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 03:35:59 -0400
-Received: by mail-lf0-f65.google.com with SMTP id q11-v6so13076139lfc.7;
-        Thu, 07 Jun 2018 00:35:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=sGlBywfzfPHWozo7tv5PPQUyDSWm6NbWeIZiH22uauo=;
-        b=DfpQE/Z0rozKKuJJtZHjNbDJDpDIukdglVKCwJp+Ap6J+r3BlU+wf3EN2Mu7IknTdT
-         ktcGF7xymQbZ9Ycc2DHloiX/cWUgJUJyeLyFkOcY+hK9MSQFaiWEYR/gkLGK/gDC9piQ
-         KDnDVE0V4OpZQOOtQuj+HTxKeJNs2lzeduz7+oZ9RNKG2+k3QkdM38fGIJIZM0zvucTZ
-         xoBcTLkrJHDhipPqmsW+rOEUtUc0UnuYnidJIxF0lHLOASe7Wa0AtTWraAHRbYl0NgnT
-         Lw8WggHqBv7OMVL4LoNq9QcUoUgU7xjQYwsJX1vTbcND/3IfXVpdIiqy4h2fGNT52YyW
-         jtIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sGlBywfzfPHWozo7tv5PPQUyDSWm6NbWeIZiH22uauo=;
-        b=qpNmndfJgWmRmbjkMeGh+aI/XJTw1Oh+9QrZ14qeXAuk6rHu1cE0rtX1cwGJvzAv8f
-         eXtZHCV9xu2ub0q7BIGiF6X/rUYm2s5DGpOki1OiUy6OkA2LCJhmLkk7LSwYqR2dc39D
-         ORav5+1I+hLT9vZXyNJS26Ym2qj8+7PRSJiHtJZZoH1K1l/OBtKFXPtdqUP8wdQ6RG5w
-         3+0nL296wzKP6+mpchwQwtNZMv68RqrjqmvfgKBwANrefgPtIkvzbaFFxS4XwAoxS0B6
-         FmaxBPNWFhEGfUKDLeH8Hc9jGKp7bNL4ASwe1L+lm+yC58b24CZ8VrJ1OS9HQdu5GTxh
-         M4MQ==
-X-Gm-Message-State: APt69E23ex0ok8+uYxOwlCLxKBINff85+02LnOPwCGIgThd38WFzrxIG
-        O4vSJ5LGFyn0493mqa3qm1Q=
-X-Google-Smtp-Source: ADUXVKLZHuMnQETCaBmL4SzmOj+mr8yIRerR4KeKjYHJBaSpNnrAf5WRewMqp+374LJ6DFLy8veJoQ==
-X-Received: by 2002:a19:5943:: with SMTP id n64-v6mr527154lfb.107.1528356957629;
-        Thu, 07 Jun 2018 00:35:57 -0700 (PDT)
-Received: from xi.terra (c-8bb2e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.178.139])
-        by smtp.gmail.com with ESMTPSA id a125-v6sm4288881lfb.61.2018.06.07.00.35.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Jun 2018 00:35:57 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.90_1)
-        (envelope-from <johan@kernel.org>)
-        id 1fQpSR-0008LC-9E; Thu, 07 Jun 2018 09:35:43 +0200
-Date: Thu, 7 Jun 2018 09:35:43 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Colin King <colin.king@canonical.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Haojian Zhuang <haojian.zhuang@linaro.org>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH][next] pinctrl: pinctrl-single: add allocation failure
- checking of saved_vals
-Message-ID: <20180607073543.GP13775@localhost>
-References: <20180606134338.4645-1-colin.king@canonical.com>
- <CAHp75Vd0Djw+nDN7u=-CLEfdDGA5QTsMueOb9EZLNnCDgso5fA@mail.gmail.com>
+        Mon, 11 Jun 2018 00:14:01 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5B48vLt048508
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 00:14:00 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2jhhp8rdnu-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 00:14:00 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Mon, 11 Jun 2018 05:13:55 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 11 Jun 2018 05:13:50 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5B4Dnqs27394180
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 11 Jun 2018 04:13:49 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5E29CA404D;
+        Mon, 11 Jun 2018 05:04:44 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 50AEEA4040;
+        Mon, 11 Jun 2018 05:04:41 +0100 (BST)
+Received: from [9.124.31.215] (unknown [9.124.31.215])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 11 Jun 2018 05:04:41 +0100 (BST)
+Subject: Re: [PATCH 0/7] Uprobes: Support SDT markers having reference count
+ (semaphore)
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: srikar@linux.vnet.ibm.com, rostedt@goodmis.org,
+        mhiramat@kernel.org, peterz@infradead.org, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org, ananth@linux.vnet.ibm.com,
+        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+References: <20180606083344.31320-1-ravi.bangoria@linux.ibm.com>
+ <20180608163600.GA9030@redhat.com>
+From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Date: Mon, 11 Jun 2018 09:43:45 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75Vd0Djw+nDN7u=-CLEfdDGA5QTsMueOb9EZLNnCDgso5fA@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180608163600.GA9030@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18061104-0028-0000-0000-000002CF5AA2
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18061104-0029-0000-0000-000023866E59
+Message-Id: <456ae8b8-8c5b-022c-0d53-c59627bda753@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-11_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806110050
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 06, 2018 at 07:02:03PM +0300, Andy Shevchenko wrote:
-> On Wed, Jun 6, 2018 at 4:43 PM, Colin King <colin.king@canonical.com> wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > Currently saved_vals is being allocated and there is no check for
-> > failed allocation (which is more likely than normal when using
-> > GFP_ATOMIC).  Fix this by checking for a failed allocation and
-> > propagating this error return down the the caller chain.
-> >
-> > Detected by CoverityScan, CID#1469841 ("Dereference null return value")
-> >
-> > Fixes: 88a1dbdec682 ("pinctrl: pinctrl-single: Add functions to save and restore pinctrl context")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  drivers/pinctrl/pinctrl-single.c | 14 +++++++++++---
-> >  1 file changed, 11 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-> > index 9c3c00515aa0..0905ee002041 100644
-> > --- a/drivers/pinctrl/pinctrl-single.c
-> > +++ b/drivers/pinctrl/pinctrl-single.c
-> > @@ -1588,8 +1588,11 @@ static int pcs_save_context(struct pcs_device *pcs)
-> >
-> >         mux_bytes = pcs->width / BITS_PER_BYTE;
-> >
-> > -       if (!pcs->saved_vals)
-> > +       if (!pcs->saved_vals) {
-> >                 pcs->saved_vals = devm_kzalloc(pcs->dev, pcs->size, GFP_ATOMIC);
-> 
-> > +               if (!pcs->saved_vals)
-> > +                       return -ENOMEM;
-> 
-> Wouldn't make sense to move it out of the first condition?
-> 
-> Something like
-> 
-> if (!foo)
->  foo = ...malloc(...);
-> if (!foo)
->  return ...
+Hi Oleg,
 
-No, checking for NULL immediately after the allocation is more obvious
-and easier to parse.
+On 06/08/2018 10:06 PM, Oleg Nesterov wrote:
+> Hello,
+> 
+> I am travelling till the end of the next week, can't read this version
+> until I return. Just one question,
+> 
+> On 06/06, Ravi Bangoria wrote:
+>>
+>>  1. One of the major reason was the deadlock between uprobe_lock and
+>>  mm->mmap inside trace_uprobe_mmap(). That deadlock was not easy to fix
+> 
+> Could you remind what exactly was wrong?
+> 
+> I can't find your previous email about this problem, but iirc you didn't
+> explain the deadlock in details, just copied some traces from lockdep...
 
-Johan
+The deadlock is between mm->mmap_sem and uprobe_lock.
+
+Some existing code path is taking these locks in following order:
+	uprobe_lock
+	  event_mutex
+	    uprobe->register_rwsem
+	      dup_mmap_sem
+		mm->mmap_sem
+
+I've introduced new function trace_uprobe_mmap() which gets called
+from mmap_region() / vma_adjust() with mm->mmap_sem already acquired.
+And it has to take uprobe_lock to loop over all trace_uprobes. i.e.
+the sequence is:
+	mm->mmap_sem
+	  uprobe_lock
+
+Why it's difficult to resolve is because trace_uprobe_mmap() does
+not have control over mm->mmap_sem.
+
+Detailed trace from lockdep:
+
+[  499.258006] ======================================================
+[  499.258205] WARNING: possible circular locking dependency detected
+[  499.258409] 4.17.0-rc3+ #76 Not tainted
+[  499.258528] ------------------------------------------------------
+[  499.258731] perf/6744 is trying to acquire lock:
+[  499.258895] 00000000e4895f49 (uprobe_lock){+.+.}, at: trace_uprobe_mmap+0x78/0x130
+[  499.259147]
+[  499.259147] but task is already holding lock:
+[  499.259349] 000000009ec93a76 (&mm->mmap_sem){++++}, at: vm_mmap_pgoff+0xe0/0x160
+[  499.259597]
+[  499.259597] which lock already depends on the new lock.
+[  499.259597]
+[  499.259848]
+[  499.259848] the existing dependency chain (in reverse order) is:
+[  499.260086]
+[  499.260086] -> #4 (&mm->mmap_sem){++++}:
+[  499.260277]        __lock_acquire+0x53c/0x910
+[  499.260442]        lock_acquire+0xf4/0x2f0
+[  499.260595]        down_write_killable+0x6c/0x150
+[  499.260764]        copy_process.isra.34.part.35+0x1594/0x1be0
+[  499.260967]        _do_fork+0xf8/0x910
+[  499.261090]        ppc_clone+0x8/0xc
+[  499.261209]
+[  499.261209] -> #3 (&dup_mmap_sem){++++}:
+[  499.261378]        __lock_acquire+0x53c/0x910
+[  499.261540]        lock_acquire+0xf4/0x2f0
+[  499.261669]        down_write+0x6c/0x110
+[  499.261793]        percpu_down_write+0x48/0x140
+[  499.261954]        register_for_each_vma+0x6c/0x2a0
+[  499.262116]        uprobe_register+0x230/0x320
+[  499.262277]        probe_event_enable+0x1cc/0x540
+[  499.262435]        perf_trace_event_init+0x1e0/0x350
+[  499.262587]        perf_trace_init+0xb0/0x110
+[  499.262750]        perf_tp_event_init+0x38/0x90
+[  499.262910]        perf_try_init_event+0x10c/0x150
+[  499.263075]        perf_event_alloc+0xbb0/0xf10
+[  499.263235]        sys_perf_event_open+0x2a8/0xdd0
+[  499.263396]        system_call+0x58/0x6c
+[  499.263516]
+[  499.263516] -> #2 (&uprobe->register_rwsem){++++}:
+[  499.263723]        __lock_acquire+0x53c/0x910
+[  499.263884]        lock_acquire+0xf4/0x2f0
+[  499.264002]        down_write+0x6c/0x110
+[  499.264118]        uprobe_register+0x1ec/0x320
+[  499.264283]        probe_event_enable+0x1cc/0x540
+[  499.264442]        perf_trace_event_init+0x1e0/0x350
+[  499.264603]        perf_trace_init+0xb0/0x110
+[  499.264766]        perf_tp_event_init+0x38/0x90
+[  499.264930]        perf_try_init_event+0x10c/0x150
+[  499.265092]        perf_event_alloc+0xbb0/0xf10
+[  499.265261]        sys_perf_event_open+0x2a8/0xdd0
+[  499.265424]        system_call+0x58/0x6c
+[  499.265542]
+[  499.265542] -> #1 (event_mutex){+.+.}:
+[  499.265738]        __lock_acquire+0x53c/0x910
+[  499.265896]        lock_acquire+0xf4/0x2f0
+[  499.266019]        __mutex_lock+0xa0/0xab0
+[  499.266142]        trace_add_event_call+0x44/0x100
+[  499.266310]        create_trace_uprobe+0x4a0/0x8b0
+[  499.266474]        trace_run_command+0xa4/0xc0
+[  499.266631]        trace_parse_run_command+0xe4/0x200
+[  499.266799]        probes_write+0x20/0x40
+[  499.266922]        __vfs_write+0x6c/0x240
+[  499.267041]        vfs_write+0xd0/0x240
+[  499.267166]        ksys_write+0x6c/0x110
+[  499.267295]        system_call+0x58/0x6c
+[  499.267413]
+[  499.267413] -> #0 (uprobe_lock){+.+.}:
+[  499.267591]        validate_chain.isra.34+0xbd0/0x1000
+[  499.267747]        __lock_acquire+0x53c/0x910
+[  499.267917]        lock_acquire+0xf4/0x2f0
+[  499.268048]        __mutex_lock+0xa0/0xab0
+[  499.268170]        trace_uprobe_mmap+0x78/0x130
+[  499.268335]        uprobe_mmap+0x80/0x3b0
+[  499.268464]        mmap_region+0x290/0x660
+[  499.268590]        do_mmap+0x40c/0x500
+[  499.268718]        vm_mmap_pgoff+0x114/0x160
+[  499.268870]        ksys_mmap_pgoff+0xe8/0x2e0
+[  499.269034]        sys_mmap+0x84/0xf0
+[  499.269161]        system_call+0x58/0x6c
+[  499.269279]
+[  499.269279] other info that might help us debug this:
+[  499.269279]
+[  499.269524] Chain exists of:
+[  499.269524]   uprobe_lock --> &dup_mmap_sem --> &mm->mmap_sem
+[  499.269524]
+[  499.269856]  Possible unsafe locking scenario:
+[  499.269856]
+[  499.270058]        CPU0                    CPU1
+[  499.270223]        ----                    ----
+[  499.270384]   lock(&mm->mmap_sem);
+[  499.270514]                                lock(&dup_mmap_sem);
+[  499.270711]                                lock(&mm->mmap_sem);
+[  499.270923]   lock(uprobe_lock);
+[  499.271046]
+[  499.271046]  *** DEADLOCK ***
+[  499.271046]
+[  499.271256] 1 lock held by perf/6744:
+[  499.271377]  #0: 000000009ec93a76 (&mm->mmap_sem){++++}, at: vm_mmap_pgoff+0xe0/0x160
+[  499.271628]
+[  499.271628] stack backtrace:
+[  499.271797] CPU: 25 PID: 6744 Comm: perf Not tainted 4.17.0-rc3+ #76
+[  499.272003] Call Trace:
+[  499.272094] [c0000000e32d74a0] [c000000000b00174] dump_stack+0xe8/0x164 (unreliable)
+[  499.272349] [c0000000e32d74f0] [c0000000001a905c] print_circular_bug.isra.30+0x354/0x388
+[  499.272590] [c0000000e32d7590] [c0000000001a3050] check_prev_add.constprop.38+0x8f0/0x910
+[  499.272828] [c0000000e32d7690] [c0000000001a3c40] validate_chain.isra.34+0xbd0/0x1000
+[  499.273070] [c0000000e32d7780] [c0000000001a57cc] __lock_acquire+0x53c/0x910
+[  499.273311] [c0000000e32d7860] [c0000000001a65b4] lock_acquire+0xf4/0x2f0
+[  499.273510] [c0000000e32d7930] [c000000000b1d1f0] __mutex_lock+0xa0/0xab0
+[  499.273717] [c0000000e32d7a40] [c0000000002b01b8] trace_uprobe_mmap+0x78/0x130
+[  499.273952] [c0000000e32d7a90] [c0000000002d7070] uprobe_mmap+0x80/0x3b0
+[  499.274153] [c0000000e32d7b20] [c0000000003550a0] mmap_region+0x290/0x660
+[  499.274353] [c0000000e32d7c00] [c00000000035587c] do_mmap+0x40c/0x500
+[  499.274560] [c0000000e32d7c80] [c00000000031ebc4] vm_mmap_pgoff+0x114/0x160
+[  499.274763] [c0000000e32d7d60] [c000000000352818] ksys_mmap_pgoff+0xe8/0x2e0
+[  499.275013] [c0000000e32d7de0] [c000000000016864] sys_mmap+0x84/0xf0
+[  499.275207] [c0000000e32d7e30] [c00000000000b404] system_call+0x58/0x6c
+
+
+( Reference: https://lkml.org/lkml/2018/5/25/111 )
