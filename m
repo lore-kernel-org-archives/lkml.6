@@ -1,86 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 2+z7EvF+GVvBcAAAmS7hNA
-	; Thu, 07 Jun 2018 18:53:19 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id lYBIJbpiHlvaVwAAmS7hNA
+	; Mon, 11 Jun 2018 11:53:30 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 2ED0C608B8; Thu,  7 Jun 2018 18:53:19 +0000 (UTC)
+	id 80248607E7; Mon, 11 Jun 2018 11:53:30 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hBB1jT7m"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r5DlBYdr"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id A8A9960590;
-	Thu,  7 Jun 2018 18:53:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A8A9960590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id E5FE560351;
+	Mon, 11 Jun 2018 11:53:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E5FE560351
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932774AbeFGSxR (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 14:53:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37370 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932264AbeFGSxM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 14:53:12 -0400
-Received: from jouet.infradead.org (unknown [190.15.121.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC6FB20895;
-        Thu,  7 Jun 2018 18:53:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528397592;
-        bh=THYrxVjExmuaQ+tQAoFKeee0aco41+apFLqM2PFWWok=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hBB1jT7mWpTbWFoGp/Caj2Hp0L6KPxSRWSBsXawbVLDYO/Cdr7ldsk1rJrxv6mMrJ
-         lSQ3VJPUuJRbg/fxAmUhh0bIB8mjbKByXX9Xi2kdn6r4KLXRBrfTRwH/5ec28J3Gz2
-         Rc+/sjARy7okDM3FEbjtx0PtFm4B7Y9sK2ccurMU=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 8FAEF1468B9; Thu,  7 Jun 2018 15:53:09 -0300 (-03)
-Date: Thu, 7 Jun 2018 15:53:09 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Milian Wolff <milian.wolff@kdab.com>,
-        Andi Kleen <andi@firstfloor.org>,
-        Frederic Weisbecker <frederic@kernel.org>
-Subject: Re: [PATCH 02/10] perf tools: Fix error index for pmu event parser
-Message-ID: <20180607185309.GA17292@kernel.org>
-References: <20180606221513.11302-1-jolsa@kernel.org>
- <20180606221513.11302-3-jolsa@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180606221513.11302-3-jolsa@kernel.org>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S933200AbeFKLx0 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 07:53:26 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:38471 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933180AbeFKLxX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 07:53:23 -0400
+Received: by mail-lf0-f68.google.com with SMTP id i83-v6so30085572lfh.5;
+        Mon, 11 Jun 2018 04:53:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=TRrbPoVvu+WEQ4B9/OSd9cynE1TicIWPa1lIblSUjJk=;
+        b=r5DlBYdrzbPNRzIJWpTSwIbKgixHzVHhxLhXF/JMluPxhEG1oPc9KUXMPE5cwlNqf+
+         6U8dI+p1WE/qkznRZtiEbCw/92M/TE42rdMaOCUZReqVJTVpt1Ba1OH8b2YNc41YtiOX
+         AORM3bT1LI3LtBK36tLuMWLFWgylpactdgoibsNXbxcOr2WILzMobViOSVfj7YvMCVYZ
+         BJJgcPYnce55aQE1hV2n1EtZrzq22xAfHf/atcKN5zfypTWrVcwwUCeXUAIfe6hI7iil
+         c/o7aHZ8vgwSrj7K4XMdqaNm3euQ/Y4XbhnmKWSiCBWn4PnKQMVV0/GUEzDtFryd9DVY
+         VhHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=TRrbPoVvu+WEQ4B9/OSd9cynE1TicIWPa1lIblSUjJk=;
+        b=VUDSOa1LPR7HXYD7JeOpH6C7aiT3wwmLSRQ0YsUwdb0Wdx7fkdP2lRKTEaUTw+uqJU
+         t6yYqcA8EpQ+wIdrXaJjhUo9Y1NkPvjYQRTasSSTJn3Tg58vV88dKKa2ze6P7TBCZEhY
+         Kwtj2ZAziWhlWpc16SCp2apsf1VOC7zc0MaA5/TphGhPm7oO0EkiNghpwfepiyR1r8iZ
+         QNWDb55ieViNKWDEjETAxQTKbFJMxVYeJjrmTlEWeMWNYgegm5eLEj+E+XKBzzSnZUOL
+         e8Ft7ZBuV7/5Hh40piCmB2SJLuhLHyY/CeMBEgiEI/Dw6xuCo18DZ1VqFocU07qXgvZO
+         nROw==
+X-Gm-Message-State: APt69E1aciCfXNkRSzTK9uNlKhXe52Wy+wdRYPty6f5P1LR/95XtYyyt
+        88Y5ch/I0QL3Tzz/5lN764966e1i
+X-Google-Smtp-Source: ADUXVKKNfj2e6nxjwFBlalJdfnp8bAu5SSC66UztgAWjCfXxwr/dc4I8tNfh97s75tvGeOeSFp3FWw==
+X-Received: by 2002:a2e:5f1a:: with SMTP id t26-v6mr11756782ljb.0.1528718001850;
+        Mon, 11 Jun 2018 04:53:21 -0700 (PDT)
+Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
+        by smtp.gmail.com with ESMTPSA id h90-v6sm8332849ljf.65.2018.06.11.04.53.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Jun 2018 04:53:20 -0700 (PDT)
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Subject: [PATCH v2 16/24] serdev: ttyport: Move serport structure to its own header
+Date: Mon, 11 Jun 2018 13:52:32 +0200
+Message-Id: <20180611115240.32606-17-ricardo.ribalda@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
+References: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Jun 07, 2018 at 12:15:05AM +0200, Jiri Olsa escreveu:
-> For events we provide specific error message we need to set
-> error column index, PMU parser is missing that, adding it.
-> 
-> Before:
->   $ perf stat -e cycles,krava/cycles/ kill
->   event syntax error: 'cycles,krava/cycles/'
->                        \___ Cannot find PMU `krava'. Missing kernel support?
-> 
-> After:
->   $ perf stat -e cycles,krava/cycles/ kill
->   event syntax error: 'cycles,krava/cycles/'
->                               \___ Cannot find PMU `krava'. Missing kernel support?
+This way we can reuse this structure in other modules.
 
-Thanks, tested and applied.
+Cc: Rob Herring <robh@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.com>
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+---
+ drivers/tty/serdev/serdev-ttyport.c |  9 +--------
+ drivers/tty/serdev/serport.h        | 16 ++++++++++++++++
+ 2 files changed, 17 insertions(+), 8 deletions(-)
+ create mode 100644 drivers/tty/serdev/serport.h
 
-- Arnaldo
+diff --git a/drivers/tty/serdev/serdev-ttyport.c b/drivers/tty/serdev/serdev-ttyport.c
+index fa1672993b4c..4acc5f41dc67 100644
+--- a/drivers/tty/serdev/serdev-ttyport.c
++++ b/drivers/tty/serdev/serdev-ttyport.c
+@@ -7,17 +7,10 @@
+ #include <linux/tty.h>
+ #include <linux/tty_driver.h>
+ #include <linux/poll.h>
++#include "serport.h"
+ 
+ #define SERPORT_ACTIVE		1
+ 
+-struct serport {
+-	struct tty_port *port;
+-	struct tty_struct *tty;
+-	struct tty_driver *tty_drv;
+-	int tty_idx;
+-	unsigned long flags;
+-};
+-
+ /*
+  * Callback functions from the tty port.
+  */
+diff --git a/drivers/tty/serdev/serport.h b/drivers/tty/serdev/serport.h
+new file mode 100644
+index 000000000000..15bc1ff6326e
+--- /dev/null
++++ b/drivers/tty/serdev/serport.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2016-2017 Linaro Ltd., Rob Herring <robh@kernel.org>
++ */
++#ifndef _SERPORT_H
++#define _SERPORT_H
++
++struct serport {
++	struct tty_port *port;
++	struct tty_struct *tty;
++	struct tty_driver *tty_drv;
++	int tty_idx;
++	unsigned long flags;
++};
++
++#endif
+-- 
+2.17.1
