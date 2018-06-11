@@ -1,149 +1,207 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id nBDzON3IG1vWOgAAmS7hNA
-	; Sat, 09 Jun 2018 12:34:07 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id GaGpEGqEHlsMGwAAmS7hNA
+	; Mon, 11 Jun 2018 14:17:34 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 48435607A4; Sat,  9 Jun 2018 12:34:07 +0000 (UTC)
+	id C8734607A4; Mon, 11 Jun 2018 14:17:34 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="slhmQnhK"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id CC0676032D;
-	Sat,  9 Jun 2018 12:34:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CC0676032D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 46E4C60351;
+	Mon, 11 Jun 2018 14:17:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 46E4C60351
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753535AbeFIMeE (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 08:34:04 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38312 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753248AbeFIMeB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 08:34:01 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C0279818BAF3;
-        Sat,  9 Jun 2018 12:34:00 +0000 (UTC)
-Received: from localhost (ovpn-12-40.pek2.redhat.com [10.72.12.40])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9C1641116709;
-        Sat,  9 Jun 2018 12:33:51 +0000 (UTC)
-From: Ming Lei <ming.lei@redhat.com>
-To: Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kent Overstreet <kent.overstreet@gmail.com>
-Cc: David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Theodore Ts'o <tytso@mit.edu>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Coly Li <colyli@suse.de>, Filipe Manana <fdmanana@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH V6 17/30] block: introduce bio_for_each_chunk_all and bio_for_each_chunk_segment_all
-Date: Sat,  9 Jun 2018 20:30:01 +0800
-Message-Id: <20180609123014.8861-18-ming.lei@redhat.com>
-In-Reply-To: <20180609123014.8861-1-ming.lei@redhat.com>
-References: <20180609123014.8861-1-ming.lei@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Sat, 09 Jun 2018 12:34:00 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Sat, 09 Jun 2018 12:34:00 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
+        id S934084AbeFKORH (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 10:17:07 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45798 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933537AbeFKOG6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 10:06:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
+        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=tRkUpxAn62xizVV0HSxWSbxkMPT1z8gWqMUFuTsxcsc=; b=slhmQnhKTfd7N3lynlfciaSsL
+        eqe2DFon/BnpvAJqaWiliZDDsKMWrgv+TWZNbCDwmu2T7GvTWPxH3EVeNuailEhKAlATYSwO0EsOA
+        icPDKHd5nYiy2Ba1g65++2970YuUw46dwfnU/pN6RqYAGUXJheRcSLGP6rJTC/6MsSN7ZgLqXwhok
+        aFDJzQSaGcCjYA/RBiWp66QZDI9Oywf/nqNCV5C7reLJLwBBVR1vnc+UvficMEg7g1gsU3ha0WeQ0
+        djI0VQzIIOMK0H4SJ/dgAghXGBusF+56TSIx+rQ+HYYWgS4II4MCUi8YzagpOkOxbml0EtQZ7Owmo
+        4KGbfoYVA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fSNTF-0004ml-Kj; Mon, 11 Jun 2018 14:06:57 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@redhat.com>,
+        Lukas Czerner <lczerner@redhat.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH v13 40/72] mm: Convert page migration to XArray
+Date: Mon, 11 Jun 2018 07:06:07 -0700
+Message-Id: <20180611140639.17215-41-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
+References: <20180611140639.17215-1-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch introduces bio_for_each_chunk_all() and bio_for_each_chunk_segment_all(),
-which are for replacing the current bio_for_each_segment_all().
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-bio_for_each_chunk_all() will iterate one chunk by chunk, which is multipage based.
-
-bio_for_each_chunk_segment_all() will iterate one segment by segment, which is
-singlepage based.
-
-For using bio_for_each_chunk_segment_all(), one 24-bytes extra local variable has to
-be introduced.
-
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- include/linux/bio.h  | 13 +++++++++++++
- include/linux/bvec.h | 31 +++++++++++++++++++++++++++++++
- 2 files changed, 44 insertions(+)
+ mm/migrate.c | 48 ++++++++++++++++++------------------------------
+ 1 file changed, 18 insertions(+), 30 deletions(-)
 
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index 0fa1035dde38..f21384be9b51 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -168,6 +168,19 @@ static inline bool bio_full(struct bio *bio)
- #define bio_for_each_segment_all(bvl, bio, i)				\
- 	for (i = 0, bvl = (bio)->bi_io_vec; i < (bio)->bi_vcnt; i++, bvl++)
+diff --git a/mm/migrate.c b/mm/migrate.c
+index 8c0af0f7cab1..80dc5b8c9738 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -323,7 +323,7 @@ void __migration_entry_wait(struct mm_struct *mm, pte_t *ptep,
+ 	page = migration_entry_to_page(entry);
  
-+#define bio_for_each_chunk_all(bvl, bio, i)		\
-+	bio_for_each_segment_all(bvl, bio, i)
-+
-+#define chunk_for_each_segment(bv, bvl, i, citer)			\
-+	for (bv = bvec_init_chunk_iter(&citer);				\
-+		(citer.done < (bvl)->bv_len) &&				\
-+		((chunk_next_segment((bvl), &citer)), 1);		\
-+		citer.done += bv->bv_len, i += 1)
-+
-+#define bio_for_each_chunk_segment_all(bvl, bio, i, citer)		\
-+	for (i = 0, citer.idx = 0; citer.idx < (bio)->bi_vcnt; citer.idx++)	\
-+		chunk_for_each_segment(bvl, &((bio)->bi_io_vec[citer.idx]), i, citer)
-+
- static inline void __bio_advance_iter(struct bio *bio, struct bvec_iter *iter,
- 				      unsigned bytes, bool chunk)
+ 	/*
+-	 * Once radix-tree replacement of page migration started, page_count
++	 * Once page cache replacement of page migration started, page_count
+ 	 * *must* be zero. And, we don't want to call wait_on_page_locked()
+ 	 * against a page without get_page().
+ 	 * So, we use get_page_unless_zero(), here. Even failed, page fault
+@@ -438,10 +438,10 @@ int migrate_page_move_mapping(struct address_space *mapping,
+ 		struct buffer_head *head, enum migrate_mode mode,
+ 		int extra_count)
  {
-diff --git a/include/linux/bvec.h b/include/linux/bvec.h
-index aac75d87d884..d4eaa0c26bb5 100644
---- a/include/linux/bvec.h
-+++ b/include/linux/bvec.h
-@@ -84,6 +84,12 @@ struct bvec_iter {
- 						   current bvec */
- };
++	XA_STATE(xas, &mapping->i_pages, page_index(page));
+ 	struct zone *oldzone, *newzone;
+ 	int dirty;
+ 	int expected_count = 1 + extra_count;
+-	void **pslot;
  
-+struct bvec_chunk_iter {
-+	struct bio_vec	bv;
-+	int		idx;
-+	unsigned	done;
-+};
-+
- /*
-  * various member access, note that bio_data should of course not be used
-  * on highmem page vectors
-@@ -219,6 +225,31 @@ static inline bool bvec_iter_chunk_advance(const struct bio_vec *bv,
- 	.bi_bvec_done	= 0,						\
+ 	/*
+ 	 * Device public or private pages have an extra refcount as they are
+@@ -467,21 +467,16 @@ int migrate_page_move_mapping(struct address_space *mapping,
+ 	oldzone = page_zone(page);
+ 	newzone = page_zone(newpage);
+ 
+-	xa_lock_irq(&mapping->i_pages);
+-
+-	pslot = radix_tree_lookup_slot(&mapping->i_pages,
+- 					page_index(page));
++	xas_lock_irq(&xas);
+ 
+ 	expected_count += hpage_nr_pages(page) + page_has_private(page);
+-	if (page_count(page) != expected_count ||
+-		radix_tree_deref_slot_protected(pslot,
+-					&mapping->i_pages.xa_lock) != page) {
+-		xa_unlock_irq(&mapping->i_pages);
++	if (page_count(page) != expected_count || xas_load(&xas) != page) {
++		xas_unlock_irq(&xas);
+ 		return -EAGAIN;
+ 	}
+ 
+ 	if (!page_ref_freeze(page, expected_count)) {
+-		xa_unlock_irq(&mapping->i_pages);
++		xas_unlock_irq(&xas);
+ 		return -EAGAIN;
+ 	}
+ 
+@@ -495,7 +490,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
+ 	if (mode == MIGRATE_ASYNC && head &&
+ 			!buffer_migrate_lock_buffers(head, mode)) {
+ 		page_ref_unfreeze(page, expected_count);
+-		xa_unlock_irq(&mapping->i_pages);
++		xas_unlock_irq(&xas);
+ 		return -EAGAIN;
+ 	}
+ 
+@@ -523,16 +518,13 @@ int migrate_page_move_mapping(struct address_space *mapping,
+ 		SetPageDirty(newpage);
+ 	}
+ 
+-	radix_tree_replace_slot(&mapping->i_pages, pslot, newpage);
++	xas_store(&xas, newpage);
+ 	if (PageTransHuge(page)) {
+ 		int i;
+-		int index = page_index(page);
+ 
+ 		for (i = 1; i < HPAGE_PMD_NR; i++) {
+-			pslot = radix_tree_lookup_slot(&mapping->i_pages,
+-						       index + i);
+-			radix_tree_replace_slot(&mapping->i_pages, pslot,
+-						newpage + i);
++			xas_next(&xas);
++			xas_store(&xas, newpage + i);
+ 		}
+ 	}
+ 
+@@ -543,7 +535,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
+ 	 */
+ 	page_ref_unfreeze(page, expected_count - hpage_nr_pages(page));
+ 
+-	xa_unlock(&mapping->i_pages);
++	xas_unlock(&xas);
+ 	/* Leave irq disabled to prevent preemption while updating stats */
+ 
+ 	/*
+@@ -583,22 +575,18 @@ EXPORT_SYMBOL(migrate_page_move_mapping);
+ int migrate_huge_page_move_mapping(struct address_space *mapping,
+ 				   struct page *newpage, struct page *page)
+ {
++	XA_STATE(xas, &mapping->i_pages, page_index(page));
+ 	int expected_count;
+-	void **pslot;
+-
+-	xa_lock_irq(&mapping->i_pages);
+-
+-	pslot = radix_tree_lookup_slot(&mapping->i_pages, page_index(page));
+ 
++	xas_lock_irq(&xas);
+ 	expected_count = 2 + page_has_private(page);
+-	if (page_count(page) != expected_count ||
+-		radix_tree_deref_slot_protected(pslot, &mapping->i_pages.xa_lock) != page) {
+-		xa_unlock_irq(&mapping->i_pages);
++	if (page_count(page) != expected_count || xas_load(&xas) != page) {
++		xas_unlock_irq(&xas);
+ 		return -EAGAIN;
+ 	}
+ 
+ 	if (!page_ref_freeze(page, expected_count)) {
+-		xa_unlock_irq(&mapping->i_pages);
++		xas_unlock_irq(&xas);
+ 		return -EAGAIN;
+ 	}
+ 
+@@ -607,11 +595,11 @@ int migrate_huge_page_move_mapping(struct address_space *mapping,
+ 
+ 	get_page(newpage);
+ 
+-	radix_tree_replace_slot(&mapping->i_pages, pslot, newpage);
++	xas_store(&xas, newpage);
+ 
+ 	page_ref_unfreeze(page, expected_count - 1);
+ 
+-	xa_unlock_irq(&mapping->i_pages);
++	xas_unlock_irq(&xas);
+ 
+ 	return MIGRATEPAGE_SUCCESS;
  }
- 
-+static inline struct bio_vec *bvec_init_chunk_iter(struct bvec_chunk_iter *citer)
-+{
-+	citer->bv.bv_page = NULL;
-+	citer->done = 0;
-+
-+	return &citer->bv;
-+}
-+
-+/* used for chunk_for_each_segment */
-+static inline void chunk_next_segment(const struct bio_vec *chunk,
-+		struct bvec_chunk_iter *iter)
-+{
-+	struct bio_vec *bv = &iter->bv;
-+
-+	if (bv->bv_page) {
-+		bv->bv_page += 1;
-+		bv->bv_offset = 0;
-+	} else {
-+		bv->bv_page = chunk->bv_page;
-+		bv->bv_offset = chunk->bv_offset;
-+	}
-+	bv->bv_len = min_t(unsigned int, PAGE_SIZE - bv->bv_offset,
-+			chunk->bv_len - iter->done);
-+}
-+
- /*
-  * Get the last singlepage segment from the multipage bvec and store it
-  * in @seg
 -- 
-2.9.5
+2.17.1
