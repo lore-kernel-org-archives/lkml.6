@@ -1,113 +1,139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id NWTRCs3rGFsSbQAAmS7hNA
-	; Thu, 07 Jun 2018 08:25:00 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id D+wsKWxjHluKJwAAmS7hNA
+	; Mon, 11 Jun 2018 11:56:28 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id B6391607F7; Thu,  7 Jun 2018 08:25:00 +0000 (UTC)
+	id 9199D607BB; Mon, 11 Jun 2018 11:56:28 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OWI2t9cF"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 18B436063F;
-	Thu,  7 Jun 2018 08:25:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 18B436063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 0DFD2601C3;
+	Mon, 11 Jun 2018 11:56:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0DFD2601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932683AbeFGIY5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 04:24:57 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:53445 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932240AbeFGIYr (ORCPT
+        id S933145AbeFKLxQ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 07:53:16 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:41852 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933079AbeFKLxN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 04:24:47 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w578Obcs2127970
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 7 Jun 2018 01:24:37 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w578ObCC2127967;
-        Thu, 7 Jun 2018 01:24:37 -0700
-Date: Thu, 7 Jun 2018 01:24:37 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-z960xobig39ca1pmp5brl2fr@git.kernel.org>
-Cc: tglx@linutronix.de, jolsa@kernel.org, wangnan0@huawei.com,
-        dsahern@gmail.com, mingo@kernel.org, adrian.hunter@intel.com,
-        hpa@zytor.com, linux-kernel@vger.kernel.org, acme@redhat.com,
-        namhyung@kernel.org
-Reply-To: wangnan0@huawei.com, jolsa@kernel.org, tglx@linutronix.de,
-          namhyung@kernel.org, acme@redhat.com, mingo@kernel.org,
-          adrian.hunter@intel.com, linux-kernel@vger.kernel.org,
-          hpa@zytor.com, dsahern@gmail.com
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf symbols: Add BSS symbols when reading from
- /proc/kallsyms
-Git-Commit-ID: 2be732c02adb15ed7f2196f075fe63ba6991642c
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Mon, 11 Jun 2018 07:53:13 -0400
+Received: by mail-lf0-f68.google.com with SMTP id d24-v6so30063400lfa.8;
+        Mon, 11 Jun 2018 04:53:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=0/Er5c2agXirdVWTPsUVQ80WpHs5LIL53DDkg9dnPxI=;
+        b=OWI2t9cFucPuSV952r0jl5aGS/kvxZ5YUhnvX68A/4NTPgZFph3IPe7LUDwQ7I61Cn
+         Zfx+KzjpDumSLkhIeRWmfTiGNuY7fe5+jtfRPUH3qbqoZ7Ul0Wd0876w4B1xsaDTZNNC
+         C52PCpvecSrvmcgkO7ITRgVVzipkYmNrzvmXS4Onp1W7DbjIz1OAHGYNX5N5tF5vk1tK
+         BzBkgljRgVVYa1L01LNt+jx26q+dkW1mjt1KXN/xQdnif+GYnZitEQSLy/0OSmh2tpGM
+         229kYiou0YDmUY8dkcDDPKKFjFGwvsc9HjvvxymjnsKRncQeWER6iIs12lX61x5NRw6g
+         qJ/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=0/Er5c2agXirdVWTPsUVQ80WpHs5LIL53DDkg9dnPxI=;
+        b=iHgssAoFhbzYeBNnZvhsxtDMg14fZB+3A7SwVEpv8Wig94bbWUN+2qJJSCs1ROLCqM
+         m2qyri3voMsGpPTJeF/gRodKCocSGruu8yATzH09ugiPcJ9eDRBQUh/GISQySZPV0IY7
+         LiHCkmRurYQDb8i5MJ+cj/Utgs0FGJMwUvYSMXgZxpOaRgvIzKhYrCmdWn3f8NcEobB9
+         SZ8l1Qc97BCpfBtcvvDZsUlHpLNbQPi5c904qNEECXnDzbvGOZQqIU3q0My/g//v8Nzv
+         fDSj3exm8+5pWFNw2agwcNWSmQgoETNHH4riCeRraSIR3XFJbyRvYsK1C9dDvFOjvLOU
+         aCUQ==
+X-Gm-Message-State: APt69E027b4QXIdl3LjKXpJdOzCSPDUmwZMLsVr6pI4u11DQZdFmXV/l
+        7uu6aWa0nHY9vyfdI+RTDFyBvgai
+X-Google-Smtp-Source: ADUXVKLkQFsR/vMyy9FtPPowGdpNV+OLVVrICUrfFFFFiVyTs0AYMSf5bibLH8pyNnn6fZV8yNlFfw==
+X-Received: by 2002:a19:944f:: with SMTP id w76-v6mr10652125lfd.90.1528717991300;
+        Mon, 11 Jun 2018 04:53:11 -0700 (PDT)
+Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
+        by smtp.gmail.com with ESMTPSA id h90-v6sm8332849ljf.65.2018.06.11.04.53.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Jun 2018 04:53:09 -0700 (PDT)
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>
+Subject: [PATCH v2 10/24] file2alias: Support for serdev devices
+Date: Mon, 11 Jun 2018 13:52:26 +0200
+Message-Id: <20180611115240.32606-11-ricardo.ribalda@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
+References: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2be732c02adb15ed7f2196f075fe63ba6991642c
-Gitweb:     https://git.kernel.org/tip/2be732c02adb15ed7f2196f075fe63ba6991642c
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Tue, 5 Jun 2018 17:06:57 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 6 Jun 2018 12:52:09 -0300
+This patch allows file2alias to generate the proper module headers to
+support serdev modalias drivers.
 
-perf symbols: Add BSS symbols when reading from /proc/kallsyms
+Eg:
 
-We were not considering 'B' and 'b' (BSS, uninitialized data objects,
-that gets set to zero at program start), do it so that we can resolve
-more symbols in tools doing resolution of data operands, like 'perf c2c'.
+root@qt5022:~# modinfo serdev:ttydev | grep alias
+alias:          serdev:ttydev_serdev
+alias:          serdev:ttydev
 
-When using vmlinux, i.e. an ELF symbol table, those were already
-considered, as the decision was about STT_FUNC or STT_OBJECT, and the
-later covers BSS symbols.
+root@qt5022:~#
+	cat /lib/modules/4.16.0-qtec-standard/modules.alias | grep serdev
+alias serdev:ttydev_serdev serdev_ttydev
+alias serdev:ttydev serdev_ttydev
 
-  # grep -i ' b ' /proc/kallsyms  | head -20 | tail -5
-  ffffffffa789d030 b execute_command
-  ffffffffa789d038 b initcall_command_line
-  ffffffffa789d040 b static_command_line
-  ffffffffa789d048 B ROOT_DEV
-  ffffffffa789d050 b once.73786
-  #
-  # readelf -s /lib/modules/`uname -r`/build/vmlinux | grep ROOT_DEV
-  79219: ffffffff8289d048     4 OBJECT  GLOBAL DEFAULT   58 ROOT_DEV
-  #
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-z960xobig39ca1pmp5brl2fr@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 ---
- tools/perf/util/symbol.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ scripts/mod/devicetable-offsets.c |  3 +++
+ scripts/mod/file2alias.c          | 11 +++++++++++
+ 2 files changed, 14 insertions(+)
 
-diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-index 3f632c60888f..d188b7588152 100644
---- a/tools/perf/util/symbol.c
-+++ b/tools/perf/util/symbol.c
-@@ -73,7 +73,7 @@ static enum dso_binary_type binary_type_symtab[] = {
- static bool symbol_type__filter(char symbol_type)
- {
- 	symbol_type = toupper(symbol_type);
--	return symbol_type == 'T' || symbol_type == 'W' || symbol_type == 'D';
-+	return symbol_type == 'T' || symbol_type == 'W' || symbol_type == 'D' || symbol_type == 'B';
- }
+diff --git a/scripts/mod/devicetable-offsets.c b/scripts/mod/devicetable-offsets.c
+index 9fad6afe4c41..6082c41b7ad7 100644
+--- a/scripts/mod/devicetable-offsets.c
++++ b/scripts/mod/devicetable-offsets.c
+@@ -142,6 +142,9 @@ int main(void)
+ 	DEVID(i2c_device_id);
+ 	DEVID_FIELD(i2c_device_id, name);
  
- static int prefix_underscores_count(const char *str)
++	DEVID(serdev_device_id);
++	DEVID_FIELD(serdev_device_id, name);
++
+ 	DEVID(spi_device_id);
+ 	DEVID_FIELD(spi_device_id, name);
+ 
+diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
+index b9beeaa4695b..dce6df3a159a 100644
+--- a/scripts/mod/file2alias.c
++++ b/scripts/mod/file2alias.c
+@@ -955,6 +955,17 @@ static int do_i2c_entry(const char *filename, void *symval,
+ }
+ ADD_TO_DEVTABLE("i2c", i2c_device_id, do_i2c_entry);
+ 
++/* Looks like: serdev:S */
++static int do_serdev_entry(const char *filename, void *symval,
++			   char *alias)
++{
++	DEF_FIELD_ADDR(symval, serdev_device_id, name);
++	sprintf(alias, SERDEV_MODULE_PREFIX "%s", *name);
++
++	return 1;
++}
++ADD_TO_DEVTABLE("serdev", serdev_device_id, do_serdev_entry);
++
+ /* Looks like: spi:S */
+ static int do_spi_entry(const char *filename, void *symval,
+ 			char *alias)
+-- 
+2.17.1
