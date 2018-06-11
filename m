@@ -1,128 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id DAlAEQLsHVsJJAAAmS7hNA
-	; Mon, 11 Jun 2018 03:26:58 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Ai17KdMpHltzIgAAmS7hNA
+	; Mon, 11 Jun 2018 07:50:43 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 33BA0608CA; Mon, 11 Jun 2018 03:26:58 +0000 (UTC)
+	id 850FD607A4; Mon, 11 Jun 2018 07:50:43 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jopemXtv"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 97935608B8;
-	Mon, 11 Jun 2018 03:26:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 97935608B8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 119B5602FC;
+	Mon, 11 Jun 2018 07:50:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 119B5602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932269AbeFKD0x (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Sun, 10 Jun 2018 23:26:53 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:63498 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753953AbeFKD0u (ORCPT
+        id S1754106AbeFKHuk (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 03:50:40 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43774 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753956AbeFKHuj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 23:26:50 -0400
-X-UUID: 82baa9f14860489e8cbe206b53e15c3c-20180611
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
-        (envelope-from <stu.hsieh@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1098726210; Mon, 11 Jun 2018 11:26:46 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Mon, 11 Jun 2018 11:26:44 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Mon, 11 Jun 2018 11:26:44 +0800
-From: Stu Hsieh <stu.hsieh@mediatek.com>
-To: CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>
-CC: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, Stu Hsieh <stu.hsieh@mediatek.com>
-Subject: [PATCH 03/28] drm/mediatek: add ddp component AAL1
-Date: Mon, 11 Jun 2018 11:25:55 +0800
-Message-ID: <1528687580-549-4-git-send-email-stu.hsieh@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
-References: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
+        Mon, 11 Jun 2018 03:50:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=3Gr5tuW1fI5oajwJqnBT9KrIPDpaRC22v6DxxfcNfO0=; b=jopemXtv/8ufB5MCGttR5up9s
+        nZ5rRGMyX3X4H7pKDmEmGGLMJjk9xGW0PxSlnssQnBrzzS50xN7+ENKjbfGhYIVxiyxYiJCt+FPLB
+        AFw2VpCm6dFaio5rliF0zU3IOqnsefrDASFbDX7L5JiVJhq/BdrIGAZWot68bEZTxADTOICCgkp4u
+        50CADCz7v5P9HiGoMpuE3fJrkXcP8yhUGjwTBAgLk1dUYTRf0Kd+pAR6gIm8S/5irsQ3jBdfZdCUE
+        HHE9/GV2/GPj0EvXVdrRXlhldS86tDKcQuX5Jpuqf4sp4D091seci8bYhb9eJgAs2SSIpOx3NlvlO
+        3+X+aq91Q==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fSHb3-0001d8-6H; Mon, 11 Jun 2018 07:50:37 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 67E88201EA7B1; Mon, 11 Jun 2018 09:50:35 +0200 (CEST)
+Date: Mon, 11 Jun 2018 09:50:35 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Nadav Amit <namit@vmware.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>
+Subject: Re: [PATCH v3 9/9] x86: jump-labels: use macros instead of inline
+ assembly
+Message-ID: <20180611075035.GQ12258@hirez.programming.kicks-ass.net>
+References: <20180610141911.52948-1-namit@vmware.com>
+ <20180610141911.52948-10-namit@vmware.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180610141911.52948-10-namit@vmware.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add component AAL1 and
-rename AAL to AAL0
+On Sun, Jun 10, 2018 at 07:19:11AM -0700, Nadav Amit wrote:
+>  static __always_inline bool arch_static_branch(struct static_key *key, bool branch)
+>  {
+> +	asm_volatile_goto("STATIC_BRANCH_GOTO l_yes=\"%l[l_yes]\" key=\"%c0\" "
+> +			  "branch=\"%c1\""
+> +			: :  "i" (key), "i" (branch) : : l_yes);
+>  
+>  	return false;
+>  l_yes:
+> @@ -48,13 +44,8 @@ static __always_inline bool arch_static_branch(struct static_key *key, bool bran
+>  
+>  static __always_inline bool arch_static_branch_jump(struct static_key *key, bool branch)
+>  {
+> +	asm_volatile_goto("STATIC_BRANCH_JUMP_GOTO l_yes=\"%l[l_yes]\" key=\"%c0\" "
+> +			  "branch=\"%c1\""
+>  		: :  "i" (key), "i" (branch) : : l_yes);
+>  
+>  	return false;
+> @@ -108,6 +99,26 @@ struct jump_entry {
+>  	.popsection
+>  .endm
+>  
+> +.macro STATIC_BRANCH_GOTO l_yes:req key:req branch:req
 
-Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
----
- drivers/gpu/drm/mediatek/mtk_drm_ddp.c      | 2 +-
- drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c | 3 ++-
- drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h | 3 ++-
- drivers/gpu/drm/mediatek/mtk_drm_drv.c      | 2 +-
- 4 files changed, 6 insertions(+), 4 deletions(-)
+STATIC_BRANCH_NOP
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-index 47ffa240bd25..7217665f4b5d 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-@@ -110,7 +110,7 @@ static const unsigned int mt2701_mutex_mod[DDP_COMPONENT_ID_MAX] = {
- };
- 
- static const unsigned int mt8173_mutex_mod[DDP_COMPONENT_ID_MAX] = {
--	[DDP_COMPONENT_AAL] = MT8173_MUTEX_MOD_DISP_AAL,
-+	[DDP_COMPONENT_AAL0] = MT8173_MUTEX_MOD_DISP_AAL,
- 	[DDP_COMPONENT_COLOR0] = MT8173_MUTEX_MOD_DISP_COLOR0,
- 	[DDP_COMPONENT_COLOR1] = MT8173_MUTEX_MOD_DISP_COLOR1,
- 	[DDP_COMPONENT_GAMMA] = MT8173_MUTEX_MOD_DISP_GAMMA,
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-index 4672317e3ad1..0919039805aa 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-@@ -218,7 +218,8 @@ struct mtk_ddp_comp_match {
- };
- 
- static const struct mtk_ddp_comp_match mtk_ddp_matches[DDP_COMPONENT_ID_MAX] = {
--	[DDP_COMPONENT_AAL]	= { MTK_DISP_AAL,	0, &ddp_aal },
-+	[DDP_COMPONENT_AAL0]	= { MTK_DISP_AAL,	0, &ddp_aal },
-+	[DDP_COMPONENT_AAL1]	= { MTK_DISP_AAL,	1, &ddp_aal },
- 	[DDP_COMPONENT_BLS]	= { MTK_DISP_BLS,	0, NULL },
- 	[DDP_COMPONENT_COLOR0]	= { MTK_DISP_COLOR,	0, NULL },
- 	[DDP_COMPONENT_COLOR1]	= { MTK_DISP_COLOR,	1, NULL },
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
-index 0828cf8bf85c..eee3c0cc2632 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
-@@ -41,7 +41,8 @@ enum mtk_ddp_comp_type {
- };
- 
- enum mtk_ddp_comp_id {
--	DDP_COMPONENT_AAL,
-+	DDP_COMPONENT_AAL0,
-+	DDP_COMPONENT_AAL1,
- 	DDP_COMPONENT_BLS,
- 	DDP_COMPONENT_COLOR0,
- 	DDP_COMPONENT_COLOR1,
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-index a2ca90fc403c..a415260f3d5f 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-@@ -149,7 +149,7 @@ static const enum mtk_ddp_comp_id mt2701_mtk_ddp_ext[] = {
- static const enum mtk_ddp_comp_id mt8173_mtk_ddp_main[] = {
- 	DDP_COMPONENT_OVL0,
- 	DDP_COMPONENT_COLOR0,
--	DDP_COMPONENT_AAL,
-+	DDP_COMPONENT_AAL0,
- 	DDP_COMPONENT_OD,
- 	DDP_COMPONENT_RDMA0,
- 	DDP_COMPONENT_UFOE,
--- 
-2.12.5
+> +1:
+> +	.byte STATIC_KEY_INIT_NOP
+> +	.pushsection __jump_table, "aw"
+> +	_ASM_ALIGN
+> +	_ASM_PTR 1b, \l_yes, \key + \branch
+> +	.popsection
+> +.endm
+> +
+> +.macro STATIC_BRANCH_JUMP_GOTO l_yes:req key:req branch:req
+
+STATIC_BRANCH_JMP
+
+> +1:
+> +	.byte 0xe9
+> +	.long \l_yes - 2f
+> +2:
+> +	.pushsection __jump_table, "aw"
+> +	_ASM_ALIGN
+> +	_ASM_PTR 1b, \l_yes, \key + \branch
+> +	.popsection
+> +.endm
+> +
+>  #endif	/* __ASSEMBLY__ */
