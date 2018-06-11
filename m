@@ -1,156 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 4ibCCoeEGVtlMAAAmS7hNA
-	; Thu, 07 Jun 2018 19:16:23 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id qRsSHKgRHlswUwAAmS7hNA
+	; Mon, 11 Jun 2018 06:07:38 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 114576074D; Thu,  7 Jun 2018 19:16:23 +0000 (UTC)
+	id 171F260791; Mon, 11 Jun 2018 06:07:38 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="sRV7AJln";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VxD7FxMz"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="zP0T5dux"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 706FD60590;
-	Thu,  7 Jun 2018 19:16:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 706FD60590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 08B85607E7;
+	Mon, 11 Jun 2018 06:07:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 08B85607E7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753042AbeFGTQU (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 15:16:20 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:36896 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751793AbeFGTQS (ORCPT
+        id S1753993AbeFKGHe (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 20 others); Mon, 11 Jun 2018 02:07:34 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:20695 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753899AbeFKGHc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 15:16:18 -0400
-Received: by mail-vk0-f67.google.com with SMTP id w8-v6so6763337vkh.4
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 12:16:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=KmvToFAAxJrFTi6ZJWeZiyjDXgBVVY6MPj7XMEujz3w=;
-        b=sRV7AJlnQOtFpnGh2iYhIXqHUnP7BLC867aeY0/Kgu/yYYGTNxyahe8lVHVk/vbf/m
-         4PP2ryHRKDgYQF/Hksy8Cipj6Wr0FM1Cjmdj7gw0Rd9cLe8gt+zOQO8cynQZQ7jny2ux
-         AOv3Uk6ePpvOGJ9RVoSrmDQEUdOmFP0h3TRsPPt3dj7ruGB08HjclNFj8NLqRDAKa2ZS
-         5RN3x7hVe/xjTMNW1D/bcgkDPW03ZTA67Ez6pv7BbgEbkrGBM/32LbFSS8CvJds6h7kl
-         VL6PGw/kFexflwZnkpmjmp6/oVeh3jg0LDnNGY4VAqzWlDtTUeyd15JlG0f+i/LsghTi
-         338g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=KmvToFAAxJrFTi6ZJWeZiyjDXgBVVY6MPj7XMEujz3w=;
-        b=VxD7FxMzEq+UqQ4+4+0niypR6GcCbZzn7zNtd0hDEjACeoAhkiDehNSi5y617SenXM
-         TYhtl9GGBtCD0GZXNqyjo5Y8sI7GasTt01C5tefLMNsdbRi3JoRIh59LP/1kesOmC+oA
-         AnXXyjeJM6ovEH5ced5w8apHJIM/lN5stSYNo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=KmvToFAAxJrFTi6ZJWeZiyjDXgBVVY6MPj7XMEujz3w=;
-        b=OOVmYTgp8sHW3Se2ZJ96u7FHNKlA+FWHboS2ju3vnIZaXXxnoLiPpMMmfSN5+Xnt/s
-         6ViRKPA2hLO5YkpJZ4OW+KfgVkYGVkFTvfPB0t9aQAK4Ok6U2Qqadlc1U5J7kNxY2hmj
-         rlxP9yj8/mqUkBs8jB+R7ju9u9k53zTmQxK1BH9HrNVQFpKZIvM13Ah/CSW3rQBapW3n
-         Xx/lzvlRwGOOm7/ROeAf6EpPy0fYRlNbnyiHcOYUrREaW5xcsGVFDUmsCKhV5RmwRhSK
-         XvmlquHd//9NHKtcNMTGidsVH8aApa4GPcADqcRUoF0EjKb9yochhSthrwx2pC5ehJai
-         LmFQ==
-X-Gm-Message-State: APt69E07Q55dB+iC59V2cuo0ySRFioI2uVp/B0wnWwqeslFgxdOzFqns
-        YNv8wVAW24tO/OWASu2jGQEU+vSNQRuZCIvu4PXNCQ==
-X-Google-Smtp-Source: ADUXVKKlAtvhAfeGuAarnbINbwvEZhOPWFKBG2qb9M0k5W2FFEKBkubhuwPEBa5uRhuLMZ+6jni7r53M+B/jVkZoHxs=
-X-Received: by 2002:a1f:e483:: with SMTP id b125-v6mr1973069vkh.149.1528398977297;
- Thu, 07 Jun 2018 12:16:17 -0700 (PDT)
+        Mon, 11 Jun 2018 02:07:32 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllnx210.ext.ti.com (8.15.1/8.15.1) with ESMTP id w5B677wu022275;
+        Mon, 11 Jun 2018 01:07:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1528697227;
+        bh=4Wi59mS72tNTUlJrSNPQqpOfK5Tm183MIXrc6ctymLQ=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=zP0T5duxQm9uBL+JDQ5FdXnUUDiiBb45I8r+HgbzI5feIT4qz9kJB62qYml7vPt9G
+         +E1R29PqRDc3zn3NOkLfLnNfXBgLoKJPpyFzBwHbhAG31Z5Am/SF3Sc9UFgs/QK5ry
+         J2v5Q2153EWnDUfAzk8AvrM45uqyK8Q27NFxn32I=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5B677l7025518;
+        Mon, 11 Jun 2018 01:07:07 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 11
+ Jun 2018 01:07:06 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Mon, 11 Jun 2018 01:07:06 -0500
+Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5B673AN013871;
+        Mon, 11 Jun 2018 01:07:03 -0500
+Subject: Re: [PATCH v3 4/6] bus: ti-sysc: Add support for software reset
+To: Tony Lindgren <tony@atomide.com>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <mark.rutland@arm.com>,
+        <paul@pwsan.com>, <t-kristo@ti.com>, <robh+dt@kernel.org>,
+        <bcousson@baylibre.com>
+References: <20180606060826.14671-1-faiz_abbas@ti.com>
+ <20180606060826.14671-5-faiz_abbas@ti.com>
+ <20180607073530.GH5738@atomide.com>
+ <a169ba7f-53f2-cf9a-a9ee-daffd6b53279@ti.com>
+ <20180608062158.GI5738@atomide.com>
+From: Faiz Abbas <faiz_abbas@ti.com>
+Message-ID: <acdfef83-8778-e8f4-e423-ed04a9a8a649@ti.com>
+Date: Mon, 11 Jun 2018 11:38:44 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Received: by 2002:a1f:a085:0:0:0:0:0 with HTTP; Thu, 7 Jun 2018 12:16:16 -0700 (PDT)
-In-Reply-To: <20180607191201.97080-1-ebiggers3@gmail.com>
-References: <0000000000009c221d056e0cf53a@google.com> <20180607191201.97080-1-ebiggers3@gmail.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Thu, 7 Jun 2018 12:16:16 -0700
-X-Google-Sender-Auth: WjiM3Ld1K5i00AN1SZUDV17bzhs
-Message-ID: <CAGXu5jJf-cW8WkwMoPZT8zM2aUoO6P-EQs7MK6_uUTneZr0ehA@mail.gmail.com>
-Subject: Re: [PATCH] dh key: fix rounding up KDF output length
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>, keyrings@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-crypto <linux-crypto@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com, Tycho Andersen <tycho@tycho.ws>,
-        Stephan Mueller <smueller@chronox.de>,
-        Eric Biggers <ebiggers@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180608062158.GI5738@atomide.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 7, 2018 at 12:12 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
-> From: Eric Biggers <ebiggers@google.com>
->
-> Commit 383203eff718 ("dh key: get rid of stack allocated array") changed
-> kdf_ctr() to assume that the length of key material to derive is a
-> multiple of the digest size.  The length was supposed to be rounded up
-> accordingly.  However, the round_up() macro was used which only gives
-> the correct result on power-of-2 arguments, whereas not all hash
-> algorithms have power-of-2 digest sizes.  In some cases this resulted in
-> a write past the end of the 'outbuf' buffer.
->
-> Fix it by switching to roundup(), which works for non-power-of-2 inputs.
+Hi Tony,
 
-round_up() vs roundup(). Wow, that's not confusing. :( I wonder if we
-should rename the former to roundup_pow2() or something?
+On Friday 08 June 2018 11:51 AM, Tony Lindgren wrote:
+> * Faiz Abbas <faiz_abbas@ti.com> [180607 10:24]:
+>> Hi,
+>>
+>> On Thursday 07 June 2018 01:05 PM, Tony Lindgren wrote:
+>>> * Faiz Abbas <faiz_abbas@ti.com> [180606 06:14]:
+>>>> +static int sysc_reset(struct sysc *ddata)
+>>>> +{
+>>>> +	int offset = ddata->offsets[SYSC_SYSCONFIG];
+>>>> +	int val = sysc_read(ddata, offset);
+>>>> +
+>>>> +	val |= (0x1 << ddata->cap->regbits->srst_shift);
+>>>> +	sysc_write(ddata, offset, val);
+>>>> +
+>>>> +	/* Poll on reset status */
+>>>> +	if (ddata->cfg.quirks & SYSC_QUIRK_RESET_STATUS) {
+>>>> +		offset = ddata->offsets[SYSC_SYSSTATUS];
+>>>> +
+>>>> +		return readl_poll_timeout(ddata->module_va + offset, val,
+>>>> +				(val & ddata->cfg.syss_mask) == 0x0,
+>>>> +				100, MAX_MODULE_SOFTRESET_WAIT);
+>>>> +	}
+>>>> +
+>>>> +	return 0;
+>>>> +}
+>>>
+>>> I wonder if we should also add SYSS_QUIRK_RESET_STATUS in
+>>> addition to SYSC_QUIRK_RESET status to make it easy to
+>>> read the right register?
+>>
+>> I assumed SYSC_QUIRK is the prefix to indicate the ti-sysc driver not
+>> the register. Are there layouts in which the reset status bit is in the
+>> sysconfig register rather than the sysstatus register?
+> 
+> Yes we can have reset status bit in either syss or syssconfig register.
 
-> Reported-by: syzbot+486f97f892efeb2075a3@syzkaller.appspotmail.com
-> Reported-by: syzbot+29d17b7898b41ee120a5@syzkaller.appspotmail.com
-> Reported-by: syzbot+8a608baf8751184ec727@syzkaller.appspotmail.com
-> Reported-by: syzbot+d04e58bd384f1fe0b112@syzkaller.appspotmail.com
-> Fixes: 383203eff718 ("dh key: get rid of stack allocated array")
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+You mean sysstatus and sysconfig right?
 
-Regardless:
+> We detect that in sysc_init_syss_mask() but we should also set something
+> at that point to make it clear which reset to use. But as we don't need
+> the quirk flag, it's probably set a function pointer after the detection.
+> So how about let's have two functions sysc_reset() and sysc_syss_reset()
+> and then we can implement sysc_syss_reset() in a separate patch after
+> testing it when we have a non-platform data using example for
+> sysc_syss_reset().
+> 
 
-Acked-by: Kees Cook <keescook@chromium.org>
+Shouldn't the function I add be called sysc_syss_reset()? The reset
+status bit is in the sysstatus.
 
--Kees
-
-> ---
->  security/keys/dh.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/security/keys/dh.c b/security/keys/dh.c
-> index f7403821db7f0..b203f7758f976 100644
-> --- a/security/keys/dh.c
-> +++ b/security/keys/dh.c
-> @@ -142,6 +142,8 @@ static void kdf_dealloc(struct kdf_sdesc *sdesc)
->   * The src pointer is defined as Z || other info where Z is the shared secret
->   * from DH and other info is an arbitrary string (see SP800-56A section
->   * 5.8.1.2).
-> + *
-> + * 'dlen' must be a multiple of the digest size.
->   */
->  static int kdf_ctr(struct kdf_sdesc *sdesc, const u8 *src, unsigned int slen,
->                    u8 *dst, unsigned int dlen, unsigned int zlen)
-> @@ -205,8 +207,8 @@ static int keyctl_dh_compute_kdf(struct kdf_sdesc *sdesc,
->  {
->         uint8_t *outbuf = NULL;
->         int ret;
-> -       size_t outbuf_len = round_up(buflen,
-> -                                    crypto_shash_digestsize(sdesc->shash.tfm));
-> +       size_t outbuf_len = roundup(buflen,
-> +                                   crypto_shash_digestsize(sdesc->shash.tfm));
->
->         outbuf = kmalloc(outbuf_len, GFP_KERNEL);
->         if (!outbuf) {
-> --
-> 2.17.1.1185.g55be947832-goog
->
-
-
-
--- 
-Kees Cook
-Pixel Security
+Thanks,
+Faiz
