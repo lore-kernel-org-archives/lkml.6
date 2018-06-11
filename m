@@ -1,188 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id +XPPMP3rHVt6IwAAmS7hNA
-	; Mon, 11 Jun 2018 03:26:53 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 4LxIHedfHluVOAAAmS7hNA
+	; Mon, 11 Jun 2018 11:41:27 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id B6CF2606DD; Mon, 11 Jun 2018 03:26:53 +0000 (UTC)
+	id 58966607A4; Mon, 11 Jun 2018 11:41:27 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 15736607E4;
-	Mon, 11 Jun 2018 03:26:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 15736607E4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id B37D4601C3;
+	Mon, 11 Jun 2018 11:41:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B37D4601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753944AbeFKD0t (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Sun, 10 Jun 2018 23:26:49 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:48026 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753866AbeFKD0r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 23:26:47 -0400
-X-UUID: aa5a8b559c5e4835b2c326576abd8e0c-20180611
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
-        (envelope-from <stu.hsieh@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 2010131235; Mon, 11 Jun 2018 11:26:44 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Mon, 11 Jun 2018 11:26:43 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Mon, 11 Jun 2018 11:26:43 +0800
-From: Stu Hsieh <stu.hsieh@mediatek.com>
-To: CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>
-CC: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, Stu Hsieh <stu.hsieh@mediatek.com>
-Subject: [PATCH 02/28] drm/mediatek: support maximum 64 mutex mod
-Date: Mon, 11 Jun 2018 11:25:54 +0800
-Message-ID: <1528687580-549-3-git-send-email-stu.hsieh@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
-References: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
+        id S932939AbeFKLlY (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 07:41:24 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39075 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932841AbeFKLlX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 07:41:23 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id C401AABCC;
+        Mon, 11 Jun 2018 11:41:21 +0000 (UTC)
+Date: Mon, 11 Jun 2018 13:41:21 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Miroslav Benes <mbenes@suse.cz>
+Cc: jikos@kernel.org, jpoimboe@redhat.com, jeyu@kernel.org,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] livepatch: Deny the patched modules to be removed
+Message-ID: <20180611114121.2u7wt6d6xu2cm6it@pathway.suse.cz>
+References: <20180607092949.1706-1-mbenes@suse.cz>
+ <20180607092949.1706-3-mbenes@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180607092949.1706-3-mbenes@suse.cz>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch support that if modules more than 32,
-add index more than 31 when using DISP_REG_MUTEX_MOD2 bit
+On Thu 2018-06-07 11:29:48, Miroslav Benes wrote:
+> We decided to deny the patched modules to be removed. If it proves to be
+> a major drawback for users, we can still implement a different approach.
+> 
+> The reference of a patched module has to be taken regardless of a
+> patch's state. Thus it is not taken and dropped in enable/disable paths,
+> but in register/unregister paths.
 
-Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
----
- drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 75 +++++++++++++++++++++-------------
- 1 file changed, 47 insertions(+), 28 deletions(-)
+> --- a/kernel/livepatch/core.c
+> +++ b/kernel/livepatch/core.c
+> @@ -739,6 +746,14 @@ static int klp_init_object_loaded(struct klp_patch *patch,
+>  		}
+>  	}
+>  
+> +	/*
+> +	 * Do not allow patched modules to be removed.
+> +	 *
+> +	 * All callers of klp_init_object_loaded() set obj->mod.
+> +	 */
+> +	if (klp_is_module(obj) && !try_module_get(obj->mod))
+> +		return -ENODEV;
+> +
+>  	return 0;
+>  }
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-index 8130f3dab661..47ffa240bd25 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-@@ -41,31 +41,32 @@
- #define DISP_REG_MUTEX_RST(n)	(0x28 + 0x20 * (n))
- #define DISP_REG_MUTEX_MOD(n)	(0x2c + 0x20 * (n))
- #define DISP_REG_MUTEX_SOF(n)	(0x30 + 0x20 * (n))
-+#define DISP_REG_MUTEX_MOD2(n)	(0x34 + 0x20 * (n))
- 
- #define INT_MUTEX				BIT(1)
- 
--#define MT8173_MUTEX_MOD_DISP_OVL0		BIT(11)
--#define MT8173_MUTEX_MOD_DISP_OVL1		BIT(12)
--#define MT8173_MUTEX_MOD_DISP_RDMA0		BIT(13)
--#define MT8173_MUTEX_MOD_DISP_RDMA1		BIT(14)
--#define MT8173_MUTEX_MOD_DISP_RDMA2		BIT(15)
--#define MT8173_MUTEX_MOD_DISP_WDMA0		BIT(16)
--#define MT8173_MUTEX_MOD_DISP_WDMA1		BIT(17)
--#define MT8173_MUTEX_MOD_DISP_COLOR0		BIT(18)
--#define MT8173_MUTEX_MOD_DISP_COLOR1		BIT(19)
--#define MT8173_MUTEX_MOD_DISP_AAL		BIT(20)
--#define MT8173_MUTEX_MOD_DISP_GAMMA		BIT(21)
--#define MT8173_MUTEX_MOD_DISP_UFOE		BIT(22)
--#define MT8173_MUTEX_MOD_DISP_PWM0		BIT(23)
--#define MT8173_MUTEX_MOD_DISP_PWM1		BIT(24)
--#define MT8173_MUTEX_MOD_DISP_OD		BIT(25)
--
--#define MT2701_MUTEX_MOD_DISP_OVL		BIT(3)
--#define MT2701_MUTEX_MOD_DISP_WDMA		BIT(6)
--#define MT2701_MUTEX_MOD_DISP_COLOR		BIT(7)
--#define MT2701_MUTEX_MOD_DISP_BLS		BIT(9)
--#define MT2701_MUTEX_MOD_DISP_RDMA0		BIT(10)
--#define MT2701_MUTEX_MOD_DISP_RDMA1		BIT(12)
-+#define MT8173_MUTEX_MOD_DISP_OVL0		11
-+#define MT8173_MUTEX_MOD_DISP_OVL1		12
-+#define MT8173_MUTEX_MOD_DISP_RDMA0		13
-+#define MT8173_MUTEX_MOD_DISP_RDMA1		14
-+#define MT8173_MUTEX_MOD_DISP_RDMA2		15
-+#define MT8173_MUTEX_MOD_DISP_WDMA0		16
-+#define MT8173_MUTEX_MOD_DISP_WDMA1		17
-+#define MT8173_MUTEX_MOD_DISP_COLOR0		18
-+#define MT8173_MUTEX_MOD_DISP_COLOR1		19
-+#define MT8173_MUTEX_MOD_DISP_AAL		20
-+#define MT8173_MUTEX_MOD_DISP_GAMMA		21
-+#define MT8173_MUTEX_MOD_DISP_UFOE		22
-+#define MT8173_MUTEX_MOD_DISP_PWM0		23
-+#define MT8173_MUTEX_MOD_DISP_PWM1		24
-+#define MT8173_MUTEX_MOD_DISP_OD		25
-+
-+#define MT2701_MUTEX_MOD_DISP_OVL		3
-+#define MT2701_MUTEX_MOD_DISP_WDMA		6
-+#define MT2701_MUTEX_MOD_DISP_COLOR		7
-+#define MT2701_MUTEX_MOD_DISP_BLS		9
-+#define MT2701_MUTEX_MOD_DISP_RDMA0		10
-+#define MT2701_MUTEX_MOD_DISP_RDMA1		12
- 
- #define MUTEX_SOF_SINGLE_MODE		0
- #define MUTEX_SOF_DSI0			1
-@@ -278,6 +279,7 @@ void mtk_disp_mutex_add_comp(struct mtk_disp_mutex *mutex,
- 	struct mtk_ddp *ddp = container_of(mutex, struct mtk_ddp,
- 					   mutex[mutex->id]);
- 	unsigned int reg;
-+	unsigned int offset;
- 
- 	WARN_ON(&ddp->mutex[mutex->id] != mutex);
- 
-@@ -292,9 +294,17 @@ void mtk_disp_mutex_add_comp(struct mtk_disp_mutex *mutex,
- 		reg = MUTEX_SOF_DPI0;
- 		break;
- 	default:
--		reg = readl_relaxed(ddp->regs + DISP_REG_MUTEX_MOD(mutex->id));
--		reg |= ddp->mutex_mod[id];
--		writel_relaxed(reg, ddp->regs + DISP_REG_MUTEX_MOD(mutex->id));
-+		if (ddp->mutex_mod[id] < 32) {
-+			offset = DISP_REG_MUTEX_MOD(mutex->id);
-+			reg = readl_relaxed(ddp->regs + offset);
-+			reg |= 1 << ddp->mutex_mod[id];
-+			writel_relaxed(reg, ddp->regs + offset);
-+		} else {
-+			offset = DISP_REG_MUTEX_MOD2(mutex->id);
-+			reg = readl_relaxed(ddp->regs + offset);
-+			reg |= 1 << (ddp->mutex_mod[id] - 32);
-+			writel_relaxed(reg, ddp->regs + offset);
-+		}
- 		return;
- 	}
- 
-@@ -307,6 +317,7 @@ void mtk_disp_mutex_remove_comp(struct mtk_disp_mutex *mutex,
- 	struct mtk_ddp *ddp = container_of(mutex, struct mtk_ddp,
- 					   mutex[mutex->id]);
- 	unsigned int reg;
-+	unsigned int offset;
- 
- 	WARN_ON(&ddp->mutex[mutex->id] != mutex);
- 
-@@ -318,9 +329,17 @@ void mtk_disp_mutex_remove_comp(struct mtk_disp_mutex *mutex,
- 			       ddp->regs + DISP_REG_MUTEX_SOF(mutex->id));
- 		break;
- 	default:
--		reg = readl_relaxed(ddp->regs + DISP_REG_MUTEX_MOD(mutex->id));
--		reg &= ~(ddp->mutex_mod[id]);
--		writel_relaxed(reg, ddp->regs + DISP_REG_MUTEX_MOD(mutex->id));
-+		if (ddp->mutex_mod[id] < 32) {
-+			offset = DISP_REG_MUTEX_MOD(mutex->id);
-+			reg = readl_relaxed(ddp->regs + offset);
-+			reg &= ~(1 << ddp->mutex_mod[id]);
-+			writel_relaxed(reg, ddp->regs + offset);
-+		} else {
-+			offset = DISP_REG_MUTEX_MOD2(mutex->id);
-+			reg = readl_relaxed(ddp->regs + offset);
-+			reg &= ~(1 << (ddp->mutex_mod[id] - 32));
-+			writel_relaxed(reg, ddp->regs + offset);
-+		}
- 		break;
- 	}
- }
--- 
-2.12.5
+This looks strange. We try to take the reference after we do all
+actions needed for a loaded module. There is nothing that would
+prevent obj->mod to get into the going state.
+
+Note that it was safe (except for the relocated symbols) because
+the module was not able to really go until it called
+klp_module_going(). But you removed this last break
+by the 3rd patch.
+
+
+I suggest another approach:
+
+I would rename klp_find_object_module() to klp_get_object_module()
+and get the reference there. Note that it should be fine to call
+it later in klp_init_object() (before klp_init_object_loaded()).
+This would solve klp_init_patch().
+
+We will also need to get the reference in klp_module_coming().
+It can be called anywhere there. If it fails, we will block
+loading the module.
+
+
+Note that the mod->klp_alive logic will still be necessary.
+It solves various races when both the patch and the patched
+module are loaded in parallel.
+
+Sigh, this also means that we still could call klp_init_object_loaded()
+and apply reloacations even when the patched module fails to loaded
+later from other reasons. This means that this approach does not
+solve the original problem completely.
+
+I wonder how complicated would be the arch-specific part that
+would clean up relocations when the module is unloaded.
+
+Best Regards,
+Petr
