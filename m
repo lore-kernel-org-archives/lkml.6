@@ -1,124 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Djl3NdxeHltWNAAAmS7hNA
-	; Mon, 11 Jun 2018 11:37:01 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id smyfOtghHluyWgAAmS7hNA
+	; Mon, 11 Jun 2018 07:18:55 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id C92AA607BB; Mon, 11 Jun 2018 11:37:00 +0000 (UTC)
+	id B771E607A4; Mon, 11 Jun 2018 07:18:55 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="ZXGnvohn"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_MED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 46B9E601C3;
-	Mon, 11 Jun 2018 11:37:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 46B9E601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=lucaceresoli.net
+	by smtp.codeaurora.org (Postfix) with ESMTP id 1F10860385;
+	Mon, 11 Jun 2018 07:18:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1F10860385
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=endlessm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932855AbeFKLgR (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Mon, 11 Jun 2018 07:36:17 -0400
-Received: from srv-hp10-72.netsons.net ([94.141.22.72]:45898 "EHLO
-        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932893AbeFKLgP (ORCPT
+        id S1754099AbeFKHSx (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 20 others); Mon, 11 Jun 2018 03:18:53 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:39329 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754028AbeFKHSv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 07:36:15 -0400
-Received: from [109.168.11.45] (port=54392 helo=pc-ceresoli.dev.aim)
-        by srv-hp10.netsons.net with esmtpa (Exim 4.89_1)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1fSL7M-00B1A2-9C; Mon, 11 Jun 2018 13:36:12 +0200
-From: Luca Ceresoli <luca@lucaceresoli.net>
-To: linux-media@vger.kernel.org
-Cc: Luca Ceresoli <luca@lucaceresoli.net>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Leon Luo <leonl@leopardimaging.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 1/8] media: imx274: initialize format before v4l2 controls
-Date: Mon, 11 Jun 2018 13:35:32 +0200
-Message-Id: <1528716939-17015-2-git-send-email-luca@lucaceresoli.net>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528716939-17015-1-git-send-email-luca@lucaceresoli.net>
-References: <1528716939-17015-1-git-send-email-luca@lucaceresoli.net>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        Mon, 11 Jun 2018 03:18:51 -0400
+Received: by mail-pl0-f65.google.com with SMTP id f1-v6so11806872plt.6
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 00:18:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=VFI3XHE7sXwJCC9HPXBJTtkLBfmxzRFUKjmMAyho8jQ=;
+        b=ZXGnvohnHAqYWPgBXpZr4UJElJXRMJ6NNEudhK/paULF5/rpEQrh7rqSiCrX7mGV4T
+         GEdj4gCiq7yWfc/BOe7MZKrKKhzJ0eL30fUXtJ/O3IHQPdDEQF4dYgyyLO+DaH67ja7Y
+         v6eif073acW6p1unmJvk8cCN+R0pxWFFu1yiAB2+f5AeewZXL68Ols+dyoISYvLuILjn
+         9d0EV+HcHgYnpnuEPjOkKtGQPGpi7RtTZfPeM4nMChyyrXuSE/IcNpD77tjtXOfctYxr
+         BHT73LRyVt3btFTLKbswscL2vfM3cvzI4agQhpS26TQWWVUIjCeeqSCs5ZEjdJh8layR
+         vcqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=VFI3XHE7sXwJCC9HPXBJTtkLBfmxzRFUKjmMAyho8jQ=;
+        b=Fk/pw3HmMlZ/e8k3R/LzmSinHrqUFcMNkiPYtXwL3NWM4wrUPxGXNCyiTz5oCzG7gL
+         or6TZ4EHxLcdM1EvR7oZC7AXP6cgvED6BHjFub6c5jYU87Q6Q1AcjbRM/H4s4eU3nRKb
+         5VDNuPFaTFp78KMPS7jg5El4YVV8P6Hq0dlckOYFKjiREzfIZkdY/KB4xG/v0GZ/lADr
+         3bdc87wQVdQB0i1ZiMWoIFzaR53g5jvEyJEYUKM/N4VP1cuslQsQ0u+RJIRoaksYKWo9
+         fKrizyPpFmUMMnnMznLUFsVQlUMcYS5qKWmKU4wnerPNoiL0LAbbL4nLCSCjnIcoG0rD
+         3z6Q==
+X-Gm-Message-State: APt69E18Ak5DL+gwLFLXS5LLokybsuxP6za4zDaGLDR+xogWWN6v6zaW
+        CLKertIy/jYdV6S2+rCRr5E4mWdd
+X-Google-Smtp-Source: ADUXVKKmKOFn+KHUqbPG60fAvvWmxbAeIxh41jacxVnaxLGOqViLU8GCq1YwsgicUpWURHPXzBugEg==
+X-Received: by 2002:a17:902:543:: with SMTP id 61-v6mr17309275plf.47.1528701531174;
+        Mon, 11 Jun 2018 00:18:51 -0700 (PDT)
+Received: from localhost.localdomain (114-26-212-90.dynamic-ip.hinet.net. [114.26.212.90])
+        by smtp.gmail.com with ESMTPSA id t13-v6sm30349692pgv.43.2018.06.11.00.18.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 11 Jun 2018 00:18:50 -0700 (PDT)
+From: Chris Chiu <chiu@endlessm.com>
+To: corentin.chary@gmail.com, dvhart@infradead.org,
+        andy.shevchenko@gmail.com
+Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        acpi4asus-user@lists.sourceforge.net, hdegoede@redhat.com,
+        linux@endlessm.com, Chris Chiu <chiu@endlessm.com>
+Subject: [PATCH v2 1/2] platform/x86: asus-wmi: Call led hw_changed API on kbd brightness change
+Date: Mon, 11 Jun 2018 15:18:37 +0800
+Message-Id: <20180611071838.47945-1-chiu@endlessm.com>
+X-Mailer: git-send-email 2.15.1 (Apple Git-101)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current probe function calls v4l2_ctrl_handler_setup() before
-initializing the format info. This triggers call paths such as:
-imx274_probe -> v4l2_ctrl_handler_setup -> imx274_s_ctrl ->
-imx274_set_exposure, where priv->mode_index is accessed before being
-assigned.
+Make asus-wmi notify on hotkey kbd brightness changes, listen for
+brightness events and update the brightness directly in the driver.
+For this purpose, bound check on brightness in kbd_led_set must be
+based on the same data type to prevent illegal value been set.
 
-This is wrong but does not trigger a visible bug because priv is
-zero-initialized and 0 is the default value for priv->mode_index. But
-this would become a crash in follow-up commits when mode_index is
-replaced by a pointer that must always be valid.
+Update the brightness by led_classdev_notify_brightness_hw_changed.
+This will allow userspace to monitor (poll) for brightness changes
+on the LED without reporting via input keymapping.
 
-Fix the bug before it shows up by initializing struct members early.
-
-Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
-
+Signed-off-by: Chris Chiu <chiu@endlessm.com>
 ---
-Changed v3 -> v4: nothing
+ drivers/platform/x86/asus-wmi.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-Changed v2 -> v3: nothing
-
-Changed v1 -> v2:
- - add "media: " prefix to commit message
----
- drivers/media/i2c/imx274.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
-index 63fb94e7da37..8a8a11b8d75d 100644
---- a/drivers/media/i2c/imx274.c
-+++ b/drivers/media/i2c/imx274.c
-@@ -1632,6 +1632,16 @@ static int imx274_probe(struct i2c_client *client,
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index 1f6e68f0b646..a18484f4bae3 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -460,6 +460,7 @@ static void kbd_led_update(struct work_struct *work)
+ 		ctrl_param = 0x80 | (asus->kbd_led_wk & 0x7F);
  
- 	mutex_init(&imx274->lock);
+ 	asus_wmi_set_devstate(ASUS_WMI_DEVID_KBD_BACKLIGHT, ctrl_param, NULL);
++	led_classdev_notify_brightness_hw_changed(&asus->kbd_led, asus->kbd_led_wk);
+ }
  
-+	/* initialize format */
-+	imx274->mode_index = IMX274_MODE_3840X2160;
-+	imx274->format.width = imx274_formats[0].size.width;
-+	imx274->format.height = imx274_formats[0].size.height;
-+	imx274->format.field = V4L2_FIELD_NONE;
-+	imx274->format.code = MEDIA_BUS_FMT_SRGGB10_1X10;
-+	imx274->format.colorspace = V4L2_COLORSPACE_SRGB;
-+	imx274->frame_interval.numerator = 1;
-+	imx274->frame_interval.denominator = IMX274_DEF_FRAME_RATE;
-+
- 	/* initialize regmap */
- 	imx274->regmap = devm_regmap_init_i2c(client, &imx274_regmap_config);
- 	if (IS_ERR(imx274->regmap)) {
-@@ -1720,16 +1730,6 @@ static int imx274_probe(struct i2c_client *client,
- 		goto err_ctrls;
+ static int kbd_led_read(struct asus_wmi *asus, int *level, int *env)
+@@ -497,9 +498,9 @@ static void kbd_led_set(struct led_classdev *led_cdev,
+ 
+ 	asus = container_of(led_cdev, struct asus_wmi, kbd_led);
+ 
+-	if (value > asus->kbd_led.max_brightness)
++	if ((int)value > (int)asus->kbd_led.max_brightness)
+ 		value = asus->kbd_led.max_brightness;
+-	else if (value < 0)
++	else if ((int)value < 0)
+ 		value = 0;
+ 
+ 	asus->kbd_led_wk = value;
+@@ -656,6 +657,7 @@ static int asus_wmi_led_init(struct asus_wmi *asus)
+ 
+ 		asus->kbd_led_wk = led_val;
+ 		asus->kbd_led.name = "asus::kbd_backlight";
++		asus->kbd_led.flags = LED_BRIGHT_HW_CHANGED;
+ 		asus->kbd_led.brightness_set = kbd_led_set;
+ 		asus->kbd_led.brightness_get = kbd_led_get;
+ 		asus->kbd_led.max_brightness = 3;
+@@ -1745,6 +1747,15 @@ static void asus_wmi_notify(u32 value, void *context)
+ 		}
  	}
  
--	/* initialize format */
--	imx274->mode_index = IMX274_MODE_3840X2160;
--	imx274->format.width = imx274_formats[0].size.width;
--	imx274->format.height = imx274_formats[0].size.height;
--	imx274->format.field = V4L2_FIELD_NONE;
--	imx274->format.code = MEDIA_BUS_FMT_SRGGB10_1X10;
--	imx274->format.colorspace = V4L2_COLORSPACE_SRGB;
--	imx274->frame_interval.numerator = 1;
--	imx274->frame_interval.denominator = IMX274_DEF_FRAME_RATE;
--
- 	/* load default control values */
- 	ret = imx274_load_default(imx274);
- 	if (ret) {
++	if (code == NOTIFY_KBD_BRTUP) {
++		kbd_led_set(&asus->kbd_led, asus->kbd_led_wk + 1);
++		goto exit;
++	}
++	if (code == NOTIFY_KBD_BRTDWN) {
++		kbd_led_set(&asus->kbd_led, asus->kbd_led_wk - 1);
++		goto exit;
++	}
++
+ 	if (is_display_toggle(code) &&
+ 	    asus->driver->quirks->no_display_toggle)
+ 		goto exit;
 -- 
-2.7.4
+2.11.0
