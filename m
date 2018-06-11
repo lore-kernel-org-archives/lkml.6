@@ -1,102 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id MSnUI7pxGVvBbwAAmS7hNA
-	; Thu, 07 Jun 2018 17:59:13 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id bNePLzyaHlsAUAAAmS7hNA
+	; Mon, 11 Jun 2018 15:50:20 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 18E906074D; Thu,  7 Jun 2018 17:59:13 +0000 (UTC)
+	id 9B8FA607A4; Mon, 11 Jun 2018 15:50:20 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oSK0sRi9"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 7E56760590;
-	Thu,  7 Jun 2018 17:59:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7E56760590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 125E9600D0;
+	Mon, 11 Jun 2018 15:50:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 125E9600D0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935987AbeFGR7K (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 13:59:10 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37106 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S935049AbeFGR7I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 13:59:08 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 20943401EF1B;
-        Thu,  7 Jun 2018 17:59:08 +0000 (UTC)
-Received: from redhat.com (ovpn-120-226.rdu2.redhat.com [10.10.120.226])
-        by smtp.corp.redhat.com (Postfix) with SMTP id D12E91C703;
-        Thu,  7 Jun 2018 17:59:06 +0000 (UTC)
-Date: Thu, 7 Jun 2018 20:59:06 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: syzbot <syzbot+87cfa083e727a224754b@syzkaller.appspotmail.com>,
-        avagin@openvz.org, davem@davemloft.net, dingtianhong@huawei.com,
-        edumazet@google.com, elena.reshetova@intel.com,
-        jasowang@redhat.com, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, matthew@mjdsystems.ca,
-        mingo@kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
-        syzkaller-bugs@googlegroups.com,
-        virtualization@lists.linux-foundation.org, willemb@google.com
-Subject: Re: KMSAN: uninit-value in _copy_to_iter (2)
-Message-ID: <20180607205611-mutt-send-email-mst@kernel.org>
-References: <000000000000a5b2b1056a86e98c@google.com>
- <000000000000cf4578056ab12452@google.com>
- <20180607183627-mutt-send-email-mst@kernel.org>
- <20180607174355.GR30522@ZenIV.linux.org.uk>
+        id S933188AbeFKPuS (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 20 others); Mon, 11 Jun 2018 11:50:18 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:37439 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933014AbeFKPuN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 11:50:13 -0400
+Received: by mail-wr0-f195.google.com with SMTP id d8-v6so20949558wro.4;
+        Mon, 11 Jun 2018 08:50:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=SUr+6NOSsNUEwURPfi8G1Ijjt8fnnFLs1nUeW5tCN0I=;
+        b=oSK0sRi9gjEhUiOFhSau5Duy8Jn+N2RtWiCVnCpaju0rfcDg1DT+/ZYdNeki64VvzD
+         qGag8fTdmmp35QTzruP+PYoOw8rdidV1ix1HoCkY7xpQgVVCBBO6QdVtALIZLQBqMjF6
+         T1o77sCfdbTNVfQ50obL+a/VjjRTxBCSwLxQOoyzkxCE1llFb7h0lZk2ctHAekC15O+h
+         PbGBnJpiAfNpy3NCEkH+wbEfUTlIN/a4+P3xlpsvfisWAyDj4+U8JzQzwd8QPvnJsEhg
+         5c/bazbG740Phy3xIHvCXGPWamzCHcU9OdZcKQX5Ry/AEs0vEL1M/IfHlgxy/CaVNJdk
+         fW6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=SUr+6NOSsNUEwURPfi8G1Ijjt8fnnFLs1nUeW5tCN0I=;
+        b=HGoiBwgurjZFj7mLPqi0JASYeFWbszoNYUS6aq6DKXlz3basuwX7E8b6jRwjvsAGKI
+         WQYu5ej74/1oivKhn4Xl+YXVWVAwwYb/7DE/sF9aTlzH4w67wu2JOvmwVzx8qYmb+Xij
+         IGos7gnYt0H6zyW52Y/F2wO1Z6i+H4lb7Anh0SqYF2jB4TyBqTkLBGTieWAe0aZrhtz6
+         Gj71nqUlYHM1UhtX0RLIpKOvnWwx/B9K+TlYZ0qTF7zcucpNBsRg+QUFkNh8aW8lzC0U
+         9yERtK/YG4P7MDlzCXCQcz/eGzgjPW8iMBCZHeURZNhwJts6nvNHGJDGVWQe5xgRpjLI
+         kKFg==
+X-Gm-Message-State: APt69E2zwGtfc4h3QEaSBDXhz8sb8DXnQoPBn8Hth45nA9jD+2bxNEBt
+        2MeqQsaEGmvhucn3eYL9BtI=
+X-Google-Smtp-Source: ADUXVKLI6WtBEQod9cOLr99RLOhLzxZ7xN2w5cc+oyjlXwABekfDOoj+WL1AG29N8SBwAWrZpsqzAg==
+X-Received: by 2002:adf:ee91:: with SMTP id b17-v6mr14460364wro.21.1528732211704;
+        Mon, 11 Jun 2018 08:50:11 -0700 (PDT)
+Received: from cperon-Latitude-7490.lan (static-css-csd-151233.business.bouyguestelecom.com. [176.162.151.233])
+        by smtp.gmail.com with ESMTPSA id n11-v6sm30308862wro.13.2018.06.11.08.50.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Jun 2018 08:50:10 -0700 (PDT)
+From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+To: Colin Didier <colin.didier@devialet.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Stefan Agner <stefan@agner.ch>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Rob Herring <robh@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        =?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
+Subject: [PATCH v7 3/5] dt-bindings: timer: add i.MX EPIT timer binding
+Date: Mon, 11 Jun 2018 17:49:59 +0200
+Message-Id: <20180611155001.3506-4-peron.clem@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180611155001.3506-1-peron.clem@gmail.com>
+References: <20180611155001.3506-1-peron.clem@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180607174355.GR30522@ZenIV.linux.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 07 Jun 2018 17:59:08 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 07 Jun 2018 17:59:08 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 07, 2018 at 06:43:55PM +0100, Al Viro wrote:
-> On Thu, Jun 07, 2018 at 06:38:48PM +0300, Michael S. Tsirkin wrote:
-> > #syz test: https://github.com/google/kmsan.git/master d2d741e5d1898dfde1a75ea3d29a9a3e2edf0617
-> > 
-> > Subject: vhost: fix info leak
-> > 
-> > Fixes: CVE-2018-1118
-> > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> > ---
-> > diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-> > index f0be5f35ab28..9beefa6ed1ce 100644
-> > --- a/drivers/vhost/vhost.c
-> > +++ b/drivers/vhost/vhost.c
-> > @@ -2345,6 +2345,9 @@ struct vhost_msg_node *vhost_new_msg(struct vhost_virtqueue *vq, int type)
-> >  	struct vhost_msg_node *node = kmalloc(sizeof *node, GFP_KERNEL);
-> >  	if (!node)
-> >  		return NULL;
-> > +
-> > +	/* Make sure all padding within the structure is initialized. */
-> > +	memset(&node->msg, 0, sizeof node->msg);
-> 
-> Umm...  Maybe kzalloc(), then?  You have
-> 
-> struct vhost_msg_node {
->   struct vhost_msg msg;
->   struct vhost_virtqueue *vq;
->   struct list_head node;
-> };
-> 
-> and that's what, 68 bytes in msg, then either 4 bytes pointer or
-> 4 bytes padding + 8 bytes pointer, then two pointers?  How much
-> does explicit partial memset() save you here?
+From: Clément Peron <clement.peron@devialet.com>
 
-Yes but 0 isn't a nop here so if this struct is used without
-a sensible initialization, it will crash elsewhere.
-I prefer KASAN to catch such uses.
+Add devicetree binding document for NXP's i.MX SoC specific
+EPIT timer driver.
 
+Signed-off-by: Clément Peron <clement.peron@devialet.com>
+Reviewed-by: Vladimir Zapolskiy <vz@mleia.com>
+---
+ .../devicetree/bindings/timer/fsl,imxepit.txt | 21 +++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/timer/fsl,imxepit.txt
 
-> >  	node->vq = vq;
-> >  	node->msg.type = type;
-> >  	return node;
+diff --git a/Documentation/devicetree/bindings/timer/fsl,imxepit.txt b/Documentation/devicetree/bindings/timer/fsl,imxepit.txt
+new file mode 100644
+index 000000000000..819d6458a860
+--- /dev/null
++++ b/Documentation/devicetree/bindings/timer/fsl,imxepit.txt
+@@ -0,0 +1,21 @@
++Binding for the i.MX Enhanced Periodic Interrupt Timer (EPIT)
++
++The Enhanced Periodic Interrupt Timer (EPIT) is a 32-bit set-and-forget timer
++that is capable of providing precise interrupts at regular intervals with
++minimal processor intervention.
++
++Required properties:
++- compatible: should be "fsl,<chip>-epit", "fsl,imx31-epit" where <chip> is
++  imx25, imx6qdl, imx6sl, imx6sul or imx6sx.
++- reg: physical base address of the controller and length of memory mapped
++  region.
++- interrupts: Should contain EPIT controller interrupt
++- clocks : The clock provided by the SoC to drive the timer.
++
++Example for i.MX6QDL:
++	epit1: timer@20d0000 {
++		compatible = "fsl,imx6qdl-epit", "fsl,imx31-epit";
++		reg = <0x020d0000 0x4000>;
++		interrupts = <0 56 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&clks IMX6QDL_CLK_EPIT1>;
++	};
+-- 
+2.17.1
