@@ -1,170 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id QUWUJIeEHlsoGwAAmS7hNA
-	; Mon, 11 Jun 2018 14:18:26 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id kSqABOxiHlu3WgAAmS7hNA
+	; Mon, 11 Jun 2018 11:54:20 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D6847607A4; Mon, 11 Jun 2018 14:18:25 +0000 (UTC)
+	id E9C6A60792; Mon, 11 Jun 2018 11:54:19 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Tb4OH0Jt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QBiWNTWJ"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 5B70560351;
-	Mon, 11 Jun 2018 14:18:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5B70560351
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 4FFC660351;
+	Mon, 11 Jun 2018 11:54:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4FFC660351
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934125AbeFKOSX (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 10:18:23 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45694 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933223AbeFKOG5 (ORCPT
+        id S933285AbeFKLyR (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 07:54:17 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:46115 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933235AbeFKLxh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:06:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=uvWT6f10klRi6JfdlHzw39lMupXUF1V/YTllgCogeUs=; b=Tb4OH0Jto49hcS/OlmqvrGaTX
-        2w31KZDWmN1UCgddj7yKcHNvky0pWsrvTvMVqnUMh4QYJXcmQqwfLgBRe3rlb/xsJOCJmLU0a9RmS
-        ztKBocaDK4KTW+ljTWVyJ7jiJwiF15ZSBEs0HrrK0POdgfFx7ahLhh+yz1pHN8mc6BhHymvud3Spg
-        MDbWWjjAYt813vsO+EJ4bXkY0jIfa5hjx1iTswqdxUiLjYmG4ZFrCYIh8XpdupdbwDbS7Nvn2Uj5i
-        hOAzMqz9kOBhxddYRnGRENmzPlUVJppdn7Ip7K9pX/fQ4VmwOmlCcRAZQ8Je0nl+T4yZ+I8fDw8+w
-        iipgW+04w==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSNTE-0004mE-Gu; Mon, 11 Jun 2018 14:06:56 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Lukas Czerner <lczerner@redhat.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v13 38/72] mm: Convert delete_from_swap_cache to XArray
-Date: Mon, 11 Jun 2018 07:06:05 -0700
-Message-Id: <20180611140639.17215-39-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
-References: <20180611140639.17215-1-willy@infradead.org>
+        Mon, 11 Jun 2018 07:53:37 -0400
+Received: by mail-lf0-f67.google.com with SMTP id j13-v6so30073632lfb.13;
+        Mon, 11 Jun 2018 04:53:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=FVYK7brF4f+8IYpaSyR+AKXBScb7nBGjmMedpmZHJqc=;
+        b=QBiWNTWJqrhS4nxbfWA6LeykeHDXaDSC5OUJElbFhadXvVUyWxG2ILbdKSbR3Qw0NZ
+         DZbKQlvCr7x70tgfDpBqObK93bc85C2becQ3Z0knFVShUqMO6Exayx1ITOr53JE0mFNb
+         /CsjgXvNaFFHCX2qNwZ9KU2We7rDH/U4/crb37vsBF1CO3N2ewigsFDxccrvdF23+jtr
+         zHpFrPYVHqQGzKTnFc6ESw8JqCPXbL/jJNAWpWzecS+Ogn2F3e95Op9lMG01uU52MKtZ
+         o7rDp1ezlQO8SfwsT/z2w733cxUk5pTpsnzL7QWhmWOeJTtCGae8pSLHP3WxsF6dJazf
+         CMVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=FVYK7brF4f+8IYpaSyR+AKXBScb7nBGjmMedpmZHJqc=;
+        b=gsrp6te+vUYxVoQNp41NVIMVSyaVujN9415ivfaH4dERNwCnXBJUrawxsUk4WxPDEp
+         tn0o4ndYRdKQvIAwTWE2/hloLUG/+kYewGgGpajhepjRXui9G8jqSbgWTWXzP+5Olmio
+         6N4+mSqClyyUV1AQas+0zQfTU3rvjp58idLKxk2qEERCyHjZtGxf97amDsjAA8hQ693n
+         3k60b0dkXul5ewrjltIwUTd4tscqiTNmkqRd8G2UJ1oxxep6lI8cpVcVllPN4bkeRzhL
+         nfaNZq9MeLymEDN6Hy9aD5N0bLsqzD3MUckQUDruvE4Xu9b8naB1iRFaG8HfA7wDJdHP
+         5WQg==
+X-Gm-Message-State: APt69E112vllkmb+f2gpm4hugjVWwylk0MUb3HV+vQnI5k6ZoO1bMnk8
+        ZFoqXy+UadEpf6RbHCNeYPd+JT3W
+X-Google-Smtp-Source: ADUXVKL5fUyfUE1j3XQz2+wb022giteonvOU+9fdnRRjD1LBS3u+HsOiTsGzitiOhzXudQcqCoax3A==
+X-Received: by 2002:a2e:55cf:: with SMTP id g76-v6mr9166812lje.4.1528718015363;
+        Mon, 11 Jun 2018 04:53:35 -0700 (PDT)
+Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
+        by smtp.gmail.com with ESMTPSA id h90-v6sm8332849ljf.65.2018.06.11.04.53.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Jun 2018 04:53:34 -0700 (PDT)
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Subject: [PATCH v2 24/24] serdev: serdev_controller_add_probed_device
+Date: Mon, 11 Jun 2018 13:52:40 +0200
+Message-Id: <20180611115240.32606-25-ricardo.ribalda@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
+References: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+Support adding probed devices by "platform" drivers.
 
-Both callers of __delete_from_swap_cache have the swp_entry_t already,
-so pass that in to make constructing the XA_STATE easier.
-
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.com>
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 ---
- include/linux/swap.h |  5 +++--
- mm/swap_state.c      | 24 ++++++++++--------------
- mm/vmscan.c          |  2 +-
- 3 files changed, 14 insertions(+), 17 deletions(-)
+ drivers/tty/serdev/core.c | 10 +++++-----
+ include/linux/serdev.h    |  2 ++
+ 2 files changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index a450a1d40b19..470570dac9e8 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -404,7 +404,7 @@ extern void show_swap_cache_info(void);
- extern int add_to_swap(struct page *page);
- extern int add_to_swap_cache(struct page *, swp_entry_t, gfp_t);
- extern int __add_to_swap_cache(struct page *page, swp_entry_t entry);
--extern void __delete_from_swap_cache(struct page *);
-+extern void __delete_from_swap_cache(struct page *, swp_entry_t entry);
- extern void delete_from_swap_cache(struct page *);
- extern void free_page_and_swap_cache(struct page *);
- extern void free_pages_and_swap_cache(struct page **, int);
-@@ -564,7 +564,8 @@ static inline int add_to_swap_cache(struct page *page, swp_entry_t entry,
- 	return -1;
+diff --git a/drivers/tty/serdev/core.c b/drivers/tty/serdev/core.c
+index 06310110104a..e56a955d4ea9 100644
+--- a/drivers/tty/serdev/core.c
++++ b/drivers/tty/serdev/core.c
+@@ -630,8 +630,8 @@ static inline int acpi_serdev_register_devices(struct serdev_controller *ctrl)
  }
+ #endif /* CONFIG_ACPI */
  
--static inline void __delete_from_swap_cache(struct page *page)
-+static inline void __delete_from_swap_cache(struct page *page,
-+							swp_entry_t entry)
+-#if IS_ENABLED(CONFIG_SERIAL_DEV_CTRL_TTYDEV)
+-static int serdev_controller_add_ttydev(struct serdev_controller *ctrl)
++int serdev_controller_add_probed_device(struct serdev_controller *ctrl,
++					const char *name)
  {
+ 	struct serdev_device *serdev;
+ 	int err;
+@@ -640,7 +640,7 @@ static int serdev_controller_add_ttydev(struct serdev_controller *ctrl)
+ 	if (!serdev)
+ 		return -ENOMEM;
+ 
+-	strcpy(serdev->modalias, "ttydev");
++	strcpy(serdev->modalias, name);
+ 
+ 	err = serdev_device_add(serdev);
+ 	if (err)
+@@ -648,7 +648,7 @@ static int serdev_controller_add_ttydev(struct serdev_controller *ctrl)
+ 
+ 	return err;
  }
+-#endif
++EXPORT_SYMBOL_GPL(serdev_controller_add_probed_device);
  
-diff --git a/mm/swap_state.c b/mm/swap_state.c
-index ac07db436c15..84595e1a4cd7 100644
---- a/mm/swap_state.c
-+++ b/mm/swap_state.c
-@@ -154,23 +154,22 @@ int add_to_swap_cache(struct page *page, swp_entry_t entry, gfp_t gfp)
-  * This must be called only on pages that have
-  * been verified to be in the swap cache.
-  */
--void __delete_from_swap_cache(struct page *page)
-+void __delete_from_swap_cache(struct page *page, swp_entry_t entry)
+ /**
+  * serdev_controller_add() - Add an serdev controller
+@@ -678,7 +678,7 @@ int serdev_controller_add(struct serdev_controller *ctrl)
+ 		goto out_dev_ok;
+ 
+ #if IS_ENABLED(CONFIG_SERIAL_DEV_CTRL_TTYDEV)
+-	ret_tty = serdev_controller_add_ttydev(ctrl);
++	ret_tty = serdev_controller_add_probed_device(ctrl, "ttydev");
+ 	if (!ret_tty)
+ 		goto out_dev_ok;
+ #endif
+diff --git a/include/linux/serdev.h b/include/linux/serdev.h
+index 1ef6e6503650..93f534a21ca9 100644
+--- a/include/linux/serdev.h
++++ b/include/linux/serdev.h
+@@ -184,6 +184,8 @@ int serdev_controller_add(struct serdev_controller *);
+ void serdev_controller_remove(struct serdev_controller *);
+ void serdev_put_controller(struct serdev_controller *ctrl);
+ struct serdev_controller *serdev_get_controller(int nr);
++int serdev_controller_add_probed_device(struct serdev_controller *ctrl,
++					const char *name);
+ 
+ static inline void serdev_controller_write_wakeup(struct serdev_controller *ctrl)
  {
--	struct address_space *address_space;
-+	struct address_space *address_space = swap_address_space(entry);
- 	int i, nr = hpage_nr_pages(page);
--	swp_entry_t entry;
--	pgoff_t idx;
-+	pgoff_t idx = swp_offset(entry);
-+	XA_STATE(xas, &address_space->i_pages, idx);
- 
- 	VM_BUG_ON_PAGE(!PageLocked(page), page);
- 	VM_BUG_ON_PAGE(!PageSwapCache(page), page);
- 	VM_BUG_ON_PAGE(PageWriteback(page), page);
- 
--	entry.val = page_private(page);
--	address_space = swap_address_space(entry);
--	idx = swp_offset(entry);
- 	for (i = 0; i < nr; i++) {
--		radix_tree_delete(&address_space->i_pages, idx + i);
-+		void *entry = xas_store(&xas, NULL);
-+		VM_BUG_ON_PAGE(entry != page + i, entry);
- 		set_page_private(page + i, 0);
-+		xas_next(&xas);
- 	}
- 	ClearPageSwapCache(page);
- 	address_space->nrpages -= nr;
-@@ -243,14 +242,11 @@ int add_to_swap(struct page *page)
-  */
- void delete_from_swap_cache(struct page *page)
- {
--	swp_entry_t entry;
--	struct address_space *address_space;
--
--	entry.val = page_private(page);
-+	swp_entry_t entry = { .val = page_private(page) };
-+	struct address_space *address_space = swap_address_space(entry);
- 
--	address_space = swap_address_space(entry);
- 	xa_lock_irq(&address_space->i_pages);
--	__delete_from_swap_cache(page);
-+	__delete_from_swap_cache(page, entry);
- 	xa_unlock_irq(&address_space->i_pages);
- 
- 	put_swap_page(page, entry);
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 03822f86f288..0448b1b366d9 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -753,7 +753,7 @@ static int __remove_mapping(struct address_space *mapping, struct page *page,
- 	if (PageSwapCache(page)) {
- 		swp_entry_t swap = { .val = page_private(page) };
- 		mem_cgroup_swapout(page, swap);
--		__delete_from_swap_cache(page);
-+		__delete_from_swap_cache(page, swap);
- 		xa_unlock_irqrestore(&mapping->i_pages, flags);
- 		put_swap_page(page, swap);
- 	} else {
 -- 
 2.17.1
