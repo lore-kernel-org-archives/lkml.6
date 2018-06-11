@@ -1,94 +1,171 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id yVqPJBzLGlvdXgAAmS7hNA
-	; Fri, 08 Jun 2018 18:50:34 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id g7ISOKNkHlt2BwAAmS7hNA
+	; Mon, 11 Jun 2018 12:02:18 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 716DC607E4; Fri,  8 Jun 2018 18:50:34 +0000 (UTC)
+	id 4F62C607A4; Mon, 11 Jun 2018 12:02:18 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UVXSB4/6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wv9Ryx0F"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id CDC9C6074D;
-	Fri,  8 Jun 2018 18:50:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CDC9C6074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 9F3E4601C3;
+	Mon, 11 Jun 2018 12:02:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9F3E4601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753079AbeFHSuc (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 14:50:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56474 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752653AbeFHSu3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 14:50:29 -0400
-Received: from mail-wr0-f171.google.com (mail-wr0-f171.google.com [209.85.128.171])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC7D4208AF
-        for <linux-kernel@vger.kernel.org>; Fri,  8 Jun 2018 18:50:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528483829;
-        bh=l6Rri0Zj7MpUVqwPnqMfWr256Ssc6j6ehlN5TZdVNZU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=UVXSB4/6WoNB5318eUuOVPDmgepehmzuffVBESNP39QRwwkI3AD5yxewku5u7oIFI
-         SzBnGLFabyAi1nhL8jE5Sfea9gpnYS1Wx9Cc/pVMRD4CrXsr/X2GCLOpRwRFNgm1fH
-         OTLGwbFOeRCuaVOCdh3ciadACgc31gyU5JqHleRc=
-Received: by mail-wr0-f171.google.com with SMTP id e18-v6so6085503wrs.5
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 11:50:28 -0700 (PDT)
-X-Gm-Message-State: APt69E0If3ovECxh29xapo1B1BTbAso4e6m75K0h4lHl7nZWF1XH93Ty
-        Ficc5RfzmGBtpkQb/+JinJTKnKOxeT5VnIsIr9jUQg==
-X-Google-Smtp-Source: ADUXVKLv7bTeSjWPG0bKqoVtNMQkQ8AN1LAt6nBp8LyIoV97friE4f/mItk7RvCZFaJq/EtvxaZZABJaqeD6pjl5P8w=
-X-Received: by 2002:adf:b445:: with SMTP id v5-v6mr5732327wrd.67.1528483827349;
- Fri, 08 Jun 2018 11:50:27 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180608171216.26521-1-jarkko.sakkinen@linux.intel.com> <20180608171216.26521-14-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20180608171216.26521-14-jarkko.sakkinen@linux.intel.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Fri, 8 Jun 2018 11:50:14 -0700
-X-Gmail-Original-Message-ID: <CALCETrWSDVdrrVbvEbOH06OQcBkGF-M9R5WQkQ0r4qK2oAL3vQ@mail.gmail.com>
-Message-ID: <CALCETrWSDVdrrVbvEbOH06OQcBkGF-M9R5WQkQ0r4qK2oAL3vQ@mail.gmail.com>
-Subject: Re: [intel-sgx-kernel-dev] [PATCH v11 13/13] intel_sgx: in-kernel
- launch enclave
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: X86 ML <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        intel-sgx-kernel-dev@lists.01.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, andy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        id S933336AbeFKL7L (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 07:59:11 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:40217 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933169AbeFKL7G (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 07:59:06 -0400
+Received: by mail-wr0-f195.google.com with SMTP id l41-v6so20099266wre.7;
+        Mon, 11 Jun 2018 04:59:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=qErnL5qEjYyTMjOuhmCeo/OjDicbWGBMEoPtEs6s6m4=;
+        b=Wv9Ryx0FudjKTzdkuapzrFjgylNlvA6HOxlhr4okkMONWGB4i+1Q7jnG4JNupkUmjL
+         8xWIEDA07HlNgMgxUlpty04CtsS/tSoXG1p+2nblp3CbirJVEj9BJb84Edbrcy1XCpQi
+         NmUgY2Gpkz8B8DXFQK82lAotK7NB3O6J3A6UVsp1YAGj96dGO/dmaRcFghS0kmR1ODWA
+         nA//nWI40LDHuCV9GQpZudEFPg0c7MvHn4nBpVjbyYBXjY/3CLaxoPLVh/WnMmZmHQjt
+         erGGifL5d/Hk9FCocOQWD2kub3Ebq+uR+qUTk6w97mlpOdQvrSOljdSvM02FxMdpg0Vg
+         gxEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=qErnL5qEjYyTMjOuhmCeo/OjDicbWGBMEoPtEs6s6m4=;
+        b=ErfoVSAa7KbntPTza7M6S+hkrVxfa/mxZ31nqx3Gv6mufYmiEnmb2IcJ7aqYcYGrh5
+         WfaRvsDvDnQNJPgS7PQpQ+Qq9JEan5sQ9JzoMlob6OYrGeFsAt5h/1gKvep6qkMue+Do
+         hMZyDppTXXVPz6P14cb72Kek4UrKWeqyT7chomCef+Vk/dhfERiPkWiZU2ArUCGAggAL
+         8e+0ULKN11RfUTZZBrJMxeYiguLzPgYC2ze30UbQ6o0Tbgm05/jwClfAscGmb9qLk6l6
+         W8zn7vmo+AM7/3bdetM7sIXYHQUZYpO/F8ytTfkRNwk1X8ZyPSNTqbnvxsrQ9FIZDnoz
+         pUkw==
+X-Gm-Message-State: APt69E1E+vy7mhdgCD3+8lZqemj5gNDK4yjBoCpHdXeTRS2aSW7M4k4p
+        AxWuPBOQDG9GBNM0L6rq7DDQ72Tm
+X-Google-Smtp-Source: ADUXVKKXe3gYI0HNergXaZUqGdgFVm2615lG7SeDva8/ALz4hb7CKOzeQ/gBcd8LvhNdfp2TMwNnnw==
+X-Received: by 2002:adf:9441:: with SMTP id 59-v6mr12026501wrq.274.1528718344680;
+        Mon, 11 Jun 2018 04:59:04 -0700 (PDT)
+Received: from kurokawa.lan (ip-86-49-107-50.net.upcbroadband.cz. [86.49.107.50])
+        by smtp.gmail.com with ESMTPSA id t124-v6sm7974796wmt.29.2018.06.11.04.59.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Jun 2018 04:59:04 -0700 (PDT)
+From: Marek Vasut <marek.vasut@gmail.com>
+X-Google-Original-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v6 02/14] mfd: da9063: Replace mfd_add_devices with devm counterpart
+Date: Mon, 11 Jun 2018 13:58:39 +0200
+Message-Id: <20180611115851.1987-2-marek.vasut+renesas@gmail.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
+References: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 8, 2018 at 10:32 AM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
->
-> The Launch Enclave (LE) generates cryptographic launch tokens for user
-> enclaves. A launch token is used by EINIT to check whether the enclave
-> is authorized to launch or not. By having its own launch enclave, Linux
-> has full control of the enclave launch process.
->
-> LE is wrapped into a user space proxy program that reads enclave
-> signatures outputs launch tokens. The kernel-side glue code is
-> implemented by using the user space helper framework.  The IPC between
-> the LE proxy program and kernel is handled with an anonymous inode.
->
-> The commit also adds enclave signing tool that is used by kbuild to
-> measure and sign the launch enclave. CONFIG_INTEL_SGX_SIGNING_KEY points
-> to a PEM-file for the 3072-bit RSA key that is used as the LE public key
-> pair. The default location is:
+Use devm_mfd_add_devices() instead of plain mfd_add_devices(), which
+removes the need for da9063_device_exit() altogether and also for the
+.remove callback in da9063-i2c.c .
 
-It might be nice to use the infrastructure that Alexei added for
-bpfilter (the umh_blob stuff) here, which is slated for merging in
-this merge window.
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+---
+V5: New patch
+V6: No change
+---
+ drivers/mfd/da9063-core.c       | 11 +++--------
+ drivers/mfd/da9063-i2c.c        | 10 ----------
+ include/linux/mfd/da9063/core.h |  2 --
+ 3 files changed, 3 insertions(+), 20 deletions(-)
 
---Andy
+diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
+index 2647bb371d86..76258e5709f8 100644
+--- a/drivers/mfd/da9063-core.c
++++ b/drivers/mfd/da9063-core.c
+@@ -226,20 +226,15 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
+ 
+ 	da9063->irq_base = regmap_irq_chip_get_base(da9063->regmap_irq);
+ 
+-	ret = mfd_add_devices(da9063->dev, -1, da9063_devs,
+-			      ARRAY_SIZE(da9063_devs), NULL, da9063->irq_base,
+-			      NULL);
++	ret = devm_mfd_add_devices(da9063->dev, -1, da9063_devs,
++				   ARRAY_SIZE(da9063_devs), NULL,
++				   da9063->irq_base, NULL);
+ 	if (ret)
+ 		dev_err(da9063->dev, "Cannot add MFD cells\n");
+ 
+ 	return ret;
+ }
+ 
+-void da9063_device_exit(struct da9063 *da9063)
+-{
+-	mfd_remove_devices(da9063->dev);
+-}
+-
+ MODULE_DESCRIPTION("PMIC driver for Dialog DA9063");
+ MODULE_AUTHOR("Krystian Garbaciak");
+ MODULE_AUTHOR("Michal Hajduk");
+diff --git a/drivers/mfd/da9063-i2c.c b/drivers/mfd/da9063-i2c.c
+index 981805a2c521..29456e807ed4 100644
+--- a/drivers/mfd/da9063-i2c.c
++++ b/drivers/mfd/da9063-i2c.c
+@@ -270,15 +270,6 @@ static int da9063_i2c_probe(struct i2c_client *i2c,
+ 	return da9063_device_init(da9063, i2c->irq);
+ }
+ 
+-static int da9063_i2c_remove(struct i2c_client *i2c)
+-{
+-	struct da9063 *da9063 = i2c_get_clientdata(i2c);
+-
+-	da9063_device_exit(da9063);
+-
+-	return 0;
+-}
+-
+ static const struct i2c_device_id da9063_i2c_id[] = {
+ 	{"da9063", PMIC_DA9063},
+ 	{},
+@@ -291,7 +282,6 @@ static struct i2c_driver da9063_i2c_driver = {
+ 		.of_match_table = of_match_ptr(da9063_dt_ids),
+ 	},
+ 	.probe    = da9063_i2c_probe,
+-	.remove   = da9063_i2c_remove,
+ 	.id_table = da9063_i2c_id,
+ };
+ 
+diff --git a/include/linux/mfd/da9063/core.h b/include/linux/mfd/da9063/core.h
+index 9ab7049977aa..8e6684d884e0 100644
+--- a/include/linux/mfd/da9063/core.h
++++ b/include/linux/mfd/da9063/core.h
+@@ -94,6 +94,4 @@ struct da9063 {
+ int da9063_device_init(struct da9063 *da9063, unsigned int irq);
+ int da9063_irq_init(struct da9063 *da9063);
+ 
+-void da9063_device_exit(struct da9063 *da9063);
+-
+ #endif /* __MFD_DA9063_CORE_H__ */
+-- 
+2.16.2
