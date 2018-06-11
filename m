@@ -1,142 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 2t9EOeNBGVsfdwAAmS7hNA
-	; Thu, 07 Jun 2018 14:32:19 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id HKEIEmMFHlu+cwAAmS7hNA
+	; Mon, 11 Jun 2018 05:16:37 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id C72E0608BA; Thu,  7 Jun 2018 14:32:19 +0000 (UTC)
+	id 5DF1460792; Mon, 11 Jun 2018 05:16:37 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YpQq/U/p"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FROM,MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 7D0AB607DC;
-	Thu,  7 Jun 2018 14:32:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7D0AB607DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id E57ED601D2;
+	Mon, 11 Jun 2018 05:16:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E57ED601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933848AbeFGOcR (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:32:17 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40273 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932911AbeFGOcN (ORCPT
+        id S1754027AbeFKFQf (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 01:16:35 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:46609 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753911AbeFKFQb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:32:13 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbg-0005Zp-G9; Thu, 07 Jun 2018 15:09:40 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb6-0002zh-23; Thu, 07 Jun 2018 15:09:04 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Tetsuo Handa" <penguin-kernel@I-love.SAKURA.ne.jp>,
-        "Vegard Nossum" <vegard.nossum@oracle.com>,
-        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
-        "" <socketpair@gmail.com>, "Al Viro" <viro@zeniv.linux.org.uk>,
-        "Willy Tarreau" <w@1wt.eu>, "Jens Axboe" <axboe@fb.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.608368031@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 203/410] pipe: simplify logic in alloc_pipe_info()
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Mon, 11 Jun 2018 01:16:31 -0400
+Received: by mail-pf0-f193.google.com with SMTP id q1-v6so9581395pff.13;
+        Sun, 10 Jun 2018 22:16:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=9HnoT00GA/e4hqOrOsR5vOygtqQIU8ZliGrohbyJ7B8=;
+        b=YpQq/U/pDVPE8Ir+DaDWKrS3GbzC8URtjRh1KR5kYS0eRxbIrqzXvC9ilQvL0n8rOr
+         foS+VJo3IKHoV+7hMeRnafS4UIdCzJijASkRAfO6YNph69B0uPXkl74CVBmXWgOrR250
+         aTfyNjUgdw0ik7CtV6VXhL8St2zMU3de6kKiuoQDkEPcVgu6wqEf7V2Zu3HYlewODbpM
+         uThnIIRNJbXcBkfcTDpnHe2oVA1CKs0peuDxKJMuqSJ7NpMqk8nUDuFi2fVVqDFirxqo
+         hANszDzUiOY+Bn1694328f8sXdydcFb0wNl55wI3dxxBjzty4DG7JptfyXLskwEfuzHs
+         3OAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=9HnoT00GA/e4hqOrOsR5vOygtqQIU8ZliGrohbyJ7B8=;
+        b=dtKaOBLzfNPddI93mF6xbo2ZcnLhjMnn5wv6/fVroGitUQ83+AL/VjVGrWV2LtWhkU
+         un5ZtKBlxtnteMo++eYKJEJJilaLqf9qa/5ek4KXEKY2wht1pN1sBnXpx8qD7OdGUFEu
+         AHYkuROXyiz7mXiyo355yhHIoTKReSDMkj2zjXgTp+a2xnDGYUPcV1iaSCvfhdp8IGqK
+         wLs250xNKVK5GRYAnGFhEX8fsuovhHHqZYVO+hq/xjVUkDePVZi0JyNvo/1qjmAhXn2u
+         Xt0KQxOyOkQhJezHkZFC78ZLqXcXdUv81fjxKz0EKNf2QYSNEJBDYrzeEXvhsHenzJAb
+         RHvw==
+X-Gm-Message-State: APt69E0Ssf0Zrm19L8MLq4phnkCgkgElYkpyTlkOiMsNpvbnH/FbUyBt
+        3rIKc8CLpP2RQuy0ppmkQYY=
+X-Google-Smtp-Source: ADUXVKL6LZUBbmnzDgrGM7YA298sQpF7YdtJuBAjNkzHPxniGbc7LjoCfrzlCioXEVRNaKgKmmetEg==
+X-Received: by 2002:a62:40dc:: with SMTP id f89-v6mr15791018pfd.194.1528694190968;
+        Sun, 10 Jun 2018 22:16:30 -0700 (PDT)
+Received: from localhost ([103.88.46.82])
+        by smtp.gmail.com with ESMTPSA id m9-v6sm108051463pff.41.2018.06.10.22.16.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 10 Jun 2018 22:16:30 -0700 (PDT)
+From: Zhouyang Jia <jiazhouyang09@gmail.com>
+Cc: Zhouyang Jia <jiazhouyang09@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Hannes Reinecke <hare@suse.com>, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] pcmcia: add error handling for pcmcia_enable_device
+Date: Mon, 11 Jun 2018 13:15:50 +0800
+Message-Id: <1528694152-31724-1-git-send-email-jiazhouyang09@gmail.com>
+X-Mailer: git-send-email 2.7.4
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+When pcmcia_enable_device fails, the lack of error-handling code may
+cause unexpected results.
 
-------------------
+This patch adds error-handling code after calling pcmcia_enable_device.
 
-From: "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-
-commit 09b4d1990094dd22c27fb0163534db419458569c upstream.
-
-Replace an 'if' block that covers most of the code in this function
-with a 'goto'. This makes the code a little simpler to read, and also
-simplifies the next patch (fix limit checking in alloc_pipe_info())
-
-Link: http://lkml.kernel.org/r/aef030c1-0257-98a9-4988-186efa48530c@gmail.com
-Signed-off-by: Michael Kerrisk <mtk.manpages@gmail.com>
-Reviewed-by: Vegard Nossum <vegard.nossum@oracle.com>
-Cc: Willy Tarreau <w@1wt.eu>
-Cc: <socketpair@gmail.com>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Jens Axboe <axboe@fb.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-[bwh: Backported to 3.16:
- - Don't use GFP_KERNEL_ACCOUNT
- - Adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
 ---
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -611,31 +611,34 @@ static bool too_many_pipe_buffers_hard(s
- struct pipe_inode_info *alloc_pipe_info(void)
+ drivers/scsi/pcmcia/qlogic_stub.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/pcmcia/qlogic_stub.c b/drivers/scsi/pcmcia/qlogic_stub.c
+index 0556054..9287d52 100644
+--- a/drivers/scsi/pcmcia/qlogic_stub.c
++++ b/drivers/scsi/pcmcia/qlogic_stub.c
+@@ -254,8 +254,14 @@ static void qlogic_release(struct pcmcia_device *link)
+ static int qlogic_resume(struct pcmcia_device *link)
  {
- 	struct pipe_inode_info *pipe;
-+	unsigned long pipe_bufs = PIPE_DEF_BUFFERS;
-+	struct user_struct *user = get_current_user();
- 
- 	pipe = kzalloc(sizeof(struct pipe_inode_info), GFP_KERNEL);
--	if (pipe) {
--		unsigned long pipe_bufs = PIPE_DEF_BUFFERS;
--		struct user_struct *user = get_current_user();
-+	if (pipe == NULL)
-+		goto out_free_uid;
- 
--		if (!too_many_pipe_buffers_hard(user)) {
--			if (too_many_pipe_buffers_soft(user))
--				pipe_bufs = 1;
--			pipe->bufs = kzalloc(sizeof(struct pipe_buffer) * pipe_bufs, GFP_KERNEL);
--		}
-+	if (!too_many_pipe_buffers_hard(user)) {
-+		if (too_many_pipe_buffers_soft(user))
-+			pipe_bufs = 1;
-+		pipe->bufs = kcalloc(pipe_bufs,
-+				     sizeof(struct pipe_buffer),
-+				     GFP_KERNEL);
+ 	scsi_info_t *info = link->priv;
++	int ret;
++
++	ret = pcmcia_enable_device(link);
++	if (ret) {
++		pcmcia_disable_device(link);
++		return -ENODEV;
 +	}
  
--		if (pipe->bufs) {
--			init_waitqueue_head(&pipe->wait);
--			pipe->r_counter = pipe->w_counter = 1;
--			pipe->buffers = pipe_bufs;
--			pipe->user = user;
--			account_pipe_buffers(user, 0, pipe_bufs);
--			mutex_init(&pipe->mutex);
--			return pipe;
--		}
--		free_uid(user);
--		kfree(pipe);
-+	if (pipe->bufs) {
-+		init_waitqueue_head(&pipe->wait);
-+		pipe->r_counter = pipe->w_counter = 1;
-+		pipe->buffers = pipe_bufs;
-+		pipe->user = user;
-+		account_pipe_buffers(user, 0, pipe_bufs);
-+		mutex_init(&pipe->mutex);
-+		return pipe;
- 	}
- 
-+	kfree(pipe);
-+out_free_uid:
-+	free_uid(user);
- 	return NULL;
- }
- 
+-	pcmcia_enable_device(link);
+ 	if ((info->manf_id == MANFID_MACNICA) ||
+ 	    (info->manf_id == MANFID_PIONEER) ||
+ 	    (info->manf_id == 0x0098)) {
+-- 
+2.7.4
