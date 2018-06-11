@@ -2,103 +2,199 @@ Return-Path: <SRS0=KDb5=I5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 09422C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 22:53:50 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id DA481C004E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 22:57:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4A2420869
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 22:53:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qBBjFFLV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4A2420869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 87F57208AE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 22:57:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87F57208AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ens-lyon.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932707AbeFKWxr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 18:53:47 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:45204 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752521AbeFKWxp (ORCPT
+        id S1754271AbeFKW5I (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 18:57:08 -0400
+Received: from hera.aquilenet.fr ([185.233.100.1]:40850 "EHLO
+        hera.aquilenet.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751234AbeFKW5H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 18:53:45 -0400
-Received: by mail-pl0-f68.google.com with SMTP id c23-v6so13166180plz.12;
-        Mon, 11 Jun 2018 15:53:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=O3/sDB5m1O0gbhdJDvI7oiQvS/wwV6wbO8Os91tmW00=;
-        b=qBBjFFLV64WolwvSk/S9TrI5ou+UR9BzGoVQSqHTxg3pLfTQwkQ/KCylTW/yLTeErJ
-         yOWEieEjVJ95Fh4vzW8UEB051siBl/a2Ee2qUi/2jC5fLvNWQgTyjaG++CgfwjFecxQI
-         NwnhG2S6Qu2DjwKq/iGXoF0GoR01zhYxozozcm9cFqoF5KtUDv+Vr7i9W9ByPFtrOyOR
-         DRmaJ1Xd0tEAIIFivFQ1JtCo9Iprq5XYWwubbu5x2ENmMLndcTM+R/J9jze6+sc9aakb
-         IMXNf0B9kTGYV5GgDfmXOAmqjU+27uNY3UNTK0smdbz9Wma+Dj1wt/QBToqPMzHnihTI
-         7R0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=O3/sDB5m1O0gbhdJDvI7oiQvS/wwV6wbO8Os91tmW00=;
-        b=X7gefS3TZgdqWX6DmtMuaUq9NwMTN1IiVInBcWOD0t5qGLfcwcU/Tggu9zsoDjMbQq
-         Vi3JvzGqt7Qx8k6+0UobWh/lqkNvSDDuSz2UQQnjXeLhGngs/xPMuikGF6tiSwct3uqz
-         qVqU8KFFys3xUtsqLQqpibYVc59b2rsZoKnFcvu990WUjaP8mxO+up6JwRCsyNzyBTnN
-         6LVzZeLnlip20OfPEIhTRGYJfZTvGE9putR/Sq4uTMh1g5mUZQ89krm4e1STfn8dRt1D
-         aPoMZ0tX2goSOH8O7iP+oDgRInMSZ/yukWkrTlIKThGHu466L7ZPAVIdhx9HeA1aHXPg
-         Z99A==
-X-Gm-Message-State: APt69E00w2v39MDirPXfdFCzp74vJfJaFC4LkCskZSE1dAyLX+bihCWF
-        XreBjMLk3qe9bPy+j1lKEIk=
-X-Google-Smtp-Source: ADUXVKJ7Y9Ws0wsz6e+nD4ywVQZUsn2cZLIB171X+0GGR0VKzg5a8P/7vA0uMxyuAQBnBP2Z/LWLAQ==
-X-Received: by 2002:a17:902:3f81:: with SMTP id a1-v6mr1117835pld.29.1528757624676;
-        Mon, 11 Jun 2018 15:53:44 -0700 (PDT)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id u14-v6sm13300228pfd.103.2018.06.11.15.53.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Jun 2018 15:53:43 -0700 (PDT)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     linux-arm-kernel@infradead.org
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
-        Jon Mason <jonmason@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM BCM5301X ARM
-        ARCHITECTURE), Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org (open list:BROADCOM BCM5301X ARM
-        ARCHITECTURE),
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] ARM: dts: BCM5301x: Fix i2c controller interrupt type
-Date:   Mon, 11 Jun 2018 15:53:40 -0700
-Message-Id: <20180611225340.12733-1-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.14.1
+        Mon, 11 Jun 2018 18:57:07 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by hera.aquilenet.fr (Postfix) with ESMTP id BDA8AE4D;
+        Tue, 12 Jun 2018 00:57:04 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at aquilenet.fr
+Received: from hera.aquilenet.fr ([127.0.0.1])
+        by localhost (hera.aquilenet.fr [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id HG29ISmkqy8T; Tue, 12 Jun 2018 00:57:04 +0200 (CEST)
+Received: from var.youpi.perso.aquilenet.fr (static-176-158-111-12.ftth.abo.bbox.fr [176.158.111.12])
+        by hera.aquilenet.fr (Postfix) with ESMTPSA id E126EE4C;
+        Tue, 12 Jun 2018 00:57:03 +0200 (CEST)
+Received: from samy by var.youpi.perso.aquilenet.fr with local (Exim 4.91)
+        (envelope-from <samuel.thibault@ens-lyon.org>)
+        id 1fSVkF-0004Lb-5g; Tue, 12 Jun 2018 00:57:03 +0200
+Date:   Tue, 12 Jun 2018 00:57:03 +0200
+From:   Samuel Thibault <samuel.thibault@ens-lyon.org>
+To:     "Speakup is a screen review system for Linux." 
+        <speakup@linux-speakup.org>, devel@driverdev.osuosl.org,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: speakup: refactor synths array to use a list
+Message-ID: <20180611225703.csi47cdafhy6rxcf@var.youpi.perso.aquilenet.fr>
+Mail-Followup-To: Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        "Speakup is a screen review system for Linux." <speakup@linux-speakup.org>,
+        devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org
+References: <20180604095212.GA18381@tanglefoot>
+ <20180606132628.fxykchbznrwzgwqt@var.youpi.perso.aquilenet.fr>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="55pr6ffpo36jsalk"
+Content-Disposition: inline
+In-Reply-To: <20180606132628.fxykchbznrwzgwqt@var.youpi.perso.aquilenet.fr>
+Organization: I am not organized
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The i2c controller should be using IRQ_TYPE_LEVEL_HIGH, fix that.
 
-Fixes: bb097e3e0045 ("ARM: dts: BCM5301X: Add I2C support to the DT")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+--55pr6ffpo36jsalk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hello,
+
+Samuel Thibault, le mer. 06 juin 2018 15:26:28 +0200, a ecrit:
+> I'd also rather see it tested in the real wild before committing. Could
+> somebody on the speakup mailing list test the patch? (which I have
+> re-attached as a file for conveniency).
+
+Anybody up for testing please?
+
+If people want to see speakup get mainlined instead of staging, please
+help.
+
+Samuel
+
+--55pr6ffpo36jsalk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename=patch
+
 ---
- arch/arm/boot/dts/bcm5301x.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/speakup/spk_types.h |  2 ++
+ drivers/staging/speakup/synth.c     | 40 ++++++++++-------------------
+ 2 files changed, 15 insertions(+), 27 deletions(-)
 
-diff --git a/arch/arm/boot/dts/bcm5301x.dtsi b/arch/arm/boot/dts/bcm5301x.dtsi
-index 9a076c409f4e..ef995e50ee12 100644
---- a/arch/arm/boot/dts/bcm5301x.dtsi
-+++ b/arch/arm/boot/dts/bcm5301x.dtsi
-@@ -365,7 +365,7 @@
- 	i2c0: i2c@18009000 {
- 		compatible = "brcm,iproc-i2c";
- 		reg = <0x18009000 0x50>;
--		interrupts = <GIC_SPI 121 IRQ_TYPE_NONE>;
-+		interrupts = <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		clock-frequency = <100000>;
+diff --git a/drivers/staging/speakup/spk_types.h b/drivers/staging/speakup/spk_types.h
+index 3e082dc3d45c..a2fc72c29894 100644
+--- a/drivers/staging/speakup/spk_types.h
++++ b/drivers/staging/speakup/spk_types.h
+@@ -160,6 +160,8 @@ struct spk_io_ops {
+ };
+ 
+ struct spk_synth {
++	struct list_head node;
++
+ 	const char *name;
+ 	const char *version;
+ 	const char *long_name;
+diff --git a/drivers/staging/speakup/synth.c b/drivers/staging/speakup/synth.c
+index 7deeb7061018..25f259ee4ffc 100644
+--- a/drivers/staging/speakup/synth.c
++++ b/drivers/staging/speakup/synth.c
+@@ -18,8 +18,7 @@
+ #include "speakup.h"
+ #include "serialio.h"
+ 
+-#define MAXSYNTHS       16      /* Max number of synths in array. */
+-static struct spk_synth *synths[MAXSYNTHS + 1];
++static LIST_HEAD(synths);
+ struct spk_synth *synth;
+ char spk_pitch_buff[32] = "";
+ static int module_status;
+@@ -355,9 +354,8 @@ struct var_t synth_time_vars[] = {
+ /* called by: speakup_init() */
+ int synth_init(char *synth_name)
+ {
+-	int i;
+ 	int ret = 0;
+-	struct spk_synth *synth = NULL;
++	struct spk_synth *tmp, *synth = NULL;
+ 
+ 	if (!synth_name)
+ 		return 0;
+@@ -371,9 +369,10 @@ int synth_init(char *synth_name)
+ 
+ 	mutex_lock(&spk_mutex);
+ 	/* First, check if we already have it loaded. */
+-	for (i = 0; i < MAXSYNTHS && synths[i]; i++)
+-		if (strcmp(synths[i]->name, synth_name) == 0)
+-			synth = synths[i];
++	list_for_each_entry(tmp, &synths, node) {
++		if (strcmp(tmp->name, synth_name) == 0)
++			synth = tmp;
++	}
+ 
+ 	/* If we got one, initialize it now. */
+ 	if (synth)
+@@ -448,29 +447,23 @@ void synth_release(void)
+ /* called by: all_driver_init() */
+ int synth_add(struct spk_synth *in_synth)
+ {
+-	int i;
+ 	int status = 0;
++	struct spk_synth *tmp;
+ 
+ 	mutex_lock(&spk_mutex);
+-	for (i = 0; i < MAXSYNTHS && synths[i]; i++)
+-		/* synth_remove() is responsible for rotating the array down */
+-		if (in_synth == synths[i]) {
++
++	list_for_each_entry(tmp, &synths, node) {
++		if (tmp == in_synth) {
+ 			mutex_unlock(&spk_mutex);
+ 			return 0;
+ 		}
+-	if (i == MAXSYNTHS) {
+-		pr_warn("Error: attempting to add a synth past end of array\n");
+-		mutex_unlock(&spk_mutex);
+-		return -1;
+ 	}
+ 
+ 	if (in_synth->startup)
+ 		status = do_synth_init(in_synth);
+ 
+-	if (!status) {
+-		synths[i++] = in_synth;
+-		synths[i] = NULL;
+-	}
++	if (!status)
++		list_add_tail(&in_synth->node, &synths);
+ 
+ 	mutex_unlock(&spk_mutex);
+ 	return status;
+@@ -479,17 +472,10 @@ EXPORT_SYMBOL_GPL(synth_add);
+ 
+ void synth_remove(struct spk_synth *in_synth)
+ {
+-	int i;
+-
+ 	mutex_lock(&spk_mutex);
+ 	if (synth == in_synth)
+ 		synth_release();
+-	for (i = 0; synths[i]; i++) {
+-		if (in_synth == synths[i])
+-			break;
+-	}
+-	for ( ; synths[i]; i++) /* compress table */
+-		synths[i] = synths[i + 1];
++	list_del(&in_synth->node);
+ 	module_status = 0;
+ 	mutex_unlock(&spk_mutex);
+ }
 -- 
-2.14.1
+2.17.1
 
+--55pr6ffpo36jsalk--
