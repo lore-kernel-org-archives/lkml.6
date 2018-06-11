@@ -1,171 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id kfzJLJufGVt7WgAAmS7hNA
-	; Thu, 07 Jun 2018 21:14:06 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id xJrPLEuDHlteEwAAmS7hNA
+	; Mon, 11 Jun 2018 14:13:11 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 63E2E6074D; Thu,  7 Jun 2018 21:14:06 +0000 (UTC)
+	id A50B1607BB; Mon, 11 Jun 2018 14:13:11 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 8345060452;
-	Thu,  7 Jun 2018 21:14:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8345060452
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id A732360351;
+	Mon, 11 Jun 2018 14:13:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A732360351
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=emlix.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752428AbeFGVOD (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 17:14:03 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37002 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751066AbeFGVOC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 17:14:02 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S933669AbeFKONJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 10:13:09 -0400
+Received: from mx1.emlix.com ([46.4.235.150]:56754 "EHLO mx1.emlix.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933646AbeFKONA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 10:13:00 -0400
+Received: from mailer.emlix.com (unknown [81.20.119.6])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id F37D7818BAFC;
-        Thu,  7 Jun 2018 21:14:01 +0000 (UTC)
-Received: from localhost (unknown [10.18.25.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 964462026DFD;
-        Thu,  7 Jun 2018 21:14:01 +0000 (UTC)
-Date: Thu, 7 Jun 2018 17:14:01 -0400
-From: Mike Snitzer <snitzer@redhat.com>
-To: valdis.kletnieks@vt.edu
-Cc: Alasdair Kergon <agk@redhat.com>, linux-kernel@vger.kernel.org,
-        dm-devel@redhat.com, axboe@kernel.dk
-Subject: Re: next-20180605 - kernel tried to execute NX-protected page -
- exploit attempt?
-Message-ID: <20180607211401.GD4481@redhat.com>
-References: <21051.1528404057@turing-police.cc.vt.edu>
+        by mx1.emlix.com (Postfix) with ESMTPS id C37BF25F5B5;
+        Mon, 11 Jun 2018 16:12:58 +0200 (CEST)
+Received: by mailer.emlix.com
+        id 1fSNZ5-0005uG-7E; Mon, 11 Jun 2018 16:12:59 +0200
+Subject: Re: [PATCH] clk: imx6: fix video_27m parent for IMX6QDL_CLK_CKO1_SEL
+To: Fabio Estevam <festevam@gmail.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-clk <linux-clk@vger.kernel.org>
+References: <20180608101924.31195-1-pp@emlix.com>
+ <CAOMZO5C8CA02V+oiag5tGpKBWN+UP28KwQ98jQ9PpQ2_aCq_bA@mail.gmail.com>
+From: Philipp Puschmann <pp@emlix.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pp@emlix.com; prefer-encrypt=mutual; keydata=
+ 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
+ nkFFRXn8
+Message-ID: <40261c5f-285f-66f3-41dc-7107c487a47e@emlix.com>
+Date: Mon, 11 Jun 2018 16:12:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <21051.1528404057@turing-police.cc.vt.edu>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 07 Jun 2018 21:14:02 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 07 Jun 2018 21:14:02 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'msnitzer@redhat.com' RCPT:''
+In-Reply-To: <CAOMZO5C8CA02V+oiag5tGpKBWN+UP28KwQ98jQ9PpQ2_aCq_bA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
+Organization: emlix gmbh, Goettingen, Germany
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 07 2018 at  4:40pm -0400,
-valdis.kletnieks@vt.edu <valdis.kletnieks@vt.edu> wrote:
-
-> I've hit this one twice today with pretty much the same traceback.
-> The disk has 3 partitions - one for EFI, one for /boot, and then the rest of
-> the disk is a cryptluks partition that contains a dozen or so LVM logical
-> volumes.
+> Hi Philipp,
 > 
-> 'git log -- drivers/md' didn't show any obvious suspects since next-20180529, which worked
-> for me just fine....
-
-I just bounced 2 patches to you that Jens sent out that will hopefully
-fix the issue.
-
-Can you please share what you test is?  We've gotten lots of reports
-with failure following wake_up but I don't have a canned test to trigger
-this.  And my testbed has so much memory that I think I'm never
-exhausting the mempool limits.
-
-Mike
-
-
-
+> On Fri, Jun 8, 2018 at 7:19 AM, Philipp Puschmann <pp@emlix.com> wrote:
+>> q/dl datasheets list the 5th selection value for ck01_sel as
+>> video_27M_clk_root.
+>>
+>> By replacing the dummy value we then can set IMX6QDL_CLK_VIDEO_27M
+>> as parent for IMX6QDL_CLK_CKO1_SEL.
+>>
+>> Signed-off-by: Philipp Puschmann <pp@emlix.com>
 > 
-> [ 6090.781839] kernel tried to execute NX-protected page - exploit attempt? (uid: 0)
-> [ 6090.781847] BUG: unable to handle kernel paging request at ffff9d4bc8b766c0
-> [ 6090.781856] PGD 17b7a067 P4D 17b7a067 PUD 17b7e067 PMD 408b9d063 PTE 8000000408b76063
-> [ 6090.781872] Oops: 0011 [#1] PREEMPT SMP PTI
+> You could still have added my Reviewed-by tag that I sent previously :-)
 > 
-> [ 6090.781893] Workqueue: kcryptd kcryptd_crypt
-> [ 6090.781901] RIP: 0010:0xffff9d4bc8b766c0
-> [ 6090.781905] Code: ff ff ff f9 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> ff ff ff ff ff ff ff ff ff <ff> ff ff ff ff ff 9f ff ff ff ff f9 ff ff bf ff ff ff ff ff ff 7f
-> [ 6090.782012] RSP: 0018:ffff9d4bdd2039d8 EFLAGS: 00010046
-> [ 6090.782018] RAX: ffff9d4bc8b766c0 RBX: ffff9d4bd53744e8 RCX: 0000000000000000
-> [ 6090.782023] RDX: 0000000000000000 RSI: 0000000000000003 RDI: ffff9d4bd31e5c90
-> [ 6090.782027] RBP: ffff9d4bdd203a40 R08: 0000000000000000 R09: ffff9d4bd31e5c90
-> [ 6090.782030] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-> [ 6090.782034] R13: ffff9d4bd7860228 R14: 00000000d31a2b40 R15: ffff9d4bdd203a58
-> [ 6090.782038] FS:  0000000000000000(0000) GS:ffff9d4bdd200000(0000) knlGS:0000000000000000
-> [ 6090.782042] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [ 6090.782046] CR2: ffff9d4bc8b766c0 CR3: 0000000015e24003 CR4: 00000000001606e0
-> [ 6090.782050] Call Trace:
-> [ 6090.782054]  <IRQ>
-> [ 6090.782061]  ? __wake_up_common+0xb7/0x3d0
-> [ 6090.782071]  __wake_up_common_lock+0x87/0xe0
-> [ 6090.782080]  __wake_up+0x13/0x20
-> [ 6090.782087]  mempool_free+0x122/0x190
-> [ 6090.782095]  bio_free+0x59/0x80
-> [ 6090.782101]  bio_put+0x50/0x90
-> [ 6090.782107]  dec_pending+0x1b0/0x560
-> [ 6090.782117]  clone_endio+0xd5/0x2e0
-> [ 6090.782125]  bio_endio+0x22e/0x4b0
-> [ 6090.782132]  crypt_dec_pending+0x92/0xf0
-> [ 6090.782139]  crypt_endio+0x9b/0xe0
-> [ 6090.782146]  bio_endio+0x22e/0x4b0
-> [ 6090.782153]  blk_update_request+0x145/0x680
-> [ 6090.782162]  scsi_end_request+0x56/0x440
-> [ 6090.782169]  scsi_io_completion+0x462/0x9b0
-> [ 6090.782178]  scsi_finish_command+0x189/0x2a0
-> [ 6090.782185]  scsi_softirq_done+0x17e/0x1f0
-> [ 6090.782193]  blk_done_softirq+0x229/0x410
-> [ 6090.782198]  ? __do_softirq+0xfb/0x914
-> [ 6090.782207]  __do_softirq+0x13a/0x914
-> [ 6090.782219]  irq_exit+0xea/0x140
-> [ 6090.782224]  do_IRQ+0xcc/0x1c0
-> [ 6090.782232]  common_interrupt+0xf/0xf
-> [ 6090.782237]  </IRQ>
-> [ 6090.782241] RIP: 0010:memset_erms+0x9/0x10
+> Here it goes:
 > 
-> The other traceback was about the same, with the following
-> interleaved:
+> Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
 > 
-> [27847.571250] list_add corruption. next->prev should be prev (ffff9e2c1347a4e8), but was 0000000000000000. (next=ffff9e2c13cde4a8).
-> [27847.571278] kernel BUG at lib/list_debug.c:25!
-> [27847.571685] invalid opcode: 0000 [#2] PREEMPT SMP PTI
-> [27847.571689] CPU: 0 PID: 55 Comm: kswapd0 Tainted: G      D    O    T 4.17.0-next-20180605-dirty #586
-> [27847.573947] Call Trace:
-> [27847.573958]  prepare_to_wait+0x133/0x210
-> [27847.573966]  ? mempool_alloc+0xe9/0x200
-> [27847.573975]  mempool_alloc+0x17e/0x200
-> [27847.573983]  ? remove_wait_queue+0x170/0x170
-> [27847.573994]  bio_alloc_bioset+0x122/0x3f0
-> [27847.574000]  ? bio_advance+0xbf/0x240
-> [27847.574006]  ? bio_clone_blkcg_association+0x5b/0x80
-> [27847.574015]  alloc_io+0x48/0x320
-> [27847.574021]  ? dm_get_live_table+0x3a/0x140
-> [27847.574030]  ? __split_and_process_non_flush+0x420/0x420
-> [27847.574035]  __split_and_process_bio+0x5d/0x2b0
-> [27847.574042]  ? __split_and_process_non_flush+0x420/0x420
-> [27847.574048]  ? dm_get_live_table+0x5d/0x140
-> [27847.574053]  ? dm_get_live_table+0x84/0x140
-> [27847.574061]  __dm_make_request+0xaf/0x1f0
-> [27847.574071]  dm_make_request+0x15/0x20
-> [27847.574078]  generic_make_request+0x3b9/0x7c0
-> [27847.574091]  submit_bio+0xb9/0x240
-> [27847.574097]  ? submit_bio+0xb9/0x240
-> [27847.574104]  ? __test_set_page_writeback+0x402/0xd30
-> [27847.574111]  ? get_swap_bio+0x106/0x180
-> [27847.574121]  __swap_writepage+0x153/0x8d0
-> [27847.574128]  ? page_swapcount+0xbf/0x140
-> [27847.574139]  ? __frontswap_store+0x8d/0x142
-> [27847.574147]  swap_writepage+0x4d/0xc0
-> [27847.574155]  pageout.isra.29+0x304/0x980
-> [27847.574171]  shrink_page_list+0x11e9/0x2020
-> [27847.574189]  shrink_inactive_list+0x291/0xdb0
-> [27847.574204]  shrink_node_memcg+0x38a/0x1530
-> [27847.574211]  ? percpu_ref_get_many+0x200/0x200
-> [27847.574233]  shrink_node+0xdc/0x920
-> [27847.574246]  balance_pgdat+0x288/0x680
-> [27847.574262]  kswapd+0x2ca/0x990
-> [27847.574271]  ? remove_wait_queue+0x170/0x170
-> [27847.574282]  kthread+0x1d3/0x2a0
-> [27847.574288]  ? balance_pgdat+0x680/0x680
-> [27847.574294]  ? kthread_create_worker_on_cpu+0x70/0x70
-> [27847.574304]  ret_from_fork+0x3a/0x50
+> Also in the future, when posting a new version of a patch, please mark
+> it as such:
 > 
+> [PATCH v2] clk: imx6: fix video_27m parent for IMX6QDL_CLK_CKO1_SEL
+> 
+> and write below the --- line what are the changes in this new version.
+> 
+> Thanks
+> 
+
+Hi Fabio,
+
+thank you for your hints, next time i will do it that way
