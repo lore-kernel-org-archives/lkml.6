@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id sprPLEuDHlteEwAAmS7hNA
-	; Mon, 11 Jun 2018 14:12:27 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id WgQ2JDiFHlvVKgAAmS7hNA
+	; Mon, 11 Jun 2018 14:20:43 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 95136607E4; Mon, 11 Jun 2018 14:12:27 +0000 (UTC)
+	id C9B21608BA; Mon, 11 Jun 2018 14:20:41 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qaqyTOZa"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fhCmjc0s"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
@@ -13,33 +13,33 @@ X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 120096074D;
-	Mon, 11 Jun 2018 14:12:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 120096074D
+	by smtp.codeaurora.org (Postfix) with ESMTP id F3D5F608FF;
+	Mon, 11 Jun 2018 14:20:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F3D5F608FF
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933948AbeFKOLk (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 10:11:40 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46480 "EHLO
+        id S934313AbeFKOUh (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 10:20:37 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45006 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933404AbeFKOHK (ORCPT
+        with ESMTP id S933475AbeFKOGq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:07:10 -0400
+        Mon, 11 Jun 2018 10:06:46 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
         Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=shTCii8XN3GaoHud7h6kduHJWwZn5c2W4msLECbUBQ8=; b=qaqyTOZa8VV5F24xAEN/p0VqJ
-        8pz7p9vrjV+Hm73Sc+0kCD3uYoLjMmA3he5tn2y7ZgcqT0T6b+bN17nN198rjfLBJfmVxTvM020xi
-        V9cYnDAl9vhkBWrtGiFlMZed+i+N20oFrFf+qrksvHPwa3VLncNkvS+Yqmejt1Skr+j5Jo7mdp9kS
-        K3ZIOcnb530aBKd/YrOqtKC/pokoPCAzJ+GCh9Jr1VLFEEVCEI1vHNohk6c7dBHOwjL1Km+I4tiE4
-        OCEgBa7Th99FU3uNSAQgkdImMsaL8LcOn2/pNpsxbz0GnwonnMSFnJJ27n8HSGksHk0ADp+VIlczu
-        G6ssNnbpQ==;
+         bh=/OXuoNN01nhzSTU6HgfbvZIzFPLZd+W81a8DkuntQPA=; b=fhCmjc0sb8KAhLmuFlr1+POvw
+        Jq1LGFUkBThFZymX5NjKJX/mXAMHpuFoYgS8xF5DFQ4OrZmlNn0jqUtO9Ods9r30jjCEac+mG4t1z
+        yUBrTHIwOAgx/INY0KSV2hbKREWkgC6d/7yqu96pH9w6g5Jt49qc14XS36+XIhgyGu2xIIchow4Qz
+        BW+5ahtfcg5tlK9MAQGV/if7x7G36MRXucUdzi4Pm433ZfNWXB4GQKDK6tpaRa9b9WLE/4eNwotsQ
+        WYJU0V3ymjWi/vygICy/VM7sHmuyl6AEEOhdn+hgIPLQrknYf6RUcBi7t2+U9uZR7FAYMk0lGCpt0
+        sOmyZdAcQ==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSNTR-0004zP-8F; Mon, 11 Jun 2018 14:07:09 +0000
+        id 1fSNT3-0004bh-Vi; Mon, 11 Jun 2018 14:06:45 +0000
 From: Matthew Wilcox <willy@infradead.org>
 To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -54,9 +54,9 @@ Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
         linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
         Chao Yu <yuchao0@huawei.com>,
         linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v13 60/72] f2fs: Convert to XArray
-Date: Mon, 11 Jun 2018 07:06:27 -0700
-Message-Id: <20180611140639.17215-61-willy@infradead.org>
+Subject: [PATCH v13 16/72] xarray: Add xas_for_each_conflict
+Date: Mon, 11 Jun 2018 07:05:43 -0700
+Message-Id: <20180611140639.17215-17-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
 References: <20180611140639.17215-1-willy@infradead.org>
@@ -67,99 +67,205 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-This is a straightforward conversion.
+This iterator iterates over each entry that is stored in the index or
+indices specified by the xa_state.  This is intended for use for a
+conditional store of a multiindex entry, or to allow entries which are
+about to be removed from the xarray to be disposed of properly.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- fs/f2fs/data.c   | 4 ++--
- fs/f2fs/dir.c    | 2 +-
- fs/f2fs/f2fs.h   | 2 +-
- fs/f2fs/inline.c | 2 +-
- fs/f2fs/node.c   | 6 ++----
- 5 files changed, 7 insertions(+), 9 deletions(-)
+ include/linux/xarray.h                 | 17 +++++++
+ lib/xarray.c                           | 61 +++++++++++++++++++++++++
+ tools/testing/radix-tree/xarray-test.c | 63 ++++++++++++++++++++++++++
+ 3 files changed, 141 insertions(+)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index e5c0b1e74ce6..b274300995cd 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2600,13 +2600,13 @@ const struct address_space_operations f2fs_dblock_aops = {
- #endif
- };
+diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+index dd941454bb5b..6a61aab11038 100644
+--- a/include/linux/xarray.h
++++ b/include/linux/xarray.h
+@@ -750,6 +750,7 @@ static inline bool xas_retry(struct xa_state *xas, const void *entry)
+ void *xas_load(struct xa_state *);
+ void *xas_store(struct xa_state *, void *entry);
+ void *xas_find(struct xa_state *, unsigned long max);
++void *xas_next_conflict(struct xa_state *);
  
--void f2fs_clear_radix_tree_dirty_tag(struct page *page)
-+void f2fs_clear_page_cache_dirty_tag(struct page *page)
- {
- 	struct address_space *mapping = page_mapping(page);
- 	unsigned long flags;
+ bool xas_get_tag(const struct xa_state *, xa_tag_t);
+ void xas_set_tag(const struct xa_state *, xa_tag_t);
+@@ -964,6 +965,22 @@ enum {
+ 	for (entry = xas_find_tagged(xas, max, tag); entry; \
+ 	     entry = xas_next_tagged(xas, max, tag))
  
- 	xa_lock_irqsave(&mapping->i_pages, flags);
--	radix_tree_tag_clear(&mapping->i_pages, page_index(page),
-+	__xa_clear_tag(&mapping->i_pages, page_index(page),
- 						PAGECACHE_TAG_DIRTY);
- 	xa_unlock_irqrestore(&mapping->i_pages, flags);
++/**
++ * xas_for_each_conflict() - Iterate over a range of an XArray.
++ * @xas: XArray operation state.
++ * @entry: Entry retrieved from the array.
++ *
++ * The loop body will be executed for each entry in the XArray that lies
++ * within the range specified by @xas.  If the loop completes successfully,
++ * any entries that lie in this range will be replaced by @entry.  The caller
++ * may break out of the loop; if they do so, the contents of the XArray will
++ * be unchanged.  The operation may fail due to an out of memory condition.
++ * The caller may also call xa_set_err() to exit the loop while setting an
++ * error to record the reason.
++ */
++#define xas_for_each_conflict(xas, entry) \
++	while ((entry = xas_next_conflict(xas)))
++
+ void *__xas_next(struct xa_state *);
+ void *__xas_prev(struct xa_state *);
+ 
+diff --git a/lib/xarray.c b/lib/xarray.c
+index 3b2c2f2240bf..d76db0ff17cf 100644
+--- a/lib/xarray.c
++++ b/lib/xarray.c
+@@ -1100,6 +1100,67 @@ void *xas_find_tagged(struct xa_state *xas, unsigned long max, xa_tag_t tag)
  }
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 7f955c4e86a4..9c2a23242f64 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -730,7 +730,7 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
+ EXPORT_SYMBOL_GPL(xas_find_tagged);
  
- 	if (bit_pos == NR_DENTRY_IN_BLOCK &&
- 		!f2fs_truncate_hole(dir, page->index, page->index + 1)) {
--		f2fs_clear_radix_tree_dirty_tag(page);
-+		f2fs_clear_page_cache_dirty_tag(page);
- 		clear_page_dirty_for_io(page);
- 		ClearPagePrivate(page);
- 		ClearPageUptodate(page);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 4d8b1de83143..1f71ab2ddad9 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2973,7 +2973,7 @@ int f2fs_migrate_page(struct address_space *mapping, struct page *newpage,
- 			struct page *page, enum migrate_mode mode);
- #endif
- bool f2fs_overwrite_io(struct inode *inode, loff_t pos, size_t len);
--void f2fs_clear_radix_tree_dirty_tag(struct page *page);
-+void f2fs_clear_page_cache_dirty_tag(struct page *page);
++/**
++ * xas_next_conflict() - Step for xas_for_each_conflict().
++ * @xas: XArray operation state.
++ *
++ * This function does the work for xas_for_each_conflict().
++ *
++ * Context: Any context.  Expects xa_lock to be held.
++ * Return: The next entry in the range covered by @xas or %NULL.
++ */
++void *xas_next_conflict(struct xa_state *xas)
++{
++	void *curr;
++
++	if (xas_error(xas))
++		return NULL;
++
++	if (!xas->xa_node)
++		return NULL;
++
++	if (xas_top(xas->xa_node)) {
++		curr = xas_start(xas);
++		if (!curr)
++			return NULL;
++		while (xa_is_node(curr)) {
++			struct xa_node *node = xa_to_node(curr);
++			curr = xas_descend(xas, node);
++		}
++		if (curr)
++			return curr;
++	}
++
++	if (xas->xa_node->shift > xas->xa_shift)
++		return NULL;
++
++	for (;;) {
++		if (xas->xa_node->shift == xas->xa_shift) {
++			if ((xas->xa_offset & xas->xa_sibs) == xas->xa_sibs)
++				break;
++		} else if (xas->xa_offset == XA_CHUNK_MASK) {
++			xas->xa_offset = xas->xa_node->offset;
++			xas->xa_node = xas->xa_node->parent;
++			if (!xas->xa_node)
++				break;
++			continue;
++		}
++		curr = xa_entry_locked(xas->xa, xas->xa_node, ++xas->xa_offset);
++		if (xa_is_sibling(curr))
++			continue;
++		while (xa_is_node(curr)) {
++			xas->xa_node = xa_to_node(curr);
++			xas->xa_offset = 0;
++			curr = xa_entry_locked(xas->xa, xas->xa_node, 0);
++		}
++		if (curr)
++			return curr;
++	}
++	xas->xa_offset -= xas->xa_sibs;
++	return NULL;
++}
++EXPORT_SYMBOL_GPL(xas_next_conflict);
++
+ /**
+  * xa_init_flags() - Initialise an empty XArray with flags.
+  * @xa: XArray.
+diff --git a/tools/testing/radix-tree/xarray-test.c b/tools/testing/radix-tree/xarray-test.c
+index eeafbf8c948c..296ace77c4f4 100644
+--- a/tools/testing/radix-tree/xarray-test.c
++++ b/tools/testing/radix-tree/xarray-test.c
+@@ -315,6 +315,68 @@ void check_multi_store(struct xarray *xa)
+ 	BUG_ON(!xa_empty(xa));
+ }
  
- /*
-  * gc.c
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 043830be5662..48f40d344a2a 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -226,7 +226,7 @@ int f2fs_write_inline_data(struct inode *inode, struct page *page)
- 	kunmap_atomic(src_addr);
- 	set_page_dirty(dn.inode_page);
- 
--	f2fs_clear_radix_tree_dirty_tag(page);
-+	f2fs_clear_page_cache_dirty_tag(page);
- 
- 	set_inode_flag(inode, FI_APPEND_WRITE);
- 	set_inode_flag(inode, FI_DATA_EXIST);
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 47d0e64a95a8..44f3974fddf4 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -103,7 +103,7 @@ bool f2fs_available_free_memory(struct f2fs_sb_info *sbi, int type)
- static void clear_node_page_dirty(struct page *page)
++void __check_store_iter(struct xarray *xa, unsigned long start,
++			unsigned int order, unsigned int present)
++{
++	XA_STATE_ORDER(xas, xa, start, order);
++	void *entry;
++	unsigned int count = 0;
++
++retry:
++	xas_for_each_conflict(&xas, entry) {
++		BUG_ON(!xa_is_value(entry));
++		BUG_ON(entry < xa_mk_value(start));
++		BUG_ON(entry > xa_mk_value(start + (1UL << order) - 1));
++		count++;
++	}
++	xas_store(&xas, xa_mk_value(start));
++	if (xas_nomem(&xas, GFP_KERNEL)) {
++		count = 0;
++		goto retry;
++	}
++	BUG_ON(xas_error(&xas));
++	BUG_ON(count != present);
++	BUG_ON(xa_load(xa, start) != xa_mk_value(start));
++	BUG_ON(xa_load(xa, start + (1UL << order) - 1) != xa_mk_value(start));
++	xa_store(xa, start, NULL, 0);
++}
++
++void check_store_iter(struct xarray *xa)
++{
++	unsigned int i, j;
++
++	for (i = 0; i < 20; i++) {
++		unsigned int min = 1 << i;
++		unsigned int max = (2 << i) - 1;
++		__check_store_iter(xa, 0, i, 0);
++		BUG_ON(!xa_empty(xa));
++		__check_store_iter(xa, min, i, 0);
++		BUG_ON(!xa_empty(xa));
++
++		xa_store(xa, min, xa_mk_value(min), GFP_KERNEL);
++		__check_store_iter(xa, min, i, 1);
++		BUG_ON(!xa_empty(xa));
++		xa_store(xa, max, xa_mk_value(max), GFP_KERNEL);
++		__check_store_iter(xa, min, i, 1);
++		BUG_ON(!xa_empty(xa));
++
++		for (j = 0; j < min; j++)
++			xa_store(xa, j, xa_mk_value(j), GFP_KERNEL);
++		__check_store_iter(xa, 0, i, min);
++		BUG_ON(!xa_empty(xa));
++		for (j = 0; j < min; j++)
++			xa_store(xa, min + j, xa_mk_value(min + j), GFP_KERNEL);
++		__check_store_iter(xa, min, i, min);
++		BUG_ON(!xa_empty(xa));
++	}
++	xa_store(xa, 63, xa_mk_value(63), GFP_KERNEL);
++	xa_store(xa, 65, xa_mk_value(65), GFP_KERNEL);
++	__check_store_iter(xa, 64, 2, 1);
++	BUG_ON(xa_load(xa, 63) != xa_mk_value(63));
++	xa_store(xa, 63, NULL, 0);
++	BUG_ON(!xa_empty(xa));
++}
++
+ void check_multi_find(struct xarray *xa)
  {
- 	if (PageDirty(page)) {
--		f2fs_clear_radix_tree_dirty_tag(page);
-+		f2fs_clear_page_cache_dirty_tag(page);
- 		clear_page_dirty_for_io(page);
- 		dec_page_count(F2FS_P_SB(page), F2FS_DIRTY_NODES);
- 	}
-@@ -1168,9 +1168,7 @@ void f2fs_ra_node_page(struct f2fs_sb_info *sbi, nid_t nid)
- 	if (f2fs_check_nid_range(sbi, nid))
- 		return;
+ 	unsigned long index;
+@@ -537,6 +599,7 @@ void xarray_checks(void)
+ 	check_cmpxchg(&array);
+ 	check_multi_store(&array);
+ 	item_kill_tree(&array);
++	check_store_iter(&array);
  
--	rcu_read_lock();
--	apage = radix_tree_lookup(&NODE_MAPPING(sbi)->i_pages, nid);
--	rcu_read_unlock();
-+	apage = xa_load(&NODE_MAPPING(sbi)->i_pages, nid);
- 	if (apage)
- 		return;
- 
+ 	check_find(&array);
+ 	check_xas_delete(&array);
 -- 
 2.17.1
