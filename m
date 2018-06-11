@@ -1,121 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id d0hGI91YGlu1WQAAmS7hNA
-	; Fri, 08 Jun 2018 10:22:35 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id KckeA7NiHlviVwAAmS7hNA
+	; Mon, 11 Jun 2018 11:53:23 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 0BF7A606FA; Fri,  8 Jun 2018 10:22:35 +0000 (UTC)
+	id E7BA1607A4; Mon, 11 Jun 2018 11:53:22 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XFFeuu75"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZLSiZxnu"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id A54EA60590;
-	Fri,  8 Jun 2018 10:22:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A54EA60590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 5FFDF601C3;
+	Mon, 11 Jun 2018 11:53:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5FFDF601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752734AbeFHKWb (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 06:22:31 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:41160 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751216AbeFHKW3 (ORCPT
+        id S933161AbeFKLxS (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 07:53:18 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:44599 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933096AbeFKLxL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 06:22:29 -0400
-Received: by mail-pl0-f66.google.com with SMTP id az12-v6so8051239plb.8
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 03:22:29 -0700 (PDT)
+        Mon, 11 Jun 2018 07:53:11 -0400
+Received: by mail-lf0-f65.google.com with SMTP id 36-v6so30057620lfr.11;
+        Mon, 11 Jun 2018 04:53:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=9USEF2CNRAHvrdTmfb05cZukP02HwDm9ILBiKM18c4M=;
-        b=XFFeuu75crYKDCVRHwt9WG86X652rybdPqMUgvei+OyyhRRY6fZk/Dq7M1shXgk3DA
-         kb9UENqrhntT9GljJa1CcBZlFhqfwNkDvdd5LjxPLUDKItqDLww59TklgUAswwSjSKJw
-         E+fGXRs/nna5tVC68e/6depRyWkg145aZ5e1U=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=6kY9iPXwrCpJV3OkX3TsAhO1ij+vSNHGyg8hj/QEdR8=;
+        b=ZLSiZxnuxE+wd5wgFlIPmpGay+FmNYP0lqbY8hV1qeO3SBnCGZit67BDAfLI3NfLIR
+         W+CvT0UfhbNPFMmkNakKv2gCUP5TNCj62s7XUaJCwKPlICN2JqLsTaDhpLCnWs2sg5Bw
+         Hwwle0NSTmEd2RhUbIFLtjzaWOKWNtsex9y/yRRoqXC+VO3zmv5LvpULN1/GMvpF4psR
+         Frro8qqbF13w08pRtbuBPMQ2/7PD4Qz2Ur7gAfw0XUvGX5gLSPW5/N/+5lCNMwVRIQUm
+         /Wf91Y67UBYkky6ki+f+ziZea5HzEce8RWFtESVVPKwshBIQGrcY0fDxi6NCgT7cY2w1
+         DjSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=9USEF2CNRAHvrdTmfb05cZukP02HwDm9ILBiKM18c4M=;
-        b=VxZ5aAcKG6u7zFBuKs9m2nWckKCmuLCr3PUn51S34AiL8XT1hf5geuRngVpmp7nROG
-         mjnP54k8JSzftQwidnZdx0NgN5vKDRlEaRCm6OH1tM9kRCP56Rip+iePPMd4ylIsrmcl
-         ATJlTn7GI2mV8BMy3EWCQLTuIpPIFRbMlUA/dLu8CAUPN3ouzVBJY9WgIVaZjsQh8eGq
-         nsZzZTWIQ4YcCQKvuoCiR6IOmiHzbvOKxjXTJdQ2+RsXOwHogwVDdOhS3pG5tcw+9t7v
-         48kv6vLZjb5A+5aYpUXYzIgq7v4X3qR+UOj2ZytOWpMbMu85/22FxcUVyzNjVbzgZBKQ
-         zPNQ==
-X-Gm-Message-State: APt69E3e5bcnmQVx2YIVX4l5kwl44fVl6nyXyfF6XEbP9SkJjhSCTOuF
-        FsLE7ne5u5ydENRv6L7Cli1o
-X-Google-Smtp-Source: ADUXVKJs/DJ6uli+5S8RJcMEiNRaHoBknxMYbFvrg1/ecN4xXJnDGIL3OpI1f/Yo7lKIkK7rDx30bA==
-X-Received: by 2002:a17:902:b416:: with SMTP id x22-v6mr5999454plr.267.1528453349087;
-        Fri, 08 Jun 2018 03:22:29 -0700 (PDT)
-Received: from linaro.org ([103.59.133.81])
-        by smtp.gmail.com with ESMTPSA id 9-v6sm36048387pfn.129.2018.06.08.03.22.26
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=6kY9iPXwrCpJV3OkX3TsAhO1ij+vSNHGyg8hj/QEdR8=;
+        b=OHzsMSTMae3QWkYbZ44OlRv0FG93XaH3m1pYRrdqwnK3+gKAKWeR5pnMViqfjF42Ly
+         3VP8ZA/uZfaCBj0sAQLRHTD4U9mxhHTgE7Qkxmw5ElUDTjbga87o13W4U8YqlRv3etfh
+         64gVwsfrMg3i9+XdkNs0yWYX8kzwGy0YcohG6W5btGAwG5C9ZcBxIqCRGE8mDmLJJzR+
+         GyjjIcqIqNNmZ/pBXpS9XGkMIQWCtH0TZuGo82CGw+VmEUjEhVDRwjaD24dlpbCIF4Ac
+         uPOTJaMCwX+Ly8+ZDTxWOemiggXVbXpmFrOfdr8ho6X9McaY6nljbGv67wRiLxKGf0dr
+         4x2Q==
+X-Gm-Message-State: APt69E3ML9mS7l91f3DYgoNfBxxlXit33vV1x8j2F5uorICqkVapnc4v
+        ORgrymm8BcfSvu7iPanHwBLzGie1
+X-Google-Smtp-Source: ADUXVKLeo9FsKGBMvGbsgS9jvB/12PWBlTk+A/zFykucnOwqn4x8QuJhIj9c26pX7hkDZvvQV8+jIw==
+X-Received: by 2002:a19:f611:: with SMTP id x17-v6mr10498982lfe.116.1528717989123;
+        Mon, 11 Jun 2018 04:53:09 -0700 (PDT)
+Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
+        by smtp.gmail.com with ESMTPSA id h90-v6sm8332849ljf.65.2018.06.11.04.53.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Jun 2018 03:22:28 -0700 (PDT)
-Date: Fri, 8 Jun 2018 15:52:21 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pinctrl: actions: Fix uninitialized error in
- owl_pin_config_set()
-Message-ID: <20180608102221.GA11497@linaro.org>
-References: <1528452347-23986-1-git-send-email-geert@linux-m68k.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1528452347-23986-1-git-send-email-geert@linux-m68k.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Mon, 11 Jun 2018 04:53:07 -0700 (PDT)
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Subject: [PATCH v2 09/24] serdev: Provide modalias uevent for modalias devices
+Date: Mon, 11 Jun 2018 13:52:25 +0200
+Message-Id: <20180611115240.32606-10-ricardo.ribalda@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
+References: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 08, 2018 at 12:05:47PM +0200, Geert Uytterhoeven wrote:
-> With gcc 4.1.2:
-> 
->     drivers/pinctrl/actions/pinctrl-owl.c: In function ‘owl_pin_config_set’:
->     drivers/pinctrl/actions/pinctrl-owl.c:336: warning: ‘ret’ may be used uninitialized in this function
-> 
-> Indeed, if num_configs is zero, the uninitialized value will be returned
-> as an error code.
-> 
-> Fix this by preinitializing it to zero.
-> 
-> Fixes: 2242ddfbf4d699b5 ("pinctrl: actions: Add Actions S900 pinctrl driver")
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Create the sysfs uevent for modalias devices. This is required by newer
+versions of udev for autoload modules.
 
-Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> 
+Cc: Rob Herring <robh@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.com>
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+---
+ drivers/tty/serdev/core.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-Thanks,
-Mani
-> ---
->  drivers/pinctrl/actions/pinctrl-owl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/actions/pinctrl-owl.c b/drivers/pinctrl/actions/pinctrl-owl.c
-> index 76243caa08c630c0..b5c880b50bb371f5 100644
-> --- a/drivers/pinctrl/actions/pinctrl-owl.c
-> +++ b/drivers/pinctrl/actions/pinctrl-owl.c
-> @@ -333,7 +333,7 @@ static int owl_pin_config_set(struct pinctrl_dev *pctrldev,
->  	unsigned long flags;
->  	unsigned int param;
->  	u32 reg, bit, width, arg;
-> -	int ret, i;
-> +	int ret = 0, i;
->  
->  	info = &pctrl->soc->padinfo[pin];
->  
-> -- 
-> 2.7.4
-> 
+diff --git a/drivers/tty/serdev/core.c b/drivers/tty/serdev/core.c
+index b9bb0c0ee319..584cb994213a 100644
+--- a/drivers/tty/serdev/core.c
++++ b/drivers/tty/serdev/core.c
+@@ -46,6 +46,7 @@ ATTRIBUTE_GROUPS(serdev_device);
+ static int serdev_device_uevent(struct device *dev, struct kobj_uevent_env *env)
+ {
+ 	int rc;
++	struct serdev_device *serdev = to_serdev_device(dev);
+ 
+ 	/* TODO: platform modalias */
+ 
+@@ -53,7 +54,11 @@ static int serdev_device_uevent(struct device *dev, struct kobj_uevent_env *env)
+ 	if (rc != -ENODEV)
+ 		return rc;
+ 
+-	return of_device_uevent_modalias(dev, env);
++	if (rc != of_device_uevent_modalias(dev, env))
++		return rc;
++
++	return add_uevent_var(env, "MODALIAS=%s%s", SERDEV_MODULE_PREFIX,
++						    serdev->modalias);
+ }
+ 
+ static void serdev_device_release(struct device *dev)
+-- 
+2.17.1
