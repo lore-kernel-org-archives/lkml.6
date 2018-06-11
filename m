@@ -1,262 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 48u9Hp3zG1v9ZgAAmS7hNA
-	; Sat, 09 Jun 2018 15:35:11 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ldhZGjVbHlvVHQAAmS7hNA
+	; Mon, 11 Jun 2018 11:22:19 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id B8182608CA; Sat,  9 Jun 2018 15:35:11 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xRSR2MKM"
+	id 26136607BB; Mon, 11 Jun 2018 11:22:19 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id F2385607DC;
-	Sat,  9 Jun 2018 15:35:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F2385607DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 91F2860792;
+	Mon, 11 Jun 2018 11:22:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 91F2860792
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932968AbeFIPe7 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 11:34:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37212 "EHLO mail.kernel.org"
+        id S932850AbeFKLWQ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 07:22:16 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55822 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932930AbeFIPez (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 11:34:55 -0400
-Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S932676AbeFKLWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 07:22:15 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8BAC3208A4;
-        Sat,  9 Jun 2018 15:34:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528558495;
-        bh=k1jVkQskFdV4G7QdElRVOsoWxjwX4QML6jYdN7a+vPQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=xRSR2MKMRPmZqCDioRMqAXajeCuy/8FVR1rVMdWzd1/Pmu/mN7cArB+BbYpN0F2u3
-         6XN2rewG4jINI8ikpuRtt9XliByPyBUDium52WfWwflpeurqbZRw4ZcPzbAQp3AJog
-         voNfFBIMBCd0nF3KxMc+ZlX4bCwcO8nYjfZ/t19w=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.14 00/41] 4.14.49-stable review
-Date: Sat,  9 Jun 2018 17:29:32 +0200
-Message-Id: <20180609152926.389750182@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-User-Agent: quilt/0.65
-X-stable: review
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.49-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.14.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.14.49-rc1
-X-KernelTest-Deadline: 2018-06-11T15:29+00:00
+        by mx1.redhat.com (Postfix) with ESMTPS id 3CE5A30C10F4;
+        Mon, 11 Jun 2018 11:22:15 +0000 (UTC)
+Received: from [10.3.116.105] (ovpn-116-105.phx2.redhat.com [10.3.116.105])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6BD7759740;
+        Mon, 11 Jun 2018 11:22:14 +0000 (UTC)
+Subject: Re: [PATCH] net: thunderx: prevent concurrent data re-writing by
+ nicvf_set_rx_mode
+To: David Miller <davem@davemloft.net>,
+        Vadim.Lomovtsev@caviumnetworks.com
+Cc: rric@kernel.org, sgoutham@cavium.com,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Vadim.Lomovtsev@cavium.com
+References: <20180608092759.28059-1-Vadim.Lomovtsev@caviumnetworks.com>
+ <20180610.123551.885190586229525170.davem@davemloft.net>
+From: Dean Nelson <dnelson@redhat.com>
+Message-ID: <036618ae-887f-44b5-2b39-451b81191cc1@redhat.com>
+Date: Mon, 11 Jun 2018 06:22:14 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180610.123551.885190586229525170.davem@davemloft.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Mon, 11 Jun 2018 11:22:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 4.14.49 release.
-There are 41 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+On 06/10/2018 02:35 PM, David Miller wrote:
+> From: Vadim Lomovtsev <Vadim.Lomovtsev@caviumnetworks.com>
+> Date: Fri,  8 Jun 2018 02:27:59 -0700
+> 
+>> +	/* Save message data locally to prevent them from
+>> +	 * being overwritten by next ndo_set_rx_mode call().
+>> +	 */
+>> +	spin_lock(&nic->rx_mode_wq_lock);
+>> +	mode = vf_work->mode;
+>> +	mc = vf_work->mc;
+>> +	vf_work->mc = NULL;
 
-Responses should be made by Mon Jun 11 15:29:07 UTC 2018.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.49-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.14.49-rc1
-
-Dexuan Cui <decui@microsoft.com>
-    PCI: hv: Do not wait forever on a device that has disappeared
-
-Paul Blakey <paulb@mellanox.com>
-    cls_flower: Fix incorrect idr release when failing to modify rule
-
-Eric Dumazet <edumazet@google.com>
-    rtnetlink: validate attributes in do_setlink()
-
-Jason Wang <jasowang@redhat.com>
-    virtio-net: fix leaking page for gso packet during mergeable XDP
-
-Eran Ben Elisha <eranbe@mellanox.com>
-    net/mlx5e: When RXFCS is set, add FCS data into checksum calculation
-
-Jason Wang <jasowang@redhat.com>
-    virtio-net: correctly check num_buf during err path
-
-Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
-    tun: Fix NULL pointer dereference in XDP redirect
-
-Jack Morgenstein <jackm@dev.mellanox.co.il>
-    net/mlx4: Fix irq-unsafe spinlock usage
-
-Jason Wang <jasowang@redhat.com>
-    virtio-net: correctly transmit XDP buff after linearizing
-
-Alexander Duyck <alexander.h.duyck@intel.com>
-    net-sysfs: Fix memory leak in XPS configuration
-
-Florian Fainelli <f.fainelli@gmail.com>
-    net: phy: broadcom: Fix auxiliary control register reads
-
-Mathieu Xhonneux <m.xhonneux@gmail.com>
-    ipv6: sr: fix memory OOB access in seg6_do_srh_encap/inline
-
-Stephen Suryaputra <ssuryaextr@gmail.com>
-    vrf: check the original netdevice for generating redirect
-
-Jason Wang <jasowang@redhat.com>
-    vhost: synchronize IOTLB message with dev cleanup
-
-Dan Carpenter <dan.carpenter@oracle.com>
-    team: use netdev_features_t instead of u32
-
-Xin Long <lucien.xin@gmail.com>
-    sctp: not allow transport timeout value less than HZ/5 for hb_timer
-
-Shahed Shaikh <shahed.shaikh@cavium.com>
-    qed: Fix mask for physical address in ILT entry
-
-Willem de Bruijn <willemb@google.com>
-    packet: fix reserve calculation
-
-Daniele Palmas <dnlplm@gmail.com>
-    net: usb: cdc_mbim: add flag FLAG_SEND_ZLP
-
-Florian Fainelli <f.fainelli@gmail.com>
-    net: phy: broadcom: Fix bcm_write_exp()
-
-Eric Dumazet <edumazet@google.com>
-    net/packet: refine check for priv area size
-
-Eric Dumazet <edumazet@google.com>
-    net: metrics: add proper netlink validation
-
-Roopa Prabhu <roopa@cumulusnetworks.com>
-    net: ipv4: add missing RTA_TABLE to rtm_ipv4_policy
-
-Cong Wang <xiyou.wangcong@gmail.com>
-    netdev-FAQ: clarify DaveM's position for stable backports
-
-Kirill Tkhai <ktkhai@virtuozzo.com>
-    kcm: Fix use-after-free caused by clonned sockets
-
-Wenwen Wang <wang6495@umn.edu>
-    isdn: eicon: fix a missing-check bug
-
-Michal Kubecek <mkubecek@suse.cz>
-    ipv6: omit traffic class when calculating flow hash
-
-Willem de Bruijn <willemb@google.com>
-    ipv4: remove warning in ip_recv_error
-
-Eric Dumazet <edumazet@google.com>
-    ipmr: properly check rhltable_init() return value
-
-Nicolas Dichtel <nicolas.dichtel@6wind.com>
-    ip6_tunnel: remove magic mtu value 0xFFF8
-
-Sabrina Dubroca <sd@queasysnail.net>
-    ip6mr: only set ip6mr_table from setsockopt when ip6mr_new_table succeeds
-
-Govindarajulu Varadarajan <gvaradar@cisco.com>
-    enic: set DMA mask to 47 bit
-
-Alexey Kodanev <alexey.kodanev@oracle.com>
-    dccp: don't free ccid2_hc_tx_sock struct in dccp_disconnect()
-
-Julia Lawall <Julia.Lawall@lip6.fr>
-    bnx2x: use the right constant
-
-Suresh Reddy <suresh.reddy@broadcom.com>
-    be2net: Fix error detection logic for BE3
-
-Nathan Chancellor <natechancellor@gmail.com>
-    kconfig: Avoid format overflow warning from GCC 8.1
-
-Anand Jain <Anand.Jain@oracle.com>
-    btrfs: define SUPER_FLAG_METADUMP_V2
-
-Linus Torvalds <torvalds@linux-foundation.org>
-    mmap: relax file size limit for regular files
-
-Linus Torvalds <torvalds@linux-foundation.org>
-    mmap: introduce sane default mmap limits
-
-Bart Van Assche <bart.vanassche@wdc.com>
-    scsi: sd_zbc: Avoid that resetting a zone fails sporadically
-
-Damien Le Moal <damien.lemoal@wdc.com>
-    scsi: sd_zbc: Fix potential memory leak
+If I'm reading this code correctly, I believe nic->rx_mode_work.mc will
+have been set to NULL before the lock is dropped by
+nicvf_set_rx_mode_task() and acquired by nicvf_set_rx_mode().
 
 
--------------
+>> +	spin_unlock(&nic->rx_mode_wq_lock);
+> 
+> At the moment you drop this lock, the memory behind 'mc' can be
+> freed up by:
+> 
+>> +	spin_lock(&nic->rx_mode_wq_lock);
+>> +	kfree(nic->rx_mode_work.mc);
 
-Diffstat:
+So the kfree() will be called with a NULL pointer and quickly return.
 
- Documentation/networking/netdev-FAQ.txt          |   9 ++
- Makefile                                         |   4 +-
- drivers/isdn/hardware/eicon/diva.c               |  22 ++--
- drivers/isdn/hardware/eicon/diva.h               |   5 +-
- drivers/isdn/hardware/eicon/divasmain.c          |  18 ++--
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c |   2 +-
- drivers/net/ethernet/cisco/enic/enic_main.c      |   8 +-
- drivers/net/ethernet/emulex/benet/be_main.c      |   4 +-
- drivers/net/ethernet/mellanox/mlx4/qp.c          |   4 +-
- drivers/net/ethernet/mellanox/mlx5/core/en_rx.c  |  42 ++++++++
- drivers/net/ethernet/qlogic/qed/qed_cxt.c        |   2 +-
- drivers/net/phy/bcm-cygnus.c                     |   6 +-
- drivers/net/phy/bcm-phy-lib.c                    |   2 +-
- drivers/net/phy/bcm-phy-lib.h                    |   7 ++
- drivers/net/phy/bcm7xxx.c                        |   4 +-
- drivers/net/team/team.c                          |   3 +-
- drivers/net/tun.c                                |  15 +--
- drivers/net/usb/cdc_mbim.c                       |   2 +-
- drivers/net/virtio_net.c                         |  19 ++--
- drivers/pci/host/pci-hyperv.c                    |  46 +++++---
- drivers/scsi/sd_zbc.c                            | 128 ++++++++++++++---------
- drivers/vhost/vhost.c                            |   3 +
- fs/btrfs/disk-io.c                               |   3 +-
- include/net/ipv6.h                               |   5 +
- include/uapi/linux/btrfs_tree.h                  |   1 +
- mm/mmap.c                                        |  32 ++++++
- net/core/flow_dissector.c                        |   2 +-
- net/core/net-sysfs.c                             |   6 +-
- net/core/rtnetlink.c                             |   8 +-
- net/dccp/proto.c                                 |   2 -
- net/ipv4/fib_frontend.c                          |   1 +
- net/ipv4/fib_semantics.c                         |   4 +
- net/ipv4/ip_sockglue.c                           |   2 -
- net/ipv4/ipmr.c                                  |   7 +-
- net/ipv6/ip6_output.c                            |   3 +-
- net/ipv6/ip6_tunnel.c                            |  11 +-
- net/ipv6/ip6mr.c                                 |   3 +-
- net/ipv6/ndisc.c                                 |   6 ++
- net/ipv6/route.c                                 |   2 +-
- net/ipv6/seg6_iptunnel.c                         |   4 +-
- net/ipv6/sit.c                                   |   5 +-
- net/kcm/kcmsock.c                                |   2 +-
- net/packet/af_packet.c                           |   4 +-
- net/sched/cls_flower.c                           |   2 +-
- net/sctp/transport.c                             |   2 +-
- scripts/kconfig/confdata.c                       |   2 +-
- 46 files changed, 329 insertions(+), 145 deletions(-)
+
+> 
+> And you'll crash when you dereference it above via
+> __nicvf_set_rx_mode_task().
+> 
+
+I believe the call to kfree() in nicvf_set_rx_mode() is there to free
+up a mc_list that has been allocated by nicvf_set_rx_mode() during a
+previous callback to the function, one that has not yet been processed
+by nicvf_set_rx_mode_task().
+
+In this way only the last 'unprocessed' callback to nicvf_set_rx_mode()
+gets processed should there be multiple callbacks occurring between the
+times the nicvf_set_rx_mode_task() runs.
+
+In my testing with this patch, this is what I see happening.
