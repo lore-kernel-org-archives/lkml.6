@@ -2,107 +2,110 @@ Return-Path: <SRS0=KDb5=I5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B05F9C07E80
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 18:56:13 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8B92BC07E80
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 18:57:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63DA52086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 18:56:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FD662087E
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 18:57:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2oOBvfxg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63DA52086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lA5GxmVR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FD662087E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934261AbeFKS4L (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 14:56:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56196 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932081AbeFKS4J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 14:56:09 -0400
-Received: from mail-it0-f46.google.com (mail-it0-f46.google.com [209.85.214.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB08A208AF;
-        Mon, 11 Jun 2018 18:56:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528743368;
-        bh=uOuSeR04aB0L2xNI58oziZVGNpzvPImu9dU4RNiFZEU=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=2oOBvfxgLi+yimW/LBGJ1noixd+W+2Ls/iSXG9rppMhVRpdHzEuENrpkMoTKA8lz3
-         P0OpSP36ZVU4URVagnmEReGbUKM15UzLxqrLpa3yZbL4Yzpc0O0nmwkINj+DAeUNGd
-         xkKJPZw+JvJPcpKHWC6199x6y38QA5Hl6sMT1hBo=
-Received: by mail-it0-f46.google.com with SMTP id v83-v6so12272077itc.3;
-        Mon, 11 Jun 2018 11:56:08 -0700 (PDT)
-X-Gm-Message-State: APt69E0o8q7RowW5WCP08Uw0//Mj0FZeApo7JGFntj3paxFRQuIUpKBG
-        MFoFuNk1iU2AwhwdYqAahOg9TCJ4x/U4zO933g==
-X-Google-Smtp-Source: ADUXVKLHfb1NzFhVt+bY0i5KyLmxs5EYPa5oF6EP5td7WkO2bi4dI7fg4F6aiSB5b5jHuQyLpuhI0Qz/OkAzkCeRnWc=
-X-Received: by 2002:a24:798f:: with SMTP id z137-v6mr186427itc.19.1528743368188;
- Mon, 11 Jun 2018 11:56:08 -0700 (PDT)
+        id S934483AbeFKS5x (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 14:57:53 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:39067 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933289AbeFKS5v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 14:57:51 -0400
+Received: by mail-lf0-f65.google.com with SMTP id t134-v6so32171040lff.6;
+        Mon, 11 Jun 2018 11:57:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:user-agent:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=0yMOs9usCeb9T5XEebbZ84a8uolnDc8ZKmKoxe/xUoo=;
+        b=lA5GxmVRPggHKqwTSmvSy1aKcR5FYD/K3gH1BIKb5b2MJURi+6f7fj5Jmo9kipdjHs
+         nt9sFdA90ILQsjXn1EiwzQpzhCyu/zLXP73H20Yx8uTk5mHrhUJF6E5bbfTtzHp6H0eg
+         0sM9p7oK3cxf+nlAIdKFGXQdA7OPSnug2QBENUgg842e4SC9dv6LBSKIlbarSVTKiyK2
+         grktmzTjvqScq8ur5/LHXgwCt0foEJ9GvmqPOiDWyJ/wimcBVxE3kPdNIcDxCRH/7SBu
+         xGknotDhhSv0BBNvtlx30B5/Q4BkUo6t4U9e5NULC0kuIDQ8fYFgw8GU/2k10NpTBCm9
+         yoLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:user-agent
+         :in-reply-to:references:mime-version:content-transfer-encoding;
+        bh=0yMOs9usCeb9T5XEebbZ84a8uolnDc8ZKmKoxe/xUoo=;
+        b=s+WD22ayiviKYScSXGH+gskvdGjUMu4hADxh4CbbPwasItgnWFFSm4douDiK62HqC/
+         cCHG04wP/oduVDkadN4mrOWtMeNCwSYJUOq5C5y0GZHKgND/l4GHh9o6b09sjGID1Mtf
+         LlZsNeeeB54qG/QMPYpLwqKuwSRCImMwFlvpy1gpsKUkZWTkdXjFwPkVr3ZmHH/B55ta
+         1vsM5l6Iuh0jPHURRV9n+a01wW3j0eergih30tdClSLDwJzLyYT1ruB0LsVrUvaGTZHn
+         buu+KFaNIVxoAvijEyv5HDrpVXSAxkP/4H+g1KQAzkcJPF+Z4T96T+4t4y9Vh8gZv1P0
+         S5zQ==
+X-Gm-Message-State: APt69E0RNYh4/0/uaXVPPKrp7dUA5pAaRB/rS2gz/r2fzvHc56gGna51
+        s9NO4qq+2D5xkBZ4szrmNAk=
+X-Google-Smtp-Source: ADUXVKICD781QTEPF8gU4uODfbRi0hupQ8+PoEbsCXdTPxh+zCPuU7lYWjsODa8gH0lCPfjk9OJAmQ==
+X-Received: by 2002:a19:a413:: with SMTP id q19-v6mr192134lfc.143.1528743468909;
+        Mon, 11 Jun 2018 11:57:48 -0700 (PDT)
+Received: from acerlaptop.localnet (user-94-254-173-75.play-internet.pl. [94.254.173.75])
+        by smtp.gmail.com with ESMTPSA id p28-v6sm5931229lfh.24.2018.06.11.11.57.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Jun 2018 11:57:48 -0700 (PDT)
+From:   =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] ARM: dts: s5pv210: Add missing interrupt-controller property to gph2
+Date:   Mon, 11 Jun 2018 20:57:39 +0200
+Message-ID: <4072275.4u7YMACK2s@acerlaptop>
+User-Agent: KMail/5.1.3 (Linux/4.13.0-43-generic; KDE/5.18.0; x86_64; ; )
+In-Reply-To: <CAJKOXPcVqaeYoU=tht5GSyEunnboG-+Mxo96LCDewbqDjCfy-A@mail.gmail.com>
+References: <1528640149-2195-1-git-send-email-pawel.mikolaj.chmiel@gmail.com> <CAJKOXPcVqaeYoU=tht5GSyEunnboG-+Mxo96LCDewbqDjCfy-A@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a4f:6403:0:0:0:0:0 with HTTP; Mon, 11 Jun 2018 11:55:47
- -0700 (PDT)
-In-Reply-To: <CAKKbWA4gm1x8VazdMjZ6a9bwGmt=_mZYS2S3FnB2x36Ng+cjCQ@mail.gmail.com>
-References: <20180607145821.322979-1-avifishman70@gmail.com>
- <20180607145821.322979-3-avifishman70@gmail.com> <20180611181646.GA5537@rob-hp-laptop>
- <CAKKbWA4gm1x8VazdMjZ6a9bwGmt=_mZYS2S3FnB2x36Ng+cjCQ@mail.gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Mon, 11 Jun 2018 12:55:47 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJYafGzpr8+VQSYJcE5EMo1xZ8NrXTyGBS-7GhU-X+PVg@mail.gmail.com>
-Message-ID: <CAL_JsqJYafGzpr8+VQSYJcE5EMo1xZ8NrXTyGBS-7GhU-X+PVg@mail.gmail.com>
-Subject: Re: [PATCH v4 2/3] dt-bindings: usb: new ehci-npcm7xx dt
-To:     Avi Fishman <avifishman70@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        James Hogan <jhogan@kernel.org>, Alban <albeu@free.fr>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Tony Lindgren <tony@atomide.com>, baolu.lu@linux.intel.com,
-        Alex Elder <elder@linaro.org>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 11, 2018 at 12:24 PM, Avi Fishman <avifishman70@gmail.com> wrote:
-> On Mon, Jun 11, 2018 at 9:16 PM, Rob Herring <robh@kernel.org> wrote:
->> On Thu, Jun 07, 2018 at 05:58:20PM +0300, avifishman70@gmail.com wrote:
->>> From: Avi Fishman <AviFishman70@gmail.com>
->>>
->>> Device Tree documentation for Nuvoton npcm7xx EHCI.
->>>
->>> Signed-off-by: Avi Fishman <AviFishman70@gmail.com>
->
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Rob, if I understand you want me to add another version (v5) with the
-> above line (only on the dt)?
+On Monday, June 11, 2018 2:43:59 PM CEST Krzysztof Kozlowski wrote:
+> On Sun, Jun 10, 2018 at 4:15 PM, Pawe=C5=82 Chmiel
+> <pawel.mikolaj.chmiel@gmail.com> wrote:
+> > This commit adds missing interrupt-controller property to gph2 block,
+>=20
+> Just "Add missing". See:
+> https://elixir.bootlin.com/linux/latest/source/Documentation/process/subm=
+itting-patches.rst#L151
+>=20
+> > to silence following warnings during build
+> >   /soc/pinctrl@e0200000/gph2: Missing interrupt-controller or interrupt=
+=2Dmap property
+> >
+> > Observed on not yet mainlined, an S5PV210 based
+> > Samsung Galaxy S (i9000) phone.
+>=20
+> The warning is not reproduceable (as you mentioned board is not
+> present in mainline) thus please skip it. Instead, either describe
+> existing reason for this change (e.g. because bindings require it for
+> node of every bank of pins supporting GPIO interrupts) or include this
+> in series mainlining new board (where the reason will be - it will be
+> used by new board etc).
+>=20
+> Best regards,
+> Krzysztof
+>=20
+Ok, I'll send this patch (fixed) with other patches adding new board.
 
-No need to *only* do that. Maintainers will collect them on the last
-version when they apply patches. You just can't expect that
-maintainers will go look at prior versions and collect them.
+Thanks
 
->>> ---
->>>  Documentation/devicetree/bindings/usb/npcm7xx-usb.txt | 17 +++++++++++++++++
->>>  1 file changed, 17 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/usb/npcm7xx-usb.txt
->>
->> Please add acks/reviewed-bys when posting new versions.
->>
->> Rob
