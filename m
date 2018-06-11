@@ -1,85 +1,173 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id X5+uONRNGVtTcwAAmS7hNA
-	; Thu, 07 Jun 2018 15:23:41 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id eAFXGyRCHltZeAAAmS7hNA
+	; Mon, 11 Jun 2018 09:49:23 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 3EE82607E7; Thu,  7 Jun 2018 15:23:41 +0000 (UTC)
+	id 50190607BB; Mon, 11 Jun 2018 09:49:23 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id C0B48606DD;
-	Thu,  7 Jun 2018 15:23:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C0B48606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id A358260351;
+	Mon, 11 Jun 2018 09:49:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A358260351
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935846AbeFGPXi (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:23:38 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41209 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935550AbeFGO6l (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:58:41 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbY-0005hL-Qb; Thu, 07 Jun 2018 15:09:32 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb9-00036x-Ez; Thu, 07 Jun 2018 15:09:07 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        id S932706AbeFKJtU (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 05:49:20 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:47381 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932453AbeFKJtT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 05:49:19 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id C3DDE207A5; Mon, 11 Jun 2018 11:49:16 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-37-30.w90-88.abo.wanadoo.fr [90.88.156.30])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 6461B203D9;
+        Mon, 11 Jun 2018 11:49:16 +0200 (CEST)
+Date: Mon, 11 Jun 2018 11:49:16 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
+Cc: linux-mtd@lists.infradead.org, boris.brezillon@free-electrons.com,
+        frieder.schrempf@exceet.de, computersforpeace@gmail.com,
+        david.wolfe@nxp.com, han.xu@nxp.com, festevam@gmail.com,
+        marek.vasut@gmail.com, prabhakar.kushwaha@nxp.com,
+        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        NeilBrown <neil@brown.name>
+Subject: Re: [PATCH] mtd: spi-nor: honour max_data_size for spi-nor writes
+Message-ID: <20180611114916.351ed272@bbrezillon>
+In-Reply-To: <1528708694-19407-1-git-send-email-yogeshnarayan.gaur@nxp.com>
+References: <1528708694-19407-1-git-send-email-yogeshnarayan.gaur@nxp.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Kees Cook" <keescook@google.com>,
-        "Johannes Berg" <johannes.berg@intel.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.863632618@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 277/410] regulatory: add NUL to request alpha2
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+Hi Yogesh,
 
-------------------
+Unrelated note: no need to send your patches to both
+boris.brezillo@free-electrons.com and boris.brezillo@bootlin.com, just
+use the latter.
 
-From: Johannes Berg <johannes.berg@intel.com>
+On Mon, 11 Jun 2018 14:48:14 +0530
+Yogesh Gaur <yogeshnarayan.gaur@nxp.com> wrote:
 
-commit 657308f73e674e86b60509a430a46e569bf02846 upstream.
+> Honour max_data_size for spi-nor writes
 
-Similar to the ancient commit a5fe8e7695dc ("regulatory: add NUL
-to alpha2"), add another byte to alpha2 in the request struct so
-that when we use nla_put_string(), we don't overrun anything.
+^ This is no longer relevant.
 
-Fixes: 73d54c9e74c4 ("cfg80211: add regulatory netlink multicast group")
-Reported-by: Kees Cook <keescook@google.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- include/net/regulatory.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> In new spi-mem framework, data size to be written is being calculated
+> using spi_mem_adjust_op_size().
+> This can return value less than nor->page_size.
+> 
+> Add check value of data size return from API spi_mem_adjust_op_size()
+> with the actual requested data size and write, max, only supported
+> data size.
 
---- a/include/net/regulatory.h
-+++ b/include/net/regulatory.h
-@@ -78,7 +78,7 @@ struct regulatory_request {
- 	int wiphy_idx;
- 	enum nl80211_reg_initiator initiator;
- 	enum nl80211_user_reg_hint_type user_reg_hint_type;
--	char alpha2[2];
-+	char alpha2[3];
- 	enum nl80211_dfs_regions dfs_region;
- 	bool intersect;
- 	bool processed;
+This part is not clear.
+
+Also, I'd prefer to have this patch split in 2:
+1/ one patch removing the check in spi_nor_write()
+2/ and the second patch removing the while() loop in m25p80_write()
+
+How about the following commit messages for those 2 patches:
+
+1:
+"
+mtd: spi-nor: Support controllers with limited TX FIFO size
+
+Some SPI controllers can't write nor->page_size bytes in a single step
+because their TX FIFO is too small.
+
+Allow nor->write() to return a size that is smaller than the requested
+write size to gracefully handle this case.
+"
+
+2:
+"
+mtd: devices: m25p80: Make sure WRITE_EN is issued before each write
+
+Some SPI controllers can't write nor->page_size bytes in a single step
+because their TX FIFO is too small, but when that happens we should
+make sure a WRITE_EN command is issued before each write access.
+
+The core is already taking care of that, so all we have to do here is
+return the actual number of bytes that were written during the
+spi_mem_exec_op() operation.
+"
+
+> 
+> Signed-off-by: NeilBrown <neil@brown.name>
+> Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
+> ---
+>  drivers/mtd/devices/m25p80.c  | 23 ++++++++---------------
+>  drivers/mtd/spi-nor/spi-nor.c |  7 -------
+>  2 files changed, 8 insertions(+), 22 deletions(-)
+> 
+> diff --git a/drivers/mtd/devices/m25p80.c b/drivers/mtd/devices/m25p80.c
+> index e84563d..60224fe 100644
+> --- a/drivers/mtd/devices/m25p80.c
+> +++ b/drivers/mtd/devices/m25p80.c
+> @@ -72,7 +72,6 @@ static ssize_t m25p80_write(struct spi_nor *nor, loff_t to, size_t len,
+>  				   SPI_MEM_OP_ADDR(nor->addr_width, to, 1),
+>  				   SPI_MEM_OP_DUMMY(0, 1),
+>  				   SPI_MEM_OP_DATA_OUT(len, buf, 1));
+> -	size_t remaining = len;
+>  	int ret;
+>  
+>  	/* get transfer protocols. */
+> @@ -84,22 +83,16 @@ static ssize_t m25p80_write(struct spi_nor *nor, loff_t to, size_t len,
+>  	if (nor->program_opcode == SPINOR_OP_AAI_WP && nor->sst_write_second)
+>  		op.addr.nbytes = 0;
+>  
+> -	while (remaining) {
+> -		op.data.nbytes = remaining < UINT_MAX ? remaining : UINT_MAX;
+> -		ret = spi_mem_adjust_op_size(flash->spimem, &op);
+> -		if (ret)
+> -			return ret;
+> -
+> -		ret = spi_mem_exec_op(flash->spimem, &op);
+> -		if (ret)
+> -			return ret;
+> +	ret = spi_mem_adjust_op_size(flash->spimem, &op);
+> +	if (ret)
+> +		return ret;
+> +	op.data.nbytes = len < op.data.nbytes ? len : op.data.nbytes;
+>  
+> -		op.addr.val += op.data.nbytes;
+> -		remaining -= op.data.nbytes;
+> -		op.data.buf.out += op.data.nbytes;
+> -	}
+> +	ret = spi_mem_exec_op(flash->spimem, &op);
+> +	if (ret)
+> +		return ret;
+>  
+> -	return len;
+> +	return op.data.nbytes;
+>  }
+>  
+>  /*
+> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+> index 5bfa36e..3e63543 100644
+> --- a/drivers/mtd/spi-nor/spi-nor.c
+> +++ b/drivers/mtd/spi-nor/spi-nor.c
+> @@ -1431,13 +1431,6 @@ static int spi_nor_write(struct mtd_info *mtd, loff_t to, size_t len,
+>  			goto write_err;
+>  		*retlen += written;
+>  		i += written;
+> -		if (written != page_remain) {
+> -			dev_err(nor->dev,
+> -				"While writing %zu bytes written %zd bytes\n",
+> -				page_remain, written);
+> -			ret = -EIO;
+> -			goto write_err;
+> -		}
+>  	}
+>  
+>  write_err:
