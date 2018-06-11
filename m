@@ -5,196 +5,101 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id DA481C004E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 22:57:10 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9A9EFC004E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 23:00:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87F57208AE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 22:57:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87F57208AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ens-lyon.org
+	by mail.kernel.org (Postfix) with ESMTP id 56F4B20869
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 23:00:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56F4B20869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754271AbeFKW5I (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 18:57:08 -0400
-Received: from hera.aquilenet.fr ([185.233.100.1]:40850 "EHLO
-        hera.aquilenet.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751234AbeFKW5H (ORCPT
+        id S932733AbeFKXAE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 19:00:04 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:42259 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752521AbeFKXAD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 18:57:07 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by hera.aquilenet.fr (Postfix) with ESMTP id BDA8AE4D;
-        Tue, 12 Jun 2018 00:57:04 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at aquilenet.fr
-Received: from hera.aquilenet.fr ([127.0.0.1])
-        by localhost (hera.aquilenet.fr [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id HG29ISmkqy8T; Tue, 12 Jun 2018 00:57:04 +0200 (CEST)
-Received: from var.youpi.perso.aquilenet.fr (static-176-158-111-12.ftth.abo.bbox.fr [176.158.111.12])
-        by hera.aquilenet.fr (Postfix) with ESMTPSA id E126EE4C;
-        Tue, 12 Jun 2018 00:57:03 +0200 (CEST)
-Received: from samy by var.youpi.perso.aquilenet.fr with local (Exim 4.91)
-        (envelope-from <samuel.thibault@ens-lyon.org>)
-        id 1fSVkF-0004Lb-5g; Tue, 12 Jun 2018 00:57:03 +0200
-Date:   Tue, 12 Jun 2018 00:57:03 +0200
-From:   Samuel Thibault <samuel.thibault@ens-lyon.org>
-To:     "Speakup is a screen review system for Linux." 
-        <speakup@linux-speakup.org>, devel@driverdev.osuosl.org,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: speakup: refactor synths array to use a list
-Message-ID: <20180611225703.csi47cdafhy6rxcf@var.youpi.perso.aquilenet.fr>
-Mail-Followup-To: Samuel Thibault <samuel.thibault@ens-lyon.org>,
-        "Speakup is a screen review system for Linux." <speakup@linux-speakup.org>,
-        devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org
-References: <20180604095212.GA18381@tanglefoot>
- <20180606132628.fxykchbznrwzgwqt@var.youpi.perso.aquilenet.fr>
+        Mon, 11 Jun 2018 19:00:03 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fSVn5-0004X2-51; Mon, 11 Jun 2018 16:59:59 -0600
+Received: from 97-119-124-205.omah.qwest.net ([97.119.124.205] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fSVmp-0000Io-PW; Mon, 11 Jun 2018 16:59:59 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Jarrett Farnitano <jmf@amazon.com>
+Cc:     kexec@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <1528738546-3328-1-git-send-email-jmf@amazon.com>
+Date:   Mon, 11 Jun 2018 17:59:38 -0500
+In-Reply-To: <1528738546-3328-1-git-send-email-jmf@amazon.com> (Jarrett
+        Farnitano's message of "Mon, 11 Jun 2018 10:35:46 -0700")
+Message-ID: <87po0xszdx.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="55pr6ffpo36jsalk"
-Content-Disposition: inline
-In-Reply-To: <20180606132628.fxykchbznrwzgwqt@var.youpi.perso.aquilenet.fr>
-Organization: I am not organized
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
+X-XM-SPF: eid=1fSVmp-0000Io-PW;;;mid=<87po0xszdx.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.124.205;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/UrLcihne018q8nuuuMn+yb4xhcWbgXsY=
+X-SA-Exim-Connect-IP: 97.119.124.205
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH] kexec: yield to scheduler when loading kimage segments
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Jarrett Farnitano <jmf@amazon.com> writes:
 
---55pr6ffpo36jsalk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Without yielding while loading kimage segments, a large initrd
+> will block all other work on the CPU performing the load until
+> it is completed. For example loading an initrd of 200MB on a
+> low power single core system will lock up the system for a few
+> seconds.
+>
+> To increase system responsiveness to other tasks at that time,
+> call cond_resched() in both the crash kernel and normal kernel
+> segment loading loops.
 
-Hello,
+I remember years ago something like this was proposed and there was a
+reason we did not include it.  I don't remember what that reason is
+right now.  But I am reluctant to ack this until I remember.
 
-Samuel Thibault, le mer. 06 juin 2018 15:26:28 +0200, a ecrit:
-> I'd also rather see it tested in the real wild before committing. Could
-> somebody on the speakup mailing list test the patch? (which I have
-> re-attached as a file for conveniency).
+Is there a practical problem with unresponsiveness?  You are talking
+an embedded machine and rarely are there people in front of embedded
+computers these days.
 
-Anybody up for testing please?
+Eric
 
-If people want to see speakup get mainlined instead of staging, please
-help.
-
-Samuel
-
---55pr6ffpo36jsalk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename=patch
-
----
- drivers/staging/speakup/spk_types.h |  2 ++
- drivers/staging/speakup/synth.c     | 40 ++++++++++-------------------
- 2 files changed, 15 insertions(+), 27 deletions(-)
-
-diff --git a/drivers/staging/speakup/spk_types.h b/drivers/staging/speakup/spk_types.h
-index 3e082dc3d45c..a2fc72c29894 100644
---- a/drivers/staging/speakup/spk_types.h
-+++ b/drivers/staging/speakup/spk_types.h
-@@ -160,6 +160,8 @@ struct spk_io_ops {
- };
- 
- struct spk_synth {
-+	struct list_head node;
-+
- 	const char *name;
- 	const char *version;
- 	const char *long_name;
-diff --git a/drivers/staging/speakup/synth.c b/drivers/staging/speakup/synth.c
-index 7deeb7061018..25f259ee4ffc 100644
---- a/drivers/staging/speakup/synth.c
-+++ b/drivers/staging/speakup/synth.c
-@@ -18,8 +18,7 @@
- #include "speakup.h"
- #include "serialio.h"
- 
--#define MAXSYNTHS       16      /* Max number of synths in array. */
--static struct spk_synth *synths[MAXSYNTHS + 1];
-+static LIST_HEAD(synths);
- struct spk_synth *synth;
- char spk_pitch_buff[32] = "";
- static int module_status;
-@@ -355,9 +354,8 @@ struct var_t synth_time_vars[] = {
- /* called by: speakup_init() */
- int synth_init(char *synth_name)
- {
--	int i;
- 	int ret = 0;
--	struct spk_synth *synth = NULL;
-+	struct spk_synth *tmp, *synth = NULL;
- 
- 	if (!synth_name)
- 		return 0;
-@@ -371,9 +369,10 @@ int synth_init(char *synth_name)
- 
- 	mutex_lock(&spk_mutex);
- 	/* First, check if we already have it loaded. */
--	for (i = 0; i < MAXSYNTHS && synths[i]; i++)
--		if (strcmp(synths[i]->name, synth_name) == 0)
--			synth = synths[i];
-+	list_for_each_entry(tmp, &synths, node) {
-+		if (strcmp(tmp->name, synth_name) == 0)
-+			synth = tmp;
-+	}
- 
- 	/* If we got one, initialize it now. */
- 	if (synth)
-@@ -448,29 +447,23 @@ void synth_release(void)
- /* called by: all_driver_init() */
- int synth_add(struct spk_synth *in_synth)
- {
--	int i;
- 	int status = 0;
-+	struct spk_synth *tmp;
- 
- 	mutex_lock(&spk_mutex);
--	for (i = 0; i < MAXSYNTHS && synths[i]; i++)
--		/* synth_remove() is responsible for rotating the array down */
--		if (in_synth == synths[i]) {
-+
-+	list_for_each_entry(tmp, &synths, node) {
-+		if (tmp == in_synth) {
- 			mutex_unlock(&spk_mutex);
- 			return 0;
- 		}
--	if (i == MAXSYNTHS) {
--		pr_warn("Error: attempting to add a synth past end of array\n");
--		mutex_unlock(&spk_mutex);
--		return -1;
- 	}
- 
- 	if (in_synth->startup)
- 		status = do_synth_init(in_synth);
- 
--	if (!status) {
--		synths[i++] = in_synth;
--		synths[i] = NULL;
--	}
-+	if (!status)
-+		list_add_tail(&in_synth->node, &synths);
- 
- 	mutex_unlock(&spk_mutex);
- 	return status;
-@@ -479,17 +472,10 @@ EXPORT_SYMBOL_GPL(synth_add);
- 
- void synth_remove(struct spk_synth *in_synth)
- {
--	int i;
--
- 	mutex_lock(&spk_mutex);
- 	if (synth == in_synth)
- 		synth_release();
--	for (i = 0; synths[i]; i++) {
--		if (in_synth == synths[i])
--			break;
--	}
--	for ( ; synths[i]; i++) /* compress table */
--		synths[i] = synths[i + 1];
-+	list_del(&in_synth->node);
- 	module_status = 0;
- 	mutex_unlock(&spk_mutex);
- }
--- 
-2.17.1
-
---55pr6ffpo36jsalk--
+> Signed-off-by: Jarrett Farnitano <jmf@amazon.com>
+> ---
+>  kernel/kexec_core.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+> index 5616755..8ee07d6 100644
+> --- a/kernel/kexec_core.c
+> +++ b/kernel/kexec_core.c
+> @@ -783,6 +783,8 @@ static int kimage_load_normal_segment(struct kimage *image,
+>  		else
+>  			buf += mchunk;
+>  		mbytes -= mchunk;
+> +
+> +		cond_resched();
+>  	}
+>  out:
+>  	return result;
+> @@ -847,6 +849,8 @@ static int kimage_load_crash_segment(struct kimage *image,
+>  		else
+>  			buf += mchunk;
+>  		mbytes -= mchunk;
+> +
+> +		cond_resched();
+>  	}
+>  out:
+>  	return result;
