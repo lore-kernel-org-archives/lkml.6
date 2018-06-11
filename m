@@ -1,93 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id fSPyBXZEGVslFAAAmS7hNA
-	; Thu, 07 Jun 2018 14:46:36 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id k0KlMnWZHlsmSgAAmS7hNA
+	; Mon, 11 Jun 2018 15:47:22 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 75035608BA; Thu,  7 Jun 2018 14:46:36 +0000 (UTC)
+	id 7B364607E4; Mon, 11 Jun 2018 15:47:22 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id BA3A5607DC;
-	Thu,  7 Jun 2018 14:46:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BA3A5607DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id BFBF3607A4;
+	Mon, 11 Jun 2018 15:47:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BFBF3607A4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=holtmann.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934997AbeFGOqc (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:46:32 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40770 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934984AbeFGOq3 (ORCPT
+        id S933051AbeFKPrU convert rfc822-to-8bit (ORCPT
+        <rfc822;monsieuricon@codeaurora.org> + 20 others);
+        Mon, 11 Jun 2018 11:47:20 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:43311 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932399AbeFKPrR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:46:29 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbQ-0005Zw-E2; Thu, 07 Jun 2018 15:09:24 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbC-0003Cy-7r; Thu, 07 Jun 2018 15:09:10 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Teijo Kinnunen" <teijo.kinnunen@code-q.fi>,
-        "Alan Stern" <stern@rowland.harvard.edu>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.14668338@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 337/410] USB: storage: Add JMicron bridge 152d:2567
- to unusual_devs.h
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Mon, 11 Jun 2018 11:47:17 -0400
+Received: from marcel-macpro.fritz.box (p5B3D24B5.dip0.t-ipconnect.de [91.61.36.181])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 0D537CF186;
+        Mon, 11 Jun 2018 17:53:58 +0200 (CEST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.4 \(3445.8.2\))
+Subject: Re: [PATCH] Bluetooth: hci_bcm: Configure SCO routing automatically
+From: Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <CAL_Jsq+a93Rpf3UAPBQ5QmA8KavberGXz76WCiZ7feHH5GgcDA@mail.gmail.com>
+Date: Mon, 11 Jun 2018 17:47:14 +0200
+Cc: =?utf-8?B?QXR0aWxhIFTFkWvDqXM=?= <attitokes@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Artiom Vaskov <velemas@gmail.com>,
+        netdev <netdev@vger.kernel.org>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <4F0D6729-AE77-47D4-9765-FBC44181D4DE@holtmann.org>
+References: <280FCB2C-6DF1-4790-A89F-AF5BE3513AE5@holtmann.org>
+ <20180608162009.22762-1-attitokes@gmail.com>
+ <CAL_JsqKGeCEBBLNQNdymQovknRM7zt4+nNJy0YSkxRicOxkCSg@mail.gmail.com>
+ <CAMoM21HshLyv+Np1vOKYTAunsPCazyP-WESiaheNXHsC078S8g@mail.gmail.com>
+ <CAL_Jsq+a93Rpf3UAPBQ5QmA8KavberGXz76WCiZ7feHH5GgcDA@mail.gmail.com>
+To: Rob Herring <robh+dt@kernel.org>
+X-Mailer: Apple Mail (2.3445.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+Hi Rob,
 
-------------------
+>>>> Added support to automatically configure the SCO packet routing at the
+>>>> device setup. The SCO packets are used with the HSP / HFP profiles, but in
+>>>> some devices (ex. CYW43438) they are routed to a PCM output by default. This
+>>>> change allows sending the vendor specific HCI command to configure the SCO
+>>>> routing. The parameters of the command are loaded from the device tree.
+>>> 
+>>> Please wrap your commit msg.
+>> 
+>> 
+>> Sure.
+>>> 
+>>> 
+>>>> 
+>>>> Signed-off-by: Attila Tőkés <attitokes@gmail.com>
+>>>> ---
+>>>> .../bindings/net/broadcom-bluetooth.txt       |  7 ++
+>>> 
+>>> Please split bindings to separate patch.
+>> 
+>> 
+>> Ok, I will split this in two.
+>>> 
+>>> 
+>>> 
+>>> 
+>>>> drivers/bluetooth/hci_bcm.c                   | 72 +++++++++++++++++++
+>>>> 2 files changed, 79 insertions(+)
+>>>> 
+>>>> diff --git
+>>>> a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
+>>>> b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
+>>>> index 4194ff7e..aea3a094 100644
+>>>> --- a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
+>>>> +++ b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
+>>>> @@ -21,6 +21,12 @@ Optional properties:
+>>>>  - clocks: clock specifier if external clock provided to the controller
+>>>>  - clock-names: should be "extclk"
+>>>> 
+>>>> + SCO routing parameters:
+>>>> + - sco-routing: 0-3 (PCM, Transport, Codec, I2S)
+>>>> + - pcm-interface-rate: 0-4 (128 Kbps - 2048 Kbps)
+>>>> + - pcm-frame-type: 0 (short), 1 (long)
+>>>> + - pcm-sync-mode: 0 (slave), 1 (master)
+>>>> + - pcm-clock-mode: 0 (slave), 1 (master)
+>>> 
+>>> Are these Broadcom specific? Properties need either vendor prefix or
+>>> to be documented in a common location. I think these look like the
+>>> latter.
+>> 
+>> 
+>> These will be used as parameters of a vendor specific (Broadcom/Cypress)
+>> command configuring the SCO packet routing. See the Write_SCO_PCM_Int_Param
+>> command from: http://www.cypress.com/file/298311/download.
+> 
+> The DT should just describe how the h/w is hooked-up. What the s/w has
+> to do based on that is the driver's problem which is certainly
+> vendor/chip specific, but that is all irrelevant to the binding.
+> 
+>> What would be the property names with a Broadcom / Cypress vendor prefix?
+>> 
+>>    brcm,sco-routing
+>>    brcm,pcm-interface-rate
+>>    brcm,pcm-frame-type
+>>    brcm,pcm-sync-mode
+>>    brcm,pcm-clock-mode
+>> 
+>> ?
+> 
+> Yes.
 
-From: Teijo Kinnunen <teijo.kinnunen@code-q.fi>
+we can do this. However all pcm-* are optional if you switch the HCI transport. And sco-routing should default to HCI if that is not present. Meaning a driver should actively trying to change this. Nevertheless, it would be good if a driver reads the current settings.
 
-commit 5126a504b63d82785eaece3a9c30c660b313785a upstream.
+In theory we could make sco-routing generic, but so many vendors have different modes, that we better keep this vendor specific.
 
-This USB-SATA controller seems to be similar with JMicron bridge
-152d:2566 already on the list. Adding it here fixes "Invalid
-field in cdb" errors.
+Regards
 
-Signed-off-by: Teijo Kinnunen <teijo.kinnunen@code-q.fi>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- drivers/usb/storage/unusual_devs.h | 7 +++++++
- 1 file changed, 7 insertions(+)
-
---- a/drivers/usb/storage/unusual_devs.h
-+++ b/drivers/usb/storage/unusual_devs.h
-@@ -2004,6 +2004,13 @@ UNUSUAL_DEV(  0x152d, 0x2566, 0x0114, 0x
- 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
- 		US_FL_BROKEN_FUA ),
- 
-+/* Reported by Teijo Kinnunen <teijo.kinnunen@code-q.fi> */
-+UNUSUAL_DEV(  0x152d, 0x2567, 0x0117, 0x0117,
-+		"JMicron",
-+		"USB to ATA/ATAPI Bridge",
-+		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
-+		US_FL_BROKEN_FUA ),
-+
- /* Reported-by George Cherian <george.cherian@cavium.com> */
- UNUSUAL_DEV(0x152d, 0x9561, 0x0000, 0x9999,
- 		"JMicron",
+Marcel
