@@ -1,336 +1,283 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Qec+HtCDHluRFwAAmS7hNA
-	; Mon, 11 Jun 2018 14:15:53 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id euA9CBVGHluVewAAmS7hNA
+	; Mon, 11 Jun 2018 09:51:17 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 377F4607A4; Mon, 11 Jun 2018 14:15:53 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oaKxgdPG"
+	id 024EA607A4; Mon, 11 Jun 2018 09:51:17 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 8340860351;
-	Mon, 11 Jun 2018 14:15:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8340860351
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 4171D60385;
+	Mon, 11 Jun 2018 09:51:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4171D60385
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933576AbeFKOHB (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 10:07:01 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45116 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933490AbeFKOGs (ORCPT
+        id S932816AbeFKJvP (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 05:51:15 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:37227 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932641AbeFKJvN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:06:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=KfXYsnltZL+rtjCiw7RQ68iU+U85ftipb5d8695MkPs=; b=oaKxgdPGojGzt+8MZ5TkVyNJp
-        4iWHNzcCOmlbVPkaOxKq8Wa/D7kVUW+xhAL+oIHQigrULSIGILcHFGMkpXDOTZ2R+0L4Tn1JYqtI1
-        Jyk9huwIrk9YfUCjmKePNhNT6dlVxNeQfnudJuCGHdeo6c98ny+ji5KvNbGKMReSfztYmiIy7wvSe
-        zVv/P+tlSkNbz9lwtj+pTbj2rtCcZBxXrdmEyOwJQxgLMDns3CIp22nftLkOmHTH4F71xvbOM6kbJ
-        +J8nETYZAGxqKkpZZWIDbKIs2iKq7DyynWrNWSrAuG9UcPre0SIjqoaZcS7hACmPlsiSkCDd1IeKp
-        68pDyZu5A==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSNT5-0004e9-VL; Mon, 11 Jun 2018 14:06:47 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Lukas Czerner <lczerner@redhat.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v13 21/72] page cache: Add and replace pages using the XArray
-Date: Mon, 11 Jun 2018 07:05:48 -0700
-Message-Id: <20180611140639.17215-22-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
-References: <20180611140639.17215-1-willy@infradead.org>
+        Mon, 11 Jun 2018 05:51:13 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5B9nZ3t008471;
+        Mon, 11 Jun 2018 11:50:42 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2jg4bwga7e-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 11 Jun 2018 11:50:42 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B174543;
+        Mon, 11 Jun 2018 09:50:41 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8BBA724DF;
+        Mon, 11 Jun 2018 09:50:41 +0000 (GMT)
+Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by Safex1hubcas22.st.com
+ (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 11 Jun
+ 2018 11:50:41 +0200
+Received: from localhost (10.201.23.73) by webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 11 Jun 2018 11:50:40
+ +0200
+From: Hugues Fruchet <hugues.fruchet@st.com>
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Hans Verkuil" <hverkuil@xs4all.nl>
+CC: <linux-media@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Hugues Fruchet <hugues.fruchet@st.com>
+Subject: [PATCH 4/4] media: stm32-dcmi: revisit buffer list management
+Date: Mon, 11 Jun 2018 11:50:27 +0200
+Message-ID: <1528710627-8566-5-git-send-email-hugues.fruchet@st.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1528710627-8566-1-git-send-email-hugues.fruchet@st.com>
+References: <1528710627-8566-1-git-send-email-hugues.fruchet@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.201.23.73]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-11_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+Cleanup "active" field usage and enhance list management
+to avoid exceptions when releasing buffers on error or
+stopping streaming.
 
-Use the XArray APIs to add and replace pages in the page cache.  This
-removes two uses of the radix tree preload API and is significantly
-shorter code.  It also removes the last user of __radix_tree_create()
-outside radix-tree.c itself, so make it static.
-
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+Signed-off-by: Hugues Fruchet <hugues.fruchet@st.com>
 ---
- include/linux/radix-tree.h |   3 -
- include/linux/swap.h       |   8 ++-
- lib/radix-tree.c           |   6 +-
- mm/filemap.c               | 139 +++++++++++++++----------------------
- 4 files changed, 66 insertions(+), 90 deletions(-)
+ drivers/media/platform/stm32/stm32-dcmi.c | 65 +++++++++++++++----------------
+ 1 file changed, 31 insertions(+), 34 deletions(-)
 
-diff --git a/include/linux/radix-tree.h b/include/linux/radix-tree.h
-index f64beb9ba175..4b6f685309fc 100644
---- a/include/linux/radix-tree.h
-+++ b/include/linux/radix-tree.h
-@@ -231,9 +231,6 @@ static inline int radix_tree_exception(void *arg)
- 	return unlikely((unsigned long)arg & RADIX_TREE_ENTRY_MASK);
+diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
+index 93bb03a..581ded0 100644
+--- a/drivers/media/platform/stm32/stm32-dcmi.c
++++ b/drivers/media/platform/stm32/stm32-dcmi.c
+@@ -191,7 +191,7 @@ static inline void reg_clear(void __iomem *base, u32 reg, u32 mask)
+ 	reg_write(base, reg, reg_read(base, reg) & ~mask);
  }
  
--int __radix_tree_create(struct radix_tree_root *, unsigned long index,
--			unsigned order, struct radix_tree_node **nodep,
--			void __rcu ***slotp);
- int __radix_tree_insert(struct radix_tree_root *, unsigned long index,
- 			unsigned order, void *);
- static inline int radix_tree_insert(struct radix_tree_root *root,
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index f73eafcaf4e9..1b91e7f7bdeb 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -300,8 +300,12 @@ void *workingset_eviction(struct address_space *mapping, struct page *page);
- bool workingset_refault(void *shadow);
- void workingset_activation(struct page *page);
+-static int dcmi_start_capture(struct stm32_dcmi *dcmi);
++static int dcmi_start_capture(struct stm32_dcmi *dcmi, struct dcmi_buf *buf);
  
--/* Do not use directly, use workingset_lookup_update */
--void workingset_update_node(struct radix_tree_node *node);
-+/* Only track the nodes of mappings with shadow entries */
-+void workingset_update_node(struct xa_node *node);
-+#define mapping_set_update(xas, mapping) do {				\
-+	if (!dax_mapping(mapping) && !shmem_mapping(mapping))		\
-+		xas_set_update(xas, workingset_update_node);		\
-+} while (0)
+ static void dcmi_buffer_done(struct stm32_dcmi *dcmi,
+ 			     struct dcmi_buf *buf,
+@@ -203,6 +203,8 @@ static void dcmi_buffer_done(struct stm32_dcmi *dcmi,
+ 	if (!buf)
+ 		return;
  
- /* Returns workingset_update_node() if the mapping has shadow entries. */
- #define workingset_lookup_update(mapping)				\
-diff --git a/lib/radix-tree.c b/lib/radix-tree.c
-index f7785f7cbd5f..5c8a262f506c 100644
---- a/lib/radix-tree.c
-+++ b/lib/radix-tree.c
-@@ -740,9 +740,9 @@ static bool delete_node(struct radix_tree_root *root,
-  *
-  *	Returns -ENOMEM, or 0 for success.
-  */
--int __radix_tree_create(struct radix_tree_root *root, unsigned long index,
--			unsigned order, struct radix_tree_node **nodep,
--			void __rcu ***slotp)
-+static int __radix_tree_create(struct radix_tree_root *root,
-+		unsigned long index, unsigned order,
-+		struct radix_tree_node **nodep, void __rcu ***slotp)
++	list_del_init(&buf->list);
++
+ 	vbuf = &buf->vb;
+ 
+ 	vbuf->sequence = dcmi->sequence++;
+@@ -220,6 +222,8 @@ static void dcmi_buffer_done(struct stm32_dcmi *dcmi,
+ 
+ static int dcmi_restart_capture(struct stm32_dcmi *dcmi)
  {
- 	struct radix_tree_node *node = NULL, *child;
- 	void __rcu **slot = (void __rcu **)&root->xa_head;
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 8de36e14e22f..965ff68e5b8d 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -111,35 +111,6 @@
-  *   ->tasklist_lock            (memory_failure, collect_procs_ao)
-  */
++	struct dcmi_buf *buf;
++
+ 	spin_lock_irq(&dcmi->irqlock);
  
--static int page_cache_tree_insert(struct address_space *mapping,
--				  struct page *page, void **shadowp)
--{
--	struct radix_tree_node *node;
--	void **slot;
--	int error;
+ 	if (dcmi->state != RUNNING) {
+@@ -230,19 +234,16 @@ static int dcmi_restart_capture(struct stm32_dcmi *dcmi)
+ 	/* Restart a new DMA transfer with next buffer */
+ 	if (list_empty(&dcmi->buffers)) {
+ 		dev_dbg(dcmi->dev, "Capture restart is deferred to next buffer queueing\n");
+-		dcmi->active = NULL;
+ 		dcmi->state = WAIT_FOR_BUFFER;
+ 		spin_unlock_irq(&dcmi->irqlock);
+ 		return 0;
+ 	}
 -
--	error = __radix_tree_create(&mapping->i_pages, page->index, 0,
--				    &node, &slot);
--	if (error)
--		return error;
--	if (*slot) {
--		void *p;
--
--		p = radix_tree_deref_slot_protected(slot,
--						    &mapping->i_pages.xa_lock);
--		if (!xa_is_value(p))
--			return -EEXIST;
--
--		mapping->nrexceptional--;
--		if (shadowp)
--			*shadowp = p;
--	}
--	__radix_tree_replace(&mapping->i_pages, node, slot, page,
--			     workingset_lookup_update(mapping));
--	mapping->nrpages++;
--	return 0;
--}
--
- static void page_cache_tree_delete(struct address_space *mapping,
- 				   struct page *page, void *shadow)
- {
-@@ -775,51 +746,44 @@ EXPORT_SYMBOL(file_write_and_wait_range);
-  * locked.  This function does not add the new page to the LRU, the
-  * caller must do that.
-  *
-- * The remove + add is atomic.  The only way this function can fail is
-- * memory allocation failure.
-+ * The remove + add is atomic.  This function cannot fail.
-  */
- int replace_page_cache_page(struct page *old, struct page *new, gfp_t gfp_mask)
- {
--	int error;
-+	struct address_space *mapping = old->mapping;
-+	void (*freepage)(struct page *) = mapping->a_ops->freepage;
-+	pgoff_t offset = old->index;
-+	XA_STATE(xas, &mapping->i_pages, offset);
-+	unsigned long flags;
+-	dcmi->active = list_entry(dcmi->buffers.next,
+-				  struct dcmi_buf, list);
+-	list_del_init(&dcmi->active->list);
++	buf = list_entry(dcmi->buffers.next, struct dcmi_buf, list);
++	dcmi->active = buf;
  
- 	VM_BUG_ON_PAGE(!PageLocked(old), old);
- 	VM_BUG_ON_PAGE(!PageLocked(new), new);
- 	VM_BUG_ON_PAGE(new->mapping, new);
+ 	spin_unlock_irq(&dcmi->irqlock);
  
--	error = radix_tree_preload(gfp_mask & GFP_RECLAIM_MASK);
--	if (!error) {
--		struct address_space *mapping = old->mapping;
--		void (*freepage)(struct page *);
--		unsigned long flags;
--
--		pgoff_t offset = old->index;
--		freepage = mapping->a_ops->freepage;
-+	get_page(new);
-+	new->mapping = mapping;
-+	new->index = offset;
- 
--		get_page(new);
--		new->mapping = mapping;
--		new->index = offset;
-+	xas_lock_irqsave(&xas, flags);
-+	xas_store(&xas, new);
- 
--		xa_lock_irqsave(&mapping->i_pages, flags);
--		__delete_from_page_cache(old, NULL);
--		error = page_cache_tree_insert(mapping, new, NULL);
--		BUG_ON(error);
--
--		/*
--		 * hugetlb pages do not participate in page cache accounting.
--		 */
--		if (!PageHuge(new))
--			__inc_node_page_state(new, NR_FILE_PAGES);
--		if (PageSwapBacked(new))
--			__inc_node_page_state(new, NR_SHMEM);
--		xa_unlock_irqrestore(&mapping->i_pages, flags);
--		mem_cgroup_migrate(old, new);
--		radix_tree_preload_end();
--		if (freepage)
--			freepage(old);
--		put_page(old);
--	}
-+	old->mapping = NULL;
-+	/* hugetlb pages do not participate in page cache accounting. */
-+	if (!PageHuge(old))
-+		__dec_node_page_state(new, NR_FILE_PAGES);
-+	if (!PageHuge(new))
-+		__inc_node_page_state(new, NR_FILE_PAGES);
-+	if (PageSwapBacked(old))
-+		__dec_node_page_state(new, NR_SHMEM);
-+	if (PageSwapBacked(new))
-+		__inc_node_page_state(new, NR_SHMEM);
-+	xas_unlock_irqrestore(&xas, flags);
-+	mem_cgroup_migrate(old, new);
-+	if (freepage)
-+		freepage(old);
-+	put_page(old);
- 
--	return error;
-+	return 0;
+-	return dcmi_start_capture(dcmi);
++	return dcmi_start_capture(dcmi, buf);
  }
- EXPORT_SYMBOL_GPL(replace_page_cache_page);
  
-@@ -828,12 +792,15 @@ static int __add_to_page_cache_locked(struct page *page,
- 				      pgoff_t offset, gfp_t gfp_mask,
- 				      void **shadowp)
+ static void dcmi_dma_callback(void *param)
+@@ -252,6 +253,8 @@ static void dcmi_dma_callback(void *param)
+ 	enum dma_status status;
+ 	struct dcmi_buf *buf = dcmi->active;
+ 
++	spin_lock_irq(&dcmi->irqlock);
++
+ 	/* Check DMA status */
+ 	status = dmaengine_tx_status(dcmi->dma_chan, dcmi->dma_cookie, &state);
+ 
+@@ -274,15 +277,19 @@ static void dcmi_dma_callback(void *param)
+ 		/* Return buffer to V4L2 */
+ 		dcmi_buffer_done(dcmi, buf, buf->size, 0);
+ 
++		spin_unlock_irq(&dcmi->irqlock);
++
+ 		/* Restart capture */
+ 		if (dcmi_restart_capture(dcmi))
+ 			dev_err(dcmi->dev, "%s: Cannot restart capture on DMA complete\n",
+ 				__func__);
+-		break;
++		return;
+ 	default:
+ 		dev_err(dcmi->dev, "%s: Received unknown status\n", __func__);
+ 		break;
+ 	}
++
++	spin_unlock_irq(&dcmi->irqlock);
+ }
+ 
+ static int dcmi_start_dma(struct stm32_dcmi *dcmi,
+@@ -334,10 +341,9 @@ static int dcmi_start_dma(struct stm32_dcmi *dcmi,
+ 	return 0;
+ }
+ 
+-static int dcmi_start_capture(struct stm32_dcmi *dcmi)
++static int dcmi_start_capture(struct stm32_dcmi *dcmi, struct dcmi_buf *buf)
  {
-+	XA_STATE(xas, &mapping->i_pages, offset);
- 	int huge = PageHuge(page);
- 	struct mem_cgroup *memcg;
- 	int error;
-+	void *old;
+ 	int ret;
+-	struct dcmi_buf *buf = dcmi->active;
  
- 	VM_BUG_ON_PAGE(!PageLocked(page), page);
- 	VM_BUG_ON_PAGE(PageSwapBacked(page), page);
-+	mapping_set_update(&xas, mapping);
+ 	if (!buf)
+ 		return -EINVAL;
+@@ -491,8 +497,6 @@ static int dcmi_queue_setup(struct vb2_queue *vq,
+ 	*nplanes = 1;
+ 	sizes[0] = size;
  
- 	if (!huge) {
- 		error = mem_cgroup_try_charge(page, current->mm,
-@@ -842,39 +809,47 @@ static int __add_to_page_cache_locked(struct page *page,
- 			return error;
+-	dcmi->active = NULL;
+-
+ 	dev_dbg(dcmi->dev, "Setup queue, count=%d, size=%d\n",
+ 		*nbuffers, size);
+ 
+@@ -550,23 +554,24 @@ static void dcmi_buf_queue(struct vb2_buffer *vb)
+ 
+ 	spin_lock_irq(&dcmi->irqlock);
+ 
+-		dcmi->active = buf;
++	/* Enqueue to video buffers list */
++	list_add_tail(&buf->list, &dcmi->buffers);
+ 
+ 	if (dcmi->state == WAIT_FOR_BUFFER) {
+ 		dcmi->state = RUNNING;
++		dcmi->active = buf;
+ 
+ 		dev_dbg(dcmi->dev, "Starting capture on buffer[%d] queued\n",
+ 			buf->vb.vb2_buf.index);
+ 
+ 		spin_unlock_irq(&dcmi->irqlock);
+-		if (dcmi_start_capture(dcmi))
++		if (dcmi_start_capture(dcmi, buf))
+ 			dev_err(dcmi->dev, "%s: Cannot restart capture on overflow or error\n",
+ 				__func__);
+-	} else {
+-		/* Enqueue to video buffers list */
+-		list_add_tail(&buf->list, &dcmi->buffers);
+-		spin_unlock_irq(&dcmi->irqlock);
++		return;
+ 	}
++
++	spin_unlock_irq(&dcmi->irqlock);
+ }
+ 
+ static int dcmi_start_streaming(struct vb2_queue *vq, unsigned int count)
+@@ -638,7 +643,6 @@ static int dcmi_start_streaming(struct vb2_queue *vq, unsigned int count)
+ 	dcmi->errors_count = 0;
+ 	dcmi->overrun_count = 0;
+ 	dcmi->buffers_count = 0;
+-	dcmi->active = NULL;
+ 
+ 	/*
+ 	 * Start transfer if at least one buffer has been queued,
+@@ -651,15 +655,15 @@ static int dcmi_start_streaming(struct vb2_queue *vq, unsigned int count)
+ 		return 0;
  	}
  
--	error = radix_tree_maybe_preload(gfp_mask & GFP_RECLAIM_MASK);
--	if (error) {
--		if (!huge)
--			mem_cgroup_cancel_charge(page, memcg, false);
--		return error;
--	}
+-	dcmi->active = list_entry(dcmi->buffers.next, struct dcmi_buf, list);
+-	list_del_init(&dcmi->active->list);
 -
- 	get_page(page);
- 	page->mapping = mapping;
- 	page->index = offset;
+-	dev_dbg(dcmi->dev, "Start streaming, starting capture\n");
++	buf = list_entry(dcmi->buffers.next, struct dcmi_buf, list);
++	dcmi->active = buf;
  
--	xa_lock_irq(&mapping->i_pages);
--	error = page_cache_tree_insert(mapping, page, shadowp);
--	radix_tree_preload_end();
--	if (unlikely(error))
--		goto err_insert;
-+	do {
-+		xas_lock_irq(&xas);
-+		old = xas_load(&xas);
-+		if (old && !xa_is_value(old))
-+			xas_set_err(&xas, -EEXIST);
-+		xas_store(&xas, page);
-+		if (xas_error(&xas))
-+			goto unlock;
-+
-+		if (xa_is_value(old)) {
-+			mapping->nrexceptional--;
-+			if (shadowp)
-+				*shadowp = old;
-+		}
-+		mapping->nrpages++;
-+
-+		/* hugetlb pages do not participate in page cache accounting */
-+		if (!huge)
-+			__inc_node_page_state(page, NR_FILE_PAGES);
-+unlock:
-+		xas_unlock_irq(&xas);
-+	} while (xas_nomem(&xas, gfp_mask & GFP_RECLAIM_MASK));
-+
-+	if (xas_error(&xas))
-+		goto error;
+ 	dcmi->state = RUNNING;
  
--	/* hugetlb pages do not participate in page cache accounting. */
--	if (!huge)
--		__inc_node_page_state(page, NR_FILE_PAGES);
--	xa_unlock_irq(&mapping->i_pages);
- 	if (!huge)
- 		mem_cgroup_commit_charge(page, memcg, false, false);
- 	trace_mm_filemap_add_to_page_cache(page);
- 	return 0;
--err_insert:
-+error:
- 	page->mapping = NULL;
- 	/* Leave page->index set: truncation relies upon it */
--	xa_unlock_irq(&mapping->i_pages);
- 	if (!huge)
- 		mem_cgroup_cancel_charge(page, memcg, false);
- 	put_page(page);
--	return error;
-+	return xas_error(&xas);
- }
++	dev_dbg(dcmi->dev, "Start streaming, starting capture\n");
++
+ 	spin_unlock_irq(&dcmi->irqlock);
+-	ret = dcmi_start_capture(dcmi);
++	ret = dcmi_start_capture(dcmi, buf);
+ 	if (ret) {
+ 		dev_err(dcmi->dev, "%s: Start streaming failed, cannot start capture\n",
+ 			__func__);
+@@ -683,15 +687,11 @@ static int dcmi_start_streaming(struct vb2_queue *vq, unsigned int count)
+ 	 * Return all buffers to vb2 in QUEUED state.
+ 	 * This will give ownership back to userspace
+ 	 */
+-	if (dcmi->active) {
+-		buf = dcmi->active;
+-		vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_QUEUED);
+-		dcmi->active = NULL;
+-	}
+ 	list_for_each_entry_safe(buf, node, &dcmi->buffers, list) {
+ 		list_del_init(&buf->list);
+ 		vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_QUEUED);
+ 	}
++	dcmi->active = NULL;
+ 	spin_unlock_irq(&dcmi->irqlock);
  
- /**
+ 	return ret;
+@@ -733,16 +733,13 @@ static void dcmi_stop_streaming(struct vb2_queue *vq)
+ 	}
+ 
+ 	/* Return all queued buffers to vb2 in ERROR state */
+-	if (dcmi->active) {
+-		buf = dcmi->active;
+-		vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_ERROR);
+-		dcmi->active = NULL;
+-	}
+ 	list_for_each_entry_safe(buf, node, &dcmi->buffers, list) {
+ 		list_del_init(&buf->list);
+ 		vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_ERROR);
+ 	}
+ 
++	dcmi->active = NULL;
++
+ 	spin_unlock_irq(&dcmi->irqlock);
+ 
+ 	/* Stop all pending DMA operations */
 -- 
-2.17.1
+1.9.1
