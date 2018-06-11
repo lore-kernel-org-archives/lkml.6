@@ -1,127 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id kKx5Lw5WGVvgOwAAmS7hNA
-	; Thu, 07 Jun 2018 15:58:53 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id oV1kIEmwHVu+XAAAmS7hNA
+	; Mon, 11 Jun 2018 00:05:55 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 116EB6089E; Thu,  7 Jun 2018 15:58:53 +0000 (UTC)
+	id 3605960791; Mon, 11 Jun 2018 00:05:55 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 4B8B360590;
-	Thu,  7 Jun 2018 15:58:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4B8B360590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 6CC05604D4;
+	Mon, 11 Jun 2018 00:05:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6CC05604D4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934539AbeFGP57 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:57:59 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39345 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933053AbeFGOJH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:09:07 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb7-0005Zw-Jy; Thu, 07 Jun 2018 15:09:05 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb3-0002vL-Nc; Thu, 07 Jun 2018 15:09:01 +0100
+        id S1753779AbeFKAFv (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Sun, 10 Jun 2018 20:05:51 -0400
+Received: from gate.crashing.org ([63.228.1.57]:39366 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753543AbeFKAFs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Jun 2018 20:05:48 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w5B05NhN007274;
+        Sun, 10 Jun 2018 19:05:25 -0500
+Message-ID: <22a505e0f094352b9cb883935fae9f494fb2cb0b.camel@kernel.crashing.org>
+Subject: Re: [PATCH v2 08/12] macintosh/via-pmu68k: Don't load driver on
+ unsupported hardware
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: Michael Schmitz <schmitzmic@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Finn Thain <fthain@telegraphics.com.au>
+Cc: Andreas Schwab <schwab@linux-m68k.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-m68k <linux-m68k@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date: Mon, 11 Jun 2018 10:05:22 +1000
+In-Reply-To: <3187b544-e265-dfd9-e0e3-e2a742c190d5@gmail.com>
+References: <cover.1528423341.git.fthain@telegraphics.com.au>
+         <d9d626ca4e7ac9c7e81b24a34f5fbcae9d1d5046.1528423341.git.fthain@telegraphics.com.au>
+         <9f015684-4d91-70e4-d2a4-89fe167ff8ab@gmail.com>
+         <m2h8mc4ejw.fsf@linux-m68k.org>
+         <e1006b0a-a429-4744-7525-203cb91f1d5f@gmail.com>
+         <alpine.LNX.2.21.1806092140410.26@nippy.intranet>
+         <CAMuHMdUHnFKzhe3x3=bG63HwnM7psu7AA=nba8q+nTDnxBAryw@mail.gmail.com>
+         <3187b544-e265-dfd9-e0e3-e2a742c190d5@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Max Schulze" <max.schulze@posteo.de>,
-        "Johan Hovold" <johan@kernel.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.863680991@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 155/410] USB: serial: simple: add Motorola Tetra driver
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+On Sun, 2018-06-10 at 21:12 +1200, Michael Schmitz wrote:
+> Hi Geert,
 
-------------------
+Top posting, sorry ...
 
-From: Johan Hovold <johan@kernel.org>
+We are painting that bike shed with way too many coats..
 
-commit 46fe895e22ab3845515ec06b01eaf1282b342e29 upstream.
+We can keep the existing definitions, stick a comment on them stating
+"obsolete" and use new number if/when needed.
 
-Add new Motorola Tetra (simple) driver for Motorola Solutions TETRA PEI
-devices.
+Ben.
 
-D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=0cad ProdID=9011 Rev=24.16
-S:  Manufacturer=Motorola Solutions Inc.
-S:  Product=Motorola Solutions TETRA PEI interface
-C:  #Ifs= 2 Cfg#= 1 Atr=80 MxPwr=500mA
-I:  If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=(none)
-I:  If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=(none)
 
-Note that these devices do not support the CDC SET_CONTROL_LINE_STATE
-request (for any interface).
-
-Reported-by: Max Schulze <max.schulze@posteo.de>
-Tested-by: Max Schulze <max.schulze@posteo.de>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- drivers/usb/serial/Kconfig             | 1 +
- drivers/usb/serial/usb-serial-simple.c | 7 +++++++
- 2 files changed, 8 insertions(+)
-
---- a/drivers/usb/serial/Kconfig
-+++ b/drivers/usb/serial/Kconfig
-@@ -63,6 +63,7 @@ config USB_SERIAL_SIMPLE
- 		- Google USB serial devices
- 		- HP4x calculators
- 		- a number of Motorola phones
-+		- Motorola Tetra devices
- 		- Novatel Wireless GPS receivers
- 		- Siemens USB/MPI adapter.
- 		- ViVOtech ViVOpay USB device.
---- a/drivers/usb/serial/usb-serial-simple.c
-+++ b/drivers/usb/serial/usb-serial-simple.c
-@@ -80,6 +80,11 @@ DEVICE(vivopay, VIVOPAY_IDS);
- 	{ USB_DEVICE(0x22b8, 0x2c64) }	/* Motorola V950 phone */
- DEVICE(moto_modem, MOTO_IDS);
- 
-+/* Motorola Tetra driver */
-+#define MOTOROLA_TETRA_IDS()			\
-+	{ USB_DEVICE(0x0cad, 0x9011) }	/* Motorola Solutions TETRA PEI */
-+DEVICE(motorola_tetra, MOTOROLA_TETRA_IDS);
-+
- /* Novatel Wireless GPS driver */
- #define NOVATEL_IDS()			\
- 	{ USB_DEVICE(0x09d7, 0x0100) }	/* NovAtel FlexPack GPS */
-@@ -110,6 +115,7 @@ static struct usb_serial_driver * const
- 	&google_device,
- 	&vivopay_device,
- 	&moto_modem_device,
-+	&motorola_tetra_device,
- 	&novatel_gps_device,
- 	&hp4x_device,
- 	&suunto_device,
-@@ -125,6 +131,7 @@ static const struct usb_device_id id_tab
- 	GOOGLE_IDS(),
- 	VIVOPAY_IDS(),
- 	MOTO_IDS(),
-+	MOTOROLA_TETRA_IDS(),
- 	NOVATEL_IDS(),
- 	HP4X_IDS(),
- 	SUUNTO_IDS(),
+> Am 10.06.2018 um 20:29 schrieb Geert Uytterhoeven:
+> > Hi Finn,
+> > 
+> > On Sat, Jun 9, 2018 at 2:20 PM Finn Thain <fthain@telegraphics.com.au> wrote:
+> > > > > > Is this enum used by any user space code? If so, perhaps rather
+> > > > > > leave the PMU_68K_V1 in there to avoid upsetting that?
+> > > > > 
+> > > > > It also changes the value of PMU_68K_V2, which is an ABI break.
+> > > > 
+> > > > Yes, that's what I worry about - but do we know of any users of that
+> > > > particular interface?
+> > > 
+> > > There is no ABI issue AFAIK. The value of pmu_kind is visible to userland
+> > > only on powerpc. /dev/pmu and /proc/pmu/* do not exist on m68k. This patch
+> > > series will make these UAPIs available on m68k, and for that reason I've
+> > > chosen the value PMU_UNKNOWN for pmu_kind.
+> > 
+> > While /dev/pmu and /proc/pmu/* may not exist on m68k, definitions in
+> > include/uapi/linux/pmu.h are part of the ABI, and cannot be changed or removed,
+> > unless we are 100% sure there are no users.
+> > 
+> > If I would write a program interfacing with /dev/pmu and /proc/pmu/*, and
+> > needing to check the PMU type, it would have a switch() statement with
+> > all existing values defined in <linux/pmu.h>. So that would become broken
+> > by your change.
+> > 
+> > Hence the enum is append-only.
+> 
+> The PMU type from pmu.h was never exposed to user space on m68k via 
+> /proc/pmu/*, and /dev/pmu is used for ioctls to the PMU driver on 
+> powerpc only (the 68k PMU driver doesn't have ioctl support). No way 
+> that I can see for user space to make use of the PMU type definition 
+> from pmu.h, so I suppose we can be sure there are no users.
+> 
+> The m68k PMU types cannot be said to be exposed on powerpc either (which 
+> has ioctl support to interrogate the PMU type), as these only return 
+> values up to PMU_KEYLARGO_BASED.
+> 
+> Applications like pbbuttonsd or pmud don't use the kernel PMU type at 
+> all, but go straight to the PMU via the ADB bus to interrogate the 
+> hardware type, so won't be affected either.
+> 
+> Is there any other way besides procfs and ioctl for user space to 
+> interrogate the PMU type that I'm missing here?
+> 
+> (I understand that breaking the ABI should not be done as a rule, but 
+> this may be a case where we can successfully argue the definitions were 
+> never in use, so the rules may be bent a little).
