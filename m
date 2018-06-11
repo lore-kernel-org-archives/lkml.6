@@ -1,247 +1,342 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id FccTL9tHGVs4QAAAmS7hNA
-	; Thu, 07 Jun 2018 14:57:53 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Hn6mMnleHlt1MQAAmS7hNA
+	; Mon, 11 Jun 2018 11:36:32 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 591B26074D; Thu,  7 Jun 2018 14:57:53 +0000 (UTC)
+	id 39DC760791; Mon, 11 Jun 2018 11:36:32 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 5FD96606DD;
-	Thu,  7 Jun 2018 14:57:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5FD96606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+	by smtp.codeaurora.org (Postfix) with ESMTP id 62BFA60541;
+	Mon, 11 Jun 2018 11:36:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 62BFA60541
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=lucaceresoli.net
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935231AbeFGO5u (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:57:50 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:44540 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S933027AbeFGO5s (ORCPT
+        id S933013AbeFKLgT (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 07:36:19 -0400
+Received: from srv-hp10-72.netsons.net ([94.141.22.72]:57458 "EHLO
+        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932894AbeFKLgP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:57:48 -0400
-Received: (qmail 2072 invoked by uid 2102); 7 Jun 2018 10:57:46 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 7 Jun 2018 10:57:46 -0400
-Date: Thu, 7 Jun 2018 10:57:46 -0400 (EDT)
-From: Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Roman Pen <roman.penyaev@profitbricks.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        <andrea.parri@amarulasolutions.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nick Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: LKMM litmus test for Roman Penyaev's rcu-rr
-In-Reply-To: <20180607094314.GF3593@linux.vnet.ibm.com>
-Message-ID: <Pine.LNX.4.44L0.1806071023440.1416-100000@iolanthe.rowland.org>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+        Mon, 11 Jun 2018 07:36:15 -0400
+Received: from [109.168.11.45] (port=54392 helo=pc-ceresoli.dev.aim)
+        by srv-hp10.netsons.net with esmtpa (Exim 4.89_1)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1fSL7M-00B1A2-Gu; Mon, 11 Jun 2018 13:36:12 +0200
+From: Luca Ceresoli <luca@lucaceresoli.net>
+To: linux-media@vger.kernel.org
+Cc: Luca Ceresoli <luca@lucaceresoli.net>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Leon Luo <leonl@leopardimaging.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 2/8] media: imx274: consolidate per-mode data in imx274_frmfmt
+Date: Mon, 11 Jun 2018 13:35:33 +0200
+Message-Id: <1528716939-17015-3-git-send-email-luca@lucaceresoli.net>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1528716939-17015-1-git-send-email-luca@lucaceresoli.net>
+References: <1528716939-17015-1-git-send-email-luca@lucaceresoli.net>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 7 Jun 2018, Paul E. McKenney wrote:
+Data about the implemented readout modes is partially stored in
+imx274_formats[], the rest is scattered in several arrays. The latter
+are then accessed using the mode index, e.g.:
 
-> On Wed, Jun 06, 2018 at 12:23:33PM -0700, Linus Torvalds wrote:
-> > On Wed, Jun 6, 2018 at 12:05 PM Paul E. McKenney
-> > <paulmck@linux.vnet.ibm.com> wrote:
-> > >
-> > > 3.      Introduce a new marking/attribute in the .def file that indicates
-> > >         whether an access is volatile or implies a compiler barrier.
-> > >         This might allow herd to be more selective about control dependencies,
-> > >         for example, extending them past the end of "if" statements
-> > >         containing compiler barriers.
-> > >
-> > >         One tricky aspect of this approach is working out what the
-> > >         compiler can do to the "if" statement.  We definitely do not
-> > >         want to put the complexity of all possible compilers into herd!
-> > 
-> > This _smells_ like the right thing to do.
-> > 
-> > Aren't the litmus-tests effectively always going to be using READ_ONCE
-> > etc volatile accesses anyway?
-> 
-> Yes, right now LKMM handles only volatile (READ_ONCE and WRITE_ONCE)
-> or stronger.
-> 
-> > Most of what the LKMM litmus tests test for is things with side effects, no?
-> > 
-> > And honestly, that is exactly the kind of litmus test behavior we
-> > *want* our memory model to have, in that any CPU designer (or compiler
-> > designer) that uses our LKMM litmus tests should very much be aware of
-> > the fact that we expect a conditional->store memory ordering to be a
-> > ordering.
-> > 
-> > We have real code that depends on it, so I think LKMM should expose
-> > those ordering requirements.
-> 
-> Good point.  And I did manage to advocate for control dependencies at an
-> academic conference earlier this week without the need for a bodyguard,
-> so perhaps things are improving.  ;-)
-> 
-> > I'm also perfectly happy with no markings at all: all memory accesses
-> > are "voiatile" as fat as C is concerned, and cannot be moved around by
-> > the compiler at all - and all that LKMM tests is memory _ordering_,
-> > not "compiler can do X".
-> 
-> We are considering adding unmarked accesses, for example, accesses
-> protected by locks.  One possible litmus test (not yet supported!)
-> might look like this:
-> 
-> 	C Z6.0+pooncelock+pooncelock+pombonce
-> 
-> 	{}
-> 
-> 	P0(int *x, int *y, spinlock_t *mylock)
-> 	{
-> 		spin_lock(mylock);
-> 		WRITE_ONCE(*x, 1);
-> 		y = 1;
-> 		spin_unlock(mylock);
-> 	}
-> 
-> 	P1(int *y, int *z, spinlock_t *mylock)
-> 	{
-> 		int r0;
-> 
-> 		spin_lock(mylock);
-> 		r0 = y;
-> 		WRITE_ONCE(*z, 1);
-> 		spin_unlock(mylock);
-> 	}
-> 
-> 	P2(int *x, int *z)
-> 	{
-> 		int r1;
-> 
-> 		WRITE_ONCE(*z, 2);
-> 		smp_mb();
-> 		r1 = READ_ONCE(x);
-> 	}
-> 
-> 	exists (1:r0=1 /\ z=2 /\ 2:r1=0)
-> 
-> Because y is only ever accessed under a lock, the compiler cannot do
-> anything to mess it up.  In this particular case, the compiler would
-> have a hard time messing up the other accesses, aside from extremely
-> unfriendly measures such as load/store tearing, but we have seen
-> Linux-kernel examples where the compiler could very reasonably repeat
-> and fuse loads and stores and so on.
-> 
-> Thoughts?
-> 
-> > Because I think your option 1. is absolutely against everything we
-> > want to happen:
-> > 
-> > > 1.      Status quo.  This works reasonably well, but we have already
-> > >         seen that your scenario makes it ask for more synchronization
-> > >         than necessary.
-> > 
-> > We absolutely do *not* want CPU designers etc thinking that we'll add
-> > insane synchronization.
-> > 
-> > We were already burned by insane bad CPU design once in the form of
-> > the garbage that alpha desigers gave us.
-> > 
-> > I am personally not at all interested in seeing our memory ordering
-> > rules be "nice". They should be as tight as possible, and *not* allow
-> > any crazy shit that some insane person can come up with. No more
-> > "dependent reads out of ordetr" garbage, and no more "store done
-> > before the condition it depends on" garbage.
-> > 
-> > A CPU designer (or a C++ memory ordering person) who tries to sneak
-> > shit like that past us should be shunned, and not taken seriously.
-> 
-> Given that I am writing this in a C++ Standards Committee meeting,
-> I do like the call for sanity.
-> 
-> > And our memory ordering rules should be very explicit about it, so
-> > that people don't even _try_ to do insane things.
-> > 
-> > I want any memory ordering litmus tests to say "we depend on this, so
-> > as a CPU designer don't mess it up, because then we won't run on the
-> > resulting crap".
-> > 
-> > I'm not in the least interested in the LKMM litmus tests being an
-> > excuse for unnecessarily weak memory ordering. That's the *opposite*
-> > of what I would want any litmus tests to do.
-> > 
-> > If people are looking to use them that way, then I'm going to remove
-> > them, because such litmus tests are not in the best interest of the
-> > kernel.
-> > 
-> > Future CPU designs need to be *saner*, not perpetuate the kind of
-> > garbage insanity we have seen so far.
-> 
-> OK, I think we all agree that we need to move away from status quo.
-> The workaround buys us some time, but the need to move is undisputed.
-> (If someone does dispute it, this would be a great time for them to make
-> their concerns known!)
-> 
-> I will take a hard look at option #3, and see if there any hidden gotchas.
+  min_frame_len[priv->mode_index]
 
-There's another aspect to this discussion.
+Consolidate all these data in imx274_formats[], and store a pointer to
+the selected mode (i.e. imx274_formats[priv->mode_index]) in the main
+device struct. This way code to use these data becomes more readable,
+e.g.:
 
-You can look at a memory model from three points of view:
+  priv->mode->min_frame_len
 
-1.	To a programmer, the model provides both guarantees (a certain
-	code snippet will never yield a particular undesired result)
-	and warnings (another snippet might yield an undesired result).
+This removes lots of scaffolding code and keeps data about each mode
+in a unique place.
 
-2.	To a CPU designer, the model provides limits on what the
-	hardware should be allowed to do (e.g., never execute a store
-	before the condition of a preceding conditional branch has been
-	determined -- not even if the CPU knows that the store would be
-	executed on both legs of the branch).
+Also remove a parameter to imx274_mode_regs() that is now unused.
 
-3.	To a compiler writer, the model provides limits on what code
-	manipulations should be allowed.
+While this adds the mode pointer to the device struct, it does not
+remove the mode_index from it because mode_index is still used in two
+dev_dbg() calls.  This will be handled in a follow-up commit.
 
-Linus's comments mostly fall under viewpoint 2 (AFAICT), and a lot of
-our thinking to date has been in viewpoint 1.  But viewpoint 3 is the
-one most relevant to the code we have been discussing here.
+Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Saying that a control dependency should extend beyond the end of an
-"if" statement is basically equivalent to saying that compiler writers
-are forbidden to implement certain optimizations.  Now, my experience
-has been that compiler writers are loathe to give up an optimization
-unless someone can point to a specific part of the language spec and
-show that the proposed optimization would violate it.
+---
+Changed v3 -> v4: nothing
 
-Given that the LKMM has no official standing whatsoever with the C and 
-C++ standards committees, how likely is it that we would be able to 
-convince them to change the spec merely to satisfy our desires?
+Changed v2 -> v3: nothing
 
-It's all very well for Linus to say "no more 'store done before the
-condition it depends on' garbage", but that is an empty rant if we are
-unable to exert any pressure on the standards or compiler writers.
+Changed v1 -> v2:
+ - add "media: " prefix to commit message
+---
+ drivers/media/i2c/imx274.c | 139 +++++++++++++++++++++------------------------
+ 1 file changed, 66 insertions(+), 73 deletions(-)
 
-Perhaps the best we could hope for would be to have a command-line flag
-added to gcc (and LLVM?) that would forbid:
-
-	combining two identical volatile stores in the two legs of an 
-	"if" statement and moving the result up before the "if", and
-
-	moving a volatile store up before a preceding "if" statement
-
-(or something along those lines -- even expressing this idea precisely
-is a difficult thing to do).  I seriously doubt the standards people
-would entertain the idea of making these restrictions universal.  
-Especially since the specs currently do not include any notion of
-dependency at all.
-
-Alan
+diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
+index 8a8a11b8d75d..2ec31ae4e60d 100644
+--- a/drivers/media/i2c/imx274.c
++++ b/drivers/media/i2c/imx274.c
+@@ -147,10 +147,28 @@ enum imx274_mode {
+ };
+ 
+ /*
+- * imx274 format related structure
++ * Parameters for each imx274 readout mode.
++ *
++ * These are the values to configure the sensor in one of the
++ * implemented modes.
++ *
++ * @size: recommended recording pixels
++ * @init_regs: registers to initialize the mode
++ * @min_frame_len: Minimum frame length for each mode (see "Frame Rate
++ *                 Adjustment (CSI-2)" in the datasheet)
++ * @min_SHR: Minimum SHR register value (see "Shutter Setting (CSI-2)" in the
++ *           datasheet)
++ * @max_fps: Maximum frames per second
++ * @nocpiop: Number of clocks per internal offset period (see "Integration Time
++ *           in Each Readout Drive Mode (CSI-2)" in the datasheet)
+  */
+ struct imx274_frmfmt {
+ 	struct v4l2_frmsize_discrete size;
++	const struct reg_8 *init_regs;
++	int min_frame_len;
++	int min_SHR;
++	int max_fps;
++	int nocpiop;
+ };
+ 
+ /*
+@@ -476,58 +494,35 @@ static const struct reg_8 imx274_tp_regs[] = {
+ 	{IMX274_TABLE_END, 0x00}
+ };
+ 
+-static const struct reg_8 *mode_table[] = {
+-	[IMX274_MODE_3840X2160]		= imx274_mode1_3840x2160_raw10,
+-	[IMX274_MODE_1920X1080]		= imx274_mode3_1920x1080_raw10,
+-	[IMX274_MODE_1280X720]		= imx274_mode5_1280x720_raw10,
+-};
+-
+-/*
+- * imx274 format related structure
+- */
++/* nocpiop happens to be the same number for the implemented modes */
+ static const struct imx274_frmfmt imx274_formats[] = {
+-	{ {3840, 2160} },
+-	{ {1920, 1080} },
+-	{ {1280,  720} },
+-};
+-
+-/*
+- * minimal frame length for each mode
+- * refer to datasheet section "Frame Rate Adjustment (CSI-2)"
+- */
+-static const int min_frame_len[] = {
+-	4550, /* mode 1, 4K */
+-	2310, /* mode 3, 1080p */
+-	2310 /* mode 5, 720p */
+-};
+-
+-/*
+- * minimal numbers of SHR register
+- * refer to datasheet table "Shutter Setting (CSI-2)"
+- */
+-static const int min_SHR[] = {
+-	12, /* mode 1, 4K */
+-	8, /* mode 3, 1080p */
+-	8 /* mode 5, 720p */
+-};
+-
+-static const int max_frame_rate[] = {
+-	60, /* mode 1 , 4K */
+-	120, /* mode 3, 1080p */
+-	120 /* mode 5, 720p */
+-};
+-
+-/*
+- * Number of clocks per internal offset period
+- * a constant based on mode
+- * refer to section "Integration Time in Each Readout Drive Mode (CSI-2)"
+- * in the datasheet
+- * for the implemented 3 modes, it happens to be the same number
+- */
+-static const int nocpiop[] = {
+-	112, /* mode 1 , 4K */
+-	112, /* mode 3, 1080p */
+-	112 /* mode 5, 720p */
++	{
++		/* mode 1, 4K */
++		.size = {3840, 2160},
++		.init_regs = imx274_mode1_3840x2160_raw10,
++		.min_frame_len = 4550,
++		.min_SHR = 12,
++		.max_fps = 60,
++		.nocpiop = 112,
++	},
++	{
++		/* mode 3, 1080p */
++		.size = {1920, 1080},
++		.init_regs = imx274_mode3_1920x1080_raw10,
++		.min_frame_len = 2310,
++		.min_SHR = 8,
++		.max_fps = 120,
++		.nocpiop = 112,
++	},
++	{
++		/* mode 5, 720p */
++		.size = {1280, 720},
++		.init_regs = imx274_mode5_1280x720_raw10,
++		.min_frame_len = 2310,
++		.min_SHR = 8,
++		.max_fps = 120,
++		.nocpiop = 112,
++	},
+ };
+ 
+ /*
+@@ -557,6 +552,8 @@ struct imx274_ctrls {
+  * @regmap: Pointer to regmap structure
+  * @reset_gpio: Pointer to reset gpio
+  * @lock: Mutex structure
++ * @mode: Parameters for the selected readout mode
++ *        (points to imx274_formats[mode_index])
+  * @mode_index: Resolution mode index
+  */
+ struct stimx274 {
+@@ -569,6 +566,7 @@ struct stimx274 {
+ 	struct regmap *regmap;
+ 	struct gpio_desc *reset_gpio;
+ 	struct mutex lock; /* mutex lock for operations */
++	const struct imx274_frmfmt *mode;
+ 	u32 mode_index;
+ };
+ 
+@@ -704,18 +702,12 @@ static int imx274_write_table(struct stimx274 *priv, const struct reg_8 table[])
+ }
+ 
+ /*
+- * imx274_mode_regs - Function for set mode registers per mode index
++ * Set mode registers to start stream.
+  * @priv: Pointer to device structure
+- * @mode: Mode index value
+- *
+- * This is used to start steam per mode index.
+- * mode = 0, start stream for sensor Mode 1: 4K/raw10
+- * mode = 1, start stream for sensor Mode 3: 1080p/raw10
+- * mode = 2, start stream for sensor Mode 5: 720p/raw10
+  *
+  * Return: 0 on success, errors otherwise
+  */
+-static int imx274_mode_regs(struct stimx274 *priv, int mode)
++static int imx274_mode_regs(struct stimx274 *priv)
+ {
+ 	int err = 0;
+ 
+@@ -727,7 +719,7 @@ static int imx274_mode_regs(struct stimx274 *priv, int mode)
+ 	if (err)
+ 		return err;
+ 
+-	err = imx274_write_table(priv, mode_table[mode]);
++	err = imx274_write_table(priv, priv->mode->init_regs);
+ 
+ 	return err;
+ }
+@@ -889,6 +881,7 @@ static int imx274_set_fmt(struct v4l2_subdev *sd,
+ 	}
+ 
+ 	imx274->mode_index = index;
++	imx274->mode = &imx274_formats[index];
+ 
+ 	if (fmt->width > IMX274_MAX_WIDTH)
+ 		fmt->width = IMX274_MAX_WIDTH;
+@@ -1042,7 +1035,7 @@ static int imx274_s_stream(struct v4l2_subdev *sd, int on)
+ 
+ 	if (on) {
+ 		/* load mode registers */
+-		ret = imx274_mode_regs(imx274, imx274->mode_index);
++		ret = imx274_mode_regs(imx274);
+ 		if (ret)
+ 			goto fail;
+ 
+@@ -1146,14 +1139,14 @@ static int imx274_clamp_coarse_time(struct stimx274 *priv, u32 *val,
+ 	if (err)
+ 		return err;
+ 
+-	if (*frame_length < min_frame_len[priv->mode_index])
+-		*frame_length = min_frame_len[priv->mode_index];
++	if (*frame_length < priv->mode->min_frame_len)
++		*frame_length =  priv->mode->min_frame_len;
+ 
+ 	*val = *frame_length - *val; /* convert to raw shr */
+ 	if (*val > *frame_length - IMX274_SHR_LIMIT_CONST)
+ 		*val = *frame_length - IMX274_SHR_LIMIT_CONST;
+-	else if (*val < min_SHR[priv->mode_index])
+-		*val = min_SHR[priv->mode_index];
++	else if (*val < priv->mode->min_SHR)
++		*val = priv->mode->min_SHR;
+ 
+ 	return 0;
+ }
+@@ -1365,7 +1358,7 @@ static int imx274_set_exposure(struct stimx274 *priv, int val)
+ 	}
+ 
+ 	coarse_time = (IMX274_PIXCLK_CONST1 / IMX274_PIXCLK_CONST2 * val
+-			- nocpiop[priv->mode_index]) / hmax;
++			- priv->mode->nocpiop) / hmax;
+ 
+ 	/* step 2: convert exposure_time into SHR value */
+ 
+@@ -1375,7 +1368,7 @@ static int imx274_set_exposure(struct stimx274 *priv, int val)
+ 		goto fail;
+ 
+ 	priv->ctrls.exposure->val =
+-			(coarse_time * hmax + nocpiop[priv->mode_index])
++			(coarse_time * hmax + priv->mode->nocpiop)
+ 			/ (IMX274_PIXCLK_CONST1 / IMX274_PIXCLK_CONST2);
+ 
+ 	dev_dbg(&priv->client->dev,
+@@ -1529,10 +1522,9 @@ static int imx274_set_frame_interval(struct stimx274 *priv,
+ 				/ frame_interval.numerator);
+ 
+ 	/* boundary check */
+-	if (req_frame_rate > max_frame_rate[priv->mode_index]) {
++	if (req_frame_rate > priv->mode->max_fps) {
+ 		frame_interval.numerator = 1;
+-		frame_interval.denominator =
+-					max_frame_rate[priv->mode_index];
++		frame_interval.denominator = priv->mode->max_fps;
+ 	} else if (req_frame_rate < IMX274_MIN_FRAME_RATE) {
+ 		frame_interval.numerator = 1;
+ 		frame_interval.denominator = IMX274_MIN_FRAME_RATE;
+@@ -1634,8 +1626,9 @@ static int imx274_probe(struct i2c_client *client,
+ 
+ 	/* initialize format */
+ 	imx274->mode_index = IMX274_MODE_3840X2160;
+-	imx274->format.width = imx274_formats[0].size.width;
+-	imx274->format.height = imx274_formats[0].size.height;
++	imx274->mode = &imx274_formats[imx274->mode_index];
++	imx274->format.width = imx274->mode->size.width;
++	imx274->format.height = imx274->mode->size.height;
+ 	imx274->format.field = V4L2_FIELD_NONE;
+ 	imx274->format.code = MEDIA_BUS_FMT_SRGGB10_1X10;
+ 	imx274->format.colorspace = V4L2_COLORSPACE_SRGB;
+-- 
+2.7.4
