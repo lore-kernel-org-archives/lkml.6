@@ -1,144 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id +ZsSLM6mHFt+bgAAmS7hNA
-	; Sun, 10 Jun 2018 04:19:26 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id HSlHFB6EHltpGQAAmS7hNA
+	; Mon, 11 Jun 2018 14:15:58 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 9F81A60795; Sun, 10 Jun 2018 04:19:26 +0000 (UTC)
+	id 3A1E2607BB; Mon, 11 Jun 2018 14:15:58 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SxnE1mBa"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 0B7036074D;
-	Sun, 10 Jun 2018 04:19:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0B7036074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id BDB1F6074D;
+	Mon, 11 Jun 2018 14:15:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BDB1F6074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753725AbeFJETX (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sun, 10 Jun 2018 00:19:23 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:42499 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753698AbeFJETV (ORCPT
+        id S934051AbeFKOPx (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 10:15:53 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45972 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933570AbeFKOHB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 00:19:21 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5A4JFtb3241697
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 9 Jun 2018 21:19:15 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5A4JEYh3241694;
-        Sat, 9 Jun 2018 21:19:14 -0700
-Date: Sat, 9 Jun 2018 21:19:14 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From: tip-bot for Anna-Maria Gleixner <tipbot@zytor.com>
-Message-ID: <tip-59dc6f3c6d81c0c4379025c4eb56919391d62b67@git.kernel.org>
-Cc: mingo@kernel.org, ebiederm@xmission.com, anna-maria@linutronix.de,
-        hpa@zytor.com, paulmck@linux.vnet.ibm.com,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de
-Reply-To: mingo@kernel.org, hpa@zytor.com, ebiederm@xmission.com,
-          anna-maria@linutronix.de, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, paulmck@linux.vnet.ibm.com
-In-Reply-To: <20180525090507.22248-3-anna-maria@linutronix.de>
-References: <20180525090507.22248-3-anna-maria@linutronix.de>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:core/urgent] signal: Remove no longer required irqsave/restore
-Git-Commit-ID: 59dc6f3c6d81c0c4379025c4eb56919391d62b67
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Mon, 11 Jun 2018 10:07:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
+        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=cp1noagiBNyq9HAsILQXj5VlZgjwOoF7k27YeP6vh0Y=; b=SxnE1mBapiL1y28hZwNeGhwJ/
+        09GiEhWbiib7/g4Cf75aq6Mmb1CR7cHxMapWj7kfybfOHAnN4e8Z/pRh0APfHIQ8UORSfvNeE4yAT
+        OgRbmoYJ5MsXrO7CXw1orPGIwM61vo6P8lAv+KtPFjAZF4KsMOU0C6rHaXJG7/QUHP67Xst6/T1j3
+        kKeGvrj03NUAd30r20e6DEpV3rYn/8f6mNT07W8BPtRbJFcJjBA2wsF31eiThUGDptumCq90fytF8
+        99wUYAh4T4zj5KSBLms74ym6yGsbRfaL2G7ODSleL9hApFG3JeXlnoD35k2xeeOQ45RfrFk3M1t2Y
+        zPgRHySzA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fSNTI-0004pL-7n; Mon, 11 Jun 2018 14:07:00 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@redhat.com>,
+        Lukas Czerner <lczerner@redhat.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH v13 44/72] mm: Convert is_page_cache_freeable to XArray
+Date: Mon, 11 Jun 2018 07:06:11 -0700
+Message-Id: <20180611140639.17215-45-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
+References: <20180611140639.17215-1-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  59dc6f3c6d81c0c4379025c4eb56919391d62b67
-Gitweb:     https://git.kernel.org/tip/59dc6f3c6d81c0c4379025c4eb56919391d62b67
-Author:     Anna-Maria Gleixner <anna-maria@linutronix.de>
-AuthorDate: Fri, 25 May 2018 11:05:07 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sun, 10 Jun 2018 06:14:01 +0200
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-signal: Remove no longer required irqsave/restore
+This is just a variable rename and comment change.
 
-Commit a841796f11c9 ("signal: align __lock_task_sighand() irq disabling and
-RCU") introduced a rcu read side critical section with interrupts
-disabled. The changelog suggested that a better long-term fix would be "to
-make rt_mutex_unlock() disable irqs when acquiring the rt_mutex structure's
-->wait_lock".
-
-This long-term fix has been made in commit b4abf91047cf ("rtmutex: Make
-wait_lock irq safe") for a different reason.
-
-Therefore revert commit a841796f11c9 ("signal: align >
-__lock_task_sighand() irq disabling and RCU") as the interrupt disable
-dance is not longer required.
-
-The change was tested on the base of b4abf91047cf ("rtmutex: Make wait_lock
-irq safe") with a four hour run of rcutorture scenario TREE03 with lockdep
-enabled as suggested by Paul McKenney.
-
-Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: bigeasy@linutronix.de
-Link: https://lkml.kernel.org/r/20180525090507.22248-3-anna-maria@linutronix.de
-
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- kernel/signal.c | 24 +++++++-----------------
- 1 file changed, 7 insertions(+), 17 deletions(-)
+ mm/vmscan.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 0f865d67415d..8d8a940422a8 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -1244,19 +1244,12 @@ struct sighand_struct *__lock_task_sighand(struct task_struct *tsk,
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 0448b1b366d9..575747728ee6 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -572,12 +572,12 @@ static inline int is_page_cache_freeable(struct page *page)
  {
- 	struct sighand_struct *sighand;
- 
-+	rcu_read_lock();
- 	for (;;) {
--		/*
--		 * Disable interrupts early to avoid deadlocks.
--		 * See rcu_read_unlock() comment header for details.
--		 */
--		local_irq_save(*flags);
--		rcu_read_lock();
- 		sighand = rcu_dereference(tsk->sighand);
--		if (unlikely(sighand == NULL)) {
--			rcu_read_unlock();
--			local_irq_restore(*flags);
-+		if (unlikely(sighand == NULL))
- 			break;
--		}
-+
- 		/*
- 		 * This sighand can be already freed and even reused, but
- 		 * we rely on SLAB_TYPESAFE_BY_RCU and sighand_ctor() which
-@@ -1268,15 +1261,12 @@ struct sighand_struct *__lock_task_sighand(struct task_struct *tsk,
- 		 * __exit_signal(). In the latter case the next iteration
- 		 * must see ->sighand == NULL.
- 		 */
--		spin_lock(&sighand->siglock);
--		if (likely(sighand == tsk->sighand)) {
--			rcu_read_unlock();
-+		spin_lock_irqsave(&sighand->siglock, *flags);
-+		if (likely(sighand == tsk->sighand))
- 			break;
--		}
--		spin_unlock(&sighand->siglock);
--		rcu_read_unlock();
--		local_irq_restore(*flags);
-+		spin_unlock_irqrestore(&sighand->siglock, *flags);
- 	}
-+	rcu_read_unlock();
- 
- 	return sighand;
+ 	/*
+ 	 * A freeable page cache page is referenced only by the caller
+-	 * that isolated the page, the page cache radix tree and
+-	 * optional buffer heads at page->private.
++	 * that isolated the page, the page cache and optional buffer
++	 * heads at page->private.
+ 	 */
+-	int radix_pins = PageTransHuge(page) && PageSwapCache(page) ?
++	int page_cache_pins = PageTransHuge(page) && PageSwapCache(page) ?
+ 		HPAGE_PMD_NR : 1;
+-	return page_count(page) - page_has_private(page) == 1 + radix_pins;
++	return page_count(page) - page_has_private(page) == 1 + page_cache_pins;
  }
+ 
+ static int may_write_to_inode(struct inode *inode, struct scan_control *sc)
+-- 
+2.17.1
