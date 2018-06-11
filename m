@@ -1,280 +1,238 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id IA0qMRc3GVstYwAAmS7hNA
-	; Thu, 07 Jun 2018 13:46:20 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id pLmwGOYYHluZDQAAmS7hNA
+	; Mon, 11 Jun 2018 06:38:35 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 34426608B8; Thu,  7 Jun 2018 13:46:20 +0000 (UTC)
+	id 53682607E4; Mon, 11 Jun 2018 06:38:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+	s=default; t=1528699115;
+	bh=iuyohPJu1iDmgcqjxWoyrmqXlOgP2uVk4WXQhjtMDdg=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=UlmyWOei6Gn7qdbcICbZ3E0OyR92TbfMkl+Z7uObdVrKW5Pun1G+kUf4cToH2jJVR
+	 7wQcavhNzsUN70cM6HOvpd3l+G+DVSCLKnrko3I613r+nPVWvNsXkRD/jCQYgokVnS
+	 ruBlVRzvtteHH9SJCGnxRdC6y1L3ERWh2iOmxu4g=
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 4BEEC602FC;
-	Thu,  7 Jun 2018 13:46:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4BEEC602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id A8BC3607BB;
+	Mon, 11 Jun 2018 06:38:34 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bQq0HCMk";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="j9Z8vBnK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A8BC3607BB
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932706AbeFGNqR (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 09:46:17 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:35495 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932347AbeFGNqP (ORCPT
+        id S1754045AbeFKGid (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 20 others); Mon, 11 Jun 2018 02:38:33 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38926 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753966AbeFKGib (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 09:46:15 -0400
-Received: by mail-wm0-f65.google.com with SMTP id j15-v6so19468888wme.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 06:46:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=mZuv6I5bKA92dw4Axi1eughSUVmgICz/5WT/gG8/ltY=;
-        b=D7zjVqn5N/COKRsusNlii/TQmqVbPKPOuWRJvEnqDRpdqbsEs7z4JcBOznsTDuLL8c
-         AoTp+LC96JRLg4X+uopbp/Mg43NXkMuH91ePfD9ElgUdB6cbnjPWUWdr7llHBQ5BSSP6
-         Ep7h2rHOFMGRPC0npETUx+cVHXJm/V6NzkwSl/T8pBz5sb+V7TOdR2RnlcB900v3Ww4s
-         +00A++MRCuuvrfQ1KcRnkDzXy0E9mVQJ9HOeQW20kwC9fbBKqAH7pDGvUjkIS6uecIKI
-         2fOt6F7WO7GScCHoSSW8C/HgFcUIG593lfjL8VPjEbtXSjDdyrVytBc1kpLx8sPX5XZD
-         k8aQ==
-X-Gm-Message-State: APt69E2rqQ5FdCciY5HHyrQ4wATuvfBRtU3hao5l7S6siox/+xBxl/1L
-        P7eFbyYgs2rEYaVgNkf/MJf7F0hSmsg=
-X-Google-Smtp-Source: ADUXVKIfyle5EcQ9Dpez4PXDA0lT5zt+xMu9z8W4Gcf94Cg2blt4uaPxMp/AnHS3l+UZv0Sf1Nmanw==
-X-Received: by 2002:a1c:1c8f:: with SMTP id c137-v6mr1681426wmc.142.1528379173818;
-        Thu, 07 Jun 2018 06:46:13 -0700 (PDT)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id l67-v6sm2384867wmb.22.2018.06.07.06.46.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Jun 2018 06:46:12 -0700 (PDT)
-Subject: Re: [PATCH v6 2/5] efi: Add embedded peripheral firmware support
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Martijn Coenen <maco@android.com>,
-        Andy Gross <andy.gross@linaro.org>,
+        Mon, 11 Jun 2018 02:38:31 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id C71C2600D0; Mon, 11 Jun 2018 06:38:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528699110;
+        bh=iuyohPJu1iDmgcqjxWoyrmqXlOgP2uVk4WXQhjtMDdg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=bQq0HCMktCwQAvXgk5IFq4XSyjY99z0xMJiL6lfIz0OS/0KmAuLxO16mYs0PT5rc4
+         MSf5U79gc+ynVM5NXJc+aO3ooAMI1JvKGkvha15Ym7EELdtQYvqeP8QrFgZCnGUxPp
+         LEbBaXqqhkVEn71tMcyUAnlNG3n2bgw6Kh8TY2Qc=
+Received: from anischal-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: anischal@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 73A15600D0;
+        Mon, 11 Jun 2018 06:38:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528699109;
+        bh=iuyohPJu1iDmgcqjxWoyrmqXlOgP2uVk4WXQhjtMDdg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=j9Z8vBnKkyofCfDIsGZO7z1qaMHm55HFJNv6YaYQEqFlAd3UOlnoRGw/+aGA2klfc
+         vMNp70tb2STPC4nBLfGtjYKcU6gStpT+EMQkRY3x08gWTpWyG4ob8cno4BtmJ0QLBo
+         3wAtF/wMq1fXlgXscEkPg/Db1Tael8hUJ0Rxw5OM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 73A15600D0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=anischal@codeaurora.org
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Peter Jones <pjones@redhat.com>,
-        Dave Olsthoorn <dave@bewaar.me>,
-        Will Deacon <will.deacon@arm.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        David Howells <dhowells@redhat.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        dmitry.torokhov@gmail.com, mfuzzey@parkeon.com,
-        Arend Van Spriel <arend.vanspriel@broadcom.com>,
-        nbroeking@me.com, Torsten Duwe <duwe@suse.de>,
-        Kees Cook <keescook@chromium.org>, x86@kernel.org,
-        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180601125330.25054-1-hdegoede@redhat.com>
- <20180601125330.25054-3-hdegoede@redhat.com>
- <20180605210753.GC4511@wotan.suse.de>
- <30260c62-eb8b-7d88-4ce1-83e969546790@redhat.com>
- <20180606214205.GI4511@wotan.suse.de>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <4cb520a0-d3c8-477d-5d05-7b05637f5faf@redhat.com>
-Date: Thu, 7 Jun 2018 15:46:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180606214205.GI4511@wotan.suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Amit Nischal <anischal@codeaurora.org>
+Subject: [PATCH v3] clk: qcom: Enable clocks which needs to be always on for SDM845
+Date: Mon, 11 Jun 2018 12:08:15 +0530
+Message-Id: <1528699095-17930-1-git-send-email-anischal@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+There are certain clocks which needs to be always enabled for system
+operation. Add support for the same by adding 'CLK_IS_CRITICAL' flag
+for such clocks.
 
-On 06-06-18 23:42, Luis R. Rodriguez wrote:
-> On Wed, Jun 06, 2018 at 08:39:15PM +0200, Hans de Goede wrote:
->> On 05-06-18 23:07, Luis R. Rodriguez wrote:
->>>> +To make request_firmware() fallback to trying EFI embedded firmwares after this,
->>>> +the driver must set a boolean "efi-embedded-firmware" device-property on the
->>>> +device before passing it to request_firmware().
->>>
->>> No, as I have requested before I don't want this, it is silly to have such
->>> functionality always be considered as a fallback if we only have 2 drivers
->>> which need this. > Please add a call which only if used would then *evaluate*
->>> such fallback prospect.
->>
->> Ok, so I've a few questions about this:
->>
->> 1) You want me to add a:
->>
->> int firmware_request_with_system_firmware_fallback(struct device *device, const char *name);
->>
->> function?
-> 
-> The idea is correct, the name however is obviously terrible.
-> 
-> This is functionality that is very specialized and only *two* device drivers
-> need it that we are aware of which would be upstream. Experience has shown
-> fallback mechanisms *can* be a pain, and if we add this we will be supporting
-> this for *life*, as such I'd very much prefer to:
-> 
-> a) *Clearly* reduce the scope of functionality clearly *beyond* what you
->     have done.
-> 
-> b) Have access to one simple call which folks can use to *clearly* and
->     quickly grep for those oddball drivers using this new interface.
-> 
-> We can do this by using a separate function for it.
-> 
-> Before you claim something seems unreasonable from the above logic, please read
-> the latest state of affairs with respect to data driven Vs functional API
-> evolution discussion over the firmware API [0] as well as my latests
-> recommendation for what to do for the async firmware API [1].
-> 
-> The skinny of it is that long ago I actually proposed having only *two*
-> firmware API calls, an async and a sync call and having all functionality
-> fleshed out through a structure of parameters. The issue with that strategy was
-> it was *too* data driven, and as per Greg's request we'll instead be exposing
-> new symbols per functionality for the firmware API with his justification
-> that this is just what is traditionally done on Linux. Hence we have
-> firmware_request_nowarn() now for just a slight variation for a sync call.
-> 
-> Despite Greg's recommendation -- for the respective async functionality I
-> suggested this is not going to scale well -- it is also just dumb to follow the
-> same approach there for a few reasons.
-> 
-> 1) We have only *one* async call and had decided to *not* provide a structure
->     for that call since its inception
-> 
-> 2) Over time have evolved this single async call each time we have a new feature,
->     causing a slew of collateral evolutions.
-> 
-> So, while we like it or not, it turns out the async call to the firmware API
-> is already completely data driven. Extending it with just another argument
-> would just be silly now.
-> 
-> So refer to my recommendations to Andres for how to evolve the async API if
-> you need it, however from a quick review you don't need async calls, so you
-> won't have to address any of that.
-> 
-> [0] https://lkml.kernel.org/r/20180421173650.GW14440@wotan.suse.de
-> [1] https://lkml.kernel.org/r/20180422202609.GX14440@wotan.suse.de
-> 
->> Note I've deliberately named it with_system_firmware_fallback
->> and not with_efi_fallback to have the name be platform agnostic in
->> case we want something similar on other platforms in the future.
-> 
-> firmware_request_platform() ?
-> 
->> And then have this pass a new FW_OPT_SYS_FW_FALLBACK flag to
->> _request_firmware(), right ?
-> 
-> Yeap.
-> 
->> 2) Should this flag then be checked inside _request_firmware() before it
->> calls fw_get_efi_embedded_fw() (which may be an empty stub),
-> 
-> You are the architect behind this call, so its up to you.
-> 
-> To answer this you have to review the other flags and see if other users of the
-> other flags may want your functionality. For instance the Android folks for
-> instance rely on the FW_OPT_NOFALLBACK - the sysfs fallback mechanism to
-> account for odd partition layouts. Could they ever want to use your fallback
-> mechanism? Granted your mechanism is for x86, but they could eventually add
-> support for it on ARM.
-> 
-> Checking if the firmware is on the EFI platform firmware list is much faster
-> than the fallback mechanism, that would be one gain for them, as such it may
-> make sense to check for firmware_request_platform() before using the sysfs
-> fallback mechanism.  However if Android folks want to always override the
-> platform firmware with the sysfs fallback interface we'd need another flag
-> added and call to then change the order later if we checked for for the
-> platform firmware first.
+Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+---
 
-I believe we agreed a while back that the platform fallback would
-replace the sysfs one when requested. I believe that still makes
-sense. If a driver wants both it can simply call request_firmware_foo
-itself twice and determine the order itself.
+Changes in v3:
+* Addressed review comments by Stephen to associate 'CLK_IS_CRITICAL'
+  flag for the clocks which are required to be always ON.
+* Added two gcc_cpuss* critical clocks and remove direct clock enable
+  for them from gcc probe function.
 
-> If you however are 100% sure they won't need it, than checking
-> firmware_request_platform() first would make sense now if you are
-> certain these same devices won't need the sysfs fallback interface
-> and don't want to use it to override the platform firmware.
-> 
->> or
->> inside fw_get_efi_embedded_fw()?
-> 
-> You'll definitely want to check it there for sure to no-op if you
-> don't have it set and error out with the same error passed before
-> so it is not lost, as is done now for the sysfs fallback mechanism.
-> 
->> 3) Also should I then still check device_property_read_bool(dev,
->> "efi-embedded-firmware") inside fw_get_efi_embedded_fw(), or do you
->> want to simply always try the fallback if the driver indicates this ?
->>
->> The reason I'm asking this is because the presence or not of the
->> firmware inside the system-firmware is a per board thing, not
->> a per driver thing. But since the firmware is unique per board
->> anyways it would be fine to skip the "efi-embedded-firmware"
->> device-prop check. If we're going to have a separate
->> firmware_request_with_system_firmware_fallback() function for
->> this then I'm leaning towards dropping the whole check myself.
->>
->> So are you ok with dropping the device-prop check then ?
-> 
-> Yes I was actually not sure why you added it, but given you say that its per
-> board, it makes sense. Drivers still would still need to enable the new
-> fallback via the new call, say firmware_request_platform().  I suppose it would
-> depend on how many boards out there *don't* have the firmware. Since we are
-> aware of only two drivers enabling this I'm going to suspect we have only a few
-> boards out there with this firmware...
-> 
-> The value of the device-prop check then would be to *avoid* running this code
-> even further for boards where it does not make sense. This is indeed valuable,
-> so unless others have issue with it I'd say leave it and document this exact
-> thing.
-> 
-> The documentation should then reflect firmware_request_platform() enables the
-> fallback for the driver, however boards must use the efi-embedded-firmware
-> property to further activate the fallback for a specific board.
-> 
->> 4) Since I'm naming the new function
->> int firmware_request_with_system_firmware_fallback()
->> I'm thinking that fw_get_efi_embedded_fw() should be renamed
->> to firmware_fallback_system_firmware()
->> and the EFI based code
->> will just be the first (and for now only) provider of this
->> fallback with an empty stub (inline in the .h file) for when
->> there is no provider defined. Do you agree with renaming
->> fw_get_efi_embedded_fw() to
->> firmware_request_with_system_firmware_fallback() ?
-> 
-> That's obviously too long, so perhaps firmware_fallback_platform()?
-> 
-> Note that Andres recently renamed fw_sysfs_fallback() to
-> firmware_fallback_sysfs() so yes, I was expectign this.
-> 
-> Also notice all that new shiny kdoc on firmware_fallback_sysfs()?  Please be
-> sure to add your own and refer to it on the kernel documentation as well -- it
-> seems we forgot to reference firmware_fallback_sysfs() on Documentation/ I'll
-> go and correct that.
-> 
-> While at it, I just noticed your most of your changes should actually
-> go into Documentation/driver-api/firmware/fallback-mechanisms.rst and only
-> this new call firmware_request_platform() on
-> Documentation/driver-api/firmware/request_firmware.rst
-> 
->> (note this is the wrapper which calls efi_get_embedded_fw()
->> which itself will not be renamed of course).
-> 
-> Yeap :)
+Changes in v2:
+* Fix target name in kernel configuration help text for SDM845 GCC
+  clock driver.
 
-Thank you for your answers. I will prepare a v7 of this series with the
-changes as discussed. I've several higher priority things to fix first
-though, so it may be a while before I post v7.
+[v1]: https://lkml.org/lkml/2018/5/28/171
+[v2]: https://lkml.org/lkml/2018/5/29/43
 
-Regards,
+ drivers/clk/qcom/gcc-sdm845.c               | 43 ++++++++++++++++++++++++++---
+ include/dt-bindings/clock/qcom,gcc-sdm845.h |  2 ++
+ 2 files changed, 41 insertions(+), 4 deletions(-)
 
-Hans
+diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+index e78e6f5..0f694ed 100644
+--- a/drivers/clk/qcom/gcc-sdm845.c
++++ b/drivers/clk/qcom/gcc-sdm845.c
+@@ -1103,6 +1103,7 @@ enum {
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gcc_camera_ahb_clk",
++			.flags = CLK_IS_CRITICAL,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -1129,6 +1130,7 @@ enum {
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gcc_camera_xo_clk",
++			.flags = CLK_IS_CRITICAL,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -1270,6 +1272,7 @@ enum {
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gcc_disp_ahb_clk",
++			.flags = CLK_IS_CRITICAL,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -1328,6 +1331,7 @@ enum {
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gcc_disp_xo_clk",
++			.flags = CLK_IS_CRITICAL,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -1397,6 +1401,7 @@ enum {
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gcc_gpu_cfg_ahb_clk",
++			.flags = CLK_IS_CRITICAL,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -2985,6 +2990,7 @@ enum {
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gcc_video_ahb_clk",
++			.flags = CLK_IS_CRITICAL,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -3011,6 +3017,7 @@ enum {
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gcc_video_xo_clk",
++			.flags = CLK_IS_CRITICAL,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -3049,6 +3056,36 @@ enum {
+ 	},
+ };
+
++static struct clk_branch gcc_cpuss_dvm_bus_clk = {
++	.halt_reg = 0x48190,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x48190,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_cpuss_dvm_bus_clk",
++			.flags = CLK_IS_CRITICAL,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_cpuss_gnoc_clk = {
++	.halt_reg = 0x48004,
++	.halt_check = BRANCH_HALT_VOTED,
++	.hwcg_reg = 0x48004,
++	.hwcg_bit = 1,
++	.clkr = {
++		.enable_reg = 0x52004,
++		.enable_mask = BIT(22),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_cpuss_gnoc_clk",
++			.flags = CLK_IS_CRITICAL,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static struct gdsc pcie_0_gdsc = {
+ 	.gdscr = 0x6b004,
+ 	.pd = {
+@@ -3344,6 +3381,8 @@ enum {
+ 	[GPLL0] = &gpll0.clkr,
+ 	[GPLL0_OUT_EVEN] = &gpll0_out_even.clkr,
+ 	[GPLL4] = &gpll4.clkr,
++	[GCC_CPUSS_DVM_BUS_CLK] = &gcc_cpuss_dvm_bus_clk.clkr,
++	[GCC_CPUSS_GNOC_CLK] = &gcc_cpuss_gnoc_clk.clkr,
+ };
+
+ static const struct qcom_reset_map gcc_sdm845_resets[] = {
+@@ -3433,10 +3472,6 @@ static int gcc_sdm845_probe(struct platform_device *pdev)
+ 	regmap_update_bits(regmap, 0x09ffc, 0x3, 0x3);
+ 	regmap_update_bits(regmap, 0x71028, 0x3, 0x3);
+
+-	/* Enable CPUSS clocks */
+-	regmap_update_bits(regmap, 0x48190, BIT(0), 0x1);
+-	regmap_update_bits(regmap, 0x52004, BIT(22), 0x1);
+-
+ 	return qcom_cc_really_probe(pdev, &gcc_sdm845_desc, regmap);
+ }
+
+diff --git a/include/dt-bindings/clock/qcom,gcc-sdm845.h b/include/dt-bindings/clock/qcom,gcc-sdm845.h
+index aca6126..f96fc2d 100644
+--- a/include/dt-bindings/clock/qcom,gcc-sdm845.h
++++ b/include/dt-bindings/clock/qcom,gcc-sdm845.h
+@@ -192,6 +192,8 @@
+ #define GCC_VS_CTRL_CLK_SRC					182
+ #define GCC_VSENSOR_CLK_SRC					183
+ #define GPLL4							184
++#define GCC_CPUSS_DVM_BUS_CLK					185
++#define GCC_CPUSS_GNOC_CLK					186
+
+ /* GCC Resets */
+ #define GCC_MMSS_BCR						0
+--
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
