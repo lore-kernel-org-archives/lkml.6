@@ -1,117 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id wNqQG3S9GFvHFAAAmS7hNA
-	; Thu, 07 Jun 2018 05:07:00 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 1o70Er5jHlucYAAAmS7hNA
+	; Mon, 11 Jun 2018 11:59:21 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 4E3AA6089E; Thu,  7 Jun 2018 05:07:00 +0000 (UTC)
+	id D688C607BB; Mon, 11 Jun 2018 11:59:20 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="X3Nsm4/B"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qWnnAJs4"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id A66C66063F;
-	Thu,  7 Jun 2018 05:06:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A66C66063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 3AC0360351;
+	Mon, 11 Jun 2018 11:59:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3AC0360351
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752575AbeFGFG5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 01:06:57 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:54683 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752336AbeFGFG4 (ORCPT
+        id S933396AbeFKL7S (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 07:59:18 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:39637 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933310AbeFKL7L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 01:06:56 -0400
-Received: by mail-wm0-f67.google.com with SMTP id o13-v6so15275876wmf.4
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Jun 2018 22:06:55 -0700 (PDT)
+        Mon, 11 Jun 2018 07:59:11 -0400
+Received: by mail-wm0-f68.google.com with SMTP id p11-v6so15956257wmc.4;
+        Mon, 11 Jun 2018 04:59:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=T6cMgT9Hi0s/ZSriMEJ1/E7XQx5AFKeemrAYgNTbaNY=;
-        b=X3Nsm4/B47DVt0Fq7ScmbTd0pEnRbzgFw2wWmeiusq4MVQFUAHA0XviWKB8W89ZKbe
-         rDGu6nBfBChAl3aQ+WAvg8jl7SBoLBETCAQXcsQk43R1gbsnbQgTzEotVUeaFgOad0NO
-         FwzhCAfbxA+i3JSy6jApaxbiJr/V5aaT8OTWk=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=5t4OXh3YN7fJm225qMAwN0eYWpLsXjfBmJlsr43UDiQ=;
+        b=qWnnAJs4snlwE77KEf8pulZJYgU4Bx3FYGDm3IcJ6Lf209awCG7g4A5/tfsLOFSmXI
+         p2GV1qmNQQrPW0ajF5wDFLQtICXLU2SqIvzBqxtoB/rKG7lQt7GSk+/Im4bJHuZ+zXFm
+         EQ8iD5gci/6ka0yKattvaQvuNXYpOiTy6Dh19xPvwVO5mMDRMrr4fh+dEoInNTcYgOvl
+         DHefEA7UAXFFGv57FwuxqT18PDO5q6K/5ufqOdVNstpjB86r9MGdZv4yZpFN2TA8oFQ1
+         Zlcpet92YDYOl8s5jANX8RFsA1vywPyfypOHAcnf3NOhGxl16kL2SP8hxUJ/0xOcjGIv
+         iRkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=T6cMgT9Hi0s/ZSriMEJ1/E7XQx5AFKeemrAYgNTbaNY=;
-        b=UowjAIjCfyio83BkCAXkwDP1wWAGyzITEf8kIcL8L/8vCcmutnXcNrFauB8LhMJlig
-         bhnrpHmbcv0/yFMF4ci450yYe3f86MpkB32c9KpFLFunPXALSduOVLnQfM+WLjGjVkBx
-         YgV0GirtJ6Vgb0IVIwuB/0VYBi/qDhR5ArKQHCADP7w8xo9LQZd37v7s1i+qHovA++O6
-         rru4GubGvku5igYZZHXZahJdRT+5bjV4zRzFBGkKm9/9HkVTimfT48jKrFREwSTABNSR
-         7gU+8Q8iuk/7zbtsPw2++hrCa5SFX2e/F9n3EAB1SkiP7p+mJMZBL5ubzp2zAK9lOVis
-         5XCw==
-X-Gm-Message-State: APt69E1MVRh5PrJuvn8z6TprFw4rJptzkpHc3iNty4CWkhgCSM0GFIcb
-        M15d67+QXRtjW/b7cPsb0vyecw==
-X-Google-Smtp-Source: ADUXVKJApYXwfisB3GKFNoeAsDHrRVpwIBVUrFhCgGjbyRp7Nm68E0tAVBeOo1uz9At+TwYuuTNgyg==
-X-Received: by 2002:a1c:7192:: with SMTP id d18-v6mr418568wmi.115.1528348014980;
-        Wed, 06 Jun 2018 22:06:54 -0700 (PDT)
-Received: from dell ([2.31.163.53])
-        by smtp.gmail.com with ESMTPSA id t66-v6sm935630wme.6.2018.06.06.22.06.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 06 Jun 2018 22:06:54 -0700 (PDT)
-Date: Thu, 7 Jun 2018 06:06:52 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Fabrice Gasnier <fabrice.gasnier@st.com>,
-        linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pwm: stm32: fix build warning with CONFIG_DMA_ENGINE
- disabled
-Message-ID: <20180607050652.GC21163@dell>
-References: <20180525210843.1821071-1-arnd@arndb.de>
- <20180606081827.GD11810@ulmo>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180606081827.GD11810@ulmo>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=5t4OXh3YN7fJm225qMAwN0eYWpLsXjfBmJlsr43UDiQ=;
+        b=Gc5rtjv5ynxdDiCTum05NzfAjW0wVt/zHrNY55UrR0q9gvPO+P6dF0psRbE/KyagvL
+         4GY8NZsgUKR3mpz+MhtS2XUzMw6mon8rymnmHXG0ngElHnAAApfW0QZ7YlxWE31jRjpT
+         pZS8B0SLReBRtAEq/v5Z3/qCWHYlyLiRvM6NDg+/TAnPzjNHgNMmeu9w36v5zkrKcNLO
+         61ptTUnIwUWbXIumHzQppyfiZiqdW0/r999ByldCQras3Q4XAS6hjo7qRad8E8OEZL9V
+         Vg0tR59luIx2TxZ5iougS5ycYNSW0RRLFRdvxgv1NDVWgFrWTW2MwUjS+4VGCw1JtZgM
+         AuAQ==
+X-Gm-Message-State: APt69E3fZJiQiKGifz7vV1vEZQezGDIGHszLOB3KxLHEKnfVdLou37my
+        QYn7kqt9cFsfnXefZw5I3mroRNhJ
+X-Google-Smtp-Source: ADUXVKI3WET6H7bvHUNArbE5GuYh0DZbQHdU4wecN5ZZ3A8jPRov3dk+PIIjKyEkMOoKOsL3+V1Mug==
+X-Received: by 2002:a1c:47cf:: with SMTP id m76-v6mr2913032wmi.80.1528718349603;
+        Mon, 11 Jun 2018 04:59:09 -0700 (PDT)
+Received: from kurokawa.lan (ip-86-49-107-50.net.upcbroadband.cz. [86.49.107.50])
+        by smtp.gmail.com with ESMTPSA id t124-v6sm7974796wmt.29.2018.06.11.04.59.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Jun 2018 04:59:07 -0700 (PDT)
+From: Marek Vasut <marek.vasut@gmail.com>
+X-Google-Original-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v6 05/14] mfd: da9063: Use PLATFORM_DEVID_NONE
+Date: Mon, 11 Jun 2018 13:58:42 +0200
+Message-Id: <20180611115851.1987-5-marek.vasut+renesas@gmail.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
+References: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 06 Jun 2018, Thierry Reding wrote:
+Use PLATFORM_DEVID_NONE instead of -1 in mfd_add_devices.
 
-> On Fri, May 25, 2018 at 11:08:30PM +0200, Arnd Bergmann wrote:
-> > Without dmaengine support, we get a harmless warning about an
-> > unused function:
-> > 
-> > drivers/pwm/pwm-stm32.c:166:12: error: 'stm32_pwm_capture' defined but not used [-Werror=unused-function]
-> > 
-> > Changing the #ifdef to an IS_ENABLED() check shuts up that warning
-> > and is slightly nicer to read.
-> > 
-> > Fixes: 53e38fe73f94 ("pwm: stm32: Add capture support")
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > ---
-> >  drivers/pwm/pwm-stm32.c | 4 +---
-> >  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> Applied, thanks.
-> 
-> Lee, I applied this on top of your immutable MFD/PWM branch because it
-> depends on the capture support that you applied. I wasn't sure what your
-> PR timing was going to be, so I thought I'd do it this way since I'm
-> pulling in some last minute fixes for v4.18.
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+---
+V4: New patch
+V5: Rebase on top of new 01 and 02 patches
+V6: No change
+---
+ drivers/mfd/da9063-core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-I don't see a problem with that.
-
+diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
+index 76258e5709f8..f57558590283 100644
+--- a/drivers/mfd/da9063-core.c
++++ b/drivers/mfd/da9063-core.c
+@@ -226,9 +226,9 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
+ 
+ 	da9063->irq_base = regmap_irq_chip_get_base(da9063->regmap_irq);
+ 
+-	ret = devm_mfd_add_devices(da9063->dev, -1, da9063_devs,
+-				   ARRAY_SIZE(da9063_devs), NULL,
+-				   da9063->irq_base, NULL);
++	ret = devm_mfd_add_devices(da9063->dev, PLATFORM_DEVID_NONE,
++				   da9063_devs, ARRAY_SIZE(da9063_devs),
++				   NULL, da9063->irq_base, NULL);
+ 	if (ret)
+ 		dev_err(da9063->dev, "Cannot add MFD cells\n");
+ 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.16.2
