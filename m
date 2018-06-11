@@ -1,236 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Gi9jCVlEGVvBEwAAmS7hNA
-	; Thu, 07 Jun 2018 14:42:43 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id PMELNZ/nHVueBAAAmS7hNA
+	; Mon, 11 Jun 2018 03:08:15 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 9E742608BA; Thu,  7 Jun 2018 14:42:43 +0000 (UTC)
+	id B31E060791; Mon, 11 Jun 2018 03:08:15 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j0JQ7mYg"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 81B9C607DC;
-	Thu,  7 Jun 2018 14:42:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 81B9C607DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 30200604D4;
+	Mon, 11 Jun 2018 03:08:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 30200604D4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934297AbeFGOmk (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:42:40 -0400
-Received: from mga17.intel.com ([192.55.52.151]:61237 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933716AbeFGOmb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:42:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 07:42:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
-   d="scan'208";a="235505947"
-Received: from 2b52.sc.intel.com ([143.183.136.51])
-  by fmsmga006.fm.intel.com with ESMTP; 07 Jun 2018 07:42:30 -0700
-From: Yu-cheng Yu <yu-cheng.yu@intel.com>
-To: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [PATCH 4/7] x86/cet: add arcp_prctl functions for indirect branch tracking
-Date: Thu,  7 Jun 2018 07:38:52 -0700
-Message-Id: <20180607143855.3681-5-yu-cheng.yu@intel.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180607143855.3681-1-yu-cheng.yu@intel.com>
-References: <20180607143855.3681-1-yu-cheng.yu@intel.com>
+        id S1753877AbeFKDII (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Sun, 10 Jun 2018 23:08:08 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:38688 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752629AbeFKDIG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Jun 2018 23:08:06 -0400
+Received: by mail-io0-f193.google.com with SMTP id l19-v6so22245433ioj.5
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Jun 2018 20:08:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=L6YMPn3dzEROBIVSmcjy7oTkC3KCMYhJRgTqLvBqsn8=;
+        b=j0JQ7mYgzP/TknUpEO4+u1jI+CkaQxaMJ4HThDl7a1Lnmzl2rRzaUPVXsX0A4nXtN0
+         qkEH/xt+cyhjZx2fIRzL/oN3e3uu9FJ0IDgOD9BIy23fU9IeQZbCW+oPgaRnR81E8gfv
+         uKuZ7ytBdFnzc4hP9l4a8787OTcIYVwbNUAy5Pn51I55VcvEvp2Oe8XaTThT1dliwa9D
+         6u9AOIKjtnSz2YmE7Fbnj8HZ4CT80RW02l4i3dfW+5ZWPJddQSgums1w6oipx05rH5Pw
+         4ZcL5/LGOvLvaZLX6GLPAW2WkwunKmLSIOZKVqgQiUEosoPjHyno0+gK+LUuOC1JxOJ7
+         qJ4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=L6YMPn3dzEROBIVSmcjy7oTkC3KCMYhJRgTqLvBqsn8=;
+        b=CtOLAfn+1SXQqkz5wY4OEbSHWOBuoTGznJfsn3luUd7kreOrKLBW5OCnyI/4fx/DNN
+         GYij2gNQApp3F3DajrWjGz3pMqydApxwDbMzeuBVZr4Y6wFXjAGQDSLRDJ0QYeVuL+I4
+         Pppim0P1dlVQqcKpwESnk8oPZRwi5SsU+EDpS+1jDwn6924JlEVwli01twH43IzM/sbq
+         Cw/i5xqJNb0D/K1C3E83HU4Q6RL0LGMRSSq3AvcJN/qTOWZ+nAjgF+jy4JGN5eShv5Lx
+         oI79O09dLOYwdjrkxvH0/DSztJUQlo561PWx5w/TjUMWAAJYLys1Qw2VlvPu0J5u5cwM
+         K97g==
+X-Gm-Message-State: APt69E3rFJKia7JhaIR2gc/1YjZld3ez7/hgCi1NelAXlFjfWCE9+d3h
+        ztV6iU0cFbBYbn8+wlok8iLywdtv
+X-Google-Smtp-Source: ADUXVKKpxnurmsvJ/aJKDJwCPcdAyLAHLFwirV66pvhDA0bRiunHN3UUPT2DFBFjq9fgJHYn65ZuTA==
+X-Received: by 2002:a6b:3902:: with SMTP id g2-v6mr12153032ioa.265.1528686485761;
+        Sun, 10 Jun 2018 20:08:05 -0700 (PDT)
+Received: from pickle.eau.wi.charter.com ([24.178.40.44])
+        by smtp.gmail.com with ESMTPSA id y13-v6sm4880268iob.53.2018.06.10.20.08.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 10 Jun 2018 20:08:04 -0700 (PDT)
+From: Kyle Buzby <kyle.buzby@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Kyle Buzby <kyle.buzby@gmail.com>
+Subject: [PATCH] staging: clocking-wizard: prefer 'help' in Kconfig
+Date: Sun, 10 Jun 2018 22:09:30 -0500
+Message-Id: <20180611030930.2097-1-kyle.buzby@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
-Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
----
- arch/x86/include/asm/cet.h        |  1 +
- arch/x86/include/uapi/asm/prctl.h |  1 +
- arch/x86/kernel/cet_prctl.c       | 54 ++++++++++++++++++++++++++++++++++++---
- arch/x86/kernel/elf.c             | 12 ++++++---
- arch/x86/kernel/process.c         |  1 +
- 5 files changed, 62 insertions(+), 7 deletions(-)
+Fixes the checkpatch warning:
 
-diff --git a/arch/x86/include/asm/cet.h b/arch/x86/include/asm/cet.h
-index d07bdeb27db4..5b71a2b44eb1 100644
---- a/arch/x86/include/asm/cet.h
-+++ b/arch/x86/include/asm/cet.h
-@@ -19,6 +19,7 @@ struct cet_stat {
- 	unsigned int	ibt_enabled:1;
- 	unsigned int	locked:1;
- 	unsigned int	exec_shstk:2;
-+	unsigned int	exec_ibt:2;
- };
- 
- #ifdef CONFIG_X86_INTEL_CET
-diff --git a/arch/x86/include/uapi/asm/prctl.h b/arch/x86/include/uapi/asm/prctl.h
-index f9965403b655..fef476d2d2f6 100644
---- a/arch/x86/include/uapi/asm/prctl.h
-+++ b/arch/x86/include/uapi/asm/prctl.h
-@@ -20,6 +20,7 @@
- #define ARCH_CET_EXEC		0x3004
- #define ARCH_CET_ALLOC_SHSTK	0x3005
- #define ARCH_CET_PUSH_SHSTK	0x3006
-+#define ARCH_CET_LEGACY_BITMAP	0x3007
- 
- /*
-  * Settings for ARCH_CET_EXEC
-diff --git a/arch/x86/kernel/cet_prctl.c b/arch/x86/kernel/cet_prctl.c
-index 326996e2ea80..948f7ba98dc2 100644
---- a/arch/x86/kernel/cet_prctl.c
-+++ b/arch/x86/kernel/cet_prctl.c
-@@ -19,6 +19,7 @@
-  * ARCH_CET_EXEC: set default features for exec()
-  * ARCH_CET_ALLOC_SHSTK: allocate shadow stack
-  * ARCH_CET_PUSH_SHSTK: put a return address on shadow stack
-+ * ARCH_CET_LEGACY_BITMAP: allocate legacy bitmap
-  */
- 
- static int handle_get_status(unsigned long arg2)
-@@ -28,8 +29,12 @@ static int handle_get_status(unsigned long arg2)
- 
- 	if (current->thread.cet.shstk_enabled)
- 		features |= GNU_PROPERTY_X86_FEATURE_1_SHSTK;
-+	if (current->thread.cet.ibt_enabled)
-+		features |= GNU_PROPERTY_X86_FEATURE_1_IBT;
- 	if (current->thread.cet.exec_shstk == CET_EXEC_ALWAYS_ON)
- 		cet_exec |= GNU_PROPERTY_X86_FEATURE_1_SHSTK;
-+	if (current->thread.cet.exec_ibt == CET_EXEC_ALWAYS_ON)
-+		cet_exec |= GNU_PROPERTY_X86_FEATURE_1_IBT;
- 	shstk_size = current->thread.cet.exec_shstk_size;
- 
- 	if (in_compat_syscall()) {
-@@ -94,9 +99,18 @@ static int handle_set_exec(unsigned long arg2)
- 			return -EPERM;
- 	}
- 
-+	if (features & GNU_PROPERTY_X86_FEATURE_1_IBT) {
-+		if (!cpu_feature_enabled(X86_FEATURE_IBT))
-+			return -EINVAL;
-+		if ((current->thread.cet.exec_ibt == CET_EXEC_ALWAYS_ON) &&
-+		    (cet_exec != CET_EXEC_ALWAYS_ON))
-+			return -EPERM;
-+	}
-+
- 	if (features & GNU_PROPERTY_X86_FEATURE_1_SHSTK)
- 		current->thread.cet.exec_shstk = cet_exec;
--
-+	if (features & GNU_PROPERTY_X86_FEATURE_1_IBT)
-+		current->thread.cet.exec_ibt = cet_exec;
- 	current->thread.cet.exec_shstk_size = shstk_size;
- 	return 0;
- }
-@@ -167,9 +181,36 @@ static int handle_alloc_shstk(unsigned long arg2)
- 	return 0;
- }
- 
-+static int handle_bitmap(unsigned long arg2)
-+{
-+	unsigned long addr, size;
-+
-+	if (current->thread.cet.ibt_enabled) {
-+		if (!current->thread.cet.ibt_bitmap_addr)
-+			cet_setup_ibt_bitmap();
-+		addr = current->thread.cet.ibt_bitmap_addr;
-+		size = current->thread.cet.ibt_bitmap_size;
-+	} else {
-+		addr = 0;
-+		size = 0;
-+	}
-+
-+	if (in_compat_syscall()) {
-+		if (put_user(addr, (unsigned int __user *)arg2) ||
-+		    put_user(size, (unsigned int __user *)arg2 + 1))
-+			return -EFAULT;
-+	} else {
-+		if (put_user(addr, (unsigned long __user *)arg2) ||
-+		    put_user(size, (unsigned long __user *)arg2 + 1))
-+		return -EFAULT;
-+	}
-+	return 0;
-+}
-+
- int prctl_cet(int option, unsigned long arg2)
- {
--	if (!cpu_feature_enabled(X86_FEATURE_SHSTK))
-+	if (!cpu_feature_enabled(X86_FEATURE_SHSTK) &&
-+	    !cpu_feature_enabled(X86_FEATURE_IBT))
- 		return -EINVAL;
- 
- 	switch (option) {
-@@ -181,7 +222,8 @@ int prctl_cet(int option, unsigned long arg2)
- 			return -EPERM;
- 		if (arg2 & GNU_PROPERTY_X86_FEATURE_1_SHSTK)
- 			cet_disable_free_shstk(current);
--
-+		if (arg2 & GNU_PROPERTY_X86_FEATURE_1_IBT)
-+			cet_disable_ibt();
- 		return 0;
- 
- 	case ARCH_CET_LOCK:
-@@ -197,6 +239,12 @@ int prctl_cet(int option, unsigned long arg2)
- 	case ARCH_CET_PUSH_SHSTK:
- 		return handle_push_shstk(arg2);
- 
-+	/*
-+	 * Allocate legacy bitmap and return address & size to user.
-+	 */
-+	case ARCH_CET_LEGACY_BITMAP:
-+		return handle_bitmap(arg2);
-+
- 	default:
- 		return -EINVAL;
- 	}
-diff --git a/arch/x86/kernel/elf.c b/arch/x86/kernel/elf.c
-index a3995c8c2fc2..c2a89f3c7186 100644
---- a/arch/x86/kernel/elf.c
-+++ b/arch/x86/kernel/elf.c
-@@ -230,10 +230,14 @@ int arch_setup_features(void *ehdr_p, void *phdr_p,
- 	}
- 
- 	if (cpu_feature_enabled(X86_FEATURE_IBT)) {
--		if (ibt) {
--			err = cet_setup_ibt();
--			if (err < 0)
--				goto out;
-+		int exec = current->thread.cet.exec_ibt;
-+
-+		if (exec != CET_EXEC_ALWAYS_OFF) {
-+			if (ibt || (exec == CET_EXEC_ALWAYS_ON)) {
-+				err = cet_setup_ibt();
-+				if (err < 0)
-+					goto out;
-+			}
- 		}
- 	}
- 
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index 9bec164e7958..c69576b4abd1 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -801,6 +801,7 @@ long do_arch_prctl_common(struct task_struct *task, int option,
- 	case ARCH_CET_EXEC:
- 	case ARCH_CET_ALLOC_SHSTK:
- 	case ARCH_CET_PUSH_SHSTK:
-+	case ARCH_CET_LEGACY_BITMAP:
- 		return prctl_cet(option, cpuid_enabled);
- 	}
- 
+WARNING: prefer 'help' over '---help---' for new help texts
++config COMMON_CLK_XLNX_CLKWZRD
+
+Signed-off-by: Kyle Buzby <kyle.buzby@gmail.com>
+---
+ drivers/staging/clocking-wizard/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/clocking-wizard/Kconfig b/drivers/staging/clocking-wizard/Kconfig
+index 357af02c562c..aa57a5865556 100644
+--- a/drivers/staging/clocking-wizard/Kconfig
++++ b/drivers/staging/clocking-wizard/Kconfig
+@@ -5,5 +5,5 @@
+ config COMMON_CLK_XLNX_CLKWZRD
+ 	tristate "Xilinx Clocking Wizard"
+ 	depends on COMMON_CLK && OF
+-	---help---
++	help
+ 	  Support for the Xilinx Clocking Wizard IP core clock generator.
 -- 
-2.15.1
+2.17.1
