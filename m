@@ -1,115 +1,226 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 1o3QNZ4kHFsXQQAAmS7hNA
-	; Sat, 09 Jun 2018 19:03:58 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id nFP5ML2DHls/FQAAmS7hNA
+	; Mon, 11 Jun 2018 14:14:21 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id CCAF5602FC; Sat,  9 Jun 2018 19:03:58 +0000 (UTC)
+	id AD72A607A4; Mon, 11 Jun 2018 14:14:21 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FtZ0bvKB"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 3D8FF602FC;
-	Sat,  9 Jun 2018 19:03:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3D8FF602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 24B2F60791;
+	Mon, 11 Jun 2018 14:14:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 24B2F60791
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753345AbeFITD4 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 15:03:56 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:50153 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753227AbeFITDy (ORCPT
+        id S933903AbeFKOOT (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 10:14:19 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46162 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933417AbeFKOHE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 15:03:54 -0400
-Received: from mail-pf0-f197.google.com ([209.85.192.197])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1fRj9V-0001NX-9k
-        for linux-kernel@vger.kernel.org; Sat, 09 Jun 2018 19:03:53 +0000
-Received: by mail-pf0-f197.google.com with SMTP id g15-v6so7978710pfh.10
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Jun 2018 12:03:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=cMF+a2zBMCbUm/J4RLrxjAyo4y80On+cFqP3HU+CYuc=;
-        b=PBLvHTMbAG6z88m5gMmThVPa5p5P242xPza0+vUywRyphgitZHRQ5k/GOFtsv+KvYM
-         dAACOh4hgw4V6rSQibh9NndV7xsUWeVCpv8yWjAaD5PV/5FObq7OGFW8q4H8HcllAvr6
-         Pmim/vWPKiO4teTS2bk92KsXY9t0hXJDhrTbO9MHJrq3DClmvb53qL5bAkl+5L7slOUG
-         L9Ol4XwWbFHNo6QjNlA4axitwnDtqPfwxDv3otqHvKneDNluzg04EgLySosGAerX882H
-         jvlUw6Jhu82MxMW6TuBmZr++f1/wjczsKmWShPW7pj1nf5NdANAB5qoIZgpEI7WVxQJV
-         eBmA==
-X-Gm-Message-State: APt69E1vZmsKh/eKGcrlXtmJXm5ff2ox393ACaLU1cZWwAcz7H+JYLcC
-        IuElnhm8nsdYGA3rprdnxV3mIjrlm7zWkOsa5V7AZdxOf3dD9IFxqAZJNxO1wvwSZjUxKVHSogN
-        0sKrAouuQfB5C7MQkqQS/2oNCnhS4o/5ZSBRLGaXZYA==
-X-Received: by 2002:a63:b609:: with SMTP id j9-v6mr9604010pgf.335.1528571031895;
-        Sat, 09 Jun 2018 12:03:51 -0700 (PDT)
-X-Google-Smtp-Source: ADUXVKLaD/eYFbOE+8qRzw7WDYYToZBtkJJCkgqebJIs+G//6XOWjs7U+DlLMAEv9nATmxqhYK6mvQ==
-X-Received: by 2002:a63:b609:: with SMTP id j9-v6mr9604002pgf.335.1528571031602;
-        Sat, 09 Jun 2018 12:03:51 -0700 (PDT)
-Received: from [192.168.1.206] (220-133-187-190.HINET-IP.hinet.net. [220.133.187.190])
-        by smtp.gmail.com with ESMTPSA id z28-v6sm70903031pfl.169.2018.06.09.12.03.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 09 Jun 2018 12:03:50 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii;
-        delsp=yes;
-        format=flowed
-Mime-Version: 1.0 (Mac OS X Mail 11.4 \(3445.8.2\))
-Subject: Re: Ryzen 2700 Temperature offset?
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <20180607154915.GA7061@roeck-us.net>
-Date: Sun, 10 Jun 2018 03:03:47 +0800
-Cc: Chris Ouellet <rabbit.of.war@gmail.com>,
-        linux-hwmon@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: 7bit
-Message-Id: <54EAD835-C48D-4751-9BFF-71536241129A@canonical.com>
-References: <C85830A6-BCC7-4137-84E5-38503873F278@canonical.com>
- <20180607154915.GA7061@roeck-us.net>
-To: Guenter Roeck <linux@roeck-us.net>
-X-Mailer: Apple Mail (2.3445.8.2)
+        Mon, 11 Jun 2018 10:07:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
+        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Y/xGYYXtotYGntdReNGF/yCzCA63LkwWsEkWoYLOKnA=; b=FtZ0bvKBvOSJ0YrtqhYJieQ6z
+        /VIP7D5CvgaWJ43rCQT800R9U0KKYIrtPxuJDUhPJW5jL0xvZ3xv77scA1QqfllamMMK1edqgHqEN
+        jLKD1CI6JqmDuzFXM1onHJnyXhfBxY1DdK4lZS1pDEOYvTH7PLY0J6QzIGMWa5MX2VxmIbaaLDpA2
+        5t0KUU5MjnWEr/3/WkaioVGp2rYQMLwfSDlsoLwDcT7jNSUv/fhg0QRxGrxCM+0ulYPLv1VQ4PgtS
+        owMdcvV9GFsc127ex1dhnMtT1pcASRreN8J7zms+n6/SJySWiyDdL3Hj9+2bS4hV5fFdDVTjlxjAv
+        RCc0UDoGA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fSNTL-0004t9-2l; Mon, 11 Jun 2018 14:07:03 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@redhat.com>,
+        Lukas Czerner <lczerner@redhat.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH v13 49/72] shmem: Convert shmem_add_to_page_cache to XArray
+Date: Mon, 11 Jun 2018 07:06:16 -0700
+Message-Id: <20180611140639.17215-50-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
+References: <20180611140639.17215-1-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-at 23:49, Guenter Roeck <linux@roeck-us.net> wrote:
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-> On Thu, Jun 07, 2018 at 11:03:13AM +0800, Kai Heng Feng wrote:
->> Hi Guenter,
->>
->> A user thinks the Ryzen 2700 temperature may not be correct [1].
->> Can you take a look when you have time? Thanks.
->>
->> Also, where can I find all these temperature offsets? I googled but with  
->> no
->> result.
-> Problem is that the offsets are not documented in public, making it
-> difficult to find out. For Ryzen 2700, there is currently no offset
-> configured; I was told that there is none. For Ryzen 2700X, the offset
-> is 10 degrees C.
+This removes the last caller of radix_tree_maybe_preload_order().
+Simpler code, unless we run out of memory for new xa_nodes partway through
+inserting entries into the xarray.  Hopefully we can support multi-index
+entries in the page cache soon and all the awful code goes away.
 
-I am still quite interesting where you get this information...
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+ mm/shmem.c | 87 ++++++++++++++++++++++++------------------------------
+ 1 file changed, 39 insertions(+), 48 deletions(-)
 
->
->> [1] https://bugs.launchpad.net/bugs/1774817
->
-> The key here is the commit mentioned in the log (1b59788979acd). It does
-> not only adjust the per-CPU offset, but also takes a configurable offset
-> of 49 degrees C into account. You'll need to apply that patch in your
-> kernel, or the temperature may be off by 49 degrees C.
-
-So unless AMD shares these offsets value, we can never know what correct  
-offsets are?
-
-Kai-Heng
-
->
-> Hope this helps. If not, please let me know. Note that I am travelling;
-> responses may be delayed.
->
-> Guenter
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 983a27656e2e..8e702b6d84a5 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -576,9 +576,10 @@ static inline bool is_huge_enabled(struct shmem_sb_info *sbinfo)
+  */
+ static int shmem_add_to_page_cache(struct page *page,
+ 				   struct address_space *mapping,
+-				   pgoff_t index, void *expected)
++				   pgoff_t index, void *expected, gfp_t gfp)
+ {
+-	int error, nr = hpage_nr_pages(page);
++	XA_STATE(xas, &mapping->i_pages, index);
++	unsigned long i, nr = 1UL << compound_order(page);
+ 
+ 	VM_BUG_ON_PAGE(PageTail(page), page);
+ 	VM_BUG_ON_PAGE(index != round_down(index, nr), page);
+@@ -587,49 +588,47 @@ static int shmem_add_to_page_cache(struct page *page,
+ 	VM_BUG_ON(expected && PageTransHuge(page));
+ 
+ 	page_ref_add(page, nr);
+-	page->mapping = mapping;
+ 	page->index = index;
++	page->mapping = mapping;
+ 
+-	xa_lock_irq(&mapping->i_pages);
+-	if (PageTransHuge(page)) {
+-		void __rcu **results;
+-		pgoff_t idx;
+-		int i;
+-
+-		error = 0;
+-		if (radix_tree_gang_lookup_slot(&mapping->i_pages,
+-					&results, &idx, index, 1) &&
+-				idx < index + HPAGE_PMD_NR) {
+-			error = -EEXIST;
++	do {
++		xas_lock_irq(&xas);
++		xas_create_range(&xas, index + nr - 1);
++		if (xas_error(&xas))
++			goto unlock;
++		for (i = 0; i < nr; i++) {
++			void *entry = xas_load(&xas);
++			if (entry != expected)
++				xas_set_err(&xas, -ENOENT);
++			if (xas_error(&xas))
++				goto undo;
++			xas_store(&xas, page + i);
++			xas_next(&xas);
+ 		}
+-
+-		if (!error) {
+-			for (i = 0; i < HPAGE_PMD_NR; i++) {
+-				error = radix_tree_insert(&mapping->i_pages,
+-						index + i, page + i);
+-				VM_BUG_ON(error);
+-			}
++		if (PageTransHuge(page)) {
+ 			count_vm_event(THP_FILE_ALLOC);
++			__inc_node_page_state(page, NR_SHMEM_THPS);
+ 		}
+-	} else if (!expected) {
+-		error = radix_tree_insert(&mapping->i_pages, index, page);
+-	} else {
+-		error = shmem_replace_entry(mapping, index, expected, page);
+-	}
+-
+-	if (!error) {
+ 		mapping->nrpages += nr;
+-		if (PageTransHuge(page))
+-			__inc_node_page_state(page, NR_SHMEM_THPS);
+ 		__mod_node_page_state(page_pgdat(page), NR_FILE_PAGES, nr);
+ 		__mod_node_page_state(page_pgdat(page), NR_SHMEM, nr);
+-		xa_unlock_irq(&mapping->i_pages);
+-	} else {
++		goto unlock;
++undo:
++		while (i-- > 0) {
++			xas_store(&xas, NULL);
++			xas_prev(&xas);
++		}
++unlock:
++		xas_unlock_irq(&xas);
++	} while (xas_nomem(&xas, gfp));
++
++	if (xas_error(&xas)) {
+ 		page->mapping = NULL;
+-		xa_unlock_irq(&mapping->i_pages);
+ 		page_ref_sub(page, nr);
++		return xas_error(&xas);
+ 	}
+-	return error;
++
++	return 0;
+ }
+ 
+ /*
+@@ -1182,7 +1181,7 @@ static int shmem_unuse_inode(struct shmem_inode_info *info,
+ 	 */
+ 	if (!error)
+ 		error = shmem_add_to_page_cache(*pagep, mapping, index,
+-						radswap);
++						radswap, gfp);
+ 	if (error != -ENOMEM) {
+ 		/*
+ 		 * Truncation and eviction use free_swap_and_cache(), which
+@@ -1698,7 +1697,7 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
+ 				false);
+ 		if (!error) {
+ 			error = shmem_add_to_page_cache(page, mapping, index,
+-						swp_to_radix_entry(swap));
++						swp_to_radix_entry(swap), gfp);
+ 			/*
+ 			 * We already confirmed swap under page lock, and make
+ 			 * no memory allocation here, so usually no possibility
+@@ -1804,13 +1803,8 @@ alloc_nohuge:		page = shmem_alloc_and_acct_page(gfp, inode,
+ 				PageTransHuge(page));
+ 		if (error)
+ 			goto unacct;
+-		error = radix_tree_maybe_preload_order(gfp & GFP_RECLAIM_MASK,
+-				compound_order(page));
+-		if (!error) {
+-			error = shmem_add_to_page_cache(page, mapping, hindex,
+-							NULL);
+-			radix_tree_preload_end();
+-		}
++		error = shmem_add_to_page_cache(page, mapping, hindex,
++						NULL, gfp & GFP_RECLAIM_MASK);
+ 		if (error) {
+ 			mem_cgroup_cancel_charge(page, memcg,
+ 					PageTransHuge(page));
+@@ -2277,11 +2271,8 @@ static int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
+ 	if (ret)
+ 		goto out_release;
+ 
+-	ret = radix_tree_maybe_preload(gfp & GFP_RECLAIM_MASK);
+-	if (!ret) {
+-		ret = shmem_add_to_page_cache(page, mapping, pgoff, NULL);
+-		radix_tree_preload_end();
+-	}
++	ret = shmem_add_to_page_cache(page, mapping, pgoff, NULL,
++						gfp & GFP_RECLAIM_MASK);
+ 	if (ret)
+ 		goto out_release_uncharge;
+ 
+-- 
+2.17.1
