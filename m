@@ -1,250 +1,183 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 1cWqGc+sGlvmaAAAmS7hNA
-	; Fri, 08 Jun 2018 16:21:10 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id PGbjNdKFHlu4LwAAmS7hNA
+	; Mon, 11 Jun 2018 14:24:02 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 940F7607E4; Fri,  8 Jun 2018 16:21:10 +0000 (UTC)
+	id ED729607E4; Mon, 11 Jun 2018 14:24:01 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sJsDXFx8"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RnaMWJcS"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FROM,MAILING_LIST_MULTI,T_DKIM_INVALID
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id E9572601B4;
-	Fri,  8 Jun 2018 16:21:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E9572601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 6EA2860541;
+	Mon, 11 Jun 2018 14:24:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6EA2860541
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752805AbeFHQVI (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 12:21:08 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:38313 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751643AbeFHQVF (ORCPT
+        id S934346AbeFKOWY (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 10:22:24 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45438 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933500AbeFKOGx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 12:21:05 -0400
-Received: by mail-wr0-f196.google.com with SMTP id e18-v6so5719909wrs.5;
-        Fri, 08 Jun 2018 09:21:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=4Z8BTLsMqz68FyZueOj7rIvHOxo9E4uO/+ybVvG7tHw=;
-        b=sJsDXFx81wyBerNeXrGVjijtRKAz5ybjVNlXMyqdW4hOQu80EK7M8JnOm3EUtYudCA
-         nX7kBXRQbYKibhKR5qAbVAotKWj8pFzKLDmSEgORUY9hwafjv16KkXPmlDqVj6K86BH5
-         ua3m69+zL5DMM+T+4ziArePd4r+EmbNV/heTwgCEKdItQvgeExD319eoftooKGVW4zqW
-         WzhrRRRrkHsnxvBjc68VAlJlz3U2arRZs699gERoB62Dt+9GC93mnRhpyB5dgMgh+pRq
-         hgYT8EpdelQForHITmYvBy2yPAQvXzBWW8mqb840Bt6sdoBwImjrArwW38GZvUjmdWHu
-         mCbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=4Z8BTLsMqz68FyZueOj7rIvHOxo9E4uO/+ybVvG7tHw=;
-        b=O7y31pXfV03upgm4wBUzLxvY01UdgFizB1g1qYIUNvtxPbsjmrn10DydnmlYX/Mver
-         Ve6lwJ/Q98XjhRVS+V6bnvWbR4T5aXrftwpm8x4k2k4hdfD5rb2t/MEuZu4tydvoZcdQ
-         mgDPa+w6fJkpW0caausDT1k6MCBVsujlMgH2htfxMKqGYxmzgL3oR5tkWc5r2PalyD6l
-         bsydU1XF+wUmUXAbh4RN3l/QmTORy3F2EpP3kdXq8okCEmvi+4m5WY8NB8/peYX3Pdr+
-         fY0BIA6VVeAVadHDsqTIlHey+KM9+Ppsu4LmLdNRG9j2In7/0+ZglvsxnvCjEN1UOCKt
-         ScVQ==
-X-Gm-Message-State: APt69E2yxsBSwQSpqomOBwYEqmzVeeSFaHT4Hetvjy/FNUwXtqDviEQS
-        c8hYSAb4CMBxPJ71is9WvaQ=
-X-Google-Smtp-Source: ADUXVKKoLTMku6OxngoGZyVOgiLEwW1pvFYjUD8Wo0V+uvuNoBt1sWNPLt1fS37RMDK+HnIkpJhVSQ==
-X-Received: by 2002:adf:ee0e:: with SMTP id y14-v6mr5966574wrn.63.1528474864148;
-        Fri, 08 Jun 2018 09:21:04 -0700 (PDT)
-Received: from localhost.localdomain ([188.24.92.194])
-        by smtp.googlemail.com with ESMTPSA id m185-v6sm2545041wma.36.2018.06.08.09.21.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Jun 2018 09:21:03 -0700 (PDT)
-From: attitokes@gmail.com
-Cc: =?UTF-8?q?Attila=20T=C5=91k=C3=A9s?= <attitokes@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Artiom Vaskov <velemas@gmail.com>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org
-Subject: [PATCH] Bluetooth: hci_bcm: Configure SCO routing automatically
-Date: Fri,  8 Jun 2018 19:20:09 +0300
-Message-Id: <20180608162009.22762-1-attitokes@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <280FCB2C-6DF1-4790-A89F-AF5BE3513AE5@holtmann.org>
-References: <280FCB2C-6DF1-4790-A89F-AF5BE3513AE5@holtmann.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-To: unlisted-recipients:; (no To-header on input)
+        Mon, 11 Jun 2018 10:06:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
+        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=SEKhh9tEySLT3DK6sNrlXzWkfXE7JM5uLwDQy4eqfzg=; b=RnaMWJcSdqsx60dv3lyYDZitM
+        5csUaOl0AXVOY8v8s2KM5XzAVAZSMjL6zE3g9K3rTdSwdmAGoCuoIxxTk5GwdGNDtWbvE1rxNMzGk
+        NdT+Nsy4rWu0sDmy3fmNfPNPlMX+1/jwILHUDXy8KgdeUBdPCw2+3oJecaPl9+OUANANTeKXc9rfx
+        nNfD/eqt6Fs2ulrlfonm+hsgvtMprDoqdbpgE28p+ChxnO1REMALI2nusYPRswbx212AvorDUlZzb
+        Iz64YO4A4o8aqYJAgBtn/PftGs/aIIVd2Scb2cO2Ku5ptS/GxvJ0cBy7qcb/vozqyr84iY2yMVK8R
+        pQScC4V4g==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fSNTA-0004iC-RQ; Mon, 11 Jun 2018 14:06:52 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@redhat.com>,
+        Lukas Czerner <lczerner@redhat.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH v13 30/72] radix tree test suite: Convert regression1 to XArray
+Date: Mon, 11 Jun 2018 07:05:57 -0700
+Message-Id: <20180611140639.17215-31-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
+References: <20180611140639.17215-1-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Attila Tőkés <attitokes@gmail.com>
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Added support to automatically configure the SCO packet routing at the device setup. The SCO packets are used with the HSP / HFP profiles, but in some devices (ex. CYW43438) they are routed to a PCM output by default. This change allows sending the vendor specific HCI command to configure the SCO routing. The parameters of the command are loaded from the device tree.
+Now the page cache lookup is using the XArray, let's convert this
+regression test from the radix tree API to the XArray so it's testing
+roughly the same thing it was testing before.
 
-Signed-off-by: Attila Tőkés <attitokes@gmail.com>
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- .../bindings/net/broadcom-bluetooth.txt       |  7 ++
- drivers/bluetooth/hci_bcm.c                   | 72 +++++++++++++++++++
- 2 files changed, 79 insertions(+)
+ tools/testing/radix-tree/regression1.c | 58 +++++++++-----------------
+ 1 file changed, 19 insertions(+), 39 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-index 4194ff7e..aea3a094 100644
---- a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-+++ b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-@@ -21,6 +21,12 @@ Optional properties:
-  - clocks: clock specifier if external clock provided to the controller
-  - clock-names: should be "extclk"
- 
-+ SCO routing parameters:
-+ - sco-routing: 0-3 (PCM, Transport, Codec, I2S)
-+ - pcm-interface-rate: 0-4 (128 Kbps - 2048 Kbps)
-+ - pcm-frame-type: 0 (short), 1 (long)
-+ - pcm-sync-mode: 0 (slave), 1 (master)
-+ - pcm-clock-mode: 0 (slave), 1 (master)
- 
- Example:
- 
-@@ -31,5 +37,6 @@ Example:
-        bluetooth {
-                compatible = "brcm,bcm43438-bt";
-                max-speed = <921600>;
-+               sco-routing = <1>; /* 1 = transport (UART) */
-        };
- };
-diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
-index ddbd8c6a..0e729534 100644
---- a/drivers/bluetooth/hci_bcm.c
-+++ b/drivers/bluetooth/hci_bcm.c
-@@ -83,6 +83,16 @@
-  * @hu: pointer to HCI UART controller struct,
-  *	used to disable flow control during runtime suspend and system sleep
-  * @is_suspended: whether flow control is currently disabled
-+ *
-+ *  SCO routing parameters:
-+ *   used as the parameters for the bcm_set_pcm_int_params command
-+ *	@sco_routing:
-+ *	 >= 255 (skip SCO routing configuration)
-+ *	 0-3 (PCM, Transport, Codec, I2S)
-+ *	@pcm_interface_rate: 0-4 (128 Kbps - 2048 Kbps)
-+ *	@pcm_frame_type: 0 (short), 1 (long)
-+ *	@pcm_sync_mode: 0 (slave), 1 (master)
-+ *	@pcm_clock_mode: 0 (slave), 1 (master)
-  */
- struct bcm_device {
- 	/* Must be the first member, hci_serdev.c expects this. */
-@@ -114,6 +124,13 @@ struct bcm_device {
- 	struct hci_uart		*hu;
- 	bool			is_suspended;
- #endif
-+
-+	/* SCO routing parameters */
-+	u8			sco_routing;
-+	u8			pcm_interface_rate;
-+	u8			pcm_frame_type;
-+	u8			pcm_sync_mode;
-+	u8			pcm_clock_mode;
+diff --git a/tools/testing/radix-tree/regression1.c b/tools/testing/radix-tree/regression1.c
+index 0aece092f40e..b4a4a7168986 100644
+--- a/tools/testing/radix-tree/regression1.c
++++ b/tools/testing/radix-tree/regression1.c
+@@ -53,12 +53,12 @@ struct page {
+ 	unsigned long index;
  };
  
- /* generic bcm uart resources */
-@@ -189,6 +206,40 @@ static int bcm_set_baudrate(struct hci_uart *hu, unsigned int speed)
- 	return 0;
- }
- 
-+static int bcm_configure_sco_routing(struct hci_uart *hu, struct bcm_device *bcm_dev)
-+{
-+	struct hci_dev *hdev = hu->hdev;
-+	struct sk_buff *skb;
-+	struct bcm_set_pcm_int_params params;
-+
-+	if (bcm_dev->sco_routing >= 0xff) {
-+		/* SCO routing configuration should be skipped */
-+		return 0;
-+	}
-+
-+	bt_dev_dbg(hdev, "BCM: Configuring SCO routing (%d %d %d %d %d)",
-+			bcm_dev->sco_routing, bcm_dev->pcm_interface_rate, bcm_dev->pcm_frame_type,
-+			bcm_dev->pcm_sync_mode,	bcm_dev->pcm_clock_mode);
-+
-+	params.routing = bcm_dev->sco_routing;
-+	params.rate = bcm_dev->pcm_interface_rate;
-+	params.frame_sync = bcm_dev->pcm_frame_type;
-+	params.sync_mode = bcm_dev->pcm_sync_mode;
-+	params.clock_mode = bcm_dev->pcm_clock_mode;
-+
-+	/* Send the SCO routing configuration command */
-+	skb = __hci_cmd_sync(hdev, 0xfc1c, sizeof(params), &params, HCI_CMD_TIMEOUT);
-+	if (IS_ERR(skb)) {
-+		int err = PTR_ERR(skb);
-+		bt_dev_err(hdev, "BCM: failed to configure SCO routing (%d)", err);
-+		return err;
-+	}
-+
-+	kfree_skb(skb);
-+
-+	return 0;
-+}
-+
- /* bcm_device_exists should be protected by bcm_device_lock */
- static bool bcm_device_exists(struct bcm_device *device)
+-static struct page *page_alloc(void)
++static struct page *page_alloc(int index)
  {
-@@ -534,6 +585,9 @@ static int bcm_setup(struct hci_uart *hu)
- 			host_set_baudrate(hu, speed);
+ 	struct page *p;
+ 	p = malloc(sizeof(struct page));
+ 	p->count = 1;
+-	p->index = 1;
++	p->index = index;
+ 	pthread_mutex_init(&p->lock, NULL);
+ 
+ 	return p;
+@@ -80,53 +80,33 @@ static void page_free(struct page *p)
+ static unsigned find_get_pages(unsigned long start,
+ 			    unsigned int nr_pages, struct page **pages)
+ {
+-	unsigned int i;
+-	unsigned int ret;
+-	unsigned int nr_found;
++	XA_STATE(xas, &mt_tree, start);
++	struct page *page;
++	unsigned int ret = 0;
+ 
+ 	rcu_read_lock();
+-restart:
+-	nr_found = radix_tree_gang_lookup_slot(&mt_tree,
+-				(void ***)pages, NULL, start, nr_pages);
+-	ret = 0;
+-	for (i = 0; i < nr_found; i++) {
+-		struct page *page;
+-repeat:
+-		page = radix_tree_deref_slot((void **)pages[i]);
+-		if (unlikely(!page))
++	xas_for_each(&xas, page, ULONG_MAX) {
++		if (xas_retry(&xas, page))
+ 			continue;
+ 
+-		if (radix_tree_exception(page)) {
+-			if (radix_tree_deref_retry(page)) {
+-				/*
+-				 * Transient condition which can only trigger
+-				 * when entry at index 0 moves out of or back
+-				 * to root: none yet gotten, safe to restart.
+-				 */
+-				assert((start | i) == 0);
+-				goto restart;
+-			}
+-			/*
+-			 * No exceptional entries are inserted in this test.
+-			 */
+-			assert(0);
+-		}
+-
+ 		pthread_mutex_lock(&page->lock);
+-		if (!page->count) {
+-			pthread_mutex_unlock(&page->lock);
+-			goto repeat;
+-		}
++		if (!page->count)
++			goto unlock;
++
+ 		/* don't actually update page refcount */
+ 		pthread_mutex_unlock(&page->lock);
+ 
+ 		/* Has the page moved? */
+-		if (unlikely(page != *((void **)pages[i]))) {
+-			goto repeat;
+-		}
++		if (unlikely(page != xas_reload(&xas)))
++			goto put_page;
+ 
+ 		pages[ret] = page;
+ 		ret++;
++		continue;
++unlock:
++		pthread_mutex_unlock(&page->lock);
++put_page:
++		xas_reset(&xas);
  	}
+ 	rcu_read_unlock();
+ 	return ret;
+@@ -145,12 +125,12 @@ static void *regression1_fn(void *arg)
+ 		for (j = 0; j < 1000000; j++) {
+ 			struct page *p;
  
-+	/* Configure SCO routing if needed */
-+	bcm_configure_sco_routing(hu, bcm->dev);
-+
- finalize:
- 	release_firmware(fw);
+-			p = page_alloc();
++			p = page_alloc(0);
+ 			pthread_mutex_lock(&mt_lock);
+ 			radix_tree_insert(&mt_tree, 0, p);
+ 			pthread_mutex_unlock(&mt_lock);
  
-@@ -1004,9 +1058,21 @@ static int bcm_acpi_probe(struct bcm_device *dev)
- }
- #endif /* CONFIG_ACPI */
- 
-+static void read_u8_device_property(struct device *device, const char *property, u8 *destination) {
-+	u32 temp;
-+	if (device_property_read_u32(device, property, &temp) == 0) {
-+		*destination = temp & 0xff;
-+	}
-+}
-+
- static int bcm_of_probe(struct bcm_device *bdev)
- {
- 	device_property_read_u32(bdev->dev, "max-speed", &bdev->oper_speed);
-+	read_u8_device_property(bdev->dev, "sco-routing", &bdev->sco_routing);
-+	read_u8_device_property(bdev->dev, "pcm-interface-rate", &bdev->pcm_interface_rate);
-+	read_u8_device_property(bdev->dev, "pcm-frame-type", &bdev->pcm_frame_type);
-+	read_u8_device_property(bdev->dev, "pcm-sync-mode", &bdev->pcm_sync_mode);
-+	read_u8_device_property(bdev->dev, "pcm-clock-mode", &bdev->pcm_clock_mode);
- 	return 0;
- }
- 
-@@ -1022,6 +1088,9 @@ static int bcm_probe(struct platform_device *pdev)
- 	dev->dev = &pdev->dev;
- 	dev->irq = platform_get_irq(pdev, 0);
- 
-+	/* SCO routing configuration is disabled by default */
-+	dev->sco_routing = 0xff;
-+
- 	if (has_acpi_companion(&pdev->dev)) {
- 		ret = bcm_acpi_probe(dev);
- 		if (ret)
-@@ -1281,6 +1350,9 @@ static int bcm_serdev_probe(struct serdev_device *serdev)
- 	bcmdev->serdev_hu.serdev = serdev;
- 	serdev_device_set_drvdata(serdev, bcmdev);
- 
-+	/* SCO routing configuration is disabled by default */
-+	bcmdev->sco_routing = 0xff;
-+
- 	if (has_acpi_companion(&serdev->dev))
- 		err = bcm_acpi_probe(bcmdev);
- 	else
+-			p = page_alloc();
++			p = page_alloc(1);
+ 			pthread_mutex_lock(&mt_lock);
+ 			radix_tree_insert(&mt_tree, 1, p);
+ 			pthread_mutex_unlock(&mt_lock);
 -- 
-2.17.0
+2.17.1
