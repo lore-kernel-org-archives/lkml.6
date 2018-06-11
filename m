@@ -1,101 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id i4KRAf+7HVt2QQAAmS7hNA
-	; Mon, 11 Jun 2018 00:02:07 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 8haRBYItHlvhVwAAmS7hNA
+	; Mon, 11 Jun 2018 08:09:46 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id DD86A60791; Mon, 11 Jun 2018 00:02:06 +0000 (UTC)
+	id F25D8605A5; Mon, 11 Jun 2018 08:09:45 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QTe9zRkF"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RR4GHGma"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 539C9606DD;
-	Mon, 11 Jun 2018 00:02:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 539C9606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 68A97605A5;
+	Mon, 11 Jun 2018 08:09:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 68A97605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753753AbeFKACC (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Sun, 10 Jun 2018 20:02:02 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59146 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753543AbeFKACB (ORCPT
+        id S932542AbeFKIJm (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 04:09:42 -0400
+Received: from mail-oi0-f43.google.com ([209.85.218.43]:40206 "EHLO
+        mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932298AbeFKIJk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 20:02:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=MECGkKJZzYlG7jN8XJaKLpiX0XNvdAcN/ORM6wjho9g=; b=QTe9zRkFPjq+NK60Pmmt4UgmE
-        EGKT0+7A1OPaTZrUiHJB/CPnjFCh97VWGJe0hH/jok0x0BhB2pc6F+8JV3C9gqyFrbG/dqa8t/Ryu
-        AjfbVWKVB/7fy1wP9u46LUDTJbWiuHRaHb3WweZU49+peG5b9Lv0NoF2OMBa1y1I89HSTy592ZicN
-        F4zvMGGge+RBHJZM6k85pDxDkhIS3PJIOlW1rjCBnYBceSV358qx2B+ZwLtqoD7i8/Y0XfVWmUqXC
-        gMZfSBqm2zruzGYZfLUEDQiMT9zSspbCHmMLvoWErkLEn+hiqj6fC8pPo90A9rB25MGqOHxD8g+/W
-        pLzB74R9Q==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSAHV-00034f-95; Mon, 11 Jun 2018 00:01:57 +0000
-Subject: Re: [mmotm:master 192/212] include/uapi/asm-generic/int-ll64.h:20:1:
- error: expected '=', ',', ';', 'asm' or '__attribute__' before 'typedef'
-To: kbuild test robot <lkp@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: kbuild-all@01.org,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-References: <201806081045.eZrs5GGH%fengguang.wu@intel.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <533c0099-d2be-8fea-fe2f-1453ea049c33@infradead.org>
-Date: Sun, 10 Jun 2018 17:01:48 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 11 Jun 2018 04:09:40 -0400
+Received: by mail-oi0-f43.google.com with SMTP id f79-v6so17090122oib.7;
+        Mon, 11 Jun 2018 01:09:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=gfSoTk4192Kp0FD5d5XyfgIrZCIKivpvt2fILOhxfVE=;
+        b=RR4GHGmaqjPJuTkGYS/ljuAtjJuEWRnphOhQ34xBgfiGxVDzlyc/0v14PnHPIVyvVX
+         X/9HLSLCZZ+HTvC3PdkVVJHFZK603tKAj6LeahtzeNF8cLGMcGjUuXonTN98GZJjRfVX
+         g52m4lW8aDjUS4S3tt24LF0GIBYuC2UMsBJm6FiEa9bkMejANmTpbeIR9rb4J4FljT2V
+         6VRTtbRVFWHByRq739AdhPdThulOYSU3gHv4x792qQIXsOLbNjHFwUXro6nhvcP9vn3P
+         /+nJ8Fcy7v+8lsZFD5kn86ZCe/6a0YPrEPnWxLLO4EF37IDhRdDvq4SJPDt6UzrCzGni
+         ao9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=gfSoTk4192Kp0FD5d5XyfgIrZCIKivpvt2fILOhxfVE=;
+        b=MT24dBmfr5mVUSwMXdyJYF0h8Zsiw6uLWDJbn2lm4Nb/q18WlPR+acNbkhEkUN/Eba
+         65V3B27RMrnd+EFzxC0tnA8gTw4RZ9b4ihahOOMS2WniqY1EkKbk2rI693kbNQKGSLwk
+         oNkOYek7DAxMWXlG4WB/GGL0NpbnRlPOB557VWIG1yN0Z2DRBVpBjjcN8/Y7yQtCdFGu
+         740mfj+IAhqHGz0DHlrpbYDhxI5A8+rIqhRqG+rdFOXiEDg1wlA0lte3MNr4cbk5uznm
+         yChg8vG2H3YEhgyQ8M8pPG+tn36ePaVrUScapCZ+1kCUyPPqz+ZiKtYEkPPK5tU6kLIy
+         YHmw==
+X-Gm-Message-State: APt69E2UvFmCfN0T8zJrGz+IVaz35GsNiUxVAuO2TKPx3OlIwjeMJ/MJ
+        LDYiGPHLU1LQOyXk2Uhbhg0z4+4gJdb5bWrRqbs=
+X-Google-Smtp-Source: ADUXVKJueXhJy38ghpsXakwomzh2K/gGwwpAc5iXeVzQrk5mJrz/wTANtVdIl2LcvZZ9pgGLKuTQg+DRqA9z4psmAvU=
+X-Received: by 2002:aca:e143:: with SMTP id y64-v6mr7487221oig.282.1528704579790;
+ Mon, 11 Jun 2018 01:09:39 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <201806081045.eZrs5GGH%fengguang.wu@intel.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a9d:1429:0:0:0:0:0 with HTTP; Mon, 11 Jun 2018 01:09:39
+ -0700 (PDT)
+In-Reply-To: <DEA1AE84-B0FD-481E-8E0D-788CD4EF59AE@canonical.com>
+References: <DEA1AE84-B0FD-481E-8E0D-788CD4EF59AE@canonical.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 11 Jun 2018 10:09:39 +0200
+X-Google-Sender-Auth: LCeeqB6JxueYBvAVuHqTTlJSUNE
+Message-ID: <CAJZ5v0iyNo+ZZ1O0_j4p6w-+eS1W9MUYs-vjeNHVENFVhReGzw@mail.gmail.com>
+Subject: Re: Possible regression caused by commit a192aa923b66a
+To: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        perryhelionsemail@gmail.com,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/07/2018 07:06 PM, kbuild test robot wrote:
-> tree:   git://git.cmpxchg.org/linux-mmotm.git master
-> head:   7393732bae530daa27567988b91d16ecfeef6c62
-> commit: b1a8bfbadbcb79644ccdd5f9cd370caa63cb1fa7 [192/212] linux-next-git-rejects
-> config: i386-randconfig-s0-201822-CONFIG_DEBUG_INFO_REDUCED (attached as .config)
-> compiler: gcc-6 (Debian 6.4.0-9) 6.4.0 20171026
-> reproduce:
->         git checkout b1a8bfbadbcb79644ccdd5f9cd370caa63cb1fa7
->         # save the attached .config to linux build tree
->         make ARCH=i386 
-> 
-> All errors (new ones prefixed by >>):
-> 
->    In file included from include/asm-generic/int-ll64.h:11:0,
->                     from include/uapi/asm-generic/types.h:7,
->                     from arch/x86/include/uapi/asm/types.h:5,
->                     from include/uapi/linux/types.h:5,
->                     from include/linux/types.h:6,
->                     from net/ipv4/ipconfig.c:36:
->>> include/uapi/asm-generic/int-ll64.h:20:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'typedef'
->     typedef __signed__ char __s8;
->     ^~~~~~~
+On Mon, Jun 11, 2018 at 8:26 AM, Kai-Heng Feng
+<kai.heng.feng@canonical.com> wrote:
+> Hi Rafael,
+>
+> There's a regression report [1] that says commit a192aa923b66a ("ACPI /
+> LPSS: Consolidate runtime PM and system sleep handling") is the first bad
+> commit.
+>
+> From the looks of it, it didn't introduce any behavioral change. So your
+> help is appreciated.
+>
+> [1] https://bugs.launchpad.net/bugs/1774950
 
-The problem here was that net/ipv4/ipconfig.c begins like this:
-
-q// SPDX-License-Identifier: GPL-2.0
-
-Did anyone fix that?
-
-
--- 
-~Randy
+Well, the only difference is the iosf quirk AFAICS, but that should be
+easy enough to check.  I'll try to cut a patch for that later today.
