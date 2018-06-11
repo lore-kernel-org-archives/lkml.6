@@ -2,218 +2,89 @@ Return-Path: <SRS0=KDb5=I5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,
-	FROM_LOCAL_NOVOWEL,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIM_INVALID autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 80FE1C5CFF0
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:27:45 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 379F6C5CFF0
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:28:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C3DC20660
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:27:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E140320869
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:28:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hiC6S314";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hVAM0Ua4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C3DC20660
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UBvkGHAI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E140320869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934371AbeFKR1n (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 13:27:43 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52846 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934294AbeFKR1B (ORCPT
+        id S934382AbeFKR2J (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 13:28:09 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:36456 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932627AbeFKR2G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 13:27:01 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id F21F1608CE; Mon, 11 Jun 2018 17:27:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528738021;
-        bh=iA5daY0TMFvQHYdypTv1GDqQpzK+Yid1N49LqMJCqII=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hiC6S314zMT1etYo5UiYdfX9vOAs4zxHr99nJHAFk2CscF6TRZp67SlJ1th9sgH8h
-         H+TTJm5/4/ODS77x9EKsJnLnV66zU8Atgexj2Gd+K4zcuDp1um21yJBvORcf/uGAef
-         F2BQ/4oJ3yBxp8mI78HlNp1MvDph7CidePIh07Dg=
-Received: from rplsssn-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rplsssn@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id AA494607E4;
-        Mon, 11 Jun 2018 17:26:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528738020;
-        bh=iA5daY0TMFvQHYdypTv1GDqQpzK+Yid1N49LqMJCqII=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hVAM0Ua42+j+rzZzFmwEoHm7fL0ioz4BySSD7CCXDT6xWNYBVDSEF6wz6uGjNj1RG
-         Bf9QakdLuFJrwUD0rwUFYjw7OkjNcpB9eEI9sfUEbsciboCq+IFj3xBiT7FZUTIYzq
-         J2MqFG0NAvNaSZnqG+uXv8wTpk4vcuRBhSWys2OU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AA494607E4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
-From:   Raju P L S S S N <rplsssn@codeaurora.org>
-To:     andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-Cc:     rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org,
-        evgreen@chromium.org, dianders@chromium.org, mka@chromium.org,
-        ilina@codeaurora.org, "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
-Subject: [PATCH v10 08/10] drivers: qcom: rpmh: allow requests to be sent asynchronously
-Date:   Mon, 11 Jun 2018 22:55:47 +0530
-Message-Id: <1528737949-17495-9-git-send-email-rplsssn@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1528737949-17495-1-git-send-email-rplsssn@codeaurora.org>
-References: <1528737949-17495-1-git-send-email-rplsssn@codeaurora.org>
+        Mon, 11 Jun 2018 13:28:06 -0400
+Received: by mail-io0-f195.google.com with SMTP id k3-v6so10775895iog.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 10:28:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8kvhdcFdV7ieWckqEpsLPUiGr2YqIhq2/gwvvUtorGw=;
+        b=UBvkGHAIoGzvqzEt+qRIzDisske2+cuE6bd7CnxfhBN2TEWB8egznjIWVGKE7axwK8
+         93fTx/MUxmzIcXJtB13tFWZFUnexZ7wnX4w1yq4bCYNSplhN6wMWYEku6B9IfqJrnsNA
+         nQzQZZT3hoYucVNjZcNq59vdu9bZwq14RBpPQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8kvhdcFdV7ieWckqEpsLPUiGr2YqIhq2/gwvvUtorGw=;
+        b=ty/6HY/d+ronicqIqi+cHSaw/j9s6sJrNr04QtOBwy5XGvDNeK6G9pjmEBw7jSST5r
+         QqqnVvObeTrXeOsacdvEQYWbjyMGBpZV6Du+MeNcap1U8grQmbol7CNHglkJEJmWR6XK
+         QtEc6HA/mzUqNshsoPy3IPRjjgmZagUoro3giFXv15QADt+3aHQfWdAL0WkTg2ESflSW
+         Tea5WjnXkUOTZFEhjY9fEiDliipTnG9/WdwgoBvETbqGzLXiM1UNWXr8Lc1Qg0BPYnTm
+         voQrIptkn08NyL4veVjm5dXi4whTHubx1njuF6+fkpFZxOYSUgpPtDsXriRLwEbBSR8O
+         +Ksg==
+X-Gm-Message-State: APt69E0+EwDdLFBNA5U7cAHvi63L0yapnyR1wckNmLBIRq34XScr4q1A
+        NwR+4BtZJ7ja3nTmnocEAruimCyiPeC3mTArYR0=
+X-Google-Smtp-Source: ADUXVKJKkYEoQC5EAYQbs6GjKQsJIi9zVkMG1elwTOnSv6z3DF4Xiw+1ccOOPEDWp3SMqorA0fDppRV0AKZnuXfV210=
+X-Received: by 2002:a6b:f90b:: with SMTP id j11-v6mr102827iog.238.1528738085753;
+ Mon, 11 Jun 2018 10:28:05 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180611165212.GA6783@jaegeuk-macbookpro.roam.corp.google.com>
+In-Reply-To: <20180611165212.GA6783@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 11 Jun 2018 10:27:54 -0700
+Message-ID: <CA+55aFznP4aEy7DkVfeQ_e6eXgLnswVnSJS3C51UHD_k8qYZCA@mail.gmail.com>
+Subject: Re: [GIT PULL] f2fs update for 4.18-rc1
+To:     Jaegeuk Kim <jaegeuk@kernel.org>,
+        Matthew Wilcox <mawilcox@microsoft.com>
+Cc:     "Linux F2FS DEV, Mailing List" 
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lina Iyer <ilina@codeaurora.org>
+On Mon, Jun 11, 2018 at 9:52 AM Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+>
+> In order to avoid old MM bug [1], we decided not to use __GFP_ZERO
+> for the mapping for node and meta page caches.
+>
+> [1] https://lkml.org/lkml/2018/4/8/661
 
-Platform drivers that want to send a request but do not want to block
-until the RPMH request completes have now a new API -
-rpmh_write_async().
+Hmm. The patch there looks correct, and anybody who relies on slab
+constructors is crazy.
 
-The API allocates memory and send the requests and returns the control
-back to the platform driver. The tx_done callback from the controller is
-handled in the context of the controller's thread and frees the
-allocated memory. This API allows RPMH requests from atomic contexts as
-well.
+That email from April says it should go into stable, but it never even
+went upstream..
 
-Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
----
+Adding Willy to the cc, for comments, since he's been active there and
+is probably the maintainer even if the MAINTAINERS file doesn't say
+so..
 
-Changes in v10:
-	- Add EXPORT_SYMBOL
-Changes in v9:
-	- Remove EXPORT_SYMBOL
-	- check to free dynamically allocated request object
-	- free request object after notifying completion
-Changes in v6:
-	- replace rpmh_client with device *
----
- drivers/soc/qcom/rpmh.c | 53 +++++++++++++++++++++++++++++++++++++++++++++++++
- include/soc/qcom/rpmh.h |  7 +++++++
- 2 files changed, 60 insertions(+)
+Willy?
 
-diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
-index a99194f..e380e5a 100644
---- a/drivers/soc/qcom/rpmh.c
-+++ b/drivers/soc/qcom/rpmh.c
-@@ -34,6 +34,7 @@
- 		.cmd = { { 0 } },			\
- 		.completion = q,			\
- 		.dev = dev,				\
-+		.needs_free = false,				\
- 	}
- 
- /**
-@@ -59,6 +60,7 @@ struct cache_req {
-  * @completion: triggered when request is done
-  * @dev: the device making the request
-  * @err: err return from the controller
-+ * @needs_free: check to free dynamically allocated request object
-  */
- struct rpmh_request {
- 	struct tcs_request msg;
-@@ -66,6 +68,7 @@ struct rpmh_request {
- 	struct completion *completion;
- 	const struct device *dev;
- 	int err;
-+	bool needs_free;
- };
- 
- /**
-@@ -131,6 +134,9 @@ void rpmh_tx_done(const struct tcs_request *msg, int r)
- 	/* Signal the blocking thread we are done */
- 	if (compl)
- 		complete(compl);
-+
-+	if (rpm_msg->needs_free)
-+		kfree(rpm_msg);
- }
- EXPORT_SYMBOL(rpmh_tx_done);
- 
-@@ -239,6 +245,53 @@ static int __rpmh_write(const struct device *dev, enum rpmh_state state,
- 	return ret;
- }
- 
-+static struct rpmh_request *__get_rpmh_msg_async(enum rpmh_state state,
-+						 const struct tcs_cmd *cmd,
-+						 u32 n)
-+{
-+	struct rpmh_request *req;
-+
-+	if (!cmd || !n || n > MAX_RPMH_PAYLOAD)
-+		return ERR_PTR(-EINVAL);
-+
-+	req = kzalloc(sizeof(*req), GFP_ATOMIC);
-+	if (!req)
-+		return ERR_PTR(-ENOMEM);
-+
-+	memcpy(req->cmd, cmd, n * sizeof(*cmd));
-+
-+	req->msg.state = state;
-+	req->msg.cmds = req->cmd;
-+	req->msg.num_cmds = n;
-+	req->needs_free = true;
-+
-+	return req;
-+}
-+
-+/**
-+ * rpmh_write_async: Write a set of RPMH commands
-+ *
-+ * @dev: The device making the request
-+ * @state: Active/sleep set
-+ * @cmd: The payload data
-+ * @n: The number of elements in payload
-+ *
-+ * Write a set of RPMH commands, the order of commands is maintained
-+ * and will be sent as a single shot.
-+ */
-+int rpmh_write_async(const struct device *dev, enum rpmh_state state,
-+		     const struct tcs_cmd *cmd, u32 n)
-+{
-+	struct rpmh_request *rpm_msg;
-+
-+	rpm_msg = __get_rpmh_msg_async(state, cmd, n);
-+	if (IS_ERR(rpm_msg))
-+		return PTR_ERR(rpm_msg);
-+
-+	return __rpmh_write(dev, state, rpm_msg);
-+}
-+EXPORT_SYMBOL(rpmh_write_async);
-+
- /**
-  * rpmh_write: Write a set of RPMH commands and block until response
-  *
-diff --git a/include/soc/qcom/rpmh.h b/include/soc/qcom/rpmh.h
-index 42e62a0..1161a5c 100644
---- a/include/soc/qcom/rpmh.h
-+++ b/include/soc/qcom/rpmh.h
-@@ -14,6 +14,9 @@
- int rpmh_write(const struct device *dev, enum rpmh_state state,
- 	       const struct tcs_cmd *cmd, u32 n);
- 
-+int rpmh_write_async(const struct device *dev, enum rpmh_state state,
-+		     const struct tcs_cmd *cmd, u32 n);
-+
- int rpmh_flush(const struct device *dev);
- 
- int rpmh_invalidate(const struct device *dev);
-@@ -24,6 +27,10 @@ static inline int rpmh_write(const struct device *dev, enum rpmh_state state,
- 			     const struct tcs_cmd *cmd, u32 n)
- { return -ENODEV; }
- 
-+static inline int rpmh_write_async(const struct device *dev,
-+				   enum rpmh_state state,
-+				   const struct tcs_cmd *cmd, u32 n)
-+{ return -ENODEV; }
- 
- static inline int rpmh_flush(const struct device *dev)
- { return -ENODEV; }
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,\na Linux Foundation Collaborative Project
-
+             Linus
