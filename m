@@ -1,174 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 7SIoCRzfGFtZfQAAmS7hNA
-	; Thu, 07 Jun 2018 07:30:36 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id YbhbGBsuHls3VAAAmS7hNA
+	; Mon, 11 Jun 2018 08:08:59 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 07F656089E; Thu,  7 Jun 2018 07:30:36 +0000 (UTC)
+	id 4B472607BB; Mon, 11 Jun 2018 08:08:59 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="X/m3Gh5i"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QVEF33G1"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FROM,MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 3C8CE605A2;
-	Thu,  7 Jun 2018 07:30:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3C8CE605A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id C3800605A5;
+	Mon, 11 Jun 2018 08:08:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C3800605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932102AbeFGHad (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 03:30:33 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:35048 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750897AbeFGHab (ORCPT
+        id S932508AbeFKII4 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 04:08:56 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:36272 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932109AbeFKIIx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 03:30:31 -0400
-Received: by mail-vk0-f67.google.com with SMTP id o17-v6so5433950vka.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 00:30:31 -0700 (PDT)
+        Mon, 11 Jun 2018 04:08:53 -0400
+Received: by mail-pf0-f195.google.com with SMTP id a12-v6so9817962pfi.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 01:08:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=vPL9vQW3X0tl5VfmRFVdk+rwFnk6aclThxxoX9HW76o=;
-        b=X/m3Gh5ipOHsw8ClCyUFWMMDMb+NYqJTgN13sQj+9JxFLTvNNZgpbDknP9PjosrsEH
-         yc9s0icnK01eHjVV3wc3XjMw/hzXj1u27XKnSiB6JPWNfNDAAGOA6A6hHSGYUv/MCMEg
-         WhEHG2/yDIuypJui9u1oCKYkn+uLKFPnQA3bs=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=K3kACUPAfqbxZzulW9WPncbnq99w+I0nZ59lhPVqKyg=;
+        b=QVEF33G1G6eAUeWOdxXm+hBVSzMu70QPUIiU02l5K+WSiI2Lv+CaddcKpZWMY4W3oH
+         M27flgeEblO0eI1jQ4fBzQxSbvLXe0BpZovYsQP4bgUiiq/vg9hVd28abEKAqNXgYHys
+         IMzIp5se+24J/yw+3jYALLuplugRmPspffJ74WOwbzljJrEs7cJ+9AnB8x+GGe3Z812v
+         knl0J5GTFEjvjcqnli4PkprErYDC8mrMIU6Pqd2RJbWNEZ6tEBU/xcwnWzkKS63VUEWa
+         X/C9BBt7NBn1FQIVtUA9rHCx8TvSwbPbe7wJW9/vs8/VhCBH0yxZsNEDWR+2cN+P1u5i
+         fk+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=vPL9vQW3X0tl5VfmRFVdk+rwFnk6aclThxxoX9HW76o=;
-        b=QZm05NX2cEGmGDbPLbUVF1jJGl5sphYiJY/kGlVFAUHI5YU89Vx9wmNAgRJYg5efz3
-         A71ysJVZgAIMaYQAHm2WCIu9SFu7KG3+7ev9lcRb5h7v+0kt28sqwzIWq3TzxgkvpKjt
-         0TLQ9EDg8VRNuseCTvaSF6S6r1tZK2/FBSGHMoQj/uIDnFG+FHG9znEob1Ij/ots3Z0z
-         GGB26uVlKPKpC/cCoz3uZYf+SkSSAaJc5TzG/v6x4AcoD46W/xj9+Ofm2BK1q6p828DG
-         0npsdrUPmESYuDfsatmC31WCp36qT5x7+xn4mpH/jDZd2IHOpp+863FY6zA18RjhK/gH
-         HSDg==
-X-Gm-Message-State: APt69E2ajxYn2ES1xWwKLBLqW8IDAUivwTYGjcLW3RTDzN/7tECLLNxJ
-        9SvyxMIltt6XSzMHmjQkKFSj9b88Pik=
-X-Google-Smtp-Source: ADUXVKLVn7ghDlWPu7OP6HamUjOLxwJva7AmBo3e9c1XdXWdynj6YUBYk3TeALhjaDr5fD439+hA6Q==
-X-Received: by 2002:a1f:4603:: with SMTP id t3-v6mr430014vka.56.1528356630528;
-        Thu, 07 Jun 2018 00:30:30 -0700 (PDT)
-Received: from mail-vk0-f48.google.com (mail-vk0-f48.google.com. [209.85.213.48])
-        by smtp.gmail.com with ESMTPSA id o85-v6sm14942712vkd.45.2018.06.07.00.30.29
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=K3kACUPAfqbxZzulW9WPncbnq99w+I0nZ59lhPVqKyg=;
+        b=PAFEzpjWh4MaGDsetG/VQl8v72E/TTkGr8OVnzQAyMFYt5bV4Ztr0b82OXhZ8KZXin
+         NQ/ka4R6oR7p/tZiCxoFIq8HxG3HmA+Br8DJ/oSj1l1OY/XZhzthOKcKVkJVyZy3iZuH
+         CpR4qJIwNZne5oK6tItznsJ9FA1TF+/qfew6JFcSJKuYjRA1cyLBBwFzAnDzkvLNusvo
+         kT8EDDvHrz6BG9ltr0hut6oA2e46ynNjOVNBb8r7TTovtLek61Wg4Im1e9y+9eRLyZiT
+         FjEH+/ol8bikIRdVRO2RASXYVEjbH8PESAqPSLkU9waMM2wfSLglDh80vS/kxLfnTeNS
+         UGFw==
+X-Gm-Message-State: APt69E3ZSbSyiG7Y7O7wRQk9I4K1GA7SKmLnFlx/PCJspbbgskhhSawU
+        lMPMBZYQPcqm5Lt41niH30ys0rSTeY8=
+X-Google-Smtp-Source: ADUXVKJHEUwuN1kD543gILpT1A+Lf7rsQBb3Z0XqNmhKxNjs1USYqZ51D9x3DkbMIh70qsYgMnoRRA==
+X-Received: by 2002:a63:86c8:: with SMTP id x191-v6mr13563799pgd.2.1528704533184;
+        Mon, 11 Jun 2018 01:08:53 -0700 (PDT)
+Received: from localhost ([103.88.46.82])
+        by smtp.gmail.com with ESMTPSA id m5-v6sm108887977pfa.93.2018.06.11.01.08.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Jun 2018 00:30:29 -0700 (PDT)
-Received: by mail-vk0-f48.google.com with SMTP id q135-v6so5435270vkh.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 00:30:29 -0700 (PDT)
-X-Received: by 2002:a1f:e686:: with SMTP id d128-v6mr427105vkh.176.1528356628694;
- Thu, 07 Jun 2018 00:30:28 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180605103328.176255-1-tfiga@chromium.org> <20180605103328.176255-2-tfiga@chromium.org>
- <CAAoAYcOJ5Q2rHqGEmcStxxXj423a3ddKOSzvwRV6R5-UxhM+Hg@mail.gmail.com> <b767d9d7-5a26-f6f8-3978-81e8d60769c2@xs4all.nl>
-In-Reply-To: <b767d9d7-5a26-f6f8-3978-81e8d60769c2@xs4all.nl>
-From: Tomasz Figa <tfiga@chromium.org>
-Date: Thu, 7 Jun 2018 16:30:16 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5BSq+kz0xxrFVFKhA4XFJE1hF8NHomQSGqYzNo+Swdyyw@mail.gmail.com>
-Message-ID: <CAAFQd5BSq+kz0xxrFVFKhA4XFJE1hF8NHomQSGqYzNo+Swdyyw@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/2] media: docs-rst: Add decoder UAPI specification
- to Codec Interfaces
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: dave.stevenson@raspberrypi.org,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Pawel Osciak <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
-        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
-        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?=
-        <tiffany.lin@mediatek.com>,
-        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?=
-        <andrew-ct.chen@mediatek.com>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        todor.tomov@linaro.org, nicolas@ndufresne.ca,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 11 Jun 2018 01:08:52 -0700 (PDT)
+From: Zhouyang Jia <jiazhouyang09@gmail.com>
+Cc: Zhouyang Jia <jiazhouyang09@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ALSA: sonicvibes: add error handling for snd_ctl_add
+Date: Mon, 11 Jun 2018 16:08:40 +0800
+Message-Id: <1528704521-34060-1-git-send-email-jiazhouyang09@gmail.com>
+X-Mailer: git-send-email 2.7.4
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 7, 2018 at 4:22 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
->
-> On 06/05/2018 03:10 PM, Dave Stevenson wrote:
-> > Hi Tomasz.
-> >
-> > Thanks for formalising this.
-> > I'm working on a stateful V4L2 codec driver on the Raspberry Pi and
-> > was having to deduce various implementation details from other
-> > drivers. I know how much we all tend to hate having to write
-> > documentation, but it is useful to have.
-> >
-> > On 5 June 2018 at 11:33, Tomasz Figa <tfiga@chromium.org> wrote:
-> >> Due to complexity of the video decoding process, the V4L2 drivers of
-> >> stateful decoder hardware require specific sequencies of V4L2 API call=
-s
-> >> to be followed. These include capability enumeration, initialization,
-> >> decoding, seek, pause, dynamic resolution change, flush and end of
-> >> stream.
-> >>
-> >> Specifics of the above have been discussed during Media Workshops at
-> >> LinuxCon Europe 2012 in Barcelona and then later Embedded Linux
-> >> Conference Europe 2014 in D=C3=BCsseldorf. The de facto Codec API that
-> >> originated at those events was later implemented by the drivers we alr=
-eady
-> >> have merged in mainline, such as s5p-mfc or mtk-vcodec.
-> >>
-> >> The only thing missing was the real specification included as a part o=
-f
-> >> Linux Media documentation. Fix it now and document the decoder part of
-> >> the Codec API.
-> >>
-> >> Signed-off-by: Tomasz Figa <tfiga@chromium.org>
-> >> ---
-> >>  Documentation/media/uapi/v4l/dev-codec.rst | 771 ++++++++++++++++++++=
-+
-> >>  Documentation/media/uapi/v4l/v4l2.rst      |  14 +-
-> >>  2 files changed, 784 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/Documentation/media/uapi/v4l/dev-codec.rst b/Documentatio=
-n/media/uapi/v4l/dev-codec.rst
-> >> index c61e938bd8dc..0483b10c205e 100644
-> >> --- a/Documentation/media/uapi/v4l/dev-codec.rst
-> >> +++ b/Documentation/media/uapi/v4l/dev-codec.rst
-> >> @@ -34,3 +34,774 @@ the codec and reprogram it whenever another file h=
-andler gets access.
-> >>  This is different from the usual video node behavior where the video
-> >>  properties are global to the device (i.e. changing something through =
-one
-> >>  file handle is visible through another file handle).
-> >
-> > I know this isn't part of the changes, but raises a question in
-> > v4l2-compliance (so probably one for Hans).
-> > testUnlimitedOpens tries opening the device 100 times. On a normal
-> > device this isn't a significant overhead, but when you're allocating
-> > resources on a per instance basis it quickly adds up.
-> > Internally I have state that has a limit of 64 codec instances (either
-> > encode or decode), so either I allocate at start_streaming and fail on
-> > the 65th one, or I fail on open. I generally take the view that
-> > failing early is a good thing.
-> > Opinions? Is 100 instances of an M2M device really sensible?
->
-> Resources should not be allocated by the driver until needed (i.e. the
-> queue_setup op is a good place for that).
->
-> It is perfectly legal to open a video node just to call QUERYCAP to
-> see what it is, and I don't expect that to allocate any hardware resource=
-s.
-> And if I want to open it 100 times, then that should just work.
->
-> It is *always* wrong to limit the number of open arbitrarily.
+When snd_ctl_add fails, the lack of error-handling code may
+cause unexpected results.
 
-That's a valid point indeed. Besides the querying use case, userspace
-might just want to pre-open a bigger number of instances, but it
-doesn't mean that they would be streaming all at the same time indeed.
+This patch adds error-handling code after calling snd_ctl_add.
 
-Best regards,
-Tomasz
+Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+---
+ sound/pci/sonicvibes.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/sound/pci/sonicvibes.c b/sound/pci/sonicvibes.c
+index a8abb15..57cb77a 100644
+--- a/sound/pci/sonicvibes.c
++++ b/sound/pci/sonicvibes.c
+@@ -1188,6 +1188,7 @@ SONICVIBES_SINGLE("Joystick Speed", 0, SV_IREG_GAME_PORT, 1, 15, 0);
+ static int snd_sonicvibes_create_gameport(struct sonicvibes *sonic)
+ {
+ 	struct gameport *gp;
++	int err;
+ 
+ 	sonic->gameport = gp = gameport_allocate_port();
+ 	if (!gp) {
+@@ -1203,7 +1204,10 @@ static int snd_sonicvibes_create_gameport(struct sonicvibes *sonic)
+ 
+ 	gameport_register_port(gp);
+ 
+-	snd_ctl_add(sonic->card, snd_ctl_new1(&snd_sonicvibes_game_control, sonic));
++	err = snd_ctl_add(sonic->card,
++		snd_ctl_new1(&snd_sonicvibes_game_control, sonic));
++	if (err < 0)
++		return err;
+ 
+ 	return 0;
+ }
+-- 
+2.7.4
