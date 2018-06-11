@@ -1,132 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id pwNeGRRHGVtJOwAAmS7hNA
-	; Thu, 07 Jun 2018 14:54:12 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id skAYKaViHlvWVgAAmS7hNA
+	; Mon, 11 Jun 2018 11:53:09 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 54455608BA; Thu,  7 Jun 2018 14:54:12 +0000 (UTC)
+	id 8B01F607A4; Mon, 11 Jun 2018 11:53:09 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YlSh9JmP"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id A3471606DD;
-	Thu,  7 Jun 2018 14:54:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A3471606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 1BF9F60351;
+	Mon, 11 Jun 2018 11:53:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1BF9F60351
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935345AbeFGOyJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:54:09 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40978 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935307AbeFGOyF (ORCPT
+        id S933092AbeFKLxH (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 07:53:07 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:35606 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932906AbeFKLxD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:54:05 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbg-0005dI-H8; Thu, 07 Jun 2018 15:09:40 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb5-0002zY-Ux; Thu, 07 Jun 2018 15:09:03 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Jens Axboe" <axboe@fb.com>,
-        "" <socketpair@gmail.com>, "Al Viro" <viro@zeniv.linux.org.uk>,
-        "Willy Tarreau" <w@1wt.eu>,
-        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
-        "Vegard Nossum" <vegard.nossum@oracle.com>,
-        "Tetsuo Handa" <penguin-kernel@I-love.SAKURA.ne.jp>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.820524984@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 201/410] pipe: refactor argument for account_pipe_buffers()
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Mon, 11 Jun 2018 07:53:03 -0400
+Received: by mail-lf0-f66.google.com with SMTP id i15-v6so19793884lfc.2;
+        Mon, 11 Jun 2018 04:53:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=abyK3A2mKywcTUrPgLsuv4slos5QLbpdCFieILCxkvQ=;
+        b=YlSh9JmPGPlPuOKMClXVHzRXfdfPDoMIAqh2BOL2Qn34iyGmedOzWvRfCY6va2P6Wm
+         a2YmS1GaozzRTQZNAWenx6/q6vlvc1PHV3kUdVff4r53NC0zDbRu34qQX3Lrj6VEpO21
+         adCdr70vVkvECYa+eFranzC2XfzssY3Cv2ht4t6nS66GF5Jfd06Nsl0jcz8KpNP6Hn/h
+         kOXFtYDiFR+8bvjdBssR9KmTCtl5wK5uUlLFczoKEX/3u5KcWiLEBZQ/b3GgnSlBXwZk
+         98+wkF4kbz0J2IzMNikE71KlCo+gpfaLhTexDdxHJyJxBsVzEqp665ba9IerqWggkIBF
+         8PZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=abyK3A2mKywcTUrPgLsuv4slos5QLbpdCFieILCxkvQ=;
+        b=Q/IJw+toYXevi0Cd9+Gt/LjVv+BdshINN1i7NNEvcws2Hpx33giB6yjyn6emdS/Mz1
+         9UWIItCjHslOwjbo5usZG2oXGRSRCtXq1EmzxTshLkofX8mVRRxIUjmdfzMob7ZKX9b7
+         L6w8+8mahP2OWHc7Vp3u+/4KMnA3Ki9cWNI6B/sYzU3NoOmc7/00dFByuKl1a14z6/0Y
+         REo3s0wnY77FszMpKPLpbwdpMI+mrsEKZbFg7eILLWa/CKPPKl7Q0NQ/TdQOFyYEoG73
+         CSyL+ntl/e6wKocqJkeGjWPk6Ss0T9ISG0yg2iTnW5fFxO9caJlTERNn0Y6U+Htkq593
+         RxQA==
+X-Gm-Message-State: APt69E1ZaYG1JgLfMn703hBY29CI0LPu2RLfuw6fjn7s0+tLqj83wQnm
+        77Io9J2COVD78YJPd9NmD1h/LeRv
+X-Google-Smtp-Source: ADUXVKLAVfhsVX6yT1ZD1qkrKazIZaXV6/i1aK0qiESDyEtv3Fvl+qP5PNdCUNLfqifjz9MoPY5oTA==
+X-Received: by 2002:a19:274e:: with SMTP id n75-v6mr5220140lfn.14.1528717981350;
+        Mon, 11 Jun 2018 04:53:01 -0700 (PDT)
+Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
+        by smtp.gmail.com with ESMTPSA id h90-v6sm8332849ljf.65.2018.06.11.04.52.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Jun 2018 04:52:59 -0700 (PDT)
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>
+Subject: [PATCH v2 05/24] serdev: Introduce modalias field
+Date: Mon, 11 Jun 2018 13:52:21 +0200
+Message-Id: <20180611115240.32606-6-ricardo.ribalda@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
+References: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+Name of the driver to use with this device, or an alias for that name,
+or an alias for the part.
+Required for hardware that is neither an of_node nor part of the ACPI
+table.
 
-------------------
-
-From: "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-
-commit 3734a13b96ebf039b293d8d37a934fd1bd9e03ab upstream.
-
-This is a preparatory patch for following work. account_pipe_buffers()
-performs accounting in the 'user_struct'. There is no need to pass a
-pointer to a 'pipe_inode_info' struct (which is then dereferenced to
-obtain a pointer to the 'user' field). Instead, pass a pointer directly
-to the 'user_struct'. This change is needed in preparation for a
-subsequent patch that the fixes the limit checking in alloc_pipe_info()
-(and the resulting code is a little more logical).
-
-Link: http://lkml.kernel.org/r/7277bf8c-a6fc-4a7d-659c-f5b145c981ab@gmail.com
-Signed-off-by: Michael Kerrisk <mtk.manpages@gmail.com>
-Reviewed-by: Vegard Nossum <vegard.nossum@oracle.com>
-Cc: Willy Tarreau <w@1wt.eu>
-Cc: <socketpair@gmail.com>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Jens Axboe <axboe@fb.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 ---
- fs/pipe.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ include/linux/serdev.h | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -590,10 +590,10 @@ pipe_fasync(int fd, struct file *filp, i
- 	return retval;
- }
+diff --git a/include/linux/serdev.h b/include/linux/serdev.h
+index 62f1b085a794..bb3b9599c652 100644
+--- a/include/linux/serdev.h
++++ b/include/linux/serdev.h
+@@ -54,6 +54,7 @@ struct serdev_device {
+ 	const struct serdev_device_ops *ops;
+ 	struct completion write_comp;
+ 	struct mutex write_lock;
++	char modalias[SERDEV_NAME_SIZE];
+ };
  
--static void account_pipe_buffers(struct pipe_inode_info *pipe,
-+static void account_pipe_buffers(struct user_struct *user,
-                                  unsigned long old, unsigned long new)
- {
--	atomic_long_add(new - old, &pipe->user->pipe_bufs);
-+	atomic_long_add(new - old, &user->pipe_bufs);
- }
- 
- static bool too_many_pipe_buffers_soft(struct user_struct *user)
-@@ -628,7 +628,7 @@ struct pipe_inode_info *alloc_pipe_info(
- 			pipe->r_counter = pipe->w_counter = 1;
- 			pipe->buffers = pipe_bufs;
- 			pipe->user = user;
--			account_pipe_buffers(pipe, 0, pipe_bufs);
-+			account_pipe_buffers(user, 0, pipe_bufs);
- 			mutex_init(&pipe->mutex);
- 			return pipe;
- 		}
-@@ -643,7 +643,7 @@ void free_pipe_info(struct pipe_inode_in
- {
- 	int i;
- 
--	account_pipe_buffers(pipe, pipe->buffers, 0);
-+	account_pipe_buffers(pipe->user, pipe->buffers, 0);
- 	free_uid(pipe->user);
- 	for (i = 0; i < pipe->buffers; i++) {
- 		struct pipe_buffer *buf = pipe->bufs + i;
-@@ -1062,7 +1062,7 @@ static long pipe_set_size(struct pipe_in
- 			memcpy(bufs + head, pipe->bufs, tail * sizeof(struct pipe_buffer));
- 	}
- 
--	account_pipe_buffers(pipe, pipe->buffers, nr_pages);
-+	account_pipe_buffers(pipe->user, pipe->buffers, nr_pages);
- 	pipe->curbuf = 0;
- 	kfree(pipe->bufs);
- 	pipe->bufs = bufs;
+ static inline struct serdev_device *to_serdev_device(struct device *d)
+-- 
+2.17.1
