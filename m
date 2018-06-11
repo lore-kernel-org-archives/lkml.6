@@ -1,98 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id tCiaGZRyHlvCBgAAmS7hNA
-	; Mon, 11 Jun 2018 13:01:08 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id oXw3MdqQHluKCwAAmS7hNA
+	; Mon, 11 Jun 2018 15:10:18 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 5C841607BB; Mon, 11 Jun 2018 13:01:08 +0000 (UTC)
+	id B9C98607BB; Mon, 11 Jun 2018 15:10:18 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id BD0DE60385;
-	Mon, 11 Jun 2018 13:01:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BD0DE60385
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=holtmann.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 5A66C60351;
+	Mon, 11 Jun 2018 15:10:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5A66C60351
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=ltec.ch
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933196AbeFKNBF convert rfc822-to-8bit (ORCPT
-        <rfc822;monsieuricon@codeaurora.org> + 20 others);
-        Mon, 11 Jun 2018 09:01:05 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:52073 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932607AbeFKNBD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 09:01:03 -0400
-Received: from marcel-macpro.fritz.box (p5B3D24B5.dip0.t-ipconnect.de [91.61.36.181])
-        by mail.holtmann.org (Postfix) with ESMTPSA id 317A3CF185;
-        Mon, 11 Jun 2018 15:07:44 +0200 (CEST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.4 \(3445.8.2\))
-Subject: Re: [PATCH v2 15/24] net: qualcomm: MODULE_DEVICE_TABLE(serdev)
-From: Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20180611115240.32606-16-ricardo.ribalda@gmail.com>
-Date: Mon, 11 Jun 2018 15:01:01 +0200
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-serial@vger.kernel.org,
-        Lino Sanfilippo <LinoSanfilippo@gmx.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
-        netdev@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <CCB7FF79-F89A-4421-A6C0-E0663BEE6065@holtmann.org>
-References: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
- <20180611115240.32606-16-ricardo.ribalda@gmail.com>
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-X-Mailer: Apple Mail (2.3445.8.2)
+        id S932695AbeFKPKQ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 20 others); Mon, 11 Jun 2018 11:10:16 -0400
+Received: from mail.ltec.ch ([95.143.48.181]:44960 "EHLO mail.ltec.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932313AbeFKPKP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 11:10:15 -0400
+X-Greylist: delayed 1388 seconds by postgrey-1.27 at vger.kernel.org; Mon, 11 Jun 2018 11:10:14 EDT
+Received: from nebula.ltec ([172.27.11.2] helo=vm64.ltec)
+        by mail.ltec.ch with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_CBC_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <fb@ltec.ch>)
+        id 1fSO60-0000Pe-Cm; Mon, 11 Jun 2018 16:47:00 +0200
+From: Felix Brack <fb@ltec.ch>
+To: bcousson@baylibre.com, tony@atomide.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, fb@ltec.ch
+Subject: [PATCH] ARM: dts: am33xx: Fix syntax of alias names
+Date: Mon, 11 Jun 2018 16:45:53 +0200
+Message-Id: <1528728353-5889-1-git-send-email-fb@ltec.ch>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ricardo,
+DT specifications do not allow the underscore character in alias names.
+Replace all underscores in alias names by dashes.
 
-> Export serdev table to the module header, allowing module autoload via
-> udev/modprobe.
-> 
-> Cc: Lino Sanfilippo <LinoSanfilippo@gmx.de>
-> Cc: David S. Miller <davem@davemloft.net>
-> Cc: Stefan Wahren <stefan.wahren@i2se.com>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Johan Hovold <johan@kernel.org>
-> Cc: netdev@vger.kernel.org
-> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-> ---
-> drivers/net/ethernet/qualcomm/qca_uart.c | 7 +++++++
-> 1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/qualcomm/qca_uart.c b/drivers/net/ethernet/qualcomm/qca_uart.c
-> index db6068cd7a1f..6d2ac6cae63f 100644
-> --- a/drivers/net/ethernet/qualcomm/qca_uart.c
-> +++ b/drivers/net/ethernet/qualcomm/qca_uart.c
-> @@ -405,6 +405,12 @@ static void qca_uart_remove(struct serdev_device *serdev)
-> 	free_netdev(qca->net_dev);
-> }
-> 
-> +static struct serdev_device_id qca_uart_serdev_id[] = {
-> +	{ QCAUART_DRV_NAME, },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(serdev, qca_uart_serdev_id);
-> +
-> static struct serdev_device_driver qca_uart_driver = {
-> 	.probe = qca_uart_probe,
-> 	.remove = qca_uart_remove,
-> @@ -412,6 +418,7 @@ static struct serdev_device_driver qca_uart_driver = {
-> 		.name = QCAUART_DRV_NAME,
-> 		.of_match_table = of_match_ptr(qca_uart_of_match),
-> 	},
-> +	.id_table = qca_uart_serdev_id,
-> };
+Signed-off-by: Felix Brack <fb@ltec.ch>
+---
+ arch/arm/boot/dts/am33xx.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-the commit message is misleading me. If I build something with ACPI or DT support, then modinfo will show all modalias information for ACPI and DT compatible strings. What else does udev/modprobe actually need? Is something broken with the modalias export?
-
-Regards
-
-Marcel
+diff --git a/arch/arm/boot/dts/am33xx.dtsi b/arch/arm/boot/dts/am33xx.dtsi
+index 9cd62bc2..d3dd6a1 100644
+--- a/arch/arm/boot/dts/am33xx.dtsi
++++ b/arch/arm/boot/dts/am33xx.dtsi
+@@ -29,8 +29,8 @@
+ 		serial3 = &uart3;
+ 		serial4 = &uart4;
+ 		serial5 = &uart5;
+-		d_can0 = &dcan0;
+-		d_can1 = &dcan1;
++		d-can0 = &dcan0;
++		d-can1 = &dcan1;
+ 		usb0 = &usb0;
+ 		usb1 = &usb1;
+ 		phy0 = &usb0_phy;
+-- 
+2.7.4
