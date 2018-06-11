@@ -1,110 +1,157 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id KhSvLy35GFsLZQAAmS7hNA
-	; Thu, 07 Jun 2018 09:25:17 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id IvY9J6iSHlvVGAAAmS7hNA
+	; Mon, 11 Jun 2018 15:18:40 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id A355B608B8; Thu,  7 Jun 2018 09:25:17 +0000 (UTC)
+	id C1E1F607A4; Mon, 11 Jun 2018 15:18:40 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I4PQwvja"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 1A9AF601C3;
-	Thu,  7 Jun 2018 09:25:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1A9AF601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 6998160541;
+	Mon, 11 Jun 2018 15:18:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6998160541
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753751AbeFGJYk (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 05:24:40 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:54746 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932377AbeFGJWl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 05:22:41 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6C80D20021E;
-        Thu,  7 Jun 2018 11:22:39 +0200 (CEST)
-Received: from smtp.na-rdc02.nxp.com (inv1260.us-phx01.nxp.com [134.27.49.11])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 26F74200037;
-        Thu,  7 Jun 2018 11:22:39 +0200 (CEST)
-Received: from az84smr01.freescale.net (az84smr01.freescale.net [10.64.34.197])
-        by inv1260.na-rdc02.nxp.com (Postfix) with ESMTP id 8FFC540A70;
-        Thu,  7 Jun 2018 02:22:38 -0700 (MST)
-Received: from titan.ap.freescale.net ([10.192.208.233])
-        by az84smr01.freescale.net (8.14.3/8.14.0) with ESMTP id w579MJ4l020959;
-        Thu, 7 Jun 2018 02:22:36 -0700
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: netdev@vger.kernel.org, madalin.bucur@nxp.com,
-        Richard Cochran <richardcochran@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>
-Cc: devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Yangbo Lu <yangbo.lu@nxp.com>
-Subject: [v3, 05/10] arm64: dts: fsl: move ptp timer out of fman
-Date: Thu,  7 Jun 2018 17:20:45 +0800
-Message-Id: <20180607092050.46128-6-yangbo.lu@nxp.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180607092050.46128-1-yangbo.lu@nxp.com>
-References: <20180607092050.46128-1-yangbo.lu@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S932885AbeFKPSi (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 20 others); Mon, 11 Jun 2018 11:18:38 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:34797 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932678AbeFKPSe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 11:18:34 -0400
+Received: by mail-lf0-f65.google.com with SMTP id o9-v6so31149589lfk.1;
+        Mon, 11 Jun 2018 08:18:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Grec2OtNvJ00k+NTJFZvu6d8o6nZ7+1BLNe/SIbSBCg=;
+        b=I4PQwvjaQrP/34JnUvvL+mxDdEqpMEZGgriiOX4V3Vo5LCsvrq5UU7jf53EFIwz1nD
+         bbIcnAVNJyLP3Tx+ZTm1A9PHlSK9bgk9tH1hisXIpQmpXRL7tGOP7ZENRAgjM0/EdjKt
+         XX7EUgXY8Qcu/9HpxmmpkmK7IiZtmbYR+XL5jOBQA1+NylacbGEirRndM+eFMmcrSUzI
+         xnlYUpklt+yjjAgYWMA0fAoPCPQHPj3B0UPTjGbhdpVOx3/owV8VkX9KmQq5PloGSkDC
+         Naiz97n4EFyJ6oKkJP0rA/TOhHi1LCdY1cliKyW9bIBART/N0rcCOJYZk8jEaxLb/OPU
+         HMNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Grec2OtNvJ00k+NTJFZvu6d8o6nZ7+1BLNe/SIbSBCg=;
+        b=KZ2zDwGNE4QCPXC9J40FSRas6xugq0TMfqPEymiOb+DVfNm9DP44L0SWp69jgs8cky
+         1NcYivodKQPsEmnEAPZWUWxJ55DU2ruOR9MOi2DfcthBnVVrMjads8M/0hH/uBTTFQse
+         7g/3o/1YHElh+syDNUCEa+69/FYwhHD0zvrZEJSyzPUm6zvGuep+O24g5D+gUZ3h9Uy0
+         tmHG3DG3mMygYAAs86Lr9gvk31l34cpzcyMyF9nwlidW2XjLK6HRQsMLsokC/NIuSnvQ
+         IqXcVrr2IRWTAXzYitwK0u1+39OFIxyCwppr8uTYwf7D9qWcKWsTn/EsTSPQ0rs7eksq
+         sI3A==
+X-Gm-Message-State: APt69E3519PbWujbuBYSHJOGDoc3HGNkGeOn2wtfuwdtUGFtuBG/J59m
+        050ruUd7lPFr3DvNbzEwc+/hZPvDU1D/2FjHKgE=
+X-Google-Smtp-Source: ADUXVKJFNEV9b1z/xacpM9J63hYi6r78PJV/ZuUlLzWxHEsmA8gTYV/kCOTMM0B1q7eikXPujocJn8p7sBzbHeCnsEE=
+X-Received: by 2002:a2e:1092:: with SMTP id 18-v6mr12560761ljq.115.1528730313213;
+ Mon, 11 Jun 2018 08:18:33 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
+ <20180611115240.32606-15-ricardo.ribalda@gmail.com> <EBCCCD1F-0F23-4599-8A78-32BBF2DAF746@holtmann.org>
+In-Reply-To: <EBCCCD1F-0F23-4599-8A78-32BBF2DAF746@holtmann.org>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Date: Mon, 11 Jun 2018 17:18:16 +0200
+Message-ID: <CAPybu_3m8M5guQQQ+_wx9i7eU8qsUhZ1bRvmbdEnSsUPUtAe6A@mail.gmail.com>
+Subject: Re: [PATCH v2 14/24] mfd: rave-sp: MODULE_DEVICE_TABLE(serdev)
+To: Marcel Holtmann <marcel@holtmann.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch is to move ptp timer node out of fman.
-Because ptp timer will be probed by ptp_qoriq driver,
-it should be an independent device in case of conflict
-memory mapping.
+Hi Marcel
+On Mon, Jun 11, 2018 at 3:14 PM Marcel Holtmann <marcel@holtmann.org> wrote=
+:
+>
+> Hi Ricardo,
+>
+> > Export serdev table to the module header, allowing module autoload via
+> > udev/modprobe.
+> >
+> > Cc: Lee Jones <lee.jones@linaro.org>
+> > Cc: Rob Herring <robh@kernel.org>
+> > Cc: Johan Hovold <johan@kernel.org>
+> > Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+> > ---
+> > drivers/mfd/rave-sp.c | 7 +++++++
+> > 1 file changed, 7 insertions(+)
+> >
+> > diff --git a/drivers/mfd/rave-sp.c b/drivers/mfd/rave-sp.c
+> > index 5c858e784a89..c0ecfbc16dca 100644
+> > --- a/drivers/mfd/rave-sp.c
+> > +++ b/drivers/mfd/rave-sp.c
+> > @@ -694,12 +694,19 @@ static int rave_sp_probe(struct serdev_device *se=
+rdev)
+> >
+> > MODULE_DEVICE_TABLE(of, rave_sp_dt_ids);
+> >
+> > +static struct serdev_device_id rave_sp_serdev_id[] =3D {
+> > +     { "rave-sp", },
+> > +     {}
+> > +};
+> > +MODULE_DEVICE_TABLE(serdev, rave_sp_serdev_id);
+> > +
+> > static struct serdev_device_driver rave_sp_drv =3D {
+> >       .probe                  =3D rave_sp_probe,
+> >       .driver =3D {
+> >               .name           =3D "rave-sp",
+> >               .of_match_table =3D rave_sp_dt_ids,
+> >       },
+> > +     .id_table =3D rave_sp_serdev_id,
+> > };
+> > module_serdev_device_driver(rave_sp_drv);
+>
+> so I would actually prefer that we not duplicate the .driver.name in the =
+.id_table. This one for example is non-functional since all supported hardw=
+are needs a specific .data entry. It will fail here:
+>
+>         sp->variant =3D of_device_get_match_data(dev);
+>         if (!sp->variant)
+>                 return -ENODEV;
+>
+> Maybe we focus first on getting the base support for new_device etc. merg=
+ed and use the Edison Bluetooth platform driver support in hci_bcm.c so we =
+can do a real cleanup there. And then later add broad new_device support. S=
+ome of these instances should be just fine with never getting it since they=
+ require to many per device quirks to make things functional. A blind searc=
+h+replace is not going to work.
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
----
-Changes for v2:
-	- Fixed address-cells for ptp-timer.
-Changes for v3:
-	- None.
----
- arch/arm64/boot/dts/freescale/qoriq-fman3-0.dtsi |   14 ++++++++------
- 1 files changed, 8 insertions(+), 6 deletions(-)
+I think that functionality is added on another patch from the series.
+Let me merge both together so the driver is functional (and builds)
+from any point of the tree. Let me merge it in
+https://github.com/ribalda/linux/tree/serdev3 and resend after I fixed
+all the other suggestions
 
-diff --git a/arch/arm64/boot/dts/freescale/qoriq-fman3-0.dtsi b/arch/arm64/boot/dts/freescale/qoriq-fman3-0.dtsi
-index 4dd0676..a56a408 100644
---- a/arch/arm64/boot/dts/freescale/qoriq-fman3-0.dtsi
-+++ b/arch/arm64/boot/dts/freescale/qoriq-fman3-0.dtsi
-@@ -11,13 +11,14 @@ fman0: fman@1a00000 {
- 	#size-cells = <1>;
- 	cell-index = <0>;
- 	compatible = "fsl,fman";
--	ranges = <0x0 0x0 0x1a00000 0x100000>;
--	reg = <0x0 0x1a00000 0x0 0x100000>;
-+	ranges = <0x0 0x0 0x1a00000 0xfe000>;
-+	reg = <0x0 0x1a00000 0x0 0xfe000>;
- 	interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
- 		     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
- 	clocks = <&clockgen 3 0>;
- 	clock-names = "fmanclk";
- 	fsl,qman-channel-range = <0x800 0x10>;
-+	ptimer-handle = <&ptp_timer0>;
- 
- 	muram@0 {
- 		compatible = "fsl,fman-muram";
-@@ -73,9 +74,10 @@ fman0: fman@1a00000 {
- 		compatible = "fsl,fman-memac-mdio", "fsl,fman-xmdio";
- 		reg = <0xfd000 0x1000>;
- 	};
-+};
- 
--	ptp_timer0: ptp-timer@fe000 {
--		compatible = "fsl,fman-ptp-timer";
--		reg = <0xfe000 0x1000>;
--	};
-+ptp_timer0: ptp-timer@1afe000 {
-+	compatible = "fsl,fman-ptp-timer";
-+	reg = <0x0 0x1afe000 0x0 0x1000>;
-+	interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
- };
--- 
-1.7.1
+
+Thanks
+
+>
+> And things like device_get_match_data() should work as well even if the h=
+ardware is listed via serdev_device_id. Drivers that are solely DT centric =
+will need a lot more work before dynamic adding of serdev devices can happe=
+n.
+>
+> Regards
+>
+> Marcel
+>
+
+
+--=20
+Ricardo Ribalda
