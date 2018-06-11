@@ -2,87 +2,107 @@ Return-Path: <SRS0=KDb5=I5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C4655C07E80
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 18:54:22 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B05F9C07E80
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 18:56:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61C1D2086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 18:54:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63DA52086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 18:56:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AoNL7Z8q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61C1D2086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2oOBvfxg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63DA52086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933253AbeFKSyU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 14:54:20 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:37028 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932081AbeFKSyT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 14:54:19 -0400
-Received: by mail-it0-f68.google.com with SMTP id l6-v6so12277298iti.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 11:54:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oZIXL1Sl0NaLpigQ2y1OrkZbfRyYFeYGW1Qwkl16w/g=;
-        b=AoNL7Z8qCdJr/CF6PvrgxRHEqsVBJo+wcY9jxrpn9tuNBkbM+JCXUtw92arhE7rRUW
-         D70mtrtUU07zY0MoEx3lA1q/LbggOIYB6rrmqTe67IFqd+BWP86z+uMY6o0TB3ILN3P7
-         /jJTsXbGOuWY5yWNdsSigzlZuUrTHaggP4H/Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oZIXL1Sl0NaLpigQ2y1OrkZbfRyYFeYGW1Qwkl16w/g=;
-        b=KEiKptVerB3shuWfLdHNRmyp8WLmTF4aEIUHBwNOX92te6gJUUbKO5QrQU0yWVqg8T
-         aYKTAOA6Iazfsq9m868w1Q312kIElYYgzUFNIaHVcbWnlx+XqLhVZk/m3Hr2vv+Mg6Iu
-         D8uE+PGzm/4pdtMGMQzO07YY1xTJZe+kTW4Hz0rT5xBalOKILh6dRg4krqW0SMLdM3fE
-         3EU6wSEZb1rxbNq6+g9LHoPfxmK7GIvs3SZkrZbjfZoSEMLXiQO8grXxqtlVMjuFErV6
-         X/7AILxInwd9oJfbiAmPB0vk9Dw54643Yxc7iGpWKzHH4d0ey1BAS7UwBPqIpd2vrfgp
-         m/8g==
-X-Gm-Message-State: APt69E1HEaQpSniRtcFLyQNiu7rm3kf8mKYAy9R+gHHORBZd/EajDKS4
-        jE3s/0sHMPCOI927DBbWS/gPX8aazZr5fr8UIRM=
-X-Google-Smtp-Source: ADUXVKKe2mTIX/GtWywFsfZMzKcFWTd/RywSA61BuaIMj3f35mEsJuKrMYddi6CXc/BPGDqXC1QyTD2O5o6bLbiX6QY=
-X-Received: by 2002:a24:8046:: with SMTP id g67-v6mr216765itd.16.1528743258445;
- Mon, 11 Jun 2018 11:54:18 -0700 (PDT)
+        id S934261AbeFKS4L (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 14:56:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56196 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932081AbeFKS4J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 14:56:09 -0400
+Received: from mail-it0-f46.google.com (mail-it0-f46.google.com [209.85.214.46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB08A208AF;
+        Mon, 11 Jun 2018 18:56:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528743368;
+        bh=uOuSeR04aB0L2xNI58oziZVGNpzvPImu9dU4RNiFZEU=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=2oOBvfxgLi+yimW/LBGJ1noixd+W+2Ls/iSXG9rppMhVRpdHzEuENrpkMoTKA8lz3
+         P0OpSP36ZVU4URVagnmEReGbUKM15UzLxqrLpa3yZbL4Yzpc0O0nmwkINj+DAeUNGd
+         xkKJPZw+JvJPcpKHWC6199x6y38QA5Hl6sMT1hBo=
+Received: by mail-it0-f46.google.com with SMTP id v83-v6so12272077itc.3;
+        Mon, 11 Jun 2018 11:56:08 -0700 (PDT)
+X-Gm-Message-State: APt69E0o8q7RowW5WCP08Uw0//Mj0FZeApo7JGFntj3paxFRQuIUpKBG
+        MFoFuNk1iU2AwhwdYqAahOg9TCJ4x/U4zO933g==
+X-Google-Smtp-Source: ADUXVKLHfb1NzFhVt+bY0i5KyLmxs5EYPa5oF6EP5td7WkO2bi4dI7fg4F6aiSB5b5jHuQyLpuhI0Qz/OkAzkCeRnWc=
+X-Received: by 2002:a24:798f:: with SMTP id z137-v6mr186427itc.19.1528743368188;
+ Mon, 11 Jun 2018 11:56:08 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180611165212.GA6783@jaegeuk-macbookpro.roam.corp.google.com>
- <CA+55aFznP4aEy7DkVfeQ_e6eXgLnswVnSJS3C51UHD_k8qYZCA@mail.gmail.com> <DM5PR2101MB08880B2FEEE593857E9501BCCB780@DM5PR2101MB0888.namprd21.prod.outlook.com>
-In-Reply-To: <DM5PR2101MB08880B2FEEE593857E9501BCCB780@DM5PR2101MB0888.namprd21.prod.outlook.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 11 Jun 2018 11:54:07 -0700
-Message-ID: <CA+55aFwEMVwijU=A7igcckkmS798m91=aEDwRpGGn7gw80ZdDA@mail.gmail.com>
-Subject: Re: [GIT PULL] f2fs update for 4.18-rc1
-To:     Matthew Wilcox <mawilcox@microsoft.com>
-Cc:     Jaegeuk Kim <jaegeuk@kernel.org>,
-        "Linux F2FS DEV, Mailing List" 
-        <linux-f2fs-devel@lists.sourceforge.net>,
+Received: by 2002:a4f:6403:0:0:0:0:0 with HTTP; Mon, 11 Jun 2018 11:55:47
+ -0700 (PDT)
+In-Reply-To: <CAKKbWA4gm1x8VazdMjZ6a9bwGmt=_mZYS2S3FnB2x36Ng+cjCQ@mail.gmail.com>
+References: <20180607145821.322979-1-avifishman70@gmail.com>
+ <20180607145821.322979-3-avifishman70@gmail.com> <20180611181646.GA5537@rob-hp-laptop>
+ <CAKKbWA4gm1x8VazdMjZ6a9bwGmt=_mZYS2S3FnB2x36Ng+cjCQ@mail.gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Mon, 11 Jun 2018 12:55:47 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJYafGzpr8+VQSYJcE5EMo1xZ8NrXTyGBS-7GhU-X+PVg@mail.gmail.com>
+Message-ID: <CAL_JsqJYafGzpr8+VQSYJcE5EMo1xZ8NrXTyGBS-7GhU-X+PVg@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] dt-bindings: usb: new ehci-npcm7xx dt
+To:     Avi Fishman <avifishman70@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        James Hogan <jhogan@kernel.org>, Alban <albeu@free.fr>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Tony Lindgren <tony@atomide.com>, baolu.lu@linux.intel.com,
+        Alex Elder <elder@linaro.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Hans de Goede <hdegoede@redhat.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>
+        Linux USB List <linux-usb@vger.kernel.org>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 11, 2018 at 11:21 AM Matthew Wilcox <mawilcox@microsoft.com> wrote:
+On Mon, Jun 11, 2018 at 12:24 PM, Avi Fishman <avifishman70@gmail.com> wrote:
+> On Mon, Jun 11, 2018 at 9:16 PM, Rob Herring <robh@kernel.org> wrote:
+>> On Thu, Jun 07, 2018 at 05:58:20PM +0300, avifishman70@gmail.com wrote:
+>>> From: Avi Fishman <AviFishman70@gmail.com>
+>>>
+>>> Device Tree documentation for Nuvoton npcm7xx EHCI.
+>>>
+>>> Signed-off-by: Avi Fishman <AviFishman70@gmail.com>
 >
-> Argh, you used my Outlook email address, so you get top-posting
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Rob, if I understand you want me to add another version (v5) with the
+> above line (only on the dt)?
 
-Hey, I think it's what you uise for your commit messages, I think
-that's where I got it from..
+No need to *only* do that. Maintainers will collect them on the last
+version when they apply patches. You just can't expect that
+maintainers will go look at prior versions and collect them.
 
-> The radix tree does rely on constructors still.  One of the things on my todo list is to verify whether it actually makes sense to do that or not.
-
-Ok, thanks.
-
-> I don't really understand why Jaegeuk is changing f2fs now when we've just fixed the core kernel to make what he's doing perfectly legal.
-
-I'm assuming it was based on the state when it wasn't legal yet.
-
-             Linus
+>>> ---
+>>>  Documentation/devicetree/bindings/usb/npcm7xx-usb.txt | 17 +++++++++++++++++
+>>>  1 file changed, 17 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/usb/npcm7xx-usb.txt
+>>
+>> Please add acks/reviewed-bys when posting new versions.
+>>
+>> Rob
