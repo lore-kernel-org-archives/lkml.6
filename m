@@ -1,234 +1,209 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id UQbSIQG7HVv1PwAAmS7hNA
-	; Sun, 10 Jun 2018 23:57:53 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ziaQI0hkHluRbgAAmS7hNA
+	; Mon, 11 Jun 2018 12:00:19 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 77F686070A; Sun, 10 Jun 2018 23:57:53 +0000 (UTC)
+	id A1C92607E4; Mon, 11 Jun 2018 12:00:19 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uvT8+myI"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id DD69160250;
-	Sun, 10 Jun 2018 23:57:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DD69160250
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id DB20E607A4;
+	Mon, 11 Jun 2018 12:00:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DB20E607A4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753749AbeFJX5u (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Sun, 10 Jun 2018 19:57:50 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57192 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753551AbeFJX5s (ORCPT
+        id S933259AbeFKMAR (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 08:00:17 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:50826 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933310AbeFKL7T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 19:57:48 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5ANsMWl001440
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Jun 2018 19:57:48 -0400
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jhbcq3eff-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Jun 2018 19:57:48 -0400
-Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Sun, 10 Jun 2018 19:57:47 -0400
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 10 Jun 2018 19:57:42 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5ANvgvM18481410
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 10 Jun 2018 23:57:42 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 784E4B2065;
-        Sun, 10 Jun 2018 20:59:08 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5A678B205F;
-        Sun, 10 Jun 2018 20:59:08 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.80.205.20])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Sun, 10 Jun 2018 20:59:08 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id D3ABD16C2DEC; Sun, 10 Jun 2018 16:59:34 -0700 (PDT)
-Date: Sun, 10 Jun 2018 16:59:34 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Shakeel Butt <shakeelb@google.com>
-Cc: Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Thelen <gthelen@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>, Linux MM <linux-mm@kvack.org>,
-        Cgroups <cgroups@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] mm: fix race between kmem_cache destroy, create and
- deactivate
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180530001204.183758-1-shakeelb@google.com>
- <20180609102027.5vkqucnzvh6nfdxu@esperanza>
- <CALvZod7OrDrq571An-GHeWFNvARWsS+fvX1-G9=nYzxgq2N3UQ@mail.gmail.com>
- <20180610163420.GK3593@linux.vnet.ibm.com>
- <CALvZod5HiwJPkD-_KnV+m=gWYgkb8rZceKoUkBK1KPW8iOzYug@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALvZod5HiwJPkD-_KnV+m=gWYgkb8rZceKoUkBK1KPW8iOzYug@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18061023-0060-0000-0000-0000027B1809
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009166; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000265; SDB=6.01045152; UDB=6.00535181; IPR=6.00824148;
- MB=3.00021570; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-10 23:57:46
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18061023-0061-0000-0000-0000456852FA
-Message-Id: <20180610235934.GM3593@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-10_15:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806100292
+        Mon, 11 Jun 2018 07:59:19 -0400
+Received: by mail-wm0-f68.google.com with SMTP id e16-v6so14168409wmd.0;
+        Mon, 11 Jun 2018 04:59:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=7DHhh/W+e98Et39AXE/FP+wAgi7x/cim2WKuNBPwZtM=;
+        b=uvT8+myICWeI6nzPBDjMjvgjIqMYj5lXRZkM31O2R9NYBlVWOtw9HiH9iYXP5AXPSK
+         QmRxqhTQl2c7bTVmnGMU+CrvNOsD3tEnTvzOOcucyQTDgVIQkEAv2Nu+TgCLd6Ml46zo
+         5t7mtbEN8I/+YrrOGcy2kHVKCAGtWtS+w908MQGDdoJq7D6CSsIg4xUIpM2ypZvDkqWH
+         a3EKDz42cfBqGqlIT7Po+g5ZCFHLrsW9X1PXosHAHpcg+OV02SgNC9gCwvWLcQ34NIgc
+         24fqcXs+POpFF1PYOeIiqNs4Tbbd4If7x9u70qymGKLHiGTXeJP4EKz4X6cgmy/BCHW7
+         Lh7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=7DHhh/W+e98Et39AXE/FP+wAgi7x/cim2WKuNBPwZtM=;
+        b=G5N/8doVjAvg0G6/vh9nFvIlfjned+/eO5UydEi1qK/+1Z1pWcrNT3XS3wp7vDAYqz
+         4NiACUyiBbZ+yOnv0zKA3wm0v+E4mAbMkWnMrnKaKYvqv3Ftdv04KUmmlEYOVV6e3Gf6
+         oeABWpgLQkIpjH3aRFd0JJKLvdp9tTWD+1eEIvcvYgOq9ptkcxWeF61IAPCKfurE/faj
+         8Qw1B+Fblc5Y8BssN1V/hBvRohU6SlFqLFwkno2WGt1V/eoMxzqVYtsvN3ozU0jWavPG
+         115xb+8skr4BaFAtYTkexQw/m2WUaXeGA+63Pwwo+LqrPSbk+b7htyXf7eaUrzU9ddZC
+         WeCw==
+X-Gm-Message-State: APt69E2bZ63GNAwFjjSPenzGD5bvoyak54PIpcVoy6XKns4IkpJN5gED
+        NYoRhbnMEGEhJmxvp+vkBYKWZCh/
+X-Google-Smtp-Source: ADUXVKIVFlWtZZbr8RI5mZwwMnPsKYjbKoHHGAijyR/5i78S6qhKElJEz717wD6gAjpR79h1LksP3Q==
+X-Received: by 2002:a1c:ad4:: with SMTP id 203-v6mr7652704wmk.98.1528718357905;
+        Mon, 11 Jun 2018 04:59:17 -0700 (PDT)
+Received: from kurokawa.lan (ip-86-49-107-50.net.upcbroadband.cz. [86.49.107.50])
+        by smtp.gmail.com with ESMTPSA id t124-v6sm7974796wmt.29.2018.06.11.04.59.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Jun 2018 04:59:17 -0700 (PDT)
+From: Marek Vasut <marek.vasut@gmail.com>
+X-Google-Original-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v6 11/14] mfd: da9063: Add custom IRQ map for DA9063L
+Date: Mon, 11 Jun 2018 13:58:48 +0200
+Message-Id: <20180611115851.1987-11-marek.vasut+renesas@gmail.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
+References: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 10, 2018 at 10:40:17AM -0700, Shakeel Butt wrote:
-> On Sun, Jun 10, 2018 at 9:32 AM Paul E. McKenney
-> <paulmck@linux.vnet.ibm.com> wrote:
-> >
-> > On Sun, Jun 10, 2018 at 07:52:50AM -0700, Shakeel Butt wrote:
-> > > On Sat, Jun 9, 2018 at 3:20 AM Vladimir Davydov <vdavydov.dev@gmail.com> wrote:
-> > > >
-> > > > On Tue, May 29, 2018 at 05:12:04PM -0700, Shakeel Butt wrote:
-> > > > > The memcg kmem cache creation and deactivation (SLUB only) is
-> > > > > asynchronous. If a root kmem cache is destroyed whose memcg cache is in
-> > > > > the process of creation or deactivation, the kernel may crash.
-> > > > >
-> > > > > Example of one such crash:
-> > > > >       general protection fault: 0000 [#1] SMP PTI
-> > > > >       CPU: 1 PID: 1721 Comm: kworker/14:1 Not tainted 4.17.0-smp
-> > > > >       ...
-> > > > >       Workqueue: memcg_kmem_cache kmemcg_deactivate_workfn
-> > > > >       RIP: 0010:has_cpu_slab
-> > > > >       ...
-> > > > >       Call Trace:
-> > > > >       ? on_each_cpu_cond
-> > > > >       __kmem_cache_shrink
-> > > > >       kmemcg_cache_deact_after_rcu
-> > > > >       kmemcg_deactivate_workfn
-> > > > >       process_one_work
-> > > > >       worker_thread
-> > > > >       kthread
-> > > > >       ret_from_fork+0x35/0x40
-> > > > >
-> > > > > To fix this race, on root kmem cache destruction, mark the cache as
-> > > > > dying and flush the workqueue used for memcg kmem cache creation and
-> > > > > deactivation.
-> > > >
-> > > > > @@ -845,6 +862,8 @@ void kmem_cache_destroy(struct kmem_cache *s)
-> > > > >       if (unlikely(!s))
-> > > > >               return;
-> > > > >
-> > > > > +     flush_memcg_workqueue(s);
-> > > > > +
-> > > >
-> > > > This should definitely help against async memcg_kmem_cache_create(),
-> > > > but I'm afraid it doesn't eliminate the race with async destruction,
-> > > > unfortunately, because the latter uses call_rcu_sched():
-> > > >
-> > > >   memcg_deactivate_kmem_caches
-> > > >    __kmem_cache_deactivate
-> > > >     slab_deactivate_memcg_cache_rcu_sched
-> > > >      call_rcu_sched
-> > > >                                             kmem_cache_destroy
-> > > >                                              shutdown_memcg_caches
-> > > >                                               shutdown_cache
-> > > >       memcg_deactivate_rcufn
-> > > >        <dereference destroyed cache>
-> > > >
-> > > > Can we somehow flush those pending rcu requests?
-> > >
-> > > You are right and thanks for catching that. Now I am wondering if
-> > > synchronize_sched() just before flush_workqueue() should be enough.
-> > > Otherwise we might have to replace call_sched_rcu with
-> > > synchronize_sched() in kmemcg_deactivate_workfn which I would not
-> > > prefer as that would holdup the kmem_cache workqueue.
-> > >
-> > > +Paul
-> > >
-> > > Paul, we have a situation something similar to the following pseudo code.
-> > >
-> > > CPU0:
-> > > lock(l)
-> > > if (!flag)
-> > >   call_rcu_sched(callback);
-> > > unlock(l)
-> > > ------
-> > > CPU1:
-> > > lock(l)
-> > > flag = true
-> > > unlock(l)
-> > > synchronize_sched()
-> > > ------
-> > >
-> > > If CPU0 has called already called call_rchu_sched(callback) then later
-> > > if CPU1 calls synchronize_sched(). Is there any guarantee that on
-> > > return from synchronize_sched(), the rcu callback scheduled by CPU0
-> > > has already been executed?
-> >
-> > No.  There is no such guarantee.
-> >
-> > You instead want rcu_barrier_sched(), which waits for the callbacks from
-> > all prior invocations of call_rcu_sched() to be invoked.
-> >
-> > Please note that synchronize_sched() is -not- sufficient.  It is only
-> > guaranteed to wait for a grace period, not necessarily for all prior
-> > callbacks.  This goes both directions because if there are no callbacks
-> > in the system, then rcu_barrier_sched() is within its rights to return
-> > immediately.
-> >
-> > So please make sure you use each of synchronize_sched() and
-> > rcu_barrier_sched() to do the job that it was intended to do!  ;-)
-> >
-> > If your lock(l) is shorthand for spin_lock(&l), it looks to me like you
-> > actually only need rcu_barrier_sched():
-> >
-> >         CPU0:
-> >         spin_lock(&l);
-> >         if (!flag)
-> >           call_rcu_sched(callback);
-> >         spin_unlock(&l);
-> >
-> >         CPU1:
-> >         spin_lock(&l);
-> >         flag = true;
-> >         spin_unlock(&l);
-> >         /* At this point, no more callbacks will be registered. */
-> >         rcu_barrier_sched();
-> >         /* At this point, all registered callbacks will have been invoked. */
-> >
-> > On the other hand, if your "lock(l)" was instead shorthand for
-> > rcu_read_lock_sched(), then you need -both- synchronize_sched() -and-
-> > rcu_barrier().  And even then, you will be broken in -rt kernels.
-> > (Which might or might not be a concern, depending on whether your code
-> > matters to -rt kernels.
-> >
-> > Make sense?
-> 
-> Thanks a lot, that was really helpful. The lock is actually
-> mutex_lock. So, I think rcu_barrier_sched() should be sufficient.
+The DA9063L does not have an RTC. Add custom IRQ map for DA9063L to
+ignore the Alarm and Tick IRQs from the PMIC.
 
-Yes, with either spin_lock() or mutex_lock(), this should work.  Mutual
-exclusion and all that.  ;-)
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+---
+V3: New patch
+V4: - Formatting fixes
+    - Drop extra newline in da9063l_irq_chip
+    - Drop mention of the buggy datasheet in commit message
+V5: Rebase on top of new 01 and 02 patches
+V6: No change
+---
+ drivers/mfd/da9063-irq.c | 81 ++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 79 insertions(+), 2 deletions(-)
 
-							Thanx, Paul
+diff --git a/drivers/mfd/da9063-irq.c b/drivers/mfd/da9063-irq.c
+index 579947f83486..ecc0c8ce6c58 100644
+--- a/drivers/mfd/da9063-irq.c
++++ b/drivers/mfd/da9063-irq.c
+@@ -102,8 +102,81 @@ static const struct regmap_irq_chip da9063_irq_chip = {
+ 	.init_ack_masked = true,
+ };
+ 
++static const struct regmap_irq da9063l_irqs[] = {
++	/* DA9063 event A register */
++	REGMAP_IRQ_REG(DA9063_IRQ_ONKEY,
++		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_ONKEY),
++	REGMAP_IRQ_REG(DA9063_IRQ_ADC_RDY,
++		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_ADC_RDY),
++	REGMAP_IRQ_REG(DA9063_IRQ_SEQ_RDY,
++		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_SEQ_RDY),
++	/* DA9063 event B register */
++	REGMAP_IRQ_REG(DA9063_IRQ_WAKE,
++		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_WAKE),
++	REGMAP_IRQ_REG(DA9063_IRQ_TEMP,
++		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_TEMP),
++	REGMAP_IRQ_REG(DA9063_IRQ_COMP_1V2,
++		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_COMP_1V2),
++	REGMAP_IRQ_REG(DA9063_IRQ_LDO_LIM,
++		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_LDO_LIM),
++	REGMAP_IRQ_REG(DA9063_IRQ_REG_UVOV,
++		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_UVOV),
++	REGMAP_IRQ_REG(DA9063_IRQ_DVC_RDY,
++		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_DVC_RDY),
++	REGMAP_IRQ_REG(DA9063_IRQ_VDD_MON,
++		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_VDD_MON),
++	REGMAP_IRQ_REG(DA9063_IRQ_WARN,
++		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_VDD_WARN),
++	/* DA9063 event C register */
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI0,
++		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI0),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI1,
++		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI1),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI2,
++		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI2),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI3,
++		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI3),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI4,
++		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI4),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI5,
++		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI5),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI6,
++		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI6),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI7,
++		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI7),
++	/* DA9063 event D register */
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI8,
++		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI8),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI9,
++		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI9),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI10,
++		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI10),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI11,
++		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI11),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI12,
++		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI12),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI13,
++		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI13),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI14,
++		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI14),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI15,
++		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI15),
++};
++
++static const struct regmap_irq_chip da9063l_irq_chip = {
++	.name = "da9063l-irq",
++	.irqs = da9063l_irqs,
++	.num_irqs = ARRAY_SIZE(da9063l_irqs),
++	.num_regs = 4,
++	.status_base = DA9063_REG_EVENT_A,
++	.mask_base = DA9063_REG_IRQ_MASK_A,
++	.ack_base = DA9063_REG_EVENT_A,
++	.init_ack_masked = true,
++};
++
+ int da9063_irq_init(struct da9063 *da9063)
+ {
++	const struct regmap_irq_chip *irq_chip;
+ 	int ret;
+ 
+ 	if (!da9063->chip_irq) {
+@@ -111,11 +184,15 @@ int da9063_irq_init(struct da9063 *da9063)
+ 		return -EINVAL;
+ 	}
+ 
++	if (da9063->type == PMIC_TYPE_DA9063)
++		irq_chip = &da9063_irq_chip;
++	else
++		irq_chip = &da9063l_irq_chip;
++
+ 	ret = devm_regmap_add_irq_chip(da9063->dev, da9063->regmap,
+ 			da9063->chip_irq,
+ 			IRQF_TRIGGER_LOW | IRQF_ONESHOT | IRQF_SHARED,
+-			da9063->irq_base, &da9063_irq_chip,
+-			&da9063->regmap_irq);
++			da9063->irq_base, irq_chip, &da9063->regmap_irq);
+ 	if (ret) {
+ 		dev_err(da9063->dev, "Failed to reguest IRQ %d: %d\n",
+ 				da9063->chip_irq, ret);
+-- 
+2.16.2
