@@ -1,111 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 2XCiN6VDG1vXAQAAmS7hNA
-	; Sat, 09 Jun 2018 03:04:05 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id EjcvHq+FHlsHLwAAmS7hNA
+	; Mon, 11 Jun 2018 14:23:01 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id B534960275; Sat,  9 Jun 2018 03:04:05 +0000 (UTC)
+	id 6BBE260850; Mon, 11 Jun 2018 14:23:01 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=hmh.eng.br header.i=@hmh.eng.br header.b="pMPYROZ1";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Z3Jps/k7"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="a4cv7/sW"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 034AA605A2;
-	Sat,  9 Jun 2018 03:04:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 034AA605A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=hmh.eng.br
+	by smtp.codeaurora.org (Postfix) with ESMTP id DDF6F60541;
+	Mon, 11 Jun 2018 14:23:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DDF6F60541
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753190AbeFIDEB (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 23:04:01 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:55287 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752337AbeFIDD7 (ORCPT
+        id S934387AbeFKOWc (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 10:22:32 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45350 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933498AbeFKOGw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 23:03:59 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id DB1AA21C47;
-        Fri,  8 Jun 2018 23:03:58 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Fri, 08 Jun 2018 23:03:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hmh.eng.br; h=cc
-        :content-transfer-encoding:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm2; bh=Lf7PS3x3vALled+G2UUzH9uNiUAGy
-        JTd2zDuVaVTlR8=; b=pMPYROZ1nNZN79B33nI0fDvCXbB6LDpHGM2kyoy+PTNw8
-        CndeOu3afB7X4QAhMuT6HmuVkYR5+PitWC9V1UkwzBdemMjGEqASljjxhpz1VxEp
-        a74EmEFl4fGhVQ4UIKdbuqgNrFak7uH4fFDH1NoOjDYg+sqi47EaXoqKpWE/Zu5V
-        riAMChZta0Bw+gKClVlbyjpFuJeddFUWiZbPh8ZgITeG6BStKMtBoqkIJY4ZyXYc
-        5mmvxL23lZSVHrgaEJvTm4UDoGjDQyWCIYMAb7e6NMCtG8TRkVy3NnyBQ6YAZ+iI
-        b6GJeWmVY5MIe3TwAqrpi6+aJ4cFKdrB5sC5JG9Hg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=Lf7PS3
-        x3vALled+G2UUzH9uNiUAGyJTd2zDuVaVTlR8=; b=Z3Jps/k7VzgBX0X0e1HjKy
-        Uqtig6M2girUhYPbcvHYBzYKMuVjAsoz3wf25faUTalyqaYtmN6IiN3anTwWo82z
-        bnzUNaAmggE1EwOlvL0uSkuEKWrUtifrAkwpkJoKDjkkxXhS6BmR4qcJ36OlIWgP
-        yeHd9heyTbp+jYDFbWmOUy1A7sS8/IlmO435aldB4ccZRI6FLCZRttZJCIhSJAYd
-        +mJE1s4K83Hk62vjqKUZaNWjxVBWLfhZyapGagr6HQVdMRAeLaBaLmlU1OgjdbRJ
-        wCnefwIxmKezHgl8kfUP83sXL5blwa1FCwt8wzpLMZwpgO2YXV2AZheIRhbr7mUQ
-        ==
-X-ME-Proxy: <xmx:nkMbW9vKgWy0rVyBvx_vGvU6g0hHrGQ30A30U1M2PjmaIfGxIdxXYA>
-X-ME-Proxy: <xmx:nkMbW5a39ZiICFxVBOFzfxp-Ch_pNv2ctghx3F29abA1piN1W8YzZg>
-X-ME-Proxy: <xmx:nkMbW0-62U3fc4swbBxMJ4QljZeNkqLoruFFd3-4UzL99xvNrh7onQ>
-X-ME-Proxy: <xmx:nkMbWxbRmyU8bkIBI0QCkD0Kq4aAzeGjGOaHgLwgYvXAYBTLI5M8yA>
-X-ME-Proxy: <xmx:nkMbW6QyaDjwNdfcDJcDo3_LFhSRZtiH5co6DDiXDEkto2loeVQC2g>
-X-ME-Proxy: <xmx:nkMbW-Ls4EyFPhMkoBk0YD_09J0YtSL2F9tZiTgYXTG54ghypgLJWQ>
-X-ME-Sender: <xms:nkMbW-vBz9Kb8D5l3Q25NVIAfXgn-wiivU3ku0UPjyML0ahdg_hzng>
-Received: from khazad-dum.debian.net (unknown [201.53.245.99])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 4F9261025D;
-        Fri,  8 Jun 2018 23:03:58 -0400 (EDT)
-Received: from localhost (localhost [127.0.0.1])
-        by localhost.khazad-dum.debian.net (Postfix) with ESMTP id CEE51340131F;
-        Sat,  9 Jun 2018 00:03:56 -0300 (-03)
-X-Virus-Scanned: Debian amavisd-new at khazad-dum.debian.net
-Received: from khazad-dum.debian.net ([127.0.0.1])
-        by localhost (khazad-dum2.khazad-dum.debian.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id QFDg6nwhj6Xx; Sat,  9 Jun 2018 00:03:55 -0300 (-03)
-Received: by khazad-dum.debian.net (Postfix, from userid 1000)
-        id 26EA23400411; Sat,  9 Jun 2018 00:03:55 -0300 (-03)
-Date: Sat, 9 Jun 2018 00:03:55 -0300
-From: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
-To: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
-        ibm-acpi-devel@lists.sourceforge.net,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: ThinkPad T480s & thinkpad_acpi.ko
-Message-ID: <20180609030354.n7gcoain34lde73i@khazad-dum.debian.net>
-References: <20180608081204.ztv4yb62szuyfsz6@pali>
- <CAHp75VfFA6ghuSeAAfcbRS47A12BCcQiAmBt_N5ejm8EsP+3yA@mail.gmail.com>
- <20180608102910.24c2l43ffgwxalgq@pali>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180608102910.24c2l43ffgwxalgq@pali>
-X-GPG-Fingerprint1: 4096R/0x0BD9E81139CB4807: C467 A717 507B BAFE D3C1  6092
- 0BD9 E811 39CB 4807
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Mon, 11 Jun 2018 10:06:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
+        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=fwqoMbRfGsDMvYDOCVix3zU3Jbw64C7uj9ufKhyC6y4=; b=a4cv7/sWTzuX3VMy+74ENBJsu
+        uDXnsLwh8pfamO8PHVtIM4BfGFuFmkuWaAuTd2OyiSzwc4yvucEgPS2M4CO1fKcI9tzuzZfSr7wcY
+        49M405DypPQkLX2MqXuOaElrel2+hxTERI8Sx3xocIbWTLqNA0xnv+vCVDBkLSQvc3bC2Otopgb5k
+        orYWU/Fj09Ch/hZh4TgyvmISicIli+YdFMbTpC1nuIOU4ekuXWNZG4au6rPtJ74XWny4VTXxO9Koq
+        A4NVc+l9AZ8BJgOb5sslB15T9PTo6NdzkmBEduTVzLOR45aUY9gDp8vH6y78aI0HyO01q028HInGj
+        iOsZN43Yg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fSNT9-0004hM-G0; Mon, 11 Jun 2018 14:06:51 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@redhat.com>,
+        Lukas Czerner <lczerner@redhat.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH v13 28/72] page cache: Convert find_get_entries_tag to XArray
+Date: Mon, 11 Jun 2018 07:05:55 -0700
+Message-Id: <20180611140639.17215-29-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
+References: <20180611140639.17215-1-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 08 Jun 2018, Pali Rohár wrote:
-> which has only 4.9 kernel and LEN0268 identifier was added in git commit
-> a3c42a467a254a17236ab817d5c7c6bc054e4f84 for 4.10.
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-You could always request it to be backported to -stable *if* you
-manually apply it to a 4.9 kernel and test the heck out of it...
+Slightly shorter and simpler code.
 
-Debian would pick it up from -stable after a while.
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+ include/linux/pagemap.h |  2 +-
+ mm/filemap.c            | 54 ++++++++++++++++++-----------------------
+ 2 files changed, 25 insertions(+), 31 deletions(-)
 
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index a6d635fefb01..442977811b59 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -373,7 +373,7 @@ static inline unsigned find_get_pages_tag(struct address_space *mapping,
+ 					nr_pages, pages);
+ }
+ unsigned find_get_entries_tag(struct address_space *mapping, pgoff_t start,
+-			int tag, unsigned int nr_entries,
++			xa_tag_t tag, unsigned int nr_entries,
+ 			struct page **entries, pgoff_t *indices);
+ 
+ struct page *grab_cache_page_write_begin(struct address_space *mapping,
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 83328635edaa..67f04bcdf9ef 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -1866,57 +1866,51 @@ EXPORT_SYMBOL(find_get_pages_range_tag);
+  * @tag.
+  */
+ unsigned find_get_entries_tag(struct address_space *mapping, pgoff_t start,
+-			int tag, unsigned int nr_entries,
++			xa_tag_t tag, unsigned int nr_entries,
+ 			struct page **entries, pgoff_t *indices)
+ {
+-	void **slot;
++	XA_STATE(xas, &mapping->i_pages, start);
++	struct page *page;
+ 	unsigned int ret = 0;
+-	struct radix_tree_iter iter;
+ 
+ 	if (!nr_entries)
+ 		return 0;
+ 
+ 	rcu_read_lock();
+-	radix_tree_for_each_tagged(slot, &mapping->i_pages, &iter, start, tag) {
+-		struct page *head, *page;
+-repeat:
+-		page = radix_tree_deref_slot(slot);
+-		if (unlikely(!page))
++	xas_for_each_tagged(&xas, page, ULONG_MAX, tag) {
++		struct page *head;
++		if (xas_retry(&xas, page))
+ 			continue;
+-		if (radix_tree_exception(page)) {
+-			if (radix_tree_deref_retry(page)) {
+-				slot = radix_tree_iter_retry(&iter);
+-				continue;
+-			}
+-
+-			/*
+-			 * A shadow entry of a recently evicted page, a swap
+-			 * entry from shmem/tmpfs or a DAX entry.  Return it
+-			 * without attempting to raise page count.
+-			 */
++		/*
++		 * A shadow entry of a recently evicted page, a swap
++		 * entry from shmem/tmpfs or a DAX entry.  Return it
++		 * without attempting to raise page count.
++		 */
++		if (xa_is_value(page))
+ 			goto export;
+-		}
+ 
+ 		head = compound_head(page);
+ 		if (!page_cache_get_speculative(head))
+-			goto repeat;
++			goto retry;
+ 
+ 		/* The page was split under us? */
+-		if (compound_head(page) != head) {
+-			put_page(head);
+-			goto repeat;
+-		}
++		if (compound_head(page) != head)
++			goto put_page;
+ 
+ 		/* Has the page moved? */
+-		if (unlikely(page != *slot)) {
+-			put_page(head);
+-			goto repeat;
+-		}
++		if (unlikely(page != xas_reload(&xas)))
++			goto put_page;
++
+ export:
+-		indices[ret] = iter.index;
++		indices[ret] = xas.xa_index;
+ 		entries[ret] = page;
+ 		if (++ret == nr_entries)
+ 			break;
++		continue;
++put_page:
++		put_page(head);
++retry:
++		xas_reset(&xas);
+ 	}
+ 	rcu_read_unlock();
+ 	return ret;
 -- 
-  Henrique Holschuh
+2.17.1
