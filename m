@@ -1,85 +1,99 @@
-Return-Path: <SRS0=KDb5=I5=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.5 required=3.0 tests=DKIM_ADSP_ALL,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0CD67C004E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 23:57:33 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D78A7C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 00:00:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC40A20839
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 23:57:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC40A20839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 395FE208B0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 00:00:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gregn.net header.i=@gregn.net header.b="CSG/lqWC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 395FE208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gregn.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933334AbeFKX53 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 19:57:29 -0400
-Received: from smtprelay0154.hostedemail.com ([216.40.44.154]:48610 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932300AbeFKX52 (ORCPT
+        id S933663AbeFLAAK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 20:00:10 -0400
+Received: from vserver.gregn.net ([174.136.110.154]:38962 "EHLO
+        vserver.gregn.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932300AbeFLAAJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 19:57:28 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 2ECED1801E309;
-        Mon, 11 Jun 2018 23:57:27 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: cry03_40d20f7422201
-X-Filterd-Recvd-Size: 2051
-Received: from XPS-9350.home (unknown [47.151.150.235])
-        (Authenticated sender: joe@perches.com)
-        by omf11.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 11 Jun 2018 23:57:25 +0000 (UTC)
-Message-ID: <48143872d69d231273bd2c8ed835cbf0046a263d.camel@perches.com>
-Subject: Re: [PATCH] staging:iio:accel:adis16240: sign extend function
- avoiding code duplication
-From:   Joe Perches <joe@perches.com>
-To:     Karim Eshapa <karim.eshapa@gmail.com>, lars@metafoo.de
-Cc:     Michael.Hennerich@analog.com, jic23@kernel.org, knaack.h@gmx.de,
-        pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 11 Jun 2018 16:57:24 -0700
-In-Reply-To: <20180611233814.18597-1-karim.eshapa@gmail.com>
-References: <20180611233814.18597-1-karim.eshapa@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 11 Jun 2018 20:00:09 -0400
+X-Greylist: delayed 523 seconds by postgrey-1.27 at vger.kernel.org; Mon, 11 Jun 2018 20:00:09 EDT
+Received: from vbox.gregn.net (unknown [IPv6:2001:470:d:6c5:e4ca:cb3c:683d:fee3])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by vserver.gregn.net (Postfix) with ESMTPSA id 991012248;
+        Mon, 11 Jun 2018 16:51:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=gregn.net; s=default;
+        t=1528761114; bh=GkLPpFQx9YRjlkVK39ioBWIZN/rLYxCYiltzxMzl2vM=;
+        h=Date:From:To:Subject:References:In-Reply-To:From;
+        b=CSG/lqWCobSPNc8QmsBbZzRlky1woLCRiXgTnHCO/1utzwoz8Si4qc7AmBqi7eJu7
+         0cO0opEBzIohUaMaRb8Mvx3D0PcPcMgn3FX+An3mC4P5ThByTLQw9dU5YNE/LlAoMy
+         tZNW+1/Q1waEj93r6XkN0eXPiJ+GLvuVDFbsZLKmz90ZqZVgngtcAfXTNJwZfFKHtO
+         wEVUvAH+fRQ/wj8w2er6qG4Sk0Ot0enfI/nSHSW0NOtnxk6bs8lCfrzn85mO82h60Z
+         FfD68R/lQsi4PbsVO/rnf0nbPmyQgwDaW4pEdLPzwAj0fa6x1WejdH/GNPAuvNbH2A
+         +sUs3gykdw7YA==
+Received: from greg by vbox.gregn.net with local (Exim 4.84_2)
+        (envelope-from <greg@gregn.net>)
+        id 1fSWao-0007vH-Ut; Mon, 11 Jun 2018 16:51:22 -0700
+Date:   Mon, 11 Jun 2018 16:51:22 -0700
+From:   Gregory Nowak <greg@gregn.net>
+To:     Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        "Speakup is a screen review system for Linux." 
+        <speakup@linux-speakup.org>, devel@driverdev.osuosl.org,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: speakup: refactor synths array to use a list
+Message-ID: <20180611235122.GA28343@gregn.net>
+References: <20180604095212.GA18381@tanglefoot>
+ <20180606132628.fxykchbznrwzgwqt@var.youpi.perso.aquilenet.fr>
+ <20180611225703.csi47cdafhy6rxcf@var.youpi.perso.aquilenet.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180611225703.csi47cdafhy6rxcf@var.youpi.perso.aquilenet.fr>
+X-PGP-Key: http://www.gregn.net/pubkey.asc
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-Virus-Scanned: clamav-milter 0.99.4 at vserver
+X-Virus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-06-12 at 01:38 +0200, Karim Eshapa wrote:
-> Use sign_extend32 kernel function instead of code duplication.
-> Safe also for 16 bit.
+On Tue, Jun 12, 2018 at 12:57:03AM +0200, Samuel Thibault wrote:
+> Anybody up for testing please?
+> 
+> If people want to see speakup get mainlined instead of staging, please
+> help.
 
-Perhaps remove the bits declaration and assignments
-and just use 9 directly.
+If I understand right, this patch changes how synthesizers are loaded
+and unloaded through /sys/accessibility/speakup/synth, correct? If
+yes, then would for example verifying that
 
-> diff --git a/drivers/staging/iio/accel/adis16240.c b/drivers/staging/iio/accel/adis16240.c
-[]
-> @@ -292,9 +292,7 @@ static int adis16240_read_raw(struct iio_dev *indio_dev,
->  		ret = adis_read_reg_16(st, addr, &val16);
->  		if (ret)
->  			return ret;
-> -		val16 &= (1 << bits) - 1;
-> -		val16 = (s16)(val16 << (16 - bits)) >> (16 - bits);
-> -		*val = val16;
-> +		*val = sign_extend32(val16, bits - 1);
->  		return IIO_VAL_INT;
->  	case IIO_CHAN_INFO_PEAK:
->  		bits = 10;
-> @@ -302,9 +300,7 @@ static int adis16240_read_raw(struct iio_dev *indio_dev,
->  		ret = adis_read_reg_16(st, addr, &val16);
->  		if (ret)
->  			return ret;
-> -		val16 &= (1 << bits) - 1;
-> -		val16 = (s16)(val16 << (16 - bits)) >> (16 - bits);
-> -		*val = val16;
-> +		*val = sign_extend32(val16, bits - 1);
->  		return IIO_VAL_INT;
->  	}
->  	return -EINVAL;
+echo bns >/sys/accessibility/speakup/synth
+echo soft >/sys/accessibility/speakup/synth
+
+does what it should be good enough of a test? If this would not be
+good enough, please describe exactly what needs testing.
+
+I likely won't be able to do a kernel build until this weekend, but
+should be able to report back next Monday on the 18th.
+
+Greg
+
+
+-- 
+web site: http://www.gregn.net
+gpg public key: http://www.gregn.net/pubkey.asc
+skype: gregn1
+(authorization required, add me to your contacts list first)
+If we haven't been in touch before, e-mail me before adding me to your contacts.
+
+--
+Free domains: http://www.eu.org/ or mail dns-manager@EU.org
