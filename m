@@ -1,114 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id zPCqBEPSGlvDHAAAmS7hNA
-	; Fri, 08 Jun 2018 19:09:03 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id I5EhBbEzHlu3CgAAmS7hNA
+	; Mon, 11 Jun 2018 08:32:49 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id B00ED607DC; Fri,  8 Jun 2018 19:09:03 +0000 (UTC)
+	id 0415960792; Mon, 11 Jun 2018 08:32:49 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 36D0760275;
-	Fri,  8 Jun 2018 19:09:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 36D0760275
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 72AB460385;
+	Mon, 11 Jun 2018 08:32:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 72AB460385
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752840AbeFHTIz (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 15:08:55 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36730 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752662AbeFHTIx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 15:08:53 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w58J5Awa049374
-        for <linux-kernel@vger.kernel.org>; Fri, 8 Jun 2018 15:08:52 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jfw7mwq16-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 15:08:52 -0400
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <alifm@linux.ibm.com>;
-        Fri, 8 Jun 2018 15:08:52 -0400
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 8 Jun 2018 15:08:49 -0400
-Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w58J8mlZ19857888
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 8 Jun 2018 19:08:48 GMT
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id ED5FA2805C;
-        Fri,  8 Jun 2018 15:08:33 -0400 (EDT)
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D3E1F2805A;
-        Fri,  8 Jun 2018 15:08:33 -0400 (EDT)
-Received: from alifm-ThinkPad-T470p.pok.ibm.com (unknown [9.56.58.93])
-        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTPS;
-        Fri,  8 Jun 2018 15:08:33 -0400 (EDT)
-From: Farhan Ali <alifm@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: mst@redhat.com, qemu-devel@nongnu.org, arei.gonglei@huawei.com,
-        longpeng2@huawei.com, pasic@linux.ibm.com, frankja@linux.ibm.com,
-        borntraeger@de.ibm.com, alifm@linux.ibm.com
-Subject: [RFC v1 0/2] Detect & register virtio-crypto algos only if it can be supported by backend
-Date: Fri,  8 Jun 2018 15:08:45 -0400
-X-Mailer: git-send-email 2.7.4
-X-TM-AS-GCONF: 00
-x-cbid: 18060819-0064-0000-0000-000003186562
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009153; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000265; SDB=6.01044097; UDB=6.00534600; IPR=6.00823135;
- MB=3.00021536; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-08 19:08:51
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18060819-0065-0000-0000-0000398745CE
-Message-Id: <cover.1528462918.git.alifm@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-08_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=623 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806080209
+        id S1754183AbeFKIcT (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 20 others); Mon, 11 Jun 2018 04:32:19 -0400
+Received: from mx.socionext.com ([202.248.49.38]:23024 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754039AbeFKIcS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 04:32:18 -0400
+Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 11 Jun 2018 17:32:16 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 213C36006F;
+        Mon, 11 Jun 2018 17:32:17 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Mon, 11 Jun 2018 17:32:17 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by iyokan.css.socionext.com (Postfix) with ESMTP id CB4AA40386;
+        Mon, 11 Jun 2018 17:32:16 +0900 (JST)
+Received: from aegis.e01.socionext.com (unknown [10.213.134.210])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id A0CC212013B;
+        Mon, 11 Jun 2018 17:32:16 +0900 (JST)
+From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org
+Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Subject: [PATCH v3 2/3] ASoC: simple-card: move hp and mic detection to soc_card probe
+Date: Mon, 11 Jun 2018 17:32:13 +0900
+Message-Id: <20180611083214.16858-2-suzuki.katsuhiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180611083214.16858-1-suzuki.katsuhiro@socionext.com>
+References: <20180611083214.16858-1-suzuki.katsuhiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This patch moves headphone and microphone detection to probe() of
+snd_soc_card from init() of snd_soc_dai_link. This is because init()
+is called (and an input device /dev/input/eventX is created too)
+twice or above if simple card has two or more DAI links.
 
-Currently the Linux virtio-crypto driver registers the crypto
-algorithm without verifying if the backend actually supports the
-algorithm.
+Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
 
-This kernel patch series adds support for registering algorithm
-with Linux crypto layer, only if the algorithm is supported by
-the backend device. This also makes the driver more compliant with
-the virtio-crypto spec [1].
+---
 
-I would appreciate any feedback or comments on this.
+Changes from v2:
+  - Keep PREFIX of hp/mic detection properties
 
-Thank you
-Farhan
+Changes from v1:
+  - Newly added
+---
+ sound/soc/generic/simple-card.c | 25 +++++++++++++++++--------
+ 1 file changed, 17 insertions(+), 8 deletions(-)
 
-Reference
----------
-[1] Virtio crypto spec proposal https://lists.gnu.org/archive/html/qemu-devel/2017-12/msg00816.html
-
-Farhan Ali (2):
-  crypto/virtio-crypto: Read crypto services and algorithm masks
-  crypto/virtio-crypto: Register an algo only if it's supported
-
- drivers/crypto/virtio/virtio_crypto_algs.c   | 110 ++++++++++++++++++---------
- drivers/crypto/virtio/virtio_crypto_common.h |  25 +++++-
- drivers/crypto/virtio/virtio_crypto_core.c   |  29 +++++++
- drivers/crypto/virtio/virtio_crypto_mgr.c    |  81 ++++++++++++++++++--
- 4 files changed, 201 insertions(+), 44 deletions(-)
-
+diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
+index 1bbd9e46bf2a..da34016652c9 100644
+--- a/sound/soc/generic/simple-card.c
++++ b/sound/soc/generic/simple-card.c
+@@ -149,14 +149,6 @@ static int asoc_simple_card_dai_init(struct snd_soc_pcm_runtime *rtd)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	ret = asoc_simple_card_init_hp(rtd->card, &priv->hp_jack, PREFIX);
+-	if (ret < 0)
+-		return ret;
+-
+-	ret = asoc_simple_card_init_mic(rtd->card, &priv->mic_jack, PREFIX);
+-	if (ret < 0)
+-		return ret;
+-
+ 	return 0;
+ }
+ 
+@@ -350,6 +342,22 @@ static int asoc_simple_card_parse_of(struct simple_card_data *priv)
+ 	return ret;
+ }
+ 
++static int asoc_simple_soc_card_probe(struct snd_soc_card *card)
++{
++	struct simple_card_data *priv = snd_soc_card_get_drvdata(card);
++	int ret;
++
++	ret = asoc_simple_card_init_hp(card, &priv->hp_jack, PREFIX);
++	if (ret < 0)
++		return ret;
++
++	ret = asoc_simple_card_init_mic(card, &priv->mic_jack, PREFIX);
++	if (ret < 0)
++		return ret;
++
++	return 0;
++}
++
+ static int asoc_simple_card_probe(struct platform_device *pdev)
+ {
+ 	struct simple_card_data *priv;
+@@ -385,6 +393,7 @@ static int asoc_simple_card_probe(struct platform_device *pdev)
+ 	card->dev		= dev;
+ 	card->dai_link		= priv->dai_link;
+ 	card->num_links		= num;
++	card->probe		= asoc_simple_soc_card_probe;
+ 
+ 	if (np && of_device_is_available(np)) {
+ 
 -- 
-2.7.4
+2.17.1
