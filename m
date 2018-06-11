@@ -1,177 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 77NXIklQGVv1BQAAmS7hNA
-	; Thu, 07 Jun 2018 15:34:13 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Rw0SIbVjHluTYAAAmS7hNA
+	; Mon, 11 Jun 2018 11:57:53 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 98042607E7; Thu,  7 Jun 2018 15:34:13 +0000 (UTC)
+	id 86BE160792; Mon, 11 Jun 2018 11:57:53 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ovUCe3ld"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id DFE8160590;
-	Thu,  7 Jun 2018 15:34:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DFE8160590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 06369601C3;
+	Mon, 11 Jun 2018 11:57:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 06369601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935349AbeFGPeL (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:34:11 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40658 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934319AbeFGOm4 (ORCPT
+        id S933288AbeFKL5u (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 07:57:50 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:38426 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933095AbeFKLxJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:42:56 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbJ-0005Zk-8r; Thu, 07 Jun 2018 15:09:17 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbF-0003Ix-9U; Thu, 07 Jun 2018 15:09:13 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Eric Dumazet" <edumazet@google.com>,
-        syzbot+91e6f9932ff122fa4410@syzkaller.appspotmail.com,
-        "Paolo Abeni" <pabeni@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.189134184@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 398/410] ipv6: the entire IPv6 header chain must fit
- the first fragment
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Mon, 11 Jun 2018 07:53:09 -0400
+Received: by mail-lf0-f65.google.com with SMTP id i83-v6so30084576lfh.5;
+        Mon, 11 Jun 2018 04:53:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=/tVL8GHbt6YzIFcBgCmNQJSQkm00CCKS7j8Re6mrh5o=;
+        b=ovUCe3ld0nR0SFJVdtm33uyWSFAJ0ceuaMwVTxu7WQxD+cPeKqGrMz+MghOBcPD/PE
+         ugCq7uRIfYezZyG/cDcvTzltK4rFr9apsEHv5a0lFl4UA2KWyGISr7k0EkJa8VXFHq/5
+         o1tgbH+lN1CWF3k8O+aLr1uzarw7m1jYcWUcQISm7iJAoWlMN1afcxxOsFt2/m5+Saj8
+         2eqNjDdy/irLGC0S2AoQY6L37WrZ2mhJhPN91nqPK5g1KnnYHgVd/ajUltrt8PUHX32f
+         CANLJDeVPlr7zTfIQzTcoYVjQt3onlR58fE+5Uh52tg4XHXbExAsZNFzPeqZVKfNYxYj
+         USBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=/tVL8GHbt6YzIFcBgCmNQJSQkm00CCKS7j8Re6mrh5o=;
+        b=g8EyaFgRpYksn22mQEz/WguchhqHCcr3zO1jsobFj3nS9jI9FzY3kZpU2Gx9bX90hi
+         PktL7REMjDa47vCj2sAtQkKkiqBUTZGCvrSN2PkV+/0IoW2CxozhKBiwUHlEjhIP40t9
+         KO4rHdEO0szTQUF7YH6BaEpNA+vi3zVISGMPMvY+z23XqHvnlqlt1s1iaORpeJ3hQVpg
+         u5nRjZoh7P+Dg/3x6qypEJuXLDRhUpmQCZvxr7sjSkW20qhnT/zjAJVA1GUa682sqGGa
+         m3cWFhfOxYn4e0iCEcMT3jGuSSl2obcM4GsUJBUcQbp9s10NlHLspp1ElpZYcUuIceNv
+         dU+Q==
+X-Gm-Message-State: APt69E0Bg86mYb3RcKZQZb3a2/eAZHhWyK0yoYtHgyt+9JOL6KGTFNnb
+        j/98h8XTDTMz9tiVcl9fkwwtWy4x
+X-Google-Smtp-Source: ADUXVKJvT0BoJjcHLOghCyW6ra9a0Wh/4uLSaQUoGFgHvf3GiKcQy9bNbsfaDrc6XYezDJPMe89E+Q==
+X-Received: by 2002:a19:8d15:: with SMTP id p21-v6mr9150449lfd.99.1528717987320;
+        Mon, 11 Jun 2018 04:53:07 -0700 (PDT)
+Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
+        by smtp.gmail.com with ESMTPSA id h90-v6sm8332849ljf.65.2018.06.11.04.53.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Jun 2018 04:53:06 -0700 (PDT)
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Subject: [PATCH v2 08/24] serdev: Provide modalias attribute for modalias devices
+Date: Mon, 11 Jun 2018 13:52:24 +0200
+Message-Id: <20180611115240.32606-9-ricardo.ribalda@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
+References: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+Create modalias sysfs attribute for modalias devices.
+This is required by modprobe/udev to autoload the serdev driver.
 
-------------------
+Eg:
+root@qt5022:~# cat /sys/bus/serial/devices/serial1-0/modalias
+serdev:ttydev
 
-From: Paolo Abeni <pabeni@redhat.com>
-
-commit 10b8a3de603df7b96004179b1b33b1708c76d144 upstream.
-
-While building ipv6 datagram we currently allow arbitrary large
-extheaders, even beyond pmtu size. The syzbot has found a way
-to exploit the above to trigger the following splat:
-
-kernel BUG at ./include/linux/skbuff.h:2073!
-invalid opcode: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 1 PID: 4230 Comm: syzkaller672661 Not tainted 4.16.0-rc2+ #326
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-Google 01/01/2011
-RIP: 0010:__skb_pull include/linux/skbuff.h:2073 [inline]
-RIP: 0010:__ip6_make_skb+0x1ac8/0x2190 net/ipv6/ip6_output.c:1636
-RSP: 0018:ffff8801bc18f0f0 EFLAGS: 00010293
-RAX: ffff8801b17400c0 RBX: 0000000000000738 RCX: ffffffff84f01828
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff8801b415ac18
-RBP: ffff8801bc18f360 R08: ffff8801b4576844 R09: 0000000000000000
-R10: ffff8801bc18f380 R11: ffffed00367aee4e R12: 00000000000000d6
-R13: ffff8801b415a740 R14: dffffc0000000000 R15: ffff8801b45767c0
-FS:  0000000001535880(0000) GS:ffff8801db300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000002000b000 CR3: 00000001b4123001 CR4: 00000000001606e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  ip6_finish_skb include/net/ipv6.h:969 [inline]
-  udp_v6_push_pending_frames+0x269/0x3b0 net/ipv6/udp.c:1073
-  udpv6_sendmsg+0x2a96/0x3400 net/ipv6/udp.c:1343
-  inet_sendmsg+0x11f/0x5e0 net/ipv4/af_inet.c:764
-  sock_sendmsg_nosec net/socket.c:630 [inline]
-  sock_sendmsg+0xca/0x110 net/socket.c:640
-  ___sys_sendmsg+0x320/0x8b0 net/socket.c:2046
-  __sys_sendmmsg+0x1ee/0x620 net/socket.c:2136
-  SYSC_sendmmsg net/socket.c:2167 [inline]
-  SyS_sendmmsg+0x35/0x60 net/socket.c:2162
-  do_syscall_64+0x280/0x940 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x4404c9
-RSP: 002b:00007ffdce35f948 EFLAGS: 00000217 ORIG_RAX: 0000000000000133
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 00000000004404c9
-RDX: 0000000000000003 RSI: 0000000020001f00 RDI: 0000000000000003
-RBP: 00000000006cb018 R08: 00000000004002c8 R09: 00000000004002c8
-R10: 0000000020000080 R11: 0000000000000217 R12: 0000000000401df0
-R13: 0000000000401e80 R14: 0000000000000000 R15: 0000000000000000
-Code: ff e8 1d 5e b9 fc e9 15 e9 ff ff e8 13 5e b9 fc e9 44 e8 ff ff e8 29
-5e b9 fc e9 c0 e6 ff ff e8 3f f3 80 fc 0f 0b e8 38 f3 80 fc <0f> 0b 49 8d
-87 80 00 00 00 4d 8d 87 84 00 00 00 48 89 85 20 fe
-RIP: __skb_pull include/linux/skbuff.h:2073 [inline] RSP: ffff8801bc18f0f0
-RIP: __ip6_make_skb+0x1ac8/0x2190 net/ipv6/ip6_output.c:1636 RSP:
-ffff8801bc18f0f0
-
-As stated by RFC 7112 section 5:
-
-   When a host fragments an IPv6 datagram, it MUST include the entire
-   IPv6 Header Chain in the First Fragment.
-
-So this patch addresses the issue dropping datagrams with excessive
-extheader length. It also updates the error path to report to the
-calling socket nonnegative pmtu values.
-
-The issue apparently predates git history.
-
-v1 -> v2: cleanup error path, as per Eric's suggestion
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Reported-by: syzbot+91e6f9932ff122fa4410@syzkaller.appspotmail.com
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[bwh: Backported to 3.16: Adjust context, indentation]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.com>
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 ---
- net/ipv6/ip6_output.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ drivers/tty/serdev/core.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/net/ipv6/ip6_output.c
-+++ b/net/ipv6/ip6_output.c
-@@ -1146,7 +1146,7 @@ int ip6_append_data(struct sock *sk, int
- 	struct ipv6_pinfo *np = inet6_sk(sk);
- 	struct inet_cork *cork;
- 	struct sk_buff *skb, *skb_prev = NULL;
--	unsigned int maxfraglen, fragheaderlen, mtu, orig_mtu, headersize;
-+	unsigned int maxfraglen, fragheaderlen, mtu, orig_mtu, headersize, pmtu;
- 	int exthdrlen;
- 	int dst_exthdrlen;
- 	int hh_len;
-@@ -1242,6 +1242,12 @@ int ip6_append_data(struct sock *sk, int
- 		      sizeof(struct frag_hdr) : 0) +
- 		     rt->rt6i_nfheader_len;
+diff --git a/drivers/tty/serdev/core.c b/drivers/tty/serdev/core.c
+index 5df01d8cf307..b9bb0c0ee319 100644
+--- a/drivers/tty/serdev/core.c
++++ b/drivers/tty/serdev/core.c
+@@ -23,12 +23,17 @@ static ssize_t modalias_show(struct device *dev,
+ 			     struct device_attribute *attr, char *buf)
+ {
+ 	int len;
++	struct serdev_device *serdev = to_serdev_device(dev);
  
-+	/* as per RFC 7112 section 5, the entire IPv6 Header Chain must fit
-+	 * the first fragment
-+	 */
-+	if (headersize + transhdrlen > mtu)
-+		goto emsgsize;
+ 	len = acpi_device_modalias(dev, buf, PAGE_SIZE - 1);
+ 	if (len != -ENODEV)
+ 		return len;
+ 
+-	return of_device_modalias(dev, buf, PAGE_SIZE);
++	len = of_device_modalias(dev, buf, PAGE_SIZE);
++	if (len != -ENODEV)
++		return len;
 +
- 	if (mtu <= sizeof(struct ipv6hdr) + IPV6_MAXPLEN) {
- 		unsigned int maxnonfragsize;
++	return sprintf(buf, "%s%s\n", SERDEV_MODULE_PREFIX, serdev->modalias);
+ }
+ static DEVICE_ATTR_RO(modalias);
  
-@@ -1261,9 +1267,8 @@ int ip6_append_data(struct sock *sk, int
- 
- 		if (cork->length + length > maxnonfragsize - headersize) {
- emsgsize:
--			ipv6_local_error(sk, EMSGSIZE, fl6,
--					 mtu - headersize +
--					 sizeof(struct ipv6hdr));
-+			pmtu = max_t(int, mtu - headersize + sizeof(struct ipv6hdr), 0);
-+			ipv6_local_error(sk, EMSGSIZE, fl6, pmtu);
- 			return -EMSGSIZE;
- 		}
- 	}
+-- 
+2.17.1
