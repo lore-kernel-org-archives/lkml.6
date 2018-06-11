@@ -1,98 +1,548 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id VaI9ISjpGFuOUwAAmS7hNA
-	; Thu, 07 Jun 2018 08:14:08 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id gNmsMzYFHlsTbwAAmS7hNA
+	; Mon, 11 Jun 2018 05:14:39 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id DB7CD6089E; Thu,  7 Jun 2018 08:14:07 +0000 (UTC)
+	id 5A778607BB; Mon, 11 Jun 2018 05:14:39 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lea7jc1h"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 6BB2B607E7;
-	Thu,  7 Jun 2018 08:14:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6BB2B607E7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 53D6560791;
+	Mon, 11 Jun 2018 05:14:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 53D6560791
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932399AbeFGIOF (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 04:14:05 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:54531 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932102AbeFGIOD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 04:14:03 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w578Dtf32125139
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 7 Jun 2018 01:13:55 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w578DsxK2125136;
-        Thu, 7 Jun 2018 01:13:54 -0700
-Date: Thu, 7 Jun 2018 01:13:54 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From: tip-bot for Thomas Richter <tipbot@zytor.com>
-Message-ID: <tip-e9ee0dce45e522221c18b2f24621a0d00d0bff40@git.kernel.org>
-Cc: schwidefsky@de.ibm.com, brueckner@linux.vnet.ibm.com,
-        hpa@zytor.com, acme@redhat.com, tglx@linutronix.de,
-        tmricht@linux.ibm.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, heiko.carstens@de.ibm.com
-Reply-To: heiko.carstens@de.ibm.com, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, tmricht@linux.ibm.com,
-          mingo@kernel.org, acme@redhat.com, hpa@zytor.com,
-          brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com
-In-Reply-To: <20180528134817.36643-1-tmricht@linux.ibm.com>
-References: <20180528134817.36643-1-tmricht@linux.ibm.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf test: Use header file util/debug.h
-Git-Commit-ID: e9ee0dce45e522221c18b2f24621a0d00d0bff40
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1753960AbeFKFOg (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 01:14:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43874 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753871AbeFKFOd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 01:14:33 -0400
+Received: from dragon (unknown [104.237.91.91])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AEA60208AF;
+        Mon, 11 Jun 2018 05:14:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528694073;
+        bh=ardqF8mGYX8SNbNSRhgReN4zKzzueoQQBftiZ4HI7J0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lea7jc1hQzwzEJaf9KahxpeDJEB3zAtyZwAP0PT6RUpZ79uKtrjUR9NdP/3YOe8z2
+         nDUUNsqXqSM1aHIy6rui3i3yzwBkt+n0j4818DJbrlbpmKuNtPOCk5v0JwUJsbQLbU
+         ko7o6uzx+QhaewLL4+HNxWd5eehgf3QoC+xrd6o0=
+Date: Mon, 11 Jun 2018 13:13:58 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Lukasz Majewski <lukma@denx.de>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2] ARM: DTS: imx53: Add support for imx53 HSC/DDC boards
+ from K+P
+Message-ID: <20180611051357.GA16091@dragon>
+References: <20180509153428.1440-1-lukma@denx.de>
+ <20180519121506.32344-1-lukma@denx.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180519121506.32344-1-lukma@denx.de>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e9ee0dce45e522221c18b2f24621a0d00d0bff40
-Gitweb:     https://git.kernel.org/tip/e9ee0dce45e522221c18b2f24621a0d00d0bff40
-Author:     Thomas Richter <tmricht@linux.ibm.com>
-AuthorDate: Mon, 28 May 2018 15:48:17 +0200
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 4 Jun 2018 10:28:53 -0300
+On Sat, May 19, 2018 at 02:15:06PM +0200, Lukasz Majewski wrote:
+> This commit provides support for HSC and DDC boards from
+> Kieback&Peter GmbH vendor.
+> 
+> Signed-off-by: Lukasz Majewski <lukma@denx.de>
+> ---
+> Changes for v2:
+> 
+> - Remove not needed #address-cells and #size-cells in
+>   the gpio_buttons node to pass make W=1
+> - Rename button@{12} to button_{kalt|pwr} nodes to pass make W=1
+> - Include #include <dt-bindings/input/input.h> to use KEY_F6|F7 directly
+> 
+> ---
+>  arch/arm/boot/dts/Makefile         |   2 +
+>  arch/arm/boot/dts/imx53-kp-ddc.dts | 146 ++++++++++++++++++++++++++++
+>  arch/arm/boot/dts/imx53-kp-hsc.dts |  51 ++++++++++
+>  arch/arm/boot/dts/imx53-kp.dtsi    | 190 +++++++++++++++++++++++++++++++++++++
+>  4 files changed, 389 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/imx53-kp-ddc.dts
+>  create mode 100644 arch/arm/boot/dts/imx53-kp-hsc.dts
+>  create mode 100644 arch/arm/boot/dts/imx53-kp.dtsi
+> 
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index fbc04b0db781..00854a5b6ac4 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -360,6 +360,8 @@ dtb-$(CONFIG_SOC_IMX51) += \
+>  dtb-$(CONFIG_SOC_IMX53) += \
+>  	imx53-ard.dtb \
+>  	imx53-cx9020.dtb \
+> +	imx53-kp-ddc.dtb \
+> +	imx53-kp-hsc.dtb \
+>  	imx53-m53evk.dtb \
+>  	imx53-mba53.dtb \
+>  	imx53-ppd.dtb \
+> diff --git a/arch/arm/boot/dts/imx53-kp-ddc.dts b/arch/arm/boot/dts/imx53-kp-ddc.dts
+> new file mode 100644
+> index 000000000000..acaf477a52c5
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/imx53-kp-ddc.dts
+> @@ -0,0 +1,146 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Copyright 2018
+> + * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
+> + */
+> +
+> +/dts-v1/;
+> +#include "imx53-kp.dtsi"
+> +
+> +/ {
+> +	model = "K+P imx53 DDC";
+> +	compatible = "kiebackpeter,imx53-ddc", "fsl,imx53";
+> +
+> +	backlight_lcd: backlight {
+> +		compatible = "pwm-backlight";
+> +		pwms = <&pwm2 0 50000>;
+> +		power-supply = <&reg_backlight>;
+> +		brightness-levels = <0 24 28 32 36
+> +				     40 44 48 52 56
+> +				     60 64 68 72 76
+> +				     80 84 88 92 96 100>;
+> +		default-brightness-level = <20>;
+> +	};
+> +
+> +	lcd_display: disp1 {
 
-perf test: Use header file util/debug.h
+display for node node.
 
-Use the header file util/debug.h instead of declaration of verbose
-variable.
+> +		compatible = "fsl,imx-parallel-display";
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		interface-pix-fmt = "rgb24";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_disp>;
+> +
+> +		port@0 {
+> +			reg = <0>;
+> +
+> +			display1_in: endpoint {
+> +				remote-endpoint = <&ipu_di1_disp1>;
+> +			};
+> +		};
+> +
+> +		port@1 {
+> +			reg = <1>;
+> +
+> +			lcd_display_out: endpoint {
+> +				remote-endpoint = <&lcd_panel_in>;
+> +			};
+> +		};
+> +	};
+> +
+> +	lcd_panel: lcd-panel {
+> +		compatible = "koe,tx14d24vm1bpa";
 
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Link: http://lkml.kernel.org/r/20180528134817.36643-1-tmricht@linux.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/tests/python-use.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Undefined compatible?
 
-diff --git a/tools/perf/tests/python-use.c b/tools/perf/tests/python-use.c
-index 5d2df65ada6a..40ab72149ce1 100644
---- a/tools/perf/tests/python-use.c
-+++ b/tools/perf/tests/python-use.c
-@@ -7,8 +7,7 @@
- #include <stdlib.h>
- #include <linux/compiler.h>
- #include "tests.h"
--
--extern int verbose;
-+#include "util/debug.h"
- 
- int test__python_use(struct test *test __maybe_unused, int subtest __maybe_unused)
- {
+> +		backlight = <&backlight_lcd>;
+> +		power-supply = <&reg_3v3>;
+> +
+> +		port {
+> +			lcd_panel_in: endpoint {
+> +				remote-endpoint = <&lcd_display_out>;
+> +			};
+> +		};
+> +	};
+> +
+> +	reg_backlight: regulator-backlight {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "backlight-supply";
+> +		regulator-min-microvolt = <15000000>;
+> +		regulator-max-microvolt = <15000000>;
+> +		regulator-always-on;
+> +	};
+> +};
+> +
+> +&i2c3 {
+> +	adc@48 {
+> +		compatible = "ti,ads1015";
+> +		reg = <0x48>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		channel@4 {
+> +			reg = <4>;
+> +			ti,gain = <2>;
+> +			ti,datarate = <4>;
+> +		};
+> +
+> +		channel@6 {
+> +			reg = <6>;
+> +			ti,gain = <2>;
+> +			ti,datarate = <4>;
+> +		};
+> +	};
+> +
+> +	gpio_expander2@21 {
+
+Use hyphen instead of underscore in node name.
+
+> +		compatible = "nxp,pcf8574";
+> +		reg = <0x21>;
+> +		interrupts = <109>;
+> +		#gpio-cells = <2>;
+> +		gpio-controller;
+> +	};
+> +};
+> +
+> +&iomuxc {
+> +	imx53-kp-ddc {
+> +		pinctrl_disp: dispgrp {
+> +			fsl,pins = <
+> +				MX53_PAD_EIM_A16__IPU_DI1_DISP_CLK      0x4
+> +				MX53_PAD_EIM_DA10__IPU_DI1_PIN15        0x4
+> +				MX53_PAD_EIM_DA9__IPU_DISP1_DAT_0       0x4
+> +				MX53_PAD_EIM_DA8__IPU_DISP1_DAT_1       0x4
+> +				MX53_PAD_EIM_DA7__IPU_DISP1_DAT_2       0x4
+> +				MX53_PAD_EIM_DA6__IPU_DISP1_DAT_3       0x4
+> +				MX53_PAD_EIM_DA5__IPU_DISP1_DAT_4       0x4
+> +				MX53_PAD_EIM_DA4__IPU_DISP1_DAT_5       0x4
+> +				MX53_PAD_EIM_DA3__IPU_DISP1_DAT_6       0x4
+> +				MX53_PAD_EIM_DA2__IPU_DISP1_DAT_7       0x4
+> +				MX53_PAD_EIM_DA1__IPU_DISP1_DAT_8       0x4
+> +				MX53_PAD_EIM_DA0__IPU_DISP1_DAT_9       0x4
+> +				MX53_PAD_EIM_EB1__IPU_DISP1_DAT_10      0x4
+> +				MX53_PAD_EIM_EB0__IPU_DISP1_DAT_11      0x4
+> +				MX53_PAD_EIM_A17__IPU_DISP1_DAT_12      0x4
+> +				MX53_PAD_EIM_A18__IPU_DISP1_DAT_13      0x4
+> +				MX53_PAD_EIM_A19__IPU_DISP1_DAT_14      0x4
+> +				MX53_PAD_EIM_A20__IPU_DISP1_DAT_15      0x4
+> +				MX53_PAD_EIM_A21__IPU_DISP1_DAT_16      0x4
+> +				MX53_PAD_EIM_A22__IPU_DISP1_DAT_17      0x4
+> +				MX53_PAD_EIM_A23__IPU_DISP1_DAT_18      0x4
+> +				MX53_PAD_EIM_A24__IPU_DISP1_DAT_19      0x4
+> +				MX53_PAD_EIM_D31__IPU_DISP1_DAT_20      0x4
+> +				MX53_PAD_EIM_D30__IPU_DISP1_DAT_21      0x4
+> +				MX53_PAD_EIM_D26__IPU_DISP1_DAT_22      0x4
+> +				MX53_PAD_EIM_D27__IPU_DISP1_DAT_23      0x4
+> +				MX53_PAD_GPIO_1__PWM2_PWMO 0x4
+> +			>;
+> +		};
+> +	};
+> +};
+> +
+> +&ipu_di1_disp1 {
+> +	remote-endpoint = <&display1_in>;
+> +};
+> +
+> +&fec {
+> +	status = "okay";
+> +};
+
+Sort the labeled nodes alphabetically in label name.
+
+> +
+> +&pmic {
+> +	fsl,mc13xxx-uses-touch;
+> +};
+> diff --git a/arch/arm/boot/dts/imx53-kp-hsc.dts b/arch/arm/boot/dts/imx53-kp-hsc.dts
+> new file mode 100644
+> index 000000000000..d68cdd5da819
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/imx53-kp-hsc.dts
+> @@ -0,0 +1,51 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Copyright 2018
+> + * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
+> + */
+> +
+> +/dts-v1/;
+> +#include "imx53-kp.dtsi"
+> +
+> +/ {
+> +	model = "K+P imx53 HSC";
+> +	compatible = "kiebackpeter,imx53-hsc", "fsl,imx53";
+> +};
+> +
+> +&fec {
+> +	status = "okay";
+
+Have a newline between property list and child node.
+
+> +	fixed-link { /* RMII fixed link to LAN9303 */
+> +		speed = <100>;
+> +		full-duplex;
+> +	};
+> +};
+> +
+> +&i2c3 {
+> +	switch: switch@a {
+> +		compatible = "smsc,lan9303-i2c";
+> +		reg = <0xa>;
+> +		reset-gpios = <&gpio7 6 GPIO_ACTIVE_LOW>;
+> +		reset-duration = <400>;
+> +
+> +		ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			port@0 { /* RMII fixed link to master */
+> +				reg = <0>;
+> +				label = "cpu";
+> +				ethernet = <&fec>;
+> +			};
+> +
+> +			port@1 { /* external port 1 */
+> +				reg = <1>;
+> +				label = "lan1";
+> +			};
+> +
+> +			port@2 { /* external port 2 */
+> +				reg = <2>;
+> +				label = "lan2";
+> +			};
+> +		};
+> +	};
+> +};
+> diff --git a/arch/arm/boot/dts/imx53-kp.dtsi b/arch/arm/boot/dts/imx53-kp.dtsi
+> new file mode 100644
+> index 000000000000..f87266843842
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/imx53-kp.dtsi
+> @@ -0,0 +1,190 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Copyright 2018
+> + * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
+> + */
+> +
+> +/dts-v1/;
+> +#include "imx53-tqma53.dtsi"
+> +#include <dt-bindings/input/input.h>
+> +
+> +/ {
+> +	buzzer {
+> +		compatible = "pwm-beeper";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_buzzer>;
+> +
+
+Drop this newline.
+
+> +		pwms = <&pwm1 0 500000>;
+> +	};
+> +
+> +	gpio_buttons {
+
+Use hyphen.
+
+> +		compatible = "gpio-keys";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_gpiobuttons>;
+> +
+> +		button_kalt {
+
+Ditto
+
+> +			label = "Kaltstart";
+> +			linux,code = <KEY_F6>;
+> +			gpios = <&gpio2 26 GPIO_ACTIVE_HIGH>;
+> +		};
+> +
+> +		button_pwr {
+
+Ditto
+
+> +			label = "PowerFailInterrupt";
+> +			linux,code = <KEY_F7>;
+> +			gpios = <&gpio3 22 GPIO_ACTIVE_HIGH>;
+> +		};
+> +	};
+> +
+> +	leds {
+> +		compatible = "gpio-leds";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_leds>;
+> +
+> +		led_bus {
+
+Ditto
+
+> +			label = "bus";
+> +			gpios = <&gpio2 30 GPIO_ACTIVE_HIGH>;
+> +			linux,default-trigger = "gpio";
+> +			default-state = "off";
+> +		};
+> +
+> +		led_error {
+
+Ditto
+
+> +			label = "error";
+> +			gpios = <&gpio3 28 GPIO_ACTIVE_HIGH>;
+> +			linux,default-trigger = "gpio";
+> +			default-state = "off";
+> +		};
+> +
+> +		led_flash {
+
+Ditto
+
+> +			label = "flash";
+> +			gpios = <&gpio5 0 GPIO_ACTIVE_HIGH>;
+> +			linux,default-trigger = "heartbeat";
+> +		};
+> +	};
+> +
+> +	reg_3v3: regulator-3v3 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "3V3";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +		regulator-always-on;
+> +	};
+> +};
+> +
+> +&can1 {
+> +	status = "okay";
+> +};
+> +
+> +&can2 {
+> +	status = "okay";
+> +};
+> +
+> +&i2c3 {
+> +	status = "okay";
+> +
+> +	gpio_expander1@22 {
+
+Ditto
+
+Shawn
+
+> +		compatible = "nxp,pcf8574";
+> +		reg = <0x22>;
+> +		interrupts = <109>;
+> +		#gpio-cells = <2>;
+> +		gpio-controller;
+> +	};
+> +
+> +	rtc@51 {
+> +		compatible = "nxp,pcf8563";
+> +		reg = <0x51>;
+> +	};
+> +};
+> +
+> +&iomuxc {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_kp_common>;
+> +
+> +	imx53-kp-common {
+> +		pinctrl_buzzer: buzzergrp {
+> +			fsl,pins = <
+> +				MX53_PAD_SD1_DATA3__PWM1_PWMO 0x1e4
+> +			>;
+> +		};
+> +
+> +		pinctrl_gpiobuttons: gpiobuttonsgrp {
+> +			fsl,pins = <
+> +				MX53_PAD_EIM_RW__GPIO2_26 0x1e4
+> +				MX53_PAD_EIM_D22__GPIO3_22 0x1e4
+> +			>;
+> +		};
+> +
+> +		pinctrl_kp_common: kpcommongrp {
+> +			fsl,pins = <
+> +				MX53_PAD_EIM_CS0__GPIO2_23 0x1e4
+> +				MX53_PAD_GPIO_19__GPIO4_5  0x1e4
+> +				MX53_PAD_PATA_DATA6__GPIO2_6 0x1e4
+> +				MX53_PAD_PATA_DATA7__GPIO2_7 0xe0
+> +				MX53_PAD_CSI0_DAT14__GPIO6_0 0x1e4
+> +				MX53_PAD_CSI0_DAT16__GPIO6_2 0x1e4
+> +				MX53_PAD_CSI0_DAT18__GPIO6_4 0x1e4
+> +				MX53_PAD_EIM_D17__GPIO3_17 0x1e4
+> +				MX53_PAD_EIM_D18__GPIO3_18 0x1e4
+> +				MX53_PAD_EIM_D21__GPIO3_21 0x1e4
+> +				MX53_PAD_EIM_D29__GPIO3_29 0x1e4
+> +				MX53_PAD_EIM_DA11__GPIO3_11 0x1e4
+> +				MX53_PAD_EIM_DA13__GPIO3_13 0x1e4
+> +				MX53_PAD_EIM_DA14__GPIO3_14 0x1e4
+> +				MX53_PAD_SD1_DATA0__GPIO1_16 0x1e4
+> +				MX53_PAD_SD1_CMD__GPIO1_18 0x1e4
+> +				MX53_PAD_SD1_CLK__GPIO1_20 0x1e4
+> +			>;
+> +		};
+> +
+> +		pinctrl_leds: ledgrp {
+> +			fsl,pins = <
+> +				MX53_PAD_EIM_EB2__GPIO2_30 0x1d4
+> +				MX53_PAD_EIM_D28__GPIO3_28 0x1d4
+> +				MX53_PAD_EIM_WAIT__GPIO5_0 0x1d4
+> +			>;
+> +		};
+> +
+> +		pinctrl_uart4: uart4grp {
+> +			fsl,pins = <
+> +				MX53_PAD_CSI0_DAT12__UART4_TXD_MUX 0x1e4
+> +				MX53_PAD_CSI0_DAT13__UART4_RXD_MUX 0x1e4
+> +			>;
+> +		};
+> +	};
+> +};
+> +
+> +&pinctrl_uart1 {
+> +	fsl,pins = <
+> +		MX53_PAD_EIM_D23__GPIO3_23 0x1e4
+> +		MX53_PAD_EIM_EB3__GPIO2_31 0x1e4
+> +		MX53_PAD_EIM_D24__GPIO3_24 0x1e4
+> +		MX53_PAD_EIM_D25__GPIO3_25 0x1e4
+> +		MX53_PAD_EIM_D19__GPIO3_19 0x1e4
+> +		MX53_PAD_EIM_D20__GPIO3_20 0x1e4
+> +	>;
+> +};
+> +
+> +&uart1 {
+> +	status = "okay";
+> +};
+> +
+> +&uart2 {
+> +	status = "okay";
+> +};
+> +
+> +&uart3 {
+> +	status = "okay";
+> +};
+> +
+> +&uart4 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_uart4>;
+> +	status = "okay";
+> +};
+> +
+> +&usbh1 {
+> +	status = "okay";
+> +};
+> +
+> +&usbphy0 {
+> +	status = "disabled";
+> +};
+> -- 
+> 2.11.0
+> 
