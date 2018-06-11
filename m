@@ -1,112 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id u8yoI5nhGlvZMgAAmS7hNA
-	; Fri, 08 Jun 2018 20:05:48 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id OxbuGrGJHlsrQAAAmS7hNA
+	; Mon, 11 Jun 2018 14:39:45 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 0F93A6089E; Fri,  8 Jun 2018 20:05:48 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="D9duoL2g"
+	id 6182D607BB; Mon, 11 Jun 2018 14:39:45 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 75F90601D2;
-	Fri,  8 Jun 2018 20:05:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 75F90601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id EB87D60351;
+	Mon, 11 Jun 2018 14:39:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EB87D60351
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=mleia.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753125AbeFHUFq (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 16:05:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49210 "EHLO mail.kernel.org"
+        id S1754037AbeFKOjm (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 10:39:42 -0400
+Received: from mleia.com ([178.79.152.223]:51126 "EHLO mail.mleia.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752729AbeFHUFm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 16:05:42 -0400
-Received: from localhost (unknown [150.199.191.185])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A0F920874;
-        Fri,  8 Jun 2018 20:05:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528488342;
-        bh=yQUpVdvD2XXsiyHcnuUJLiJvGI24rcsU8zNG1Ffmgt4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=D9duoL2gnqPA9B33VNAl41ap9JAEc6ddi515OKgA5seeu8QRKkns17r4pXD2FhQdM
-         ot+15Vt+Ew/FuPCejcsNR4v15DWjb5nZcyLb1352H8sK3vmSFefSul3+RqHAafMPnY
-         Blr4PMsQlZ3+uk++l6NOfKyZ0jCHh4GJ4TBsnuiQ=
-Subject: [PATCH v1 09/13] PCI/AER: Move aer_irq() declaration to portdrv.h
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: linux-pci@vger.kernel.org
-Cc: Keith Busch <keith.busch@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Oza Pawandeep <poza@codeaurora.org>,
+        id S1753893AbeFKOjl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 10:39:41 -0400
+Received: from mail.mleia.com (localhost [127.0.0.1])
+        by mail.mleia.com (Postfix) with ESMTP id 05EC990CB4;
+        Mon, 11 Jun 2018 15:39:40 +0100 (BST)
+Subject: Re: [PATCH v6 0/5] Reintroduce i.MX EPIT Timer
+To: =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
+        Colin Didier <colin.didier@devialet.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date: Fri, 08 Jun 2018 15:05:41 -0500
-Message-ID: <152848834128.11888.12263280185471104825.stgit@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <152848785553.11888.12243539903985770441.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <152848785553.11888.12243539903985770441.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: StGit/0.18
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Rob Herring <robh@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        =?UTF-8?Q?Cl=c3=a9ment_Peron?= <clement.peron@devialet.com>
+References: <20180607140544.22268-1-peron.clem@gmail.com>
+From: Vladimir Zapolskiy <vz@mleia.com>
+Message-ID: <74959a6a-60bb-f854-6ef2-21c3c60d3451@mleia.com>
+Date: Mon, 11 Jun 2018 17:39:38 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180607140544.22268-1-peron.clem@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-49551924 
+X-CRM114-CacheID: sfid-20180611_153940_054640_596AA8DD 
+X-CRM114-Status: UNSURE (   8.49  )
+X-CRM114-Notice: Please train this message. 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+Hi Clément,
 
-The aer_irq() declaration is the only thing needed by aer_inject.c.  Move
-it to portdrv.h so we eventually get rid of aerdrv.h completely.  No
-functional change intended.
+On 06/07/2018 05:05 PM, Clément Péron wrote:
+> From: Clément Peron <clement.peron@devialet.com>
+> 
+> As suggested in the commit message we have added the device tree support,
+> proper bindings and we moved the driver into the correct folder.
+> 
+> Moreover we made some changes like use of relaxed IO accesor,
+> implement sched_clock, delay_timer and reduce the clockevents min_delta.
+> 
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/pcie/aer/aer_inject.c |    3 ++-
- drivers/pci/pcie/aer/aerdrv.h     |    2 --
- drivers/pci/pcie/portdrv.h        |    4 ++++
- 3 files changed, 6 insertions(+), 3 deletions(-)
+I reviewed and tested the driver on i.MX31, as expected it works fine,
+and I'll give my tags per a commit, please add them to v7 changes.
 
-diff --git a/drivers/pci/pcie/aer/aer_inject.c b/drivers/pci/pcie/aer/aer_inject.c
-index a49090935303..6c5fda96778a 100644
---- a/drivers/pci/pcie/aer/aer_inject.c
-+++ b/drivers/pci/pcie/aer/aer_inject.c
-@@ -21,7 +21,8 @@
- #include <linux/uaccess.h>
- #include <linux/stddef.h>
- #include <linux/device.h>
--#include "aerdrv.h"
-+
-+#include "../portdrv.h"
- 
- /* Override the existing corrected and uncorrected error masks */
- static bool aer_mask_override;
-diff --git a/drivers/pci/pcie/aer/aerdrv.h b/drivers/pci/pcie/aer/aerdrv.h
-index b0c4aaa79d9c..9867950635df 100644
---- a/drivers/pci/pcie/aer/aerdrv.h
-+++ b/drivers/pci/pcie/aer/aerdrv.h
-@@ -76,6 +76,4 @@ struct aer_rpc {
- 					 */
- };
- 
--irqreturn_t aer_irq(int irq, void *context);
--
- #endif /* _AERDRV_H_ */
-diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
-index 6a261dc7cd4c..6ffc797a0dc1 100644
---- a/drivers/pci/pcie/portdrv.h
-+++ b/drivers/pci/pcie/portdrv.h
-@@ -121,6 +121,10 @@ static inline int pcie_aer_get_firmware_first(struct pci_dev *pci_dev)
- }
- #endif
- 
-+#ifdef CONFIG_PCIEAER
-+irqreturn_t aer_irq(int irq, void *context);
-+#endif
-+
- struct pcie_port_service_driver *pcie_port_find_service(struct pci_dev *dev,
- 							u32 service);
- struct device *pcie_port_find_device(struct pci_dev *dev, u32 service);
+--
+Best wishes,
+Vladimir
