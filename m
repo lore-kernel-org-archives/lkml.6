@@ -1,334 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id qXcZGE6WHltFNgAAmS7hNA
-	; Mon, 11 Jun 2018 15:34:36 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id jizKN1GIHlvVRAAAmS7hNA
+	; Mon, 11 Jun 2018 14:35:13 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 62E0F607E4; Mon, 11 Jun 2018 15:34:36 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YuCKFqhY"
+	id C5AC8607BB; Mon, 11 Jun 2018 14:35:13 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 7411E607BB;
-	Mon, 11 Jun 2018 15:34:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7411E607BB
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 01A2B60541;
+	Mon, 11 Jun 2018 14:35:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 01A2B60541
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=sandeen.net
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932903AbeFKPee (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 11:34:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49540 "EHLO mail.kernel.org"
+        id S932654AbeFKOfL (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 10:35:11 -0400
+Received: from sandeen.net ([63.231.237.45]:37634 "EHLO sandeen.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932433AbeFKPeb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 11:34:31 -0400
-Received: from mail-io0-f170.google.com (mail-io0-f170.google.com [209.85.223.170])
+        id S932109AbeFKOfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 10:35:09 -0400
+Received: from [10.0.0.4] (liberator [10.0.0.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 68A08208B3;
-        Mon, 11 Jun 2018 15:34:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528731270;
-        bh=vs/Lw80umkzo8t2vza/vTMzI1eOxDFM9SJWcFZJhNPQ=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=YuCKFqhYDIdL1Za3yfLoTc4LwngdH6spqAnyjGQzJXlk78uTKa7Ynd44zxevm8+zL
-         hbQHdaqYcXQXQESyFXrrwY2BDqxkV0lcTG24cJVt4M6lpNZ21FbsGmYARSgFRM6+SJ
-         g1I7i8Kl5qx84xToFvd7JWTI2+RvCRPvp/+aJkW4=
-Received: by mail-io0-f170.google.com with SMTP id g22-v6so24364085iob.7;
-        Mon, 11 Jun 2018 08:34:30 -0700 (PDT)
-X-Gm-Message-State: APt69E18kOCk1RC3bFAfafcG7kpFq3782OOvHLRZkJHUEgmb+8g3sh4s
-        Z5ewYkq4QEqL/mRV2Ud9YwY+QaiwjnJJ73lBSw==
-X-Google-Smtp-Source: ADUXVKLyl2EUw9ExbF1wBpsAAOXesVlK75GZxEc0KUODEdwFYuZK4VvqqclC0lZ+JjveXvVtQZ9Q/42c1hIN+5t9BlE=
-X-Received: by 2002:a6b:bd47:: with SMTP id n68-v6mr14972500iof.111.1528731269784;
- Mon, 11 Jun 2018 08:34:29 -0700 (PDT)
+        by sandeen.net (Postfix) with ESMTPSA id E4ABAF89;
+        Mon, 11 Jun 2018 09:34:47 -0500 (CDT)
+Subject: Re: INFO: task hung in xlog_grant_head_check
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: Eric Biggers <ebiggers3@gmail.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Brian Foster <bfoster@redhat.com>,
+        syzbot <syzbot+568245b88fbaedcb1959@syzkaller.appspotmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+References: <000000000000457b2d056cbb0044@google.com>
+ <20180522123107.GC3751@bfoster.bfoster> <20180522222620.GW23861@dastard>
+ <20180522225208.GB658@sol.localdomain> <20180523074425.GM14384@magnolia>
+ <20180523162015.GA3684@sol.localdomain>
+ <a52266f9-0096-b28c-c01c-046ababcfe3a@sandeen.net>
+ <CACT4Y+b4+o86Aud9K3m1HWhqsbNoyvEfW+53R2WV=Redi6Cwew@mail.gmail.com>
+From: Eric Sandeen <sandeen@sandeen.net>
+Openpgp: preference=signencrypt
+Autocrypt: addr=sandeen@sandeen.net; prefer-encrypt=mutual; keydata=
+ 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 pA==
+Message-ID: <46be4dcc-15e5-1482-042b-a0bcdb0fa56b@sandeen.net>
+Date: Mon, 11 Jun 2018 09:35:08 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
+ Gecko/20100101 Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a4f:6403:0:0:0:0:0 with HTTP; Mon, 11 Jun 2018 08:34:09
- -0700 (PDT)
-In-Reply-To: <CAMoM21HshLyv+Np1vOKYTAunsPCazyP-WESiaheNXHsC078S8g@mail.gmail.com>
-References: <280FCB2C-6DF1-4790-A89F-AF5BE3513AE5@holtmann.org>
- <20180608162009.22762-1-attitokes@gmail.com> <CAL_JsqKGeCEBBLNQNdymQovknRM7zt4+nNJy0YSkxRicOxkCSg@mail.gmail.com>
- <CAMoM21HshLyv+Np1vOKYTAunsPCazyP-WESiaheNXHsC078S8g@mail.gmail.com>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Mon, 11 Jun 2018 09:34:09 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+a93Rpf3UAPBQ5QmA8KavberGXz76WCiZ7feHH5GgcDA@mail.gmail.com>
-Message-ID: <CAL_Jsq+a93Rpf3UAPBQ5QmA8KavberGXz76WCiZ7feHH5GgcDA@mail.gmail.com>
-Subject: Re: [PATCH] Bluetooth: hci_bcm: Configure SCO routing automatically
-To: =?UTF-8?B?QXR0aWxhIFTFkWvDqXM=?= <attitokes@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Artiom Vaskov <velemas@gmail.com>,
-        netdev <netdev@vger.kernel.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CACT4Y+b4+o86Aud9K3m1HWhqsbNoyvEfW+53R2WV=Redi6Cwew@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 9, 2018 at 12:26 AM, Attila T=C5=91k=C3=A9s <attitokes@gmail.co=
-m> wrote:
-> Hello Rob,
->
-> On Fri, Jun 8, 2018 at 8:25 PM, Rob Herring <robh+dt@kernel.org> wrote:
->>
->> On Fri, Jun 8, 2018 at 10:20 AM,  <attitokes@gmail.com> wrote:
->> > From: Attila T=C5=91k=C3=A9s <attitokes@gmail.com>
->> >
->> > Added support to automatically configure the SCO packet routing at the
->> > device setup. The SCO packets are used with the HSP / HFP profiles, bu=
-t in
->> > some devices (ex. CYW43438) they are routed to a PCM output by default=
-. This
->> > change allows sending the vendor specific HCI command to configure the=
- SCO
->> > routing. The parameters of the command are loaded from the device tree=
-.
->>
->> Please wrap your commit msg.
->
->
-> Sure.
->>
->>
->> >
->> > Signed-off-by: Attila T=C5=91k=C3=A9s <attitokes@gmail.com>
->> > ---
->> >  .../bindings/net/broadcom-bluetooth.txt       |  7 ++
->>
->> Please split bindings to separate patch.
->
->
-> Ok, I will split this in two.
->>
->>
->>
->>
->> >  drivers/bluetooth/hci_bcm.c                   | 72 ++++++++++++++++++=
-+
->> >  2 files changed, 79 insertions(+)
->> >
->> > diff --git
->> > a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
->> > b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
->> > index 4194ff7e..aea3a094 100644
->> > --- a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
->> > +++ b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
->> > @@ -21,6 +21,12 @@ Optional properties:
->> >   - clocks: clock specifier if external clock provided to the controll=
-er
->> >   - clock-names: should be "extclk"
->> >
->> > + SCO routing parameters:
->> > + - sco-routing: 0-3 (PCM, Transport, Codec, I2S)
->> > + - pcm-interface-rate: 0-4 (128 Kbps - 2048 Kbps)
->> > + - pcm-frame-type: 0 (short), 1 (long)
->> > + - pcm-sync-mode: 0 (slave), 1 (master)
->> > + - pcm-clock-mode: 0 (slave), 1 (master)
->>
->> Are these Broadcom specific? Properties need either vendor prefix or
->> to be documented in a common location. I think these look like the
->> latter.
->
->
-> These will be used as parameters of a vendor specific (Broadcom/Cypress)
-> command configuring the SCO packet routing. See the Write_SCO_PCM_Int_Par=
-am
-> command from: http://www.cypress.com/file/298311/download.
+On 6/11/18 8:20 AM, Dmitry Vyukov wrote:
+> On Wed, May 23, 2018 at 8:01 PM, Eric Sandeen <sandeen@sandeen.net> wrote:
 
-The DT should just describe how the h/w is hooked-up. What the s/w has
-to do based on that is the driver's problem which is certainly
-vendor/chip specific, but that is all irrelevant to the binding.
+...
 
-> What would be the property names with a Broadcom / Cypress vendor prefix?
->
->     brcm,sco-routing
->     brcm,pcm-interface-rate
->     brcm,pcm-frame-type
->     brcm,pcm-sync-mode
->     brcm,pcm-clock-mode
->
-> ?
+>> As an aside, I wonder how much coverage of the V5 format code syzkaller
+>> /has/
+>> achieved; that would be another useful datapoint google could provide - if
+>> syzkaller is in fact traversing the V5 codepaths and isn't turning anything
+>> up, that'd be pretty useful to know.
+> 
+> Hi Eric,
+> 
+> The current syzbot kernel code coverage is available here:
+> https://storage.googleapis.com/syzkaller/cover/upstream.html#9c73bb525fc1def86e67f5039ab97d8f48062621
 
-Yes.
+Here is an example of an informative, useful, and efficient presentation of
+code coverage:
 
->
->>
->>
->> However, this also looks incomplete to me. For example, which SoC
->> I2S/PCM port is BT audio connected to and how does it fit into the
->> existing audio related bindings? There's been work on HDMI audio
->> bindings which would be similar (except for the SCO over UART at
->> least).
->
->
-> The I2S / PCM pins of the Bluetooth chip most likely will not be connecte=
-d
-> to the host SoC. When used with a SoC we probably want tor route the SCO
-> packets over the UART transport. A2DP data already goes here and we proba=
-bly
-> want the same for HSP / HFP.
+http://ltp.sourceforge.net/coverage/lcov/output/index.html
 
-Then that should be the default with no properties.
-
-I imagine for phones, vendors want I2S hooked up for voice calls so
-audio can be routed directly to/from the modem and the power hungry
-apps processor can be kept in low power modes.
-
-> For example in the Raspberry Pi 3 B, the CYW43438's PCM output is not
-> connected (there is no I2S output), But it may be connected to any other
-> device in other hardware.
->
-> The purpose of this command is to tell the BT chip where to send the SCO
-> packets. From the driver's perspective, it does not really matters where
-> these pins are connected.
-
-Bindings are for h/w description (and config to some extent).
-
-
->> >  Example:
->> >
->> > @@ -31,5 +37,6 @@ Example:
->> >         bluetooth {
->> >                 compatible =3D "brcm,bcm43438-bt";
->> >                 max-speed =3D <921600>;
->> > +               sco-routing =3D <1>; /* 1 =3D transport (UART) */
->> >         };
->> >  };
->> > diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
->> > index ddbd8c6a..0e729534 100644
->> > --- a/drivers/bluetooth/hci_bcm.c
->> > +++ b/drivers/bluetooth/hci_bcm.c
->> > @@ -83,6 +83,16 @@
->> >   * @hu: pointer to HCI UART controller struct,
->> >   *     used to disable flow control during runtime suspend and system
->> > sleep
->> >   * @is_suspended: whether flow control is currently disabled
->> > + *
->> > + *  SCO routing parameters:
->> > + *   used as the parameters for the bcm_set_pcm_int_params command
->> > + *     @sco_routing:
->> > + *      >=3D 255 (skip SCO routing configuration)
->> > + *      0-3 (PCM, Transport, Codec, I2S)
->> > + *     @pcm_interface_rate: 0-4 (128 Kbps - 2048 Kbps)
->> > + *     @pcm_frame_type: 0 (short), 1 (long)
->> > + *     @pcm_sync_mode: 0 (slave), 1 (master)
->> > + *     @pcm_clock_mode: 0 (slave), 1 (master)
->> >   */
->> >  struct bcm_device {
->> >         /* Must be the first member, hci_serdev.c expects this. */
->> > @@ -114,6 +124,13 @@ struct bcm_device {
->> >         struct hci_uart         *hu;
->> >         bool                    is_suspended;
->> >  #endif
->> > +
->> > +       /* SCO routing parameters */
->> > +       u8                      sco_routing;
->> > +       u8                      pcm_interface_rate;
->> > +       u8                      pcm_frame_type;
->> > +       u8                      pcm_sync_mode;
->> > +       u8                      pcm_clock_mode;
->> >  };
->> >
->> >  /* generic bcm uart resources */
->> > @@ -189,6 +206,40 @@ static int bcm_set_baudrate(struct hci_uart *hu,
->> > unsigned int speed)
->> >         return 0;
->> >  }
->> >
->> > +static int bcm_configure_sco_routing(struct hci_uart *hu, struct
->> > bcm_device *bcm_dev)
->> > +{
->> > +       struct hci_dev *hdev =3D hu->hdev;
->> > +       struct sk_buff *skb;
->> > +       struct bcm_set_pcm_int_params params;
->> > +
->> > +       if (bcm_dev->sco_routing >=3D 0xff) {
->> > +               /* SCO routing configuration should be skipped */
->> > +               return 0;
->> > +       }
->> > +
->> > +       bt_dev_dbg(hdev, "BCM: Configuring SCO routing (%d %d %d %d
->> > %d)",
->> > +                       bcm_dev->sco_routing,
->> > bcm_dev->pcm_interface_rate, bcm_dev->pcm_frame_type,
->> > +                       bcm_dev->pcm_sync_mode,
->> > bcm_dev->pcm_clock_mode);
->> > +
->> > +       params.routing =3D bcm_dev->sco_routing;
->> > +       params.rate =3D bcm_dev->pcm_interface_rate;
->> > +       params.frame_sync =3D bcm_dev->pcm_frame_type;
->> > +       params.sync_mode =3D bcm_dev->pcm_sync_mode;
->> > +       params.clock_mode =3D bcm_dev->pcm_clock_mode;
->> > +
->> > +       /* Send the SCO routing configuration command */
->> > +       skb =3D __hci_cmd_sync(hdev, 0xfc1c, sizeof(params), &params,
->> > HCI_CMD_TIMEOUT);
->> > +       if (IS_ERR(skb)) {
->> > +               int err =3D PTR_ERR(skb);
->> > +               bt_dev_err(hdev, "BCM: failed to configure SCO routing
->> > (%d)", err);
->> > +               return err;
->> > +       }
->> > +
->> > +       kfree_skb(skb);
->> > +
->> > +       return 0;
->> > +}
->> > +
->> >  /* bcm_device_exists should be protected by bcm_device_lock */
->> >  static bool bcm_device_exists(struct bcm_device *device)
->> >  {
->> > @@ -534,6 +585,9 @@ static int bcm_setup(struct hci_uart *hu)
->> >                         host_set_baudrate(hu, speed);
->> >         }
->> >
->> > +       /* Configure SCO routing if needed */
->> > +       bcm_configure_sco_routing(hu, bcm->dev);
->> > +
->> >  finalize:
->> >         release_firmware(fw);
->> >
->> > @@ -1004,9 +1058,21 @@ static int bcm_acpi_probe(struct bcm_device *de=
-v)
->> >  }
->> >  #endif /* CONFIG_ACPI */
->> >
->> > +static void read_u8_device_property(struct device *device, const char
->> > *property, u8 *destination) {
->> > +       u32 temp;
->> > +       if (device_property_read_u32(device, property, &temp) =3D=3D 0=
-) {
->> > +               *destination =3D temp & 0xff;
->> > +       }
->> > +}
->> > +
->> >  static int bcm_of_probe(struct bcm_device *bdev)
->> >  {
->> >         device_property_read_u32(bdev->dev, "max-speed",
->> > &bdev->oper_speed);
->> > +       read_u8_device_property(bdev->dev, "sco-routing",
->> > &bdev->sco_routing);
->> > +       read_u8_device_property(bdev->dev, "pcm-interface-rate",
->> > &bdev->pcm_interface_rate);
->> > +       read_u8_device_property(bdev->dev, "pcm-frame-type",
->> > &bdev->pcm_frame_type);
->> > +       read_u8_device_property(bdev->dev, "pcm-sync-mode",
->> > &bdev->pcm_sync_mode);
->> > +       read_u8_device_property(bdev->dev, "pcm-clock-mode",
->> > &bdev->pcm_clock_mode);
->>
->> These are actually broken because the DT properties are 32-bit.
->>
-> The properties from device tree are read as 32-bit values, then they are
-> truncated to 8-bit (see the read_u8_device_property function above). Is
-> anything wrong with this?
-Ah, NM, I missed the wrapper.
-
-Rob
+Thanks,
+-Eric
