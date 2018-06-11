@@ -1,115 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id q+oiIyExGVtjMgAAmS7hNA
-	; Thu, 07 Jun 2018 13:20:33 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id vkAYKaViHlvWVgAAmS7hNA
+	; Mon, 11 Jun 2018 11:53:53 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 78229606DD; Thu,  7 Jun 2018 13:20:33 +0000 (UTC)
+	id A5472607A4; Mon, 11 Jun 2018 11:53:53 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kixDYZHG"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 8A97C601C3;
-	Thu,  7 Jun 2018 13:20:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8A97C601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by smtp.codeaurora.org (Postfix) with ESMTP id 092DC601C3;
+	Mon, 11 Jun 2018 11:53:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 092DC601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932630AbeFGNUa (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 09:20:30 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:40310 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932568AbeFGNU2 (ORCPT
+        id S933250AbeFKLxi (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 07:53:38 -0400
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:42396 "EHLO
+        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933004AbeFKLxf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 09:20:28 -0400
-Received: from fsav403.sakura.ne.jp (fsav403.sakura.ne.jp [133.242.250.102])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w57DJFOt091278;
-        Thu, 7 Jun 2018 22:19:15 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav403.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp);
- Thu, 07 Jun 2018 22:19:15 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w57DJ8oq091222
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Thu, 7 Jun 2018 22:19:14 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: INFO: task hung in blk_queue_enter
-To: Ming Lei <tom.leiming@gmail.com>, Ming Lei <ming.lei@redhat.com>
-Cc: Jens Axboe <axboe@kernel.dk>,
-        Bart Van Assche <Bart.VanAssche@wdc.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        alan.christopher.jenkins@gmail.com,
-        syzbot+c4f9cebf9d651f6e54de@syzkaller.appspotmail.com,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Oleksandr Natalenko <oleksandr@natalenko.name>,
-        martin@lichtvoll.de, Hannes Reinecke <hare@suse.com>,
-        syzkaller-bugs@googlegroups.com,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        "open list:EXT4 FILE SYSTEM" <linux-ext4@vger.kernel.org>
-References: <25708e84-6f35-04c3-a2e4-6854f0ed9e78@I-love.SAKURA.ne.jp>
- <dc9862c7-ec16-8b11-04e4-422b435d41ef@kernel.dk>
- <201806050027.w550RfJl010157@www262.sakura.ne.jp>
- <20180605004128.GA28826@ming.t460p>
- <CACVXFVNcJ+tC6RUT+JUA3iw+STB+q4P_u+AvoOSrt04zEw8TZA@mail.gmail.com>
-From: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <927ef9f9-4f4d-185e-b86f-10bd18fa92d4@i-love.sakura.ne.jp>
-Date: Thu, 7 Jun 2018 22:19:06 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <CACVXFVNcJ+tC6RUT+JUA3iw+STB+q4P_u+AvoOSrt04zEw8TZA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 11 Jun 2018 07:53:35 -0400
+Received: by mail-lf0-f52.google.com with SMTP id v135-v6so30073563lfa.9;
+        Mon, 11 Jun 2018 04:53:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=Suyinsj+2DMcJEI8FsGWk1SnNxmOdY2jzBHLWvXZJ0g=;
+        b=kixDYZHGRg4sczrgAUfqqfQhh+KlON4rmOrbmoIIKV80qRPKTQXjoz6TvYI5tnFqsG
+         BlpShuv5TyvH9jKA4FJNCa/ZdlJiydYF8nDoKo65d1A7/PcDxr0CKIc4+I5WX3tAtweH
+         yWGMR9cYSesKqLnLqZi7Quo2LLfCpfdbAwPR6+F9K5bxJK9FgZqK10eaeK/SuJ6VDSPV
+         DlqL16o8X8Ttw1QGWFqFIXypvzOu4bDpHFAoZKX1IZ/wBMzB8DbMONTZbXQcbE70Z/O2
+         he2eHZ6TvwRiDoY4xIVoJmFoHM5nUXIWC32CAs+Bm6PPjj+veerffPU3nL3TERz0GaAL
+         lIHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=Suyinsj+2DMcJEI8FsGWk1SnNxmOdY2jzBHLWvXZJ0g=;
+        b=hVaQO1GYJpX82iBdtK7lsyj+QUVgNV2a8d8TAoTJNf16rjbE1fvFur/8mIRmvD4vvK
+         qju/yl3uOFRHaCRA98GU7+6ZZYW04QSuReS4K6cO1K5/Y2knKrWnDPCNrjaffq4/iSFk
+         pdqRzKI5IvOdb/rkTdzjOApxOTHiernjD0dV4X2UB15j6quLGEX6ejgXBwvLsIDSG4vr
+         yKJljvVhd7BbIgMlfIRbr57CRB3rAtFwlUNCAYfyyqf88nqf+0q6zPF1GTZeo+4ICR7l
+         XYXA4m6mq1hhTo++1Gmlr6W8ZdUOg9L17mNvflhyTf67M5VAkWoITwe636pMJQi/+4Pr
+         Cjyg==
+X-Gm-Message-State: APt69E3SimrAgythCkarGt3d0pMCKUczxHyoQ2ToMhmu25uY17747tAe
+        GdsBFGIp3+36sX50VXO3hurJtqcH
+X-Google-Smtp-Source: ADUXVKIlQ+UVLibl4aCdlTg7mzUa3RzcWb0YM4rQHpesuKMcaffe65GsI+wweP8RgV0g8w4Kii0dYA==
+X-Received: by 2002:a2e:8257:: with SMTP id j23-v6mr11109487ljh.1.1528718013720;
+        Mon, 11 Jun 2018 04:53:33 -0700 (PDT)
+Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
+        by smtp.gmail.com with ESMTPSA id h90-v6sm8332849ljf.65.2018.06.11.04.53.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Jun 2018 04:53:32 -0700 (PDT)
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Subject: [PATCH v2 23/24] serdev: get/put controller
+Date: Mon, 11 Jun 2018 13:52:39 +0200
+Message-Id: <20180611115240.32606-24-ricardo.ribalda@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
+References: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/06/07 12:29, Ming Lei wrote:
->> The vfs_fsync() isn't necessary in loop_update_dio() since both
->> generic_file_write_iter() and generic_file_read_iter() can handle
->> buffered io vs dio well.
->>
->> I will send one patch to remove the vfs_sync() later.
-> 
-> Hi Tetsuo,
-> 
-> The issue might be fixed by removing this vfs_sync(), but I'd like to
-> understand the idea behind since vfs_sync() shouldn't have caused
-> any IO to this loop queue.
-> 
-> I also tried to do the test via the following c syzbot, but can't reproduce
-> it yet after running it for several hours.
-> 
-> https://syzkaller.appspot.com/x/repro.c?id=4727023951937536
-> 
-> Could you share us how you reproduce it?
+Allow access serdev controllers by other drivers in a safe way.
 
-I just reported that syzbot started hitting vfs_sync() case.
-I haven't succeeded reproducing vfs_sync() case in my environment.
+Cc: Rob Herring <robh@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.com>
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+---
+ drivers/tty/serdev/core.c | 23 +++++++++++++++++++++++
+ include/linux/serdev.h    |  2 ++
+ 2 files changed, 25 insertions(+)
 
-But in general, I modify "any reproducer provided by syzbot that loops
-forever" to call exit() if open() etc. failed, for continuing the loop
-unlikely helps after hitting "Too many open files" error.
-
-   res = syscall(__NR_memfd_create, 0x200002c0, 0);
-   if (res != -1)
-     r[1] = res;
-+  else
-+    exit(1);
-
-Thus, I restart the reproducer in a loop from shell
-rather than keep running for hours.
-
-   while :; do echo -n .; ./a.out; done
+diff --git a/drivers/tty/serdev/core.c b/drivers/tty/serdev/core.c
+index 6b24b0a74fbf..06310110104a 100644
+--- a/drivers/tty/serdev/core.c
++++ b/drivers/tty/serdev/core.c
+@@ -724,6 +724,29 @@ void serdev_controller_remove(struct serdev_controller *ctrl)
+ }
+ EXPORT_SYMBOL_GPL(serdev_controller_remove);
+ 
++struct serdev_controller *serdev_get_controller(int nr)
++{
++	struct serdev_controller *ctrl;
++
++	ctrl = idr_find(&ctrl_idr, nr);
++	if (!ctrl)
++		return NULL;
++
++	get_device(&ctrl->dev);
++
++	return ctrl;
++}
++EXPORT_SYMBOL_GPL(serdev_get_controller);
++
++void serdev_put_controller(struct serdev_controller *ctrl)
++{
++	if (!ctrl)
++		return;
++
++	put_device(&ctrl->dev);
++}
++EXPORT_SYMBOL_GPL(serdev_put_controller);
++
+ /**
+  * serdev_driver_register() - Register client driver with serdev core
+  * @sdrv:	client driver to be associated with client-device.
+diff --git a/include/linux/serdev.h b/include/linux/serdev.h
+index bf282b3781b9..1ef6e6503650 100644
+--- a/include/linux/serdev.h
++++ b/include/linux/serdev.h
+@@ -182,6 +182,8 @@ void serdev_device_remove(struct serdev_device *);
+ struct serdev_controller *serdev_controller_alloc(struct device *, size_t);
+ int serdev_controller_add(struct serdev_controller *);
+ void serdev_controller_remove(struct serdev_controller *);
++void serdev_put_controller(struct serdev_controller *ctrl);
++struct serdev_controller *serdev_get_controller(int nr);
+ 
+ static inline void serdev_controller_write_wakeup(struct serdev_controller *ctrl)
+ {
+-- 
+2.17.1
