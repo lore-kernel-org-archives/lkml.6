@@ -1,204 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id /5mhJK8tGVtwJAAAmS7hNA
-	; Thu, 07 Jun 2018 13:07:24 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id b4tfAohlHlvsCwAAmS7hNA
+	; Mon, 11 Jun 2018 12:09:30 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 568906089E; Thu,  7 Jun 2018 13:07:24 +0000 (UTC)
+	id BDB7F607A4; Mon, 11 Jun 2018 12:09:30 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="v1jPscX0"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.6 required=2.0 tests=BAYES_00,FROM_LOCAL_HEX,
-	HEXHASH_WORD,MAILING_LIST_MULTI,SORTED_RECIPS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 8800E601C3;
-	Thu,  7 Jun 2018 13:07:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8800E601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 392906074D;
+	Mon, 11 Jun 2018 12:09:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 392906074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753664AbeFGNHW (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 09:07:22 -0400
-Received: from mail-it0-f72.google.com ([209.85.214.72]:35194 "EHLO
-        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753327AbeFGNHD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 09:07:03 -0400
-Received: by mail-it0-f72.google.com with SMTP id k18-v6so3506333itb.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 06:07:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=B6AbsOZF5fKnooCsCC3p7ea1kEZvuvVF1bQvVqAF5ik=;
-        b=sAjvoXlkTl7EXhGx4rsrRqgNgtDquQz3HT09yL0GeH+GEqYLSh+wHe+218k8CZpvlm
-         Tf9eq4GjHx+jMYSs2nHCV84Rbxh4xhT57tmn95YaLb4amTT969bTZM+1MUoBxLaLGQtV
-         bpyJW6O5D/iQqdLwlRZsmdNvnKOjLtqFeNtLciQ4ofY32pxQvQX9Ji6ic8SAgBmeoJxN
-         iT5TGEPeFUcKZEK1qGlwFPHDRkthrXvUIlIqUcDEGOGvbSMvJJ5NUGN0TO6NSft5lQaa
-         PjLuH/1maGok5zbRoytc7tesMTqcvDlrPboxOqqjKEohWGGgAmobKQ8+r2I0GMcqRdGl
-         g6Pg==
-X-Gm-Message-State: APt69E2tW+Q63FTgkIRQtAXC+a02Yt+uL75pxUEu1026lA0/NIzNmlM+
-        veW4/x17YtXfzKcpqN2PMevc8Pq4ShzjvJMRFZkBNJ+n2myY
-X-Google-Smtp-Source: ADUXVKKx7rxFKFLE2/n1iOROTmz7ZjNQmyhd64mtxxRc0MK2VnyZ8zoxglAlAOzpqdyPsB8VMDoG2LgngcY37pH63hscFQKVfWY6
+        id S932902AbeFKMJ1 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 08:09:27 -0400
+Received: from mail-eopbgr80055.outbound.protection.outlook.com ([40.107.8.55]:26432
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932776AbeFKMJZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 08:09:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/deL+9tLm9ZVkLBKJab6DddexeTNP1p6b1SJhocCyuI=;
+ b=v1jPscX04W/i+GyuIPIkZz+ADoSiRkxuN6a1t6LdbQ3nrVNSQ6fzUzT3WZ+z2m+9pMziQEr2Dug/O6b81rsIP0L9A4lUGMnGxb37KeYzwn5ww1lAm8S/Bc1AsXkx6M/HCkY2f0qU+eLxRpS0Ey2PBmaHf180t/eNDEobTdwYFoI=
+Received: from DB6PR04MB3223.eurprd04.prod.outlook.com (10.170.211.19) by
+ DB6PR04MB3016.eurprd04.prod.outlook.com (10.170.213.23) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.841.14; Mon, 11 Jun 2018 12:09:22 +0000
+Received: from DB6PR04MB3223.eurprd04.prod.outlook.com
+ ([fe80::15a5:6ba0:ac66:7977]) by DB6PR04MB3223.eurprd04.prod.outlook.com
+ ([fe80::15a5:6ba0:ac66:7977%2]) with mapi id 15.20.0841.011; Mon, 11 Jun 2018
+ 12:09:22 +0000
+From: Robin Gong <yibin.gong@nxp.com>
+To: Lucas Stach <l.stach@pengutronix.de>
+CC: "vkoul@kernel.org" <vkoul@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH v3 0/6] add virt-dma support for imx-sdma
+Thread-Topic: [PATCH v3 0/6] add virt-dma support for imx-sdma
+Thread-Index: AQHUAVHamC9wTHQjkEKuAo/ffjDFC6Ra5GaAgAATBp8=
+Date: Mon, 11 Jun 2018 12:09:22 +0000
+Message-ID: <8C06065A-DC99-4DA8-BF97-0C3BFE95C080@nxp.com>
+References: <1528729173-28684-1-git-send-email-yibin.gong@nxp.com>,<1528714877.2842.3.camel@pengutronix.de>
+In-Reply-To: <1528714877.2842.3.camel@pengutronix.de>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yibin.gong@nxp.com;
+x-originating-ip: [223.104.213.29]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB6PR04MB3016;7:6M4K4B46cJJAUhPJVZ/vNA1DH8EU7CGMT2z3tKwzUFcf2B7RKSDKkCrXKzxfjQSMK/w/fqBIFRxFqdbWojHAV87v+j6OFjWS7t0bxuiduTjy7kcxeKBWUXvjOp59JOqxMXHSw21RfqJ+qc+MAwTkoWMw6kkNV7gnT1V29fPyJe1csBreT4lpUIHA7sUAH96Ll/z40D7Z873VJ/Qn7+NXPLugjzv1/6VRg3hiyZuTs2P7vt9utKBMHoKCI9s+1e0R
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DB6PR04MB3016;
+x-ms-traffictypediagnostic: DB6PR04MB3016:
+x-microsoft-antispam-prvs: <DB6PR04MB3016795E3D093D6FB659A95F89780@DB6PR04MB3016.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(10201501046)(93006095)(93001095)(3002001)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:DB6PR04MB3016;BCL:0;PCL:0;RULEID:;SRVR:DB6PR04MB3016;
+x-forefront-prvs: 070092A9D3
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(366004)(39380400002)(376002)(346002)(199004)(189003)(8936002)(6916009)(83716003)(5660300001)(59450400001)(54906003)(76176011)(478600001)(105586002)(106356001)(102836004)(97736004)(53936002)(316002)(99286004)(36756003)(6506007)(5250100002)(6486002)(229853002)(86362001)(66066001)(25786009)(11346002)(2900100001)(486006)(446003)(3280700002)(4326008)(6436002)(476003)(305945005)(2906002)(7736002)(2616005)(3660700001)(6246003)(33656002)(6116002)(3846002)(81156014)(8676002)(186003)(81166006)(14454004)(82746002)(68736007)(6512007)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR04MB3016;H:DB6PR04MB3223.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: y56scH1pl112HLlt5mAiKGKfAWtXB8yYol/DS5N6f/JSl0y23aWfc5YBUiur8TGxTa3yxFUPZ44eTb1kk2Tk6Y6gsePC0KHhohemT4DQ2Nz+4e6OUpjir/4U03g5v47jSLUcBjCB/xMRuz7A4FW2rPMARfro7HCn5RnrxjpMfBdRXZBlDXKqPwGShvY7/fHd
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-Received: by 2002:a24:190b:: with SMTP id b11-v6mr1038523itb.36.1528376822863;
- Thu, 07 Jun 2018 06:07:02 -0700 (PDT)
-Date: Thu, 07 Jun 2018 06:07:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009c221d056e0cf53a@google.com>
-Subject: KASAN: slab-out-of-bounds Write in sha1_finup
-From: syzbot <syzbot+486f97f892efeb2075a3@syzkaller.appspotmail.com>
-To: davem@davemloft.net, herbert@gondor.apana.org.au, hpa@zytor.com,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+X-MS-Office365-Filtering-Correlation-Id: 21ca88b5-9c4d-4c01-318a-08d5cf942ad4
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 21ca88b5-9c4d-4c01-318a-08d5cf942ad4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jun 2018 12:09:22.1733
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR04MB3016
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-syzbot found the following crash on:
-
-HEAD commit:    1c8c5a9d38f6 Merge git://git.kernel.org/pub/scm/linux/kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16289b9f800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2e1a31e8576e013a
-dashboard link: https://syzkaller.appspot.com/bug?extid=486f97f892efeb2075a3
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-userspace arch: i386
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=122bb5df800000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+486f97f892efeb2075a3@syzkaller.appspotmail.com
-
-IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
-IPv6: ADDRCONF(NETDEV_CHANGE): bond0: link becomes ready
-8021q: adding VLAN 0 to HW filter on device team0
-==================================================================
-BUG: KASAN: slab-out-of-bounds in put_unaligned_be32  
-include/linux/unaligned/access_ok.h:60 [inline]
-BUG: KASAN: slab-out-of-bounds in sha1_base_finish  
-include/crypto/sha1_base.h:102 [inline]
-BUG: KASAN: slab-out-of-bounds in sha1_finup+0x44e/0x4b0  
-arch/x86/crypto/sha1_ssse3_glue.c:70
-Write of size 4 at addr ffff8801d7130ed8 by task syz-executor0/4761
-
-CPU: 0 PID: 4761 Comm: syz-executor0 Not tainted 4.17.0+ #113
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
-  __asan_report_store4_noabort+0x17/0x20 mm/kasan/report.c:437
-  put_unaligned_be32 include/linux/unaligned/access_ok.h:60 [inline]
-  sha1_base_finish include/crypto/sha1_base.h:102 [inline]
-  sha1_finup+0x44e/0x4b0 arch/x86/crypto/sha1_ssse3_glue.c:70
-  sha1_avx2_finup arch/x86/crypto/sha1_ssse3_glue.c:232 [inline]
-  sha1_avx2_final+0x28/0x30 arch/x86/crypto/sha1_ssse3_glue.c:238
-  crypto_shash_final+0x104/0x260 crypto/shash.c:152
-  kdf_ctr security/keys/dh.c:186 [inline]
-  keyctl_dh_compute_kdf security/keys/dh.c:217 [inline]
-  __keyctl_dh_compute+0x1184/0x1bc0 security/keys/dh.c:389
-  compat_keyctl_dh_compute+0x2c8/0x3e0 security/keys/compat_dh.c:39
-  __do_compat_sys_keyctl security/keys/compat.c:136 [inline]
-  __se_compat_sys_keyctl security/keys/compat.c:59 [inline]
-  __ia32_compat_sys_keyctl+0x137/0x3b0 security/keys/compat.c:59
-  do_syscall_32_irqs_on arch/x86/entry/common.c:323 [inline]
-  do_fast_syscall_32+0x345/0xf9b arch/x86/entry/common.c:394
-  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-RIP: 0023:0xf7fbdcb9
-Code: 55 08 8b 88 64 cd ff ff 8b 98 68 cd ff ff 89 c8 85 d2 74 02 89 0a 5b  
-5d c3 8b 04 24 c3 8b 1c 24 c3 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90  
-90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 002b:00000000ffdb494c EFLAGS: 00000286 ORIG_RAX: 0000000000000120
-RAX: ffffffffffffffda RBX: 0000000000000017 RCX: 0000000020000100
-RDX: 0000000020a53ffb RSI: 0000000000000005 RDI: 0000000020c61fc8
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-
-Allocated by task 4761:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-  __do_kmalloc mm/slab.c:3718 [inline]
-  __kmalloc+0x14e/0x760 mm/slab.c:3727
-  kmalloc include/linux/slab.h:518 [inline]
-  keyctl_dh_compute_kdf security/keys/dh.c:211 [inline]
-  __keyctl_dh_compute+0xfe9/0x1bc0 security/keys/dh.c:389
-  compat_keyctl_dh_compute+0x2c8/0x3e0 security/keys/compat_dh.c:39
-  __do_compat_sys_keyctl security/keys/compat.c:136 [inline]
-  __se_compat_sys_keyctl security/keys/compat.c:59 [inline]
-  __ia32_compat_sys_keyctl+0x137/0x3b0 security/keys/compat.c:59
-  do_syscall_32_irqs_on arch/x86/entry/common.c:323 [inline]
-  do_fast_syscall_32+0x345/0xf9b arch/x86/entry/common.c:394
-  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-
-Freed by task 1:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xd9/0x260 mm/slab.c:3813
-  acpi_os_free include/acpi/platform/aclinuxex.h:62 [inline]
-  acpi_ns_get_node_unlocked+0x2b1/0x2ee drivers/acpi/acpica/nsutils.c:698
-  acpi_ns_get_node+0x4d/0x6b drivers/acpi/acpica/nsutils.c:738
-  acpi_get_handle+0x153/0x24b drivers/acpi/acpica/nsxfname.c:98
-  acpi_has_method+0x68/0xa0 drivers/acpi/utils.c:555
-  acpi_device_setup_files+0x393/0x820 drivers/acpi/device_sysfs.c:565
-  acpi_device_add+0x8af/0x1240 drivers/acpi/scan.c:700
-  acpi_add_single_object+0xaa5/0x1e70 drivers/acpi/scan.c:1620
-  acpi_bus_check_add+0x5fa/0xb40 drivers/acpi/scan.c:1860
-  acpi_ns_walk_namespace+0x224/0x400 drivers/acpi/acpica/nswalk.c:237
-  acpi_walk_namespace+0xf2/0x12c drivers/acpi/acpica/nsxfeval.c:606
-  acpi_bus_scan+0x138/0x160 drivers/acpi/scan.c:2041
-  acpi_scan_init+0x404/0x8df drivers/acpi/scan.c:2198
-  acpi_init+0x936/0x9fa drivers/acpi/bus.c:1284
-  do_one_initcall+0x127/0x913 init/main.c:884
-  do_initcall_level init/main.c:952 [inline]
-  do_initcalls init/main.c:960 [inline]
-  do_basic_setup init/main.c:978 [inline]
-  kernel_init_freeable+0x49b/0x58e init/main.c:1135
-  kernel_init+0x11/0x1b3 init/main.c:1061
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
-
-The buggy address belongs to the object at ffff8801d7130ec0
-  which belongs to the cache kmalloc-32 of size 32
-The buggy address is located 24 bytes inside of
-  32-byte region [ffff8801d7130ec0, ffff8801d7130ee0)
-The buggy address belongs to the page:
-page:ffffea00075c4c00 count:1 mapcount:0 mapping:ffff8801d7130000  
-index:0xffff8801d7130fc1
-flags: 0x2fffc0000000100(slab)
-raw: 02fffc0000000100 ffff8801d7130000 ffff8801d7130fc1 0000000100000036
-raw: ffffea00076061e0 ffffea0007633a60 ffff8801da8001c0 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801d7130d80: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-  ffff8801d7130e00: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-> ffff8801d7130e80: fb fb fb fb fc fc fc fc 00 00 00 fc fc fc fc fc
-                                                     ^
-  ffff8801d7130f00: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-  ffff8801d7130f80: fb fb fb fb fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+DQpIaSBMdWNhcywNCiAgICBUaGFuayBmb3IgeW91ciByZXBvcnQsIEkgdGVzdGVkIGl0IG9ubHkg
+b24gU1BJLCB3aWxsIHVwZGF0ZSB0byB5b3UgYWZ0ZXIgdHJ5IG9uIHVhcnQgdG9tb3Jyb3cuDQoN
+Cj4g5ZyoIDIwMTjlubQ25pyIMTHml6XvvIzkuIvljYg3OjAx77yMTHVjYXMgU3RhY2ggPGwuc3Rh
+Y2hAcGVuZ3V0cm9uaXguZGU+IOWGmemBk++8mg0KPiANCj4gSGkgUm9iaW4sDQo+IA0KPiB0aGlz
+IHNlcmllcyBicmVha3Mgc2VyaWFsIERNQSBmb3IgbWUuIEkgd2Fzbid0IGFibGUgdG8gZGlnIGlu
+IGRlZXBlcg0KPiB5ZXQuIFBsZWFzZSBsZXQgbWUga25vdyBpZiB5b3UgY2FuIHRlc3QvcmVwcm9k
+dWNlIGF0IHlvdXIgc2lkZSwgaWYgbm90DQo+IEknbGwgdHJ5IHRvIGZpbmQgc29tZSB0aW1lIHRv
+IGNvbGxlY3Qgc29tZSBtb3JlIGRlYnVnIGluZm8uDQo+IA0KPiBSZWdhcmRzLA0KPiBMdWNhcw0K
+PiANCj4gQW0gTW9udGFnLCBkZW4gMTEuMDYuMjAxOCwgMjI6NTkgKzA4MDAgc2NocmllYiBSb2Jp
+biBHb25nOg0KPj4gVGhlIGxlZ2FjeSBzZG1hIGRyaXZlciBoYXMgYmVsb3cgbGltaXRhdGlvbnMg
+b3IgZHJhd2JhY2tzOg0KPj4gICAxLiBIYXJkY29kZSB0aGUgbWF4IEJEcyBudW1iZXIgYXMgIlBB
+R0VfU0laRSAvIHNpemVvZigqKSIsIGFuZCBhbGxvYw0KPj4gICAgICBvbmUgcGFnZSBzaXplIGZv
+ciBvbmUgY2hhbm5lbCByZWdhcmRsZXNzIG9mIG9ubHkgZmV3IEJEcyBuZWVkZWQNCj4+ICAgICAg
+bW9zdCB0aW1lLiBCdXQgaW4gZmV3IGNhc2VzLCB0aGUgbWF4IFBBR0VfU0laRSBtYXliZSBub3Qg
+ZW5vdWdoLg0KPj4gICAyLiBPbmUgU0RNQSBjaGFubmVsIGNhbid0IHN0b3AgaW1tZWRpYXRsZXkg
+b25jZSBjaGFubmVsIGRpc2FibGVkIHdoaWNoDQo+PiAgICAgIG1lYW5zIFNETUEgaW50ZXJydXB0
+IG1heSBjb21lIGluIGFmdGVyIHRoaXMgY2hhbm5lbCB0ZXJtaW5hdGVkLlRoZXJlDQo+PiAgICAg
+IGFyZSBzb21lIHBhdGNoZXMgZm9yIHRoaXMgY29ybmVyIGNhc2Ugc3VjaCBhcyBjb21taXQgIjI3
+NDZlMmMzODlmOSIsDQo+PiAgICAgIGJ1dCBub3QgY292ZXIgbm9uLWN5Y2xpYy4NCj4+IA0KPj4g
+VGhlIGNvbW1vbiB2aXJ0LWRtYSBvdmVyY29tZXMgdGhlIGFib3ZlIGxpbWl0YXRpb25zLiBJdCBj
+YW4gYWxsb2MgYmQNCj4+IGR5bmFtaWNhbGx5IGFuZCBmcmVlIGJkIG9uY2UgdGhpcyB0eCB0cmFu
+c2ZlciBkb25lLiBObyBtZW1vcnkgd2FzdGVkIG9yDQo+PiBtYXhpbXVtIGxpbWl0aXRhdGlvbiBo
+ZXJlLCBvbmx5IGRlcGVuZHMgb24gaG93IG1hbnkgbWVtb3J5IGNhbiBiZSByZXF1ZXN0ZWQNCj4+
+IGZyb20ga2VybmVsLiBGb3IgTm8uMiwgc3VjaCBpc3N1ZSBjYW4gYmUgd29ya2Fyb3VuZCBieSBj
+aGVja2luZyBpZiB0aGVyZQ0KPj4gaXMgYXZhaWxhYmxlIGRlc2NyaXB0KCJzZG1hYy0+ZGVzYyIp
+IG5vdyBvbmNlIHRoZSB1bndhbnRlZCBpbnRlcnJ1cHQNCj4+IGNvbWluZy4gQXQgbGFzdCB0aGUg
+Y29tbW9uIHZpcnQtZG1hIGlzIGVhc2llciBmb3Igc2RtYSBkcml2ZXIgbWFpbnRhaW4uDQo+PiAN
+Cj4+IENoYW5nZSBmcm9tIHYyOg0KPj4gICAxLiBpbmNsdWRlIFNhc2NoYSdzIHBhdGNoIHRvIG1h
+a2UgdGhlIG1haW4gcGF0Y2ggZWFzaWVyIHRvIHJldmlldy4NCj4+ICAgICAgVGhhbmtzIFNhY2hh
+Lg0KPj4gICAyLiByZW1vdmUgdXNlbGVzcyAnZGVzYycvJ2NoYW4nIGluIHN0cnVjdCBzZG1hX2No
+YW5uZS4NCj4+IA0KPj4gQ2hhbmdlIGZyb20gdjE6DQo+PiAgIDEuIHNwbGl0IHYxIHBhdGNoIGlu
+dG8gNSBwYXRjaGVzLg0KPj4gICAyLiByZW1vdmUgc29tZSB1bm5lY2Vzc2FyeSBjb25kaXRpb24g
+Y2hlY2suDQo+PiAgIDMuIHJlbW92ZSB1bm5lY2Vzc2FyeSAncGVuZGluZycgbGlzdC4NCj4+IA0K
+Pj4gUm9iaW4gR29uZyAoNSk6DQo+PiAgIGRtYWVuZ2luZTogaW14LXNkbWE6IGFkZCB2aXJ0LWRt
+YSBzdXBwb3J0DQo+PiAgIFJldmVydCAiZG1hZW5naW5lOiBpbXgtc2RtYTogZml4IHBhZ2VmYXVs
+dCB3aGVuIGNoYW5uZWwgaXMgZGlzYWJsZWQNCj4+ICAgICBkdXJpbmcgaW50ZXJydXB0Ig0KPj4g
+ICBkbWFlbmdpbmU6IGlteC1zZG1hOiByZW1vdmUgdXNsZXNzIGxvY2sNCj4+ICAgZG1hZW5naW5l
+OiBpbXgtc2RtYTogcmVtb3ZlIHRoZSBtYXhpbXVtIGxpbWF0aW9uIGZvciBiZCBudW1iZXJzDQo+
+PiAgIGRtYWVuZ2luZTogaW14LXNkbWE6IGFkZCBzZG1hX3RyYW5zZmVyX2luaXQgdG8gZGVjcmVh
+c2UgY29kZSBvdmVybGFwDQo+PiANCj4+ICBkcml2ZXJzL2RtYS9LY29uZmlnICAgIHwgICAxICsN
+Cj4+ICBkcml2ZXJzL2RtYS9pbXgtc2RtYS5jIHwgMzkyICsrKysrKysrKysrKysrKysrKysrKysr
+KysrKystLS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4+ICAyIGZpbGVzIGNoYW5nZWQsIDIyNyBpbnNl
+cnRpb25zKCspLCAxNjYgZGVsZXRpb25zKC0pDQo+PiANCj4+IC0tIA0KPj4gMi43LjQNCj4+IA0K
+Pj4gUm9iaW4gR29uZyAoNSk6DQo+PiAgIGRtYWVuZ2luZTogaW14LXNkbWE6IGFkZCB2aXJ0LWRt
+YSBzdXBwb3J0DQo+PiAgIFJldmVydCAiZG1hZW5naW5lOiBpbXgtc2RtYTogZml4IHBhZ2VmYXVs
+dCB3aGVuIGNoYW5uZWwgaXMgZGlzYWJsZWQNCj4+ICAgICBkdXJpbmcgaW50ZXJydXB0Ig0KPj4g
+ICBkbWFlbmdpbmU6IGlteC1zZG1hOiByZW1vdmUgdXNsZXNzIGxvY2sNCj4+ICAgZG1hZW5naW5l
+OiBpbXgtc2RtYTogcmVtb3ZlIHRoZSBtYXhpbXVtIGxpbWF0aW9uIGZvciBiZCBudW1iZXJzDQo+
+PiAgIGRtYWVuZ2luZTogaW14LXNkbWE6IGFkZCBzZG1hX3RyYW5zZmVyX2luaXQgdG8gZGVjcmVh
+c2UgY29kZSBvdmVybGFwDQo+PiANCj4+IFNhc2NoYSBIYXVlciAoMSk6DQo+PiAgIGRtYWVuZ2lu
+ZTogaW14LXNkbWE6IGZhY3RvciBvdXQgYSBzdHJ1Y3Qgc2RtYV9kZXNjIGZyb20gc3RydWN0DQo+
+PiAgICAgc2RtYV9jaGFubmVsDQo+PiANCj4+ICBkcml2ZXJzL2RtYS9LY29uZmlnICAgIHwgICAx
+ICsNCj4+ICBkcml2ZXJzL2RtYS9pbXgtc2RtYS5jIHwgMzkxICsrKysrKysrKysrKysrKysrKysr
+KysrKysrKystLS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4+ICAyIGZpbGVzIGNoYW5nZWQsIDIyNiBp
+bnNlcnRpb25zKCspLCAxNjYgZGVsZXRpb25zKC0pDQo+PiANCg==
