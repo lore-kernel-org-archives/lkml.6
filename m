@@ -1,117 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id zaSHEMheGlvPeQAAmS7hNA
-	; Fri, 08 Jun 2018 10:47:36 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id p3M8K/sLHlv+LQAAmS7hNA
+	; Mon, 11 Jun 2018 05:43:23 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 2846A607E4; Fri,  8 Jun 2018 10:47:36 +0000 (UTC)
+	id 943FB607A4; Mon, 11 Jun 2018 05:43:23 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MdRM90a/"
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="MrOTEJh9"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_MED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 7F123606FA;
-	Fri,  8 Jun 2018 10:47:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7F123606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id EA4F560351;
+	Mon, 11 Jun 2018 05:43:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EA4F560351
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751483AbeFHKrd (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 06:47:33 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:40095 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751056AbeFHKrb (ORCPT
+        id S1753994AbeFKFnV (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 01:43:21 -0400
+Received: from relmlor3.renesas.com ([210.160.252.173]:63246 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753797AbeFKFnT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 06:47:31 -0400
-Received: by mail-lf0-f65.google.com with SMTP id q11-v6so19364358lfc.7
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 03:47:31 -0700 (PDT)
+        Mon, 11 Jun 2018 01:43:19 -0400
+Received: from unknown (HELO relmlir4.idc.renesas.com) ([10.200.68.154])
+  by relmlie2.idc.renesas.com with ESMTP; 11 Jun 2018 14:43:17 +0900
+Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
+        by relmlir4.idc.renesas.com (Postfix) with ESMTP id DCEAD79148;
+        Mon, 11 Jun 2018 14:43:17 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.49,500,1520866800";
+   d="scan'208";a="283643234"
+Received: from mail-ty1jpn01lp0180.outbound.protection.outlook.com (HELO JPN01-TY1-obe.outbound.protection.outlook.com) ([23.103.139.180])
+  by relmlii2.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 11 Jun 2018 14:43:17 +0900
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=PFD0VpUfrp1iROTJgJhiS4hDGulXIL/e5KCjLwGx/t4=;
-        b=MdRM90a/q1EFy8/G+sU7niM9W9MQJm3NgGehbwEZw4SDEwEnt53A7mZ1X84+NZ1Rhd
-         EVmMG3JrvKN9yhB2jmQJDbIKKJSc7PcoLTGeLHw1OdfFynsJW0lxIGdnq0jvgHYshQq3
-         Fp7G6EST/XSJ+xVWyyKpu8aarNwDtXPN5BpdmJxiFG8G5kDkSIPmO3eH0LfXWHYKaxMp
-         2CHSJKrm+VA0QJpw7ZW+9utra3ctC8cOVTDE6c/AJ6J8MNezSsVeChQBfT1tgMewfKaA
-         hdMZq65XIj601oSxXzbAO7/xj70YOaiUCGSOhW8JOg1XuE5rYC2uwN2Yw/6JL0oq0Kzl
-         QzpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=PFD0VpUfrp1iROTJgJhiS4hDGulXIL/e5KCjLwGx/t4=;
-        b=AIG1ce77IB8pTc4XcV77e00tiei4PTaHy6Haksu4LPgSbLROwzXNnvEJC6qqNrm48u
-         G95fvISWY9ieKrQLS6q0gECCY9xN1gCLMzcnnwwHHLJ0bknOxS3zSNRE4jLQD3a1USQr
-         fQGznt1jsHajW/Z2ro2y8YTJfqZrclD8ECM2+JJU7B79pbdCF+WadaSp4xiIx1Vs/ARA
-         tgsRXXmOYLapUOfVjroiPxmNu9zIFWlAErxF/4NwrqbPTW6IuRopI9qqUNg3WUboUJsa
-         MwzCX77Gq/T++PfrM+aA6C1WwUIcYg1TEBzr9U49PgmFuhil0b4KJ9BUFCTLOVTsl0Oz
-         hyLA==
-X-Gm-Message-State: APt69E3CUn9quxWEaJmzXopMC38IjWFptcQIl4N/uhBUyDPv54H5Gchm
-        0O1b27zd5z5qZOpTREQrF0RJwy9LjItSi2VMKiI=
-X-Google-Smtp-Source: ADUXVKLNmi/TI7lPE/Vi4fZMGohpylzCLXfwjTbOLYOBXdJBIvAMyu+mIa+56UopEkjIwuEaUeuIrqjoI57M65MSArM=
-X-Received: by 2002:a19:b203:: with SMTP id b3-v6mr3481176lff.84.1528454850371;
- Fri, 08 Jun 2018 03:47:30 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a19:d885:0:0:0:0:0 with HTTP; Fri, 8 Jun 2018 03:47:29 -0700 (PDT)
-In-Reply-To: <cf6ee7ab-5818-3309-5a0d-ba047d3f900c@ti.com>
-References: <20180522181357.GA31257@jordon-HP-15-Notebook-PC> <cf6ee7ab-5818-3309-5a0d-ba047d3f900c@ti.com>
-From: Souptick Joarder <jrdr.linux@gmail.com>
-Date: Fri, 8 Jun 2018 16:17:29 +0530
-Message-ID: <CAFqt6zYLPc=GzJBTTHH5MuUzer8aa7nwS6y8aPFn05hNXgoiEw@mail.gmail.com>
-Subject: Re: [PATCH v2] gpu: drm: omapdrm: Adding new typedef vm_fault_t
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Fj+V7pF7b6FyEciYG2Zkp6FhcAz3RxsZBtc6gx6UaPg=;
+ b=MrOTEJh9MFLrD1WjpLpSJP2CJIVft5uujP/U6reEfZc+QXlS/61zvvrDd3fh2R8Qqp5oWEKzmH/B4cQ3uY1tDzAo/LCpSTWnCU9X+bFrd56tFwxZXQZ+XapgFREwOtoTq7AgAcZdKnBARfYIaOBA+pfUGoo+H2aaUotSv4y22fQ=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=kuninori.morimoto.gx@renesas.com;
+Received: from morimoto-PC.renesas.com (211.11.155.138) by
+ TYAPR01MB2079.jpnprd01.prod.outlook.com (2603:1096:404:8::11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.841.14; Mon, 11 Jun 2018 05:43:14 +0000
+Message-ID: <87sh5t6fwv.wl-kuninori.morimoto.gx@renesas.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Cc: Mark Brown <broonie@kernel.org>, <alsa-devel@alsa-project.org>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/3] ASoC: simple-card: move hp and mic detection to soc_card probe
+In-Reply-To: <007401d40146$9ddaaec0$d9900c40$@socionext.com>
+References: <20180611051559.18082-1-suzuki.katsuhiro@socionext.com>
+        <20180611051559.18082-2-suzuki.katsuhiro@socionext.com>
+        <87tvq96gnm.wl-kuninori.morimoto.gx@renesas.com>
+        <007401d40146$9ddaaec0$d9900c40$@socionext.com>
+User-Agent: Wanderlust/2.15.9 Emacs/25.2 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+Date: Mon, 11 Jun 2018 05:43:14 +0000
+X-Originating-IP: [211.11.155.138]
+X-ClientProxiedBy: TY2PR06CA0023.apcprd06.prod.outlook.com
+ (2603:1096:404:42::35) To TYAPR01MB2079.jpnprd01.prod.outlook.com
+ (2603:1096:404:8::11)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:TYAPR01MB2079;
+X-Microsoft-Exchange-Diagnostics: 1;TYAPR01MB2079;3:wxlUbgl6SkvBP/YZfnjj+rySebLxHLFbrbllOnAujpmIYitynuuhuFGICiGspV8M0rJ6ZhTAN3dpFdmI8gzMSsBzkBa60d2/R8UfEyW2SGcipE5nrTg6N19jjQog94t9PeHrmmKMryUFzLCf+tjckvhm8Hmse9tl0LRFgYzxzhOeANukz9W8rLgPygjwqfjIJcW7fCdCVJClq7vdVTcsnsjX8M/jysp0EwgZBEeUyeC1dLn8U0PEwDPKHHQNXEKh;25:jeE6DxfRgTnqavXoc5EZrk+EEBnMwL8yp71NjdCy07IJFS1bUgiZ70iC9zf1h2+VtqYrQI67YkPqGfGng0YkTuTFjxHmKU7j+tbtPNuP5ApH6X3XUi2BuQzw2M9ly1Dp1e7wAVCN9ho9JX3qkMzC8sr2RnL4nid2hahK1tlB2lhSZVKrUcevpjJBA6WyE7d0500z3YOLUlem5p2eo1DAqzcIs1ZSjj1KwZwAKf6qHRbz5FSc1ZNVRNuHkHmUbyGhchCbUEXBUWcMsESX1O5/3Yd6yHILcJ+tIqsO8QCBEfoQslm8z/T2qY2QFnrun1ngA9Dx/nnZpnfQPIOXWyPYcA==;31:wUvH+p/jmq+z1GDRUjNCsFuowJZ6TldiMmJVAxnCThMjFU3JYv6lLA7x070r6qDsur3xJXEVevI36QfhqsYqBBDg4S86aqbLCmtlocASUaP9k4MzCybTJ6VbhDlLT80kgwRWEyA6GBv7vGWtc50f5gKj0sXfkJHJRjo1OfLQDZkANAkevDADI+Zk2XMGuOJ/rh3Ny7pktyOLlGUD8SNUW0CIFPlnkPYyiBvQm9oKa6k=
+X-MS-TrafficTypeDiagnostic: TYAPR01MB2079:
+X-Microsoft-Exchange-Diagnostics: 1;TYAPR01MB2079;20:+5OSF1fFVowRz45xpDSqWBQ30zX2Lm0pYWlbq5RhZ/ey4GpE1VxluM93VCSR8UyvlQRb7v/hAbU2ZnbI04Y53nIleTPoVlTbI1OWN5cJEqw9qDHvIiQuAZWosy7nkIO0yka5DdK0i6Tz9nXlcXi1jTfNYKPuhl0U8rzIeHwqGhyGKuo66bCKzgOrxkvMHkLkwHlUuS/1RdF/GWmayUYHaKJtm3B+n/ulALtOPl8pIBCl42xOOMyHRFB23dQBnhaYAaiFGX7hiPS4pTcyYXw8ShA4/5GdO1c3Yxq8KKw/Qb6heSVY5qkAvAH2g9joaWaoGGIabgudFjUUbwQZOniuj7PISwJTM47OjiNsEwHoJkkSkDL2BJQOvOcgUp7gjEFMjcWQEmhOd7PmD8PgdAHSivsn4FZYAtqK8HpOHFN10PQCmJta8+JV2bGBnR+IBUZlsasc9Nf5YlSATLzrP3DQM3gznwG/Y9aLRaVGNvIW2PD3v+bfH06GKeqIMFGj3U8A;4:Fg806bR30InD3nO7EymSjfJX2RwSzE4f8f5nBoU7uv2/nMYFwpBZCIM0H/s9mbiA0e2YmHs3DCebGWAdp2drJkeepS0wdSQOgESu6oKmq636HZOSZi1zC/5m+EULL2vuJfI0V8ifHUJSnCJTowZusVbe/krQLzDvs3JmyhXLvCK9aHS2Y53ZGykvVGE/UKOvoDVrx/qlcKLlLq7DLwN05O+z2PKZMW/mIT/kadQkmf8a3lpEei2QXenF5W5N34G+ydo4z3QOPRh0MlOpFSPqkw==
+X-Microsoft-Antispam-PRVS: <TYAPR01MB20797B07C6B0B4333261E844D4780@TYAPR01MB2079.jpnprd01.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:TYAPR01MB2079;BCL:0;PCL:0;RULEID:;SRVR:TYAPR01MB2079;
+X-Forefront-PRVS: 070092A9D3
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(39380400002)(396003)(346002)(366004)(376002)(39860400002)(189003)(199004)(229853002)(386003)(86362001)(53416004)(50466002)(36756003)(8936002)(2906002)(66066001)(6916009)(106356001)(486006)(5660300001)(11346002)(956004)(2616005)(446003)(81156014)(476003)(478600001)(93886005)(97736004)(76176011)(69596002)(16526019)(4326008)(7696005)(68736007)(8676002)(52116002)(58126008)(16586007)(186003)(25786009)(316002)(47776003)(54906003)(53936002)(7736002)(3846002)(6116002)(305945005)(6486002)(6246003)(81166006)(23726003)(26005)(105586002)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:TYAPR01MB2079;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;TYAPR01MB2079;23:LitzxRVooIX4OEjJrarDZfVitQPAbJ4/TyYAgPJ4A?=
+ =?us-ascii?Q?QnmEhXI57PbYsnSfu3GHTovAbMgRHD3dAPGuu4kMmbgOZxneEQ9L+88YFxAD?=
+ =?us-ascii?Q?bz9JXLTzWeBPFj5SIMWRWO9bD1ry2vyxx5McbLXC7JE8MbLNnj1er4OX0hsl?=
+ =?us-ascii?Q?kZsOJm+8TFVE1I1pUw0qHbvJv4COT4omf4UUAM8998hdDLVrro42MrBVQFxw?=
+ =?us-ascii?Q?fe1FUKVytoPyNn8dVCU5U8g43Uloir4XRZwCsqTFrHRzlf2uTogmmm7NoPZS?=
+ =?us-ascii?Q?ZsWPaKT/zj7cGvETN68SXU9cE6zwfTPdipKocG4ypazn6vGqZkbp10celS+x?=
+ =?us-ascii?Q?AOBes5EhlBtBGs5laMvVfjSrp9qq6lzui8oPzPJHTVhZtaWrQaKxg8ip8Bgd?=
+ =?us-ascii?Q?zYZ2ehzede7n6KqWrbJGEp1DHmgUHBJ6UzQcQ4iq63M0bLA8oeaT3eXE6g9G?=
+ =?us-ascii?Q?nZU22y3mrbnc0nCBDz7jckFdjRuM0QrI9h3Y5gT59oSqTzTQMX0RfSYG+2r5?=
+ =?us-ascii?Q?4HfJ3VruuZhgceyoV+OMywbu3RgeBIt+JbAgyl+Un71fXv5z+XSROUmFCyO8?=
+ =?us-ascii?Q?L2jjjPLI2b1BUkEj8GtwcwENs0MZ1p4or/KvehvDqbkerKMg/jdnjWWLqP5g?=
+ =?us-ascii?Q?AyRVNJyvpmN9SGICUwBnPZIE/yw458MbHXMrUdAe9DL/t+ctvDK43fUzrKpb?=
+ =?us-ascii?Q?D8E3rZvcDSUQWM/uJg/pst/Q2+tHorLNBIpnnBXVPZqp0/tsyMwPrdmw0RrO?=
+ =?us-ascii?Q?XDKK0GcmXpTqKBHRwbwKJKMcB0vSAe1nUdYoZXmmkCezYa3sKcIWotVUjUdS?=
+ =?us-ascii?Q?FqupeIRJAjwasYQ3EHxupYuOTNJo8mx686wFfkbrY3k7TUqSMrNqePeXgIEA?=
+ =?us-ascii?Q?SQn8rB227Ne+lNQJnWTXH8uCdx2//59kU/xEywCyP9BvqsZZJCTRhPLvtaT0?=
+ =?us-ascii?Q?P6gAIK2w/vCzlWqr1QuB/0dXbxHkcdQNUaSWI+nngKaQgCyZgQjbPdmTsydA?=
+ =?us-ascii?Q?eXCoWurJCboSU9l/T0lDJJ0JvVYafWeehwGPAv6NIHW9IAJdJFvQlbnVEvri?=
+ =?us-ascii?Q?qt6lZaWvk9M/i6TvIKIuPfiMkaHrEt3c3xVXAZ/VAXtT4d43OlbCGzZFrEU4?=
+ =?us-ascii?Q?D+oPOXy+BpCfpsCP3HvCwKn45k/Lm6Drs/Sp7bxM22ZVn2U8uIolIKJZKLxK?=
+ =?us-ascii?Q?dwb9wEf7EkEXBAJcgbCE1xeTASWUMrVDz30cR01RH3am27r79I2Q0lzZ+xBd?=
+ =?us-ascii?Q?r43USJxxaz7LwcKLMgtz6jaUQct5j8JcaaxgCDa?=
+X-Microsoft-Antispam-Message-Info: H2PADvEZ3mCeQfWA25uzsnjbe9kOZRzAvCsAtvApZJgN7QyjzuwKVgwX8hzv1hnuLqq4Or0HFmpdgkieFubRp6xH9ExZPHZ2Bx/3xoDEK2Pd+DsLHlGK+7Iu9hyUtuHTXvNBwTtWswBqCMO/lHLsO6UFhhl0KtHrAqb3sNJZxOcQvoc9NrIOPFjajh+XKg52
+X-Microsoft-Exchange-Diagnostics: 1;TYAPR01MB2079;6:+4Mdw9zASjmVHtqYdkVw6Izb0DrPIhDU/8zOsORyRkEiHEiALLcDTQxcJUb9am9AmlTNmWXaP/VIZNS2iQJnfpgMctrh/FEVxKS7L1DYYK9cgCZd08IhYg4ArLlkVFHh03RQSCNRu1SJP4bg9CUY1wQEp7hz5uHAxZ6Ol9okWW+l6mGfD3R7i0kXICGcl/xxM1XsF8+yoRE03qldgPpA9EzqNlg2AeI7Z7DCb04l7gtf+un/5zAlEHD9gGOeOrrG0ukM+q1NY26OwDJnypDWtGMV8StoU7sJwvZeamn6VNEzsREgpbfCTwNB4WHzEWX2GUUeKaLYLoyEC7VuYM5cPLbzd2LB4T/wpzbSRqCHiaxj/hNYGYdXy6YEWdyOBT4VvdCFgC/ZjWs55PfYalpbZHT1uz6jGMNRuTCzIWg0z7ePtnG/3FFs6ZmXG/jbRnBYo+QEc5Nmy5dGyK0sSXqsvg==;5:NgJjcAGh9hFD5F+YkDtfaU0Mxo0PtO3edi/13+W2pZCFPkxrTqJwgwd3afvgVBbjbyH4LHhoq8L5yNHOqWc34+m6U4lUjn8q4ZrBNn9sp1sBOmpwDjp/aEE3oc2Sx+D2+I0OkUx5HWK4mCZlSMdsnGxecvtYVScwjSMSOStiaGM=;24:IuX65QbHlB/l3CKJbsskZ00BqKFKTR8fvvNLa1hsNpHse19CCAgksYC0t41+QtdCDAj5ifHgg5qh8J9vCmwnDAFes4pes6BjwODhWsEc6ZE=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;TYAPR01MB2079;7:XlFsUDJpNptsyaM88bEnL5rLRNqJjEKlJaeZq/hndhn+59ga5/4P7CY6vmrU6D8Dd3JN+MKhH2dZwqSVLhMOfaXLoHc1DHy+epNXG73IncE3nQcejwuA0dqsxXSSqkGua3LFbpMsiIGgdD63unqekr+cMOt9VYQc+ZHFAoXb2EkwCQktHmDZpd+LPnGBO4V/VQ5aZDiYQ6CjskHBo5GdAcr8QvHZEDXb5b1PjHLyJZTkXn/B4kr8PDWHIMeAmBRp;20:Ta+P9HtgrygAQnuK3fYDZTTiXM4tUKC2AqtgtXBfkKs6la2e/7xltUNwWGT0xk9H+Af4PN5G/CK5NEf4OxkUE5FAcdLv8yhI8X/XcCxzp33ydB8PqFRtn/a2zbQ/ubHYxCvduyIpM3u6u9MOAIk+p2BrAQh+bioSZOoQyETNCVQ=
+X-MS-Office365-Filtering-Correlation-Id: d1ca09c1-f965-44a2-160d-08d5cf5e39a3
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2018 05:43:14.2737 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d1ca09c1-f965-44a2-160d-08d5cf5e39a3
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB2079
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 8, 2018 at 11:47 AM, Tomi Valkeinen <tomi.valkeinen@ti.com> wrote:
-> Hi,
->
-> On 22/05/18 21:13, Souptick Joarder wrote:
->> Use new return type vm_fault_t for fault handler. For
->> now, this is just documenting that the function returns
->> a VM_FAULT value rather than an errno. Once all instances
->> are converted, vm_fault_t will become a distinct type.
->>
->> Ref-> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
->>
->> Previously vm_insert_mixed() returns err which driver
->> mapped into VM_FAULT_* type. Also return value of
->> vm_insert_mixed() not handled correctly and 0 was
->> returned inside fault_2d() as default. The new function
->> vmf_insert_mixed() will replace this inefficiency by
->> returning correct VM_FAULT_* type.
->>
->> vmf_error() is the newly introduce inline function
->> in 4.17-rc6.
->>
->> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
->> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
->> ---
->> v2: Fixed kbuild error by initialized ret
->>     in fault_2d().
->>
->>  drivers/gpu/drm/omapdrm/omap_gem.c | 51 +++++++++++++++++---------------------
->>  drivers/gpu/drm/omapdrm/omap_gem.h |  3 ++-
->>  2 files changed, 25 insertions(+), 29 deletions(-)
->
-> Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
->
-> It's too late to get this to 4.18 via my normal routes. If you have
-> other similar patches queued and Linus/maintainers are ok to merge this
-> late, feel free to queue this that way.
->
-> Otherwise I can pick this up for my 4.19 patches.
->
 
-4.19 looks ok. In case, we have pushed this patch into 4.18-rc-x along
-with few others, will notify you.
+Hi Katsuhiro
+
+> > > This patch moves headphone and microphone detection to probe() of
+> > > snd_soc_card from init() of snd_soc_dai_link. This is because init()
+> > > is called (and an input device /dev/input/eventX is created too)
+> > > twice or above if simple card has two or more DAI links.
+(snip)
+> It seems if simple card has multiple DAI links, it creates multiple input 
+> devices.
+> 
+> For example simple card has 3-links, 3 input devices /dev/input/event0,
+> event1, event2 are created. Is it correct?
+
+Oh, I see, fair enough.
+I'm sorry, it was my English skill error.
+
+Best regards
+---
+Kuninori Morimoto
