@@ -1,148 +1,165 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id B+qQEs3nGFsyTAAAmS7hNA
-	; Thu, 07 Jun 2018 08:08:39 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id sgSyGeV0HlsoFAAAmS7hNA
+	; Mon, 11 Jun 2018 13:11:23 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 89DBC6089E; Thu,  7 Jun 2018 08:08:39 +0000 (UTC)
+	id 9B0B9607E4; Mon, 11 Jun 2018 13:11:23 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JSJA9cUi"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id DDA64605A2;
-	Thu,  7 Jun 2018 08:08:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DDA64605A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 04734601C3;
+	Mon, 11 Jun 2018 13:11:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 04734601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753325AbeFGIIg (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 04:08:36 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:41857 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753556AbeFGIIV (ORCPT
+        id S933229AbeFKNLU (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 20 others); Mon, 11 Jun 2018 09:11:20 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:39459 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932516AbeFKNLQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 04:08:21 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5788Brj2124339
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 7 Jun 2018 01:08:11 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5788Brw2124336;
-        Thu, 7 Jun 2018 01:08:11 -0700
-Date: Thu, 7 Jun 2018 01:08:11 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-ovhikrfj8pzdv93yq3gt6sei@git.kernel.org>
-Cc: tglx@linutronix.de, acme@redhat.com, adrian.hunter@intel.com,
-        linux-kernel@vger.kernel.org, jolsa@kernel.org, dsahern@gmail.com,
-        wangnan0@huawei.com, namhyung@kernel.org, hpa@zytor.com,
-        mingo@kernel.org
-Reply-To: tglx@linutronix.de, adrian.hunter@intel.com, acme@redhat.com,
-          linux-kernel@vger.kernel.org, jolsa@kernel.org,
-          dsahern@gmail.com, hpa@zytor.com, namhyung@kernel.org,
-          wangnan0@huawei.com, mingo@kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf tools: Ditch the symbol_conf.nr_events
- global
-Git-Commit-ID: 9fd5578a3cdd6cb59603b04a9282199d08f85607
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 11 Jun 2018 09:11:16 -0400
+Received: by mail-it0-f66.google.com with SMTP id p185-v6so10797431itp.4
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 06:11:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=eYZlrUF/pnSTAI6/KINBFuxtfAfPBvPKaN9O9UZcImA=;
+        b=JSJA9cUi0L5503vqc7zu6mrxFmDEBxOB1glXLvI+pOEhnqiSXxS+SVir8TuPyWxZVt
+         coh5Z745LMs3Ue6GZ2As/iaEm81+IfZkQF3RJJNfYAfce2tEciOv9FC6Y+9PZgwX57XM
+         qdpI7yGk1FlKBJhJPYLa/1/jL7OmlegZxMeBM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=eYZlrUF/pnSTAI6/KINBFuxtfAfPBvPKaN9O9UZcImA=;
+        b=E6UH+IbdvHgZtSnvdjyx1lxdL40iNY/A6RVMDz4BHeNIc4sFgsk6NY33LFTZ8k5pVQ
+         nApKpVXs7PYy51j3sNS6l7UwcnQ/kPJpl7Sfh5NhJm86IGH4UAG0G+sPCloGdTh66G21
+         GQ8G6Ja0MieedTX/tEEQP5Bt4fsWPYX2666CWP37rKpssVjbPW7Aan5DzQSiiUGdewU3
+         8P8TBWDACapW2JhHZk+1bbJE7VQslXaofwJvp5n1Yd6Othwz3i0C8OQUHh/Cb1HvQK0j
+         /IAJl8raRBAG9tCfPwv1wlG5lweSqO5rIpvPRZSQTsIu2dXA3Ekoh+f3/0MS/2cvZJH8
+         RhQA==
+X-Gm-Message-State: APt69E3M4dWahoC77oVa/x5pM5XFPBThkQvVehWPL2GSVNvRielL7bHM
+        uv1LKxMQaHPe5jrQpLFqNXrbyQgAUSW4+NwLrZOYbw==
+X-Google-Smtp-Source: ADUXVKKvcGYgZkTSKh8RUAYPg8+VJHmVDVhsVG86cvfP0hmUZnOPui/tLxYuwYaHIiOeFXeL2WWOk66OtUxyIZ5o/Vo=
+X-Received: by 2002:a24:690f:: with SMTP id e15-v6mr10199738itc.70.1528722675963;
+ Mon, 11 Jun 2018 06:11:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Received: by 2002:a4f:78c9:0:0:0:0:0 with HTTP; Mon, 11 Jun 2018 06:11:14
+ -0700 (PDT)
+In-Reply-To: <20180601093511.GA11734@ulmo>
+References: <20180514080640.12515-1-linus.walleij@linaro.org>
+ <20180514080640.12515-2-linus.walleij@linaro.org> <20180601093511.GA11734@ulmo>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 11 Jun 2018 15:11:14 +0200
+Message-ID: <CACRpkdZEMPfxHc8dZOvyYN+S4o_zwKuYCTBbMiXMLsCZRz_f6A@mail.gmail.com>
+Subject: Re: [PATCH 01/19 v3] regulator: fixed: Convert to use GPIO descriptor only
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Tony Lindgren <tony@atomide.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Philipp Zabel <philipp.zabel@gmail.com>,
+        Daniel Mack <zonque@gmail.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9fd5578a3cdd6cb59603b04a9282199d08f85607
-Gitweb:     https://git.kernel.org/tip/9fd5578a3cdd6cb59603b04a9282199d08f85607
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Thu, 24 May 2018 17:38:51 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 4 Jun 2018 10:28:52 -0300
+On Fri, Jun 1, 2018 at 11:35 AM, Thierry Reding
+<thierry.reding@gmail.com> wrote:
+> On Mon, May 14, 2018 at 10:06:22AM +0200, Linus Walleij wrote:
 
-perf tools: Ditch the symbol_conf.nr_events global
+>> As we augmented the regulator core to accept a GPIO descriptor instead
+>> of a GPIO number, we can augment the fixed GPIO regulator to look up
+>> and pass that descriptor directly from device tree or board GPIO
+>> descriptor look up tables.
+(...)
+> This causes an HDMI display regression on Jetson TK1. From what I can
+> tell, the problem is that we now get a double-inversion for low-active
+> GPIOs. For example, we have this in the Jetson TK1 device tree:
+>
+>                 vdd_hdmi_pll: regulator@11 {
+>                         compatible = "regulator-fixed";
+>                         reg = <11>;
+>                         regulator-name = "+1.05V_RUN_AVDD_HDMI_PLL";
+>                         regulator-min-microvolt = <1050000>;
+>                         regulator-max-microvolt = <1050000>;
+>                         gpio = <&gpio TEGRA_GPIO(H, 7) GPIO_ACTIVE_LOW>;
+>                         vin-supply = <&vdd_1v05_run>;
+>                 };
+>
+> We've got GPIO_ACTIVE_LOW for the regulator's enable GPIO and since we
+> don't have enable-active-high, the regulator core will treat the GPIO as
+> low active. The presence of the GPIO_ACTIVE_LOW flag will cause the GPIO
+> polarity to be inversed, transparently in gpiolib, and the lack of the
+> enable-active-high property causes the GPIO polarity to inversed as
+> well, so we effectively end up with a high-active enable GPIO for one
+> which should really be low-active.
 
-Since over time the places where we need to pass this got reduced
-because we can obtain it from evsel->evlist->nr_entries, no need to have
-this global anymore.
+I dug into this. It turns out there are some layers of mess....
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-ovhikrfj8pzdv93yq3gt6sei@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/builtin-kvm.c | 2 --
- tools/perf/builtin-top.c | 2 --
- tools/perf/util/header.c | 4 ----
- tools/perf/util/symbol.h | 1 -
- 4 files changed, 9 deletions(-)
+The DT binding for "regulator-fixed" specifies that enable-active-high
+should be set for polarity inversion. For historical reasons, I guess,
+we screwed up. The example in the binding uses that.
 
-diff --git a/tools/perf/builtin-kvm.c b/tools/perf/builtin-kvm.c
-index 72e2ca096bf5..2b1ef704169f 100644
---- a/tools/perf/builtin-kvm.c
-+++ b/tools/perf/builtin-kvm.c
-@@ -1438,8 +1438,6 @@ static int kvm_events_live(struct perf_kvm_stat *kvm,
- 		goto out;
- 	}
- 
--	symbol_conf.nr_events = kvm->evlist->nr_entries;
--
- 	if (perf_evlist__create_maps(kvm->evlist, &kvm->opts.target) < 0)
- 		usage_with_options(live_usage, live_options);
- 
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index 04fe04885e99..4284840022a3 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -1462,8 +1462,6 @@ int cmd_top(int argc, const char **argv)
- 		goto out_delete_evlist;
- 	}
- 
--	symbol_conf.nr_events = top.evlist->nr_entries;
--
- 	if (top.delay_secs < 1)
- 		top.delay_secs = 1;
- 
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index a8bff2178fbc..2625cc38a0d6 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -3312,8 +3312,6 @@ int perf_session__read_header(struct perf_session *session)
- 		lseek(fd, tmp, SEEK_SET);
- 	}
- 
--	symbol_conf.nr_events = nr_attrs;
--
- 	perf_header__process_sections(header, fd, &session->tevent,
- 				      perf_file_section__process);
- 
-@@ -3739,8 +3737,6 @@ int perf_event__process_attr(struct perf_tool *tool __maybe_unused,
- 		perf_evlist__id_add(evlist, evsel, 0, i, event->attr.id[i]);
- 	}
- 
--	symbol_conf.nr_events = evlist->nr_entries;
--
- 	return 0;
- }
- 
-diff --git a/tools/perf/util/symbol.h b/tools/perf/util/symbol.h
-index 1a16438eb3ce..1be9a6bad967 100644
---- a/tools/perf/util/symbol.h
-+++ b/tools/perf/util/symbol.h
-@@ -90,7 +90,6 @@ struct intlist;
- 
- struct symbol_conf {
- 	unsigned short	priv_size;
--	unsigned short	nr_events;
- 	bool		try_vmlinux_path,
- 			init_annotation,
- 			force,
+I interpreted the binding such that also specifying GPIO_ACTIVE_LOW
+was essentially illegal, so I patched gpiolib in commit
+a603a2b8d86ee93ee2107da8ca75fd854fd4ff32
+"gpio: of: Add special quirk to parse regulator flags"
+so it looks like that:
+
++       if (IS_ENABLED(CONFIG_REGULATOR) &&
++           (of_device_is_compatible(np, "reg-fixed-voltage") ||
++            of_device_is_compatible(np, "regulator-gpio"))) {
++               /*
++                * The regulator GPIO handles are specified such that the
++                * presence or absence of "enable-active-high" solely controls
++                * the polarity of the GPIO line. Any phandle flags must
++                * be actively ignored.
++                */
++               if (*flags & OF_GPIO_ACTIVE_LOW) {
++                       pr_warn("%s GPIO handle specifies active low -
+ignored\n",
++                               of_node_full_name(np));
++                       *flags &= ~OF_GPIO_ACTIVE_LOW;
++               }
++               if (!of_property_read_bool(np, "enable-active-high"))
++                       *flags |= OF_GPIO_ACTIVE_LOW;
++       }
+
+This means no matter if you specify active low, the GPIO
+will be treated as active low, as this is the default behaviour.
+We will warn if things are overspecified as active low on the
+flag as well.
+
+The second clause (notice nagation!) specifies that
+if enable-acive-high flag is NOT specified, we will be active
+low.
+
+Sadly this only handled the undocumented fixed
+regulator binding "reg-fixed-voltage". So I need to fix it
+for "regulator-fixed" as well, and then it "should work".
+
+I will follow up with a patch.
+
+Yours,
+Linus Walleij
