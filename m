@@ -1,103 +1,245 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ODBsC2c0HltMEgAAmS7hNA
-	; Mon, 11 Jun 2018 08:35:59 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id /PS4Ew9CHltKdgAAmS7hNA
+	; Mon, 11 Jun 2018 09:34:07 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id C4484607E4; Mon, 11 Jun 2018 08:35:59 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jylQT2nv"
+	id 3C4B7608CD; Mon, 11 Jun 2018 09:34:07 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FROM,MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 2A128602FC;
-	Mon, 11 Jun 2018 08:35:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2A128602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 4446560792;
+	Mon, 11 Jun 2018 09:34:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4446560792
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932498AbeFKIf5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 04:35:57 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:34019 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932109AbeFKIfz (ORCPT
+        id S932680AbeFKJeD (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 05:34:03 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:1594 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932109AbeFKJeC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 04:35:55 -0400
-Received: by mail-pl0-f66.google.com with SMTP id g20-v6so11923577plq.1;
-        Mon, 11 Jun 2018 01:35:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=FTG8gJcA3AxjC8olL8p2LVHe6D4TEDxeNdhHMYDuNuc=;
-        b=jylQT2nv1tua9+02t8mzyqwLBgg7N5Vb2JH0rVHpL3l+7sdKiJcieKVmyf33/IF5Un
-         9NQ1rCooxP90h7cHtEfju+ZubEH9NCa1zdT/5PGGeyZ0CDO/jLiitiDN9LSgml1m9BHm
-         nfx88g4UKcIpCiggCuLuc3F0NVrzMU/kVIMVFw5crvU1NWhzQUtqQF6GL5MJYjZ/okVx
-         JDDIKIX5MR9AdbhUT42be248MtOGY2L8+fy9UG5uNpnRQRkltKxWkwlV3hgr8st4NCNc
-         rJwjIUPdoeyiSI4k374TmiBR8Un1iYhcMmadtuyeibKm7rHz61M2Xf84e2M84H/aKgu7
-         CULg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=FTG8gJcA3AxjC8olL8p2LVHe6D4TEDxeNdhHMYDuNuc=;
-        b=pO2Tt2nAlkg+n2gPjk0XCAXHtWj5oiLui3sQADu2ZkoFwvPYC7gTloimplmDGoy6c6
-         TcQiO8B+/JvGQrYNpKoQ9nI1U0a99oWKBOddjhuAXITUOL6MbAW4Aeq97EJPAQvFJFLV
-         kvVZPrsQEM0pDm0hJ3ltNQkLFbUzgyYc8E/OZ6jSwVa1HiBuh6LiuNWHQ6OLubpnIbvz
-         HidMNHolM6NJnUCfO0rZYCBpO0zkmM2FeWbXD6ZqQQpMN0tnZW/oGLylJ8MRwOWGIb1h
-         q7PYYAdh/uVeIuYQELW8Z+NdZgMv5u8uon0loDAV2POsiF5itOb6DMH2SkbqDAtVrNFg
-         3+WA==
-X-Gm-Message-State: APt69E1VU34tpa6XMtD92AaCIhh+WlhW9gjMuN4+SWmCJ5uYFP9j5VZ2
-        fKe11ze8f3uquLwBFbbyhDA=
-X-Google-Smtp-Source: ADUXVKIzBzE9SaKcoyf60lU48PKMatVwDPfM/g6IcCBfIobF+r2TEmPjKvxicrVx8vIhplCaDomU9w==
-X-Received: by 2002:a17:902:ba87:: with SMTP id k7-v6mr17486767pls.271.1528706155215;
-        Mon, 11 Jun 2018 01:35:55 -0700 (PDT)
-Received: from localhost ([103.88.46.82])
-        by smtp.gmail.com with ESMTPSA id y15-v6sm1939496pfm.136.2018.06.11.01.35.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Jun 2018 01:35:54 -0700 (PDT)
-From: Zhouyang Jia <jiazhouyang09@gmail.com>
-Cc: Zhouyang Jia <jiazhouyang09@gmail.com>,
-        Achim Leubner <achim_leubner@adaptec.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: gdth: add error handling for register_chrdev
-Date: Mon, 11 Jun 2018 16:35:48 +0800
-Message-Id: <1528706148-35044-1-git-send-email-jiazhouyang09@gmail.com>
-X-Mailer: git-send-email 2.7.4
-To: unlisted-recipients:; (no To-header on input)
+        Mon, 11 Jun 2018 05:34:02 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5B9T5UK001979;
+        Mon, 11 Jun 2018 11:33:33 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2jg415rc0b-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 11 Jun 2018 11:33:33 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 918DF3D;
+        Mon, 11 Jun 2018 09:33:31 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7037C2478;
+        Mon, 11 Jun 2018 09:33:31 +0000 (GMT)
+Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by Safex1hubcas22.st.com
+ (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 11 Jun
+ 2018 11:33:31 +0200
+Received: from localhost (10.201.23.73) by webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 11 Jun 2018 11:33:29
+ +0200
+From: Hugues Fruchet <hugues.fruchet@st.com>
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Hans Verkuil" <hverkuil@xs4all.nl>
+CC: <linux-media@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Hugues Fruchet <hugues.fruchet@st.com>
+Subject: [PATCH] media: stm32-dcmi: add power saving support
+Date: Mon, 11 Jun 2018 11:33:17 +0200
+Message-ID: <1528709597-7734-1-git-send-email-hugues.fruchet@st.com>
+X-Mailer: git-send-email 1.9.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.201.23.73]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-11_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When register_chrdev fails, the lack of error-handling code may
-cause unexpected results.
+Implements runtime & system sleep power management ops.
 
-This patch adds error-handling code after calling register_chrdev.
-
-Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+Signed-off-by: Hugues Fruchet <hugues.fruchet@st.com>
 ---
- drivers/scsi/gdth.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/media/platform/stm32/stm32-dcmi.c | 80 ++++++++++++++++++++++++-------
+ 1 file changed, 64 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/scsi/gdth.c b/drivers/scsi/gdth.c
-index 8560479..d5a2af8 100644
---- a/drivers/scsi/gdth.c
-+++ b/drivers/scsi/gdth.c
-@@ -5198,6 +5198,11 @@ static int __init gdth_init(void)
- 	TRACE2(("gdth_detect() %d controller detected\n", gdth_ctr_count));
+diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
+index 2e1933d..68da9ec 100644
+--- a/drivers/media/platform/stm32/stm32-dcmi.c
++++ b/drivers/media/platform/stm32/stm32-dcmi.c
+@@ -22,6 +22,7 @@
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+ #include <linux/of_graph.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/reset.h>
+ #include <linux/videodev2.h>
+@@ -578,9 +579,9 @@ static int dcmi_start_streaming(struct vb2_queue *vq, unsigned int count)
+ 	u32 val = 0;
+ 	int ret;
  
- 	major = register_chrdev(0,"gdth", &gdth_fops);
-+	if (major < 0) {
-+		printk("GDT-HA: Unable to register char device gdth.\n");
-+		return major;
-+	}
+-	ret = clk_enable(dcmi->mclk);
++	ret = pm_runtime_get_sync(dcmi->dev);
+ 	if (ret) {
+-		dev_err(dcmi->dev, "%s: Failed to start streaming, cannot enable clock\n",
++		dev_err(dcmi->dev, "%s: Failed to start streaming, cannot get sync\n",
+ 			__func__);
+ 		goto err_release_buffers;
+ 	}
+@@ -590,7 +591,7 @@ static int dcmi_start_streaming(struct vb2_queue *vq, unsigned int count)
+ 	if (ret && ret != -ENOIOCTLCMD) {
+ 		dev_err(dcmi->dev, "%s: Failed to start streaming, subdev streamon error",
+ 			__func__);
+-		goto err_disable_clock;
++		goto err_pm_put;
+ 	}
+ 
+ 	spin_lock_irq(&dcmi->irqlock);
+@@ -675,8 +676,8 @@ static int dcmi_start_streaming(struct vb2_queue *vq, unsigned int count)
+ err_subdev_streamoff:
+ 	v4l2_subdev_call(dcmi->entity.subdev, video, s_stream, 0);
+ 
+-err_disable_clock:
+-	clk_disable(dcmi->mclk);
++err_pm_put:
++	pm_runtime_put(dcmi->dev);
+ 
+ err_release_buffers:
+ 	spin_lock_irq(&dcmi->irqlock);
+@@ -749,7 +750,7 @@ static void dcmi_stop_streaming(struct vb2_queue *vq)
+ 	/* Stop all pending DMA operations */
+ 	dmaengine_terminate_all(dcmi->dma_chan);
+ 
+-	clk_disable(dcmi->mclk);
++	pm_runtime_put(dcmi->dev);
+ 
+ 	if (dcmi->errors_count)
+ 		dev_warn(dcmi->dev, "Some errors found while streaming: errors=%d (overrun=%d), buffers=%d\n",
+@@ -1751,12 +1752,6 @@ static int dcmi_probe(struct platform_device *pdev)
+ 		return -EPROBE_DEFER;
+ 	}
+ 
+-	ret = clk_prepare(mclk);
+-	if (ret) {
+-		dev_err(&pdev->dev, "Unable to prepare mclk %p\n", mclk);
+-		goto err_dma_release;
+-	}
+-
+ 	spin_lock_init(&dcmi->irqlock);
+ 	mutex_init(&dcmi->lock);
+ 	init_completion(&dcmi->complete);
+@@ -1772,7 +1767,7 @@ static int dcmi_probe(struct platform_device *pdev)
+ 	/* Initialize the top-level structure */
+ 	ret = v4l2_device_register(&pdev->dev, &dcmi->v4l2_dev);
+ 	if (ret)
+-		goto err_clk_unprepare;
++		goto err_dma_release;
+ 
+ 	dcmi->vdev = video_device_alloc();
+ 	if (!dcmi->vdev) {
+@@ -1832,14 +1827,15 @@ static int dcmi_probe(struct platform_device *pdev)
+ 	dev_info(&pdev->dev, "Probe done\n");
+ 
+ 	platform_set_drvdata(pdev, dcmi);
 +
- 	register_reboot_notifier(&gdth_notifier);
- 	gdth_polling = FALSE;
++	pm_runtime_enable(&pdev->dev);
++
  	return 0;
+ 
+ err_device_release:
+ 	video_device_release(dcmi->vdev);
+ err_device_unregister:
+ 	v4l2_device_unregister(&dcmi->v4l2_dev);
+-err_clk_unprepare:
+-	clk_unprepare(dcmi->mclk);
+ err_dma_release:
+ 	dma_release_channel(dcmi->dma_chan);
+ 
+@@ -1850,20 +1846,72 @@ static int dcmi_remove(struct platform_device *pdev)
+ {
+ 	struct stm32_dcmi *dcmi = platform_get_drvdata(pdev);
+ 
++	pm_runtime_disable(&pdev->dev);
++
+ 	v4l2_async_notifier_unregister(&dcmi->notifier);
+ 	v4l2_device_unregister(&dcmi->v4l2_dev);
+-	clk_unprepare(dcmi->mclk);
++
+ 	dma_release_channel(dcmi->dma_chan);
+ 
+ 	return 0;
+ }
+ 
++static __maybe_unused int dcmi_runtime_suspend(struct device *dev)
++{
++	struct stm32_dcmi *dcmi = dev_get_drvdata(dev);
++
++	clk_disable_unprepare(dcmi->mclk);
++
++	return 0;
++}
++
++static __maybe_unused int dcmi_runtime_resume(struct device *dev)
++{
++	struct stm32_dcmi *dcmi = dev_get_drvdata(dev);
++	int ret;
++
++	ret = clk_prepare_enable(dcmi->mclk);
++	if (ret)
++		dev_err(dev, "%s: Failed to prepare_enable clock\n", __func__);
++
++	return ret;
++}
++
++static __maybe_unused int dcmi_suspend(struct device *dev)
++{
++	/* disable clock */
++	pm_runtime_force_suspend(dev);
++
++	/* change pinctrl state */
++	pinctrl_pm_select_sleep_state(dev);
++
++	return 0;
++}
++
++static __maybe_unused int dcmi_resume(struct device *dev)
++{
++	/* restore pinctl default state */
++	pinctrl_pm_select_default_state(dev);
++
++	/* clock enable */
++	pm_runtime_force_resume(dev);
++
++	return 0;
++}
++
++static const struct dev_pm_ops dcmi_pm_ops = {
++	SET_SYSTEM_SLEEP_PM_OPS(dcmi_suspend, dcmi_resume)
++	SET_RUNTIME_PM_OPS(dcmi_runtime_suspend,
++			   dcmi_runtime_resume, NULL)
++};
++
+ static struct platform_driver stm32_dcmi_driver = {
+ 	.probe		= dcmi_probe,
+ 	.remove		= dcmi_remove,
+ 	.driver		= {
+ 		.name = DRV_NAME,
+ 		.of_match_table = of_match_ptr(stm32_dcmi_of_match),
++		.pm = &dcmi_pm_ops,
+ 	},
+ };
+ 
 -- 
-2.7.4
+1.9.1
