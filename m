@@ -1,137 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id CrhvFZ/2GFsbRwAAmS7hNA
-	; Thu, 07 Jun 2018 09:14:22 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id rTlADjcnHluyBQAAmS7hNA
+	; Mon, 11 Jun 2018 07:39:35 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 8A260607F7; Thu,  7 Jun 2018 09:14:22 +0000 (UTC)
+	id 1BCE6606FA; Mon, 11 Jun 2018 07:39:35 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="STjeTFBB"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k8zLwNvY"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id E6385607DC;
-	Thu,  7 Jun 2018 09:14:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E6385607DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id B9D57601D2;
+	Mon, 11 Jun 2018 07:39:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B9D57601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753577AbeFGJOU (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 05:14:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36118 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750905AbeFGJOR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 05:14:17 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB3672087F;
-        Thu,  7 Jun 2018 09:14:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528362857;
-        bh=+gq/XdxrLa0zt2rREwYIblERQcfZo/Bo7cETNwyvQlg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=STjeTFBBrdfZEOZANanKs369ixJ0RDsPVV3+ztZIaXpTe2fypwY7uWTqQbW4LJs4V
-         hoesluInbivq6BT0Y7n9c2aMziItBJ19ixN+nbTDQjx4CD0dje7DabqQAbHb6OUf0V
-         NKuFaOCL6jPK5mjKtpDn0P2KSwBpEm224EbQ33UE=
-Date: Thu, 7 Jun 2018 11:13:53 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: Kim Phillips <kim.phillips@arm.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Gargi Sharma <gs051095@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Rik van Riel <riel@redhat.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Thierry Reding <treding@nvidia.com>,
-        Todd Kjos <tkjos@google.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 05/14] coresight: get/put module in
- coresight_build/release_path
-Message-ID: <20180607091353.GA20438@kroah.com>
-References: <20180605210710.22227-1-kim.phillips@arm.com>
- <20180605210710.22227-6-kim.phillips@arm.com>
- <20180606082422.GB19727@kroah.com>
- <a457594c-b391-23e1-6ab5-d115073cac5a@arm.com>
- <20180606155501.704583e1412996a1a2c6fa61@arm.com>
- <20180607083401.GE16651@kroah.com>
- <3219276b-2703-bc30-92e1-bae80cdc5901@arm.com>
+        id S932385AbeFKHjb (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 20 others); Mon, 11 Jun 2018 03:39:31 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:41397 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754140AbeFKHj2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 03:39:28 -0400
+Received: by mail-pg0-f66.google.com with SMTP id l65-v6so9328864pgl.8
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 00:39:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=e9wiTJgkhYWodmql/X5ryM0JlrJvkdjAPkFig3X5rp4=;
+        b=k8zLwNvYDWDC5JlNs6+/4Y0gR56GZG7g45DamM2GQ30bFhVLhjPi9zjZIbXiyoyZ44
+         VtGL+C96V7TV+ajcHKow11NjmMQRgD42/q4SIjaTWKIffTii1cqj9UuG+DM9oiqzi76N
+         M4wavJVMmZXOKqhZTzn4va0d5eI/oWpUTmNdIUEdx4SPWXbWte7JR2Q7aLAVXmXIBKJV
+         F/5OoA7PA2DEm7Ho1T23bDrvsLl9W6x0BzU5W2b2ZRcL1t/Qbf26IQLaltPBwKW0qNLM
+         eJYM52ZU0IgKv62khJt6LSBo4RBEHJ0kxt5iHI9j/M+ZbVvfvs9/iJBDwXTssTpI10bV
+         j04w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=e9wiTJgkhYWodmql/X5ryM0JlrJvkdjAPkFig3X5rp4=;
+        b=f92To7V1CKyFcFiEDFwVgyHZ974yJRaXV6TcVkaqSpj8lNgEvaKq12zD3+Thrj6+o4
+         rFNMfJGDfe549E5v0BZXm7erDUGKYHhApWE+TEAYH22aqgSqckwbWDag0yM0nOBaUvw8
+         TD4hHEQSgULACAwVy9U8sQdjIQl7CbhO+C98XPT7FNVbFNMZYlY66DQc5y8TNr1u5Q79
+         wpBhogWbmm1xoYQ+irypmVtjoR2AS3QhH87K97XX6HKzuO0WKpOtfmegoL/kBtAQY06C
+         ltpUMsgNb1yhx6Lb9k73r+e6Ewv8xCs4cDJfAOXFda4Jr9INBp87TDB4XwCZleSqP5k9
+         C9vg==
+X-Gm-Message-State: APt69E1oSohS9Mla6d1orDs/+FtbC6MGRMDZe9gul57Lio0MJcWPd/Fw
+        Kaa7bVSO/VyMrfzd1T2dPYCf5XXoGgWXcJw5VGhxFw==
+X-Google-Smtp-Source: ADUXVKJBopbC5lBQvK9fP5ISp4Jjz+/sJI1Dv5E2R3+w69X5fUHW3zGTBi3+D35NOYerOeTDM0fIklJkbOKyf0PgyJo=
+X-Received: by 2002:a63:721c:: with SMTP id n28-v6mr13695177pgc.96.1528702767678;
+ Mon, 11 Jun 2018 00:39:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3219276b-2703-bc30-92e1-bae80cdc5901@arm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a17:90a:ac07:0:0:0:0 with HTTP; Mon, 11 Jun 2018 00:39:07
+ -0700 (PDT)
+In-Reply-To: <20180611073038.GK12217@hirez.programming.kicks-ass.net>
+References: <000000000000283c37056b4a81a5@google.com> <ee29ad1e-8bd0-3eef-f49e-793bfadcbea7@I-love.SAKURA.ne.jp>
+ <20180611073038.GK12217@hirez.programming.kicks-ass.net>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Mon, 11 Jun 2018 09:39:07 +0200
+Message-ID: <CACT4Y+Zyf2e_K0oRJ5oRj3WYWpf-t=V=RKHYcdqujF3s9PJL_w@mail.gmail.com>
+Subject: Re: INFO: task hung in __sb_start_write
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        syzbot <syzbot+7b2866454055e43c21e5@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 07, 2018 at 10:04:33AM +0100, Suzuki K Poulose wrote:
-> Hi Greg,
-> 
-> On 06/07/2018 09:34 AM, Greg Kroah-Hartman wrote:
-> > On Wed, Jun 06, 2018 at 03:55:01PM -0500, Kim Phillips wrote:
-> > > On Wed, 6 Jun 2018 10:46:36 +0100
-> > > Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
-> > > 
-> > > > On 06/06/2018 09:24 AM, Greg Kroah-Hartman wrote:
-> > > > > On Tue, Jun 05, 2018 at 04:07:01PM -0500, Kim Phillips wrote:
-> > > > > > Increment the refcnt for driver modules in current use by calling
-> > > > > > module_get in coresight_build_path and module_put in release_path.
-> > > > > > 
-> > > > > > This prevents driver modules from being unloaded when they are in use,
-> > > > > > either in sysfs or perf mode.
-> > > > > 
-> > > > > Why does it matter?  Shouldn't you be allowed to remove any module at
-> > > > > any point in time, much like a networking driver?
-> 
-> The user doesn't have an explicit refcount on the individual components
-> in a trace session. So, when a trace session is in progress, it is as
-> good as having a "file" open on each component that is part of the
-> active trace session. So, we don't want the driver to be removed when
-> the component is being used in the trace collection.
+On Mon, Jun 11, 2018 at 9:30 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Sun, Jun 10, 2018 at 11:47:56PM +0900, Tetsuo Handa wrote:
+>
+>> This looks quite strange that nobody is holding percpu_rw_semaphore for
+>> write but everybody is stuck trying to hold it for read. (Since there
+>> is no "X locks held by ..." line without followup "#0:" line, there is
+>> no possibility that somebody is in TASK_RUNNING state while holding
+>> percpu_rw_semaphore for write.)
+>>
+>> I feel that either API has a bug or API usage is wrong.
+>> Any idea for debugging this?
+>
+> Look at percpu_rwsem_release() and usage. The whole fs freezer thing is
+> magic.
 
-Why not?  What's wrong with that happening and then the trace collection
-starts failing with -ENODEV or something?
-
-Remember, removing a kernel module is something that only happens very
-rarely, and is an explicit choice by someone with root permissions.  If
-you want to remove that module, it should be able to go, as you know
-what you are doing at that point in time.
-
-Don't try to "protect the user from themselves" here, they want to shoot
-their foot, make it hurt if they are aiming it there :)
-
-> This will be
-> released as soon as the session is ended. It is just like a PMU driver
-> where the module refcount is held to ensure the module stays until the
-> session is over. In this case, we have multiple components, each with
-> its own driver invisible to the PMU driver. Hence the coresight driver
-> must hold the reference.
-
-Again, please think this through and don't add extra complexity to the
-normal path, and get it right if you do it (the existing patch is not
-right as I pointed out.)  Personally, I feel the code should just be
-able to be unloaded whenever they want, user beware...
-
-thanks,
-
-greg k-h
+Do you mean that we froze fs? We tried to never-ever issue
+ioctl(FIFREEZE) during fuzzing. Are there other ways to do this?
