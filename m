@@ -1,341 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id WHyuGCJJGVsaTgAAmS7hNA
-	; Thu, 07 Jun 2018 15:03:22 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id m20zJNhdHluqJwAAmS7hNA
+	; Mon, 11 Jun 2018 11:32:40 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 82632608B8; Thu,  7 Jun 2018 15:03:22 +0000 (UTC)
+	id 6A4BA601C3; Mon, 11 Jun 2018 11:32:40 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Xgbmx+wH"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 2A2AC6063F;
-	Thu,  7 Jun 2018 15:03:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2A2AC6063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 65457601C3;
+	Mon, 11 Jun 2018 11:32:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 65457601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935863AbeFGPDT (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:03:19 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41488 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S965004AbeFGPDM (ORCPT
+        id S932881AbeFKLch (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 07:32:37 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:34957 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932765AbeFKLcf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:03:12 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbx-0005Zn-2L; Thu, 07 Jun 2018 15:09:57 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvaz-0002kH-4D; Thu, 07 Jun 2018 15:08:57 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Mon, 11 Jun 2018 07:32:35 -0400
+Received: by mail-wr0-f193.google.com with SMTP id l10-v6so20029711wrn.2
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 04:32:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BvosY+glcajskazeW3QKx7oNpuMskaqjo8F6Czy62cY=;
+        b=Xgbmx+wHheYnG/qHNvQydbn9aGXNWE8sSNqIZBp+1ecXIf7mM/1zmq8Bl7EbFTL9HY
+         lEamNfLfF+A2nK1qX0KbZdFpwQw2XvyuQRSghDm2Tp/zaIWmfYH87SKu6F77lQ2Fvhct
+         v4l7bd8BJDph2nGF3Cd0jsHNx7COieWzSko/o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BvosY+glcajskazeW3QKx7oNpuMskaqjo8F6Czy62cY=;
+        b=XhYa0SzqBo5zE01C0lTEGHEeW5CwLXXB7lSgacePK2UOF78sOuXuGZ7k5c3GMyfsIV
+         O8S8dImProX0XH1YkW6VUoU98TmOVqgo0qGOGSWufPaN+XLTijuA3nMwUg/lMGiMK4In
+         c4o0pNxSj99AMG83OVSKg4fZRHsWzvAMY5Vdzo3iY0ggsEU0tbhylfk2OdxdiBQTIsNX
+         NDpYs40Bmd5ylc0zhj9E7o4CQ8CuW7XhjQYG6m9UJXyccNgUK7GyYfLJadCWGn8bfapB
+         AS5XPBhddAIxNeuZsfe9DGi0/jR7RBMSurYvpGuB0vLC8jXnU8C0E+U4PtOsQoOPMWKo
+         /obg==
+X-Gm-Message-State: APt69E2OKmWxTBEeaXxT6GcSqtm8GsMG2lHuUzpRjXlohAaNL+y7PjTE
+        nfke8H0B0fvMx/VGO8WfySNbsbCC
+X-Google-Smtp-Source: ADUXVKL4wnyiU9eo5YTUVQjIP9XhexkCT+BIfFouDXmmJ748vXNsIQUdS/OIW1y6PjbDxC+iuaRfsA==
+X-Received: by 2002:adf:86ae:: with SMTP id 43-v6mr11580554wrx.281.1528716753810;
+        Mon, 11 Jun 2018 04:32:33 -0700 (PDT)
+Received: from veci.piliscsaba.redhat.com (C2B0E321.catv.pool.telekom.hu. [194.176.227.33])
+        by smtp.gmail.com with ESMTPSA id z5-v6sm23300034wrh.10.2018.06.11.04.32.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 11 Jun 2018 04:32:32 -0700 (PDT)
+Date: Mon, 11 Jun 2018 13:32:30 +0200
+From: Miklos Szeredi <miklos@szeredi.hu>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Miklos Szeredi <mszeredi@redhat.com>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/11] vfs: factor out inode_insert5()
+Message-ID: <20180611113230.GI23785@veci.piliscsaba.redhat.com>
+References: <20180529144143.16378-1-mszeredi@redhat.com>
+ <20180529144143.16378-10-mszeredi@redhat.com>
+ <20180610054902.GQ30522@ZenIV.linux.org.uk>
+ <20180610060159.GS30522@ZenIV.linux.org.uk>
+ <CAJfpegt5guR3zJeATw4-N41Ad2n9pcB5mQoLmSLOfocnEoodVg@mail.gmail.com>
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "David Woodhouse" <dwmw@amazon.co.uk>,
-        "Ameya More" <ameya.more@oracle.com>,
-        "Jim Mattson" <jmattson@google.com>,
-        "Mark Kanda" <mark.kanda@oracle.com>,
-        "Paolo Bonzini" <pbonzini@redhat.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?=" <rkrcmar@redhat.com>,
-        "David Hildenbrand" <david@redhat.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.948913191@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 052/410] KVM: nVMX: Eliminate vmcs02 pool
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegt5guR3zJeATw4-N41Ad2n9pcB5mQoLmSLOfocnEoodVg@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+On Mon, Jun 11, 2018 at 11:15:55AM +0200, Miklos Szeredi wrote:
+> On Sun, Jun 10, 2018 at 8:02 AM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > On Sun, Jun 10, 2018 at 06:49:10AM +0100, Al Viro wrote:
+> >> On Tue, May 29, 2018 at 04:41:41PM +0200, Miklos Szeredi wrote:
+> >> > From: Miklos Szeredi <miklos@szeredi.hu>
+> >> >
+> >> > Split out common helper for race free insertion of an already allocated
+> >> > inode into the cache.  Use this from iget5_locked() and
+> >> > insert_inode_locked4().  Make iget5_locked() use new_inode()/iput() instead
+> >> > of alloc_inode()/destroy_inode() directly.
+> >>
+> >> ... thus hitting the sucker with ->evict_inode(), in condition that is quite
+> >> likely to be unfit to be seen by that.
+> >>
+> >> NAK.
+> >
+> > To clarify: objection here is against the switch to new_inode/iput.  The rest is
+> > sane.  What makes new_inode() better here, anyway?
+> 
+> Umm, got to look into this.  The patch has already been pulled by
+> Linus, but I hope it's salvageable.
 
-------------------
+Incremental follows.  I think it's cleaner to initialize i_state and i_sb_list
+up front (hence the use of new_inode()), but could just as well add to sb list
+afterwards.
 
-From: Jim Mattson <jmattson@google.com>
-
-commit de3a0021a60635de96aa92713c1a31a96747d72c upstream.
-
-The potential performance advantages of a vmcs02 pool have never been
-realized. To simplify the code, eliminate the pool. Instead, a single
-vmcs02 is allocated per VCPU when the VCPU enters VMX operation.
-
-Signed-off-by: Jim Mattson <jmattson@google.com>
-Signed-off-by: Mark Kanda <mark.kanda@oracle.com>
-Reviewed-by: Ameya More <ameya.more@oracle.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.16:
- - No loaded_vmcs::shadow_vmcs field to initialise
- - Adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -138,7 +138,6 @@ module_param(ple_window, int, S_IRUGO);
- extern const ulong vmx_return;
+diff --git a/fs/inode.c b/fs/inode.c
+index 0df41bb77e0f..03c0d7c1296f 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -1098,8 +1098,10 @@ struct inode *iget5_locked(struct super_block *sb, unsigned long hashval,
  
- #define NR_AUTOLOAD_MSRS 8
--#define VMCS02_POOL_SIZE 1
- 
- struct vmcs {
- 	u32 revision_id;
-@@ -171,7 +170,7 @@ struct shared_msr_entry {
-  * stored in guest memory specified by VMPTRLD, but is opaque to the guest,
-  * which must access it using VMREAD/VMWRITE/VMCLEAR instructions.
-  * More than one of these structures may exist, if L1 runs multiple L2 guests.
-- * nested_vmx_run() will use the data here to build a vmcs02: a VMCS for the
-+ * nested_vmx_run() will use the data here to build the vmcs02: a VMCS for the
-  * underlying hardware which will be used to run L2.
-  * This structure is packed to ensure that its layout is identical across
-  * machines (necessary for live migration).
-@@ -342,13 +341,6 @@ struct __packed vmcs12 {
-  */
- #define VMCS12_SIZE 0x1000
- 
--/* Used to remember the last vmcs02 used for some recently used vmcs12s */
--struct vmcs02_list {
--	struct list_head list;
--	gpa_t vmptr;
--	struct loaded_vmcs vmcs02;
--};
--
- /*
-  * The nested_vmx structure is part of vcpu_vmx, and holds information we need
-  * for correct emulation of VMX (i.e., nested VMX) on this vcpu.
-@@ -370,16 +362,16 @@ struct nested_vmx {
- 	 */
- 	bool sync_shadow_vmcs;
- 
--	/* vmcs02_list cache of VMCSs recently used to run L2 guests */
--	struct list_head vmcs02_pool;
--	int vmcs02_num;
- 	u64 vmcs01_tsc_offset;
- 	bool change_vmcs01_virtual_x2apic_mode;
- 	/* L2 must run next, and mustn't decide to exit to L1. */
- 	bool nested_run_pending;
-+
-+	struct loaded_vmcs vmcs02;
-+
- 	/*
--	 * Guest pages referred to in vmcs02 with host-physical pointers, so
--	 * we must keep them pinned while L2 runs.
-+	 * Guest pages referred to in the vmcs02 with host-physical
-+	 * pointers, so we must keep them pinned while L2 runs.
- 	 */
- 	struct page *apic_access_page;
- 	u64 msr_ia32_feature_control;
-@@ -5751,93 +5743,6 @@ static int handle_monitor(struct kvm_vcp
- }
- 
- /*
-- * To run an L2 guest, we need a vmcs02 based on the L1-specified vmcs12.
-- * We could reuse a single VMCS for all the L2 guests, but we also want the
-- * option to allocate a separate vmcs02 for each separate loaded vmcs12 - this
-- * allows keeping them loaded on the processor, and in the future will allow
-- * optimizations where prepare_vmcs02 doesn't need to set all the fields on
-- * every entry if they never change.
-- * So we keep, in vmx->nested.vmcs02_pool, a cache of size VMCS02_POOL_SIZE
-- * (>=0) with a vmcs02 for each recently loaded vmcs12s, most recent first.
-- *
-- * The following functions allocate and free a vmcs02 in this pool.
-- */
--
--/* Get a VMCS from the pool to use as vmcs02 for the current vmcs12. */
--static struct loaded_vmcs *nested_get_current_vmcs02(struct vcpu_vmx *vmx)
--{
--	struct vmcs02_list *item;
--	list_for_each_entry(item, &vmx->nested.vmcs02_pool, list)
--		if (item->vmptr == vmx->nested.current_vmptr) {
--			list_move(&item->list, &vmx->nested.vmcs02_pool);
--			return &item->vmcs02;
--		}
--
--	if (vmx->nested.vmcs02_num >= max(VMCS02_POOL_SIZE, 1)) {
--		/* Recycle the least recently used VMCS. */
--		item = list_entry(vmx->nested.vmcs02_pool.prev,
--			struct vmcs02_list, list);
--		item->vmptr = vmx->nested.current_vmptr;
--		list_move(&item->list, &vmx->nested.vmcs02_pool);
--		return &item->vmcs02;
--	}
--
--	/* Create a new VMCS */
--	item = kmalloc(sizeof(struct vmcs02_list), GFP_KERNEL);
--	if (!item)
--		return NULL;
--	item->vmcs02.vmcs = alloc_vmcs();
--	if (!item->vmcs02.vmcs) {
--		kfree(item);
--		return NULL;
--	}
--	loaded_vmcs_init(&item->vmcs02);
--	item->vmptr = vmx->nested.current_vmptr;
--	list_add(&(item->list), &(vmx->nested.vmcs02_pool));
--	vmx->nested.vmcs02_num++;
--	return &item->vmcs02;
--}
--
--/* Free and remove from pool a vmcs02 saved for a vmcs12 (if there is one) */
--static void nested_free_vmcs02(struct vcpu_vmx *vmx, gpa_t vmptr)
--{
--	struct vmcs02_list *item;
--	list_for_each_entry(item, &vmx->nested.vmcs02_pool, list)
--		if (item->vmptr == vmptr) {
--			free_loaded_vmcs(&item->vmcs02);
--			list_del(&item->list);
--			kfree(item);
--			vmx->nested.vmcs02_num--;
--			return;
--		}
--}
--
--/*
-- * Free all VMCSs saved for this vcpu, except the one pointed by
-- * vmx->loaded_vmcs. We must be running L1, so vmx->loaded_vmcs
-- * must be &vmx->vmcs01.
-- */
--static void nested_free_all_saved_vmcss(struct vcpu_vmx *vmx)
--{
--	struct vmcs02_list *item, *n;
--
--	WARN_ON(vmx->loaded_vmcs != &vmx->vmcs01);
--	list_for_each_entry_safe(item, n, &vmx->nested.vmcs02_pool, list) {
--		/*
--		 * Something will leak if the above WARN triggers.  Better than
--		 * a use-after-free.
--		 */
--		if (vmx->loaded_vmcs == &item->vmcs02)
--			continue;
--
--		free_loaded_vmcs(&item->vmcs02);
--		list_del(&item->list);
--		kfree(item);
--		vmx->nested.vmcs02_num--;
--	}
--}
--
--/*
-  * The following 3 functions, nested_vmx_succeed()/failValid()/failInvalid(),
-  * set the success or error code of an emulated VMX instruction, as specified
-  * by Vol 2B, VMX Instruction Reference, "Conventions".
-@@ -6099,10 +6004,17 @@ static int handle_vmon(struct kvm_vcpu *
- 		return 1;
+ 		if (new) {
+ 			inode = inode_insert5(new, hashval, test, set, data);
+-			if (unlikely(inode != new))
+-				iput(new);
++			if (unlikely(inode != new)) {
++				inode_sb_list_del(inode);
++				destroy_inode(new);
++			}
+ 		}
  	}
- 
-+	vmx->nested.vmcs02.vmcs = alloc_vmcs();
-+	if (!vmx->nested.vmcs02.vmcs)
-+		return -ENOMEM;
-+	loaded_vmcs_init(&vmx->nested.vmcs02);
-+
- 	if (enable_shadow_vmcs) {
- 		shadow_vmcs = alloc_vmcs();
--		if (!shadow_vmcs)
-+		if (!shadow_vmcs) {
-+			free_loaded_vmcs(&vmx->nested.vmcs02);
- 			return -ENOMEM;
-+		}
- 		/* mark vmcs as shadow */
- 		shadow_vmcs->revision_id |= (1u << 31);
- 		/* init shadow vmcs */
-@@ -6110,9 +6022,6 @@ static int handle_vmon(struct kvm_vcpu *
- 		vmx->nested.current_shadow_vmcs = shadow_vmcs;
- 	}
- 
--	INIT_LIST_HEAD(&(vmx->nested.vmcs02_pool));
--	vmx->nested.vmcs02_num = 0;
--
- 	hrtimer_init(&vmx->nested.preemption_timer, CLOCK_MONOTONIC,
- 		     HRTIMER_MODE_REL);
- 	vmx->nested.preemption_timer.function = vmx_preemption_timer_fn;
-@@ -6189,13 +6098,13 @@ static void free_nested(struct vcpu_vmx
- 	}
- 	if (enable_shadow_vmcs)
- 		free_vmcs(vmx->nested.current_shadow_vmcs);
--	/* Unpin physical memory we referred to in current vmcs02 */
-+	/* Unpin physical memory we referred to in the vmcs02 */
- 	if (vmx->nested.apic_access_page) {
- 		nested_release_page(vmx->nested.apic_access_page);
- 		vmx->nested.apic_access_page = 0;
- 	}
- 
--	nested_free_all_saved_vmcss(vmx);
-+	free_loaded_vmcs(&vmx->nested.vmcs02);
- }
- 
- /* Emulate the VMXOFF instruction */
-@@ -6246,8 +6155,6 @@ static int handle_vmclear(struct kvm_vcp
- 	kunmap(page);
- 	nested_release_page(page);
- 
--	nested_free_vmcs02(vmx, vmptr);
--
- 	skip_emulated_instruction(vcpu);
- 	nested_vmx_succeed(vcpu);
- 	return 1;
-@@ -6921,10 +6828,11 @@ static bool nested_vmx_exit_handled(stru
- 
- 	/*
- 	 * The host physical addresses of some pages of guest memory
--	 * are loaded into VMCS02 (e.g. L1's Virtual APIC Page). The CPU
--	 * may write to these pages via their host physical address while
--	 * L2 is running, bypassing any address-translation-based dirty
--	 * tracking (e.g. EPT write protection).
-+	 * are loaded into the vmcs02 (e.g. vmcs12's Virtual APIC
-+	 * Page). The CPU may write to these pages via their host
-+	 * physical address while L2 is running, bypassing any
-+	 * address-translation-based dirty tracking (e.g. EPT write
-+	 * protection).
- 	 *
- 	 * Mark them dirty on every exit from L2 to prevent them from
- 	 * getting out of sync with dirty tracking.
-@@ -8235,7 +8143,6 @@ static int nested_vmx_run(struct kvm_vcp
- 	struct vmcs12 *vmcs12;
- 	struct vcpu_vmx *vmx = to_vmx(vcpu);
- 	int cpu;
--	struct loaded_vmcs *vmcs02;
- 	bool ia32e;
- 
- 	if (!nested_vmx_check_permission(vcpu) ||
-@@ -8372,16 +8279,12 @@ static int nested_vmx_run(struct kvm_vcp
- 	 * the nested entry.
- 	 */
- 
--	vmcs02 = nested_get_current_vmcs02(vmx);
--	if (!vmcs02)
--		return -ENOMEM;
--
- 	enter_guest_mode(vcpu);
- 
- 	vmx->nested.vmcs01_tsc_offset = vmcs_read64(TSC_OFFSET);
- 
- 	cpu = get_cpu();
--	vmx->loaded_vmcs = vmcs02;
-+	vmx->loaded_vmcs = &vmx->nested.vmcs02;
- 	vmx_vcpu_put(vcpu);
- 	vmx_vcpu_load(vcpu, cpu);
- 	vcpu->cpu = cpu;
-@@ -8861,10 +8764,6 @@ static void nested_vmx_vmexit(struct kvm
- 	vm_exit_controls_init(vmx, vmcs_read32(VM_EXIT_CONTROLS));
- 	vmx_segment_cache_clear(vmx);
- 
--	/* if no vmcs02 cache requested, remove the one we used */
--	if (VMCS02_POOL_SIZE == 0)
--		nested_free_vmcs02(vmx, vmx->nested.current_vmptr);
--
- 	load_vmcs12_host_state(vcpu, vmcs12);
- 
- 	/* Update TSC_OFFSET if TSC was changed while L2 ran */
+ 	return inode;
