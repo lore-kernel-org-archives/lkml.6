@@ -2,125 +2,110 @@ Return-Path: <SRS0=KDb5=I5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 75BD7C07D5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 18:24:31 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6A821C07E80
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 18:24:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B12F20839
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 18:24:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16D6320839
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 18:24:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AuAn8Uhb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B12F20839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yoj6Ygia"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16D6320839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934345AbeFKSY3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 14:24:29 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:45914 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934096AbeFKSY1 (ORCPT
+        id S934386AbeFKSYi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 14:24:38 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:55494 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934096AbeFKSYg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 14:24:27 -0400
-Received: by mail-pl0-f67.google.com with SMTP id c23-v6so12794747plz.12
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 11:24:27 -0700 (PDT)
+        Mon, 11 Jun 2018 14:24:36 -0400
+Received: by mail-it0-f68.google.com with SMTP id 16-v6so6827477itl.5;
+        Mon, 11 Jun 2018 11:24:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=sU7czxTlopqIJjfghphxnokrvsuaVvf2+1Ex73LmAg4=;
-        b=AuAn8UhbR+N5ciXwC6qd8QIC9LiKHCVlY7s59CRZYa6Qu3XuADJRBF18fvj5vD2CLm
-         zclZILTvHTsjo0y1hfsPigZfjUOXiCqULNS5IMtNYv4p5ak9bYbeE5m2YHZ8ZAJJ926Z
-         naAFCIlNysrWZlOgV/ViwPGlBC1mWvdu5xP0w=
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=EIRrKUCuoy62BBZ0NppoxusTJo43weGZNVinmsKVmvM=;
+        b=Yoj6Ygiau72n5UcIteFSleE+Z6N88ZAuEmLCRoD5OXkdiG6cCXXgV/2Vu0/srDP/86
+         Wthv6egn4scdN5T21x52iTpI8gA/4xrRhGEiEZFM0jm2F7pFwfNXPvTpxiLJagYQ7z+C
+         y0wXWs/loYj8RPg9Uur/jWQesl9r5UWRG4qmmbiuk178zyPmFdeVeP8I26eT0sa1PLci
+         bk4yaz174aHmjTKn4NCvrSrjFjeS38x1gEoASYrfDz0pXy5Mcmdmkb/EOqL2WDiGvzgT
+         MhaehsUXao+9LrDJHJvXXr7FW5MtN019NglzSSddYxOptEsIDv8F6on3QkjgyDWdF8p5
+         86qQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=sU7czxTlopqIJjfghphxnokrvsuaVvf2+1Ex73LmAg4=;
-        b=hOP6bowUNThIkDuc2T0GP9zfIoiICDLGjsulrjPXjtRe1QaJMaWVNtYsVy1sXYj2Gm
-         /j66EJ8Xg/i7abQzpsqXdSmVky7YwM4NPDrLrm/DOUSbk0H60iM6MZLidhA+dGxhM2k2
-         iIlqLc80YIYW7G5Zon7G44TnA8c0seD/i0dl3GHnuvavqJoK6NXYxWgtrY9koUak4Svm
-         R2WQU0Y/8ZM7Ss1Geo6EhCKTVXqMisuZQAd9W17EYlflfvL+pWCegxDmIJE+EFguHFtJ
-         ORg1Y8kWe/LydfZBVaYaDVzdQ3Yd+MQhX4X826B+6XqwoEIunUg7RquCpQiKK+ipEfDv
-         Ytfg==
-X-Gm-Message-State: APt69E3zF6yrKfMdDcd5rBMDRgZgFdrp0J3erXsEhDvpyRGkzBkNtRr6
-        GJItW9Uf0ErogHdN76O1MIXurAwZZEA=
-X-Google-Smtp-Source: ADUXVKK1+xN9/2gFKiGdpZkQMTrTIUOCcbNvahGGSp8u26GeL/Q2bR3XmzynnC4Ig9dtYSYZnA8ZXg==
-X-Received: by 2002:a17:902:6b86:: with SMTP id p6-v6mr279667plk.75.1528741466719;
-        Mon, 11 Jun 2018 11:24:26 -0700 (PDT)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id g12-v6sm31915395pfh.164.2018.06.11.11.24.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 11 Jun 2018 11:24:26 -0700 (PDT)
-Date:   Mon, 11 Jun 2018 11:24:24 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [GIT PULL] remoteproc updates for v4.18
-Message-ID: <20180611182424.GD3206@builder>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=EIRrKUCuoy62BBZ0NppoxusTJo43weGZNVinmsKVmvM=;
+        b=c5G8R6xcIa+MHdKpbTTgaNcdS+h0goLU370yxCbKNYidzcU2MxqLCMIJVe2fCitJR2
+         remJK4cAocDLEB321+RXG/gZcpRhFal8iLpONB0M7ZuGLAqFp96FYXrAtYk1WojXA4jk
+         V8AtgAr+gTN36LaXP/0B1SCLyblWwx8hLAJQGoZaPO3RFBnbSoDMEVnYdHN0z09ROkqF
+         e5lBZpBsICkxFd88Z6Fb1mD6guhJiOKmfY1vypwrgpKp0Ekjw4B85VhCiBAzXnUnjSOS
+         YpmQPao9DOrxMMCeAPAHyaXhScybT0NCVDqAEDn1WiyRE67xPCN3Ced9AjpLvbC+2ndY
+         Zwmw==
+X-Gm-Message-State: APt69E1cp20Q4jq8k/FGV1scbPOXb/MNjeqAiFwX+oekRyMkLDKTSeD+
+        Lq+AKEeK2w2LVcPh61mjgVXJ2RC8fWvsckA6vQ==
+X-Google-Smtp-Source: ADUXVKJjOidjikFxt9DLAh2M1r3AS1FoZ+tFd4V33rXG5wWJbn5tT7fcmd3YW2oGSES4hUz9K0C886B4MXC4IVEGbN8=
+X-Received: by 2002:a24:2e43:: with SMTP id i64-v6mr126342ita.0.1528741475786;
+ Mon, 11 Jun 2018 11:24:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Received: by 2002:a4f:ba01:0:0:0:0:0 with HTTP; Mon, 11 Jun 2018 11:24:35
+ -0700 (PDT)
+In-Reply-To: <20180611181646.GA5537@rob-hp-laptop>
+References: <20180607145821.322979-1-avifishman70@gmail.com>
+ <20180607145821.322979-3-avifishman70@gmail.com> <20180611181646.GA5537@rob-hp-laptop>
+From:   Avi Fishman <avifishman70@gmail.com>
+Date:   Mon, 11 Jun 2018 21:24:35 +0300
+Message-ID: <CAKKbWA4gm1x8VazdMjZ6a9bwGmt=_mZYS2S3FnB2x36Ng+cjCQ@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] dt-bindings: usb: new ehci-npcm7xx dt
+To:     Rob Herring <robh@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        mathias.nyman@linux.intel.com, bjorn.andersson@linaro.org,
+        jhogan@kernel.org, albeu@free.fr, chunfeng.yun@mediatek.com,
+        Tony Lindgren <tony@atomide.com>, baolu.lu@linux.intel.com,
+        Alex Elder <elder@linaro.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        hdegoede@redhat.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-usb@vger.kernel.org,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 75bc37fefc4471e718ba8e651aa74673d4e0a9eb:
+On Mon, Jun 11, 2018 at 9:16 PM, Rob Herring <robh@kernel.org> wrote:
+> On Thu, Jun 07, 2018 at 05:58:20PM +0300, avifishman70@gmail.com wrote:
+>> From: Avi Fishman <AviFishman70@gmail.com>
+>>
+>> Device Tree documentation for Nuvoton npcm7xx EHCI.
+>>
+>> Signed-off-by: Avi Fishman <AviFishman70@gmail.com>
 
-  Linux 4.17-rc4 (2018-05-06 16:57:38 -1000)
+Reviewed-by: Rob Herring <robh@kernel.org>
+Rob, if I understand you want me to add another version (v5) with the
+above line (only on the dt)?
 
-are available in the Git repository at:
-
-  git://github.com/andersson/remoteproc tags/rproc-v4.18
-
-for you to fetch changes up to 4725496e4872824fa6182d412c66c00cae978a62:
-
-  remoteproc: q6v5: Allow defining GLINK edge for mss remoteproc (2018-05-29 20:10:34 -0700)
-
-----------------------------------------------------------------
-remoteproc updates for v4.18
-
-This brings a few minor fixes to the Davinci driver, drops a orphan
-include file from the StE cleanup done ealier and introduces support for
-booting the modem on Qualcomm's SDM845 platform.
-
-----------------------------------------------------------------
-Andrzej Hajda (1):
-      remoteproc/ste: remove abandoned include file
-
-Bartosz Golaszewski (3):
-      remoteproc/davinci: add the missing retval check for clk_enable()
-      remoteproc/davinci: prepare and unprepare the clock where needed
-      remoteproc/davinci: use octal permissions for module_param()
-
-Bjorn Andersson (2):
-      Merge tag 'v4.17-rc4' into rproc-next
-      remoteproc: q6v5: Return irq from q6v5_request_irq()
-
-Geert Uytterhoeven (1):
-      remoteproc: Remove depends on HAS_DMA in case of platform dependency
-
-Sibi Sankar (6):
-      remoteproc: Prevent incorrect rproc state on xfer mem ownership failure
-      remoteproc: q6v5: Move proxy unvote to handover irq handler
-      dt-bindings: remoteproc: Add Q6v5 Modem PIL binding for SDM845
-      remoteproc: q6v5: Introduce reset assert/deassert helper functions
-      remoteproc: q6v5: Add support for mss remoteproc on SDM845
-      remoteproc: q6v5: Allow defining GLINK edge for mss remoteproc
-
- .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |   1 +
- drivers/remoteproc/Kconfig                         |   1 -
- drivers/remoteproc/da8xx_remoteproc.c              |  12 +-
- drivers/remoteproc/qcom_q6v5_pil.c                 | 201 ++++++++++++++++++---
- include/linux/ste_modem_shm.h                      |  56 ------
- 5 files changed, 188 insertions(+), 83 deletions(-)
- delete mode 100644 include/linux/ste_modem_shm.h
+>> ---
+>>  Documentation/devicetree/bindings/usb/npcm7xx-usb.txt | 17 +++++++++++++++++
+>>  1 file changed, 17 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/usb/npcm7xx-usb.txt
+>
+> Please add acks/reviewed-bys when posting new versions.
+>
+> Rob
