@@ -2,179 +2,175 @@ Return-Path: <SRS0=KDb5=I5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 87A9CC07D5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:53:07 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9C1CBC07D5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:54:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D6B420869
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:53:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D6B420869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 51DB520869
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:54:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="T1yiHRBy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51DB520869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933944AbeFKRxF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 13:53:05 -0400
-Received: from mail-it0-f70.google.com ([209.85.214.70]:36883 "EHLO
-        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932821AbeFKRxD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 13:53:03 -0400
-Received: by mail-it0-f70.google.com with SMTP id p130-v6so9802281itp.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 10:53:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=dI+40BjrisDZkoBfZjRgGFkF5bSq5stKGyfOkYy4Y+8=;
-        b=NSo4rp6cVQMFp5YIwUPYiUsZQBymoUnnLUiGODAZvx9o3IpihAxbCDD3nQnbYCol9n
-         BJu94mtErepABoII3+63uq11pREUU/7/WOx3knnMf1TS2mCTDrn3Hqn/H7/p6uM0G38Y
-         xodca8QFyWKAqvRtr3jq02lGFMSG6N7g+vA/Vcipa5/nnvllM2LSV4efY9tGNphsxAcZ
-         ngUWWYMseNIq7/qUbmdgUB7wtAYg8lpzuXO5sinm/bE1DRnntAO+yXHBzievdB99OLad
-         6omrzsaK26Pb5//Yjz6kikn/Sy+k49UwXwNm1qdhP0fu5oSTvYiNyyFSz6QByvfgW8Da
-         sTWA==
-X-Gm-Message-State: APt69E0K5zsD92v2WCJTjjhcnuBvs8Fctrv+fMtVJKum5Z+HZry6Yusd
-        yM4xqyBB4zT6v+aNhNIQyxvWY9tjHTs+Aqi7vY1wakG7hWBS
-X-Google-Smtp-Source: ADUXVKJD+8K1t6T993ZR8Ge9h5Mife137t1iWFt+YMzyVYqu0zf1ds+p7fvsM9eqa88aXPKwcC4fdKFQv15qLYfYLeFP2tibNsiw
+        id S933741AbeFKRyl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 13:54:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38784 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932647AbeFKRyj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 13:54:39 -0400
+Received: from mail-io0-f182.google.com (mail-io0-f182.google.com [209.85.223.182])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DFFC3208B1;
+        Mon, 11 Jun 2018 17:54:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528739679;
+        bh=2TzgZey581hTt3zu4wrjplG0yy0ADveDkPVQzG6HT+w=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=T1yiHRByV33Zs8/x0TKjHwFKyKY0ozXmglIBTEFcITAXRvIGCmWtAIhd7xPr0WwR6
+         kVLSY/62dSIKCoVp9V+IifphjAktJay6rbNt/HNgXE8uWhtywcCx4bcYnJMNNKD3iU
+         SnX23bBf6Cu+4hCxfsLeq9NyrU57fpmiLn2ewOZ8=
+Received: by mail-io0-f182.google.com with SMTP id d185-v6so24929535ioe.0;
+        Mon, 11 Jun 2018 10:54:38 -0700 (PDT)
+X-Gm-Message-State: APt69E17uzRLd1ucld30wIpI24SW1iWusO1ulF1zEiPmnSh7hvWBfFEx
+        FpOfcrEjGhbiFaEw6eaSOaqJahXduO2nVu2gVA==
+X-Google-Smtp-Source: ADUXVKKORGo4SPVpBMEHNmKeKvE6jC/QcGQlyk88vNIIFd6Q7gTCGVjniCpXQA77Nb3IB55ict5LsUeM3zd/wGL8MpQ=
+X-Received: by 2002:a5e:9407:: with SMTP id q7-v6mr186551ioj.268.1528739678311;
+ Mon, 11 Jun 2018 10:54:38 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a24:ac69:: with SMTP id m41-v6mr4245639iti.49.1528739582802;
- Mon, 11 Jun 2018 10:53:02 -0700 (PDT)
-Date:   Mon, 11 Jun 2018 10:53:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c98a37056e616b45@google.com>
-Subject: WARNING in ext4_put_io_end_defer
-From:   syzbot <syzbot+2202a584a00fffd19fbf@syzkaller.appspotmail.com>
-To:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Received: by 2002:a4f:6403:0:0:0:0:0 with HTTP; Mon, 11 Jun 2018 10:54:17
+ -0700 (PDT)
+In-Reply-To: <4F0D6729-AE77-47D4-9765-FBC44181D4DE@holtmann.org>
+References: <280FCB2C-6DF1-4790-A89F-AF5BE3513AE5@holtmann.org>
+ <20180608162009.22762-1-attitokes@gmail.com> <CAL_JsqKGeCEBBLNQNdymQovknRM7zt4+nNJy0YSkxRicOxkCSg@mail.gmail.com>
+ <CAMoM21HshLyv+Np1vOKYTAunsPCazyP-WESiaheNXHsC078S8g@mail.gmail.com>
+ <CAL_Jsq+a93Rpf3UAPBQ5QmA8KavberGXz76WCiZ7feHH5GgcDA@mail.gmail.com> <4F0D6729-AE77-47D4-9765-FBC44181D4DE@holtmann.org>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 11 Jun 2018 11:54:17 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqL2StWgA9gkL9i3o85-C3TNixBLmbTXzFQW8bts4phJqQ@mail.gmail.com>
+Message-ID: <CAL_JsqL2StWgA9gkL9i3o85-C3TNixBLmbTXzFQW8bts4phJqQ@mail.gmail.com>
+Subject: Re: [PATCH] Bluetooth: hci_bcm: Configure SCO routing automatically
+To:     Marcel Holtmann <marcel@holtmann.org>
+Cc:     =?UTF-8?B?QXR0aWxhIFTFkWvDqXM=?= <attitokes@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Artiom Vaskov <velemas@gmail.com>,
+        netdev <netdev@vger.kernel.org>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Mon, Jun 11, 2018 at 9:47 AM, Marcel Holtmann <marcel@holtmann.org> wrot=
+e:
+> Hi Rob,
+>
+>>>>> Added support to automatically configure the SCO packet routing at th=
+e
+>>>>> device setup. The SCO packets are used with the HSP / HFP profiles, b=
+ut in
+>>>>> some devices (ex. CYW43438) they are routed to a PCM output by defaul=
+t. This
+>>>>> change allows sending the vendor specific HCI command to configure th=
+e SCO
+>>>>> routing. The parameters of the command are loaded from the device tre=
+e.
+>>>>
+>>>> Please wrap your commit msg.
+>>>
+>>>
+>>> Sure.
+>>>>
+>>>>
+>>>>>
+>>>>> Signed-off-by: Attila T=C5=91k=C3=A9s <attitokes@gmail.com>
+>>>>> ---
+>>>>> .../bindings/net/broadcom-bluetooth.txt       |  7 ++
+>>>>
+>>>> Please split bindings to separate patch.
+>>>
+>>>
+>>> Ok, I will split this in two.
+>>>>
+>>>>
+>>>>
+>>>>
+>>>>> drivers/bluetooth/hci_bcm.c                   | 72 ++++++++++++++++++=
++
+>>>>> 2 files changed, 79 insertions(+)
+>>>>>
+>>>>> diff --git
+>>>>> a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
+>>>>> b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
+>>>>> index 4194ff7e..aea3a094 100644
+>>>>> --- a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
+>>>>> +++ b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
+>>>>> @@ -21,6 +21,12 @@ Optional properties:
+>>>>>  - clocks: clock specifier if external clock provided to the controll=
+er
+>>>>>  - clock-names: should be "extclk"
+>>>>>
+>>>>> + SCO routing parameters:
+>>>>> + - sco-routing: 0-3 (PCM, Transport, Codec, I2S)
+>>>>> + - pcm-interface-rate: 0-4 (128 Kbps - 2048 Kbps)
+>>>>> + - pcm-frame-type: 0 (short), 1 (long)
+>>>>> + - pcm-sync-mode: 0 (slave), 1 (master)
+>>>>> + - pcm-clock-mode: 0 (slave), 1 (master)
+>>>>
+>>>> Are these Broadcom specific? Properties need either vendor prefix or
+>>>> to be documented in a common location. I think these look like the
+>>>> latter.
+>>>
+>>>
+>>> These will be used as parameters of a vendor specific (Broadcom/Cypress=
+)
+>>> command configuring the SCO packet routing. See the Write_SCO_PCM_Int_P=
+aram
+>>> command from: http://www.cypress.com/file/298311/download.
+>>
+>> The DT should just describe how the h/w is hooked-up. What the s/w has
+>> to do based on that is the driver's problem which is certainly
+>> vendor/chip specific, but that is all irrelevant to the binding.
+>>
+>>> What would be the property names with a Broadcom / Cypress vendor prefi=
+x?
+>>>
+>>>    brcm,sco-routing
+>>>    brcm,pcm-interface-rate
+>>>    brcm,pcm-frame-type
+>>>    brcm,pcm-sync-mode
+>>>    brcm,pcm-clock-mode
+>>>
+>>> ?
+>>
+>> Yes.
+>
+> we can do this. However all pcm-* are optional if you switch the HCI tran=
+sport. And sco-routing should default to HCI if that is not present. Meanin=
+g a driver should actively trying to change this. Nevertheless, it would be=
+ good if a driver reads the current settings.
+>
+> In theory we could make sco-routing generic, but so many vendors have dif=
+ferent modes, that we better keep this vendor specific.
 
-syzbot found the following crash on:
+Even if vendor specific, the properties for not HCI transport case are
+still incomplete IMO.
 
-HEAD commit:    1aaccb5fa0ea Merge tag 'rtc-4.18' of git://git.kernel.org/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=177a36af800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fa9c20c48788d1c1
-dashboard link: https://syzkaller.appspot.com/bug?extid=2202a584a00fffd19fbf
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+By modes, you mean PCM vs. I2S and all the flavors of timings you can
+have within those or something else? For the former, that's often
+going to be a process of solving what each end support and if that
+doesn't work, then IIRC we already have properties for setting
+modes/timing. All the same issues exist with audio codecs and this is
+really not any different.
 
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+2202a584a00fffd19fbf@syzkaller.appspotmail.com
-
-RAX: ffffffffffffffda RBX: 0000000020000500 RCX: 0000000000455867
-RDX: 0000000000000000 RSI: 0000000000004c01 RDI: 0000000000000015
-RBP: 0000000000000000 R08: 0000000020000200 R09: 0000000020000500
-R10: 000000000010a034 R11: 0000000000000246 R12: 0000000000000014
-R13: 0000000000000000 R14: 00000000004d2c08 R15: 0000000000000020
-WARNING: CPU: 0 PID: 2416 at fs/ext4/page-io.c:206 ext4_add_complete_io  
-fs/ext4/page-io.c:206 [inline]
-WARNING: CPU: 0 PID: 2416 at fs/ext4/page-io.c:206  
-ext4_put_io_end_defer+0x430/0x580 fs/ext4/page-io.c:269
-Kernel panic - not syncing: panic_on_warn set ...
-
-CPU: 0 PID: 2416 Comm: udevd Not tainted 4.17.0+ #95
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  panic+0x22f/0x4de kernel/panic.c:184
-  __warn.cold.8+0x163/0x1b3 kernel/panic.c:536
-  report_bug+0x252/0x2d0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x1fc/0x4d0 arch/x86/kernel/traps.c:296
-  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:316
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
-RIP: 0010:ext4_add_complete_io fs/ext4/page-io.c:206 [inline]
-RIP: 0010:ext4_put_io_end_defer+0x430/0x580 fs/ext4/page-io.c:269
-Code: 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 59 01 00 00  
-49 83 bf e0 02 00 00 00 0f 84 d9 fd ff ff e8 60 28 69 ff <0f> 0b e9 cd fd  
-ff ff e8 94 4e a6 ff e9 89 fc ff ff 48 89 b5 20 ff
-RSP: 0018:ffff8801dae07140 EFLAGS: 00010006
-RAX: ffff8801cae8c780 RBX: 1ffff1003b5c0e2d RCX: ffffffff821111c6
-RDX: 0000000000010000 RSI: ffffffff821114e0 RDI: ffff8801cc4347a0
-RBP: ffff8801dae07230 R08: ffff8801cae8c780 R09: ffffed002f401fd9
-R10: ffffed002f401fd9 R11: ffff88017a00fecf R12: ffff88017a00fea0
-R13: ffff880175a9c970 R14: ffff8801dae07208 R15: ffff8801cc4344c0
-  ext4_end_bio+0x234/0x6d0 fs/ext4/page-io.c:335
-  bio_endio+0x51c/0x9c0 block/bio.c:1836
-  req_bio_endio block/blk-core.c:281 [inline]
-  blk_update_request+0x3aa/0xcb0 block/blk-core.c:3091
-  scsi_end_request+0xd3/0x870 drivers/scsi/scsi_lib.c:672
-  scsi_io_completion+0xcb2/0x1db0 drivers/scsi/scsi_lib.c:898
-  scsi_finish_command+0x542/0x8d0 drivers/scsi/scsi.c:248
-  scsi_softirq_done+0x3e2/0x4c0 drivers/scsi/scsi_lib.c:1687
-  __blk_mq_complete_request block/blk-mq.c:583 [inline]
-  blk_mq_complete_request+0x355/0x630 block/blk-mq.c:620
-  scsi_mq_done+0xe2/0x430 drivers/scsi/scsi_lib.c:1998
-  virtscsi_complete_cmd+0x573/0x740 drivers/scsi/virtio_scsi.c:207
-  virtscsi_vq_done+0xc3/0x170 drivers/scsi/virtio_scsi.c:223
-  virtscsi_req_done+0xa7/0xd0 drivers/scsi/virtio_scsi.c:238
-  vring_interrupt+0x128/0x170 drivers/virtio/virtio_ring.c:950
-  __handle_irq_event_percpu+0x1c0/0xad0 kernel/irq/handle.c:149
-  handle_irq_event_percpu+0x98/0x1c0 kernel/irq/handle.c:189
-  handle_irq_event+0xa7/0x135 kernel/irq/handle.c:206
-  handle_edge_irq+0x20f/0x870 kernel/irq/chip.c:791
-  generic_handle_irq_desc include/linux/irqdesc.h:159 [inline]
-  handle_irq+0x18c/0x2e7 arch/x86/kernel/irq_64.c:77
-  do_IRQ+0x78/0x190 arch/x86/kernel/irq.c:245
-  common_interrupt+0xf/0xf arch/x86/entry/entry_64.S:642
-  </IRQ>
-RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:783  
-[inline]
-RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:160  
-[inline]
-RIP: 0010:_raw_spin_unlock_irqrestore+0xa1/0xc0  
-kernel/locking/spinlock.c:184
-Code: 68 a8 f1 88 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c  
-02 00 75 21 48 83 3d fe dd 6e 01 00 74 0e 48 89 df 57 9d <0f> 1f 44 00 00  
-eb bb 0f 0b 0f 0b e8 1f 99 34 fa eb 97 e8 18 99 34
-RSP: 0018:ffff8801cae97980 EFLAGS: 00000286 ORIG_RAX: ffffffffffffffda
-RAX: dffffc0000000000 RBX: 0000000000000286 RCX: 0000000000000000
-RDX: 1ffffffff11e350d RSI: 0000000000000001 RDI: 0000000000000286
-RBP: ffff8801cae97990 R08: ffffed003950c819 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff8801ca8640c0
-R13: 0000000000000000 R14: ffff8801cae97ba8 R15: ffff8801caae1918
-  spin_unlock_irqrestore include/linux/spinlock.h:365 [inline]
-  ep_poll+0x357/0x11d0 fs/eventpoll.c:1824
-  do_epoll_wait+0x1b0/0x200 fs/eventpoll.c:2190
-  __do_sys_epoll_wait fs/eventpoll.c:2200 [inline]
-  __se_sys_epoll_wait fs/eventpoll.c:2197 [inline]
-  __x64_sys_epoll_wait+0x97/0xf0 fs/eventpoll.c:2197
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x7fbecd751943
-Code: 00 31 d2 48 29 c2 64 89 11 48 83 c8 ff eb ea 90 90 90 90 90 90 90 90  
-83 3d b5 dc 2a 00 00 75 13 49 89 ca b8 e8 00 00 00 0f 05 <48> 3d 01 f0 ff  
-ff 73 34 c3 48 83 ec 08 e8 3b c4 00 00 48 89 04 24
-RSP: 002b:00007fffb1bb2698 EFLAGS: 00000246 ORIG_RAX: 00000000000000e8
-RAX: ffffffffffffffda RBX: 0000000000000bb8 RCX: 00007fbecd751943
-RDX: 0000000000000008 RSI: 00007fffb1bb2790 RDI: 000000000000000a
-RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000001
-R10: 0000000000000bb8 R11: 0000000000000246 R12: 0000000000000003
-R13: 0000000000000000 R14: 0000000002569010 R15: 0000000002563250
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+Rob
