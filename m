@@ -1,83 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id lxnBFO0vHVtqIwAAmS7hNA
-	; Sun, 10 Jun 2018 14:04:29 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id gs8CNWuEHlsUGwAAmS7hNA
+	; Mon, 11 Jun 2018 14:18:00 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 40D9D60795; Sun, 10 Jun 2018 14:04:29 +0000 (UTC)
+	id 6C7AB607BB; Mon, 11 Jun 2018 14:18:00 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="X4ZGc+hB"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id DA49A601C3;
-	Sun, 10 Jun 2018 14:04:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DA49A601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 0B0CA60351;
+	Mon, 11 Jun 2018 14:18:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0B0CA60351
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753884AbeFJOEZ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sun, 10 Jun 2018 10:04:25 -0400
-Received: from mail-ua0-f179.google.com ([209.85.217.179]:36706 "EHLO
-        mail-ua0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753511AbeFJOEY (ORCPT
+        id S934121AbeFKOR5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 10:17:57 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37226 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933534AbeFKORw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 10:04:24 -0400
-Received: by mail-ua0-f179.google.com with SMTP id c23-v6so11865607uan.3;
-        Sun, 10 Jun 2018 07:04:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=I32MOW+5xx2bj+zwjdbTw6N6pVUh4db8umkJFqrJQKM=;
-        b=orTp7Fpj17p3s6MCA+eXi6QdQ55Yu6Id7xHnmPpXd91mloBoRXb0Hv1JhsIJM6V4Tm
-         hkLpG5Zg9Njs4xc4G78j8mjubxkbXLoC6I7khxSrLiS6nB3L6cfXyVcvHK0pTPyyUJa9
-         EBEBdvsMIrQ4zgSUUqKAjs66o5P0YfjRuLyF4ZsAzU5iKakk6AHdZ09k8Siu5p4CvtMs
-         cBOYeEjos+Suyu8YEyGrOZXlN9/zT3veSB9mZXN/8famcjn/tPTTfeeOjsL+3OKJIa9l
-         BthFzx230xIrKZU61cVSGCDiFNW8B6tBT17mjlCQv2mY4Iq3gw8deZQr8ktsBh9uovN2
-         L5Pw==
-X-Gm-Message-State: APt69E3OLl+cFH+/5SqpIKq5CmH1/uBdMYPrqt3LDTrulTXLSMHZ3NUE
-        4+appcUwHzIbdZ1R2pfb14BCJ7qjSOJu31gmZ4w=
-X-Google-Smtp-Source: ADUXVKIV6ju6LAxHVfvPJmrxOPulGe2/Vstitw91fyqQu8m3wLQ4CSnT+xzp4nsFWvIqKtwMp1GUKSdNuoSKzrjvibw=
-X-Received: by 2002:ab0:5b18:: with SMTP id u24-v6mr4575544uae.72.1528639463049;
- Sun, 10 Jun 2018 07:04:23 -0700 (PDT)
+        Mon, 11 Jun 2018 10:17:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=c9JGmXcXEjBX4HtNBYNB06krYjNwA+3mpPGd6VgAfZk=; b=X4ZGc+hBnyU8MS/2o/N3XUUDv
+        1kUZLPxOg7ldwM79RbbFcbtEdCcAFllK/JRGTtVVIVQ+0SMSm1MNBoZ8VL3Z4WZTGtqVSUIpJi+zp
+        N4SdZ1EqtR4QcLPwmsckI6OZR89EJI/UomFvlNAaBupi95fMcuvGVB48JVMoHkAej3cvpTnuX2ehO
+        5jNPadtpwExUy3T9EkTb6XV6I2ftoDQUG4tifrOMiEU8sDYU0IveQq8zeiEt3U6/e0OVIMSQjmbrF
+        8R/fGRlssrakhI0isZxaEd+13X/SwuQ7hCgVC4YEu6I6Tssdl2fHvgID0KODB9csnVBHOfhSPKBeZ
+        2VAvIAouQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fSNdg-0006lt-KZ; Mon, 11 Jun 2018 14:17:44 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 04C5E201EA7A5; Mon, 11 Jun 2018 16:17:43 +0200 (CEST)
+Date: Mon, 11 Jun 2018 16:17:42 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Jeremy Cline <jeremy@jcline.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        rui.zhang@intel.com, len.brown@intel.com, stable@vger.kernel.org,
+        linux-kernel@vger.kernel.org, regressions@leemhuis.info,
+        Diego Viola <diego.viola@gmail.com>
+Subject: Re: Regression: x86/tsc: Fix mark_tsc_unstable()
+Message-ID: <20180611141742.GP12198@hirez.programming.kicks-ass.net>
+References: <01000163ef24c875-daa2c00e-611e-4383-99a6-c8c72ef04a14-000000@email.amazonses.com>
 MIME-Version: 1.0
-References: <ae09ac81-c2a5-4a18-bb7f-61219b0c0ac4@email.android.com>
-In-Reply-To: <ae09ac81-c2a5-4a18-bb7f-61219b0c0ac4@email.android.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Sun, 10 Jun 2018 16:04:11 +0200
-Message-ID: <CAMuHMdV02LVvNXxFxMBX+N73N_b0E=YF5WTNqX85BOPjMPwnww@mail.gmail.com>
-Subject: Re: UML build broken on master
-To: Thomas Meyer <thomas@m3y3r.de>
-Cc: alexei.starovoitov@gmail.com, netdev <netdev@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        yuehaibing@huawei.com, Daniel Borkmann <daniel@iogearbox.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <01000163ef24c875-daa2c00e-611e-4383-99a6-c8c72ef04a14-000000@email.amazonses.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 10, 2018 at 3:49 PM Thomas Meyer <thomas@m3y3r.de> wrote:
->The umh stuff seems to have broken this build config:
->
-> http://kisskb.ellerman.id.au/kisskb/buildresult/13394304/
->
-> Bug or feature?
+On Mon, Jun 11, 2018 at 01:59:15PM +0000, Jeremy Cline wrote:
+> A user has bisected the problem to the v4.16 commit 1ab4ca7c59d4
+> ("x86/tsc: Fix mark_tsc_unstable()"). According to the reporter,
+> explicitly setting "tsc=" on the kernel command line causes the boot to
+> always succeed. All the users have Thinkpad T500s or T400s (Core 2 Duos)
 
-Bug. It's broken everywhere except for native X86.
-Multiple patches to fix this are floating around.
+Weird. So Core2 typically triggers mark_tsc_unstable() in either
+intel_idle or processor_idle. ISTR testing that when I did the patches.
 
-Gr{oetje,eeting}s,
+When I make that mark_tsc_unstable() in the idle drivers unconditional
+and boot my ivb with that, it doesn't want to fail. I've booted the
+machine 5 consequctive times without issue.
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Let me try and checkout -stable, maybe something's up with that.
