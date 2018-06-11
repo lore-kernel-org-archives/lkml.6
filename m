@@ -1,113 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id B/KkIY4aG1sgXgAAmS7hNA
-	; Sat, 09 Jun 2018 00:08:46 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id hvnEMl7tHVu5OAAAmS7hNA
+	; Mon, 11 Jun 2018 03:32:55 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 789556089E; Sat,  9 Jun 2018 00:08:46 +0000 (UTC)
+	id C7F8F60791; Mon, 11 Jun 2018 03:32:55 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id F4104602FC;
-	Sat,  9 Jun 2018 00:08:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F4104602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 3D57A606DD;
+	Mon, 11 Jun 2018 03:32:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3D57A606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932101AbeFIAIb (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 20:08:31 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:60546 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752946AbeFIAI1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 20:08:27 -0400
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1fRRQd-00043q-2R; Fri, 08 Jun 2018 18:08:25 -0600
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1fRRQb-0003cw-T2; Fri, 08 Jun 2018 18:08:21 -0600
-From: Logan Gunthorpe <logang@deltatee.com>
-To: linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com
-Cc: Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>,
-        Allen Hubbe <allenbh@gmail.com>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Logan Gunthorpe <logang@deltatee.com>
-Date: Fri,  8 Jun 2018 18:08:14 -0600
-Message-Id: <20180609000819.13883-5-logang@deltatee.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180609000819.13883-1-logang@deltatee.com>
-References: <20180609000819.13883-1-logang@deltatee.com>
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com, jdmason@kudzu.us, dave.jiang@intel.com, allenbh@gmail.com, fancer.lancer@gmail.com, Shyam-sundar.S-k@amd.com, shuah@kernel.org, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH 4/8] NTB: ntb_pingpong: Choose doorbells based on port number
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        id S932638AbeFKDcx (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Sun, 10 Jun 2018 23:32:53 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:1774 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753930AbeFKD0t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Jun 2018 23:26:49 -0400
+X-UUID: d3c6e22c43684c09ac6038535e4a8e74-20180611
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <stu.hsieh@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1030615504; Mon, 11 Jun 2018 11:26:46 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Mon, 11 Jun 2018 11:26:45 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Mon, 11 Jun 2018 11:26:45 +0800
+From: Stu Hsieh <stu.hsieh@mediatek.com>
+To: CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>
+CC: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, Stu Hsieh <stu.hsieh@mediatek.com>
+Subject: [PATCH 04/28] drm/mediatek: add ddp component OD1
+Date: Mon, 11 Jun 2018 11:25:56 +0800
+Message-ID: <1528687580-549-5-git-send-email-stu.hsieh@mediatek.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
+References: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit fixes pingpong support for existing drivers that do not
-implement ntb_default_port_number() and ntb_default_peer_port_number().
-This is required for hardware (like the crosslink topology of
-switchtec) which cannot assign reasonable port numbers to each port due
-to its perfect symmetry.
+This patch add the component OD1 and
+rename the OD to OD0
 
-Instead of picking the doorbell to use based on the the index of the
-peer, we use the peer's port number. This is a bit clearer and easier
-to understand.
-
-Fixes: c7aeb0afdcc2 ("NTB: ntb_pp: Add full multi-port NTB API support")
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
 ---
- drivers/ntb/test/ntb_pingpong.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c      | 4 ++--
+ drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c | 3 ++-
+ drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h | 3 ++-
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c      | 2 +-
+ 4 files changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/ntb/test/ntb_pingpong.c b/drivers/ntb/test/ntb_pingpong.c
-index 65865e460ab8..18d00eec7b02 100644
---- a/drivers/ntb/test/ntb_pingpong.c
-+++ b/drivers/ntb/test/ntb_pingpong.c
-@@ -121,15 +121,14 @@ static int pp_find_next_peer(struct pp_ctx *pp)
- 	link = ntb_link_is_up(pp->ntb, NULL, NULL);
- 
- 	/* Find next available peer */
--	if (link & pp->nmask) {
-+	if (link & pp->nmask)
- 		pidx = __ffs64(link & pp->nmask);
--		out_db = BIT_ULL(pidx + 1);
--	} else if (link & pp->pmask) {
-+	else if (link & pp->pmask)
- 		pidx = __ffs64(link & pp->pmask);
--		out_db = BIT_ULL(pidx);
--	} else {
-+	else
- 		return -ENODEV;
--	}
-+
-+	out_db = BIT_ULL(ntb_peer_port_number(pp->ntb, pidx));
- 
- 	spin_lock(&pp->lock);
- 	pp->out_pidx = pidx;
-@@ -303,7 +302,7 @@ static void pp_init_flds(struct pp_ctx *pp)
- 			break;
- 	}
- 
--	pp->in_db = BIT_ULL(pidx);
-+	pp->in_db = BIT_ULL(lport);
- 	pp->pmask = GENMASK_ULL(pidx, 0) >> 1;
- 	pp->nmask = GENMASK_ULL(pcnt - 1, pidx);
- 
-@@ -435,4 +434,3 @@ static void __exit pp_exit(void)
- 	debugfs_remove_recursive(pp_dbgfs_topdir);
- }
- module_exit(pp_exit);
--
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+index 7217665f4b5d..58e44349e315 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+@@ -114,7 +114,7 @@ static const unsigned int mt8173_mutex_mod[DDP_COMPONENT_ID_MAX] = {
+ 	[DDP_COMPONENT_COLOR0] = MT8173_MUTEX_MOD_DISP_COLOR0,
+ 	[DDP_COMPONENT_COLOR1] = MT8173_MUTEX_MOD_DISP_COLOR1,
+ 	[DDP_COMPONENT_GAMMA] = MT8173_MUTEX_MOD_DISP_GAMMA,
+-	[DDP_COMPONENT_OD] = MT8173_MUTEX_MOD_DISP_OD,
++	[DDP_COMPONENT_OD0] = MT8173_MUTEX_MOD_DISP_OD,
+ 	[DDP_COMPONENT_OVL0] = MT8173_MUTEX_MOD_DISP_OVL0,
+ 	[DDP_COMPONENT_OVL1] = MT8173_MUTEX_MOD_DISP_OVL1,
+ 	[DDP_COMPONENT_PWM0] = MT8173_MUTEX_MOD_DISP_PWM0,
+@@ -139,7 +139,7 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
+ 	} else if (cur == DDP_COMPONENT_OVL0 && next == DDP_COMPONENT_RDMA0) {
+ 		*addr = DISP_REG_CONFIG_DISP_OVL_MOUT_EN;
+ 		value = OVL_MOUT_EN_RDMA;
+-	} else if (cur == DDP_COMPONENT_OD && next == DDP_COMPONENT_RDMA0) {
++	} else if (cur == DDP_COMPONENT_OD0 && next == DDP_COMPONENT_RDMA0) {
+ 		*addr = DISP_REG_CONFIG_DISP_OD_MOUT_EN;
+ 		value = OD_MOUT_EN_RDMA0;
+ 	} else if (cur == DDP_COMPONENT_UFOE && next == DDP_COMPONENT_DSI0) {
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+index 0919039805aa..87acf6be87f6 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+@@ -227,7 +227,8 @@ static const struct mtk_ddp_comp_match mtk_ddp_matches[DDP_COMPONENT_ID_MAX] = {
+ 	[DDP_COMPONENT_DSI0]	= { MTK_DSI,		0, NULL },
+ 	[DDP_COMPONENT_DSI1]	= { MTK_DSI,		1, NULL },
+ 	[DDP_COMPONENT_GAMMA]	= { MTK_DISP_GAMMA,	0, &ddp_gamma },
+-	[DDP_COMPONENT_OD]	= { MTK_DISP_OD,	0, &ddp_od },
++	[DDP_COMPONENT_OD0]	= { MTK_DISP_OD,	0, &ddp_od },
++	[DDP_COMPONENT_OD1]	= { MTK_DISP_OD,	1, &ddp_od },
+ 	[DDP_COMPONENT_OVL0]	= { MTK_DISP_OVL,	0, NULL },
+ 	[DDP_COMPONENT_OVL1]	= { MTK_DISP_OVL,	1, NULL },
+ 	[DDP_COMPONENT_PWM0]	= { MTK_DISP_PWM,	0, NULL },
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
+index eee3c0cc2632..9b19fc4423f1 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
+@@ -50,7 +50,8 @@ enum mtk_ddp_comp_id {
+ 	DDP_COMPONENT_DSI0,
+ 	DDP_COMPONENT_DSI1,
+ 	DDP_COMPONENT_GAMMA,
+-	DDP_COMPONENT_OD,
++	DDP_COMPONENT_OD0,
++	DDP_COMPONENT_OD1,
+ 	DDP_COMPONENT_OVL0,
+ 	DDP_COMPONENT_OVL1,
+ 	DDP_COMPONENT_PWM0,
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+index a415260f3d5f..08d5d0b47bfe 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+@@ -150,7 +150,7 @@ static const enum mtk_ddp_comp_id mt8173_mtk_ddp_main[] = {
+ 	DDP_COMPONENT_OVL0,
+ 	DDP_COMPONENT_COLOR0,
+ 	DDP_COMPONENT_AAL0,
+-	DDP_COMPONENT_OD,
++	DDP_COMPONENT_OD0,
+ 	DDP_COMPONENT_RDMA0,
+ 	DDP_COMPONENT_UFOE,
+ 	DDP_COMPONENT_DSI0,
 -- 
-2.11.0
+2.12.5
