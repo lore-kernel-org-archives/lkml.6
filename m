@@ -1,219 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ahA7ANrVGFu4LwAAmS7hNA
-	; Thu, 07 Jun 2018 06:51:06 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 1vrWAFc4HlsiMQAAmS7hNA
+	; Mon, 11 Jun 2018 08:52:39 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id BCED5608BF; Thu,  7 Jun 2018 06:51:05 +0000 (UTC)
+	id DE624607A4; Mon, 11 Jun 2018 08:52:38 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VOtKTTIi"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FROM,MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 6EE8A607F7;
-	Thu,  7 Jun 2018 06:50:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6EE8A607F7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 6B0B1606FA;
+	Mon, 11 Jun 2018 08:52:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6B0B1606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753068AbeFGGu5 convert rfc822-to-8bit (ORCPT
-        <rfc822;monsieuricon@codeaurora.org> + 25 others);
-        Thu, 7 Jun 2018 02:50:57 -0400
-Received: from mga07.intel.com ([134.134.136.100]:1708 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750897AbeFGGuz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 02:50:55 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2018 23:50:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
-   d="scan'208";a="206029272"
-Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
-  by orsmga004.jf.intel.com with ESMTP; 06 Jun 2018 23:50:54 -0700
-Received: from fmsmsx154.amr.corp.intel.com (10.18.116.70) by
- fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Wed, 6 Jun 2018 23:50:54 -0700
-Received: from shsmsx104.ccr.corp.intel.com (10.239.4.70) by
- FMSMSX154.amr.corp.intel.com (10.18.116.70) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Wed, 6 Jun 2018 23:50:53 -0700
-Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.82]) by
- SHSMSX104.ccr.corp.intel.com ([169.254.5.87]) with mapi id 14.03.0319.002;
- Thu, 7 Jun 2018 14:50:51 +0800
-From: "Kang, Luwei" <luwei.kang@intel.com>
-To: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "alexander.shishkin@linux.intel.com"
-        <alexander.shishkin@linux.intel.com>,
-        "hpa@zytor.com" <hpa@zytor.com>
-CC: "x86@kernel.org" <x86@kernel.org>,
-        "chao.p.peng@linux.intel.com" <chao.p.peng@linux.intel.com>,
-        "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
-        "bp@suse.de" <bp@suse.de>, "Liang, Kan" <kan.liang@intel.com>,
-        "Janakarajan.Natarajan@amd.com" <Janakarajan.Natarajan@amd.com>,
-        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "david@redhat.com" <david@redhat.com>,
-        "bsd@redhat.com" <bsd@redhat.com>,
-        "yu.c.zhang@linux.intel.com" <yu.c.zhang@linux.intel.com>,
-        "joro@8bytes.org" <joro@8bytes.org>
-Subject: RE: [PATCH v9 01/12] perf/x86/intel/pt: Move Intel-PT MSRs bit
- definitions to a public header
-Thread-Topic: [PATCH v9 01/12] perf/x86/intel/pt: Move Intel-PT MSRs bit
- definitions to a public header
-Thread-Index: AQHT8XiywMAZxFSpsEGuxZJAkMIGbaRUcLog
-Date: Thu, 7 Jun 2018 06:50:50 +0000
-Message-ID: <82D7661F83C1A047AF7DC287873BF1E167FE8E4B@SHSMSX101.ccr.corp.intel.com>
-References: <1526964735-16566-1-git-send-email-luwei.kang@intel.com>
- <1526964735-16566-2-git-send-email-luwei.kang@intel.com>
-In-Reply-To: <1526964735-16566-2-git-send-email-luwei.kang@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZGNiOTlmMWQtNmIyNS00MGMzLTg0YzktNjNkODczYzdjNTU5IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiWWJsanpvS1RpamhYb3lWcFJwcHNEVHlIRjFjcFwvMjhcL3BcLzhENFRiUFg0SmxXNjJHSUVMbWsxaEZwNTV2bWF3MCJ9
-dlp-product: dlpe-windows
-dlp-version: 11.0.200.100
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
+        id S932546AbeFKIwg (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 20 others); Mon, 11 Jun 2018 04:52:36 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:34196 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932288AbeFKIwf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 04:52:35 -0400
+Received: by mail-pg0-f66.google.com with SMTP id q4-v6so8361649pgr.1;
+        Mon, 11 Jun 2018 01:52:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=cmCEKRLCAHwV9KostSrIThoAzGLeQHJXtToj8bM7bsE=;
+        b=VOtKTTIiWpc2utmXPXLodkJUE0bQ7p8Erctgcl8mx7HWI9T79ovaJQIFJG+1Ld7+Dy
+         opNFZDKFb8NUqnRACQTHfGROnHqUn9wUoHcvImnov26TCAJdtk0iXZL/7ulYo7ckXM5C
+         FANNy1Fe/VRwsx7zJ1m+XexA7QIOd0CsrvjkYph9u3xn+LgA+esk9KBuOXite7ZdoIh4
+         asMD6S1TRStx26BqfG90HHGko9ZVUoGg704EyYi1GPMd0DJ6aRBpHbWAbRI7wrhnaB6A
+         /35yJSw8AbSwoyFXW8aZKZLw54QmoqMKES0oLmUFETWiesMLwe1oOVbCM6NgJK8+S9fV
+         fKvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=cmCEKRLCAHwV9KostSrIThoAzGLeQHJXtToj8bM7bsE=;
+        b=DdwxR+OhBvtSbN8ClQ9kyGGUsl0kpUKyi66TaN2sCTnCjJru9S+VKlKvhU70Vx5jyd
+         JWCFCmg5N/R3Ahl4AXgli7gm+AjQuZbeFygxtTKJIGJByIA8m8+QPLSkdsKeP2XJCR1m
+         QserZ2//8L92yK4uopMH3xFlh5ALf8abMXbtgfSJq+uJEP3XgKb8mqr2L4VRIad31wJg
+         aui0GQM2F+aYptiv3Ki3YTOicplVnC8GNXpBbmIJN6VMfyq2hV6i44zm3t3qV74O4/4f
+         TIpnjWmIMuzOGxJp+Q3RKW08l+prjSY2Elj0X9GM/pP6nslJJJXoGB1Ldylc+CdoOLPI
+         wH2g==
+X-Gm-Message-State: APt69E3BpbwbZoF/chJ8oH1H5+x6izLpAmzFECAH0eWs1GoCf7Dd5hph
+        ygc+WfeGEo2ckg1aPdkriac=
+X-Google-Smtp-Source: ADUXVKI8WCymay5ylCTnuU1YBqw7e1Xtjk/L3Gs2O+ytPWGdC5WyVtnaWGybDDrwp4CO91oNvf5K4Q==
+X-Received: by 2002:a63:7001:: with SMTP id l1-v6mr14340350pgc.358.1528707154644;
+        Mon, 11 Jun 2018 01:52:34 -0700 (PDT)
+Received: from localhost ([103.88.46.82])
+        by smtp.gmail.com with ESMTPSA id a14-v6sm29937731pgv.4.2018.06.11.01.52.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Jun 2018 01:52:34 -0700 (PDT)
+From: Zhouyang Jia <jiazhouyang09@gmail.com>
+Cc: Zhouyang Jia <jiazhouyang09@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] usb: storage: add error handling for kcalloc
+Date: Mon, 11 Jun 2018 16:52:26 +0800
+Message-Id: <1528707147-35623-1-git-send-email-jiazhouyang09@gmail.com>
+X-Mailer: git-send-email 2.7.4
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Kang, Luwei
-> Sent: Tuesday, May 22, 2018 12:52 PM
-> To: kvm@vger.kernel.org
-> Cc: tglx@linutronix.de; mingo@redhat.com; hpa@zytor.com; x86@kernel.org; chao.p.peng@linux.intel.com;
-> thomas.lendacky@amd.com; bp@suse.de; Liang, Kan <kan.liang@intel.com>; Janakarajan.Natarajan@amd.com;
-> dwmw@amazon.co.uk; linux-kernel@vger.kernel.org; alexander.shishkin@linux.intel.com; peterz@infradead.org;
-> mathieu.poirier@linaro.org; kstewart@linuxfoundation.org; gregkh@linuxfoundation.org; pbonzini@redhat.com;
-> rkrcmar@redhat.com; david@redhat.com; bsd@redhat.com; yu.c.zhang@linux.intel.com; joro@8bytes.org; Kang, Luwei
-> <luwei.kang@intel.com>
-> Subject: [PATCH v9 01/12] perf/x86/intel/pt: Move Intel-PT MSRs bit definitions to a public header
-> 
-> From: Chao Peng <chao.p.peng@linux.intel.com>
-> 
-> Intel Processor Trace virtualization enabling in KVM guest need to access these MSRs bit definitions, so move them to public header
-> file msr-index.h.
-> 
-> Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
-> Signed-off-by: Luwei Kang <luwei.kang@intel.com>
-> ---
->  arch/x86/events/intel/pt.h       | 37 -------------------------------------
->  arch/x86/include/asm/msr-index.h | 33 +++++++++++++++++++++++++++++++++
->  2 files changed, 33 insertions(+), 37 deletions(-)
-> 
-> diff --git a/arch/x86/events/intel/pt.h b/arch/x86/events/intel/pt.h index 0eb41d0..0050ca1 100644
-> --- a/arch/x86/events/intel/pt.h
-> +++ b/arch/x86/events/intel/pt.h
-> @@ -20,43 +20,6 @@
->  #define __INTEL_PT_H__
-> 
->  /*
-> - * PT MSR bit definitions
-> - */
-> -#define RTIT_CTL_TRACEEN		BIT(0)
-> -#define RTIT_CTL_CYCLEACC		BIT(1)
-> -#define RTIT_CTL_OS			BIT(2)
-> -#define RTIT_CTL_USR			BIT(3)
-> -#define RTIT_CTL_PWR_EVT_EN		BIT(4)
-> -#define RTIT_CTL_FUP_ON_PTW		BIT(5)
-> -#define RTIT_CTL_CR3EN			BIT(7)
-> -#define RTIT_CTL_TOPA			BIT(8)
-> -#define RTIT_CTL_MTC_EN			BIT(9)
-> -#define RTIT_CTL_TSC_EN			BIT(10)
-> -#define RTIT_CTL_DISRETC		BIT(11)
-> -#define RTIT_CTL_PTW_EN			BIT(12)
-> -#define RTIT_CTL_BRANCH_EN		BIT(13)
-> -#define RTIT_CTL_MTC_RANGE_OFFSET	14
-> -#define RTIT_CTL_MTC_RANGE		(0x0full << RTIT_CTL_MTC_RANGE_OFFSET)
-> -#define RTIT_CTL_CYC_THRESH_OFFSET	19
-> -#define RTIT_CTL_CYC_THRESH		(0x0full << RTIT_CTL_CYC_THRESH_OFFSET)
-> -#define RTIT_CTL_PSB_FREQ_OFFSET	24
-> -#define RTIT_CTL_PSB_FREQ      		(0x0full << RTIT_CTL_PSB_FREQ_OFFSET)
-> -#define RTIT_CTL_ADDR0_OFFSET		32
-> -#define RTIT_CTL_ADDR0      		(0x0full << RTIT_CTL_ADDR0_OFFSET)
-> -#define RTIT_CTL_ADDR1_OFFSET		36
-> -#define RTIT_CTL_ADDR1      		(0x0full << RTIT_CTL_ADDR1_OFFSET)
-> -#define RTIT_CTL_ADDR2_OFFSET		40
-> -#define RTIT_CTL_ADDR2      		(0x0full << RTIT_CTL_ADDR2_OFFSET)
-> -#define RTIT_CTL_ADDR3_OFFSET		44
-> -#define RTIT_CTL_ADDR3      		(0x0full << RTIT_CTL_ADDR3_OFFSET)
-> -#define RTIT_STATUS_FILTEREN		BIT(0)
-> -#define RTIT_STATUS_CONTEXTEN		BIT(1)
-> -#define RTIT_STATUS_TRIGGEREN		BIT(2)
-> -#define RTIT_STATUS_BUFFOVF		BIT(3)
-> -#define RTIT_STATUS_ERROR		BIT(4)
-> -#define RTIT_STATUS_STOPPED		BIT(5)
-> -
-> -/*
->   * Single-entry ToPA: when this close to region boundary, switch
->   * buffers to avoid losing data.
->   */
-> diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-> index 53d5b1b..afe4e13 100644
-> --- a/arch/x86/include/asm/msr-index.h
-> +++ b/arch/x86/include/asm/msr-index.h
-> @@ -106,7 +106,40 @@
->  #define MSR_PEBS_LD_LAT_THRESHOLD	0x000003f6
-> 
->  #define MSR_IA32_RTIT_CTL		0x00000570
-> +#define RTIT_CTL_TRACEEN		BIT(0)
-> +#define RTIT_CTL_CYCLEACC		BIT(1)
-> +#define RTIT_CTL_OS			BIT(2)
-> +#define RTIT_CTL_USR			BIT(3)
-> +#define RTIT_CTL_PWR_EVT_EN		BIT(4)
-> +#define RTIT_CTL_FUP_ON_PTW		BIT(5)
-> +#define RTIT_CTL_CR3EN			BIT(7)
-> +#define RTIT_CTL_TOPA			BIT(8)
-> +#define RTIT_CTL_MTC_EN			BIT(9)
-> +#define RTIT_CTL_TSC_EN			BIT(10)
-> +#define RTIT_CTL_DISRETC		BIT(11)
-> +#define RTIT_CTL_PTW_EN			BIT(12)
-> +#define RTIT_CTL_BRANCH_EN		BIT(13)
-> +#define RTIT_CTL_MTC_RANGE_OFFSET	14
-> +#define RTIT_CTL_MTC_RANGE		(0x0full << RTIT_CTL_MTC_RANGE_OFFSET)
-> +#define RTIT_CTL_CYC_THRESH_OFFSET	19
-> +#define RTIT_CTL_CYC_THRESH		(0x0full << RTIT_CTL_CYC_THRESH_OFFSET)
-> +#define RTIT_CTL_PSB_FREQ_OFFSET	24
-> +#define RTIT_CTL_PSB_FREQ		(0x0full << RTIT_CTL_PSB_FREQ_OFFSET)
-> +#define RTIT_CTL_ADDR0_OFFSET		32
-> +#define RTIT_CTL_ADDR0			(0x0full << RTIT_CTL_ADDR0_OFFSET)
-> +#define RTIT_CTL_ADDR1_OFFSET		36
-> +#define RTIT_CTL_ADDR1			(0x0full << RTIT_CTL_ADDR1_OFFSET)
-> +#define RTIT_CTL_ADDR2_OFFSET		40
-> +#define RTIT_CTL_ADDR2			(0x0full << RTIT_CTL_ADDR2_OFFSET)
-> +#define RTIT_CTL_ADDR3_OFFSET		44
-> +#define RTIT_CTL_ADDR3			(0x0full << RTIT_CTL_ADDR3_OFFSET)
->  #define MSR_IA32_RTIT_STATUS		0x00000571
-> +#define RTIT_STATUS_FILTEREN		BIT(0)
-> +#define RTIT_STATUS_CONTEXTEN		BIT(1)
-> +#define RTIT_STATUS_TRIGGEREN		BIT(2)
-> +#define RTIT_STATUS_BUFFOVF		BIT(3)
-> +#define RTIT_STATUS_ERROR		BIT(4)
-> +#define RTIT_STATUS_STOPPED		BIT(5)
->  #define MSR_IA32_RTIT_ADDR0_A		0x00000580
->  #define MSR_IA32_RTIT_ADDR0_B		0x00000581
->  #define MSR_IA32_RTIT_ADDR1_A		0x00000582
+When kcalloc fails, the lack of error-handling code may
+cause unexpected results.
 
-Hi,
-    Patch 1~5 have some code changes in x86 native for Intel Processor Trace virtualization enabling in KVM guest.
-    I have sent patch set v9 which include some minor changes from old version.
-    Do you have any comments?
+This patch adds error-handling code after calling kcalloc.
 
-Thanks,
-Luwei Kang
+Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+---
+ drivers/usb/storage/alauda.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/usb/storage/alauda.c b/drivers/usb/storage/alauda.c
+index 900591d..c56355c 100644
+--- a/drivers/usb/storage/alauda.c
++++ b/drivers/usb/storage/alauda.c
+@@ -437,6 +437,11 @@ static int alauda_init_media(struct us_data *us)
+ 		+ MEDIA_INFO(us).blockshift + MEDIA_INFO(us).pageshift);
+ 	MEDIA_INFO(us).pba_to_lba = kcalloc(num_zones, sizeof(u16*), GFP_NOIO);
+ 	MEDIA_INFO(us).lba_to_pba = kcalloc(num_zones, sizeof(u16*), GFP_NOIO);
++	if ((MEDIA_INFO(us).pba_to_lba == NULL)
++		|| (MEDIA_INFO(us).lba_to_pba == NULL)) {
++		pr_warn("alauda_init_media: memory allocation failed\n");
++		return USB_STOR_TRANSPORT_ERROR;
++	}
+ 
+ 	if (alauda_reset_media(us) != USB_STOR_XFER_GOOD)
+ 		return USB_STOR_TRANSPORT_ERROR;
+-- 
+2.7.4
