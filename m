@@ -1,155 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id DnwzKCYIHlt0EgAAmS7hNA
-	; Mon, 11 Jun 2018 05:27:21 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id hYPNEu5nHlsyHAAAmS7hNA
+	; Mon, 11 Jun 2018 12:20:25 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 441B6607A4; Mon, 11 Jun 2018 05:27:21 +0000 (UTC)
+	id 9E37A607E4; Mon, 11 Jun 2018 12:20:09 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="jc+PU7Kj"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="U/dpZocy"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_MED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 97F9960791;
-	Mon, 11 Jun 2018 05:27:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 97F9960791
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 1E3236074D;
+	Mon, 11 Jun 2018 12:20:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1E3236074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753952AbeFKF1S (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Mon, 11 Jun 2018 01:27:18 -0400
-Received: from relmlor3.renesas.com ([210.160.252.173]:63064 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932386AbeFKF1P (ORCPT
+        id S1754147AbeFKMUG (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 08:20:06 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:35101 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754010AbeFKMUE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 01:27:15 -0400
-Received: from unknown (HELO relmlir3.idc.renesas.com) ([10.200.68.153])
-  by relmlie2.idc.renesas.com with ESMTP; 11 Jun 2018 14:27:13 +0900
-Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
-        by relmlir3.idc.renesas.com (Postfix) with ESMTP id 92E4B731E6;
-        Mon, 11 Jun 2018 14:27:13 +0900 (JST)
-X-IronPort-AV: E=Sophos;i="5.49,500,1520866800";
-   d="scan'208";a="282164987"
-Received: from mail-ty1jpn01lp0180.outbound.protection.outlook.com (HELO JPN01-TY1-obe.outbound.protection.outlook.com) ([23.103.139.180])
-  by relmlii1.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 11 Jun 2018 14:27:13 +0900
+        Mon, 11 Jun 2018 08:20:04 -0400
+Received: by mail-it0-f65.google.com with SMTP id a3-v6so10631942itd.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 05:20:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hqS6e/BV4IEPgr+2Sbo+FrJNfNV91AhCYIXepBFZEV4=;
- b=jc+PU7KjEYXHnsOH1QlDVtJNvsvZ6wW0w29LE88sI7tsVff0s8pkrdc9hxXxMTrVENDq0OeuPP0e7IwbrdpBcMBP7LdQ/B8yEa8ynQ69+BmB6bXaLt9jR6JFenRQc5DV6DllxnziPpQ/EEn40K9Q9jhhmwJevdxJa/ps5YztUSc=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=kuninori.morimoto.gx@renesas.com;
-Received: from morimoto-PC.renesas.com (211.11.155.138) by
- OSAPR01MB2067.jpnprd01.prod.outlook.com (2603:1096:603:18::14) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.841.17; Mon, 11 Jun 2018 05:27:11 +0000
-Message-ID: <87tvq96gnm.wl-kuninori.morimoto.gx@renesas.com>
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Cc: Mark Brown <broonie@kernel.org>, <alsa-devel@alsa-project.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/3] ASoC: simple-card: move hp and mic detection to soc_card probe
-In-Reply-To: <20180611051559.18082-2-suzuki.katsuhiro@socionext.com>
-References: <20180611051559.18082-1-suzuki.katsuhiro@socionext.com>
-        <20180611051559.18082-2-suzuki.katsuhiro@socionext.com>
-User-Agent: Wanderlust/2.15.9 Emacs/25.2 Mule/6.0
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-Date: Mon, 11 Jun 2018 05:27:11 +0000
-X-Originating-IP: [211.11.155.138]
-X-ClientProxiedBy: TY2PR06CA0022.apcprd06.prod.outlook.com
- (2603:1096:404:42::34) To OSAPR01MB2067.jpnprd01.prod.outlook.com
- (2603:1096:603:18::14)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(48565401081)(2017052603328)(7153060)(7193020);SRVR:OSAPR01MB2067;
-X-Microsoft-Exchange-Diagnostics: 1;OSAPR01MB2067;3:U/pl68Z5l1fDq8PatYPLDQtKqjBEwSJxRCMHODSLY7tDu+yhyw1BQ86dDS62RIhrDyyULmGixmDL0qForQ5/laEBbJoCg15kT0zfmVNRbgOTya8OqSN1yk/Uu5yW9Y1s3NYD9BranycIXlCGh9XNCLShcg3HJBN4ZF6HZR7uoy6he+D2fZl0hZHkzoAekxZIZAi5EN+9p0fa7c7TkzATEvZJz16cm+4hh3KGCOuePf1zO9688T/ApqGBQMzlivIc;25:cs19sgj1mnfFxeIMEELodViR5Nl4zjMPkubR8CEKVd3yd6KEW+DamMthivLgJbJQxreQ6z8+40zvYYcllp4rNHQUwH9b2K2TfeOJSYcYgk4TL4dgiTHgw+dAaNGLl1NEAei0S8Fbgjslr9I6SAWAZ7diy6sNttQHxhbfG+lhuHLRw+tJQ1z9NbHQkldfDbQLuBHY8FXFSK2FYnzoChTLAcXWl63b+pE2bPZ6n2Fbk1uW2QGxlhxwSv2xn3+DCnmKKexXLIPBm0vqhur9snIHjjZLmWuTfPxu2CGMqZl/qwT4uhBeA4g403pOJkp7QHcN3nEPpOAsCMpCFwdlbhRG3w==;31:UE16JHefPuoJYRHEKi3B4kTbX+AUJf2i2cInffmcVe7RF29xiNcgpayWg76CaXyLyWs0sk+Qo6eAeyeLqpXT5gpu1I7ISegZq8doIN0veS3TJ2XLh1R+qrwygBTVzD2HKJwWHAzgRhQ2Ph9dAtZ2JzLn5AF+vfEH8RDKEEcAbc5SQlqeVexzEkNnz2j3fWl7A/DE1UkuqBw6jBdeoNjoBC/wGwTRQX1Z4xUG7wArg3I=
-X-MS-TrafficTypeDiagnostic: OSAPR01MB2067:
-X-Microsoft-Exchange-Diagnostics: 1;OSAPR01MB2067;20:iEN+UCXEiRqdj8MJrsPrrNIG2DsD9zTMjJhDgGe95RsaPX4FMVH4l59bhqI6kZGR6DfhlNWE5/P6C3AIloeFFK67xDenFDfrnLHjL+vHj6N3SCv8tVJm7rmZr7D1Hbeu4EwIfZRqWqjf8qg0H1dr9l2S+BhgdNH6SO4fSLhGeak2nRmqNhd8QSZZzIiegsKD9+t2D37byI4DKHNi/DsOBBP0KQwmJNWrdGvcq/VK8VdGhKimWBaPLY9bcboczIlF+1epKjDtWslIYDdIwKNYixy9IAS9kYrjpe6mi51sVP5YCQ4LTwnKLxSrFYu5lZ4Ddtn/XwyJNTt0mxGuG/QGQn/t7Rp2cCjO+PRi06t4H2CVPoHRcsaFtZIrwctd9/59/GPKA4tkBQs8f1sNZo8kmLiUY7XleLUAW13MlppS3TEnlVbSH1Wp00QCAWrGklYd3g+TJCs26bUTclQGRlCqCejm/rST2bs7EtaOOVIlZBzLscuABIkSJHNFCWKrE9R2;4:bHvPJt8olAnwjb+TKs2e3mBwsL4Is18D3n2nat5wV11Ni9sAUkKatUt803dI+S7+E5QG1pC/HXP1dW/yNEAEl/SNr/4ozfnLjmzS6Yak0ORMmC+61Aed5H5939iQm0CuGgGdUS9dP9EDaknB1Q0J9OOrZiJvjiHdYuD/GMQ8LeYB9kYamAjtwXtCkbrd3menMZb7X2H6Gn1VNTC3cA44d7+1ZViVcmHMnI/oECSMtybxZVH0noUANBWyEDJt7K6ziuj3XiQ9q89RzfxVkGiH8Q==
-X-Microsoft-Antispam-PRVS: <OSAPR01MB2067FEAAC108119D27E0BAECD4780@OSAPR01MB2067.jpnprd01.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(10201501046)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:OSAPR01MB2067;BCL:0;PCL:0;RULEID:;SRVR:OSAPR01MB2067;
-X-Forefront-PRVS: 070092A9D3
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(376002)(39860400002)(346002)(39380400002)(366004)(199004)(189003)(956004)(26005)(186003)(446003)(16526019)(76176011)(54906003)(52116002)(58126008)(4326008)(23726003)(105586002)(86362001)(7696005)(25786009)(97736004)(47776003)(66066001)(53416004)(36756003)(6486002)(386003)(16586007)(106356001)(316002)(11346002)(476003)(2616005)(486006)(8676002)(81166006)(81156014)(5660300001)(69596002)(68736007)(8936002)(478600001)(53936002)(6246003)(6916009)(50466002)(3846002)(305945005)(6116002)(2906002)(7736002)(229853002)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:OSAPR01MB2067;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;OSAPR01MB2067;23:oP20SYKRFxGSKd4xLaxymHsatB7HMDQ/ZdBQXJ3dH?=
- =?us-ascii?Q?M3IlbaIoTZYOGwjyWXFdCnNeCmdEc4SgnzVSjtEI0YEVyLe5SNmDT/vSuGxu?=
- =?us-ascii?Q?cWm+XUZhUZsQcB2Va0eMEb9D2a7D59QyzVYxBeDfeIjInZbaQyC26mi/anBB?=
- =?us-ascii?Q?w/s8dlQMkY0XcjVEgkItLmZwlnhE1tr+XXJYMnT3S24dRzdz0Dq1opFpAJ1p?=
- =?us-ascii?Q?QZGXFWCIZe5XOT7X32HDPRNztDXARf1OBv/JPM/YXEVSJakVLLHNdQ8KDTUw?=
- =?us-ascii?Q?LPpvU8rUwJGAfajiAGaePV5LWcYyuLmgJl2HEFjcjLjkzFS9oDTIxRi2Kwmm?=
- =?us-ascii?Q?VuKzUP91hjriaLKOGSqudm8FrQb8g9d212b+/cVQTJFEGlSiFFQKj1PNuENT?=
- =?us-ascii?Q?u441cXivRu2Q7NofReFSgY0RZ2pp/uTRZjo6osVxjv3KE0TDXnVGc6cyvGYU?=
- =?us-ascii?Q?aQBtdK+aDpqJiGiZbs0uaV77F6g3PLXx85sCnwxvai46d1J2FE1aJm5ytNw3?=
- =?us-ascii?Q?7RyyXHP8gPH0+b0C0sdg1BKaS/wbo1t6Kgdkks4WRKqDrqN/VfaTYWkSTPMI?=
- =?us-ascii?Q?mFrprreui2F0fi4G+zWbuLtsLZCReD5fCWOh/ZUgNq7SoHtm/b6UqsY6IQyd?=
- =?us-ascii?Q?+O09gI1kmu25PgadPwBD8DATigExecog6IeNL5o7ORMtHhTKzL8BJ+yOug+s?=
- =?us-ascii?Q?0wGsXbQGLkETvLr3/vNYDCKVV9qsy8XL9lYPqya317e4rUREfxDdz1osMWPq?=
- =?us-ascii?Q?OWCj/QvVHaYFEebmSc3WbGgU4auhBQaq+3jnMcwk5eK5RMJBFvQ8cjTaKMgh?=
- =?us-ascii?Q?37wly0nc9cCQHo2l0uk8v2v6pHxLaVNsiOg137SQ0Az5WcK7CyBnncdnYHK+?=
- =?us-ascii?Q?t3W9rDzbWMzp4JtBkk5sOsNbflT3Z+9unODHMXpDSP1WZA/HIkNZvzBN86Gp?=
- =?us-ascii?Q?ioTGjICrg99Al2O8GxLeNPC6S/OlpYPlT0WrGIDPzGcaGCO5jsIf8XWhYXke?=
- =?us-ascii?Q?9bRhGoeWcVZHiW+ZUc4t8krrn8U027E0IKeGoaXjD8wu08Jer5aa2q2iJv0f?=
- =?us-ascii?Q?mE6k4CTrT41WLqIHx1bf19fg5o+7x3TJPIN0slRkvF5EVaPu7L4gWH3VNGuJ?=
- =?us-ascii?Q?S+TaFmIF22N3XBzoqtcDUwZ/hsJsTl/YCC/cFSyY+HJ1d/yhUiQ+XSj/j06s?=
- =?us-ascii?Q?peFPmJln+k/QE5v3vmrM4JyPN1F2rsiKv0xmIxyaCaJHRLoVxkoYqYo4TCCb?=
- =?us-ascii?Q?aRv5LoOA8O6t3eT9uY=3D?=
-X-Microsoft-Antispam-Message-Info: tMvN8Nl8pR+AHGHHM6UZOLy3r6f27DSxKc2nFqfh0Ypa9hhDgja5sN3D9P8vXb4b7KmRimPB+56Huzlo8PGgtFJsWWf+SSQcHx2+pKJMX8FyNh6xJQLhPmb/ZXKq+55k75R66h6567juJwDPfkFqbFCgH2rX7pQ4I12tvHTCqxKu9CRrCy09IxTLC9xpTH9i
-X-Microsoft-Exchange-Diagnostics: 1;OSAPR01MB2067;6:hHG5Yn5nf6NeL6g5Ue+b/EzaDjzIjblZ4jUjlvbO3722n6zcA9HUIpN47wHGxWoRbbN6lNUagnD8HxLQagFEit7zif/TsWl2W4+cbmKS/eIqR6SxbhK+l611LmwHiugMN6nHdioEvCWKUFMLbmY0xMJUWYOVyCfoGnNjY/mqlJzNAJXBKKMQKe54tqSVlTRpYXu9zD8y+2HcPU6/UI5rPQzhEJr3+Vg2RYvWa1uxgMCvcAOFMzf3yZrO589JbVJiEEd1CR3mEcLUdwCbdA68ZaCY/YfaspmxTX4GCrMdUXz4FJdZb1YQDfxe7euaSiOccVHU0hquOlSYFf692tPKbXtf/6h+e5pQGxmeFLVeo/fRHfGDeD/oYJozQ/bNJIPGgVGWDL1tEn08Wdnd5VxgF1KvKlRpfiKyGOMl5m83ZTMZlOGPrdNHXENZe6stoV4ZL/uhHbLCbFRT8WuXRD+mcg==;5:lL6T0Q2329nD4umdPwqA9H6qsfAuGh0sxH7ycw4b02or71dFYuZ9t1xEHRrUVkOWkDPZjc45KkGhmxEVc3vbkw2pn6ocUGwJ5NiTHpdgXG/hv7qCSVgcyIacScN6hBe9mYCl7P89o8lrCHdH/rEparziB9bxyPLGKmvScX0rud4=;24:3azuQZx6+4aDri8o5caVH/J6s0w4vBT2L8nG3/QNc9iNcv5/CcgMEHJvc8RnjX6aaAu/PQxLBVHVXc7z+OW4NK3RrQpL2BduWDQli/kgDEc=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;OSAPR01MB2067;7:MFKzHkwII2cZUX0a9rzWbydplFRWe9Sgalnk3eoYh9XebO4HpAmZQdoN8avuxmrHk1EMKfnHrYufA/NNhd4TXAQi6VirpCiX13igkl+mhWkjhecYj8MeAcWbrYz3Cu8trm8dVFnGITvSBuN4pECPabvjZKlD7VEWG06W4Gc0nfmQy+U6dDWQGtQiNJjhGSrVzmiarPdOmYy0sHkd1Ejdtm7u4yBrdeAR7HMaJojCTnH/rJu6C+izaHateYBUmTUP;20:maWgRdAyfS3Rsk0kugRvLybR1bYF0SbI9wzl4rOCDPDPcdxtB3jlyyv46aNkAkQi28zKrFrUNvPvR0fDhEXrnvsNu9h8qQene2lZHFW38kmGNkLgeOCZ991HT9jhz/u7efI+XJkfZ+Lfv56LBhCoYgcatp8wKKrhv3YTvyyL/kI=
-X-MS-Office365-Filtering-Correlation-Id: f90f6573-9ce8-4f36-a4b6-08d5cf5bfbb5
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2018 05:27:11.2960 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f90f6573-9ce8-4f36-a4b6-08d5cf5bfbb5
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB2067
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=XXE/ppThYU9iATRRsXWBtMgzDBecQQvCw1cKEFfzQes=;
+        b=U/dpZocykHdK/Pc03+YX0qJWeVGAlsXd/t23k8MIT94cAA/3liDX+z4JMGQmrJ7tlm
+         So/j+IiIUNBioT1WRKq2/tkKmsk76WfiX27IDyy75Xdl020GIp5if3ml0xJgKoVJ8Mgl
+         JlY8zVIXwUq5cI6lRm/GDT59rBMr5Y/vJSLok=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=XXE/ppThYU9iATRRsXWBtMgzDBecQQvCw1cKEFfzQes=;
+        b=W04UR+1dlnT0bXhE9f7CfT8Rbvx2PcCV5xXPBGP3mvlYboF+Fpwiave2fyskajK7PY
+         mXYWjZ/Qhf8pTrQ+kKbdz+pjFfq+NSx83h6auhYf1ywjtwmqJoAM/PjeWEwc8bsM9RK/
+         7/MRMAMTKZeqyYWiwNa4N//yw39ScPdVjZWtbi8xqoD/qv5mPTai02ullZLYF2054qIs
+         iVy926L3fft5Pfy5ZpRBIc8vt4onLfPa24LHtcgQ3fng+ioBBYl30+Bws81TQvVYfB9W
+         MyKKjqM0inKQyJPF2J6yLP5M/z/dfaw4ofLPFhUYLB7Cv2FgwPZAJbSvrwNdH33Wg5JL
+         +gXQ==
+X-Gm-Message-State: APt69E2q39cIvvz9PQSBo1xKWC87gO8SjTw08CYpODKZUNcGDizqC+eG
+        2sjL8MkGSvs9HxYE6aNm/nP6fZUkZ7L0XFoTZc+lhw==
+X-Google-Smtp-Source: ADUXVKJEFk1dSEV6f5wTAuGygDR9L+5U4waVc02daAYa7iiSbxvsNtMvQvDKL/Oa+I2EsWqRtuAKMePpLd1yyzAIEYs=
+X-Received: by 2002:a24:91d3:: with SMTP id i202-v6mr10734136ite.97.1528719604072;
+ Mon, 11 Jun 2018 05:20:04 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a02:c054:0:0:0:0:0 with HTTP; Mon, 11 Jun 2018 05:20:03
+ -0700 (PDT)
+In-Reply-To: <1527590335-171787-1-git-send-email-xiaqing17@hisilicon.com>
+References: <1527590335-171787-1-git-send-email-xiaqing17@hisilicon.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 11 Jun 2018 14:20:03 +0200
+Message-ID: <CAPDyKFo7FP5bL8doK3P749Rcyzh_H-3SzG+GZVJb2pp9j_ZH_A@mail.gmail.com>
+Subject: Re: [PATCH] mmc: dw_mmc: fix card threshold control configuration
+To: Shawn Lin <shawn.lin@rock-chips.com>,
+        Evgeniy Didin <Evgeniy.Didin@synopsys.com>,
+        Doug Anderson <dianders@chromium.org>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>,
+        Qing Xia <xiaqing17@hisilicon.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
++ Shawn Lin, Evgeniy Didin, Doug Andersson
 
-Hi Katsuhiro-san
+On 29 May 2018 at 12:38, Qing Xia <xiaqing17@hisilicon.com> wrote:
+> From: x00270170 <xiaqing17@hisilicon.com>
+>
+> Card write threshold control is supposed to be set since controller
+> version 2.80a for data write in HS400 mode and data read in
+> HS200/HS400/SDR104 mode. However the current code returns without
+> configuring it in the case of data writing in HS400 mode.
+> Meanwhile the patch fixes that the current code goes to
+> 'disable' when doing data reading in HS400 mode.
+>
+> Signed-off-by: Qing Xia <xiaqing17@hisilicon.com>
 
-> This patch moves headphone and microphone detection to probe() of
-> snd_soc_card from init() of snd_soc_dai_link. This is because init()
-> is called (and an input device /dev/input/eventX is created too)
-> twice or above if simple card has two or more DAI links.
-> 
-> Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+This looks good to me. However, it seems like Jaehoon has been busy,
+no response yet.
 
-or above ?
+I have looped in a few more people to see if they thinks this makes sense.
 
-> -	ret = asoc_simple_card_init_hp(rtd->card, &priv->hp_jack, PREFIX);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	ret = asoc_simple_card_init_mic(rtd->card, &priv->mic_jack, PREFIX);
-> -	if (ret < 0)
-> -		return ret;
-(snip)
-> +	ret = asoc_simple_card_init_hp(card, &priv->hp_jack, NULL);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = asoc_simple_card_init_mic(card, &priv->mic_jack, NULL);
-> +	if (ret < 0)
-> +		return ret;
+Kind regards
+Uffe
 
-I think we want to keep "PREFIX" ?
-
-
-Best regards
----
-Kuninori Morimoto
+> ---
+>  drivers/mmc/host/dw_mmc.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+> index 29a1afa..3ee8f57 100644
+> --- a/drivers/mmc/host/dw_mmc.c
+> +++ b/drivers/mmc/host/dw_mmc.c
+> @@ -1065,8 +1065,8 @@ static void dw_mci_ctrl_thld(struct dw_mci *host, struct mmc_data *data)
+>          * It's used when HS400 mode is enabled.
+>          */
+>         if (data->flags & MMC_DATA_WRITE &&
+> -               !(host->timing != MMC_TIMING_MMC_HS400))
+> -               return;
+> +               host->timing != MMC_TIMING_MMC_HS400)
+> +               goto disable;
+>
+>         if (data->flags & MMC_DATA_WRITE)
+>                 enable = SDMMC_CARD_WR_THR_EN;
+> @@ -1074,7 +1074,8 @@ static void dw_mci_ctrl_thld(struct dw_mci *host, struct mmc_data *data)
+>                 enable = SDMMC_CARD_RD_THR_EN;
+>
+>         if (host->timing != MMC_TIMING_MMC_HS200 &&
+> -           host->timing != MMC_TIMING_UHS_SDR104)
+> +           host->timing != MMC_TIMING_UHS_SDR104 &&
+> +           host->timing != MMC_TIMING_MMC_HS400)
+>                 goto disable;
+>
+>         blksz_depth = blksz / (1 << host->data_shift);
+> --
+> 2.8.1
+>
