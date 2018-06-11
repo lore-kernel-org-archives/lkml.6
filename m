@@ -1,84 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Nnx+MlJIGVtPRwAAmS7hNA
-	; Thu, 07 Jun 2018 14:59:47 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id T/JzMjcFHltMcwAAmS7hNA
+	; Mon, 11 Jun 2018 05:16:18 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 313C3608BA; Thu,  7 Jun 2018 14:59:47 +0000 (UTC)
+	id C04E9607A4; Mon, 11 Jun 2018 05:16:18 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id C3162601C3;
-	Thu,  7 Jun 2018 14:59:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C3162601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 4EC83605A5;
+	Mon, 11 Jun 2018 05:16:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4EC83605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935741AbeFGO7p (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:59:45 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:33475 "EHLO
-        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S935721AbeFGO7m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:59:42 -0400
-Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id w57EwNmR019457;
-        Thu, 7 Jun 2018 17:58:24 +0300
-Received: by taln60.nuvoton.co.il (Postfix, from userid 8441)
-        id 9F2DE62FF0; Thu,  7 Jun 2018 17:58:23 +0300 (IDT)
-From: avifishman70@gmail.com
-To: gregkh@linuxfoundation.org, stern@rowland.harvard.edu
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, venture@google.com,
-        yuenn@google.com, brendanhiggins@google.com,
-        mathias.nyman@linux.intel.com, bjorn.andersson@linaro.org,
-        jhogan@kernel.org, albeu@free.fr, chunfeng.yun@mediatek.com,
-        tony@atomide.com, baolu.lu@linux.intel.com, elder@linaro.org,
-        digetx@gmail.com, kstewart@linuxfoundation.org,
-        hdegoede@redhat.com, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, openbmc@lists.ozlabs.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, Avi Fishman <AviFishman70@gmail.com>
-Subject: [PATCH v4 0/3] USB host: Add USB ehci support for nuvoton npcm7xx
-Date: Thu,  7 Jun 2018 17:58:18 +0300
-Message-Id: <20180607145821.322979-1-avifishman70@gmail.com>
-X-Mailer: git-send-email 2.14.1
+        id S1753972AbeFKFQE (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 01:16:04 -0400
+Received: from mx.socionext.com ([202.248.49.38]:19719 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753902AbeFKFQD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 01:16:03 -0400
+Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 11 Jun 2018 14:16:01 +0900
+Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 2FEE4180B83;
+        Mon, 11 Jun 2018 14:16:02 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Mon, 11 Jun 2018 14:16:02 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by iyokan.css.socionext.com (Postfix) with ESMTP id F147640389;
+        Mon, 11 Jun 2018 14:16:01 +0900 (JST)
+Received: from aegis.e01.socionext.com (unknown [10.213.134.210])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id C6354120139;
+        Mon, 11 Jun 2018 14:16:01 +0900 (JST)
+From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org
+Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Subject: [PATCH v2 3/3] ASoC: audio-graph-card: add hp and mic detect gpios same as simple-card
+Date: Mon, 11 Jun 2018 14:15:59 +0900
+Message-Id: <20180611051559.18082-3-suzuki.katsuhiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180611051559.18082-1-suzuki.katsuhiro@socionext.com>
+References: <20180611051559.18082-1-suzuki.katsuhiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Avi Fishman <AviFishman70@gmail.com>
+This patch adds headphone and microphone jack detection gpios as same
+as simple-card driver.
 
-Changes since version 3:
-- Follow Rob Herring comments to change dt-bindings commit subject
+Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
 
-Changes since version 2:
-- Follow Sergei Shtylyov comments to rename the node name in in device tree 
-  documentation
+---
 
-Changes since version 1:
-- Follow Rob Herring comments in device tree documentation
-- minor log error fix in ehci-npcm7xx.c
-   
-This patch adds support for ehci controller for the Nuvoton npcm7xx platform.
-Most of the code was taken from ehci-spear.c + specific initialization code
+Changes from v1:
+  - Move changes of audio-graph-card to other patch
+---
+ sound/soc/generic/audio-graph-card.c | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
-Avi Fishman (3):
-  USB host: Add USB ehci support for nuvoton npcm7xx platform
-  dt-bindings: usb: new ehci-npcm7xx dt
-  MAINTAINERS: add subfolders for nuvoton *npcm*
-
- .../devicetree/bindings/usb/npcm7xx-usb.txt        |  17 ++
- MAINTAINERS                                        |   3 +
- drivers/usb/host/Kconfig                           |   8 +
- drivers/usb/host/Makefile                          |   1 +
- drivers/usb/host/ehci-npcm7xx.c                    | 212 +++++++++++++++++++++
- 5 files changed, 241 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/usb/npcm7xx-usb.txt
- create mode 100644 drivers/usb/host/ehci-npcm7xx.c
-
+diff --git a/sound/soc/generic/audio-graph-card.c b/sound/soc/generic/audio-graph-card.c
+index 1b6164249341..2baa60d3b3cc 100644
+--- a/sound/soc/generic/audio-graph-card.c
++++ b/sound/soc/generic/audio-graph-card.c
+@@ -21,7 +21,6 @@
+ #include <linux/of_graph.h>
+ #include <linux/platform_device.h>
+ #include <linux/string.h>
+-#include <sound/jack.h>
+ #include <sound/simple_card_utils.h>
+ 
+ struct graph_card_data {
+@@ -32,6 +31,8 @@ struct graph_card_data {
+ 		unsigned int mclk_fs;
+ 	} *dai_props;
+ 	unsigned int mclk_fs;
++	struct asoc_simple_jack hp_jack;
++	struct asoc_simple_jack mic_jack;
+ 	struct snd_soc_dai_link *dai_link;
+ 	struct gpio_desc *pa_gpio;
+ };
+@@ -278,6 +279,22 @@ static int asoc_graph_get_dais_count(struct device *dev)
+ 	return count;
+ }
+ 
++static int asoc_graph_soc_card_probe(struct snd_soc_card *card)
++{
++	struct graph_card_data *priv = snd_soc_card_get_drvdata(card);
++	int ret;
++
++	ret = asoc_simple_card_init_hp(card, &priv->hp_jack, NULL);
++	if (ret < 0)
++		return ret;
++
++	ret = asoc_simple_card_init_mic(card, &priv->mic_jack, NULL);
++	if (ret < 0)
++		return ret;
++
++	return 0;
++}
++
+ static int asoc_graph_card_probe(struct platform_device *pdev)
+ {
+ 	struct graph_card_data *priv;
+@@ -319,6 +336,7 @@ static int asoc_graph_card_probe(struct platform_device *pdev)
+ 	card->num_links	= num;
+ 	card->dapm_widgets = asoc_graph_card_dapm_widgets;
+ 	card->num_dapm_widgets = ARRAY_SIZE(asoc_graph_card_dapm_widgets);
++	card->probe	= asoc_graph_soc_card_probe;
+ 
+ 	ret = asoc_graph_card_parse_of(priv);
+ 	if (ret < 0) {
 -- 
-2.14.1
+2.17.1
