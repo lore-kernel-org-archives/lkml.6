@@ -1,279 +1,277 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id s2LUN+0FG1uWOQAAmS7hNA
-	; Fri, 08 Jun 2018 22:41:11 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id eshkOcecHlvcawAAmS7hNA
+	; Mon, 11 Jun 2018 16:01:11 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id E5694607DC; Fri,  8 Jun 2018 22:41:10 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="m2yy1kvP"
+	id D8D2B607A4; Mon, 11 Jun 2018 16:01:11 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 16C38601B4;
-	Fri,  8 Jun 2018 22:41:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 16C38601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id CBE546074D;
+	Mon, 11 Jun 2018 16:01:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CBE546074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753179AbeFHWlF (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 18:41:05 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:44301 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753140AbeFHWlC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 18:41:02 -0400
-Received: by mail-pg0-f68.google.com with SMTP id p21-v6so7008737pgd.11
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 15:41:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=+69TXg+Wsvl5slpBB6Z/uUH/Ghx+qEPNqIf1Y39kTO4=;
-        b=m2yy1kvPnNf71aosiEzOYrHf156mNqDunGxQp5vwypmyLi7nW05QTIxIhY/zggyyVp
-         VFOgGOmJSlyuySNJLKGAA8DFZe5v4ejlo5L2o7kO5fjw0xW3qm2f74op6XjPO5TPu44T
-         i5soAlW3Y/esoQqnGCx6MMpG9le59Kygerpak=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=+69TXg+Wsvl5slpBB6Z/uUH/Ghx+qEPNqIf1Y39kTO4=;
-        b=nJUrKTuox8OD5WdGy2frGNBdh9K6NWxzROnHhXoGVQT6mGuB2Ulwq3zMytSt/Q718S
-         R7hP6j9s/DK0k67o6AkVTroT8tgdkFuMzX33A7BgzhfB/7ys4Db5f0y4yDXltR2IxHQ3
-         v2yDmTkMPhpgOuz5rjQPnS3yoUkMJD2I8ZZoHBaT12SMF10EzignLXpGgeCSvHGm3IGN
-         ThbayMXm345GcgbwBsq9GlGFKYaNdiWCLwzuLjMDIVXDWXkiRFW5JuNhlNaIA1FX7SRD
-         VJ8m9FgbWZpBIs22GlvCCuSY686xNS27A+RzaYDUEI4bp+OVqWKflssumjg6a6ojlCD+
-         YeYQ==
-X-Gm-Message-State: APt69E2oR9r39rgpdhKc547atO/B+/xZH/iCr8rhrWEdPp4HoF9rGTbh
-        o+KksMRpVDf2wVxyIpOsPVM8gmJmmx8=
-X-Google-Smtp-Source: ADUXVKI2G2PRhC9pnGvUCDJ38Oj6RhS/SMZyA5YeWCRnySCMP64mO6pjxQDQZA5l9NsmL3wY4mbBVg==
-X-Received: by 2002:a62:119d:: with SMTP id 29-v6mr7841815pfr.102.1528497662080;
-        Fri, 08 Jun 2018 15:41:02 -0700 (PDT)
-Received: from ban.mtv.corp.google.com ([2620:0:1000:1501:bc2f:3082:9938:5d41])
-        by smtp.gmail.com with ESMTPSA id g4-v6sm61164550pfg.38.2018.06.08.15.41.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Jun 2018 15:41:00 -0700 (PDT)
-From: Brian Norris <briannorris@chromium.org>
-To: Sebastian Reichel <sre@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        Rhyland Klein <rklein@nvidia.com>,
-        Alexandru Stan <amstan@chromium.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Doug Anderson <dianders@chromium.org>,
-        Phil Reid <preid@electromag.com.au>,
-        Brian Norris <briannorris@chromium.org>
-Subject: [PATCH v4 1/2] power: supply: sbs-battery: don't assume MANUFACTURER_DATA formats
-Date: Fri,  8 Jun 2018 15:36:54 -0700
-Message-Id: <20180608223655.33565-1-briannorris@chromium.org>
-X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a-goog
+        id S932467AbeFKQBJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 20 others); Mon, 11 Jun 2018 12:01:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35202 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932081AbeFKQBG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 12:01:06 -0400
+Received: from vmware.local.home (ppp-93-104-177-77.dynamic.mnet-online.de [93.104.177.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A42320853;
+        Mon, 11 Jun 2018 16:01:01 +0000 (UTC)
+Date: Mon, 11 Jun 2018 12:00:57 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: kbuild test robot <lkp@intel.com>
+Cc: changbin.du@intel.com, kbuild-all@01.org, mingo@redhat.com,
+        akpm@linux-foundation.org, yamada.masahiro@socionext.com,
+        michal.lkml@markovi.net, tglx@linutronix.de, rdunlap@infradead.org,
+        x86@kernel.org, linux@armlinux.org.uk, lgirdwood@gmail.com,
+        broonie@kernel.org, arnd@arndb.de, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sparse@vger.kernel.org,
+        changbin.du@gmail.com
+Subject: Re: [PATCH v5 4/4] kernel hacking: new config
+ CC_OPTIMIZE_FOR_DEBUGGING to apply GCC -Og optimization
+Message-ID: <20180611120057.5391dfc6@vmware.local.home>
+In-Reply-To: <201806101929.E2oiistg%fengguang.wu@intel.com>
+References: <1528186420-6615-5-git-send-email-changbin.du@intel.com>
+        <201806101929.E2oiistg%fengguang.wu@intel.com>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This driver was originally submitted for the TI BQ20Z75 battery IC
-(commit a7640bfa10c5 ("power_supply: Add driver for TI BQ20Z75 gas gauge
-IC")) and later renamed to express generic SBS support. While it's
-mostly true that this driver implemented a standard SBS command set, it
-takes liberties with the REG_MANUFACTURER_DATA register. This register
-is specified in the SBS spec, but it doesn't make any mention of what
-its actual contents are.
+On Sun, 10 Jun 2018 23:49:55 +0800
+kbuild test robot <lkp@intel.com> wrote:
 
-We've sort of noticed this optionality previously, with commit
-17c6d3979e5b ("sbs-battery: make writes to ManufacturerAccess
-optional"), where we found that some batteries NAK writes to this
-register.
+> Hi Changbin,
+> 
+> Thank you for the patch! Perhaps something to improve:
+> 
+> [auto build test WARNING on linus/master]
+> [also build test WARNING on v4.17 next-20180608]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> 
+> url:    https://github.com/0day-ci/linux/commits/changbin-du-intel-com/kernel-hacking-GCC-optimization-for-better-debug-experience-Og/20180606-001415
+> config: i386-randconfig-x076-06101602 (attached as .config)
+> compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=i386 
+> 
+> Note: it may well be a FALSE warning. FWIW you are at least aware of it now.
+> http://gcc.gnu.org/wiki/Better_Uninitialized_Warnings
+> 
+> All warnings (new ones prefixed by >>):
+> 
+>    drivers//usb/typec/fusb302/fusb302.c: In function 'fusb302_handle_togdone_src':
+> >> drivers//usb/typec/fusb302/fusb302.c:1413:10: warning: 'ra_comp' may be used uninitialized in this function [-Wmaybe-uninitialized]  
+>      else if (ra_comp)
+>              ^
 
-What this really means is that so far, we've just been lucky that most
-batteries have either been compatible with the TI chip, or else at least
-haven't reported highly-unexpected values.
+This is a false warning. I'm surprised gcc couldn't catch it. Although
+that code looks like it could have been  done a bit nicer.
 
-For instance, one battery I have here seems to report either 0x0000 or
-0x0100 to the MANUFACTURER_ACCESS_STATUS command -- while this seems to
-match either Wake Up (bits[11:8] = 0000b) or Normal Discharge
-(bits[11:8] = 0001b) status for the TI part [1], they don't seem to
-actually correspond to real states (for instance, I never see 0101b =
-Charge, even when charging).
 
-On other batteries, I'm getting apparently random data in return, which
-means that occasionally, we interpret this as "battery not present" or
-"battery is not healthy".
+> --
+>    drivers/infiniband/ulp/ipoib/ipoib_main.c: In function 'ipoib_get_netdev':
+> >> drivers/infiniband/ulp/ipoib/ipoib_main.c:2021:30: warning: 'dev' may be used uninitialized in this function [-Wmaybe-uninitialized]  
+>      if (!hca->alloc_rdma_netdev || PTR_ERR(dev) == -EOPNOTSUPP)
+> --
 
-All in all, it seems to be a really bad idea to make assumptions about
-REG_MANUFACTURER_DATA, unless we already know what battery we're using.
-Therefore, this patch reimplements the "present" and "health" checks to
-the following on most SBS batteries:
+Strange, this is also false, with the same construct.
 
-1. HEALTH: report "unknown" -- I couldn't find a standard SBS command
-   that gives us much useful here
-2. PRESENT: just send a REG_STATUS command; if it succeeds, then the
-   battery is present
+	if (a) {
+		b = init;
+	}
+	if (!a) {
+		use b;
 
-Also, we stop sending MANUFACTURER_ACCESS_SLEEP to non-TI parts. I have
-no proof that this is useful and supported.
+It warns that b may be unused. I'm guessing the extra option we add in
+gcc by the patch causes gcc to break in this regard.
 
-If someone explicitly provided a 'ti,bq20z75' compatible property, then
-we continue to use the existing TI command behaviors, and we effectively
-revert commit 17c6d3979e5b ("sbs-battery: make writes to
-ManufacturerAccess optional") to again make these commands required.
 
-[1] http://www.ti.com/lit/er/sluu265a/sluu265a.pdf
 
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Acked-by: Rhyland Klein <rklein@nvidia.com>
----
-v2:
- * don't stub out POWER_SUPPLY_PROP_PRESENT from sbs_data[]
- * use if/else instead of switch/case
+>    kernel//cgroup/cgroup-v1.c: In function 'cgroup1_mount':
+> >> kernel//cgroup/cgroup-v1.c:1268:3: warning: 'root' may be used uninitialized in this function [-Wmaybe-uninitialized]  
+>       percpu_ref_reinit(&root->cgrp.self.refcnt);
+>       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> --
 
-v3:
- * pull 'return 0' out of if/else, to satisfy braindead tooling
+Slightly different construct, but similar:
 
-v4:
- * make ManufacturerAccess non-optional for TI parts again
----
- drivers/power/supply/sbs-battery.c | 67 ++++++++++++++++++++++++------
- 1 file changed, 54 insertions(+), 13 deletions(-)
+	ret = func();
+	if (ret)
+		goto out_unlock;
 
-diff --git a/drivers/power/supply/sbs-battery.c b/drivers/power/supply/sbs-battery.c
-index 83d7b4115857..8ba6abf584de 100644
---- a/drivers/power/supply/sbs-battery.c
-+++ b/drivers/power/supply/sbs-battery.c
-@@ -23,6 +23,7 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/of_device.h>
- #include <linux/power/sbs-battery.h>
- #include <linux/power_supply.h>
- #include <linux/slab.h>
-@@ -156,6 +157,9 @@ static enum power_supply_property sbs_properties[] = {
- 	POWER_SUPPLY_PROP_MODEL_NAME
- };
- 
-+/* Supports special manufacturer commands from TI BQ20Z75 IC. */
-+#define SBS_FLAGS_TI_BQ20Z75		BIT(0)
-+
- struct sbs_info {
- 	struct i2c_client		*client;
- 	struct power_supply		*power_supply;
-@@ -168,6 +172,7 @@ struct sbs_info {
- 	u32				poll_retry_count;
- 	struct delayed_work		work;
- 	struct mutex			mode_lock;
-+	u32				flags;
- };
- 
- static char model_name[I2C_SMBUS_BLOCK_MAX + 1];
-@@ -315,17 +320,41 @@ static int sbs_status_correct(struct i2c_client *client, int *intval)
- static int sbs_get_battery_presence_and_health(
- 	struct i2c_client *client, enum power_supply_property psp,
- 	union power_supply_propval *val)
-+{
-+	int ret;
-+
-+	if (psp == POWER_SUPPLY_PROP_PRESENT) {
-+		/* Dummy command; if it succeeds, battery is present. */
-+		ret = sbs_read_word_data(client, sbs_data[REG_STATUS].addr);
-+		if (ret < 0)
-+			val->intval = 0; /* battery disconnected */
-+		else
-+			val->intval = 1; /* battery present */
-+	} else { /* POWER_SUPPLY_PROP_HEALTH */
-+		/* SBS spec doesn't have a general health command. */
-+		val->intval = POWER_SUPPLY_HEALTH_UNKNOWN;
-+	}
-+
-+	return 0;
-+}
-+
-+static int sbs_get_ti_battery_presence_and_health(
-+	struct i2c_client *client, enum power_supply_property psp,
-+	union power_supply_propval *val)
- {
- 	s32 ret;
- 
- 	/*
- 	 * Write to ManufacturerAccess with ManufacturerAccess command
--	 * and then read the status. Do not check for error on the write
--	 * since not all batteries implement write access to this command,
--	 * while others mandate it.
-+	 * and then read the status.
- 	 */
--	sbs_write_word_data(client, sbs_data[REG_MANUFACTURER_DATA].addr,
--			    MANUFACTURER_ACCESS_STATUS);
-+	ret = sbs_write_word_data(client, sbs_data[REG_MANUFACTURER_DATA].addr,
-+				  MANUFACTURER_ACCESS_STATUS);
-+	if (ret < 0) {
-+		if (psp == POWER_SUPPLY_PROP_PRESENT)
-+			val->intval = 0; /* battery removed */
-+		return ret;
-+	}
- 
- 	ret = sbs_read_word_data(client, sbs_data[REG_MANUFACTURER_DATA].addr);
- 	if (ret < 0) {
-@@ -600,7 +629,12 @@ static int sbs_get_property(struct power_supply *psy,
- 	switch (psp) {
- 	case POWER_SUPPLY_PROP_PRESENT:
- 	case POWER_SUPPLY_PROP_HEALTH:
--		ret = sbs_get_battery_presence_and_health(client, psp, val);
-+		if (client->flags & SBS_FLAGS_TI_BQ20Z75)
-+			ret = sbs_get_ti_battery_presence_and_health(client,
-+								     psp, val);
-+		else
-+			ret = sbs_get_battery_presence_and_health(client, psp,
-+								  val);
- 		if (psp == POWER_SUPPLY_PROP_PRESENT)
- 			return 0;
- 		break;
-@@ -806,6 +840,7 @@ static int sbs_probe(struct i2c_client *client,
- 	if (!chip)
- 		return -ENOMEM;
- 
-+	chip->flags = (u32)(uintptr_t)of_device_get_match_data(&client->dev);
- 	chip->client = client;
- 	chip->enable_detection = false;
- 	psy_cfg.of_node = client->dev.of_node;
-@@ -911,16 +946,19 @@ static int sbs_suspend(struct device *dev)
- {
- 	struct i2c_client *client = to_i2c_client(dev);
- 	struct sbs_info *chip = i2c_get_clientdata(client);
-+	int ret;
- 
- 	if (chip->poll_time > 0)
- 		cancel_delayed_work_sync(&chip->work);
- 
--	/*
--	 * Write to manufacturer access with sleep command.
--	 * Support is manufacturer dependend, so ignore errors.
--	 */
--	sbs_write_word_data(client, sbs_data[REG_MANUFACTURER_DATA].addr,
--		MANUFACTURER_ACCESS_SLEEP);
-+	if (chip->flags & SBS_FLAGS_TI_BQ20Z75) {
-+		/* Write to manufacturer access with sleep command. */
-+		ret = sbs_write_word_data(client,
-+					  sbs_data[REG_MANUFACTURER_DATA].addr,
-+					  MANUFACTURER_ACCESS_SLEEP);
-+		if (chip->is_present && ret < 0)
-+			return ret;
-+	}
- 
- 	return 0;
- }
-@@ -941,7 +979,10 @@ MODULE_DEVICE_TABLE(i2c, sbs_id);
- 
- static const struct of_device_id sbs_dt_ids[] = {
- 	{ .compatible = "sbs,sbs-battery" },
--	{ .compatible = "ti,bq20z75" },
-+	{
-+		.compatible = "ti,bq20z75",
-+		.data = (void *)SBS_FLAGS_TI_BQ20Z75,
-+	},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, sbs_dt_ids);
--- 
-2.18.0.rc1.242.g61856ae69a-goog
+	root = init;
+
+ out_unlock:
+
+	if (ret)
+		return;
+
+	use root;
+
+
+
+>    kernel//trace/bpf_trace.c: In function 'bpf_trace_printk':
+> >> kernel//trace/bpf_trace.c:226:20: warning: 'unsafe_addr' may be used uninitialized in this function [-Wmaybe-uninitialized]  
+>               (void *) (long) unsafe_addr,
+>                        ^~~~~~~~~~~~~~~~~~
+
+Again similar:
+
+	if (fmt_cnt >= 3)
+		return;
+
+	switch (fmt_cnt) {
+	case 1:
+		unsafe_addr = init;
+		break;
+	case 2:
+		unsafe_addr = init2;
+		break;
+	case 3:
+		unsafe_addr = init3;
+		break;
+	}
+
+	use init;
+
+
+>    kernel//trace/bpf_trace.c:170:6: note: 'unsafe_addr' was declared here
+>      u64 unsafe_addr;
+>          ^~~~~~~~~~~
+> --
+>    net//6lowpan/iphc.c: In function 'lowpan_header_decompress':
+>    net//6lowpan/iphc.c:617:12: warning: 'iphc1' may be used uninitialized in this function [-Wmaybe-uninitialized]
+>      u8 iphc0, iphc1, cid = 0;
+>                ^~~~~
+> >> net//6lowpan/iphc.c:617:5: warning: 'iphc0' may be used uninitialized in this function [-Wmaybe-uninitialized]  
+>      u8 iphc0, iphc1, cid = 0;
+>         ^~~~~
+
+Similar but crazier:
+
+	if (lowpan_fetch_skb(&iphc0) ||
+	    lowpan_fetch_skb(&iphc1))
+		return;
+
+	use iphc0 and ipch1;
+
+where lowpan_fetch_skb() is:
+
+	if (test())
+		return true;
+
+	init data (iphc0 or iphc1);
+	return false;
+
+
+> --
+>    net//netfilter/nf_tables_api.c: In function 'nf_tables_dump_set':
+> >> net//netfilter/nf_tables_api.c:3625:2: warning: 'set' may be used uninitialized in this function [-Wmaybe-uninitialized]  
+>      set->ops->walk(&dump_ctx->ctx, set, &args.iter);
+>      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+I don't have the same kernel, as this doesn't match. But I'm sure it's
+a false positive like the others.
+
+
+> --
+>    drivers/media/dvb-frontends/mn88472.c: In function 'mn88472_set_frontend':
+> >> drivers/media/dvb-frontends/mn88472.c:339:27: warning: 'bandwidth_vals_ptr' may be used uninitialized in this function [-Wmaybe-uninitialized]  
+>             bandwidth_vals_ptr[i]);
+>                               ^
+> >> drivers/media/dvb-frontends/mn88472.c:320:8: warning: 'bandwidth_val' may be used uninitialized in this function [-Wmaybe-uninitialized]  
+>      ret = regmap_write(dev->regmap[2], 0x04, bandwidth_val);
+>            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This one may not be a false positive. It really looks like there's a
+path to that being used uninitialized. But I haven't torn that function
+apart enough to really tell, but I don't fault gcc for not warning
+about it. But I like to know if gcc doesn't warn without this patch?
+
+
+> --
+>    drivers/media/dvb-frontends/mn88473.c: In function 'mn88473_set_frontend':
+> >> drivers/media/dvb-frontends/mn88473.c:162:7: warning: 'conf_val_ptr' may be used uninitialized in this function [-Wmaybe-uninitialized]  
+>       ret = regmap_bulk_write(dev->regmap[1], 0x10, conf_val_ptr, 6);
+>       ~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Same as the one before it. Need to see if this isn't really a real
+issue.
+
+> --
+>    net//netfilter/ipvs/ip_vs_sync.c: In function 'ip_vs_sync_conn':
+> >> net//netfilter/ipvs/ip_vs_sync.c:731:13: warning: 'm' may be used uninitialized in this function [-Wmaybe-uninitialized]  
+>      m->nr_conns++;
+>      ~~~~~~~~~~~^~
+
+gcc is really stupid on this one.
+
+	if (buff)
+		init m;
+	if (!buff)
+		init m;
+
+	use m;
+
+Really?
+
+> --
+>    drivers//hwspinlock/hwspinlock_core.c: In function 'of_hwspin_lock_get_id':
+> >> drivers//hwspinlock/hwspinlock_core.c:339:19: warning: 'id' may be used uninitialized in this function [-Wmaybe-uninitialized]  
+>      return ret ? ret : id;
+>             ~~~~~~~~~~^~~~
+
+
+Again, we jump here without initializing 'id' when ret is set.
+
+
+> --
+>    drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c: In function 'mlxsw_sp_nexthop_group_update':
+> >> drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c:3078:7: warning: 'err' may be used uninitialized in this function [-Wmaybe-uninitialized]  
+>        if (err)
+>           ^
+> 
+> vim +/ra_comp +1413 drivers//usb/typec/fusb302/fusb302.c
+> 
+
+
+Another switch statement false positive:
+
+	nh->type can only be set to two different values, and then we
+	have:
+
+	switch (nh->type) {
+	case value1:
+		err = func();
+		break;
+	case value2:
+		err = func2();
+		break;
+	}
+	if (err)
+
+
+Of all the warnings, only one looks like it could be a possible issue.
+Thus, this patch causes gcc to fail more on it analysis. The one
+possible issue should have been caught by gcc without this patch, so
+I'm skeptical that it is indeed an issue, but it's complex and I am
+impressed if gcc really did figure it out.
+
+-- Steve
