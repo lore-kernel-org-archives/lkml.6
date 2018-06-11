@@ -1,99 +1,157 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id qzT1Fd2MHVthPQAAmS7hNA
-	; Sun, 10 Jun 2018 20:43:13 +0000
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 69436607A4; Sun, 10 Jun 2018 20:43:13 +0000 (UTC)
+Return-Path: <SRS0=KDb5=I5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-	pdx-caf-mail.web.codeaurora.org
+	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3C490C5CFF0
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 16:55:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id EBF5C604D4;
-	Sun, 10 Jun 2018 20:43:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EBF5C604D4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id F0CC2208B9
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 16:55:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0CC2208B9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753734AbeFJUnJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sun, 10 Jun 2018 16:43:09 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:43095 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752133AbeFJUnH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 16:43:07 -0400
-Received: by mail-wr0-f195.google.com with SMTP id d2-v6so18251120wrm.10
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Jun 2018 13:43:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=y8nCAhzIRe1z4xMOT8m6qkIw3nbeHrp4H6C/yuCxzEI=;
-        b=jyX9Gf4jbCdtZQ3+N/Bsyqvsq4uii9wlq3lQtVSl/rhajY1xwBAWvrRFtJ+hMTIbtG
-         7KeyWAIEbc2ur8JvYqaY96iqyo5dt2+STSdNMwijaht9tcdHZBPxUmjfdexAuQNJF9Ty
-         vpzPjNLBx5jbtRrkE4I+cW+h2q/JDxIgAMIzlv/yXykA3/aTc5To/tZdzoe9cqW8OVRk
-         ThuMfQu/IRpUytQPUdHVn5bggZylqz9Ske1SamI+1cCQBchLsW5lcl1dGHY2WbTPT6vi
-         a9V6UZY5AQNYjYQ+Q9oFRa/L8orAcfLpxSmKRs41C01/CqYNEh4qPdTPH6tju2PegfLd
-         XVTg==
-X-Gm-Message-State: APt69E0HWMSDga9B1+UCAUpNGO8C8QOQ7eU/AbuQ87KNmp6zUMAu7NFc
-        usdTqWq141kBKNuTDgosJhR7fXf9/Ro=
-X-Google-Smtp-Source: ADUXVKLr86lg1+zmz/Mm0VUvdxI3A9RDmiH/HCJ+D/GGvRqHhPLgRUuIxdYJzBa6Gqktoy8hlfgLmA==
-X-Received: by 2002:adf:f90d:: with SMTP id b13-v6mr921033wrr.38.1528663385986;
-        Sun, 10 Jun 2018 13:43:05 -0700 (PDT)
-Received: from minerva.home ([90.77.100.34])
-        by smtp.gmail.com with ESMTPSA id y186-v6sm10129441wmd.38.2018.06.10.13.43.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 10 Jun 2018 13:43:05 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Brian Warner <brian.warner@samsung.com>,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-        Nasser Afshin <afshin.nasser@gmail.com>,
-        linux-media@vger.kernel.org
-Subject: [PATCH] Revert "[media] tvp5150: fix pad format frame height"
-Date: Sun, 10 Jun 2018 22:43:02 +0200
-Message-Id: <20180610204302.1825-1-javierm@redhat.com>
-X-Mailer: git-send-email 2.17.1
+        id S934017AbeFKQzb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 12:55:31 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53878 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933950AbeFKQza (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 12:55:30 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EF4161435;
+        Mon, 11 Jun 2018 09:55:29 -0700 (PDT)
+Received: from [10.1.206.73] (en101.cambridge.arm.com [10.1.206.73])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A42533F59D;
+        Mon, 11 Jun 2018 09:55:27 -0700 (PDT)
+Subject: Re: [PATCH 08/20] coresight: dts: Cleanup device tree graph bindings
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Rob Herring <robh@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>, arm@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Matt Sealey <matt.sealey@arm.com>,
+        John Horley <john.horley@arm.com>,
+        Charles Garcia-Tobin <charles.garcia-tobin@arm.com>,
+        coresight@lists.linaro.org, devicetree@vger.kernel.org,
+        Mike Leach <mike.leach@linaro.org>
+References: <1528235011-30691-1-git-send-email-suzuki.poulose@arm.com>
+ <1528235011-30691-9-git-send-email-suzuki.poulose@arm.com>
+ <20180608212211.GG30587@xps15> <f616c825-b459-397d-3e61-70c1f1790f4f@arm.com>
+ <CANLsYkwGmUpHKRZYJ=pGbEKOAGT6O=+u0_mpAJOyoONuqpXO4g@mail.gmail.com>
+From:   Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <0a213578-c7d7-0ed3-ffc1-afc97d8d1516@arm.com>
+Date:   Mon, 11 Jun 2018 17:55:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <CANLsYkwGmUpHKRZYJ=pGbEKOAGT6O=+u0_mpAJOyoONuqpXO4g@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 0866df8dffd514185bfab0d205db76e4c02cf1e4.
+On 11/06/18 17:52, Mathieu Poirier wrote:
+> On 11 June 2018 at 03:22, Suzuki K Poulose <Suzuki.Poulose@arm.com> wrote:
+>> On 08/06/18 22:22, Mathieu Poirier wrote:
+>>>
+>>> On Tue, Jun 05, 2018 at 10:43:19PM +0100, Suzuki K Poulose wrote:
+>>>>
+>>>> The coresight drivers relied on default bindings for graph
+>>>> in DT, while reusing the "reg" field of the "ports" to indicate
+>>>> the actual hardware port number for the connections. However,
+>>>> with the rules getting stricter w.r.t to the address mismatch
+>>>> with the label, it is no longer possible to use the port address
+>>>> field for the hardware port number. Hence, we add an explicit
+>>>> property to denote the hardware port number, "coresight,hwid"
+>>>> which must be specified for each "endpoint".
+>>>>
+>>>> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+>>>> Cc: Sudeep Holla <sudeep.holla@arm.com>
+>>>> Cc: Rob Herring <robh@kernel.org>
+>>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>>> ---
+>>>>    .../devicetree/bindings/arm/coresight.txt          | 29 ++++++++++---
+>>>>    drivers/hwtracing/coresight/of_coresight.c         | 49
+>>>> +++++++++++++++++-----
+>>>>    2 files changed, 62 insertions(+), 16 deletions(-)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/arm/coresight.txt
+>>>> b/Documentation/devicetree/bindings/arm/coresight.txt
+>>>> index ed6b555..bf75ab3 100644
+>>>> --- a/Documentation/devicetree/bindings/arm/coresight.txt
+>>>> +++ b/Documentation/devicetree/bindings/arm/coresight.txt
+>>>> @@ -108,8 +108,13 @@ following properties to uniquely identify the
+>>>> connection details.
+>>>>          "slave-mode"
+>>
+>>
+>>
+>>>>          };
+>>>
+>>>
+>>> For the binding part:
+>>> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-The v4l uAPI documentation [0] makes clear that in the case of interlaced
-video (i.e: field is V4L2_FIELD_ALTERNATE) the height refers to the number
-of lines in the field and not the number of lines in the full frame (which
-is twice the field height for interlaced formats).
+...
 
-So the original height calculation was correct, and it shouldn't had been
-changed by the mentioned commit.
+>>>> @@ -140,9 +166,6 @@ static int of_coresight_parse_endpoint(struct
+>>>> device_node *ep,
+>>>>                  rparent = of_graph_get_port_parent(rep);
+>>>>                  if (!rparent)
+>>>>                          break;
+>>>> -               if (of_graph_parse_endpoint(rep, &rendpoint))
+>>>> -                       break;
+>>>> -
+>>>>                  /* If the remote device is not available, defer probing
+>>>> */
+>>>>                  rdev = of_coresight_get_endpoint_device(rparent);
+>>>>                  if (!rdev) {
+>>>> @@ -150,9 +173,15 @@ static int of_coresight_parse_endpoint(struct
+>>>> device_node *ep,
+>>>>                          break;
+>>>>                  }
+>>>>    -             conn->outport = endpoint.port;
+>>>> +               child_port = of_coresight_endpoint_get_port_id(rdev,
+>>>> rep);
+>>>> +               if (child_port < 0) {
+>>>> +                       ret = 0;
+>>>
+>>>
+>>> Why returning '0' on an error condition?  Same for 'local_port' above.
+>>>
+>>
+>> If we are unable to parse a port, we can simply ignore the port and
+>> continue, which
+>> is what we have today with the existing code. I didn't change it and still
+>> think
+>> it is the best effort thing. We could spit a warning for such cases, if
+>> really needed.
+>> Also, the parsing code almost never fails at the moment. If it fails to find
+>> "reg" field,
+>> it is assumed to be '0'. Either way ignoring it seems harmless. That said I
+>> am open
+>> to suggestions.
+> 
+> Looking at the original code I remember not mandating enpoints to be
+> valid for debugging purposes.  That certainly helps when building up a
+> device tree file but also has the side effect of silently overlooking
+> specification problems.  Fortunately the revamping you did on that
+> part of the code makes it very easy to change that, something I think
+> we should take advantage of (it can only lead to positive scenarios
+> where defective specifications get pointed out).
+> 
+> That being said and because the original behaviour is just as
+> permissive, you can leave as is.
 
-[0]:https://linuxtv.org/downloads/v4l-dvb-apis/uapi/v4l/subdev-formats.html
+Thanks. So can I assume the Reviewed-by applies for the code now ?
 
-Fixes: 0866df8dffd5 ("[media] tvp5150: fix pad format frame height")
-Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
-
----
-
- drivers/media/i2c/tvp5150.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/i2c/tvp5150.c b/drivers/media/i2c/tvp5150.c
-index 038e4ae0fe8..3ae543559fe 100644
---- a/drivers/media/i2c/tvp5150.c
-+++ b/drivers/media/i2c/tvp5150.c
-@@ -872,7 +872,7 @@ static int tvp5150_fill_fmt(struct v4l2_subdev *sd,
- 	f = &format->format;
- 
- 	f->width = decoder->rect.width;
--	f->height = decoder->rect.height;
-+	f->height = decoder->rect.height / 2;
- 
- 	f->code = MEDIA_BUS_FMT_UYVY8_2X8;
- 	f->field = V4L2_FIELD_ALTERNATE;
--- 
-2.17.1
+Suzuki
