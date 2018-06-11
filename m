@@ -1,136 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id mzokNK1ZGVswCgAAmS7hNA
-	; Thu, 07 Jun 2018 16:13:37 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id G+tpDMx1HlsPGAAAmS7hNA
+	; Mon, 11 Jun 2018 13:14:52 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id A53256089E; Thu,  7 Jun 2018 16:13:37 +0000 (UTC)
+	id 2096C607BB; Mon, 11 Jun 2018 13:14:52 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 0EB8960115;
-	Thu,  7 Jun 2018 16:13:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0EB8960115
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id A6246601C3;
+	Mon, 11 Jun 2018 13:14:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A6246601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=holtmann.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935894AbeFGQNd (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 12:13:33 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39138 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932930AbeFGOI7 (ORCPT
+        id S933221AbeFKNOu convert rfc822-to-8bit (ORCPT
+        <rfc822;monsieuricon@codeaurora.org> + 20 others);
+        Mon, 11 Jun 2018 09:14:50 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:40242 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932516AbeFKNOs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:08:59 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvay-0005Zt-Be; Thu, 07 Jun 2018 15:08:56 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvax-0002gu-CR; Thu, 07 Jun 2018 15:08:55 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Johannes Thumshirn" <jthumshirn@suse.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "Tomas Henzl" <thenzl@redhat.com>,
-        "Christoph Hellwig" <hch@lst.de>,
-        "John Garry" <john.garry@huawei.com>,
-        "Ewan Milne" <emilne@redhat.com>, "Jason Yan" <yanaijie@huawei.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.25667866@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 011/410] scsi: libsas: remove the numbering for each
- event enum
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Mon, 11 Jun 2018 09:14:48 -0400
+Received: from marcel-macpro.fritz.box (p5B3D24B5.dip0.t-ipconnect.de [91.61.36.181])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 6AF05CF185;
+        Mon, 11 Jun 2018 15:21:29 +0200 (CEST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.4 \(3445.8.2\))
+Subject: Re: [PATCH v2 14/24] mfd: rave-sp: MODULE_DEVICE_TABLE(serdev)
+From: Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20180611115240.32606-15-ricardo.ribalda@gmail.com>
+Date: Mon, 11 Jun 2018 15:14:46 +0200
+Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <EBCCCD1F-0F23-4599-8A78-32BBF2DAF746@holtmann.org>
+References: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
+ <20180611115240.32606-15-ricardo.ribalda@gmail.com>
+To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+X-Mailer: Apple Mail (2.3445.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+Hi Ricardo,
 
-------------------
+> Export serdev table to the module header, allowing module autoload via
+> udev/modprobe.
+> 
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Johan Hovold <johan@kernel.org>
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+> ---
+> drivers/mfd/rave-sp.c | 7 +++++++
+> 1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/mfd/rave-sp.c b/drivers/mfd/rave-sp.c
+> index 5c858e784a89..c0ecfbc16dca 100644
+> --- a/drivers/mfd/rave-sp.c
+> +++ b/drivers/mfd/rave-sp.c
+> @@ -694,12 +694,19 @@ static int rave_sp_probe(struct serdev_device *serdev)
+> 
+> MODULE_DEVICE_TABLE(of, rave_sp_dt_ids);
+> 
+> +static struct serdev_device_id rave_sp_serdev_id[] = {
+> +	{ "rave-sp", },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(serdev, rave_sp_serdev_id);
+> +
+> static struct serdev_device_driver rave_sp_drv = {
+> 	.probe			= rave_sp_probe,
+> 	.driver = {
+> 		.name		= "rave-sp",
+> 		.of_match_table	= rave_sp_dt_ids,
+> 	},
+> +	.id_table = rave_sp_serdev_id,
+> };
+> module_serdev_device_driver(rave_sp_drv);
 
-From: Jason Yan <yanaijie@huawei.com>
+so I would actually prefer that we not duplicate the .driver.name in the .id_table. This one for example is non-functional since all supported hardware needs a specific .data entry. It will fail here:
 
-commit 0d78f969b10f27e0be34210d482a01e1ee92994c upstream.
+        sp->variant = of_device_get_match_data(dev);                             
+        if (!sp->variant)                                                        
+                return -ENODEV;
 
-Numbering for each event enum makes no sense. Remove the numbering so
-that we don't have to calculate the number by hand every time.
+Maybe we focus first on getting the base support for new_device etc. merged and use the Edison Bluetooth platform driver support in hci_bcm.c so we can do a real cleanup there. And then later add broad new_device support. Some of these instances should be just fine with never getting it since they require to many per device quirks to make things functional. A blind search+replace is not going to work.
 
-Signed-off-by: Jason Yan <yanaijie@huawei.com>
-CC: John Garry <john.garry@huawei.com>
-CC: Johannes Thumshirn <jthumshirn@suse.de>
-CC: Ewan Milne <emilne@redhat.com>
-CC: Christoph Hellwig <hch@lst.de>
-CC: Tomas Henzl <thenzl@redhat.com>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- include/scsi/libsas.h | 34 +++++++++++++++++-----------------
- 1 file changed, 17 insertions(+), 17 deletions(-)
+And things like device_get_match_data() should work as well even if the hardware is listed via serdev_device_id. Drivers that are solely DT centric will need a lot more work before dynamic adding of serdev devices can happen.
 
---- a/include/scsi/libsas.h
-+++ b/include/scsi/libsas.h
-@@ -67,31 +67,31 @@ enum ha_event {
- 
- enum port_event {
- 	PORTE_BYTES_DMAED     = 0U,
--	PORTE_BROADCAST_RCVD  = 1,
--	PORTE_LINK_RESET_ERR  = 2,
--	PORTE_TIMER_EVENT     = 3,
--	PORTE_HARD_RESET      = 4,
--	PORT_NUM_EVENTS       = 5,
-+	PORTE_BROADCAST_RCVD,
-+	PORTE_LINK_RESET_ERR,
-+	PORTE_TIMER_EVENT,
-+	PORTE_HARD_RESET,
-+	PORT_NUM_EVENTS,
- };
- 
- enum phy_event {
- 	PHYE_LOSS_OF_SIGNAL   = 0U,
--	PHYE_OOB_DONE         = 1,
--	PHYE_OOB_ERROR        = 2,
--	PHYE_SPINUP_HOLD      = 3, /* hot plug SATA, no COMWAKE sent */
--	PHYE_RESUME_TIMEOUT   = 4,
--	PHY_NUM_EVENTS        = 5,
-+	PHYE_OOB_DONE,
-+	PHYE_OOB_ERROR,
-+	PHYE_SPINUP_HOLD,             /* hot plug SATA, no COMWAKE sent */
-+	PHYE_RESUME_TIMEOUT,
-+	PHY_NUM_EVENTS,
- };
- 
- enum discover_event {
- 	DISCE_DISCOVER_DOMAIN   = 0U,
--	DISCE_REVALIDATE_DOMAIN = 1,
--	DISCE_PORT_GONE         = 2,
--	DISCE_PROBE		= 3,
--	DISCE_SUSPEND		= 4,
--	DISCE_RESUME		= 5,
--	DISCE_DESTRUCT		= 6,
--	DISC_NUM_EVENTS		= 7,
-+	DISCE_REVALIDATE_DOMAIN,
-+	DISCE_PORT_GONE,
-+	DISCE_PROBE,
-+	DISCE_SUSPEND,
-+	DISCE_RESUME,
-+	DISCE_DESTRUCT,
-+	DISC_NUM_EVENTS,
- };
- 
- /* ---------- Expander Devices ---------- */
+Regards
+
+Marcel
