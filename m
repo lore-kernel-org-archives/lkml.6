@@ -1,117 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id V2bmLPyPGVsoLQAAmS7hNA
-	; Thu, 07 Jun 2018 20:05:25 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id RiRFO/mBHlv2AgAAmS7hNA
+	; Mon, 11 Jun 2018 14:07:43 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id A0D5C6089E; Thu,  7 Jun 2018 20:05:24 +0000 (UTC)
+	id 11C28608B8; Mon, 11 Jun 2018 14:07:43 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="mAj6/ja2"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aPJhJ6xq"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_MED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 0926A60290;
-	Thu,  7 Jun 2018 20:05:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0926A60290
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 38172600D0;
+	Mon, 11 Jun 2018 14:07:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 38172600D0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753100AbeFGUFU (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 16:05:20 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:52236 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751037AbeFGUFS (ORCPT
+        id S933760AbeFKOH2 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 10:07:28 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46406 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933620AbeFKOHI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 16:05:18 -0400
-Received: by mail-wm0-f68.google.com with SMTP id p126-v6so20214748wmb.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 13:05:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=gX4JavC5r+wDie0MzJp42r8v3Y1P9ZA0tiR4xFkF+e8=;
-        b=mAj6/ja2AtSEh5yklYKMkNCZ3YmeeeR2Z+wa5kehRwtlzkLc+tKUi4Fx6fWJmEWnHQ
-         Zm6X5fheGYOhQQZSqbLr2TCx/JwxsuTxrJkEJIhJ09LKHXquFgL6ncstRY6bcp5XgDdc
-         tVfU0Od3BYcAOUjw6F89MDh9FF3bcrNgnEfrZGEWvLRNBDotJ3x2KKbt4Ur8xPAaRGY0
-         GHuogzBnmQqwntRVzmRgLjgJCutTgudB1mM4rmHXPvtfjJkNXW/6hWx3Gk8B+s3Ceczn
-         F1y5q2Ffiui9ZROno6+/8omjv9OnBD31I/zz5/0UsdXR9vSHDxhOyWTrS9w7R45nRFci
-         LzoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=gX4JavC5r+wDie0MzJp42r8v3Y1P9ZA0tiR4xFkF+e8=;
-        b=GwL38sRwKNpfcAk1HUAxClUPXz3Nv373dbul8MRleZq7FKYxxEXn0ZpBQqGB8uMc5R
-         Dben9YEgDRILFtWel+3nPM1vppC+RE224c3wsnNyRjOKWueIFq0ZXX3lJ/RjTiR0OIT7
-         3QxZMNAaCqZ12CDQ3mBu7L82OnBKGEcFgMlcE6kXHTcI4QMgmuFjFDA/+k8EEK/cYUxX
-         xkaIO3uX5ARSvI/91AtMEbEmSDsZ1JWjUlBTvaB5iEHF7dI9jASj9uuPNG2DO1SgCOK+
-         g2HVgfsa/dENqFdz1NjKBrn82uFfNLkka+o9qhpXHxUoQueGR4+/5WysyeqXWih7uYXz
-         +Wcg==
-X-Gm-Message-State: APt69E1T08mw8x82it8uxEKIPoQkRECZQrIxTrj90oE97N/mAtFb9259
-        cGVESkm0+aDdQ5x4gzhTRvMolg==
-X-Google-Smtp-Source: ADUXVKJ9TVTFBSbt0gCaDq7wd39wFHhr/vRxtsm72P2u/mfFhhdd9bjaJvEhc+uHzRvLikVrGctdyQ==
-X-Received: by 2002:a1c:9947:: with SMTP id b68-v6mr2480187wme.159.1528401917257;
-        Thu, 07 Jun 2018 13:05:17 -0700 (PDT)
-Received: from localhost.localdomain ([51.15.160.169])
-        by smtp.googlemail.com with ESMTPSA id i46-v6sm58394573wra.36.2018.06.07.13.05.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 07 Jun 2018 13:05:16 -0700 (PDT)
-From: Corentin Labbe <clabbe@baylibre.com>
-To: gregkh@linuxfoundation.org, stern@rowland.harvard.edu
-Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH] usb: Replace empty define with do while
-Date: Thu,  7 Jun 2018 20:05:11 +0000
-Message-Id: <1528401911-5263-1-git-send-email-clabbe@baylibre.com>
-X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 11 Jun 2018 10:07:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
+        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=l7vqrsvTDgMQ5pcpSIqMCIBtnn2ngsgjRhaUjxPid4k=; b=aPJhJ6xqOtMIh27P/19+yTKdJ
+        hGTBCHyVnv8zdk4wqDHZEf+JBnnt9ZxU2hx/f5Zcc4XFGvmYgCkUGQudofIt+LyYFt6IXfT7IMXy4
+        sbdWtI4A8TMisIr3CC8z7NkNhaCDXIi4LyFszSz8H3Mv1X1nU45bNbX0mhMCCHe+nRQQqdAXfHgdS
+        F/Qs7u/O4EC5wzYeLEbxo4/KRQ8JBYYXSRfqZPvNqiIw3JUCIJWbGznRT57pKT7ZlcV2WKBaSHf8Q
+        pmmbPz6UNaqt9c+xfvz9G0WhSgJpSqlq12sBUUz5j2JK19+JqjbwTT5vDumr89J8d1R1Md2J4nAjF
+        rRhACmRPw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fSNTP-0004wy-OM; Mon, 11 Jun 2018 14:07:07 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@redhat.com>,
+        Lukas Czerner <lczerner@redhat.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH v13 57/72] fs: Convert buffer to XArray
+Date: Mon, 11 Jun 2018 07:06:24 -0700
+Message-Id: <20180611140639.17215-58-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
+References: <20180611140639.17215-1-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's dangerous to use empty code define.
-Furthermore it lead to the following warning:
-"suggest braces around empty body in an « else » statement"
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-So let's replace emptyness by "do {} while(0)"
+Mostly comment fixes, but one use of __xa_set_tag.
 
-Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- drivers/usb/host/ehci.h    | 2 +-
- drivers/usb/host/fotg210.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ fs/buffer.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/usb/host/ehci.h b/drivers/usb/host/ehci.h
-index c8e9a48e1d51..a60d91eac771 100644
---- a/drivers/usb/host/ehci.h
-+++ b/drivers/usb/host/ehci.h
-@@ -237,7 +237,7 @@ struct ehci_hcd {			/* one per controller */
- 	struct ehci_stats	stats;
- #	define COUNT(x) ((x)++)
- #else
--#	define COUNT(x)
-+#	define COUNT(x) do {} while (0)
- #endif
+diff --git a/fs/buffer.c b/fs/buffer.c
+index 8194e3049fc5..deae44fd64e9 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -562,7 +562,7 @@ void mark_buffer_dirty_inode(struct buffer_head *bh, struct inode *inode)
+ EXPORT_SYMBOL(mark_buffer_dirty_inode);
  
- 	/* debug files */
-diff --git a/drivers/usb/host/fotg210.h b/drivers/usb/host/fotg210.h
-index 7fcd785c7bc8..dca46d04e288 100644
---- a/drivers/usb/host/fotg210.h
-+++ b/drivers/usb/host/fotg210.h
-@@ -179,7 +179,7 @@ struct fotg210_hcd {			/* one per controller */
- 	struct fotg210_stats	stats;
- #	define COUNT(x) ((x)++)
- #else
--#	define COUNT(x)
-+#	define COUNT(x) do {} while (0)
- #endif
- 
- 	/* debug files */
+ /*
+- * Mark the page dirty, and set it dirty in the radix tree, and mark the inode
++ * Mark the page dirty, and set it dirty in the page cache, and mark the inode
+  * dirty.
+  *
+  * If warn is true, then emit a warning if the page is not uptodate and has
+@@ -579,8 +579,8 @@ void __set_page_dirty(struct page *page, struct address_space *mapping,
+ 	if (page->mapping) {	/* Race with truncate? */
+ 		WARN_ON_ONCE(warn && !PageUptodate(page));
+ 		account_page_dirtied(page, mapping);
+-		radix_tree_tag_set(&mapping->i_pages,
+-				page_index(page), PAGECACHE_TAG_DIRTY);
++		__xa_set_tag(&mapping->i_pages, page_index(page),
++				PAGECACHE_TAG_DIRTY);
+ 	}
+ 	xa_unlock_irqrestore(&mapping->i_pages, flags);
+ }
+@@ -1043,7 +1043,7 @@ __getblk_slow(struct block_device *bdev, sector_t block,
+  * The relationship between dirty buffers and dirty pages:
+  *
+  * Whenever a page has any dirty buffers, the page's dirty bit is set, and
+- * the page is tagged dirty in its radix tree.
++ * the page is tagged dirty in the page cache.
+  *
+  * At all times, the dirtiness of the buffers represents the dirtiness of
+  * subsections of the page.  If the page has buffers, the page dirty bit is
+@@ -1066,9 +1066,9 @@ __getblk_slow(struct block_device *bdev, sector_t block,
+  * mark_buffer_dirty - mark a buffer_head as needing writeout
+  * @bh: the buffer_head to mark dirty
+  *
+- * mark_buffer_dirty() will set the dirty bit against the buffer, then set its
+- * backing page dirty, then tag the page as dirty in its address_space's radix
+- * tree and then attach the address_space's inode to its superblock's dirty
++ * mark_buffer_dirty() will set the dirty bit against the buffer, then set
++ * its backing page dirty, then tag the page as dirty in the page cache
++ * and then attach the address_space's inode to its superblock's dirty
+  * inode list.
+  *
+  * mark_buffer_dirty() is atomic.  It takes bh->b_page->mapping->private_lock,
 -- 
-2.16.4
+2.17.1
