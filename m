@@ -1,143 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id i3/nCB3QGlstEgAAmS7hNA
-	; Fri, 08 Jun 2018 18:51:50 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id B3TPMP3rHVt6IwAAmS7hNA
+	; Mon, 11 Jun 2018 03:27:26 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 8ACD96089E; Fri,  8 Jun 2018 18:51:50 +0000 (UTC)
+	id 05FCA60792; Mon, 11 Jun 2018 03:27:26 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 0CDD8607DC;
-	Fri,  8 Jun 2018 18:51:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0CDD8607DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 775B4604D4;
+	Mon, 11 Jun 2018 03:27:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 775B4604D4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753262AbeFHSvs (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 14:51:48 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:53806 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752746AbeFHSuV (ORCPT
+        id S932534AbeFKD1W (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Sun, 10 Jun 2018 23:27:22 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:31939 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753966AbeFKD1R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 14:50:21 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fRMSq-0006Nt-1h; Fri, 08 Jun 2018 18:50:20 +0000
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 07/13] now we can fold open_check_o_direct() into do_dentry_open()
-Date: Fri,  8 Jun 2018 19:50:13 +0100
-Message-Id: <20180608185019.24472-7-viro@ZenIV.linux.org.uk>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20180608185019.24472-1-viro@ZenIV.linux.org.uk>
-References: <20180608184842.GD30522@ZenIV.linux.org.uk>
- <20180608185019.24472-1-viro@ZenIV.linux.org.uk>
+        Sun, 10 Jun 2018 23:27:17 -0400
+X-UUID: 5ca256802bf440599c9f09b40c6584de-20180611
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <stu.hsieh@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 590964821; Mon, 11 Jun 2018 11:27:11 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Mon, 11 Jun 2018 11:27:06 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Mon, 11 Jun 2018 11:27:06 +0800
+From: Stu Hsieh <stu.hsieh@mediatek.com>
+To: CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>
+CC: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, Stu Hsieh <stu.hsieh@mediatek.com>
+Subject: [PATCH 21/28] drm/mediatek: add connection from RDMA2 to DSI2
+Date: Mon, 11 Jun 2018 11:26:13 +0800
+Message-ID: <1528687580-549-22-git-send-email-stu.hsieh@mediatek.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
+References: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+This patch add the connection from RDMA2 to DSI2
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
 ---
- fs/internal.h |  1 -
- fs/namei.c    |  7 +------
- fs/open.c     | 27 +++++++++------------------
- 3 files changed, 10 insertions(+), 25 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/fs/internal.h b/fs/internal.h
-index 5645b4ebf494..08ac9cdee1b4 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -125,7 +125,6 @@ int do_fchmodat(int dfd, const char __user *filename, umode_t mode);
- int do_fchownat(int dfd, const char __user *filename, uid_t user, gid_t group,
- 		int flag);
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+index ae10f8f1e140..ce89a1d86b93 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+@@ -95,6 +95,7 @@
+ #define RDMA2_MOUT_DPI0			0x2
+ #define RDMA2_MOUT_DPI1			0x3
+ #define RDMA2_MOUT_DSI1			0x1
++#define RDMA2_MOUT_DSI2			0x4
+ #define DPI0_SEL_IN_RDMA1		0x1
+ #define DPI0_SEL_IN_RDMA2		0x3
+ #define DPI1_SEL_IN_RDMA1		(0x1 << 8)
+@@ -102,6 +103,7 @@
+ #define DSI1_SEL_IN_RDMA1		0x1
+ #define DSI1_SEL_IN_RDMA2		0x4
+ #define DSI2_SEL_IN_RDMA1		(0x1 << 16)
++#define DSI2_SEL_IN_RDMA2		(0x4 << 16)
+ #define DSI3_SEL_IN_RDMA1		(0x1 << 16)
+ #define COLOR1_SEL_IN_OVL1		0x1
  
--extern int open_check_o_direct(struct file *f);
- extern int vfs_open(const struct path *, struct file *, const struct cred *);
- 
- /*
-diff --git a/fs/namei.c b/fs/namei.c
-index 3034c97df757..ef21c904f147 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3366,9 +3366,7 @@ static int do_last(struct nameidata *nd,
- 	if (error)
- 		goto out;
- opened:
--	error = open_check_o_direct(file);
--	if (!error)
--		error = ima_file_check(file, op->acc_mode, *opened);
-+	error = ima_file_check(file, op->acc_mode, *opened);
- 	if (!error && will_truncate)
- 		error = handle_truncate(file);
- out:
-@@ -3444,9 +3442,6 @@ static int do_tmpfile(struct nameidata *nd, unsigned flags,
- 		goto out2;
- 	file->f_path.mnt = path.mnt;
- 	error = finish_open(file, child, NULL);
--	if (error)
--		goto out2;
--	error = open_check_o_direct(file);
- out2:
- 	mnt_drop_write(path.mnt);
- out:
-diff --git a/fs/open.c b/fs/open.c
-index 83e489d43526..2724aa2e9635 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -724,16 +724,6 @@ SYSCALL_DEFINE3(fchown, unsigned int, fd, uid_t, user, gid_t, group)
- 	return ksys_fchown(fd, user, group);
- }
- 
--int open_check_o_direct(struct file *f)
--{
--	/* NB: we're sure to have correct a_ops only after f_op->open */
--	if (f->f_flags & O_DIRECT) {
--		if (!f->f_mapping->a_ops || !f->f_mapping->a_ops->direct_IO)
--			return -EINVAL;
--	}
--	return 0;
--}
--
- static int do_dentry_open(struct file *f,
- 			  struct inode *inode,
- 			  int (*open)(struct inode *, struct file *),
-@@ -810,6 +800,11 @@ static int do_dentry_open(struct file *f,
- 
- 	file_ra_state_init(&f->f_ra, f->f_mapping->host->i_mapping);
- 
-+	/* NB: we're sure to have correct a_ops only after f_op->open */
-+	if (f->f_flags & O_DIRECT) {
-+		if (!f->f_mapping->a_ops || !f->f_mapping->a_ops->direct_IO)
-+			return -EINVAL;
-+	}
- 	return 0;
- 
- cleanup_all:
-@@ -918,15 +913,11 @@ struct file *dentry_open(const struct path *path, int flags,
- 	if (!IS_ERR(f)) {
- 		f->f_flags = flags;
- 		error = vfs_open(path, f, cred);
--		if (!error) {
--			/* from now on we need fput() to dispose of f */
--			error = open_check_o_direct(f);
--			if (error) {
-+		if (error) {
-+			if (f->f_mode & FMODE_OPENED)
- 				fput(f);
--				f = ERR_PTR(error);
--			}
--		} else { 
--			put_filp(f);
-+			else
-+				put_filp(f);
- 			f = ERR_PTR(error);
- 		}
+@@ -209,6 +211,9 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
+ 	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI1) {
+ 		*addr = DISP_REG_CONFIG_DISP_RDMA2_SOUT;
+ 		value = RDMA2_MOUT_DPI1;
++	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DSI2) {
++		*addr = DISP_REG_CONFIG_DISP_RDMA2_SOUT;
++		value = RDMA2_MOUT_DSI2;
+ 	} else {
+ 		value = 0;
  	}
+@@ -249,6 +254,9 @@ static unsigned int mtk_ddp_sel_in(enum mtk_ddp_comp_id cur,
+ 	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DSI1) {
+ 		*addr = DISP_REG_CONFIG_DSIE_SEL_IN;
+ 		value = DSI1_SEL_IN_RDMA2;
++	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DSI2) {
++		*addr = DISP_REG_CONFIG_DSIE_SEL_IN;
++		value = DSI2_SEL_IN_RDMA2;
+ 	} else if (cur == DDP_COMPONENT_OVL1 && next == DDP_COMPONENT_COLOR1) {
+ 		*addr = DISP_REG_CONFIG_DISP_COLOR1_SEL_IN;
+ 		value = COLOR1_SEL_IN_OVL1;
 -- 
-2.11.0
+2.12.5
