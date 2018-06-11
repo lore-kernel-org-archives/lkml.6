@@ -1,125 +1,154 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 8/AHE/i3HFuHSgAAmS7hNA
-	; Sun, 10 Jun 2018 05:32:40 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id wECQDQBGHlszeQAAmS7hNA
+	; Mon, 11 Jun 2018 09:52:49 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 33FF360795; Sun, 10 Jun 2018 05:32:40 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2OuMiWyr"
+	id D78DB607A4; Mon, 11 Jun 2018 09:52:49 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 9D1A5602FC;
-	Sun, 10 Jun 2018 05:32:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9D1A5602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 58D69606FA;
+	Mon, 11 Jun 2018 09:52:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 58D69606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932153AbeFJFch (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sun, 10 Jun 2018 01:32:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43672 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932086AbeFJFcf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 01:32:35 -0400
-Received: from mail-wm0-f47.google.com (mail-wm0-f47.google.com [74.125.82.47])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A696A208AD
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Jun 2018 05:32:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528608755;
-        bh=+J5x0eICSCLh2R1EzuQmwIt2G+wxvbQvWCYGLBeq5yg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=2OuMiWyr3RarJeBBxJlivlu/bKKa/bNUdkfQTLLpB4RcVFpu3x8aFEejZTNhX93mP
-         niOeTRSM/pKPBGqdbjC7Grl+Evli/pDnOl23MnsMDd8Y+5eNarycjjzvtnJB4SzfuD
-         eW4/6O5ViOD/YbNeHRWiSHeQmh8pjpRMrXXptEdU=
-Received: by mail-wm0-f47.google.com with SMTP id r15-v6so9289421wmc.1
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Jun 2018 22:32:34 -0700 (PDT)
-X-Gm-Message-State: APt69E26qHAh1MQWf/zXh0/0PsqZ0mgykkmUj6O0w9XCwzfYoufvfCIn
-        EM7QyffoJACGB/pgfbXDtpj1YCRjfH/RIMwZWhtmlw==
-X-Google-Smtp-Source: ADUXVKJWEnt2SfGYs0oNdezAX2vQwRz4ngA0uVg9TrpAoBV2IG9o3ZeYW4baDUig8h5egNfzvRIGcZgDmyrt6aCL7T4=
-X-Received: by 2002:a1c:34c9:: with SMTP id b192-v6mr5467743wma.21.1528608753151;
- Sat, 09 Jun 2018 22:32:33 -0700 (PDT)
+        id S932863AbeFKJws (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 05:52:48 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:7985 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932702AbeFKJwq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 05:52:46 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5B9ikQB013583;
+        Mon, 11 Jun 2018 11:52:25 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2jg415reqj-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 11 Jun 2018 11:52:25 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CAB244A;
+        Mon, 11 Jun 2018 09:52:23 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9662C241E;
+        Mon, 11 Jun 2018 09:52:23 +0000 (GMT)
+Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by Safex1hubcas24.st.com
+ (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 11 Jun
+ 2018 11:52:22 +0200
+Received: from localhost (10.201.23.73) by webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 11 Jun 2018 11:52:22
+ +0200
+From: Hugues Fruchet <hugues.fruchet@st.com>
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Hans Verkuil" <hverkuil@xs4all.nl>
+CC: <linux-media@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Hugues Fruchet <hugues.fruchet@st.com>
+Subject: [PATCH] media: stm32-dcmi: revisit stop streaming ops
+Date: Mon, 11 Jun 2018 11:52:17 +0200
+Message-ID: <1528710737-8946-1-git-send-email-hugues.fruchet@st.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-References: <20180608171216.26521-1-jarkko.sakkinen@linux.intel.com> <20180608171216.26521-10-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20180608171216.26521-10-jarkko.sakkinen@linux.intel.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Sat, 9 Jun 2018 22:32:21 -0700
-X-Gmail-Original-Message-ID: <CALCETrVUGubKSS00aH5JJoc0vNkqLGPqCoaG2br2yn5cxWXz-Q@mail.gmail.com>
-Message-ID: <CALCETrVUGubKSS00aH5JJoc0vNkqLGPqCoaG2br2yn5cxWXz-Q@mail.gmail.com>
-Subject: Re: [intel-sgx-kernel-dev] [PATCH v11 09/13] x86, sgx: basic routines
- for enclave page cache
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: X86 ML <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        intel-sgx-kernel-dev@lists.01.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.201.23.73]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-11_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 8, 2018 at 10:22 AM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
->
-> SGX has a set of data structures to maintain information about the enclaves
-> and their security properties. BIOS reserves a fixed size region of
-> physical memory for these structures by setting Processor Reserved Memory
-> Range Registers (PRMRR). This memory area is called Enclave Page Cache
-> (EPC).
->
+Do not wait for interrupt completion when stopping streaming,
+stopping sensor and disabling interruptions are enough.
 
-> +/**
-> + * sgx_einit - EINIT an enclave with the appropriate LE pubkey hash
-> + * @sigstruct:         a pointer to the enclave's sigstruct
-> + * @token:             a pointer to the enclave's EINIT token
-> + * @secs_page:         a pointer to the enclave's SECS EPC page
-> + * @le_pubkey_hash:    the desired LE pubkey hash for EINIT
-> + */
-> +int sgx_einit(struct sgx_sigstruct *sigstruct, struct sgx_einittoken *token,
-> +             struct sgx_epc_page *secs_page, u64 le_pubkey_hash[4])
-> +{
-> +       u64 __percpu *cache;
-> +       void *secs;
-> +       int i, ret;
-> +
-> +       secs = sgx_get_page(secs_page);
-> +
-> +       if (!sgx_lc_enabled) {
+Signed-off-by: Hugues Fruchet <hugues.fruchet@st.com>
+---
+ drivers/media/platform/stm32/stm32-dcmi.c | 29 +----------------------------
+ 1 file changed, 1 insertion(+), 28 deletions(-)
 
-I'm confused.  What does this code path do?  It kind of looks like the
-driver will load and just malfunction if we don't have write access to
-the MSRs.  What is the intended behavior?
-
-> +               ret = __einit(sigstruct, token, secs);
-> +               goto out;
-> +       }
-> +
-> +       cache = per_cpu(sgx_le_pubkey_hash_cache, smp_processor_id());
-> +
-> +       preempt_disable();
-> +       for (i = 0; i < 4; i++) {
-> +               if (le_pubkey_hash[i] == cache[i])
-> +                       continue;
-> +
-> +               wrmsrl(MSR_IA32_SGXLEPUBKEYHASH0 + i, le_pubkey_hash[i]);
-> +               cache[i] = le_pubkey_hash[i];
-> +       }
-> +       ret = __einit(sigstruct, token, secs);
-> +       preempt_enable();
-> +
-> +out:
-> +       sgx_put_page(secs);
-> +       return ret;
-> +}
-> +EXPORT_SYMBOL(sgx_einit);
-> +
+diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
+index 581ded0..f0134a6 100644
+--- a/drivers/media/platform/stm32/stm32-dcmi.c
++++ b/drivers/media/platform/stm32/stm32-dcmi.c
+@@ -87,7 +87,6 @@ enum state {
+ 	STOPPED = 0,
+ 	WAIT_FOR_BUFFER,
+ 	RUNNING,
+-	STOPPING,
+ };
+ 
+ #define MIN_WIDTH	16U
+@@ -432,18 +431,6 @@ static irqreturn_t dcmi_irq_thread(int irq, void *arg)
+ 
+ 	spin_lock_irq(&dcmi->irqlock);
+ 
+-	/* Stop capture is required */
+-	if (dcmi->state == STOPPING) {
+-		reg_clear(dcmi->regs, DCMI_IER, IT_FRAME | IT_OVR | IT_ERR);
+-
+-		dcmi->state = STOPPED;
+-
+-		complete(&dcmi->complete);
+-
+-		spin_unlock_irq(&dcmi->irqlock);
+-		return IRQ_HANDLED;
+-	}
+-
+ 	if ((dcmi->misr & IT_OVR) || (dcmi->misr & IT_ERR)) {
+ 		dcmi->errors_count++;
+ 		if (dcmi->misr & IT_OVR)
+@@ -701,8 +688,6 @@ static void dcmi_stop_streaming(struct vb2_queue *vq)
+ {
+ 	struct stm32_dcmi *dcmi = vb2_get_drv_priv(vq);
+ 	struct dcmi_buf *buf, *node;
+-	unsigned long time_ms = msecs_to_jiffies(TIMEOUT_MS);
+-	long timeout;
+ 	int ret;
+ 
+ 	/* Disable stream on the sub device */
+@@ -712,13 +697,6 @@ static void dcmi_stop_streaming(struct vb2_queue *vq)
+ 			__func__, ret);
+ 
+ 	spin_lock_irq(&dcmi->irqlock);
+-	dcmi->state = STOPPING;
+-	spin_unlock_irq(&dcmi->irqlock);
+-
+-	timeout = wait_for_completion_interruptible_timeout(&dcmi->complete,
+-							    time_ms);
+-
+-	spin_lock_irq(&dcmi->irqlock);
+ 
+ 	/* Disable interruptions */
+ 	reg_clear(dcmi->regs, DCMI_IER, IT_FRAME | IT_OVR | IT_ERR);
+@@ -726,12 +704,6 @@ static void dcmi_stop_streaming(struct vb2_queue *vq)
+ 	/* Disable DCMI */
+ 	reg_clear(dcmi->regs, DCMI_CR, CR_ENABLE);
+ 
+-	if (!timeout) {
+-		dev_err(dcmi->dev, "%s: Timeout during stop streaming\n",
+-			__func__);
+-		dcmi->state = STOPPED;
+-	}
+-
+ 	/* Return all queued buffers to vb2 in ERROR state */
+ 	list_for_each_entry_safe(buf, node, &dcmi->buffers, list) {
+ 		list_del_init(&buf->list);
+@@ -739,6 +711,7 @@ static void dcmi_stop_streaming(struct vb2_queue *vq)
+ 	}
+ 
+ 	dcmi->active = NULL;
++	dcmi->state = STOPPED;
+ 
+ 	spin_unlock_irq(&dcmi->irqlock);
+ 
+-- 
+1.9.1
