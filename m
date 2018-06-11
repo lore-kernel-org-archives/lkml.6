@@ -2,148 +2,139 @@ Return-Path: <SRS0=KDb5=I5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 89855C07D5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:57:28 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4072AC07D5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:59:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49A9B208B2
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:57:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49A9B208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id EA14A208B2
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:59:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jGvhzr07"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA14A208B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934129AbeFKR50 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 13:57:26 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58458 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932292AbeFKR5Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 13:57:24 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 01EC8BD9E;
-        Mon, 11 Jun 2018 17:57:24 +0000 (UTC)
-Received: from darcari.bos.csb (dhcp-17-203.bos.redhat.com [10.18.17.203])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1B84584438;
-        Mon, 11 Jun 2018 17:57:23 +0000 (UTC)
-Subject: Re: [PATCH] perf/x86: read the FREEZE_WHILE_SMM bit during boot
-From:   David Arcari <darcari@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Andi Kleen <ak@linux.intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Donald Zickus <dzickus@redhat.com>,
-        Prarit Bhargava <prarit@redhat.com>,
-        Jerry Hoemann <jerry.hoemann@hpe.com>
-References: <1528050223-144925-1-git-send-email-darcari@redhat.com>
- <20180604082414.GO12217@hirez.programming.kicks-ass.net>
- <e420bcc1-c75d-e6a1-0ca6-b668b6818f16@redhat.com>
-Organization: Red Hat
-Message-ID: <a8202fa8-a368-947f-994f-060ce83d188b@redhat.com>
-Date:   Mon, 11 Jun 2018 13:57:22 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <e420bcc1-c75d-e6a1-0ca6-b668b6818f16@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 11 Jun 2018 17:57:24 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 11 Jun 2018 17:57:24 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'darcari@redhat.com' RCPT:''
+        id S933824AbeFKR7D (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 13:59:03 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:36893 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932647AbeFKR7B (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 13:59:01 -0400
+Received: by mail-pf0-f195.google.com with SMTP id y5-v6so9731494pfn.4
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 10:59:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=zpWNBfoGxwT7agTpDOavD9TWXLeX5cvkMqjV9IQ59+I=;
+        b=jGvhzr07gSVdx+gdIr0uitQjVSklkbD3tPTsIfwYza2U+nEg1Zi/QsoqQU4HK2WFNg
+         thr7+9xUY2TdPEEh0cGC77bg+/5bkSgbprdvcCsU4Rk77t3wh9v3fx3iLdXt8UIWRTn2
+         rh+KlnY+Y5XAtJ8LwwVxH8Dn17SB2JEOYkuj8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=zpWNBfoGxwT7agTpDOavD9TWXLeX5cvkMqjV9IQ59+I=;
+        b=bTqNY8e9T36ArkGQFpLaKoBxnAHF2SUZ8zX3yA2nQER95SgaCz+kuXBakvn/AgSSea
+         WbpV0k1J4KPS1HiTIkeg0WqNP0fNsgon0rTTWG9UhHUDVAngPQwhkc64UNKo9eyD/RJ2
+         gbDFd8FiWQy+xPKY8fk20wTUEuiTvK1Ct1u/F4gdosqPiGy1dHdFa6CwFFPWL7TXw5h6
+         BmozmGtFk2H/Oyf01/niN709apwFJyCu5q2jbspjhOPwxv4le+zf5mXy3L6GDb7bng2M
+         7fJ5bzH/kQ80vyBzKD0P2mBeLYkkycmLmLfxkKDmJi0mJpMdL5QlP/jmSFKZwA0J79tM
+         XgYw==
+X-Gm-Message-State: APt69E1FbIa2VMCTOXQ8ivJGWmLUCM5P0HklwuBrSpd8s1SxH+vtWvsi
+        5zqU33+MTkdGDosX4yWqavELeAzwIsc=
+X-Google-Smtp-Source: ADUXVKKZwvvC09st0mK0delV1RLILGOf7XLtSRHnS7T11MGdctDzM4EdSZ2aI244/dex5HvF5pv/rg==
+X-Received: by 2002:a62:ca99:: with SMTP id y25-v6mr166675pfk.187.1528739941289;
+        Mon, 11 Jun 2018 10:59:01 -0700 (PDT)
+Received: from ravisadineni0.mtv.corp.google.com ([2620:0:1000:1501:1f1:adfa:a458:823f])
+        by smtp.gmail.com with ESMTPSA id w19-v6sm78377806pgv.59.2018.06.11.10.59.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Jun 2018 10:59:00 -0700 (PDT)
+From:   Ravi Chandra Sadineni <ravisadineni@chromium.org>
+To:     rjw@rjwysocki.net, lenb@kernel.org, ravisadineni@chromium.org,
+        ravisadineni@google.com
+Cc:     dmitry.torokhov@gmail.com, tbroch@google.com,
+        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        rajatja@google.com, bleung@google.com, furquan@chromium.org
+Subject: [PATCH V2] ACPI LID: increment wakeup count only when notified.
+Date:   Mon, 11 Jun 2018 10:57:59 -0700
+Message-Id: <20180611175759.181681-1-ravisadineni@chromium.org>
+X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a-goog
+In-Reply-To: <CAJZ5v0gXqyKQ5yTtqFYzv=KW2o+b4vGiUYiWWn+iT=zY-mU9xw@mail.gmail.com>
+References: <CAJZ5v0gXqyKQ5yTtqFYzv=KW2o+b4vGiUYiWWn+iT=zY-mU9xw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/04/2018 10:12 AM, David Arcari wrote:
-> On 06/04/2018 04:24 AM, Peter Zijlstra wrote:
->> On Sun, Jun 03, 2018 at 02:23:43PM -0400, David Arcari wrote:
->>> On some systems pressing the external NMI button is now failing to inject
->>> an NMI 5-10% of the time.  This causes confusion for a user that expects
->>> the NMI to dump the system.
->>>
->>> Commit 6089327f5424 ("perf/x86: Add sysfs entry to freeze counters on SMI")
->>> does not read the firmware setting of the FREEZE_WHILE_SMM bit and will
->>> always clear it when the PMU is initialized.  As a result the performance
->>> counters will always run and that greatly expands the race in which
->>> external NMI will not be processed if a local NMI is already being
->>> processed.
->>>
->>> One option is to change default_do_nmi().  The code snippet below shows the
->>> relevant portion of a patch that resolves the issue, but it is problematic
->>> from a performance perspective and was dismissed.
->>>
->>> -345,7 +345,17 @@ static void default_do_nmi(struct pt_regs *regs)
->>>  		 */
->>>  		if (handled > 1)
->>>  			__this_cpu_write(swallow_nmi, true);
->>> -		return;
->>> +
->>> +		/*
->>> +		 * Unfortunately, there is a race condition which can
->>> +		 * result in a missing an external NMI.  Typically, an
->>> +		 * external NMI is processed on cpu 0.  Therefore, on
->>> +		 * cpu 0 check for an external NMI before returning.
->>> +		 */
->>> +		if (smp_processor_id() ||
->>> +		    (x86_platform.get_nmi_reason() & NMI_REASON_MASK) == 0) {
->>> +			return;
->>> +		}
->>>  	}
->>>
->>> Ultimately, the issue can be resolved by storing the default firmware
->>> setting of FREEZE_WHILE_SMM before initializing the PMU.
->>
->> I'm sorry, I know it's Monday morning, but what?! I really don't
->> understand anything you write there.
->>
->> Maybe if you explain the race and how your proposed fix closes it things
->> will make sense. The above refers to too many things not here.
->>
-> 
-> Sorry.
-> 
-> default_do_nmi() will process both perf events (local interrupts) as well as
-> external interrupts (such as the NMI button).  The handler is coded such that
-> if a local interrupt occurs, no check is made for an external interrupt.
-> Therefore, if the two interrupts occur simultaneously, the external interrupt
-> is lost.
-> 
-> The code above, which was ultimately discounted, attempts to avoid this
-> scenario with as little performance impact as possible by reading the register
-> without the spinlock for cpu 0 only (currently only cpu 0 can handle an
-> external NMI, I verified this on my system by testing the NMI button with
-> cpu 0 offline).
-> 
-> The code above is problematic for a number of reasons not the least of which
-> is performance.  Furthermore, I don't see a less intrusive solution wrt
-> do_default_nmi().
-> 
-> Upstream 6089327f5424 ("perf/x86: Add sysfs entry to freeze counters on SMI")
-> appears to have made it relatively easy to hit this race condition.  On some
-> systems, this commit has resulted in a change to the default firmware setting
-> of DEBUGCTLMSR_FREEZE_IN_SMM_BIT (it is now cleared by the OS by default).
-> 
-> With this bit cleared, the following situation occurs:
-> 
-> 1) external NMI - due to io check
-> 2) long duration SMI (counters do not freeze)
-> 3) NMI handler runs and misattributes interrupt to perf event
-> 
-> Ultimately, my solution was to restore the previous behavior by reading and
-> storing the firmware setting of the bit rather than to always clear it.
-> 
+Currently ACPI LID increments wakeup count irrespective of the wake source.
+This is because we call acpi_lid_initialize_state on every resume.
+Userland deamons using wakeup_count to identify the potential wake
+source for the last wake will be thrown off by this. Instead increment
+the wakeup count only when there is a FIXED_HARDWARE/NOTFIY_STATUS event.
 
-Hi Peter,
+Signed-off-by: Ravi Chandra Sadineni <ravisadineni@chromium.org>
+---
+ V2: Increment the wakeup count only when the lid is open.
 
-Have you had a chance to take a look at this?
+ drivers/acpi/button.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-Thanks,
+diff --git a/drivers/acpi/button.c b/drivers/acpi/button.c
+index 2345a5ee2dbbc..d2fe03e4faf05 100644
+--- a/drivers/acpi/button.c
++++ b/drivers/acpi/button.c
+@@ -235,9 +235,6 @@ static int acpi_lid_notify_state(struct acpi_device *device, int state)
+ 		button->last_time = ktime_get();
+ 	}
+ 
+-	if (state)
+-		acpi_pm_wakeup_event(&device->dev);
+-
+ 	ret = blocking_notifier_call_chain(&acpi_lid_notifier, state, device);
+ 	if (ret == NOTIFY_DONE)
+ 		ret = blocking_notifier_call_chain(&acpi_lid_notifier, state,
+@@ -366,7 +363,8 @@ int acpi_lid_open(void)
+ }
+ EXPORT_SYMBOL(acpi_lid_open);
+ 
+-static int acpi_lid_update_state(struct acpi_device *device)
++static int acpi_lid_update_state(struct acpi_device *device,
++				 bool is_notification)
+ {
+ 	int state;
+ 
+@@ -374,6 +372,9 @@ static int acpi_lid_update_state(struct acpi_device *device)
+ 	if (state < 0)
+ 		return state;
+ 
++	if (state && is_notification)
++		acpi_pm_wakeup_event(&device->dev);
++
+ 	return acpi_lid_notify_state(device, state);
+ }
+ 
+@@ -384,7 +385,7 @@ static void acpi_lid_initialize_state(struct acpi_device *device)
+ 		(void)acpi_lid_notify_state(device, 1);
+ 		break;
+ 	case ACPI_BUTTON_LID_INIT_METHOD:
+-		(void)acpi_lid_update_state(device);
++		(void)acpi_lid_update_state(device, false);
+ 		break;
+ 	case ACPI_BUTTON_LID_INIT_IGNORE:
+ 	default:
+@@ -409,7 +410,7 @@ static void acpi_button_notify(struct acpi_device *device, u32 event)
+ 			users = button->input->users;
+ 			mutex_unlock(&button->input->mutex);
+ 			if (users)
+-				acpi_lid_update_state(device);
++				acpi_lid_update_state(device, true);
+ 		} else {
+ 			int keycode;
+ 
+-- 
+2.18.0.rc1.242.g61856ae69a-goog
 
--Dave
