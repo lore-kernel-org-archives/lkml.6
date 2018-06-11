@@ -5,194 +5,145 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1FAF9C07D5F
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:57:13 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 89855C07D5F
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:57:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9EC5208B2
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:57:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9EC5208B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 49A9B208B2
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:57:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49A9B208B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934114AbeFKR5K (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 13:57:10 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54522 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932292AbeFKR5J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 13:57:09 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AC1811435;
-        Mon, 11 Jun 2018 10:57:08 -0700 (PDT)
-Received: from [192.168.43.63] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A5C303F59D;
-        Mon, 11 Jun 2018 10:57:01 -0700 (PDT)
-Subject: Re: [Xen-devel] [PATCH v2 5/9] xen/gntdev: Allow mappings for DMA
- buffers
-To:     Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Oleksandr Andrushchenko <andr2000@gmail.com>
-Cc:     jgross@suse.com, dongwon.kim@intel.com,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        daniel.vetter@intel.com, xen-devel@lists.xenproject.org,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        matthew.d.roper@intel.com, linux-media@vger.kernel.org
-References: <20180601114132.22596-1-andr2000@gmail.com>
- <20180601114132.22596-6-andr2000@gmail.com>
- <64facf05-0a51-c3d9-9d3b-780893248628@oracle.com>
- <84217eac-b83b-710f-39ab-c93cad65bf9a@gmail.com>
- <a172746d-7a97-159f-71a7-511b2d239089@oracle.com>
- <30fa03c0-1b75-c0b1-b14f-8b52ea584e20@gmail.com>
- <78dc2fc4-cdac-05b7-2c34-22b69e7e009c@oracle.com>
- <4be24882-185d-01e3-6aa1-751e341433c7@gmail.com>
- <alpine.DEB.2.10.1806081025030.14699@sstabellini-ThinkPad-X260>
- <c6e1820a-fb57-b213-aa2f-05787dae06ad@oracle.com>
- <06eff3fe-3ffc-47f6-6bd6-d8f2f823b382@gmail.com>
- <alpine.DEB.2.10.1806110949050.14695@sstabellini-ThinkPad-X260>
- <baab493d-bcba-f053-4b48-0f97fb5723b2@epam.com>
- <33984b9b-966a-78bb-0472-37af23b8ba9d@arm.com>
- <c5a94f8e-4b9f-a5e5-aac2-fc9fbd5503de@epam.com>
-From:   Julien Grall <julien.grall@arm.com>
-Message-ID: <c45aa6c9-cc0e-63db-e97a-0518497eb78b@arm.com>
-Date:   Mon, 11 Jun 2018 18:56:57 +0100
+        id S934129AbeFKR50 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 13:57:26 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58458 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932292AbeFKR5Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 13:57:24 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 01EC8BD9E;
+        Mon, 11 Jun 2018 17:57:24 +0000 (UTC)
+Received: from darcari.bos.csb (dhcp-17-203.bos.redhat.com [10.18.17.203])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1B84584438;
+        Mon, 11 Jun 2018 17:57:23 +0000 (UTC)
+Subject: Re: [PATCH] perf/x86: read the FREEZE_WHILE_SMM bit during boot
+From:   David Arcari <darcari@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Andi Kleen <ak@linux.intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Donald Zickus <dzickus@redhat.com>,
+        Prarit Bhargava <prarit@redhat.com>,
+        Jerry Hoemann <jerry.hoemann@hpe.com>
+References: <1528050223-144925-1-git-send-email-darcari@redhat.com>
+ <20180604082414.GO12217@hirez.programming.kicks-ass.net>
+ <e420bcc1-c75d-e6a1-0ca6-b668b6818f16@redhat.com>
+Organization: Red Hat
+Message-ID: <a8202fa8-a368-947f-994f-060ce83d188b@redhat.com>
+Date:   Mon, 11 Jun 2018 13:57:22 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <c5a94f8e-4b9f-a5e5-aac2-fc9fbd5503de@epam.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <e420bcc1-c75d-e6a1-0ca6-b668b6818f16@redhat.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 11 Jun 2018 17:57:24 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 11 Jun 2018 17:57:24 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'darcari@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 06/11/2018 06:49 PM, Oleksandr Andrushchenko wrote:
-> On 06/11/2018 08:46 PM, Julien Grall wrote:
->> Hi,
+On 06/04/2018 10:12 AM, David Arcari wrote:
+> On 06/04/2018 04:24 AM, Peter Zijlstra wrote:
+>> On Sun, Jun 03, 2018 at 02:23:43PM -0400, David Arcari wrote:
+>>> On some systems pressing the external NMI button is now failing to inject
+>>> an NMI 5-10% of the time.  This causes confusion for a user that expects
+>>> the NMI to dump the system.
+>>>
+>>> Commit 6089327f5424 ("perf/x86: Add sysfs entry to freeze counters on SMI")
+>>> does not read the firmware setting of the FREEZE_WHILE_SMM bit and will
+>>> always clear it when the PMU is initialized.  As a result the performance
+>>> counters will always run and that greatly expands the race in which
+>>> external NMI will not be processed if a local NMI is already being
+>>> processed.
+>>>
+>>> One option is to change default_do_nmi().  The code snippet below shows the
+>>> relevant portion of a patch that resolves the issue, but it is problematic
+>>> from a performance perspective and was dismissed.
+>>>
+>>> -345,7 +345,17 @@ static void default_do_nmi(struct pt_regs *regs)
+>>>  		 */
+>>>  		if (handled > 1)
+>>>  			__this_cpu_write(swallow_nmi, true);
+>>> -		return;
+>>> +
+>>> +		/*
+>>> +		 * Unfortunately, there is a race condition which can
+>>> +		 * result in a missing an external NMI.  Typically, an
+>>> +		 * external NMI is processed on cpu 0.  Therefore, on
+>>> +		 * cpu 0 check for an external NMI before returning.
+>>> +		 */
+>>> +		if (smp_processor_id() ||
+>>> +		    (x86_platform.get_nmi_reason() & NMI_REASON_MASK) == 0) {
+>>> +			return;
+>>> +		}
+>>>  	}
+>>>
+>>> Ultimately, the issue can be resolved by storing the default firmware
+>>> setting of FREEZE_WHILE_SMM before initializing the PMU.
 >>
->> On 06/11/2018 06:16 PM, Oleksandr Andrushchenko wrote:
->>> On 06/11/2018 07:51 PM, Stefano Stabellini wrote:
->>>> On Mon, 11 Jun 2018, Oleksandr Andrushchenko wrote:
->>>>> On 06/08/2018 10:21 PM, Boris Ostrovsky wrote:
->>>>>> On 06/08/2018 01:59 PM, Stefano Stabellini wrote:
->>>>>>>>>>>>>>       @@ -325,6 +401,14 @@ static int map_grant_pages(struct
->>>>>>>>>>>>>> grant_map
->>>>>>>>>>>>>> *map)
->>>>>>>>>>>>>>               map->unmap_ops[i].handle =
->>>>>>>>>>>>>> map->map_ops[i].handle;
->>>>>>>>>>>>>>               if (use_ptemod)
->>>>>>>>>>>>>> map->kunmap_ops[i].handle =
->>>>>>>>>>>>>> map->kmap_ops[i].handle;
->>>>>>>>>>>>>> +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
->>>>>>>>>>>>>> +        else if (map->dma_vaddr) {
->>>>>>>>>>>>>> +            unsigned long mfn;
->>>>>>>>>>>>>> +
->>>>>>>>>>>>>> +            mfn = __pfn_to_mfn(page_to_pfn(map->pages[i]));
->>>>>>>>>>>>> Not pfn_to_mfn()?
->>>>>>>>>>>> I'd love to, but pfn_to_mfn is only defined for x86, not ARM:
->>>>>>>>>>>> [1]
->>>>>>>>>>>> and [2]
->>>>>>>>>>>> Thus,
->>>>>>>>>>>>
->>>>>>>>>>>> drivers/xen/gntdev.c:408:10: error: implicit declaration of
->>>>>>>>>>>> function
->>>>>>>>>>>> ‘pfn_to_mfn’ [-Werror=implicit-function-declaration]
->>>>>>>>>>>>         mfn = pfn_to_mfn(page_to_pfn(map->pages[i]));
->>>>>>>>>>>>
->>>>>>>>>>>> So, I'll keep __pfn_to_mfn
->>>>>>>>>>> How will this work on non-PV x86?
->>>>>>>>>> So, you mean I need:
->>>>>>>>>> #ifdef CONFIG_X86
->>>>>>>>>> mfn = pfn_to_mfn(page_to_pfn(map->pages[i]));
->>>>>>>>>> #else
->>>>>>>>>> mfn = __pfn_to_mfn(page_to_pfn(map->pages[i]));
->>>>>>>>>> #endif
->>>>>>>>>>
->>>>>>>>> I'd rather fix it in ARM code. Stefano, why does ARM uses the
->>>>>>>>> underscored version?
->>>>>>>> Do you want me to add one more patch for ARM to wrap __pfn_to_mfn
->>>>>>>> with static inline for ARM? e.g.
->>>>>>>> static inline ...pfn_to_mfn(...)
->>>>>>>> {
->>>>>>>>       __pfn_to_mfn();
->>>>>>>> }
->>>>>>> A Xen on ARM guest doesn't actually know the mfns behind its own
->>>>>>> pseudo-physical pages. This is why we stopped using pfn_to_mfn and
->>>>>>> started using pfn_to_bfn instead, which will generally return "pfn",
->>>>>>> unless the page is a foreign grant. See include/xen/arm/page.h.
->>>>>>> pfn_to_bfn was also introduced on x86. For example, see the usage of
->>>>>>> pfn_to_bfn in drivers/xen/swiotlb-xen.c. Otherwise, if you don't 
->>>>>>> care
->>>>>>> about other mapped grants, you can just use pfn_to_gfn, that always
->>>>>>> returns pfn.
->>>>>> I think then this code needs to use pfn_to_bfn().
->>>>> Ok
->>>>>>
->>>>>>> Also, for your information, we support different page 
->>>>>>> granularities in
->>>>>>> Linux as a Xen guest, see the comment at include/xen/arm/page.h:
->>>>>>>
->>>>>>>     /*
->>>>>>>      * The pseudo-physical frame (pfn) used in all the helpers is 
->>>>>>> always
->>>>>>> based
->>>>>>>      * on Xen page granularity (i.e 4KB).
->>>>>>>      *
->>>>>>>      * A Linux page may be split across multiple non-contiguous 
->>>>>>> Xen page so
->>>>>>> we
->>>>>>>      * have to keep track with frame based on 4KB page granularity.
->>>>>>>      *
->>>>>>>      * PV drivers should never make a direct usage of those helpers
->>>>>>> (particularly
->>>>>>>      * pfn_to_gfn and gfn_to_pfn).
->>>>>>>      */
->>>>>>>
->>>>>>> A Linux page could be 64K, but a Xen page is always 4K. A granted 
->>>>>>> page
->>>>>>> is also 4K. We have helpers to take into account the offsets to map
->>>>>>> multiple Xen grants in a single Linux page, see for example
->>>>>>> drivers/xen/grant-table.c:gnttab_foreach_grant. Most PV drivers have
->>>>>>> been converted to be able to work with 64K pages correctly, but if I
->>>>>>> remember correctly gntdev.c is the only remaining driver that 
->>>>>>> doesn't
->>>>>>> support 64K pages yet, so you don't have to deal with it if you 
->>>>>>> don't
->>>>>>> want to.
->>>>>> I believe somewhere in this series there is a test for PAGE_SIZE vs.
->>>>>> XEN_PAGE_SIZE. Right, Oleksandr?
->>>>> Not in gntdev. You might have seen this in xen-drmfront/xen-sndfront,
->>>>> but I didn't touch gntdev for that. Do you want me to add yet 
->>>>> another patch
->>>>> in the series to check for that?
->>>> gntdev.c is already not capable of handling PAGE_SIZE != XEN_PAGE_SIZE,
->>>> so you are not going to break anything that is not already broken 
->>>> :-) If
->>>> your new gntdev.c code relies on PAGE_SIZE == XEN_PAGE_SIZE, it 
->>>> might be
->>>> good to add an in-code comment about it, just to make it easier to fix
->>>> the whole of gntdev.c in the future.
->>>>
->>> Yes, I just mean I can add something like [1] as a separate patch to 
->>> the series,
->>> so we are on the safe side here
+>> I'm sorry, I know it's Monday morning, but what?! I really don't
+>> understand anything you write there.
 >>
->> See my comment on Stefano's e-mail. I believe gntdev is able to handle 
->> PAGE_SIZE != XEN_PAGE_SIZE. So I would rather keep the behavior we 
->> have today for such case.
+>> Maybe if you explain the race and how your proposed fix closes it things
+>> will make sense. The above refers to too many things not here.
 >>
-> Sure, with a note that we waste most of a 64KiB page ;)
+> 
+> Sorry.
+> 
+> default_do_nmi() will process both perf events (local interrupts) as well as
+> external interrupts (such as the NMI button).  The handler is coded such that
+> if a local interrupt occurs, no check is made for an external interrupt.
+> Therefore, if the two interrupts occur simultaneously, the external interrupt
+> is lost.
+> 
+> The code above, which was ultimately discounted, attempts to avoid this
+> scenario with as little performance impact as possible by reading the register
+> without the spinlock for cpu 0 only (currently only cpu 0 can handle an
+> external NMI, I verified this on my system by testing the NMI button with
+> cpu 0 offline).
+> 
+> The code above is problematic for a number of reasons not the least of which
+> is performance.  Furthermore, I don't see a less intrusive solution wrt
+> do_default_nmi().
+> 
+> Upstream 6089327f5424 ("perf/x86: Add sysfs entry to freeze counters on SMI")
+> appears to have made it relatively easy to hit this race condition.  On some
+> systems, this commit has resulted in a change to the default firmware setting
+> of DEBUGCTLMSR_FREEZE_IN_SMM_BIT (it is now cleared by the OS by default).
+> 
+> With this bit cleared, the following situation occurs:
+> 
+> 1) external NMI - due to io check
+> 2) long duration SMI (counters do not freeze)
+> 3) NMI handler runs and misattributes interrupt to perf event
+> 
+> Ultimately, my solution was to restore the previous behavior by reading and
+> storing the firmware setting of the bit rather than to always clear it.
+> 
 
-That's the second definition of "64KB page" ;). In the case of grants, 
-it is actually quite hard to merge them in a single page. So quite a few 
-places still allocate 64KB but only map the first 4KB.
+Hi Peter,
 
-You would need to rework most the grant framework (not only gntdev) to 
-avoid that waste. Patches are welcomed.
+Have you had a chance to take a look at this?
 
-Cheers,
+Thanks,
 
--- 
-Julien Grall
+-Dave
