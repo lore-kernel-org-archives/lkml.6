@@ -1,342 +1,323 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Hn6mMnleHlt1MQAAmS7hNA
-	; Mon, 11 Jun 2018 11:36:32 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id La3+Cl2SHlsGFwAAmS7hNA
+	; Mon, 11 Jun 2018 15:17:15 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 39DC760791; Mon, 11 Jun 2018 11:36:32 +0000 (UTC)
+	id E089C60791; Mon, 11 Jun 2018 15:17:14 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 62BFA60541;
-	Mon, 11 Jun 2018 11:36:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 62BFA60541
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=lucaceresoli.net
+	by smtp.codeaurora.org (Postfix) with ESMTP id 3025460791;
+	Mon, 11 Jun 2018 15:17:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3025460791
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933013AbeFKLgT (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Mon, 11 Jun 2018 07:36:19 -0400
-Received: from srv-hp10-72.netsons.net ([94.141.22.72]:57458 "EHLO
-        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932894AbeFKLgP (ORCPT
+        id S1754220AbeFKPRM (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 20 others); Mon, 11 Jun 2018 11:17:12 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:7554 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753988AbeFKPRL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 07:36:15 -0400
-Received: from [109.168.11.45] (port=54392 helo=pc-ceresoli.dev.aim)
-        by srv-hp10.netsons.net with esmtpa (Exim 4.89_1)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1fSL7M-00B1A2-Gu; Mon, 11 Jun 2018 13:36:12 +0200
-From: Luca Ceresoli <luca@lucaceresoli.net>
-To: linux-media@vger.kernel.org
-Cc: Luca Ceresoli <luca@lucaceresoli.net>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Leon Luo <leonl@leopardimaging.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 2/8] media: imx274: consolidate per-mode data in imx274_frmfmt
-Date: Mon, 11 Jun 2018 13:35:33 +0200
-Message-Id: <1528716939-17015-3-git-send-email-luca@lucaceresoli.net>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528716939-17015-1-git-send-email-luca@lucaceresoli.net>
-References: <1528716939-17015-1-git-send-email-luca@lucaceresoli.net>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        Mon, 11 Jun 2018 11:17:11 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5BEsReo005141;
+        Mon, 11 Jun 2018 17:14:08 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2jg4nr1k2c-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 11 Jun 2018 17:14:08 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5922D31;
+        Mon, 11 Jun 2018 15:14:07 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3439F2D5F;
+        Mon, 11 Jun 2018 15:14:07 +0000 (GMT)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by SAFEX1HUBCAS21.st.com
+ (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 11 Jun
+ 2018 17:14:07 +0200
+Received: from localhost (10.201.23.16) by Webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 11 Jun 2018 17:14:06
+ +0200
+From: Olivier Moysan <olivier.moysan@st.com>
+To: <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <mcoquelin.stm32@gmail.com>,
+        <alexandre.torgue@st.com>, <alsa-devel@alsa-project.org>,
+        <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
+        <linux-kernel@vger.kernel.org>, <olivier.moysan@st.com>
+CC: <arnaud.pouliquen@st.com>, <benjamin.gaignard@st.com>
+Subject: [PATCH v2 1/1] ASoC: stm32: sai: add iec958 controls support
+Date: Mon, 11 Jun 2018 17:13:59 +0200
+Message-ID: <1528730039-15757-2-git-send-email-olivier.moysan@st.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1528730039-15757-1-git-send-email-olivier.moysan@st.com>
+References: <1528730039-15757-1-git-send-email-olivier.moysan@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.201.23.16]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-11_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Data about the implemented readout modes is partially stored in
-imx274_formats[], the rest is scattered in several arrays. The latter
-are then accessed using the mode index, e.g.:
+Add support of iec958 controls for STM32 SAI.
 
-  min_frame_len[priv->mode_index]
-
-Consolidate all these data in imx274_formats[], and store a pointer to
-the selected mode (i.e. imx274_formats[priv->mode_index]) in the main
-device struct. This way code to use these data becomes more readable,
-e.g.:
-
-  priv->mode->min_frame_len
-
-This removes lots of scaffolding code and keeps data about each mode
-in a unique place.
-
-Also remove a parameter to imx274_mode_regs() that is now unused.
-
-While this adds the mode pointer to the device struct, it does not
-remove the mode_index from it because mode_index is still used in two
-dev_dbg() calls.  This will be handled in a follow-up commit.
-
-Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
-
+Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
 ---
-Changed v3 -> v4: nothing
+ sound/soc/stm/Kconfig         |   1 +
+ sound/soc/stm/stm32_sai_sub.c | 139 ++++++++++++++++++++++++++++++++++++++----
+ 2 files changed, 128 insertions(+), 12 deletions(-)
 
-Changed v2 -> v3: nothing
-
-Changed v1 -> v2:
- - add "media: " prefix to commit message
----
- drivers/media/i2c/imx274.c | 139 +++++++++++++++++++++------------------------
- 1 file changed, 66 insertions(+), 73 deletions(-)
-
-diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
-index 8a8a11b8d75d..2ec31ae4e60d 100644
---- a/drivers/media/i2c/imx274.c
-+++ b/drivers/media/i2c/imx274.c
-@@ -147,10 +147,28 @@ enum imx274_mode {
- };
+diff --git a/sound/soc/stm/Kconfig b/sound/soc/stm/Kconfig
+index 48f9ddd94016..9b2681397dba 100644
+--- a/sound/soc/stm/Kconfig
++++ b/sound/soc/stm/Kconfig
+@@ -6,6 +6,7 @@ config SND_SOC_STM32_SAI
+ 	depends on SND_SOC
+ 	select SND_SOC_GENERIC_DMAENGINE_PCM
+ 	select REGMAP_MMIO
++	select SND_PCM_IEC958
+ 	help
+ 	  Say Y if you want to enable SAI for STM32
  
- /*
-- * imx274 format related structure
-+ * Parameters for each imx274 readout mode.
-+ *
-+ * These are the values to configure the sensor in one of the
-+ * implemented modes.
-+ *
-+ * @size: recommended recording pixels
-+ * @init_regs: registers to initialize the mode
-+ * @min_frame_len: Minimum frame length for each mode (see "Frame Rate
-+ *                 Adjustment (CSI-2)" in the datasheet)
-+ * @min_SHR: Minimum SHR register value (see "Shutter Setting (CSI-2)" in the
-+ *           datasheet)
-+ * @max_fps: Maximum frames per second
-+ * @nocpiop: Number of clocks per internal offset period (see "Integration Time
-+ *           in Each Readout Drive Mode (CSI-2)" in the datasheet)
+diff --git a/sound/soc/stm/stm32_sai_sub.c b/sound/soc/stm/stm32_sai_sub.c
+index cfeb219e1d78..c4f15ea14197 100644
+--- a/sound/soc/stm/stm32_sai_sub.c
++++ b/sound/soc/stm/stm32_sai_sub.c
+@@ -96,7 +96,8 @@
+  * @slot_mask: rx or tx active slots mask. set at init or at runtime
+  * @data_size: PCM data width. corresponds to PCM substream width.
+  * @spdif_frm_cnt: S/PDIF playback frame counter
+- * @spdif_status_bits: S/PDIF status bits
++ * @snd_aes_iec958: iec958 data
++ * @ctrl_lock: control lock
   */
- struct imx274_frmfmt {
- 	struct v4l2_frmsize_discrete size;
-+	const struct reg_8 *init_regs;
-+	int min_frame_len;
-+	int min_SHR;
-+	int max_fps;
-+	int nocpiop;
+ struct stm32_sai_sub_data {
+ 	struct platform_device *pdev;
+@@ -125,7 +126,8 @@ struct stm32_sai_sub_data {
+ 	int slot_mask;
+ 	int data_size;
+ 	unsigned int spdif_frm_cnt;
+-	unsigned char spdif_status_bits[SAI_IEC60958_STATUS_BYTES];
++	struct snd_aes_iec958 iec958;
++	struct mutex ctrl_lock; /* protect resources accessed by controls */
  };
  
- /*
-@@ -476,58 +494,35 @@ static const struct reg_8 imx274_tp_regs[] = {
- 	{IMX274_TABLE_END, 0x00}
- };
- 
--static const struct reg_8 *mode_table[] = {
--	[IMX274_MODE_3840X2160]		= imx274_mode1_3840x2160_raw10,
--	[IMX274_MODE_1920X1080]		= imx274_mode3_1920x1080_raw10,
--	[IMX274_MODE_1280X720]		= imx274_mode5_1280x720_raw10,
--};
--
--/*
-- * imx274 format related structure
-- */
-+/* nocpiop happens to be the same number for the implemented modes */
- static const struct imx274_frmfmt imx274_formats[] = {
--	{ {3840, 2160} },
--	{ {1920, 1080} },
--	{ {1280,  720} },
--};
--
--/*
-- * minimal frame length for each mode
-- * refer to datasheet section "Frame Rate Adjustment (CSI-2)"
-- */
--static const int min_frame_len[] = {
--	4550, /* mode 1, 4K */
--	2310, /* mode 3, 1080p */
--	2310 /* mode 5, 720p */
--};
--
--/*
-- * minimal numbers of SHR register
-- * refer to datasheet table "Shutter Setting (CSI-2)"
-- */
--static const int min_SHR[] = {
--	12, /* mode 1, 4K */
--	8, /* mode 3, 1080p */
--	8 /* mode 5, 720p */
--};
--
--static const int max_frame_rate[] = {
--	60, /* mode 1 , 4K */
--	120, /* mode 3, 1080p */
--	120 /* mode 5, 720p */
--};
--
--/*
-- * Number of clocks per internal offset period
-- * a constant based on mode
-- * refer to section "Integration Time in Each Readout Drive Mode (CSI-2)"
-- * in the datasheet
-- * for the implemented 3 modes, it happens to be the same number
-- */
--static const int nocpiop[] = {
--	112, /* mode 1 , 4K */
--	112, /* mode 3, 1080p */
--	112 /* mode 5, 720p */
-+	{
-+		/* mode 1, 4K */
-+		.size = {3840, 2160},
-+		.init_regs = imx274_mode1_3840x2160_raw10,
-+		.min_frame_len = 4550,
-+		.min_SHR = 12,
-+		.max_fps = 60,
-+		.nocpiop = 112,
-+	},
-+	{
-+		/* mode 3, 1080p */
-+		.size = {1920, 1080},
-+		.init_regs = imx274_mode3_1920x1080_raw10,
-+		.min_frame_len = 2310,
-+		.min_SHR = 8,
-+		.max_fps = 120,
-+		.nocpiop = 112,
-+	},
-+	{
-+		/* mode 5, 720p */
-+		.size = {1280, 720},
-+		.init_regs = imx274_mode5_1280x720_raw10,
-+		.min_frame_len = 2310,
-+		.min_SHR = 8,
-+		.max_fps = 120,
-+		.nocpiop = 112,
-+	},
- };
- 
- /*
-@@ -557,6 +552,8 @@ struct imx274_ctrls {
-  * @regmap: Pointer to regmap structure
-  * @reset_gpio: Pointer to reset gpio
-  * @lock: Mutex structure
-+ * @mode: Parameters for the selected readout mode
-+ *        (points to imx274_formats[mode_index])
-  * @mode_index: Resolution mode index
-  */
- struct stimx274 {
-@@ -569,6 +566,7 @@ struct stimx274 {
- 	struct regmap *regmap;
- 	struct gpio_desc *reset_gpio;
- 	struct mutex lock; /* mutex lock for operations */
-+	const struct imx274_frmfmt *mode;
- 	u32 mode_index;
- };
- 
-@@ -704,18 +702,12 @@ static int imx274_write_table(struct stimx274 *priv, const struct reg_8 table[])
+ enum stm32_sai_fifo_th {
+@@ -184,10 +186,6 @@ static bool stm32_sai_sub_writeable_reg(struct device *dev, unsigned int reg)
+ 	}
  }
  
- /*
-- * imx274_mode_regs - Function for set mode registers per mode index
-+ * Set mode registers to start stream.
-  * @priv: Pointer to device structure
-- * @mode: Mode index value
-- *
-- * This is used to start steam per mode index.
-- * mode = 0, start stream for sensor Mode 1: 4K/raw10
-- * mode = 1, start stream for sensor Mode 3: 1080p/raw10
-- * mode = 2, start stream for sensor Mode 5: 720p/raw10
-  *
-  * Return: 0 on success, errors otherwise
-  */
--static int imx274_mode_regs(struct stimx274 *priv, int mode)
-+static int imx274_mode_regs(struct stimx274 *priv)
+-static const unsigned char default_status_bits[SAI_IEC60958_STATUS_BYTES] = {
+-	0, 0, 0, IEC958_AES3_CON_FS_48000,
+-};
+-
+ static const struct regmap_config stm32_sai_sub_regmap_config_f4 = {
+ 	.reg_bits = 32,
+ 	.reg_stride = 4,
+@@ -210,6 +208,49 @@ static bool stm32_sai_sub_writeable_reg(struct device *dev, unsigned int reg)
+ 	.fast_io = true,
+ };
+ 
++static int snd_pcm_iec958_info(struct snd_kcontrol *kcontrol,
++			       struct snd_ctl_elem_info *uinfo)
++{
++	uinfo->type = SNDRV_CTL_ELEM_TYPE_IEC958;
++	uinfo->count = 1;
++
++	return 0;
++}
++
++static int snd_pcm_iec958_get(struct snd_kcontrol *kcontrol,
++			      struct snd_ctl_elem_value *uctl)
++{
++	struct stm32_sai_sub_data *sai = snd_kcontrol_chip(kcontrol);
++
++	mutex_lock(&sai->ctrl_lock);
++	memcpy(uctl->value.iec958.status, sai->iec958.status, 4);
++	mutex_unlock(&sai->ctrl_lock);
++
++	return 0;
++}
++
++static int snd_pcm_iec958_put(struct snd_kcontrol *kcontrol,
++			      struct snd_ctl_elem_value *uctl)
++{
++	struct stm32_sai_sub_data *sai = snd_kcontrol_chip(kcontrol);
++
++	mutex_lock(&sai->ctrl_lock);
++	memcpy(sai->iec958.status, uctl->value.iec958.status, 4);
++	mutex_unlock(&sai->ctrl_lock);
++
++	return 0;
++}
++
++static const struct snd_kcontrol_new iec958_ctls = {
++	.access = (SNDRV_CTL_ELEM_ACCESS_READWRITE |
++			SNDRV_CTL_ELEM_ACCESS_VOLATILE),
++	.iface = SNDRV_CTL_ELEM_IFACE_PCM,
++	.name = SNDRV_CTL_NAME_IEC958("", PLAYBACK, DEFAULT),
++	.info = snd_pcm_iec958_info,
++	.get = snd_pcm_iec958_get,
++	.put = snd_pcm_iec958_put,
++};
++
+ static irqreturn_t stm32_sai_isr(int irq, void *devid)
  {
- 	int err = 0;
- 
-@@ -727,7 +719,7 @@ static int imx274_mode_regs(struct stimx274 *priv, int mode)
- 	if (err)
- 		return err;
- 
--	err = imx274_write_table(priv, mode_table[mode]);
-+	err = imx274_write_table(priv, priv->mode->init_regs);
- 
- 	return err;
+ 	struct stm32_sai_sub_data *sai = (struct stm32_sai_sub_data *)devid;
+@@ -619,6 +660,59 @@ static void stm32_sai_set_frame(struct snd_soc_dai *cpu_dai)
+ 	}
  }
-@@ -889,6 +881,7 @@ static int imx274_set_fmt(struct v4l2_subdev *sd,
+ 
++static void stm32_sai_init_iec958_status(struct stm32_sai_sub_data *sai)
++{
++	unsigned char *cs = sai->iec958.status;
++
++	cs[0] = IEC958_AES0_CON_NOT_COPYRIGHT | IEC958_AES0_CON_EMPHASIS_NONE;
++	cs[1] = IEC958_AES1_CON_GENERAL;
++	cs[2] = IEC958_AES2_CON_SOURCE_UNSPEC | IEC958_AES2_CON_CHANNEL_UNSPEC;
++	cs[3] = IEC958_AES3_CON_CLOCK_1000PPM | IEC958_AES3_CON_FS_NOTID;
++}
++
++static void stm32_sai_set_iec958_status(struct stm32_sai_sub_data *sai,
++					struct snd_pcm_runtime *runtime)
++{
++	if (!runtime)
++		return;
++
++	/* Force the sample rate according to runtime rate */
++	mutex_lock(&sai->ctrl_lock);
++	switch (runtime->rate) {
++	case 22050:
++		sai->iec958.status[3] = IEC958_AES3_CON_FS_22050;
++		break;
++	case 44100:
++		sai->iec958.status[3] = IEC958_AES3_CON_FS_44100;
++		break;
++	case 88200:
++		sai->iec958.status[3] = IEC958_AES3_CON_FS_88200;
++		break;
++	case 176400:
++		sai->iec958.status[3] = IEC958_AES3_CON_FS_176400;
++		break;
++	case 24000:
++		sai->iec958.status[3] = IEC958_AES3_CON_FS_24000;
++		break;
++	case 48000:
++		sai->iec958.status[3] = IEC958_AES3_CON_FS_48000;
++		break;
++	case 96000:
++		sai->iec958.status[3] = IEC958_AES3_CON_FS_96000;
++		break;
++	case 192000:
++		sai->iec958.status[3] = IEC958_AES3_CON_FS_192000;
++		break;
++	case 32000:
++		sai->iec958.status[3] = IEC958_AES3_CON_FS_32000;
++		break;
++	default:
++		sai->iec958.status[3] = IEC958_AES3_CON_FS_NOTID;
++		break;
++	}
++	mutex_unlock(&sai->ctrl_lock);
++}
++
+ static int stm32_sai_configure_clock(struct snd_soc_dai *cpu_dai,
+ 				     struct snd_pcm_hw_params *params)
+ {
+@@ -709,7 +803,11 @@ static int stm32_sai_hw_params(struct snd_pcm_substream *substream,
+ 
+ 	sai->data_size = params_width(params);
+ 
+-	if (!STM_SAI_PROTOCOL_IS_SPDIF(sai)) {
++	if (STM_SAI_PROTOCOL_IS_SPDIF(sai)) {
++		/* Rate not already set in runtime structure */
++		substream->runtime->rate = params_rate(params);
++		stm32_sai_set_iec958_status(sai, substream->runtime);
++	} else {
+ 		ret = stm32_sai_set_slots(cpu_dai);
+ 		if (ret < 0)
+ 			return ret;
+@@ -789,6 +887,20 @@ static void stm32_sai_shutdown(struct snd_pcm_substream *substream,
+ 	sai->substream = NULL;
+ }
+ 
++static int stm32_sai_pcm_new(struct snd_soc_pcm_runtime *rtd,
++			     struct snd_soc_dai *cpu_dai)
++{
++	struct stm32_sai_sub_data *sai = dev_get_drvdata(cpu_dai->dev);
++
++	if (STM_SAI_PROTOCOL_IS_SPDIF(sai)) {
++		dev_dbg(&sai->pdev->dev, "%s: register iec controls", __func__);
++		return snd_ctl_add(rtd->pcm->card,
++				   snd_ctl_new1(&iec958_ctls, sai));
++	}
++
++	return 0;
++}
++
+ static int stm32_sai_dai_probe(struct snd_soc_dai *cpu_dai)
+ {
+ 	struct stm32_sai_sub_data *sai = dev_get_drvdata(cpu_dai->dev);
+@@ -809,6 +921,10 @@ static int stm32_sai_dai_probe(struct snd_soc_dai *cpu_dai)
+ 	else
+ 		snd_soc_dai_init_dma_data(cpu_dai, NULL, &sai->dma_params);
+ 
++	/* Next settings are not relevant for spdif mode */
++	if (STM_SAI_PROTOCOL_IS_SPDIF(sai))
++		return 0;
++
+ 	cr1_mask = SAI_XCR1_RX_TX;
+ 	if (STM_SAI_IS_CAPTURE(sai))
+ 		cr1 |= SAI_XCR1_RX_TX;
+@@ -820,10 +936,6 @@ static int stm32_sai_dai_probe(struct snd_soc_dai *cpu_dai)
+ 				     sai->synco, sai->synci);
  	}
  
- 	imx274->mode_index = index;
-+	imx274->mode = &imx274_formats[index];
+-	if (STM_SAI_PROTOCOL_IS_SPDIF(sai))
+-		memcpy(sai->spdif_status_bits, default_status_bits,
+-		       sizeof(default_status_bits));
+-
+ 	cr1_mask |= SAI_XCR1_SYNCEN_MASK;
+ 	cr1 |= SAI_XCR1_SYNCEN_SET(sai->sync);
  
- 	if (fmt->width > IMX274_MAX_WIDTH)
- 		fmt->width = IMX274_MAX_WIDTH;
-@@ -1042,7 +1035,7 @@ static int imx274_s_stream(struct v4l2_subdev *sd, int on)
+@@ -861,7 +973,7 @@ static int stm32_sai_pcm_process_spdif(struct snd_pcm_substream *substream,
+ 		/* Set channel status bit */
+ 		byte = frm_cnt >> 3;
+ 		mask = 1 << (frm_cnt - (byte << 3));
+-		if (sai->spdif_status_bits[byte] & mask)
++		if (sai->iec958.status[byte] & mask)
+ 			*ptr |= 0x04000000;
+ 		ptr++;
  
- 	if (on) {
- 		/* load mode registers */
--		ret = imx274_mode_regs(imx274, imx274->mode_index);
-+		ret = imx274_mode_regs(imx274);
- 		if (ret)
- 			goto fail;
- 
-@@ -1146,14 +1139,14 @@ static int imx274_clamp_coarse_time(struct stimx274 *priv, u32 *val,
- 	if (err)
- 		return err;
- 
--	if (*frame_length < min_frame_len[priv->mode_index])
--		*frame_length = min_frame_len[priv->mode_index];
-+	if (*frame_length < priv->mode->min_frame_len)
-+		*frame_length =  priv->mode->min_frame_len;
- 
- 	*val = *frame_length - *val; /* convert to raw shr */
- 	if (*val > *frame_length - IMX274_SHR_LIMIT_CONST)
- 		*val = *frame_length - IMX274_SHR_LIMIT_CONST;
--	else if (*val < min_SHR[priv->mode_index])
--		*val = min_SHR[priv->mode_index];
-+	else if (*val < priv->mode->min_SHR)
-+		*val = priv->mode->min_SHR;
- 
- 	return 0;
- }
-@@ -1365,7 +1358,7 @@ static int imx274_set_exposure(struct stimx274 *priv, int val)
+@@ -888,6 +1000,7 @@ static int stm32_sai_pcm_process_spdif(struct snd_pcm_substream *substream,
+ static struct snd_soc_dai_driver stm32_sai_playback_dai[] = {
+ {
+ 		.probe = stm32_sai_dai_probe,
++		.pcm_new = stm32_sai_pcm_new,
+ 		.id = 1, /* avoid call to fmt_single_name() */
+ 		.playback = {
+ 			.channels_min = 1,
+@@ -998,6 +1111,7 @@ static int stm32_sai_sub_parse_of(struct platform_device *pdev,
+ 			dev_err(&pdev->dev, "S/PDIF IEC60958 not supported\n");
+ 			return -EINVAL;
+ 		}
++		stm32_sai_init_iec958_status(sai);
+ 		sai->spdif = true;
+ 		sai->master = true;
  	}
+@@ -1114,6 +1228,7 @@ static int stm32_sai_sub_probe(struct platform_device *pdev)
+ 	sai->id = (uintptr_t)of_id->data;
  
- 	coarse_time = (IMX274_PIXCLK_CONST1 / IMX274_PIXCLK_CONST2 * val
--			- nocpiop[priv->mode_index]) / hmax;
-+			- priv->mode->nocpiop) / hmax;
+ 	sai->pdev = pdev;
++	mutex_init(&sai->ctrl_lock);
+ 	platform_set_drvdata(pdev, sai);
  
- 	/* step 2: convert exposure_time into SHR value */
- 
-@@ -1375,7 +1368,7 @@ static int imx274_set_exposure(struct stimx274 *priv, int val)
- 		goto fail;
- 
- 	priv->ctrls.exposure->val =
--			(coarse_time * hmax + nocpiop[priv->mode_index])
-+			(coarse_time * hmax + priv->mode->nocpiop)
- 			/ (IMX274_PIXCLK_CONST1 / IMX274_PIXCLK_CONST2);
- 
- 	dev_dbg(&priv->client->dev,
-@@ -1529,10 +1522,9 @@ static int imx274_set_frame_interval(struct stimx274 *priv,
- 				/ frame_interval.numerator);
- 
- 	/* boundary check */
--	if (req_frame_rate > max_frame_rate[priv->mode_index]) {
-+	if (req_frame_rate > priv->mode->max_fps) {
- 		frame_interval.numerator = 1;
--		frame_interval.denominator =
--					max_frame_rate[priv->mode_index];
-+		frame_interval.denominator = priv->mode->max_fps;
- 	} else if (req_frame_rate < IMX274_MIN_FRAME_RATE) {
- 		frame_interval.numerator = 1;
- 		frame_interval.denominator = IMX274_MIN_FRAME_RATE;
-@@ -1634,8 +1626,9 @@ static int imx274_probe(struct i2c_client *client,
- 
- 	/* initialize format */
- 	imx274->mode_index = IMX274_MODE_3840X2160;
--	imx274->format.width = imx274_formats[0].size.width;
--	imx274->format.height = imx274_formats[0].size.height;
-+	imx274->mode = &imx274_formats[imx274->mode_index];
-+	imx274->format.width = imx274->mode->size.width;
-+	imx274->format.height = imx274->mode->size.height;
- 	imx274->format.field = V4L2_FIELD_NONE;
- 	imx274->format.code = MEDIA_BUS_FMT_SRGGB10_1X10;
- 	imx274->format.colorspace = V4L2_COLORSPACE_SRGB;
+ 	sai->pdata = dev_get_drvdata(pdev->dev.parent);
 -- 
-2.7.4
+1.9.1
