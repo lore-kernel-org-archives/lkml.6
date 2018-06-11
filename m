@@ -1,103 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 1vrWAFc4HlsiMQAAmS7hNA
-	; Mon, 11 Jun 2018 08:52:39 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Sw0SIbVjHluTYAAAmS7hNA
+	; Mon, 11 Jun 2018 11:58:10 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id DE624607A4; Mon, 11 Jun 2018 08:52:38 +0000 (UTC)
+	id 8A4F0607BB; Mon, 11 Jun 2018 11:58:10 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VOtKTTIi"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dQIxJ2ee"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FROM,MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 6B0B1606FA;
-	Mon, 11 Jun 2018 08:52:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6B0B1606FA
+	by smtp.codeaurora.org (Postfix) with ESMTP id 065AD60351;
+	Mon, 11 Jun 2018 11:58:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 065AD60351
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932546AbeFKIwg (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 04:52:36 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:34196 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932288AbeFKIwf (ORCPT
+        id S933293AbeFKL6I (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 07:58:08 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:45294 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933058AbeFKLxF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 04:52:35 -0400
-Received: by mail-pg0-f66.google.com with SMTP id q4-v6so8361649pgr.1;
-        Mon, 11 Jun 2018 01:52:34 -0700 (PDT)
+        Mon, 11 Jun 2018 07:53:05 -0400
+Received: by mail-lf0-f66.google.com with SMTP id n3-v6so30078657lfe.12;
+        Mon, 11 Jun 2018 04:53:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=cmCEKRLCAHwV9KostSrIThoAzGLeQHJXtToj8bM7bsE=;
-        b=VOtKTTIiWpc2utmXPXLodkJUE0bQ7p8Erctgcl8mx7HWI9T79ovaJQIFJG+1Ld7+Dy
-         opNFZDKFb8NUqnRACQTHfGROnHqUn9wUoHcvImnov26TCAJdtk0iXZL/7ulYo7ckXM5C
-         FANNy1Fe/VRwsx7zJ1m+XexA7QIOd0CsrvjkYph9u3xn+LgA+esk9KBuOXite7ZdoIh4
-         asMD6S1TRStx26BqfG90HHGko9ZVUoGg704EyYi1GPMd0DJ6aRBpHbWAbRI7wrhnaB6A
-         /35yJSw8AbSwoyFXW8aZKZLw54QmoqMKES0oLmUFETWiesMLwe1oOVbCM6NgJK8+S9fV
-         fKvQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=Y+5GKTpgMCdMxyRxlBxs6bjclVa+cCFGKAw3dcGnPl0=;
+        b=dQIxJ2eeqbGd6GjDKjKk1aITeyJxzGmVVE1/nyBI4/mv44D4IEgUetdCVLl9XaQTN5
+         z8dfIdhuKEmXnn9ifNEVnGo3BnlHmfcmRgObgJKkeDQenc14QlsH9IrT/iP1bgrmpYDx
+         /VASPGdVRV+mnGanHze5ikzgE7x05GtZs0koN+mtqJn9HeaDut5ghtr05nZU1cIPns/+
+         S8NfoHMGJULCfT/638gxOHNxYIGXM2altkh4+l8u1aWSU0j+Kr5CIcfLdL/vDKvIEy5D
+         Jis1FEYGk5g75e1nYuzVCDWwKkwyyoiEVC3IUiIu8xVZCeTD0AGkmbIt75UM07eCmU/a
+         uvSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=cmCEKRLCAHwV9KostSrIThoAzGLeQHJXtToj8bM7bsE=;
-        b=DdwxR+OhBvtSbN8ClQ9kyGGUsl0kpUKyi66TaN2sCTnCjJru9S+VKlKvhU70Vx5jyd
-         JWCFCmg5N/R3Ahl4AXgli7gm+AjQuZbeFygxtTKJIGJByIA8m8+QPLSkdsKeP2XJCR1m
-         QserZ2//8L92yK4uopMH3xFlh5ALf8abMXbtgfSJq+uJEP3XgKb8mqr2L4VRIad31wJg
-         aui0GQM2F+aYptiv3Ki3YTOicplVnC8GNXpBbmIJN6VMfyq2hV6i44zm3t3qV74O4/4f
-         TIpnjWmIMuzOGxJp+Q3RKW08l+prjSY2Elj0X9GM/pP6nslJJJXoGB1Ldylc+CdoOLPI
-         wH2g==
-X-Gm-Message-State: APt69E3BpbwbZoF/chJ8oH1H5+x6izLpAmzFECAH0eWs1GoCf7Dd5hph
-        ygc+WfeGEo2ckg1aPdkriac=
-X-Google-Smtp-Source: ADUXVKI8WCymay5ylCTnuU1YBqw7e1Xtjk/L3Gs2O+ytPWGdC5WyVtnaWGybDDrwp4CO91oNvf5K4Q==
-X-Received: by 2002:a63:7001:: with SMTP id l1-v6mr14340350pgc.358.1528707154644;
-        Mon, 11 Jun 2018 01:52:34 -0700 (PDT)
-Received: from localhost ([103.88.46.82])
-        by smtp.gmail.com with ESMTPSA id a14-v6sm29937731pgv.4.2018.06.11.01.52.33
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=Y+5GKTpgMCdMxyRxlBxs6bjclVa+cCFGKAw3dcGnPl0=;
+        b=rkAddzqfnjkTHF9ACqrfMCyw3MlGb1t7AdQr2PRLoAeZQRdG2/2g19bjPaLI1BullH
+         19N4pqehb716nQUHASX69K3QuRzQC3McGh2zTlG7eEyh0zdB0XpimY3oNirdSMbQ2YxM
+         Eqc5tCGM63Xh9bzxaw1P3rr5yAU1ptvhocie82MKDgzHaozqOnixdhJRlexZAUuOISrJ
+         KLmtaQzKq9n0zrfy9rMO+18694o0kwK/guV43/F1F6744dhmvkSiKtmsQsa3YxeoWBz+
+         OiEzAW+pSahiq1lR3oTaB0y0XNgbc0TxwutLH1NUmBKJhR1zqk4bvrXj4Nd4MrFjVMgp
+         5SNQ==
+X-Gm-Message-State: APt69E2+0PPHXFVyGaitI0Nohk++8bEQWjtVyPE2taeJcwAlNmeXR955
+        7xS4BKn/rJtWE4IFDoZwNwwyqWgI
+X-Google-Smtp-Source: ADUXVKJBYD9n9DdETVruAeMJm2e2z8Pe/uxocQE3clzsMbByXizSzEkaowF3TGuYL2DxPC6+YQhH7Q==
+X-Received: by 2002:a2e:5111:: with SMTP id f17-v6mr11261891ljb.16.1528717983291;
+        Mon, 11 Jun 2018 04:53:03 -0700 (PDT)
+Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
+        by smtp.gmail.com with ESMTPSA id h90-v6sm8332849ljf.65.2018.06.11.04.53.01
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Jun 2018 01:52:34 -0700 (PDT)
-From: Zhouyang Jia <jiazhouyang09@gmail.com>
-Cc: Zhouyang Jia <jiazhouyang09@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
+        Mon, 11 Jun 2018 04:53:02 -0700 (PDT)
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: storage: add error handling for kcalloc
-Date: Mon, 11 Jun 2018 16:52:26 +0800
-Message-Id: <1528707147-35623-1-git-send-email-jiazhouyang09@gmail.com>
-X-Mailer: git-send-email 2.7.4
-To: unlisted-recipients:; (no To-header on input)
+        Jiri Slaby <jslaby@suse.com>
+Subject: [PATCH v2 06/24] serdev: Support bus matching with modalias field
+Date: Mon, 11 Jun 2018 13:52:22 +0200
+Message-Id: <20180611115240.32606-7-ricardo.ribalda@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
+References: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When kcalloc fails, the lack of error-handling code may
-cause unexpected results.
+Match devices to drivers by their modalias when the ACPI and the OF
+match fails.
 
-This patch adds error-handling code after calling kcalloc.
-
-Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.com>
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 ---
- drivers/usb/storage/alauda.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/tty/serdev/core.c | 23 ++++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/storage/alauda.c b/drivers/usb/storage/alauda.c
-index 900591d..c56355c 100644
---- a/drivers/usb/storage/alauda.c
-+++ b/drivers/usb/storage/alauda.c
-@@ -437,6 +437,11 @@ static int alauda_init_media(struct us_data *us)
- 		+ MEDIA_INFO(us).blockshift + MEDIA_INFO(us).pageshift);
- 	MEDIA_INFO(us).pba_to_lba = kcalloc(num_zones, sizeof(u16*), GFP_NOIO);
- 	MEDIA_INFO(us).lba_to_pba = kcalloc(num_zones, sizeof(u16*), GFP_NOIO);
-+	if ((MEDIA_INFO(us).pba_to_lba == NULL)
-+		|| (MEDIA_INFO(us).lba_to_pba == NULL)) {
-+		pr_warn("alauda_init_media: memory allocation failed\n");
-+		return USB_STOR_TRANSPORT_ERROR;
-+	}
+diff --git a/drivers/tty/serdev/core.c b/drivers/tty/serdev/core.c
+index df93b727e984..2c79f47fc0db 100644
+--- a/drivers/tty/serdev/core.c
++++ b/drivers/tty/serdev/core.c
+@@ -79,8 +79,23 @@ static const struct device_type serdev_ctrl_type = {
+ 	.release	= serdev_ctrl_release,
+ };
  
- 	if (alauda_reset_media(us) != USB_STOR_XFER_GOOD)
- 		return USB_STOR_TRANSPORT_ERROR;
++static int serdev_match_id(const struct serdev_device_id *id,
++			   const struct serdev_device *sdev)
++{
++	while (id->name[0]) {
++		if (!strcmp(sdev->modalias, id->name))
++			return 1;
++		id++;
++	}
++
++	return 0;
++}
++
+ static int serdev_device_match(struct device *dev, struct device_driver *drv)
+ {
++	const struct serdev_device *sdev = to_serdev_device(dev);
++	const struct serdev_device_driver *sdrv = to_serdev_device_driver(drv);
++
+ 	if (!is_serdev_device(dev))
+ 		return 0;
+ 
+@@ -88,7 +103,13 @@ static int serdev_device_match(struct device *dev, struct device_driver *drv)
+ 	if (acpi_driver_match_device(dev, drv))
+ 		return 1;
+ 
+-	return of_driver_match_device(dev, drv);
++	if (of_driver_match_device(dev, drv))
++		return 1;
++
++	if (sdrv->id_table)
++		return serdev_match_id(sdrv->id_table, sdev);
++
++	return strcmp(sdev->modalias, drv->name) == 0;
+ }
+ 
+ /**
 -- 
-2.7.4
+2.17.1
