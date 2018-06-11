@@ -1,155 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id oY/kDVMLGVtuZQAAmS7hNA
-	; Thu, 07 Jun 2018 10:42:23 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id BplqHzqFHlvyKwAAmS7hNA
+	; Mon, 11 Jun 2018 14:21:30 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 18789608B8; Thu,  7 Jun 2018 10:42:23 +0000 (UTC)
+	id AECCB607A4; Mon, 11 Jun 2018 14:21:30 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iEUzAMRf"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id F38856089E;
-	Thu,  7 Jun 2018 10:42:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F38856089E
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 390C860351;
+	Mon, 11 Jun 2018 14:21:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 390C860351
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932251AbeFGKmS (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 06:42:18 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34027 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753004AbeFGKmR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 06:42:17 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 6FF77ABF9;
-        Thu,  7 Jun 2018 10:42:15 +0000 (UTC)
-Date: Thu, 7 Jun 2018 12:42:14 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Mel Gorman <mgorman@techsingularity.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Dave Hansen <dave.hansen@intel.com>, vbabka@suse.cz,
-        Aaron Lu <aaron.lu@intel.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Hugh Dickins <hughd@google.com>
-Subject: Re: [PATCH] mremap: Remove LATENCY_LIMIT from mremap to reduce the
- number of TLB shootdowns
-Message-ID: <20180607104214.GI32433@dhcp22.suse.cz>
-References: <20180606183803.k7qaw2xnbvzshv34@techsingularity.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180606183803.k7qaw2xnbvzshv34@techsingularity.net>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S934268AbeFKOUb (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 10:20:31 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45238 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933495AbeFKOGu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 10:06:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
+        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=+c+l1NkAi3vmmhzDtUhhMVC9W/oaDCjLLlNg0JM0yu4=; b=iEUzAMRfHgRfvebMaKJqDTGkZ
+        AaNbUk3keL7ve5wapSApkl5+mV3v6qoydpMdkJaTheMjI6vELUAdZU7QV/Gsku9Qj5HJqsJuUGUju
+        hEOklifUvPIFNxfAV/+BLxaH43R3gguKxR9TGAFhAR3ApsMtoy2g/OJAY81zBLZ7D//mUKx+TJ1nH
+        XIOr0bJJG3hKcwutCd9wuDfNpSxB7JPfVuK3fr10xw2Vqzqek7elH9kPmdy1syE0EN9dpT5i0UWZp
+        B1EutnH3BwxjpC7Eonj/XQwGsrIyMe+ma6OfxKOHwuY5UHwjd/+0MQAltp2LJz13nU0lI5DfIer38
+        dSj+2S0jg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fSNT7-0004gI-Ul; Mon, 11 Jun 2018 14:06:49 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@redhat.com>,
+        Lukas Czerner <lczerner@redhat.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH v13 25/72] page cache: Convert find_get_pages_range to XArray
+Date: Mon, 11 Jun 2018 07:05:52 -0700
+Message-Id: <20180611140639.17215-26-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
+References: <20180611140639.17215-1-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 06-06-18 19:38:03, Mel Gorman wrote:
-> Commit 5d1904204c99 ("mremap: fix race between mremap() and page cleanning")
-> fixed races between mremap and other operations for both file-backed and
-> anonymous mappings. The file-backed was the most critical as it allowed the
-> possibility that data could be changed on a physical page after page_mkclean
-> returned which could trigger data loss or data integrity issues. A customer
-> reported that the cost of the TLBs for anonymous regressions was excessive
-> and resulting in a 30-50% drop in performance overall since this commit
-> on a microbenchmark. Unfortunately I neither have access to the test-case
-> nor can I describe what it does other than saying that mremap operations
-> dominate heavily.
-> 
-> This patch removes the LATENCY_LIMIT to handle TLB flushes on a PMD boundary
-> instead of every 64 pages to reduce the number of TLB shootdowns by a factor
-> of 8 in the ideal case. LATENCY_LIMIT was almost certainly used originally
-> to limit the PTL hold times but the latency savings are likely offset by
-> the cost of IPIs in many cases. This patch is not reported to completely
-> restore performance but gets it within an acceptable percentage. The given
-> metric here is simply described as "higher is better".
-> 
-> Baseline that was known good
-> 002:  Metric:       91.05
-> 004:  Metric:      109.45
-> 008:  Metric:       73.08
-> 016:  Metric:       58.14
-> 032:  Metric:       61.09
-> 064:  Metric:       57.76
-> 128:  Metric:       55.43
-> 
-> Current
-> 001:  Metric:       54.98
-> 002:  Metric:       56.56
-> 004:  Metric:       41.22
-> 008:  Metric:       35.96
-> 016:  Metric:       36.45
-> 032:  Metric:       35.71
-> 064:  Metric:       35.73
-> 128:  Metric:       34.96
-> 
-> With patch
-> 001:  Metric:       61.43
-> 002:  Metric:       81.64
-> 004:  Metric:       67.92
-> 008:  Metric:       51.67
-> 016:  Metric:       50.47
-> 032:  Metric:       52.29
-> 064:  Metric:       50.01
-> 128:  Metric:       49.04
-> 
-> So for low threads, it's not restored but for larger number of threads,
-> it's closer to the "known good" baseline.
-> 
-> Using a different mremap-intensive workload that is not representative of
-> the real workload there is little difference observed outside of noise in
-> the headline metrics However, the TLB shootdowns are reduced by 11% on
-> average and at the peak, TLB shootdowns were reduced by 21%. Interrupts
-> were sampled every second while the workload ran to get those figures.
-> It's known that the figures will vary as the non-representative load is
-> non-deterministic.
-> 
-> An alternative patch was posted that should have significantly reduced the
-> TLB flushes but unfortunately it does not perform as well as this version
-> on the customer test case. If revisited, the two patches can stack on top
-> of each other.
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Yes, I think the other patch still makes some sense. I do not see why it
-is not helping much but I hope we will learn that. This is a reasonable
-step in the meantime.
+The 'end' parameter of the xas_for_each iterator avoids a useless
+iteration at the end of the range.
 
-I like the limit removal more than the previous version to tweak it.
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+ mm/filemap.c | 52 +++++++++++++++++++---------------------------------
+ 1 file changed, 19 insertions(+), 33 deletions(-)
 
-> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
-
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-> ---
->  mm/mremap.c | 4 ----
->  1 file changed, 4 deletions(-)
-> 
-> diff --git a/mm/mremap.c b/mm/mremap.c
-> index 049470aa1e3e..5c2e18505f75 100644
-> --- a/mm/mremap.c
-> +++ b/mm/mremap.c
-> @@ -191,8 +191,6 @@ static void move_ptes(struct vm_area_struct *vma, pmd_t *old_pmd,
->  		drop_rmap_locks(vma);
->  }
->  
-> -#define LATENCY_LIMIT	(64 * PAGE_SIZE)
-> -
->  unsigned long move_page_tables(struct vm_area_struct *vma,
->  		unsigned long old_addr, struct vm_area_struct *new_vma,
->  		unsigned long new_addr, unsigned long len,
-> @@ -247,8 +245,6 @@ unsigned long move_page_tables(struct vm_area_struct *vma,
->  		next = (new_addr + PMD_SIZE) & PMD_MASK;
->  		if (extent > next - new_addr)
->  			extent = next - new_addr;
-> -		if (extent > LATENCY_LIMIT)
-> -			extent = LATENCY_LIMIT;
->  		move_ptes(vma, old_pmd, old_addr, old_addr + extent, new_vma,
->  			  new_pmd, new_addr, need_rmap_locks, &need_flush);
->  	}
-
+diff --git a/mm/filemap.c b/mm/filemap.c
+index b49290131e85..019c263bb6be 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -1650,64 +1650,50 @@ unsigned find_get_pages_range(struct address_space *mapping, pgoff_t *start,
+ 			      pgoff_t end, unsigned int nr_pages,
+ 			      struct page **pages)
+ {
+-	struct radix_tree_iter iter;
+-	void **slot;
++	XA_STATE(xas, &mapping->i_pages, *start);
++	struct page *page;
+ 	unsigned ret = 0;
+ 
+ 	if (unlikely(!nr_pages))
+ 		return 0;
+ 
+ 	rcu_read_lock();
+-	radix_tree_for_each_slot(slot, &mapping->i_pages, &iter, *start) {
+-		struct page *head, *page;
+-
+-		if (iter.index > end)
+-			break;
+-repeat:
+-		page = radix_tree_deref_slot(slot);
+-		if (unlikely(!page))
++	xas_for_each(&xas, page, end) {
++		struct page *head;
++		if (xas_retry(&xas, page))
+ 			continue;
+-
+-		if (radix_tree_exception(page)) {
+-			if (radix_tree_deref_retry(page)) {
+-				slot = radix_tree_iter_retry(&iter);
+-				continue;
+-			}
+-			/*
+-			 * A shadow entry of a recently evicted page,
+-			 * or a swap entry from shmem/tmpfs.  Skip
+-			 * over it.
+-			 */
++		/* Skip over shadow, swap and DAX entries */
++		if (xa_is_value(page))
+ 			continue;
+-		}
+ 
+ 		head = compound_head(page);
+ 		if (!page_cache_get_speculative(head))
+-			goto repeat;
++			goto retry;
+ 
+ 		/* The page was split under us? */
+-		if (compound_head(page) != head) {
+-			put_page(head);
+-			goto repeat;
+-		}
++		if (compound_head(page) != head)
++			goto put_page;
+ 
+ 		/* Has the page moved? */
+-		if (unlikely(page != *slot)) {
+-			put_page(head);
+-			goto repeat;
+-		}
++		if (unlikely(page != xas_reload(&xas)))
++			goto put_page;
+ 
+ 		pages[ret] = page;
+ 		if (++ret == nr_pages) {
+-			*start = pages[ret - 1]->index + 1;
++			*start = page->index + 1;
+ 			goto out;
+ 		}
++		continue;
++put_page:
++		put_page(head);
++retry:
++		xas_reset(&xas);
+ 	}
+ 
+ 	/*
+ 	 * We come here when there is no page beyond @end. We take care to not
+ 	 * overflow the index @start as it confuses some of the callers. This
+-	 * breaks the iteration when there is page at index -1 but that is
++	 * breaks the iteration when there is a page at index -1 but that is
+ 	 * already broken anyway.
+ 	 */
+ 	if (end == (pgoff_t)-1)
 -- 
-Michal Hocko
-SUSE Labs
+2.17.1
