@@ -1,126 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 0po1Id9AGVtRZgAAmS7hNA
-	; Thu, 07 Jun 2018 14:29:48 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id JnaBADkyHltjfAAAmS7hNA
+	; Mon, 11 Jun 2018 08:26:33 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 6B2C56063F; Thu,  7 Jun 2018 14:29:48 +0000 (UTC)
+	id DD859607A4; Mon, 11 Jun 2018 08:26:32 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kNThQjms"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FROM,MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 7E8D3608CD;
-	Thu,  7 Jun 2018 14:29:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7E8D3608CD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 6D2F260791;
+	Mon, 11 Jun 2018 08:26:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6D2F260791
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933744AbeFGO3i (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:29:38 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40223 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933706AbeFGO32 (ORCPT
+        id S1754150AbeFKI0a (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 04:26:30 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:36492 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754010AbeFKI02 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:29:28 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbz-0005Zl-UA; Thu, 07 Jun 2018 15:10:00 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvay-0002ja-NL; Thu, 07 Jun 2018 15:08:56 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, dave.hansen@intel.com,
-        gregkh@linux-foundation.org, ak@linux.intel.com,
-        gnomes@lxorguk.ukuu.org.uk, arjan@linux.intel.com,
-        torvalds@linux-foundation.org,
-        "Thomas Gleixner" <tglx@linutronix.de>, karahmed@amazon.de,
-        tim.c.chen@linux.intel.com, pbonzini@redhat.com,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, bp@alien8.de,
-        "David Woodhouse" <dwmw@amazon.co.uk>, ashok.raj@intel.com,
-        peterz@infradead.org
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.589453943@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 043/410] x86/msr: Add definitions for new speculation
- control MSRs
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Mon, 11 Jun 2018 04:26:28 -0400
+Received: by mail-pl0-f65.google.com with SMTP id a7-v6so9404699plp.3;
+        Mon, 11 Jun 2018 01:26:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=TVVOEI6h0780tnAylhUZDND+FOZfDBDaGWtZb7OFp9A=;
+        b=kNThQjmsMATe3qwDCv9QI6u7T4YpZVow05YzK30myIG7obWl55CwdmqEQl6exaKgTH
+         xCB+S4H5UekKDtOtBz5OTWKMubVcYBYUILqdM+m7UgfplU6A5SJ8tXvfWacxHGjdtpoi
+         4OYYGVlQBOF1wTEFEx9BE9XJdbq+RhQr6WDgfY1E4bwSWJ6MQ1KWL3W/2bqF93o/TBeg
+         HaEKKv5vYma8kzBsDhv/jCMpotoRL9WyMGsSZXDZvscVo6gfERFeirtFx0RuyUEeyOiF
+         SzsW80aeXOnGIAiTkmxae5UhAZrqE0MC+vjGUlxTzaN1nSF88x+HLBwEWzm3Jvndo6MG
+         eBSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=TVVOEI6h0780tnAylhUZDND+FOZfDBDaGWtZb7OFp9A=;
+        b=kv3j5XJssR6j8jUF+C7kLJLo3nBMm3FLmO9Zrt0KtbtPXGoex2QAItgkOrZPab936r
+         4jDD+1PhM4Cje8DsQB8U9RUygfpUFYHfRRGvDheGn5ahzbjYfE1nqH5I77BZHmOoHZwM
+         bU5et5wIbJdRK2pQNKryDcEKlWXIPEKqg3FC/USUssfnYY4aSH67fep1SlJzXLnx2Rmt
+         6AzA09Hm6MDHVJ6WjKaeCEtKV17zT4IB8Svtjpajyh5tE1zfg7XkYxf13kxL+bwrX07P
+         qGDuhqzkq//mJvBeIxXtUr9lR6iFlc6JetbIOab9dR/xAHi1WU5OG05zmCCRCDuQIV/Q
+         sC1g==
+X-Gm-Message-State: APt69E3z1odpbKi745K1txJXXlSYfpwJglX3BLZiwqnzDkYcnPDEk80q
+        EDhLltdFKD6WFsS4yLxpmqM=
+X-Google-Smtp-Source: ADUXVKKAP02Os/Ht/aI+CotwgMmb0rHN3aK4L0RZ31K09gVOoki/UOpPsj3FQWl0+zUwdxAZcrh7xA==
+X-Received: by 2002:a17:902:264:: with SMTP id 91-v6mr17198127plc.341.1528705588389;
+        Mon, 11 Jun 2018 01:26:28 -0700 (PDT)
+Received: from localhost ([103.88.46.82])
+        by smtp.gmail.com with ESMTPSA id w125-v6sm16988020pgb.92.2018.06.11.01.26.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Jun 2018 01:26:27 -0700 (PDT)
+From: Zhouyang Jia <jiazhouyang09@gmail.com>
+Cc: Zhouyang Jia <jiazhouyang09@gmail.com>,
+        Anil Gurumurthy <anil.gurumurthy@qlogic.com>,
+        Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: bfa: add error handling for pci_iomap
+Date: Mon, 11 Jun 2018 16:26:21 +0800
+Message-Id: <1528705581-34646-1-git-send-email-jiazhouyang09@gmail.com>
+X-Mailer: git-send-email 2.7.4
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+When pci_iomap fails, the lack of error-handling code may
+cause unexpected results.
 
-------------------
+This patch adds error-handling code after calling pci_iomap.
 
-From: David Woodhouse <dwmw@amazon.co.uk>
-
-commit 1e340c60d0dd3ae07b5bedc16a0469c14b9f3410 upstream.
-
-Add MSR and bit definitions for SPEC_CTRL, PRED_CMD and ARCH_CAPABILITIES.
-
-See Intel's 336996-Speculative-Execution-Side-Channel-Mitigations.pdf
-
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: gnomes@lxorguk.ukuu.org.uk
-Cc: ak@linux.intel.com
-Cc: ashok.raj@intel.com
-Cc: dave.hansen@intel.com
-Cc: karahmed@amazon.de
-Cc: arjan@linux.intel.com
-Cc: torvalds@linux-foundation.org
-Cc: peterz@infradead.org
-Cc: bp@alien8.de
-Cc: pbonzini@redhat.com
-Cc: tim.c.chen@linux.intel.com
-Cc: gregkh@linux-foundation.org
-Link: https://lkml.kernel.org/r/1516896855-7642-5-git-send-email-dwmw@amazon.co.uk
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.16: adjust filename]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
 ---
- arch/x86/include/uapi/asm/msr-index.h | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/scsi/bfa/bfad.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/arch/x86/include/uapi/asm/msr-index.h
-+++ b/arch/x86/include/uapi/asm/msr-index.h
-@@ -32,6 +32,13 @@
- #define EFER_FFXSR		(1<<_EFER_FFXSR)
+diff --git a/drivers/scsi/bfa/bfad.c b/drivers/scsi/bfa/bfad.c
+index bd7e6a6f..74e39d7 100644
+--- a/drivers/scsi/bfa/bfad.c
++++ b/drivers/scsi/bfa/bfad.c
+@@ -760,6 +760,11 @@ bfad_pci_init(struct pci_dev *pdev, struct bfad_s *bfad)
+ 		goto out_release_region;
+ 	}
  
- /* Intel MSRs. Some also available on other CPUs */
-+#define MSR_IA32_SPEC_CTRL		0x00000048 /* Speculation Control */
-+#define SPEC_CTRL_IBRS			(1 << 0)   /* Indirect Branch Restricted Speculation */
-+#define SPEC_CTRL_STIBP			(1 << 1)   /* Single Thread Indirect Branch Predictors */
++	if (bfad->pci_bar2_kva == NULL) {
++		printk(KERN_ERR "Fail to map bar2\n");
++		goto out_release_region;
++	}
 +
-+#define MSR_IA32_PRED_CMD		0x00000049 /* Prediction Command */
-+#define PRED_CMD_IBPB			(1 << 0)   /* Indirect Branch Prediction Barrier */
-+
- #define MSR_IA32_PERFCTR0		0x000000c1
- #define MSR_IA32_PERFCTR1		0x000000c2
- #define MSR_FSB_FREQ			0x000000cd
-@@ -46,6 +53,11 @@
- 
- #define MSR_PLATFORM_INFO		0x000000ce
- #define MSR_MTRRcap			0x000000fe
-+
-+#define MSR_IA32_ARCH_CAPABILITIES	0x0000010a
-+#define ARCH_CAP_RDCL_NO		(1 << 0)   /* Not susceptible to Meltdown */
-+#define ARCH_CAP_IBRS_ALL		(1 << 1)   /* Enhanced IBRS support */
-+
- #define MSR_IA32_BBL_CR_CTL		0x00000119
- #define MSR_IA32_BBL_CR_CTL3		0x0000011e
- 
+ 	bfad->hal_pcidev.pci_slot = PCI_SLOT(pdev->devfn);
+ 	bfad->hal_pcidev.pci_func = PCI_FUNC(pdev->devfn);
+ 	bfad->hal_pcidev.pci_bar_kva = bfad->pci_bar0_kva;
+-- 
+2.7.4
