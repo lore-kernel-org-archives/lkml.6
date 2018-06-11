@@ -1,140 +1,215 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id kBDjEK/TG1tXAQAAmS7hNA
-	; Sat, 09 Jun 2018 13:19:20 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id H0hkGyZkHlu+YgAAmS7hNA
+	; Mon, 11 Jun 2018 12:01:14 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 569B4608BA; Sat,  9 Jun 2018 13:19:20 +0000 (UTC)
+	id 9B328607BB; Mon, 11 Jun 2018 12:01:14 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LS0rlWRN"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D022E6074D;
-	Sat,  9 Jun 2018 13:19:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D022E6074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=jonmasters.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id E491260351;
+	Mon, 11 Jun 2018 12:01:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E491260351
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753256AbeFINTR (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 09:19:17 -0400
-Received: from edison.jonmasters.org ([173.255.233.168]:36608 "EHLO
-        edison.jonmasters.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753175AbeFINTQ (ORCPT
+        id S933015AbeFKMBL (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 08:01:11 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:52510 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933369AbeFKL7P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 09:19:16 -0400
-Received: from [104.153.224.165] (helo=washington.bos.jonmasters.org)
-        by edison.jonmasters.org with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.71)
-        (envelope-from <jcm@jonmasters.org>)
-        id 1fRdN3-0001gL-CE; Sat, 09 Jun 2018 12:53:30 +0000
-To: Marc Zyngier <marc.zyngier@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu
-Cc: Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Julien Grall <julien.grall@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>
-References: <20180529121121.24927-1-marc.zyngier@arm.com>
- <20180529121121.24927-6-marc.zyngier@arm.com>
-From: Jon Masters <jcm@jonmasters.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jcm@jonmasters.org; prefer-encrypt=mutual; keydata=
- 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
- yrXvw9qg2waGcnb8WuoS+g==
-Organization: World Organi{s,z}ation Of Broken Dreams
-Message-ID: <e1b89362-ba94-ead9-a930-eac0e1b3ffba@jonmasters.org>
-Date: Sat, 9 Jun 2018 08:53:08 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180529121121.24927-6-marc.zyngier@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 104.153.224.165
-X-SA-Exim-Mail-From: jcm@jonmasters.org
-Subject: Re: [PATCH v2 05/17] arm64: Add 'ssbd' command-line option
-X-SA-Exim-Version: 4.2.1 (built Sun, 08 Nov 2009 07:31:22 +0000)
-X-SA-Exim-Scanned: Yes (on edison.jonmasters.org)
+        Mon, 11 Jun 2018 07:59:15 -0400
+Received: by mail-wm0-f68.google.com with SMTP id p126-v6so14212460wmb.2;
+        Mon, 11 Jun 2018 04:59:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=cN+60n4BKajOWmKOdya9NSESmrRg018NuSBryO1xDvg=;
+        b=LS0rlWRNA33QIGhnHznqNSxYcr/9OElPh7ZTPjpXL96gITZCAWhH/bSTHfQQh8xnIw
+         JwoSPJRhk+rsPMutPIHciwMLoJM8fwxzXoYf6ykmUUlAbgVy78/i70beF+MuinBUG+ik
+         SQF/jHYoEkc51CpXO3+k2HjO9RUOZxt3vrMlPcYOAn7za5UWLcAXVdhjSb0qMUnltqSB
+         D6Bt8LTosrYDtUMLxH0oWCxy99YlnhOo85yBfMWhxWDKoDmKWMgRLq1i7aq/4wsjTzcM
+         zUIH1f+85CxchPrea+52ejf+FFtG2ZffLN/8k2hYXFIXC4lkCoPmrDy+SLxFX8ifahE7
+         MjEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=cN+60n4BKajOWmKOdya9NSESmrRg018NuSBryO1xDvg=;
+        b=mVuCzWDaF/sHWwXafmposV1V4BBen6kQ9JEN3jv/4FLVD/XUhghcCLLEhbN+DVx63k
+         j/B6L+fNWoC3ODQph6dm9OeXB8s9vArH4MVvbT2iv+QsuIL/J2AE7S0yCdDD2endNp0G
+         JbdpU4dv4CBOPIu/nSL/HcLvrxrz+2U7ba708E1us1S2SEgaA3Z2UWsDgrqRSeovSI65
+         6MVD/KjwRn042Jv2IQTDd4AuHRPFUTegDyRCqXnDiOy/mUKR8PdnjBdJFd+FPMcqY0s3
+         dsIx3tyUjbdtazzUo989adJkIjGTksCBvGv8m536PTk8FXKNmb1yL7Mlpr06FtGj+Ho3
+         uKWw==
+X-Gm-Message-State: APt69E37ypFbE47NtYtQQom+86BcsnA5191DtMplXddnVqAlH9dQHCGn
+        0LwlT+5PqBzY3cofFLXoOruxXGkR
+X-Google-Smtp-Source: ADUXVKIVK0EWKn3SGR8OeUZPCYvHI39oKiegpaJR6msnxUQC5ZJA1wIRQTIYcF1kCYuUniggJMN2bQ==
+X-Received: by 2002:a1c:9e95:: with SMTP id h143-v6mr8371507wme.68.1528718353996;
+        Mon, 11 Jun 2018 04:59:13 -0700 (PDT)
+Received: from kurokawa.lan (ip-86-49-107-50.net.upcbroadband.cz. [86.49.107.50])
+        by smtp.gmail.com with ESMTPSA id t124-v6sm7974796wmt.29.2018.06.11.04.59.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Jun 2018 04:59:13 -0700 (PDT)
+From: Marek Vasut <marek.vasut@gmail.com>
+X-Google-Original-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v6 08/14] mfd: da9063: Replace model with type
+Date: Mon, 11 Jun 2018 13:58:45 +0200
+Message-Id: <20180611115851.1987-8-marek.vasut+renesas@gmail.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
+References: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/29/2018 08:11 AM, Marc Zyngier wrote:
+The model number stored in the struct da9063 is the same for all
+variants of the da9063 since it is the chip ID, which is always
+the same. Replace that with a separate identifier instead, which
+allows us to discern the DA9063 variants by setting the type
+based on either DT match or otherwise.
 
-> +	ssbd=		[ARM64,HW]
-> +			Speculative Store Bypass Disable control
-> +
-> +			On CPUs that are vulnerable to the Speculative
-> +			Store Bypass vulnerability and offer a
-> +			firmware based mitigation, this parameter
-> +			indicates how the mitigation should be used:
-> +
-> +			force-on:  Unconditionally enable mitigation for
-> +				   for both kernel and userspace
-> +			force-off: Unconditionally disable mitigation for
-> +				   for both kernel and userspace
-> +			kernel:    Always enable mitigation in the
-> +				   kernel, and offer a prctl interface
-> +				   to allow userspace to register its
-> +				   interest in being mitigated too.
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Acked-by: Mark Brown <broonie@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+---
+V2: Drop useless cast of id->driver_data
+V3: Fix kernel 0day error , s/dev_model/type/
+V4: No change
+V5: No change
+V6: Zap one more missing da9063->model
+---
+ drivers/mfd/da9063-core.c            | 1 -
+ drivers/mfd/da9063-i2c.c             | 5 +++--
+ drivers/regulator/da9063-regulator.c | 8 ++++----
+ include/linux/mfd/da9063/core.h      | 6 +++++-
+ 4 files changed, 12 insertions(+), 8 deletions(-)
 
-This should be "spec_store_bypass_disable" and it should have the same
-parameters as on x86: "on", "off", "auto". Why not just add "kernel"?
-(we had a "kernel" early on for x86 as well, and it might still end up
-coming back anyway). If there's a /compelling/ reason to have the Arm
-parameter differ, then it should still recognize the x86 parameter,
-similarly to how POWER also does that for cross-arch consistency.
-
-We'll add the x86 parameter way of doing it to RHEL anyway.
-
-Jon.
+diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
+index c54777cc2f12..ded59990f18c 100644
+--- a/drivers/mfd/da9063-core.c
++++ b/drivers/mfd/da9063-core.c
+@@ -215,7 +215,6 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
+ 		return -ENODEV;
+ 	}
+ 
+-	da9063->model = model;
+ 	da9063->variant_code = variant_code;
+ 
+ 	ret = da9063_irq_init(da9063);
+diff --git a/drivers/mfd/da9063-i2c.c b/drivers/mfd/da9063-i2c.c
+index d1fe88777e3f..6fe9c3464b41 100644
+--- a/drivers/mfd/da9063-i2c.c
++++ b/drivers/mfd/da9063-i2c.c
+@@ -146,7 +146,7 @@ static const struct of_device_id da9063_dt_ids[] = {
+ };
+ MODULE_DEVICE_TABLE(of, da9063_dt_ids);
+ static int da9063_i2c_probe(struct i2c_client *i2c,
+-	const struct i2c_device_id *id)
++			    const struct i2c_device_id *id)
+ {
+ 	struct da9063 *da9063;
+ 	int ret;
+@@ -158,6 +158,7 @@ static int da9063_i2c_probe(struct i2c_client *i2c,
+ 	i2c_set_clientdata(i2c, da9063);
+ 	da9063->dev = &i2c->dev;
+ 	da9063->chip_irq = i2c->irq;
++	da9063->type = id->driver_data;
+ 
+ 	if (da9063->variant_code == PMIC_DA9063_AD) {
+ 		da9063_regmap_config.rd_table = &da9063_ad_readable_table;
+@@ -181,7 +182,7 @@ static int da9063_i2c_probe(struct i2c_client *i2c,
+ }
+ 
+ static const struct i2c_device_id da9063_i2c_id[] = {
+-	{ "da9063", PMIC_CHIP_ID_DA9063 },
++	{ "da9063", PMIC_TYPE_DA9063 },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(i2c, da9063_i2c_id);
+diff --git a/drivers/regulator/da9063-regulator.c b/drivers/regulator/da9063-regulator.c
+index 87c884ae0064..02a036f310de 100644
+--- a/drivers/regulator/da9063-regulator.c
++++ b/drivers/regulator/da9063-regulator.c
+@@ -98,7 +98,7 @@ struct da9063_regulator_info {
+ struct da9063_dev_model {
+ 	const struct da9063_regulator_info	*regulator_info;
+ 	unsigned				n_regulators;
+-	unsigned				dev_model;
++	enum da9063_type			type;
+ };
+ 
+ /* Single regulator settings */
+@@ -585,7 +585,7 @@ static struct da9063_dev_model regulators_models[] = {
+ 	{
+ 		.regulator_info = da9063_regulator_info,
+ 		.n_regulators = ARRAY_SIZE(da9063_regulator_info),
+-		.dev_model = PMIC_CHIP_ID_DA9063,
++		.type = PMIC_TYPE_DA9063,
+ 	},
+ 	{ }
+ };
+@@ -741,12 +741,12 @@ static int da9063_regulator_probe(struct platform_device *pdev)
+ 
+ 	/* Find regulators set for particular device model */
+ 	for (model = regulators_models; model->regulator_info; model++) {
+-		if (model->dev_model == da9063->model)
++		if (model->type == da9063->type)
+ 			break;
+ 	}
+ 	if (!model->regulator_info) {
+ 		dev_err(&pdev->dev, "Chip model not recognised (%u)\n",
+-			da9063->model);
++			da9063->type);
+ 		return -ENODEV;
+ 	}
+ 
+diff --git a/include/linux/mfd/da9063/core.h b/include/linux/mfd/da9063/core.h
+index e015b065db7e..9e36097adc42 100644
+--- a/include/linux/mfd/da9063/core.h
++++ b/include/linux/mfd/da9063/core.h
+@@ -31,6 +31,10 @@
+ 
+ #define PMIC_CHIP_ID_DA9063		0x61
+ 
++enum da9063_type {
++	PMIC_TYPE_DA9063 = 0,
++};
++
+ enum da9063_variant_codes {
+ 	PMIC_DA9063_AD = 0x3,
+ 	PMIC_DA9063_BB = 0x5,
+@@ -73,7 +77,7 @@ enum da9063_irqs {
+ struct da9063 {
+ 	/* Device */
+ 	struct device	*dev;
+-	unsigned short	model;
++	enum da9063_type type;
+ 	unsigned char	variant_code;
+ 	unsigned int	flags;
+ 
+-- 
+2.16.2
