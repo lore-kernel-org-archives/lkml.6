@@ -1,127 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Lec+HtCDHluRFwAAmS7hNA
-	; Mon, 11 Jun 2018 14:14:40 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 2vlPCB8IHlvpEQAAmS7hNA
+	; Mon, 11 Jun 2018 05:26:55 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 61FE7607BB; Mon, 11 Jun 2018 14:14:40 +0000 (UTC)
+	id 0657B607E4; Mon, 11 Jun 2018 05:26:55 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nw5wsaxA"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lxb29K5R"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id F06C26074D;
-	Mon, 11 Jun 2018 14:14:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F06C26074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 9293F60791;
+	Mon, 11 Jun 2018 05:26:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9293F60791
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933996AbeFKOOh (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 10:14:37 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46120 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933595AbeFKOHD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:07:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=jGmi8q2eJKLoEu0xg6LdGVZ3YCLCZYH2N+fwRAOSbTc=; b=nw5wsaxAg7PXkxISMGsjS8auB
-        exTQMXQmjdTXaF6KLSbpPUiWdc1XjGtKxLW3jdNr9ilXGBLBLjj/QXv3adaAXAwFo08bN+RcDmafy
-        U1xBJF9Iz7EIMOlFMIpSUnCOgOfw7A761enXRxKmHjwUGqC4MoWffQQsTtHLA8CuHLs1JSbje7R9c
-        HBlQgTEUXhxtJ9dtdh2yA0BhDc62PQPkx9KoDlx8SodXIMuxsfHu1JYJTLBNqfiSa1TdS4y0H56C8
-        fgsleLGoFeo72pRnDoL63XgHbv9pfdGUb2Ezdi3TCFDf9/vdT0SwtqOnqBzo/oC/txDEAF0ZyyG0k
-        pC1qXzGXg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSNTK-0004s8-KC; Mon, 11 Jun 2018 14:07:02 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Lukas Czerner <lczerner@redhat.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v13 48/72] shmem: Convert find_swap_entry to XArray
-Date: Mon, 11 Jun 2018 07:06:15 -0700
-Message-Id: <20180611140639.17215-49-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
-References: <20180611140639.17215-1-willy@infradead.org>
+        id S932342AbeFKF0w (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 01:26:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45040 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932272AbeFKF0t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 01:26:49 -0400
+Received: from localhost (unknown [62.177.166.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B817208AF;
+        Mon, 11 Jun 2018 05:26:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528694808;
+        bh=dPVFcytT2OXrerKrBkDib+/yTsSY3UMdktRarmZJPJU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Lxb29K5RLPifYFlwBdP0IcX79eOttjH2tMstTDJFfXVJju50/wAHgjrwh7ByHt/IW
+         HbvxgtKrDYm5jQsUWc8O4J7aSeLUxXfECsYHRfI6nX1f4fy5MGfXaKG7iUTEsCO+JN
+         07hF69TMT+HhwMFMNe/tGPo/oIQmHg8x8KNXn/Vs=
+Date: Mon, 11 Jun 2018 07:26:27 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: David Airlie <airlied@redhat.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, Willy Tarreau <w@1wt.eu>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 4.16 01/48] mmap: introduce sane default mmap limits
+Message-ID: <20180611052627.GD644@kroah.com>
+References: <20180609145947.679103414@linuxfoundation.org>
+ <20180609145947.782225494@linuxfoundation.org>
+ <CAMwc25rh7ZSO3mEFyTwbyh1qNy3k-5AHyRrRFq-Zih4kDDGsig@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMwc25rh7ZSO3mEFyTwbyh1qNy3k-5AHyRrRFq-Zih4kDDGsig@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+On Mon, Jun 11, 2018 at 08:12:45AM +1000, David Airlie wrote:
+> Can you make sure you pull in
+> 
+> 76ef6b28ea4f81c3d511866a9b31392caa833126 (tag:
+> drm-fixes-for-v4.17-rc6-urgent)
+> Author: Dave Airlie <airlied@redhat.com>
+> Date:   Tue May 15 13:38:15 2018 +1000
+> 
+>     drm: set FMODE_UNSIGNED_OFFSET for drm files
+> 
+> Into anywhere this first patch goes?
 
-This is a 1:1 conversion.
+Thanks for pointing this out, now queued up.
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
----
- mm/shmem.c | 27 ++++++++++-----------------
- 1 file changed, 10 insertions(+), 17 deletions(-)
-
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 479e4a8e6d68..983a27656e2e 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1099,34 +1099,27 @@ static void shmem_evict_inode(struct inode *inode)
- 	clear_inode(inode);
- }
- 
--static unsigned long find_swap_entry(struct radix_tree_root *root, void *item)
-+static unsigned long find_swap_entry(struct xarray *xa, void *item)
- {
--	struct radix_tree_iter iter;
--	void __rcu **slot;
--	unsigned long found = -1;
-+	XA_STATE(xas, xa, 0);
- 	unsigned int checked = 0;
-+	void *entry;
- 
- 	rcu_read_lock();
--	radix_tree_for_each_slot(slot, root, &iter, 0) {
--		void *entry = radix_tree_deref_slot(slot);
--
--		if (radix_tree_deref_retry(entry)) {
--			slot = radix_tree_iter_retry(&iter);
-+	xas_for_each(&xas, entry, ULONG_MAX) {
-+		if (xas_retry(&xas, entry))
- 			continue;
--		}
--		if (entry == item) {
--			found = iter.index;
-+		if (entry == item)
- 			break;
--		}
- 		checked++;
--		if ((checked % 4096) != 0)
-+		if ((checked % XA_CHECK_SCHED) != 0)
- 			continue;
--		slot = radix_tree_iter_resume(slot, &iter);
-+		xas_pause(&xas);
- 		cond_resched_rcu();
- 	}
--
- 	rcu_read_unlock();
--	return found;
-+
-+	return xas_invalid(&xas) ? -1 : xas.xa_index;
- }
- 
- /*
--- 
-2.17.1
+greg k-h
