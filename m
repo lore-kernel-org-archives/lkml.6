@@ -2,169 +2,188 @@ Return-Path: <SRS0=KDb5=I5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E331DC07E80
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 19:00:17 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B7BBFC07E80
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 19:05:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4883F2086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 19:00:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 692702086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 19:05:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LuC/fMrJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4883F2086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ugSZIHyD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 692702086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934521AbeFKTAP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 15:00:15 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:46518 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933309AbeFKTAL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 15:00:11 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5BItQ64135659;
-        Mon, 11 Jun 2018 19:00:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2017-10-26;
- bh=PggGe6zUywAvI/w078yg/48tvjuwWYZ3jKgBuK9JDGw=;
- b=LuC/fMrJVqZezxnzb1B9FfDwMg6cNFIj7HgTOrdqaa0V7gQn8bqARnIxh7R6MhGgcpo8
- 8u3KznN7L4xrmhgrAKfy4rlW7jQypwM+hqTTnyFJfxnHj/V7XgCQDPxiT4TvodQf1qMY
- OPDLOy6W2vjuxNZ668N8AfJoCNbvyj2fYnOKaHmufD0dl2A2Nn7CfC5F4JrQbomN8p+p
- yaKKIpeaRbhXFSf/PgeNtEPwK+6U9DsPhZGoFM2Q24jwwIgVwQ2NoyyBgXmN3pqjLwlP
- hxs2rK9wqLSMxWZ4rvFwxIDt+YjaGEIPu7Gvv5EI7rNQzzjnDf0o9JQgf3PthsrfoSA3 PQ== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2jg7hwxr5d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 11 Jun 2018 19:00:04 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5BJ03RP016138
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 11 Jun 2018 19:00:03 GMT
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5BJ02gJ019266;
-        Mon, 11 Jun 2018 19:00:02 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 11 Jun 2018 12:00:02 -0700
-Subject: Re: [Xen-devel] [PATCH] xen/netfront: raise max number of slots in
- xennet_get_responses()
-To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, netdev@vger.kernel.org
-Cc:     davem@davemloft.net
-References: <20180611075742.1691-1-jgross@suse.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <e970a52b-d4ad-30c1-65ca-15d7679951da@oracle.com>
-Date:   Mon, 11 Jun 2018 14:59:49 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S934596AbeFKTFw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 15:05:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58788 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934324AbeFKTFu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 15:05:50 -0400
+Received: from mail-it0-f51.google.com (mail-it0-f51.google.com [209.85.214.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A0012087E;
+        Mon, 11 Jun 2018 19:05:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528743950;
+        bh=6Tvf+T1OUSJ9Lt68XpdzTSeeYGPneK16guRRD0XHFOw=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=ugSZIHyDIlPYIhi8iNY4gRpuWdEkTkqe72Lv+9psdgoo+WckxoDL/1BZtA/SO23xf
+         FdvK7KM3iI0RnkKj4AFWobpubQL2wB2uuruB7EYxr+SYwqHtI0Zp2t3nc4aFtlPjj6
+         x2N+ux2Op8pAmx+1SW5dLrrINO5KX5JMj7ayNsk4=
+Received: by mail-it0-f51.google.com with SMTP id n7-v6so11672864itn.1;
+        Mon, 11 Jun 2018 12:05:50 -0700 (PDT)
+X-Gm-Message-State: APt69E0ScsqgCuaj+mrmMinZgHs2M/UnqkldbhChohQiZnEfJk6HYLl8
+        SHDFNJ5Q5W7kcs3Ex+tVDhyMcc+gn0bTrS6ijw==
+X-Google-Smtp-Source: ADUXVKIKlw4GoF8WXXvk9gcBloC9+cW5G87UXGVVd40WDVOqUtJxH6YI670ewYYl6xBC/VIvd0s+sGceo34bkjxLMkw=
+X-Received: by 2002:a24:798f:: with SMTP id z137-v6mr223305itc.19.1528743949677;
+ Mon, 11 Jun 2018 12:05:49 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180611075742.1691-1-jgross@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8921 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806110213
+Received: by 2002:a4f:6403:0:0:0:0:0 with HTTP; Mon, 11 Jun 2018 12:05:29
+ -0700 (PDT)
+In-Reply-To: <D56466C0-2312-4F0E-AB00-66EF4BEECB1A@holtmann.org>
+References: <280FCB2C-6DF1-4790-A89F-AF5BE3513AE5@holtmann.org>
+ <20180608162009.22762-1-attitokes@gmail.com> <CAL_JsqKGeCEBBLNQNdymQovknRM7zt4+nNJy0YSkxRicOxkCSg@mail.gmail.com>
+ <CAMoM21HshLyv+Np1vOKYTAunsPCazyP-WESiaheNXHsC078S8g@mail.gmail.com>
+ <CAL_Jsq+a93Rpf3UAPBQ5QmA8KavberGXz76WCiZ7feHH5GgcDA@mail.gmail.com>
+ <4F0D6729-AE77-47D4-9765-FBC44181D4DE@holtmann.org> <CAL_JsqL2StWgA9gkL9i3o85-C3TNixBLmbTXzFQW8bts4phJqQ@mail.gmail.com>
+ <D56466C0-2312-4F0E-AB00-66EF4BEECB1A@holtmann.org>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 11 Jun 2018 13:05:29 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKi=GPYGabjrkKx+1Qv9=NnB6j7=YQhQsBwOBWGAY03tw@mail.gmail.com>
+Message-ID: <CAL_JsqKi=GPYGabjrkKx+1Qv9=NnB6j7=YQhQsBwOBWGAY03tw@mail.gmail.com>
+Subject: Re: [PATCH] Bluetooth: hci_bcm: Configure SCO routing automatically
+To:     Marcel Holtmann <marcel@holtmann.org>
+Cc:     =?UTF-8?B?QXR0aWxhIFTFkWvDqXM=?= <attitokes@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Artiom Vaskov <velemas@gmail.com>,
+        netdev <netdev@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/11/2018 03:57 AM, Juergen Gross wrote:
-> The max number of slots used in xennet_get_responses() is set to
-> MAX_SKB_FRAGS + (rx->status <= RX_COPY_THRESHOLD).
+On Mon, Jun 11, 2018 at 12:19 PM, Marcel Holtmann <marcel@holtmann.org> wro=
+te:
+> Hi Rob,
 >
-> In old kernel-xen MAX_SKB_FRAGS was 18, while nowadays it is 17. This
-> difference is resulting in frequent messages "too many slots" and a
-> reduced network throughput for some workloads (factor 10 below that of
-> a kernel-xen based guest).
+>>>>>>> Added support to automatically configure the SCO packet routing at =
+the
+>>>>>>> device setup. The SCO packets are used with the HSP / HFP profiles,=
+ but in
+>>>>>>> some devices (ex. CYW43438) they are routed to a PCM output by defa=
+ult. This
+>>>>>>> change allows sending the vendor specific HCI command to configure =
+the SCO
+>>>>>>> routing. The parameters of the command are loaded from the device t=
+ree.
+>>>>>>
+>>>>>> Please wrap your commit msg.
+>>>>>
+>>>>>
+>>>>> Sure.
+>>>>>>
+>>>>>>
+>>>>>>>
+>>>>>>> Signed-off-by: Attila T=C5=91k=C3=A9s <attitokes@gmail.com>
+>>>>>>> ---
+>>>>>>> .../bindings/net/broadcom-bluetooth.txt       |  7 ++
+>>>>>>
+>>>>>> Please split bindings to separate patch.
+>>>>>
+>>>>>
+>>>>> Ok, I will split this in two.
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>>> drivers/bluetooth/hci_bcm.c                   | 72 ++++++++++++++++=
++++
+>>>>>>> 2 files changed, 79 insertions(+)
+>>>>>>>
+>>>>>>> diff --git
+>>>>>>> a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
+>>>>>>> b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
+>>>>>>> index 4194ff7e..aea3a094 100644
+>>>>>>> --- a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
+>>>>>>> +++ b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
+>>>>>>> @@ -21,6 +21,12 @@ Optional properties:
+>>>>>>> - clocks: clock specifier if external clock provided to the control=
+ler
+>>>>>>> - clock-names: should be "extclk"
+>>>>>>>
+>>>>>>> + SCO routing parameters:
+>>>>>>> + - sco-routing: 0-3 (PCM, Transport, Codec, I2S)
+>>>>>>> + - pcm-interface-rate: 0-4 (128 Kbps - 2048 Kbps)
+>>>>>>> + - pcm-frame-type: 0 (short), 1 (long)
+>>>>>>> + - pcm-sync-mode: 0 (slave), 1 (master)
+>>>>>>> + - pcm-clock-mode: 0 (slave), 1 (master)
+>>>>>>
+>>>>>> Are these Broadcom specific? Properties need either vendor prefix or
+>>>>>> to be documented in a common location. I think these look like the
+>>>>>> latter.
+>>>>>
+>>>>>
+>>>>> These will be used as parameters of a vendor specific (Broadcom/Cypre=
+ss)
+>>>>> command configuring the SCO packet routing. See the Write_SCO_PCM_Int=
+_Param
+>>>>> command from: http://www.cypress.com/file/298311/download.
+>>>>
+>>>> The DT should just describe how the h/w is hooked-up. What the s/w has
+>>>> to do based on that is the driver's problem which is certainly
+>>>> vendor/chip specific, but that is all irrelevant to the binding.
+>>>>
+>>>>> What would be the property names with a Broadcom / Cypress vendor pre=
+fix?
+>>>>>
+>>>>>   brcm,sco-routing
+>>>>>   brcm,pcm-interface-rate
+>>>>>   brcm,pcm-frame-type
+>>>>>   brcm,pcm-sync-mode
+>>>>>   brcm,pcm-clock-mode
+>>>>>
+>>>>> ?
+>>>>
+>>>> Yes.
+>>>
+>>> we can do this. However all pcm-* are optional if you switch the HCI tr=
+ansport. And sco-routing should default to HCI if that is not present. Mean=
+ing a driver should actively trying to change this. Nevertheless, it would =
+be good if a driver reads the current settings.
+>>>
+>>> In theory we could make sco-routing generic, but so many vendors have d=
+ifferent modes, that we better keep this vendor specific.
+>>
+>> Even if vendor specific, the properties for not HCI transport case are
+>> still incomplete IMO.
+>>
+>> By modes, you mean PCM vs. I2S and all the flavors of timings you can
+>> have within those or something else? For the former, that's often
+>> going to be a process of solving what each end support and if that
+>> doesn't work, then IIRC we already have properties for setting
+>> modes/timing. All the same issues exist with audio codecs and this is
+>> really not any different.
 >
-> Replacing MAX_SKB_FRAGS by XEN_NETIF_NR_SLOTS_MIN for calculation of
-> the max number of slots to use solves that problem (tests showed no
-> more messages "too many slots" and throughput was as high as with the
-> kernel-xen based guest system).
->
-> Signed-off-by: Juergen Gross <jgross@suse.com>
+> this is what Broadcom uses to configure their PCM transport. So I think f=
+or now, we make them brcm, specific and see how that goes. We can always ge=
+neralize them later if enough chip manufactures provide support for it.
 
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+We already have properties doing the same thing defined in
+Documentation/devicetree/bindings/sound/simple-card.txt. Use and
+extend that. We don't need new properties especially for something
+that is not complete. For example If I have 2 host ports (every SoC
+has at least 2), how do I indicate which one is connected to BT.
 
-I wonder also whether netfront_tx_slot_available() is meant to be
-
-return (queue->tx.req_prod_pvt - queue->tx.rsp_cons) <
-                (NET_TX_RING_SIZE - XEN_NETIF_NR_SLOTS_MIN - 1);
-
-which is the same numeric value but provides a more accurate description
-of what is being tested.
-
--boris
-
-
-> ---
->  drivers/net/xen-netfront.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/net/xen-netfront.c b/drivers/net/xen-netfront.c
-> index 679da1abd73c..ba411005d829 100644
-> --- a/drivers/net/xen-netfront.c
-> +++ b/drivers/net/xen-netfront.c
-> @@ -790,7 +790,7 @@ static int xennet_get_responses(struct netfront_queue *queue,
->  	RING_IDX cons = queue->rx.rsp_cons;
->  	struct sk_buff *skb = xennet_get_rx_skb(queue, cons);
->  	grant_ref_t ref = xennet_get_rx_ref(queue, cons);
-> -	int max = MAX_SKB_FRAGS + (rx->status <= RX_COPY_THRESHOLD);
-> +	int max = XEN_NETIF_NR_SLOTS_MIN + (rx->status <= RX_COPY_THRESHOLD);
->  	int slots = 1;
->  	int err = 0;
->  	unsigned long ret;
-
+Rob
