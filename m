@@ -1,179 +1,259 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id cIYFEmQ3GVvSYgAAmS7hNA
-	; Thu, 07 Jun 2018 13:47:16 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id MHE7KO56HlvgQQAAmS7hNA
+	; Mon, 11 Jun 2018 13:36:46 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 2FE696089E; Thu,  7 Jun 2018 13:47:16 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="BIRhsghq"
+	id 977366074D; Mon, 11 Jun 2018 13:36:46 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 96992601B4;
-	Thu,  7 Jun 2018 13:47:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 96992601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id D492A60541;
+	Mon, 11 Jun 2018 13:36:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D492A60541
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753596AbeFGNrN (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 09:47:13 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:40746 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753165AbeFGNrK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 09:47:10 -0400
-Received: by mail-pf0-f194.google.com with SMTP id z24-v6so4953288pfe.7
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 06:47:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=p6WRACkNnLRaA9eFoxZmmzDsYSOhuAQJc38TqBrd6Rg=;
-        b=BIRhsghqBWWQhMbEQnohKaPNm53CrkGqXn+TpRMO76Vg8H+h8PrR5chpNnlVee7Dp/
-         aUExuyqNVouSKe/AZE8+aXXtIItZ4lPOCJZyCeDeQ1ZZ703XJoR8ACr73KxutlJ9oBll
-         Fs7s9h12+8LrNanrG3B0w3DtiJ5aWkwJg1RHM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=p6WRACkNnLRaA9eFoxZmmzDsYSOhuAQJc38TqBrd6Rg=;
-        b=mZP8S/sOFT8h9b2McbHSza02wlZE1OVAYzRwZnj9tpKR+JJgua9a1g/0dvpMBEPVZU
-         VqUkDfyoaoZrvbSrwVOLXK5qdvniNU9K6/A0t9SBE6ueKCW7F+VJlmAdrjOUGe01N7XB
-         ZWV6W9a1PUake0SLvWcM18A6/jZ02a97+VBP08Y8AXBsCxU8uG+pb6UrDsyrNMxZhoxJ
-         96RzHujRiSxXIdE+ZFQGNslcLoX2X4CxMUN6R4xdnJi7YjqGsOy7KBk2vzgh0A1AWNnb
-         S6yG/ygLo+GLXoyP9Nrwzk3gssCN4TGESfmBI/qbcb5fijS38p23WqLFPro0oUuglbO7
-         iLRg==
-X-Gm-Message-State: APt69E2u/9Q7JkFaAJFu2vC7p5ucGRFvfd9ZXbNT7zmFsAUYYrO9mppM
-        rIKV2RhURRGOwYPHq2oB79EKwQ==
-X-Google-Smtp-Source: ADUXVKJ2AV/32nIA6BmcGY7F8DmF6eM9SG4A280U0yaOkp5wr78/3fpBvrtnsBRYQVkf668RSsfjxg==
-X-Received: by 2002:a62:1e02:: with SMTP id e2-v6mr1892464pfe.212.1528379230095;
-        Thu, 07 Jun 2018 06:47:10 -0700 (PDT)
-Received: from localhost.localdomain ([115.97.190.51])
-        by smtp.gmail.com with ESMTPSA id f11-v6sm12721381pgq.18.2018.06.07.06.47.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Jun 2018 06:47:09 -0700 (PDT)
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, Shawn Guo <shawnguo@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Fabio maggi <fabio.mauri@bticino.it>, lamiaposta71@gmail.com,
-        Andrea CORTESE <andrea.cortese@bticino.it>,
-        Davide Bonfanti <davide.bonfanti@bticino.it>
-Cc: Shyam Saini <shyam.saini@amarulasolutions.com>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v2 1/4] drm/panel: simple: Add support for Rocktech RK070ER9427 LCD panel
-Date: Thu,  7 Jun 2018 19:16:48 +0530
-Message-Id: <20180607134648.2902-1-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.14.3
+        id S1754236AbeFKNgo (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 09:36:44 -0400
+Received: from foss.arm.com ([217.140.101.70]:51656 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751886AbeFKNgm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 09:36:42 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 391901529;
+        Mon, 11 Jun 2018 06:36:42 -0700 (PDT)
+Received: from [10.1.206.34] (melchizedek.cambridge.arm.com [10.1.206.34])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 26D273F318;
+        Mon, 11 Jun 2018 06:36:40 -0700 (PDT)
+Subject: Re: [PATCH RESEND v4 2/2] arm/arm64: KVM: Add KVM_GET/SET_VCPU_EVENTS
+To: Dongjiu Geng <gengdongjiu@huawei.com>
+References: <1528487320-2873-1-git-send-email-gengdongjiu@huawei.com>
+ <1528487320-2873-3-git-send-email-gengdongjiu@huawei.com>
+From: James Morse <james.morse@arm.com>
+Cc: rkrcmar@redhat.com, corbet@lwn.net, christoffer.dall@arm.com,
+        marc.zyngier@arm.com, linux@armlinux.org.uk,
+        catalin.marinas@arm.com, will.deacon@arm.com, kvm@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
+Message-ID: <45e94aae-ed9f-1fb7-f10e-d95c2f969ddd@arm.com>
+Date: Mon, 11 Jun 2018 14:36:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <1528487320-2873-3-git-send-email-gengdongjiu@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds support for the Rocktech Display Ltd. RK070ER9427
-800(RGB)x480 TFT LCD panel, which can be supported by the
-simple panel driver.
+Hi Dongjiu Geng,
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
-Changes for v2:
-- collect Rob r-w-b tag
+Please only put 'RESEND' in the subject if the patch content is identical.
+This patch is not the same as v4.
 
- .../display/panel/rocktech,rk070er9427.txt         | 25 ++++++++++++++++
- drivers/gpu/drm/panel/panel-simple.c               | 33 ++++++++++++++++++++++
- 2 files changed, 58 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/panel/rocktech,rk070er9427.txt
+On 08/06/18 20:48, Dongjiu Geng wrote:
+> For the migrating VMs, user space may need to know the exception
+> state. For example, in the machine A, KVM make an SError pending,
+> when migrate to B, KVM also needs to pend an SError.
+> 
+> This new IOCTL exports user-invisible states related to SError.
+> Together with appropriate user space changes, user space can get/set
+> the SError exception state to do migrate/snapshot/suspend.
 
-diff --git a/Documentation/devicetree/bindings/display/panel/rocktech,rk070er9427.txt b/Documentation/devicetree/bindings/display/panel/rocktech,rk070er9427.txt
-new file mode 100644
-index 000000000000..eb1fb9f8d1f4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/panel/rocktech,rk070er9427.txt
-@@ -0,0 +1,25 @@
-+Rocktech Display Ltd. RK070ER9427 800(RGB)x480 TFT LCD panel
-+
-+This binding is compatible with the simple-panel binding, which is specified
-+in simple-panel.txt in this directory.
-+
-+Required properties:
-+- compatible: should be "rocktech,rk070er9427"
-+
-+Optional properties:
-+- backlight: phandle of the backlight device attached to the panel
-+
-+Optional nodes:
-+- Video port for LCD panel input.
-+
-+Example:
-+	panel {
-+		compatible = "rocktech,rk070er9427";
-+		backlight = <&backlight_lcd>;
-+
-+		port {
-+			lcd_panel_in: endpoint {
-+				remote-endpoint = <&lcd_display_out>;
-+			};
-+		};
-+	};
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index cbf1ab404ee7..a6c633fd0559 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -745,6 +745,36 @@ static const struct panel_desc avic_tm070ddh03 = {
- 	},
- };
- 
-+static const struct display_timing rocktech_rk070er9427_timing = {
-+	.pixelclock = { 26400000, 33300000, 46800000 },
-+	.hactive = { 800, 800, 800 },
-+	.hfront_porch = { 16, 210, 354 },
-+	.hback_porch = { 46, 46, 46 },
-+	.hsync_len = { 1, 1, 1 },
-+	.vactive = { 480, 480, 480 },
-+	.vfront_porch = { 7, 22, 147 },
-+	.vback_porch = { 23, 23, 23 },
-+	.vsync_len = { 1, 1, 1 },
-+	.flags = DISPLAY_FLAGS_DE_HIGH,
-+};
-+
-+static const struct panel_desc rocktech_rk070er9427 = {
-+	.timings = &rocktech_rk070er9427_timing,
-+	.num_timings = 1,
-+	.bpc = 6,
-+	.size = {
-+		.width = 154,
-+		.height = 86,
-+	},
-+	.delay = {
-+		.prepare = 41,
-+		.enable = 50,
-+		.unprepare = 41,
-+		.disable = 50,
-+	},
-+	.bus_format = MEDIA_BUS_FMT_RGB666_1X18,
-+};
-+
- static const struct drm_display_mode boe_nv101wxmn51_modes[] = {
- 	{
- 		.clock = 71900,
-@@ -2226,6 +2256,9 @@ static const struct of_device_id platform_of_match[] = {
- 	}, {
- 		.compatible = "qiaodian,qd43003c0-40",
- 		.data = &qd43003c0_40,
-+	}, {
-+		.compatible = "rocktech,rk070er9427",
-+		.data = &rocktech_rk070er9427,
- 	}, {
- 		.compatible = "samsung,lsn122dl01-c01",
- 		.data = &samsung_lsn122dl01_c01,
--- 
-2.14.3
+> diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
+> index fdac969..8896737 100644
+> --- a/Documentation/virtual/kvm/api.txt
+> +++ b/Documentation/virtual/kvm/api.txt
+> @@ -835,11 +835,13 @@ struct kvm_clock_data {
+>  
+>  Capability: KVM_CAP_VCPU_EVENTS
+>  Extended by: KVM_CAP_INTR_SHADOW
+> -Architectures: x86
+> +Architectures: x86, arm, arm64
+>  Type: vm ioctl
+
+Isn't this actually a per-vcpu ioctl? Can we fix the documentation?
+
+
+>  Parameters: struct kvm_vcpu_event (out)
+>  Returns: 0 on success, -1 on error
+>  
+> +X86:
+> +
+>  Gets currently pending exceptions, interrupts, and NMIs as well as related
+>  states of the vcpu.
+>  
+> @@ -881,15 +883,32 @@ Only two fields are defined in the flags field:
+>  - KVM_VCPUEVENT_VALID_SMM may be set in the flags field to signal that
+>    smi contains a valid state.
+>  
+> +ARM, ARM64:
+> +
+> +Gets currently pending SError exceptions as well as related states of the vcpu.
+> +
+> +struct kvm_vcpu_events {
+> +	struct {
+> +		__u8 serror_pending;
+> +		__u8 serror_has_esr;
+> +		/* Align it to 8 bytes */
+> +		__u8 pad[6];
+> +		__u64 serror_esr;
+> +	} exception;
+> +	__u32 reserved[12];
+> +};
+> +
+>  4.32 KVM_SET_VCPU_EVENTS
+>  
+> -Capability: KVM_CAP_VCPU_EVENTS
+> +Capebility: KVM_CAP_VCPU_EVENTS
+
+(please fix this)
+
+
+>  Extended by: KVM_CAP_INTR_SHADOW
+> -Architectures: x86
+> +Architectures: x86, arm, arm64
+>  Type: vm ioctl
+
+(this is also a vcpu ioctl)
+
+
+>  Parameters: struct kvm_vcpu_event (in)
+>  Returns: 0 on success, -1 on error
+>  
+> +X86:
+> +
+>  Set pending exceptions, interrupts, and NMIs as well as related states of the
+>  vcpu.
+>  
+> @@ -910,6 +929,12 @@ shall be written into the VCPU.
+>  
+>  KVM_VCPUEVENT_VALID_SMM can only be set if KVM_CAP_X86_SMM is available.
+>  
+> +ARM, ARM64:
+> +
+> +Set pending SError exceptions as well as related states of the vcpu.
+
+There are some deliberate choices here I think we should document:
+| This API can't be used to clear a pending SError.
+
+If there already was an SError pending, this API just overwrites it with the new
+one. The architecture has some rules about merging multiple SError. (details in
+2.5.3 Multiple SError interrupts of [0])
+
+I don't think KVM needs to enforce these, as they are implementation-defined if
+one of the ESR is implementation-defined... the part that matters is reporting
+the 'most severe' RAS ESR if there are multiple pending. As only user-space ever
+sets these, let's make it user-spaces problem to do.
+
+I think we should recommend user-space always reads the pending values and
+applies its merging-multiple-SError logic. (I assume your Qemu patches do this).
+
+Something like:
+| User-space should first use KVM_GET_VCPU_EVENTS in case KVM has made an SError
+| pending as part of its device emulation. When both values are architected RAS
+| SError ESR values, the new ESR should reflect the combined effect of both
+| errors.
+
+
+> diff --git a/arch/arm/include/uapi/asm/kvm.h b/arch/arm/include/uapi/asm/kvm.h
+> index caae484..c3e6975 100644
+> --- a/arch/arm/include/uapi/asm/kvm.h
+> +++ b/arch/arm/include/uapi/asm/kvm.h
+> @@ -124,6 +124,18 @@ struct kvm_sync_regs {
+>  struct kvm_arch_memory_slot {
+>  };
+>  
+> +/* for KVM_GET/SET_VCPU_EVENTS */
+> +struct kvm_vcpu_events {
+> +	struct {
+> +		__u8 serror_pending;
+> +		__u8 serror_has_esr;
+> +		/* Align it to 8 bytes */
+> +		__u8 pad[6];
+> +		__u64 serror_esr;
+> +	} exception;
+> +	__u32 reserved[12];
+> +};
+> +
+
+You haven't defined __KVM_HAVE_VCPU_EVENTS for 32bit, so presumably this struct
+will never be used. Why is it here?
+
+(I agree if we ever provide it on 32bit, the struct layout should be the same.
+Is this only here to force that to happen?)
+
+[...]
+
+
+> +int kvm_arm_vcpu_set_events(struct kvm_vcpu *vcpu,
+> +			struct kvm_vcpu_events *events)
+> +{
+> +	bool serror_pending = events->exception.serror_pending;
+> +	bool has_esr = events->exception.serror_has_esr;
+> +
+> +	if (serror_pending && has_esr) {
+> +		if (!cpus_have_const_cap(ARM64_HAS_RAS_EXTN))
+> +			return -EINVAL;
+> +
+> +		kvm_set_sei_esr(vcpu, events->exception.serror_esr);
+
+kvm_set_sei_esr() will silently discard the top 40 bits of serror_esr, (which is
+correct, we shouldn't copy them into hardware without know what they do).
+
+Could we please force user-space to zero these bits, we can advertise extra CAPs
+if new features turn up in that space, instead of user-space passing <something>
+and relying on the kernel to remove it.
+
+(Background: VSESR is a 64bit register that holds the value to go in a 32bit
+register. I suspect the top-half could get re-used for control values or
+something we don't want to give user-space)
+
+
+> diff --git a/arch/arm64/kvm/inject_fault.c b/arch/arm64/kvm/inject_fault.c
+> index d8e7165..a55e91d 100644
+> --- a/arch/arm64/kvm/inject_fault.c
+> +++ b/arch/arm64/kvm/inject_fault.c
+> @@ -164,9 +164,9 @@ void kvm_inject_undefined(struct kvm_vcpu *vcpu)
+>  		inject_undef64(vcpu);
+>  }
+>  
+> -static void pend_guest_serror(struct kvm_vcpu *vcpu, u64 esr)
+> +void kvm_set_sei_esr(struct kvm_vcpu *vcpu, u64 esr)
+>  {
+> -	vcpu_set_vsesr(vcpu, esr);
+> +	vcpu_set_vsesr(vcpu, esr & ESR_ELx_ISS_MASK);
+>  	*vcpu_hcr(vcpu) |= HCR_VSE;
+>  }
+>  
+
+> diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
+> index a4c1b76..79ecba9 100644
+> --- a/virt/kvm/arm/arm.c
+> +++ b/virt/kvm/arm/arm.c
+> @@ -1107,6 +1107,25 @@ long kvm_arch_vcpu_ioctl(struct file *filp,
+
+> +	case KVM_SET_VCPU_EVENTS: {
+> +		struct kvm_vcpu_events events;
+> +
+> +		if (copy_from_user(&events, argp, sizeof(events)))
+> +			return -EFAULT;
+> +
+> +		return kvm_arm_vcpu_set_events(vcpu, &events);
+> +	}
+
+Please check the padding[] and reserved[] are zero, otherwise we can't re-use these.
+
+
+Thanks,
+
+James
+
+[0]
+https://static.docs.arm.com/ddi0587/a/RAS%20Extension-release%20candidate_march_29.pdf
