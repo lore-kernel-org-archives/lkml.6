@@ -1,139 +1,186 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id jV86LoL2G1uhdQAAmS7hNA
-	; Sat, 09 Jun 2018 15:47:14 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 9sRJMrWSHlvqGAAAmS7hNA
+	; Mon, 11 Jun 2018 15:18:13 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 940DE608C1; Sat,  9 Jun 2018 15:47:14 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qcQ4RUm2"
+	id B9F34607E4; Mon, 11 Jun 2018 15:18:13 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id DC641608B8;
-	Sat,  9 Jun 2018 15:47:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DC641608B8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 181BF60791;
+	Mon, 11 Jun 2018 15:18:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 181BF60791
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753698AbeFIPrM (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 11:47:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35536 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932608AbeFIPdJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 11:33:09 -0400
-Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBF0F204EC;
-        Sat,  9 Jun 2018 15:33:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528558388;
-        bh=5U2VKFA6/9ukO2d67iCm9+S05ShXNCFqkOYSemviVrY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qcQ4RUm251QDQwuvHjRmeYdET+edIDTktA9rty3yf6cn5pNGNfEoUxi3vI6Qby2V4
-         LnC28xAJt+gkGJSd4VzcQLXpB7rieuXMazahNfr/1lop5E794lusChSsKOD5Fx9UCK
-         Jf/wTdNvTdD2glRGfKby3ZmBMNpyjp+LnORK5DLw=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>,
-        Petr Machata <petrm@mellanox.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 18/48] mlxsw: spectrum: Forbid creation of VLAN 1 over port/LAG
-Date: Sat,  9 Jun 2018 17:29:30 +0200
-Message-Id: <20180609145948.830230443@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
-References: <20180609145947.679103414@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S932844AbeFKPSL (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 20 others); Mon, 11 Jun 2018 11:18:11 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55160 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932678AbeFKPSE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 11:18:04 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5BFFAAC123617
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 11:18:04 -0400
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jhudt8mrd-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 11:18:03 -0400
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Mon, 11 Jun 2018 11:18:03 -0400
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 11 Jun 2018 11:18:00 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5BFHxNA3998072
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 11 Jun 2018 15:17:59 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 098FFB206C;
+        Mon, 11 Jun 2018 11:17:59 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E78D7B2065;
+        Mon, 11 Jun 2018 11:17:58 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.157.62])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 11 Jun 2018 11:17:58 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 98B7B16C997C; Mon, 11 Jun 2018 05:56:58 -0700 (PDT)
+Date: Mon, 11 Jun 2018 05:56:58 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Joel Fernandes <joelaf@google.com>
+Cc: linux-kernel@vger.kernel.org, kernel-team@android.com,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        mingo@redhat.com, Steven Rostedt <rostedt@goodmis.org>,
+        tglx@linutronix.de
+Subject: Re: [PATCH 1/2] rcutorture: Disable RT throttling for boost tests
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180610234544.150933-1-joel@joelfernandes.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180610234544.150933-1-joel@joelfernandes.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18061115-2213-0000-0000-000002B6E842
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009170; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000265; SDB=6.01045450; UDB=6.00535337; IPR=6.00824427;
+ MB=3.00021581; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-11 15:18:02
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18061115-2214-0000-0000-00005A7111FF
+Message-Id: <20180611125658.GR3593@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-11_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806110175
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+On Sun, Jun 10, 2018 at 04:45:43PM -0700, Joel Fernandes wrote:
+> From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+> 
+> Currently rcutorture is not able to torture RCU boosting properly. This
+> is because the rcutorture's boost threads which are doing the torturing
+> may be throttled due to RT throttling.
+> 
+> This patch makes rcutorture use the right torture technique (unthrottled
+> rcutorture boost tasks) for torturing RCU so that the test fails
+> correctly when no boost is available.
+> 
+> Currently this requires accessing sysctl_sched_rt_runtime directly, but
+> that should be Ok since rcutorture is test code. Such direct access is
+> also only possible if rcutorture is used as a built-in so make it
+> conditional on that.
+> 
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
-------------------
+Thank you, Joel!  I have queued these for testing and review.
+Peter Zijlstra might have some feedback on variable access, but will
+test first.
 
-From: Petr Machata <petrm@mellanox.com>
+							Thanx, Paul
 
-[ Upstream commit 47bf9df2e8201d07c40670e093629f8dfd1b5d9f ]
-
-VLAN 1 is internally used for untagged traffic. Prevent creation of
-explicit netdevice for that VLAN, because that currently isn't supported
-and leads to the NULL pointer dereference cited below.
-
-Fix by preventing creation of VLAN devices with VID of 1 over mlxsw
-devices or LAG devices that involve mlxsw devices.
-
-[  327.175816] ================================================================================
-[  327.184544] UBSAN: Undefined behaviour in drivers/net/ethernet/mellanox/mlxsw/spectrum_fid.c:200:12
-[  327.193667] member access within null pointer of type 'const struct mlxsw_sp_fid'
-[  327.201226] CPU: 0 PID: 8983 Comm: ip Not tainted 4.17.0-rc4-petrm_net_ip6gre_headroom-custom-140 #11
-[  327.210496] Hardware name: Mellanox Technologies Ltd. "MSN2410-CB2F"/"SA000874", BIOS 4.6.5 03/08/2016
-[  327.219872] Call Trace:
-[  327.222384]  dump_stack+0xc3/0x12b
-[  327.234007]  ubsan_epilogue+0x9/0x49
-[  327.237638]  ubsan_type_mismatch_common+0x1f9/0x2d0
-[  327.255769]  __ubsan_handle_type_mismatch+0x90/0xa7
-[  327.264716]  mlxsw_sp_fid_type+0x35/0x50 [mlxsw_spectrum]
-[  327.270255]  mlxsw_sp_port_vlan_router_leave+0x46/0xc0 [mlxsw_spectrum]
-[  327.277019]  mlxsw_sp_inetaddr_port_vlan_event+0xe1/0x340 [mlxsw_spectrum]
-[  327.315031]  mlxsw_sp_netdevice_vrf_event+0xa8/0x100 [mlxsw_spectrum]
-[  327.321626]  mlxsw_sp_netdevice_event+0x276/0x430 [mlxsw_spectrum]
-[  327.367863]  notifier_call_chain+0x4c/0x150
-[  327.372128]  __netdev_upper_dev_link+0x1b3/0x260
-[  327.399450]  vrf_add_slave+0xce/0x170 [vrf]
-[  327.403703]  do_setlink+0x658/0x1d70
-[  327.508998]  rtnl_newlink+0x908/0xf20
-[  327.559128]  rtnetlink_rcv_msg+0x50c/0x720
-[  327.571720]  netlink_rcv_skb+0x16a/0x1f0
-[  327.583450]  netlink_unicast+0x2ca/0x3e0
-[  327.599305]  netlink_sendmsg+0x3e2/0x7f0
-[  327.616655]  sock_sendmsg+0x76/0xc0
-[  327.620207]  ___sys_sendmsg+0x494/0x5d0
-[  327.666117]  __sys_sendmsg+0xc2/0x130
-[  327.690953]  do_syscall_64+0x66/0x370
-[  327.694677]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[  327.699782] RIP: 0033:0x7f4c2f3f8037
-[  327.703393] RSP: 002b:00007ffe8c389708 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-[  327.711035] RAX: ffffffffffffffda RBX: 000000005b03f53e RCX: 00007f4c2f3f8037
-[  327.718229] RDX: 0000000000000000 RSI: 00007ffe8c389760 RDI: 0000000000000003
-[  327.725431] RBP: 00007ffe8c389760 R08: 0000000000000000 R09: 00007f4c2f443630
-[  327.732632] R10: 00000000000005eb R11: 0000000000000246 R12: 0000000000000000
-[  327.739833] R13: 00000000006774e0 R14: 00007ffe8c3897e8 R15: 0000000000000000
-[  327.747096] ================================================================================
-
-Fixes: 9589a7b5d7d9 ("mlxsw: spectrum: Handle VLAN devices linking / unlinking")
-Suggested-by: Ido Schimmel <idosch@mellanox.com>
-Signed-off-by: Petr Machata <petrm@mellanox.com>
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Acked-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/mellanox/mlxsw/spectrum.c |    5 +++++
- 1 file changed, 5 insertions(+)
-
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-@@ -4870,6 +4870,11 @@ static int mlxsw_sp_netdevice_port_upper
- 				       "spectrum: Can not put a VLAN on an OVS port");
- 			return -EINVAL;
- 		}
-+		if (is_vlan_dev(upper_dev) &&
-+		    vlan_dev_vlan_id(upper_dev) == 1) {
-+			NL_SET_ERR_MSG_MOD(extack, "Creating a VLAN device with VID 1 is unsupported: VLAN 1 carries untagged traffic");
-+			return -EINVAL;
-+		}
- 		break;
- 	case NETDEV_CHANGEUPPER:
- 		upper_dev = info->upper_dev;
+> ---
+>  kernel/rcu/rcutorture.c | 29 +++++++++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+> 
+> diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+> index 5219e7ccd8a4..00e06349d7bb 100644
+> --- a/kernel/rcu/rcutorture.c
+> +++ b/kernel/rcu/rcutorture.c
+> @@ -55,6 +55,7 @@
+>  #include <linux/torture.h>
+>  #include <linux/vmalloc.h>
+>  #include <linux/sched/debug.h>
+> +#include <linux/sched/sysctl.h>
+> 
+>  #include "rcu.h"
+> 
+> @@ -772,6 +773,32 @@ static void rcu_torture_boost_cb(struct rcu_head *head)
+>  	smp_store_release(&rbip->inflight, 0);
+>  }
+> 
+> +static int old_rt_runtime = -1;
+> +
+> +static void rcu_torture_disable_rt_throttle(void)
+> +{
+> +	/*
+> +	 * Disable RT throttling so that rcutorture's boost threads don't get
+> +	 * throttled. Only possible if rcutorture is built-in otherwise the
+> +	 * user should manually do this by setting the sched_rt_period_us and
+> +	 * sched_rt_runtime sysctls.
+> +	 */
+> +	if (!IS_BUILTIN(CONFIG_RCU_TORTURE_TEST) || old_rt_runtime != -1)
+> +		return;
+> +
+> +	old_rt_runtime = sysctl_sched_rt_runtime;
+> +	sysctl_sched_rt_runtime = -1;
+> +}
+> +
+> +static void rcu_torture_enable_rt_throttle(void)
+> +{
+> +	if (!IS_BUILTIN(CONFIG_RCU_TORTURE_TEST) || old_rt_runtime == -1)
+> +		return;
+> +
+> +	sysctl_sched_rt_runtime = old_rt_runtime;
+> +	old_rt_runtime = -1;
+> +}
+> +
+>  static int rcu_torture_boost(void *arg)
+>  {
+>  	unsigned long call_rcu_time;
+> @@ -1510,6 +1537,7 @@ static int rcutorture_booster_cleanup(unsigned int cpu)
+>  	mutex_lock(&boost_mutex);
+>  	t = boost_tasks[cpu];
+>  	boost_tasks[cpu] = NULL;
+> +	rcu_torture_enable_rt_throttle();
+>  	mutex_unlock(&boost_mutex);
+> 
+>  	/* This must be outside of the mutex, otherwise deadlock! */
+> @@ -1526,6 +1554,7 @@ static int rcutorture_booster_init(unsigned int cpu)
+> 
+>  	/* Don't allow time recalculation while creating a new task. */
+>  	mutex_lock(&boost_mutex);
+> +	rcu_torture_disable_rt_throttle();
+>  	VERBOSE_TOROUT_STRING("Creating rcu_torture_boost task");
+>  	boost_tasks[cpu] = kthread_create_on_node(rcu_torture_boost, NULL,
+>  						  cpu_to_node(cpu),
+> -- 
+> 2.18.0.rc1.242.g61856ae69a-goog
+> 
