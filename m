@@ -2,148 +2,102 @@ Return-Path: <SRS0=KDb5=I5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1714BC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 19:41:05 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 05FD1C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 19:49:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB8B82086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 19:41:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB8B82086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 86F6C2086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 19:49:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="shrYRREw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86F6C2086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934666AbeFKTlC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 15:41:02 -0400
-Received: from smtprelay0228.hostedemail.com ([216.40.44.228]:33274 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934043AbeFKTlA (ORCPT
+        id S934703AbeFKTtV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 15:49:21 -0400
+Received: from mail.efficios.com ([167.114.142.138]:47410 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934347AbeFKTtU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 15:41:00 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 6D116180A8CA0;
-        Mon, 11 Jun 2018 19:40:59 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: skate82_8574120f0109
-X-Filterd-Recvd-Size: 4877
-Received: from XPS-9350.home (unknown [47.151.150.235])
-        (Authenticated sender: joe@perches.com)
-        by omf12.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 11 Jun 2018 19:40:57 +0000 (UTC)
-Message-ID: <7f508dccf95cff7fb8e083666b8939c58f65f894.camel@perches.com>
-Subject: Re: [PATCH] iwlwifi: pcie: make array prop static, shrinks object
- size
-From:   Joe Perches <joe@perches.com>
-To:     Colin King <colin.king@canonical.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 11 Jun 2018 12:40:55 -0700
-In-Reply-To: <20180611171537.14597-1-colin.king@canonical.com>
-References: <20180611171537.14597-1-colin.king@canonical.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
+        Mon, 11 Jun 2018 15:49:20 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 807181BC5CF;
+        Mon, 11 Jun 2018 15:49:19 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id R8Ojig0b47pf; Mon, 11 Jun 2018 15:49:19 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id EC9EE1BC5CC;
+        Mon, 11 Jun 2018 15:49:18 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com EC9EE1BC5CC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1528746559;
+        bh=onpme0irgk/PAatiLRHk5inGwCqrfC8BxU9D1FLcDB4=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=shrYRREwXsIj0wLsx/nianaj1BjY/pl1ckVmHK61VRLYAsYLoTWP8QZUMWB46ysbr
+         MwFkRom3Yo/kPIyYEgzHjIWf0RfWdflATifiwh8SC1PQ8wIJzKe6Cm5vxDUurhz+bM
+         FWaC0+BfP4OSV2SMvQFKa/T3Gu0SHuxd23/v4+Lv+RItKN59R8ifbFrjSLu6ckXM+m
+         Vwn0cRN26E4qsf2xO6T+jUsO+IUQ9seBa/tTCRtDk9vt1ClMJjBUyi8D46HAIvkJMn
+         kbATRKbNbmligs/UGZkO7LeEbAQ5OB3+IXDJ4kdIKxwf9mpwD+HEI7rtW2sgWEyyKj
+         poKrKZODR9KiQ==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id 77MTc6G90N38; Mon, 11 Jun 2018 15:49:18 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id D74B41BC5C1;
+        Mon, 11 Jun 2018 15:49:18 -0400 (EDT)
+Date:   Mon, 11 Jun 2018 15:49:18 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Carlos O'Donell <carlos@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        libc-alpha <libc-alpha@sourceware.org>
+Message-ID: <1084280721.10859.1528746558696.JavaMail.zimbra@efficios.com>
+Subject: Restartable Sequences system call merged into Linux
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
+Thread-Index: Ji+Ih2ToZVzsN7nm//LhgOxKDWsqWA==
+Thread-Topic: Restartable Sequences system call merged into Linux
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(adding Greg KH)
+Hi!
 
-On Mon, 2018-06-11 at 18:15 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate the read-only array 'prop' on the stack but
-> instead make it static. Makes the object code smaller by 20 bytes:
-> 
-> Before:
->    text    data     bss     dec     hex filename
->   71659   14614     576   86849   15341 trans.o
-> 
-> After:
->    text    data     bss     dec     hex filename
->   71479   14774     576   86829   1532d trans.o
-> 
-> (gcc version 7.3.0 x86_64)
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/wireless/intel/iwlwifi/pcie/trans.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-> index 7229991ae70d..c4626ebe5da1 100644
-> --- a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-> +++ b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-> @@ -1946,7 +1946,7 @@ static void iwl_trans_pcie_removal_wk(struct work_struct *wk)
->  	struct iwl_trans_pcie_removal *removal =
->  		container_of(wk, struct iwl_trans_pcie_removal, work);
->  	struct pci_dev *pdev = removal->pdev;
-> -	char *prop[] = {"EVENT=INACCESSIBLE", NULL};
-> +	static char *prop[] = {"EVENT=INACCESSIBLE", NULL};
->  
->  	dev_err(&pdev->dev, "Device gone - attempting removal\n");
->  	kobject_uevent_env(&pdev->dev.kobj, KOBJ_CHANGE, prop);
+Good news! The restartable sequences (rseq) system call is now merged into the master
+branch of the Linux kernel within the 4.18 merge window:
 
-Now what is happening is that prop is being reloaded
-each invocation with the constant addresses of the strings.
+https://github.com/torvalds/linux/commit/d82991a8688ad128b46db1b42d5d84396487a508
 
-It seems the prototype and function for kobject_uevent_env
-should change as well to avoid this.
+It would be important to discuss how we should proceed to integrate the library part
+of rseq (see tools/testing/selftests/rseq/rseq*.{ch}) into glibc, or if it should
+live in a standalone project.
 
-Perhaps this should become:
----
- drivers/net/wireless/intel/iwlwifi/pcie/trans.c | 2 +-
- include/linux/kobject.h                         | 2 +-
- lib/kobject_uevent.c                            | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+It should be noted that there can be only one rseq TLS area registered per thread,
+which can then be used by many libraries and by the executable, so this is a
+process-wide (per-thread) resource that we need to manage carefully.
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-index 7229991ae70d..6668a8aad22e 100644
---- a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-@@ -1946,7 +1946,7 @@ static void iwl_trans_pcie_removal_wk(struct work_struct *wk)
- 	struct iwl_trans_pcie_removal *removal =
- 		container_of(wk, struct iwl_trans_pcie_removal, work);
- 	struct pci_dev *pdev = removal->pdev;
--	char *prop[] = {"EVENT=INACCESSIBLE", NULL};
-+	static const char * const prop[] = {"EVENT=INACCESSIBLE", NULL};
- 
- 	dev_err(&pdev->dev, "Device gone - attempting removal\n");
- 	kobject_uevent_env(&pdev->dev.kobj, KOBJ_CHANGE, prop);
-diff --git a/include/linux/kobject.h b/include/linux/kobject.h
-index 7f6f93c3df9c..9f5cf553dd1e 100644
---- a/include/linux/kobject.h
-+++ b/include/linux/kobject.h
-@@ -217,7 +217,7 @@ extern struct kobject *firmware_kobj;
- 
- int kobject_uevent(struct kobject *kobj, enum kobject_action action);
- int kobject_uevent_env(struct kobject *kobj, enum kobject_action action,
--			char *envp[]);
-+			const char * const envp[]);
- int kobject_synth_uevent(struct kobject *kobj, const char *buf, size_t count);
- 
- __printf(2, 3)
-diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
-index 63d0816ab23b..9107989a0cc8 100644
---- a/lib/kobject_uevent.c
-+++ b/lib/kobject_uevent.c
-@@ -452,7 +452,7 @@ static void zap_modalias_env(struct kobj_uevent_env *env)
-  * corresponding error when it fails.
-  */
- int kobject_uevent_env(struct kobject *kobj, enum kobject_action action,
--		       char *envp_ext[])
-+		       const char * const envp_ext[])
- {
- 	struct kobj_uevent_env *env;
- 	const char *action_string = kobject_actions[action];
+Thoughts ?
+
+Thanks!
+
+Mathieu
+
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
