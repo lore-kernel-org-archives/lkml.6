@@ -3,111 +3,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0842FC004E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 21:10:31 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id F2485C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 21:11:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B12522086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 21:10:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A78282087E
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 21:11:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="W5GDzYyX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B12522086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KfVk3tYY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A78282087E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934308AbeFKVK3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 17:10:29 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:34188 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754202AbeFKVKG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 17:10:06 -0400
-Received: by mail-pf0-f193.google.com with SMTP id a63-v6so10893698pfl.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 14:10:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=h1pXq7NPNRuYXuOgas51mxihg+FMjGWfvyKPiwhEFQU=;
-        b=W5GDzYyXC0Naj/gD2Dlm1lMCYFcDX/A1aou+fqOAr8QRkQi+8IHUssMFCNjEp5rUKk
-         6BdMojwUTogeUr91VO3lkuBs/mq3Q/GsfK5/ghbwjW/Fe728UMdSkolhkcCMM6P+MMUZ
-         +4VeYrsFD4A5FFfY6fTS+h6bZXU75PKAedRJY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=h1pXq7NPNRuYXuOgas51mxihg+FMjGWfvyKPiwhEFQU=;
-        b=RqljIZa6/P1rAi8qKZFwzydj+6++drzVs2KrVSKAsp6bDXDa8IhBnNDh8+EN61v2m2
-         nLR9LHoXWio0cjhXsFrcVuuYFNqKvzfFaFxkxRHW0eoPhHaBTZFRACsnkfXI/+CXmWba
-         aMzvfONHhCXfZpw+xCDMihymKeBH94QoejC20ODcrtfy7XNSjWBAszbf1LZwLX08t17y
-         2+w/wodArBkKbasa0esalfBjlY5Qay2wLXSFFa5f2imUPMaZj8bJTKZmRR41VLIQ7VH5
-         UllrDYNuQ7DJIC7QrO8PkfUCmQDp8mbn2vu3+mpigTZZ3W2x2ODmCuhLmGmYGRrS18W8
-         TQKw==
-X-Gm-Message-State: APt69E25AGIYfmt34ez0lL/Twl1H35ohS9M5YB5cknVjO1dMm6nejGiR
-        glLVpgJbV7//KP/cLPwEmGWMIEZumcQ=
-X-Google-Smtp-Source: ADUXVKLGpoF9oG6FeFwaOTJHAOw/10/bNyawy+cbaB4XOhkI0ne0QQShfCaqhzOF1q0hHhb/pykLZQ==
-X-Received: by 2002:a62:d117:: with SMTP id z23-v6mr749967pfg.99.1528751405251;
-        Mon, 11 Jun 2018 14:10:05 -0700 (PDT)
-Received: from ban.mtv.corp.google.com ([2620:0:1000:1501:bc2f:3082:9938:5d41])
-        by smtp.gmail.com with ESMTPSA id c4-v6sm49116184pfe.53.2018.06.11.14.10.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Jun 2018 14:10:04 -0700 (PDT)
-From:   Brian Norris <briannorris@chromium.org>
-To:     Kalle Valo <kvalo@qca.qualcomm.com>
-Cc:     ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        Govind Singh <govinds@codeaurora.org>,
-        <linux-kernel@vger.kernel.org>,
-        Brian Norris <briannorris@chromium.org>
-Subject: [PATCH 4/4] ath10k: snoc: sort include files
-Date:   Mon, 11 Jun 2018 14:09:46 -0700
-Message-Id: <20180611210946.241341-4-briannorris@chromium.org>
-X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a-goog
-In-Reply-To: <20180611210946.241341-1-briannorris@chromium.org>
-References: <20180611210946.241341-1-briannorris@chromium.org>
+        id S934494AbeFKVLi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 17:11:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60478 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933029AbeFKVLg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 17:11:36 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7396B2086D;
+        Mon, 11 Jun 2018 21:11:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528751496;
+        bh=fmosyqRQNEOa0KU2BGMopmytpXPRPlSYV+c+vXgZgJk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KfVk3tYYJhyWSuobH55fbrCK6Lzzoa+RpfAushfnQXGOpW1zEmDUghJ5wQ4P0a75o
+         51ARZQ5Qbv/44AQSQ/tJrzfH464O7+nfxyeLNYIy07oaka4Gydoe5lcg9hPfjU7lL8
+         MQ6bpgKBaUW4oXFlJD2mpIzJxUDNxH47oT7ugVi0=
+Date:   Mon, 11 Jun 2018 23:11:15 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        lkft-triage@lists.linaro.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        linux- stable <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH 4.17 00/15] 4.17.1-stable review
+Message-ID: <20180611211115.GE4023@kroah.com>
+References: <20180609150000.746833461@linuxfoundation.org>
+ <CA+G9fYuF=oe-fw6qpwRg0qPgBtjH18JY2JGR7hDVb-eC20sW3w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+G9fYuF=oe-fw6qpwRg0qPgBtjH18JY2JGR7hDVb-eC20sW3w@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sort these alphabetically, with local includes in a separate section.
+On Mon, Jun 11, 2018 at 07:32:41PM +0530, Naresh Kamboju wrote:
+> On 9 June 2018 at 20:59, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> > This is the start of the stable review cycle for the 4.17.1 release.
+> > There are 15 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Mon Jun 11 14:59:48 UTC 2018.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.17.1-rc1.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.17.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
+> 
+> 
+> Results from Linaro’s test farm.
+> No regressions on arm64, arm and x86_64.
 
-Signed-off-by: Brian Norris <briannorris@chromium.org>
----
- drivers/net/wireless/ath/ath10k/snoc.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+Wonderful, thanks for testing and letting me know.
 
-diff --git a/drivers/net/wireless/ath/ath10k/snoc.c b/drivers/net/wireless/ath/ath10k/snoc.c
-index 61967c2966e6..c88677e0a21c 100644
---- a/drivers/net/wireless/ath/ath10k/snoc.c
-+++ b/drivers/net/wireless/ath/ath10k/snoc.c
-@@ -14,18 +14,19 @@
-  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-  */
- 
--#include <linux/module.h>
-+#include <linux/clk.h>
- #include <linux/kernel.h>
--#include "debug.h"
--#include "hif.h"
--#include "htc.h"
--#include "ce.h"
--#include "snoc.h"
-+#include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/regulator/consumer.h>
--#include <linux/clk.h>
-+
-+#include "ce.h"
-+#include "debug.h"
-+#include "hif.h"
-+#include "htc.h"
-+#include "snoc.h"
- 
- #define ATH10K_SNOC_RX_POST_RETRY_MS 50
- #define CE_POLL_PIPE 4
--- 
-2.18.0.rc1.242.g61856ae69a-goog
-
+greg k-h
