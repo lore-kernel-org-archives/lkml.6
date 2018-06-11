@@ -1,137 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id lJiqIWPnGFswRwAAmS7hNA
-	; Thu, 07 Jun 2018 08:05:55 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id m/iHG11tHlucUgAAmS7hNA
+	; Mon, 11 Jun 2018 12:39:20 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 68E5F607F7; Thu,  7 Jun 2018 08:05:55 +0000 (UTC)
+	id 195CE60792; Mon, 11 Jun 2018 12:39:20 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="czMbtDVM"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D0002607DC;
-	Thu,  7 Jun 2018 08:05:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D0002607DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 9233A600D0;
+	Mon, 11 Jun 2018 12:39:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9233A600D0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753397AbeFGIFu (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 04:05:50 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:58107 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753285AbeFGIFs (ORCPT
+        id S933170AbeFKMjR (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 08:39:17 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:35012 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932910AbeFKMjP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 04:05:48 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5785dY12123961
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 7 Jun 2018 01:05:39 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5785dfq2123958;
-        Thu, 7 Jun 2018 01:05:39 -0700
-Date: Thu, 7 Jun 2018 01:05:39 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-2se2v7rrjil0kwqywks04ey2@git.kernel.org>
-Cc: tglx@linutronix.de, linux-kernel@vger.kernel.org, jolsa@kernel.org,
-        acme@redhat.com, mingo@kernel.org, dsahern@gmail.com,
-        adrian.hunter@intel.com, namhyung@kernel.org, wangnan0@huawei.com,
-        hpa@zytor.com
-Reply-To: mingo@kernel.org, acme@redhat.com, dsahern@gmail.com,
-          jolsa@kernel.org, linux-kernel@vger.kernel.org,
-          tglx@linutronix.de, hpa@zytor.com, adrian.hunter@intel.com,
-          namhyung@kernel.org, wangnan0@huawei.com
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf annotate: __symbol__inc_addr_samples() needs
- just annotated_source
-Git-Commit-ID: e1a91a834d6e1b6616b76b0ba22e7e11d5592c3b
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 11 Jun 2018 08:39:15 -0400
+Received: by mail-vk0-f66.google.com with SMTP id o17-v6so12162712vka.2;
+        Mon, 11 Jun 2018 05:39:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=J+5U/CLI+ddGe5QQzpNF+yE310Cyxp/5p9xgshqYOmw=;
+        b=czMbtDVM8yd2cTjTsTtT8Zn9rzMern66VVhfu9D9OIZRj4CI8r9FM30yYg+6NNBVfT
+         TSp9b+BbFR8n7P3dFCltTnF+35RHHpubBHHdqcACM9ZHib1i1xR4CJncVplaXX3DKDCL
+         ORCt8A2WOAMykL97X0Fwn59xB60sFBaEy9PkV1R/nkvVpiInWJmlKR75qhIO2kOlxae5
+         AiTvXVuVk9AxHhVtArHk6RTmY85r1E8WRMAZWRsucJx4jf8Awf81FOUdvNoifrYvf8BJ
+         fyZebOP+lSMTOniE0guLyVrFSBQxARWE21CQEskAmIu3goiXPdYF/88jAPmjY/sWb6VR
+         FvaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=J+5U/CLI+ddGe5QQzpNF+yE310Cyxp/5p9xgshqYOmw=;
+        b=fINqGnNpdUFJL+kNLFbNtGajyk+IyqgukklJYB+BcuvBwKXnTo2/ECvBdOYzjK+hrW
+         x+Rfn7ElWeLvejEm+9AZrT0NNzyjnJ6RZZu6tQ5imOk6e+ggvhKQ1ub4ixtp6NcREW5c
+         NgFGi4WKNUrI24watOJVYFz9biM+QWi9Kb9n7kjvH+aWWTcaRYsd7R6TDFly80fNt6SA
+         mXnR6F8sjsWRSAD1PBFH7/l+BOqZmstppXuqd8Ca9pgMOv6JGL6L7tVOb3DgdIO5NfcS
+         D9o1rDlHzwYV28+svwUu/EXGADXgb5BcRVvFF88ZPojcaKon8YqcnV8zdwY1Sfw8puBb
+         VNEg==
+X-Gm-Message-State: APt69E1hzGoGbkxf2jsrUuh3mtqWEJQgrmfInowf3Gmzyddl4eq77qf9
+        ULa1Lo0K0dmKV8XdGE5UTSD7OqfEJMGIiDGRpsKbmQ==
+X-Google-Smtp-Source: ADUXVKKu4iocev1mk9v4ku5r/emxIewrIjFozypZjeD5PscR1DI4CzSJ15rZNlbr6JUTHRFikd7yUJpl24uWVR7+gSc=
+X-Received: by 2002:a1f:860b:: with SMTP id i11-v6mr10107891vkd.15.1528720754612;
+ Mon, 11 Jun 2018 05:39:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Mon, 11 Jun 2018 05:39:13
+ -0700 (PDT)
+In-Reply-To: <20180611115240.32606-8-ricardo.ribalda@gmail.com>
+References: <20180611115240.32606-1-ricardo.ribalda@gmail.com> <20180611115240.32606-8-ricardo.ribalda@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 11 Jun 2018 15:39:13 +0300
+Message-ID: <CAHp75Vf-V7BVU_SiyBp18D0cM_nOO=EAxfgzUaa4-hngh9PeMw@mail.gmail.com>
+Subject: Re: [PATCH v2 07/24] serdev: Allows dynamic creation of devices via sysfs
+To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e1a91a834d6e1b6616b76b0ba22e7e11d5592c3b
-Gitweb:     https://git.kernel.org/tip/e1a91a834d6e1b6616b76b0ba22e7e11d5592c3b
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Thu, 24 May 2018 16:28:29 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 4 Jun 2018 10:28:51 -0300
+On Mon, Jun 11, 2018 at 2:52 PM, Ricardo Ribalda Delgado
+<ricardo.ribalda@gmail.com> wrote:
+> Allow creating and deleting devices via sysfs. Devices created will be
+> matched to serdev drivers via modalias (the string provided by the user)
+> and deleted via their name. Eg:
 
-perf annotate: __symbol__inc_addr_samples() needs just annotated_source
+> +       nline = strchr(buf, '\n');
 
-It only operates on the histograms, so no need for the encompassing
-'struct annotation'.
+...
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-2se2v7rrjil0kwqywks04ey2@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/annotate.c | 6 +++---
- tools/perf/util/annotate.h | 8 ++++++--
- 2 files changed, 9 insertions(+), 5 deletions(-)
+> +       if (nline)
+> +               len = nline - buf;
+> +       else
 
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index a6fa49bf879b..a5a6d686004e 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -819,7 +819,7 @@ static int __symbol__account_cycles(struct cyc_hist *ch,
- }
- 
- static int __symbol__inc_addr_samples(struct symbol *sym, struct map *map,
--				      struct annotation *notes, int evidx, u64 addr,
-+				      struct annotated_source *src, int evidx, u64 addr,
- 				      struct perf_sample *sample)
- {
- 	unsigned offset;
-@@ -835,7 +835,7 @@ static int __symbol__inc_addr_samples(struct symbol *sym, struct map *map,
- 	}
- 
- 	offset = addr - sym->start;
--	h = annotation__histogram(notes, evidx);
-+	h = annotated_source__histogram(src, evidx);
- 	h->nr_samples++;
- 	h->addr[offset].nr_samples++;
- 	h->period += sample->period;
-@@ -874,7 +874,7 @@ static int symbol__inc_addr_samples(struct symbol *sym, struct map *map,
- 	notes = symbol__get_annotation(sym, false);
- 	if (notes == NULL)
- 		return -ENOMEM;
--	return __symbol__inc_addr_samples(sym, map, notes, evsel->idx, addr, sample);
-+	return __symbol__inc_addr_samples(sym, map, notes->src, evsel->idx, addr, sample);
- }
- 
- static int symbol__account_cycles(u64 addr, u64 start,
-diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-index 94b60e34c3a7..2a73f9084930 100644
---- a/tools/perf/util/annotate.h
-+++ b/tools/perf/util/annotate.h
-@@ -267,10 +267,14 @@ void annotation__mark_jump_targets(struct annotation *notes, struct symbol *sym)
- void annotation__update_column_widths(struct annotation *notes);
- void annotation__init_column_widths(struct annotation *notes, struct symbol *sym);
- 
-+static inline struct sym_hist *annotated_source__histogram(struct annotated_source *src, int idx)
-+{
-+	return ((void *)src->histograms) + (src->sizeof_sym_hist * idx);
-+}
-+
- static inline struct sym_hist *annotation__histogram(struct annotation *notes, int idx)
- {
--	return (((void *)notes->src->histograms) +
--	 	(notes->src->sizeof_sym_hist * idx));
-+	return annotated_source__histogram(notes->src, idx);
- }
- 
- static inline struct annotation *symbol__annotation(struct symbol *sym)
+> +               len = strlen(buf);
+> +       len = min(SERDEV_NAME_SIZE - 1, len);
+
+If buf is guaranteed to have '\0', the strlen() is not needed.
+
+I'm not sure about this entire dances with first line and so on.
+When it's possible to get more, than two lines on input?
+
+Would it be just as simple as strstrip() call followed by strscpy()?
+
+> +       strncpy(serdev->modalias, buf, len);
+> +       serdev->modalias[len] = '\0';
+
+strspcy() ?
+
+-- 
+With Best Regards,
+Andy Shevchenko
