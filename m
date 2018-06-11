@@ -1,260 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id EyxuNnBIGVt+SAAAmS7hNA
-	; Thu, 07 Jun 2018 15:01:13 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id E0lkMyDsHVt+JgAAmS7hNA
+	; Mon, 11 Jun 2018 03:28:22 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 8BE91606DD; Thu,  7 Jun 2018 15:01:13 +0000 (UTC)
+	id A8C8E607A4; Mon, 11 Jun 2018 03:28:22 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 8406D606DD;
-	Thu,  7 Jun 2018 15:01:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8406D606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 2C5C1606DD;
+	Mon, 11 Jun 2018 03:28:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2C5C1606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935868AbeFGPBD (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:01:03 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41368 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935852AbeFGPBA (ORCPT
+        id S932600AbeFKD2U (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Sun, 10 Jun 2018 23:28:20 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:38127 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932487AbeFKD1R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:01:00 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbw-0005Zx-UD; Thu, 07 Jun 2018 15:09:57 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvaz-0002km-DG; Thu, 07 Jun 2018 15:08:57 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Sun, 10 Jun 2018 23:27:17 -0400
+X-UUID: 2548927404c64c1a92a2fd35f57fab8a-20180611
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <stu.hsieh@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 165180462; Mon, 11 Jun 2018 11:27:11 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Mon, 11 Jun 2018 11:27:01 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Mon, 11 Jun 2018 11:27:01 +0800
+From: Stu Hsieh <stu.hsieh@mediatek.com>
+To: CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>
+CC: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, Stu Hsieh <stu.hsieh@mediatek.com>
+Subject: [PATCH 18/28] drm/mediatek: add connection from RDMA2 to DPI0
+Date: Mon, 11 Jun 2018 11:26:10 +0800
+Message-ID: <1528687580-549-19-git-send-email-stu.hsieh@mediatek.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
+References: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Jun Nakajima" <jun.nakajima@intel.com>,
-        "Ashok Raj" <ashok.raj@intel.com>,
-        "Andrea Arcangeli" <aarcange@redhat.com>,
-        "David Woodhouse" <dwmw@amazon.co.uk>,
-        "Greg KH" <gregkh@linuxfoundation.org>,
-        "Asit Mallick" <asit.k.mallick@intel.com>,
-        "Paolo Bonzini" <pbonzini@redhat.com>,
-        "Tim Chen" <tim.c.chen@linux.intel.com>,
-        "KarimAllah Ahmed" <karahmed@amazon.de>, kvm@vger.kernel.org,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>,
-        "Andi Kleen" <ak@linux.intel.com>,
-        "Andy Lutomirski" <luto@kernel.org>,
-        "Arjan Van De Ven" <arjan.van.de.ven@intel.com>,
-        "Dan Williams" <dan.j.williams@intel.com>,
-        "Dave Hansen" <dave.hansen@intel.com>,
-        "Darren Kenny" <darren.kenny@oracle.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.520837304@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 058/410] KVM/SVM: Allow direct access to
- MSR_IA32_SPEC_CTRL
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+This patch add the connection from RDMA2 to DPI0
 
-------------------
-
-From: KarimAllah Ahmed <karahmed@amazon.de>
-
-commit b2ac58f90540e39324e7a29a7ad471407ae0bf48 upstream.
-
-[ Based on a patch from Paolo Bonzini <pbonzini@redhat.com> ]
-
-... basically doing exactly what we do for VMX:
-
-- Passthrough SPEC_CTRL to guests (if enabled in guest CPUID)
-- Save and restore SPEC_CTRL around VMExit and VMEntry only if the guest
-  actually used it.
-
-Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jun Nakajima <jun.nakajima@intel.com>
-Cc: kvm@vger.kernel.org
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Asit Mallick <asit.k.mallick@intel.com>
-Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ashok Raj <ashok.raj@intel.com>
-Link: https://lkml.kernel.org/r/1517669783-20732-1-git-send-email-karahmed@amazon.de
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
 ---
- arch/x86/kvm/svm.c | 88 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 88 insertions(+)
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -146,6 +146,8 @@ struct vcpu_svm {
- 		u64 gs_base;
- 	} host;
- 
-+	u64 spec_ctrl;
-+
- 	u32 *msrpm;
- 
- 	ulong nmi_iret_rip;
-@@ -180,6 +182,7 @@ static const struct svm_direct_access_ms
- 	{ .index = MSR_CSTAR,				.always = true  },
- 	{ .index = MSR_SYSCALL_MASK,			.always = true  },
- #endif
-+	{ .index = MSR_IA32_SPEC_CTRL,			.always = false },
- 	{ .index = MSR_IA32_PRED_CMD,			.always = false },
- 	{ .index = MSR_IA32_LASTBRANCHFROMIP,		.always = false },
- 	{ .index = MSR_IA32_LASTBRANCHTOIP,		.always = false },
-@@ -762,6 +765,25 @@ static bool valid_msr_intercept(u32 inde
- 	return false;
- }
- 
-+static bool msr_write_intercepted(struct kvm_vcpu *vcpu, unsigned msr)
-+{
-+	u8 bit_write;
-+	unsigned long tmp;
-+	u32 offset;
-+	u32 *msrpm;
-+
-+	msrpm = is_guest_mode(vcpu) ? to_svm(vcpu)->nested.msrpm:
-+				      to_svm(vcpu)->msrpm;
-+
-+	offset    = svm_msrpm_offset(msr);
-+	bit_write = 2 * (msr & 0x0f) + 1;
-+	tmp       = msrpm[offset];
-+
-+	BUG_ON(offset == MSR_INVALID);
-+
-+	return !!test_bit(bit_write,  &tmp);
-+}
-+
- static void set_msr_interception(u32 *msrpm, unsigned msr,
- 				 int read, int write)
- {
-@@ -1206,6 +1228,8 @@ static void svm_vcpu_reset(struct kvm_vc
- 	u32 dummy;
- 	u32 eax = 1;
- 
-+	svm->spec_ctrl = 0;
-+
- 	init_vmcb(svm);
- 
- 	kvm_cpuid(vcpu, &eax, &dummy, &dummy, &dummy);
-@@ -3112,6 +3136,13 @@ static int svm_get_msr(struct kvm_vcpu *
- 	case MSR_VM_CR:
- 		msr_info->data = svm->nested.vm_cr_msr;
- 		break;
-+	case MSR_IA32_SPEC_CTRL:
-+		if (!msr_info->host_initiated &&
-+		    !guest_cpuid_has_ibrs(vcpu))
-+			return 1;
-+
-+		msr_info->data = svm->spec_ctrl;
-+		break;
- 	case MSR_IA32_UCODE_REV:
- 		msr_info->data = 0x01000065;
- 		break;
-@@ -3184,6 +3215,33 @@ static int svm_set_msr(struct kvm_vcpu *
- 	case MSR_IA32_TSC:
- 		kvm_write_tsc(vcpu, msr);
- 		break;
-+	case MSR_IA32_SPEC_CTRL:
-+		if (!msr->host_initiated &&
-+		    !guest_cpuid_has_ibrs(vcpu))
-+			return 1;
-+
-+		/* The STIBP bit doesn't fault even if it's not advertised */
-+		if (data & ~(SPEC_CTRL_IBRS | SPEC_CTRL_STIBP))
-+			return 1;
-+
-+		svm->spec_ctrl = data;
-+
-+		if (!data)
-+			break;
-+
-+		/*
-+		 * For non-nested:
-+		 * When it's written (to non-zero) for the first time, pass
-+		 * it through.
-+		 *
-+		 * For nested:
-+		 * The handling of the MSR bitmap for L2 guests is done in
-+		 * nested_svm_vmrun_msrpm.
-+		 * We update the L1 MSR bit as well since it will end up
-+		 * touching the MSR anyway now.
-+		 */
-+		set_msr_interception(svm->msrpm, MSR_IA32_SPEC_CTRL, 1, 1);
-+		break;
- 	case MSR_IA32_PRED_CMD:
- 		if (!msr->host_initiated &&
- 		    !guest_cpuid_has_ibpb(vcpu))
-@@ -3902,6 +3960,15 @@ static void svm_vcpu_run(struct kvm_vcpu
- 
- 	local_irq_enable();
- 
-+	/*
-+	 * If this vCPU has touched SPEC_CTRL, restore the guest's value if
-+	 * it's non-zero. Since vmentry is serialising on affected CPUs, there
-+	 * is no need to worry about the conditional branch over the wrmsr
-+	 * being speculatively taken.
-+	 */
-+	if (svm->spec_ctrl)
-+		wrmsrl(MSR_IA32_SPEC_CTRL, svm->spec_ctrl);
-+
- 	asm volatile (
- 		"push %%" _ASM_BP "; \n\t"
- 		"mov %c[rbx](%[svm]), %%" _ASM_BX " \n\t"
-@@ -3994,6 +4061,27 @@ static void svm_vcpu_run(struct kvm_vcpu
- #endif
- 		);
- 
-+	/*
-+	 * We do not use IBRS in the kernel. If this vCPU has used the
-+	 * SPEC_CTRL MSR it may have left it on; save the value and
-+	 * turn it off. This is much more efficient than blindly adding
-+	 * it to the atomic save/restore list. Especially as the former
-+	 * (Saving guest MSRs on vmexit) doesn't even exist in KVM.
-+	 *
-+	 * For non-nested case:
-+	 * If the L01 MSR bitmap does not intercept the MSR, then we need to
-+	 * save it.
-+	 *
-+	 * For nested case:
-+	 * If the L02 MSR bitmap does not intercept the MSR, then we need to
-+	 * save it.
-+	 */
-+	if (!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL))
-+		rdmsrl(MSR_IA32_SPEC_CTRL, svm->spec_ctrl);
-+
-+	if (svm->spec_ctrl)
-+		wrmsrl(MSR_IA32_SPEC_CTRL, 0);
-+
- 	/* Eliminate branch target predictions from guest mode */
- 	vmexit_fill_RSB();
- 
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+index a5cee4b7f908..31a0832ef9ec 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+@@ -31,6 +31,7 @@
+ #define DISP_REG_CONFIG_DSIE_SEL_IN		0x0a4
+ #define DISP_REG_CONFIG_DSIO_SEL_IN		0x0a8
+ #define DISP_REG_CONFIG_DPI_SEL_IN		0x0ac
++#define DISP_REG_CONFIG_DISP_RDMA2_SOUT		0x0b8
+ #define DISP_REG_CONFIG_DISP_RDMA0_MOUT_EN	0x0c4
+ #define DISP_REG_CONFIG_DISP_RDMA1_MOUT_EN	0x0c8
+ #define DISP_REG_CONFIG_MMSYS_CG_CON0		0x100
+@@ -91,7 +92,9 @@
+ #define RDMA1_MOUT_DSI3			0x5
+ #define RDMA1_MOUT_DPI0			0x2
+ #define RDMA1_MOUT_DPI1			0x3
++#define RDMA2_MOUT_DPI0			0x2
+ #define DPI0_SEL_IN_RDMA1		0x1
++#define DPI0_SEL_IN_RDMA2		0x3
+ #define DPI1_SEL_IN_RDMA1		(0x1 << 8)
+ #define DSI1_SEL_IN_RDMA1		0x1
+ #define DSI2_SEL_IN_RDMA1		(0x1 << 16)
+@@ -193,6 +196,9 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
+ 	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DPI1) {
+ 		*addr = DISP_REG_CONFIG_DISP_RDMA1_MOUT_EN;
+ 		value = RDMA1_MOUT_DPI1;
++	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI0) {
++		*addr = DISP_REG_CONFIG_DISP_RDMA2_SOUT;
++		value = RDMA2_MOUT_DPI0;
+ 	} else {
+ 		value = 0;
+ 	}
+@@ -224,6 +230,9 @@ static unsigned int mtk_ddp_sel_in(enum mtk_ddp_comp_id cur,
+ 	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DSI3) {
+ 		*addr = DISP_REG_CONFIG_DSIO_SEL_IN;
+ 		value = DSI3_SEL_IN_RDMA1;
++	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI0) {
++		*addr = DISP_REG_CONFIG_DPI_SEL_IN;
++		value = DPI0_SEL_IN_RDMA2;
+ 	} else if (cur == DDP_COMPONENT_OVL1 && next == DDP_COMPONENT_COLOR1) {
+ 		*addr = DISP_REG_CONFIG_DISP_COLOR1_SEL_IN;
+ 		value = COLOR1_SEL_IN_OVL1;
+-- 
+2.12.5
