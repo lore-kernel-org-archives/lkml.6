@@ -1,129 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id k3FCI/L2G1t2eAAAmS7hNA
-	; Sat, 09 Jun 2018 15:49:45 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 27S8MfFjHlugYQAAmS7hNA
+	; Mon, 11 Jun 2018 11:58:49 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 4F248608C8; Sat,  9 Jun 2018 15:49:45 +0000 (UTC)
+	id 77A43607A4; Mon, 11 Jun 2018 11:58:49 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="p2U+GMGv"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ahfOeVR8"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=unavailable
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id B90F3608B8;
-	Sat,  9 Jun 2018 15:49:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B90F3608B8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 0110B601C3;
+	Mon, 11 Jun 2018 11:58:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0110B601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932657AbeFIPtn (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 11:49:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34882 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932483AbeFIPcZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 11:32:25 -0400
-Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79AED204EC;
-        Sat,  9 Jun 2018 15:32:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528558345;
-        bh=HupZmIERkInV2hV2H/sV9WOlx/70nUQlwNnKzrJSbUU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p2U+GMGvHbv4Fj+Npbdmn514dSrqjWFOQekSgtlODGjF49cAfnSYljEI6Kc1REcOa
-         OU5R2DpRL++vmYYEZwowizh+7DyRHnSjrWXi7f8vY5fwtMmXX9cFLOAjBabS7jlygj
-         jPQcyj/4flJahxKAszK0UP4+29wfPS7bYMtJPhf8=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 11/48] ip6_tunnel: remove magic mtu value 0xFFF8
-Date: Sat,  9 Jun 2018 17:29:23 +0200
-Message-Id: <20180609145948.391158106@linuxfoundation.org>
+        id S933269AbeFKL6r (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 07:58:47 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:37342 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932978AbeFKLw7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 07:52:59 -0400
+Received: by mail-lf0-f67.google.com with SMTP id g21-v6so28109921lfb.4;
+        Mon, 11 Jun 2018 04:52:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=ZJrLI/VuqBYag/UozRd6+0YNWDier7XViH34iN010c8=;
+        b=ahfOeVR84gvf5MuZ+MyooHku0ulk8W7Wgkp8m6kNXQBML0X/H7urIWHwwo1nbjQFch
+         t0OOl2WezbCdV7DPY1rLag/5t12WRfBsQNvGov/Qc/LHS6bInMKxj7C+DQxjx14xaeyf
+         bg+Q8pvRX0OhU3QAU+41txq2jMQ61HpI7ULlPsOdhjPk9+g0e+oAeyHH1EGbBtPVhJ+R
+         BfTW5XHSuaeOJ2kP13Ozq44UvHri18aQHUScSxpSQPdJx1y84ZKr+WnKvidiN60lLICj
+         JvQsz9Hs4ktxjB36DbSbMl29uDkmqDowh1/GUMBuD259Mj6Pe6hIViXEtTytgjEaMTxo
+         M+cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=ZJrLI/VuqBYag/UozRd6+0YNWDier7XViH34iN010c8=;
+        b=OjKoP3rRXDKvdthLNcZfz89dh5EIk0GCibU5lkvquIehc8l6FWXzdcGH0c1IFdNr/6
+         1iawGnJlUBZSAI0ELtsWFQWQIzCuo+ZnokAymfaQa9a3ohONHEFCpgNTp8j1xSGMVxXT
+         43PCWDGYeltGgX/FcVnXlSKdTypfbFElrPs4gzDr8VwhzaIwyRUovAVylNp2Mguyv0jM
+         +N3fEMaDokQ/JU1X/i3ZIJ0UpiBd7OFPkPER2Buo2BNrixO8uLTaR6sozWNvBwIykMLT
+         agVcVeYD2BzsSIPcZu1stbm7ns5iic74EuL33k6ZrNFX0Wbdb1MaPrJlFPXCg8nqyjGK
+         sqtA==
+X-Gm-Message-State: APt69E3+AgJzmNIYtNvcu2xaA3H1/BtOOSduSXsT+3QVjvmSadl5cu83
+        t6ZkoP+ZgdInoVlawbVEap4/7+iN
+X-Google-Smtp-Source: ADUXVKI9rQjGv71F6Zfg/540Y/hvIUuS++7uHq9eUcU8AOKCUkLmHMMKZTyhLKvXEgg3ohMdynFL6g==
+X-Received: by 2002:a19:15da:: with SMTP id 87-v6mr10733932lfv.136.1528717976978;
+        Mon, 11 Jun 2018 04:52:56 -0700 (PDT)
+Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
+        by smtp.gmail.com with ESMTPSA id h90-v6sm8332849ljf.65.2018.06.11.04.52.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Jun 2018 04:52:54 -0700 (PDT)
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
+        linux-bluetooth@vger.kernel.org
+Subject: [PATCH v2 03/24] Bluetooth: hci_ll: Add serdev_id_table
+Date: Mon, 11 Jun 2018 13:52:19 +0200
+Message-Id: <20180611115240.32606-4-ricardo.ribalda@gmail.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
-References: <20180609145947.679103414@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
+References: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+Describe which hardware is supported by the current driver.
 
-------------------
-
-From: Nicolas Dichtel <nicolas.dichtel@6wind.com>
-
-[ Upstream commit f7ff1fde9441b4fcc8ffb6e66e6e5a00d008937e ]
-
-I don't know where this value comes from (probably a copy and paste and
-paste and paste ...).
-Let's use standard values which are a bit greater.
-
-Link: https://git.kernel.org/pub/scm/linux/kernel/git/davem/netdev-vger-cvs.git/commit/?id=e5afd356a411a
-Signed-off-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Marcel Holtmann <marcel@holtmann.org>
+Cc: Johan Hedberg <johan.hedberg@gmail.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>
+Cc: linux-bluetooth@vger.kernel.org
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 ---
- net/ipv6/ip6_tunnel.c |   11 ++++++++---
- net/ipv6/sit.c        |    5 +++--
- 2 files changed, 11 insertions(+), 5 deletions(-)
+ drivers/bluetooth/hci_ll.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
---- a/net/ipv6/ip6_tunnel.c
-+++ b/net/ipv6/ip6_tunnel.c
-@@ -1688,8 +1688,13 @@ int ip6_tnl_change_mtu(struct net_device
- 		if (new_mtu < ETH_MIN_MTU)
- 			return -EINVAL;
- 	}
--	if (new_mtu > 0xFFF8 - dev->hard_header_len)
--		return -EINVAL;
-+	if (tnl->parms.proto == IPPROTO_IPV6 || tnl->parms.proto == 0) {
-+		if (new_mtu > IP6_MAX_MTU - dev->hard_header_len)
-+			return -EINVAL;
-+	} else {
-+		if (new_mtu > IP_MAX_MTU - dev->hard_header_len)
-+			return -EINVAL;
-+	}
- 	dev->mtu = new_mtu;
- 	return 0;
- }
-@@ -1837,7 +1842,7 @@ ip6_tnl_dev_init_gen(struct net_device *
- 	if (!(t->parms.flags & IP6_TNL_F_IGN_ENCAP_LIMIT))
- 		dev->mtu -= 8;
- 	dev->min_mtu = ETH_MIN_MTU;
--	dev->max_mtu = 0xFFF8 - dev->hard_header_len;
-+	dev->max_mtu = IP6_MAX_MTU - dev->hard_header_len;
+diff --git a/drivers/bluetooth/hci_ll.c b/drivers/bluetooth/hci_ll.c
+index 27e414b4e3a2..276fdf677df4 100644
+--- a/drivers/bluetooth/hci_ll.c
++++ b/drivers/bluetooth/hci_ll.c
+@@ -776,6 +776,23 @@ static const struct of_device_id hci_ti_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, hci_ti_of_match);
  
- 	return 0;
- 
---- a/net/ipv6/sit.c
-+++ b/net/ipv6/sit.c
-@@ -1371,7 +1371,7 @@ static void ipip6_tunnel_setup(struct ne
- 	dev->hard_header_len	= LL_MAX_HEADER + t_hlen;
- 	dev->mtu		= ETH_DATA_LEN - t_hlen;
- 	dev->min_mtu		= IPV6_MIN_MTU;
--	dev->max_mtu		= 0xFFF8 - t_hlen;
-+	dev->max_mtu		= IP6_MAX_MTU - t_hlen;
- 	dev->flags		= IFF_NOARP;
- 	netif_keep_dst(dev);
- 	dev->addr_len		= 4;
-@@ -1583,7 +1583,8 @@ static int ipip6_newlink(struct net *src
- 	if (tb[IFLA_MTU]) {
- 		u32 mtu = nla_get_u32(tb[IFLA_MTU]);
- 
--		if (mtu >= IPV6_MIN_MTU && mtu <= 0xFFF8 - dev->hard_header_len)
-+		if (mtu >= IPV6_MIN_MTU &&
-+		    mtu <= IP6_MAX_MTU - dev->hard_header_len)
- 			dev->mtu = mtu;
- 	}
- 
++static struct serdev_device_id hci_ti_id[] = {
++	{ "cc2560", },
++	{ "wl1271-st", },
++	{ "wl1273-st", },
++	{ "wl1281-st", },
++	{ "wl1283-st", },
++	{ "wl1285-st", },
++	{ "wl1801-st", },
++	{ "wl1805-st", },
++	{ "wl1807-st", },
++	{ "wl1831-st", },
++	{ "wl1835-st", },
++	{ "wl1837-st", },
++	{}
++};
++MODULE_DEVICE_TABLE(serdev, hci_ti_id);
++
+ static struct serdev_device_driver hci_ti_drv = {
+ 	.driver		= {
+ 		.name	= "hci-ti",
+@@ -783,6 +800,7 @@ static struct serdev_device_driver hci_ti_drv = {
+ 	},
+ 	.probe	= hci_ti_probe,
+ 	.remove	= hci_ti_remove,
++	.id_table = hci_ti_id,
+ };
+ #else
+ #define ll_setup NULL
+-- 
+2.17.1
