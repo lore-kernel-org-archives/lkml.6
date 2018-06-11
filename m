@@ -1,661 +1,264 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id YEpHAjuJGlvtEAAAmS7hNA
-	; Fri, 08 Jun 2018 13:48:43 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id inszMKOaHlsyYgAAmS7hNA
+	; Mon, 11 Jun 2018 15:53:54 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id DD805608C1; Fri,  8 Jun 2018 13:48:42 +0000 (UTC)
+	id 8CDB260791; Mon, 11 Jun 2018 15:53:54 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bOcJqXKf"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 3816F608B8;
-	Fri,  8 Jun 2018 13:48:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3816F608B8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id C8E3D607A4;
+	Mon, 11 Jun 2018 15:53:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C8E3D607A4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752852AbeFHNse (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 09:48:34 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:24138 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752693AbeFHNsb (ORCPT
+        id S1752825AbeFKPxu (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 20 others); Mon, 11 Jun 2018 11:53:50 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:35159 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751063AbeFKPxs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 09:48:31 -0400
-X-IronPort-AV: E=Sophos;i="5.49,490,1520924400";
-   d="scan'208";a="12312500"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 08 Jun 2018 06:48:30 -0700
-Received: from localhost.localdomain.com (10.10.76.4) by
- chn-sv-exch05.mchp-main.com (10.10.76.106) with Microsoft SMTP Server id
- 14.3.352.0; Fri, 8 Jun 2018 06:48:29 -0700
-From: Tudor Ambarus <tudor.ambarus@microchip.com>
-To: <marek.vasut@gmail.com>, <cyrille.pitchen@microchip.com>,
-        <dwmw2@infradead.org>, <computersforpeace@gmail.com>,
-        <boris.brezillon@bootlin.com>, <richard@nod.at>
-CC: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <nicolas.ferre@microchip.com>, <Cristian.Birsan@microchip.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>
-Subject: [PATCH] mtd: spi-nor: add support to non-uniform SFDP SPI NOR flash memories
-Date: Fri, 8 Jun 2018 16:48:18 +0300
-Message-ID: <20180608134818.21387-2-tudor.ambarus@microchip.com>
-X-Mailer: git-send-email 2.9.4
-In-Reply-To: <20180608134818.21387-1-tudor.ambarus@microchip.com>
-References: <20180608134818.21387-1-tudor.ambarus@microchip.com>
+        Mon, 11 Jun 2018 11:53:48 -0400
+Received: by mail-wr0-f193.google.com with SMTP id l10-v6so20961679wrn.2;
+        Mon, 11 Jun 2018 08:53:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1Ko8To+hLTmQyyIxDrtq4tokmn6w7+Fqa/OksUCiZDY=;
+        b=bOcJqXKfHKMSQVl92HAMj9eC4JUrhKgEfES7setXaP1HGf89yDQ6JIEIu/aXYlOv6o
+         uxUAw9OZF/+zYjc5WzFV2dSG1oUgkiTOCK1XYQqw59p/IX3uvlhPYgA+yezCYeTQK0Pv
+         UEDGGLrmCZKWHrOhlsBidZXibEdx1wjUrt4uZejV2VC5jkTC8a7jmWiyMZyEA7vavzp/
+         WE9nGCfMkqOyF+SZ52voR232iMh50HfGQ7Y6uz07gdxcc5ckR1z/uOmldJ6OMmHGYrv1
+         xs0nnkSu08FC+PvA9hQ+PM/fIR82V9uD5RIsFC65oO6LjPNZLbkUUBoyA+jH75OiFKYP
+         KPMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1Ko8To+hLTmQyyIxDrtq4tokmn6w7+Fqa/OksUCiZDY=;
+        b=HvEP960vhkPitw7PABe5JYfQGQCTdEPKtPpm7odS/3+MjCBtWbTkUydzSwlUtHsHxz
+         ZTctHgv5QQfoiYQy8bd4MXDk4g8e5mm3qks2pntIEpukeNGVUQmBXRjU96R0T6WuQVSu
+         PEsHISCtDoAxLb7BA5+/HZEdzlBBsfvHfrsEcda8anAAqc7DHPtixv9rONs8HLdthFfl
+         3QjUOv+tgmQnxN7Ud6uWJaFP60oQ/4RH0nv0GoFp7QaoFBSL6K7G7uEl92FZOBmbRhIJ
+         xDsEntNow8DfHtXceMDknhaq2J9Ign93sfpwO+xozuRwL2IT4F7keh16GVWZ/65E1DUc
+         g3IQ==
+X-Gm-Message-State: APt69E1Yx89mrgc6FoywTaW214yT+bw3hCkrM4giovMXKOam/gbjVhph
+        l4Osqh5EuTt7SGHgM0Ei3CI=
+X-Google-Smtp-Source: ADUXVKKw1MnllhbkRzl89zd56KzGgSOmBNIoJhpFAycBJAj2uJoG94lNogTKv6YD2ADKLEBBJoKecw==
+X-Received: by 2002:a5d:4906:: with SMTP id x6-v6mr13407845wrq.66.1528732426411;
+        Mon, 11 Jun 2018 08:53:46 -0700 (PDT)
+Received: from localhost (pD9E510DD.dip0.t-ipconnect.de. [217.229.16.221])
+        by smtp.gmail.com with ESMTPSA id r9-v6sm26262680wrs.63.2018.06.11.08.53.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 11 Jun 2018 08:53:45 -0700 (PDT)
+Date: Mon, 11 Jun 2018 17:53:43 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] memory: tegra: Introduce Tegra20 EMC driver
+Message-ID: <20180611155343.GE31977@ulmo>
+References: <20180603223654.23324-1-digetx@gmail.com>
+ <c17a1edf-f87d-e5f6-b446-34505a2bbc07@gmail.com>
+ <20180611113503.GC31977@ulmo>
+ <2510221.F5DvE09a94@dimapc>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="Q8BnQc91gJZX4vDc"
+Content-Disposition: inline
+In-Reply-To: <2510221.F5DvE09a94@dimapc>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Based on Cyrille Pitchen's patch https://lkml.org/lkml/2017/3/22/935.
 
-This patch is a transitional patch in introducing  the support of
-SFDP SPI memories with non-uniform erase sizes like Spansion s25fs512s.
-Non-uniform erase maps will be used later when initialized based on the
-SFDP data.
+--Q8BnQc91gJZX4vDc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Introduce the memory erase map which splits the memory array into one
-or many erase regions. Each erase region supports up to 4 erase types,
-as defined by the JEDEC JESD216B (SFDP) specification.
+On Mon, Jun 11, 2018 at 04:06:41PM +0300, Dmitry Osipenko wrote:
+> On Monday, 11 June 2018 14:35:03 MSK Thierry Reding wrote:
+> > On Wed, Jun 06, 2018 at 04:42:01PM +0300, Dmitry Osipenko wrote:
+> > > On 06.06.2018 14:02, Thierry Reding wrote:
+> > > > On Mon, Jun 04, 2018 at 01:36:54AM +0300, Dmitry Osipenko wrote:
+[...]
+> > > >> +	} else {
+> > > >> +		init_completion(&emc->clk_handshake_complete);
+> > > >> +
+> > > >> +		err =3D devm_request_irq(&pdev->dev, emc->irq, tegra_emc_isr,=
+=20
+> 0,
+> > > >> +				       dev_name(&pdev->dev), emc);
+> > > >> +		if (err < 0) {
+> > > >> +			dev_err(&pdev->dev, "failed to request IRQ#%u: %d\n",
+> > > >> +				emc->irq, err);
+> > > >> +			return err;
+> > > >> +		}
+> > > >> +	}
+> > > >> +
+> > > >> +	emc->pll_m =3D clk_get_sys(NULL, "pll_m");
+> > > >> +	if (IS_ERR(emc->pll_m)) {
+> > > >> +		err =3D PTR_ERR(emc->pll_m);
+> > > >> +		dev_err(&pdev->dev, "failed to get pll_m: %d\n", err);
+> > > >> +		return err;
+> > > >> +	}
+> > > >> +
+> > > >> +	emc->backup_clk =3D clk_get_sys(NULL, "pll_p");
+> > > >> +	if (IS_ERR(emc->backup_clk)) {
+> > > >> +		err =3D PTR_ERR(emc->backup_clk);
+> > > >> +		dev_err(&pdev->dev, "failed to get pll_p: %d\n", err);
+> > > >> +		goto put_pll_m;
+> > > >> +	}
+> > > >> +
+> > > >> +	emc->clk =3D clk_get_sys(NULL, "emc");
+> > > >> +	if (IS_ERR(emc->clk)) {
+> > > >> +		err =3D PTR_ERR(emc->clk);
+> > > >> +		dev_err(&pdev->dev, "failed to get emc: %d\n", err);
+> > > >> +		goto put_backup;
+> > > >> +	}
+> > > >=20
+> > > > Instead of using clk_get_sys(), why not specify these in the DT with
+> > > > proper names for context ("emc", "pll", "backup")? Again, I don't t=
+hink
+> > > > we have to worry about backwards-compatibility here since there can=
+ be
+> > > > no regression.
+> > >=20
+> > > I don't think that "pll" and "backup" could be placed in DT because i=
+t is
+> > > a pure software-driver descriptio     in
+> > DT. There are other cases, like for display, where we list clocks in the
+> > DT that aren't strictly inputs to a hardware block. But they are related
+> > to the functionality of the block, so I think it makes sense to list
+> > them as well.
+> >=20
+> > In this particular case, the PLL is what drives the memory banks, which
+> > is the think that the EMC controls, right? So that itself is reason
+> > enough, in my opinion, to list it in DT. Much the same goes for the
+> > backup clock, which is really just the PLL for some transient state
+> > where the normal PLL is being reconfigured.
+>=20
+> PLL itself shouldn't really matter. EMC doesn't control PLL, but only=20
+> interacts with the Clock-and-Reset controller. This means that we could u=
+se=20
+> PLL_C instead of PLL_M if we wanted. Though PLL_M is meant to be a "memor=
+y=20
+> PLL".
+>=20
+> To me a selection of a parent clock is a pure software description that i=
+s=20
+> wrong to be placed in DT.
 
-To be backward compatible, the erase map of uniform SPI NOR flash memories
-is initialized so it contains only one erase region and this erase region
-supports only one erase command. Hence a single size is used to erase any
-sector/block of the memory.
+I think of it as configuration rather than software description. The
+problem that we're trying to solve with DT is primarily one of
+configuration and parameterization. The idea is that we describe the
+interfaces of some hardware module and then specify which resources
+to use as inputs and/or outputs for those interfaces.
 
-Besides, since the algorithm used to erase sectors on non-uniform SPI NOR
-flash memories is quite expensive, when possible, the erase map is tuned
-to come back to the uniform case.
+So in this case we can define that in order to perform its function the
+EMC driver needs to somehow control a PLL that drives the memory. Even
+if the EMC hardware itself doesn't control a PLL, not controlling a PLL
+would make the EMC driver rather pointless. Actually, if the hardware
+did control the PLL itself, there'd be no need to describe any aspect of
+that PLL in the DT. We only need to describe it in DT because we've got
+several possibilities and we want to make sure we pick one that is best
+for our specific use-case.
 
-The 'erase with the best command, move forward and repeat' approach was
-suggested by Cristian Birsan in a brainstorm session, so:
+> I'm not sure that specifying parent clock for display in DT is correct. T=
+hat=20
+> simply doesn't make sense because there are four possible parent clocks f=
+or=20
+> the display. Selection of a parent clock in DT is a pure software descrip=
+tion=20
+> that is only relevant for the upstream Linux DRM driver, it's a mistake t=
+o me.
 
-Suggested-by: Cristian Birsan <cristian.birsan@microchip.com>
-Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
----
- drivers/mtd/spi-nor/spi-nor.c | 357 ++++++++++++++++++++++++++++++++++++++++--
- include/linux/mtd/spi-nor.h   | 108 +++++++++++++
- 2 files changed, 451 insertions(+), 14 deletions(-)
+I disagree. While it is certainly true that there are multiple possible
+PLLs for display, which one to use depends on the use-case. In most SoC
+generations we have two display PLLs where pll_d2 is "more capable" than
+pll_d because it can run at higher frequencies. pll_d for example can in
+many cases not be used to drive an HDMI output at 1080p resolutions. For
+DisplayPort output, pll_d can usually also not be used. It therefore
+makes sense to define in DT which PLL to use for a particular use-case.
 
-diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-index 494b7a2..3e04082 100644
---- a/drivers/mtd/spi-nor/spi-nor.c
-+++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -260,6 +260,18 @@ static void spi_nor_set_4byte_opcodes(struct spi_nor *nor,
- 	nor->read_opcode = spi_nor_convert_3to4_read(nor->read_opcode);
- 	nor->program_opcode = spi_nor_convert_3to4_program(nor->program_opcode);
- 	nor->erase_opcode = spi_nor_convert_3to4_erase(nor->erase_opcode);
-+
-+	if (!spi_nor_has_uniform_erase(nor)) {
-+		struct spi_nor_erase_map *map = &nor->erase_map;
-+		struct spi_nor_erase_type *erase;
-+		int i;
-+
-+		for (i = 0; i < SNOR_ERASE_TYPE_MAX; i++) {
-+			erase = &map->erase_type[i];
-+			erase->opcode =
-+				spi_nor_convert_3to4_erase(erase->opcode);
-+		}
-+	}
- }
- 
- /* Enable/disable 4-byte addressing mode. */
-@@ -497,6 +509,204 @@ static int spi_nor_erase_sector(struct spi_nor *nor, u32 addr)
- 	return nor->write_reg(nor, nor->erase_opcode, buf, nor->addr_width);
- }
- 
-+/* JEDEC JESD216B Standard imposes erase sizes to be power of 2. */
-+static inline u64
-+spi_nor_div_by_erase_size(const struct spi_nor_erase_type *erase,
-+			  u64 dividend, u32 *remainder)
-+{
-+	*remainder = (u32)dividend & erase->size_mask;
-+	return dividend >> erase->size_shift;
-+}
-+
-+static const struct spi_nor_erase_type *
-+spi_nor_find_best_erase_type(const struct spi_nor_erase_map *map,
-+			     const struct spi_nor_erase_region *region,
-+			     u64 addr, u32 len)
-+{
-+	const struct spi_nor_erase_type *erase;
-+	u32 rem;
-+	int i;
-+	u8 erase_mask = region->offset & SNOR_ERASE_TYPE_MASK;
-+
-+	/*
-+	 * Erase types are ordered by size, with the biggest erase type at
-+	 * index 0.
-+	 */
-+	for (i = 0; i < SNOR_ERASE_TYPE_MAX; i++) {
-+		/* Does the erase region support the tested erase type? */
-+		if (!(erase_mask & BIT(i)))
-+			continue;
-+
-+		erase = &map->erase_type[i];
-+
-+		/* Don't erase more than what the user has asked for. */
-+		if (erase->size > len)
-+			continue;
-+
-+		/* Alignment is not mandatory for overlaid regions */
-+		if (region->offset & SNOR_OVERLAID_REGION)
-+			return erase;
-+
-+		spi_nor_div_by_erase_size(erase, addr, &rem);
-+		if (rem)
-+			continue;
-+		else
-+			return erase;
-+	}
-+
-+	return NULL;
-+}
-+
-+static const struct spi_nor_erase_region *
-+spi_nor_region_next(const struct spi_nor_erase_region *region)
-+{
-+	if (spi_nor_region_is_last(region))
-+		return NULL;
-+	return ++region;
-+}
-+
-+static const struct spi_nor_erase_region *
-+spi_nor_find_erase_region(const struct spi_nor_erase_map *map, u64 addr,
-+			  u32 len)
-+{
-+	const struct spi_nor_erase_region *region = map->regions;
-+	u64 region_start = region->offset & ~SNOR_ERASE_FLAGS_MASK;
-+	u64 region_end = region_start + region->size;
-+
-+	while (addr < region_start || addr > region_end) {
-+		region = spi_nor_region_next(region);
-+		if (!region)
-+			return ERR_PTR(-EINVAL);
-+
-+		region_start = region->offset & ~SNOR_ERASE_FLAGS_MASK;
-+		region_end = region_start + region->size;
-+	}
-+
-+	return region;
-+}
-+
-+static struct spi_nor_erase_command *
-+spi_nor_init_erase_cmd(const struct spi_nor_erase_region *region,
-+		       const struct spi_nor_erase_type *erase, u64 addr)
-+{
-+	struct spi_nor_erase_command *cmd;
-+
-+	cmd = kmalloc(sizeof(*cmd), GFP_KERNEL);
-+	if (!cmd)
-+		return ERR_PTR(-ENOMEM);
-+
-+	INIT_LIST_HEAD(&cmd->list);
-+	cmd->opcode = erase->opcode;
-+	cmd->count = 1;
-+
-+	if (region->offset & SNOR_OVERLAID_REGION)
-+		cmd->size = region->size;
-+	else
-+		cmd->size = erase->size;
-+
-+	return cmd;
-+}
-+
-+static void spi_nor_destroy_erase_cmd_list(struct list_head *erase_list)
-+{
-+	struct spi_nor_erase_command *cmd, *next;
-+
-+	list_for_each_entry_safe(cmd, next, erase_list, list) {
-+		list_del(&cmd->list);
-+		kfree(cmd);
-+	}
-+}
-+
-+static int spi_nor_init_erase_cmd_list(struct spi_nor *nor,
-+				       struct list_head *erase_list,
-+				       u64 addr, u32 len)
-+{
-+	const struct spi_nor_erase_map *map = &nor->erase_map;
-+	const struct spi_nor_erase_region *region;
-+	const struct spi_nor_erase_type *erase, *prev_erase = NULL;
-+	struct spi_nor_erase_command *cmd = NULL;
-+	u64 region_end;
-+	int ret = -EINVAL;
-+
-+	region = spi_nor_find_erase_region(map, addr, len);
-+	if (IS_ERR(region))
-+		return PTR_ERR(region);
-+
-+	region_end = spi_nor_region_end(region);
-+
-+	while (len) {
-+		erase = spi_nor_find_best_erase_type(map, region, addr, len);
-+		if (!erase)
-+			goto destroy_erase_cmd_list;
-+
-+		if (prev_erase != erase ||
-+		    region->offset & SNOR_OVERLAID_REGION) {
-+			cmd = spi_nor_init_erase_cmd(region, erase, addr);
-+			if (IS_ERR(cmd)) {
-+				ret = PTR_ERR(cmd);
-+				goto destroy_erase_cmd_list;
-+			}
-+
-+			list_add(&cmd->list, erase_list);
-+		} else {
-+			cmd->count++;
-+		}
-+
-+		addr += cmd->size;
-+		len -= cmd->size;
-+
-+		if (len && addr >= region_end) {
-+			region = spi_nor_region_next(region);
-+			if (!region)
-+				goto destroy_erase_cmd_list;
-+			region_end = spi_nor_region_end(region);
-+		}
-+
-+		prev_erase = erase;
-+	}
-+
-+	return 0;
-+
-+destroy_erase_cmd_list:
-+	spi_nor_destroy_erase_cmd_list(erase_list);
-+	return ret;
-+}
-+
-+static int spi_nor_erase_multi_sectors(struct spi_nor *nor, u64 addr, u32 len)
-+{
-+	LIST_HEAD(erase_list);
-+	struct spi_nor_erase_command *cmd, *next;
-+	int ret;
-+
-+	ret = spi_nor_init_erase_cmd_list(nor, &erase_list, addr, len);
-+	if (ret)
-+		return ret;
-+
-+	list_for_each_entry_safe(cmd, next, &erase_list, list) {
-+		nor->erase_opcode = cmd->opcode;
-+		while (cmd->count) {
-+			ret = spi_nor_erase_sector(nor, addr);
-+			if (ret)
-+				goto destroy_erase_cmd_list;
-+
-+			addr += cmd->size;
-+			cmd->count--;
-+
-+			ret = spi_nor_wait_till_ready(nor);
-+			if (ret)
-+				goto destroy_erase_cmd_list;
-+		}
-+		list_del(&cmd->list);
-+		kfree(cmd);
-+	}
-+
-+	return 0;
-+
-+destroy_erase_cmd_list:
-+	spi_nor_destroy_erase_cmd_list(&erase_list);
-+	return ret;
-+}
-+
- /*
-  * Erase an address range on the nor chip.  The address range may extend
-  * one or more erase sectors.  Return an error is there is a problem erasing.
-@@ -511,9 +721,11 @@ static int spi_nor_erase(struct mtd_info *mtd, struct erase_info *instr)
- 	dev_dbg(nor->dev, "at 0x%llx, len %lld\n", (long long)instr->addr,
- 			(long long)instr->len);
- 
--	div_u64_rem(instr->len, mtd->erasesize, &rem);
--	if (rem)
--		return -EINVAL;
-+	if (likely(spi_nor_has_uniform_erase(nor))) {
-+		div_u64_rem(instr->len, mtd->erasesize, &rem);
-+		if (rem)
-+			return -EINVAL;
-+	}
- 
- 	addr = instr->addr;
- 	len = instr->len;
-@@ -552,7 +764,7 @@ static int spi_nor_erase(struct mtd_info *mtd, struct erase_info *instr)
- 	 */
- 
- 	/* "sector"-at-a-time erase */
--	} else {
-+	} else if (likely(spi_nor_has_uniform_erase(nor))) {
- 		while (len) {
- 			write_enable(nor);
- 
-@@ -567,6 +779,12 @@ static int spi_nor_erase(struct mtd_info *mtd, struct erase_info *instr)
- 			if (ret)
- 				goto erase_err;
- 		}
-+
-+	/* erase multiple sectors */
-+	} else {
-+		ret = spi_nor_erase_multi_sectors(nor, addr, len);
-+		if (ret)
-+			goto erase_err;
- 	}
- 
- 	write_disable(nor);
-@@ -2329,6 +2547,27 @@ static int spi_nor_parse_bfpt(struct spi_nor *nor,
- 	return 0;
- }
- 
-+/* JEDEC JESD216B Standard imposes erase sizes to be power of 2. */
-+static inline void
-+spi_nor_set_erase_type(struct spi_nor_erase_type *erase,  u32 size, u8 opcode)
-+{
-+	erase->size = size;
-+	erase->opcode = opcode;
-+	erase->size_shift = ffs(erase->size) - 1;
-+	erase->size_mask = (1 << erase->size_shift) - 1;
-+}
-+
-+static inline void
-+spi_nor_init_uniform_erase_map(struct spi_nor_erase_map *map,
-+			       u8 erase_mask, u64 flash_size)
-+{
-+	map->uniform_region.offset = SNOR_ERASE_FLAGS_OFFSET(erase_mask, 1, 0,
-+							     0);
-+	map->uniform_region.size = flash_size;
-+	map->regions = &map->uniform_region;
-+	map->uniform_erase_type = erase_mask;
-+}
-+
- /**
-  * spi_nor_parse_sfdp() - parse the Serial Flash Discoverable Parameters.
-  * @nor:		pointer to a 'struct spi_nor'
-@@ -2443,6 +2682,9 @@ static int spi_nor_init_params(struct spi_nor *nor,
- 			       const struct flash_info *info,
- 			       struct spi_nor_flash_parameter *params)
- {
-+	struct spi_nor_erase_map *map = &nor->erase_map;
-+	u8 erase_mask = 0;
-+
- 	/* Set legacy flash parameters as default. */
- 	memset(params, 0, sizeof(*params));
- 
-@@ -2482,6 +2724,24 @@ static int spi_nor_init_params(struct spi_nor *nor,
- 	spi_nor_set_pp_settings(&params->page_programs[SNOR_CMD_PP],
- 				SPINOR_OP_PP, SNOR_PROTO_1_1_1);
- 
-+	/*
-+	 * Sector Erase settings. Order erase types by size, with the biggest
-+	 * erase size at BIT(0)
-+	 */
-+	erase_mask |= BIT(0);
-+	spi_nor_set_erase_type(&map->erase_type[0], info->sector_size,
-+			       SPINOR_OP_SE);
-+	if (info->flags & SECT_4K_PMC) {
-+		erase_mask |= BIT(1);
-+		spi_nor_set_erase_type(&map->erase_type[1], 4096u,
-+				       SPINOR_OP_BE_4K_PMC);
-+	} else if (info->flags & SECT_4K) {
-+		erase_mask |= BIT(1);
-+		spi_nor_set_erase_type(&map->erase_type[1], 4096u,
-+				       SPINOR_OP_BE_4K);
-+	}
-+	spi_nor_init_uniform_erase_map(map, erase_mask, params->size);
-+
- 	/* Select the procedure to set the Quad Enable bit. */
- 	if (params->hwcaps.mask & (SNOR_HWCAPS_READ_QUAD |
- 				   SNOR_HWCAPS_PP_QUAD)) {
-@@ -2631,29 +2891,98 @@ static int spi_nor_select_pp(struct spi_nor *nor,
- 	return 0;
- }
- 
-+static const struct spi_nor_erase_type *
-+spi_nor_select_uniform_erase(struct spi_nor_erase_map *map,
-+			     const struct flash_info *info, u32 wanted_size)
-+{
-+	const struct spi_nor_erase_type *tested_erase, *erase = NULL;
-+	int i;
-+	u8 uniform_erase_type = map->uniform_erase_type;
-+
-+	for (i = 0; i < SNOR_ERASE_TYPE_MAX; i++) {
-+		if (!(uniform_erase_type & BIT(i)))
-+			continue;
-+
-+		tested_erase = &map->erase_type[i];
-+
-+		/*
-+		 * If the current erase size is the one, stop here:
-+		 * we have found the right uniform Sector Erase command.
-+		 */
-+		if (tested_erase->size == wanted_size) {
-+			erase = tested_erase;
-+			break;
-+		}
-+
-+		/*
-+		 * Otherwise, the current erase size is still a valid canditate
-+		 * we select the biggest valid candidate unless we find the
-+		 * Sector Erase command for an erase size of
-+		 * 'info->sector_size'.
-+		 */
-+		if (!erase || tested_erase->size == info->sector_size)
-+			erase = tested_erase;
-+	}
-+
-+	if (!erase || !erase->size)
-+		return ERR_PTR(-EINVAL);
-+
-+	/* Disable all other Sector Erase commands. */
-+	map->uniform_erase_type &= ~SNOR_ERASE_TYPE_MASK;
-+	map->uniform_erase_type |= BIT(erase - map->erase_type);
-+	return erase;
-+}
-+
- static int spi_nor_select_erase(struct spi_nor *nor,
- 				const struct flash_info *info)
- {
-+	struct spi_nor_erase_map *map = &nor->erase_map;
-+	const struct spi_nor_erase_type *erase = NULL;
- 	struct mtd_info *mtd = &nor->mtd;
-+	u32 wanted_size = info->sector_size;
-+	int i;
- 
- 	/* Do nothing if already configured from SFDP. */
- 	if (mtd->erasesize)
- 		return 0;
- 
-+	/*
-+	 * The previous implementation handling Sector Erase commands assumed
-+	 * that the SPI flash memory has an uniform layout then used only one
-+	 * of the supported erase sizes for all Sector Erase commands.
-+	 * So to be backward compatible, the new implementation also tries to
-+	 * manage the SPI flash memory as uniform with a single erase sector
-+	 * size, when possible.
-+	 */
- #ifdef CONFIG_MTD_SPI_NOR_USE_4K_SECTORS
- 	/* prefer "small sector" erase if possible */
--	if (info->flags & SECT_4K) {
--		nor->erase_opcode = SPINOR_OP_BE_4K;
--		mtd->erasesize = 4096;
--	} else if (info->flags & SECT_4K_PMC) {
--		nor->erase_opcode = SPINOR_OP_BE_4K_PMC;
--		mtd->erasesize = 4096;
--	} else
-+	wanted_size = 4096u;
- #endif
--	{
--		nor->erase_opcode = SPINOR_OP_SE;
--		mtd->erasesize = info->sector_size;
-+
-+	if (map->uniform_erase_type) {
-+		erase = spi_nor_select_uniform_erase(map, info, wanted_size);
-+		if (IS_ERR(erase))
-+			return PTR_ERR(erase);
-+		nor->erase_opcode = erase->opcode;
-+		mtd->erasesize = erase->size;
-+		return 0;
- 	}
-+
-+	/*
-+	 * For non-uniform SPI flash memory, set mtd->erasesize to the
-+	 * maximum erase sector size. No need to set nor->erase_opcode.
-+	 */
-+	for (i = 0; i < SNOR_ERASE_TYPE_MAX; i++) {
-+		if (!map->erase_type[i].size) {
-+			erase = &map->erase_type[i];
-+			break;
-+		}
-+	}
-+
-+	if (!erase)
-+		return -EINVAL;
-+
-+	mtd->erasesize = erase->size;
- 	return 0;
- }
- 
-diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h
-index e60da0d..072ff5f 100644
---- a/include/linux/mtd/spi-nor.h
-+++ b/include/linux/mtd/spi-nor.h
-@@ -238,6 +238,95 @@ enum spi_nor_option_flags {
- };
- 
- /**
-+ * struct spi_nor_erase_type - Structure to describe a SPI NOR erase type
-+ * @size:		the size of the sector/block erased by the erase type.
-+ *			JEDEC JESD216B imposes erase sizes to be a power of 2.
-+ * @size_shift:		@size is a power of 2, the shift is stored in
-+ *			@size_shift.
-+ * @size_mask:		the size mask based on @size_shift.
-+ * @opcode:		the SPI command op code to erase the sector/block.
-+ */
-+struct spi_nor_erase_type {
-+	u32	size;
-+	u32	size_shift;
-+	u32	size_mask;
-+	u8	opcode;
-+};
-+
-+/**
-+ * struct spi_nor_erase_command - Used for non-uniform erases
-+ * The structure is used to describe a list of erase commands to be executed
-+ * once we validate that the erase can be performed. The elements in the list
-+ * are run-length encoded.
-+ * @list:		for inclusion into the list of erase commands.
-+ * @count:		how many times the same erase command should be
-+ *			consecutively used.
-+ * @size:		the size of the sector/block erased by the command.
-+ * @opcode:		the SPI command op code to erase the sector/block.
-+ */
-+struct spi_nor_erase_command {
-+	struct list_head	list;
-+	u32			count;
-+	u32			size;
-+	u8			opcode;
-+};
-+
-+/**
-+ * struct spi_nor_erase_region - Structure to describe a SPI NOR erase region
-+ * @offset:		the offset in the data array of erase region start.
-+ *			LSB bits are used as a bitmask encoding flags to
-+ *			determine if this region is overlaid, if this region is
-+ *			the last in the SPI NOR flash memory and to indicate
-+ *			all the supported erase commands inside this region.
-+ *			The erase types are ordered by size with the biggest
-+ *			erase type at BIT(0).
-+ * @size:		the size of the region in bytes.
-+ */
-+struct spi_nor_erase_region {
-+	u64		offset;
-+	u64		size;
-+};
-+
-+#define SNOR_ERASE_TYPE_MAX	4
-+#define SNOR_ERASE_TYPE_MASK	GENMASK_ULL(SNOR_ERASE_TYPE_MAX - 1, 0)
-+
-+#define SNOR_LAST_REGION	BIT(4)
-+#define SNOR_OVERLAID_REGION	BIT(5)
-+
-+#define SNOR_ERASE_FLAGS_MAX	6
-+#define SNOR_ERASE_FLAGS_MASK	GENMASK_ULL(SNOR_ERASE_FLAGS_MAX - 1, 0)
-+
-+#define SNOR_ERASE_FLAGS_OFFSET(_cmd_mask, _last_region, _overlaid_region, \
-+				_offset)				\
-+	((((u64)(_offset)) & ~SNOR_ERASE_FLAGS_MASK)	|		\
-+	 (((u64)(_cmd_mask)) & SNOR_ERASE_TYPE_MASK)	|		\
-+	 (((u64)(_last_region)) & SNOR_LAST_REGION)	|		\
-+	 (((u64)(_overlaid_region)) & SNOR_OVERLAID_REGION))
-+
-+/**
-+ * struct spi_nor_erase_map - Structure to describe the SPI NOR erase map
-+ * @regions:		array of erase regions. The regions are consecutive in
-+ *			address space. Walking through the regions is done
-+ *			incrementally.
-+ * @uniform_region:	a pre-allocated erase region for SPI NOR with a uniform
-+ *			sector size (legacy implementation).
-+ * @erase_type:		an array of erase types shared by all the regions.
-+ *			The erase types are ordered by size, with the
-+ *			biggest erase type size starting at index 0.
-+ * @uniform_erase_type:	bitmask encoding erase types that can erase the
-+ *			entire memory. This member is completed at init by
-+ *			uniform and non-uniform SPI NOR flash memories if they
-+ *			support at least one erase type that can erase the
-+ *			entire memory.
-+ */
-+struct spi_nor_erase_map {
-+	struct spi_nor_erase_region	*regions;
-+	struct spi_nor_erase_region	uniform_region;
-+	struct spi_nor_erase_type	erase_type[SNOR_ERASE_TYPE_MAX];
-+	u8				uniform_erase_type;
-+};
-+
-+/**
-  * struct flash_info - Forward declaration of a structure used internally by
-  *		       spi_nor_scan()
-  */
-@@ -261,6 +350,7 @@ struct flash_info;
-  * @write_proto:	the SPI protocol for write operations
-  * @reg_proto		the SPI protocol for read_reg/write_reg/erase operations
-  * @cmd_buf:		used by the write_reg
-+ * @erase_map:		the erase map of the SPI NOR
-  * @prepare:		[OPTIONAL] do some preparations for the
-  *			read/write/erase/lock/unlock operations
-  * @unprepare:		[OPTIONAL] do some post work after the
-@@ -296,6 +386,7 @@ struct spi_nor {
- 	bool			sst_write_second;
- 	u32			flags;
- 	u8			cmd_buf[SPI_NOR_MAX_CMD_SIZE];
-+	struct spi_nor_erase_map	erase_map;
- 
- 	int (*prepare)(struct spi_nor *nor, enum spi_nor_ops ops);
- 	void (*unprepare)(struct spi_nor *nor, enum spi_nor_ops ops);
-@@ -316,6 +407,23 @@ struct spi_nor {
- 	void *priv;
- };
- 
-+#define spi_nor_region_is_last(region)  (region->offset & SNOR_LAST_REGION)
-+
-+static inline u64 spi_nor_region_end(const struct spi_nor_erase_region *region)
-+{
-+	return (region->offset & ~SNOR_ERASE_FLAGS_MASK) + region->size;
-+}
-+
-+static inline void spi_nor_region_mark_end(struct spi_nor_erase_region *region)
-+{
-+	region->offset |= SNOR_LAST_REGION;
-+}
-+
-+static inline bool spi_nor_has_uniform_erase(const struct spi_nor *nor)
-+{
-+	return (nor->erase_map.regions == &nor->erase_map.uniform_region);
-+}
-+
- static inline void spi_nor_set_flash_node(struct spi_nor *nor,
- 					  struct device_node *np)
- {
--- 
-2.9.4
+Now, I'll grant you that this somewhat blurs the lines of hardware
+descriptions vs. software description. But the alternative would be that
+we don't describe the PLLs in DT, which would imply that we have to have
+some logic in the driver that either knows which PLLs exist on the given
+SoC and can query their capabilities in order to determine which one to
+use for any given use-case.
+
+It also means that the driver becomes much less generic, because we have
+to put a lot of SoC specific knowledge into the driver. This is perhaps
+not a big issue for SoCs like Tegra that are very closely integrated
+anyway, but imagine if you take the same approach with IP that can be
+licensed from a third party and therefore could appear in many more
+different combinations.
+
+I think having the parent PLL defined in DT is a good compromise. If you
+say that strictly only hardware interfaces can be represented in DT, you
+take away a lot of the flexibility and in turn put a lot of the data
+back into drivers.
+
+> Moreover PLL isn't a "device" clock, but specifically a "system" clock. S=
+o=20
+> describing it in DT as a "device" clock is wrong to me too.
+>=20
+> Putting all together, the PLL's should be left as-is they are now in v2,=
+=20
+> please let me know if you disagree.
+
+I don't care very strongly in this case because the driver is unlikely
+to ever be reused anywhere other than on Tegra20. But looking up the
+system clock by a string is not something that is typically encouraged
+because it limits portability.
+
+> The "emc" clock could be placed in DT since we won't bother with the DT=
+=20
+> backwards compatibility, I'll change it in the next revision of the patch=
+set.
+
+Frankly, if you don't have the other clocks in DT there's little sense
+in having the EMC clock in DT.
+
+Thierry
+
+--Q8BnQc91gJZX4vDc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlsemwMACgkQ3SOs138+
+s6GquQ/7BegUHmQUOGU1QSRBzUHfJ73w6QolDHvvcYmBYaQlktgdd8jkoW+TM/56
+On9bm7MLPbiC9SKrBtoxa8YRiBZNTNBZgT9s7GIvdbdL+RPwcHXGsVcVX6/9quJB
+ibpeggVOtOeiEIOLnfEN4PbQuUGvoYBphlDIi1oUU5vPk3jrFnBp/BU3QclRS4WI
+4RZovn5zElY0vgHnCO9sVJWkxKGk4HFxTNxf8rLakQcO0c4ult1OlMdrg2q4hCrS
+IpWuArufRnhzusiH9HRWckciRA5G04Au2Shol6OBcJBaKWnL8dzXa0o427chtLXM
+i7S4YrE+kFyM2dy0C44qoedANc6ZU6VzQ6rzQlfxDG0fHHEo4avfka3KkOyE3oNN
+De61GuQWAlZpib9pVSYofMUoW9NkTHzGPOe0AKizXRpkute6IqhWOnym4PswwgL1
+z7NXIlIlb3tcmNRI4QwnWaAOuPRuc0kzOF7pO8I1ejxSfqlK/tM2TzX43RM9Cxo5
+6bEIJUE9dVr2nru3R9H9w3CclqHw+cZAh76LFeFs7MaZs+l5AzH4mso0nhROkKQE
+xsLQzX8iV757bEu1HAiwiz9gnF/OffiIMqu617+dmcQp7NAbqphKAgGD+OUQ9mpa
+oAaMD6bbCiQCTGtTJWJGLazGuCwTbalCWThJ07f1yjorEDJBpw4=
+=+U13
+-----END PGP SIGNATURE-----
+
+--Q8BnQc91gJZX4vDc--
