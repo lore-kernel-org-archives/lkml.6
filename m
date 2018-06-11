@@ -1,67 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id iIf7GfzoGVsEEwAAmS7hNA
-	; Fri, 08 Jun 2018 02:25:43 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Ka3+Cl2SHlsGFwAAmS7hNA
+	; Mon, 11 Jun 2018 15:16:45 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 13EDE6089E; Fri,  8 Jun 2018 02:25:43 +0000 (UTC)
+	id 202A9607BB; Mon, 11 Jun 2018 15:16:45 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.3 required=2.0 tests=BAYES_50,DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FROM,HK_NAME_FM_MR_MRS,MAILING_LIST_MULTI autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id AC7D760290;
-	Fri,  8 Jun 2018 02:25:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AC7D760290
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 981CB60791;
+	Mon, 11 Jun 2018 15:16:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 981CB60791
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932119AbeFHCZk (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 22:25:40 -0400
-Received: from shiva.jussieu.fr ([134.157.0.129]:23446 "EHLO shiva.jussieu.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753048AbeFHCZj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 22:25:39 -0400
-X-Greylist: delayed 2376 seconds by postgrey-1.27 at vger.kernel.org; Thu, 07 Jun 2018 22:25:39 EDT
-Received: from mailix1.insp.jussieu.fr (mailix1.insp.jussieu.fr [134.157.37.11])
-          by shiva.jussieu.fr (8.15.2/jtpda-5.4) with ESMTP id w581iWKZ034840
-          ; Fri, 8 Jun 2018 03:44:32 +0200 (CEST)
-X-Ids: 164
-Received: from hordix.insp.jussieu.fr (hordix.insp.jussieu.fr [134.157.37.9])
-        by mailix1.insp.jussieu.fr (Postfix-INSP-2.10.1) with ESMTPSA id 1A941C00048E;
-        Fri,  8 Jun 2018 03:44:31 +0200 (CEST)
-Received: from [92.247.152.173] ([92.247.152.173]) by webmail.insp.upmc.fr
- (Horde Framework) with HTTPS; Fri, 08 Jun 2018 01:44:30 +0000
-Date: Fri, 08 Jun 2018 01:44:30 +0000
-Message-ID: <20180608014430.Horde.BdqSt_pdWWdqQPx-wflkbB9@webmail.insp.upmc.fr>
-From: "Mr. Fawaz KhE. Al Saleh" <mr.fawaz.khe.al.saleh73@gmail.com>
-Subject: Proposal
-Reply-to: mr.fawaz.khe.al.saleh@gmail.com
-User-Agent: Horde Application Framework 5
-Organization: Institut des NanoSciences de Paris
-X-InspUpmcSession: khenafou
-Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
+        id S1754180AbeFKPQm (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 20 others); Mon, 11 Jun 2018 11:16:42 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:54129 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753988AbeFKPQl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 11:16:41 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5BEsKH2004782;
+        Mon, 11 Jun 2018 17:14:08 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2jg4nr1k2d-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 11 Jun 2018 17:14:08 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4007934;
+        Mon, 11 Jun 2018 15:14:05 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id DB50A2D61;
+        Mon, 11 Jun 2018 15:14:04 +0000 (GMT)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by SAFEX1HUBCAS23.st.com
+ (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 11 Jun
+ 2018 17:14:04 +0200
+Received: from localhost (10.201.23.16) by Webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 11 Jun 2018 17:14:04
+ +0200
+From: Olivier Moysan <olivier.moysan@st.com>
+To: <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <mcoquelin.stm32@gmail.com>,
+        <alexandre.torgue@st.com>, <alsa-devel@alsa-project.org>,
+        <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
+        <linux-kernel@vger.kernel.org>, <olivier.moysan@st.com>
+CC: <arnaud.pouliquen@st.com>, <benjamin.gaignard@st.com>
+Subject: [PATCH v2 0/1] ASoC: stm32: sai: add iec958 controls support
+Date: Mon, 11 Jun 2018 17:13:58 +0200
+Message-ID: <1528730039-15757-1-git-send-email-olivier.moysan@st.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-X-Miltered: at jchkmail2.reseau.jussieu.fr with ID 5B19DF80.006 by Joe's j-chkmail (http : // j-chkmail dot ensmp dot fr)!
-X-j-chkmail-Enveloppe: 5B19DF80.006 from mailix1.insp.jussieu.fr/mailix1.insp.jussieu.fr/134.157.37.11/mailix1.insp.jussieu.fr/<mr.fawaz.khe.al.saleh73@gmail.com>
-To: unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain
+X-Originating-IP: [10.201.23.16]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-11_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Changes v2:
+- Remove iec958 helpers and implement iec958 controls in sai driver 
 
+Olivier Moysan (1):
+  ASoC: stm32: sai: add iec958 controls support
+
+ sound/soc/stm/Kconfig         |   1 +
+ sound/soc/stm/stm32_sai_sub.c | 139 ++++++++++++++++++++++++++++++++++++++----
+ 2 files changed, 128 insertions(+), 12 deletions(-)
 
 -- 
-Good day,
-
-i know you do not know me personally but i have checked your profile  
-and i see generosity in you, There's an urgent offer attach
-to your name here in the office of Mr. Fawaz KhE. Al Saleh Member of
-the Board of Directors, Kuveyt Türk Participation Bank  (Turkey) and
-head of private banking and wealth management
-Regards,
-Mr. Fawaz KhE. Al Saleh
+1.9.1
