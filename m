@@ -1,116 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id PNq+CcJhHlv5RwAAmS7hNA
-	; Mon, 11 Jun 2018 11:55:25 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id UO91FtvOHVveLQAAmS7hNA
+	; Mon, 11 Jun 2018 01:23:09 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 773C2607E4; Mon, 11 Jun 2018 11:55:25 +0000 (UTC)
+	id 9713860792; Mon, 11 Jun 2018 01:23:09 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pVenX1Xa"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="Zlmft24Z"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id EA3C460351;
-	Mon, 11 Jun 2018 11:55:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EA3C460351
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id B5CA4601D2;
+	Mon, 11 Jun 2018 01:23:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B5CA4601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933304AbeFKLzX (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Mon, 11 Jun 2018 07:55:23 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:38472 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932893AbeFKLxZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 07:53:25 -0400
-Received: by mail-lf0-f65.google.com with SMTP id i83-v6so30085689lfh.5;
-        Mon, 11 Jun 2018 04:53:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=hg88Wzl5zGWc4tPtZJAg8u0955QkUDLn494gEpnUIxk=;
-        b=pVenX1XawER8HQyLZLqw0h3oNSdiQR8U5TltD5Imuu+T3ivfVmKAniWJZo+S6DTfkT
-         C0hpKxp8IvCSDAUEWomGP1MQcX1M27ADbZMA/VB+NrqLCiry0eyAQSZCvl/Vs4DDmyW8
-         1umhJJS1g3lLivYl/SGfWxDSSrNDDmYXboSnBZLP4fbFDBSqsfFw29GRri6eSQPJUZ4L
-         SfSyvgZMbS2HgQEdafL1/dkXtoCNNKoXSVT68XWM+03uu986qpuCHBAy33q1NDJu4ohS
-         DRz2LiJvUCn00J0aWhwbikUU5IrKGacLMdixZlBr2h7xitcJ1y2rh9ZusfCya2LhokJe
-         Howw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=hg88Wzl5zGWc4tPtZJAg8u0955QkUDLn494gEpnUIxk=;
-        b=GgrdTPxLSdZt1YHfJNgHffs1ypkCU9nqj7SMN+fFkrgtsg4i6QV2DypTIFOtQ8iPF8
-         lvdSsxCNZ5PBeWp76fkkppBZU/mkdpmYB+ELVExoTNw74fBBRvCfbqKsAJ3XwOFAp3cf
-         ZsUQIsUfLa4o2GFcaiIVYC96nAQk92ExIGNpNCEpUNsm26YenokI+ZsY222IluaJ9DVm
-         +GNd1ybZK2S9Zi0r8a27YBRL66qHCicaG7jVCnesUGCy5l2yfuQvLKgSJWpr9NiNCYq+
-         aWrL/8OJX2QqVkrMxPskWXfPBe1Y65ZxHk1uXWGj0wjQLoHpR2doXUfpc3WJ2s5vpFSa
-         1OoQ==
-X-Gm-Message-State: APt69E0v3ItxGs3OPBcIl2uptuuFXesTocvHZBsaO/IvvG5kpVJcvk20
-        Xnwms5hJu3L613wkKVFthlwd3ixs
-X-Google-Smtp-Source: ADUXVKJG0E7tZMSYKOcs4fmKZVHJEDZ2HTJTQU84QtRho7YEMYw5lR5LDeqlMsENvAGgU5pHJWurow==
-X-Received: by 2002:a2e:8951:: with SMTP id b17-v6mr12203612ljk.111.1528718003505;
-        Mon, 11 Jun 2018 04:53:23 -0700 (PDT)
-Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
-        by smtp.gmail.com with ESMTPSA id h90-v6sm8332849ljf.65.2018.06.11.04.53.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Jun 2018 04:53:22 -0700 (PDT)
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-To: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
+        id S1753802AbeFKBXG (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Sun, 10 Jun 2018 21:23:06 -0400
+Received: from imap.thunk.org ([74.207.234.97]:54548 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753736AbeFKBXF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Jun 2018 21:23:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=FPfFGvk7znywbS2Zm0uSjx7LHVcTK7j5Z5rBOBR0ZDo=; b=Zlmft24Zt2nHZXr6w7u7O1xtV/
+        452lGxqR91nqclm8LXtNf4CXyp5J9321XUgpi/CZeEZUTh0zDsJIaZKsBXOYHYBmFUpnHixKMuI2n
+        pOWp7l7ScHiF1QTeGm2QS1Akx4UZu3+DijF40eA5QvlcHqxharGcaozfv1AohzcWCWR4=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1fSBXn-0002uS-7q; Mon, 11 Jun 2018 01:22:51 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 5D5017A4474; Sun, 10 Jun 2018 21:22:50 -0400 (EDT)
+Date: Sun, 10 Jun 2018 21:22:50 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Subject: [PATCH v2 17/24] serdev: Mark controllers compatible with ttyport
-Date: Mon, 11 Jun 2018 13:52:33 +0200
-Message-Id: <20180611115240.32606-18-ricardo.ribalda@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
-References: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Guenter Roeck <groeck@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        David Miller <davem@davemloft.net>,
+        Wu Fengguang <fengguang.wu@intel.com>
+Subject: Re: what trees/branches to test on syzbot
+Message-ID: <20180611012250.GD5020@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Guenter Roeck <groeck@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        David Miller <davem@davemloft.net>,
+        Wu Fengguang <fengguang.wu@intel.com>
+References: <CACT4Y+bvA6hrVT5u-Cy_zJLNTM5SYf9kt+sXYmfq13rPGfiqFQ@mail.gmail.com>
+ <CABXOdTf+CoB6EkhG1yPtB4NNtohbex=ebHLX7YW5TyQQGn9byw@mail.gmail.com>
+ <CACT4Y+aGMoobn069+Lq1BT2YGqi9qYY9vHFtiXT2DLsJ5ZUh9Q@mail.gmail.com>
+ <873735n3dy.fsf@xmission.com>
+ <20180116173440.GA15893@kroah.com>
+ <CACT4Y+Yy4YZG54xXfR1QNM0i8aS66BZyCnaD2YuooYo2sGuSLg@mail.gmail.com>
+ <81a0eb59-c204-9e36-13b7-88c2ea99ceab@I-love.SAKURA.ne.jp>
+ <CA+55aFzJaHyKBg_PTS85Y5RxUsQEerJ_Lc5HY1dd1YNztf==Wg@mail.gmail.com>
+ <20180610015107.GC5020@thunk.org>
+ <CACT4Y+Z-+5XhmyVcLjEf6531GKC-b+JL9kes-vjWF5PXJNvqrw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+Z-+5XhmyVcLjEf6531GKC-b+JL9kes-vjWF5PXJNvqrw@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This allows us to treat differently this controllers, by creating a tty
-compatibility layer.
+On Sun, Jun 10, 2018 at 08:11:05AM +0200, Dmitry Vyukov wrote:
+> 
+> The set of trees where a crash happened is visible on dashboard, so
+> one can see if it's only linux-next or whole set of trees. Potentially
+> syzbot can act differently depending on this predicate, but I don't
+> see what should be the difference.  However, this does not fully save
+> from falsely assessing bugs as linux-next-only just because they
+> happened few times and only on linux-next so far.
 
-Cc: Rob Herring <robh@kernel.org>
-Cc: Johan Hovold <johan@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jslaby@suse.com>
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
----
- drivers/tty/serdev/serdev-ttyport.c | 1 +
- include/linux/serdev.h              | 1 +
- 2 files changed, 2 insertions(+)
+So how about this, only report something as being a linux-next
+regression if (a) there is a reproducer, and (b) the reproducer does
+not trigger any kind of crash on mainline?
 
-diff --git a/drivers/tty/serdev/serdev-ttyport.c b/drivers/tty/serdev/serdev-ttyport.c
-index 4acc5f41dc67..ae961260e4a4 100644
---- a/drivers/tty/serdev/serdev-ttyport.c
-+++ b/drivers/tty/serdev/serdev-ttyport.c
-@@ -276,6 +276,7 @@ struct device *serdev_tty_port_register(struct tty_port *port,
- 	serport->tty_drv = drv;
- 
- 	ctrl->ops = &ctrl_ops;
-+	ctrl->is_ttyport = true;
- 
- 	old_ops = port->client_ops;
- 	port->client_ops = &client_ops;
-diff --git a/include/linux/serdev.h b/include/linux/serdev.h
-index bb3b9599c652..07d63933bdb9 100644
---- a/include/linux/serdev.h
-+++ b/include/linux/serdev.h
-@@ -116,6 +116,7 @@ struct serdev_controller {
- 	unsigned int		nr;
- 	struct serdev_device	*serdev;
- 	const struct serdev_controller_ops *ops;
-+	bool			is_ttyport;
- };
- 
- static inline struct serdev_controller *to_serdev_controller(struct device *d)
--- 
-2.17.1
+> There is also a problem with rebasing of linux-next: reported commit
+> hashes do not make sense and we can forget about bisection.
+
+If there is a valid reproducer, bisection should simply be a matter ofu
+running and if we know the reproducer doesn't trigger on mainline,
+then the bisection should only require no more than 8-10 VM runs.  For
+Linux-next, this would be *super* valuable.  Reporting the commit ID
+and the one-line commit summary will be enough for most maintainers,
+since even if they are using a rewinding head, so long as the
+bisection can be done quickly enough (e.g., within a few days), it
+will still be in their git repository.
+
+And if you have a reproducer, then once it's identified as a
+linux-next reproducer with a guilty commit, that can be confirmed by
+either (a) seeing if you can revert the commit and if it makes the
+problem go away, or (b) figure out which subsystem git tree the commit
+was introduced via, and then verify that the reproducer triggers on
+the tip of the subsystem git tree.
+
+All of this will require development effort, so I suspect it's not
+something we'll see from syzbot tomorrow --- but it's not
+*impossible*.
+
+I think though that sending e-mail about a linux-next syzbot crash if
+there is a reproducer and the reproducer doesn't trigger a crash on
+mainline should be really simple to implement, and it would add huge
+value without spamming the subsystem maintainers.
+
+					- Ted
