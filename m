@@ -1,133 +1,281 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id RJ1jLnHWG1vJHwAAmS7hNA
-	; Sat, 09 Jun 2018 13:31:17 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id z8YFH5czHlvnBgAAmS7hNA
+	; Mon, 11 Jun 2018 08:32:23 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 27A52608C8; Sat,  9 Jun 2018 13:31:17 +0000 (UTC)
+	id 6F0BE60792; Mon, 11 Jun 2018 08:32:23 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 9C0386032D;
-	Sat,  9 Jun 2018 13:31:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9C0386032D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=hygon.cn
+	by smtp.codeaurora.org (Postfix) with ESMTP id 8DB5C605A5;
+	Mon, 11 Jun 2018 08:32:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8DB5C605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753450AbeFINac (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 09:30:32 -0400
-Received: from smtp21.cstnet.cn ([159.226.251.21]:44125 "EHLO cstnet.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753225AbeFINaV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 09:30:21 -0400
-Received: from pw-vbox.higon.com (unknown [182.150.46.145])
-        by APP-01 (Coremail) with SMTP id qwCowAAXTbnQ1Btb701EBA--.1155S2;
-        Sat, 09 Jun 2018 21:23:32 +0800 (CST)
-From: Pu Wen <puwen@hygon.cn>
-To: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, pbonzini@redhat.com, rkrcmar@redhat.com,
-        zhangpanyong@hygon.cn
-Cc: thomas.lendacky@amd.com, peterz@infradead.org, tony.luck@intel.com,
-        bp@alien8.de, boris.ostrovsky@oracle.com, jgross@suse.com,
-        rjw@rjwysocki.net, lenb@kernel.org, viresh.kumar@linaro.org,
-        mchehab@kernel.org, trenn@suse.com, shuah@kernel.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-x86_64@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-edac@vger.kernel.org,
-        linux-pm@vger.kernel.org, kvm@vger.kernel.org,
-        xen-devel@lists.xenproject.org, Pu Wen <puwen@hygon.cn>
-Subject: [PATCH 06/11] x86/kvm: Add support for Hygon's Dhyana Family 18h processor
-Date: Sat,  9 Jun 2018 21:23:23 +0800
-Message-Id: <1528550603-28351-1-git-send-email-puwen@hygon.cn>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: qwCowAAXTbnQ1Btb701EBA--.1155S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7AF48Jw17ury5AF45Kr4UJwb_yoW5JF4fpF
-        ZrGFs2qFsYgrsIk34DJrnrZF1Uuws8Kw10gryUu3savF4jvayxXr4Fkw15Ja17Aa95ua4r
-        KFy8ua1kJayfXFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUva14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-        1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-        JVWxJr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
-        1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
-        7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Cr0_Gr1UMcvjeVCFs4IE7xkEbV
-        WUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7Cj
-        xVA2Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-        Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a
-        6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6x
-        kF7I0E14v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6r4j6FyUMIIF0xvEx4A2jsIE
-        14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyT
-        uYvjfUw18BUUUUU
-X-Originating-IP: [182.150.46.145]
-X-CM-SenderInfo: psxzv046klw03qof0z/
+        id S1754198AbeFKIcU (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 20 others); Mon, 11 Jun 2018 04:32:20 -0400
+Received: from mx.socionext.com ([202.248.49.38]:23019 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754010AbeFKIcS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 04:32:18 -0400
+Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 11 Jun 2018 17:32:17 +0900
+Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 0FF896006F;
+        Mon, 11 Jun 2018 17:32:17 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Mon, 11 Jun 2018 17:32:17 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by iyokan.css.socionext.com (Postfix) with ESMTP id 9B82F40386;
+        Mon, 11 Jun 2018 17:32:16 +0900 (JST)
+Received: from aegis.e01.socionext.com (unknown [10.213.134.210])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id 7126812013B;
+        Mon, 11 Jun 2018 17:32:16 +0900 (JST)
+From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org
+Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Subject: [PATCH v3 1/3] ASoC: simple-card-utils: move hp and mic detect gpios from simple-card
+Date: Mon, 11 Jun 2018 17:32:12 +0900
+Message-Id: <20180611083214.16858-1-suzuki.katsuhiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch enables the x86 KVM support to Hygon Family 18h CPU:
-- Add Hygon CPU VENDOR ID macro for KVM.
-- Add SVM support in cpu_has_svm().
-- Add support in em_syscall_is_enabled().
+This patch moves headphone and microphone jack detection gpios from
+simple-card driver. It is preparing for using this feature from other
+drivers.
 
-Signed-off-by: Pu Wen <puwen@hygon.cn>
+Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+
 ---
- arch/x86/include/asm/kvm_emulate.h | 4 ++++
- arch/x86/include/asm/virtext.h     | 5 +++--
- arch/x86/kvm/emulate.c             | 8 +++++++-
- 3 files changed, 14 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/include/asm/kvm_emulate.h b/arch/x86/include/asm/kvm_emulate.h
-index b24b1c8..a4907e5 100644
---- a/arch/x86/include/asm/kvm_emulate.h
-+++ b/arch/x86/include/asm/kvm_emulate.h
-@@ -362,6 +362,10 @@ struct x86_emulate_ctxt {
- #define X86EMUL_CPUID_VENDOR_AMDisbetterI_ecx 0x21726574
- #define X86EMUL_CPUID_VENDOR_AMDisbetterI_edx 0x74656273
+Changes from v2:
+  - Nothing
+
+Changes from v1:
+  - Move changes of audio-graph-card to other patch
+---
+ include/sound/simple_card_utils.h     | 15 +++++++
+ sound/soc/generic/simple-card-utils.c | 59 ++++++++++++++++++++++++
+ sound/soc/generic/simple-card.c       | 64 ---------------------------
+ 3 files changed, 74 insertions(+), 64 deletions(-)
+
+diff --git a/include/sound/simple_card_utils.h b/include/sound/simple_card_utils.h
+index 7e25afce6566..f82acef3b992 100644
+--- a/include/sound/simple_card_utils.h
++++ b/include/sound/simple_card_utils.h
+@@ -12,6 +12,11 @@
  
-+#define X86EMUL_CPUID_VENDOR_HygonGenuine_ebx 0x6f677948
-+#define X86EMUL_CPUID_VENDOR_HygonGenuine_ecx 0x656e6975
-+#define X86EMUL_CPUID_VENDOR_HygonGenuine_edx 0x6e65476e
+ #include <sound/soc.h>
+ 
++#define asoc_simple_card_init_hp(card, sjack, prefix) \
++	asoc_simple_card_init_jack(card, sjack, 1, prefix)
++#define asoc_simple_card_init_mic(card, sjack, prefix) \
++	asoc_simple_card_init_jack(card, sjack, 0, prefix)
 +
- #define X86EMUL_CPUID_VENDOR_GenuineIntel_ebx 0x756e6547
- #define X86EMUL_CPUID_VENDOR_GenuineIntel_ecx 0x6c65746e
- #define X86EMUL_CPUID_VENDOR_GenuineIntel_edx 0x49656e69
-diff --git a/arch/x86/include/asm/virtext.h b/arch/x86/include/asm/virtext.h
-index 0116b2e..e05e0d3 100644
---- a/arch/x86/include/asm/virtext.h
-+++ b/arch/x86/include/asm/virtext.h
-@@ -83,9 +83,10 @@ static inline void cpu_emergency_vmxoff(void)
+ struct asoc_simple_dai {
+ 	const char *name;
+ 	unsigned int sysclk;
+@@ -28,6 +33,12 @@ struct asoc_simple_card_data {
+ 	u32 convert_channels;
+ };
+ 
++struct asoc_simple_jack {
++	struct snd_soc_jack jack;
++	struct snd_soc_jack_pin pin;
++	struct snd_soc_jack_gpio gpio;
++};
++
+ int asoc_simple_card_parse_daifmt(struct device *dev,
+ 				  struct device_node *node,
+ 				  struct device_node *codec,
+@@ -107,4 +118,8 @@ int asoc_simple_card_of_parse_routing(struct snd_soc_card *card,
+ int asoc_simple_card_of_parse_widgets(struct snd_soc_card *card,
+ 				      char *prefix);
+ 
++int asoc_simple_card_init_jack(struct snd_soc_card *card,
++			       struct asoc_simple_jack *sjack,
++			       int is_hp, char *prefix);
++
+ #endif /* __SIMPLE_CARD_UTILS_H */
+diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/simple-card-utils.c
+index 3751a07de6aa..4398c9580929 100644
+--- a/sound/soc/generic/simple-card-utils.c
++++ b/sound/soc/generic/simple-card-utils.c
+@@ -8,9 +8,13 @@
+  * published by the Free Software Foundation.
   */
- static inline int cpu_has_svm(const char **msg)
- {
--	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD) {
-+	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD &&
-+	    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON) {
- 		if (msg)
--			*msg = "not amd";
-+			*msg = "not amd or hygon";
- 		return 0;
- 	}
+ #include <linux/clk.h>
++#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
++#include <linux/of_gpio.h>
+ #include <linux/of_graph.h>
++#include <sound/jack.h>
+ #include <sound/simple_card_utils.h>
  
-diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
-index b3705ae..fbba814 100644
---- a/arch/x86/kvm/emulate.c
-+++ b/arch/x86/kvm/emulate.c
-@@ -2702,7 +2702,13 @@ static bool em_syscall_is_enabled(struct x86_emulate_ctxt *ctxt)
- 	    edx == X86EMUL_CPUID_VENDOR_AMDisbetterI_edx)
- 		return true;
- 
--	/* default: (not Intel, not AMD), apply Intel's stricter rules... */
-+	/* Hygon ("HygonGenuine") */
-+	if (ebx == X86EMUL_CPUID_VENDOR_HygonGenuine_ebx &&
-+	    ecx == X86EMUL_CPUID_VENDOR_HygonGenuine_ecx &&
-+	    edx == X86EMUL_CPUID_VENDOR_HygonGenuine_edx)
-+		return true;
-+
-+	/* default: (not Intel, not AMD or Hygon), apply Intel's stricter rules... */
- 	return false;
+ void asoc_simple_card_convert_fixup(struct asoc_simple_card_data *data,
+@@ -419,6 +423,61 @@ int asoc_simple_card_of_parse_widgets(struct snd_soc_card *card,
  }
+ EXPORT_SYMBOL_GPL(asoc_simple_card_of_parse_widgets);
  
++int asoc_simple_card_init_jack(struct snd_soc_card *card,
++			       struct asoc_simple_jack *sjack,
++			       int is_hp, char *prefix)
++{
++	struct device *dev = card->dev;
++	enum of_gpio_flags flags;
++	char prop[128];
++	char *pin_name;
++	char *gpio_name;
++	int mask;
++	int det;
++
++	if (!prefix)
++		prefix = "";
++
++	sjack->gpio.gpio = -ENOENT;
++
++	if (is_hp) {
++		snprintf(prop, sizeof(prop), "%shp-det-gpio", prefix);
++		pin_name	= "Headphones";
++		gpio_name	= "Headphone detection";
++		mask		= SND_JACK_HEADPHONE;
++	} else {
++		snprintf(prop, sizeof(prop), "%smic-det-gpio", prefix);
++		pin_name	= "Mic Jack";
++		gpio_name	= "Mic detection";
++		mask		= SND_JACK_MICROPHONE;
++	}
++
++	det = of_get_named_gpio_flags(dev->of_node, prop, 0, &flags);
++	if (det == -EPROBE_DEFER)
++		return -EPROBE_DEFER;
++
++	if (gpio_is_valid(det)) {
++		sjack->pin.pin		= pin_name;
++		sjack->pin.mask		= mask;
++
++		sjack->gpio.name	= gpio_name;
++		sjack->gpio.report	= mask;
++		sjack->gpio.gpio	= det;
++		sjack->gpio.invert	= !!(flags & OF_GPIO_ACTIVE_LOW);
++		sjack->gpio.debounce_time = 150;
++
++		snd_soc_card_jack_new(card, pin_name, mask,
++				      &sjack->jack,
++				      &sjack->pin, 1);
++
++		snd_soc_jack_add_gpios(&sjack->jack, 1,
++				       &sjack->gpio);
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(asoc_simple_card_init_jack);
++
+ /* Module information */
+ MODULE_AUTHOR("Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>");
+ MODULE_DESCRIPTION("ALSA SoC Simple Card Utils");
+diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
+index 4a516c428b3d..1bbd9e46bf2a 100644
+--- a/sound/soc/generic/simple-card.c
++++ b/sound/soc/generic/simple-card.c
+@@ -10,23 +10,14 @@
+  */
+ #include <linux/clk.h>
+ #include <linux/device.h>
+-#include <linux/gpio.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+-#include <linux/of_gpio.h>
+ #include <linux/platform_device.h>
+ #include <linux/string.h>
+-#include <sound/jack.h>
+ #include <sound/simple_card.h>
+ #include <sound/soc-dai.h>
+ #include <sound/soc.h>
+ 
+-struct asoc_simple_jack {
+-	struct snd_soc_jack jack;
+-	struct snd_soc_jack_pin pin;
+-	struct snd_soc_jack_gpio gpio;
+-};
+-
+ struct simple_card_data {
+ 	struct snd_soc_card snd_card;
+ 	struct simple_dai_props {
+@@ -49,61 +40,6 @@ struct simple_card_data {
+ #define CELL	"#sound-dai-cells"
+ #define PREFIX	"simple-audio-card,"
+ 
+-#define asoc_simple_card_init_hp(card, sjack, prefix)\
+-	asoc_simple_card_init_jack(card, sjack, 1, prefix)
+-#define asoc_simple_card_init_mic(card, sjack, prefix)\
+-	asoc_simple_card_init_jack(card, sjack, 0, prefix)
+-static int asoc_simple_card_init_jack(struct snd_soc_card *card,
+-				      struct asoc_simple_jack *sjack,
+-				      int is_hp, char *prefix)
+-{
+-	struct device *dev = card->dev;
+-	enum of_gpio_flags flags;
+-	char prop[128];
+-	char *pin_name;
+-	char *gpio_name;
+-	int mask;
+-	int det;
+-
+-	sjack->gpio.gpio = -ENOENT;
+-
+-	if (is_hp) {
+-		snprintf(prop, sizeof(prop), "%shp-det-gpio", prefix);
+-		pin_name	= "Headphones";
+-		gpio_name	= "Headphone detection";
+-		mask		= SND_JACK_HEADPHONE;
+-	} else {
+-		snprintf(prop, sizeof(prop), "%smic-det-gpio", prefix);
+-		pin_name	= "Mic Jack";
+-		gpio_name	= "Mic detection";
+-		mask		= SND_JACK_MICROPHONE;
+-	}
+-
+-	det = of_get_named_gpio_flags(dev->of_node, prop, 0, &flags);
+-	if (det == -EPROBE_DEFER)
+-		return -EPROBE_DEFER;
+-
+-	if (gpio_is_valid(det)) {
+-		sjack->pin.pin		= pin_name;
+-		sjack->pin.mask		= mask;
+-
+-		sjack->gpio.name	= gpio_name;
+-		sjack->gpio.report	= mask;
+-		sjack->gpio.gpio	= det;
+-		sjack->gpio.invert	= !!(flags & OF_GPIO_ACTIVE_LOW);
+-		sjack->gpio.debounce_time = 150;
+-
+-		snd_soc_card_jack_new(card, pin_name, mask,
+-				      &sjack->jack,
+-				      &sjack->pin, 1);
+-
+-		snd_soc_jack_add_gpios(&sjack->jack, 1,
+-				       &sjack->gpio);
+-	}
+-
+-	return 0;
+-}
+-
+ static int asoc_simple_card_startup(struct snd_pcm_substream *substream)
+ {
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
 -- 
-2.7.4
+2.17.1
