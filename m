@@ -1,99 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id mSepGD21GlsfLQAAmS7hNA
-	; Fri, 08 Jun 2018 16:56:29 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 4X/OJqVFHlsAcAAAmS7hNA
+	; Mon, 11 Jun 2018 09:51:10 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 3197F607A4; Fri,  8 Jun 2018 16:56:29 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GOxFW0UO"
+	id 92966608BA; Mon, 11 Jun 2018 09:51:07 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FROM,MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id C4D02607DC;
-	Fri,  8 Jun 2018 16:56:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C4D02607DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id CA726608EA;
+	Mon, 11 Jun 2018 09:51:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CA726608EA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752609AbeFHQ4Z (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 12:56:25 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:36340 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751141AbeFHQ4Y (ORCPT
+        id S932797AbeFKJvE (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 05:51:04 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:2915 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932453AbeFKJvB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 12:56:24 -0400
-Received: by mail-wr0-f193.google.com with SMTP id f16-v6so14070978wrm.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 09:56:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=nKyDvEcogVelZCrIwXds53gKJoZYN36JnIDsL/Uab2Y=;
-        b=GOxFW0UOPEWPoZle8lptLaQ0RuBRx3NzSCEB2ThYRLdC8bnHa7ypKSRSc7sKI3uTm0
-         lxsyIHUwpelkGdO05a5H8YJrCWZY2xExWpyostTMufRsMq9Ma/VvIX28tw8c1QzsUgyx
-         Me4qa8FyfBAZ7O8Om+/KpkUcX5o9nTSeEbNPl3w6t2qUsl4HrXm3Toq8Ybzt08B4F7hU
-         AIggTGWDjLK7G8P9iDDC6tZylLkAsz8BiAI0i/v/Wj0T3dwfxT1wi7qyDlonezPUET+9
-         ljPF6aQg/9JfsNo0kN764t1CnxjP0/kIWuitgD6zr9jC08nq97SDxQZD8r2Wolr5DXbx
-         z7BA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=nKyDvEcogVelZCrIwXds53gKJoZYN36JnIDsL/Uab2Y=;
-        b=jN//9w2pAI1raNptzPjWkc+ECXrnGTPW57CQtyNctGVWMg+Cf9ZfMu412XswdphXSQ
-         Ahqjeuth1WJCJiOsVhoiS2a+tb6ETSXz/nE7zkDUMgy8LIHoQeBvsjQQxNBYccfDLV5a
-         m8OWZXN5l+rCiVHfeXpUu21aXOv46asVo5cTTQUggfLQA+UvjLSrhe1KvzEVZoAbzOtz
-         uWSWYViebLyXTczrBLw9oZbdsNvhHY2OXOqnPtpcNjiMQvP8i6TVSBwLAfSWBnAW6FFg
-         ypTooa61VwjbDx+GHAh4Low0Kb/+4+d7gCrS8WOWPi+0mfGY48PzlWcWckgkPVCCHD0w
-         qugA==
-X-Gm-Message-State: APt69E3fythjzNp51soLHXe4Xa0K+OWzSNEpjM6AbWmRqrazHTIQ4uvl
-        kyvy4yTFWPWod+NTfQzhAkMByVMn
-X-Google-Smtp-Source: ADUXVKLSDRKrIic5l8pUkJPIKUprYQDyt8Zhol0XXU7f49hVoe9GS7hbaNsssMZd2ykbiMg+IN1Eig==
-X-Received: by 2002:adf:81c2:: with SMTP id 60-v6mr5632054wra.13.1528476983425;
-        Fri, 08 Jun 2018 09:56:23 -0700 (PDT)
-Received: from localhost.localdomain (8ta-150-94-26.telkomadsl.co.za. [41.150.94.26])
-        by smtp.googlemail.com with ESMTPSA id a203-v6sm2845938wme.46.2018.06.08.09.56.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 08 Jun 2018 09:56:22 -0700 (PDT)
-From: Chris Opperman <eklikeroomys@gmail.com>
-Cc: eklikeroomys@gmail.com, Ian Abbott <abbotti@mev.co.uk>,
-        H Hartley Sweeten <hsweeten@visionengravers.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Simo Koskinen <koskisoft@gmail.com>,
-        Frank Mori Hess <fmh6jj@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] Fixed coding style problems.
-Date: Fri,  8 Jun 2018 20:52:37 +0200
-Message-Id: <1528483959-23158-1-git-send-email-eklikeroomys@gmail.com>
-X-Mailer: git-send-email 2.1.4
-To: unlisted-recipients:; (no To-header on input)
+        Mon, 11 Jun 2018 05:51:01 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5B9nTZ4008460;
+        Mon, 11 Jun 2018 11:50:38 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2jg4bwga6w-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 11 Jun 2018 11:50:38 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 73EA43D;
+        Mon, 11 Jun 2018 09:50:37 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5411024DF;
+        Mon, 11 Jun 2018 09:50:37 +0000 (GMT)
+Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by Safex1hubcas22.st.com
+ (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 11 Jun
+ 2018 11:50:37 +0200
+Received: from localhost (10.201.23.73) by webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 11 Jun 2018 11:50:36
+ +0200
+From: Hugues Fruchet <hugues.fruchet@st.com>
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Hans Verkuil" <hverkuil@xs4all.nl>
+CC: <linux-media@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Hugues Fruchet <hugues.fruchet@st.com>
+Subject: [PATCH 1/4] media: stm32-dcmi: do not fall into error on buffer starvation
+Date: Mon, 11 Jun 2018 11:50:24 +0200
+Message-ID: <1528710627-8566-2-git-send-email-hugues.fruchet@st.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1528710627-8566-1-git-send-email-hugues.fruchet@st.com>
+References: <1528710627-8566-1-git-send-email-hugues.fruchet@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.201.23.73]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-11_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes a coding style problem in drivers/staging/comedi/drivers.c
-and is submitted for task 10 of the eudyptula challenge.
-Signed-off-by: Chris Opperman <eklikeroomys@gmail.com>
----
- drivers/staging/comedi/drivers.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Return silently instead of falling into error when running
+out of available buffers when restarting capture.
+Capture will be restarted when new buffers will be
+provided by V4L2 client.
 
-diff --git a/drivers/staging/comedi/drivers.c b/drivers/staging/comedi/drivers.c
-index 9d73347..90ee974 100644
---- a/drivers/staging/comedi/drivers.c
-+++ b/drivers/staging/comedi/drivers.c
-@@ -475,7 +475,8 @@ unsigned int comedi_nsamples_left(struct comedi_subdevice *s,
- 	struct comedi_cmd *cmd = &async->cmd;
+Signed-off-by: Hugues Fruchet <hugues.fruchet@st.com>
+---
+ drivers/media/platform/stm32/stm32-dcmi.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
+index b796334..a3fbfac 100644
+--- a/drivers/media/platform/stm32/stm32-dcmi.c
++++ b/drivers/media/platform/stm32/stm32-dcmi.c
+@@ -228,13 +228,10 @@ static int dcmi_restart_capture(struct stm32_dcmi *dcmi)
  
- 	if (cmd->stop_src == TRIG_COUNT) {
--		unsigned int scans_left = __comedi_nscans_left(s, cmd->stop_arg);
-+		unsigned int scans_left =
-+			__comedi_nscans_left(s, cmd->stop_arg);
- 		unsigned int scan_pos =
- 		    comedi_bytes_to_samples(s, async->scan_progress);
- 		unsigned long long samples_left = 0;
+ 	/* Restart a new DMA transfer with next buffer */
+ 	if (list_empty(&dcmi->buffers)) {
+-		dev_err(dcmi->dev, "%s: No more buffer queued, cannot capture buffer\n",
+-			__func__);
+-		dcmi->errors_count++;
++		dev_dbg(dcmi->dev, "Capture restart is deferred to next buffer queueing\n");
+ 		dcmi->active = NULL;
+-
+ 		spin_unlock_irq(&dcmi->irqlock);
+-		return -EINVAL;
++		return 0;
+ 	}
+ 
+ 	dcmi->active = list_entry(dcmi->buffers.next,
 -- 
-2.1.4
+1.9.1
