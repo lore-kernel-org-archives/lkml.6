@@ -6,184 +6,112 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B7BBFC07E80
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 19:05:55 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A4A23C07E80
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 19:09:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 692702086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 19:05:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4ED8E2087E
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 19:09:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ugSZIHyD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 692702086D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jnSKnVQt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4ED8E2087E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934596AbeFKTFw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 15:05:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58788 "EHLO mail.kernel.org"
+        id S934611AbeFKTJI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 15:09:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59100 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934324AbeFKTFu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 15:05:50 -0400
-Received: from mail-it0-f51.google.com (mail-it0-f51.google.com [209.85.214.51])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S932987AbeFKTJH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 15:09:07 -0400
+Received: from localhost (unknown [104.132.1.88])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A0012087E;
-        Mon, 11 Jun 2018 19:05:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F35DD20839;
+        Mon, 11 Jun 2018 19:09:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528743950;
-        bh=6Tvf+T1OUSJ9Lt68XpdzTSeeYGPneK16guRRD0XHFOw=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=ugSZIHyDIlPYIhi8iNY4gRpuWdEkTkqe72Lv+9psdgoo+WckxoDL/1BZtA/SO23xf
-         FdvK7KM3iI0RnkKj4AFWobpubQL2wB2uuruB7EYxr+SYwqHtI0Zp2t3nc4aFtlPjj6
-         x2N+ux2Op8pAmx+1SW5dLrrINO5KX5JMj7ayNsk4=
-Received: by mail-it0-f51.google.com with SMTP id n7-v6so11672864itn.1;
-        Mon, 11 Jun 2018 12:05:50 -0700 (PDT)
-X-Gm-Message-State: APt69E0ScsqgCuaj+mrmMinZgHs2M/UnqkldbhChohQiZnEfJk6HYLl8
-        SHDFNJ5Q5W7kcs3Ex+tVDhyMcc+gn0bTrS6ijw==
-X-Google-Smtp-Source: ADUXVKIKlw4GoF8WXXvk9gcBloC9+cW5G87UXGVVd40WDVOqUtJxH6YI670ewYYl6xBC/VIvd0s+sGceo34bkjxLMkw=
-X-Received: by 2002:a24:798f:: with SMTP id z137-v6mr223305itc.19.1528743949677;
- Mon, 11 Jun 2018 12:05:49 -0700 (PDT)
+        s=default; t=1528744147;
+        bh=wb38NQjKx+GFRJPXuTlmXc1RPiCyE5AaOJYDm/d603I=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jnSKnVQtgBCE7xxWwjGFkBjbZ3DQzC8Lf0aXLqcC+zqLVvTY5xPJuqXmE/plldq+U
+         vUm0Dj/z701RBHSSQmwk7MmSVZ5/bwBSxUng5+l43ANN4GpCh5++5GDLQciAoQ4Gr+
+         KpIp8yVJUQbdbd7lPHiN5u3IpS5WycKMM67CZyL0=
+Date:   Mon, 11 Jun 2018 12:09:06 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Matthew Wilcox <mawilcox@microsoft.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        "Linux F2FS DEV, Mailing List" 
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [GIT PULL] f2fs update for 4.18-rc1
+Message-ID: <20180611190906.GA11994@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180611165212.GA6783@jaegeuk-macbookpro.roam.corp.google.com>
+ <CA+55aFznP4aEy7DkVfeQ_e6eXgLnswVnSJS3C51UHD_k8qYZCA@mail.gmail.com>
+ <DM5PR2101MB08880B2FEEE593857E9501BCCB780@DM5PR2101MB0888.namprd21.prod.outlook.com>
 MIME-Version: 1.0
-Received: by 2002:a4f:6403:0:0:0:0:0 with HTTP; Mon, 11 Jun 2018 12:05:29
- -0700 (PDT)
-In-Reply-To: <D56466C0-2312-4F0E-AB00-66EF4BEECB1A@holtmann.org>
-References: <280FCB2C-6DF1-4790-A89F-AF5BE3513AE5@holtmann.org>
- <20180608162009.22762-1-attitokes@gmail.com> <CAL_JsqKGeCEBBLNQNdymQovknRM7zt4+nNJy0YSkxRicOxkCSg@mail.gmail.com>
- <CAMoM21HshLyv+Np1vOKYTAunsPCazyP-WESiaheNXHsC078S8g@mail.gmail.com>
- <CAL_Jsq+a93Rpf3UAPBQ5QmA8KavberGXz76WCiZ7feHH5GgcDA@mail.gmail.com>
- <4F0D6729-AE77-47D4-9765-FBC44181D4DE@holtmann.org> <CAL_JsqL2StWgA9gkL9i3o85-C3TNixBLmbTXzFQW8bts4phJqQ@mail.gmail.com>
- <D56466C0-2312-4F0E-AB00-66EF4BEECB1A@holtmann.org>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 11 Jun 2018 13:05:29 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKi=GPYGabjrkKx+1Qv9=NnB6j7=YQhQsBwOBWGAY03tw@mail.gmail.com>
-Message-ID: <CAL_JsqKi=GPYGabjrkKx+1Qv9=NnB6j7=YQhQsBwOBWGAY03tw@mail.gmail.com>
-Subject: Re: [PATCH] Bluetooth: hci_bcm: Configure SCO routing automatically
-To:     Marcel Holtmann <marcel@holtmann.org>
-Cc:     =?UTF-8?B?QXR0aWxhIFTFkWvDqXM=?= <attitokes@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Artiom Vaskov <velemas@gmail.com>,
-        netdev <netdev@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <DM5PR2101MB08880B2FEEE593857E9501BCCB780@DM5PR2101MB0888.namprd21.prod.outlook.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 11, 2018 at 12:19 PM, Marcel Holtmann <marcel@holtmann.org> wro=
-te:
-> Hi Rob,
->
->>>>>>> Added support to automatically configure the SCO packet routing at =
-the
->>>>>>> device setup. The SCO packets are used with the HSP / HFP profiles,=
- but in
->>>>>>> some devices (ex. CYW43438) they are routed to a PCM output by defa=
-ult. This
->>>>>>> change allows sending the vendor specific HCI command to configure =
-the SCO
->>>>>>> routing. The parameters of the command are loaded from the device t=
-ree.
->>>>>>
->>>>>> Please wrap your commit msg.
->>>>>
->>>>>
->>>>> Sure.
->>>>>>
->>>>>>
->>>>>>>
->>>>>>> Signed-off-by: Attila T=C5=91k=C3=A9s <attitokes@gmail.com>
->>>>>>> ---
->>>>>>> .../bindings/net/broadcom-bluetooth.txt       |  7 ++
->>>>>>
->>>>>> Please split bindings to separate patch.
->>>>>
->>>>>
->>>>> Ok, I will split this in two.
->>>>>>
->>>>>>
->>>>>>
->>>>>>
->>>>>>> drivers/bluetooth/hci_bcm.c                   | 72 ++++++++++++++++=
-+++
->>>>>>> 2 files changed, 79 insertions(+)
->>>>>>>
->>>>>>> diff --git
->>>>>>> a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
->>>>>>> b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
->>>>>>> index 4194ff7e..aea3a094 100644
->>>>>>> --- a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
->>>>>>> +++ b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
->>>>>>> @@ -21,6 +21,12 @@ Optional properties:
->>>>>>> - clocks: clock specifier if external clock provided to the control=
-ler
->>>>>>> - clock-names: should be "extclk"
->>>>>>>
->>>>>>> + SCO routing parameters:
->>>>>>> + - sco-routing: 0-3 (PCM, Transport, Codec, I2S)
->>>>>>> + - pcm-interface-rate: 0-4 (128 Kbps - 2048 Kbps)
->>>>>>> + - pcm-frame-type: 0 (short), 1 (long)
->>>>>>> + - pcm-sync-mode: 0 (slave), 1 (master)
->>>>>>> + - pcm-clock-mode: 0 (slave), 1 (master)
->>>>>>
->>>>>> Are these Broadcom specific? Properties need either vendor prefix or
->>>>>> to be documented in a common location. I think these look like the
->>>>>> latter.
->>>>>
->>>>>
->>>>> These will be used as parameters of a vendor specific (Broadcom/Cypre=
-ss)
->>>>> command configuring the SCO packet routing. See the Write_SCO_PCM_Int=
-_Param
->>>>> command from: http://www.cypress.com/file/298311/download.
->>>>
->>>> The DT should just describe how the h/w is hooked-up. What the s/w has
->>>> to do based on that is the driver's problem which is certainly
->>>> vendor/chip specific, but that is all irrelevant to the binding.
->>>>
->>>>> What would be the property names with a Broadcom / Cypress vendor pre=
-fix?
->>>>>
->>>>>   brcm,sco-routing
->>>>>   brcm,pcm-interface-rate
->>>>>   brcm,pcm-frame-type
->>>>>   brcm,pcm-sync-mode
->>>>>   brcm,pcm-clock-mode
->>>>>
->>>>> ?
->>>>
->>>> Yes.
->>>
->>> we can do this. However all pcm-* are optional if you switch the HCI tr=
-ansport. And sco-routing should default to HCI if that is not present. Mean=
-ing a driver should actively trying to change this. Nevertheless, it would =
-be good if a driver reads the current settings.
->>>
->>> In theory we could make sco-routing generic, but so many vendors have d=
-ifferent modes, that we better keep this vendor specific.
->>
->> Even if vendor specific, the properties for not HCI transport case are
->> still incomplete IMO.
->>
->> By modes, you mean PCM vs. I2S and all the flavors of timings you can
->> have within those or something else? For the former, that's often
->> going to be a process of solving what each end support and if that
->> doesn't work, then IIRC we already have properties for setting
->> modes/timing. All the same issues exist with audio codecs and this is
->> really not any different.
->
-> this is what Broadcom uses to configure their PCM transport. So I think f=
-or now, we make them brcm, specific and see how that goes. We can always ge=
-neralize them later if enough chip manufactures provide support for it.
+On 06/11, Matthew Wilcox wrote:
+> Argh, you used my Outlook email address, so you get top-posting 😉
 
-We already have properties doing the same thing defined in
-Documentation/devicetree/bindings/sound/simple-card.txt. Use and
-extend that. We don't need new properties especially for something
-that is not complete. For example If I have 2 host ports (every SoC
-has at least 2), how do I indicate which one is connected to BT.
+:P
 
-Rob
+> 
+> The radix tree does rely on constructors still.  One of the things on my todo list is to verify whether it actually makes sense to do that or not.  It may continue to make sense; the radix tree node is 576 bytes (9 cache lines) and the normal usage of a freshly allocated radix tree node will touch only one or two cachelines.  Radix tree nodes naturally come back to the cache zeroed, so there's no cache pollution when destroying them either.
+> 
+> We didn't send that patch upstream; instead we said that anybody who specifies __GFP_ZERO on a slab with constructors is crazy and fixed it with commits abc1be13fd113ddef5e2d807a466286b864caed3 and 128227e7fe4087b60f1bd31f762e61237eb23790
+> 
+> I don't really understand why Jaegeuk is changing f2fs now when we've just fixed the core kernel to make what he's doing perfectly legal.
+
+Cause Sometimes I can't wait for propagation of MM-stable patches into old
+-stable kernels, going into android common kernels [1], in order to resolve
+huge number of kernel panic reports in time. Instead, since I keep backporting
+mainline f2fs into them, I'd prefer to change f2fs to address it quickly in this
+case -- not always tho.
+
+[1] 3.18, 4.4, 4.9, and 4.14 in:
+ https://android.googlesource.com/kernel/common/
+
+> 
+> > -----Original Message-----
+> > From: Linus Torvalds <torvalds@linux-foundation.org>
+> > Sent: Monday, June 11, 2018 1:28 PM
+> > To: Jaegeuk Kim <jaegeuk@kernel.org>; Matthew Wilcox
+> > <mawilcox@microsoft.com>
+> > Cc: Linux F2FS DEV, Mailing List <linux-f2fs-devel@lists.sourceforge.net>; Linux
+> > Kernel Mailing List <linux-kernel@vger.kernel.org>
+> > Subject: Re: [GIT PULL] f2fs update for 4.18-rc1
+> > 
+> > On Mon, Jun 11, 2018 at 9:52 AM Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+> > >
+> > > In order to avoid old MM bug [1], we decided not to use __GFP_ZERO
+> > > for the mapping for node and meta page caches.
+> > >
+> > > [1]
+> > https://na01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flkml.org
+> > %2Flkml%2F2018%2F4%2F8%2F661&data=02%7C01%7Cmawilcox%40microso
+> > ft.com%7Ce69c1f9a8d6a44bda36e08d5cfc0b1a5%7C72f988bf86f141af91ab2d
+> > 7cd011db47%7C1%7C0%7C636643348874608385&sdata=xbAg0cOMxyrY4NY
+> > ysTj1X0DPTdxwT24oYu1cxO45nkQ%3D&reserved=0
+> > 
+> > Hmm. The patch there looks correct, and anybody who relies on slab
+> > constructors is crazy.
+> > 
+> > That email from April says it should go into stable, but it never even
+> > went upstream..
+> > 
+> > Adding Willy to the cc, for comments, since he's been active there and
+> > is probably the maintainer even if the MAINTAINERS file doesn't say
+> > so..
+> > 
+> > Willy?
+> > 
+> >              Linus
