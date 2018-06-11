@@ -6,104 +6,155 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B6E76C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 20:53:34 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id CCD5BC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 20:53:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A83A208B0
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 20:53:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81FAB208AF
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 20:53:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="QMHCu3fm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A83A208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="FmtlbGj4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81FAB208AF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934715AbeFKUxc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 16:53:32 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:41045 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934534AbeFKUxa (ORCPT
+        id S934753AbeFKUx5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 16:53:57 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:41648 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934530AbeFKUw3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 16:53:30 -0400
-Received: by mail-pf0-f196.google.com with SMTP id a11-v6so10863211pff.8
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 13:53:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5ATqy6FDaazWryUpdp6T2kFdM17mLFZKqGBRW6IyTWc=;
-        b=QMHCu3fm9o3F9BKM68UEJuguKbzEZTv39jaabmj4+qKHh8435aeoER3kN5fjKS+1fE
-         AdN23TlrUYPPar5iLSRW28pp2KIu5tVjP4yt3hAlxLaAjHZuuSRV5ow73htiRue+P/mg
-         Y2PXhFrE9ShS4fgoqly4swD8i7nF4CbXIJVZQcYbZvy5YCDEVkKKLqk5l6i7zcm/1qhV
-         FQcXytbP6lfFP+cqCEsfrl2uCiFFja5KRnK1FfqyIn/G2dWHQwJD6o17hZ0/1j2toCyP
-         zrnsYDPF0pRPvZsWOMtNNahGgv66p/Nwji4oY3/Jferag+DGhce24Z2wgzfUtENXSP22
-         e3Ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=5ATqy6FDaazWryUpdp6T2kFdM17mLFZKqGBRW6IyTWc=;
-        b=SWTpmGz/yXatqGmC76/rXmtcppFoRUX1uuZoU9FOHWzTyzHJjMAzR3BFwEAaMXYaXn
-         v5zyvWLmeq0WnkWgwfWTQVpvdkuCjS72pzdw65LtR6NZBuvvu8pv1KhlNA0JrnAI81Bv
-         oAK8vFQ9wIVxDrJfcj6SN2LoW4k0CQiDCi5Yx2s8QH5X1S3VnyzWgant547hvzbBMYVP
-         CuswUdMmbAQ8EY2nSvLtnw9+1VEe8HPoBCO5kXSwEREaOMH/cEeKHpioHoy00eLFf6WM
-         RR9ghCOoiBJqntcXiZcH5yXvfHB/qyFAWqZxZBi74/19hiXuzxLMJZHhHKCWy4GnUX/J
-         RO+A==
-X-Gm-Message-State: APt69E3YuRKRGel+dfw+/mfIrEUjnqd1Bcf4mLUQU5wUlpA9HVXSw1Q1
-        nb9N787JCu1D26cnDQLotih8Ow==
-X-Google-Smtp-Source: ADUXVKJqmacYrtT1nw42qikx7E1Xk2HWeA/vk7eNG/qyhoYQc2h7i2e8Hgp/XkwOPnE4AbP6b3rNbg==
-X-Received: by 2002:a63:a74c:: with SMTP id w12-v6mr634387pgo.374.1528750409833;
-        Mon, 11 Jun 2018 13:53:29 -0700 (PDT)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id u1-v6sm42333755pfn.59.2018.06.11.13.53.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Jun 2018 13:53:29 -0700 (PDT)
-Date:   Mon, 11 Jun 2018 13:53:29 -0700 (PDT)
-X-Google-Original-Date: Mon, 11 Jun 2018 13:30:24 PDT (-0700)
-Subject:     Re: [PATCH] RISC-V: Handle R_RISCV_32 in modules
-In-Reply-To: <mvm8t7liwrr.fsf@suse.de>
-CC:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     schwab@suse.de
-Message-ID: <mhng-5cb86075-42ca-4d7a-906b-599072a6484c@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Mon, 11 Jun 2018 16:52:29 -0400
+Received: from trochilidae.lan (unknown [37.17.239.3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id E36335C0E1F;
+        Mon, 11 Jun 2018 22:52:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1528750347;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=f6nxdRtIFcUNV1w2CEA4dVtOBEFFm9pReXLk7EvbSuA=;
+        b=FmtlbGj4br7c98+Wdwopmpaj7cW9aa7H3xUsOidlDfv2+Rfir+gsMj6Kf+4BVZEdwJBeK5
+        DQ/+mT6NIPGFmcP6wDk4g5Q1uMiYI6bXAbnCgTUHyyEUuYRIh8wYrEOW3WnQbZXN0z/xnr
+        gePAUHFYtmBkwdEaswAs1ZoIm012gcM=
+From:   Stefan Agner <stefan@agner.ch>
+To:     boris.brezillon@bootlin.com, dwmw2@infradead.org,
+        computersforpeace@gmail.com, marek.vasut@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com
+Cc:     dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
+        marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
+        benjamin.lindqvist@endian.se, jonathanh@nvidia.com,
+        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com,
+        gaireg@gaireg.de, linux-mtd@lists.infradead.org,
+        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
+Subject: [PATCH v4 3/6] mtd: rawnand: tegra: add devicetree binding
+Date:   Mon, 11 Jun 2018 22:52:21 +0200
+Message-Id: <20180611205224.23340-4-stefan@agner.ch>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180611205224.23340-1-stefan@agner.ch>
+References: <20180611205224.23340-1-stefan@agner.ch>
+X-Spamd-Result: default: False [-2.10 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         RCPT_COUNT_TWELVE(0.00)[24];
+         BAYES_HAM(-3.00)[100.00%];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_HAS_DN(0.00)[];
+         FROM_EQ_ENVFROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         TO_DN_SOME(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         MID_CONTAINS_FROM(1.00)[];
+         ASN(0.00)[asn:13030, ipnet:37.17.238.0/23, country:CH];
+         RCVD_TLS_ALL(0.00)[];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 11 Jun 2018 00:54:00 PDT (-0700), schwab@suse.de wrote:
-> On Jun 08 2018, Palmer Dabbelt <palmer@sifive.com> wrote:
->
->> On Thu, 07 Jun 2018 03:27:27 PDT (-0700), schwab@suse.de wrote:
->>> With CONFIG_MODVERSIONS=y the R_RISCV_32 relocation is used by the
->>> __kcrctab section.
->>>
->>> Signed-off-by: Andreas Schwab <schwab@suse.de>
->>> ---
->>>  arch/riscv/kernel/module.c | 12 ++++++++++++
->>>  1 file changed, 12 insertions(+)
->>>
->>> diff --git a/arch/riscv/kernel/module.c b/arch/riscv/kernel/module.c
->>> index 5dddba301d..1d5e9b934b 100644
->>> --- a/arch/riscv/kernel/module.c
->>> +++ b/arch/riscv/kernel/module.c
->>> @@ -17,6 +17,17 @@
->>>  #include <linux/errno.h>
->>>  #include <linux/moduleloader.h>
->>>
->>> +static int apply_r_riscv_32_rela(struct module *me, u32 *location, Elf_Addr v)
->>> +{
->>> +	if (v != (u32)v) {
->>
->> My worry with this kind of check is that it relies on some sort of
->> undefined behavior in C and that at some point in the future GCC will just
->> go decide the check can never fail.  I checked and GCC doesn't elide these
->> checks now, so I might be wrong.
->>
->> Is this defined to do what it looks like it's doing?
->
-> This is unsigned arithmetic, thus fully defined.
+This adds the devicetree binding for the Tegra 2 NAND flash
+controller.
 
-Great, thanks!  I guess I'm just a bit paranoid :)
+Signed-off-by: Lucas Stach <dev@lynxeye.de>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/mtd/nvidia-tegra20-nand.txt      | 64 +++++++++++++++++++
+ 1 file changed, 64 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
+
+diff --git a/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt b/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
+new file mode 100644
+index 000000000000..1c351362f3a9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
+@@ -0,0 +1,64 @@
++NVIDIA Tegra NAND Flash controller
++
++Required properties:
++- compatible: Must be one of:
++  - "nvidia,tegra20-nand"
++- reg: MMIO address range
++- interrupts: interrupt output of the NFC controller
++- clocks: Must contain an entry for each entry in clock-names.
++  See ../clocks/clock-bindings.txt for details.
++- clock-names: Must include the following entries:
++  - nand
++- resets: Must contain an entry for each entry in reset-names.
++  See ../reset/reset.txt for details.
++- reset-names: Must include the following entries:
++  - nand
++
++Optional children nodes:
++Individual NAND chips are children of the NAND controller node. Currently
++only one NAND chip supported.
++
++Required children node properties:
++- reg: An integer ranging from 1 to 6 representing the CS line to use.
++
++Optional children node properties:
++- nand-ecc-mode: String, operation mode of the NAND ecc mode. Currently only
++		 "hw" is supported.
++- nand-ecc-algo: string, algorithm of NAND ECC.
++		 Supported values with "hw" ECC mode are: "rs", "bch".
++- nand-bus-width : See nand.txt
++- nand-on-flash-bbt: See nand.txt
++- nand-ecc-strength: integer representing the number of bits to correct
++		     per ECC step (always 512). Supported strength using HW ECC
++		     modes are:
++		     - RS: 4, 6, 8
++		     - BCH: 4, 8, 14, 16
++- nand-ecc-maximize: See nand.txt
++- nand-is-boot-medium: Makes sure only ECC strengths supported by the boot ROM
++		       are choosen.
++- wp-gpios: GPIO specifier for the write protect pin.
++
++Optional child node of NAND chip nodes:
++Partitions: see partition.txt
++
++  Example:
++	nand-controller@70008000 {
++		compatible = "nvidia,tegra20-nand";
++		reg = <0x70008000 0x100>;
++		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&tegra_car TEGRA20_CLK_NDFLASH>;
++		clock-names = "nand";
++		resets = <&tegra_car 13>;
++		reset-names = "nand";
++
++		nand@0 {
++			reg = <0>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			nand-bus-width = <8>;
++			nand-on-flash-bbt;
++			nand-ecc-algo = "bch";
++			nand-ecc-strength = <8>;
++			wp-gpios = <&gpio TEGRA_GPIO(S, 0) GPIO_ACTIVE_LOW>;
++		};
++	};
+-- 
+2.17.1
+
