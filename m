@@ -1,75 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 5wj6OP1XGVvzfQAAmS7hNA
-	; Thu, 07 Jun 2018 16:06:22 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id jMWdF/pOHls1RAAAmS7hNA
+	; Mon, 11 Jun 2018 10:30:08 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D519C6089E; Thu,  7 Jun 2018 16:06:21 +0000 (UTC)
+	id 707F560792; Mon, 11 Jun 2018 10:30:08 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 4294360590;
-	Thu,  7 Jun 2018 16:06:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4294360590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=rockwellcollins.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id A4AD660351;
+	Mon, 11 Jun 2018 10:30:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A4AD660351
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=nyt.cloud
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935168AbeFGQGS (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 12:06:18 -0400
-Received: from ch3vs01.rockwellcollins.com ([205.175.226.27]:22530 "EHLO
-        ch3vs01.rockwellcollins.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933058AbeFGQGQ (ORCPT
+        id S932755AbeFKKaF (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 06:30:05 -0400
+Received: from smtp.domeneshop.no ([194.63.252.55]:55308 "EHLO
+        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932590AbeFKKaE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 12:06:16 -0400
-X-Greylist: delayed 567 seconds by postgrey-1.27 at vger.kernel.org; Thu, 07 Jun 2018 12:06:15 EDT
-Received: from ofwch3n02.rockwellcollins.com (HELO ciulimr02.rockwellcollins.com) ([205.175.226.14])
-  by ch3vs01.rockwellcollins.com with ESMTP; 07 Jun 2018 10:56:48 -0500
-X-Received: from righttwix.rockwellcollins.com (righttwix.rockwellcollins.com [192.168.141.218])
-        by ciulimr02.rockwellcollins.com (Postfix) with ESMTP id 242EE20094;
-        Thu,  7 Jun 2018 10:56:48 -0500 (CDT)
-From: Brandon Maier <brandon.maier@rockwellcollins.com>
-To: netdev@vger.kernel.org
-Cc: andrew@lunn.ch, f.fainelli@gmail.com, davem@davemloft.net,
-        michal.simek@xilinx.com, clayton.shotwell@rockwellcollins.com,
-        kristopher.cory@rockwellcollins.com, linux-kernel@vger.kernel.org,
-        Brandon Maier <brandon.maier@rockwellcollins.com>
-Subject: [PATCH 3/3] net: phy: xgmiitorgmii: Check read_status results
-Date: Thu,  7 Jun 2018 10:53:48 -0500
-Message-Id: <20180607155348.149665-3-brandon.maier@rockwellcollins.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180607155348.149665-1-brandon.maier@rockwellcollins.com>
-References: <20180607155348.149665-1-brandon.maier@rockwellcollins.com>
+        Mon, 11 Jun 2018 06:30:04 -0400
+Received: from cm-84.208.136.53.getinternet.no ([84.208.136.53]:2895)
+        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.84_2)
+        (envelope-from <ywe@nyt.cloud>)
+        id 1fSK5K-0007mI-Q0
+        for linux-kernel@vger.kernel.org; Mon, 11 Jun 2018 12:30:02 +0200
+Subject: Re: Nis Net In
+From: =?UTF-8?Q?Ywe_C=c3=a6rlyn?= <ywe@nyt.cloud>
+To: LKML <linux-kernel@vger.kernel.org>
+References: <4ce73abe-b1a2-a3bc-9dd9-a8557e29ad7d@nyt.cloud>
+ <47dfe99a-e4ed-a9f7-1e88-13c865cb5d3e@nyt.cloud>
+Message-ID: <eebdbc06-fdc1-2030-80af-bb0855b241d8@nyt.cloud>
+Date: Mon, 11 Jun 2018 12:29:12 +0200
+User-Agent: Mozilla/5.0 (Windows NT 5.1; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <47dfe99a-e4ed-a9f7-1e88-13c865cb5d3e@nyt.cloud>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We're ignoring the result of the attached phy device's read_status().
-Return it so we can detect errors.
+Den 6/11/2018 10:56, skrev Ywe Cærlyn:
+> Slight tweak.
+>
+> We have slightly changed the name of the project, to Nis Net In.
+>
+> Read All Here: https://nyt.cloud/showthread.php?tid=2&pid=2#pid2
+>
+> Peace (Go With Théé).
+>
+> Ywe Cærlyn,
+> Philosophical Lead,
+> Nis Net In.
+> (To some known as Iüz Gnomegod)
 
-Signed-off-by: Brandon Maier <brandon.maier@rockwellcollins.com>
----
- drivers/net/phy/xilinx_gmii2rgmii.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/phy/xilinx_gmii2rgmii.c b/drivers/net/phy/xilinx_gmii2rgmii.c
-index d6f8b64cddbe..74a8782313cf 100644
---- a/drivers/net/phy/xilinx_gmii2rgmii.c
-+++ b/drivers/net/phy/xilinx_gmii2rgmii.c
-@@ -42,8 +42,11 @@ static int xgmiitorgmii_read_status(struct phy_device *phydev)
- 	struct mii_bus *bus = priv->mdio->bus;
- 	int addr = priv->mdio->addr;
- 	u16 val = 0;
-+	int err;
- 
--	priv->phy_drv->read_status(phydev);
-+	err = priv->phy_drv->read_status(phydev);
-+	if (err < 0)
-+		return err;
- 
- 	val = mdiobus_read(bus, addr, XILINX_GMII2RGMII_REG);
- 	val &= ~XILINX_GMII2RGMII_SPEED_MASK;
--- 
-2.14.3
+And for those interested in the 1000hz Kernel Song. see here: 
+https://www.youtube.com/watch?v=b2hTDw-YdIk
+Because Iüz Gnomegod is a rival god!
