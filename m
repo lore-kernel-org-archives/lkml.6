@@ -1,109 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id oOV0FdYcHFvwGgAAmS7hNA
-	; Sat, 09 Jun 2018 18:34:43 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 2YAwBdYhHluMWgAAmS7hNA
+	; Mon, 11 Jun 2018 07:16:54 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 27DBB608C1; Sat,  9 Jun 2018 18:34:43 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="InhQSZz8"
+	id AAB3F60792; Mon, 11 Jun 2018 07:16:54 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 56791601C3;
-	Sat,  9 Jun 2018 18:34:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 56791601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 2285B605A5;
+	Mon, 11 Jun 2018 07:16:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2285B605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933167AbeFISef (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 14:34:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49540 "EHLO mail.kernel.org"
+        id S1754092AbeFKHQw (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 20 others); Mon, 11 Jun 2018 03:16:52 -0400
+Received: from mga03.intel.com ([134.134.136.65]:51769 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753510AbeFISdU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 14:33:20 -0400
-Received: from mail.kernel.org (unknown [91.207.57.115])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B9D320874;
-        Sat,  9 Jun 2018 18:33:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528569200;
-        bh=kbxvhLXUx47w5cpwgM6km5MoWmj4yVw3Y9GLcaqeMIg=;
-        h=Date:From:To:Cc:Subject:From;
-        b=InhQSZz8G7Nj5uppErZr2tyC2YdGwiiLUFlnqicmYvzMgtBSzNQTllYaz4AnkfV9r
-         G5SS79sKOyiY2ol+K4twueGWPIDnEqThyM/CKY3H0O4xCQ/SWz0aL4cisoC6uV/4mM
-         fcA++33lSJz3QY1VBFD9zUfkjjJIgZFrFURGoBZU=
-Date: Sat, 9 Jun 2018 20:33:16 +0200
-From: Sebastian Reichel <sre@kernel.org>
+        id S1754001AbeFKHQv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 03:16:51 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2018 00:16:50 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,500,1520924400";
+   d="scan'208";a="48012419"
+Received: from pl-dbox.sh.intel.com (HELO intel.com) ([10.239.13.138])
+  by orsmga007.jf.intel.com with ESMTP; 11 Jun 2018 00:16:49 -0700
+Date: Mon, 11 Jun 2018 15:26:48 +0800
+From: Philip Li <philip.li@intel.com>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [GIT PULL] hsi changes for hsi-4.18
-Message-ID: <20180609183316.pzfbcndn32gb44o7@earth.universe>
+Cc: kbuild test robot <lkp@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [linus:master] BUILD REGRESSION
+ 68abbe729567cef128b2c2141f2ed2567f3b8372
+Message-ID: <20180611072648.GA8748@intel.com>
+References: <5b1a9cac.E0zqScbTCJ5WgP6x%lkp@intel.com>
+ <CA+55aFwHCJ-ra6GOz3bFXx21D1bOjN4L11Dybr5t2OHCAYCL5Q@mail.gmail.com>
+ <20180609002917.GA22101@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="yiv77ushflonumne"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: NeoMutt/20180512
+In-Reply-To: <20180609002917.GA22101@intel.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Jun 09, 2018 at 08:29:17AM +0800, Philip Li wrote:
+> On Fri, Jun 08, 2018 at 08:48:29AM -0700, Linus Torvalds wrote:
+> > On Fri, Jun 8, 2018 at 8:12 AM kbuild test robot <lkp@intel.com> wrote:
+> > >
+> > > arch/sh/include/asm/io.h:246:32: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+> > > arch/x86/net/bpf_jit_comp32.c:2449 do_jit() warn: potential off by one 'addrs[]' limit 'bpf_prog->len'
+> > > drivers/acpi/battery.c:720:3-9: preceding lock on line 701
+> > > drivers/gpu/drm/amd/amdkfd/Kconfig:8: unknown option "imply"
+> > > drivers/gpu/drm/amd/amdkfd/Kconfig:9: syntax error
+> > > .. lots of these ..
+> > 
+> > Hmm? Is the kbuild robot not feeling well? This looks odd.
+> Thanks Linus, we will follow up to check what possibly went wrong here,
+> this does look unreasonable.
+Hi Linus, this is caused by some cherry picked old commits are compiled on one
+randconfig, and triggers bisect. The error is discussed before as you may know,
+at https://patchwork.kernel.org/patch/9459363/ or
+http://lkml.iu.edu/hypermail/linux/kernel/1611.2/01337.html.
 
---yiv77ushflonumne
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The bisect considers the errors belong to mainline tree, meanwhile, there's a
+corner case, the bot sends out this mail externally which is supposed to send
+only internally for double check.
 
-Hi Linus,
+Kindly ignore this. We will continue the improvement of the bot.
 
-Just one patch for the HSI subsystem this time:
-
-The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
-
-  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
-
-are available in the Git repository at:
-
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/sre/linux-hsi.git tags/hsi-for-4.18
-
-for you to fetch changes up to 70d52ba9e57eb93cfe916f7f4d14a09750890ffd:
-
-  hsi: clients: Change return type to vm_fault_t (2018-04-17 16:05:26 +0200)
-
-----------------------------------------------------------------
-HSI changes for the 4.18 series
-
-* use new vm_fault_t return type
-
-----------------------------------------------------------------
-Souptick Joarder (1):
-      hsi: clients: Change return type to vm_fault_t
-
- drivers/hsi/clients/cmt_speech.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---yiv77ushflonumne
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlscHWsACgkQ2O7X88g7
-+pq82A/+I81DpXTfZ0ll2ynWhnl8YAG7JJqXmjfNLUtX5omLYP8V99sU5V8Hy/eM
-SnNysAsWVWRCrQ/OQ6Bt/X/lYS8dTPxh9DTznRbj5Mi6nBL2CB0MiHq6EDiKIjxf
-EZ0Zj6WIFcazk39kyaKWmILVLO9xZL0ro+JCUt6eS1ySwe5VYZdAv6sEKvYQR6un
-vLc87VOZ3PliILRwds+IKr/GQ4snjSwIh7Qr8VAe62rcz6ar/islArjB8oBMIVRJ
-rDn6TG3xy975FSvyZkKJtcF+onYNr2iRzYjBvvKOH9uKhVwBdreOcUgAOJWV7H6j
-R6m3PxRMp24X8+SiASDEiYT+SB3yfl0tElZWIvpF9jLKpIDIpLAXIPpoh9MCHLY9
-cFZxTbaUDg62u3FIMgfbqA/+J9fx5EeQ2Q3KHe6ILXbBKbBtG4llJ50m35qDtQGK
-saQJ4nutCkBhV9u8g9kjInYs+E6KaWoJxQN7kdLBu5DqEckJ5yY4a1BSPJJ8DXWa
-orQ9UlBg2KryNTmW+xaOk9stiNIADiAXHF02HBV/ZxrXr2s3VLbAFrQxvhT0gw47
-peaQNAy2FlkmAKxLzwmD7O1jD5jhr9df5K/rCussEBs9Oh8rwJkmgEzYbCoEvRzS
-8YTEJ+R5hS5O/KuYp0KOM2MS6yEAmgfySoDgBNYS66yoCe9Yl9w=
-=eob4
------END PGP SIGNATURE-----
-
---yiv77ushflonumne--
+> 
+> > 
+> >                     Linus
+> > 
