@@ -1,286 +1,257 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ktTtBmNoGVtMHgAAmS7hNA
-	; Thu, 07 Jun 2018 17:16:19 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Y767ByBkHluxYgAAmS7hNA
+	; Mon, 11 Jun 2018 11:59:28 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 0C209607E7; Thu,  7 Jun 2018 17:16:19 +0000 (UTC)
+	id 00E1C607E7; Mon, 11 Jun 2018 11:59:27 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eyh/Osag"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 5E98760590;
-	Thu,  7 Jun 2018 17:16:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5E98760590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 2BE5D60792;
+	Mon, 11 Jun 2018 11:59:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2BE5D60792
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934362AbeFGRPS (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 13:15:18 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42488 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753667AbeFGRPP (ORCPT
+        id S933438AbeFKL7Y (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 07:59:24 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:35467 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933341AbeFKL7W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 13:15:15 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w57H9jH2089356
-        for <linux-kernel@vger.kernel.org>; Thu, 7 Jun 2018 13:15:15 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jf89pj4sf-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 13:15:15 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Thu, 7 Jun 2018 18:15:12 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 7 Jun 2018 18:15:10 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w57HF8jK32571508
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 7 Jun 2018 17:15:08 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C16145204C;
-        Thu,  7 Jun 2018 17:04:45 +0100 (BST)
-Received: from [9.152.224.92] (unknown [9.152.224.92])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 1FA2952047;
-        Thu,  7 Jun 2018 17:04:45 +0100 (BST)
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH v5 11/13] KVM: s390: implement mediated device open
- callback
-To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1525705912-12815-12-git-send-email-akrowiak@linux.vnet.ibm.com>
- <98ea7ce2-2539-e2ff-4bb4-297e784d87bd@linux.ibm.com>
- <7bb480ac-5723-83ff-c797-53c1ab0458c1@linux.vnet.ibm.com>
- <93cd0f46-a410-51c8-00b9-810c1b3d3ae2@linux.ibm.com>
- <0f37dc39-7355-19e5-40c9-a02a1ea58c2d@linux.vnet.ibm.com>
- <736a1346-f81a-7f71-7d13-38729ff78e4f@linux.ibm.com>
- <8f68183d-8385-8025-1898-23cad604ae94@linux.vnet.ibm.com>
- <9e30c9b0-a04c-0c4e-9d3d-37e7a53a7f72@linux.ibm.com>
- <d6455b0b-804f-b58e-41bc-83731979911a@linux.ibm.com>
- <f74f2d2d-36d3-7910-5511-3691a483b89f@linux.vnet.ibm.com>
- <ea5c2c2f-27fe-b2bf-2aa8-fbe80e77ce81@linux.ibm.com>
- <5f9c3f97-34e2-bf68-b8ca-ac9288ea5efa@linux.vnet.ibm.com>
-From: Pierre Morel <pmorel@linux.ibm.com>
-Date: Thu, 7 Jun 2018 19:15:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <5f9c3f97-34e2-bf68-b8ca-ac9288ea5efa@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18060717-0016-0000-0000-000001D93FC0
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18060717-0017-0000-0000-0000322C56EF
-Message-Id: <b7215f0e-6ceb-2738-4584-1af7c30bd595@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-07_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806070188
+        Mon, 11 Jun 2018 07:59:22 -0400
+Received: by mail-wm0-f68.google.com with SMTP id j15-v6so16028840wme.0;
+        Mon, 11 Jun 2018 04:59:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=R/cfs1Vx01BzkQmh1dkDLW6kUx8xjmgO0gHCKfS+kpQ=;
+        b=eyh/OsagoGRSF4dAsVUpBiyaD+zEEvYBtpmKyjvC1ma+sWOfAZTJXC65KHfYQVlSD+
+         7e44iGwiL9nB3NL8zeTZt0zotnbNrHXdvDoST7kPb/fFsnrh4v3sVvKGH58M97C5NkJS
+         DTgOLI9Xs23J79Y4Il4++u06aPsCfRVrY5Y8995wnbRZdoRWCRZpfWc3Y3vv9cgTkzMe
+         BdAksYx70tTxtDmNiJo2BU+PtqWvqU26nKdCiwQ89TonbQlHLzDmpNe8+pTVrrNsRdEK
+         L/lzmaGcnv9rXfu3AXKb+MRrq/bdrMxdRsR11nmmEl/WKHDkD/BzxZb/xJdqiNzEeVo5
+         SI4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=R/cfs1Vx01BzkQmh1dkDLW6kUx8xjmgO0gHCKfS+kpQ=;
+        b=it0Z1WolMPj1vlD0DMCuj9IKXnu9vF2SDx+I+d7hB+xZc7CUU2ukgf2WwAqfsOXfhn
+         fYRjZElTJOvrixN/AE49v9Ahn8CUaANn3G0yQwPqDVJO9hcBIgL0ThYC+ZOrPggtiy+O
+         16BHX1SEU9pPcDfVERsXejq3sIuaFj4f8SJap0s9BHUsdFM551HhIU7KkXwwxjs/p8me
+         +RymGeClHmTwOjwel33BHt+4mME5E6cWCtwIVLjcBUd3pjrzAfqiH9OXqO1dTsDCXIpe
+         CKj0sMmZ8qtl7tVerij8CyJ/T927KQhW/UuunNC9vhVn/RdS6tJcjnanauFUhbDdDkXW
+         ErVQ==
+X-Gm-Message-State: APt69E1vLeiarqSolqkJsS8j/qGXis1CqNwEpnlaSKfXb/Dg2ljRg/yi
+        U1rGLGG3Oaa0KX5NmnO8ZoZRsEPm
+X-Google-Smtp-Source: ADUXVKLmWVlmdSE7dP5iTqcbDHL3/UbUY/FShXlc9TgPW+M4xdZth/VXKp9G+F0dgBi8EhaaIED0yA==
+X-Received: by 2002:a1c:800e:: with SMTP id b14-v6mr7750473wmd.83.1528718360283;
+        Mon, 11 Jun 2018 04:59:20 -0700 (PDT)
+Received: from kurokawa.lan (ip-86-49-107-50.net.upcbroadband.cz. [86.49.107.50])
+        by smtp.gmail.com with ESMTPSA id t124-v6sm7974796wmt.29.2018.06.11.04.59.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Jun 2018 04:59:19 -0700 (PDT)
+From: Marek Vasut <marek.vasut@gmail.com>
+X-Google-Original-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v6 13/14] regulator: da9063: Handle less LDOs on DA9063L
+Date: Mon, 11 Jun 2018 13:58:50 +0200
+Message-Id: <20180611115851.1987-13-marek.vasut+renesas@gmail.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
+References: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/06/2018 18:30, Tony Krowiak wrote:
-> On 06/07/2018 11:20 AM, Pierre Morel wrote:
->> On 07/06/2018 15:54, Tony Krowiak wrote:
->>> On 06/06/2018 01:40 PM, Pierre Morel wrote:
->>>> On 06/06/2018 18:08, Pierre Morel wrote:
->>>>> On 06/06/2018 16:28, Tony Krowiak wrote:
->>>>>> On 06/05/2018 08:19 AM, Pierre Morel wrote:
->>>>>>> On 30/05/2018 16:33, Tony Krowiak wrote:
->>>>>>>> On 05/24/2018 05:08 AM, Pierre Morel wrote:
->>>>>>>>> On 23/05/2018 16:45, Tony Krowiak wrote:
->>>>>>>>>> On 05/16/2018 04:03 AM, Pierre Morel wrote:
->>>>>>>>>>> On 07/05/2018 17:11, Tony Krowiak wrote:
->>>>>>>>>>>> Implements the open callback on the mediated matrix device.
->>>>>>>>>>>> The function registers a group notifier to receive 
->>>>>>>>>>>> notification
->>>>>>>>>>>> of the VFIO_GROUP_NOTIFY_SET_KVM event. When notified,
->>>>>>>>>>>> the vfio_ap device driver will get access to the guest's
->>>>>>>>>>>> kvm structure. With access to this structure the driver will:
->>>>>>>>>>>>
->>>>>>>>>>>> 1. Ensure that only one mediated device is opened for the 
->>>>>>>>>>>> guest
->>>>>>>>>
->>>>>>>>> You should explain why.
->>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>>> 2. Configure access to the AP devices for the guest.
->>>>>>>>>>>>
->>>>>>>>> ...snip...
->>>>>>>>>>>> +void kvm_ap_refcount_inc(struct kvm *kvm)
->>>>>>>>>>>> +{
->>>>>>>>>>>> + atomic_inc(&kvm->arch.crypto.aprefs);
->>>>>>>>>>>> +}
->>>>>>>>>>>> +EXPORT_SYMBOL(kvm_ap_refcount_inc);
->>>>>>>>>>>> +
->>>>>>>>>>>> +void kvm_ap_refcount_dec(struct kvm *kvm)
->>>>>>>>>>>> +{
->>>>>>>>>>>> + atomic_dec(&kvm->arch.crypto.aprefs);
->>>>>>>>>>>> +}
->>>>>>>>>>>> +EXPORT_SYMBOL(kvm_ap_refcount_dec);
->>>>>>>>>>>
->>>>>>>>>>> Why are these functions inside kvm-ap ?
->>>>>>>>>>> Will anyone use this outer of vfio-ap ?
->>>>>>>>>>
->>>>>>>>>> As I've stated before, I made the choice to contain all 
->>>>>>>>>> interfaces that
->>>>>>>>>> access KVM in kvm-ap because I don't think it is appropriate 
->>>>>>>>>> for the device
->>>>>>>>>> driver to have to have "knowledge" of the inner workings of 
->>>>>>>>>> KVM. Why does
->>>>>>>>>> it matter whether any entity outside of the vfio_ap device 
->>>>>>>>>> driver calls
->>>>>>>>>> these functions? I could ask a similar question if the 
->>>>>>>>>> interfaces were
->>>>>>>>>> contained in vfio-ap; what if another device driver needs 
->>>>>>>>>> access to these
->>>>>>>>>> interfaces?
->>>>>>>>>
->>>>>>>>> This is very driver specific and only used during initialization.
->>>>>>>>> It is not a common property of the cryptographic interface.
->>>>>>>>>
->>>>>>>>> I really think you should handle this inside the driver.
->>>>>>>>
->>>>>>>> We are going to have to agree to disagree on this one. Is it 
->>>>>>>> not possible
->>>>>>>> that future drivers - e.g., when full virtualization is 
->>>>>>>> implemented - will
->>>>>>>> require access to KVM?
->>>>>>>
->>>>>>> I do not think that an access to KVM is required for full 
->>>>>>> virtualization.
->>>>>>
->>>>>> You may be right, but at this point, there is no guarantee. I 
->>>>>> stand by my
->>>>>> design on this one.
->>>>>
->>>>> I really regret that we abandoned the initial design with the 
->>>>> matrix bus and one
->>>>> single parent matrix device per guest.
->>>>> We would not have the problem of these KVM dependencies.
->>>>>
->>>>> It had the advantage of taking care of having only one device per 
->>>>> guest
->>>>> (available_instance = 1), could take care of provisioning as you have
->>>>> sysfs entries available for a matrix without having a guest and a 
->>>>> mediated
->>>>> device.
->>>>>
->>>>> it also had advantage for virtualization to keep host side and 
->>>>> guest side matrix
->>>>> separate inside parent (host side) and mediated device (guest side).
->>>>>
->>>>> Shouldn't we treat this problem with a design using standard 
->>>>> interfaces
->>>>> Instead of adding new dedicated interfaces?
->>>>>
->>>>> Regards,
->>>>>
->>>>> Pierre
->>>>>
->>>>>
->>>>
->>>> Forget it.
->>>>
->>>> I am not happy with the design but the design I was speaking of may 
->>>> not be the solution either.
->>>
->>> The AP architecture makes virtualization of AP devices complex. We 
->>> tried the solution you
->>> described and found it to be sorely lacking which is why we ended up 
->>> where we are now.
->>
->> I did not see any explanation on why between v1 and v2 as it was 
->> abandoned.
->>
->>
->> We have internal structures like the ap_matrix and kvm_ap_matrix
->> which look like the bus/devices we had previously but are differently
->> or not at all integrated with the LDD.
->
-> What is LDD? Are you talking about dependencies between the vfio_ap 
-> device
-> driver and KVM? If so, see my arguments below.
->
->>
->>
->> Also I think that with a little data structure refactoring you can 
->> avoid most of
->> the code in the arch/s390/kvm.
->
-> How will structure refactoring help us avoid the code for updating the 
-> CRYCB
-> in the guest's SIE state description.
->
->>
->>
->> For example, storing the kvm pointer inside the kvm_ap_matrix and
->> maintaining a list of the kvm_ap_matrix structures allows to easily know
->> if a guest already has an associated mediated device.
->
-> How is that easier than storing the kvm pointer inside of the mediated 
-> matrix
-> device (i.e., struct ap_matrix_mdev) which also contains the struct 
-> kvm_ap_matrix?
+Move the LDOs present only on DA9063 at the end of the list, so that
+the DA9063L can simply indicate less LDOs and still share the list of
+regulators with DA9063.
 
-you can put it in ap_matrix_mdev but just the name "kvm_ap_matrix" make the
-last one a better candidate for my opinion.
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Acked-by: Mark Brown <broonie@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+---
+V2: No change
+V3: No change
+V4: Change subject s/mfd/regulator/
+V5: No change
+V6: No change
+---
+ drivers/regulator/da9063-regulator.c | 76 +++++++++++++++++++++---------------
+ 1 file changed, 45 insertions(+), 31 deletions(-)
 
-> How does that allow us to avoid the code in arch/s390/kvm?
-
-This alone does not.
-
-> We still need the code
-> to update the CRYCB in the SIE block. I can obviously avoid placing 
-> that code in
-> kvm-ap.c and move it to the driver, but I already explained my 
-> reasoning for
-> keeping it in KVM. Let's face it, there is no way around the 
-> dependency between
-> the vfio_ap device driver and KVM unless guest matrix configuration is 
-> managed
-> solely by KVM through KVM interfaces.
-
-We get the pointer to KVM from the VFIO interface.
-That we both discuss on this is sterile.
-The only one who could say what is right is a S390 KVM maintainer.
-This would end the discussion.
-My point was just to say that we have an alternative.
-
->
-> Why maintain a list of kvm_ap_matrix structures if we don't have to; 
-> it is stored
-> with the mediated matrix device which is passed in to all of the 
-> vfio_ap driver
-> callbacks.
-
-Because using the vm_list which is a static in kvm makes you stick 
-inside the kvm code.
-
-
+diff --git a/drivers/regulator/da9063-regulator.c b/drivers/regulator/da9063-regulator.c
+index 02a036f310de..edc2a0ae0011 100644
+--- a/drivers/regulator/da9063-regulator.c
++++ b/drivers/regulator/da9063-regulator.c
+@@ -529,6 +529,32 @@ static const struct da9063_regulator_info da9063_regulator_info[] = {
+ 		.ilimit = BFIELD(DA9063_REG_BUCK_ILIM_A,
+ 				 DA9063_BMEM_ILIM_MASK),
+ 	},
++	{
++		DA9063_LDO(DA9063, LDO3, 900, 20, 3440),
++		.suspend = BFIELD(DA9063_REG_DVC_1, DA9063_VLDO3_SEL),
++		.oc_event = BFIELD(DA9063_REG_STATUS_D, DA9063_LDO3_LIM),
++	},
++	{
++		DA9063_LDO(DA9063, LDO7, 900, 50, 3600),
++		.suspend = BFIELD(DA9063_REG_LDO7_CONT, DA9063_VLDO7_SEL),
++		.oc_event = BFIELD(DA9063_REG_STATUS_D, DA9063_LDO7_LIM),
++	},
++	{
++		DA9063_LDO(DA9063, LDO8, 900, 50, 3600),
++		.suspend = BFIELD(DA9063_REG_LDO8_CONT, DA9063_VLDO8_SEL),
++		.oc_event = BFIELD(DA9063_REG_STATUS_D, DA9063_LDO8_LIM),
++	},
++	{
++		DA9063_LDO(DA9063, LDO9, 950, 50, 3600),
++		.suspend = BFIELD(DA9063_REG_LDO9_CONT, DA9063_VLDO9_SEL),
++	},
++	{
++		DA9063_LDO(DA9063, LDO11, 900, 50, 3600),
++		.suspend = BFIELD(DA9063_REG_LDO11_CONT, DA9063_VLDO11_SEL),
++		.oc_event = BFIELD(DA9063_REG_STATUS_D, DA9063_LDO11_LIM),
++	},
++
++	/* The following LDOs are present only on DA9063, not on DA9063L */
+ 	{
+ 		DA9063_LDO(DA9063, LDO1, 600, 20, 1860),
+ 		.suspend = BFIELD(DA9063_REG_DVC_1, DA9063_VLDO1_SEL),
+@@ -537,11 +563,6 @@ static const struct da9063_regulator_info da9063_regulator_info[] = {
+ 		DA9063_LDO(DA9063, LDO2, 600, 20, 1860),
+ 		.suspend = BFIELD(DA9063_REG_DVC_1, DA9063_VLDO2_SEL),
+ 	},
+-	{
+-		DA9063_LDO(DA9063, LDO3, 900, 20, 3440),
+-		.suspend = BFIELD(DA9063_REG_DVC_1, DA9063_VLDO3_SEL),
+-		.oc_event = BFIELD(DA9063_REG_STATUS_D, DA9063_LDO3_LIM),
+-	},
+ 	{
+ 		DA9063_LDO(DA9063, LDO4, 900, 20, 3440),
+ 		.suspend = BFIELD(DA9063_REG_DVC_2, DA9063_VLDO4_SEL),
+@@ -555,29 +576,11 @@ static const struct da9063_regulator_info da9063_regulator_info[] = {
+ 		DA9063_LDO(DA9063, LDO6, 900, 50, 3600),
+ 		.suspend = BFIELD(DA9063_REG_LDO6_CONT, DA9063_VLDO6_SEL),
+ 	},
+-	{
+-		DA9063_LDO(DA9063, LDO7, 900, 50, 3600),
+-		.suspend = BFIELD(DA9063_REG_LDO7_CONT, DA9063_VLDO7_SEL),
+-		.oc_event = BFIELD(DA9063_REG_STATUS_D, DA9063_LDO7_LIM),
+-	},
+-	{
+-		DA9063_LDO(DA9063, LDO8, 900, 50, 3600),
+-		.suspend = BFIELD(DA9063_REG_LDO8_CONT, DA9063_VLDO8_SEL),
+-		.oc_event = BFIELD(DA9063_REG_STATUS_D, DA9063_LDO8_LIM),
+-	},
+-	{
+-		DA9063_LDO(DA9063, LDO9, 950, 50, 3600),
+-		.suspend = BFIELD(DA9063_REG_LDO9_CONT, DA9063_VLDO9_SEL),
+-	},
++
+ 	{
+ 		DA9063_LDO(DA9063, LDO10, 900, 50, 3600),
+ 		.suspend = BFIELD(DA9063_REG_LDO10_CONT, DA9063_VLDO10_SEL),
+ 	},
+-	{
+-		DA9063_LDO(DA9063, LDO11, 900, 50, 3600),
+-		.suspend = BFIELD(DA9063_REG_LDO11_CONT, DA9063_VLDO11_SEL),
+-		.oc_event = BFIELD(DA9063_REG_STATUS_D, DA9063_LDO11_LIM),
+-	},
+ };
+ 
+ /* Link chip model with regulators info table */
+@@ -587,6 +590,11 @@ static struct da9063_dev_model regulators_models[] = {
+ 		.n_regulators = ARRAY_SIZE(da9063_regulator_info),
+ 		.type = PMIC_TYPE_DA9063,
+ 	},
++	{
++		.regulator_info = da9063_regulator_info,
++		.n_regulators = ARRAY_SIZE(da9063_regulator_info) - 6,
++		.type = PMIC_TYPE_DA9063L,
++	},
+ 	{ }
+ };
+ 
+@@ -641,28 +649,34 @@ static struct of_regulator_match da9063_matches[] = {
+ 	[DA9063_ID_BPERI]            = { .name = "bperi",           },
+ 	[DA9063_ID_BCORES_MERGED]    = { .name = "bcores-merged"    },
+ 	[DA9063_ID_BMEM_BIO_MERGED]  = { .name = "bmem-bio-merged", },
++	[DA9063_ID_LDO3]             = { .name = "ldo3",            },
++	[DA9063_ID_LDO7]             = { .name = "ldo7",            },
++	[DA9063_ID_LDO8]             = { .name = "ldo8",            },
++	[DA9063_ID_LDO9]             = { .name = "ldo9",            },
++	[DA9063_ID_LDO11]            = { .name = "ldo11",           },
++	/* The following LDOs are present only on DA9063, not on DA9063L */
+ 	[DA9063_ID_LDO1]             = { .name = "ldo1",            },
+ 	[DA9063_ID_LDO2]             = { .name = "ldo2",            },
+-	[DA9063_ID_LDO3]             = { .name = "ldo3",            },
+ 	[DA9063_ID_LDO4]             = { .name = "ldo4",            },
+ 	[DA9063_ID_LDO5]             = { .name = "ldo5",            },
+ 	[DA9063_ID_LDO6]             = { .name = "ldo6",            },
+-	[DA9063_ID_LDO7]             = { .name = "ldo7",            },
+-	[DA9063_ID_LDO8]             = { .name = "ldo8",            },
+-	[DA9063_ID_LDO9]             = { .name = "ldo9",            },
+ 	[DA9063_ID_LDO10]            = { .name = "ldo10",           },
+-	[DA9063_ID_LDO11]            = { .name = "ldo11",           },
+ };
+ 
+ static struct da9063_regulators_pdata *da9063_parse_regulators_dt(
+ 		struct platform_device *pdev,
+ 		struct of_regulator_match **da9063_reg_matches)
+ {
++	struct da9063 *da9063 = dev_get_drvdata(pdev->dev.parent);
+ 	struct da9063_regulators_pdata *pdata;
+ 	struct da9063_regulator_data *rdata;
+ 	struct device_node *node;
++	int da9063_matches_len = ARRAY_SIZE(da9063_matches);
+ 	int i, n, num;
+ 
++	if (da9063->type == PMIC_TYPE_DA9063L)
++		da9063_matches_len -= 6;
++
+ 	node = of_get_child_by_name(pdev->dev.parent->of_node, "regulators");
+ 	if (!node) {
+ 		dev_err(&pdev->dev, "Regulators device node not found\n");
+@@ -670,7 +684,7 @@ static struct da9063_regulators_pdata *da9063_parse_regulators_dt(
+ 	}
+ 
+ 	num = of_regulator_match(&pdev->dev, node, da9063_matches,
+-				 ARRAY_SIZE(da9063_matches));
++				 da9063_matches_len);
+ 	of_node_put(node);
+ 	if (num < 0) {
+ 		dev_err(&pdev->dev, "Failed to match regulators\n");
+@@ -689,7 +703,7 @@ static struct da9063_regulators_pdata *da9063_parse_regulators_dt(
+ 	pdata->n_regulators = num;
+ 
+ 	n = 0;
+-	for (i = 0; i < ARRAY_SIZE(da9063_matches); i++) {
++	for (i = 0; i < da9063_matches_len; i++) {
+ 		if (!da9063_matches[i].init_data)
+ 			continue;
+ 
 -- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
+2.16.2
