@@ -1,117 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id hdtlGTw5GVvACAAAmS7hNA
-	; Thu, 07 Jun 2018 13:57:25 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id QGE+AsjsHVvzMAAAmS7hNA
+	; Mon, 11 Jun 2018 03:31:03 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 57B3F608CA; Thu,  7 Jun 2018 13:57:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-	s=default; t=1528379845;
-	bh=TthbVH7Kga29oLsBTTMHQR6WqazIdSsjlITVGU2u0BI=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=hcGE7eV/9LZxgf2eBH+3XuPRPBAh/Kd3O+/WsSxlTY9OA1S7rM9goIEkWc1+eUIx6
-	 7EQxApcWYEgOSByuy7FL+0JVgdnu3szuCExGuRMCoKBNYPkYBuAwb/f5r0Ostd8E5P
-	 2oHZyTGz39V9THjax3VyuFfGv9GeD503eiJ1GJVU=
+	id D73DC60792; Mon, 11 Jun 2018 03:31:03 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id C8D19608C8;
-	Thu,  7 Jun 2018 13:57:24 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="b/EAAW9t";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="b/EAAW9t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C8D19608C8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 655C8606DD;
+	Mon, 11 Jun 2018 03:31:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 655C8606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932722AbeFGN5W (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 09:57:22 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39472 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932129AbeFGN5V (ORCPT
+        id S932368AbeFKD07 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Sun, 10 Jun 2018 23:26:59 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:60066 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932070AbeFKD0x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 09:57:21 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 9FDD7607DC; Thu,  7 Jun 2018 13:57:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528379840;
-        bh=TthbVH7Kga29oLsBTTMHQR6WqazIdSsjlITVGU2u0BI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=b/EAAW9tcvo5Zk17CJgBS+QhC4pOcilGsSQ0HwRww96HVHqLtakbH8+ZOliFJcJpb
-         GVfH5P5lRj88/BGCjACCiukANguesFKHRm6Ah3mWpqE1jyWjEx67qHRn1/Pl3ombUF
-         JMBsxuJvGjf6rPqoBfBlzQJ3hsZVtMgbRMJ8TOgU=
-Received: from azshara.qualcomm.com (global_nat1_iad_fw.qualcomm.com [129.46.232.65])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: agustinv@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 01179601D2;
-        Thu,  7 Jun 2018 13:57:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528379840;
-        bh=TthbVH7Kga29oLsBTTMHQR6WqazIdSsjlITVGU2u0BI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=b/EAAW9tcvo5Zk17CJgBS+QhC4pOcilGsSQ0HwRww96HVHqLtakbH8+ZOliFJcJpb
-         GVfH5P5lRj88/BGCjACCiukANguesFKHRm6Ah3mWpqE1jyWjEx67qHRn1/Pl3ombUF
-         JMBsxuJvGjf6rPqoBfBlzQJ3hsZVtMgbRMJ8TOgU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 01179601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=agustinv@codeaurora.org
-From: Agustin Vega-Frias <agustinv@codeaurora.org>
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Will Deacon <will.deacon@arm.com>,
+        Sun, 10 Jun 2018 23:26:53 -0400
+X-UUID: 10b3c4f91de94b6ea5379bb5f2667c94-20180611
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <stu.hsieh@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1353463026; Mon, 11 Jun 2018 11:26:50 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Mon, 11 Jun 2018 11:26:47 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Mon, 11 Jun 2018 11:26:47 +0800
+From: Stu Hsieh <stu.hsieh@mediatek.com>
+To: CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>
+CC: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Jeremy Linton <jeremy.linton@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: timur@codeaurora.org, agustinv@codeaurora.org
-Subject: [RFC V2 0/3] arm_pmu: acpi: variant support and QCOM Falkor extensions
-Date: Thu,  7 Jun 2018 09:56:45 -0400
-Message-Id: <1528379808-27970-1-git-send-email-agustinv@codeaurora.org>
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, Stu Hsieh <stu.hsieh@mediatek.com>
+Subject: [PATCH 07/28] drm/mediatek: add component DPI1
+Date: Mon, 11 Jun 2018 11:25:59 +0800
+Message-ID: <1528687580-549-8-git-send-email-stu.hsieh@mediatek.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
+References: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series is a complete re-design of V1 of the QCOM Falkor extensions [1],
-it introduces a probe table based on the HID of a device nested under the CPU
-device to allow variant detection and arm_pmu customization.
+This patch add the component DPI1
 
-The first patch adds an additional section at the end of each ACPI probe table.
-This allows probe tables to be sentinel-delimited and better accommodate some
-APIs that require such tables.
+Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+---
+ drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c | 1 +
+ drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h | 1 +
+ 2 files changed, 2 insertions(+)
 
-The second patch adds the PMUv3 ACPI probe table and plumbing to allow drivers
-to plug into the ACPI PMUv3 probe sequence.
-
-The third patch adds the QCOM Falkor extensions using the new probe table.
-
-If this found to be a reasonable extension approach other patches will be
-added to the series to build on the base QCOM extensions.
-
-[1] https://lkml.org/lkml/2017/3/1/540
-
-Changes since V1:
-- Redesign as a separate module by adding variant detection support.
-
-Agustin Vega-Frias (3):
-  ACPI: add support for sentinel-delimited probe tables
-  arm_pmu: acpi: add support for CPU PMU variant detection
-  perf: qcom: Add Falkor CPU PMU IMPLEMENTATION DEFINED event support
-
- drivers/perf/Makefile             |   2 +-
- drivers/perf/arm_pmu_acpi.c       |  27 ++++
- drivers/perf/qcom_arm_pmu.c       | 310 ++++++++++++++++++++++++++++++++++++++
- include/asm-generic/vmlinux.lds.h |   4 +-
- include/linux/acpi.h              |  11 ++
- include/linux/perf/arm_pmu.h      |   1 +
- 6 files changed, 353 insertions(+), 2 deletions(-)
- create mode 100644 drivers/perf/qcom_arm_pmu.c
-
---
-Qualcomm Datacenter Technologies, Inc. on behalf of the Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+index 86e8c9e5df41..4f9d81025d69 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+@@ -224,6 +224,7 @@ static const struct mtk_ddp_comp_match mtk_ddp_matches[DDP_COMPONENT_ID_MAX] = {
+ 	[DDP_COMPONENT_COLOR0]	= { MTK_DISP_COLOR,	0, NULL },
+ 	[DDP_COMPONENT_COLOR1]	= { MTK_DISP_COLOR,	1, NULL },
+ 	[DDP_COMPONENT_DPI0]	= { MTK_DPI,		0, NULL },
++	[DDP_COMPONENT_DPI1]	= { MTK_DPI,		1, NULL },
+ 	[DDP_COMPONENT_DSI0]	= { MTK_DSI,		0, NULL },
+ 	[DDP_COMPONENT_DSI1]	= { MTK_DSI,		1, NULL },
+ 	[DDP_COMPONENT_GAMMA]	= { MTK_DISP_GAMMA,	0, &ddp_gamma },
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
+index e00c2e798abd..54c99c169093 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
+@@ -47,6 +47,7 @@ enum mtk_ddp_comp_id {
+ 	DDP_COMPONENT_COLOR0,
+ 	DDP_COMPONENT_COLOR1,
+ 	DDP_COMPONENT_DPI0,
++	DDP_COMPONENT_DPI1,
+ 	DDP_COMPONENT_DSI0,
+ 	DDP_COMPONENT_DSI1,
+ 	DDP_COMPONENT_GAMMA,
+-- 
+2.12.5
