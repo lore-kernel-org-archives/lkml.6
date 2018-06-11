@@ -1,66 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id KJPZEQRjGVufZQAAmS7hNA
-	; Thu, 07 Jun 2018 16:54:05 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 2bxmBZqAHlsHcgAAmS7hNA
+	; Mon, 11 Jun 2018 14:04:24 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id CFB8F6074D; Thu,  7 Jun 2018 16:54:05 +0000 (UTC)
+	id 1E31D607A4; Mon, 11 Jun 2018 14:04:24 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=cmpxchg.org header.i=@cmpxchg.org header.b="aACAxKmc"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 5554760115;
-	Thu,  7 Jun 2018 16:54:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5554760115
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 7EC756074D;
+	Mon, 11 Jun 2018 14:04:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7EC756074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933796AbeFGQyC (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 12:54:02 -0400
-Received: from mga03.intel.com ([134.134.136.65]:60223 "EHLO mga03.intel.com"
+        id S933444AbeFKOEW (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 10:04:22 -0400
+Received: from gum.cmpxchg.org ([85.214.110.215]:54108 "EHLO gum.cmpxchg.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932630AbeFGQyB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 12:54:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 09:54:00 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,487,1520924400";
-   d="scan'208";a="57388140"
-Received: from jacob-builder.jf.intel.com ([10.7.199.155])
-  by orsmga003.jf.intel.com with ESMTP; 07 Jun 2018 09:54:00 -0700
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-To: iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>
-Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH v2 0/2] iommu/vt-d: pfsid fix
-Date: Thu,  7 Jun 2018 09:56:58 -0700
-Message-Id: <1528390620-31565-1-git-send-email-jacob.jun.pan@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S933223AbeFKOEU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 10:04:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cmpxchg.org
+        ; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=zJB73XS7lUbPrg7oRQIuf+fw3UTmxPtdyzlhlVF9Igo=; b=aACAxKmcQnKIUncm37R2EJavih
+        9EgQE/s9zEaY8fkLI3pO3745nzJzlribwhW0fXqwc0co6Jp+FAtUe8QDyS9qx51u4LN30WSv2njut
+        nuJ/WNK3+V+YLxZfiouiA2wFMMW44gxhhWIDYYzUMUVEeZUINmg6Ho98txHI/iTeURDA=;
+Date: Mon, 11 Jun 2018 10:06:35 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: axboe@kernel.dk, kernel-team@fb.com, linux-block@vger.kernel.org,
+        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        tj@kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 05/13] swap,blkcg: issue swap io with the appropriate
+ context
+Message-ID: <20180611140635.GA1507@cmpxchg.org>
+References: <20180605132948.1664-1-josef@toxicpanda.com>
+ <20180605132948.1664-6-josef@toxicpanda.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180605132948.1664-6-josef@toxicpanda.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When device invalidation throttling(DIT) is supported by an IOMMU, device TLB
-invalidation should include physical function source ID(PFSID).
+On Tue, Jun 05, 2018 at 09:29:40AM -0400, Josef Bacik wrote:
+> From: Tejun Heo <tj@kernel.org>
+> 
+> For backcharging we need to know who the page belongs to when swapping
+> it out.
+> 
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Signed-off-by: Josef Bacik <jbacik@fb.com>
 
-Changes since v1:
-- Fixed compile error when CONFIG_PCI_ATS is not set
-- Simplified how PF source ID is retrieved
-
-Jacob Pan (2):
-  iommu/vt-d: add definitions for PFSID
-  iommu/vt-d: fix dev iotlb pfsid use
-
- drivers/iommu/dmar.c        |  6 +++---
- drivers/iommu/intel-iommu.c | 18 +++++++++++++++++-
- include/linux/intel-iommu.h |  8 +++++---
- 3 files changed, 25 insertions(+), 7 deletions(-)
-
--- 
-2.7.4
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
