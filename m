@@ -1,88 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id J7QIGHP3G1vdBQAAmS7hNA
-	; Sat, 09 Jun 2018 15:51:15 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id KbivF4raHVuUdgAAmS7hNA
+	; Mon, 11 Jun 2018 02:12:26 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 50FB8608BF; Sat,  9 Jun 2018 15:51:15 +0000 (UTC)
+	id 51365607A4; Mon, 11 Jun 2018 02:12:26 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 9A37B608B8;
-	Sat,  9 Jun 2018 15:51:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9A37B608B8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id B9609601D2;
+	Mon, 11 Jun 2018 02:12:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B9609601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932650AbeFIPvM (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 11:51:12 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:44640 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751434AbeFIPvJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 11:51:09 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fRg8y-0000Rr-6O; Sat, 09 Jun 2018 15:51:08 +0000
-Date: Sat, 9 Jun 2018 16:51:08 +0100
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Stephane Eranian <eranian@google.com>
-Subject: Re: [RFC][PATCHES] getting rid of int *open in ->atomic_open() and
- friends
-Message-ID: <20180609155107.GH30522@ZenIV.linux.org.uk>
-References: <20180608184842.GD30522@ZenIV.linux.org.uk>
- <CA+55aFz9cS3m=wZxqKbzrCLEjhPoPddKw5U2MDKNqbG79Wx6bw@mail.gmail.com>
- <20180609051051.GF30522@ZenIV.linux.org.uk>
+        id S1753918AbeFKCMX (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Sun, 10 Jun 2018 22:12:23 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48852 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753886AbeFKCMV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Jun 2018 22:12:21 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id ECC157D65F;
+        Mon, 11 Jun 2018 02:12:20 +0000 (UTC)
+Received: from redhat.com (ovpn-120-77.rdu2.redhat.com [10.10.120.77])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 94096ED155;
+        Mon, 11 Jun 2018 02:12:20 +0000 (UTC)
+Date: Mon, 11 Jun 2018 05:12:20 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] vhost_net: remove VHOST_NET_F_VIRTIO_NET_HDR support
+Message-ID: <20180611050741-mutt-send-email-mst@kernel.org>
+References: <1528429842-22835-1-git-send-email-jasowang@redhat.com>
+ <20180608074115-mutt-send-email-mst@kernel.org>
+ <23efe110-f61a-5aee-c0b4-bd3dc5426438@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180609051051.GF30522@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <23efe110-f61a-5aee-c0b4-bd3dc5426438@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 11 Jun 2018 02:12:21 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 11 Jun 2018 02:12:21 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 09, 2018 at 06:10:51AM +0100, Al Viro wrote:
-
-> That leaves
-> 	* anon_inode_getfile() - converts to similar form, at the price of
-> ihold done slightly earlier, so that failure exit needs a (non-final, i.e.
-> very cheap) iput() we currently avoid.  Not a problem.
-> 	* do_shmat() and the second alloc_file() in create_pipe_files().
-> Those are rather different - we *do* have an existing dentry/inode/mount
-> there and all we want on cleanup is path_put() to undo the path_get()
-> we'd done.
-> 	* perfmon mess - _very_ different, and I wouldn't bet a dime on
-> correctness of failure exits there.  One of the issues is that it simulates
-> mmap as part of setup, so cleanup really is different.
+On Fri, Jun 08, 2018 at 01:07:09PM +0800, Jason Wang wrote:
 > 
-> AFAICS, there's a clear case for alloc_file() wrapper - 6 callers out of
-> 10 get simpler with it, and the seventh is also a good candidate for the
-> same treatment.  Any naming ideas for that thing ("something" in the above)
-> would be welcome...
 > 
-> BTW, that's almost all callers of d_alloc_pseudo() - there is exactly one
-> caller not of that form (in __ns_get_path()) right now.  perfmon should
-> be another caller, but that might end up converted to the new wrapper...
+> On 2018年06月08日 12:46, Michael S. Tsirkin wrote:
+> > On Fri, Jun 08, 2018 at 11:50:42AM +0800, Jason Wang wrote:
+> > > This feature bit is duplicated with VIRTIO_F_ANY_LAYOUT, this means if
+> > > a userpsace want to enable VRITIO_F_ANY_LAYOUT,
+> > > VHOST_NET_F_VIRTIO_NET_HDR will be implied too. This is wrong and will
+> > > break networking.
+> > What breaks networking exactly? VHOST_NET supported ANY_LAYOUT
+> > from day one. For this reason it does not need to know about
+> > VRITIO_F_ANY_LAYOUT and we reused the bit for other purposes.
 > 
-> As for put_filp()... the callers left in my local tree right now are
-> 	* path_openat(), dentry_open(), file_clone_open() (all of the
-> same form - "put_filp() if it doesn't have FMODE_OPENED, fput() otherwise)
-> 	* perfmon mess.
-> create_pipe_files() got converted to fput() with a bit of massage...
+> It's the knowledge of vhost_net code it self but not userspace. For
+> userspace, it should depends on the value of returned by VHOST_GET_FEATURES.
+> So when userspace can set_features with ANY_LAYOUT, vhost may think it wants
+> VHOST_NET_F_VIRTIO_NET_HDR.
 
-Untested followup along those lines pushed; helper called alloc_file_pseudo()
-and all but 3 callers of alloc_file() got converted to it.  perfmon is not
-touched and it's becoming more and more annoying ;-/  It's also sticking
-its tender bits into mm/* a lot - what it tries to do, AFAICS, is a heavily
-open-coded vmalloc-backed mmap() of sorts.  It feels like there ought to be
-a more idiomatic way of doing that kind of stuff...
+Yes but that's the admittedly ugly API that we have now.
+userspace is supposed to know VRITIO_F_ANY_LAYOUT does
+not make sense for vhost.
 
-Stephane, could you comment on the situation in there?  I realize that you
-hadn't touched that thing in more than a decade, but I've no idea who else
-might be familiar with that thing and it's very inconveniently special...
+
+
+> > 
+> > 
+> > 
+> > > Fixing this by safely removing
+> > > VHOST_NET_F_VIRTIO_NET_HDR support. There should be very few or even
+> > > no userspace can use this.
+> > Quite possibly, but it is hard to be sure. It seems safer to
+> > maintain it unless there's an actual reason something's broken.
+> 
+> I think not since the feature is negotiated not mandatory?
+
+That doesn't mean much.
+
+> > 
+> > > Further cleanups could be done for
+> > > -net-next for safety.
+> > > 
+> > > In the future, we need a vhost dedicated feature set/get ioctl()
+> > > instead of reusing virtio ones.
+> > Not just in the future, we might want to switch iommu
+> > to a sane structure without the 64 bit padding bug
+> > right now.
+> 
+> Yes, I hit this bug when introducing V2 of msg IOTLB message.
+
+Sounds good, so if you like, reserve a bit for
+VHOST_NET_F_VIRTIO_NET_HDR in the new ioctl mask and
+do not enable it there.
+
+> > 
+> > > Fixes: 4e9fa50c6ccbe ("vhost: move features to core")
+> > This tag makes no sense here IMHO. Looks like people are using some tool
+> > that just looks at the earliest version where patch won't apply. The
+> > commit in question just moved some code around.
+> 
+> Looks not, before this commit, vhost_net won't return ANY_LAYOUT.
+> 
+> Thanks
+
+Well ANY_LAYOUT just happens to be same as VHOST_NET_F_VIRTIO_NET_HDR
+and that has been set since forever.
+
+> > 
+> > > Signed-off-by: Jason Wang <jasowang@redhat.com>
+> > > ---
+> > >   drivers/vhost/net.c | 15 +++++----------
+> > >   1 file changed, 5 insertions(+), 10 deletions(-)
+> > > 
+> > > diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+> > > index 986058a..83eef52 100644
+> > > --- a/drivers/vhost/net.c
+> > > +++ b/drivers/vhost/net.c
+> > > @@ -69,7 +69,6 @@ MODULE_PARM_DESC(experimental_zcopytx, "Enable Zero Copy TX;"
+> > >   enum {
+> > >   	VHOST_NET_FEATURES = VHOST_FEATURES |
+> > > -			 (1ULL << VHOST_NET_F_VIRTIO_NET_HDR) |
+> > >   			 (1ULL << VIRTIO_NET_F_MRG_RXBUF) |
+> > >   			 (1ULL << VIRTIO_F_IOMMU_PLATFORM)
+> > >   };
+> > > @@ -1255,15 +1254,11 @@ static int vhost_net_set_features(struct vhost_net *n, u64 features)
+> > >   			       (1ULL << VIRTIO_F_VERSION_1))) ?
+> > >   			sizeof(struct virtio_net_hdr_mrg_rxbuf) :
+> > >   			sizeof(struct virtio_net_hdr);
+> > > -	if (features & (1 << VHOST_NET_F_VIRTIO_NET_HDR)) {
+> > > -		/* vhost provides vnet_hdr */
+> > > -		vhost_hlen = hdr_len;
+> > > -		sock_hlen = 0;
+> > > -	} else {
+> > > -		/* socket provides vnet_hdr */
+> > > -		vhost_hlen = 0;
+> > > -		sock_hlen = hdr_len;
+> > > -	}
+> > > +
+> > > +        /* socket provides vnet_hdr */
+> > > +	vhost_hlen = 0;
+> > > +	sock_hlen = hdr_len;
+> > > +
+> > >   	mutex_lock(&n->dev.mutex);
+> > >   	if ((features & (1 << VHOST_F_LOG_ALL)) &&
+> > >   	    !vhost_log_access_ok(&n->dev))
+> > > -- 
+> > > 2.7.4
