@@ -1,185 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id DMelKrhpGlv9WwAAmS7hNA
-	; Fri, 08 Jun 2018 11:34:21 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 7Js1Ox1kHluUYgAAmS7hNA
+	; Mon, 11 Jun 2018 11:59:26 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id AD06A6089E; Fri,  8 Jun 2018 11:34:21 +0000 (UTC)
+	id D88EB607E4; Mon, 11 Jun 2018 11:59:25 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gAQKXfLT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jXD/Iyy0"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 1C408607A4;
-	Fri,  8 Jun 2018 11:34:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1C408607A4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 33C5960351;
+	Mon, 11 Jun 2018 11:59:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 33C5960351
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752857AbeFHLeT (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 07:34:19 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:38687 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752650AbeFHLeQ (ORCPT
+        id S933425AbeFKL7W (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 07:59:22 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:53571 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933093AbeFKL7S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 07:34:16 -0400
-Received: by mail-wr0-f193.google.com with SMTP id e18-v6so4800671wrs.5
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 04:34:16 -0700 (PDT)
+        Mon, 11 Jun 2018 07:59:18 -0400
+Received: by mail-wm0-f68.google.com with SMTP id x6-v6so14146527wmc.3;
+        Mon, 11 Jun 2018 04:59:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=N9Wt8Hq2FQvP/yu4lvLbwfgPZukhpHybUyvWcgfPzwg=;
-        b=gAQKXfLTExbBk6wraS6pMC2GNqb9fxwkIv2ylm2uUHpT85SM//OKIzaBPFntIEWIRr
-         IAsqeswyjKY36OzGIT9/ah5B33tffnCgKgGEuQid6Z+Hs8pObna6e58xyW8H6e4mfYDP
-         7ffwH8/0rZtsPPD4IsEthl/y95K2aU8I1Lj2I=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=nW4Y3Hmy+etDpn8UpYab7hHeguWXF8Ildaizkt5vMig=;
+        b=jXD/Iyy03fsgQRBWRWkumqAwX5T6n6zd2JLlFSb2c/dr4SyPKWitCaiJaaRooVM8RA
+         qUNsEZah6kMSuDluJRUxzb2WlFRs5h75HkicXBQe5aHO8L6ETTUsTGzdLDvs8g51wWxQ
+         Q8tswYFLIu6d19TVpt6OVZ8qPadBXCy7S6hXv9cO2e2rktvHK9Xl+/mcxtJGsRMdqDVm
+         yls+pfuh0XV5K9BDGHNfvUbYX5GBLCJb1EF/k5l/mVG/XSkQw60j8l2QWsYSxxxmJira
+         FqJpV+i1Y30azfwwASLgQNDClg8riA0mMSFYyHBcniDLwH7qimyo0Y9D3cjYRNnGH4L2
+         QlbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=N9Wt8Hq2FQvP/yu4lvLbwfgPZukhpHybUyvWcgfPzwg=;
-        b=rjIqB4KzmnlWCXz/3KFMupbGJCyoEJ2VJxty3YuAcA1ZkHLZjdVtNsNwrWNc454TJo
-         wf8uTdxMspaWFg/uSwWOU8/NiqVwv9bPlrZZQrTR04k+IU6xJsEPB8X6v5YRnu/qAFUi
-         o0txh7O0vzq//MeX5k7y2gnQw0H9m5SCe4q3BA6uMcdqtJkjgyRIVdDEn+zSeOnNppAg
-         i7r9DbQHhNdc4cLWTz2PvPrTl99TyA/Vbjs5Ot/svhOx33piKPb13D43SAwtxJkmtXni
-         EhhLsExSPtVXXGtkHPcpUMSgq8bOq080nJEfnb/mi27ekdB+TVfbFP469Fvk7JVtZ17/
-         2qUg==
-X-Gm-Message-State: APt69E2AuLoIqEIb8k5VCT4fgNVYZnSQjO+j2vGBaOV+f/bo6Nqfzvar
-        jn+/uc1o6WNW10/CFS9xuVpu7A==
-X-Google-Smtp-Source: ADUXVKL8WJ1H/3Gn542/ynitd0NWxnDRhkhtrlCJQEn9pNKCjYDqlwjMVk/5j48DEfcI+gQBFZH2Lw==
-X-Received: by 2002:adf:9441:: with SMTP id 59-v6mr4532695wrq.274.1528457655357;
-        Fri, 08 Jun 2018 04:34:15 -0700 (PDT)
-Received: from [192.168.0.18] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.googlemail.com with ESMTPSA id b74-v6sm2325788wmi.13.2018.06.08.04.34.13
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=nW4Y3Hmy+etDpn8UpYab7hHeguWXF8Ildaizkt5vMig=;
+        b=oWpkib26BbAUwAfp55cqAbaQSl5llYMqAzQi8jkhgD/R56cW9W2CyLR4YPCuec/xRI
+         PjpptPXZNt3IT/zRiu4beNaP/NJ5bK/DGhYuEgtalhsYeTUhUzoBJI4/DY8tnbzzSmH8
+         3031nMl6/VqfuqepCD/T2V4pVpo58KbAVTa5A9pfyorWErs0mQCmeGOX3C1dNB9/T2Yd
+         OiTR+S04761K70/ZLT7TzxYg1gI/gcLxGxMm3I3DNbwehoP7ZBsmsS9lv50stYHM62kX
+         ra5u+MBea/jyxkJvew9db7ETM1yP64tA92XwQCBTTwuEAGvcXNoVJKeTf+1Crvu6S6qG
+         Nglw==
+X-Gm-Message-State: APt69E1UaYix2wGY/hVOun/0z9UxqvioJiKYW6QXHbDiSWYtHymubiYN
+        q2uKm+pi0HI+nEF9H6X39ZFMAQAb
+X-Google-Smtp-Source: ADUXVKL4v2cEI99gDRGudZ/MnhQyWGsJPYHZ9/UC9drmIG09W/WEOHvJQaBoqZQmaf0RuzfDHBd8Xw==
+X-Received: by 2002:a1c:e306:: with SMTP id a6-v6mr7369420wmh.15.1528718356633;
+        Mon, 11 Jun 2018 04:59:16 -0700 (PDT)
+Received: from kurokawa.lan (ip-86-49-107-50.net.upcbroadband.cz. [86.49.107.50])
+        by smtp.gmail.com with ESMTPSA id t124-v6sm7974796wmt.29.2018.06.11.04.59.15
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Jun 2018 04:34:14 -0700 (PDT)
-Subject: Re: [PATCH v3 1/3] nvmem: Update the OF binding to use a subnode for
- the cells list
-To: Alban <albeu@free.fr>
-Cc: linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        devicetree@vger.kernel.org, linux-mtd@lists.infradead.org
-References: <1521933899-362-1-git-send-email-albeu@free.fr>
- <1521933899-362-2-git-send-email-albeu@free.fr>
- <344e0087-7410-aebb-8a66-c6976064df10@linaro.org>
- <20180417165420.423a691b@avionic-0020>
- <8c4b48ad-e99e-030a-a4ee-b6df0fa59c79@linaro.org>
- <20180417180040.04f53495@avionic-0020> <20180418134119.2e587621@avionic-0020>
- <9f7d2987-b33e-79b5-ae58-2985fd7334e4@linaro.org>
- <20180418143243.3c23493c@avionic-0020>
- <e34619a4-e9b6-9945-a1cc-a3680aac6819@linaro.org>
- <20180418153440.187ed16e@avionic-0020>
- <d30656d6-f17e-6ed0-251f-2b59d02cd202@linaro.org>
- <20180607184155.6da38a01@tock>
- <0fb0e8e9-e7b8-10c3-fcdd-399c73a33878@linaro.org>
- <20180608125938.4fd457a0@tock>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <cd7a0085-66cd-308e-a950-cd0eb96db945@linaro.org>
-Date: Fri, 8 Jun 2018 12:34:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <20180608125938.4fd457a0@tock>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 11 Jun 2018 04:59:15 -0700 (PDT)
+From: Marek Vasut <marek.vasut@gmail.com>
+X-Google-Original-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v6 10/14] mfd: da9063: Add custom regmap for DA9063L
+Date: Mon, 11 Jun 2018 13:58:47 +0200
+Message-Id: <20180611115851.1987-10-marek.vasut+renesas@gmail.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
+References: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The DA9063L does not have an RTC. Add custom regmap for DA9063L to
+prevent access into that register block.
 
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+---
+V3: New patch
+V4: Drop mention of buggy datasheet in the commit message
+V5: Use regmap_reg_range macro
+V6: No change
+---
+ drivers/mfd/da9063-i2c.c | 48 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
-On 08/06/18 11:59, Alban wrote:
-> On Thu, 7 Jun 2018 18:03:16 +0100
-> Srinivas Kandagatla <srinivas.kandagatla@linaro.org> wrote:
-> 
->> On 07/06/18 17:41, Alban wrote:
->>> AFAIU the only thing that we disagree on now is if the nodes
->>> representing the cells should be direct children of the provider
->>> or in a dedicated subnode. For the MTD case both solution would solve
->>> the binding clash. I would really appreciate if the DT people could
->> Am reluctant in changing the nvmem generic bindings for a special case.
-> 
-> Where I think the generic binding is fundamentally flawed, as this
-> problem will most probably appear again. But do note that my proposal
-
-It depends from which side you are looking at this!!
-
-There are more than 16 nvmem providers in kernel which use this bindings 
-and they are fine!!
-
-I obviously take some of your concerns w.r.t bindings and there is a 
-scope of making the bindings much robust, most importantly the #address 
-and #size-cells. But having a subnode still sounds very fragile to me, 
-and this could be much specific case of MTD provider. We might have 
-instances where this could be sub-sub node of the the original provider 
-for other providers. Also I do not want to bring in Provider specifics 
-into this bindings. If single level of subnode works for your case and 
-the below patch works for you then I would recommend lets move on and 
-try to get this going.
-
-> doesn't require updating the dts using the original binding, both are
-> still supported. I proposed deprecating the current binding because I
-> think it is flawed, but we could also "officially" support both style.
-> 
->> Can you try this with your original subnode proposal:
->> just pass the subnode node pointer in np of nvmem_config:
->>
->> ------------------------->cut<------------------------------------
->> diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
->> index b05aa8e81303..c9621632bbfb 100644
->> --- a/drivers/nvmem/core.c
->> +++ b/drivers/nvmem/core.c
->> @@ -472,7 +472,11 @@ struct nvmem_device *nvmem_register(const struct
->> nvmem_config *config)
->>           nvmem->priv = config->priv;
->>           nvmem->reg_read = config->reg_read;
->>           nvmem->reg_write = config->reg_write;
->> -       nvmem->dev.of_node = config->dev->of_node;
->> +
->> +       if (config->np)
->> +               nvmem->dev.of_node = config->np;
->> +       else
->> +               nvmem->dev.of_node = config->dev->of_node;
->>
->>           if (config->id == -1 && config->name) {
->>                   dev_set_name(&nvmem->dev, "%s", config->name);
->> diff --git a/include/linux/nvmem-provider.h
->> b/include/linux/nvmem-provider.h index f89598bc4e1c..743345ffe2c8
->> 100644 --- a/include/linux/nvmem-provider.h
->> +++ b/include/linux/nvmem-provider.h
->> @@ -49,6 +49,7 @@ typedef int (*nvmem_reg_write_t)(void *priv,
->> unsigned int offset,nvmem_device_get(
->>     */
->>    struct nvmem_config {
->>           struct device           *dev;
->> +       struct device_node      *np;
->>           const char              *name;
->>           int                     id;
->>           struct module           *owner;
->>
->> ------------------------->cut<------------------------------------
-> 
-> That should work just fine to allow next to any kind of binding.
-> I'll do a new patch using this approach for the code side and leaving
-> the generic binding as it is.
-Sure!!
-This will give more flexibility to other provider drivers!
-
-
-thanks,
-srini
-> 
-> Alban
-> 
+diff --git a/drivers/mfd/da9063-i2c.c b/drivers/mfd/da9063-i2c.c
+index 6fe9c3464b41..a449a9263dd7 100644
+--- a/drivers/mfd/da9063-i2c.c
++++ b/drivers/mfd/da9063-i2c.c
+@@ -118,6 +118,50 @@ static const struct regmap_access_table da9063_bb_volatile_table = {
+ 	.n_yes_ranges = ARRAY_SIZE(da9063_bb_volatile_ranges),
+ };
+ 
++static const struct regmap_range da9063l_bb_readable_ranges[] = {
++	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_REG_MON_A10_RES),
++	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_ID_32_31),
++	regmap_reg_range(DA9063_REG_SEQ_A, DA9063_REG_AUTO3_LOW),
++	regmap_reg_range(DA9063_REG_T_OFFSET, DA9063_BB_REG_GP_ID_19),
++	regmap_reg_range(DA9063_REG_CHIP_ID, DA9063_REG_CHIP_VARIANT),
++};
++
++static const struct regmap_range da9063l_bb_writeable_ranges[] = {
++	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_REG_PAGE_CON),
++	regmap_reg_range(DA9063_REG_FAULT_LOG, DA9063_REG_VSYS_MON),
++	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_ID_32_31),
++	regmap_reg_range(DA9063_REG_SEQ_A, DA9063_REG_AUTO3_LOW),
++	regmap_reg_range(DA9063_REG_CONFIG_I, DA9063_BB_REG_MON_REG_4),
++	regmap_reg_range(DA9063_BB_REG_GP_ID_0, DA9063_BB_REG_GP_ID_19),
++};
++
++static const struct regmap_range da9063l_bb_volatile_ranges[] = {
++	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_REG_EVENT_D),
++	regmap_reg_range(DA9063_REG_CONTROL_A, DA9063_REG_CONTROL_B),
++	regmap_reg_range(DA9063_REG_CONTROL_E, DA9063_REG_CONTROL_F),
++	regmap_reg_range(DA9063_REG_BCORE2_CONT, DA9063_REG_LDO11_CONT),
++	regmap_reg_range(DA9063_REG_DVC_1, DA9063_REG_ADC_MAN),
++	regmap_reg_range(DA9063_REG_ADC_RES_L, DA9063_REG_MON_A10_RES),
++	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_SEQ),
++	regmap_reg_range(DA9063_REG_EN_32K, DA9063_REG_EN_32K),
++	regmap_reg_range(DA9063_BB_REG_MON_REG_5, DA9063_BB_REG_MON_REG_6),
++};
++
++static const struct regmap_access_table da9063l_bb_readable_table = {
++	.yes_ranges = da9063l_bb_readable_ranges,
++	.n_yes_ranges = ARRAY_SIZE(da9063l_bb_readable_ranges),
++};
++
++static const struct regmap_access_table da9063l_bb_writeable_table = {
++	.yes_ranges = da9063l_bb_writeable_ranges,
++	.n_yes_ranges = ARRAY_SIZE(da9063l_bb_writeable_ranges),
++};
++
++static const struct regmap_access_table da9063l_bb_volatile_table = {
++	.yes_ranges = da9063l_bb_volatile_ranges,
++	.n_yes_ranges = ARRAY_SIZE(da9063l_bb_volatile_ranges),
++};
++
+ static const struct regmap_range_cfg da9063_range_cfg[] = {
+ 	{
+ 		.range_min = DA9063_REG_PAGE_CON,
+@@ -164,6 +208,10 @@ static int da9063_i2c_probe(struct i2c_client *i2c,
+ 		da9063_regmap_config.rd_table = &da9063_ad_readable_table;
+ 		da9063_regmap_config.wr_table = &da9063_ad_writeable_table;
+ 		da9063_regmap_config.volatile_table = &da9063_ad_volatile_table;
++	} else if (da9063->type == PMIC_TYPE_DA9063L) {
++		da9063_regmap_config.rd_table = &da9063l_bb_readable_table;
++		da9063_regmap_config.wr_table = &da9063l_bb_writeable_table;
++		da9063_regmap_config.volatile_table = &da9063l_bb_volatile_table;
+ 	} else {
+ 		da9063_regmap_config.rd_table = &da9063_bb_readable_table;
+ 		da9063_regmap_config.wr_table = &da9063_bb_writeable_table;
+-- 
+2.16.2
