@@ -2,114 +2,80 @@ Return-Path: <SRS0=KDb5=I5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 75345C004E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 20:04:41 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 04840C004E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 20:06:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F29FA20839
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 20:04:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="O1C2p8oi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F29FA20839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	by mail.kernel.org (Postfix) with ESMTP id 79A532086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 20:06:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79A532086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933604AbeFKUEi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 16:04:38 -0400
-Received: from mail.efficios.com ([167.114.142.138]:49166 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932139AbeFKUEf (ORCPT
+        id S1754139AbeFKUGL (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 16:06:11 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:35744 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753786AbeFKUGK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 16:04:35 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 84B3D1BCA1E;
-        Mon, 11 Jun 2018 16:04:34 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id bj48XmxqSzyl; Mon, 11 Jun 2018 16:04:34 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 07DF11BCA1B;
-        Mon, 11 Jun 2018 16:04:34 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 07DF11BCA1B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1528747474;
-        bh=ILK2XKVdRd6EjsYTUwT5pnIka5COcALqHFTsCN1LG6s=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=O1C2p8oiGDHzOkfczH2ELHLr4BoJHQM18czFhKNiyK7K2zuCZZqWxjjmJGFpo4EFd
-         sHwgnM/IeHir0QHUHaSznzx15BWJGqogsxilyEpRBFiqxVa/UoTXMuAWFMUjYIHhBu
-         n4VS5WE4WV0vzhXLlkvhE7ENk3yDqKlBKLKia4pAy0Kg7Cnvp/wKbz08+kQqPfnnIc
-         wUq40fxzWIfnzRRfQArkwn82KI6t0ZQw6p1frmy9AqPgh4nlChsTRXKezihovE6Wg4
-         IJks0Np3MoYIXHwRtzOmS/Z8rjMSV84ShT09pDimc3lQKI33YUQ+fG3rG5o+eNGM3b
-         SCTjl3uTupu2w==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id DuMJsdJj0jce; Mon, 11 Jun 2018 16:04:33 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id E47C31BCA12;
-        Mon, 11 Jun 2018 16:04:33 -0400 (EDT)
-Date:   Mon, 11 Jun 2018 16:04:33 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     Carlos O'Donell <carlos@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        libc-alpha <libc-alpha@sourceware.org>
-Message-ID: <305409897.10888.1528747473727.JavaMail.zimbra@efficios.com>
-In-Reply-To: <31fc101a-295b-067b-1a82-7e9e509fc92f@redhat.com>
-References: <1084280721.10859.1528746558696.JavaMail.zimbra@efficios.com> <31fc101a-295b-067b-1a82-7e9e509fc92f@redhat.com>
-Subject: Re: Restartable Sequences system call merged into Linux
+        Mon, 11 Jun 2018 16:06:10 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1fST4j-0005qZ-Sy; Mon, 11 Jun 2018 20:06:01 +0000
+Date:   Mon, 11 Jun 2018 21:06:01 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     Stephane Eranian <eranian@google.com>
+Cc:     willy@infradead.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        hch@infradead.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, "Luck, Tony" <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>, linux-ia64@vger.kernel.org
+Subject: Re: perfmon trouble
+Message-ID: <20180611200601.GW30522@ZenIV.linux.org.uk>
+References: <20180608184842.GD30522@ZenIV.linux.org.uk>
+ <CA+55aFz9cS3m=wZxqKbzrCLEjhPoPddKw5U2MDKNqbG79Wx6bw@mail.gmail.com>
+ <20180609051051.GF30522@ZenIV.linux.org.uk>
+ <20180609155107.GH30522@ZenIV.linux.org.uk>
+ <20180611021028.GT30522@ZenIV.linux.org.uk>
+ <20180611162313.GA6942@infradead.org>
+ <20180611164859.GA28292@bombadil.infradead.org>
+ <CA+55aFykGPDTVN=UvrcDvwV3S_sixXREu8D7eK+x695OmA2PNw@mail.gmail.com>
+ <20180611171811.GB28292@bombadil.infradead.org>
+ <CABPqkBTwqtFxtFsCjTNyHa_T1_vCbCQWHwo42RZAbg0QRi1BFw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
-Thread-Topic: Restartable Sequences system call merged into Linux
-Thread-Index: zhJcsiSjFFTw3hSbC6qfc+ihAyNZFQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABPqkBTwqtFxtFsCjTNyHa_T1_vCbCQWHwo42RZAbg0QRi1BFw@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jun 11, 2018, at 3:55 PM, Florian Weimer fweimer@redhat.com wrote:
+On Mon, Jun 11, 2018 at 11:51:34AM -0700, Stephane Eranian wrote:
 
-> On 06/11/2018 09:49 PM, Mathieu Desnoyers wrote:
->> It should be noted that there can be only one rseq TLS area registered per
->> thread,
->> which can then be used by many libraries and by the executable, so this is a
->> process-wide (per-thread) resource that we need to manage carefully.
-> 
-> Is it possible to resize the area after thread creation, perhaps even
-> from other threads?
+> Thanks Al for the careful analysis. If I understand correctly, the
+> problem seems to be that on
+> execve the mapping of the sampling buffer is not destroyed and then on
+> close, the kernel
+> unmaps whatever the new binary had in that address range. The fix
+> would be to ensure
+> the mmap is destroyed on execve.
 
-I'm not sure why we would want to resize it. The per-thread area is fixed-size.
-Its layout is here: include/uapi/linux/rseq.h: struct rseq
+mmap *is* destroyed on execve; it's just that perfmon doesn't notice and
+then tries to destroy it again on close, nevermind that it's a different
+process, different mapping, etc.
 
-The ABI is designed so that all users (program and libraries) can interact
-through this per-thread TLS area.
+> My problem is that I do not have IA64 hw anymore, so whatever the fix,
+> I will not be able
+> to test this. In the meantime, I agree with Matthew, simply disable
+> PERFMON support.
 
-> 
-> If there is only one contiguous area, this generally means there needs
-> to be linker support, similar to what we have for initial-exec TLS today.
-
-Not entirely sure what you imply by "one contiguous area". All we need is
-a single fixed-size TLS area for each thread.
-
-Thanks,
-
-Mathieu
-
-> 
-> Thanks,
-> Florian
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+Out of curiosity - what happened to never-went-into-mainline rewrite
+of perfmon circa 2008?  perfmon2 sourceforget site has a collection
+of those, up to 2.6.29; AFAICS, they did have a somewhat saner syscall
+interface (no auto-mmap on creation, no auto-munmap attempts on close).
+By this point it obviously would've been too late to resurrect anyway,
+but I wonder what happened with it...
