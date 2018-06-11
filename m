@@ -1,137 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id lXDPC8JhHlttSAAAmS7hNA
-	; Mon, 11 Jun 2018 11:50:31 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id i4KRAf+7HVt2QQAAmS7hNA
+	; Mon, 11 Jun 2018 00:02:07 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 83FA2607A4; Mon, 11 Jun 2018 11:50:31 +0000 (UTC)
+	id DD86A60791; Mon, 11 Jun 2018 00:02:06 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QTe9zRkF"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id F074060541;
-	Mon, 11 Jun 2018 11:50:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F074060541
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 539C9606DD;
+	Mon, 11 Jun 2018 00:02:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 539C9606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933023AbeFKLu2 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Mon, 11 Jun 2018 07:50:28 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:49661 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932942AbeFKLu0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 07:50:26 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id E858820981; Mon, 11 Jun 2018 13:50:23 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-37-30.w90-88.abo.wanadoo.fr [90.88.156.30])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 70F36207A5;
-        Mon, 11 Jun 2018 13:50:13 +0200 (CEST)
-Date: Mon, 11 Jun 2018 13:50:13 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Stefan Agner <stefan@agner.ch>, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
-        dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
-        marcel@ziswiler.com, krzk@kernel.org, benjamin.lindqvist@endian.se,
-        jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        mirza.krak@gmail.com, linux-mtd@lists.infradead.org,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/6] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-Message-ID: <20180611135013.7bb5b59b@bbrezillon>
-In-Reply-To: <1862022.905gDpZtpO@dimapc>
-References: <20180531221637.6017-1-stefan@agner.ch>
-        <1868760.y7shk6NfjH@dimapc>
-        <20180610173202.680d2ee8@bbrezillon>
-        <1862022.905gDpZtpO@dimapc>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1753753AbeFKACC (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Sun, 10 Jun 2018 20:02:02 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59146 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753543AbeFKACB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Jun 2018 20:02:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=MECGkKJZzYlG7jN8XJaKLpiX0XNvdAcN/ORM6wjho9g=; b=QTe9zRkFPjq+NK60Pmmt4UgmE
+        EGKT0+7A1OPaTZrUiHJB/CPnjFCh97VWGJe0hH/jok0x0BhB2pc6F+8JV3C9gqyFrbG/dqa8t/Ryu
+        AjfbVWKVB/7fy1wP9u46LUDTJbWiuHRaHb3WweZU49+peG5b9Lv0NoF2OMBa1y1I89HSTy592ZicN
+        F4zvMGGge+RBHJZM6k85pDxDkhIS3PJIOlW1rjCBnYBceSV358qx2B+ZwLtqoD7i8/Y0XfVWmUqXC
+        gMZfSBqm2zruzGYZfLUEDQiMT9zSspbCHmMLvoWErkLEn+hiqj6fC8pPo90A9rB25MGqOHxD8g+/W
+        pLzB74R9Q==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fSAHV-00034f-95; Mon, 11 Jun 2018 00:01:57 +0000
+Subject: Re: [mmotm:master 192/212] include/uapi/asm-generic/int-ll64.h:20:1:
+ error: expected '=', ',', ';', 'asm' or '__attribute__' before 'typedef'
+To: kbuild test robot <lkp@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc: kbuild-all@01.org,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+References: <201806081045.eZrs5GGH%fengguang.wu@intel.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <533c0099-d2be-8fea-fe2f-1453ea049c33@infradead.org>
+Date: Sun, 10 Jun 2018 17:01:48 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <201806081045.eZrs5GGH%fengguang.wu@intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 11 Jun 2018 14:45:45 +0300
-Dmitry Osipenko <digetx@gmail.com> wrote:
-
-> On Sunday, 10 June 2018 18:32:02 MSK Boris Brezillon wrote:
-> > On Sun, 10 Jun 2018 18:00:06 +0300
-> > 
-> > Dmitry Osipenko <digetx@gmail.com> wrote:  
-> > > > >> That seems a lot of work for a code path I do not intend to ever use
-> > > > >> :-)  
-> > > > > 
-> > > > > Are you sure that resetting HW resets the timing and other registers
-> > > > > configuration? Reset implementation is HW-specific, like for example
-> > > > > in a
-> > > > > case of a video decoder the registers state is re-intialized on HW
-> > > > > reset,
-> > > > > but registers configuration is untouched in a case of resetting GPU.
-> > > > > I'd
-> > > > > suggest to check whether NAND controller resetting affects the HW
-> > > > > configuration.  
-> > > > 
-> > > > It seems all registers are set back to their documented reset value:
-> > > > 
-> > > > [boot loader/ROM initialized values]
-> > > > [    1.270253] tegra-nand 70008000.nand: Tegra NAND controller register
-> > > > dump
-> > > > [    1.277051] tegra-nand 70008000.nand: COMMAND: 0x66880104
-> > > > [    1.282457] tegra-nand 70008000.nand: STATUS: 0x00000101
-> > > > [    1.287763] tegra-nand 70008000.nand: ISR: 0x01000120
-> > > > [    1.292818] tegra-nand 70008000.nand: IER: 0x00000000
-> > > > [    1.297863] tegra-nand 70008000.nand: CONFIG: 0x00840000
-> > > > [    1.303181] tegra-nand 70008000.nand: TIMING: 0x05040000
-> > > > [    1.308486] tegra-nand 70008000.nand: TIMING2: 0x00000003
-> > > > [    1.313897] tegra-nand 70008000.nand: CMD_REG1: 0x00000000
-> > > > [    1.319377] tegra-nand 70008000.nand: CMD_REG2: 0x00000030
-> > > > [    1.324868] tegra-nand 70008000.nand: ADDR_REG1: 0x03000000
-> > > > [    1.330435] tegra-nand 70008000.nand: ADDR_REG2: 0x00000000
-> > > > [    1.336011] tegra-nand 70008000.nand: DMA_MST_CTRL: 0x04100004
-> > > > [    1.341838] tegra-nand 70008000.nand: DMA_CFG_A: 0x00000fff
-> > > > [    1.347415] tegra-nand 70008000.nand: DMA_CFG_B: 0x0000001b
-> > > > [    1.352991] tegra-nand 70008000.nand: FIFO_CTRL: 0x0000aa00
-> > > > [reset]
-> > > > [    1.358559] tegra-nand 70008000.nand: Tegra NAND controller register
-> > > > dump
-> > > > [    1.365352] tegra-nand 70008000.nand: COMMAND: 0x00800004
-> > > > [    1.370744] tegra-nand 70008000.nand: STATUS: 0x00000101
-> > > > [    1.376060] tegra-nand 70008000.nand: ISR: 0x00000100
-> > > > [    1.381105] tegra-nand 70008000.nand: IER: 0x00000000
-> > > > [    1.386161] tegra-nand 70008000.nand: CONFIG: 0x10030000
-> > > > [    1.391466] tegra-nand 70008000.nand: TIMING: 0x00000000
-> > > > [    1.396782] tegra-nand 70008000.nand: TIMING2: 0x00000000
-> > > > [    1.402174] tegra-nand 70008000.nand: CMD_REG1: 0x00000000
-> > > > [    1.407664] tegra-nand 70008000.nand: CMD_REG2: 0x00000000
-> > > > [    1.413156] tegra-nand 70008000.nand: ADDR_REG1: 0x00000000
-> > > > [    1.418722] tegra-nand 70008000.nand: ADDR_REG2: 0x00000000
-> > > > [    1.424297] tegra-nand 70008000.nand: DMA_MST_CTRL: 0x24000000
-> > > > [    1.430123] tegra-nand 70008000.nand: DMA_CFG_A: 0x00000000
-> > > > [    1.435698] tegra-nand 70008000.nand: DMA_CFG_B: 0x00000000
-> > > > [    1.441264] tegra-nand 70008000.nand: FIFO_CTRL: 0x0000aa00  
-> > > 
-> > > Alright, then indeed it's not really worth to bother with HW resetting
-> > > here. Probably only a kernel module reload or a reboot will help if HW is
-> > > hung. Maybe NAND controller / chip recovering is something that NAND core
-> > > should be handling in a such case by providing a nand_controller_reset()
-> > > hook?  
-> > I don't see what the core could do to help with that. We'd end up with
-> > a new hook implemented by the controller that would be called by the
-> > controller driver when it knows it's safe to reset the controller. So,
-> > why bother exposing that in the core?  
+On 06/07/2018 07:06 PM, kbuild test robot wrote:
+> tree:   git://git.cmpxchg.org/linux-mmotm.git master
+> head:   7393732bae530daa27567988b91d16ecfeef6c62
+> commit: b1a8bfbadbcb79644ccdd5f9cd370caa63cb1fa7 [192/212] linux-next-git-rejects
+> config: i386-randconfig-s0-201822-CONFIG_DEBUG_INFO_REDUCED (attached as .config)
+> compiler: gcc-6 (Debian 6.4.0-9) 6.4.0 20171026
+> reproduce:
+>         git checkout b1a8bfbadbcb79644ccdd5f9cd370caa63cb1fa7
+>         # save the attached .config to linux build tree
+>         make ARCH=i386 
 > 
-> Giving a driver more flexibility is always a good thing. I'm not really 
-> familiar with mtd/ and maybe indeed it doesn't make much sense to move HW 
-> resetting to NAND core, though it looked to me that it should be always safe 
-> for NAND core to initiate HW resetting after IO failure and hence would be 
-> cleaner and nicer to have a unified HW reset management rather than to have 
-> each driver to do its own thing.
+> All errors (new ones prefixed by >>):
+> 
+>    In file included from include/asm-generic/int-ll64.h:11:0,
+>                     from include/uapi/asm-generic/types.h:7,
+>                     from arch/x86/include/uapi/asm/types.h:5,
+>                     from include/uapi/linux/types.h:5,
+>                     from include/linux/types.h:6,
+>                     from net/ipv4/ipconfig.c:36:
+>>> include/uapi/asm-generic/int-ll64.h:20:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'typedef'
+>     typedef __signed__ char __s8;
+>     ^~~~~~~
 
-No really, the NAND core can't know when it's appropriate to reset the
-controller, and what this reset will do, hence it doesn't know if the
-chips connected to the controller should also be reset.
+The problem here was that net/ipv4/ipconfig.c begins like this:
+
+q// SPDX-License-Identifier: GPL-2.0
+
+Did anyone fix that?
+
+
+-- 
+~Randy
