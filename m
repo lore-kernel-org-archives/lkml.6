@@ -1,101 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id vDIQBPERHltSVAAAmS7hNA
-	; Mon, 11 Jun 2018 06:09:20 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id XyEtO9HsHVv4MAAAmS7hNA
+	; Mon, 11 Jun 2018 03:30:47 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 21EF960792; Mon, 11 Jun 2018 06:09:20 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GTX1R5YC"
+	id 4FC2D60792; Mon, 11 Jun 2018 03:30:47 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 93312605A5;
-	Mon, 11 Jun 2018 06:09:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 93312605A5
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id D7F31604D4;
+	Mon, 11 Jun 2018 03:30:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D7F31604D4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754061AbeFKGJR (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 02:09:17 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:33039 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753899AbeFKGJO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 02:09:14 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllnx209.ext.ti.com (8.15.1/8.15.1) with ESMTP id w5B69DsI023908;
-        Mon, 11 Jun 2018 01:09:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1528697353;
-        bh=L6x7BXFfZq4J33aNcoyEGfU0AdUiYPQLJwyUwVVv/o8=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=GTX1R5YCq7WeXAcOwh024fg7yWE6qDIBkE2l3foKMpPRvpyHbNMlkh0fj1wWPA1Ko
-         VO8N+OaTc8Y7FHQ8v9OXI2PyruNjheNvzLx1mu3DjxImmCISpD+lJHPXA9IqtMJVAG
-         KDOvHSe4IET4cN4YdpkoRZxvKjZd02U5jvUkwnzo=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5B69DVr028780;
-        Mon, 11 Jun 2018 01:09:13 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 11
- Jun 2018 01:09:13 -0500
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Mon, 11 Jun 2018 01:09:13 -0500
-Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5B697IH016033;
-        Mon, 11 Jun 2018 01:09:12 -0500
-From: Vignesh R <vigneshr@ti.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-CC: <linux-pwm@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Vignesh R <vigneshr@ti.com>
-Subject: [PATCH 2/2] pwm: pwm-tiehrpwm: Fix disabling of output of PWMs
-Date: Mon, 11 Jun 2018 11:39:56 +0530
-Message-ID: <20180611060956.27999-3-vigneshr@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180611060956.27999-1-vigneshr@ti.com>
-References: <20180611060956.27999-1-vigneshr@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        id S932612AbeFKDao (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Sun, 10 Jun 2018 23:30:44 -0400
+Received: from gate.crashing.org ([63.228.1.57]:47585 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932328AbeFKDam (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Jun 2018 23:30:42 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w5B3TIbr013800;
+        Sun, 10 Jun 2018 22:29:20 -0500
+Message-ID: <07b804fccd7373c650be79ac9fa77ae7f2375ced.camel@kernel.crashing.org>
+Subject: Re: [RFC V2] virtio: Add platform specific DMA API translation for
+ virito devices
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: Ram Pai <linuxram@us.ibm.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Christoph Hellwig <hch@infradead.org>, robh@kernel.org,
+        pawel.moll@arm.com, Tom Lendacky <thomas.lendacky@amd.com>,
+        aik@ozlabs.ru, jasowang@redhat.com, cohuck@redhat.com,
+        linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, joe@perches.com,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        david@gibson.dropbear.id.au, linuxppc-dev@lists.ozlabs.org,
+        elfring@users.sourceforge.net,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Date: Mon, 11 Jun 2018 13:29:18 +1000
+In-Reply-To: <20180611023909.GA5726@ram.oc3035372033.ibm.com>
+References: <20180522063317.20956-1-khandual@linux.vnet.ibm.com>
+         <20180523213703-mutt-send-email-mst@kernel.org>
+         <20180524072104.GD6139@ram.oc3035372033.ibm.com>
+         <0c508eb2-08df-3f76-c260-90cf7137af80@linux.vnet.ibm.com>
+         <20180531204320-mutt-send-email-mst@kernel.org>
+         <20180607052306.GA1532@infradead.org>
+         <20180607185234-mutt-send-email-mst@kernel.org>
+         <20180611023909.GA5726@ram.oc3035372033.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pwm-tiehrpwm driver disables PWM output by putting it in low output
-state via active AQCSFRC register in ehrpwm_pwm_disable(). But, the
-AQCSFRC shadow register is not updated. Therefore, when shadow AQCSFRC
-register is re-enabled in ehrpwm_pwm_enable() (say to enable second PWM
-output), previous settings are lost as shadow register value is loaded
-into active register. This results in things like PWMA getting enabled
-automatically, when PWMB is enabled and vice versa. Fix this by
-updating AQCSFRC shadow register as well during ehrpwm_pwm_disable().
+On Sun, 2018-06-10 at 19:39 -0700, Ram Pai wrote:
+> 
+> However if the administrator
+> ignores/forgets/deliberatey-decides/is-constrained to NOT enable the
+> flag, virtio will not be able to pass control to the DMA ops associated
+> with the virtio devices. Which means, we have no opportunity to share
+> the I/O buffers with the hypervisor/qemu.
+> 
+> How do you suggest, we handle this case?
 
-Fixes: 19891b20e7c2 ("pwm: pwm-tiehrpwm: PWM driver support for EHRPWM")
-Cc: stable@vger.kernel.org
-Signed-off-by: Vignesh R <vigneshr@ti.com>
----
- drivers/pwm/pwm-tiehrpwm.c | 2 ++
- 1 file changed, 2 insertions(+)
+At the risk of repeating myself, let's just do the first pass which is
+to switch virtio over to always using the DMA API in the actual data
+flow code, with a hook at initialization time that replaces the DMA ops
+with some home cooked "direct" ops in the case where the IOMMU flag
+isn't set.
 
-diff --git a/drivers/pwm/pwm-tiehrpwm.c b/drivers/pwm/pwm-tiehrpwm.c
-index 768176f54d5e..f7b8a86fa5c5 100644
---- a/drivers/pwm/pwm-tiehrpwm.c
-+++ b/drivers/pwm/pwm-tiehrpwm.c
-@@ -381,6 +381,8 @@ static void ehrpwm_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
- 		aqcsfrc_mask = AQCSFRC_CSFA_MASK;
- 	}
- 
-+	/* Update shadow register first before modifying active register */
-+	ehrpwm_modify(pc->mmio_base, AQCSFRC, aqcsfrc_mask, aqcsfrc_val);
- 	/*
- 	 * Changes to immediate action on Action Qualifier. This puts
- 	 * Action Qualifier control on PWM output from next TBCLK
--- 
-2.17.1
+This will be equivalent to what we have today but avoids having 2
+separate code path all over the driver.
+
+Then a second stage, I think, is to replace this "hook" so that the
+architecture gets a say in the matter.
+
+Basically, something like:
+
+	arch_virtio_update_dma_ops(pci_dev, qemu_direct_mode).
+
+IE, virtio would tell the arch whether the "other side" is in fact QEMU
+in a mode that bypasses the IOMMU and is cache coherent with the guest.
+This is our legacy "qemu special" mode. If the performance is
+sufficient we may want to deprecate it over time and have qemu enable
+the iommu by default but we still need it.
+
+A weak implementation of the above will be provied that just puts in
+the direct ops when qemu_direct_mode is set, and thus provides today's
+behaviour on any arch that doesn't override it. If the flag is not set,
+the ops are left to whatever the arch PCI layer already set.
+
+This will provide the opportunity for architectures that want to do
+something special, such as in our case, when we want to force even the
+"qemu_direct_mode" to go via bounce buffers, to put our own ops in
+there, while retaining the legacy behaviour otherwise.
+
+It also means that the "gunk" is entirely localized in that one
+function, the rest of virtio just uses the DMA API normally.
+
+Christoph, are you actually hacking "stage 1" above already or should
+we produce patches ?
+
+Cheers,
+Ben.
