@@ -1,82 +1,124 @@
 Return-Path: <SRS0=KDb5=I5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI
+X-Spam-Level: **
+X-Spam-Status: No, score=2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,UNWANTED_LANGUAGE_BODY
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 767EFC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 19:37:24 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 44E2AC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 19:39:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 361A92086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 19:37:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 361A92086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E677A2086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 19:39:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LE+Rd43c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E677A2086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933946AbeFKThV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 15:37:21 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:34923 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933752AbeFKThU (ORCPT
+        id S934042AbeFKTjo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 15:39:44 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:41979 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932823AbeFKTjm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 15:37:20 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mailout.easymail.ca (Postfix) with ESMTP id 5955A21C47;
-        Mon, 11 Jun 2018 19:37:19 +0000 (UTC)
-Received: from mailout.easymail.ca ([127.0.0.1])
-        by localhost (emo02-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id nf6cCSFzimkX; Mon, 11 Jun 2018 19:37:19 +0000 (UTC)
-Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailout.easymail.ca (Postfix) with ESMTPSA id 3481821BAC;
-        Mon, 11 Jun 2018 19:37:05 +0000 (UTC)
-Subject: Re: [PATCH 4.17 00/15] 4.17.1-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>
-References: <20180609150000.746833461@linuxfoundation.org>
-From:   Shuah Khan <shuah@kernel.org>
-Message-ID: <ff28f8b8-15f6-f17b-df2f-9884cc315a98@kernel.org>
-Date:   Mon, 11 Jun 2018 13:37:05 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 11 Jun 2018 15:39:42 -0400
+Received: by mail-pf0-f195.google.com with SMTP id a11-v6so10770836pff.8;
+        Mon, 11 Jun 2018 12:39:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=X2hLEhf61E8TNoM8JyZCeslkEPZdJuF3n+7rqdu1BKw=;
+        b=LE+Rd43ci7ruw1AOF07ns62gSzUjqZVcrXw2tbfJ1fXyI6g7In9Zi37rN5rx/CsS6/
+         D6EviHfuN/lEu9ygv6QMfG89QwQviR5rWpcxXgOcMx50wr1UIfGaTq1dClMcbukv4BQp
+         fb/6S9TFfrFM0O2D9WJpd3WOS62SwAiecqqbePUbp5b9HpFdZTG0lv3CRW1FBcAOU3+S
+         s6vKp/SRy5PXcxEkiEarr1iToeiEUi/f2vfqVd6s9qQrCStVluKmO44pDS1dDFcdu5mk
+         4DV4WLj7TM2PGRQXM0W7wy/dPccsv2/qrnMEZvpO9ztmRQ/3FxpWfdIlMTCEMRs95K+S
+         KV0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=X2hLEhf61E8TNoM8JyZCeslkEPZdJuF3n+7rqdu1BKw=;
+        b=Dtal2Vs9wBV+PVzlw0WTW6hSVe44l+6yIPnQxqUe3PLJL8vn+RzOUBrG9yKV1t+sQW
+         3sQUIV5jmb70vzSGkiRHrnh2uJOsDjBsdIEvrIHCGWCxwswrDwMdMiyCwuNAw0kc1lpQ
+         UAMgYxkLQzUJq4MAYTd1bDkSB7/+V/cnwW2v9ZmZjUk1xDKhC2gR7aDpmClUBaGnCdo7
+         CGlEdAdPpclTlvBglpDHMhYAz9/8YMlRTOftSdiLFSGC9UQj/FcsAFw5jfthjh1wD+/H
+         9W8f3I2UTa150LYXMrUC6+DTnhxJw1+5Ic5FZIFiS31ETAZP7jsNxQmn+ZIBeZ1UmSss
+         MR/w==
+X-Gm-Message-State: APt69E0A3OiClL8g5fyEOyzVpvaIP6lE2m1BA1I/QwTD+QfkwIRyuSE/
+        R/MfJjRtEsVzbPv/NQcgWJE=
+X-Google-Smtp-Source: ADUXVKKLcUvViXb7rzI/av9eJ4+cqyv9KSrechrS0HojBGe9z4oOm5IjW5CnlIoZwfJdy2TcYLw0aA==
+X-Received: by 2002:a63:6e4e:: with SMTP id j75-v6mr424089pgc.125.1528745982239;
+        Mon, 11 Jun 2018 12:39:42 -0700 (PDT)
+Received: from jordon-HP-15-Notebook-PC ([183.82.16.65])
+        by smtp.gmail.com with ESMTPSA id p1-v6sm9402809pfh.58.2018.06.11.12.39.39
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 11 Jun 2018 12:39:40 -0700 (PDT)
+Date:   Tue, 12 Jun 2018 01:12:04 +0530
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     willy@infradead.org, manoj@linux.vnet.ibm.com,
+        mrochs@linux.vnet.ibm.com, ukrishn@linux.vnet.ibm.com,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sabyasachi.linux@gmail.com, brajeswar.linux@gmail.com
+Subject: [PATCH] scsi: cxlflash: Change return type for fault handler
+Message-ID: <20180611194204.GA18687@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-In-Reply-To: <20180609150000.746833461@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/09/2018 09:29 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.17.1 release.
-> There are 15 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Mon Jun 11 14:59:48 UTC 2018.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.17.1-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.17.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+Use new return type vm_fault_t for fault handler. For
+now, this is just documenting that the function returns
+a VM_FAULT value rather than an errno. Once all instances
+are converted, vm_fault_t will become a distinct type.
 
-Compiled and booted on my test system. No dmesg regressions.
+Ref-> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
 
-thanks,
--- Shuah
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+---
+ drivers/scsi/cxlflash/superpipe.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/scsi/cxlflash/superpipe.c b/drivers/scsi/cxlflash/superpipe.c
+index 2fe79df..a4e4c50 100644
+--- a/drivers/scsi/cxlflash/superpipe.c
++++ b/drivers/scsi/cxlflash/superpipe.c
+@@ -1087,7 +1087,7 @@ static struct page *get_err_page(struct cxlflash_cfg *cfg)
+  *
+  * Return: 0 on success, VM_FAULT_SIGBUS on failure
+  */
+-static int cxlflash_mmap_fault(struct vm_fault *vmf)
++static vm_fault_t cxlflash_mmap_fault(struct vm_fault *vmf)
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	struct file *file = vma->vm_file;
+@@ -1098,7 +1098,7 @@ static int cxlflash_mmap_fault(struct vm_fault *vmf)
+ 	struct ctx_info *ctxi = NULL;
+ 	struct page *err_page = NULL;
+ 	enum ctx_ctrl ctrl = CTX_CTRL_ERR_FALLBACK | CTX_CTRL_FILE;
+-	int rc = 0;
++	vm_fault_t rc = 0;
+ 	int ctxid;
+ 
+ 	ctxid = cfg->ops->process_element(ctx);
+@@ -1138,7 +1138,7 @@ static int cxlflash_mmap_fault(struct vm_fault *vmf)
+ out:
+ 	if (likely(ctxi))
+ 		put_context(ctxi);
+-	dev_dbg(dev, "%s: returning rc=%d\n", __func__, rc);
++	dev_dbg(dev, "%s: returning rc=%x\n", __func__, rc);
+ 	return rc;
+ 
+ err:
+-- 
+1.9.1
 
