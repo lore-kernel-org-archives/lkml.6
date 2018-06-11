@@ -1,73 +1,225 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id jXndMMapGlvCSQAAmS7hNA
-	; Fri, 08 Jun 2018 16:07:37 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id sRteL5xeHlshNAAAmS7hNA
+	; Mon, 11 Jun 2018 11:37:12 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 312D7607DC; Fri,  8 Jun 2018 16:07:37 +0000 (UTC)
+	id E62BF607BB; Mon, 11 Jun 2018 11:37:11 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id B8BD0601B4;
-	Fri,  8 Jun 2018 16:07:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B8BD0601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 3FCC960541;
+	Mon, 11 Jun 2018 11:37:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3FCC960541
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=lucaceresoli.net
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752863AbeFHQHe (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 12:07:34 -0400
-Received: from mga06.intel.com ([134.134.136.31]:4564 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751241AbeFHQHd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 12:07:33 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jun 2018 09:07:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,490,1520924400";
-   d="scan'208";a="235831247"
-Received: from agluck-desk.sc.intel.com ([10.3.52.160])
-  by fmsmga006.fm.intel.com with ESMTP; 08 Jun 2018 09:07:32 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
-        Vikas Shivappa <vikas.shivappa@linux.intel.com>,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/intel_rdt: Enable CMT and MBM on new Skylake stepping
-Date: Fri,  8 Jun 2018 09:07:32 -0700
-Message-Id: <20180608160732.9842-1-tony.luck@intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S933067AbeFKLhK (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 07:37:10 -0400
+Received: from srv-hp10-72.netsons.net ([94.141.22.72]:40109 "EHLO
+        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932957AbeFKLgQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 07:36:16 -0400
+Received: from [109.168.11.45] (port=54392 helo=pc-ceresoli.dev.aim)
+        by srv-hp10.netsons.net with esmtpa (Exim 4.89_1)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1fSL7N-00B1A2-FQ; Mon, 11 Jun 2018 13:36:13 +0200
+From: Luca Ceresoli <luca@lucaceresoli.net>
+To: linux-media@vger.kernel.org
+Cc: Luca Ceresoli <luca@lucaceresoli.net>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Leon Luo <leonl@leopardimaging.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 6/8] media: imx274: add helper function to fill a reg_8 table chunk
+Date: Mon, 11 Jun 2018 13:35:37 +0200
+Message-Id: <1528716939-17015-7-git-send-email-luca@lucaceresoli.net>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1528716939-17015-1-git-send-email-luca@lucaceresoli.net>
+References: <1528716939-17015-1-git-send-email-luca@lucaceresoli.net>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-New stepping of Skylake has fixes for cache occupancy and memory
-bandwidth monitoring.
+Tables of struct reg_8 are used to simplify multi-byte register
+assignment. However filling these snippets with values computed at
+runtime is currently implemented by very similar functions doing the
+needed shift & mask manipulation.
 
-Update the code to enable these by default on newer steppings.
+Replace all those functions with a unique helper function to fill
+reg_8 tables in a simple and clean way.
 
-Cc: stable@vger.kernel.org # v4.14
-Signed-off-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+
 ---
- arch/x86/kernel/cpu/intel_rdt.c | 2 ++
- 1 file changed, 2 insertions(+)
+Changed v3 -> v4: nothing
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt.c b/arch/x86/kernel/cpu/intel_rdt.c
-index 24bfa63e86cf..ec4754f81cbd 100644
---- a/arch/x86/kernel/cpu/intel_rdt.c
-+++ b/arch/x86/kernel/cpu/intel_rdt.c
-@@ -845,6 +845,8 @@ static __init void rdt_quirks(void)
- 	case INTEL_FAM6_SKYLAKE_X:
- 		if (boot_cpu_data.x86_stepping <= 4)
- 			set_rdt_options("!cmt,!mbmtotal,!mbmlocal,!l3cat");
-+		else
-+			set_rdt_options("!l3cat");
- 	}
+Changed v2 -> v3:
+ - minor reformatting in prepare_reg() documentation
+
+Changed v1 -> v2:
+ - add "media: " prefix to commit message
+---
+ drivers/media/i2c/imx274.c | 90 ++++++++++++++++++++++++++++------------------
+ 1 file changed, 55 insertions(+), 35 deletions(-)
+
+diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
+index 48343c2ade83..e5ba19b97083 100644
+--- a/drivers/media/i2c/imx274.c
++++ b/drivers/media/i2c/imx274.c
+@@ -597,6 +597,58 @@ static inline struct stimx274 *to_imx274(struct v4l2_subdev *sd)
  }
  
+ /*
++ * Fill consecutive reg_8 items in order to set a multibyte register.
++ *
++ * The sensor has many 2-bytes registers and a 3-byte register. This
++ * simplifies code to set them by filling consecutive entries of a
++ * struct reg_8 table with the data to set a register.
++ *
++ * The number of table entries that is filled is the minimum needed
++ * for the given number of bits (i.e. nbits / 8, rounded up). If nbits
++ * is not a multiple of 8, extra bits in the most significant byte are
++ * zeroed.
++ *
++ * Example:
++ *   Calling prepare_reg(&regs[10], 0x3000, 0xcafe, 12) will set:
++ *   regs[10] = { .addr = 0x3000, .val = 0xfe }
++ *   regs[11] = { .addr = 0x3001, .val = 0x0a }
++ *
++ * @table_base: Pointer to the first reg_8 struct to be filled.  The
++ *              following entries will also be set, make sure they are
++ *              properly allocated!
++ * @addr_lsb: Address of the LSB register.  Other registers must be
++ *            consecutive, least-to-most significant.
++ * @value: Value to be written to the register.
++ * @nbits: Number of bits to write (range: [1..24])
++ */
++static void prepare_reg(struct reg_8 *table_base,
++			u16 addr_lsb,
++			u32 value,
++			size_t nbits)
++{
++	struct reg_8 *cmd = table_base;
++	u16 addr = addr_lsb;
++	size_t bits; /* how many bits at this round */
++
++	WARN_ON(nbits > 24);
++
++	if (nbits > 24)
++		nbits = 24;
++
++	while (nbits > 0) {
++		bits = min_t(size_t, 8, nbits);
++
++		cmd->addr = addr;
++		cmd->val = value & ((1 << bits) - 1);
++
++		nbits -= bits;
++		value >>= 8;
++		addr++;
++		cmd++;
++	}
++}
++
++/*
+  * Writing a register table
+  *
+  * @priv: Pointer to device
+@@ -1163,15 +1215,6 @@ static int imx274_set_digital_gain(struct stimx274 *priv, u32 dgain)
+ 				reg_val & IMX274_MASK_LSB_4_BITS);
+ }
+ 
+-static inline void imx274_calculate_gain_regs(struct reg_8 regs[2], u16 gain)
+-{
+-	regs->addr = IMX274_ANALOG_GAIN_ADDR_MSB;
+-	regs->val = (gain >> IMX274_SHIFT_8_BITS) & IMX274_MASK_LSB_3_BITS;
+-
+-	(regs + 1)->addr = IMX274_ANALOG_GAIN_ADDR_LSB;
+-	(regs + 1)->val = (gain) & IMX274_MASK_LSB_8_BITS;
+-}
+-
+ /*
+  * imx274_set_gain - Function called when setting gain
+  * @priv: Pointer to device structure
+@@ -1229,7 +1272,7 @@ static int imx274_set_gain(struct stimx274 *priv, struct v4l2_ctrl *ctrl)
+ 	if (gain_reg > IMX274_GAIN_REG_MAX)
+ 		gain_reg = IMX274_GAIN_REG_MAX;
+ 
+-	imx274_calculate_gain_regs(reg_list, (u16)gain_reg);
++	prepare_reg(reg_list, IMX274_ANALOG_GAIN_ADDR_LSB, gain_reg, 11);
+ 
+ 	for (i = 0; i < ARRAY_SIZE(reg_list); i++) {
+ 		err = imx274_write_reg(priv, reg_list[i].addr,
+@@ -1258,16 +1301,6 @@ static int imx274_set_gain(struct stimx274 *priv, struct v4l2_ctrl *ctrl)
+ 	return err;
+ }
+ 
+-static inline void imx274_calculate_coarse_time_regs(struct reg_8 regs[2],
+-						     u32 coarse_time)
+-{
+-	regs->addr = IMX274_SHR_REG_MSB;
+-	regs->val = (coarse_time >> IMX274_SHIFT_8_BITS)
+-			& IMX274_MASK_LSB_8_BITS;
+-	(regs + 1)->addr = IMX274_SHR_REG_LSB;
+-	(regs + 1)->val = (coarse_time) & IMX274_MASK_LSB_8_BITS;
+-}
+-
+ /*
+  * imx274_set_coarse_time - Function called when setting SHR value
+  * @priv: Pointer to device structure
+@@ -1292,7 +1325,7 @@ static int imx274_set_coarse_time(struct stimx274 *priv, u32 *val)
+ 		goto fail;
+ 
+ 	/* prepare SHR registers */
+-	imx274_calculate_coarse_time_regs(reg_list, coarse_time);
++	prepare_reg(reg_list, IMX274_SHR_REG_LSB, coarse_time, 16);
+ 
+ 	/* write to SHR registers */
+ 	for (i = 0; i < ARRAY_SIZE(reg_list); i++) {
+@@ -1429,19 +1462,6 @@ static int imx274_set_test_pattern(struct stimx274 *priv, int val)
+ 	return err;
+ }
+ 
+-static inline void imx274_calculate_frame_length_regs(struct reg_8 regs[3],
+-						      u32 frame_length)
+-{
+-	regs->addr = IMX274_VMAX_REG_1;
+-	regs->val = (frame_length >> IMX274_SHIFT_16_BITS)
+-			& IMX274_MASK_LSB_4_BITS;
+-	(regs + 1)->addr = IMX274_VMAX_REG_2;
+-	(regs + 1)->val = (frame_length >> IMX274_SHIFT_8_BITS)
+-			& IMX274_MASK_LSB_8_BITS;
+-	(regs + 2)->addr = IMX274_VMAX_REG_3;
+-	(regs + 2)->val = (frame_length) & IMX274_MASK_LSB_8_BITS;
+-}
+-
+ /*
+  * imx274_set_frame_length - Function called when setting frame length
+  * @priv: Pointer to device structure
+@@ -1463,7 +1483,7 @@ static int imx274_set_frame_length(struct stimx274 *priv, u32 val)
+ 
+ 	frame_length = (u32)val;
+ 
+-	imx274_calculate_frame_length_regs(reg_list, frame_length);
++	prepare_reg(reg_list, IMX274_VMAX_REG_3, frame_length, 20);
+ 	for (i = 0; i < ARRAY_SIZE(reg_list); i++) {
+ 		err = imx274_write_reg(priv, reg_list[i].addr,
+ 				       reg_list[i].val);
 -- 
-2.17.0
+2.7.4
