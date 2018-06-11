@@ -1,124 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id dnBbBZHRG1uBcwAAmS7hNA
-	; Sat, 09 Jun 2018 13:10:12 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id /1O2CCgxHlt1dAAAmS7hNA
+	; Mon, 11 Jun 2018 08:24:09 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 7759E607BB; Sat,  9 Jun 2018 13:10:12 +0000 (UTC)
+	id 6C872607BB; Mon, 11 Jun 2018 08:24:09 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j++xxqAC"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 0393D606FA;
-	Sat,  9 Jun 2018 13:10:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0393D606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=jonmasters.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id DC99A60791;
+	Mon, 11 Jun 2018 08:24:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DC99A60791
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753263AbeFINKK (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 09:10:10 -0400
-Received: from edison.jonmasters.org ([173.255.233.168]:36558 "EHLO
-        edison.jonmasters.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753159AbeFINKI (ORCPT
+        id S932415AbeFKIYH (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 04:24:07 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:43899 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932250AbeFKIYF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 09:10:08 -0400
-Received: from [104.153.224.165] (helo=washington.bos.jonmasters.org)
-        by edison.jonmasters.org with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.71)
-        (envelope-from <jcm@jonmasters.org>)
-        id 1fRdd0-0001kQ-MB; Sat, 09 Jun 2018 13:09:59 +0000
-To: Marc Zyngier <marc.zyngier@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu
-Cc: Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Julien Grall <julien.grall@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>
-References: <20180529121121.24927-1-marc.zyngier@arm.com>
- <20180529121121.24927-13-marc.zyngier@arm.com>
-From: Jon Masters <jcm@jonmasters.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jcm@jonmasters.org; prefer-encrypt=mutual; keydata=
- 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
- yrXvw9qg2waGcnb8WuoS+g==
-Organization: World Organi{s,z}ation Of Broken Dreams
-Message-ID: <98318e6c-adcd-ddb8-ad92-e7c1fa771c84@jonmasters.org>
-Date: Sat, 9 Jun 2018 09:09:35 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 11 Jun 2018 04:24:05 -0400
+Received: by mail-pl0-f68.google.com with SMTP id c41-v6so11887435plj.10
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 01:24:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=QkwOdRXa54x0TBzS1g3OGHAdvKBdpAprApOFLeePv34=;
+        b=j++xxqACUNGxYT4cWUObjf7zWxdP72ed7hG23rRE0mKLgSD8TwXdqvYu5lRcJ4CDrb
+         r/WL1nbmnKVyskFT2CRPr6OVER+/jl8rIkbU763mRAmJRVZ8iw3z7dnmr/aHD+MUuZmA
+         5aMsMGad414c2F5V18g7+cnIaiKFtzxcI9hNQME8O5lb25qAJUkXLXA1UPZX6+O4T2As
+         iUygRLS29d0XfpEPWEvYChDpVArjNzhyUqWJpjxeaJxOSPwtn07mH/sguloiEZwk77Zj
+         rsb8cs+4STOyqv+clwSqIFSuMNIjUl7nTk+WsCJy8PLoK7MFtqmaL3SoqSu8X6U2cTvF
+         vHBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=QkwOdRXa54x0TBzS1g3OGHAdvKBdpAprApOFLeePv34=;
+        b=rFv05/B8iRRyVGWkNjcgtXaNBNwdH4lTFUkRDSUUbh19QlO7Act3x7juHxDzhpqQPA
+         s0eIc9SaVnovTk7YYLFGmRQPHJ4qGN4jXkLLwSjNTsFXUvHQbiXzzDpsgV78v1OiLM6Y
+         HUqeXG8mZbC0vCU3hgl5c9X2XlLTx5P1VIg8gnaDS6Gfx0fiWHRkedyS02QqHCKc9W1m
+         6ghVWafu5bKfyH8YCrcgGYhypaow1LwZr3LCIQgDCLrChP8bWQ2MIg+UAx/nwhLRCU5h
+         ffXpKWWMUZyh0NB8PbIIPF3m6TkEfFkTdfKUBOkpxDg4lj9ErtSfVTFxpG7bES9Ns1eB
+         kSiA==
+X-Gm-Message-State: APt69E3UZJVlxzSyearRxx2nvUhcvTIp+FzFca+5g6ALRQp8kHclKGoe
+        +Gy0mkCSvXgY+M//fCALn2yauDe5IgHjs1rGPJvA/iP+
+X-Google-Smtp-Source: ADUXVKKNiYY3mHAha/YaXGbvN6VoFGXvy5W8mxYT3+5UFjfzJi0w/ToC/YAM9NrNZOSKC7QipLg97ch0zzTD7SkQ1EQ=
+X-Received: by 2002:a17:902:ab95:: with SMTP id f21-v6mr10310836plr.264.1528705444316;
+ Mon, 11 Jun 2018 01:24:04 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180529121121.24927-13-marc.zyngier@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 104.153.224.165
-X-SA-Exim-Mail-From: jcm@jonmasters.org
-Subject: Re: [PATCH v2 12/17] arm64: KVM: Add ARCH_WORKAROUND_2 support for
- guests
-X-SA-Exim-Version: 4.2.1 (built Sun, 08 Nov 2009 07:31:22 +0000)
-X-SA-Exim-Scanned: Yes (on edison.jonmasters.org)
+Received: by 2002:a17:90a:de2:0:0:0:0 with HTTP; Mon, 11 Jun 2018 01:23:43
+ -0700 (PDT)
+In-Reply-To: <1d8de494-0a52-33f5-4c8d-0ec08cfb101c@kernel.dk>
+References: <CACT4Y+ZmRj61ia-WQBC=M72o=OZWk5LSnzf2qOEuOLHAa4do_A@mail.gmail.com>
+ <1d8de494-0a52-33f5-4c8d-0ec08cfb101c@kernel.dk>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Mon, 11 Jun 2018 10:23:43 +0200
+Message-ID: <CACT4Y+b3ZWfOEHdYPCtP3mULz+6PheWv1CRvEME4jcpbjiJirA@mail.gmail.com>
+Subject: Re: mainline boot is broken: KASAN: use-after-free in blk_flush_complete_seq
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/29/2018 08:11 AM, Marc Zyngier wrote:
-> In order to offer ARCH_WORKAROUND_2 support to guests, we need
-> a bit of infrastructure.
-> 
-> Let's add a flag indicating whether or not the guest uses
-> SSBD mitigation. Depending on the state of this flag, allow
-> KVM to disable ARCH_WORKAROUND_2 before entering the guest,
-> and enable it when exiting it.
+On Sat, Jun 9, 2018 at 2:33 PM, Jens Axboe <axboe@kernel.dk> wrote:
+> On 6/9/18 3:34 AM, Dmitry Vyukov wrote:
+>> Hi,
+>>
+>> Boot of mainline kernel is currently broken.
+>> On commit 7d3bf613e99abbd96ac7b90ee3694a246c975021.
+>> Config:
+>> https://gist.githubusercontent.com/dvyukov/9f7f1fd9e477efd85b221b3a21036c20/raw/7c56ede0840494b26045976960866f2b265c6f64/gistfile1.txt
+>> Should have been introduced very recently.
+>
+> Can you try the below?
 
-...Live migration?
+Yes, this fixes the use-after-free:
 
-Jon.
+Tested-by: Dmitry Vyukov <dvyukov@google.com>
+
+>> You may need to also patch "umh: fix race condition", because that's
+>> another boot crasher currently present in tree.
+>
+> Not sure that that refers to.
+
+
+Currently there are 2 boot bugs present in upstream tree: this block
+bug and an umh bug. I assumed that anybody who will be fixing the
+block bug will want to first reproduce it and then test the fix
+locally. But if one would try to do it, they will actually hit the umh
+bug first. So I provided the fixing commit for the umh bug to simplify
+things for whoever would be fixing this block bug.
+
+
+> diff --git a/block/blk-flush.c b/block/blk-flush.c
+> index 058abdb50f31..ce41f666de3e 100644
+> --- a/block/blk-flush.c
+> +++ b/block/blk-flush.c
+> @@ -169,9 +169,11 @@ static bool blk_flush_complete_seq(struct request *rq,
+>         struct request_queue *q = rq->q;
+>         struct list_head *pending = &fq->flush_queue[fq->flush_pending_idx];
+>         bool queued = false, kicked;
+> +       unsigned int cmd_flags;
+>
+>         BUG_ON(rq->flush.seq & seq);
+>         rq->flush.seq |= seq;
+> +       cmd_flags = rq->cmd_flags;
+>
+>         if (likely(!error))
+>                 seq = blk_flush_cur_seq(rq);
+> @@ -212,7 +214,7 @@ static bool blk_flush_complete_seq(struct request *rq,
+>                 BUG();
+>         }
+>
+> -       kicked = blk_kick_flush(q, fq, rq->cmd_flags);
+> +       kicked = blk_kick_flush(q, fq, cmd_flags);
+>         return kicked | queued;
+>  }
+>
+>
+> --
+> Jens Axboe
+>
