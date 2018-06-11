@@ -1,249 +1,282 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id xHbKFYFAGVs8YgAAmS7hNA
-	; Thu, 07 Jun 2018 14:26:16 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id tYsEGweGHlsaMQAAmS7hNA
+	; Mon, 11 Jun 2018 14:24:41 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 38AD3608FD; Thu,  7 Jun 2018 14:26:16 +0000 (UTC)
+	id 6B041607BB; Mon, 11 Jun 2018 14:24:41 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GioKHzFj"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id CCBFF60912;
-	Thu,  7 Jun 2018 14:26:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CCBFF60912
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id B6EED6074D;
+	Mon, 11 Jun 2018 14:24:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B6EED6074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933601AbeFGO0M (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:26:12 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40158 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933420AbeFGO0G (ORCPT
+        id S934423AbeFKOYj (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 10:24:39 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44932 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933465AbeFKOGo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:26:06 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbj-0005Zq-Bi; Thu, 07 Jun 2018 15:09:43 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb5-0002y0-09; Thu, 07 Jun 2018 15:09:03 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Bruno =?UTF-8?Q?Pr=C3=A9mont?=" <bonbons@linux-vserver.org>,
-        "Ronald =?UTF-8?Q?Tschal=C3=A4r?=" <ronald@innovation.ch>,
-        "Petri Hodju" <petrihodju@yahoo.com>,
-        "Darren Hart (VMware)" <dvhart@infradead.org>,
-        "Bjorn Helgaas" <bhelgaas@google.com>,
-        "Andy Ritger" <aritger@nvidia.com>,
-        "Wilfried Klaebe" <linux-kernel@lebenslange-mailadresse.de>,
-        "Lukas Wunner" <lukas@wunner.de>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.594249066@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 182/410] Revert "apple-gmux: lock iGP IO to protect
- from vgaarb changes"
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Mon, 11 Jun 2018 10:06:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
+        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=GWcO8qHo0kt3ntl8a5jR2Ne+3gIMw/C9E24POVCTyQY=; b=GioKHzFjcfm4M43j3Axf/hlmN
+        VvDdVWDo21wuM9BnbT8CL3KddhQBCmDAd2gXGXOaN0Fm2vGiJtm60nY9eRREVQV988ohoxU86pjym
+        4p6tusbicOfLZ5UWauBN3y/sOWqpwLZ9xV1ZOfZDqa0/rBlL0KYeOWuwB9wdom4FF7RPEJNyZ5S+E
+        cka2w3r9GZs4QPRjDr7mjK760nPO7B6DwIBf3juE9/AI8hu0itHMkRs6j5zZIeoqLuL31m7U6WVj2
+        KiTCpfN554WsYTR9zM9Th9iwSRdY8Av7E2RZ1pPJTlAh4xpRcNsOHK6K3DktRlDs65HI6CPfaajBs
+        As+lRAPkA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fSNT1-0004ZL-PS; Mon, 11 Jun 2018 14:06:43 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@redhat.com>,
+        Lukas Czerner <lczerner@redhat.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH v13 11/72] xarray: Add xa_cmpxchg and xa_insert
+Date: Mon, 11 Jun 2018 07:05:38 -0700
+Message-Id: <20180611140639.17215-12-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
+References: <20180611140639.17215-1-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-------------------
+Like cmpxchg(), xa_cmpxchg will only store to the index if the current
+entry matches the old entry.  It returns the current entry, which is
+usually more useful than the errno returned by radix_tree_insert().
+For the users who really only want the errno, the xa_insert() wrapper
+provides a more convenient calling convention.
 
-From: Lukas Wunner <lukas@wunner.de>
-
-commit d6fa7588fd7a8def4c747c0c574ce85d453e3788 upstream.
-
-Commit 4eebd5a4e726 ("apple-gmux: lock iGP IO to protect from vgaarb
-changes") amended this driver's ->probe hook to lock decoding of normal
-(non-legacy) I/O space accesses to the integrated GPU on dual-GPU
-MacBook Pros.  The lock stays in place until the driver is unbound.
-
-The change was made to work around an issue with the out-of-tree nvidia
-graphics driver (available at http://www.nvidia.com/object/unix.html).
-It contains the following sequence in nvidia/nv.c:
-
-	#if defined(CONFIG_VGA_ARB) && !defined(NVCPU_PPC64LE)
-	#if defined(VGA_DEFAULT_DEVICE)
-	    vga_tryget(VGA_DEFAULT_DEVICE, VGA_RSRC_LEGACY_MASK);
-	#endif
-	    vga_set_legacy_decoding(dev, VGA_RSRC_NONE);
-	#endif
-
-This code was reported to cause deadlocks with VFIO already in 2013:
-https://devtalk.nvidia.com/default/topic/545560
-
-I've reported the issue to Nvidia developers once more in 2017:
-https://www.spinics.net/lists/dri-devel/msg138754.html
-
-On the MacBookPro10,1, this code apparently breaks backlight control
-(which is handled by apple-gmux via an I/O region starting at 0x700),
-as reported by Petri Hodju:
-https://bugzilla.kernel.org/show_bug.cgi?id=86121
-
-I tried to replicate Petri's observations on my MacBook9,1, which uses
-the same Intel Ivy Bridge + Nvidia GeForce GT 650M architecture, to no
-avail.  On my machine apple-gmux' I/O region remains accessible even
-with the nvidia driver loaded and commit 4eebd5a4e726 reverted.
-Petri reported that apple-gmux becomes accessible again after a
-suspend/resume cycle because the BIOS changed the VGA routing on the
-root port to the Nvidia GPU.  Perhaps this is a BIOS issue after all
-that can be fixed with an update?
-
-In any case, the change made by commit 4eebd5a4e726 has turned out to
-cause two new issues:
-
-* Wilfried Klaebe reports a deadlock when launching Xorg because it
-  opens /dev/vga_arbiter and calls vga_get(), but apple-gmux is holding
-  a lock on I/O space indefinitely.  It looks like apple-gmux' current
-  behavior is an abuse of the vgaarb API as locks are not meant to be
-  held for longer periods:
-  https://bugzilla.kernel.org/show_bug.cgi?id=88861#c11
-  https://bugzilla.kernel.org/attachment.cgi?id=217541
-
-* On dual GPU MacBook Pros introduced since 2013, the integrated GPU is
-  powergated on boot und thus becomes invisible to Linux unless a custom
-  EFI protocol is used to leave it powered on.  (A patch exists but is
-  not in mainline yet due to several negative side effects.)  On these
-  machines, locking I/O to the integrated GPU (as done by 4eebd5a4e726)
-  fails and backlight control is therefore broken:
-  https://bugzilla.kernel.org/show_bug.cgi?id=105051
-
-So let's revert commit 4eebd5a4e726 please.  Users experiencing the
-issue with the proprietary nvidia driver can comment out the above-
-quoted problematic code as a workaround (or try updating the BIOS).
-
-Cc: Petri Hodju <petrihodju@yahoo.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Bruno Prémont <bonbons@linux-vserver.org>
-Cc: Andy Ritger <aritger@nvidia.com>
-Cc: Ronald Tschalär <ronald@innovation.ch>
-Tested-by: Wilfried Klaebe <linux-kernel@lebenslange-mailadresse.de>
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
-[bwh: Backported to 3.16: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- drivers/platform/x86/apple-gmux.c | 48 +------------------------------
- 1 file changed, 1 insertion(+), 47 deletions(-)
+ include/linux/xarray.h                 | 60 ++++++++++++++++++++++
+ lib/xarray.c                           | 71 ++++++++++++++++++++++++++
+ tools/testing/radix-tree/xarray-test.c | 10 ++++
+ 3 files changed, 141 insertions(+)
 
---- a/drivers/platform/x86/apple-gmux.c
-+++ b/drivers/platform/x86/apple-gmux.c
-@@ -22,7 +22,6 @@
- #include <linux/delay.h>
- #include <linux/pci.h>
- #include <linux/vga_switcheroo.h>
--#include <linux/vgaarb.h>
- #include <acpi/video.h>
- #include <asm/io.h>
- 
-@@ -32,7 +31,6 @@ struct apple_gmux_data {
- 	bool indexed;
- 	struct mutex index_lock;
- 
--	struct pci_dev *pdev;
- 	struct backlight_device *bdev;
- 
- 	/* switcheroo data */
-@@ -417,23 +415,6 @@ static int gmux_resume(struct device *de
- 	return 0;
+diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+index b5220493652d..c9fc47d28c09 100644
+--- a/include/linux/xarray.h
++++ b/include/linux/xarray.h
+@@ -218,6 +218,8 @@ struct xarray {
+ void xa_init_flags(struct xarray *, gfp_t flags);
+ void *xa_load(struct xarray *, unsigned long index);
+ void *xa_store(struct xarray *, unsigned long index, void *entry, gfp_t);
++void *xa_cmpxchg(struct xarray *, unsigned long index,
++			void *old, void *entry, gfp_t);
+ bool xa_get_tag(struct xarray *, unsigned long index, xa_tag_t);
+ void xa_set_tag(struct xarray *, unsigned long index, xa_tag_t);
+ void xa_clear_tag(struct xarray *, unsigned long index, xa_tag_t);
+@@ -277,6 +279,34 @@ static inline bool xa_tagged(const struct xarray *xa, xa_tag_t tag)
+ 	return xa->xa_flags & XA_FLAGS_TAG(tag);
  }
  
--static struct pci_dev *gmux_get_io_pdev(void)
--{
--	struct pci_dev *pdev = NULL;
--
--	while ((pdev = pci_get_class(PCI_CLASS_DISPLAY_VGA << 8, pdev))) {
--		u16 cmd;
--
--		pci_read_config_word(pdev, PCI_COMMAND, &cmd);
--		if (!(cmd & PCI_COMMAND_IO))
--			continue;
--
--		return pdev;
--	}
--
--	return NULL;
--}
--
- static int gmux_probe(struct pnp_dev *pnp, const struct pnp_device_id *id)
++/**
++ * xa_insert() - Store this entry in the XArray unless another entry is
++ *			already present.
++ * @xa: XArray.
++ * @index: Index into array.
++ * @entry: New entry.
++ * @gfp: Memory allocation flags.
++ *
++ * If you would rather see the existing entry in the array, use xa_cmpxchg().
++ * This function is for users who don't care what the entry is, only that
++ * one is present.
++ *
++ * Context: Process context.  Takes and releases the xa_lock.
++ *	    May sleep if the @gfp flags permit.
++ * Return: 0 if the store succeeded.  -EEXIST if another entry was present.
++ * 	   -ENOMEM if memory could not be allocated.
++ */
++static inline int xa_insert(struct xarray *xa, unsigned long index,
++		void *entry, gfp_t gfp)
++{
++	void *curr = xa_cmpxchg(xa, index, NULL, entry, gfp);
++	if (!curr)
++		return 0;
++	if (xa_is_err(curr))
++		return xa_err(curr);
++	return -EEXIST;
++}
++
+ #define xa_trylock(xa)		spin_trylock(&(xa)->xa_lock)
+ #define xa_lock(xa)		spin_lock(&(xa)->xa_lock)
+ #define xa_unlock(xa)		spin_unlock(&(xa)->xa_lock)
+@@ -296,9 +326,39 @@ static inline bool xa_tagged(const struct xarray *xa, xa_tag_t tag)
+  */
+ void *__xa_erase(struct xarray *, unsigned long index);
+ void *__xa_store(struct xarray *, unsigned long index, void *entry, gfp_t);
++void *__xa_cmpxchg(struct xarray *, unsigned long index, void *old,
++		void *entry, gfp_t);
+ void __xa_set_tag(struct xarray *, unsigned long index, xa_tag_t);
+ void __xa_clear_tag(struct xarray *, unsigned long index, xa_tag_t);
+ 
++/**
++ * __xa_insert() - Store this entry in the XArray unless another entry is
++ *			already present.
++ * @xa: XArray.
++ * @index: Index into array.
++ * @entry: New entry.
++ * @gfp: Memory allocation flags.
++ *
++ * If you would rather see the existing entry in the array, use __xa_cmpxchg().
++ * This function is for users who don't care what the entry is, only that
++ * one is present.
++ *
++ * Context: Any context.  Expects xa_lock to be held on entry.  May
++ *	    release and reacquire xa_lock if the @gfp flags permit.
++ * Return: 0 if the store succeeded.  -EEXIST if another entry was present.
++ *	   -ENOMEM if memory could not be allocated.
++ */
++static inline int __xa_insert(struct xarray *xa, unsigned long index,
++		void *entry, gfp_t gfp)
++{
++	void *curr = __xa_cmpxchg(xa, index, NULL, entry, gfp);
++	if (!curr)
++		return 0;
++	if (xa_is_err(curr))
++		return xa_err(curr);
++	return -EEXIST;
++}
++
+ /* Everything below here is the Advanced API.  Proceed with caution. */
+ 
+ /*
+diff --git a/lib/xarray.c b/lib/xarray.c
+index d408627b2479..86b9e00a37a0 100644
+--- a/lib/xarray.c
++++ b/lib/xarray.c
+@@ -976,6 +976,77 @@ void *__xa_store(struct xarray *xa, unsigned long index, void *entry, gfp_t gfp)
+ }
+ EXPORT_SYMBOL(__xa_store);
+ 
++/**
++ * xa_cmpxchg() - Conditionally replace an entry in the XArray.
++ * @xa: XArray.
++ * @index: Index into array.
++ * @old: Old value to test against.
++ * @entry: New value to place in array.
++ * @gfp: Memory allocation flags.
++ *
++ * If the entry at @index is the same as @old, replace it with @entry.
++ * If the return value is equal to @old, then the exchange was successful.
++ *
++ * Context: Process context.  Takes and releases the xa_lock.  May sleep
++ * if the @gfp flags permit.
++ * Return: The old value at this index or xa_err() if an error happened.
++ */
++void *xa_cmpxchg(struct xarray *xa, unsigned long index,
++			void *old, void *entry, gfp_t gfp)
++{
++	XA_STATE(xas, xa, index);
++	void *curr;
++
++	if (WARN_ON_ONCE(xa_is_internal(entry)))
++		return XA_ERROR(-EINVAL);
++
++	do {
++		xas_lock(&xas);
++		curr = xas_load(&xas);
++		if (curr == old)
++			xas_store(&xas, entry);
++		xas_unlock(&xas);
++	} while (xas_nomem(&xas, gfp));
++
++	return xas_result(&xas, curr);
++}
++EXPORT_SYMBOL(xa_cmpxchg);
++
++/**
++ * __xa_cmpxchg() - Store this entry in the XArray.
++ * @xa: XArray.
++ * @index: Index into array.
++ * @old: Old value to test against.
++ * @entry: New entry.
++ * @gfp: Memory allocation flags.
++ *
++ * You must already be holding the xa_lock when calling this function.
++ * It will drop the lock if needed to allocate memory, and then reacquire
++ * it afterwards.
++ *
++ * Context: Any context.  Expects xa_lock to be held on entry.  May
++ * release and reacquire xa_lock if @gfp flags permit.
++ * Return: The old entry at this index or xa_err() if an error happened.
++ */
++void *__xa_cmpxchg(struct xarray *xa, unsigned long index,
++			void *old, void *entry, gfp_t gfp)
++{
++	XA_STATE(xas, xa, index);
++	void *curr;
++
++	if (WARN_ON_ONCE(xa_is_internal(entry)))
++		return XA_ERROR(-EINVAL);
++
++	do {
++		curr = xas_load(&xas);
++		if (curr == old)
++			xas_store(&xas, entry);
++	} while (__xas_nomem(&xas, gfp));
++
++	return xas_result(&xas, curr);
++}
++EXPORT_SYMBOL(__xa_cmpxchg);
++
+ /**
+  * __xa_set_tag() - Set this tag on this entry while locked.
+  * @xa: XArray.
+diff --git a/tools/testing/radix-tree/xarray-test.c b/tools/testing/radix-tree/xarray-test.c
+index 7bc84d1d6c9a..575f494e17da 100644
+--- a/tools/testing/radix-tree/xarray-test.c
++++ b/tools/testing/radix-tree/xarray-test.c
+@@ -88,6 +88,15 @@ void check_xa_shrink(struct xarray *xa)
+ 	assert(xa_load(xa, 0) == xa_mk_value(0));
+ }
+ 
++void check_cmpxchg(struct xarray *xa)
++{
++	assert(xa_empty(xa));
++	assert(!xa_store(xa, 12345678, xa_mk_value(12345678), GFP_KERNEL));
++	assert(!xa_cmpxchg(xa, 5, xa_mk_value(5), NULL, GFP_KERNEL));
++	assert(xa_erase(xa, 12345678) == xa_mk_value(12345678));
++	assert(xa_empty(xa));
++}
++
+ void check_multi_store(struct xarray *xa)
  {
- 	struct apple_gmux_data *gmux_data;
-@@ -444,7 +425,6 @@ static int gmux_probe(struct pnp_dev *pn
- 	int ret = -ENXIO;
- 	acpi_status status;
- 	unsigned long long gpe;
--	struct pci_dev *pdev = NULL;
+ 	unsigned long i, j, k;
+@@ -158,6 +167,7 @@ void xarray_checks(void)
+ 	check_xa_shrink(&array);
+ 	item_kill_tree(&array);
  
- 	if (apple_gmux_data)
- 		return -EBUSY;
-@@ -495,7 +475,7 @@ static int gmux_probe(struct pnp_dev *pn
- 			ver_minor = (version >> 16) & 0xff;
- 			ver_release = (version >> 8) & 0xff;
- 		} else {
--			pr_info("gmux device not present or IO disabled\n");
-+			pr_info("gmux device not present\n");
- 			ret = -ENODEV;
- 			goto err_release;
- 		}
-@@ -503,23 +483,6 @@ static int gmux_probe(struct pnp_dev *pn
- 	pr_info("Found gmux version %d.%d.%d [%s]\n", ver_major, ver_minor,
- 		ver_release, (gmux_data->indexed ? "indexed" : "classic"));
- 
--	/*
--	 * Apple systems with gmux are EFI based and normally don't use
--	 * VGA. In addition changing IO+MEM ownership between IGP and dGPU
--	 * disables IO/MEM used for backlight control on some systems.
--	 * Lock IO+MEM to GPU with active IO to prevent switch.
--	 */
--	pdev = gmux_get_io_pdev();
--	if (pdev && vga_tryget(pdev,
--			       VGA_RSRC_NORMAL_IO | VGA_RSRC_NORMAL_MEM)) {
--		pr_err("IO+MEM vgaarb-locking for PCI:%s failed\n",
--			pci_name(pdev));
--		ret = -EBUSY;
--		goto err_release;
--	} else if (pdev)
--		pr_info("locked IO for PCI:%s\n", pci_name(pdev));
--	gmux_data->pdev = pdev;
--
- 	memset(&props, 0, sizeof(props));
- 	props.type = BACKLIGHT_PLATFORM;
- 	props.max_brightness = gmux_read32(gmux_data, GMUX_PORT_MAX_BRIGHTNESS);
-@@ -611,10 +574,6 @@ err_enable_gpe:
- err_notify:
- 	backlight_device_unregister(bdev);
- err_release:
--	if (gmux_data->pdev)
--		vga_put(gmux_data->pdev,
--			VGA_RSRC_NORMAL_IO | VGA_RSRC_NORMAL_MEM);
--	pci_dev_put(pdev);
- 	release_region(gmux_data->iostart, gmux_data->iolen);
- err_free:
- 	kfree(gmux_data);
-@@ -634,11 +593,6 @@ static void gmux_remove(struct pnp_dev *
- 					   &gmux_notify_handler);
- 	}
- 
--	if (gmux_data->pdev) {
--		vga_put(gmux_data->pdev,
--			VGA_RSRC_NORMAL_IO | VGA_RSRC_NORMAL_MEM);
--		pci_dev_put(gmux_data->pdev);
--	}
- 	backlight_device_unregister(gmux_data->bdev);
- 
- 	release_region(gmux_data->iostart, gmux_data->iolen);
++	check_cmpxchg(&array);
+ 	check_multi_store(&array);
+ 	item_kill_tree(&array);
+ }
+-- 
+2.17.1
