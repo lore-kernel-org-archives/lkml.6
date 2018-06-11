@@ -1,112 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id m7eMNY9mG1vvHAAAmS7hNA
-	; Sat, 09 Jun 2018 05:33:03 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id +SYvHUyWHlvBNQAAmS7hNA
+	; Mon, 11 Jun 2018 15:34:20 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id C4D856089E; Sat,  9 Jun 2018 05:33:03 +0000 (UTC)
+	id 972C2607BB; Mon, 11 Jun 2018 15:34:20 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uOA/UFIg"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 55DB2607A4;
-	Sat,  9 Jun 2018 05:33:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 55DB2607A4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by smtp.codeaurora.org (Postfix) with ESMTP id 06489601C3;
+	Mon, 11 Jun 2018 15:34:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 06489601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751528AbeFIFdB (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 01:33:01 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:16527 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751257AbeFIFdA (ORCPT
+        id S1754234AbeFKPeS (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 20 others); Mon, 11 Jun 2018 11:34:18 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:43336 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753933AbeFKPeP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 01:33:00 -0400
-Received: from fsav305.sakura.ne.jp (fsav305.sakura.ne.jp [153.120.85.136])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w595UleC074809;
-        Sat, 9 Jun 2018 14:30:47 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav305.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp);
- Sat, 09 Jun 2018 14:30:47 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w595Ugl3074791
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Sat, 9 Jun 2018 14:30:47 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: general protection fault in wb_workfn (2)
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
-        syzbot <syzbot+4a7438e774b21ddd8eca@syzkaller.appspotmail.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Tejun Heo <tj@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-block@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <95865cab-e12f-d45b-b6e3-465b624862ba@i-love.sakura.ne.jp>
- <CACT4Y+byRRtCA9B9bPG9mjrf3UY3OsGeBsoh8dZ0T+V6tKpTHg@mail.gmail.com>
- <201806080231.w582VIRn021009@www262.sakura.ne.jp>
- <CACT4Y+Y7Mj1JngLst1aRHDhURXQMn-eTjyPFjDdGAT0ZV-dHrw@mail.gmail.com>
- <CACT4Y+bBfwpcP2h0URpqwiNMQ5SFJdPDHThUu2xetmrxgC+3BQ@mail.gmail.com>
- <CACT4Y+bHDWDapwOonO1EpR6TiRa=qf9nSDtHArq75yCGuHf=gg@mail.gmail.com>
- <CACT4Y+Z4i=bD49cb4pJ5zOMxVu675NT8wCNk+c2n2XJVOXG2bg@mail.gmail.com>
-From: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <2b437c6f-3e10-3d83-bdf3-82075d3eaa1a@i-love.sakura.ne.jp>
-Date: Sat, 9 Jun 2018 14:30:41 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 11 Jun 2018 11:34:15 -0400
+Received: by mail-lf0-f66.google.com with SMTP id n15-v6so31203827lfn.10;
+        Mon, 11 Jun 2018 08:34:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=w2LJaCm5tOxzif/TTH8ApWC0yWKEqOMOFZ+xIB5jfw4=;
+        b=uOA/UFIg28FyySx9I/zPraT1OCAcxYZwsEOZV03MXyB+QR8zVlh5xu2xHuoyncQbsk
+         lh294Lv1yvw+nXoslMG3+9RmSwpCqAdyBX90ynagqwccX6dztCPSpT0dQQo3WMS8OuZy
+         jseZWPPHJaqGo+uPaBJlkk6FdXExx+8FbrcO1HkD+U1/3wzxd/4FRja+C9W49VHXjGvR
+         zS4B27n8mKm1Lq18Euf8LkYq2yRrdAkMgLap3w8r+GRLStb9H2dHOPT69zgJsejsyBsj
+         bzhjj3m8wPbO+NrhUtDnWr/Ns5BQLSKNJqLlqCfYJvzc6pIOuYup2XFRFsRma5x2Nuln
+         Bkyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=w2LJaCm5tOxzif/TTH8ApWC0yWKEqOMOFZ+xIB5jfw4=;
+        b=gTyia6pnvDL5yMv/DxPd18HXJXpiPVNUswcE5Xqu4tuvEaKCG4nkNIFVBPPCfwBLIy
+         wUc1B18CuFg4KXbS9O6EODoYx9fcVC6FMC4jvbEpa7iFAzfeEDwRw3fJfvVWlGhbJDyd
+         ItIr6FM417pDO4NmFVwvJEIlcuVm7TrvKaQ4TVRU3NbKuukQ8S/o4V1UInzdoQoA1UhL
+         r8JtZg+bHo3KFHRqKTU27Xt1RfSiDvuug7sGYe45tD5bTjdUDJXsqq6C1pmRw6oMXqqp
+         DAydzFiaF0qFCehYVJ5lWNtN49SDV3K17eKfLlIA3jPtDlnXnvBdxXjUlyz9YrpMRKCo
+         k2Kw==
+X-Gm-Message-State: APt69E2bRmdgi3BYxxgLiODaC+aS0edfQmrQdqfIlSkUyTl6qBCwdSoc
+        hc40t7z8sFPf6j7AEuX0ZHyu7ioYYHnU07t0EEE=
+X-Google-Smtp-Source: ADUXVKJWaqDgqBHzMWZdN6JfxgcXA3F3thSgrxMPlJWMnme/RLES+uRwQgRyXSGhRAtrDLLaVLxOz4RI6v8uimrjeTw=
+X-Received: by 2002:a2e:9204:: with SMTP id k4-v6mr11850316ljg.144.1528731254041;
+ Mon, 11 Jun 2018 08:34:14 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+Z4i=bD49cb4pJ5zOMxVu675NT8wCNk+c2n2XJVOXG2bg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
+ <20180611115240.32606-16-ricardo.ribalda@gmail.com> <CCB7FF79-F89A-4421-A6C0-E0663BEE6065@holtmann.org>
+ <CAPybu_0=ykAcCx=nZyrv90YRfihDxi3s2+Nz+6UP8Fwd5eH2-A@mail.gmail.com> <B4BC9DB0-2D7C-4F9D-99FE-8227D4DC3D54@holtmann.org>
+In-Reply-To: <B4BC9DB0-2D7C-4F9D-99FE-8227D4DC3D54@holtmann.org>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Date: Mon, 11 Jun 2018 17:33:53 +0200
+Message-ID: <CAPybu_2ViGvN6egz-Ajq4+1fv6VAVFswuvSPAVmYH0a9R-Yjvw@mail.gmail.com>
+Subject: Re: [PATCH v2 15/24] net: qualcomm: MODULE_DEVICE_TABLE(serdev)
+To: Marcel Holtmann <marcel@holtmann.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Lino Sanfilippo <LinoSanfilippo@gmx.de>,
+        David Miller <davem@davemloft.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
+        netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dmitry Vyukov wrote:
-> Here we go:
+Hi Marcel,
+On Mon, Jun 11, 2018 at 5:28 PM Marcel Holtmann <marcel@holtmann.org> wrote=
+:
+>
+> Hi Marcel,
+>
+> >> the commit message is misleading me. If I build something with ACPI or=
+ DT support, then modinfo will show all modalias information for ACPI and D=
+T compatible strings. What else does udev/modprobe actually need? Is someth=
+ing broken with the modalias export?
+> >
+> > The main purpose is to autoload drivers for devices that have been
+> > created via sysfs or another module.
+> >
+> > Eg1: We have a serial port on a standard computer that has connected a
+> > GPS module. Since it is something that is not in the ACPI nor the DT
+> > table the user will run
+> >
+> > echo serdev_gps > /sys/bus/serial/devices/serial0/new_device
+> >
+> > Eg2 module: https://github.com/ribalda/linux/blob/415bb3f0076c2b846ebe5=
+409589b8e1e3004f55a/drivers/tty/serdev/test_platform.c
+> >
+> > Modprobe does not know what module to load for that device unless
+> > there is a matching MODULE_DEVICE_TABLE
+> > Today, we have the same functionality for i2c devices
+> > https://www.kernel.org/doc/Documentation/i2c/instantiating-devices
+>
+> but why does this have to be the driver name? I would rather say, create =
+a generic string that describes the hardware and then use that. I think you=
+ also want the special handling, as from USB for example, that lets you ref=
+erence an existing .compatible or ACPI ID as reference so that the driver_d=
+ata is copied.
 
-Great. Thank you.
+We can choose any name, but if there are no special variants (like the
+rave-sp driver) I would prefer using the module name. We can of course
+use more names, like the part number of the the device, but it is very
+convenient to also use the module name, and other subsystems also do
+that.
 
-> 
-> [ 2853.033175] WARNING: wb_workfn: device is NULL
-> [ 2853.034709] wb->state=2
-> 
+If you want to add specific names for this device please let me know
+and I will add them to the list. You know much more about this module
+than myself.
 
-It is surprising that wb->state == WB_shutting_down .
+Thanks!
 
-WB_shutting_down is set by only wb_shutdown() and is always cleared
-before leaving wb_shutdown(). This means that someone was calling
-wb_shutdown() on this wb object. And bdi->dev == NULL means that
-bdi_unregister() already did bdi->dev = NULL while someone was still
-inside wb_shutdown().
+>
+> Regards
+>
+> Marcel
+>
 
-Since we call wb_shutdown() from bdi_unregister() for each wb object
-on this bdi object, this should not happen. But since "INFO: task hung
-in wb_shutdown (2)" found that it is possible that wb_shutdown() is
-concurrently called on the same wb object, there might be something
-complicated concurrency.
 
-Well, is it really true that "we call wb_shutdown() from bdi_unregister()
-for each wb object on this bdi object"? It seems it is not always true...
-
-While cgwb_bdi_unregister() from bdi_unregister() calls wb_shutdown() on
-each wb object reachable from bdi->wb_list, wb_shutdown() firstly calls
-list_del_rcu(&wb->bdi_node) (which was added by
-list_add_tail_rcu(&wb->bdi_node, &bdi->wb_list) from cgwb_create()) and
-then starts waiting for that wb object by calling
-mod_delayed_work()/flush_delayed_work() and then clears WB_shutting_down.
-
-Then, it is possible that cgwb_bdi_unregister() from calls wb_shutdown()
-fails to find a wb object which already passed list_del_rcu() from
-wb_shutdown(), and cgwb_bdi_unregister() can return without waiting for
-somebody who is waiting inside wb_shutdown(). Hence, allows doing
-bdi->dev = NULL before a wb object which somebody is waiting inside
-wb_shutdown() completes wb_workfn(), and NULL pointer dereference...
+--=20
+Ricardo Ribalda
