@@ -1,196 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 5OrLBJBEGVt9FAAAmS7hNA
-	; Thu, 07 Jun 2018 14:43:59 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id xZNGIGZvHlsUYwAAmS7hNA
+	; Mon, 11 Jun 2018 12:47:34 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id C7EA5608BA; Thu,  7 Jun 2018 14:43:58 +0000 (UTC)
+	id 69F91607A4; Mon, 11 Jun 2018 12:47:34 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K8EUm6lz"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 0B783602FC;
-	Thu,  7 Jun 2018 14:43:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0B783602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 04F6760541;
+	Mon, 11 Jun 2018 12:47:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 04F6760541
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934885AbeFGOnz (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:43:55 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40696 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934145AbeFGOnx (ORCPT
+        id S932958AbeFKMrb (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 20 others); Mon, 11 Jun 2018 08:47:31 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:45596 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932516AbeFKMr3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:43:53 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbg-0005Zk-Ex; Thu, 07 Jun 2018 15:09:40 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb6-0002zs-50; Thu, 07 Jun 2018 15:09:04 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Mon, 11 Jun 2018 08:47:29 -0400
+Received: by mail-ua0-f196.google.com with SMTP id k14-v6so13393506uao.12;
+        Mon, 11 Jun 2018 05:47:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=WPXGr+s3Szyfok0w2Ppvm3sA7IRQliz0AqP22oT9WYU=;
+        b=K8EUm6lzDbSq2Fmj9kYUcyIFjnX4zhTIP71qq8ewoZjhbHIzzmmbVZMe1NXmgptxN/
+         HY+yiE2tgR68SIBTnxYSycIC8fTEKJ3pe7YObU3tG9cf9UwmvYn6mkPgESJx1KKsiAI8
+         KAK6PTDVk1oaIXh2gscO2ZeWdcgfOFra/+y8EhQeVL4bzvm2pfrvRQgCoWnt9qMViOkN
+         pvhoT0hmV97OLHu9/wF76aILS+1XURxi7+uEppMxs763gpENQv+ah0wvtepRARnH8YHM
+         UY853gBx9B4eelOqE+O2h+uSUv/vuVaLxe4mzdh+QDM+OmeLtWOeFSYUVwJxFmE8xzA7
+         LMSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=WPXGr+s3Szyfok0w2Ppvm3sA7IRQliz0AqP22oT9WYU=;
+        b=dSGM5nY9ty1uX9ltkkn+IrLK/vFH8pKcDV41RUe/Fd6xGxDlYggwlil3PNHnPIIppd
+         fDUKJH9DmzAEx6adO7Qq/PaEZEBdY2ukoUqvd5Bj8vb/TcSYxXbtC53fOm0Z/81UhCIv
+         RP2DgHOxnNHKxQUwwSJ3CkRiIk7Sl8PGshLjRgjT/hYvcXRxpMhH1rR/dH8THTttt7wy
+         4O54263gIrCkV7ck0fXMY9G2+NcreXMlPApgDDgFWWy8UVtOGkEf/htIHZRrWmyh5z6U
+         +ajBoYdgeZ20TL/4JZkAI3QCAqa7u7AqTFHURxu1dYqrND11sP9+jCCUM+BhTMvn54Hj
+         x6DQ==
+X-Gm-Message-State: APt69E0LoQ20D8qXk4DfUlmGMbCcuxr8VDGNw7Geh86ERfxvoBzkCVSh
+        5gI/VK0axh8+hJT4u5YDtUhEYl/44DKYPLkZRLk=
+X-Google-Smtp-Source: ADUXVKJ9XTcdVlftq6cA0iWajGDthu9yGqCGDPttHxOFezSc36+oT+QBQcVPCWQov34lVh1XuJBytUNw43VxHJCMgiY=
+X-Received: by 2002:ab0:6008:: with SMTP id j8-v6mr651628ual.28.1528721248687;
+ Mon, 11 Jun 2018 05:47:28 -0700 (PDT)
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "" <socketpair@gmail.com>,
-        "Al Viro" <viro@zeniv.linux.org.uk>, "Willy Tarreau" <w@1wt.eu>,
-        "Jens Axboe" <axboe@fb.com>,
-        "Vegard Nossum" <vegard.nossum@oracle.com>,
-        "Tetsuo Handa" <penguin-kernel@I-love.SAKURA.ne.jp>,
-        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.469393976@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 205/410] pipe: make account_pipe_buffers() return a
- value, and use it
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Mon, 11 Jun 2018 05:47:27
+ -0700 (PDT)
+In-Reply-To: <20180611115240.32606-21-ricardo.ribalda@gmail.com>
+References: <20180611115240.32606-1-ricardo.ribalda@gmail.com> <20180611115240.32606-21-ricardo.ribalda@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 11 Jun 2018 15:47:27 +0300
+Message-ID: <CAHp75VcKxZdp=Rmkt=K+yHq2aFAfSsD+SrKvPsSCCVLmLgc1pA@mail.gmail.com>
+Subject: Re: [PATCH v2 20/24] serdev: Make match_id accessible by drivers
+To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+On Mon, Jun 11, 2018 at 2:52 PM, Ricardo Ribalda Delgado
+<ricardo.ribalda@gmail.com> wrote:
+> Drivers that make use of the driver_data field require to transverse the
+> id_table. There is no reason to have one implementation per driver.
 
-------------------
+> +const struct serdev_device_id *serdev_match_id(
+> +                       const struct serdev_device_id *id,
+> +                       const struct serdev_device *sdev)
 
-From: "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+I think slightly better would be
 
-commit 9c87bcf0a31b338dc8a69a5d251a037565a94e13 upstream.
+const strunct serdev_device *
+serdev_match_id(const struct serdev_device_id *id,
+                       const struct serdev_device *sdev)
 
-This is an optional patch, to provide a small performance
-improvement.  Alter account_pipe_buffers() so that it returns the
-new value in user->pipe_bufs. This means that we can refactor
-too_many_pipe_buffers_soft() and too_many_pipe_buffers_hard() to
-avoid the costs of repeated use of atomic_long_read() to get the
-value user->pipe_bufs.
+>  {
+>         while (id->name[0]) {
+>                 if (!strcmp(sdev->modalias, id->name))
+> -                       return 1;
+> +                       return id;
+>                 id++;
+>         }
+>
+> -       return 0;
+> +       return NULL;
+>  }
+> +EXPORT_SYMBOL_GPL(serdev_match_id);
 
-Link: http://lkml.kernel.org/r/93e5f193-1e5e-3e1f-3a20-eae79b7e1310@gmail.com
-Signed-off-by: Michael Kerrisk <mtk.manpages@gmail.com>
-Reviewed-by: Vegard Nossum <vegard.nossum@oracle.com>
-Cc: Willy Tarreau <w@1wt.eu>
-Cc: <socketpair@gmail.com>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Jens Axboe <axboe@fb.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- fs/pipe.c | 36 ++++++++++++++++++------------------
- 1 file changed, 18 insertions(+), 18 deletions(-)
+Can we avoid ping-pong changes in the series? I mean to introduce this
+helper in this form in the first place?
 
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -590,22 +590,20 @@ pipe_fasync(int fd, struct file *filp, i
- 	return retval;
- }
- 
--static void account_pipe_buffers(struct user_struct *user,
-+static unsigned long account_pipe_buffers(struct user_struct *user,
-                                  unsigned long old, unsigned long new)
- {
--	atomic_long_add(new - old, &user->pipe_bufs);
-+	return atomic_long_add_return(new - old, &user->pipe_bufs);
- }
- 
--static bool too_many_pipe_buffers_soft(struct user_struct *user)
-+static bool too_many_pipe_buffers_soft(unsigned long user_bufs)
- {
--	return pipe_user_pages_soft &&
--	       atomic_long_read(&user->pipe_bufs) >= pipe_user_pages_soft;
-+	return pipe_user_pages_soft && user_bufs >= pipe_user_pages_soft;
- }
- 
--static bool too_many_pipe_buffers_hard(struct user_struct *user)
-+static bool too_many_pipe_buffers_hard(unsigned long user_bufs)
- {
--	return pipe_user_pages_hard &&
--	       atomic_long_read(&user->pipe_bufs) >= pipe_user_pages_hard;
-+	return pipe_user_pages_hard && user_bufs >= pipe_user_pages_hard;
- }
- 
- struct pipe_inode_info *alloc_pipe_info(void)
-@@ -613,19 +611,20 @@ struct pipe_inode_info *alloc_pipe_info(
- 	struct pipe_inode_info *pipe;
- 	unsigned long pipe_bufs = PIPE_DEF_BUFFERS;
- 	struct user_struct *user = get_current_user();
-+	unsigned long user_bufs;
- 
- 	pipe = kzalloc(sizeof(struct pipe_inode_info), GFP_KERNEL);
- 	if (pipe == NULL)
- 		goto out_free_uid;
- 
--	account_pipe_buffers(user, 0, pipe_bufs);
-+	user_bufs = account_pipe_buffers(user, 0, pipe_bufs);
- 
--	if (too_many_pipe_buffers_soft(user)) {
--		account_pipe_buffers(user, pipe_bufs, 1);
-+	if (too_many_pipe_buffers_soft(user_bufs)) {
-+		user_bufs = account_pipe_buffers(user, pipe_bufs, 1);
- 		pipe_bufs = 1;
- 	}
- 
--	if (too_many_pipe_buffers_hard(user))
-+	if (too_many_pipe_buffers_hard(user_bufs))
- 		goto out_revert_acct;
- 
- 	pipe->bufs = kcalloc(pipe_bufs, sizeof(struct pipe_buffer),
-@@ -641,7 +640,7 @@ struct pipe_inode_info *alloc_pipe_info(
- 	}
- 
- out_revert_acct:
--	account_pipe_buffers(user, pipe_bufs, 0);
-+	(void) account_pipe_buffers(user, pipe_bufs, 0);
- 	kfree(pipe);
- out_free_uid:
- 	free_uid(user);
-@@ -652,7 +651,7 @@ void free_pipe_info(struct pipe_inode_in
- {
- 	int i;
- 
--	account_pipe_buffers(pipe->user, pipe->buffers, 0);
-+	(void) account_pipe_buffers(pipe->user, pipe->buffers, 0);
- 	free_uid(pipe->user);
- 	for (i = 0; i < pipe->buffers; i++) {
- 		struct pipe_buffer *buf = pipe->bufs + i;
-@@ -1022,6 +1021,7 @@ static long pipe_set_size(struct pipe_in
- {
- 	struct pipe_buffer *bufs;
- 	unsigned int size, nr_pages;
-+	unsigned long user_bufs;
- 	long ret = 0;
- 
- 	size = round_pipe_size(arg);
-@@ -1041,11 +1041,11 @@ static long pipe_set_size(struct pipe_in
- 			size > pipe_max_size && !capable(CAP_SYS_RESOURCE))
- 		return -EPERM;
- 
--	account_pipe_buffers(pipe->user, pipe->buffers, nr_pages);
-+	user_bufs = account_pipe_buffers(pipe->user, pipe->buffers, nr_pages);
- 
- 	if (nr_pages > pipe->buffers &&
--			(too_many_pipe_buffers_hard(pipe->user) ||
--			 too_many_pipe_buffers_soft(pipe->user)) &&
-+			(too_many_pipe_buffers_hard(user_bufs) ||
-+			 too_many_pipe_buffers_soft(user_bufs)) &&
- 			!capable(CAP_SYS_RESOURCE) && !capable(CAP_SYS_ADMIN)) {
- 		ret = -EPERM;
- 		goto out_revert_acct;
-@@ -1096,7 +1096,7 @@ static long pipe_set_size(struct pipe_in
- 	return nr_pages * PAGE_SIZE;
- 
- out_revert_acct:
--	account_pipe_buffers(pipe->user, nr_pages, pipe->buffers);
-+	(void) account_pipe_buffers(pipe->user, nr_pages, pipe->buffers);
- 	return ret;
- }
- 
+
+> -               return serdev_match_id(sdrv->id_table, sdev);
+> +               return serdev_match_id(sdrv->id_table, sdev) != NULL;
+
+return !!serdev_match_id(...);
+?
+
+
+> +const struct serdev_device_id *serdev_match_id(
+> +               const struct serdev_device_id *id,
+> +               const struct serdev_device *sdev);
+
+Same as above.
+
+-- 
+With Best Regards,
+Andy Shevchenko
