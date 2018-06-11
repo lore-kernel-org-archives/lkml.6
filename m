@@ -1,120 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 0ZqjNhKrGlvtUQAAmS7hNA
-	; Fri, 08 Jun 2018 16:13:58 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id /O13GxuEHltbGQAAmS7hNA
+	; Mon, 11 Jun 2018 14:17:10 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 5F1C8607E4; Fri,  8 Jun 2018 16:13:58 +0000 (UTC)
+	id 90EDE607E4; Mon, 11 Jun 2018 14:17:10 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oeORb1zk"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id F2A75601B4;
-	Fri,  8 Jun 2018 16:13:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F2A75601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 2F2EC60791;
+	Mon, 11 Jun 2018 14:17:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2F2EC60791
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752911AbeFHQN4 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 12:13:56 -0400
-Received: from mga05.intel.com ([192.55.52.43]:26371 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751286AbeFHQNz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 12:13:55 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jun 2018 09:13:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,490,1520924400";
-   d="scan'208";a="62953688"
-Received: from unknown (HELO [10.7.201.145]) ([10.7.201.145])
-  by orsmga001.jf.intel.com with ESMTP; 08 Jun 2018 09:13:54 -0700
-Subject: Re: [PATCH v4 3/4] mm/sparse: Add a new parameter 'data_unit_size'
- for alloc_usemap_and_memmap
-To: Baoquan He <bhe@redhat.com>
-References: <20180521101555.25610-1-bhe@redhat.com>
- <20180521101555.25610-4-bhe@redhat.com>
- <8ff7638c-d3ee-a40c-e5cf-deded8d19e93@intel.com>
- <20180608062733.GB16231@MiWiFi-R3L-srv>
- <74359df3-76a8-6dc7-51c5-27019130224f@intel.com>
- <20180608151748.GE16231@MiWiFi-R3L-srv>
-Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        pagupta@redhat.com, linux-mm@kvack.org,
-        kirill.shutemov@linux.intel.com
-From: Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzShEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gPGRhdmVAc3I3MS5uZXQ+wsF7BBMBAgAlAhsDBgsJCAcDAgYVCAIJ
- CgsEFgIDAQIeAQIXgAUCTo3k0QIZAQAKCRBoNZUwcMmSsMO2D/421Xg8pimb9mPzM5N7khT0
- 2MCnaGssU1T59YPE25kYdx2HntwdO0JA27Wn9xx5zYijOe6B21ufrvsyv42auCO85+oFJWfE
- K2R/IpLle09GDx5tcEmMAHX6KSxpHmGuJmUPibHVbfep2aCh9lKaDqQR07gXXWK5/yU1Dx0r
- VVFRaHTasp9fZ9AmY4K9/BSA3VkQ8v3OrxNty3OdsrmTTzO91YszpdbjjEFZK53zXy6tUD2d
- e1i0kBBS6NLAAsqEtneplz88T/v7MpLmpY30N9gQU3QyRC50jJ7LU9RazMjUQY1WohVsR56d
- ORqFxS8ChhyJs7BI34vQusYHDTp6PnZHUppb9WIzjeWlC7Jc8lSBDlEWodmqQQgp5+6AfhTD
- kDv1a+W5+ncq+Uo63WHRiCPuyt4di4/0zo28RVcjtzlGBZtmz2EIC3vUfmoZbO/Gn6EKbYAn
- rzz3iU/JWV8DwQ+sZSGu0HmvYMt6t5SmqWQo/hyHtA7uF5Wxtu1lCgolSQw4t49ZuOyOnQi5
- f8R3nE7lpVCSF1TT+h8kMvFPv3VG7KunyjHr3sEptYxQs4VRxqeirSuyBv1TyxT+LdTm6j4a
- mulOWf+YtFRAgIYyyN5YOepDEBv4LUM8Tz98lZiNMlFyRMNrsLV6Pv6SxhrMxbT6TNVS5D+6
- UorTLotDZKp5+M7BTQRUY85qARAAsgMW71BIXRgxjYNCYQ3Xs8k3TfAvQRbHccky50h99TUY
- sqdULbsb3KhmY29raw1bgmyM0a4DGS1YKN7qazCDsdQlxIJp9t2YYdBKXVRzPCCsfWe1dK/q
- 66UVhRPP8EGZ4CmFYuPTxqGY+dGRInxCeap/xzbKdvmPm01Iw3YFjAE4PQ4hTMr/H76KoDbD
- cq62U50oKC83ca/PRRh2QqEqACvIH4BR7jueAZSPEDnzwxvVgzyeuhwqHY05QRK/wsKuhq7s
- UuYtmN92Fasbxbw2tbVLZfoidklikvZAmotg0dwcFTjSRGEg0Gr3p/xBzJWNavFZZ95Rj7Et
- db0lCt0HDSY5q4GMR+SrFbH+jzUY/ZqfGdZCBqo0cdPPp58krVgtIGR+ja2Mkva6ah94/oQN
- lnCOw3udS+Eb/aRcM6detZr7XOngvxsWolBrhwTQFT9D2NH6ryAuvKd6yyAFt3/e7r+HHtkU
- kOy27D7IpjngqP+b4EumELI/NxPgIqT69PQmo9IZaI/oRaKorYnDaZrMXViqDrFdD37XELwQ
- gmLoSm2VfbOYY7fap/AhPOgOYOSqg3/Nxcapv71yoBzRRxOc4FxmZ65mn+q3rEM27yRztBW9
- AnCKIc66T2i92HqXCw6AgoBJRjBkI3QnEkPgohQkZdAb8o9WGVKpfmZKbYBo4pEAEQEAAcLB
- XwQYAQIACQUCVGPOagIbDAAKCRBoNZUwcMmSsJeCEACCh7P/aaOLKWQxcnw47p4phIVR6pVL
- e4IEdR7Jf7ZL00s3vKSNT+nRqdl1ugJx9Ymsp8kXKMk9GSfmZpuMQB9c6io1qZc6nW/3TtvK
- pNGz7KPPtaDzvKA4S5tfrWPnDr7n15AU5vsIZvgMjU42gkbemkjJwP0B1RkifIK60yQqAAlT
- YZ14P0dIPdIPIlfEPiAWcg5BtLQU4Wg3cNQdpWrCJ1E3m/RIlXy/2Y3YOVVohfSy+4kvvYU3
- lXUdPb04UPw4VWwjcVZPg7cgR7Izion61bGHqVqURgSALt2yvHl7cr68NYoFkzbNsGsye9ft
- M9ozM23JSgMkRylPSXTeh5JIK9pz2+etco3AfLCKtaRVysjvpysukmWMTrx8QnI5Nn5MOlJj
- 1Ov4/50JY9pXzgIDVSrgy6LYSMc4vKZ3QfCY7ipLRORyalFDF3j5AGCMRENJjHPD6O7bl3Xo
- 4DzMID+8eucbXxKiNEbs21IqBZbbKdY1GkcEGTE7AnkA3Y6YB7I/j9mQ3hCgm5muJuhM/2Fr
- OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
- ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
- z5cecg==
-Message-ID: <6cb5f16f-68a6-84af-c7e6-1a563133fac8@intel.com>
-Date: Fri, 8 Jun 2018 09:13:54 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180608151748.GE16231@MiWiFi-R3L-srv>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S933716AbeFKORI (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 10:17:08 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45776 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933534AbeFKOG6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 10:06:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
+        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=MujQtudD6HapXlrwSi8huMmGpeKkjTkBkrUZuiJikXE=; b=oeORb1zkr0yVfKJawkiF8tapz
+        AP283ohq5CrZArgIGTWnvMCIr8sfI3jNzzfxmmQ9fD+AbFJKaKb8ZREua/EzVkPyErflY/DfaReCs
+        rgzrDHCyo4jU+nseYGNF7ybp3CxQkfWrN6PXsONZYBtGv8e616D9KXlg3kBWPtEorGlakzOd4wRkb
+        UAy70hJFoIYsui4qBhNL9KnBopPmd+zunjg7yYGCietgss5AcobvIiEGOO0tziaAa6SdDPdELVPOM
+        rQwtM+v7XaDX5tLNQnBOE+uaDpRWkxq1PffuCjrgUjHazMoPA9DC+YDW/yyrsJRQ00p5kWB6wu9qU
+        UM1uOmuIA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fSNTE-0004mW-UX; Mon, 11 Jun 2018 14:06:56 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@redhat.com>,
+        Lukas Czerner <lczerner@redhat.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH v13 39/72] mm: Convert __do_page_cache_readahead to XArray
+Date: Mon, 11 Jun 2018 07:06:06 -0700
+Message-Id: <20180611140639.17215-40-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
+References: <20180611140639.17215-1-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/08/2018 08:17 AM, Baoquan He wrote:
-> 
-> Then inside alloc_usemap_and_memmap(), For each node, we get how many
-> present sections on this node, call hook alloc_func(). Then we update
-> the pointer to point at a new position of usemap_map[] or map_map[].
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-I think this is the key.
+This one is trivial.
 
-alloc_usemap_and_memmap() is passed in a "void *" that it needs to
-update as things get consumed.  But, it knows only the quantity of
-objects consumed and not the type.  This effectively tells it enough
-about the type to let it update the pointer as objects are consumed.
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+ mm/readahead.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Right?
-
-Can we get that in the changelog?
+diff --git a/mm/readahead.c b/mm/readahead.c
+index 59998ca31f2a..07f9734dc79f 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -174,9 +174,7 @@ unsigned int __do_page_cache_readahead(struct address_space *mapping,
+ 		if (page_offset > end_index)
+ 			break;
+ 
+-		rcu_read_lock();
+-		page = radix_tree_lookup(&mapping->i_pages, page_offset);
+-		rcu_read_unlock();
++		page = xa_load(&mapping->i_pages, page_offset);
+ 		if (page && !xa_is_value(page)) {
+ 			/*
+ 			 * Page already present?  Kick off the current batch of
+-- 
+2.17.1
