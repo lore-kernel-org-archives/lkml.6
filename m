@@ -1,150 +1,367 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id jEUjFj31G1usbwAAmS7hNA
-	; Sat, 09 Jun 2018 15:41:52 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id rERWGCtvHlu5YAAAmS7hNA
+	; Mon, 11 Jun 2018 12:46:35 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 47699605A5; Sat,  9 Jun 2018 15:41:52 +0000 (UTC)
+	id 47AA760792; Mon, 11 Jun 2018 12:46:35 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pC7N2j6H"
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="fXqr2h0l"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 851F2605A5;
-	Sat,  9 Jun 2018 15:41:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 851F2605A5
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 83AF560351;
+	Mon, 11 Jun 2018 12:46:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 83AF560351
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933095AbeFIPlu (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 11:41:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37274 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932961AbeFIPe6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 11:34:58 -0400
-Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81487208AD;
-        Sat,  9 Jun 2018 15:34:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528558498;
-        bh=0JTNr9/F5tLtn5ynHTi+d95tKngDPEcPU+CFHnkv54I=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pC7N2j6H6O5LF8ml10iBIIT7+btHpZ8986xFMDHigINwUkiYgjb90yMM9GTEWMt59
-         /5cV7kpCYqU0x2OP3KLoJBWuGhXhyrOF9dfx8NYNJtqA6uvazNQF6qIHdAVeb7NnyJ
-         UGcYXSv60F2hx4ht38tA7Hq5gbYjLIXu9TRp0WNQ=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        Yuval Mintz <yuvalm@mellanox.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 13/41] ipmr: properly check rhltable_init() return value
-Date: Sat,  9 Jun 2018 17:29:45 +0200
-Message-Id: <20180609152927.155044014@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180609152926.389750182@linuxfoundation.org>
-References: <20180609152926.389750182@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S932898AbeFKMqc (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 20 others); Mon, 11 Jun 2018 08:46:32 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:36962 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932516AbeFKMq3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 08:46:29 -0400
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id D7BA35C0109;
+        Mon, 11 Jun 2018 14:46:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1528721187;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=2l4IJEfEiwlbvwevmTGNE97K6HLQwewqousD8Rf4KsY=;
+        b=fXqr2h0lR6/QRy/28zLiKbXxeUZ7Q7b+rofsuP410MmKV6gyFLcf8cM9Ts4IAzLEkzlDEu
+        dXUO2ooRNUTFjaFM+ANqXYlg2Mz6SUQwpODhuhZhFgmZPwgPptzXicHiZhAobvzWQ359q+
+        4aN4GqnWqSKKnfqi62B0GmVttcYGuMM=
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Date: Mon, 11 Jun 2018 14:46:27 +0200
+From: Stefan Agner <stefan@agner.ch>
+To: =?UTF-8?Q?Cl=C3=A9ment_P=C3=A9ron?= <peron.clem@gmail.com>
+Cc: Colin Didier <colin.didier@devialet.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        =?UTF-8?Q?Cl=C3=A9ment_Peron?= <clement.peron@devialet.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: Re: [PATCH v6 4/5] clocksource: add driver for i.MX EPIT timer
+In-Reply-To: <CAJiuCcdHKpfCkLhV=rZcLHx2k9BAh7bnDQMWDkquXJOYiQoTeA@mail.gmail.com>
+References: <20180607140544.22268-1-peron.clem@gmail.com>
+ <20180607140544.22268-5-peron.clem@gmail.com>
+ <5df13d8f6422d9099c1692dd2091d9ca@agner.ch>
+ <CAJiuCcdHKpfCkLhV=rZcLHx2k9BAh7bnDQMWDkquXJOYiQoTeA@mail.gmail.com>
+Message-ID: <a010621ceec0bf748e4393a3db322a28@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.4
+X-Spamd-Result: default: False [-2.70 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MID_RHS_MATCH_FROM(0.00)[];
+         RCPT_COUNT_TWELVE(0.00)[14];
+         TAGGED_RCPT(0.00)[];
+         FROM_EQ_ENVFROM(0.00)[];
+         FROM_HAS_DN(0.00)[];
+         URL_IN_SUBJECT(0.40)[i.mx];
+         MIME_GOOD(-0.10)[text/plain];
+         DKIM_SIGNED(0.00)[];
+         TO_DN_SOME(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
+         RCVD_TLS_ALL(0.00)[];
+         BAYES_HAM(-3.00)[100.00%];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On 11.06.2018 14:42, Clément Péron wrote:
+> Hi Stefan,
+> 
+> 
+>> > +
+>> > +#define EPITCR                               0x00
+>> > +#define EPITSR                               0x04
+>> > +#define EPITLR                               0x08
+>> > +#define EPITCMPR                     0x0c
+>> > +#define EPITCNR                              0x10
+>> > +
+>> > +#define EPITCR_EN                    BIT(0)
+>> > +#define EPITCR_ENMOD                 BIT(1)
+>> > +#define EPITCR_OCIEN                 BIT(2)
+>> > +#define EPITCR_RLD                   BIT(3)
+>> > +#define EPITCR_PRESC(x)                      (((x) & 0xfff) << 4)
+>> > +#define EPITCR_SWR                   BIT(16)
+>> > +#define EPITCR_IOVW                  BIT(17)
+>> > +#define EPITCR_DBGEN                 BIT(18)
+>> > +#define EPITCR_WAITEN                        BIT(19)
+>> > +#define EPITCR_RES                   BIT(20)
+>> > +#define EPITCR_STOPEN                        BIT(21)
+>> > +#define EPITCR_OM_DISCON             (0 << 22)
+>> > +#define EPITCR_OM_TOGGLE             (1 << 22)
+>> > +#define EPITCR_OM_CLEAR                      (2 << 22)
+>> > +#define EPITCR_OM_SET                        (3 << 22)
+>> > +#define EPITCR_CLKSRC_OFF            (0 << 24)
+>> > +#define EPITCR_CLKSRC_PERIPHERAL     (1 << 24)
+>> > +#define EPITCR_CLKSRC_REF_HIGH               (2 << 24)
+>> > +#define EPITCR_CLKSRC_REF_LOW                (3 << 24)
+>> > +
+>> > +#define EPITSR_OCIF                  BIT(0)
+>> > +
+>> > +struct epit_timer {
+>> > +     void __iomem *base;
+>> > +     int irq;
+>> > +     struct clk *clk;
+>> > +     struct clock_event_device ced;
+>> > +     struct irqaction act;
+>> > +};
+>> > +
+>> > +static void __iomem *sched_clock_reg;
+>> > +
+>> > +static inline struct epit_timer *to_epit_timer(struct clock_event_device *ced)
+>> > +{
+>> > +     return container_of(ced, struct epit_timer, ced);
+>> > +}
+>> > +
+>> > +static inline void epit_irq_disable(struct epit_timer *epittm)
+>> > +{
+>> > +     u32 val;
+>> > +
+>> > +     val = readl_relaxed(epittm->base + EPITCR);
+>> > +     writel_relaxed(val & ~EPITCR_OCIEN, epittm->base + EPITCR);
+>> > +}
+>> > +
+>> > +static inline void epit_irq_enable(struct epit_timer *epittm)
+>> > +{
+>> > +     u32 val;
+>> > +
+>> > +     val = readl_relaxed(epittm->base + EPITCR);
+>> > +     writel_relaxed(val | EPITCR_OCIEN, epittm->base + EPITCR);
+>> > +}
+>> > +
+>> > +static void epit_irq_acknowledge(struct epit_timer *epittm)
+>> > +{
+>> > +     writel_relaxed(EPITSR_OCIF, epittm->base + EPITSR);
+>> > +}
+>> > +
+>> > +static u64 notrace epit_read_sched_clock(void)
+>> > +{
+>> > +     return ~readl_relaxed(sched_clock_reg);
+>> > +}
+>> > +
+>> > +static int epit_set_next_event(unsigned long cycles,
+>> > +                            struct clock_event_device *ced)
+>> > +{
+>> > +     struct epit_timer *epittm = to_epit_timer(ced);
+>> > +     unsigned long tcmp;
+>> > +
+>> > +     tcmp = readl_relaxed(epittm->base + EPITCNR) - cycles;
+>> > +     writel_relaxed(tcmp, epittm->base + EPITCMPR);
+>> > +
+>> > +     return 0;
+>> > +}
+>> > +
+>> > +/* Left event sources disabled, no more interrupts appear */
+>> > +static int epit_shutdown(struct clock_event_device *ced)
+>> > +{
+>> > +     struct epit_timer *epittm = to_epit_timer(ced);
+>> > +     unsigned long flags;
+>> > +
+>> > +     /*
+>> > +      * The timer interrupt generation is disabled at least
+>> > +      * for enough time to call epit_set_next_event()
+>> > +      */
+>> > +     local_irq_save(flags);
+>> > +
+>> > +     /* Disable interrupt in EPIT module */
+>> > +     epit_irq_disable(epittm);
+>> > +
+>> > +     /* Clear pending interrupt */
+>> > +     epit_irq_acknowledge(epittm);
+>> > +
+>> > +     local_irq_restore(flags);
+>> > +
+>> > +     return 0;
+>> > +}
+>> > +
+>> > +static int epit_set_oneshot(struct clock_event_device *ced)
+>> > +{
+>> > +     struct epit_timer *epittm = to_epit_timer(ced);
+>> > +     unsigned long flags;
+>> > +
+>> > +     /*
+>> > +      * The timer interrupt generation is disabled at least
+>> > +      * for enough time to call epit_set_next_event()
+>> > +      */
+>> > +     local_irq_save(flags);
+>> > +
+>> > +     /* Disable interrupt in EPIT module */
+>> > +     epit_irq_disable(epittm);
+>> > +
+>> > +     /* Clear pending interrupt, only while switching mode */
+>> > +     if (!clockevent_state_oneshot(ced))
+>> > +             epit_irq_acknowledge(epittm);
+>> > +
+>> > +     /*
+>> > +      * Do not put overhead of interrupt enable/disable into
+>> > +      * epit_set_next_event(), the core has about 4 minutes
+>> > +      * to call epit_set_next_event() or shutdown clock after
+>> > +      * mode switching
+>> > +      */
+>> > +     epit_irq_enable(epittm);
+>> > +     local_irq_restore(flags);
+>> > +
+>> > +     return 0;
+>> > +}
+>> > +
+>> > +static irqreturn_t epit_timer_interrupt(int irq, void *dev_id)
+>> > +{
+>> > +     struct clock_event_device *ced = dev_id;
+>> > +     struct epit_timer *epittm = to_epit_timer(ced);
+>> > +
+>> > +     epit_irq_acknowledge(epittm);
+>> > +
+>> > +     ced->event_handler(ced);
+>> > +
+>> > +     return IRQ_HANDLED;
+>> > +}
+>> > +
+>> > +static int __init epit_clocksource_init(struct epit_timer *epittm)
+>> > +{
+>> > +     unsigned int c = clk_get_rate(epittm->clk);
+>> > +
+>> > +     sched_clock_reg = epittm->base + EPITCNR;
+>> > +     sched_clock_register(epit_read_sched_clock, 32, c);
+>> > +
+>> > +     return clocksource_mmio_init(epittm->base + EPITCNR, "epit", c, 200, 32,
+>> > +                                  clocksource_mmio_readl_down);
+>> > +}
+>> > +
+>> > +static int __init epit_clockevent_init(struct epit_timer *epittm)
+>> > +{
+>> > +     struct clock_event_device *ced = &epittm->ced;
+>> > +     struct irqaction *act = &epittm->act;
+>> > +
+>> > +     ced->name = "epit";
+>> > +     ced->features = CLOCK_EVT_FEAT_ONESHOT | CLOCK_EVT_FEAT_DYNIRQ;
+>> > +     ced->set_state_shutdown = epit_shutdown;
+>> > +     ced->tick_resume = epit_shutdown;
+>> > +     ced->set_state_oneshot = epit_set_oneshot;
+>> > +     ced->set_next_event = epit_set_next_event;
+>> > +     ced->rating = 200;
+>> > +     ced->cpumask = cpumask_of(0);
+>> > +     ced->irq = epittm->irq;
+>> > +     clockevents_config_and_register(ced, clk_get_rate(epittm->clk),
+>> > +                                     0xff, 0xfffffffe);
+>> > +
+>> > +     act->name = "i.MX EPIT Timer Tick",
+>> > +     act->flags = IRQF_TIMER | IRQF_IRQPOLL;
+>> > +     act->handler = epit_timer_interrupt;
+>> > +     act->dev_id = ced;
+>> > +
+>> > +     /* Make irqs happen */
+>> > +     return setup_irq(epittm->irq, act);
+>> > +}
+>> > +
+>> > +static int __init epit_timer_init(struct device_node *np)
+>> > +{
+>> > +     struct epit_timer *epittm;
+>> > +     int ret;
+>> > +
+>> > +     epittm = kzalloc(sizeof(*epittm), GFP_KERNEL);
+>> > +     if (!epittm)
+>> > +             return -ENOMEM;
+>> > +
+>> > +     epittm->base = of_iomap(np, 0);
+>> > +     if (!epittm->base) {
+>> > +             ret = -ENXIO;
+>> > +             goto out_kfree;
+>> > +     }
+>> > +
+>> > +     epittm->irq = irq_of_parse_and_map(np, 0);
+>> > +     if (!epittm->irq) {
+>> > +             ret = -EINVAL;
+>> > +             goto out_iounmap;
+>> > +     }
+>> > +
+>> > +        /* Get EPIT clock */
+>> > +        epittm->clk = of_clk_get(np, 0);
+>> > +        if (IS_ERR(epittm->clk)) {
+>> > +             pr_err("i.MX EPIT: unable to get clk\n");
+>> > +             ret = PTR_ERR(epittm->clk);
+>> > +             goto out_iounmap;
+>> > +        }
+>>
+>> There is something off with indent here.
+> Thanks for pointing out that, I will fix it.
+> 
+>>
+>> There is a helper library in drivers/clocksource/timer-of.c which might
+>> be useful for this driver.
+> Indeed, but will require a bit of rewrite.
 
-------------------
+That is fine for me ;-) Afaict, if should be simplify code a quite a
+bit, and doable with reasonable amount of work.
 
-From: Eric Dumazet <edumazet@google.com>
+It is typically the expectation for new drivers to make use of such
+libraries. In the end it is up to the clocksource maintainer(s) to
+decide whether they make it as an requirement for this driver.
 
-[ Upstream commit 66fb33254f45df4b049f487aff1cbde1ef919390 ]
+--
+Stefan
 
-commit 8fb472c09b9d ("ipmr: improve hash scalability")
-added a call to rhltable_init() without checking its return value.
-
-This problem was then later copied to IPv6 and factorized in commit
-0bbbf0e7d0e7 ("ipmr, ip6mr: Unite creation of new mr_table")
-
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-   (ftrace buffer empty)
-Modules linked in:
-CPU: 1 PID: 31552 Comm: syz-executor7 Not tainted 4.17.0-rc5+ #60
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:rht_key_hashfn include/linux/rhashtable.h:277 [inline]
-RIP: 0010:__rhashtable_lookup include/linux/rhashtable.h:630 [inline]
-RIP: 0010:rhltable_lookup include/linux/rhashtable.h:716 [inline]
-RIP: 0010:mr_mfc_find_parent+0x2ad/0xbb0 net/ipv4/ipmr_base.c:63
-RSP: 0018:ffff8801826aef70 EFLAGS: 00010203
-RAX: 0000000000000001 RBX: 0000000000000001 RCX: ffffc90001ea0000
-RDX: 0000000000000079 RSI: ffffffff8661e859 RDI: 000000000000000c
-RBP: ffff8801826af1c0 R08: ffff8801b2212000 R09: ffffed003b5e46c2
-R10: ffffed003b5e46c2 R11: ffff8801daf23613 R12: dffffc0000000000
-R13: ffff8801826af198 R14: ffff8801cf8225c0 R15: ffff8801826af658
-FS:  00007ff7fa732700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000003ffffff9c CR3: 00000001b0210000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- ip6mr_cache_find_parent net/ipv6/ip6mr.c:981 [inline]
- ip6mr_mfc_delete+0x1fe/0x6b0 net/ipv6/ip6mr.c:1221
- ip6_mroute_setsockopt+0x15c6/0x1d70 net/ipv6/ip6mr.c:1698
- do_ipv6_setsockopt.isra.9+0x422/0x4660 net/ipv6/ipv6_sockglue.c:163
- ipv6_setsockopt+0xbd/0x170 net/ipv6/ipv6_sockglue.c:922
- rawv6_setsockopt+0x59/0x140 net/ipv6/raw.c:1060
- sock_common_setsockopt+0x9a/0xe0 net/core/sock.c:3039
- __sys_setsockopt+0x1bd/0x390 net/socket.c:1903
- __do_sys_setsockopt net/socket.c:1914 [inline]
- __se_sys_setsockopt net/socket.c:1911 [inline]
- __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1911
- do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Fixes: 8fb472c09b9d ("ipmr: improve hash scalability")
-Fixes: 0bbbf0e7d0e7 ("ipmr, ip6mr: Unite creation of new mr_table")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Cc: Yuval Mintz <yuvalm@mellanox.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Acked-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv4/ipmr.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
---- a/net/ipv4/ipmr.c
-+++ b/net/ipv4/ipmr.c
-@@ -323,6 +323,7 @@ static const struct rhashtable_params ip
- static struct mr_table *ipmr_new_table(struct net *net, u32 id)
- {
- 	struct mr_table *mrt;
-+	int err;
- 
- 	/* "pimreg%u" should not exceed 16 bytes (IFNAMSIZ) */
- 	if (id != RT_TABLE_DEFAULT && id >= 1000000000)
-@@ -338,7 +339,11 @@ static struct mr_table *ipmr_new_table(s
- 	write_pnet(&mrt->net, net);
- 	mrt->id = id;
- 
--	rhltable_init(&mrt->mfc_hash, &ipmr_rht_params);
-+	err = rhltable_init(&mrt->mfc_hash, &ipmr_rht_params);
-+	if (err) {
-+		kfree(mrt);
-+		return ERR_PTR(err);
-+	}
- 	INIT_LIST_HEAD(&mrt->mfc_cache_list);
- 	INIT_LIST_HEAD(&mrt->mfc_unres_queue);
- 
+> 
+> Clement
+> 
+>>
+>> --
+>> Stefan
+>>
+>> > +
+>> > +     ret = clk_prepare_enable(epittm->clk);
+>> > +     if (ret) {
+>> > +             pr_err("i.MX EPIT: unable to prepare+enable clk\n");
+>> > +             goto out_iounmap;
+>> > +     }
+>> > +
+>> > +     /* Initialise to a known state (all timers off, and timing reset) */
+>> > +     writel_relaxed(0x0, epittm->base + EPITCR);
+>> > +     writel_relaxed(0xffffffff, epittm->base + EPITLR);
+>> > +     writel_relaxed(EPITCR_EN | EPITCR_CLKSRC_REF_HIGH | EPITCR_WAITEN,
+>> > +                    epittm->base + EPITCR);
+>> > +
+>> > +     ret = epit_clocksource_init(epittm);
+>> > +     if (ret) {
+>> > +             pr_err("i.MX EPIT: failed to init clocksource\n");
+>> > +             goto out_clk_disable;
+>> > +     }
+>> > +
+>> > +     ret = epit_clockevent_init(epittm);
+>> > +     if (ret) {
+>> > +             pr_err("i.MX EPIT: failed to init clockevent\n");
+>> > +             goto out_clk_disable;
+>> > +     }
+>> > +
+>> > +     return 0;
+>> > +
+>> > +out_clk_disable:
+>> > +     clk_disable_unprepare(epittm->clk);
+>> > +out_iounmap:
+>> > +     iounmap(epittm->base);
+>> > +out_kfree:
+>> > +     kfree(epittm);
+>> > +
+>> > +     return ret;
+>> > +}
+>> > +TIMER_OF_DECLARE(epit_timer, "fsl,imx31-epit", epit_timer_init);
