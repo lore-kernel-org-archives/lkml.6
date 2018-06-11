@@ -1,122 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id a+uqNYtrGVvzRgAAmS7hNA
-	; Thu, 07 Jun 2018 17:29:55 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id KSwPAuyGHltyOQAAmS7hNA
+	; Mon, 11 Jun 2018 14:27:58 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 62BE1608BA; Thu,  7 Jun 2018 17:29:55 +0000 (UTC)
+	id 3E1D360792; Mon, 11 Jun 2018 14:27:58 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="djsguOgB"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id F2149605A2;
-	Thu,  7 Jun 2018 17:29:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F2149605A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id BB1E56074D;
+	Mon, 11 Jun 2018 14:27:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BB1E56074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933851AbeFGR3w (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 13:29:52 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:6989 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932648AbeFGR3v (ORCPT
+        id S934700AbeFKO1z (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 10:27:55 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:36868 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934639AbeFKO1q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 13:29:51 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b196b990000>; Thu, 07 Jun 2018 10:30:01 -0700
-Received: from HQMAIL105.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 07 Jun 2018 10:29:50 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 07 Jun 2018 10:29:50 -0700
-Received: from rcampbell-dev.nvidia.com (10.110.48.66) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 7 Jun
- 2018 17:29:50 +0000
-Subject: Re: [PATCH 6/6] Convert intel uncore to struct_size
-To: Matthew Wilcox <willy@infradead.org>,
-        Kees Cook <keescook@chromium.org>
-CC: Matthew Wilcox <mawilcox@microsoft.com>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>,
-        <kernel-hardening@lists.openwall.com>
-References: <20180607145720.22590-1-willy@infradead.org>
- <20180607145720.22590-7-willy@infradead.org>
-From: Ralph Campbell <rcampbell@nvidia.com>
-Message-ID: <03d9addb-9c68-c6e5-d7db-57468fc3950c@nvidia.com>
-Date: Thu, 7 Jun 2018 10:29:49 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180607145720.22590-7-willy@infradead.org>
-X-Originating-IP: [10.110.48.66]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL105.nvidia.com (172.20.187.12)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 11 Jun 2018 10:27:46 -0400
+Received: by mail-wr0-f195.google.com with SMTP id d8-v6so20649107wro.4;
+        Mon, 11 Jun 2018 07:27:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=JrH8Ij012fxadUQg2ac4/rVD+BQU/gbbLmpgAyRLZ40=;
+        b=djsguOgBZk0tahd/Sk/UKcThoATqGoCqBrpjAv3z3yGk3aisAYI/UXin3idbwfwB4v
+         eJm40jLygT7kJSiYV96XHHzgSXmDv/ESfqckQ2xXRd2m/0+yrM3G/hHu683uONn0qICk
+         SjhIiz0qXIZ/1qkkONWnL6K9OGBmSJbk4yNSeT/hGVxAbIbrZodS6m1eUzAQAxOs/juC
+         Ddzr0HgwQHgI3C8JYwyeK3jHA3l9TTI37PKysMZBeA4RLzNCqRFnTGNaihbJ0ZyoTJGi
+         /0YL+k8Gx3n++a9QtcmD7TIoHFMS/yV6ddWviN2xEI6Narq9cI2FHuGgn+6ibUFJ4dNG
+         EuwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=JrH8Ij012fxadUQg2ac4/rVD+BQU/gbbLmpgAyRLZ40=;
+        b=LRBkI2uRKkJsdxct6S0IsEc8ht6Rcy5VsbqQ6A5pOU7exn0XLL+x5/FVKQjlE1Hien
+         6q8yeC6GrpYhcoOZ0ushK9bx3iF20T5Iq3E8uJW+x968o448b21oX+oABLv8YgY6m9tu
+         Dc8jmqjSXf1EENCanzsK8gjYRVB2KxnP6YtjktHbEfgbvFtvXrJxgJGbUoUuhLJcFy56
+         DLN2C/0RJ7ekvqLsyz/tCq1ZajFS+UUJJJFb2nVw2oMZW5ZBYJh1q2AC/O/K90Yhtat8
+         IRtfvZado62KWPNz+CiOJLPqIf9acCzNT7YT+OsWtve3AKpgjKvslw5tVGn1YvHgMitE
+         CWuw==
+X-Gm-Message-State: APt69E25sm+hHcPHzSV9sxCSmOPvumemBJQrXTv8tvBNHgYJwkyHmUxt
+        kojM33+YRw5sGh0C6+Pqy1I=
+X-Google-Smtp-Source: ADUXVKK9f7f+rHNt8exA6JpIdu8zC/LeXfnm/HL89yRzcjW2Y/dbGLeCTn12cxcNCb/WdIjnKZErjg==
+X-Received: by 2002:adf:9663:: with SMTP id c32-v6mr13938968wra.89.1528727265266;
+        Mon, 11 Jun 2018 07:27:45 -0700 (PDT)
+Received: from localhost.localdomain (83-103-103-194.ip.fastwebnet.it. [83.103.103.194])
+        by smtp.gmail.com with ESMTPSA id y18-v6sm36204266wrl.53.2018.06.11.07.27.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 11 Jun 2018 07:27:44 -0700 (PDT)
+From: Andrea Greco <andrea.greco.gapmilano@gmail.com>
+To: davem@davemloft.net
+Cc: tobin@apporbit.com, Andrea Greco <a.greco@4sigma.it>,
+        Michael Grzeschik <m.grzeschik@pengutronix.de>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 5/6] arcnet: com20020: Fixup missing SLOWARB bit
+Date: Mon, 11 Jun 2018 16:27:37 +0200
+Message-Id: <20180611142737.20983-1-andrea.greco.gapmilano@gmail.com>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Andrea Greco <a.greco@4sigma.it>
 
+If com20020 clock is major of 40Mhz SLOWARB bit is requested.
 
-On 06/07/2018 07:57 AM, Matthew Wilcox wrote:
-> From: Matthew Wilcox <mawilcox@microsoft.com>
-> 
-> Need to do a bit of rearranging to make this work.
-> 
-> Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
-> ---
->   arch/x86/events/intel/uncore.c | 19 ++++++++++---------
->   1 file changed, 10 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
-> index 15b07379e72d..e15cfad4f89b 100644
-> --- a/arch/x86/events/intel/uncore.c
-> +++ b/arch/x86/events/intel/uncore.c
-> @@ -865,8 +865,6 @@ static void uncore_types_exit(struct intel_uncore_type **types)
->   static int __init uncore_type_init(struct intel_uncore_type *type, bool setid)
->   {
->   	struct intel_uncore_pmu *pmus;
-> -	struct attribute_group *attr_group;
-> -	struct attribute **attrs;
->   	size_t size;
->   	int i, j;
->   
-> @@ -891,21 +889,24 @@ static int __init uncore_type_init(struct intel_uncore_type *type, bool setid)
->   				0, type->num_counters, 0, 0);
->   
->   	if (type->event_descs) {
-> +		struct {
-> +			struct attribute_group group;
-> +			struct attribute *attrs[];
-> +		} *attr_group;
->   		for (i = 0; type->event_descs[i].attr.attr.name; i++);
+Signed-off-by: Andrea Greco <a.greco@4sigma.it>
+---
+ drivers/net/arcnet/com20020.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-What does this for loop do?
-Looks like nothing given the semicolon at the end.
-
-> -		attr_group = kzalloc(sizeof(struct attribute *) * (i + 1) +
-> -					sizeof(*attr_group), GFP_KERNEL);
-> +		attr_group = kzalloc(struct_size(attr_group, attrs, i + 1),
-> +								GFP_KERNEL);
->   		if (!attr_group)
->   			goto err;
->   
-> -		attrs = (struct attribute **)(attr_group + 1);
-> -		attr_group->name = "events";
-> -		attr_group->attrs = attrs;
-> +		attr_group->group.name = "events";
-> +		attr_group->group.attrs = attr_group->attrs;
->   
->   		for (j = 0; j < i; j++)
-> -			attrs[j] = &type->event_descs[j].attr.attr;
-> +			attr_group->attrs[j] = &type->event_descs[j].attr.attr;
->   
-> -		type->events_group = attr_group;
-> +		type->events_group = &attr_group->group;
->   	}
->   
->   	type->pmu_group = &uncore_pmu_attr_group;
-> 
+diff --git a/drivers/net/arcnet/com20020.c b/drivers/net/arcnet/com20020.c
+index 8d979a66d8e9..1a0fd30fe8ae 100644
+--- a/drivers/net/arcnet/com20020.c
++++ b/drivers/net/arcnet/com20020.c
+@@ -133,6 +133,10 @@ int com20020_check(struct net_device *dev)
+ 	lp->setup = lp->clockm ? 0 : (lp->clockp << 1);
+ 	lp->setup2 = (lp->clockm << 4) | 8;
+ 
++	/* If clock is major of 40Mhz, SLOWARB bit must be set */
++	if (lp->clockm > 1)
++		lp->setup2 |= SLOWARB;
++
+ 	/* CHECK: should we do this for SOHARD cards ? */
+ 	/* Enable P1Mode for backplane mode */
+ 	lp->setup = lp->setup | P1MODE;
+-- 
+2.14.4
