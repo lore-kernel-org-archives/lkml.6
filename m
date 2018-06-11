@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 13vLN0ZAGVuLYAAAmS7hNA
-	; Thu, 07 Jun 2018 14:25:56 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id OCRFO/mBHlv2AgAAmS7hNA
+	; Mon, 11 Jun 2018 14:07:05 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id EA080608BA; Thu,  7 Jun 2018 14:25:55 +0000 (UTC)
+	id 5E568607E7; Mon, 11 Jun 2018 14:07:05 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t1JUFI93"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="goYdOaUW"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
@@ -13,152 +13,265 @@ X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 48DC6602FC;
-	Thu,  7 Jun 2018 14:25:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 48DC6602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 8F3EE6074D;
+	Mon, 11 Jun 2018 14:07:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8F3EE6074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933384AbeFGOZx (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:25:53 -0400
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:45192 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753103AbeFGOZt (ORCPT
+        id S933594AbeFKOHD (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 10:07:03 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45092 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933489AbeFKOGs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:25:49 -0400
-Received: by mail-vk0-f65.google.com with SMTP id n134-v6so6145214vke.12;
-        Thu, 07 Jun 2018 07:25:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=ro7exVqps1s/SXZT/NIJdfCFQHjGQLvvszmoBJ9+0+U=;
-        b=t1JUFI93L/Wy7y0Om6qaFzoPKd/um0W1k5yrhP+/QiSuUCOzacsu2dFeG+YtmBfi+W
-         4qH/fIfpkAOW89AFYDXK++eRWQw0JGMncEs9bLbQXhh3urxcU3RRbDg/wVJgE6Ut/AT3
-         uVdK+TalzBDRELJ7DYEjm8c3C08MmoX8cLlbn4+vnkuJHigTocLMh8ARw5u1y+mB3spO
-         HxCZiStD7DTlrN4XnEd9JZK0L4m9sBnGTwtQW/BGjCbb601cX6aWnng1QTev0py67yNM
-         UZ6I9wPTGqVt+87aVqk2gJutIh+UkfNg3lfmOoQQStBc0uwDAmKBTGquaX+eu3tOPrVK
-         yGDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=ro7exVqps1s/SXZT/NIJdfCFQHjGQLvvszmoBJ9+0+U=;
-        b=McOI7gY3snbEbZyA9ZKeMMNfJ9vxreWPlpHUbV9u2FoEFFLTntcbJ+EHHRAgoY6JPM
-         6BOegAhYF5gH9aa9kGM1h5b1QOw3DH3Qp8JGV4vH9DNA+7BRfpPEWU1q18QR2YhuCJp0
-         zck0Qk0KMMXkks8auGl0+aiSBMLortZwCCJKDmDV96IAIH2csg/XU3Vn4H4WoS5t0yFj
-         Q5Ko46OaM6HpbURMvkEJwXSJyGOIle8e8Lln/H4kowEMMTZEn0JnmJIpFe8cPemZD50M
-         zPIJtlo+3u8jdV49xiLGiZV8oKlmBGzJFHRqo3JzMYmE456aXBNaIypkMvjoTPys6cRt
-         xWdQ==
-X-Gm-Message-State: APt69E3X1VX5k4ltkL3+BFr+pvPd+pFiq92Bsnb3CHNe8d5Oi2R6GMom
-        Y0tgJP1RN8yHIE9K407MlvNmLLftfwieJHyMYGRn/u0a
-X-Google-Smtp-Source: ADUXVKLTvhz7JytbgFuG6ZHzE/2MriImr9RBX3j0LdND7AnNEi8u5K8W/t3UD3oBeSbRCPy1rZTyxx0F7toeuqceIi4=
-X-Received: by 2002:a1f:644:: with SMTP id 65-v6mr1255432vkg.159.1528381548345;
- Thu, 07 Jun 2018 07:25:48 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a67:8596:0:0:0:0:0 with HTTP; Thu, 7 Jun 2018 07:25:47 -0700 (PDT)
-In-Reply-To: <20180606163846.495725-1-jeremy.linton@arm.com>
-References: <20180606163846.495725-1-jeremy.linton@arm.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 7 Jun 2018 16:25:47 +0200
-X-Google-Sender-Auth: lQM9OY0W6E8363vRRasoz6LxfRU
-Message-ID: <CAMuHMdXW4M5CNS3wvb1R8v7ioGX7Q3ODcfgcdn2Ok3FRedTMZA@mail.gmail.com>
-Subject: Re: [PATCH v2] arm64: topology: Avoid checking numa mask for
- scheduler MC selection
-To: Jeremy Linton <jeremy.linton@arm.com>
-Cc: Sudeep Holla <Sudeep.Holla@arm.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        Catalin Marinas <Catalin.Marinas@arm.com>,
-        Robin Murphy <Robin.Murphy@arm.com>, Morten.Rasmussen@arm.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 11 Jun 2018 10:06:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
+        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=WWd+vxYrR7dn/0JVMqHD/PvTu5jxex5WZWt+Aik16Z8=; b=goYdOaUWm9P51SnD4JM/dgShi
+        9kwWLFGB2Lpf0q/sVdcvlqJ/89ZhpEWeWN+Lj4Vx1b4eKoWJJ3UKLHkLiOKiEpe2ROnWnhRrfN43Q
+        enAbGkzzeWmcr5z1RBbC/x9mSD4P/u9AST5eUrxsEWXCFeDRYZ+HqYxN6WHFZZqS309v10lNJlvF1
+        I+ox6DfozfmR2vbAaMcV5TgoPe/Djag1Cawy81ZxbWsbLJ9gcIBF7cDyuOdR5EPtDKMvVSs45irvZ
+        mTmPejPCSNpFLuyscKmLi9VNIuJoO6KbsdJh973W/Z6WgwKnfvW0sDozyNQ4PoujFgvj7alNpneVl
+        NQD1nC8bg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fSNT5-0004e0-IZ; Mon, 11 Jun 2018 14:06:47 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@redhat.com>,
+        Lukas Czerner <lczerner@redhat.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH v13 20/72] page cache: Convert hole search to XArray
+Date: Mon, 11 Jun 2018 07:05:47 -0700
+Message-Id: <20180611140639.17215-21-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
+References: <20180611140639.17215-1-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jeremy,
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-On Wed, Jun 6, 2018 at 6:38 PM, Jeremy Linton <jeremy.linton@arm.com> wrote:
-> The numa mask subset check can often lead to system hang or crash during
-> CPU hotplug and system suspend operation if NUMA is disabled. This is
+The page cache offers the ability to search for a miss in the previous or
+next N locations.  Rather than teach the XArray about the page cache's
+definition of a miss, use xas_prev() and xas_next() to search the page
+array.  This should be more efficient as it does not have to start the
+lookup from the top for each index.
 
-Also during boot, if CONFIG_ARM_PSCI_CHECKER=y.
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+ fs/nfs/blocklayout/blocklayout.c |   2 +-
+ include/linux/pagemap.h          |   4 +-
+ mm/filemap.c                     | 110 ++++++++++++++-----------------
+ mm/readahead.c                   |   4 +-
+ 4 files changed, 55 insertions(+), 65 deletions(-)
 
-> mostly observed on HMP systems where the CPU compute capacities are
-> different and ends up in different scheduler domains. Since
-> cpumask_of_node is returned instead core_sibling, the scheduler is
-> confused with incorrect cpumasks(e.g. one CPU in two different sched
-> domains at the same time) on CPU hotplug.
->
-> Lets disable the NUMA siblings checks for the time being, as NUMA in
-> socket machines have LLC's that will assure that the scheduler topology
-> isn't "borken".
->
-> The NUMA check exists to assure that if a LLC within a socket crosses
-> NUMA nodes/chiplets the scheduler domains remain consistent. This code will
-> likely have to be re-enabled in the near future once the NUMA mask story
-> is sorted.  At the moment its not necessary because the NUMA in socket
-> machines LLC's are contained within the NUMA domains.
->
-> Further, as a defensive mechanism during hot-plug, lets assure that the
-> LLC siblings are also masked.
->
-> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
-
-Thanks!
-
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-> ---
->  arch/arm64/kernel/topology.c | 11 ++++-------
->  1 file changed, 4 insertions(+), 7 deletions(-)
->
-> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-> index 7415c166281f..f845a8617812 100644
-> --- a/arch/arm64/kernel/topology.c
-> +++ b/arch/arm64/kernel/topology.c
-> @@ -215,13 +215,8 @@ EXPORT_SYMBOL_GPL(cpu_topology);
->
->  const struct cpumask *cpu_coregroup_mask(int cpu)
->  {
-> -       const cpumask_t *core_mask = cpumask_of_node(cpu_to_node(cpu));
-> +       const cpumask_t *core_mask = &cpu_topology[cpu].core_sibling;
->
-> -       /* Find the smaller of NUMA, core or LLC siblings */
-> -       if (cpumask_subset(&cpu_topology[cpu].core_sibling, core_mask)) {
-> -               /* not numa in package, lets use the package siblings */
-> -               core_mask = &cpu_topology[cpu].core_sibling;
-> -       }
->         if (cpu_topology[cpu].llc_id != -1) {
->                 if (cpumask_subset(&cpu_topology[cpu].llc_siblings, core_mask))
->                         core_mask = &cpu_topology[cpu].llc_siblings;
-> @@ -239,8 +234,10 @@ static void update_siblings_masks(unsigned int cpuid)
->         for_each_possible_cpu(cpu) {
->                 cpu_topo = &cpu_topology[cpu];
->
-> -               if (cpuid_topo->llc_id == cpu_topo->llc_id)
-> +               if (cpuid_topo->llc_id == cpu_topo->llc_id) {
->                         cpumask_set_cpu(cpu, &cpuid_topo->llc_siblings);
-> +                       cpumask_set_cpu(cpuid, &cpu_topo->llc_siblings);
-> +               }
->
->                 if (cpuid_topo->package_id != cpu_topo->package_id)
->                         continue;
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/fs/nfs/blocklayout/blocklayout.c b/fs/nfs/blocklayout/blocklayout.c
+index 7cb5c38c19e4..961901685007 100644
+--- a/fs/nfs/blocklayout/blocklayout.c
++++ b/fs/nfs/blocklayout/blocklayout.c
+@@ -895,7 +895,7 @@ static u64 pnfs_num_cont_bytes(struct inode *inode, pgoff_t idx)
+ 	end = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
+ 	if (end != inode->i_mapping->nrpages) {
+ 		rcu_read_lock();
+-		end = page_cache_next_hole(mapping, idx + 1, ULONG_MAX);
++		end = page_cache_next_gap(mapping, idx + 1, ULONG_MAX);
+ 		rcu_read_unlock();
+ 	}
+ 
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index b1bd2186e6d2..2f5d2d3ebaac 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -241,9 +241,9 @@ static inline gfp_t readahead_gfp_mask(struct address_space *x)
+ 
+ typedef int filler_t(void *, struct page *);
+ 
+-pgoff_t page_cache_next_hole(struct address_space *mapping,
++pgoff_t page_cache_next_gap(struct address_space *mapping,
+ 			     pgoff_t index, unsigned long max_scan);
+-pgoff_t page_cache_prev_hole(struct address_space *mapping,
++pgoff_t page_cache_prev_gap(struct address_space *mapping,
+ 			     pgoff_t index, unsigned long max_scan);
+ 
+ #define FGP_ACCESSED		0x00000001
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 4de14e75c4ec..8de36e14e22f 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -1326,86 +1326,76 @@ int __lock_page_or_retry(struct page *page, struct mm_struct *mm,
+ }
+ 
+ /**
+- * page_cache_next_hole - find the next hole (not-present entry)
+- * @mapping: mapping
+- * @index: index
+- * @max_scan: maximum range to search
+- *
+- * Search the set [index, min(index+max_scan-1, MAX_INDEX)] for the
+- * lowest indexed hole.
+- *
+- * Returns: the index of the hole if found, otherwise returns an index
+- * outside of the set specified (in which case 'return - index >=
+- * max_scan' will be true). In rare cases of index wrap-around, 0 will
+- * be returned.
+- *
+- * page_cache_next_hole may be called under rcu_read_lock. However,
+- * like radix_tree_gang_lookup, this will not atomically search a
+- * snapshot of the tree at a single point in time. For example, if a
+- * hole is created at index 5, then subsequently a hole is created at
+- * index 10, page_cache_next_hole covering both indexes may return 10
+- * if called under rcu_read_lock.
++ * page_cache_next_gap() - Find the next gap in the page cache.
++ * @mapping: Mapping.
++ * @index: Index.
++ * @max_scan: Maximum range to search.
++ *
++ * Search the range [index, min(index + max_scan - 1, ULONG_MAX)] for the
++ * gap with the lowest index.
++ *
++ * This function may be called under the rcu_read_lock.  However, this will
++ * not atomically search a snapshot of the cache at a single point in time.
++ * For example, if a gap is created at index 5, then subsequently a gap is
++ * created at index 10, page_cache_next_gap covering both indices may
++ * return 10 if called under the rcu_read_lock.
++ *
++ * Return: The index of the gap if found, otherwise an index outside the
++ * range specified (in which case 'return - index >= max_scan' will be true).
++ * In the rare case of index wrap-around, 0 will be returned.
+  */
+-pgoff_t page_cache_next_hole(struct address_space *mapping,
++pgoff_t page_cache_next_gap(struct address_space *mapping,
+ 			     pgoff_t index, unsigned long max_scan)
+ {
+-	unsigned long i;
++	XA_STATE(xas, &mapping->i_pages, index);
+ 
+-	for (i = 0; i < max_scan; i++) {
+-		struct page *page;
+-
+-		page = radix_tree_lookup(&mapping->i_pages, index);
+-		if (!page || xa_is_value(page))
++	while (max_scan--) {
++		void *entry = xas_next(&xas);
++		if (!entry || xa_is_value(entry))
+ 			break;
+-		index++;
+-		if (index == 0)
++		if (xas.xa_index == 0)
+ 			break;
+ 	}
+ 
+-	return index;
++	return xas.xa_index;
+ }
+-EXPORT_SYMBOL(page_cache_next_hole);
++EXPORT_SYMBOL(page_cache_next_gap);
+ 
+ /**
+- * page_cache_prev_hole - find the prev hole (not-present entry)
+- * @mapping: mapping
+- * @index: index
+- * @max_scan: maximum range to search
+- *
+- * Search backwards in the range [max(index-max_scan+1, 0), index] for
+- * the first hole.
+- *
+- * Returns: the index of the hole if found, otherwise returns an index
+- * outside of the set specified (in which case 'index - return >=
+- * max_scan' will be true). In rare cases of wrap-around, ULONG_MAX
+- * will be returned.
+- *
+- * page_cache_prev_hole may be called under rcu_read_lock. However,
+- * like radix_tree_gang_lookup, this will not atomically search a
+- * snapshot of the tree at a single point in time. For example, if a
+- * hole is created at index 10, then subsequently a hole is created at
+- * index 5, page_cache_prev_hole covering both indexes may return 5 if
+- * called under rcu_read_lock.
++ * page_cache_prev_gap() - Find the next gap in the page cache.
++ * @mapping: Mapping.
++ * @index: Index.
++ * @max_scan: Maximum range to search.
++ *
++ * Search the range [max(index - max_scan + 1, 0), index] for the
++ * gap with the highest index.
++ *
++ * This function may be called under the rcu_read_lock.  However, this will
++ * not atomically search a snapshot of the cache at a single point in time.
++ * For example, if a gap is created at index 10, then subsequently a gap is
++ * created at index 5, page_cache_prev_gap() covering both indices may
++ * return 5 if called under the rcu_read_lock.
++ *
++ * Return: The index of the gap if found, otherwise an index outside the
++ * range specified (in which case 'index - return >= max_scan' will be true).
++ * In the rare case of wrap-around, ULONG_MAX will be returned.
+  */
+-pgoff_t page_cache_prev_hole(struct address_space *mapping,
++pgoff_t page_cache_prev_gap(struct address_space *mapping,
+ 			     pgoff_t index, unsigned long max_scan)
+ {
+-	unsigned long i;
+-
+-	for (i = 0; i < max_scan; i++) {
+-		struct page *page;
++	XA_STATE(xas, &mapping->i_pages, index);
+ 
+-		page = radix_tree_lookup(&mapping->i_pages, index);
+-		if (!page || xa_is_value(page))
++	while (max_scan--) {
++		void *entry = xas_prev(&xas);
++		if (!entry || xa_is_value(entry))
+ 			break;
+-		index--;
+-		if (index == ULONG_MAX)
++		if (xas.xa_index == ULONG_MAX)
+ 			break;
+ 	}
+ 
+-	return index;
++	return xas.xa_index;
+ }
+-EXPORT_SYMBOL(page_cache_prev_hole);
++EXPORT_SYMBOL(page_cache_prev_gap);
+ 
+ /**
+  * find_get_entry - find and get a page cache entry
+diff --git a/mm/readahead.c b/mm/readahead.c
+index 3757aa549709..59998ca31f2a 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -334,7 +334,7 @@ static pgoff_t count_history_pages(struct address_space *mapping,
+ 	pgoff_t head;
+ 
+ 	rcu_read_lock();
+-	head = page_cache_prev_hole(mapping, offset - 1, max);
++	head = page_cache_prev_gap(mapping, offset - 1, max);
+ 	rcu_read_unlock();
+ 
+ 	return offset - 1 - head;
+@@ -422,7 +422,7 @@ ondemand_readahead(struct address_space *mapping,
+ 		pgoff_t start;
+ 
+ 		rcu_read_lock();
+-		start = page_cache_next_hole(mapping, offset + 1, max_pages);
++		start = page_cache_next_gap(mapping, offset + 1, max_pages);
+ 		rcu_read_unlock();
+ 
+ 		if (!start || start - offset > max_pages)
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.17.1
