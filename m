@@ -1,143 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ZErgNXR+GVvWawAAmS7hNA
-	; Thu, 07 Jun 2018 18:52:17 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id EhDTOUZkHlsGbQAAmS7hNA
+	; Mon, 11 Jun 2018 12:00:07 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 4D0076074D; Thu,  7 Jun 2018 18:52:17 +0000 (UTC)
+	id CED18607E4; Mon, 11 Jun 2018 12:00:06 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UMYEGc+X"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HOzMVHX5"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 9F18F606DD;
-	Thu,  7 Jun 2018 18:52:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9F18F606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 43DE0601C3;
+	Mon, 11 Jun 2018 12:00:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 43DE0601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753493AbeFGSwO (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 14:52:14 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:33374 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753066AbeFGSwM (ORCPT
+        id S933195AbeFKMAC (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 08:00:02 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:34613 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933407AbeFKL7U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 14:52:12 -0400
-Received: by mail-pg0-f65.google.com with SMTP id e11-v6so5183393pgq.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 11:52:12 -0700 (PDT)
+        Mon, 11 Jun 2018 07:59:20 -0400
+Received: by mail-wr0-f195.google.com with SMTP id a12-v6so20114734wro.1;
+        Mon, 11 Jun 2018 04:59:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hAU99C9zD3UsghKcPiymqFmN6jOxU+sKBReB+2Fl77c=;
-        b=UMYEGc+XphVzhcWKKGYa4oeBMj6jIro6wZDDEEq3CJCRLsdiDq6FdCCyHzKHyYOrml
-         gg5ik++TxRHx2iukX3iJSpGCdgzqo6YWbXsdltXF9vERu/ZNlXN66tXHTauYONCrEq56
-         CNO/9EVaFZMRRFZgcbGnIaJ1Lt4vbgHZlXZQRaGCOw+2s/Lq/VoZtT10+G/onwuMcvOc
-         eE1gTSn3nfvvNiPvIjvAG0cnyiJnRwMD1TZAH+hbDZjh5HwPgyRbAniM5nnpS5EyJdUk
-         tHdmuW7TKhe5dVC27e21sLxE/YWrOcxviN9qgKhsoVfCOU5mLu3hpNggZNB0WSOEgZ6T
-         pavg==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=ROqarQcUbRjTNGoRFFwVBtFCzqlS726GHAZNfRCPmCM=;
+        b=HOzMVHX5XcuEyxmVmS0e6HkVjNCQrb9JxfWHDagJ8xAmpSQiGV0usxcDgRipbJJrg8
+         57fmpUqdPfPN1L8mXZhb0Chz9AOLffaXH5BF+9I4zHCugoQyr3RAB1Ynf0BZiLVP5VwH
+         om8Vu0EIvzGJnZmmxVrMe2JsCj4WEszHZBJNEzQp9w8+8T0yTRbzUOQ6uRWjA2h+46gm
+         YuKWk8Bv9TYi1q9SJgAbwzD7Mw6NwJ/8ro+V7yxJ2KlPC5odHuf4rrDcYLxd/jNJ7BdA
+         PKf865raBAXh4lW7f//F310DUv9bQ2+NvMFDzw0GVvG50Fbu6m1aYhCeij3hnjZjlXiL
+         UFmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hAU99C9zD3UsghKcPiymqFmN6jOxU+sKBReB+2Fl77c=;
-        b=BhUL+de3M69q9BKO3Tlnh7tpUY0ZVekd6eOX7NQSOYc7wXQkkhCeFyLq9wqIkltfVp
-         EMT8u0cS5+xJAd8O4zUj6zwfN7zS7qgd+mYYPELh0VFRCDy1li8Mi/UDUR7BpM+pmund
-         IDHFBNxfEsA01MeoY2YgAWYW9kcc8OR1MNlpBhe947YH7w4l0X4D21+1Kp09DMqQ1Lt8
-         DYTMgeLPB9uvxAeZ62XBOEA89s+QQkz5+XJZ5WrehtP5c4uYo2YyrIHO3GTfZ85rX5aX
-         T7rD/ejFaxdSNqWIDSCPa/k+WSMroEkZJHHN2Mge5/h2R5jfq8zjDCWGFTrIcivTmS5P
-         se2g==
-X-Gm-Message-State: APt69E3O+imCb4kD/NqH2ibkSFNdMRXDB4fJfkV3YafTTU+tMlPwp6cv
-        TTr3xqG2y3DU7UKnEofDvMyUQuX3DjpU2F9/NV+mVA==
-X-Google-Smtp-Source: ADUXVKK7nnWe3wzigDzsdNspyvSJGJG3/u+QBc07PhZitbpc/mKCdUEFlsoPr/WUq9SagiL+tl5MVGwtaz5rd3BhXw4=
-X-Received: by 2002:a63:af50:: with SMTP id s16-v6mr2563785pgo.263.1528397531471;
- Thu, 07 Jun 2018 11:52:11 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180605170532.170361-1-ndesaulniers@google.com>
- <20180605170532.170361-2-ndesaulniers@google.com> <202492204c2d5bd5ca27307cbca5e44673b739ed.camel@perches.com>
- <CAKwvOdkUk7ZL8tXgBs0Y+0Y5NVebgAYne_qgdSWWDOvQaWFPhw@mail.gmail.com> <28c288fd3e87b6c839697519043cf642518e0262.camel@perches.com>
-In-Reply-To: <28c288fd3e87b6c839697519043cf642518e0262.camel@perches.com>
-From: Nick Desaulniers <ndesaulniers@google.com>
-Date: Thu, 7 Jun 2018 11:51:59 -0700
-Message-ID: <CAKwvOdkDyVC02oXsTX9YYAFLw5Q+aFNWsAp911h6VdjMCYFwJQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] compiler-gcc.h: add gnu_inline to all inline declarations
-To: joe@perches.com
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>, akataria@vmware.com,
-        boris.ostrovsky@oracle.com, brijesh.singh@amd.com,
-        Cao jin <caoj.fnst@cn.fujitsu.com>,
-        Greg KH <gregkh@linuxfoundation.org>, hpa@zytor.com,
-        "J. Kiszka" <jan.kiszka@siemens.com>,
-        jarkko.sakkinen@linux.intel.com, jgross@suse.com,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        kirill.shutemov@linux.intel.com, mingo@redhat.com,
-        mjg59@google.com, Matthias Kaehlcke <mka@chromium.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        rostedt@goodmis.org, Thomas Gleixner <tglx@linutronix.de>,
-        thomas.lendacky@amd.com, Thiebaud Weksteen <tweek@google.com>,
-        linux-efi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        x86@kernel.org, virtualization@lists.linux-foundation.org,
-        Alistair Strachan <astrachan@google.com>,
-        Manoj Gupta <manojgupta@google.com>,
-        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
-        tstellar@redhat.com, Kees Cook <keescook@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        geert@linux-m68k.org, Will Deacon <will.deacon@arm.com>,
-        mawilcox@microsoft.com, Arnd Bergmann <arnd@arndb.de>,
-        David Rientjes <rientjes@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=ROqarQcUbRjTNGoRFFwVBtFCzqlS726GHAZNfRCPmCM=;
+        b=SpCriG6zsqy5sqEy6BfXfjyZsqBW+Jpyd6t0sDhj1Eer0DZBfAcsXAPY9JVsXN3CrW
+         GTZefw3IgJKOa7muNS9aP54cVEkdY/ZmK87lzWcHHrKY9Yez3cM5/lug0SW/AowQAyLh
+         jgVcZr3iGBbKbjgTlkNikTNgjOyrRIHBgZB0VtUvmXqykKDlUFGR8KmP6HBRErIR/3Jt
+         wQwXOWhVhDEEW81I9qYCUd3uaGfDeCWSM7l7sGduXjJQG+mLn6ShNiddwtXufetvbl7X
+         g3aPkoeTcSKI+gDMkc6rX6g33L0JFhunHGFuidGMwVp9Qmd0BaSjPGYmrEN1layDmsSQ
+         sbOA==
+X-Gm-Message-State: APt69E0okCFxhDWTv29Y+Yjx4rz4NKViAwmX89JTq38usaO1KQgXvGed
+        zsmm8bXKie2GkhWfCGS5ZekBJi2m
+X-Google-Smtp-Source: ADUXVKI098rEsEGXYr5y8JdArir0vTWn+tf69kppL1d1PYO8rSIWiGFmZoNGttEuxmhnPbDQFYWO3g==
+X-Received: by 2002:adf:98cf:: with SMTP id w73-v6mr13514341wrb.209.1528718359117;
+        Mon, 11 Jun 2018 04:59:19 -0700 (PDT)
+Received: from kurokawa.lan (ip-86-49-107-50.net.upcbroadband.cz. [86.49.107.50])
+        by smtp.gmail.com with ESMTPSA id t124-v6sm7974796wmt.29.2018.06.11.04.59.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Jun 2018 04:59:18 -0700 (PDT)
+From: Marek Vasut <marek.vasut@gmail.com>
+X-Google-Original-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v6 12/14] mfd: da9063: Register RTC only on DA9063L
+Date: Mon, 11 Jun 2018 13:58:49 +0200
+Message-Id: <20180611115851.1987-12-marek.vasut+renesas@gmail.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
+References: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 7, 2018 at 11:31 AM Joe Perches <joe@perches.com> wrote:
->
-> On Thu, 2018-06-07 at 10:26 -0700, Nick Desaulniers wrote:
-> > I get the feeling that the use of __inline__ or __inline (vs inline)
-> > in the kernel may be wrong and their use should be eradicated in the
-> > follow up patch set, but it would be cool if others have additional
-> > insight.
->
-> __inline is easy and useful to remove as it's used in
-> just a few files.
->
-> But __inline__ is used in a lot of files and locations:
->
-> $ git grep -w --name-only __inline__ | wc -l
-> 154
-> $ git grep -w __inline__ | wc -l
-> 503
->
-> Some of these files are used in asm includes as
-> well where __inline__ may be preferred by gcc
->
-> https://gcc.gnu.org/onlinedocs/gcc/Alternate-Keywords.html#Alternate-Keywords
->
-> so perhaps asm exclusions would be necessary.
+The DA9063L does not contain RTC block, unlike the full DA9063.
+Split the RTC block into separate mfd cell and register it only
+on DA9063.
 
-Oops, just saw this email after sending v3: https://lkml.org/lkml/2018/6/7/1055
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+---
+V2: No change
+V3: Rework of mfd: da9063: Disallow RTC on DA9063L
+V4: - Change the original failure text
+    - Use PLATFORM_DEVID_NONE in mfd_add_devices
+V5: Rebase on top of new 01 and 02 patches
+V6: No change
+---
+ drivers/mfd/da9063-core.c | 31 ++++++++++++++++++++++++-------
+ 1 file changed, 24 insertions(+), 7 deletions(-)
 
-Guess I should re-add __inline__ and __inline then to 1/3?
-https://lkml.org/lkml/2018/6/7/1060
-
-ie:
-
-+#define __inline__ __inline__ inline
-instead of
-+#define __inline__ inline
-
-?
-
-On the other hand, I was able to assemble with gcc+binutils and v3 as it stands.
-
-Reading the link you sent, it seems more about compiling with
--pedantic or non-gnu C standards being used (I'd call that unlikely
-for the kernel). So it still seems incorrect to me the use of
-__inline__ (but I do appreciate the link!) at least in the kernel.
+diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
+index ded59990f18c..6e4ce49b4405 100644
+--- a/drivers/mfd/da9063-core.c
++++ b/drivers/mfd/da9063-core.c
+@@ -76,7 +76,7 @@ static struct resource da9063_hwmon_resources[] = {
+ };
+ 
+ 
+-static const struct mfd_cell da9063_devs[] = {
++static const struct mfd_cell da9063_common_devs[] = {
+ 	{
+ 		.name		= DA9063_DRVNAME_REGULATORS,
+ 		.num_resources	= ARRAY_SIZE(da9063_regulators_resources),
+@@ -100,15 +100,19 @@ static const struct mfd_cell da9063_devs[] = {
+ 		.resources	= da9063_onkey_resources,
+ 		.of_compatible = "dlg,da9063-onkey",
+ 	},
++	{
++		.name		= DA9063_DRVNAME_VIBRATION,
++	},
++};
++
++/* Only present on DA9063 , not on DA9063L */
++static const struct mfd_cell da9063_devs[] = {
+ 	{
+ 		.name		= DA9063_DRVNAME_RTC,
+ 		.num_resources	= ARRAY_SIZE(da9063_rtc_resources),
+ 		.resources	= da9063_rtc_resources,
+ 		.of_compatible	= "dlg,da9063-rtc",
+ 	},
+-	{
+-		.name		= DA9063_DRVNAME_VIBRATION,
+-	},
+ };
+ 
+ static int da9063_clear_fault_log(struct da9063 *da9063)
+@@ -226,10 +230,23 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
+ 	da9063->irq_base = regmap_irq_chip_get_base(da9063->regmap_irq);
+ 
+ 	ret = devm_mfd_add_devices(da9063->dev, PLATFORM_DEVID_NONE,
+-				   da9063_devs, ARRAY_SIZE(da9063_devs),
++				   da9063_common_devs,
++				   ARRAY_SIZE(da9063_common_devs),
+ 				   NULL, da9063->irq_base, NULL);
+-	if (ret)
+-		dev_err(da9063->dev, "Cannot add MFD cells\n");
++	if (ret) {
++		dev_err(da9063->dev, "Failed to add child devices\n");
++		return ret;
++	}
++
++	if (da9063->type == PMIC_TYPE_DA9063) {
++		ret = devm_mfd_add_devices(da9063->dev, PLATFORM_DEVID_NONE,
++					   da9063_devs, ARRAY_SIZE(da9063_devs),
++					   NULL, da9063->irq_base, NULL);
++		if (ret) {
++			dev_err(da9063->dev, "Failed to add child devices\n");
++			return ret;
++		}
++	}
+ 
+ 	return ret;
+ }
+-- 
+2.16.2
