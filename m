@@ -1,141 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 8wv4A4FCGVvEfAAAmS7hNA
-	; Thu, 07 Jun 2018 14:35:30 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id SlwcAZ7sHVvJLQAAmS7hNA
+	; Mon, 11 Jun 2018 03:29:34 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id B619A607DC; Thu,  7 Jun 2018 14:35:30 +0000 (UTC)
+	id EACEA60792; Mon, 11 Jun 2018 03:29:33 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 21644601D2;
-	Thu,  7 Jun 2018 14:35:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 21644601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 734EC604D4;
+	Mon, 11 Jun 2018 03:29:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 734EC604D4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934048AbeFGOf2 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:35:28 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40385 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933817AbeFGOfX (ORCPT
+        id S932621AbeFKD3c (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Sun, 10 Jun 2018 23:29:32 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:29104 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932435AbeFKD1K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:35:23 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbj-0005Zw-8V; Thu, 07 Jun 2018 15:09:43 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb5-0002yp-GE; Thu, 07 Jun 2018 15:09:03 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Sun, 10 Jun 2018 23:27:10 -0400
+X-UUID: 36ad306a79b04a9798dfb07042590dc6-20180611
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        (envelope-from <stu.hsieh@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 941269283; Mon, 11 Jun 2018 11:27:06 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Mon, 11 Jun 2018 11:27:04 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Mon, 11 Jun 2018 11:27:04 +0800
+From: Stu Hsieh <stu.hsieh@mediatek.com>
+To: CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>
+CC: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, Stu Hsieh <stu.hsieh@mediatek.com>
+Subject: [PATCH 19/28] drm/mediatek: add connection from RDMA2 to DPI1
+Date: Mon, 11 Jun 2018 11:26:11 +0800
+Message-ID: <1528687580-549-20-git-send-email-stu.hsieh@mediatek.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
+References: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Parag Warudkar" <parag.warudkar@gmail.com>,
-        "Ingo Molnar" <mingo@kernel.org>,
-        "Jean Delvare" <jdelvare@suse.de>,
-        "Thomas Gleixner" <tglx@linutronix.de>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.219715334@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 192/410] firmware: dmi_scan: Fix handling of empty
- DMI strings
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+This patch add the connection from RDMA2 to DPI1
 
-------------------
-
-From: Jean Delvare <jdelvare@suse.de>
-
-commit a7770ae194569e96a93c48aceb304edded9cc648 upstream.
-
-The handling of empty DMI strings looks quite broken to me:
-* Strings from 1 to 7 spaces are not considered empty.
-* True empty DMI strings (string index set to 0) are not considered
-  empty, and result in allocating a 0-char string.
-* Strings with invalid index also result in allocating a 0-char
-  string.
-* Strings starting with 8 spaces are all considered empty, even if
-  non-space characters follow (sounds like a weird thing to do, but
-  I have actually seen occurrences of this in DMI tables before.)
-* Strings which are considered empty are reported as 8 spaces,
-  instead of being actually empty.
-
-Some of these issues are the result of an off-by-one error in memcmp,
-the rest is incorrect by design.
-
-So let's get it square: missing strings and strings made of only
-spaces, regardless of their length, should be treated as empty and
-no memory should be allocated for them. All other strings are
-non-empty and should be allocated.
-
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
-Fixes: 79da4721117f ("x86: fix DMI out of memory problems")
-Cc: Parag Warudkar <parag.warudkar@gmail.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
 ---
- drivers/firmware/dmi_scan.c | 22 +++++++++-------------
- 1 file changed, 9 insertions(+), 13 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/firmware/dmi_scan.c
-+++ b/drivers/firmware/dmi_scan.c
-@@ -15,7 +15,7 @@
-  * of and an antecedent to, SMBIOS, which stands for System
-  * Management BIOS.  See further: http://www.dmtf.org/standards
-  */
--static const char dmi_empty_string[] = "        ";
-+static const char dmi_empty_string[] = "";
- 
- static u16 __initdata dmi_ver;
- /*
-@@ -36,25 +36,21 @@ static int dmi_memdev_nr;
- static const char * __init dmi_string_nosave(const struct dmi_header *dm, u8 s)
- {
- 	const u8 *bp = ((u8 *) dm) + dm->length;
-+	const u8 *nsp;
- 
- 	if (s) {
--		s--;
--		while (s > 0 && *bp) {
-+		while (--s > 0 && *bp)
- 			bp += strlen(bp) + 1;
--			s--;
--		}
- 
--		if (*bp != 0) {
--			size_t len = strlen(bp)+1;
--			size_t cmp_len = len > 8 ? 8 : len;
--
--			if (!memcmp(bp, dmi_empty_string, cmp_len))
--				return dmi_empty_string;
-+		/* Strings containing only spaces are considered empty */
-+		nsp = bp;
-+		while (*nsp == ' ')
-+			nsp++;
-+		if (*nsp != '\0')
- 			return bp;
--		}
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+index 31a0832ef9ec..2d883815d79c 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+@@ -93,9 +93,11 @@
+ #define RDMA1_MOUT_DPI0			0x2
+ #define RDMA1_MOUT_DPI1			0x3
+ #define RDMA2_MOUT_DPI0			0x2
++#define RDMA2_MOUT_DPI1			0x3
+ #define DPI0_SEL_IN_RDMA1		0x1
+ #define DPI0_SEL_IN_RDMA2		0x3
+ #define DPI1_SEL_IN_RDMA1		(0x1 << 8)
++#define DPI1_SEL_IN_RDMA2		(0x3 << 8)
+ #define DSI1_SEL_IN_RDMA1		0x1
+ #define DSI2_SEL_IN_RDMA1		(0x1 << 16)
+ #define DSI3_SEL_IN_RDMA1		(0x1 << 16)
+@@ -199,6 +201,9 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
+ 	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI0) {
+ 		*addr = DISP_REG_CONFIG_DISP_RDMA2_SOUT;
+ 		value = RDMA2_MOUT_DPI0;
++	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI1) {
++		*addr = DISP_REG_CONFIG_DISP_RDMA2_SOUT;
++		value = RDMA2_MOUT_DPI1;
+ 	} else {
+ 		value = 0;
  	}
- 
--	return "";
-+	return dmi_empty_string;
- }
- 
- static const char * __init dmi_string(const struct dmi_header *dm, u8 s)
+@@ -233,6 +238,9 @@ static unsigned int mtk_ddp_sel_in(enum mtk_ddp_comp_id cur,
+ 	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI0) {
+ 		*addr = DISP_REG_CONFIG_DPI_SEL_IN;
+ 		value = DPI0_SEL_IN_RDMA2;
++	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI1) {
++		*addr = DISP_REG_CONFIG_DPI_SEL_IN;
++		value = DPI1_SEL_IN_RDMA2;
+ 	} else if (cur == DDP_COMPONENT_OVL1 && next == DDP_COMPONENT_COLOR1) {
+ 		*addr = DISP_REG_CONFIG_DISP_COLOR1_SEL_IN;
+ 		value = COLOR1_SEL_IN_OVL1;
+-- 
+2.12.5
