@@ -1,113 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id pQAnMDFJGVshTgAAmS7hNA
-	; Thu, 07 Jun 2018 15:03:47 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ZD6lK/hLHludJgAAmS7hNA
+	; Mon, 11 Jun 2018 10:16:24 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 0C29B608C1; Thu,  7 Jun 2018 15:03:47 +0000 (UTC)
+	id A19D4607E7; Mon, 11 Jun 2018 10:16:24 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 77267601C3;
-	Thu,  7 Jun 2018 15:03:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 77267601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 3550960541;
+	Mon, 11 Jun 2018 10:16:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3550960541
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935957AbeFGPDo (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:03:44 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41518 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935924AbeFGPDi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:03:38 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbJ-0005a0-9I; Thu, 07 Jun 2018 15:09:17 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbF-0003Im-4q; Thu, 07 Jun 2018 15:09:13 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        id S932717AbeFKKQV (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 06:16:21 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:48104 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932515AbeFKKQU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 06:16:20 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 45FA4207A5; Mon, 11 Jun 2018 12:16:18 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-37-30.w90-88.abo.wanadoo.fr [90.88.156.30])
+        by mail.bootlin.com (Postfix) with ESMTPSA id D86062069C;
+        Mon, 11 Jun 2018 12:16:17 +0200 (CEST)
+Date: Mon, 11 Jun 2018 12:16:18 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+Cc: "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        Frieder Schrempf <frieder.schrempf@exceet.de>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        David Wolfe <david.wolfe@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>,
+        Han Xu <han.xu@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 03/11] spi: Add a driver for the Freescale/NXP QuadSPI
+ controller
+Message-ID: <20180611121618.40f4b609@bbrezillon>
+In-Reply-To: <DB6PR0402MB283825171DF93AD3C8590DD799780@DB6PR0402MB2838.eurprd04.prod.outlook.com>
+References: <1527686082-15142-1-git-send-email-frieder.schrempf@exceet.de>
+        <1527686082-15142-4-git-send-email-frieder.schrempf@exceet.de>
+        <DB6PR0402MB283845A1A98672FE63C89550997B0@DB6PR0402MB2838.eurprd04.prod.outlook.com>
+        <20180608145130.09f979f9@bbrezillon>
+        <DB6PR0402MB2838D514CF38AC5E6C004E8499780@DB6PR0402MB2838.eurprd04.prod.outlook.com>
+        <20180611094616.5c8f82cf@bbrezillon>
+        <DB6PR0402MB283825171DF93AD3C8590DD799780@DB6PR0402MB2838.eurprd04.prod.outlook.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "James Holderness" <j4_james@hotmail.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.181972819@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 396/410] tty: vt: fix up tabstops properly
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+On Mon, 11 Jun 2018 09:38:14 +0000
+Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
 
-------------------
+> > > Observation 3:
+> > > As we can support JFFS2 filesystem on NOR flash, so we can expect JFFS2 commands should work fine on NOR flash.
+> > > But with this driver change my mount command is not working.
+> > > 
+> > > In my target there are 2 flash slave devices connected, and I have given argument to create MTD partition like "mtdparts=20c0000.quadspi-1:5M(rcw),10M(test),46M(rootfs) " for 2nd flash.
+> > > Below is output for /proc/mtd commands
+> > >     root@ls1012ardb:~# cat /proc/mtd
+> > >     dev:    size   erasesize  name
+> > >     mtd0: 04000000 00040000 "20c0000.quadspi-0"   --> First 64MB flash
+> > >     mtd1: 00500000 00040000 "rcw"                               --> Second 64 MB flash device, 3 MTD partition are created for it.
+> > >     mtd2: 00a00000 00040000 "test"
+> > >     mtd3: 02e00000 00040000 "rootfs"
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+When I do mtd1 + mtd2 + mtd3, I end up with 0x3d00000 instead of
+0x4000000. Is that normal? Do you reserve a bit of space at the end or
+is it that rcw is not starting at 0?
 
-commit f1869a890cdedb92a3fab969db5d0fd982850273 upstream.
+> > > 
+> > >     root@ls1012ardb:~# mkdir /media/ram ; flash_eraseall /dev/mtd3
+> > >     flash_eraseall has been replaced by `flash_erase <mtddev> 0 0`; please use it
+> > >     Erasing 256 Kibyte @ 0 --  0 % complete [   18.299929] random: crng init done
+> > >     Erasing 256 Kibyte @ 2dc0000 -- 100 % complete
+> > >     root@ls1012ardb:~# mount -t jffs2 /dev/mtdblock3 /media/ram/
+> > > 
+> > > This command didn't finish successfully and there are lot of messages coming on console mentioning failure in jffs2_scan_eraseblock()
+> > >     [  187.118677] jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found at 0x013c0000: 0x2886 instead
 
-Tabs on a console with long lines do not wrap properly, so correctly
-account for the line length when computing the tab placement location.
+Did you try to create a smaller partition? Maybe we have a problem when
+accessing addresses higher than X with the new driver (X to be
+determined).
 
-Reported-by: James Holderness <j4_james@hotmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- drivers/tty/vt/vt.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
---- a/drivers/tty/vt/vt.c
-+++ b/drivers/tty/vt/vt.c
-@@ -1705,7 +1705,7 @@ static void reset_terminal(struct vc_dat
- 	default_attr(vc);
- 	update_attr(vc);
- 
--	vc->vc_tab_stop[0]	= 0x01010100;
-+	vc->vc_tab_stop[0]	=
- 	vc->vc_tab_stop[1]	=
- 	vc->vc_tab_stop[2]	=
- 	vc->vc_tab_stop[3]	=
-@@ -1748,7 +1748,7 @@ static void do_con_trol(struct tty_struc
- 		vc->vc_pos -= (vc->vc_x << 1);
- 		while (vc->vc_x < vc->vc_cols - 1) {
- 			vc->vc_x++;
--			if (vc->vc_tab_stop[vc->vc_x >> 5] & (1 << (vc->vc_x & 31)))
-+			if (vc->vc_tab_stop[7 & (vc->vc_x >> 5)] & (1 << (vc->vc_x & 31)))
- 				break;
- 		}
- 		vc->vc_pos += (vc->vc_x << 1);
-@@ -1808,7 +1808,7 @@ static void do_con_trol(struct tty_struc
- 			lf(vc);
- 			return;
- 		case 'H':
--			vc->vc_tab_stop[vc->vc_x >> 5] |= (1 << (vc->vc_x & 31));
-+			vc->vc_tab_stop[7 & (vc->vc_x >> 5)] |= (1 << (vc->vc_x & 31));
- 			return;
- 		case 'Z':
- 			respond_ID(tty);
-@@ -2001,7 +2001,7 @@ static void do_con_trol(struct tty_struc
- 			return;
- 		case 'g':
- 			if (!vc->vc_par[0])
--				vc->vc_tab_stop[vc->vc_x >> 5] &= ~(1 << (vc->vc_x & 31));
-+				vc->vc_tab_stop[7 & (vc->vc_x >> 5)] &= ~(1 << (vc->vc_x & 31));
- 			else if (vc->vc_par[0] == 3) {
- 				vc->vc_tab_stop[0] =
- 					vc->vc_tab_stop[1] =
+> > >     [  187.128159] jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found at 0x013c0004: 0x7a3b instead
+> > >     [  187.137641] jffs2: jffs2_scan_eraseblock(): Magic bitmask
+> > > 0x1985 not found at 0x013c0008: 0xb10f instead
+> > > 
