@@ -2,117 +2,205 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E3C14C004E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 00:27:40 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 64D4FC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 00:27:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9536D208AE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 00:27:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ftjh0LwE";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="B4/8vu2N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9536D208AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id DBCA0208B0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 00:27:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBCA0208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ccs.covici.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934761AbeFLA1i (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 20:27:38 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:51666 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934716AbeFLA1f (ORCPT
+        id S934784AbeFLA1l (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 20:27:41 -0400
+Received: from dallas-out-001.smtp25.com ([63.71.12.128]:55890 "EHLO
+        dallas-out-001.smtp25.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934716AbeFLA1j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 20:27:35 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 2E91A606FA; Tue, 12 Jun 2018 00:27:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528763255;
-        bh=8bRmaUZJ8/S1WMiqrWwYATODjR54CvfGZiiPPGgZOR4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ftjh0LwExmn0mcZa+9JaxTxX7jjJtlGkuSZtI8bthbUTbSXqTcEiZfgAs6TLfilo6
-         NOfiVOrIp6rQUqS+4mSk29xjKVJxu2xjcE7xkb2/0FnQBeDrZ5PGtua7Niu4P13USi
-         IEdGDeeq8vXRAChWPBvlDqAye4Si7+40ORBJzuKQ=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 7694160351;
-        Tue, 12 Jun 2018 00:27:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528763254;
-        bh=8bRmaUZJ8/S1WMiqrWwYATODjR54CvfGZiiPPGgZOR4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=B4/8vu2NZe/soEPbljXKgJdfn8zgYFgSvhgr7wKl2CC/BbHjbB2RXZzpTYRI7ZsJ5
-         P6JOseik9lZPyNvoO/wy6fPu0F+5IU+dcbpn2rvYn2i8kBwkHezub9mBuYZ1a+PsxM
-         91rBD/XKqETaoVALG4K4wlf6JZ3xsWEgZ7Y0haSQ=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 12 Jun 2018 08:27:34 +0800
-From:   cang@codeaurora.org
-To:     Manu Gautam <mgautam@codeaurora.org>
-Cc:     subhashj@codeaurora.org, asutoshd@codeaurora.org,
-        vivek.gautam@codeaurora.org, kishon@ti.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v6 1/3] phy: Update PHY power control sequence
-In-Reply-To: <9954c362-c144-9e5f-8b06-687c856ed25a@codeaurora.org>
-References: <20180529043751.10580-1-cang@codeaurora.org>
- <20180529043751.10580-2-cang@codeaurora.org>
- <9954c362-c144-9e5f-8b06-687c856ed25a@codeaurora.org>
-Message-ID: <7b5f62c60cc3a2c3b9d7c4e99dcde01b@codeaurora.org>
-X-Sender: cang@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+        Mon, 11 Jun 2018 20:27:39 -0400
+X-Greylist: delayed 1919 seconds by postgrey-1.27 at vger.kernel.org; Mon, 11 Jun 2018 20:27:39 EDT
+Received: from ccs.covici.com (localhost [127.0.0.1])
+        by ccs.covici.com (8.14.9/8.14.8) with ESMTP id w5BNtRwM017117
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Jun 2018 19:55:27 -0400
+Received: (from covici@localhost)
+        by ccs.covici.com (8.14.9/8.13.7/Submit) id w5BNtRUq017116;
+        Mon, 11 Jun 2018 19:55:27 -0400
+Date:   Mon, 11 Jun 2018 19:55:27 -0400
+Message-ID: <m3bmcgho9c.wl-covici@ccs.covici.com>
+From:   John Covici <covici@ccs.covici.com>
+To:     Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        "Speakup is a screen review system for Linux." 
+        <speakup@linux-speakup.org>, devel@driverdev.osuosl.org,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: speakup: refactor synths array to use a list
+In-Reply-To: <20180611225703.csi47cdafhy6rxcf@var.youpi.perso.aquilenet.fr>
+References: <20180604095212.GA18381@tanglefoot>
+        <20180606132628.fxykchbznrwzgwqt@var.youpi.perso.aquilenet.fr>
+        <20180611225703.csi47cdafhy6rxcf@var.youpi.perso.aquilenet.fr>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?ISO-8859-4?Q?Goj=F2?=) APEL/10.8 EasyPG/1.0.0 Emacs/26
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Reply-To: covici@ccs.covici.com
+Organization: Covici Computer Systems
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SpamH-Filter: dallas-out-001.smtp25.com-w5BNtSGA029445
+X-SpamH-OriginatingIP: 70.109.53.110
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-06-08 14:45, Manu Gautam wrote:
-> Hi,
-> 
-> On 5/29/2018 10:07 AM, Can Guo wrote:
->> All PHYs should be powered on before register configuration starts. 
->> And
->> only PCIe PHYs need an extra power control before deasserts reset 
->> state.
->> 
->> Signed-off-by: Can Guo <cang@codeaurora.org>
->> ---
->>  drivers/phy/qualcomm/phy-qcom-qmp.c | 5 ++++-
->>  1 file changed, 4 insertions(+), 1 deletion(-)
->> 
->> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c 
->> b/drivers/phy/qualcomm/phy-qcom-qmp.c
->> index 97ef942..f779b0f 100644
->> --- a/drivers/phy/qualcomm/phy-qcom-qmp.c
->> +++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
->> @@ -982,6 +982,8 @@ static int qcom_qmp_phy_com_init(struct qcom_qmp 
->> *qmp)
->>  	if (cfg->has_phy_com_ctrl)
->>  		qphy_setbits(serdes, cfg->regs[QPHY_COM_POWER_DOWN_CONTROL],
->>  			     SW_PWRDN);
->> +	else
->> +		qphy_setbits(pcs, QPHY_POWER_DOWN_CONTROL, cfg->pwrdn_ctrl);
-> 
-> We should power-up PHYs after following dp_com_ctrl programming which
-> powers-off USB-DP combo PHY when it brings DP_COM block out of reset 
-> reset.
-> 
-> 
+Maybe I can do it, I have a kernel with speakup, using 4.9.43.  Will
+the patch fit there?
 
-Sure Manu
+On Mon, 11 Jun 2018 18:57:03 -0400,
+Samuel Thibault wrote:
+> 
+> [1  <text/plain; us-ascii (7bit)>]
+> Hello,
+> 
+> Samuel Thibault, le mer. 06 juin 2018 15:26:28 +0200, a ecrit:
+> > I'd also rather see it tested in the real wild before committing. Could
+> > somebody on the speakup mailing list test the patch? (which I have
+> > re-attached as a file for conveniency).
+> 
+> Anybody up for testing please?
+> 
+> If people want to see speakup get mainlined instead of staging, please
+> help.
+> 
+> Samuel
+> [2 patch <text/plain; us-ascii (7bit)>]
+> ---
+>  drivers/staging/speakup/spk_types.h |  2 ++
+>  drivers/staging/speakup/synth.c     | 40 ++++++++++-------------------
+>  2 files changed, 15 insertions(+), 27 deletions(-)
+> 
+> diff --git a/drivers/staging/speakup/spk_types.h b/drivers/staging/speakup/spk_types.h
+> index 3e082dc3d45c..a2fc72c29894 100644
+> --- a/drivers/staging/speakup/spk_types.h
+> +++ b/drivers/staging/speakup/spk_types.h
+> @@ -160,6 +160,8 @@ struct spk_io_ops {
+>  };
+>  
+>  struct spk_synth {
+> +	struct list_head node;
+> +
+>  	const char *name;
+>  	const char *version;
+>  	const char *long_name;
+> diff --git a/drivers/staging/speakup/synth.c b/drivers/staging/speakup/synth.c
+> index 7deeb7061018..25f259ee4ffc 100644
+> --- a/drivers/staging/speakup/synth.c
+> +++ b/drivers/staging/speakup/synth.c
+> @@ -18,8 +18,7 @@
+>  #include "speakup.h"
+>  #include "serialio.h"
+>  
+> -#define MAXSYNTHS       16      /* Max number of synths in array. */
+> -static struct spk_synth *synths[MAXSYNTHS + 1];
+> +static LIST_HEAD(synths);
+>  struct spk_synth *synth;
+>  char spk_pitch_buff[32] = "";
+>  static int module_status;
+> @@ -355,9 +354,8 @@ struct var_t synth_time_vars[] = {
+>  /* called by: speakup_init() */
+>  int synth_init(char *synth_name)
+>  {
+> -	int i;
+>  	int ret = 0;
+> -	struct spk_synth *synth = NULL;
+> +	struct spk_synth *tmp, *synth = NULL;
+>  
+>  	if (!synth_name)
+>  		return 0;
+> @@ -371,9 +369,10 @@ int synth_init(char *synth_name)
+>  
+>  	mutex_lock(&spk_mutex);
+>  	/* First, check if we already have it loaded. */
+> -	for (i = 0; i < MAXSYNTHS && synths[i]; i++)
+> -		if (strcmp(synths[i]->name, synth_name) == 0)
+> -			synth = synths[i];
+> +	list_for_each_entry(tmp, &synths, node) {
+> +		if (strcmp(tmp->name, synth_name) == 0)
+> +			synth = tmp;
+> +	}
+>  
+>  	/* If we got one, initialize it now. */
+>  	if (synth)
+> @@ -448,29 +447,23 @@ void synth_release(void)
+>  /* called by: all_driver_init() */
+>  int synth_add(struct spk_synth *in_synth)
+>  {
+> -	int i;
+>  	int status = 0;
+> +	struct spk_synth *tmp;
+>  
+>  	mutex_lock(&spk_mutex);
+> -	for (i = 0; i < MAXSYNTHS && synths[i]; i++)
+> -		/* synth_remove() is responsible for rotating the array down */
+> -		if (in_synth == synths[i]) {
+> +
+> +	list_for_each_entry(tmp, &synths, node) {
+> +		if (tmp == in_synth) {
+>  			mutex_unlock(&spk_mutex);
+>  			return 0;
+>  		}
+> -	if (i == MAXSYNTHS) {
+> -		pr_warn("Error: attempting to add a synth past end of array\n");
+> -		mutex_unlock(&spk_mutex);
+> -		return -1;
+>  	}
+>  
+>  	if (in_synth->startup)
+>  		status = do_synth_init(in_synth);
+>  
+> -	if (!status) {
+> -		synths[i++] = in_synth;
+> -		synths[i] = NULL;
+> -	}
+> +	if (!status)
+> +		list_add_tail(&in_synth->node, &synths);
+>  
+>  	mutex_unlock(&spk_mutex);
+>  	return status;
+> @@ -479,17 +472,10 @@ EXPORT_SYMBOL_GPL(synth_add);
+>  
+>  void synth_remove(struct spk_synth *in_synth)
+>  {
+> -	int i;
+> -
+>  	mutex_lock(&spk_mutex);
+>  	if (synth == in_synth)
+>  		synth_release();
+> -	for (i = 0; synths[i]; i++) {
+> -		if (in_synth == synths[i])
+> -			break;
+> -	}
+> -	for ( ; synths[i]; i++) /* compress table */
+> -		synths[i] = synths[i + 1];
+> +	list_del(&in_synth->node);
+>  	module_status = 0;
+>  	mutex_unlock(&spk_mutex);
+>  }
+> -- 
+> 2.17.1
+> [3  <text/plain; utf-8 (base64)>]
+> _______________________________________________
+> Speakup mailing list
+> Speakup@linux-speakup.org
+> http://linux-speakup.org/cgi-bin/mailman/listinfo/speakup
 
->> 
->>  	if (cfg->has_phy_dp_com_ctrl) {
->>  		qphy_setbits(dp_com, QPHY_V3_DP_COM_POWER_DOWN_CTRL,
->> @@ -1127,7 +1129,8 @@ static int qcom_qmp_phy_init(struct phy *phy)
->>  	 * Pull out PHY from POWER DOWN state.
->>  	 * This is active low enable signal to power-down PHY.
->>  	 */
->> -	qphy_setbits(pcs, QPHY_POWER_DOWN_CONTROL, cfg->pwrdn_ctrl);
->> +	if (cfg->type == PHY_TYPE_PCIE)
->> +		qphy_setbits(pcs, QPHY_POWER_DOWN_CONTROL, cfg->pwrdn_ctrl);
->> 
->>  	if (cfg->has_pwrdn_delay)
->>  		usleep_range(cfg->pwrdn_delay_min, cfg->pwrdn_delay_max);
+-- 
+Your life is like a penny.  You're going to lose it.  The question is:
+How do
+you spend it?
+
+         John Covici wb2una
+         covici@ccs.covici.com
