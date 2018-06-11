@@ -1,185 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id dTF+AJSFHluqKwAAmS7hNA
-	; Mon, 11 Jun 2018 14:22:12 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id bZyrC0ViHluOVQAAmS7hNA
+	; Mon, 11 Jun 2018 11:53:26 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D990760791; Mon, 11 Jun 2018 14:22:11 +0000 (UTC)
+	id 07A96607BB; Mon, 11 Jun 2018 11:53:26 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GecsTcI+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IF228xrf"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 55D9E600D0;
-	Mon, 11 Jun 2018 14:22:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 55D9E600D0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 77AEC601C3;
+	Mon, 11 Jun 2018 11:53:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 77AEC601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934326AbeFKOWK (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 10:22:10 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44956 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933467AbeFKOGp (ORCPT
+        id S933179AbeFKLxW (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 07:53:22 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:37385 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933151AbeFKLxS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:06:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=QHopodgOckH0JnTMC74cz/L5jvYaTcy0lLTV0wcZbXM=; b=GecsTcI+M6rjNPEH8IVnZO/7U
-        csPI9XxMj9/MVftlaHS2asCmBAsHsk6ok6my/n0U4albS3QAbSEnCvvR1BEMX9uLORgrBOFyDq0Rn
-        8gf9gYBzcXqmTRTJwYYJUck6kiM1xYgOmsEBpHUIRe+yqAX0v3C702kcj3+eWFYYgDgxoruulWJhv
-        RS68PiGzLZu29vPOVlzjfZzVVs3ILwQikbFoZSk0ZppAyCG5lHSvoV1wDcHeVZ93msMf81zyYlHDY
-        leddNtMmGcvh07C8cSmooDQngcilxEVbh5pyUk8mBTY+GejmCFx2g/VguyMcsUuItsMXm2tRG/lXz
-        muC85uX9g==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSNT2-0004Zn-Pf; Mon, 11 Jun 2018 14:06:44 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Lukas Czerner <lczerner@redhat.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v13 13/72] xarray: Add xa_extract
-Date: Mon, 11 Jun 2018 07:05:40 -0700
-Message-Id: <20180611140639.17215-14-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
-References: <20180611140639.17215-1-willy@infradead.org>
+        Mon, 11 Jun 2018 07:53:18 -0400
+Received: by mail-lf0-f66.google.com with SMTP id g21-v6so28111372lfb.4;
+        Mon, 11 Jun 2018 04:53:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=XNfhu7uXwhrvFzGOIoFdDoFjyRco9xidHWDg5YHJW/c=;
+        b=IF228xrfMTOrdqh6XXCA/qxmx48UsnM8hEZCAVNUrXLqsQRjKTNZ6xvMQ5VsfkSC17
+         +a6L0tYPugw5G1myjMm28rTz6vCsbo5s3ZFqi2DBoG4B0bgWI97dk6WsuzYu1gCLpnXU
+         mYoeaJKSXZnOW5Gk8Ln6HR13t4WSlxdE32lKuE7wJabw1TRNAAyFTY+jYiuDGx+OH+Mj
+         v1BfK/ZuyHT/G+IUD7cXHgXk45rlS+uy+barUXceJOM6eZ2X3ZSlHZZdF6W3rZtGlgBF
+         rU+vjxx8v05nMVz5maq87liuBet49DVbfdOz2cutO3Pf+X6EtGXUGbZ2fWaIqo6Z8Pi5
+         fCBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=XNfhu7uXwhrvFzGOIoFdDoFjyRco9xidHWDg5YHJW/c=;
+        b=kBo4LqgVzlmXQ+7gtFfGCWot320C7jCs+4nifG3TAKPaxdBZHgamucegFeL3Kl2FP3
+         6ytqKvoDCAk0icvyS8Hs8tpsRSxbw8E1Lrpdo6sxOHxB8oUH6V3gsolBcsVM2FHzjGAN
+         xaE0zvZ8SV6Kdgg3RVRkNCWUkxjSulQH3SHlQzRsXktHm8e3xmZsECNqKp1cUWTHehXz
+         vZVdu543+oDlYxg/FZIi381e3HgGwpoSSfh0j1ppYoWbCsb2JWAckUm1ADaaLkzqERIV
+         Q2ZdOjbhhnPuDiA//uivYCu1/EhO4fKdqOZJyy2EhrTG1kMHTVOK87QZZsbt5445r/PD
+         Dlkg==
+X-Gm-Message-State: APt69E2B7KNhNuOrnI4GVFe/9JKtSlw6vfEvaFRaRFP+4+a10ho6hcfR
+        Om4EeJ3nxjM2SBOjCGDaTFNrFMQw
+X-Google-Smtp-Source: ADUXVKIHLkg2mOUQYuwiB17BYvx3NwXg9c5i2fWXi++5KYcy+y6C1J6IOPxRSZYE1tqFe/GXMV2UZw==
+X-Received: by 2002:a2e:458a:: with SMTP id s132-v6mr11074628lja.92.1528717996749;
+        Mon, 11 Jun 2018 04:53:16 -0700 (PDT)
+Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
+        by smtp.gmail.com with ESMTPSA id h90-v6sm8332849ljf.65.2018.06.11.04.53.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Jun 2018 04:53:15 -0700 (PDT)
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
+        linux-bluetooth@vger.kernel.org
+Subject: [PATCH v2 13/24] Bluetooth: hci_nokia: MODULE_DEVICE_TABLE(serdev)
+Date: Mon, 11 Jun 2018 13:52:29 +0200
+Message-Id: <20180611115240.32606-14-ricardo.ribalda@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
+References: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+Export serdev table to the module header, allowing module autoload via
+udev/modprobe.
 
-This function combines the functionality of radix_tree_gang_lookup() and
-radix_tree_gang_lookup_tagged().  It extracts entries matching the
-specified filter into a normal array.
-
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>
+Cc: Johan Hedberg <johan.hedberg@gmail.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>
+Cc: linux-bluetooth@vger.kernel.org
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 ---
- include/linux/xarray.h |  2 ++
- lib/xarray.c           | 80 ++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 82 insertions(+)
+ drivers/bluetooth/hci_nokia.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-index 89f37d841d18..3764f4b4c1a8 100644
---- a/include/linux/xarray.h
-+++ b/include/linux/xarray.h
-@@ -227,6 +227,8 @@ void *xa_find(struct xarray *xa, unsigned long *index,
- 		unsigned long max, xa_tag_t) __attribute__((nonnull(2)));
- void *xa_find_after(struct xarray *xa, unsigned long *index,
- 		unsigned long max, xa_tag_t) __attribute__((nonnull(2)));
-+unsigned int xa_extract(struct xarray *, void **dst, unsigned long start,
-+		unsigned long max, unsigned int n, xa_tag_t);
+diff --git a/drivers/bluetooth/hci_nokia.c b/drivers/bluetooth/hci_nokia.c
+index eb3d59894aef..fef285608f10 100644
+--- a/drivers/bluetooth/hci_nokia.c
++++ b/drivers/bluetooth/hci_nokia.c
+@@ -803,8 +803,10 @@ MODULE_DEVICE_TABLE(of, nokia_bluetooth_of_match);
  
- /**
-  * xa_init() - Initialise an empty XArray.
-diff --git a/lib/xarray.c b/lib/xarray.c
-index c6b7adcd6131..c3a53f09aa88 100644
---- a/lib/xarray.c
-+++ b/lib/xarray.c
-@@ -1427,6 +1427,86 @@ void *xa_find_after(struct xarray *xa, unsigned long *indexp,
- }
- EXPORT_SYMBOL(xa_find_after);
+ static struct serdev_device_id nokia_bluetooth_serdev_id[] = {
+ 	{ "hp4-bluetooth", },
++	{ "nokia-bluetooth", },
+ 	{}
+ };
++MODULE_DEVICE_TABLE(serdev, nokia_bluetooth_serdev_id);
  
-+static unsigned int xas_extract_present(struct xa_state *xas, void **dst,
-+			unsigned long max, unsigned int n)
-+{
-+	void *entry;
-+	unsigned int i = 0;
-+
-+	rcu_read_lock();
-+	xas_for_each(xas, entry, max) {
-+		if (xas_retry(xas, entry))
-+			continue;
-+		dst[i++] = entry;
-+		if (i == n)
-+			break;
-+	}
-+	rcu_read_unlock();
-+
-+	return i;
-+}
-+
-+static unsigned int xas_extract_tag(struct xa_state *xas, void **dst,
-+			unsigned long max, unsigned int n, xa_tag_t tag)
-+{
-+	void *entry;
-+	unsigned int i = 0;
-+
-+	rcu_read_lock();
-+	xas_for_each_tagged(xas, entry, max, tag) {
-+		if (xas_retry(xas, entry))
-+			continue;
-+		dst[i++] = entry;
-+		if (i == n)
-+			break;
-+	}
-+	rcu_read_unlock();
-+
-+	return i;
-+}
-+
-+/**
-+ * xa_extract() - Copy selected entries from the XArray into a normal array.
-+ * @xa: The source XArray to copy from.
-+ * @dst: The buffer to copy entries into.
-+ * @start: The first index in the XArray eligible to be selected.
-+ * @max: The last index in the XArray eligible to be selected.
-+ * @n: The maximum number of entries to copy.
-+ * @filter: Selection criterion.
-+ *
-+ * Copies up to @n entries that match @filter from the XArray.  The
-+ * copied entries will have indices between @start and @max, inclusive.
-+ *
-+ * The @filter may be an XArray tag value, in which case entries which are
-+ * tagged with that tag will be copied.  It may also be %XA_PRESENT, in
-+ * which case non-NULL entries will be copied.
-+ *
-+ * The entries returned may not represent a snapshot of the XArray at a
-+ * moment in time.  For example, if another thread stores to index 5, then
-+ * index 10, calling xa_extract() may return the old contents of index 5
-+ * and the new contents of index 10.  Indices not modified while this
-+ * function is running will not be skipped.
-+ *
-+ * If you need stronger guarantees, holding the xa_lock across calls to this
-+ * function will prevent concurrent modification.
-+ *
-+ * Context: Any context.  Takes and releases the RCU lock.
-+ * Return: The number of entries copied.
-+ */
-+unsigned int xa_extract(struct xarray *xa, void **dst, unsigned long start,
-+			unsigned long max, unsigned int n, xa_tag_t filter)
-+{
-+	XA_STATE(xas, xa, start);
-+
-+	if (!n)
-+		return 0;
-+
-+	if ((__force unsigned int)filter < XA_MAX_TAGS)
-+		return xas_extract_tag(&xas, dst, max, n, filter);
-+	return xas_extract_present(&xas, dst, max, n);
-+}
-+EXPORT_SYMBOL(xa_extract);
-+
- #ifdef XA_DEBUG
- void xa_dump_node(const struct xa_node *node)
- {
+ static struct serdev_device_driver nokia_bluetooth_serdev_driver = {
+ 	.probe = nokia_bluetooth_serdev_probe,
 -- 
 2.17.1
