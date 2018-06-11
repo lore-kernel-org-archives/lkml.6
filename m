@@ -1,155 +1,301 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id BhUDJDspHluhEwAAmS7hNA
-	; Mon, 11 Jun 2018 07:48:11 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ejE7I3qDHlsvFQAAmS7hNA
+	; Mon, 11 Jun 2018 14:13:49 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 7734E607BB; Mon, 11 Jun 2018 07:48:11 +0000 (UTC)
+	id 3AE58607A4; Mon, 11 Jun 2018 14:13:49 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JhU8qF4O"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mZpnL+aR"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id C4143602FC;
-	Mon, 11 Jun 2018 07:48:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C4143602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by smtp.codeaurora.org (Postfix) with ESMTP id 8D0EF60791;
+	Mon, 11 Jun 2018 14:13:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8D0EF60791
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932494AbeFKHsJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 03:48:09 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:43595 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754006AbeFKHsG (ORCPT
+        id S933898AbeFKOLf (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 10:11:35 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46610 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933627AbeFKOHM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 03:48:06 -0400
-Received: by mail-lf0-f65.google.com with SMTP id n15-v6so29020263lfn.10;
-        Mon, 11 Jun 2018 00:48:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=Rzp1dSYL8ni2PE4y20+h5RWuQuksPR8PB20WytsYboE=;
-        b=JhU8qF4OEnrQpV08f3OGPvZ0VAMiDgcLkLvSLzkfl1HIMFJ+0Hm9STO4bMvPTvGX76
-         kB2neGoCTFPIb/ecaSFCkCZwN0CFLu2kq9CfOrZAvhviy4Ot0YSpZkv0E39rz65ZWj2t
-         YHWOgHZwswQYQZbhCchplaFjrVXHGdFgsPZz8gkCSCK9GiMm1fVmFBe5xfZ7okNNkGmg
-         y1imjZwYixaB9SoyZQ9bQ/LgvghB9wwtGUvHZj9VqJBDNcPXP2cFxnCCfhllcdqt4OHG
-         DHeYdNm9o+AOI0Eoeu6ZeeA35jEPQvbECWAcu75jkaMHEWMo/G7R3gvQX1Rpeh5hTtPQ
-         5dlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=Rzp1dSYL8ni2PE4y20+h5RWuQuksPR8PB20WytsYboE=;
-        b=GMWB3PRrVQgSWjeK86UcNGH3KhInMXZhh0QBFhEH4mzylDLe0uV+TCz21StTulyMOy
-         M9iulv8IGdSw7a6FicAOXurGq1tA7N9vS80++k7u7MNcEz+MFWE4DPeu+yTkE43SuvRu
-         kLZ0TRJLuelmMYjVc7I78WVG6qllb00XrKhvp85PVAkQ6ry8HWx6IgRLYN43uexAUqNp
-         nQJNqMeE8XQnQ2F18GF4Q8VBziv6QVDqUXayf4HewqCuq+e9UehtQDw8+m5EDuwfjJvH
-         6qfqYRRSdixX/y5tTa2yGJE6dSSteU8Q8LGE/WvbNMC+/kcIPCCVnQuAVK7UWd63bhoC
-         UUFA==
-X-Gm-Message-State: APt69E2RNjHEYJlo6bV65lbXOIHYXqwkGKfna+n8GGie2Mvo0EnhKb8H
-        1LHGPSwfnAOxHGmuYy+wgZMXQb9JyBcJpNzKl0w=
-X-Google-Smtp-Source: ADUXVKIwx5xKJ019sp+KYBsSWOu0xc1vY65s1XFdDMg/+TZJGMZrPuu89EimIu8nL3zEO+1r3WnAnxJFBHDfm+ek3Ws=
-X-Received: by 2002:a2e:5453:: with SMTP id y19-v6mr10302309ljd.11.1528703283779;
- Mon, 11 Jun 2018 00:48:03 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a2e:56c8:0:0:0:0:0 with HTTP; Mon, 11 Jun 2018 00:48:02
- -0700 (PDT)
-In-Reply-To: <20180609074227.GA6810@yury-thinkpad>
-References: <20180516081910.10067-1-ynorov@caviumnetworks.com>
- <20180516081910.10067-5-ynorov@caviumnetworks.com> <20180608173207.nwoi25jee52gpdwy@armageddon.cambridge.arm.com>
- <20180609074227.GA6810@yury-thinkpad>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Mon, 11 Jun 2018 09:48:02 +0200
-X-Google-Sender-Auth: xuQjuSuRPXF2lPaqecQszCuPNVA
-Message-ID: <CAK8P3a16ByPtCwKbdLQRDRni3qV9DXLNYZ9QJUH6uHaZYHr34g@mail.gmail.com>
-Subject: Re: [PATCH 04/24] 32-bit userspace ABI: introduce ARCH_32BIT_OFF_T
- config option
-To: Yury Norov <ynorov@caviumnetworks.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Philipp Tomsich <philipp.tomsich@theobroma-systems.com>,
-        Joseph Myers <joseph@codesourcery.com>,
-        Steve Ellcey <sellcey@caviumnetworks.com>,
-        Prasun Kapoor <Prasun.Kapoor@caviumnetworks.com>,
-        Andreas Schwab <schwab@suse.de>,
-        Alexander Graf <agraf@suse.de>,
-        Bamvor Zhangjian <bamv2005@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Adam Borowski <kilobyte@angband.pl>,
-        Manuel Montezelo <manuel.montezelo@gmail.com>,
-        James Hogan <james.hogan@imgtec.com>,
-        Chris Metcalf <cmetcalf@mellanox.com>,
-        Andrew Pinski <pinskia@gmail.com>,
-        Lin Yongting <linyongting@huawei.com>,
-        Alexey Klimov <klimov.linux@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Maxim Kuvyrkov <maxim.kuvyrkov@linaro.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        Nathan_Lynch <Nathan_Lynch@mentor.com>,
-        James Morse <james.morse@arm.com>,
-        Ramana Radhakrishnan <ramana.gcc@googlemail.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Christoph Muellner <christoph.muellner@theobroma-systems.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 11 Jun 2018 10:07:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
+        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=2u6+qgyveiDkqLJM8FJpbQoqNhFUWbl8SL25NGa49r4=; b=mZpnL+aRY2gJ/21PALfF2FW1X
+        2e11UTeU4GSb/Yl2U93jG5tF/7LeFk/A99SFeONNGtImef7jCcP8kh0CnW5NrrvrrXs9JK0Dydcp6
+        gsENHgsQMBuBSb03fIIwL/JYCSa93YZRFt8CpzPhsyDNY2+QqHf3dxp6K7Ll5SHzCbK/2Y4RmwOWp
+        X5AqVsXKwMrP5cAcYrxiv2yd45A2CfxQOY71h2pC3qYd59M9XV1qhxn5TgyyXn9g1GC5AqsnGbnfA
+        611okxWktqdfGTuJIA4T7Xlf5AxBDQM2MAeKSYlnltMj5LOYrbyOsM4Cud8v9cPCE/FB/BRWUP2kj
+        LC5RaeBzw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fSNTT-00051J-IR; Mon, 11 Jun 2018 14:07:11 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@redhat.com>,
+        Lukas Czerner <lczerner@redhat.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH v13 63/72] dax: Convert dax_insert_pfn_mkwrite to XArray
+Date: Mon, 11 Jun 2018 07:06:30 -0700
+Message-Id: <20180611140639.17215-64-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
+References: <20180611140639.17215-1-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 9, 2018 at 9:42 AM, Yury Norov <ynorov@caviumnetworks.com> wrote:
-> On Fri, Jun 08, 2018 at 06:32:07PM +0100, Catalin Marinas wrote:
->> On Wed, May 16, 2018 at 11:18:49AM +0300, Yury Norov wrote:
->> > diff --git a/arch/Kconfig b/arch/Kconfig
->> > index 76c0b54443b1..ee079244dc3c 100644
->> > --- a/arch/Kconfig
->> > +++ b/arch/Kconfig
->> > @@ -264,6 +264,21 @@ config ARCH_THREAD_STACK_ALLOCATOR
->> >  config ARCH_WANTS_DYNAMIC_TASK_STRUCT
->> >     bool
->> >
->> > +config ARCH_32BIT_OFF_T
->> > +   bool
->> > +   depends on !64BIT
->> > +   help
->> > +     All new 32-bit architectures should have 64-bit off_t type on
->> > +     userspace side which corresponds to the loff_t kernel type. This
->> > +     is the requirement for modern ABIs. Some existing architectures
->> > +     already have 32-bit off_t. This option is enabled for all such
->> > +     architectures explicitly. Namely: arc, arm, blackfin, cris, frv,
->> > +     h8300, hexagon, m32r, m68k, metag, microblaze, mips32, mn10300,
->> > +     nios2, openrisc, parisc32, powerpc32, score, sh, sparc, tile32,
->> > +     unicore32, x86_32 and xtensa. This is the complete list. Any
->> > +     new 32-bit architecture should declare 64-bit off_t type on user
->> > +     side and so should not enable this option.
->>
->> Do you know if this is the case for riscv and nds32, merged in the
->> meantime? If not, I suggest you drop this patch altogether and just
->> define force_o_largefile() for arm64/ilp32 as we don't seem to stick to
->> "all new 32-bit architectures should have 64-bit off_t".
->
-> I wrote this patch at request of Arnd Bergmann. This is actually his
-> words that all new 32-bit architectures should have 64-bit off_t. So
-> I was surprized when riscv was merged with 32-bit off_t (and I didn't
-> follow nds32).
->
-> If this rule is still in force, we'd better add new exceptions to this
-> patch. Otherwise, we can drop it.
->
-> Arnd, could you please comment it?
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-I completely forgot about it and had assumed that it was merged long
-ago, sorry about that.
+Add some XArray-based helper functions to replace the radix tree based
+metaphors currently in use.  The biggest change is that converted code
+doesn't see its own lock bit; get_unlocked_entry() always returns an
+entry with the lock bit clear, and locking the entry now returns void.
+So we don't have to mess around loading the current entry and clearing
+the lock bit; we can just store the entry that we were using.
 
-        Arnd
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+ fs/dax.c | 145 +++++++++++++++++++++++++++++++++++++++++++------------
+ 1 file changed, 113 insertions(+), 32 deletions(-)
+
+diff --git a/fs/dax.c b/fs/dax.c
+index 7d0712c45da5..1c9b736147d3 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -38,6 +38,17 @@
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/fs_dax.h>
+ 
++static inline unsigned int pe_order(enum page_entry_size pe_size)
++{
++	if (pe_size == PE_SIZE_PTE)
++		return PAGE_SHIFT - PAGE_SHIFT;
++	if (pe_size == PE_SIZE_PMD)
++		return PMD_SHIFT - PAGE_SHIFT;
++	if (pe_size == PE_SIZE_PUD)
++		return PUD_SHIFT - PAGE_SHIFT;
++	return ~0;
++}
++
+ /* We choose 4096 entries - same as per-zone page wait tables */
+ #define DAX_WAIT_TABLE_BITS 12
+ #define DAX_WAIT_TABLE_ENTRIES (1 << DAX_WAIT_TABLE_BITS)
+@@ -46,6 +57,9 @@
+ #define PG_PMD_COLOUR	((PMD_SIZE >> PAGE_SHIFT) - 1)
+ #define PG_PMD_NR	(PMD_SIZE >> PAGE_SHIFT)
+ 
++/* The order of a PMD entry */
++#define PMD_ORDER	(PMD_SHIFT - PAGE_SHIFT)
++
+ static wait_queue_head_t wait_table[DAX_WAIT_TABLE_ENTRIES];
+ 
+ static int __init init_dax_wait_table(void)
+@@ -85,10 +99,15 @@ static void *dax_make_locked(unsigned long pfn, unsigned long flags)
+ 			DAX_LOCKED);
+ }
+ 
++static bool dax_is_locked(void *entry)
++{
++	return xa_to_value(entry) & DAX_LOCKED;
++}
++
+ static unsigned int dax_entry_order(void *entry)
+ {
+ 	if (xa_to_value(entry) & DAX_PMD)
+-		return PMD_SHIFT - PAGE_SHIFT;
++		return PMD_ORDER;
+ 	return 0;
+ }
+ 
+@@ -181,6 +200,77 @@ static void dax_wake_mapping_entry_waiter(struct xarray *xa,
+ 		__wake_up(wq, TASK_NORMAL, wake_all ? 0 : 1, &key);
+ }
+ 
++static void dax_wake_entry(struct xa_state *xas, void *entry, bool wake_all)
++{
++	return dax_wake_mapping_entry_waiter(xas->xa, xas->xa_index, entry,
++								wake_all);
++}
++
++/*
++ * Look up entry in page cache, wait for it to become unlocked if it
++ * is a DAX entry and return it.  The caller must subsequently call
++ * put_unlocked_entry() if it did not lock the entry or put_locked_entry()
++ * if it did.
++ *
++ * Must be called with the i_pages lock held.
++ */
++static void *get_unlocked_entry(struct xa_state *xas)
++{
++	void *entry;
++	struct wait_exceptional_entry_queue ewait;
++	wait_queue_head_t *wq;
++
++	init_wait(&ewait.wait);
++	ewait.wait.func = wake_exceptional_entry_func;
++
++	for (;;) {
++		entry = xas_load(xas);
++		if (!entry || WARN_ON_ONCE(!xa_is_value(entry)) ||
++				!dax_is_locked(entry))
++			return entry;
++
++		wq = dax_entry_waitqueue(xas->xa, xas->xa_index, entry,
++				&ewait.key);
++		prepare_to_wait_exclusive(wq, &ewait.wait,
++					  TASK_UNINTERRUPTIBLE);
++		xas_unlock_irq(xas);
++		xas_reset(xas);
++		schedule();
++		finish_wait(wq, &ewait.wait);
++		xas_lock_irq(xas);
++	}
++}
++
++static void put_unlocked_entry(struct xa_state *xas, void *entry)
++{
++	/* If we were the only waiter woken, wake the next one */
++	if (entry)
++		dax_wake_entry(xas, entry, false);
++}
++
++/*
++ * We used the xa_state to get the entry, but then we locked the entry and
++ * dropped the xa_lock, so we know the xa_state is stale and must be reset
++ * before use.
++ */
++static void put_locked_entry(struct xa_state *xas, void *entry)
++{
++	void *old;
++
++	xas_reset(xas);
++	xas_lock_irq(xas);
++	old = xas_store(xas, entry);
++	xas_unlock_irq(xas);
++	BUG_ON(!dax_is_locked(old));
++	dax_wake_entry(xas, entry, false);
++}
++
++static void dax_lock_entry(struct xa_state *xas, void *entry)
++{
++	unsigned long v = xa_to_value(entry);
++	xas_store(xas, xa_mk_value(v | DAX_LOCKED));
++}
++
+ /*
+  * Check whether the given slot is locked.  Must be called with the i_pages
+  * lock held.
+@@ -1629,50 +1719,46 @@ EXPORT_SYMBOL_GPL(dax_iomap_fault);
+ /*
+  * dax_insert_pfn_mkwrite - insert PTE or PMD entry into page tables
+  * @vmf: The description of the fault
+- * @pe_size: Size of entry to be inserted
+  * @pfn: PFN to insert
++ * @order: Order of entry to insert.
+  *
+  * This function inserts a writeable PTE or PMD entry into the page tables
+  * for an mmaped DAX file.  It also marks the page cache entry as dirty.
+  */
+-static vm_fault_t dax_insert_pfn_mkwrite(struct vm_fault *vmf,
+-				  enum page_entry_size pe_size,
+-				  pfn_t pfn)
++static vm_fault_t
++dax_insert_pfn_mkwrite(struct vm_fault *vmf, pfn_t pfn, unsigned int order)
+ {
+ 	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
+-	void *entry, **slot;
+-	pgoff_t index = vmf->pgoff;
++	XA_STATE_ORDER(xas, &mapping->i_pages, vmf->pgoff, order);
++	void *entry;
+ 	vm_fault_t ret;
+ 
+-	xa_lock_irq(&mapping->i_pages);
+-	entry = get_unlocked_mapping_entry(mapping, index, &slot);
++	xas_lock_irq(&xas);
++	entry = get_unlocked_entry(&xas);
+ 	/* Did we race with someone splitting entry or so? */
+ 	if (!entry ||
+-	    (pe_size == PE_SIZE_PTE && !dax_is_pte_entry(entry)) ||
+-	    (pe_size == PE_SIZE_PMD && !dax_is_pmd_entry(entry))) {
+-		put_unlocked_mapping_entry(mapping, index, entry);
+-		xa_unlock_irq(&mapping->i_pages);
++	    (order == 0 && !dax_is_pte_entry(entry)) ||
++	    (order == PMD_ORDER && (xa_is_internal(entry) ||
++				    !dax_is_pmd_entry(entry)))) {
++		put_unlocked_entry(&xas, entry);
++		xas_unlock_irq(&xas);
+ 		trace_dax_insert_pfn_mkwrite_no_entry(mapping->host, vmf,
+ 						      VM_FAULT_NOPAGE);
+ 		return VM_FAULT_NOPAGE;
+ 	}
+-	radix_tree_tag_set(&mapping->i_pages, index, PAGECACHE_TAG_DIRTY);
+-	entry = lock_slot(mapping, slot);
+-	xa_unlock_irq(&mapping->i_pages);
+-	switch (pe_size) {
+-	case PE_SIZE_PTE:
++	xas_set_tag(&xas, PAGECACHE_TAG_DIRTY);
++	dax_lock_entry(&xas, entry);
++	xas_unlock_irq(&xas);
++	if (order == 0)
+ 		ret = vmf_insert_mixed_mkwrite(vmf->vma, vmf->address, pfn);
+-		break;
+ #ifdef CONFIG_FS_DAX_PMD
+-	case PE_SIZE_PMD:
++	else if (order == PMD_ORDER)
+ 		ret = vmf_insert_pfn_pmd(vmf->vma, vmf->address, vmf->pmd,
+ 			pfn, true);
+-		break;
+ #endif
+-	default:
++	else
+ 		ret = VM_FAULT_FALLBACK;
+-	}
+-	put_locked_mapping_entry(mapping, index);
++	put_locked_entry(&xas, entry);
+ 	trace_dax_insert_pfn_mkwrite(mapping->host, vmf, ret);
+ 	return ret;
+ }
+@@ -1692,17 +1778,12 @@ vm_fault_t dax_finish_sync_fault(struct vm_fault *vmf,
+ {
+ 	int err;
+ 	loff_t start = ((loff_t)vmf->pgoff) << PAGE_SHIFT;
+-	size_t len = 0;
++	unsigned int order = pe_order(pe_size);
++	size_t len = PAGE_SIZE << order;
+ 
+-	if (pe_size == PE_SIZE_PTE)
+-		len = PAGE_SIZE;
+-	else if (pe_size == PE_SIZE_PMD)
+-		len = PMD_SIZE;
+-	else
+-		WARN_ON_ONCE(1);
+ 	err = vfs_fsync_range(vmf->vma->vm_file, start, start + len - 1, 1);
+ 	if (err)
+ 		return VM_FAULT_SIGBUS;
+-	return dax_insert_pfn_mkwrite(vmf, pe_size, pfn);
++	return dax_insert_pfn_mkwrite(vmf, pfn, order);
+ }
+ EXPORT_SYMBOL_GPL(dax_finish_sync_fault);
+-- 
+2.17.1
