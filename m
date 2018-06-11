@@ -2,139 +2,87 @@ Return-Path: <SRS0=KDb5=I5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3C53EC07E80
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 18:51:52 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C4655C07E80
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 18:54:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E65C22087E
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 18:51:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61C1D2086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 18:54:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KW4PmawE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E65C22087E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AoNL7Z8q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61C1D2086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933140AbeFKSvu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 14:51:50 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:53030 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932081AbeFKSvs (ORCPT
+        id S933253AbeFKSyU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 14:54:20 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:37028 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932081AbeFKSyT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 14:51:48 -0400
-Received: by mail-wm0-f65.google.com with SMTP id p126-v6so16464254wmb.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 11:51:47 -0700 (PDT)
+        Mon, 11 Jun 2018 14:54:19 -0400
+Received: by mail-it0-f68.google.com with SMTP id l6-v6so12277298iti.2
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 11:54:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=/t6TzYRrEArVifOmxTfTGnjHafv6/3KlwlFq8kwamCo=;
-        b=KW4PmawEh+abKnolb2EX+ByOQ7+b2Z+94ZMAJT0di9sPGivYRSylNXMmpiHe4ZekpJ
-         17k4mMzWQOd0VSPOXymvc5MFhML/9NOQyBIKZzGRqGgteT9iNExh99Vh/lK3XBVRl/aM
-         liUmeeLBCVBZ68FLb4+XopAHwufNfI/Kc5LORv0bGSif+bqYtBVy/TE2MTluc6LQ4hQL
-         zqrILgW2n7eJfsFCeth1kf6bHEkq1pY+70DJpuHfvXYQYawRk621l4hyk1oV+c8nmLGl
-         ylv0ztALWFSFwGrqesuY4W6nu5ihuwfvq+WxS330RbygvuVYZTOIOjAqDX9dvKxKWgu9
-         mIKA==
+        bh=oZIXL1Sl0NaLpigQ2y1OrkZbfRyYFeYGW1Qwkl16w/g=;
+        b=AoNL7Z8qCdJr/CF6PvrgxRHEqsVBJo+wcY9jxrpn9tuNBkbM+JCXUtw92arhE7rRUW
+         D70mtrtUU07zY0MoEx3lA1q/LbggOIYB6rrmqTe67IFqd+BWP86z+uMY6o0TB3ILN3P7
+         /jJTsXbGOuWY5yWNdsSigzlZuUrTHaggP4H/Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=/t6TzYRrEArVifOmxTfTGnjHafv6/3KlwlFq8kwamCo=;
-        b=bVi3KPgQek/hxh2jloFx1fSPGc5QXrQei0u8SMNMafeM8pEu3CHEY3HQjKW3CRMSTk
-         SEvByvaFFVXlvYFhW+fvZgnc+sCXIXrqKlj3S4knMOPJIrNDAvX5ZYP41GakV2HolyPT
-         jo/bresd+KY87rjHO2nmcYsPy0rQElsbVBCUQNSvwP8DPkLx91YFeJGk5bg6f6+/LSaX
-         2kYUcX7dHoKEFPShWHAZlDjyA191y0KnftcWAHw65xt873qQb832UQfRgppIG5N41mtp
-         Ak79DFJtEHhOpnZdRtP1brPJS2xrGvlCV7+JOMELLjy01a4M6XVun8Jg+jN5s7+NbNyK
-         l1mw==
-X-Gm-Message-State: APt69E0hxY7JU2IivbsaV9GNuXaSensL7WZ9bdsAbryCKyJVfSEGfrLa
-        K2T8u/p3eIn9x6Tz3asWR3K9o7ZcINmv30/EuiOguw==
-X-Google-Smtp-Source: ADUXVKJEvtv0Olhz4Ew8sFZEb6g3XfRxV+DP90OpooofeoJJZ6WSdPliiJ5GdAxB4YW7e9wlF2dicBvo62QZQD6qBDw=
-X-Received: by 2002:a1c:afc3:: with SMTP id y186-v6mr84085wme.87.1528743106721;
- Mon, 11 Jun 2018 11:51:46 -0700 (PDT)
+        bh=oZIXL1Sl0NaLpigQ2y1OrkZbfRyYFeYGW1Qwkl16w/g=;
+        b=KEiKptVerB3shuWfLdHNRmyp8WLmTF4aEIUHBwNOX92te6gJUUbKO5QrQU0yWVqg8T
+         aYKTAOA6Iazfsq9m868w1Q312kIElYYgzUFNIaHVcbWnlx+XqLhVZk/m3Hr2vv+Mg6Iu
+         D8uE+PGzm/4pdtMGMQzO07YY1xTJZe+kTW4Hz0rT5xBalOKILh6dRg4krqW0SMLdM3fE
+         3EU6wSEZb1rxbNq6+g9LHoPfxmK7GIvs3SZkrZbjfZoSEMLXiQO8grXxqtlVMjuFErV6
+         X/7AILxInwd9oJfbiAmPB0vk9Dw54643Yxc7iGpWKzHH4d0ey1BAS7UwBPqIpd2vrfgp
+         m/8g==
+X-Gm-Message-State: APt69E1HEaQpSniRtcFLyQNiu7rm3kf8mKYAy9R+gHHORBZd/EajDKS4
+        jE3s/0sHMPCOI927DBbWS/gPX8aazZr5fr8UIRM=
+X-Google-Smtp-Source: ADUXVKKe2mTIX/GtWywFsfZMzKcFWTd/RywSA61BuaIMj3f35mEsJuKrMYddi6CXc/BPGDqXC1QyTD2O5o6bLbiX6QY=
+X-Received: by 2002:a24:8046:: with SMTP id g67-v6mr216765itd.16.1528743258445;
+ Mon, 11 Jun 2018 11:54:18 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180608184842.GD30522@ZenIV.linux.org.uk> <CA+55aFz9cS3m=wZxqKbzrCLEjhPoPddKw5U2MDKNqbG79Wx6bw@mail.gmail.com>
- <20180609051051.GF30522@ZenIV.linux.org.uk> <20180609155107.GH30522@ZenIV.linux.org.uk>
- <20180611021028.GT30522@ZenIV.linux.org.uk> <20180611162313.GA6942@infradead.org>
- <20180611164859.GA28292@bombadil.infradead.org> <CA+55aFykGPDTVN=UvrcDvwV3S_sixXREu8D7eK+x695OmA2PNw@mail.gmail.com>
- <20180611171811.GB28292@bombadil.infradead.org>
-In-Reply-To: <20180611171811.GB28292@bombadil.infradead.org>
-From:   Stephane Eranian <eranian@google.com>
-Date:   Mon, 11 Jun 2018 11:51:34 -0700
-Message-ID: <CABPqkBTwqtFxtFsCjTNyHa_T1_vCbCQWHwo42RZAbg0QRi1BFw@mail.gmail.com>
-Subject: Re: perfmon trouble
-To:     willy@infradead.org
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>, hch@infradead.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, "Luck, Tony" <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>, linux-ia64@vger.kernel.org
+References: <20180611165212.GA6783@jaegeuk-macbookpro.roam.corp.google.com>
+ <CA+55aFznP4aEy7DkVfeQ_e6eXgLnswVnSJS3C51UHD_k8qYZCA@mail.gmail.com> <DM5PR2101MB08880B2FEEE593857E9501BCCB780@DM5PR2101MB0888.namprd21.prod.outlook.com>
+In-Reply-To: <DM5PR2101MB08880B2FEEE593857E9501BCCB780@DM5PR2101MB0888.namprd21.prod.outlook.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 11 Jun 2018 11:54:07 -0700
+Message-ID: <CA+55aFwEMVwijU=A7igcckkmS798m91=aEDwRpGGn7gw80ZdDA@mail.gmail.com>
+Subject: Re: [GIT PULL] f2fs update for 4.18-rc1
+To:     Matthew Wilcox <mawilcox@microsoft.com>
+Cc:     Jaegeuk Kim <jaegeuk@kernel.org>,
+        "Linux F2FS DEV, Mailing List" 
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, Jun 11, 2018 at 11:21 AM Matthew Wilcox <mawilcox@microsoft.com> wrote:
+>
+> Argh, you used my Outlook email address, so you get top-posting
 
-On Mon, Jun 11, 2018 at 10:18 AM Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Mon, Jun 11, 2018 at 10:04:00AM -0700, Linus Torvalds wrote:
-> > On Mon, Jun 11, 2018 at 9:49 AM Matthew Wilcox <willy@infradead.org> wrote:
-> > >
-> > > The problem is that even oprofile on ia64 depends on perfmon.
-> >
-> > Hmm? You can definitely enable ia64 support for oprofile even without perfmon.
->
-> Oh, I think my memory is playing tricks on me.  This is my confusion, I think:
->
-> oprofile-$(CONFIG_PERFMON) += perfmon.o
->
-> so perfmon events are exposed through oprofile, but you can disable
-> perfmon without disabling oprofile.
->
-> > Because I'd be inclined to just remove CONFIG_PERFMON support, and see
-> > if anybody even notices..
-> >
-> > I'm not expecting a lot of people to do a lot of oprofile on ia64
-> > anyway. It's a bit late to start optimizing things now.
-> >
-> > Do people use perfmon still? Maybe. Maybe not. Perhaps we could just
-> > mark it as broken in the Kconfig file for now, and see if somebody
-> > says something?
->
-Thanks Al for the careful analysis. If I understand correctly, the
-problem seems to be that on
-execve the mapping of the sampling buffer is not destroyed and then on
-close, the kernel
-unmaps whatever the new binary had in that address range. The fix
-would be to ensure
-the mmap is destroyed on execve.
+Hey, I think it's what you uise for your commit messages, I think
+that's where I got it from..
 
-My problem is that I do not have IA64 hw anymore, so whatever the fix,
-I will not be able
-to test this. In the meantime, I agree with Matthew, simply disable
-PERFMON support.
+> The radix tree does rely on constructors still.  One of the things on my todo list is to verify whether it actually makes sense to do that or not.
 
-thanks.
+Ok, thanks.
 
+> I don't really understand why Jaegeuk is changing f2fs now when we've just fixed the core kernel to make what he's doing perfectly legal.
 
-> That gets my vote.
->
-> Tony?  Fenghua?
->
-> diff --git a/arch/ia64/Kconfig b/arch/ia64/Kconfig
-> index 792437d526c6..ff861420b8f5 100644
-> --- a/arch/ia64/Kconfig
-> +++ b/arch/ia64/Kconfig
-> @@ -455,6 +455,7 @@ config IA64_MCA_RECOVERY
->
->  config PERFMON
->         bool "Performance monitor support"
-> +       depends on BROKEN
->         help
->           Selects whether support for the IA-64 performance monitor hardware
->           is included in the kernel.  This makes some kernel data-structures a
->
+I'm assuming it was based on the state when it wasn't legal yet.
+
+             Linus
