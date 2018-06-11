@@ -1,111 +1,244 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 4JAvBBYnHlvyAgAAmS7hNA
-	; Mon, 11 Jun 2018 07:39:18 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id BGRcKDbsHVsFJgAAmS7hNA
+	; Mon, 11 Jun 2018 03:28:30 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 9B587602FC; Mon, 11 Jun 2018 07:39:17 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ol5pV7f0"
+	id 7137560792; Mon, 11 Jun 2018 03:28:30 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 03B40602FC;
-	Mon, 11 Jun 2018 07:39:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 03B40602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id B9D06606DD;
+	Mon, 11 Jun 2018 03:28:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B9D06606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754138AbeFKHjP (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 03:39:15 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:40260 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754096AbeFKHi6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 03:38:58 -0400
-Received: by mail-pg0-f68.google.com with SMTP id l2-v6so9322774pgc.7;
-        Mon, 11 Jun 2018 00:38:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=F5FAyvqFcUxt5nLk8zYwAG/hfXKeRDgWfiR11vwNRZM=;
-        b=Ol5pV7f0gm2O3GvAPkl5nexkSxboHHwEpJnVEL5n4tbl5lenojTb2y22s4cgfS8bfz
-         rbSaV7tiyQOXwsWU2c9xsxvMLk+ZK1QgrponPr27fHJk1u4Rvn02aSgtyw8Ct+xmlR0k
-         yaYcuqIrs/zjgIQsb8F/atUe3fKRdZaRfw+e7onbdYVCu34WLKh1jGuLrhd7xPnte1cg
-         qEO0cepKNHDuCZsPfGEA2F0r8E8I0knBqjc3iUPUNW94vj4jygmsXcgxB0ovjTIBlu8c
-         1xPRxUGZNZLlm9gh4WY5BEanIAeS5w/utCUIPSA68PsZEaZhVyoqW5NEZHfWND90SHxB
-         1UTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=F5FAyvqFcUxt5nLk8zYwAG/hfXKeRDgWfiR11vwNRZM=;
-        b=WJP9z2W4Z6lB3PLinTIFSKjr/gWeMGEgMFpRGz6iTaqc4vYv6P7bs3PvKe4DK3MUII
-         maOwniWPCf6qZTOZk1CrmTo5LqbrzyDts8oHbQCVngXi+n66KpM0mrwgUZgKvSKmbrHv
-         iYxpDOjGEuPI+MzRIXpGmQj0am1weenpH45Wj1V2Ak7gIWNklT6QI4l4cSOkMVpyC1PO
-         Ugg30QbCo3Vm6vpb1REHVjjrjPFtOP3V5imPkelu1Bb0FHCbcx6SEnd8D71IZxtuwS2D
-         IAYnrLs7rk650tUWai//K5ngaKGeHOcx3aYyC0d95djDe8dvxQXeFcHpEzNQybatcw6Y
-         cYUg==
-X-Gm-Message-State: APt69E2drU0CSVWT2VnXYcX9kWQhQEhxTqUj7eMiqKKBfmZSVQG6kPpB
-        Cwq3tKc5g2+iFAs57Li2Oyp08g==
-X-Google-Smtp-Source: ADUXVKKXW3kiOyjTi6ijvp2c2e+4+xdYEZ84MUR1BT6vUOvQ5ZEQ2pNSZChIIvksIYtUrGWssh2cEg==
-X-Received: by 2002:a65:5246:: with SMTP id q6-v6mr13697356pgp.152.1528702737479;
-        Mon, 11 Jun 2018 00:38:57 -0700 (PDT)
-Received: from localhost.localdomain ([203.205.141.123])
-        by smtp.googlemail.com with ESMTPSA id c27-v6sm78323076pfl.63.2018.06.11.00.38.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 11 Jun 2018 00:38:56 -0700 (PDT)
-From: Wanpeng Li <kernellwp@gmail.com>
-X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
-To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 2/2] sched/core: Consider afffinity constrain when yield to a task
-Date: Mon, 11 Jun 2018 15:38:50 +0800
-Message-Id: <1528702730-7538-2-git-send-email-wanpengli@tencent.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528702730-7538-1-git-send-email-wanpengli@tencent.com>
-References: <1528702730-7538-1-git-send-email-wanpengli@tencent.com>
+        id S1753987AbeFKD21 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Sun, 10 Jun 2018 23:28:27 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55008 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753793AbeFKD2Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Jun 2018 23:28:24 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C6BE9738E0;
+        Mon, 11 Jun 2018 03:28:23 +0000 (UTC)
+Received: from redhat.com (ovpn-120-77.rdu2.redhat.com [10.10.120.77])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 8EE2720244E0;
+        Mon, 11 Jun 2018 03:28:19 +0000 (UTC)
+Date: Mon, 11 Jun 2018 06:28:19 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Ram Pai <linuxram@us.ibm.com>
+Cc: Christoph Hellwig <hch@infradead.org>, robh@kernel.org,
+        pawel.moll@arm.com, Tom Lendacky <thomas.lendacky@amd.com>,
+        aik@ozlabs.ru, jasowang@redhat.com, cohuck@redhat.com,
+        linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, joe@perches.com,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        david@gibson.dropbear.id.au, linuxppc-dev@lists.ozlabs.org,
+        elfring@users.sourceforge.net,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        benh@kernel.crashing.org
+Subject: Re: [RFC V2] virtio: Add platform specific DMA API translation for
+ virito devices
+Message-ID: <20180611060949-mutt-send-email-mst@kernel.org>
+References: <20180522063317.20956-1-khandual@linux.vnet.ibm.com>
+ <20180523213703-mutt-send-email-mst@kernel.org>
+ <20180524072104.GD6139@ram.oc3035372033.ibm.com>
+ <0c508eb2-08df-3f76-c260-90cf7137af80@linux.vnet.ibm.com>
+ <20180531204320-mutt-send-email-mst@kernel.org>
+ <20180607052306.GA1532@infradead.org>
+ <20180607185234-mutt-send-email-mst@kernel.org>
+ <20180611023909.GA5726@ram.oc3035372033.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180611023909.GA5726@ram.oc3035372033.ibm.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 11 Jun 2018 03:28:23 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 11 Jun 2018 03:28:23 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wanpeng Li <wanpengli@tencent.com>
+On Sun, Jun 10, 2018 at 07:39:09PM -0700, Ram Pai wrote:
+> On Thu, Jun 07, 2018 at 07:28:35PM +0300, Michael S. Tsirkin wrote:
+> > On Wed, Jun 06, 2018 at 10:23:06PM -0700, Christoph Hellwig wrote:
+> > > On Thu, May 31, 2018 at 08:43:58PM +0300, Michael S. Tsirkin wrote:
+> > > > Pls work on a long term solution. Short term needs can be served by
+> > > > enabling the iommu platform in qemu.
+> > > 
+> > > So, I spent some time looking at converting virtio to dma ops overrides,
+> > > and the current virtio spec, and the sad through I have to tell is that
+> > > both the spec and the Linux implementation are complete and utterly fucked
+> > > up.
+> > 
+> > Let me restate it: DMA API has support for a wide range of hardware, and
+> > hardware based virtio implementations likely won't benefit from all of
+> > it.
+> > 
+> > And given virtio right now is optimized for specific workloads, improving
+> > portability without regressing performance isn't easy.
+> > 
+> > I think it's unsurprising since it started a strictly a guest/host
+> > mechanism.  People did implement offloads on specific platforms though,
+> > and they are known to work. To improve portability even further,
+> > we might need to make spec and code changes.
+> > 
+> > I'm not really sympathetic to people complaining that they can't even
+> > set a flag in qemu though. If that's the case the stack in question is
+> > way too inflexible.
+> 
+> We did consider your suggestion. But can't see how it will work.
+> Maybe you can guide us here. 
+> 
+> In our case qemu has absolutely no idea if the VM will switch itself to
+> secure mode or not.  Its a dynamic decision made entirely by the VM
+> through direct interaction with the hardware/firmware; no
+> qemu/hypervisor involved.
+> 
+> If the administrator, who invokes qemu, enables the flag, the DMA ops
+> associated with the virito devices will be called, and hence will be
+> able to do the right things. Yes we might incur performance hit due to
+> the IOMMU translations, but lets ignore that for now; the functionality
+> will work. Good till now.
+> 
+> However if the administrator
+> ignores/forgets/deliberatey-decides/is-constrained to NOT enable the
+> flag, virtio will not be able to pass control to the DMA ops associated
+> with the virtio devices. Which means, we have no opportunity to share
+> the I/O buffers with the hypervisor/qemu.
+> 
+> How do you suggest, we handle this case?
 
-Consider the task afffinity constrain when yield to a task.
+As step 1, ignore it as a user error.
+Further you can for example add per-device quirks in virtio so it can be
+switched to dma api. make extra decisions in platform code then.
 
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
----
- kernel/sched/core.c | 3 +++
- 1 file changed, 3 insertions(+)
+> > 
+> > 
+> > 
+> > > Both in the flag naming and the implementation there is an implication
+> > > of DMA API == IOMMU, which is fundamentally wrong.
+> > 
+> > Maybe we need to extend the meaning of PLATFORM_IOMMU or rename it.
+> > 
+> > It's possible that some setups will benefit from a more
+> > fine-grained approach where some aspects of the DMA
+> > API are bypassed, others aren't.
+> > 
+> > This seems to be what was being asked for in this thread,
+> > with comments claiming IOMMU flag adds too much overhead.
+> > 
+> > 
+> > > The DMA API does a few different things:
+> > > 
+> > >  a) address translation
+> > > 
+> > > 	This does include IOMMUs.  But it also includes random offsets
+> > > 	between PCI bars and system memory that we see on various
+> > > 	platforms.
+> > 
+> > I don't think you mean bars. That's unrelated to DMA.
+> > 
+> > >  Worse so some of these offsets might be based on
+> > > 	banks, e.g. on the broadcom bmips platform.  It also deals
+> > > 	with bitmask in physical addresses related to memory encryption
+> > > 	like AMD SEV.  I'd be really curious how for example the
+> > > 	Intel virtio based NIC is going to work on any of those
+> > > 	plaforms.
+> > 
+> > SEV guys report that they just set the iommu flag and then it all works.
+> 
+> This is one of the fundamental difference between SEV architecture and
+> the ultravisor architecture. In SEV, qemu is aware of SEV.  In
+> ultravisor architecture, only the VM that runs within qemu is aware of
+> ultravisor;  hypervisor/qemu/administrator are untrusted entities.
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 092f7c4..11001ff 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5102,6 +5102,9 @@ int __sched yield_to(struct task_struct *p, bool preempt)
- 	if (task_running(p_rq, p) || p->state)
- 		goto out_unlock;
- 
-+	if (!cpumask_test_cpu(smp_processor_id(), &p->cpus_allowed))
-+		goto out_unlock;
-+
- 	yielded = curr->sched_class->yield_to_task(rq, p, preempt);
- 	if (yielded) {
- 		schedstat_inc(rq->yld_count);
--- 
-2.7.4
+Spo one option is to teach qemu that it's on a platform with an
+ultravisor, this might have more advantages.
+
+> I hope, we can make virtio subsystem flexibe enough to support various
+> security paradigms.
+
+So if you are worried about qemu attacking guests, I see
+more problems than just passing an incorrect iommu
+flag.
+
+
+> Apart from the above reason, Christoph and Ben point to so many other
+> reasons to make it flexibe. So why not, make it happen?
+> 
+
+I don't see a flexibility argument.  I just don't think new platforms
+should use workarounds that we put in place for old ones.
+
+
+> > I guess if there's translation we can think of this as a kind of iommu.
+> > Maybe we should rename PLATFORM_IOMMU to PLARTFORM_TRANSLATION?
+> > 
+> > And apparently some people complain that just setting that flag makes
+> > qemu check translation on each access with an unacceptable performance
+> > overhead.  Forcing same behaviour for everyone on general principles
+> > even without the flag is unlikely to make them happy.
+> > 
+> > >   b) coherency
+> > > 
+> > > 	On many architectures DMA is not cache coherent, and we need
+> > > 	to invalidate and/or write back cache lines before doing
+> > > 	DMA.  Again, I wonder how this is every going to work with
+> > > 	hardware based virtio implementations.
+> > 
+> > 
+> > You mean dma_Xmb and friends?
+> > There's a new feature VIRTIO_F_IO_BARRIER that's being proposed
+> > for that.
+> > 
+> > 
+> > >  Even worse I think this
+> > > 	is actually broken at least for VIVT event for virtualized
+> > > 	implementations.  E.g. a KVM guest is going to access memory
+> > > 	using different virtual addresses than qemu, vhost might throw
+> > > 	in another different address space.
+> > 
+> > I don't really know what VIVT is. Could you help me please?
+> > 
+> > >   c) bounce buffering
+> > > 
+> > > 	Many DMA implementations can not address all physical memory
+> > > 	due to addressing limitations.  In such cases we copy the
+> > > 	DMA memory into a known addressable bounc buffer and DMA
+> > > 	from there.
+> > 
+> > Don't do it then?
+> > 
+> > 
+> > >   d) flushing write combining buffers or similar
+> > > 
+> > > 	On some hardware platforms we need workarounds to e.g. read
+> > > 	from a certain mmio address to make sure DMA can actually
+> > > 	see memory written by the host.
+> > 
+> > I guess it isn't an issue as long as WC isn't actually used.
+> > It will become an issue when virtio spec adds some WC capability -
+> > I suspect we can ignore this for now.
+> > 
+> > > 
+> > > All of this is bypassed by virtio by default despite generally being
+> > > platform issues, not particular to a given device.
+> > 
+> > It's both a device and a platform issue. A PV device is often more like
+> > another CPU than like a PCI device.
+> > 
+> > 
+> > 
+> > -- 
+> > MST
+> 
+> -- 
+> Ram Pai
