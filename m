@@ -1,117 +1,302 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id dfftB4BrGVuTRQAAmS7hNA
-	; Thu, 07 Jun 2018 17:31:57 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id XBYAKOQfHlurSAAAmS7hNA
+	; Mon, 11 Jun 2018 07:15:13 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 837DA608BA; Thu,  7 Jun 2018 17:31:57 +0000 (UTC)
+	id 1C042607A4; Mon, 11 Jun 2018 07:15:13 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="c3orN18A"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 1F7FB601B4;
-	Thu,  7 Jun 2018 17:31:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1F7FB601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id AF564605A5;
+	Mon, 11 Jun 2018 07:15:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AF564605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933973AbeFGRbu (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 13:31:50 -0400
-Received: from foss.arm.com ([217.140.101.70]:54928 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932648AbeFGRbt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 13:31:49 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3AE2D1435;
-        Thu,  7 Jun 2018 10:31:49 -0700 (PDT)
-Received: from e108498-lin.cambridge.arm.com (e108498-lin.cambridge.arm.com [10.1.211.46])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 457FE3F59D;
-        Thu,  7 Jun 2018 10:31:45 -0700 (PDT)
-Date: Thu, 7 Jun 2018 18:31:43 +0100
-From: Quentin Perret <quentin.perret@arm.com>
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: peterz@infradead.org, rjw@rjwysocki.net,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, mingo@redhat.com,
-        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
-        chris.redpath@arm.com, patrick.bellasi@arm.com,
-        valentin.schneider@arm.com, vincent.guittot@linaro.org,
-        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
-        tkjos@google.com, joelaf@google.com, smuckle@google.com,
-        adharmap@quicinc.com, skannan@quicinc.com, pkondeti@codeaurora.org,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org
-Subject: Re: [RFC PATCH v3 03/10] PM: Introduce an Energy Model management
- framework
-Message-ID: <20180607173143.GD3597@e108498-lin.cambridge.arm.com>
-References: <20180521142505.6522-1-quentin.perret@arm.com>
- <20180521142505.6522-4-quentin.perret@arm.com>
- <20180607144409.GB3311@localhost.localdomain>
- <20180607151954.GA3597@e108498-lin.cambridge.arm.com>
- <20180607160419.GD3311@localhost.localdomain>
+        id S1754076AbeFKHPG (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 20 others); Mon, 11 Jun 2018 03:15:06 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:38301 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754001AbeFKHPE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 03:15:04 -0400
+Received: by mail-io0-f195.google.com with SMTP id l19-v6so22725933ioj.5
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 00:15:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=EAmvlFKeTS9v1ojXFILVNG9h2SZAYvtakCRes9k4vYw=;
+        b=c3orN18Ao+au9WotaptMYMjElTbxBDaf+GbhpxIyqKAV4hjfz+ic+VrJlY+5EL2+hw
+         nxmAzWw40PFrhn0MLAIQv6kYV93LktPU/EOnoeW43hPlEDLr8AV9XGqBGLr5uh3LQ7YZ
+         JTbqJuY3s12POIDPcyU0uH81MAzawJwbxqLvI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=EAmvlFKeTS9v1ojXFILVNG9h2SZAYvtakCRes9k4vYw=;
+        b=X9o0eWJzpJf8gaFGyI2ishNelrIinL/MuZ5vZOQYD1Wsv45lUfjCe0ZDa/7TBTLDP3
+         QTDvBzmkBqA/U0wWPuxfUxU5dvzd7TgFeADEB9gJSXSE7iQEv2TQKyVmMGCi4qNxOLNJ
+         hRePbfxgbXQMqCuGtTBmvCeHCMpgQOt+THYMLNGfFEUi5mSBu2VrzDMqyApZqxiy+eT4
+         b1VPC86faIAIoiznT/2R7shohTRedTYOGd0UU+Xp6ic2XicJbcTtcL+0LlzrKv1wCgI3
+         aK2QkuawxBgIvvLnZmSGWjdJu0MG4vQ+usk0FWTMUm6fMaAFIbvjmqVsk7xcMkhuQDAK
+         x3Kw==
+X-Gm-Message-State: APt69E37W1AJGyZb9kn+HD3oazW+bUyc3Z81vh2+/ePTmZVFnKy6gp9T
+        FkqIbSmLQSzaxnHLYasRIo7nwfeglnzWZ6uNF2Dk0Q==
+X-Google-Smtp-Source: ADUXVKI9gK7gmCUZh/hDOrPSMCo4vpzHoGxtjYzAuk5p5paUzQJJVHTg/6KgpU2qr0jhLlLe4d+Nejv1mWgsNsWHczs=
+X-Received: by 2002:a6b:c986:: with SMTP id z128-v6mr13638533iof.266.1528701303922;
+ Mon, 11 Jun 2018 00:15:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180607160419.GD3311@localhost.localdomain>
-User-Agent: Mutt/1.8.3 (2017-05-23)
+Received: by 2002:a02:c054:0:0:0:0:0 with HTTP; Mon, 11 Jun 2018 00:15:03
+ -0700 (PDT)
+In-Reply-To: <1528445893-14530-7-git-send-email-zhang.chunyan@linaro.org>
+References: <1528445893-14530-1-git-send-email-zhang.chunyan@linaro.org> <1528445893-14530-7-git-send-email-zhang.chunyan@linaro.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 11 Jun 2018 09:15:03 +0200
+Message-ID: <CAPDyKFq5WpLTySEPKjNxXSjz5hpiDGStNQo1pPzNmxy0Y9bpnQ@mail.gmail.com>
+Subject: Re: [PATCH 6/6] mmc: host: sdhci-sprd: added Spreadtrum's host
+ controller R11
+To: Chunyan Zhang <zhang.chunyan@linaro.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Billows Wu <billows.wu@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday 07 Jun 2018 at 18:04:19 (+0200), Juri Lelli wrote:
-> On 07/06/18 16:19, Quentin Perret wrote:
-> > On Thursday 07 Jun 2018 at 16:44:09 (+0200), Juri Lelli wrote:
-> > > > +	if (!fd->cs_table)
-> > > > +		goto free_fd;
-> > > > +
-> > > > +	/* Copy the span of the frequency domain */
-> > > > +	cpumask_copy(&fd->cpus, span);
-> > > > +
-> > > > +	/* Build the list of capacity states for this freq domain */
-> > > > +	for (i = 0, freq = 0; i < nr_states; i++, freq++) {
-> > >                      ^                              ^
-> > > The fact that this relies on active_power() to use ceil OPP for a given
-> > > freq might deserve a comment. Also, is this behaviour of active_power()
-> > > standardized?
-> > 
-> > Right, this can get confusing pretty quickly. There is a comment in
-> > include/linux/energy_model.h where the expected behaviour of
-> > active_power is explained, but a reminder above this function shouldn't
-> > hurt.
-> 
-> Mmm, not sure if you could actually check that returned freq values are
-> actually consistent with the assumption (just in case one didn't do
-> homework).
+On 8 June 2018 at 10:18, Chunyan Zhang <zhang.chunyan@linaro.org> wrote:
+> From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+>
+> This patch adds the initial support of Secure Digital Host Controller
+> Interface compliant controller - R11 found in some latest Spreadtrum
+> chipsets.
+>
+> R11 is a variant based on SD v4.0 specification.
+>
+> With this driver, mmc can be initialized, can be mounted, read and
+> written.
+>
+> Original-by: Billows Wu <billows.wu@spreadtrum.com>
+> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+> ---
+>  drivers/mmc/host/Kconfig          |  13 ++
+>  drivers/mmc/host/Makefile         |   1 +
+>  drivers/mmc/host/sdhci-sprd-r11.c | 472 ++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 486 insertions(+)
+>  create mode 100644 drivers/mmc/host/sdhci-sprd-r11.c
 
-Right, that's a good point. I'll add checks on the parameters modified by
-active_power(). Monotonically increasing freq, monotonically increasing
-power as well I guess, something along those lines.
+This is a DT based driver. Please add a separate patch describing the
+corresponding bindings and compatibles.
 
-> > > > +{
-> > > > +	struct em_cs_table *old_table, *new_table;
-> > > > +	struct em_freq_domain *fd;
-> > > > +	unsigned long flags;
-> > > > +	int nr_states, cpu;
-> > > > +
-> > > > +	read_lock_irqsave(&em_data_lock, flags);
-> > > 
-> > > Don't you need write_lock_ here, since you are going to exchange the
-> > > em tables?
-> > 
-> > This lock protects the per_cpu() variable itself. Here we only read
-> > pointers from that per_cpu variable, and we modify one attribute in
-> > the pointed structure. We don't modify the per_cpu table itself. Does
-> > that make sense ?
-> 
-> So, I don't seem to understand what protects the rcu_assign_pointer(s)
-> below (as in
-> https://elixir.bootlin.com/linux/latest/source/Documentation/RCU/whatisRCU.txt#L395).
+[...]
 
-Sigh, that's not right :(
-I take back my previous message, the write lock _is_ needed. Thanks for
-pointing that out ...
+> +static int sdhci_sprd_get_dt_resource(struct platform_device *pdev,
+> +               struct sdhci_sprd_host *sprd_host)
+> +{
+> +       int ret = 0;
+> +       struct clk *clk;
+> +
+> +       clk = devm_clk_get(&pdev->dev, "sdio");
+> +       if (IS_ERR(clk)) {
+> +               ret = PTR_ERR(clk);
+> +               dev_warn(&pdev->dev, "Failed to get sdio clock (%d)\n", ret);
+> +               goto out;
+> +       }
+> +       sprd_host->clk_sdio = clk;
+> +
+> +       clk = devm_clk_get(&pdev->dev, "source");
+> +       if (IS_ERR(clk)) {
+> +               ret = PTR_ERR(clk);
+> +               dev_warn(&pdev->dev, "Failed to get source clock (%d)\n", ret);
+> +               goto out;
+> +       }
+> +       sprd_host->clk_source = clk;
+> +
+> +       clk_set_parent(sprd_host->clk_sdio, sprd_host->clk_source);
+> +       sprd_host->base_rate = clk_get_rate(sprd_host->clk_source);
+> +       if (!sprd_host->base_rate) {
+> +               sprd_host->base_rate = 26000000;
+> +               dev_warn(&pdev->dev, "The source clock rate is 0\n");
+> +       }
+> +
 
-Thanks,
-Quentin
+The above can be managed by the assigned-clock* DT bindings. Please
+have a look at:
+
+Documentation/devicetree/bindings/clock/clock-bindings.txt
+drivers/clk/clk-conf.c
+
+> +       clk = devm_clk_get(&pdev->dev, "enable");
+> +       if (IS_ERR(clk)) {
+> +               ret = PTR_ERR(clk);
+> +               dev_warn(&pdev->dev, "Failed to get gate clock (%d)\n", ret);
+
+The printed name of the clock doesn't match the name used in
+devm_clk_get() call.
+
+BTW, I think devm_clk_get() already prints some information when it
+fails to lookup a clock. Isn't that sufficient?
+
+> +               goto out;
+> +       }
+> +       sprd_host->clk_enable = clk;
+> +
+> +out:
+> +       return ret;
+> +}
+> +
+> +static void sdhci_sprd_set_mmc_struct(struct platform_device *pdev,
+> +                               struct mmc_host *mmc)
+> +{
+> +       struct device_node *np = pdev->dev.of_node;
+> +       struct sdhci_host *host = mmc_priv(mmc);
+> +
+> +       mmc->caps = MMC_CAP_SD_HIGHSPEED | MMC_CAP_MMC_HIGHSPEED |
+> +               MMC_CAP_ERASE | MMC_CAP_CMD23;
+> +
+> +       mmc_of_parse(mmc);
+> +       mmc_of_parse_voltage(np, &host->ocr_mask);
+
+mmc_of_parse_voltage() is intended to be used for controllers that
+internally manages the powered to the card. Is that really the case?
+
+I assume you have external regulator(s) to manage that, no?
+
+> +
+> +       mmc->ocr_avail = 0x40000;
+> +       mmc->ocr_avail_sdio = mmc->ocr_avail;
+> +       mmc->ocr_avail_sd = mmc->ocr_avail;
+> +       mmc->ocr_avail_mmc = mmc->ocr_avail;
+
+If there is external regulators used, all the above can go away. In
+either case, at least the *_sdio, *_sd, *_mmc can go away.
+
+> +
+> +       mmc->max_current_330 = SDHCI_SPRD_MAX_CUR;
+> +       mmc->max_current_300 = SDHCI_SPRD_MAX_CUR;
+> +       mmc->max_current_180 = SDHCI_SPRD_MAX_CUR;
+
+This should probably also be fetched used an external regulator and
+sdhci already manages that.
+
+> +
+> +       host->dma_mask = DMA_BIT_MASK(64);
+> +       mmc_dev(host->mmc)->dma_mask = &host->dma_mask;
+> +}
+
+[...]
+
+> +
+> +static unsigned int sdhci_sprd_get_min_clock(struct sdhci_host *host)
+> +{
+> +       return 400000;
+> +}
+
+Isn't there a more straightforward way to assign the minimum clock
+rate? Do you really need to use a callback?
+
+> +
+> +static void sdhci_sprd_reset(struct sdhci_host *host, u8 mask)
+> +{
+> +       sdhci_reset(host, mask);
+> +}
+
+Looks like an unnecessary wrapper function.
+
+[...]
+
+> +static int sdhci_sprd_probe(struct platform_device *pdev)
+> +{
+> +       struct sdhci_host *host;
+> +       struct sdhci_sprd_host *sprd_host;
+> +       int ret = 0;
+> +
+> +       host = sdhci_pltfm_init(pdev, &sdhci_sprd_pdata, sizeof(*sprd_host));
+> +       if (IS_ERR(host))
+> +               return PTR_ERR(host);
+> +
+> +       sprd_host = TO_SPRD_HOST(host);
+> +
+> +       ret = sdhci_sprd_get_dt_resource(pdev, sprd_host);
+> +       if (ret)
+> +               goto pltfm_free;
+> +
+> +       clk_prepare_enable(sprd_host->clk_sdio);
+> +       clk_prepare_enable(sprd_host->clk_enable);
+> +
+> +       sdhci_sprd_init_config(host);
+> +
+> +       sdhci_sprd_set_mmc_struct(pdev, host->mmc);
+> +
+> +       host->version = sdhci_readw(host, SDHCI_HOST_VERSION);
+> +       sprd_host->version = ((host->version & SDHCI_VENDOR_VER_MASK) >>
+> +                              SDHCI_VENDOR_VER_SHIFT);
+> +
+> +       pm_runtime_get_noresume(&pdev->dev);
+> +       pm_runtime_set_active(&pdev->dev);
+> +       pm_runtime_enable(&pdev->dev);
+> +       pm_runtime_set_autosuspend_delay(&pdev->dev, 50);
+> +       pm_runtime_use_autosuspend(&pdev->dev);
+> +       pm_suspend_ignore_children(&pdev->dev, 1);
+> +
+> +       ret = sdhci_add_host(host);
+> +       if (ret) {
+> +               dev_err(&pdev->dev, "failed to add mmc host: %d\n", ret);
+> +               goto pm_runtime_disable;
+> +       }
+> +
+
+Looks like there is a missing call to pm_runtime_put() here, no?
+
+Unless it's intentional to prevent runtime suspend, for whatever reasons!?
+
+> +       return 0;
+> +
+> +pm_runtime_disable:
+> +       pm_runtime_disable(&pdev->dev);
+> +       pm_runtime_set_suspended(&pdev->dev);
+> +
+> +       clk_disable_unprepare(sprd_host->clk_sdio);
+> +       clk_disable_unprepare(sprd_host->clk_enable);
+> +
+> +pltfm_free:
+> +       sdhci_pltfm_free(pdev);
+> +       return ret;
+> +}
+> +
+> +static int sdhci_sprd_remove(struct platform_device *pdev)
+> +{
+> +       struct sdhci_host *host = platform_get_drvdata(pdev);
+> +       struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
+> +       struct mmc_host *mmc = host->mmc;
+> +
+> +       mmc_remove_host(mmc);
+> +       clk_disable_unprepare(sprd_host->clk_sdio);
+> +       clk_disable_unprepare(sprd_host->clk_enable);
+> +
+> +       mmc_free_host(mmc);
+> +
+> +       return 0;
+> +}
+> +
+> +static const struct of_device_id sdhci_sprd_of_match[] = {
+> +       { .compatible = "sprd,sdhc-r11", },
+
+As stated, don't forget to document this.
+
+[...]
+
+Kind regards
+Uffe
