@@ -1,96 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 7nDSOYZyG1slaQAAmS7hNA
-	; Sat, 09 Jun 2018 06:39:30 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id EVqBMwIWHltKdgAAmS7hNA
+	; Mon, 11 Jun 2018 06:26:22 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id E0A89607E7; Sat,  9 Jun 2018 06:39:29 +0000 (UTC)
+	id 1203A60791; Mon, 11 Jun 2018 06:26:22 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id E0401600D0;
-	Sat,  9 Jun 2018 06:39:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E0401600D0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+	by smtp.codeaurora.org (Postfix) with ESMTP id 7FDB360385;
+	Mon, 11 Jun 2018 06:26:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7FDB360385
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753139AbeFIGjY (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 02:39:24 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:48548 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752272AbeFIGhC (ORCPT
+        id S1753990AbeFKG0T (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 20 others); Mon, 11 Jun 2018 02:26:19 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:38330 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753926AbeFKG0S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 02:37:02 -0400
-Received: from fsav301.sakura.ne.jp (fsav301.sakura.ne.jp [153.120.85.132])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w596VUtN095423;
-        Sat, 9 Jun 2018 15:31:30 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav301.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp);
- Sat, 09 Jun 2018 15:31:30 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w596VPI7095409
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Sat, 9 Jun 2018 15:31:30 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Subject: Re: what trees/branches to test on syzbot
-To: Dmitry Vyukov <dvyukov@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
-        Guenter Roeck <groeck@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Miller <davem@davemloft.net>,
-        Fengguang Wu <fengguang.wu@intel.com>
-References: <CACT4Y+bvA6hrVT5u-Cy_zJLNTM5SYf9kt+sXYmfq13rPGfiqFQ@mail.gmail.com>
- <CABXOdTf+CoB6EkhG1yPtB4NNtohbex=ebHLX7YW5TyQQGn9byw@mail.gmail.com>
- <CACT4Y+aGMoobn069+Lq1BT2YGqi9qYY9vHFtiXT2DLsJ5ZUh9Q@mail.gmail.com>
- <873735n3dy.fsf@xmission.com> <20180116173440.GA15893@kroah.com>
- <CACT4Y+Yy4YZG54xXfR1QNM0i8aS66BZyCnaD2YuooYo2sGuSLg@mail.gmail.com>
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <81a0eb59-c204-9e36-13b7-88c2ea99ceab@I-love.SAKURA.ne.jp>
-Date: Sat, 9 Jun 2018 15:31:24 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <CACT4Y+Yy4YZG54xXfR1QNM0i8aS66BZyCnaD2YuooYo2sGuSLg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Mon, 11 Jun 2018 02:26:18 -0400
+Received: from mail-pg0-f72.google.com ([74.125.83.72])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1fSGHR-0001FG-7c
+        for linux-kernel@vger.kernel.org; Mon, 11 Jun 2018 06:26:17 +0000
+Received: by mail-pg0-f72.google.com with SMTP id d2-v6so2302260pgq.22
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Jun 2018 23:26:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:content-transfer-encoding:mime-version
+         :subject:message-id:date:cc:to;
+        bh=qOQKzYYxEDKUPAe6+ipKXvO11GL/2Fj0MGEGacU09tw=;
+        b=mBBg9DlVVGymFbkyuPsw/y2Ip1NgKcm4SkWdZHOTplOcl/QyTjmJxd8CQ5WuOZslkr
+         Ly2N80R3HhIbW4l86wFuhvsPlX/MK0FA/xm0UoBxJn2xYDa1G7+YmXKlcNv1IX65cNve
+         J3wOBqdxQsSdQS09+278ICQ5etkNNuN05rQjj1PiZEI6lTI96Zenw/BjshC3DJ1FmgE5
+         t5hml5mc9LA8KEJhUlMyz9AzyJ+3XiwbL83CUsBWPESSBGh6MUAPouiOyZu+CWRfs+3b
+         R37KZAMgZQu1G8X16nVzJ7ytJ5fgOxDLdL2Dk4JwERM27mbfwmPoqR/UpLNX1i5A/lCT
+         GF0A==
+X-Gm-Message-State: APt69E0DilYlMIUf/YgAalF8C78X6ncniL+iD4kELfMZCUk2qyTCMlub
+        BfLV1PhoreAc/j1byK0E6YnwxfEbu4oYQXWMlHD+27hCzGu3/fQIpOMd5djsbVfOvfpqPsTdNPE
+        WvFTtWf9TQ99pk2LHbQQ0l/jnJ/8NmsYpFa5+jH04ZQ==
+X-Received: by 2002:a62:9804:: with SMTP id q4-v6mr16173074pfd.65.1528698375956;
+        Sun, 10 Jun 2018 23:26:15 -0700 (PDT)
+X-Google-Smtp-Source: ADUXVKKU53slhice0vSYOiEz/PDLKVvtoIyZPtwJmD2SEmrjgu4iz0Vq4gzb852kebnKq7EE2CwH+g==
+X-Received: by 2002:a62:9804:: with SMTP id q4-v6mr16173063pfd.65.1528698375720;
+        Sun, 10 Jun 2018 23:26:15 -0700 (PDT)
+Received: from [192.168.1.206] (220-133-187-190.HINET-IP.hinet.net. [220.133.187.190])
+        by smtp.gmail.com with ESMTPSA id r20-v6sm1408923pgu.25.2018.06.10.23.26.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 10 Jun 2018 23:26:15 -0700 (PDT)
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Content-Type: text/plain;
+        charset=us-ascii;
+        delsp=yes;
+        format=flowed
 Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 11.4 \(3445.8.2\))
+Subject: Possible regression caused by commit a192aa923b66a
+Message-Id: <DEA1AE84-B0FD-481E-8E0D-788CD4EF59AE@canonical.com>
+Date: Mon, 11 Jun 2018 14:26:12 +0800
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, perryhelionsemail@gmail.com,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+X-Mailer: Apple Mail (2.3445.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/01/22 22:32, Dmitry Vyukov wrote:
-> On Tue, Jan 16, 2018 at 6:34 PM, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
->>> The problem is testing linux-next and then using get-maintainer.pl to
->>> report the problem.
->>>
->>> If you are resource limited I would start by testing Linus's tree to
->>> find the existing bugs, and to get a baseline.  Using get-maintainer.pl
->>> is fine for sending emails to developers there.
->>
->> I second this, almost all of the issues you are hitting are usually in
->> Linus's tree.  Let's make that "clean" first, before messing around and
->> adding 100+ other random developer's trees into the mix :)
-> 
-> FTR I've just dropped linux-next and mmots from syzbot.
-> 
+Hi Rafael,
 
-I hope that we can test linux-next on syzbot, as a tree for testing debug
-printk() patches. People do not like sending debug printk() patches to
-Linus's tree, while majority of bugs are found in Linus's tree.
+There's a regression report [1] that says commit a192aa923b66a ("ACPI /  
+LPSS: Consolidate runtime PM and system sleep handling") is the first bad  
+commit.
 
-We could automatically expire (and delete) reports found in linux-next from
-the table at https://syzkaller.appspot.com/ if the bug was not reproduced
-for some time (e.g. one week or one month).
+ From the looks of it, it didn't introduce any behavioral change. So your  
+help is appreciated.
+
+[1] https://bugs.launchpad.net/bugs/1774950
+
+Kai-Heng
