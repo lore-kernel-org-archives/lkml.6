@@ -2,160 +2,129 @@ Return-Path: <SRS0=KDb5=I5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 56D71C004E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 20:45:31 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 61F40C004E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 20:48:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B43B20839
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 20:45:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DKvDO4SU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B43B20839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 1A702208B8
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 20:48:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A702208B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934278AbeFKUp3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 16:45:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52392 "EHLO mail.kernel.org"
+        id S934363AbeFKUsF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 16:48:05 -0400
+Received: from mout.gmx.net ([212.227.15.15]:40935 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933204AbeFKUp1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 16:45:27 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 35F9120839;
-        Mon, 11 Jun 2018 20:45:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528749926;
-        bh=O6MXkE9dvC/xZu35zWNiDz+9cz6yl1xemYEV74ViOy8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DKvDO4SU0twjrqtZY3B/ox0xrMGtuEJ+AL1U/pk77CuAsNDpH7jqUEDAbky/PkRRQ
-         prZi7/1jsSrLIc3IKOs+HTPIEOZRNvCMrZrUC3y2fuK80aOORLPGIo+t7HU1BpfjHI
-         hfTt1LIz0FBJ8YRGPXCuVXtrQz4cjzDxv5JNp8LE=
-Date:   Mon, 11 Jun 2018 22:45:06 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Joe Perches <joe@perches.com>
-Cc:     Colin King <colin.king@canonical.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iwlwifi: pcie: make array prop static, shrinks object
- size
-Message-ID: <20180611204506.GA21542@kroah.com>
-References: <20180611171537.14597-1-colin.king@canonical.com>
- <7f508dccf95cff7fb8e083666b8939c58f65f894.camel@perches.com>
+        id S932468AbeFKUsE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 16:48:04 -0400
+Received: from localhost ([92.75.47.185]) by mail.gmx.com (mrgmx003
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 0M3AWN-1gHgZX0eoB-00srXA; Mon, 11
+ Jun 2018 22:47:56 +0200
+Date:   Mon, 11 Jun 2018 22:47:54 +0200
+From:   Peter Seiderer <ps.report@gmx.net>
+To:     Steve Longerbeam <slongerbeam@gmail.com>
+Cc:     linux-media@vger.kernel.org,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] media: staging/imx: fill vb2_v4l2_buffer field
+ entry
+Message-ID: <20180611224754.1f4d3792@gmx.net>
+In-Reply-To: <9d5ff49f-6d07-0371-9cc1-5ee929328241@gmail.com>
+References: <20180315191323.6028-1-ps.report@gmx.net>
+        <9d5ff49f-6d07-0371-9cc1-5ee929328241@gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7f508dccf95cff7fb8e083666b8939c58f65f894.camel@perches.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:Uz4HUvjDpoucvyJBULEq4waQV4ozxMnw9UxMPNm7RzlCHJgvvFs
+ Fe8xr83Xtctjoogu96FlFtBxwrX1r/aQo8j0AtC/R9dEElUc5+ZVcjs3/fuPTdpvYhUqHHz
+ 0pjT0F4JOkZ4rmaOI0vUdDvp5E+azPGMCWaMRZPqJsLIef3ty8OWvXFsOesla1fUZoigEg5
+ yuc1FBUx2Be3zHHKh2Gag==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:U+WeIGfxbCg=:C/UoL2UnYgw5Ut9tMtMCi6
+ p/Xka+6RZA5qhk9bbM25DFRqOS8tAoSsnu9aPXhHtKZva2srGmEg1RA2sduHSaWxmCp473xfV
+ 4d+SDjs0o11JS9e4wxk7T7ITcyw1lnwyiYC2XAbXmtUr4lN1aB/giSBmnq6XnzyW6TCOgFjd9
+ QIfm9px49U4oogT6iOejed8MZh1aLyEwx5MAbWZsbL2uaruN7M7ghojuHleDo+cDTxKOOS24Q
+ i7r7llY6+JuMMwVY44/BFIsKdkfBXGJymG6ELDvSN5I9/SadXWebIHy6SxQxq7GUCEmKzsxn+
+ YeZlz45b1Dge8F0JcS3LQNRNHgkWILI0a202yUUIpBhLUrKxFtMhSPBw9aQ+lSYnL2moF94FQ
+ bQmSMndD2aw/JtNFfC6h8FG3yRDlcozz7bZI7Izw6krKqXH0TJgO5nu5F7VP/WjudK/y7ylV1
+ GD57cE+QZk6+g5HJr5O5vnGyGD5pei9ws/+3l9XGRudEbS/kWNQTbVyzpjue8H+TLs3LZrtzR
+ YvLrScBoud1jVuoacj8FkpY8vNTDRN/gENcLrUFcOdr3wAMImOfMg+uFAM8nvrUxwM/Mvi0+e
+ SNp4wrZj5jewW16WmNz3gDCBmQssDpsh9koPjS/KfMkmUxO3l2MFaEyEx4v+Mm6Ck5IS4v5hd
+ iOAEGDvqwDUXlQ0cZK1QbZrXzM0FIDxsuQCZjaHUsW9Cx4Aja0YpacgLvGQyJ65P5IAjuob16
+ rK1c8SSBZAMdBFrFGJ5MVnCAWzBhebTmXB27KnQRcqGoo7eq2LZwwjj1hLTN8Cn422aVV56QE
+ UYyiZoO
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 11, 2018 at 12:40:55PM -0700, Joe Perches wrote:
-> (adding Greg KH)
+Hello *,
+
+On Fri, 16 Mar 2018 10:02:47 -0700, Steve Longerbeam <slongerbeam@gmail.com> wrote:
+
+> Reviewed-by: Steve Longerbeam <steve_longerbeam@mentor.com>
+
+Ping? Anybody taking this one?
+
+Regards,
+Peter
+
 > 
-> On Mon, 2018-06-11 at 18:15 +0100, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > Don't populate the read-only array 'prop' on the stack but
-> > instead make it static. Makes the object code smaller by 20 bytes:
-> > 
-> > Before:
-> >    text    data     bss     dec     hex filename
-> >   71659   14614     576   86849   15341 trans.o
-> > 
-> > After:
-> >    text    data     bss     dec     hex filename
-> >   71479   14774     576   86829   1532d trans.o
-> > 
-> > (gcc version 7.3.0 x86_64)
-> > 
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> 
+> On 03/15/2018 12:13 PM, Peter Seiderer wrote:
+> > - fixes gstreamer v4l2src warning:
+> >
+> >    0:00:00.716640334  349  0x164f720 WARN  v4l2bufferpool gstv4l2bufferpool.c:1195:gst_v4l2_buffer_pool_dqbuf:<v4l2src0:pool:src> Driver should never set v4l2_buffer.field to ANY
+> >
+> > - fixes v4l2-compliance test failure:
+> >
+> >    Streaming ioctls:
+> >            test read/write: OK (Not Supported)
+> >                Video Capture:
+> >                    Buffer: 0 Sequence: 0 Field: Any Timestamp: 58.383658s
+> >                    fail: v4l2-test-buffers.cpp(297): g_field() == V4L2_FIELD_ANY
+> >
+> > Signed-off-by: Peter Seiderer <ps.report@gmx.net>
 > > ---
-> >  drivers/net/wireless/intel/iwlwifi/pcie/trans.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-> > index 7229991ae70d..c4626ebe5da1 100644
-> > --- a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-> > +++ b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-> > @@ -1946,7 +1946,7 @@ static void iwl_trans_pcie_removal_wk(struct work_struct *wk)
-> >  	struct iwl_trans_pcie_removal *removal =
-> >  		container_of(wk, struct iwl_trans_pcie_removal, work);
-> >  	struct pci_dev *pdev = removal->pdev;
-> > -	char *prop[] = {"EVENT=INACCESSIBLE", NULL};
-> > +	static char *prop[] = {"EVENT=INACCESSIBLE", NULL};
-> >  
-> >  	dev_err(&pdev->dev, "Device gone - attempting removal\n");
-> >  	kobject_uevent_env(&pdev->dev.kobj, KOBJ_CHANGE, prop);
+> > Changes in v4:
+> >    - new patch (put first because patch is needed to advance with
+> >      the v4l2-compliance test), thanks to Philipp Zabel
+> >      <p.zabel@pengutronix.de> for suggested solution for the right
+> >      field value source
+> > ---
+> >   drivers/staging/media/imx/imx-ic-prpencvf.c | 1 +
+> >   drivers/staging/media/imx/imx-media-csi.c   | 1 +
+> >   2 files changed, 2 insertions(+)
+> >
+> > diff --git a/drivers/staging/media/imx/imx-ic-prpencvf.c b/drivers/staging/media/imx/imx-ic-prpencvf.c
+> > index ae453fd422f0..ffeb017c73b2 100644
+> > --- a/drivers/staging/media/imx/imx-ic-prpencvf.c
+> > +++ b/drivers/staging/media/imx/imx-ic-prpencvf.c
+> > @@ -210,6 +210,7 @@ static void prp_vb2_buf_done(struct prp_priv *priv, struct ipuv3_channel *ch)
+> >   
+> >   	done = priv->active_vb2_buf[priv->ipu_buf_num];
+> >   	if (done) {
+> > +		done->vbuf.field = vdev->fmt.fmt.pix.field;
+> >   		vb = &done->vbuf.vb2_buf;
+> >   		vb->timestamp = ktime_get_ns();
+> >   		vb2_buffer_done(vb, priv->nfb4eof ?
+> > diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
+> > index 5a195f80a24d..5f69117b5811 100644
+> > --- a/drivers/staging/media/imx/imx-media-csi.c
+> > +++ b/drivers/staging/media/imx/imx-media-csi.c
+> > @@ -236,6 +236,7 @@ static void csi_vb2_buf_done(struct csi_priv *priv)
+> >   
+> >   	done = priv->active_vb2_buf[priv->ipu_buf_num];
+> >   	if (done) {
+> > +		done->vbuf.field = vdev->fmt.fmt.pix.field;
+> >   		vb = &done->vbuf.vb2_buf;
+> >   		vb->timestamp = ktime_get_ns();
+> >   		vb2_buffer_done(vb, priv->nfb4eof ?  
 > 
-> Now what is happening is that prop is being reloaded
-> each invocation with the constant addresses of the strings.
-> 
-> It seems the prototype and function for kobject_uevent_env
-> should change as well to avoid this.
-> 
-> Perhaps this should become:
-> ---
->  drivers/net/wireless/intel/iwlwifi/pcie/trans.c | 2 +-
->  include/linux/kobject.h                         | 2 +-
->  lib/kobject_uevent.c                            | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-> index 7229991ae70d..6668a8aad22e 100644
-> --- a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-> +++ b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-> @@ -1946,7 +1946,7 @@ static void iwl_trans_pcie_removal_wk(struct work_struct *wk)
->  	struct iwl_trans_pcie_removal *removal =
->  		container_of(wk, struct iwl_trans_pcie_removal, work);
->  	struct pci_dev *pdev = removal->pdev;
-> -	char *prop[] = {"EVENT=INACCESSIBLE", NULL};
-> +	static const char * const prop[] = {"EVENT=INACCESSIBLE", NULL};
->  
->  	dev_err(&pdev->dev, "Device gone - attempting removal\n");
->  	kobject_uevent_env(&pdev->dev.kobj, KOBJ_CHANGE, prop);
-> diff --git a/include/linux/kobject.h b/include/linux/kobject.h
-> index 7f6f93c3df9c..9f5cf553dd1e 100644
-> --- a/include/linux/kobject.h
-> +++ b/include/linux/kobject.h
-> @@ -217,7 +217,7 @@ extern struct kobject *firmware_kobj;
->  
->  int kobject_uevent(struct kobject *kobj, enum kobject_action action);
->  int kobject_uevent_env(struct kobject *kobj, enum kobject_action action,
-> -			char *envp[]);
-> +			const char * const envp[]);
->  int kobject_synth_uevent(struct kobject *kobj, const char *buf, size_t count);
->  
->  __printf(2, 3)
-> diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
-> index 63d0816ab23b..9107989a0cc8 100644
-> --- a/lib/kobject_uevent.c
-> +++ b/lib/kobject_uevent.c
-> @@ -452,7 +452,7 @@ static void zap_modalias_env(struct kobj_uevent_env *env)
->   * corresponding error when it fails.
->   */
->  int kobject_uevent_env(struct kobject *kobj, enum kobject_action action,
-> -		       char *envp_ext[])
-> +		       const char * const envp_ext[])
->  {
->  	struct kobj_uevent_env *env;
->  	const char *action_string = kobject_actions[action];
 
-No objection from me, care to make it a real patch so that I can apply
-it after 4.18-rc1 is out?
-
-thanks,
-
-greg k-h
