@@ -1,105 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id QzcIG3lDGVviCAAAmS7hNA
-	; Thu, 07 Jun 2018 14:40:40 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id LPzkHcYtHlssWQAAmS7hNA
+	; Mon, 11 Jun 2018 08:08:37 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 602EC6089E; Thu,  7 Jun 2018 14:40:40 +0000 (UTC)
+	id 125D5607E4; Mon, 11 Jun 2018 08:08:37 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="SE/3zlEa"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id E93BA602FC;
-	Thu,  7 Jun 2018 14:40:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E93BA602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 9D5CB605A5;
+	Mon, 11 Jun 2018 08:08:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9D5CB605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934510AbeFGOkh (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:40:37 -0400
-Received: from mga09.intel.com ([134.134.136.24]:36280 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932912AbeFGOkc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:40:32 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 07:40:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
-   d="scan'208";a="47542281"
-Received: from 2b52.sc.intel.com ([143.183.136.51])
-  by orsmga008.jf.intel.com with ESMTP; 07 Jun 2018 07:40:31 -0700
-From: Yu-cheng Yu <yu-cheng.yu@intel.com>
-To: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [PATCH 0/9] Control Flow Enforcement - Part (2)
-Date: Thu,  7 Jun 2018 07:36:56 -0700
-Message-Id: <20180607143705.3531-1-yu-cheng.yu@intel.com>
-X-Mailer: git-send-email 2.15.1
+        id S932365AbeFKIIe (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 04:08:34 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:43533 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754053AbeFKIIb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 04:08:31 -0400
+Received: by mail-ot0-f196.google.com with SMTP id i19-v6so22736280otk.10
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 01:08:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=FpTTIKkOane+I4capCYDktNntDMiKJ+XoY5kZucG7L0=;
+        b=SE/3zlEaoLos5ao2n0h0Xhne34moNI4AvZRLSvi8VTMbEK9XHlPjp/IZBJNoqjIgEA
+         ZkoCW92ol5fo6WOMng8X0xikfTSxpOMHu1ckpMsZL+wmlSsnp2i6YrWu4TW/7xaQI9OX
+         PeR6gH0WmWI0dD44j5rE1udttiuWDx8cYJdCc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=FpTTIKkOane+I4capCYDktNntDMiKJ+XoY5kZucG7L0=;
+        b=JltoarhBr7oWUA4aMBXIVHRVxnNj75Wku1t6q3JRsu14SObS1374BBf7V2UlWa0uo2
+         KaM5v7YKaTUI+uPpyIWi+dAXnHvhP4b/Yjs3ssRVOaBFNNhprh0oSdGABC9zFDOK6xj3
+         48gM/ZarVz54JjEzXVa5tqO5i/EIVG8zcch4dyc8PnO/R9qoSBlyi7O3QcWuxe0ng8iq
+         YpouqRUa6LUdwD7AmH3FBoZPhmOfb/a+z5Y49FadEMVkJ4zN4JwztnqAzBfhwvLtu3mb
+         ulpELDizLKH/7ZUrM8Jl1Xfn3v69NhILE4aSwRWnHRv2ytX1ctVCZbpyNUFce/Wfxypj
+         NxMQ==
+X-Gm-Message-State: APt69E0Z7OXkns22zF4dYISQliOkbKshXhWOfMDXp624va5YFkxL19Ty
+        gflHr+FOHcfBCChlf3BoVyJaPH0KCrTSU14ty0xLBg==
+X-Google-Smtp-Source: ADUXVKLUmMumNDgQpp4bfjKl2JNRXRkzLdX7EvqhAf0JK7r1YuQYWVeZzapB/B4lGKTQNBgCrPshxJfnjWukD8Tw8vg=
+X-Received: by 2002:a9d:19e8:: with SMTP id k95-v6mr8719786otk.368.1528704511062;
+ Mon, 11 Jun 2018 01:08:31 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a9d:1123:0:0:0:0:0 with HTTP; Mon, 11 Jun 2018 01:08:30
+ -0700 (PDT)
+X-Originating-IP: [194.176.227.33]
+In-Reply-To: <20180610053128.GO30522@ZenIV.linux.org.uk>
+References: <20180529144339.16538-1-mszeredi@redhat.com> <20180529144339.16538-24-mszeredi@redhat.com>
+ <20180610053128.GO30522@ZenIV.linux.org.uk>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 11 Jun 2018 10:08:30 +0200
+Message-ID: <CAJfpegteZatDXOV+6FQKOE9pOA=_FErGRn1Jj1fHUYm_QLb4ew@mail.gmail.com>
+Subject: Re: [PATCH 23/39] ovl: add O_DIRECT support
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Miklos Szeredi <mszeredi@redhat.com>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Summary of changes:
+On Sun, Jun 10, 2018 at 7:31 AM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> On Tue, May 29, 2018 at 04:43:23PM +0200, Miklos Szeredi wrote:
+>> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+>> ---
+>>  fs/overlayfs/file.c | 3 +++
+>>  1 file changed, 3 insertions(+)
+>>
+>> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+>> index 3f610a5b38e4..e5e7ccaaf9ec 100644
+>> --- a/fs/overlayfs/file.c
+>> +++ b/fs/overlayfs/file.c
+>> @@ -110,6 +110,9 @@ static int ovl_open(struct inode *inode, struct file *file)
+>>       if (IS_ERR(realfile))
+>>               return PTR_ERR(realfile);
+>>
+>> +     /* For O_DIRECT dentry_open() checks f_mapping->a_ops->direct_IO */
+>> +     file->f_mapping = realfile->f_mapping;
+>
+> Umm...  What happens if upper layer doesn't allow O_DIRECT, while the lower one does?
 
-  Shadow stack kernel config option;
-  Control protection exception; and
-  Shadow stack memory management.
+Will get EINVAL on read(2) after copy up.  Not sure if it can be
+called a regression, since it's a corner case of a corner case.
 
-The shadow stack PTE needs to be read-only and dirty.  Changes
-are made to:
+I think proper solution is to support O_DIRECT unconditionally on
+upper (and for the likes of shmfs, just fall back to "cached" I/O).
 
-  Use the read-only and hardware dirty combination exclusively
-  for shadow stack;
-
-  Use a PTE spare bit to indicate other PTE dirty conditions;
-
-  Shadow stack page fault handling.
-
-Yu-cheng Yu (9):
-  x86/cet: Control protection exception handler
-  x86/cet: Add Kconfig option for user-mode shadow stack
-  mm: Introduce VM_SHSTK for shadow stack memory
-  x86/mm: Change _PAGE_DIRTY to _PAGE_DIRTY_HW
-  x86/mm: Introduce _PAGE_DIRTY_SW
-  x86/mm: Introduce ptep_set_wrprotect_flush and related functions
-  x86/mm: Shadow stack page fault error checking
-  x86/cet: Handle shadow stack page fault
-  x86/cet: Handle THP/HugeTLB shadow stack page copying
-
- arch/x86/Kconfig                     |  24 ++++++
- arch/x86/entry/entry_32.S            |   5 ++
- arch/x86/entry/entry_64.S            |   2 +-
- arch/x86/include/asm/pgtable.h       | 149 ++++++++++++++++++++++++++++++-----
- arch/x86/include/asm/pgtable_types.h |  31 +++++---
- arch/x86/include/asm/traps.h         |   5 ++
- arch/x86/kernel/idt.c                |   1 +
- arch/x86/kernel/relocate_kernel_64.S |   2 +-
- arch/x86/kernel/traps.c              |  61 ++++++++++++++
- arch/x86/kvm/vmx.c                   |   2 +-
- arch/x86/mm/fault.c                  |  11 +++
- include/asm-generic/pgtable.h        |  38 +++++++++
- include/linux/mm.h                   |   8 ++
- mm/huge_memory.c                     |  10 ++-
- mm/hugetlb.c                         |   2 +-
- mm/internal.h                        |   8 ++
- mm/memory.c                          |  32 +++++++-
- 17 files changed, 353 insertions(+), 38 deletions(-)
-
--- 
-2.15.1
+Thanks,
+Miklos
