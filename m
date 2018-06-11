@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id LlAJMCZdGVtbKQAAmS7hNA
-	; Thu, 07 Jun 2018 16:28:35 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id V1F7OY4NHlsoHwAAmS7hNA
+	; Mon, 11 Jun 2018 05:50:07 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 76AD86089E; Thu,  7 Jun 2018 16:28:35 +0000 (UTC)
+	id C3CF860791; Mon, 11 Jun 2018 05:50:06 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pKfTlVWD"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D00JzaE+"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
@@ -13,123 +13,143 @@ X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
 	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id B096860590;
-	Thu,  7 Jun 2018 16:28:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B096860590
+	by smtp.codeaurora.org (Postfix) with ESMTP id C5562605A5;
+	Mon, 11 Jun 2018 05:50:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C5562605A5
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932418AbeFGQ2b (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 12:28:31 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:36450 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932160AbeFGQ2X (ORCPT
+        id S1754017AbeFKFuE (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 20 others); Mon, 11 Jun 2018 01:50:04 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:32863 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753866AbeFKFuC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 12:28:23 -0400
-Received: by mail-pl0-f68.google.com with SMTP id a7-v6so3965796plp.3
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 09:28:23 -0700 (PDT)
+        Mon, 11 Jun 2018 01:50:02 -0400
+Received: by mail-pl0-f66.google.com with SMTP id n10-v6so11664849plp.0
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Jun 2018 22:50:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to;
-        bh=Bix4pk4nM4frknzm5oL/wBUaoXyVZw50N9nXaUuhfSw=;
-        b=pKfTlVWDb/PMlmjzRALWDzpmeFEMcKOIEaEq6X5m5bl2FdbHReGLYhG5kAHV2SJNnZ
-         kSbcrOIhJxcGKQ/O3gWanS9KLY2f0VDgTOtkUAYC4H3ZQbde1BtZGg+TAHtzRrsfekV4
-         3b1lCdpTymELm69gvndBPv0MYFKd+WSpxHPjPqtCm8dPsTLzJaojbV1GyX5/l6O+he2G
-         LP5ZlmpqhPJZmZO5Km5zd4azAK0DAah2gAWX2QBfQy0MrLW0mA0cqoTXa/r2JgXdLgro
-         y67+yNXgufpbyx8P9vKSVmW97dnVNuNG9ewHn9LchAZnMoXOQgcpL48GmTKa/j0xGegH
-         FTnQ==
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=RXu/bK4SWzQwSBoMmfKrOHsvAv5YDAlr/Ir6D+SL3wE=;
+        b=D00JzaE+jiFKHc3essOkZL20NK8Va03GcMX2Pj5TuPYaawhWB/JNsEpdFd1XOuHwCF
+         5bTnp95UA1F1qeWxW3uoGP8vnaFk0Hj55lY/xwWTBt8PUSuof2FcP9qOBRPDM7XkOGk8
+         yaSQkPQyWnr9oeSy3lWoWRzv5Sq5PahcBV50whWqFLfbsT/1MN+MbdeX28UW2hXED+8s
+         TQbofZ94pNqUeihRFK4o4/9yt1AFJp+EeWG/9+ezcPYuZkJbaCFHDE6cWKJv7qectIUy
+         OGKYLfnqUUp2ZMmVXmWwV0AcvxHICMOOOifaDXlZCt8n6VsZOndzn5iatH6qQwmngIaN
+         Dt9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to;
-        bh=Bix4pk4nM4frknzm5oL/wBUaoXyVZw50N9nXaUuhfSw=;
-        b=nnHpA15rexf7aX32iLLYOQmLMLRvcBN7EP433PFu1IA9S3RJo1g6ZajJ6GB4q8ZRFi
-         i3QKvdiT1FNSd3OZ0eZ+j8P/1ATd+aJUcKdxoro7qI2XFj1LVo1qiCsthNbWgssTygoP
-         nYD4cRDBUH2XxMjjbyajzXR8XZl/lfLJ1xwFAGSAJHndEVWt3jQHopZfD0iyMRqNuh2h
-         cVe8NUPgb/ij9FpDd46zMCTH23e5c/uvnlJTh6F6ixQh0WaWEV+LJhFicL6jX2ckaiKH
-         f57kSKVuoKG2c+69t6Ndjvh0Qn+0bOekcEAUbDjondY17LPKO45TJSi6KF7Y4BBu5zYc
-         Uscg==
-X-Gm-Message-State: APt69E0Um2llVx/2ZBEJ5rqACatphSl3cgU0tHySCmy9bx3xw/EMPwgx
-        DUuwJqmB253SNAKeESowgHRmJSWGkCcJB89xvKOc/g==
-X-Google-Smtp-Source: ADUXVKI1LBDrccTDb17gk+KBFgue7nP48AwEkqNiufEGnk0IDMOXFrFz95PtubJLj2wETbl2mUWKvbvChdNIlPP2P7w=
-X-Received: by 2002:a17:902:7d09:: with SMTP id z9-v6mr2706918pll.233.1528388902549;
- Thu, 07 Jun 2018 09:28:22 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=RXu/bK4SWzQwSBoMmfKrOHsvAv5YDAlr/Ir6D+SL3wE=;
+        b=lKSCJGo3MqSj+s+GbN4zr2eDjFmb3wAMfNfOGLYVtW/wsudj33HbP8+tCDexptz7tZ
+         XQ4VspZ0Q+onN+tlx9BedoIzYDfDRlLjHqJb1H23fEUWFFtyT7PyIK6J7uq6RkwQIHC6
+         mPaK+5qpUxnJJj8LUV7BPx23eaH3+qMd7BgtTb+FaiS978srXOTifgg8C2AuVqltJ0YS
+         paqMFBzS4qlyrzISyzjtznhJ/MgJTJtqRflOQwkMGZDWcP2AVKP6gj5CLbgmop+TPNOa
+         SqWM9szKtwPGe2Y6DyFQEmxsYiMlVVMiAiEl32e8jy8mFx+qOwTBHJAZJf8cR8kjc4iW
+         Y0Ww==
+X-Gm-Message-State: APt69E16TWY5g0ILzhavvfWWjElhhThrdcgpRgllp5iINRy47BCRuVv1
+        B80OqWFKS1L8VOO+rpB9XmpVxfUdWtiXw7xYbWQD6w==
+X-Google-Smtp-Source: ADUXVKKkgRd0rxCH1foVl0j0vKrHhqc0tAamSihaGwq5uproW0Aw9ES5YhuC8W2rMgHoUiR+8gA/NyrgIMqAuhw59oI=
+X-Received: by 2002:a17:902:8491:: with SMTP id c17-v6mr16721670plo.97.1528696201639;
+ Sun, 10 Jun 2018 22:50:01 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a17:90a:d42:0:0:0:0 with HTTP; Thu, 7 Jun 2018 09:28:02
+Received: by 2002:a17:90a:de2:0:0:0:0 with HTTP; Sun, 10 Jun 2018 22:49:41
  -0700 (PDT)
-In-Reply-To: <20180607153450.GF3215@twin.jikos.cz>
-References: <00000000000096009b056df92dc1@google.com> <70a3c2d1-3f53-d4c0-13b3-29f836ec46d9@oracle.com>
- <20180607153450.GF3215@twin.jikos.cz>
+In-Reply-To: <CAJ+HfNh9pRGcd9EO7BEfPPEdCmP5EDdu_rNgLR7r4oDrcLgvQQ@mail.gmail.com>
+References: <00000000000092de58056e3d4b96@google.com> <10d6b170-b820-3077-8737-c9d06e98d0fb@I-love.SAKURA.ne.jp>
+ <CAJ+HfNhnmvTHsE7cgi8pROjprsYvCZuzZDmYmpiUx4jqtHboUw@mail.gmail.com>
+ <CACT4Y+bfZK6yucoDrXPPW3Tc40RYq61u0Zcb=CKtdao8E+v1cQ@mail.gmail.com>
+ <13f6777a-2170-d0cc-1066-1b48a27ec981@i-love.sakura.ne.jp> <CAJ+HfNh9pRGcd9EO7BEfPPEdCmP5EDdu_rNgLR7r4oDrcLgvQQ@mail.gmail.com>
 From: Dmitry Vyukov <dvyukov@google.com>
-Date: Thu, 7 Jun 2018 18:28:02 +0200
-Message-ID: <CACT4Y+arBwkwhD-kob9fg1pVBXiMepW6KBK2LkhwjQ9HnDcoqw@mail.gmail.com>
-Subject: Re: kernel BUG at fs/btrfs/volumes.c:LINE!
-To: dsterba@suse.cz, Anand Jain <anand.jain@oracle.com>,
-        syzbot <syzbot+5b658d997a83984507a6@syzkaller.appspotmail.com>,
-        clm@fb.com, dsterba@suse.com, Josef Bacik <jbacik@fb.com>,
-        linux-btrfs@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+Date: Mon, 11 Jun 2018 07:49:41 +0200
+Message-ID: <CACT4Y+ZYNjPTkDZxCranM9X1C3yB4GSy8qQd=U0NoeHiJtmV-w@mail.gmail.com>
+Subject: Re: WARNING: kmalloc bug in xdp_umem_create
+To: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@gmail.com>
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        syzbot+4abadc5d69117b346506@syzkaller.appspotmail.com,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        "Karlsson, Magnus" <magnus.karlsson@intel.com>,
+        David Miller <davem@davemloft.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
         syzkaller-bugs <syzkaller-bugs@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 7, 2018 at 5:34 PM, David Sterba <dsterba@suse.cz> wrote:
-> On Thu, Jun 07, 2018 at 12:15:04AM +0800, Anand Jain wrote:
->>
->>
->> On 06/06/2018 09:31 PM, syzbot wrote:
->> > Hello,
+On Sun, Jun 10, 2018 at 3:03 PM, Bj=C3=B6rn T=C3=B6pel <bjorn.topel@gmail.c=
+om> wrote:
+>> On 2018/06/10 20:52, Dmitry Vyukov wrote:
+>> > On Sun, Jun 10, 2018 at 11:31 AM, Bj=C3=B6rn T=C3=B6pel <bjorn.topel@g=
+mail.com> wrote:
+>> >> Den s=C3=B6n 10 juni 2018 kl 04:53 skrev Tetsuo Handa
+>> >> <penguin-kernel@i-love.sakura.ne.jp>:
+>> >>>
+>> >>> On 2018/06/10 7:47, syzbot wrote:
+>> >>>> Hello,
+>> >>>>
+>> >>>> syzbot found the following crash on:
+>> >>>>
+>> >>>> HEAD commit:    7d3bf613e99a Merge tag 'libnvdimm-for-4.18' of git:=
+//git.k..
+>> >>>> git tree:       upstream
+>> >>>> console output: https://syzkaller.appspot.com/x/log.txt?x=3D1073f68=
+f800000
+>> >>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Df04d8d0=
+a2afb789a
+>> >>>> dashboard link: https://syzkaller.appspot.com/bug?extid=3D4abadc5d6=
+9117b346506
+>> >>>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>> >>>> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=3D13c97=
+56f800000
+>> >>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D16366f9=
+f800000
+>> >>>>
+>> >>>> IMPORTANT: if you fix the bug, please add the following tag to the =
+commit:
+>> >>>> Reported-by: syzbot+4abadc5d69117b346506@syzkaller.appspotmail.com
+>> >>>>
+>> >>>> random: sshd: uninitialized urandom read (32 bytes read)
+>> >>>> random: sshd: uninitialized urandom read (32 bytes read)
+>> >>>> random: sshd: uninitialized urandom read (32 bytes read)
+>> >>>> random: sshd: uninitialized urandom read (32 bytes read)
+>> >>>> random: sshd: uninitialized urandom read (32 bytes read)
+>> >>>> WARNING: CPU: 1 PID: 4537 at mm/slab_common.c:996 kmalloc_slab+0x56=
+/0x70 mm/slab_common.c:996
+>> >>>> Kernel panic - not syncing: panic_on_warn set ...
+>> >>>
+>> >>> syzbot gave up upon kmalloc(), but actually error handling path has
+>> >>> NULL pointer dereference bug.
+>> >>>
+>> >>
+>> >> Thanks Tetsuo! This crash has been fixed by Daniel Borkmann in commit
+>> >> c09290c56376 ("bpf, xdp: fix crash in xdp_umem_unaccount_pages").
 >> >
->> > syzbot found the following crash on:
+>> > Let's tell syzbot about this:
 >> >
->> > HEAD commit:    af6c5d5e01ad Merge branch 'for-4.18' of
->> > git://git.kernel.o..
->> > git tree:       upstream
->> > console output: https://syzkaller.appspot.com/x/log.txt?x=15f700af800000
->> > kernel config:  https://syzkaller.appspot.com/x/.config?x=12ff770540994680
->> > dashboard link:
->> > https://syzkaller.appspot.com/bug?extid=5b658d997a83984507a6
->> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>> > #syz fix: bpf, xdp: fix crash in xdp_umem_unaccount_pages
 >> >
->> > Unfortunately, I don't have any reproducer for this crash yet.
 >> >
->> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> > Reported-by: syzbot+5b658d997a83984507a6@syzkaller.appspotmail.com
->> >
->> > RDX: 0000000020000080 RSI: 0000000020000040 RDI: 00007f787067fbf0
->> > RBP: 0000000000000001 R08: 00000000200000c0 R09: 0000000020000080
->> > R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000014
->> > R13: 0000000000000001 R14: 0000000000700008 R15: 0000000000000043
->> > ------------[ cut here ]------------
->> > kernel BUG at fs/btrfs/volumes.c:1032!
->> > invalid opcode: 0000 [#1] SMP KASAN
->> > CPU: 1 PID: 22303 Comm: syz-executor1 Not tainted 4.17.0+ #86
->> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
->> > Google 01/01/2011
->> > RIP: 0010:btrfs_prepare_close_one_device fs/btrfs/volumes.c:1032 [inline]
->>
->> btrfs_prepare_close_one_device()
->> ::
->> 1031           name = rcu_string_strdup(device->name->str, GFP_NOFS);
->> 1032           BUG_ON(!name); /* -ENOMEM */
->>
->> The way we close our devices needs new memory allocations
->> at the time of device close. By doing this apart from the BUG_ON
->> reported here, there _were_ other complications like managing the sysfs
->> links and moving them to the newly allocated btrfs_fs_devices.
->> So sometime back I attempted to correct this approach to a simple
->> device close without fresh allocation, however it wasn't successful.
->> I am going to try that again, but its not p1.
+>> Excuse me, but that patch fixes NULL pointer dereference which occurs af=
+ter kmalloc()'s
+>> "WARNING: CPU: 1 PID: 4537 at mm/slab_common.c:996 kmalloc_slab+0x56/0x7=
+0 mm/slab_common.c:996"
+>> message. That is, "Too large memory allocation" itself is not yet fixed.
 >
-> Yeah, getting rid of the allocations while freeing device would be great
-> but unfortunatelly is not simple.
->
-> Normally the GFP_NOFS allocations do not fail so I think the fuzzer
-> environment is tuned to allow that, which is fine for coverage but does
-> not happen in practice. This will be fixed eventually.
+> The code relies on that the sl{u,a,o}b layer says no, and the
+> setsockopt bails out. The warning could be opted out using
+> __GFP_NOWARN. Is there another preferred way? Two get_user_pages
+> calls, where the first call would set pages to NULL just to fault the
+> region? Walk the process' VMAs? Something else?
 
-Isn't GFP_NOFS more restricted than normal allocations? Are these
-allocations accounted against memcg? It's easy to fail any allocation
-within a memory container.
+Hi Bj=C3=B6rn,
+
+Yes, either __GFP_NOWARN for allocations with user-controllable size
+or stricter custom limit (if we don't want current sla/u/ob
+implementation details to be part of public kernel interface).
