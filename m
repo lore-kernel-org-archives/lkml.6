@@ -1,111 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id XcIwOEhbGlsMaQAAmS7hNA
-	; Fri, 08 Jun 2018 10:32:40 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id jWshF0yaHls4WwAAmS7hNA
+	; Mon, 11 Jun 2018 15:52:38 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id CA92A607A4; Fri,  8 Jun 2018 10:32:40 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CvjFuByv"
+	id ABC9A608D2; Mon, 11 Jun 2018 15:52:38 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 4713460590;
-	Fri,  8 Jun 2018 10:32:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4713460590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id E1F6E600D0;
+	Mon, 11 Jun 2018 15:52:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E1F6E600D0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=holtmann.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752667AbeFHKci (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 06:32:38 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:39397 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751265AbeFHKch (ORCPT
+        id S932258AbeFKPwg convert rfc822-to-8bit (ORCPT
+        <rfc822;monsieuricon@codeaurora.org> + 20 others);
+        Mon, 11 Jun 2018 11:52:36 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:32927 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750928AbeFKPwe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 06:32:37 -0400
-Received: by mail-wm0-f68.google.com with SMTP id p11-v6so2737690wmc.4
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 03:32:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dITMI4l7aJUATZu4oKRtakaJjgYR8lqhz1VJoiK+mrY=;
-        b=CvjFuByve6LTNffcwGH5lgj2EP7oYKiXaqtVeW0zTnmar/Guy5MwJxvasxSxbi05Oq
-         O/U7OWAJ/nk3YdCDhcu6UztNaBYyKpNem6AFwQMnwtypsrWLp/dzSr42lTfVrmy4jyOi
-         WWxGGfQLgBzRUsuvypHm1l885I61Xpde6jee4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=dITMI4l7aJUATZu4oKRtakaJjgYR8lqhz1VJoiK+mrY=;
-        b=sqG7EaJdKxzZhW+z1eCG2WWFPUQbMU2j6Ax6lyGKsdK/EngOX9JbQdRRFao0BJDXJR
-         L6iNYxwJ9s2YSINHw1q7inaGssmGWqWFxog3z68zAdb/tYZ038b4lhmLcy2uzu246IHJ
-         ROnOPmOUAy83XIvwy0tO04Oi0K5xP04PFSthf7/HTIiHMUeCt+IXwPeYZLOHfm3fUE37
-         uhoPAikk9LexiHsj9+OTMZvimZ17Ud/A2rDjE4mDUbraPv9vwwE2TeV5v82H9HrPdrpJ
-         uqlfWYlrUnDcfDRwZRzSQcQynLVKximPD5mjJQOt2F52OJB5kWw6zKQnZX7EX4jj9qdX
-         8Kqw==
-X-Gm-Message-State: APt69E2Y1pqWwjnKEbWjYp7ddWN820LZP9MVqbd3oWxyKgYUpLK64Ucc
-        rCl/1uOMIQGiqWzvFsBEM+Jl//rEg8s=
-X-Google-Smtp-Source: ADUXVKLt27nLnzQs4oNCves68fFqxS8qrW92aWmeIhPScgpnl0xZnhJcbpKeuP1Ckf9wnfwn81Sngw==
-X-Received: by 2002:a1c:4252:: with SMTP id p79-v6mr1114762wma.119.1528453955785;
-        Fri, 08 Jun 2018 03:32:35 -0700 (PDT)
-Received: from [192.168.1.100] (aig34-1-88-167-228-121.fbx.proxad.net. [88.167.228.121])
-        by smtp.gmail.com with ESMTPSA id i76-v6sm1741406wmd.20.2018.06.08.03.32.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Jun 2018 03:32:34 -0700 (PDT)
-Subject: Re: [PATCH RESEND] lib/test_printf.c: call wait_for_random_bytes()
- before plain %p tests
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Petr Mladek <pmladek@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Miller <davem@davemloft.net>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "Tobin C . Harding" <me@tobin.cc>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180604113708.11554-1-thierry.escande@linaro.org>
- <20180607122434.i4x7b5ij4p6dpx7w@pathway.suse.cz>
- <d9ecdf72-7500-66d4-0360-231218cccbb4@linaro.org>
- <20180608080437.n2b5nv73d3kp6yhb@pathway.suse.cz>
- <0fa30e13-c16f-95d8-d1ef-fd45e7a99888@linaro.org>
- <CAHp75Vc5_+Kxsvgws9Oq-hOgbQ8-ocxeKa4AuhC0uJ0oKsu+BA@mail.gmail.com>
-From: Thierry Escande <thierry.escande@linaro.org>
-Message-ID: <a8ab166e-a2b9-b0fc-9717-ffd8fcbcd386@linaro.org>
-Date: Fri, 8 Jun 2018 12:32:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <CAHp75Vc5_+Kxsvgws9Oq-hOgbQ8-ocxeKa4AuhC0uJ0oKsu+BA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 11 Jun 2018 11:52:34 -0400
+Received: from marcel-macpro.fritz.box (p5B3D24B5.dip0.t-ipconnect.de [91.61.36.181])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 24B88CF186;
+        Mon, 11 Jun 2018 17:59:14 +0200 (CEST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.4 \(3445.8.2\))
+Subject: Re: [PATCH v2 15/24] net: qualcomm: MODULE_DEVICE_TABLE(serdev)
+From: Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <CAPybu_2ViGvN6egz-Ajq4+1fv6VAVFswuvSPAVmYH0a9R-Yjvw@mail.gmail.com>
+Date: Mon, 11 Jun 2018 17:52:31 +0200
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Lino Sanfilippo <LinoSanfilippo@gmx.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
+        netdev@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <07871EF5-D1D3-4677-8100-B5E7F14DB302@holtmann.org>
+References: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
+ <20180611115240.32606-16-ricardo.ribalda@gmail.com>
+ <CCB7FF79-F89A-4421-A6C0-E0663BEE6065@holtmann.org>
+ <CAPybu_0=ykAcCx=nZyrv90YRfihDxi3s2+Nz+6UP8Fwd5eH2-A@mail.gmail.com>
+ <B4BC9DB0-2D7C-4F9D-99FE-8227D4DC3D54@holtmann.org>
+ <CAPybu_2ViGvN6egz-Ajq4+1fv6VAVFswuvSPAVmYH0a9R-Yjvw@mail.gmail.com>
+To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+X-Mailer: Apple Mail (2.3445.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/06/2018 11:46, Andy Shevchenko wrote:
-> On Fri, Jun 8, 2018 at 12:07 PM, Thierry Escande
-> <thierry.escande@linaro.org> wrote:
-> 
->> But as I type I realize it's not necessary. I will simply enclose the call
->> to wait_for_random_bytes() by #if IS_MODULE() #endif so it gets called only
->> if built as a module, which is how run_kselftest.sh wants it... If
->> test_printf is compiled built-in and the crng is not yet initialized the
->> test will fail anyway so there is no need to add an extra check.
-> 
-> Unfortunately I can't support this as is.
-> We have environments where crng will be ready minutes after the boot.
-> It's unacceptable.
-> 
-> So, we need to have means to not delay test for so long.
+Hi Ricardo,
 
-I agree we can't delay test execution for too long. In my case the crng 
-is ready only a few seconds after the boot. So we may just skip this 
-plain 'p' printf test if crng is not ready then.
+>>>> the commit message is misleading me. If I build something with ACPI or DT support, then modinfo will show all modalias information for ACPI and DT compatible strings. What else does udev/modprobe actually need? Is something broken with the modalias export?
+>>> 
+>>> The main purpose is to autoload drivers for devices that have been
+>>> created via sysfs or another module.
+>>> 
+>>> Eg1: We have a serial port on a standard computer that has connected a
+>>> GPS module. Since it is something that is not in the ACPI nor the DT
+>>> table the user will run
+>>> 
+>>> echo serdev_gps > /sys/bus/serial/devices/serial0/new_device
+>>> 
+>>> Eg2 module: https://github.com/ribalda/linux/blob/415bb3f0076c2b846ebe5409589b8e1e3004f55a/drivers/tty/serdev/test_platform.c
+>>> 
+>>> Modprobe does not know what module to load for that device unless
+>>> there is a matching MODULE_DEVICE_TABLE
+>>> Today, we have the same functionality for i2c devices
+>>> https://www.kernel.org/doc/Documentation/i2c/instantiating-devices
+>> 
+>> but why does this have to be the driver name? I would rather say, create a generic string that describes the hardware and then use that. I think you also want the special handling, as from USB for example, that lets you reference an existing .compatible or ACPI ID as reference so that the driver_data is copied.
+> 
+> We can choose any name, but if there are no special variants (like the
+> rave-sp driver) I would prefer using the module name. We can of course
+> use more names, like the part number of the the device, but it is very
+> convenient to also use the module name, and other subsystems also do
+> that.
+> 
+> If you want to add specific names for this device please let me know
+> and I will add them to the list. You know much more about this module
+> than myself.
 
-Regards,
-Thierry
+if we want to use the driver name, then why not build this into the new_device handling itself instead of duplicating that name in each serdev_device_id table. What is the reference here? For example platform device do matching on driver name if I recall this correctly.
+
+However what is most important is that device_get_match_data() actually works. There should be no difference between DT, ACPI or a dynamic device.
+
+Regards
+
+Marcel
