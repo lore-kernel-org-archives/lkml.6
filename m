@@ -7,53 +7,51 @@ X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,
 	T_DKIM_INVALID,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C6700C5CFF0
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:08:03 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E417EC5CFF0
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:11:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70AD5208BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:08:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E37C208B1
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:11:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hjOHR/57";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YsZud230"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70AD5208BA
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OXRr5I7u";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Ovz9wMEG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E37C208B1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753896AbeFKRIC (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 13:08:02 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:60034 "EHLO
+        id S932862AbeFKRL2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 13:11:28 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33142 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751912AbeFKRIA (ORCPT
+        with ESMTP id S932297AbeFKRL0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 13:08:00 -0400
+        Mon, 11 Jun 2018 13:11:26 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 7785D60791; Mon, 11 Jun 2018 17:07:59 +0000 (UTC)
+        id 160D16070A; Mon, 11 Jun 2018 17:11:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528736879;
-        bh=LYfjHBrQCAD2IMKPtcaiEKIMm4ONfHzn8wiUlxbZZaA=;
+        s=default; t=1528737086;
+        bh=yJZnyoDd0FLJEodo74HBE69pOZYVzafmOc3KMkoZEn4=;
         h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=hjOHR/57UlHAaBGeYK+02H/18PAHKNzr+byGREmnHQqieOMfoXM84HiXHIAXy7pLe
-         s3UpuMgJXXb5fcB+Q7IW6r09lKnpjN+QsqWF+rvk4xNs7mAWB1NnhMZDD9GFEis8c/
-         1SySpa2Bzu9u/5cfDUU+iosybCgOjUBPkUeIRcmU=
+        b=OXRr5I7uBd//MNiRiiGpybjHrMiOENnPuk7ZZlmKnZ6OTBKleEpxDDsi2kvtLypzg
+         mXkQ7//z+qnqsrJrKSJlrwwoH5+tdB+/1l8pJHBkIuEU5KI/Ji1o4+xvkJJAprbb3f
+         PZJg/N2TSlKlO4CFjEoF+g0tvPstJ9QBCtcxZl+0=
 Received: from [192.168.1.7] (unknown [183.83.75.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: rplsssn@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9D8276074D;
-        Mon, 11 Jun 2018 17:07:54 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id CB28160541;
+        Mon, 11 Jun 2018 17:11:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528736878;
-        bh=LYfjHBrQCAD2IMKPtcaiEKIMm4ONfHzn8wiUlxbZZaA=;
+        s=default; t=1528737085;
+        bh=yJZnyoDd0FLJEodo74HBE69pOZYVzafmOc3KMkoZEn4=;
         h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=YsZud2303SiRIlLaSdlLVi41xZ+GoB+lxI5jop4I+ptAPdLz4fxOsWyi9T9VTN2zP
-         XXO7djihwXAAWL8YpDFK6fGBntNd47qm9GAFU2Dy5kWtNKi1ufdmCANYArAPWcOweU
-         tt1TYZ0vbuy+SzPZhs5209f4Ooo3PdzrnJmNg9O0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9D8276074D
+        b=Ovz9wMEGOiLM7olPizPi8nzkAP2RWXWXWsMYeufI2Y9hLNxh9L0CLkQXj96rkbB6p
+         VMF6N5UQl4Aj0yw8Jo0lB7Lcp/LSffNq1SLQApHUoYtipK7CVu7gsQQuopTDE5IvGt
+         lP6vYZSoacpkBnopv3jnj06KSdUzDNNhPlXPETLY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CB28160541
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
-Subject: Re: [PATCH v9 01/10] drivers: qcom: rpmh-rsc: add RPMH controller for
- QCOM SoCs
+Subject: Re: [PATCH v9 04/10] drivers: qcom: rpmh: add RPMH helper functions
 To:     Doug Anderson <dianders@chromium.org>
 Cc:     Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>,
@@ -67,15 +65,15 @@ Cc:     Andy Gross <andy.gross@linaro.org>,
         Matthias Kaehlcke <mka@chromium.org>,
         Lina Iyer <ilina@codeaurora.org>
 References: <1527158731-17685-1-git-send-email-rplsssn@codeaurora.org>
- <1527158731-17685-2-git-send-email-rplsssn@codeaurora.org>
- <CAD=FV=VG-wDqone04dFZHVPUgxvdPQED0eeT90ZobKqtVKJ-hQ@mail.gmail.com>
+ <1527158731-17685-5-git-send-email-rplsssn@codeaurora.org>
+ <CAD=FV=V9TP-d33nc8Wq53C+KaDZffi7Vjtp5yDwdjvTP+aeb6A@mail.gmail.com>
 From:   Raju P L S S S N <rplsssn@codeaurora.org>
-Message-ID: <3f5e0d02-7f95-3337-68a2-8fd05c015eb0@codeaurora.org>
-Date:   Mon, 11 Jun 2018 22:37:51 +0530
+Message-ID: <a7b1b031-1009-4c5b-30ec-2db529ae6150@codeaurora.org>
+Date:   Mon, 11 Jun 2018 22:41:18 +0530
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <CAD=FV=VG-wDqone04dFZHVPUgxvdPQED0eeT90ZobKqtVKJ-hQ@mail.gmail.com>
+In-Reply-To: <CAD=FV=V9TP-d33nc8Wq53C+KaDZffi7Vjtp5yDwdjvTP+aeb6A@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -91,27 +89,65 @@ On 5/31/2018 3:19 AM, Doug Anderson wrote:
 > 
 > On Thu, May 24, 2018 at 3:45 AM, Raju P L S S S N
 > <rplsssn@codeaurora.org> wrote:
->> diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
->> new file mode 100644
->> index 0000000..99b23b7
->> --- /dev/null
+>> --- a/drivers/soc/qcom/rpmh-rsc.c
 >> +++ b/drivers/soc/qcom/rpmh-rsc.c
->> @@ -0,0 +1,482 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
->> + */
->> +
->> +#define pr_fmt(fmt) "%s " fmt, KBUILD_MODNAME
->> +
->> +#include <linux/atomic.h>
->> +#include <linux/delay.h>
->> +#include <linux/export.h>
+>> @@ -61,6 +61,8 @@
+>>   #define CMD_STATUS_ISSUED              BIT(8)
+>>   #define CMD_STATUS_COMPL               BIT(16)
+>>
+>> +LIST_HEAD(rsc_drv_list);
 > 
-> Now that you're not exporting any symbols in here, presumably you no
-> longer need "export.h" right?
+> I still see no point of rsc_drv_list.  Please remove it, AKA squash in
+> <http://crosreview.com/1042883>.
 
-Sure. Will remove.
+Agree.
+
+
+> 
+> I'm also still of the opinion that we should take something like
+> <http://crosreview.com/1054646>, AKA "Get rid of the global array
+> rpmh_rsc".
+
+
+>> +/**
+>> + * __rpmh_write: send the RPMH request
+>> + *
+>> + * @dev: The device making the request
+>> + * @state: Active/Sleep request type
+>> + * @rpm_msg: The data that needs to be sent (cmds).
+>> + */
+>> +static int __rpmh_write(const struct device *dev, enum rpmh_state state,
+>> +                       struct rpmh_request *rpm_msg)
+>> +{
+>> +       struct rpmh_ctrlr *ctrlr = get_rpmh_ctrlr(dev);
+>> +
+>> +       if (IS_ERR(ctrlr))
+>> +               return PTR_ERR(ctrlr);
+>> +
+>> +       rpm_msg->msg.state = state;
+>> +
+>> +       if (state != RPMH_ACTIVE_ONLY_STATE)
+>> +               return -EINVAL;
+>> +
+>> +       WARN_ON(irqs_disabled());
+>> +
+>> +       return rpmh_rsc_send_data(ctrlr->drv, &rpm_msg->msg);
+>> +}
+> 
+> You went too far in the removal of EXPORT_SYMBOL I think.  This symbol
+> needs to be exported because other code that could be compiled as a
+> module might need to call into it.  To explain:
+> 
+> * If two files that are always built-in to Linux need to call into
+> each other: no need for EXPORT_SYMBOL.
+> 
+> * If two files that are always part of the same module need to call
+> into each other: no need for EXPORT_SYMBOL.
+> 
+> * If one file that might be built-into a module needs to call another
+> that's builtin to the kernel: need EXPORT_SYMBOL.
+
+Thanks for the explanation Doug. Will address this.
 
 Thanks,
 Raju
