@@ -1,193 +1,205 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 1/klOceWGVt6cgAAmS7hNA
-	; Thu, 07 Jun 2018 20:41:06 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id qhLQHv/rHVuxIwAAmS7hNA
+	; Mon, 11 Jun 2018 03:28:06 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 590446089E; Thu,  7 Jun 2018 20:41:06 +0000 (UTC)
+	id 3DA8F607E7; Mon, 11 Jun 2018 03:28:06 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 90E7560452;
-	Thu,  7 Jun 2018 20:41:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 90E7560452
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=vt.edu
+	by smtp.codeaurora.org (Postfix) with ESMTP id 8846460792;
+	Mon, 11 Jun 2018 03:28:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8846460792
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932647AbeFGUlE (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 16:41:04 -0400
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:44046 "EHLO
-        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932213AbeFGUlC (ORCPT
+        id S932585AbeFKD2D (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Sun, 10 Jun 2018 23:28:03 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:37847 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932494AbeFKD1R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 16:41:02 -0400
-Received: from mr4.cc.vt.edu (mr4.cc.vt.edu [IPv6:2607:b400:92:8300:0:7b:e2b1:6a29])
-        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id w57Kf14i017393
-        for <linux-kernel@vger.kernel.org>; Thu, 7 Jun 2018 16:41:01 -0400
-Received: from mail-qk0-f200.google.com (mail-qk0-f200.google.com [209.85.220.200])
-        by mr4.cc.vt.edu (8.14.7/8.14.7) with ESMTP id w57KeukY019188
-        for <linux-kernel@vger.kernel.org>; Thu, 7 Jun 2018 16:41:01 -0400
-Received: by mail-qk0-f200.google.com with SMTP id w203-v6so10720328qkb.16
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 13:41:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:mime-version
-         :content-transfer-encoding:date:message-id;
-        bh=0A6b0948d5CYCpmJ3m0UsBn+v6atcGPqdiG6ej5w2lI=;
-        b=SnPvLBxsnkWFmc38wF2oDYOUjcAm0KkzC5vEQ9ck3TSe/3dOcnHh4X8keyfCMakB1c
-         nC0K7+CFlv6aNBg9UgM6sazncqcX+KVVh8nhUg4O3RFtRJ/vgGmwtbqQe7ZuJQ6+e4lE
-         rbbTHi8qoEsjwAYJ8U88QOQ+DPMmgreKcrhVgBeiVvE2jMEBpiuppPJAUVh1NV9wDulN
-         D58R1VivkS5Yzxn8JJg/avkzVOD/Azp2tzo/XIIU7VuKarwziOkmntG0EPd4mno+hIgM
-         eFw4B0WTJz7XGPooo+St5AZIG0DlywU2zPszG3BA/1pRuIFENzWfWWeyLBm9JteEI+nA
-         IBmQ==
-X-Gm-Message-State: APt69E3oaYNUa1Tm4BqKTNUIvg0EpZ+WKlpj652vwQ2g8XL2JnBt01+w
-        1aMCKC6SRlOjCscDWZaB57kNrdmVTaJUP5sGXN9wg+pcvzEVZ3Uoc+u34FR5mghOPVFXlt3v1Sb
-        I2e4/cNVmZiR2eInkB26pMZv6AiQwwQDIB7s=
-X-Received: by 2002:ac8:1842:: with SMTP id n2-v6mr3355651qtk.124.1528404055733;
-        Thu, 07 Jun 2018 13:40:55 -0700 (PDT)
-X-Google-Smtp-Source: ADUXVKKcedxF2czAJ+fC288XcXaMpRIGnMB0IkjWgMwHNjsNj94fv/iCR3xm0FU2V/VTjHq/6WJsPQ==
-X-Received: by 2002:ac8:1842:: with SMTP id n2-v6mr3355631qtk.124.1528404055406;
-        Thu, 07 Jun 2018 13:40:55 -0700 (PDT)
-Received: from turing-police.cc.vt.edu ([2607:b400:24:0:5dba:c103:941e:4ee3])
-        by smtp.gmail.com with ESMTPSA id j1-v6sm12868955qte.13.2018.06.07.13.40.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Jun 2018 13:40:54 -0700 (PDT)
-X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
-From: valdis.kletnieks@vt.edu
-To: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>
-Cc: linux-kernel@vger.kernel.org, dm-devel@redhat.com
-Subject: next-20180605 - kernel tried to execute NX-protected page - exploit attempt? 
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1528404057_2539P";
-         micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Date: Thu, 07 Jun 2018 16:40:57 -0400
-Message-ID: <21051.1528404057@turing-police.cc.vt.edu>
+        Sun, 10 Jun 2018 23:27:17 -0400
+X-UUID: fa454d305bc94c41aa2b22be4506b2e3-20180611
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <stu.hsieh@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 416502438; Mon, 11 Jun 2018 11:27:14 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Mon, 11 Jun 2018 11:27:13 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Mon, 11 Jun 2018 11:27:13 +0800
+From: Stu Hsieh <stu.hsieh@mediatek.com>
+To: CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>
+CC: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, "Stu Hsieh" <stu.hsieh@mediatek.com>
+Subject: [PATCH 28/28] drm/mediatek: Add support for mediatek SOC MT2712
+Date: Mon, 11 Jun 2018 11:26:20 +0800
+Message-ID: <1528687580-549-29-git-send-email-stu.hsieh@mediatek.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
+References: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---==_Exmh_1528404057_2539P
-Content-Type: text/plain; charset=us-ascii
+This patch add support for the Mediatek MT2712 DISP subsystem.
+There are two OVL engine and three disp output in MT2712.
 
-I've hit this one twice today with pretty much the same traceback.
-The disk has 3 partitions - one for EFI, one for /boot, and then the rest of
-the disk is a cryptluks partition that contains a dozen or so LVM logical
-volumes.
+Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+---
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 39 ++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c | 38 +++++++++++++++++++++++++++++++++
+ 2 files changed, 77 insertions(+)
 
-'git log -- drivers/md' didn't show any obvious suspects since next-20180529, which worked
-for me just fine....
-
-[ 6090.781839] kernel tried to execute NX-protected page - exploit attempt? (uid: 0)
-[ 6090.781847] BUG: unable to handle kernel paging request at ffff9d4bc8b766c0
-[ 6090.781856] PGD 17b7a067 P4D 17b7a067 PUD 17b7e067 PMD 408b9d063 PTE 8000000408b76063
-[ 6090.781872] Oops: 0011 [#1] PREEMPT SMP PTI
-
-[ 6090.781893] Workqueue: kcryptd kcryptd_crypt
-[ 6090.781901] RIP: 0010:0xffff9d4bc8b766c0
-[ 6090.781905] Code: ff ff ff f9 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-ff ff ff ff ff ff ff ff ff <ff> ff ff ff ff ff 9f ff ff ff ff f9 ff ff bf ff ff ff ff ff ff 7f
-[ 6090.782012] RSP: 0018:ffff9d4bdd2039d8 EFLAGS: 00010046
-[ 6090.782018] RAX: ffff9d4bc8b766c0 RBX: ffff9d4bd53744e8 RCX: 0000000000000000
-[ 6090.782023] RDX: 0000000000000000 RSI: 0000000000000003 RDI: ffff9d4bd31e5c90
-[ 6090.782027] RBP: ffff9d4bdd203a40 R08: 0000000000000000 R09: ffff9d4bd31e5c90
-[ 6090.782030] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-[ 6090.782034] R13: ffff9d4bd7860228 R14: 00000000d31a2b40 R15: ffff9d4bdd203a58
-[ 6090.782038] FS:  0000000000000000(0000) GS:ffff9d4bdd200000(0000) knlGS:0000000000000000
-[ 6090.782042] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 6090.782046] CR2: ffff9d4bc8b766c0 CR3: 0000000015e24003 CR4: 00000000001606e0
-[ 6090.782050] Call Trace:
-[ 6090.782054]  <IRQ>
-[ 6090.782061]  ? __wake_up_common+0xb7/0x3d0
-[ 6090.782071]  __wake_up_common_lock+0x87/0xe0
-[ 6090.782080]  __wake_up+0x13/0x20
-[ 6090.782087]  mempool_free+0x122/0x190
-[ 6090.782095]  bio_free+0x59/0x80
-[ 6090.782101]  bio_put+0x50/0x90
-[ 6090.782107]  dec_pending+0x1b0/0x560
-[ 6090.782117]  clone_endio+0xd5/0x2e0
-[ 6090.782125]  bio_endio+0x22e/0x4b0
-[ 6090.782132]  crypt_dec_pending+0x92/0xf0
-[ 6090.782139]  crypt_endio+0x9b/0xe0
-[ 6090.782146]  bio_endio+0x22e/0x4b0
-[ 6090.782153]  blk_update_request+0x145/0x680
-[ 6090.782162]  scsi_end_request+0x56/0x440
-[ 6090.782169]  scsi_io_completion+0x462/0x9b0
-[ 6090.782178]  scsi_finish_command+0x189/0x2a0
-[ 6090.782185]  scsi_softirq_done+0x17e/0x1f0
-[ 6090.782193]  blk_done_softirq+0x229/0x410
-[ 6090.782198]  ? __do_softirq+0xfb/0x914
-[ 6090.782207]  __do_softirq+0x13a/0x914
-[ 6090.782219]  irq_exit+0xea/0x140
-[ 6090.782224]  do_IRQ+0xcc/0x1c0
-[ 6090.782232]  common_interrupt+0xf/0xf
-[ 6090.782237]  </IRQ>
-[ 6090.782241] RIP: 0010:memset_erms+0x9/0x10
-
-The other traceback was about the same, with the following
-interleaved:
-
-[27847.571250] list_add corruption. next->prev should be prev (ffff9e2c1347a4e8), but was 0000000000000000. (next=ffff9e2c13cde4a8).
-[27847.571278] kernel BUG at lib/list_debug.c:25!
-[27847.571685] invalid opcode: 0000 [#2] PREEMPT SMP PTI
-[27847.571689] CPU: 0 PID: 55 Comm: kswapd0 Tainted: G      D    O    T 4.17.0-next-20180605-dirty #586
-[27847.573947] Call Trace:
-[27847.573958]  prepare_to_wait+0x133/0x210
-[27847.573966]  ? mempool_alloc+0xe9/0x200
-[27847.573975]  mempool_alloc+0x17e/0x200
-[27847.573983]  ? remove_wait_queue+0x170/0x170
-[27847.573994]  bio_alloc_bioset+0x122/0x3f0
-[27847.574000]  ? bio_advance+0xbf/0x240
-[27847.574006]  ? bio_clone_blkcg_association+0x5b/0x80
-[27847.574015]  alloc_io+0x48/0x320
-[27847.574021]  ? dm_get_live_table+0x3a/0x140
-[27847.574030]  ? __split_and_process_non_flush+0x420/0x420
-[27847.574035]  __split_and_process_bio+0x5d/0x2b0
-[27847.574042]  ? __split_and_process_non_flush+0x420/0x420
-[27847.574048]  ? dm_get_live_table+0x5d/0x140
-[27847.574053]  ? dm_get_live_table+0x84/0x140
-[27847.574061]  __dm_make_request+0xaf/0x1f0
-[27847.574071]  dm_make_request+0x15/0x20
-[27847.574078]  generic_make_request+0x3b9/0x7c0
-[27847.574091]  submit_bio+0xb9/0x240
-[27847.574097]  ? submit_bio+0xb9/0x240
-[27847.574104]  ? __test_set_page_writeback+0x402/0xd30
-[27847.574111]  ? get_swap_bio+0x106/0x180
-[27847.574121]  __swap_writepage+0x153/0x8d0
-[27847.574128]  ? page_swapcount+0xbf/0x140
-[27847.574139]  ? __frontswap_store+0x8d/0x142
-[27847.574147]  swap_writepage+0x4d/0xc0
-[27847.574155]  pageout.isra.29+0x304/0x980
-[27847.574171]  shrink_page_list+0x11e9/0x2020
-[27847.574189]  shrink_inactive_list+0x291/0xdb0
-[27847.574204]  shrink_node_memcg+0x38a/0x1530
-[27847.574211]  ? percpu_ref_get_many+0x200/0x200
-[27847.574233]  shrink_node+0xdc/0x920
-[27847.574246]  balance_pgdat+0x288/0x680
-[27847.574262]  kswapd+0x2ca/0x990
-[27847.574271]  ? remove_wait_queue+0x170/0x170
-[27847.574282]  kthread+0x1d3/0x2a0
-[27847.574288]  ? balance_pgdat+0x680/0x680
-[27847.574294]  ? kthread_create_worker_on_cpu+0x70/0x70
-[27847.574304]  ret_from_fork+0x3a/0x50
-
-
---==_Exmh_1528404057_2539P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Comment: Exmh version 2.8.0 04/21/2017
-
-iQEVAwUBWxmYWI0DS38y7CIcAQLIVQgAp1dN26+PyWbqizBsMehR6hjjyBhEhznO
-KiOEkVXxlcMdFTuesO4nKIMUmL6jONdxOFG7UgE4hxsUSRh6AXYFdYg2eBQjGrpV
-8uIlP85IHL92Bz1TgpwS8o1CerQPpr+YW5yE52HMifQb+mACLsn75+7PO8ndM4c1
-ajNH50pNZ/Ljih7tzF+ARg06AsBWSHKRaLqHIPjePJUqK7eSWOvhuUNLpnmvTwsM
-1JX4AAQEvN+tD6orqGxRvsJlN2gifq+xQQB+5cFlOkGAUOKEg9rtOJQ15tWLkbcL
-H3ZVnmsat9FPUoL3QAsBsjstNxMwofVXR47J1QDIpLjW6+mBhccoEA==
-=j1yZ
------END PGP SIGNATURE-----
-
---==_Exmh_1528404057_2539P--
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+index 28dd8531a7de..c3fa5591bfc8 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+@@ -65,6 +65,24 @@
+ #define MT8173_MUTEX_MOD_DISP_PWM1		24
+ #define MT8173_MUTEX_MOD_DISP_OD		25
+ 
++#define MT2712_MUTEX_MOD_DISP_PWM2		10
++#define MT2712_MUTEX_MOD_DISP_OVL0		11
++#define MT2712_MUTEX_MOD_DISP_OVL1		12
++#define MT2712_MUTEX_MOD_DISP_RDMA0		13
++#define MT2712_MUTEX_MOD_DISP_RDMA1		14
++#define MT2712_MUTEX_MOD_DISP_RDMA2		15
++#define MT2712_MUTEX_MOD_DISP_WDMA0		16
++#define MT2712_MUTEX_MOD_DISP_WDMA1		17
++#define MT2712_MUTEX_MOD_DISP_COLOR0		18
++#define MT2712_MUTEX_MOD_DISP_COLOR1		19
++#define MT2712_MUTEX_MOD_DISP_AAL0		20
++#define MT2712_MUTEX_MOD_DISP_UFOE		22
++#define MT2712_MUTEX_MOD_DISP_PWM0		23
++#define MT2712_MUTEX_MOD_DISP_PWM1		24
++#define MT2712_MUTEX_MOD_DISP_OD0		25
++#define MT2712_MUTEX_MOD2_DISP_AAL1		33
++#define MT2712_MUTEX_MOD2_DISP_OD1		34
++
+ #define MT2701_MUTEX_MOD_DISP_OVL		3
+ #define MT2701_MUTEX_MOD_DISP_WDMA		6
+ #define MT2701_MUTEX_MOD_DISP_COLOR		7
+@@ -138,6 +156,26 @@ static const unsigned int mt2701_mutex_mod[DDP_COMPONENT_ID_MAX] = {
+ 	[DDP_COMPONENT_WDMA0] = MT2701_MUTEX_MOD_DISP_WDMA,
+ };
+ 
++static const unsigned int mt2712_mutex_mod[DDP_COMPONENT_ID_MAX] = {
++	[DDP_COMPONENT_AAL0] = MT2712_MUTEX_MOD_DISP_AAL0,
++	[DDP_COMPONENT_AAL1] = MT2712_MUTEX_MOD2_DISP_AAL1,
++	[DDP_COMPONENT_COLOR0] = MT2712_MUTEX_MOD_DISP_COLOR0,
++	[DDP_COMPONENT_COLOR1] = MT2712_MUTEX_MOD_DISP_COLOR1,
++	[DDP_COMPONENT_OD0] = MT2712_MUTEX_MOD_DISP_OD0,
++	[DDP_COMPONENT_OD1] = MT2712_MUTEX_MOD2_DISP_OD1,
++	[DDP_COMPONENT_OVL0] = MT2712_MUTEX_MOD_DISP_OVL0,
++	[DDP_COMPONENT_OVL1] = MT2712_MUTEX_MOD_DISP_OVL1,
++	[DDP_COMPONENT_PWM0] = MT2712_MUTEX_MOD_DISP_PWM0,
++	[DDP_COMPONENT_PWM1] = MT2712_MUTEX_MOD_DISP_PWM1,
++	[DDP_COMPONENT_PWM2] = MT2712_MUTEX_MOD_DISP_PWM2,
++	[DDP_COMPONENT_RDMA0] = MT2712_MUTEX_MOD_DISP_RDMA0,
++	[DDP_COMPONENT_RDMA1] = MT2712_MUTEX_MOD_DISP_RDMA1,
++	[DDP_COMPONENT_RDMA2] = MT2712_MUTEX_MOD_DISP_RDMA2,
++	[DDP_COMPONENT_UFOE] = MT2712_MUTEX_MOD_DISP_UFOE,
++	[DDP_COMPONENT_WDMA0] = MT2712_MUTEX_MOD_DISP_WDMA0,
++	[DDP_COMPONENT_WDMA1] = MT2712_MUTEX_MOD_DISP_WDMA1,
++};
++
+ static const unsigned int mt8173_mutex_mod[DDP_COMPONENT_ID_MAX] = {
+ 	[DDP_COMPONENT_AAL0] = MT8173_MUTEX_MOD_DISP_AAL,
+ 	[DDP_COMPONENT_COLOR0] = MT8173_MUTEX_MOD_DISP_COLOR0,
+@@ -533,6 +571,7 @@ static int mtk_ddp_remove(struct platform_device *pdev)
+ 
+ static const struct of_device_id ddp_driver_dt_match[] = {
+ 	{ .compatible = "mediatek,mt2701-disp-mutex", .data = mt2701_mutex_mod},
++	{ .compatible = "mediatek,mt2712-disp-mutex", .data = mt2712_mutex_mod},
+ 	{ .compatible = "mediatek,mt8173-disp-mutex", .data = mt8173_mutex_mod},
+ 	{},
+ };
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+index 3d279a299383..3a866e1d6af4 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+@@ -146,6 +146,32 @@ static const enum mtk_ddp_comp_id mt2701_mtk_ddp_ext[] = {
+ 	DDP_COMPONENT_DPI0,
+ };
+ 
++static const enum mtk_ddp_comp_id mt2712_mtk_ddp_main[] = {
++	DDP_COMPONENT_OVL0,
++	DDP_COMPONENT_COLOR0,
++	DDP_COMPONENT_AAL0,
++	DDP_COMPONENT_OD0,
++	DDP_COMPONENT_RDMA0,
++	DDP_COMPONENT_DPI0,
++	DDP_COMPONENT_PWM0,
++};
++
++static const enum mtk_ddp_comp_id mt2712_mtk_ddp_ext[] = {
++	DDP_COMPONENT_OVL1,
++	DDP_COMPONENT_COLOR1,
++	DDP_COMPONENT_AAL1,
++	DDP_COMPONENT_OD1,
++	DDP_COMPONENT_RDMA1,
++	DDP_COMPONENT_DPI1,
++	DDP_COMPONENT_PWM1,
++};
++
++static const enum mtk_ddp_comp_id mt2712_mtk_ddp_third[] = {
++	DDP_COMPONENT_RDMA2,
++	DDP_COMPONENT_DSI3,
++	DDP_COMPONENT_PWM2,
++};
++
+ static const enum mtk_ddp_comp_id mt8173_mtk_ddp_main[] = {
+ 	DDP_COMPONENT_OVL0,
+ 	DDP_COMPONENT_COLOR0,
+@@ -173,6 +199,15 @@ static const struct mtk_mmsys_driver_data mt2701_mmsys_driver_data = {
+ 	.shadow_register = true,
+ };
+ 
++static const struct mtk_mmsys_driver_data mt2712_mmsys_driver_data = {
++	.main_path = mt2712_mtk_ddp_main,
++	.main_len = ARRAY_SIZE(mt2712_mtk_ddp_main),
++	.ext_path = mt2712_mtk_ddp_ext,
++	.ext_len = ARRAY_SIZE(mt2712_mtk_ddp_ext),
++	.third_path = mt2712_mtk_ddp_third,
++	.third_len = ARRAY_SIZE(mt2712_mtk_ddp_third),
++};
++
+ static const struct mtk_mmsys_driver_data mt8173_mmsys_driver_data = {
+ 	.main_path = mt8173_mtk_ddp_main,
+ 	.main_len = ARRAY_SIZE(mt8173_mtk_ddp_main),
+@@ -379,6 +414,7 @@ static const struct of_device_id mtk_ddp_comp_dt_ids[] = {
+ 	{ .compatible = "mediatek,mt8173-dsi",        .data = (void *)MTK_DSI },
+ 	{ .compatible = "mediatek,mt8173-dpi",        .data = (void *)MTK_DPI },
+ 	{ .compatible = "mediatek,mt2701-disp-mutex", .data = (void *)MTK_DISP_MUTEX },
++	{ .compatible = "mediatek,mt2712-disp-mutex", .data = (void *)MTK_DISP_MUTEX },
+ 	{ .compatible = "mediatek,mt8173-disp-mutex", .data = (void *)MTK_DISP_MUTEX },
+ 	{ .compatible = "mediatek,mt2701-disp-pwm",   .data = (void *)MTK_DISP_BLS },
+ 	{ .compatible = "mediatek,mt8173-disp-pwm",   .data = (void *)MTK_DISP_PWM },
+@@ -557,6 +593,8 @@ static SIMPLE_DEV_PM_OPS(mtk_drm_pm_ops, mtk_drm_sys_suspend,
+ static const struct of_device_id mtk_drm_of_ids[] = {
+ 	{ .compatible = "mediatek,mt2701-mmsys",
+ 	  .data = &mt2701_mmsys_driver_data},
++	{ .compatible = "mediatek,mt2712-mmsys",
++	  .data = &mt2712_mmsys_driver_data},
+ 	{ .compatible = "mediatek,mt8173-mmsys",
+ 	  .data = &mt8173_mmsys_driver_data},
+ 	{ }
+-- 
+2.12.5
