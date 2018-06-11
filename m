@@ -1,138 +1,192 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id uzxtGeWuGltzdQAAmS7hNA
-	; Fri, 08 Jun 2018 16:29:48 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 9IDVCapiHluoVwAAmS7hNA
+	; Mon, 11 Jun 2018 11:53:35 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 0FCD06089E; Fri,  8 Jun 2018 16:29:48 +0000 (UTC)
+	id F2E02607E4; Mon, 11 Jun 2018 11:53:34 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="gaE6zQRE";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nLd54+0Q"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sa4C1+ch"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 50154602FC;
-	Fri,  8 Jun 2018 16:29:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 50154602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 2EDFF601C3;
+	Mon, 11 Jun 2018 11:53:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2EDFF601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752642AbeFHQ3p (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 12:29:45 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:39195 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751244AbeFHQ3n (ORCPT
+        id S933215AbeFKLxa (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 07:53:30 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:44644 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933193AbeFKLx1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 12:29:43 -0400
-Received: by mail-ua0-f196.google.com with SMTP id n4-v6so9279801uad.6
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 09:29:43 -0700 (PDT)
+        Mon, 11 Jun 2018 07:53:27 -0400
+Received: by mail-lf0-f65.google.com with SMTP id 36-v6so30058756lfr.11;
+        Mon, 11 Jun 2018 04:53:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=dBPvpm4p9HX5uNhZdZUFQHtFRZG1/nRFT96EthPgtbM=;
-        b=gaE6zQREY+XyJQvL9QUoevvyt5eCmY6UDHy+KHj5S8z4DdtvFPudGyq8po+3/1jOwz
-         D9MnM+BnpKvAEfvcs2/vjc4APlyLKvo+J3fG0tnfD3KYwCoAIFvbtPaoXhKyJupEfIyR
-         sCwHyqJEEA1hsyPr0vcQonflIkhTxKLcSB6+ntKynYU7+w2bdGZRkYL/m3X9/f4cAz5N
-         VzTgHIRRBQ5GMSWaifHMTsi/tUu7rkWXZZwl2NBbvYHvBawsnHbzP+BuENgPBvEHpUYZ
-         GQoi9J3EfX1MjurZtH6p2Dz9uiRQu7449fWl+tcBCihQeodl2QYVU74zJi2YO9lzuNHc
-         3b2g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=dBPvpm4p9HX5uNhZdZUFQHtFRZG1/nRFT96EthPgtbM=;
-        b=nLd54+0QUqzRmCx7hUgA/342cldn7P7lkyRmtf2bPtQer5ELhqq4hd1d3ZChozYYZB
-         IaPLUE3RQw5uUQhL/Dh6lCEqW0EZgyYkB8BKwLfZlYUZe6TodX2n7P8o329rtA4CwwEo
-         qujKDBVo5Jpw2lXKsIq4n7r7fE1HpSpLLDOEo=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=x3j8Fs15IS+dl+eVI+x+JnCjz8Ngw6xJEDChdEEgmsc=;
+        b=Sa4C1+chrObCBlRMOXQYnUBhBNXe2j1d7+6MpXAYLygojmLwcN8bN639evfPFyXuAU
+         bftu4WH+SXCiSI9c4ii3KExgPoQWa0JGihBOxGgVSG+VPcLuZa9LEeUmpGs7xd/7+ugH
+         BOb4tQeIor47VezYOKZqBnD2GAY62wTKouKzJ4ZBdNy7pIgIhK2TgjE/lckwmbZJwKxO
+         /gEscSI0/pFPYaatdeOSHkh2FtNw0a5itELp74lnHDeN3FhJHX/pSVVflUIK3sh2Uqjc
+         tAEmTZjULZHGZZ41GjPVskyCXLFDV+Ik224Q6woEXDGFpbT1nJX+uqYw69EeWiZSY0cC
+         1XUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=dBPvpm4p9HX5uNhZdZUFQHtFRZG1/nRFT96EthPgtbM=;
-        b=uUbkQCdhTMs0ZlCCN82C0EV4HWa4ZaXBHGEZaycolrqhYgrdgtGcj7bwzYzxDzKe1p
-         alt4Pauu2d9Sr6q1e68/Q76qdC2dAhMkVyzgwhklGOm75yxI2jJB8uq9v3r1oLDjRzEW
-         fLGPsLzWdWVW06/2Fga76bDZ3XbKcdVMEbyTTDnbeAFQx08rjGCCFLA97kYU6Hh2muxx
-         WvhxZML30Sg6ry/NWSx43+PLGliwX1vXveNv1mXDg4VGXHkyg1U5Kb2KpBjbwNa0T8pT
-         rK7i8j3VLIMYFRSZtqu3QswfCvUkr4bhAeXm/FhFJyV2Zoaj8S3cBv/wfQCmBcP4qwzZ
-         3DPw==
-X-Gm-Message-State: APt69E1fDiEpgNvivu5GpZbh6dJaSu114YFSqClYsUWE5ZfJZ3W6e/k7
-        skLnXxUzxk3oAAaNnVl4H/7aulD+z0/5g3ujfO1heg==
-X-Google-Smtp-Source: ADUXVKIJYvFK9s8ZPnY7JA3gqSuyq7ePt24ahy4t8GPeK1Fb8bsbgAMzaa7NljEfVwllI370a9jnaLDb6hT5xtRaD9M=
-X-Received: by 2002:a9f:3751:: with SMTP id a17-v6mr4608541uae.83.1528475382781;
- Fri, 08 Jun 2018 09:29:42 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a1f:a085:0:0:0:0:0 with HTTP; Fri, 8 Jun 2018 09:29:42 -0700 (PDT)
-In-Reply-To: <20180531144949.24995-1-tycho@tycho.ws>
-References: <20180531144949.24995-1-tycho@tycho.ws>
-From: Kees Cook <keescook@chromium.org>
-Date: Fri, 8 Jun 2018 09:29:42 -0700
-X-Google-Sender-Auth: 2TtLY4BR1wzDdb8_vxKf_8paZpw
-Message-ID: <CAGXu5jKsLDSBjB74SrvCvmGy_RTEjBsMtR5dk1CcRFrHEQfM_g@mail.gmail.com>
-Subject: Re: [PATCH v3 0/4] seccomp trap to userspace
-To: Tycho Andersen <tycho@tycho.ws>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        "Tobin C . Harding" <me@tobin.cc>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=x3j8Fs15IS+dl+eVI+x+JnCjz8Ngw6xJEDChdEEgmsc=;
+        b=GSkU6LGvs4Q/aWsldyF/L6ALfYefzYkryFmL1z+aYcIz0CQCwBsQlUA3UWvlbFHC4F
+         NvfIi5zemOK7VeY3JR7wUU/jKXYXL3acncuuzBTw75hSQrPowoP2REiEFoNZCR10YLdn
+         yzDyFQLpr/4Vq0J22RNzpAGwhuMbUT9EA9BOMA986DKvWN1byxCd6LN9g/E6eBxzrUB9
+         9lpU2E8q9cOgJyWGif6rtfMAjZktcpFq3yseecttAnVKCHxeVn204x+zT1/7XvCowaS0
+         CkbjRIcVF0H2zbr0bGL3WC8CEqxf47WSAM6fX4ib6M+pogPe/NTQV3HYM6zX6DSsRWKE
+         HznA==
+X-Gm-Message-State: APt69E35d5aEsT2mwlrOGD8DkdSZ+tVcYyVbiAqzTZovITd82s00JseQ
+        kAqbluJoTsu7sFJs95HrW9m9F1Fa
+X-Google-Smtp-Source: ADUXVKK8UQBzp+GxyvgPS+uSvRmlK+fjhPNo3bgH4YtiJn93hBsb5L1Zda777dSZtPLoBEc+m+LdPg==
+X-Received: by 2002:a2e:9890:: with SMTP id b16-v6mr11341876ljj.80.1528718005328;
+        Mon, 11 Jun 2018 04:53:25 -0700 (PDT)
+Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
+        by smtp.gmail.com with ESMTPSA id h90-v6sm8332849ljf.65.2018.06.11.04.53.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Jun 2018 04:53:24 -0700 (PDT)
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: [PATCH v2 18/24] serdev: ttydev: Serdev driver that creates an standard TTY port
+Date: Mon, 11 Jun 2018 13:52:34 +0200
+Message-Id: <20180611115240.32606-19-ricardo.ribalda@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
+References: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 7:49 AM, Tycho Andersen <tycho@tycho.ws> wrote:
-> Hi all,
->
-> Here's a v3 of the seccomp trap to userspace, with all the nits from v2
-> fixed. Open questions from v2 are still:
->
-> 1. is it ok not to use netlink?
+Standard TTY port that can be loaded/unloaded via serdev sysfs. This
+serdev driver can only be used by serdev controllers that are compatible
+with ttyport.
 
-Yeah, I think there isn't a sensible way to reuse that API, which is
-too bad. Let's just try to keep this interface future-proofed. :)
+Cc: Rob Herring <robh@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+---
+ drivers/tty/serdev/Kconfig         | 10 +++++
+ drivers/tty/serdev/Makefile        |  2 +
+ drivers/tty/serdev/serdev-ttydev.c | 60 ++++++++++++++++++++++++++++++
+ 3 files changed, 72 insertions(+)
+ create mode 100644 drivers/tty/serdev/serdev-ttydev.c
 
-> 2. what should the fd passing API look like? (see patch notes on this
->    one for details of why the current one might (?) be a problem)
-
-The only thing in my mind is avoiding the problems with other fd
-passing API (e.g. when do rlimits get checked, etc).
-
-> As an added bonus, I've also written some stress testing, with lots of
-> tasks and listeners (1000 of each) sharing the same notification thread,
-> and not found any issues so far. Code is here:
-> https://github.com/tych0/kernel-utils/blob/master/seccomp/notify_stress.c
-> although I haven't included it in the patchset.
-
-That's excellent, thanks!
-
-> v2: https://lkml.org/lkml/2018/5/17/627
->
-> Tycho Andersen (4):
->   seccomp: add a return code to trap to userspace
->   seccomp: make get_nth_filter available outside of CHECKPOINT_RESTORE
->   seccomp: add a way to get a listener fd from ptrace
->   seccomp: add support for passing fds via USER_NOTIF
-
-I'm under a time crunch with the merge window, but after -rc2 I should
-have time to give this some close review. FWIW, I expect this to enter
--next this cycle and get it into the 4.19 merge window: we need the
-feature and the alternatives have been well explored and don't look
-workable.
-
-Thanks for the series!
-
--Kees
-
+diff --git a/drivers/tty/serdev/Kconfig b/drivers/tty/serdev/Kconfig
+index 1dbc8352e027..848692caabd6 100644
+--- a/drivers/tty/serdev/Kconfig
++++ b/drivers/tty/serdev/Kconfig
+@@ -21,4 +21,14 @@ config SERIAL_DEV_CTRL_TTYPORT
+ 	depends on SERIAL_DEV_BUS != m
+ 	default y
+ 
++config SERIAL_DEV_CTRL_TTYDEV
++	tristate "TTY port dynamically loaded by the Serial Device Bus"
++	help
++	  Say Y here if you want to create a bridge driver between the Serial
++	  device bus and the TTY chardevice. This driver can be dynamically
++	  loaded/unloaded by the Serial Device Bus.
++
++	  If unsure, say N.
++	depends on SERIAL_DEV_CTRL_TTYPORT
++
+ endif
+diff --git a/drivers/tty/serdev/Makefile b/drivers/tty/serdev/Makefile
+index 0cbdb9444d9d..5c807b77d12d 100644
+--- a/drivers/tty/serdev/Makefile
++++ b/drivers/tty/serdev/Makefile
+@@ -3,3 +3,5 @@ serdev-objs := core.o
+ obj-$(CONFIG_SERIAL_DEV_BUS) += serdev.o
+ 
+ obj-$(CONFIG_SERIAL_DEV_CTRL_TTYPORT) += serdev-ttyport.o
++
++obj-$(CONFIG_SERIAL_DEV_CTRL_TTYDEV) += serdev-ttydev.o
+diff --git a/drivers/tty/serdev/serdev-ttydev.c b/drivers/tty/serdev/serdev-ttydev.c
+new file mode 100644
+index 000000000000..180035e101dc
+--- /dev/null
++++ b/drivers/tty/serdev/serdev-ttydev.c
+@@ -0,0 +1,60 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2018 Ricardo Ribalda <ricardo.ribalda@gmail.com>
++ *
++ */
++
++#include <linux/kernel.h>
++#include <linux/errno.h>
++#include <linux/module.h>
++#include <linux/serdev.h>
++#include <linux/tty.h>
++#include "serport.h"
++
++static int ttydev_serdev_probe(struct serdev_device *serdev)
++{
++	struct serdev_controller *ctrl = serdev->ctrl;
++	struct serport *serport;
++	struct device *dev;
++
++	if (!ctrl->is_ttyport)
++		return -ENODEV;
++
++	serport = serdev_controller_get_drvdata(ctrl);
++
++	dev = tty_register_device_attr(serport->tty_drv, serport->tty_idx,
++					&serdev->dev, NULL, NULL);
++
++	return dev ? 0 : PTR_ERR(dev);
++}
++
++static void ttydev_serdev_remove(struct serdev_device *serdev)
++{
++	struct serdev_controller *ctrl = serdev->ctrl;
++	struct serport *serport;
++
++	serport = serdev_controller_get_drvdata(ctrl);
++	tty_unregister_device(serport->tty_drv, serport->tty_idx);
++}
++
++static const struct serdev_device_id ttydev_serdev_id[] = {
++	{ "ttydev", },
++	{ "ttydev_serdev", },
++	{}
++};
++MODULE_DEVICE_TABLE(serdev, ttydev_serdev_id);
++
++static struct serdev_device_driver ttydev_serdev_driver = {
++	.probe = ttydev_serdev_probe,
++	.remove = ttydev_serdev_remove,
++	.driver = {
++		.name = "ttydev_serdev",
++	},
++	.id_table = ttydev_serdev_id,
++};
++
++module_serdev_device_driver(ttydev_serdev_driver);
++
++MODULE_AUTHOR("Ricardo Ribalda <ricardo.ribalda@gmail.com>");
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("Serdev to ttydev module");
 -- 
-Kees Cook
-Pixel Security
+2.17.1
