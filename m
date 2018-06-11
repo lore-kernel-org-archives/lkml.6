@@ -2,109 +2,105 @@ Return-Path: <SRS0=KDb5=I5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 419F8C004E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 21:06:46 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 66F41C004E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 21:10:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B027C2086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 21:06:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B027C2086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieldses.org
+	by mail.kernel.org (Postfix) with ESMTP id 15CB92086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 21:10:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KzkYGh54"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15CB92086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934184AbeFKVGn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 17:06:43 -0400
-Received: from fieldses.org ([173.255.197.46]:50226 "EHLO fieldses.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933394AbeFKVGl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 17:06:41 -0400
-Received: by fieldses.org (Postfix, from userid 2815)
-        id 2A0201CEE; Mon, 11 Jun 2018 17:06:41 -0400 (EDT)
-Date:   Mon, 11 Jun 2018 17:06:41 -0400
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] knfsd changes for 4.18
-Message-ID: <20180611210641.GA9628@fieldses.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
-From:   bfields@fieldses.org (J. Bruce Fields)
+        id S1754164AbeFKVKB (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 17:10:01 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:41457 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752801AbeFKVKA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 17:10:00 -0400
+Received: by mail-pl0-f66.google.com with SMTP id az12-v6so13019771plb.8
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 14:10:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=27owysnX14HEcDVIWfr1qFoh0CBLmYb3+9NO+C2BgoU=;
+        b=KzkYGh54E9JoTqD3jvrOfCcgRI3yP3UaJ2jlYsNgblqq/IC167fGalTUaLqI0rS/Np
+         QVhMuiSYn0xfzuTz+iFVyCWQs1jlEFfqoiupHW46ESYSIxchB4HTTaBks0/+l6dLrxpw
+         OUmNGsZJp3feyujF+cjG4GhpRb+Iit4oiGgnA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=27owysnX14HEcDVIWfr1qFoh0CBLmYb3+9NO+C2BgoU=;
+        b=bF7AZGKJT+wTe8N+2R4YfELc3BBSm1/xWI7/TlUYV8gfSK2CgAPZnPFQUoeBI+AB1a
+         cH3Ob/B2Q0Q6dkOlSYKfkcbCQH7hP1xP1GTPVljLhDgs/bic7S+IAKMET0TpYnmGYvpC
+         rWXJxONQZl23eJUn+dTxnn1XKG1hdm8VkjgBZmo0yKcoVhSnNW+xyKEU68NfPmK5jXkk
+         PNoq/yIYdxOOgWrvNW52x9VqXBvw8yqdRWBd1iA3HR7x5DE+Y7qe+zorMrDxPo90Sp2Y
+         SJrUKfErFLVjd+472fii2HC2rboopduwb4dzSAbi2nTjEDCanmq8x7OFYiY31gY4c6Qb
+         QWwg==
+X-Gm-Message-State: APt69E0ET23jFL0XbCF6DwlKwAlaXYi+wKfb4RNZtuJWAidQlDLyj2qj
+        ESTjofWFg5bUt5TKOC06AzgSyQ==
+X-Google-Smtp-Source: ADUXVKIJHWB4qXfITSZ6UB8yuF79x0rbO2pXHIzKzhe+KRrvApOJY5C8hkHcxMXH+oqnOrp7bUhVRw==
+X-Received: by 2002:a17:902:76c4:: with SMTP id j4-v6mr792401plt.19.1528751399771;
+        Mon, 11 Jun 2018 14:09:59 -0700 (PDT)
+Received: from ban.mtv.corp.google.com ([2620:0:1000:1501:bc2f:3082:9938:5d41])
+        by smtp.gmail.com with ESMTPSA id c4-v6sm49116184pfe.53.2018.06.11.14.09.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Jun 2018 14:09:58 -0700 (PDT)
+From:   Brian Norris <briannorris@chromium.org>
+To:     Kalle Valo <kvalo@qca.qualcomm.com>
+Cc:     ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        Govind Singh <govinds@codeaurora.org>,
+        <linux-kernel@vger.kernel.org>,
+        Brian Norris <briannorris@chromium.org>
+Subject: [PATCH 1/4] ath10k: snoc: use correct bus-specific pointer in RX retry
+Date:   Mon, 11 Jun 2018 14:09:43 -0700
+Message-Id: <20180611210946.241341-1-briannorris@chromium.org>
+X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a-goog
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Please pull:
+We're 'ath10k_snoc', not 'ath10k_pci'. This probably means we're
+accessing junk data in ath10k_snoc_rx_replenish_retry(), unless
+'ath10k_snoc' and 'ath10k_pci' happen to have very similar struct
+layouts.
 
-  git://linux-nfs.org/~bfields/linux.git tags/nfsd-4.18
+Noticed by inspection.
 
-A relatively quiet cycle for nfsd.  The largest piece is an RDMA update
-from Chuck Lever with new trace points, miscellaneous cleanups, and
-streamlining of the send and receive paths.  Other than that, some
-miscellaneous bugfixes.
+Fixes: d915105231ca ("ath10k: add hif rx methods for wcn3990")
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+---
+It's possible this would be a for-4.18 target, since the buggy patch is
+in the -rc1 merge. But this driver is not fully operational yet. Also,
+I'm sending some companion refactorings to help avoid this bug. They
+probably aren't 4.18 material.
 
---b.
+Let me know if I should do anything differently.
 
-Andrew Elble (1):
-      nfsd: fix error handling in nfs4_set_delegation()
+ drivers/net/wireless/ath/ath10k/snoc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Chuck Lever (20):
-      svcrdma: Add proper SPDX tags for NetApp-contributed source
-      svcrdma: Use passed-in net namespace when creating RDMA listener
-      xprtrdma: Prepare RPC/RDMA includes for server-side trace points
-      svcrdma: Trace key RPC/RDMA protocol events
-      svcrdma: Trace key RDMA API events
-      svcrdma: Introduce svc_rdma_recv_ctxt
-      svcrdma: Remove sc_rq_depth
-      svcrdma: Simplify svc_rdma_recv_ctxt_put
-      svcrdma: Preserve Receive buffer until svc_rdma_sendto
-      svcrdma: Persistently allocate and DMA-map Receive buffers
-      svcrdma: Allocate recv_ctxt's on CPU handling Receives
-      svcrdma: Refactor svc_rdma_dma_map_buf
-      svcrdma: Clean up Send SGE accounting
-      svcrdma: Introduce svc_rdma_send_ctxt
-      svcrdma: Don't overrun the SGE array in svc_rdma_send_ctxt
-      svcrdma: Remove post_send_wr
-      svcrdma: Simplify svc_rdma_send()
-      svcrdma: Persistently allocate and DMA-map Send buffers
-      svcrdma: Remove unused svc_rdma_op_ctxt
-      svcrdma: Fix incorrect return value/type in svc_rdma_post_recvs
+diff --git a/drivers/net/wireless/ath/ath10k/snoc.c b/drivers/net/wireless/ath/ath10k/snoc.c
+index ee74e0060504..c7cfc9c9b3d7 100644
+--- a/drivers/net/wireless/ath/ath10k/snoc.c
++++ b/drivers/net/wireless/ath/ath10k/snoc.c
+@@ -449,7 +449,7 @@ static void ath10k_snoc_htt_rx_cb(struct ath10k_ce_pipe *ce_state)
+ 
+ static void ath10k_snoc_rx_replenish_retry(struct timer_list *t)
+ {
+-	struct ath10k_pci *ar_snoc = from_timer(ar_snoc, t, rx_post_retry);
++	struct ath10k_snoc *ar_snoc = from_timer(ar_snoc, t, rx_post_retry);
+ 	struct ath10k *ar = ar_snoc->ar;
+ 
+ 	ath10k_snoc_rx_post(ar);
+-- 
+2.18.0.rc1.242.g61856ae69a-goog
 
-Dave Wysochanski (1):
-      Fix 16-byte memory leak in gssp_accept_sec_context_upcall
-
-Scott Mayhew (3):
-      nfsd: restrict rd_maxcount to svc_max_payload in nfsd_encode_readdir
-      nfsd: make nfsd4_scsi_identify_device retry with a larger buffer
-      nfsd: fix potential use-after-free in nfsd4_decode_getdeviceinfo
-
-Trond Myklebust (1):
-      nfsd: Do not refuse to serve out of cache
-
- fs/nfsd/blocklayout.c                      |  18 +-
- fs/nfsd/cache.h                            |   5 -
- fs/nfsd/nfs4state.c                        |   5 +-
- fs/nfsd/nfs4xdr.c                          |   7 +-
- fs/nfsd/nfscache.c                         |   6 +-
- include/linux/sunrpc/svc_rdma.h            |  95 ++---
- include/trace/events/rpcrdma.h             | 584 ++++++++++++++++++++++++++++-
- net/sunrpc/auth_gss/gss_rpc_upcall.c       |   4 +-
- net/sunrpc/xprtrdma/backchannel.c          |   2 +
- net/sunrpc/xprtrdma/fmr_ops.c              |   3 +
- net/sunrpc/xprtrdma/frwr_ops.c             |   2 +
- net/sunrpc/xprtrdma/module.c               |   4 +-
- net/sunrpc/xprtrdma/rpc_rdma.c             |   7 +-
- net/sunrpc/xprtrdma/svc_rdma.c             |   3 +-
- net/sunrpc/xprtrdma/svc_rdma_backchannel.c |  54 ++-
- net/sunrpc/xprtrdma/svc_rdma_recvfrom.c    | 439 ++++++++++++++++------
- net/sunrpc/xprtrdma/svc_rdma_rw.c          | 133 +++----
- net/sunrpc/xprtrdma/svc_rdma_sendto.c      | 510 ++++++++++++++++---------
- net/sunrpc/xprtrdma/svc_rdma_transport.c   | 481 ++++--------------------
- net/sunrpc/xprtrdma/transport.c            |   4 +
- net/sunrpc/xprtrdma/verbs.c                |   1 +
- net/sunrpc/xprtrdma/xprt_rdma.h            |   2 -
- 22 files changed, 1489 insertions(+), 880 deletions(-)
