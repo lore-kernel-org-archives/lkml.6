@@ -1,124 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ayOICWsoGVvyfAAAmS7hNA
-	; Thu, 07 Jun 2018 12:43:36 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id KuawBE/7HVvvPwAAmS7hNA
+	; Mon, 11 Jun 2018 04:32:15 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id A0542608B8; Thu,  7 Jun 2018 12:43:36 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vEXq7kPq"
+	id E270C60792; Mon, 11 Jun 2018 04:32:14 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 0F9E3607E7;
-	Thu,  7 Jun 2018 12:43:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0F9E3607E7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 6BE8260385;
+	Mon, 11 Jun 2018 04:32:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6BE8260385
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932634AbeFGMne (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 08:43:34 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:32842 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932124AbeFGMnd (ORCPT
+        id S932204AbeFKEcK (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 00:32:10 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57808 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753736AbeFKEcJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 08:43:33 -0400
-Received: by mail-qk0-f193.google.com with SMTP id h7-v6so6444749qkm.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 05:43:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=8jcHIO5M5eC0KSj3+NsblS9FR+TlbhcP3F3bH+2fw7o=;
-        b=vEXq7kPqcOYGA7ehrkm38LYHCOGltndgrghLrvGuTYeQANRs2wg9nu+m/p0ekkunoI
-         vFaEvsMY43uF/9NFdQ444agSPKSb8SlBOE8aHOi+6Y7WOSPuDGcC1wQoqYzzedPnYNlT
-         OOf7NYsGnQCjYwJUSG/YWiMdKTyJsuoJCr7vspVuum9m06SRf1XUSnXvZ0FIfDWM1YE/
-         te8aBicX6+RGG+Thrlf+O0OB1qG5oLRduU5m3bCmayTG5l74SCbOpfG8QwBC4AZCeSLT
-         jjr9Nslbdv6XPfIbtkm0Vwkr7jSdiqc4gQagVoRJCiAZgRKdIN0wRHlBfJRtiE8sJCKh
-         Ms2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=8jcHIO5M5eC0KSj3+NsblS9FR+TlbhcP3F3bH+2fw7o=;
-        b=nxqRPQmrMq/dcn1Pp099xEmEGtay+hw6qF2kvGRzgwwMu9AI0wQ5EK3UyzKR+czNmD
-         TRTH7q90WQmcRoDgaOlsaHOEgqcnmSgY46GBisDVz+O95NDV3doG2B5B3s/KPKLuvbJ3
-         PD6GSQVjYvxxxCmhJexOZJhNJ3xTxUZZtVsq1vuwsWfB36dUu8/LNAQADV9caFwzgNbX
-         +iIuMzocAHofaoChZ9lvUnPLkd9ZqRqapMYidWVApV05ZqX7M+94eTmbIYqXIfyzfRUo
-         gmEFbm35Cui/6zpS0sjsUEFMrc28k6h3lbz/UoVX1iV03pzMAY/Zdr3Uq9oJqGb1CV4/
-         VTww==
-X-Gm-Message-State: APt69E3T0HxEHPc54lzSrSYtr/DIf5fpYLaRGo+Rf3M4EVuA5QP5P/E5
-        Y5R2JrTYugYIGqyi+/Igv7vmainJp+maZEKfon4=
-X-Google-Smtp-Source: ADUXVKJH2bvTIjB3JU34L6TCtIKvHwO63u0dwijWiBY2tQaXEwzAABGjgxRq0HvIgX3f8pJrS2cSHhExKHEdR1Y0XGE=
-X-Received: by 2002:a37:129d:: with SMTP id 29-v6mr1283152qks.263.1528375412409;
- Thu, 07 Jun 2018 05:43:32 -0700 (PDT)
+        Mon, 11 Jun 2018 00:32:09 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5B4TGcl100686
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 00:32:09 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jhhaahewr-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 00:32:08 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Mon, 11 Jun 2018 05:32:06 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 11 Jun 2018 05:32:02 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5B4W1rm30277788
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 11 Jun 2018 04:32:01 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 813C0A4040;
+        Mon, 11 Jun 2018 05:22:56 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9A778A404D;
+        Mon, 11 Jun 2018 05:22:53 +0100 (BST)
+Received: from [9.124.31.215] (unknown [9.124.31.215])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 11 Jun 2018 05:22:53 +0100 (BST)
+Subject: Re: [PATCH 0/7] Uprobes: Support SDT markers having reference count
+ (semaphore)
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: oleg@redhat.com, srikar@linux.vnet.ibm.com, rostedt@goodmis.org,
+        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org, ananth@linux.vnet.ibm.com,
+        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+References: <20180606083344.31320-1-ravi.bangoria@linux.ibm.com>
+ <20180608101023.cbf20db485026213d490cb7c@kernel.org>
+ <0d487b32-3141-ec30-6cca-eba7159d70b0@linux.ibm.com>
+ <20180608141431.c0196a2c80a8d4701bc9db58@kernel.org>
+ <71f19b63-a641-1705-f087-a39b8b81c4be@linux.ibm.com>
+ <20180609004549.ea7b1854772217598bb1cdfd@kernel.org>
+From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Date: Mon, 11 Jun 2018 10:01:58 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:ac8:4716:0:0:0:0:0 with HTTP; Thu, 7 Jun 2018 05:43:12 -0700 (PDT)
-In-Reply-To: <22cb30ea19ad4ab1b341836c5f672ba406cb2b4e.camel@perches.com>
-References: <20180606201556.GA10832@ziepe.ca> <22cb30ea19ad4ab1b341836c5f672ba406cb2b4e.camel@perches.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 7 Jun 2018 14:43:12 +0200
-Message-ID: <CANiq72kzLg2Y2oV0PNTGLP-2ZzW9q_GitR+WSAyHjNZJ2PPbnA@mail.gmail.com>
-Subject: Re: [PATCH] clang-format: Set IndentWrappedFunctionNames false
-To: Joe Perches <joe@perches.com>
-Cc: Jason Gunthorpe <jgg@mellanox.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Andy Whitcroft <apw@canonical.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180609004549.ea7b1854772217598bb1cdfd@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18061104-4275-0000-0000-0000028C4520
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18061104-4276-0000-0000-0000379361FB
+Message-Id: <6225481e-fa00-a242-2b57-223559e3c488@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-11_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=717 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806110054
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 6, 2018 at 10:18 PM, Joe Perches <joe@perches.com> wrote:
-> On Wed, 2018-06-06 at 14:15 -0600, Jason Gunthorpe wrote:
->> The true option causes this indenting for functions:
->>
->> static struct something_very_very_long *
->>     function(void *arg)
->> {
->>
->> While a quick survey suggests that the usual Linux fallback is the GNU
->> style:
->>
->> static struct something_very_very_long *
->> function(void *arg)
->>
-> []
->> AFAIK the above describes the more common choice in the code base?
->>
->> Not sure who's tree this is supposed to go through.. Andrew I guess?
->
-> I believe so yes.
->
-> I expect there will be more refinements to .clang-formata
-> as perhaps more people experiment with it too.
+Hi Masami,
 
-Yes, indeed! The version I committed was an initial approximation --
-don't expect it to be the "final" or "official" one!
+>>> Hmm, it sounds simple... maybe we can increment refctr in install_breakpoint/
+>>> remove_breakpoint?
+>>
+>> Not really, it would be simpler if I can put it inside install_breakpoint().
+>> Consider an mmap() case. Probed instruction resides in the text section whereas
+>> reference counter resides in the data section. These sections gets mapped using
+>> separate mmap() calls. So, when process mmaps the text section we will change the
+>> instruction, but section holding the reference counter may not have been mapped
+>> yet in the virtual memory. If so, we will fail to update the reference counter.
+> 
+> Got it. 
+> In such case, maybe we can hook the target page mmapped and do install_breakpoint()
+> at that point. Since the instruction is protected by a refctr, unless mmap the
+> page on where the refctr is, the program doesn't reach the tracepoint. Is that right?
+> 
 
-Cheers,
-Miguel
+You mean, when mmap(text) happens, save the target page somewhere and when
+mmap(data) happens, update both instruction and ref_ctr?
 
->
-> Acked-by: Joe Perches <joe@perches.com>
->
->> diff --git a/.clang-format b/.clang-format
->> index faffc0d5af4eeb..1d5da22e0ba50c 100644
->> --- a/.clang-format
->> +++ b/.clang-format
->> @@ -382,7 +382,7 @@ IncludeIsMainRegex: '(Test)?$'
->>  IndentCaseLabels: false
->>  #IndentPPDirectives: None # Unknown to clang-format-5.0
->>  IndentWidth: 8
->> -IndentWrappedFunctionNames: true
->> +IndentWrappedFunctionNames: false
->>  JavaScriptQuotes: Leave
->>  JavaScriptWrapImports: true
->>  KeepEmptyLinesAtTheStartOfBlocks: false
+This sounds feasible. Let me think on it.
+
+Thanks for suggestion,
+Ravi
