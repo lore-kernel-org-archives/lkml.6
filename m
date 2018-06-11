@@ -1,246 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id zG7ZFSFOHlvSPQAAmS7hNA
-	; Mon, 11 Jun 2018 10:25:37 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 75bqCmRkHlsGcAAAmS7hNA
+	; Mon, 11 Jun 2018 12:01:31 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 4ABFA607A4; Mon, 11 Jun 2018 10:25:37 +0000 (UTC)
+	id 3A809607E4; Mon, 11 Jun 2018 12:01:31 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GVUQFYPm"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id AFD8E60351;
-	Mon, 11 Jun 2018 10:25:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AFD8E60351
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by smtp.codeaurora.org (Postfix) with ESMTP id 9840760351;
+	Mon, 11 Jun 2018 12:01:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9840760351
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932745AbeFKKZe (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 06:25:34 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47852 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932517AbeFKKZc (ORCPT
+        id S933072AbeFKMB2 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 08:01:28 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:46429 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933356AbeFKL7O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 06:25:32 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 93D3E804BB; Mon, 11 Jun 2018 12:25:30 +0200 (CEST)
-Date: Mon, 11 Jun 2018 12:25:30 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
-        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org,
-        alsa-devel@alsa-project.org, tiwai@suse.com, perex@perex.cz,
-        broonie@kernel.org, lgirdwood@gmail.com
-Subject: handling voice calls in ALSA soc (on Droid 4)
-Message-ID: <20180611102529.GA1272@amd>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="zYM0uCDKw75PZbzx"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Mon, 11 Jun 2018 07:59:14 -0400
+Received: by mail-wr0-f196.google.com with SMTP id v13-v6so20098616wrp.13;
+        Mon, 11 Jun 2018 04:59:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=xdLxjk0Q8O47kyIPh0dVVd/xYllcF+e5dBFDiji/Cmk=;
+        b=GVUQFYPmQD3jvB/0oVamN8/djGlsHatemNoySupUZEH6j/ObCO3LH0cF6n9VCnPWGa
+         7p4SK2dDrmQSqaspmBGp1vNx3Zb93VtscXOS3oDFdJTK9RCmZxASfXRvS0fx5rHb3hCX
+         0fC443DjFmDjfjf+LBPW8oNZHmSUheR+7dnZpY95h1khxbT6Mf7no81VATyUe0lpXY1L
+         uwoMbLVv8zrlndMMQ2B5sbPFqLKlsS0RCA77h5wFl3IGn/4gSgsjsWWHTRg98otE2BZQ
+         ZR2r8nO1JMiZ28bBdAlJLp01zgtMYwnZC6UBddw0ISptBKz23FDVPeJ8hC4r547qxiC5
+         LSKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=xdLxjk0Q8O47kyIPh0dVVd/xYllcF+e5dBFDiji/Cmk=;
+        b=o1K5caaPnSvRYxVgTqAr60ABp4fmC3J/LFsshq87z3FEY6QQ6M10wVHqJnOlNrKKkY
+         aFndFbd3720jJMSzq1ujQTnE0F8Z54WmyQKtWSjUkaFQjl73vVziSc+YHy7ulvPCZ/Ia
+         AqqAnJJrke0kcRPpfrWT1r422LF+RjKTv7ZsucQpfqQwQYdDKgWDAUvcaQNe/FxkY9FI
+         HtUBKCrJQqd2jeOvVpCRMbmjKK+Dqx830LQy7xxl3zx5ngj4NMMpqK474xZXED5L5RFV
+         jxTV/HjZjQZJRsfFrv2Epxud0ctRYBYag+SoC/p3jNqq9CagXIfQln8e0G8AzYYbUHPv
+         zcsw==
+X-Gm-Message-State: APt69E2u8NT0zQqz6+fxTWoBGvGKVdBegx2qR9GdNJ96KqMy514UYOy7
+        D0oKgWfrs9mh2fDyBkT7to5Toya+
+X-Google-Smtp-Source: ADUXVKJi2y2B5gxkvKwZoF5hRFUhvuQGmt8Fps+GZIzLRqL6BWGGc3WQhsAa2JCr/X5yYx1/MV7F2A==
+X-Received: by 2002:adf:8462:: with SMTP id 89-v6mr13948387wrf.138.1528718352720;
+        Mon, 11 Jun 2018 04:59:12 -0700 (PDT)
+Received: from kurokawa.lan (ip-86-49-107-50.net.upcbroadband.cz. [86.49.107.50])
+        by smtp.gmail.com with ESMTPSA id t124-v6sm7974796wmt.29.2018.06.11.04.59.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Jun 2018 04:59:11 -0700 (PDT)
+From: Marek Vasut <marek.vasut@gmail.com>
+X-Google-Original-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v6 07/14] mfd: da9063: Rename PMIC_DA9063 to PMIC_CHIP_ID_DA9063
+Date: Mon, 11 Jun 2018 13:58:44 +0200
+Message-Id: <20180611115851.1987-7-marek.vasut+renesas@gmail.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
+References: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The PMIC_DA9063 is a complete misnomer, it denotes the value of the
+DA9063 chip ID register, so rename it as such. It is also the value
+of chip ID register of DA9063L though, so drop the enum as all the
+DA9063 "models" share the same chip ID and thus the distinction will
+have to be made using DT or otherwise.
 
---zYM0uCDKw75PZbzx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Acked-by: Mark Brown <broonie@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
+---
+V2: No change
+V3: No change
+V4: No change
+V5: No change
+V6: No change
+---
+ drivers/mfd/da9063-core.c            | 2 +-
+ drivers/mfd/da9063-i2c.c             | 2 +-
+ drivers/regulator/da9063-regulator.c | 2 +-
+ include/linux/mfd/da9063/core.h      | 4 +---
+ 4 files changed, 4 insertions(+), 6 deletions(-)
 
-Hi!
-
-During voice call, I need audio components to be active "as if" aplay
-or arecord was running, because modem needs to comunicate with speaker
-and microphone.
-
-I hacked something up, but... I believe I'll need help here. Look at
-"enable_call" for "interesting" stuff I had to do.
-
-=2E..and also. What is right interface for this? Mixer component that
-says if voice call is active or not?
-
-Any ideas?
-
-Thanks,
-									Pavel
-
-(edited).
-+++ b/sound/soc/codecs/cpcap.c
-@@ -330,6 +330,10 @@ static const char * const cpcap_in_left_mux_texts[] =
-=3D {
- 	"Off", "Mic 2", "Ext Left"
- };
-=20
-+static const char * const cpcap_mode_texts[] =3D {
-+	"Normal", "Handsfree", "Call",
-+};
-+
- /*
-  * input muxes use unusual register layout, so that we need to use custom
-  * getter/setter methods
-@@ -354,6 +358,8 @@ static SOC_ENUM_SINGLE_DECL(cpcap_hs_l_mux_enum, 0, 6, =
-cpcap_out_mux_texts);
- static SOC_ENUM_SINGLE_DECL(cpcap_emu_l_mux_enum, 0, 7, cpcap_out_mux_text=
-s);
- static SOC_ENUM_SINGLE_DECL(cpcap_emu_r_mux_enum, 0, 8, cpcap_out_mux_text=
-s);
-=20
-+static SOC_ENUM_SINGLE_DECL(cpcap_mode_enum, 0, 9, cpcap_mode_texts);
-+
- static int cpcap_output_mux_get_enum(struct snd_kcontrol *kcontrol,
- 				     struct snd_ctl_elem_value *ucontrol)
- {
-@@ -442,6 +448,211 @@ static int cpcap_output_mux_put_enum(struct snd_kcont=
-rol *kcontrol,
- 	return 0;
- }
-=20
-+static int mode;
-+
-+static int cpcap_mode_get_enum(struct snd_kcontrol *kcontrol,
-+				     struct snd_ctl_elem_value *ucontrol)
-+{
-+	ucontrol->value.enumerated.item[0] =3D mode;
-+
-+	return 0;
-+}
-+
-+static struct snd_soc_dai *voice_codec_dai_hack;
-+
-+static int enable_call(struct snd_soc_component *component, int on)
-+{
-+	struct cpcap_audio *cpcap =3D snd_soc_component_get_drvdata(component);
-
-+		struct snd_soc_pcm_runtime *rt;
-+
-+		rt =3D snd_soc_get_pcm_runtime(component->card, "40126000.mcbsp-cpcap-vo=
-ice");
-+		printk("num_dai: %d, got runtime %lx\n", component->num_dai, rt);
-+
-+		if (rt) {
-+		snd_soc_dapm_stream_event(rt, SNDRV_PCM_STREAM_PLAYBACK, SND_SOC_DAPM_ST=
-REAM_START);
-+		snd_soc_dapm_stream_event(rt, SNDRV_PCM_STREAM_CAPTURE, SND_SOC_DAPM_STR=
-EAM_START);
-+		}
-+
-+		cpcap_set_sysclk(cpcap, CPCAP_DAI_VOICE, 1, 19200000);
-+		cpcap_set_samprate(cpcap, CPCAP_DAI_VOICE, 8000);
-+	=09
-+		cpcap_voice_set_dai_fmt(voice_codec_dai_hack,
-+					SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF | SND_SOC_DAIFMT_CBM_CFM );
-+
-+	return 0;
-+}
-+
-+static int cpcap_mode_put_enum(struct snd_kcontrol *kcontrol,
-+				     struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_component *component =3D snd_soc_dapm_kcontrol_component(k=
-control);
-+	struct cpcap_audio *cpcap =3D snd_soc_component_get_drvdata(component);
-+	unsigned int muxval =3D ucontrol->value.enumerated.item[0];
-+
-+	printk("Requested mode %d\n", muxval);
-+
-+	mode =3D muxval;
-+
-+	switch (muxval) {
-+	case 1:
-+		enable_call(component, 1);
-+		break;
-+	case 2:
-+		enable_call(component, 1);
-+
-+		regmap_assert(cpcap, CPCAP_REG_TXI, 0xffff, 0x0cc6);
-		...
-+		break;
-+	=09
-+	default:
-+		break;
-+	}
-+
-+	return 0;
-+}
-+
- static int cpcap_input_right_mux_get_enum(struct snd_kcontrol *kcontrol,
- 					  struct snd_ctl_elem_value *ucontrol)
- {
-@@ -630,6 +841,10 @@ static const struct snd_kcontrol_new cpcap_earpiece_mu=
-x =3D
- 	SOC_DAPM_ENUM_EXT("Earpiece", cpcap_earpiece_mux_enum,
- 			  cpcap_output_mux_get_enum, cpcap_output_mux_put_enum);
-=20
-+static const struct snd_kcontrol_new cpcap_mode =3D
-+	SOC_DAPM_ENUM_EXT("Mode", cpcap_mode_enum,
-+			  cpcap_mode_get_enum, cpcap_mode_put_enum);
-+
- static const struct snd_kcontrol_new cpcap_hifi_mono_mixer_controls[] =3D {
- 	SOC_DAPM_SINGLE("HiFi Mono Playback Switch",
- 		CPCAP_REG_RXSDOA, CPCAP_BIT_MONO_DAC1, 1, 0),
-@@ -771,6 +986,9 @@ static const struct snd_soc_dapm_widget cpcap_dapm_widg=
-ets[] =3D {
- 	SND_SOC_DAPM_MUX("EMU Left Playback Route", SND_SOC_NOPM, 0, 0,
- 		&cpcap_emu_left_mux),
-=20
-+	SND_SOC_DAPM_MUX("Mode", SND_SOC_NOPM, 0, 0,
-+		&cpcap_mode),
-+=09
- 	/* Output Amplifier */
- 	SND_SOC_DAPM_PGA("Earpiece PGA",
- 		CPCAP_REG_RXOA, CPCAP_BIT_A1_EAR_EN, 0, NULL, 0),
-@@ -791,7 +1009,7 @@ static const struct snd_soc_dapm_widget cpcap_dapm_wid=
-gets[] =3D {
- 	SND_SOC_DAPM_PGA("EMU Left PGA",
- 		CPCAP_REG_RXOA, CPCAP_BIT_EMU_SPKR_L_EN, 0, NULL, 0),
-=20
--	/* Headet Charge Pump */
-+	/* Headset Charge Pump */
- 	SND_SOC_DAPM_SUPPLY("Headset Charge Pump",
- 		CPCAP_REG_RXOA, CPCAP_BIT_ST_HS_CP_EN, 0, NULL, 0),
-=20
-@@ -1304,6 +1525,7 @@ static int cpcap_voice_set_dai_fmt(struct snd_soc_dai=
- *codec_dai,
- 	u16 val =3D 0x0000;
- 	int err;
-=20
-+	voice_codec_dai_hack =3D codec_dai;
- 	dev_dbg(component->dev, "Voice setup dai format (%08x)", fmt);
-=20
- 	/*
-@@ -1343,10 +1565,7 @@ static int cpcap_voice_set_dai_fmt(struct snd_soc_da=
-i *codec_dai,
- 		break;
+diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
+index f57558590283..c54777cc2f12 100644
+--- a/drivers/mfd/da9063-core.c
++++ b/drivers/mfd/da9063-core.c
+@@ -192,7 +192,7 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
+ 		dev_err(da9063->dev, "Cannot read chip model id.\n");
+ 		return -EIO;
  	}
-=20
--	if (val & BIT(CPCAP_BIT_CLK_INV))
--		val &=3D ~BIT(CPCAP_BIT_CLK_INV);
--	else
--		val |=3D BIT(CPCAP_BIT_CLK_INV);
-+	val ^=3D BIT(CPCAP_BIT_CLK_INV);
-=20
- 	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
- 	case SND_SOC_DAIFMT_I2S:
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---zYM0uCDKw75PZbzx
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlseThkACgkQMOfwapXb+vLMXQCgkFlHSaHC2Zi4EY8Dt2Wlp/ks
-f8UAnjFDZjKdAFiuDkz5nm4Fnjfq8ynO
-=6/sK
------END PGP SIGNATURE-----
-
---zYM0uCDKw75PZbzx--
+-	if (model != PMIC_DA9063) {
++	if (model != PMIC_CHIP_ID_DA9063) {
+ 		dev_err(da9063->dev, "Invalid chip model id: 0x%02x\n", model);
+ 		return -ENODEV;
+ 	}
+diff --git a/drivers/mfd/da9063-i2c.c b/drivers/mfd/da9063-i2c.c
+index e9797153bc19..d1fe88777e3f 100644
+--- a/drivers/mfd/da9063-i2c.c
++++ b/drivers/mfd/da9063-i2c.c
+@@ -181,7 +181,7 @@ static int da9063_i2c_probe(struct i2c_client *i2c,
+ }
+ 
+ static const struct i2c_device_id da9063_i2c_id[] = {
+-	{"da9063", PMIC_DA9063},
++	{ "da9063", PMIC_CHIP_ID_DA9063 },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(i2c, da9063_i2c_id);
+diff --git a/drivers/regulator/da9063-regulator.c b/drivers/regulator/da9063-regulator.c
+index 6a8f9cd69f52..87c884ae0064 100644
+--- a/drivers/regulator/da9063-regulator.c
++++ b/drivers/regulator/da9063-regulator.c
+@@ -585,7 +585,7 @@ static struct da9063_dev_model regulators_models[] = {
+ 	{
+ 		.regulator_info = da9063_regulator_info,
+ 		.n_regulators = ARRAY_SIZE(da9063_regulator_info),
+-		.dev_model = PMIC_DA9063,
++		.dev_model = PMIC_CHIP_ID_DA9063,
+ 	},
+ 	{ }
+ };
+diff --git a/include/linux/mfd/da9063/core.h b/include/linux/mfd/da9063/core.h
+index 260cd5834861..e015b065db7e 100644
+--- a/include/linux/mfd/da9063/core.h
++++ b/include/linux/mfd/da9063/core.h
+@@ -29,9 +29,7 @@
+ #define DA9063_DRVNAME_RTC		"da9063-rtc"
+ #define DA9063_DRVNAME_VIBRATION	"da9063-vibration"
+ 
+-enum da9063_models {
+-	PMIC_DA9063 = 0x61,
+-};
++#define PMIC_CHIP_ID_DA9063		0x61
+ 
+ enum da9063_variant_codes {
+ 	PMIC_DA9063_AD = 0x3,
+-- 
+2.16.2
