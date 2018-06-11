@@ -1,128 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id fwycK7JhGlufFAAAmS7hNA
-	; Fri, 08 Jun 2018 11:00:26 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id lSqABOxiHlu3WgAAmS7hNA
+	; Mon, 11 Jun 2018 11:54:40 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 6C6EE607E4; Fri,  8 Jun 2018 11:00:26 +0000 (UTC)
+	id BEB0160792; Mon, 11 Jun 2018 11:54:40 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vpOU3ntB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RANv3zPP"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id BC1D5602FC;
-	Fri,  8 Jun 2018 11:00:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BC1D5602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 351A9601C3;
+	Mon, 11 Jun 2018 11:54:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 351A9601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752478AbeFHLAY (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 07:00:24 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:57920 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751056AbeFHLAW (ORCPT
+        id S933292AbeFKLyi (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 07:54:38 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:35672 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933193AbeFKLxc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 07:00:22 -0400
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id D998057;
-        Fri,  8 Jun 2018 13:00:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1528455619;
-        bh=4Vv6Nh1VzCheYZ2isn5rXBZ0FVK/rRbwXwpv6m8Aoc0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vpOU3ntBpsV4hsdc4Cy2Q49YrANsL5xtUiu5EOHPH/bdLcjo7//8LLB1/WeYZ3+A6
-         A4MI8TWDORL11dF9HbDComdQ8Epap9D5TQmqI19TrUBJTkMVk5Zt3rv1ALuHGarMnx
-         SwpLskjvOyw4AMdCDvdwqaymZFIynwCnyhhYxIqU=
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Will Deacon <will.deacon@arm.com>,
-        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
-        <linux-arm-kernel@lists.infradead.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH 11/17] arm64: dts: r8a77965: Add VSP instances
-Date: Fri, 08 Jun 2018 14:00:36 +0300
-Message-ID: <7269469.ESYJcRDGIc@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <CAMuHMdU7OyUvgNqbkjtHyb0LPjgTdPp_BBcGNbjiqfQUgCdMuw@mail.gmail.com>
-References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com> <1787243.JuNJAuBqMb@avalon> <CAMuHMdU7OyUvgNqbkjtHyb0LPjgTdPp_BBcGNbjiqfQUgCdMuw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Mon, 11 Jun 2018 07:53:32 -0400
+Received: by mail-lf0-f68.google.com with SMTP id i15-v6so19795871lfc.2;
+        Mon, 11 Jun 2018 04:53:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=2Km7hK8QIdn2ncv5EakjPSi0LKzKQ4/VXQjW2Pxz1Rg=;
+        b=RANv3zPP2qXa4P9hJYP4evHbeKol2nfhjTdwsCuBO7SKmcAcNIjr9XcLvlPyZfBNLq
+         mfcC3bljhZG5P+/+lzkmPcOsICV9TWtwKOdMWIwHVu4uokiVcYfo7qnrv6C5Y/OXlUjp
+         3kg+/i2yCNiox3KYId4Opne+zeMFBSjY7YfPiNVnIqZZiOdCdI3w74JYM1zSZ7getqSH
+         16uU23wBPgLHwfE9/WxYDD6F+FzoLlBxI/e5A9vjjO1Tq0Uy3214VNu3tGhypUW4Q/uP
+         XN5dw8SsRV9iZBIdi1DeVIpTlxvlGC3BbTWGorSnRjYxnMRis1KgWA/sfdTP2Ude5tLf
+         lveg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=2Km7hK8QIdn2ncv5EakjPSi0LKzKQ4/VXQjW2Pxz1Rg=;
+        b=fVamGczBpB0NmQ6Ykq63ARdgcEdZWNIQYU+WyigmixSaEfhQFex/9GHxvrePa+HeSA
+         x1kxEpp0lpz6ion6IxyH5CNmAfVuW4WcsrqXsYKG/eEI7okPTPkdCOIFJorvo0Y7tLpb
+         npNvUb28VjeigOqSKaLvuGqku6ptcLKRijET69PSCcekFfyKp4GD9cz0WyIUk3Tmn6Lk
+         o1oTizwgllop+8BcQB//7AA5cjhqlrjY6fj8FaXB9LnZuzA+PRjdJcRi8HZKxjVTm0fM
+         bUZ4WLMrMDYkoK7bjq9AXsgTnpBgfc61vELnTBGQT0tUSgHPuGJT0MQKAckTskRXVUXW
+         18tw==
+X-Gm-Message-State: APt69E0NYD3Jokd+zf64Cg/KeyJt2UMSd+0oXx8hec6WAIqA2Eva9Z3e
+        mk4upahXBGcUV3IXZH34lf082WYY
+X-Google-Smtp-Source: ADUXVKL4PSTB9udamdt6v9Udw3WWq9ngl/eLUUyoZ4Nh4jRRG3j65FjYojTNz7mLixmsNDwhLODD0Q==
+X-Received: by 2002:a19:8f1d:: with SMTP id r29-v6mr10645029lfd.88.1528718010510;
+        Mon, 11 Jun 2018 04:53:30 -0700 (PDT)
+Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
+        by smtp.gmail.com with ESMTPSA id h90-v6sm8332849ljf.65.2018.06.11.04.53.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Jun 2018 04:53:29 -0700 (PDT)
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>
+Subject: [PATCH v2 21/24] rave-sp: Support for variants on modalias drivers
+Date: Mon, 11 Jun 2018 13:52:37 +0200
+Message-Id: <20180611115240.32606-22-ricardo.ribalda@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
+References: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+Rave-sp behaves differently based on the device variant.
 
-On Friday, 8 June 2018 12:29:29 EEST Geert Uytterhoeven wrote:
-> On Thu, Apr 26, 2018 at 11:11 PM, Laurent Pinchart wrote:
-> > On Thursday, 26 April 2018 19:53:40 EEST Kieran Bingham wrote:
-> >> The r8a77965 has 4 VSP instances.
-> >> 
-> >> Based on a similar patch of the R8A7796 device tree
-> >> by Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>.
-> >> 
-> >> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> >> [Kieran: Rebased to top of tree, fixed sort orders]
-> >> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> >> ---
-> >> 
-> >>  arch/arm64/boot/dts/renesas/r8a77965.dtsi | 44 +++++++++++++++++++++++
-> >>  1 file changed, 44 insertions(+)
-> >> 
-> >> diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-> >> b/arch/arm64/boot/dts/renesas/r8a77965.dtsi index
-> >> 1f44ed7c1b1c..e92e6b03333a 100644
-> >> --- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-> >> +++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-> >> @@ -1025,6 +1047,17 @@
-> >>                       resets = <&cpg 611>;
-> >>               };
-> >> 
-> >> +             vspd0: vsp@fea20000 {
-> >> +                     compatible = "renesas,vsp2";
-> >> +                     reg = <0 0xfea20000 0 0x4000>;
-> > 
-> > RFP2 has a CLUT so the register range needs to be extended. I'd recommend
-> > covering the entire space (0x8000) even if no LUT or CLU module is
-> > present.
-> 
-> Even on V3H/V3M, which have some part of the CLUT, and could do
-> with 0x5000?
-> 
-> Note that this makes it overlap with fcpvd0 on all R-Car Gen3 SoCs,
-> as mentioned by Simon on IRC.
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+---
+ drivers/mfd/rave-sp.c | 30 +++++++++++++++++++++++-------
+ 1 file changed, 23 insertions(+), 7 deletions(-)
 
-My bad :-/ I'll submit fixes shortly.
-
-> >> +                     interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
-> >> +                     clocks = <&cpg CPG_MOD 623>;
-> >> +                     power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-> >> +                     resets = <&cpg 623>;
-> >> +
-> >> +                     renesas,fcp = <&fcpvd0>;
-> >> +             };
-> >> +
-> >>               fcpvd0: fcp@fea27000 {
-> >>                       compatible = "renesas,fcpv";
-> >>                       reg = <0 0xfea27000 0 0x200>;
-
+diff --git a/drivers/mfd/rave-sp.c b/drivers/mfd/rave-sp.c
+index c0ecfbc16dca..d33cb9d914e8 100644
+--- a/drivers/mfd/rave-sp.c
++++ b/drivers/mfd/rave-sp.c
+@@ -654,14 +654,30 @@ static const struct serdev_device_ops rave_sp_serdev_device_ops = {
+ 	.write_wakeup = serdev_device_write_wakeup,
+ };
+ 
++static struct serdev_device_id rave_sp_serdev_id[] = {
++	{ "rave-sp", (kernel_ulong_t) &rave_sp_legacy},
++	{ "rave-sp-niu", (kernel_ulong_t) &rave_sp_legacy},
++	{ "rave-sp-mezz", (kernel_ulong_t) &rave_sp_legacy},
++	{ "rave-sp-esb", (kernel_ulong_t) &rave_sp_legacy},
++	{ "rave-sp-rdu1", (kernel_ulong_t) &rave_sp_rdu1},
++	{ "rave-sp-rdu2", (kernel_ulong_t) &rave_sp_rdu2},
++	{}
++};
++MODULE_DEVICE_TABLE(serdev, rave_sp_serdev_id);
++
+ static int rave_sp_probe(struct serdev_device *serdev)
+ {
+ 	struct device *dev = &serdev->dev;
++	const struct serdev_device_id *id;
+ 	struct rave_sp *sp;
+ 	u32 baud;
+ 	int ret;
+ 
+-	if (of_property_read_u32(dev->of_node, "current-speed", &baud)) {
++	if (!dev->of_node) {
++		/* Baudrate at zii,rave-sp.txt */
++		baud = 1000000;
++	} else if (of_property_read_u32(dev->of_node,
++					"current-speed", &baud)) {
+ 		dev_err(dev,
+ 			"'current-speed' is not specified in device node\n");
+ 		return -EINVAL;
+@@ -675,6 +691,12 @@ static int rave_sp_probe(struct serdev_device *serdev)
+ 	dev_set_drvdata(dev, sp);
+ 
+ 	sp->variant = of_device_get_match_data(dev);
++	if (!sp->variant) {
++		id = serdev_match_id(rave_sp_serdev_id, serdev);
++		if (id)
++			sp->variant = (const struct rave_sp_variant *)
++							id->driver_data;
++	}
+ 	if (!sp->variant)
+ 		return -ENODEV;
+ 
+@@ -694,12 +716,6 @@ static int rave_sp_probe(struct serdev_device *serdev)
+ 
+ MODULE_DEVICE_TABLE(of, rave_sp_dt_ids);
+ 
+-static struct serdev_device_id rave_sp_serdev_id[] = {
+-	{ "rave-sp", },
+-	{}
+-};
+-MODULE_DEVICE_TABLE(serdev, rave_sp_serdev_id);
+-
+ static struct serdev_device_driver rave_sp_drv = {
+ 	.probe			= rave_sp_probe,
+ 	.driver = {
 -- 
-Regards,
-
-Laurent Pinchart
+2.17.1
