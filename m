@@ -1,155 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id xWWLMp4BGlv7YQAAmS7hNA
-	; Fri, 08 Jun 2018 04:10:10 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id yo2pN1hjHltvWgAAmS7hNA
+	; Mon, 11 Jun 2018 11:57:08 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 5B101607E4; Fri,  8 Jun 2018 04:10:10 +0000 (UTC)
+	id 9A0EE607A4; Mon, 11 Jun 2018 11:57:08 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J/OmBTnO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a2LKF4Ys"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id C8FF1606FA;
-	Fri,  8 Jun 2018 04:10:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C8FF1606FA
+	by smtp.codeaurora.org (Postfix) with ESMTP id 12A2F60351;
+	Mon, 11 Jun 2018 11:57:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 12A2F60351
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751063AbeFHEKG (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 00:10:06 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:41109 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750773AbeFHEJ7 (ORCPT
+        id S933319AbeFKL5G (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 07:57:06 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:43496 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932858AbeFKLxP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 00:09:59 -0400
-Received: by mail-ot0-f193.google.com with SMTP id d19-v6so8605144oti.8;
-        Thu, 07 Jun 2018 21:09:59 -0700 (PDT)
+        Mon, 11 Jun 2018 07:53:15 -0400
+Received: by mail-lf0-f67.google.com with SMTP id n15-v6so30069819lfn.10;
+        Mon, 11 Jun 2018 04:53:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=3YxVFb3V959wocR3NdoEsznAFl1SruV1TEp0gMLHw34=;
-        b=J/OmBTnOsI6EA82c9ZlA8BSibgI2emfj92vWvImiE1022bJBtzJ2+0HJaJ0aTrunZU
-         1LcO64PE9PTntTW+8ExaW+mpDUaLrVZqvwQd0/7h65Ao6Tz0DlUOHgmnT9E5u9I/7yMU
-         yC+o7s/kf0DoA1CYz3VwIGciVXrbDEsg3fIMGEUXBpx49SmavRnMemGQF8rCfJ/6+GQV
-         JzsmqOu7UI159/JW2qRsGFfPNAFZqhVQAEPOb951kXNiLUdI5Ejir1h8R3mQw/4hOhLl
-         xE1dd8IVXIetnhCSCOfro7OMqAsV6x4xyN6dBDW+Z/Aah09f/6xdXuJYUwArl9sYyS6s
-         MeUg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=G0yQFClwEcblIZB8wuKheaU/5e+e9n0CQyeJsCaU38w=;
+        b=a2LKF4YsGOyFzcE5jt1edNQeswxiTnFcaaPS3Y1Oz46svKsn9nk61cBAzX3OMbij59
+         JH2WPLKr8rHu4oX+OJUQYgVXFKTa7eYY1spOtJOsDHyfaYGFYqhocuTgT0yjOPfJQAnb
+         MrCb9bR799xmjVXDaJrbdATrAbenXx/2fpqk2OJ4LkiLftY62y+bR/+Jva+zeOwLq371
+         4T877TZLGdPC7epKMxKcPX3ahRkBus4La6szT00R6oA8NW5FM+K7eB/X22p1bLz+2bOz
+         0rB0MbC74hUZ0gl/JmXN3ykKaJpZ7//uMDCLU8/LBGT5dyeRdGA+JKSKr0FT8v444W56
+         JWzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=3YxVFb3V959wocR3NdoEsznAFl1SruV1TEp0gMLHw34=;
-        b=HeWrr/MHSO4SVjKC0HBT1kZzAa85Ae1VIIOh3AxUM0UkjOvJf78E1k8+3TA+4QCsnD
-         EMD32Tyi7pbjdmt0ig+Jmi2MethBEFMv2E/PP7GmzXnu1TufzJIH/rJjK1y9aW7JLYXv
-         qOVJyxd8RuEv1QNv6mKZUNlTvHv1NVZl7jAAMN8Q49EwiHyK4hlEiErk1P6DUJzVb9Kl
-         2KWuKui9YuFCZc/z99M1gFzMuebos1YMevijpSFKoUzz71qWainKizjm0PPrKHM/5nRw
-         /pETdX2UiBtv7QtSOdAnwtuwdPTe6Mvxr2yhGwtuieHiXMidfKErpn/xrlOPK7vuhpSV
-         B89Q==
-X-Gm-Message-State: APt69E13RD3Q5hmKNFfFPbIe13vhg3sAOp5wOXX+BNvpADaWyDQrerdp
-        fX2AkQQEW0c+Xef4yodb9vErNiwHe0tUJ4kPnIY=
-X-Google-Smtp-Source: ADUXVKIUFXRqaf75rKjEbGOtTAlujZtxVd/fB5/Su+S3EeLy1KwsHLOvN+VKR8vnTaFAoCyC5u6wb1sxdTHr8aKpyso=
-X-Received: by 2002:a9d:322f:: with SMTP id t47-v6mr2912567otc.7.1528430998903;
- Thu, 07 Jun 2018 21:09:58 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a4a:7019:0:0:0:0:0 with HTTP; Thu, 7 Jun 2018 21:09:58 -0700 (PDT)
-In-Reply-To: <CALCETrV1GG5rq_kwxkS-o3x8Ldr72ThdYgkJKQ9cx9Q63SxgTQ@mail.gmail.com>
-References: <20180607143807.3611-1-yu-cheng.yu@intel.com> <20180607143807.3611-7-yu-cheng.yu@intel.com>
- <CALCETrU6axo158CiSCRRkC4GC5hib9hypC98t7LLjA3gDaacsw@mail.gmail.com>
- <1528403417.5265.35.camel@2b52.sc.intel.com> <CALCETrXz3WWgZwUXJsDTWvmqKUArQFuMH1xJdSLVKFpTysNWxg@mail.gmail.com>
- <CAMe9rOr49V8rqRa_KVsw61PWd+crkQvPDgPKtvowazjmsfgWWQ@mail.gmail.com> <CALCETrV1GG5rq_kwxkS-o3x8Ldr72ThdYgkJKQ9cx9Q63SxgTQ@mail.gmail.com>
-From: "H.J. Lu" <hjl.tools@gmail.com>
-Date: Thu, 7 Jun 2018 21:09:58 -0700
-Message-ID: <CAMe9rOpeDrkwi-AG0vsiZy4NwkmavhB5Empv58FSHxtr3rpapw@mail.gmail.com>
-Subject: Re: [PATCH 06/10] x86/cet: Add arch_prctl functions for shadow stack
-To: Andy Lutomirski <luto@kernel.org>
-Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        mike.kravetz@oracle.com
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=G0yQFClwEcblIZB8wuKheaU/5e+e9n0CQyeJsCaU38w=;
+        b=DZWIfF2rA8sYzZw2HsYuqwiR7ojnFP+clEoUSksuzVmrzS2FR5FX7zipUPBBcE1e8K
+         qmVRJxvrVsvhl1LB2rdWp0tDZu1C/dfUzWXuOwNXtRs8LJGsIUSC/gc1SOSjpj5F6dwM
+         DEAaCfpdNdpLm8XWWgN1DI/UL7GK2LxCsWcOPx9uxkXyt188fJIFi5Xw4Xj3cFPfe7aN
+         RPN+Jp1TiX7Fk9oowSXXVDzqzCHTG6YnPe8bYN72/+4OeS3xIWTOD6tVUb/qfvEHcvqO
+         OO5hkGnsnJAO/tGsGEV62hBGF8NvWY+DaPB1WESE4ASoK1Td/slq368p18DF0ByvYmbL
+         ugMQ==
+X-Gm-Message-State: APt69E3r2dWduLXfeuryMdF1apNohi/R0Slt4EJr+48Fz47hYoQb5QNc
+        v7MzK5dcdzf+yy1wvz5BCZ1dyl2K
+X-Google-Smtp-Source: ADUXVKKwzQeN9u7n2c0xgVEzaPi2GhOgqKInp15Vu+gXgw5cUClEtGnwbalTczcMze19MSM4Y1AhSQ==
+X-Received: by 2002:a2e:889a:: with SMTP id k26-v6mr11239310lji.54.1528717993334;
+        Mon, 11 Jun 2018 04:53:13 -0700 (PDT)
+Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
+        by smtp.gmail.com with ESMTPSA id h90-v6sm8332849ljf.65.2018.06.11.04.53.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Jun 2018 04:53:12 -0700 (PDT)
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
+        linux-bluetooth@vger.kernel.org
+Subject: [PATCH v2 11/24] Bluetooth: hci_bcm: MODULE_DEVICE_TABLE(serdev)
+Date: Mon, 11 Jun 2018 13:52:27 +0200
+Message-Id: <20180611115240.32606-12-ricardo.ribalda@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
+References: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 7, 2018 at 4:01 PM, Andy Lutomirski <luto@kernel.org> wrote:
-> On Thu, Jun 7, 2018 at 3:02 PM H.J. Lu <hjl.tools@gmail.com> wrote:
->>
->> On Thu, Jun 7, 2018 at 2:01 PM, Andy Lutomirski <luto@kernel.org> wrote:
->> > On Thu, Jun 7, 2018 at 1:33 PM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
->> >>
->> >> On Thu, 2018-06-07 at 11:48 -0700, Andy Lutomirski wrote:
->> >> > On Thu, Jun 7, 2018 at 7:41 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
->> >> > >
->> >> > > The following operations are provided.
->> >> > >
->> >> > > ARCH_CET_STATUS:
->> >> > >         return the current CET status
->> >> > >
->> >> > > ARCH_CET_DISABLE:
->> >> > >         disable CET features
->> >> > >
->> >> > > ARCH_CET_LOCK:
->> >> > >         lock out CET features
->> >> > >
->> >> > > ARCH_CET_EXEC:
->> >> > >         set CET features for exec()
->> >> > >
->> >> > > ARCH_CET_ALLOC_SHSTK:
->> >> > >         allocate a new shadow stack
->> >> > >
->> >> > > ARCH_CET_PUSH_SHSTK:
->> >> > >         put a return address on shadow stack
->> >> > >
->> >> > > ARCH_CET_ALLOC_SHSTK and ARCH_CET_PUSH_SHSTK are intended only for
->> >> > > the implementation of GLIBC ucontext related APIs.
->> >> >
->> >> > Please document exactly what these all do and why.  I don't understand
->> >> > what purpose ARCH_CET_LOCK and ARCH_CET_EXEC serve.  CET is opt in for
->> >> > each ELF program, so I think there should be no need for a magic
->> >> > override.
->> >>
->> >> CET is initially enabled if the loader has CET capability.  Then the
->> >> loader decides if the application can run with CET.  If the application
->> >> cannot run with CET (e.g. a dependent library does not have CET), then
->> >> the loader turns off CET before passing to the application.  When the
->> >> loader is done, it locks out CET and the feature cannot be turned off
->> >> anymore until the next exec() call.
->> >
->> > Why is the lockout necessary?  If user code enables CET and tries to
->> > run code that doesn't support CET, it will crash.  I don't see why we
->> > need special code in the kernel to prevent a user program from calling
->> > arch_prctl() and crashing itself.  There are already plenty of ways to
->> > do that :)
->>
->> On CET enabled machine, not all programs nor shared libraries are
->> CET enabled.  But since ld.so is CET enabled, all programs start
->> as CET enabled.  ld.so will disable CET if a program or any of its shared
->> libraries aren't CET enabled.  ld.so will lock up CET once it is done CET
->> checking so that CET can't no longer be disabled afterwards.
->
-> Yeah, I got that.  No one has explained *why*.
+Export serdev table to the module header, allowing module autoload via
+udev/modprobe.
 
-It is to prevent malicious code from disabling CET.
+Cc: Marcel Holtmann <marcel@holtmann.org>
+Cc: Johan Hedberg <johan.hedberg@gmail.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>
+Cc: linux-bluetooth@vger.kernel.org
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+---
+ drivers/bluetooth/hci_bcm.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> (Also, shouldn't the vDSO itself be marked as supporting CET?)
-
-No. vDSO is loaded by kernel.  vDSO in CET kernel is CET
-compatible.
-
+diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
+index f4d7846c06b8..ff0fd3502a90 100644
+--- a/drivers/bluetooth/hci_bcm.c
++++ b/drivers/bluetooth/hci_bcm.c
+@@ -1327,8 +1327,10 @@ MODULE_DEVICE_TABLE(of, bcm_bluetooth_of_match);
+ 
+ static const struct serdev_device_id bcm_serdev_id[] = {
+ 	{ "bcm43438-bt", },
++	{ "hci_uart_bcm", },
+ 	{}
+ };
++MODULE_DEVICE_TABLE(serdev, bcm_serdev_id);
+ 
+ static struct serdev_device_driver bcm_serdev_driver = {
+ 	.probe = bcm_serdev_probe,
 -- 
-H.J.
+2.17.1
