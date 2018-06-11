@@ -2,135 +2,112 @@ Return-Path: <SRS0=KDb5=I5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6FF2AC004E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 20:54:03 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0024BC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 21:03:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25E03208AF
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 20:54:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0E0820869
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 21:03:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="tb3a4l9+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25E03208AF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pYxJloE9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0E0820869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934770AbeFKUyB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 16:54:01 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:41616 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934496AbeFKUw2 (ORCPT
+        id S934206AbeFKVDE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 17:03:04 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:34091 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933394AbeFKVDC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 16:52:28 -0400
-Received: from trochilidae.lan (unknown [37.17.239.3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 5125E5C0E11;
-        Mon, 11 Jun 2018 22:52:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1528750346;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=oerqIEE+xggnIjrHtE6Ey/NtBGMZE3DZc1W2OjC7VRY=;
-        b=tb3a4l9+8xTvMjm+TScKlwhszX/tFj4qTsNNYi0sG/ig/XybPlSNTzEQz9EQZ1uwy8nr0J
-        dyJ/QCHmazQFrLNGGDyNZ+rJvUk7NmWFhO+E5cVKtL1qDrhufkhppd7yyn3noh/esIsSar
-        ACZ32FHIFfAIQN7JEpuE0KvOVzX+FxQ=
-From:   Stefan Agner <stefan@agner.ch>
-To:     boris.brezillon@bootlin.com, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com
-Cc:     dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
-        marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
-        benjamin.lindqvist@endian.se, jonathanh@nvidia.com,
-        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com,
-        gaireg@gaireg.de, linux-mtd@lists.infradead.org,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v4 2/6] mtd: rawnand: add an option to specify NAND chip as a boot device
-Date:   Mon, 11 Jun 2018 22:52:20 +0200
-Message-Id: <20180611205224.23340-3-stefan@agner.ch>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180611205224.23340-1-stefan@agner.ch>
-References: <20180611205224.23340-1-stefan@agner.ch>
-X-Spamd-Result: default: False [-2.10 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[24];
-         BAYES_HAM(-3.00)[100.00%];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         MID_CONTAINS_FROM(1.00)[];
-         ASN(0.00)[asn:13030, ipnet:37.17.238.0/23, country:CH];
-         RCVD_TLS_ALL(0.00)[];
-         ARC_NA(0.00)[]
+        Mon, 11 Jun 2018 17:03:02 -0400
+Received: by mail-vk0-f68.google.com with SMTP id q135-v6so13140721vkh.1;
+        Mon, 11 Jun 2018 14:03:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TBsKDxQNgcErenXGavhLA/H0ypc17pbOJM8i3gQ768U=;
+        b=pYxJloE9SFGCB8zTW+RkJTjiBUoHoonvtRmc0L/Iwr6HdLD37lKVUvhH56j/DVg1c6
+         lLfAqupdSxFVDM6qZ6RN7JLjShDF8DIQT07w952uJ0E3vRbUuF/ElMeCyr2nmZ9pBjDm
+         LQcVraZfSmh3AC1vhBmdo0W4xPzICgbp4nj7DJPiQR0fEsQ5AIaMiuHgVs6pchhTHa3K
+         cesqNbB7EH3vEiS7BpoMeKs01moUPKrCvxOJ3xklFFH1Yff5naEi+N31l/PyfM5OKNkJ
+         H2PQY6L5B6VrCTQVOXeB/hq1ecxI7Eo/yOi6XfmIFFZuqh5ON+HumSJbh0u3JF/CXN3C
+         zQLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TBsKDxQNgcErenXGavhLA/H0ypc17pbOJM8i3gQ768U=;
+        b=Lm6Oo7oSMEtONU3pPslndM7XGuwWyxSz23B1os4v44cG3FQ9BBLQwX8JIgpIAXU2fI
+         HWRSLa7MTebvBjoyrECi3AQE9zUPwE9AuKAi91FA6/VVAQzJCJyfRUuNlnkGPyfCWVs1
+         53Lw/zF0uH/4hXP2TqXs7T66UfVEfFRyKieXEdy83G1fuIyf6Yo8Z4r1a8QmHMfq88M2
+         3LeoA6XQQyweiTOnYEW55/orB7Cx5A7utSSK5iNADyH7MI1EQlBRPkHtAHKwFYr2b90/
+         zyH6YP869dVXRuCUYj9ZOy3UM2LX0etitMoBgYNT/7ZhJ5cH5N0MfZs/VhPBrn3KcA96
+         YEZA==
+X-Gm-Message-State: APt69E27V2YSR155mgv1C/hO5eiO1N4vg2QG9tkuJiKFT/frwMcwOy5G
+        8otZspgOeEuhZLI9zg+qHz9Ssrd9/xhaLgn314U=
+X-Google-Smtp-Source: ADUXVKKMOz2k3rxZx5wOyerOMT+iPoN82t2knj1nr9zgOPKznn6UPrjY5RlExtm72E7naazxQDW5g0cfQjtXnMTA6g4=
+X-Received: by 2002:a1f:d1c5:: with SMTP id i188-v6mr479260vkg.131.1528750981660;
+ Mon, 11 Jun 2018 14:03:01 -0700 (PDT)
+MIME-Version: 1.0
+References: <1528310824-12706-1-git-send-email-clabbe@baylibre.com>
+In-Reply-To: <1528310824-12706-1-git-send-email-clabbe@baylibre.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 12 Jun 2018 00:02:50 +0300
+Message-ID: <CAHp75Ve3nDsoEh0dL=xF3oei_GM9tPn_72=je+FESO=hJFm4uA@mail.gmail.com>
+Subject: Re: [PATCH] serial: 8250_dw: 8250_dw need to depend on COMMON_CLK
+To:     Corentin Labbe <clabbe@baylibre.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow to define a NAND chip as a boot device. This can be helpful
-for the selection of the ECC algorithm and strength in case the boot
-ROM supports only a subset of controller provided options.
+On Wed, Jun 6, 2018 at 10:27 PM Corentin Labbe <clabbe@baylibre.com> wrote:
+>
+> This patch fix the following build error on M68K:
+> drivers/tty/serial/8250/8250_dw.o: In function `dw8250_set_termios':
+> 8250_dw.c:(.text+0x50c): undefined reference to `clk_round_rate'
+> 8250_dw.c:(.text+0x594): undefined reference to `clk_set_rate'
+>
+> So 8250_dw need to depend on COMMON_CLK.
+>
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
----
- Documentation/devicetree/bindings/mtd/nand.txt | 4 ++++
- drivers/mtd/nand/raw/nand_base.c               | 3 +++
- include/linux/mtd/rawnand.h                    | 6 ++++++
- 3 files changed, 13 insertions(+)
+Makes sense.
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-diff --git a/Documentation/devicetree/bindings/mtd/nand.txt b/Documentation/devicetree/bindings/mtd/nand.txt
-index eaef8c657aa5..e949c778e983 100644
---- a/Documentation/devicetree/bindings/mtd/nand.txt
-+++ b/Documentation/devicetree/bindings/mtd/nand.txt
-@@ -43,6 +43,10 @@ Optional NAND chip properties:
- 		     This is particularly useful when only the in-band area is
- 		     used by the upper layers, and you want to make your NAND
- 		     as reliable as possible.
-+- nand-is-boot-medium: Whether the NAND chip is a boot medium. Drivers might use
-+		       this information to select ECC algorithms supported by
-+		       the boot ROM or similar restrictions.
-+
- - nand-rb: shall contain the native Ready/Busy ids.
- 
- The ECC strength and ECC step size properties define the correction capability
-diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-index 9eb5678dd6d0..c8fb7c9855e2 100644
---- a/drivers/mtd/nand/raw/nand_base.c
-+++ b/drivers/mtd/nand/raw/nand_base.c
-@@ -5826,6 +5826,9 @@ static int nand_dt_init(struct nand_chip *chip)
- 	if (of_get_nand_bus_width(dn) == 16)
- 		chip->options |= NAND_BUSWIDTH_16;
- 
-+	if (of_property_read_bool(dn, "nand-is-boot-medium"))
-+		chip->options |= NAND_IS_BOOT_MEDIUM;
-+
- 	if (of_get_nand_on_flash_bbt(dn))
- 		chip->bbt_options |= NAND_BBT_USE_FLASH;
- 
-diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
-index 6a82da8c44ce..8e54fcf2fa94 100644
---- a/include/linux/mtd/rawnand.h
-+++ b/include/linux/mtd/rawnand.h
-@@ -212,6 +212,12 @@ enum nand_ecc_algo {
-  */
- #define NAND_WAIT_TCCS		0x00200000
- 
-+/*
-+ * Whether the NAND chip is a boot medium. Drivers might use this information
-+ * to select ECC algorithms supported by the boot ROM or similar restrictions.
-+ */
-+#define NAND_IS_BOOT_MEDIUM	0x00400000
-+
- /* Options set by nand scan */
- /* Nand scan has allocated controller struct */
- #define NAND_CONTROLLER_ALLOC	0x80000000
+> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+> ---
+>  drivers/tty/serial/8250/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/tty/serial/8250/Kconfig b/drivers/tty/serial/8250/Kconfig
+> index f005eaf8bc57..37d4ec5f3cc9 100644
+> --- a/drivers/tty/serial/8250/Kconfig
+> +++ b/drivers/tty/serial/8250/Kconfig
+> @@ -351,7 +351,7 @@ config SERIAL_8250_FSL
+>
+>  config SERIAL_8250_DW
+>         tristate "Support for Synopsys DesignWare 8250 quirks"
+> -       depends on SERIAL_8250
+> +       depends on SERIAL_8250 && COMMON_CLK
+>         help
+>           Selecting this option will enable handling of the extra features
+>           present in the Synopsys DesignWare APB UART.
+> --
+> 2.16.4
+>
+
+
 -- 
-2.17.1
-
+With Best Regards,
+Andy Shevchenko
