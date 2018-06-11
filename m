@@ -1,118 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id oV1kIEmwHVu+XAAAmS7hNA
-	; Mon, 11 Jun 2018 00:05:55 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id rryHHZx5HluDOAAAmS7hNA
+	; Mon, 11 Jun 2018 13:31:08 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 3605960791; Mon, 11 Jun 2018 00:05:55 +0000 (UTC)
+	id 6022F60541; Mon, 11 Jun 2018 13:31:08 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="biqU4aXu"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 6CC05604D4;
-	Mon, 11 Jun 2018 00:05:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6CC05604D4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id B124E60541;
+	Mon, 11 Jun 2018 13:31:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B124E60541
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753779AbeFKAFv (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Sun, 10 Jun 2018 20:05:51 -0400
-Received: from gate.crashing.org ([63.228.1.57]:39366 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753543AbeFKAFs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 20:05:48 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w5B05NhN007274;
-        Sun, 10 Jun 2018 19:05:25 -0500
-Message-ID: <22a505e0f094352b9cb883935fae9f494fb2cb0b.camel@kernel.crashing.org>
-Subject: Re: [PATCH v2 08/12] macintosh/via-pmu68k: Don't load driver on
- unsupported hardware
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To: Michael Schmitz <schmitzmic@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Finn Thain <fthain@telegraphics.com.au>
-Cc: Andreas Schwab <schwab@linux-m68k.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-m68k <linux-m68k@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date: Mon, 11 Jun 2018 10:05:22 +1000
-In-Reply-To: <3187b544-e265-dfd9-e0e3-e2a742c190d5@gmail.com>
-References: <cover.1528423341.git.fthain@telegraphics.com.au>
-         <d9d626ca4e7ac9c7e81b24a34f5fbcae9d1d5046.1528423341.git.fthain@telegraphics.com.au>
-         <9f015684-4d91-70e4-d2a4-89fe167ff8ab@gmail.com>
-         <m2h8mc4ejw.fsf@linux-m68k.org>
-         <e1006b0a-a429-4744-7525-203cb91f1d5f@gmail.com>
-         <alpine.LNX.2.21.1806092140410.26@nippy.intranet>
-         <CAMuHMdUHnFKzhe3x3=bG63HwnM7psu7AA=nba8q+nTDnxBAryw@mail.gmail.com>
-         <3187b544-e265-dfd9-e0e3-e2a742c190d5@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1754235AbeFKNbA (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 09:31:00 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:36953 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754014AbeFKNa5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 09:30:57 -0400
+Received: by mail-lf0-f67.google.com with SMTP id g21-v6so28582053lfb.4
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 06:30:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QEII/3fKlM7VRZMuVo9waV9UCHHYm7cpFanxZdTzUfI=;
+        b=biqU4aXunnW+Ivubo6AAStih02saSFcm/A0BAVAf0fP66QsB9ZTJqMVG0NLi+ZIQVe
+         dv86FxQ+x6T9o2MyTSXZxglWMHKfoXQBSugY5v5baYKJLRhIt67PHWiNluhy9tYwPE7B
+         yUppEjuoho4rn5HFtaBC7eMUSjwYyuHWykTYA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QEII/3fKlM7VRZMuVo9waV9UCHHYm7cpFanxZdTzUfI=;
+        b=Ie9Vvx0qc0i2L6vP6Mc7CE8BxsCDHRVkzQ+6DQKHm9d23sB20N7U89NQ+/sgvGaPGT
+         MTSDQqiQArkBpTiUUhKt5G/FcXKYsIRgOlmMcszCdg1fqiAQj4AyPhpDKj5teKBFEiO3
+         FcLbKd6gj3tQh2KABe0F8isvN9fuSB79mfOUygarpny0uANCflHiR142csUOEGTNPbY4
+         LHLNOk9Cm/oLK4gOtkRy4N8Q+9PKLYHvEK2MiCkKeVSs7+pnla2E7gpMENZC78bqJosz
+         HrmGI4hRR05e32h6pkiAOvC7MpLmuqxz7YMxGuGYKjMLAOEQ0Xw7RFov/0UtBpWPWF51
+         hHWQ==
+X-Gm-Message-State: APt69E1VgV8gxjdwdNHaAOAya65yQjlfN3ZBJ3rQYUTim+fQxTifi5o3
+        LNg7q5Cv6gUqTKLggRmnXQlt5Q==
+X-Google-Smtp-Source: ADUXVKK7H1EI56c31XznnWBdzNJcFlb8kJAdzXLyBQbTdxAY3CgeYcV8/pduVfJZLrDYNS/pN2Z1nQ==
+X-Received: by 2002:a2e:6f02:: with SMTP id k2-v6mr11739267ljc.72.1528723856439;
+        Mon, 11 Jun 2018 06:30:56 -0700 (PDT)
+Received: from localhost.localdomain (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
+        by smtp.gmail.com with ESMTPSA id u24-v6sm2617712ljj.96.2018.06.11.06.30.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Jun 2018 06:30:55 -0700 (PDT)
+From: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+To: grygorii.strashko@ti.com, davem@davemloft.net
+Cc: corbet@lwn.net, akpm@linux-foundation.org, netdev@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, vinicius.gomes@intel.com,
+        henrik@austad.us, jesus.sanchez-palencia@intel.com,
+        ilias.apalodimas@linaro.org, p-varis@ti.com, spatton@ti.com,
+        francois.ozog@linaro.org, yogeshs@ti.com, nsekhar@ti.com,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Subject: [PATCH net-next 0/6] net: ethernet: ti: cpsw: add MQPRIO and CBS Qdisc offload
+Date: Mon, 11 Jun 2018 16:30:41 +0300
+Message-Id: <20180611133047.4818-1-ivan.khoronzhuk@linaro.org>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-06-10 at 21:12 +1200, Michael Schmitz wrote:
-> Hi Geert,
+This series adds MQPRIO and CBS Qdisc offload for TI cpsw driver.
+It potentially can be used in audio video bridging (AVB) and time
+sensitive networking (TSN).
 
-Top posting, sorry ...
+Patchset was tested on AM572x EVM and BBB boards. Last patch from this
+series adds detailed description of configuration with examples. For
+consistency reasons, in role of talker and listener, tools from
+patchset "TSN: Add qdisc based config interface for CBS" were used and
+can be seen here: https://www.spinics.net/lists/netdev/msg460869.html
 
-We are painting that bike shed with way too many coats..
+Based on net-next/master
 
-We can keep the existing definitions, stick a comment on them stating
-"obsolete" and use new number if/when needed.
+Ivan Khoronzhuk (6):
+  net: ethernet: ti: cpsw: use cpdma channels in backward order for txq
+  net: ethernet: ti: cpdma: fit rated channels in backward order
+  net: ethernet: ti: cpsw: add MQPRIO Qdisc offload
+  net: ethernet: ti: cpsw: add CBS Qdisc offload
+  net: ethernet: ti: cpsw: restore shaper configuration while down/up
+  Documentation: networking: cpsw: add MQPRIO & CBS offload examples
 
-Ben.
+ Documentation/networking/cpsw.txt       | 540 ++++++++++++++++++++++++
+ drivers/net/ethernet/ti/cpsw.c          | 364 +++++++++++++++-
+ drivers/net/ethernet/ti/davinci_cpdma.c |  31 +-
+ 3 files changed, 913 insertions(+), 22 deletions(-)
+ create mode 100644 Documentation/networking/cpsw.txt
 
-
-> Am 10.06.2018 um 20:29 schrieb Geert Uytterhoeven:
-> > Hi Finn,
-> > 
-> > On Sat, Jun 9, 2018 at 2:20 PM Finn Thain <fthain@telegraphics.com.au> wrote:
-> > > > > > Is this enum used by any user space code? If so, perhaps rather
-> > > > > > leave the PMU_68K_V1 in there to avoid upsetting that?
-> > > > > 
-> > > > > It also changes the value of PMU_68K_V2, which is an ABI break.
-> > > > 
-> > > > Yes, that's what I worry about - but do we know of any users of that
-> > > > particular interface?
-> > > 
-> > > There is no ABI issue AFAIK. The value of pmu_kind is visible to userland
-> > > only on powerpc. /dev/pmu and /proc/pmu/* do not exist on m68k. This patch
-> > > series will make these UAPIs available on m68k, and for that reason I've
-> > > chosen the value PMU_UNKNOWN for pmu_kind.
-> > 
-> > While /dev/pmu and /proc/pmu/* may not exist on m68k, definitions in
-> > include/uapi/linux/pmu.h are part of the ABI, and cannot be changed or removed,
-> > unless we are 100% sure there are no users.
-> > 
-> > If I would write a program interfacing with /dev/pmu and /proc/pmu/*, and
-> > needing to check the PMU type, it would have a switch() statement with
-> > all existing values defined in <linux/pmu.h>. So that would become broken
-> > by your change.
-> > 
-> > Hence the enum is append-only.
-> 
-> The PMU type from pmu.h was never exposed to user space on m68k via 
-> /proc/pmu/*, and /dev/pmu is used for ioctls to the PMU driver on 
-> powerpc only (the 68k PMU driver doesn't have ioctl support). No way 
-> that I can see for user space to make use of the PMU type definition 
-> from pmu.h, so I suppose we can be sure there are no users.
-> 
-> The m68k PMU types cannot be said to be exposed on powerpc either (which 
-> has ioctl support to interrogate the PMU type), as these only return 
-> values up to PMU_KEYLARGO_BASED.
-> 
-> Applications like pbbuttonsd or pmud don't use the kernel PMU type at 
-> all, but go straight to the PMU via the ADB bus to interrogate the 
-> hardware type, so won't be affected either.
-> 
-> Is there any other way besides procfs and ioctl for user space to 
-> interrogate the PMU type that I'm missing here?
-> 
-> (I understand that breaking the ABI should not be done as a rule, but 
-> this may be a case where we can successfully argue the definitions were 
-> never in use, so the rules may be bent a little).
+-- 
+2.17.1
