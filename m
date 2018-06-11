@@ -1,153 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id NKrgAFrnGltKYwAAmS7hNA
-	; Fri, 08 Jun 2018 20:30:18 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id /SI1IRRCHluTdwAAmS7hNA
+	; Mon, 11 Jun 2018 09:34:31 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D9128607E7; Fri,  8 Jun 2018 20:30:17 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PY6xzadl"
+	id 6E594607A4; Mon, 11 Jun 2018 09:34:31 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 48263601D2;
-	Fri,  8 Jun 2018 20:30:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 48263601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id E273C60351;
+	Mon, 11 Jun 2018 09:34:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E273C60351
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932092AbeFHUaP (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 16:30:15 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:38693 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752777AbeFHUaN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 16:30:13 -0400
-Received: by mail-pf0-f194.google.com with SMTP id b74-v6so7180423pfl.5
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 13:30:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=wwQOtuXl4E4GgWhitlx0Pj0xixasp8LEMmt5iX5JPzI=;
-        b=PY6xzadlpnHDh22W29cdykFU1anQ0Gj6ujKeqe/MeWV/+Kin+tXJUerKTGynNYtY/n
-         3fWsFn28xHNfeAjnQhlCeZipPWKKRofP5coLUpr/VAj1+ji4uajr3VWHAfIgC/TVy/iR
-         1qKfaYELbOaHoMEQ6tNOE4nQ3EDWdHqTqu3WI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wwQOtuXl4E4GgWhitlx0Pj0xixasp8LEMmt5iX5JPzI=;
-        b=RYe+JuvU6Q1nTRjbw22IM2woe/fyYJ8wQjj1HBMukxDYVITDmR3oEEneI/oFB+8kAd
-         RkLBdQmJQCeKNueqEtaCm/5OI8vzzgYwDVUfWp0YclygqQvPZCGSyXjDz4854H0IJOSB
-         h48iRJRklR6u9pEPhRS6rH5wtSleCRkB1tgM7SiXJJAfI4n9XuZtoAOWxFJZhpdrKNNC
-         901ToHq5l+RHYoCO0SIqF1x85vEIN04AT0hTAIgpc5DeyRpw49FND8F6r0j1UJuXoiwv
-         o8b4XQ1+mfieKSOcC5KMuVgppC3L085pWco7KwJZBUmnkh4NX3wDGxz+jSpDPXiQiVku
-         L60g==
-X-Gm-Message-State: APt69E1BUftmdQcxzFID7lS4zo2wH2H1latTXdPe7ZukMLAAyekF4QKN
-        nRv6YsGE2Qgx7HgnSgDVrkf+7w==
-X-Google-Smtp-Source: ADUXVKIydJPj1NjAm/uMX59mtrIF5y77id0xoMBYvE0A4vKoz0ISUJ0yKz5lnFCvmrTz3HvlPt4t2g==
-X-Received: by 2002:a63:7d4c:: with SMTP id m12-v6mr6412945pgn.201.1528489812596;
-        Fri, 08 Jun 2018 13:30:12 -0700 (PDT)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id w3-v6sm7409811pfi.109.2018.06.08.13.30.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Jun 2018 13:30:11 -0700 (PDT)
-Date: Fri, 8 Jun 2018 14:30:09 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, robh@kernel.org,
-        frowand.list@gmail.com, mark.rutland@arm.com, sudeep.holla@arm.com,
-        arm@kernel.org, linux-kernel@vger.kernel.org, matt.sealey@arm.com,
-        john.horley@arm.com, charles.garcia-tobin@arm.com,
-        coresight@lists.linaro.org, devicetree@vger.kernel.org,
-        mike.leach@linaro.org
-Subject: Re: [PATCH 07/20] coresight: dts: Document usage of graph bindings
-Message-ID: <20180608203009.GF30587@xps15>
-References: <1528235011-30691-1-git-send-email-suzuki.poulose@arm.com>
- <1528235011-30691-8-git-send-email-suzuki.poulose@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1528235011-30691-8-git-send-email-suzuki.poulose@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S932746AbeFKJe2 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 05:34:28 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35424 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932109AbeFKJe0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 05:34:26 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 051FB7C6C2;
+        Mon, 11 Jun 2018 09:34:26 +0000 (UTC)
+Received: from krava.brq.redhat.com (unknown [10.43.17.242])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 949E52144B29;
+        Mon, 11 Jun 2018 09:34:23 +0000 (UTC)
+From: Jiri Olsa <jolsa@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Thomas-Mich Richter <tmricht@linux.ibm.com>,
+        Kim Phillips <kim.phillips@arm.com>
+Cc: lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        linux-perf-users@vger.kernel.org, brueckner@linux.vnet.ibm.com,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
+Subject: [PATCH 1/2] perf tests: Add event parsing error handling to parse events test
+Date: Mon, 11 Jun 2018 11:34:21 +0200
+Message-Id: <20180611093422.1005-1-jolsa@kernel.org>
+In-Reply-To: <0d25bc25-ed0b-81bb-c516-12fd25442427@linux.ibm.com>
+References: <0d25bc25-ed0b-81bb-c516-12fd25442427@linux.ibm.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 11 Jun 2018 09:34:26 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 11 Jun 2018 09:34:26 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@kernel.org' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 10:43:18PM +0100, Suzuki K Poulose wrote:
-> Before we update the bindings, document the current graph bindings
-> and usage of additional properties.
-> 
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Add missing error handling for parse_events calls in test_event
+function that led to following segfault on s390:
 
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+  running test 52 'intel_pt//u'
+  perf: Segmentation fault
+  ...
+  /lib64/libc.so.6(vasprintf+0xe6) [0x3fffca3f106]
+  /lib64/libc.so.6(asprintf+0x46) [0x3fffca1aa96]
+  ./perf(parse_events_add_pmu+0xb8) [0x80132088]
+  ./perf(parse_events_parse+0xc62) [0x8019529a]
+  ./perf(parse_events+0x98) [0x801341c0]
+  ./perf(test__parse_events+0x48) [0x800cd140]
+  ./perf(cmd_test+0x26a) [0x800bd44a]
+  test child interrupted
 
-> ---
->  .../devicetree/bindings/arm/coresight.txt          | 31 +++++++++++++++++++---
->  1 file changed, 27 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/coresight.txt b/Documentation/devicetree/bindings/arm/coresight.txt
-> index 9aa30a1..ed6b555 100644
-> --- a/Documentation/devicetree/bindings/arm/coresight.txt
-> +++ b/Documentation/devicetree/bindings/arm/coresight.txt
-> @@ -52,9 +52,7 @@ its hardware characteristcs.
->  	  clocks the core of that coresight component. The latter clock
->  	  is optional.
->  
-> -	* port or ports: The representation of the component's port
-> -	  layout using the generic DT graph presentation found in
-> -	  "bindings/graph.txt".
-> +	* port or ports: see "Graph bindings for Coresight" below.
->  
->  * Additional required properties for System Trace Macrocells (STM):
->  	* reg: along with the physical base address and length of the register
-> @@ -71,7 +69,7 @@ its hardware characteristcs.
->  	  AMBA markee):
->  		- "arm,coresight-replicator"
->  
-> -	* port or ports: same as above.
-> +	* port or ports: see "Graph bindings for Coresight" below.
->  
->  * Optional properties for ETM/PTMs:
->  
-> @@ -90,6 +88,31 @@ its hardware characteristcs.
->  	* arm,scatter-gather: boolean. Indicates that the TMC-ETR can safely
->  	  use the SG mode on this system.
->  
-> +Graph bindings for Coresight
-> +-------------------------------
-> +
-> +Coresight components are interconnected to create a data path for the flow of
-> +trace data generated from the "sources" to their collection points "sink".
-> +Each coresight component must describe the "input" and "output" connections.
-> +The connections must be described via generic DT graph bindings as described
-> +by the "bindings/graph.txt", where each "port" along with an "endpoint"
-> +component represents a hardware port and the connection.
-> +
-> +Since it is possible to have multiple connections for any coresight component
-> +with a specific direction of data flow, each connection must define the
-> +following properties to uniquely identify the connection details.
-> +
-> + * Direction of the data flow w.r.t the component :
-> +   Each input port must have the following property defined at the "endpoint"
-> +   for the port.
-> +	"slave-mode"
-> +
-> + * Hardware Port number at the component:
-> +     -  The hardware port number is assumed to be the address of the "port"
-> +         component.
-> +
-> +
-> +
->  Example:
->  
->  1. Sinks
-> -- 
-> 2.7.4
-> 
+Adding the struct parse_events_error argument to parse_events
+call. Also adding parse_events_print_error to get more details
+on the parsing failures, like:
+
+  # perf test 6 -v
+  running test 52 'intel_pt//u'failed to parse event 'intel_pt//u', err 1, str 'Cannot find PMU `intel_pt'. Missing kernel support?'
+  event syntax error: 'intel_pt//u'
+                       \___ Cannot find PMU `intel_pt'. Missing kernel support?
+
+Link: http://lkml.kernel.org/n/tip-lmrdeivfr0m34t67c6i98p1f@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+---
+ tools/perf/tests/parse-events.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-events.c
+index 7d4077068454..3b0bfdf5a594 100644
+--- a/tools/perf/tests/parse-events.c
++++ b/tools/perf/tests/parse-events.c
+@@ -1686,6 +1686,7 @@ static struct terms_test test__terms[] = {
+ 
+ static int test_event(struct evlist_test *e)
+ {
++	struct parse_events_error err = { 0 };
+ 	struct perf_evlist *evlist;
+ 	int ret;
+ 
+@@ -1693,10 +1694,11 @@ static int test_event(struct evlist_test *e)
+ 	if (evlist == NULL)
+ 		return -ENOMEM;
+ 
+-	ret = parse_events(evlist, e->name, NULL);
++	ret = parse_events(evlist, e->name, &err);
+ 	if (ret) {
+-		pr_debug("failed to parse event '%s', err %d\n",
+-			 e->name, ret);
++		pr_debug("failed to parse event '%s', err %d, str '%s'\n",
++			 e->name, ret, err.str);
++		parse_events_print_error(&err, e->name);
+ 	} else {
+ 		ret = e->check(evlist);
+ 	}
+-- 
+2.13.6
