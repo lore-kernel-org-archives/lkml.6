@@ -1,130 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id uXEGCOdlGltUIwAAmS7hNA
-	; Fri, 08 Jun 2018 11:29:07 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id jU7sDuN5HlsFOwAAmS7hNA
+	; Mon, 11 Jun 2018 13:33:58 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id E6397607E4; Fri,  8 Jun 2018 11:29:06 +0000 (UTC)
+	id C420F607A4; Mon, 11 Jun 2018 13:33:58 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="F/gESEU8"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="TU5KGD5h"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 92C64601D2;
-	Fri,  8 Jun 2018 11:29:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 92C64601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 0E67A60791;
+	Mon, 11 Jun 2018 13:33:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0E67A60791
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752692AbeFHL3D (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 07:29:03 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:33095 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751485AbeFHL3B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 07:29:01 -0400
-Received: by mail-wm0-f65.google.com with SMTP id z6-v6so6743342wma.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 04:29:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=OHDzssc6IQS33Vgpo5N5myowHmy6qw3n8Nt8ExOrf9E=;
-        b=F/gESEU8vWQMXETaWFjcdCmi1ExozPs71shczoqlX2DryXU8qZ5+rYJOg2sByE4ISp
-         PD3ln8ifR3FfYeYVYuf3Uk4dOWlGm/eiAMNbZJg16rwGoXO+x6YPKRShvVULz8/YS0gG
-         D4+EJGz+79sQgTm1ewcfMSYlBne57VB/1bDfs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=OHDzssc6IQS33Vgpo5N5myowHmy6qw3n8Nt8ExOrf9E=;
-        b=HChhquE1zMxMexEkFmt7zEjuqLtyvUo8lCcty4PfOTLuKO634xoeZKr486Q7fZz2Du
-         O3ULQiJZOljos9te0G0bsBF91b9LBUmYPhBNdel7atBQAMA0mwsNtkRkFWRMj0l0DRod
-         hA1LYb9IDsIFEoYvuKp6WiEJ2+vBiG82r6fdM8kY8f0bldcRO6toRZ62MEaO/vwVWYJh
-         qelcrICggkqprx9wx43PiiamI6p5HeINW+fN9w3CsrZ10d0wIadDMqRYJqgKPEtCAlN+
-         s82ZFsNrRmjjX55hh/YFQUrZJ/SdFgh8VYUkcDMUk5Yp7BsZ0uDPbN9bG8+ntbWqGz8F
-         iFlw==
-X-Gm-Message-State: APt69E3uM5HVUHA77rifcZSHuvf6bCGjQjFZtLptsFbf8PYal4pxGkEO
-        ZFjo5NpwqDVIRGKqCpKcWNawpSdeRUk=
-X-Google-Smtp-Source: ADUXVKL16vPuZsuGE+9pMObVRVDOEf8AOE5T+QGLr9AuhC7QZpn3JDhZMhzptasPFrN2Eah6q6oAMA==
-X-Received: by 2002:a1c:bf43:: with SMTP id p64-v6mr1229016wmf.71.1528457340461;
-        Fri, 08 Jun 2018 04:29:00 -0700 (PDT)
-Received: from [192.168.1.100] (aig34-1-88-167-228-121.fbx.proxad.net. [88.167.228.121])
-        by smtp.gmail.com with ESMTPSA id n7-v6sm39816574wri.27.2018.06.08.04.28.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Jun 2018 04:28:59 -0700 (PDT)
-Subject: Re: [PATCH RESEND] lib/test_printf.c: call wait_for_random_bytes()
- before plain %p tests
-To: Petr Mladek <pmladek@suse.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Miller <davem@davemloft.net>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "Tobin C . Harding" <me@tobin.cc>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180604113708.11554-1-thierry.escande@linaro.org>
- <20180607122434.i4x7b5ij4p6dpx7w@pathway.suse.cz>
- <d9ecdf72-7500-66d4-0360-231218cccbb4@linaro.org>
- <20180608080437.n2b5nv73d3kp6yhb@pathway.suse.cz>
- <0fa30e13-c16f-95d8-d1ef-fd45e7a99888@linaro.org>
- <CAHp75Vc5_+Kxsvgws9Oq-hOgbQ8-ocxeKa4AuhC0uJ0oKsu+BA@mail.gmail.com>
- <a8ab166e-a2b9-b0fc-9717-ffd8fcbcd386@linaro.org>
- <20180608112230.77zsd5y7we7hiqei@pathway.suse.cz>
-From: Thierry Escande <thierry.escande@linaro.org>
-Message-ID: <5484aaf1-ec14-0013-c2c1-fcb3e95b975d@linaro.org>
-Date: Fri, 8 Jun 2018 13:28:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S933344AbeFKNd4 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 09:33:56 -0400
+Received: from imap.thunk.org ([74.207.234.97]:56218 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932945AbeFKNdx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 09:33:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=/6VNVFlIgqB86JMIwoR/jMKFROV+4qyP15rj3t3A50c=; b=TU5KGD5hkd8QfALe3tvhK1ixxy
+        rsuwM67uFK4PNqxJjByhWW1+aLVzCw0vswahGjqSSI79dSEITeFYSLf1ZpcFRJFEPL6uzdnSmoYM6
+        yZ+6zG+TT79amZf/8WuZlwd/pRWjvM8qTKwHtMlewp2303JvzaM14Ew7GReAqW0jSbNw=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1fSMx7-0005Ua-V2; Mon, 11 Jun 2018 13:33:45 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 38CE07A63CD; Mon, 11 Jun 2018 09:33:45 -0400 (EDT)
+Date: Mon, 11 Jun 2018 09:33:45 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: Eric Sandeen <sandeen@sandeen.net>,
+        Eric Biggers <ebiggers3@gmail.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Brian Foster <bfoster@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        syzkaller <syzkaller@googlegroups.com>
+Subject: Re: Bugs involving maliciously crafted file system
+Message-ID: <20180611133345.GE5020@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        Eric Biggers <ebiggers3@gmail.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Brian Foster <bfoster@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        syzkaller <syzkaller@googlegroups.com>
+References: <20180522123107.GC3751@bfoster.bfoster>
+ <20180522222620.GW23861@dastard>
+ <20180522225208.GB658@sol.localdomain>
+ <20180523074425.GM14384@magnolia>
+ <20180523162015.GA3684@sol.localdomain>
+ <a52266f9-0096-b28c-c01c-046ababcfe3a@sandeen.net>
+ <20180523234114.GA3434@thunk.org>
+ <CACT4Y+YEpThQj=63F8CSHeWSZxbWJ1cTDB7ZvM8OYR921uXT2g@mail.gmail.com>
+ <20180526202436.GC4613@thunk.org>
+ <CACT4Y+YK9LzYuVSruimbgxSAoCt_UYbHwzhvDGCqZ7FuQLcUUA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180608112230.77zsd5y7we7hiqei@pathway.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+YK9LzYuVSruimbgxSAoCt_UYbHwzhvDGCqZ7FuQLcUUA@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 08/06/2018 13:22, Petr Mladek wrote:
-> On Fri 2018-06-08 12:32:33, Thierry Escande wrote:
->> On 08/06/2018 11:46, Andy Shevchenko wrote:
->>> On Fri, Jun 8, 2018 at 12:07 PM, Thierry Escande
->>> <thierry.escande@linaro.org> wrote:
->>>
->>>> But as I type I realize it's not necessary. I will simply enclose the call
->>>> to wait_for_random_bytes() by #if IS_MODULE() #endif so it gets called only
->>>> if built as a module, which is how run_kselftest.sh wants it... If
->>>> test_printf is compiled built-in and the crng is not yet initialized the
->>>> test will fail anyway so there is no need to add an extra check.
->>>
->>> Unfortunately I can't support this as is.
->>> We have environments where crng will be ready minutes after the boot.
->>> It's unacceptable.
->>>
->>> So, we need to have means to not delay test for so long.
->>
->> I agree we can't delay test execution for too long. In my case the crng is
->> ready only a few seconds after the boot. So we may just skip this plain 'p'
->> printf test if crng is not ready then.
+On Mon, Jun 11, 2018 at 03:07:24PM +0200, Dmitry Vyukov wrote:
 > 
-> Alternative solution would be to accept
-> const char *str = sizeof(ptr) == 8 ? "(____ptrval____)" : "(ptrval)";
-> as a valid result. It would make sense to print some warning in that case.
-> 
-> In each case, it would look ugly to use add_random_ready_callback()
-> wihtout passing a callback. If you really needed to check crng_ready(),
-> it would be better to make it public.
+> These can't be weaponized to execute code, but if a BUG_ON is
+> triggerable over a network, or from VM guest, then it's likely more
+> critical than a local code execution. That's why I am saying that
+> automated evaluation is infeasible.
 
-Agree but even with crng_ready() public we would have to block the test 
-until it's ready which is not good either.
+I can't imagine situations where a BUG_ON would be more critical than
+local code execution.  You can leverage local code execution to ah
+remote privilege escalation attack; and local code execution can (with
+less effort) be translated to a system crash.  Hence, local code
+execution is always more critical than a BUG_ON.
 
-Accepting "(ptrval)" as a valid result seems the least bad alternative...
+> Anyway, bug type (UAF, BUG, task hung) is available in the bug title
+> on dashboard and on mailing lists, so you can just search/sort bugs on
+> the dashboard. What other interface you want on top of this?
+
+I also want to be able to search and filter based on subsystem, and
+whether or not there is a reproducer.  Sometimes you can't even figure
+out the subsytem from the limited string shown on the dashboard,
+because the original string didn't include the subsystem to begin
+with, or the the subsytem name was truncated and not included on the
+dashboard.
+
+> On a related note, perhaps kernel community needs to finally start
+> using bugzilla for real, like with priorities, assignees, up-to-date
+> statuses, no stale bugs, etc. All of this is available in bug tracking
+> systems for decades...
+
+I do use bugzilla and in fact if syzbot would automatically file a
+bugzilla.kernel.org report for things that are in the ext4 subsystem,
+that would be really helpful.
+
+As far as no stale bugs, etc., many companies (including Google)
+aren't capable of doing that with their own internal bug tracking
+systems, because management doesn't give them enough time to track and
+fix all stale bugs.  You seem to be assuming/demanding things of the
+kernel community that are at least partially constrained by resource
+availability --- and since you've used constrained resources as a
+reason why Syzbot can't be extended as we've requested to reduce
+developer toil and leverage our available resources, it would perhaps
+be respectful if you also accepted that resource constraints also
+exist in other areas, such as how much we can keep a fully groomed bug
+tracking system.
 
 Regards,
-Thierry
+
+						- Ted
