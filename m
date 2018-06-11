@@ -1,88 +1,225 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Y8dtMKxJGVuWUQAAmS7hNA
-	; Thu, 07 Jun 2018 15:05:16 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id OHA3NeeEHluEHgAAmS7hNA
+	; Mon, 11 Jun 2018 14:19:36 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id B52D6608B8; Thu,  7 Jun 2018 15:05:16 +0000 (UTC)
+	id 6A3A2607A4; Mon, 11 Jun 2018 14:19:36 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="s2QO8zNt"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 2C292601C3;
-	Thu,  7 Jun 2018 15:05:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2C292601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id C22CA6074D;
+	Mon, 11 Jun 2018 14:19:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C22CA6074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965052AbeFGPEJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:04:09 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41567 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934962AbeFGPEG (ORCPT
+        id S934153AbeFKOTV (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 10:19:21 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45620 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933511AbeFKOGz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:04:06 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbz-0005dI-Se; Thu, 07 Jun 2018 15:10:00 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvay-0002iw-9f; Thu, 07 Jun 2018 15:08:56 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Dan Carpenter" <dan.carpenter@oracle.com>,
-        "Christoph Hellwig" <hch@lst.de>, "Jens Axboe" <axboe@kernel.dk>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.402239905@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 035/410] cdrom: information leak in cdrom_ioctl_media_changed()
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Mon, 11 Jun 2018 10:06:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
+        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=O9uY+J4/RG9YXAAfAsVm7Lcu0R0unVIN2Mssj0GLwEA=; b=s2QO8zNtN9pjpe+ok+9dK2O0T
+        AnPt7a5dWNQKxMZu5M/x7uVxt9fTcB0U7qV3TTF4Mj7y5ME0MU+no6zXk6qccQguB/KWqoEuYmD48
+        mrPbFrN0BK+AI1eTeBbyMigaDSpiG/yHtRkf4Dysjic3xno3Mir8ZxvyhHVP71IJBdJ8ourZw1ICs
+        uKZRgHysmXNbgAmPIgu0+LGAd+JrO6k9u9mKAPogiaxZ+0ZCm4S7ebr4qNAhO3PPcCeJ/pjJiMAh1
+        jp1kwR9vcllU/hlv3dam8+pjk0ozumfLZmIcQb+FnZi8UiI4+qQEKo00m6dBFpLToq6SjAjZTe90+
+        oF2CreeIQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fSNTD-0004ji-2P; Mon, 11 Jun 2018 14:06:55 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@redhat.com>,
+        Lukas Czerner <lczerner@redhat.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH v13 35/72] mm: Convert workingset to XArray
+Date: Mon, 11 Jun 2018 07:06:02 -0700
+Message-Id: <20180611140639.17215-36-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
+References: <20180611140639.17215-1-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-------------------
+We construct a fake XA_STATE and use it to delete the node with
+xas_store() rather than adding a special function for this unique
+use case.
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-
-commit 9de4ee40547fd315d4a0ed1dd15a2fa3559ad707 upstream.
-
-This cast is wrong.  "cdi->capacity" is an int and "arg" is an unsigned
-long.  The way the check is written now, if one of the high 32 bits is
-set then we could read outside the info->slots[] array.
-
-This bug is pretty old and it predates git.
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- drivers/cdrom/cdrom.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/swap.h |  9 --------
+ mm/workingset.c      | 51 +++++++++++++++++++-------------------------
+ 2 files changed, 22 insertions(+), 38 deletions(-)
 
---- a/drivers/cdrom/cdrom.c
-+++ b/drivers/cdrom/cdrom.c
-@@ -2357,7 +2357,7 @@ static int cdrom_ioctl_media_changed(str
- 	if (!CDROM_CAN(CDC_SELECT_DISC) || arg == CDSL_CURRENT)
- 		return media_changed(cdi, 1);
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index 1b91e7f7bdeb..a450a1d40b19 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -307,15 +307,6 @@ void workingset_update_node(struct xa_node *node);
+ 		xas_set_update(xas, workingset_update_node);		\
+ } while (0)
  
--	if ((unsigned int)arg >= cdi->capacity)
-+	if (arg >= cdi->capacity)
- 		return -EINVAL;
+-/* Returns workingset_update_node() if the mapping has shadow entries. */
+-#define workingset_lookup_update(mapping)				\
+-({									\
+-	radix_tree_update_node_t __helper = workingset_update_node;	\
+-	if (dax_mapping(mapping) || shmem_mapping(mapping))		\
+-		__helper = NULL;					\
+-	__helper;							\
+-})
+-
+ /* linux/mm/page_alloc.c */
+ extern unsigned long totalram_pages;
+ extern unsigned long totalreserve_pages;
+diff --git a/mm/workingset.c b/mm/workingset.c
+index bad4e58881cd..564e97bd5934 100644
+--- a/mm/workingset.c
++++ b/mm/workingset.c
+@@ -148,7 +148,7 @@
+  * and activations is maintained (node->inactive_age).
+  *
+  * On eviction, a snapshot of this counter (along with some bits to
+- * identify the node) is stored in the now empty page cache radix tree
++ * identify the node) is stored in the now empty page cache
+  * slot of the evicted page.  This is called a shadow entry.
+  *
+  * On cache misses for which there are shadow entries, an eligible
+@@ -162,7 +162,7 @@
  
- 	info = kmalloc(sizeof(*info), GFP_KERNEL);
+ /*
+  * Eviction timestamps need to be able to cover the full range of
+- * actionable refaults. However, bits are tight in the radix tree
++ * actionable refaults. However, bits are tight in the xarray
+  * entry, and after storing the identifier for the lruvec there might
+  * not be enough left to represent every single actionable refault. In
+  * that case, we have to sacrifice granularity for distance, and group
+@@ -338,7 +338,7 @@ void workingset_activation(struct page *page)
+ 
+ static struct list_lru shadow_nodes;
+ 
+-void workingset_update_node(struct radix_tree_node *node)
++void workingset_update_node(struct xa_node *node)
+ {
+ 	/*
+ 	 * Track non-empty nodes that contain only shadow entries;
+@@ -370,7 +370,7 @@ static unsigned long count_shadow_nodes(struct shrinker *shrinker,
+ 	local_irq_enable();
+ 
+ 	/*
+-	 * Approximate a reasonable limit for the radix tree nodes
++	 * Approximate a reasonable limit for the nodes
+ 	 * containing shadow entries. We don't need to keep more
+ 	 * shadow entries than possible pages on the active list,
+ 	 * since refault distances bigger than that are dismissed.
+@@ -385,11 +385,11 @@ static unsigned long count_shadow_nodes(struct shrinker *shrinker,
+ 	 * worst-case density of 1/8th. Below that, not all eligible
+ 	 * refaults can be detected anymore.
+ 	 *
+-	 * On 64-bit with 7 radix_tree_nodes per page and 64 slots
++	 * On 64-bit with 7 xa_nodes per page and 64 slots
+ 	 * each, this will reclaim shadow entries when they consume
+ 	 * ~1.8% of available memory:
+ 	 *
+-	 * PAGE_SIZE / radix_tree_nodes / node_entries * 8 / PAGE_SIZE
++	 * PAGE_SIZE / xa_nodes / node_entries * 8 / PAGE_SIZE
+ 	 */
+ 	if (sc->memcg) {
+ 		cache = mem_cgroup_node_nr_lru_pages(sc->memcg, sc->nid,
+@@ -398,7 +398,7 @@ static unsigned long count_shadow_nodes(struct shrinker *shrinker,
+ 		cache = node_page_state(NODE_DATA(sc->nid), NR_ACTIVE_FILE) +
+ 			node_page_state(NODE_DATA(sc->nid), NR_INACTIVE_FILE);
+ 	}
+-	max_nodes = cache >> (RADIX_TREE_MAP_SHIFT - 3);
++	max_nodes = cache >> (XA_CHUNK_SHIFT - 3);
+ 
+ 	if (nodes <= max_nodes)
+ 		return 0;
+@@ -408,11 +408,11 @@ static unsigned long count_shadow_nodes(struct shrinker *shrinker,
+ static enum lru_status shadow_lru_isolate(struct list_head *item,
+ 					  struct list_lru_one *lru,
+ 					  spinlock_t *lru_lock,
+-					  void *arg)
++					  void *arg) __must_hold(lru_lock)
+ {
++	XA_STATE(xas, NULL, 0);
+ 	struct address_space *mapping;
+-	struct radix_tree_node *node;
+-	unsigned int i;
++	struct xa_node *node;
+ 	int ret;
+ 
+ 	/*
+@@ -420,7 +420,7 @@ static enum lru_status shadow_lru_isolate(struct list_head *item,
+ 	 * the shadow node LRU under the i_pages lock and the
+ 	 * lru_lock.  Because the page cache tree is emptied before
+ 	 * the inode can be destroyed, holding the lru_lock pins any
+-	 * address_space that has radix tree nodes on the LRU.
++	 * address_space that has nodes on the LRU.
+ 	 *
+ 	 * We can then safely transition to the i_pages lock to
+ 	 * pin only the address_space of the particular node we want
+@@ -449,25 +449,18 @@ static enum lru_status shadow_lru_isolate(struct list_head *item,
+ 		goto out_invalid;
+ 	if (WARN_ON_ONCE(node->count != node->nr_values))
+ 		goto out_invalid;
+-	for (i = 0; i < RADIX_TREE_MAP_SIZE; i++) {
+-		if (node->slots[i]) {
+-			if (WARN_ON_ONCE(!xa_is_value(node->slots[i])))
+-				goto out_invalid;
+-			if (WARN_ON_ONCE(!node->nr_values))
+-				goto out_invalid;
+-			if (WARN_ON_ONCE(!mapping->nrexceptional))
+-				goto out_invalid;
+-			node->slots[i] = NULL;
+-			node->nr_values--;
+-			node->count--;
+-			mapping->nrexceptional--;
+-		}
+-	}
+-	if (WARN_ON_ONCE(node->nr_values))
+-		goto out_invalid;
++	mapping->nrexceptional -= node->nr_values;
++	xas.xa = node->array;
++	xas.xa_node = rcu_dereference_protected(node->parent,
++				lockdep_is_held(&mapping->i_pages.xa_lock));
++	xas.xa_offset = node->offset;
++	xas.xa_update = workingset_update_node;
++	/*
++	 * We could store a shadow entry here which was the minimum of the
++	 * shadow entries we were tracking ...
++	 */
++	xas_store(&xas, NULL);
+ 	inc_lruvec_page_state(virt_to_page(node), WORKINGSET_NODERECLAIM);
+-	__radix_tree_delete_node(&mapping->i_pages, node,
+-				 workingset_lookup_update(mapping));
+ 
+ out_invalid:
+ 	xa_unlock(&mapping->i_pages);
+-- 
+2.17.1
