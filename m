@@ -1,95 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ueoHKTM4GVvjeQAAmS7hNA
-	; Thu, 07 Jun 2018 13:50:56 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id m57qKfgQHltUTwAAmS7hNA
+	; Mon, 11 Jun 2018 06:09:32 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 52B2C607DC; Thu,  7 Jun 2018 13:50:56 +0000 (UTC)
+	id D856F60792; Mon, 11 Jun 2018 06:09:31 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="m5YFEOkv"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D17B3601B4;
-	Thu,  7 Jun 2018 13:50:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D17B3601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 56E74601D2;
+	Mon, 11 Jun 2018 06:09:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 56E74601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932689AbeFGNuy (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 09:50:54 -0400
-Received: from xavier.telenet-ops.be ([195.130.132.52]:58012 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753493AbeFGNuw (ORCPT
+        id S932324AbeFKGJQ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 20 others); Mon, 11 Jun 2018 02:09:16 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:20782 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754035AbeFKGJM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 09:50:52 -0400
-Received: from ayla.of.borg ([84.194.111.163])
-        by xavier.telenet-ops.be with bizsmtp
-        id vpqp1x00a3XaVaC01pqpUV; Thu, 07 Jun 2018 15:50:51 +0200
-Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
-        by ayla.of.borg with esmtp (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1fQvJR-0000Oz-IU; Thu, 07 Jun 2018 15:50:49 +0200
-Received: from geert by ramsan with local (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1fQvJR-00012E-Gr; Thu, 07 Jun 2018 15:50:49 +0200
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Shuming Fan <shumingf@realtek.com>,
-        Bard Liao <bardliao@realtek.com>,
-        Oder Chiou <oder_chiou@realtek.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH] ASoC: rt1305: Use ULL suffixes for 64-bit constants
-Date: Thu,  7 Jun 2018 15:50:48 +0200
-Message-Id: <1528379448-3937-1-git-send-email-geert@linux-m68k.org>
-X-Mailer: git-send-email 2.7.4
+        Mon, 11 Jun 2018 02:09:12 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by fllnx210.ext.ti.com (8.15.1/8.15.1) with ESMTP id w5B69BA8022618;
+        Mon, 11 Jun 2018 01:09:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1528697351;
+        bh=r0CSrsiBsJTw33Cuqm0n9WwlFPaZFEPktqKO9NTaIKg=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=m5YFEOkvQblOhwq+KpKkaaQa1EAUOcS8Me8pe6JY69oDJ06ZAhr7dunIcUzw9Z7Cf
+         RoKrVrZ7Cn6BK2jSNRBa9LjV0qudMcJg5sUPyrneCX0MizecCMKgkpHIEI3td9W2VZ
+         NIxoGN/7pwGE/IVIxESvMoHkB0w2TLSXejD1azN4=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5B69BI2016343;
+        Mon, 11 Jun 2018 01:09:11 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 11
+ Jun 2018 01:09:11 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Mon, 11 Jun 2018 01:09:11 -0500
+Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5B697IG016033;
+        Mon, 11 Jun 2018 01:09:10 -0500
+From: Vignesh R <vigneshr@ti.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+CC: <linux-pwm@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Vignesh R <vigneshr@ti.com>
+Subject: [PATCH 1/2] pwm: pwm-tiehrpwm: Don't use emulation mode bits to control PWM output
+Date: Mon, 11 Jun 2018 11:39:55 +0530
+Message-ID: <20180611060956.27999-2-vigneshr@ti.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180611060956.27999-1-vigneshr@ti.com>
+References: <20180611060956.27999-1-vigneshr@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With gcc 4.1.2:
+As per AM335x TRM SPRUH73P "15.2.2.11 ePWM Behavior During Emulation",
+TBCTL[15:14] only have effect during emulation suspend events (IOW,
+to stop PWM when debugging using a debugger). These bits have no effect
+on PWM output during normal running of system. Hence, remove code
+accessing these bits as they have no role in enabling/disabling PWMs.
 
-    sound/soc/codecs/rt1305.c: In function ‘rt1305_calibrate’:
-    sound/soc/codecs/rt1305.c:1069: warning: integer constant is too large for ‘long’ type
-    sound/soc/codecs/rt1305.c:1086: warning: integer constant is too large for ‘long’ type
-
-Add the missing "ULL" suffixes to fix this.
-
-Fixes: 29bc643ddd7efb74 ("ASoC: rt1305: Add RT1305/RT1306 amplifier driver")
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Fixes: 19891b20e7c2 ("pwm: pwm-tiehrpwm: PWM driver support for EHRPWM")
+Cc: stable@vger.kernel.org
+Signed-off-by: Vignesh R <vigneshr@ti.com>
 ---
- sound/soc/codecs/rt1305.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pwm/pwm-tiehrpwm.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-diff --git a/sound/soc/codecs/rt1305.c b/sound/soc/codecs/rt1305.c
-index f4c8c45f40103cf8..421b8fb2fa04dd63 100644
---- a/sound/soc/codecs/rt1305.c
-+++ b/sound/soc/codecs/rt1305.c
-@@ -1066,7 +1066,7 @@ static void rt1305_calibrate(struct rt1305_priv *rt1305)
- 	pr_debug("Left_rhl = 0x%x rh=0x%x rl=0x%x\n", rhl, rh, rl);
- 	pr_info("Left channel %d.%dohm\n", (r0ohm/10), (r0ohm%10));
+diff --git a/drivers/pwm/pwm-tiehrpwm.c b/drivers/pwm/pwm-tiehrpwm.c
+index 4c22cb395040..768176f54d5e 100644
+--- a/drivers/pwm/pwm-tiehrpwm.c
++++ b/drivers/pwm/pwm-tiehrpwm.c
+@@ -33,10 +33,6 @@
+ #define TBCTL			0x00
+ #define TBPRD			0x0A
  
--	r0l = 562949953421312;
-+	r0l = 562949953421312ULL;
- 	if (rhl != 0)
- 		do_div(r0l, rhl);
- 	pr_debug("Left_r0 = 0x%llx\n", r0l);
-@@ -1083,7 +1083,7 @@ static void rt1305_calibrate(struct rt1305_priv *rt1305)
- 	pr_debug("Right_rhl = 0x%x rh=0x%x rl=0x%x\n", rhl, rh, rl);
- 	pr_info("Right channel %d.%dohm\n", (r0ohm/10), (r0ohm%10));
+-#define TBCTL_RUN_MASK		(BIT(15) | BIT(14))
+-#define TBCTL_STOP_NEXT		0
+-#define TBCTL_STOP_ON_CYCLE	BIT(14)
+-#define TBCTL_FREE_RUN		(BIT(15) | BIT(14))
+ #define TBCTL_PRDLD_MASK	BIT(3)
+ #define TBCTL_PRDLD_SHDW	0
+ #define TBCTL_PRDLD_IMDT	BIT(3)
+@@ -360,7 +356,7 @@ static int ehrpwm_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
+ 	/* Channels polarity can be configured from action qualifier module */
+ 	configure_polarity(pc, pwm->hwpwm);
  
--	r0r = 562949953421312;
-+	r0r = 562949953421312ULL;
- 	if (rhl != 0)
- 		do_div(r0r, rhl);
- 	pr_debug("Right_r0 = 0x%llx\n", r0r);
+-	/* Enable TBCLK before enabling PWM device */
++	/* Enable TBCLK */
+ 	ret = clk_enable(pc->tbclk);
+ 	if (ret) {
+ 		dev_err(chip->dev, "Failed to enable TBCLK for %s: %d\n",
+@@ -368,9 +364,6 @@ static int ehrpwm_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
+ 		return ret;
+ 	}
+ 
+-	/* Enable time counter for free_run */
+-	ehrpwm_modify(pc->mmio_base, TBCTL, TBCTL_RUN_MASK, TBCTL_FREE_RUN);
+-
+ 	return 0;
+ }
+ 
+@@ -400,9 +393,6 @@ static void ehrpwm_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
+ 	/* Disabling TBCLK on PWM disable */
+ 	clk_disable(pc->tbclk);
+ 
+-	/* Stop Time base counter */
+-	ehrpwm_modify(pc->mmio_base, TBCTL, TBCTL_RUN_MASK, TBCTL_STOP_NEXT);
+-
+ 	/* Disable clock on PWM disable */
+ 	pm_runtime_put_sync(chip->dev);
+ }
 -- 
-2.7.4
+2.17.1
