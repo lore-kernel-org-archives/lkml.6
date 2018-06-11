@@ -1,126 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id xZNGIGZvHlsUYwAAmS7hNA
-	; Mon, 11 Jun 2018 12:47:34 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id xhbmOhNgHluFPAAAmS7hNA
+	; Mon, 11 Jun 2018 11:42:12 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 69F91607A4; Mon, 11 Jun 2018 12:47:34 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K8EUm6lz"
+	id D14E2607A4; Mon, 11 Jun 2018 11:42:11 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 04F6760541;
-	Mon, 11 Jun 2018 12:47:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 04F6760541
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 5823C60541;
+	Mon, 11 Jun 2018 11:42:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5823C60541
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932958AbeFKMrb (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 08:47:31 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:45596 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932516AbeFKMr3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 08:47:29 -0400
-Received: by mail-ua0-f196.google.com with SMTP id k14-v6so13393506uao.12;
-        Mon, 11 Jun 2018 05:47:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=WPXGr+s3Szyfok0w2Ppvm3sA7IRQliz0AqP22oT9WYU=;
-        b=K8EUm6lzDbSq2Fmj9kYUcyIFjnX4zhTIP71qq8ewoZjhbHIzzmmbVZMe1NXmgptxN/
-         HY+yiE2tgR68SIBTnxYSycIC8fTEKJ3pe7YObU3tG9cf9UwmvYn6mkPgESJx1KKsiAI8
-         KAK6PTDVk1oaIXh2gscO2ZeWdcgfOFra/+y8EhQeVL4bzvm2pfrvRQgCoWnt9qMViOkN
-         pvhoT0hmV97OLHu9/wF76aILS+1XURxi7+uEppMxs763gpENQv+ah0wvtepRARnH8YHM
-         UY853gBx9B4eelOqE+O2h+uSUv/vuVaLxe4mzdh+QDM+OmeLtWOeFSYUVwJxFmE8xzA7
-         LMSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=WPXGr+s3Szyfok0w2Ppvm3sA7IRQliz0AqP22oT9WYU=;
-        b=dSGM5nY9ty1uX9ltkkn+IrLK/vFH8pKcDV41RUe/Fd6xGxDlYggwlil3PNHnPIIppd
-         fDUKJH9DmzAEx6adO7Qq/PaEZEBdY2ukoUqvd5Bj8vb/TcSYxXbtC53fOm0Z/81UhCIv
-         RP2DgHOxnNHKxQUwwSJ3CkRiIk7Sl8PGshLjRgjT/hYvcXRxpMhH1rR/dH8THTttt7wy
-         4O54263gIrCkV7ck0fXMY9G2+NcreXMlPApgDDgFWWy8UVtOGkEf/htIHZRrWmyh5z6U
-         +ajBoYdgeZ20TL/4JZkAI3QCAqa7u7AqTFHURxu1dYqrND11sP9+jCCUM+BhTMvn54Hj
-         x6DQ==
-X-Gm-Message-State: APt69E0LoQ20D8qXk4DfUlmGMbCcuxr8VDGNw7Geh86ERfxvoBzkCVSh
-        5gI/VK0axh8+hJT4u5YDtUhEYl/44DKYPLkZRLk=
-X-Google-Smtp-Source: ADUXVKJ9XTcdVlftq6cA0iWajGDthu9yGqCGDPttHxOFezSc36+oT+QBQcVPCWQov34lVh1XuJBytUNw43VxHJCMgiY=
-X-Received: by 2002:ab0:6008:: with SMTP id j8-v6mr651628ual.28.1528721248687;
- Mon, 11 Jun 2018 05:47:28 -0700 (PDT)
+        id S933002AbeFKLmK (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 07:42:10 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47898 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932858AbeFKLmI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 07:42:08 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5DDE0401EF00;
+        Mon, 11 Jun 2018 11:42:07 +0000 (UTC)
+Received: from [10.36.117.231] (ovpn-117-231.ams2.redhat.com [10.36.117.231])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id BA892ED156;
+        Mon, 11 Jun 2018 11:41:55 +0000 (UTC)
+Subject: Re: [PATCH v9 09/12] KVM: x86: Introduce a function to initialize the
+ PT configuration
+To: "Kang, Luwei" <luwei.kang@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "chao.p.peng@linux.intel.com" <chao.p.peng@linux.intel.com>,
+        "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
+        "bp@suse.de" <bp@suse.de>, "Liang, Kan" <kan.liang@intel.com>,
+        "Janakarajan.Natarajan@amd.com" <Janakarajan.Natarajan@amd.com>,
+        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "david@redhat.com" <david@redhat.com>,
+        "bsd@redhat.com" <bsd@redhat.com>,
+        "yu.c.zhang@linux.intel.com" <yu.c.zhang@linux.intel.com>,
+        "joro@8bytes.org" <joro@8bytes.org>
+References: <1526964735-16566-1-git-send-email-luwei.kang@intel.com>
+ <1526964735-16566-10-git-send-email-luwei.kang@intel.com>
+ <20180607135648.mkciyfrd2wgvdxze@um.fi.intel.com>
+ <82D7661F83C1A047AF7DC287873BF1E167FF0140@SHSMSX101.ccr.corp.intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <c3a25e58-cb4e-f3f7-bbd5-559bc763bb26@redhat.com>
+Date: Mon, 11 Jun 2018 13:41:53 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Mon, 11 Jun 2018 05:47:27
- -0700 (PDT)
-In-Reply-To: <20180611115240.32606-21-ricardo.ribalda@gmail.com>
-References: <20180611115240.32606-1-ricardo.ribalda@gmail.com> <20180611115240.32606-21-ricardo.ribalda@gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 11 Jun 2018 15:47:27 +0300
-Message-ID: <CAHp75VcKxZdp=Rmkt=K+yHq2aFAfSsD+SrKvPsSCCVLmLgc1pA@mail.gmail.com>
-Subject: Re: [PATCH v2 20/24] serdev: Make match_id accessible by drivers
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <82D7661F83C1A047AF7DC287873BF1E167FF0140@SHSMSX101.ccr.corp.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 11 Jun 2018 11:42:07 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 11 Jun 2018 11:42:07 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 11, 2018 at 2:52 PM, Ricardo Ribalda Delgado
-<ricardo.ribalda@gmail.com> wrote:
-> Drivers that make use of the driver_data field require to transverse the
-> id_table. There is no reason to have one implementation per driver.
+On 08/06/2018 16:56, Kang, Luwei wrote:
+>>> +	/* Initialize and clear the no dependency bits */
+>>> +	vmx->pt_desc.ctl_bitmask = ~0ULL;
+>> This looks redundant, doesn't it?
+> This is a bit mask for RTIT_CTL MSR and it will make & with the value of RTIT_CLT from guest.
+> The reserved bits will be 1 in this bit mask and the setable  bits are 0.
+> 
+>>> +	vmx->pt_desc.ctl_bitmask = ~(RTIT_CTL_TRACEEN | RTIT_CTL_OS |
+>>> +			RTIT_CTL_USR | RTIT_CTL_TSC_EN |
+>> RTIT_CTL_DISRETC);
 
-> +const struct serdev_device_id *serdev_match_id(
-> +                       const struct serdev_device_id *id,
-> +                       const struct serdev_device *sdev)
+But it's set twice, so the first assignment is superfluous.
 
-I think slightly better would be
-
-const strunct serdev_device *
-serdev_match_id(const struct serdev_device_id *id,
-                       const struct serdev_device *sdev)
-
->  {
->         while (id->name[0]) {
->                 if (!strcmp(sdev->modalias, id->name))
-> -                       return 1;
-> +                       return id;
->                 id++;
->         }
->
-> -       return 0;
-> +       return NULL;
->  }
-> +EXPORT_SYMBOL_GPL(serdev_match_id);
-
-Can we avoid ping-pong changes in the series? I mean to introduce this
-helper in this form in the first place?
-
-
-> -               return serdev_match_id(sdrv->id_table, sdev);
-> +               return serdev_match_id(sdrv->id_table, sdev) != NULL;
-
-return !!serdev_match_id(...);
-?
-
-
-> +const struct serdev_device_id *serdev_match_id(
-> +               const struct serdev_device_id *id,
-> +               const struct serdev_device *sdev);
-
-Same as above.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Paolo
