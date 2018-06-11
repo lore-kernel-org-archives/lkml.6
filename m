@@ -1,182 +1,166 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id DhoZFXY3GVvEZgAAmS7hNA
-	; Thu, 07 Jun 2018 13:48:26 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id GgkDMJneHVuQKAAAmS7hNA
+	; Mon, 11 Jun 2018 02:29:48 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id B08956089E; Thu,  7 Jun 2018 13:48:26 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="Guz1wJZA"
+	id 85E7D607BB; Mon, 11 Jun 2018 02:29:48 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 22EA8601B4;
-	Thu,  7 Jun 2018 13:48:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 22EA8601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id E78E7605A5;
+	Mon, 11 Jun 2018 02:29:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E78E7605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932733AbeFGNsY (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 09:48:24 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:36996 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932152AbeFGNsV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 09:48:21 -0400
-Received: by mail-pg0-f68.google.com with SMTP id r21-v6so4461518pgv.4
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 06:48:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=DK9BI/IiCFdOJj8aP1zv1mjVWahGcQYyLnCe+U2Ehsw=;
-        b=Guz1wJZAAXWN1nUi685aWaCTWVKEYBn688kxUxn1hn22JxhTrzSwExUR9nrmfWCoJ1
-         ugLDPN8aZFzBc9YTKmTDFbqsDdD1HRiwxaFG+VYW/OKVxUOx4dIOw6AkvDijcPqG5QlW
-         YF1XElsUY35BLSIIIb6XK0WEihQj0WHFNRqKA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=DK9BI/IiCFdOJj8aP1zv1mjVWahGcQYyLnCe+U2Ehsw=;
-        b=hwnnuiYnO7Xj8Iy7uErM4H8ONbJD0DmNsshyk+3su1aJNJBb+H4Lu787csuXQ0aIDw
-         oTrVjZK2oM5PH+59NIiattRJlZs3Jp97xIM1psDgq1hdZGDcBswEueZJa4+LugqwwoWK
-         bwKISP9yEYo5RuOirCu/KN8yasw9jjPEDYcSVz3dkecZ4i4jrDNmRHBa+L/DuHVWZbW1
-         gFrgLnYAFAg+6QwrCZ5TImYDNuIzYi9Nu+8KSC7aVaHq4M2iFAanM4b3Kjr6VdyBeJQh
-         wrZdwkhQqM9ndpPMkzG+t3JiBGLWxV366RE+mXBaEz7uHIPy8t2tnCQpvILj3YfTIEOu
-         pwHg==
-X-Gm-Message-State: APt69E2PjknARTwaX7jZ29xvHqRa44NJcv9ZTzDRf5aI+XJpjPXzfDye
-        71ViMMNum7U9xIcKAq49atBXUA==
-X-Google-Smtp-Source: ADUXVKIIhMdUDqg2QJToFmGPNgufeUiQgVdbOgP6SRkoNpbYXOM8FC64DMgIAvUntlvCQ25l2Esw9g==
-X-Received: by 2002:a63:ab45:: with SMTP id k5-v6mr1665689pgp.192.1528379300557;
-        Thu, 07 Jun 2018 06:48:20 -0700 (PDT)
-Received: from localhost.localdomain ([115.97.190.51])
-        by smtp.gmail.com with ESMTPSA id r30-v6sm12879137pgn.58.2018.06.07.06.48.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Jun 2018 06:48:20 -0700 (PDT)
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Fabio maggi <fabio.mauri@bticino.it>, lamiaposta71@gmail.com,
-        Andrea CORTESE <andrea.cortese@bticino.it>,
-        "davide . bonfanti" <davide.bonfanti@bticino.it>,
-        Shyam Saini <shyam.saini@amarulasolutions.com>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Simone CIANNI <simone.cianni@bticino.it>,
-        Raffaele RECALCATI <raffaele.recalcati@bticino.it>
-Subject: [PATCH v2 3/4] ARM: dts: i.MX6: imx6dl-mamoj: Add Wifi support
-Date: Thu,  7 Jun 2018 19:17:47 +0530
-Message-Id: <20180607134748.2970-2-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180607134748.2970-1-jagan@amarulasolutions.com>
-References: <20180607134748.2970-1-jagan@amarulasolutions.com>
+        id S1753923AbeFKC3p (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Sun, 10 Jun 2018 22:29:45 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53260 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753793AbeFKC3o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Jun 2018 22:29:44 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A8F3EBB40A;
+        Mon, 11 Jun 2018 02:29:43 +0000 (UTC)
+Received: from [10.72.12.98] (ovpn-12-98.pek2.redhat.com [10.72.12.98])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D602420244E0;
+        Mon, 11 Jun 2018 02:29:39 +0000 (UTC)
+Subject: Re: [PATCH net] vhost_net: remove VHOST_NET_F_VIRTIO_NET_HDR support
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1528429842-22835-1-git-send-email-jasowang@redhat.com>
+ <20180608074115-mutt-send-email-mst@kernel.org>
+ <23efe110-f61a-5aee-c0b4-bd3dc5426438@redhat.com>
+ <20180611050741-mutt-send-email-mst@kernel.org>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <90e9b3ea-e9d2-d60d-8355-42d447c67452@redhat.com>
+Date: Mon, 11 Jun 2018 10:29:36 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180611050741-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 11 Jun 2018 02:29:43 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 11 Jun 2018 02:29:43 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jasowang@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add TI WL18XX Wifi for BTicino i.MX6DL board.
 
-Signed-off-by: Simone CIANNI <simone.cianni@bticino.it>
-Signed-off-by: Raffaele RECALCATI <raffaele.recalcati@bticino.it>
-Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
----
-Changes for v2:
-- collect Fabio r-w-b tag
 
- arch/arm/boot/dts/imx6dl-mamoj.dts | 53 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
+On 2018年06月11日 10:12, Michael S. Tsirkin wrote:
+> On Fri, Jun 08, 2018 at 01:07:09PM +0800, Jason Wang wrote:
+>>
+>> On 2018年06月08日 12:46, Michael S. Tsirkin wrote:
+>>> On Fri, Jun 08, 2018 at 11:50:42AM +0800, Jason Wang wrote:
+>>>> This feature bit is duplicated with VIRTIO_F_ANY_LAYOUT, this means if
+>>>> a userpsace want to enable VRITIO_F_ANY_LAYOUT,
+>>>> VHOST_NET_F_VIRTIO_NET_HDR will be implied too. This is wrong and will
+>>>> break networking.
+>>> What breaks networking exactly? VHOST_NET supported ANY_LAYOUT
+>>> from day one. For this reason it does not need to know about
+>>> VRITIO_F_ANY_LAYOUT and we reused the bit for other purposes.
+>> It's the knowledge of vhost_net code it self but not userspace. For
+>> userspace, it should depends on the value of returned by VHOST_GET_FEATURES.
+>> So when userspace can set_features with ANY_LAYOUT, vhost may think it wants
+>> VHOST_NET_F_VIRTIO_NET_HDR.
+> Yes but that's the admittedly ugly API that we have now.
+> userspace is supposed to know VRITIO_F_ANY_LAYOUT does
+> not make sense for vhost.
 
-diff --git a/arch/arm/boot/dts/imx6dl-mamoj.dts b/arch/arm/boot/dts/imx6dl-mamoj.dts
-index ed9050c5dbcc..5034b086035f 100644
---- a/arch/arm/boot/dts/imx6dl-mamoj.dts
-+++ b/arch/arm/boot/dts/imx6dl-mamoj.dts
-@@ -133,6 +133,18 @@
- 		enable-active-high;
- 		vin-supply = <&reg_lcd_vgl>;
- 	};
-+
-+	reg_wl18xx_vmmc:  regulator-wl18xx-vmcc {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vwl1807";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_wlan>;
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		gpio = <&gpio6 21 GPIO_ACTIVE_HIGH>;
-+		startup-delay-us = <70000>;
-+		enable-active-high;
-+	};
- };
- 
- &fec {
-@@ -285,6 +297,30 @@
- 	status = "okay";
- };
- 
-+&usdhc1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_usdhc1>;
-+	bus-width = <4>;
-+	vmmc-supply = <&reg_wl18xx_vmmc>;
-+	no-1-8-v;
-+	non-removable;
-+	wakeup-source;
-+	keep-power-in-suspend;
-+	cap-power-off-card;
-+	max-frequency = <25000000>;
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	status = "okay";
-+
-+	wlcore: wlcore@2 {
-+		compatible = "ti,wl1837";
-+		reg = <2>;
-+		interrupt-parent = <&gpio6>;
-+		interrupts = <23 IRQ_TYPE_LEVEL_HIGH>;
-+		tcxo-clock-frequency = <26000000>;
-+	};
-+};
-+
- &usdhc3 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_usdhc3>;
-@@ -392,6 +428,17 @@
- 		>;
- 	};
- 
-+	pinctrl_usdhc1: usdhc1grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_SD1_CMD__SD1_CMD    0x17069
-+			MX6QDL_PAD_SD1_CLK__SD1_CLK    0x10079
-+			MX6QDL_PAD_SD1_DAT0__SD1_DATA0 0x17069
-+			MX6QDL_PAD_SD1_DAT1__SD1_DATA1 0x17069
-+			MX6QDL_PAD_SD1_DAT2__SD1_DATA2 0x17069
-+			MX6QDL_PAD_SD1_DAT3__SD1_DATA3 0x17069
-+		>;
-+	};
-+
- 	pinctrl_usdhc3: usdhc3grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_SD3_CMD__SD3_CMD	0x17059
-@@ -406,4 +453,10 @@
- 			MX6QDL_PAD_SD3_DAT7__SD3_DATA7	0x17059
- 		>;
- 	};
-+
-+	pinctrl_wlan: wlan {
-+		fsl,pins = <
-+			MX6QDL_PAD_RGMII_TD1__GPIO6_IO21	0x4001b0b0
-+		>;
-+	};
- };
--- 
-2.14.3
+Ok.
+
+>
+>
+>
+>>>
+>>>
+>>>> Fixing this by safely removing
+>>>> VHOST_NET_F_VIRTIO_NET_HDR support. There should be very few or even
+>>>> no userspace can use this.
+>>> Quite possibly, but it is hard to be sure. It seems safer to
+>>> maintain it unless there's an actual reason something's broken.
+>> I think not since the feature is negotiated not mandatory?
+> That doesn't mean much.
+>
+>>>> Further cleanups could be done for
+>>>> -net-next for safety.
+>>>>
+>>>> In the future, we need a vhost dedicated feature set/get ioctl()
+>>>> instead of reusing virtio ones.
+>>> Not just in the future, we might want to switch iommu
+>>> to a sane structure without the 64 bit padding bug
+>>> right now.
+>> Yes, I hit this bug when introducing V2 of msg IOTLB message.
+> Sounds good, so if you like, reserve a bit for
+> VHOST_NET_F_VIRTIO_NET_HDR in the new ioctl mask and
+> do not enable it there.
+
+Ok, and maybe VHOST_F_LOG_ALL.
+
+>
+>>>> Fixes: 4e9fa50c6ccbe ("vhost: move features to core")
+>>> This tag makes no sense here IMHO. Looks like people are using some tool
+>>> that just looks at the earliest version where patch won't apply. The
+>>> commit in question just moved some code around.
+>> Looks not, before this commit, vhost_net won't return ANY_LAYOUT.
+>>
+>> Thanks
+> Well ANY_LAYOUT just happens to be same as VHOST_NET_F_VIRTIO_NET_HDR
+> and that has been set since forever.
+
+So do you still want this patch? If not we need to document that 
+ANY_LAYOUT could not be passed through SET_FEATURES somewhere.
+
+Thanks
+
+>
+>>>> Signed-off-by: Jason Wang <jasowang@redhat.com>
+>>>> ---
+>>>>    drivers/vhost/net.c | 15 +++++----------
+>>>>    1 file changed, 5 insertions(+), 10 deletions(-)
+>>>>
+>>>> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+>>>> index 986058a..83eef52 100644
+>>>> --- a/drivers/vhost/net.c
+>>>> +++ b/drivers/vhost/net.c
+>>>> @@ -69,7 +69,6 @@ MODULE_PARM_DESC(experimental_zcopytx, "Enable Zero Copy TX;"
+>>>>    enum {
+>>>>    	VHOST_NET_FEATURES = VHOST_FEATURES |
+>>>> -			 (1ULL << VHOST_NET_F_VIRTIO_NET_HDR) |
+>>>>    			 (1ULL << VIRTIO_NET_F_MRG_RXBUF) |
+>>>>    			 (1ULL << VIRTIO_F_IOMMU_PLATFORM)
+>>>>    };
+>>>> @@ -1255,15 +1254,11 @@ static int vhost_net_set_features(struct vhost_net *n, u64 features)
+>>>>    			       (1ULL << VIRTIO_F_VERSION_1))) ?
+>>>>    			sizeof(struct virtio_net_hdr_mrg_rxbuf) :
+>>>>    			sizeof(struct virtio_net_hdr);
+>>>> -	if (features & (1 << VHOST_NET_F_VIRTIO_NET_HDR)) {
+>>>> -		/* vhost provides vnet_hdr */
+>>>> -		vhost_hlen = hdr_len;
+>>>> -		sock_hlen = 0;
+>>>> -	} else {
+>>>> -		/* socket provides vnet_hdr */
+>>>> -		vhost_hlen = 0;
+>>>> -		sock_hlen = hdr_len;
+>>>> -	}
+>>>> +
+>>>> +        /* socket provides vnet_hdr */
+>>>> +	vhost_hlen = 0;
+>>>> +	sock_hlen = hdr_len;
+>>>> +
+>>>>    	mutex_lock(&n->dev.mutex);
+>>>>    	if ((features & (1 << VHOST_F_LOG_ALL)) &&
+>>>>    	    !vhost_log_access_ok(&n->dev))
+>>>> -- 
+>>>> 2.7.4
