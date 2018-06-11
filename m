@@ -1,368 +1,246 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id IwZLICL5GFuAYwAAmS7hNA
-	; Thu, 07 Jun 2018 09:21:38 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id uPq/ORc9HltRSwAAmS7hNA
+	; Mon, 11 Jun 2018 09:12:56 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 66D8B608B8; Thu,  7 Jun 2018 09:21:38 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="mfWfV8De"
+	id D9351607BB; Mon, 11 Jun 2018 09:12:55 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 77A8B605A2;
-	Thu,  7 Jun 2018 09:21:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 77A8B605A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 2AE1060791;
+	Mon, 11 Jun 2018 09:12:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2AE1060791
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753686AbeFGJVf (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 05:21:35 -0400
-Received: from mail-he1eur01on0048.outbound.protection.outlook.com ([104.47.0.48]:22880
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753121AbeFGJVc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 05:21:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O19scUCFFB2yh26Sdo5CaEyPsqnS8x2aBDPDjxvxdJY=;
- b=mfWfV8De5Lx91OTcCBYZhyfr4UyN7NaxKgtIY8gw3RJd/v77/s0M+uNCAJ38xa+NgBBMW9FjB3C/QZ6XCsGEhTOO72V+10zY7J3bYehidMHFWlh5juwSZTfrT76YP3yZD2b3IGH6XR3nVbK8wUEDgDdk33BXFJSssArX0rZdn3o=
-Received: from DB6PR0401MB2536.eurprd04.prod.outlook.com (10.169.224.151) by
- DB6PR0401MB2469.eurprd04.prod.outlook.com (10.169.224.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.820.14; Thu, 7 Jun 2018 09:21:28 +0000
-Received: from DB6PR0401MB2536.eurprd04.prod.outlook.com
- ([fe80::c860:bdbd:3a07:8580]) by DB6PR0401MB2536.eurprd04.prod.outlook.com
- ([fe80::c860:bdbd:3a07:8580%5]) with mapi id 15.20.0797.020; Thu, 7 Jun 2018
- 09:21:28 +0000
-From: "Y.b. Lu" <yangbo.lu@nxp.com>
-To: Madalin-cristian Bucur <madalin.bucur@nxp.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>
-CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [v2, 09/10] dpaa_eth: add support for hardware timestamping
-Thread-Topic: [v2, 09/10] dpaa_eth: add support for hardware timestamping
-Thread-Index: AQHT/g8iPthuHS016UuT35rVkpvytaRUdaiAgAAPMEA=
-Date: Thu, 7 Jun 2018 09:21:28 +0000
-Message-ID: <DB6PR0401MB2536E1848289D45F5C77FEF7F8640@DB6PR0401MB2536.eurprd04.prod.outlook.com>
-References: <20180607032256.39802-1-yangbo.lu@nxp.com>
- <20180607032256.39802-10-yangbo.lu@nxp.com>
- <AM6PR04MB40080865F823C7C57716818FEC640@AM6PR04MB4008.eurprd04.prod.outlook.com>
-In-Reply-To: <AM6PR04MB40080865F823C7C57716818FEC640@AM6PR04MB4008.eurprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB6PR0401MB2469;7:Jnc9UupUcFZBEc6T2lrpkhUyyKGLg/yF1+ynu56+W3+owdgrehmelPSoXC5nbjTsmWVslckSa/OO5L2n7em39NK9YqtL6KLw7q3cXM1VtSvGRbPjS2IKJlYDv3g8aPXdWtpmd4m6zqdWFHLzyquuBCUgBJj2c1qlIKStA6Ll3Wqm9kNvmIZb/yoVApNW2BYHwridXxpVk7GmwIO4PCpnEnm8zv8hCZ+9eDqAybveTsGIVOtnK5vNH8WeNhzGw+ZI
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(2017052603328)(7153060)(7193020);SRVR:DB6PR0401MB2469;
-x-ms-traffictypediagnostic: DB6PR0401MB2469:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yangbo.lu@nxp.com;
-x-microsoft-antispam-prvs: <DB6PR0401MB246960B815272186755BBFBFF8640@DB6PR0401MB2469.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(65623756079841)(185117386973197)(85827821059158)(258649278758335);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231254)(944501410)(52105095)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:DB6PR0401MB2469;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0401MB2469;
-x-forefront-prvs: 06968FD8C4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(376002)(39860400002)(39380400002)(346002)(189003)(199004)(13464003)(7696005)(99286004)(68736007)(2900100001)(9686003)(5660300001)(53936002)(478600001)(76176011)(3846002)(6116002)(486006)(11346002)(110136005)(53546011)(316002)(39060400002)(6246003)(476003)(4326008)(54906003)(2906002)(3660700001)(2501003)(446003)(3280700002)(25786009)(74316002)(305945005)(66066001)(8676002)(7736002)(102836004)(81166006)(81156014)(5250100002)(6506007)(55016002)(97736004)(8936002)(6436002)(14454004)(86362001)(105586002)(229853002)(26005)(106356001)(33656002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0401MB2469;H:DB6PR0401MB2536.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: OO/LxJOT0y77CfUloR2Vql14tUHN7jF6Of4ygkvOfITjf9su02lKahiLlRl/+dMXwbYHnoiRIVHjgJZ+sKX1dBTDs+BoQ/8stDUu33bfyb4Fu7xDhf9nOwxMwaJagnjh3KK+x3qUVi1s18J/ZzOfzIPnmD+azkGXN8vDtLyHy9XgX4d3Kgb7IEdF+ltk6HRx
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S932551AbeFKJMx (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 05:12:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48289 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754073AbeFKJMv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 05:12:51 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 9F69EAE28;
+        Mon, 11 Jun 2018 09:12:49 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 974071E04CC; Mon, 11 Jun 2018 11:12:48 +0200 (CEST)
+Date: Mon, 11 Jun 2018 11:12:48 +0200
+From: Jan Kara <jack@suse.cz>
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Dmitry Vyukov <dvyukov@google.com>, Jens Axboe <axboe@kernel.dk>,
+        Jan Kara <jack@suse.cz>,
+        syzbot <syzbot+4a7438e774b21ddd8eca@syzkaller.appspotmail.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Tejun Heo <tj@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        linux-block@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] bdi: Fix another oops in wb_workfn()
+Message-ID: <20180611091248.2i6nt27h5mxrodm2@quack2.suse.cz>
+References: <95865cab-e12f-d45b-b6e3-465b624862ba@i-love.sakura.ne.jp>
+ <CACT4Y+byRRtCA9B9bPG9mjrf3UY3OsGeBsoh8dZ0T+V6tKpTHg@mail.gmail.com>
+ <201806080231.w582VIRn021009@www262.sakura.ne.jp>
+ <CACT4Y+Y7Mj1JngLst1aRHDhURXQMn-eTjyPFjDdGAT0ZV-dHrw@mail.gmail.com>
+ <CACT4Y+bBfwpcP2h0URpqwiNMQ5SFJdPDHThUu2xetmrxgC+3BQ@mail.gmail.com>
+ <CACT4Y+bHDWDapwOonO1EpR6TiRa=qf9nSDtHArq75yCGuHf=gg@mail.gmail.com>
+ <CACT4Y+Z4i=bD49cb4pJ5zOMxVu675NT8wCNk+c2n2XJVOXG2bg@mail.gmail.com>
+ <2b437c6f-3e10-3d83-bdf3-82075d3eaa1a@i-love.sakura.ne.jp>
+ <3cf4b0e3-31b6-8cdc-7c1e-15ba575a7879@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 5d001171-1ca1-4693-2347-08d5cc580ccc
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5d001171-1ca1-4693-2347-08d5cc580ccc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Jun 2018 09:21:28.5592
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0401MB2469
+Content-Type: multipart/mixed; boundary="frmuxgldwmreei4c"
+Content-Disposition: inline
+In-Reply-To: <3cf4b0e3-31b6-8cdc-7c1e-15ba575a7879@i-love.sakura.ne.jp>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Madalin,
 
-> -----Original Message-----
-> From: Madalin-cristian Bucur
-> Sent: Thursday, June 7, 2018 4:24 PM
-> To: Y.b. Lu <yangbo.lu@nxp.com>; netdev@vger.kernel.org; Richard Cochran
-> <richardcochran@gmail.com>; Rob Herring <robh+dt@kernel.org>; Shawn
-> Guo <shawnguo@kernel.org>; David S . Miller <davem@davemloft.net>
-> Cc: devicetree@vger.kernel.org; linuxppc-dev@lists.ozlabs.org;
-> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org; Y.b. =
-Lu
-> <yangbo.lu@nxp.com>
-> Subject: RE: [v2, 09/10] dpaa_eth: add support for hardware timestamping
->=20
-> > -----Original Message-----
-> > From: Yangbo Lu [mailto:yangbo.lu@nxp.com]
-> > Sent: Thursday, June 7, 2018 6:23 AM
-> > Subject: [v2, 09/10] dpaa_eth: add support for hardware timestamping
-> >
-> > This patch is to add hardware timestamping support for dpaa_eth. On
-> > Rx, timestamping is enabled for all frames. On Tx, we only instruct
-> > the hardware to timestamp the frames marked accordingly by the stack.
-> >
-> > Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-> > ---
-> > Changes for v2:
-> > 	- Removed ifdef for timestamp code.
-> > 	- Minor fixes for code style.
-> > ---
-> >  drivers/net/ethernet/freescale/dpaa/dpaa_eth.c |  101
-> > ++++++++++++++++++++++-
-> >  drivers/net/ethernet/freescale/dpaa/dpaa_eth.h |    3 +
-> >  2 files changed, 99 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-> > b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-> > index fd43f98..bd589ac 100644
-> > --- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-> > +++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-> > @@ -1168,7 +1168,7 @@ static int dpaa_eth_init_tx_port(struct
-> > fman_port *port, struct dpaa_fq *errq,
-> >  	buf_prefix_content.priv_data_size =3D buf_layout->priv_data_size;
-> >  	buf_prefix_content.pass_prs_result =3D true;
-> >  	buf_prefix_content.pass_hash_result =3D true;
-> > -	buf_prefix_content.pass_time_stamp =3D false;
-> > +	buf_prefix_content.pass_time_stamp =3D true;
-> >  	buf_prefix_content.data_align =3D DPAA_FD_DATA_ALIGNMENT;
-> >
-> >  	params.specific_params.non_rx_params.err_fqid =3D errq->fqid; @@
-> > -1210,7 +1210,7 @@ static int dpaa_eth_init_rx_port(struct fman_port
-> > *port, struct dpaa_bp **bps,
-> >  	buf_prefix_content.priv_data_size =3D buf_layout->priv_data_size;
-> >  	buf_prefix_content.pass_prs_result =3D true;
-> >  	buf_prefix_content.pass_hash_result =3D true;
-> > -	buf_prefix_content.pass_time_stamp =3D false;
-> > +	buf_prefix_content.pass_time_stamp =3D true;
-> >  	buf_prefix_content.data_align =3D DPAA_FD_DATA_ALIGNMENT;
-> >
-> >  	rx_p =3D &params.specific_params.rx_params;
-> > @@ -1592,6 +1592,16 @@ static int dpaa_eth_refill_bpools(struct
-> > dpaa_priv
-> > *priv)
-> >  	return 0;
-> >  }
-> >
-> > +static int dpaa_get_tstamp_ns(struct net_device *net_dev, u64 *ns,
-> > +			      struct fman_port *port, const void *data) {
-> > +	if (!fman_port_get_tstamp_field(port, data, ns)) {
-> > +		be64_to_cpus(ns);
->=20
-> Please move this endianness conversion in the fman API.
+--frmuxgldwmreei4c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-[Y.b. Lu] Ok. Will move to fman API in next version.
+On Sat 09-06-18 23:00:05, Tetsuo Handa wrote:
+> From 014c4149f2e24cd26b278b32d5dfda056eecf093 Mon Sep 17 00:00:00 2001
+> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Date: Sat, 9 Jun 2018 22:47:52 +0900
+> Subject: [PATCH] bdi: Fix another oops in wb_workfn()
+> 
+> syzbot is reporting NULL pointer dereference at wb_workfn() [1] due to
+> wb->bdi->dev being NULL. And Dmitry confirmed that wb->state was
+> WB_shutting_down after wb->bdi->dev became NULL. This indicates that
+> unregister_bdi() failed to call wb_shutdown() on one of wb objects.
+> 
+> Since cgwb_bdi_unregister() from bdi_unregister() cannot call wb_shutdown()
+> on wb objects which have already passed list_del_rcu() in wb_shutdown(),
+> cgwb_bdi_unregister() from bdi_unregister() can return and set wb->bdi->dev
+> to NULL before such wb objects enter final round of wb_workfn() via
+> mod_delayed_work()/flush_delayed_work().
 
->=20
-> > +		return 0;
-> > +	}
-> > +	return -EINVAL;
-> > +}
-> > +
-> >  /* Cleanup function for outgoing frame descriptors that were built on
-> > Tx path,
-> >   * either contiguous frames or scatter/gather ones.
-> >   * Skb freeing is not handled here.
-> > @@ -1607,14 +1617,29 @@ static int dpaa_eth_refill_bpools(struct
-> > dpaa_priv
-> > *priv)
-> >  {
-> >  	const enum dma_data_direction dma_dir =3D DMA_TO_DEVICE;
-> >  	struct device *dev =3D priv->net_dev->dev.parent;
-> > +	struct skb_shared_hwtstamps shhwtstamps;
-> >  	dma_addr_t addr =3D qm_fd_addr(fd);
-> >  	const struct qm_sg_entry *sgt;
-> >  	struct sk_buff **skbh, *skb;
-> >  	int nr_frags, i;
-> > +	u64 ns;
-> >
-> >  	skbh =3D (struct sk_buff **)phys_to_virt(addr);
-> >  	skb =3D *skbh;
-> >
-> > +	if (priv->tx_tstamp && skb_shinfo(skb)->tx_flags &
-> > SKBTX_HW_TSTAMP) {
-> > +		memset(&shhwtstamps, 0, sizeof(shhwtstamps));
-> > +
-> > +		if (!dpaa_get_tstamp_ns(priv->net_dev, &ns,
-> > +					priv->mac_dev->port[TX],
-> > +					(void *)skbh)) {
-> > +			shhwtstamps.hwtstamp =3D ns_to_ktime(ns);
-> > +			skb_tstamp_tx(skb, &shhwtstamps);
-> > +		} else {
-> > +			dev_warn(dev, "dpaa_get_tstamp_ns failed!\n");
-> > +		}
-> > +	}
-> > +
-> >  	if (unlikely(qm_fd_get_format(fd) =3D=3D qm_fd_sg)) {
-> >  		nr_frags =3D skb_shinfo(skb)->nr_frags;
-> >  		dma_unmap_single(dev, addr, qm_fd_get_offset(fd) + @@ -2086,6
-> > +2111,11 @@ static int dpaa_start_xmit(struct sk_buff *skb, struct
-> > net_device *net_dev)
-> >  	if (unlikely(err < 0))
-> >  		goto skb_to_fd_failed;
-> >
-> > +	if (priv->tx_tstamp && skb_shinfo(skb)->tx_flags &
-> > SKBTX_HW_TSTAMP) {
-> > +		fd.cmd |=3D FM_FD_CMD_UPD;
->=20
-> The fd.cmd field is big endian, please use this:
->=20
-> +		fd.cmd |=3D cpu_to_be32(FM_FD_CMD_UPD);
->=20
+Thanks a lot for debugging the issue and also thanks a lot to Dmitry for
+taking time to reproduce the race by hand with the debug patch! I really
+appreciate it!
 
-[Y.b. Lu] Thanks a lot for pointing out this issue. This fixes TX timestamp=
- issue on ARM platform.
-By now, I have verified both PowerPC platform and ARM platform. The PTP clo=
-ck driver and timestamping worked fine.
-I will send out v3 patch-set for reviewing.
+> Since WB_registered is already cleared by wb_shutdown(), only wb_shutdown()
+> can schedule for final round of wb_workfn(). Since concurrent calls to
+> wb_shutdown() on the same wb object is safe because of WB_shutting_down
+> state, I think that wb_shutdown() can safely keep a wb object in the
+> bdi->wb_list until that wb object leaves final round of wb_workfn().
+> Thus, make wb_shutdown() call list_del_rcu() after flush_delayed_work().
 
-> > +		skb_shinfo(skb)->tx_flags |=3D SKBTX_IN_PROGRESS;
-> > +	}
-> > +
-> >  	if (likely(dpaa_xmit(priv, percpu_stats, queue_mapping, &fd) =3D=3D 0=
-))
-> >  		return NETDEV_TX_OK;
-> >
-> > @@ -2227,6 +2257,7 @@ static enum qman_cb_dqrr_result
-> > rx_default_dqrr(struct qman_portal *portal,
-> >  						struct qman_fq *fq,
-> >  						const struct qm_dqrr_entry
-> > *dq)
-> >  {
-> > +	struct skb_shared_hwtstamps *shhwtstamps;
-> >  	struct rtnl_link_stats64 *percpu_stats;
-> >  	struct dpaa_percpu_priv *percpu_priv;
-> >  	const struct qm_fd *fd =3D &dq->fd;
-> > @@ -2240,6 +2271,7 @@ static enum qman_cb_dqrr_result
-> > rx_default_dqrr(struct qman_portal *portal,
-> >  	struct sk_buff *skb;
-> >  	int *count_ptr;
-> >  	void *vaddr;
-> > +	u64 ns;
-> >
-> >  	fd_status =3D be32_to_cpu(fd->status);
-> >  	fd_format =3D qm_fd_get_format(fd);
-> > @@ -2304,6 +2336,18 @@ static enum qman_cb_dqrr_result
-> > rx_default_dqrr(struct qman_portal *portal,
-> >  	if (!skb)
-> >  		return qman_cb_dqrr_consume;
-> >
-> > +	if (priv->rx_tstamp) {
-> > +		shhwtstamps =3D skb_hwtstamps(skb);
-> > +		memset(shhwtstamps, 0, sizeof(*shhwtstamps));
-> > +
-> > +		if (!dpaa_get_tstamp_ns(priv->net_dev, &ns,
-> > +					priv->mac_dev->port[RX],
-> > +					vaddr))
-> > +			shhwtstamps->hwtstamp =3D ns_to_ktime(ns);
-> > +		else
-> > +			dev_warn(net_dev->dev.parent,
-> > "dpaa_get_tstamp_ns failed!\n");
-> > +	}
-> > +
-> >  	skb->protocol =3D eth_type_trans(skb, net_dev);
-> >
-> >  	if (net_dev->features & NETIF_F_RXHASH && priv->keygen_in_use &&
-> @@
-> > -2523,11 +2567,58 @@ static int dpaa_eth_stop(struct net_device
-> > *net_dev)
-> >  	return err;
-> >  }
-> >
-> > +static int dpaa_ts_ioctl(struct net_device *dev, struct ifreq *rq,
-> > +int cmd) {
-> > +	struct dpaa_priv *priv =3D netdev_priv(dev);
-> > +	struct hwtstamp_config config;
-> > +
-> > +	if (copy_from_user(&config, rq->ifr_data, sizeof(config)))
-> > +		return -EFAULT;
-> > +
-> > +	switch (config.tx_type) {
-> > +	case HWTSTAMP_TX_OFF:
-> > +		/* Couldn't disable rx/tx timestamping separately.
-> > +		 * Do nothing here.
-> > +		 */
-> > +		priv->tx_tstamp =3D false;
-> > +		break;
-> > +	case HWTSTAMP_TX_ON:
-> > +		priv->mac_dev->set_tstamp(priv->mac_dev->fman_mac,
-> > true);
-> > +		priv->tx_tstamp =3D true;
-> > +		break;
-> > +	default:
-> > +		return -ERANGE;
-> > +	}
-> > +
-> > +	if (config.rx_filter =3D=3D HWTSTAMP_FILTER_NONE) {
-> > +		/* Couldn't disable rx/tx timestamping separately.
-> > +		 * Do nothing here.
-> > +		 */
-> > +		priv->rx_tstamp =3D false;
-> > +	} else {
-> > +		priv->mac_dev->set_tstamp(priv->mac_dev->fman_mac,
-> > true);
-> > +		priv->rx_tstamp =3D true;
-> > +		/* TS is set for all frame types, not only those requested */
-> > +		config.rx_filter =3D HWTSTAMP_FILTER_ALL;
-> > +	}
-> > +
-> > +	return copy_to_user(rq->ifr_data, &config, sizeof(config)) ?
-> > +			-EFAULT : 0;
-> > +}
-> > +
-> >  static int dpaa_ioctl(struct net_device *net_dev, struct ifreq *rq,
-> > int cmd)  {
-> > -	if (!net_dev->phydev)
-> > -		return -EINVAL;
-> > -	return phy_mii_ioctl(net_dev->phydev, rq, cmd);
-> > +	int ret =3D -EINVAL;
-> > +
-> > +	if (cmd =3D=3D SIOCGMIIREG) {
-> > +		if (net_dev->phydev)
-> > +			return phy_mii_ioctl(net_dev->phydev, rq, cmd);
-> > +	}
-> > +
-> > +	if (cmd =3D=3D SIOCSHWTSTAMP)
-> > +		return dpaa_ts_ioctl(net_dev, rq, cmd);
-> > +
-> > +	return ret;
-> >  }
-> >
-> >  static const struct net_device_ops dpaa_ops =3D { diff --git
-> > a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.h
-> > b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.h
-> > index bd94220..af320f8 100644
-> > --- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.h
-> > +++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.h
-> > @@ -182,6 +182,9 @@ struct dpaa_priv {
-> >
-> >  	struct dpaa_buffer_layout buf_layout[2];
-> >  	u16 rx_headroom;
-> > +
-> > +	bool tx_tstamp; /* Tx timestamping enabled */
-> > +	bool rx_tstamp; /* Rx timestamping enabled */
-> >  };
-> >
-> >  /* from dpaa_ethtool.c */
-> > --
-> > 1.7.1
+However this is wrong and so is the patch. The problem is in
+cgwb_bdi_unregister() which does cgwb_kill() and thus drops bdi's
+reference to wb structures before going through the list of wbs again and
+calling wb_shutdown() on each of them. The writeback structures we are
+accessing at this point can be already freed in principle like:
+
+CPU1				CPU2
+				cgwb_bdi_unregister()
+				  cgwb_kill(*slot);
+
+cgwb_release()
+  queue_work(cgwb_release_wq, &wb->release_work);
+cgwb_release_workfn()
+				  wb = list_first_entry(&bdi->wb_list, ...)
+				  spin_unlock_irq(&cgwb_lock);
+  wb_shutdown(wb);
+  ...				
+  kfree_rcu(wb, rcu);
+				  wb_shutdown(wb); -> oops use-after-free
+
+I'm not 100% sure how to fix this. wb structures can be at various phases of
+shutdown (or there may be other external references still existing) when we
+enter cgwb_bdi_unregister() so I think adding a way for cgwb_bdi_unregister()
+to wait for standard wb shutdown path to finish is the most robust way.
+What do you think about attached patch Tejun? So far only compile tested...
+
+Possible problem with it is that now cgwb_bdi_unregister() will wait for
+all wb references to be dropped so it adds some implicit dependencies to
+bdi shutdown path. 
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
+
+--frmuxgldwmreei4c
+Content-Type: text/x-patch; charset=us-ascii
+Content-Disposition: attachment; filename="0001-bdi-Fix-another-oops-in-wb_workfn.patch"
+
+>From f5038c6e7a3d1a4a91879187b92ede8c868988ac Mon Sep 17 00:00:00 2001
+From: Jan Kara <jack@suse.cz>
+Date: Mon, 11 Jun 2018 10:56:04 +0200
+Subject: [PATCH] bdi: Fix another oops in wb_workfn()
+
+syzbot is reporting NULL pointer dereference at wb_workfn() [1] due to
+wb->bdi->dev being NULL. And Dmitry confirmed that wb->state was
+WB_shutting_down after wb->bdi->dev became NULL. This indicates that
+unregister_bdi() failed to call wb_shutdown() on one of wb objects.
+
+The problem is in cgwb_bdi_unregister() which does cgwb_kill() and thus
+drops bdi's reference to wb structures before going through the list of
+wbs again and calling wb_shutdown() on each of them. This way the loop
+iterating through all wbs can easily miss a wb if that wb has already
+passed through cgwb_remove_from_bdi_list() called from wb_shutdown()
+from cgwb_release_workfn() and as a result fully shutdown bdi although
+wb_workfn() for this wb structure is still running. In fact there are
+also other ways cgwb_bdi_unregister() can race with
+cgwb_release_workfn() leading e.g. to use-after-free issues:
+
+CPU1                            CPU2
+                                cgwb_bdi_unregister()
+                                  cgwb_kill(*slot);
+
+cgwb_release()
+  queue_work(cgwb_release_wq, &wb->release_work);
+cgwb_release_workfn()
+                                  wb = list_first_entry(&bdi->wb_list, ...)
+                                  spin_unlock_irq(&cgwb_lock);
+  wb_shutdown(wb);
+  ...
+  kfree_rcu(wb, rcu);
+                                  wb_shutdown(wb); -> oops use-after-free
+
+We solve all these issues by making cgwb_bdi_unregister() wait for
+shutdown of all wb structures instead of going through them and trying
+to actively shut them down.
+
+[1] https://syzkaller.appspot.com/bug?id=e0818ccb7e46190b3f1038b0c794299208ed4206
+
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Tejun Heo <tj@kernel.org>
+Reported-and-analyzed-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzbot+4a7438e774b21ddd8eca@syzkaller.appspotmail.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ mm/backing-dev.c | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
+
+diff --git a/mm/backing-dev.c b/mm/backing-dev.c
+index 347cc834c04a..39fa5f4ddd5c 100644
+--- a/mm/backing-dev.c
++++ b/mm/backing-dev.c
+@@ -370,7 +370,6 @@ static void wb_shutdown(struct bdi_writeback *wb)
+ 	set_bit(WB_shutting_down, &wb->state);
+ 	spin_unlock_bh(&wb->work_lock);
+ 
+-	cgwb_remove_from_bdi_list(wb);
+ 	/*
+ 	 * Drain work list and shutdown the delayed_work.  !WB_registered
+ 	 * tells wb_workfn() that @wb is dying and its work_list needs to
+@@ -379,6 +378,7 @@ static void wb_shutdown(struct bdi_writeback *wb)
+ 	mod_delayed_work(bdi_wq, &wb->dwork, 0);
+ 	flush_delayed_work(&wb->dwork);
+ 	WARN_ON(!list_empty(&wb->work_list));
++	cgwb_remove_from_bdi_list(wb);
+ 	/*
+ 	 * Make sure bit gets cleared after shutdown is finished. Matches with
+ 	 * the barrier provided by test_and_clear_bit() above.
+@@ -541,6 +541,9 @@ static void cgwb_remove_from_bdi_list(struct bdi_writeback *wb)
+ 	spin_lock_irq(&cgwb_lock);
+ 	list_del_rcu(&wb->bdi_node);
+ 	spin_unlock_irq(&cgwb_lock);
++	/* Last wb of the bdi? Wake up waiters for shutdown of all wbs. */
++	if (list_empty(&wb->bdi->wb_list))
++		wake_up_all(&wb->bdi->wb_waitq);
+ }
+ 
+ static int cgwb_create(struct backing_dev_info *bdi,
+@@ -710,22 +713,16 @@ static void cgwb_bdi_unregister(struct backing_dev_info *bdi)
+ {
+ 	struct radix_tree_iter iter;
+ 	void **slot;
+-	struct bdi_writeback *wb;
+ 
+ 	WARN_ON(test_bit(WB_registered, &bdi->wb.state));
+ 
+ 	spin_lock_irq(&cgwb_lock);
+ 	radix_tree_for_each_slot(slot, &bdi->cgwb_tree, &iter, 0)
+ 		cgwb_kill(*slot);
+-
+-	while (!list_empty(&bdi->wb_list)) {
+-		wb = list_first_entry(&bdi->wb_list, struct bdi_writeback,
+-				      bdi_node);
+-		spin_unlock_irq(&cgwb_lock);
+-		wb_shutdown(wb);
+-		spin_lock_irq(&cgwb_lock);
+-	}
+ 	spin_unlock_irq(&cgwb_lock);
++
++	/* Wait for all writeback structures to shutdown */
++	wait_event(bdi->wb_waitq, list_empty(&bdi->wb_list));
+ }
+ 
+ /**
+-- 
+2.13.7
+
+
+--frmuxgldwmreei4c--
