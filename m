@@ -1,72 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id KtYwHDN7GVuvPgAAmS7hNA
-	; Thu, 07 Jun 2018 18:36:35 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id KJSoJNSLHls8ZAAAmS7hNA
+	; Mon, 11 Jun 2018 14:49:20 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 602366074D; Thu,  7 Jun 2018 18:36:35 +0000 (UTC)
+	id 846F3607A4; Mon, 11 Jun 2018 14:49:20 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id DB64960590;
-	Thu,  7 Jun 2018 18:36:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DB64960590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 97ACA6074D;
+	Mon, 11 Jun 2018 14:49:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 97ACA6074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753994AbeFGSgb (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 14:36:31 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:52496 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753716AbeFGSga (ORCPT
+        id S932439AbeFKOtR (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 10:49:17 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:37342 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751952AbeFKOtQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 14:36:30 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fQzlk-00039U-BS; Thu, 07 Jun 2018 18:36:20 +0000
-Date: Thu, 7 Jun 2018 19:36:20 +0100
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: "'tj@kernel.org'" <tj@kernel.org>,
-        "Hatayama, Daisuke" <d.hatayama@jp.fujitsu.com>,
-        "'gregkh@linuxfoundation.org'" <gregkh@linuxfoundation.org>,
-        "Okajima, Toshiyuki" <toshi.okajima@jp.fujitsu.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "'ebiederm@aristanetworks.com'" <ebiederm@aristanetworks.com>
-Subject: Re: [CFT][PATCH] kernfs: Correct kernfs directory seeks.
-Message-ID: <20180607183620.GU30522@ZenIV.linux.org.uk>
-References: <33710E6CAA200E4583255F4FB666C4E21B63D491@G01JPEXMBYT03>
- <87wovhqex2.fsf@xmission.com>
- <87po17r9ek.fsf_-_@xmission.com>
- <33710E6CAA200E4583255F4FB666C4E21B65E04E@G01JPEXMBYT03>
- <87sh62k3vk.fsf@xmission.com>
- <33710E6CAA200E4583255F4FB666C4E21B66BAC8@G01JPEXMBYT03>
- <87h8mhgsh3.fsf@xmission.com>
- <20180605154210.GD1351649@devbig577.frc2.facebook.com>
- <8736y1dt1m.fsf@xmission.com>
+        Mon, 11 Jun 2018 10:49:16 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1fSO8A-0006Au-2F; Mon, 11 Jun 2018 16:49:14 +0200
+Date: Mon, 11 Jun 2018 16:49:14 +0200
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: linux-kernel@vger.kernel.org
+Cc: tglx@linutronix.de, linux-ntfs-dev@lists.sourceforge.net,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anton Altaparmakov <anton@tuxera.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH REPOST] ntfs: don't disable interrupts during kmap_atomic()
+Message-ID: <20180611144913.gln5mklhqcrfsoom@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <8736y1dt1m.fsf@xmission.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 12:47:33PM -0500, Eric W. Biederman wrote:
+ntfs_end_buffer_async_read() disables interrupts around kmap_atomic(). This is
+a leftover from the old kmap_atomic() implementation which relied on fixed
+mapping slots, so the caller had to make sure that the same slot could not be
+reused from an interrupting context.
 
-> Sigh,  I have found another issue with kernfs_fop_readdir.
-> 
-> We are not currently protecting file->private_data with the kernfs_mutex
-> or any other kind of serialization.  Which means if two processes are
-> calling readdir on the same file descriptor we might get unpredictable
-> behavior.
-> 
-> It doesn't look too bad and easy enough to fix, but definitely something
-> to be watchful of.
+kmap_atomic() was changed to dynamic slots long ago and commit 1ec9c5ddc17a
+("include/linux/highmem.h: remove the second argument of k[un]map_atomic()")
+removed the slot assignements, but the callers were not checked for now
+redundant interrupt disabling.
 
-As discussed off-list - this is not a problem; getdents() et.al. are
-serialized on per-struct-file basis by fdget_pos() in relevant syscalls,
-since all directories automatically get FMODE_ATOMIC_POS in ->f_mode.
+Remove the conditional interrupt disable.
+
+Cc: Anton Altaparmakov <anton@tuxera.com>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+Repost from 
+  https://lkml.kernel.org/r/20180504144222.5443-1-bigeasy@linutronix.de
+
+ fs/ntfs/aops.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/fs/ntfs/aops.c b/fs/ntfs/aops.c
+index 3a2e509c77c5..01c770979921 100644
+--- a/fs/ntfs/aops.c
++++ b/fs/ntfs/aops.c
+@@ -93,13 +93,11 @@ static void ntfs_end_buffer_async_read(struct buffer_head *bh, int uptodate)
+ 			ofs = 0;
+ 			if (file_ofs < init_size)
+ 				ofs = init_size - file_ofs;
+-			local_irq_save(flags);
+ 			kaddr = kmap_atomic(page);
+ 			memset(kaddr + bh_offset(bh) + ofs, 0,
+ 					bh->b_size - ofs);
+ 			flush_dcache_page(page);
+ 			kunmap_atomic(kaddr);
+-			local_irq_restore(flags);
+ 		}
+ 	} else {
+ 		clear_buffer_uptodate(bh);
+@@ -146,13 +144,11 @@ static void ntfs_end_buffer_async_read(struct buffer_head *bh, int uptodate)
+ 		recs = PAGE_SIZE / rec_size;
+ 		/* Should have been verified before we got here... */
+ 		BUG_ON(!recs);
+-		local_irq_save(flags);
+ 		kaddr = kmap_atomic(page);
+ 		for (i = 0; i < recs; i++)
+ 			post_read_mst_fixup((NTFS_RECORD*)(kaddr +
+ 					i * rec_size), rec_size);
+ 		kunmap_atomic(kaddr);
+-		local_irq_restore(flags);
+ 		flush_dcache_page(page);
+ 		if (likely(page_uptodate && !PageError(page)))
+ 			SetPageUptodate(page);
+-- 
+2.17.1
