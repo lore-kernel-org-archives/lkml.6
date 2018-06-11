@@ -2,89 +2,295 @@ Return-Path: <SRS0=KDb5=I5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,
+	FROM_LOCAL_NOVOWEL,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	T_DKIM_INVALID,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 379F6C5CFF0
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:28:11 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 562AAC004EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:28:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E140320869
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:28:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F00B820869
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 17:28:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UBvkGHAI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E140320869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YssiY4px";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="EKJqYskh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F00B820869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934382AbeFKR2J (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 13:28:09 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:36456 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932627AbeFKR2G (ORCPT
+        id S934404AbeFKR2K (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 13:28:10 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52488 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934257AbeFKR0u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 13:28:06 -0400
-Received: by mail-io0-f195.google.com with SMTP id k3-v6so10775895iog.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 10:28:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8kvhdcFdV7ieWckqEpsLPUiGr2YqIhq2/gwvvUtorGw=;
-        b=UBvkGHAIoGzvqzEt+qRIzDisske2+cuE6bd7CnxfhBN2TEWB8egznjIWVGKE7axwK8
-         93fTx/MUxmzIcXJtB13tFWZFUnexZ7wnX4w1yq4bCYNSplhN6wMWYEku6B9IfqJrnsNA
-         nQzQZZT3hoYucVNjZcNq59vdu9bZwq14RBpPQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8kvhdcFdV7ieWckqEpsLPUiGr2YqIhq2/gwvvUtorGw=;
-        b=ty/6HY/d+ronicqIqi+cHSaw/j9s6sJrNr04QtOBwy5XGvDNeK6G9pjmEBw7jSST5r
-         QqqnVvObeTrXeOsacdvEQYWbjyMGBpZV6Du+MeNcap1U8grQmbol7CNHglkJEJmWR6XK
-         QtEc6HA/mzUqNshsoPy3IPRjjgmZagUoro3giFXv15QADt+3aHQfWdAL0WkTg2ESflSW
-         Tea5WjnXkUOTZFEhjY9fEiDliipTnG9/WdwgoBvETbqGzLXiM1UNWXr8Lc1Qg0BPYnTm
-         voQrIptkn08NyL4veVjm5dXi4whTHubx1njuF6+fkpFZxOYSUgpPtDsXriRLwEbBSR8O
-         +Ksg==
-X-Gm-Message-State: APt69E0+EwDdLFBNA5U7cAHvi63L0yapnyR1wckNmLBIRq34XScr4q1A
-        NwR+4BtZJ7ja3nTmnocEAruimCyiPeC3mTArYR0=
-X-Google-Smtp-Source: ADUXVKJKkYEoQC5EAYQbs6GjKQsJIi9zVkMG1elwTOnSv6z3DF4Xiw+1ccOOPEDWp3SMqorA0fDppRV0AKZnuXfV210=
-X-Received: by 2002:a6b:f90b:: with SMTP id j11-v6mr102827iog.238.1528738085753;
- Mon, 11 Jun 2018 10:28:05 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180611165212.GA6783@jaegeuk-macbookpro.roam.corp.google.com>
-In-Reply-To: <20180611165212.GA6783@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 11 Jun 2018 10:27:54 -0700
-Message-ID: <CA+55aFznP4aEy7DkVfeQ_e6eXgLnswVnSJS3C51UHD_k8qYZCA@mail.gmail.com>
-Subject: Re: [GIT PULL] f2fs update for 4.18-rc1
-To:     Jaegeuk Kim <jaegeuk@kernel.org>,
-        Matthew Wilcox <mawilcox@microsoft.com>
-Cc:     "Linux F2FS DEV, Mailing List" 
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 11 Jun 2018 13:26:50 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id C65FA607E7; Mon, 11 Jun 2018 17:26:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528738009;
+        bh=zlAIA3u/OAZ1mGIGGUKOhF4gHuKrg7fr0IeMJPFP60Q=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=YssiY4pxO7zt/SG2w7LSoFc6qXV0e0KV1LHFiNW8wRmKNmnLimkr5NJG/ayQEuvnP
+         1khgRu8LCaaJNWNP+aMlunOAafO127Hq2H8PS8gIJh+giuv9Jxej2Vu+9kkOYhd/qJ
+         uljpA21168Fw77dMh+MYgSKz3+EbXhehz8VFnw4E=
+Received: from rplsssn-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rplsssn@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 01C2F60850;
+        Mon, 11 Jun 2018 17:26:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528738008;
+        bh=zlAIA3u/OAZ1mGIGGUKOhF4gHuKrg7fr0IeMJPFP60Q=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=EKJqYskhlLxtDsIaP5t4uCIlsg/8il47BO48pfJrUhpZUkY/Rwm4VRaT+b95Y9bxO
+         s/upi2KxQZWMF9g67xyk0WomP+0MCeFulfpCti7ESc4Y/MomvwnSOWPZzggHw/pDeq
+         LEL8iNXQWtLjg8zwWycO2DtedVI2+IcpzAYZoK1I=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 01C2F60850
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
+From:   Raju P L S S S N <rplsssn@codeaurora.org>
+To:     andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Cc:     rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org,
+        evgreen@chromium.org, dianders@chromium.org, mka@chromium.org,
+        ilina@codeaurora.org, "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
+Subject: [PATCH v10 05/10] drivers: qcom: rpmh-rsc: write sleep/wake requests to TCS
+Date:   Mon, 11 Jun 2018 22:55:44 +0530
+Message-Id: <1528737949-17495-6-git-send-email-rplsssn@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1528737949-17495-1-git-send-email-rplsssn@codeaurora.org>
+References: <1528737949-17495-1-git-send-email-rplsssn@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 11, 2018 at 9:52 AM Jaegeuk Kim <jaegeuk@kernel.org> wrote:
->
-> In order to avoid old MM bug [1], we decided not to use __GFP_ZERO
-> for the mapping for node and meta page caches.
->
-> [1] https://lkml.org/lkml/2018/4/8/661
+From: Lina Iyer <ilina@codeaurora.org>
 
-Hmm. The patch there looks correct, and anybody who relies on slab
-constructors is crazy.
+Sleep and wake requests are sent when the application processor
+subsystem of the SoC is entering deep sleep states like in suspend.
+These requests help lower the system power requirements when the
+resources are not in use.
 
-That email from April says it should go into stable, but it never even
-went upstream..
+Sleep and wake requests are written to the TCS slots but are not
+triggered at the time of writing. The TCS are triggered by the firmware
+after the last of the CPUs has executed its WFI. Since these requests
+may come in different batches of requests, it is the job of this
+controller driver to find and arrange the requests into the available
+TCSes.
 
-Adding Willy to the cc, for comments, since he's been active there and
-is probably the maintainer even if the MAINTAINERS file doesn't say
-so..
+Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
+Reviewed-by: Evan Green <evgreen@chromium.org>
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
 
-Willy?
+---
+Changes in v9:
+        - Bounds check in find_match()
+        - Bounds check in find_slots()
+        - Fix comment in tcs_ctrl_write()
+        - Remove EXPORT_SYMBOL
 
-             Linus
+Changes in v8:
+	- Bounds check in find_match()
+
+Changes in v7:
+	- Bug fix in find_match()
+---
+ drivers/soc/qcom/rpmh-internal.h |   8 +++
+ drivers/soc/qcom/rpmh-rsc.c      | 121 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 129 insertions(+)
+
+diff --git a/drivers/soc/qcom/rpmh-internal.h b/drivers/soc/qcom/rpmh-internal.h
+index edf1a91..27a12d1 100644
+--- a/drivers/soc/qcom/rpmh-internal.h
++++ b/drivers/soc/qcom/rpmh-internal.h
+@@ -14,6 +14,7 @@
+ #define MAX_CMDS_PER_TCS		16
+ #define MAX_TCS_PER_TYPE		3
+ #define MAX_TCS_NR			(MAX_TCS_PER_TYPE * TCS_TYPE_NR)
++#define MAX_TCS_SLOTS			(MAX_CMDS_PER_TCS * MAX_TCS_PER_TYPE)
+ #define RPMH_MAX_CTRLR			2
+ 
+ struct rsc_drv;
+@@ -30,6 +31,8 @@
+  * @ncpt:      number of commands in each TCS
+  * @lock:      lock for synchronizing this TCS writes
+  * @req:       requests that are sent from the TCS
++ * @cmd_cache: flattened cache of cmds in sleep/wake TCS
++ * @slots:     indicates which of @cmd_addr are occupied
+  */
+ struct tcs_group {
+ 	struct rsc_drv *drv;
+@@ -40,6 +43,8 @@ struct tcs_group {
+ 	int ncpt;
+ 	spinlock_t lock;
+ 	const struct tcs_request *req[MAX_TCS_PER_TYPE];
++	u32 *cmd_cache;
++	DECLARE_BITMAP(slots, MAX_TCS_SLOTS);
+ };
+ 
+ /**
+@@ -65,6 +70,9 @@ struct rsc_drv {
+ };
+ 
+ int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg);
++int rpmh_rsc_write_ctrl_data(struct rsc_drv *drv,
++			     const struct tcs_request *msg);
++int rpmh_rsc_invalidate(struct rsc_drv *drv);
+ 
+ void rpmh_tx_done(const struct tcs_request *msg, int r);
+ 
+diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
+index 59fa41f..b87f9b0 100644
+--- a/drivers/soc/qcom/rpmh-rsc.c
++++ b/drivers/soc/qcom/rpmh-rsc.c
+@@ -110,6 +110,12 @@ static struct tcs_group *get_tcs_for_msg(struct rsc_drv *drv,
+ 	case RPMH_ACTIVE_ONLY_STATE:
+ 		type = ACTIVE_TCS;
+ 		break;
++	case RPMH_WAKE_ONLY_STATE:
++		type = WAKE_TCS;
++		break;
++	case RPMH_SLEEP_STATE:
++		type = SLEEP_TCS;
++		break;
+ 	default:
+ 		return ERR_PTR(-EINVAL);
+ 	}
+@@ -349,6 +355,108 @@ int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg)
+ 	return ret;
+ }
+ 
++static int find_match(const struct tcs_group *tcs, const struct tcs_cmd *cmd,
++		      int len)
++{
++	int i, j;
++
++	/* Check for already cached commands */
++	for_each_set_bit(i, tcs->slots, MAX_TCS_SLOTS) {
++		if (tcs->cmd_cache[i] != cmd[0].addr)
++			continue;
++		if (i + len >= tcs->num_tcs * tcs->ncpt)
++			goto seq_err;
++		for (j = 0; j < len; j++) {
++			if (tcs->cmd_cache[i + j] != cmd[j].addr)
++				goto seq_err;
++		}
++		return i;
++	}
++
++	return -ENODATA;
++
++seq_err:
++	WARN(1, "Message does not match previous sequence.\n");
++	return -EINVAL;
++}
++
++static int find_slots(struct tcs_group *tcs, const struct tcs_request *msg,
++		      int *tcs_id, int *cmd_id)
++{
++	int slot, offset;
++	int i = 0;
++
++	/* Find if we already have the msg in our TCS */
++	slot = find_match(tcs, msg->cmds, msg->num_cmds);
++	if (slot >= 0)
++		goto copy_data;
++
++	/* Do over, until we can fit the full payload in a TCS */
++	do {
++		slot = bitmap_find_next_zero_area(tcs->slots, MAX_TCS_SLOTS,
++						  i, msg->num_cmds, 0);
++		if (slot == tcs->num_tcs * tcs->ncpt)
++			return -ENOMEM;
++		i += tcs->ncpt;
++	} while (slot + msg->num_cmds - 1 >= i);
++
++copy_data:
++	bitmap_set(tcs->slots, slot, msg->num_cmds);
++	/* Copy the addresses of the resources over to the slots */
++	for (i = 0; i < msg->num_cmds; i++)
++		tcs->cmd_cache[slot + i] = msg->cmds[i].addr;
++
++	offset = slot / tcs->ncpt;
++	*tcs_id = offset + tcs->offset;
++	*cmd_id = slot % tcs->ncpt;
++
++	return 0;
++}
++
++static int tcs_ctrl_write(struct rsc_drv *drv, const struct tcs_request *msg)
++{
++	struct tcs_group *tcs;
++	int tcs_id = 0, cmd_id = 0;
++	unsigned long flags;
++	int ret;
++
++	tcs = get_tcs_for_msg(drv, msg);
++	if (IS_ERR(tcs))
++		return PTR_ERR(tcs);
++
++	spin_lock_irqsave(&tcs->lock, flags);
++	/* find the TCS id and the command in the TCS to write to */
++	ret = find_slots(tcs, msg, &tcs_id, &cmd_id);
++	if (!ret)
++		__tcs_buffer_write(drv, tcs_id, cmd_id, msg);
++	spin_unlock_irqrestore(&tcs->lock, flags);
++
++	return ret;
++}
++
++/**
++ * rpmh_rsc_write_ctrl_data: Write request to the controller
++ *
++ * @drv: the controller
++ * @msg: the data to be written to the controller
++ *
++ * There is no response returned for writing the request to the controller.
++ */
++int rpmh_rsc_write_ctrl_data(struct rsc_drv *drv, const struct tcs_request *msg)
++{
++	if (!msg || !msg->cmds || !msg->num_cmds ||
++	    msg->num_cmds > MAX_RPMH_PAYLOAD) {
++		pr_err("Payload error\n");
++		return -EINVAL;
++	}
++
++	/* Data sent to this API will not be sent immediately */
++	if (msg->state == RPMH_ACTIVE_ONLY_STATE)
++		return -EINVAL;
++
++	return tcs_ctrl_write(drv, msg);
++}
++
+ static int rpmh_probe_tcs_config(struct platform_device *pdev,
+ 				 struct rsc_drv *drv)
+ {
+@@ -424,6 +532,19 @@ static int rpmh_probe_tcs_config(struct platform_device *pdev,
+ 		tcs->mask = ((1 << tcs->num_tcs) - 1) << st;
+ 		tcs->offset = st;
+ 		st += tcs->num_tcs;
++
++		/*
++		 * Allocate memory to cache sleep and wake requests to
++		 * avoid reading TCS register memory.
++		 */
++		if (tcs->type == ACTIVE_TCS)
++			continue;
++
++		tcs->cmd_cache = devm_kcalloc(&pdev->dev,
++					      tcs->num_tcs * ncpt, sizeof(u32),
++					      GFP_KERNEL);
++		if (!tcs->cmd_cache)
++			return -ENOMEM;
+ 	}
+ 
+ 	drv->num_tcs = st;
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,\na Linux Foundation Collaborative Project
+
