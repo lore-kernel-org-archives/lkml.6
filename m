@@ -1,121 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id BdPyLfycGlu4RgAAmS7hNA
-	; Fri, 08 Jun 2018 15:17:56 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id TpYLJ4soHltMDwAAmS7hNA
+	; Mon, 11 Jun 2018 07:45:20 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 7064D607E4; Fri,  8 Jun 2018 15:17:56 +0000 (UTC)
+	id A2A4A607E7; Mon, 11 Jun 2018 07:45:19 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m0KeBFD5"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id E908160590;
-	Fri,  8 Jun 2018 15:17:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E908160590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 22403608CA;
+	Mon, 11 Jun 2018 07:45:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 22403608CA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752857AbeFHPRy (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 11:17:54 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49984 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751496AbeFHPRw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 11:17:52 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 53F6E859A2;
-        Fri,  8 Jun 2018 15:17:52 +0000 (UTC)
-Received: from localhost (ovpn-8-19.pek2.redhat.com [10.72.8.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8BD2E10EE6D6;
-        Fri,  8 Jun 2018 15:17:51 +0000 (UTC)
-Date: Fri, 8 Jun 2018 23:17:48 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        pagupta@redhat.com, linux-mm@kvack.org,
-        kirill.shutemov@linux.intel.com
-Subject: Re: [PATCH v4 3/4] mm/sparse: Add a new parameter 'data_unit_size'
- for alloc_usemap_and_memmap
-Message-ID: <20180608151748.GE16231@MiWiFi-R3L-srv>
-References: <20180521101555.25610-1-bhe@redhat.com>
- <20180521101555.25610-4-bhe@redhat.com>
- <8ff7638c-d3ee-a40c-e5cf-deded8d19e93@intel.com>
- <20180608062733.GB16231@MiWiFi-R3L-srv>
- <74359df3-76a8-6dc7-51c5-27019130224f@intel.com>
+        id S1754101AbeFKHpP (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 03:45:15 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37156 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753964AbeFKHpO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 03:45:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=J90GsHWbmiMUP60WHu7W/BPoqlHG5vrbzrKoQ+f5kWM=; b=m0KeBFD5c5hPIDsPbBpIEHOGd
+        JW/UwWQ9XXImqVbiOGIiU+0m6C5dgDVoJgy2oNEGQ62rYCCXhPV1xyu5t9HccVF2HCbXsov83vt6N
+        C9zJzr8x3tgW8Sw1i02ekV+UykjVCEC91qVlqm4Mf0f5JK0YEiWvPmoV4lyBD/i71DTwCfPgW9qzz
+        JHI/ZYsu9yeN7BO6OFQ3RSUdXEudaj7R9irg/uV/mGRL8a48C0e0bRPcdASJCC7d7q0zIEiDwZS82
+        ivCNZDYkneO5gBYlg/7dxgQvpHSyy/PblrOn6HD75zwzfcKYlPBwEURNpPyJrozCXMfyK7T9czzd6
+        BqnQcxfbg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fSHVl-0004Uw-9n; Mon, 11 Jun 2018 07:45:09 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 85FD6201EA7B1; Mon, 11 Jun 2018 09:45:07 +0200 (CEST)
+Date: Mon, 11 Jun 2018 09:45:07 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Nadav Amit <namit@vmware.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+        Juergen Gross <jgross@suse.com>,
+        Alok Kataria <akataria@vmware.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH v3 6/9] x86: prevent inline distortion by paravirt ops
+Message-ID: <20180611074507.GP12258@hirez.programming.kicks-ass.net>
+References: <20180610141911.52948-1-namit@vmware.com>
+ <20180610141911.52948-7-namit@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <74359df3-76a8-6dc7-51c5-27019130224f@intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 08 Jun 2018 15:17:52 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 08 Jun 2018 15:17:52 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+In-Reply-To: <20180610141911.52948-7-namit@vmware.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/08/18 at 07:20am, Dave Hansen wrote:
-> On 06/07/2018 11:27 PM, Baoquan He wrote:
-> > In alloc_usemap_and_memmap(), it will call
-> > sparse_early_usemaps_alloc_node() or sparse_early_mem_maps_alloc_node()
-> > to allocate usemap and memmap for each node and install them into
-> > usemap_map[] and map_map[]. Here we need pass in the number of present
-> > sections on this node so that we can move pointer of usemap_map[] and
-> > map_map[] to right position.
-> > 
-> > How do think about above words?
-> 
-> But you're now passing in the size of the data structure.  Why is that
-> needed all of a sudden?
+On Sun, Jun 10, 2018 at 07:19:08AM -0700, Nadav Amit wrote:
+> +/*
+> + * This generates an indirect call based on the operation type number.
+> + * The type number, computed in PARAVIRT_PATCH, is derived from the
+> + * offset into the paravirt_patch_template structure, and can therefore be
+> + * freely converted back into a structure offset.
+> + */
+> +.macro PARAVIRT_ALT type:req clobber:req pv_opptr:req
 
-Oh, it's the size of the data structure. Because
-alloc_usemap_and_memmap() is reused for both usemap and memmap
-allocation, then inside alloc_usemap_and_memmap(), we need move forward
-the passed in pointer which points at the starting address of usemap_map
-or memmap_map, to a new position which points at the next starting
-address on new node.
+Unlike the marcro maze you replaced, this has the CALL hardcoded in. So
+maybe name this PARAVIRT_CALL instead of PARAVIRT_ALT ?
 
-You can see we passed the usemap_map, map_map, and the array element
-size.  
-
-void __init sparse_init(void)
-{
-	...
-        alloc_usemap_and_memmap(sparse_early_usemaps_alloc_node,                                                                                  
-                                (void *)usemap_map,
-                                sizeof(usemap_map[0]));
-	...
-        alloc_usemap_and_memmap(sparse_early_mem_maps_alloc_node,
-                                (void *)map_map,
-                                sizeof(map_map[0]));
-	...
-}
-
-Then inside alloc_usemap_and_memmap(), For each node, we get how many
-present sections on this node, call hook alloc_func(). Then we update
-the pointer to point at a new position of usemap_map[] or map_map[].
-
-Here usemap_map[] is (unsigned long *), map_map[] is (struct page*).
-Even though both of them are pointer, I think it might be not good to
-assume that in alloc_usemap_and_memmap() because
-alloc_usemap_and_memmap() doesn't know what is stored in its 2nd
-parameter, namely (void * data). So add this new parameter to tell it.
-
-Combine with patch 4/4, it might be easier to understand.
-
-static void __init alloc_usemap_and_memmap(void (*alloc_func)
-..
-{
-	...
-	for_each_present_section_nr(pnum_begin + 1, pnum) {
-                alloc_func(data, pnum_begin, pnum,                                                                                                
-                                                map_count, nodeid_begin);
-		...
-		data += map_count * data_unit_size; 
-		...
-	}
-	...
-}
+> +771:	ANNOTATE_RETPOLINE_SAFE
+> +	call *\pv_opptr
+> +772:	.pushsection .parainstructions,"a"
+> +	_ASM_ALIGN
+> +	_ASM_PTR 771b
+> +	.byte \type
+> +	.byte 772b-771b
+> +	.short \clobber
+> +	.popsection
+> +.endm
