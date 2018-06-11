@@ -1,161 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id DqchHDy4HVtdKgAAmS7hNA
-	; Sun, 10 Jun 2018 23:46:04 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 2IpwFcr4HVsxNgAAmS7hNA
+	; Mon, 11 Jun 2018 04:21:33 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 5752360792; Sun, 10 Jun 2018 23:46:04 +0000 (UTC)
+	id CD45D607A4; Mon, 11 Jun 2018 04:21:32 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eNozJIFI"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dfd5R1f2"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id B5DCD604D4;
-	Sun, 10 Jun 2018 23:46:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B5DCD604D4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 5C2EC602FC;
+	Mon, 11 Jun 2018 04:21:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5C2EC602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753723AbeFJXp7 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Sun, 10 Jun 2018 19:45:59 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:33162 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753531AbeFJXp5 (ORCPT
+        id S1753919AbeFKEVa (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 00:21:30 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:34267 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753801AbeFKEV2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 19:45:57 -0400
-Received: by mail-pf0-f194.google.com with SMTP id b17-v6so9282291pfi.0
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Jun 2018 16:45:57 -0700 (PDT)
+        Mon, 11 Jun 2018 00:21:28 -0400
+Received: by mail-pl0-f66.google.com with SMTP id g20-v6so11565771plq.1
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Jun 2018 21:21:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=plNzHcAhpungQm78VxafCFi2EDjeTT64qkFxxYjePAU=;
-        b=eNozJIFI6hQd7Lv2ig9iNzmInQpinrSaaqC/35SfvgP24kaf1EuhPDZGTcSFLr78eL
-         WBmiVbMtXqdOJJ/xiyV4dsVeEjcene5UwwxZoNeBu5viLVoir+qKWrT2Jgj+qDOAP0mK
-         Bjsr1GUy78XTmGD7oqeuFH8UzIovASXMs4RSTmkRv7TGEmhdlT+rFkbWwuKXfZeiX1nc
-         iSv8e649xExdbDXzjh6gmUfNe7cDZq5RBZb3bTosnbzqVRD3fv1htVTjzbdGciVxPaei
-         3p1MfjlBg9vUBGDrl3UEuLyqRXMIWV3UueUARXLekgg/WtvWDYKdFv4/s9v7MYASZVf1
-         XTdA==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5zhAVZKwMMeKB/iTBpRxyK0hRyebu1oigRIY94Ajy24=;
+        b=dfd5R1f2whh5pQX9sHuICSHOgF0zCFq3Cx2d3YuLj9m3PSCmub045kEaS2OsuuAMhe
+         Bki/0Ivxl0weRVyTz9JKWlFHR5ZLmTlovE4pglkIm3aXZw8wPED7ru0Aez3LceX0cf0N
+         Vj9uWF5R/3S3edneyOaGnnROQrlhkRQWPh0UA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=plNzHcAhpungQm78VxafCFi2EDjeTT64qkFxxYjePAU=;
-        b=Prx3ON5t5flm80e1Gls7daxL3LGsF9/NUndAmThOWOEFIJMWvWlNYblxzF7pkEnWYh
-         6C8TCqo2U1iPV3QnC4itWz8UhgwFAesnYngw6BPcxXuUqNz8drWJpmWzAEybQZo2mjZt
-         7Fe5yjKI6TI4bu9hld0had87h9kKt/NjQEIafR83BzyLRptB6kTPPr9fdLI3hsipetQi
-         tbgTeaaQesTFIofonhXqEUUzq8aWepLLv4TXiLqthEZLhJ91JbO7LzVlvXPGPk6beXPK
-         iXHmsHkPBjmNDMeqknmJKYpeTYC2uWFhJmpiUsK4fJRS5dmebWzxxwSak/vUMYeCht15
-         L4ow==
-X-Gm-Message-State: APt69E0+3HWGZ2EQKXJo/hyNo7jOkce8YFgeYZGg+JBauHcta9b7XvOy
-        tFuCXu8kpHA8r9i5Yx2Xka0do8bcA6E=
-X-Google-Smtp-Source: ADUXVKLB7+T+A43Z7KWUd+HNcmgc7s9JeiRhmQ9GsbzKYW0mBsQ5YegJNU4aEitKKQpI5KcVMDRBAg==
-X-Received: by 2002:a65:51c9:: with SMTP id i9-v6mr10502094pgq.202.1528674356525;
-        Sun, 10 Jun 2018 16:45:56 -0700 (PDT)
-Received: from joelaf.mtv.corp.google.com ([2620:0:1000:1600:3122:ea9c:d178:eb])
-        by smtp.gmail.com with ESMTPSA id x72-v6sm64939133pff.176.2018.06.10.16.45.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 10 Jun 2018 16:45:55 -0700 (PDT)
-From: Joel Fernandes <joelaf@google.com>
-X-Google-Original-From: Joel Fernandes <joel@joelfernandes.org>
-To: linux-kernel@vger.kernel.org
-Cc: kernel-team@android.com,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        mingo@redhat.com, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, tglx@linutronix.de
-Subject: [PATCH 1/2] rcutorture: Disable RT throttling for boost tests
-Date: Sun, 10 Jun 2018 16:45:43 -0700
-Message-Id: <20180610234544.150933-1-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a-goog
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5zhAVZKwMMeKB/iTBpRxyK0hRyebu1oigRIY94Ajy24=;
+        b=MHkZe8AtcXckVBr7iAwQN7iHfxzvfpyHtSl9aOR5IMUWwTeV9mOQHgfTmksGVZvWvW
+         CjcyL1HTb19x53G1sfgkOOROdcz6ilHpfdPBQwleFtVcYcfKLVWJ2ocBsPJJQL7ItTb2
+         0BJ00xUevPuP3+8+ngYDSffvtOeg+KmtXp4OqV7P0msOJkSvHiblqTdJ75+ZBsiAkZO4
+         ippZuw1aYSjVfpQPm41GlQQP6t2IrhspaN+s3h/4V2TjKeQK7ne9FeJVVlJtcbUDQJd3
+         wj5ZDFBVa1dQv7hAECe5V+7uKa6abORCXmQK6/zgJGVoGDSvmfhEAmTDEQ4NMhi942pT
+         fpZQ==
+X-Gm-Message-State: APt69E2tNjF+mqwmvvKRz98Bg1XQWnFkTcNXDOc0EKHrGlS4EdWJediH
+        A0o9/++wX7yZ8L7oGz68TlB/Dw==
+X-Google-Smtp-Source: ADUXVKK/xypmAN6/Uf4AZY2VprBs+vYpKPkVmL8USTQKguSJbyvLNl9AKb/wZM2ZRWYryBq8id8srg==
+X-Received: by 2002:a17:902:a416:: with SMTP id p22-v6mr16708510plq.228.1528690887878;
+        Sun, 10 Jun 2018 21:21:27 -0700 (PDT)
+Received: from localhost ([106.201.98.91])
+        by smtp.gmail.com with ESMTPSA id n22-v6sm26683280pgv.60.2018.06.10.21.21.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 10 Jun 2018 21:21:27 -0700 (PDT)
+Date: Mon, 11 Jun 2018 09:51:25 +0530
+From: Vinod Koul <vinod.koul@linaro.org>
+To: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Vinod Koul <vinod.koul@intel.com>,
+        linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [RESEND v2] dmaengine: pxa: add a default requestor policy
+Message-ID: <20180611042125.GD2452@vkoul-mobl>
+References: <20180530201249.26972-1-robert.jarzmik@free.fr>
+ <878t7oruya.fsf@belgarion.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <878t7oruya.fsf@belgarion.home>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+On 09-06-18, 14:43, Robert Jarzmik wrote:
+> Robert Jarzmik <robert.jarzmik@free.fr> writes:
+> 
+> > As what former drcmr -1 value meant, add a this as a default to each
+> > channel, ie. that by default no requestor line is used.
+> >
+> > This is specifically used for network drivers smc91x and smc911x, and
+> > needed for their port to slave maps.
+> >
+> > Cc: Arnd Bergmann <arnd@arndb.de>
+> > Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+> > ---
+> > Since v1: changed -1 to U32_MAX
+> Hi Vinod,
+> 
+> Could I have your ack on this so that I add this one to the dma slave map serie
+> after the merge window is closed please ?
 
-Currently rcutorture is not able to torture RCU boosting properly. This
-is because the rcutorture's boost threads which are doing the torturing
-may be throttled due to RT throttling.
+Sorry I was thinking it would go thru dmaengine tree, please do
+indicate if that is not the case. Nevertheless
 
-This patch makes rcutorture use the right torture technique (unthrottled
-rcutorture boost tasks) for torturing RCU so that the test fails
-correctly when no boost is available.
+Acked-by: Vinod Koul <vkoul@kernel.org>
 
-Currently this requires accessing sysctl_sched_rt_runtime directly, but
-that should be Ok since rcutorture is test code. Such direct access is
-also only possible if rcutorture is used as a built-in so make it
-conditional on that.
-
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
----
- kernel/rcu/rcutorture.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
-
-diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index 5219e7ccd8a4..00e06349d7bb 100644
---- a/kernel/rcu/rcutorture.c
-+++ b/kernel/rcu/rcutorture.c
-@@ -55,6 +55,7 @@
- #include <linux/torture.h>
- #include <linux/vmalloc.h>
- #include <linux/sched/debug.h>
-+#include <linux/sched/sysctl.h>
- 
- #include "rcu.h"
- 
-@@ -772,6 +773,32 @@ static void rcu_torture_boost_cb(struct rcu_head *head)
- 	smp_store_release(&rbip->inflight, 0);
- }
- 
-+static int old_rt_runtime = -1;
-+
-+static void rcu_torture_disable_rt_throttle(void)
-+{
-+	/*
-+	 * Disable RT throttling so that rcutorture's boost threads don't get
-+	 * throttled. Only possible if rcutorture is built-in otherwise the
-+	 * user should manually do this by setting the sched_rt_period_us and
-+	 * sched_rt_runtime sysctls.
-+	 */
-+	if (!IS_BUILTIN(CONFIG_RCU_TORTURE_TEST) || old_rt_runtime != -1)
-+		return;
-+
-+	old_rt_runtime = sysctl_sched_rt_runtime;
-+	sysctl_sched_rt_runtime = -1;
-+}
-+
-+static void rcu_torture_enable_rt_throttle(void)
-+{
-+	if (!IS_BUILTIN(CONFIG_RCU_TORTURE_TEST) || old_rt_runtime == -1)
-+		return;
-+
-+	sysctl_sched_rt_runtime = old_rt_runtime;
-+	old_rt_runtime = -1;
-+}
-+
- static int rcu_torture_boost(void *arg)
- {
- 	unsigned long call_rcu_time;
-@@ -1510,6 +1537,7 @@ static int rcutorture_booster_cleanup(unsigned int cpu)
- 	mutex_lock(&boost_mutex);
- 	t = boost_tasks[cpu];
- 	boost_tasks[cpu] = NULL;
-+	rcu_torture_enable_rt_throttle();
- 	mutex_unlock(&boost_mutex);
- 
- 	/* This must be outside of the mutex, otherwise deadlock! */
-@@ -1526,6 +1554,7 @@ static int rcutorture_booster_init(unsigned int cpu)
- 
- 	/* Don't allow time recalculation while creating a new task. */
- 	mutex_lock(&boost_mutex);
-+	rcu_torture_disable_rt_throttle();
- 	VERBOSE_TOROUT_STRING("Creating rcu_torture_boost task");
- 	boost_tasks[cpu] = kthread_create_on_node(rcu_torture_boost, NULL,
- 						  cpu_to_node(cpu),
 -- 
-2.18.0.rc1.242.g61856ae69a-goog
+~Vinod
