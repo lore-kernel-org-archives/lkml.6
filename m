@@ -1,140 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id EiVvFn1MGVvPYQAAmS7hNA
-	; Thu, 07 Jun 2018 15:18:14 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Lec+HtCDHluRFwAAmS7hNA
+	; Mon, 11 Jun 2018 14:14:40 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 700A4607E7; Thu,  7 Jun 2018 15:18:14 +0000 (UTC)
+	id 61FE7607BB; Mon, 11 Jun 2018 14:14:40 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nw5wsaxA"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id C63A6601B4;
-	Thu,  7 Jun 2018 15:18:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C63A6601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id F06C26074D;
+	Mon, 11 Jun 2018 14:14:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F06C26074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935877AbeFGPSL (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:18:11 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41298 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935720AbeFGO7l (ORCPT
+        id S933996AbeFKOOh (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 10:14:37 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46120 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933595AbeFKOHD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:59:41 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbe-0005hJ-EC; Thu, 07 Jun 2018 15:09:38 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb6-00031u-MQ; Thu, 07 Jun 2018 15:09:04 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Michael Kerrisk" <mtk.manpages@gmail.com>,
-        "Kees Cook" <keescook@chromium.org>,
-        "Mikulas Patocka" <mpatocka@redhat.com>,
-        "Eric Biggers" <ebiggers@google.com>,
-        "Alexander Viro" <viro@zeniv.linux.org.uk>,
-        "Willy Tarreau" <w@1wt.eu>,
-        "Joe Lawrence" <joe.lawrence@redhat.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.615608833@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 216/410] pipe: read buffer limits atomically
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Mon, 11 Jun 2018 10:07:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
+        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=jGmi8q2eJKLoEu0xg6LdGVZ3YCLCZYH2N+fwRAOSbTc=; b=nw5wsaxAg7PXkxISMGsjS8auB
+        exTQMXQmjdTXaF6KLSbpPUiWdc1XjGtKxLW3jdNr9ilXGBLBLjj/QXv3adaAXAwFo08bN+RcDmafy
+        U1xBJF9Iz7EIMOlFMIpSUnCOgOfw7A761enXRxKmHjwUGqC4MoWffQQsTtHLA8CuHLs1JSbje7R9c
+        HBlQgTEUXhxtJ9dtdh2yA0BhDc62PQPkx9KoDlx8SodXIMuxsfHu1JYJTLBNqfiSa1TdS4y0H56C8
+        fgsleLGoFeo72pRnDoL63XgHbv9pfdGUb2Ezdi3TCFDf9/vdT0SwtqOnqBzo/oC/txDEAF0ZyyG0k
+        pC1qXzGXg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fSNTK-0004s8-KC; Mon, 11 Jun 2018 14:07:02 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@redhat.com>,
+        Lukas Czerner <lczerner@redhat.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH v13 48/72] shmem: Convert find_swap_entry to XArray
+Date: Mon, 11 Jun 2018 07:06:15 -0700
+Message-Id: <20180611140639.17215-49-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
+References: <20180611140639.17215-1-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-------------------
+This is a 1:1 conversion.
 
-From: Eric Biggers <ebiggers@google.com>
-
-commit f7340761812fc10313e6fcc115e0bc4f7a799112 upstream.
-
-The pipe buffer limits are accessed without any locking, and may be
-changed at any time by the sysctl handlers.  In theory this could cause
-problems for expressions like the following:
-
-    pipe_user_pages_hard && user_bufs > pipe_user_pages_hard
-
-...  since the assembly code might reference the 'pipe_user_pages_hard'
-memory location multiple times, and if the admin removes the limit by
-setting it to 0, there is a very brief window where processes could
-incorrectly observe the limit to be exceeded.
-
-Fix this by loading the limits with READ_ONCE() prior to use.
-
-Link: http://lkml.kernel.org/r/20180111052902.14409-8-ebiggers3@gmail.com
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Acked-by: Kees Cook <keescook@chromium.org>
-Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Michael Kerrisk <mtk.manpages@gmail.com>
-Cc: Willy Tarreau <w@1wt.eu>
-Cc: Mikulas Patocka <mpatocka@redhat.com>
-Cc: "Luis R . Rodriguez" <mcgrof@kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-[bwh: Backported to 3.16:
- - Use ACCESS_ONCE() instead of READ_ONCE()
- - Adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- fs/pipe.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ mm/shmem.c | 27 ++++++++++-----------------
+ 1 file changed, 10 insertions(+), 17 deletions(-)
 
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -593,12 +593,16 @@ static unsigned long account_pipe_buffer
- 
- static bool too_many_pipe_buffers_soft(unsigned long user_bufs)
- {
--	return pipe_user_pages_soft && user_bufs > pipe_user_pages_soft;
-+	unsigned long soft_limit = ACCESS_ONCE(pipe_user_pages_soft);
-+
-+	return soft_limit && user_bufs > soft_limit;
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 479e4a8e6d68..983a27656e2e 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1099,34 +1099,27 @@ static void shmem_evict_inode(struct inode *inode)
+ 	clear_inode(inode);
  }
  
- static bool too_many_pipe_buffers_hard(unsigned long user_bufs)
+-static unsigned long find_swap_entry(struct radix_tree_root *root, void *item)
++static unsigned long find_swap_entry(struct xarray *xa, void *item)
  {
--	return pipe_user_pages_hard && user_bufs > pipe_user_pages_hard;
-+	unsigned long hard_limit = ACCESS_ONCE(pipe_user_pages_hard);
+-	struct radix_tree_iter iter;
+-	void __rcu **slot;
+-	unsigned long found = -1;
++	XA_STATE(xas, xa, 0);
+ 	unsigned int checked = 0;
++	void *entry;
+ 
+ 	rcu_read_lock();
+-	radix_tree_for_each_slot(slot, root, &iter, 0) {
+-		void *entry = radix_tree_deref_slot(slot);
+-
+-		if (radix_tree_deref_retry(entry)) {
+-			slot = radix_tree_iter_retry(&iter);
++	xas_for_each(&xas, entry, ULONG_MAX) {
++		if (xas_retry(&xas, entry))
+ 			continue;
+-		}
+-		if (entry == item) {
+-			found = iter.index;
++		if (entry == item)
+ 			break;
+-		}
+ 		checked++;
+-		if ((checked % 4096) != 0)
++		if ((checked % XA_CHECK_SCHED) != 0)
+ 			continue;
+-		slot = radix_tree_iter_resume(slot, &iter);
++		xas_pause(&xas);
+ 		cond_resched_rcu();
+ 	}
+-
+ 	rcu_read_unlock();
+-	return found;
 +
-+	return hard_limit && user_bufs > hard_limit;
++	return xas_invalid(&xas) ? -1 : xas.xa_index;
  }
  
- static bool is_unprivileged_user(void)
-@@ -612,13 +616,14 @@ struct pipe_inode_info *alloc_pipe_info(
- 	unsigned long pipe_bufs = PIPE_DEF_BUFFERS;
- 	struct user_struct *user = get_current_user();
- 	unsigned long user_bufs;
-+	unsigned int max_size = ACCESS_ONCE(pipe_max_size);
- 
- 	pipe = kzalloc(sizeof(struct pipe_inode_info), GFP_KERNEL);
- 	if (pipe == NULL)
- 		goto out_free_uid;
- 
--	if (pipe_bufs * PAGE_SIZE > pipe_max_size && !capable(CAP_SYS_RESOURCE))
--		pipe_bufs = pipe_max_size >> PAGE_SHIFT;
-+	if (pipe_bufs * PAGE_SIZE > max_size && !capable(CAP_SYS_RESOURCE))
-+		pipe_bufs = max_size >> PAGE_SHIFT;
- 
- 	user_bufs = account_pipe_buffers(user, 0, pipe_bufs);
- 
+ /*
+-- 
+2.17.1
