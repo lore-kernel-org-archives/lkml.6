@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id skDYCtI9HlsiTwAAmS7hNA
-	; Mon, 11 Jun 2018 09:16:03 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id hEK/ISCCHlubBAAAmS7hNA
+	; Mon, 11 Jun 2018 14:07:28 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 95DB460792; Mon, 11 Jun 2018 09:16:03 +0000 (UTC)
+	id 6FEE360791; Mon, 11 Jun 2018 14:07:28 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="cCtjfrnK"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="O+u+ZFiw"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
@@ -13,86 +13,221 @@ X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id CF0E6600D0;
-	Mon, 11 Jun 2018 09:16:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CF0E6600D0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
+	by smtp.codeaurora.org (Postfix) with ESMTP id C21C4600D0;
+	Mon, 11 Jun 2018 14:07:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C21C4600D0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754149AbeFKJQA (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 05:16:00 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:38604 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754037AbeFKJP4 (ORCPT
+        id S933745AbeFKOH0 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 19 others); Mon, 11 Jun 2018 10:07:26 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46442 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933623AbeFKOHJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 05:15:56 -0400
-Received: by mail-oi0-f66.google.com with SMTP id d5-v6so17233680oib.5
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 02:15:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=f0GG80AfT0/C/udW73VTn9TtgNFFvRIKIDcV48HAF4w=;
-        b=cCtjfrnKB37EZOXSmMYORhmHfh80asSXpaLMfhn3SGI5llqh/XuJCY7Vn9gR4JC+Cb
-         jznLrJyV71zfUpCrAYxQmM16j24cHorzyEMq9bORZ3qg+2CbgGyB5yjUDO5wda1BK5b4
-         K+VqiSDW9Ffj6Lk1+ETPegskBG3KLyHRVHR5A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=f0GG80AfT0/C/udW73VTn9TtgNFFvRIKIDcV48HAF4w=;
-        b=j/qBUjY0EpaV3GAgw8eQPjjBCvJ1lgkrOmIAGLNrHjDEgx9j3ZziLIWaSh5tIRsSYu
-         ygraH1+vegC5PeuSVjTxstwJMvmfsaa45ej1QhyWzrQg/EenPEYFPsznXD7OBZ2SJAlg
-         unOFTCUnDcnjPOxDr+Dhj4UJG1AgcLGJay8nRqu8KaJoHZHpyoAPbnE7Xi2GzBreTnar
-         BnW5zYLk9GwbL0oLeKyRNPFVFetf/FEl5JT0XFiHSlT53rHNm/jXZoM2ETB5t3VZtV2g
-         PZ0uKdqSXEP9KrUHkieq2ECLqiXvdFZT6Dat0MULyjgWiwuZzQGiUgtQIzb4TLL6puqp
-         PHGg==
-X-Gm-Message-State: APt69E3RZwJjgYViHpSAbOonhEzDwqmYTUIuIIt16G0iZKPcXNPuNJ5p
-        iYocJHmR+MhwFOnh9HMFyF82yjKNZljrmfRFzwEmjQ==
-X-Google-Smtp-Source: ADUXVKIePq6NWegzyYRr5hBysCIwR/HQqDWkMjekkZhLEkuIh0Txo35omIDs6AVBy2wRrI1aLPKfyeAFRTDMMR+VukM=
-X-Received: by 2002:aca:5c46:: with SMTP id q67-v6mr3196433oib.17.1528708555982;
- Mon, 11 Jun 2018 02:15:55 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a9d:1123:0:0:0:0:0 with HTTP; Mon, 11 Jun 2018 02:15:55
- -0700 (PDT)
-X-Originating-IP: [194.176.227.33]
-In-Reply-To: <20180610060159.GS30522@ZenIV.linux.org.uk>
-References: <20180529144143.16378-1-mszeredi@redhat.com> <20180529144143.16378-10-mszeredi@redhat.com>
- <20180610054902.GQ30522@ZenIV.linux.org.uk> <20180610060159.GS30522@ZenIV.linux.org.uk>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Mon, 11 Jun 2018 11:15:55 +0200
-Message-ID: <CAJfpegt5guR3zJeATw4-N41Ad2n9pcB5mQoLmSLOfocnEoodVg@mail.gmail.com>
-Subject: Re: [PATCH 09/11] vfs: factor out inode_insert5()
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Miklos Szeredi <mszeredi@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 11 Jun 2018 10:07:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
+        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=D6Nq+q//o9H6X1dq/PwQbU/ZsmpxD/JiFSdlUUlc5Dc=; b=O+u+ZFiwIvLk3e5zFGmndfuSL
+        /MQGF1eAUWKNWK9+eypVSJiKH70pAn0SPMWidprPm79HoyYyPeA2xJZgBX9mER+PGhDzdHhnPySbw
+        oN/9ITrFRkdHmKTdAEq1GAUHAU4tF2tOgeTVzyk3tCFHJK6oP8R533upqSgNTLNNv996hkznkEMLH
+        4vGBJV6A3I5TXCJJuaoCx5o56fMdo2h7ePfT6rQ5205gr/slGBCtecZgApvEKlqEH4K0nLegG5yTD
+        qDKX01N4nKXCbfZ6w8fHVAaK2XaZmKhHmiHhnVTw/I0IdC0rNi+opSaHahugUBK0yqJqL1jvZiR+c
+        Ss5Qg2kIQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fSNTQ-0004yN-Pn; Mon, 11 Jun 2018 14:07:08 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@redhat.com>,
+        Lukas Czerner <lczerner@redhat.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH v13 59/72] nilfs2: Convert to XArray
+Date: Mon, 11 Jun 2018 07:06:26 -0700
+Message-Id: <20180611140639.17215-60-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
+References: <20180611140639.17215-1-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 10, 2018 at 8:02 AM, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> On Sun, Jun 10, 2018 at 06:49:10AM +0100, Al Viro wrote:
->> On Tue, May 29, 2018 at 04:41:41PM +0200, Miklos Szeredi wrote:
->> > From: Miklos Szeredi <miklos@szeredi.hu>
->> >
->> > Split out common helper for race free insertion of an already allocated
->> > inode into the cache.  Use this from iget5_locked() and
->> > insert_inode_locked4().  Make iget5_locked() use new_inode()/iput() instead
->> > of alloc_inode()/destroy_inode() directly.
->>
->> ... thus hitting the sucker with ->evict_inode(), in condition that is quite
->> likely to be unfit to be seen by that.
->>
->> NAK.
->
-> To clarify: objection here is against the switch to new_inode/iput.  The rest is
-> sane.  What makes new_inode() better here, anyway?
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Umm, got to look into this.  The patch has already been pulled by
-Linus, but I hope it's salvageable.
+This is close to a 1:1 replacement of radix tree APIs with their XArray
+equivalents.  It would be possible to optimise nilfs_copy_back_pages(),
+but that doesn't seem to be in the performance path.  Also, I think
+it has a pre-existing bug, and I've added a note to that effect in the
+source code.
 
-Thanks,
-Miklos
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+ fs/nilfs2/btnode.c | 26 +++++++++-----------------
+ fs/nilfs2/page.c   | 29 +++++++++++++----------------
+ 2 files changed, 22 insertions(+), 33 deletions(-)
+
+diff --git a/fs/nilfs2/btnode.c b/fs/nilfs2/btnode.c
+index dec98cab729d..e9fcffb3a15c 100644
+--- a/fs/nilfs2/btnode.c
++++ b/fs/nilfs2/btnode.c
+@@ -177,24 +177,18 @@ int nilfs_btnode_prepare_change_key(struct address_space *btnc,
+ 	ctxt->newbh = NULL;
+ 
+ 	if (inode->i_blkbits == PAGE_SHIFT) {
+-		lock_page(obh->b_page);
+-		/*
+-		 * We cannot call radix_tree_preload for the kernels older
+-		 * than 2.6.23, because it is not exported for modules.
+-		 */
++		struct page *opage = obh->b_page;
++		lock_page(opage);
+ retry:
+-		err = radix_tree_preload(GFP_NOFS & ~__GFP_HIGHMEM);
+-		if (err)
+-			goto failed_unlock;
+ 		/* BUG_ON(oldkey != obh->b_page->index); */
+-		if (unlikely(oldkey != obh->b_page->index))
+-			NILFS_PAGE_BUG(obh->b_page,
++		if (unlikely(oldkey != opage->index))
++			NILFS_PAGE_BUG(opage,
+ 				       "invalid oldkey %lld (newkey=%lld)",
+ 				       (unsigned long long)oldkey,
+ 				       (unsigned long long)newkey);
+ 
+ 		xa_lock_irq(&btnc->i_pages);
+-		err = radix_tree_insert(&btnc->i_pages, newkey, obh->b_page);
++		err = __xa_insert(&btnc->i_pages, newkey, opage, GFP_NOFS);
+ 		xa_unlock_irq(&btnc->i_pages);
+ 		/*
+ 		 * Note: page->index will not change to newkey until
+@@ -202,7 +196,6 @@ int nilfs_btnode_prepare_change_key(struct address_space *btnc,
+ 		 * To protect the page in intermediate state, the page lock
+ 		 * is held.
+ 		 */
+-		radix_tree_preload_end();
+ 		if (!err)
+ 			return 0;
+ 		else if (err != -EEXIST)
+@@ -212,7 +205,7 @@ int nilfs_btnode_prepare_change_key(struct address_space *btnc,
+ 		if (!err)
+ 			goto retry;
+ 		/* fallback to copy mode */
+-		unlock_page(obh->b_page);
++		unlock_page(opage);
+ 	}
+ 
+ 	nbh = nilfs_btnode_create_block(btnc, newkey);
+@@ -252,9 +245,8 @@ void nilfs_btnode_commit_change_key(struct address_space *btnc,
+ 		mark_buffer_dirty(obh);
+ 
+ 		xa_lock_irq(&btnc->i_pages);
+-		radix_tree_delete(&btnc->i_pages, oldkey);
+-		radix_tree_tag_set(&btnc->i_pages, newkey,
+-				   PAGECACHE_TAG_DIRTY);
++		__xa_erase(&btnc->i_pages, oldkey);
++		__xa_set_tag(&btnc->i_pages, newkey, PAGECACHE_TAG_DIRTY);
+ 		xa_unlock_irq(&btnc->i_pages);
+ 
+ 		opage->index = obh->b_blocknr = newkey;
+@@ -284,7 +276,7 @@ void nilfs_btnode_abort_change_key(struct address_space *btnc,
+ 
+ 	if (nbh == NULL) {	/* blocksize == pagesize */
+ 		xa_lock_irq(&btnc->i_pages);
+-		radix_tree_delete(&btnc->i_pages, newkey);
++		__xa_erase(&btnc->i_pages, newkey);
+ 		xa_unlock_irq(&btnc->i_pages);
+ 		unlock_page(ctxt->bh->b_page);
+ 	} else
+diff --git a/fs/nilfs2/page.c b/fs/nilfs2/page.c
+index 4cb850a6f1c2..8384473b98b8 100644
+--- a/fs/nilfs2/page.c
++++ b/fs/nilfs2/page.c
+@@ -298,7 +298,7 @@ int nilfs_copy_dirty_pages(struct address_space *dmap,
+  * @dmap: destination page cache
+  * @smap: source page cache
+  *
+- * No pages must no be added to the cache during this process.
++ * No pages must be added to the cache during this process.
+  * This must be ensured by the caller.
+  */
+ void nilfs_copy_back_pages(struct address_space *dmap,
+@@ -307,7 +307,6 @@ void nilfs_copy_back_pages(struct address_space *dmap,
+ 	struct pagevec pvec;
+ 	unsigned int i, n;
+ 	pgoff_t index = 0;
+-	int err;
+ 
+ 	pagevec_init(&pvec);
+ repeat:
+@@ -322,35 +321,34 @@ void nilfs_copy_back_pages(struct address_space *dmap,
+ 		lock_page(page);
+ 		dpage = find_lock_page(dmap, offset);
+ 		if (dpage) {
+-			/* override existing page on the destination cache */
++			/* overwrite existing page in the destination cache */
+ 			WARN_ON(PageDirty(dpage));
+ 			nilfs_copy_page(dpage, page, 0);
+ 			unlock_page(dpage);
+ 			put_page(dpage);
++			/* Do we not need to remove page from smap here? */
+ 		} else {
+-			struct page *page2;
++			struct page *p;
+ 
+ 			/* move the page to the destination cache */
+ 			xa_lock_irq(&smap->i_pages);
+-			page2 = radix_tree_delete(&smap->i_pages, offset);
+-			WARN_ON(page2 != page);
+-
++			p = __xa_erase(&smap->i_pages, offset);
++			WARN_ON(page != p);
+ 			smap->nrpages--;
+ 			xa_unlock_irq(&smap->i_pages);
+ 
+ 			xa_lock_irq(&dmap->i_pages);
+-			err = radix_tree_insert(&dmap->i_pages, offset, page);
+-			if (unlikely(err < 0)) {
+-				WARN_ON(err == -EEXIST);
++			p = __xa_store(&dmap->i_pages, offset, page, GFP_NOFS);
++			if (unlikely(p)) {
++				/* Probably -ENOMEM */
+ 				page->mapping = NULL;
+-				put_page(page); /* for cache */
++				put_page(page);
+ 			} else {
+ 				page->mapping = dmap;
+ 				dmap->nrpages++;
+ 				if (PageDirty(page))
+-					radix_tree_tag_set(&dmap->i_pages,
+-							   offset,
+-							   PAGECACHE_TAG_DIRTY);
++					__xa_set_tag(&dmap->i_pages, offset,
++							PAGECACHE_TAG_DIRTY);
+ 			}
+ 			xa_unlock_irq(&dmap->i_pages);
+ 		}
+@@ -476,8 +474,7 @@ int __nilfs_clear_page_dirty(struct page *page)
+ 	if (mapping) {
+ 		xa_lock_irq(&mapping->i_pages);
+ 		if (test_bit(PG_dirty, &page->flags)) {
+-			radix_tree_tag_clear(&mapping->i_pages,
+-					     page_index(page),
++			__xa_clear_tag(&mapping->i_pages, page_index(page),
+ 					     PAGECACHE_TAG_DIRTY);
+ 			xa_unlock_irq(&mapping->i_pages);
+ 			return clear_page_dirty_for_io(page);
+-- 
+2.17.1
