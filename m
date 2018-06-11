@@ -1,95 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id PMELNZ/nHVueBAAAmS7hNA
-	; Mon, 11 Jun 2018 03:08:15 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id co05JsI6HluFNQAAmS7hNA
+	; Mon, 11 Jun 2018 09:02:58 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id B31E060791; Mon, 11 Jun 2018 03:08:15 +0000 (UTC)
+	id 75819607A4; Mon, 11 Jun 2018 09:02:58 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j0JQ7mYg"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C4oY64Ld"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 30200604D4;
-	Mon, 11 Jun 2018 03:08:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 30200604D4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 9442960385;
+	Mon, 11 Jun 2018 09:02:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9442960385
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753877AbeFKDII (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Sun, 10 Jun 2018 23:08:08 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:38688 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752629AbeFKDIG (ORCPT
+        id S932536AbeFKJC4 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 20 others); Mon, 11 Jun 2018 05:02:56 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:40152 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754024AbeFKJCy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 23:08:06 -0400
-Received: by mail-io0-f193.google.com with SMTP id l19-v6so22245433ioj.5
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Jun 2018 20:08:06 -0700 (PDT)
+        Mon, 11 Jun 2018 05:02:54 -0400
+Received: by mail-lf0-f65.google.com with SMTP id q11-v6so29349070lfc.7;
+        Mon, 11 Jun 2018 02:02:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=L6YMPn3dzEROBIVSmcjy7oTkC3KCMYhJRgTqLvBqsn8=;
-        b=j0JQ7mYgzP/TknUpEO4+u1jI+CkaQxaMJ4HThDl7a1Lnmzl2rRzaUPVXsX0A4nXtN0
-         qkEH/xt+cyhjZx2fIRzL/oN3e3uu9FJ0IDgOD9BIy23fU9IeQZbCW+oPgaRnR81E8gfv
-         uKuZ7ytBdFnzc4hP9l4a8787OTcIYVwbNUAy5Pn51I55VcvEvp2Oe8XaTThT1dliwa9D
-         6u9AOIKjtnSz2YmE7Fbnj8HZ4CT80RW02l4i3dfW+5ZWPJddQSgums1w6oipx05rH5Pw
-         4ZcL5/LGOvLvaZLX6GLPAW2WkwunKmLSIOZKVqgQiUEosoPjHyno0+gK+LUuOC1JxOJ7
-         qJ4w==
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=EAidKCBZ+2a3EqXWgXbW+ePZySVlGnhaMBmN/EdlonQ=;
+        b=C4oY64LdYBxusgaqA7r4Xl5ZdbT8FlhX1/1fLNDbeVA5QmMChkDU53Wkr72Q8hccCz
+         A8a2X+r1fViqanHXM1zI4o9jj65C1b8048N7iFLse22k75kTUTlIPa6yLQUqiTlsDq/q
+         a5r4pJbCdoKqyOcfLG76OOHW5+outAMR6R8l7RriOLoZhu722DYM4S3Cs8CUwWJ7wwDA
+         GOLkHggPsogstvgvFwDt5M6WlEA7mSZbe53mY4sWkrXfwTjNcE8DR8JP5ywvURLrRmpR
+         dtYrJr08iwPyRqy9ZJbOiJcTYZuxXKsM4iCHIz6Q9+8eZ/6UMYB/RBP6UAqOgDN6zL1j
+         6VkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=L6YMPn3dzEROBIVSmcjy7oTkC3KCMYhJRgTqLvBqsn8=;
-        b=CtOLAfn+1SXQqkz5wY4OEbSHWOBuoTGznJfsn3luUd7kreOrKLBW5OCnyI/4fx/DNN
-         GYij2gNQApp3F3DajrWjGz3pMqydApxwDbMzeuBVZr4Y6wFXjAGQDSLRDJ0QYeVuL+I4
-         Pppim0P1dlVQqcKpwESnk8oPZRwi5SsU+EDpS+1jDwn6924JlEVwli01twH43IzM/sbq
-         Cw/i5xqJNb0D/K1C3E83HU4Q6RL0LGMRSSq3AvcJN/qTOWZ+nAjgF+jy4JGN5eShv5Lx
-         oI79O09dLOYwdjrkxvH0/DSztJUQlo561PWx5w/TjUMWAAJYLys1Qw2VlvPu0J5u5cwM
-         K97g==
-X-Gm-Message-State: APt69E3rFJKia7JhaIR2gc/1YjZld3ez7/hgCi1NelAXlFjfWCE9+d3h
-        ztV6iU0cFbBYbn8+wlok8iLywdtv
-X-Google-Smtp-Source: ADUXVKKpxnurmsvJ/aJKDJwCPcdAyLAHLFwirV66pvhDA0bRiunHN3UUPT2DFBFjq9fgJHYn65ZuTA==
-X-Received: by 2002:a6b:3902:: with SMTP id g2-v6mr12153032ioa.265.1528686485761;
-        Sun, 10 Jun 2018 20:08:05 -0700 (PDT)
-Received: from pickle.eau.wi.charter.com ([24.178.40.44])
-        by smtp.gmail.com with ESMTPSA id y13-v6sm4880268iob.53.2018.06.10.20.08.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 10 Jun 2018 20:08:04 -0700 (PDT)
-From: Kyle Buzby <kyle.buzby@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Kyle Buzby <kyle.buzby@gmail.com>
-Subject: [PATCH] staging: clocking-wizard: prefer 'help' in Kconfig
-Date: Sun, 10 Jun 2018 22:09:30 -0500
-Message-Id: <20180611030930.2097-1-kyle.buzby@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=EAidKCBZ+2a3EqXWgXbW+ePZySVlGnhaMBmN/EdlonQ=;
+        b=FXEws7o91AcF+ym3xkZX2x9aizufJKw67r8jJ4O4TN0UUozltE3TOCrG1TEsJb0E5a
+         Rgdb/TlVhHz2LAnj6Pl4TJ/N5igF0tp3DBdIekoGk2bQygs3StYCQmCisxI7F7VjoRd+
+         rpdBJirC1MzTuGKlt/qPs65qIpOL4jzr4lGRkcxfxhB9tKjYYH3jUBcPnQE2CuBEcAng
+         jipfWK5HY811lBVdQHTniAdg1gH7hD3VOgHNocLeVwgFtr6ZsiNVk5BDR4aEZIgW80nQ
+         yX8NBn0nnGfL7t7Wcryb5fdzPM5H8nDeCgRXlzWhcouxTc5EUjPokmCdrM4gRiFlRFfl
+         rQ8A==
+X-Gm-Message-State: APt69E3hTAvfcWf61AGxi9054bhqqeA+52q01Woc1sOYq7p2ryTRa8ZQ
+        Yp04we1DMfBv51QbO2ZsL9GiiCyHV7YQuVnRivg=
+X-Google-Smtp-Source: ADUXVKIMIRkWNXt4W8iYgYKgIiuWHTTgU6VWAqXixtOF3o9jT0Do6gbMZP13Qp2n75uLDqEA8FTSqg8PPFfvoX5uUEY=
+X-Received: by 2002:a19:1460:: with SMTP id k93-v6mr10353795lfi.23.1528707772836;
+ Mon, 11 Jun 2018 02:02:52 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a2e:56c8:0:0:0:0:0 with HTTP; Mon, 11 Jun 2018 02:02:52
+ -0700 (PDT)
+In-Reply-To: <1528706663-20670-1-git-send-email-geert@linux-m68k.org>
+References: <1528706663-20670-1-git-send-email-geert@linux-m68k.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Mon, 11 Jun 2018 11:02:52 +0200
+X-Google-Sender-Auth: Mxh_Sf2EJaB4_0zemth4sa32SM4
+Message-ID: <CAK8P3a0CJmpf0L-OXDmqP=kRLGCokR=v6jUPaCSpnFuCwHa7WA@mail.gmail.com>
+Subject: Re: [PATCH 0/3] Legacy clock drivers: Normalize clk API
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Greg Ungerer <gerg@linux-m68k.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Corentin Labbe <clabbe@baylibre.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
+        Networking <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes the checkpatch warning:
+On Mon, Jun 11, 2018 at 10:44 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+>         Hi all,
+>
+> When seeing commit bde4975310eb1982 ("net: stmmac: fix build failure due
+> to missing COMMON_CLK dependency"), I wondered why this dependency is
+> needed, as all implementations of the clock API should implement all
+> required functionality, or provide dummies.
+>
+> It turns out there were still two implementations that lacked the
+> clk_set_rate() function: Coldfire and AR7.
+>
+> This series contains three patches:
+>   - The first two patches add dummies for clk_set_rate(),
+>     clk_set_rate(), clk_set_parent(), and clk_get_parent() to the
+>     Coldfire and AR7, like Arnd has done for other legacy clock
+>     implementations a while ago.
+>   - The second patch removes the COMMON_CLK dependency from the stmmac
+>     network drivers again, as it is no longer needed.
+>     Obviously this patch has a hard dependency on the first two patches.
 
-WARNING: prefer 'help' over '---help---' for new help texts
-+config COMMON_CLK_XLNX_CLKWZRD
+Yes, good idea.
 
-Signed-off-by: Kyle Buzby <kyle.buzby@gmail.com>
----
- drivers/staging/clocking-wizard/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Arnd Bergmann <arnd@arnd.de>
 
-diff --git a/drivers/staging/clocking-wizard/Kconfig b/drivers/staging/clocking-wizard/Kconfig
-index 357af02c562c..aa57a5865556 100644
---- a/drivers/staging/clocking-wizard/Kconfig
-+++ b/drivers/staging/clocking-wizard/Kconfig
-@@ -5,5 +5,5 @@
- config COMMON_CLK_XLNX_CLKWZRD
- 	tristate "Xilinx Clocking Wizard"
- 	depends on COMMON_CLK && OF
--	---help---
-+	help
- 	  Support for the Xilinx Clocking Wizard IP core clock generator.
--- 
-2.17.1
+One question: what happens on machines that don't support any CLK
+interface, i.e.
+that don't have any of COMMON_CLK/HAVE_CLK/CLKDEV_LOOKUP?
+
+I guess those are already hopelessly broken for many drivers, right?
+
+         Arnd
