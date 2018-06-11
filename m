@@ -1,186 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id TCKbI73TGlvnIgAAmS7hNA
-	; Fri, 08 Jun 2018 19:06:37 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id qxw7OeZeHltkNwAAmS7hNA
+	; Mon, 11 Jun 2018 11:37:28 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 718F8607DC; Fri,  8 Jun 2018 19:06:37 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b="XGIZh1PT"
+	id 38F6D607BB; Mon, 11 Jun 2018 11:37:28 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 307E460275;
-	Fri,  8 Jun 2018 19:06:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 307E460275
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=quarantine dis=none) header.from=akamai.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id B6351601C3;
+	Mon, 11 Jun 2018 11:37:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B6351601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=lucaceresoli.net
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752746AbeFHTGc (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 15:06:32 -0400
-Received: from mx0a-00190b01.pphosted.com ([67.231.149.131]:41792 "EHLO
-        mx0a-00190b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752662AbeFHTGb (ORCPT
+        id S933085AbeFKLh0 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 21 others); Mon, 11 Jun 2018 07:37:26 -0400
+Received: from srv-hp10-72.netsons.net ([94.141.22.72]:47205 "EHLO
+        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932958AbeFKLgQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 15:06:31 -0400
-X-Greylist: delayed 486 seconds by postgrey-1.27 at vger.kernel.org; Fri, 08 Jun 2018 15:06:31 EDT
-Received: from pps.filterd (m0050093.ppops.net [127.0.0.1])
-        by m0050093.ppops.net-00190b01. (8.16.0.22/8.16.0.22) with SMTP id w58IvPOs020197;
-        Fri, 8 Jun 2018 19:58:14 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=from : to : cc :
- subject : date : message-id; s=jan2016.eng;
- bh=itzodWythzEyEoJMwkew01V3D7MPmGPBRCvvntVprY4=;
- b=XGIZh1PTqd7Io/Gq+Xl+9BbztE8ai64KXIVMsU59NtO5IRDhBGT24rpci6yaECaPtzxn
- fDuWLW0yd56DpiKQQqfRFYHazyoO2wcP+CP+9pBOzPERkoCfTO80NOLvUqJtCfwDVPRl
- IE8ljMBu37nRIvzJTzizByveKnFs3V+zxukliBX4JtFWckElmUOBXu2+sQQD7KAKZi43
- GMtMNzwaxrN8Itzu685G0oYWPI6YcTvV4bUfusoWuUXaVKTirGOQFalbPZDQDORjSi3f
- 6AXybAOnJxw1cTH22EGlSERlC4fWOYurdqyZTQiuM0J5P3TXM+b0BqIX2EV0kbBu1tWF Mw==
-Received: from prod-mail-ppoint3 (a96-6-114-86.deploy.static.akamaitechnologies.com [96.6.114.86] (may be forged))
-        by m0050093.ppops.net-00190b01. with ESMTP id 2jf85mmp5n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 08 Jun 2018 19:58:14 +0100
-Received: from pps.filterd (prod-mail-ppoint3.akamai.com [127.0.0.1])
-        by prod-mail-ppoint3.akamai.com (8.16.0.21/8.16.0.21) with SMTP id w58IuAV0031234;
-        Fri, 8 Jun 2018 14:58:13 -0400
-Received: from prod-mail-relay14.akamai.com ([172.27.17.39])
-        by prod-mail-ppoint3.akamai.com with ESMTP id 2jbpjwvbuw-1;
-        Fri, 08 Jun 2018 14:58:13 -0400
-Received: from bos-lpjec.kendall.corp.akamai.com (bos-lpjec.kendall.corp.akamai.com [172.28.13.175])
-        by prod-mail-relay14.akamai.com (Postfix) with ESMTP id C542982D01;
-        Fri,  8 Jun 2018 18:58:12 +0000 (GMT)
-From: Jason Baron <jbaron@akamai.com>
-To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Cc: Michal Hocko <mhocko@suse.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH] mm/madvise: allow MADV_DONTNEED to free memory that is MLOCK_ONFAULT
-Date: Fri,  8 Jun 2018 14:56:52 -0400
-Message-Id: <1528484212-7199-1-git-send-email-jbaron@akamai.com>
-X-Mailer: git-send-email 1.9.1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-08_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806080207
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-08_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1805220000
- definitions=main-1806080207
+        Mon, 11 Jun 2018 07:36:16 -0400
+Received: from [109.168.11.45] (port=54392 helo=pc-ceresoli.dev.aim)
+        by srv-hp10.netsons.net with esmtpa (Exim 4.89_1)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1fSL7N-00B1A2-ND; Mon, 11 Jun 2018 13:36:13 +0200
+From: Luca Ceresoli <luca@lucaceresoli.net>
+To: linux-media@vger.kernel.org
+Cc: Luca Ceresoli <luca@lucaceresoli.net>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Leon Luo <leonl@leopardimaging.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 7/8] media: imx274: fix typo
+Date: Mon, 11 Jun 2018 13:35:38 +0200
+Message-Id: <1528716939-17015-8-git-send-email-luca@lucaceresoli.net>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1528716939-17015-1-git-send-email-luca@lucaceresoli.net>
+References: <1528716939-17015-1-git-send-email-luca@lucaceresoli.net>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to free memory that is marked MLOCK_ONFAULT, the memory region
-needs to be first unlocked, before calling MADV_DONTNEED. And if the region
-is to be reused as MLOCK_ONFAULT, we require another call to mlock2() with
-the MLOCK_ONFAULT flag.
+pd -> pad
 
-Let's simplify freeing memory that is set MLOCK_ONFAULT, by allowing
-MADV_DONTNEED to work directly for memory that is set MLOCK_ONFAULT. The
-locked memory limits, tracked by mm->locked_vm do not need to be adjusted
-in this case, since they were charged to the entire region when
-MLOCK_ONFAULT was initially set.
+Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Further, I don't think allowing MADV_FREE for MLOCK_ONFAULT regions makes
-sense, since the point of MLOCK_ONFAULT is for userspace to know when pages
-are locked in memory and thus to know when page faults will occur.
-
-Signed-off-by: Jason Baron <jbaron@akamai.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 ---
- mm/internal.h | 18 ++++++++++++++++++
- mm/madvise.c  |  4 ++--
- mm/oom_kill.c |  2 +-
- 3 files changed, 21 insertions(+), 3 deletions(-)
+Changed v3 -> v4: nothing
+---
+ drivers/media/i2c/imx274.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/internal.h b/mm/internal.h
-index 9e3654d..16c0041 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -15,6 +15,7 @@
- #include <linux/mm.h>
- #include <linux/pagemap.h>
- #include <linux/tracepoint-defs.h>
-+#include <uapi/asm-generic/mman-common.h>
- 
+diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
+index e5ba19b97083..2c13961e9764 100644
+--- a/drivers/media/i2c/imx274.c
++++ b/drivers/media/i2c/imx274.c
+@@ -544,7 +544,7 @@ struct imx274_ctrls {
  /*
-  * The set of flags that only affect watermark checking and reclaim
-@@ -45,9 +46,26 @@ void free_pgtables(struct mmu_gather *tlb, struct vm_area_struct *start_vma,
- 
- static inline bool can_madv_dontneed_vma(struct vm_area_struct *vma)
- {
-+	return !(((vma->vm_flags & (VM_LOCKED|VM_LOCKONFAULT)) == VM_LOCKED) ||
-+		 (vma->vm_flags & (VM_HUGETLB|VM_PFNMAP)));
-+}
-+
-+static inline bool can_madv_free_vma(struct vm_area_struct *vma)
-+{
- 	return !(vma->vm_flags & (VM_LOCKED|VM_HUGETLB|VM_PFNMAP));
- }
- 
-+static inline bool can_madv_dontneed_or_free_vma(struct vm_area_struct *vma,
-+						 int behavior)
-+{
-+	if (behavior == MADV_DONTNEED)
-+		return can_madv_dontneed_vma(vma);
-+	else if (behavior == MADV_FREE)
-+		return can_madv_free_vma(vma);
-+	else
-+		return 0;
-+}
-+
- void unmap_page_range(struct mmu_gather *tlb,
- 			     struct vm_area_struct *vma,
- 			     unsigned long addr, unsigned long end,
-diff --git a/mm/madvise.c b/mm/madvise.c
-index 4d3c922..61ff306 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -517,7 +517,7 @@ static long madvise_dontneed_free(struct vm_area_struct *vma,
- 				  int behavior)
- {
- 	*prev = vma;
--	if (!can_madv_dontneed_vma(vma))
-+	if (!can_madv_dontneed_or_free_vma(vma, behavior))
- 		return -EINVAL;
- 
- 	if (!userfaultfd_remove(vma, start, end)) {
-@@ -539,7 +539,7 @@ static long madvise_dontneed_free(struct vm_area_struct *vma,
- 			 */
- 			return -ENOMEM;
- 		}
--		if (!can_madv_dontneed_vma(vma))
-+		if (!can_madv_dontneed_or_free_vma(vma, behavior))
- 			return -EINVAL;
- 		if (end > vma->vm_end) {
- 			/*
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index 8ba6cb8..9817d15 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -492,7 +492,7 @@ void __oom_reap_task_mm(struct mm_struct *mm)
- 	set_bit(MMF_UNSTABLE, &mm->flags);
- 
- 	for (vma = mm->mmap ; vma; vma = vma->vm_next) {
--		if (!can_madv_dontneed_vma(vma))
-+		if (!can_madv_free_vma(vma))
- 			continue;
- 
- 		/*
+  * struct stim274 - imx274 device structure
+  * @sd: V4L2 subdevice structure
+- * @pd: Media pad structure
++ * @pad: Media pad structure
+  * @client: Pointer to I2C client
+  * @ctrls: imx274 control structure
+  * @format: V4L2 media bus frame format structure
 -- 
 2.7.4
