@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id CCD5BC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 20:53:59 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6FF2AC004E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 20:54:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81FAB208AF
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 20:53:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25E03208AF
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 20:54:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="FmtlbGj4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81FAB208AF
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="tb3a4l9+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25E03208AF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934753AbeFKUx5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 16:53:57 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:41648 "EHLO
+        id S934770AbeFKUyB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 16:54:01 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:41616 "EHLO
         mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934530AbeFKUw3 (ORCPT
+        with ESMTP id S934496AbeFKUw2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 16:52:29 -0400
+        Mon, 11 Jun 2018 16:52:28 -0400
 Received: from trochilidae.lan (unknown [37.17.239.3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id E36335C0E1F;
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 5125E5C0E11;
         Mon, 11 Jun 2018 22:52:26 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1528750347;
+        t=1528750346;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=f6nxdRtIFcUNV1w2CEA4dVtOBEFFm9pReXLk7EvbSuA=;
-        b=FmtlbGj4br7c98+Wdwopmpaj7cW9aa7H3xUsOidlDfv2+Rfir+gsMj6Kf+4BVZEdwJBeK5
-        DQ/+mT6NIPGFmcP6wDk4g5Q1uMiYI6bXAbnCgTUHyyEUuYRIh8wYrEOW3WnQbZXN0z/xnr
-        gePAUHFYtmBkwdEaswAs1ZoIm012gcM=
+        bh=oerqIEE+xggnIjrHtE6Ey/NtBGMZE3DZc1W2OjC7VRY=;
+        b=tb3a4l9+8xTvMjm+TScKlwhszX/tFj4qTsNNYi0sG/ig/XybPlSNTzEQz9EQZ1uwy8nr0J
+        dyJ/QCHmazQFrLNGGDyNZ+rJvUk7NmWFhO+E5cVKtL1qDrhufkhppd7yyn3noh/esIsSar
+        ACZ32FHIFfAIQN7JEpuE0KvOVzX+FxQ=
 From:   Stefan Agner <stefan@agner.ch>
 To:     boris.brezillon@bootlin.com, dwmw2@infradead.org,
         computersforpeace@gmail.com, marek.vasut@gmail.com,
@@ -47,9 +47,9 @@ Cc:     dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
         gaireg@gaireg.de, linux-mtd@lists.infradead.org,
         linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v4 3/6] mtd: rawnand: tegra: add devicetree binding
-Date:   Mon, 11 Jun 2018 22:52:21 +0200
-Message-Id: <20180611205224.23340-4-stefan@agner.ch>
+Subject: [PATCH v4 2/6] mtd: rawnand: add an option to specify NAND chip as a boot device
+Date:   Mon, 11 Jun 2018 22:52:20 +0200
+Message-Id: <20180611205224.23340-3-stefan@agner.ch>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180611205224.23340-1-stefan@agner.ch>
 References: <20180611205224.23340-1-stefan@agner.ch>
@@ -73,88 +73,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the devicetree binding for the Tegra 2 NAND flash
-controller.
+Allow to define a NAND chip as a boot device. This can be helpful
+for the selection of the ECC algorithm and strength in case the boot
+ROM supports only a subset of controller provided options.
 
-Signed-off-by: Lucas Stach <dev@lynxeye.de>
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../bindings/mtd/nvidia-tegra20-nand.txt      | 64 +++++++++++++++++++
- 1 file changed, 64 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
+ Documentation/devicetree/bindings/mtd/nand.txt | 4 ++++
+ drivers/mtd/nand/raw/nand_base.c               | 3 +++
+ include/linux/mtd/rawnand.h                    | 6 ++++++
+ 3 files changed, 13 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt b/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
-new file mode 100644
-index 000000000000..1c351362f3a9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
-@@ -0,0 +1,64 @@
-+NVIDIA Tegra NAND Flash controller
+diff --git a/Documentation/devicetree/bindings/mtd/nand.txt b/Documentation/devicetree/bindings/mtd/nand.txt
+index eaef8c657aa5..e949c778e983 100644
+--- a/Documentation/devicetree/bindings/mtd/nand.txt
++++ b/Documentation/devicetree/bindings/mtd/nand.txt
+@@ -43,6 +43,10 @@ Optional NAND chip properties:
+ 		     This is particularly useful when only the in-band area is
+ 		     used by the upper layers, and you want to make your NAND
+ 		     as reliable as possible.
++- nand-is-boot-medium: Whether the NAND chip is a boot medium. Drivers might use
++		       this information to select ECC algorithms supported by
++		       the boot ROM or similar restrictions.
 +
-+Required properties:
-+- compatible: Must be one of:
-+  - "nvidia,tegra20-nand"
-+- reg: MMIO address range
-+- interrupts: interrupt output of the NFC controller
-+- clocks: Must contain an entry for each entry in clock-names.
-+  See ../clocks/clock-bindings.txt for details.
-+- clock-names: Must include the following entries:
-+  - nand
-+- resets: Must contain an entry for each entry in reset-names.
-+  See ../reset/reset.txt for details.
-+- reset-names: Must include the following entries:
-+  - nand
+ - nand-rb: shall contain the native Ready/Busy ids.
+ 
+ The ECC strength and ECC step size properties define the correction capability
+diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+index 9eb5678dd6d0..c8fb7c9855e2 100644
+--- a/drivers/mtd/nand/raw/nand_base.c
++++ b/drivers/mtd/nand/raw/nand_base.c
+@@ -5826,6 +5826,9 @@ static int nand_dt_init(struct nand_chip *chip)
+ 	if (of_get_nand_bus_width(dn) == 16)
+ 		chip->options |= NAND_BUSWIDTH_16;
+ 
++	if (of_property_read_bool(dn, "nand-is-boot-medium"))
++		chip->options |= NAND_IS_BOOT_MEDIUM;
 +
-+Optional children nodes:
-+Individual NAND chips are children of the NAND controller node. Currently
-+only one NAND chip supported.
+ 	if (of_get_nand_on_flash_bbt(dn))
+ 		chip->bbt_options |= NAND_BBT_USE_FLASH;
+ 
+diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
+index 6a82da8c44ce..8e54fcf2fa94 100644
+--- a/include/linux/mtd/rawnand.h
++++ b/include/linux/mtd/rawnand.h
+@@ -212,6 +212,12 @@ enum nand_ecc_algo {
+  */
+ #define NAND_WAIT_TCCS		0x00200000
+ 
++/*
++ * Whether the NAND chip is a boot medium. Drivers might use this information
++ * to select ECC algorithms supported by the boot ROM or similar restrictions.
++ */
++#define NAND_IS_BOOT_MEDIUM	0x00400000
 +
-+Required children node properties:
-+- reg: An integer ranging from 1 to 6 representing the CS line to use.
-+
-+Optional children node properties:
-+- nand-ecc-mode: String, operation mode of the NAND ecc mode. Currently only
-+		 "hw" is supported.
-+- nand-ecc-algo: string, algorithm of NAND ECC.
-+		 Supported values with "hw" ECC mode are: "rs", "bch".
-+- nand-bus-width : See nand.txt
-+- nand-on-flash-bbt: See nand.txt
-+- nand-ecc-strength: integer representing the number of bits to correct
-+		     per ECC step (always 512). Supported strength using HW ECC
-+		     modes are:
-+		     - RS: 4, 6, 8
-+		     - BCH: 4, 8, 14, 16
-+- nand-ecc-maximize: See nand.txt
-+- nand-is-boot-medium: Makes sure only ECC strengths supported by the boot ROM
-+		       are choosen.
-+- wp-gpios: GPIO specifier for the write protect pin.
-+
-+Optional child node of NAND chip nodes:
-+Partitions: see partition.txt
-+
-+  Example:
-+	nand-controller@70008000 {
-+		compatible = "nvidia,tegra20-nand";
-+		reg = <0x70008000 0x100>;
-+		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA20_CLK_NDFLASH>;
-+		clock-names = "nand";
-+		resets = <&tegra_car 13>;
-+		reset-names = "nand";
-+
-+		nand@0 {
-+			reg = <0>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			nand-bus-width = <8>;
-+			nand-on-flash-bbt;
-+			nand-ecc-algo = "bch";
-+			nand-ecc-strength = <8>;
-+			wp-gpios = <&gpio TEGRA_GPIO(S, 0) GPIO_ACTIVE_LOW>;
-+		};
-+	};
+ /* Options set by nand scan */
+ /* Nand scan has allocated controller struct */
+ #define NAND_CONTROLLER_ALLOC	0x80000000
 -- 
 2.17.1
 
