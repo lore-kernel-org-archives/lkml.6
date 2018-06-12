@@ -2,133 +2,336 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B04E5C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:15:52 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5D995C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:16:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 668D2208B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:15:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="g/6VgbBQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 668D2208B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 0A2D5208AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:16:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A2D5208AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sony.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934033AbeFLIPt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 04:15:49 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:43648 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932803AbeFLIPn (ORCPT
+        id S933787AbeFLIPC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 04:15:02 -0400
+Received: from seldsegrel01.sonyericsson.com ([37.139.156.29]:5957 "EHLO
+        SELDSEGREL01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933439AbeFLIJt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 04:15:43 -0400
-Received: by mail-io0-f194.google.com with SMTP id t6-v6so27011757iob.10
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 01:15:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=8p1CFS2O3E5h9rXQg6U3ITMKE1FkZyDDSplG4QvHBDo=;
-        b=g/6VgbBQ7E0S6GR6viQhnGdBhMb9M57dohBJKY4sjHEoFrZyiRMwNJ5+iYQwrcMPvz
-         dZClI4DkE3RyCTWJKFW3UqCZNsCae2VGhh1Oq12ymmp3w1JK/eRjxC2UECg1Xy6kONBW
-         2WAxsUPHqGwHPqzUZOjCbQq8tQbT5XMQ6Q8gE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=8p1CFS2O3E5h9rXQg6U3ITMKE1FkZyDDSplG4QvHBDo=;
-        b=Fp1HFJA+uLH1UUA1WbKtA4K7nViC0g+xFMoaKmJ4Tb3toSn2PRZIkcMigAImFvXYNG
-         Jf2KNvVFYT7FFQOSC77bgvkoXkUGAtXbYIOLoBzkB7FIW+tu6pPOinOZlk7pg+Ukg+Eq
-         yTpbV63xWup83WuiJkkdrqrHEJPkHslb+888x5bsxfBtvYuK+nHeuOJ9VkLo5zkIlBzI
-         wcMShmRYdtfngHiLEaQn9iU6NQSeG/xTOaR/2YE8dxBCOH+7OGDFa/j3TZz6eehP4WnP
-         idKMAz0ZMfuexpB5gXkrY9pxZyu8Q78Traoxf/5eVQVx232Uwq6EZ72xJzK1vUeaLcL+
-         rlqw==
-X-Gm-Message-State: APt69E10ed9sLN++aDg64ttP92TX6097nuItZjfQrB0JTUYB4ZEvrPyd
-        hwzoT0EcnYwZEhnbjInXnXN+qNfcWHwE1pd0AgEcyA==
-X-Google-Smtp-Source: ADUXVKIKTLe+rB3A1Wt0eWIzCveEWI34WDZ5Qd9En0TjF5XTPI4ytey5KNEOB33m7Jfe3L+Tm8h2LJFOgOHWeh4dmlE=
-X-Received: by 2002:a6b:4a15:: with SMTP id w21-v6mr871730iob.277.1528791342411;
- Tue, 12 Jun 2018 01:15:42 -0700 (PDT)
+        Tue, 12 Jun 2018 04:09:49 -0400
+From:   Peter Enderborg <peter.enderborg@sony.com>
+To:     <peter.enderborg@sony.com>, Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>,
+        James Morris <jmorris@namei.org>,
+        Daniel Jurgens <danielj@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>, <selinux@tycho.nsa.gov>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Subject: [PATCH 04/13] selinux: Cleanup printk logging in hooks
+Date:   Tue, 12 Jun 2018 10:09:03 +0200
+Message-ID: <20180612080912.7827-5-peter.enderborg@sony.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180612080912.7827-1-peter.enderborg@sony.com>
+References: <20180612080912.7827-1-peter.enderborg@sony.com>
 MIME-Version: 1.0
-Received: by 2002:a4f:78c9:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 01:15:40
- -0700 (PDT)
-In-Reply-To: <20180611150054.GC11580@sirena.org.uk>
-References: <20180514080640.12515-1-linus.walleij@linaro.org>
- <20180514080640.12515-2-linus.walleij@linaro.org> <20180601093511.GA11734@ulmo>
- <CACRpkdZEMPfxHc8dZOvyYN+S4o_zwKuYCTBbMiXMLsCZRz_f6A@mail.gmail.com> <20180611150054.GC11580@sirena.org.uk>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 12 Jun 2018 10:15:40 +0200
-Message-ID: <CACRpkdYxTNWcvJ41TJ+uLyVuGzbdip9uOOgDdiyyjYt1Vd8pfg@mail.gmail.com>
-Subject: Re: [PATCH 01/19 v3] regulator: fixed: Convert to use GPIO descriptor only
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Alexander Shiyan <shc_work@mail.ru>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Tony Lindgren <tony@atomide.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Philipp Zabel <philipp.zabel@gmail.com>,
-        Daniel Mack <zonque@gmail.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Russell King <rmk+kernel@armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 11, 2018 at 5:00 PM, Mark Brown <broonie@kernel.org> wrote:
-> On Mon, Jun 11, 2018 at 03:11:14PM +0200, Linus Walleij wrote:
->
->> The DT binding for "regulator-fixed" specifies that enable-active-high
->> should be set for polarity inversion. For historical reasons, I guess,
->> we screwed up. The example in the binding uses that.
->
-> No, it just says that if the enable is active high then we should
-> specify it using that boolean property.  It explicitly says that enables
-> might be active low
->
-> | - enable-active-high: Polarity of GPIO is Active high
-> | If this property is missing, the default assumed is Active low.
+Replace printk with pr_* to avoid checkpatch warnings.
 
-Yeah my code gets it right I think, my head doesn't always :/
+Signed-off-by: Peter Enderborg <peter.enderborg@sony.com>
+---
+ security/selinux/hooks.c | 68 +++++++++++++++++++++++-------------------------
+ 1 file changed, 33 insertions(+), 35 deletions(-)
 
-The assumed default is active low and then we tag this
-bool property on the regulator if we want it to be active high.
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 4cafe6a19167..3ab9687ac4c8 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -531,7 +531,7 @@ static int sb_finish_set_opts(struct super_block *sb)
+ 		   the first boot of the SELinux kernel before we have
+ 		   assigned xattr values to the filesystem. */
+ 		if (!(root_inode->i_opflags & IOP_XATTR)) {
+-			printk(KERN_WARNING "SELinux: (dev %s, type %s) has no "
++			pr_warn("SELinux: (dev %s, type %s) has no "
+ 			       "xattr support\n", sb->s_id, sb->s_type->name);
+ 			rc = -EOPNOTSUPP;
+ 			goto out;
+@@ -540,11 +540,11 @@ static int sb_finish_set_opts(struct super_block *sb)
+ 		rc = __vfs_getxattr(root, root_inode, XATTR_NAME_SELINUX, NULL, 0);
+ 		if (rc < 0 && rc != -ENODATA) {
+ 			if (rc == -EOPNOTSUPP)
+-				printk(KERN_WARNING "SELinux: (dev %s, type "
++				pr_warn("SELinux: (dev %s, type "
+ 				       "%s) has no security xattr handler\n",
+ 				       sb->s_id, sb->s_type->name);
+ 			else
+-				printk(KERN_WARNING "SELinux: (dev %s, type "
++				pr_warn("SELinux: (dev %s, type "
+ 				       "%s) getxattr errno %d\n", sb->s_id,
+ 				       sb->s_type->name, -rc);
+ 			goto out;
+@@ -743,7 +743,7 @@ static int selinux_set_mnt_opts(struct super_block *sb,
+ 			goto out;
+ 		}
+ 		rc = -EINVAL;
+-		printk(KERN_WARNING "SELinux: Unable to set superblock options "
++		pr_warn("SELinux: Unable to set superblock options "
+ 			"before the security server is initialized\n");
+ 		goto out;
+ 	}
+@@ -785,7 +785,7 @@ static int selinux_set_mnt_opts(struct super_block *sb,
+ 						 mount_options[i], &sid,
+ 						 GFP_KERNEL);
+ 		if (rc) {
+-			printk(KERN_WARNING "SELinux: security_context_str_to_sid"
++			pr_warn("SELinux: security_context_str_to_sid"
+ 			       "(%s) failed for (dev %s, type %s) errno=%d\n",
+ 			       mount_options[i], sb->s_id, name, rc);
+ 			goto out;
+@@ -861,8 +861,7 @@ static int selinux_set_mnt_opts(struct super_block *sb,
+ 		 */
+ 		rc = security_fs_use(&selinux_state, sb);
+ 		if (rc) {
+-			printk(KERN_WARNING
+-				"%s: security_fs_use(%s) returned %d\n",
++			pr_warn("%s: security_fs_use(%s) returned %d\n",
+ 					__func__, sb->s_type->name, rc);
+ 			goto out;
+ 		}
+@@ -948,7 +947,7 @@ static int selinux_set_mnt_opts(struct super_block *sb,
+ 		if (sbsec->behavior != SECURITY_FS_USE_XATTR &&
+ 			sbsec->behavior != SECURITY_FS_USE_NATIVE) {
+ 			rc = -EINVAL;
+-			printk(KERN_WARNING "SELinux: defcontext option is "
++			pr_warn("SELinux: defcontext option is "
+ 			       "invalid for this filesystem type\n");
+ 			goto out;
+ 		}
+@@ -970,7 +969,7 @@ static int selinux_set_mnt_opts(struct super_block *sb,
+ 	return rc;
+ out_double_mount:
+ 	rc = -EINVAL;
+-	printk(KERN_WARNING "SELinux: mount invalid.  Same superblock, different "
++	pr_warn("SELinux: mount invalid.  Same superblock, different "
+ 	       "security settings for (dev %s, type %s)\n", sb->s_id, name);
+ 	goto out;
+ }
+@@ -999,7 +998,7 @@ static int selinux_cmp_sb_context(const struct super_block *oldsb,
+ 	}
+ 	return 0;
+ mismatch:
+-	printk(KERN_WARNING "SELinux: mount invalid.  Same superblock, "
++	pr_warn("SELinux: mount invalid.  Same superblock, "
+ 			    "different security settings for (dev %s, "
+ 			    "type %s)\n", newsb->s_id, newsb->s_type->name);
+ 	return -EBUSY;
+@@ -1107,7 +1106,7 @@ static int selinux_parse_opts_str(char *options,
+ 		case Opt_context:
+ 			if (context || defcontext) {
+ 				rc = -EINVAL;
+-				printk(KERN_WARNING SEL_MOUNT_FAIL_MSG);
++				pr_warn(SEL_MOUNT_FAIL_MSG);
+ 				goto out_err;
+ 			}
+ 			context = match_strdup(&args[0]);
+@@ -1120,7 +1119,7 @@ static int selinux_parse_opts_str(char *options,
+ 		case Opt_fscontext:
+ 			if (fscontext) {
+ 				rc = -EINVAL;
+-				printk(KERN_WARNING SEL_MOUNT_FAIL_MSG);
++				pr_warn(SEL_MOUNT_FAIL_MSG);
+ 				goto out_err;
+ 			}
+ 			fscontext = match_strdup(&args[0]);
+@@ -1133,7 +1132,7 @@ static int selinux_parse_opts_str(char *options,
+ 		case Opt_rootcontext:
+ 			if (rootcontext) {
+ 				rc = -EINVAL;
+-				printk(KERN_WARNING SEL_MOUNT_FAIL_MSG);
++				pr_warn(SEL_MOUNT_FAIL_MSG);
+ 				goto out_err;
+ 			}
+ 			rootcontext = match_strdup(&args[0]);
+@@ -1146,7 +1145,7 @@ static int selinux_parse_opts_str(char *options,
+ 		case Opt_defcontext:
+ 			if (context || defcontext) {
+ 				rc = -EINVAL;
+-				printk(KERN_WARNING SEL_MOUNT_FAIL_MSG);
++				pr_warn(SEL_MOUNT_FAIL_MSG);
+ 				goto out_err;
+ 			}
+ 			defcontext = match_strdup(&args[0]);
+@@ -1159,7 +1158,7 @@ static int selinux_parse_opts_str(char *options,
+ 			break;
+ 		default:
+ 			rc = -EINVAL;
+-			printk(KERN_WARNING "SELinux:  unknown mount option\n");
++			pr_warn("SELinux:  unknown mount option\n");
+ 			goto out_err;
+ 
+ 		}
+@@ -1615,7 +1614,7 @@ static int inode_doinit_with_dentry(struct inode *inode, struct dentry *opt_dent
+ 		dput(dentry);
+ 		if (rc < 0) {
+ 			if (rc != -ENODATA) {
+-				printk(KERN_WARNING "SELinux: %s:  getxattr returned "
++				pr_warn("SELinux: %s:  getxattr returned "
+ 				       "%d for dev=%s ino=%ld\n", __func__,
+ 				       -rc, inode->i_sb->s_id, inode->i_ino);
+ 				kfree(context);
+@@ -1635,11 +1634,11 @@ static int inode_doinit_with_dentry(struct inode *inode, struct dentry *opt_dent
+ 
+ 				if (rc == -EINVAL) {
+ 					if (printk_ratelimit())
+-						printk(KERN_NOTICE "SELinux: inode=%lu on dev=%s was found to have an invalid "
++						pr_notice("SELinux: inode=%lu on dev=%s was found to have an invalid "
+ 							"context=%s.  This indicates you may need to relabel the inode or the "
+ 							"filesystem in question.\n", ino, dev, context);
+ 				} else {
+-					printk(KERN_WARNING "SELinux: %s:  context_to_sid(%s) "
++					pr_warn("SELinux: %s:  context_to_sid(%s) "
+ 					       "returned %d for dev=%s ino=%ld\n",
+ 					       __func__, context, -rc, dev, ino);
+ 				}
+@@ -1772,8 +1771,7 @@ static int cred_has_capability(const struct cred *cred,
+ 		sclass = initns ? SECCLASS_CAPABILITY2 : SECCLASS_CAP2_USERNS;
+ 		break;
+ 	default:
+-		printk(KERN_ERR
+-		       "SELinux:  out of range capability %d\n", cap);
++		pr_err("SELinux:  out of range capability %d\n", cap);
+ 		BUG();
+ 		return -EINVAL;
+ 	}
+@@ -2016,7 +2014,7 @@ static int may_link(struct inode *dir,
+ 		av = DIR__RMDIR;
+ 		break;
+ 	default:
+-		printk(KERN_WARNING "SELinux: %s:  unrecognized kind %d\n",
++		pr_warn("SELinux: %s:  unrecognized kind %d\n",
+ 			__func__, kind);
+ 		return 0;
+ 	}
+@@ -2862,7 +2860,7 @@ static int selinux_sb_remount(struct super_block *sb, void *data)
+ 						 mount_options[i], &sid,
+ 						 GFP_KERNEL);
+ 		if (rc) {
+-			printk(KERN_WARNING "SELinux: security_context_str_to_sid"
++			pr_warn("SELinux: security_context_str_to_sid"
+ 			       "(%s) failed for (dev %s, type %s) errno=%d\n",
+ 			       mount_options[i], sb->s_id, sb->s_type->name, rc);
+ 			goto out_free_opts;
+@@ -2901,7 +2899,7 @@ static int selinux_sb_remount(struct super_block *sb, void *data)
+ 	free_secdata(secdata);
+ 	return rc;
+ out_bad_option:
+-	printk(KERN_WARNING "SELinux: unable to change security options "
++	pr_warn("SELinux: unable to change security options "
+ 	       "during remount (dev %s, type=%s)\n", sb->s_id,
+ 	       sb->s_type->name);
+ 	goto out_free_opts;
+@@ -3343,7 +3341,7 @@ static void selinux_inode_post_setxattr(struct dentry *dentry, const char *name,
+ 	rc = security_context_to_sid_force(&selinux_state, value, size,
+ 					   &newsid);
+ 	if (rc) {
+-		printk(KERN_ERR "SELinux:  unable to map context to SID"
++		pr_err("SELinux:  unable to map context to SID"
+ 		       "for (%s, %lu), rc=%d\n",
+ 		       inode->i_sb->s_id, inode->i_ino, -rc);
+ 		return;
+@@ -4406,7 +4404,7 @@ static int selinux_parse_skb(struct sk_buff *skb, struct common_audit_data *ad,
+ 	}
+ 
+ parse_error:
+-	printk(KERN_WARNING
++	pr_warn(
+ 	       "SELinux: failure in selinux_parse_skb(),"
+ 	       " unable to parse packet\n");
+ 	return ret;
+@@ -4449,7 +4447,7 @@ static int selinux_skb_peerlbl_sid(struct sk_buff *skb, u16 family, u32 *sid)
+ 	err = security_net_peersid_resolve(&selinux_state, nlbl_sid,
+ 					   nlbl_type, xfrm_sid, sid);
+ 	if (unlikely(err)) {
+-		printk(KERN_WARNING
++		pr_warn(
+ 		       "SELinux: failure in selinux_skb_peerlbl_sid(),"
+ 		       " unable to determine packet's peer label\n");
+ 		return -EACCES;
+@@ -7091,11 +7089,11 @@ static __init int selinux_init(void)
+ 	}
+ 
+ 	if (!selinux_enabled) {
+-		printk(KERN_INFO "SELinux:  Disabled at boot.\n");
++		pr_info("SELinux:  Disabled at boot.\n");
+ 		return 0;
+ 	}
+ 
+-	printk(KERN_INFO "SELinux:  Initializing.\n");
++	pr_info("SELinux:  Initializing.\n");
+ 
+ 	memset(&selinux_state, 0, sizeof(selinux_state));
+ 	enforcing_set(&selinux_state, selinux_enforcing_boot);
+@@ -7131,9 +7129,9 @@ static __init int selinux_init(void)
+ 		panic("SELinux: Unable to register AVC LSM notifier callback\n");
+ 
+ 	if (selinux_enforcing_boot)
+-		printk(KERN_DEBUG "SELinux:  Starting in enforcing mode\n");
++		pr_debug("SELinux:  Starting in enforcing mode\n");
+ 	else
+-		printk(KERN_DEBUG "SELinux:  Starting in permissive mode\n");
++		pr_debug("SELinux:  Starting in permissive mode\n");
+ 
+ 	return 0;
+ }
+@@ -7145,10 +7143,10 @@ static void delayed_superblock_init(struct super_block *sb, void *unused)
+ 
+ void selinux_complete_init(void)
+ {
+-	printk(KERN_DEBUG "SELinux:  Completing initialization.\n");
++	pr_debug("SELinux:  Completing initialization.\n");
+ 
+ 	/* Set up any superblocks initialized prior to the policy load. */
+-	printk(KERN_DEBUG "SELinux:  Setting up existing superblocks.\n");
++	pr_debug("SELinux:  Setting up existing superblocks.\n");
+ 	iterate_supers(delayed_superblock_init, NULL);
+ }
+ 
+@@ -7223,7 +7221,7 @@ static int __init selinux_nf_ip_init(void)
+ 	if (!selinux_enabled)
+ 		return 0;
+ 
+-	printk(KERN_DEBUG "SELinux:  Registering netfilter hooks\n");
++	pr_debug("SELinux:  Registering netfilter hooks\n");
+ 
+ 	err = register_pernet_subsys(&selinux_net_ops);
+ 	if (err)
+@@ -7236,7 +7234,7 @@ __initcall(selinux_nf_ip_init);
+ #ifdef CONFIG_SECURITY_SELINUX_DISABLE
+ static void selinux_nf_ip_exit(void)
+ {
+-	printk(KERN_DEBUG "SELinux:  Unregistering netfilter hooks\n");
++	pr_debug("SELinux:  Unregistering netfilter hooks\n");
+ 
+ 	unregister_pernet_subsys(&selinux_net_ops);
+ }
+@@ -7265,7 +7263,7 @@ int selinux_disable(struct selinux_state *state)
+ 
+ 	state->disabled = 1;
+ 
+-	printk(KERN_INFO "SELinux:  Disabled at runtime.\n");
++	pr_info("SELinux:  Disabled at runtime.\n");
+ 
+ 	selinux_enabled = 0;
+ 
+-- 
+2.15.1
 
-> This binding predates the GPIO binding having any gpiolib level polarity
-> inversion.
-
-Yeah, that's how it is.
-
-The confusion stems from Tegra using kinda both.
-
-I think I have it handled right in the gpiolib core by assuming
-it is active low, and explicitlt ignoring any attempts to use
-the GPIO flags to flag it as active low. It will be active low
-anyway in the Tegra case (after my patch to the second
-compatible string) albeit giving a warning in the
-dmesg.
-
->> Sadly this only handled the undocumented fixed
->> regulator binding "reg-fixed-voltage". So I need to fix it
->> for "regulator-fixed" as well, and then it "should work".
->
-> The normal fixed voltage regulator parses enable-active-high?
-
-Yeah currently. However I moved the handling to the gpiolib
-parsing code to centralize polarity inversion handling, in an
-attempt so keep things under control. So in the patch series
-this flag handling moves over to the gpiolib.
-
-I was thinking to do the same with other subsystems, such as
-MMC to get legacy GPIO flags under control and contained.
-
-Yours,
-Linus Walleij
