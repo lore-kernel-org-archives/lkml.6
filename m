@@ -2,131 +2,115 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B73D5C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:43:00 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1D8B1C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:43:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FACF2086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:43:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6DB32086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:43:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cws0QnOv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FACF2086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="hh0mWbEl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6DB32086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754396AbeFLRm5 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 13:42:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46870 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754223AbeFLRmz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 13:42:55 -0400
-Received: from mail-it0-f51.google.com (mail-it0-f51.google.com [209.85.214.51])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1ED2A2086D;
-        Tue, 12 Jun 2018 17:42:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528825375;
-        bh=jwpEHHWodfhDaq/Q5SEIu+/ICTj+5d7EouTDJCtG5+4=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=cws0QnOvmiyZjBKoeoAW+PwnV/zjrf4b8mfAvR4LdXaV3scJo2fpkc4j0lLHjtEG/
-         +y3+IaWur5EHBHmXbxbklKDWdec7IEDLqsV3doK014CJVf9gj7R5LubD0hsZFBYOMi
-         KzXSGJabJryM3x0zeKew9pcqL/LzE3Jdo728jgHc=
-Received: by mail-it0-f51.google.com with SMTP id p185-v6so387547itp.4;
-        Tue, 12 Jun 2018 10:42:55 -0700 (PDT)
-X-Gm-Message-State: APt69E3a66D8BuwVES7lgfG0AOd+nKcwCYvFMBj20dRNLQ1a6LhZhvYe
-        hfRDapWku5EANLRNcB4Uh3ALaz+OdeODJMQkZA==
-X-Google-Smtp-Source: ADUXVKJFiK2lrt2ScmQx36xuBCtY7cbeQrJdDBboiMl4Ppo2NTWhdo2ori0nW8YDOhauQQCRttmEmG5Yv4vvwx6cTgo=
-X-Received: by 2002:a24:ec44:: with SMTP id g65-v6mr1511411ith.18.1528825374558;
- Tue, 12 Jun 2018 10:42:54 -0700 (PDT)
+        id S933838AbeFLRnM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 13:43:12 -0400
+Received: from mail-io0-f178.google.com ([209.85.223.178]:42732 "EHLO
+        mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933244AbeFLRnK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 13:43:10 -0400
+Received: by mail-io0-f178.google.com with SMTP id r24-v6so346608ioh.9;
+        Tue, 12 Jun 2018 10:43:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oJerA/g7j/eT4ia97YQ6w8r2SThKDt/btDybPoDy6DE=;
+        b=hh0mWbElUnj1TMAyXX8X3vr9YDfRGJlBbKZ7CQ46dTqMvI3VocEySTwkhkicR1rg8Z
+         OMmpTaKceilwEzvMIvhQAd+ZCLFjUkHkEavCIjv4pXUpq0nqTm7KrSrHM3BPbUthW9UP
+         kaLJ6m2EWzxeif6joMswxAGmmWhbt5lgnVDQI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oJerA/g7j/eT4ia97YQ6w8r2SThKDt/btDybPoDy6DE=;
+        b=exN10qDDvXSvGh3lQDYlWD7z/mEIjY+0P3pfcjv0a/4ssBWh74P2kJ9z6aKOSNxSg/
+         YOZz26yS0mptpGUCktKcPjFRxr7CeCeGD60imb/nd8kCwmPZaV9tqYuX+k3yE3z6zb2g
+         So2QD/ipAoSI2CBub+lpHGuuOKOD9ZMaAEWFnW+GeJB5kIbbR+6VWleUDaSDlVTQMAsu
+         /sLDaH6HB/z+btjecL0MmweSxAIcPLV1BOBHBLcS+6/LnUpwXuhTFEK5oOXIvGgLp9cb
+         S9Ud0tQrA/VtMOITlnIo7usAHhktBzV7eIwjeG4NIFrDXBHb+an8Fv7af63iIZOV5yAq
+         XCPA==
+X-Gm-Message-State: APt69E2ia2fq4DkqObGDpOdfq7g8Pa8Hl+LSNCidLX9GfEwNRDThP3E3
+        LwGUnRSeSja6tg9GgXMkcT6DQM1DGDZwRDgWwf4=
+X-Google-Smtp-Source: ADUXVKJGfpnm9HjjD01u6LZr8YEeQYwbipMeQTwv230dJNu6B5alyljMO5QOg3YgCkfDuo0F8h+lmKG8EkmNju7hy1Q=
+X-Received: by 2002:a6b:274f:: with SMTP id n76-v6mr1488772ion.259.1528825389715;
+ Tue, 12 Jun 2018 10:43:09 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a4f:6403:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 10:42:34
- -0700 (PDT)
-In-Reply-To: <23be2945b593a36d8fa1970bb579389c0f892a3e.camel@kernel.crashing.org>
-References: <23be2945b593a36d8fa1970bb579389c0f892a3e.camel@kernel.crashing.org>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 12 Jun 2018 11:42:34 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+dHVN+Y7xczf_Oxcn=BiJ6N9WzovRbSujgLLTYHMEh0g@mail.gmail.com>
-Message-ID: <CAL_Jsq+dHVN+Y7xczf_Oxcn=BiJ6N9WzovRbSujgLLTYHMEh0g@mail.gmail.com>
-Subject: Re: [PATCH] drivers/of: Add devm_of_iomap()
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <e5c90488937d14e9df81752a024be9d1e73ed398.camel@hammerspace.com>
+In-Reply-To: <e5c90488937d14e9df81752a024be9d1e73ed398.camel@hammerspace.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 12 Jun 2018 10:42:58 -0700
+Message-ID: <CA+55aFxYMg+F9Jdi_25X-Qtt=7imqjQhLnjEyQXOQ6+eJvy83A@mail.gmail.com>
+Subject: Re: [GIT PULL] Please pull NFS client changes for 4.18
+To:     trondmy@hammerspace.com, NeilBrown <neilb@suse.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 11, 2018 at 6:01 PM, Benjamin Herrenschmidt
-<benh@kernel.crashing.org> wrote:
-> There are still quite a few cases where a device might want to get to a
-> different node of the device-tree, obtain the resources and map them.
+On Tue, Jun 12, 2018 at 6:39 AM Trond Myklebust <trondmy@hammerspace.com> wrote:
 >
-> Drivers doing that currently open code the whole thing, which is error
-> proe.
->
-> We have of_iomap() and of_io_request_and_map() but they both have shortcomings,
-> such as not returning the size of the resource found (which can be necessary)
-> and not being "managed".
->
-> This adds a devm_of_iomap() that provides all of these and should probably
-> replace uses of the above in most drivers.
->
-> Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> ---
->
-> I'm cooking a driver that uses this, if there's no objection I'd like
-> to carry it in my pull request for that driver (it can also exist in
-> the DT tree of course). Just let me know.
+> NeilBrown (4):
+>       rculist: add list_for_each_entry_from_rcu()
 
-We generally only use of_iomap when there is no struct device for any
-new driver. Why can't you use devm_ioremap_resource? Is this a
-non-platform bus device?
+Oh christ, people. Not another one of these.
 
->
->  drivers/of/address.c       | 35 +++++++++++++++++++++++++++++++++++
->  include/linux/of_address.h |  5 +++++
->  2 files changed, 40 insertions(+)
->
-> diff --git a/drivers/of/address.c b/drivers/of/address.c
-> index cf83c05f5650..b7d49ee7b690 100644
-> --- a/drivers/of/address.c
-> +++ b/drivers/of/address.c
-> @@ -807,6 +807,41 @@ void __iomem *of_io_request_and_map(struct device_node *np, int index,
->  }
->  EXPORT_SYMBOL(of_io_request_and_map);
->
-> +/*
-> + * devm_of_iomap - Requests a resource and maps the memory mapped IO
-> + *                for a given device_node managed by a given device
-> + *
-> + * Checks that a resource is a valid memory region, requests the memory
-> + * region and ioremaps it. All operations are managed and will be undone
-> + * on driver detach of the device.
-> + *
-> + * This is to be used when a device requests/maps resources described
-> + * by other device tree nodes (children or otherwise).
-> + *
-> + * @dev:       The device "managing" the resource
-> + * @node:       The device-tree node where the resource resides
-> + * @index:     index of the MMIO range in the "reg" property
-> + * @size:      Returns the size of the resource (pass NULL if not needed)
-> + * Returns a pointer to the requested and mapped memory or an ERR_PTR() encoded
-> + * error code on failure. Usage example:
-> + *
-> + *     base = devm_of_iomap(&pdev->dev, node, 0, NULL);
-> + *     if (IS_ERR(base))
-> + *             return PTR_ERR(base);
-> + */
-> +void __iomem *devm_of_iomap(struct device *dev, struct device_node *node, int index,
-> +                           resource_size_t *size)
+We need to start having a real rule in place where people DO NOT PLAY
+GAMES WITH RCU LISTS.
 
-of/address.c generally doesn't depend on struct device. I'd like to
-keep it that way.
+Adding Paul McKenney to the list, since he clearly wasn't for the
+actual development, and the commit has no sign that it was sanity
+checked.
 
-Rob
+This whole "let's re-start RCU walking in the middle after we've
+dropped the RCU read lock" needs a hell of a lot more thought than
+people seem to actually be giving it.
+
+Maybe the code is actually correct - it looks ok to me. But every time
+I see it I just shudder.
+
+What people actually want is to just have a cursor entry in an RCU
+list. I'd much rather have *that*, than have people make up these
+insane ad-hoc cursor entries that are insane and have horrible
+semantics.
+
+For example, looking at that commit e04bbf6b1bbe ("NFS: Avoid
+quadratic search when freeing delegations"), it even talks about the
+ad-hoc cursor entry not actually being reliable, and how that's ok
+because the code doesn't care. No, random odd behavior that is
+basically never ever going to be testable is *NOT* ok.
+
+So could we please have a cursor entry for RCU walking, and actually
+have a agreed-upon way to do this? Maybe even using the low bit in the
+"next" field to mark a cursor entry generically - the same way we
+already do for the HEAD field in the bit-locked lists, just on the
+actual entries _on_ the list instead.
+
+Because we now have *two* of these odd special "restart the loop in
+the middle" come in during the same merge window. That really implies
+to me that we should have a _proper_ solution for the problem, not
+this horribly nasty case where people make up their own pseudo-cursors
+that have odd and questionable semantics.
+
+Paul, comments?
+
+                 Linus
