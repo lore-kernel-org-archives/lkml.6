@@ -2,90 +2,172 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0A6A5C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 05:38:14 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3EFEBC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 05:40:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBFDA2086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 05:38:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBFDA2086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id DD4852086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 05:40:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="L5gthDtT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD4852086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933073AbeFLFiM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 01:38:12 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:54792 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932448AbeFLFiL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 01:38:11 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id B14ED7ABF6030;
-        Tue, 12 Jun 2018 13:38:00 +0800 (CST)
-Received: from [127.0.0.1] (10.184.52.56) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.382.0; Tue, 12 Jun 2018
- 13:37:54 +0800
-To:     <agk@redhat.com>, <snitzer@redhat.com>, <gmazyland@gmail.com>
-CC:     <wangxiongfeng2@huawei.com>, <broonie@linaro.org>, <arnd@arndb.de>,
-        <joakim.bech@linaro.org>, <dm-devel@redhat.com>,
-        <linux-kernel@vger.kernel.org>
-From:   Xiongfeng Wang <wangxiongfeng2@huawei.com>
-Subject: [Query] Failed to create dm-crypt device when using AEAD type
-Message-ID: <33220afd-9a26-6133-ebf0-83b1268c34b7@huawei.com>
-Date:   Tue, 12 Jun 2018 13:37:46 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S932941AbeFLFj6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 01:39:58 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:40379 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753943AbeFLFj4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 01:39:56 -0400
+Received: by mail-pf0-f195.google.com with SMTP id z24-v6so11480330pfe.7
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 22:39:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=rT7/2cQm+XgPbqD4s2gQ3emxw6lyO4aTylJUGXMzl78=;
+        b=L5gthDtTqAoqrgmImfzIVVtCol1IuAPrQeehbXfasTLcgC5ChxcTm0YB3HxvsJR1RB
+         batmpqrtPsvgREmYRtPX7thr+ahZsYLbIqtXd6F62wWckcKaW+VrB++lk3AZ6EO/PeZ3
+         2GyFwUtk0oMWuAXJhXpqiG3Tffe3wD3UVeQv8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=rT7/2cQm+XgPbqD4s2gQ3emxw6lyO4aTylJUGXMzl78=;
+        b=SYWAV36JLo2X0FgJSSp11cSsgBbsKD7x32vnKGygsAjYvy4esyF1S5IWF8fg4ICptv
+         Mi8yRRAJkKNMgEQEfNJQxsujcHtNOD09GNr1N8HYyb4BjtTOSg9Bm8p5eH1J4Ab5NmbD
+         M046kULgwQjjp6W84s5TqGbL5B7jI5YIogNKAqnf2Bv4DavmvoSoMWplM1mO7Q1FPQSR
+         qybgr3nZpELZ6T1RgqQm1TbVj39NrmIZj/2p17j7Y35tMdlB0LTBdAT8CpU1HZUBMAAx
+         L05mTREY1DEHUjLZz1+pkLljrNxY+TPLZ4275jYbJvfaDlgNB6LHnl6rXXC796RorpSs
+         cMwg==
+X-Gm-Message-State: APt69E3lDJHZ3pzVKJVooDStIoJ0mpaYrkfjVHnaCWaPbYeiTF5Qg6O9
+        1DqbxKqhXOkx+Y8PM7wpkop+1w==
+X-Google-Smtp-Source: ADUXVKLzt5AdgPiw1llsyCCIoVo+MPuKIjgqCO6OvekmzhsmQ7ZxZ2HJ0gHdnsn0lyfniyPevzLEYA==
+X-Received: by 2002:a62:3ad8:: with SMTP id v85-v6mr2329652pfj.184.1528781996155;
+        Mon, 11 Jun 2018 22:39:56 -0700 (PDT)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id l26-v6sm120505pgn.55.2018.06.11.22.39.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 11 Jun 2018 22:39:55 -0700 (PDT)
+Date:   Mon, 11 Jun 2018 22:39:53 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Rajendra Nayak <rnayak@codeaurora.org>
+Cc:     viresh.kumar@linaro.org, sboyd@kernel.org, andy.gross@linaro.org,
+        ulf.hansson@linaro.org, collinsd@codeaurora.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/7] dt-bindings: power: Add qcom rpmh power domain
+ driver bindings
+Message-ID: <20180612053953.GA18050@builder>
+References: <20180612044052.4402-1-rnayak@codeaurora.org>
+ <20180612044052.4402-6-rnayak@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.184.52.56]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180612044052.4402-6-rnayak@codeaurora.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dm-crypt maintainers,
+On Mon 11 Jun 21:40 PDT 2018, Rajendra Nayak wrote:
 
-Recently, I was testing the dm-crypt, but I failed to create dm-crypt device when using AEAD type.
-I would really appreciate it if you could give some help.
-The error info is as follows:
-localhost:~ # export SIZE_INT=997376
-8 J 0"ost:~ # dmsetup create integ1 --table "0 $SIZE_INT integrity /dev/sdd2 0 2
-localhost:~ #
-dom \host:~ # dmsetup create crypt1 --table "0 $SIZE_INT crypt capi:gcm(aes)-ran
->  11ff33c6fb942655efb3e30cf4c0fd95f5ef483afca72166c530ae26151dd83b \
->  0 /dev/mapper/integ1 0 1 integrity:28:aead"
-[ 1746.631559] device-mapper: crypt: Integrity AEAD, tag size 16, IV size 12.
-[ 1746.649796] device-mapper: crypt: INTEGRITY AEAD ERROR, sector 997248
-[ 1746.656382] device-mapper: crypt: INTEGRITY AEAD ERROR, sector 997248
-[ 1746.662826] Buffer I/O error on dev dm-3, logical block 124656, async page read
+> Add DT bindings to describe the rpmh powerdomains found on Qualcomm
+> Technologies, Inc. SoCs. These power domains communicate a performance
+> state to RPMh, which then translates it into corresponding voltage on
+> a PMIC rail.
+> 
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> ---
+>  .../devicetree/bindings/power/qcom,rpmhpd.txt | 65 +++++++++++++++++++
+>  1 file changed, 65 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/power/qcom,rpmhpd.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/power/qcom,rpmhpd.txt b/Documentation/devicetree/bindings/power/qcom,rpmhpd.txt
+> new file mode 100644
+> index 000000000000..41ef7afa6b24
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/power/qcom,rpmhpd.txt
+> @@ -0,0 +1,65 @@
+> +Qualcomm RPMh Power domains
+> +
+> +For RPMh Power domains, we communicate a performance state to RPMh
+> +which then translates it into a corresponding voltage on a rail
+> +
+> +Required Properties:
+> + - compatible: Should be one of the following
+> +	* qcom,sdm845-rpmhpd: RPMh Power domain for the sdm845 family of SoC
 
-I tested it both on qemu and hardware, and it printed the same error.
-The error seems always on the last several sectors within the SIZE_INT I designated.
-When I change the SIZE_INT, the error sector num also change.
-I think something went wrong in the software, not the hardware.
-
-My board don't have AEAD accelerator, so it uses the software implemented cipher.
-My kernel version is 4.17-rc3.
-
-The command is as follows:
-export SIZE_INT=997376
-dmsetup create integ1 --table "0 $SIZE_INT integrity /dev/sdd2 0 28 J 0"
-dmsetup create crypt1 --table "0 $SIZE_INT crypt capi:gcm(aes)-random \
- 11ff33c6fb942655efb3e30cf4c0fd95f5ef483afca72166c530ae26151dd83b \
- 0 /dev/mapper/integ1 0 1 integrity:28:aead"
-
-This command comes from the commit information of the commit which introduce AEAD.
-(commit ef43aa38063a6b2b3c6618e28ab35794f4f1fe29
-dm crypt: add cryptographic data integrity protection (authenticated encryption))
-I only change 'aes-gcm-random' to 'capi:gcm(aes)-random'
-
-Really appreciate it if you could have a look at it, Thanks!
+Afaict this binding is identical to the one introduced in patch 1, so I
+would suggest that you just add the compatible there.
 
 Regards,
-Xiongfeng
+Bjorn
 
-
+> + - power-domain-cells: number of cells in power domain specifier
+> +	must be 1
+> + - operating-points-v2: Phandle to the OPP table for the power-domain.
+> +	Refer to Documentation/devicetree/bindings/power/power_domain.txt
+> +	and Documentation/devicetree/bindings/opp/qcom-opp.txt for more details
+> +
+> +Example:
+> +
+> +	rpmhpd: power-controller {
+> +		compatible = "qcom,sdm845-rpmhpd";
+> +		#power-domain-cells = <1>;
+> +		operating-points-v2 = <&rpmhpd_opp_table>;
+> +	};
+> +
+> +	rpmhpd_opp_table: opp-table {
+> +		compatible = "operating-points-v2-qcom-level";
+> +
+> +		rpmhpd_opp_ret: opp1 {
+> +			qcom-level = <16>;
+> +		};
+> +
+> +		rpmhpd_opp_min_svs: opp2 {
+> +			qcom-level = <48>;
+> +		};
+> +
+> +		rpmhpd_opp_low_svs: opp3 {
+> +			qcom-level = <64>;
+> +		};
+> +
+> +		rpmhpd_opp_svs: opp4 {
+> +			qcom-level = <128>;
+> +		};
+> +
+> +		rpmhpd_opp_svs_l1: opp5 {
+> +			qcom-level = <192>;
+> +		};
+> +
+> +		rpmhpd_opp_nom: opp6 {
+> +			qcom-level = <256>;
+> +		};
+> +
+> +		rpmhpd_opp_nom_l1: opp7 {
+> +			qcom-level = <320>;
+> +		};
+> +
+> +		rpmhpd_opp_nom_l2: opp8 {
+> +			qcom-level = <336>;
+> +		};
+> +
+> +		rpmhpd_opp_turbo: opp9 {
+> +			qcom-level = <384>;
+> +		};
+> +
+> +		rpmhpd_opp_turbo_l1: opp10 {
+> +			qcom-level = <416>;
+> +		};
+> +	};
+> -- 
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+> of Code Aurora Forum, hosted by The Linux Foundation
+> 
