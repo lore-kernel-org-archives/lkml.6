@@ -6,70 +6,84 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C5FBAC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 09:42:06 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 39A28C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 09:50:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B2B0208B4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 09:42:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B2B0208B4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id E9DD3208AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 09:50:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9DD3208AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754331AbeFLJmE (ORCPT
+        id S1754345AbeFLJu3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 05:42:04 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:34650 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754285AbeFLJmD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 05:42:03 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1fSfoO-0006eA-JR; Tue, 12 Jun 2018 09:42:00 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Andy Walls <awalls@md.metrocast.net>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][V2] [media] cx18: remove redundant zero check on retval
-Date:   Tue, 12 Jun 2018 10:42:00 +0100
-Message-Id: <20180612094200.11545-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        Tue, 12 Jun 2018 05:50:29 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59744 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754287AbeFLJu1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 05:50:27 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0A4511435;
+        Tue, 12 Jun 2018 02:50:27 -0700 (PDT)
+Received: from [10.1.206.73] (en101.cambridge.arm.com [10.1.206.73])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8E4713F59D;
+        Tue, 12 Jun 2018 02:50:24 -0700 (PDT)
+Subject: Re: [PATCH 10/20] dts: juno: Update coresight bindings for hw port
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Rob Herring <robh@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>, arm@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Matt Sealey <matt.sealey@arm.com>,
+        John Horley <john.horley@arm.com>,
+        Charles Garcia-Tobin <charles.garcia-tobin@arm.com>,
+        coresight@lists.linaro.org, devicetree@vger.kernel.org,
+        Mike Leach <mike.leach@linaro.org>,
+        Liviu Dudau <liviu.dudau@arm.com>
+References: <1528235011-30691-1-git-send-email-suzuki.poulose@arm.com>
+ <1528235011-30691-11-git-send-email-suzuki.poulose@arm.com>
+ <20180608214946.GI30587@xps15>
+ <CANLsYkxNakRGCWT6O0JRKz+N1OTU3-XreC_FiB8Fiv+jEoPEbQ@mail.gmail.com>
+From:   Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <451386d1-b08a-5d90-336c-4708e35a32bf@arm.com>
+Date:   Tue, 12 Jun 2018 10:50:22 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANLsYkxNakRGCWT6O0JRKz+N1OTU3-XreC_FiB8Fiv+jEoPEbQ@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 08/06/18 22:52, Mathieu Poirier wrote:
+> On 8 June 2018 at 15:49, Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
+>> On Tue, Jun 05, 2018 at 10:43:21PM +0100, Suzuki K Poulose wrote:
+>>> Switch to updated coresight bindings for hw ports.
+>>>
+>>> Cc: Sudeep Holla <sudeep.holla@arm.com>
+>>> Cc: Liviu Dudau <liviu.dudau@arm.com>
+>>> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>> ---
+>>> Changes since V1:
+>>>    - Add support Juno for r1 & r2.
+>>> ---
+>>
+>> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> 
+> Sudeep please hold on before applying this as there is more work to be
+> done on this set.
 
-The check for a zero retval is redundant as all paths that lead to
-this point have set retval to an error return value that is non-zero.
-Remove the redundant check.
+Mathieu,
 
-Detected by CoverityScan, CID#102589 ("Logically dead code")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/pci/cx18/cx18-driver.c | 2 --
- 1 file changed, 2 deletions(-)
+I will wait for Rob / Frank to have a say on the bindings before I post the
+next update.
 
-diff --git a/drivers/media/pci/cx18/cx18-driver.c b/drivers/media/pci/cx18/cx18-driver.c
-index 8f314ca320c7..0c389a3fb4e5 100644
---- a/drivers/media/pci/cx18/cx18-driver.c
-+++ b/drivers/media/pci/cx18/cx18-driver.c
-@@ -1134,8 +1134,6 @@ static int cx18_probe(struct pci_dev *pci_dev,
- free_workqueues:
- 	destroy_workqueue(cx->in_work_queue);
- err:
--	if (retval == 0)
--		retval = -ENODEV;
- 	CX18_ERR("Error %d on initialization\n", retval);
- 
- 	v4l2_device_unregister(&cx->v4l2_dev);
--- 
-2.17.0
-
+Cheers
+Suzuki
