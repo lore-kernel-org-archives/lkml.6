@@ -6,43 +6,38 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4546CC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:24:50 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4F3A4C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:25:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04E8A208B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:24:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04E8A208B0
+	by mail.kernel.org (Postfix) with ESMTP id 0D28D208B0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:25:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D28D208B0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934065AbeFLKYs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 06:24:48 -0400
+        id S934079AbeFLKZG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 06:25:06 -0400
 Received: from mga09.intel.com ([134.134.136.24]:34386 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754325AbeFLKXY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 06:23:24 -0400
+        id S933795AbeFLKXS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 06:23:18 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2018 03:23:23 -0700
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2018 03:23:17 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,214,1526367600"; 
-   d="scan'208";a="66322077"
+   d="scan'208";a="66322062"
 Received: from hao-dev.bj.intel.com ([10.238.157.61])
-  by orsmga002.jf.intel.com with ESMTP; 12 Jun 2018 03:23:20 -0700
+  by orsmga002.jf.intel.com with ESMTP; 12 Jun 2018 03:23:15 -0700
 From:   Wu Hao <hao.wu@intel.com>
 To:     atull@kernel.org, mdf@kernel.org, linux-fpga@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     linux-api@vger.kernel.org, luwei.kang@intel.com,
-        yi.z.zhang@intel.com, hao.wu@intel.com,
-        Tim Whisonant <tim.whisonant@intel.com>,
-        Enno Luebbers <enno.luebbers@intel.com>,
-        Shiva Rao <shiva.rao@intel.com>,
-        Christopher Rauer <christopher.rauer@intel.com>,
-        Xiao Guangrong <guangrong.xiao@linux.intel.com>
-Subject: [PATCH v6 26/29] fpga: dfl: afu: add DFL_FPGA_GET_API_VERSION/CHECK_EXTENSION ioctls support
-Date:   Tue, 12 Jun 2018 18:10:40 +0800
-Message-Id: <1528798243-2029-27-git-send-email-hao.wu@intel.com>
+        yi.z.zhang@intel.com, hao.wu@intel.com
+Subject: [PATCH v6 24/29] fpga: dfl: afu: add port ops support
+Date:   Tue, 12 Jun 2018 18:10:38 +0800
+Message-Id: <1528798243-2029-25-git-send-email-hao.wu@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1528798243-2029-1-git-send-email-hao.wu@intel.com>
 References: <1528798243-2029-1-git-send-email-hao.wu@intel.com>
@@ -51,59 +46,166 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DFL_FPGA_GET_API_VERSION and DFL_FPGA_CHECK_EXTENSION ioctls are common
-ones which need to be supported by all feature devices drivers including
-FME and AFU. This patch implements above 2 ioctls in FPGA Accelerated
-Function Unit (AFU) driver.
+This patch registers the port ops into the global list in the DFL
+framework, and it allows other modules to use the port ops. And
+This patch includes the implementation of the get_id and enable_set
+ops too.
 
-Signed-off-by: Tim Whisonant <tim.whisonant@intel.com>
-Signed-off-by: Enno Luebbers <enno.luebbers@intel.com>
-Signed-off-by: Shiva Rao <shiva.rao@intel.com>
-Signed-off-by: Christopher Rauer <christopher.rauer@intel.com>
-Signed-off-by: Xiao Guangrong <guangrong.xiao@linux.intel.com>
 Signed-off-by: Wu Hao <hao.wu@intel.com>
 Acked-by: Alan Tull <atull@kernel.org>
-Acked-by: Moritz Fischer <mdf@kernel.org>
 ---
-v2: rebased
-v3: rebased as driver renamed to fpga-dfl-afu
-    fix one checkpatch issue
-v4: add Acked-by from Alan and Moritz.
-v5: rebase, and add DFL_ prefix to APIs.
-v6: rebase.
+v6: rebase, fix copyright time and add Acked-by from Alan.
 ---
- drivers/fpga/dfl-afu-main.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/fpga/dfl-afu-main.c | 122 +++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 121 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/fpga/dfl-afu-main.c b/drivers/fpga/dfl-afu-main.c
-index 30a6937..1f22423 100644
+index 08f88cd..a38d6a8 100644
 --- a/drivers/fpga/dfl-afu-main.c
 +++ b/drivers/fpga/dfl-afu-main.c
-@@ -236,6 +236,13 @@ static int afu_release(struct inode *inode, struct file *filp)
- 	return 0;
- }
+@@ -19,6 +19,83 @@
  
-+static long afu_ioctl_check_extension(struct dfl_feature_platform_data *pdata,
-+				      unsigned long arg)
+ #include "dfl.h"
+ 
++/**
++ * port_enable - enable a port
++ * @pdev: port platform device.
++ *
++ * Enable Port by clear the port soft reset bit, which is set by default.
++ * The User AFU is unable to respond to any MMIO access while in reset.
++ * port_enable function should only be used after port_disable
++ * function.
++ */
++static void port_enable(struct platform_device *pdev)
 +{
-+	/* No extension support for now */
++	struct dfl_feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
++	void __iomem *base;
++	u64 v;
++
++	WARN_ON(!pdata->disable_count);
++
++	if (--pdata->disable_count != 0)
++		return;
++
++	base = dfl_get_feature_ioaddr_by_id(&pdev->dev, PORT_FEATURE_ID_HEADER);
++
++	/* Clear port soft reset */
++	v = readq(base + PORT_HDR_CTRL);
++	v &= ~PORT_CTRL_SFTRST;
++	writeq(v, base + PORT_HDR_CTRL);
++}
++
++#define RST_POLL_INVL 10 /* us */
++#define RST_POLL_TIMEOUT 1000 /* us */
++
++/**
++ * port_disable - disable a port
++ * @pdev: port platform device.
++ *
++ * Disable Port by setting the port soft reset bit, it puts the port into
++ * reset.
++ */
++static int port_disable(struct platform_device *pdev)
++{
++	struct dfl_feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
++	void __iomem *base;
++	u64 v;
++
++	if (pdata->disable_count++ != 0)
++		return 0;
++
++	base = dfl_get_feature_ioaddr_by_id(&pdev->dev, PORT_FEATURE_ID_HEADER);
++
++	/* Set port soft reset */
++	v = readq(base + PORT_HDR_CTRL);
++	v |= PORT_CTRL_SFTRST;
++	writeq(v, base + PORT_HDR_CTRL);
++
++	/*
++	 * HW sets ack bit to 1 when all outstanding requests have been drained
++	 * on this port and minimum soft reset pulse width has elapsed.
++	 * Driver polls port_soft_reset_ack to determine if reset done by HW.
++	 */
++	if (readq_poll_timeout(base + PORT_HDR_CTRL, v, v & PORT_CTRL_SFTRST,
++			       RST_POLL_INVL, RST_POLL_TIMEOUT)) {
++		dev_err(&pdev->dev, "timeout, fail to reset device\n");
++		return -ETIMEDOUT;
++	}
++
 +	return 0;
 +}
 +
- static long afu_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
++static int port_get_id(struct platform_device *pdev)
++{
++	void __iomem *base;
++
++	base = dfl_get_feature_ioaddr_by_id(&pdev->dev, PORT_FEATURE_ID_HEADER);
++
++	return FIELD_GET(PORT_CAP_PORT_NUM, readq(base + PORT_HDR_CAP));
++}
++
+ static int port_hdr_init(struct platform_device *pdev,
+ 			 struct dfl_feature *feature)
  {
- 	struct platform_device *pdev = filp->private_data;
-@@ -248,6 +255,10 @@ static long afu_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 	pdata = dev_get_platdata(&pdev->dev);
+@@ -119,6 +196,28 @@ static long afu_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 	.unlocked_ioctl = afu_ioctl,
+ };
  
- 	switch (cmd) {
-+	case DFL_FPGA_GET_API_VERSION:
-+		return DFL_FPGA_API_VERSION;
-+	case DFL_FPGA_CHECK_EXTENSION:
-+		return afu_ioctl_check_extension(pdata, arg);
- 	default:
- 		/*
- 		 * Let sub-feature's ioctl function to handle the cmd
++static int port_enable_set(struct platform_device *pdev, bool enable)
++{
++	struct dfl_feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
++	int ret = 0;
++
++	mutex_lock(&pdata->lock);
++	if (enable)
++		port_enable(pdev);
++	else
++		ret = port_disable(pdev);
++	mutex_unlock(&pdata->lock);
++
++	return ret;
++}
++
++static struct dfl_fpga_port_ops afu_port_ops = {
++	.name = DFL_FPGA_FEATURE_DEV_PORT,
++	.owner = THIS_MODULE,
++	.get_id = port_get_id,
++	.enable_set = port_enable_set,
++};
++
+ static int afu_probe(struct platform_device *pdev)
+ {
+ 	int ret;
+@@ -154,7 +253,28 @@ static int afu_remove(struct platform_device *pdev)
+ 	.remove  = afu_remove,
+ };
+ 
+-module_platform_driver(afu_driver);
++static int __init afu_init(void)
++{
++	int ret;
++
++	dfl_fpga_port_ops_add(&afu_port_ops);
++
++	ret = platform_driver_register(&afu_driver);
++	if (ret)
++		dfl_fpga_port_ops_del(&afu_port_ops);
++
++	return ret;
++}
++
++static void __exit afu_exit(void)
++{
++	platform_driver_unregister(&afu_driver);
++
++	dfl_fpga_port_ops_del(&afu_port_ops);
++}
++
++module_init(afu_init);
++module_exit(afu_exit);
+ 
+ MODULE_DESCRIPTION("FPGA Accelerated Function Unit driver");
+ MODULE_AUTHOR("Intel Corporation");
 -- 
 1.8.3.1
 
