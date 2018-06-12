@@ -7,64 +7,63 @@ X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5BB57C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 03:35:13 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7ECA4C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 03:38:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FFE3208B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 03:35:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27EA220693
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 03:38:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YV5eA4ys"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FFE3208B0
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QNRo7INp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27EA220693
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933484AbeFLDfL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 23:35:11 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:44262 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932650AbeFLDfJ (ORCPT
+        id S933340AbeFLDiT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 23:38:19 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:34703 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932650AbeFLDiR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 23:35:09 -0400
-Received: by mail-pg0-f66.google.com with SMTP id p21-v6so10758987pgd.11;
-        Mon, 11 Jun 2018 20:35:09 -0700 (PDT)
+        Mon, 11 Jun 2018 23:38:17 -0400
+Received: by mail-pl0-f65.google.com with SMTP id g20-v6so13547349plq.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 20:38:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=MlqzkGgLdRmxIdvPNSMk5xtZQZeWnIihHFcDgT2MH5s=;
-        b=YV5eA4ysnaoNWkuHvwFpW7ZJBBk+xMm3d8H87RsKgwKytt9pSnkX1siuq4OTFBc3mO
-         87+ZwOlc1Ik4u3VoDCe/KuJTr1NGfjY+RI1LHuy96OCy8lCdZ9q0z70Ro2K4g6fb/scI
-         Pb2CLWy3w3DJiNw3Gf52kOEnCaYGT3vYhOwAspKw8ScRreoR/lzAKkurubVCP7MyTtN4
-         YAHqELF3lrWMmQSRYldmlwOy2bhaGTr4tXo6lMDAcMcrqRVV7cupRo12fN4+nBBGV9hK
-         L2Qm2GiVPS38Ep3xNhC5QNsvSyXdZqct25tqldD/RGWtIz0O4lcAbrfL0zFPLCbcAQ/W
-         WnMA==
+        bh=zYdq2o2hPEivRFoImDEtISLRjqAIs4y06nKopbM5QEg=;
+        b=QNRo7INpqccpgrpZiT2ibtfh2FH0SpCCHMPvqRs8TSt3wRMEtDELTU1+HITGSPJDPo
+         j18nzWyf76WuR6Z5eKQIpkVHZvylmZkKO2aAavl1xR0XkMBMt8CeF+DZTNa5vHutGziK
+         K2wHHx/pihtgRDLyog90xF0ghEti3Z8TD5A1SUY0fOlNUdZ2dCKwzu1gfSR+MBfnwd78
+         nQRwxwpl9gkFg0EFQIBb8v7j77M0Fh0xP5lJ335g/HkLZXMCgZkQrn2XlR2WNkl2OiTZ
+         jnnyNY6pX3aRKib59HH1izpsRx60I71Lh6NBUAmHve8r8w9H7F/Ll7nf9c7zUQFCV5Cx
+         C06Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=MlqzkGgLdRmxIdvPNSMk5xtZQZeWnIihHFcDgT2MH5s=;
-        b=TH+zWvzdUatB65/nAh9mlZ5POSWq9/oYpqtsxQs4dDOSAabeLwc98a8fR0Tz615/i0
-         xQtpPaxOTAPoDtr3Tctlek7Zfi9YSVqDgeyW99VQTicBOZ/3u/4c5EqHdELVgk3ShvZg
-         0fPo9y/T39PGgIAwMRmMsTN5ERhEIkh67j9CqUaU1jRtlaQxMt4BgtBPsgBTZ6zb59TC
-         p9fNwkj7lOiH/jexYb8fCWDWeARpQv5iE5hagVndVjRe2ivOgnZBg/1lRFzTGf1zJBnA
-         5RCVm0R+2+eM28BOQWjyE7RQDC1iT9H87EfBgXf0BIiKOYUpD1wLx5bXEPoRmRM322yQ
-         k4hQ==
-X-Gm-Message-State: APt69E1cK72K6VxE9UTfO1R89UX6aXr0bfCiHGnh1PWUb0zaxG7qw7OV
-        IRUbNP37ISxTNcMx/TS+R0U=
-X-Google-Smtp-Source: ADUXVKIVoX/xgmuhb20ugakJMaHd5DKXMVGxn33dGggBCOhCIlJJNMS/oINAgjggC0Gd81By7dJkpA==
-X-Received: by 2002:a65:5a88:: with SMTP id c8-v6mr1594289pgt.287.1528774509232;
-        Mon, 11 Jun 2018 20:35:09 -0700 (PDT)
+        bh=zYdq2o2hPEivRFoImDEtISLRjqAIs4y06nKopbM5QEg=;
+        b=Xz2ftVMTzc+nDdI2h639U9UhYylkun5Ml2WukZ9vcMyraGsYo/Qd4RQHCicUf0w23e
+         U3gCFmDccxivSsyJu5Gvp3IWhTtpHgwHPJ98Nh9W+kj78OwjlFLlj064jT+5JpOIl6KU
+         XrMeMEhs934q2iOnSV17B9ZOChG8Gk8lWARNaeUbNofylIfU8lE0myIPfMq3StE57QPM
+         /UoxOWK0JAm6h2Mg+GcAcUDBAM47fbAkhVGaA2ahJcMVA3HGV7MjgcNUdWx4pHuOM/18
+         +HqcOQ9YTpJw8XFjhexpvEjbZF/XKldnoVq5Q60TlEtwzfhLBJ4/cpyGyD2XdO55AzoK
+         cIpA==
+X-Gm-Message-State: APt69E2qDYd9G4K0ZI+VM4plblCuQJeXpLyWrGkj3EaNvILaLfA5TQTT
+        B41SwfifN0OvXiHIY3pTGI98s4bfCGU=
+X-Google-Smtp-Source: ADUXVKK+ln9zbJAscx5ndUOEZwvQy8icx5b5nV+XguzndaNA8xfNdFD2MdtPT0axSg8l8etKw6cefg==
+X-Received: by 2002:a17:902:28a6:: with SMTP id f35-v6mr2091371plb.110.1528774697579;
+        Mon, 11 Jun 2018 20:38:17 -0700 (PDT)
 Received: from localhost ([103.88.46.82])
-        by smtp.gmail.com with ESMTPSA id c12-v6sm41226425pfi.177.2018.06.11.20.35.08
+        by smtp.gmail.com with ESMTPSA id g4-v6sm74254933pfg.38.2018.06.11.20.38.16
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Jun 2018 20:35:08 -0700 (PDT)
+        Mon, 11 Jun 2018 20:38:17 -0700 (PDT)
 From:   Zhouyang Jia <jiazhouyang09@gmail.com>
 Cc:     Zhouyang Jia <jiazhouyang09@gmail.com>,
-        Marc Hulsman <m.hulsman@tudelft.nl>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] hwmon: (w83791d) add error handling for i2c_new_dummy
-Date:   Tue, 12 Jun 2018 11:35:03 +0800
-Message-Id: <1528774504-38755-1-git-send-email-jiazhouyang09@gmail.com>
+        Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        cluster-devel@redhat.com, linux-kernel@vger.kernel.org
+Subject: [PATCH] gfs2: add error handling for kmem_cache_zalloc
+Date:   Tue, 12 Jun 2018 11:38:12 +0800
+Message-Id: <1528774692-38990-1-git-send-email-jiazhouyang09@gmail.com>
 X-Mailer: git-send-email 2.7.4
 To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -72,50 +71,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When i2c_new_dummy fails, the lack of error-handling code may
+When kmem_cache_zalloc fails, the lack of error-handling code may
 cause unexpected results.
 
-This patch adds error-handling code after calling i2c_new_dummy.
+This patch adds error-handling code after calling kmem_cache_zalloc.
 
 Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
 ---
- drivers/hwmon/w83791d.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ fs/gfs2/trans.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/hwmon/w83791d.c b/drivers/hwmon/w83791d.c
-index 28fa3bd..a183432 100644
---- a/drivers/hwmon/w83791d.c
-+++ b/drivers/hwmon/w83791d.c
-@@ -1295,8 +1295,15 @@ static int w83791d_detect_subclients(struct i2c_client *client)
- 	}
+diff --git a/fs/gfs2/trans.c b/fs/gfs2/trans.c
+index 064c9a0..da81eb4 100644
+--- a/fs/gfs2/trans.c
++++ b/fs/gfs2/trans.c
+@@ -130,6 +130,9 @@ static struct gfs2_bufdata *gfs2_alloc_bufdata(struct gfs2_glock *gl,
+ 	struct gfs2_bufdata *bd;
  
- 	val = w83791d_read(client, W83791D_REG_I2C_SUBADDR);
--	if (!(val & 0x08))
-+	if (!(val & 0x08)) {
- 		data->lm75[0] = i2c_new_dummy(adapter, 0x48 + (val & 0x7));
-+		if (data->lm75[0] == NULL) {
-+			dev_err(&client->dev,
-+				"Failed to allocate I2C device\n");
-+			err = -ENODEV;
-+			goto error_sc_1;
-+		}
-+	}
- 	if (!(val & 0x80)) {
- 		if ((data->lm75[0] != NULL) &&
- 				((val & 0x7) == ((val >> 4) & 0x7))) {
-@@ -1309,6 +1316,12 @@ static int w83791d_detect_subclients(struct i2c_client *client)
- 		}
- 		data->lm75[1] = i2c_new_dummy(adapter,
- 					      0x48 + ((val >> 4) & 0x7));
-+		if (data->lm75[1] == NULL) {
-+			dev_err(&client->dev,
-+				"Failed to allocate I2C device\n");
-+			err = -ENODEV;
-+			goto error_sc_1;
-+		}
- 	}
- 
- 	return 0;
+ 	bd = kmem_cache_zalloc(gfs2_bufdata_cachep, GFP_NOFS | __GFP_NOFAIL);
++	if (!bd)
++		return NULL;
++
+ 	bd->bd_bh = bh;
+ 	bd->bd_gl = gl;
+ 	bd->bd_ops = lops;
 -- 
 2.7.4
 
