@@ -6,138 +6,114 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id BF470C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 20:22:53 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 65B44C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 20:23:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75BB7208AE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 20:22:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B8F22086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 20:23:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="em1dpKNY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75BB7208AE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ng2WAp8T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B8F22086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934516AbeFLUWw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 16:22:52 -0400
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:42250 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933517AbeFLUVt (ORCPT
+        id S934462AbeFLUXc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 16:23:32 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:39081 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933517AbeFLUX3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 16:21:49 -0400
-Received: by mail-qk0-f194.google.com with SMTP id j80-v6so178091qke.9
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 13:21:49 -0700 (PDT)
+        Tue, 12 Jun 2018 16:23:29 -0400
+Received: by mail-wm0-f66.google.com with SMTP id p11-v6so1177722wmc.4
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 13:23:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=NmtYejaVr49vUkSDCF8993I3P1Hvc+o6t8lYihInN8g=;
-        b=em1dpKNYVT8/MjLbpaM3F6FZaEMPcVBp+pSJrLy3V6fmuXoV4J8auTAybr2v/oens5
-         MLO/94O++RxM6UBTdsAxMDa7qyXXcGiC6vTPNQMNBC2Om9Qj3wb6jzEr2rpabHKR2bT5
-         CdPOg2HWsNNM3xrBMEvvLgZrID5E4PY7pzkzY=
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=DmWSjQBU9Sq7rzyStZnHWzPWeA2nzkfCL13VjG2sYTI=;
+        b=ng2WAp8T6eRP+l3f2c7u7SXbBY4lhVvqzmR9PQIgzh9dPaC5O7HTmdWPmOX3xv9Xuh
+         mQYDByb8PDq08OLNj8nIQQiKE1X1xA8S87HXNwqARe+IiMQ2H/k1tiXR0pFWH81VVskq
+         J8ZIbB6d1ekfKrvFlzltT8SxfU1xFOWUEh0VU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=NmtYejaVr49vUkSDCF8993I3P1Hvc+o6t8lYihInN8g=;
-        b=fUrYzQAIBzdITpjMOZSTJMy4ZqlPmFUUVwPqmObj3rCzcJQ32sIZXu+err/6mJY9eI
-         jdIVwrTNYwOxbb5KWZ9Qm5cL9u7CupgplfusM0MHhZHxmY1YWbAlJbsSgFE+UUorqHwF
-         nr00//bZAg4Katyofk+oCvPgmTgPq/8MJNH0XvVzKmDskkD4npntcVjEtiaqNi4As0PJ
-         jlbNZEjuPPSNYe4W78qLsnU9FE/MCnvHtm4Ubk3NWRO+NEkDdVv3rubPFBGw4AJzIylc
-         4SlqV3kMO2vQ8M6/dC4XwXySVOJZUBPilM89lAb8PCGCnmOWdro5jEo+omY6OL1B+IMF
-         pWFw==
-X-Gm-Message-State: APt69E2Z3LBEkMOQ34B+xpfebXYbnIsNA0OTPfn9ln42e81c+3y6HqkN
-        a6emPeY6fJ3drZ6txchRslMg8Q==
-X-Google-Smtp-Source: ADUXVKIABZFkypNvdCWSLCZJaVqGmF5QlWgOg2jEmWFEk9ELP4PsSo13evXvQd62BMxWQs7ljk1ZZw==
-X-Received: by 2002:a37:84c3:: with SMTP id g186-v6mr1904420qkd.346.1528834908676;
-        Tue, 12 Jun 2018 13:21:48 -0700 (PDT)
-Received: from lbrmn-lnxub44-1.ric.broadcom.com ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id l9-v6sm635080qtp.25.2018.06.12.13.21.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 12 Jun 2018 13:21:47 -0700 (PDT)
-From:   Ray Jui <ray.jui@broadcom.com>
-To:     linux-arm-kernel@lists.infradead.org,
-        Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        Ray Jui <ray.jui@broadcom.com>
-Subject: [PATCH 2/5] ARM: dts: cygnus: Fix PCIe controller interrupt type
-Date:   Tue, 12 Jun 2018 13:21:28 -0700
-Message-Id: <1528834891-17807-3-git-send-email-ray.jui@broadcom.com>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1528834891-17807-1-git-send-email-ray.jui@broadcom.com>
-References: <1528834891-17807-1-git-send-email-ray.jui@broadcom.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=DmWSjQBU9Sq7rzyStZnHWzPWeA2nzkfCL13VjG2sYTI=;
+        b=U9KBrNnNuzvheEZ3ymW0DqHwhnPWb8aSi7pe+Dj26fzeswoUi12sBBVPIYBHK8Va/f
+         e2T/du+w76oSkFi2te+xBdSdjCEScYSQ12l0lVLPRDhei0fLTIgZHmp14SjTtu9VYG7S
+         lrW2WWN8LgawS2Lie4F7YEMb8ipBfcWsv/wRRVatLfYce2XYUm6rDefxrBweN8/SrtL2
+         lo4699nIF87o18j71dfnTOjzou/FRxJlwDALFwRDFgNoFzYtYhkqWqwMfco0DldHWl5U
+         B8N2J2L0SXbs8WjVSsJjSJ30YZvll71IXrWb5S2nleey6jX4nfgMGvFJ55RlGmD6EFuk
+         1OFw==
+X-Gm-Message-State: APt69E3lOWlV9I9XXCmIk4v8Wd3Ga/YbxJ+sD+zURJlt5ngIquGBASLs
+        pHaQbqvfKp0l7U85pfsHTyQzu1attSI=
+X-Google-Smtp-Source: ADUXVKIimSnkWRb6M3dRpOpGfzVto3kDSD60EIvwwk96BpDABVDwmY0Sjfm0lSMFz0/UbLicVGMRSA==
+X-Received: by 2002:a1c:3448:: with SMTP id b69-v6mr1654675wma.0.1528835008079;
+        Tue, 12 Jun 2018 13:23:28 -0700 (PDT)
+Received: from mail-wm0-f44.google.com (mail-wm0-f44.google.com. [74.125.82.44])
+        by smtp.gmail.com with ESMTPSA id r15-v6sm492073edp.92.2018.06.12.13.23.26
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Jun 2018 13:23:26 -0700 (PDT)
+Received: by mail-wm0-f44.google.com with SMTP id z6-v6so20888567wma.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 13:23:26 -0700 (PDT)
+X-Received: by 2002:a1c:d11:: with SMTP id 17-v6mr1451654wmn.81.1528835006124;
+ Tue, 12 Jun 2018 13:23:26 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a50:cc45:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 13:23:25
+ -0700 (PDT)
+In-Reply-To: <20180612202042.107603-1-briannorris@chromium.org>
+References: <20180612202042.107603-1-briannorris@chromium.org>
+From:   Brian Norris <briannorris@chromium.org>
+Date:   Tue, 12 Jun 2018 13:23:25 -0700
+X-Gmail-Original-Message-ID: <CA+ASDXMuohDxvAXdnea8xAZyq6Nn4JThQFGTPPtxTzvf-2dJ0Q@mail.gmail.com>
+Message-ID: <CA+ASDXMuohDxvAXdnea8xAZyq6Nn4JThQFGTPPtxTzvf-2dJ0Q@mail.gmail.com>
+Subject: Re: [PATCH 1/2] power: supply: sbs-battery: don't assume
+ MANUFACTURER_DATA formats
+To:     Sebastian Reichel <sre@kernel.org>
+Cc:     Linux Kernel <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, Rhyland Klein <rklein@nvidia.com>,
+        Alexandru Stan <amstan@chromium.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Doug Anderson <dianders@chromium.org>,
+        Phil Reid <preid@electromag.com.au>,
+        Brian Norris <briannorris@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix PCIe controller interrupt to use IRQ_TYPE_LEVEL_HIGH for Broadcom
-Cygnus SoC
+Eek, sorry this series should have subjects "[PATCH v5 X/2] ...". I
+can resend if really needed, but hopefully by now this is ready to
+go...
 
-Fixes: cd590b50a936 ("ARM: dts: enable PCIe support for Cygnus")
-Fixes: 0f0b21a83ad2 ("ARM: dts: Move all Cygnus peripherals into axi
-bus")
-Fixes: 9c5101f7a253 ("ARM: dts: Reorder Cygnus peripherals")
-Fixes: f6b889358a82 ("ARM: dts: Enable MSI support for Broadcom Cygnus")
+Brian
 
-Signed-off-by: Ray Jui <ray.jui@broadcom.com>
----
- arch/arm/boot/dts/bcm-cygnus.dtsi | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+On Tue, Jun 12, 2018 at 1:20 PM, Brian Norris <briannorris@chromium.org> wrote:
+> This driver was originally submitted for the TI BQ20Z75 battery IC
+> (commit a7640bfa10c5 ("power_supply: Add driver for TI BQ20Z75 gas gauge
+> IC")) and later renamed to express generic SBS support. While it's
+> mostly true that this driver implemented a standard SBS command set, it
+> takes liberties with the REG_MANUFACTURER_DATA register. This register
+> is specified in the SBS spec, but it doesn't make any mention of what
+> its actual contents are.
 
-diff --git a/arch/arm/boot/dts/bcm-cygnus.dtsi b/arch/arm/boot/dts/bcm-cygnus.dtsi
-index 835a6f7..2c4df2d 100644
---- a/arch/arm/boot/dts/bcm-cygnus.dtsi
-+++ b/arch/arm/boot/dts/bcm-cygnus.dtsi
-@@ -256,7 +256,7 @@
- 
- 			#interrupt-cells = <1>;
- 			interrupt-map-mask = <0 0 0 0>;
--			interrupt-map = <0 0 0 0 &gic GIC_SPI 100 IRQ_TYPE_NONE>;
-+			interrupt-map = <0 0 0 0 &gic GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
- 
- 			linux,pci-domain = <0>;
- 
-@@ -278,10 +278,10 @@
- 				compatible = "brcm,iproc-msi";
- 				msi-controller;
- 				interrupt-parent = <&gic>;
--				interrupts = <GIC_SPI 96 IRQ_TYPE_NONE>,
--					     <GIC_SPI 97 IRQ_TYPE_NONE>,
--					     <GIC_SPI 98 IRQ_TYPE_NONE>,
--					     <GIC_SPI 99 IRQ_TYPE_NONE>;
-+				interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>;
- 			};
- 		};
- 
-@@ -291,7 +291,7 @@
- 
- 			#interrupt-cells = <1>;
- 			interrupt-map-mask = <0 0 0 0>;
--			interrupt-map = <0 0 0 0 &gic GIC_SPI 106 IRQ_TYPE_NONE>;
-+			interrupt-map = <0 0 0 0 &gic GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
- 
- 			linux,pci-domain = <1>;
- 
-@@ -313,10 +313,10 @@
- 				compatible = "brcm,iproc-msi";
- 				msi-controller;
- 				interrupt-parent = <&gic>;
--				interrupts = <GIC_SPI 102 IRQ_TYPE_NONE>,
--					     <GIC_SPI 103 IRQ_TYPE_NONE>,
--					     <GIC_SPI 104 IRQ_TYPE_NONE>,
--					     <GIC_SPI 105 IRQ_TYPE_NONE>;
-+				interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
- 			};
- 		};
- 
--- 
-2.1.4
+...
 
+> ---
+> v2:
+>  * don't stub out POWER_SUPPLY_PROP_PRESENT from sbs_data[]
+>  * use if/else instead of switch/case
+>
+> v3:
+>  * pull 'return 0' out of if/else, to satisfy braindead tooling
+>
+> v4:
+>  * make ManufacturerAccess non-optional for TI parts again
+>
+> v5: no change
+> ---
+>  drivers/power/supply/sbs-battery.c | 67 ++++++++++++++++++++++++------
+>  1 file changed, 54 insertions(+), 13 deletions(-)
