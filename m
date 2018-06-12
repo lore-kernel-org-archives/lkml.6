@@ -2,215 +2,109 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id CF9BFC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:25:57 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B3F5AC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:27:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8561B2086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:25:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8561B2086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 68C582086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:27:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ilWRFtAo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68C582086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934324AbeFLPZ4 convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 11:25:56 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44806 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932803AbeFLPZy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 11:25:54 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3953C7D654;
-        Tue, 12 Jun 2018 15:25:53 +0000 (UTC)
-Received: from gondolin (ovpn-117-39.ams2.redhat.com [10.36.117.39])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BF05B2144B4C;
-        Tue, 12 Jun 2018 15:25:51 +0000 (UTC)
-Date:   Tue, 12 Jun 2018 17:25:48 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Halil Pasic <pasic@linux.ibm.com>
-Cc:     pmorel@linux.ibm.com, Dong Jia Shi <bjsdjshi@linux.ibm.com>,
-        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, qemu-s390x@nongnu.org,
-        qemu-devel@nongnu.org
-Subject: Re: [PATCH RFC 2/2] vfio-ccw: support for halt/clear subchannel
-Message-ID: <20180612172548.43ab4143.cohuck@redhat.com>
-In-Reply-To: <e4fc9a67-f3df-c040-8188-37eb3091db1a@linux.ibm.com>
-References: <20180509154822.23510-1-cohuck@redhat.com>
-        <c18f9b9f-da00-1a0b-8ef0-7ac223c73d1a@linux.ibm.com>
-        <20180515181006.0cb1dfc2.cohuck@redhat.com>
-        <a5d08fb7-d9c1-b230-fe0c-acebbda2ba65@linux.ibm.com>
-        <20180522145208.310143ea.cohuck@redhat.com>
-        <4e4001cc-540e-0f2b-bbd1-1f82ca594bb3@linux.ibm.com>
-        <20180605151449.22aafbfc.cohuck@redhat.com>
-        <e73038ff-fb2d-5865-8b84-e775990f3983@linux.ibm.com>
-        <20180606142131.74ea2eb7.cohuck@redhat.com>
-        <5b77ec9c-41b8-2e32-ce79-d9005b93fdd0@linux.ibm.com>
-        <20180607115442.6a779ed9.cohuck@redhat.com>
-        <86d57698-3ea7-a390-2217-07c6d41ca9ed@linux.ibm.com>
-        <20180608142022.7dd6a658.cohuck@redhat.com>
-        <d68340a2-bb1b-cef9-e394-f0d55983c0bb@linux.ibm.com>
-        <20180608164514.2e8248f4.cohuck@redhat.com>
-        <99ca65a2-ee33-6353-b6b7-aa4c07a34e2a@linux.ibm.com>
-        <20180612115900.4aa319d1.cohuck@redhat.com>
-        <d5416c61-252a-5bb8-aebe-46d883e5822e@linux.ibm.com>
-        <e4fc9a67-f3df-c040-8188-37eb3091db1a@linux.ibm.com>
-Organization: Red Hat GmbH
+        id S934448AbeFLP1Y (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 11:27:24 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:52776 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933845AbeFLP1W (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 11:27:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=K7QWjCLzyUpUNATe0WXJicNygYPxbkC9Lqgf/l3Bh94=; b=ilWRFtAoaj9C02/sDNWpzN1qCG
+        9P8SZDrYL06vF7hfpcjgTyt414x+1DvHqPGgzG87TNBK7yXGBhjjpeROmoO0D2O4H1qrTJOHU8bh8
+        ECyTUY+ZaguRXMF5lXkRiy+y2um3Rex0Yps7hCZKl0bN0STEQnj1x92rS5ywI1SSm5Ra2UvZRf2o9
+        psGPY+UYzRzfK6+FVNHJ1Z0Z2hWcttLi6EH8X2zGZdz7WdfaC0Nqb8Tl3/0qmBCF29rPRJRnUlB1K
+        gw4FYBAd6Z382W6dz6Myvi1YZAPhB4ta8fUYmGSl6FW7blL/SB1p2IUB6gFWh8gl5Yq4PIucDeiJM
+        jwakAdUw==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fSlCW-0004T1-Sf; Tue, 12 Jun 2018 15:27:17 +0000
+Subject: Re: [PATCH v6 06/29] fpga: add device feature list support
+To:     Wu Hao <hao.wu@intel.com>, atull@kernel.org, mdf@kernel.org,
+        linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     linux-api@vger.kernel.org, luwei.kang@intel.com,
+        yi.z.zhang@intel.com, Tim Whisonant <tim.whisonant@intel.com>,
+        Enno Luebbers <enno.luebbers@intel.com>,
+        Shiva Rao <shiva.rao@intel.com>,
+        Christopher Rauer <christopher.rauer@intel.com>,
+        Xiao Guangrong <guangrong.xiao@linux.intel.com>
+References: <1528798243-2029-1-git-send-email-hao.wu@intel.com>
+ <1528798243-2029-7-git-send-email-hao.wu@intel.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <e4e6c6b4-bf85-64e0-5d4b-f0816c2f941c@infradead.org>
+Date:   Tue, 12 Jun 2018 08:27:09 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 12 Jun 2018 15:25:53 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 12 Jun 2018 15:25:53 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
+In-Reply-To: <1528798243-2029-7-git-send-email-hao.wu@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Jun 2018 16:08:42 +0200
-Halil Pasic <pasic@linux.ibm.com> wrote:
+Hi,
 
-> On 06/12/2018 03:56 PM, Pierre Morel wrote:
-> >> So, what are you proposing? Being more specific and stating that the
-> >> scsw is not necessarily a real scsw, but merely a vehicle for sending a
-> >> command? Or keeping it as it is now for ssch, and adding a second
-> >> interface for hsch/csch (and maybe rsch, msch, ...)?
-> >>  
-> > 
-> > 
-> > I said no radical surgery, but after thinking more about it...
-> > I am not sure.
-> > 
-> > Let's explain this:
-> > 
-> > I see 2 ways to proceed but my favorite is definitively to introduce versioning.
-> > 
-> > 
-> > Way 1)
-> > 
-> > This was the way I first thought about.
-> > We keep the existing IO Regionand structures, and are more
-> > specific by stating that the io_region is a command region during write
-> > entry and a status region during interrupt handling:
-> > This allow us to use the 3 bits of the FCTL field of the SCSW to pass
-> > commands to the kernel and stay backward compatible.  
-> > The FCTL field has 3 bits => we can have 8 commands.  
-> > 
-> > PRO: small change
-> > 
-> > CONTRA: This is still confusing, we do not really solve this
-> >          unclarity problem since QEMU view / documentation and
-> >          Linux view / documentation differ or we update QEMU.
-> >          Moreover this does not allow for long term extensions
-> >          and/or re-design.
-> > 
-> >   
-> 
-> I'm not really in favor of way 1. Conie's point with RSCH is a good one.
-> And IMHO it speaks for a new interface for commands. Squeezing the RSCH
-> command into the SCSW does not seem to be a good idea. Considering your
-> proposal with the 3 bits, we could do something like: if in FCTL the
-> start and the clear and the halt bits are set then we postulate that is
-> request for a resume. But that would be quite confusing, and we would end
-> up re-defining the semantic of the scsw_area -- in respect to what is
-> documented Documentation/s390/vfio-ccw.txt, and also what is intuitive
-> based on the uapi header.
-
-Agreed. Making scsw_area something like an scsw but still different is
-bound to be confusing, even if documented, and I'm not sure it covers
-all our bases anyway. Just using the halt/clear bits might have been
-feasible, but as that does not cover rsch, we need something different
-anyway.
+On 06/12/2018 03:10 AM, Wu Hao wrote:
 
 > 
-> > 
-> > Way 2)
-> > 
-> > We use the device VFIO versioning using the capability chain to advertise
-> > a new interface.
-> > 
-> > This the preferred way, it is sane, allows for the userland backward
-> > compatibility and allows to have a new command interface, extensible
-> > for future use.
-> > 
-> > In this case we can extend the interface to be any kind we want
-> > in a next version, pwrite with new io_region, mmap on new
-> > IO regions, status region...
-> > 
-> > PRO: Extensible and also goes in the VFIO INFO extension direction
-> >       proposed by Alex
-> >   
-> 
-> 
-> Sounds much better. I imagine the coexistence of old and new like this.
-> Both the old and the new QEMU would supply the the SCSW area with the old
-> documented semantics -- the SCSW of the virtual subchannel. But with the
-> new version an explicit command would be supplied via the command region
-> (also for  SSCH). Maybe the SCSW can still end up being useful for
-> something in the kernel module too (maybe there are some  optimization
-> that can be done based on the QEMU SCSW).
+> diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+> index ee9c542..4052532 100644
+> --- a/drivers/fpga/Kconfig
+> +++ b/drivers/fpga/Kconfig
+> @@ -130,4 +130,20 @@ config OF_FPGA_REGION
+>  	  Support for loading FPGA images by applying a Device Tree
+>  	  overlay.
+>  
+> +config FPGA_DFL
+> +	tristate "FPGA Device Feature List (DFL) support"
+> +	select FPGA_BRIDGE
+> +	select FPGA_REGION
+> +	help
+> +	  Device Feature List (DFL) defines a feature list structure that
+> +	  creates a link list of feature headers within the MMIO space
 
-We need to keep the old interface anyway. But yes, I think capabilities
-are the way to go.
+	          a linked list
 
-> 
-> 
-> > CONTRA: I see none outer more work to do (but is it a problem?)
-> > 
-> >   
-> The problem I see is that designing a good interface usually hard.
+> +	  to provide an extensible way of adding features for FPGA.
+> +	  Driver can walk through the feature headers to enumerate feature
+> +	  devices (e.g FPGA Management Engine, Port and Accelerator
 
-I fear that this is always the case :)
+	          (e.g.
 
-> I could help with review, but I don't have the resources to commit
-> to more than that.
+> +	  Function Unit) and their private features for target FPGA devices.
+> +
+> +	  Select this option to enable common support for Field-Programmable
+> +	  Gate Array (FPGA) solutions which implement Device Feature List.
+> +	  It provides enumeration APIs, and feature device infrastructure.
 
-I'm looking into the halt/clear thing anyway. But review is appreciated.
+	                              ^no comma
 
-> 
-> > ====================
-> > 
-> > Extra argumentation for versioning support
-> > 
-> > 
-> > Suppose a future implementation with 4 mapped regions like
-> > the following:
-> > 
-> > - A Status region (RO updated as result of command and IRQ)
+> +
+>  endif # FPGA
 
-scsw/pmcw/anything else? Would also accommodate the path handling
-stuff, I think.
 
-> > 
-> > - A command region (WO where the user send its commands)
-> >    userland write here to trigger IO (quite as currently)
-> > 
-> > - A CCW program region (RW where the CCW chain is handled)
-> >    most handling done from userspace, last translations in kernel,
-> >    double buffering...
-
-I'm not sure about that. But in any case, we can add this later on. We
-need to keep the orb as it is now, and that should already cover our
-current use cases.
-
-> > 
-> > - A performance / measurement / statistics region (RO)
-> >    This is updated asynchronously by hardware and/or driver
-
-For channel measurements, for example? Makes sense. (I recall that
-there's also a measurement infrastructure triggered via CHSC, but I
-don't have the documentation.)
-
-> > 
-> > This is purely theoretical and we do not need to do all at once
-> > but if we want to extend the implementation without problems
-> > and continue backward compatibility the versioning and capability
-> > handling is a must.  
-> 
-> I'm not sure about this.
-
-We can think about this later, the capabilities infrastructure enables
-us to do so.
+-- 
+~Randy
