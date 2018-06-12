@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9F76BC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:21:13 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 674ECC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:24:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A2642084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:21:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EC0D208B0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:24:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jzt3t0mw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A2642084E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e2Bsy+6c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EC0D208B0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934874AbeFLWVL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 18:21:11 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:36123 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933798AbeFLWVI (ORCPT
+        id S934875AbeFLWYC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 18:24:02 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:34656 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934418AbeFLWYA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 18:21:08 -0400
-Received: by mail-pl0-f68.google.com with SMTP id a7-v6so287350plp.3;
-        Tue, 12 Jun 2018 15:21:08 -0700 (PDT)
+        Tue, 12 Jun 2018 18:24:00 -0400
+Received: by mail-pg0-f67.google.com with SMTP id q4-v6so248315pgr.1;
+        Tue, 12 Jun 2018 15:24:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=m7K+iPuN7HMWI/Q2hEwu98irLoy95XPWUtDzK9wz4D4=;
-        b=Jzt3t0mw13S4dmZrD/n+GcZhUzfR93MeNwBCOeTvVrPPQBn7ap6eies4FGOFYmk1Lb
-         U/WDqqR9wQuHMvuYvok6Z4GIGp1XOOvZrHeeOkfKYXQt4y2ZZI3Pqkuc/wBn77PwVJ9L
-         AG7RdukHuHquToD+zXG0VKtxUqDK+6uUBMcMF5mjOT7+m7eCwi1Jip0wrtFw0Ba+/YEo
-         iI917tBoThqJO4dTwF3U48PEo5j2TW8+EDQwHWOlvjLXHU9VPgnJ07iYXk8SILQ9Aomv
-         zNtlgNqj9Qwoi4W7WOP9P4NKp2f6DmaA8a4lB7woJaKDObUOLs2a+9p63qyiXl69SHH+
-         ZPgQ==
+        bh=hnmKm7rpFDKdViozsx57KeQ2owOgOEmOxtUHRT8SSfE=;
+        b=e2Bsy+6ciboA77z99rAkDMXdr6vspVsQGqTv0vHVq5BbhHoWe9XGbRazfaXFrlD9q3
+         HApQINsKgBnJBoFcgkNpNERvld0CHTFIGkcPquyJOoFWLmEWugcN9HVAyuYQy5rh7Q68
+         zxhHBtN9rYtL7WmEQYGnd5Q0eCoz6fgmq0jV09Gxi6zMdOSXSOtqS5uCQdwFgOCL//hs
+         djx8qarKEu74gbiohryijNWaqHlQx4/NwPQs0cPizaedCcD11GQYTCGBuV9Rt7dXxTW+
+         QlJwzXRJ15Kk8buGS1/7TO9QeMTK1PYLDSmazWGqsbKqsyNseL1mU1w1I5+IT9G4yMWX
+         dUNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=m7K+iPuN7HMWI/Q2hEwu98irLoy95XPWUtDzK9wz4D4=;
-        b=j+EGB1sQOPeBmgqcUGLyApKeT+Ytv3OZFeQNcsKGN4DQ+GoWqNvuBw14BGTAJ9g7rh
-         MvY9PEDxrgdxu4WavO5ICOOrR8gWr/i19YFPRrGOFPnLTjKS8ziSHfbVdtrdU7cS+cuz
-         j353OtYMmOMqIooaQ9+KAtX/GYqANR13GkmYw3NVRve4GlEIW8rtWyDwHlXnf8rSunEh
-         z3nN0zUSeM4yjeXDxQGJFog2jpnfPtaJQawe0/o0W9mVc0IgR5mGpVKP1zHw3QWn4iQ7
-         wU9UxAjmUGKWeBhTgptkCqulsMsl8jJbHfsveB0YaWjakvOip/xHAapifnbZakbqnUMo
-         0LfA==
-X-Gm-Message-State: APt69E1MX9PtUTyIvrxEEzlClVzp0zYFNH+7s2Xytj+AylFqOOgHlHy+
-        6m6HeAg1GwaatcXASbpOecA=
-X-Google-Smtp-Source: ADUXVKKBNAiSS7jpb1AYXJQr7iPl+ga8w4MMJFN3PCVYSsogW1dpt7hW/whs1SKIFjO0xW6PhXpGXA==
-X-Received: by 2002:a17:902:8308:: with SMTP id bd8-v6mr2301844plb.329.1528842067956;
-        Tue, 12 Jun 2018 15:21:07 -0700 (PDT)
+        bh=hnmKm7rpFDKdViozsx57KeQ2owOgOEmOxtUHRT8SSfE=;
+        b=nasQ8cMxu32ui2D3SO4oecy/K+VJ/3PMBCfJNDDpeh2yzO9G9+4gMvWwXjb/4163LZ
+         nbSJaXRC+D8IhXApG+nvOGv3gL5U9joUNa/C6N85AmrZXq/O2bBsxuk9h2vT104WsK91
+         Mr7BJDYMz6BZJ660gXBm/Jy6cgHu6bpVOKi3Id7lPZRMtvIPJx6DOKgxFnNrJoDXrvHs
+         UU2LAbu690S7rWoA06ieI1NYJ8K8wCsl6CEBAJBTdkf5nYehl2eTBwwWkV5TqybxbiW1
+         YqwG+2HveR64aXy9bojHPN4NT6eIJxgWajEKA6WqljJACfEk0aZn0DQZwbr/xjVzQfU+
+         2brA==
+X-Gm-Message-State: APt69E0BDC0HbF0Vio8jssNBbynXgo81oDdAaiPZ6z9BEIVmJb/x1e5c
+        YO4MCQh5TCD1/i39mbeSU/c=
+X-Google-Smtp-Source: ADUXVKLCeiwxxwM7lDP1yevT+tUiiBVkUiaFkUrJCo4rViyPEZvnue3GwZ81ORMYofMyLYK6+rlPCA==
+X-Received: by 2002:a62:6cc4:: with SMTP id h187-v6mr2207794pfc.145.1528842239426;
+        Tue, 12 Jun 2018 15:23:59 -0700 (PDT)
 Received: from dtor-ws ([2620:0:1000:1511:8de6:27a8:ed13:2ef5])
-        by smtp.gmail.com with ESMTPSA id d88-v6sm1540875pfb.43.2018.06.12.15.21.06
+        by smtp.gmail.com with ESMTPSA id d88-v6sm1545339pfb.43.2018.06.12.15.23.57
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Jun 2018 15:21:06 -0700 (PDT)
-Date:   Tue, 12 Jun 2018 15:21:04 -0700
+        Tue, 12 Jun 2018 15:23:58 -0700 (PDT)
+Date:   Tue, 12 Jun 2018 15:23:56 -0700
 From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
 Cc:     Tony Lindgren <tony@atomide.com>,
@@ -74,210 +74,92 @@ Cc:     Tony Lindgren <tony@atomide.com>,
         linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org,
         linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/10] Input: ams_delta_serio: use IRQ resource
-Message-ID: <20180612222104.GC38773@dtor-ws>
+Subject: Re: [PATCH 01/10] ARM: OMAP1: ams-delta: drop GPIO lookup table for
+ serio device
+Message-ID: <20180612222356.GD38773@dtor-ws>
 References: <20180609140224.32606-1-jmkrzyszt@gmail.com>
- <20180609140224.32606-9-jmkrzyszt@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180609140224.32606-9-jmkrzyszt@gmail.com>
+In-Reply-To: <20180609140224.32606-1-jmkrzyszt@gmail.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 09, 2018 at 04:02:23PM +0200, Janusz Krzysztofik wrote:
-> The driver still obtains IRQ number from a hardcoded GPIO.  Use IRQ
-> resource instead.
+Hi Janusz,
+
+On Sat, Jun 09, 2018 at 04:02:15PM +0200, Janusz Krzysztofik wrote:
+> GPIO lookup table for ams-delta-serio device was introduced by commit
+> 0486738928bf ("ARM: OMAP1: ams-delta: add GPIO lookup tables").
+> Unfortunately, a follow up patch "Input: ams_delta_serio: use GPIO
+> lookup table" was not accepted by subystem maintainer who requested
+> conversion of the driver to a platform driver, replacepemnt of IRQ GPIO
+> pin with IRQ resource, replacement of GPIO pin providing keyboard power
+> with a regulator and removal of remaining GPIO pins from the driver as
+> not handled by it.
 > 
-> For this to work on Amstrad Delta, add the IRQ resource to
-> ams-delta-serio platform device structure.  Obtain the IRQ number
-> assigned to "keyboard_clk" GPIO pin from FIQ initialization routine.
+> Let's start with removal of no the longer needed GPIO lookup table from
+> the board init file.
 > 
-> As a benefit, the driver no longer needs to include
-> <mach/board-ams-delta.h>.
+> Series created and tested on top of next-20180608 tag from linux-next
+> tree.
+
+This all is really nice (modulo a couple of questions), thank you for
+implementing this. How do you want to merge this? Through OMAP tree or
+input?
+
 > 
 > Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 > ---
->  arch/arm/mach-omap1/ams-delta-fiq.c   |  8 +++++++-
->  arch/arm/mach-omap1/ams-delta-fiq.h   |  3 ++-
->  arch/arm/mach-omap1/board-ams-delta.c | 17 ++++++++++++++++-
->  drivers/input/serio/ams_delta_serio.c | 28 ++++++++++------------------
->  4 files changed, 35 insertions(+), 21 deletions(-)
+>  arch/arm/mach-omap1/board-ams-delta.c | 19 -------------------
+>  1 file changed, 19 deletions(-)
 > 
-> diff --git a/arch/arm/mach-omap1/ams-delta-fiq.c b/arch/arm/mach-omap1/ams-delta-fiq.c
-> index e72935034d42..e9d350117240 100644
-> --- a/arch/arm/mach-omap1/ams-delta-fiq.c
-> +++ b/arch/arm/mach-omap1/ams-delta-fiq.c
-> @@ -20,6 +20,7 @@
->  #include <linux/module.h>
->  #include <linux/io.h>
->  #include <linux/platform_data/ams-delta-fiq.h>
-> +#include <linux/platform_device.h>
->  
->  #include <mach/board-ams-delta.h>
->  
-> @@ -84,7 +85,8 @@ static irqreturn_t deferred_fiq(int irq, void *dev_id)
->  	return IRQ_HANDLED;
->  }
->  
-> -void __init ams_delta_init_fiq(struct gpio_chip *chip)
-> +void __init ams_delta_init_fiq(struct gpio_chip *chip,
-> +			       struct platform_device *serio)
->  {
->  	struct gpio_desc *gpiod, *data = NULL, *clk = NULL;
->  	void *fiqhandler_start;
-> @@ -201,6 +203,10 @@ void __init ams_delta_init_fiq(struct gpio_chip *chip)
->  	val = omap_readl(OMAP_IH1_BASE + offset) | 1;
->  	omap_writel(val, OMAP_IH1_BASE + offset);
->  
-> +	/* Initialize serio device IRQ resource */
-> +	serio->resource[0].start = gpiod_to_irq(clk);
-> +	serio->resource[0].end = serio->resource[0].start;
-> +
->  	return;
->  
->  out_gpio:
-> diff --git a/arch/arm/mach-omap1/ams-delta-fiq.h b/arch/arm/mach-omap1/ams-delta-fiq.h
-> index 3f691d68aa62..fd76df3cce37 100644
-> --- a/arch/arm/mach-omap1/ams-delta-fiq.h
-> +++ b/arch/arm/mach-omap1/ams-delta-fiq.h
-> @@ -35,7 +35,8 @@
->  #ifndef __ASSEMBLER__
->  extern unsigned char qwerty_fiqin_start, qwerty_fiqin_end;
->  
-> -extern void __init ams_delta_init_fiq(struct gpio_chip *chip);
-> +extern void __init ams_delta_init_fiq(struct gpio_chip *chip,
-> +				      struct platform_device *pdev);
->  #endif
->  
->  #endif
 > diff --git a/arch/arm/mach-omap1/board-ams-delta.c b/arch/arm/mach-omap1/board-ams-delta.c
-> index fe9a3e7cbfeb..84177ba3e39a 100644
+> index 80f54cb54276..18e0ff437b27 100644
 > --- a/arch/arm/mach-omap1/board-ams-delta.c
 > +++ b/arch/arm/mach-omap1/board-ams-delta.c
-> @@ -504,9 +504,24 @@ static struct platform_device cx20442_codec_device = {
+> @@ -504,20 +504,6 @@ static struct platform_device cx20442_codec_device = {
 >  	.id     = -1,
 >  };
 >  
-> +static struct resource ams_delta_serio_resources[] = {
-> +	{
-> +		.flags	= IORESOURCE_IRQ,
-> +		/*
-> +		 * Initialize IRQ resource with invalid IRQ number.
-> +		 * It will be replaced with dynamically allocated GPIO IRQ
-> +		 * obtained from GPIO chip as soon as the chip is available.
-> +		 */
-> +		.start	= -EINVAL,
-> +		.end	= -EINVAL,
-> +	},
-> +};
-> +
->  static struct platform_device ams_delta_serio_device = {
->  	.name		= "ams-delta-serio",
->  	.id		= PLATFORM_DEVID_NONE,
-> +	.num_resources	= ARRAY_SIZE(ams_delta_serio_resources),
-> +	.resource	= ams_delta_serio_resources,
+> -static struct gpiod_lookup_table ams_delta_serio_gpio_table = {
+> -	.table = {
+> -		GPIO_LOOKUP(OMAP_GPIO_LABEL, AMS_DELTA_GPIO_PIN_KEYBRD_DATA,
+> -			    "data", 0),
+> -		GPIO_LOOKUP(OMAP_GPIO_LABEL, AMS_DELTA_GPIO_PIN_KEYBRD_CLK,
+> -			    "clock", 0),
+> -		GPIO_LOOKUP(LATCH2_LABEL, LATCH2_PIN_KEYBRD_PWR,
+> -			    "power", 0),
+> -		GPIO_LOOKUP(LATCH2_LABEL, LATCH2_PIN_KEYBRD_DATAOUT,
+> -			    "dataout", 0),
+> -		{ },
+> -	},
+> -};
+> -
+>  static struct platform_device *ams_delta_devices[] __initdata = {
+>  	&latch1_gpio_device,
+>  	&latch2_gpio_device,
+> @@ -534,7 +520,6 @@ static struct platform_device *late_devices[] __initdata = {
+>  
+>  static struct gpiod_lookup_table *ams_delta_gpio_tables[] __initdata = {
+>  	&ams_delta_audio_gpio_table,
+> -	&ams_delta_serio_gpio_table,
 >  };
 >  
->  static struct regulator_consumer_supply keybrd_pwr_consumers[] = {
-> @@ -615,7 +630,7 @@ static void __init omap_gpio_deps_init(void)
->  		return;
->  	}
->  
-> -	ams_delta_init_fiq(chip);
-> +	ams_delta_init_fiq(chip, &ams_delta_serio_device);
->  }
->  
->  static void __init ams_delta_init(void)
-> diff --git a/drivers/input/serio/ams_delta_serio.c b/drivers/input/serio/ams_delta_serio.c
-> index 5d0bd2005648..03640b171516 100644
-> --- a/drivers/input/serio/ams_delta_serio.c
-> +++ b/drivers/input/serio/ams_delta_serio.c
-> @@ -20,7 +20,6 @@
->   * However, when used with the E3 mailboard that producecs non-standard
->   * scancodes, a custom key table must be prepared and loaded from userspace.
->   */
-> -#include <linux/gpio.h>
->  #include <linux/irq.h>
->  #include <linux/platform_data/ams-delta-fiq.h>
->  #include <linux/platform_device.h>
-> @@ -29,8 +28,6 @@
->  #include <linux/slab.h>
->  #include <linux/module.h>
->  
-> -#include <mach/board-ams-delta.h>
-> -
->  #define DRIVER_NAME	"ams-delta-serio"
->  
->  MODULE_AUTHOR("Matt Callow");
-> @@ -113,7 +110,7 @@ static int ams_delta_serio_init(struct platform_device *pdev)
->  {
->  	struct ams_delta_serio *priv;
->  	struct serio *serio;
-> -	int err;
-> +	int irq, err;
->  
->  	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
->  	if (!priv)
-> @@ -129,9 +126,12 @@ static int ams_delta_serio_init(struct platform_device *pdev)
->  		return err;
->  	}
->  
-> -	err = request_irq(gpio_to_irq(AMS_DELTA_GPIO_PIN_KEYBRD_CLK),
-> -			ams_delta_serio_interrupt, IRQ_TYPE_EDGE_RISING,
-> -			DRIVER_NAME, priv);
-> +	irq = platform_get_irq(pdev, 0);
-> +	if (irq < 0)
-> +		return -ENXIO;
-> +
-> +	err = devm_request_irq(&pdev->dev, irq, ams_delta_serio_interrupt,
-> +			       IRQ_TYPE_EDGE_RISING, DRIVER_NAME, priv);
->  	if (err < 0) {
->  		dev_err(&pdev->dev, "IRQ request failed (%d)\n", err);
->  		return err;
-> @@ -141,14 +141,11 @@ static int ams_delta_serio_init(struct platform_device *pdev)
->  	 * at FIQ level, switch back from edge to simple interrupt handler
->  	 * to avoid bad interaction.
+>  static struct gpiod_lookup_table *late_gpio_tables[] __initdata = {
+> @@ -580,10 +565,6 @@ static void __init ams_delta_init(void)
 >  	 */
-> -	irq_set_handler(gpio_to_irq(AMS_DELTA_GPIO_PIN_KEYBRD_CLK),
-> -			handle_simple_irq);
-> +	irq_set_handler(irq, handle_simple_irq);
-
-Do we still need to do this here, or it can be moved into board file?
-
+>  	ams_delta_audio_gpio_table.dev_id =
+>  			dev_name(&ams_delta_audio_device.dev);
+> -	/*
+> -	 * No device name is assigned to GPIO lookup table for serio device
+> -	 * as long as serio driver is not converted to platform device driver.
+> -	 */
 >  
->  	serio = kzalloc(sizeof(*serio), GFP_KERNEL);
-> -	if (!serio) {
-> -		err = -ENOMEM;
-> -		goto irq;
-> -	}
-> +	if (!serio)
-> +		return -ENOMEM;
->  
->  	priv->serio = serio;
->  
-> @@ -167,10 +164,6 @@ static int ams_delta_serio_init(struct platform_device *pdev)
->  	dev_info(&serio->dev, "%s\n", serio->name);
->  
->  	return 0;
-> -
-> -irq:
-> -	free_irq(gpio_to_irq(AMS_DELTA_GPIO_PIN_KEYBRD_CLK), priv);
-> -	return err;
->  }
->  
->  static int ams_delta_serio_exit(struct platform_device *pdev)
-> @@ -178,7 +171,6 @@ static int ams_delta_serio_exit(struct platform_device *pdev)
->  	struct ams_delta_serio *priv = platform_get_drvdata(pdev);
->  
->  	serio_unregister_port(priv->serio);
-> -	free_irq(gpio_to_irq(AMS_DELTA_GPIO_PIN_KEYBRD_CLK), 0);
->  
->  	return 0;
->  }
+>  	gpiod_add_lookup_tables(ams_delta_gpio_tables,
+>  				ARRAY_SIZE(ams_delta_gpio_tables));
 > -- 
 > 2.16.1
 > 
