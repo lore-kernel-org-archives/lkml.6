@@ -2,106 +2,156 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5CF7FC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:13:39 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A8765C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:14:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12B41208AE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:13:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N1iHl/cW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12B41208AE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 68FA6208AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:14:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68FA6208AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934098AbeFLINg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 04:13:36 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:37822 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933643AbeFLINb (ORCPT
+        id S933892AbeFLINO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 04:13:14 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:4303 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S933463AbeFLIMO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 04:13:31 -0400
-Received: by mail-vk0-f68.google.com with SMTP id w8-v6so13877490vkh.4;
-        Tue, 12 Jun 2018 01:13:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Y2BZHJyLODDXSd/OQ6ItWjdg9jgC2rhTrJbUKrkaFd8=;
-        b=N1iHl/cWRKzcA/Fla656UgRHfPAHly0kULEhTWrFGbhvmP2dLwdg+i57sCqyxLjQg2
-         i58xG2J8TRA6iMqtkKldIWHXymavAPHU73wkgjkf3OJ4HvKHihUZRQ+xdu3PE+GTV6Lp
-         9wK9LrGS0jr8DrY5SFBp8ufcIWe6zHbZlik1mxgBYEl6TQw/pqTItOvqTmO7Vy4S2eHP
-         TSy1SVQ28EKQoP1+jZdUjoFTm2dWT0UcPN7Ut3hqR4587/4pA/KSZveHUtYAGakeEQ+J
-         /3y6tymRqUxNgNmjf9Mg0h6AnKgsCpsteAYtzJX/rjmoifbfPG43VNGruduIxxHB9YkO
-         PGcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Y2BZHJyLODDXSd/OQ6ItWjdg9jgC2rhTrJbUKrkaFd8=;
-        b=HbaayL9CTpLqik1ufEIMkCZgVxA9cTpTlBKTlbuJx5sFoz4qWE95Gsv43Tb2YC5VTt
-         7BfP6kX42eXx2t3hgyAJ5vvXJ5yAmKVnH8zdQGlKJgogEWBP08FGLawv2b0/qFbw8ZAW
-         58ocwx1Unm1f3by1nGbHRLj+un+ldtcJGdvgBVtYsoEkdLl4QLVZ1dux1ssFjD/BGv9e
-         b7/w6M1K01gqz+8pUCXDlTfvg/yLzWIR4LIG8lgUPGbxnfhA5GTlwmTB8ovebaWW3Tqh
-         r0SgITagUkklezMr84XA8F/rcui/9xTkhK447wnSarjl3uA65eX+magDdhHcdQq4I5F5
-         qbMQ==
-X-Gm-Message-State: APt69E1lTSPs6h6Rq4q0UYAQDZfAJE/tnAi/+xx9YY1Xq0kC+b2PiDSN
-        7x9S6qKGQH3oNleQHoD9usYyUGUb3l4XbEdkHjg=
-X-Google-Smtp-Source: ADUXVKLdCHm7Ad9A+47ef/zwibGY7xwrNzvUMqmhSH/jthvaSvs5DCqnXsjl203kDF+IQl4OK2lzU/vqOOdO5uAsry0=
-X-Received: by 2002:a1f:8e0f:: with SMTP id q15-v6mr1542764vkd.161.1528791210207;
- Tue, 12 Jun 2018 01:13:30 -0700 (PDT)
+        Tue, 12 Jun 2018 04:12:14 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
+   d="scan'208";a="40978539"
+Received: from bogon (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 12 Jun 2018 16:12:11 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 351FF4B41ECF;
+        Tue, 12 Jun 2018 16:12:08 +0800 (CST)
+Received: from localhost (10.167.225.56) by G08CNEXCHPEKD01.g08.fujitsu.local
+ (10.167.33.89) with Microsoft SMTP Server id 14.3.399.0; Tue, 12 Jun 2018
+ 16:12:12 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <hpa@zytor.com>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <bhe@redhat.com>,
+        <keescook@chromium.org>, <yasu.isimatu@gmail.com>
+CC:     <indou.takao@jp.fujitsu.com>, <lcapitulino@redhat.com>,
+        <caoj.fnst@cn.fujitsu.com>, <douly.fnst@cn.fujitsu.com>,
+        Chao Fan <fanc.fnst@cn.fujitsu.com>
+Subject: [RFC PATCH 3/4] x86/boot/KASLR: Walk srat tables to filter immovable memory
+Date:   Tue, 12 Jun 2018 16:10:50 +0800
+Message-ID: <20180612081051.21811-4-fanc.fnst@cn.fujitsu.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180612081051.21811-1-fanc.fnst@cn.fujitsu.com>
+References: <20180612081051.21811-1-fanc.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
-Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 01:13:29
- -0700 (PDT)
-In-Reply-To: <20180612054034.4969-5-songjun.wu@linux.intel.com>
-References: <20180612054034.4969-1-songjun.wu@linux.intel.com> <20180612054034.4969-5-songjun.wu@linux.intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 12 Jun 2018 11:13:29 +0300
-Message-ID: <CAHp75Vc_EVgfj1MpuA_hKHgy6SiQdU7JQDdtVHfOT1sZ_K-nRQ@mail.gmail.com>
-Subject: Re: [PATCH 4/7] tty: serial: lantiq: Always use readl()/writel()
-To:     Songjun Wu <songjun.wu@linux.intel.com>
-Cc:     hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
-        chuanhua.lei@intel.com,
-        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
-        qi-ming.wu@intel.com, linux-clk@vger.kernel.org,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        James Hogan <jhogan@kernel.org>, Jiri Slaby <jslaby@suse.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ralf Baechle <ralf@linux-mips.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-yoursite-MailScanner-ID: 351FF4B41ECF.ABAD0
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 8:40 AM, Songjun Wu <songjun.wu@linux.intel.com> wrote:
-> Previous implementation uses platform-dependent functions
-> ltq_w32()/ltq_r32() to access registers. Those functions are not
-> available for other SoC which uses the same IP.
-> Change to OS provided readl()/writel() and readb()/writeb(), so
-> that different SoCs can use the same driver.
+If 'CONFIG_MEMORY_HOTREMOVE' specified, walk the acpi srat memory
+tables, store the immovable memory regions, so that kaslr can get
+the information abouth where can be selected or not.
 
-This patch consists 2 or even 3 ones:
-- whitespace shuffling (indentation fixes, blank lines), I dunno if
-it's needed at all
-- some new registers / bits
-- actual switch to readl() / writel()
+Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+---
+ arch/x86/boot/compressed/kaslr.c | 55 ++++++++++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
 
-Please, split.
-
-> +#define asc_w32_mask(clear, set, reg)  \
-> +       ({ typeof(reg) reg_ = (reg);    \
-> +       writel((readl(reg_) & ~(clear)) | (set), reg_); })
-
-This would be better as a static inline helper, and name is completely
-misleading, it doesn't mask the register bits, it _updates_ them.
-
+diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+index b87a7582853d..4edff0501540 100644
+--- a/arch/x86/boot/compressed/kaslr.c
++++ b/arch/x86/boot/compressed/kaslr.c
+@@ -31,6 +31,7 @@
+ 
+ #include "misc.h"
+ #include "error.h"
++#include "acpitb.h"
+ #include "../string.h"
+ 
+ #include <generated/compile.h>
+@@ -104,6 +105,17 @@ static bool memmap_too_large;
+ /* Store memory limit specified by "mem=nn[KMG]" or "memmap=nn[KMG]" */
+ unsigned long long mem_limit = ULLONG_MAX;
+ 
++/* Store the max numbers of acpi tables */
++#define ACPI_MAX_TABLES		128
++
++#ifdef CONFIG_MEMORY_HOTREMOVE
++/* Store the movable memory */
++struct mem_vector immovable_mem[MAX_NUMNODES*2];
++
++/* Store the num of movable mem regions */
++static int num_immovable_mem;
++#endif
++
+ 
+ enum mem_avoid_index {
+ 	MEM_AVOID_ZO_RANGE = 0,
+@@ -266,6 +278,44 @@ static int handle_mem_memmap(void)
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_MEMORY_HOTREMOVE
++/*
++ * According to ACPI table, filter the immvoable memory regions
++ * and store them in immovable_mem[].
++ */
++static void handle_movable_mem(void)
++{
++	struct acpi_table_header *table_header;
++	struct acpi_subtable_header *asth;
++	struct acpi_srat_mem_affinity *ma;
++	unsigned long table_size;
++	unsigned long table_end;
++	int i = 0;
++
++	table_header = get_acpi_srat_table();
++
++	table_size = sizeof(struct acpi_table_srat);
++	table_end = (unsigned long)table_header + table_header->length;
++	asth = (struct acpi_subtable_header *)
++		((unsigned long)table_header + table_size);
++
++	while (((unsigned long)asth) +
++			sizeof(struct acpi_subtable_header) < table_end) {
++		if (asth->type == 1) {
++			ma = (struct acpi_srat_mem_affinity *)asth;
++			if (!(ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE)) {
++				immovable_mem[i].start = ma->base_address;
++				immovable_mem[i].size = ma->length;
++				i++;
++			}
++		}
++		asth = (struct acpi_subtable_header *)
++			((unsigned long)asth + asth->length);
++	}
++	num_immovable_mem = i;
++}
++#endif
++
+ /*
+  * In theory, KASLR can put the kernel anywhere in the range of [16M, 64T).
+  * The mem_avoid array is used to store the ranges that need to be avoided
+@@ -389,6 +439,11 @@ static void mem_avoid_init(unsigned long input, unsigned long input_size,
+ 	/* Mark the memmap regions we need to avoid */
+ 	handle_mem_memmap();
+ 
++#ifdef CONFIG_MEMORY_HOTREMOVE
++	/* Mark the hotplug SB regions we need choose */
++	handle_movable_mem();
++#endif
++
+ #ifdef CONFIG_X86_VERBOSE_BOOTUP
+ 	/* Make sure video RAM can be used. */
+ 	add_identity_map(0, PMD_SIZE);
 -- 
-With Best Regards,
-Andy Shevchenko
+2.17.0
+
+
+
