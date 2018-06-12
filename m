@@ -2,109 +2,160 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5B955C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:07:59 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E7804C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:09:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11138208B2
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:07:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BBA3208B2
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:09:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KOmAUjPv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11138208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lniK+jxr";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PY7ccB1v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BBA3208B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754360AbeFLRH4 (ORCPT
+        id S1754386AbeFLRJY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 13:07:56 -0400
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:38166 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754056AbeFLRHx (ORCPT
+        Tue, 12 Jun 2018 13:09:24 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:58776 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753448AbeFLRJV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 13:07:53 -0400
-Received: by mail-vk0-f65.google.com with SMTP id b77-v6so14826982vkb.5;
-        Tue, 12 Jun 2018 10:07:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=LBlOOu7V2vdaXnytjqweoEtAJ5H9yjuxRDefypomlxQ=;
-        b=KOmAUjPvIRZ3i3qapH43UBRlGe7Y5oZmhHeImCeGVhzfCK7LjoDZEw3csWsqpAPRz3
-         6BQLqTU7qcpgjdZCf82nqrIOG/Y87HTCYvcsim9vki0GTnsNwwC83MsJiJGDBuY8TQzq
-         LWaBtxdOv8rXcHMOYJVndxxIbMRqo7RNkNEfqaLzBPufP9R0moSN/xfPvSaOT2tMx/fJ
-         qFiSM26RBTp8aIPfnd/qd3WKdp9ffInGDJJsH7/wx5LJwM8zlU27S2S9NWIfGX83qdBd
-         C7CcPEjFp3FWZngvSOpbZ7UK3yPWwrSSpb5Dj2DAVDism7JUItRzE9PTWdBwC1vW5PJz
-         bOig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=LBlOOu7V2vdaXnytjqweoEtAJ5H9yjuxRDefypomlxQ=;
-        b=EV03a1Efk+S/ZssjvOK3rkt/DxXHZUV9Vld8VKYOQUYj08b5bHREZo+g5FwIp3dYnv
-         /oRypb9mL2NxDgSYW412WMGZ5c7mDjwFINJoL3nQWGEQh724buDBjDTbojvcC/XT7pNJ
-         GSJanmIXs9ETsssOJzyO1j+dlW9DDuZYJBmx3gRZXvbTpOyBW1EY1AFDdTS/gQyc/Z4O
-         RxeqUForvA4HJzphfTgU/udQfjnFj8scrzTRHLeEy8Pjpr/Oj7GPcpcLz4CJB+HPMcFx
-         ZAIMMaPywEh3UQmDMnPcvV7AuQdPn6TjVqGkvW5eDoxO2shPbYTZlDsmeJKFflJzpEXb
-         EpWQ==
-X-Gm-Message-State: APt69E38II7m5BRa/B6GPkRLRlGrekObPjPkOIDzX93ZoXpgIH6noamp
-        zhU5AIEU4PXfTPASfaKg3ObRTrbc5jTngoh8e3r9RPE5
-X-Google-Smtp-Source: ADUXVKJks92q747odk7JsyK+kK6Ix3lgVWS50dD+QhTVwnOffYAYqOJWL/ceN5FkfCaDPUecyIyiP/8RKTaZ0I3N1c4=
-X-Received: by 2002:a1f:860b:: with SMTP id i11-v6mr834330vkd.15.1528823272623;
- Tue, 12 Jun 2018 10:07:52 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 10:07:52
- -0700 (PDT)
-In-Reply-To: <1528310612-10158-1-git-send-email-clabbe@baylibre.com>
-References: <1528310612-10158-1-git-send-email-clabbe@baylibre.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 12 Jun 2018 20:07:52 +0300
-Message-ID: <CAHp75VdtdkqJW2svYPuBW4nZz2dRnZ4w5c_BBv=iTgZV2Lkj1A@mail.gmail.com>
-Subject: Re: [PATCH] mmc: dw_mmc should depend on COMMON_CLK
-To:     Corentin Labbe <clabbe@baylibre.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mmc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 12 Jun 2018 13:09:21 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 4D5C660850; Tue, 12 Jun 2018 17:09:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528823361;
+        bh=hOYzfGJnJA7ldHU75roW+TH5Mc4VwYRFbaeRZYwMExc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=lniK+jxrchzzKONydYpjmJsrLkVo/uoNPfpcaVVO2nFtC25LoTCouzXVnx3xuxekY
+         YMba3KO+YboEeN/vE8zHOTMJfGsnVvE9flXMUJP0poQNq1rfvZ8JlRxgrTlwxoFhia
+         IxbaqUkGvqET/Zgd7L3RQOB7Qn06EXlnYlTqfpdg=
+Received: from codeaurora.org (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kramasub@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A320C606DB;
+        Tue, 12 Jun 2018 17:09:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528823360;
+        bh=hOYzfGJnJA7ldHU75roW+TH5Mc4VwYRFbaeRZYwMExc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=PY7ccB1v2xF+HH+wAuJikxNZKqJE2WMNxzTAOwGkzoUCjYWBrxKW1KTCO2sVXpOz5
+         c4NqxFdFrFE45cn15H+VuApe2iVVgi1dHtlDWm6+9lhMTglWE6NKMsoMzz3p3YNrvd
+         1hGQ5cHjFvJqOLUfLUWUJclcYFxpP5Iygcax7N70=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A320C606DB
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kramasub@codeaurora.org
+From:   Karthikeyan Ramasubramanian <kramasub@codeaurora.org>
+To:     andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, wsa@the-dreams.de, gregkh@linuxfoundation.org
+Cc:     Karthikeyan Ramasubramanian <kramasub@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-i2c@vger.kernel.org,
+        evgreen@chromium.org, acourbot@chromium.org, swboyd@chromium.org,
+        dianders@chromium.org
+Subject: [PATCH v7 0/4] Introduce GENI SE Controller Driver
+Date:   Tue, 12 Jun 2018 11:09:04 -0600
+Message-Id: <1528823348-30532-1-git-send-email-kramasub@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Cc: Geert
+Generic Interface (GENI) firmware based Qualcomm Universal Peripheral (QUP)
+Wrapper is a next generation programmable module for supporting a wide
+range of serial interfaces like UART, SPI, I2C, I3C, etc. A single QUP
+module can provide upto 8 Serial Interfaces using its internal Serial
+Engines (SE). The protocol supported by each interface is determined by
+the firmware loaded to the Serial Engine.
 
-On Wed, Jun 6, 2018 at 9:43 PM, Corentin Labbe <clabbe@baylibre.com> wrote:
-> This patch fix the following build failure on m68k:
-> ERROR: "clk_set_rate" [drivers/mmc/host/dw_mmc.ko] undefined!
->
-> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
-> ---
->  drivers/mmc/host/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> index 0581c199c996..77d6ba090436 100644
-> --- a/drivers/mmc/host/Kconfig
-> +++ b/drivers/mmc/host/Kconfig
-> @@ -666,7 +666,7 @@ config MMC_CAVIUM_THUNDERX
->
->  config MMC_DW
->         tristate "Synopsys DesignWare Memory Card Interface"
-> -       depends on ARC || ARM || ARM64 || MIPS || COMPILE_TEST
-> +       depends on COMMON_CLK && (ARC || ARM || ARM64 || MIPS || COMPILE_TEST)
->         help
->           This selects support for the Synopsys DesignWare Mobile Storage IP
->           block, this provides host support for SD and MMC interfaces, in both
-> --
-> 2.16.4
->
+This patch series introduces GENI SE Driver to manage the GENI based QUP
+Wrapper and the common aspects of all SEs inside the QUP Wrapper. This
+patch series also introduces the UART and I2C Controller drivers to
+drive the SEs that are programmed with the respective protocols.
 
+[v7]
+ * Return appropriate error codes as idenitified in i2c fault-codes
+ * Add Maintainer details for I2C controller driver
+ * Fix an incorrect conditional check in DMA mode
+ * Drop the patches in the series that got accepted
 
+[v6]
+ * Move the I2C clock-frequency configuration to the SDM845 board file
+ * Remove a redundant comment in the I2C driver
+
+[v5]
+ * Remove Linux specific property from the device tree binding
+ * Clarify I2C SCL time period documentation
+ * Remove redundant checks in I2C controller driver during timeout
+ * Use 100kHz as the default clock frequency in the I2C controller driver
+ * Disable Wrapper controller by default in the SDM845 device tree and
+   enable it explicitly for SDM845 MTP
+ * Specify I2C clock frequency in the SDM845 device tree
+ * Remove bias configuration for I2C pins under sleep state in device tree
+ * Drop the serial driver from the patch series since it is merged
+ * Specify the UART port options in the SDM845 device tree
+
+[v4]
+ * Add SPI controller information in device tree binding
+ * Add support for debug UART & I2C controllers in SDM845 device tree
+ * Remove any unnecessary parenthesis & casting
+ * Identify break character in UART line and pass it to the framework
+ * Transmit data from fault handler reliably in debug UART
+ * Map the register block when the UART port is requested
+ * Move concise exported functions as macros or inlines in public header
+ * Move the clock performance table from the wrapper to serial engines
+ * Add a lock to synchronize between IRQ & error handling in I2C controller
+ * Remove any compiler optimization hints like likely/unlikely
+ * Update documentation to clarify tables and hardware blocks
+
+[v3]
+ * Update the driver dependencies
+ * Use the SPDX License Expression
+ * Squash all the controller device tree bindings together
+ * Use kernel doc format for documentation
+ * Add additional documentation for packing configuration
+ * Use clk_bulk_* API for related clocks
+ * Remove driver references to pinctrl and their states
+ * Replace magic numbers with appropriate macros
+ * Update memory barrier usage and associated comments
+ * Reduce interlacing of register reads/writes
+ * Fix poll_get_char() operation in console UART driver under polling mode
+ * Address other comments from Bjorn Andersson to improve code readability
+
+[v2]
+ * Updated device tree bindings to describe the hardware
+ * Updated SE DT node as child node of QUP Wrapper DT node
+ * Moved common AHB clocks to QUP Wrapper DT node
+ * Use the standard "clock-frequency" I2C property
+ * Update compatible field in UART Controller to reflect hardware manual
+ * Addressed other device tree binding specific comments from Rob Herring
+
+Karthikeyan Ramasubramanian (3):
+  i2c: i2c-qcom-geni: Add bus driver for the Qualcomm GENI I2C
+    controller
+  MAINTAINERS: Add Qualcomm Generic Interface I2C driver maintainer
+  arm64: dts: sdm845: Add support for an instance of I2C controller
+
+Rajendra Nayak (1):
+  arm64: dts: sdm845: Add serial console support
+
+ MAINTAINERS                             |   8 +
+ arch/arm64/boot/dts/qcom/sdm845-mtp.dts |  60 +++
+ arch/arm64/boot/dts/qcom/sdm845.dtsi    |  67 ++++
+ drivers/i2c/busses/Kconfig              |  13 +
+ drivers/i2c/busses/Makefile             |   1 +
+ drivers/i2c/busses/i2c-qcom-geni.c      | 649 ++++++++++++++++++++++++++++++++
+ 6 files changed, 798 insertions(+)
+ create mode 100644 drivers/i2c/busses/i2c-qcom-geni.c
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
