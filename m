@@ -3,114 +3,110 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 42E15C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:50:21 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6D5DCC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:54:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7DB32086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:50:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7DB32086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 210222086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:54:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 210222086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754295AbeFLKuT (ORCPT
+        id S1754142AbeFLKyv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 06:50:19 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52782 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753906AbeFLKuP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 06:50:15 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 670C380525; Tue, 12 Jun 2018 12:50:12 +0200 (CEST)
-Date:   Tue, 12 Jun 2018 12:50:12 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@suse.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
-        "open list:INTEL SGX" <intel-sgx-kernel-dev@lists.01.org>,
-        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        "open list:KERNEL VIRTUAL MACHINE FOR X86 (KVM/x86)" 
-        <kvm@vger.kernel.org>, Len Brown <len.brown@intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:CRYPTO API" <linux-crypto@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:SPARSE CHECKER" <linux-sparse@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Vikas Shivappa <vikas.shivappa@linux.intel.com>
-Subject: Re: [PATCH v11 00/13] Intel SGX1 support
-Message-ID: <20180612105011.GA26931@amd>
-References: <20180608171216.26521-1-jarkko.sakkinen@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="vtzGhvizbBRQ85DL"
-Content-Disposition: inline
-In-Reply-To: <20180608171216.26521-1-jarkko.sakkinen@linux.intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Tue, 12 Jun 2018 06:54:51 -0400
+Received: from gate.crashing.org ([63.228.1.57]:44776 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752705AbeFLKyu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 06:54:50 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w5CAsdAu029497;
+        Tue, 12 Jun 2018 05:54:40 -0500
+Message-ID: <5c7f9044fefed8bc0e4ca5688801ffa379f38f62.camel@kernel.crashing.org>
+Subject: [GIT PULL v2]  FSI updates for 4.17
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        openbmc@lists.ozlabs.org
+Date:   Tue, 12 Jun 2018 20:54:39 +1000
+In-Reply-To: <7c268f5bb58cb45a2868020b3c5b8f48ac6844ea.camel@kernel.crashing.org>
+References: <7c268f5bb58cb45a2868020b3c5b8f48ac6844ea.camel@kernel.crashing.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Greg !
 
---vtzGhvizbBRQ85DL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There are a first round of updates of the FSI stack, aiming at reducing/removing
+he gap with the OpenBMC tree and a first step in getting dependent drivers
+upstream.
 
-On Fri 2018-06-08 19:09:35, Jarkko Sakkinen wrote:
-> Intel(R) SGX is a set of CPU instructions that can be used by applications
-> to set aside private regions of code and data. The code outside the encla=
-ve
-> is disallowed to access the memory inside the enclave by the CPU access
-> control.  In a way you can think that SGX provides inverted sandbox. It
-> protects the application from a malicious host.
+These changes significantly improve the FSI bitbanging driver performance
+and reliability, and add the new "sbefifo" driver for communicating with
+the POWER9 Self Boot Engine (which will be needed for some upcoming
+additional drivers).
 
-Do you intend to allow non-root applications to use SGX?
+These were posted to the list as patches a couple of weeks ago and were
+prior to that tested in the OpenBMC tree and CI. Some subsequent driver
+work depends on some of these, so merging early is probably the best.
 
-What are non-evil uses for SGX?
+The following changes since commit 8efcf34a263965e471e3999904f94d1f6799d42a:
 
-=2E..because it is quite useful for some kinds of evil:
+  Merge tag 'armsoc-late' of git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc (2018-06-11 18:19:45 -0700)
 
-https://taesoo.kim/pubs/2017/jang:sgx-bomb.pdf
+are available in the Git repository at:
 
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+  https://git.kernel.org/pub/scm/linux/kernel/git/benh/linux-fsi.git tags/fsi-updates-2018-06-12
 
---vtzGhvizbBRQ85DL
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+for you to fetch changes up to 9f4a8a2d7f9d71093f41c4bb0ef8707e8145bad3:
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+  fsi/sbefifo: Add driver for the SBE FIFO (2018-06-12 14:05:39 +1000)
 
-iEYEARECAAYFAlsfpWMACgkQMOfwapXb+vJyjACgptNd44vgyUMl4V5k7rJbDQxK
-JbEAnjeMHh5kaf/23CfmT5S/0/qhg2Co
-=U4Bc
------END PGP SIGNATURE-----
+----------------------------------------------------------------
+FSI updates and sbefifo driver
 
---vtzGhvizbBRQ85DL--
+----------------------------------------------------------------
+Andrew Jeffery (2):
+      fsi: gpio: Trace busy count
+      fsi: gpio: Remove unused 'id' variable
+
+Benjamin Herrenschmidt (8):
+      fsi/fsi-master-gpio: Sample input data on different clock phase
+      fsi/fsi-master-gpio: Add "no-gpio-delays" option
+      fsi/fsi-master-gpio: Reduce turnaround clocks
+      fsi/fsi-master-gpio: Reduce dpoll clocks
+      fsi/fsi-master-gpio: Delay sampling of FSI data input
+      fsi/fsi-master-gpio: Implement CRC error recovery
+      fsi/fsi-master-gpio: More error handling cleanup
+      fsi/sbefifo: Add driver for the SBE FIFO
+
+Eddie James (1):
+      fsi: scom: Remove PIB reset during probe
+
+Jeremy Kerr (4):
+      fsi: gpio: Use a mutex to protect transfers
+      fsi/gpio: Include command build in locked section
+      fsi/gpio: Use relative-addressing commands
+      fsi/master-gpio: Replace bit_bit lock with IRQ disable/enable
+
+ arch/arm/boot/dts/aspeed-bmc-opp-romulus.dts     |    1 +
+ arch/arm/boot/dts/aspeed-bmc-opp-witherspoon.dts |    1 +
+ arch/arm/boot/dts/aspeed-bmc-opp-zaius.dts       |    1 +
+ drivers/fsi/Kconfig                              |    7 +
+ drivers/fsi/Makefile                             |    1 +
+ drivers/fsi/fsi-master-gpio.c                    |  349 ++++++++++++----
+ drivers/fsi/fsi-sbefifo.c                        | 1005 +++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/fsi/fsi-scom.c                           |    8 -
+ include/linux/fsi-sbefifo.h                      |   33 ++
+ include/trace/events/fsi_master_gpio.h           |   43 ++
+ 10 files changed, 1362 insertions(+), 87 deletions(-)
+ create mode 100644 drivers/fsi/fsi-sbefifo.c
+ create mode 100644 include/linux/fsi-sbefifo.h
+
