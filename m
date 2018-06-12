@@ -6,89 +6,105 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 965EDC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 09:14:49 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 18A2FC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 09:14:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A91B20693
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 09:14:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A91B20693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id CBAEA20693
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 09:14:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBAEA20693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754342AbeFLJOr (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 05:14:47 -0400
-Received: from foss.arm.com ([217.140.101.70]:59456 "EHLO foss.arm.com"
+        id S933248AbeFLJO4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 05:14:56 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:17022 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754293AbeFLJOp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 05:14:45 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 56C261435;
-        Tue, 12 Jun 2018 02:14:45 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8BC7B3F59D;
-        Tue, 12 Jun 2018 02:14:43 -0700 (PDT)
-Date:   Tue, 12 Jun 2018 10:14:41 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Zhizhou Zhang <zhizhouzhang@asrmicro.com>
-Cc:     catalin.marinas@arm.com, will.deacon@arm.com, james.morse@arm.com,
-        julien.thierry@arm.com, suzuki.poulose@arm.com,
-        hoeun.ryu@gmail.com, ard.biesheuvel@linaro.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] arm64: make secondary_start_kernel() notrace
-Message-ID: <20180612091440.f4jd2r4kq3nxv7pr@lakrids.cambridge.arm.com>
-References: <1528794457-14129-1-git-send-email-zhizhouzhang@asrmicro.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1528794457-14129-1-git-send-email-zhizhouzhang@asrmicro.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S932626AbeFLJOw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 05:14:52 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 414kjg1Hldz9ttSS;
+        Tue, 12 Jun 2018 11:14:47 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id bLSYlDVGCmrS; Tue, 12 Jun 2018 11:14:47 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 414kjg0C9hz9ttBy;
+        Tue, 12 Jun 2018 11:14:47 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 3AC5E8B924;
+        Tue, 12 Jun 2018 11:14:50 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id J1Y2IIn-NXny; Tue, 12 Jun 2018 11:14:50 +0200 (CEST)
+Received: from po14934vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 212CE8B923;
+        Tue, 12 Jun 2018 11:14:50 +0200 (CEST)
+Received: by po14934vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id DC0D16F83E; Tue, 12 Jun 2018 09:14:49 +0000 (UTC)
+Message-Id: <85de16f5629ac9f4a815230cced361908758b53a.1528791416.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v6 1/4] selftests/powerpc: add test for 32 bits memcmp
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, wei.guo.simon@gmail.com,
+        segher@kernel.crashing.org
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Tue, 12 Jun 2018 09:14:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 05:07:37PM +0800, Zhizhou Zhang wrote:
-> We can't call function trace hook before setup percpu offset.
-> When entering secondary_start_kernel(), percpu offset has not
-> been initialized.  So this lead hotplug malfunction.
-> Here is the flow to reproduce this bug:
-> 
-> echo 0 > /sys/devices/system/cpu/cpu1/online
-> echo function > /sys/kernel/debug/tracing/current_tracer
-> echo 1 > /sys/kernel/debug/tracing/tracing_on
-> echo 1 > /sys/devices/system/cpu/cpu1/online
-> 
-> Signed-off-by: Zhizhou Zhang <zhizhouzhang@asrmicro.com>
-> ---
->  arch/arm64/kernel/smp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
-> index f3e2e3ae..11b0f30 100644
-> --- a/arch/arm64/kernel/smp.c
-> +++ b/arch/arm64/kernel/smp.c
-> @@ -179,7 +179,7 @@ int __cpu_up(unsigned int cpu, struct task_struct *idle)
->   * This is the secondary CPU boot entry.  We're using this CPUs
->   * idle thread stack, but a set of temporary page tables.
->   */
-> -asmlinkage void secondary_start_kernel(void)
-> +notrace asmlinkage void secondary_start_kernel(void)
+This patch renames memcmp test to memcmp_64 and adds
+a memcmp_32 test for testing the 32 bits version of memcmp()
 
-Minor nit: can we please keep asmlinkage first, e.g.
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ v6: no change
+ v5: no change
+ v4: new
 
-asmlinkage notrace void secondary_start_kernel(void)
+ tools/testing/selftests/powerpc/stringloops/Makefile    | 14 +++++++++++---
+ tools/testing/selftests/powerpc/stringloops/memcmp_32.S |  1 +
+ 2 files changed, 12 insertions(+), 3 deletions(-)
+ create mode 120000 tools/testing/selftests/powerpc/stringloops/memcmp_32.S
 
-Either way:
+diff --git a/tools/testing/selftests/powerpc/stringloops/Makefile b/tools/testing/selftests/powerpc/stringloops/Makefile
+index 1125e489055e..1e7301d4bac9 100644
+--- a/tools/testing/selftests/powerpc/stringloops/Makefile
++++ b/tools/testing/selftests/powerpc/stringloops/Makefile
+@@ -1,10 +1,18 @@
+ # SPDX-License-Identifier: GPL-2.0
+ # The loops are all 64-bit code
+-CFLAGS += -m64
+ CFLAGS += -I$(CURDIR)
+ 
+-TEST_GEN_PROGS := memcmp
+-EXTRA_SOURCES := memcmp_64.S ../harness.c
++EXTRA_SOURCES := ../harness.c
++
++$(OUTPUT)/memcmp_64: memcmp.c
++$(OUTPUT)/memcmp_64: CFLAGS += -m64
++
++$(OUTPUT)/memcmp_32: memcmp.c
++$(OUTPUT)/memcmp_32: CFLAGS += -m32
++
++ASFLAGS = $(CFLAGS)
++
++TEST_GEN_PROGS := memcmp_32 memcmp_64
+ 
+ include ../../lib.mk
+ 
+diff --git a/tools/testing/selftests/powerpc/stringloops/memcmp_32.S b/tools/testing/selftests/powerpc/stringloops/memcmp_32.S
+new file mode 120000
+index 000000000000..056f2b3af789
+--- /dev/null
++++ b/tools/testing/selftests/powerpc/stringloops/memcmp_32.S
+@@ -0,0 +1 @@
++../../../../../arch/powerpc/lib/memcmp_32.S
+\ No newline at end of file
+-- 
+2.13.3
 
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-
-Thanks,
-Mark.
-
->  {
->  	u64 mpidr = read_cpuid_mpidr() & MPIDR_HWID_BITMASK;
->  	struct mm_struct *mm = &init_mm;
-> -- 
-> 1.9.1
-> 
