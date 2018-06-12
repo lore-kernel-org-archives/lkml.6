@@ -2,138 +2,122 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 46C3AC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 18:50:37 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6B80EC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 18:52:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06C5A2086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 18:50:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06C5A2086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 171692086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 18:52:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V4QNlN2F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 171692086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933466AbeFLSuf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 14:50:35 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54990 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932343AbeFLSuc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 14:50:32 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6C3C787A73;
-        Tue, 12 Jun 2018 18:50:32 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id F24EC111CA18;
-        Tue, 12 Jun 2018 18:50:29 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w5CIoTNw028373;
-        Tue, 12 Jun 2018 14:50:29 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w5CIoTL4028369;
-        Tue, 12 Jun 2018 14:50:29 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Tue, 12 Jun 2018 14:50:29 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Ming Lei <ming.lei@redhat.com>,
-        USB list <linux-usb@vger.kernel.org>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] usb: don't offload isochronous urb completions to
- ksoftirq
-In-Reply-To: <20180612175242.GA12855@kroah.com>
-Message-ID: <alpine.LRH.2.02.1806121403260.14879@file01.intranet.prod.int.rdu2.redhat.com>
-References: <Pine.LNX.4.44L0.1806121232460.1582-100000@iolanthe.rowland.org> <alpine.LRH.2.02.1806121304530.1848@file01.intranet.prod.int.rdu2.redhat.com> <20180612175242.GA12855@kroah.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        id S933133AbeFLSwu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 14:52:50 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:50216 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754047AbeFLSws (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 14:52:48 -0400
+Received: by mail-wm0-f66.google.com with SMTP id e16-v6so744877wmd.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 11:52:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=g1ew7Cyzkwe29we6u9V8RUXpPocg/90t/58XG9lIzJw=;
+        b=V4QNlN2FAVrGSMZRt41MbNtrmlW5wvWbf7L1ZNNLEywkvNyT4MUHnGV5ImMmLvquVM
+         Gv1ZFxDXJsMvz2zlr11Xg8Nq48h5L8+VisTui0wdSXSFBkqTZnx4wLboeC604qom+lM6
+         4XxzS7gdPc7PiY/Cr30etwwh+g9QS1lWnkp47N/gfa19dPIfieWuTbAYEZ6kk6jMhAe3
+         t1J6pJcdBDN9/eM0RA+phL1ft4ZH10L1iUMDSAcBuvpxSqwb2iHh+XwOksKTVGWsVE01
+         REGeLj8eg5YawYH/jCE8ItrKtXWvODdiEHHG+TvLD5jzMivJcQnVnYp29u97LlIn/DbQ
+         y/CA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=g1ew7Cyzkwe29we6u9V8RUXpPocg/90t/58XG9lIzJw=;
+        b=M/0wE+Ze6Ssi5MTWMSuWzrHcXnt8UdaFzGFeYymsyx05UxLFsqhudz4G5640QBjUKA
+         LUxdpeZbZqSk14Z2yZwVU8zxzvXWEpZeeZYMmCZ3N3mmgGch4hVJcKZpmdOvV9XHIN9t
+         Vbyc/2k7+JTFkp33vQrg514au63u5Lg6XEfskGZxsDD11a9UPb3J6fI4XfCRjYQerg20
+         IjfQ8FvQsg/TJ1eZBS7uFgkpNrh/YtF3uwIPUp1a2z5p/zPY+iHw1Q8F0hDkucEzBr6E
+         7Dmh4smAiL75++kIXzg2LJGR5WNuVG2Zh5uSbkjJQl7/G2Tr7+LXCKG5FVKuimnblLzX
+         wsFg==
+X-Gm-Message-State: APt69E2IABy39hSnQjWpMJIp7X5bIiX6gh+ug4TZszyKI6eOOQHXFUX6
+        BuhbvImAyU7P0SOfy2fSVQHduYAwITtJ7KX+cQI=
+X-Google-Smtp-Source: ADUXVKL9ducfiKbiTvWdD5Ehg9H9IHnQHscdNft1kHpo141vPmg4M603phcU/Xm/XBsawwy0tpBXLxrZF8lmRaqP/SM=
+X-Received: by 2002:a1c:bf0c:: with SMTP id p12-v6mr1170537wmf.120.1528829567590;
+ Tue, 12 Jun 2018 11:52:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 12 Jun 2018 18:50:32 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 12 Jun 2018 18:50:32 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
+Received: by 2002:adf:e241:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 11:52:46
+ -0700 (PDT)
+In-Reply-To: <CA+55aFzLNFO1za9-Lb=jxO_F9NS0jZyti+we=ycr5NTpgzdEbw@mail.gmail.com>
+References: <20180612083449.100099222@infradead.org> <CA+55aFzLNFO1za9-Lb=jxO_F9NS0jZyti+we=ycr5NTpgzdEbw@mail.gmail.com>
+From:   =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
+Date:   Tue, 12 Jun 2018 20:52:46 +0200
+Message-ID: <CAHpGcMJSb4pqWF7X3K7yrk+N=FwcSrbjWm9xvprpaLRGgdE24A@mail.gmail.com>
+Subject: Re: [PATCH 0/3] sched/swait: Convert to full exclusive mode
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        quilt-dev <quilt-dev@nongnu.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+2018-06-12 18:47 GMT+02:00 Linus Torvalds <torvalds@linux-foundation.org>:
+> "
+> On Tue, Jun 12, 2018 at 1:39 AM Peter Zijlstra <peterz@infradead.org> wrote:
+>>
+>> As mentioned by Linus, swait is exclusive mode and had better behave like it
+>> and be named like it.
+>
+> Ack on the patches.
+>
+> I do note how quilt emails are really hard to read, because that:
+>
+>     Content-Disposition: inline
+>
+> makes gmail think it's flowed.
+>
+> Which works horribly badly for patches, surprise surprise.
+>
+> So I really wish quilt wouldn't do that. It does smell like a gmail
+> bug, but at the same time, why would you use "Content-Disposition:
+> inline" when you don't have an actual multi-part email? So I do blame
+> quilt too for sending nonsensical headers.
+>
+> (Yes, yes, I see the "It is permissible to use Content-Disposition on
+> the main body" in the RFC. But the RFC also makes it clear that it
+> actually matters for how things are presented, so saying "ok, I'll do
+> flowed" seems equally insane and equally technically RFC-compliant)
 
+Quilt uses those Content-Disposition headers to preserve the patch
+filenames; the full headers look like:
 
-On Tue, 12 Jun 2018, Greg Kroah-Hartman wrote:
+  Content-Disposition: inline; filename=foo.patch
 
-> On Tue, Jun 12, 2018 at 01:19:28PM -0400, Mikulas Patocka wrote:
-> > 
-> > 
-> > On Tue, 12 Jun 2018, Alan Stern wrote:
-> > 
-> > > On Tue, 12 Jun 2018, Mikulas Patocka wrote:
-> > > 
-> > > > > How about making the softirq thread's priority adjustable?
-> > > > 
-> > > > But you would have to argue with softirq maintainers about it - and you 
-> > > > say that you don't have time for that.
-> > > 
-> > > But maybe _you_ do...
-> > 
-> > ksoftirqd has priority 0 - it is not suitable for real-time tasks, such as 
-> > audio.
-> > 
-> > In my opinion, it is much easier to fix this in the ehci driver (by not 
-> > offloading isochronous completions), than to design a new 
-> > real-time-capable ksoftirqd.
-> 
-> Ok, but what happens when you plug your device into a xhci controller?
-> Do we also need to change that?  Only touching a specific host
-> controller is not good, you will be playing "whack a mole" for forever.
+Various mail clients use that as the default filename when saving
+emails, but there's been at least one other mail client that didn't
+handle those headers very well.
 
-xhci doesn't set the HCD_BH flag, so it doesn't offload callbacks to 
-softirq and doesn't suffer from this problem. Neither ohci and uhci do.
+Is this a new problem with gmail?
 
-> Isoc packets are, by definition, not supposed to be guaranteed at all.
-> So if they are "slow" or dropped or delayed somehow, that's fine.  The
-> sound protocol should be fine with it.
+I'm not sure whose workflows would break if we kill those headers
+altogether, but maybe we can omit them by default.
 
-The sound USB protocol doesn't provide any redundancy - so a missed packet 
-means audible clipping.
-
-There are crappy USB controllers that skip an isochronous packet when they 
-encounter too high memory latency - they are unuseable for audio - but 
-this is not the problem here.
-
-The USB specification doesn't allow re-sending failed isochronous packets.
-
-> Now yes, in reality, as you have found out, things can be "tight" on
-> low-powered processors under heavy load.  But what you are doing here is
-> a priority inversion.  You do not solve such a thing by going around and
-> raising everything else up as well, this is supposed to be a "general
-> purpose" kernel.  You can tune a specific machine/device just fine this
-> way, but not by messing with the kernel for the most part.
-> 
-> > snd_complete_urb is doing nothing but submitting the same urb again. Is 
-> > resubmitting the urb really causing so much latency that you can't do it 
-> > in the interrupt handler?
-> 
-> snd_complete_urb() does much more than just submition of the same urb.
-
-How is snd_complete_urb() different from a hard-irq handler of a PCI sound 
-card? AFAIK sound irq handlers just set the current position in the ring 
-and wake up a process that wants to read or write to the ring. This is so 
-simple task, that there's no reason to offload it to softirq.
-
-> Perhaps if this is a real problem, the sound driver should have more
-> than one urb pending?  Is there a pool here that is somehow getting used
-> up?
-
-It has 12 urbs - but it means that 12ms scheduling latency (which is 
-common) means sound skipping.
-
-Games or proffesional sound applications need bounded sound latency, so 
-you can't just increase the number of urbs arbitrarily.
-
-> thanks,
-> 
-> greg k-h
-
-Mikulas
+Andreas
