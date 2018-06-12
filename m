@@ -2,552 +2,192 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.4 required=3.0 tests=DATE_IN_PAST_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id EB034C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:08:19 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5665CC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:08:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E46F2089C
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:08:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mK5cmVxQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E46F2089C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 1706A20660
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:08:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1706A20660
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934207AbeFLTH0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 15:07:26 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39244 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933335AbeFLTFw (ORCPT
+        id S1754418AbeFLTFg (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 15:05:36 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:36894 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754146AbeFLTFd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 15:05:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=PbHJZLwv4tXS2Wtc8vXXPtvwfmIlf3cq3+ixHGYE0+Y=; b=mK5cmVxQHoLjhczsBK/zsVNqd
-        nstsnTh1R4glrrSZE1jj7JsFU3eLpI5Bj7quh6slib6WaS8L1e9bbew2te1yoLXA+1Omp2s5+Iw2H
-        De5+AcpFMoGYcZqqxhGE3q1sPMFnPiLIinYCjSQIP7cnyEQiIQhvo2zob/GIpNtGueXEQH+whmKyh
-        +JjjNXG3wKMAa2+Z3mJCwMxmxR3lg5lvZhYa4PPkvTeDwds0Mf6dMi8+Z3CzVXSFNboQVRG/YH2YC
-        QgeMZS5M1uXzLN+ApwzbzQ1J+t0p2ayudtm6anz6fzU1TAv+2Xg5qS6wVdzNhXmyLGzES7Q6Yjv+w
-        Qnw0QGkwA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSoc3-0002vZ-GR; Tue, 12 Jun 2018 19:05:51 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
-        target-devel@vger.kernel.org,
-        linux1394-devel@lists.sourceforge.net, linux-usb@vger.kernel.org,
-        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, Juergen Gross <jgross@suse.com>,
-        qla2xxx-upstream@qlogic.com,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH 3/3] Remove percpu_ida
-Date:   Tue, 12 Jun 2018 12:05:45 -0700
-Message-Id: <20180612190545.10781-4-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180612190545.10781-1-willy@infradead.org>
-References: <20180612190545.10781-1-willy@infradead.org>
+        Tue, 12 Jun 2018 15:05:33 -0400
+Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Tue, 12 Jun 2018 12:05:09 -0700
+Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 12E4240591;
+        Tue, 12 Jun 2018 12:05:33 -0700 (PDT)
+From:   Nadav Amit <namit@vmware.com>
+To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>
+CC:     Nadav Amit <namit@vmware.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, <linux-kbuild@vger.kernel.org>
+Subject: [PATCH v4 1/9] Makefile: Prepare for using macros for inline asm
+Date:   Tue, 12 Jun 2018 04:50:42 -0700
+Message-ID: <20180612115050.185112-2-namit@vmware.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180612115050.185112-1-namit@vmware.com>
+References: <20180612115050.185112-1-namit@vmware.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
+ designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With its one user gone, remove the library code.
+Using macros for inline assembly improves both readability and
+compilation decisions that are distorted by big assembly blocks that use
+alternative sections. Compile macros.S and use it to assemble all C
+files. Currently, only x86 will use it.
 
-Signed-off-by: Matthew Wilcox <willy@infradead.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Michal Marek <michal.lkml@markovi.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: linux-kbuild@vger.kernel.org
+
+Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- include/linux/percpu_ida.h |  83 ---------
- lib/Makefile               |   2 +-
- lib/percpu_ida.c           | 370 -------------------------------------
- 3 files changed, 1 insertion(+), 454 deletions(-)
- delete mode 100644 include/linux/percpu_ida.h
- delete mode 100644 lib/percpu_ida.c
+ Makefile                 |  9 +++++++--
+ arch/x86/Makefile        | 11 +++++++++--
+ arch/x86/kernel/Makefile |  6 ++++++
+ arch/x86/kernel/macros.S |  7 +++++++
+ scripts/Kbuild.include   |  4 +++-
+ 5 files changed, 32 insertions(+), 5 deletions(-)
+ create mode 100644 arch/x86/kernel/macros.S
 
-diff --git a/include/linux/percpu_ida.h b/include/linux/percpu_ida.h
-deleted file mode 100644
-index 07d78e4653bc..000000000000
---- a/include/linux/percpu_ida.h
-+++ /dev/null
-@@ -1,83 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef __PERCPU_IDA_H__
--#define __PERCPU_IDA_H__
--
--#include <linux/types.h>
--#include <linux/bitops.h>
--#include <linux/init.h>
--#include <linux/sched.h>
--#include <linux/spinlock_types.h>
--#include <linux/wait.h>
--#include <linux/cpumask.h>
--
--struct percpu_ida_cpu;
--
--struct percpu_ida {
--	/*
--	 * number of tags available to be allocated, as passed to
--	 * percpu_ida_init()
--	 */
--	unsigned			nr_tags;
--	unsigned			percpu_max_size;
--	unsigned			percpu_batch_size;
--
--	struct percpu_ida_cpu __percpu	*tag_cpu;
--
--	/*
--	 * Bitmap of cpus that (may) have tags on their percpu freelists:
--	 * steal_tags() uses this to decide when to steal tags, and which cpus
--	 * to try stealing from.
--	 *
--	 * It's ok for a freelist to be empty when its bit is set - steal_tags()
--	 * will just keep looking - but the bitmap _must_ be set whenever a
--	 * percpu freelist does have tags.
--	 */
--	cpumask_t			cpus_have_tags;
--
--	struct {
--		spinlock_t		lock;
--		/*
--		 * When we go to steal tags from another cpu (see steal_tags()),
--		 * we want to pick a cpu at random. Cycling through them every
--		 * time we steal is a bit easier and more or less equivalent:
--		 */
--		unsigned		cpu_last_stolen;
--
--		/* For sleeping on allocation failure */
--		wait_queue_head_t	wait;
--
--		/*
--		 * Global freelist - it's a stack where nr_free points to the
--		 * top
--		 */
--		unsigned		nr_free;
--		unsigned		*freelist;
--	} ____cacheline_aligned_in_smp;
--};
--
--/*
-- * Number of tags we move between the percpu freelist and the global freelist at
-- * a time
-- */
--#define IDA_DEFAULT_PCPU_BATCH_MOVE	32U
--/* Max size of percpu freelist, */
--#define IDA_DEFAULT_PCPU_SIZE	((IDA_DEFAULT_PCPU_BATCH_MOVE * 3) / 2)
--
--int percpu_ida_alloc(struct percpu_ida *pool, int state);
--void percpu_ida_free(struct percpu_ida *pool, unsigned tag);
--
--void percpu_ida_destroy(struct percpu_ida *pool);
--int __percpu_ida_init(struct percpu_ida *pool, unsigned long nr_tags,
--	unsigned long max_size, unsigned long batch_size);
--static inline int percpu_ida_init(struct percpu_ida *pool, unsigned long nr_tags)
--{
--	return __percpu_ida_init(pool, nr_tags, IDA_DEFAULT_PCPU_SIZE,
--		IDA_DEFAULT_PCPU_BATCH_MOVE);
--}
--
--typedef int (*percpu_ida_cb)(unsigned, void *);
--int percpu_ida_for_each_free(struct percpu_ida *pool, percpu_ida_cb fn,
--	void *data);
--
--unsigned percpu_ida_free_tags(struct percpu_ida *pool, int cpu);
--#endif /* __PERCPU_IDA_H__ */
-diff --git a/lib/Makefile b/lib/Makefile
-index 84c6dcb31fbb..f4722a7fa62c 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -40,7 +40,7 @@ obj-y += bcd.o div64.o sort.o parser.o debug_locks.o random32.o \
- 	 bust_spinlocks.o kasprintf.o bitmap.o scatterlist.o \
- 	 gcd.o lcm.o list_sort.o uuid.o flex_array.o iov_iter.o clz_ctz.o \
- 	 bsearch.o find_bit.o llist.o memweight.o kfifo.o \
--	 percpu-refcount.o percpu_ida.o rhashtable.o reciprocal_div.o \
-+	 percpu-refcount.o rhashtable.o reciprocal_div.o \
- 	 once.o refcount.o usercopy.o errseq.o bucket_locks.o
- obj-$(CONFIG_STRING_SELFTEST) += test_string.o
- obj-y += string_helpers.o
-diff --git a/lib/percpu_ida.c b/lib/percpu_ida.c
-deleted file mode 100644
-index 9bbd9c5d375a..000000000000
---- a/lib/percpu_ida.c
-+++ /dev/null
-@@ -1,370 +0,0 @@
--/*
-- * Percpu IDA library
-- *
-- * Copyright (C) 2013 Datera, Inc. Kent Overstreet
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License as
-- * published by the Free Software Foundation; either version 2, or (at
-- * your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful, but
-- * WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-- * General Public License for more details.
-- */
--
--#include <linux/mm.h>
--#include <linux/bitmap.h>
--#include <linux/bitops.h>
--#include <linux/bug.h>
--#include <linux/err.h>
--#include <linux/export.h>
--#include <linux/init.h>
--#include <linux/kernel.h>
--#include <linux/percpu.h>
--#include <linux/sched/signal.h>
--#include <linux/string.h>
--#include <linux/spinlock.h>
--#include <linux/percpu_ida.h>
--
--struct percpu_ida_cpu {
--	/*
--	 * Even though this is percpu, we need a lock for tag stealing by remote
--	 * CPUs:
--	 */
--	spinlock_t			lock;
--
--	/* nr_free/freelist form a stack of free IDs */
--	unsigned			nr_free;
--	unsigned			freelist[];
--};
--
--static inline void move_tags(unsigned *dst, unsigned *dst_nr,
--			     unsigned *src, unsigned *src_nr,
--			     unsigned nr)
--{
--	*src_nr -= nr;
--	memcpy(dst + *dst_nr, src + *src_nr, sizeof(unsigned) * nr);
--	*dst_nr += nr;
--}
--
--/*
-- * Try to steal tags from a remote cpu's percpu freelist.
-- *
-- * We first check how many percpu freelists have tags
-- *
-- * Then we iterate through the cpus until we find some tags - we don't attempt
-- * to find the "best" cpu to steal from, to keep cacheline bouncing to a
-- * minimum.
-- */
--static inline void steal_tags(struct percpu_ida *pool,
--			      struct percpu_ida_cpu *tags)
--{
--	unsigned cpus_have_tags, cpu = pool->cpu_last_stolen;
--	struct percpu_ida_cpu *remote;
--
--	for (cpus_have_tags = cpumask_weight(&pool->cpus_have_tags);
--	     cpus_have_tags; cpus_have_tags--) {
--		cpu = cpumask_next(cpu, &pool->cpus_have_tags);
--
--		if (cpu >= nr_cpu_ids) {
--			cpu = cpumask_first(&pool->cpus_have_tags);
--			if (cpu >= nr_cpu_ids)
--				BUG();
--		}
--
--		pool->cpu_last_stolen = cpu;
--		remote = per_cpu_ptr(pool->tag_cpu, cpu);
--
--		cpumask_clear_cpu(cpu, &pool->cpus_have_tags);
--
--		if (remote == tags)
--			continue;
--
--		spin_lock(&remote->lock);
--
--		if (remote->nr_free) {
--			memcpy(tags->freelist,
--			       remote->freelist,
--			       sizeof(unsigned) * remote->nr_free);
--
--			tags->nr_free = remote->nr_free;
--			remote->nr_free = 0;
--		}
--
--		spin_unlock(&remote->lock);
--
--		if (tags->nr_free)
--			break;
--	}
--}
--
--/*
-- * Pop up to IDA_PCPU_BATCH_MOVE IDs off the global freelist, and push them onto
-- * our percpu freelist:
-- */
--static inline void alloc_global_tags(struct percpu_ida *pool,
--				     struct percpu_ida_cpu *tags)
--{
--	move_tags(tags->freelist, &tags->nr_free,
--		  pool->freelist, &pool->nr_free,
--		  min(pool->nr_free, pool->percpu_batch_size));
--}
--
--/**
-- * percpu_ida_alloc - allocate a tag
-- * @pool: pool to allocate from
-- * @state: task state for prepare_to_wait
-- *
-- * Returns a tag - an integer in the range [0..nr_tags) (passed to
-- * tag_pool_init()), or otherwise -ENOSPC on allocation failure.
-- *
-- * Safe to be called from interrupt context (assuming it isn't passed
-- * TASK_UNINTERRUPTIBLE | TASK_INTERRUPTIBLE, of course).
-- *
-- * @gfp indicates whether or not to wait until a free id is available (it's not
-- * used for internal memory allocations); thus if passed __GFP_RECLAIM we may sleep
-- * however long it takes until another thread frees an id (same semantics as a
-- * mempool).
-- *
-- * Will not fail if passed TASK_UNINTERRUPTIBLE | TASK_INTERRUPTIBLE.
-- */
--int percpu_ida_alloc(struct percpu_ida *pool, int state)
--{
--	DEFINE_WAIT(wait);
--	struct percpu_ida_cpu *tags;
--	unsigned long flags;
--	int tag = -ENOSPC;
--
--	tags = raw_cpu_ptr(pool->tag_cpu);
--	spin_lock_irqsave(&tags->lock, flags);
--
--	/* Fastpath */
--	if (likely(tags->nr_free >= 0)) {
--		tag = tags->freelist[--tags->nr_free];
--		spin_unlock_irqrestore(&tags->lock, flags);
--		return tag;
--	}
--	spin_unlock_irqrestore(&tags->lock, flags);
--
--	while (1) {
--		spin_lock_irqsave(&pool->lock, flags);
--		tags = this_cpu_ptr(pool->tag_cpu);
--
--		/*
--		 * prepare_to_wait() must come before steal_tags(), in case
--		 * percpu_ida_free() on another cpu flips a bit in
--		 * cpus_have_tags
--		 *
--		 * global lock held and irqs disabled, don't need percpu lock
--		 */
--		if (state != TASK_RUNNING)
--			prepare_to_wait(&pool->wait, &wait, state);
--
--		if (!tags->nr_free)
--			alloc_global_tags(pool, tags);
--		if (!tags->nr_free)
--			steal_tags(pool, tags);
--
--		if (tags->nr_free) {
--			tag = tags->freelist[--tags->nr_free];
--			if (tags->nr_free)
--				cpumask_set_cpu(smp_processor_id(),
--						&pool->cpus_have_tags);
--		}
--
--		spin_unlock_irqrestore(&pool->lock, flags);
--
--		if (tag >= 0 || state == TASK_RUNNING)
--			break;
--
--		if (signal_pending_state(state, current)) {
--			tag = -ERESTARTSYS;
--			break;
--		}
--
--		schedule();
--	}
--	if (state != TASK_RUNNING)
--		finish_wait(&pool->wait, &wait);
--
--	return tag;
--}
--EXPORT_SYMBOL_GPL(percpu_ida_alloc);
--
--/**
-- * percpu_ida_free - free a tag
-- * @pool: pool @tag was allocated from
-- * @tag: a tag previously allocated with percpu_ida_alloc()
-- *
-- * Safe to be called from interrupt context.
-- */
--void percpu_ida_free(struct percpu_ida *pool, unsigned tag)
--{
--	struct percpu_ida_cpu *tags;
--	unsigned long flags;
--	unsigned nr_free;
--
--	BUG_ON(tag >= pool->nr_tags);
--
--	tags = raw_cpu_ptr(pool->tag_cpu);
--
--	spin_lock_irqsave(&tags->lock, flags);
--	tags->freelist[tags->nr_free++] = tag;
--
--	nr_free = tags->nr_free;
--
--	if (nr_free == 1) {
--		cpumask_set_cpu(smp_processor_id(),
--				&pool->cpus_have_tags);
--		wake_up(&pool->wait);
--	}
--	spin_unlock_irqrestore(&tags->lock, flags);
--
--	if (nr_free == pool->percpu_max_size) {
--		spin_lock_irqsave(&pool->lock, flags);
--		spin_lock(&tags->lock);
--
--		if (tags->nr_free == pool->percpu_max_size) {
--			move_tags(pool->freelist, &pool->nr_free,
--				  tags->freelist, &tags->nr_free,
--				  pool->percpu_batch_size);
--
--			wake_up(&pool->wait);
--		}
--		spin_unlock(&tags->lock);
--		spin_unlock_irqrestore(&pool->lock, flags);
--	}
--}
--EXPORT_SYMBOL_GPL(percpu_ida_free);
--
--/**
-- * percpu_ida_destroy - release a tag pool's resources
-- * @pool: pool to free
-- *
-- * Frees the resources allocated by percpu_ida_init().
-- */
--void percpu_ida_destroy(struct percpu_ida *pool)
--{
--	free_percpu(pool->tag_cpu);
--	free_pages((unsigned long) pool->freelist,
--		   get_order(pool->nr_tags * sizeof(unsigned)));
--}
--EXPORT_SYMBOL_GPL(percpu_ida_destroy);
--
--/**
-- * percpu_ida_init - initialize a percpu tag pool
-- * @pool: pool to initialize
-- * @nr_tags: number of tags that will be available for allocation
-- *
-- * Initializes @pool so that it can be used to allocate tags - integers in the
-- * range [0, nr_tags). Typically, they'll be used by driver code to refer to a
-- * preallocated array of tag structures.
-- *
-- * Allocation is percpu, but sharding is limited by nr_tags - for best
-- * performance, the workload should not span more cpus than nr_tags / 128.
-- */
--int __percpu_ida_init(struct percpu_ida *pool, unsigned long nr_tags,
--	unsigned long max_size, unsigned long batch_size)
--{
--	unsigned i, cpu, order;
--
--	memset(pool, 0, sizeof(*pool));
--
--	init_waitqueue_head(&pool->wait);
--	spin_lock_init(&pool->lock);
--	pool->nr_tags = nr_tags;
--	pool->percpu_max_size = max_size;
--	pool->percpu_batch_size = batch_size;
--
--	/* Guard against overflow */
--	if (nr_tags > (unsigned) INT_MAX + 1) {
--		pr_err("percpu_ida_init(): nr_tags too large\n");
--		return -EINVAL;
--	}
--
--	order = get_order(nr_tags * sizeof(unsigned));
--	pool->freelist = (void *) __get_free_pages(GFP_KERNEL, order);
--	if (!pool->freelist)
--		return -ENOMEM;
--
--	for (i = 0; i < nr_tags; i++)
--		pool->freelist[i] = i;
--
--	pool->nr_free = nr_tags;
--
--	pool->tag_cpu = __alloc_percpu(sizeof(struct percpu_ida_cpu) +
--				       pool->percpu_max_size * sizeof(unsigned),
--				       sizeof(unsigned));
--	if (!pool->tag_cpu)
--		goto err;
--
--	for_each_possible_cpu(cpu)
--		spin_lock_init(&per_cpu_ptr(pool->tag_cpu, cpu)->lock);
--
--	return 0;
--err:
--	percpu_ida_destroy(pool);
--	return -ENOMEM;
--}
--EXPORT_SYMBOL_GPL(__percpu_ida_init);
--
--/**
-- * percpu_ida_for_each_free - iterate free ids of a pool
-- * @pool: pool to iterate
-- * @fn: interate callback function
-- * @data: parameter for @fn
-- *
-- * Note, this doesn't guarantee to iterate all free ids restrictly. Some free
-- * ids might be missed, some might be iterated duplicated, and some might
-- * be iterated and not free soon.
-- */
--int percpu_ida_for_each_free(struct percpu_ida *pool, percpu_ida_cb fn,
--	void *data)
--{
--	unsigned long flags;
--	struct percpu_ida_cpu *remote;
--	unsigned cpu, i, err = 0;
--
--	for_each_possible_cpu(cpu) {
--		remote = per_cpu_ptr(pool->tag_cpu, cpu);
--		spin_lock_irqsave(&remote->lock, flags);
--		for (i = 0; i < remote->nr_free; i++) {
--			err = fn(remote->freelist[i], data);
--			if (err)
--				break;
--		}
--		spin_unlock_irqrestore(&remote->lock, flags);
--		if (err)
--			goto out;
--	}
--
--	spin_lock_irqsave(&pool->lock, flags);
--	for (i = 0; i < pool->nr_free; i++) {
--		err = fn(pool->freelist[i], data);
--		if (err)
--			break;
--	}
--	spin_unlock_irqrestore(&pool->lock, flags);
--out:
--	return err;
--}
--EXPORT_SYMBOL_GPL(percpu_ida_for_each_free);
--
--/**
-- * percpu_ida_free_tags - return free tags number of a specific cpu or global pool
-- * @pool: pool related
-- * @cpu: specific cpu or global pool if @cpu == nr_cpu_ids
-- *
-- * Note: this just returns a snapshot of free tags number.
-- */
--unsigned percpu_ida_free_tags(struct percpu_ida *pool, int cpu)
--{
--	struct percpu_ida_cpu *remote;
--	if (cpu == nr_cpu_ids)
--		return pool->nr_free;
--	remote = per_cpu_ptr(pool->tag_cpu, cpu);
--	return remote->nr_free;
--}
--EXPORT_SYMBOL_GPL(percpu_ida_free_tags);
+diff --git a/Makefile b/Makefile
+index 554dcaddbce4..026586db2f26 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1085,7 +1085,7 @@ scripts: scripts_basic include/config/auto.conf include/config/tristate.conf \
+ # version.h and scripts_basic is processed / created.
+ 
+ # Listed in dependency order
+-PHONY += prepare archprepare prepare0 prepare1 prepare2 prepare3
++PHONY += prepare archprepare macroprepare prepare0 prepare1 prepare2 prepare3
+ 
+ # prepare3 is used to check if we are building in a separate output directory,
+ # and if so do:
+@@ -1109,7 +1109,9 @@ prepare1: prepare2 $(version_h) $(autoksyms_h) include/generated/utsrelease.h \
+                    include/config/auto.conf
+ 	$(cmd_crmodverdir)
+ 
+-archprepare: archheaders archscripts prepare1 scripts_basic
++macroprepare: prepare1 archmacros
++
++archprepare: archheaders archscripts macroprepare scripts_basic
+ 
+ prepare0: archprepare gcc-plugins
+ 	$(Q)$(MAKE) $(build)=.
+@@ -1214,6 +1216,9 @@ archheaders:
+ PHONY += archscripts
+ archscripts:
+ 
++PHONY += archmacros
++archmacros:
++
+ PHONY += __headers
+ __headers: $(version_h) scripts_basic uapi-asm-generic archheaders archscripts
+ 	$(Q)$(MAKE) $(build)=scripts build_unifdef
+diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+index 60135cbd905c..6b82314776fd 100644
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -235,8 +235,8 @@ ifdef CONFIG_X86_64
+ LDFLAGS += $(call ld-option, -z max-page-size=0x200000)
+ endif
+ 
+-# Speed up the build
+-KBUILD_CFLAGS += -pipe
++# We cannot use -pipe flag since we give an additional .s file to the compiler
++#KBUILD_CFLAGS += -pipe
+ # Workaround for a gcc prelease that unfortunately was shipped in a suse release
+ KBUILD_CFLAGS += -Wno-sign-compare
+ #
+@@ -258,11 +258,18 @@ archscripts: scripts_basic
+ archheaders:
+ 	$(Q)$(MAKE) $(build)=arch/x86/entry/syscalls all
+ 
++archmacros:
++	$(Q)$(MAKE) $(build)=arch/x86/kernel macros
++
+ archprepare:
+ ifeq ($(CONFIG_KEXEC_FILE),y)
+ 	$(Q)$(MAKE) $(build)=arch/x86/purgatory arch/x86/purgatory/kexec-purgatory.c
+ endif
+ 
++ASM_MACRO_FLAGS = -Wa,arch/x86/kernel/macros.s
++export ASM_MACRO_FLAGS
++KBUILD_CFLAGS += $(ASM_MACRO_FLAGS)
++
+ ###
+ # Kernel objects
+ 
+diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
+index 02d6f5cf4e70..fdb6c5b2a922 100644
+--- a/arch/x86/kernel/Makefile
++++ b/arch/x86/kernel/Makefile
+@@ -9,6 +9,12 @@ extra-y	+= ebda.o
+ extra-y	+= platform-quirks.o
+ extra-y	+= vmlinux.lds
+ 
++$(obj)/macros.s: $(obj)/macros.S FORCE
++	$(call if_changed_dep,cpp_s_S)
++
++macros: $(obj)/macros.s
++	@:
++
+ CPPFLAGS_vmlinux.lds += -U$(UTS_MACHINE)
+ 
+ ifdef CONFIG_FUNCTION_TRACER
+diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
+new file mode 100644
+index 000000000000..cfc1c7d1a6eb
+--- /dev/null
++++ b/arch/x86/kernel/macros.S
+@@ -0,0 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++/*
++ * This file includes headers whose assembly part includes macros which are
++ * commonly used. The macros are precompiled into assmebly file which is later
++ * assembled together with each compiled file.
++ */
+diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
+index 50cee534fd64..ad2c02062aa4 100644
+--- a/scripts/Kbuild.include
++++ b/scripts/Kbuild.include
+@@ -189,7 +189,9 @@ __cc-option = $(call try-run-cached,\
+ 
+ # Do not attempt to build with gcc plugins during cc-option tests.
+ # (And this uses delayed resolution so the flags will be up to date.)
+-CC_OPTION_CFLAGS = $(filter-out $(GCC_PLUGINS_CFLAGS),$(KBUILD_CFLAGS))
++# In addition, do not include the asm macros which are built later.
++CC_OPTION_FILTERED = $(GCC_PLUGINS_CFLAGS) $(ASM_MACRO_FLAGS)
++CC_OPTION_CFLAGS = $(filter-out $(CC_OPTION_FILTERED),$(KBUILD_CFLAGS))
+ 
+ # cc-option
+ # Usage: cflags-y += $(call cc-option,-march=winchip-c6,-march=i586)
 -- 
-2.17.1
+2.17.0
 
