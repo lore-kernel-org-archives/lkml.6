@@ -1,35 +1,35 @@
 Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,UNWANTED_LANGUAGE_BODY autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 85174C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 05:41:21 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 775DCC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 05:41:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2075820693
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 05:41:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2075820693
+	by mail.kernel.org (Postfix) with ESMTP id 0A8C820693
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 05:41:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A8C820693
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933246AbeFLFlT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 01:41:19 -0400
-Received: from mga03.intel.com ([134.134.136.65]:41743 "EHLO mga03.intel.com"
+        id S933312AbeFLFl1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 01:41:27 -0400
+Received: from mga07.intel.com ([134.134.136.100]:62700 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932619AbeFLFlN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 01:41:13 -0400
+        id S933164AbeFLFlS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 01:41:18 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2018 22:41:12 -0700
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2018 22:41:17 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,213,1526367600"; 
-   d="scan'208";a="48616021"
+   d="scan'208";a="56366546"
 Received: from sgsxdev001.isng.intel.com (HELO localhost) ([10.226.88.11])
-  by orsmga008.jf.intel.com with ESMTP; 11 Jun 2018 22:41:09 -0700
+  by fmsmga002.fm.intel.com with ESMTP; 11 Jun 2018 22:41:13 -0700
 From:   Songjun Wu <songjun.wu@linux.intel.com>
 To:     hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
         chuanhua.lei@intel.com
@@ -37,13 +37,13 @@ Cc:     linux-mips@linux-mips.org, qi-ming.wu@intel.com,
         linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
         devicetree@vger.kernel.org,
         Songjun Wu <songjun.wu@linux.intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org,
         Rob Herring <robh+dt@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 2/7] clk: intel: Add clock driver for GRX500 SoC
-Date:   Tue, 12 Jun 2018 13:40:29 +0800
-Message-Id: <20180612054034.4969-3-songjun.wu@linux.intel.com>
+Subject: [PATCH 3/7] MIPS: intel: Add initial support for Intel MIPS SoCs
+Date:   Tue, 12 Jun 2018 13:40:30 +0800
+Message-Id: <20180612054034.4969-4-songjun.wu@linux.intel.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180612054034.4969-1-songjun.wu@linux.intel.com>
 References: <20180612054034.4969-1-songjun.wu@linux.intel.com>
@@ -52,1285 +52,1164 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yixin Zhu <yixin.zhu@linux.intel.com>
+From: Hua Ma <hua.ma@linux.intel.com>
 
-PLL of GRX500 provide clock to DDR, CPU, and peripherals as show below
+Add initial support for Intel MIPS interAptiv SoCs made by Intel.
+This series will add support for the GRX500 family.
 
-                 +---------+
-	    |--->| LCPLL3 0|--PCIe clk-->
-   XO       |    +---------+
-+-----------|
-            |    +---------+
-            |    |        3|--PAE clk-->
-            |--->| PLL0B  2|--GSWIP clk-->
-            |    |        1|--DDR clk-->DDR PHY clk-->
-            |    |        0|--CPU1 clk--+   +-----+
-            |    +---------+            |--->0    |
-            |                               | MUX |--CPU clk-->
-            |    +---------+            |--->1    |
-            |    |        0|--CPU0 clk--+   +-----+
-            |--->| PLLOA  1|--SSX4 clk-->
-                 |        2|--NGI clk-->
-                 |        3|--CBM clk-->
-                 +---------+
+The series allows booting a minimal system using a initramfs.
 
-VCO of all PLLs of GRX500 is not supposed to be reprogrammed.
-DDR PHY clock is created to show correct clock rate in software
-point of view.
-CPU clock of 1Ghz from PLL0B otherwise from PLL0A.
-Signed-off-by: Yixin Zhu <yixin.zhu@linux.intel.com>
-
+Signed-off-by: Hua ma <hua.ma@linux.intel.com>
 Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
 ---
 
- .../devicetree/bindings/clock/intel,grx500-clk.txt |  46 ++
- drivers/clk/Kconfig                                |   1 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/intel/Kconfig                          |  21 +
- drivers/clk/intel/Makefile                         |   7 +
- drivers/clk/intel/clk-cgu-api.c                    | 676 +++++++++++++++++++++
- drivers/clk/intel/clk-cgu-api.h                    | 120 ++++
- drivers/clk/intel/clk-grx500.c                     | 236 +++++++
- include/dt-bindings/clock/intel,grx500-clk.h       |  61 ++
- 9 files changed, 1169 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/intel,grx500-clk.txt
- create mode 100644 drivers/clk/intel/Kconfig
- create mode 100644 drivers/clk/intel/Makefile
- create mode 100644 drivers/clk/intel/clk-cgu-api.c
- create mode 100644 drivers/clk/intel/clk-cgu-api.h
- create mode 100644 drivers/clk/intel/clk-grx500.c
- create mode 100644 include/dt-bindings/clock/intel,grx500-clk.h
+ arch/mips/Kbuild.platforms                         |   1 +
+ arch/mips/Kconfig                                  |  36 ++++
+ arch/mips/boot/dts/Makefile                        |   1 +
+ arch/mips/boot/dts/intel-mips/Makefile             |   3 +
+ arch/mips/boot/dts/intel-mips/easy350_anywan.dts   |  20 +++
+ arch/mips/boot/dts/intel-mips/xrx500.dtsi          | 196 +++++++++++++++++++++
+ arch/mips/configs/grx500_defconfig                 | 165 +++++++++++++++++
+ .../asm/mach-intel-mips/cpu-feature-overrides.h    |  61 +++++++
+ arch/mips/include/asm/mach-intel-mips/ioremap.h    |  39 ++++
+ arch/mips/include/asm/mach-intel-mips/irq.h        |  17 ++
+ .../asm/mach-intel-mips/kernel-entry-init.h        |  76 ++++++++
+ arch/mips/include/asm/mach-intel-mips/spaces.h     |  29 +++
+ arch/mips/include/asm/mach-intel-mips/war.h        |  18 ++
+ arch/mips/intel-mips/Kconfig                       |  22 +++
+ arch/mips/intel-mips/Makefile                      |   3 +
+ arch/mips/intel-mips/Platform                      |  11 ++
+ arch/mips/intel-mips/irq.c                         |  36 ++++
+ arch/mips/intel-mips/prom.c                        | 184 +++++++++++++++++++
+ arch/mips/intel-mips/time.c                        |  56 ++++++
+ 19 files changed, 974 insertions(+)
+ create mode 100644 arch/mips/boot/dts/intel-mips/Makefile
+ create mode 100644 arch/mips/boot/dts/intel-mips/easy350_anywan.dts
+ create mode 100644 arch/mips/boot/dts/intel-mips/xrx500.dtsi
+ create mode 100644 arch/mips/configs/grx500_defconfig
+ create mode 100644 arch/mips/include/asm/mach-intel-mips/cpu-feature-overrides.h
+ create mode 100644 arch/mips/include/asm/mach-intel-mips/ioremap.h
+ create mode 100644 arch/mips/include/asm/mach-intel-mips/irq.h
+ create mode 100644 arch/mips/include/asm/mach-intel-mips/kernel-entry-init.h
+ create mode 100644 arch/mips/include/asm/mach-intel-mips/spaces.h
+ create mode 100644 arch/mips/include/asm/mach-intel-mips/war.h
+ create mode 100644 arch/mips/intel-mips/Kconfig
+ create mode 100644 arch/mips/intel-mips/Makefile
+ create mode 100644 arch/mips/intel-mips/Platform
+ create mode 100644 arch/mips/intel-mips/irq.c
+ create mode 100644 arch/mips/intel-mips/prom.c
+ create mode 100644 arch/mips/intel-mips/time.c
 
-diff --git a/Documentation/devicetree/bindings/clock/intel,grx500-clk.txt b/Documentation/devicetree/bindings/clock/intel,grx500-clk.txt
-new file mode 100644
-index 000000000000..dd761d900dc9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/intel,grx500-clk.txt
-@@ -0,0 +1,46 @@
-+Device Tree Clock bindings for GRX500 PLL controller.
-+
-+This binding uses the common clock binding:
-+	Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+This GRX500 PLL controller provides the 5 main clock domain of the SoC: CPU/DDR, XBAR,
-+Voice, WLAN, PCIe and gate clocks for HW modules.
-+
-+Required properties for osc clock node
-+- compatible: Should be intel,grx500-xxx-clk
-+- reg: offset address of the controller memory area.
-+- clocks: phandle of the external reference clock
-+- #clock-cells: can be one or zero.
-+- clock-output-names: Names of the output clocks.
-+
-+Example:
-+	pll0aclk: pll0aclk {
-+		#clock-cells = <1>;
-+		compatible = "intel,grx500-pll0a-clk";
-+		clocks = <&pll0a>;
-+		reg = <0x8>;
-+		clock-output-names = "cbmclk", "ngiclk", "ssx4clk", "cpu0clk";
-+	};
-+
-+	cpuclk: cpuclk {
-+		#clock-cells = <0>;
-+		compatible = "intel,grx500-cpu-clk";
-+		clocks = <&pll0aclk CPU0_CLK>, <&pll0bclk CPU1_CLK>;
-+		reg = <0x8>;
-+		clock-output-names = "cpu";
-+	};
-+
-+Required properties for gate node:
-+- compatible: Should be intel,grx500-gatex-clk
-+- reg: offset address of the controller memory area.
-+- #clock-cells: Should be <1>
-+- clock-output-names: Names of the output clocks.
-+
-+Example:
-+	clkgate0: clkgate0 {
-+		#clock-cells = <1>;
-+		compatible = "intel,grx500-gate0-clk";
-+		reg = <0x114>;
-+		clock-output-names = "gate_xbar0", "gate_xbar1", "gate_xbar2",
-+		"gate_xbar3", "gate_xbar6", "gate_xbar7";
-+	};
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 34968a381d0f..9e2e19a1170a 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -280,6 +280,7 @@ config COMMON_CLK_STM32H7
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
- source "drivers/clk/imgtec/Kconfig"
-+source "drivers/clk/intel/Kconfig"
- source "drivers/clk/keystone/Kconfig"
- source "drivers/clk/mediatek/Kconfig"
- source "drivers/clk/meson/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index de6d06ac790b..ef3e270005a1 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -105,3 +105,4 @@ obj-$(CONFIG_X86)			+= x86/
- endif
- obj-$(CONFIG_ARCH_ZX)			+= zte/
- obj-$(CONFIG_ARCH_ZYNQ)			+= zynq/
-+obj-$(CONFIG_COMMON_CLK_INTEL)		+= intel/
-diff --git a/drivers/clk/intel/Kconfig b/drivers/clk/intel/Kconfig
-new file mode 100644
-index 000000000000..d40a92ae7462
---- /dev/null
-+++ b/drivers/clk/intel/Kconfig
-@@ -0,0 +1,21 @@
-+# SPDX-License-Identifier: GPL-2.0
-+config COMMON_CLK_INTEL
-+	depends on COMMON_CLK
-+	depends on INTEL_MIPS || COMPILE_TEST
+diff --git a/arch/mips/Kbuild.platforms b/arch/mips/Kbuild.platforms
+index ac7ad54f984f..bcd647060f3e 100644
+--- a/arch/mips/Kbuild.platforms
++++ b/arch/mips/Kbuild.platforms
+@@ -12,6 +12,7 @@ platforms += cobalt
+ platforms += dec
+ platforms += emma
+ platforms += generic
++platforms += intel-mips
+ platforms += jazz
+ platforms += jz4740
+ platforms += lantiq
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index 225c95da23ce..c82cebeb6192 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -404,6 +404,41 @@ config LANTIQ
+ 	select ARCH_HAS_RESET_CONTROLLER
+ 	select RESET_CONTROLLER
+ 
++config INTEL_MIPS
++	bool "Intel MIPS interAptiv SoC based platforms"
++	select ARCH_HAS_RESET_CONTROLLER
++	select ARCH_SUPPORTS_MSI
++	select BOOT_RAW
++	select CEVT_R4K
++	select COMMON_CLK
++	select CPU_MIPS32_3_5_EVA
++	select CPU_MIPS32_3_5_FEATURES
++	select CPU_MIPSR2_IRQ_EI
++	select CPU_MIPSR2_IRQ_VI
++	select CSRC_R4K
++	select DMA_NONCOHERENT
++	select GENERIC_ISA_DMA
++	select GPIOLIB
++	select HW_HAS_PCI
++	select IRQ_MIPS_CPU
++	select MFD_CORE
 +	select MFD_SYSCON
-+	bool "Intel clock controller support"
-+	help
-+	  This driver support Intel GRX500 crystal oscillator clock
-+	  using common clock framework.
++	select MIPS_CPU_SCACHE
++	select MIPS_GIC
++	select PCI_DRIVERS_GENERIC
++	select RESET_CONTROLLER
++	select SYS_HAS_CPU_MIPS32_R1
++	select SYS_HAS_CPU_MIPS32_R2
++	select SYS_HAS_CPU_MIPS32_R3_5
++	select SYS_HAS_EARLY_PRINTK
++	select SYS_SUPPORTS_BIG_ENDIAN
++	select SYS_SUPPORTS_32BIT_KERNEL
++	select SYS_SUPPORTS_MIPS_CPS
++	select SYS_SUPPORTS_MULTITHREADING
++	select SYS_SUPPORTS_ZBOOT
++	select TIMER_OF
++	select USE_OF
++
+ config LASAT
+ 	bool "LASAT Networks platforms"
+ 	select CEVT_R4K
+@@ -1010,6 +1045,7 @@ source "arch/mips/bcm47xx/Kconfig"
+ source "arch/mips/bcm63xx/Kconfig"
+ source "arch/mips/bmips/Kconfig"
+ source "arch/mips/generic/Kconfig"
++source "arch/mips/intel-mips/Kconfig"
+ source "arch/mips/jazz/Kconfig"
+ source "arch/mips/jz4740/Kconfig"
+ source "arch/mips/lantiq/Kconfig"
+diff --git a/arch/mips/boot/dts/Makefile b/arch/mips/boot/dts/Makefile
+index 1e79cab8e269..05f52f279047 100644
+--- a/arch/mips/boot/dts/Makefile
++++ b/arch/mips/boot/dts/Makefile
+@@ -3,6 +3,7 @@ subdir-y	+= brcm
+ subdir-y	+= cavium-octeon
+ subdir-y	+= img
+ subdir-y	+= ingenic
++subdir-y	+= intel-mips
+ subdir-y	+= lantiq
+ subdir-y	+= mscc
+ subdir-y	+= mti
+diff --git a/arch/mips/boot/dts/intel-mips/Makefile b/arch/mips/boot/dts/intel-mips/Makefile
+new file mode 100644
+index 000000000000..b16c0081639c
+--- /dev/null
++++ b/arch/mips/boot/dts/intel-mips/Makefile
+@@ -0,0 +1,3 @@
++# SPDX-License-Identifier: GPL-2.0
++dtb-$(CONFIG_DTB_INTEL_MIPS_GRX500)	+= easy350_anywan.dtb
++obj-y	+= $(patsubst %.dtb, %.dtb.o, $(dtb-y))
+diff --git a/arch/mips/boot/dts/intel-mips/easy350_anywan.dts b/arch/mips/boot/dts/intel-mips/easy350_anywan.dts
+new file mode 100644
+index 000000000000..40177f6cee1e
+--- /dev/null
++++ b/arch/mips/boot/dts/intel-mips/easy350_anywan.dts
+@@ -0,0 +1,20 @@
++// SPDX-License-Identifier: GPL-2.0
++/dts-v1/;
++
++#include <dt-bindings/interrupt-controller/mips-gic.h>
++#include <dt-bindings/clock/intel,grx500-clk.h>
++
++#include "xrx500.dtsi"
++
++/ {
++	model = "EASY350 ANYWAN (GRX350) Main model";
++	chosen {
++		bootargs = "earlycon=lantiq,0x16600000 clk_ignore_unused";
++		stdout-path = "serial0";
++	};
++
++	memory@0 {
++		device_type = "memory";
++		reg = <0x20000000 0x0e000000>;
++	};
++};
+diff --git a/arch/mips/boot/dts/intel-mips/xrx500.dtsi b/arch/mips/boot/dts/intel-mips/xrx500.dtsi
+new file mode 100644
+index 000000000000..04a068d6d96b
+--- /dev/null
++++ b/arch/mips/boot/dts/intel-mips/xrx500.dtsi
+@@ -0,0 +1,196 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/ {
++	#address-cells = <1>;
++	#size-cells = <1>;
++	compatible = "intel,xrx500";
++
++	aliases {
++		serial0 = &asc0;
++	};
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu0: cpu@0 {
++			device_type = "cpu";
++			compatible = "mti,interaptiv";
++			clocks = <&cpuclk>;
++			reg = <0>;
++		};
++
++		cpu1: cpu@1 {
++			device_type = "cpu";
++			compatible = "mti,interaptiv";
++			reg = <1>;
++		};
++	};
++
++	cpu_intc: interrupt-controller {
++		compatible = "mti,cpu-interrupt-controller";
++
++		interrupt-controller;
++		#interrupt-cells = <1>;
++	};
++
++	gic: gic@12320000 {
++		compatible = "mti,gic";
++		reg = <0x12320000 0x20000>;
++
++		interrupt-controller;
++		#interrupt-cells = <3>;
++		/*
++		 * Declare the interrupt-parent even though the mti,gic
++		 * binding doesn't require it, such that the kernel can
++		 * figure out that cpu_intc is the root interrupt
++		 * controller & should be probed first.
++		 */
++		interrupt-parent = <&cpu_intc>;
++		mti,reserved-ipi-vectors = <56 8>;
++	};
++
++	cgu0: cgu@16200000 {
++		compatible = "syscon";
++		reg = <0x16200000 0x100000>;
++
++		clock {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			osc0: osc0 {
++				#clock-cells = <0>;
++				compatible = "fixed-clock";
++				clock-frequency = <40000000>;
++				clock-output-names = "osc40M";
++			};
++
++			pll0a: pll0a {
++				#clock-cells = <0>;
++				compatible = "fixed-factor-clock";
++				clock-mult = <0x3C>;
++				clock-div = <1>;
++				clocks = <&osc0>;
++				clock-output-names = "pll0a";
++			};
++
++			pll0b: pll0b {
++				#clock-cells = <0>;
++				compatible = "fixed-factor-clock";
++				clock-mult = <0x32>;
++				clock-div = <1>;
++				clocks = <&osc0>;
++				clock-output-names = "pll0b";
++			};
++
++			pll3: pll3 {
++				#clock-cells = <0>;
++				compatible = "fixed-factor-clock";
++				clock-mult = <0x64>;
++				clock-div = <1>;
++				clocks = <&osc0>;
++				clock-output-names = "lcpll3";
++			};
++
++			pll0aclk: pll0aclk {
++				#clock-cells = <1>;
++				compatible = "intel,grx500-pll0a-clk";
++				clocks = <&pll0a>;
++				reg = <0x8>;
++				clock-output-names = "cbm", "ngi",
++				"ssx4", "cpu0";
++			};
++
++			pll0bclk: pll0bclk {
++				#clock-cells = <1>;
++				compatible = "intel,grx500-pll0b-clk";
++				clocks = <&pll0b>;
++				reg = <0x38>;
++				clock-output-names = "pae", "gswip", "ddr",
++				"cpu1";
++			};
++
++			ddrphyclk: ddrphyclk {
++				#clock-cells = <0>;
++				compatible = "fixed-factor-clock";
++				clock-mult = <2>;
++				clock-div = <1>;
++				clocks = <&pll0bclk DDR_CLK>;
++				clock-output-names = "ddrphy";
++			};
++
++			pcieclk: pcieclk {
++				#clock-cells = <0>;
++				compatible = "intel,grx500-pcie-clk";
++				clocks = <&pll3>;
++				reg = <0x98>;
++				clock-output-names = "pcie";
++			};
++
++			cpuclk: cpuclk {
++				#clock-cells = <0>;
++				compatible = "intel,grx500-cpu-clk";
++				clocks = <&pll0aclk CPU0_CLK>,
++				<&pll0bclk CPU1_CLK>;
++				reg = <0x8>;
++				clock-output-names = "cpu";
++			};
++
++			clkgate0: clkgate0 {
++				#clock-cells = <1>;
++				compatible = "intel,grx500-gate0-clk";
++				reg = <0x114>;
++				clock-output-names = "gate_xbar0", "gate_xbar1",
++				"gate_xbar2", "gate_xbar3", "gate_xbar6",
++				"gate_xbar7";
++			};
++
++			clkgate1: clkgate1 {
++				#clock-cells = <1>;
++				compatible = "intel,grx500-gate1-clk";
++				reg = <0x120>;
++				clock-output-names = "gate_vcodec", "gate_dma0",
++				"gate_usb0", "gate_spi1", "gate_spi0",
++				"gate_cbm", "gate_ebu", "gate_sso",
++				"gate_gptc0", "gate_gptc1", "gate_gptc2",
++				"gate_urt", "gate_eip97", "gate_eip123",
++				"gate_toe", "gate_mpe", "gate_tdm", "gate_pae",
++				"gate_usb1", "gate_gswip";
++			};
++
++			clkgate2: clkgate2 {
++				#clock-cells = <1>;
++				compatible = "intel,grx500-gate2-clk";
++				reg = <0x130>;
++				clock-output-names = "gate_pcie0", "gate_pcie1",
++				"gate_pcie2";
++			};
++
++			voiceclk: voiceclk {
++				#clock-cells = <0>;
++				compatible = "intel,grx500-voice-clk";
++				clock-frequency = <8192000>;
++				reg = <0xc4>;
++				clock-output-names = "voice";
++			};
++
++			i2cclk: i2cclk {
++				#clock-cells = <0>;
++				compatible = "intel,grx500-gate-dummy-clk";
++				clock-output-names = "gate_i2c";
++			};
++		};
++	};
++
++	asc0: serial@16600000 {
++		compatible = "lantiq,asc";
++		reg = <0x16600000 0x100000>;
++
++		interrupt-parent = <&gic>;
++		interrupts = <GIC_SHARED 103 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SHARED 105 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SHARED 106 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&pll0aclk SSX4_CLK>, <&clkgate1 GATE_URT_CLK>;
++		clock-names = "freq", "asc";
++	};
++};
+diff --git a/arch/mips/configs/grx500_defconfig b/arch/mips/configs/grx500_defconfig
+new file mode 100644
+index 000000000000..d353b74dddcd
+--- /dev/null
++++ b/arch/mips/configs/grx500_defconfig
+@@ -0,0 +1,165 @@
++CONFIG_INTEL_MIPS=y
++CONFIG_DTB_INTEL_MIPS_GRX500=y
++CONFIG_CPU_MIPS32_R2=y
++CONFIG_SCHED_SMT=y
++# CONFIG_MIPS_MT_FPAFF is not set
++CONFIG_MIPS_CPS=y
++CONFIG_KSM=y
++CONFIG_DEFAULT_MMAP_MIN_ADDR=65536
++CONFIG_CLEANCACHE=y
++CONFIG_FRONTSWAP=y
++CONFIG_CMA=y
++CONFIG_CMA_DEBUGFS=y
++CONFIG_ZSWAP=y
++CONFIG_ZBUD=y
++CONFIG_Z3FOLD=y
++CONFIG_ZSMALLOC=y
++CONFIG_PGTABLE_MAPPING=y
++CONFIG_HOTPLUG_CPU=y
++CONFIG_NR_CPUS=2
++CONFIG_HZ_100=y
++# CONFIG_SECCOMP is not set
++CONFIG_CROSS_COMPILE=""
++# CONFIG_LOCALVERSION_AUTO is not set
++CONFIG_DEFAULT_HOSTNAME="GRX500"
++CONFIG_SYSVIPC=y
++CONFIG_HIGH_RES_TIMERS=y
++CONFIG_RCU_EXPERT=y
++CONFIG_LOG_BUF_SHIFT=18
++CONFIG_BLK_DEV_INITRD=y
++CONFIG_INITRAMFS_SOURCE=""
++CONFIG_INITRAMFS_ROOT_UID=11609386
++CONFIG_INITRAMFS_ROOT_GID=2222
++# CONFIG_RD_GZIP is not set
++# CONFIG_RD_BZIP2 is not set
++# CONFIG_RD_LZMA is not set
++# CONFIG_RD_LZO is not set
++# CONFIG_RD_LZ4 is not set
++CONFIG_INITRAMFS_COMPRESSION_XZ=y
++CONFIG_CC_OPTIMIZE_FOR_SIZE=y
++CONFIG_SYSCTL_SYSCALL=y
++# CONFIG_FHANDLE is not set
++# CONFIG_AIO is not set
++CONFIG_BPF_SYSCALL=y
++CONFIG_USERFAULTFD=y
++CONFIG_EMBEDDED=y
++# CONFIG_COMPAT_BRK is not set
++CONFIG_CC_STACKPROTECTOR_STRONG=y
++CONFIG_MODULES=y
++CONFIG_MODULE_UNLOAD=y
++CONFIG_MODVERSIONS=y
++CONFIG_BLK_DEV_BSGLIB=y
++CONFIG_BLK_DEV_INTEGRITY=y
++# CONFIG_SUSPEND is not set
++CONFIG_NET=y
++CONFIG_PACKET=y
++CONFIG_UNIX=y
++CONFIG_INET=y
++# CONFIG_INET6_XFRM_MODE_TRANSPORT is not set
++# CONFIG_INET6_XFRM_MODE_TUNNEL is not set
++# CONFIG_INET6_XFRM_MODE_BEET is not set
++# CONFIG_IPV6_SIT is not set
++CONFIG_IPV6_MULTIPLE_TABLES=y
++CONFIG_IPV6_SUBTREES=y
++CONFIG_IPV6_MROUTE=y
++CONFIG_NETFILTER=y
++CONFIG_NF_CONNTRACK=m
++CONFIG_NF_CONNTRACK_MARK=y
++CONFIG_NETFILTER_XT_MARK=m
++CONFIG_NETFILTER_XT_TARGET_LOG=m
++CONFIG_NETFILTER_XT_TARGET_TCPMSS=m
++CONFIG_NETFILTER_XT_MATCH_COMMENT=m
++CONFIG_NETFILTER_XT_MATCH_CONNTRACK=m
++CONFIG_NETFILTER_XT_MATCH_LIMIT=m
++CONFIG_NETFILTER_XT_MATCH_MAC=m
++CONFIG_NETFILTER_XT_MATCH_MULTIPORT=m
++CONFIG_NETFILTER_XT_MATCH_STATE=m
++CONFIG_NETFILTER_XT_MATCH_TIME=m
++CONFIG_NF_CONNTRACK_IPV4=m
++CONFIG_IP_NF_IPTABLES=m
++CONFIG_IP_NF_FILTER=m
++CONFIG_IP_NF_TARGET_REJECT=m
++CONFIG_IP_NF_NAT=m
++CONFIG_IP_NF_TARGET_MASQUERADE=m
++CONFIG_IP_NF_TARGET_REDIRECT=m
++CONFIG_IP_NF_MANGLE=m
++CONFIG_NF_CONNTRACK_IPV6=m
++CONFIG_IP6_NF_IPTABLES=m
++CONFIG_IP6_NF_FILTER=m
++CONFIG_IP6_NF_TARGET_REJECT=m
++CONFIG_IP6_NF_MANGLE=m
++CONFIG_ATM=m
++CONFIG_ATM_BR2684=m
++CONFIG_DMA_CMA=y
++CONFIG_BLK_DEV_RAM=y
++CONFIG_BLK_DEV_RAM_COUNT=4
++CONFIG_BLK_DEV_RAM_SIZE=8192
++# CONFIG_INPUT_KEYBOARD is not set
++# CONFIG_INPUT_MOUSE is not set
++# CONFIG_SERIO is not set
++# CONFIG_CONSOLE_TRANSLATIONS is not set
++# CONFIG_VT_CONSOLE is not set
++# CONFIG_LEGACY_PTYS is not set
++# CONFIG_DEVMEM is not set
++CONFIG_SERIAL_LANTIQ=y
++# CONFIG_HW_RANDOM is not set
++CONFIG_I2C=y
++# CONFIG_HWMON is not set
++# CONFIG_VGA_CONSOLE is not set
++# CONFIG_HID is not set
++# CONFIG_USB_SUPPORT is not set
++# CONFIG_VIRTIO_MENU is not set
++# CONFIG_MIPS_PLATFORM_DEVICES is not set
++CONFIG_COMMON_CLK_INTEL=y
++# CONFIG_IOMMU_SUPPORT is not set
++CONFIG_EXPORTFS_BLOCK_OPS=y
++# CONFIG_MANDATORY_FILE_LOCKING is not set
++CONFIG_QUOTA=y
++# CONFIG_PRINT_QUOTA_WARNING is not set
++CONFIG_AUTOFS4_FS=y
++CONFIG_FSCACHE=y
++CONFIG_FSCACHE_STATS=y
++CONFIG_FSCACHE_OBJECT_LIST=y
++CONFIG_CACHEFILES=y
++CONFIG_PROC_KCORE=y
++# CONFIG_PROC_PAGE_MONITOR is not set
++CONFIG_PROC_CHILDREN=y
++CONFIG_TMPFS=y
++CONFIG_TMPFS_XATTR=y
++CONFIG_CONFIGFS_FS=y
++CONFIG_SQUASHFS=y
++CONFIG_SQUASHFS_XATTR=y
++CONFIG_SQUASHFS_LZ4=y
++CONFIG_SQUASHFS_LZO=y
++CONFIG_SQUASHFS_XZ=y
++CONFIG_NLS=y
++CONFIG_PRINTK_TIME=y
++CONFIG_BOOT_PRINTK_DELAY=y
++CONFIG_DEBUG_INFO=y
++# CONFIG_ENABLE_WARN_DEPRECATED is not set
++CONFIG_FRAME_WARN=2048
++CONFIG_STRIP_ASM_SYMS=y
++CONFIG_UNUSED_SYMBOLS=y
++CONFIG_DEBUG_FS=y
++CONFIG_HEADERS_CHECK=y
++CONFIG_MAGIC_SYSRQ=y
++CONFIG_DEBUG_VM=y
++CONFIG_DEBUG_MEMORY_INIT=y
++CONFIG_DEBUG_STACKOVERFLOW=y
++CONFIG_DEBUG_RT_MUTEXES=y
++CONFIG_DEBUG_ATOMIC_SLEEP=y
++# CONFIG_RCU_TRACE is not set
++CONFIG_LATENCYTOP=y
++# CONFIG_FTRACE is not set
++CONFIG_ATOMIC64_SELFTEST=y
++CONFIG_TEST_KSTRTOX=y
++# CONFIG_EARLY_PRINTK is not set
++CONFIG_CRYPTO_CCM=y
++CONFIG_CRYPTO_GCM=y
++# CONFIG_CRYPTO_ECHAINIV is not set
++CONFIG_CRYPTO_ARC4=y
++# CONFIG_CRYPTO_HW is not set
++CONFIG_CRC_CCITT=y
++CONFIG_CRC16=y
++CONFIG_LIBCRC32C=y
++CONFIG_IRQ_POLL=y
+diff --git a/arch/mips/include/asm/mach-intel-mips/cpu-feature-overrides.h b/arch/mips/include/asm/mach-intel-mips/cpu-feature-overrides.h
+new file mode 100644
+index 000000000000..ac5f3b943d2a
+--- /dev/null
++++ b/arch/mips/include/asm/mach-intel-mips/cpu-feature-overrides.h
+@@ -0,0 +1,61 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * This file was derived from: include/asm-mips/cpu-features.h
++ *	Copyright (C) 2003, 2004 Ralf Baechle
++ *	Copyright (C) 2004 Maciej W. Rozycki
++ *	Copyright (C) 2018 Intel Corporation.
++ */
++
++#ifndef __ASM_MACH_INTEL_MIPS_CPU_FEATURE_OVERRIDES_H
++#define __ASM_MACH_INTEL_MIPS_CPU_FEATURE_OVERRIDES_H
++
++#define cpu_has_tlb		1
++#define cpu_has_4kex		1
++#define cpu_has_3k_cache	0
++#define cpu_has_4k_cache	1
++#define cpu_has_tx39_cache	0
++#define cpu_has_sb1_cache	0
++#define cpu_has_fpu		0
++#define cpu_has_32fpr		0
++#define cpu_has_counter		1
++#define cpu_has_watch		1
++#define cpu_has_divec		1
++
++#define cpu_has_prefetch	1
++#define cpu_has_ejtag		1
++#define cpu_has_llsc		1
++
++#define cpu_has_mips16		0
++#define cpu_has_mdmx		0
++#define cpu_has_mips3d		0
++#define cpu_has_smartmips	0
++#define cpu_has_mmips		0
++#define cpu_has_vz		0
++
++#define cpu_has_mips32r1	1
++#define cpu_has_mips32r2	1
++#define cpu_has_mips64r1	0
++#define cpu_has_mips64r2	0
++
++#define cpu_has_dsp		1
++#define cpu_has_dsp2		0
++#define cpu_has_mipsmt		1
++
++#define cpu_has_vint		1
++#define cpu_has_veic		0
++
++#define cpu_has_64bits		0
++#define cpu_has_64bit_zero_reg	0
++#define cpu_has_64bit_gp_regs	0
++#define cpu_has_64bit_addresses	0
++
++#define cpu_has_cm2		1
++#define cpu_has_cm2_l2sync	1
++#define cpu_has_eva		1
++#define cpu_has_tlbinv		1
++
++#define cpu_dcache_line_size()	32
++#define cpu_icache_line_size()	32
++#define cpu_scache_line_size()	32
++
++#endif /* __ASM_MACH_INTEL_MIPS_CPU_FEATURE_OVERRIDES_H */
+diff --git a/arch/mips/include/asm/mach-intel-mips/ioremap.h b/arch/mips/include/asm/mach-intel-mips/ioremap.h
+new file mode 100644
+index 000000000000..99b20ed0b457
+--- /dev/null
++++ b/arch/mips/include/asm/mach-intel-mips/ioremap.h
+@@ -0,0 +1,39 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ *  Copyright (C) 2014 Lei Chuanhua <Chuanhua.lei@lantiq.com>
++ *  Copyright (C) 2018 Intel Corporation.
++ */
++#ifndef __ASM_MACH_INTEL_MIPS_IOREMAP_H
++#define __ASM_MACH_INTEL_MIPS_IOREMAP_H
++
++#include <linux/types.h>
++
++static inline phys_addr_t fixup_bigphys_addr(phys_addr_t phys_addr,
++					     phys_addr_t size)
++{
++	return phys_addr;
++}
++
++/*
++ * TOP IO Space definition for SSX7 components /PCIe/ToE/Memcpy
++ * physical 0xa0000000 --> virtual 0xe0000000
++ */
++#define GRX500_TOP_IOREMAP_BASE			0xA0000000
++#define GRX500_TOP_IOREMAP_SIZE			0x20000000
++#define GRX500_TOP_IOREMAP_PHYS_VIRT_OFFSET	0x40000000
++
++static inline void __iomem *plat_ioremap(phys_addr_t offset, unsigned long size,
++					 unsigned long flags)
++{
++	if (offset >= GRX500_TOP_IOREMAP_BASE &&
++	    offset < (GRX500_TOP_IOREMAP_BASE + GRX500_TOP_IOREMAP_SIZE))
++		return (void __iomem *)(unsigned long)
++			(offset + GRX500_TOP_IOREMAP_PHYS_VIRT_OFFSET);
++	return NULL;
++}
++
++static inline int plat_iounmap(const volatile void __iomem *addr)
++{
++	return (unsigned long)addr >= (unsigned long)GRX500_TOP_IOREMAP_BASE;
++}
++#endif /* __ASM_MACH_INTEL_MIPS_IOREMAP_H */
+diff --git a/arch/mips/include/asm/mach-intel-mips/irq.h b/arch/mips/include/asm/mach-intel-mips/irq.h
+new file mode 100644
+index 000000000000..12a949084856
+--- /dev/null
++++ b/arch/mips/include/asm/mach-intel-mips/irq.h
+@@ -0,0 +1,17 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ *  Copyright (C) 2014 Lei Chuanhua <Chuanhua.lei@lantiq.com>
++ *  Copyright (C) 2018 Intel Corporation.
++ */
++
++#ifndef __INTEL_MIPS_IRQ_H
++#define __INTEL_MIPS_IRQ_H
++
++#define MIPS_CPU_IRQ_BASE	0
++#define MIPS_GIC_IRQ_BASE	(MIPS_CPU_IRQ_BASE + 8)
++
++#define NR_IRQS 256
++
++#include_next <irq.h>
++
++#endif /* __INTEL_MIPS_IRQ_H */
+diff --git a/arch/mips/include/asm/mach-intel-mips/kernel-entry-init.h b/arch/mips/include/asm/mach-intel-mips/kernel-entry-init.h
+new file mode 100644
+index 000000000000..3893855b60c6
+--- /dev/null
++++ b/arch/mips/include/asm/mach-intel-mips/kernel-entry-init.h
+@@ -0,0 +1,76 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Chris Dearman (chris@mips.com)
++ * Leonid Yegoshin (yegoshin@mips.com)
++ * Copyright (C) 2012 Mips Technologies, Inc.
++ * Copyright (C) 2018 Intel Corporation.
++ */
++#ifndef __ASM_MACH_INTEL_MIPS_KERNEL_ENTRY_INIT_H
++#define __ASM_MACH_INTEL_MIPS_KERNEL_ENTRY_INIT_H
++
++	.macro  platform_eva_init
++
++	.set    push
++	.set    reorder
++	/*
++	 * Get Config.K0 value and use it to program
++	 * the segmentation registers
++	 */
++	mfc0    t1, CP0_CONFIG
++	andi    t1, 0x7 /* CCA */
++	move    t2, t1
++	ins     t2, t1, 16, 3
++	/* SegCtl0 */
++	li      t0, ((MIPS_SEGCFG_UK << MIPS_SEGCFG_AM_SHIFT) |              \
++		(5 << MIPS_SEGCFG_PA_SHIFT) | (2 << MIPS_SEGCFG_C_SHIFT) |   \
++		(1 << MIPS_SEGCFG_EU_SHIFT)) |                               \
++		(((MIPS_SEGCFG_MSK << MIPS_SEGCFG_AM_SHIFT) |                \
++		(0 << MIPS_SEGCFG_PA_SHIFT) |                                \
++		(1 << MIPS_SEGCFG_EU_SHIFT)) << 16)
++	ins     t0, t1, 16, 3
++	mtc0    t0, $5, 2
++
++	/* SegCtl1 */
++	li      t0, ((MIPS_SEGCFG_UK << MIPS_SEGCFG_AM_SHIFT) |              \
++		(1 << MIPS_SEGCFG_PA_SHIFT) | (2 << MIPS_SEGCFG_C_SHIFT) |   \
++		(1 << MIPS_SEGCFG_EU_SHIFT)) |                               \
++		(((MIPS_SEGCFG_UK << MIPS_SEGCFG_AM_SHIFT) |                 \
++		(2 << MIPS_SEGCFG_PA_SHIFT) |                                \
++		(1 << MIPS_SEGCFG_EU_SHIFT)) << 16)
++	ins     t0, t1, 16, 3
++	mtc0    t0, $5, 3
++
++	/* SegCtl2 */
++	li      t0, ((MIPS_SEGCFG_MUSUK << MIPS_SEGCFG_AM_SHIFT) |           \
++		(0 << MIPS_SEGCFG_PA_SHIFT) |                                \
++		(1 << MIPS_SEGCFG_EU_SHIFT)) |                               \
++		(((MIPS_SEGCFG_MUSK << MIPS_SEGCFG_AM_SHIFT) |               \
++		(0 << MIPS_SEGCFG_PA_SHIFT)/*| (2 << MIPS_SEGCFG_C_SHIFT)*/ | \
++		(1 << MIPS_SEGCFG_EU_SHIFT)) << 16)
++	ins     t0, t1, 0, 3
++	mtc0    t0, $5, 4
++
++	jal     mips_ihb
++	mfc0    t0, $16, 5
++	li      t2, 0x40000000      /* K bit */
++	or      t0, t0, t2
++	mtc0    t0, $16, 5
++	sync
++	jal     mips_ihb
++
++	.set    pop
++	.endm
++
++	.macro	kernel_entry_setup
++	sync
++	ehb
++	platform_eva_init
++	.endm
++
++	.macro	smp_slave_setup
++	sync
++	ehb
++	platform_eva_init
++	.endm
++
++#endif /* __ASM_MACH_INTEL_MIPS_KERNEL_ENTRY_INIT_H */
+diff --git a/arch/mips/include/asm/mach-intel-mips/spaces.h b/arch/mips/include/asm/mach-intel-mips/spaces.h
+new file mode 100644
+index 000000000000..abce53a65157
+--- /dev/null
++++ b/arch/mips/include/asm/mach-intel-mips/spaces.h
+@@ -0,0 +1,29 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Author: Leonid Yegoshin (yegoshin@mips.com)
++ * Copyright (C) 2012 MIPS Technologies, Inc.
++ * Copyright (C) 2014 Lei Chuanhua <Chuanhua.lei@lantiq.com>
++ * Copyright (C) 2018 Intel Corporation.
++ */
++
++#ifndef _ASM_INTEL_MIPS_SPACES_H
++#define _ASM_INTEL_MIPS_SPACES_H
++
++#include <linux/sizes.h>
++
++#define PAGE_OFFSET		_AC(0x60000000, UL)
++#define PHYS_OFFSET		_AC(0x20000000, UL)
++
++/* No Highmem Support */
++#define HIGHMEM_START		_AC(0xffff0000, UL)
++
++#define FIXADDR_TOP		((unsigned long)(long)(int)0xcffe0000)
++
++#define IO_SIZE			_AC(0x10000000, UL)
++#define IO_SHIFT		_AC(0x10000000, UL)
++
++/* IO space one */
++#define __pa_symbol(x)		__pa(x)
++
++#include <asm/mach-generic/spaces.h>
++#endif /* __ASM_INTEL_MIPS_SPACES_H */
+diff --git a/arch/mips/include/asm/mach-intel-mips/war.h b/arch/mips/include/asm/mach-intel-mips/war.h
+new file mode 100644
+index 000000000000..1c95553151e1
+--- /dev/null
++++ b/arch/mips/include/asm/mach-intel-mips/war.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __ASM_MIPS_MACH_INTEL_MIPS_WAR_H
++#define __ASM_MIPS_MACH_INTEL_MIPS_WAR_H
++
++#define R4600_V1_INDEX_ICACHEOP_WAR	0
++#define R4600_V1_HIT_CACHEOP_WAR	0
++#define R4600_V2_HIT_CACHEOP_WAR	0
++#define R5432_CP0_INTERRUPT_WAR		0
++#define BCM1250_M3_WAR			0
++#define SIBYTE_1956_WAR			0
++#define MIPS4K_ICACHE_REFILL_WAR	0
++#define MIPS_CACHE_SYNC_WAR		0
++#define TX49XX_ICACHE_INDEX_INV_WAR	0
++#define ICACHE_REFILLS_WORKAROUND_WAR	0
++#define R10000_LLSC_WAR			0
++#define MIPS34K_MISSED_ITLB_WAR		0
++
++#endif /* __ASM_MIPS_MACH_INTEL_MIPS_WAR_H */
+diff --git a/arch/mips/intel-mips/Kconfig b/arch/mips/intel-mips/Kconfig
+new file mode 100644
+index 000000000000..35d2ae2b5408
+--- /dev/null
++++ b/arch/mips/intel-mips/Kconfig
+@@ -0,0 +1,22 @@
++if INTEL_MIPS
 +
 +choice
-+	prompt "SoC platform selection"
-+	depends on COMMON_CLK_INTEL
-+	default INTEL_GRX500_CLK
-+
-+config INTEL_GRX500_CLK
-+	bool "GRX500 CLK"
++	prompt "Built-in device tree"
 +	help
-+	  Clock driver of GRX500 platform.
++	  Legacy bootloaders do not pass a DTB pointer to the kernel, so
++	  if a "wrapper" is not being used, the kernel will need to include
++	  a device tree that matches the target board.
++
++	  The builtin DTB will only be used if the firmware does not supply
++	  a valid DTB.
++
++config DTB_INTEL_MIPS_NONE
++	bool "None"
++
++config DTB_INTEL_MIPS_GRX500
++	bool "Intel MIPS GRX500 Board"
++	select BUILTIN_DTB
 +
 +endchoice
-diff --git a/drivers/clk/intel/Makefile b/drivers/clk/intel/Makefile
-new file mode 100644
-index 000000000000..1eaa37f797ea
---- /dev/null
-+++ b/drivers/clk/intel/Makefile
-@@ -0,0 +1,7 @@
-+# SPDX-License-Identifier: GPL-2.0
-+# Makefile for intel specific clk
 +
-+obj-y += clk-cgu-api.o
-+ifneq ($(CONFIG_INTEL_GRX500_CLK),)
-+	obj-y += clk-grx500.o
 +endif
-diff --git a/drivers/clk/intel/clk-cgu-api.c b/drivers/clk/intel/clk-cgu-api.c
+diff --git a/arch/mips/intel-mips/Makefile b/arch/mips/intel-mips/Makefile
 new file mode 100644
-index 000000000000..ab0590cb8b60
+index 000000000000..9f272d06eecd
 --- /dev/null
-+++ b/drivers/clk/intel/clk-cgu-api.c
-@@ -0,0 +1,676 @@
++++ b/arch/mips/intel-mips/Makefile
+@@ -0,0 +1,3 @@
++# SPDX-License-Identifier: GPL-2.0
++
++obj-$(CONFIG_INTEL_MIPS)	+= prom.o irq.o time.o
+diff --git a/arch/mips/intel-mips/Platform b/arch/mips/intel-mips/Platform
+new file mode 100644
+index 000000000000..b34750eeaeb0
+--- /dev/null
++++ b/arch/mips/intel-mips/Platform
+@@ -0,0 +1,11 @@
++#
++# MIPs SoC platform
++#
++
++platform-$(CONFIG_INTEL_MIPS)			+= intel-mips/
++cflags-$(CONFIG_INTEL_MIPS)			+= -I$(srctree)/arch/mips/include/asm/mach-intel-mips
++ifdef CONFIG_EVA
++	load-$(CONFIG_INTEL_MIPS)		= 0xffffffff60020000
++else
++	load-$(CONFIG_INTEL_MIPS)		= 0xffffffff80020000
++endif
+diff --git a/arch/mips/intel-mips/irq.c b/arch/mips/intel-mips/irq.c
+new file mode 100644
+index 000000000000..00637a5cdd20
+--- /dev/null
++++ b/arch/mips/intel-mips/irq.c
+@@ -0,0 +1,36 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ *  Copyright (C) 2016 Intel Corporation.
-+ *  Zhu YiXin <Yixin.zhu@intel.com>
-+ *
++ * Copyright (C) 2016 Intel Corporation.
++ */
++#include <linux/init.h>
++#include <linux/irqchip.h>
++#include <linux/of_irq.h>
++#include <asm/irq.h>
++
++#include <asm/irq_cpu.h>
++
++void __init arch_init_irq(void)
++{
++	struct device_node *intc_node;
++
++	pr_info("EIC is %s\n", cpu_has_veic ? "on" : "off");
++	pr_info("VINT is %s\n", cpu_has_vint ? "on" : "off");
++
++	intc_node = of_find_compatible_node(NULL, NULL,
++					    "mti,cpu-interrupt-controller");
++	if (!cpu_has_veic && !intc_node)
++		mips_cpu_irq_init();
++
++	irqchip_init();
++}
++
++int get_c0_perfcount_int(void)
++{
++	return gic_get_c0_perfcount_int();
++}
++EXPORT_SYMBOL_GPL(get_c0_perfcount_int);
++
++unsigned int get_c0_compare_int(void)
++{
++	return gic_get_c0_compare_int();
++}
+diff --git a/arch/mips/intel-mips/prom.c b/arch/mips/intel-mips/prom.c
+new file mode 100644
+index 000000000000..9407858ddc94
+--- /dev/null
++++ b/arch/mips/intel-mips/prom.c
+@@ -0,0 +1,184 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2014 Lei Chuanhua <Chuanhua.lei@lantiq.com>
++ * Copyright (C) 2016 Intel Corporation.
++ */
++#include <linux/init.h>
++#include <linux/export.h>
++#include <linux/of_platform.h>
++#include <linux/of_fdt.h>
++#include <linux/regmap.h>
++#include <linux/mfd/syscon.h>
++#include <asm/mips-cps.h>
++#include <asm/smp-ops.h>
++#include <asm/dma-coherence.h>
++#include <asm/prom.h>
++
++#define IOPORT_RESOURCE_START   0x10000000
++#define IOPORT_RESOURCE_END     0xffffffff
++#define IOMEM_RESOURCE_START    0x10000000
++#define IOMEM_RESOURCE_END      0xffffffff
++
++const char *get_system_type(void)
++{
++	return "Intel MIPS interAptiv SoC";
++}
++
++void prom_free_prom_memory(void)
++{
++}
++
++static void __init prom_init_cmdline(void)
++{
++	int i;
++	int argc;
++	char **argv;
++
++	/*
++	 * If u-boot pass parameters, it is ok, however, if without u-boot
++	 * JTAG or other tool has to reset all register value before it goes
++	 * emulation most likely belongs to this category
++	 */
++	if (fw_arg0 == 0 || fw_arg1 == 0)
++		return;
++
++	argc = fw_arg0;
++	argv = (char **)KSEG1ADDR(fw_arg1);
++
++	arcs_cmdline[0] = '\0';
++
++	for (i = 0; i < argc; i++) {
++		char *p = (char *)KSEG1ADDR(argv[i]);
++
++		if (argv[i] && *p) {
++			strlcat(arcs_cmdline, p, sizeof(arcs_cmdline));
++			strlcat(arcs_cmdline, " ", sizeof(arcs_cmdline));
++		}
++	}
++}
++
++static int __init plat_enable_iocoherency(void)
++{
++	int supported = 0;
++
++	if (mips_cps_numiocu(0) != 0) {
++		/* Nothing special needs to be done to enable coherency */
++		pr_info("Coherence Manager IOCU detected\n");
++		/* Second IOCU for MPE or other master access register */
++		write_gcr_reg0_base(0xa0000000);
++		write_gcr_reg0_mask(0xf8000000 | CM_GCR_REGn_MASK_CMTGT_IOCU1);
++		supported = 1;
++	}
++
++	/* hw_coherentio = supported; */
++
++	return supported;
++}
++
++static void __init plat_setup_iocoherency(void)
++{
++#ifdef CONFIG_DMA_NONCOHERENT
++	/*
++	 * Kernel has been configured with software coherency
++	 * but we might choose to turn it off and use hardware
++	 * coherency instead.
++	 */
++	if (plat_enable_iocoherency()) {
++		if (coherentio == IO_COHERENCE_DISABLED)
++			pr_info("Hardware DMA cache coherency disabled\n");
++		else
++			pr_info("Hardware DMA cache coherency enabled\n");
++	} else {
++		if (coherentio == IO_COHERENCE_ENABLED)
++			pr_info("Hardware DMA cache coherency unsupported, but enabled from command line!\n");
++		else
++			pr_info("Software DMA cache coherency enabled\n");
++	}
++#else
++	if (!plat_enable_iocoherency())
++		panic("Hardware DMA cache coherency not supported!");
++#endif
++}
++
++static void free_init_pages_eva_intel(void *begin, void *end)
++{
++	free_init_pages("unused kernel", __pa_symbol((unsigned long *)begin),
++			__pa_symbol((unsigned long *)end));
++}
++
++static void plat_early_init_devtree(void)
++{
++	void *dtb;
++
++	/*
++	 * Load the builtin devicetree. This causes the chosen node to be
++	 * parsed resulting in our memory appearing
++	 */
++	if (fw_passed_dtb) /* used by CONFIG_MIPS_APPENDED_RAW_DTB as well */
++		dtb = (void *)fw_passed_dtb;
++	else if (__dtb_start != __dtb_end)
++		dtb = (void *)__dtb_start;
++
++	if (dtb)
++		__dt_setup_arch(dtb);
++}
++
++void __init plat_mem_setup(void)
++{
++	ioport_resource.start = IOPORT_RESOURCE_START;
++	ioport_resource.end = ~0UL; /* No limit */
++	iomem_resource.start = IOMEM_RESOURCE_START;
++	iomem_resource.end = ~0UL; /* No limit */
++
++	set_io_port_base((unsigned long)KSEG1);
++
++	strlcpy(arcs_cmdline, boot_command_line, COMMAND_LINE_SIZE);
++
++	plat_early_init_devtree();
++	plat_setup_iocoherency();
++
++	if (IS_ENABLED(CONFIG_EVA))
++		free_init_pages_eva = free_init_pages_eva_intel;
++	else
++		free_init_pages_eva = 0;
++}
++
++void __init device_tree_init(void)
++{
++	if (!initial_boot_params)
++		return;
++
++	unflatten_and_copy_device_tree();
++}
++
++#define CPC_BASE_ADDR		0x12310000
++
++phys_addr_t mips_cpc_default_phys_base(void)
++{
++	return CPC_BASE_ADDR;
++}
++
++void __init prom_init(void)
++{
++	prom_init_cmdline();
++
++	mips_cpc_probe();
++
++	if (!register_cps_smp_ops())
++		return;
++
++	if (!register_cmp_smp_ops())
++		return;
++
++	if (!register_vsmp_smp_ops())
++		return;
++}
++
++static int __init plat_publish_devices(void)
++{
++	if (!of_have_populated_dt())
++		return 0;
++	return of_platform_populate(NULL, of_default_bus_match_table, NULL,
++				    NULL);
++}
++arch_initcall(plat_publish_devices);
+diff --git a/arch/mips/intel-mips/time.c b/arch/mips/intel-mips/time.c
+new file mode 100644
+index 000000000000..77ad4014fe9d
+--- /dev/null
++++ b/arch/mips/intel-mips/time.c
+@@ -0,0 +1,56 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2016 Intel Corporation.
 + */
 +
 +#include <linux/clk.h>
 +#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
++#include <linux/clocksource.h>
 +#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/slab.h>
-+#include <linux/spinlock.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/regmap.h>
 +
-+#include "clk-cgu-api.h"
++#include <asm/time.h>
 +
-+#define to_gate_clk(_hw) container_of(_hw, struct gate_clk, hw)
-+#define to_clk_gate_dummy(_hw) container_of(_hw, struct gate_dummy_clk, hw)
-+#define to_div_clk(_hw) container_of(_hw, struct div_clk, hw)
-+#define to_mux_clk(_hw) container_of(_hw, struct mux_clk, hw)
-+
-+static void set_clk_val(struct regmap *map, u32 reg, u8 shift,
-+			u8 width, u32 set_val)
++static inline u32 get_counter_resolution(void)
 +{
-+	u32 mask = GENMASK(width + shift, shift);
++	u32 res;
 +
-+	regmap_update_bits(map, reg, mask,
-+			   (set_val << shift));
++	__asm__ __volatile__(".set	push\n"
++			     ".set	mips32r2\n"
++			     "rdhwr	%0, $3\n"
++			     ".set pop\n"
++			     : "=&r" (res)
++			     : /* no input */
++			     : "memory");
++
++	return res;
 +}
 +
-+static u32 get_clk_val(struct regmap *map, u32 reg, u8 shift,
-+		       u8 width)
++void __init plat_time_init(void)
 +{
-+	u32 val;
-+
-+	regmap_read(map, reg, &val);
-+	val >>= shift;
-+	val &= (BIT(width) - 1);
-+
-+	return val;
-+}
-+
-+static struct regmap *regmap_from_node(struct device_node *np)
-+{
-+	struct regmap *map;
-+
-+	for ( ; np; ) {
-+		np = of_get_parent(np);
-+		if (!np)
-+			return ERR_PTR(-EINVAL);
-+
-+		map = syscon_node_to_regmap(np);
-+		if (!IS_ERR(map))
-+			return map;
-+	}
-+
-+	return ERR_PTR(-EINVAL);
-+}
-+
-+#define GATE_STAT_REG(reg)	(reg)
-+#define GATE_EN_REG(reg)	((reg) + 0x4)
-+#define GATE_DIS_REG(reg)	((reg) + 0x8)
-+
-+static int get_gate(struct regmap *map, u32 reg, u8 shift)
-+{
-+	unsigned int val;
-+
-+	regmap_read(map, GATE_STAT_REG(reg), &val);
-+
-+	return !!(val & BIT(shift));
-+}
-+
-+static void set_gate(struct regmap *map, u32 reg, u8 shift, int enable)
-+{
-+	if (enable)
-+		regmap_write(map, GATE_EN_REG(reg), BIT(shift));
-+	else
-+		regmap_write(map, GATE_DIS_REG(reg), BIT(shift));
-+}
-+
-+void
-+intel_fixed_rate_clk_setup(struct device_node *node,
-+			   const struct fixed_rate_clk_data *data)
-+{
++	unsigned long cpuclk;
++	struct device_node *np;
 +	struct clk *clk;
-+	const char *clk_name = node->name;
-+	unsigned long rate;
-+	struct regmap *regmap;
-+	u32 reg;
 +
-+	if (!data)
-+		return;
++	of_clk_init(NULL);
 +
-+	if (of_property_read_string(node, "clock-output-names", &clk_name))
-+		return;
-+
-+	if (of_property_read_u32(node, "clock-frequency", (u32 *)&rate))
-+		rate = data->fixed_rate;
-+	if (!rate) {
-+		pr_err("clk(%s): Could not get fixed rate\n", clk_name);
++	np = of_get_cpu_node(0, NULL);
++	if (!np) {
++		pr_err("Failed to get CPU node\n");
 +		return;
 +	}
 +
-+	regmap = regmap_from_node(node);
-+	if (IS_ERR(regmap))
-+		return;
-+
-+	/* Register the fixed rate clock */
-+	clk = clk_register_fixed_rate(NULL, clk_name, NULL, 0, rate);
-+	if (IS_ERR(clk))
-+		return;
-+
-+	/* Clock init */
-+	if (of_property_read_u32(node, "reg", &reg)) {
-+		pr_err("%s no reg definition\n", node->name);
-+		return;
-+	}
-+
-+	set_clk_val(regmap, reg, data->shift, data->width, data->setval);
-+
-+	/* Register clock provider */
-+	of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+}
-+
-+static int gate_clk_enable(struct clk_hw *hw)
-+{
-+	struct gate_clk *clk;
-+
-+	clk = to_gate_clk(hw);
-+	set_gate(clk->map, clk->reg, clk->bit_idx, 1);
-+	return 0;
-+}
-+
-+static void gate_clk_disable(struct clk_hw *hw)
-+{
-+	struct gate_clk *clk;
-+
-+	clk = to_gate_clk(hw);
-+	set_gate(clk->map, clk->reg, clk->bit_idx, 0);
-+}
-+
-+static int gate_clk_is_enabled(struct clk_hw *hw)
-+{
-+	struct gate_clk *clk;
-+
-+	clk = to_gate_clk(hw);
-+	return get_gate(clk->map, clk->reg, clk->bit_idx);
-+}
-+
-+static const struct clk_ops gate_clk_ops = {
-+	.enable = gate_clk_enable,
-+	.disable = gate_clk_disable,
-+	.is_enabled = gate_clk_is_enabled,
-+};
-+
-+static struct clk *gate_clk_register(struct device *dev, const char *name,
-+				     const char *parent_name,
-+				     unsigned long flags,
-+				     struct regmap *map, unsigned int reg,
-+				     u8 bit_idx, unsigned int clk_gate_flags)
-+{
-+	struct gate_clk *gate;
-+	struct clk *clk;
-+	struct clk_init_data init;
-+
-+	/* Allocate the gate */
-+	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-+	if (!gate)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &gate_clk_ops;
-+	init.flags = flags | CLK_IS_BASIC;
-+	init.parent_names = (parent_name ? &parent_name : NULL);
-+	init.num_parents = (parent_name ? 1 : 0);
-+
-+	/* Struct gate_clk assignments */
-+	gate->map = map;
-+	gate->reg = reg;
-+	gate->bit_idx = bit_idx;
-+	gate->flags = clk_gate_flags;
-+	gate->hw.init = &init;
-+
-+	clk = clk_register(dev, &gate->hw);
++	clk = of_clk_get(np, 0);
 +	if (IS_ERR(clk)) {
-+		pr_err("0x%4x %d %s %d %d %s\n", (u32)reg, init.num_parents,
-+		       parent_name, bit_idx, clk_gate_flags, name);
-+		kfree(gate);
-+	}
-+
-+	return clk;
-+}
-+
-+void
-+intel_gate_clk_setup(struct device_node *node, const struct gate_clk_data *data)
-+{
-+	struct clk_onecell_data *clk_data;
-+	const char *clk_parent;
-+	const char *clk_name = node->name;
-+	struct regmap *regmap;
-+	unsigned int reg;
-+	int i, j, num;
-+	unsigned int val;
-+
-+	if (!data || !data->reg_size) {
-+		pr_err("%s: register bit size cannot be 0!\n", __func__);
++		pr_err("Failed to get CPU clock: %ld\n", PTR_ERR(clk));
 +		return;
 +	}
 +
-+	regmap = regmap_from_node(node);
-+	if (IS_ERR(regmap))
-+		return;
++	cpuclk = clk_get_rate(clk);
++	mips_hpt_frequency = cpuclk / get_counter_resolution();
++	clk_put(clk);
 +
-+	if (of_property_read_u32(node, "reg", &reg)) {
-+		pr_err("%s no reg definition\n", node->name);
-+		return;
-+	}
-+
-+	clk_parent = of_clk_get_parent_name(node, 0);
-+
-+	/* Size probe and memory allocation */
-+	num = find_last_bit(&data->mask, data->reg_size);
-+	clk_data = kmalloc(sizeof(*clk_data), GFP_KERNEL);
-+	if (!clk_data)
-+		return;
-+
-+	clk_data->clks = kcalloc(num + 1, sizeof(struct clk *), GFP_KERNEL);
-+	if (!clk_data->clks)
-+		goto __clkarr_alloc_fail;
-+
-+	i = 0;
-+	j = 0;
-+	for_each_set_bit(i, &data->mask, data->reg_size) {
-+		of_property_read_string_index(node, "clock-output-names",
-+					      j, &clk_name);
-+
-+		clk_data->clks[j] = gate_clk_register(NULL, clk_name,
-+						      clk_parent, 0, regmap,
-+						      reg, i, 0);
-+		WARN_ON(IS_ERR(clk_data->clks[j]));
-+
-+		j++;
-+	}
-+
-+	/* Adjust to the real max */
-+	clk_data->clk_num = num + 1;
-+
-+	/* Initial gate default setting */
-+	if (data->flags & CLK_INIT_DEF_CFG_REQ) {
-+		val = (unsigned int)data->def_onoff;
-+		if (val)
-+			regmap_write(regmap, GATE_EN_REG(reg), val);
-+		val = (((unsigned int)(~data->def_onoff)) & data->mask);
-+		if (val)
-+			regmap_write(regmap, GATE_DIS_REG(reg), val);
-+	}
-+
-+	/* Register to clock provider */
-+	of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-+	return;
-+
-+__clkarr_alloc_fail:
-+	kfree(clk_data);
++	write_c0_compare(read_c0_count());
++	pr_info("CPU Clock: %ldHz  mips_hpt_frequency %dHz\n",
++		cpuclk, mips_hpt_frequency);
++	timer_probe();
 +}
-+
-+static unsigned long div_recalc_rate(struct div_clk *div,
-+				     unsigned long parent_rate,
-+				     unsigned int val)
-+{
-+	return divider_recalc_rate(&div->hw, parent_rate,
-+			val, div->div_table, div->flags, div->width);
-+}
-+
-+static unsigned long div_clk_recalc_rate(struct clk_hw *hw,
-+					 unsigned long parent_rate)
-+{
-+	struct div_clk *div = to_div_clk(hw);
-+	unsigned int val;
-+
-+	val = get_clk_val(div->map, div->reg, div->shift, div->width);
-+
-+	return div_recalc_rate(div, parent_rate, val);
-+}
-+
-+static long div_clk_round_rate(struct clk_hw *hw,
-+			       unsigned long rate, unsigned long *prate)
-+{
-+	struct div_clk *div = to_div_clk(hw);
-+
-+	return divider_round_rate(hw, rate, prate,
-+				  div->div_table, div->width, div->flags);
-+}
-+
-+static int div_set_rate(struct div_clk *div, unsigned long rate,
-+			unsigned long parent_rate)
-+{
-+	unsigned int val;
-+
-+	val = divider_get_val(rate, parent_rate, div->div_table,
-+			      div->width, div->flags);
-+	set_clk_val(div->map, div->reg, div->shift, div->width, val);
-+
-+	return 0;
-+}
-+
-+static int div_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-+			    unsigned long parent_rate)
-+{
-+	struct div_clk *div = to_div_clk(hw);
-+
-+	return div_set_rate(div, rate, parent_rate);
-+}
-+
-+static const struct clk_ops clk_div_ops = {
-+	.recalc_rate = div_clk_recalc_rate,
-+	.round_rate = div_clk_round_rate,
-+	.set_rate = div_clk_set_rate,
-+};
-+
-+static struct clk *div_clk_register(struct device *dev, const char *name,
-+				    const char *parent_name,
-+				    unsigned long flags,
-+				    struct regmap *map, unsigned int reg,
-+				    const struct div_clk_data *data)
-+{
-+	struct div_clk *div;
-+	struct clk *clk;
-+	struct clk_init_data init;
-+
-+	/* Allocate the divider clock*/
-+	div = kzalloc(sizeof(*div), GFP_KERNEL);
-+	if (!div)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &clk_div_ops;
-+	init.flags = flags | CLK_IS_BASIC;
-+	init.parent_names = (parent_name ? &parent_name : NULL);
-+	init.num_parents = (parent_name ? 1 : 0);
-+
-+	/* Struct clk_divider assignments */
-+	div->map = map;
-+	div->reg = reg;
-+	div->shift = data->shift;
-+	div->width = data->width;
-+	div->flags = data->flags;
-+	div->div_table = data->div_table;
-+	div->hw.init = &init;
-+	div->tbl_sz = data->tbl_sz;
-+
-+	/* Register the clock */
-+	clk = clk_register(dev, &div->hw);
-+	if (IS_ERR(clk))
-+		kfree(div);
-+
-+	return clk;
-+}
-+
-+void
-+intel_div_clk_setup(struct device_node *node, const struct div_clk_data *data)
-+{
-+	struct clk *clk;
-+	const char *clk_name = node->name;
-+	const char *clk_parent;
-+	struct regmap *map;
-+	unsigned int reg;
-+
-+	if (!data)
-+		return;
-+
-+	map = regmap_from_node(node);
-+	if (IS_ERR(map))
-+		return;
-+
-+	if (of_property_read_u32(node, "reg", &reg)) {
-+		pr_err("%s no reg definition\n", node->name);
-+		return;
-+	}
-+
-+	if (of_property_read_string(node, "clock-output-names", &clk_name))
-+		return;
-+	clk_parent = of_clk_get_parent_name(node, 0);
-+
-+	clk = div_clk_register(NULL, clk_name, clk_parent, 0, map, reg, data);
-+	if (IS_ERR(clk))
-+		return;
-+
-+	of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+}
-+
-+void
-+intel_cluster_div_clk_setup(struct device_node *node,
-+			    const struct div_clk_data *data, u32 num)
-+{
-+	struct clk_onecell_data *clk_data;
-+	const char *clk_name;
-+	const char *clk_parent;
-+	struct regmap *regmap;
-+	unsigned int reg;
-+	int i;
-+
-+	if (!data || !num) {
-+		pr_err("%s: invalid array or array size!\n", __func__);
-+		return;
-+	}
-+
-+	regmap = regmap_from_node(node);
-+	if (IS_ERR(regmap))
-+		return;
-+
-+	if (of_property_read_u32(node, "reg", &reg)) {
-+		pr_err("%s no reg definition\n", node->name);
-+		return;
-+	}
-+
-+	clk_data = kmalloc(sizeof(*clk_data), GFP_KERNEL);
-+	if (!clk_data)
-+		return;
-+	clk_data->clks = kcalloc(num, sizeof(struct clk *), GFP_KERNEL);
-+	if (!clk_data->clks)
-+		goto __clkarr_alloc_fail;
-+
-+	clk_parent = of_clk_get_parent_name(node, 0);
-+
-+	for (i = 0; i < num; i++) {
-+		of_property_read_string_index(node, "clock-output-names",
-+					      i, &clk_name);
-+		clk_data->clks[i] = div_clk_register(NULL, clk_name, clk_parent,
-+						     0, regmap, reg, &data[i]);
-+		WARN_ON(IS_ERR(clk_data->clks[i]));
-+	}
-+	clk_data->clk_num = num + 1;
-+
-+	of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-+	return;
-+
-+__clkarr_alloc_fail:
-+	kfree(clk_data);
-+}
-+
-+static unsigned int mux_parent_from_table(const u32 *table,
-+					  unsigned int val, unsigned int num)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < num; i++)
-+		if (table[i] == val)
-+			return i;
-+
-+	return -EINVAL;
-+}
-+
-+static u8 mux_clk_get_parent(struct clk_hw *hw)
-+{
-+	struct mux_clk *mux = to_mux_clk(hw);
-+	int num_parents = clk_hw_get_num_parents(hw);
-+	unsigned int val;
-+
-+	val = get_clk_val(mux->map, mux->reg, mux->shift, mux->width);
-+	if (mux->table)
-+		return mux_parent_from_table(mux->table, val, num_parents);
-+
-+	if (val && (mux->flags & CLK_MUX_INDEX_BIT))
-+		val = ffs(val) - 1;
-+	if (val && (mux->flags & CLK_MUX_INDEX_ONE))
-+		val -= 1;
-+	if (val >= num_parents)
-+		return -EINVAL;
-+
-+	return val;
-+}
-+
-+static int mux_clk_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct mux_clk *mux = to_mux_clk(hw);
-+
-+	if (mux->table) {
-+		index = mux->table[index];
-+	} else {
-+		if (mux->flags & CLK_MUX_INDEX_BIT)
-+			index = BIT(index);
-+		if (mux->flags & CLK_MUX_INDEX_ONE)
-+			index += 1;
-+	}
-+
-+	set_clk_val(mux->map, mux->reg, mux->shift, mux->width, index);
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops mux_clk_ops = {
-+	.get_parent = mux_clk_get_parent,
-+	.set_parent = mux_clk_set_parent,
-+	.determine_rate = __clk_mux_determine_rate,
-+};
-+
-+static struct clk *mux_clk_register(struct device *dev, const char *name,
-+				    const char * const *parent_names,
-+				    u8 num_parents, unsigned long flags,
-+				    struct regmap *map, unsigned int reg,
-+				    const struct mux_clk_data *data)
-+{
-+	struct mux_clk *mux;
-+	struct clk_init_data init;
-+	struct clk *clk;
-+
-+	/* allocate mux clk */
-+	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
-+	if (!mux)
-+		return ERR_PTR(-ENOMEM);
-+
-+	/* struct init assignments */
-+	init.name = name;
-+	init.flags = flags | CLK_IS_BASIC;
-+	init.parent_names = parent_names;
-+	init.num_parents = num_parents;
-+	init.ops = &mux_clk_ops;
-+
-+	/* struct mux_clk assignments */
-+	mux->map = map;
-+	mux->reg = reg;
-+	mux->shift = data->shift;
-+	mux->width = data->width;
-+	mux->flags = data->clk_flags;
-+	mux->table = data->table;
-+	mux->hw.init = &init;
-+
-+	clk = clk_register(dev, &mux->hw);
-+	if (IS_ERR(clk))
-+		kfree(mux);
-+
-+	return clk;
-+}
-+
-+void
-+intel_mux_clk_setup(struct device_node *node, const struct mux_clk_data *data)
-+{
-+	struct clk *clk;
-+	const char *clk_name;
-+	const char **parents;
-+	unsigned int num_parents;
-+	struct regmap *map;
-+	unsigned int reg;
-+
-+	if (!data)
-+		return;
-+
-+	map = regmap_from_node(node);
-+	if (IS_ERR(map))
-+		return;
-+
-+	if (of_property_read_string(node, "clock-output-names", &clk_name)) {
-+		pr_err("%s: no output clock name!\n", node->name);
-+		return;
-+	}
-+
-+	if (of_property_read_u32(node, "reg", &reg)) {
-+		pr_err("%s no reg definition\n", node->name);
-+		return;
-+	}
-+
-+	num_parents = of_clk_get_parent_count(node);
-+	if (num_parents) {
-+		parents = kmalloc_array(num_parents,
-+					sizeof(char *), GFP_KERNEL);
-+		if (!parents)
-+			return;
-+		of_clk_parent_fill(node, parents, num_parents);
-+	} else {
-+		pr_err("%s: mux clk no parent!\n", __func__);
-+		return;
-+	}
-+
-+	clk = mux_clk_register(NULL, clk_name, parents, num_parents,
-+			       data->flags, map, reg, data);
-+	if (IS_ERR(clk))
-+		goto __mux_clk_fail;
-+
-+	of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+	return;
-+
-+__mux_clk_fail:
-+	kfree(parents);
-+}
-+
-+static int gate_clk_dummy_enable(struct clk_hw *hw)
-+{
-+	struct gate_dummy_clk *clk;
-+
-+	clk = to_clk_gate_dummy(hw);
-+	clk->clk_status = 1;
-+
-+	return 0;
-+}
-+
-+static void gate_clk_dummy_disable(struct clk_hw *hw)
-+{
-+	struct gate_dummy_clk *clk;
-+
-+	clk = to_clk_gate_dummy(hw);
-+	clk->clk_status = 0;
-+}
-+
-+static int gate_clk_dummy_is_enabled(struct clk_hw *hw)
-+{
-+	struct gate_dummy_clk *clk;
-+
-+	clk = to_clk_gate_dummy(hw);
-+	return clk->clk_status;
-+}
-+
-+static const struct clk_ops clk_gate_dummy_ops = {
-+	.enable = gate_clk_dummy_enable,
-+	.disable = gate_clk_dummy_disable,
-+	.is_enabled = gate_clk_dummy_is_enabled,
-+};
-+
-+static struct clk
-+*clk_register_gate_dummy(struct device *dev,
-+			 const char *name,
-+			 const char *parent_name,
-+			 unsigned long flags,
-+			 const struct gate_dummy_clk_data *data)
-+{
-+	struct gate_dummy_clk *gate_clk;
-+	struct clk *clk;
-+	struct clk_init_data init;
-+
-+	/* Allocate the gate_dummy clock*/
-+	gate_clk = kzalloc(sizeof(*gate_clk), GFP_KERNEL);
-+	if (!gate_clk)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &clk_gate_dummy_ops;
-+	init.flags = flags | CLK_IS_BASIC;
-+	init.parent_names = (parent_name ? &parent_name : NULL);
-+	init.num_parents = (parent_name ? 1 : 0);
-+	gate_clk->hw.init = &init;
-+
-+	/* Struct gate_clk assignments */
-+	if (data->flags & CLK_INIT_DEF_CFG_REQ)
-+		gate_clk->clk_status = data->def_val & 0x1;
-+
-+	/* Register the clock */
-+	clk = clk_register(dev, &gate_clk->hw);
-+	if (IS_ERR(clk))
-+		kfree(gate_clk);
-+
-+	return clk;
-+}
-+
-+void
-+intel_gate_dummy_clk_setup(struct device_node *node,
-+			   const struct gate_dummy_clk_data *data)
-+{
-+	struct clk *clk;
-+	const char *clk_name = node->name;
-+
-+	if (!data)
-+		return;
-+
-+	if (of_property_read_string(node, "clock-output-names", &clk_name))
-+		return;
-+
-+	clk = clk_register_gate_dummy(NULL, clk_name, NULL, 0, data);
-+	if (IS_ERR(clk)) {
-+		pr_err("%s: dummy gate clock register fail!\n", __func__);
-+		return;
-+	}
-+
-+	of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+}
-diff --git a/drivers/clk/intel/clk-cgu-api.h b/drivers/clk/intel/clk-cgu-api.h
-new file mode 100644
-index 000000000000..3a8d7e47ba58
---- /dev/null
-+++ b/drivers/clk/intel/clk-cgu-api.h
-@@ -0,0 +1,120 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __INTEL_CLK_API_H
-+#define __INTEL_CLK_API_H
-+
-+/*
-+ *  Copyright(c) 2016 Intel Corporation.
-+ *  Zhu YiXin <Yixin.zhu@intel.com>
-+ *
-+ */
-+
-+struct div_clk_data {
-+	u8 shift;
-+	u8 width;
-+	const unsigned int tbl_sz;
-+	const struct clk_div_table *div_table;
-+	unsigned long flags;
-+};
-+
-+struct mux_clk_data {
-+	u8 shift;
-+	u8 width;
-+	const u32 *table;
-+	unsigned long flags;
-+	unsigned long clk_flags;
-+};
-+
-+struct gate_clk_data {
-+	unsigned long mask;
-+	unsigned long def_onoff;
-+	u8 reg_size;
-+	unsigned long flags;
-+};
-+
-+struct gate_dummy_clk_data {
-+	unsigned int def_val;
-+	unsigned long flags;
-+};
-+
-+struct fixed_rate_clk_data {
-+	u8 shift;
-+	u8 width;
-+	unsigned long fixed_rate;
-+	unsigned int setval;
-+};
-+
-+struct gate_dummy_clk {
-+	struct clk_hw hw;
-+	unsigned int clk_status;
-+};
-+
-+struct div_clk {
-+	struct clk_hw hw;
-+	struct regmap *map;
-+	unsigned int reg;
-+	u8 shift;
-+	u8 width;
-+	unsigned int flags;
-+	const struct clk_div_table *div_table;
-+	unsigned int tbl_sz;
-+};
-+
-+struct gate_clk {
-+	struct clk_hw hw;
-+	struct regmap *map;
-+	unsigned int reg;
-+	u8 bit_idx;
-+	unsigned int flags;
-+};
-+
-+struct mux_clk {
-+	struct clk_hw hw;
-+	struct regmap *map;
-+	unsigned int reg;
-+	const u32 *table;
-+	u8 shift;
-+	u8 width;
-+	unsigned int flags;
-+};
-+
-+/**
-+ * struct clk_fixed_factor_frac - fixed multiplier/divider/fraction clock
-+ *
-+ * @hw:		handle between common and hardware-specific interfaces
-+ * @mult:	multiplier(N)
-+ * @div:	divider(M)
-+ * @frac:	fraction(K)
-+ * @frac_div:	fraction divider(D)
-+ *
-+ * Clock with a fixed multiplier, divider and fraction.
-+ * The output frequency formula is clk = parent clk * (N+K/D)/M.
-+ * Implements .recalc_rate, .set_rate and .round_rate
-+ */
-+
-+struct clk_fixed_factor_frac {
-+	struct clk_hw	hw;
-+	unsigned int	mult;
-+	unsigned int	div;
-+	unsigned int	frac;
-+	unsigned int	frac_div;
-+};
-+
-+#define INTEL_FIXED_FACTOR_PLLCLK	"intel,fixed-factor-pllclk"
-+#define INTEL_FIXED_FACTOR_FRAC_PLLCLK	"intel,fixed-factor-frac-pllclk"
-+
-+#define CLK_INIT_DEF_CFG_REQ		BIT(0)
-+
-+void intel_gate_clk_setup(struct device_node *np,
-+			  const struct gate_clk_data *data);
-+void intel_mux_clk_setup(struct device_node *np,
-+			 const struct mux_clk_data *data);
-+void intel_fixed_rate_clk_setup(struct device_node *np,
-+				const struct fixed_rate_clk_data *data);
-+void intel_div_clk_setup(struct device_node *np,
-+			 const struct div_clk_data *data);
-+void intel_gate_dummy_clk_setup(struct device_node *np,
-+				const struct gate_dummy_clk_data *data);
-+void intel_cluster_div_clk_setup(struct device_node *np,
-+				 const struct div_clk_data *data, u32 num);
-+
-+#endif /* __INTEL_CLK_API_H */
-diff --git a/drivers/clk/intel/clk-grx500.c b/drivers/clk/intel/clk-grx500.c
-new file mode 100644
-index 000000000000..c61b7ba06758
---- /dev/null
-+++ b/drivers/clk/intel/clk-grx500.c
-@@ -0,0 +1,236 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ *  Copyright (C) 2016 Intel Corporation.
-+ *  Zhu YiXin <Yixin.zhu@intel.com>
-+ *
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/spinlock.h>
-+#include <dt-bindings/clock/intel,grx500-clk.h>
-+#include "clk-cgu-api.h"
-+
-+/* Intel GRX500 CGU device tree "compatible" strings */
-+#define INTEL_GRX500_DT_PLL0A_CLK	"intel,grx500-pll0a-clk"
-+#define INTEL_GRX500_DT_PLL0B_CLK	"intel,grx500-pll0b-clk"
-+#define INTEL_GRX500_DT_PCIE_CLK	"intel,grx500-pcie-clk"
-+#define INTEL_GRX500_DT_CPU_CLK		"intel,grx500-cpu-clk"
-+#define INTEL_GRX500_DT_GATE0_CLK	"intel,grx500-gate0-clk"
-+#define INTEL_GRX500_DT_GATE1_CLK	"intel,grx500-gate1-clk"
-+#define INTEL_GRX500_DT_GATE2_CLK	"intel,grx500-gate2-clk"
-+#define INTEL_GRX500_DT_VOICE_CLK	"intel,grx500-voice-clk"
-+#define INTEL_GRX500_DT_GATE_I2C_CLK	"intel,grx500-gate-dummy-clk"
-+
-+/* clock shift and width */
-+#define CBM_CLK_SHIFT		0
-+#define CBM_CLK_WIDTH		4
-+#define NGI_CLK_SHIFT		4
-+#define NGI_CLK_WIDTH		4
-+#define SSX4_CLK_SHIFT		8
-+#define SSX4_CLK_WIDTH		4
-+#define CPU0_CLK_SHIFT		12
-+#define CPU0_CLK_WIDTH		4
-+
-+#define PAE_CLK_SHIFT		0
-+#define PAE_CLK_WIDTH		4
-+#define GSWIP_CLK_SHIFT		4
-+#define GSWIP_CLK_WIDTH		4
-+#define DDR_CLK_SHIFT		8
-+#define DDR_CLK_WIDTH		4
-+#define CPU1_CLK_SHIFT		12
-+#define CPU1_CLK_WIDTH		4
-+
-+#define PCIE_CLK_SHIFT		12
-+#define PCIE_CLK_WIDTH		2
-+
-+#define CPU_CLK_SHIFT		29
-+#define CPU_CLK_WIDTH		1
-+
-+#define VOICE_CLK_SHIFT		14
-+#define VOICE_CLK_WIDTH		2
-+
-+/* Gate clock mask */
-+#define GATE0_CLK_MASK		0xCF
-+#define GATE1_CLK_MASK		0x1EF27FE4
-+#define GATE2_CLK_MASK		0x2020002
-+
-+static const struct clk_div_table pll_div[] = {
-+	{1,	2},
-+	{2,	3},
-+	{3,	4},
-+	{4,	5},
-+	{5,	6},
-+	{6,	8},
-+	{7,	10},
-+	{8,	12},
-+	{9,	16},
-+	{10,	20},
-+	{11,	24},
-+	{12,	32},
-+	{13,	40},
-+	{14,	48},
-+	{15,	64}
-+};
-+
-+static const struct gate_dummy_clk_data grx500_clk_gate_i2c_data __initconst = {
-+	0
-+};
-+
-+static void __init grx500_clk_gate_i2c_setup(struct device_node *node)
-+{
-+	intel_gate_dummy_clk_setup(node, &grx500_clk_gate_i2c_data);
-+}
-+
-+CLK_OF_DECLARE(grx500_gatei2cclk, INTEL_GRX500_DT_GATE_I2C_CLK,
-+	       grx500_clk_gate_i2c_setup);
-+
-+static const struct fixed_rate_clk_data grx500_clk_voice_data __initconst = {
-+	.shift = VOICE_CLK_SHIFT,
-+	.width = VOICE_CLK_WIDTH,
-+	.setval = 0x2,
-+};
-+
-+static void __init grx500_clk_voice_setup(struct device_node *node)
-+{
-+	intel_fixed_rate_clk_setup(node, &grx500_clk_voice_data);
-+}
-+
-+CLK_OF_DECLARE(grx500_voiceclk, INTEL_GRX500_DT_VOICE_CLK,
-+	       grx500_clk_voice_setup);
-+
-+static const struct gate_clk_data grx500_clk_gate2_data __initconst = {
-+	.mask = GATE2_CLK_MASK,
-+	.reg_size = 32,
-+};
-+
-+static void __init grx500_clk_gate2_setup(struct device_node *node)
-+{
-+	intel_gate_clk_setup(node, &grx500_clk_gate2_data);
-+}
-+
-+CLK_OF_DECLARE(grx500_gate2clk, INTEL_GRX500_DT_GATE2_CLK,
-+	       grx500_clk_gate2_setup);
-+
-+static const struct gate_clk_data grx500_clk_gate1_data __initconst = {
-+	.mask = GATE1_CLK_MASK,
-+	.def_onoff = 0x14000600,
-+	.reg_size = 32,
-+	.flags = CLK_INIT_DEF_CFG_REQ,
-+};
-+
-+static void __init grx500_clk_gate1_setup(struct device_node *node)
-+{
-+	intel_gate_clk_setup(node, &grx500_clk_gate1_data);
-+}
-+
-+CLK_OF_DECLARE(grx500_gate1clk, INTEL_GRX500_DT_GATE1_CLK,
-+	       grx500_clk_gate1_setup);
-+
-+static const struct gate_clk_data grx500_clk_gate0_data __initconst = {
-+	.mask = GATE0_CLK_MASK,
-+	.def_onoff = GATE0_CLK_MASK,
-+	.reg_size = 32,
-+	.flags = CLK_INIT_DEF_CFG_REQ,
-+};
-+
-+static void __init grx500_clk_gate0_setup(struct device_node *node)
-+{
-+	intel_gate_clk_setup(node, &grx500_clk_gate0_data);
-+}
-+
-+CLK_OF_DECLARE(grx500_gate0clk, INTEL_GRX500_DT_GATE0_CLK,
-+	       grx500_clk_gate0_setup);
-+
-+static const struct mux_clk_data grx500_clk_cpu_data __initconst = {
-+	.shift = CPU_CLK_SHIFT,
-+	.width = CPU_CLK_WIDTH,
-+	.flags = CLK_SET_RATE_PARENT,
-+};
-+
-+static void __init grx500_clk_cpu_setup(struct device_node *node)
-+{
-+	intel_mux_clk_setup(node, &grx500_clk_cpu_data);
-+}
-+
-+CLK_OF_DECLARE(grx500_cpuclk, INTEL_GRX500_DT_CPU_CLK,
-+	       grx500_clk_cpu_setup);
-+
-+static const struct div_clk_data grx500_clk_pcie_data __initconst = {
-+	.shift = PCIE_CLK_SHIFT,
-+	.width = PCIE_CLK_WIDTH,
-+	.div_table = pll_div,
-+};
-+
-+static void __init grx500_clk_pcie_setup(struct device_node *node)
-+{
-+	intel_div_clk_setup(node, &grx500_clk_pcie_data);
-+}
-+
-+CLK_OF_DECLARE(grx500_pcieclk, INTEL_GRX500_DT_PCIE_CLK,
-+	       grx500_clk_pcie_setup);
-+
-+static const struct div_clk_data grx500_clk_pll0b[] __initconst = {
-+	{
-+		.shift = PAE_CLK_SHIFT,
-+		.width = PAE_CLK_WIDTH,
-+		.div_table = pll_div,
-+	},
-+	{
-+		.shift = GSWIP_CLK_SHIFT,
-+		.width = GSWIP_CLK_WIDTH,
-+		.div_table = pll_div,
-+	},
-+	{
-+		.shift = DDR_CLK_SHIFT,
-+		.width = DDR_CLK_WIDTH,
-+		.div_table = pll_div,
-+	},
-+	{
-+		.shift = CPU1_CLK_SHIFT,
-+		.width = CPU1_CLK_WIDTH,
-+		.div_table = pll_div,
-+	},
-+};
-+
-+static void __init grx500_clk_pll0b_setup(struct device_node *node)
-+{
-+	intel_cluster_div_clk_setup(node, grx500_clk_pll0b,
-+				    ARRAY_SIZE(grx500_clk_pll0b));
-+}
-+
-+CLK_OF_DECLARE(grx500_pll0bclk, INTEL_GRX500_DT_PLL0B_CLK,
-+	       grx500_clk_pll0b_setup);
-+
-+static const struct div_clk_data grx500_clk_pll0a[] __initconst = {
-+	{
-+		.shift = CBM_CLK_SHIFT,
-+		.width = CBM_CLK_WIDTH,
-+		.div_table = pll_div,
-+	},
-+	{
-+		.shift = NGI_CLK_SHIFT,
-+		.width = NGI_CLK_WIDTH,
-+		.div_table = pll_div,
-+	},
-+	{
-+		.shift = SSX4_CLK_SHIFT,
-+		.width = SSX4_CLK_WIDTH,
-+		.div_table = pll_div,
-+	},
-+	{
-+		.shift = CPU0_CLK_SHIFT,
-+		.width = CPU0_CLK_WIDTH,
-+		.div_table = pll_div,
-+	},
-+};
-+
-+static void __init grx500_clk_pll0a_setup(struct device_node *node)
-+{
-+	intel_cluster_div_clk_setup(node, grx500_clk_pll0a,
-+				    ARRAY_SIZE(grx500_clk_pll0a));
-+}
-+
-+CLK_OF_DECLARE(grx500_pll0aclk, INTEL_GRX500_DT_PLL0A_CLK,
-+	       grx500_clk_pll0a_setup);
-diff --git a/include/dt-bindings/clock/intel,grx500-clk.h b/include/dt-bindings/clock/intel,grx500-clk.h
-new file mode 100644
-index 000000000000..eb1114636504
---- /dev/null
-+++ b/include/dt-bindings/clock/intel,grx500-clk.h
-@@ -0,0 +1,61 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ *  Copyright (C) 2016 Intel Corporation.
-+ *  Zhu YiXin <Yixin.zhu@intel.com>
-+ *
-+ */
-+
-+#ifndef __INTEL_GRX500_CLK_H
-+#define __INTEL_GRX500_CLK_H
-+
-+/* clocks under pll0a-clk */
-+#define CBM_CLK			0
-+#define NGI_CLK			1
-+#define SSX4_CLK		2
-+#define CPU0_CLK		3
-+
-+/* clocks under pll0b-clk */
-+#define PAE_CLK			0
-+#define GSWIP_CLK		1
-+#define DDR_CLK			2
-+#define CPU1_CLK		3
-+
-+/* clocks under lcpll-clk */
-+#define GRX500_PCIE_CLK		0
-+
-+/* clocks under gate0-clk */
-+#define GATE_XBAR0_CLK		0
-+#define GATE_XBAR1_CLK		1
-+#define GATE_XBAR2_CLK		2
-+#define GATE_XBAR3_CLK		3
-+#define GATE_XBAR6_CLK		4
-+#define GATE_XBAR7_CLK		5
-+
-+/* clocks under gate1-clk */
-+#define GATE_V_CODEC_CLK	0
-+#define GATE_DMA0_CLK		1
-+#define GATE_USB0_CLK		2
-+#define GATE_SPI1_CLK		3
-+#define GATE_SPI0_CLK		4
-+#define GATE_CBM_CLK		5
-+#define GATE_EBU_CLK		6
-+#define GATE_SSO_CLK		7
-+#define GATE_GPTC0_CLK		8
-+#define GATE_GPTC1_CLK		9
-+#define GATE_GPTC2_CLK		10
-+#define GATE_URT_CLK		11
-+#define GATE_EIP97_CLK		12
-+#define GATE_EIP123_CLK		13
-+#define GATE_TOE_CLK		14
-+#define GATE_MPE_CLK		15
-+#define GATE_TDM_CLK		16
-+#define GATE_PAE_CLK		17
-+#define GATE_USB1_CLK		18
-+#define GATE_GSWIP_CLK		19
-+
-+/* clocks under gate2-clk */
-+#define GATE_PCIE0_CLK		0
-+#define GATE_PCIE1_CLK		1
-+#define GATE_PCIE2_CLK		2
-+
-+#endif /* __INTEL_GRX500_CLK_H */
 -- 
 2.11.0
 
