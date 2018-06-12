@@ -2,129 +2,210 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7018FC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:22:50 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B670CC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:23:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25732208B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:22:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="BAnHsZ06"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25732208B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id 6B7D9208B1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:23:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B7D9208B1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934505AbeFLQWs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 12:22:48 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:34304 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933693AbeFLQWr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 12:22:47 -0400
-Received: by mail-io0-f196.google.com with SMTP id e15-v6so83105iog.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 09:22:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=r/qp76db4bObpVGxzAg5VlXRgTR1rLK2DbFKk0DUPMU=;
-        b=BAnHsZ06ERHTPhjoHZd0QQ+T2Vciz6fRKjbWSgHWXveTW7XeSm+32MHNBgZGO/Le2Q
-         LFBlLRuG838R5YwdHZm2M5vyal2TIeZ08U8bWhfaxG0pVEos/F+jSO/MiE/EFciC8Ojr
-         W8pw8LzY8weGYDgFTdhOpfMloob4vO1+kKdXmTju3kN7Fy2ExX8hovoTyAx2LtKVVd8s
-         iR78LyAZnnf6uqwooTBLbDd6+cnEkDSS2HqyaVF2YfHdzQtjSxmvbuCICl8zAc7dv9Us
-         +TdFcj5ntBRVhOU91gPA/dXJJepfZnl15gGQo1546L+SUbAVh6HClc9otnjOYqiGH1xM
-         DNSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=r/qp76db4bObpVGxzAg5VlXRgTR1rLK2DbFKk0DUPMU=;
-        b=Qy51KusXtOWa/YunV6V4LAuIoJtSmn8bgMdv6dEJqNP3Cx0l8LSXpvdv9TzkSenKqp
-         jdZ1Bei9OBT6FvyOzXGFXP3Ck8ubiK7DFy1mTSCeCnQ8oXru6KdCGjAUAAXt8GWnwxf5
-         O7oZpjoGsMWJwvAm5SIw5b4X2AEMJ9wIN5ErZUjDTvdwmZg8qr+36XjCfv1DKiJN+GAO
-         C2HiRiTn/PasnmSdHqdcJn3BGEY3gVh6odoTBm/+aBHipp10mzmNAN3IyYVF/AVjZmrx
-         RT/05NYdWm4OEQekzj/8SPMr6bpXeZC2NDaIpmORnWLQ0DmFAizQhrIAFew8Bg/gEIUe
-         eQJg==
-X-Gm-Message-State: APt69E1pKbm3yXvb6VhgTrolf7NI+p0mQXSOX9rqgy2gglJS/NZlWU1X
-        BEF330fmrcGpiqHqzSXAVGuWXw==
-X-Google-Smtp-Source: ADUXVKI7giRoAgVQl6Fj9+HwqfMAsWcHJVxLc+HTyRzaPJt/KvffbF5GjoXqkT+E2wbXZjORKzF4oQ==
-X-Received: by 2002:a6b:6e0e:: with SMTP id d14-v6mr1147674ioh.57.1528820566371;
-        Tue, 12 Jun 2018 09:22:46 -0700 (PDT)
-Received: from [192.168.1.212] (107.191.0.158.static.utbb.net. [107.191.0.158])
-        by smtp.gmail.com with ESMTPSA id 80-v6sm507152itk.12.2018.06.12.09.22.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Jun 2018 09:22:45 -0700 (PDT)
-Subject: Re: Hard lockup in blk_mq_free_request() / wbt_done() / wake_up_all()
-To:     Chris Boot <bootc@boo.tc>, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org
-References: <9788e0e6-a448-bf85-1f41-88f42dc0071d@boo.tc>
- <ac2c7156-f405-4047-564d-816159d5968b@kernel.dk>
- <7080a91c-8d9a-6305-2b67-dc27a374327a@boo.tc>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <d8ba8949-259a-c0c0-d476-710bcf69c266@kernel.dk>
-Date:   Tue, 12 Jun 2018 10:22:43 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <7080a91c-8d9a-6305-2b67-dc27a374327a@boo.tc>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S934567AbeFLQXW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 12:23:22 -0400
+Received: from mga05.intel.com ([192.55.52.43]:41852 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934151AbeFLQXU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 12:23:20 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2018 09:23:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,215,1526367600"; 
+   d="scan'208";a="63953655"
+Received: from weideng-mobl2.ccr.corp.intel.com ([10.255.30.49])
+  by orsmga001.jf.intel.com with ESMTP; 12 Jun 2018 09:23:18 -0700
+Message-ID: <1528820596.2661.34.camel@intel.com>
+Subject: [GIT PULL] Thermal management updates for v4.18-rc1 #2
+From:   Zhang Rui <rui.zhang@intel.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Eduardo Valentin <edubezval@gmail.com>
+Date:   Wed, 13 Jun 2018 00:23:16 +0800
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/12/18 10:19 AM, Chris Boot wrote:
-> On 12/06/18 17:09, Jens Axboe wrote:
->> On 6/12/18 9:38 AM, Chris Boot wrote:
->>> Hi folks,
->>>
->>> I maintain a large (to me) system with 112 threads (4x Intel E7-4830 v4)
->>> which has a MegaRAID SAS 9361-24i controller. This system is currently
->>> running Debian's 4.16.12 kernel (from stretch-backports) with blk_mq
->>> enabled.
->>>
->>> I've run into a lockup which appears to involve blq_mq and writeback
->>> throttling. It's hard to tell if I've run into this same thing with
->>> older kernels; I'm trying to track down a deadlock but so far I've been
->>> fairly certain that involved the OOM killer, but this doesn't seem to.
-> [snip]
->>
->> Hmm that's really weird, I don't see how we could be spinning on the
->> waitqueue lock like that. I haven't seen any wbt bug reports like this
->> before.
->>
->> Are things generally stable if you just turn off wbt? You can do that
->> for sda, for instance, by doing:
->>
->> # echo 0 > /sys/block/sda/queue/wbt_lat_usec
->>
->> It'd be interesting to get this data point. Eg leave blk-mq enabled, and
->> then just disable wbt.
-> 
-> Hi Jens,
-> 
-> Thanks for the speedy response. I'll see if I can get that tested soon;
-> if the system is stable without blk_mq I can see the users wanting to
-> keep it that way for a while. I'll let you know.
+Hi, Linus,
 
-Understandable. I just get suspicious of the general state of the system,
-if it's locking up there. Could be a hardware issue, or a bug in some
-other area that's messing things up. I have wbt running on literally
-hundreds of thousands of boxes and haven't seen a lockup like this.
+Please pull from
+  git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-
+thermal.git linus
 
->> Is anything disabling wbt in the system otherwise?
-> 
-> Not that I'm aware of, no.
+to receive the latest Thermal SoC management updates for v4.18-rc1 with
+top-most commit 6d7c70d1cd6526dc79e3d3b3faae1c40c1681168:
 
-OK, just wanted to rule out something related to the shutdown path
-racing with IO.
+  thermal: qcom: tsens: Allow number of sensors to come from DT (2018-
+06-01 15:09:15 -0700)
 
--- 
-Jens Axboe
+on top of commit 701e39d05119229b92ecca4add7b7ed2193622c3:
 
+  Merge tag 'for-linus' of git://git.kernel.org/pub/scm/virt/kvm/kvm
+(2018-05-06 05:46:29 -1000)
+
+Specifics:
+
+- imx thermal driver now supports i.MX7 thermal sensor (Anson Huang).
+
+- exynos thermal driver dropped support for exynos 5440 (Krzysztof
+Kozlowski).
+
+- rcar_thermal now supports r8a77995 (Yoshihiro Kaneko).
+
+- rcar_gen3_thermal now supports r8a77965 (Niklas Söderlund).
+
+- qcom-spmi-temp-alarm now supports GEN2 PMIC peripherals (David
+Collins).
+
+- uniphier thermal now supports UniPhier PXs3 (Kunihiko Hayashi).
+
+- mediatek thermal now supports MT7622 SoC (Sean Wang).
+
+- considerable refactoring of exynos driver (Bartlomiej
+Zolnierkiewicz).
+
+- Small fixes all over the place on different drivers.
+
+thanks,
+rui
+
+----------------------------------------------------------------
+Anson Huang (1):
+      thermal: imx: add i.MX7 thermal sensor support
+
+Bartlomiej Zolnierkiewicz (28):
+      thermal: exynos: remove unused "type" field from struct
+exynos_tmu_platform_data
+      thermal: exynos: remove parsing of samsung,
+tmu_default_temp_offset property
+      thermal: exynos: remove parsing of samsung, tmu_[first,
+second]_point_trim properties
+      thermal: exynos: remove parsing of samsung, tmu_noise_cancel_mode
+property
+      thermal: exynos: remove parsing of samsung, tmu[_min,
+_max]_efuse_value properties
+      thermal: exynos: remove parsing of samsung, tmu_reference_voltage
+property
+      thermal: exynos: remove parsing of samsung,tmu_gain property
+      thermal: exynos: remove parsing of samsung, tmu_cal_type property
+      thermal: exynos: remove separate exynos_tmu.h header file
+      thermal: exynos: fix setting rising_threshold for Exynos5433
+      thermal: exynos: always check for trips points existence
+      thermal: exynos: always check for critical trip points existence
+      thermal: exynos: check STATUS register in exynos_tmu_initialize()
+      thermal: exynos: use sanitize_temp_error() in
+exynos7_tmu_initialize()
+      thermal: exynos: fix trips limit checking in get_th_reg()
+      thermal: exynos: remove threshold_code checking from
+exynos4210_tmu_initialize()
+      thermal: exynos: make ->tmu_initialize method void
+      thermal: exynos: clear IRQs later in exynos4412_tmu_initialize()
+      thermal: exynos: move IRQs clearing to exynos_tmu_initialize()
+      thermal: exynos: add exynos*_tmu_set_[trip,hyst]() helpers
+      thermal: exynos: do not use trips structure directly in
+->tmu_initialize
+      thermal: exynos: set trips in ascending order in
+exynos7_tmu_initialize()
+      thermal: exynos: move trips setting to exynos_tmu_initialize()
+      thermal: exynos: check return values of ->get_trip_[temp, hyst]
+methods
+      thermal: exynos: cleanup code for enabling threshold interrupts
+      thermal: exynos: remove unused defines for Exynos5433
+      thermal: exynos: remove trip reporting to user-space
+      thermal: ti-soc-thermal: fix incorrect entry in
+omap5430_adc_to_temp[]
+
+Bjorn Andersson (1):
+      thermal: qcom: tsens: Allow number of sensors to come from DT
+
+David Collins (1):
+      thermal: qcom-spmi-temp-alarm: add support for GEN2 PMIC
+peripherals
+
+Ezequiel Garcia (1):
+      thermal: tegra: Nuke clk_{readl,writel} helpers
+
+Fabio Estevam (1):
+      thermal: imx: Switch to SPDX identifier
+
+Hien Dang (1):
+      thermal: rcar_gen3_thermal: Update calculation formula due to HW
+evaluation
+
+Krzysztof Kozlowski (2):
+      thermal: samsung: Remove support for Exynos5440
+      thermal: exynos: Reduce severity of too early temperature read
+
+Kunihiko Hayashi (2):
+      dt-bindings: thermal: uniphier: add a compatible string for PXs3
+      thermal: uniphier: add UniPhier PXs3 support
+
+Maciej Purski (1):
+      thermal: exynos: Read soc_type from match data
+
+Marek Szyprowski (2):
+      thermal: exynos: Reading temperature makes sense only when TMU is
+turned on
+      thermal: exynos: Propagate error value from tmu_read()
+
+Niklas Söderlund (3):
+      thermal: rcar_gen3_thermal: update max temperature clamp
+      dt-bindings: thermal: rcar-gen3-thermal: add r8a77965
+      thermal: rcar_gen3_thermal: add r8a77965 support
+
+Ryder Lee (1):
+      thermal: mediatek: use of_device_get_match_data()
+
+Sean Wang (2):
+      dt-bindings: thermal: add binding for MT7622 SoC
+      thermal: mediatek: add support for MT7622 SoC
+
+Yoshihiro Kaneko (2):
+      dt-bindings: thermal: rcar-thermal: add R8A77995 support
+      thermal: rcar_thermal: add r8a77995 support
+
+srplinux2008 (1):
+      thermal: tegra: soctherm: add const to struct
+thermal_cooling_device_ops
+
+ .../devicetree/bindings/thermal/exynos-thermal.txt |  14 +-
+ .../devicetree/bindings/thermal/imx-thermal.txt    |   9 +-
+ .../bindings/thermal/mediatek-thermal.txt          |   1 +
+ .../devicetree/bindings/thermal/qcom-tsens.txt     |   1 +
+ .../bindings/thermal/rcar-gen3-thermal.txt         |   3 +-
+ .../devicetree/bindings/thermal/rcar-thermal.txt   |   7 +-
+ .../bindings/thermal/uniphier-thermal.txt          |   1 +
+ drivers/thermal/imx_thermal.c                      | 306 +++++--
+ drivers/thermal/mtk_thermal.c                      |  40 +-
+ drivers/thermal/qcom-spmi-temp-alarm.c             |  92 +-
+ drivers/thermal/qcom/tsens.c                       |  12 +-
+ drivers/thermal/rcar_gen3_thermal.c                |  17 +-
+ drivers/thermal/rcar_thermal.c                     | 158 +++-
+ drivers/thermal/samsung/exynos_tmu.c               | 971 ++++++++-----
+--------
+ drivers/thermal/samsung/exynos_tmu.h               |  75 --
+ drivers/thermal/tegra/soctherm.c                   |  31 +-
+ .../thermal/ti-soc-thermal/omap5-thermal-data.c    |   2 +-
+ drivers/thermal/uniphier_thermal.c                 |   4 +
+ 18 files changed, 861 insertions(+), 883 deletions(-)
+ delete mode 100644 drivers/thermal/samsung/exynos_tmu.h
