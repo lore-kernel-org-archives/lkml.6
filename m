@@ -3,112 +3,84 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4E69CC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:53:22 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A4DCEC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:53:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F76E208B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:53:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F76E208B0
+	by mail.kernel.org (Postfix) with ESMTP id 6106B208B2
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:53:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6106B208B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934001AbeFLNxV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 09:53:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37560 "EHLO mx2.suse.de"
+        id S934048AbeFLNxW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 09:53:22 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37555 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933909AbeFLNxS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S933574AbeFLNxS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 12 Jun 2018 09:53:18 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 1221FAF18;
-        Tue, 12 Jun 2018 13:53:17 +0000 (UTC)
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id EC31CADDC;
+        Tue, 12 Jun 2018 13:53:16 +0000 (UTC)
 From:   Johannes Thumshirn <jthumshirn@suse.de>
 To:     "Martin K . Petersen" <martin.petersen@oracle.com>
 Cc:     Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
         Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>,
         Johannes Thumshirn <jthumshirn@suse.de>
-Subject: [PATCH 3/3] scsi: don't add scsi command result bytes
-Date:   Tue, 12 Jun 2018 15:53:11 +0200
-Message-Id: <20180612135311.13216-4-jthumshirn@suse.de>
+Subject: [PATCH 0/3] Preparation patch-set for SCSI results rework
+Date:   Tue, 12 Jun 2018 15:53:08 +0200
+Message-Id: <20180612135311.13216-1-jthumshirn@suse.de>
 X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180612135311.13216-1-jthumshirn@suse.de>
-References: <20180612135311.13216-1-jthumshirn@suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some drivers are ADDing the scsi command's result bytes instead of
-ORing them.
+This is small patch set with obvious prep patches for the SCSI results
+rework discussed at LFS/MM and other occasions on the list.
 
-While this can produce correct results it has unexpected side effects.
+Note, I'll be on PTO for the next two weeks so I'll be slow in
+responding to this patches.
 
-Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
----
- drivers/scsi/imm.c                  | 2 +-
- drivers/scsi/mesh.c                 | 4 ++--
- drivers/scsi/sym53c8xx_2/sym_glue.c | 2 +-
- drivers/scsi/sym53c8xx_2/sym_glue.h | 2 +-
- 4 files changed, 5 insertions(+), 5 deletions(-)
+Johannes Thumshirn (3):
+  scsi: remove Scsi_Cmnd typedef
+  scsi: check for equality of result byte values
+  scsi: don't add scsi command result bytes
 
-diff --git a/drivers/scsi/imm.c b/drivers/scsi/imm.c
-index 87c94191033b..e67033c8011f 100644
---- a/drivers/scsi/imm.c
-+++ b/drivers/scsi/imm.c
-@@ -892,7 +892,7 @@ static int imm_engine(imm_struct *dev, struct scsi_cmnd *cmd)
- 			/* Check for optional message byte */
- 			if (imm_wait(dev) == (unsigned char) 0xb8)
- 				imm_in(dev, &h, 1);
--			cmd->result = (DID_OK << 16) + (l & STATUS_MASK);
-+			cmd->result = DID_OK << 16 | l & STATUS_MASK;
- 		}
- 		if ((dev->mode == IMM_NIBBLE) || (dev->mode == IMM_PS2)) {
- 			w_ctr(ppb, 0x4);
-diff --git a/drivers/scsi/mesh.c b/drivers/scsi/mesh.c
-index 1753e42826dd..3473a860e690 100644
---- a/drivers/scsi/mesh.c
-+++ b/drivers/scsi/mesh.c
-@@ -594,9 +594,9 @@ static void mesh_done(struct mesh_state *ms, int start_next)
- 	ms->current_req = NULL;
- 	tp->current_req = NULL;
- 	if (cmd) {
--		cmd->result = (ms->stat << 16) + cmd->SCp.Status;
-+		cmd->result = ms->stat << 16 | cmd->SCp.Status;
- 		if (ms->stat == DID_OK)
--			cmd->result += (cmd->SCp.Message << 8);
-+			cmd->result |= cmd->SCp.Message << 8;
- 		if (DEBUG_TARGET(cmd)) {
- 			printk(KERN_DEBUG "mesh_done: result = %x, data_ptr=%d, buflen=%d\n",
- 			       cmd->result, ms->data_ptr, scsi_bufflen(cmd));
-diff --git a/drivers/scsi/sym53c8xx_2/sym_glue.c b/drivers/scsi/sym53c8xx_2/sym_glue.c
-index 7320d5fe4cbc..afdbd5a66083 100644
---- a/drivers/scsi/sym53c8xx_2/sym_glue.c
-+++ b/drivers/scsi/sym53c8xx_2/sym_glue.c
-@@ -252,7 +252,7 @@ void sym_set_cam_result_error(struct sym_hcb *np, struct sym_ccb *cp, int resid)
- 		cam_status = sym_xerr_cam_status(DID_ERROR, cp->xerr_status);
- 	}
- 	scsi_set_resid(cmd, resid);
--	cmd->result = (drv_status << 24) + (cam_status << 16) + scsi_status;
-+	cmd->result = drv_status << 24 | cam_status << 16 | scsi_status;
- }
- 
- static int sym_scatter(struct sym_hcb *np, struct sym_ccb *cp, struct scsi_cmnd *cmd)
-diff --git a/drivers/scsi/sym53c8xx_2/sym_glue.h b/drivers/scsi/sym53c8xx_2/sym_glue.h
-index 805369521df8..25c7478d8810 100644
---- a/drivers/scsi/sym53c8xx_2/sym_glue.h
-+++ b/drivers/scsi/sym53c8xx_2/sym_glue.h
-@@ -256,7 +256,7 @@ sym_get_cam_status(struct scsi_cmnd *cmd)
- static inline void sym_set_cam_result_ok(struct sym_ccb *cp, struct scsi_cmnd *cmd, int resid)
- {
- 	scsi_set_resid(cmd, resid);
--	cmd->result = (((DID_OK) << 16) + ((cp->ssss_status) & 0x7f));
-+	cmd->result = DID_OK << 16 | cp->ssss_status & 0x7f;
- }
- void sym_set_cam_result_error(struct sym_hcb *np, struct sym_ccb *cp, int resid);
- 
+ drivers/scsi/3w-xxxx.c              |  2 +-
+ drivers/scsi/advansys.c             |  2 +-
+ drivers/scsi/aha152x.c              | 71 ++++++++++++++++++++-----------------
+ drivers/scsi/aha1740.c              |  9 ++---
+ drivers/scsi/aha1740.h              |  4 +--
+ drivers/scsi/ch.c                   |  2 +-
+ drivers/scsi/dc395x.c               |  2 +-
+ drivers/scsi/gdth.c                 | 67 +++++++++++++++++-----------------
+ drivers/scsi/gdth.h                 | 10 +++---
+ drivers/scsi/gdth_proc.c            |  2 +-
+ drivers/scsi/ibmvscsi/ibmvfc.c      |  2 +-
+ drivers/scsi/ibmvscsi/ibmvscsi.c    |  2 +-
+ drivers/scsi/imm.c                  |  2 +-
+ drivers/scsi/libiscsi_tcp.c         |  2 +-
+ drivers/scsi/megaraid.c             | 29 +++++++--------
+ drivers/scsi/megaraid.h             | 14 ++++----
+ drivers/scsi/mesh.c                 |  4 +--
+ drivers/scsi/nsp32_debug.c          |  2 +-
+ drivers/scsi/scsi.c                 |  2 +-
+ drivers/scsi/scsi.h                 |  3 --
+ drivers/scsi/scsi_ioctl.c           |  2 +-
+ drivers/scsi/scsi_lib.c             |  4 +--
+ drivers/scsi/scsi_scan.c            |  2 +-
+ drivers/scsi/scsi_transport_spi.c   |  2 +-
+ drivers/scsi/scsi_typedefs.h        |  2 --
+ drivers/scsi/sd.c                   | 12 +++----
+ drivers/scsi/sym53c8xx_2/sym_glue.c |  2 +-
+ drivers/scsi/sym53c8xx_2/sym_glue.h |  2 +-
+ drivers/scsi/ufs/ufshcd.c           |  2 +-
+ 29 files changed, 134 insertions(+), 129 deletions(-)
+ delete mode 100644 drivers/scsi/scsi_typedefs.h
+
 -- 
 2.16.4
 
