@@ -2,106 +2,481 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4991CC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 11:55:43 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0F4AEC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 11:56:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7B92208B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 11:55:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3F0C208AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 11:56:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Qqer5SXz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7B92208B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aPElvHGM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3F0C208AE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754347AbeFLLzl (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 07:55:41 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:44148 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753970AbeFLLzj (ORCPT
+        id S933009AbeFLL4x (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 07:56:53 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:39814 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932373AbeFLL4u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 07:55:39 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5CBta4l005024;
-        Tue, 12 Jun 2018 11:55:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2017-10-26;
- bh=ek0FP9VI6tkkK8arwzAAa9x/JrZbx4+YlZ295zXfQjs=;
- b=Qqer5SXz647IPV+wcwZiFql1lPwXn858Ikyf0okY40rz1hgVTfIM41fbvxVFZCpR1wG3
- YKLkYAmevx9Zbchb8NluYFXN/ZFEcqLLQSR6iwqjqsw3DBk4/BWyZ/sOGD45KYTRQh+s
- sAoDtRLO0KnrQL6NwCO6R5KyH4DZi4LAO+o892eA1YpP+pAE40ChBT7Z2RKfkvrIl1tU
- IOtBxxM8JfCEzzH4Ra8Qne4wyZjAVyWrGmJNFaz3/ytDk8UHuUxaNOOUqElxBlVCiGn5
- mR1Vz/7jYC2PUjjWACY1TkrCseKqZagrzZqrg3mRW4GL8rBPvY1t/pXWaHVKmnIWdT+E 7Q== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2jg6b1hnnt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 12 Jun 2018 11:55:36 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5CBtZRc018996
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 12 Jun 2018 11:55:35 GMT
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5CBtZso030682;
-        Tue, 12 Jun 2018 11:55:35 GMT
-Received: from mwanda (/197.157.0.30)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 12 Jun 2018 04:55:34 -0700
-Date:   Tue, 12 Jun 2018 14:55:25 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Zhouyang Jia <jiazhouyang09@gmail.com>
-Cc:     devel@driverdev.osuosl.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: gdm724x: add error handling for nlmsg_put
-Message-ID: <20180612115525.yg2mnhlcz6ok3dyo@mwanda>
-References: <1528693766-31570-1-git-send-email-jiazhouyang09@gmail.com>
+        Tue, 12 Jun 2018 07:56:50 -0400
+Received: by mail-pg0-f65.google.com with SMTP id w12-v6so11361121pgc.6;
+        Tue, 12 Jun 2018 04:56:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=qsMuMkk5TF7yTHm2GDImu1yji8mfNUmM0tTAsfHMuIk=;
+        b=aPElvHGMedOY8CvGQiF2MLsmKu+dA1ftxH7owWiygN6qNQQF90zdShlXmE96XQ7Efk
+         vGsbhamkXc3yAycWNan9N0qITKyGfqRiv2ITBkM7Kk7DvJscgB+cEH9z+AE+i1VGBGCJ
+         3oMsY5D65OCL4naOP5L/qJylW3+W7SesGL3hQWaSgS8GdNQx6pY1Ey3cQUvX7oeu3+rR
+         5rzIZKJBXkWaZU494AC3GuF00EWQTUnciaoS7/EcE9yf0m5Ub5fZYKQ+BfQ92ltlI1Gq
+         J6kR2+neTSpoG5ueBaJ1U9CsVqx4cWwgsFFE2Je5wGgyYsx+7MN+R57VaZkYx4hxii2a
+         4Llg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=qsMuMkk5TF7yTHm2GDImu1yji8mfNUmM0tTAsfHMuIk=;
+        b=cbGjxg568KnQPpV2BsbTJEleXoZVFzsNIk0RT5T95wfQEfIWM17wP//oRhZGrkhL+6
+         +xhhHCBeAt+DLjIEab6zQVzG7hvhupXIKTgwHF5Fe+olhLjykqbjsV2U1rkPOtu7MdAJ
+         Tu5fMlss8Oekm13a8AGfS8Uks0Q7qlvR7UEVDR8wRR/H+xiHco5prkj359adiq6zicyv
+         W6dGT8gmhxk6sYSVA94gHZTrx7kUc9Ix1jdAGoYaOGOcEwoQ62HBuqg4Ugrt8REylqq2
+         e6oJ45Czff91uKb2DOd0JJl/tFOZQd/aV+elymLU0YcNBCjQxseWEtX6YDbArsTqgu3+
+         tsXw==
+X-Gm-Message-State: APt69E39Mu7kbl6Dq4YyllCuUaet788Zm9foI9TZjJrNkAFXnIEgKih5
+        B19c0kdjQMv8/jz8COG66KQ=
+X-Google-Smtp-Source: ADUXVKKV2SUT0YSR/NEeThnP5xMkkLbUWFo8LfWR7+HltBfBXVEbnNelpHoDRlScRmOpC93Zs2KlnQ==
+X-Received: by 2002:a63:70a:: with SMTP id 10-v6mr48369pgh.216.1528804609524;
+        Tue, 12 Jun 2018 04:56:49 -0700 (PDT)
+Received: from [192.168.1.11] (14-202-194-140.static.tpgi.com.au. [14.202.194.140])
+        by smtp.gmail.com with ESMTPSA id a81-v6sm3351464pfl.167.2018.06.12.04.56.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Jun 2018 04:56:48 -0700 (PDT)
+Subject: Re: [PATCH 01/10] x86/cet: User-mode shadow stack support
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+References: <20180607143807.3611-1-yu-cheng.yu@intel.com>
+ <20180607143807.3611-2-yu-cheng.yu@intel.com>
+From:   Balbir Singh <bsingharora@gmail.com>
+Message-ID: <0e80c181-83b2-457f-a419-01e79f94ca1c@gmail.com>
+Date:   Tue, 12 Jun 2018 21:56:37 +1000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1528693766-31570-1-git-send-email-jiazhouyang09@gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8921 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=847
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806120140
+In-Reply-To: <20180607143807.3611-2-yu-cheng.yu@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 11, 2018 at 01:09:24PM +0800, Zhouyang Jia wrote:
-> When nlmsg_put fails, the lack of error-handling code may
-> cause unexpected results.
+
+
+On 08/06/18 00:37, Yu-cheng Yu wrote:
+> This patch adds basic shadow stack enabling/disabling routines.
+> A task's shadow stack is allocated from memory with VM_SHSTK
+> flag set and read-only protection.  The shadow stack is
+> allocated to a fixed size and that can be changed by the system
+> admin.
 > 
-> This patch adds error-handling code after calling nlmsg_put.
-> 
-> Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+
+I presume a read-only permission on the kernel side, but it
+can be written by hardware?
+
+> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
 > ---
->  drivers/staging/gdm724x/netlink_k.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  arch/x86/include/asm/cet.h               |  32 ++++++++
+>  arch/x86/include/asm/disabled-features.h |   8 +-
+>  arch/x86/include/asm/msr-index.h         |  14 ++++
+>  arch/x86/include/asm/processor.h         |   5 ++
+>  arch/x86/kernel/Makefile                 |   2 +
+>  arch/x86/kernel/cet.c                    | 123 +++++++++++++++++++++++++++++++
+>  arch/x86/kernel/cpu/common.c             |  24 ++++++
+>  arch/x86/kernel/process.c                |   2 +
+>  fs/proc/task_mmu.c                       |   3 +
+>  9 files changed, 212 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/x86/include/asm/cet.h
+>  create mode 100644 arch/x86/kernel/cet.c
 > 
-> diff --git a/drivers/staging/gdm724x/netlink_k.c b/drivers/staging/gdm724x/netlink_k.c
-> index abe2425..4623140 100644
-> --- a/drivers/staging/gdm724x/netlink_k.c
-> +++ b/drivers/staging/gdm724x/netlink_k.c
-> @@ -119,6 +119,9 @@ int netlink_send(struct sock *sock, int group, u16 type, void *msg, int len)
->  	seq++;
+> diff --git a/arch/x86/include/asm/cet.h b/arch/x86/include/asm/cet.h
+> new file mode 100644
+> index 000000000000..9d5bc1efc9b7
+> --- /dev/null
+> +++ b/arch/x86/include/asm/cet.h
+> @@ -0,0 +1,32 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef _ASM_X86_CET_H
+> +#define _ASM_X86_CET_H
+> +
+> +#ifndef __ASSEMBLY__
+> +#include <linux/types.h>
+> +
+> +struct task_struct;
+> +/*
+> + * Per-thread CET status
+> + */
+> +struct cet_stat {
+
+stat sounds like statistics, just expand out to status please
+
+> +	unsigned long	shstk_base;
+> +	unsigned long	shstk_size;
+> +	unsigned int	shstk_enabled:1;
+> +};
+> +
+> +#ifdef CONFIG_X86_INTEL_CET
+> +unsigned long cet_get_shstk_ptr(void);
+
+For the current task? Why does _ptr routine return an unsigned long?
+
+> +int cet_setup_shstk(void);
+> +void cet_disable_shstk(void);
+> +void cet_disable_free_shstk(struct task_struct *p);
+> +#else
+> +static inline unsigned long cet_get_shstk_ptr(void) { return 0; }
+> +static inline int cet_setup_shstk(void) { return 0; }
+> +static inline void cet_disable_shstk(void) {}
+> +static inline void cet_disable_free_shstk(struct task_struct *p) {}
+> +#endif
+> +
+> +#endif /* __ASSEMBLY__ */
+> +
+> +#endif /* _ASM_X86_CET_H */
+> diff --git a/arch/x86/include/asm/disabled-features.h b/arch/x86/include/asm/disabled-features.h
+> index 33833d1909af..3624a11e5ba6 100644
+> --- a/arch/x86/include/asm/disabled-features.h
+> +++ b/arch/x86/include/asm/disabled-features.h
+> @@ -56,6 +56,12 @@
+>  # define DISABLE_PTI		(1 << (X86_FEATURE_PTI & 31))
+>  #endif
 >  
->  	nlh = nlmsg_put(skb, 0, seq, type, len, 0);
-> +	if (!nlh)
-> +		return -EMSGSIZE;
+> +#ifdef CONFIG_X86_INTEL_SHADOW_STACK_USER
+> +#define DISABLE_SHSTK	0
+> +#else
+> +#define DISABLE_SHSTK	(1<<(X86_FEATURE_SHSTK & 31))
+> +#endif
+> +
+>  /*
+>   * Make sure to add features to the correct mask
+>   */
+> @@ -75,7 +81,7 @@
+>  #define DISABLED_MASK13	0
+>  #define DISABLED_MASK14	0
+>  #define DISABLED_MASK15	0
+> -#define DISABLED_MASK16	(DISABLE_PKU|DISABLE_OSPKE|DISABLE_LA57|DISABLE_UMIP)
+> +#define DISABLED_MASK16	(DISABLE_PKU|DISABLE_OSPKE|DISABLE_LA57|DISABLE_UMIP|DISABLE_SHSTK)
+>  #define DISABLED_MASK17	0
+>  #define DISABLED_MASK18	0
+>  #define DISABLED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 19)
+> diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
+> index fda2114197b3..428d13828ba9 100644
+> --- a/arch/x86/include/asm/msr-index.h
+> +++ b/arch/x86/include/asm/msr-index.h
+> @@ -770,4 +770,18 @@
+>  #define MSR_VM_IGNNE                    0xc0010115
+>  #define MSR_VM_HSAVE_PA                 0xc0010117
+>  
+> +/* Control-flow Enforcement Technology MSRs */
+> +#define MSR_IA32_U_CET		0x6a0
+> +#define MSR_IA32_S_CET		0x6a2
+> +#define MSR_IA32_PL0_SSP	0x6a4
+> +#define MSR_IA32_PL3_SSP	0x6a7
+> +#define MSR_IA32_INT_SSP_TAB	0x6a8
 
-This can't fail.  We just allocated skb on the line before and we
-allocated enough space for "len".  Also if we *did* hit a bug here then
-we would need to do some more cleanup instead of a direct return.
+some comments on the purpose of the MSR would be nice
 
-regards,
-dan carpenter
+> +
+> +/* MSR_IA32_U_CET and MSR_IA32_S_CET bits */
+> +#define MSR_IA32_CET_SHSTK_EN		0x0000000000000001
+> +#define MSR_IA32_CET_WRSS_EN		0x0000000000000002
+> +#define MSR_IA32_CET_ENDBR_EN		0x0000000000000004
+> +#define MSR_IA32_CET_LEG_IW_EN		0x0000000000000008
+> +#define MSR_IA32_CET_NO_TRACK_EN	0x0000000000000010
+> +
 
+Same as above
+
+>  #endif /* _ASM_X86_MSR_INDEX_H */
+> diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+> index 21a114914ba4..e632dd7adaac 100644
+> --- a/arch/x86/include/asm/processor.h
+> +++ b/arch/x86/include/asm/processor.h
+> @@ -24,6 +24,7 @@ struct vm86;
+>  #include <asm/special_insns.h>
+>  #include <asm/fpu/types.h>
+>  #include <asm/unwind_hints.h>
+> +#include <asm/cet.h>
+>  
+>  #include <linux/personality.h>
+>  #include <linux/cache.h>
+> @@ -507,6 +508,10 @@ struct thread_struct {
+>  	unsigned int		sig_on_uaccess_err:1;
+>  	unsigned int		uaccess_err:1;	/* uaccess failed */
+>  
+> +#ifdef CONFIG_X86_INTEL_CET
+> +	struct cet_stat		cet;
+> +#endif
+> +
+>  	/* Floating point and extended processor state */
+>  	struct fpu		fpu;
+>  	/*
+> diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
+> index 02d6f5cf4e70..7ea5e099d558 100644
+> --- a/arch/x86/kernel/Makefile
+> +++ b/arch/x86/kernel/Makefile
+> @@ -138,6 +138,8 @@ obj-$(CONFIG_UNWINDER_ORC)		+= unwind_orc.o
+>  obj-$(CONFIG_UNWINDER_FRAME_POINTER)	+= unwind_frame.o
+>  obj-$(CONFIG_UNWINDER_GUESS)		+= unwind_guess.o
+>  
+> +obj-$(CONFIG_X86_INTEL_CET)		+= cet.o
+> +
+>  ###
+>  # 64 bit specific files
+>  ifeq ($(CONFIG_X86_64),y)
+> diff --git a/arch/x86/kernel/cet.c b/arch/x86/kernel/cet.c
+> new file mode 100644
+> index 000000000000..8abbfd44322a
+> --- /dev/null
+> +++ b/arch/x86/kernel/cet.c
+> @@ -0,0 +1,123 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * cet.c - Control Flow Enforcement (CET)
+> + *
+> + * Copyright (c) 2018, Intel Corporation.
+> + * Yu-cheng Yu <yu-cheng.yu@intel.com>
+> + */
+> +
+> +#include <linux/types.h>
+> +#include <linux/mm.h>
+> +#include <linux/mman.h>
+> +#include <linux/slab.h>
+> +#include <linux/uaccess.h>
+> +#include <linux/sched/signal.h>
+> +#include <asm/msr.h>
+> +#include <asm/user.h>
+> +#include <asm/fpu/xstate.h>
+> +#include <asm/fpu/types.h>
+> +#include <asm/cet.h>
+> +
+> +#define SHSTK_SIZE (0x8000 * (test_thread_flag(TIF_IA32) ? 4 : 8))
+> +
+> +static inline int cet_set_shstk_ptr(unsigned long addr)
+> +{
+> +	u64 r;
+> +
+> +	if (!cpu_feature_enabled(X86_FEATURE_SHSTK))
+> +		return -1;
+> +
+> +	if ((addr >= TASK_SIZE) || (!IS_ALIGNED(addr, 4)))
+> +		return -1;
+
+I think there was a comment about this being TASK_SIZE_MAX
+
+> +
+> +	rdmsrl(MSR_IA32_U_CET, r);
+> +	wrmsrl(MSR_IA32_U_CET, r | MSR_IA32_CET_SHSTK_EN);
+> +	wrmsrl(MSR_IA32_PL3_SSP, addr);
+
+Should the enable happen before setting addr? I would expect to do this in the opposite order.
+
+> +	return 0;
+> +}
+> +
+> +unsigned long cet_get_shstk_ptr(void)
+> +{
+> +	unsigned long ptr;
+> +
+> +	if (!current->thread.cet.shstk_enabled)
+> +		return 0;
+> +
+> +	rdmsrl(MSR_IA32_PL3_SSP, ptr);
+> +	return ptr;
+> +}
+> +
+> +static unsigned long shstk_mmap(unsigned long addr, unsigned long len)
+> +{
+> +	struct mm_struct *mm = current->mm;
+> +	unsigned long populate;
+> +
+> +	down_write(&mm->mmap_sem);
+> +	addr = do_mmap(NULL, addr, len, PROT_READ,
+> +		       MAP_ANONYMOUS | MAP_PRIVATE, VM_SHSTK,
+> +		       0, &populate, NULL);
+> +	up_write(&mm->mmap_sem);
+
+What happens if the mmap fails for any reason? I presume the caller disables shadow stack on this process?
+
+> +
+> +	if (populate)
+> +		mm_populate(addr, populate);
+> +
+> +	return addr;
+> +}
+> +
+> +int cet_setup_shstk(void)
+> +{
+> +	unsigned long addr, size;
+> +
+> +	if (!cpu_feature_enabled(X86_FEATURE_SHSTK))
+> +		return -EOPNOTSUPP;
+> +
+> +	size = SHSTK_SIZE;
+> +	addr = shstk_mmap(0, size);
+> +
+> +	if (addr >= TASK_SIZE)
+> +		return -ENOMEM;
+> +
+
+TASK_SIZE_MAX?
+
+> +	cet_set_shstk_ptr(addr + size - sizeof(void *));
+> +	current->thread.cet.shstk_base = addr;
+> +	current->thread.cet.shstk_size = size;
+> +	current->thread.cet.shstk_enabled = 1;
+> +	return 0;
+> +}
+> +
+> +void cet_disable_shstk(void)
+> +{
+> +	u64 r;
+> +
+> +	if (!cpu_feature_enabled(X86_FEATURE_SHSTK))
+> +		return;
+> +
+> +	rdmsrl(MSR_IA32_U_CET, r);
+> +	r &= ~(MSR_IA32_CET_SHSTK_EN);
+> +	wrmsrl(MSR_IA32_U_CET, r);
+> +	wrmsrl(MSR_IA32_PL3_SSP, 0);
+
+Again, I'd expect the order to be the reverse
+
+> +	current->thread.cet.shstk_enabled = 0;
+> +}
+> +
+> +void cet_disable_free_shstk(struct task_struct *tsk)
+> +{
+> +	if (!cpu_feature_enabled(X86_FEATURE_SHSTK) ||
+> +	    !tsk->thread.cet.shstk_enabled)
+> +		return;
+> +
+> +	if (tsk == current)
+> +		cet_disable_shstk();
+> +
+> +	/*
+> +	 * Free only when tsk is current or shares mm
+> +	 * with current but has its own shstk.
+> +	 */
+> +	if (tsk->mm && (tsk->mm == current->mm) &&
+> +	    (tsk->thread.cet.shstk_base)) {
+
+Does the caller hold a reference to tsk->mm?
+
+> +		vm_munmap(tsk->thread.cet.shstk_base,
+> +			  tsk->thread.cet.shstk_size);
+> +		tsk->thread.cet.shstk_base = 0;
+> +		tsk->thread.cet.shstk_size = 0;
+> +	}
+> +
+> +	tsk->thread.cet.shstk_enabled = 0;
+> +}
+> diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+> index 38276f58d3bf..f54fabdaef60 100644
+> --- a/arch/x86/kernel/cpu/common.c
+> +++ b/arch/x86/kernel/cpu/common.c
+> @@ -401,6 +401,29 @@ static __init int setup_disable_pku(char *arg)
+>  __setup("nopku", setup_disable_pku);
+>  #endif /* CONFIG_X86_64 */
+>  
+> +static __always_inline void setup_cet(struct cpuinfo_x86 *c)
+> +{
+> +	if (cpu_feature_enabled(X86_FEATURE_SHSTK))
+> +		cr4_set_bits(X86_CR4_CET);
+> +}
+> +
+> +#ifdef CONFIG_X86_INTEL_SHADOW_STACK_USER
+> +static __init int setup_disable_shstk(char *s)
+> +{
+> +	/* require an exact match without trailing characters */
+> +	if (strlen(s))
+> +		return 0;
+> +
+> +	if (!boot_cpu_has(X86_FEATURE_SHSTK))
+> +		return 1;
+> +
+> +	setup_clear_cpu_cap(X86_FEATURE_SHSTK);
+> +	pr_info("x86: 'noshstk' specified, disabling Shadow Stack\n");
+> +	return 1;
+> +}
+> +__setup("noshstk", setup_disable_shstk);
+> +#endif
+> +
+>  /*
+>   * Some CPU features depend on higher CPUID levels, which may not always
+>   * be available due to CPUID level capping or broken virtualization
+> @@ -1313,6 +1336,7 @@ static void identify_cpu(struct cpuinfo_x86 *c)
+>  	x86_init_rdrand(c);
+>  	x86_init_cache_qos(c);
+>  	setup_pku(c);
+> +	setup_cet(c);
+>  
+>  	/*
+>  	 * Clear/Set all flags overridden by options, need do it
+> diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+> index 30ca2d1a9231..b3b0b482983a 100644
+> --- a/arch/x86/kernel/process.c
+> +++ b/arch/x86/kernel/process.c
+> @@ -39,6 +39,7 @@
+>  #include <asm/desc.h>
+>  #include <asm/prctl.h>
+>  #include <asm/spec-ctrl.h>
+> +#include <asm/cet.h>
+>  
+>  /*
+>   * per-CPU TSS segments. Threads are completely 'soft' on Linux,
+> @@ -136,6 +137,7 @@ void flush_thread(void)
+>  	flush_ptrace_hw_breakpoint(tsk);
+>  	memset(tsk->thread.tls_array, 0, sizeof(tsk->thread.tls_array));
+>  
+> +	cet_disable_shstk();
+>  	fpu__clear(&tsk->thread.fpu);
+>  }
+>  
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index c486ad4b43f0..6aca93ecec0e 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -679,6 +679,9 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
+>  		[ilog2(VM_PKEY_BIT1)]	= "",
+>  		[ilog2(VM_PKEY_BIT2)]	= "",
+>  		[ilog2(VM_PKEY_BIT3)]	= "",
+> +#endif
+> +#ifdef CONFIG_X86_INTEL_SHADOW_STACK_USER
+> +		[ilog2(VM_SHSTK)]	= "ss"
+>  #endif
+>  	};
+>  	size_t i;
+> 
+
+Balbir Singh.
