@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8E5F6C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:54:34 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5DC83C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:54:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44E69208B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:54:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09E00208BA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:54:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="O78h3hu1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44E69208B8
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZAmUAVAg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09E00208BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934845AbeFLQyb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 12:54:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55864 "EHLO mail.kernel.org"
+        id S1754421AbeFLQyh (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 12:54:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56608 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934579AbeFLQyU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 12:54:20 -0400
+        id S934838AbeFLQyc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 12:54:32 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4DE82208B8;
-        Tue, 12 Jun 2018 16:54:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F43B208B4;
+        Tue, 12 Jun 2018 16:54:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528822459;
-        bh=Mv52hmUiMrMlFuCu8KOT5sgdcqJnh41Bc3wbFTdZHgA=;
+        s=default; t=1528822471;
+        bh=v5GfxsQGiE+bBMmN2OxgMT5z3I9MNKJB4U0/2M8DwkY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O78h3hu1X3dEBF02T2T/jxfZyj8nKS3lsjjkt+OENAbiEVnrNoLYFusrnJxpI/qmz
-         /TXbXG92gps7fen5OfK38A53DPwgFIS2N0uogu/T+Ww+tYKu2LbT+Qm+vmAVUclpRQ
-         mx7VgOuV1b4Yl9d9ZV9nw30SY5VS867zXATMw+48=
+        b=ZAmUAVAg/3t9QQBMKfFop2AUjvUNUqEvQH8QFFZxJ7mvyIBA6VlqlNVbeEvh9cB6d
+         uqI9BXhT0ysDV0FNlLbUk2qggtJEyYbPHVg8UY24IKXKS5XR+94vaIhIYUMpbbBshy
+         YITh6yIhmnhuKSaRyzZXoTwHUnxQcQxT755SN86M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Jack Morgenstein <jackm@dev.mellanox.co.il>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 19/21] net/mlx4: Fix irq-unsafe spinlock usage
-Date:   Tue, 12 Jun 2018 18:52:16 +0200
-Message-Id: <20180612164826.186608548@linuxfoundation.org>
+        syzbot+e64565577af34b3768dc@syzkaller.appspotmail.com,
+        Eric Biggers <ebiggers@google.com>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 3.18 03/21] cfg80211: further limit wiphy names to 64 bytes
+Date:   Tue, 12 Jun 2018 18:52:00 +0200
+Message-Id: <20180612164825.530260391@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180612164825.401145490@linuxfoundation.org>
 References: <20180612164825.401145490@linuxfoundation.org>
@@ -61,72 +62,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jack Morgenstein <jackm@dev.mellanox.co.il>
+From: Eric Biggers <ebiggers@google.com>
 
-[ Upstream commit d546b67cda015fb92bfee93d5dc0ceadb91deaee ]
+commit 814596495dd2b9d4aab92d8f89cf19060d25d2ea upstream.
 
-spin_lock/unlock was used instead of spin_un/lock_irq
-in a procedure used in process space, on a spinlock
-which can be grabbed in an interrupt.
+wiphy names were recently limited to 128 bytes by commit a7cfebcb7594
+("cfg80211: limit wiphy names to 128 bytes").  As it turns out though,
+this isn't sufficient because dev_vprintk_emit() needs the syslog header
+string "SUBSYSTEM=ieee80211\0DEVICE=+ieee80211:$devname" to fit into 128
+bytes.  This triggered the "device/subsystem name too long" WARN when
+the device name was >= 90 bytes.  As before, this was reproduced by
+syzbot by sending an HWSIM_CMD_NEW_RADIO command to the MAC80211_HWSIM
+generic netlink family.
 
-This caused the stack trace below to be displayed (on kernel
-4.17.0-rc1 compiled with Lock Debugging enabled):
+Fix it by further limiting wiphy names to 64 bytes.
 
-[  154.661474] WARNING: SOFTIRQ-safe -> SOFTIRQ-unsafe lock order detected
-[  154.668909] 4.17.0-rc1-rdma_rc_mlx+ #3 Tainted: G          I
-[  154.675856] -----------------------------------------------------
-[  154.682706] modprobe/10159 [HC0[0]:SC0[0]:HE0:SE1] is trying to acquire:
-[  154.690254] 00000000f3b0e495 (&(&qp_table->lock)->rlock){+.+.}, at: mlx4_qp_remove+0x20/0x50 [mlx4_core]
-[  154.700927]
-and this task is already holding:
-[  154.707461] 0000000094373b5d (&(&cq->lock)->rlock/1){....}, at: destroy_qp_common+0x111/0x560 [mlx4_ib]
-[  154.718028] which would create a new lock dependency:
-[  154.723705]  (&(&cq->lock)->rlock/1){....} -> (&(&qp_table->lock)->rlock){+.+.}
-[  154.731922]
-but this new dependency connects a SOFTIRQ-irq-safe lock:
-[  154.740798]  (&(&cq->lock)->rlock){..-.}
-[  154.740800]
-... which became SOFTIRQ-irq-safe at:
-[  154.752163]   _raw_spin_lock_irqsave+0x3e/0x50
-[  154.757163]   mlx4_ib_poll_cq+0x36/0x900 [mlx4_ib]
-[  154.762554]   ipoib_tx_poll+0x4a/0xf0 [ib_ipoib]
-...
-to a SOFTIRQ-irq-unsafe lock:
-[  154.815603]  (&(&qp_table->lock)->rlock){+.+.}
-[  154.815604]
-... which became SOFTIRQ-irq-unsafe at:
-[  154.827718] ...
-[  154.827720]   _raw_spin_lock+0x35/0x50
-[  154.833912]   mlx4_qp_lookup+0x1e/0x50 [mlx4_core]
-[  154.839302]   mlx4_flow_attach+0x3f/0x3d0 [mlx4_core]
-
-Since mlx4_qp_lookup() is called only in process space, we can
-simply replace the spin_un/lock calls with spin_un/lock_irq calls.
-
-Fixes: 6dc06c08bef1 ("net/mlx4: Fix the check in attaching steering rules")
-Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
-Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: syzbot+e64565577af34b3768dc@syzkaller.appspotmail.com
+Fixes: a7cfebcb7594 ("cfg80211: limit wiphy names to 128 bytes")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/mellanox/mlx4/qp.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx4/qp.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/qp.c
-@@ -363,11 +363,11 @@ struct mlx4_qp *mlx4_qp_lookup(struct ml
- 	struct mlx4_qp_table *qp_table = &mlx4_priv(dev)->qp_table;
- 	struct mlx4_qp *qp;
+---
+ include/uapi/linux/nl80211.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/include/uapi/linux/nl80211.h
++++ b/include/uapi/linux/nl80211.h
+@@ -2026,7 +2026,7 @@ enum nl80211_attrs {
+ #define NL80211_ATTR_KEYS NL80211_ATTR_KEYS
+ #define NL80211_ATTR_FEATURE_FLAGS NL80211_ATTR_FEATURE_FLAGS
  
--	spin_lock(&qp_table->lock);
-+	spin_lock_irq(&qp_table->lock);
+-#define NL80211_WIPHY_NAME_MAXLEN		128
++#define NL80211_WIPHY_NAME_MAXLEN		64
  
- 	qp = __mlx4_qp_lookup(dev, qpn);
- 
--	spin_unlock(&qp_table->lock);
-+	spin_unlock_irq(&qp_table->lock);
- 	return qp;
- }
- 
+ #define NL80211_MAX_SUPP_RATES			32
+ #define NL80211_MAX_SUPP_HT_RATES		77
 
 
