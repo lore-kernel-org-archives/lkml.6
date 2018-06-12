@@ -6,130 +6,221 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E0636C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 21:29:52 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 54A0EC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 21:31:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87897208B4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 21:29:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87897208B4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 077422089C
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 21:31:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 077422089C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934144AbeFLV3t (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 17:29:49 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:48326 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932869AbeFLV3r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 17:29:47 -0400
-Received: from static-50-53-48-205.bvtn.or.frontiernet.net ([50.53.48.205] helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1fSqrE-0006Ae-1C; Tue, 12 Jun 2018 21:29:40 +0000
-Subject: Re: [-next PATCH] security: use octal not symbolic permissions
-To:     Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        Joe Perches <joe@perches.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        selinux@tycho.nsa.gov
-References: <1e91f8e10ce76d3208239b6b5899aab76d1543ff.1528743633.git.joe@perches.com>
- <fcac609a-08a8-b3ab-a69e-2e65e2ad63e9@schaufler-ca.com>
- <alpine.LRH.2.21.1806130631400.13763@namei.org>
- <CAHC9VhTpsYDT5+CjdtiBmLMDEKV9fmGv+DyXVtUuja9d4i2ecg@mail.gmail.com>
-From:   John Johansen <john.johansen@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Canonical
-Message-ID: <9ae2397b-ad11-d437-d0f4-4e4f0dff4ce9@canonical.com>
-Date:   Tue, 12 Jun 2018 14:29:31 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S934391AbeFLVa6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 17:30:58 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:60668 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933533AbeFLVa4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 17:30:56 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id E14AC20981; Tue, 12 Jun 2018 23:30:54 +0200 (CEST)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 42D0120731;
+        Tue, 12 Jun 2018 23:30:44 +0200 (CEST)
+Date:   Tue, 12 Jun 2018 23:30:44 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Stefan Agner <stefan@agner.ch>, Dmitry Osipenko <digetx@gmail.com>,
+        dwmw2@infradead.org, computersforpeace@gmail.com,
+        marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        thierry.reding@gmail.com, dev@lynxeye.de,
+        miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com,
+        krzk@kernel.org, benjamin.lindqvist@endian.se,
+        jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        mirza.krak@gmail.com, gaireg@gaireg.de,
+        linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 4/6] mtd: rawnand: add NVIDIA Tegra NAND Flash
+ controller driver
+Message-ID: <20180612233044.2dfe0886@bbrezillon>
+In-Reply-To: <7985c118-af47-624e-bfcc-cd5d8726742a@kernel.dk>
+References: <20180611205224.23340-1-stefan@agner.ch>
+        <20180611205224.23340-5-stefan@agner.ch>
+        <4258393.O1xtUOGbca@dimapc>
+        <cb6f2ef0a5a41e001a2019caa1a18c23@agner.ch>
+        <20180612102734.0ea3bfa5@bbrezillon>
+        <53e36cff80e38e489959aa18471d0782@agner.ch>
+        <1fcde0fa-d1e8-1cc3-8c3d-0e8c4097cb91@kernel.dk>
+        <bb2b5e0de922dd928ad923c185bb5da8@agner.ch>
+        <7985c118-af47-624e-bfcc-cd5d8726742a@kernel.dk>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhTpsYDT5+CjdtiBmLMDEKV9fmGv+DyXVtUuja9d4i2ecg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/12/2018 02:12 PM, Paul Moore wrote:
-> On Tue, Jun 12, 2018 at 4:32 PM, James Morris <jmorris@namei.org> wrote:
->> On Mon, 11 Jun 2018, Casey Schaufler wrote:
->>
->>> If you want to break this up by security module I would take
->>> the Smack part as soon as James does the tree update. If James
->>> wants to take the whole thing at once you can add my:
->>>
->>> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
->>>
->>> for the Smack changes.
->>
->> It's probably simplest for me to take them as one patch.
-> 
-> I would prefer if the SELinux changes were split into a separate
-> patch.  I'm guessing John would probably want the same for the
-> AppArmor patches, but take his work for it, not mine.
+On Tue, 12 Jun 2018 15:24:41 -0600
+Jens Axboe <axboe@kernel.dk> wrote:
 
-yes that would be preferred
-
+> On 6/12/18 2:20 PM, Stefan Agner wrote:
+> > On 12.06.2018 17:24, Jens Axboe wrote:  
+> >> On 6/12/18 3:17 AM, Stefan Agner wrote:  
+> >>> [also added Jens Axboe]
+> >>>
+> >>> On 12.06.2018 10:27, Boris Brezillon wrote:  
+> >>>> On Tue, 12 Jun 2018 10:06:42 +0200
+> >>>> Stefan Agner <stefan@agner.ch> wrote:
+> >>>>  
+> >>>>> On 12.06.2018 02:03, Dmitry Osipenko wrote:  
+> >>>>>> On Monday, 11 June 2018 23:52:22 MSK Stefan Agner wrote:  
+> >>>>>>> Add support for the NAND flash controller found on NVIDIA
+> >>>>>>> Tegra 2 SoCs. This implementation does not make use of the
+> >>>>>>> command queue feature. Regular operations/data transfers are
+> >>>>>>> done in PIO mode. Page read/writes with hardware ECC make
+> >>>>>>> use of the DMA for data transfer.
+> >>>>>>>
+> >>>>>>> Signed-off-by: Lucas Stach <dev@lynxeye.de>
+> >>>>>>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> >>>>>>> ---
+> >>>>>>>  MAINTAINERS                       |    7 +
+> >>>>>>>  drivers/mtd/nand/raw/Kconfig      |    6 +
+> >>>>>>>  drivers/mtd/nand/raw/Makefile     |    1 +
+> >>>>>>>  drivers/mtd/nand/raw/tegra_nand.c | 1248 +++++++++++++++++++++++++++++
+> >>>>>>>  4 files changed, 1262 insertions(+)
+> >>>>>>>  create mode 100644 drivers/mtd/nand/raw/tegra_nand.c
+> >>>>>>>  
+> >>>>> [snip]  
+> >>>>>>> +static int tegra_nand_cmd(struct nand_chip *chip,
+> >>>>>>> +			 const struct nand_subop *subop)
+> >>>>>>> +{
+> >>>>>>> +	const struct nand_op_instr *instr;
+> >>>>>>> +	const struct nand_op_instr *instr_data_in = NULL;
+> >>>>>>> +	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip->controller);
+> >>>>>>> +	unsigned int op_id, size = 0, offset = 0;
+> >>>>>>> +	bool first_cmd = true;
+> >>>>>>> +	u32 reg, cmd = 0;
+> >>>>>>> +	int ret;
+> >>>>>>> +
+> >>>>>>> +	for (op_id = 0; op_id < subop->ninstrs; op_id++) {
+> >>>>>>> +		unsigned int naddrs, i;
+> >>>>>>> +		const u8 *addrs;
+> >>>>>>> +		u32 addr1 = 0, addr2 = 0;
+> >>>>>>> +
+> >>>>>>> +		instr = &subop->instrs[op_id];
+> >>>>>>> +
+> >>>>>>> +		switch (instr->type) {
+> >>>>>>> +		case NAND_OP_CMD_INSTR:
+> >>>>>>> +			if (first_cmd) {
+> >>>>>>> +				cmd |= COMMAND_CLE;
+> >>>>>>> +				writel_relaxed(instr->ctx.cmd.opcode,
+> >>>>>>> +					       ctrl->regs + CMD_REG1);
+> >>>>>>> +			} else {
+> >>>>>>> +				cmd |= COMMAND_SEC_CMD;
+> >>>>>>> +				writel_relaxed(instr->ctx.cmd.opcode,
+> >>>>>>> +					       ctrl->regs + CMD_REG2);
+> >>>>>>> +			}
+> >>>>>>> +			first_cmd = false;
+> >>>>>>> +			break;
+> >>>>>>> +		case NAND_OP_ADDR_INSTR:
+> >>>>>>> +			offset = nand_subop_get_addr_start_off(subop, op_id);
+> >>>>>>> +			naddrs = nand_subop_get_num_addr_cyc(subop, op_id);
+> >>>>>>> +			addrs = &instr->ctx.addr.addrs[offset];
+> >>>>>>> +
+> >>>>>>> +			cmd |= COMMAND_ALE | COMMAND_ALE_SIZE(naddrs);
+> >>>>>>> +			for (i = 0; i < min_t(unsigned int, 4, naddrs); i++)
+> >>>>>>> +				addr1 |= *addrs++ << (BITS_PER_BYTE * i);
+> >>>>>>> +			naddrs -= i;
+> >>>>>>> +			for (i = 0; i < min_t(unsigned int, 4, naddrs); i++)
+> >>>>>>> +				addr2 |= *addrs++ << (BITS_PER_BYTE * i);
+> >>>>>>> +			writel_relaxed(addr1, ctrl->regs + ADDR_REG1);
+> >>>>>>> +			writel_relaxed(addr2, ctrl->regs + ADDR_REG2);
+> >>>>>>> +			break;
+> >>>>>>> +
+> >>>>>>> +		case NAND_OP_DATA_IN_INSTR:
+> >>>>>>> +			size = nand_subop_get_data_len(subop, op_id);
+> >>>>>>> +			offset = nand_subop_get_data_start_off(subop, op_id);
+> >>>>>>> +
+> >>>>>>> +			cmd |= COMMAND_TRANS_SIZE(size) | COMMAND_PIO |
+> >>>>>>> +				COMMAND_RX | COMMAND_A_VALID;
+> >>>>>>> +
+> >>>>>>> +			instr_data_in = instr;
+> >>>>>>> +			break;
+> >>>>>>> +
+> >>>>>>> +		case NAND_OP_DATA_OUT_INSTR:
+> >>>>>>> +			size = nand_subop_get_data_len(subop, op_id);
+> >>>>>>> +			offset = nand_subop_get_data_start_off(subop, op_id);
+> >>>>>>> +
+> >>>>>>> +			cmd |= COMMAND_TRANS_SIZE(size) | COMMAND_PIO |
+> >>>>>>> +				COMMAND_TX | COMMAND_A_VALID;
+> >>>>>>> +
+> >>>>>>> +			memcpy(&reg, instr->ctx.data.buf.out + offset, size);
+> >>>>>>> +			writel_relaxed(reg, ctrl->regs + RESP);
+> >>>>>>> +
+> >>>>>>> +			break;
+> >>>>>>> +		case NAND_OP_WAITRDY_INSTR:
+> >>>>>>> +			cmd |= COMMAND_RBSY_CHK;
+> >>>>>>> +			break;
+> >>>>>>> +
+> >>>>>>> +		}
+> >>>>>>> +	}
+> >>>>>>> +
+> >>>>>>> +	cmd |= COMMAND_GO | COMMAND_CE(ctrl->cur_cs);
+> >>>>>>> +	writel_relaxed(cmd, ctrl->regs + COMMAND);
+> >>>>>>> +	ret = wait_for_completion_io_timeout(&ctrl->command_complete,
+> >>>>>>> +					     msecs_to_jiffies(500));  
+> >>>>>>
+> >>>>>> It's not obvious to me whether _io_ variant is appropriate to use here, would
+> >>>>>> be nice if somebody could clarify that. Maybe block/ already does the IO
+> >>>>>> accounting itself and hence the IO time would be counted twice in that case.  
+> >>>>>
+> >>>>> Good that you bring this up.
+> >>>>>
+> >>>>> I don't think that there is any higher layer which could take care of
+> >>>>> accounting. Usually, with raw nand there is no block layer involved
+> >>>>> anyway.
+> >>>>>
+> >>>>> In a quick test it seems that only when using wait_for_completion_io I/O
+> >>>>> is properly accounted in the "wait" section of top.
+> >>>>>
+> >>>>> So far only a single driver (omap2) used the _io variant, but I think it
+> >>>>> is the right thing to do! After all, it is I/O...
+> >>>>>
+> >>>>> Boris or any other MTD maintainer, any comment on this?  
+> >>>>
+> >>>> Given this definition of io_schedule_timeout() [1] (which is used when
+> >>>> you call wait_for_completion_io_timeout()), I'd say it's not useful to
+> >>>> use the _io_ version, simply because MTD devs are not exposed as blk
+> >>>> devices, and thus don't need the blk_schedule_flush_plug() that is done
+> >>>> is io_schedule_prepare(). But that also means MTD I/Os are not
+> >>>> accounted as I/Os :-(.  
+> >>>
+> >>> Documentation of wait_for_completion_io says:
+> >>> "The caller is accounted as waiting for IO (which traditionally means
+> >>> blkio only)."
+> >>>
+> >>> Which sounds as if it using _io is only an accounting thing...  
+> >>
+> >> Yes, you should only use it for waiting for IO off a system call
+> >> read path. So block IO, or file system IO. Don't use it for internal
+> >> IO that isn't related to that.  
+> > 
+> > I guess that would be the case here, since MTD page read/writes are
+> > typically file system IOs (e.g. UBIFS).
+> > 
+> > The problem is just that is not block related at all since it uses the
+> > MTD subsystem... And it seems that the _io variants besides accounting,
+> > also take a role in the block subsystems device plugging mechanism. What
+> > is unclear to me if using the _io variant from the MTD subsystem
+> > potentially disturbs the plugging mechanism...  
 > 
-> Joe, in general I really appreciate the fixes you send, but these
-> patches that cross a lot of subsystem boundaries (this isn't the first
-> one that does this) causes unnecessary conflicts in -next and during
-> the merge window.  Could you split your patches up from now on please?
-> 
+> No, it has nothing to do with plugging at the block level. So if you're
+> doing regular user IO, then you should use the _io variants.
 
-yeah splitting patches at subsystem boundaries is highly recommended.
+It's a bit more complicated than that. ->exec_op() is not only used for
+read/write accesses, but also all kind of management around the NAND
+chip which can't really be considered as storage device I/Os (at least
+that's my opinion). The one in tegra_nand_page_xfer() is probably
+valid though.
 
