@@ -2,238 +2,105 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.4 required=3.0 tests=DATE_IN_PAST_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 86EB1C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:10:09 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A7A13C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:10:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 472F920660
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:10:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 472F920660
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
+	by mail.kernel.org (Postfix) with ESMTP id 68E9420660
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:10:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68E9420660
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933929AbeFLTKH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 15:10:07 -0400
-Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:36894 "EHLO
-        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754181AbeFLTFe (ORCPT
+        id S933987AbeFLTKQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 15:10:16 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:38515 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933011AbeFLTKN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 15:05:34 -0400
-Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
- 15.0.1156.6; Tue, 12 Jun 2018 12:05:09 -0700
-Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 28412406F2;
-        Tue, 12 Jun 2018 12:05:33 -0700 (PDT)
-From:   Nadav Amit <namit@vmware.com>
-To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>
-CC:     Nadav Amit <namit@vmware.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jan Beulich <JBeulich@suse.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH v4 3/9] x86: refcount: prevent gcc distortions
-Date:   Tue, 12 Jun 2018 04:50:44 -0700
-Message-ID: <20180612115050.185112-4-namit@vmware.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180612115050.185112-1-namit@vmware.com>
-References: <20180612115050.185112-1-namit@vmware.com>
+        Tue, 12 Jun 2018 15:10:13 -0400
+Received: by mail-pg0-f68.google.com with SMTP id c9-v6so26040pgf.5;
+        Tue, 12 Jun 2018 12:10:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=eZIJ2337ZfatyGsHj6AhkWTZqCqYht1IwCqe6Cos2gI=;
+        b=J6cWylG31aioD2AYdfBqtncnG6lpvIDcspBPLpTiGcHWzratt8pTDs4iA/dKF+cWW9
+         5huY8Jdc2CCdgFJdnOAc3//IQE8chKm2bKPq2ICFpQLKvPloj2JZwBGTs0TE6iVnYvAN
+         1SZM8A4xVvCXCryzhiQ6CagL+BXOYMxOZudSQtkMMtXf2ag8xPW2l8K1h7PvS1NQG1Lv
+         3xAnrbnYOQa6+BDffqmNHHi9j0KDrWoP/atJ0Kzh97rfjyRoKWBhncBeBJ2UvmFdz1fN
+         km2sgWdFJOSQ9tQ9grMbUZXgbKGOYqYtyEaYDTsnZezRu4Ab3OqutIUGzhTYQdqpJobE
+         DzJw==
+X-Gm-Message-State: APt69E2sVNIx1ag1jZcjJmr8sukRB13Rms2LcPE9hhT8P8S2T/zd+2OL
+        wCCBnxj/mdj9xBgC4jsLKQ==
+X-Google-Smtp-Source: ADUXVKKYX7ykxPn5v7U42/R7Oz+TbAztZmTUeCkg5JqmJlUs89zvbuMs+34qOuykh/y6cj+5UFJLIQ==
+X-Received: by 2002:a63:8ec8:: with SMTP id k191-v6mr1370198pge.435.1528830613132;
+        Tue, 12 Jun 2018 12:10:13 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id i71-v6sm849406pgd.22.2018.06.12.12.10.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 12 Jun 2018 12:10:12 -0700 (PDT)
+Date:   Tue, 12 Jun 2018 13:10:11 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: Re: [PATCH v2 10/11] dt-bindings: misc: add bindings for
+ cros_ec_throttler
+Message-ID: <20180612191011.GA26266@rob-hp-laptop>
+References: <20180607181214.30338-1-mka@chromium.org>
+ <20180607181214.30338-11-mka@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
- designate permitted sender hosts)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180607181214.30338-11-mka@chromium.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GCC considers the number of statements in inlined assembly blocks,
-according to new-lines and semicolons, as an indication to the cost of
-the block in time and space. This data is distorted by the kernel code,
-which puts information in alternative sections. As a result, the
-compiler may perform incorrect inlining and branch optimizations.
+On Thu, Jun 07, 2018 at 11:12:13AM -0700, Matthias Kaehlcke wrote:
+> The cros_ec_throttler monitors events from the Chrome OS Embedded
+> Controller to throttle the system if needed, using the mechanisms
+> provided by the throttler core.
+> 
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
+> Changes in v2:
+> - patch added to series
+> 
+>  Documentation/devicetree/bindings/misc/cros_ec_throttler.txt | 4 ++++
+>  1 file changed, 4 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/misc/cros_ec_throttler.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/misc/cros_ec_throttler.txt b/Documentation/devicetree/bindings/misc/cros_ec_throttler.txt
+> new file mode 100644
+> index 000000000000..7316dcc0ef75
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/misc/cros_ec_throttler.txt
+> @@ -0,0 +1,4 @@
+> +* cros_ec_throttler driver
 
-The solution is to set an assembly macro and call it from the inlined
-assembly block. As a result GCC considers the inline assembly block as
-a single instruction.
+Bindings are for h/w, not drivers.
 
-This patch allows to inline functions such as __get_seccomp_filter().
-Interestingly, this allows more aggressive inlining while reducing the
-kernel size.
+I continue to fail to see why this needs to be in DT. There are other 
+ways to instantiate drivers.
 
-   text	   data	    bss	    dec	    hex	filename
-18140970 10225412 2957312 31323694 1ddf62e ./vmlinux before
-18140140 10225284 2957312 31322736 1ddf270 ./vmlinux after (-958)
-
-Static text symbols:
-Before:	40302
-After:	40286	(-16)
-
-Functions such as kref_get(), free_user(), fuse_file_get() now get
-inlined.
-
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: x86@kernel.org
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Jan Beulich <JBeulich@suse.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-
-Signed-off-by: Nadav Amit <namit@vmware.com>
----
- arch/x86/include/asm/refcount.h | 74 ++++++++++++++++++++-------------
- arch/x86/kernel/macros.S        |  1 +
- 2 files changed, 46 insertions(+), 29 deletions(-)
-
-diff --git a/arch/x86/include/asm/refcount.h b/arch/x86/include/asm/refcount.h
-index 4cf11d88d3b3..6b2809a4d8e9 100644
---- a/arch/x86/include/asm/refcount.h
-+++ b/arch/x86/include/asm/refcount.h
-@@ -4,6 +4,41 @@
-  * x86-specific implementation of refcount_t. Based on PAX_REFCOUNT from
-  * PaX/grsecurity.
-  */
-+
-+#ifdef __ASSEMBLY__
-+
-+#include <asm/asm.h>
-+#include <asm/bug.h>
-+
-+.macro REFCOUNT_EXCEPTION counter:req
-+	.pushsection .text..refcount
-+111:	lea \counter, %_ASM_CX
-+112:	ud2
-+	ASM_UNREACHABLE
-+	.popsection
-+113:	_ASM_EXTABLE_REFCOUNT(112b, 113b)
-+.endm
-+
-+/* Trigger refcount exception if refcount result is negative. */
-+.macro REFCOUNT_CHECK_LT_ZERO counter:req
-+	js 111f
-+	REFCOUNT_EXCEPTION counter="\counter"
-+.endm
-+
-+/* Trigger refcount exception if refcount result is zero or negative. */
-+.macro REFCOUNT_CHECK_LE_ZERO counter:req
-+	jz 111f
-+	REFCOUNT_CHECK_LT_ZERO counter="\counter"
-+.endm
-+
-+/* Trigger refcount exception unconditionally. */
-+.macro REFCOUNT_ERROR counter:req
-+	jmp 111f
-+	REFCOUNT_EXCEPTION counter="\counter"
-+.endm
-+
-+#else /* __ASSEMBLY__ */
-+
- #include <linux/refcount.h>
- 
- /*
-@@ -14,34 +49,11 @@
-  * central refcount exception. The fixup address for the exception points
-  * back to the regular execution flow in .text.
-  */
--#define _REFCOUNT_EXCEPTION				\
--	".pushsection .text..refcount\n"		\
--	"111:\tlea %[counter], %%" _ASM_CX "\n"		\
--	"112:\t" ASM_UD2 "\n"				\
--	ASM_UNREACHABLE					\
--	".popsection\n"					\
--	"113:\n"					\
--	_ASM_EXTABLE_REFCOUNT(112b, 113b)
--
--/* Trigger refcount exception if refcount result is negative. */
--#define REFCOUNT_CHECK_LT_ZERO				\
--	"js 111f\n\t"					\
--	_REFCOUNT_EXCEPTION
--
--/* Trigger refcount exception if refcount result is zero or negative. */
--#define REFCOUNT_CHECK_LE_ZERO				\
--	"jz 111f\n\t"					\
--	REFCOUNT_CHECK_LT_ZERO
--
--/* Trigger refcount exception unconditionally. */
--#define REFCOUNT_ERROR					\
--	"jmp 111f\n\t"					\
--	_REFCOUNT_EXCEPTION
- 
- static __always_inline void refcount_add(unsigned int i, refcount_t *r)
- {
- 	asm volatile(LOCK_PREFIX "addl %1,%0\n\t"
--		REFCOUNT_CHECK_LT_ZERO
-+		"REFCOUNT_CHECK_LT_ZERO counter=\"%[counter]\""
- 		: [counter] "+m" (r->refs.counter)
- 		: "ir" (i)
- 		: "cc", "cx");
-@@ -50,7 +62,7 @@ static __always_inline void refcount_add(unsigned int i, refcount_t *r)
- static __always_inline void refcount_inc(refcount_t *r)
- {
- 	asm volatile(LOCK_PREFIX "incl %0\n\t"
--		REFCOUNT_CHECK_LT_ZERO
-+		"REFCOUNT_CHECK_LT_ZERO counter=\"%[counter]\""
- 		: [counter] "+m" (r->refs.counter)
- 		: : "cc", "cx");
- }
-@@ -58,7 +70,7 @@ static __always_inline void refcount_inc(refcount_t *r)
- static __always_inline void refcount_dec(refcount_t *r)
- {
- 	asm volatile(LOCK_PREFIX "decl %0\n\t"
--		REFCOUNT_CHECK_LE_ZERO
-+		"REFCOUNT_CHECK_LE_ZERO counter=\"%[counter]\""
- 		: [counter] "+m" (r->refs.counter)
- 		: : "cc", "cx");
- }
-@@ -66,13 +78,15 @@ static __always_inline void refcount_dec(refcount_t *r)
- static __always_inline __must_check
- bool refcount_sub_and_test(unsigned int i, refcount_t *r)
- {
--	GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl", REFCOUNT_CHECK_LT_ZERO,
-+	GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl",
-+				  "REFCOUNT_CHECK_LT_ZERO counter=\"%0\"",
- 				  r->refs.counter, "er", i, "%0", e, "cx");
- }
- 
- static __always_inline __must_check bool refcount_dec_and_test(refcount_t *r)
- {
--	GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl", REFCOUNT_CHECK_LT_ZERO,
-+	GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl",
-+				 "REFCOUNT_CHECK_LT_ZERO counter=\"%0\"",
- 				 r->refs.counter, "%0", e, "cx");
- }
- 
-@@ -90,7 +104,7 @@ bool refcount_add_not_zero(unsigned int i, refcount_t *r)
- 
- 		/* Did we try to increment from/to an undesirable state? */
- 		if (unlikely(c < 0 || c == INT_MAX || result < c)) {
--			asm volatile(REFCOUNT_ERROR
-+			asm volatile("REFCOUNT_ERROR counter=\"%[counter]\""
- 				     : : [counter] "m" (r->refs.counter)
- 				     : "cc", "cx");
- 			break;
-@@ -106,4 +120,6 @@ static __always_inline __must_check bool refcount_inc_not_zero(refcount_t *r)
- 	return refcount_add_not_zero(1, r);
- }
- 
-+#endif /* __ASSEMBLY__ */
-+
- #endif
-diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
-index cee28c3246dc..f1fe1d570365 100644
---- a/arch/x86/kernel/macros.S
-+++ b/arch/x86/kernel/macros.S
-@@ -7,3 +7,4 @@
-  */
- 
- #include <linux/compiler.h>
-+#include <asm/refcount.h>
--- 
-2.17.0
-
+> +
+> +Required properties:
+> +- compatible: "google,cros-ec-throttler"
+> -- 
+> 2.18.0.rc1.242.g61856ae69a-goog
+> 
