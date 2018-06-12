@@ -6,59 +6,59 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 99667C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 00:39:51 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9B657C004E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 00:40:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E8CB208AF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 00:39:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C698208B9
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 00:40:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="gwIS1Gk/";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PmC5Pniu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E8CB208AF
+	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="grkwpCPA";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PoHOHuJU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C698208B9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tobin.cc
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934886AbeFLAjt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 20:39:49 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:51737 "EHLO
+        id S934872AbeFLAjq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 20:39:46 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:49725 "EHLO
         out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934843AbeFLAjl (ORCPT
+        by vger.kernel.org with ESMTP id S934811AbeFLAje (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 20:39:41 -0400
+        Mon, 11 Jun 2018 20:39:34 -0400
 Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 0752D21D03;
-        Mon, 11 Jun 2018 20:39:41 -0400 (EDT)
+        by mailout.nyi.internal (Postfix) with ESMTP id 8B61321CA8;
+        Mon, 11 Jun 2018 20:39:33 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Mon, 11 Jun 2018 20:39:41 -0400
+  by compute5.internal (MEProxy); Mon, 11 Jun 2018 20:39:33 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=cc
         :date:from:in-reply-to:message-id:references:subject:to
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=ZZ72QDn5X46qixFLx
-        Fam4HSohOZAP8ybWu3r9d+Y2mE=; b=gwIS1Gk/96G4FE0/UHKH5SWoWfDz8IeK5
-        qVg6MFIla/9mMLuKwcSPzBJpXbmYA1Hewdpd6rjs7wQz/0VHd/BE7FJswGcRBLHr
-        VfItXL5dwr6NVLKckm3C3AVfN7fUGfVVISotTOwSTPm6OK3GTEdLV+yuhm6RBi7L
-        9YR5G+MaHc7CnXo4XzvMEFeuFUg5SCo4nGlaXZIqZOCLWGbR+IZ73PFcFvATv1ex
-        WI8feTs/Scqdf/wMEDvXdaCnJpcccFOWt1S6t7aAC1FB0KHdIYYUsh/GItiia1kH
-        4ckOapCDxt/mJX7KXAYtROatO5HFzfArSXLSkBNUI+6C04I5Xf+ig==
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=wVO0ELc2nMmioIWS8
+        aWaBXLUwnC2bh10GTjADlU81XU=; b=grkwpCPAfJXn68D6okPTD05ej1rfcAhW/
+        7mg1KGLjndh8IDrbwUSFngJ9zYUPfDdHG2j71CpnRBquVxa82sz4I3aLx1VpYkTk
+        SComzDaWsu4zyPxjBslWHQ3WnxzPjD9qIHFxflO9xPFCY0IpzytFuL7l1MBBsyTL
+        pxWG2Ie+rgOlqR6nYL85dISfAsBHLgZrea/llVW0XdRvulCUFIG0aZuiBOwwVKOv
+        SPLMI7WBcAGyBQXwZYzrVlO1eAzhFp9wIV9ptr357EgnEKcVk2mCSnd9BEy+SbsV
+        OcH8GdZ7uVfwwM83F3x2NYTU2Re9TTIYWZWRRdujt01OK7znN/2vg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:date:from:in-reply-to:message-id
         :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=ZZ72QDn5X46qixFLxFam4HSohOZAP8ybWu3r9d+Y2mE=; b=PmC5Pniu
-        Z76TF7fTtciJYIZP1fsMOwJbwangPFAIjOEln3m8l+oSyggg8HxQn/mQ8eE/82ne
-        8So0brxFu7l59EYGpL/je+qdckagMveXvyLNT21vs6V6a21zZHyUPzkkIbZWYxrN
-        pKnZwdZj9uQokUWroxWfeqXloHc3XmqxeSpz1+63hpTA/QMainEjMOUmvEqiCdlT
-        uJcbMyBFnGXzpKiE97RJcDSzmTEbr6dqJTz5ZaXLfHy8OkLzasI5EbYT2L37loBM
-        e0F5i4hVMOwb46nHrOgELmnrrwKX0V5T1xFj+KKxROSNAhkck+3O0sxk7m2cu34f
-        LjA1ypwU1bb+ZA==
-X-ME-Proxy: <xmx:TBYfW0SZq3lH0jw8jO9xIlxq8v_O2skXSSL9_YC1jE_1Zbam6eJdSA>
-X-ME-Proxy: <xmx:TBYfW20odSnGlwvQcNO4QXv2Ybu8FXYbXwrbNhbzFOTr8kXvHgBMSg>
-X-ME-Proxy: <xmx:TBYfW-1p1p5QoiRQtPVe8wObnhj846TUZyzgGGKFrHDMRChV4jxXOA>
-X-ME-Proxy: <xmx:TBYfW1upIOYKFyTMbOcJlXo3PB2-SAPds2H6AQ2CjWP6ZVqb2y9UFg>
-X-ME-Proxy: <xmx:TBYfW_B0hBn4YWETutlBOEStZ_Ut1QzaSwXIBQ2n2DUPIxjy8AVhFw>
-X-ME-Proxy: <xmx:TBYfW15KifqNc03uT24-0ix8OoPMvkj2yHM9uSzPgXPvPrbU8VoAwg>
-X-ME-Sender: <xms:TBYfW_YzC39JbjlzWSlleZjvU-9G8QQddpuoU0-ptAX3MTjFTxPHMQ>
+        fm3; bh=wVO0ELc2nMmioIWS8aWaBXLUwnC2bh10GTjADlU81XU=; b=PoHOHuJU
+        uToei8C7q9HnYRWarl/dUJFjfNfDoNw++70ubG4Fq1z5KQllXubILIaFN8OApow5
+        6GddpDlNb5nCdQ/a7xwsSk/jDsv9NrFbrSN1vjPODe9UHSuRXZ/VDcV91s8ZI6Un
+        EP7IhxE9yEC1tumg8ZSJtfZdFLjfsG6z05RmezTgF2BLmkZJ+3+s8SpVsiUFUSVi
+        7Ul6OmP3ffsWhMK9H65nE3OZxdEz+qWBOFr/NzLCFyMWezh8jzzf6/QawD7SmebQ
+        64pVKcGQADEMbNFTjKoqWFPEA9O3Ggu4rKaAtULzF6fOqF1LbodNC66ECmGdGMMw
+        FHcP0liwPHVl3Q==
+X-ME-Proxy: <xmx:RRYfW5DqXg9bsOixKKEcf_rhOuzIpyXlCCFqBKU2xL7BOazhOSdLWQ>
+X-ME-Proxy: <xmx:RRYfW-0PrdB0gvrwgnt8S7GIDT2AHmrK9svBr5fCNW3GZCXK3D8N6w>
+X-ME-Proxy: <xmx:RRYfW5RyKmW4Y1XACiY8hc1qKZrMioZnc_PD-CnyJRiuY5E3vBJY-A>
+X-ME-Proxy: <xmx:RRYfW8yvE0SGk9XVK5YL38scaKzG-AEOgC9WA4rjDbfKt9xQkt5QQQ>
+X-ME-Proxy: <xmx:RRYfW44gNUdEFrYIkbrKEu0t-FU9UvjDKFjqZB09Hhth4CIb6KfLGQ>
+X-ME-Proxy: <xmx:RRYfW-CT8BVeJZOm42CKU_hMZpo7Fd6tb2gdBheTCUnmOgCPZtT2Lg>
+X-ME-Sender: <xms:RRYfW4Lbx69W7cro8_stmR32MdfGhUQ54fQjyJaZ19vSfw0z2KcGaA>
 Received: from localhost (124-169-136-87.dyn.iinet.net.au [124.169.136.87])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 3208AE425A;
-        Mon, 11 Jun 2018 20:39:39 -0400 (EDT)
+        by mail.messagingengine.com (Postfix) with ESMTPA id B3891E425A;
+        Mon, 11 Jun 2018 20:39:32 -0400 (EDT)
 From:   "Tobin C. Harding" <me@tobin.cc>
 To:     "Theodore Ts'o" <tytso@mit.edu>
 Cc:     "Tobin C. Harding" <me@tobin.cc>,
@@ -70,9 +70,9 @@ Cc:     "Tobin C. Harding" <me@tobin.cc>,
         Andrew Morton <akpm@linux-foundation.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Subject: [PATCH v7 4/4] vsprintf: Add command line option debug_boot_weak_hash
-Date:   Tue, 12 Jun 2018 10:39:14 +1000
-Message-Id: <1528763954-27731-5-git-send-email-me@tobin.cc>
+Subject: [PATCH v7 2/4] random: Return nbytes filled from hw RNG
+Date:   Tue, 12 Jun 2018 10:39:12 +1000
+Message-Id: <1528763954-27731-3-git-send-email-me@tobin.cc>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1528763954-27731-1-git-send-email-me@tobin.cc>
 References: <1528763954-27731-1-git-send-email-me@tobin.cc>
@@ -81,82 +81,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently printing [hashed] pointers requires enough entropy to be
-available.  Early in the boot sequence this may not be the case
-resulting in a dummy string '(____ptrval____)' being printed.  This
-makes debugging the early boot sequence difficult.  We can relax the
-requirement to use cryptographically secure hashing during debugging.
-This enables debugging while keeping development/production kernel
-behaviour the same.
+Currently the function get_random_bytes_arch() has return value 'void'.
+If the hw RNG fails we currently fall back to using get_random_bytes().
+This defeats the purpose of requesting random material from the hw RNG
+in the first place.
 
-If new command line option debug_boot_weak_hash is enabled use
-cryptographically insecure hashing and hash pointer value immediately.
+There are currently no intree users of get_random_bytes_arch().
 
-Cc: Anna-Maria Gleixner <anna-maria@linutronix.de>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>
+Only get random bytes from the hw RNG, make function return the number
+of bytes retrieved from the hw RNG.
+
 Signed-off-by: Tobin C. Harding <me@tobin.cc>
+Acked-by: Theodore Ts'o <tytso@mit.edu>
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- Documentation/admin-guide/kernel-parameters.txt |  9 +++++++++
- lib/vsprintf.c                                  | 18 ++++++++++++++++++
- 2 files changed, 27 insertions(+)
+ drivers/char/random.c  | 16 +++++++++-------
+ include/linux/random.h |  2 +-
+ 2 files changed, 10 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 638342d0a095..a116fc0366b0 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -748,6 +748,15 @@
+diff --git a/drivers/char/random.c b/drivers/char/random.c
+index ed679099afba..bd3d3fbea632 100644
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -1724,26 +1724,28 @@ EXPORT_SYMBOL(del_random_ready_callback);
+  * key known by the NSA).  So it's useful if we need the speed, but
+  * only if we're willing to trust the hardware manufacturer not to
+  * have put in a back door.
++ *
++ * Return number of bytes filled in.
+  */
+-void get_random_bytes_arch(void *buf, int nbytes)
++int __must_check get_random_bytes_arch(void *buf, int nbytes)
+ {
++	int left = nbytes;
+ 	char *p = buf;
  
- 	debug		[KNL] Enable kernel debugging (events log level).
+-	trace_get_random_bytes_arch(nbytes, _RET_IP_);
+-	while (nbytes) {
++	trace_get_random_bytes_arch(left, _RET_IP_);
++	while (left) {
+ 		unsigned long v;
+-		int chunk = min(nbytes, (int)sizeof(unsigned long));
++		int chunk = min_t(int, left, (int)sizeof(unsigned long));
  
-+	debug_boot_weak_hash
-+			[KNL] Enable printing pointers early in the boot
-+			sequence.  If enabled, we use a weak hash instead of
-+			siphash to hash pointers.  Use this option if you need
-+			to see pointer values during early boot (i.e you are
-+			seeing instances of '(___ptrval___)').
-+			Cryptographically insecure, please do not use on
-+			production kernels.
-+
- 	debug_locks_verbose=
- 			[KNL] verbose self-tests
- 			Format=<0|1>
-diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-index c445f9f28760..6d2479eb7c2b 100644
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -1651,6 +1651,18 @@ char *device_node_string(char *buf, char *end, struct device_node *dn,
- 	return widen_string(buf, buf - buf_start, end, spec);
+ 		if (!arch_get_random_long(&v))
+ 			break;
+ 
+ 		memcpy(p, &v, chunk);
+ 		p += chunk;
+-		nbytes -= chunk;
++		left -= chunk;
+ 	}
+ 
+-	if (nbytes)
+-		get_random_bytes(p, nbytes);
++	return nbytes - left;
  }
+ EXPORT_SYMBOL(get_random_bytes_arch);
  
-+/* Make pointers available for printing early in the boot sequence. */
-+static int debug_boot_weak_hash __ro_after_init;
-+EXPORT_SYMBOL(debug_boot_weak_hash);
-+
-+static int __init debug_boot_weak_hash_enable(char *str)
-+{
-+	debug_boot_weak_hash = 1;
-+	pr_info("debug_boot_weak_hash enabled\n");
-+	return 0;
-+}
-+early_param("debug_boot_weak_hash", debug_boot_weak_hash_enable);
-+
- static DEFINE_STATIC_KEY_TRUE(not_filled_random_ptr_key);
- static siphash_key_t ptr_key __read_mostly;
+diff --git a/include/linux/random.h b/include/linux/random.h
+index 2ddf13b4281e..f1c9bc5cd231 100644
+--- a/include/linux/random.h
++++ b/include/linux/random.h
+@@ -38,7 +38,7 @@ extern void get_random_bytes(void *buf, int nbytes);
+ extern int wait_for_random_bytes(void);
+ extern int add_random_ready_callback(struct random_ready_callback *rdy);
+ extern void del_random_ready_callback(struct random_ready_callback *rdy);
+-extern void get_random_bytes_arch(void *buf, int nbytes);
++extern int __must_check get_random_bytes_arch(void *buf, int nbytes);
  
-@@ -1703,6 +1715,12 @@ static char *ptr_to_id(char *buf, char *end, void *ptr, struct printf_spec spec)
- 	const char *str = sizeof(ptr) == 8 ? "(____ptrval____)" : "(ptrval)";
- 	unsigned long hashval;
- 
-+	/* When debugging early boot use non-cryptographically secure hash */
-+	if (unlikely(debug_boot_weak_hash)) {
-+		hashval = hash_long((unsigned long)ptr, 32);
-+		return pointer_string(buf, end, (const void *)hashval, spec);
-+	}
-+
- 	if (static_branch_unlikely(&not_filled_random_ptr_key)) {
- 		spec.field_width = 2 * sizeof(ptr);
- 		/* string length must be less than default_width */
+ #ifndef MODULE
+ extern const struct file_operations random_fops, urandom_fops;
 -- 
 2.7.4
 
