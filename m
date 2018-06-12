@@ -3,134 +3,98 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id ECC6CC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:46:50 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C3554C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:47:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC3D12086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:46:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC3D12086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 837C72086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:47:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 837C72086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933965AbeFLNqt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 09:46:49 -0400
-Received: from foss.arm.com ([217.140.101.70]:33934 "EHLO foss.arm.com"
+        id S933973AbeFLNrR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 09:47:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37101 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932749AbeFLNqr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 09:46:47 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 719401529;
-        Tue, 12 Jun 2018 06:46:47 -0700 (PDT)
-Received: from [10.1.207.44] (e112298-lin.cambridge.arm.com [10.1.207.44])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 89A4B3F557;
-        Tue, 12 Jun 2018 06:46:40 -0700 (PDT)
-Subject: Re: [PATCH v4 02/26] arm64: cpufeature: Add cpufeature for IRQ
- priority masking
-From:   Julien Thierry <julien.thierry@arm.com>
-To:     Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
-        joel@joelfernandes.org, marc.zyngier@arm.com, mark.rutland@arm.com,
-        christoffer.dall@arm.com, james.morse@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com
-References: <1527241772-48007-1-git-send-email-julien.thierry@arm.com>
- <1527241772-48007-3-git-send-email-julien.thierry@arm.com>
- <e44df12f-9868-ae94-4623-ec221d72d783@arm.com>
- <b0673d7e-9a1e-7dcb-5322-c05fe0821349@arm.com>
- <c4e5f8ff-ecde-7b88-8a37-39e47ef22917@arm.com>
- <54ff6127-928d-99a3-a6e9-59799628ca87@arm.com>
- <3f0afa54-8e98-798e-68dc-bbbc74bd9e19@arm.com>
- <acf4b44f-d5c7-c31a-7f47-cfbe1049eadc@arm.com>
-Message-ID: <bc8bb69d-8db4-87b7-adfb-589e1dd905c0@arm.com>
-Date:   Tue, 12 Jun 2018 14:46:38 +0100
+        id S932749AbeFLNrP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 09:47:15 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id E2946ADD2;
+        Tue, 12 Jun 2018 13:47:13 +0000 (UTC)
+Subject: Re: [PATCH v5 2/3] Input: xen-kbdfront - fix multi-touch XenStore
+ node's locations
+To:     Oleksandr Andrushchenko <andr2000@gmail.com>,
+        xen-devel@lists.xenproject.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dmitry.torokhov@gmail.com,
+        lyan@suse.com, boris.ostrovsky@oracle.com
+Cc:     konrad.wilk@oracle.com, andrii_chepurnyi@epam.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180612074856.28451-1-andr2000@gmail.com>
+ <20180612074856.28451-3-andr2000@gmail.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <efd627f7-8d12-c0c1-f21d-36baacc45522@suse.com>
+Date:   Tue, 12 Jun 2018 15:47:13 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <acf4b44f-d5c7-c31a-7f47-cfbe1049eadc@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180612074856.28451-3-andr2000@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 25/05/18 11:48, Julien Thierry wrote:
+On 12/06/18 09:48, Oleksandr Andrushchenko wrote:
+> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 > 
+> kbdif protocol describes multi-touch device parameters as a
+> part of frontend's XenBus configuration nodes while they
+> belong to backend's configuration. Fix this by reading the
+> parameters as defined by the protocol.
 > 
-> On 25/05/18 11:41, Suzuki K Poulose wrote:
->> On 25/05/18 11:39, Julien Thierry wrote:
->>>
->>>
->>> On 25/05/18 11:36, Suzuki K Poulose wrote:
->>>> On 25/05/18 11:17, Julien Thierry wrote:
->>>>>
->>>>>
->>>>> On 25/05/18 11:04, Suzuki K Poulose wrote:
->>>>>> On 25/05/18 10:49, Julien Thierry wrote:
->>>>>>> Add a cpufeature indicating whether a cpu supports masking 
->>>>>>> interrupts
->>>>>>> by priority.
->>>>>>
->>>>>> How is this different from the SYSREG_GIC_CPUIF cap ? Is it just
->>>>>> the description ?
->>>>>
->>>>> More or less.
->>>>>
->>>>> It is just to have an easier condition in the rest of the series. 
->>>>> Basically the PRIO masking feature is enabled if we have a GICv3 
->>>>> CPUIF working *and* the option was selected at build time. Before 
->>>>> this meant that I was checking for the GIC_CPUIF cap inside #ifdefs 
->>>>> (and putting alternatives depending on that inside #ifdefs as well).
->>>>>
->>>>> Having this as a separate feature feels easier to manage in the 
->>>>> code. It also makes it clearer at boot time that the kernel will be 
->>>>> using irq priorities (although I admit it was not the initial 
->>>>> intention):
->>>>>
->>>>> [    0.000000] CPU features: detected: IRQ priority masking
->>>>>
->>>>>
->>>>> But yes that new feature will be detected only if SYSREG_GIC_CPUIF 
->>>>> gets detected as well.
->>>>
->>>> Well, you could always wrap the check like :
->>>>
->>>> static inline bool system_has_irq_priority_masking(void)
->>>> {
->>>>      return (IS_ENABLED(CONFIG_YOUR_CONFIG) && 
->>>> cpus_have_const_cap(HWCAP_SYSREG_GIC_CPUIF));
->>>> }
->>>>
->>>> and use it everywhere.
->>>>
->>>
->>> Yes, but I can't use that in the asm parts that use alternatives and 
->>> would need to surround them in #ifdef... :\
->>
->> I thought there is _ALTERNATIVE_CFG() to base the alternative depend 
->> on a CONFIG_xxx ?
->> Doesn't that solve the problem ?
+> Fixes: 49aac8204da5 ("Input: xen-kbdfront - add multi-touch support")
 > 
-> Right, I didn't see that one. It should work yes.
-> 
-> I'll try that when working on the next version.
+> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-I've been trying to use this now, but I can't figure out how.
+Reviewed-by: Juergen Gross <jgross@suse.com>
 
-The _ALTERNATIVE_CFG does not seem to work in assembly code (despite 
-having its own definition for __ASSEMBLY__), and the alternative_insn 
-does not seem to be suited for instructions that take operands (or more 
-than one operand)
 
-If I am mistaken, can you provide an example of how to use this in 
-assembly with instructions having more than 1 operand?
-
-Cheers,
-
--- 
-Julien Thierry
+Juergen
