@@ -2,95 +2,111 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6849DC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 21:10:30 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E0303C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 21:11:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12A8E2086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 21:10:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JVddtvD/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12A8E2086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 9EDC12086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 21:11:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EDC12086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933713AbeFLVK2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 17:10:28 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:55528 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933912AbeFLVK0 (ORCPT
+        id S934091AbeFLVLe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 17:11:34 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:34157 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932985AbeFLVLc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 17:10:26 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5CL6HdO086442;
-        Tue, 12 Jun 2018 21:09:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2017-10-26;
- bh=+7qepDaPWnQevdYs0uJ75WwfBIC3xEzD2qhhfGEkLpM=;
- b=JVddtvD/uL3kq6Msd5j096dOTs0kAaa6kO+J/J8JOVr8ovnxFPDekOjdlUVVd+sREATQ
- VeqYHkSnMeT5rpiXbCn3RbT7/bTUAE+JgPTrCfmkkqRrKajmO4Jv82UMyjk4PcykZhv1
- JBp156NPlV3YbPGoQzptfmZrWGzY3aePGyEzNMIVb9pUkgHjA2VI+FP5jrYOaRkrgbcF
- Lhw12tiXeV7ZhIElQAmtd4C2JaDkCc29AxMMMBnskRsyspbB5sBKJ4vXN59RiVYF4Tt7
- nx3kjctyUbgnNCJBEAF23lY8Z0kvba017k66SAdAucreGUkla7fAja7kqJ4wOEQ74eIA PQ== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2120.oracle.com with ESMTP id 2jgecxk35g-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 12 Jun 2018 21:09:45 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5CL9i0Q014130
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 12 Jun 2018 21:09:45 GMT
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5CL9hGq017829;
-        Tue, 12 Jun 2018 21:09:43 GMT
-Received: from char.us.oracle.com (/10.137.176.158)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 12 Jun 2018 14:09:43 -0700
-Received: by char.us.oracle.com (Postfix, from userid 1000)
-        id 5922E6A00D6; Tue, 12 Jun 2018 17:09:40 -0400 (EDT)
-Date:   Tue, 12 Jun 2018 17:09:40 -0400
-From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To:     Anchal Agarwal <anchalag@amazon.com>
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, boris.ostrovsky@oracle.com, roger.pau@citrix.com,
-        netdev@vger.kernel.org, jgross@suse.com,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        kamatam@amazon.com, fllinden@amazon.com, vallish@amazon.com,
-        guruanb@amazon.com, eduval@amazon.com, rjw@rjwysocki.net,
-        pavel@ucw.cz, len.brown@intel.com, linux-pm@vger.kernel.org,
-        cyberax@amazon.com
-Subject: Re: [RFC PATCH 00/12] Enable PM hibernation on guest VMs
-Message-ID: <20180612210940.GA17709@char.us.oracle.com>
-References: <20180612205619.28156-1-anchalag@amazon.com>
+        Tue, 12 Jun 2018 17:11:32 -0400
+Received: by mail-yb0-f194.google.com with SMTP id n23-v6so155676ybg.1;
+        Tue, 12 Jun 2018 14:11:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=UKjmOrF1I5tEXYeQ8mRJFZFQ+FuLPhLDVAYGPcUR3sM=;
+        b=dhVOmrxJo5yyUUMSSDtbiFF6uzUmPr7G1WWBUzHjsIr2jYgIm7E6MxmHQDqaequx7U
+         8YC+tY7j2MK1rBgHNS/HJ72hsdX0A8xD8W3HhXiSTX2PAN8v/lvACbnrhUr0jVu+La7g
+         IQj1fnpk2CSUCYrEuh4qTCHwIsy0+rbj38JH5LzARB3Gry55GH+zACuxCUFMAmYVQZMs
+         hVTEUWrFdx6GvuAZcsvYzYetU7P8OAi6ssBzCKT/x4orb4SpPuA7uAa4Yk0aWxNCqJZF
+         nRuQ3BKpBxwyKxVNtUE3vz/sQW/HVP2pOwdjOrNlakUIUd4MDkTaXSp1NI9ot0s5Cl/E
+         kBcg==
+X-Gm-Message-State: APt69E0y3GDOrUVjy2XN0JOnnadML88vwJS8sxNyqQaUB93ypHjA5zvr
+        f/+nROOwcFpWLf0lt71s1g==
+X-Google-Smtp-Source: ADUXVKJMM1rMQcgl12Rphl4WekVE2N457+0ogkfN7i3gePaVULchBTRQCALY9HzllCLkaxpp1L4eKQ==
+X-Received: by 2002:a25:add0:: with SMTP id d16-v6mr1031773ybe.378.1528837891707;
+        Tue, 12 Jun 2018 14:11:31 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id q7-v6sm396912ywa.57.2018.06.12.14.11.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 12 Jun 2018 14:11:30 -0700 (PDT)
+Date:   Tue, 12 Jun 2018 15:11:28 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Nishanth Menon <nm@ti.com>
+Cc:     Jassi Brar <jassisinghbrar@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Tero Kristo <t-kristo@ti.com>,
+        Suman Anna <s-anna@ti.com>
+Subject: Re: [RFC PATCH 5/8] dt-bindings: mailbox: ti,message-manager: Add
+ support for secure proxy threads
+Message-ID: <20180612211128.GA22038@rob-hp-laptop>
+References: <20180605061629.4759-1-nm@ti.com>
+ <20180605061629.4759-6-nm@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180612205619.28156-1-anchalag@amazon.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8922 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=943
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806120234
+In-Reply-To: <20180605061629.4759-6-nm@ti.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 08:56:07PM +0000, Anchal Agarwal wrote:
-> Hello,
-> I am sending out a series of patches that implements guest
-> PM hibernation. These guests are running on xen hypervisor.
-> The patches had been tested against mainstream kernel and latest
-> xen version-4.11. EC2 instance hibernation feature is provided to
-> the AWS EC2 customers. PM hibernation uses swap space where
-> hibernation image is stored and restored from. I would like
-> the community to review and provide some feedback on the patch 
-> series and if they look good, merge them into 4.17 kernel.
+On Tue, Jun 05, 2018 at 01:16:26AM -0500, Nishanth Menon wrote:
+> Secure Proxy is another communication scheme in Texas Instrument's
+> devices intended to provide an unique communication path from various
+> processors in the System on Chip(SoC) to a central System Controller.
+> 
+> Secure proxy is, in effect, an evolution of current generation Message
+> Manager hardware block found in K2G devices. However the following
+> changes have taken place:
+> 
+> Secure Proxy instance exposes "threads" or "proxies" which is
+> primary representation of "a" communication channel. Each thread is
+> preconfigured by System controller configuration based on SoC usage
+> requirements. Secure proxy by itself represents a single "queue" of
+> communication but allows the proxies to be independently operated.
+> 
+> Each Secure proxy thread can uniquely have their own error and threshold
+> interrupts allowing for more fine control of IRQ handling.
+> 
+> Provide an hardware description of the same for device tree
+> representation.
+> 
+> See AM65x Technical Reference Manual (SPRUID7, April 2018)
+> for further details: http://www.ti.com/lit/pdf/spruid7
+> 
+> Signed-off-by: Nishanth Menon <nm@ti.com>
+> ---
+>  .../bindings/mailbox/ti,message-manager.txt        | 58 +++++++++++++++++++---
+>  1 file changed, 50 insertions(+), 8 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mailbox/ti,message-manager.txt b/Documentation/devicetree/bindings/mailbox/ti,message-manager.txt
+> index ebf0e3710cee..de796e90cac6 100644
+> --- a/Documentation/devicetree/bindings/mailbox/ti,message-manager.txt
+> +++ b/Documentation/devicetree/bindings/mailbox/ti,message-manager.txt
+> @@ -7,22 +7,40 @@ manager is broken up into queues in different address regions that are called
+>  "proxies" - each instance is unidirectional and is instantiated at SoC
+>  integration level to indicate receive or transmit path.
+>  
+> +This can also be used to describe Texas Instrument's Secure Proxy
+> +controller that allows for individually configurable "threads" or
+> +"proxies" which allow for independent communication scheme.
 
-4.17 got released on Jun 3rd. Kind of hard to do a time-machine.
+There seems to be very little re-use here. I think I would make this 
+its own doc.
+
+Rob
