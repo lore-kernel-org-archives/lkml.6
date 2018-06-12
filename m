@@ -2,154 +2,90 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D5D41C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:31:55 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E2E7AC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:32:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8878320693
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:31:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jnA6Xp/d";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YCyATbGF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8878320693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 962DB20693
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:32:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 962DB20693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933828AbeFLIbw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 04:31:52 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48932 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933242AbeFLIbu (ORCPT
+        id S933901AbeFLIcG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 04:32:06 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:37911 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933242AbeFLIcD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 04:31:50 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 8E831602BD; Tue, 12 Jun 2018 08:31:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528792309;
-        bh=OKyWdj5ZUElVAlqma/conqyWv7riKtTD8VDX3wT63ro=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=jnA6Xp/dSk8WnX5fJF18vr4eSltt/q9HPmGfumDPDTPWAe4aRkXy1fkogfS6c0oED
-         SwtAx4+eqBbFCqU2lJpG3C1nBppfpX+qxxGipkrdoJ3xk+EDmFf46/DaTqloXRit0s
-         plmQTeagYdzd92z4bDFjawz/DtIqhpYMKLV/YzkQ=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 9103F60116;
-        Tue, 12 Jun 2018 08:31:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528792308;
-        bh=OKyWdj5ZUElVAlqma/conqyWv7riKtTD8VDX3wT63ro=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=YCyATbGF3oaqkCJVfJsLvuODO3XtkqNKuuaN7CHf4mEfSnGJK9t61Usw064BCirOp
-         RHQQQUp3oF/tybzReZ7SW1/bh+nMdpaNJN7JQAOnNCZyQQqa9tbTIuMWEh+CaHhaeB
-         bppPG2Og5YpSO1+4FORImn2u/mu3TKTRUzd+wNCk=
+        Tue, 12 Jun 2018 04:32:03 -0400
+Received: by mail-ua0-f193.google.com with SMTP id 59-v6so15409824uas.5;
+        Tue, 12 Jun 2018 01:32:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ibDo8n6JdWD+/E8bFGdmWAd8Xc4e9ymJcXprcPQ1qB4=;
+        b=i6Befhx84TCQmxpICM78E8TEyEx5EjNtzIl1w27ug0mLjihiJe598urpk/k+gLOtiS
+         5eASHA5rmOn6ZhYSPLdgfZPCHBq3choduU3BlNE+/stceG22UzF+9XhXfOtuWXppnozj
+         gz+1FVbqOJk2uoJcVmu4jR2KPwe4ccgMgzgzDQR+QtwXdJFAqdO5psKi1THCARti2UlO
+         3ZtnsoxmRsJMlKMXVBChD0t1qhqEkpxhD+ymMcswFYr/wEhvK/8i6JJlVW/n1vojd+LH
+         v6IXk5OYnR9cbOYWBXbzQjBlgAXWLDgFP22+6Irg4a8wUsQIVz4TkZAYfdl1CEEMHeqP
+         33jw==
+X-Gm-Message-State: APt69E3V84f4z+Fm8K6dM9v00yaocNn+mCVBgXHQMrmIOTldjY/mwige
+        7qvuuWj3DEhTKP3P0AZnkLxnRYMoVk1Pwc2AR/I=
+X-Google-Smtp-Source: ADUXVKJ6co7bkC//oyd390D4OzNZeIDbSANWl/IV1/4LlYl9fCM9IVRaNc7w7RyUEyQ5VWiZtuQShq5EPyhTQ1hUzrc=
+X-Received: by 2002:ab0:5b18:: with SMTP id u24-v6mr1751980uae.72.1528792322235;
+ Tue, 12 Jun 2018 01:32:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 12 Jun 2018 14:01:48 +0530
-From:   poza@codeaurora.org
-To:     Ray Jui <ray.jui@broadcom.com>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
-        linux-pci-owner@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] PCI: iproc: Reduce inbound/outbound mapping print
- level
-In-Reply-To: <1528762867-16823-6-git-send-email-ray.jui@broadcom.com>
-References: <1528762867-16823-1-git-send-email-ray.jui@broadcom.com>
- <1528762867-16823-6-git-send-email-ray.jui@broadcom.com>
-Message-ID: <f38e325f6d2e280e0a5f63183042746a@codeaurora.org>
-X-Sender: poza@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+References: <1528310824-12706-1-git-send-email-clabbe@baylibre.com> <CAHp75Ve3nDsoEh0dL=xF3oei_GM9tPn_72=je+FESO=hJFm4uA@mail.gmail.com>
+In-Reply-To: <CAHp75Ve3nDsoEh0dL=xF3oei_GM9tPn_72=je+FESO=hJFm4uA@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 12 Jun 2018 10:31:51 +0200
+Message-ID: <CAMuHMdVZjPRknHY-3b7qr+FgwWmK3g3rCgjjK09Thh2EOLXbcQ@mail.gmail.com>
+Subject: Re: [PATCH] serial: 8250_dw: 8250_dw need to depend on COMMON_CLK
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Corentin Labbe <clabbe@baylibre.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-06-12 05:51, Ray Jui wrote:
-> Reduce inbound/outbound mapping print level from dev_info to
-> dev_dbg. This reduces the console logs during Linux boot process
-> 
-> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
-> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
-> ---
->  drivers/pci/host/pcie-iproc.c | 34 +++++++++++++++++-----------------
->  1 file changed, 17 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/pci/host/pcie-iproc.c 
-> b/drivers/pci/host/pcie-iproc.c
-> index 59be1e0..3160e93 100644
-> --- a/drivers/pci/host/pcie-iproc.c
-> +++ b/drivers/pci/host/pcie-iproc.c
-> @@ -880,14 +880,14 @@ static inline int iproc_pcie_ob_write(struct
-> iproc_pcie *pcie, int window_idx,
->  	writel(lower_32_bits(pci_addr), pcie->base + omap_offset);
->  	writel(upper_32_bits(pci_addr), pcie->base + omap_offset + 4);
-> 
-> -	dev_info(dev, "ob window [%d]: offset 0x%x axi %pap pci %pap\n",
-> -		 window_idx, oarr_offset, &axi_addr, &pci_addr);
-> -	dev_info(dev, "oarr lo 0x%x oarr hi 0x%x\n",
-> -		 readl(pcie->base + oarr_offset),
-> -		 readl(pcie->base + oarr_offset + 4));
-> -	dev_info(dev, "omap lo 0x%x omap hi 0x%x\n",
-> -		 readl(pcie->base + omap_offset),
-> -		 readl(pcie->base + omap_offset + 4));
-> +	dev_dbg(dev, "ob window [%d]: offset 0x%x axi %pap pci %pap\n",
-> +		window_idx, oarr_offset, &axi_addr, &pci_addr);
-> +	dev_dbg(dev, "oarr lo 0x%x oarr hi 0x%x\n",
-> +		readl(pcie->base + oarr_offset),
-> +		readl(pcie->base + oarr_offset + 4));
-> +	dev_dbg(dev, "omap lo 0x%x omap hi 0x%x\n",
-> +		readl(pcie->base + omap_offset),
-> +		readl(pcie->base + omap_offset + 4));
-> 
->  	return 0;
->  }
-> @@ -1054,8 +1054,8 @@ static int iproc_pcie_ib_write(struct iproc_pcie
-> *pcie, int region_idx,
->  	    iproc_pcie_reg_is_invalid(imap_offset))
->  		return -EINVAL;
-> 
-> -	dev_info(dev, "ib region [%d]: offset 0x%x axi %pap pci %pap\n",
-> -		 region_idx, iarr_offset, &axi_addr, &pci_addr);
-> +	dev_dbg(dev, "ib region [%d]: offset 0x%x axi %pap pci %pap\n",
-> +		region_idx, iarr_offset, &axi_addr, &pci_addr);
-> 
->  	/*
->  	 * Program the IARR registers.  The upper 32-bit IARR register is
-> @@ -1065,9 +1065,9 @@ static int iproc_pcie_ib_write(struct iproc_pcie
-> *pcie, int region_idx,
->  	       pcie->base + iarr_offset);
->  	writel(upper_32_bits(pci_addr), pcie->base + iarr_offset + 4);
-> 
-> -	dev_info(dev, "iarr lo 0x%x iarr hi 0x%x\n",
-> -		 readl(pcie->base + iarr_offset),
-> -		 readl(pcie->base + iarr_offset + 4));
-> +	dev_dbg(dev, "iarr lo 0x%x iarr hi 0x%x\n",
-> +		readl(pcie->base + iarr_offset),
-> +		readl(pcie->base + iarr_offset + 4));
-> 
->  	/*
->  	 * Now program the IMAP registers.  Each IARR region may have one or
-> @@ -1081,10 +1081,10 @@ static int iproc_pcie_ib_write(struct
-> iproc_pcie *pcie, int region_idx,
->  		writel(upper_32_bits(axi_addr),
->  		       pcie->base + imap_offset + ib_map->imap_addr_offset);
-> 
-> -		dev_info(dev, "imap window [%d] lo 0x%x hi 0x%x\n",
-> -			 window_idx, readl(pcie->base + imap_offset),
-> -			 readl(pcie->base + imap_offset +
-> -			       ib_map->imap_addr_offset));
-> +		dev_dbg(dev, "imap window [%d] lo 0x%x hi 0x%x\n",
-> +			window_idx, readl(pcie->base + imap_offset),
-> +			readl(pcie->base + imap_offset +
-> +			      ib_map->imap_addr_offset));
-> 
->  		imap_offset += ib_map->imap_window_offset;
->  		axi_addr += size;
+On Mon, Jun 11, 2018 at 11:03 PM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+> On Wed, Jun 6, 2018 at 10:27 PM Corentin Labbe <clabbe@baylibre.com> wrote:
+> > This patch fix the following build error on M68K:
 
-Reviewed-by: Oza Pawandeep <poza@codeaurora.org>
+Not plain m68k, but coldfire only (and MIPS AR7, I guess).
+
+> > drivers/tty/serial/8250/8250_dw.o: In function `dw8250_set_termios':
+> > 8250_dw.c:(.text+0x50c): undefined reference to `clk_round_rate'
+> > 8250_dw.c:(.text+0x594): undefined reference to `clk_set_rate'
+> >
+> > So 8250_dw need to depend on COMMON_CLK.
+> >
+>
+> Makes sense.
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+
+Please see "[PATCH 0/3] Legacy clock drivers: Normalize clk API"
+(https://lkml.org/lkml/2018/6/11/122).
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
