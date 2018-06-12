@@ -2,115 +2,111 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.7 required=3.0 tests=BODY_8BITS,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E7CF9C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:54:07 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 06759C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:55:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9384220660
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:54:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFD4D20660
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:55:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XbiFiFYS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9384220660
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="V3kKimGR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFD4D20660
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754308AbeFLTyF (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 15:54:05 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:47023 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754110AbeFLTyE (ORCPT
+        id S933476AbeFLTz0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 15:55:26 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:42666 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932533AbeFLTzY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 15:54:04 -0400
-Received: by mail-yb0-f194.google.com with SMTP id p22-v6so62566yba.13
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 12:54:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=8yHkdgVIpxTMHHgVUumack6HiMHlX/Yn6zXgyBVNaXY=;
-        b=XbiFiFYSipFykKvlEwSHmpjAXjh8On7c3mE5VLQ340qeQ0LGjY3BUYa60IAKZTBuFE
-         GG7/rrMC7tR8fWfkLbOIM0vd2TE9idHd14C9u8FkFbFT8c4xTYP4Az2sCWOY56AAhv6t
-         SK7HICD1hM2VwtqkgR+f4w2Boo35ZKxTseNnI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=8yHkdgVIpxTMHHgVUumack6HiMHlX/Yn6zXgyBVNaXY=;
-        b=NTxfChS32o3jrkm0QhbPkDU6YtcYnqcUGrsP247xsyJtYzKUb6XRzRyNWIfiIiUo2o
-         91qAZJ9STAH8xRQDAufpFYSfEJyToS45HU+nGVh4FkUYu2hUTOYU/FMwKw6+jFpF+PJ1
-         54dI8DzgM0WyfISo/h2IfTN5H6a3Itm5eGt8mjVx4pfh2Iw6mSl/aJp0+8ZmXoKTK9+W
-         rhsgeWf5J6YSFxgbAZhM3SkRGUVDsbjHUnItOfVzQvFStT44YnPlXZMl0cUK4iNlbiXS
-         1R0QPOzsTEaKCd7CY33Hoz9EEtCSudcflhNTSoPlgF0zWg5R6O3FX7llZVU95xsvYAWX
-         V9xw==
-X-Gm-Message-State: APt69E0Tg05a2II0yQtNwCMr/WK1D4vmRUWAMjqatHJEnGBx86Qpa+j2
-        cVkMRswUPVk3DOK0tC9fkEWUXXDcjWS4HsigXJMrrA==
-X-Google-Smtp-Source: ADUXVKLSSm1r7VYdEP0OEDmKq9znvaBdiELsAVuq3yyloonMoFSmWI6c9meXVS0kG4gZWSx5UHvWnmAIEQSc2hwEWFE=
-X-Received: by 2002:a25:acd0:: with SMTP id x16-v6mr910636ybd.400.1528833243036;
- Tue, 12 Jun 2018 12:54:03 -0700 (PDT)
+        Tue, 12 Jun 2018 15:55:24 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by lelnx193.ext.ti.com (8.15.1/8.15.1) with ESMTP id w5CJtJar006622;
+        Tue, 12 Jun 2018 14:55:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1528833319;
+        bh=RR5TU+DjZ31MgsdqVBQiIGOpXQs9KKJ77HxVQxWwgrQ=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=V3kKimGRxAkw/yOs32vcidjox4ISPO6MiJc8lEsuUmMitmm1sOroQ5OQOvEdLWqqc
+         X5X+jOH43+KD/ImKAtzODZQO7Cw7N9OehXxWmmtRUx+TWv+HuS4wVPKaJoqhIpUr0D
+         A+FKkUTifK50Dc3KhIRNmFih/grBlmm0hWUa4BGY=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5CJtJeA027813;
+        Tue, 12 Jun 2018 14:55:19 -0500
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 12
+ Jun 2018 14:55:18 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 12 Jun 2018 14:55:18 -0500
+Received: from [128.247.59.147] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5CJtI2U027844;
+        Tue, 12 Jun 2018 14:55:18 -0500
+Subject: Re: [PATCH net-next 6/6] Documentation: networking: cpsw: add MQPRIO
+ & CBS offload examples
+To:     Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>, <davem@davemloft.net>
+CC:     <corbet@lwn.net>, <akpm@linux-foundation.org>,
+        <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <vinicius.gomes@intel.com>, <henrik@austad.us>,
+        <jesus.sanchez-palencia@intel.com>, <ilias.apalodimas@linaro.org>,
+        <p-varis@ti.com>, <spatton@ti.com>, <francois.ozog@linaro.org>,
+        <yogeshs@ti.com>, <nsekhar@ti.com>
+References: <20180611133047.4818-1-ivan.khoronzhuk@linaro.org>
+ <20180611133047.4818-7-ivan.khoronzhuk@linaro.org>
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <16c97ea6-9f28-1dd6-136a-2473423bf94a@ti.com>
+Date:   Tue, 12 Jun 2018 14:55:18 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <20180608144834.3003465-1-arnd@arndb.de> <20180608181956.GA110395@decatoncale.mtv.corp.google.com>
- <20180611060819.GD5278@dell>
-In-Reply-To: <20180611060819.GD5278@dell>
-From:   Gwendal Grignou <gwendal@chromium.org>
-Date:   Tue, 12 Jun 2018 12:53:51 -0700
-Message-ID: <CAMHSBOU-f4oxR9kBkgYXOunRSUKx+cP3mJzmVKHnYJXfAzgHKQ@mail.gmail.com>
-Subject: Re: [PATCH] mfd: cros_ec: remove unused __remove function
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Benson Leung <bleung@google.com>, Arnd Bergmann <arnd@arndb.de>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Benson Leung <bleung@chromium.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20180611133047.4818-7-ivan.khoronzhuk@linaro.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 10, 2018 at 11:08 PM Lee Jones <lee.jones@linaro.org> wrote:
->
-> On Fri, 08 Jun 2018, Benson Leung wrote:
->
-> >
-> > On Fri, Jun 08, 2018 at 04:48:06PM +0200, Arnd Bergmann wrote:
-> > > This function is no longer called, so we get a harmless
-> > > warning until it is removed as well:
-> > >
-> > > drivers/mfd/cros_ec_dev.c:265:13: error: '__remove' defined but not u=
-sed [-Werror=3Dunused-function]
-> > >
-> > > Fixes: 3aa2177e4787 ("mfd: cros_ec: Use devm_kzalloc for private data=
-")
-> >
-> > Gwendal, in PATCH v2 of https://patchwork.kernel.org/patch/10439449/
-> > you mentioned that you readded the __remove to avoid a warning when bui=
-lt
-> > as a module. Can you explain what's going on?
->
-> Yes please, and quickly.  I'm going to sent the patch-set today.  If I
-> don't hear from you promptly, I'll probably pull the patch!
-I readded it because when cros_ec_dev is loaded as module, I get a
-warning on dmesg when unloading:
 
-"""Device 'cros_pd' [or 'cros_ec'] does not have a release() function,
-it is broken and must be fixed."""
 
-The warning comes from device_release(). Given I get a warning when I
-remove the release function or when I leave it empty. Let's pull the
-patch.
+On 06/11/2018 08:30 AM, Ivan Khoronzhuk wrote:
+> This document describes MQPRIO and CBS Qdisc offload configuration
+> for cpsw driver based on examples. It potentially can be used in
+> audio video bridging (AVB) and time sensitive networking (TSN).
+> 
+> Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+> ---
+>   Documentation/networking/cpsw.txt | 540 ++++++++++++++++++++++++++++++
+>   1 file changed, 540 insertions(+)
+>   create mode 100644 Documentation/networking/cpsw.txt
+> 
+> diff --git a/Documentation/networking/cpsw.txt b/Documentation/networking/cpsw.txt
+> new file mode 100644
+> index 000000000000..f5d58f502e52
+> --- /dev/null
+> +++ b/Documentation/networking/cpsw.txt
 
-Sorry for the confusion,
+Could you name it with "ti" prefix, pls?
 
-Gwendal.
->
-> --
-> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
-> Linaro Services Technical Lead
-> Linaro.org =E2=94=82 Open source software for ARM SoCs
-> Follow Linaro: Facebook | Twitter | Blog
+Like "ti-cpsw.txt" or "ti,cpsw.txt"
+
+> @@ -0,0 +1,540 @@
+> +* Texas Instruments CPSW ethernet driver
+> +
+> +Multiqueue & CBS & MQPRIO
+> +=====================================================================
+> +=====================================================================
+[...]
+
+-- 
+regards,
+-grygorii
