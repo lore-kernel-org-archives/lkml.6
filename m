@@ -6,43 +6,44 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2E63AC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:52:54 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4CAC1C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:53:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8838208B9
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:52:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 019EF208C2
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:53:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZO9lg6Mx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8838208B9
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VoWET/cP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 019EF208C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935080AbeFLQww (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 12:52:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48772 "EHLO mail.kernel.org"
+        id S935103AbeFLQw4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 12:52:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48380 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934968AbeFLQws (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 12:52:48 -0400
+        id S935055AbeFLQwp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 12:52:45 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05E5C208B4;
-        Tue, 12 Jun 2018 16:52:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF229208BA;
+        Tue, 12 Jun 2018 16:52:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528822367;
-        bh=r87PFb0bx4Gd283S1V03+FAqiuxt9TYUdldeb4YLTj0=;
+        s=default; t=1528822364;
+        bh=avp+9hWZlz1nx00jnBhnWOQsnGhE/qh8DC/EkZ/pErQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZO9lg6MxExW1anz9lTjSVnSHzA6JGN7ubf3DWg+vaEF+LzvLQvF0cZgaptIjxHICj
-         pboIdWVldkZUeV13sMJxTQyAPpxqija0mWvjIR2mdvg/3ttJyfG4x8saK7b30FhBvM
-         c3A/U/uT3Rvri/iR/OYQzQ4fq+62zWPXjV/kNsRI=
+        b=VoWET/cPvMz9Xvus6zxp/FQyASYw99kRsYhgYqP1naKlydf2Xv1t6NzGHWwbIQGjw
+         uB6HyauPA9qYkE1+IaTQgDnm62p0Nvr1Ihr0qGBJgyRaguTnBSKg8uyYRYRojetZhK
+         2umLKiJr2kNwLQev03Vc+8wGkxCmrr+nn60IHKEo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sabrina Dubroca <sd@queasysnail.net>,
+        stable@vger.kernel.org,
+        Govindarajulu Varadarajan <gvaradar@cisco.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 12/24] ip6mr: only set ip6mr_table from setsockopt when ip6mr_new_table succeeds
-Date:   Tue, 12 Jun 2018 18:51:56 +0200
-Message-Id: <20180612164817.181262749@linuxfoundation.org>
+Subject: [PATCH 4.4 11/24] enic: set DMA mask to 47 bit
+Date:   Tue, 12 Jun 2018 18:51:55 +0200
+Message-Id: <20180612164817.129520725@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180612164816.587001852@linuxfoundation.org>
 References: <20180612164816.587001852@linuxfoundation.org>
@@ -59,37 +60,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sabrina Dubroca <sd@queasysnail.net>
+From: Govindarajulu Varadarajan <gvaradar@cisco.com>
 
-[ Upstream commit 848235edb5c93ed086700584c8ff64f6d7fc778d ]
+[ Upstream commit 322eaa06d55ebc1402a4a8d140945cff536638b4 ]
 
-Currently, raw6_sk(sk)->ip6mr_table is set unconditionally during
-ip6_mroute_setsockopt(MRT6_TABLE). A subsequent attempt at the same
-setsockopt will fail with -ENOENT, since we haven't actually created
-that table.
+In commit 624dbf55a359b ("driver/net: enic: Try DMA 64 first, then
+failover to DMA") DMA mask was changed from 40 bits to 64 bits.
+Hardware actually supports only 47 bits.
 
-A similar fix for ipv4 was included in commit 5e1859fbcc3c ("ipv4: ipmr:
-various fixes and cleanups").
-
-Fixes: d1db275dd3f6 ("ipv6: ip6mr: support multiple tables")
-Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
+Fixes: 624dbf55a359b ("driver/net: enic: Try DMA 64 first, then failover to DMA")
+Signed-off-by: Govindarajulu Varadarajan <gvaradar@cisco.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/ip6mr.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/cisco/enic/enic_main.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/net/ipv6/ip6mr.c
-+++ b/net/ipv6/ip6mr.c
-@@ -1787,7 +1787,8 @@ int ip6_mroute_setsockopt(struct sock *s
- 		ret = 0;
- 		if (!ip6mr_new_table(net, v))
- 			ret = -ENOMEM;
--		raw6_sk(sk)->ip6mr_table = v;
-+		else
-+			raw6_sk(sk)->ip6mr_table = v;
- 		rtnl_unlock();
- 		return ret;
- 	}
+--- a/drivers/net/ethernet/cisco/enic/enic_main.c
++++ b/drivers/net/ethernet/cisco/enic/enic_main.c
+@@ -2543,11 +2543,11 @@ static int enic_probe(struct pci_dev *pd
+ 	pci_set_master(pdev);
+ 
+ 	/* Query PCI controller on system for DMA addressing
+-	 * limitation for the device.  Try 64-bit first, and
++	 * limitation for the device.  Try 47-bit first, and
+ 	 * fail to 32-bit.
+ 	 */
+ 
+-	err = pci_set_dma_mask(pdev, DMA_BIT_MASK(64));
++	err = pci_set_dma_mask(pdev, DMA_BIT_MASK(47));
+ 	if (err) {
+ 		err = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
+ 		if (err) {
+@@ -2561,10 +2561,10 @@ static int enic_probe(struct pci_dev *pd
+ 			goto err_out_release_regions;
+ 		}
+ 	} else {
+-		err = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64));
++		err = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(47));
+ 		if (err) {
+ 			dev_err(dev, "Unable to obtain %u-bit DMA "
+-				"for consistent allocations, aborting\n", 64);
++				"for consistent allocations, aborting\n", 47);
+ 			goto err_out_release_regions;
+ 		}
+ 		using_dac = 1;
 
 
