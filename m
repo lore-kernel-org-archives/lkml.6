@@ -2,125 +2,93 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6973EC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:53:08 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6B9C9C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:58:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1190620891
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:53:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ghBD451V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1190620891
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id D34122089C
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:58:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D34122089C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754378AbeFLRxF (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 13:53:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49114 "EHLO mail.kernel.org"
+        id S933943AbeFLR63 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 13:58:29 -0400
+Received: from mga11.intel.com ([192.55.52.93]:30990 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754056AbeFLRxE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 13:53:04 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 198C220891;
-        Tue, 12 Jun 2018 17:53:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528825983;
-        bh=aAERSOix1p8OcjwrDDU6VsLhS/tV9+fgqFMBu11b3gM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ghBD451VimzzB+fTV1vTZEZXnxdX9ECopmCIW2HwKcoVaWV+Wla9Vua6jE9skwfef
-         5oVL3Zv/5E43XN6OHpMILaVi32v72/rL3EawH9G7utxCSac8eL3vosHN1iJ5Y03EmT
-         t1I45w6I9dsk8DO4P2s1dJprzpEEfW2GLcz8G1Ao=
-Date:   Tue, 12 Jun 2018 19:52:42 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Mikulas Patocka <mpatocka@redhat.com>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Ming Lei <ming.lei@redhat.com>,
-        USB list <linux-usb@vger.kernel.org>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] usb: don't offload isochronous urb completions to
- ksoftirq
-Message-ID: <20180612175242.GA12855@kroah.com>
-References: <Pine.LNX.4.44L0.1806121232460.1582-100000@iolanthe.rowland.org>
- <alpine.LRH.2.02.1806121304530.1848@file01.intranet.prod.int.rdu2.redhat.com>
+        id S933378AbeFLR61 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 13:58:27 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2018 10:58:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,215,1526367600"; 
+   d="scan'208";a="63978330"
+Received: from tstruk-mobl1.jf.intel.com ([10.7.196.162])
+  by orsmga001.jf.intel.com with ESMTP; 12 Jun 2018 10:58:26 -0700
+Subject: [PATCH v3 0/2] tpm: add support for nonblocking operation
+From:   Tadeusz Struk <tadeusz.struk@intel.com>
+To:     jarkko.sakkinen@linux.intel.com
+Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        tadeusz.struk@intel.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 12 Jun 2018 10:58:26 -0700
+Message-ID: <152882630662.30206.8805136953394285180.stgit@tstruk-mobl1.jf.intel.com>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.02.1806121304530.1848@file01.intranet.prod.int.rdu2.redhat.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 01:19:28PM -0400, Mikulas Patocka wrote:
-> 
-> 
-> On Tue, 12 Jun 2018, Alan Stern wrote:
-> 
-> > On Tue, 12 Jun 2018, Mikulas Patocka wrote:
-> > 
-> > > > How about making the softirq thread's priority adjustable?
-> > > 
-> > > But you would have to argue with softirq maintainers about it - and you 
-> > > say that you don't have time for that.
-> > 
-> > But maybe _you_ do...
-> 
-> ksoftirqd has priority 0 - it is not suitable for real-time tasks, such as 
-> audio.
-> 
-> In my opinion, it is much easier to fix this in the ehci driver (by not 
-> offloading isochronous completions), than to design a new 
-> real-time-capable ksoftirqd.
+The TCG SAPI specification [1] defines a set of functions, which allows
+applications to use the TPM device in either blocking or non-blocking fashion.
+Each command defined by the specification has a corresponding
+Tss2_Sys_<COMMAND>_Prepare() and Tss2_Sys_<COMMAND>_Complete() call, which
+together with Tss2_Sys_ExecuteAsync() is designed to allow asynchronous
+mode of operation. Currently the TPM driver supports only blocking calls,
+which doesn't allow asynchronous IO operations.
+This patch changes it and adds support for nonblocking write and a new poll
+function to enable applications, which want to take advantage of this feature.
+The new functionality can be tested using standard TPM tools implemented
+in [2], together with modified TCTI from [3].
 
-Ok, but what happens when you plug your device into a xhci controller?
-Do we also need to change that?  Only touching a specific host
-controller is not good, you will be playing "whack a mole" for forever.
+[1] https://trustedcomputinggroup.org/wp-content/uploads/TSS_SAPI_Version-1.1_Revision-22_review_030918.pdf
+[2] https://github.com/tpm2-software/tpm2-tools
+[3] https://github.com/tstruk/tpm2-tss/tree/async
 
-Isoc packets are, by definition, not supposed to be guaranteed at all.
-So if they are "slow" or dropped or delayed somehow, that's fine.  The
-sound protocol should be fine with it.
+---
+Changes in v3:
+- Fixed problem reported by 0-dey kbuild test robot around __exitcall.
+  It complained because there is a module_exit() in another file already.
 
-Now yes, in reality, as you have found out, things can be "tight" on
-low-powered processors under heavy load.  But what you are doing here is
-a priority inversion.  You do not solve such a thing by going around and
-raising everything else up as well, this is supposed to be a "general
-purpose" kernel.  You can tune a specific machine/device just fine this
-way, but not by messing with the kernel for the most part.
+Changes in v2:
+- Split the change into two separate patches. First patch adds a pointer
+  to the space to the struct file_priv to have access to it from the async job.
+  This is to avoid memory allocations on every write call. Now everything
+  what's needed is in the file_priv struct.
+- Renamed the 'work' member of the timer to avoid confusion.
+  Now there are 'timeout_work' and 'async_work'.
+- Removed the global wait queue and moved it to file_priv.
+- Only creating the work queue when the first file is opened.
 
-> > > > As for coordinating with the softirq maintainers -- whether I want to 
-> > > > or not isn't the issue.  Right now I don't have _time_ to do it.
-> > > > 
-> > > > Alan Stern
-> > > 
-> > > I am wondering - whats the purpose of that patch 
-> > > 428aac8a81058e2303677a8fbf26670229e51d3a at all? The patch shows some 
-> > > performance difference, but they are minor, about 1%.
-> > > 
-> > > If you want to call the urb callback as soon as possible - why don't you 
-> > > just call it? Why do you need to offload the callback to a softirq thread?
-> > 
-> > Please read the Changelog entry for commit 94dfd7edfd5c.  Basically the 
-> > idea was to reduce overall latency by not doing as much work in an 
-> > interrupt handler.
-> > 
-> > Alan Stern
-> 
-> snd_complete_urb is doing nothing but submitting the same urb again. Is 
-> resubmitting the urb really causing so much latency that you can't do it 
-> in the interrupt handler?
+Tadeusz Struk (2):
+      tpm: add ptr to the tpm_space struct to file_priv
+      tpm: add support for nonblocking operation
 
-snd_complete_urb() does much more than just submition of the same urb.
-Perhaps if this is a real problem, the sound driver should have more
-than one urb pending?  Is there a pool here that is somehow getting used
-up?
+ drivers/char/tpm/tpm-dev-common.c |  150 +++++++++++++++++++++++++++----------
+ drivers/char/tpm/tpm-dev.c        |   22 +++--
+ drivers/char/tpm/tpm-dev.h        |   19 +++--
+ drivers/char/tpm/tpm-interface.c  |    1 
+ drivers/char/tpm/tpm.h            |    1 
+ drivers/char/tpm/tpmrm-dev.c      |   31 ++++----
+ 6 files changed, 152 insertions(+), 72 deletions(-)
 
-thanks,
-
-greg k-h
+--
+TS
