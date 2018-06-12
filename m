@@ -2,133 +2,141 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 92900C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:37:13 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 06BA8C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:39:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 468F2208B1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:37:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A75F8208AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:39:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="UIvZkhVs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 468F2208B1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=verdurent-com.20150623.gappssmtp.com header.i=@verdurent-com.20150623.gappssmtp.com header.b="p0e5uDa+";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="e3MvycQr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A75F8208AE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933163AbeFLKhL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 06:37:11 -0400
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:43903 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932373AbeFLKhH (ORCPT
+        id S933069AbeFLKjy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 06:39:54 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:39969 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932373AbeFLKju (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 06:37:07 -0400
-Received: from mail-ua0-f173.google.com (mail-ua0-f173.google.com [209.85.217.173]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id w5CAalhT012362;
-        Tue, 12 Jun 2018 19:36:48 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w5CAalhT012362
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1528799808;
-        bh=TB2W3sAWHNM2VtLFteR9rvaNgle4FM3F4g9T9b+Wk5Q=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=UIvZkhVsnvPSRYG1FeAdI44SRMBO69RIpbagwBBfU2CMbdxyJztRmpxzPcPOGhDbO
-         UmQYljRRG+A0Ga3gZAVMIqpSy0UmzE6CkKZ5vKwUf5SxJ/sQrMV845H3tBbQ52X7Zi
-         poINUtlCJ402DKut9McNas8IopLs4MbMxacMrTjDf7PWKk7mFUTkuVCoC36UJCRvkE
-         k3+i3R1zDPwAqjvl/6ZpLEk0mnxo+kGDOl3WdY/+PrJ4Y5RkE9Ke8LcNVdfztQHs42
-         3+XIQjr5V6ON6IRHd2VUkxTDNRBv+MKkObfhDs2KZi+VihVl4QCzNEAeOm989/zrT8
-         53cs4Q7gBQrBg==
-X-Nifty-SrcIP: [209.85.217.173]
-Received: by mail-ua0-f173.google.com with SMTP id c23-v6so15605892uan.3;
-        Tue, 12 Jun 2018 03:36:48 -0700 (PDT)
-X-Gm-Message-State: APt69E16vMzPnkw3AxIIfTwKoCzkRw8zFzFyhzK9CLltpJd3zUBQuMQF
-        mPyYtyjT2qnLS0WXxTupxrhVOH+ilIKNMY1U5d4=
-X-Google-Smtp-Source: ADUXVKJS0GAPasi9Fzpcdqm6TAWXZT5OHEtbx9Wd4d4XheooKqOZr8ykAoW0+jw+2KKa8V1+rCA2ZRiusTGbyRanx9c=
-X-Received: by 2002:ab0:5061:: with SMTP id z30-v6mr1932015uaz.82.1528799806736;
- Tue, 12 Jun 2018 03:36:46 -0700 (PDT)
+        Tue, 12 Jun 2018 06:39:50 -0400
+Received: by mail-ot0-f195.google.com with SMTP id w9-v6so21954746otj.7
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 03:39:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=verdurent-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=buX668ubvpmJekevypntnaFeICyiuMIeR7zZStVYbbc=;
+        b=p0e5uDa+Gdmb3KcUMyaF+PG6TYc9z/g1GjLJ8FtgPA5FYzY8znltxW0Ekpa6sPAMr4
+         48xKNBEmGHeFmqu4+Vhgui/sDbYlfvdPQx8anKPCNRnVwLpseYvoOe7qSdCcbOrxC4C5
+         U2KtCLI4rKtQ61b4HhPY2sxTJIlHc5BH4rwK30NiT5+u9i7y+0pcvgQxX+r/Ud+F2p6Y
+         pHSJYpxFO/VvJKuW4fiVTLRelfZWbMTw3VDUaIga06pNJrPLDM0QzUfUcJB9rWKF6aCP
+         /jT3P+kHCgLDfJ/eM+osNcduQJSaXSawcdGByhJ7vYDZY7tuFhCiM1fM7WVwlqD+slrx
+         YzSA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=buX668ubvpmJekevypntnaFeICyiuMIeR7zZStVYbbc=;
+        b=e3MvycQr0A6+h4bp8e2bvSIaCXDd0YZe6gCftKWZ2h/1JCAfRnXun7C3JUfprHh8yN
+         edZPuKmaFrhp/MJCTagTtBFMfKcdeDqHUuLMkrLyppkMwuTFJnm9zSkuVje7t1MlPw+r
+         68cAkQueWH9vyFckrY6Q9a3saA0j9o53dD7is=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=buX668ubvpmJekevypntnaFeICyiuMIeR7zZStVYbbc=;
+        b=WwKlCPhJd8Ba3/yaHaov5qBA2vj1Wf9HzyNk9xfxml/D2zJnHaGjkBsdewGZaOWN/M
+         UVfBJ9n12tspHwLOvaTOlUh1bDxSNPWxuiaObBKuAcyd62vf3vTidAjFBIxEpl/jWOBN
+         cuf5tFUSgkIEJNjBEPnkdJRpjdxpGx7O8JORkcY9Hc0/YISZCI8qyMjqMC0v8Ibc0lQl
+         f44KMmN8F7UMSLtS/BsO0xaIBAxj+QZWVnGBdxl4CfHmMaec04JZ3XSp7/3jlQkB/6R0
+         zaDlvL0DA+wn3kTpUg421hwwo9+nQQfYeY4wr9YJbUZxsYrrmuB/t3b7Rjjq7gTK+P0a
+         7ycw==
+X-Gm-Message-State: APt69E36LKPJABMUf4G5eBRLChKffcsKucod5m4N1nEJOU18DX0RuSGY
+        H9PZvy09b9e9IYuOIgw6lE7zDB7tLppFnH8aNwqzsVDX
+X-Google-Smtp-Source: ADUXVKK4h3uYHsNyKOkQH3XLC34EbziRoyvagqPlHfM7iTmK5zKlJ/wZgMatcdCMEDrM+uYMgHsqvo24oKJcG4u0asg=
+X-Received: by 2002:a9d:241:: with SMTP id 59-v6mr2075194otb.71.1528799989960;
+ Tue, 12 Jun 2018 03:39:49 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:ab0:20ab:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 03:36:06
+Received: by 2002:a4a:99ab:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 03:39:49
  -0700 (PDT)
-In-Reply-To: <1528799515-1356-2-git-send-email-yamada.masahiro@socionext.com>
-References: <1528799515-1356-1-git-send-email-yamada.masahiro@socionext.com> <1528799515-1356-2-git-send-email-yamada.masahiro@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 12 Jun 2018 19:36:06 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASM53scdd-OZOj_7404Eru3a98uNLagip_GdkrSSaG3-Q@mail.gmail.com>
-Message-ID: <CAK7LNASM53scdd-OZOj_7404Eru3a98uNLagip_GdkrSSaG3-Q@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mtd: rawnand: denali: add more clocks
-To:     linux-mtd <linux-mtd@lists.infradead.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        DTML <devicetree@vger.kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
+In-Reply-To: <20180604150319.GC510@tuxbook-pro>
+References: <cover.1527937396.git.amit.kucheria@linaro.org>
+ <7a0f33cff94f41110bdbff14d28d36074fae2a7d.1527937396.git.amit.kucheria@linaro.org>
+ <20180604150319.GC510@tuxbook-pro>
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+Date:   Tue, 12 Jun 2018 13:39:49 +0300
+X-Google-Sender-Auth: Dk34AUMngaaDQ20aSKgWRhtTRVQ
+Message-ID: <CAHLCerPOp7_60JF-jJ+wZR9jq-z_wypheE=g_GV7Nn=M2OCP5Q@mail.gmail.com>
+Subject: Re: [PATCH 1/2] thermal: tsens: Add support for SDM845 platform
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Philipp Rosenberger <p.rosenberger@linutronix.de>,
-        Richard Weinberger <richard@sigma-star.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Marek Vasut <marek.vasut@gmail.com>
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Maybe, the commit title should be:
+On Mon, Jun 4, 2018 at 6:03 PM, Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+> On Sat 02 Jun 04:11 PDT 2018, Amit Kucheria wrote:
+>> diff --git a/drivers/thermal/qcom/tsens-sdm845.c b/drivers/thermal/qcom/tsens-sdm845.c
+> [..]
+>> +#define TRDY_OFFSET     0xe4
+>> +#define TRDY_READY_BIT  BIT(1)
+>
+> This is bit 0.
 
-mtd: rawnand: denali: add more clocks and improve setup_data_interface
+Oops, fixed.
 
+>> +
+>> +#define STATUS_OFFSET        0xa0
+>> +#define LAST_TEMP_MASK       0xfff
+>> +#define STATUS_VALID_BIT     BIT(21)
+>> +#define CODE_SIGN_BIT                BIT(11)
+>> +
+>> +static int get_temp_sdm845(struct tsens_device *tmdev, int id, int *temp)
+>> +{
+>> +     struct tsens_sensor *s = &tmdev->sensor[id];
+>> +     u32 code;
+>> +     unsigned int sensor_addr;
+>> +     int last_temp = 0, last_temp2 = 0, last_temp3 = 0, ret;
+>> +
+>> +     ret = regmap_read(tmdev->map, TRDY_OFFSET, &code);
+>> +     if (ret)
+>> +             return ret;
+>> +     if (code & TRDY_READY_BIT)
+>> +             return -ENODATA;
+>
+> This section is the only difference from 8996, but this register is
+> identical to 8996 and 8998. So I think you should add this to
+> tsens-8996.c and we can use that for 8996, 8998 and sdm845.
+>
+> Perhaps we should name it tsens-v2, as that seems to be the common
+> denominator for these, according to the documentation.
 
+Thanks for confirming that the block is identical^Wsimilar across
+8996, 8998, sdm845 (and possible others). I suspected as much but
+didn't check in a lot of detail.
 
-2018-06-12 19:31 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> According to the Denali User's Guide, this IP needs three clock inputs:
->
->  - clk: controller core clock
->
->  - clk_x: bus interface clock
->
->  - ecc_clk: clock at which ECC circuitry is run
->
-> Currently, denali_dt.c requires a single anonymous clock and its
-> frequency.  However, the driver needs to get the frequency of "clk_x"
-> not "clk".  This is confusing because people tend to assume the
-> anonymous clock means the core clock.
->
-> Instead of the cheesy implementation, the clocks in the real hardware
-> should be represented in the driver code and the DT-binding.
->
-> I improved the ->setup_data_interface() hook as well.
->
-> The denali_setup_data_interface() needs the frequency of clk_x
-> and the ratio of clk_x / clk.
->
-> The latter is currently hardcoded in the driver, like this:
->
->   #define DENALI_CLK_X_MULT       6
->
-> The IP datasheet specifies that clk_x / clk should be 4, 5, or 6.
-> I just chose 6 because it is the most defensive value, but it is not
-> very nice.  By getting the clock rate of both "clk" and "clk_x", the
-> driver can compute the timing values more precisely.
->
-> Adding new clocks would break the existing platforms.  For the backward
-> compatibility, the driver still accepts the single clock just as before.
-> Also, ->clk_rate and ->clk_x_rate are set to hardcoded values if clk_x
-> is missing.
->
-> It should work for all upstreamed platforms because Intel Moorestown,
-> Altera (Intel) SOCFPGA, Socionext UniPhier use the following clock
-> frequency:
->
->   clk = 50 MHz
->   clk_x = ecc_clk = 200 MHz
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
+I expected the 845 to gain more features over time, hence the reason
+for a separate file and a custom get_temp(). Now, I'll fold all of
+them into a common tsens-v2 function.
 
-
--- 
-Best Regards
-Masahiro Yamada
+We'll also need to change how we regmap the 8998 and sdm845 tsens
+registers because the offsets are not the same and hence not handled
+corrently by tsens-common.c/init_common().
