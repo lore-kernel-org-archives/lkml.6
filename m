@@ -7,63 +7,64 @@ X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8FFC3C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 03:44:42 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 030F0C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 03:46:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40A56208AE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 03:44:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C88F208B0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 03:46:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YJqwphis"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40A56208AE
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZGBI6MhU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C88F208B0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932951AbeFLDok (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 23:44:40 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:40903 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751862AbeFLDoj (ORCPT
+        id S933307AbeFLDqd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 23:46:33 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:34438 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932460AbeFLDqb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 23:44:39 -0400
-Received: by mail-pg0-f66.google.com with SMTP id l2-v6so10767608pgc.7
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 20:44:39 -0700 (PDT)
+        Mon, 11 Jun 2018 23:46:31 -0400
+Received: by mail-pl0-f68.google.com with SMTP id g20-v6so13559066plq.1;
+        Mon, 11 Jun 2018 20:46:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=aUhT9jqKZFY72Z1/qW6kXOFlp/YvK0MiyVB6Pgj0070=;
-        b=YJqwphisIRCDqe0OJEnV1AVA/egZDHO0t0vgf0zHEDeHBPj3k2ogDhGla6tYrCsU7k
-         +F0DtIfHmxfJvt4BLhlXQZ8xbvzPsx4Jl51C+bzr+1IYjVHUFTDGcJR6OQL0SkNQ4275
-         RW6etGp285VtsmuQgl5HPBGGX+LQPNLuc6AfBC7vZFrLZL89Y6faU0tzdBakzAfr31KY
-         sdo5Ctv+czeiUyWQdrpS2XGwPcYFS6+GNurnuhmNqDPMKwcj2SPHrCZJERz9IfnDoImC
-         E8aZ4SQpBpxVIrkPpJ7ndSoYa80XME2AwZAskBiGrEcKd+Ic+i71wFvnhypT5SlmouLH
-         Qclw==
+        bh=x7I56ELwwevdipu2gQ2jZ0MqSh/U5Nq/u+3Tv6XMrIk=;
+        b=ZGBI6MhUSCmN4U9KPF8qhYDTKjTpYoa7XYk6mp7oztHY8iuU3Ol1qW44ttGeI6XQX3
+         hDW1H3Jef5vL0A84cVZmLbyO5rU4DIdWxXA8gUZRS+nDQtcH7e4aeGJw5XRGfhER7T47
+         fnWvDdUeEtQI8DI1g74Fh0ZOytNtXJzRLPrzcjVK4S/jhD7MX579uMmLGUaGbIyEr1mF
+         ZkX9C0HcDclUkKuv0UZxJM0ux96tbV1udAEXh+inXygsaaoAnslimWNeFOrn2E+9NBG3
+         J09U2J6YezxM3AlD0+Qr+pjTjjMxbIK3W1a/uSg9z7OGQ7mWtc9kTf3CIm4PJHCkQF+l
+         MaiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=aUhT9jqKZFY72Z1/qW6kXOFlp/YvK0MiyVB6Pgj0070=;
-        b=tgAOgfAgXaX5WxbG1k9Ms/dUGwZC07K9nZWOSlLx0T1RB4Yy5A+7Nr3w8B7EIXzDZj
-         E+4Mj8BFW4geHHJ6jTNOc3lvkGNm0Txg4Vhr6PGTu++/jzhYhc5QQyLSL1LB6WJ+W+Ng
-         /Xlgc81bXhDcAuBg+tKEhlCgy+KuVB1kzwpz1Mnyl6B58Xt09BoV2XvQMz6RlA7khR8K
-         MzghA5LGJ1zi7iMlRNgLKjDdlB6zL+Si+0dsetIz2/H/nCuHR68tziVaBkSX6xBtgTsx
-         bN2z8NoIChuFxM2I81jV42ZLzZBDrjFo++K4sMqfmiRiu0DBpWgD1f2Kl3fAzp4NTYJi
-         zPCw==
-X-Gm-Message-State: APt69E2w4H01/O3P1U7rySkWJhpjnEQ7LvS7G8vHaRm79wc5W1Ku5hqs
-        dJHkSVDOYsjkFG8vfAKwtWc=
-X-Google-Smtp-Source: ADUXVKI9lIFV0PFU8qvq8Zia0AHL7/eIiTXz+Pgf80DymMJUOuZqOqc0N49D47iAjK0FyTooMCpWyQ==
-X-Received: by 2002:a62:4785:: with SMTP id p5-v6mr1981645pfi.164.1528775079104;
-        Mon, 11 Jun 2018 20:44:39 -0700 (PDT)
+        bh=x7I56ELwwevdipu2gQ2jZ0MqSh/U5Nq/u+3Tv6XMrIk=;
+        b=Y8ZsLaC8s/mYYH+tvZ+NgKeU9JygUm8rYvgGev/j+60C36ufGxb8e59EZwqcm37HQS
+         fwUsJFiZDLuTkGrp/A6jV2gtSExaGIcmCAzsW4P1Rk0+8AnXVQbSXsHk8F88jI4hLhD0
+         DfC7IPcLN1hWOTO6fJ3kcO0i3m6DtWcefDxXgIUQT1/a2VysyELceqnZMbM4Y3GXt8hN
+         GfNR5hH6NkSFIMbkXWYqV2D2StNhI0kaX9f+0h2zNW/hFd9/v4xhN/XG1jFm5nXyMPcg
+         E8meCBJJi1L2csU9Td7W2eeJV3cKynbI/iwZUaPpc6RaRTsb5upWRcCTcHy7BfAWQ0bj
+         u7Qg==
+X-Gm-Message-State: APt69E2vQNW+91kqtf5ZcgbNHXVVkvv8ll/6WNmzGfP64eAc56Kh4jl7
+        M202Y1cu0VtkJONluQIV1zg=
+X-Google-Smtp-Source: ADUXVKJ0+LEa3Nlb+k6vom7aLjEeNImsenJoJopAwRPFjbrQaxX/qrv6IlckdoUiECxQqUYN879/UQ==
+X-Received: by 2002:a17:902:b611:: with SMTP id b17-v6mr2069734pls.284.1528775191021;
+        Mon, 11 Jun 2018 20:46:31 -0700 (PDT)
 Received: from localhost ([103.88.46.82])
-        by smtp.gmail.com with ESMTPSA id i17-v6sm32290369pfj.95.2018.06.11.20.44.38
+        by smtp.gmail.com with ESMTPSA id e189-v6sm33100393pfc.134.2018.06.11.20.46.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Jun 2018 20:44:38 -0700 (PDT)
+        Mon, 11 Jun 2018 20:46:30 -0700 (PDT)
 From:   Zhouyang Jia <jiazhouyang09@gmail.com>
 Cc:     Zhouyang Jia <jiazhouyang09@gmail.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
         Juergen Gross <jgross@suse.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] xen: add error handling for xenbus_printf
-Date:   Tue, 12 Jun 2018 11:44:33 +0800
-Message-Id: <1528775073-39322-1-git-send-email-jiazhouyang09@gmail.com>
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] xen/scsiback: add error handling for xenbus_printf
+Date:   Tue, 12 Jun 2018 11:46:25 +0800
+Message-Id: <1528775185-39467-1-git-send-email-jiazhouyang09@gmail.com>
 X-Mailer: git-send-email 2.7.4
 To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -78,44 +79,49 @@ This patch adds error-handling code after calling xenbus_printf.
 
 Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
 ---
- drivers/xen/manage.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+ drivers/xen/xen-scsiback.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/xen/manage.c b/drivers/xen/manage.c
-index 8835065..159694d 100644
---- a/drivers/xen/manage.c
-+++ b/drivers/xen/manage.c
-@@ -289,8 +289,15 @@ static void sysrq_handler(struct xenbus_watch *watch, const char *path,
+diff --git a/drivers/xen/xen-scsiback.c b/drivers/xen/xen-scsiback.c
+index 7bc88fd..13ab54c 100644
+--- a/drivers/xen/xen-scsiback.c
++++ b/drivers/xen/xen-scsiback.c
+@@ -1027,8 +1027,9 @@ static void scsiback_do_add_lun(struct vscsibk_info *info, const char *state,
+ 			scsiback_del_translation_entry(info, vir);
+ 		}
+ 	} else if (!try) {
+-		xenbus_printf(XBT_NIL, info->dev->nodename, state,
+-			      "%d", XenbusStateClosed);
++		if (xenbus_printf(XBT_NIL, info->dev->nodename, state,
++			      "%d", XenbusStateClosed))
++			pr_err("xenbus_printf error %s\n", state);
+ 	}
+ }
+ 
+@@ -1067,8 +1068,9 @@ static void scsiback_do_1lun_hotplug(struct vscsibk_info *info, int op,
+ 	snprintf(str, sizeof(str), "vscsi-devs/%s/p-dev", ent);
+ 	val = xenbus_read(XBT_NIL, dev->nodename, str, NULL);
+ 	if (IS_ERR(val)) {
+-		xenbus_printf(XBT_NIL, dev->nodename, state,
+-			      "%d", XenbusStateClosed);
++		if (xenbus_printf(XBT_NIL, dev->nodename, state,
++			      "%d", XenbusStateClosed))
++			pr_err("xenbus_printf error %s\n", state);
+ 		return;
+ 	}
+ 	strlcpy(phy, val, VSCSI_NAMELEN);
+@@ -1079,8 +1081,9 @@ static void scsiback_do_1lun_hotplug(struct vscsibk_info *info, int op,
+ 	err = xenbus_scanf(XBT_NIL, dev->nodename, str, "%u:%u:%u:%u",
+ 			   &vir.hst, &vir.chn, &vir.tgt, &vir.lun);
+ 	if (XENBUS_EXIST_ERR(err)) {
+-		xenbus_printf(XBT_NIL, dev->nodename, state,
+-			      "%d", XenbusStateClosed);
++		if (xenbus_printf(XBT_NIL, dev->nodename, state,
++			      "%d", XenbusStateClosed))
++			pr_err("xenbus_printf error %s\n", state);
  		return;
  	}
  
--	if (sysrq_key != '\0')
--		xenbus_printf(xbt, "control", "sysrq", "%c", '\0');
-+	if (sysrq_key != '\0') {
-+		err = xenbus_printf(xbt, "control", "sysrq", "%c", '\0');
-+		if (err) {
-+			pr_err("Error %d writing sysrq code in control/sysrq\n",
-+			       err);
-+			xenbus_transaction_end(xbt, 1);
-+			return;
-+		}
-+	}
- 
- 	err = xenbus_transaction_end(xbt, 0);
- 	if (err == -EAGAIN)
-@@ -342,7 +349,11 @@ static int setup_shutdown_watcher(void)
- 			continue;
- 		snprintf(node, FEATURE_PATH_SIZE, "feature-%s",
- 			 shutdown_handlers[idx].command);
--		xenbus_printf(XBT_NIL, "control", node, "%u", 1);
-+		err = xenbus_printf(XBT_NIL, "control", node, "%u", 1);
-+		if (err) {
-+			pr_err("Error %d writing %s\n", err, node);
-+			return err;
-+		}
- 	}
- 
- 	return 0;
 -- 
 2.7.4
 
