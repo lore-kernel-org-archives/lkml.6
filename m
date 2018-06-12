@@ -2,105 +2,133 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 533DAC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:11:51 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 720E2C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:13:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08D7F2086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:11:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27EFB2086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:13:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="bpIUL1Wh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08D7F2086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kCCUYlq3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27EFB2086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933595AbeFLMLt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 08:11:49 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:48186 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932543AbeFLMLp (ORCPT
+        id S933603AbeFLMM7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 08:12:59 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45790 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932412AbeFLMM6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 08:11:45 -0400
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 74A565C11DF;
-        Tue, 12 Jun 2018 14:11:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1528805504;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=E8AukCerDvBdieQFF4Aby5TkP1atSf5ItPL/oIkkS3Q=;
-        b=bpIUL1WhaIUbPjsRgciN0b0vxBHvPgXsSNUSOvacrGghQn0hKzn1cfIqRbPJrqVRXLXTsd
-        Xw57XJxn+McJ55xkABPPLgEQHNJDM9MGmvc/R/iukNRjs9kY3Wogggp965sBK2FtVGflm8
-        Okwvi8oHpb1vAL5kvPH9BF//ob9CPfk=
+        Tue, 12 Jun 2018 08:12:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=QKSxCx8YXtcZbqDr7JOG45Jn1z6AumNMNW/ErgmOZA0=; b=kCCUYlq3MVdhS0n09XCgTCJ2n
+        QmHnlWTCckYdhoc6EACeU3gqWi1tpfAlmSfq7P0//57QlbSOlMYfbKlSkd7EKSonrusxW+SERySCp
+        NsALA+nB0xcxkHFbM7JTMSl0JTArveqQI36fd+yyEr+35UfNPu9lZrLa/o2tYi+NDwZCFR1gXhwV/
+        dH2ass89x3GLEUsQ9kH5/fTcDFib566IewD5jHjBJLKQAevsVhhIyBCBV/zV7ow4wqZmc5WbobLom
+        4prDdsUqr5AEYhy0YlsiQqYIjK8kDAhChFtIb15Y/c9f/Hin2fQPM1DF592axSk4qSPKRDT2Lu3Lz
+        997fhlizg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fSiAN-0002s4-Il; Tue, 12 Jun 2018 12:12:51 +0000
+Date:   Tue, 12 Jun 2018 05:12:51 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     jackm <jackm@dev.mellanox.co.il>
+Cc:     hans.westgaard.ry@oracle.com, Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        linux-rdma@vger.kernel.org,
+        =?iso-8859-1?Q?H=E5kon?= Bugge <haakon.bugge@oracle.com>,
+        Parav Pandit <parav@mellanox.com>,
+        Pravin Shedge <pravin.shedge4linux@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] IB/mad: Use IDR for agent IDs
+Message-ID: <20180612121251.GC19433@bombadil.infradead.org>
+References: <20180608174218.32455-1-willy@infradead.org>
+ <20180608174218.32455-3-willy@infradead.org>
+ <20180612115046.00007213@dev.mellanox.co.il>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Date:   Tue, 12 Jun 2018 14:11:44 +0200
-From:   Stefan Agner <stefan@agner.ch>
-To:     =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc:     gregkh@linuxfoundation.org, festevam@gmail.com, jslaby@suse.com,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] serial: imx: fix cached UCR2 read on software reset
-In-Reply-To: <20180607075633.y3tm245jv7nkdrqx@pengutronix.de>
-References: <20180420124407.12892-1-stefan@agner.ch>
- <20180607075633.y3tm245jv7nkdrqx@pengutronix.de>
-Message-ID: <afda793c86ba7394233e17813589b44c@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-3.06 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         RCPT_COUNT_FIVE(0.00)[6];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
-         RCVD_TLS_ALL(0.00)[];
-         BAYES_HAM(-2.96)[99.84%];
-         ARC_NA(0.00)[]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180612115046.00007213@dev.mellanox.co.il>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07.06.2018 09:56, Uwe Kleine-König wrote:
-> On Fri, Apr 20, 2018 at 02:44:07PM +0200, Stefan Agner wrote:
->> To reset the UART the SRST needs be cleared (low active). According
->> to the documentation the bit will remain active for 4 module clocks
->> until it is cleared (set to 1).
->>
->> Hence the real register need to be read in case the cached register
->> indicates that the SRST bit is zero.
->>
->> This bug lead to wrong baudrate because the baud rate register got
->> restored before reset completed in imx_flush_buffer.
->>
->> Fixes: 3a0ab62f43de ("serial: imx: implement shadow registers for UCRx and UFCR")
->> Signed-off-by: Stefan Agner <stefan@agner.ch>
->> Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
->> Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+On Tue, Jun 12, 2018 at 11:50:46AM +0300, jackm wrote:
+> On Fri,  8 Jun 2018 10:42:18 -0700
+> Matthew Wilcox <willy@infradead.org> wrote:
 > 
-> For the record, there is a customer of mine who reports that this commit
-> breaks rs485 communication on i.MX25 because RTS stops to toggle as
-> intended.
+> > +		rcu_read_lock();
+> > +		mad_agent = idr_find(&ib_mad_clients, hi_tid);
+> > +		if (mad_agent
+> > && !atomic_inc_not_zero(&mad_agent->refcount))
+> > +			mad_agent = NULL;
+> > +		rcu_read_unlock();
 > 
-> (Some details: uart3, fsl,uart-has-rtscts, fsl,dte-mode,
-> linux,rs485-enabled-at-boot-time, native RTS.)
+> Hi Matthew,
 > 
-> I didn't debug this yet.
+> I don't see the flow which can explain using atomic_inc_not_zero() here.
+> 
+> The refcount will go to zero only when unregister_mad_agent() is
+> called (code below, see asterisks):
+>         idr_lock(&ib_mad_clients);
+>  ***    idr_remove(&ib_mad_clients, mad_agent_priv->agent.hi_tid);
+>         idr_unlock(&ib_mad_clients);
+> 
+>         flush_workqueue(port_priv->wq);
+>         ib_cancel_rmpp_recvs(mad_agent_priv);
+> 
+>  ***    deref_mad_agent(mad_agent_priv);
+> 		[JPM] The call to idr_find in the interrupt context
+> 		would need to occur here for the refcount to have a
+> 		possibility of being zero.
+> 		Shouldn't idr_find in the interrupt context fail, since
+> 		idr_remove has already been invoked?
 
-I have seen your patch today "serial: imx: fix comment about UCR2_SRST
-and its handling for shadowing" so I assume you looked into this issue?
+RCU is tricky.  Here's the flow:
 
-Was it related to that change?
+CPU 0		CPU 1
+rcu_read_lock();
+mad_agent = idr_find(&ib_mad_clients, hi_tid);
+		idr_lock(&ib_mad_clients);
+		idr_remove(&ib_mad_clients, mad_agent_priv->agent.hi_tid);
+		idr_unlock(&ib_mad_clients);
+		flush_workqueue(port_priv->wq);
+		ib_cancel_rmpp_recvs(mad_agent_priv);
+		deref_mad_agent(mad_agent_priv);
 
---
-Stefan
+Now, you're going to argue that CPU 0 is running in interrupt context, but
+with virtualisation, it can have the CPU taken away from it at any time.
+This window which looks like a couple of instructions long can actually
+be seconds long.
+
+> 	wait_for_completion(&mad_agent_priv->comp);
+> 
+> The refcount will be able to go to zero only after deref_mad_agent is
+> called above.  Before this, however, idr_remove() has been called --
+> so, if my understanding is correct, the idr_find call in
+> find_mad_agent() should not succeed since the refcount can get to zero
+> only AFTER the idr_remove call.
+> 
+> Could you please explain the flow which can result in idr_find
+> succeeding (in the interrupt context) after idr_remove has been invoked
+> (in the process context)?  Will idr_find succeed even after
+> idr_remove, and only fail after kfree_rcu is invoked as well? (or,
+> maybe after some garbage-collection delay?)
+
+Ordering is weird in SMP systems.  You can appear to have causality
+violations when you're operating locklessly (and rcu_read_lock()
+is essentially lockless).  So we can absolutely observe the store to
+agent->refcount before we observe the store to idr->agent.
+
+Documentation/memory-barriers.txt has a LOT more information on this.
