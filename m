@@ -6,44 +6,45 @@ X-Spam-Status: No, score=0.4 required=3.0 tests=DATE_IN_PAST_06_12,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id F346FC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:09:38 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8CB87C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:09:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B43752089C
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:09:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B43752089C
+	by mail.kernel.org (Postfix) with ESMTP id 4CC7120660
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:09:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CC7120660
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933800AbeFLTJe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 15:09:34 -0400
-Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:36894 "EHLO
-        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754288AbeFLTFf (ORCPT
+        id S933837AbeFLTJx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 15:09:53 -0400
+Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:18332 "EHLO
+        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754223AbeFLTFe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 15:05:35 -0400
+        Tue, 12 Jun 2018 15:05:34 -0400
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
- 15.0.1156.6; Tue, 12 Jun 2018 12:05:09 -0700
+ EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
+ 15.0.1156.6; Tue, 12 Jun 2018 12:05:30 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 377DD4058F;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 53C61405F3;
         Tue, 12 Jun 2018 12:05:33 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>
-CC:     Nadav Amit <namit@vmware.com>,
+CC:     Nadav Amit <namit@vmware.com>, Juergen Gross <jgross@suse.com>,
+        Alok Kataria <akataria@vmware.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
         "H. Peter Anvin" <hpa@zytor.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH v4 4/9] x86: alternatives: macrofy locks for better inlining
-Date:   Tue, 12 Jun 2018 04:50:45 -0700
-Message-ID: <20180612115050.185112-5-namit@vmware.com>
+        <virtualization@lists.linux-foundation.org>
+Subject: [PATCH v4 6/9] x86: prevent inline distortion by paravirt ops
+Date:   Tue, 12 Jun 2018 04:50:47 -0700
+Message-ID: <20180612115050.185112-7-namit@vmware.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180612115050.185112-1-namit@vmware.com>
 References: <20180612115050.185112-1-namit@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
+Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
  designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -60,95 +61,143 @@ The solution is to set an assembly macro and call it from the inlined
 assembly block. As a result GCC considers the inline assembly block as
 a single instruction.
 
-This patch handles the LOCK prefix, allowing more aggresive inlining.
+The effect of the patch is a more aggressive inlining, which also
+causes a size increase of kernel.
 
    text	   data	    bss	    dec	    hex	filename
-18140140 10225284 2957312 31322736 1ddf270 ./vmlinux before
-18146889 10225380 2957312 31329581 1de0d2d ./vmlinux after (+6845)
+18147336 10226688 2957312 31331336 1de1408 ./vmlinux before
+18162555 10226288 2957312 31346155 1de4deb ./vmlinux after (+14819)
 
 Static text symbols:
-Before:	40286
-After:	40218	(-68)
+Before:	40053
+After:	39942	(-111)
 
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Alok Kataria <akataria@vmware.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: x86@kernel.org
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: virtualization@lists.linux-foundation.org
 
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/include/asm/alternative-asm.h | 20 ++++++++++++++------
- arch/x86/include/asm/alternative.h     | 11 ++---------
- arch/x86/kernel/macros.S               |  1 +
- 3 files changed, 17 insertions(+), 15 deletions(-)
+ arch/x86/include/asm/paravirt_types.h | 56 +++++++++++++--------------
+ arch/x86/kernel/macros.S              |  1 +
+ 2 files changed, 28 insertions(+), 29 deletions(-)
 
-diff --git a/arch/x86/include/asm/alternative-asm.h b/arch/x86/include/asm/alternative-asm.h
-index 31b627b43a8e..8e4ea39e55d0 100644
---- a/arch/x86/include/asm/alternative-asm.h
-+++ b/arch/x86/include/asm/alternative-asm.h
-@@ -7,16 +7,24 @@
- #include <asm/asm.h>
+diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
+index 180bc0bff0fb..a3d886238b58 100644
+--- a/arch/x86/include/asm/paravirt_types.h
++++ b/arch/x86/include/asm/paravirt_types.h
+@@ -343,23 +343,11 @@ extern struct pv_lock_ops pv_lock_ops;
+ #define paravirt_clobber(clobber)		\
+ 	[paravirt_clobber] "i" (clobber)
  
- #ifdef CONFIG_SMP
--	.macro LOCK_PREFIX
--672:	lock
-+.macro LOCK_PREFIX_HERE
- 	.pushsection .smp_locks,"a"
- 	.balign 4
--	.long 672b - .
-+	.long 671f - .		# offset
- 	.popsection
--	.endm
-+671:
-+.endm
-+
-+.macro LOCK_PREFIX insn:vararg
-+	LOCK_PREFIX_HERE
-+	lock \insn
-+.endm
- #else
--	.macro LOCK_PREFIX
--	.endm
-+.macro LOCK_PREFIX_HERE
-+.endm
-+
-+.macro LOCK_PREFIX insn:vararg
-+.endm
- #endif
+-/*
+- * Generate some code, and mark it as patchable by the
+- * apply_paravirt() alternate instruction patcher.
+- */
+-#define _paravirt_alt(insn_string, type, clobber)	\
+-	"771:\n\t" insn_string "\n" "772:\n"		\
+-	".pushsection .parainstructions,\"a\"\n"	\
+-	_ASM_ALIGN "\n"					\
+-	_ASM_PTR " 771b\n"				\
+-	"  .byte " type "\n"				\
+-	"  .byte 772b-771b\n"				\
+-	"  .short " clobber "\n"			\
+-	".popsection\n"
+-
+ /* Generate patchable code, with the default asm parameters. */
+-#define paravirt_alt(insn_string)					\
+-	_paravirt_alt(insn_string, "%c[paravirt_typenum]", "%c[paravirt_clobber]")
++#define paravirt_alt							\
++	"PARAVIRT_CALL type=\"%c[paravirt_typenum]\""			\
++	" clobber=\"%c[paravirt_clobber]\""				\
++	" pv_opptr=\"%c[paravirt_opptr]\""
  
+ /* Simple instruction patching code. */
+ #define NATIVE_LABEL(a,x,b) "\n\t.globl " a #x "_" #b "\n" a #x "_" #b ":\n\t"
+@@ -387,16 +375,6 @@ unsigned native_patch(u8 type, u16 clobbers, void *ibuf,
+ 
+ int paravirt_disable_iospace(void);
+ 
+-/*
+- * This generates an indirect call based on the operation type number.
+- * The type number, computed in PARAVIRT_PATCH, is derived from the
+- * offset into the paravirt_patch_template structure, and can therefore be
+- * freely converted back into a structure offset.
+- */
+-#define PARAVIRT_CALL					\
+-	ANNOTATE_RETPOLINE_SAFE				\
+-	"call *%c[paravirt_opptr];"
+-
  /*
-diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
-index 4cd6a3b71824..d7faa16622d8 100644
---- a/arch/x86/include/asm/alternative.h
-+++ b/arch/x86/include/asm/alternative.h
-@@ -31,15 +31,8 @@
-  */
+  * These macros are intended to wrap calls through one of the paravirt
+  * ops structs, so that they can be later identified and patched at
+@@ -534,7 +512,7 @@ int paravirt_disable_iospace(void);
+ 		/* since this condition will never hold */		\
+ 		if (sizeof(rettype) > sizeof(unsigned long)) {		\
+ 			asm volatile(pre				\
+-				     paravirt_alt(PARAVIRT_CALL)	\
++				     paravirt_alt			\
+ 				     post				\
+ 				     : call_clbr, ASM_CALL_CONSTRAINT	\
+ 				     : paravirt_type(op),		\
+@@ -544,7 +522,7 @@ int paravirt_disable_iospace(void);
+ 			__ret = (rettype)((((u64)__edx) << 32) | __eax); \
+ 		} else {						\
+ 			asm volatile(pre				\
+-				     paravirt_alt(PARAVIRT_CALL)	\
++				     paravirt_alt			\
+ 				     post				\
+ 				     : call_clbr, ASM_CALL_CONSTRAINT	\
+ 				     : paravirt_type(op),		\
+@@ -571,7 +549,7 @@ int paravirt_disable_iospace(void);
+ 		PVOP_VCALL_ARGS;					\
+ 		PVOP_TEST_NULL(op);					\
+ 		asm volatile(pre					\
+-			     paravirt_alt(PARAVIRT_CALL)		\
++			     paravirt_alt				\
+ 			     post					\
+ 			     : call_clbr, ASM_CALL_CONSTRAINT		\
+ 			     : paravirt_type(op),			\
+@@ -691,6 +669,26 @@ struct paravirt_patch_site {
+ extern struct paravirt_patch_site __parainstructions[],
+ 	__parainstructions_end[];
  
- #ifdef CONFIG_SMP
--#define LOCK_PREFIX_HERE \
--		".pushsection .smp_locks,\"a\"\n"	\
--		".balign 4\n"				\
--		".long 671f - .\n" /* offset */		\
--		".popsection\n"				\
--		"671:"
--
--#define LOCK_PREFIX LOCK_PREFIX_HERE "\n\tlock; "
--
-+#define LOCK_PREFIX_HERE "LOCK_PREFIX_HERE\n\t"
-+#define LOCK_PREFIX "LOCK_PREFIX "
- #else /* ! CONFIG_SMP */
- #define LOCK_PREFIX_HERE ""
- #define LOCK_PREFIX ""
++#else	/* __ASSEMBLY__ */
++
++/*
++ * This generates an indirect call based on the operation type number.
++ * The type number, computed in PARAVIRT_PATCH, is derived from the
++ * offset into the paravirt_patch_template structure, and can therefore be
++ * freely converted back into a structure offset.
++ */
++.macro PARAVIRT_CALL type:req clobber:req pv_opptr:req
++771:	ANNOTATE_RETPOLINE_SAFE
++	call *\pv_opptr
++772:	.pushsection .parainstructions,"a"
++	_ASM_ALIGN
++	_ASM_PTR 771b
++	.byte \type
++	.byte 772b-771b
++	.short \clobber
++	.popsection
++.endm
++
+ #endif	/* __ASSEMBLY__ */
+ 
+ #endif	/* _ASM_X86_PARAVIRT_TYPES_H */
 diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
-index f1fe1d570365..852487a9fc56 100644
+index 66ccb8e823b1..71d8b716b111 100644
 --- a/arch/x86/kernel/macros.S
 +++ b/arch/x86/kernel/macros.S
-@@ -8,3 +8,4 @@
- 
- #include <linux/compiler.h>
+@@ -10,3 +10,4 @@
  #include <asm/refcount.h>
-+#include <asm/alternative-asm.h>
+ #include <asm/alternative-asm.h>
+ #include <asm/bug.h>
++#include <asm/paravirt.h>
 -- 
 2.17.0
 
