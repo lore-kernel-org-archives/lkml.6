@@ -3,87 +3,134 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6A90BC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 06:21:25 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E657AC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 06:25:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12A2F2086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 06:21:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9537C2086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 06:25:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XlVVdvfM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12A2F2086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="i/m7ohZH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9537C2086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932831AbeFLGVW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 02:21:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50972 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932448AbeFLGVV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 02:21:21 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A7DF20693;
-        Tue, 12 Jun 2018 06:21:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528784481;
-        bh=1spcMF/62Z/hqwVq681z9z6YeH7mff2G4NRfI+oCEF0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XlVVdvfMQJWH+7jyy5hXq+wdzIi8iEOeQLo/CDAXmfrh0aaqfdf7rW3Q30LeiixM0
-         iVLYUBz9B5DZH9QCLyQzvUHbEY6MD2ThjU+9F71vshSNxNeqoGR/0S/KHsKcoV3sAf
-         CNlx13Ke7a73Z1mHqIOYF53QfzXIiqxOhUnqG3Tk=
-Date:   Tue, 12 Jun 2018 08:20:59 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        openbmc@lists.ozlabs.org
-Subject: Re: [GIT PULL]  FSI updates
-Message-ID: <20180612062059.GA26240@kroah.com>
-References: <7c268f5bb58cb45a2868020b3c5b8f48ac6844ea.camel@kernel.crashing.org>
+        id S932897AbeFLGZr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 02:25:47 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:52393 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932539AbeFLGZp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 02:25:45 -0400
+Received: by mail-it0-f67.google.com with SMTP id m194-v6so13293743itg.2
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 23:25:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=djRo0AvE9gopwwP5+w01p5YWhU8W7ljhEsugL4Ar+9g=;
+        b=i/m7ohZH6vWQXoZVuRsn5U1IxTJyNc0c2uDa5u/T144er4/XITKZgVryRUse1/2Wt1
+         R4UlTTqrhetfc4C3OsCzuQGnYp6palRHWOVtlkiMHzmF6tMGT33vtxy1ziaypwsoR03A
+         N+uCA2Kmh/iuSTmBUDjaXO4xCtocAs1jFOyg4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=djRo0AvE9gopwwP5+w01p5YWhU8W7ljhEsugL4Ar+9g=;
+        b=PDlaO8/GLOey5h+Yx5MIWzzRmuGituW1jyddeWTSnTnZ/HQxu4Obrdca/ojUVrsb94
+         op5CZVaHPRFjajBhsguAE68FLUiXUD6wn3X+QMzey2JPoqjxiF7/OfGuqtvd2J+7awj/
+         faf61pa70slwVufLiC5HHirh9kBUMNREg/nO7sF72r562ehJHg8/ur2uNEJaHL0J8ZFi
+         nOCzExqGezsWuwHCd6NW//1geR9dXse44AuzpOvRNNTmaQ7JETXwsU6zTpRhEtTVDDcQ
+         iuZm21UQnCbXum5wGIrzKKe2GAWxfbfJ894sYvnZjjFWwCWok0sR94X3UE3s6hgslY7H
+         peJg==
+X-Gm-Message-State: APt69E2+Vgv0y2QqF/S3J6H0C3RRdMk3NrPqL58xTEVgcPu3DtC/wQqB
+        ByoGvi8vIp5QYuUSmoQWmZ09p2aS8RKyYH9BLjYQmA==
+X-Google-Smtp-Source: ADUXVKI/Lz9c7GgT/3YVXbmQjeuvtW/1ilca74SY7sh0Aj2rTJ4HGcBkzKnZplrrsKygrOmzvYUW1KkYYN+RYIds1O8=
+X-Received: by 2002:a24:308:: with SMTP id e8-v6mr2064788ite.102.1528784744621;
+ Mon, 11 Jun 2018 23:25:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7c268f5bb58cb45a2868020b3c5b8f48ac6844ea.camel@kernel.crashing.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a02:c054:0:0:0:0:0 with HTTP; Mon, 11 Jun 2018 23:25:44
+ -0700 (PDT)
+In-Reply-To: <20180608095154.22413-1-feng.tang@intel.com>
+References: <20180608095154.22413-1-feng.tang@intel.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 12 Jun 2018 08:25:44 +0200
+Message-ID: <CAPDyKFrs3ngkVVQaq34V9qzV3KoFdy=B+UbLnzR=fHKsOco=tg@mail.gmail.com>
+Subject: Re: [PATCH] mmc: Move the mmc driver init earlier
+To:     Feng Tang <feng.tang@intel.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 02:14:25PM +1000, Benjamin Herrenschmidt wrote:
-> Hi Greg !
-> 
-> There are a first round of updates of the FSI stack, aiming at reducing/removing
-> the gap with the OpenBMC tree and a first step in getting dependent drivers
-> upstream.
-> 
-> These changes significantly improve the FSI bitbanging driver performance
-> and reliability, and add the new "sbefifo" driver for communicating with
-> the POWER9 Self Boot Engine (which will be needed for some upcoming
-> additional drivers).
-> 
-> [ Apologies if I got part of the process wrong, I haven't
->   sent a pull request in years ;-) ]
+On 8 June 2018 at 11:51, Feng Tang <feng.tang@intel.com> wrote:
+> When doing some boot time optimization for an eMMC rootfs NUCs,
+> we found the rootfs may spend around 100 microseconds waiting
+> for eMMC card to be initialized, then the rootfs could be
+> mounted.
+>         [    1.216561] Waiting for root device /dev/mmcblk1p1...
+>         [    1.289262] mmc1: new HS400 MMC card at address 0001
+>         [    1.289667] mmcblk1: mmc1:0001 R1J56L 14.7 GiB
+>         [    1.289772] mmcblk1boot0: mmc1:0001 R1J56L partition 1 8.00 MiB
+>         [    1.289869] mmcblk1boot1: mmc1:0001 R1J56L partition 2 8.00 MiB
+>         [    1.289967] mmcblk1rpmb: mmc1:0001 R1J56L partition 3 4.00 MiB
+>         [    1.292798]  mmcblk1: p1 p2 p3
+>         [    1.300576] EXT4-fs (mmcblk1p1): couldn't mount as ext3 due to feature incompatibilities
+>         [    1.300912] EXT4-fs (mmcblk1p1): couldn't mount as ext2 due to feature incompatibilities
+>
+> And this is a common problem for smartphones, tablets, embedded
+> devices and automotive products. This patch will make the eMMC/SD
+> card  start initializing earlier, by changing its order in drivers/Makefile.
+>
+> On our platform, the waiting for eMMC card is almost eliminated with the patch,
+> which is critical to boot time.
 
-So, these are all for 4.19-rc1, right?  Not bugfixes for 4.18-final?
+I am wondering what kernel version you are running here. There have
+been some changes to the mmc initialization path, which perhaps can
+help.
 
-> The following changes since commit 8efcf34a263965e471e3999904f94d1f6799d42a:
-> 
->   Merge tag 'armsoc-late' of git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc (2018-06-11 18:19:45 -0700)
-> 
-> are available in the Git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/benh/linux-fsi.git 
+>
+> Signed-off-by: Feng Tang <feng.tang@intel.com>
+> ---
+>  drivers/Makefile | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/Makefile b/drivers/Makefile
+> index 24cd47014657..c473afd3c688 100644
+> --- a/drivers/Makefile
+> +++ b/drivers/Makefile
+> @@ -50,6 +50,9 @@ obj-$(CONFIG_REGULATOR)               += regulator/
+>  # reset controllers early, since gpu drivers might rely on them to initialize
+>  obj-$(CONFIG_RESET_CONTROLLER) += reset/
+>
+> +# put mmc early as many morden devices use emm/sd card as rootfs storage
+> +obj-y                          += mmc/
+> +
 
-I need a signed tag to pull from, not just a git tree, otherwise I don't
-know that you really sent me what you think you sent me :)
+Your suggested approach isn't really a solution, as it may work for
+your particular case but not for everybody else.
 
-Can you fix that up, and tell me where you want this to go and then I
-can take it after 4.18-rc1 is out.
+>  # tty/ comes before char/ so that the VT console is the boot-time
+>  # default.
+>  obj-y                          += tty/
+> @@ -128,7 +131,6 @@ obj-$(CONFIG_EISA)          += eisa/
+>  obj-$(CONFIG_PM_OPP)           += opp/
+>  obj-$(CONFIG_CPU_FREQ)         += cpufreq/
+>  obj-$(CONFIG_CPU_IDLE)         += cpuidle/
+> -obj-y                          += mmc/
+>  obj-$(CONFIG_MEMSTICK)         += memstick/
+>  obj-$(CONFIG_NEW_LEDS)         += leds/
+>  obj-$(CONFIG_INFINIBAND)       += infiniband/
+> --
+> 2.14.1
+>
 
-thanks,
-
-greg k-h
+Kind regards
+Uffe
