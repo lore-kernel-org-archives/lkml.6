@@ -3,79 +3,97 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 845F8C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 06:31:13 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D8B9BC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 06:31:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31F2E20660
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 06:31:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31F2E20660
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ens-lyon.org
+	by mail.kernel.org (Postfix) with ESMTP id 97E6820660
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 06:31:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97E6820660
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754280AbeFLGbL (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 02:31:11 -0400
-Received: from hera.aquilenet.fr ([185.233.100.1]:42388 "EHLO
-        hera.aquilenet.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753943AbeFLGbJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 02:31:09 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by hera.aquilenet.fr (Postfix) with ESMTP id 02BB2D34;
-        Tue, 12 Jun 2018 08:31:08 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at aquilenet.fr
-Received: from hera.aquilenet.fr ([127.0.0.1])
-        by localhost (hera.aquilenet.fr [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id sC42oj9jdOoG; Tue, 12 Jun 2018 08:31:07 +0200 (CEST)
-Received: from var.youpi.perso.aquilenet.fr (static-176-158-111-12.ftth.abo.bbox.fr [176.158.111.12])
-        by hera.aquilenet.fr (Postfix) with ESMTPSA id 4DE696E9;
-        Tue, 12 Jun 2018 08:31:07 +0200 (CEST)
-Received: from samy by var.youpi.perso.aquilenet.fr with local (Exim 4.91)
-        (envelope-from <samuel.thibault@ens-lyon.org>)
-        id 1fScpe-0004W5-0z; Tue, 12 Jun 2018 08:31:06 +0200
-Date:   Tue, 12 Jun 2018 08:31:06 +0200
-From:   Samuel Thibault <samuel.thibault@ens-lyon.org>
-To:     Gregory Nowak <greg@gregn.net>
-Cc:     "Speakup is a screen review system for Linux." 
-        <speakup@linux-speakup.org>, devel@driverdev.osuosl.org,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: speakup: refactor synths array to use a list
-Message-ID: <20180612063105.7urgjfckrwjvqs6k@var.youpi.perso.aquilenet.fr>
-Mail-Followup-To: Samuel Thibault <samuel.thibault@ens-lyon.org>,
-        Gregory Nowak <greg@gregn.net>,
-        "Speakup is a screen review system for Linux." <speakup@linux-speakup.org>,
-        devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org
-References: <20180604095212.GA18381@tanglefoot>
- <20180606132628.fxykchbznrwzgwqt@var.youpi.perso.aquilenet.fr>
- <20180611225703.csi47cdafhy6rxcf@var.youpi.perso.aquilenet.fr>
- <20180611235122.GA28343@gregn.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180611235122.GA28343@gregn.net>
-Organization: I am not organized
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S932916AbeFLGbP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 02:31:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55079 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753970AbeFLGbK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 02:31:10 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 5CD3FAEBF;
+        Tue, 12 Jun 2018 06:31:09 +0000 (UTC)
+Date:   Tue, 12 Jun 2018 08:31:09 +0200
+Message-ID: <s5hvaaozfbm.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Davidlohr Bueso <dbueso@suse.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ipc: Limit sysctl value to IPCMNI
+In-Reply-To: <46a299ce-072c-fc84-3d52-3179ee42db4a@redhat.com>
+References: <20180608134949.12672-1-tiwai@suse.de>
+        <20180608141659.8a517b128c756b4d0b813c9e@linux-foundation.org>
+        <46a299ce-072c-fc84-3d52-3179ee42db4a@redhat.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Gregory Nowak, le lun. 11 juin 2018 16:51:22 -0700, a ecrit:
-> On Tue, Jun 12, 2018 at 12:57:03AM +0200, Samuel Thibault wrote:
-> > Anybody up for testing please?
-> > 
-> > If people want to see speakup get mainlined instead of staging, please
-> > help.
+On Mon, 11 Jun 2018 23:27:08 +0200,
+Waiman Long wrote:
 > 
-> If I understand right, this patch changes how synthesizers are loaded
-> and unloaded through /sys/accessibility/speakup/synth, correct?
+> On 06/08/2018 05:16 PM, Andrew Morton wrote:
+> > On Fri,  8 Jun 2018 15:49:49 +0200 Takashi Iwai <tiwai@suse.de> wrote:
+> >
+> >> Currently shmmni proc entry accepts all entered integer values, but
+> >> the practical limit is IPCMNI (32768).  This confuses user as if a
+> >> bigger value were accepted but not applied correctly.
+> >>
+> >> This patch changes the proc entry to use *_minmax variant to limit the
+> >> accepted values accordingly.
+> > Waiman Long was working on a (vastly more complicated) patchset to
+> > address this.
+> >
+> >> --- a/ipc/ipc_sysctl.c
+> >> +++ b/ipc/ipc_sysctl.c
+> >> @@ -99,6 +99,7 @@ static int proc_ipc_auto_msgmni(struct ctl_table *table, int write,
+> >>  static int zero;
+> >>  static int one = 1;
+> >>  static int int_max = INT_MAX;
+> >> +static int ipcmni = IPCMNI;
+> >>  
+> >>  static struct ctl_table ipc_kern_table[] = {
+> >>  	{
+> >> @@ -120,7 +121,9 @@ static struct ctl_table ipc_kern_table[] = {
+> >>  		.data		= &init_ipc_ns.shm_ctlmni,
+> >>  		.maxlen		= sizeof(init_ipc_ns.shm_ctlmni),
+> >>  		.mode		= 0644,
+> >> -		.proc_handler	= proc_ipc_dointvec,
+> >> +		.proc_handler	= proc_ipc_dointvec_minmax,
+> >> +		.extra1		= &zero,
+> >> +		.extra2		= &ipcmni,
+> >>  	},
+> >>  	{
+> >>  		.procname	= "shm_rmid_forced",
+> > What is the back-compatibility situation here?
+> >
+> >
+> Sorry for the late reply. I am planning to send out an updated patch
+> once the merge window is closed. The latest patch can be found in
+> 
+> https://lkml.org/lkml/2018/5/7/666
+> 
+> Luis has some concern about the use of __read_mostly tag which I am
+> going to remove in the next version.
 
-The load/unload is about the module itself, i.e. modprobe speakup_bns ;
-modprobe speakup_soft, switch between them, then rmmod speakup_bns ;
-speakup_soft or the converse (to exercise both orders).
+Thanks, that's as trivial as my patch, unsurprisingly :)
 
-Thanks!
-Samuel
+
+Takashi
