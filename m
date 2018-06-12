@@ -2,97 +2,109 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	T_DKIMWL_WL_HIGH autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9BBCFC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 21:21:31 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6EB29C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 21:24:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5128A20693
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 21:21:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AFAD2086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 21:24:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="IfI56sYj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5128A20693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="M/NRHvrM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AFAD2086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934294AbeFLVV3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 17:21:29 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:46510 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932682AbeFLVV1 (ORCPT
+        id S933994AbeFLVYQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 17:24:16 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:55528 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933173AbeFLVYP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 17:21:27 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id DB0AE8EE1E9;
-        Tue, 12 Jun 2018 14:21:26 -0700 (PDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id nw37WqPdzCg8; Tue, 12 Jun 2018 14:21:26 -0700 (PDT)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 6F4BA8EE0C8;
-        Tue, 12 Jun 2018 14:21:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1528838486;
-        bh=P46dzem9QUsqP5pxcvFdZcrRe70rv5guQ6CUuLeEb24=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=IfI56sYjlyYrwaGVOa+uiNBoMueuGVBhfM4xa/qqtKxTj79JLk+GbIoZ3XWEucYcF
-         ijbpu1qi/gqn7I3gLI71f+sIq8FmwU4Wfd1B9q993dMJ3RXoIp9Jl1hMEsFAZOLCRi
-         xUbpEzudtxtqI4hgUagiIIEbt6LJuHZsG0/WEJBE=
-Message-ID: <1528838485.24454.2.camel@HansenPartnership.com>
-Subject: Re: [PATCH] target: add error handling for match_int
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Zhouyang Jia <jiazhouyang09@gmail.com>
-Cc:     "Nicholas A. Bellinger" <nab@linux-iscsi.org>,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 12 Jun 2018 14:21:25 -0700
-In-Reply-To: <1528779148-42485-1-git-send-email-jiazhouyang09@gmail.com>
-References: <1528779148-42485-1-git-send-email-jiazhouyang09@gmail.com>
+        Tue, 12 Jun 2018 17:24:15 -0400
+Received: by mail-wm0-f66.google.com with SMTP id v16-v6so1179503wmh.5
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 14:24:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arista.com; s=googlenew;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=A65GuVh3Xf/UIsGvCEfFhd/waTry7eJAr1W3EBVir68=;
+        b=M/NRHvrMTbAcYDNRsXLFnyc7hmLOFvK8ip5nieC8O49w1V9zGdVqeHlILwEeFWPY8N
+         A5ADtzbc9MFHfQd5ef6pifODvt8r/N0gFbCGzVrNf6M5rK4fmHC+1HD5BbBQSHCeDspA
+         k6oQ18An/lw2VbcOJcWJw9/m+6qHH3f9GmMo1sITgJREbYgkz98UFTBGvCDN6Ancvmww
+         Lc1dqc1LuYvDzSoc51HsIrq7tVGvkKvIhMo8+067wjDGPUNf7wUwxm8PX0IGAoJrH9vQ
+         9n4AHOG0qpB4uVbJTfIPxfWObhwGW8GevECP0+1wHNNdel6cYixYdFFcBE5UXLm2mm3u
+         DYBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=A65GuVh3Xf/UIsGvCEfFhd/waTry7eJAr1W3EBVir68=;
+        b=fma1Y0GaYb1pG3WLZfHYgNuNZz9rUQ51y411ybLVBEo1otekQlSYFL224l6228BxY5
+         PM0q5VOXcMwLhtm1c0kjmLCJsVfphYe81xWd7ILauY1B/e24UrwjD0axQdZ5jIjmH7a4
+         vxZBVzO8m8Bbk+4qNeEC8tf1BfLOHdBjzlCzFVqKzKhZLUKMF2RlFPWGNRrF4Nzfzlcm
+         sXfVkqbK4eC6TLrIWcPSqcf25oStGcCMeZGaLmdZJJfTg03xyU7MbY2SInhCZO1Fvr5t
+         Hctk3/LUpKzZv7+clZLYh5V1mIRdMkH7GO7aTwRNEnKlVTFk+lgd9101PpP55i4Rl+um
+         yTZQ==
+X-Gm-Message-State: APt69E17mYVHitDY0fd94nkXy1ZXrcfWlNXGGsBd2I3mktvGVyJQNagm
+        duAVxl2KLXkYEO0I11uwNvbXXIw2gRg=
+X-Google-Smtp-Source: ADUXVKIzcrEUE8O3gd2/7C6MPdnP1FBbHF2UYfQvh9VSCrfwfFS5+nB3fKwXlkRJgdbhQ2e/+/pKUQ==
+X-Received: by 2002:a1c:58d1:: with SMTP id m200-v6mr1767919wmb.160.1528838653788;
+        Tue, 12 Jun 2018 14:24:13 -0700 (PDT)
+Received: from dhcp.ire.aristanetworks.com ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id f13-v6sm506213eds.15.2018.06.12.14.24.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 12 Jun 2018 14:24:13 -0700 (PDT)
+Message-ID: <1528838651.26829.69.camel@arista.com>
+Subject: Re: [RFC] x86/vdso: Align vdso after searching for free area
+From:   Dmitry Safonov <dima@arista.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Borislav Petkov <bp@alien8.de>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vasiliy Khoruzhick <vasilykh@arista.com>, x86@kernel.org
+Date:   Tue, 12 Jun 2018 22:24:11 +0100
+In-Reply-To: <20180612204948.4752-1-dima@arista.com>
+References: <20180612204948.4752-1-dima@arista.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 
+X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-06-12 at 12:52 +0800, Zhouyang Jia wrote:
-> When match_int fails, the lack of error-handling code may
-> cause unexpected results.
+On Tue, 2018-06-12 at 21:49 +0100, Dmitry Safonov wrote:
+> There is errata for AMD family 15h CPUs [1] and since
+> commit dfb09f9b7ab03 ("x86, amd: Avoid cache aliasing penalties on
+> AMD
+> family 15h") bits [14:12] are being cleared for shared libraries.
+> Also per-boot ASLR applies over upper bits by OR directly over the
+> address.
 > 
-> This patch adds error-handling code after calling match_int.
+> As we need special alignment and lower bits values to be set, it
+> makes
+> only a little sense to call get_unmapped_area() after calculating the
+> address. It also can lead to random crashes if get_unmapped_area()
+> actually changes/aligns the address, which we observed on 15h CPU.
+> Usually it's not a problem as there isn't many mappings (except
+> possibly
+> ld.so, uprobes?) and result address is the same before/after
+> get_unmapped_area().
 > 
-> Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
-> ---
->  drivers/target/target_core_rd.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/target/target_core_rd.c
-> b/drivers/target/target_core_rd.c
-> index a6e8106..7bc89ff 100644
-> --- a/drivers/target/target_core_rd.c
-> +++ b/drivers/target/target_core_rd.c
-> @@ -573,14 +573,16 @@ static ssize_t
-> rd_set_configfs_dev_params(struct se_device *dev,
->  		token = match_token(ptr, tokens, args);
->  		switch (token) {
->  		case Opt_rd_pages:
-> -			match_int(args, &arg);
-> +			if (match_int(args, &arg))
-> +				return -EINVAL;
+> Move align_vdso_addr() after get_unmapped_area() to make sure that
+> errata for AMD 15h is always applied.
 
-The first observation is that this would leak the kmalloc'd orig
-variable, but the second is that I don't think terminating parsing is
-the right thing to do even if match_int() returns an error: just
-ignoring this option and proceed to the next seems to be the best
-course because that's what we do with unrecognised options (the
-default: case).
+Alternative dirty-hacky idea:
+specify some (struct file*) to get_unmapped_area() for vdso vma, then
+mapping would be automatically aligned. Dirty as hell as relies on
+get_unmapped_area() realization details.
 
-James
-
-
+-- 
+            Dima
