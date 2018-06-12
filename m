@@ -2,172 +2,171 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B9066C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:12:37 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E431EC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:12:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77B83208B2
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:12:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77B83208B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id 83474208B0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:12:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="S9IiOfB1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83474208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934040AbeFLIMe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 04:12:34 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:48040 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932555AbeFLIMQ (ORCPT
+        id S934020AbeFLIMd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 04:12:33 -0400
+Received: from relmlor4.renesas.com ([210.160.252.174]:14792 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S934010AbeFLIMX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 04:12:16 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
-   d="scan'208";a="40978546"
-Received: from bogon (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 12 Jun 2018 16:12:12 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 228A94B34D54;
-        Tue, 12 Jun 2018 16:12:10 +0800 (CST)
-Received: from localhost (10.167.225.56) by G08CNEXCHPEKD01.g08.fujitsu.local
- (10.167.33.89) with Microsoft SMTP Server id 14.3.399.0; Tue, 12 Jun 2018
- 16:12:14 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <hpa@zytor.com>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <bhe@redhat.com>,
-        <keescook@chromium.org>, <yasu.isimatu@gmail.com>
-CC:     <indou.takao@jp.fujitsu.com>, <lcapitulino@redhat.com>,
-        <caoj.fnst@cn.fujitsu.com>, <douly.fnst@cn.fujitsu.com>,
-        Chao Fan <fanc.fnst@cn.fujitsu.com>
-Subject: [RFC PATCH 4/4] x86/boot/KASLR: Limit kaslr to choosing the immovable memory
-Date:   Tue, 12 Jun 2018 16:10:51 +0800
-Message-ID: <20180612081051.21811-5-fanc.fnst@cn.fujitsu.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180612081051.21811-1-fanc.fnst@cn.fujitsu.com>
-References: <20180612081051.21811-1-fanc.fnst@cn.fujitsu.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-yoursite-MailScanner-ID: 228A94B34D54.A8286
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+        Tue, 12 Jun 2018 04:12:23 -0400
+Received: from unknown (HELO relmlir4.idc.renesas.com) ([10.200.68.154])
+  by relmlie3.idc.renesas.com with ESMTP; 12 Jun 2018 17:12:19 +0900
+Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
+        by relmlir4.idc.renesas.com (Postfix) with ESMTP id 31A6487578;
+        Tue, 12 Jun 2018 17:12:19 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.51,213,1526310000"; 
+   d="scan'208";a="282291258"
+Received: from mail-hk2apc01lp0213.outbound.protection.outlook.com (HELO APC01-HK2-obe.outbound.protection.outlook.com) ([65.55.88.213])
+  by relmlii1.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 12 Jun 2018 17:12:17 +0900
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6gNfdwttkeg6d8xQzojFE9jrwZNhm4bKZ6kqxZf6SdU=;
+ b=S9IiOfB16XlBObYBWAGR+FRe2kWjviF4AdnfQpD1mHhVjYepnyilOxTFFx5/DVN8jvwqlicgGsb1iEqmt6HEgnDnfE/IRG9hGgWpEhfOqnYtyvntl7sv5iob70cPKgMOREx8pf2eVhFr1CYwWA6/TVdlD/Z1iOcgb5FexNpgMlE=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
+Received: from morimoto-PC.renesas.com (211.11.155.138) by
+ TY2PR01MB2074.jpnprd01.prod.outlook.com (2603:1096:404:e::14) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.841.14; Tue, 12 Jun 2018 08:12:15 +0000
+Message-ID: <87muw0qvfo.wl%kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran@ksquared.org.uk>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        <dmaengine@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH] dmaengine: rcar-dmac: don't use DMAC error interrupt
+In-Reply-To: <CAMuHMdVjVgb+1HrUdOuKpDW8NiXBwPJPAucZhDbN64xb5FtN=A@mail.gmail.com>
+References: <87o9ggqwwh.wl%kuninori.morimoto.gx@renesas.com>
+        <CAMuHMdVjVgb+1HrUdOuKpDW8NiXBwPJPAucZhDbN64xb5FtN=A@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 Emacs/24.3 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+Date:   Tue, 12 Jun 2018 08:12:15 +0000
+X-Originating-IP: [211.11.155.138]
+X-ClientProxiedBy: TY2PR02CA0005.apcprd02.prod.outlook.com
+ (2603:1096:404:56::17) To TY2PR01MB2074.jpnprd01.prod.outlook.com
+ (2603:1096:404:e::14)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:TY2PR01MB2074;
+X-Microsoft-Exchange-Diagnostics: 1;TY2PR01MB2074;3:tTRlVk0vz/elhUfHuDJeTfPcDRxXkkgtbR+Zxr5sCjRQSXZ6Dqn2HAhiTHl0DCuxLD2J/Dxn/1gDma6jFDPHaOeeoufCY8NN+0U5jpOiKTaap2C17tJPf9h9SmpTNzjBz7RCJvv6A3MUOI7nJuQ+mt1WtS5bUo10y6P8xygelOxNcTNc7eQifjewalwUY3wVZM7DPJtcQe0OhyvveKr/g4sosi1nLZtjuRRHLXIuxb9aiVdfw822ABbMS1fsngo4;25:FJk2IxyiVCiCQfK70ajPlSz+0rKjf8YvuLLFezzUWbu0GhyJa4pb8By1M1CTLUMrq1a2jczpCfR5FDQ9dlh4Pe978v0zHXxsJR1UlL3EEPfEt5FpOisM7OvUbnxKyd3EfELfLC3Vqr6FY8OpckRd6VeTH3bh0htivzgGc8spsMkJFhC1rypWzZnUXkOL1JmBKBYp84Gi3WIiZW3YmS/bUOVStMnM9EH/3frs8QQUb1nEwgqjX0C+8PXMblPUoPfjBFPjVsuSTol560n8fhwzYO6YSsrsU/3pNSmPNIqQNwP3EJm5Ey55AHbESxApnSNSvhiS0uqYASqqS5cU3RrjgA==;31:QqVJngZMk+6zyLJ1QmVN16SdY61Esyh1TZMe2dq2xFsRlhkK6ZtHj4yf1Dic/6ltBlJk57WWUSJZ9/HIJNomU7ACx3ffNwIDGnPFR/3fZukerEMGzDlFk/ITHK48PT3Pzyh69w2hXq1E2iuDwdwQAOe+7ydfaMQ++a8FCqzPjEVNqcY1DtSI9yvNl4ErROadv0MuOZuC57Qlcj9JUw77N9oKSTkA1cmOvDaDYnqFVL4=
+X-MS-TrafficTypeDiagnostic: TY2PR01MB2074:
+X-Microsoft-Exchange-Diagnostics: 1;TY2PR01MB2074;20:L6MMfAwcYwEZpWVczFeNLddeO56FbY6KsYi2AOZjYZ8Yt1nf0OTwizZDKf0rDQxX7LHlczbANg1hRLeMfTPAeLrBGwh/8V42j2ahySObCltEHgqY4Y34AkcaNN7amK9W8/mKs3nixC6pa5zxxv39AUNzell80Joo59WNLjeAJlWmf6b89LfievCsgGePxBMOBJ20rLoBEDqea+bvoMd2+kVnFRywjixed3ULWa/Vr0ropmc103Q87cr6WwQ1FDZaC9HhUh4M/NNlJ1/XGez18QYRAL1J+iDwKwB0ZFyi1ybkkfJpujmhT7tOqaJsRzl1JAsOwZu0iK4qfh43icEuWpJyMUT/48+B+IFyhm48HlpHZVs7HSLxCZu6MwvQYqLVns+Lu4VFqWpKakmfT6Mo7voJ0IpK9yhY7txIJitzATDt94nYCozWauyykgZUf/y765/aX0D6X+MGy3YrGTDViBpg9kMaBOWBrmUrWWMxabt/UFoDFTQyeyZJPjtcIVz3;4:/pmGf5qmXV36SNI3G92J8oPoTN/fp4LLnaMnihigU/lcjnJ+J8a2NId0Lh8MSI6n8scL6sCLvyEGRwtHjGCfdkFG/+tEvMzP2EJ9v3EkE8V77DsfWzcfttVLE9ZKjzXeXq42558Ud6T7eG1LG+OC+ESUEbIkXd+MbWVBVSG9/vvPnKOYzrprCCWOcoqsWJX+xCKUN0TscjON4z2HzWTccwyizg9MEKSb3iT22ElhCfPVLJqmX/nIBoq+6EJenCiqWRPUh9ls25lBKPeWmbmnsQ==
+X-Microsoft-Antispam-PRVS: <TY2PR01MB2074C231C92C63B23F93C82DD47F0@TY2PR01MB2074.jpnprd01.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(10201501046)(93006095)(93001095)(3002001)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:TY2PR01MB2074;BCL:0;PCL:0;RULEID:;SRVR:TY2PR01MB2074;
+X-Forefront-PRVS: 07013D7479
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(39860400002)(346002)(376002)(39380400002)(396003)(366004)(189003)(199004)(8676002)(25786009)(50466002)(53416004)(106356001)(486006)(386003)(105586002)(186003)(16526019)(47776003)(86362001)(66066001)(7416002)(6486002)(5660300001)(26005)(6916009)(6116002)(53936002)(81166006)(3846002)(23726003)(11346002)(446003)(2616005)(956004)(476003)(229853002)(97736004)(69596002)(7696005)(76176011)(52116002)(68736007)(2906002)(345774005)(36756003)(316002)(58126008)(39060400002)(6246003)(7736002)(305945005)(8936002)(81156014)(16586007)(4326008)(478600001)(54906003)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:TY2PR01MB2074;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;TY2PR01MB2074;23:SydtqTDgymE9+Sw9pXhleFbMxekIlDD8wF8dD7FAc?=
+ =?us-ascii?Q?gLuYQ9SZTVngmewGtNxsiEbvM35OTfpvlW1pTAWqoNpKqY+7Mk8BtI5bTq/f?=
+ =?us-ascii?Q?fmDCYwWo+pnj6rO9p8FUaTdUnXHhHTWT//AfNtZhm4O0TRT3hLWzMSRHmmh2?=
+ =?us-ascii?Q?j2iG4g37AfZP8O7MLT0noG7uRGTcZphnPbN2GUscYOqNPmwFdOc0hfkr57y8?=
+ =?us-ascii?Q?SeHteKwXNDGUVzQM9gKLlgSZJFBfMfOpbzioyBjZWC7wY45tIsh61YidPtKf?=
+ =?us-ascii?Q?I3/rHds629u+rUConIsZeyYWwMvPk+D2u66H/farwVL+XKRvqe7Khlv8DPIU?=
+ =?us-ascii?Q?fF9crxT1gTJhLApWvcQneQ0B4VJ99qYADg+ejPWHqfoI/mcAoxxVQpFHckQS?=
+ =?us-ascii?Q?WUNfQ6DVy459sGlj5SP4QduNB99KCBK5vN74xq2UqXa8Crcpz29pybh3pw04?=
+ =?us-ascii?Q?+bOObiZB25qUwCvTV04HYEp0Q9zOv7Mbe6xC9KqQyRHu9cv9Z0mD4NAgfjyi?=
+ =?us-ascii?Q?fnkEcJ0kncOQw7j821lyusfEs7l579xsZ1yiTNmqWAVnCmK0wTFhKHKKJ5Jc?=
+ =?us-ascii?Q?bGLxn+WAFswJudDpq9cd8EwdPYSq1FZuFPZiYk4A1TUqJaDaWr/YuOFDtpEm?=
+ =?us-ascii?Q?gjENu1Ndm8zrtvNR75iLbdk0TPFWyKqFrm9sbB3rkeJX6dKrA/6pzwA15pqB?=
+ =?us-ascii?Q?p7RcLN4k6TSzgzdImCB0UhcPqJNVsx4+oeBinOb+dXJGQPJQyx1XumWbpPNE?=
+ =?us-ascii?Q?fodJbjYwknZQW+ZRxUSmuak4HtRPwSzf65k/8PRtDteKKC3tEiMXqIWBT9vt?=
+ =?us-ascii?Q?zVoBmdohUyhsZoIkmK5XcJd7/DhwacZ+z4BDG2vw8NlkOHLfClR6BSNOE/cu?=
+ =?us-ascii?Q?o/vkrckJYG2izCMNJeb5MBo2GRjMyyIr3fGM1H3UBH2n1uCgy7882dEcKRDo?=
+ =?us-ascii?Q?kuzeTiX6IdM6xeYIy1O2j165Uxj1wYgnhlld3ln1jwAD3RLgMbDOnc8TXFIR?=
+ =?us-ascii?Q?H9FhbskhnT/W5H+GovwD/hX3VP76W7JJJs4FLz9FzNc3kOIIG2sXyN4bfiKt?=
+ =?us-ascii?Q?VRS7FpG16EH81+iA46DbcBB3+Yz4EQWK7fjLGZDE4a0dQdpCaf5c2brHExWJ?=
+ =?us-ascii?Q?JGPWNgeb0nSL87lzGONgoUkuG9WQfAQplD1h+qNAbv97p/Mey5dpIkkiLU1O?=
+ =?us-ascii?Q?AC3DgItj+6n5qOLdCgGNz05SPr79IC8VwjBEV5C4FJ1sV1vCHp5dBMMW7zE6?=
+ =?us-ascii?Q?K7agKeM3sG0YpIayMey0mnjNILJ/v705moyc6sAslr+caiBqC3+o9IjHFI7M?=
+ =?us-ascii?Q?vl3NFHO/IvexIPVBghFitI=3D?=
+X-Microsoft-Antispam-Message-Info: QeebbnaD93v8qylJvVRYD4EGCQELe6vxg/+tWM2A0ByTRDW18YC9smIfwVP7SNdDELlt2B7fu7ERnpxbLJocjfQrli3ZVVa/nerLmc+dDt5nlA4JkcB1LlEoopDHwNSvX1vhKWtVzoMmmziqNZHYApcBzIi5BtgEcPGH0cAI5e/8KW/Cxa+uWjUvstLcMWxx
+X-Microsoft-Exchange-Diagnostics: 1;TY2PR01MB2074;6:44njZb8QtwrcIlMDVyGlCSIfxL0sjkwO1H4DHnrtjiLV5bgFF9cJzTegMR2jlLMg/8/418jsX5dhCHbCdcHS8hlxW2mzEDKqWQpIJaNNu7zMUTRkvbsRYe5UAZn15Vvf0CnrmnOJSYgmaYGbBFfqeQzx234wZQ2poL7GGAcu65j/uPF32WZqpTBzJyHUnF9NSLE28XYgfn62/vuMzfNTyEc2zUBCBHFC2veZqQZaLWY0OMELvhxdR9Ha99SllbLKg1c/b7SFbLCVcjVeEOLF49qXCNVPRhtXVMQntXYHLB8uy2oEJUUEerTN6Ate11vbol1t9bGbo0wrgkZ+HboMoenNPKVdlq+BGEYGy4AZ0+LX/AzbVq7Q3IUUEiqtjgXc1opNH3mCOj9gOTk5gdH+fWVAKuYdJnO1LHvjtew4lSxiQNkrHiKfdFHOB2v0F8vJDLCWe7OkteG+DWF9CHDHLA==;5:JyKrek6ZB00fD8oZQOF7pN87Nb41AU710sOoC2Bu4D4gWMMJQmd9QTBA4JvBX980mIhl+4Pu6dFzCe3I+/9Uz41yPF0l0EZ/9p/A7n6kCzngLq2aAALivlwnup/rn8m2PyT/2zFomqwLyV4zCArDWiVfA5KedBR2GG8KZILO5eA=;24:DnuWD6HXTmyVy4jzn6I5o+n5t7zNUe3vJEzOn4k9DaeJNUffAP5QwQnbS+w/+Jo+tkY7YBB6P2u1mCZkYeF4yvnYjpJGlASPSKq8y4NDwro=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;TY2PR01MB2074;7:bjRSc3ERcSkBqEnGWvnSiPQxDyDUdJ66e5DaRJn7VTUQYo3P2sdU/UmZwzhAClrXQ2PO62hyuwbQ3G5VMq2kupl1Is2npNkgpyfJoDbwMltZwyY+rtNknrS6g+q07TJTw8nuFBaf0spPIhNGDaGg3sasSl1bxYui5ldzcONVcrRQOUPP5n3Pqv//R/a/Zak8OTHbVqnBiLEPsKFUfP6mxtb7CE6Ui203mAF8V0Y/i2JPwQyoqQlh8iAswUi/HHmQ;20:8x5ILAlITYcjyyYcQePdgy3W1m02mgnztvuyGSSX7xsQ07LfRqwjI38ouKL8uX4Ak2tyGsEZoAyiBhfBSUND3iwku8JyMp+miUd7L3T/1BZpwAt0eLvsZpYPXsNd1pH9F8gROCybVyq6KzlqntcNrn5Lh2sW8omCNxHBAot4LO0=
+X-MS-Office365-Filtering-Correlation-Id: 9e7ea4b6-c4f8-4cde-38ac-08d5d03c3555
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2018 08:12:15.2935 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9e7ea4b6-c4f8-4cde-38ac-08d5d03c3555
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB2074
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If 'CONFIG_MEMORY_HOTREMOVE' specified and the account of immovable
-memory regions is not zero. Calculate the intersection between memory
-regions from e820/efi memory table and immovable memory regions.
 
-Rename process_mem_region to slots_count to match slots_fetch_random,
-and name new function as process_mem_region.
+Hi Geert
 
-Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+Thank you for your light speed review :)
+
+> > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> >
+> > Current rcar-dmac is using DMAC error interrupt which will handle all
+> > channel's error. But in this design, error handling itself will be
+> > issue if user want to use virtualization, multi OS, etc.
+> > This patch removes current DMAC error interrupt handling, and handle it
+> > on each channel interrupt handler.
+> >
+> > Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> Who wrote this patch, you or Magnus? Or is this a joint effort?
+
+Original was Magnus, and I updated it.
+I think I need to add such things.
+
+> > --- a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
+> > +++ b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
+> > @@ -35,9 +35,8 @@ Required Properties:
+> >
+> >  - interrupts: interrupt specifiers for the DMAC, one for each entry in
+> >    interrupt-names.
+> > -- interrupt-names: one entry for the error interrupt, named "error", plus one
+> > -  entry per channel, named "ch%u", where %u is the channel number ranging from
+> > -  zero to the number of channels minus one.
+> > +- interrupt-names: one entry per channel, named "ch%u", where %u is the
+> > +  channel number ranging from zero to the number of channels minus one.
+> 
+> DT bindings describe hardware, not software policy.
+> So IMHO the error interrupt must not be removed from the bindings (and
+> from the DTS and example).
+
+IC
+
+> The rest looks good to me (but I haven't tested it), so with the above fixed:
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Thanks. Will post v2 tomorrow
+
+Best regards
 ---
- arch/x86/boot/compressed/kaslr.c | 65 ++++++++++++++++++++++++++------
- 1 file changed, 54 insertions(+), 11 deletions(-)
-
-diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
-index 4edff0501540..a0a07e549ef8 100644
---- a/arch/x86/boot/compressed/kaslr.c
-+++ b/arch/x86/boot/compressed/kaslr.c
-@@ -545,9 +545,9 @@ static unsigned long slots_fetch_random(void)
- 	return 0;
- }
- 
--static void process_mem_region(struct mem_vector *entry,
--			       unsigned long minimum,
--			       unsigned long image_size)
-+static void slots_count(struct mem_vector *entry,
-+			unsigned long minimum,
-+			unsigned long image_size)
- {
- 	struct mem_vector region, overlap;
- 	struct slot_area slot_area;
-@@ -624,6 +624,55 @@ static void process_mem_region(struct mem_vector *entry,
- 	}
- }
- 
-+static bool process_mem_region(struct mem_vector *region,
-+			       unsigned long long minimum,
-+			       unsigned long long image_size)
-+{
-+#ifdef CONFIG_MEMORY_HOTREMOVE
-+	/*
-+	 * If hotplug memory found, filter the intersection between
-+	 * immovable memory and region to slots_count.
-+	 */
-+	if (num_immovable_mem > 0) {
-+		int i;
-+
-+		for (i = 0; i < num_immovable_mem; i++) {
-+			struct mem_vector entry;
-+			unsigned long long start, end, entry_end, region_end;
-+
-+			start = immovable_mem[i].start;
-+			end = start + immovable_mem[i].size;
-+			region_end = region->start + region->size;
-+
-+			entry.start = clamp(region->start, start, end);
-+			entry_end = clamp(region_end, start, end);
-+
-+			if (entry.start + image_size < entry_end) {
-+				entry.size = entry_end - entry.start;
-+				slots_count(&entry, minimum, image_size);
-+
-+				if (slot_area_index == MAX_SLOT_AREA) {
-+					debug_putstr("Aborted e820/efi memmap scan (slot_areas full)!\n");
-+					return 1;
-+				}
-+			}
-+		}
-+		return 0;
-+	}
-+#endif
-+	/*
-+	 * If no hotplug memory found, walk all the regions,
-+	 * so use region directely.
-+	 */
-+	slots_count(region, minimum, image_size);
-+
-+	if (slot_area_index == MAX_SLOT_AREA) {
-+		debug_putstr("Aborted e820/efi memmap scan (slot_areas full)!\n");
-+		return 1;
-+	}
-+	return 0;
-+}
-+
- #ifdef CONFIG_EFI
- /*
-  * Returns true if mirror region found (and must have been processed
-@@ -689,11 +738,8 @@ process_efi_entries(unsigned long minimum, unsigned long image_size)
- 
- 		region.start = md->phys_addr;
- 		region.size = md->num_pages << EFI_PAGE_SHIFT;
--		process_mem_region(&region, minimum, image_size);
--		if (slot_area_index == MAX_SLOT_AREA) {
--			debug_putstr("Aborted EFI scan (slot_areas full)!\n");
-+		if (process_mem_region(&region, minimum, image_size))
- 			break;
--		}
- 	}
- 	return true;
- }
-@@ -720,11 +766,8 @@ static void process_e820_entries(unsigned long minimum,
- 			continue;
- 		region.start = entry->addr;
- 		region.size = entry->size;
--		process_mem_region(&region, minimum, image_size);
--		if (slot_area_index == MAX_SLOT_AREA) {
--			debug_putstr("Aborted e820 scan (slot_areas full)!\n");
-+		if (process_mem_region(&region, minimum, image_size))
- 			break;
--		}
- 	}
- }
- 
--- 
-2.17.0
-
-
-
+Kuninori Morimoto
