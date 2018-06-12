@@ -2,235 +2,153 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id CCD45C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 09:17:18 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 13E6BC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 09:18:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78C9E20693
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 09:17:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="iKMxd/5Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78C9E20693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	by mail.kernel.org (Postfix) with ESMTP id C60FE20693
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 09:18:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C60FE20693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933646AbeFLJRR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 05:17:17 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:47012 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933363AbeFLJRN (ORCPT
+        id S933676AbeFLJSM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 05:18:12 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:52640 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932711AbeFLJSL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 05:17:13 -0400
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id B26C15C11DF;
-        Tue, 12 Jun 2018 11:17:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1528795031;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=bNi4F3fxvld8usCk8e4TADsWyAsxTc2lU7LOhl+2WyQ=;
-        b=iKMxd/5ZMODUKncpDxeX3+Fw3A8aFzKlQGF0mhZzaB+sKjebJlbQBO8AWPSLu9xtaZ0eu1
-        i8Lu5dcAVXLIVSoZ8toXcOzLFRS/RbFfEL+R8kdWJ0Qyi+2rKpKiufkdPL1SuGsyOtdJ5A
-        B0BZ53Dv+8pqHJFxlMhdwdAGZcUIr7U=
+        Tue, 12 Jun 2018 05:18:11 -0400
+Received: from 79.184.255.56.ipv4.supernova.orange.pl (79.184.255.56) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
+ id 758dfcf34e6c4e82; Tue, 12 Jun 2018 11:18:09 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        P HeLiOn <perryhelionsemail@gmail.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: Possible regression caused by commit a192aa923b66a
+Date:   Tue, 12 Jun 2018 11:17:08 +0200
+Message-ID: <2505591.oRh3ktjo9V@aspire.rjw.lan>
+In-Reply-To: <CAJZ5v0jiWugSt98MXOLUKAsig=uWFsTHK1Mntvy6z0JfiWt9sQ@mail.gmail.com>
+References: <DEA1AE84-B0FD-481E-8E0D-788CD4EF59AE@canonical.com> <CAJZ5v0iyNo+ZZ1O0_j4p6w-+eS1W9MUYs-vjeNHVENFVhReGzw@mail.gmail.com> <CAJZ5v0jiWugSt98MXOLUKAsig=uWFsTHK1Mntvy6z0JfiWt9sQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 12 Jun 2018 11:17:09 +0200
-From:   Stefan Agner <stefan@agner.ch>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>, axboe@kernel.dk
-Cc:     Dmitry Osipenko <digetx@gmail.com>, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
-        dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
-        marcel@ziswiler.com, krzk@kernel.org, benjamin.lindqvist@endian.se,
-        jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        mirza.krak@gmail.com, gaireg@gaireg.de,
-        linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 4/6] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-In-Reply-To: <20180612102734.0ea3bfa5@bbrezillon>
-References: <20180611205224.23340-1-stefan@agner.ch>
- <20180611205224.23340-5-stefan@agner.ch> <4258393.O1xtUOGbca@dimapc>
- <cb6f2ef0a5a41e001a2019caa1a18c23@agner.ch>
- <20180612102734.0ea3bfa5@bbrezillon>
-Message-ID: <53e36cff80e38e489959aa18471d0782@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-3.10 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[24];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
-         RCVD_TLS_ALL(0.00)[];
-         BAYES_HAM(-3.00)[100.00%];
-         ARC_NA(0.00)[]
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[also added Jens Axboe]
-
-On 12.06.2018 10:27, Boris Brezillon wrote:
-> On Tue, 12 Jun 2018 10:06:42 +0200
-> Stefan Agner <stefan@agner.ch> wrote:
+On Monday, June 11, 2018 11:52:34 PM CEST Rafael J. Wysocki wrote:
 > 
->> On 12.06.2018 02:03, Dmitry Osipenko wrote:
->> > On Monday, 11 June 2018 23:52:22 MSK Stefan Agner wrote:
->> >> Add support for the NAND flash controller found on NVIDIA
->> >> Tegra 2 SoCs. This implementation does not make use of the
->> >> command queue feature. Regular operations/data transfers are
->> >> done in PIO mode. Page read/writes with hardware ECC make
->> >> use of the DMA for data transfer.
->> >>
->> >> Signed-off-by: Lucas Stach <dev@lynxeye.de>
->> >> Signed-off-by: Stefan Agner <stefan@agner.ch>
->> >> ---
->> >>  MAINTAINERS                       |    7 +
->> >>  drivers/mtd/nand/raw/Kconfig      |    6 +
->> >>  drivers/mtd/nand/raw/Makefile     |    1 +
->> >>  drivers/mtd/nand/raw/tegra_nand.c | 1248 +++++++++++++++++++++++++++++
->> >>  4 files changed, 1262 insertions(+)
->> >>  create mode 100644 drivers/mtd/nand/raw/tegra_nand.c
->> >>
->> [snip]
->> >> +static int tegra_nand_cmd(struct nand_chip *chip,
->> >> +			 const struct nand_subop *subop)
->> >> +{
->> >> +	const struct nand_op_instr *instr;
->> >> +	const struct nand_op_instr *instr_data_in = NULL;
->> >> +	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip->controller);
->> >> +	unsigned int op_id, size = 0, offset = 0;
->> >> +	bool first_cmd = true;
->> >> +	u32 reg, cmd = 0;
->> >> +	int ret;
->> >> +
->> >> +	for (op_id = 0; op_id < subop->ninstrs; op_id++) {
->> >> +		unsigned int naddrs, i;
->> >> +		const u8 *addrs;
->> >> +		u32 addr1 = 0, addr2 = 0;
->> >> +
->> >> +		instr = &subop->instrs[op_id];
->> >> +
->> >> +		switch (instr->type) {
->> >> +		case NAND_OP_CMD_INSTR:
->> >> +			if (first_cmd) {
->> >> +				cmd |= COMMAND_CLE;
->> >> +				writel_relaxed(instr->ctx.cmd.opcode,
->> >> +					       ctrl->regs + CMD_REG1);
->> >> +			} else {
->> >> +				cmd |= COMMAND_SEC_CMD;
->> >> +				writel_relaxed(instr->ctx.cmd.opcode,
->> >> +					       ctrl->regs + CMD_REG2);
->> >> +			}
->> >> +			first_cmd = false;
->> >> +			break;
->> >> +		case NAND_OP_ADDR_INSTR:
->> >> +			offset = nand_subop_get_addr_start_off(subop, op_id);
->> >> +			naddrs = nand_subop_get_num_addr_cyc(subop, op_id);
->> >> +			addrs = &instr->ctx.addr.addrs[offset];
->> >> +
->> >> +			cmd |= COMMAND_ALE | COMMAND_ALE_SIZE(naddrs);
->> >> +			for (i = 0; i < min_t(unsigned int, 4, naddrs); i++)
->> >> +				addr1 |= *addrs++ << (BITS_PER_BYTE * i);
->> >> +			naddrs -= i;
->> >> +			for (i = 0; i < min_t(unsigned int, 4, naddrs); i++)
->> >> +				addr2 |= *addrs++ << (BITS_PER_BYTE * i);
->> >> +			writel_relaxed(addr1, ctrl->regs + ADDR_REG1);
->> >> +			writel_relaxed(addr2, ctrl->regs + ADDR_REG2);
->> >> +			break;
->> >> +
->> >> +		case NAND_OP_DATA_IN_INSTR:
->> >> +			size = nand_subop_get_data_len(subop, op_id);
->> >> +			offset = nand_subop_get_data_start_off(subop, op_id);
->> >> +
->> >> +			cmd |= COMMAND_TRANS_SIZE(size) | COMMAND_PIO |
->> >> +				COMMAND_RX | COMMAND_A_VALID;
->> >> +
->> >> +			instr_data_in = instr;
->> >> +			break;
->> >> +
->> >> +		case NAND_OP_DATA_OUT_INSTR:
->> >> +			size = nand_subop_get_data_len(subop, op_id);
->> >> +			offset = nand_subop_get_data_start_off(subop, op_id);
->> >> +
->> >> +			cmd |= COMMAND_TRANS_SIZE(size) | COMMAND_PIO |
->> >> +				COMMAND_TX | COMMAND_A_VALID;
->> >> +
->> >> +			memcpy(&reg, instr->ctx.data.buf.out + offset, size);
->> >> +			writel_relaxed(reg, ctrl->regs + RESP);
->> >> +
->> >> +			break;
->> >> +		case NAND_OP_WAITRDY_INSTR:
->> >> +			cmd |= COMMAND_RBSY_CHK;
->> >> +			break;
->> >> +
->> >> +		}
->> >> +	}
->> >> +
->> >> +	cmd |= COMMAND_GO | COMMAND_CE(ctrl->cur_cs);
->> >> +	writel_relaxed(cmd, ctrl->regs + COMMAND);
->> >> +	ret = wait_for_completion_io_timeout(&ctrl->command_complete,
->> >> +					     msecs_to_jiffies(500));
->> >
->> > It's not obvious to me whether _io_ variant is appropriate to use here, would
->> > be nice if somebody could clarify that. Maybe block/ already does the IO
->> > accounting itself and hence the IO time would be counted twice in that case.
->>
->> Good that you bring this up.
->>
->> I don't think that there is any higher layer which could take care of
->> accounting. Usually, with raw nand there is no block layer involved
->> anyway.
->>
->> In a quick test it seems that only when using wait_for_completion_io I/O
->> is properly accounted in the "wait" section of top.
->>
->> So far only a single driver (omap2) used the _io variant, but I think it
->> is the right thing to do! After all, it is I/O...
->>
->> Boris or any other MTD maintainer, any comment on this?
+> --000000000000703623056e64c488
+> Content-Type: text/plain; charset="UTF-8"
 > 
-> Given this definition of io_schedule_timeout() [1] (which is used when
-> you call wait_for_completion_io_timeout()), I'd say it's not useful to
-> use the _io_ version, simply because MTD devs are not exposed as blk
-> devices, and thus don't need the blk_schedule_flush_plug() that is done
-> is io_schedule_prepare(). But that also means MTD I/Os are not
-> accounted as I/Os :-(.
-
-Documentation of wait_for_completion_io says:
-"The caller is accounted as waiting for IO (which traditionally means
-blkio only)."
-
-Which sounds as if it using _io is only an accounting thing...
-
-The hint about blkio might suggest that there is more to it.
-
-Is calling blk_schedule_flush_plug a problem for MTD?
-https://elixir.bootlin.com/linux/v4.17.1/source/include/linux/blkdev.h#L1355
-
+> On Mon, Jun 11, 2018 at 10:09 AM, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> > On Mon, Jun 11, 2018 at 8:26 AM, Kai-Heng Feng
+> > <kai.heng.feng@canonical.com> wrote:
+> >> Hi Rafael,
+> >>
+> >> There's a regression report [1] that says commit a192aa923b66a ("ACPI /
+> >> LPSS: Consolidate runtime PM and system sleep handling") is the first bad
+> >> commit.
+> >>
+> >> From the looks of it, it didn't introduce any behavioral change. So your
+> >> help is appreciated.
+> >>
+> >> [1] https://bugs.launchpad.net/bugs/1774950
+> >
+> > Well, the only difference is the iosf quirk AFAICS, but that should be
+> > easy enough to check.  I'll try to cut a patch for that later today.
 > 
-> Let's go for the non-io version for now, since all drivers except omap2
-> seem to use this function.
-> 
+> If the iosf quirk is the source of the problem, the attached patch should help.
 
-I still think it would be nice and "the right thing" from a user
-perspective...
+The one below should be slightly better, please test this one.
 
---
-Stefan
+---
+ drivers/acpi/acpi_lpss.c |   18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
 
-> [1]https://elixir.bootlin.com/linux/v4.17.1/source/kernel/sched/core.c#L5164
+Index: linux-pm/drivers/acpi/acpi_lpss.c
+===================================================================
+--- linux-pm.orig/drivers/acpi/acpi_lpss.c
++++ linux-pm/drivers/acpi/acpi_lpss.c
+@@ -22,6 +22,7 @@
+ #include <linux/pm_domain.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/pwm.h>
++#include <linux/suspend.h>
+ #include <linux/delay.h>
+ 
+ #include "internal.h"
+@@ -940,9 +941,10 @@ static void lpss_iosf_exit_d3_state(void
+ 	mutex_unlock(&lpss_iosf_mutex);
+ }
+ 
+-static int acpi_lpss_suspend(struct device *dev, bool wakeup)
++static int acpi_lpss_suspend(struct device *dev, bool runtime)
+ {
+ 	struct lpss_private_data *pdata = acpi_driver_data(ACPI_COMPANION(dev));
++	bool wakeup = runtime || device_may_wakeup(dev);
+ 	int ret;
+ 
+ 	if (pdata->dev_desc->flags & LPSS_SAVE_CTX)
+@@ -955,13 +957,14 @@ static int acpi_lpss_suspend(struct devi
+ 	 * wrong status for devices being about to be powered off. See
+ 	 * lpss_iosf_enter_d3_state() for further information.
+ 	 */
+-	if (lpss_quirks & LPSS_QUIRK_ALWAYS_POWER_ON && iosf_mbi_available())
++	if ((runtime || !pm_suspend_via_firmware()) &&
++	    lpss_quirks & LPSS_QUIRK_ALWAYS_POWER_ON && iosf_mbi_available())
+ 		lpss_iosf_enter_d3_state();
+ 
+ 	return ret;
+ }
+ 
+-static int acpi_lpss_resume(struct device *dev)
++static int acpi_lpss_resume(struct device *dev, bool runtime)
+ {
+ 	struct lpss_private_data *pdata = acpi_driver_data(ACPI_COMPANION(dev));
+ 	int ret;
+@@ -970,7 +973,8 @@ static int acpi_lpss_resume(struct devic
+ 	 * This call is kept first to be in symmetry with
+ 	 * acpi_lpss_runtime_suspend() one.
+ 	 */
+-	if (lpss_quirks & LPSS_QUIRK_ALWAYS_POWER_ON && iosf_mbi_available())
++	if ((runtime || !pm_resume_via_firmware()) &&
++	    lpss_quirks & LPSS_QUIRK_ALWAYS_POWER_ON && iosf_mbi_available())
+ 		lpss_iosf_exit_d3_state();
+ 
+ 	ret = acpi_dev_resume(dev);
+@@ -994,12 +998,12 @@ static int acpi_lpss_suspend_late(struct
+ 		return 0;
+ 
+ 	ret = pm_generic_suspend_late(dev);
+-	return ret ? ret : acpi_lpss_suspend(dev, device_may_wakeup(dev));
++	return ret ? ret : acpi_lpss_suspend(dev, false);
+ }
+ 
+ static int acpi_lpss_resume_early(struct device *dev)
+ {
+-	int ret = acpi_lpss_resume(dev);
++	int ret = acpi_lpss_resume(dev, false);
+ 
+ 	return ret ? ret : pm_generic_resume_early(dev);
+ }
+@@ -1014,7 +1018,7 @@ static int acpi_lpss_runtime_suspend(str
+ 
+ static int acpi_lpss_runtime_resume(struct device *dev)
+ {
+-	int ret = acpi_lpss_resume(dev);
++	int ret = acpi_lpss_resume(dev, true);
+ 
+ 	return ret ? ret : pm_generic_runtime_resume(dev);
+ }
+
