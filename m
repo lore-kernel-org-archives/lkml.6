@@ -2,131 +2,120 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 08393C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 05:37:17 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 71135C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 05:37:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A697D208B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 05:37:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A697D208B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=diasemi.com
+	by mail.kernel.org (Postfix) with ESMTP id 2454C2086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 05:37:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WFYJuddY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2454C2086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932762AbeFLFhO convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 01:37:14 -0400
-Received: from mail1.bemta25.messagelabs.com ([195.245.230.1]:21878 "EHLO
-        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932448AbeFLFhM (ORCPT
+        id S932961AbeFLFhx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 01:37:53 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:42607 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932448AbeFLFhv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 01:37:12 -0400
-Received: from [46.226.52.104] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-1.bemta.az-a.eu-west-1.aws.symcld.net id FB/C5-09737-70C5F1B5; Tue, 12 Jun 2018 05:37:11 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEKsWRWlGSWpSXmKPExsUSt3OpsS5bjHy
-  0wd2PJhaHF71gtLj56RurxeVdc9gcmD12zrrL7vF5k1wAUxRrZl5SfkUCa8aO1qNMBR18Fc+n
-  fWNrYPzI3cXIySEksIxRYv5OVxCbTcBQYt6b94wgtoiAvsT22b+AbC4OZoHtjBKnTt9jAUkIC
-  zhLLDv5hhmiyEXi9J55LBC2lcSdfavBmlkEVCWeX3rPBmLzCgRIXF8xgQViWZbE/XMLwGxOAT
-  2J+8u/s4LYjAKyEl8aV4PNZBYQl7j1ZD4TiC0hICCxZM95ZghbVOLl43+sELaCxL5fK9kgbHu
-  J1/feAc3kALL1JfoaiyHChhKrph1ggbDNJV7vOM0EMV5HYsHuT2wQtrbEsoWvmSHOFJQ4OfMJ
-  ywRG8VlIrpiFpGUWkpZZSFoWMLKsYjRPKspMzyjJTczM0TU0MNA1NDTSNbQ00jUx0kus0k3US
-  y3VLU8tLtE11EssL9YrrsxNzknRy0st2cQIjEsGINjBuPVC8iFGSQ4mJVHeNAn5aCG+pPyUyo
-  zE4oz4otKc1OJDjDIcHEoSvFuigHKCRanpqRVpmTnABAGTluDgURLhLQFJ8xYXJOYWZ6ZDpE4
-  xKkqJ864ASQiAJDJK8+DaYEnpEqOslDAvI9AhQjwFqUW5mSWo8q8YxTkYlYR5p4BM4cnMK4Gb
-  /gpoMRPQYrMtMiCLSxIRUlINjFHvXwRvPXntxReJ2XvspFhN2A38m19Kmd55a2X/4uTia42Zk
-  5Li29NyL8+3OGg1w/hZ0sKdX3KqTkic9IqKZ7IVbbBk/q3Btm0OF3Pkne+a4fVRhawiN3/+5T
-  h//reW69zjjNcVTkau+Fah3c+759MZNbGNKpUJl1NXnJF9e0osWfNIysRkNSWW4oxEQy3mouJ
-  EAGzPzlZFAwAA
-X-Env-Sender: stwiss.opensource@diasemi.com
-X-Msg-Ref: server-20.tower-268.messagelabs.com!1528781830!1689286!1
-X-Originating-IP: [94.185.165.51]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.9.15; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 22303 invoked from network); 12 Jun 2018 05:37:10 -0000
-Received: from mailrelay2.diasemi.com (HELO sw-ex-cashub01.diasemi.com) (94.185.165.51)
-  by server-20.tower-268.messagelabs.com with AES128-SHA encrypted SMTP; 12 Jun 2018 05:37:10 -0000
-Received: from SW-EX-MBX02.diasemi.com ([169.254.4.155]) by
- sw-ex-cashub01.diasemi.com ([10.20.16.141]) with mapi id 14.03.0382.000; Tue,
- 12 Jun 2018 06:37:09 +0100
-From:   Steve Twiss <stwiss.opensource@diasemi.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-CC:     "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Support Opensource" <Support.Opensource@diasemi.com>
-Subject: RE: [PATCH] Input: add error handling for da9052_reg_write
-Thread-Topic: [PATCH] Input: add error handling for da9052_reg_write
-Thread-Index: AQHUAURsBP9EaXR9t0yaKNf9vqeVLaRbQG2AgADaMMA=
-Date:   Tue, 12 Jun 2018 05:37:08 +0000
-Message-ID: <6ED8E3B22081A4459DAC7699F3695FB701941AFADA@SW-EX-MBX02.diasemi.com>
-References: <1528694619-31889-1-git-send-email-jiazhouyang09@gmail.com>
- <20180611173017.GD251078@dtor-ws>
-In-Reply-To: <20180611173017.GD251078@dtor-ws>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.20.27.121]
-x-kse-attachmentfiltering-interceptor-info: protection disabled
-x-kse-serverinfo: sw-ex-cashub01.diasemi.com, 9
-x-kse-antivirus-interceptor-info: scan successful
-x-kse-antivirus-info: Clean, bases: 12/06/2018 03:12:00
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Tue, 12 Jun 2018 01:37:51 -0400
+Received: by mail-yb0-f193.google.com with SMTP id d123-v6so7505665ybh.9;
+        Mon, 11 Jun 2018 22:37:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=f1UKvr66Escybq5NeRGshx1FfsH9+fGZXqfNnU4A1fA=;
+        b=WFYJuddYhso9Yd9QLPVxsk41uZP6J6l260XMnko2XO8/N2nt57z9n+IzPzt5gNupmk
+         MDdnyurEYq7TbDCBLPpjY+9f/69QTLCXSm9VIieI7FDy0uOFhHoBLUdVjEclQjbfN3zz
+         w9QxlM6UC2m0ktOCzxC/4KdWhG4XP9phapgu/KQjilqqWXzytp05sMj7ifib5xqTXFfb
+         0pHgtLtmQnFWzXbpTy+AVFFwpc5N43lT53bvumV/usayX1n9LdtiDD+ZELCpttNMHJw1
+         jXkNwBpZ3A30Z5rLe6ZmzPkRT6lL2a6UZqEZhd3gFKXOzkTCF3//Ak7gzWAG1luvucgS
+         83pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=f1UKvr66Escybq5NeRGshx1FfsH9+fGZXqfNnU4A1fA=;
+        b=aduvKoa7t9XWkzaXEBOvFaBBVEqfzaSWj2+5IitGbIj4cwIQiLEQ8F2PU/NYMatau5
+         hEvXWi2aFlGZmvnSVR8ibBcxtGCRPkIoqcYEB/nirvrN1De9SfabLGVn3CNrPCxXeIDK
+         Vy70d9ZS3cGhtKmAN0hnracM+V2ty/rR3f2gwisXGs9j3dUM+ONpWZ9pgw3H34n61/3T
+         +16c9kixPauEdNqs7xpWvNK4IGDpEacNYyi8hr+NPv3KFOaoigZgt9jKVAOHk1dgdx9h
+         a4TOcQ/YPVASk0Qpld2FjPoCACLT6AEmj0fgrB1HlqFG3UMqkrfJkqJFezyQccp6i943
+         Ujyg==
+X-Gm-Message-State: APt69E0XhisXLlr5eKNNJXOFUH/vOD8qL8omiD9T1Y2S9uhm5x6jkkHu
+        wNT9TkjpmB/X4yJ/8mNXv9sXb9cVdGGvizgjjQI=
+X-Google-Smtp-Source: ADUXVKLgSAk/dVgbwzOyJ1fIv5Wwd2J8BXTq61BSFaB95qbIh6S7e5C29eIkhBbfah0rviEG9/QOtif38NmfiEjT2fA=
+X-Received: by 2002:a25:9d86:: with SMTP id v6-v6mr887725ybp.252.1528781871309;
+ Mon, 11 Jun 2018 22:37:51 -0700 (PDT)
 MIME-Version: 1.0
+Received: by 2002:a81:79cf:0:0:0:0:0 with HTTP; Mon, 11 Jun 2018 22:37:50
+ -0700 (PDT)
+In-Reply-To: <1528777174-40045-1-git-send-email-jiazhouyang09@gmail.com>
+References: <1528777174-40045-1-git-send-email-jiazhouyang09@gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 12 Jun 2018 08:37:50 +0300
+Message-ID: <CAOQ4uxjbB9mtt6Fq=CLrH5AQm0fPHscrW2+91+3zgn89cxL=aQ@mail.gmail.com>
+Subject: Re: [PATCH] fanotify: add error handling for kmem_cache_create
+To:     Zhouyang Jia <jiazhouyang09@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11 June 2018 18:30 wrote Dmitry Torokhov 
+On Tue, Jun 12, 2018 at 7:19 AM, Zhouyang Jia <jiazhouyang09@gmail.com> wrote:
+> When kmem_cache_create fails, the lack of error-handling code may
+> cause unexpected results.
+>
+> This patch adds error-handling code after calling kmem_cache_create.
+>
+> Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+> ---
+>  fs/notify/fanotify/fanotify_user.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> index ec4d8c5..e3fa861 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -959,9 +959,14 @@ static int __init fanotify_user_setup(void)
+>  {
+>         fanotify_mark_cache = KMEM_CACHE(fsnotify_mark, SLAB_PANIC);
+>         fanotify_event_cachep = KMEM_CACHE(fanotify_event_info, SLAB_PANIC);
+> +       if (!fanotify_mark_cache || !fanotify_event_cachep)
+> +               return -ENOMEM;
 
-> Subject: Re: [PATCH] Input: add error handling for da9052_reg_write
-> 
-> Hi Zhouyang,
-> 
-> On Mon, Jun 11, 2018 at 01:23:39PM +0800, Zhouyang Jia wrote:
-> > When da9052_reg_write fails, the lack of error-handling code may
-> > cause unexpected results.
-> >
-> > This patch adds error-handling code after calling da9052_reg_write.
-> >
-> > Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
-> > ---
-> >  drivers/input/touchscreen/da9052_tsi.c | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/input/touchscreen/da9052_tsi.c
-> b/drivers/input/touchscreen/da9052_tsi.c
-> > index b5dfd594..60c82a0 100644
-> > --- a/drivers/input/touchscreen/da9052_tsi.c
-> > +++ b/drivers/input/touchscreen/da9052_tsi.c
-> > @@ -319,8 +319,11 @@ static int da9052_ts_probe(struct platform_device *pdev)
-> >  static int  da9052_ts_remove(struct platform_device *pdev)
-> >  {
-> >  	struct da9052_tsi *tsi = platform_get_drvdata(pdev);
-> > +	int error;
-> >
-> > -	da9052_reg_write(tsi->da9052, DA9052_LDO9_REG, 0x19);
-> > +	error = da9052_reg_write(tsi->da9052, DA9052_LDO9_REG, 0x19);
-> > +	if (error < 0)
-> > +		return error;
-> 
-> No, this does not help anything. The remove() action must not fail
-> (really, having it return an int and not void was an API mistake made
-> long time ago), and thus returning early in and event of error failing
-> to communicate with the device is a mistake. You really want to release
-> the interrupts and memory and unregister input device before returning.
-> 
-> >
-> >  	da9052_free_irq(tsi->da9052, DA9052_IRQ_TSIREADY, tsi);
-> >  	da9052_free_irq(tsi->da9052, DA9052_IRQ_PENDOWN, tsi);
-> > --
-> > 2.7.4
-> >
+If only one failed need to free the other.
 
-script?
-https://patchwork.kernel.org/project/LKML/list/?submitter=181001
+> +
+>         if (IS_ENABLED(CONFIG_FANOTIFY_ACCESS_PERMISSIONS)) {
+>                 fanotify_perm_event_cachep =
+>                         KMEM_CACHE(fanotify_perm_event_info, SLAB_PANIC);
+> +               if (!fanotify_perm_event_cachep)
+> +                       return -ENOMEM;
 
+here as well.
+best implement as goto fail
+
+>         }
+>
+>         return 0;
+
+fail:
+           if (fanotify_mark_cache)
+                            kmem_cache_destroy(fanotify_mark_cache);
+           ...
+           return -ENOMEM;
+
+Thanks,
+Amir.
