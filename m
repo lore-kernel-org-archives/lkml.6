@@ -6,45 +6,43 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E0D61C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:59:18 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id EC95AC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:59:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CC8D208B1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:59:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97C88208B1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:59:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EZq4bqSd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CC8D208B1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IUiYYzO3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97C88208B1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935180AbeFLQ7Q (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 12:59:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53848 "EHLO mail.kernel.org"
+        id S934259AbeFLQ7q (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 12:59:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53258 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932969AbeFLQxr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 12:53:47 -0400
+        id S934905AbeFLQxi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 12:53:38 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 175D3208B4;
-        Tue, 12 Jun 2018 16:53:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 61583208B9;
+        Tue, 12 Jun 2018 16:53:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528822427;
-        bh=G/hLi0EiKkELQMxM0mtGKM6VzOWgf/SHVjZ0cdYxnY8=;
+        s=default; t=1528822417;
+        bh=aYxlI5xbVk4kZO5Zsn4UaODYNCWmWLoFSFScIb8sGl4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EZq4bqSdWDw5FAzUCnBMZJiDs4T5sNSxoDxGg2r+WtcvtbsBE5DSSuDI3TrOIlGdJ
-         Sv8my0Ky29680pf7R+Hn+GvQ/RUJr7NrTk8OfcoyM3YZWevkuA6YpIyYxpWgrLhqmV
-         BBruIj8HVk4aYL9TFBXAvzdS4/jUHkVbESvpqSBA=
+        b=IUiYYzO3TwCxZssIFdoc1HX0YfGRhaEhmel7lFEkaPDbOkArMuMek10YDddA7wzxJ
+         wb7gSkSOocz5jq3vWd6ZNAdsB5YLw43CBbyDndt/Yn1we/DnYWO3QDTRTmf/vIUmIM
+         4VFL/Plsu5GBHlguyq3kOV8uxxt0SIzhfHTEOScI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
+        stable@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 22/24] rtnetlink: validate attributes in do_setlink()
-Date:   Tue, 12 Jun 2018 18:52:06 +0200
-Message-Id: <20180612164817.770197736@linuxfoundation.org>
+Subject: [PATCH 4.4 09/24] bnx2x: use the right constant
+Date:   Tue, 12 Jun 2018 18:51:53 +0200
+Message-Id: <20180612164817.037574260@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180612164816.587001852@linuxfoundation.org>
 References: <20180612164816.587001852@linuxfoundation.org>
@@ -61,139 +59,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-[ Upstream commit 644c7eebbfd59e72982d11ec6cc7d39af12450ae ]
+[ Upstream commit dd612f18a49b63af8b3a5f572d999bdb197385bc ]
 
-It seems that rtnl_group_changelink() can call do_setlink
-while a prior call to validate_linkmsg(dev = NULL, ...) could
-not validate IFLA_ADDRESS / IFLA_BROADCAST
+Nearby code that also tests port suggests that the P0 constant should be
+used when port is zero.
 
-Make sure do_setlink() calls validate_linkmsg() instead
-of letting its callers having this responsibility.
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-With help from Dmitry Vyukov, thanks a lot !
+// <smpl>
+@@
+expression e,e1;
+@@
 
-BUG: KMSAN: uninit-value in is_valid_ether_addr include/linux/etherdevice.h:199 [inline]
-BUG: KMSAN: uninit-value in eth_prepare_mac_addr_change net/ethernet/eth.c:275 [inline]
-BUG: KMSAN: uninit-value in eth_mac_addr+0x203/0x2b0 net/ethernet/eth.c:308
-CPU: 1 PID: 8695 Comm: syz-executor3 Not tainted 4.17.0-rc5+ #103
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x185/0x1d0 lib/dump_stack.c:113
- kmsan_report+0x149/0x260 mm/kmsan/kmsan.c:1084
- __msan_warning_32+0x6e/0xc0 mm/kmsan/kmsan_instr.c:686
- is_valid_ether_addr include/linux/etherdevice.h:199 [inline]
- eth_prepare_mac_addr_change net/ethernet/eth.c:275 [inline]
- eth_mac_addr+0x203/0x2b0 net/ethernet/eth.c:308
- dev_set_mac_address+0x261/0x530 net/core/dev.c:7157
- do_setlink+0xbc3/0x5fc0 net/core/rtnetlink.c:2317
- rtnl_group_changelink net/core/rtnetlink.c:2824 [inline]
- rtnl_newlink+0x1fe9/0x37a0 net/core/rtnetlink.c:2976
- rtnetlink_rcv_msg+0xa32/0x1560 net/core/rtnetlink.c:4646
- netlink_rcv_skb+0x378/0x600 net/netlink/af_netlink.c:2448
- rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4664
- netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
- netlink_unicast+0x1678/0x1750 net/netlink/af_netlink.c:1336
- netlink_sendmsg+0x104f/0x1350 net/netlink/af_netlink.c:1901
- sock_sendmsg_nosec net/socket.c:629 [inline]
- sock_sendmsg net/socket.c:639 [inline]
- ___sys_sendmsg+0xec0/0x1310 net/socket.c:2117
- __sys_sendmsg net/socket.c:2155 [inline]
- __do_sys_sendmsg net/socket.c:2164 [inline]
- __se_sys_sendmsg net/socket.c:2162 [inline]
- __x64_sys_sendmsg+0x331/0x460 net/socket.c:2162
- do_syscall_64+0x152/0x230 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x455a09
-RSP: 002b:00007fc07480ec68 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007fc07480f6d4 RCX: 0000000000455a09
-RDX: 0000000000000000 RSI: 00000000200003c0 RDI: 0000000000000014
-RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000000005d0 R14: 00000000006fdc20 R15: 0000000000000000
+* e ? e1 : e1
+// </smpl>
 
-Uninit was stored to memory at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:279 [inline]
- kmsan_save_stack mm/kmsan/kmsan.c:294 [inline]
- kmsan_internal_chain_origin+0x12b/0x210 mm/kmsan/kmsan.c:685
- kmsan_memcpy_origins+0x11d/0x170 mm/kmsan/kmsan.c:527
- __msan_memcpy+0x109/0x160 mm/kmsan/kmsan_instr.c:478
- do_setlink+0xb84/0x5fc0 net/core/rtnetlink.c:2315
- rtnl_group_changelink net/core/rtnetlink.c:2824 [inline]
- rtnl_newlink+0x1fe9/0x37a0 net/core/rtnetlink.c:2976
- rtnetlink_rcv_msg+0xa32/0x1560 net/core/rtnetlink.c:4646
- netlink_rcv_skb+0x378/0x600 net/netlink/af_netlink.c:2448
- rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4664
- netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
- netlink_unicast+0x1678/0x1750 net/netlink/af_netlink.c:1336
- netlink_sendmsg+0x104f/0x1350 net/netlink/af_netlink.c:1901
- sock_sendmsg_nosec net/socket.c:629 [inline]
- sock_sendmsg net/socket.c:639 [inline]
- ___sys_sendmsg+0xec0/0x1310 net/socket.c:2117
- __sys_sendmsg net/socket.c:2155 [inline]
- __do_sys_sendmsg net/socket.c:2164 [inline]
- __se_sys_sendmsg net/socket.c:2162 [inline]
- __x64_sys_sendmsg+0x331/0x460 net/socket.c:2162
- do_syscall_64+0x152/0x230 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-Uninit was created at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:279 [inline]
- kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:189
- kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:315
- kmsan_slab_alloc+0x10/0x20 mm/kmsan/kmsan.c:322
- slab_post_alloc_hook mm/slab.h:446 [inline]
- slab_alloc_node mm/slub.c:2753 [inline]
- __kmalloc_node_track_caller+0xb32/0x11b0 mm/slub.c:4395
- __kmalloc_reserve net/core/skbuff.c:138 [inline]
- __alloc_skb+0x2cb/0x9e0 net/core/skbuff.c:206
- alloc_skb include/linux/skbuff.h:988 [inline]
- netlink_alloc_large_skb net/netlink/af_netlink.c:1182 [inline]
- netlink_sendmsg+0x76e/0x1350 net/netlink/af_netlink.c:1876
- sock_sendmsg_nosec net/socket.c:629 [inline]
- sock_sendmsg net/socket.c:639 [inline]
- ___sys_sendmsg+0xec0/0x1310 net/socket.c:2117
- __sys_sendmsg net/socket.c:2155 [inline]
- __do_sys_sendmsg net/socket.c:2164 [inline]
- __se_sys_sendmsg net/socket.c:2162 [inline]
- __x64_sys_sendmsg+0x331/0x460 net/socket.c:2162
- do_syscall_64+0x152/0x230 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-Fixes: e7ed828f10bd ("netlink: support setting devgroup parameters")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
+Fixes: 6c3218c6f7e5 ("bnx2x: Adjust ETS to 578xx")
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/rtnetlink.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -1691,6 +1691,10 @@ static int do_setlink(const struct sk_bu
- 	const struct net_device_ops *ops = dev->netdev_ops;
- 	int err;
- 
-+	err = validate_linkmsg(dev, tb);
-+	if (err < 0)
-+		return err;
-+
- 	if (tb[IFLA_NET_NS_PID] || tb[IFLA_NET_NS_FD]) {
- 		struct net *net = rtnl_link_get_net(dev_net(dev), tb);
- 		if (IS_ERR(net)) {
-@@ -1982,10 +1986,6 @@ static int rtnl_setlink(struct sk_buff *
- 		goto errout;
- 	}
- 
--	err = validate_linkmsg(dev, tb);
--	if (err < 0)
--		goto errout;
--
- 	err = do_setlink(skb, dev, ifm, tb, ifname, 0);
- errout:
- 	return err;
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
+@@ -594,7 +594,7 @@ static void bnx2x_ets_e3b0_nig_disabled(
+ 	 * slots for the highest priority.
+ 	 */
+ 	REG_WR(bp, (port) ? NIG_REG_P1_TX_ARB_NUM_STRICT_ARB_SLOTS :
+-		   NIG_REG_P1_TX_ARB_NUM_STRICT_ARB_SLOTS, 0x100);
++		   NIG_REG_P0_TX_ARB_NUM_STRICT_ARB_SLOTS, 0x100);
+ 	/* Mapping between the CREDIT_WEIGHT registers and actual client
+ 	 * numbers
+ 	 */
 
 
