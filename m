@@ -2,78 +2,98 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9A803C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 11:19:04 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9212BC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 11:22:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 468CE208B1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 11:19:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C186208AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 11:22:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fa/0ckQz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 468CE208B1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TnCKcgah";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TnCKcgah"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C186208AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932675AbeFLLTC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 07:19:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58164 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752853AbeFLLTB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 07:19:01 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S933233AbeFLLWR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 07:22:17 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:49856 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932503AbeFLLWQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 07:22:16 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id DC8F8607E4; Tue, 12 Jun 2018 11:22:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528802535;
+        bh=NCAXiKJzkbAgpc85OBSwR10uiM+1VLJV7ivv4UrCjlc=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=TnCKcgahlKXYk+zzp/RxsZCdvR+51OqtygspxbZY2NWuyrt+XRr77O42dL82ofwgt
+         QYLdgS4u7aGVsYqQ1HfPUvJ+Yo98kZAOXe/GYDrEivwOhEhyhkwx6etzq8TaAlDAt5
+         OrhVHkqA4ywS4LRR9AG+5olv83Ik6XumopZ2Tp7A=
+Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 50BEC208AE;
-        Tue, 12 Jun 2018 11:19:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528802340;
-        bh=qsOjIgZJU5bUiJxaRCfAwRiXxYdGRP1625rn+Yxyisg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fa/0ckQzit6595BZd9nfmx2nRwKjrlmHC5pEV6cl24gko5zOiVBFw1v9bSMNHZM8S
-         AeYtW9t0TlX0OKSc2/f/4WLmIREr/l9awoGzLkcQXofncoTih3b9rSjcKyDcZFDAMo
-         nscUh/QikKg6dl/V0ibQsCCRcIrrWzvbtgGwOi/4=
-Date:   Tue, 12 Jun 2018 13:18:39 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        openbmc@lists.ozlabs.org
-Subject: Re: [GIT PULL v2]  FSI updates for 4.17
-Message-ID: <20180612111839.GA3536@kroah.com>
-References: <7c268f5bb58cb45a2868020b3c5b8f48ac6844ea.camel@kernel.crashing.org>
- <5c7f9044fefed8bc0e4ca5688801ffa379f38f62.camel@kernel.crashing.org>
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 82C3E602BD;
+        Tue, 12 Jun 2018 11:22:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528802535;
+        bh=NCAXiKJzkbAgpc85OBSwR10uiM+1VLJV7ivv4UrCjlc=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=TnCKcgahlKXYk+zzp/RxsZCdvR+51OqtygspxbZY2NWuyrt+XRr77O42dL82ofwgt
+         QYLdgS4u7aGVsYqQ1HfPUvJ+Yo98kZAOXe/GYDrEivwOhEhyhkwx6etzq8TaAlDAt5
+         OrhVHkqA4ywS4LRR9AG+5olv83Ik6XumopZ2Tp7A=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 82C3E602BD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     Brian Norris <briannorris@chromium.org>
+Cc:     Govind Singh <govinds@codeaurora.org>,
+        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ath10k@lists.infradead.org
+Subject: Re: [PATCH 1/4] ath10k: snoc: use correct bus-specific pointer in RX retry
+References: <20180611210946.241341-1-briannorris@chromium.org>
+Date:   Tue, 12 Jun 2018 14:22:08 +0300
+In-Reply-To: <20180611210946.241341-1-briannorris@chromium.org> (Brian
+        Norris's message of "Mon, 11 Jun 2018 14:09:43 -0700")
+Message-ID: <87wov4ckrj.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5c7f9044fefed8bc0e4ca5688801ffa379f38f62.camel@kernel.crashing.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 08:54:39PM +1000, Benjamin Herrenschmidt wrote:
-> Hi Greg !
-> 
-> There are a first round of updates of the FSI stack, aiming at reducing/removing
-> he gap with the OpenBMC tree and a first step in getting dependent drivers
-> upstream.
-> 
-> These changes significantly improve the FSI bitbanging driver performance
-> and reliability, and add the new "sbefifo" driver for communicating with
-> the POWER9 Self Boot Engine (which will be needed for some upcoming
-> additional drivers).
-> 
-> These were posted to the list as patches a couple of weeks ago and were
-> prior to that tested in the OpenBMC tree and CI. Some subsequent driver
-> work depends on some of these, so merging early is probably the best.
+Brian Norris <briannorris@chromium.org> writes:
 
-Yeah, but as they are not "regression fixes", I'll put them into my
--next branch for merging with 4.19-rc1.  I'll do that once 4.18-rc1 is
-released, can't touch my trees until that happens.
+> We're 'ath10k_snoc', not 'ath10k_pci'. This probably means we're
+> accessing junk data in ath10k_snoc_rx_replenish_retry(), unless
+> 'ath10k_snoc' and 'ath10k_pci' happen to have very similar struct
+> layouts.
+>
+> Noticed by inspection.
+>
+> Fixes: d915105231ca ("ath10k: add hif rx methods for wcn3990")
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> ---
+> It's possible this would be a for-4.18 target, since the buggy patch is
+> in the -rc1 merge. But this driver is not fully operational yet. Also,
+> I'm sending some companion refactorings to help avoid this bug. They
+> probably aren't 4.18 material.
 
-thanks,
+Yeah, in theory this should go to 4.18 but, like you said, snoc support
+does not even work on 4.18 so there would be no benefit. Actually just
+more work while we add final pieces of wcn3990 support to ath10k. So
+I'll queue these to 4.19.
 
-greg k-h
+> Let me know if I should do anything differently.
+
+This is very good as is, thanks.
+
+-- 
+Kalle Valo
