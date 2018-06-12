@@ -2,219 +2,222 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2F9EFC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:06:45 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E4A9AC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:06:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0A61208B2
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:06:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="RAxSEA7r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0A61208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	by mail.kernel.org (Postfix) with ESMTP id 8B0CD208B4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:06:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B0CD208B4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934216AbeFLRGm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 13:06:42 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:39861 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933658AbeFLRGk (ORCPT
+        id S934595AbeFLRGp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 13:06:45 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50172 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934177AbeFLRGn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 13:06:43 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5CH4c5E047001
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 13:06:42 -0400
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jjh7xb277-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 13:06:41 -0400
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <alifm@linux.ibm.com>;
         Tue, 12 Jun 2018 13:06:40 -0400
-Received: by mail-qk0-f196.google.com with SMTP id g14-v6so15506825qkm.6
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 10:06:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=d+Gp79xn1V/Jb9QT0t625UKjQZ86Es2lcOAGlFLu/x4=;
-        b=RAxSEA7rDnQiNHZ7sAbA9r+PhwJZlMo/kvzbC7XT/YObp0zat7tsXWNyJkpjyIAUCY
-         FLMox8DCyUiCM+yaPX75OTVpODvqxdIJ4XBXtx3gwFZ9QAJcQYiV57V3FvGzK4NCdVTi
-         ayBRIQ2xF9W5IF1/DREwaaHii+0CwaogiAN2U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=d+Gp79xn1V/Jb9QT0t625UKjQZ86Es2lcOAGlFLu/x4=;
-        b=TRa51zh/v0q+CO8vwzB6QVDhetbge+m5JQaFbzMPd+X2hmNhFDUZJdY/aqCTS389Be
-         J0MOo05VmrGn4hnKJyxcufctsvP4WBq5cheo9pCHR3auYcJ+XmlSDw8pAt3UuuNbrLDD
-         u25wIfpEoxjKqN5jUPDdyVB6sHix+EFEy4M1q439gG3PyRj87MaA6cSc94kJrMjnzDve
-         Y5Vb7D9o0MBP/U/K/x9VYQLaWCGw7GNqV7nNMlAlR0Q4iZFZClvxivJiB3w9qlMUmWmC
-         4TxklkZ7lxmkMA9g19hOuPHgHVdUlkI14u2vKzHGtO28REdcXnKieR54Ddsors1XDqrv
-         4I8Q==
-X-Gm-Message-State: APt69E0IRYGyvDiWyuNmyHi4GRmLU20b1o3T04AXkh2RgSyInqFeYlWQ
-        +2pMEtrDgfddYHhNdOIeT2pA3A==
-X-Google-Smtp-Source: ADUXVKLJDH2PcJUhUASob1Oonsgg4OtlL4C9uxkPA/PB4AtDgckUTMu6FFTGzpsmmtOgTXIqm2Wbng==
-X-Received: by 2002:a37:d1d0:: with SMTP id o77-v6mr1258471qkl.185.1528823199537;
-        Tue, 12 Jun 2018 10:06:39 -0700 (PDT)
-Received: from [10.136.8.248] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id b14-v6sm380820qtp.26.2018.06.12.10.06.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Jun 2018 10:06:38 -0700 (PDT)
-Subject: Re: [PATCH 2/6] PCI: iproc: Add INTx support with better modeling
-To:     poza@codeaurora.org
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pci-owner@vger.kernel.org
-References: <1527631130-20045-1-git-send-email-ray.jui@broadcom.com>
- <1527631130-20045-3-git-send-email-ray.jui@broadcom.com>
- <3ecc33ebe3db1f010f5c8938dfb87677@codeaurora.org>
-From:   Ray Jui <ray.jui@broadcom.com>
-Message-ID: <89adfced-75d6-9ad2-0a39-1fbdf9a33cb0@broadcom.com>
-Date:   Tue, 12 Jun 2018 10:06:34 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 12 Jun 2018 13:06:36 -0400
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5CH6ZcH18415956
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 12 Jun 2018 17:06:35 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 31E50112061;
+        Tue, 12 Jun 2018 13:06:35 -0400 (EDT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 20FBF112063;
+        Tue, 12 Jun 2018 13:06:35 -0400 (EDT)
+Received: from [9.56.58.93] (unknown [9.56.58.93])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 12 Jun 2018 13:06:35 -0400 (EDT)
+Subject: Re: [RFC v1 1/2] crypto/virtio-crypto: Read crypto services and
+ algorithm masks
+To:     "Gonglei (Arei)" <arei.gonglei@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Cc:     "mst@redhat.com" <mst@redhat.com>,
+        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
+        longpeng <longpeng2@huawei.com>,
+        "pasic@linux.ibm.com" <pasic@linux.ibm.com>,
+        "frankja@linux.ibm.com" <frankja@linux.ibm.com>,
+        "borntraeger@de.ibm.com" <borntraeger@de.ibm.com>
+References: <cover.1528462918.git.alifm@linux.ibm.com>
+ <e0fe84d1df4e0c2c88d7d29f94d621c988c22194.1528462918.git.alifm@linux.ibm.com>
+ <33183CC9F5247A488A2544077AF19020DB015842@dggeml511-mbx.china.huawei.com>
+From:   Farhan Ali <alifm@linux.ibm.com>
+Date:   Tue, 12 Jun 2018 13:06:35 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-In-Reply-To: <3ecc33ebe3db1f010f5c8938dfb87677@codeaurora.org>
+In-Reply-To: <33183CC9F5247A488A2544077AF19020DB015842@dggeml511-mbx.china.huawei.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18061217-0052-0000-0000-000002FD9946
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009177; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000265; SDB=6.01045966; UDB=6.00535647; IPR=6.00824944;
+ MB=3.00021606; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-12 17:06:38
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18061217-0053-0000-0000-00005CFE709C
+Message-Id: <226dad9f-8931-3886-eb00-352a190c5b5b@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-12_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806120191
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Arei
 
-
-On 6/12/2018 1:52 AM, poza@codeaurora.org wrote:
-> On 2018-05-30 03:28, Ray Jui wrote:
->> Add PCIe legacy interrupt INTx support to the iProc PCIe driver by
->> modeling it with its own IRQ domain. All 4 interrupts INTA, INTB, INTC,
->> INTD share the same interrupt line connected to the GIC in the system,
->> while the status of each INTx can be obtained through the INTX CSR
->> register
+On 06/11/2018 02:43 AM, Gonglei (Arei) wrote:
+> 
+>> -----Original Message-----
+>> From: Farhan Ali [mailto:alifm@linux.ibm.com]
+>> Sent: Saturday, June 09, 2018 3:09 AM
+>> To: linux-kernel@vger.kernel.org; kvm@vger.kernel.org
+>> Cc: mst@redhat.com; qemu-devel@nongnu.org; Gonglei (Arei)
+>> <arei.gonglei@huawei.com>; longpeng <longpeng2@huawei.com>;
+>> pasic@linux.ibm.com; frankja@linux.ibm.com; borntraeger@de.ibm.com;
+>> alifm@linux.ibm.com
+>> Subject: [RFC v1 1/2] crypto/virtio-crypto: Read crypto services and algorithm
+>> masks
 >>
->> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+>> Read the crypto services and algorithm masks which provides
+>> information about the services and algorithms supported by
+>> virtio-crypto backend.
+>>
+>> Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
 >> ---
->>  drivers/pci/host/pcie-iproc-platform.c |  2 +
->>  drivers/pci/host/pcie-iproc.c          | 95 
->> +++++++++++++++++++++++++++++++++-
->>  drivers/pci/host/pcie-iproc.h          |  6 +++
->>  3 files changed, 101 insertions(+), 2 deletions(-)
+>>   drivers/crypto/virtio/virtio_crypto_common.h | 14 ++++++++++++++
+>>   drivers/crypto/virtio/virtio_crypto_core.c   | 29
+>> ++++++++++++++++++++++++++++
+>>   2 files changed, 43 insertions(+)
 >>
->> diff --git a/drivers/pci/host/pcie-iproc-platform.c
->> b/drivers/pci/host/pcie-iproc-platform.c
->> index e764a2a..7a51e6c 100644
->> --- a/drivers/pci/host/pcie-iproc-platform.c
->> +++ b/drivers/pci/host/pcie-iproc-platform.c
->> @@ -70,6 +70,8 @@ static int iproc_pcie_pltfm_probe(struct
->> platform_device *pdev)
->>      }
->>      pcie->base_addr = reg.start;
+>> diff --git a/drivers/crypto/virtio/virtio_crypto_common.h
+>> b/drivers/crypto/virtio/virtio_crypto_common.h
+>> index 66501a5..05eca12e 100644
+>> --- a/drivers/crypto/virtio/virtio_crypto_common.h
+>> +++ b/drivers/crypto/virtio/virtio_crypto_common.h
+>> @@ -55,6 +55,20 @@ struct virtio_crypto {
+>>   	/* Number of queue currently used by the driver */
+>>   	u32 curr_queue;
 >>
->> +    pcie->irq = platform_get_irq(pdev, 0);
->> +
->>      if (of_property_read_bool(np, "brcm,pcie-ob")) {
->>          u32 val;
->>
->> diff --git a/drivers/pci/host/pcie-iproc.c 
->> b/drivers/pci/host/pcie-iproc.c
->> index 14f374d..0bd2c14 100644
->> --- a/drivers/pci/host/pcie-iproc.c
->> +++ b/drivers/pci/host/pcie-iproc.c
->> @@ -14,6 +14,7 @@
->>  #include <linux/delay.h>
->>  #include <linux/interrupt.h>
->>  #include <linux/irqchip/arm-gic-v3.h>
->> +#include <linux/irqchip/chained_irq.h>
->>  #include <linux/platform_device.h>
->>  #include <linux/of_address.h>
->>  #include <linux/of_pci.h>
->> @@ -264,6 +265,7 @@ enum iproc_pcie_reg {
->>
->>      /* enable INTx */
->>      IPROC_PCIE_INTX_EN,
->> +    IPROC_PCIE_INTX_CSR,
->>
->>      /* outbound address mapping */
->>      IPROC_PCIE_OARR0,
->> @@ -305,6 +307,7 @@ static const u16 iproc_pcie_reg_paxb_bcma[] = {
->>      [IPROC_PCIE_CFG_ADDR]        = 0x1f8,
->>      [IPROC_PCIE_CFG_DATA]        = 0x1fc,
->>      [IPROC_PCIE_INTX_EN]        = 0x330,
->> +    [IPROC_PCIE_INTX_CSR]        = 0x334,
->>      [IPROC_PCIE_LINK_STATUS]    = 0xf0c,
->>  };
->>
->> @@ -316,6 +319,7 @@ static const u16 iproc_pcie_reg_paxb[] = {
->>      [IPROC_PCIE_CFG_ADDR]        = 0x1f8,
->>      [IPROC_PCIE_CFG_DATA]        = 0x1fc,
->>      [IPROC_PCIE_INTX_EN]        = 0x330,
->> +    [IPROC_PCIE_INTX_CSR]        = 0x334,
->>      [IPROC_PCIE_OARR0]        = 0xd20,
->>      [IPROC_PCIE_OMAP0]        = 0xd40,
->>      [IPROC_PCIE_OARR1]        = 0xd28,
->> @@ -332,6 +336,7 @@ static const u16 iproc_pcie_reg_paxb_v2[] = {
->>      [IPROC_PCIE_CFG_ADDR]        = 0x1f8,
->>      [IPROC_PCIE_CFG_DATA]        = 0x1fc,
->>      [IPROC_PCIE_INTX_EN]        = 0x330,
->> +    [IPROC_PCIE_INTX_CSR]        = 0x334,
->>      [IPROC_PCIE_OARR0]        = 0xd20,
->>      [IPROC_PCIE_OMAP0]        = 0xd40,
->>      [IPROC_PCIE_OARR1]        = 0xd28,
->> @@ -782,9 +787,90 @@ static int iproc_pcie_check_link(struct 
->> iproc_pcie *pcie)
->>      return link_is_active ? 0 : -ENODEV;
->>  }
->>
->> -static void iproc_pcie_enable(struct iproc_pcie *pcie)
->> +static int iproc_pcie_intx_map(struct irq_domain *domain, unsigned 
->> int irq,
->> +                   irq_hw_number_t hwirq)
->>  {
->> +    irq_set_chip_and_handler(irq, &dummy_irq_chip, handle_simple_irq);
->> +    irq_set_chip_data(irq, domain->host_data);
->> +
->> +    return 0;
->> +}
->> +
->> +static const struct irq_domain_ops intx_domain_ops = {
->> +    .map = iproc_pcie_intx_map,
->> +};
->> +
->> +static void iproc_pcie_isr(struct irq_desc *desc)
->> +{
->> +    struct irq_chip *chip = irq_desc_get_chip(desc);
->> +    struct iproc_pcie *pcie;
->> +    struct device *dev;
->> +    unsigned long status;
->> +    u32 bit, virq;
->> +
->> +    chained_irq_enter(chip, desc);
->> +    pcie = irq_desc_get_handler_data(desc);
->> +    dev = pcie->dev;
->> +
->> +    /* go through INTx A, B, C, D until all interrupts are handled */
->> +    while ((status = iproc_pcie_read_reg(pcie, IPROC_PCIE_INTX_CSR) &
->> +        SYS_RC_INTX_MASK) != 0) {
->> +        for_each_set_bit(bit, &status, PCI_NUM_INTX) {
->> +            virq = irq_find_mapping(pcie->irq_domain, bit + 1);
->> +            if (virq)
->> +                generic_handle_irq(virq);
->> +            else
->> +                dev_err(dev, "unexpected INTx%u\n", bit);
->> +        }
->> +    }
->> +
+>> +	/*
+>> +	 * Specifies the services mask which the device support,
+>> +	 * see VIRTIO_CRYPTO_SERVICE_* above
+>> +	 */
 > 
-> Are these level or edge interrupts ? although I see DT says: IRQ_TYPE_NONE
-
-DT entries should be fixed to trigger on level HIGH like Florian and I 
-discussed on the mailing list yesterday. It looks like you are missing a 
-lot of discussions on the mailing list. Could you please help to make 
-sure you read all the existing discussions when commenting on a patch?
-
-> do you not need to clear interrupt status bits in IPROC_PCIE_INTX_CSR ?
+> Pls update the above comments. Except that:
+> 
+> Acked-by: Gonglei <arei.gonglei@huawei.com>
 > 
 
-RO
+Sure will update the comment. How about " Specifies the services mask 
+which the device support, * see VIRTIO_CRYPTO_SERVICE_*" ?
+
+or should I specify the file where the VIRTIO_CRYPTO_SERVICE_* are defined?
+
+Thanks
+Farhan
+
+>> +	u32 crypto_services;
+>> +
+>> +	/* Detailed algorithms mask */
+>> +	u32 cipher_algo_l;
+>> +	u32 cipher_algo_h;
+>> +	u32 hash_algo;
+>> +	u32 mac_algo_l;
+>> +	u32 mac_algo_h;
+>> +	u32 aead_algo;
+>> +
+>>   	/* Maximum length of cipher key */
+>>   	u32 max_cipher_key_len;
+>>   	/* Maximum length of authenticated key */
+>> diff --git a/drivers/crypto/virtio/virtio_crypto_core.c
+>> b/drivers/crypto/virtio/virtio_crypto_core.c
+>> index 8332698..8f745f2 100644
+>> --- a/drivers/crypto/virtio/virtio_crypto_core.c
+>> +++ b/drivers/crypto/virtio/virtio_crypto_core.c
+>> @@ -303,6 +303,13 @@ static int virtcrypto_probe(struct virtio_device *vdev)
+>>   	u32 max_data_queues = 0, max_cipher_key_len = 0;
+>>   	u32 max_auth_key_len = 0;
+>>   	u64 max_size = 0;
+>> +	u32 cipher_algo_l = 0;
+>> +	u32 cipher_algo_h = 0;
+>> +	u32 hash_algo = 0;
+>> +	u32 mac_algo_l = 0;
+>> +	u32 mac_algo_h = 0;
+>> +	u32 aead_algo = 0;
+>> +	u32 crypto_services = 0;
+>>
+>>   	if (!virtio_has_feature(vdev, VIRTIO_F_VERSION_1))
+>>   		return -ENODEV;
+>> @@ -339,6 +346,20 @@ static int virtcrypto_probe(struct virtio_device *vdev)
+>>   		max_auth_key_len, &max_auth_key_len);
+>>   	virtio_cread(vdev, struct virtio_crypto_config,
+>>   		max_size, &max_size);
+>> +	virtio_cread(vdev, struct virtio_crypto_config,
+>> +		crypto_services, &crypto_services);
+>> +	virtio_cread(vdev, struct virtio_crypto_config,
+>> +		cipher_algo_l, &cipher_algo_l);
+>> +	virtio_cread(vdev, struct virtio_crypto_config,
+>> +		cipher_algo_h, &cipher_algo_h);
+>> +	virtio_cread(vdev, struct virtio_crypto_config,
+>> +		hash_algo, &hash_algo);
+>> +	virtio_cread(vdev, struct virtio_crypto_config,
+>> +		mac_algo_l, &mac_algo_l);
+>> +	virtio_cread(vdev, struct virtio_crypto_config,
+>> +		mac_algo_h, &mac_algo_h);
+>> +	virtio_cread(vdev, struct virtio_crypto_config,
+>> +		aead_algo, &aead_algo);
+>>
+>>   	/* Add virtio crypto device to global table */
+>>   	err = virtcrypto_devmgr_add_dev(vcrypto);
+>> @@ -358,6 +379,14 @@ static int virtcrypto_probe(struct virtio_device *vdev)
+>>   	vcrypto->max_cipher_key_len = max_cipher_key_len;
+>>   	vcrypto->max_auth_key_len = max_auth_key_len;
+>>   	vcrypto->max_size = max_size;
+>> +	vcrypto->crypto_services = crypto_services;
+>> +	vcrypto->cipher_algo_l = cipher_algo_l;
+>> +	vcrypto->cipher_algo_h = cipher_algo_h;
+>> +	vcrypto->mac_algo_l = mac_algo_l;
+>> +	vcrypto->mac_algo_h = mac_algo_h;
+>> +	vcrypto->hash_algo = hash_algo;
+>> +	vcrypto->aead_algo = aead_algo;
+>> +
+>>
+>>   	dev_info(&vdev->dev,
+>>   		"max_queues: %u, max_cipher_key_len: %u, max_auth_key_len: %u,
+>> max_size 0x%llx\n",
+>> --
+>> 2.7.4
+> 
+> 
 
