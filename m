@@ -2,123 +2,105 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7802DC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:35:26 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1C62FC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:39:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D6F7208B1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:35:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gZMcbWBW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D6F7208B1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id C6627208B1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:39:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6627208B1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934155AbeFLRfY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 13:35:24 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43154 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933076AbeFLRfW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 13:35:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=FG3ng/wIdluKsRmtbpvycaAup8uVOve30OfjFvdX5aM=; b=gZMcbWBWd2SgTb2Ukn+h92Lle
-        bqH6WeAJkVU4OOyYcB30x6uByLzBz6kkhKqsKhi/3GPTjtcXlR4DTq7/ZhiKNiUme1/egS1Hwyf6i
-        /t1RyWEa+rU7u9FOo+zLrqchtsAFZyuB1MkvsbX+kF+070QZIWJ4USONMEtiT1SC0axGtDnyAOKs1
-        itcHJZ/EYb/Hsjqa+DK1dC8Xj7VV663FFq5uOrgeXDofYIbEOM3pFKNrgqY1JuCddSPlH+tzk7EFh
-        qkSNXoeSHfMPM/t7ybgd+hVQqrezTsAfpazBU0BTS4/AmkqWACyu2Dd/s7T+h1sMYF8Yd5cY0bHzF
-        q0ATYDdBQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSnCO-00011t-AJ; Tue, 12 Jun 2018 17:35:16 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 1645D201EA7A3; Tue, 12 Jun 2018 19:35:14 +0200 (CEST)
-Date:   Tue, 12 Jun 2018 19:35:14 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     viresh.kumar@linaro.org, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Javi Merino <javi.merino@kernel.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Kevin Wangtao <kevin.wangtao@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rui Zhang <rui.zhang@intel.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>
-Subject: Re: [PATCH V6] powercap/drivers/idle_injection: Add an idle
- injection framework
-Message-ID: <20180612173514.GV12217@hirez.programming.kicks-ass.net>
-References: <1528804816-32636-1-git-send-email-daniel.lezcano@linaro.org>
- <20180612123036.GJ12180@hirez.programming.kicks-ass.net>
- <16d5649d-863c-10c7-9287-202568e713e6@linaro.org>
- <20180612125247.GO12217@hirez.programming.kicks-ass.net>
- <16770447-afe3-0fd7-19f9-1bd52c4c8ced@linaro.org>
- <20180612140654.GQ12217@hirez.programming.kicks-ass.net>
- <cce05d92-d51a-ab4f-83f2-37dcdee0cd6a@linaro.org>
- <20180612155841.GT12217@hirez.programming.kicks-ass.net>
- <7190a58e-05f2-216c-8b36-70692fa722bf@linaro.org>
+        id S933835AbeFLRjG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 13:39:06 -0400
+Received: from mga11.intel.com ([192.55.52.93]:30078 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933295AbeFLRjD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 13:39:03 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2018 10:39:03 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,215,1526367600"; 
+   d="scan'208";a="48431427"
+Received: from tstruk-mobl1.jf.intel.com ([10.7.196.162])
+  by orsmga007.jf.intel.com with ESMTP; 12 Jun 2018 10:39:00 -0700
+Subject: Re: [PATCH v2 2/2] tpm: add support for nonblocking operation
+To:     kbuild test robot <lkp@intel.com>
+Cc:     kbuild-all@01.org, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <152876282414.19591.7972634639749417028.stgit@tstruk-mobl1.jf.intel.com>
+ <201806120803.W0vjfLEH%fengguang.wu@intel.com>
+From:   Tadeusz Struk <tadeusz.struk@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
+ xsDiBEiLICMRBADteQacQxypsuFvAw6IwYzbD8pgQi+kLYBcqfGgVAUN/cO+sLl6u1lVdaDB
+ fhAArdbV9lpoqcWnmhQFTb4A+W569EpydBr6nuatWkEB+fmmx8YoUtuZfXt7v+1l1rc09kaW
+ LY+TkwQkvFCeuvdasgmBLnmRWymEGWi1E12hUgTw/wCgtK24geC7XkiuANMv0gpr+raOgQMD
+ /2yJZ0SeXQApWyTRaeIYN8GgYHZTWuBp/ofN+viEkhrDxahcaGPP5B/Nv6VS1+M0e5m8OzHj
+ qPUbgfyOeJcslC5aoZdqqqzVWVLaA/+Jy+O+6T3k3R/IryVVATldBlwnGFDhET0mKQsd15zt
+ cIdQBBbfSFR5VlugZuWV5q442IpPA/4g7nen9FFPxh45Te8D54hAsOCywjm6xUE0UJGYHeJ/
+ MXCPtuXfVCbYcOxZVH7kUS2Vtk5d3bF40IE2WnVq1ZScNANF4ZjikxYhYGfNWX3HXak1gSoj
+ UrY87rMSjPIAry4L0BoIx2qgL/k4iV/3QcXL4t5wosU0iw++suf1zGGcKM0gVGFkZXVzeiBT
+ dHJ1ayA8dHN0cnVrQGdtYWlsLmNvbT7CYwQTEQIAIwIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
+ AheABQJQTjJTAhkBAAoJEDFswfskq9xyqvcAoI2nsaUCX8ZGbu+Jhq+++qlBFJ2rAJ983RoO
+ R2ofHhn3g3Qi4K34tw0l087BTQRauzUlARAAqkWRL/InEPnoGMg/gw/CRaDBaIBgMsvIcghI
+ 7xevIzpleXt6jKHghSBooH+zaT7qi4u2gkgPn4odsER3Rm94XgrZJgoqls6EpKMWpJNGP4HT
+ eYgykhfsZOLX8ijUbjTM/Sm/dZVo6aYoBL2+ciJwyl+Zt3Mp6un3/GWu6cA9005V50pRqO7j
+ PTlVCHi2bedcEEf5DDsYJv/3Oz8/4LpSf6BL6BltjeZVa2y03dTMmD031JTH+OuyJm1yh72Z
+ HWxhlYNXOv6uFJJVr+paQjrAsBVIYKhK24bD+uGJxLm8AN9i7/Si+2YeSsXvKUhk9mIoFBnU
+ VFo63cziRTcpRu/kXgDAbujwN88qytEcvhEZHS6B9vdws+lhTpolEjkLCkz0Y59z4Fs9srKy
+ QkRN+wtdiLgrwyDW3ryAKxcDmOumGWebDxpaOI/pBhrlS93HmDlvj7JmgTUU4a/NhwI3dXh5
+ pn8FZzZyVXe3Kc3bu5T3UAC7uztinsAvCJQS6jGZWrXmXkqYkaLXQOw61eInWjr01zE/zDbE
+ mdJPM0+va/gtZx9TtGxr4PpjbqswqCiubLDZXZHh5uqArPv/i+E8aXIsNSTN6Rrqs1j9YgDN
+ ALksibv6+tXH3sOlCUgjuZgJH3+s/mnaAtiV2rZ/WlH15d6nd0uiDSZrKhlR+g4NHMh1ztEA
+ EQEAAcJPBBgRAgAPBQJauzUlAhsMBQkJZgGAAAoJEDFswfskq9xyfv8AoI8aPrJCoM0h5WOP
+ kKxMmPEPHzUNAJ9jBBYXhX1CWg+IhI7i/fLlI0vwCA==
+Message-ID: <23f79ed3-be69-2a80-b4d8-b9af8491bcd1@intel.com>
+Date:   Tue, 12 Jun 2018 10:39:00 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7190a58e-05f2-216c-8b36-70692fa722bf@linaro.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <201806120803.W0vjfLEH%fengguang.wu@intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 07:02:57PM +0200, Daniel Lezcano wrote:
-> Mmh, it is unclear for me if the park() vs wakeup() can happen at the
-> same time.
+On 06/11/2018 07:53 PM, kbuild test robot wrote:
+> Hi Tadeusz,
+>         # save the attached .config to linux build tree
+>         make ARCH=i386 
 > 
-> If the park() function is called, that means the hotplug is allowed.
-
-No, it means we're inside hot-un-plug, but that doesn't stop the hrtimer
-from firing.
-
-> If the hotplug is allowed, we can modify the online mask.
+> All error/warnings (new ones prefixed by >>):
 > 
-> What happens with the online mask when we are processing it in an
-> interrupt context ?
-
-RCU-like, if you observe a CPU in the online mask, it will stay
-available, but the bit might get cleared.
-
-> > Maybe avoid the issue entire by having a
-> > {period,idle} tuple, where your old run := period - idle.
+>>> drivers/char//tpm/tpm-dev-common.c:223:1: warning: data definition has no type or storage class
+>     __exitcall(tpm_dev_common_exit);
+>     ^~~~~~~~~~
+>>> drivers/char//tpm/tpm-dev-common.c:223:1: error: type defaults to 'int' in declaration of '__exitcall' [-Werror=implicit-int]
+>>> drivers/char//tpm/tpm-dev-common.c:223:1: warning: parameter names (without types) in function declaration
+>    drivers/char//tpm/tpm-dev-common.c:215:20: warning: 'tpm_dev_common_exit' defined but not used [-Wunused-function]
+>     static void __exit tpm_dev_common_exit(void)
+>                        ^~~~~~~~~~~~~~~~~~~
+>    cc1: some warnings being treated as errors
 > 
-> Can you elaborate ? I don't get it.
-
-Have a period parameter that specifies the interval in which you have
-one injected idle, and specify for how long you want to inject idle;
-then obviously idle < period.
-
-> >>> Furthermore, should you not be using hrtimer_forward(&timer,
-> >>> idle_duration + run_duration) instead? AFAICT the current scheme is
-> >>> prone to drifting.
-> >>
-> >> (I assume you meant setting the timer in the wakeup task function).
-> >>
-> >> Yes, drifting is not an issue if that happens. This scheme is simpler
-> >> and safer than setting the timer ahead before waking up the tasks with
-> >> the risk it expires before all the tasks ended their idle cycles.
-> > 
-> > sloppy though..
+> vim +223 drivers/char//tpm/tpm-dev-common.c
 > 
-> Ok, do you prefer to see the timer set in the wakeup function and thus
-> having a periodic tick for the idle injection ?
+>    222	
+>  > 223	__exitcall(tpm_dev_common_exit);
 
-I think having a HRTIMER_RESTART handler that does hrtimer_forward() is
-the most sensible. You will end up having to deal with threads not being
-ready, but I think that's not a real problem.
-
-
+It is complaining about __exitcall here, because there is a module_exit() call
+in drivers/char/tpm/tpm-interface.c already and the two files are build into the same object.
+It is strange that the problem only manifests itself when cross compiling with ARCH=i386. Native 64bit build works fine.
+I will simply call the tpm_dev_common_exit() from the tpm_exit() and re-spin a v3.
+Thanks again for the report.
+-- 
+Tadeusz
