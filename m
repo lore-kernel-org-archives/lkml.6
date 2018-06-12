@@ -7,69 +7,68 @@ X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2E44CC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 04:27:17 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 41D2BC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 04:30:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2F8F208AE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 04:27:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E11EB208AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 04:30:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MksncrhA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2F8F208AE
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GMKC4Zlo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E11EB208AE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753887AbeFLE1N (ORCPT
+        id S1753965AbeFLEaG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 00:27:13 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:34274 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750966AbeFLE1M (ORCPT
+        Tue, 12 Jun 2018 00:30:06 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:42459 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752632AbeFLEaE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 00:27:12 -0400
-Received: by mail-pf0-f195.google.com with SMTP id a63-v6so11404278pfl.1;
-        Mon, 11 Jun 2018 21:27:11 -0700 (PDT)
+        Tue, 12 Jun 2018 00:30:04 -0400
+Received: by mail-pl0-f65.google.com with SMTP id w17-v6so13609616pll.9;
+        Mon, 11 Jun 2018 21:30:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=SStYGhlcztqQ2MrXH1jzRquNyv/Gz5mhdhNphCnT8tg=;
-        b=MksncrhAv+28cnPrTeqSYPjg0teTHebXSTHHFRMMHB9Oa7iemr97MRBUi71KNfp6kF
-         abgC+HFzraaqgsPVQBHPJ+/l8w13HtcKecyoDCBpyzQYE9707epJQ/rxjIY4nHUJ+VYq
-         L+qKCTel8jpgLgP2Bz6ct+vakZTxEhGBdu4f9/vgnBI2GZFRbX7EUE0LAE7q3f49tm3P
-         8cJL1LnZY8AQ6gdl5sEUxnNgp+/Uk77gCWm5v3blHbbbkHYvGvQiJrYVfrTKtkWCL4+w
-         kwSS5PxihyX41rmx/rzpyWEZq+6obHk3rcez14CJSfjvsVsfQl1UGt66bS8Y9qnZs5BB
-         jkMg==
+        bh=bxqWUWhCKY9Y0pIQmPe1KyEDr/D7TjfHfUiC9NAULgU=;
+        b=GMKC4Zlot2F4YtcjsdmYovwVAbLbn8jxljL4njSXVMZ6Iw+BZVa7asrCmzBeA8J2DR
+         05XM64sZKpJzATfalnyKIP6Zbd5uDETbZbCkitR5fisBI7FF4Q8TVGQrIHkQEzrzFpsy
+         h/hO4fu5BVP8YwKYgSkrT7Gag9GARh+HobQXBZPUdMigAiADRtdcEWutYBDNbcbospWd
+         5kgAAWuEVqlxXq1WEMZmb/a4ZDu5fE9Athk7aQFQkrhxAz115tzO/TFWM/uMwFK86EIc
+         7moLhnIwNWLi2X/wt2cx9dkq6BvquplJNeHuokL3Xb6BGMdwYGAG9ZvirnOsY73lIX6K
+         E2xQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=SStYGhlcztqQ2MrXH1jzRquNyv/Gz5mhdhNphCnT8tg=;
-        b=J7XIS1GqUVyecm/LmR7CovgYpTk4hu0BXXPcwx0lZ5c5LikYj5xTVdIp38nr6mARYH
-         k455Cyc9PdsOuTPD9hd+MroKO9AdXCuPRQFXOk/s/243GIz7zaV8uL0xVU+MF38oKEtD
-         mzY8UnmALtcza+LQ/cX2M0Ebud+jiitr6akZt4GekK/t+/RayTH2xPSHPtLchh9U+mps
-         ymOS4Di7gLl3wV87tc9PhP0AV80aS1YxdcYkZmBjSENyGnyHYHnGokdYrEeyvvxCdbih
-         Q8WGm/WYXt9DVy9xRkW8KWqCq4f4R2Ckf/HCXm3SAzKgA5awA9M8FJ6/25IMPPRhHP3B
-         Puag==
-X-Gm-Message-State: APt69E0jIIzNiFEV8WGSA/YjWdweG/3jCkKMgb5U5H5Vd61f1yF2qTwh
-        Thh+7clR2kA+VN0lSSV6N7E=
-X-Google-Smtp-Source: ADUXVKIXBgY4TeQGWFZM7aYt7WRtOsIXgsiRlfWxGzPBklqFWT4qf++bzaWoStIbI/a4m62CRGr3vQ==
-X-Received: by 2002:a63:6f42:: with SMTP id k63-v6mr1756600pgc.135.1528777631602;
-        Mon, 11 Jun 2018 21:27:11 -0700 (PDT)
+        bh=bxqWUWhCKY9Y0pIQmPe1KyEDr/D7TjfHfUiC9NAULgU=;
+        b=QIOj/SIE6cqXqJfxmQkSiBcJZoid61B+7Hv18oDssKPiaqrfCsLKETwNya8OWi/hIy
+         jXe62SEHeVrKHuTE/xNpuSe+fwSaxNedmUKv3WYgc4FQye9aGfdgcB4XvxiKbsbrSfN2
+         KVTiHkMXS+FShNErSqeLkQ0UFsq/jgD9wq0WUlemGcG8mnIegFzZNPvTzN7tNaU7nyG/
+         Wc1ooIEQViQ84oKJIhXOUSEh73ipdhMNeKMFealTC/vGeTKRXoG/1IH9JwCQe+cS22v0
+         Nm5FoQiiSoJhydhow54BxLhRsL0XIOqp/rfmogWP2a0I9UruLVAD1zj/lVoeLRjiGmPy
+         3c5g==
+X-Gm-Message-State: APt69E2TWuAMBDRW4f9LysDjRutF37m0RbW6+e90cP7S4kHOdAaoaa7U
+        PW7hAQVtgJqhPG/M3NJxgKU=
+X-Google-Smtp-Source: ADUXVKJeb3ZBnKRc1gs87LgBqH9zmvBGrsVFZ+k+XktthWZmbFj1JU9MCr86T7D3qHt/7bSzxkobGg==
+X-Received: by 2002:a17:902:8a82:: with SMTP id p2-v6mr2298190plo.244.1528777804408;
+        Mon, 11 Jun 2018 21:30:04 -0700 (PDT)
 Received: from localhost ([103.88.46.82])
-        by smtp.gmail.com with ESMTPSA id c19-v6sm4347607pfn.182.2018.06.11.21.27.10
+        by smtp.gmail.com with ESMTPSA id d72-v6sm121913628pfe.150.2018.06.11.21.30.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Jun 2018 21:27:11 -0700 (PDT)
+        Mon, 11 Jun 2018 21:30:03 -0700 (PDT)
 From:   Zhouyang Jia <jiazhouyang09@gmail.com>
 Cc:     Zhouyang Jia <jiazhouyang09@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] integrity: add error handling for kmem_cache_create
-Date:   Tue, 12 Jun 2018 12:27:03 +0800
-Message-Id: <1528777625-40502-1-git-send-email-jiazhouyang09@gmail.com>
+        "David S. Miller" <davem@davemloft.net>,
+        Wei Wang <weiwan@google.com>, Martin KaFai Lau <kafai@fb.com>,
+        Kees Cook <keescook@chromium.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Florian Westphal <fw@strlen.de>, Joe Perches <joe@perches.com>,
+        linux-decnet-user@lists.sourceforge.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] net: add error handling for kmem_cache_create
+Date:   Tue, 12 Jun 2018 12:29:56 +0800
+Message-Id: <1528777798-40722-1-git-send-email-jiazhouyang09@gmail.com>
 X-Mailer: git-send-email 2.7.4
 To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -84,23 +83,23 @@ This patch adds error-handling code after calling kmem_cache_create.
 
 Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
 ---
- security/integrity/iint.c | 3 +++
+ net/decnet/dn_route.c | 3 +++
  1 file changed, 3 insertions(+)
 
-diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-index 149faa8..c074fd8 100644
---- a/security/integrity/iint.c
-+++ b/security/integrity/iint.c
-@@ -172,6 +172,9 @@ static int __init integrity_iintcache_init(void)
- 	iint_cache =
- 	    kmem_cache_create("iint_cache", sizeof(struct integrity_iint_cache),
- 			      0, SLAB_PANIC, init_once);
-+	if (!iint_cache)
-+		return -ENOMEM;
+diff --git a/net/decnet/dn_route.c b/net/decnet/dn_route.c
+index e747650..2b743c7 100644
+--- a/net/decnet/dn_route.c
++++ b/net/decnet/dn_route.c
+@@ -1861,6 +1861,9 @@ void __init dn_route_init(void)
+ 	dn_dst_ops.kmem_cachep =
+ 		kmem_cache_create("dn_dst_cache", sizeof(struct dn_route), 0,
+ 				  SLAB_HWCACHE_ALIGN|SLAB_PANIC, NULL);
++	if (!dn_dst_ops.kmem_cachep)
++		panic("Failed to create dn_dst_cache cache\n");
 +
- 	return 0;
- }
- security_initcall(integrity_iintcache_init);
+ 	dst_entries_init(&dn_dst_ops);
+ 	timer_setup(&dn_route_timer, dn_dst_check_expire, 0);
+ 	dn_route_timer.expires = jiffies + decnet_dst_gc_interval * HZ;
 -- 
 2.7.4
 
