@@ -2,111 +2,109 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E0303C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 21:11:36 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id F2FE3C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 21:12:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EDC12086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 21:11:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EDC12086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A808E2089C
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 21:12:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="xTpD9KVP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A808E2089C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934091AbeFLVLe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 17:11:34 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:34157 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932985AbeFLVLc (ORCPT
+        id S934269AbeFLVM2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 17:12:28 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:33900 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933852AbeFLVM0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 17:11:32 -0400
-Received: by mail-yb0-f194.google.com with SMTP id n23-v6so155676ybg.1;
-        Tue, 12 Jun 2018 14:11:32 -0700 (PDT)
+        Tue, 12 Jun 2018 17:12:26 -0400
+Received: by mail-lf0-f66.google.com with SMTP id o9-v6so624263lfk.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 14:12:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=EJyhxvbi3HsrNfbsh3MGJpj5otQ1ywoDBTL8Ie3Co8c=;
+        b=xTpD9KVPL5WjBiUhqqYtCG/jsP0ckivZETwZIVTy4XfLwTEm0nQ32osy/l27oUrwCR
+         f5OdAbFbnh+a3PTEwx5wo7DAQorjLxiuP9W0YfVjrIC3xl26snIRyI/54XsRDlFPBzTd
+         Ix3Ul7mEjxscOcSZNXsD2w9rBy6mHZNYHoAnq3bhIR/wlgKok0uTdn3yZ0lK34UvTFSe
+         zpeRZjMA/9R/R4/0B6M02SuKDqMilUIi6h102HxlG30kpsEOyZiT0sbzIzi3eLaEyLud
+         mOPMuOktiB03nQsOGiUHVv+fda+18OjSYcN8COF2UozwiyWCH/5qS92d50l6og7pcz/y
+         x+pQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UKjmOrF1I5tEXYeQ8mRJFZFQ+FuLPhLDVAYGPcUR3sM=;
-        b=dhVOmrxJo5yyUUMSSDtbiFF6uzUmPr7G1WWBUzHjsIr2jYgIm7E6MxmHQDqaequx7U
-         8YC+tY7j2MK1rBgHNS/HJ72hsdX0A8xD8W3HhXiSTX2PAN8v/lvACbnrhUr0jVu+La7g
-         IQj1fnpk2CSUCYrEuh4qTCHwIsy0+rbj38JH5LzARB3Gry55GH+zACuxCUFMAmYVQZMs
-         hVTEUWrFdx6GvuAZcsvYzYetU7P8OAi6ssBzCKT/x4orb4SpPuA7uAa4Yk0aWxNCqJZF
-         nRuQ3BKpBxwyKxVNtUE3vz/sQW/HVP2pOwdjOrNlakUIUd4MDkTaXSp1NI9ot0s5Cl/E
-         kBcg==
-X-Gm-Message-State: APt69E0y3GDOrUVjy2XN0JOnnadML88vwJS8sxNyqQaUB93ypHjA5zvr
-        f/+nROOwcFpWLf0lt71s1g==
-X-Google-Smtp-Source: ADUXVKJMM1rMQcgl12Rphl4WekVE2N457+0ogkfN7i3gePaVULchBTRQCALY9HzllCLkaxpp1L4eKQ==
-X-Received: by 2002:a25:add0:: with SMTP id d16-v6mr1031773ybe.378.1528837891707;
-        Tue, 12 Jun 2018 14:11:31 -0700 (PDT)
-Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.gmail.com with ESMTPSA id q7-v6sm396912ywa.57.2018.06.12.14.11.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Jun 2018 14:11:30 -0700 (PDT)
-Date:   Tue, 12 Jun 2018 15:11:28 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Nishanth Menon <nm@ti.com>
-Cc:     Jassi Brar <jassisinghbrar@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Tero Kristo <t-kristo@ti.com>,
-        Suman Anna <s-anna@ti.com>
-Subject: Re: [RFC PATCH 5/8] dt-bindings: mailbox: ti,message-manager: Add
- support for secure proxy threads
-Message-ID: <20180612211128.GA22038@rob-hp-laptop>
-References: <20180605061629.4759-1-nm@ti.com>
- <20180605061629.4759-6-nm@ti.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=EJyhxvbi3HsrNfbsh3MGJpj5otQ1ywoDBTL8Ie3Co8c=;
+        b=Dpr71Ug15bcWdQL8a173fsHRmAPssuXd+mrR6QC6niv49SKIMLKZgBErIWV4bYQNmZ
+         olewqd5BNZzb3L44c4apzuiRnGO5DSpKuu/N7VfSsXP8kyEXupBVYC4gFub2hee76bo/
+         0WZZu+rOnCAzpxHbcPzE40dLMPNtcHK4i74jF6sNbdD+IjHYqHO0/N9a4mldGGG13qz8
+         wqZAT0qPMuVGpu07du4AX1g0WZjW5bNkrND581kFKLq91m0l9vnJdT33D0OCv+jnONG1
+         W6Y1/N9DNr2/xqV0FjXSKETO2k2OwWw3N2IAiU1zlDT+obmXgWz07rCMNOnwlTTCg8tT
+         D88A==
+X-Gm-Message-State: APt69E3JtCAQQBrdyceIOdjbj5zGkMTVBfoAceKP4nZOQjNH8zzcTNEI
+        cXqOczum1/1A8CX4g0ekWfI2b6YSXoLNyhxyCNc+
+X-Google-Smtp-Source: ADUXVKK3MfTCvCs0p8R4P80DX8GuzMaa17EytEkwztsZAzVppemMLRIZFX2bmbKnvu004pfZvN/MfwM36NQqX3hw8iw=
+X-Received: by 2002:a2e:9e57:: with SMTP id g23-v6mr1285759ljk.14.1528837944493;
+ Tue, 12 Jun 2018 14:12:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180605061629.4759-6-nm@ti.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Received: by 2002:a19:a911:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 14:12:23
+ -0700 (PDT)
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <alpine.LRH.2.21.1806130631400.13763@namei.org>
+References: <1e91f8e10ce76d3208239b6b5899aab76d1543ff.1528743633.git.joe@perches.com>
+ <fcac609a-08a8-b3ab-a69e-2e65e2ad63e9@schaufler-ca.com> <alpine.LRH.2.21.1806130631400.13763@namei.org>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 12 Jun 2018 17:12:23 -0400
+Message-ID: <CAHC9VhTpsYDT5+CjdtiBmLMDEKV9fmGv+DyXVtUuja9d4i2ecg@mail.gmail.com>
+Subject: Re: [-next PATCH] security: use octal not symbolic permissions
+To:     James Morris <jmorris@namei.org>, Joe Perches <joe@perches.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        selinux@tycho.nsa.gov
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 01:16:26AM -0500, Nishanth Menon wrote:
-> Secure Proxy is another communication scheme in Texas Instrument's
-> devices intended to provide an unique communication path from various
-> processors in the System on Chip(SoC) to a central System Controller.
-> 
-> Secure proxy is, in effect, an evolution of current generation Message
-> Manager hardware block found in K2G devices. However the following
-> changes have taken place:
-> 
-> Secure Proxy instance exposes "threads" or "proxies" which is
-> primary representation of "a" communication channel. Each thread is
-> preconfigured by System controller configuration based on SoC usage
-> requirements. Secure proxy by itself represents a single "queue" of
-> communication but allows the proxies to be independently operated.
-> 
-> Each Secure proxy thread can uniquely have their own error and threshold
-> interrupts allowing for more fine control of IRQ handling.
-> 
-> Provide an hardware description of the same for device tree
-> representation.
-> 
-> See AM65x Technical Reference Manual (SPRUID7, April 2018)
-> for further details: http://www.ti.com/lit/pdf/spruid7
-> 
-> Signed-off-by: Nishanth Menon <nm@ti.com>
-> ---
->  .../bindings/mailbox/ti,message-manager.txt        | 58 +++++++++++++++++++---
->  1 file changed, 50 insertions(+), 8 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/mailbox/ti,message-manager.txt b/Documentation/devicetree/bindings/mailbox/ti,message-manager.txt
-> index ebf0e3710cee..de796e90cac6 100644
-> --- a/Documentation/devicetree/bindings/mailbox/ti,message-manager.txt
-> +++ b/Documentation/devicetree/bindings/mailbox/ti,message-manager.txt
-> @@ -7,22 +7,40 @@ manager is broken up into queues in different address regions that are called
->  "proxies" - each instance is unidirectional and is instantiated at SoC
->  integration level to indicate receive or transmit path.
->  
-> +This can also be used to describe Texas Instrument's Secure Proxy
-> +controller that allows for individually configurable "threads" or
-> +"proxies" which allow for independent communication scheme.
+On Tue, Jun 12, 2018 at 4:32 PM, James Morris <jmorris@namei.org> wrote:
+> On Mon, 11 Jun 2018, Casey Schaufler wrote:
+>
+>> If you want to break this up by security module I would take
+>> the Smack part as soon as James does the tree update. If James
+>> wants to take the whole thing at once you can add my:
+>>
+>> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+>>
+>> for the Smack changes.
+>
+> It's probably simplest for me to take them as one patch.
 
-There seems to be very little re-use here. I think I would make this 
-its own doc.
+I would prefer if the SELinux changes were split into a separate
+patch.  I'm guessing John would probably want the same for the
+AppArmor patches, but take his work for it, not mine.
 
-Rob
+Joe, in general I really appreciate the fixes you send, but these
+patches that cross a lot of subsystem boundaries (this isn't the first
+one that does this) causes unnecessary conflicts in -next and during
+the merge window.  Could you split your patches up from now on please?
+
+-- 
+paul moore
+www.paul-moore.com
