@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 417C5C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 04:19:45 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0894DC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 04:22:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCDF720693
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 04:19:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A58C520693
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 04:22:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tzNB/PWK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCDF720693
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VL4+v27h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A58C520693
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752861AbeFLETm (ORCPT
+        id S1753454AbeFLEWu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 00:19:42 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:40349 "EHLO
+        Tue, 12 Jun 2018 00:22:50 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:32988 "EHLO
         mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750811AbeFLETk (ORCPT
+        with ESMTP id S1752583AbeFLEWt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 00:19:40 -0400
-Received: by mail-pl0-f68.google.com with SMTP id t12-v6so13577580plo.7;
-        Mon, 11 Jun 2018 21:19:40 -0700 (PDT)
+        Tue, 12 Jun 2018 00:22:49 -0400
+Received: by mail-pl0-f68.google.com with SMTP id n10-v6so13593055plp.0;
+        Mon, 11 Jun 2018 21:22:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=F+GFV2KjdqB0bR40IfmTpZtntOLDxZbv1eGUZATGvUQ=;
-        b=tzNB/PWK+sqmOwMAXvDTIH0IZyEcQV6JZazPi+1yATccYhqAyOdFOHtwCxm5q4ALZy
-         k23Pp/3tMQZ5nMsbo6gi9d/xUkPiFBzihOAEYqNFGDrYr4EQ8gFHWdLJSJzTB+a5Ug6x
-         gYfPKxOMvd+OTGdjnTLEvBeZvd7Pqx7QRco4B2Bp9aghZ7LBsRhNEsboSyhBHC0D7qj2
-         TtHdDrfQKLU6mE0svvl2VmElHipep8k2k9wUgrm1jq+cTH1c2q1Oo81B1l8/ThGn3Ajb
-         9TBiHq5XpovSNpThK9uCxGNHPdadMfQ8pwrbqC5IwLtB5n8ECA7tOJwaSNEFkpQpkDFH
-         GYgw==
+        bh=uHfPz/0FW3DSovSQYFdQIsmxMGKsKBoCByGmkyBWYKA=;
+        b=VL4+v27h66QkObEfYs32z1TljQLoSd4MfG1ZFZ6DaYH7IqimT+ha0FgVkJPCFeZfkw
+         XT2t9apL+bAoeP2x6ra2N7ra7MRB297I/61bWvFIwBFYfZHOoUUob/DHLuBD0mu1Pcnd
+         gQBuuoRdH7ACzW9R9ke/zn0t6okMUKWphEQfHv2D1H++P3gsZbJG52J57D1DkOrnDnOP
+         IVDXcPpMYIJ6eBDIf2fB7BxxZ1J2Ky161736Fbw0Zy7HGCFriQDR/wowyqz5uDwaLpQV
+         iPzSX61r36LRGduqj0uPKnP3wDmBvcIrnvrpYpq1lmed7P3bhuN9ALtAnOAzaLbzRjEg
+         UUCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=F+GFV2KjdqB0bR40IfmTpZtntOLDxZbv1eGUZATGvUQ=;
-        b=Djqo8LFZysIxkUB/ELzSr3NAwyr5IW4G0Z7ubr51GPfGxPQQAyTc+qI4z+AZ6jI/PQ
-         O1lTmgqyWNq2zJimJMRDjd/4atzHz7yAtxxlOshp7YKzMQtn5bjCUUImIxe+gNj0IQBi
-         b8/jlb8wiIPaUjg6sjC8UgRoUc7/Lek+AwMDF9VtCz0aNVFf6dmSOS3BCAD1GMxpK0qK
-         6fsUG8knRPCTm9mIn/3vDmqnFJjIhpa9/i0Wh0HkZsQZxrC693mHjpqsYtF2sC48mAeK
-         uI67FKnF472qoLB8lbHku9lrj+w8Kd0D9v8eklvSieezI9PZbKOkZyt3re+jxb+p4m2w
-         vwQQ==
-X-Gm-Message-State: APt69E3PldcNq46HP//s5ov8BEHlvFGcglo1EeCjoSPBfBCkfxF5YW82
-        FPPJHxVgtbspXLvIExOXKBk=
-X-Google-Smtp-Source: ADUXVKIQwD/vLkhjnsZKGOJ6jB1ZX9aS7A9JajMM9GzDquqB+wP15ObjUMICSZtFjvGUtg3mv7xRuw==
-X-Received: by 2002:a17:902:6b0c:: with SMTP id o12-v6mr2150507plk.159.1528777180237;
-        Mon, 11 Jun 2018 21:19:40 -0700 (PDT)
+        bh=uHfPz/0FW3DSovSQYFdQIsmxMGKsKBoCByGmkyBWYKA=;
+        b=Jd8Qs6WYFnQSGX37Z+tE/DDwvxJmChBvHTN6Yykwsbgu8pYf42jD3Q+XAsjpFMoO+a
+         Vu/MPu6vKCxC4ihRkq+I9ovNou78gabkCgE+TY0CzTtMR14FataeUQiPahnRBoZS3/2B
+         3MoHuJdD0FV4Mp5J35Y0nk0UXqHwDXd5Vj4XX9Wjey4NZiBdAyvZRWqprNMRpPUC5my0
+         xFLTQElqNi3k+s8Wh+IWSylFub5nFqGVbv24spMH31wFJ81J+1S+xITgXv+tniE8gpie
+         CTCQosIm0m7Csw2F2vtqaqfBDItImGTqmT5KYt60+3EN6LF0gu2xlNGlA2gJnEPQzjba
+         EYjQ==
+X-Gm-Message-State: APt69E1kz68oaguEAeP+ysnFYlUGC8bE4KfbcarpXHQKcr5YqD03+Nn0
+        NVdg4SgU+MrO8rd84x0y1YeHmp8naR0=
+X-Google-Smtp-Source: ADUXVKK1fR2W90PS2BDKZywbgVPSHdZNkRulIhmxOBqYKsBoHF4rTG8qMB1qLgbdm3RfpAOFOu6l3Q==
+X-Received: by 2002:a17:902:206:: with SMTP id 6-v6mr2205808plc.294.1528777368784;
+        Mon, 11 Jun 2018 21:22:48 -0700 (PDT)
 Received: from localhost ([103.88.46.82])
-        by smtp.gmail.com with ESMTPSA id o77-v6sm84856375pfj.0.2018.06.11.21.19.39
+        by smtp.gmail.com with ESMTPSA id u84-v6sm78869678pfg.156.2018.06.11.21.22.47
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Jun 2018 21:19:39 -0700 (PDT)
+        Mon, 11 Jun 2018 21:22:48 -0700 (PDT)
 From:   Zhouyang Jia <jiazhouyang09@gmail.com>
 Cc:     Zhouyang Jia <jiazhouyang09@gmail.com>, Jan Kara <jack@suse.cz>,
         Amir Goldstein <amir73il@gmail.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] fanotify: add error handling for kmem_cache_create
-Date:   Tue, 12 Jun 2018 12:19:34 +0800
-Message-Id: <1528777174-40045-1-git-send-email-jiazhouyang09@gmail.com>
+Subject: [PATCH] inotify: add error handling for kmem_cache_create
+Date:   Tue, 12 Jun 2018 12:22:42 +0800
+Message-Id: <1528777362-40212-1-git-send-email-jiazhouyang09@gmail.com>
 X-Mailer: git-send-email 2.7.4
 To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -78,28 +78,22 @@ This patch adds error-handling code after calling kmem_cache_create.
 
 Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
 ---
- fs/notify/fanotify/fanotify_user.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ fs/notify/inotify/inotify_user.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index ec4d8c5..e3fa861 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -959,9 +959,14 @@ static int __init fanotify_user_setup(void)
- {
- 	fanotify_mark_cache = KMEM_CACHE(fsnotify_mark, SLAB_PANIC);
- 	fanotify_event_cachep = KMEM_CACHE(fanotify_event_info, SLAB_PANIC);
-+	if (!fanotify_mark_cache || !fanotify_event_cachep)
-+		return -ENOMEM;
-+
- 	if (IS_ENABLED(CONFIG_FANOTIFY_ACCESS_PERMISSIONS)) {
- 		fanotify_perm_event_cachep =
- 			KMEM_CACHE(fanotify_perm_event_info, SLAB_PANIC);
-+		if (!fanotify_perm_event_cachep)
-+			return -ENOMEM;
- 	}
+diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+index ef32f36..0704bab 100644
+--- a/fs/notify/inotify/inotify_user.c
++++ b/fs/notify/inotify/inotify_user.c
+@@ -805,6 +805,8 @@ static int __init inotify_user_setup(void)
+ 	BUG_ON(hweight32(ALL_INOTIFY_BITS) != 21);
  
- 	return 0;
+ 	inotify_inode_mark_cachep = KMEM_CACHE(inotify_inode_mark, SLAB_PANIC);
++	if (!inotify_inode_mark_cachep)
++		return -ENOMEM;
+ 
+ 	inotify_max_queued_events = 16384;
+ 	init_user_ns.ucount_max[UCOUNT_INOTIFY_INSTANCES] = 128;
 -- 
 2.7.4
 
