@@ -6,43 +6,47 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6433BC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:49:07 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9144FC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:50:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A388208B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:49:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4588F208B0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:50:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tf+osyHB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A388208B0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gznwjcqI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4588F208B0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935092AbeFLQtF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 12:49:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35574 "EHLO mail.kernel.org"
+        id S934943AbeFLQuG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 12:50:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935032AbeFLQsa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 12:48:30 -0400
+        id S934951AbeFLQsL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 12:48:11 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE430208B7;
-        Tue, 12 Jun 2018 16:48:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47AB8208B7;
+        Tue, 12 Jun 2018 16:48:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528822109;
-        bh=wp4mT+eZLg+OGpYEK1BOWkbSaJ12nSLR9D5+YLKgu44=;
+        s=default; t=1528822090;
+        bh=M3ks+pkVnOVDKcj1sJRwDklA/o3hqEs2YfAmJfTErFs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Tf+osyHBtnRoSq1oODyphJTOu85LDiSIL2A5F+qyZIx2PZH3Pj69ApxGiNO5YqPua
-         wux00o6XoYclweWeWGgb00wJ5fz3jlGYrTYgsHE1vUGdsxSXCU8yyyNz9EzecSkyxk
-         cYYaUEEE4IYaydCXyyxHYhPGejw+X48pe9iLYr9M=
+        b=gznwjcqIekOTJxN6Nyu9g3gwj91QQ69uIpUB5dOY+dWKsrdHwmO24wZt3FedlDLs+
+         8aMWDSlvjqNjBn6lDUOwxeV63aOoVNLlcs+mgr71DZv7wLeo3fP1JeydFUWbgk6H62
+         mrPZ6Lk0A6iNkBB1BQfX0a7uVUgxA1U00C0VWzTs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 08/31] bnx2x: use the right constant
-Date:   Tue, 12 Jun 2018 18:46:11 +0200
-Message-Id: <20180612164621.119721834@linuxfoundation.org>
+        stable@vger.kernel.org, kbuild test robot <fengguang.wu@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.9 30/31] objtool: Fix gcov check for older versions of GCC
+Date:   Tue, 12 Jun 2018 18:46:33 +0200
+Message-Id: <20180612164621.996798847@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180612164620.797338191@linuxfoundation.org>
 References: <20180612164620.797338191@linuxfoundation.org>
@@ -59,42 +63,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 
-[ Upstream commit dd612f18a49b63af8b3a5f572d999bdb197385bc ]
+commit 867ac9d737094e46a6c33213f16dd1ec9e8bd5d5 upstream.
 
-Nearby code that also tests port suggests that the P0 constant should be
-used when port is zero.
+Objtool tries to silence 'unreachable instruction' warnings when it
+detects gcov is enabled, because gcov produces a lot of unreachable
+instructions and they don't really matter.
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+However, the 0-day bot is still reporting some unreachable instruction
+warnings with CONFIG_GCOV_KERNEL=y on GCC 4.6.4.
 
-// <smpl>
-@@
-expression e,e1;
-@@
+As it turns out, objtool's gcov detection doesn't work with older
+versions of GCC because they don't create a bunch of symbols with the
+'gcov.' prefix like newer versions of GCC do.
 
-* e ? e1 : e1
-// </smpl>
+Move the gcov check out of objtool and instead just create a new
+'--no-unreachable' flag which can be passed in by the kernel Makefile
+when CONFIG_GCOV_KERNEL is defined.
 
-Fixes: 6c3218c6f7e5 ("bnx2x: Adjust ETS to 578xx")
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Also rename the 'nofp' variable to 'no_fp' for consistency with the new
+'no_unreachable' variable.
+
+Reported-by: kbuild test robot <fengguang.wu@intel.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: 9cfffb116887 ("objtool: Skip all "unreachable instruction" warnings for gcov kernels")
+Link: http://lkml.kernel.org/r/c243dc78eb2ffdabb6e927844dea39b6033cd395.1500939244.git.jpoimboe@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+[just Makefile.build as the other parts of this patch already applied - gregkh]
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
-@@ -594,7 +594,7 @@ static void bnx2x_ets_e3b0_nig_disabled(
- 	 * slots for the highest priority.
- 	 */
- 	REG_WR(bp, (port) ? NIG_REG_P1_TX_ARB_NUM_STRICT_ARB_SLOTS :
--		   NIG_REG_P1_TX_ARB_NUM_STRICT_ARB_SLOTS, 0x100);
-+		   NIG_REG_P0_TX_ARB_NUM_STRICT_ARB_SLOTS, 0x100);
- 	/* Mapping between the CREDIT_WEIGHT registers and actual client
- 	 * numbers
- 	 */
+---
+ scripts/Makefile.build |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -253,6 +253,9 @@ objtool_args = check
+ ifndef CONFIG_FRAME_POINTER
+ objtool_args += --no-fp
+ endif
++ifdef CONFIG_GCOV_KERNEL
++objtool_args += --no-unreachable
++endif
+ 
+ # 'OBJECT_FILES_NON_STANDARD := y': skip objtool checking for a directory
+ # 'OBJECT_FILES_NON_STANDARD_foo.o := 'y': skip objtool checking for a file
 
 
