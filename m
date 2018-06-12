@@ -2,98 +2,180 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4053DC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:45:16 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id F2A09C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:45:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E76D82086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:45:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dTUxjHPZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E76D82086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id A7D1120660
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:45:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7D1120660
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934193AbeFLRpO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 13:45:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47238 "EHLO mail.kernel.org"
+        id S934245AbeFLRpr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 13:45:47 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33518 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933574AbeFLRpN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 13:45:13 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S933244AbeFLRpq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 13:45:46 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4521F20660;
-        Tue, 12 Jun 2018 17:45:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528825512;
-        bh=X0d/s4r7cZwINA0t1AE4pSdBKw4CfF0hUElmnO6yDl0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dTUxjHPZd5g4a+w9RphsIJ46bVwniLhh3rozVQ0WkoZ7vNXY7jI4NBredeSsLw5s1
-         SC9BSe0/eulswIaIPWXI/R9cllSdJRaEPfDI0ENXi4Qg7uT4ZslBuomqz2F8zV+6G4
-         LjFpcMhuBzQbFAH7PxoxTXpDTNKhBPH2/9CgKOZI=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 3.18 07/21] fix io_destroy()/aio_complete() race
-Date:   Tue, 12 Jun 2018 18:52:04 +0200
-Message-Id: <20180612164825.712821017@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180612164825.401145490@linuxfoundation.org>
-References: <20180612164825.401145490@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        by mx1.redhat.com (Postfix) with ESMTPS id D4EF4307D854;
+        Tue, 12 Jun 2018 17:45:45 +0000 (UTC)
+Received: from hmswarspite.think-freely.org (ovpn-121-97.rdu2.redhat.com [10.10.121.97])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0529484ED;
+        Tue, 12 Jun 2018 17:45:41 +0000 (UTC)
+Date:   Tue, 12 Jun 2018 13:45:35 -0400
+From:   Neil Horman <nhorman@redhat.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        npmccallum@redhat.com, LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        intel-sgx-kernel-dev@lists.01.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, andy@infradead.org
+Subject: Re: [intel-sgx-kernel-dev] [PATCH v11 13/13] intel_sgx: in-kernel
+ launch enclave
+Message-ID: <20180612174535.GE19168@hmswarspite.think-freely.org>
+References: <20180608171216.26521-1-jarkko.sakkinen@linux.intel.com>
+ <20180608171216.26521-14-jarkko.sakkinen@linux.intel.com>
+ <CALCETrW3aZJMMm1GqgPm-cOD3p7JvKxLj7j85KJwfNW2iHTj4A@mail.gmail.com>
+ <CALCETrVp1ZhrxF5bQDSaZpLucS88tErejj5JC6Jb0fB5etWRbA@mail.gmail.com>
+ <20180611115255.GC22164@hmswarspite.think-freely.org>
+ <CALCETrX6SD0ThNzpjkbXd7CbNTguzqiQhWMomGK+tocx_DE9XQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrX6SD0ThNzpjkbXd7CbNTguzqiQhWMomGK+tocx_DE9XQ@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Tue, 12 Jun 2018 17:45:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+On Mon, Jun 11, 2018 at 09:55:29PM -0700, Andy Lutomirski wrote:
+> On Mon, Jun 11, 2018 at 4:52 AM Neil Horman <nhorman@redhat.com> wrote:
+> >
+> > On Sun, Jun 10, 2018 at 10:17:13PM -0700, Andy Lutomirski wrote:
+> > > > On Jun 9, 2018, at 10:39 PM, Andy Lutomirski <luto@kernel.org> wrote:
+> > > >
+> > > > On Fri, Jun 8, 2018 at 10:32 AM Jarkko Sakkinen
+> > > > <jarkko.sakkinen@linux.intel.com> wrote:
+> > > >>
+> > > >> The Launch Enclave (LE) generates cryptographic launch tokens for user
+> > > >> enclaves. A launch token is used by EINIT to check whether the enclave
+> > > >> is authorized to launch or not. By having its own launch enclave, Linux
+> > > >> has full control of the enclave launch process.
+> > > >>
+> > > >> LE is wrapped into a user space proxy program that reads enclave
+> > > >> signatures outputs launch tokens. The kernel-side glue code is
+> > > >> implemented by using the user space helper framework.  The IPC between
+> > > >> the LE proxy program and kernel is handled with an anonymous inode.
+> > > >>
+> > > >> The commit also adds enclave signing tool that is used by kbuild to
+> > > >> measure and sign the launch enclave. CONFIG_INTEL_SGX_SIGNING_KEY points
+> > > >> to a PEM-file for the 3072-bit RSA key that is used as the LE public key
+> > > >> pair. The default location is:
+> > > >>
+> > > >>  drivers/platform/x86/intel_sgx/sgx_signing_key.pem
+> > > >>
+> > > >> If the default key does not exist kbuild will generate a random key and
+> > > >> place it to this location. KBUILD_SGX_SIGN_PIN can be used to specify
+> > > >> the passphrase for the LE public key.
+> > > >
+> > > > It seems to me that it might be more useful to just commit a key pair
+> > > > into the kernel.  As far as I know, there is no security whatsoever
+> > > > gained by keeping the private key private, so why not make
+> > > > reproducible builds easier by simply fixing the key?
+> > >
+> > > Having thought about this some more, I think that you should
+> > > completely remove support for specifying a key. Provide a fixed key
+> > > pair, hard code the cache, and call it a day. If you make the key
+> > > configurable, every vendor that has any vendor keys (Debian, Ubuntu,
+> > > Fedora, Red Hat, SuSE, Clear Linux, etc) will see that config option
+> > > and set up their own key pair for no gain whatsoever.  Instead, it'll
+> > > give some illusion of security and it'll slow down operations in a VM
+> > > guest due to swapping out the values of the MSRs.  And, if the code to
+> > > support a locked MSR that just happens to have the right value stays
+> > > in the kernel, then we'll risk having vendors actually ship one
+> > > distro's public key hash, and that will seriously suck.
+> > >
+> > If you hard code the key pair however, doesn't that imply that anyone can sign a
+> > user space binary as a launch enclave, and potentially gain control of the token
+> > granting process?
+> 
+> Yes and no.
+> 
+> First of all, the kernel driver shouldn't be allowing user code to
+> launch a launch enclave regardless of signature.  I haven't gotten far
+> enough in reviewing the code to see whether that's the case, but if
+> it's not, it should be fixed before it's merged.
+> 
+Ok, I agree with you here.
 
-------------------
+> But keep in mind that control of the token granting process is not the
+> same thing as control over the right to launch an enclave.  On systems
+> without the LE hash MSRs, Intel controls the token granting process
+> and, barring some attack, an enclave that isn't blessed by Intel can't
+> be launched.  Support for that model will not be merged into upstream
+> Linux.  But on systems that have the LE hash MSRs and leave them
+> unlocked, there is effectively no hardware-enforced launch control.
+> Instead we have good old kernel policy.  If a user wants to launch an
+> enclave, they need to get the kernel to launch the enclave, and the
+> kernel needs to apply its policy.  The patch here (the in-kernel
+> launch enclave) has a wide-open policy.
+> 
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+Right, also agree here.  Systems without Flexible Launch Control are a
+non-starter, we're only considering FLC systems here
 
-commit 4faa99965e027cc057c5145ce45fa772caa04e8d upstream.
+> So, as a practical matter, if every distro has their own LE key and
+> keeps it totally safe, then a system that locks the MSRs to one
+> distro's key makes it quite annoying to run another distro's intel_sgx
+> driver, but there is no effect on the actual security of the system.
+> 
+I agree that for systems that firmware-lock the msrs are annoying, but I would
+think that IHV's would want to keep those msrs unlocked specifically to allow a
+wide range of distributions to use this feature.
 
-If io_destroy() gets to cancelling everything that can be cancelled and
-gets to kiocb_cancel() calling the function driver has left in ->ki_cancel,
-it becomes vulnerable to a race with IO completion.  At that point req
-is already taken off the list and aio_complete() does *NOT* spin until
-we (in free_ioctx_users()) releases ->ctx_lock.  As the result, it proceeds
-to kiocb_free(), freing req just it gets passed to ->ki_cancel().
+As for benefits to security, I think there are some.  Namely, by leaving the
+MSRS unlocked, A distribution can, rather than providing their own distirbution
+key, pass the root of trust on to the end user.  I can easily envision a
+downstream customer that wants to use SGX, and do so in such a way that they are
+assured that their OS vendor doesn't have the ability to run an LE on their
+system (at least not without the visual cue of specifying a different key hash
+at the OS boot).
 
-Fix is simple - remove from the list after the call of kiocb_cancel().  All
-instances of ->ki_cancel() already have to cope with the being called with
-iocb still on list - that's what happens in io_cancel(2).
-
-Cc: stable@kernel.org
-Fixes: 0460fef2a921 "aio: use cancellation list lazily"
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- fs/aio.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -560,9 +560,8 @@ static void free_ioctx_users(struct perc
- 	while (!list_empty(&ctx->active_reqs)) {
- 		req = list_first_entry(&ctx->active_reqs,
- 				       struct kiocb, ki_list);
--
--		list_del_init(&req->ki_list);
- 		kiocb_cancel(req);
-+		list_del_init(&req->ki_list);
- 	}
- 
- 	spin_unlock_irq(&ctx->ctx_lock);
-
+> >  It was my understanding that the value of the key pair was
+> > that the end user was guaranteed autonomy and security over which processes
+> > could start enclaves.  By publishing a fixed key pair, it seems to remove that
+> > ability.
+> 
+> If someone comes up with an actual machine that grants the actual end
+> user (where the end user is the person who bought the thing, not the
+> OEM) control over the MSRs, *and* the actual end user wants to limit
+> what enclaves can be launched even if the kernel is compromised, *and*
+> there is some actual argument for why this is useful (as opposed to
+> some compliance checkbox), then Linux could reasonably consider adding
+> support for this use case.  But that would be a separate patch.
+> 
+> >
+> > What would be nicer (I think) would be the abilty to specify both the public and
+> > the private key at run time.  the use case here is not one in which a vendor or
+> > os distribution ships a key pair, but one in which a downstream user doesn't
+> > want a vendor/os distribution to have any cryptographic information installed on
+> > their system
+> 
+> For what gain?
+My use case above is the primary one I was thinking of
+Neil
 
