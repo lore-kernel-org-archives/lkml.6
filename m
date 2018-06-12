@@ -6,43 +6,44 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 75D4BC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 14:50:44 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8C2A5C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 14:50:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35C72208B2
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 14:50:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35C72208B2
+	by mail.kernel.org (Postfix) with ESMTP id 4C39D208B1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 14:50:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C39D208B1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934152AbeFLOun (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 10:50:43 -0400
-Received: from mga06.intel.com ([134.134.136.31]:9886 "EHLO mga06.intel.com"
+        id S934284AbeFLOup (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 10:50:45 -0400
+Received: from mga17.intel.com ([192.55.52.151]:33186 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932750AbeFLOul (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 10:50:41 -0400
-X-Amp-Result: UNSCANNABLE
+        id S932750AbeFLOun (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 10:50:43 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2018 07:50:40 -0700
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2018 07:50:43 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,215,1526367600"; 
-   d="scan'208";a="231959332"
+   d="scan'208";a="63434973"
 Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
-  by orsmga005.jf.intel.com with ESMTP; 12 Jun 2018 07:50:38 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 12 Jun 2018 07:50:42 -0700
 Received: from kbuild by bee with local (Exim 4.84_2)
         (envelope-from <lkp@intel.com>)
-        id 1fSkd4-000WXW-6I; Tue, 12 Jun 2018 22:50:38 +0800
+        id 1fSkd4-000WXt-A6; Tue, 12 Jun 2018 22:50:38 +0800
 Date:   Tue, 12 Jun 2018 22:50:37 +0800
-From:   kbuild test robot <lkp@intel.com>
+From:   kbuild test robot <fengguang.wu@intel.com>
 To:     Niklas Cassel <niklas.cassel@linaro.org>
 Cc:     kbuild-all@01.org, Kalle Valo <kvalo@codeaurora.org>,
         "David S. Miller" <davem@davemloft.net>,
         Niklas Cassel <niklas.cassel@linaro.org>,
         ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] ath10k: allow ATH10K_SNOC with COMPILE_TEST
-Message-ID: <201806122228.8vAQXcD6%fengguang.wu@intel.com>
+Subject: [RFC PATCH] ath10k: ath10k_snoc_get_ce_id_from_irq() can be static
+Message-ID: <20180612145037.GA95182@lkp-ib03>
 References: <20180612113907.15043-2-niklas.cassel@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -57,30 +58,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Niklas,
 
-Thank you for the patch! Perhaps something to improve:
-
-[auto build test WARNING on ath6kl/ath-next]
-[also build test WARNING on next-20180612]
-[cannot apply to v4.17]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Niklas-Cassel/ath10k-do-not-mix-spaces-and-tabs-in-Kconfig/20180612-194241
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/kvalo/ath.git ath-next
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
-
-
-sparse warnings: (new ones prefixed by >>)
-
->> drivers/net/wireless/ath/ath10k/snoc.c:823:5: sparse: symbol 'ath10k_snoc_get_ce_id_from_irq' was not declared. Should it be static?
->> drivers/net/wireless/ath/ath10k/snoc.c:871:6: sparse: symbol 'ath10k_snoc_init_napi' was not declared. Should it be static?
-
-Please review and possibly fold the followup patch.
-
+Fixes: aecf55e7df3a ("ath10k: allow ATH10K_SNOC with COMPILE_TEST")
+Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ snoc.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/ath10k/snoc.c b/drivers/net/wireless/ath/ath10k/snoc.c
+index a3a7042..92ddb1c 100644
+--- a/drivers/net/wireless/ath/ath10k/snoc.c
++++ b/drivers/net/wireless/ath/ath10k/snoc.c
+@@ -820,7 +820,7 @@ static const struct ath10k_bus_ops ath10k_snoc_bus_ops = {
+ 	.write32	= ath10k_snoc_write32,
+ };
+ 
+-int ath10k_snoc_get_ce_id_from_irq(struct ath10k *ar, int irq)
++static int ath10k_snoc_get_ce_id_from_irq(struct ath10k *ar, int irq)
+ {
+ 	struct ath10k_snoc *ar_snoc = ath10k_snoc_priv(ar);
+ 	int i;
+@@ -868,7 +868,7 @@ static int ath10k_snoc_napi_poll(struct napi_struct *ctx, int budget)
+ 	return done;
+ }
+ 
+-void ath10k_snoc_init_napi(struct ath10k *ar)
++static void ath10k_snoc_init_napi(struct ath10k *ar)
+ {
+ 	netif_napi_add(&ar->napi_dev, &ar->napi, ath10k_snoc_napi_poll,
+ 		       ATH10K_NAPI_BUDGET);
