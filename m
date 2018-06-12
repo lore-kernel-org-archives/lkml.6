@@ -2,302 +2,132 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 897A0C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:56:21 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7802AC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 14:01:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14A62208B1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:56:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14A62208B1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 20E35208B0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 14:01:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E0hw6lIv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20E35208B0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934010AbeFLN4T (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 09:56:19 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48020 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933550AbeFLN4P (ORCPT
+        id S933808AbeFLOBj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 10:01:39 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:35647 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933295AbeFLOBh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 09:56:15 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5CDqwxB012332
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 09:56:15 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jje8avpm1-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 09:56:14 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Tue, 12 Jun 2018 14:56:12 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 12 Jun 2018 14:56:09 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5CDu74227001042
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 12 Jun 2018 13:56:07 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B3FAA5204B;
-        Tue, 12 Jun 2018 13:45:37 +0100 (BST)
-Received: from [9.152.224.92] (unknown [9.152.224.92])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 1B6BC52041;
-        Tue, 12 Jun 2018 13:45:37 +0100 (BST)
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH RFC 2/2] vfio-ccw: support for halt/clear subchannel
-To:     Cornelia Huck <cohuck@redhat.com>
-Cc:     Halil Pasic <pasic@linux.ibm.com>,
-        Dong Jia Shi <bjsdjshi@linux.ibm.com>,
-        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, qemu-s390x@nongnu.org,
-        qemu-devel@nongnu.org
-References: <20180509154822.23510-1-cohuck@redhat.com>
- <20180509154822.23510-3-cohuck@redhat.com>
- <c18f9b9f-da00-1a0b-8ef0-7ac223c73d1a@linux.ibm.com>
- <20180515181006.0cb1dfc2.cohuck@redhat.com>
- <a5d08fb7-d9c1-b230-fe0c-acebbda2ba65@linux.ibm.com>
- <20180522145208.310143ea.cohuck@redhat.com>
- <4e4001cc-540e-0f2b-bbd1-1f82ca594bb3@linux.ibm.com>
- <20180605151449.22aafbfc.cohuck@redhat.com>
- <e73038ff-fb2d-5865-8b84-e775990f3983@linux.ibm.com>
- <20180606142131.74ea2eb7.cohuck@redhat.com>
- <5b77ec9c-41b8-2e32-ce79-d9005b93fdd0@linux.ibm.com>
- <20180607115442.6a779ed9.cohuck@redhat.com>
- <86d57698-3ea7-a390-2217-07c6d41ca9ed@linux.ibm.com>
- <20180608142022.7dd6a658.cohuck@redhat.com>
- <d68340a2-bb1b-cef9-e394-f0d55983c0bb@linux.ibm.com>
- <20180608164514.2e8248f4.cohuck@redhat.com>
- <99ca65a2-ee33-6353-b6b7-aa4c07a34e2a@linux.ibm.com>
- <20180612115900.4aa319d1.cohuck@redhat.com>
-From:   Pierre Morel <pmorel@linux.ibm.com>
-Date:   Tue, 12 Jun 2018 15:56:06 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 12 Jun 2018 10:01:37 -0400
+Received: by mail-pl0-f68.google.com with SMTP id k1-v6so6038011plt.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 07:01:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to;
+        bh=JNBKUM4Tz/CwiHqCwbCjYcn0+R6qgjM0VDTm+6Ih/48=;
+        b=E0hw6lIvtLMMuXhKnM8PHcnc5WO6RrHoPgBLhePAxHXML2sQrSbfRrnDI9QUebjGFC
+         JZU82zpCj6RhNczdqrg/L+nvIRusDU0F4+I/pIqUvsQKiQhRTMluvM6ka0SZhn0M3ABV
+         tHYnejCIBVz9K/5yt5aeFG7w0q+VETBesU5K26qhWyb238x+nBhhXpNTs0xBqYihUHGF
+         dvR38hkNHIBRPBDcWK73IJeEBXgwImNgqPmE+WEQbmcYyP3QwPEmtePyC+WTL6vfdmZX
+         l72GuPBcfQSgOu9qzioCwwGN8M06uiv+FTg4G5RI2bT41DAWM9bdoYnRRci0L2jkeNGO
+         56Ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to;
+        bh=JNBKUM4Tz/CwiHqCwbCjYcn0+R6qgjM0VDTm+6Ih/48=;
+        b=Gdt/AHJHcx2Nm7DbFKbyAXhe4km8Lkr+OglSPepxNX2hP1rw0vtznsuimyFoiJ6kzK
+         SLJOT0sUofBlHMTi3EO+4v5mrb5FCXwo7QNdr4usti3cn4Be4NWKGUpp/t5XJH0XFaOk
+         5ih8OvEi5VDu9wZVKQR7wq4ChGEIIH+SqvE3mIxWL5CftZPJhh1e6uV1l2yfGddM8z52
+         W3YpgseglUYCI6dfBY1f+wj6I1nitQLo2/TN/mC8TA/ulAx1u6K56pQxzkchTqrsxkmQ
+         1IEhi+RZOZfJgG/BjULGX1nbESIi+aWJbeK7NCLUbTZI8vls0nbk0Duyz2pBSbdFvwZI
+         zR9Q==
+X-Gm-Message-State: APt69E3bYlk0ddStecRA91bacmI63HxtktCZlD7TZlYyeSLTCAPHT8nM
+        KYtPLscBGP01d78m8MfHwxwaeyGJ6gOhVzWxZzXBbw==
+X-Google-Smtp-Source: ADUXVKJnDVTExQ+i5F60XdndzY9czKMgIG5RqKRidFvhGd2anBuJWjEe7dx8js9AgrtcmNtdkpCcw0GYIdSG7qkoz7o=
+X-Received: by 2002:a17:902:5a4c:: with SMTP id f12-v6mr567447plm.85.1528812096550;
+ Tue, 12 Jun 2018 07:01:36 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180612115900.4aa319d1.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18061213-0016-0000-0000-000001DAED63
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18061213-0017-0000-0000-0000322E2199
-Message-Id: <d5416c61-252a-5bb8-aebe-46d883e5822e@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-12_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806120159
+Received: by 2002:a17:90a:de2:0:0:0:0 with HTTP; Tue, 12 Jun 2018 07:01:15
+ -0700 (PDT)
+In-Reply-To: <CACT4Y+YhpkZt2ufQo+hBV8FkAPE+wzxM1PUhQSZbQFWFR9bW_Q@mail.gmail.com>
+References: <000000000000019f50056b7f0890@google.com> <20180506022428.GQ29205@thunk.org>
+ <d295f575-ba4b-b0ba-a856-405f9d393c9d@I-love.SAKURA.ne.jp>
+ <20180506133154.GS29205@thunk.org> <201805062340.HFC78625.VFFFOHSOtQMOJL@I-love.SAKURA.ne.jp>
+ <20180506203046.GV29205@thunk.org> <CACT4Y+YhpkZt2ufQo+hBV8FkAPE+wzxM1PUhQSZbQFWFR9bW_Q@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 12 Jun 2018 16:01:15 +0200
+Message-ID: <CACT4Y+Z+2YW_VALJzzQr6hLsviA=dXk3iFqwVf+P5zqojeC9Zg@mail.gmail.com>
+Subject: Re: kernel panic: EXT4-fs (device loop0): panic forced after error
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        syzbot <syzbot+a9a45987b8b2daabdc88@syzkaller.appspotmail.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/06/2018 11:59, Cornelia Huck wrote:
-> On Fri, 8 Jun 2018 17:51:27 +0200
-> Pierre Morel <pmorel@linux.ibm.com> wrote:
->
->> On 08/06/2018 16:45, Cornelia Huck wrote:
->>> On Fri, 8 Jun 2018 15:13:28 +0200
->>> Halil Pasic <pasic@linux.ibm.com> wrote:
->>>   
->>>> On 06/08/2018 02:20 PM, Cornelia Huck wrote:
->>>>>>> My proposal is to do the same
->>>>>>> copying to scsw(r) again, which would mean we get a request with both
->>>>>>> the halt and the start bit set. The vfio code now needs to do a hsch
->>>>>>> (instead of a ssch). The real channel subsystem should figure this out,
->>>>>>> as we can't reliably check whether the start function has concluded
->>>>>>> already (there's always a race window).
->>>>>> This I do not agree scsw(r) is part of the driver.
->>>>>> The interface here is not a device interface anymore but a driver
->>>>>> interface.
->>>>>> SCSW is a status, it is at its place in QEMU device interface with the
->>>>>> guest
->>>>>> but here pwrite() sends a command.
->>>>> Hm, I rather consider that "we write a status, and the backend figures
->>>>> out what to do based on that status".
->>>>>       
->>>> The status of what? Kind of a target status?
->>>>
->>>> I think this approach is the source of lots of complications. For instance
->>>> take xsch. How are we supposed to react to a guest xsch (in QEMU and
->>>> in the kernel module)? My guess is that the right thing to do is to issue
->>>> an xsch in the vfio-ccw kernel module on the passed through subchannel.
->>>> But there is no bit in fctl for cancel.
->>>>
->>>> Bottom line is: I'm not happy with the current design but I'm not sure
->>>> if it's practical to do something about it (i.e. change it radically).
->>> It might make sense to keep this for ssch, maybe reuse it for hsch/csch,
->> I do not think we need to change the interface radically but
->> I also do not thing we should extend it by using multiple commands
->> in a single syscall.
+On Mon, May 14, 2018 at 11:12 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> On Sun, May 6, 2018 at 10:30 PM, Theodore Y. Ts'o <tytso@mit.edu> wrote:
+>> On Sun, May 06, 2018 at 11:40:10PM +0900, Tetsuo Handa wrote:
+>>> > We could add a full kernel-mode fsck which gets run before mount ---
+>>> > the question is how much complexity we want to add.  If SELinux is
+>>> > enabled, then we have to check xattr consinsistency, etc., etc.
+>>>
+>>> You are thinking too complicated. I'm not asking for kernel-mode fsck.
 >>
->> Currently:
->>     - only SSCH bit is used
->>     - only the SSCH instruction is implemented
->>     - all other bits, CSCH,HSCH produce an error when used alone
->>       or are ignored in conjonction with SSCH
->>      - there is no implementation using the other bits
->>      - It is not specified in the documentation that multiple commands
->>        can be used.
-> Looking at Documentation/s390/vfio-ccw.txt, it states that "scsw_area
-> should be filled with the SCSW of the Virtual Subchannel". This seems
-> to indicate that this is really intended to be a scsw... but I agree,
-> it does lack details.
->
->> Looking at these, I think there is no trouble to modify the way
->> the Kernel interface is implemented without impact on current QEMU.
+>> That is the logical outcome of what you are asking for.  There will
+>> *always* be a point after which where we can't atomically unwind the
+>> mount, and we have to proceed.  And after that point, when we detect
+>> an inconsistency all we can do is what the system administrator
+>> requested that we do.  Sure, for this particular case, we can
+>> significantly add more complexity and decrease the maintainability of
+>> the code paths involved.  But there will always be another case
+>> (e.g,. xattr's being read by SELinux or IMA) that will happen during
+>> the mount, and are we expected to catch all of those cases?
 >>
->> But if we begin to allow ssch/hsch/csch in a single command
->> in a new implementation we will be stuck with it.
-> Yes, we're currently still free to go in different directions; adding
-> support for hsch/csch to the interface in the way I did would fix it.
-> In any case, we need better documentation :/
->
->>> and think about something else for other things we want to handle
->> Yes we will need to have another interface, ioctl, or new region,
->> all possible, but really more complex.
+>> We do catch a lot of cases where we refuse the mount and complain that
+>> the file system is badly corrupted.  This just doesn't happen to be
+>> one of them.
 >>
->>> (xsch, channel monitoring, the path handling stuff for which we already
->> We can use another region for getting up information on path handling
->> or monitoring, as does the patch IIRC.
->> This is not a problem.
-> Not a problem, I agree (and yes, the patch did that).
+>>> I'm just suggesting that mount() request returns an error to the caller
+>>> (and the administrator invokes fsck etc. as needed).
+>>>
+>>> We are fixing bugs which occur during mount operation (e.g.
+>>>
+>>>   https://groups.google.com/d/msg/syzkaller-bugs/Yp4q8n-MijM/yDX3zl1XBQAJ
+>>>   https://groups.google.com/d/msg/syzkaller-bugs/4C4oiBX8vZ0/W6pi8NdbBgAJ
+>>>   https://groups.google.com/d/msg/syzkaller-bugs/QBnHAQBy2pI/ccf-yL5bBgAJ
+>>
+>> These are different because there are kernel OOPS or warning messages.
+>> This is neither a kernel OOPS or a WARN_ON or BUG_ON.
+>>
+>>> And extX filesystem is different from other filesystems that it invokes
+>>> error action specified by errors= parameter rather than return an error to
+>>> the caller.
+>>
+>> Syzkaller (or anyone else) can mount the file system with
+>> errors=continue or errors=remount-ro if it wants to override the
+>> requested behavior of the flag in the superblock which is manipulated
+>> by tune2fs.
 >
-> For xsch, I like Halil's suggestion of simply always setting cc 2.
 >
-> Channel monitoring is a difficult beast (need to pass through msch, mix
-> of virtual and passthrough devices on the machine which have different
-> semantics etc.) I put some of my concerns into
-> https://wiki.qemu.org/ToDo/Channel_I/O_Passthrough; please add to that
-> if you have further thoughts.
->
-> We should keep those requirements in mind, even if we won't implement
-> support for it right now.
->
->>> had a prototype etc.) It's probably not practical to do radical surgery
->>> on the existing code.
->> There is no need for radical surgery, no change is required to older or
->> current QEMU code.
->> My concern is to avoid a future implementation merging multiple commands
->> in a single syscall.
->> It is not only a problem of beauty of the interface,
->> using a status is for the up-stream, from device to program.
->> Using the same construct, same name and same location, to produce commands
->> for the down stream is misleading and source of incoherence.
-> OK, I think I see your concern now.
->
-> What happens on the real hardware is that we do a ssch etc. and this
-> triggers a change that is visible in the scsw when we do a stsch.
->
-> What happens here is that the guest doing a ssch triggers a change in
-> our virtual scsw in QEMU (so far, so good); then we send this scsw to
-> the vfio module, which looks at the scsw to figure out that it should
-> do a ssch on the host. This works fine to figure out that a ssch needs
-> to be done, and would also work for hsch and csch, but it is really a
-> bit of reverse engineering, and it would probably fail for rsch
-> (haven't thought about that yet). To parse the intention of doing a
-> halt or clear out of the scsw_area, we need to rely (a) on user space
-> doing the right thing, and (b) on us implementing the rules for which
-> function can be initiated when correctly. If we treat fctl as a simple
-> command field, we'll just do what user space asks of us directly.
->
-> So, what are you proposing? Being more specific and stating that the
-> scsw is not necessarily a real scsw, but merely a vehicle for sending a
-> command? Or keeping it as it is now for ssch, and adding a second
-> interface for hsch/csch (and maybe rsch, msch, ...)?
->
+> Filed https://github.com/google/syzkaller/issues/599 to always pass
+> errors=remount-ro when mounting ext4.
 
+This was fixed in syzkaller. With this commit:
+https://github.com/google/syzkaller/commit/deb0e69e1028ba3152631c3f1d2fac98c12e33a5
+syzkaller should always pass errors=continue when mounting ext2/3/4.
 
-I said no radical surgery, but after thinking more about it...
-I am not sure.
-
-Let's explain this:
-
-I see 2 ways to proceed but my favorite is definitively to introduce 
-versioning.
-
-
-Way 1)
-
-This was the way I first thought about.
-We keep the existing IO Regionand structures, and are more
-specific by stating that the io_region is a command region during write
-entry and a status region during interrupt handling:
-This allow us to use the 3 bits of the FCTL field of the SCSW to pass
-commands to the kernel and stay backward compatible.
-The FCTL field has 3 bits => we can have 8 commands.
-
-PRO: small change
-
-CONTRA: This is still confusing, we do not really solve this
-         unclarity problem since QEMU view / documentation and
-         Linux view / documentation differ or we update QEMU.
-         Moreover this does not allow for long term extensions
-         and/or re-design.
-
-
-
-Way 2)
-
-We use the device VFIO versioning using the capability chain to advertise
-a new interface.
-
-This the preferred way, it is sane, allows for the userland backward
-compatibility and allows to have a new command interface, extensible
-for future use.
-
-In this case we can extend the interface to be any kind we want
-in a next version, pwrite with new io_region, mmap on new
-IO regions, status region...
-
-PRO: Extensible and also goes in the VFIO INFO extension direction
-      proposed by Alex
-
-CONTRA: I see none outer more work to do (but is it a problem?)
-
-
-====================
-
-Extra argumentation for versioning support
-
-
-Suppose a future implementation with 4 mapped regions like
-the following:
-
-- A Status region (RO updated as result of command and IRQ)
-
-- A command region (WO where the user send its commands)
-   userland write here to trigger IO (quite as currently)
-
-- A CCW program region (RW where the CCW chain is handled)
-   most handling done from userspace, last translations in kernel,
-   double buffering...
-
-- A performance / measurement / statistics region (RO)
-   This is updated asynchronously by hardware and/or driver
-
-This is purely theoretical and we do not need to do all at once
-but if we want to extend the implementation without problems
-and continue backward compatibility the versioning and capability
-handling is a must.
-
-====================
-
-
-Regards,
-
-Pierre
-
-
-
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
-
+#syz invalid
