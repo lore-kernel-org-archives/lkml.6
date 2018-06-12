@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C0155C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:23:50 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0CE66C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:24:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80CCD208B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:23:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80CCD208B0
+	by mail.kernel.org (Postfix) with ESMTP id C11F2208CB
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:24:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C11F2208CB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osadl.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933762AbeFLRXg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 13:23:36 -0400
-Received: from www.osadl.org ([62.245.132.105]:58253 "EHLO www.osadl.org"
+        id S934097AbeFLRYt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 13:24:49 -0400
+Received: from www.osadl.org ([62.245.132.105]:58259 "EHLO www.osadl.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754209AbeFLRXf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 13:23:35 -0400
+        id S932976AbeFLRYr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 13:24:47 -0400
 Received: from debian01.hofrr.at (178.115.242.59.static.drei.at [178.115.242.59] (may be forged))
-        by www.osadl.org (8.13.8/8.13.8/OSADL-2007092901) with ESMTP id w5CHMdrw021809;
-        Tue, 12 Jun 2018 19:22:46 +0200
+        by www.osadl.org (8.13.8/8.13.8/OSADL-2007092901) with ESMTP id w5CHNUqM021912;
+        Tue, 12 Jun 2018 19:23:31 +0200
 From:   Nicholas Mc Guire <hofrat@osadl.org>
 To:     Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
@@ -36,55 +36,63 @@ Cc:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
         linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>
-Subject: [PATCH 2/2] media: stm32-dcmi: add mandatory of_node_put() in success path
-Date:   Tue, 12 Jun 2018 19:22:18 +0200
-Message-Id: <1528824138-19089-2-git-send-email-hofrat@osadl.org>
+Subject: [PATCH] media: stm32-dcmi: simplify of_node_put usage
+Date:   Tue, 12 Jun 2018 19:23:16 +0200
+Message-Id: <1528824196-19149-1-git-send-email-hofrat@osadl.org>
 X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1528824138-19089-1-git-send-email-hofrat@osadl.org>
-References: <1528824138-19089-1-git-send-email-hofrat@osadl.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The endpoint allocated by of_graph_get_next_endpoint() needs an of_node_put()
-in both error and success path. As  ep  is not used the refcount decrement
-can be right after the last use of  ep.
+This does not fix any bug - this is just a code simplification. As
+np is not used after passing it to v4l2_fwnode_endpoint_parse() its
+refcount can be decremented immediately and at one location.
 
 Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: commit 37404f91ef8b ("[media] stm32-dcmi: STM32 DCMI camera interface driver")
 ---
 
-Problem located with an experimental coccinelle script
+Issue found during code reading.
 
 Patch was compile tested with: x86_64_defconfig, MEDIA_SUPPORT=y
 MEDIA_CAMERA_SUPPORT=y, V4L_PLATFORM_DRIVERS=y, OF=y, COMPILE_TEST=y
 CONFIG_VIDEO_STM32_DCMI=y
-(There are a number of sparse warnings - not related to the changes though)
+(There are a few sparse warnings - but unrelated to the lines changed)
 
-Patch is on top of "[PATCH 1/2] media: stm32-dcmi: drop unneceeary while(1)
-loop" against 4.17.0 (localversion-next is next-20180608)
+Patch is against 4.17.0 (localversion-next is next-20180608)
 
- drivers/media/platform/stm32/stm32-dcmi.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/media/platform/stm32/stm32-dcmi.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
 diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
-index 70b81d2..542d148 100644
+index 2e1933d..0b61042 100644
 --- a/drivers/media/platform/stm32/stm32-dcmi.c
 +++ b/drivers/media/platform/stm32/stm32-dcmi.c
-@@ -1610,10 +1610,9 @@ static int dcmi_graph_parse(struct stm32_dcmi *dcmi, struct device_node *node)
- 		return -EINVAL;
+@@ -1696,23 +1696,20 @@ static int dcmi_probe(struct platform_device *pdev)
+ 	}
  
- 	remote = of_graph_get_remote_port_parent(ep);
--	if (!remote) {
--		of_node_put(ep);
-+	of_node_put(ep);
-+	if (!remote)
- 		return -EINVAL;
--	}
+ 	ret = v4l2_fwnode_endpoint_parse(of_fwnode_handle(np), &ep);
++	of_node_put(np);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Could not parse the endpoint\n");
+-		of_node_put(np);
+ 		return -ENODEV;
+ 	}
  
- 	/* Remote node to connect */
- 	dcmi->entity.node = remote;
+ 	if (ep.bus_type == V4L2_MBUS_CSI2) {
+ 		dev_err(&pdev->dev, "CSI bus not supported\n");
+-		of_node_put(np);
+ 		return -ENODEV;
+ 	}
+ 	dcmi->bus.flags = ep.bus.parallel.flags;
+ 	dcmi->bus.bus_width = ep.bus.parallel.bus_width;
+ 	dcmi->bus.data_shift = ep.bus.parallel.data_shift;
+ 
+-	of_node_put(np);
+-
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq <= 0) {
+ 		dev_err(&pdev->dev, "Could not get irq\n");
 -- 
 2.1.4
 
