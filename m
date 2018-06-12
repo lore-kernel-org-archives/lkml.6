@@ -2,115 +2,107 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id BF72BC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:24:32 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7E7C5C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:24:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FA3C2084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:24:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FA3C2084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3F9BB2089C
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:24:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F9BB2089C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934906AbeFLWYa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 18:24:30 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:44841 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934418AbeFLWY2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 18:24:28 -0400
-Received: by mail-pf0-f194.google.com with SMTP id h12-v6so256990pfk.11;
-        Tue, 12 Jun 2018 15:24:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=J9IvU1cX1LPBQyS4HNvbWY1dc6IN6lPqYJsKAqWSv+4=;
-        b=MlpXfIq+zWwjZHbnUDdz/Opyh706l3t8ksNjNRjmQ9bEj4Ef/VzyCZdHaLhR370E1h
-         JunvB7yCo4tPyQMf7qOPY6bKTnw8q3Y49rebXQnhfxUYLisBiIykvrClT9t1tm+/m5q8
-         lWEABb+yF05aLy1aFsGegA1ZtC/R3+0jISOdSW5FymFVRU7HpIsQwzg/qCeyVvUXlet9
-         flx+JLN79eKK86+VR141zQWO/zhDkRhdUFa6MzLamxUKIs6jjS8iIgKa/9ffXYPpqc+d
-         zkPGGo8oSp2Q7SYn1W+jWe9PwLtlJIWFMo4AYn3euIhOwzmdIW5h7iCCAD2n7NacVmiK
-         HOxA==
-X-Gm-Message-State: APt69E36v/wlLcbVPzz9q5qvVFtLurUZcmFQDNIz31rhAYXBDMqrZM/E
-        TxlnsgB3j554u2AHL+b4MA==
-X-Google-Smtp-Source: ADUXVKKw/kgMcb9uEw33ozCvkfkt43vl+oiIIbms0Mxdyl71WZIv+fUJKHV+hH0J0087r2+Ig1auEQ==
-X-Received: by 2002:a63:7211:: with SMTP id n17-v6mr1815539pgc.94.1528842267392;
-        Tue, 12 Jun 2018 15:24:27 -0700 (PDT)
-Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.gmail.com with ESMTPSA id v26-v6sm1308471pfe.13.2018.06.12.15.24.26
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Jun 2018 15:24:26 -0700 (PDT)
-Date:   Tue, 12 Jun 2018 16:24:24 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Songjun Wu <songjun.wu@linux.intel.com>
-Cc:     hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
-        chuanhua.lei@intel.com, linux-mips@linux-mips.org,
-        qi-ming.wu@intel.com, linux-clk@vger.kernel.org,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>
-Subject: Re: [PATCH 1/7] MIPS: dts: Add aliases node for lantiq danube serial
-Message-ID: <20180612222424.GA2197@rob-hp-laptop>
-References: <20180612054034.4969-1-songjun.wu@linux.intel.com>
- <20180612054034.4969-2-songjun.wu@linux.intel.com>
+        id S934931AbeFLWYs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 18:24:48 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37866 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934418AbeFLWYp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 18:24:45 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id E30DCAFB9;
+        Tue, 12 Jun 2018 22:24:38 +0000 (UTC)
+From:   NeilBrown <neil@brown.name>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Date:   Wed, 13 Jun 2018 08:24:26 +1000
+Cc:     Yogesh Gaur <yogeshnarayan.gaur@nxp.com>,
+        linux-mtd@lists.infradead.org, boris.brezillon@free-electrons.com,
+        frieder.schrempf@exceet.de, computersforpeace@gmail.com,
+        david.wolfe@nxp.com, han.xu@nxp.com, festevam@gmail.com,
+        marek.vasut@gmail.com, prabhakar.kushwaha@nxp.com,
+        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mtd: spi-nor: honour max_data_size for spi-nor writes
+In-Reply-To: <20180612092248.4e6a3e92@bbrezillon>
+References: <1528708694-19407-1-git-send-email-yogeshnarayan.gaur@nxp.com> <20180611114916.351ed272@bbrezillon> <87r2ldj7xi.fsf@notabene.neil.brown.name> <20180612092248.4e6a3e92@bbrezillon>
+Message-ID: <87sh5riqxx.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180612054034.4969-2-songjun.wu@linux.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 01:40:28PM +0800, Songjun Wu wrote:
-> Previous implementation uses a hard-coded register value to check if
-> the current serial entity is the console entity.
-> Now the lantiq serial driver uses the aliases for the index of the
-> serial port.
-> The lantiq danube serial dts are updated with aliases to support this.
-> 
-> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
-> ---
-> 
->  arch/mips/boot/dts/lantiq/danube.dtsi | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/mips/boot/dts/lantiq/danube.dtsi b/arch/mips/boot/dts/lantiq/danube.dtsi
-> index 2dd950181f8a..7a9e15da6bd0 100644
-> --- a/arch/mips/boot/dts/lantiq/danube.dtsi
-> +++ b/arch/mips/boot/dts/lantiq/danube.dtsi
-> @@ -4,6 +4,10 @@
->  	#size-cells = <1>;
->  	compatible = "lantiq,xway", "lantiq,danube";
->  
-> +	aliases {
-> +		serial0 = &asc1;
-> +	};
-> +
->  	cpus {
->  		cpu@0 {
->  			compatible = "mips,mips24Kc";
-> @@ -74,7 +78,7 @@
->  			reg = <0xE100A00 0x100>;
->  		};
->  
-> -		serial@E100C00 {
-> +		asc1: serial@E100C00 {
+--=-=-=
+Content-Type: text/plain
 
-Fix this to be lower case hex while you are at it.
+On Tue, Jun 12 2018, Boris Brezillon wrote:
 
->  			compatible = "lantiq,asc";
->  			reg = <0xE100C00 0x400>;
->  			interrupt-parent = <&icu0>;
-> -- 
-> 2.11.0
-> 
+>
+> Just because you managed to solve the problem in one driver does not
+> mean the problem does not exist for others. I read this datasheet [1]
+> several times and couldn't find a way to say 'I want to keep the CS
+> asserted between 2 transactions', so I think we really need this patch.
+
+I agree that my experience doesn't necessarily generalize.  As the patch
+carried by signed-off-by (even though I only wrote little parts of it) I
+wanted to make it clear that I had no desire to promote the patch -
+maybe I stated that too strongly.
+
+Thanks for the link to the data sheet.  I had a bit of a look, but
+reading these things must be an art that I haven't fully mastered yet -
+it would probably take me a few days to really understand it.
+The Programmable Sequence Enginine (Section 10.2.5.3.1) seems
+interesting. I wouldn't be surprised that that lets you do interesting
+things.
+
+It is obviously quite a powerful unit and it is surprising - to me -
+that it might not allow arbitrarily long messages, but I cannot justify
+the time to really dig in and see if that is the case.
+Maybe you are right.  I have no particular objections to the patch, I
+just don't want to be seen as speaking in favour of it.
+
+Thanks,
+NeilBrown
+
+
+>
+> Regards,
+>
+> Boris
+>
+> [1]https://www.nxp.com/docs/en/reference-manual/VFXXXRM.pdf
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlsgSBoACgkQOeye3VZi
+gbmEQQ/9EtAAeJYjXQHQOr4P79+wEAposchwmDGzy1RDb3R6MFeLzl8CYyCpg/ma
+ll6hRREuJ7IcLE+4weGyeNadGxTBGUFpJ87srm46QmzeJxZKv8PcJxILgfAABtet
+uI7Ru4dFpDyIGOhgzjsKtp40093RIqxlY7j4fRMQAziaAHASw/bJmz/NwZgbeQol
+/tlKcLKub2n0p2vxiDvj6DcTkMcPRElTmQw5OUQpn2kW5sSMUxg61yilXZHX9tq9
+6iuC+vJ1AywX0aXovivq+y72wk9/qjg1SnhjyRZWAYhPxpoWf9lLlRUjVK9ZjnfU
+dZr+TLQm897qLKXv0FLXUBoArrxFL5K1znLphNdqKzoeXuL80Z9qt7VDHEPzcaVR
+yvTTx8AszModPzqeMCzCijsjCRyfVIg2FfB/ap0ma70Po9GQ3+lkNWHgwlI99+Nz
+IdGXYseRPAwgwmHgpGC89Mlw6sly8ryPzwwajHEg5qTem4ZW+emKehrGlanzgr89
+3onaYEYc9tgp1+Ksj/j4Zb9OwgyE+Lzt7e4JilRmZKRHS/eXNQoWAS/ODGFI5cJf
+6aJsTI4/08aKzHLApjZDck5fDKlT48+PNu6ADQqWsWw6Yi307mNlDgg8jOPRvUhi
+SI3r2L9QCwA7YPAIDA3WGAwaMRvSeVz5zJ5eX+s4+NvWcU7+jfg=
+=19Jr
+-----END PGP SIGNATURE-----
+--=-=-=--
