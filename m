@@ -2,232 +2,140 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8115BC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:44:22 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B4F87C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:45:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AFFB2086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:44:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69B7D2086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:45:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hDxwiLvh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AFFB2086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="XdWGHMUO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69B7D2086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933671AbeFLNmN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 09:42:13 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:42523 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933088AbeFLNmK (ORCPT
+        id S933864AbeFLNpe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 09:45:34 -0400
+Received: from smtprelay.synopsys.com ([198.182.37.59]:40481 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933448AbeFLNpc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 09:42:10 -0400
-Received: by mail-lf0-f66.google.com with SMTP id v135-v6so36086150lfa.9;
-        Tue, 12 Jun 2018 06:42:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=VvG94fgLhXAFJwpSW9DbRPdddlwGv4MIJ8r++VXbRcY=;
-        b=hDxwiLvh29H/huxBKs/BrINz9jMSh4vwuEPs1kGRz65hsB/XmcKyi4niKZbbnsHswq
-         xSDsvrdjCX78aZjlm8RzNze+YIgOTZ/M3iVguB0PHW9HItfHAZjZQo078kB3Itp1ZLzn
-         NUyG01Dm/fxoidno+Au5l3OdzyW3VOei+Ixnmeigndd0Y/0gqIyFwBOW5GWjbtqVpDuy
-         FYKePoRyNn+/zfNOz8uMMJ/aMQiOp8I73sgwU8WZ5bIvLW9u8cpWLCnruRAJvt3ygIsA
-         7kNQwrrI5NvI3AbpdDgBHrcJzEsa7o9PmciEUovdk0hBsme0b4TbLtYMim4WNdsAo1pW
-         iT/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=VvG94fgLhXAFJwpSW9DbRPdddlwGv4MIJ8r++VXbRcY=;
-        b=RGQ7H0JT4mee8R2bD/vyEhf/M53IrfdxNDwar6DaFoiVdv6GNfDLNCWLjyiU33BGUQ
-         +nD8itZwgwEF24Kzto6Q+7CS8/xsXuhM4Dwne5NsaKr4V82Rq8+8QawgxY+2vwjInGC5
-         1mDvy0GWS0RyH7jzFTMobLhIGeHwmdeTUwhGX3eqn12a1OUKndMtxU7ZAujWMqo0Z2DC
-         Ei7sBRWlLRhph4tIIaJ+WPJrj8Uysw1ykOnsgLQjAuRrkHXaOKbbhed66Z+l1DUhfX6e
-         a6zVrezWRXbYKmjLX8g7uMmivVQUCvefktqN1gSu44B5YHRVO/zhmdXgRXlNHXqXsK+c
-         7/nQ==
-X-Gm-Message-State: APt69E0u7nSKVN9ypEkbYkRxcwbhahNtyHGC8gXi9AQmD5HTv1I/90EL
-        ZUlpN6yH4Z7qOqRWYk0sQ6M=
-X-Google-Smtp-Source: ADUXVKI7PfYGIwYAX4Zgrgw+ZjPhZEVnr7Vpw3IyNmoAApR09nO2sqqUh0kLzbPCExHhH15psAzLeA==
-X-Received: by 2002:a2e:c52:: with SMTP id o18-v6mr322812ljd.72.1528810928878;
-        Tue, 12 Jun 2018 06:42:08 -0700 (PDT)
-Received: from a2k-HP-ProDesk-600-G2-SFF.kyiv.epam.com (ll-74.141.223.85.sovam.net.ua. [85.223.141.74])
-        by smtp.gmail.com with ESMTPSA id x18-v6sm46692ljh.63.2018.06.12.06.42.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 12 Jun 2018 06:42:07 -0700 (PDT)
-From:   Oleksandr Andrushchenko <andr2000@gmail.com>
-To:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
-Cc:     daniel.vetter@intel.com, andr2000@gmail.com, dongwon.kim@intel.com,
-        matthew.d.roper@intel.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: [PATCH v3 0/9] xen: dma-buf support for grant device
-Date:   Tue, 12 Jun 2018 16:41:51 +0300
-Message-Id: <20180612134200.17456-1-andr2000@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 12 Jun 2018 09:45:32 -0400
+Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 04D731E04F7;
+        Tue, 12 Jun 2018 15:45:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1528811131; bh=HlAy1UgzcZabioHZX9zlM0Jk5i3yJAa9CEFl86VKkyA=;
+        h=Subject:To:References:CC:From:Date:In-Reply-To:From;
+        b=XdWGHMUOzN4nFO1i/M+Y2QALVCKODB9gz8/wu5NVH8uZxO2ArSE5hApbTlrd71N03
+         +c2LahnUvlUqgu+7fKFIspMPCycj10EhCBazX8t3Oe6nqL1m+QjaDich/6AmSZuKti
+         MOUOL2JtNXX76U5QUcljD6LRKry6/zu7SKnYYLa0x4pVxU9HiOLMaX7w1M2m63OwGj
+         HTSESKfSa4DbXdnhm8nHeSyTh2XydZCu4zgxNLZy0jLUzfJun72VoSoMY8DzYiI202
+         mAzEkh/xqVvymOCKT571kYEWarWk9nizMmq7zSUHlw61K8oz/xzBCZYSd2ynVfxrvB
+         lmIzMDPJ7ry4Q==
+Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
+        by mailhost.synopsys.com (Postfix) with ESMTP id CA4EE3252;
+        Tue, 12 Jun 2018 06:45:29 -0700 (PDT)
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ us01wehtc1.internal.synopsys.com (10.12.239.231) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Tue, 12 Jun 2018 06:45:29 -0700
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ DE02WEHTCA.internal.synopsys.com (10.225.19.92) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Tue, 12 Jun 2018 15:45:27 +0200
+Received: from [10.0.2.15] (10.107.19.20) by DE02WEHTCB.internal.synopsys.com
+ (10.225.19.80) with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 12 Jun
+ 2018 15:45:26 +0200
+Subject: Re: [PATCH v10 4/4] [media] platform: Add Synopsys DesignWare HDMI RX
+ Controller Driver
+To:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <cover.1513013948.git.joabreu@synopsys.com>
+ <5f9eedfd6f91ed73ef0bb6d3977588d01478909f.1513013948.git.joabreu@synopsys.com>
+ <108e2c3c-243f-cd67-2df7-57541b28ca39@xs4all.nl>
+ <635e7d70-0edb-7506-c268-9ebbae1eb39e@synopsys.com>
+ <ca5b3cf7-c7d0-36d4-08ac-32a7a00afd7d@xs4all.nl>
+ <f5341c4b-43e2-12f6-9c9f-2385d47bb2fd@synopsys.com>
+ <86a5787d-6ed6-7674-35f9-c77341b4c36b@xs4all.nl>
+ <3c15b537-33b3-f786-369e-5d82ab9eeb9c@synopsys.com>
+ <ed3dabc0-66b2-d069-99f9-75b742709e9f@xs4all.nl>
+CC:     Joao Pinto <Joao.Pinto@synopsys.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        "Sylwester Nawrocki" <snawrocki@kernel.org>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Philippe Ombredanne <pombredanne@nexb.com>
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+Message-ID: <dbfa5d85-0cac-caab-07aa-0d048c68cea0@synopsys.com>
+Date:   Tue, 12 Jun 2018 14:45:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <ed3dabc0-66b2-d069-99f9-75b742709e9f@xs4all.nl>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.107.19.20]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Hi Hans,
 
-This work is in response to my previous attempt to introduce Xen/DRM
-zero-copy driver [1] to enable Linux dma-buf API [2] for Xen based
-frontends/backends. There is also an existing hyper_dmabuf approach
-available [3] which, if reworked to utilize the proposed solution,
-can greatly benefit as well.
+On 08-06-2018 08:41, Hans Verkuil wrote:
+> Hi Jose,
+>
+> I have not seen any updates for this series. What is the status? I thought we
+> were close to merging this...
 
-RFC for this series was published and discussed [9], comments addressed.
+Good to hear from you! Hope you are doing fine! :)
 
-The original rationale behind this work was to enable zero-copying
-use-cases while working with Xen para-virtual display driver [4]:
-when using Xen PV DRM frontend driver then on backend side one will
-need to do copying of display buffers' contents (filled by the
-frontend's user-space) into buffers allocated at the backend side.
-Taking into account the size of display buffers and frames per
-second it may result in unneeded huge data bus occupation and
-performance loss.
+A colleague of mine is working on this right now. We expect to
+send a new series with some more features added.
 
-The helper driver [4] allows implementing zero-copying use-cases
-when using Xen para-virtualized frontend display driver by implementing
-a DRM/KMS helper driver running on backend's side.
-It utilizes PRIME buffers API (implemented on top of Linux dma-buf)
-to share frontend's buffers with physical device drivers on
-backend's side:
+Thanks and Best Regards,
+Jose Miguel Abreu
 
- - a dumb buffer created on backend's side can be shared
-   with the Xen PV frontend driver, so it directly writes
-   into backend's domain memory (into the buffer exported from
-   DRM/KMS driver of a physical display device)
- - a dumb buffer allocated by the frontend can be imported
-   into physical device DRM/KMS driver, thus allowing to
-   achieve no copying as well
-
-Finally, it was discussed and decided ([1], [5]) that it is worth
-implementing such use-cases via extension of the existing Xen gntdev
-driver instead of introducing new DRM specific driver.
-Please note, that the support of dma-buf is Linux only,
-as dma-buf is a Linux only thing.
-
-Now to the proposed solution. The changes  to the existing Xen drivers
-in the Linux kernel fall into 2 categories:
-1. DMA-able memory buffer allocation and increasing/decreasing memory
-   reservation of the pages of such a buffer.
-   This is required if we are about to share dma-buf with the hardware
-   that does require those to be allocated with dma_alloc_xxx API.
-   (It is still possible to allocate a dma-buf from any system memory,
-   e.g. system pages).
-2. Extension of the gntdev driver to enable it to import/export dma-buf’s.
-
-The first six patches are in preparation for Xen dma-buf support,
-but I consider those usable regardless of the dma-buf use-case,
-e.g. other frontend/backend kernel modules may also benefit from these
-for better code reuse:
-    0001-xen-grant-table-Export-gnttab_-alloc-free-_pages-as-.patch
-    0002-xen-grant-table-Make-set-clear-page-private-code-sha.patch
-    0003-xen-balloon-Share-common-memory-reservation-routines.patch
-    0004-xen-grant-table-Allow-allocating-buffers-suitable-fo.patch
-    0005-xen-gntdev-Allow-mappings-for-DMA-buffers.patch
-    0006-xen-gntdev-Make-private-routines-structures-accessib.patch
-
-The next three patches are Xen implementation of dma-buf as part of
-the grant device:
-    0007-xen-gntdev-Add-initial-support-for-dma-buf-UAPI.patch
-    0008-xen-gntdev-Implement-dma-buf-export-functionality.patch
-    0009-xen-gntdev-Implement-dma-buf-import-functionality.patch
-
-The corresponding libxengnttab changes are available at [6].
-
-All the above was tested with display backend [7] and its accompanying
-helper library [8] on Renesas ARM64 based board.
-Basic balloon tests on x86.
-
-*To all the communities*: I would like to ask you to review the proposed
-solution and give feedback on it, so I can improve and send final
-patches for review (this is still work in progress, but enough to start
-discussing the implementation).
-
-Thank you in advance,
-Oleksandr Andrushchenko
-
-[1] https://lists.freedesktop.org/archives/dri-devel/2018-April/173163.html
-[2] https://elixir.bootlin.com/linux/v4.17-rc5/source/Documentation/driver-api/dma-buf.rst
-[3] https://lists.xenproject.org/archives/html/xen-devel/2018-02/msg01202.html
-[4] https://cgit.freedesktop.org/drm/drm-misc/tree/drivers/gpu/drm/xen
-[5] https://patchwork.kernel.org/patch/10279681/
-[6] https://github.com/andr2000/xen/tree/xen_dma_buf_v1
-[7] https://github.com/andr2000/displ_be/tree/xen_dma_buf_v1
-[8] https://github.com/andr2000/libxenbe/tree/xen_dma_buf_v1
-[9] https://lkml.org/lkml/2018/5/17/215
-
-Changes since v2:
-*****************
-- fixed missed break in dmabuf_exp_wait_obj_signal
-- re-worked debug and error messages, be less verbose
-- removed patch for making gntdev functions available to other drivers
-- removed WARN_ON's in dma-buf code
-- moved all dma-buf related code into gntdev-dmabuf
-- introduced gntdev-common.h with common structures and function prototypes
-- added additional checks for number of grants in IOCTLs
-- gnttab patch cleanup
-- made xenmem_reservation_scrub_page defined in the header as inline
-- fixed __pfn_to_mfn use to pfn_to_bfn
-- no changes to patches 1-2
-
-Changes since v1:
-*****************
-- Define GNTDEV_DMA_FLAG_XXX starting from bit 0
-- Rename mem_reservation.h to mem-reservation.h
-- Remove usless comments
-- Change licenses from GPLv2 OR MIT to GPLv2 only
-- Make xenmem_reservation_va_mapping_{update|clear} inline
-- Change EXPORT_SYMBOL to EXPORT_SYMBOL_GPL for new functions
-- Make gnttab_dma_{alloc|free}_pages to request frames array
-  be allocated outside
-- Fixe gnttab_dma_alloc_pages fail path (added xenmem_reservation_increase)
-- Move most of dma-buf from gntdev.c to gntdev-dmabuf.c
-- Add required dependencies to Kconfig
-- Rework "#ifdef CONFIG_XEN_XXX" for if/else
-- Export gnttab_{alloc|free}_pages as GPL symbols (patch 1)
-
-Oleksandr Andrushchenko (9):
-  xen/grant-table: Export gnttab_{alloc|free}_pages as GPL
-  xen/grant-table: Make set/clear page private code shared
-  xen/balloon: Share common memory reservation routines
-  xen/grant-table: Allow allocating buffers suitable for DMA
-  xen/gntdev: Allow mappings for DMA buffers
-  xen/gntdev: Make private routines/structures accessible
-  xen/gntdev: Add initial support for dma-buf UAPI
-  xen/gntdev: Implement dma-buf export functionality
-  xen/gntdev: Implement dma-buf import functionality
-
- drivers/xen/Kconfig           |  23 +
- drivers/xen/Makefile          |   2 +
- drivers/xen/balloon.c         |  71 +---
- drivers/xen/gntdev-common.h   |  96 +++++
- drivers/xen/gntdev-dmabuf.c   | 774 ++++++++++++++++++++++++++++++++++
- drivers/xen/gntdev-dmabuf.h   |  39 ++
- drivers/xen/gntdev.c          | 329 ++++++++++++---
- drivers/xen/grant-table.c     | 153 ++++++-
- drivers/xen/mem-reservation.c | 112 +++++
- include/uapi/xen/gntdev.h     | 106 +++++
- include/xen/grant_table.h     |  21 +
- include/xen/mem-reservation.h |  64 +++
- 12 files changed, 1635 insertions(+), 155 deletions(-)
- create mode 100644 drivers/xen/gntdev-common.h
- create mode 100644 drivers/xen/gntdev-dmabuf.c
- create mode 100644 drivers/xen/gntdev-dmabuf.h
- create mode 100644 drivers/xen/mem-reservation.c
- create mode 100644 include/xen/mem-reservation.h
-
--- 
-2.17.1
+>
+> Regards,
+>
+> 	Hans
+>
+> On 12/15/2017 12:23 PM, Jose Abreu wrote:
+>> Hi Hans,
+>>
+>> On 13-12-2017 20:49, Hans Verkuil wrote:
+>>> On 13/12/17 15:00, Jose Abreu wrote:
+>>>> Indeed. I compared the values with the spec and they are not
+>>>> correct. Even hsync is wrong. I already corrected in the code the
+>>>> hsync but regarding interlace I'm not seeing an easy way to do
+>>>> this without using interrupts in each vsync because the register
+>>>> I was toggling does not behave as I expected (I misunderstood the
+>>>> databook). Maybe we should not detect interlaced modes for now?
+>>>> Or not fill the il_ fields?
+>>> As I mentioned above you as long as you get a good backporch value you
+>>> can deduce from whether it is an odd or even number to which field it
+>>> belongs and fill in the other values. So I think you only need to read
+>>> these values for one field.
+>>>
+>>> Filling in good values here (at least as far as is possible since not all
+>>> hardware can give it) will help debugging issues, even if you otherwise do
+>>> not support interlaced.
+>> Ok, I will fill the fields.
+>>
+>> Until the end of January I will be quite busy in another project
+>> so if you could review the remaining patches of this series I
+>> would appreciate very much ... This way when I have the time I
+>> can code all the changes and send them at once.
+>>
+>> Thanks and Best Regards,
+>> Jose Miguel Abreu
+>>
+>>> Regards,
+>>>
+>>> 	Hans
+>>
 
