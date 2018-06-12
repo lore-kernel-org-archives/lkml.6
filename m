@@ -3,93 +3,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3FCAEC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:35:13 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2BC83C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:36:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEE672089C
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:35:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEE672089C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id E19102086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:36:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E19102086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934894AbeFLWfK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 18:35:10 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:34274 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934314AbeFLWfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 18:35:09 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id A1C0920731; Wed, 13 Jun 2018 00:35:07 +0200 (CEST)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 4AF07203EC;
-        Wed, 13 Jun 2018 00:35:07 +0200 (CEST)
-Date:   Wed, 13 Jun 2018 00:35:06 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     NeilBrown <neil@brown.name>
-Cc:     Yogesh Gaur <yogeshnarayan.gaur@nxp.com>,
-        linux-mtd@lists.infradead.org, boris.brezillon@free-electrons.com,
-        frieder.schrempf@exceet.de, computersforpeace@gmail.com,
-        david.wolfe@nxp.com, han.xu@nxp.com, festevam@gmail.com,
-        marek.vasut@gmail.com, prabhakar.kushwaha@nxp.com,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: spi-nor: honour max_data_size for spi-nor writes
-Message-ID: <20180613003506.2b521e94@bbrezillon>
-In-Reply-To: <87sh5riqxx.fsf@notabene.neil.brown.name>
-References: <1528708694-19407-1-git-send-email-yogeshnarayan.gaur@nxp.com>
-        <20180611114916.351ed272@bbrezillon>
-        <87r2ldj7xi.fsf@notabene.neil.brown.name>
-        <20180612092248.4e6a3e92@bbrezillon>
-        <87sh5riqxx.fsf@notabene.neil.brown.name>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S934938AbeFLWgn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 18:36:43 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:42872 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933988AbeFLWgl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 18:36:41 -0400
+Received: from localhost (74-93-104-98-Washington.hfc.comcastbusiness.net [74.93.104.98])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 80BF5100AB029;
+        Tue, 12 Jun 2018 15:36:40 -0700 (PDT)
+Date:   Tue, 12 Jun 2018 15:36:40 -0700 (PDT)
+Message-Id: <20180612.153640.206354770292248454.davem@davemloft.net>
+To:     christophe.jaillet@wanadoo.fr
+Cc:     peppe.cavallaro@st.com, alexandre.torgue@st.com,
+        joabreu@synopsys.com, carlo@caione.org, khilman@baylibre.com,
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] net: stmmac: dwmac-meson8b: Fix an error handling path
+ in 'meson8b_dwmac_probe()'
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20180611175227.27509-1-christophe.jaillet@wanadoo.fr>
+References: <20180611175227.27509-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 12 Jun 2018 15:36:40 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 13 Jun 2018 08:24:26 +1000
-NeilBrown <neil@brown.name> wrote:
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 11 Jun 2018 19:52:27 +0200
 
-> On Tue, Jun 12 2018, Boris Brezillon wrote:
+> If 'of_device_get_match_data()' fails, we need to release some resources as
+> done in the other error handling path of this function.
 > 
-> >
-> > Just because you managed to solve the problem in one driver does not
-> > mean the problem does not exist for others. I read this datasheet [1]
-> > several times and couldn't find a way to say 'I want to keep the CS
-> > asserted between 2 transactions', so I think we really need this patch.  
-> 
-> I agree that my experience doesn't necessarily generalize.  As the patch
-> carried by signed-off-by (even though I only wrote little parts of it) I
-> wanted to make it clear that I had no desire to promote the patch -
-> maybe I stated that too strongly.
+> Fixes: efacb568c962 ("net: stmmac: dwmac-meson: extend phy mode setting")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-If that's a problem, we can drop your SoB.
-
-> 
-> Thanks for the link to the data sheet.  I had a bit of a look, but
-> reading these things must be an art that I haven't fully mastered yet -
-> it would probably take me a few days to really understand it.
-> The Programmable Sequence Enginine (Section 10.2.5.3.1) seems
-> interesting. I wouldn't be surprised that that lets you do interesting
-> things.
-
-It does.
-
-> 
-> It is obviously quite a powerful unit and it is surprising - to me -
-> that it might not allow arbitrarily long messages, but I cannot justify
-> the time to really dig in and see if that is the case.
-
-Unfortunately it does not allow you to manually control the CS signal,
-and when it comes to data transfers you're limited by the TX/RX FIFO
-size.
-
-> Maybe you are right.  I have no particular objections to the patch, I
-> just don't want to be seen as speaking in favour of it.
-
-Okay.
+Applied.
