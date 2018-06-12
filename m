@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 458A1C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:53:21 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4307DC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:53:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F038D208B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:53:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED757208B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:53:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="npNrEERq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F038D208B7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TdbwW/pp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED757208B8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754393AbeFLQxS (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 12:53:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51564 "EHLO mail.kernel.org"
+        id S935134AbeFLQx3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 12:53:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934651AbeFLQxO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 12:53:14 -0400
+        id S933660AbeFLQxU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 12:53:20 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 748F6208B4;
-        Tue, 12 Jun 2018 16:53:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B0CAD208B4;
+        Tue, 12 Jun 2018 16:53:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528822394;
-        bh=1iB61A8EFkr8y6FlxwfiaXp0oWh1lZ+MjPSZxv19Sks=;
+        s=default; t=1528822400;
+        bh=jKkFCtRqtigeay5ugPHxBz43kQcNXDOGzT+qCph5plM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=npNrEERqSLgFGSCmhtu0L/qhspAlmVd17BZp8F0Xoe3Y5tyvneVjlR+zR23utCMNq
-         SWqVRBUdr8jDvKjGptWCbtRBzcDMsKt9JW1RIdlkHdKRzMeoJmds2CExxLwi5PQy/0
-         PVJkJkYFgxeJaKlzMGU2kp3JBYgCpbJNEpep8d9k=
+        b=TdbwW/ppqkFpH6QpVxGW+Tu9R3f7VPKtcKM07GyVtDsGlAh09aFc7JYii2nStv9kK
+         Cj16w02v0gsp8HM/jjL3LtIu3opQX+tWK/nrtbKANAxVxEgoP1Fi2ZecZi27kX39TY
+         dIIlXZucL+3jZ7XW9FG6EN9Ozn8j0evueT977oxw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jack Morgenstein <jackm@dev.mellanox.co.il>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 20/24] net/mlx4: Fix irq-unsafe spinlock usage
-Date:   Tue, 12 Jun 2018 18:52:04 +0200
-Message-Id: <20180612164817.683295540@linuxfoundation.org>
+        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, Willy Tarreau <w@1wt.eu>,
+        Dave Airlie <airlied@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.4 03/24] mmap: introduce sane default mmap limits
+Date:   Tue, 12 Jun 2018 18:51:47 +0200
+Message-Id: <20180612164816.738560305@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180612164816.587001852@linuxfoundation.org>
 References: <20180612164816.587001852@linuxfoundation.org>
@@ -62,72 +62,124 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jack Morgenstein <jackm@dev.mellanox.co.il>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-[ Upstream commit d546b67cda015fb92bfee93d5dc0ceadb91deaee ]
+commit be83bbf806822b1b89e0a0f23cd87cddc409e429 upstream.
 
-spin_lock/unlock was used instead of spin_un/lock_irq
-in a procedure used in process space, on a spinlock
-which can be grabbed in an interrupt.
+The internal VM "mmap()" interfaces are based on the mmap target doing
+everything using page indexes rather than byte offsets, because
+traditionally (ie 32-bit) we had the situation that the byte offset
+didn't fit in a register.  So while the mmap virtual address was limited
+by the word size of the architecture, the backing store was not.
 
-This caused the stack trace below to be displayed (on kernel
-4.17.0-rc1 compiled with Lock Debugging enabled):
+So we're basically passing "pgoff" around as a page index, in order to
+be able to describe backing store locations that are much bigger than
+the word size (think files larger than 4GB etc).
 
-[  154.661474] WARNING: SOFTIRQ-safe -> SOFTIRQ-unsafe lock order detected
-[  154.668909] 4.17.0-rc1-rdma_rc_mlx+ #3 Tainted: G          I
-[  154.675856] -----------------------------------------------------
-[  154.682706] modprobe/10159 [HC0[0]:SC0[0]:HE0:SE1] is trying to acquire:
-[  154.690254] 00000000f3b0e495 (&(&qp_table->lock)->rlock){+.+.}, at: mlx4_qp_remove+0x20/0x50 [mlx4_core]
-[  154.700927]
-and this task is already holding:
-[  154.707461] 0000000094373b5d (&(&cq->lock)->rlock/1){....}, at: destroy_qp_common+0x111/0x560 [mlx4_ib]
-[  154.718028] which would create a new lock dependency:
-[  154.723705]  (&(&cq->lock)->rlock/1){....} -> (&(&qp_table->lock)->rlock){+.+.}
-[  154.731922]
-but this new dependency connects a SOFTIRQ-irq-safe lock:
-[  154.740798]  (&(&cq->lock)->rlock){..-.}
-[  154.740800]
-... which became SOFTIRQ-irq-safe at:
-[  154.752163]   _raw_spin_lock_irqsave+0x3e/0x50
-[  154.757163]   mlx4_ib_poll_cq+0x36/0x900 [mlx4_ib]
-[  154.762554]   ipoib_tx_poll+0x4a/0xf0 [ib_ipoib]
-...
-to a SOFTIRQ-irq-unsafe lock:
-[  154.815603]  (&(&qp_table->lock)->rlock){+.+.}
-[  154.815604]
-... which became SOFTIRQ-irq-unsafe at:
-[  154.827718] ...
-[  154.827720]   _raw_spin_lock+0x35/0x50
-[  154.833912]   mlx4_qp_lookup+0x1e/0x50 [mlx4_core]
-[  154.839302]   mlx4_flow_attach+0x3f/0x3d0 [mlx4_core]
+But while this all makes a ton of sense conceptually, we've been dogged
+by various drivers that don't really understand this, and internally
+work with byte offsets, and then try to work with the page index by
+turning it into a byte offset with "pgoff << PAGE_SHIFT".
 
-Since mlx4_qp_lookup() is called only in process space, we can
-simply replace the spin_un/lock calls with spin_un/lock_irq calls.
+Which obviously can overflow.
 
-Fixes: 6dc06c08bef1 ("net/mlx4: Fix the check in attaching steering rules")
-Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
-Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Adding the size of the mapping to it to get the byte offset of the end
+of the backing store just exacerbates the problem, and if you then use
+this overflow-prone value to check various limits of your device driver
+mmap capability, you're just setting yourself up for problems.
+
+The correct thing for drivers to do is to do their limit math in page
+indices, the way the interface is designed.  Because the generic mmap
+code _does_ test that the index doesn't overflow, since that's what the
+mmap code really cares about.
+
+HOWEVER.
+
+Finding and fixing various random drivers is a sisyphean task, so let's
+just see if we can just make the core mmap() code do the limiting for
+us.  Realistically, the only "big" backing stores we need to care about
+are regular files and block devices, both of which are known to do this
+properly, and which have nice well-defined limits for how much data they
+can access.
+
+So let's special-case just those two known cases, and then limit other
+random mmap users to a backing store that still fits in "unsigned long".
+Realistically, that's not much of a limit at all on 64-bit, and on
+32-bit architectures the only worry might be the GPU drivers, which can
+have big physical address spaces.
+
+To make it possible for drivers like that to say that they are 64-bit
+clean, this patch does repurpose the "FMODE_UNSIGNED_OFFSET" bit in the
+file flags to allow drivers to mark their file descriptors as safe in
+the full 64-bit mmap address space.
+
+[ The timing for doing this is less than optimal, and this should really
+  go in a merge window. But realistically, this needs wide testing more
+  than it needs anything else, and being main-line is the only way to do
+  that.
+
+  So the earlier the better, even if it's outside the proper development
+  cycle        - Linus ]
+
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Willy Tarreau <w@1wt.eu>
+Cc: Dave Airlie <airlied@redhat.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/mellanox/mlx4/qp.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx4/qp.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/qp.c
-@@ -386,11 +386,11 @@ struct mlx4_qp *mlx4_qp_lookup(struct ml
- 	struct mlx4_qp_table *qp_table = &mlx4_priv(dev)->qp_table;
- 	struct mlx4_qp *qp;
- 
--	spin_lock(&qp_table->lock);
-+	spin_lock_irq(&qp_table->lock);
- 
- 	qp = __mlx4_qp_lookup(dev, qpn);
- 
--	spin_unlock(&qp_table->lock);
-+	spin_unlock_irq(&qp_table->lock);
- 	return qp;
+---
+ mm/mmap.c |   32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -1275,6 +1275,35 @@ static inline int mlock_future_check(str
+ 	return 0;
  }
  
++static inline u64 file_mmap_size_max(struct file *file, struct inode *inode)
++{
++	if (S_ISREG(inode->i_mode))
++		return inode->i_sb->s_maxbytes;
++
++	if (S_ISBLK(inode->i_mode))
++		return MAX_LFS_FILESIZE;
++
++	/* Special "we do even unsigned file positions" case */
++	if (file->f_mode & FMODE_UNSIGNED_OFFSET)
++		return 0;
++
++	/* Yes, random drivers might want more. But I'm tired of buggy drivers */
++	return ULONG_MAX;
++}
++
++static inline bool file_mmap_ok(struct file *file, struct inode *inode,
++				unsigned long pgoff, unsigned long len)
++{
++	u64 maxsize = file_mmap_size_max(file, inode);
++
++	if (maxsize && len > maxsize)
++		return false;
++	maxsize -= len;
++	if (pgoff > maxsize >> PAGE_SHIFT)
++		return false;
++	return true;
++}
++
+ /*
+  * The caller must hold down_write(&current->mm->mmap_sem).
+  */
+@@ -1340,6 +1369,9 @@ unsigned long do_mmap(struct file *file,
+ 	if (file) {
+ 		struct inode *inode = file_inode(file);
+ 
++		if (!file_mmap_ok(file, inode, pgoff, len))
++			return -EOVERFLOW;
++
+ 		switch (flags & MAP_TYPE) {
+ 		case MAP_SHARED:
+ 			if ((prot&PROT_WRITE) && !(file->f_mode&FMODE_WRITE))
 
 
