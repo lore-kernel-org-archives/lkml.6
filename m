@@ -2,192 +2,158 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C33CFC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:29:43 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id DAA7DC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:29:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78949208AE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:29:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78949208AE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 863DD208AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:29:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kHsLXVn/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 863DD208AE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754344AbeFLK3k (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 06:29:40 -0400
-Received: from mga09.intel.com ([134.134.136.24]:34353 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932433AbeFLKWZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 06:22:25 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2018 03:22:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,214,1526367600"; 
-   d="scan'208";a="66321894"
-Received: from hao-dev.bj.intel.com ([10.238.157.61])
-  by orsmga002.jf.intel.com with ESMTP; 12 Jun 2018 03:22:23 -0700
-From:   Wu Hao <hao.wu@intel.com>
-To:     atull@kernel.org, mdf@kernel.org, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     linux-api@vger.kernel.org, luwei.kang@intel.com,
-        yi.z.zhang@intel.com, hao.wu@intel.com
-Subject: [PATCH v6 03/29] fpga: mgr: add status for fpga-manager
-Date:   Tue, 12 Jun 2018 18:10:17 +0800
-Message-Id: <1528798243-2029-4-git-send-email-hao.wu@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528798243-2029-1-git-send-email-hao.wu@intel.com>
-References: <1528798243-2029-1-git-send-email-hao.wu@intel.com>
+        id S933395AbeFLK3y (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 06:29:54 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:46686 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933088AbeFLK3w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 06:29:52 -0400
+Received: by mail-io0-f195.google.com with SMTP id d22-v6so27394377iof.13
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 03:29:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=QJHgqkFvLTsM8STc/8YPQoKD29IzA3g5gEvJetaqwOc=;
+        b=kHsLXVn//mvh0vWOyQ0e45u4z7HrmYFSC6Y6AvEQ952UsgorYzcL40ERqGsYtDsS+B
+         jlDmR/BzM173tMgeVViKissUV6rQsX6lrLkFm5rLsmfUXosy5s/hd4+Wjdofc20qaG1f
+         jaL2Fo5djYNthWh1qwwdZzHDkP8m4qfBA5obI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=QJHgqkFvLTsM8STc/8YPQoKD29IzA3g5gEvJetaqwOc=;
+        b=tq8IbM4CNyaF9Slc/r7JLXy+cIGgr7ZdyWLPupzGK0NJOy8Pn+6vzTdIUk+bZplly7
+         nRs0dlvppnjkEmoY6eulWH1g5VzUwohXKdZ5B1y2zT1p3QFsjIqtlbveJTkXBgVv0zjI
+         cX1vDJaRCulCV6XjmkMpfAOHMUl4oXcbVNVjMlv+zVsH6t3MF07NB8s9NWDiB3sqJ8Om
+         OI08gSdpIli3S6c/swsbckzq9ZMVtckPEZ9jS6m2TOyC4dedQ9peXietf4E7/1KMW8bh
+         zd/yJ3R4hOqJnfei9KXKhd2QAFCY8sdMqzI90Hq2YB9I25uxGmpsdtgBYFrMztz+Ew70
+         zmGg==
+X-Gm-Message-State: APt69E3mjfTAT43Sb055aH4PapSxQyvW4jsZ4wHEHT+fz5djIi6FUNB2
+        sBU5etv3nfJzvn2TLdxLb669+zE0dlXQ7Y9f32YLGg==
+X-Google-Smtp-Source: ADUXVKKebfCZ9uZogQR0ccpCSz/iL7ymuL097a2BBQPgQPSABdW+bxRanxptTsM6CM276tJJ4CKaBAqHVi4Lm+gtWKc=
+X-Received: by 2002:a6b:1410:: with SMTP id 16-v6mr2658318iou.218.1528799391442;
+ Tue, 12 Jun 2018 03:29:51 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a02:c054:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 03:29:50
+ -0700 (PDT)
+In-Reply-To: <20180612084234.gjzq66xsqblryrkm@shbuild888>
+References: <20180608095154.22413-1-feng.tang@intel.com> <CAPDyKFrs3ngkVVQaq34V9qzV3KoFdy=B+UbLnzR=fHKsOco=tg@mail.gmail.com>
+ <20180612084234.gjzq66xsqblryrkm@shbuild888>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 12 Jun 2018 12:29:50 +0200
+Message-ID: <CAPDyKFq8WZhQQ9EBjfuVvu=YHB9AdwvMHwyKOY5Wxku1V5PtmA@mail.gmail.com>
+Subject: Re: [PATCH] mmc: Move the mmc driver init earlier
+To:     Feng Tang <feng.tang@intel.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds status sysfs interface for fpga manager, it's a
-read only interface which allows user to get fpga manager status,
-including full/partial reconfiguration error and other status
-information. It adds a status callback to fpga_manager_ops too,
-allows each fpga_manager driver to define its own method to
-collect latest status from hardware.
+On 12 June 2018 at 10:42, Feng Tang <feng.tang@intel.com> wrote:
+> Hi Ulf,
+>
+> Thanks for the review.
+>
+> On Tue, Jun 12, 2018 at 08:25:44AM +0200, Ulf Hansson wrote:
+>> On 8 June 2018 at 11:51, Feng Tang <feng.tang@intel.com> wrote:
+>> > When doing some boot time optimization for an eMMC rootfs NUCs,
+>> > we found the rootfs may spend around 100 microseconds waiting
+>> > for eMMC card to be initialized, then the rootfs could be
+>> > mounted.
+>> >         [    1.216561] Waiting for root device /dev/mmcblk1p1...
+>> >         [    1.289262] mmc1: new HS400 MMC card at address 0001
+>> >         [    1.289667] mmcblk1: mmc1:0001 R1J56L 14.7 GiB
+>> >         [    1.289772] mmcblk1boot0: mmc1:0001 R1J56L partition 1 8.00 MiB
+>> >         [    1.289869] mmcblk1boot1: mmc1:0001 R1J56L partition 2 8.00 MiB
+>> >         [    1.289967] mmcblk1rpmb: mmc1:0001 R1J56L partition 3 4.00 MiB
+>> >         [    1.292798]  mmcblk1: p1 p2 p3
+>> >         [    1.300576] EXT4-fs (mmcblk1p1): couldn't mount as ext3 due to feature incompatibilities
+>> >         [    1.300912] EXT4-fs (mmcblk1p1): couldn't mount as ext2 due to feature incompatibilities
+>> >
+>> > And this is a common problem for smartphones, tablets, embedded
+>> > devices and automotive products. This patch will make the eMMC/SD
+>> > card  start initializing earlier, by changing its order in drivers/Makefile.
+>> >
+>> > On our platform, the waiting for eMMC card is almost eliminated with the patch,
+>> > which is critical to boot time.
+>>
+>> I am wondering what kernel version you are running here. There have
+>> been some changes to the mmc initialization path, which perhaps can
+>> help.
+> These logs in commit msg are based on kernel 4.14, and the patch is generated
+> against kernel 4.17.
 
-The following sysfs file is created:
-* /sys/class/fpga_manager/<fpga>/status
-  Return status of fpga manager, including reconfiguration errors.
+Right. So it's quite recent, even if lot's of changes have been made
+to the mmc core since then.
 
-Signed-off-by: Wu Hao <hao.wu@intel.com>
-Acked-by: Alan Tull <atull@kernel.org>
-Acked-by: Moritz Fischer <mdf@kernel.org>
----
-v3: add one line description for status
-    add status callback function to fpga_manager_ops
-    update fpga-mgr status if any failure or during initialization
-    s/INCOMPATIBLE_BS_ERR/INCOMPATIBLE_IMAGE_ERR/
-v4: simply code per suggestion from Alan.
-    add supported status strings (and descriptions) in sysfs document.
-    remove unused error code (SECURE_LOAD_ERR).
-v5: fix the wrong commit message and add Acked-by from Alan and Moritz.
-v6: rebase.
----
- Documentation/ABI/testing/sysfs-class-fpga-manager | 24 +++++++++++++++++++
- drivers/fpga/fpga-mgr.c                            | 28 ++++++++++++++++++++++
- include/linux/fpga/fpga-mgr.h                      |  9 +++++++
- 3 files changed, 61 insertions(+)
+A few things (old/new) that is important.
+1) Check if your mmc host driver support MMC_CAP_WAIT_WHILE_BUSY. That
+should have some effect, avoiding unnecessary polling.
 
-diff --git a/Documentation/ABI/testing/sysfs-class-fpga-manager b/Documentation/ABI/testing/sysfs-class-fpga-manager
-index 23056c5..2aadf59 100644
---- a/Documentation/ABI/testing/sysfs-class-fpga-manager
-+++ b/Documentation/ABI/testing/sysfs-class-fpga-manager
-@@ -35,3 +35,27 @@ Description:	Read fpga manager state as a string.
- 		* write complete	= Doing post programming steps
- 		* write complete error	= Error while doing post programming
- 		* operating		= FPGA is programmed and operating
-+
-+What:		/sys/class/fpga_manager/<fpga>/status
-+Date:		June 2018
-+KernelVersion:	4.18
-+Contact:	Wu Hao <hao.wu@intel.com>
-+Description:	Read fpga manager status as a string.
-+		If FPGA programming operation fails, it could be caused by crc
-+		error or incompatible bitstream image. The intent of this
-+		interface is to provide more detailed information for FPGA
-+		programming errors to userspace. This is a list of strings for
-+		the supported status.
-+
-+		* reconfig operation error 	- invalid operations detected by
-+						  reconfiguration hardware.
-+						  e.g start reconfiguration
-+						  with errors not cleared
-+		* reconfig CRC error		- CRC error detected by
-+						  reconfiguration hardware.
-+		* reconfig incompatible image	- reconfiguration image is
-+						  incompatible with hardware
-+		* reconfig IP protocol error	- protocol errors detected by
-+						  reconfiguration hardware
-+		* reconfig fifo overflow error	- FIFO overflow detected by
-+						  reconfiguration hardware
-diff --git a/drivers/fpga/fpga-mgr.c b/drivers/fpga/fpga-mgr.c
-index c1564cf..a41b07e 100644
---- a/drivers/fpga/fpga-mgr.c
-+++ b/drivers/fpga/fpga-mgr.c
-@@ -406,12 +406,40 @@ static ssize_t state_show(struct device *dev,
- 	return sprintf(buf, "%s\n", state_str[mgr->state]);
- }
- 
-+static ssize_t status_show(struct device *dev,
-+			   struct device_attribute *attr, char *buf)
-+{
-+	struct fpga_manager *mgr = to_fpga_manager(dev);
-+	u64 status;
-+	int len = 0;
-+
-+	if (!mgr->mops->status)
-+		return -ENOENT;
-+
-+	status = mgr->mops->status(mgr);
-+
-+	if (status & FPGA_MGR_STATUS_OPERATION_ERR)
-+		len += sprintf(buf + len, "reconfig operation error\n");
-+	if (status & FPGA_MGR_STATUS_CRC_ERR)
-+		len += sprintf(buf + len, "reconfig CRC error\n");
-+	if (status & FPGA_MGR_STATUS_INCOMPATIBLE_IMAGE_ERR)
-+		len += sprintf(buf + len, "reconfig incompatible image\n");
-+	if (status & FPGA_MGR_STATUS_IP_PROTOCOL_ERR)
-+		len += sprintf(buf + len, "reconfig IP protocol error\n");
-+	if (status & FPGA_MGR_STATUS_FIFO_OVERFLOW_ERR)
-+		len += sprintf(buf + len, "reconfig fifo overflow error\n");
-+
-+	return len;
-+}
-+
- static DEVICE_ATTR_RO(name);
- static DEVICE_ATTR_RO(state);
-+static DEVICE_ATTR_RO(status);
- 
- static struct attribute *fpga_mgr_attrs[] = {
- 	&dev_attr_name.attr,
- 	&dev_attr_state.attr,
-+	&dev_attr_status.attr,
- 	NULL,
- };
- ATTRIBUTE_GROUPS(fpga_mgr);
-diff --git a/include/linux/fpga/fpga-mgr.h b/include/linux/fpga/fpga-mgr.h
-index 3eb6b9d..e249b72 100644
---- a/include/linux/fpga/fpga-mgr.h
-+++ b/include/linux/fpga/fpga-mgr.h
-@@ -101,6 +101,7 @@ struct fpga_image_info {
-  * struct fpga_manager_ops - ops for low level fpga manager drivers
-  * @initial_header_size: Maximum number of bytes that should be passed into write_init
-  * @state: returns an enum value of the FPGA's state
-+ * @status: returns status of the FPGA, including reconfiguration error code
-  * @write_init: prepare the FPGA to receive confuration data
-  * @write: write count bytes of configuration data to the FPGA
-  * @write_sg: write the scatter list of configuration data to the FPGA
-@@ -115,6 +116,7 @@ struct fpga_image_info {
- struct fpga_manager_ops {
- 	size_t initial_header_size;
- 	enum fpga_mgr_states (*state)(struct fpga_manager *mgr);
-+	u64 (*status)(struct fpga_manager *mgr);
- 	int (*write_init)(struct fpga_manager *mgr,
- 			  struct fpga_image_info *info,
- 			  const char *buf, size_t count);
-@@ -126,6 +128,13 @@ struct fpga_manager_ops {
- 	const struct attribute_group **groups;
- };
- 
-+/* FPGA manager status: Partial/Full Reconfiguration errors */
-+#define FPGA_MGR_STATUS_OPERATION_ERR		BIT(0)
-+#define FPGA_MGR_STATUS_CRC_ERR			BIT(1)
-+#define FPGA_MGR_STATUS_INCOMPATIBLE_IMAGE_ERR	BIT(2)
-+#define FPGA_MGR_STATUS_IP_PROTOCOL_ERR		BIT(3)
-+#define FPGA_MGR_STATUS_FIFO_OVERFLOW_ERR	BIT(4)
-+
- /**
-  * struct fpga_manager - fpga manager structure
-  * @name: name of low level fpga manager
--- 
-1.8.3.1
+2) Since 4.18 rc1, you will be able to configure an over estimated
+"power on" delay (via DT as well). Look at commit
+6d796c68cd15234a33a4bd2ef7231125fea2dc6c.
 
+3) If you use a DT based platform, I think what people do is to
+re-organize the order of device nodes, such that as many as possible
+-EPROBE_DEFER is avoided to be returned by drivers. This is also not a
+good solution, but the best we have at this moment.
+
+>
+>>
+>> >
+>> > Signed-off-by: Feng Tang <feng.tang@intel.com>
+>> > ---
+>> >  drivers/Makefile | 4 +++-
+>> >  1 file changed, 3 insertions(+), 1 deletion(-)
+>> >
+>> > diff --git a/drivers/Makefile b/drivers/Makefile
+>> > index 24cd47014657..c473afd3c688 100644
+>> > --- a/drivers/Makefile
+>> > +++ b/drivers/Makefile
+>> > @@ -50,6 +50,9 @@ obj-$(CONFIG_REGULATOR)               += regulator/
+>> >  # reset controllers early, since gpu drivers might rely on them to initialize
+>> >  obj-$(CONFIG_RESET_CONTROLLER) += reset/
+>> >
+>> > +# put mmc early as many morden devices use emm/sd card as rootfs storage
+>> > +obj-y                          += mmc/
+>> > +
+>>
+>> Your suggested approach isn't really a solution, as it may work for
+>> your particular case but not for everybody else.
+>
+> Do you mean the patch may break some platforms? Yes, I only tested on
+> some IA based NUCs, and I did think about other architectures, things
+> that may affect MMC are gpio/clk/pinctrl, and those are still earlier
+> than mmc after change.
+
+I don't know if it breaks things, potentially it could, if drivers
+don't implement support for -EPROBE_DEFER properly.
+
+However, more importantly, it's not real fix to the problem, just
+something that seems to work for you.
+
+Kind regards
+Uffe
