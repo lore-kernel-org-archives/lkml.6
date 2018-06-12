@@ -2,122 +2,242 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 18E1EC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:57:11 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E74B9C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:57:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBCAF208B4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:57:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 920E9208B1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:57:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Jm4lMPtH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBCAF208B4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qcFaZy0R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 920E9208B1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935128AbeFLQ5J (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 12:57:09 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:53226 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933570AbeFLQ4y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 12:56:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=6cUjTbPz9UIsLT5O9WbWfRe5EMMyN9DO+r05K2EXxd0=; b=Jm4lMPtH8fWEBipc9VXwiA4E4
-        rHAY885hQ9RHAvrAb9bL18oTWuTBXstoGxLD55iMXZ0Nh6EDrEinqufiESrsDQGyCJV06g0ohSCtm
-        coRlldXr4E+RJ/oyDTz6CSrK5V+6Obm8WIAJOr3IXyL0x4hCHlDPmewdEPmQALgJ3VwQ3r0InXdyc
-        +hZhGo3vPdI70epEIbCCVul9vgoP329OFgqCtVDh8mlkmEpde+V1CCm7b1zMz1agIVRLi2PiovStK
-        yeNTyPt48Qp/tVx6DZEKzCxsGTw7yfgFDeVcUV+Caav77LjlTLavrqyfkeoN+gTq10mK3TE3jdOF8
-        VeToZHd0g==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSmaz-0005ZI-7T; Tue, 12 Jun 2018 16:56:37 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id ACDEB201EA7C9; Tue, 12 Jun 2018 18:56:35 +0200 (CEST)
-Date:   Tue, 12 Jun 2018 18:56:35 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     David Arcari <darcari@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Andi Kleen <ak@linux.intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Donald Zickus <dzickus@redhat.com>,
-        Prarit Bhargava <prarit@redhat.com>,
-        Jerry Hoemann <jerry.hoemann@hpe.com>
-Subject: Re: [PATCH] perf/x86: read the FREEZE_WHILE_SMM bit during boot
-Message-ID: <20180612165635.GT12198@hirez.programming.kicks-ass.net>
-References: <1528050223-144925-1-git-send-email-darcari@redhat.com>
- <20180604082414.GO12217@hirez.programming.kicks-ass.net>
- <e420bcc1-c75d-e6a1-0ca6-b668b6818f16@redhat.com>
+        id S935211AbeFLQ5e (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 12:57:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55332 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934933AbeFLQyL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 12:54:11 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF613208B8;
+        Tue, 12 Jun 2018 16:54:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528822451;
+        bh=nXaaFdQGxoVa9tBAmSiyrXExAYfMi54XGKPkyLI6C08=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=qcFaZy0R7u5TxzjvH0gpDK/iFqyDF2RHPfAmoYRFVOytMQkIvoalpgRE9HWjVN2mY
+         UbgL7JtXYh5zFn35C9ArAHZIbhxtwwgGo8DrnJvwA0WnZ33w9cKPTOX2acHahEGgko
+         1v7Q8YaIOD7KZ6PQCznQVf52w/BCUvgeVwlIMmBo=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 3.18 16/21] isdn: eicon: fix a missing-check bug
+Date:   Tue, 12 Jun 2018 18:52:13 +0200
+Message-Id: <20180612164826.059063532@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180612164825.401145490@linuxfoundation.org>
+References: <20180612164825.401145490@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e420bcc1-c75d-e6a1-0ca6-b668b6818f16@redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 04, 2018 at 10:12:20AM -0400, David Arcari wrote:
-> default_do_nmi() will process both perf events (local interrupts) as well as
-> external interrupts (such as the NMI button).  The handler is coded such that
-> if a local interrupt occurs, no check is made for an external interrupt.
-> Therefore, if the two interrupts occur simultaneously, the external interrupt
-> is lost.
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
-ACK, NMI handling on x86 is less than ideal.
+------------------
 
-> The code above, which was ultimately discounted, attempts to avoid this
-> scenario with as little performance impact as possible by reading the register
-> without the spinlock for cpu 0 only (currently only cpu 0 can handle an
-> external NMI, I verified this on my system by testing the NMI button with
-> cpu 0 offline).
-> 
-> The code above is problematic for a number of reasons not the least of which
-> is performance.  Furthermore, I don't see a less intrusive solution wrt
-> do_default_nmi().
+From: Wenwen Wang <wang6495@umn.edu>
 
-Right, because reading the register itself is dog slow IIRC.
+[ Upstream commit 6009d1fe6ba3bb2dab55921da60465329cc1cd89 ]
 
-> Upstream 6089327f5424 ("perf/x86: Add sysfs entry to freeze counters on SMI")
-> appears to have made it relatively easy to hit this race condition.  On some
-> systems, this commit has resulted in a change to the default firmware setting
-> of DEBUGCTLMSR_FREEZE_IN_SMM_BIT (it is now cleared by the OS by default).
-> 
-> With this bit cleared, the following situation occurs:
-> 
-> 1) external NMI - due to io check
-> 2) long duration SMI (counters do not freeze)
-> 3) NMI handler runs and misattributes interrupt to perf event
+In divasmain.c, the function divas_write() firstly invokes the function
+diva_xdi_open_adapter() to open the adapter that matches with the adapter
+number provided by the user, and then invokes the function diva_xdi_write()
+to perform the write operation using the matched adapter. The two functions
+diva_xdi_open_adapter() and diva_xdi_write() are located in diva.c.
 
-I think 3 is wrong, because 2 will in fact have triggered a PMI (due to
-long running) so 3 will observe a PMI and claim the NMI. No
-misattribution what so ever.
+In diva_xdi_open_adapter(), the user command is copied to the object 'msg'
+from the userspace pointer 'src' through the function pointer 'cp_fn',
+which eventually calls copy_from_user() to do the copy. Then, the adapter
+number 'msg.adapter' is used to find out a matched adapter from the
+'adapter_queue'. A matched adapter will be returned if it is found.
+Otherwise, NULL is returned to indicate the failure of the verification on
+the adapter number.
 
-Because if this wasn't the case, flipping FREEZE_IN_SMM wouldn't have
-made a difference.
+As mentioned above, if a matched adapter is returned, the function
+diva_xdi_write() is invoked to perform the write operation. In this
+function, the user command is copied once again from the userspace pointer
+'src', which is the same as the 'src' pointer in diva_xdi_open_adapter() as
+both of them are from the 'buf' pointer in divas_write(). Similarly, the
+copy is achieved through the function pointer 'cp_fn', which finally calls
+copy_from_user(). After the successful copy, the corresponding command
+processing handler of the matched adapter is invoked to perform the write
+operation.
 
-> Ultimately, my solution was to restore the previous behavior by reading and
-> storing the firmware setting of the bit rather than to always clear it.
+It is obvious that there are two copies here from userspace, one is in
+diva_xdi_open_adapter(), and one is in diva_xdi_write(). Plus, both of
+these two copies share the same source userspace pointer, i.e., the 'buf'
+pointer in divas_write(). Given that a malicious userspace process can race
+to change the content pointed by the 'buf' pointer, this can pose potential
+security issues. For example, in the first copy, the user provides a valid
+adapter number to pass the verification process and a valid adapter can be
+found. Then the user can modify the adapter number to an invalid number.
+This way, the user can bypass the verification process of the adapter
+number and inject inconsistent data.
 
-Ah, urgh.. what a mess. So the OS setting the bit to a known and
-consistent value is 'good' IMO. The firmware magically frobbing things
-is 'bad'.
+This patch reuses the data copied in
+diva_xdi_open_adapter() and passes it to diva_xdi_write(). This way, the
+above issues can be avoided.
 
-Now, explain to me why an IO-check results in an external NMI, and why
-there are long running SMI handlers around? Why can't the IO error not
-be propagated through the regular device interrupt/state? Why are long
-running SMIs required at all, ever? Why doesn't the OS handler whatever
-it is the SMM does?
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/isdn/hardware/eicon/diva.c      |   22 +++++++++++++++-------
+ drivers/isdn/hardware/eicon/diva.h      |    5 +++--
+ drivers/isdn/hardware/eicon/divasmain.c |   18 +++++++++++-------
+ 3 files changed, 29 insertions(+), 16 deletions(-)
 
-Are you not solving the wrong problem here?
+--- a/drivers/isdn/hardware/eicon/diva.c
++++ b/drivers/isdn/hardware/eicon/diva.c
+@@ -387,10 +387,10 @@ void divasa_xdi_driver_unload(void)
+ **  Receive and process command from user mode utility
+ */
+ void *diva_xdi_open_adapter(void *os_handle, const void __user *src,
+-			    int length,
++			    int length, void *mptr,
+ 			    divas_xdi_copy_from_user_fn_t cp_fn)
+ {
+-	diva_xdi_um_cfg_cmd_t msg;
++	diva_xdi_um_cfg_cmd_t *msg = (diva_xdi_um_cfg_cmd_t *)mptr;
+ 	diva_os_xdi_adapter_t *a = NULL;
+ 	diva_os_spin_lock_magic_t old_irql;
+ 	struct list_head *tmp;
+@@ -400,21 +400,21 @@ void *diva_xdi_open_adapter(void *os_han
+ 			 length, sizeof(diva_xdi_um_cfg_cmd_t)))
+ 			return NULL;
+ 	}
+-	if ((*cp_fn) (os_handle, &msg, src, sizeof(msg)) <= 0) {
++	if ((*cp_fn) (os_handle, msg, src, sizeof(*msg)) <= 0) {
+ 		DBG_ERR(("A: A(?) open, write error"))
+ 			return NULL;
+ 	}
+ 	diva_os_enter_spin_lock(&adapter_lock, &old_irql, "open_adapter");
+ 	list_for_each(tmp, &adapter_queue) {
+ 		a = list_entry(tmp, diva_os_xdi_adapter_t, link);
+-		if (a->controller == (int)msg.adapter)
++		if (a->controller == (int)msg->adapter)
+ 			break;
+ 		a = NULL;
+ 	}
+ 	diva_os_leave_spin_lock(&adapter_lock, &old_irql, "open_adapter");
+ 
+ 	if (!a) {
+-		DBG_ERR(("A: A(%d) open, adapter not found", msg.adapter))
++		DBG_ERR(("A: A(%d) open, adapter not found", msg->adapter))
+ 			}
+ 
+ 	return (a);
+@@ -436,8 +436,10 @@ void diva_xdi_close_adapter(void *adapte
+ 
+ int
+ diva_xdi_write(void *adapter, void *os_handle, const void __user *src,
+-	       int length, divas_xdi_copy_from_user_fn_t cp_fn)
++	       int length, void *mptr,
++	       divas_xdi_copy_from_user_fn_t cp_fn)
+ {
++	diva_xdi_um_cfg_cmd_t *msg = (diva_xdi_um_cfg_cmd_t *)mptr;
+ 	diva_os_xdi_adapter_t *a = (diva_os_xdi_adapter_t *) adapter;
+ 	void *data;
+ 
+@@ -458,7 +460,13 @@ diva_xdi_write(void *adapter, void *os_h
+ 			return (-2);
+ 	}
+ 
+-	length = (*cp_fn) (os_handle, data, src, length);
++	if (msg) {
++		*(diva_xdi_um_cfg_cmd_t *)data = *msg;
++		length = (*cp_fn) (os_handle, (char *)data + sizeof(*msg),
++				   src + sizeof(*msg), length - sizeof(*msg));
++	} else {
++		length = (*cp_fn) (os_handle, data, src, length);
++	}
+ 	if (length > 0) {
+ 		if ((*(a->interface.cmd_proc))
+ 		    (a, (diva_xdi_um_cfg_cmd_t *) data, length)) {
+--- a/drivers/isdn/hardware/eicon/diva.h
++++ b/drivers/isdn/hardware/eicon/diva.h
+@@ -19,10 +19,11 @@ int diva_xdi_read(void *adapter, void *o
+ 		  int max_length, divas_xdi_copy_to_user_fn_t cp_fn);
+ 
+ int diva_xdi_write(void *adapter, void *os_handle, const void __user *src,
+-		   int length, divas_xdi_copy_from_user_fn_t cp_fn);
++		   int length, void *msg,
++		   divas_xdi_copy_from_user_fn_t cp_fn);
+ 
+ void *diva_xdi_open_adapter(void *os_handle, const void __user *src,
+-			    int length,
++			    int length, void *msg,
+ 			    divas_xdi_copy_from_user_fn_t cp_fn);
+ 
+ void diva_xdi_close_adapter(void *adapter, void *os_handle);
+--- a/drivers/isdn/hardware/eicon/divasmain.c
++++ b/drivers/isdn/hardware/eicon/divasmain.c
+@@ -591,19 +591,22 @@ static int divas_release(struct inode *i
+ static ssize_t divas_write(struct file *file, const char __user *buf,
+ 			   size_t count, loff_t *ppos)
+ {
++	diva_xdi_um_cfg_cmd_t msg;
+ 	int ret = -EINVAL;
+ 
+ 	if (!file->private_data) {
+ 		file->private_data = diva_xdi_open_adapter(file, buf,
+-							   count,
++							   count, &msg,
+ 							   xdi_copy_from_user);
+-	}
+-	if (!file->private_data) {
+-		return (-ENODEV);
++		if (!file->private_data)
++			return (-ENODEV);
++		ret = diva_xdi_write(file->private_data, file,
++				     buf, count, &msg, xdi_copy_from_user);
++	} else {
++		ret = diva_xdi_write(file->private_data, file,
++				     buf, count, NULL, xdi_copy_from_user);
+ 	}
+ 
+-	ret = diva_xdi_write(file->private_data, file,
+-			     buf, count, xdi_copy_from_user);
+ 	switch (ret) {
+ 	case -1:		/* Message should be removed from rx mailbox first */
+ 		ret = -EBUSY;
+@@ -622,11 +625,12 @@ static ssize_t divas_write(struct file *
+ static ssize_t divas_read(struct file *file, char __user *buf,
+ 			  size_t count, loff_t *ppos)
+ {
++	diva_xdi_um_cfg_cmd_t msg;
+ 	int ret = -EINVAL;
+ 
+ 	if (!file->private_data) {
+ 		file->private_data = diva_xdi_open_adapter(file, buf,
+-							   count,
++							   count, &msg,
+ 							   xdi_copy_from_user);
+ 	}
+ 	if (!file->private_data) {
+
+
