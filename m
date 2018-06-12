@@ -2,262 +2,105 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 37FBFC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 05:28:28 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id BDF75C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 05:32:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D81222086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 05:28:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69DA42086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 05:32:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="vOIRJYjp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D81222086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="baJZAMMB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69DA42086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932973AbeFLF20 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 01:28:26 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:63276 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932286AbeFLF2X (ORCPT
+        id S932674AbeFLFcM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 01:32:12 -0400
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:39884 "EHLO
+        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753584AbeFLFcK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 01:28:23 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllnx209.ext.ti.com (8.15.1/8.15.1) with ESMTP id w5C5SM7x003683;
-        Tue, 12 Jun 2018 00:28:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1528781302;
-        bh=u3pM9a/KBLgU++yKBpplB/FFLh9A8ubHrXiUet4sDbQ=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=vOIRJYjpObb1ZQPL9jZmnDBo6UAPUJrTGfY6X37geZZrkQU36rZggqBXTx0evwLlP
-         mPIUgO0K5hQEpux4/CK0xPrxMAeXFJkjn5c0LnD3jEEqZhyGvsWkiKZnt4RNh2awdd
-         C+hzwpdI03LHvVx7NV198yB0LKNkWFHr9tR5AYL8=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5C5SM34009961;
-        Tue, 12 Jun 2018 00:28:22 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 12
- Jun 2018 00:28:22 -0500
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 12 Jun 2018 00:28:22 -0500
-Received: from ula0393675.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5C5S0Lo032243;
-        Tue, 12 Jun 2018 00:28:20 -0500
-From:   Keerthy <j-keerthy@ti.com>
-To:     <linus.walleij@linaro.org>
-CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <grygorii.strashko@ti.com>, <t-kristo@ti.com>, <j-keerthy@ti.com>
-Subject: [PATCH v2 2/2] gpio: davinci: Do not assume continuous IRQ numbering
-Date:   Tue, 12 Jun 2018 10:57:53 +0530
-Message-ID: <1528781273-18098-2-git-send-email-j-keerthy@ti.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1528781273-18098-1-git-send-email-j-keerthy@ti.com>
-References: <1528781273-18098-1-git-send-email-j-keerthy@ti.com>
+        Tue, 12 Jun 2018 01:32:10 -0400
+Received: by mail-yw0-f193.google.com with SMTP id 81-v6so7105709ywb.6;
+        Mon, 11 Jun 2018 22:32:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=5SP2n5WBdA+IozLYtV2m690qBT9t4zUE1sxh2Fu2vQQ=;
+        b=baJZAMMBentMrgyOIG8410RtMDLvsOFVhFlrlB5v7qFf3+0rPZR6044zVmJjTjDjiZ
+         INSTujkr0OYMduff3BmFNMdozRkyfH9r8kQKzaK/nd0ZMSq61pGn0irK9qeex5q/iOP7
+         qj9vMK543TbfaDJ9dasf/9X4qWEpUilcw3F96LsmIv7dQ6z56wPMyvpZYPjTE/6Te0Y3
+         Z0wpnDy5vel/0L4F5un1NZDWxLcRx3DQGTCQxzKa0zo6zelpUinOfWIMgxgQxuOYIZhy
+         zSPiaxHFcMss03pfOVt8nh1QNPkSLOQNjuBWO5V2QS9R+i1mU5rke0D7Bd7rb9oCPY88
+         dMPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=5SP2n5WBdA+IozLYtV2m690qBT9t4zUE1sxh2Fu2vQQ=;
+        b=hBntX7kckQVB6EFrFSazwsrUIa05lAXKtU9v7M21nOY60yG5V2EzKTroXuZ4R4Mhmq
+         nd5gUYNS4qphTj3APfnF1UzEjiEPV4C5BRySROGGlrvW1q+PYJ5drn7eULPEQ7E+UXNu
+         gpK0sN68k1sD5bu3ggIHJnizubCQ1P5LOmfYIFR/Fnttu+dbwAiiM+ozB0bYRKH3QwKW
+         ETffr8r5ViZkb7TlWBgyQNSiTMZJyYhlXknc5c4cFnTtL/yWHElU2q4m4CKe2H8fOojX
+         G4LZmBjI2ufDrOJgzKjhteC7RyNd1HQ0BzsfVSvRlEXdndYeOOSwpFxOAdnxQhDtD3rM
+         YN4w==
+X-Gm-Message-State: APt69E1Hm2+syvcBOZjDPn3Bn4InX/5cs1vPAcIPdxo1mL3enbaCbROe
+        12Y0CZXc2rV+bdDEF3sF2eXSpjYSQ4kjdeBwrCA=
+X-Google-Smtp-Source: ADUXVKLXsLgntPq99H9ANBDi8APzM8LCxt5R1DgE9W7Hy1AvpxC0PBubYortwWdOG4qzePqQX6BNTKFSGwdtVNyg3tQ=
+X-Received: by 2002:a81:168a:: with SMTP id 132-v6mr828013yww.183.1528781529894;
+ Mon, 11 Jun 2018 22:32:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Received: by 2002:a81:79cf:0:0:0:0:0 with HTTP; Mon, 11 Jun 2018 22:32:09
+ -0700 (PDT)
+In-Reply-To: <1528776964-39826-1-git-send-email-jiazhouyang09@gmail.com>
+References: <1528776964-39826-1-git-send-email-jiazhouyang09@gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 12 Jun 2018 08:32:09 +0300
+Message-ID: <CAOQ4uxgUoPB4jOCro4nDs7wby_GN593iuh8QhD9cGwSQJZJxdQ@mail.gmail.com>
+Subject: Re: [PATCH] fsnotify: add error handling for kmem_cache_create
+To:     Zhouyang Jia <jiazhouyang09@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the driver assumes that the interrupts are continuous
-and does platform_get_irq only once and assumes the rest are continuous,
-instead call platform_get_irq for all the interrupts and store them
-in an array for later use.
+On Tue, Jun 12, 2018 at 7:16 AM, Zhouyang Jia <jiazhouyang09@gmail.com> wrote:
+> When kmem_cache_create fails, the lack of error-handling code may
+> cause unexpected results.
+>
+> This patch adds error-handling code after calling kmem_cache_create.
+>
+> Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+> ---
+>  fs/notify/dnotify/dnotify.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/fs/notify/dnotify/dnotify.c b/fs/notify/dnotify/dnotify.c
+> index 63a1ca4..216b411 100644
+> --- a/fs/notify/dnotify/dnotify.c
+> +++ b/fs/notify/dnotify/dnotify.c
+> @@ -387,6 +387,9 @@ static int __init dnotify_init(void)
+>         dnotify_struct_cache = KMEM_CACHE(dnotify_struct, SLAB_PANIC);
+>         dnotify_mark_cache = KMEM_CACHE(dnotify_mark, SLAB_PANIC);
+>
+> +       if (!dnotify_struct_cache || !dnotify_mark_cache)
+> +               return -ENOMEM;
+> +
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
----
+If only one failed need to free the other.
 
-Tested for GPIO Interrupts on da850-lcdk and keystone-k2g-evm boards.
-
-Changes in v2:
-
-  * Extended the logic of using saved IRQs to unbanked IRQs
-    as per Grygorii's suggestion.
-
- drivers/gpio/gpio-davinci.c                | 53 +++++++++++++++++++-----------
- include/linux/platform_data/gpio-davinci.h |  3 +-
- 2 files changed, 36 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-index 861f35b..b2119c0 100644
---- a/drivers/gpio/gpio-davinci.c
-+++ b/drivers/gpio/gpio-davinci.c
-@@ -55,7 +55,7 @@ static inline struct davinci_gpio_regs __iomem *irq2regs(struct irq_data *d)
- 	return g;
- }
- 
--static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq);
-+static int davinci_gpio_irq_setup(struct platform_device *pdev);
- 
- /*--------------------------------------------------------------------------*/
- 
-@@ -168,7 +168,8 @@ static int davinci_gpio_probe(struct platform_device *pdev)
- {
- 	static int ctrl_num, bank_base;
- 	int gpio, bank, ret = 0;
--	unsigned ngpio, nbank, bank_irq;
-+	unsigned int ngpio, nbank, nirq;
-+	int i;
- 	struct davinci_gpio_controller *chips;
- 	struct davinci_gpio_platform_data *pdata;
- 	struct device *dev = &pdev->dev;
-@@ -197,6 +198,16 @@ static int davinci_gpio_probe(struct platform_device *pdev)
- 	if (WARN_ON(ARCH_NR_GPIOS < ngpio))
- 		ngpio = ARCH_NR_GPIOS;
- 
-+	/*
-+	 * If there are unbanked interrupts then the number of
-+	 * interrupts is equal to number of gpios else all are banked so
-+	 * number of interrupts is equal to number of banks(each with 16 gpios)
-+	 */
-+	if (pdata->gpio_unbanked)
-+		nirq = pdata->gpio_unbanked;
-+	else
-+		nirq = DIV_ROUND_UP(ngpio, 16);
-+
- 	nbank = DIV_ROUND_UP(ngpio, 32);
- 	chips = devm_kzalloc(dev,
- 			     nbank * sizeof(struct davinci_gpio_controller),
-@@ -209,10 +220,13 @@ static int davinci_gpio_probe(struct platform_device *pdev)
- 	if (IS_ERR(gpio_base))
- 		return PTR_ERR(gpio_base);
- 
--	bank_irq = platform_get_irq(pdev, 0);
--	if (bank_irq < 0) {
--		dev_dbg(dev, "IRQ not populated\n");
--		return bank_irq;
-+	for (i = 0; i < nirq; i++) {
-+		chips->irqs[i] = platform_get_irq(pdev, i);
-+		if (chips->irqs[i] < 0) {
-+			dev_info(dev, "IRQ not populated, err = %d\n",
-+				 chips->irqs[i]);
-+			return chips->irqs[i];
-+		}
- 	}
- 
- 	snprintf(label, MAX_LABEL_SIZE, "davinci_gpio.%d", ctrl_num++);
-@@ -249,7 +263,7 @@ static int davinci_gpio_probe(struct platform_device *pdev)
- 		goto err;
- 
- 	platform_set_drvdata(pdev, chips);
--	ret = davinci_gpio_irq_setup(pdev, bank_irq);
-+	ret = davinci_gpio_irq_setup(pdev);
- 	if (ret)
- 		goto err;
- 
-@@ -383,7 +397,7 @@ static int gpio_to_irq_unbanked(struct gpio_chip *chip, unsigned offset)
- 	 * can provide direct-mapped IRQs to AINTC (up to 32 GPIOs).
- 	 */
- 	if (offset < d->gpio_unbanked)
--		return d->base_irq + offset;
-+		return d->irqs[offset];
- 	else
- 		return -ENODEV;
- }
-@@ -396,7 +410,7 @@ static int gpio_irq_type_unbanked(struct irq_data *data, unsigned trigger)
- 
- 	d = (struct davinci_gpio_controller *)irq_data_get_irq_handler_data(data);
- 	g = (struct davinci_gpio_regs __iomem *)d->regs[0];
--	mask = __gpio_mask(data->irq - d->base_irq);
-+	mask = __gpio_mask(data->irq - d->irqs[0]);
- 
- 	if (trigger & ~(IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
- 		return -EINVAL;
-@@ -458,7 +472,7 @@ static struct irq_chip *keystone_gpio_get_irq_chip(unsigned int irq)
-  * (dm6446) can be set appropriately for GPIOV33 pins.
-  */
- 
--static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq)
-+static int davinci_gpio_irq_setup(struct platform_device *pdev)
- {
- 	unsigned	gpio, bank;
- 	int		irq;
-@@ -492,6 +506,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq)
- 		dev_err(dev, "Error %ld getting gpio clock\n", PTR_ERR(clk));
- 		return PTR_ERR(clk);
- 	}
-+
- 	ret = clk_prepare_enable(clk);
- 	if (ret)
- 		return ret;
-@@ -531,12 +546,11 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq)
- 	if (pdata->gpio_unbanked) {
- 		/* pass "bank 0" GPIO IRQs to AINTC */
- 		chips->chip.to_irq = gpio_to_irq_unbanked;
--		chips->base_irq = bank_irq;
- 		chips->gpio_unbanked = pdata->gpio_unbanked;
- 		binten = GENMASK(pdata->gpio_unbanked / 16, 0);
- 
- 		/* AINTC handles mask/unmask; GPIO handles triggering */
--		irq = bank_irq;
-+		irq = chips->irqs[0];
- 		irq_chip = gpio_get_irq_chip(irq);
- 		irq_chip->name = "GPIO-AINTC";
- 		irq_chip->irq_set_type = gpio_irq_type_unbanked;
-@@ -547,10 +561,11 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq)
- 		writel_relaxed(~0, &g->set_rising);
- 
- 		/* set the direct IRQs up to use that irqchip */
--		for (gpio = 0; gpio < pdata->gpio_unbanked; gpio++, irq++) {
--			irq_set_chip(irq, irq_chip);
--			irq_set_handler_data(irq, chips);
--			irq_set_status_flags(irq, IRQ_TYPE_EDGE_BOTH);
-+		for (gpio = 0; gpio < pdata->gpio_unbanked; gpio++) {
-+			irq_set_chip(chips->irqs[gpio], irq_chip);
-+			irq_set_handler_data(chips->irqs[gpio], chips);
-+			irq_set_status_flags(chips->irqs[gpio],
-+					     IRQ_TYPE_EDGE_BOTH);
- 		}
- 
- 		goto done;
-@@ -560,7 +575,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq)
- 	 * Or, AINTC can handle IRQs for banks of 16 GPIO IRQs, which we
- 	 * then chain through our own handler.
- 	 */
--	for (gpio = 0, bank = 0; gpio < ngpio; bank++, bank_irq++, gpio += 16) {
-+	for (gpio = 0, bank = 0; gpio < ngpio; bank++, gpio += 16) {
- 		/* disabled by default, enabled only as needed
- 		 * There are register sets for 32 GPIOs. 2 banks of 16
- 		 * GPIOs are covered by each set of registers hence divide by 2
-@@ -587,8 +602,8 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq)
- 		irqdata->bank_num = bank;
- 		irqdata->chip = chips;
- 
--		irq_set_chained_handler_and_data(bank_irq, gpio_irq_handler,
--						 irqdata);
-+		irq_set_chained_handler_and_data(chips->irqs[bank],
-+						 gpio_irq_handler, irqdata);
- 
- 		binten |= BIT(bank);
- 	}
-diff --git a/include/linux/platform_data/gpio-davinci.h b/include/linux/platform_data/gpio-davinci.h
-index 90ae19c..cf884d1 100644
---- a/include/linux/platform_data/gpio-davinci.h
-+++ b/include/linux/platform_data/gpio-davinci.h
-@@ -22,6 +22,7 @@
- #include <asm-generic/gpio.h>
- 
- #define MAX_REGS_BANKS		5
-+#define MAX_INT_PER_BANK 32
- 
- struct davinci_gpio_platform_data {
- 	u32	ngpio;
-@@ -41,7 +42,7 @@ struct davinci_gpio_controller {
- 	spinlock_t		lock;
- 	void __iomem		*regs[MAX_REGS_BANKS];
- 	int			gpio_unbanked;
--	unsigned int		base_irq;
-+	unsigned int		irqs[MAX_INT_PER_BANK];
- 	unsigned int		base;
- };
- 
--- 
-1.9.1
-
+>         dnotify_group = fsnotify_alloc_group(&dnotify_fsnotify_ops);
+>         if (IS_ERR(dnotify_group))
+>                 panic("unable to allocate fsnotify group for dnotify\n");
+> --
+> 2.7.4
+>
