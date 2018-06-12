@@ -6,114 +6,104 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 477AEC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 07:22:55 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7D54CC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 07:25:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2787208AE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 07:22:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2787208AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 34BAB208B0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 07:25:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34BAB208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933241AbeFLHWw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 03:22:52 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:37971 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932944AbeFLHWv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 03:22:51 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 691D520A20; Tue, 12 Jun 2018 09:22:49 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-37-30.w90-88.abo.wanadoo.fr [90.88.156.30])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 129312073C;
-        Tue, 12 Jun 2018 09:22:49 +0200 (CEST)
-Date:   Tue, 12 Jun 2018 09:22:48 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     NeilBrown <neil@brown.name>
-Cc:     Yogesh Gaur <yogeshnarayan.gaur@nxp.com>,
-        linux-mtd@lists.infradead.org, boris.brezillon@free-electrons.com,
-        frieder.schrempf@exceet.de, computersforpeace@gmail.com,
-        david.wolfe@nxp.com, han.xu@nxp.com, festevam@gmail.com,
-        marek.vasut@gmail.com, prabhakar.kushwaha@nxp.com,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: spi-nor: honour max_data_size for spi-nor writes
-Message-ID: <20180612092248.4e6a3e92@bbrezillon>
-In-Reply-To: <87r2ldj7xi.fsf@notabene.neil.brown.name>
-References: <1528708694-19407-1-git-send-email-yogeshnarayan.gaur@nxp.com>
-        <20180611114916.351ed272@bbrezillon>
-        <87r2ldj7xi.fsf@notabene.neil.brown.name>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S933353AbeFLHZS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 03:25:18 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:46584 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932637AbeFLHZR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 03:25:17 -0400
+Received: by mail-ua0-f195.google.com with SMTP id d7-v6so674310uam.13;
+        Tue, 12 Jun 2018 00:25:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hpuW02e5fz01lQPIGRKiow8oWEu7hE5cx8eVLMb8WYQ=;
+        b=YP+ew1A6jsYlqnbVCRpopX8OhLW+650FEhzmruSrO/libjIAM/Du/ip6eBJUhDaWnX
+         EXjaJQ5zVugAnVL4ntibrXq3MYEJZ6bLDlENGtZ2hNioYu10zYcMXJeS0dx+a/bJmVJj
+         ZBeH8yfCi8ijVYegy02zdpXCu1Z4QIqxuO20Q6oIOZ3DngzNzrScya4dyGLQjusoQrfk
+         GW8LEk9x1pwTMx84yjJ3ufu7et7rDkEBCXUgWp9amIXxdKaChO44WzSjyjHD1UhxqZer
+         WdHFy4AWe+OfdJ/ne57GK5kqY/IqDkROyhrFJ2qLeOahi0fVmc68ZvPvmNZjeLhD0DhD
+         F/1w==
+X-Gm-Message-State: APt69E1/zn3o2Rd2GGqbmIvhxQyp0sg1BP33tEMyPfB5U0qRsVDjbaU2
+        prgFB6yViQVmQEgoUUum14m4Jg3rWuxMsFFuSQo=
+X-Google-Smtp-Source: ADUXVKL+QAY83ps7pBhUfPy/eWZhjJGxAxlWeO5RbhDLavBED+KX5beoeJEPpbqAT6yZ7qW4V7zYCEXgZ8G8YZeseO8=
+X-Received: by 2002:ab0:265:: with SMTP id 92-v6mr1741926uas.26.1528788316119;
+ Tue, 12 Jun 2018 00:25:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20180525210843.1821071-1-arnd@arndb.de>
+In-Reply-To: <20180525210843.1821071-1-arnd@arndb.de>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 12 Jun 2018 09:25:05 +0200
+Message-ID: <CAMuHMdXJg0mYbs=e0QJMDb=A+bRbPsNF=TJzSumSjjOK3yJw2Q@mail.gmail.com>
+Subject: Re: [PATCH] pwm: stm32: fix build warning with CONFIG_DMA_ENGINE disabled
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Linux PWM List <linux-pwm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        fabrice.gasnier@st.com,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Neil,
+Hi Arnd,
 
-On Tue, 12 Jun 2018 08:05:13 +1000
-NeilBrown <neil@brown.name> wrote:
+On Fri, May 25, 2018 at 11:09 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> Without dmaengine support, we get a harmless warning about an
+> unused function:
+>
+> drivers/pwm/pwm-stm32.c:166:12: error: 'stm32_pwm_capture' defined but not used [-Werror=unused-function]
+>
+> Changing the #ifdef to an IS_ENABLED() check shuts up that warning
+> and is slightly nicer to read.
+>
+> Fixes: 53e38fe73f94 ("pwm: stm32: Add capture support")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-> On Mon, Jun 11 2018, Boris Brezillon wrote:
-> >
-> > Also, I'd prefer to have this patch split in 2:
-> > 1/ one patch removing the check in spi_nor_write()
-> > 2/ and the second patch removing the while() loop in m25p80_write()
-> >
-> > How about the following commit messages for those 2 patches:
-> >
-> > 1:
-> > "
-> > mtd: spi-nor: Support controllers with limited TX FIFO size
-> >
-> > Some SPI controllers can't write nor->page_size bytes in a single step
-> > because their TX FIFO is too small.  
-> 
-> I no longer think this is good justification for changes to m25p80 or to
-> anything outside the low-level SPI driver.  The size of the FIFO is not
-> related to the maximum message size.
-> 
-> An SPI transaction involves:
->  - asserting chip-select
->  - sending/receiving a bunch of bits
->  - deasserting chip-select
-> 
-> That middle part of sending/receiving bits can be done:
->  - one bit at a time by bit-banging GPIOs
->  - 32 bytes at a time by filling a buffer, running the SPI engine, then
->     reading results out of the buffer (assuming a 32-byte buffer)
->  - with one single DMA operation if the SPI engine can DMA to/from
->    main memory
-> 
-> and there are probably other options.
-> 
-> If your SPI engine only handles (say) 32 bytes at a time, then call it
-> repeatedly, while holding chip-select asserted the whole time.
+Thanks!
 
-Except you're not necessarily in control of the CS signal, and that's
-most of the time the case with high-level (Q)SPI mem controllers like
-the NXP/FSL QSPI controller (see the datasheet here if you want to check
-[1]).
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-> The SPI
-> clock is controlled by the host and in this case it will not have a
-> stable frequency for the whole transaction (occasionally pauses), but
-> that doesn't matter.  The slave just watches for the clock transitions
-> and don't care when they come as long as they don't come too fast.
-> 
-> I recently modified the mt7621 spi driver (in drivers/staging) to work
-> like this and got much better throughput when reading from spi-nor flash
-> memory.  It handles writes of full pages (36 bytes at at time!) without
-> problems.
+> --- a/drivers/pwm/pwm-stm32.c
+> +++ b/drivers/pwm/pwm-stm32.c
+> @@ -484,9 +484,7 @@ static int stm32_pwm_apply_locked(struct pwm_chip *chip, struct pwm_device *pwm,
+>  static const struct pwm_ops stm32pwm_ops = {
+>         .owner = THIS_MODULE,
+>         .apply = stm32_pwm_apply_locked,
+> -#if IS_ENABLED(CONFIG_DMA_ENGINE)
+> -       .capture = stm32_pwm_capture,
+> -#endif
+> +       .capture = IS_ENABLED(CONFIG_DMA_ENGINE) ? stm32_pwm_capture : NULL,
 
-Just because you managed to solve the problem in one driver does not
-mean the problem does not exist for others. I read this datasheet [1]
-several times and couldn't find a way to say 'I want to keep the CS
-asserted between 2 transactions', so I think we really need this patch.
+Cool, I didn't know IS_ENABLED() can be used in static initializers.
+I guess it's too late/much work to use this trick in e.g. SET_*_PM_OPS(),
+as there are lots of places protecting the functions by #ifdefs?
 
-Regards,
+>  };
 
-Boris
+Gr{oetje,eeting}s,
 
-[1]https://www.nxp.com/docs/en/reference-manual/VFXXXRM.pdf
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
