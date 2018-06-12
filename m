@@ -6,44 +6,48 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2EF5EC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:54:45 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 75CAEC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:54:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCD5A208B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:54:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CD19208BA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:54:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="w8QEHmCp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCD5A208B8
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hdOMokMC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CD19208BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935285AbeFLQym (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 12:54:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57012 "EHLO mail.kernel.org"
+        id S935295AbeFLQyv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 12:54:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57620 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933574AbeFLQyi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 12:54:38 -0400
+        id S933429AbeFLQyq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 12:54:46 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 079A2208B4;
-        Tue, 12 Jun 2018 16:54:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E481E208C1;
+        Tue, 12 Jun 2018 16:54:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528822477;
-        bh=HSd/qak5V+249pubFaor+BtSwo4ksfdI5oEsOwALkNI=;
+        s=default; t=1528822485;
+        bh=0aXUTGKgFaPllD+a2a0RfHj5Hy32yqs2pVzFP7kN3G0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w8QEHmCpvoKYxqpMpwRIhn8RHyCtEs0kmyhzXU+D2BdXW5tihm+EjYQllHwLEA3/V
-         f/50yqhuaaY1WJkLsiGRFdUod/AuwSsQlnQsVUDE5wkMTF7p1Sa30haS0Jt8NLU5aJ
-         Q5X2PQAP+SK6NSvLsAhqg1FWNRALAt9qfMXdG5ag=
+        b=hdOMokMCHwc/QR/Q1cQKWdmvzg14/DoSVcngrDjhw9h0T/Prruw9F4X6O8LVui3RE
+         cZkG7u2I/XYhAqIdV3M7mz73xFYX6dLvCUNLY5LgDAvXf9JxVn19Vf12LrN5VIATbi
+         XnR6KaG9zqBYHOb1gi8EeZ2bBIMnCM7BrwLlJiww=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        James Hogan <jhogan@kernel.org>
-Subject: [PATCH 3.18 05/21] MIPS: ptrace: Fix PTRACE_PEEKUSR requests for 64-bit FGRs
-Date:   Tue, 12 Jun 2018 18:52:02 +0200
-Message-Id: <20180612164825.623493095@linuxfoundation.org>
+        stable@vger.kernel.org, Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Ivan Kalvachev <ikalvachev@gmail.com>,
+        "Huang, Ying" <ying.huang@intel.com>, Jan Kara <jack@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 3.18 08/21] mm: fix the NULL mapping case in __isolate_lru_page()
+Date:   Tue, 12 Jun 2018 18:52:05 +0200
+Message-Id: <20180612164825.753678266@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180612164825.401145490@linuxfoundation.org>
 References: <20180612164825.401145490@linuxfoundation.org>
@@ -60,53 +64,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maciej W. Rozycki <macro@mips.com>
+From: Hugh Dickins <hughd@google.com>
 
-commit c7e814628df65f424fe197dde73bfc67e4a244d7 upstream.
+commit 145e1a71e090575c74969e3daa8136d1e5b99fc8 upstream.
 
-Use 64-bit accesses for 64-bit floating-point general registers with
-PTRACE_PEEKUSR, removing the truncation of their upper halves in the
-FR=1 mode, caused by commit bbd426f542cb ("MIPS: Simplify FP context
-access"), which inadvertently switched them to using 32-bit accesses.
+George Boole would have noticed a slight error in 4.16 commit
+69d763fc6d3a ("mm: pin address_space before dereferencing it while
+isolating an LRU page").  Fix it, to match both the comment above it,
+and the original behaviour.
 
-The PTRACE_POKEUSR side is fine as it's never been broken and continues
-using 64-bit accesses.
+Although anonymous pages are not marked PageDirty at first, we have an
+old habit of calling SetPageDirty when a page is removed from swap
+cache: so there's a category of ex-swap pages that are easily
+migratable, but were inadvertently excluded from compaction's async
+migration in 4.16.
 
-Fixes: bbd426f542cb ("MIPS: Simplify FP context access")
-Signed-off-by: Maciej W. Rozycki <macro@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: <stable@vger.kernel.org> # 3.15+
-Patchwork: https://patchwork.linux-mips.org/patch/19334/
-Signed-off-by: James Hogan <jhogan@kernel.org>
+Link: http://lkml.kernel.org/r/alpine.LSU.2.11.1805302014001.12558@eggly.anvils
+Fixes: 69d763fc6d3a ("mm: pin address_space before dereferencing it while isolating an LRU page")
+Signed-off-by: Hugh Dickins <hughd@google.com>
+Acked-by: Minchan Kim <minchan@kernel.org>
+Acked-by: Mel Gorman <mgorman@techsingularity.net>
+Reported-by:  Ivan Kalvachev <ikalvachev@gmail.com>
+Cc: "Huang, Ying" <ying.huang@intel.com>
+Cc: Jan Kara <jack@suse.cz>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/kernel/ptrace.c   |    2 +-
- arch/mips/kernel/ptrace32.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ mm/vmscan.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/mips/kernel/ptrace.c
-+++ b/arch/mips/kernel/ptrace.c
-@@ -713,7 +713,7 @@ long arch_ptrace(struct task_struct *chi
- 				break;
- 			}
- #endif
--			tmp = get_fpr32(&fregs[addr - FPR_BASE], 0);
-+			tmp = get_fpr64(&fregs[addr - FPR_BASE], 0);
- 			break;
- 		case PC:
- 			tmp = regs->cp0_epc;
---- a/arch/mips/kernel/ptrace32.c
-+++ b/arch/mips/kernel/ptrace32.c
-@@ -107,7 +107,7 @@ long compat_arch_ptrace(struct task_stru
- 						addr & 1);
- 				break;
- 			}
--			tmp = get_fpr32(&fregs[addr - FPR_BASE], 0);
-+			tmp = get_fpr64(&fregs[addr - FPR_BASE], 0);
- 			break;
- 		case PC:
- 			tmp = regs->cp0_epc;
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1234,7 +1234,7 @@ int __isolate_lru_page(struct page *page
+ 				return ret;
+ 
+ 			mapping = page_mapping(page);
+-			migrate_dirty = mapping && mapping->a_ops->migratepage;
++			migrate_dirty = !mapping || mapping->a_ops->migratepage;
+ 			unlock_page(page);
+ 			if (!migrate_dirty)
+ 				return ret;
 
 
