@@ -2,82 +2,90 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id ECC2AC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 11:49:44 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id AF17DC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 11:50:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACE39208B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 11:49:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACE39208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.com
+	by mail.kernel.org (Postfix) with ESMTP id 65AEE208BA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 11:50:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="HSxnFF7N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65AEE208BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933481AbeFLLtm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 07:49:42 -0400
-Received: from mout.gmx.net ([212.227.15.15]:44903 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754019AbeFLLtl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 07:49:41 -0400
-Received: from juanniu018037.ss.mogujie.org ([122.225.81.134]) by mail.gmx.com
- (mrgmx002 [212.227.17.184]) with ESMTPSA (Nemesis) id
- 0MId0S-1fQVwK39jM-002CVv; Tue, 12 Jun 2018 13:49:09 +0200
-From:   Chengguang Xu <cgxu519@gmx.com>
-To:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        Chengguang Xu <cgxu519@gmx.com>
-Subject: [PATCH v2] x86: remove redundant check for kmem_cache_create()
-Date:   Tue, 12 Jun 2018 19:48:52 +0800
-Message-Id: <1528804132-154948-1-git-send-email-cgxu519@gmx.com>
-X-Mailer: git-send-email 1.8.3.1
-X-Provags-ID: V03:K1:SRzQPuPqcxm7EN2BdxdWGb4Uhp7UFUVLDjTo++bX1e7FUwdUit1
- CKKk4rPDd+rfWmVgB6g0c8GR2haax96xh3PKiorQN1oAW0oeRIdbcs5hthaWLm6KD3RO/f9
- WF05839oTnbdgZVDYUnngPBROoNGT5rBIW5eDVQUWfRm4ZvMGp0vnUwPFkWNzlmyxSkl4gg
- s904BYj4DvPel0U2Ra2yQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:3XYV9chKzRg=:Oh4mm8fqcUehXdR4/4WcH6
- EPtQuwnTOuFfBK2t59RUNq37i8e8hMxEY7/UOK0r1pD9ySrlJT474IWZO1YKQpAH15YSeDPKv
- HS8XyJvtHJO5VYVtB/ONuc3QTHQNdHWNwlpu+UxvSYKazK5wrluVeOq9pap/eno8EB6nUBWJH
- 7OtKpYTr/wxp9fT0pdrzoqs/ar9imLNL+2J0mhoPKT4yiEsVFdRqT3E9ZXtfPjjBNypFm/9Ea
- jhaEkGnmTnYnxtYe7y+gT0h/Gh3UimvzpgSqxK7IZEb46e69Ojz9uapfRVDc//oEbI7qUWdIN
- Uw8zSjIy/2gEb72Vo/DMZYBhhTntR1klM+IpiZ1NJokNgVuUz2uuJGUWYT22pUqzZQXur78lX
- u6fWHUYPTpsMy+g1q7c8s2Yu0Sya0Us4BkhP2XUVrzhu5yR2nw2lxJ5+Jo+jk0HExAUkFz0l4
- 98LBe6cCnRkiE/TgKhcNMNl3G4lzrUw09flD5NBQrI8wYy6GOGZcOw8r02TBYQnbQsOZlw1iP
- fGMvdi4QoSAm7U4vVMFakGJXvI1KtRr1OHRo4yFF2clDjTGwj26VDDIxUZnMH8jkEw31mvcd2
- qetI0jSHuQQCff2MIKfffAEMGMCBHw/nq4JmUBki3pnXp6462+hxwddMg6hQR8m8iQs4KhP4Z
- pkSRlepLkOL8oTcxdgThHzzwLFr1rGTt9L1mNUYWAtM/6LhYl7hhJ4ci2UZiOyOkooBv+4poH
- yVZFhM/10HIYsEu7HC7VAW+tW/MSJUE5KcKv2graIC5LZH2sdsLXVIKTbc0=
+        id S933548AbeFLLu5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 07:50:57 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:53576 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754299AbeFLLu4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 07:50:56 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5CBkAL9132801;
+        Tue, 12 Jun 2018 11:50:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2017-10-26;
+ bh=Eiz6F8v714qmX2pfN+Bqzjkuvp8aD5p4rZwLTdVKEMI=;
+ b=HSxnFF7NcjQEO4WlxqTT3A3FfSzJ83iesjSRJLp1tu/C4rVsUnIAvuxzgN7VyOTWBceA
+ kJazDJPGewyK4J2DjZKN7F6CG/uzYoPFgNTnOQbeez8t+lkoE69tY92nVIWmQnxz+knk
+ yeafFs+ydjEGv/Xcd9RkT3H5xzL5ToEMRS7pIc0X7E7+65P1/cmaK7j56/RHVDRLlVs/
+ rYG1CSZdNYXVi+BRJ6KDg/Pg7/GWCZuvxP0AlpMZXB5Fj2UrARupWgqoSxfc9TFekkwt
+ WMFJWbSaWRApQL/J8eJfggr1ipXaT3osItYoVY9NOUAcmwCfGxZCpeDQIa1BP0R5/XJq yg== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2130.oracle.com with ESMTP id 2jg4dm1u53-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Jun 2018 11:50:49 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5CBom4K011712
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Jun 2018 11:50:49 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5CBomcL026814;
+        Tue, 12 Jun 2018 11:50:48 GMT
+Received: from mwanda (/197.157.0.30)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 12 Jun 2018 04:50:47 -0700
+Date:   Tue, 12 Jun 2018 14:50:39 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Zhouyang Jia <jiazhouyang09@gmail.com>
+Cc:     devel@driverdev.osuosl.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Ian Abbott <abbotti@mev.co.uk>
+Subject: Re: [PATCH] staging: comedi: add error handling for vmap
+Message-ID: <20180612115039.sz4zjgf7vrudpvyx@mwanda>
+References: <1528773937-38106-1-git-send-email-jiazhouyang09@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1528773937-38106-1-git-send-email-jiazhouyang09@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8921 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=671
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806120137
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The flag 'SLAB_PANIC' implies panic when encouter failure,
-So there is no need to check NULL pointer for cache creation.
+On Tue, Jun 12, 2018 at 11:25:35AM +0800, Zhouyang Jia wrote:
+> When vmap fails, the lack of error-handling code may
+> cause unexpected results.
+> 
+> This patch adds error-handling code after calling vmap.
+> 
 
-Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
----
-v1->v2:
-- Keep return type as int instead of changing to void.
+Again, this is not error handling, this is just an error message.  This
+error condition is handled in the caller.
 
- arch/x86/mm/pgtable.c | 3 ---
- 1 file changed, 3 deletions(-)
+regards,
+dan carpenter
 
-diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-index 47b5951..406873d 100644
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -329,9 +329,6 @@ static int __init pgd_cache_init(void)
- 	 */
- 	pgd_cache = kmem_cache_create("pgd_cache", PGD_SIZE, PGD_ALIGN,
- 				      SLAB_PANIC, NULL);
--	if (!pgd_cache)
--		return -ENOMEM;
--
- 	return 0;
- }
- core_initcall(pgd_cache_init);
--- 
-1.8.3.1
 
