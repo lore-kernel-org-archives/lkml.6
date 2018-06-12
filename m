@@ -2,116 +2,99 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED
+X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0645DC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:11:19 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 19F05C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:18:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A00DC208B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:11:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="pP46h51S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A00DC208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
+	by mail.kernel.org (Postfix) with ESMTP id C9839208B0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:18:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9839208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754178AbeFLKLR (ORCPT
+        id S1754128AbeFLKS2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 06:11:17 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:34476 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753206AbeFLKLO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 06:11:14 -0400
-Received: by mail-lf0-f65.google.com with SMTP id o9-v6so35117985lfk.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 03:11:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=UI+XqWZ4n8sigZuaALnjT5i0YxPNoao9KFDIICJlphQ=;
-        b=pP46h51SzH0+5n69C36EFd26Ohp8iEi92pnPIFN9yUnfB4FU57riBeL6e9yR8pMsUZ
-         59GFm+sTqKvuFvHDMtI7J0oB8pqjst5i1TlD0l4WmP4IpiIIWhpsm4TP01vv5dtANXgO
-         2W6oZqzV6EfLA/lnll9JxATCi9KfHbdd9wL3k0gJ2Ihrf3ivROfBzqniBliYPN8BxXsU
-         QEvw+KRk0bOGQ5YFrwnrL3b5Ij74sBe70P0/rcm2u4272m4x9tYz2RYWrsWFfsKDsSwu
-         UK04uDixWVsQQFUIlO3FeZpik9xNuvjk836jnqek0lvb1lGupymjCbehDI/mPNw/3Qts
-         rZVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UI+XqWZ4n8sigZuaALnjT5i0YxPNoao9KFDIICJlphQ=;
-        b=n70dZgVa/U+V/wrPqfuD+ggFnFrq+wYOwrQAI/H1NqDmSq14zoJHUwUYhZC3ka+yw7
-         b0Qc9vMhej7+ypOJO0Eel6eN/Yv1ZUePE9EbSQbYUpelqdV/Jdq14OW9yxrvAx5eLRMZ
-         NxiOI/hOl21oKK+TOyKQlIh0TEYj/YhSeeNY624OREk5pWkYRcFMrW2jo3ic+l7lhGtq
-         bMH3RyTDs2A1lMCYbUTLds981pr6iY2iE95sICAXX/qO9W+nCfrGMtMtma87H1777Z1A
-         wR3o18wB2hoFpf62Zo19T5jo6ZWkPjrTkhn2b+KOaNkc6UPDOjacBdAY1rvTI2t/FNTO
-         6lLQ==
-X-Gm-Message-State: APt69E0PVO3L+WWybb1L5h3VcUumnauIOTXeM/3qW3H4UpeANlaV+oOM
-        esWqjN+F3xf2aA+Zqfb1pLMZbJvU6yQ=
-X-Google-Smtp-Source: ADUXVKKbhmInUoxEDvAkkD1lencqhfpjmxINFuNeLmPKi6ZYaaqCqQVt2jbviz2UMrnNl/Os1f/q9g==
-X-Received: by 2002:a2e:4811:: with SMTP id v17-v6mr1868261lja.39.1528798272678;
-        Tue, 12 Jun 2018 03:11:12 -0700 (PDT)
-Received: from [192.168.0.126] ([31.173.81.249])
-        by smtp.gmail.com with ESMTPSA id 66-v6sm136321ljz.28.2018.06.12.03.11.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Jun 2018 03:11:11 -0700 (PDT)
-Subject: Re: [PATCH] isdn/i4l: add error handling for try_module_get
-To:     Zhouyang Jia <jiazhouyang09@gmail.com>
-Cc:     Karsten Keil <isdn@linux-pingi.de>,
-        Kees Cook <keescook@chromium.org>,
-        Annie Cherkaev <annie.cherk@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jiten Thakkar <jitenmt@gmail.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1528778635-41763-1-git-send-email-jiazhouyang09@gmail.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <5a6a774c-156e-3e13-eda8-ed6c81722888@cogentembedded.com>
-Date:   Tue, 12 Jun 2018 13:11:13 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <1528778635-41763-1-git-send-email-jiazhouyang09@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 12 Jun 2018 06:18:28 -0400
+Received: from mout.gmx.net ([212.227.15.18]:33099 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752659AbeFLKS0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 06:18:26 -0400
+Received: from juanniu018037.ss.mogujie.org ([122.225.81.134]) by mail.gmx.com
+ (mrgmx001 [212.227.17.184]) with ESMTPSA (Nemesis) id
+ 0MaJPk-1fi8oq2npw-00JoN5; Tue, 12 Jun 2018 12:17:45 +0200
+From:   Chengguang Xu <cgxu519@gmx.com>
+To:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        Chengguang Xu <cgxu519@gmx.com>
+Subject: [RESEND PATCH] x86: remove redundant check for kmem_cache_create()
+Date:   Tue, 12 Jun 2018 18:16:49 +0800
+Message-Id: <1528798609-111951-1-git-send-email-cgxu519@gmx.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Provags-ID: V03:K1:V4GS0+Yga31F3sIzKWGQ3Lmr+wpVqJmK6/bhAorF3oYg9hrVS/Z
+ lSjUp52Ov3k/i10ii7ymAU4Y3nWv4myzIR/tic/71up6OkkEDP2pMvRpClYsZcU17KjyamR
+ PL5OKhBBT1EVPU0160tD4mS3FH13A4L273IIsZrOWtSYf70k/8CPHv/sjYvD71zKBD+tXEQ
+ MFHEvmulEasmLwBBXO+Hw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:IJrzMPOfLrw=:GKl8aD1ejkf2kt8hzuo64Z
+ sY0OlpW8Vi41JBhqNrzuFqZ2Ou96m3rQkUqCITPyY4Oup0iC9pzFJxTU+n1uzVHRAdvFhUj22
+ VZ6xUKqpwzTjkQfXr0kYst+uIElR6kpVHAZaqXTEg+A05JpzmNRWeNj/IwDyMcvaALEWiO63r
+ U706A4tmkyAGd30+t43uM/w9dgdj2VBiJUtV+e41BPXoLdrz8V+jRpSGLI6rtxfI8BfZdXZM2
+ RQlcHCs+zAA1CAERC8jqk5YwULeZtK3OkA1XQKKmd6HeGEQB/ik9wmqi3is7V1RRPTDq9ziZm
+ ql5KRAeh55J+GG5YYx1Y0w5a7fI8yVIf7H8jpsrl6PqF2o65RCp3T3fMFJQpJd0gi4iSm7miP
+ xH+yuslTKA0pOHU+FKihHurhVAPo+JPY6jvlP5HbBHaUTLWo6t8sBt9NIAjdji+gC3f2MM62h
+ AYtV5NoenKlimtouptwt7gw7rfyQX3SvL5LXV4tD2mVVTMCFWNfU2RA6nGcWMWSkF29Up5YtR
+ GKyaTEbtIVW0PGc3J8Zjir4l5EHc4Pb46gFlReq3un5eFGIEy9KfAQWKR+8z30omBtIPxMl14
+ Io8ZlNaWO95MskLjJyFLrKSi/MKPaZY3wU62RgZJncLq4cQbD1Q4bQ0NxW/cAkA8+P+5MiC3F
+ MXA+8t6IYhVvTxFB0CB7gZS1UeSg32NUIKbFb+mpmwDzqzFWdfrnk/E8czQgpdnElqskksLFq
+ 6pEmuQ5mauzdcTRA9RgBnHt1VSADcORgXYrK1Vsx0tJcyLVELyytvFXSNX8=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/12/2018 7:43 AM, Zhouyang Jia wrote:
+The flag 'SLAB_PANIC' implies panic when encouter failure,
+so there is no need to check NULL pointer and return error
+code.
 
-> When try_module_get fails, the lack of error-handling code may
-> cause unexpected results.
-> 
-> This patch adds error-handling code after calling try_module_get.
-> 
-> Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
-> ---
->   drivers/isdn/i4l/isdn_common.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/isdn/i4l/isdn_common.c b/drivers/isdn/i4l/isdn_common.c
-> index 7c6f3f5..7e52851 100644
-> --- a/drivers/isdn/i4l/isdn_common.c
-> +++ b/drivers/isdn/i4l/isdn_common.c
-> @@ -71,7 +71,8 @@ static int isdn_add_channels(isdn_driver_t *d, int drvidx, int n, int adding);
->   static inline void
->   isdn_lock_driver(isdn_driver_t *drv)
->   {
-> -	try_module_get(drv->interface->owner);
-> +	if (!try_module_get(drv->interface->owner))
-> +		printk(KERN_WARNING "isdn_lock_driver: cannot get module\n");
+Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+---
+ arch/x86/mm/pgtable.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-    Do you call this error handling code? :-)
-    And BTW we have pr_warn() for that.
+diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
+index 47b5951..4392414 100644
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -312,14 +312,14 @@ static void pgd_prepopulate_pmd(struct mm_struct *mm, pgd_t *pgd, pmd_t *pmds[])
+ 
+ static struct kmem_cache *pgd_cache;
+ 
+-static int __init pgd_cache_init(void)
++static void __init pgd_cache_init(void)
+ {
+ 	/*
+ 	 * When PAE kernel is running as a Xen domain, it does not use
+ 	 * shared kernel pmd. And this requires a whole page for pgd.
+ 	 */
+ 	if (!SHARED_KERNEL_PMD)
+-		return 0;
++		return;
+ 
+ 	/*
+ 	 * when PAE kernel is not running as a Xen domain, it uses
+@@ -329,10 +329,6 @@ static int __init pgd_cache_init(void)
+ 	 */
+ 	pgd_cache = kmem_cache_create("pgd_cache", PGD_SIZE, PGD_ALIGN,
+ 				      SLAB_PANIC, NULL);
+-	if (!pgd_cache)
+-		return -ENOMEM;
+-
+-	return 0;
+ }
+ core_initcall(pgd_cache_init);
+ 
+-- 
+1.8.3.1
 
->   	drv->locks++;
->   }
->   
-
-MBR, Sergei
