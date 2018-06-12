@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id DDC0DC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:01:16 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id EF070C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:01:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89DCF208B1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:01:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5D08208B1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:01:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="asrL56Kw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89DCF208B1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iB8RGGgE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5D08208B1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935112AbeFLQxQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 12:53:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50918 "EHLO mail.kernel.org"
+        id S934869AbeFLRB2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 13:01:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51264 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754343AbeFLQxI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 12:53:08 -0400
+        id S934815AbeFLQxL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 12:53:11 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 35967208BA;
-        Tue, 12 Jun 2018 16:53:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 85BF3208B7;
+        Tue, 12 Jun 2018 16:53:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528822388;
-        bh=ka5Ym23zn3/4xWhph80MyzDON/TUTgyRgTmHX9+WiAw=;
+        s=default; t=1528822391;
+        bh=WKYv9xzYbwrj1+B7dsmjwf0KhkTxO3n3XmIssv37FPY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=asrL56KwYB4SfXDHdJMp3mDVfvYEG+3TH1UX7/AJLFcPzpe4bieukK4onNl8hUXSW
-         Gdghl2ueTdajeXLZ6akB1vm83EFdH+W6x0gfXeeuuQuquxmDmPbiODPD6MK2DzlUIV
-         a188mazk+2RRuuSqjiy9Die3Cjbk621V0q2vnGnA=
+        b=iB8RGGgEXdrasHLbMkRfgZx0d54NBq21OUSfUfYeAuWyI0ufBVGjNKE29Ze6xJDTL
+         PPjlIbisc1Vw0RzZQhINlZ3MhRk4danJHWTlJjt+ZY6B/lUiWhbeaMOv997KcKh4Dc
+         f+mLnVvv9iD8/kVQYuBfOrvDNQE6ZSiYKVJiYqaM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shahed Shaikh <shahed.shaikh@cavium.com>,
-        Ariel Elior <ariel.elior@cavium.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 19/24] qed: Fix mask for physical address in ILT entry
-Date:   Tue, 12 Jun 2018 18:52:03 +0200
-Message-Id: <20180612164817.625996766@linuxfoundation.org>
+        stable@vger.kernel.org, Chris Chiu <chiu@endlessm.com>,
+        Daniel Drake <drake@endlessm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH 4.4 02/24] tpm: self test failure should not cause suspend to fail
+Date:   Tue, 12 Jun 2018 18:51:46 +0200
+Message-Id: <20180612164816.700938132@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180612164816.587001852@linuxfoundation.org>
 References: <20180612164816.587001852@linuxfoundation.org>
@@ -60,38 +60,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shahed Shaikh <shahed.shaikh@cavium.com>
+From: Chris Chiu <chiu@endlessm.com>
 
-[ Upstream commit fdd13dd350dda1826579eb5c333d76b14513b812 ]
+commit 0803d7befa15cab5717d667a97a66214d2a4c083 upstream.
 
-ILT entry requires 12 bit right shifted physical address.
-Existing mask for ILT entry of physical address i.e.
-ILT_ENTRY_PHY_ADDR_MASK is not sufficient to handle 64bit
-address because upper 8 bits of 64 bit address were getting
-masked which resulted in completer abort error on
-PCIe bus due to invalid address.
+The Acer Acer Veriton X4110G has a TPM device detected as:
+  tpm_tis 00:0b: 1.2 TPM (device-id 0xFE, rev-id 71)
 
-Fix that mask to handle 64bit physical address.
+After the first S3 suspend, the following error appears during resume:
+  tpm tpm0: A TPM error(38) occurred continue selftest
 
-Fixes: fe56b9e6a8d9 ("qed: Add module with basic common support")
-Signed-off-by: Shahed Shaikh <shahed.shaikh@cavium.com>
-Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Any following S3 suspend attempts will now fail with this error:
+  tpm tpm0: Error (38) sending savestate before suspend
+  PM: Device 00:0b failed to suspend: error 38
+
+Error 38 is TPM_ERR_INVALID_POSTINIT which means the TPM is
+not in the correct state. This indicates that the platform BIOS
+is not sending the usual TPM_Startup command during S3 resume.
+>From this point onwards, all TPM commands will fail.
+
+The same issue was previously reported on Foxconn 6150BK8MC and
+Sony Vaio TX3.
+
+The platform behaviour seems broken here, but we should not break
+suspend/resume because of this.
+
+When the unexpected TPM state is encountered, set a flag to skip the
+affected TPM_SaveState command on later suspends.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Chris Chiu <chiu@endlessm.com>
+Signed-off-by: Daniel Drake <drake@endlessm.com>
+Link: http://lkml.kernel.org/r/CAB4CAwfSCvj1cudi+MWaB5g2Z67d9DwY1o475YOZD64ma23UiQ@mail.gmail.com
+Link: https://lkml.org/lkml/2011/3/28/192
+Link: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=591031
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/qlogic/qed/qed_cxt.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/qlogic/qed/qed_cxt.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_cxt.c
-@@ -43,7 +43,7 @@
- #define ILT_CFG_REG(cli, reg)	PSWRQ2_REG_ ## cli ## _ ## reg ## _RT_OFFSET
+---
+ drivers/char/tpm/tpm-interface.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -787,6 +787,10 @@ int tpm_do_selftest(struct tpm_chip *chi
+ 	loops = jiffies_to_msecs(duration) / delay_msec;
  
- /* ILT entry structure */
--#define ILT_ENTRY_PHY_ADDR_MASK		0x000FFFFFFFFFFFULL
-+#define ILT_ENTRY_PHY_ADDR_MASK		(~0ULL >> 12)
- #define ILT_ENTRY_PHY_ADDR_SHIFT	0
- #define ILT_ENTRY_VALID_MASK		0x1ULL
- #define ILT_ENTRY_VALID_SHIFT		52
+ 	rc = tpm_continue_selftest(chip);
++	if (rc == TPM_ERR_INVALID_POSTINIT) {
++		chip->flags |= TPM_CHIP_FLAG_ALWAYS_POWERED;
++		dev_info(&chip->dev, "TPM not ready (%d)\n", rc);
++	}
+ 	/* This may fail if there was no TPM driver during a suspend/resume
+ 	 * cycle; some may return 10 (BAD_ORDINAL), others 28 (FAILEDSELFTEST)
+ 	 */
 
 
