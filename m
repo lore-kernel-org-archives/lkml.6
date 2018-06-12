@@ -6,45 +6,43 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id AAFA1C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:56:15 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 93541C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:56:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5074F208B4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:56:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48CB8208B1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:56:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="L7lwondz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5074F208B4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="U2lW2N+S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48CB8208B1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934769AbeFLQ4O (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 12:56:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56398 "EHLO mail.kernel.org"
+        id S934950AbeFLQ4g (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 12:56:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56074 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934991AbeFLQy3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 12:54:29 -0400
+        id S934957AbeFLQyX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 12:54:23 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 24296208B7;
-        Tue, 12 Jun 2018 16:54:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80CB8208B9;
+        Tue, 12 Jun 2018 16:54:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528822468;
-        bh=HNuXnq1CVulg06BwtLxpSeBlMzAQAUWpnm7SQaBVs2A=;
+        s=default; t=1528822463;
+        bh=zMrU25xrZmh+80z99gcRrmiQR2yCTioTQZ4YRhth5YI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L7lwondzOdhmNRwP/4GHI0QY+XhZ3D4Dmlg60HBJZH/SOJDaOlPn/5ZgJGsW+KRZm
-         csrsAAxuK25vnnm0YjDIBDoMr0asEu7D2TvN+9veGlM+gmVGQpZxIGirFSZiONlrMn
-         gbto0UKcQUVrIN7NDVC+iuQxvWq+h1Bh47KXiw3g=
+        b=U2lW2N+SsOgaz3WSZHQaPrvgqCZ8QiqPVSkf5+abw5AZ0IghIqOt2+1l6OR/K0f2y
+         FVXpmovRPnIhb0sazQHJWffIkrkxtEFkP+WH3VWIpLq508OwG84W6cIVGKpFv2S7ti
+         YaJ8MGJLLPPP2wTigwJWbW+fCaOfRrpreeRSDd8Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 21/21] rtnetlink: validate attributes in do_setlink()
-Date:   Tue, 12 Jun 2018 18:52:18 +0200
-Message-Id: <20180612164826.260313257@linuxfoundation.org>
+        stable@vger.kernel.org, Sachin Grover <sgrover@codeaurora.org>,
+        Paul Moore <paul@paul-moore.com>
+Subject: [PATCH 3.18 02/21] selinux: KASAN: slab-out-of-bounds in xattr_getsecurity
+Date:   Tue, 12 Jun 2018 18:51:59 +0200
+Message-Id: <20180612164825.495531260@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180612164825.401145490@linuxfoundation.org>
 References: <20180612164825.401145490@linuxfoundation.org>
@@ -61,139 +59,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Sachin Grover <sgrover@codeaurora.org>
 
-[ Upstream commit 644c7eebbfd59e72982d11ec6cc7d39af12450ae ]
+commit efe3de79e0b52ca281ef6691480c8c68c82a4657 upstream.
 
-It seems that rtnl_group_changelink() can call do_setlink
-while a prior call to validate_linkmsg(dev = NULL, ...) could
-not validate IFLA_ADDRESS / IFLA_BROADCAST
+Call trace:
+ [<ffffff9203a8d7a8>] dump_backtrace+0x0/0x428
+ [<ffffff9203a8dbf8>] show_stack+0x28/0x38
+ [<ffffff920409bfb8>] dump_stack+0xd4/0x124
+ [<ffffff9203d187e8>] print_address_description+0x68/0x258
+ [<ffffff9203d18c00>] kasan_report.part.2+0x228/0x2f0
+ [<ffffff9203d1927c>] kasan_report+0x5c/0x70
+ [<ffffff9203d1776c>] check_memory_region+0x12c/0x1c0
+ [<ffffff9203d17cdc>] memcpy+0x34/0x68
+ [<ffffff9203d75348>] xattr_getsecurity+0xe0/0x160
+ [<ffffff9203d75490>] vfs_getxattr+0xc8/0x120
+ [<ffffff9203d75d68>] getxattr+0x100/0x2c8
+ [<ffffff9203d76fb4>] SyS_fgetxattr+0x64/0xa0
+ [<ffffff9203a83f70>] el0_svc_naked+0x24/0x28
 
-Make sure do_setlink() calls validate_linkmsg() instead
-of letting its callers having this responsibility.
+If user get root access and calls security.selinux setxattr() with an
+embedded NUL on a file and then if some process performs a getxattr()
+on that file with a length greater than the actual length of the string,
+it would result in a panic.
 
-With help from Dmitry Vyukov, thanks a lot !
+To fix this, add the actual length of the string to the security context
+instead of the length passed by the userspace process.
 
-BUG: KMSAN: uninit-value in is_valid_ether_addr include/linux/etherdevice.h:199 [inline]
-BUG: KMSAN: uninit-value in eth_prepare_mac_addr_change net/ethernet/eth.c:275 [inline]
-BUG: KMSAN: uninit-value in eth_mac_addr+0x203/0x2b0 net/ethernet/eth.c:308
-CPU: 1 PID: 8695 Comm: syz-executor3 Not tainted 4.17.0-rc5+ #103
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x185/0x1d0 lib/dump_stack.c:113
- kmsan_report+0x149/0x260 mm/kmsan/kmsan.c:1084
- __msan_warning_32+0x6e/0xc0 mm/kmsan/kmsan_instr.c:686
- is_valid_ether_addr include/linux/etherdevice.h:199 [inline]
- eth_prepare_mac_addr_change net/ethernet/eth.c:275 [inline]
- eth_mac_addr+0x203/0x2b0 net/ethernet/eth.c:308
- dev_set_mac_address+0x261/0x530 net/core/dev.c:7157
- do_setlink+0xbc3/0x5fc0 net/core/rtnetlink.c:2317
- rtnl_group_changelink net/core/rtnetlink.c:2824 [inline]
- rtnl_newlink+0x1fe9/0x37a0 net/core/rtnetlink.c:2976
- rtnetlink_rcv_msg+0xa32/0x1560 net/core/rtnetlink.c:4646
- netlink_rcv_skb+0x378/0x600 net/netlink/af_netlink.c:2448
- rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4664
- netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
- netlink_unicast+0x1678/0x1750 net/netlink/af_netlink.c:1336
- netlink_sendmsg+0x104f/0x1350 net/netlink/af_netlink.c:1901
- sock_sendmsg_nosec net/socket.c:629 [inline]
- sock_sendmsg net/socket.c:639 [inline]
- ___sys_sendmsg+0xec0/0x1310 net/socket.c:2117
- __sys_sendmsg net/socket.c:2155 [inline]
- __do_sys_sendmsg net/socket.c:2164 [inline]
- __se_sys_sendmsg net/socket.c:2162 [inline]
- __x64_sys_sendmsg+0x331/0x460 net/socket.c:2162
- do_syscall_64+0x152/0x230 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x455a09
-RSP: 002b:00007fc07480ec68 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007fc07480f6d4 RCX: 0000000000455a09
-RDX: 0000000000000000 RSI: 00000000200003c0 RDI: 0000000000000014
-RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000000005d0 R14: 00000000006fdc20 R15: 0000000000000000
-
-Uninit was stored to memory at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:279 [inline]
- kmsan_save_stack mm/kmsan/kmsan.c:294 [inline]
- kmsan_internal_chain_origin+0x12b/0x210 mm/kmsan/kmsan.c:685
- kmsan_memcpy_origins+0x11d/0x170 mm/kmsan/kmsan.c:527
- __msan_memcpy+0x109/0x160 mm/kmsan/kmsan_instr.c:478
- do_setlink+0xb84/0x5fc0 net/core/rtnetlink.c:2315
- rtnl_group_changelink net/core/rtnetlink.c:2824 [inline]
- rtnl_newlink+0x1fe9/0x37a0 net/core/rtnetlink.c:2976
- rtnetlink_rcv_msg+0xa32/0x1560 net/core/rtnetlink.c:4646
- netlink_rcv_skb+0x378/0x600 net/netlink/af_netlink.c:2448
- rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4664
- netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
- netlink_unicast+0x1678/0x1750 net/netlink/af_netlink.c:1336
- netlink_sendmsg+0x104f/0x1350 net/netlink/af_netlink.c:1901
- sock_sendmsg_nosec net/socket.c:629 [inline]
- sock_sendmsg net/socket.c:639 [inline]
- ___sys_sendmsg+0xec0/0x1310 net/socket.c:2117
- __sys_sendmsg net/socket.c:2155 [inline]
- __do_sys_sendmsg net/socket.c:2164 [inline]
- __se_sys_sendmsg net/socket.c:2162 [inline]
- __x64_sys_sendmsg+0x331/0x460 net/socket.c:2162
- do_syscall_64+0x152/0x230 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-Uninit was created at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:279 [inline]
- kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:189
- kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:315
- kmsan_slab_alloc+0x10/0x20 mm/kmsan/kmsan.c:322
- slab_post_alloc_hook mm/slab.h:446 [inline]
- slab_alloc_node mm/slub.c:2753 [inline]
- __kmalloc_node_track_caller+0xb32/0x11b0 mm/slub.c:4395
- __kmalloc_reserve net/core/skbuff.c:138 [inline]
- __alloc_skb+0x2cb/0x9e0 net/core/skbuff.c:206
- alloc_skb include/linux/skbuff.h:988 [inline]
- netlink_alloc_large_skb net/netlink/af_netlink.c:1182 [inline]
- netlink_sendmsg+0x76e/0x1350 net/netlink/af_netlink.c:1876
- sock_sendmsg_nosec net/socket.c:629 [inline]
- sock_sendmsg net/socket.c:639 [inline]
- ___sys_sendmsg+0xec0/0x1310 net/socket.c:2117
- __sys_sendmsg net/socket.c:2155 [inline]
- __do_sys_sendmsg net/socket.c:2164 [inline]
- __se_sys_sendmsg net/socket.c:2162 [inline]
- __x64_sys_sendmsg+0x331/0x460 net/socket.c:2162
- do_syscall_64+0x152/0x230 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-Fixes: e7ed828f10bd ("netlink: support setting devgroup parameters")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sachin Grover <sgrover@codeaurora.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/core/rtnetlink.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -1503,6 +1503,10 @@ static int do_setlink(const struct sk_bu
- 	const struct net_device_ops *ops = dev->netdev_ops;
- 	int err;
- 
-+	err = validate_linkmsg(dev, tb);
-+	if (err < 0)
-+		return err;
-+
- 	if (tb[IFLA_NET_NS_PID] || tb[IFLA_NET_NS_FD]) {
- 		struct net *net = rtnl_link_get_net(dev_net(dev), tb);
- 		if (IS_ERR(net)) {
-@@ -1783,10 +1787,6 @@ static int rtnl_setlink(struct sk_buff *
- 		goto errout;
- 	}
- 
--	err = validate_linkmsg(dev, tb);
--	if (err < 0)
--		goto errout;
--
- 	err = do_setlink(skb, dev, ifm, tb, ifname, 0);
- errout:
- 	return err;
+---
+ security/selinux/ss/services.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/security/selinux/ss/services.c
++++ b/security/selinux/ss/services.c
+@@ -1271,7 +1271,7 @@ static int security_context_to_sid_core(
+ 				      scontext_len, &context, def_sid);
+ 	if (rc == -EINVAL && force) {
+ 		context.str = str;
+-		context.len = scontext_len;
++		context.len = strlen(str) + 1;
+ 		str = NULL;
+ 	} else if (rc)
+ 		goto out_unlock;
 
 
