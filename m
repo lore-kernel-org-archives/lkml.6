@@ -3,43 +3,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D00CCC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:16:46 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E37FDC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:17:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F9BB208B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:16:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F9BB208B0
+	by mail.kernel.org (Postfix) with ESMTP id 988F4208B0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:17:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 988F4208B0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933919AbeFLNQn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 09:16:43 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:57495 "EHLO
+        id S934159AbeFLNQ6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 09:16:58 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:46304 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933864AbeFLNQj (ORCPT
+        by vger.kernel.org with ESMTP id S934077AbeFLNQy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 09:16:39 -0400
+        Tue, 12 Jun 2018 09:16:54 -0400
 Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5CDE5IF017839;
-        Tue, 12 Jun 2018 15:15:54 +0200
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5CDE9FY017844;
+        Tue, 12 Jun 2018 15:16:09 +0200
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2jjegrr42r-1
+        by mx08-00178001.pphosted.com with ESMTP id 2jjegrr44h-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 12 Jun 2018 15:15:54 +0200
+        Tue, 12 Jun 2018 15:16:09 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C28E33F;
-        Tue, 12 Jun 2018 13:15:49 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 94A2AA54A;
-        Tue, 12 Jun 2018 13:15:49 +0000 (GMT)
-Received: from SAFEX1HUBCAS21.st.com (10.75.90.44) by Safex1hubcas22.st.com
- (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 12 Jun
- 2018 15:15:49 +0200
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 00B433A;
+        Tue, 12 Jun 2018 13:16:08 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D5932A543;
+        Tue, 12 Jun 2018 13:16:08 +0000 (GMT)
+Received: from SAFEX1HUBCAS21.st.com (10.75.90.44) by SAFEX1HUBCAS23.st.com
+ (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 12 Jun
+ 2018 15:16:08 +0200
 Received: from lmecxl0923.lme.st.com (10.48.0.237) by Webmail-ga.st.com
  (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 12 Jun
- 2018 15:15:47 +0200
+ 2018 15:16:08 +0200
 From:   Ludovic Barre <ludovic.Barre@st.com>
 To:     Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>
@@ -49,10 +50,12 @@ CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-mmc@vger.kernel.org>, Ludovic Barre <ludovic.barre@st.com>
-Subject: [PATCH 00/19] mmc: mmci: add stm32 sdmmc variant
-Date:   Tue, 12 Jun 2018 15:14:21 +0200
-Message-ID: <1528809280-31116-1-git-send-email-ludovic.Barre@st.com>
+Subject: [PATCH 18/19] mmc: mmci: add specific clk/pwr procedure for stm32 sdmmc
+Date:   Tue, 12 Jun 2018 15:14:39 +0200
+Message-ID: <1528809280-31116-19-git-send-email-ludovic.Barre@st.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1528809280-31116-1-git-send-email-ludovic.Barre@st.com>
+References: <1528809280-31116-1-git-send-email-ludovic.Barre@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.48.0.237]
@@ -65,58 +68,158 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ludovic Barre <ludovic.barre@st.com>
 
-This patch series adapts mmci driver to add support for stm32
-sdmmc variant. stm32h7 SoC integrates the first revision of
-stm32 sdmmc.
+This patch adds specific clock and power ios for stm32 sdmmc variant.
+power ios: stm32 dedicated procedure must be done to perform power
+off/on procedures. To power off, the sdmmc must be reset and set
+to power cycle state before to disabling vqmmc. This drives low
+SDMMC_D[7:0], SDMMC_CMD and SDMMC_CK to prevent the Card from
+being supplied through the signal lines.
+To power on, set the SDMMC in power-off SDMMC_D[7:0], SDMMC_CMD
+and SDMMC_CK are driven high. Then we can set the SDMMC to
+Power-on state.
 
-This series is composed of 3 parts:
--Prepare mmci driver to manage dma interfaces by adding property.
- New mmci dma API is defined according to the legacy needs.
--Adapt mmci driver to dedicated constraints of stm32 sdmmc variant,
- defined under some specific properties.
--Add stm32 sdmmc variant. As Internal DMA way satisfies data
-transfer, the mmci driver hasn't been modified for pio_read/write.
-Specific adds-ons to stm32 sdmmc:
- + registers
- + clk/power functions
- + idma interface
+clock ios: specific bits behavior:
+-clock divider card_clk = mclk / (2 * clkdiv)
+-ddr activation
+-wide bus 1/4/8bits
+-bus speed
+-receive clock selection (in_ck/ck_in/fb_ck)
 
-Ludovic Barre (19):
-  mmc: mmci: regroup and define dma operations
-  mmc: mmci: merge qcom dml feature into mmci dma
-  mmc: mmci: add datactrl block size variant property
-  mmc: mmci: expand startbiterr to irqmask and error check
-  mmc: mmci: allow to overwrite clock/power procedure to specific
-    variant
-  mmc: mmci: add variant properties to define cpsm & cmdresp bits
-  mmc: mmci: add variant property to define dpsm bit
-  mmc: mmci: add variant property to define irq pio mask
-  mmc: mmci: add variant property to write datactrl before command
-  mmc: mmci: add variant property to allow remain data
-  mmc: mmci: add variant property to check specific data constraint
-  mmc: mmci: add variant property to request a reset
-  mmc: mmci: send stop cmd if a data command fail
-  mmc: mmci: add clock divider for stm32 sdmmc
-  mmc: mmci: add stm32 sdmmc registers
-  mmc: mmci: add DT bindings for STM32 sdmmc
-  mmc: mmci: add stm32 sdmmc idma support
-  mmc: mmci: add specific clk/pwr procedure for stm32 sdmmc
-  mmc: mmci: add stm32 sdmmc variant
+Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+---
+ drivers/mmc/host/mmci.c | 112 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 112 insertions(+)
 
- Documentation/devicetree/bindings/mmc/mmci.txt |  11 +
- drivers/mmc/host/Makefile                      |   3 +-
- drivers/mmc/host/mmci.c                        | 846 +++++++++++--------------
- drivers/mmc/host/mmci.h                        | 237 ++++++-
- drivers/mmc/host/mmci_dma.c                    | 780 +++++++++++++++++++++++
- drivers/mmc/host/mmci_dma.h                    |  33 +
- drivers/mmc/host/mmci_qcom_dml.c               | 177 ------
- drivers/mmc/host/mmci_qcom_dml.h               |  31 -
- 8 files changed, 1410 insertions(+), 708 deletions(-)
- create mode 100644 drivers/mmc/host/mmci_dma.c
- create mode 100644 drivers/mmc/host/mmci_dma.h
- delete mode 100644 drivers/mmc/host/mmci_qcom_dml.c
- delete mode 100644 drivers/mmc/host/mmci_qcom_dml.h
-
+diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
+index 86aef4f..af27a0a 100644
+--- a/drivers/mmc/host/mmci.c
++++ b/drivers/mmc/host/mmci.c
+@@ -50,6 +50,10 @@
+ 
+ static unsigned int fmax = 515633;
+ 
++static void mmci_sdmmc_set_pwrreg(struct mmci_host *host,
++				  unsigned char power_mode, unsigned int pwr);
++static void mmci_sdmmc_set_clkreg(struct mmci_host *host, unsigned int desired);
++
+ static struct variant_data variant_arm = {
+ 	.fifosize		= 16 * 4,
+ 	.fifohalfsize		= 8 * 4,
+@@ -490,6 +494,114 @@ static void mmci_set_pwrreg(struct mmci_host *host, unsigned char power_mode,
+ 	mmci_write_pwrreg(host, pwr);
+ }
+ 
++static void mmci_sdmmc_set_clkreg(struct mmci_host *host, unsigned int desired)
++{
++	unsigned int clk = 0, ddr = 0;
++
++	if (host->mmc->ios.timing == MMC_TIMING_MMC_DDR52 ||
++	    host->mmc->ios.timing == MMC_TIMING_UHS_DDR50)
++		ddr = MCI_STM32_CLK_DDR;
++
++	/*
++	 * cclk = mclk / (2 * clkdiv)
++	 * clkdiv 0 => bypass
++	 * in ddr mode bypass is not possible
++	 */
++	if (desired) {
++		if (desired >= host->mclk && !ddr) {
++			host->cclk = host->mclk;
++		} else {
++			clk = DIV_ROUND_UP(host->mclk, 2 * desired);
++			if (clk > MCI_STM32_CLK_CLKDIV_MSK)
++				clk = MCI_STM32_CLK_CLKDIV_MSK;
++			host->cclk = host->mclk / (2 * clk);
++		}
++	}
++
++	if (host->mmc->ios.bus_width == MMC_BUS_WIDTH_4)
++		clk |= MCI_STM32_CLK_WIDEBUS_4;
++	if (host->mmc->ios.bus_width == MMC_BUS_WIDTH_8)
++		clk |= MCI_STM32_CLK_WIDEBUS_8;
++
++	clk |= MCI_STM32_CLK_HWFCEN;
++	clk |= host->clk_reg_add;
++	clk |= ddr;
++
++	/*
++	 * SDMMC_FBCK is selected when an external Delay Block is needed
++	 * with SDR104.
++	 */
++	if (host->mmc->ios.timing >= MMC_TIMING_UHS_SDR50) {
++		clk |= MCI_STM32_CLK_BUSSPEED;
++		if (host->mmc->ios.timing == MMC_TIMING_UHS_SDR104) {
++			clk &= ~MCI_STM32_CLK_SEL_MSK;
++			clk |= MCI_STM32_CLK_SELFBCK;
++		}
++	}
++
++	mmci_write_clkreg(host, clk);
++}
++
++static void mmci_sdmmc_set_pwrreg(struct mmci_host *host,
++				  unsigned char power_mode, unsigned int pwr)
++{
++	struct mmc_host *mmc = host->mmc;
++
++	pwr |= host->pwr_reg_add;
++
++	switch (power_mode) {
++	case MMC_POWER_OFF:
++		if (!IS_ERR(mmc->supply.vmmc))
++			mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, 0);
++
++		/* Only a reset could disable sdmmc */
++		reset_control_assert(host->rst);
++		udelay(2);
++		reset_control_deassert(host->rst);
++
++		/* default mask (probe) must be activated */
++		writel(MCI_IRQENABLE | host->variant->start_err,
++		       host->base + MMCIMASK0);
++
++		/*
++		 * Set the SDMMC in Power-cycle state before to disabling vqmmc.
++		 * This will make that the SDMMC_D[7:0], SDMMC_CMD and SDMMC_CK
++		 * are driven low, to prevent the Card from being supplied
++		 * through the signal lines.
++		 */
++		mmci_write_pwrreg(host, MCI_STM32_PWR_CYC | pwr);
++
++		if (!IS_ERR(host->mmc->supply.vqmmc) && host->vqmmc_enabled) {
++			regulator_disable(host->mmc->supply.vqmmc);
++			host->vqmmc_enabled = false;
++		}
++		break;
++	case MMC_POWER_UP:
++		if (!IS_ERR(mmc->supply.vmmc))
++			mmc_regulator_set_ocr(mmc, mmc->supply.vmmc,
++					      mmc->ios.vdd);
++		break;
++	case MMC_POWER_ON:
++		if (!IS_ERR(host->mmc->supply.vqmmc) && !host->vqmmc_enabled) {
++			if (regulator_enable(host->mmc->supply.vqmmc) < 0)
++				dev_err(mmc_dev(host->mmc),
++					"failed to enable vqmmc regulator\n");
++			else
++				host->vqmmc_enabled = true;
++		}
++
++		/*
++		 * After a power-cycle state, we must set the SDMMC in
++		 * Power-off. The SDMMC_D[7:0], SDMMC_CMD and SDMMC_CK are
++		 * driven high. Then we can set the SDMMC to Power-on state
++		 */
++		mmci_write_pwrreg(host, MCI_PWR_OFF | pwr);
++		mdelay(1);
++		mmci_write_pwrreg(host, MCI_PWR_ON | pwr);
++		break;
++	}
++}
++
+ static void
+ mmci_request_end(struct mmci_host *host, struct mmc_request *mrq)
+ {
 -- 
 2.7.4
 
