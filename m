@@ -3,80 +3,85 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 806F3C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:06:52 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E28ADC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:06:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 408FB2086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:06:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 408FB2086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id A1A892086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:06:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1A892086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934370AbeFLPGu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 11:06:50 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:45995 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932905AbeFLPGt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S934406AbeFLPGx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 11:06:53 -0400
+Received: from mga04.intel.com ([192.55.52.120]:23629 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933363AbeFLPGt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 12 Jun 2018 11:06:49 -0400
-Received: from 79.184.255.56.ipv4.supernova.orange.pl (79.184.255.56) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
- id 3ce46dd2d57245a2; Tue, 12 Jun 2018 17:06:47 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Chen Yu <yu.c.chen@intel.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Artem S Tashkinov <t.artem@mailcity.com>,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH][v2] sched: cpufreq: Fix long idle judgement logic in load calculation
-Date:   Tue, 12 Jun 2018 17:05:46 +0200
-Message-ID: <3199989.mUnO823ZlS@aspire.rjw.lan>
-In-Reply-To: <20180608040413.2pjfr6by3me5qymk@vireshk-i7>
-References: <1528420053-22884-1-git-send-email-yu.c.chen@intel.com> <20180608040413.2pjfr6by3me5qymk@vireshk-i7>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2018 08:06:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,215,1526367600"; 
+   d="scan'208";a="46547133"
+Received: from 2b52.sc.intel.com (HELO [143.183.136.147]) ([143.183.136.147])
+  by fmsmga007.fm.intel.com with ESMTP; 12 Jun 2018 08:06:48 -0700
+Message-ID: <1528815820.8271.16.camel@2b52.sc.intel.com>
+Subject: Re: [PATCH 00/10] Control Flow Enforcement - Part (3)
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Balbir Singh <bsingharora@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org, linux-arch@vger.kernel.org, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Date:   Tue, 12 Jun 2018 08:03:40 -0700
+In-Reply-To: <bbfde1b3-5e1b-80e3-30e8-fd1e46a2ceb1@gmail.com>
+References: <20180607143807.3611-1-yu-cheng.yu@intel.com>
+         <bbfde1b3-5e1b-80e3-30e8-fd1e46a2ceb1@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, June 8, 2018 6:04:13 AM CEST Viresh Kumar wrote:
-> On 08-06-18, 09:07, Chen Yu wrote:
-> > According to current code implementation, detecting the long
-> > idle period is done by checking if the interval between two
-> > adjacent utilization update handers is long enough. Although
-> > this mechanism can detect if the idle period is long enough
-> > (no utilization hooks invoked during idle period), it might
-> > not contain a corner case: if the task has occupied the cpu
-> > for too long which causes no context switch during that
-> > period, then no utilization handler will be launched until this
-> > high prio task is switched out. As a result, the idle_periods
-> > field might be calculated incorrectly because it regards the
-> > 100% load as 0% and makes the conservative governor who uses
-> > this field confusing.
-> > 
-> > Change the judgement to compare the idle_time with sampling_rate
-> > directly.
-> > 
-> > Reported-by: Artem S. Tashkinov <t.artem@mailcity.com>
-> > Cc: Artem S Tashkinov <t.artem@mailcity.com>
-> > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> > Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> > Cc: linux-pm@vger.kernel.org
-> > Signed-off-by: Chen Yu <yu.c.chen@intel.com>
-> > ---
-> > v2: Per Viresh's suggestion, ignore idle_time longer than 30mins and
-> >     simplify the code.
-> > ---
-> >  drivers/cpufreq/cpufreq_governor.c | 12 +++++-------
-> >  1 file changed, 5 insertions(+), 7 deletions(-)
+On Tue, 2018-06-12 at 20:56 +1000, Balbir Singh wrote:
 > 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> On 08/06/18 00:37, Yu-cheng Yu wrote:
+> > This series introduces CET - Shadow stack
+> > 
+> > At the high level, shadow stack is:
+> > 
+> > 	Allocated from a task's address space with vm_flags VM_SHSTK;
+> > 	Its PTEs must be read-only and dirty;
+> > 	Fixed sized, but the default size can be changed by sys admin.
+> > 
+> > For a forked child, the shadow stack is duplicated when the next
+> > shadow stack access takes place.
+> > 
+> > For a pthread child, a new shadow stack is allocated.
+> > 
+> > The signal handler uses the same shadow stack as the main program.
+> > 
+> 
+> Even with sigaltstack()?
+> 
+> 
+> Balbir Singh.
 
-Patch applied, thanks!
-
+Yes.
 
