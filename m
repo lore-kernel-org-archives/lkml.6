@@ -7,56 +7,57 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4D208C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:44:06 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8115BC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:44:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3C7A2086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:44:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AFFB2086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:44:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sjHDAbz9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3C7A2086D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hDxwiLvh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AFFB2086D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934106AbeFLNoE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 09:44:04 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:43849 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933088AbeFLNmO (ORCPT
+        id S933671AbeFLNmN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 09:42:13 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:42523 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933088AbeFLNmK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 09:42:14 -0400
-Received: by mail-lf0-f68.google.com with SMTP id n15-v6so36077229lfn.10;
-        Tue, 12 Jun 2018 06:42:13 -0700 (PDT)
+        Tue, 12 Jun 2018 09:42:10 -0400
+Received: by mail-lf0-f66.google.com with SMTP id v135-v6so36086150lfa.9;
+        Tue, 12 Jun 2018 06:42:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=qn9DhGEWTMaawUxaGfYqOvXnzJRBZPC7KzIu0SJDlM8=;
-        b=sjHDAbz9JtEc+rn5NO7EMFdyMajglohYTaXKZ9yMtAV6OGhYBu9AErOjQOLfZabetd
-         n8BlFXlS3IV6IA5NjnhZ0wyqiLleSKln+gFMqqq/P6SW0LUzfFovfmwC8A2ZL618EARh
-         AccRdJRsMyHcEkiCmxM2uI1w/ZyRYbgAuL0odMn4T0SRF4DyV3HEg1DECFj6hhwuQ3Dz
-         cG+qJAN2kHraySbGJUIPmTuAxsTD6AM4Km8aP1kh31dP+cCNgx1mjbIfj43Ia7x0Tbf1
-         DHku11p4wLopOurOeoUYLLhg+pg8KA6FzyauQHoFMa7NZNn/dOjkRgdIFR+7gUso+ls5
-         uo8w==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VvG94fgLhXAFJwpSW9DbRPdddlwGv4MIJ8r++VXbRcY=;
+        b=hDxwiLvh29H/huxBKs/BrINz9jMSh4vwuEPs1kGRz65hsB/XmcKyi4niKZbbnsHswq
+         xSDsvrdjCX78aZjlm8RzNze+YIgOTZ/M3iVguB0PHW9HItfHAZjZQo078kB3Itp1ZLzn
+         NUyG01Dm/fxoidno+Au5l3OdzyW3VOei+Ixnmeigndd0Y/0gqIyFwBOW5GWjbtqVpDuy
+         FYKePoRyNn+/zfNOz8uMMJ/aMQiOp8I73sgwU8WZ5bIvLW9u8cpWLCnruRAJvt3ygIsA
+         7kNQwrrI5NvI3AbpdDgBHrcJzEsa7o9PmciEUovdk0hBsme0b4TbLtYMim4WNdsAo1pW
+         iT/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=qn9DhGEWTMaawUxaGfYqOvXnzJRBZPC7KzIu0SJDlM8=;
-        b=EaT1ZtODoMTiWofKUn91eNhT+rb84YcEFz3tB0tUHeNCfztSlUOLKvVFoeBBo+h0V3
-         r23Alb6RxPK6x2QS5djcUCspxjGXSAxRAkkWhemZK9gRy6wR0YoPQs9EwEdfj6Q+z2Wg
-         ZoRXs/bmvgdU4YLTqke7CdzbMiQbk1IhWaelbnAtV9LnZH7ahBdR/1EcTFjdSt06AT2m
-         eNCbeTmWJLMbmLG7tCLUxP/hJ1zLUJMomBastkS6otUvoDpfmDVsXWLstMy6A2ogDzU1
-         E1zg8o4at7/Ge43Heeuip0JY2tTAEd6zPrv5or0jgmX5gHdWJcJWdFtDnTaLqtC+N73J
-         zeGQ==
-X-Gm-Message-State: APt69E28hk0KsqkgBQnDl24P1PWd2FbXjkUttyiQjjaLbtzPwtpIPepo
-        k6TXAi0iFNfzvez0vGCC3uE=
-X-Google-Smtp-Source: ADUXVKKM9B5okxfYG0eCDKB6bjrtwW+fuCuq6SPeN0gg/hQ42kxTLPkjRTZd4oNFBnlPCoATvZXG6w==
-X-Received: by 2002:a2e:458a:: with SMTP id s132-v6mr308287lja.92.1528810932047;
-        Tue, 12 Jun 2018 06:42:12 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VvG94fgLhXAFJwpSW9DbRPdddlwGv4MIJ8r++VXbRcY=;
+        b=RGQ7H0JT4mee8R2bD/vyEhf/M53IrfdxNDwar6DaFoiVdv6GNfDLNCWLjyiU33BGUQ
+         +nD8itZwgwEF24Kzto6Q+7CS8/xsXuhM4Dwne5NsaKr4V82Rq8+8QawgxY+2vwjInGC5
+         1mDvy0GWS0RyH7jzFTMobLhIGeHwmdeTUwhGX3eqn12a1OUKndMtxU7ZAujWMqo0Z2DC
+         Ei7sBRWlLRhph4tIIaJ+WPJrj8Uysw1ykOnsgLQjAuRrkHXaOKbbhed66Z+l1DUhfX6e
+         a6zVrezWRXbYKmjLX8g7uMmivVQUCvefktqN1gSu44B5YHRVO/zhmdXgRXlNHXqXsK+c
+         7/nQ==
+X-Gm-Message-State: APt69E0u7nSKVN9ypEkbYkRxcwbhahNtyHGC8gXi9AQmD5HTv1I/90EL
+        ZUlpN6yH4Z7qOqRWYk0sQ6M=
+X-Google-Smtp-Source: ADUXVKI7PfYGIwYAX4Zgrgw+ZjPhZEVnr7Vpw3IyNmoAApR09nO2sqqUh0kLzbPCExHhH15psAzLeA==
+X-Received: by 2002:a2e:c52:: with SMTP id o18-v6mr322812ljd.72.1528810928878;
+        Tue, 12 Jun 2018 06:42:08 -0700 (PDT)
 Received: from a2k-HP-ProDesk-600-G2-SFF.kyiv.epam.com (ll-74.141.223.85.sovam.net.ua. [85.223.141.74])
-        by smtp.gmail.com with ESMTPSA id x18-v6sm46692ljh.63.2018.06.12.06.42.10
+        by smtp.gmail.com with ESMTPSA id x18-v6sm46692ljh.63.2018.06.12.06.42.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 12 Jun 2018 06:42:11 -0700 (PDT)
+        Tue, 12 Jun 2018 06:42:07 -0700 (PDT)
 From:   Oleksandr Andrushchenko <andr2000@gmail.com>
 To:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
@@ -64,12 +65,13 @@ To:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
 Cc:     daniel.vetter@intel.com, andr2000@gmail.com, dongwon.kim@intel.com,
         matthew.d.roper@intel.com,
         Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: [PATCH v3 2/9] xen/grant-table: Make set/clear page private code shared
-Date:   Tue, 12 Jun 2018 16:41:53 +0300
-Message-Id: <20180612134200.17456-3-andr2000@gmail.com>
+Subject: [PATCH v3 0/9] xen: dma-buf support for grant device
+Date:   Tue, 12 Jun 2018 16:41:51 +0300
+Message-Id: <20180612134200.17456-1-andr2000@gmail.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180612134200.17456-1-andr2000@gmail.com>
-References: <20180612134200.17456-1-andr2000@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -77,121 +79,155 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-Make set/clear page private code shared and accessible to
-other kernel modules which can re-use these instead of open-coding.
+This work is in response to my previous attempt to introduce Xen/DRM
+zero-copy driver [1] to enable Linux dma-buf API [2] for Xen based
+frontends/backends. There is also an existing hyper_dmabuf approach
+available [3] which, if reworked to utilize the proposed solution,
+can greatly benefit as well.
 
-Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
----
- drivers/xen/grant-table.c | 54 +++++++++++++++++++++++++--------------
- include/xen/grant_table.h |  3 +++
- 2 files changed, 38 insertions(+), 19 deletions(-)
+RFC for this series was published and discussed [9], comments addressed.
 
-diff --git a/drivers/xen/grant-table.c b/drivers/xen/grant-table.c
-index ba36ff3e4903..dbb48a89e987 100644
---- a/drivers/xen/grant-table.c
-+++ b/drivers/xen/grant-table.c
-@@ -769,29 +769,18 @@ void gnttab_free_auto_xlat_frames(void)
- }
- EXPORT_SYMBOL_GPL(gnttab_free_auto_xlat_frames);
- 
--/**
-- * gnttab_alloc_pages - alloc pages suitable for grant mapping into
-- * @nr_pages: number of pages to alloc
-- * @pages: returns the pages
-- */
--int gnttab_alloc_pages(int nr_pages, struct page **pages)
-+int gnttab_pages_set_private(int nr_pages, struct page **pages)
- {
- 	int i;
--	int ret;
--
--	ret = alloc_xenballooned_pages(nr_pages, pages);
--	if (ret < 0)
--		return ret;
- 
- 	for (i = 0; i < nr_pages; i++) {
- #if BITS_PER_LONG < 64
- 		struct xen_page_foreign *foreign;
- 
- 		foreign = kzalloc(sizeof(*foreign), GFP_KERNEL);
--		if (!foreign) {
--			gnttab_free_pages(nr_pages, pages);
-+		if (!foreign)
- 			return -ENOMEM;
--		}
-+
- 		set_page_private(pages[i], (unsigned long)foreign);
- #endif
- 		SetPagePrivate(pages[i]);
-@@ -799,14 +788,30 @@ int gnttab_alloc_pages(int nr_pages, struct page **pages)
- 
- 	return 0;
- }
--EXPORT_SYMBOL_GPL(gnttab_alloc_pages);
-+EXPORT_SYMBOL_GPL(gnttab_pages_set_private);
- 
- /**
-- * gnttab_free_pages - free pages allocated by gnttab_alloc_pages()
-- * @nr_pages; number of pages to free
-- * @pages: the pages
-+ * gnttab_alloc_pages - alloc pages suitable for grant mapping into
-+ * @nr_pages: number of pages to alloc
-+ * @pages: returns the pages
-  */
--void gnttab_free_pages(int nr_pages, struct page **pages)
-+int gnttab_alloc_pages(int nr_pages, struct page **pages)
-+{
-+	int ret;
-+
-+	ret = alloc_xenballooned_pages(nr_pages, pages);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = gnttab_pages_set_private(nr_pages, pages);
-+	if (ret < 0)
-+		gnttab_free_pages(nr_pages, pages);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(gnttab_alloc_pages);
-+
-+void gnttab_pages_clear_private(int nr_pages, struct page **pages)
- {
- 	int i;
- 
-@@ -818,6 +823,17 @@ void gnttab_free_pages(int nr_pages, struct page **pages)
- 			ClearPagePrivate(pages[i]);
- 		}
- 	}
-+}
-+EXPORT_SYMBOL_GPL(gnttab_pages_clear_private);
-+
-+/**
-+ * gnttab_free_pages - free pages allocated by gnttab_alloc_pages()
-+ * @nr_pages; number of pages to free
-+ * @pages: the pages
-+ */
-+void gnttab_free_pages(int nr_pages, struct page **pages)
-+{
-+	gnttab_pages_clear_private(nr_pages, pages);
- 	free_xenballooned_pages(nr_pages, pages);
- }
- EXPORT_SYMBOL_GPL(gnttab_free_pages);
-diff --git a/include/xen/grant_table.h b/include/xen/grant_table.h
-index 2e37741f6b8d..de03f2542bb7 100644
---- a/include/xen/grant_table.h
-+++ b/include/xen/grant_table.h
-@@ -198,6 +198,9 @@ void gnttab_free_auto_xlat_frames(void);
- int gnttab_alloc_pages(int nr_pages, struct page **pages);
- void gnttab_free_pages(int nr_pages, struct page **pages);
- 
-+int gnttab_pages_set_private(int nr_pages, struct page **pages);
-+void gnttab_pages_clear_private(int nr_pages, struct page **pages);
-+
- int gnttab_map_refs(struct gnttab_map_grant_ref *map_ops,
- 		    struct gnttab_map_grant_ref *kmap_ops,
- 		    struct page **pages, unsigned int count);
+The original rationale behind this work was to enable zero-copying
+use-cases while working with Xen para-virtual display driver [4]:
+when using Xen PV DRM frontend driver then on backend side one will
+need to do copying of display buffers' contents (filled by the
+frontend's user-space) into buffers allocated at the backend side.
+Taking into account the size of display buffers and frames per
+second it may result in unneeded huge data bus occupation and
+performance loss.
+
+The helper driver [4] allows implementing zero-copying use-cases
+when using Xen para-virtualized frontend display driver by implementing
+a DRM/KMS helper driver running on backend's side.
+It utilizes PRIME buffers API (implemented on top of Linux dma-buf)
+to share frontend's buffers with physical device drivers on
+backend's side:
+
+ - a dumb buffer created on backend's side can be shared
+   with the Xen PV frontend driver, so it directly writes
+   into backend's domain memory (into the buffer exported from
+   DRM/KMS driver of a physical display device)
+ - a dumb buffer allocated by the frontend can be imported
+   into physical device DRM/KMS driver, thus allowing to
+   achieve no copying as well
+
+Finally, it was discussed and decided ([1], [5]) that it is worth
+implementing such use-cases via extension of the existing Xen gntdev
+driver instead of introducing new DRM specific driver.
+Please note, that the support of dma-buf is Linux only,
+as dma-buf is a Linux only thing.
+
+Now to the proposed solution. The changes  to the existing Xen drivers
+in the Linux kernel fall into 2 categories:
+1. DMA-able memory buffer allocation and increasing/decreasing memory
+   reservation of the pages of such a buffer.
+   This is required if we are about to share dma-buf with the hardware
+   that does require those to be allocated with dma_alloc_xxx API.
+   (It is still possible to allocate a dma-buf from any system memory,
+   e.g. system pages).
+2. Extension of the gntdev driver to enable it to import/export dma-buf’s.
+
+The first six patches are in preparation for Xen dma-buf support,
+but I consider those usable regardless of the dma-buf use-case,
+e.g. other frontend/backend kernel modules may also benefit from these
+for better code reuse:
+    0001-xen-grant-table-Export-gnttab_-alloc-free-_pages-as-.patch
+    0002-xen-grant-table-Make-set-clear-page-private-code-sha.patch
+    0003-xen-balloon-Share-common-memory-reservation-routines.patch
+    0004-xen-grant-table-Allow-allocating-buffers-suitable-fo.patch
+    0005-xen-gntdev-Allow-mappings-for-DMA-buffers.patch
+    0006-xen-gntdev-Make-private-routines-structures-accessib.patch
+
+The next three patches are Xen implementation of dma-buf as part of
+the grant device:
+    0007-xen-gntdev-Add-initial-support-for-dma-buf-UAPI.patch
+    0008-xen-gntdev-Implement-dma-buf-export-functionality.patch
+    0009-xen-gntdev-Implement-dma-buf-import-functionality.patch
+
+The corresponding libxengnttab changes are available at [6].
+
+All the above was tested with display backend [7] and its accompanying
+helper library [8] on Renesas ARM64 based board.
+Basic balloon tests on x86.
+
+*To all the communities*: I would like to ask you to review the proposed
+solution and give feedback on it, so I can improve and send final
+patches for review (this is still work in progress, but enough to start
+discussing the implementation).
+
+Thank you in advance,
+Oleksandr Andrushchenko
+
+[1] https://lists.freedesktop.org/archives/dri-devel/2018-April/173163.html
+[2] https://elixir.bootlin.com/linux/v4.17-rc5/source/Documentation/driver-api/dma-buf.rst
+[3] https://lists.xenproject.org/archives/html/xen-devel/2018-02/msg01202.html
+[4] https://cgit.freedesktop.org/drm/drm-misc/tree/drivers/gpu/drm/xen
+[5] https://patchwork.kernel.org/patch/10279681/
+[6] https://github.com/andr2000/xen/tree/xen_dma_buf_v1
+[7] https://github.com/andr2000/displ_be/tree/xen_dma_buf_v1
+[8] https://github.com/andr2000/libxenbe/tree/xen_dma_buf_v1
+[9] https://lkml.org/lkml/2018/5/17/215
+
+Changes since v2:
+*****************
+- fixed missed break in dmabuf_exp_wait_obj_signal
+- re-worked debug and error messages, be less verbose
+- removed patch for making gntdev functions available to other drivers
+- removed WARN_ON's in dma-buf code
+- moved all dma-buf related code into gntdev-dmabuf
+- introduced gntdev-common.h with common structures and function prototypes
+- added additional checks for number of grants in IOCTLs
+- gnttab patch cleanup
+- made xenmem_reservation_scrub_page defined in the header as inline
+- fixed __pfn_to_mfn use to pfn_to_bfn
+- no changes to patches 1-2
+
+Changes since v1:
+*****************
+- Define GNTDEV_DMA_FLAG_XXX starting from bit 0
+- Rename mem_reservation.h to mem-reservation.h
+- Remove usless comments
+- Change licenses from GPLv2 OR MIT to GPLv2 only
+- Make xenmem_reservation_va_mapping_{update|clear} inline
+- Change EXPORT_SYMBOL to EXPORT_SYMBOL_GPL for new functions
+- Make gnttab_dma_{alloc|free}_pages to request frames array
+  be allocated outside
+- Fixe gnttab_dma_alloc_pages fail path (added xenmem_reservation_increase)
+- Move most of dma-buf from gntdev.c to gntdev-dmabuf.c
+- Add required dependencies to Kconfig
+- Rework "#ifdef CONFIG_XEN_XXX" for if/else
+- Export gnttab_{alloc|free}_pages as GPL symbols (patch 1)
+
+Oleksandr Andrushchenko (9):
+  xen/grant-table: Export gnttab_{alloc|free}_pages as GPL
+  xen/grant-table: Make set/clear page private code shared
+  xen/balloon: Share common memory reservation routines
+  xen/grant-table: Allow allocating buffers suitable for DMA
+  xen/gntdev: Allow mappings for DMA buffers
+  xen/gntdev: Make private routines/structures accessible
+  xen/gntdev: Add initial support for dma-buf UAPI
+  xen/gntdev: Implement dma-buf export functionality
+  xen/gntdev: Implement dma-buf import functionality
+
+ drivers/xen/Kconfig           |  23 +
+ drivers/xen/Makefile          |   2 +
+ drivers/xen/balloon.c         |  71 +---
+ drivers/xen/gntdev-common.h   |  96 +++++
+ drivers/xen/gntdev-dmabuf.c   | 774 ++++++++++++++++++++++++++++++++++
+ drivers/xen/gntdev-dmabuf.h   |  39 ++
+ drivers/xen/gntdev.c          | 329 ++++++++++++---
+ drivers/xen/grant-table.c     | 153 ++++++-
+ drivers/xen/mem-reservation.c | 112 +++++
+ include/uapi/xen/gntdev.h     | 106 +++++
+ include/xen/grant_table.h     |  21 +
+ include/xen/mem-reservation.h |  64 +++
+ 12 files changed, 1635 insertions(+), 155 deletions(-)
+ create mode 100644 drivers/xen/gntdev-common.h
+ create mode 100644 drivers/xen/gntdev-dmabuf.c
+ create mode 100644 drivers/xen/gntdev-dmabuf.h
+ create mode 100644 drivers/xen/mem-reservation.c
+ create mode 100644 include/xen/mem-reservation.h
+
 -- 
 2.17.1
 
