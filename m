@@ -1,498 +1,130 @@
 Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.1 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id CF677C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:13:50 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3B143C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:22:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A07D20660
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:13:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A07D20660
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E37F9208C1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:22:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E37F9208C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933135AbeFLTNr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 15:13:47 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:43323 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754181AbeFLTNp (ORCPT
+        id S1754288AbeFLTWE (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 15:22:04 -0400
+Received: from mail-it0-f72.google.com ([209.85.214.72]:53176 "EHLO
+        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753517AbeFLTWD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 15:13:45 -0400
-Received: by mail-pl0-f68.google.com with SMTP id c41-v6so27150plj.10;
-        Tue, 12 Jun 2018 12:13:45 -0700 (PDT)
+        Tue, 12 Jun 2018 15:22:03 -0400
+Received: by mail-it0-f72.google.com with SMTP id q5-v6so430284itq.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 12:22:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=m6BifBUBvwRLDEFCWwvmGlG0Y0XdygkkALqpxCXkJpY=;
-        b=leW1EGNFyu+b9pb3JEWhfx+v8AH56AD5s2eUw/6no74+cFZCYydrbutBMKgmuLHlIf
-         8sQaHwkSgaDu9qspiS+J3/RUk3j55fGlqfFwcBAJZnpODMypztwQvB01qgW21v2H7KpZ
-         YgAQry53Co38c59Wc59NSrrEpn+4+1NyVoZhTpq6B7yOfGxNfcsZgMfDPeSm3MMseL9x
-         LHvWXlOuE/W9YltwOMUyDSAEsw8WZoq5ZkI3TvtW+BCRzynKkXPMjlsKwlpiaL6h5hBt
-         91ecnaIE+xTutlJZQXvABm6G1p/A4dwODPXYIG9MGb0MxVnyl3ra0EQLEplKr2zGXhZ/
-         cTzg==
-X-Gm-Message-State: APt69E3d4a/H+Bev0llIznASJ7c+p3JjHWQ8A2zSx0rVHWC71w0JkusM
-        3Q44gKKFG5LKEj/8wLFSmw==
-X-Google-Smtp-Source: ADUXVKJ/Kvu8CX7anmgoKiubiJVXk+TrMHh2lzs6wyLhE3dX2XYVw4I4bUT9vEcV944UBrrP7mlvHg==
-X-Received: by 2002:a17:902:206:: with SMTP id 6-v6mr1776959plc.294.1528830824935;
-        Tue, 12 Jun 2018 12:13:44 -0700 (PDT)
-Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.gmail.com with ESMTPSA id y15-v6sm1049202pfm.136.2018.06.12.12.13.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Jun 2018 12:13:44 -0700 (PDT)
-Date:   Tue, 12 Jun 2018 13:13:43 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Elaine Zhang <zhangqing@rock-chips.com>
-Cc:     heiko@sntech.de, sboyd@kernel.org, mark.rutland@arm.com,
-        mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        cl@rock-chips.com, xxx@rock-chips.com, xf@rock-chips.com,
-        huangtao@rock-chips.com
-Subject: Re: [PATCH v2 2/4] clk: rockchip: add dt-binding header for px30
-Message-ID: <20180612191343.GA30373@rob-hp-laptop>
-References: <1528439519-30135-1-git-send-email-zhangqing@rock-chips.com>
- <1528439519-30135-3-git-send-email-zhangqing@rock-chips.com>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=i5drFsYdF4/84Qj5hHR6yFL6JSCq+UhaTlu9j8q5FZA=;
+        b=cRoje74okxKMCm4CGJdlMOj769vTreiLN76//RpajhuPxDvinU1NyBNitTC+jLGCWX
+         jKQ7aZ0V7a47cP/Rku5Z8ZvjswAIwyE1xFg7HFAQDcHa8+BqUHj5128Jn9Y90bGiDR1g
+         ZpUBCXuxUz5ASrIQc596QM8ZHfGvNA9/xf6I97WDTZpZGGNehrPgIFZ2DmB7if0M9YKX
+         1Zz77tvFPu9BLtslJ/oHVYjm+VsdQD6jPurs4MdsHrTR61dHEFJOv/QgOQRpy1TEU4LP
+         aWTMJMak08H5YPO+gykyDuStrLT/nR7HLLwpNjXwEBZ5cx0wTiykaY2cmkCUhjO39yO2
+         r4vQ==
+X-Gm-Message-State: APt69E1qrJRVouHB2QtBbaqRumuemCHYy3/z9xC2Lp18XV+wEitvk4y+
+        1GglwGTB2iCgTm5RqlQPgPSeR8+wHpgt+85NVQyfsoTIGjoZ
+X-Google-Smtp-Source: ADUXVKKcF2+9ztI4vIeJuW4fUstzls8Rb+GxdEDtwTHh6y4RpaAZnM8wPbHmB979Pa3zNw/SLudEpFCSNKhBohpIM+0kr38/tfNv
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1528439519-30135-3-git-send-email-zhangqing@rock-chips.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Received: by 2002:a24:b90d:: with SMTP id w13-v6mr776649ite.18.1528831322356;
+ Tue, 12 Jun 2018 12:22:02 -0700 (PDT)
+Date:   Tue, 12 Jun 2018 12:22:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e403b3056e76c786@google.com>
+Subject: KMSAN: uninit-value in do_msgrcv
+From:   syzbot <syzbot+2827ef6b3385deb07eaf@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, ebiederm@xmission.com,
+        keescook@chromium.org, linux-kernel@vger.kernel.org,
+        linux@dominikbrodowski.net, manfred@colorfullife.com,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 08, 2018 at 02:31:57PM +0800, Elaine Zhang wrote:
-> Add the dt-bindings header for the px30, that gets shared between
-> the clock controller and the clock references in the dts.
-> Add softreset ID for px30.
-> 
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> ---
->  include/dt-bindings/clock/px30-cru.h | 402 +++++++++++++++++++++++++++++++++++
->  1 file changed, 402 insertions(+)
->  create mode 100644 include/dt-bindings/clock/px30-cru.h
-> 
-> diff --git a/include/dt-bindings/clock/px30-cru.h b/include/dt-bindings/clock/px30-cru.h
-> new file mode 100644
-> index 000000000000..6b0b9507597a
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/px30-cru.h
-> @@ -0,0 +1,402 @@
-> +/*
-> + * Copyright (c) 2018 Rockchip Electronics Co. Ltd.
-> + * Author: Elaine Zhang<zhangqing@rock-chips.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
+Hello,
 
-Use an SPDX tag instead.
+syzbot found the following crash on:
 
-Otherwise,
+HEAD commit:    8fc8ecd1c58a kmsan: unpoison regs in arch_uprobe_exception..
+git tree:       https://github.com/google/kmsan.git/master
+console output: https://syzkaller.appspot.com/x/log.txt?x=1481799f800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9fa436d3ae606638
+dashboard link: https://syzkaller.appspot.com/bug?extid=2827ef6b3385deb07eaf
+compiler:       clang version 7.0.0 (trunk 332596)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1265edb7800000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16eeee9f800000
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+2827ef6b3385deb07eaf@syzkaller.appspotmail.com
 
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLK_ROCKCHIP_PX30_H
-> +#define _DT_BINDINGS_CLK_ROCKCHIP_PX30_H
-> +
-> +/* core clocks */
-> +#define PLL_APLL		1
-> +#define PLL_DPLL		2
-> +#define PLL_CPLL		3
-> +#define PLL_NPLL		4
-> +#define APLL_BOOST_H		5
-> +#define APLL_BOOST_L		6
-> +#define ARMCLK			7
-> +
-> +/* sclk gates (special clocks) */
-> +#define USB480M			14
-> +#define SCLK_PDM		15
-> +#define SCLK_I2S0_TX		16
-> +#define SCLK_I2S0_TX_OUT	17
-> +#define SCLK_I2S0_RX		18
-> +#define SCLK_I2S0_RX_OUT	19
-> +#define SCLK_I2S1		20
-> +#define SCLK_I2S1_OUT		21
-> +#define SCLK_I2S2		22
-> +#define SCLK_I2S2_OUT		23
-> +#define SCLK_UART1		24
-> +#define SCLK_UART2		25
-> +#define SCLK_UART3		26
-> +#define SCLK_UART4		27
-> +#define SCLK_UART5		28
-> +#define SCLK_I2C0		29
-> +#define SCLK_I2C1		30
-> +#define SCLK_I2C2		31
-> +#define SCLK_I2C3		32
-> +#define SCLK_I2C4		33
-> +#define SCLK_PWM0		34
-> +#define SCLK_PWM1		35
-> +#define SCLK_SPI0		36
-> +#define SCLK_SPI1		37
-> +#define SCLK_TIMER0		38
-> +#define SCLK_TIMER1		39
-> +#define SCLK_TIMER2		40
-> +#define SCLK_TIMER3		41
-> +#define SCLK_TIMER4		42
-> +#define SCLK_TIMER5		43
-> +#define SCLK_TSADC		44
-> +#define SCLK_SARADC		45
-> +#define SCLK_OTP		46
-> +#define SCLK_OTP_USR		47
-> +#define SCLK_CRYPTO		48
-> +#define SCLK_CRYPTO_APK		49
-> +#define SCLK_DDRC		50
-> +#define SCLK_ISP		51
-> +#define SCLK_CIF_OUT		52
-> +#define SCLK_RGA_CORE		53
-> +#define SCLK_VOPB_PWM		54
-> +#define SCLK_NANDC		55
-> +#define SCLK_SDIO		56
-> +#define SCLK_EMMC		57
-> +#define SCLK_SFC		58
-> +#define SCLK_SDMMC		59
-> +#define SCLK_OTG_ADP		60
-> +#define SCLK_GMAC_SRC		61
-> +#define SCLK_GMAC		62
-> +#define SCLK_GMAC_RX_TX		63
-> +#define SCLK_MAC_REF		64
-> +#define SCLK_MAC_REFOUT		65
-> +#define SCLK_MAC_OUT		66
-> +#define SCLK_SDMMC_DRV		67
-> +#define SCLK_SDMMC_SAMPLE	68
-> +#define SCLK_SDIO_DRV		69
-> +#define SCLK_SDIO_SAMPLE	70
-> +#define SCLK_EMMC_DRV		71
-> +#define SCLK_EMMC_SAMPLE	72
-> +#define SCLK_GPU		73
-> +#define SCLK_PVTM		74
-> +#define SCLK_CORE_VPU		75
-> +#define SCLK_GMAC_RMII		76
-> +#define SCLK_UART2_SRC		77
-> +#define SCLK_NANDC_DIV		78
-> +#define SCLK_NANDC_DIV50	79
-> +#define SCLK_SDIO_DIV		80
-> +#define SCLK_SDIO_DIV50		81
-> +#define SCLK_EMMC_DIV		82
-> +#define SCLK_EMMC_DIV50		83
-> +#define SCLK_DDRCLK		84
-> +#define SCLK_UART1_SRC		85
-> +
-> +/* dclk gates */
-> +#define DCLK_VOPB		150
-> +#define DCLK_VOPL		151
-> +
-> +/* aclk gates */
-> +#define ACLK_GPU		170
-> +#define ACLK_BUS_PRE		171
-> +#define ACLK_CRYPTO		172
-> +#define ACLK_VI_PRE		173
-> +#define ACLK_VO_PRE		174
-> +#define ACLK_VPU		175
-> +#define ACLK_PERI_PRE		176
-> +#define ACLK_GMAC		178
-> +#define ACLK_CIF		179
-> +#define ACLK_ISP		180
-> +#define ACLK_VOPB		181
-> +#define ACLK_VOPL		182
-> +#define ACLK_RGA		183
-> +#define ACLK_GIC		184
-> +#define ACLK_DCF		186
-> +#define ACLK_DMAC		187
-> +#define ACLK_BUS_SRC		188
-> +#define ACLK_PERI_SRC		189
-> +
-> +/* hclk gates */
-> +#define HCLK_BUS_PRE		240
-> +#define HCLK_CRYPTO		241
-> +#define HCLK_VI_PRE		242
-> +#define HCLK_VO_PRE		243
-> +#define HCLK_VPU		244
-> +#define HCLK_PERI_PRE		245
-> +#define HCLK_MMC_NAND		246
-> +#define HCLK_SDMMC		247
-> +#define HCLK_USB		248
-> +#define HCLK_CIF		249
-> +#define HCLK_ISP		250
-> +#define HCLK_VOPB		251
-> +#define HCLK_VOPL		252
-> +#define HCLK_RGA		253
-> +#define HCLK_NANDC		254
-> +#define HCLK_SDIO		255
-> +#define HCLK_EMMC		256
-> +#define HCLK_SFC		257
-> +#define HCLK_OTG		258
-> +#define HCLK_HOST		259
-> +#define HCLK_HOST_ARB		260
-> +#define HCLK_PDM		261
-> +#define HCLK_I2S0		262
-> +#define HCLK_I2S1		263
-> +#define HCLK_I2S2		264
-> +
-> +/* pclk gates */
-> +#define PCLK_BUS_PRE		320
-> +#define PCLK_DDR		321
-> +#define PCLK_VO_PRE		322
-> +#define PCLK_GMAC		323
-> +#define PCLK_MIPI_DSI		324
-> +#define PCLK_MIPIDSIPHY		325
-> +#define PCLK_MIPICSIPHY		326
-> +#define PCLK_USB_GRF		327
-> +#define PCLK_DCF		328
-> +#define PCLK_UART1		329
-> +#define PCLK_UART2		330
-> +#define PCLK_UART3		331
-> +#define PCLK_UART4		332
-> +#define PCLK_UART5		333
-> +#define PCLK_I2C0		334
-> +#define PCLK_I2C1		335
-> +#define PCLK_I2C2		336
-> +#define PCLK_I2C3		337
-> +#define PCLK_I2C4		338
-> +#define PCLK_PWM0		339
-> +#define PCLK_PWM1		340
-> +#define PCLK_SPI0		341
-> +#define PCLK_SPI1		342
-> +#define PCLK_SARADC		343
-> +#define PCLK_TSADC		344
-> +#define PCLK_TIMER		345
-> +#define PCLK_OTP_NS		346
-> +#define PCLK_WDT_NS		347
-> +#define PCLK_GPIO1		348
-> +#define PCLK_GPIO2		349
-> +#define PCLK_GPIO3		350
-> +#define PCLK_ISP		351
-> +#define PCLK_CIF		352
-> +#define PCLK_OTP_PHY		353
-> +
-> +#define CLK_NR_CLKS		(PCLK_OTP_PHY + 1)
-> +
-> +/* pmu-clocks indices */
-> +
-> +#define PLL_GPLL		1
-> +
-> +#define SCLK_RTC32K_PMU		4
-> +#define SCLK_WIFI_PMU		5
-> +#define SCLK_UART0_PMU		6
-> +#define SCLK_PVTM_PMU		7
-> +#define PCLK_PMU_PRE		8
-> +#define SCLK_REF24M_PMU		9
-> +#define SCLK_USBPHY_REF		10
-> +#define SCLK_MIPIDSIPHY_REF	11
-> +
-> +#define XIN24M_DIV		12
-> +
-> +#define PCLK_GPIO0_PMU		20
-> +#define PCLK_UART0_PMU		21
-> +
-> +#define CLKPMU_NR_CLKS		(PCLK_UART0_PMU + 1)
-> +
-> +/* soft-reset indices */
-> +#define SRST_CORE0_PO		0
-> +#define SRST_CORE1_PO		1
-> +#define SRST_CORE2_PO		2
-> +#define SRST_CORE3_PO		3
-> +#define SRST_CORE0		4
-> +#define SRST_CORE1		5
-> +#define SRST_CORE2		6
-> +#define SRST_CORE3		7
-> +#define SRST_CORE0_DBG		8
-> +#define SRST_CORE1_DBG		9
-> +#define SRST_CORE2_DBG		10
-> +#define SRST_CORE3_DBG		11
-> +#define SRST_TOPDBG		12
-> +#define SRST_CORE_NOC		13
-> +#define SRST_STRC_A		14
-> +#define SRST_L2C		15
-> +
-> +#define SRST_DAP		16
-> +#define SRST_CORE_PVTM		17
-> +#define SRST_GPU		18
-> +#define SRST_GPU_NIU		19
-> +#define SRST_UPCTL2		20
-> +#define SRST_UPCTL2_A		21
-> +#define SRST_UPCTL2_P		22
-> +#define SRST_MSCH		23
-> +#define SRST_MSCH_P		24
-> +#define SRST_DDRMON_P		25
-> +#define SRST_DDRSTDBY_P		26
-> +#define SRST_DDRSTDBY		27
-> +#define SRST_DDRGRF_p		28
-> +#define SRST_AXI_SPLIT_A	29
-> +#define SRST_AXI_CMD_A		30
-> +#define SRST_AXI_CMD_P		31
-> +
-> +#define SRST_DDRPHY		32
-> +#define SRST_DDRPHYDIV		33
-> +#define SRST_DDRPHY_P		34
-> +#define SRST_VPU_A		36
-> +#define SRST_VPU_NIU_A		37
-> +#define SRST_VPU_H		38
-> +#define SRST_VPU_NIU_H		39
-> +#define SRST_VI_NIU_A		40
-> +#define SRST_VI_NIU_H		41
-> +#define SRST_ISP_H		42
-> +#define SRST_ISP		43
-> +#define SRST_CIF_A		44
-> +#define SRST_CIF_H		45
-> +#define SRST_CIF_PCLKIN		46
-> +#define SRST_MIPICSIPHY_P	47
-> +
-> +#define SRST_VO_NIU_A		48
-> +#define SRST_VO_NIU_H		49
-> +#define SRST_VO_NIU_P		50
-> +#define SRST_VOPB_A		51
-> +#define SRST_VOPB_H		52
-> +#define SRST_VOPB		53
-> +#define SRST_PWM_VOPB		54
-> +#define SRST_VOPL_A		55
-> +#define SRST_VOPL_H		56
-> +#define SRST_VOPL		57
-> +#define SRST_RGA_A		58
-> +#define SRST_RGA_H		59
-> +#define SRST_RGA		60
-> +#define SRST_MIPIDSI_HOST_P	61
-> +#define SRST_MIPIDSIPHY_P	62
-> +#define SRST_VPU_CORE		63
-> +
-> +#define SRST_PERI_NIU_A		64
-> +#define SRST_USB_NIU_H		65
-> +#define SRST_USB2OTG_H		66
-> +#define SRST_USB2OTG		67
-> +#define SRST_USB2OTG_ADP	68
-> +#define SRST_USB2HOST_H		69
-> +#define SRST_USB2HOST_ARB_H	70
-> +#define SRST_USB2HOST_AUX_H	71
-> +#define SRST_USB2HOST_EHCI	72
-> +#define SRST_USB2HOST		73
-> +#define SRST_USBPHYPOR		74
-> +#define SRST_USBPHY_OTG_PORT	75
-> +#define SRST_USBPHY_HOST_PORT	76
-> +#define SRST_USBPHY_GRF		77
-> +#define SRST_CPU_BOOST_P	78
-> +#define SRST_CPU_BOOST		79
-> +
-> +#define SRST_MMC_NAND_NIU_H	80
-> +#define SRST_SDIO_H		81
-> +#define SRST_EMMC_H		82
-> +#define SRST_SFC_H		83
-> +#define SRST_SFC		84
-> +#define SRST_SDCARD_NIU_H	85
-> +#define SRST_SDMMC_H		86
-> +#define SRST_NANDC_H		89
-> +#define SRST_NANDC		90
-> +#define SRST_GMAC_NIU_A		92
-> +#define SRST_GMAC_NIU_P		93
-> +#define SRST_GMAC_A		94
-> +
-> +#define SRST_PMU_NIU_P		96
-> +#define SRST_PMU_SGRF_P		97
-> +#define SRST_PMU_GRF_P		98
-> +#define SRST_PMU		99
-> +#define SRST_PMU_MEM_P		100
-> +#define SRST_PMU_GPIO0_P	101
-> +#define SRST_PMU_UART0_P	102
-> +#define SRST_PMU_CRU_P		103
-> +#define SRST_PMU_PVTM		104
-> +#define SRST_PMU_UART		105
-> +#define SRST_PMU_NIU_H		106
-> +#define SRST_PMU_DDR_FAIL_SAVE	107
-> +#define SRST_PMU_CORE_PERF_A	108
-> +#define SRST_PMU_CORE_GRF_P	109
-> +#define SRST_PMU_GPU_PERF_A	110
-> +#define SRST_PMU_GPU_GRF_P	111
-> +
-> +#define SRST_CRYPTO_NIU_A	112
-> +#define SRST_CRYPTO_NIU_H	113
-> +#define SRST_CRYPTO_A		114
-> +#define SRST_CRYPTO_H		115
-> +#define SRST_CRYPTO		116
-> +#define SRST_CRYPTO_APK		117
-> +#define SRST_BUS_NIU_H		120
-> +#define SRST_USB_NIU_P		121
-> +#define SRST_BUS_TOP_NIU_P	122
-> +#define SRST_INTMEM_A		123
-> +#define SRST_GIC_A		124
-> +#define SRST_ROM_H		126
-> +#define SRST_DCF_A		127
-> +
-> +#define SRST_DCF_P		128
-> +#define SRST_PDM_H		129
-> +#define SRST_PDM		130
-> +#define SRST_I2S0_H		131
-> +#define SRST_I2S0_TX		132
-> +#define SRST_I2S1_H		133
-> +#define SRST_I2S1		134
-> +#define SRST_I2S2_H		135
-> +#define SRST_I2S2		136
-> +#define SRST_UART1_P		137
-> +#define SRST_UART1		138
-> +#define SRST_UART2_P		139
-> +#define SRST_UART2		140
-> +#define SRST_UART3_P		141
-> +#define SRST_UART3		142
-> +#define SRST_UART4_P		143
-> +
-> +#define SRST_UART4		144
-> +#define SRST_UART5_P		145
-> +#define SRST_UART5		146
-> +#define SRST_I2C0_P		147
-> +#define SRST_I2C0		148
-> +#define SRST_I2C1_P		149
-> +#define SRST_I2C1		150
-> +#define SRST_I2C2_P		151
-> +#define SRST_I2C2		152
-> +#define SRST_I2C3_P		153
-> +#define SRST_I2C3		154
-> +#define SRST_PWM0_P		157
-> +#define SRST_PWM0		158
-> +#define SRST_PWM1_P		159
-> +
-> +#define SRST_PWM1		160
-> +#define SRST_SPI0_P		161
-> +#define SRST_SPI0		162
-> +#define SRST_SPI1_P		163
-> +#define SRST_SPI1		164
-> +#define SRST_SARADC_P		165
-> +#define SRST_SARADC		166
-> +#define SRST_TSADC_P		167
-> +#define SRST_TSADC		168
-> +#define SRST_TIMER_P		169
-> +#define SRST_TIMER0		170
-> +#define SRST_TIMER1		171
-> +#define SRST_TIMER2		172
-> +#define SRST_TIMER3		173
-> +#define SRST_TIMER4		174
-> +#define SRST_TIMER5		175
-> +
-> +#define SRST_OTP_NS_P		176
-> +#define SRST_OTP_NS_SBPI	177
-> +#define SRST_OTP_NS_USR		178
-> +#define SRST_OTP_PHY_P		179
-> +#define SRST_OTP_PHY		180
-> +#define SRST_WDT_NS_P		181
-> +#define SRST_GPIO1_P		182
-> +#define SRST_GPIO2_P		183
-> +#define SRST_GPIO3_P		184
-> +#define SRST_SGRF_P		185
-> +#define SRST_GRF_P		186
-> +#define SRST_I2S0_RX		191
-> +
-> +#endif
-> -- 
-> 1.9.1
-> 
-> 
+==================================================================
+BUG: KMSAN: uninit-value in do_msgrcv+0x509/0x1e30 ipc/msg.c:1048
+CPU: 0 PID: 4528 Comm: syz-executor852 Not tainted 4.17.0-rc5+ #103
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x185/0x1d0 lib/dump_stack.c:113
+  kmsan_report+0x149/0x260 mm/kmsan/kmsan.c:1084
+  __msan_warning_32+0x6e/0xc0 mm/kmsan/kmsan_instr.c:686
+  do_msgrcv+0x509/0x1e30 ipc/msg.c:1048
+  ksys_msgrcv ipc/msg.c:1184 [inline]
+  __do_sys_msgrcv ipc/msg.c:1190 [inline]
+  __se_sys_msgrcv ipc/msg.c:1187 [inline]
+  __x64_sys_msgrcv+0x160/0x1b0 ipc/msg.c:1187
+  do_syscall_64+0x152/0x230 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x4459b9
+RSP: 002b:00007f0d57662db8 EFLAGS: 00000297 ORIG_RAX: 0000000000000046
+RAX: ffffffffffffffda RBX: 00000000006dac54 RCX: 00000000004459b9
+RDX: 00000000000000d0 RSI: 0000000020000000 RDI: 0000000000260007
+RBP: 00000000006dac50 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000297 R12: 0000000000000000
+R13: 00007ffd5ab7e25f R14: 00007f0d576639c0 R15: 0000000000000006
+
+Uninit was created at:
+  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:279 [inline]
+  kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:189
+  kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:315
+  __kmalloc_node+0xe25/0x11f0 mm/slub.c:3865
+  kmalloc_node include/linux/slab.h:554 [inline]
+  kvmalloc_node+0x197/0x2f0 mm/util.c:421
+  kvmalloc include/linux/mm.h:550 [inline]
+  newque+0xb4/0x7d0 ipc/msg.c:139
+  ipcget_new ipc/util.c:315 [inline]
+  ipcget+0x27b/0xd90 ipc/util.c:653
+  ksys_msgget ipc/msg.c:289 [inline]
+  __do_sys_msgget ipc/msg.c:294 [inline]
+  __se_sys_msgget ipc/msg.c:292 [inline]
+  __x64_sys_msgget+0x14c/0x1d0 ipc/msg.c:292
+  do_syscall_64+0x152/0x230 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
