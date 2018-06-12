@@ -3,330 +3,214 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id DEFE7C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 14:08:44 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 95DBEC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 14:08:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8815D208B2
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 14:08:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8815D208B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4884A2089C
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 14:08:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4884A2089C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934128AbeFLOIm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 10:08:42 -0400
-Received: from fw-tnat.cambridge.arm.com ([217.140.96.140]:18863 "EHLO
-        cam-smtp0.cambridge.arm.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934030AbeFLOIi (ORCPT
+        id S934171AbeFLOIz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 10:08:55 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:14034 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933295AbeFLOIv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 10:08:38 -0400
-Received: from e110455-lin.cambridge.arm.com (e110455-lin.cambridge.arm.com [10.2.131.61])
-        by cam-smtp0.cambridge.arm.com (8.13.8/8.13.8) with ESMTP id w5CE8DwR031673;
-        Tue, 12 Jun 2018 15:08:18 +0100
-From:   Liviu Dudau <Liviu.Dudau@arm.com>
-To:     Mali DP Maintainers <malidp@foss.arm.com>
-Cc:     Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        DRI-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Brian Starkey <brian.starkey@arm.com>,
-        Alexandru-Cosmin Gheorghe <alexandru-cosmin.gheorghe@arm.com>,
-        Eric Anholt <eric@anholt.net>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Daniel Stone <daniels@collabora.com>,
-        Liviu Dudau <liviu.dudau@arm.com>
-Subject: [PATCH v8 3/5] drm/mali-dp: Add writeback support for DP500.
-Date:   Tue, 12 Jun 2018 15:08:11 +0100
-Message-Id: <20180612140813.20419-4-Liviu.Dudau@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180612140813.20419-1-Liviu.Dudau@arm.com>
-References: <20180612140813.20419-1-Liviu.Dudau@arm.com>
+        Tue, 12 Jun 2018 10:08:51 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5CDwjGn002659
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 10:08:51 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jjervucqh-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 10:08:50 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
+        Tue, 12 Jun 2018 15:08:49 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 12 Jun 2018 15:08:45 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5CE8hCH30539862
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 12 Jun 2018 14:08:43 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6AC7511C05C;
+        Tue, 12 Jun 2018 14:59:19 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B964A11C050;
+        Tue, 12 Jun 2018 14:59:18 +0100 (BST)
+Received: from oc3836556865.ibm.com (unknown [9.152.224.108])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 12 Jun 2018 14:59:18 +0100 (BST)
+Subject: Re: [PATCH RFC 2/2] vfio-ccw: support for halt/clear subchannel
+To:     pmorel@linux.ibm.com, Cornelia Huck <cohuck@redhat.com>
+Cc:     Dong Jia Shi <bjsdjshi@linux.ibm.com>, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        qemu-s390x@nongnu.org, qemu-devel@nongnu.org
+References: <20180509154822.23510-1-cohuck@redhat.com>
+ <20180509154822.23510-3-cohuck@redhat.com>
+ <c18f9b9f-da00-1a0b-8ef0-7ac223c73d1a@linux.ibm.com>
+ <20180515181006.0cb1dfc2.cohuck@redhat.com>
+ <a5d08fb7-d9c1-b230-fe0c-acebbda2ba65@linux.ibm.com>
+ <20180522145208.310143ea.cohuck@redhat.com>
+ <4e4001cc-540e-0f2b-bbd1-1f82ca594bb3@linux.ibm.com>
+ <20180605151449.22aafbfc.cohuck@redhat.com>
+ <e73038ff-fb2d-5865-8b84-e775990f3983@linux.ibm.com>
+ <20180606142131.74ea2eb7.cohuck@redhat.com>
+ <5b77ec9c-41b8-2e32-ce79-d9005b93fdd0@linux.ibm.com>
+ <20180607115442.6a779ed9.cohuck@redhat.com>
+ <86d57698-3ea7-a390-2217-07c6d41ca9ed@linux.ibm.com>
+ <20180608142022.7dd6a658.cohuck@redhat.com>
+ <d68340a2-bb1b-cef9-e394-f0d55983c0bb@linux.ibm.com>
+ <20180608164514.2e8248f4.cohuck@redhat.com>
+ <99ca65a2-ee33-6353-b6b7-aa4c07a34e2a@linux.ibm.com>
+ <20180612115900.4aa319d1.cohuck@redhat.com>
+ <d5416c61-252a-5bb8-aebe-46d883e5822e@linux.ibm.com>
+From:   Halil Pasic <pasic@linux.ibm.com>
+Date:   Tue, 12 Jun 2018 16:08:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <d5416c61-252a-5bb8-aebe-46d883e5822e@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18061214-0016-0000-0000-000001DAEE8C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18061214-0017-0000-0000-0000322E22E6
+Message-Id: <e4fc9a67-f3df-c040-8188-37eb3091db1a@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-12_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=963 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806120160
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mali DP500 behaves differently from the rest of the Mali DP IP,
-in that it does not have a one-shot mode and keeps writing the
-content of the current frame to the provided memory area until
-stopped. As a way of emulating the one-shot behaviour, we are
-going to use the CVAL interrupt that is being raised at the
-start of each frame, during prefetch phase, to act as End-of-Write
-signal, but with a twist: we are going to disable the memory
-write engine right after we're notified that it has been enabled,
-using the knowledge that the bit controlling the enabling will
-only be acted upon on the next vblank/prefetch.
 
-CVAL interrupt will fire durint the next prefetch phase every time
-the global CVAL bit gets set, so we need a state byte to track
-the memory write enabling. We also need to pay attention during the
-disabling of the memory write engine as that requires the CVAL bit
-to be set in the control register, but we don't want to do that
-during an atomic commit, as it will write into the hardware a partial
-state.
 
-Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
----
- drivers/gpu/drm/arm/malidp_drv.c  | 16 ++++--
- drivers/gpu/drm/arm/malidp_drv.h  |  4 ++
- drivers/gpu/drm/arm/malidp_hw.c   | 84 +++++++++++++++++++++++++++++--
- drivers/gpu/drm/arm/malidp_hw.h   |  5 +-
- drivers/gpu/drm/arm/malidp_regs.h |  3 +-
- 5 files changed, 102 insertions(+), 10 deletions(-)
+On 06/12/2018 03:56 PM, Pierre Morel wrote:
+>> So, what are you proposing? Being more specific and stating that the
+>> scsw is not necessarily a real scsw, but merely a vehicle for sending a
+>> command? Or keeping it as it is now for ssch, and adding a second
+>> interface for hsch/csch (and maybe rsch, msch, ...)?
+>>
+> 
+> 
+> I said no radical surgery, but after thinking more about it...
+> I am not sure.
+> 
+> Let's explain this:
+> 
+> I see 2 ways to proceed but my favorite is definitively to introduce versioning.
+> 
+> 
+> Way 1)
+> 
+> This was the way I first thought about.
+> We keep the existing IO Regionand structures, and are more
+> specific by stating that the io_region is a command region during write
+> entry and a status region during interrupt handling:
+> This allow us to use the 3 bits of the FCTL field of the SCSW to pass
+> commands to the kernel and stay backward compatible.
+> The FCTL field has 3 bits => we can have 8 commands.
+> 
+> PRO: small change
+> 
+> CONTRA: This is still confusing, we do not really solve this
+>          unclarity problem since QEMU view / documentation and
+>          Linux view / documentation differ or we update QEMU.
+>          Moreover this does not allow for long term extensions
+>          and/or re-design.
+> 
+> 
 
-diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
-index 8d20faa198cf1..e262620ffed55 100644
---- a/drivers/gpu/drm/arm/malidp_drv.c
-+++ b/drivers/gpu/drm/arm/malidp_drv.c
-@@ -170,14 +170,15 @@ static int malidp_set_and_wait_config_valid(struct drm_device *drm)
- 	struct malidp_hw_device *hwdev = malidp->dev;
- 	int ret;
- 
--	atomic_set(&malidp->config_valid, 0);
- 	hwdev->hw->set_config_valid(hwdev);
- 	/* don't wait for config_valid flag if we are in config mode */
--	if (hwdev->hw->in_config_mode(hwdev))
-+	if (hwdev->hw->in_config_mode(hwdev)) {
-+		atomic_set(&malidp->config_valid, MALIDP_CONFIG_VALID_DONE);
- 		return 0;
-+	}
- 
- 	ret = wait_event_interruptible_timeout(malidp->wq,
--			atomic_read(&malidp->config_valid) == 1,
-+			atomic_read(&malidp->config_valid) == MALIDP_CONFIG_VALID_DONE,
- 			msecs_to_jiffies(MALIDP_CONF_VALID_TIMEOUT));
- 
- 	return (ret > 0) ? 0 : -ETIMEDOUT;
-@@ -216,12 +217,19 @@ static void malidp_atomic_commit_hw_done(struct drm_atomic_state *state)
- static void malidp_atomic_commit_tail(struct drm_atomic_state *state)
- {
- 	struct drm_device *drm = state->dev;
-+	struct malidp_drm *malidp = drm->dev_private;
- 	struct drm_crtc *crtc;
- 	struct drm_crtc_state *old_crtc_state;
- 	int i;
- 
- 	pm_runtime_get_sync(drm->dev);
- 
-+	/*
-+	 * set config_valid to a special value to let IRQ handlers
-+	 * know that we are updating registers
-+	 */
-+	atomic_set(&malidp->config_valid, MALIDP_CONFIG_START);
-+
- 	drm_atomic_helper_commit_modeset_disables(drm, state);
- 
- 	for_each_old_crtc_in_state(state, crtc, old_crtc_state, i) {
-@@ -589,7 +597,7 @@ static int malidp_bind(struct device *dev)
- 		out_depth = (out_depth << 8) | (output_width[i] & 0xf);
- 	malidp_hw_write(hwdev, out_depth, hwdev->hw->map.out_depth_base);
- 
--	atomic_set(&malidp->config_valid, 0);
-+	atomic_set(&malidp->config_valid, MALIDP_CONFIG_VALID_INIT);
- 	init_waitqueue_head(&malidp->wq);
- 
- 	ret = malidp_init(drm);
-diff --git a/drivers/gpu/drm/arm/malidp_drv.h b/drivers/gpu/drm/arm/malidp_drv.h
-index c70989b933874..e8c41cf1b5bd2 100644
---- a/drivers/gpu/drm/arm/malidp_drv.h
-+++ b/drivers/gpu/drm/arm/malidp_drv.h
-@@ -18,6 +18,10 @@
- #include <drm/drmP.h>
- #include "malidp_hw.h"
- 
-+#define MALIDP_CONFIG_VALID_INIT	0
-+#define MALIDP_CONFIG_VALID_DONE	1
-+#define MALIDP_CONFIG_START		0xd0
-+
- struct malidp_drm {
- 	struct malidp_hw_device *dev;
- 	struct drm_crtc crtc;
-diff --git a/drivers/gpu/drm/arm/malidp_hw.c b/drivers/gpu/drm/arm/malidp_hw.c
-index dd3a15964c588..0524b75f85c6e 100644
---- a/drivers/gpu/drm/arm/malidp_hw.c
-+++ b/drivers/gpu/drm/arm/malidp_hw.c
-@@ -22,6 +22,13 @@
- #include "malidp_drv.h"
- #include "malidp_hw.h"
- 
-+enum {
-+	MW_NOT_ENABLED = 0,	/* SE writeback not enabled */
-+	MW_ONESHOT,		/* SE in one-shot mode for writeback */
-+	MW_START,		/* SE started writeback */
-+	MW_STOP,		/* SE finished writeback */
-+};
-+
- static const struct malidp_format_id malidp500_de_formats[] = {
- 	/*    fourcc,   layers supporting the format,     internal id  */
- 	{ DRM_FORMAT_ARGB2101010, DE_VIDEO1 | DE_GRAPHICS1 | DE_GRAPHICS2,  0 },
-@@ -368,6 +375,51 @@ static long malidp500_se_calc_mclk(struct malidp_hw_device *hwdev,
- 	return ret;
- }
- 
-+static int malidp500_enable_memwrite(struct malidp_hw_device *hwdev,
-+				     dma_addr_t *addrs, s32 *pitches,
-+				     int num_planes, u16 w, u16 h, u32 fmt_id)
-+{
-+	u32 base = MALIDP500_SE_MEMWRITE_BASE;
-+	u32 de_base = malidp_get_block_base(hwdev, MALIDP_DE_BLOCK);
-+
-+	/* enable the scaling engine block */
-+	malidp_hw_setbits(hwdev, MALIDP_SCALE_ENGINE_EN, de_base + MALIDP_DE_DISPLAY_FUNC);
-+
-+	hwdev->mw_state = MW_START;
-+
-+	malidp_hw_write(hwdev, fmt_id, base + MALIDP_MW_FORMAT);
-+	switch (num_planes) {
-+	case 2:
-+		malidp_hw_write(hwdev, lower_32_bits(addrs[1]), base + MALIDP_MW_P2_PTR_LOW);
-+		malidp_hw_write(hwdev, upper_32_bits(addrs[1]), base + MALIDP_MW_P2_PTR_HIGH);
-+		malidp_hw_write(hwdev, pitches[1], base + MALIDP_MW_P2_STRIDE);
-+		/* fall through */
-+	case 1:
-+		malidp_hw_write(hwdev, lower_32_bits(addrs[0]), base + MALIDP_MW_P1_PTR_LOW);
-+		malidp_hw_write(hwdev, upper_32_bits(addrs[0]), base + MALIDP_MW_P1_PTR_HIGH);
-+		malidp_hw_write(hwdev, pitches[0], base + MALIDP_MW_P1_STRIDE);
-+		break;
-+	default:
-+		WARN(1, "Invalid number of planes");
-+	}
-+
-+	malidp_hw_write(hwdev, MALIDP_DE_H_ACTIVE(w) | MALIDP_DE_V_ACTIVE(h),
-+			MALIDP500_SE_MEMWRITE_OUT_SIZE);
-+	malidp_hw_setbits(hwdev, MALIDP_SE_MEMWRITE_EN, MALIDP500_SE_CONTROL);
-+
-+	return 0;
-+}
-+
-+static void malidp500_disable_memwrite(struct malidp_hw_device *hwdev)
-+{
-+	u32 base = malidp_get_block_base(hwdev, MALIDP_DE_BLOCK);
-+
-+	if (hwdev->mw_state == MW_START)
-+		hwdev->mw_state = MW_STOP;
-+	malidp_hw_clearbits(hwdev, MALIDP_SE_MEMWRITE_EN, MALIDP500_SE_CONTROL);
-+	malidp_hw_clearbits(hwdev, MALIDP_SCALE_ENGINE_EN, base + MALIDP_DE_DISPLAY_FUNC);
-+}
-+
- static int malidp550_query_hw(struct malidp_hw_device *hwdev)
- {
- 	u32 conf = malidp_hw_read(hwdev, MALIDP550_CONFIG_ID);
-@@ -598,6 +650,8 @@ static int malidp550_enable_memwrite(struct malidp_hw_device *hwdev,
- 	/* enable the scaling engine block */
- 	malidp_hw_setbits(hwdev, MALIDP_SCALE_ENGINE_EN, de_base + MALIDP_DE_DISPLAY_FUNC);
- 
-+	hwdev->mw_state = MW_ONESHOT;
-+
- 	malidp_hw_write(hwdev, fmt_id, base + MALIDP_MW_FORMAT);
- 	switch (num_planes) {
- 	case 2:
-@@ -677,8 +731,9 @@ const struct malidp_hw malidp_device[MALIDP_MAX_DEVICES] = {
- 				.vsync_irq = MALIDP500_DE_IRQ_VSYNC,
- 			},
- 			.se_irq_map = {
--				.irq_mask = MALIDP500_SE_IRQ_CONF_MODE,
--				.vsync_irq = 0,
-+				.irq_mask = MALIDP500_SE_IRQ_CONF_MODE |
-+					    MALIDP500_SE_IRQ_CONF_VALID,
-+				.vsync_irq = MALIDP500_SE_IRQ_CONF_VALID,
- 			},
- 			.dc_irq_map = {
- 				.irq_mask = MALIDP500_DE_IRQ_CONF_VALID,
-@@ -697,6 +752,8 @@ const struct malidp_hw malidp_device[MALIDP_MAX_DEVICES] = {
- 		.rotmem_required = malidp500_rotmem_required,
- 		.se_set_scaling_coeffs = malidp500_se_set_scaling_coeffs,
- 		.se_calc_mclk = malidp500_se_calc_mclk,
-+		.enable_memwrite = malidp500_enable_memwrite,
-+		.disable_memwrite = malidp500_disable_memwrite,
- 		.features = MALIDP_DEVICE_LV_HAS_3_STRIDES,
- 	},
- 	[MALIDP_550] = {
-@@ -841,7 +898,7 @@ static irqreturn_t malidp_de_irq(int irq, void *arg)
- 			malidp->event = NULL;
- 			spin_unlock(&drm->event_lock);
- 		}
--		atomic_set(&malidp->config_valid, 1);
-+		atomic_set(&malidp->config_valid, MALIDP_CONFIG_VALID_DONE);
- 		ret = IRQ_WAKE_THREAD;
- 	}
- 
-@@ -935,7 +992,25 @@ static irqreturn_t malidp_se_irq(int irq, void *arg)
- 	mask = malidp_hw_read(hwdev, hw->map.se_base + MALIDP_REG_MASKIRQ);
- 	status = malidp_hw_read(hwdev, hw->map.se_base + MALIDP_REG_STATUS);
- 	status &= mask;
--	/* ToDo: status decoding and firing up of VSYNC and page flip events */
-+
-+	if (status & se->vsync_irq) {
-+		switch (hwdev->mw_state) {
-+		case MW_STOP:
-+			/* disable writeback after stop */
-+			hwdev->mw_state = MW_NOT_ENABLED;
-+			break;
-+		case MW_START:
-+			/* writeback started, need to emulate one-shot mode */
-+			hw->disable_memwrite(hwdev);
-+			/*
-+			 * only set config_valid HW bit if there is no
-+			 * other update in progress
-+			 */
-+			if (atomic_read(&malidp->config_valid) != MALIDP_CONFIG_START)
-+				hw->set_config_valid(hwdev);
-+			break;
-+		}
-+	}
- 
- 	malidp_hw_clear_irq(hwdev, MALIDP_SE_BLOCK, status);
- 
-@@ -965,6 +1040,7 @@ int malidp_se_irq_init(struct drm_device *drm, int irq)
- 		return ret;
- 	}
- 
-+	hwdev->mw_state = MW_NOT_ENABLED;
- 	malidp_hw_enable_irq(hwdev, MALIDP_SE_BLOCK,
- 			     hwdev->hw->map.se_irq_map.irq_mask);
- 
-diff --git a/drivers/gpu/drm/arm/malidp_hw.h b/drivers/gpu/drm/arm/malidp_hw.h
-index a242e97cf6428..c479738b81af5 100644
---- a/drivers/gpu/drm/arm/malidp_hw.h
-+++ b/drivers/gpu/drm/arm/malidp_hw.h
-@@ -178,7 +178,7 @@ struct malidp_hw {
- 	long (*se_calc_mclk)(struct malidp_hw_device *hwdev,
- 			     struct malidp_se_config *se_config,
- 			     struct videomode *vm);
--	/**
-+	/*
- 	 * Enable writing to memory the content of the next frame
- 	 * @param hwdev - malidp_hw_device structure containing the HW description
- 	 * @param addrs - array of addresses for each plane
-@@ -232,6 +232,9 @@ struct malidp_hw_device {
- 	/* track the device PM state */
- 	bool pm_suspended;
- 
-+	/* track the SE memory writeback state */
-+	u8 mw_state;
-+
- 	/* size of memory used for rotating layers, up to two banks available */
- 	u32 rotation_memory[2];
- };
-diff --git a/drivers/gpu/drm/arm/malidp_regs.h b/drivers/gpu/drm/arm/malidp_regs.h
-index e2b2c496225e3..93b198f3af864 100644
---- a/drivers/gpu/drm/arm/malidp_regs.h
-+++ b/drivers/gpu/drm/arm/malidp_regs.h
-@@ -198,7 +198,8 @@
- #define MALIDP500_DE_LG2_PTR_BASE	0x0031c
- #define MALIDP500_SE_BASE		0x00c00
- #define MALIDP500_SE_CONTROL		0x00c0c
--#define MALIDP500_SE_PTR_BASE		0x00e0c
-+#define MALIDP500_SE_MEMWRITE_OUT_SIZE	0x00c2c
-+#define MALIDP500_SE_MEMWRITE_BASE	0x00e00
- #define MALIDP500_DC_IRQ_BASE		0x00f00
- #define MALIDP500_CONFIG_VALID		0x00f00
- #define MALIDP500_CONFIG_ID		0x00fd4
--- 
-2.17.1
+I'm not really in favor of way 1. Conie's point with RSCH is a good one.
+And IMHO it speaks for a new interface for commands. Squeezing the RSCH
+command into the SCSW does not seem to be a good idea. Considering your
+proposal with the 3 bits, we could do something like: if in FCTL the
+start and the clear and the halt bits are set then we postulate that is
+request for a resume. But that would be quite confusing, and we would end
+up re-defining the semantic of the scsw_area -- in respect to what is
+documented Documentation/s390/vfio-ccw.txt, and also what is intuitive
+based on the uapi header.
+
+> 
+> Way 2)
+> 
+> We use the device VFIO versioning using the capability chain to advertise
+> a new interface.
+> 
+> This the preferred way, it is sane, allows for the userland backward
+> compatibility and allows to have a new command interface, extensible
+> for future use.
+> 
+> In this case we can extend the interface to be any kind we want
+> in a next version, pwrite with new io_region, mmap on new
+> IO regions, status region...
+> 
+> PRO: Extensible and also goes in the VFIO INFO extension direction
+>       proposed by Alex
+> 
+
+
+Sounds much better. I imagine the coexistence of old and new like this.
+Both the old and the new QEMU would supply the the SCSW area with the old
+documented semantics -- the SCSW of the virtual subchannel. But with the
+new version an explicit command would be supplied via the command region
+(also for  SSCH). Maybe the SCSW can still end up being useful for
+something in the kernel module too (maybe there are some  optimization
+that can be done based on the QEMU SCSW).
+
+
+> CONTRA: I see none outer more work to do (but is it a problem?)
+> 
+> 
+The problem I see is that designing a good interface usually hard.
+I could help with review, but I don't have the resources to commit
+to more than that.
+
+> ====================
+> 
+> Extra argumentation for versioning support
+> 
+> 
+> Suppose a future implementation with 4 mapped regions like
+> the following:
+> 
+> - A Status region (RO updated as result of command and IRQ)
+> 
+> - A command region (WO where the user send its commands)
+>    userland write here to trigger IO (quite as currently)
+> 
+> - A CCW program region (RW where the CCW chain is handled)
+>    most handling done from userspace, last translations in kernel,
+>    double buffering...
+> 
+> - A performance / measurement / statistics region (RO)
+>    This is updated asynchronously by hardware and/or driver
+> 
+> This is purely theoretical and we do not need to do all at once
+> but if we want to extend the implementation without problems
+> and continue backward compatibility the versioning and capability
+> handling is a must.
+
+I'm not sure about this.
+
+
+Regards,
+Halil
+[..]
 
