@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5FEE6C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 03:30:11 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D87C6C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 03:30:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EB9C208AF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 03:30:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EB9C208AF
+	by mail.kernel.org (Postfix) with ESMTP id 97A90208AF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 03:30:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97A90208AF
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933374AbeFLDaJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 23:30:09 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45704 "EHLO mx1.redhat.com"
+        id S933468AbeFLDa2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 23:30:28 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39306 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932757AbeFLDaG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 23:30:06 -0400
+        id S932757AbeFLDa0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 23:30:26 -0400
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C82F8401EF30;
-        Tue, 12 Jun 2018 03:30:05 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 48413402346B;
+        Tue, 12 Jun 2018 03:30:25 +0000 (UTC)
 Received: from MiWiFi-R3L-srv.redhat.com (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3C4FF1134CA2;
-        Tue, 12 Jun 2018 03:29:44 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6C38F1134CA2;
+        Tue, 12 Jun 2018 03:30:06 +0000 (UTC)
 From:   Baoquan He <bhe@redhat.com>
 To:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
         robh+dt@kernel.org, dan.j.williams@intel.com,
@@ -50,114 +50,62 @@ Cc:     patrik.r.jakobsson@gmail.com, airlied@linux.ie, kys@microsoft.com,
         gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
         seanpaul@chromium.org, linux-parisc@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org, Baoquan He <bhe@redhat.com>
-Subject: [PATCH v5 3/4] resource: add walk_system_ram_res_rev()
-Date:   Tue, 12 Jun 2018 11:28:30 +0800
-Message-Id: <20180612032831.29747-4-bhe@redhat.com>
+Subject: [PATCH v5 4/4] kexec_file: Load kernel at top of system RAM if required
+Date:   Tue, 12 Jun 2018 11:28:31 +0800
+Message-Id: <20180612032831.29747-5-bhe@redhat.com>
 In-Reply-To: <20180612032831.29747-1-bhe@redhat.com>
 References: <20180612032831.29747-1-bhe@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 12 Jun 2018 03:30:06 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 12 Jun 2018 03:30:06 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 12 Jun 2018 03:30:25 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 12 Jun 2018 03:30:25 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This function, being a variant of walk_system_ram_res() introduced in
-commit 8c86e70acead ("resource: provide new functions to walk through
-resources"), walks through a list of all the resources of System RAM
-in reversed order, i.e., from higher to lower.
+For kexec_file loading, if kexec_buf.top_down is 'true', the memory which
+is used to load kernel/initrd/purgatory is supposed to be allocated from
+top to down. This is what we have been doing all along in the old kexec
+loading interface and the kexec loading is still default setting in some
+distributions. However, the current kexec_file loading interface doesn't
+do likt this. The function arch_kexec_walk_mem() it calls ignores checking
+kexec_buf.top_down, but calls walk_system_ram_res() directly to go through
+all resources of System RAM from bottom to up, to try to find memory region
+which can contain the specific kexec buffer, then call locate_mem_hole_callback()
+to allocate memory in that found memory region from top to down. This brings
+confusion especially when KASLR is widely supported , users have to make clear
+why kexec/kdump kernel loading position is different between these two
+interfaces in order to exclude unnecessary noises. Hence these two interfaces
+need be unified on behaviour.
 
-It will be used in kexec_file code.
+Here add checking if kexec_buf.top_down is 'true' in arch_kexec_walk_mem(),
+if yes, call the newly added walk_system_ram_res_rev() to find memory region
+from top to down to load kernel.
 
 Signed-off-by: Baoquan He <bhe@redhat.com>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: Vivek Goyal <vgoyal@redhat.com>
+Cc: Dave Young <dyoung@redhat.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Brijesh Singh <brijesh.singh@amd.com>
-Cc: "Jérôme Glisse" <jglisse@redhat.com>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Wei Yang <richard.weiyang@gmail.com>
+Cc: Yinghai Lu <yinghai@kernel.org>
+Cc: kexec@lists.infradead.org
 ---
- include/linux/ioport.h |  3 +++
- kernel/resource.c      | 40 ++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 43 insertions(+)
+ kernel/kexec_file.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/include/linux/ioport.h b/include/linux/ioport.h
-index b7456ae889dd..066cc263e2cc 100644
---- a/include/linux/ioport.h
-+++ b/include/linux/ioport.h
-@@ -279,6 +279,9 @@ extern int
- walk_system_ram_res(u64 start, u64 end, void *arg,
- 		    int (*func)(struct resource *, void *));
- extern int
-+walk_system_ram_res_rev(u64 start, u64 end, void *arg,
-+			int (*func)(struct resource *, void *));
-+extern int
- walk_iomem_res_desc(unsigned long desc, unsigned long flags, u64 start, u64 end,
- 		    void *arg, int (*func)(struct resource *, void *));
- 
-diff --git a/kernel/resource.c b/kernel/resource.c
-index ef9a20b75234..3128ac938f38 100644
---- a/kernel/resource.c
-+++ b/kernel/resource.c
-@@ -23,6 +23,8 @@
- #include <linux/pfn.h>
- #include <linux/mm.h>
- #include <linux/resource_ext.h>
-+#include <linux/string.h>
-+#include <linux/vmalloc.h>
- #include <asm/io.h>
- 
- 
-@@ -443,6 +445,44 @@ int walk_system_ram_res(u64 start, u64 end, void *arg,
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index 75d8e7cf040e..7a66d9d5a534 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -518,6 +518,8 @@ int __weak arch_kexec_walk_mem(struct kexec_buf *kbuf,
+ 					   IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY,
+ 					   crashk_res.start, crashk_res.end,
+ 					   kbuf, func);
++	else if (kbuf->top_down)
++		return walk_system_ram_res_rev(0, ULONG_MAX, kbuf, func);
+ 	else
+ 		return walk_system_ram_res(0, ULONG_MAX, kbuf, func);
  }
- 
- /*
-+ * This function, being a variant of walk_system_ram_res(), calls the @func
-+ * callback against all memory ranges of type System RAM which are marked as
-+ * IORESOURCE_SYSTEM_RAM and IORESOUCE_BUSY in reversed order, i.e., from
-+ * higher to lower.
-+ */
-+int walk_system_ram_res_rev(u64 start, u64 end, void *arg,
-+				int (*func)(struct resource *, void *))
-+{
-+	unsigned long flags;
-+	struct resource *res;
-+	int ret = -1;
-+
-+	flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
-+
-+	read_lock(&resource_lock);
-+	list_for_each_entry_reverse(res, &iomem_resource.child, sibling) {
-+		if (start >= end)
-+			break;
-+		if ((res->flags & flags) != flags)
-+			continue;
-+		if (res->desc != IORES_DESC_NONE)
-+			continue;
-+		if (res->end < start)
-+			break;
-+
-+		if ((res->end >= start) && (res->start < end)) {
-+			ret = (*func)(res, arg);
-+			if (ret)
-+				break;
-+		}
-+		end = res->start - 1;
-+
-+	}
-+	read_unlock(&resource_lock);
-+	return ret;
-+}
-+
-+/*
-  * This function calls the @func callback against all memory ranges, which
-  * are ranges marked as IORESOURCE_MEM and IORESOUCE_BUSY.
-  */
 -- 
 2.13.6
 
