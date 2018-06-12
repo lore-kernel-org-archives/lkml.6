@@ -2,221 +2,124 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7B748C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:08:10 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 639CFC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:08:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 317032086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:08:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 317032086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 15D632086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:08:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="bS3enzgi";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="IpS/RbS6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15D632086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934164AbeFLPIH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        id S934408AbeFLPIN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 11:08:13 -0400
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:47369 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933868AbeFLPIH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 12 Jun 2018 11:08:07 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35064 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933175AbeFLPIF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 11:08:05 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0D8E71529;
-        Tue, 12 Jun 2018 08:08:05 -0700 (PDT)
-Received: from localhost (e105922-lin.cambridge.arm.com [10.1.206.33])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A56FD3F557;
-        Tue, 12 Jun 2018 08:08:04 -0700 (PDT)
-From:   Punit Agrawal <punit.agrawal@arm.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>,
-        Xie XiuQi <xiexiuqi@huawei.com>,
-        Hanjun Guo <guohanjun@huawei.com>, tnowicki@caviumnetworks.com,
-        linux-pci@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-mm@kvack.org, wanghuiqiang@huawei.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        zhongjiang <zhongjiang@huawei.com>,
-        linux-arm <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 1/2] arm64: avoid alloc memory on offline node
-References: <1527768879-88161-2-git-send-email-xiexiuqi@huawei.com>
-        <20180606154516.GL6631@arm.com>
-        <CAErSpo6S0qtR42tjGZrFu4aMFFyThx1hkHTSowTt6t3XerpHnA@mail.gmail.com>
-        <20180607105514.GA13139@dhcp22.suse.cz>
-        <5ed798a0-6c9c-086e-e5e8-906f593ca33e@huawei.com>
-        <20180607122152.GP32433@dhcp22.suse.cz>
-        <a880df29-b656-d98d-3037-b04761c7ed78@huawei.com>
-        <20180611085237.GI13364@dhcp22.suse.cz>
-        <16c4db2f-bc70-d0f2-fb38-341d9117ff66@huawei.com>
-        <20180611134303.GC75679@bhelgaas-glaptop.roam.corp.google.com>
-        <20180611145330.GO13364@dhcp22.suse.cz>
-Date:   Tue, 12 Jun 2018 16:08:03 +0100
-In-Reply-To: <20180611145330.GO13364@dhcp22.suse.cz> (Michal Hocko's message
-        of "Mon, 11 Jun 2018 16:53:30 +0200")
-Message-ID: <87lgbk59gs.fsf@e105922-lin.cambridge.arm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1528816087; x=1560352087;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=0LfFs9lJNSUXlZ2Fq01j+d+iFkQkrAbau3vT+dPX4Lg=;
+  b=bS3enzgipwO42+Qcj52pUW/jO3icr+A7Huc6fTtdukFDjUJN+7YSoFZ3
+   +cMpmB05VR9gXLDs1pVaFUK8AkK6UrIiAGPMwUkqIzm5HpUUjF180jDTT
+   dq3Ue8Q/54+yCPZyh4yNIpFyrRnYlmOdqp6/7fjznalziBENHJsocPuoS
+   vZNhxIMsQunMJeGWNnwj06jyHpZteht8W77MkJpGsSqHQRsFpsiwk/lBX
+   YOVSa6MI8rXOcf+0JLxVgDUZIfaX2ozF65I3jUg+aNiMLJSzLC/sZL7MF
+   Yl/B8HkHBL1XAL41/1EauEYT5NraoW/QF6OYefoJp5t9e6V2cAnm3Rt1q
+   A==;
+X-IronPort-AV: E=Sophos;i="5.51,215,1526313600"; 
+   d="scan'208";a="82287750"
+Received: from mail-co1nam05lp0084.outbound.protection.outlook.com (HELO NAM05-CO1-obe.outbound.protection.outlook.com) ([216.32.181.84])
+  by ob1.hgst.iphmx.com with ESMTP; 12 Jun 2018 23:08:07 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0LfFs9lJNSUXlZ2Fq01j+d+iFkQkrAbau3vT+dPX4Lg=;
+ b=IpS/RbS6WNJXOkLtQwqqJ91LXJ05T8FvRc/WMglyp3VRO7qOjCCeofhFMqSgqDjYG93DnXbrY0hrmSMWnu+AlqjnlE8MNT9lyI5684AYeulajVt1xGPvKYd/EnhLHijwIPzzWYWHbSAbxu9667I+grx8q2bvhapOIBRpW3nG0hg=
+Received: from MWHPR04MB1198.namprd04.prod.outlook.com (10.173.48.151) by
+ MWHPR04MB0271.namprd04.prod.outlook.com (10.169.202.17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.863.14; Tue, 12 Jun 2018 15:08:05 +0000
+Received: from MWHPR04MB1198.namprd04.prod.outlook.com
+ ([fe80::9de4:3c8d:39af:e4c5]) by MWHPR04MB1198.namprd04.prod.outlook.com
+ ([fe80::9de4:3c8d:39af:e4c5%8]) with mapi id 15.20.0841.019; Tue, 12 Jun 2018
+ 15:08:05 +0000
+From:   Bart Van Assche <Bart.VanAssche@wdc.com>
+To:     "jthumshirn@suse.de" <jthumshirn@suse.de>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
+CC:     "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/3] scsi: remove Scsi_Cmnd typedef
+Thread-Topic: [PATCH 1/3] scsi: remove Scsi_Cmnd typedef
+Thread-Index: AQHUAlUiMUp4cype1k6iBQXVEOM1GaRcuagA
+Date:   Tue, 12 Jun 2018 15:08:05 +0000
+Message-ID: <98683ad68d6d708335294d1fcdbdcc58f2eaa9e4.camel@wdc.com>
+References: <20180612135311.13216-1-jthumshirn@suse.de>
+         <20180612135311.13216-2-jthumshirn@suse.de>
+In-Reply-To: <20180612135311.13216-2-jthumshirn@suse.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [199.255.44.174]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR04MB0271;7:7iXhcVKjK+aYUggnv+NnOTe7T6E8C4fe7lzn65IfDzYeVin2TW2lbQMsYBHE2sUf6dO9NxySFY9DgO7nNd7QdjJm1xUvYmlO6nDCn3G3bp5+0d1XmDoYeyEVIu41g2YBYZDMFnhNB+P4MToNBf9o+Nzb7rcwgu/PdspgaTuqIggJ/ucQMTBbewVNjx62EhfypsImvfk42ZqfmhGzOwDauir+GxLN0F9Ga42KLLQYvChpYTSFc+BUANie4BoSUiGd;20:L9nw5niTnhgq8er7JAD45XYFL7JY3FxkgqM5grqemA3KSOsjRhmutgFecl/wk2Sn6tdZQGEVsuwHe4iBPGobgzJnr65CVDcmiaWGRl+C6kar4gtyntTtlX+BhGQvSpuzjThdHZfaH3VKMkpOjwDY7RaYj76F02NqGeOzhgvCm1A=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0271;
+x-ms-traffictypediagnostic: MWHPR04MB0271:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Bart.VanAssche@wdc.com; 
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <MWHPR04MB027160C5F2FC3CFD1F2BC033987F0@MWHPR04MB0271.namprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:MWHPR04MB0271;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0271;
+x-forefront-prvs: 07013D7479
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(366004)(39860400002)(39380400002)(396003)(189003)(199004)(316002)(110136005)(54906003)(3846002)(6116002)(68736007)(11346002)(76176011)(476003)(7736002)(446003)(2616005)(305945005)(486006)(81166006)(81156014)(8676002)(3280700002)(8936002)(26005)(99286004)(2906002)(105586002)(106356001)(3660700001)(97736004)(229853002)(6506007)(4326008)(72206003)(86362001)(6512007)(2900100001)(102836004)(5660300001)(36756003)(53936002)(6486002)(186003)(25786009)(6436002)(118296001)(478600001)(2501003)(66066001)(5250100002)(6246003)(14454004);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0271;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: TJs2VcSw8uuhCHLCRph7worp5LgrHuuoSez6lqwjSLIoO0OW8iCxm1BHSAcq2KN5C4aKdqQrIXLYjBRiSJNrRnYK7+CoH7LlMyMGTnRxVlWxJMXaB4Df2hJyAmbr4AfOuAlFGj7flajILUMD3DMAZfSIMsSQidttOJuv3afCbKscovEWAfUWc3ZKJi0r7d3q
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <3CC3A014F6C62747AB2CF6DF4BDFBD47@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 7b7ff7b7-146f-44fe-973c-08d5d0764cef
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7b7ff7b7-146f-44fe-973c-08d5d0764cef
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jun 2018 15:08:05.7481
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0271
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michal Hocko <mhocko@kernel.org> writes:
-
-> On Mon 11-06-18 08:43:03, Bjorn Helgaas wrote:
->> On Mon, Jun 11, 2018 at 08:32:10PM +0800, Xie XiuQi wrote:
->> > Hi Michal,
->> > 
->> > On 2018/6/11 16:52, Michal Hocko wrote:
->> > > On Mon 11-06-18 11:23:18, Xie XiuQi wrote:
->> > >> Hi Michal,
->> > >>
->> > >> On 2018/6/7 20:21, Michal Hocko wrote:
->> > >>> On Thu 07-06-18 19:55:53, Hanjun Guo wrote:
->> > >>>> On 2018/6/7 18:55, Michal Hocko wrote:
->> > >>> [...]
->> > >>>>> I am not sure I have the full context but pci_acpi_scan_root calls
->> > >>>>> kzalloc_node(sizeof(*info), GFP_KERNEL, node)
->> > >>>>> and that should fall back to whatever node that is online. Offline node
->> > >>>>> shouldn't keep any pages behind. So there must be something else going
->> > >>>>> on here and the patch is not the right way to handle it. What does
->> > >>>>> faddr2line __alloc_pages_nodemask+0xf0 tells on this kernel?
->> > >>>>
->> > >>>> The whole context is:
->> > >>>>
->> > >>>> The system is booted with a NUMA node has no memory attaching to it
->> > >>>> (memory-less NUMA node), also with NR_CPUS less than CPUs presented
->> > >>>> in MADT, so CPUs on this memory-less node are not brought up, and
->> > >>>> this NUMA node will not be online (but SRAT presents this NUMA node);
->> > >>>>
->> > >>>> Devices attaching to this NUMA node such as PCI host bridge still
->> > >>>> return the valid NUMA node via _PXM, but actually that valid NUMA node
->> > >>>> is not online which lead to this issue.
->> > >>>
->> > >>> But we should have other numa nodes on the zonelists so the allocator
->> > >>> should fall back to other node. If the zonelist is not intiailized
->> > >>> properly, though, then this can indeed show up as a problem. Knowing
->> > >>> which exact place has blown up would help get a better picture...
->> > >>>
->> > >>
->> > >> I specific a non-exist node to allocate memory using kzalloc_node,
->> > >> and got this following error message.
->> > >>
->> > >> And I found out there is just a VM_WARN, but it does not prevent the memory
->> > >> allocation continue.
->> > >>
->> > >> This nid would be use to access NODE_DADA(nid), so if nid is invalid,
->> > >> it would cause oops here.
->> > >>
->> > >> 459 /*
->> > >> 460  * Allocate pages, preferring the node given as nid. The node must be valid and
->> > >> 461  * online. For more general interface, see alloc_pages_node().
->> > >> 462  */
->> > >> 463 static inline struct page *
->> > >> 464 __alloc_pages_node(int nid, gfp_t gfp_mask, unsigned int order)
->> > >> 465 {
->> > >> 466         VM_BUG_ON(nid < 0 || nid >= MAX_NUMNODES);
->> > >> 467         VM_WARN_ON(!node_online(nid));
->> > >> 468
->> > >> 469         return __alloc_pages(gfp_mask, order, nid);
->> > >> 470 }
->> > >> 471
->> > >>
->> > >> (I wrote a ko, to allocate memory on a non-exist node using kzalloc_node().)
->> > > 
->> > > OK, so this is an artificialy broken code, right. You shouldn't get a
->> > > non-existent node via standard APIs AFAICS. The original report was
->> > > about an existing node which is offline AFAIU. That would be a different
->> > > case. If I am missing something and there are legitimate users that try
->> > > to allocate from non-existing nodes then we should handle that in
->> > > node_zonelist.
->> > 
->> > I think hanjun's comments may help to understood this question:
->> >  - NUMA node will be built if CPUs and (or) memory are valid on this NUMA
->> >  node;
->> > 
->> >  - But if we boot the system with memory-less node and also with
->> >  CONFIG_NR_CPUS less than CPUs in SRAT, for example, 64 CPUs total with 4
->> >  NUMA nodes, 16 CPUs on each NUMA node, if we boot with
->> >  CONFIG_NR_CPUS=48, then we will not built numa node for node 3, but with
->> >  devices on that numa node, alloc memory will be panic because NUMA node
->> >  3 is not a valid node.
->
-> Hmm, but this is not a memory-less node. It sounds like a misconfigured
-> kernel to me or the broken initialization. Each CPU should have a
-> fallback numa node to be used.
->
->> > I triggered this BUG on arm64 platform, and I found a similar bug has
->> > been fixed on x86 platform. So I sent a similar patch for this bug.
->> > 
->> > Or, could we consider to fix it in the mm subsystem?
->> 
->> The patch below (b755de8dfdfe) seems like totally the wrong direction.
->> I don't think we want every caller of kzalloc_node() to have check for
->> node_online().
->
-> absolutely.
->
->> Why would memory on an off-line node even be in the allocation pool?
->> I wouldn't expect that memory to be put in the pool until the node
->> comes online and the memory is accessible, so this sounds like some
->> kind of setup issue.
->> 
->> But I'm definitely not an mm person.
->
-> Well, the standard way to handle memory less NUMA nodes is to simply
-> fallback to the closest NUMA node. We even have an API for that
-> (numa_mem_id).
-
-CONFIG_HAVE_MEMORYLESS node is not enabled on arm64 which means we end
-up returning the original node in the fallback path.
-
-Xie, does the below patch help? I can submit a proper patch if this
-fixes the issue for you.
-
--- >8 --
-Subject: [PATCH] arm64/numa: Enable memoryless numa nodes
-
-Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
----
- arch/arm64/Kconfig   | 4 ++++
- arch/arm64/mm/numa.c | 2 ++
- 2 files changed, 6 insertions(+)
-
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index eb2cf4938f6d..5317e9aa93ab 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -756,6 +756,10 @@ config USE_PERCPU_NUMA_NODE_ID
- 	def_bool y
- 	depends on NUMA
- 
-+config HAVE_MEMORYLESS_NODES
-+       def_bool y
-+       depends on NUMA
-+
- config HAVE_SETUP_PER_CPU_AREA
- 	def_bool y
- 	depends on NUMA
-diff --git a/arch/arm64/mm/numa.c b/arch/arm64/mm/numa.c
-index dad128ba98bf..c699dcfe93de 100644
---- a/arch/arm64/mm/numa.c
-+++ b/arch/arm64/mm/numa.c
-@@ -73,6 +73,8 @@ EXPORT_SYMBOL(cpumask_of_node);
- static void map_cpu_to_node(unsigned int cpu, int nid)
- {
- 	set_cpu_numa_node(cpu, nid);
-+	set_numa_mem(local_memory_node(nid));
-+
- 	if (nid >= 0)
- 		cpumask_set_cpu(cpu, node_to_cpumask_map[nid]);
- }
--- 
-2.17.0
+T24gVHVlLCAyMDE4LTA2LTEyIGF0IDE1OjUzICswMjAwLCBKb2hhbm5lcyBUaHVtc2hpcm4gd3Jv
+dGU6DQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3Njc2kvM3cteHh4eC5jIGIvZHJpdmVycy9zY3Np
+LzN3LXh4eHguYw0KPiBpbmRleCBmNjE3OWUzZDY5NTMuLjVkZDA1ZTU2NDc2MCAxMDA2NDQNCj4g
+LS0tIGEvZHJpdmVycy9zY3NpLzN3LXh4eHguYw0KPiArKysgYi9kcml2ZXJzL3Njc2kvM3cteHh4
+eC5jDQo+IEBAIC0xOTI1LDcgKzE5MjUsNyBAQCBzdGF0aWMgaW50IHR3X3Njc2lfcXVldWVfbGNr
+KHN0cnVjdCBzY3NpX2NtbmQgKlNDcG50LCB2b2lkICgqZG9uZSkoc3RydWN0IHNjc2lfYw0KPiAg
+CWlmICh0ZXN0X2JpdChUV19JTl9SRVNFVCwgJnR3X2Rldi0+ZmxhZ3MpKQ0KPiAgCQlyZXR1cm4g
+U0NTSV9NTFFVRVVFX0hPU1RfQlVTWTsNCj4gIA0KPiAtCS8qIFNhdmUgZG9uZSBmdW5jdGlvbiBp
+bnRvIFNjc2lfQ21uZCBzdHJ1Y3QgKi8NCj4gKwkvKiBTYXZlIGRvbmUgZnVuY3Rpb24gaW50byBz
+dHJ1Y3Qgc2NzaV9jbW5kIHN0cnVjdCAqLw0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICBeXl5eXl5eXl5eXl5eXl5eXl5eXl5eXg0KSSB0aGluayBvbmUgb2YgdGhlIHR3byAic3Ry
+dWN0IiBvY2N1cnJlbmNlcyBzaG91bGQgYmUgcmVtb3ZlZC4NCg0KT3RoZXJ3aXNlIHRoaXMgcGF0
+Y2ggbG9va3MgZmluZSB0byBtZS4gSGVuY2U6DQoNClJldmlld2VkLWJ5OiBCYXJ0IFZhbiBBc3Nj
+aGUgPGJhcnQudmFuYXNzY2hlQHdkYy5jb20+DQoNCg0KDQo=
