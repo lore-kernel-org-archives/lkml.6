@@ -6,47 +6,45 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9144FC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:50:08 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 41BDDC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:50:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4588F208B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:50:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DFE7208B4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:50:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gznwjcqI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4588F208B0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kkXS0oVG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DFE7208B4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934943AbeFLQuG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 12:50:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34460 "EHLO mail.kernel.org"
+        id S935025AbeFLQu0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 12:50:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934951AbeFLQsL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 12:48:11 -0400
+        id S934882AbeFLQsC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 12:48:02 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 47AB8208B7;
-        Tue, 12 Jun 2018 16:48:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB004208B8;
+        Tue, 12 Jun 2018 16:48:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528822090;
-        bh=M3ks+pkVnOVDKcj1sJRwDklA/o3hqEs2YfAmJfTErFs=;
+        s=default; t=1528822082;
+        bh=OLFpDrXrtl2zWLXxpZ6L98RviF6WcoQY6N+T1o6tSZM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gznwjcqIekOTJxN6Nyu9g3gwj91QQ69uIpUB5dOY+dWKsrdHwmO24wZt3FedlDLs+
-         8aMWDSlvjqNjBn6lDUOwxeV63aOoVNLlcs+mgr71DZv7wLeo3fP1JeydFUWbgk6H62
-         mrPZ6Lk0A6iNkBB1BQfX0a7uVUgxA1U00C0VWzTs=
+        b=kkXS0oVG+uJbICrP+k4jN3ykT37+S4pEiQfoeri3NYO+06LiEu5Nlxgx/ZPSxa6FI
+         MD8Av1Iv5cIoYz1QEgAsA62p9gd4Ow0sDFy1j1Lj2/YpsibgTJ1kWh2S2H3ISQSq2+
+         dKfq37iiczRBeks3EWxbDezu8fckIHP8HQX3+GvY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <fengguang.wu@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
+        stable@vger.kernel.org, Ben Hutchings <ben@decadent.org.uk>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 30/31] objtool: Fix gcov check for older versions of GCC
-Date:   Tue, 12 Jun 2018 18:46:33 +0200
-Message-Id: <20180612164621.996798847@linuxfoundation.org>
+        David Woodhouse <dwmw@amazon.co.uk>, kvm@vger.kernel.org
+Subject: [PATCH 4.9 28/31] KVM: VMX: Expose SSBD properly to guests, 4.9 supplement
+Date:   Tue, 12 Jun 2018 18:46:31 +0200
+Message-Id: <20180612164621.898625630@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180612164620.797338191@linuxfoundation.org>
 References: <20180612164620.797338191@linuxfoundation.org>
@@ -63,54 +61,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+From: Ben Hutchings <ben@decadent.org.uk>
 
-commit 867ac9d737094e46a6c33213f16dd1ec9e8bd5d5 upstream.
+Fix an additional misuse of X86_FEATURE_SSBD in
+guest_cpuid_has_spec_ctrl().  This function was introduced in the
+backport of SSBD support to 4.9 and is not present upstream, so it was
+not fixed by commit 43462d908821 "KVM: VMX: Expose SSBD properly to
+guests."
 
-Objtool tries to silence 'unreachable instruction' warnings when it
-detects gcov is enabled, because gcov produces a lot of unreachable
-instructions and they don't really matter.
-
-However, the 0-day bot is still reporting some unreachable instruction
-warnings with CONFIG_GCOV_KERNEL=y on GCC 4.6.4.
-
-As it turns out, objtool's gcov detection doesn't work with older
-versions of GCC because they don't create a bunch of symbols with the
-'gcov.' prefix like newer versions of GCC do.
-
-Move the gcov check out of objtool and instead just create a new
-'--no-unreachable' flag which can be passed in by the kernel Makefile
-when CONFIG_GCOV_KERNEL is defined.
-
-Also rename the 'nofp' variable to 'no_fp' for consistency with the new
-'no_unreachable' variable.
-
-Reported-by: kbuild test robot <fengguang.wu@intel.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
+Fixes: 52817587e706 ("x86/cpufeatures: Disentangle SSBD enumeration")
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 9cfffb116887 ("objtool: Skip all "unreachable instruction" warnings for gcov kernels")
-Link: http://lkml.kernel.org/r/c243dc78eb2ffdabb6e927844dea39b6033cd395.1500939244.git.jpoimboe@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-[just Makefile.build as the other parts of this patch already applied - gregkh]
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: kvm@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- scripts/Makefile.build |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/kvm/cpuid.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -253,6 +253,9 @@ objtool_args = check
- ifndef CONFIG_FRAME_POINTER
- objtool_args += --no-fp
- endif
-+ifdef CONFIG_GCOV_KERNEL
-+objtool_args += --no-unreachable
-+endif
+--- a/arch/x86/kvm/cpuid.h
++++ b/arch/x86/kvm/cpuid.h
+@@ -179,7 +179,7 @@ static inline bool guest_cpuid_has_spec_
+ 	if (best && (best->ebx & bit(X86_FEATURE_AMD_IBRS)))
+ 		return true;
+ 	best = kvm_find_cpuid_entry(vcpu, 7, 0);
+-	return best && (best->edx & (bit(X86_FEATURE_SPEC_CTRL) | bit(X86_FEATURE_SSBD)));
++	return best && (best->edx & (bit(X86_FEATURE_SPEC_CTRL) | bit(X86_FEATURE_SPEC_CTRL_SSBD)));
+ }
  
- # 'OBJECT_FILES_NON_STANDARD := y': skip objtool checking for a directory
- # 'OBJECT_FILES_NON_STANDARD_foo.o := 'y': skip objtool checking for a file
+ static inline bool guest_cpuid_has_arch_capabilities(struct kvm_vcpu *vcpu)
 
 
