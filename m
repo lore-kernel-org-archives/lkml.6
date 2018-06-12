@@ -5,109 +5,249 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 67F5AC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:05:44 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 919BCC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:06:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 278EB208B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:05:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 278EB208B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 477B32086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:06:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 477B32086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934323AbeFLPFl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 11:05:41 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58086 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932803AbeFLPFk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 11:05:40 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1B2B881A6D3A;
-        Tue, 12 Jun 2018 15:05:40 +0000 (UTC)
-Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 79F4420284D6;
-        Tue, 12 Jun 2018 15:05:38 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Tianyu Lan <Tianyu.Lan@microsoft.com>
-Cc:     "pbonzini\@redhat.com" <pbonzini@redhat.com>,
-        "rkrcmar\@redhat.com" <rkrcmar@redhat.com>,
-        "tglx\@linutronix.de" <tglx@linutronix.de>,
-        "mingo\@redhat.com" <mingo@redhat.com>,
-        "hpa\@zytor.com" <hpa@zytor.com>,
-        "x86\@kernel.org" <x86@kernel.org>,
-        "kvm\@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        KY Srinivasan <kys@microsoft.com>
-Subject: Re: [RFC Patch 3/3] KVM/x86: Add tlb_remote_flush callback support for vmcs
-References: <20180604090749.489-1-Tianyu.Lan@microsoft.com>
-        <20180604090749.489-4-Tianyu.Lan@microsoft.com>
-Date:   Tue, 12 Jun 2018 17:05:37 +0200
-In-Reply-To: <20180604090749.489-4-Tianyu.Lan@microsoft.com> (Tianyu Lan's
-        message of "Mon, 4 Jun 2018 09:08:34 +0000")
-Message-ID: <87lgbkqc3i.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 12 Jun 2018 15:05:40 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 12 Jun 2018 15:05:40 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
+        id S934361AbeFLPGO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 11:06:14 -0400
+Received: from mga06.intel.com ([134.134.136.31]:10586 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932905AbeFLPGL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 11:06:11 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2018 08:06:10 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,215,1526367600"; 
+   d="scan'208";a="58608801"
+Received: from 2b52.sc.intel.com (HELO [143.183.136.147]) ([143.183.136.147])
+  by orsmga003.jf.intel.com with ESMTP; 12 Jun 2018 08:06:09 -0700
+Message-ID: <1528815781.8271.15.camel@2b52.sc.intel.com>
+Subject: Re: [PATCH 01/10] x86/cet: User-mode shadow stack support
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Balbir Singh <bsingharora@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org, linux-arch@vger.kernel.org, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Date:   Tue, 12 Jun 2018 08:03:01 -0700
+In-Reply-To: <0e80c181-83b2-457f-a419-01e79f94ca1c@gmail.com>
+References: <20180607143807.3611-1-yu-cheng.yu@intel.com>
+         <20180607143807.3611-2-yu-cheng.yu@intel.com>
+         <0e80c181-83b2-457f-a419-01e79f94ca1c@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tianyu Lan <Tianyu.Lan@microsoft.com> writes:
+On Tue, 2018-06-12 at 21:56 +1000, Balbir Singh wrote:
+> 
+> On 08/06/18 00:37, Yu-cheng Yu wrote:
+> > This patch adds basic shadow stack enabling/disabling routines.
+> > A task's shadow stack is allocated from memory with VM_SHSTK
+> > flag set and read-only protection.  The shadow stack is
+> > allocated to a fixed size and that can be changed by the system
+> > admin.
+> > 
+> 
+> I presume a read-only permission on the kernel side, but it
+> can be written by hardware?
 
-> Register tlb_remote_flush callback for vmcs when hyperv capability of
-> nested guest mapping flush is detected. The interface can help to reduce
-> overhead when flush ept table among vcpus for nested VM. The tradition way
-> is to send IPIs to all affected vcpus and executes INVEPT on each vcpus.
-> It will trigger several vmexits for IPI and INVEPT emulation. Hyperv provides
-> such hypercall to do flush for all vcpus.
->
-> Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
-> ---
->  arch/x86/kvm/vmx.c | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
->
-> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> index e50beb76d846..6cb241c05690 100644
-> --- a/arch/x86/kvm/vmx.c
-> +++ b/arch/x86/kvm/vmx.c
-> @@ -4737,6 +4737,17 @@ static inline void __vmx_flush_tlb(struct kvm_vcpu *vcpu, int vpid,
->  	}
->  }
->
-> +static int vmx_remote_flush_tlb(struct kvm *kvm)
-> +{
-> +	struct kvm_vcpu *vcpu = kvm_get_vcpu(kvm, 0);
-> +
-> +	if (!VALID_PAGE(vcpu->arch.mmu.root_hpa))
-> +		return -1;
-> +
-> +	return hyperv_flush_guest_mapping(construct_eptp(vcpu,
-> +		vcpu->arch.mmu.root_hpa));
-> +}
-> +
->  static void vmx_flush_tlb(struct kvm_vcpu *vcpu, bool invalidate_gpa)
->  {
->  	__vmx_flush_tlb(vcpu, to_vmx(vcpu)->vpid, invalidate_gpa);
-> @@ -7495,6 +7506,10 @@ static __init int hardware_setup(void)
->  	if (enable_ept && !cpu_has_vmx_ept_2m_page())
->  		kvm_disable_largepages();
->
-> +	if (ms_hyperv.nested_features & HV_X64_NESTED_GUSET_MAPPING_FLUSH
-> +	    && enable_ept)
-> +		kvm_x86_ops->tlb_remote_flush = vmx_remote_flush_tlb;
-> +
+Yes, the shadow stack is written by the processor when a call
+instruction is executed.
 
-You'll need to surround the above with #if IS_ENABLED(CONFIG_HYPERV) as
-ms_hyperv is otherwise unavailable.
+...
 
->  	if (!cpu_has_vmx_ple()) {
->  		ple_gap = 0;
->  		ple_window = 0;
+> > 
+> > diff --git a/arch/x86/include/asm/cet.h b/arch/x86/include/asm/cet.h
+> > new file mode 100644
+> > index 000000000000..9d5bc1efc9b7
+> > --- /dev/null
+> > +++ b/arch/x86/include/asm/cet.h
+> > @@ -0,0 +1,32 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +#ifndef _ASM_X86_CET_H
+> > +#define _ASM_X86_CET_H
+> > +
+> > +#ifndef __ASSEMBLY__
+> > +#include <linux/types.h>
+> > +
+> > +struct task_struct;
+> > +/*
+> > + * Per-thread CET status
+> > + */
+> > +struct cet_stat {
+> 
+> stat sounds like statistics, just expand out to status please
 
--- 
-  Vitaly
+I will make it 'cet_status'.
+
+> > +	unsigned long	shstk_base;
+> > +	unsigned long	shstk_size;
+> > +	unsigned int	shstk_enabled:1;
+> > +};
+> > +
+> > +#ifdef CONFIG_X86_INTEL_CET
+> > +unsigned long cet_get_shstk_ptr(void);
+> 
+> For the current task? Why does _ptr routine return an unsigned long?
+
+What about cet_get_shstk_addr()?
+
+...
+
+> > diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
+> > index fda2114197b3..428d13828ba9 100644
+> > --- a/arch/x86/include/asm/msr-index.h
+> > +++ b/arch/x86/include/asm/msr-index.h
+> > @@ -770,4 +770,18 @@
+> >  #define MSR_VM_IGNNE                    0xc0010115
+> >  #define MSR_VM_HSAVE_PA                 0xc0010117
+> >  
+> > +/* Control-flow Enforcement Technology MSRs */
+> > +#define MSR_IA32_U_CET		0x6a0
+> > +#define MSR_IA32_S_CET		0x6a2
+> > +#define MSR_IA32_PL0_SSP	0x6a4
+> > +#define MSR_IA32_PL3_SSP	0x6a7
+> > +#define MSR_IA32_INT_SSP_TAB	0x6a8
+> 
+> some comments on the purpose of the MSR would be nice
+
+Sure.
+
+...
+
+> 
+> I think there was a comment about this being TASK_SIZE_MAX
+> 
+> > +
+> > +	rdmsrl(MSR_IA32_U_CET, r);
+> > +	wrmsrl(MSR_IA32_U_CET, r | MSR_IA32_CET_SHSTK_EN);
+> > +	wrmsrl(MSR_IA32_PL3_SSP, addr);
+> 
+> Should the enable happen before setting addr? I would expect to do this in the opposite order.
+
+I will check.
+
+> > +	return 0;
+> > +}
+> > +
+> > +unsigned long cet_get_shstk_ptr(void)
+> > +{
+> > +	unsigned long ptr;
+> > +
+> > +	if (!current->thread.cet.shstk_enabled)
+> > +		return 0;
+> > +
+> > +	rdmsrl(MSR_IA32_PL3_SSP, ptr);
+> > +	return ptr;
+> > +}
+> > +
+> > +static unsigned long shstk_mmap(unsigned long addr, unsigned long len)
+> > +{
+> > +	struct mm_struct *mm = current->mm;
+> > +	unsigned long populate;
+> > +
+> > +	down_write(&mm->mmap_sem);
+> > +	addr = do_mmap(NULL, addr, len, PROT_READ,
+> > +		       MAP_ANONYMOUS | MAP_PRIVATE, VM_SHSTK,
+> > +		       0, &populate, NULL);
+> > +	up_write(&mm->mmap_sem);
+> 
+> What happens if the mmap fails for any reason? I presume the caller disables shadow stack on this process?
+
+This is from exec(), and that fails.
+
+> > +
+> > +	if (populate)
+> > +		mm_populate(addr, populate);
+> > +
+> > +	return addr;
+> > +}
+> > +
+> > +int cet_setup_shstk(void)
+> > +{
+> > +	unsigned long addr, size;
+> > +
+> > +	if (!cpu_feature_enabled(X86_FEATURE_SHSTK))
+> > +		return -EOPNOTSUPP;
+> > +
+> > +	size = SHSTK_SIZE;
+> > +	addr = shstk_mmap(0, size);
+> > +
+> > +	if (addr >= TASK_SIZE)
+> > +		return -ENOMEM;
+> > +
+> 
+> TASK_SIZE_MAX?
+
+Yes.
+
+> 
+> > +	cet_set_shstk_ptr(addr + size - sizeof(void *));
+> > +	current->thread.cet.shstk_base = addr;
+> > +	current->thread.cet.shstk_size = size;
+> > +	current->thread.cet.shstk_enabled = 1;
+> > +	return 0;
+> > +}
+> > +
+> > +void cet_disable_shstk(void)
+> > +{
+> > +	u64 r;
+> > +
+> > +	if (!cpu_feature_enabled(X86_FEATURE_SHSTK))
+> > +		return;
+> > +
+> > +	rdmsrl(MSR_IA32_U_CET, r);
+> > +	r &= ~(MSR_IA32_CET_SHSTK_EN);
+> > +	wrmsrl(MSR_IA32_U_CET, r);
+> > +	wrmsrl(MSR_IA32_PL3_SSP, 0);
+> 
+> Again, I'd expect the order to be the reverse
+> 
+> > +	current->thread.cet.shstk_enabled = 0;
+> > +}
+> > +
+> > +void cet_disable_free_shstk(struct task_struct *tsk)
+> > +{
+> > +	if (!cpu_feature_enabled(X86_FEATURE_SHSTK) ||
+> > +	    !tsk->thread.cet.shstk_enabled)
+> > +		return;
+> > +
+> > +	if (tsk == current)
+> > +		cet_disable_shstk();
+> > +
+> > +	/*
+> > +	 * Free only when tsk is current or shares mm
+> > +	 * with current but has its own shstk.
+> > +	 */
+> > +	if (tsk->mm && (tsk->mm == current->mm) &&
+> > +	    (tsk->thread.cet.shstk_base)) {
+> 
+> Does the caller hold a reference to tsk->mm?
+
+If (tsk->mm == current->mm), i.e. it is current or it is a pthread of
+current, then yes.
+
+Yu-cheng
+
