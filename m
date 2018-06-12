@@ -6,43 +6,44 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 42FD5C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:54:18 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 85ECAC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:54:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E394E208B4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:54:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C3C6208BA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:54:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ajRDkaWu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E394E208B4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LFIOmXRI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C3C6208BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934543AbeFLQyO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 12:54:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55160 "EHLO mail.kernel.org"
+        id S935014AbeFLQyU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 12:54:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934765AbeFLQyI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 12:54:08 -0400
+        id S934765AbeFLQyO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 12:54:14 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DEAC2208B7;
-        Tue, 12 Jun 2018 16:54:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A4388208B8;
+        Tue, 12 Jun 2018 16:54:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528822448;
-        bh=ZaB8xum9wTEvE4xIPMqUvjYh7MpewltjNl2yQXWEG7g=;
+        s=default; t=1528822454;
+        bh=W729ZqrgarqyQuaotihrgPztRnk/v4Pp38tsX1jkPtM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ajRDkaWutDRg78BwFY8tq/nsyYkHw1mfDjeJumil7On+sZNsrj94KR5kjXkS8xV3q
-         fvRNBSYw2CdKalm7DZ/6iBLQRNZjME4kZToP/H1Ilt23cGbIjBHLjvp0WyILJSnolg
-         iJIaBESPOmv3uZA/430hBIANtD5Bua+WwTjSaU+Q=
+        b=LFIOmXRIRSkfxIY85ZY6mKlgS+fUDDWSyi3OTtccfOXQAcSKTB94H2bOQp38Epl8J
+         2elc7236yc5SsE5Yu2UN+x1mcL6GzJQhdHAtqCZBQHWsEm9SOwASWUbWJfDu/cBz/9
+         HxN1G7+sVg+fwC/YqQH7yaIdY1hd8NqeW9LRRMHE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sabrina Dubroca <sd@queasysnail.net>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 15/21] ip6mr: only set ip6mr_table from setsockopt when ip6mr_new_table succeeds
-Date:   Tue, 12 Jun 2018 18:52:12 +0200
-Message-Id: <20180612164826.018718984@linuxfoundation.org>
+Subject: [PATCH 3.18 17/21] net/packet: refine check for priv area size
+Date:   Tue, 12 Jun 2018 18:52:14 +0200
+Message-Id: <20180612164826.097182019@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180612164825.401145490@linuxfoundation.org>
 References: <20180612164825.401145490@linuxfoundation.org>
@@ -59,37 +60,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sabrina Dubroca <sd@queasysnail.net>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 848235edb5c93ed086700584c8ff64f6d7fc778d ]
+[ Upstream commit eb73190f4fbeedf762394e92d6a4ec9ace684c88 ]
 
-Currently, raw6_sk(sk)->ip6mr_table is set unconditionally during
-ip6_mroute_setsockopt(MRT6_TABLE). A subsequent attempt at the same
-setsockopt will fail with -ENOENT, since we haven't actually created
-that table.
+syzbot was able to trick af_packet again [1]
 
-A similar fix for ipv4 was included in commit 5e1859fbcc3c ("ipv4: ipmr:
-various fixes and cleanups").
+Various commits tried to address the problem in the past,
+but failed to take into account V3 header size.
 
-Fixes: d1db275dd3f6 ("ipv6: ip6mr: support multiple tables")
-Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
+[1]
+
+tpacket_rcv: packet too big, clamped from 72 to 4294967224. macoff=96
+BUG: KASAN: use-after-free in prb_run_all_ft_ops net/packet/af_packet.c:1016 [inline]
+BUG: KASAN: use-after-free in prb_fill_curr_block.isra.59+0x4e5/0x5c0 net/packet/af_packet.c:1039
+Write of size 2 at addr ffff8801cb62000e by task kworker/1:2/2106
+
+CPU: 1 PID: 2106 Comm: kworker/1:2 Not tainted 4.17.0-rc7+ #77
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: ipv6_addrconf addrconf_dad_work
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+ print_address_description+0x6c/0x20b mm/kasan/report.c:256
+ kasan_report_error mm/kasan/report.c:354 [inline]
+ kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+ __asan_report_store2_noabort+0x17/0x20 mm/kasan/report.c:436
+ prb_run_all_ft_ops net/packet/af_packet.c:1016 [inline]
+ prb_fill_curr_block.isra.59+0x4e5/0x5c0 net/packet/af_packet.c:1039
+ __packet_lookup_frame_in_block net/packet/af_packet.c:1094 [inline]
+ packet_current_rx_frame net/packet/af_packet.c:1117 [inline]
+ tpacket_rcv+0x1866/0x3340 net/packet/af_packet.c:2282
+ dev_queue_xmit_nit+0x891/0xb90 net/core/dev.c:2018
+ xmit_one net/core/dev.c:3049 [inline]
+ dev_hard_start_xmit+0x16b/0xc10 net/core/dev.c:3069
+ __dev_queue_xmit+0x2724/0x34c0 net/core/dev.c:3584
+ dev_queue_xmit+0x17/0x20 net/core/dev.c:3617
+ neigh_resolve_output+0x679/0xad0 net/core/neighbour.c:1358
+ neigh_output include/net/neighbour.h:482 [inline]
+ ip6_finish_output2+0xc9c/0x2810 net/ipv6/ip6_output.c:120
+ ip6_finish_output+0x5fe/0xbc0 net/ipv6/ip6_output.c:154
+ NF_HOOK_COND include/linux/netfilter.h:277 [inline]
+ ip6_output+0x227/0x9b0 net/ipv6/ip6_output.c:171
+ dst_output include/net/dst.h:444 [inline]
+ NF_HOOK include/linux/netfilter.h:288 [inline]
+ ndisc_send_skb+0x100d/0x1570 net/ipv6/ndisc.c:491
+ ndisc_send_ns+0x3c1/0x8d0 net/ipv6/ndisc.c:633
+ addrconf_dad_work+0xbef/0x1340 net/ipv6/addrconf.c:4033
+ process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
+ worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
+ kthread+0x345/0x410 kernel/kthread.c:240
+ ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+
+The buggy address belongs to the page:
+page:ffffea00072d8800 count:0 mapcount:-127 mapping:0000000000000000 index:0xffff8801cb620e80
+flags: 0x2fffc0000000000()
+raw: 02fffc0000000000 0000000000000000 ffff8801cb620e80 00000000ffffff80
+raw: ffffea00072e3820 ffffea0007132d20 0000000000000002 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff8801cb61ff00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff8801cb61ff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff8801cb620000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+                      ^
+ ffff8801cb620080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ ffff8801cb620100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+
+Fixes: 2b6867c2ce76 ("net/packet: fix overflow in check for priv area size")
+Fixes: dc808110bb62 ("packet: handle too big packets for PACKET_V3")
+Fixes: f6fb8f100b80 ("af-packet: TPACKET_V3 flexible buffer implementation.")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/ip6mr.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/packet/af_packet.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv6/ip6mr.c
-+++ b/net/ipv6/ip6mr.c
-@@ -1788,7 +1788,8 @@ int ip6_mroute_setsockopt(struct sock *s
- 		ret = 0;
- 		if (!ip6mr_new_table(net, v))
- 			ret = -ENOMEM;
--		raw6_sk(sk)->ip6mr_table = v;
-+		else
-+			raw6_sk(sk)->ip6mr_table = v;
- 		rtnl_unlock();
- 		return ret;
- 	}
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -3877,7 +3877,7 @@ static int packet_set_ring(struct sock *
+ 			goto out;
+ 		if (po->tp_version >= TPACKET_V3 &&
+ 		    req->tp_block_size <=
+-			  BLK_PLUS_PRIV((u64)req_u->req3.tp_sizeof_priv))
++		    BLK_PLUS_PRIV((u64)req_u->req3.tp_sizeof_priv) + sizeof(struct tpacket3_hdr))
+ 			goto out;
+ 		if (unlikely(req->tp_frame_size < po->tp_hdrlen +
+ 					po->tp_reserve))
 
 
