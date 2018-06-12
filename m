@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9620BC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:47:21 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id BD574C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:47:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41763208B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:47:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 721B0208B0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:47:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wkmimq91"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41763208B8
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fb8IwxuW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 721B0208B0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934597AbeFLQrU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 12:47:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58906 "EHLO mail.kernel.org"
+        id S934665AbeFLQrZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 12:47:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933748AbeFLQrQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 12:47:16 -0400
+        id S933748AbeFLQrW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 12:47:22 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE2AA208B7;
-        Tue, 12 Jun 2018 16:47:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE62A208B0;
+        Tue, 12 Jun 2018 16:47:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528822035;
-        bh=nAgB+FiVF+VDgci6cSrV0AdUzp4HrlI0Tz/ey+N57WU=;
+        s=default; t=1528822041;
+        bh=92PU/beCHKqdLUAUAClMaE7cqJX8dS4WM2S4E9cd7YA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Wkmimq91R8y4SEYnQrTIcobmv0/HeWByuW/WxqN9eQFSvk4x1a3A3J3kcQ6hZ/Fsm
-         om7mWCLPTOprpUCDJpFuFmI/TeRwhyUfHmc0a2J3iV0V/qyOy3Jn1wxo+hcTb3TWQs
-         TeW7MLqml8TeUR6uAq4MEhJK7aUba+Fyid3QRifg=
+        b=fb8IwxuWmtQP0E+U/alHPuKXqBrZ6lB+Ei5hS81G/PUo/jXOjSzBNBmd9R3SZsFLn
+         0qumlFY+IUECfizAxyOnHV+7fv/NpXyZW/TO4PX8QuFeYeC5t3nJdMFvMkxCfSvC99
+         t1kFu/irs4AOQaLjD497v3S1uDsVr1XIssDNOe3A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
+        stable@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 13/31] isdn: eicon: fix a missing-check bug
-Date:   Tue, 12 Jun 2018 18:46:16 +0200
-Message-Id: <20180612164621.325784210@linuxfoundation.org>
+Subject: [PATCH 4.9 15/31] netdev-FAQ: clarify DaveMs position for stable backports
+Date:   Tue, 12 Jun 2018 18:46:18 +0200
+Message-Id: <20180612164621.400557475@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180612164620.797338191@linuxfoundation.org>
 References: <20180612164620.797338191@linuxfoundation.org>
@@ -59,185 +59,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wenwen Wang <wang6495@umn.edu>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit 6009d1fe6ba3bb2dab55921da60465329cc1cd89 ]
+[ Upstream commit 75d4e704fa8d2cf33ff295e5b441317603d7f9fd ]
 
-In divasmain.c, the function divas_write() firstly invokes the function
-diva_xdi_open_adapter() to open the adapter that matches with the adapter
-number provided by the user, and then invokes the function diva_xdi_write()
-to perform the write operation using the matched adapter. The two functions
-diva_xdi_open_adapter() and diva_xdi_write() are located in diva.c.
+Per discussion with David at netconf 2018, let's clarify
+DaveM's position of handling stable backports in netdev-FAQ.
 
-In diva_xdi_open_adapter(), the user command is copied to the object 'msg'
-from the userspace pointer 'src' through the function pointer 'cp_fn',
-which eventually calls copy_from_user() to do the copy. Then, the adapter
-number 'msg.adapter' is used to find out a matched adapter from the
-'adapter_queue'. A matched adapter will be returned if it is found.
-Otherwise, NULL is returned to indicate the failure of the verification on
-the adapter number.
+This is important for people relying on upstream -stable
+releases.
 
-As mentioned above, if a matched adapter is returned, the function
-diva_xdi_write() is invoked to perform the write operation. In this
-function, the user command is copied once again from the userspace pointer
-'src', which is the same as the 'src' pointer in diva_xdi_open_adapter() as
-both of them are from the 'buf' pointer in divas_write(). Similarly, the
-copy is achieved through the function pointer 'cp_fn', which finally calls
-copy_from_user(). After the successful copy, the corresponding command
-processing handler of the matched adapter is invoked to perform the write
-operation.
-
-It is obvious that there are two copies here from userspace, one is in
-diva_xdi_open_adapter(), and one is in diva_xdi_write(). Plus, both of
-these two copies share the same source userspace pointer, i.e., the 'buf'
-pointer in divas_write(). Given that a malicious userspace process can race
-to change the content pointed by the 'buf' pointer, this can pose potential
-security issues. For example, in the first copy, the user provides a valid
-adapter number to pass the verification process and a valid adapter can be
-found. Then the user can modify the adapter number to an invalid number.
-This way, the user can bypass the verification process of the adapter
-number and inject inconsistent data.
-
-This patch reuses the data copied in
-diva_xdi_open_adapter() and passes it to diva_xdi_write(). This way, the
-above issues can be avoided.
-
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/isdn/hardware/eicon/diva.c      |   22 +++++++++++++++-------
- drivers/isdn/hardware/eicon/diva.h      |    5 +++--
- drivers/isdn/hardware/eicon/divasmain.c |   18 +++++++++++-------
- 3 files changed, 29 insertions(+), 16 deletions(-)
+ Documentation/networking/netdev-FAQ.txt |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/isdn/hardware/eicon/diva.c
-+++ b/drivers/isdn/hardware/eicon/diva.c
-@@ -387,10 +387,10 @@ void divasa_xdi_driver_unload(void)
- **  Receive and process command from user mode utility
- */
- void *diva_xdi_open_adapter(void *os_handle, const void __user *src,
--			    int length,
-+			    int length, void *mptr,
- 			    divas_xdi_copy_from_user_fn_t cp_fn)
- {
--	diva_xdi_um_cfg_cmd_t msg;
-+	diva_xdi_um_cfg_cmd_t *msg = (diva_xdi_um_cfg_cmd_t *)mptr;
- 	diva_os_xdi_adapter_t *a = NULL;
- 	diva_os_spin_lock_magic_t old_irql;
- 	struct list_head *tmp;
-@@ -400,21 +400,21 @@ void *diva_xdi_open_adapter(void *os_han
- 			 length, sizeof(diva_xdi_um_cfg_cmd_t)))
- 			return NULL;
- 	}
--	if ((*cp_fn) (os_handle, &msg, src, sizeof(msg)) <= 0) {
-+	if ((*cp_fn) (os_handle, msg, src, sizeof(*msg)) <= 0) {
- 		DBG_ERR(("A: A(?) open, write error"))
- 			return NULL;
- 	}
- 	diva_os_enter_spin_lock(&adapter_lock, &old_irql, "open_adapter");
- 	list_for_each(tmp, &adapter_queue) {
- 		a = list_entry(tmp, diva_os_xdi_adapter_t, link);
--		if (a->controller == (int)msg.adapter)
-+		if (a->controller == (int)msg->adapter)
- 			break;
- 		a = NULL;
- 	}
- 	diva_os_leave_spin_lock(&adapter_lock, &old_irql, "open_adapter");
+--- a/Documentation/networking/netdev-FAQ.txt
++++ b/Documentation/networking/netdev-FAQ.txt
+@@ -168,6 +168,15 @@ A: No.  See above answer.  In short, if
+    dash marker line as described in Documentation/SubmittingPatches to
+    temporarily embed that information into the patch that you send.
  
- 	if (!a) {
--		DBG_ERR(("A: A(%d) open, adapter not found", msg.adapter))
-+		DBG_ERR(("A: A(%d) open, adapter not found", msg->adapter))
- 			}
++Q: Are all networking bug fixes backported to all stable releases?
++
++A: Due to capacity, Dave could only take care of the backports for the last
++   2 stable releases. For earlier stable releases, each stable branch maintainer
++   is supposed to take care of them. If you find any patch is missing from an
++   earlier stable branch, please notify stable@vger.kernel.org with either a
++   commit ID or a formal patch backported, and CC Dave and other relevant
++   networking developers.
++
+ Q: Someone said that the comment style and coding convention is different
+    for the networking content.  Is this true?
  
- 	return (a);
-@@ -436,8 +436,10 @@ void diva_xdi_close_adapter(void *adapte
- 
- int
- diva_xdi_write(void *adapter, void *os_handle, const void __user *src,
--	       int length, divas_xdi_copy_from_user_fn_t cp_fn)
-+	       int length, void *mptr,
-+	       divas_xdi_copy_from_user_fn_t cp_fn)
- {
-+	diva_xdi_um_cfg_cmd_t *msg = (diva_xdi_um_cfg_cmd_t *)mptr;
- 	diva_os_xdi_adapter_t *a = (diva_os_xdi_adapter_t *) adapter;
- 	void *data;
- 
-@@ -458,7 +460,13 @@ diva_xdi_write(void *adapter, void *os_h
- 			return (-2);
- 	}
- 
--	length = (*cp_fn) (os_handle, data, src, length);
-+	if (msg) {
-+		*(diva_xdi_um_cfg_cmd_t *)data = *msg;
-+		length = (*cp_fn) (os_handle, (char *)data + sizeof(*msg),
-+				   src + sizeof(*msg), length - sizeof(*msg));
-+	} else {
-+		length = (*cp_fn) (os_handle, data, src, length);
-+	}
- 	if (length > 0) {
- 		if ((*(a->interface.cmd_proc))
- 		    (a, (diva_xdi_um_cfg_cmd_t *) data, length)) {
---- a/drivers/isdn/hardware/eicon/diva.h
-+++ b/drivers/isdn/hardware/eicon/diva.h
-@@ -19,10 +19,11 @@ int diva_xdi_read(void *adapter, void *o
- 		  int max_length, divas_xdi_copy_to_user_fn_t cp_fn);
- 
- int diva_xdi_write(void *adapter, void *os_handle, const void __user *src,
--		   int length, divas_xdi_copy_from_user_fn_t cp_fn);
-+		   int length, void *msg,
-+		   divas_xdi_copy_from_user_fn_t cp_fn);
- 
- void *diva_xdi_open_adapter(void *os_handle, const void __user *src,
--			    int length,
-+			    int length, void *msg,
- 			    divas_xdi_copy_from_user_fn_t cp_fn);
- 
- void diva_xdi_close_adapter(void *adapter, void *os_handle);
---- a/drivers/isdn/hardware/eicon/divasmain.c
-+++ b/drivers/isdn/hardware/eicon/divasmain.c
-@@ -591,19 +591,22 @@ static int divas_release(struct inode *i
- static ssize_t divas_write(struct file *file, const char __user *buf,
- 			   size_t count, loff_t *ppos)
- {
-+	diva_xdi_um_cfg_cmd_t msg;
- 	int ret = -EINVAL;
- 
- 	if (!file->private_data) {
- 		file->private_data = diva_xdi_open_adapter(file, buf,
--							   count,
-+							   count, &msg,
- 							   xdi_copy_from_user);
--	}
--	if (!file->private_data) {
--		return (-ENODEV);
-+		if (!file->private_data)
-+			return (-ENODEV);
-+		ret = diva_xdi_write(file->private_data, file,
-+				     buf, count, &msg, xdi_copy_from_user);
-+	} else {
-+		ret = diva_xdi_write(file->private_data, file,
-+				     buf, count, NULL, xdi_copy_from_user);
- 	}
- 
--	ret = diva_xdi_write(file->private_data, file,
--			     buf, count, xdi_copy_from_user);
- 	switch (ret) {
- 	case -1:		/* Message should be removed from rx mailbox first */
- 		ret = -EBUSY;
-@@ -622,11 +625,12 @@ static ssize_t divas_write(struct file *
- static ssize_t divas_read(struct file *file, char __user *buf,
- 			  size_t count, loff_t *ppos)
- {
-+	diva_xdi_um_cfg_cmd_t msg;
- 	int ret = -EINVAL;
- 
- 	if (!file->private_data) {
- 		file->private_data = diva_xdi_open_adapter(file, buf,
--							   count,
-+							   count, &msg,
- 							   xdi_copy_from_user);
- 	}
- 	if (!file->private_data) {
 
 
