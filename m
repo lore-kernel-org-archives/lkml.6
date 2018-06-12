@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 26A64C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:43:21 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D0507C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:43:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCAEF2086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:43:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 715D9208B2
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:43:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DB4P95B7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCAEF2086D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D+Sw3tUt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 715D9208B2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934046AbeFLNnS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 09:43:18 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:44849 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933834AbeFLNmU (ORCPT
+        id S933840AbeFLNmT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 09:42:19 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:33470 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933733AbeFLNmP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 09:42:20 -0400
-Received: by mail-lf0-f66.google.com with SMTP id 36-v6so36058956lfr.11;
-        Tue, 12 Jun 2018 06:42:19 -0700 (PDT)
+        Tue, 12 Jun 2018 09:42:15 -0400
+Received: by mail-lf0-f68.google.com with SMTP id y20-v6so36137889lfy.0;
+        Tue, 12 Jun 2018 06:42:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=LrWYV+AtyWhlFcxL2HtiKawBkiXkUclWFShkomApmm0=;
-        b=DB4P95B7/h3RJtcfqDEnhC+y39fhWOQDYQhnOGn+xnJ8IhadEEuuLcTlgObkU97IWX
-         niyErtUeI3eMrD3NUTlDQVRj3vyFmT+xKNtV4yMWtlkRUPPcbbmM2TSzUjcNrB4s6aGq
-         +4QHoRlcEzMcRYtIMc2FrupYT3G4/O90LKJTEdpXyRKthVFXAz1jrESGAeJgO+s6+IWe
-         k/1tewatEG+1g+8V8hcK+r0A0tDivyk4gPA4k6Us+R9sJkFJEDIxm0uSkcmEhIkPWAZY
-         +9fywrTcpX/LSGuh6YRbJ+YE/scA6tD0KTFGcB6SLdixTSyTGxVs4AU6Q0YsA4Z78gaR
-         HNBw==
+        bh=ugKatMUqPYGZezKRz6KC/dxbT0OpuLNYxqHCMiad+Qg=;
+        b=D+Sw3tUt/YD29GeWOBZaGXR9B0u2su88Hakxhy6Aqea0Z1mKOorltbKPvpWzzIIqu2
+         dr8qaAnG5VoEH8wwtJUmPcwnHqg+kqv1y4cfSY/C/NZmFWIprMoBYHxDF0jIrwZlG6sj
+         8HXmiLagUabA8zpGOdq9AHq2znQdZmEWMsGJPuevpXrkCZD2vVm1eN475+amQDxg2dj1
+         Dd6tNz8CK0ejIbDesah0gKkefVy1M+PK9aUoB4RaiODoQUraC12fdBCZ3RxQfLyjrbtS
+         CyIXuVwqSN4x0zhYYYqRMKvdv0FL+lK+2Me/beyZ9zHMO2XkvMUOZELNY3SDEIGW5Knl
+         Ly9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=LrWYV+AtyWhlFcxL2HtiKawBkiXkUclWFShkomApmm0=;
-        b=n9HMQPEWPyfbxZXzQGURHpiDzvWf7ccknZ8kBtnupDqN3KhBQHn84sEgIttaX+CfV2
-         +Zc0MONia+v3xaqdz+pDqI8sKME9z/ZDtdZy+wKX5WuEkdka3yPgD2ZhMww9Yhs0zh5g
-         01smH+P8BSAeI0U2ll+BcXREUppcIKZI0FvoN5N7sSdgP2Ai/MtxhY4mqY9/xhqzRxXP
-         5nFq8C3pD2Tg6y0TPOz99ftl577CWy1ePmHG35bO27m/lZmZCyx1lE8tXbE2/Y8Dn24T
-         hclseEtF/jSwFkeaT2ukBa4T0rVIpfcxxk7mNiUVT3SBmLfdGh9Bxvgj2N6Dv6Qjl51L
-         +BDw==
-X-Gm-Message-State: APt69E1388omQIHqQEaeVmQSiHtoe2LaPl9Pq0CebNPHvNegXJhdVGBy
-        CcTM0yWtFak9Un6ebe8TDQ4=
-X-Google-Smtp-Source: ADUXVKLS7FUDwC7xO9T+10uHCMprjTHZsGkJsq7/EPwOHcJ2Qsq8/9w27YqSl8eGH0mDlxRvQtAxkA==
-X-Received: by 2002:a2e:4149:: with SMTP id o70-v6mr318334lja.3.1528810938498;
-        Tue, 12 Jun 2018 06:42:18 -0700 (PDT)
+        bh=ugKatMUqPYGZezKRz6KC/dxbT0OpuLNYxqHCMiad+Qg=;
+        b=a0vFX0f3NZ3ZPDs6I39Y+l9HHViaYsH7uVUOaVOV4SUUCRgeWNJ1AJQzgpLP3R+pdq
+         k6IGVsmfCzWYPeqxxa8q4SV9uNOHPGOEbtpmPpv5a6Z/Q++M88/JqVqrSZpWW3M7elIP
+         /Z/8YSbF4KvhX1obbj7PX2nUVMoWtrkmI4jEl8qcmgqE2sWV85SHeK3jw42K8HCPjypT
+         vtl2Lnj5vP3FjgwZQ9L3NCcV1uEOIp/jgQrGf0wFIFsP27AyW/cXZzeeoR4pfpey5zWl
+         +Coux0D51cZec/EcFETVyxuTMGWQ5/kr+K1iJSzFYNqZzpwFuSdXB9FBsBfgzKmAv2Sc
+         uF/w==
+X-Gm-Message-State: APt69E3aatEYb8J+Tukf4ocnkShtSSmo31UuDZlyrW8jHh4IDCyEFTRy
+        GmoHjBfEwvxYJ0qHLuiUOQw=
+X-Google-Smtp-Source: ADUXVKI7tz/UC8kUdP4gyJj3Y7KnA4B/BaEQtCV5pXK0l/Fz4BqoQ93rjNwuCt1Wj/HVT6n5JlBhwg==
+X-Received: by 2002:a2e:f11:: with SMTP id 17-v6mr311603ljp.47.1528810933661;
+        Tue, 12 Jun 2018 06:42:13 -0700 (PDT)
 Received: from a2k-HP-ProDesk-600-G2-SFF.kyiv.epam.com (ll-74.141.223.85.sovam.net.ua. [85.223.141.74])
-        by smtp.gmail.com with ESMTPSA id x18-v6sm46692ljh.63.2018.06.12.06.42.16
+        by smtp.gmail.com with ESMTPSA id x18-v6sm46692ljh.63.2018.06.12.06.42.12
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 12 Jun 2018 06:42:17 -0700 (PDT)
+        Tue, 12 Jun 2018 06:42:12 -0700 (PDT)
 From:   Oleksandr Andrushchenko <andr2000@gmail.com>
 To:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
@@ -64,9 +64,9 @@ To:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
 Cc:     daniel.vetter@intel.com, andr2000@gmail.com, dongwon.kim@intel.com,
         matthew.d.roper@intel.com,
         Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: [PATCH v3 6/9] xen/gntdev: Make private routines/structures accessible
-Date:   Tue, 12 Jun 2018 16:41:57 +0300
-Message-Id: <20180612134200.17456-7-andr2000@gmail.com>
+Subject: [PATCH v3 3/9] xen/balloon: Share common memory reservation routines
+Date:   Tue, 12 Jun 2018 16:41:54 +0300
+Message-Id: <20180612134200.17456-4-andr2000@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180612134200.17456-1-andr2000@gmail.com>
 References: <20180612134200.17456-1-andr2000@gmail.com>
@@ -77,457 +77,361 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-This is in preparation for adding support of DMA buffer
-functionality: make map/unmap related code and structures, used
-privately by gntdev, ready for dma-buf extension, which will re-use
-these. Rename corresponding structures as those become non-private
-to gntdev now.
+Memory {increase|decrease}_reservation and VA mappings update/reset
+code used in balloon driver can be made common, so other drivers can
+also re-use the same functionality without open-coding.
+Create a dedicated file for the shared code and export corresponding
+symbols for other kernel modules.
 
 Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 ---
- drivers/xen/gntdev-common.h |  86 +++++++++++++++++++++++
- drivers/xen/gntdev.c        | 132 ++++++++++++------------------------
- 2 files changed, 128 insertions(+), 90 deletions(-)
- create mode 100644 drivers/xen/gntdev-common.h
+ drivers/xen/Makefile          |   1 +
+ drivers/xen/balloon.c         |  71 ++-------------------
+ drivers/xen/mem-reservation.c | 112 ++++++++++++++++++++++++++++++++++
+ include/xen/mem-reservation.h |  64 +++++++++++++++++++
+ 4 files changed, 183 insertions(+), 65 deletions(-)
+ create mode 100644 drivers/xen/mem-reservation.c
+ create mode 100644 include/xen/mem-reservation.h
 
-diff --git a/drivers/xen/gntdev-common.h b/drivers/xen/gntdev-common.h
+diff --git a/drivers/xen/Makefile b/drivers/xen/Makefile
+index 451e833f5931..3c87b0c3aca6 100644
+--- a/drivers/xen/Makefile
++++ b/drivers/xen/Makefile
+@@ -2,6 +2,7 @@
+ obj-$(CONFIG_HOTPLUG_CPU)		+= cpu_hotplug.o
+ obj-$(CONFIG_X86)			+= fallback.o
+ obj-y	+= grant-table.o features.o balloon.o manage.o preempt.o time.o
++obj-y	+= mem-reservation.o
+ obj-y	+= events/
+ obj-y	+= xenbus/
+ 
+diff --git a/drivers/xen/balloon.c b/drivers/xen/balloon.c
+index 065f0b607373..bdbce4257b65 100644
+--- a/drivers/xen/balloon.c
++++ b/drivers/xen/balloon.c
+@@ -71,6 +71,7 @@
+ #include <xen/balloon.h>
+ #include <xen/features.h>
+ #include <xen/page.h>
++#include <xen/mem-reservation.h>
+ 
+ static int xen_hotplug_unpopulated;
+ 
+@@ -157,13 +158,6 @@ static DECLARE_DELAYED_WORK(balloon_worker, balloon_process);
+ #define GFP_BALLOON \
+ 	(GFP_HIGHUSER | __GFP_NOWARN | __GFP_NORETRY | __GFP_NOMEMALLOC)
+ 
+-static void scrub_page(struct page *page)
+-{
+-#ifdef CONFIG_XEN_SCRUB_PAGES
+-	clear_highpage(page);
+-#endif
+-}
+-
+ /* balloon_append: add the given page to the balloon. */
+ static void __balloon_append(struct page *page)
+ {
+@@ -463,11 +457,6 @@ static enum bp_state increase_reservation(unsigned long nr_pages)
+ 	int rc;
+ 	unsigned long i;
+ 	struct page   *page;
+-	struct xen_memory_reservation reservation = {
+-		.address_bits = 0,
+-		.extent_order = EXTENT_ORDER,
+-		.domid        = DOMID_SELF
+-	};
+ 
+ 	if (nr_pages > ARRAY_SIZE(frame_list))
+ 		nr_pages = ARRAY_SIZE(frame_list);
+@@ -486,9 +475,7 @@ static enum bp_state increase_reservation(unsigned long nr_pages)
+ 		page = balloon_next_page(page);
+ 	}
+ 
+-	set_xen_guest_handle(reservation.extent_start, frame_list);
+-	reservation.nr_extents = nr_pages;
+-	rc = HYPERVISOR_memory_op(XENMEM_populate_physmap, &reservation);
++	rc = xenmem_reservation_increase(nr_pages, frame_list);
+ 	if (rc <= 0)
+ 		return BP_EAGAIN;
+ 
+@@ -496,29 +483,7 @@ static enum bp_state increase_reservation(unsigned long nr_pages)
+ 		page = balloon_retrieve(false);
+ 		BUG_ON(page == NULL);
+ 
+-#ifdef CONFIG_XEN_HAVE_PVMMU
+-		/*
+-		 * We don't support PV MMU when Linux and Xen is using
+-		 * different page granularity.
+-		 */
+-		BUILD_BUG_ON(XEN_PAGE_SIZE != PAGE_SIZE);
+-
+-		if (!xen_feature(XENFEAT_auto_translated_physmap)) {
+-			unsigned long pfn = page_to_pfn(page);
+-
+-			set_phys_to_machine(pfn, frame_list[i]);
+-
+-			/* Link back into the page tables if not highmem. */
+-			if (!PageHighMem(page)) {
+-				int ret;
+-				ret = HYPERVISOR_update_va_mapping(
+-						(unsigned long)__va(pfn << PAGE_SHIFT),
+-						mfn_pte(frame_list[i], PAGE_KERNEL),
+-						0);
+-				BUG_ON(ret);
+-			}
+-		}
+-#endif
++		xenmem_reservation_va_mapping_update(1, &page, &frame_list[i]);
+ 
+ 		/* Relinquish the page back to the allocator. */
+ 		free_reserved_page(page);
+@@ -535,11 +500,6 @@ static enum bp_state decrease_reservation(unsigned long nr_pages, gfp_t gfp)
+ 	unsigned long i;
+ 	struct page *page, *tmp;
+ 	int ret;
+-	struct xen_memory_reservation reservation = {
+-		.address_bits = 0,
+-		.extent_order = EXTENT_ORDER,
+-		.domid        = DOMID_SELF
+-	};
+ 	LIST_HEAD(pages);
+ 
+ 	if (nr_pages > ARRAY_SIZE(frame_list))
+@@ -553,7 +513,7 @@ static enum bp_state decrease_reservation(unsigned long nr_pages, gfp_t gfp)
+ 			break;
+ 		}
+ 		adjust_managed_page_count(page, -1);
+-		scrub_page(page);
++		xenmem_reservation_scrub_page(page);
+ 		list_add(&page->lru, &pages);
+ 	}
+ 
+@@ -575,25 +535,8 @@ static enum bp_state decrease_reservation(unsigned long nr_pages, gfp_t gfp)
+ 		/* XENMEM_decrease_reservation requires a GFN */
+ 		frame_list[i++] = xen_page_to_gfn(page);
+ 
+-#ifdef CONFIG_XEN_HAVE_PVMMU
+-		/*
+-		 * We don't support PV MMU when Linux and Xen is using
+-		 * different page granularity.
+-		 */
+-		BUILD_BUG_ON(XEN_PAGE_SIZE != PAGE_SIZE);
+-
+-		if (!xen_feature(XENFEAT_auto_translated_physmap)) {
+-			unsigned long pfn = page_to_pfn(page);
++		xenmem_reservation_va_mapping_reset(1, &page);
+ 
+-			if (!PageHighMem(page)) {
+-				ret = HYPERVISOR_update_va_mapping(
+-						(unsigned long)__va(pfn << PAGE_SHIFT),
+-						__pte_ma(0), 0);
+-				BUG_ON(ret);
+-			}
+-			__set_phys_to_machine(pfn, INVALID_P2M_ENTRY);
+-		}
+-#endif
+ 		list_del(&page->lru);
+ 
+ 		balloon_append(page);
+@@ -601,9 +544,7 @@ static enum bp_state decrease_reservation(unsigned long nr_pages, gfp_t gfp)
+ 
+ 	flush_tlb_all();
+ 
+-	set_xen_guest_handle(reservation.extent_start, frame_list);
+-	reservation.nr_extents   = nr_pages;
+-	ret = HYPERVISOR_memory_op(XENMEM_decrease_reservation, &reservation);
++	ret = xenmem_reservation_decrease(nr_pages, frame_list);
+ 	BUG_ON(ret != nr_pages);
+ 
+ 	balloon_stats.current_pages -= nr_pages;
+diff --git a/drivers/xen/mem-reservation.c b/drivers/xen/mem-reservation.c
 new file mode 100644
-index 000000000000..7a9845a6bee9
+index 000000000000..aa551d58001c
 --- /dev/null
-+++ b/drivers/xen/gntdev-common.h
-@@ -0,0 +1,86 @@
++++ b/drivers/xen/mem-reservation.c
+@@ -0,0 +1,112 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/******************************************************************************
++ * Xen memory reservation utilities.
++ *
++ * Copyright (c) 2003, B Dragovic
++ * Copyright (c) 2003-2004, M Williamson, K Fraser
++ * Copyright (c) 2005 Dan M. Smith, IBM Corporation
++ * Copyright (c) 2010 Daniel Kiper
++ * Copyright (c) 2018 Oleksandr Andrushchenko, EPAM Systems Inc.
++ */
++
++#include <xen/mem-reservation.h>
++
++/*
++ * Use one extent per PAGE_SIZE to avoid to break down the page into
++ * multiple frame.
++ */
++#define EXTENT_ORDER (fls(XEN_PFN_PER_PAGE) - 1)
++
++#ifdef CONFIG_XEN_HAVE_PVMMU
++void __xenmem_reservation_va_mapping_update(unsigned long count,
++					    struct page **pages,
++					    xen_pfn_t *frames)
++{
++	int i;
++
++	for (i = 0; i < count; i++) {
++		struct page *page = pages[i];
++		unsigned long pfn = page_to_pfn(page);
++
++		BUG_ON(page == NULL);
++
++		/*
++		 * We don't support PV MMU when Linux and Xen is using
++		 * different page granularity.
++		 */
++		BUILD_BUG_ON(XEN_PAGE_SIZE != PAGE_SIZE);
++
++
++		set_phys_to_machine(pfn, frames[i]);
++
++		/* Link back into the page tables if not highmem. */
++		if (!PageHighMem(page)) {
++			int ret;
++
++			ret = HYPERVISOR_update_va_mapping(
++					(unsigned long)__va(pfn << PAGE_SHIFT),
++					mfn_pte(frames[i], PAGE_KERNEL),
++					0);
++			BUG_ON(ret);
++		}
++	}
++}
++EXPORT_SYMBOL_GPL(__xenmem_reservation_va_mapping_update);
++
++void __xenmem_reservation_va_mapping_reset(unsigned long count,
++					   struct page **pages)
++{
++	int i;
++
++	for (i = 0; i < count; i++) {
++		struct page *page = pages[i];
++		unsigned long pfn = page_to_pfn(page);
++
++		/*
++		 * We don't support PV MMU when Linux and Xen is using
++		 * different page granularity.
++		 */
++		BUILD_BUG_ON(XEN_PAGE_SIZE != PAGE_SIZE);
++
++		if (!PageHighMem(page)) {
++			int ret;
++
++			ret = HYPERVISOR_update_va_mapping(
++					(unsigned long)__va(pfn << PAGE_SHIFT),
++					__pte_ma(0), 0);
++			BUG_ON(ret);
++		}
++		__set_phys_to_machine(pfn, INVALID_P2M_ENTRY);
++	}
++}
++EXPORT_SYMBOL_GPL(__xenmem_reservation_va_mapping_reset);
++#endif /* CONFIG_XEN_HAVE_PVMMU */
++
++int xenmem_reservation_increase(int count, xen_pfn_t *frames)
++{
++	struct xen_memory_reservation reservation = {
++		.address_bits = 0,
++		.extent_order = EXTENT_ORDER,
++		.domid        = DOMID_SELF
++	};
++
++	set_xen_guest_handle(reservation.extent_start, frames);
++	reservation.nr_extents = count;
++	return HYPERVISOR_memory_op(XENMEM_populate_physmap, &reservation);
++}
++EXPORT_SYMBOL_GPL(xenmem_reservation_increase);
++
++int xenmem_reservation_decrease(int count, xen_pfn_t *frames)
++{
++	struct xen_memory_reservation reservation = {
++		.address_bits = 0,
++		.extent_order = EXTENT_ORDER,
++		.domid        = DOMID_SELF
++	};
++
++	set_xen_guest_handle(reservation.extent_start, frames);
++	reservation.nr_extents = count;
++	return HYPERVISOR_memory_op(XENMEM_decrease_reservation, &reservation);
++}
++EXPORT_SYMBOL_GPL(xenmem_reservation_decrease);
+diff --git a/include/xen/mem-reservation.h b/include/xen/mem-reservation.h
+new file mode 100644
+index 000000000000..e0939387278d
+--- /dev/null
++++ b/include/xen/mem-reservation.h
+@@ -0,0 +1,64 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
 +
 +/*
-+ * Common functionality of grant device.
++ * Xen memory reservation utilities.
 + *
-+ * Copyright (c) 2006-2007, D G Murray.
-+ *           (c) 2009 Gerd Hoffmann <kraxel@redhat.com>
-+ *           (c) 2018 Oleksandr Andrushchenko, EPAM Systems Inc.
++ * Copyright (c) 2003, B Dragovic
++ * Copyright (c) 2003-2004, M Williamson, K Fraser
++ * Copyright (c) 2005 Dan M. Smith, IBM Corporation
++ * Copyright (c) 2010 Daniel Kiper
++ * Copyright (c) 2018 Oleksandr Andrushchenko, EPAM Systems Inc.
 + */
 +
-+#ifndef _GNTDEV_COMMON_H
-+#define _GNTDEV_COMMON_H
++#ifndef _XENMEM_RESERVATION_H
++#define _XENMEM_RESERVATION_H
 +
-+#include <linux/mm.h>
-+#include <linux/mman.h>
-+#include <linux/mmu_notifier.h>
-+#include <linux/types.h>
++#include <linux/kernel.h>
++#include <linux/slab.h>
 +
-+struct gntdev_priv {
-+	/* maps with visible offsets in the file descriptor */
-+	struct list_head maps;
-+	/* maps that are not visible; will be freed on munmap.
-+	 * Only populated if populate_freeable_maps == 1 */
-+	struct list_head freeable_maps;
-+	/* lock protects maps and freeable_maps */
-+	struct mutex lock;
-+	struct mm_struct *mm;
-+	struct mmu_notifier mn;
++#include <asm/xen/hypercall.h>
++#include <asm/tlb.h>
 +
-+#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
-+	/* Device for which DMA memory is allocated. */
-+	struct device *dma_dev;
-+#endif
-+};
++#include <xen/interface/memory.h>
++#include <xen/page.h>
 +
-+struct gntdev_unmap_notify {
-+	int flags;
-+	/* Address relative to the start of the gntdev_grant_map */
-+	int addr;
-+	int event;
-+};
-+
-+struct gntdev_grant_map {
-+	struct list_head next;
-+	struct vm_area_struct *vma;
-+	int index;
-+	int count;
-+	int flags;
-+	refcount_t users;
-+	struct gntdev_unmap_notify notify;
-+	struct ioctl_gntdev_grant_ref *grants;
-+	struct gnttab_map_grant_ref   *map_ops;
-+	struct gnttab_unmap_grant_ref *unmap_ops;
-+	struct gnttab_map_grant_ref   *kmap_ops;
-+	struct gnttab_unmap_grant_ref *kunmap_ops;
-+	struct page **pages;
-+	unsigned long pages_vm_start;
-+
-+#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
-+	/*
-+	 * If dmabuf_vaddr is not NULL then this mapping is backed by DMA
-+	 * capable memory.
-+	 */
-+
-+	struct device *dma_dev;
-+	/* Flags used to create this DMA buffer: GNTDEV_DMA_FLAG_XXX. */
-+	int dma_flags;
-+	void *dma_vaddr;
-+	dma_addr_t dma_bus_addr;
-+	/* Needed to avoid allocation in gnttab_dma_free_pages(). */
-+	xen_pfn_t *frames;
-+#endif
-+};
-+
-+struct gntdev_grant_map *gntdev_alloc_map(struct gntdev_priv *priv, int count,
-+					  int dma_flags);
-+
-+void gntdev_add_map(struct gntdev_priv *priv, struct gntdev_grant_map *add);
-+
-+void gntdev_put_map(struct gntdev_priv *priv, struct gntdev_grant_map *map);
-+
-+bool gntdev_account_mapped_pages(int count);
-+
-+int gntdev_map_grant_pages(struct gntdev_grant_map *map);
-+
-+#endif
-diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
-index d6b79ad1cd6f..a09db23e9663 100644
---- a/drivers/xen/gntdev.c
-+++ b/drivers/xen/gntdev.c
-@@ -6,6 +6,7 @@
-  *
-  * Copyright (c) 2006-2007, D G Murray.
-  *           (c) 2009 Gerd Hoffmann <kraxel@redhat.com>
-+ *           (c) 2018 Oleksandr Andrushchenko, EPAM Systems Inc.
-  *
-  * This program is distributed in the hope that it will be useful,
-  * but WITHOUT ANY WARRANTY; without even the implied warranty of
-@@ -26,10 +27,6 @@
- #include <linux/init.h>
- #include <linux/miscdevice.h>
- #include <linux/fs.h>
--#include <linux/mm.h>
--#include <linux/mman.h>
--#include <linux/mmu_notifier.h>
--#include <linux/types.h>
- #include <linux/uaccess.h>
- #include <linux/sched.h>
- #include <linux/sched/mm.h>
-@@ -50,6 +47,8 @@
- #include <asm/xen/hypervisor.h>
- #include <asm/xen/hypercall.h>
- 
-+#include "gntdev-common.h"
-+
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Derek G. Murray <Derek.Murray@cl.cam.ac.uk>, "
- 	      "Gerd Hoffmann <kraxel@redhat.com>");
-@@ -65,73 +64,23 @@ static atomic_t pages_mapped = ATOMIC_INIT(0);
- static int use_ptemod;
- #define populate_freeable_maps use_ptemod
- 
--struct gntdev_priv {
--	/* maps with visible offsets in the file descriptor */
--	struct list_head maps;
--	/* maps that are not visible; will be freed on munmap.
--	 * Only populated if populate_freeable_maps == 1 */
--	struct list_head freeable_maps;
--	/* lock protects maps and freeable_maps */
--	struct mutex lock;
--	struct mm_struct *mm;
--	struct mmu_notifier mn;
--
--#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
--	/* Device for which DMA memory is allocated. */
--	struct device *dma_dev;
--#endif
--};
--
--struct unmap_notify {
--	int flags;
--	/* Address relative to the start of the grant_map */
--	int addr;
--	int event;
--};
--
--struct grant_map {
--	struct list_head next;
--	struct vm_area_struct *vma;
--	int index;
--	int count;
--	int flags;
--	refcount_t users;
--	struct unmap_notify notify;
--	struct ioctl_gntdev_grant_ref *grants;
--	struct gnttab_map_grant_ref   *map_ops;
--	struct gnttab_unmap_grant_ref *unmap_ops;
--	struct gnttab_map_grant_ref   *kmap_ops;
--	struct gnttab_unmap_grant_ref *kunmap_ops;
--	struct page **pages;
--	unsigned long pages_vm_start;
--
--#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
--	/*
--	 * If dmabuf_vaddr is not NULL then this mapping is backed by DMA
--	 * capable memory.
--	 */
--
--	struct device *dma_dev;
--	/* Flags used to create this DMA buffer: GNTDEV_DMA_FLAG_XXX. */
--	int dma_flags;
--	void *dma_vaddr;
--	dma_addr_t dma_bus_addr;
--	/* Needed to avoid allocation in gnttab_dma_free_pages(). */
--	xen_pfn_t *frames;
--#endif
--};
--
--static int unmap_grant_pages(struct grant_map *map, int offset, int pages);
-+static int unmap_grant_pages(struct gntdev_grant_map *map,
-+			     int offset, int pages);
- 
- static struct miscdevice gntdev_miscdev;
- 
- /* ------------------------------------------------------------------ */
- 
-+bool gntdev_account_mapped_pages(int count)
++static inline void xenmem_reservation_scrub_page(struct page *page)
 +{
-+	return atomic_add_return(count, &pages_mapped) > limit;
++#ifdef CONFIG_XEN_SCRUB_PAGES
++	clear_highpage(page);
++#endif
 +}
 +
- static void gntdev_print_maps(struct gntdev_priv *priv,
- 			      char *text, int text_index)
- {
- #ifdef DEBUG
--	struct grant_map *map;
-+	struct gntdev_grant_map *map;
- 
- 	pr_debug("%s: maps list (priv %p)\n", __func__, priv);
- 	list_for_each_entry(map, &priv->maps, next)
-@@ -141,7 +90,7 @@ static void gntdev_print_maps(struct gntdev_priv *priv,
- #endif
- }
- 
--static void gntdev_free_map(struct grant_map *map)
-+static void gntdev_free_map(struct gntdev_grant_map *map)
- {
- 	if (map == NULL)
- 		return;
-@@ -176,13 +125,13 @@ static void gntdev_free_map(struct grant_map *map)
- 	kfree(map);
- }
- 
--static struct grant_map *gntdev_alloc_map(struct gntdev_priv *priv, int count,
-+struct gntdev_grant_map *gntdev_alloc_map(struct gntdev_priv *priv, int count,
- 					  int dma_flags)
- {
--	struct grant_map *add;
-+	struct gntdev_grant_map *add;
- 	int i;
- 
--	add = kzalloc(sizeof(struct grant_map), GFP_KERNEL);
-+	add = kzalloc(sizeof(struct gntdev_grant_map), GFP_KERNEL);
- 	if (NULL == add)
- 		return NULL;
- 
-@@ -252,9 +201,9 @@ static struct grant_map *gntdev_alloc_map(struct gntdev_priv *priv, int count,
- 	return NULL;
- }
- 
--static void gntdev_add_map(struct gntdev_priv *priv, struct grant_map *add)
-+void gntdev_add_map(struct gntdev_priv *priv, struct gntdev_grant_map *add)
- {
--	struct grant_map *map;
-+	struct gntdev_grant_map *map;
- 
- 	list_for_each_entry(map, &priv->maps, next) {
- 		if (add->index + add->count < map->index) {
-@@ -269,10 +218,10 @@ static void gntdev_add_map(struct gntdev_priv *priv, struct grant_map *add)
- 	gntdev_print_maps(priv, "[new]", add->index);
- }
- 
--static struct grant_map *gntdev_find_map_index(struct gntdev_priv *priv,
-+static struct gntdev_grant_map *gntdev_find_map_index(struct gntdev_priv *priv,
- 		int index, int count)
- {
--	struct grant_map *map;
-+	struct gntdev_grant_map *map;
- 
- 	list_for_each_entry(map, &priv->maps, next) {
- 		if (map->index != index)
-@@ -284,7 +233,7 @@ static struct grant_map *gntdev_find_map_index(struct gntdev_priv *priv,
- 	return NULL;
- }
- 
--static void gntdev_put_map(struct gntdev_priv *priv, struct grant_map *map)
-+void gntdev_put_map(struct gntdev_priv *priv, struct gntdev_grant_map *map)
- {
- 	if (!map)
- 		return;
-@@ -315,7 +264,7 @@ static void gntdev_put_map(struct gntdev_priv *priv, struct grant_map *map)
- static int find_grant_ptes(pte_t *pte, pgtable_t token,
- 		unsigned long addr, void *data)
- {
--	struct grant_map *map = data;
-+	struct gntdev_grant_map *map = data;
- 	unsigned int pgnr = (addr - map->vma->vm_start) >> PAGE_SHIFT;
- 	int flags = map->flags | GNTMAP_application_map | GNTMAP_contains_pte;
- 	u64 pte_maddr;
-@@ -348,7 +297,7 @@ static int set_grant_ptes_as_special(pte_t *pte, pgtable_t token,
- }
- #endif
- 
--static int map_grant_pages(struct grant_map *map)
-+int gntdev_map_grant_pages(struct gntdev_grant_map *map)
- {
- 	int i, err = 0;
- 
-@@ -413,7 +362,8 @@ static int map_grant_pages(struct grant_map *map)
- 	return err;
- }
- 
--static int __unmap_grant_pages(struct grant_map *map, int offset, int pages)
-+static int __unmap_grant_pages(struct gntdev_grant_map *map, int offset,
-+			       int pages)
- {
- 	int i, err = 0;
- 	struct gntab_unmap_queue_data unmap_data;
-@@ -448,7 +398,8 @@ static int __unmap_grant_pages(struct grant_map *map, int offset, int pages)
- 	return err;
- }
- 
--static int unmap_grant_pages(struct grant_map *map, int offset, int pages)
-+static int unmap_grant_pages(struct gntdev_grant_map *map, int offset,
-+			     int pages)
- {
- 	int range, err = 0;
- 
-@@ -480,7 +431,7 @@ static int unmap_grant_pages(struct grant_map *map, int offset, int pages)
- 
- static void gntdev_vma_open(struct vm_area_struct *vma)
- {
--	struct grant_map *map = vma->vm_private_data;
-+	struct gntdev_grant_map *map = vma->vm_private_data;
- 
- 	pr_debug("gntdev_vma_open %p\n", vma);
- 	refcount_inc(&map->users);
-@@ -488,7 +439,7 @@ static void gntdev_vma_open(struct vm_area_struct *vma)
- 
- static void gntdev_vma_close(struct vm_area_struct *vma)
- {
--	struct grant_map *map = vma->vm_private_data;
-+	struct gntdev_grant_map *map = vma->vm_private_data;
- 	struct file *file = vma->vm_file;
- 	struct gntdev_priv *priv = file->private_data;
- 
-@@ -512,7 +463,7 @@ static void gntdev_vma_close(struct vm_area_struct *vma)
- static struct page *gntdev_vma_find_special_page(struct vm_area_struct *vma,
- 						 unsigned long addr)
- {
--	struct grant_map *map = vma->vm_private_data;
-+	struct gntdev_grant_map *map = vma->vm_private_data;
- 
- 	return map->pages[(addr - map->pages_vm_start) >> PAGE_SHIFT];
- }
-@@ -525,7 +476,7 @@ static const struct vm_operations_struct gntdev_vmops = {
- 
- /* ------------------------------------------------------------------ */
- 
--static void unmap_if_in_range(struct grant_map *map,
-+static void unmap_if_in_range(struct gntdev_grant_map *map,
- 			      unsigned long start, unsigned long end)
- {
- 	unsigned long mstart, mend;
-@@ -554,7 +505,7 @@ static void mn_invl_range_start(struct mmu_notifier *mn,
- 				unsigned long start, unsigned long end)
- {
- 	struct gntdev_priv *priv = container_of(mn, struct gntdev_priv, mn);
--	struct grant_map *map;
-+	struct gntdev_grant_map *map;
- 
- 	mutex_lock(&priv->lock);
- 	list_for_each_entry(map, &priv->maps, next) {
-@@ -570,7 +521,7 @@ static void mn_release(struct mmu_notifier *mn,
- 		       struct mm_struct *mm)
- {
- 	struct gntdev_priv *priv = container_of(mn, struct gntdev_priv, mn);
--	struct grant_map *map;
-+	struct gntdev_grant_map *map;
- 	int err;
- 
- 	mutex_lock(&priv->lock);
-@@ -651,13 +602,14 @@ static int gntdev_open(struct inode *inode, struct file *flip)
- static int gntdev_release(struct inode *inode, struct file *flip)
- {
- 	struct gntdev_priv *priv = flip->private_data;
--	struct grant_map *map;
-+	struct gntdev_grant_map *map;
- 
- 	pr_debug("priv %p\n", priv);
- 
- 	mutex_lock(&priv->lock);
- 	while (!list_empty(&priv->maps)) {
--		map = list_entry(priv->maps.next, struct grant_map, next);
-+		map = list_entry(priv->maps.next,
-+				 struct gntdev_grant_map, next);
- 		list_del(&map->next);
- 		gntdev_put_map(NULL /* already removed */, map);
- 	}
-@@ -674,7 +626,7 @@ static long gntdev_ioctl_map_grant_ref(struct gntdev_priv *priv,
- 				       struct ioctl_gntdev_map_grant_ref __user *u)
- {
- 	struct ioctl_gntdev_map_grant_ref op;
--	struct grant_map *map;
-+	struct gntdev_grant_map *map;
- 	int err;
- 
- 	if (copy_from_user(&op, u, sizeof(op)) != 0)
-@@ -688,7 +640,7 @@ static long gntdev_ioctl_map_grant_ref(struct gntdev_priv *priv,
- 	if (!map)
- 		return err;
- 
--	if (unlikely(atomic_add_return(op.count, &pages_mapped) > limit)) {
-+	if (unlikely(gntdev_account_mapped_pages(op.count))) {
- 		pr_debug("can't map: over limit\n");
- 		gntdev_put_map(NULL, map);
- 		return err;
-@@ -715,7 +667,7 @@ static long gntdev_ioctl_unmap_grant_ref(struct gntdev_priv *priv,
- 					 struct ioctl_gntdev_unmap_grant_ref __user *u)
- {
- 	struct ioctl_gntdev_unmap_grant_ref op;
--	struct grant_map *map;
-+	struct gntdev_grant_map *map;
- 	int err = -ENOENT;
- 
- 	if (copy_from_user(&op, u, sizeof(op)) != 0)
-@@ -741,7 +693,7 @@ static long gntdev_ioctl_get_offset_for_vaddr(struct gntdev_priv *priv,
- {
- 	struct ioctl_gntdev_get_offset_for_vaddr op;
- 	struct vm_area_struct *vma;
--	struct grant_map *map;
-+	struct gntdev_grant_map *map;
- 	int rv = -EINVAL;
- 
- 	if (copy_from_user(&op, u, sizeof(op)) != 0)
-@@ -772,7 +724,7 @@ static long gntdev_ioctl_get_offset_for_vaddr(struct gntdev_priv *priv,
- static long gntdev_ioctl_notify(struct gntdev_priv *priv, void __user *u)
- {
- 	struct ioctl_gntdev_unmap_notify op;
--	struct grant_map *map;
-+	struct gntdev_grant_map *map;
- 	int rc;
- 	int out_flags;
- 	unsigned int out_event;
-@@ -1070,7 +1022,7 @@ static int gntdev_mmap(struct file *flip, struct vm_area_struct *vma)
- 	struct gntdev_priv *priv = flip->private_data;
- 	int index = vma->vm_pgoff;
- 	int count = vma_pages(vma);
--	struct grant_map *map;
-+	struct gntdev_grant_map *map;
- 	int i, err = -EINVAL;
- 
- 	if ((vma->vm_flags & VM_WRITE) && !(vma->vm_flags & VM_SHARED))
-@@ -1127,7 +1079,7 @@ static int gntdev_mmap(struct file *flip, struct vm_area_struct *vma)
- 		}
- 	}
- 
--	err = map_grant_pages(map);
-+	err = gntdev_map_grant_pages(map);
- 	if (err)
- 		goto out_put_map;
- 
++#ifdef CONFIG_XEN_HAVE_PVMMU
++void __xenmem_reservation_va_mapping_update(unsigned long count,
++					    struct page **pages,
++					    xen_pfn_t *frames);
++
++void __xenmem_reservation_va_mapping_reset(unsigned long count,
++					   struct page **pages);
++#endif
++
++static inline void xenmem_reservation_va_mapping_update(unsigned long count,
++							struct page **pages,
++							xen_pfn_t *frames)
++{
++#ifdef CONFIG_XEN_HAVE_PVMMU
++	if (!xen_feature(XENFEAT_auto_translated_physmap))
++		__xenmem_reservation_va_mapping_update(count, pages, frames);
++#endif
++}
++
++static inline void xenmem_reservation_va_mapping_reset(unsigned long count,
++						       struct page **pages)
++{
++#ifdef CONFIG_XEN_HAVE_PVMMU
++	if (!xen_feature(XENFEAT_auto_translated_physmap))
++		__xenmem_reservation_va_mapping_reset(count, pages);
++#endif
++}
++
++int xenmem_reservation_increase(int count, xen_pfn_t *frames);
++
++int xenmem_reservation_decrease(int count, xen_pfn_t *frames);
++
++#endif
 -- 
 2.17.1
 
