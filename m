@@ -7,66 +7,64 @@ X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 42BFAC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 04:50:58 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 17B01C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 04:52:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC2DC2086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 04:50:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1044208B0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 04:52:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HXQuK5YG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC2DC2086D
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JLqL31PH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1044208B0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932348AbeFLEuz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 00:50:55 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:43685 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752046AbeFLEuw (ORCPT
+        id S1753985AbeFLEwg (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 00:52:36 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:40853 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751861AbeFLEwe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 00:50:52 -0400
-Received: by mail-pf0-f194.google.com with SMTP id y8-v6so2357650pfm.10;
-        Mon, 11 Jun 2018 21:50:52 -0700 (PDT)
+        Tue, 12 Jun 2018 00:52:34 -0400
+Received: by mail-pf0-f195.google.com with SMTP id z24-v6so11423161pfe.7;
+        Mon, 11 Jun 2018 21:52:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=1TKrvCSm+Eh984/81unuiMPXREU2a4wzPgn4YkBsUNU=;
-        b=HXQuK5YGv7k+Fu1oI9NJDEb5+4OIld8snzh/dgL6aVPVOUT3Qydhe6Du9dOOBi1CPy
-         PWTIvs1cgOYBwKkgywK01j/iC0Gj9PROwTSFzCZy6gexwGVKyVINEve3l7veJsv1bHKV
-         qdvuHFWvo8ueeY1pRFoTLIO46rRkmRir7/L/HmMsTliZ2QotvyFCd7SANFKbKRvVmI25
-         IBCtY90aVQJS/rqK+9GZ2qZUaImP2S7trW0rFdMVgkLwACTKu6/+j8du6cwZz2zEHEUt
-         XsnEJGAXP1YQQtGBsmOWlu6bs+YOYJSb7uYs4iZfAs+HXEdmFKIE9OXu3z6EqSM95k5d
-         zhwQ==
+        bh=m14ufEtRSa+LUzqFSxg+yOEVHxaSLIpqRPCDa7ILFqA=;
+        b=JLqL31PHxA4O/P8WhlrF/2n44rQSyKZYQPLOW1uhnAdV0egeWotdVEKAyYpR+JQdKo
+         4NCsIPFYl7m6bkBoricNOX4t/GDEHG2lV1wpbbAuI3HUfInzU5Vvnkk9KvW9Lc4YDRsg
+         sOMW5K3r3mdrqUKjEASYSzlAxRci06orkvEuEkez1qlpyZTrq809nQ7gBCrVms83SfFA
+         ZNFTUMP8U4VxsGj//JVFCpoaf8Gcg2plYRJtrMx904KQZi0mCq4wjtgfLECjgsC4vZ6G
+         9gnZn0h/Z/b7OwfDgGYiLaGUMS7RR6rjVHxlEI8srGUDRXIS+MGKmV8p2jKs4Su3iF4w
+         cycw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=1TKrvCSm+Eh984/81unuiMPXREU2a4wzPgn4YkBsUNU=;
-        b=V4Ewhl1FBKThhNPsQSPxQ1J8mMnw9LPQKKaXALBXBdkzTF7VTEKtw+xcNXQtDZ5NYj
-         UKDzw/nzW2EbvumkVqZJLTe7/+fU8/l6SJfUxhHaDd2qcgBYdkvs9Lzo/qHD4Hz61y+P
-         GueulBX7KzhZYkB9IeHUJq+iw5KQFUoNXxfqjWoFuX5kf7bOGY1pss4uWnmiW3fylcg/
-         9vh+qbohMLpHfIXW0oGkSiDSe6tUurkY6fo15DZ8B1wc3b0DWvVys6VQjlezQ82FNpgd
-         xPk6czoCF+XHuTiAWtGc/7rR6zeoTTGBJN3z2nYyboecTix2RjILXe1DuFpGU3WAznbg
-         DUEw==
-X-Gm-Message-State: APt69E17ga8PuQVVdRquSatSAfsbFH23DRZhnLYlMjfdzdJd8va+kXBf
-        jmGsgvj2DbusXKOQputEUxyzUBYTJRU=
-X-Google-Smtp-Source: ADUXVKJMYUKPkqX+mE/Vj6tj9MDJuvzz8JiS6eRIBKKfZxPGDuWZq+0jiULxM0PLJhoL4hh7wCMTvw==
-X-Received: by 2002:a62:c809:: with SMTP id z9-v6mr2127331pff.5.1528779052004;
-        Mon, 11 Jun 2018 21:50:52 -0700 (PDT)
+        bh=m14ufEtRSa+LUzqFSxg+yOEVHxaSLIpqRPCDa7ILFqA=;
+        b=j9OmhNrHEZcLa+r+lQNppR3rP+scbLH0uafqXBOLecBVcVZBK3D03/0ZhFV1b3tzsp
+         YonEFiC5k2c3OQD5+rf9YT2LhCkG2oShxcdZ30Oo6jRxE1K+DihywzhEvt/sX7xGsIH0
+         zo7w0AR39MttLTDWMgtpoff+o3ogaQew9BhdQVx8FFCugHqz/wgUrjJuasLuoU6ewDRu
+         i/kvymFRppGoKfpvCLJnTU3ahkdfJRdaHwyEi/lixfxevVkwuShu1rWZIICx6yBC+WiR
+         zdDfIrvCN4O6CHl9hVMKmujwYp+UPyAu1YK4K+8Rydk0xYsA52pmhFMxx2h+Fk/LN0pr
+         ZDKw==
+X-Gm-Message-State: APt69E2vlBoQN4TIP1VuqxuR2EcITw+1QatxbchYNzp9Bz1drWcFSnsn
+        FT1qZoe/ECIZOm8nQo/9hptYktQcJsI=
+X-Google-Smtp-Source: ADUXVKJU6zVO5A3E+54JlL6Mfq/k0tpH2Wk++m2T3E5y1FFbOi3szH36i1MPSSlwv8fuCQHkgiehbg==
+X-Received: by 2002:a65:644f:: with SMTP id s15-v6mr1847820pgv.228.1528779154241;
+        Mon, 11 Jun 2018 21:52:34 -0700 (PDT)
 Received: from localhost ([103.88.46.82])
-        by smtp.gmail.com with ESMTPSA id z26-v6sm3652975pfd.60.2018.06.11.21.50.50
+        by smtp.gmail.com with ESMTPSA id p12-v6sm27331565pfi.175.2018.06.11.21.52.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Jun 2018 21:50:51 -0700 (PDT)
+        Mon, 11 Jun 2018 21:52:33 -0700 (PDT)
 From:   Zhouyang Jia <jiazhouyang09@gmail.com>
 Cc:     Zhouyang Jia <jiazhouyang09@gmail.com>,
-        Jason Wessel <jason.wessel@windriver.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        kgdb-bugreport@lists.sourceforge.net, linux-serial@vger.kernel.org,
+        "Nicholas A. Bellinger" <nab@linux-iscsi.org>,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] tty: serial: add error handling for try_module_get
-Date:   Tue, 12 Jun 2018 12:50:46 +0800
-Message-Id: <1528779046-42341-1-git-send-email-jiazhouyang09@gmail.com>
+Subject: [PATCH] target: add error handling for match_int
+Date:   Tue, 12 Jun 2018 12:52:28 +0800
+Message-Id: <1528779148-42485-1-git-send-email-jiazhouyang09@gmail.com>
 X-Mailer: git-send-email 2.7.4
 To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -74,33 +72,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When try_module_get fails, the lack of error-handling code may
+When match_int fails, the lack of error-handling code may
 cause unexpected results.
 
-This patch adds error-handling code after calling try_module_get.
+This patch adds error-handling code after calling match_int.
 
 Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
 ---
- drivers/tty/serial/kgdboc.c | 6 ++++--
+ drivers/target/target_core_rd.c | 6 ++++--
  1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/tty/serial/kgdboc.c b/drivers/tty/serial/kgdboc.c
-index b4ba2b1..641e22a 100644
---- a/drivers/tty/serial/kgdboc.c
-+++ b/drivers/tty/serial/kgdboc.c
-@@ -286,8 +286,10 @@ static void kgdboc_pre_exp_handler(void)
- 		con_debug_enter(vc_cons[fg_console].d);
- 	}
- 	/* Increment the module count when the debugger is active */
--	if (!kgdb_connected)
--		try_module_get(THIS_MODULE);
-+	if (!kgdb_connected) {
-+		if (!try_module_get(THIS_MODULE))
-+			printk(KERN_ERR "kgdboc: cannot get module.\n");
-+	}
- }
+diff --git a/drivers/target/target_core_rd.c b/drivers/target/target_core_rd.c
+index a6e8106..7bc89ff 100644
+--- a/drivers/target/target_core_rd.c
++++ b/drivers/target/target_core_rd.c
+@@ -573,14 +573,16 @@ static ssize_t rd_set_configfs_dev_params(struct se_device *dev,
+ 		token = match_token(ptr, tokens, args);
+ 		switch (token) {
+ 		case Opt_rd_pages:
+-			match_int(args, &arg);
++			if (match_int(args, &arg))
++				return -EINVAL;
+ 			rd_dev->rd_page_count = arg;
+ 			pr_debug("RAMDISK: Referencing Page"
+ 				" Count: %u\n", rd_dev->rd_page_count);
+ 			rd_dev->rd_flags |= RDF_HAS_PAGE_COUNT;
+ 			break;
+ 		case Opt_rd_nullio:
+-			match_int(args, &arg);
++			if (match_int(args, &arg))
++				return -EINVAL;
+ 			if (arg != 1)
+ 				break;
  
- static void kgdboc_post_exp_handler(void)
 -- 
 2.7.4
 
