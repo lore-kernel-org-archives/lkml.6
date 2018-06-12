@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 33D1BC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 07:49:33 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id EE737C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 07:49:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C933920693
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 07:49:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FD0820693
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 07:49:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HLsEJBaA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C933920693
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TOJ6vm9d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FD0820693
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933578AbeFLHta (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 03:49:30 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:39806 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933526AbeFLHtQ (ORCPT
+        id S933585AbeFLHtt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 03:49:49 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:37323 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933348AbeFLHtN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 03:49:16 -0400
-Received: by mail-lf0-f68.google.com with SMTP id t134-v6so34509044lff.6;
-        Tue, 12 Jun 2018 00:49:15 -0700 (PDT)
+        Tue, 12 Jun 2018 03:49:13 -0400
+Received: by mail-lf0-f67.google.com with SMTP id g21-v6so32533836lfb.4;
+        Tue, 12 Jun 2018 00:49:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=p6D7/5BidEe3XpfScupYNsNQdCy1j4id8nWIUcSG2MQ=;
-        b=HLsEJBaAolDWUEaHyFdXd0t8YN3WZiXkDkHSAjufL8YY+XND/Xfmu71+rvo41XGfpR
-         F1HfvRRhqqutSgAwXpHxxGM36EcTVpP8IzPfdpzxAqI3X+dNdf3eFo+zr9M1m4nXos0F
-         knruo8/cqxOTe1c9y2eP4SA5FctsOc6XEisaLLzkrXtNjIjfqJb/lTQVKzDKXYuOoXMW
-         k8Ys5CB9Nf/leERFw2+d1k3X5boe2upES47lKH2r7t2NHeFfhmKp2pKs37FY/pxD0NeN
-         Q0HxIG2e+ENEGzNLrcZZK0RY0SmUqIM9ZGqEaTiQRcOTKqi4JTemz6UptbxpBbqwqg01
-         5DwQ==
+        bh=aeYlAw6zzL39UODlCI4I7JnN5rvSsiKx3KLbZ4Toj9U=;
+        b=TOJ6vm9dFmByKLB6Y1v1SSB14sr6y9WVfQ9NsGo7lakyegQoYRaCqiVDeWBknxjBA/
+         N07FSEeM3Ms0GyJ68nj6IBcj2XA855n0KoeZl68McDswsVufytMLY/kCZ6NaarvMqf7r
+         MZbymZnS0bv9acXLZpxP3ezpfBfqT0d+Xib8ng+NVHlpCocjJyP6qteZteDeVjjeZGbO
+         B6BI0qoCze15f4eZgXoOL+U9Z7ZaGsWvcDLLoPObBUq9/oIay4I9b/zgsy9hOt5BUnWj
+         ZYF6xxSOymKhFWun28xDNiNo6kbcklLW9ydXHJi8FE2xOv2ag11bjsXQJHqqdZ8dxkEX
+         mglQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=p6D7/5BidEe3XpfScupYNsNQdCy1j4id8nWIUcSG2MQ=;
-        b=ES57yc8sxDrxXwfm4NKLLcPblTjuxLWHFccAZPzPqSSMH328zSL+HE8kQgDVpsKXqv
-         hFyF6BnHBty6fAdWCD74e9N6PKBsnoPnltRuHasJtmIiR+V81z0xGEfihAJNC3qTm0IH
-         5hrDWW7zJhalKTrP3kOvxA8XIIRLfeCGI4ajdMAWhi5MYgOHzkSMQzBqSJInpmVwq0+n
-         3gv+SJbBX6SmTmN+/bTAgVTt0ZVeEgMiZQNRpHVEXIz6F/YAnGkyFrYDofzvp7XcEicV
-         mguPyAQJAx/zvdZtde5Zpp2kw9C6fSgj0P83aJTpQsVq90M7gRulPtiX8V6yYAUSslb6
-         5pbA==
-X-Gm-Message-State: APt69E19wYb9OCC0yzFjlmQghU7kS9NKMod/CR7VJGRq9EZbAqWluUyT
-        VjWfv1DFpJN6kSrngJcId/I=
-X-Google-Smtp-Source: ADUXVKK3nvXeGAUKrYvr/vIC/+jftg4uUgZx9HTsK1pQq6XJaGv1lP9OxmyxV+KBhB8v/kEpJkYDFw==
-X-Received: by 2002:a19:c452:: with SMTP id u79-v6mr1358667lff.5.1528789754536;
-        Tue, 12 Jun 2018 00:49:14 -0700 (PDT)
+        bh=aeYlAw6zzL39UODlCI4I7JnN5rvSsiKx3KLbZ4Toj9U=;
+        b=QYk29BWExXl2lRtmcVIlEUcAOFD4guoGWNBN01CdQG39K88TYYkOnd4uoxhCgOOFkd
+         mAimlUYokTcVRfQe+km4GDYO/fA2zy4JkZ65h1NKhHwYkw9w1uZhBVuAPG5Gsy0NZjDu
+         PpxcDCC7BssKX1eYhvlSuzaa66h/MQ1bcWC759xVSJiGP9ChAE3+deSxiIfOOh87YZIB
+         Hlf85m4fNQqiUKARTLrcDOwkuQg0CqkbfWWYU3cHTuSAUdxr7utxM7LZ4TyPmM97QMzn
+         Kvx9bo1AItd7dS39Sz8huJvZiIb94HAcCgXtLSOqeiT5lncflyrEVy3XyoLacnIA4nxl
+         vxNg==
+X-Gm-Message-State: APt69E2RTrDrNtnt4sjugZ9QEYbT+z+qMXSy4/KzadD8e3y1VBsRVYwJ
+        p5WDlYdI1OBm61XNGTNNzmA=
+X-Google-Smtp-Source: ADUXVKLL1y/QpafVK9CQo3eXiiahEV/BrU36KGkBwxUW+9EK+AkA6DSbJIvesjkUEuHq1R/RscWBjA==
+X-Received: by 2002:a19:1156:: with SMTP id g83-v6mr1320659lfi.142.1528789751543;
+        Tue, 12 Jun 2018 00:49:11 -0700 (PDT)
 Received: from a2k-HP-ProDesk-600-G2-SFF.kyiv.epam.com (ll-74.141.223.85.sovam.net.ua. [85.223.141.74])
-        by smtp.gmail.com with ESMTPSA id b65-v6sm62657lfe.80.2018.06.12.00.49.13
+        by smtp.gmail.com with ESMTPSA id b65-v6sm62657lfe.80.2018.06.12.00.49.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 12 Jun 2018 00:49:13 -0700 (PDT)
+        Tue, 12 Jun 2018 00:49:10 -0700 (PDT)
 From:   Oleksandr Andrushchenko <andr2000@gmail.com>
 To:     xen-devel@lists.xenproject.org, linux-input@vger.kernel.org,
         linux-kernel@vger.kernel.org, dmitry.torokhov@gmail.com,
@@ -64,9 +64,9 @@ To:     xen-devel@lists.xenproject.org, linux-input@vger.kernel.org,
 Cc:     konrad.wilk@oracle.com, andr2000@gmail.com,
         andrii_chepurnyi@epam.com,
         Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: [PATCH v5 3/3] Input: xen-kbdfront - allow better run-time configuration
-Date:   Tue, 12 Jun 2018 10:48:56 +0300
-Message-Id: <20180612074856.28451-4-andr2000@gmail.com>
+Subject: [PATCH v5 1/3] xen: Sync up with the canonical protocol definitions in Xen
+Date:   Tue, 12 Jun 2018 10:48:54 +0300
+Message-Id: <20180612074856.28451-2-andr2000@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180612074856.28451-1-andr2000@gmail.com>
 References: <20180612074856.28451-1-andr2000@gmail.com>
@@ -77,269 +77,221 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-It is now only possible to control if multi-touch virtual device
-is created or not (via the corresponding XenStore entries),
-but keyboard and pointer devices are always created.
-In some cases this is not desirable. For example, if virtual
-keyboard device is exposed to Android then the latter won't
-automatically show on-screen keyboard as it expects that a
-physical keyboard device can be used for typing.
+This is the sync up with the canonical definitions of the input,
+sound and display protocols in Xen.
 
-Utilize keyboard and pointer device XenStore feature fields to
-configure which virtual devices are created:
- - set "feature-disable-keyboard" to 1 if no keyboard device
-   needs to be created
- - set "feature-disable-pointer" to 1 if no pointer device
-   needs to be created
-Keep old behavior by default.
+Changes to kbdif:
+1. Add missing string constants for {feature|request}-raw-pointer
+   to align with the rest of the interface file.
+
+2. Add new XenStore feature fields, so it is possible to individually
+   control set of exposed virtual devices for each guest OS:
+     - set feature-disable-keyboard to 1 if no keyboard device needs
+       to be created
+     - set feature-disable-pointer to 1 if no pointer device needs
+       to be created
+
+3. Move multi-touch device parameters to backend nodes: these are
+    described as a part of frontend's XenBus configuration nodes
+    while they belong to backend's configuration. Fix this by moving
+    the parameters to the proper section.
+
+Unique-id field:
+1. Add unique-id XenBus entry for virtual input and display.
+
+2. Change type of unique-id field to string for sndif to align with
+display and input protocols.
 
 Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Suggested-by: Andrii Chepurnyi <andrii_chepurnyi@epam.com>
-Tested-by: Andrii Chepurnyi <andrii_chepurnyi@epam.com>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 ---
- drivers/input/misc/xen-kbdfront.c | 177 ++++++++++++++++++------------
- 1 file changed, 106 insertions(+), 71 deletions(-)
+ include/xen/interface/io/displif.h |  8 +++
+ include/xen/interface/io/kbdif.h   | 78 ++++++++++++++++++++++--------
+ include/xen/interface/io/sndif.h   | 10 ++--
+ 3 files changed, 71 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/input/misc/xen-kbdfront.c b/drivers/input/misc/xen-kbdfront.c
-index 92d739649022..f50fba1962ec 100644
---- a/drivers/input/misc/xen-kbdfront.c
-+++ b/drivers/input/misc/xen-kbdfront.c
-@@ -63,6 +63,9 @@ static void xenkbd_disconnect_backend(struct xenkbd_info *);
- static void xenkbd_handle_motion_event(struct xenkbd_info *info,
- 				       struct xenkbd_motion *motion)
- {
-+	if (unlikely(!info->ptr))
-+		return;
-+
- 	input_report_rel(info->ptr, REL_X, motion->rel_x);
- 	input_report_rel(info->ptr, REL_Y, motion->rel_y);
- 	if (motion->rel_z)
-@@ -73,6 +76,9 @@ static void xenkbd_handle_motion_event(struct xenkbd_info *info,
- static void xenkbd_handle_position_event(struct xenkbd_info *info,
- 					 struct xenkbd_position *pos)
- {
-+	if (unlikely(!info->ptr))
-+		return;
-+
- 	input_report_abs(info->ptr, ABS_X, pos->abs_x);
- 	input_report_abs(info->ptr, ABS_Y, pos->abs_y);
- 	if (pos->rel_z)
-@@ -97,6 +103,9 @@ static void xenkbd_handle_key_event(struct xenkbd_info *info,
- 		return;
- 	}
+diff --git a/include/xen/interface/io/displif.h b/include/xen/interface/io/displif.h
+index 596578d9be3e..fdc279dc4a88 100644
+--- a/include/xen/interface/io/displif.h
++++ b/include/xen/interface/io/displif.h
+@@ -189,6 +189,13 @@
+  *
+  *----------------------------- Connector settings ----------------------------
+  *
++ * unique-id
++ *      Values:         <string>
++ *
++ *      After device instance initialization each connector is assigned a
++ *      unique ID, so it can be identified by the backend by this ID.
++ *      This can be UUID or such.
++ *
+  * resolution
+  *      Values:         <width, uint32_t>x<height, uint32_t>
+  *
+@@ -368,6 +375,7 @@
+ #define XENDISPL_FIELD_EVT_CHANNEL	"evt-event-channel"
+ #define XENDISPL_FIELD_RESOLUTION	"resolution"
+ #define XENDISPL_FIELD_BE_ALLOC		"be-alloc"
++#define XENDISPL_FIELD_UNIQUE_ID	"unique-id"
  
-+	if (unlikely(!dev))
-+		return;
-+
- 	input_event(dev, EV_KEY, key->keycode, value);
- 	input_sync(dev);
- }
-@@ -192,7 +201,7 @@ static int xenkbd_probe(struct xenbus_device *dev,
- 				  const struct xenbus_device_id *id)
- {
- 	int ret, i;
--	unsigned int abs, touch;
-+	bool with_mtouch, with_kbd, with_ptr;
- 	struct xenkbd_info *info;
- 	struct input_dev *kbd, *ptr, *mtouch;
+ /*
+  ******************************************************************************
+diff --git a/include/xen/interface/io/kbdif.h b/include/xen/interface/io/kbdif.h
+index 2a9510ade701..b4439cf48220 100644
+--- a/include/xen/interface/io/kbdif.h
++++ b/include/xen/interface/io/kbdif.h
+@@ -51,6 +51,18 @@
+  * corresponding entries in XenStore and puts 1 as the value of the entry.
+  * If a feature is not supported then 0 must be set or feature entry omitted.
+  *
++ * feature-disable-keyboard
++ *      Values:         <uint>
++ *
++ *      If there is no need to expose a virtual keyboard device by the
++ *      frontend then this must be set to 1.
++ *
++ * feature-disable-pointer
++ *      Values:         <uint>
++ *
++ *      If there is no need to expose a virtual pointer device by the
++ *      frontend then this must be set to 1.
++ *
+  * feature-abs-pointer
+  *      Values:         <uint>
+  *
+@@ -63,6 +75,22 @@
+  *      Backends, which support reporting of multi-touch events
+  *      should set this to 1.
+  *
++ * feature-raw-pointer
++ *      Values:        <uint>
++ *
++ *      Backends, which support reporting raw (unscaled) absolute coordinates
++ *      for pointer devices should set this to 1. Raw (unscaled) values have
++ *      a range of [0, 0x7fff].
++ *
++ *-----------------------  Device Instance Parameters ------------------------
++ *
++ * unique-id
++ *      Values:         <string>
++ *
++ *      After device instance initialization it is assigned a unique ID,
++ *      so every instance of the frontend can be identified by the backend
++ *      by this ID. This can be UUID or such.
++ *
+  *------------------------- Pointer Device Parameters ------------------------
+  *
+  * width
+@@ -77,6 +105,25 @@
+  *      Maximum Y coordinate (height) to be used by the frontend
+  *      while reporting input events, pixels, [0; UINT32_MAX].
+  *
++ *----------------------- Multi-touch Device Parameters ----------------------
++ *
++ * multi-touch-num-contacts
++ *      Values:         <uint>
++ *
++ *      Number of simultaneous touches reported.
++ *
++ * multi-touch-width
++ *      Values:         <uint>
++ *
++ *      Width of the touch area to be used by the frontend
++ *      while reporting input events, pixels, [0; UINT32_MAX].
++ *
++ * multi-touch-height
++ *      Values:         <uint>
++ *
++ *      Height of the touch area to be used by the frontend
++ *      while reporting input events, pixels, [0; UINT32_MAX].
++ *
+  *****************************************************************************
+  *                            Frontend XenBus Nodes
+  *****************************************************************************
+@@ -98,6 +145,13 @@
+  *
+  *      Request backend to report multi-touch events.
+  *
++ * request-raw-pointer
++ *      Values:         <uint>
++ *
++ *      Request backend to report raw unscaled absolute pointer coordinates.
++ *      This option is only valid if request-abs-pointer is also set.
++ *      Raw unscaled coordinates have the range [0, 0x7fff]
++ *
+  *----------------------- Request Transport Parameters -----------------------
+  *
+  * event-channel
+@@ -117,25 +171,6 @@
+  *
+  *      OBSOLETE, not recommended for use.
+  *      PFN of the shared page.
+- *
+- *----------------------- Multi-touch Device Parameters -----------------------
+- *
+- * multi-touch-num-contacts
+- *      Values:         <uint>
+- *
+- *      Number of simultaneous touches reported.
+- *
+- * multi-touch-width
+- *      Values:         <uint>
+- *
+- *      Width of the touch area to be used by the frontend
+- *      while reporting input events, pixels, [0; UINT32_MAX].
+- *
+- * multi-touch-height
+- *      Values:         <uint>
+- *
+- *      Height of the touch area to be used by the frontend
+- *      while reporting input events, pixels, [0; UINT32_MAX].
+  */
  
-@@ -211,93 +220,114 @@ static int xenkbd_probe(struct xenbus_device *dev,
- 	if (!info->page)
- 		goto error_nomem;
+ /*
+@@ -163,9 +198,13 @@
  
--	/* Set input abs params to match backend screen res */
--	abs = xenbus_read_unsigned(dev->otherend,
--				   XENKBD_FIELD_FEAT_ABS_POINTER, 0);
--	ptr_size[KPARAM_X] = xenbus_read_unsigned(dev->otherend,
--						  XENKBD_FIELD_WIDTH,
--						  ptr_size[KPARAM_X]);
--	ptr_size[KPARAM_Y] = xenbus_read_unsigned(dev->otherend,
--						  XENKBD_FIELD_HEIGHT,
--						  ptr_size[KPARAM_Y]);
--	if (abs) {
--		ret = xenbus_write(XBT_NIL, dev->nodename,
--				   XENKBD_FIELD_REQ_ABS_POINTER, "1");
--		if (ret) {
--			pr_warn("xenkbd: can't request abs-pointer\n");
--			abs = 0;
--		}
--	}
-+	/*
-+	 * The below are reverse logic, e.g. if the feature is set, then
-+	 * do not expose the corresponding virtual device.
-+	 */
-+	with_kbd = !xenbus_read_unsigned(dev->otherend,
-+					 XENKBD_FIELD_FEAT_DSBL_KEYBRD, 0);
-+
-+	with_ptr = !xenbus_read_unsigned(dev->otherend,
-+					 XENKBD_FIELD_FEAT_DSBL_POINTER, 0);
+ #define XENKBD_DRIVER_NAME		"vkbd"
  
--	touch = xenbus_read_unsigned(dev->otherend,
--				     XENKBD_FIELD_FEAT_MTOUCH, 0);
--	if (touch) {
-+	/* Direct logic: if set, then create multi-touch device. */
-+	with_mtouch = xenbus_read_unsigned(dev->otherend,
-+					   XENKBD_FIELD_FEAT_MTOUCH, 0);
-+	if (with_mtouch) {
- 		ret = xenbus_write(XBT_NIL, dev->nodename,
- 				   XENKBD_FIELD_REQ_MTOUCH, "1");
- 		if (ret) {
- 			pr_warn("xenkbd: can't request multi-touch");
--			touch = 0;
-+			with_mtouch = 0;
- 		}
- 	}
++#define XENKBD_FIELD_FEAT_DSBL_KEYBRD	"feature-disable-keyboard"
++#define XENKBD_FIELD_FEAT_DSBL_POINTER	"feature-disable-pointer"
+ #define XENKBD_FIELD_FEAT_ABS_POINTER	"feature-abs-pointer"
++#define XENKBD_FIELD_FEAT_RAW_POINTER	"feature-raw-pointer"
+ #define XENKBD_FIELD_FEAT_MTOUCH	"feature-multi-touch"
+ #define XENKBD_FIELD_REQ_ABS_POINTER	"request-abs-pointer"
++#define XENKBD_FIELD_REQ_RAW_POINTER	"request-raw-pointer"
+ #define XENKBD_FIELD_REQ_MTOUCH		"request-multi-touch"
+ #define XENKBD_FIELD_RING_GREF		"page-gref"
+ #define XENKBD_FIELD_EVT_CHANNEL	"event-channel"
+@@ -174,6 +213,7 @@
+ #define XENKBD_FIELD_MT_WIDTH		"multi-touch-width"
+ #define XENKBD_FIELD_MT_HEIGHT		"multi-touch-height"
+ #define XENKBD_FIELD_MT_NUM_CONTACTS	"multi-touch-num-contacts"
++#define XENKBD_FIELD_UNIQUE_ID		"unique-id"
  
- 	/* keyboard */
--	kbd = input_allocate_device();
--	if (!kbd)
--		goto error_nomem;
--	kbd->name = "Xen Virtual Keyboard";
--	kbd->phys = info->phys;
--	kbd->id.bustype = BUS_PCI;
--	kbd->id.vendor = 0x5853;
--	kbd->id.product = 0xffff;
--
--	__set_bit(EV_KEY, kbd->evbit);
--	for (i = KEY_ESC; i < KEY_UNKNOWN; i++)
--		__set_bit(i, kbd->keybit);
--	for (i = KEY_OK; i < KEY_MAX; i++)
--		__set_bit(i, kbd->keybit);
--
--	ret = input_register_device(kbd);
--	if (ret) {
--		input_free_device(kbd);
--		xenbus_dev_fatal(dev, ret, "input_register_device(kbd)");
--		goto error;
-+	if (with_kbd) {
-+		kbd = input_allocate_device();
-+		if (!kbd)
-+			goto error_nomem;
-+		kbd->name = "Xen Virtual Keyboard";
-+		kbd->phys = info->phys;
-+		kbd->id.bustype = BUS_PCI;
-+		kbd->id.vendor = 0x5853;
-+		kbd->id.product = 0xffff;
-+
-+		__set_bit(EV_KEY, kbd->evbit);
-+		for (i = KEY_ESC; i < KEY_UNKNOWN; i++)
-+			__set_bit(i, kbd->keybit);
-+		for (i = KEY_OK; i < KEY_MAX; i++)
-+			__set_bit(i, kbd->keybit);
-+
-+		ret = input_register_device(kbd);
-+		if (ret) {
-+			input_free_device(kbd);
-+			xenbus_dev_fatal(dev, ret,
-+					 "input_register_device(kbd)");
-+			goto error;
-+		}
-+		info->kbd = kbd;
- 	}
--	info->kbd = kbd;
- 
- 	/* pointing device */
--	ptr = input_allocate_device();
--	if (!ptr)
--		goto error_nomem;
--	ptr->name = "Xen Virtual Pointer";
--	ptr->phys = info->phys;
--	ptr->id.bustype = BUS_PCI;
--	ptr->id.vendor = 0x5853;
--	ptr->id.product = 0xfffe;
--
--	if (abs) {
--		__set_bit(EV_ABS, ptr->evbit);
--		input_set_abs_params(ptr, ABS_X, 0, ptr_size[KPARAM_X], 0, 0);
--		input_set_abs_params(ptr, ABS_Y, 0, ptr_size[KPARAM_Y], 0, 0);
--	} else {
--		input_set_capability(ptr, EV_REL, REL_X);
--		input_set_capability(ptr, EV_REL, REL_Y);
--	}
--	input_set_capability(ptr, EV_REL, REL_WHEEL);
-+	if (with_ptr) {
-+		unsigned int abs;
-+
-+		/* Set input abs params to match backend screen res */
-+		abs = xenbus_read_unsigned(dev->otherend,
-+					   XENKBD_FIELD_FEAT_ABS_POINTER, 0);
-+		ptr_size[KPARAM_X] = xenbus_read_unsigned(dev->otherend,
-+							  XENKBD_FIELD_WIDTH,
-+							  ptr_size[KPARAM_X]);
-+		ptr_size[KPARAM_Y] = xenbus_read_unsigned(dev->otherend,
-+							  XENKBD_FIELD_HEIGHT,
-+							  ptr_size[KPARAM_Y]);
-+		if (abs) {
-+			ret = xenbus_write(XBT_NIL, dev->nodename,
-+					   XENKBD_FIELD_REQ_ABS_POINTER, "1");
-+			if (ret) {
-+				pr_warn("xenkbd: can't request abs-pointer\n");
-+				abs = 0;
-+			}
-+		}
- 
--	__set_bit(EV_KEY, ptr->evbit);
--	for (i = BTN_LEFT; i <= BTN_TASK; i++)
--		__set_bit(i, ptr->keybit);
-+		ptr = input_allocate_device();
-+		if (!ptr)
-+			goto error_nomem;
-+		ptr->name = "Xen Virtual Pointer";
-+		ptr->phys = info->phys;
-+		ptr->id.bustype = BUS_PCI;
-+		ptr->id.vendor = 0x5853;
-+		ptr->id.product = 0xfffe;
-+
-+		if (abs) {
-+			__set_bit(EV_ABS, ptr->evbit);
-+			input_set_abs_params(ptr, ABS_X, 0,
-+					     ptr_size[KPARAM_X], 0, 0);
-+			input_set_abs_params(ptr, ABS_Y, 0,
-+					     ptr_size[KPARAM_Y], 0, 0);
-+		} else {
-+			input_set_capability(ptr, EV_REL, REL_X);
-+			input_set_capability(ptr, EV_REL, REL_Y);
-+		}
-+		input_set_capability(ptr, EV_REL, REL_WHEEL);
- 
--	ret = input_register_device(ptr);
--	if (ret) {
--		input_free_device(ptr);
--		xenbus_dev_fatal(dev, ret, "input_register_device(ptr)");
--		goto error;
-+		__set_bit(EV_KEY, ptr->evbit);
-+		for (i = BTN_LEFT; i <= BTN_TASK; i++)
-+			__set_bit(i, ptr->keybit);
-+
-+		ret = input_register_device(ptr);
-+		if (ret) {
-+			input_free_device(ptr);
-+			xenbus_dev_fatal(dev, ret,
-+					 "input_register_device(ptr)");
-+			goto error;
-+		}
-+		info->ptr = ptr;
- 	}
--	info->ptr = ptr;
- 
- 	/* multi-touch device */
--	if (touch) {
-+	if (with_mtouch) {
- 		int num_cont, width, height;
- 
- 		mtouch = input_allocate_device();
-@@ -346,6 +376,11 @@ static int xenkbd_probe(struct xenbus_device *dev,
- 		info->mtouch = mtouch;
- 	}
- 
-+	if (!(with_kbd | with_ptr | with_mtouch)) {
-+		ret = -ENXIO;
-+		goto error;
-+	}
-+
- 	ret = xenkbd_connect_backend(dev, info);
- 	if (ret < 0)
- 		goto error;
+ /* OBSOLETE, not recommended for use */
+ #define XENKBD_FIELD_RING_REF		"page-ref"
+diff --git a/include/xen/interface/io/sndif.h b/include/xen/interface/io/sndif.h
+index 78bb5d9f8d83..2aac8f73614c 100644
+--- a/include/xen/interface/io/sndif.h
++++ b/include/xen/interface/io/sndif.h
+@@ -278,13 +278,11 @@
+  *      defined under the same device.
+  *
+  * unique-id
+- *      Values:         <uint32_t>
++ *      Values:         <string>
+  *
+- *      After stream initialization it is assigned a unique ID (within the front
+- *      driver), so every stream of the frontend can be identified by the
+- *      backend by this ID. This is not equal to stream-idx as the later is
+- *      zero based within the device, but this index is contigous within the
+- *      driver.
++ *      After stream initialization it is assigned a unique ID, so every
++ *      stream of the frontend can be identified by the backend by this ID.
++ *      This can be UUID or such.
+  *
+  *-------------------- Stream Request Transport Parameters --------------------
+  *
 -- 
 2.17.1
 
