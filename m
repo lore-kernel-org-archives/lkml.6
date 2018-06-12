@@ -6,896 +6,298 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 06960C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:54:06 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 897A0C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:56:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9404D208B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:54:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9404D208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 14A62208B1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:56:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14A62208B1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934139AbeFLNxy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 09:53:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37556 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933906AbeFLNxS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 09:53:18 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id F1762AE54;
-        Tue, 12 Jun 2018 13:53:16 +0000 (UTC)
-From:   Johannes Thumshirn <jthumshirn@suse.de>
-To:     "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc:     Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>,
-        Johannes Thumshirn <jthumshirn@suse.de>
-Subject: [PATCH 1/3] scsi: remove Scsi_Cmnd typedef
-Date:   Tue, 12 Jun 2018 15:53:09 +0200
-Message-Id: <20180612135311.13216-2-jthumshirn@suse.de>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180612135311.13216-1-jthumshirn@suse.de>
-References: <20180612135311.13216-1-jthumshirn@suse.de>
+        id S934010AbeFLN4T (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 09:56:19 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48020 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933550AbeFLN4P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 09:56:15 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5CDqwxB012332
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 09:56:15 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jje8avpm1-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 09:56:14 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Tue, 12 Jun 2018 14:56:12 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 12 Jun 2018 14:56:09 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5CDu74227001042
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 12 Jun 2018 13:56:07 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B3FAA5204B;
+        Tue, 12 Jun 2018 13:45:37 +0100 (BST)
+Received: from [9.152.224.92] (unknown [9.152.224.92])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 1B6BC52041;
+        Tue, 12 Jun 2018 13:45:37 +0100 (BST)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH RFC 2/2] vfio-ccw: support for halt/clear subchannel
+To:     Cornelia Huck <cohuck@redhat.com>
+Cc:     Halil Pasic <pasic@linux.ibm.com>,
+        Dong Jia Shi <bjsdjshi@linux.ibm.com>,
+        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, qemu-s390x@nongnu.org,
+        qemu-devel@nongnu.org
+References: <20180509154822.23510-1-cohuck@redhat.com>
+ <20180509154822.23510-3-cohuck@redhat.com>
+ <c18f9b9f-da00-1a0b-8ef0-7ac223c73d1a@linux.ibm.com>
+ <20180515181006.0cb1dfc2.cohuck@redhat.com>
+ <a5d08fb7-d9c1-b230-fe0c-acebbda2ba65@linux.ibm.com>
+ <20180522145208.310143ea.cohuck@redhat.com>
+ <4e4001cc-540e-0f2b-bbd1-1f82ca594bb3@linux.ibm.com>
+ <20180605151449.22aafbfc.cohuck@redhat.com>
+ <e73038ff-fb2d-5865-8b84-e775990f3983@linux.ibm.com>
+ <20180606142131.74ea2eb7.cohuck@redhat.com>
+ <5b77ec9c-41b8-2e32-ce79-d9005b93fdd0@linux.ibm.com>
+ <20180607115442.6a779ed9.cohuck@redhat.com>
+ <86d57698-3ea7-a390-2217-07c6d41ca9ed@linux.ibm.com>
+ <20180608142022.7dd6a658.cohuck@redhat.com>
+ <d68340a2-bb1b-cef9-e394-f0d55983c0bb@linux.ibm.com>
+ <20180608164514.2e8248f4.cohuck@redhat.com>
+ <99ca65a2-ee33-6353-b6b7-aa4c07a34e2a@linux.ibm.com>
+ <20180612115900.4aa319d1.cohuck@redhat.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Tue, 12 Jun 2018 15:56:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180612115900.4aa319d1.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18061213-0016-0000-0000-000001DAED63
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18061213-0017-0000-0000-0000322E2199
+Message-Id: <d5416c61-252a-5bb8-aebe-46d883e5822e@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-12_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806120159
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This will make subsequent refactoring easier to handle.
+On 12/06/2018 11:59, Cornelia Huck wrote:
+> On Fri, 8 Jun 2018 17:51:27 +0200
+> Pierre Morel <pmorel@linux.ibm.com> wrote:
+>
+>> On 08/06/2018 16:45, Cornelia Huck wrote:
+>>> On Fri, 8 Jun 2018 15:13:28 +0200
+>>> Halil Pasic <pasic@linux.ibm.com> wrote:
+>>>   
+>>>> On 06/08/2018 02:20 PM, Cornelia Huck wrote:
+>>>>>>> My proposal is to do the same
+>>>>>>> copying to scsw(r) again, which would mean we get a request with both
+>>>>>>> the halt and the start bit set. The vfio code now needs to do a hsch
+>>>>>>> (instead of a ssch). The real channel subsystem should figure this out,
+>>>>>>> as we can't reliably check whether the start function has concluded
+>>>>>>> already (there's always a race window).
+>>>>>> This I do not agree scsw(r) is part of the driver.
+>>>>>> The interface here is not a device interface anymore but a driver
+>>>>>> interface.
+>>>>>> SCSW is a status, it is at its place in QEMU device interface with the
+>>>>>> guest
+>>>>>> but here pwrite() sends a command.
+>>>>> Hm, I rather consider that "we write a status, and the backend figures
+>>>>> out what to do based on that status".
+>>>>>       
+>>>> The status of what? Kind of a target status?
+>>>>
+>>>> I think this approach is the source of lots of complications. For instance
+>>>> take xsch. How are we supposed to react to a guest xsch (in QEMU and
+>>>> in the kernel module)? My guess is that the right thing to do is to issue
+>>>> an xsch in the vfio-ccw kernel module on the passed through subchannel.
+>>>> But there is no bit in fctl for cancel.
+>>>>
+>>>> Bottom line is: I'm not happy with the current design but I'm not sure
+>>>> if it's practical to do something about it (i.e. change it radically).
+>>> It might make sense to keep this for ssch, maybe reuse it for hsch/csch,
+>> I do not think we need to change the interface radically but
+>> I also do not thing we should extend it by using multiple commands
+>> in a single syscall.
+>>
+>> Currently:
+>>     - only SSCH bit is used
+>>     - only the SSCH instruction is implemented
+>>     - all other bits, CSCH,HSCH produce an error when used alone
+>>       or are ignored in conjonction with SSCH
+>>      - there is no implementation using the other bits
+>>      - It is not specified in the documentation that multiple commands
+>>        can be used.
+> Looking at Documentation/s390/vfio-ccw.txt, it states that "scsw_area
+> should be filled with the SCSW of the Virtual Subchannel". This seems
+> to indicate that this is really intended to be a scsw... but I agree,
+> it does lack details.
+>
+>> Looking at these, I think there is no trouble to modify the way
+>> the Kernel interface is implemented without impact on current QEMU.
+>>
+>> But if we begin to allow ssch/hsch/csch in a single command
+>> in a new implementation we will be stuck with it.
+> Yes, we're currently still free to go in different directions; adding
+> support for hsch/csch to the interface in the way I did would fix it.
+> In any case, we need better documentation :/
+>
+>>> and think about something else for other things we want to handle
+>> Yes we will need to have another interface, ioctl, or new region,
+>> all possible, but really more complex.
+>>
+>>> (xsch, channel monitoring, the path handling stuff for which we already
+>> We can use another region for getting up information on path handling
+>> or monitoring, as does the patch IIRC.
+>> This is not a problem.
+> Not a problem, I agree (and yes, the patch did that).
+>
+> For xsch, I like Halil's suggestion of simply always setting cc 2.
+>
+> Channel monitoring is a difficult beast (need to pass through msch, mix
+> of virtual and passthrough devices on the machine which have different
+> semantics etc.) I put some of my concerns into
+> https://wiki.qemu.org/ToDo/Channel_I/O_Passthrough; please add to that
+> if you have further thoughts.
+>
+> We should keep those requirements in mind, even if we won't implement
+> support for it right now.
+>
+>>> had a prototype etc.) It's probably not practical to do radical surgery
+>>> on the existing code.
+>> There is no need for radical surgery, no change is required to older or
+>> current QEMU code.
+>> My concern is to avoid a future implementation merging multiple commands
+>> in a single syscall.
+>> It is not only a problem of beauty of the interface,
+>> using a status is for the up-stream, from device to program.
+>> Using the same construct, same name and same location, to produce commands
+>> for the down stream is misleading and source of incoherence.
+> OK, I think I see your concern now.
+>
+> What happens on the real hardware is that we do a ssch etc. and this
+> triggers a change that is visible in the scsw when we do a stsch.
+>
+> What happens here is that the guest doing a ssch triggers a change in
+> our virtual scsw in QEMU (so far, so good); then we send this scsw to
+> the vfio module, which looks at the scsw to figure out that it should
+> do a ssch on the host. This works fine to figure out that a ssch needs
+> to be done, and would also work for hsch and csch, but it is really a
+> bit of reverse engineering, and it would probably fail for rsch
+> (haven't thought about that yet). To parse the intention of doing a
+> halt or clear out of the scsw_area, we need to rely (a) on user space
+> doing the right thing, and (b) on us implementing the rules for which
+> function can be initiated when correctly. If we treat fctl as a simple
+> command field, we'll just do what user space asks of us directly.
+>
+> So, what are you proposing? Being more specific and stating that the
+> scsw is not necessarily a real scsw, but merely a vehicle for sending a
+> command? Or keeping it as it is now for ssch, and adding a second
+> interface for hsch/csch (and maybe rsch, msch, ...)?
+>
 
-Note: this patch is nowhere checkpatch clean.
 
-Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
----
- drivers/scsi/3w-xxxx.c           |  2 +-
- drivers/scsi/advansys.c          |  2 +-
- drivers/scsi/aha152x.c           | 71 +++++++++++++++++++++-------------------
- drivers/scsi/aha1740.c           |  9 ++---
- drivers/scsi/aha1740.h           |  4 +--
- drivers/scsi/gdth.c              | 67 +++++++++++++++++++------------------
- drivers/scsi/gdth.h              | 10 +++---
- drivers/scsi/gdth_proc.c         |  2 +-
- drivers/scsi/ibmvscsi/ibmvfc.c   |  2 +-
- drivers/scsi/ibmvscsi/ibmvscsi.c |  2 +-
- drivers/scsi/libiscsi_tcp.c      |  2 +-
- drivers/scsi/megaraid.c          | 29 ++++++++--------
- drivers/scsi/megaraid.h          | 14 ++++----
- drivers/scsi/nsp32_debug.c       |  2 +-
- drivers/scsi/scsi.h              |  3 --
- drivers/scsi/scsi_typedefs.h     |  2 --
- 16 files changed, 114 insertions(+), 109 deletions(-)
- delete mode 100644 drivers/scsi/scsi_typedefs.h
+I said no radical surgery, but after thinking more about it...
+I am not sure.
 
-diff --git a/drivers/scsi/3w-xxxx.c b/drivers/scsi/3w-xxxx.c
-index f6179e3d6953..5dd05e564760 100644
---- a/drivers/scsi/3w-xxxx.c
-+++ b/drivers/scsi/3w-xxxx.c
-@@ -1925,7 +1925,7 @@ static int tw_scsi_queue_lck(struct scsi_cmnd *SCpnt, void (*done)(struct scsi_c
- 	if (test_bit(TW_IN_RESET, &tw_dev->flags))
- 		return SCSI_MLQUEUE_HOST_BUSY;
- 
--	/* Save done function into Scsi_Cmnd struct */
-+	/* Save done function into struct scsi_cmnd struct */
- 	SCpnt->scsi_done = done;
- 		 
- 	/* Queue the command and get a request id */
-diff --git a/drivers/scsi/advansys.c b/drivers/scsi/advansys.c
-index 24e57e770432..c9a52905070e 100644
---- a/drivers/scsi/advansys.c
-+++ b/drivers/scsi/advansys.c
-@@ -8466,7 +8466,7 @@ static int AdvExeScsiQueue(ADV_DVC_VAR *asc_dvc, adv_req_t *reqp)
- }
- 
- /*
-- * Execute a single 'Scsi_Cmnd'.
-+ * Execute a single 'struct scsi_cmnd'.
-  */
- static int asc_execute_scsi_cmnd(struct scsi_cmnd *scp)
- {
-diff --git a/drivers/scsi/aha152x.c b/drivers/scsi/aha152x.c
-index bc0058df31c6..4d7b0e0adbf7 100644
---- a/drivers/scsi/aha152x.c
-+++ b/drivers/scsi/aha152x.c
-@@ -422,16 +422,16 @@ enum aha152x_state {
-  *
-  */
- struct aha152x_hostdata {
--	Scsi_Cmnd *issue_SC;
-+	struct scsi_cmnd *issue_SC;
- 		/* pending commands to issue */
- 
--	Scsi_Cmnd *current_SC;
-+	struct scsi_cmnd *current_SC;
- 		/* current command on the bus */
- 
--	Scsi_Cmnd *disconnected_SC;
-+	struct scsi_cmnd *disconnected_SC;
- 		/* commands that disconnected */
- 
--	Scsi_Cmnd *done_SC;
-+	struct scsi_cmnd *done_SC;
- 		/* command that was completed */
- 
- 	spinlock_t lock;
-@@ -510,7 +510,7 @@ struct aha152x_hostdata {
-  *
-  */
- struct aha152x_scdata {
--	Scsi_Cmnd *next;	/* next sc in queue */
-+	struct scsi_cmnd *next;	/* next sc in queue */
- 	struct completion *done;/* semaphore to block on */
- 	struct scsi_eh_save ses;
- };
-@@ -633,7 +633,7 @@ static void aha152x_error(struct Scsi_Host *shpnt, char *msg);
- static void done(struct Scsi_Host *shpnt, int error);
- 
- /* diagnostics */
--static void show_command(Scsi_Cmnd * ptr);
-+static void show_command(struct scsi_cmnd * ptr);
- static void show_queues(struct Scsi_Host *shpnt);
- static void disp_enintr(struct Scsi_Host *shpnt);
- 
-@@ -642,9 +642,9 @@ static void disp_enintr(struct Scsi_Host *shpnt);
-  *  queue services:
-  *
-  */
--static inline void append_SC(Scsi_Cmnd **SC, Scsi_Cmnd *new_SC)
-+static inline void append_SC(struct scsi_cmnd **SC, struct scsi_cmnd *new_SC)
- {
--	Scsi_Cmnd *end;
-+	struct scsi_cmnd *end;
- 
- 	SCNEXT(new_SC) = NULL;
- 	if (!*SC)
-@@ -656,9 +656,9 @@ static inline void append_SC(Scsi_Cmnd **SC, Scsi_Cmnd *new_SC)
- 	}
- }
- 
--static inline Scsi_Cmnd *remove_first_SC(Scsi_Cmnd ** SC)
-+static inline struct scsi_cmnd *remove_first_SC(struct scsi_cmnd ** SC)
- {
--	Scsi_Cmnd *ptr;
-+	struct scsi_cmnd *ptr;
- 
- 	ptr = *SC;
- 	if (ptr) {
-@@ -668,9 +668,10 @@ static inline Scsi_Cmnd *remove_first_SC(Scsi_Cmnd ** SC)
- 	return ptr;
- }
- 
--static inline Scsi_Cmnd *remove_lun_SC(Scsi_Cmnd ** SC, int target, int lun)
-+static inline struct scsi_cmnd *remove_lun_SC(struct scsi_cmnd ** SC,
-+					      int target, int lun)
- {
--	Scsi_Cmnd *ptr, *prev;
-+	struct scsi_cmnd *ptr, *prev;
- 
- 	for (ptr = *SC, prev = NULL;
- 	     ptr && ((ptr->device->id != target) || (ptr->device->lun != lun));
-@@ -689,9 +690,10 @@ static inline Scsi_Cmnd *remove_lun_SC(Scsi_Cmnd ** SC, int target, int lun)
- 	return ptr;
- }
- 
--static inline Scsi_Cmnd *remove_SC(Scsi_Cmnd **SC, Scsi_Cmnd *SCp)
-+static inline struct scsi_cmnd *remove_SC(struct scsi_cmnd **SC,
-+					  struct scsi_cmnd *SCp)
- {
--	Scsi_Cmnd *ptr, *prev;
-+	struct scsi_cmnd *ptr, *prev;
- 
- 	for (ptr = *SC, prev = NULL;
- 	     ptr && SCp!=ptr;
-@@ -912,8 +914,9 @@ static int setup_expected_interrupts(struct Scsi_Host *shpnt)
- /*
-  *  Queue a command and setup interrupts for a free bus.
-  */
--static int aha152x_internal_queue(Scsi_Cmnd *SCpnt, struct completion *complete,
--		int phase, void (*done)(Scsi_Cmnd *))
-+static int aha152x_internal_queue(struct scsi_cmnd *SCpnt,
-+				  struct completion *complete,
-+				  int phase, void (*done)(struct scsi_cmnd *))
- {
- 	struct Scsi_Host *shpnt = SCpnt->device->host;
- 	unsigned long flags;
-@@ -987,7 +990,8 @@ static int aha152x_internal_queue(Scsi_Cmnd *SCpnt, struct completion *complete,
-  *  queue a command
-  *
-  */
--static int aha152x_queue_lck(Scsi_Cmnd *SCpnt, void (*done)(Scsi_Cmnd *))
-+static int aha152x_queue_lck(struct scsi_cmnd *SCpnt,
-+			     void (*done)(struct scsi_cmnd *))
- {
- 	return aha152x_internal_queue(SCpnt, NULL, 0, done);
- }
-@@ -998,7 +1002,7 @@ static DEF_SCSI_QCMD(aha152x_queue)
- /*
-  *
-  */
--static void reset_done(Scsi_Cmnd *SCpnt)
-+static void reset_done(struct scsi_cmnd *SCpnt)
- {
- 	if(SCSEM(SCpnt)) {
- 		complete(SCSEM(SCpnt));
-@@ -1011,10 +1015,10 @@ static void reset_done(Scsi_Cmnd *SCpnt)
-  *  Abort a command
-  *
-  */
--static int aha152x_abort(Scsi_Cmnd *SCpnt)
-+static int aha152x_abort(struct scsi_cmnd *SCpnt)
- {
- 	struct Scsi_Host *shpnt = SCpnt->device->host;
--	Scsi_Cmnd *ptr;
-+	struct scsi_cmnd *ptr;
- 	unsigned long flags;
- 
- 	DO_LOCK(flags);
-@@ -1052,7 +1056,7 @@ static int aha152x_abort(Scsi_Cmnd *SCpnt)
-  * Reset a device
-  *
-  */
--static int aha152x_device_reset(Scsi_Cmnd * SCpnt)
-+static int aha152x_device_reset(struct scsi_cmnd * SCpnt)
- {
- 	struct Scsi_Host *shpnt = SCpnt->device->host;
- 	DECLARE_COMPLETION(done);
-@@ -1110,13 +1114,14 @@ static int aha152x_device_reset(Scsi_Cmnd * SCpnt)
- 	return ret;
- }
- 
--static void free_hard_reset_SCs(struct Scsi_Host *shpnt, Scsi_Cmnd **SCs)
-+static void free_hard_reset_SCs(struct Scsi_Host *shpnt,
-+				struct scsi_cmnd **SCs)
- {
--	Scsi_Cmnd *ptr;
-+	struct scsi_cmnd *ptr;
- 
- 	ptr=*SCs;
- 	while(ptr) {
--		Scsi_Cmnd *next;
-+		struct scsi_cmnd *next;
- 
- 		if(SCDATA(ptr)) {
- 			next = SCNEXT(ptr);
-@@ -1171,7 +1176,7 @@ static int aha152x_bus_reset_host(struct Scsi_Host *shpnt)
-  * Reset the bus
-  *
-  */
--static int aha152x_bus_reset(Scsi_Cmnd *SCpnt)
-+static int aha152x_bus_reset(struct scsi_cmnd *SCpnt)
- {
- 	return aha152x_bus_reset_host(SCpnt->device->host);
- }
-@@ -1436,7 +1441,7 @@ static void busfree_run(struct Scsi_Host *shpnt)
- 
- 			if(!(DONE_SC->SCp.phase & not_issued)) {
- 				struct aha152x_scdata *sc;
--				Scsi_Cmnd *ptr = DONE_SC;
-+				struct scsi_cmnd *ptr = DONE_SC;
- 				DONE_SC=NULL;
- 
- 				sc = SCDATA(ptr);
-@@ -1451,7 +1456,7 @@ static void busfree_run(struct Scsi_Host *shpnt)
- 		}
- 
- 		if(DONE_SC && DONE_SC->scsi_done) {
--			Scsi_Cmnd *ptr = DONE_SC;
-+			struct scsi_cmnd *ptr = DONE_SC;
- 			DONE_SC=NULL;
- 
- 			/* turn led off, when no commands are in the driver */
-@@ -2247,13 +2252,13 @@ static void parerr_run(struct Scsi_Host *shpnt)
-  */
- static void rsti_run(struct Scsi_Host *shpnt)
- {
--	Scsi_Cmnd *ptr;
-+	struct scsi_cmnd *ptr;
- 
- 	shost_printk(KERN_NOTICE, shpnt, "scsi reset in\n");
- 
- 	ptr=DISCONNECTED_SC;
- 	while(ptr) {
--		Scsi_Cmnd *next = SCNEXT(ptr);
-+		struct scsi_cmnd *next = SCNEXT(ptr);
- 
- 		if (!ptr->device->soft_reset) {
- 			remove_SC(&DISCONNECTED_SC, ptr);
-@@ -2438,7 +2443,7 @@ static void disp_enintr(struct Scsi_Host *shpnt)
- /*
-  * Show the command data of a command
-  */
--static void show_command(Scsi_Cmnd *ptr)
-+static void show_command(struct scsi_cmnd *ptr)
- {
- 	scsi_print_command(ptr);
- 	scmd_printk(KERN_DEBUG, ptr,
-@@ -2462,7 +2467,7 @@ static void show_command(Scsi_Cmnd *ptr)
-  */
- static void show_queues(struct Scsi_Host *shpnt)
- {
--	Scsi_Cmnd *ptr;
-+	struct scsi_cmnd *ptr;
- 	unsigned long flags;
- 
- 	DO_LOCK(flags);
-@@ -2484,7 +2489,7 @@ static void show_queues(struct Scsi_Host *shpnt)
- 	disp_enintr(shpnt);
- }
- 
--static void get_command(struct seq_file *m, Scsi_Cmnd * ptr)
-+static void get_command(struct seq_file *m, struct scsi_cmnd * ptr)
- {
- 	int i;
- 
-@@ -2813,7 +2818,7 @@ static int aha152x_set_info(struct Scsi_Host *shpnt, char *buffer, int length)
- static int aha152x_show_info(struct seq_file *m, struct Scsi_Host *shpnt)
- {
- 	int i;
--	Scsi_Cmnd *ptr;
-+	struct scsi_cmnd *ptr;
- 	unsigned long flags;
- 
- 	seq_puts(m, AHA152X_REVID "\n");
-diff --git a/drivers/scsi/aha1740.c b/drivers/scsi/aha1740.c
-index b48d5436f094..786bf7f32c64 100644
---- a/drivers/scsi/aha1740.c
-+++ b/drivers/scsi/aha1740.c
-@@ -207,11 +207,11 @@ static int aha1740_test_port(unsigned int base)
- static irqreturn_t aha1740_intr_handle(int irq, void *dev_id)
- {
- 	struct Scsi_Host *host = (struct Scsi_Host *) dev_id;
--        void (*my_done)(Scsi_Cmnd *);
-+        void (*my_done)(struct scsi_cmnd *);
- 	int errstatus, adapstat;
- 	int number_serviced;
- 	struct ecb *ecbptr;
--	Scsi_Cmnd *SCtmp;
-+	struct scsi_cmnd *SCtmp;
- 	unsigned int base;
- 	unsigned long flags;
- 	int handled = 0;
-@@ -311,7 +311,8 @@ static irqreturn_t aha1740_intr_handle(int irq, void *dev_id)
- 	return IRQ_RETVAL(handled);
- }
- 
--static int aha1740_queuecommand_lck(Scsi_Cmnd * SCpnt, void (*done)(Scsi_Cmnd *))
-+static int aha1740_queuecommand_lck(struct scsi_cmnd * SCpnt,
-+				    void (*done)(struct scsi_cmnd *))
- {
- 	unchar direction;
- 	unchar *cmd = (unchar *) SCpnt->cmnd;
-@@ -520,7 +521,7 @@ static int aha1740_biosparam(struct scsi_device *sdev,
- 	return 0;
- }
- 
--static int aha1740_eh_abort_handler (Scsi_Cmnd *dummy)
-+static int aha1740_eh_abort_handler (struct scsi_cmnd *dummy)
- {
- /*
-  * From Alan Cox :
-diff --git a/drivers/scsi/aha1740.h b/drivers/scsi/aha1740.h
-index dfdaa4d3ea4e..6eeed6da0b54 100644
---- a/drivers/scsi/aha1740.h
-+++ b/drivers/scsi/aha1740.h
-@@ -135,8 +135,8 @@ struct ecb {			/* Enhanced Control Block 6.1 */
- /* Hardware defined portion ends here, rest is driver defined */
- 	u8 sense[MAX_SENSE];	/* Sense area */
- 	u8 status[MAX_STATUS];	/* Status area */
--	Scsi_Cmnd *SCpnt;	/* Link to the SCSI Command Block */
--	void (*done) (Scsi_Cmnd *);	/* Completion Function */
-+	struct scsi_cmnd *SCpnt;	/* Link to the SCSI Command Block */
-+	void (*done) (struct scsi_cmnd *);	/* Completion Function */
- };
- 
- #define	AHA1740CMD_NOP	 0x00	/* No OP */
-diff --git a/drivers/scsi/gdth.c b/drivers/scsi/gdth.c
-index 85604795d8ee..16709735b546 100644
---- a/drivers/scsi/gdth.c
-+++ b/drivers/scsi/gdth.c
-@@ -146,14 +146,14 @@ static irqreturn_t gdth_interrupt(int irq, void *dev_id);
- static irqreturn_t __gdth_interrupt(gdth_ha_str *ha,
-                                     int gdth_from_wait, int* pIndex);
- static int gdth_sync_event(gdth_ha_str *ha, int service, u8 index,
--                                                               Scsi_Cmnd *scp);
-+                                                               struct scsi_cmnd *scp);
- static int gdth_async_event(gdth_ha_str *ha);
- static void gdth_log_event(gdth_evt_data *dvr, char *buffer);
- 
--static void gdth_putq(gdth_ha_str *ha, Scsi_Cmnd *scp, u8 priority);
-+static void gdth_putq(gdth_ha_str *ha, struct scsi_cmnd *scp, u8 priority);
- static void gdth_next(gdth_ha_str *ha);
--static int gdth_fill_raw_cmd(gdth_ha_str *ha, Scsi_Cmnd *scp, u8 b);
--static int gdth_special_cmd(gdth_ha_str *ha, Scsi_Cmnd *scp);
-+static int gdth_fill_raw_cmd(gdth_ha_str *ha, struct scsi_cmnd *scp, u8 b);
-+static int gdth_special_cmd(gdth_ha_str *ha, struct scsi_cmnd *scp);
- static gdth_evt_str *gdth_store_event(gdth_ha_str *ha, u16 source,
-                                       u16 idx, gdth_evt_data *evt);
- static int gdth_read_event(gdth_ha_str *ha, int handle, gdth_evt_str *estr);
-@@ -161,10 +161,11 @@ static void gdth_readapp_event(gdth_ha_str *ha, u8 application,
-                                gdth_evt_str *estr);
- static void gdth_clear_events(void);
- 
--static void gdth_copy_internal_data(gdth_ha_str *ha, Scsi_Cmnd *scp,
-+static void gdth_copy_internal_data(gdth_ha_str *ha, struct scsi_cmnd *scp,
-                                     char *buffer, u16 count);
--static int gdth_internal_cache_cmd(gdth_ha_str *ha, Scsi_Cmnd *scp);
--static int gdth_fill_cache_cmd(gdth_ha_str *ha, Scsi_Cmnd *scp, u16 hdrive);
-+static int gdth_internal_cache_cmd(gdth_ha_str *ha, struct scsi_cmnd *scp);
-+static int gdth_fill_cache_cmd(gdth_ha_str *ha, struct scsi_cmnd *scp,
-+			       u16 hdrive);
- 
- static void gdth_enable_int(gdth_ha_str *ha);
- static int gdth_test_busy(gdth_ha_str *ha);
-@@ -446,7 +447,7 @@ int __gdth_execute(struct scsi_device *sdev, gdth_cmd_str *gdtcmd, char *cmnd,
-                    int timeout, u32 *info)
- {
-     gdth_ha_str *ha = shost_priv(sdev->host);
--    Scsi_Cmnd *scp;
-+    struct scsi_cmnd *scp;
-     struct gdth_cmndinfo cmndinfo;
-     DECLARE_COMPLETION_ONSTACK(wait);
-     int rval;
-@@ -1982,11 +1983,11 @@ static int gdth_analyse_hdrive(gdth_ha_str *ha, u16 hdrive)
- 
- /* command queueing/sending functions */
- 
--static void gdth_putq(gdth_ha_str *ha, Scsi_Cmnd *scp, u8 priority)
-+static void gdth_putq(gdth_ha_str *ha, struct scsi_cmnd *scp, u8 priority)
- {
-     struct gdth_cmndinfo *cmndinfo = gdth_cmnd_priv(scp);
--    register Scsi_Cmnd *pscp;
--    register Scsi_Cmnd *nscp;
-+    register struct scsi_cmnd *pscp;
-+    register struct scsi_cmnd *nscp;
-     unsigned long flags;
- 
-     TRACE(("gdth_putq() priority %d\n",priority));
-@@ -2000,11 +2001,11 @@ static void gdth_putq(gdth_ha_str *ha, Scsi_Cmnd *scp, u8 priority)
-         scp->SCp.ptr = NULL;
-     } else {                                    /* queue not empty */
-         pscp = ha->req_first;
--        nscp = (Scsi_Cmnd *)pscp->SCp.ptr;
-+        nscp = (struct scsi_cmnd *)pscp->SCp.ptr;
-         /* priority: 0-highest,..,0xff-lowest */
-         while (nscp && gdth_cmnd_priv(nscp)->priority <= priority) {
-             pscp = nscp;
--            nscp = (Scsi_Cmnd *)pscp->SCp.ptr;
-+            nscp = (struct scsi_cmnd *)pscp->SCp.ptr;
-         }
-         pscp->SCp.ptr = (char *)scp;
-         scp->SCp.ptr  = (char *)nscp;
-@@ -2013,7 +2014,7 @@ static void gdth_putq(gdth_ha_str *ha, Scsi_Cmnd *scp, u8 priority)
- 
- #ifdef GDTH_STATISTICS
-     flags = 0;
--    for (nscp=ha->req_first; nscp; nscp=(Scsi_Cmnd*)nscp->SCp.ptr)
-+    for (nscp=ha->req_first; nscp; nscp=(struct scsi_cmnd*)nscp->SCp.ptr)
-         ++flags;
-     if (max_rq < flags) {
-         max_rq = flags;
-@@ -2024,8 +2025,8 @@ static void gdth_putq(gdth_ha_str *ha, Scsi_Cmnd *scp, u8 priority)
- 
- static void gdth_next(gdth_ha_str *ha)
- {
--    register Scsi_Cmnd *pscp;
--    register Scsi_Cmnd *nscp;
-+    register struct scsi_cmnd *pscp;
-+    register struct scsi_cmnd *nscp;
-     u8 b, t, l, firsttime;
-     u8 this_cmd, next_cmd;
-     unsigned long flags = 0;
-@@ -2040,10 +2041,10 @@ static void gdth_next(gdth_ha_str *ha)
-     next_cmd = gdth_polling ? FALSE:TRUE;
-     cmd_index = 0;
- 
--    for (nscp = pscp = ha->req_first; nscp; nscp = (Scsi_Cmnd *)nscp->SCp.ptr) {
-+    for (nscp = pscp = ha->req_first; nscp; nscp = (struct scsi_cmnd *)nscp->SCp.ptr) {
-         struct gdth_cmndinfo *nscp_cmndinfo = gdth_cmnd_priv(nscp);
--        if (nscp != pscp && nscp != (Scsi_Cmnd *)pscp->SCp.ptr)
--            pscp = (Scsi_Cmnd *)pscp->SCp.ptr;
-+        if (nscp != pscp && nscp != (struct scsi_cmnd *)pscp->SCp.ptr)
-+            pscp = (struct scsi_cmnd *)pscp->SCp.ptr;
-         if (!nscp_cmndinfo->internal_command) {
-             b = nscp->device->channel;
-             t = nscp->device->id;
-@@ -2250,7 +2251,7 @@ static void gdth_next(gdth_ha_str *ha)
-         if (!this_cmd)
-             break;
-         if (nscp == ha->req_first)
--            ha->req_first = pscp = (Scsi_Cmnd *)nscp->SCp.ptr;
-+            ha->req_first = pscp = (struct scsi_cmnd *)nscp->SCp.ptr;
-         else
-             pscp->SCp.ptr = nscp->SCp.ptr;
-         if (!next_cmd)
-@@ -2275,7 +2276,7 @@ static void gdth_next(gdth_ha_str *ha)
-  * gdth_copy_internal_data() - copy to/from a buffer onto a scsi_cmnd's
-  * buffers, kmap_atomic() as needed.
-  */
--static void gdth_copy_internal_data(gdth_ha_str *ha, Scsi_Cmnd *scp,
-+static void gdth_copy_internal_data(gdth_ha_str *ha, struct scsi_cmnd *scp,
-                                     char *buffer, u16 count)
- {
-     u16 cpcount,i, max_sg = scsi_sg_count(scp);
-@@ -2317,7 +2318,7 @@ static void gdth_copy_internal_data(gdth_ha_str *ha, Scsi_Cmnd *scp,
-     }
- }
- 
--static int gdth_internal_cache_cmd(gdth_ha_str *ha, Scsi_Cmnd *scp)
-+static int gdth_internal_cache_cmd(gdth_ha_str *ha, struct scsi_cmnd *scp)
- {
-     u8 t;
-     gdth_inq_data inq;
-@@ -2419,7 +2420,8 @@ static int gdth_internal_cache_cmd(gdth_ha_str *ha, Scsi_Cmnd *scp)
-     return 0;
- }
- 
--static int gdth_fill_cache_cmd(gdth_ha_str *ha, Scsi_Cmnd *scp, u16 hdrive)
-+static int gdth_fill_cache_cmd(gdth_ha_str *ha, struct scsi_cmnd *scp,
-+                               u16 hdrive)
- {
-     register gdth_cmd_str *cmdp;
-     struct gdth_cmndinfo *cmndinfo = gdth_cmnd_priv(scp);
-@@ -2594,7 +2596,7 @@ static int gdth_fill_cache_cmd(gdth_ha_str *ha, Scsi_Cmnd *scp, u16 hdrive)
-     return cmd_index;
- }
- 
--static int gdth_fill_raw_cmd(gdth_ha_str *ha, Scsi_Cmnd *scp, u8 b)
-+static int gdth_fill_raw_cmd(gdth_ha_str *ha, struct scsi_cmnd *scp, u8 b)
- {
-     register gdth_cmd_str *cmdp;
-     u16 i;
-@@ -2767,7 +2769,7 @@ static int gdth_fill_raw_cmd(gdth_ha_str *ha, Scsi_Cmnd *scp, u8 b)
-     return cmd_index;
- }
- 
--static int gdth_special_cmd(gdth_ha_str *ha, Scsi_Cmnd *scp)
-+static int gdth_special_cmd(gdth_ha_str *ha, struct scsi_cmnd *scp)
- {
-     register gdth_cmd_str *cmdp;
-     struct gdth_cmndinfo *cmndinfo = gdth_cmnd_priv(scp);
-@@ -2958,7 +2960,7 @@ static irqreturn_t __gdth_interrupt(gdth_ha_str *ha,
-     gdt6m_dpram_str __iomem *dp6m_ptr = NULL;
-     gdt6_dpram_str __iomem *dp6_ptr;
-     gdt2_dpram_str __iomem *dp2_ptr;
--    Scsi_Cmnd *scp;
-+    struct scsi_cmnd *scp;
-     int rval, i;
-     u8 IStatus;
-     u16 Service;
-@@ -3217,7 +3219,7 @@ static irqreturn_t gdth_interrupt(int irq, void *dev_id)
- }
- 
- static int gdth_sync_event(gdth_ha_str *ha, int service, u8 index,
--                                                              Scsi_Cmnd *scp)
-+                                                              struct scsi_cmnd *scp)
- {
-     gdth_msg_str *msg;
-     gdth_cmd_str *cmdp;
-@@ -3708,7 +3710,7 @@ static u8	gdth_timer_running;
- static void gdth_timeout(struct timer_list *unused)
- {
-     u32 i;
--    Scsi_Cmnd *nscp;
-+    struct scsi_cmnd *nscp;
-     gdth_ha_str *ha;
-     unsigned long flags;
- 
-@@ -3724,7 +3726,8 @@ static void gdth_timeout(struct timer_list *unused)
-         if (ha->cmd_tab[i].cmnd != UNUSED_CMND)
-             ++act_stats;
- 
--    for (act_rq=0,nscp=ha->req_first; nscp; nscp=(Scsi_Cmnd*)nscp->SCp.ptr)
-+    for (act_rq=0,
-+         nscp=ha->req_first; nscp; nscp=(struct scsi_cmnd*)nscp->SCp.ptr)
-         ++act_rq;
- 
-     TRACE2(("gdth_to(): ints %d, ios %d, act_stats %d, act_rq %d\n",
-@@ -3909,12 +3912,12 @@ static enum blk_eh_timer_return gdth_timed_out(struct scsi_cmnd *scp)
- }
- 
- 
--static int gdth_eh_bus_reset(Scsi_Cmnd *scp)
-+static int gdth_eh_bus_reset(struct scsi_cmnd *scp)
- {
-     gdth_ha_str *ha = shost_priv(scp->device->host);
-     int i;
-     unsigned long flags;
--    Scsi_Cmnd *cmnd;
-+    struct scsi_cmnd *cmnd;
-     u8 b;
- 
-     TRACE2(("gdth_eh_bus_reset()\n"));
-@@ -4465,7 +4468,7 @@ static int ioc_rescan(void __user *arg, char *cmnd)
- static int gdth_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- {
-     gdth_ha_str *ha; 
--    Scsi_Cmnd *scp;
-+    struct scsi_cmnd *scp;
-     unsigned long flags;
-     char cmnd[MAX_COMMAND_SIZE];   
-     void __user *argp = (void __user *)arg;
-diff --git a/drivers/scsi/gdth.h b/drivers/scsi/gdth.h
-index e6e5ccb1e0f3..ee6ffcf388e8 100644
---- a/drivers/scsi/gdth.h
-+++ b/drivers/scsi/gdth.h
-@@ -162,9 +162,9 @@
- #define BIGSECS         63                      /* mapping 255*63 */
- 
- /* special command ptr. */
--#define UNUSED_CMND     ((Scsi_Cmnd *)-1)
--#define INTERNAL_CMND   ((Scsi_Cmnd *)-2)
--#define SCREEN_CMND     ((Scsi_Cmnd *)-3)
-+#define UNUSED_CMND     ((struct scsi_cmnd *)-1)
-+#define INTERNAL_CMND   ((struct scsi_cmnd *)-2)
-+#define SCREEN_CMND     ((struct scsi_cmnd *)-3)
- #define SPECIAL_SCP(p)  (p==UNUSED_CMND || p==INTERNAL_CMND || p==SCREEN_CMND)
- 
- /* controller services */
-@@ -867,7 +867,7 @@ typedef struct {
-     u16              service;                /* service/firmware ver./.. */
-     u32             info;
-     u32             info2;                  /* additional info */
--    Scsi_Cmnd           *req_first;             /* top of request queue */
-+    struct scsi_cmnd           *req_first;             /* top of request queue */
-     struct {
-         u8          present;                /* Flag: host drive present? */
-         u8          is_logdrv;              /* Flag: log. drive (master)? */
-@@ -896,7 +896,7 @@ typedef struct {
-         u32         id_list[MAXID];         /* IDs of the phys. devices */
-     } raw[MAXBUS];                              /* SCSI channels */
-     struct {
--        Scsi_Cmnd       *cmnd;                  /* pending request */
-+        struct scsi_cmnd       *cmnd;                  /* pending request */
-         u16          service;                /* service */
-     } cmd_tab[GDTH_MAXCMDS];                    /* table of pend. requests */
-     struct gdth_cmndinfo {                      /* per-command private info */
-diff --git a/drivers/scsi/gdth_proc.c b/drivers/scsi/gdth_proc.c
-index 20add49cdd32..3a9751a80225 100644
---- a/drivers/scsi/gdth_proc.c
-+++ b/drivers/scsi/gdth_proc.c
-@@ -626,7 +626,7 @@ static void gdth_wait_completion(gdth_ha_str *ha, int busnum, int id)
- {
-     unsigned long flags;
-     int i;
--    Scsi_Cmnd *scp;
-+    struct scsi_cmnd *scp;
-     struct gdth_cmndinfo *cmndinfo;
-     u8 b, t;
- 
-diff --git a/drivers/scsi/ibmvscsi/ibmvfc.c b/drivers/scsi/ibmvscsi/ibmvfc.c
-index daefe8172b04..b64ca977825d 100644
---- a/drivers/scsi/ibmvscsi/ibmvfc.c
-+++ b/drivers/scsi/ibmvscsi/ibmvfc.c
-@@ -1322,7 +1322,7 @@ static void ibmvfc_map_sg_list(struct scsi_cmnd *scmd, int nseg,
- 
- /**
-  * ibmvfc_map_sg_data - Maps dma for a scatterlist and initializes decriptor fields
-- * @scmd:		Scsi_Cmnd with the scatterlist
-+ * @scmd:		struct scsi_cmnd with the scatterlist
-  * @evt:		ibmvfc event struct
-  * @vfc_cmd:	vfc_cmd that contains the memory descriptor
-  * @dev:		device for which to map dma memory
-diff --git a/drivers/scsi/ibmvscsi/ibmvscsi.c b/drivers/scsi/ibmvscsi/ibmvscsi.c
-index 17df76f0be3c..44916282ebd4 100644
---- a/drivers/scsi/ibmvscsi/ibmvscsi.c
-+++ b/drivers/scsi/ibmvscsi/ibmvscsi.c
-@@ -681,7 +681,7 @@ static int map_sg_list(struct scsi_cmnd *cmd, int nseg,
- 
- /**
-  * map_sg_data: - Maps dma for a scatterlist and initializes decriptor fields
-- * @cmd:	Scsi_Cmnd with the scatterlist
-+ * @cmd:	struct scsi_cmnd with the scatterlist
-  * @srp_cmd:	srp_cmd that contains the memory descriptor
-  * @dev:	device for which to map dma memory
-  *
-diff --git a/drivers/scsi/libiscsi_tcp.c b/drivers/scsi/libiscsi_tcp.c
-index 369ef8f23b24..4fcb9e65be57 100644
---- a/drivers/scsi/libiscsi_tcp.c
-+++ b/drivers/scsi/libiscsi_tcp.c
-@@ -695,7 +695,7 @@ iscsi_tcp_hdr_dissect(struct iscsi_conn *conn, struct iscsi_hdr *hdr)
- 			struct scsi_data_buffer *sdb = scsi_in(task->sc);
- 
- 			/*
--			 * Setup copy of Data-In into the Scsi_Cmnd
-+			 * Setup copy of Data-In into the struct scsi_cmnd
- 			 * Scatterlist case:
- 			 * We set up the iscsi_segment to point to the next
- 			 * scatterlist entry to copy to. As we go along,
-diff --git a/drivers/scsi/megaraid.c b/drivers/scsi/megaraid.c
-index 3b3767e240d8..2865e442c7ff 100644
---- a/drivers/scsi/megaraid.c
-+++ b/drivers/scsi/megaraid.c
-@@ -371,7 +371,7 @@ mega_runpendq(adapter_t *adapter)
-  * The command queuing entry point for the mid-layer.
-  */
- static int
--megaraid_queue_lck(Scsi_Cmnd *scmd, void (*done)(Scsi_Cmnd *))
-+megaraid_queue_lck(struct scsi_cmnd *scmd, void (*done)(struct scsi_cmnd *))
- {
- 	adapter_t	*adapter;
- 	scb_t	*scb;
-@@ -425,7 +425,7 @@ static DEF_SCSI_QCMD(megaraid_queue)
-  * commands.
-  */
- static inline scb_t *
--mega_allocate_scb(adapter_t *adapter, Scsi_Cmnd *cmd)
-+mega_allocate_scb(adapter_t *adapter, struct scsi_cmnd *cmd)
- {
- 	struct list_head *head = &adapter->free_list;
- 	scb_t	*scb;
-@@ -457,7 +457,7 @@ mega_allocate_scb(adapter_t *adapter, Scsi_Cmnd *cmd)
-  * and the channel number.
-  */
- static inline int
--mega_get_ldrv_num(adapter_t *adapter, Scsi_Cmnd *cmd, int channel)
-+mega_get_ldrv_num(adapter_t *adapter, struct scsi_cmnd *cmd, int channel)
- {
- 	int		tgt;
- 	int		ldrv_num;
-@@ -520,7 +520,7 @@ mega_get_ldrv_num(adapter_t *adapter, Scsi_Cmnd *cmd, int channel)
-  * boot settings.
-  */
- static scb_t *
--mega_build_cmd(adapter_t *adapter, Scsi_Cmnd *cmd, int *busy)
-+mega_build_cmd(adapter_t *adapter, struct scsi_cmnd *cmd, int *busy)
- {
- 	mega_ext_passthru	*epthru;
- 	mega_passthru	*pthru;
-@@ -951,8 +951,8 @@ mega_build_cmd(adapter_t *adapter, Scsi_Cmnd *cmd, int *busy)
-  * prepare a command for the scsi physical devices.
-  */
- static mega_passthru *
--mega_prepare_passthru(adapter_t *adapter, scb_t *scb, Scsi_Cmnd *cmd,
--		int channel, int target)
-+mega_prepare_passthru(adapter_t *adapter, scb_t *scb, struct scsi_cmnd *cmd,
-+		      int channel, int target)
- {
- 	mega_passthru *pthru;
- 
-@@ -1015,8 +1015,9 @@ mega_prepare_passthru(adapter_t *adapter, scb_t *scb, Scsi_Cmnd *cmd,
-  * commands for devices which can take extended CDBs (>10 bytes)
-  */
- static mega_ext_passthru *
--mega_prepare_extpassthru(adapter_t *adapter, scb_t *scb, Scsi_Cmnd *cmd,
--		int channel, int target)
-+mega_prepare_extpassthru(adapter_t *adapter, scb_t *scb,
-+			 struct scsi_cmnd *cmd,
-+			 int channel, int target)
- {
- 	mega_ext_passthru	*epthru;
- 
-@@ -1417,7 +1418,7 @@ mega_cmd_done(adapter_t *adapter, u8 completed[], int nstatus, int status)
- {
- 	mega_ext_passthru	*epthru = NULL;
- 	struct scatterlist	*sgl;
--	Scsi_Cmnd	*cmd = NULL;
-+	struct scsi_cmnd	*cmd = NULL;
- 	mega_passthru	*pthru = NULL;
- 	mbox_t	*mbox = NULL;
- 	u8	c;
-@@ -1652,14 +1653,14 @@ mega_cmd_done(adapter_t *adapter, u8 completed[], int nstatus, int status)
- static void
- mega_rundoneq (adapter_t *adapter)
- {
--	Scsi_Cmnd *cmd;
-+	struct scsi_cmnd *cmd;
- 	struct list_head *pos;
- 
- 	list_for_each(pos, &adapter->completed_list) {
- 
- 		struct scsi_pointer* spos = (struct scsi_pointer *)pos;
- 
--		cmd = list_entry(spos, Scsi_Cmnd, SCp);
-+		cmd = list_entry(spos, struct scsi_cmnd, SCp);
- 		cmd->scsi_done(cmd);
- 	}
- 
-@@ -1722,7 +1723,7 @@ static int
- mega_build_sglist(adapter_t *adapter, scb_t *scb, u32 *buf, u32 *len)
- {
- 	struct scatterlist *sg;
--	Scsi_Cmnd	*cmd;
-+	struct scsi_cmnd	*cmd;
- 	int	sgcnt;
- 	int	idx;
- 
-@@ -1869,7 +1870,7 @@ megaraid_info(struct Scsi_Host *host)
-  * aborted. All the commands issued to the F/W must complete.
-  */
- static int
--megaraid_abort(Scsi_Cmnd *cmd)
-+megaraid_abort(struct scsi_cmnd *cmd)
- {
- 	adapter_t	*adapter;
- 	int		rval;
-@@ -1933,7 +1934,7 @@ megaraid_reset(struct scsi_cmnd *cmd)
-  * issued to the controller, abort/reset it. Otherwise return failure
-  */
- static int
--megaraid_abort_and_reset(adapter_t *adapter, Scsi_Cmnd *cmd, int aor)
-+megaraid_abort_and_reset(adapter_t *adapter, struct scsi_cmnd *cmd, int aor)
- {
- 	struct list_head	*pos, *next;
- 	scb_t			*scb;
-diff --git a/drivers/scsi/megaraid.h b/drivers/scsi/megaraid.h
-index 18e85d9267ff..cce23a086fbe 100644
---- a/drivers/scsi/megaraid.h
-+++ b/drivers/scsi/megaraid.h
-@@ -191,7 +191,7 @@ typedef struct {
- 	u32	dma_type;
- 	u32	dma_direction;
- 
--	Scsi_Cmnd	*cmd;
-+	struct scsi_cmnd	*cmd;
- 	dma_addr_t	dma_h_bulkdata;
- 	dma_addr_t	dma_h_sgdata;
- 
-@@ -942,7 +942,7 @@ static int issue_scb(adapter_t *, scb_t *);
- static int mega_setup_mailbox(adapter_t *);
- 
- static int megaraid_queue (struct Scsi_Host *, struct scsi_cmnd *);
--static scb_t * mega_build_cmd(adapter_t *, Scsi_Cmnd *, int *);
-+static scb_t * mega_build_cmd(adapter_t *, struct scsi_cmnd *, int *);
- static void __mega_runpendq(adapter_t *);
- static int issue_scb_block(adapter_t *, u_char *);
- 
-@@ -951,9 +951,9 @@ static irqreturn_t megaraid_isr_iomapped(int, void *);
- 
- static void mega_free_scb(adapter_t *, scb_t *);
- 
--static int megaraid_abort(Scsi_Cmnd *);
--static int megaraid_reset(Scsi_Cmnd *);
--static int megaraid_abort_and_reset(adapter_t *, Scsi_Cmnd *, int);
-+static int megaraid_abort(struct scsi_cmnd *);
-+static int megaraid_reset(struct scsi_cmnd *);
-+static int megaraid_abort_and_reset(adapter_t *, struct scsi_cmnd *, int);
- static int megaraid_biosparam(struct scsi_device *, struct block_device *,
- 		sector_t, int []);
- 
-@@ -983,9 +983,9 @@ static int mega_internal_dev_inquiry(adapter_t *, u8, u8, dma_addr_t);
- 
- static int mega_support_ext_cdb(adapter_t *);
- static mega_passthru* mega_prepare_passthru(adapter_t *, scb_t *,
--		Scsi_Cmnd *, int, int);
-+		struct scsi_cmnd *, int, int);
- static mega_ext_passthru* mega_prepare_extpassthru(adapter_t *,
--		scb_t *, Scsi_Cmnd *, int, int);
-+		scb_t *, struct scsi_cmnd *, int, int);
- static void mega_enum_raid_scsi(adapter_t *);
- static void mega_get_boot_drv(adapter_t *);
- static int mega_support_random_del(adapter_t *);
-diff --git a/drivers/scsi/nsp32_debug.c b/drivers/scsi/nsp32_debug.c
-index 58806f432a16..4f1d4bf9c775 100644
---- a/drivers/scsi/nsp32_debug.c
-+++ b/drivers/scsi/nsp32_debug.c
-@@ -137,7 +137,7 @@ static void print_commandk (unsigned char *command)
- 	printk("\n");
- }
- 
--static void show_command(Scsi_Cmnd *SCpnt)
-+static void show_command(struct scsi_cmnd *SCpnt)
- {
- 	print_commandk(SCpnt->cmnd);
- }
-diff --git a/drivers/scsi/scsi.h b/drivers/scsi/scsi.h
-index 6dcc4c685d1d..4fd75a3aff66 100644
---- a/drivers/scsi/scsi.h
-+++ b/drivers/scsi/scsi.h
-@@ -43,7 +43,4 @@ struct scsi_device;
- struct scsi_target;
- struct scatterlist;
- 
--/* obsolete typedef junk. */
--#include "scsi_typedefs.h"
--
- #endif /* _SCSI_H */
-diff --git a/drivers/scsi/scsi_typedefs.h b/drivers/scsi/scsi_typedefs.h
-deleted file mode 100644
-index 2ed4c5cb7088..000000000000
---- a/drivers/scsi/scsi_typedefs.h
-+++ /dev/null
-@@ -1,2 +0,0 @@
--
--typedef struct scsi_cmnd Scsi_Cmnd;
+Let's explain this:
+
+I see 2 ways to proceed but my favorite is definitively to introduce 
+versioning.
+
+
+Way 1)
+
+This was the way I first thought about.
+We keep the existing IO Regionand structures, and are more
+specific by stating that the io_region is a command region during write
+entry and a status region during interrupt handling:
+This allow us to use the 3 bits of the FCTL field of the SCSW to pass
+commands to the kernel and stay backward compatible.
+The FCTL field has 3 bits => we can have 8 commands.
+
+PRO: small change
+
+CONTRA: This is still confusing, we do not really solve this
+         unclarity problem since QEMU view / documentation and
+         Linux view / documentation differ or we update QEMU.
+         Moreover this does not allow for long term extensions
+         and/or re-design.
+
+
+
+Way 2)
+
+We use the device VFIO versioning using the capability chain to advertise
+a new interface.
+
+This the preferred way, it is sane, allows for the userland backward
+compatibility and allows to have a new command interface, extensible
+for future use.
+
+In this case we can extend the interface to be any kind we want
+in a next version, pwrite with new io_region, mmap on new
+IO regions, status region...
+
+PRO: Extensible and also goes in the VFIO INFO extension direction
+      proposed by Alex
+
+CONTRA: I see none outer more work to do (but is it a problem?)
+
+
+====================
+
+Extra argumentation for versioning support
+
+
+Suppose a future implementation with 4 mapped regions like
+the following:
+
+- A Status region (RO updated as result of command and IRQ)
+
+- A command region (WO where the user send its commands)
+   userland write here to trigger IO (quite as currently)
+
+- A CCW program region (RW where the CCW chain is handled)
+   most handling done from userspace, last translations in kernel,
+   double buffering...
+
+- A performance / measurement / statistics region (RO)
+   This is updated asynchronously by hardware and/or driver
+
+This is purely theoretical and we do not need to do all at once
+but if we want to extend the implementation without problems
+and continue backward compatibility the versioning and capability
+handling is a must.
+
+====================
+
+
+Regards,
+
+Pierre
+
+
+
 -- 
-2.16.4
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
 
