@@ -2,94 +2,105 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5BF49C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:11:45 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 533DAC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:11:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 074612086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:11:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08D7F2086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:11:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="pAz6Et3A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 074612086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="bpIUL1Wh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08D7F2086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933370AbeFLMLm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 08:11:42 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:54838 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932555AbeFLMLl (ORCPT
+        id S933595AbeFLMLt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 08:11:49 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:48186 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932543AbeFLMLp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 08:11:41 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5CC5lMQ012518;
-        Tue, 12 Jun 2018 12:11:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2017-10-26;
- bh=2CYl8EN03bUQqU6Fqtz7Tnjmy3CvBGmrELPnpshJiQY=;
- b=pAz6Et3ABO7yYEAP9EuegCrXHzH9NZkg/zJ8p1UzVku2QbrPE1mm9CDflNxzZJfbwLHh
- rnrxNA0CSvT/Rpv4gaj2qwonnbn6yvG3gtsfVlLGnszNmXEwzrm/gUkGNsaIB1XPtlte
- pjHiXi33iL2CYN6dGF/rx/QK6xvUDM41irozGDDHePtH1wumVLglaySM9wzLMyeWHips
- y68ikbkm6SsgeZNblXB9JSCPvu6vq+Z1FQ0w+5QKsFy2ozA8XljDf5S7IGJgYyXiJRS8
- xs2jc00Raj0IHV+/YEu80zkAO2hwQ8ixp9MZoMbKiTo6etZ89FnP3YfBgVHU8A/68mO5 /g== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2jg6b1hqn6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 12 Jun 2018 12:11:25 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5CCBOjI019030
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 12 Jun 2018 12:11:24 GMT
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5CCBLDt007377;
-        Tue, 12 Jun 2018 12:11:21 GMT
-Received: from mwanda (/197.157.0.30)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 12 Jun 2018 05:11:21 -0700
-Date:   Tue, 12 Jun 2018 15:11:07 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Hugo Lefeuvre <hle@owl.eu.com>
-Cc:     Valentin Vidic <Valentin.Vidic@CARNet.hr>,
-        devel@driverdev.osuosl.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, kernelnewbies@kernelnewbies.org
-Subject: Re: [PATCH v2] staging: pi433: add mutex fixing concurrency issues.
-Message-ID: <20180612121107.xgxdqda5bzhqeizr@mwanda>
-References: <20180602175649.GA2816@hle-laptop.local>
- <20180607124216.GA2329@hle-laptop.local>
- <20180609081244.GP14048@gavran.carpriv.carnet.hr>
- <20180609154842.GB1826@hle-laptop.local>
+        Tue, 12 Jun 2018 08:11:45 -0400
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 74A565C11DF;
+        Tue, 12 Jun 2018 14:11:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1528805504;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=E8AukCerDvBdieQFF4Aby5TkP1atSf5ItPL/oIkkS3Q=;
+        b=bpIUL1WhaIUbPjsRgciN0b0vxBHvPgXsSNUSOvacrGghQn0hKzn1cfIqRbPJrqVRXLXTsd
+        Xw57XJxn+McJ55xkABPPLgEQHNJDM9MGmvc/R/iukNRjs9kY3Wogggp965sBK2FtVGflm8
+        Okwvi8oHpb1vAL5kvPH9BF//ob9CPfk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180609154842.GB1826@hle-laptop.local>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8921 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=819
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806120142
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Date:   Tue, 12 Jun 2018 14:11:44 +0200
+From:   Stefan Agner <stefan@agner.ch>
+To:     =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc:     gregkh@linuxfoundation.org, festevam@gmail.com, jslaby@suse.com,
+        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] serial: imx: fix cached UCR2 read on software reset
+In-Reply-To: <20180607075633.y3tm245jv7nkdrqx@pengutronix.de>
+References: <20180420124407.12892-1-stefan@agner.ch>
+ <20180607075633.y3tm245jv7nkdrqx@pengutronix.de>
+Message-ID: <afda793c86ba7394233e17813589b44c@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.4
+X-Spamd-Result: default: False [-3.06 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MID_RHS_MATCH_FROM(0.00)[];
+         RCPT_COUNT_FIVE(0.00)[6];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_HAS_DN(0.00)[];
+         FROM_EQ_ENVFROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         TO_DN_SOME(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
+         RCVD_TLS_ALL(0.00)[];
+         BAYES_HAM(-2.96)[99.84%];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 09, 2018 at 11:48:42AM -0400, Hugo Lefeuvre wrote:
-> case PI433_IOC_WR_TX_CFG:
->         if (copy_from_user(&instance->tx_cfg, argp,
->                    sizeof(struct pi433_tx_cfg)))
->             return -EFAULT;
->         break;
+On 07.06.2018 09:56, Uwe Kleine-König wrote:
+> On Fri, Apr 20, 2018 at 02:44:07PM +0200, Stefan Agner wrote:
+>> To reset the UART the SRST needs be cleared (low active). According
+>> to the documentation the bit will remain active for 4 module clocks
+>> until it is cleared (set to 1).
+>>
+>> Hence the real register need to be read in case the cached register
+>> indicates that the SRST bit is zero.
+>>
+>> This bug lead to wrong baudrate because the baud rate register got
+>> restored before reset completed in imx_flush_buffer.
+>>
+>> Fixes: 3a0ab62f43de ("serial: imx: implement shadow registers for UCRx and UFCR")
+>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>> Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+>> Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> 
+> For the record, there is a customer of mine who reports that this commit
+> breaks rs485 communication on i.MX25 because RTS stops to toggle as
+> intended.
+> 
+> (Some details: uart3, fsl,uart-has-rtscts, fsl,dte-mode,
+> linux,rs485-enabled-at-boot-time, native RTS.)
+> 
+> I didn't debug this yet.
 
-Btw, it looks so wrong to me that we copy partial data to
-&instance->tx_cfg...  I'd really prefer copying it to a tmp buffer and
-then verifying it's corrent then memcpy()ing it to &instance->tx_cfg.
+I have seen your patch today "serial: imx: fix comment about UCR2_SRST
+and its handling for shadowing" so I assume you looked into this issue?
 
-regards,
-dan carpenter
+Was it related to that change?
 
+--
+Stefan
