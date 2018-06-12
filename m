@@ -2,1505 +2,166 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9E672C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 18:38:48 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id EB4AEC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 18:39:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 274EF20891
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 18:38:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 274EF20891
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 8D01920891
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 18:39:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="AVwJ7XMq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D01920891
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933222AbeFLSiq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 14:38:46 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:53221 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932343AbeFLSio (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 14:38:44 -0400
-X-Greylist: delayed 575 seconds by postgrey-1.27 at vger.kernel.org; Tue, 12 Jun 2018 14:38:43 EDT
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E215C1A022B;
-        Tue, 12 Jun 2018 20:29:06 +0200 (CEST)
-Received: from smtp.na-rdc02.nxp.com (inv1260.us-phx01.nxp.com [134.27.49.11])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 464291A022A;
-        Tue, 12 Jun 2018 20:29:06 +0200 (CEST)
-Received: from az84smr01.freescale.net (az84smr01.freescale.net [10.64.34.197])
-        by inv1260.na-rdc02.nxp.com (Postfix) with ESMTP id B62E940A6B;
-        Tue, 12 Jun 2018 11:29:05 -0700 (MST)
-Received: from right.am.freescale.net (right.am.freescale.net [10.81.116.70])
-        by az84smr01.freescale.net (8.14.3/8.14.0) with ESMTP id w5CIT5g4007411;
-        Tue, 12 Jun 2018 11:29:05 -0700
-From:   Li Yang <leoyang.li@nxp.com>
-To:     shawnguo@kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Li Yang <leoyang.li@nxp.com>
-Subject: [PATCH] arm64: dts: freescale: Update to use SPDX identifiers
-Date:   Tue, 12 Jun 2018 13:28:42 -0500
-Message-Id: <1528828122-9276-1-git-send-email-leoyang.li@nxp.com>
-X-Mailer: git-send-email 1.9.0
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S933249AbeFLSjN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 14:39:13 -0400
+Received: from mail-bl2nam02on0087.outbound.protection.outlook.com ([104.47.38.87]:54816
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754087AbeFLSjL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 14:39:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=52cUGabUn0KMcQRFF1TOtmUWfEPT4dOSw7l/5JCZ6q4=;
+ b=AVwJ7XMqsWDCMn7ewXwZHqAMmLNaUd79GZ+zbcrS4FSM3rcqTL5tLxUk6p/jnbmrTesKdB6G0JBazEP5sR5QKWVQ8z1KEhkWFwZCT818BqeSMIm1FiXblwtST7s5/CWeGofvUJDATYhETLX3/eAXphPIqSBNT05xdhRrZntBI3w=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Gary.Hook@amd.com; 
+Received: from [10.236.109.62] (165.204.78.1) by
+ BN6PR12MB1443.namprd12.prod.outlook.com (2603:10b6:405:10::20) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.863.15; Tue, 12 Jun 2018 18:39:07 +0000
+Subject: Re: [PATCH v8 1/2] iommu - Enable debugfs exposure of IOMMU driver
+ internals
+To:     Greg KH <greg@kroah.com>
+Cc:     iommu@lists.linux-foundation.org, joro@8bytes.org,
+        linux-kernel@vger.kernel.org
+References: <152761784341.2654.8609366076331539902.stgit@sosgrh1.amd.com>
+ <152761819480.2654.5371070582955429468.stgit@sosgrh1.amd.com>
+ <20180529184101.GB10618@kroah.com>
+ <3249cc11-09d8-2078-28a6-efd3078ca0e9@amd.com>
+ <20180605170824.GA11965@kroah.com>
+From:   Gary R Hook <gary.hook@amd.com>
+Message-ID: <bfee19e5-7953-7bda-2c46-9dbb4d002512@amd.com>
+Date:   Tue, 12 Jun 2018 13:39:04 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180605170824.GA11965@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [165.204.78.1]
+X-ClientProxiedBy: SN4PR0401CA0019.namprd04.prod.outlook.com
+ (2603:10b6:803:21::29) To BN6PR12MB1443.namprd12.prod.outlook.com
+ (2603:10b6:405:10::20)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BN6PR12MB1443;
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR12MB1443;3:GiMs8vCyQgvt1mpqNa6ARXrblx3AMDuqVjqhJEO/tm5PJSNaNOtvXHIrUJaxAUbuRrDD31G4i4TQGdlX4OlqPNInu+FaqcSbIyLxSYf2TONEcHdvIjyGIAsLGA+JT23gWCwbwd94A88J4HO+eSahBQxT/o3mYTnKUtj7beZy1VpnSeIgg/tK8bL7SztyDiA5DZaKoUuF1kBgT4OztafXzBAQfRuBEBVUZuL2qEBsugL0F4G8Xllvh/8Wxtib9zlE;25:lpdtt6tKUOPP2Bk0lQoifi7wjah2v6ep0PJFbAV+tDwi8dKl0mwjU+4s/L2PQpUePdU76GEu5MVGZkq1ptTwo62zK3OjCvbYxsnIMhjOjZVzbhuuSZ4pbdGIH330Bu3a+0qhQFMjOgMhw74a8kUGy7tUVEHjk+rHPAM1v0MWPMULyTWXlkgKP9K8XXHfjLBi9mci28YcV3uS1bVgf/gp4MNN+eo4cMePGSPERYNbfrN5DAln2lQkqJVj6Oo5uDQGtM4+R8P67ExfXM/Tdx3iYpBbtHcpi0N4HBAV3nVMeNHnDnZiEdvKxm7emS6aqo3hIVNVaOnIVWPQAtLMkIG7ow==;31:ODdCO4XVXIcf3vdXhvUigA0b5/MlamNdLxWDAaXhaUYHugS30SHug7MbPQE5JpjCc38a6P5j4SM4RysNOvQDQ0mYKGn9ukAFUzrMRsMi55ZXaDpLXfx63cHkhxCypRsYXN9fOlVeYA0CfEEnaP5D59zAvgl0nGl3Tosblcl3r8EIid0TNG3FZSxk5aLEcMvPf/f3jF7UJuvkbYHjb7BpFvsH+NMtnaGjeGh0ACkoXDI=
+X-MS-TrafficTypeDiagnostic: BN6PR12MB1443:
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR12MB1443;20:8aUkOAjRXo0B5qYe+Mgo/FefZX3i0pI/XYIm9Au7pcMH9vLPIGQssWQmvhcHgSGDTQDO1CvcxWRQRH9MM/5LgrebPaBgNPuf7TQ5FXyw8DwAcuq/hlYRtfdnBzq5KV92TYtGx4o5h70R+lXux9abco3iRkc+XtbbtIq20o4A2NMaZvRYH1y6/dxbO184Gve4EBAjkucU8ro9PClTEmFKkdzy4ECOhF1uIcHt10+JEy3xS16+mjTBMVR+2E3fOEvhhOqk9vCR1v2oD7duQ772+JQc5nRBIOEsPCB1oq0orNF8uQABzFK173/Td++tzo6XZCgvCl4sYr6B72Llop4DFLonhusjkJpLvYzCnSKeIEZtW2iV+Vl5LgYFcnkpIm+nAW6YGv+9tH5q1WxRvRpDCM+dLhb9k+aD/akTspZK9H7N9Or80WgKy6s5zRleQ6HZ5FGe0ZC+exB33ryAPjSHxiXg3tFUVjgakzW4XZGZBKM22f7ncFlnRpZNuDHCj5Wt;4:gUo5Rfs7Q5k7TZyfZrQS0ry6tqNFEwjg5V0SuWtO5DDFBP82CILw+JzxD1tBLAXTdKS+ymiV6I5O2U9nZzUlM/u1BHkbWQK6a2DOuh2eJMkXjpFTJkC9oVQaWdGanTWNsj0O1JT3HNgcZKnW4v/S1K7XBUNBLRJHlXH/ufCyFAkMkl8z9bh0cymfVVLX3eXgBVG5GTi6I4fXfnAV1Y5Iti8VIdcJsbNTKq+saXgdQwwBiiToJoyRGTzR18adFoqusMOEBdknM6RgoI6DT2Ld+w==
+X-Microsoft-Antispam-PRVS: <BN6PR12MB144388CEF70A45C89C9E17B2FD7F0@BN6PR12MB1443.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:BN6PR12MB1443;BCL:0;PCL:0;RULEID:;SRVR:BN6PR12MB1443;
+X-Forefront-PRVS: 07013D7479
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(39860400002)(346002)(39380400002)(366004)(396003)(376002)(199004)(189003)(64126003)(386003)(53546011)(81166006)(8936002)(106356001)(59450400001)(67846002)(50466002)(230700001)(52116002)(76176011)(3846002)(6116002)(6246003)(446003)(6486002)(23676004)(52146003)(316002)(2486003)(16576012)(105586002)(476003)(2616005)(11346002)(956004)(486006)(53936002)(31686004)(25786009)(47776003)(68736007)(36756003)(58126008)(229853002)(8676002)(4326008)(93886005)(6916009)(65956001)(65806001)(66066001)(72206003)(478600001)(77096007)(97736004)(26005)(5660300001)(86362001)(7736002)(2906002)(16526019)(6666003)(65826007)(81156014)(186003)(305945005)(31696002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR12MB1443;H:[10.236.109.62];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtCTjZQUjEyTUIxNDQzOzIzOllhNGJmMzBHc3Byd2FTdzlVblUrZTlJQzdP?=
+ =?utf-8?B?SnBqTStrREZaWjA2SWdTVUZ3MzZpekdWeWRLZm4xaWFTY3Z1MWQ0SGpacUYv?=
+ =?utf-8?B?Rlo3REkxWmlENFZ4eUJqZVF6YTZNSGtGL1BQVDk4R1JwVVgyQTY1SHoweUxL?=
+ =?utf-8?B?ZW8xVnllZTNMNE1iVW40MlppUmsrYk1aekJSNmkvTW1kdENPV0dZdS9FWE52?=
+ =?utf-8?B?SVFkbjQ3bnJsUHNHN0lhOCt2Mk1sSmNTK0FlaC81V1F5dDJjZ1VBZDIrekN4?=
+ =?utf-8?B?VlpVS3F1a3lBclZhSnJheUxzZmVQOHpMMjN4S0ZYVk1Hb2FxR1JGRUNxalpB?=
+ =?utf-8?B?WWN3N2FLTWxydDhiMFZIK1VTMXViQ2U5V2lHRFF5MVYxaFVlaGplOFk1L3J2?=
+ =?utf-8?B?alYvTlNvMVhIVDA3TFhaWlREbi9vT0grdTd5aVJ5UTR5eUhNNHpGeXlpeHlw?=
+ =?utf-8?B?YW5DMnNQQlZ3ekJzQ2ZPZlNza2NVa3g4c1N6Qytya1JRTHFDS05OV2tsaGx0?=
+ =?utf-8?B?cW13Qy84RkFKNFlIcjB1UkNxcndQNzZLNHNuZG5uMTgralhsek9SVzVmOVkw?=
+ =?utf-8?B?clhwaXhZbXZIUUtGbURIY081TU9tQUNFaFRLRThrd3VNOGN1YytVYTYvTVJE?=
+ =?utf-8?B?cjZleTYvelJBZkh4ZS9FZXpTMW43Q3dsWU1mTWVCakNrSytwUUV3UWtEMUJq?=
+ =?utf-8?B?V0pjMkFyR3ExYjlRcUo0YTFoVSsvY3BRWkdmQjJEMld2SHI2Mi9QeGdiN3Z3?=
+ =?utf-8?B?aU1wTEp1MDBmWkJvYytScldzRWtUTzVhaCtUT0dKbjZKeVNYRUd3bFZ6bTJr?=
+ =?utf-8?B?Vk0vZElCY0d2SXVqSklPRmt1MDZRQ1dUZjdKOTFNMWM5MlVpUnJXMC9ISEFI?=
+ =?utf-8?B?WmhISkxpbFNMRWRaT05LUnpTMWZxemtSSFBYdGNnbk9tcUtkZnZHUlZSWDNT?=
+ =?utf-8?B?RmFBa2FjODlvYmRBYjBCbVExVDltdS9wK2JWekNUVXVyMmpHVjhkYnRDaHZN?=
+ =?utf-8?B?dEIzbG1HOEVFUjhSRWdweUVveG00bHpaVU15SHNxTUxSVEVpcjRlSkp2c0R3?=
+ =?utf-8?B?MHYzY1hvVFhLU0NpODc1N0tGZVBlL3k4ZzJxU09VbENCT2Z2WFBZWXFoQlpN?=
+ =?utf-8?B?T1J4Mk9PL2VlZ2xHR25GMURzVzJONnh2RldqMnRhemprSkdPN1M2eFFBT3Q2?=
+ =?utf-8?B?UU04REpZUzZFUlJ3c0c2eXFwU1RZZmdzVHhURzZxS3NlRWI0aG9RMVpxQmVJ?=
+ =?utf-8?B?cmhxMVJLN3BKTHp3NGRKZ2M3YjBhdVhML3labUY2S0hsMHlKZU9kK0hLcllK?=
+ =?utf-8?B?K2dYczZySDRMalVFZGFIb09YczlOOHN1S0J1WWNEQXUvdk43OXJEbWVGOGMx?=
+ =?utf-8?B?NFV4c2VoR2VJZFJCSDNQaWFRY083eURJTEFkLzVoQ2FLbzEvNHJERzdVUmJq?=
+ =?utf-8?B?Y1RWSTRQSGc3ZlppakpxQUhhZ3NuVVB3VWFtRExORlNGeEN6WGlHVjlPZmg3?=
+ =?utf-8?B?T3R4THA5Qng5RzJXTDZCTVhyc0cwQ3hNekJTOEFpZkdnY01OYWVlSmYzRWh0?=
+ =?utf-8?B?Y0liWWJvM20zNi9BZ01tdmRsQldxNnBaZGFJQk1ONXZNMzdTOW9ZRlpXN3Jp?=
+ =?utf-8?B?UXdETEdsOHBESW93aC9Sb0tHT2VrMnZ4aFFwYmFYeHh0OEppRmFqN3ZEWlE1?=
+ =?utf-8?B?T08ycEY0bDZ3TTA3a3hRQlAvQitXODkyRWFqN3F4QnVkSkt5WTVDRFNPRXdz?=
+ =?utf-8?B?ZCtLZjJVQWpQODhyb2tWTFU1UlFYS2dkbmVmb3VoRGQwRUYyV2NBclg1NzYr?=
+ =?utf-8?B?bHVNSUM5RnBOenlTNXdJN1VGb3U1MGxDVDRna0cwMGZQZHJDQkZSRVV2TnZZ?=
+ =?utf-8?B?aTAvTTBqZ1I5eVFaeWtkN3duOGZHeU0vblRWNTVsa3JlRms0KytIZGlSTDZX?=
+ =?utf-8?B?V1FqZ21KNjJUR2hzK0cwK0sxRzNsQTlVZ3VPaTdQV1hFQ2pISlArUlN6YkZt?=
+ =?utf-8?B?d3RrR3JOMjVLU1hVN2ZBSEtEVjE4MFRENzdVcERtb0tYaS9IS3hzSnJ6bWRu?=
+ =?utf-8?Q?Uiqk=3D?=
+X-Microsoft-Antispam-Message-Info: ZsZJsdtaIUQMbDXg0LjdFsBysfshjTCjS+bNfYVJTnXny4pFHyDU2V9o0l0s5eK3W/yt59H8m+cawLvXL8jYb6uVsjylDDdrYt1C1Yki7lJT/BljZMVSUrhYZ4lephLDn5ppYDfcFQO31FpPYL02Zkn4JAgZvxJeEX7I8sylac/3EcjzEq6E/tdldnvsN09/
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR12MB1443;6:VVlgjUCvxWsqV7kq77btjxoUmhIjfqr4/2FBynYYx9ZHfBu8gxg27BzXoEHn9m5HLt4d4zoc+L0mIGukTD7EJXKv/P2KNMirmCFIeyMXaabOrsDGesb2YQy1xhdAf2i7jEeWncsmfqBWHH+pUFsMX0cr0Ycplyq/zFNHw+dKJE+tcnlbPmKNTvo9GKsY62AClpIP3ts01nm7sAqvH3Ukowh8Vljd3SBpeJG4qI0+Ys2zBsZN52t3Q2ARYfwGyMc0poIFL/ZIhJGUuGYwfWFqXvNEADmWfc5hew/9EBjbD6I2JrSEsnegGEkeCggsi+9hzwdmKtAsWH+FFm05uNfUVkwaHSwl8G97ATE4/Ei2PTYKD0XM581gj/+tn9u+6bwgw/ctzF2fOiyT7cLoSSprcultwLx3wDy33iF2r+8qOxkX348FAN3oXo2akWU/CGlrkAdnCE7C4ykOjesk5SsUow==;5:LuAHSyQFiJxe7JKQpjiQ5WbQs7YPuIxmRVmbDMoo0NbzZ5ikq3Hznq4Nh2dqhcZntBezf+HhNFUstmGLbqk9TVLSQ9kZizqh/dDdqdRATbmCzdj3h/CV3OY1dx1oLUiJ8mXskva+E9k4A1bzivS/dy84mnc9Xzxu5FocF4if15c=;24:mZgzk0xIbb5tBd5UC9t7zQ3q4rLGb0Ia/tfMluESgRchR851l+uhWGIPCKOIWqDbFA0cfrtSYfu021IodJ8N8admpt08yT7V+/9meP1TLB0=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR12MB1443;7:xW9+v7mnDuDFSaUw5mCjVNoDAILpPeWp4HX2X4MLg2lsQY9BQHSdk+gH3nQeldkQlM3Jm7hegkzxEqKeZeO1B741HmiMO01k8H4M//LppOCKJ2fITJPvm2sKmlUdQt2VjscnlyxqFVJCLdjSMWh1OWf7T5GxF8aT4uuLgRhkp+Z8Nk9CoQdWsteNuGg8ZjNvd2q2oqXTryKJuGN5kva+bPeMto+Bh26xJLPJVjgsSTYWoxj83NgGR6Cbyrw1H1Ar;20:r7xmZeKscF3TTPEP0TnakU6dQQ+hKzYTNeoD7I7CTtpt3kiZwPXIil6pDgzAobFdfacabhfJqHmpeMOzoT9GvKDlFF6Ayb/4QL0+Pnf0T4qAFN0i4h24J/or8Eilxxdn9QoOYMaH4zqhRpoLw6EOYrV7bmLPj9SQ1fO2MoZI8tuHvFhbnLKABPrN9/xNqt5PoWUyS3Sup+oVuaAC0EpEB3qaz5WqY3djS8vZ8Ns07tpCGbNlXZGwaSH5KsipIUDy
+X-MS-Office365-Filtering-Correlation-Id: 22189586-32d6-4c52-3eee-08d5d093c84e
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2018 18:39:07.9008 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 22189586-32d6-4c52-3eee-08d5d093c84e
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR12MB1443
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace license text with corresponding SPDX identifiers and update the
-format of existing SPDX identifiers to follow the new guideline
-Documentation/process/license-rules.rst.
+On 06/05/2018 12:08 PM, Greg KH wrote:
+> On Tue, Jun 05, 2018 at 12:01:41PM -0500, Gary R Hook wrote:
+>>>> +/**
+>>>> + * iommu_debugfs_new_driver_dir - create a vendor directory under debugfs/iommu
+>>>> + * @vendor: name of the vendor-specific subdirectory to create
+>>>> + *
+>>>> + * This function is called by an IOMMU driver to create the top-level debugfs
+>>>> + * directory for that driver.
+>>>> + *
+>>>> + * Return: upon success, a pointer to the dentry for the new directory.
+>>>> + *         NULL in case of failure.
+>>>> + */
+>>>> +struct dentry *iommu_debugfs_new_driver_dir(const char *vendor)
+>>>> +{
+>>>> +	struct dentry *d_new;
+>>>> +
+>>>> +	d_new = debugfs_create_dir(vendor, iommu_debugfs_dir);
+>>>> +
+>>>> +	return d_new;
+>>>> +}
+>>>> +EXPORT_SYMBOL_GPL(iommu_debugfs_new_driver_dir);
+>>>
+>>> Why are you wrapping a debugfs call?  Why not just export
+>>> iommu_debugfs_dir instead?
+>>
+>> It was a choice, as I stated in my other post. It is not a requirement.
+>> If you resolutely reject this approach, that's fine. I'll change it, no
+>> worries.
+> 
+> Either is fine, but if it stays, it should stay a single line function
+> :)
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-Note that some of the files mentioned X11 license previously but the
-license text actually matches MIT license.
+Then I shall leave it as a black-box function. Single line, of course.
 
-Signed-off-by: Li Yang <leoyang.li@nxp.com>
----
- arch/arm64/boot/dts/freescale/fsl-ls1012a-frdm.dts | 38 +--------------------
- arch/arm64/boot/dts/freescale/fsl-ls1012a-qds.dts  | 38 +--------------------
- arch/arm64/boot/dts/freescale/fsl-ls1012a-rdb.dts  | 38 +--------------------
- arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi     | 38 +--------------------
- arch/arm64/boot/dts/freescale/fsl-ls1043-post.dtsi |  3 +-
- arch/arm64/boot/dts/freescale/fsl-ls1043a-qds.dts  | 39 +---------------------
- arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts  | 39 +---------------------
- arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi     | 39 +---------------------
- arch/arm64/boot/dts/freescale/fsl-ls1046-post.dtsi |  2 +-
- arch/arm64/boot/dts/freescale/fsl-ls1046a-qds.dts  | 39 +---------------------
- arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dts  | 39 +---------------------
- arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi     | 39 +---------------------
- arch/arm64/boot/dts/freescale/fsl-ls1088a-qds.dts  | 38 +--------------------
- arch/arm64/boot/dts/freescale/fsl-ls1088a-rdb.dts  | 38 +--------------------
- arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi     | 38 +--------------------
- arch/arm64/boot/dts/freescale/fsl-ls2080a-qds.dts  | 38 +--------------------
- arch/arm64/boot/dts/freescale/fsl-ls2080a-rdb.dts  | 38 +--------------------
- arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts | 38 +--------------------
- arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi     | 38 +--------------------
- arch/arm64/boot/dts/freescale/fsl-ls2088a-qds.dts  | 38 +--------------------
- arch/arm64/boot/dts/freescale/fsl-ls2088a-rdb.dts  | 38 +--------------------
- arch/arm64/boot/dts/freescale/fsl-ls2088a.dtsi     | 38 +--------------------
- arch/arm64/boot/dts/freescale/fsl-ls208xa-qds.dtsi | 38 +--------------------
- arch/arm64/boot/dts/freescale/fsl-ls208xa-rdb.dtsi | 38 +--------------------
- arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi     | 38 +--------------------
- .../boot/dts/freescale/qoriq-bman-portals.dtsi     |  2 +-
- .../boot/dts/freescale/qoriq-fman3-0-10g-0.dtsi    |  2 +-
- .../boot/dts/freescale/qoriq-fman3-0-10g-1.dtsi    |  2 +-
- .../boot/dts/freescale/qoriq-fman3-0-1g-0.dtsi     |  2 +-
- .../boot/dts/freescale/qoriq-fman3-0-1g-1.dtsi     |  2 +-
- .../boot/dts/freescale/qoriq-fman3-0-1g-2.dtsi     |  2 +-
- .../boot/dts/freescale/qoriq-fman3-0-1g-3.dtsi     |  2 +-
- .../boot/dts/freescale/qoriq-fman3-0-1g-4.dtsi     |  2 +-
- .../boot/dts/freescale/qoriq-fman3-0-1g-5.dtsi     |  2 +-
- arch/arm64/boot/dts/freescale/qoriq-fman3-0.dtsi   |  2 +-
- .../boot/dts/freescale/qoriq-qman-portals.dtsi     |  2 +-
- 36 files changed, 36 insertions(+), 871 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1012a-frdm.dts b/arch/arm64/boot/dts/freescale/fsl-ls1012a-frdm.dts
-index 7286b1e..f90c040 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1012a-frdm.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1012a-frdm.dts
-@@ -1,45 +1,9 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-  * Device Tree file for Freescale LS1012A Freedom Board.
-  *
-  * Copyright 2016 Freescale Semiconductor, Inc.
-  *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPLv2 or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This library is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License, or (at your option) any later version.
-- *
-- *     This library is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- /dts-v1/;
- 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1012a-qds.dts b/arch/arm64/boot/dts/freescale/fsl-ls1012a-qds.dts
-index cdc4aee..2fb1cb1 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1012a-qds.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1012a-qds.dts
-@@ -1,45 +1,9 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-  * Device Tree file for Freescale LS1012A QDS Board.
-  *
-  * Copyright 2016 Freescale Semiconductor, Inc.
-  *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPLv2 or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This library is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License, or (at your option) any later version.
-- *
-- *     This library is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- /dts-v1/;
- 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1012a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-ls1012a-rdb.dts
-index c1a119e..5edb1e1 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1012a-rdb.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1012a-rdb.dts
-@@ -1,45 +1,9 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-  * Device Tree file for Freescale LS1012A RDB Board.
-  *
-  * Copyright 2016 Freescale Semiconductor, Inc.
-  *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPLv2 or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This library is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License, or (at your option) any later version.
-- *
-- *     This library is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- /dts-v1/;
- 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
-index 205f0f4..4c558a2 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
-@@ -1,45 +1,9 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-  * Device Tree Include file for Freescale Layerscape-1012A family SoC.
-  *
-  * Copyright 2016 Freescale Semiconductor, Inc.
-  *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPLv2 or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This library is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License, or (at your option) any later version.
-- *
-- *     This library is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043-post.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1043-post.dtsi
-index 169e171..6082ae0 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1043-post.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1043-post.dtsi
-@@ -1,9 +1,8 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
- /*
-  * QorIQ FMan v3 device tree nodes for ls1043
-  *
-  * Copyright 2015-2016 Freescale Semiconductor Inc.
-- *
-- * SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
-  */
- 
- &soc {
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a-qds.dts b/arch/arm64/boot/dts/freescale/fsl-ls1043a-qds.dts
-index 6341281..c7b8d2c 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1043a-qds.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a-qds.dts
-@@ -1,47 +1,10 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-  * Device Tree Include file for Freescale Layerscape-1043A family SoC.
-  *
-  * Copyright 2014-2015 Freescale Semiconductor, Inc.
-  *
-  * Mingkai Hu <Mingkai.hu@freescale.com>
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPLv2 or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This library is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License, or (at your option) any later version.
-- *
-- *     This library is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts
-index 3dc0c8e..7b01ba8 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts
-@@ -1,47 +1,10 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-  * Device Tree Include file for Freescale Layerscape-1043A family SoC.
-  *
-  * Copyright 2014-2015 Freescale Semiconductor, Inc.
-  *
-  * Mingkai Hu <Mingkai.hu@freescale.com>
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPLv2 or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This library is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License, or (at your option) any later version.
-- *
-- *     This library is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-index 1109f22..8f7ad1d 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-@@ -1,47 +1,10 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-  * Device Tree Include file for Freescale Layerscape-1043A family SoC.
-  *
-  * Copyright 2014-2015 Freescale Semiconductor, Inc.
-  *
-  * Mingkai Hu <Mingkai.hu@freescale.com>
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPLv2 or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This library is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License, or (at your option) any later version.
-- *
-- *     This library is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- #include <dt-bindings/thermal/thermal.h>
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046-post.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1046-post.dtsi
-index f5017db..d6caaea 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1046-post.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1046-post.dtsi
-@@ -1,9 +1,9 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
- /*
-  * QorIQ FMan v3 device tree nodes for ls1046
-  *
-  * Copyright 2015-2016 Freescale Semiconductor Inc.
-  *
-- * SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
-  */
- 
- &soc {
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a-qds.dts b/arch/arm64/boot/dts/freescale/fsl-ls1046a-qds.dts
-index 434383b..e69306e 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1046a-qds.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a-qds.dts
-@@ -1,47 +1,10 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-  * Device Tree Include file for Freescale Layerscape-1046A family SoC.
-  *
-  * Copyright 2016 Freescale Semiconductor, Inc.
-  *
-  * Shaohui Xie <Shaohui.Xie@nxp.com>
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPLv2 or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This library is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License, or (at your option) any later version.
-- *
-- *     This library is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dts
-index 5dc2782..440e111 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dts
-@@ -1,47 +1,10 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-  * Device Tree Include file for Freescale Layerscape-1046A family SoC.
-  *
-  * Copyright 2016 Freescale Semiconductor, Inc.
-  *
-  * Mingkai Hu <mingkai.hu@nxp.com>
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPLv2 or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This library is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License, or (at your option) any later version.
-- *
-- *     This library is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-index 136ebfa..ed76325 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-@@ -1,47 +1,10 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-  * Device Tree Include file for Freescale Layerscape-1046A family SoC.
-  *
-  * Copyright 2016 Freescale Semiconductor, Inc.
-  *
-  * Mingkai Hu <mingkai.hu@nxp.com>
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPLv2 or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This library is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License, or (at your option) any later version.
-- *
-- *     This library is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1088a-qds.dts b/arch/arm64/boot/dts/freescale/fsl-ls1088a-qds.dts
-index 3012805..6f48d21 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1088a-qds.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1088a-qds.dts
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-  * Device Tree file for NXP LS1088A QDS Board.
-  *
-@@ -5,43 +6,6 @@
-  *
-  * Harninder Rai <harninder.rai@nxp.com>
-  *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPLv2 or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This library is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License, or (at your option) any later version.
-- *
-- *     This library is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1088a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-ls1088a-rdb.dts
-index 4f17601..8e925df 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1088a-rdb.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1088a-rdb.dts
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-  * Device Tree file for NXP LS1088A RDB Board.
-  *
-@@ -5,43 +6,6 @@
-  *
-  * Harninder Rai <harninder.rai@nxp.com>
-  *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPLv2 or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This library is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License, or (at your option) any later version.
-- *
-- *     This library is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-index 1c6556b..292f186 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-  * Device Tree Include file for NXP Layerscape-1088A family SoC.
-  *
-@@ -5,43 +6,6 @@
-  *
-  * Harninder Rai <harninder.rai@nxp.com>
-  *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPLv2 or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This library is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License, or (at your option) any later version.
-- *
-- *     This library is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/thermal/thermal.h>
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a-qds.dts b/arch/arm64/boot/dts/freescale/fsl-ls2080a-qds.dts
-index 3c99608..f6c3ee7 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls2080a-qds.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a-qds.dts
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-  * Device Tree file for Freescale LS2080a QDS Board.
-  *
-@@ -7,43 +8,6 @@
-  * Abhimanyu Saini <abhimanyu.saini@nxp.com>
-  * Bhupesh Sharma <bhupesh.sharma@freescale.com>
-  *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPLv2 or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This library is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License, or (at your option) any later version.
-- *
-- *     This library is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-ls2080a-rdb.dts
-index a4e7de9..4489435 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls2080a-rdb.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a-rdb.dts
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-  * Device Tree file for Freescale LS2080a RDB Board.
-  *
-@@ -7,43 +8,6 @@
-  * Abhimanyu Saini <abhimanyu.saini@nxp.com>
-  * Bhupesh Sharma <bhupesh.sharma@freescale.com>
-  *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPLv2 or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This library is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License, or (at your option) any later version.
-- *
-- *     This library is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts b/arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts
-index fbbb73e..5517305 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-  * Device Tree file for Freescale LS2080a software Simulator model
-  *
-@@ -5,43 +6,6 @@
-  *
-  * Bhupesh Sharma <bhupesh.sharma@freescale.com>
-  *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This library is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License, or (at your option) any later version.
-- *
-- *     This library is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-index 8d73930..1292ab9 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-  * Device Tree Include file for Freescale Layerscape-2080A family SoC.
-  *
-@@ -6,43 +7,6 @@
-  * Abhimanyu Saini <abhimanyu.saini@nxp.com>
-  * Bhupesh Sharma <bhupesh.sharma@freescale.com>
-  *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPLv2 or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This library is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License, or (at your option) any later version.
-- *
-- *     This library is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- #include "fsl-ls208xa.dtsi"
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2088a-qds.dts b/arch/arm64/boot/dts/freescale/fsl-ls2088a-qds.dts
-index eaee5b1..7c17b1b 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls2088a-qds.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls2088a-qds.dts
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-  * Device Tree file for Freescale LS2088A QDS Board.
-  *
-@@ -6,43 +7,6 @@
-  *
-  * Abhimanyu Saini <abhimanyu.saini@nxp.com>
-  *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPLv2 or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This library is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License, or (at your option) any later version.
-- *
-- *     This library is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2088a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-ls2088a-rdb.dts
-index c411442..f6b4d75 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls2088a-rdb.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls2088a-rdb.dts
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-  * Device Tree file for Freescale LS2088A RDB Board.
-  *
-@@ -6,43 +7,6 @@
-  *
-  * Abhimanyu Saini <abhimanyu.saini@nxp.com>
-  *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPLv2 or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This library is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License, or (at your option) any later version.
-- *
-- *     This library is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2088a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls2088a.dtsi
-index 0884e1a..d92ea6c 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls2088a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls2088a.dtsi
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-  * Device Tree Include file for Freescale Layerscape-2088A family SoC.
-  *
-@@ -6,43 +7,6 @@
-  *
-  * Abhimanyu Saini <abhimanyu.saini@nxp.com>
-  *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPLv2 or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This library is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License, or (at your option) any later version.
-- *
-- *     This library is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- #include "fsl-ls208xa.dtsi"
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls208xa-qds.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls208xa-qds.dtsi
-index 1de6188..c11f52e 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls208xa-qds.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls208xa-qds.dtsi
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-  * Device Tree file for Freescale LS2080A QDS Board.
-  *
-@@ -6,43 +7,6 @@
-  *
-  * Abhimanyu Saini <abhimanyu.saini@nxp.com>
-  *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPLv2 or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This library is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License, or (at your option) any later version.
-- *
-- *     This library is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- &esdhc {
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls208xa-rdb.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls208xa-rdb.dtsi
-index 061647b..6fd7f63 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls208xa-rdb.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls208xa-rdb.dtsi
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-  * Device Tree file for Freescale LS2080A RDB Board.
-  *
-@@ -6,43 +7,6 @@
-  *
-  * Abhimanyu Saini <abhimanyu.saini@nxp.com>
-  *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPLv2 or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This library is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License, or (at your option) any later version.
-- *
-- *     This library is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- &esdhc {
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
-index 137ef4d..8cb78dd 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-  * Device Tree Include file for Freescale Layerscape-2080A family SoC.
-  *
-@@ -6,43 +7,6 @@
-  *
-  * Abhimanyu Saini <abhimanyu.saini@nxp.com>
-  *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPLv2 or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This library is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License, or (at your option) any later version.
-- *
-- *     This library is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- #include <dt-bindings/thermal/thermal.h>
-diff --git a/arch/arm64/boot/dts/freescale/qoriq-bman-portals.dtsi b/arch/arm64/boot/dts/freescale/qoriq-bman-portals.dtsi
-index ae15307..ff1aba5 100644
---- a/arch/arm64/boot/dts/freescale/qoriq-bman-portals.dtsi
-+++ b/arch/arm64/boot/dts/freescale/qoriq-bman-portals.dtsi
-@@ -1,9 +1,9 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
- /*
-  * QorIQ BMan Portals device tree
-  *
-  * Copyright 2011-2016 Freescale Semiconductor Inc.
-  *
-- * SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
-  */
- 
- &bportals {
-diff --git a/arch/arm64/boot/dts/freescale/qoriq-fman3-0-10g-0.dtsi b/arch/arm64/boot/dts/freescale/qoriq-fman3-0-10g-0.dtsi
-index ecdffe7..dbd2fc3 100644
---- a/arch/arm64/boot/dts/freescale/qoriq-fman3-0-10g-0.dtsi
-+++ b/arch/arm64/boot/dts/freescale/qoriq-fman3-0-10g-0.dtsi
-@@ -1,9 +1,9 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
- /*
-  * QorIQ FMan v3 10g port #0 device tree
-  *
-  * Copyright 2012-2015 Freescale Semiconductor Inc.
-  *
-- * SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
-  */
- 
- fman@1a00000 {
-diff --git a/arch/arm64/boot/dts/freescale/qoriq-fman3-0-10g-1.dtsi b/arch/arm64/boot/dts/freescale/qoriq-fman3-0-10g-1.dtsi
-index a7f6af5..6fc5d25 100644
---- a/arch/arm64/boot/dts/freescale/qoriq-fman3-0-10g-1.dtsi
-+++ b/arch/arm64/boot/dts/freescale/qoriq-fman3-0-10g-1.dtsi
-@@ -1,9 +1,9 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
- /*
-  * QorIQ FMan v3 10g port #1 device tree
-  *
-  * Copyright 2012-2015 Freescale Semiconductor Inc.
-  *
-- * SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
-  */
- 
- fman@1a00000 {
-diff --git a/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-0.dtsi b/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-0.dtsi
-index d600786..4e02276 100644
---- a/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-0.dtsi
-+++ b/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-0.dtsi
-@@ -1,9 +1,9 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
- /*
-  * QorIQ FMan v3 1g port #0 device tree
-  *
-  * Copyright 2012-2015 Freescale Semiconductor Inc.
-  *
-- * SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
-  */
- 
- fman@1a00000 {
-diff --git a/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-1.dtsi b/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-1.dtsi
-index 3c0b76d..0312fa4 100644
---- a/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-1.dtsi
-+++ b/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-1.dtsi
-@@ -1,9 +1,9 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
- /*
-  * QorIQ FMan v3 1g port #1 device tree
-  *
-  * Copyright 2012-2015 Freescale Semiconductor Inc.
-  *
-- * SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
-  */
- 
- fman@1a00000 {
-diff --git a/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-2.dtsi b/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-2.dtsi
-index 89633af..af2df07 100644
---- a/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-2.dtsi
-+++ b/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-2.dtsi
-@@ -1,9 +1,9 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
- /*
-  * QorIQ FMan v3 1g port #2 device tree
-  *
-  * Copyright 2012-2015 Freescale Semiconductor Inc.
-  *
-- * SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
-  */
- 
- fman@1a00000 {
-diff --git a/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-3.dtsi b/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-3.dtsi
-index 87c2b70..4ac98dc 100644
---- a/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-3.dtsi
-+++ b/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-3.dtsi
-@@ -1,9 +1,9 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
- /*
-  * QorIQ FMan v3 1g port #3 device tree
-  *
-  * Copyright 2012-2015 Freescale Semiconductor Inc.
-  *
-- * SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
-  */
- 
- fman@1a00000 {
-diff --git a/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-4.dtsi b/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-4.dtsi
-index 8f4d74b..bd932d8 100644
---- a/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-4.dtsi
-+++ b/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-4.dtsi
-@@ -1,9 +1,9 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
- /*
-  * QorIQ FMan v3 1g port #4 device tree
-  *
-  * Copyright 2012-2015 Freescale Semiconductor Inc.
-  *
-- * SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
-  */
- 
- fman@1a00000 {
-diff --git a/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-5.dtsi b/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-5.dtsi
-index d534f77..7de1c52 100644
---- a/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-5.dtsi
-+++ b/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-5.dtsi
-@@ -1,9 +1,9 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
- /*
-  * QorIQ FMan v3 1g port #5 device tree
-  *
-  * Copyright 2012-2015 Freescale Semiconductor Inc.
-  *
-- * SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
-  */
- 
- fman@1a00000 {
-diff --git a/arch/arm64/boot/dts/freescale/qoriq-fman3-0.dtsi b/arch/arm64/boot/dts/freescale/qoriq-fman3-0.dtsi
-index 4dd0676..ad6f46d 100644
---- a/arch/arm64/boot/dts/freescale/qoriq-fman3-0.dtsi
-+++ b/arch/arm64/boot/dts/freescale/qoriq-fman3-0.dtsi
-@@ -1,9 +1,9 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
- /*
-  * QorIQ FMan v3 device tree
-  *
-  * Copyright 2012-2015 Freescale Semiconductor Inc.
-  *
-- * SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
-  */
- 
- fman0: fman@1a00000 {
-diff --git a/arch/arm64/boot/dts/freescale/qoriq-qman-portals.dtsi b/arch/arm64/boot/dts/freescale/qoriq-qman-portals.dtsi
-index 6a93a4a..e3bec08 100644
---- a/arch/arm64/boot/dts/freescale/qoriq-qman-portals.dtsi
-+++ b/arch/arm64/boot/dts/freescale/qoriq-qman-portals.dtsi
-@@ -1,9 +1,9 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
- /*
-  * QorIQ QMan Portals device tree
-  *
-  * Copyright 2011-2016 Freescale Semiconductor Inc.
-  *
-- * SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
-  */
- 
- &qportals {
--- 
-1.9.0
-
+Thank you.
