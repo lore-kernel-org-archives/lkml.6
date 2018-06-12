@@ -6,44 +6,45 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id EF070C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:01:29 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 39C85C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:01:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5D08208B1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:01:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAEB2208B1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:01:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iB8RGGgE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5D08208B1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IDwjaQnE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAEB2208B1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934869AbeFLRB2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 13:01:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51264 "EHLO mail.kernel.org"
+        id S934892AbeFLRBt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 13:01:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50602 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934815AbeFLQxL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 12:53:11 -0400
+        id S934959AbeFLQxF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 12:53:05 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 85BF3208B7;
-        Tue, 12 Jun 2018 16:53:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 652E7208B4;
+        Tue, 12 Jun 2018 16:53:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528822391;
-        bh=WKYv9xzYbwrj1+B7dsmjwf0KhkTxO3n3XmIssv37FPY=;
+        s=default; t=1528822384;
+        bh=fcGfxoI4frL1ZcFZZGFYIFQp/M2dUnd5lUVM98PycJE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iB8RGGgEXdrasHLbMkRfgZx0d54NBq21OUSfUfYeAuWyI0ufBVGjNKE29Ze6xJDTL
-         PPjlIbisc1Vw0RzZQhINlZ3MhRk4danJHWTlJjt+ZY6B/lUiWhbeaMOv997KcKh4Dc
-         f+mLnVvv9iD8/kVQYuBfOrvDNQE6ZSiYKVJiYqaM=
+        b=IDwjaQnE8+eyEwtQ4MUH+ybfewLtu99vPs3Av7CNKyzLbq8I5qqWZXt2pZFoAR+Bp
+         OjAa1PVv+s6ZCqO9KNSza7Y+/L64RDjKlGv3K2LujPT5SzU51BYwdV+z3+6ATn68cT
+         OJv+JjIuaZzQa9OT0aj8eJOoHfzitH292IpBxh74=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Chiu <chiu@endlessm.com>,
-        Daniel Drake <drake@endlessm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH 4.4 02/24] tpm: self test failure should not cause suspend to fail
-Date:   Tue, 12 Jun 2018 18:51:46 +0200
-Message-Id: <20180612164816.700938132@linuxfoundation.org>
+        stable@vger.kernel.org, Tariq Toukan <tariqt@mellanox.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 18/24] packet: fix reserve calculation
+Date:   Tue, 12 Jun 2018 18:52:02 +0200
+Message-Id: <20180612164817.509369173@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180612164816.587001852@linuxfoundation.org>
 References: <20180612164816.587001852@linuxfoundation.org>
@@ -60,60 +61,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chris Chiu <chiu@endlessm.com>
+From: Willem de Bruijn <willemb@google.com>
 
-commit 0803d7befa15cab5717d667a97a66214d2a4c083 upstream.
+[ Upstream commit 9aad13b087ab0a588cd68259de618f100053360e ]
 
-The Acer Acer Veriton X4110G has a TPM device detected as:
-  tpm_tis 00:0b: 1.2 TPM (device-id 0xFE, rev-id 71)
+Commit b84bbaf7a6c8 ("packet: in packet_snd start writing at link
+layer allocation") ensures that packet_snd always starts writing
+the link layer header in reserved headroom allocated for this
+purpose.
 
-After the first S3 suspend, the following error appears during resume:
-  tpm tpm0: A TPM error(38) occurred continue selftest
+This is needed because packets may be shorter than hard_header_len,
+in which case the space up to hard_header_len may be zeroed. But
+that necessary padding is not accounted for in skb->len.
 
-Any following S3 suspend attempts will now fail with this error:
-  tpm tpm0: Error (38) sending savestate before suspend
-  PM: Device 00:0b failed to suspend: error 38
+The fix, however, is buggy. It calls skb_push, which grows skb->len
+when moving skb->data back. But in this case packet length should not
+change.
 
-Error 38 is TPM_ERR_INVALID_POSTINIT which means the TPM is
-not in the correct state. This indicates that the platform BIOS
-is not sending the usual TPM_Startup command during S3 resume.
->From this point onwards, all TPM commands will fail.
+Instead, call skb_reserve, which moves both skb->data and skb->tail
+back, without changing length.
 
-The same issue was previously reported on Foxconn 6150BK8MC and
-Sony Vaio TX3.
-
-The platform behaviour seems broken here, but we should not break
-suspend/resume because of this.
-
-When the unexpected TPM state is encountered, set a flag to skip the
-affected TPM_SaveState command on later suspends.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Chris Chiu <chiu@endlessm.com>
-Signed-off-by: Daniel Drake <drake@endlessm.com>
-Link: http://lkml.kernel.org/r/CAB4CAwfSCvj1cudi+MWaB5g2Z67d9DwY1o475YOZD64ma23UiQ@mail.gmail.com
-Link: https://lkml.org/lkml/2011/3/28/192
-Link: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=591031
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Fixes: b84bbaf7a6c8 ("packet: in packet_snd start writing at link layer allocation")
+Reported-by: Tariq Toukan <tariqt@mellanox.com>
+Signed-off-by: Willem de Bruijn <willemb@google.com>
+Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/char/tpm/tpm-interface.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ net/packet/af_packet.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -787,6 +787,10 @@ int tpm_do_selftest(struct tpm_chip *chi
- 	loops = jiffies_to_msecs(duration) / delay_msec;
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -2779,7 +2779,7 @@ static int packet_snd(struct socket *soc
+ 		if (unlikely(offset < 0))
+ 			goto out_free;
+ 	} else if (reserve) {
+-		skb_push(skb, reserve);
++		skb_reserve(skb, -reserve);
+ 	}
  
- 	rc = tpm_continue_selftest(chip);
-+	if (rc == TPM_ERR_INVALID_POSTINIT) {
-+		chip->flags |= TPM_CHIP_FLAG_ALWAYS_POWERED;
-+		dev_info(&chip->dev, "TPM not ready (%d)\n", rc);
-+	}
- 	/* This may fail if there was no TPM driver during a suspend/resume
- 	 * cycle; some may return 10 (BAD_ORDINAL), others 28 (FAILEDSELFTEST)
- 	 */
+ 	/* Returns -EFAULT on error */
 
 
