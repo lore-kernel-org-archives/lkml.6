@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 41BDDC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:50:28 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E3C3FC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:51:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DFE7208B4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:50:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F574208B7
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:51:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kkXS0oVG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DFE7208B4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vnz6KFpV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F574208B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935025AbeFLQu0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 12:50:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33820 "EHLO mail.kernel.org"
+        id S934840AbeFLQvP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 12:51:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60882 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934882AbeFLQsC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 12:48:02 -0400
+        id S934829AbeFLQrs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 12:47:48 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB004208B8;
-        Tue, 12 Jun 2018 16:48:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F3E67208B7;
+        Tue, 12 Jun 2018 16:47:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528822082;
-        bh=OLFpDrXrtl2zWLXxpZ6L98RviF6WcoQY6N+T1o6tSZM=;
+        s=default; t=1528822067;
+        bh=wNvpJc+D8q9Nmmw6e6eDB3KfEtbzYaqPMNmQzYjvKMY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kkXS0oVG+uJbICrP+k4jN3ykT37+S4pEiQfoeri3NYO+06LiEu5Nlxgx/ZPSxa6FI
-         MD8Av1Iv5cIoYz1QEgAsA62p9gd4Ow0sDFy1j1Lj2/YpsibgTJ1kWh2S2H3ISQSq2+
-         dKfq37iiczRBeks3EWxbDezu8fckIHP8HQX3+GvY=
+        b=Vnz6KFpV2/xtaRsmqBKjNt+6Lg78uaD3xBHs2NQYzsy5Y67k1AXa6nH/cYdRZT/EH
+         gNa+ZXk97mhqlrBi4miM0Cs8vK3DvLaCLRPRFEW3VIy526jKnWLMQxwS9t2ziYxldA
+         XHzWiQcG65+WhlsUruFsbC34YZbkRWA4CxIhvQQA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ben Hutchings <ben@decadent.org.uk>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        David Woodhouse <dwmw@amazon.co.uk>, kvm@vger.kernel.org
-Subject: [PATCH 4.9 28/31] KVM: VMX: Expose SSBD properly to guests, 4.9 supplement
-Date:   Tue, 12 Jun 2018 18:46:31 +0200
-Message-Id: <20180612164621.898625630@linuxfoundation.org>
+        stable@vger.kernel.org, Stephen Suryaputra <ssuryaextr@gmail.com>,
+        David Ahern <dsahern@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 23/31] vrf: check the original netdevice for generating redirect
+Date:   Tue, 12 Jun 2018 18:46:26 +0200
+Message-Id: <20180612164621.703872905@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180612164620.797338191@linuxfoundation.org>
 References: <20180612164620.797338191@linuxfoundation.org>
@@ -61,35 +60,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ben Hutchings <ben@decadent.org.uk>
+From: Stephen Suryaputra <ssuryaextr@gmail.com>
 
-Fix an additional misuse of X86_FEATURE_SSBD in
-guest_cpuid_has_spec_ctrl().  This function was introduced in the
-backport of SSBD support to 4.9 and is not present upstream, so it was
-not fixed by commit 43462d908821 "KVM: VMX: Expose SSBD properly to
-guests."
+[ Upstream commit 2f17becfbea5e9a0529b51da7345783e96e69516 ]
 
-Fixes: 52817587e706 ("x86/cpufeatures: Disentangle SSBD enumeration")
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: kvm@vger.kernel.org
+Use the right device to determine if redirect should be sent especially
+when using vrf. Same as well as when sending the redirect.
+
+Signed-off-by: Stephen Suryaputra <ssuryaextr@gmail.com>
+Acked-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/cpuid.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv6/ip6_output.c |    3 ++-
+ net/ipv6/ndisc.c      |    6 ++++++
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
---- a/arch/x86/kvm/cpuid.h
-+++ b/arch/x86/kvm/cpuid.h
-@@ -179,7 +179,7 @@ static inline bool guest_cpuid_has_spec_
- 	if (best && (best->ebx & bit(X86_FEATURE_AMD_IBRS)))
- 		return true;
- 	best = kvm_find_cpuid_entry(vcpu, 7, 0);
--	return best && (best->edx & (bit(X86_FEATURE_SPEC_CTRL) | bit(X86_FEATURE_SSBD)));
-+	return best && (best->edx & (bit(X86_FEATURE_SPEC_CTRL) | bit(X86_FEATURE_SPEC_CTRL_SSBD)));
- }
+--- a/net/ipv6/ip6_output.c
++++ b/net/ipv6/ip6_output.c
+@@ -487,7 +487,8 @@ int ip6_forward(struct sk_buff *skb)
+ 	   send redirects to source routed frames.
+ 	   We don't send redirects to frames decapsulated from IPsec.
+ 	 */
+-	if (skb->dev == dst->dev && opt->srcrt == 0 && !skb_sec_path(skb)) {
++	if (IP6CB(skb)->iif == dst->dev->ifindex &&
++	    opt->srcrt == 0 && !skb_sec_path(skb)) {
+ 		struct in6_addr *target = NULL;
+ 		struct inet_peer *peer;
+ 		struct rt6_info *rt;
+--- a/net/ipv6/ndisc.c
++++ b/net/ipv6/ndisc.c
+@@ -1538,6 +1538,12 @@ void ndisc_send_redirect(struct sk_buff
+ 	   ops_data_buf[NDISC_OPS_REDIRECT_DATA_SPACE], *ops_data = NULL;
+ 	bool ret;
  
- static inline bool guest_cpuid_has_arch_capabilities(struct kvm_vcpu *vcpu)
++	if (netif_is_l3_master(skb->dev)) {
++		dev = __dev_get_by_index(dev_net(skb->dev), IPCB(skb)->iif);
++		if (!dev)
++			return;
++	}
++
+ 	if (ipv6_get_lladdr(dev, &saddr_buf, IFA_F_TENTATIVE)) {
+ 		ND_PRINTK(2, warn, "Redirect: no link-local address on %s\n",
+ 			  dev->name);
 
 
