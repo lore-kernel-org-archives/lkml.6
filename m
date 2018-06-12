@@ -2,174 +2,144 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 005D9C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:03:36 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3B82DC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:03:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94AE72086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:03:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SuknLxxY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94AE72086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id EC9222089C
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:03:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC9222089C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932886AbeFLTDe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 15:03:34 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:32869 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754047AbeFLTDc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 15:03:32 -0400
-Received: by mail-io0-f193.google.com with SMTP id d185-v6so666009ioe.0;
-        Tue, 12 Jun 2018 12:03:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=1tXikmjrljb2EqOv0btgOMQ/liPl9BFGQn6Scd/f9zw=;
-        b=SuknLxxYgBtYL1vYDkYRSORfl2Aoi7IG3GwtsNEqg5S9N4ibaPZNMTlA9S0tciQS1P
-         k8ouiOxPNDIxQe0rw1jUCfFvoGMPx5P2g5VVHHAEU4CiAjO77UPA12EfESufSy1z3LRA
-         3+FlmvkQtyVoWnZGZeD2axEkx5vkzJqwQ+4cwgBWZmi8kmp4Hof8/athwq1WDxkQynS+
-         5HSdv/+b0UdpJwoc+uFwD+Q5CAJeTwgOwpgGSDf60/m4BSpvT/rHgcilW9fiHpsp8cJn
-         MgrIaVs4FJ6xgChtVodTL/K4z57xqxl56kcOS3Yz7+RI0uhQbYd5TDn9xRS9BAasPpSZ
-         fc4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=1tXikmjrljb2EqOv0btgOMQ/liPl9BFGQn6Scd/f9zw=;
-        b=isADB6UFuLq+RvaGbsrIXEC9CsCRi/yrQ+PPrnabQefmxXQYoWwDWw+sED2+rgOOMK
-         TwR7t862VgRiNbGS4k1SDD7mpaN2dfnswszDssGBei25FGHZydI+hm0STwqC4cI+s76a
-         EHLLF/gYwWFJfgY6ti13Qcz7s0Xv+nitaJjB0/aIxPGav5cso24gLIAQOzpBD+irTTdT
-         +OtfB1UAtZ/CAlaicMYFBsAOqMVEnuvkz4LyziqR00/pjBMASR4P+Afu4MQnhZEMhtmo
-         XEkbRhVyTH3QwaWYJr32ZMP1sH760P8Jh+1qHyNACZ4ME2RT7GW3XK7S7Ok1vFGD/A/R
-         oLGA==
-X-Gm-Message-State: APt69E1gQxYGAcUjWK/NAJmw14FE+t0so00H02+iHxtFejSxsIq8Ss+P
-        fG1pwaRbl85pPzWqi+Cv4BHJwZk8POSrex1oeiM=
-X-Google-Smtp-Source: ADUXVKKfkDJeklPmxPs7PLiunWePWxabXlEbbuAPV0n4k8O/r0TzgRF5od3m8HbX24ITKI6yP471Bd8q2scZaV/Xc38=
-X-Received: by 2002:a6b:c544:: with SMTP id v65-v6mr1705956iof.278.1528830211909;
- Tue, 12 Jun 2018 12:03:31 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a02:7b26:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 12:03:31
- -0700 (PDT)
-In-Reply-To: <alpine.DEB.2.20.1712282315030.1899@nanos>
-References: <20171228152710.891701433@linutronix.de> <20171228153308.286787253@linutronix.de>
- <alpine.DEB.2.20.1712282315030.1899@nanos>
-From:   Yang Li <pku.leo@gmail.com>
-Date:   Tue, 12 Jun 2018 14:03:31 -0500
-Message-ID: <CADRPPNTK1x_47fnk4Tor5QSPk2DEuEwNUQQ4dGu1P3QkQDyZeQ@mail.gmail.com>
-Subject: Re: [patch V5 01/11] Documentation: Add license-rules.rst to describe
- how to properly identify file licenses
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linuxfoundation.org>,
-        Andrew Morton <akpm@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
+        id S933280AbeFLTDn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 15:03:43 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50920 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932926AbeFLTDl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 15:03:41 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 023C24000B8A;
+        Tue, 12 Jun 2018 19:03:41 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E81732026DEF;
+        Tue, 12 Jun 2018 19:03:40 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w5CJ3eCV030776;
+        Tue, 12 Jun 2018 15:03:40 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w5CJ3eSw030772;
+        Tue, 12 Jun 2018 15:03:40 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Tue, 12 Jun 2018 15:03:40 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Alan Stern <stern@rowland.harvard.edu>
+cc:     Ming Lei <ming.lei@redhat.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Rob Herring <rob.herring@linaro.org>,
-        Jonas Oberg <jonas@fsfe.org>, Joe Perches <joe@perches.com>,
-        linux-xfs@vger.kernel.org,
-        Charlemagne Lasse <charlemagnelasse@gmail.com>,
-        Carmen Bianca Bakker <carmenbianca@fsfe.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+        USB list <linux-usb@vger.kernel.org>,
+        Kernel development list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] usb: don't offload isochronous urb completions to
+ ksoftirq
+In-Reply-To: <Pine.LNX.4.44L0.1806121433290.1582-100000@iolanthe.rowland.org>
+Message-ID: <alpine.LRH.2.02.1806121450330.14879@file01.intranet.prod.int.rdu2.redhat.com>
+References: <Pine.LNX.4.44L0.1806121433290.1582-100000@iolanthe.rowland.org>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 12 Jun 2018 19:03:41 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 12 Jun 2018 19:03:41 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 28, 2017 at 4:17 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> On Thu, 28 Dec 2017, Thomas Gleixner wrote:
->
-> Sorry for the spam. I somehow missed to refresh the patch before generating
-> the mbox. Find below the correct version of that one which has ALL braces
-> removed which we don't need.
-
-Hi Thomas,
-
-I'm not sure how we reached the conclusion that we should remove ALL
-braces?  I cannot find related discussion in the archive except for
-the "WITH" case.
-
-This is conflicting with the current SPDX spec at
-https://spdx.org/spdx-specification-21-web-version quoted below and
-also the explenation in your own file.
-
-Quote from SPDX spec 2.1: More expressive composite license
-expressions can be constructed using "OR", "AND", and "WITH" operators
-similar to constructing mathematical expressions using arithmetic
-operators. For the Tag:value format, any license expression that
-consists of more than one license identifier and/or LicenseRef, should
-be encapsulated by parentheses: "( )".
 
 
-> +
-> +   A <SPDX License Expression> is either an SPDX short form license
-> +   identifier found on the SPDX License List, or the combination of two
-> +   SPDX short form license identifiers separated by "WITH" when a license
-> +   exception applies. When multiple licenses apply, an expression consists
-> +   of keywords "AND", "OR" separating sub-expressions and surrounded by
-> +   "(", ")" .
+On Tue, 12 Jun 2018, Alan Stern wrote:
 
-Conflicting with the example
+> On Tue, 12 Jun 2018, Mikulas Patocka wrote:
+> 
+> > On Tue, 12 Jun 2018, Alan Stern wrote:
+> > 
+> > > On Tue, 12 Jun 2018, Mikulas Patocka wrote:
+> > > 
+> > > > > How about making the softirq thread's priority adjustable?
+> > > > 
+> > > > But you would have to argue with softirq maintainers about it - and you 
+> > > > say that you don't have time for that.
+> > > 
+> > > But maybe _you_ do...
+> > 
+> > ksoftirqd has priority 0 - it is not suitable for real-time tasks, such as 
+> > audio.
+> 
+> There have been suggestions posted to this mailing list for changing 
+> the USB stack to use a threaded interrupt routine instead of a tasklet
+> for this purpose.  Would that make your situation any better?
 
-> +
-> +   License identifiers for licenses like [L]GPL with the 'or later' option
-> +   are constructed by using a "+" for indicating the 'or later' option.::
-> +
-> +      // SPDX-License-Identifier: GPL-2.0+
-> +      // SPDX-License-Identifier: LGPL-2.1+
-> +
-> +   WITH should be used when there is a modifier to a license needed.
-> +   For example, the linux kernel UAPI files use the expression::
-> +
-> +      // SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note
-> +      // SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note
-> +
-> +   Other examples using WITH exceptions found in the kernel are::
-> +
-> +      // SPDX-License-Identifier: GPL-2.0 WITH mif-exception
-> +      // SPDX-License-Identifier: GPL-2.0+ WITH GCC-exception-2.0
-> +
-> +   Exceptions can only be used with particular License identifiers. The
-> +   valid License identifiers are listed in the tags of the exception text
-> +   file. For details see the point `Exceptions`_ in the chapter `License
-> +   identifiers`_.
-> +
-> +   OR should be used if the file is dual licensed and only one license is
-> +   to be selected.  For example, some dtsi files are available under dual
-> +   licenses::
-> +
-> +      // SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
-> +
-> +   Examples from the kernel for license expressions in dual licensed files::
-> +
-> +      // SPDX-License-Identifier: GPL-2.0 OR MIT
-> +      // SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
-> +      // SPDX-License-Identifier: GPL-2.0 OR Apache-2.0
-> +      // SPDX-License-Identifier: GPL-2.0 OR MPL-1.1
-> +      // SPDX-License-Identifier: (GPL-2.0 WITH Linux-syscall-note) OR MIT
-> +      // SPDX-License-Identifier: GPL-1.0+ OR BSD-3-Clause OR OpenSSL
-> +
-> +   AND should be used if the file has multiple licenses whose terms all
-> +   apply to use the file. For example, if code is inherited from another
-> +   project and permission has been given to put it in the kernel, but the
-> +   original license terms need to remain in effect::
-> +
-> +      // SPDX-License-Identifier: (GPL-2.0 WITH Linux-syscall-note) AND MIT
-> +
-> +   Another other example where both sets of license terms need to be
-> +   adhered to is::
-> +
-> +      // SPDX-License-Identifier: GPL-1.0+ AND LGPL-2.1+
-> +
+If you set real-time priority to the interrupt thread, then yes, I think 
+it would solve the problem.
+
+> > In my opinion, it is much easier to fix this in the ehci driver (by not 
+> > offloading isochronous completions), than to design a new 
+> > real-time-capable ksoftirqd.
+> 
+> You probably never noticed this, but in fact we use _two_ bottom-half 
+> handlers for URB completions: one scheduled with normal priority and 
+> one scheduled with high priority (tasklet_hi_schedule()).  Isochronous 
+> URB completions go to the high-priority handler.
+> 
+> Shouldn't a high-priority tasklet be up to the job of handling audio?
+
+I noticed the function tasklet_hi_schedule. It has higher priority than 
+other softirqs - but it gets offloaded to the ksoftirqd thread that has 
+priority 0. So it can be preempted by anything - and it doesn't protect 
+against skipping.
+
+If we raise the priority of ksoftirqd, people will start complaining such 
+as "my machine is unuseable when it receives too many network packets". 
+So, you basically need two ksoftirqds, one for networking (with regular 
+priority) and one for audio (with high priority).
+
+> > > > > As for coordinating with the softirq maintainers -- whether I want to 
+> > > > > or not isn't the issue.  Right now I don't have _time_ to do it.
+> > > > > 
+> > > > > Alan Stern
+> > > > 
+> > > > I am wondering - whats the purpose of that patch 
+> > > > 428aac8a81058e2303677a8fbf26670229e51d3a at all? The patch shows some 
+> > > > performance difference, but they are minor, about 1%.
+> > > > 
+> > > > If you want to call the urb callback as soon as possible - why don't you 
+> > > > just call it? Why do you need to offload the callback to a softirq thread?
+> > > 
+> > > Please read the Changelog entry for commit 94dfd7edfd5c.  Basically the 
+> > > idea was to reduce overall latency by not doing as much work in an 
+> > > interrupt handler.
+> > > 
+> > > Alan Stern
+> > 
+> > snd_complete_urb is doing nothing but submitting the same urb again. Is 
+> > resubmitting the urb really causing so much latency that you can't do it 
+> > in the interrupt handler?
+> 
+> Perhaps snd_complete_urb doesn't doing very much, but other drivers
+> most definitely do.  In particular, the completion handler for the USB
+> video class driver can be very time consuming.  Your proposed change
+> would make things worse for people using USB video.
+
+In that case we can avoid offloading just for snd_complete_urb. Would you 
+agree to adding a flag such as URB_FAST_COMPLETION that is set just by the 
+audio driver?
+
+Do the video usb devices use isochronous or bulk transfers?
+
+> Alan Stern
+
+Mikulas
