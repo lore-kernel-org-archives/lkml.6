@@ -2,104 +2,228 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1DB64C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:38:16 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id AEBABC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:42:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C71C42086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:38:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 517872086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:42:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="HXY3FJRw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C71C42086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LRnTKc9J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 517872086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754373AbeFLTiN (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 15:38:13 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:34753 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754181AbeFLTiM (ORCPT
+        id S933406AbeFLTma (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 15:42:30 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:38504 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932926AbeFLTm2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 15:38:12 -0400
-Received: by mail-pf0-f193.google.com with SMTP id a63-v6so69223pfl.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 12:38:12 -0700 (PDT)
+        Tue, 12 Jun 2018 15:42:28 -0400
+Received: by mail-pl0-f65.google.com with SMTP id b14-v6so74250pls.5
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 12:42:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Tg30631c7VsW83EyQ4zCQyWRcvmxf/UhwcvkSz+5aHw=;
-        b=HXY3FJRw0mLWgEwY+STnQSmPBtb9POdAYK9Vgz5BH5Fzx1aukt/TuwLw8HWcRWjc84
-         G4lxcDPx6yt9EYex0V3vqxGr2BkxpXflX8a5h+qJ4zLvwy7Mk+KvVQzFb9UgtKdstIwr
-         QgTKIPPTdkeBmXda9/1JcMxOvD5kZiDDzLMmI5kII25LGSmjJMWZuqdD8CuH0o8ZgnDN
-         tbByA85oPj08G41kZVNahl0f0e3VlEQqq2iDXmv/eTcRfZUq9yWK/C80vnF2OxW9U92j
-         uQQqRXrVV1tPlYzsR3Glv7WzgEPmnGmxFZoC2lAY0dXt/KjR7jMnXdA84jeLrrnwOtpG
-         DgIg==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Z8tWk21EbOUM/7yZ5vR3wRSPVlC0AC0/fpwGfzSWhBw=;
+        b=LRnTKc9JGdpVFvBJGWoEKakKeI7x5wmyY91s7ETf0OZRNJ8VU/566aD/APqA2xbp9T
+         Y0uz5ACH75A9J8i/FAJ3tH33d2CCFv+HNrDrEdXyWTlxD1t6G7gJmU5Ymx8LVF4JwR/3
+         v/laIeor7dn6LObzouDA81jQ06YuTayLbri1E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=Tg30631c7VsW83EyQ4zCQyWRcvmxf/UhwcvkSz+5aHw=;
-        b=ZJ8aUvwU9iHiLGp2n6r6vbNAMqd/trohH8za26lGX9ceqgw1phsYM92ALpNOf8Dazw
-         eViJWEIPKD19VrSe4Nz4mfMFbxw8K4ocKBnsPa/ya137dnlDxHJZEwi1T0f0TJvOWXQY
-         J2X9D8LLib2PllW0vnIVhrH6kC+4Kjc0PAiXWp9z93Yk8IjdJBiGzxKXXDKOqpGqj6Nf
-         bmTSwrY3W0lDVTYLPJ5a1rTtyYPZAqGAjgTgFpJ8Mo6TGDVyYESGzdM3NldpW7u3tAQc
-         idW3+zdN/lQGVy2mqcsL9csgBB6CY7RvSO5/w9Y+fTQGyYFXi/rWqtVT8H1WNubYCyPx
-         JZ6w==
-X-Gm-Message-State: APt69E0wj8bXKuzN+KZ0LPEem7n6fuwRO4f4BTNVZnRVlftvA8d4ZAMa
-        R1o6Cx5GGG7zUp99r61hszwnsg==
-X-Google-Smtp-Source: ADUXVKJeiicEm4k9xBtIZS01upIk+DlkyMnohRWl310hhfnh+I0Rp0uu0PcRcMofLBp/9KsQmj2f/A==
-X-Received: by 2002:a62:234a:: with SMTP id j71-v6mr1707174pfj.221.1528832292205;
-        Tue, 12 Jun 2018 12:38:12 -0700 (PDT)
-Received: from localhost ([73.93.152.169])
-        by smtp.gmail.com with ESMTPSA id k129-v6sm890796pga.94.2018.06.12.12.38.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Jun 2018 12:38:11 -0700 (PDT)
-Date:   Tue, 12 Jun 2018 12:38:11 -0700 (PDT)
-X-Google-Original-Date: Tue, 12 Jun 2018 12:36:54 PDT (-0700)
-Subject:     Re: [PATCH 3/3] riscv: fix __user annotation for __copy_user()
-In-Reply-To: <CAMHZB6E3Jcvni=nsxvOB-+g8sDGCvEV2G2q2+3XrJJy7f__-eg@mail.gmail.com>
-CC:     atish.patra@wdc.com, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org, albert@sifive.com
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     luc.vanoostenryck@gmail.com
-Message-ID: <mhng-8a2f58a2-6c49-43bb-a7dc-51f2f8ff8e8f@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Z8tWk21EbOUM/7yZ5vR3wRSPVlC0AC0/fpwGfzSWhBw=;
+        b=WgF2oimKt+uvqAND1E74oZbEFs4oGtkfBzCF7qUggD03sJAJ2MM5cwNAmmpZU33E49
+         B004XrdQftWM6RAco9byzVtsZxItN2jZJU1jPVvCXD7xAKGk2Vjk9MPGJMDgaHmpDPwF
+         JImGtDJj1TJsIhq0Bv+I6UvLSbhzxteKVaz+LJC1DK304OmNjsAJSBFSyI25HNkh8977
+         JB0WGB57YPW5WHvCfhbaA6qqmCUjbkUdtIEwQcYwSCaMVkeQ6A5ebC9NiegHLZjLughz
+         kche0ArwaWAlOP/3TVAZ5cmP2OnZCXZsqZtdLjPXPFX5IU4gsqrccyeky4igjhWara5f
+         uGHQ==
+X-Gm-Message-State: APt69E2ADxiLYdWmfxQc8XO/+gcZbnYyZmBnwMLyHP/su3/8bBMrvYvH
+        jS5IXtVZ2NDR4NJIDqjfGSQpBg==
+X-Google-Smtp-Source: ADUXVKIM32OBXh+QET25RX4/WJJvLm/SvSlCvYX15vJN++BjrD0eV6y49lL5k2QUL2LY8B2qjmkvLQ==
+X-Received: by 2002:a17:902:981:: with SMTP id 1-v6mr1870103pln.11.1528832548029;
+        Tue, 12 Jun 2018 12:42:28 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
+        by smtp.gmail.com with ESMTPSA id j127-v6sm1150382pgc.10.2018.06.12.12.42.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 12 Jun 2018 12:42:26 -0700 (PDT)
+Date:   Tue, 12 Jun 2018 12:42:26 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Rajendra Nayak <rnayak@codeaurora.org>
+Cc:     viresh.kumar@linaro.org, sboyd@kernel.org, andy.gross@linaro.org,
+        ulf.hansson@linaro.org, collinsd@codeaurora.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 6/7] soc: qcom: Add RPMh Power domain driver
+Message-ID: <20180612194226.GI88063@google.com>
+References: <20180612044052.4402-1-rnayak@codeaurora.org>
+ <20180612044052.4402-7-rnayak@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180612044052.4402-7-rnayak@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Jun 2018 11:19:57 PDT (-0700), luc.vanoostenryck@gmail.com wrote:
-> On Tue, Jun 12, 2018 at 7:12 PM, Palmer Dabbelt <palmer@sifive.com> wrote:
->> On Mon, 11 Jun 2018 20:00:08 PDT (-0700), luc.vanoostenryck@gmail.com wrote:
->>> On Mon, Jun 11, 2018 at 12:01:37PM -0700, Palmer Dabbelt wrote:
->>>>
->>>> OK, I'll try and figure out what's going on.  We've had a handful of
->>>> headaches trying to get things like '.align 2; .align 2' to actually
->>>> produce
->>>> no NOPs for the second alignment directive, which is surprisingly
->>>> complicated due to the aggressive linker relaxation we do.
->>>
->>>
->>> OK. I imagine indeed but note that no linker is involved here so,
->>> if the problem is still present, it must already be in the assembler.
->>
->>
->> Ah, OK -- in that case then it's just not a bug.  In RISC-V land we handle
->> alignment as part of relaxation in the linker, so if you're looking at the
->> output of the assembler then you'll always see a bunch of NOPs for every
->> alignment directive.  If you 'objdump -dr' you should be able to see the
->> relocations that get emitted, there should be a R_RISCV_ALIGN that points to
->> the run of NOPs.
->
-> Ah OK. Indeed I see the R_RISCV_ALIGN.
-> Thanks for the explanation.
+Hi,
 
-No problem.  There's heaps of info about this in some blog posts I made a while 
-ago if you're interested.
+On Tue, Jun 12, 2018 at 10:10:51AM +0530, Rajendra Nayak wrote:
+> The RPMh Power domain driver aggregates the corner votes from various
+> consumers for the ARC resources and communicates it to RPMh.
+> 
+> We also add data for all power domains on sdm845 SoC as part of the patch.
+> The driver can be extended to support other SoCs which support RPMh
+> 
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> ---
+>  drivers/soc/qcom/Kconfig                |   9 +
+>  drivers/soc/qcom/Makefile               |   1 +
+>  drivers/soc/qcom/rpmhpd.c               | 427 ++++++++++++++++++++++++
+>  include/dt-bindings/power/qcom-rpmhpd.h |  31 ++
+>  4 files changed, 468 insertions(+)
+>  create mode 100644 drivers/soc/qcom/rpmhpd.c
+>  create mode 100644 include/dt-bindings/power/qcom-rpmhpd.h
+> 
+> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+> index 5c54931a7b99..7cb7eba2b997 100644
+> --- a/drivers/soc/qcom/Kconfig
+> +++ b/drivers/soc/qcom/Kconfig
+> @@ -74,6 +74,15 @@ config QCOM_RMTFS_MEM
+>  
+>  	  Say y here if you intend to boot the modem remoteproc.
+>  
+> +config QCOM_RPMHPD
+> +	tristate "Qualcomm RPMh Power domain driver"
+> +	depends on QCOM_RPMH && QCOM_COMMAND_DB
+> +	help
+> +	  QCOM RPMh Power domain driver to support power-domains with
+> +	  performance states. The driver communicates a performance state
+> +	  value to RPMh which then translates it into corresponding voltage
+> +	  for the voltage rail.
+> +
+>  config QCOM_RPMPD
+>  	tristate "Qualcomm RPM Power domain driver"
+>  	depends on MFD_QCOM_RPM && QCOM_SMD_RPM
+> diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
+> index 9550c170de93..499513f63bef 100644
+> --- a/drivers/soc/qcom/Makefile
+> +++ b/drivers/soc/qcom/Makefile
+> @@ -16,3 +16,4 @@ obj-$(CONFIG_QCOM_SMSM)	+= smsm.o
+>  obj-$(CONFIG_QCOM_WCNSS_CTRL) += wcnss_ctrl.o
+>  obj-$(CONFIG_QCOM_APR) += apr.o
+>  obj-$(CONFIG_QCOM_RPMPD) += rpmpd.o
+> +obj-$(CONFIG_QCOM_RPMHPD) += rpmhpd.o
+> diff --git a/drivers/soc/qcom/rpmhpd.c b/drivers/soc/qcom/rpmhpd.c
+> new file mode 100644
+> index 000000000000..7083ec1590ff
+> --- /dev/null
+> +++ b/drivers/soc/qcom/rpmhpd.c
+> @@ -0,0 +1,427 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/* Copyright (c) 2018, The Linux Foundation. All rights reserved.*/
+> +
+> +#include <linux/err.h>
+> +#include <linux/export.h>
+> +#include <linux/init.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/pm_domain.h>
+> +#include <linux/slab.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_opp.h>
+> +#include <soc/qcom/cmd-db.h>
+> +#include <soc/qcom/rpmh.h>
+> +#include <dt-bindings/power/qcom-rpmhpd.h>
+> +
+> +#define domain_to_rpmhpd(domain) container_of(domain, struct rpmhpd, pd)
+> +
+> +#define DEFINE_RPMHPD_AO(_platform, _name, _active)			\
+> +	static struct rpmhpd _platform##_##_active;			\
+> +	static struct rpmhpd _platform##_##_name = {			\
+> +		.pd = {	.name = #_name,	},				\
+> +		.peer = &_platform##_##_active,				\
+> +		.res_name = #_name".lvl",				\
+> +		.valid_state_mask = (BIT(RPMH_ACTIVE_ONLY_STATE) |	\
+> +					BIT(RPMH_WAKE_ONLY_STATE) |	\
+> +					BIT(RPMH_SLEEP_STATE)),		\
+> +	};								\
+> +	static struct rpmhpd _platform##_##_active = {			\
+> +		.pd = { .name = #_active, },				\
+> +		.peer = &_platform##_##_name,				\
+> +		.active_only = true,					\
+> +		.res_name = #_name".lvl",				\
+> +		.valid_state_mask = (BIT(RPMH_ACTIVE_ONLY_STATE) |	\
+> +					BIT(RPMH_WAKE_ONLY_STATE) |	\
+> +					BIT(RPMH_SLEEP_STATE)),		\
+> +	}
+> +
+> +#define DEFINE_RPMHPD(_platform, _name)					\
+> +	static struct rpmhpd _platform##_##_name = {			\
+> +		.pd = { .name = #_name, },				\
+> +		.res_name = #_name".lvl",				\
+> +		.valid_state_mask = BIT(RPMH_ACTIVE_ONLY_STATE),	\
+> +	}
+
+Perhaps describe briefly the concept of an AO (active-only) and a peer
+domain. It is not necessarily evident why an AO domain would have
+WAKE_ONLY and SLEEP_ONLY as valid states, while the non-AO domain has
+ACTIVE_ONLY as it's only state.
+
+> +/*
+> + * This function is used to aggregate the votes across the active only
+> + * resources and its peers. The aggregated votes are send to RPMh as
+
+s/send/sent/
+
+> + * ACTIVE_ONLY votes (which take effect immediately), as WAKE_ONLY votes
+> + * (applied by RPMh on system wakeup) and as SLEEP votes (applied by RPMh
+> + * on system sleep).
+> + * We send ACTIVE_ONLY votes for resources without any peers. For others,
+> + * which have an active only peer, all 3 Votes are sent.
+
+s/Votes/votes/
+
+> +static int rpmhpd_probe(struct platform_device *pdev)
+> +{
+> +	int i, ret;
+> +	size_t num;
+
+nit: naming this num_pds would slightly improve readability (e.g. make
+it evident that the for loop iterates over the PDs).
+
+> +	struct genpd_onecell_data *data;
+> +	struct rpmhpd **rpmhpds;
+> +	const struct rpmhpd_desc *desc;
+> +
+> +	desc = of_device_get_match_data(&pdev->dev);
+> +	if (!desc)
+> +		return -EINVAL;
+> +
+> +	rpmhpds = desc->rpmhpds;
+> +	num = desc->num_pds;
+> +
+> +	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
+> +	if (!data)
+> +		return -ENOMEM;
+> +
+> +	data->domains = devm_kcalloc(&pdev->dev, num, sizeof(*data->domains),
+> +				     GFP_KERNEL);
+
+Check for NULL?
+
+Thanks
+
+Matthias
