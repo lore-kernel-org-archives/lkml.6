@@ -6,102 +6,112 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8902EC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:08:55 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C5113C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:09:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31F882089C
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:08:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31F882089C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 83E8E208B1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:09:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83E8E208B1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933045AbeFLMIw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 08:08:52 -0400
-Received: from mga07.intel.com ([134.134.136.100]:41804 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754250AbeFLMIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 08:08:51 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2018 05:08:50 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,214,1526367600"; 
-   d="scan'208";a="46505056"
-Received: from irvmail001.ir.intel.com ([163.33.26.43])
-  by fmsmga007.fm.intel.com with ESMTP; 12 Jun 2018 05:08:48 -0700
-Received: from mwajdecz-mobl1.ger.corp.intel.com (mwajdecz-mobl1.ger.corp.intel.com [172.28.174.165])
-        by irvmail001.ir.intel.com (8.14.3/8.13.6/MailSET/Hub) with ESMTP id w5CC8l1M028135;
-        Tue, 12 Jun 2018 13:08:47 +0100
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To:     "Jani Nikula" <jani.nikula@linux.intel.com>,
-        "Joonas Lahtinen" <joonas.lahtinen@linux.intel.com>,
-        "Rodrigo Vivi" <rodrigo.vivi@intel.com>,
-        "David Airlie" <airlied@linux.ie>, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org,
-        "Colin King" <colin.king@canonical.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [Intel-gfx] [PATCH][V3] drm/i915/guc: fix GEM_BUG_ON check
-References: <20180612093804.11341-1-colin.king@canonical.com>
-Date:   Tue, 12 Jun 2018 14:08:43 +0200
+        id S933421AbeFLMJE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 08:09:04 -0400
+Received: from www62.your-server.de ([213.133.104.62]:55194 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933076AbeFLMJC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 08:09:02 -0400
+Received: from [178.197.248.16] (helo=linux.home)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-SHA:256)
+        (Exim 4.85_2)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fSi6W-0005cB-La; Tue, 12 Jun 2018 14:08:52 +0200
+Subject: Re: WARNING: kmalloc bug in xdp_umem_create
+To:     =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@gmail.com>,
+        penguin-kernel@i-love.sakura.ne.jp
+Cc:     dvyukov@google.com,
+        syzbot+4abadc5d69117b346506@syzkaller.appspotmail.com,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        "Karlsson, Magnus" <magnus.karlsson@intel.com>,
+        David Miller <davem@davemloft.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>, syzkaller-bugs@googlegroups.com
+References: <00000000000092de58056e3d4b96@google.com>
+ <10d6b170-b820-3077-8737-c9d06e98d0fb@I-love.SAKURA.ne.jp>
+ <CAJ+HfNhnmvTHsE7cgi8pROjprsYvCZuzZDmYmpiUx4jqtHboUw@mail.gmail.com>
+ <CACT4Y+bfZK6yucoDrXPPW3Tc40RYq61u0Zcb=CKtdao8E+v1cQ@mail.gmail.com>
+ <13f6777a-2170-d0cc-1066-1b48a27ec981@i-love.sakura.ne.jp>
+ <CAJ+HfNh9pRGcd9EO7BEfPPEdCmP5EDdu_rNgLR7r4oDrcLgvQQ@mail.gmail.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <aa02466c-695a-d482-bc5e-ff249536a4ad@iogearbox.net>
+Date:   Tue, 12 Jun 2018 14:08:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From:   "Michal Wajdeczko" <michal.wajdeczko@intel.com>
-Message-ID: <op.zkhv0tz5xaggs7@mwajdecz-mobl1.ger.corp.intel.com>
-In-Reply-To: <20180612093804.11341-1-colin.king@canonical.com>
-User-Agent: Opera Mail/1.0 (Win32)
+In-Reply-To: <CAJ+HfNh9pRGcd9EO7BEfPPEdCmP5EDdu_rNgLR7r4oDrcLgvQQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.99.3/24655/Tue Jun 12 06:33:35 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Jun 2018 11:38:04 +0200, Colin King <colin.king@canonical.com>  
-wrote:
+On 06/10/2018 03:03 PM, Björn Töpel wrote:
+> Den sön 10 juni 2018 kl 14:53 skrev Tetsuo Handa
+> <penguin-kernel@i-love.sakura.ne.jp>:
+>> On 2018/06/10 20:52, Dmitry Vyukov wrote:
+>>> On Sun, Jun 10, 2018 at 11:31 AM, Björn Töpel <bjorn.topel@gmail.com> wrote:
+>>>> Den sön 10 juni 2018 kl 04:53 skrev Tetsuo Handa
+>>>> <penguin-kernel@i-love.sakura.ne.jp>:
+>>>>> On 2018/06/10 7:47, syzbot wrote:
+>>>>>> Hello,
+>>>>>>
+>>>>>> syzbot found the following crash on:
+>>>>>>
+>>>>>> HEAD commit:    7d3bf613e99a Merge tag 'libnvdimm-for-4.18' of git://git.k..
+>>>>>> git tree:       upstream
+>>>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=1073f68f800000
+>>>>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=f04d8d0a2afb789a
+>>>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=4abadc5d69117b346506
+>>>>>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>>>>>> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=13c9756f800000
+>>>>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16366f9f800000
+>>>>>>
+>>>>>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>>>>>> Reported-by: syzbot+4abadc5d69117b346506@syzkaller.appspotmail.com
+>>>>>>
+>>>>>> random: sshd: uninitialized urandom read (32 bytes read)
+>>>>>> random: sshd: uninitialized urandom read (32 bytes read)
+>>>>>> random: sshd: uninitialized urandom read (32 bytes read)
+>>>>>> random: sshd: uninitialized urandom read (32 bytes read)
+>>>>>> random: sshd: uninitialized urandom read (32 bytes read)
+>>>>>> WARNING: CPU: 1 PID: 4537 at mm/slab_common.c:996 kmalloc_slab+0x56/0x70 mm/slab_common.c:996
+>>>>>> Kernel panic - not syncing: panic_on_warn set ...
+>>>>>
+>>>>> syzbot gave up upon kmalloc(), but actually error handling path has
+>>>>> NULL pointer dereference bug.
+>>>>
+>>>> Thanks Tetsuo! This crash has been fixed by Daniel Borkmann in commit
+>>>> c09290c56376 ("bpf, xdp: fix crash in xdp_umem_unaccount_pages").
+>>>
+>>> Let's tell syzbot about this:
+>>>
+>>> #syz fix: bpf, xdp: fix crash in xdp_umem_unaccount_pages
+>>>
+>> Excuse me, but that patch fixes NULL pointer dereference which occurs after kmalloc()'s
+>> "WARNING: CPU: 1 PID: 4537 at mm/slab_common.c:996 kmalloc_slab+0x56/0x70 mm/slab_common.c:996"
+>> message. That is, "Too large memory allocation" itself is not yet fixed.
+> 
+> The code relies on that the sl{u,a,o}b layer says no, and the
+> setsockopt bails out. The warning could be opted out using
+> __GFP_NOWARN. Is there another preferred way? Two get_user_pages
+> calls, where the first call would set pages to NULL just to fault the
+> region? Walk the process' VMAs? Something else?
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The check for level being less than zero always false because flags
-> is currently unsigned and can never be negative. Fix this by making
-> level a s32.
->
-> Detected by CoverityScan, CID#1468363 ("Macro compares unsigned to 0")
->
-> Fixes: cb5d64e9f13e ("drm/i915/guc: Allow user to control default GuC  
-> logging")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->
-> ---
-> V3: Make level s32 and add the missing Fixes: tag, thanks to Dan  
-> Carpenter and
-> Jani Nikula for correcting my mistakes
->
-> ---
->  drivers/gpu/drm/i915/intel_guc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/i915/intel_guc.c  
-> b/drivers/gpu/drm/i915/intel_guc.c
-> index 116f4ccf1bbd..bdb1fab322bf 100644
-> --- a/drivers/gpu/drm/i915/intel_guc.c
-> +++ b/drivers/gpu/drm/i915/intel_guc.c
-> @@ -205,7 +205,7 @@ void intel_guc_fini(struct intel_guc *guc)
-> static u32 get_log_control_flags(void)
->  {
-> -	u32 level = i915_modparams.guc_log_level;
-> +	s32 level = i915_modparams.guc_log_level;
+(Now resolved as well.)
 
-s/s32 level/int level
-
-to match modparam type as already suggested by others
-
->  	u32 flags = 0;
-> 	GEM_BUG_ON(level < 0);
-
-please note that this BUG_ON will go away with pending [1] so maybe
-we can just merge series [2] instead ?
-
-Thanks,
-Michal
-
-[1] https://patchwork.freedesktop.org/patch/227365/
-[2] https://patchwork.freedesktop.org/series/44201/
+#syz fix: xsk: silence warning on memory allocation failure
