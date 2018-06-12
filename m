@@ -2,116 +2,102 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8508EC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:46:59 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A298DC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:52:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A01E2089C
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:46:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DAD62086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:52:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OHOyuGCs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A01E2089C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="liHY87sA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DAD62086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754369AbeFLMqo (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 08:46:44 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:39351 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754290AbeFLMqm (ORCPT
+        id S933183AbeFLMww (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 08:52:52 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36654 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754223AbeFLMwv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 08:46:42 -0400
-Received: by mail-lf0-f68.google.com with SMTP id t134-v6so35807756lff.6;
-        Tue, 12 Jun 2018 05:46:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=pJjSA50iRw8SLe0S+usgvRDyFXFk54BMK3wa4Qk93iM=;
-        b=OHOyuGCsx6SxiQfx7PuUReHn6G4nAAN4bLw6cS2qdCwDmwKx3mYi3buJfoE2Ym09EH
-         ZTi5zT7PdoPG4qghjxw6+IMc5iL8PA3PgxyYBpelybbxRmGJABduuTJ6eve6bPDJdN33
-         UZWIhaMNZrMaCxgQ8NP/ZmnNfQN3TLgORZuJ+tAZGFDde3egl2tqr+CV98bp0lq+Arhh
-         frGJUWfHhI1PROzuE6hOXkV289MhQVp8aikAFdLmOh5e//ASRwwx2Hkt4ieAVJINwpcF
-         SsbJ8GEHp88uDs/PDfMpRIivPj6iBpcXd3OcTqQLI/tgUD/C01jgaULezazGQz/zAS2i
-         vcbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=pJjSA50iRw8SLe0S+usgvRDyFXFk54BMK3wa4Qk93iM=;
-        b=ABgtFdszQs62Zy37ihbMwMUVrXMvdaB1oiU5PsN4dV6c8PARHkCM1FbBpMlIVMrda7
-         rNcTwC7avX+zC8IZU6w+0DlR1CVpwd5WvhBoqorYYygroyE4Fw0aP5dAzVo75Xg0OfC+
-         dnkqsqb0uSMk6j3tNN7bWL5Mamumyjqr/5XzGsWJ9BV4wSgHym6y8dh121vxCTG1t8bG
-         Un5UUzgN6xbio9M5y6Zq9YBZNNoeOqop1/QsLD81H93cyXpMQHWvEQt0E3ohy9x6Geww
-         M0T8oePRv5HFkYZTpI9vDXn/6GCSeRbw51DHZLTSfjNho8qEGowL0b0n0j1uJXWC51H8
-         w4uQ==
-X-Gm-Message-State: APt69E3db2iEy+IqFEb6qi5fU1LtcxbFAYxNdF3Sy2puntYLMnHAkw1r
-        4cgafMwAy517+D+je/6iMwE=
-X-Google-Smtp-Source: ADUXVKJ3RRBt8TBxZ5/zxzhdIsMppSmlOc+985G6dSzTf7Wqs0FNlNWIALbpZm4nrr07Ysh66qAlFw==
-X-Received: by 2002:a19:c452:: with SMTP id u79-v6mr144128lff.5.1528807600757;
-        Tue, 12 Jun 2018 05:46:40 -0700 (PDT)
-Received: from xi.terra (c-8bb2e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.178.139])
-        by smtp.gmail.com with ESMTPSA id h24-v6sm13981lfc.63.2018.06.12.05.46.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Jun 2018 05:46:39 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.90_1)
-        (envelope-from <johan@xi.terra>)
-        id 1fSigj-0001hY-J6; Tue, 12 Jun 2018 14:46:17 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Johan Hovold <johan@kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Denis Kirjanov <kirjanov@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@redhat.com>
-Subject: [PATCH 1/2] EDAC: fix memleak in module init error path
-Date:   Tue, 12 Jun 2018 14:43:34 +0200
-Message-Id: <20180612124335.6420-1-johan@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        Tue, 12 Jun 2018 08:52:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=iW1N7nazOG3nFnLgR1E6cE44LszNz5mvWvdQT6g4Cqg=; b=liHY87sAWqHXYhpVk2v5IrWS6
+        Gr1GANzKDlZdn+4N9T86cWwuMCZz6/6BXWVXsODkopM66pG98RlJ7GcrxcblUwik1KspAm6uPFHqJ
+        GxC+/+ev8U0D4WSlcpjtTPatKbn4GZxx24rSJn74ymV2z6MLICmaAD2Cf/J7VzR8ABL6dpscIPK2l
+        bP/BU8SB0paE5Kpr1DSVVf/IRSdWJOLnZeG2252k67YMfdavvquTjHZToNX2pH9daA2tIDf3SmSdr
+        gYUS5i+K7nik2fZysauk9fXa6NAspWNZkgdM0sqBcTsa7xj4Pe0esMNZPt43FXCxvwDxq3aCaN14h
+        V77th8SPw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fSin2-0007Iu-Kh; Tue, 12 Jun 2018 12:52:48 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 1EAFA201EA7A3; Tue, 12 Jun 2018 14:52:47 +0200 (CEST)
+Date:   Tue, 12 Jun 2018 14:52:47 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     viresh.kumar@linaro.org, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Javi Merino <javi.merino@kernel.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Kevin Wangtao <kevin.wangtao@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rui Zhang <rui.zhang@intel.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>
+Subject: Re: [PATCH V6] powercap/drivers/idle_injection: Add an idle
+ injection framework
+Message-ID: <20180612125247.GO12217@hirez.programming.kicks-ass.net>
+References: <1528804816-32636-1-git-send-email-daniel.lezcano@linaro.org>
+ <20180612123036.GJ12180@hirez.programming.kicks-ass.net>
+ <16d5649d-863c-10c7-9287-202568e713e6@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <16d5649d-863c-10c7-9287-202568e713e6@linaro.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make sure to use put_device() to free the initialised struct device so
-that resources managed by driver core also gets released in the event of
-a registration failure.
+On Tue, Jun 12, 2018 at 02:44:29PM +0200, Daniel Lezcano wrote:
+> On 12/06/2018 14:30, Peter Zijlstra wrote:
+> > On Tue, Jun 12, 2018 at 02:00:11PM +0200, Daniel Lezcano wrote:
+> >> +static void __idle_injection_wakeup(struct idle_injection_device *ii_dev)
+> >> +{
+> >> +	struct idle_injection_thread *iit;
+> >> +	struct cpumask tmp;
+> >> +	unsigned int cpu;
+> >> +
+> >> +	cpumask_and(&tmp, ii_dev->cpumask, cpu_online_mask);
+> > 
+> > You should not be having a cpumask on the stack. Those things can be
+> > ginormous.
+> 
+> Ok, the kernel code uses of cpumask_t on the stack when dealing with
+> cpumask_and. I assume it is also not recommended.
 
-Fixes: de3910eb79ac ("edac: change the mem allocation scheme to make Documentation/kobject.txt happy")
-Fixes: 2d56b109e3a5 ("EDAC: Handle error path in edac_mc_sysfs_init() properly")
-Cc: stable <stable@vger.kernel.org>     # 3.6
-Cc: Denis Kirjanov <kirjanov@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@redhat.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- drivers/edac/edac_mc_sysfs.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Yes, that should all get fixed. It's mostly legacy code I suppose. It's
+been at least 10 years I think since we merged the whole
+CPUMASK_OFFSTACK stuff.
 
-diff --git a/drivers/edac/edac_mc_sysfs.c b/drivers/edac/edac_mc_sysfs.c
-index 7481955160a4..20374b8248f0 100644
---- a/drivers/edac/edac_mc_sysfs.c
-+++ b/drivers/edac/edac_mc_sysfs.c
-@@ -1075,14 +1075,14 @@ int __init edac_mc_sysfs_init(void)
- 
- 	err = device_add(mci_pdev);
- 	if (err < 0)
--		goto out_dev_free;
-+		goto out_put_device;
- 
- 	edac_dbg(0, "device %s created\n", dev_name(mci_pdev));
- 
- 	return 0;
- 
-- out_dev_free:
--	kfree(mci_pdev);
-+ out_put_device:
-+	put_device(mci_pdev);
-  out:
- 	return err;
- }
--- 
-2.17.1
+> What would be the best practice ? Allocate a per cpumask at init time as
+> a temporary mask to work with ?
 
+In this case, you can do:
+
++       for_each_cpu_and(cpu, &ii_dev->cpumask, cpu_online_mask) {
++               iit = per_cpu_ptr(&idle_injection_thread, cpu);
++               iit->should_run = 1;
++               wake_up_process(iit->tsk);
++       }
