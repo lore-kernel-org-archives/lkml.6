@@ -2,102 +2,161 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 187E3C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:35:09 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B9F87C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:37:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1D38208B2
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:35:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65710208B5
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:37:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="alNrT1NC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1D38208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="IIipsKui"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65710208B5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934766AbeFLQfH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 12:35:07 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:44209 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933640AbeFLQfF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 12:35:05 -0400
-Received: by mail-vk0-f68.google.com with SMTP id x4-v6so14762598vkx.11;
-        Tue, 12 Jun 2018 09:35:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=9g+YNya/oiudvFRC2Fn99o7O/QWr3/U5iyQW70kvuG4=;
-        b=alNrT1NC6oqh4UP3uv+1db5RfNoZdEe3YJTTTbUnL0elXzEA4hPCLpCqEqBf+7hc6e
-         G25BFjGrq98Gq9DuVBi5FfJ2grecy7AmLDCmlBwARY8b0BIhOCvSQfS7B3A9gdfio4Jb
-         8ioX4yg3v6h6VjwSFhnWYukf0IQO390gfak5cXEm6O9Nyq/2w4A4qPH1NnToMyYWQhgi
-         0kEt/FyA/vtatBA1WYLJsAjBS7xmvH1PLq15rYo2JhexGttI+aQ7u7eFrpHNltn4pXSl
-         wnKQ6KUJzeG4/RN+CLrYxdsAip68yhgwsAUX4I5UkYQ6I232HP+y65pWndFrt1fUHV3f
-         vnBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=9g+YNya/oiudvFRC2Fn99o7O/QWr3/U5iyQW70kvuG4=;
-        b=gHOm+cddPYLBxia3GP1ZT/g3eTtiDps/JYnuMA+XZ133WpILgZMedU5046xK+WDEIU
-         Fs6Eg+kMQT6g5EkHiNfohRqm8QBQEJi1ylmzIF5VZjPb7Pna5ZNWI1daG7DfYW1+XPfl
-         Jgxl0dnDuTH8/YVSQZa5GhhVX1oWo3fFcu+gZvAv2Is9BZTajwAtJ+Cyai988TA10oAV
-         1tvzDP6cJsuSIqnViBrXKa5n+pVarMm069bbriGCWiGf0bTHEGRUJDQO+VQBltEPd639
-         +9iGdqKx68DxJFAza0dpkfLT1kfAdHBewFszVQgILRA8vMie8i/D2RXN7OhXO6F0+FSu
-         yA5A==
-X-Gm-Message-State: APt69E30Vp8GPN+Sk8TFh+QkJ6yDzpQei7QzWZFJowELz7uD8SzIlWpe
-        jaYsQzVOlOBHUIoIeuyZAZSsn4Ja5ifGZ6TdVj8=
-X-Google-Smtp-Source: ADUXVKJQ5GmfcSGnepM5w2AtZGns1yLPKWEhrZSKoG16fzoVPyG5P0DzqLuNQB/4mXXDv2UUk8gAkK+rgDn4coEzlPc=
-X-Received: by 2002:a1f:7283:: with SMTP id n125-v6mr762141vkc.26.1528821304754;
- Tue, 12 Jun 2018 09:35:04 -0700 (PDT)
+        id S934190AbeFLQhK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 12:37:10 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:59788 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933638AbeFLQhI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 12:37:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=NAGGVcBPMvS05EZ2nRe1likAnCLqpWac5M+NiRMJlss=;
+        b=IIipsKui9p7Ntkn98tlnwuc3vd8+DrKofCuxjwKp6ipZYyIXccpmf7LhWP4NvkpWJU68hjTIdB/EkaGr5JVdTr2MztPhZxqIsnE78qnQjRZsPL3XkKx/RxB6Y1ITqV5CcE8KfZXM8DACyUuDtmxl2WGQ4n27K97gewavRcClg3Q=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1fSmHz-0003YT-05; Tue, 12 Jun 2018 18:36:59 +0200
+Date:   Tue, 12 Jun 2018 18:36:58 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Cc:     grygorii.strashko@ti.com, davem@davemloft.net, corbet@lwn.net,
+        akpm@linux-foundation.org, netdev@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, vinicius.gomes@intel.com,
+        henrik@austad.us, jesus.sanchez-palencia@intel.com,
+        ilias.apalodimas@linaro.org, p-varis@ti.com, spatton@ti.com,
+        francois.ozog@linaro.org, yogeshs@ti.com, nsekhar@ti.com
+Subject: Re: [PATCH net-next 3/6] net: ethernet: ti: cpsw: add MQPRIO Qdisc
+ offload
+Message-ID: <20180612163658.GC12251@lunn.ch>
+References: <20180611133047.4818-1-ivan.khoronzhuk@linaro.org>
+ <20180611133047.4818-4-ivan.khoronzhuk@linaro.org>
 MIME-Version: 1.0
-Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 09:35:04
- -0700 (PDT)
-In-Reply-To: <20180608.105926.600207780816212953.davem@davemloft.net>
-References: <1528310722-11512-1-git-send-email-clabbe@baylibre.com> <20180608.105926.600207780816212953.davem@davemloft.net>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 12 Jun 2018 19:35:04 +0300
-Message-ID: <CAHp75VdaOuK2F0ENpwGf7HKVqXa13fe10rugYjLaQCTY7DbiaQ@mail.gmail.com>
-Subject: Re: [PATCH] net: stmmac: fix build failure due to missing COMMON_CLK dependency
-To:     David Miller <davem@davemloft.net>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Corentin Labbe <clabbe@baylibre.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Giuseppe CAVALLARO <peppe.cavallaro@st.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180611133047.4818-4-ivan.khoronzhuk@linaro.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 8, 2018 at 5:59 PM, David Miller <davem@davemloft.net> wrote:
-> From: Corentin Labbe <clabbe@baylibre.com>
-> Date: Wed,  6 Jun 2018 18:45:22 +0000
->
->> This patch fix the build failure on m68k;
->> drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.o: In function `ipq806x_gmac_probe':
->> dwmac-ipq806x.c:(.text+0xda): undefined reference to `clk_set_rate'
->> drivers/net/ethernet/stmicro/stmmac/dwmac-rk.o: In function `rk_gmac_probe':
->> dwmac-rk.c:(.text+0x1e58): undefined reference to `clk_set_rate'
->> drivers/net/ethernet/stmicro/stmmac/dwmac-sti.o: In function `stid127_fix_retime_src':
->> dwmac-sti.c:(.text+0xd8): undefined reference to `clk_set_rate'
->> dwmac-sti.c:(.text+0x114): undefined reference to `clk_set_rate'
->> drivers/net/ethernet/stmicro/stmmac/dwmac-sti.o:dwmac-sti.c:(.text+0x12c): more undefined references to `clk_set_rate' follow
->> Lots of stmmac platform drivers need COMMON_CLK in their Kconfig depends.
->>
->> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
->
-> Applied.
+On Mon, Jun 11, 2018 at 04:30:44PM +0300, Ivan Khoronzhuk wrote:
+> That's possible to offload vlan to tc priority mapping with
+> assumption sk_prio == L2 prio.
+> 
+> Example:
+> $ ethtool -L eth0 rx 1 tx 4
+> 
+> $ qdisc replace dev eth0 handle 100: parent root mqprio num_tc 3 \
+> map 2 2 1 0 2 2 2 2 2 2 2 2 2 2 2 2 queues 1@0 1@1 2@2 hw 1
+> 
+> $ tc -g class show dev eth0
+> +---(100:ffe2) mqprio
+> |    +---(100:3) mqprio
+> |    +---(100:4) mqprio
+> |    
+> +---(100:ffe1) mqprio
+> |    +---(100:2) mqprio
+> |    
+> +---(100:ffe0) mqprio
+>      +---(100:1) mqprio
+> 
+> Here, 100:1 is txq0, 100:2 is txq1, 100:3 is txq2, 100:4 is txq3
+> txq0 belongs to tc0, txq1 to tc1, txq2 and txq3 to tc2
+> The offload part only maps L2 prio to classes of traffic, but not
+> to transmit queues, so to direct traffic to traffic class vlan has
+> to be created with appropriate egress map.
+> 
+> Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+> ---
+>  drivers/net/ethernet/ti/cpsw.c | 82 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 82 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
+> index 406537d74ec1..fd967d2bce5d 100644
+> --- a/drivers/net/ethernet/ti/cpsw.c
+> +++ b/drivers/net/ethernet/ti/cpsw.c
+> @@ -39,6 +39,7 @@
+>  #include <linux/sys_soc.h>
+>  
+>  #include <linux/pinctrl/consumer.h>
+> +#include <net/pkt_cls.h>
+>  
+>  #include "cpsw.h"
+>  #include "cpsw_ale.h"
+> @@ -153,6 +154,8 @@ do {								\
+>  #define IRQ_NUM			2
+>  #define CPSW_MAX_QUEUES		8
+>  #define CPSW_CPDMA_DESCS_POOL_SIZE_DEFAULT 256
+> +#define CPSW_TC_NUM			4
+> +#define CPSW_FIFO_SHAPERS_NUM		(CPSW_TC_NUM - 1)
+>  
+>  #define CPSW_RX_VLAN_ENCAP_HDR_PRIO_SHIFT	29
+>  #define CPSW_RX_VLAN_ENCAP_HDR_PRIO_MSK		GENMASK(2, 0)
+> @@ -453,6 +456,7 @@ struct cpsw_priv {
+>  	u8				mac_addr[ETH_ALEN];
+>  	bool				rx_pause;
+>  	bool				tx_pause;
+> +	bool				mqprio_hw;
+>  	u32 emac_port;
+>  	struct cpsw_common *cpsw;
+>  };
+> @@ -1577,6 +1581,14 @@ static void cpsw_slave_stop(struct cpsw_slave *slave, struct cpsw_common *cpsw)
+>  	soft_reset_slave(slave);
+>  }
+>  
+> +static int cpsw_tc_to_fifo(int tc, int num_tc)
+> +{
+> +	if (tc == num_tc - 1)
+> +		return 0;
+> +
+> +	return CPSW_FIFO_SHAPERS_NUM - tc;
+> +}
+> +
+>  static int cpsw_ndo_open(struct net_device *ndev)
+>  {
+>  	struct cpsw_priv *priv = netdev_priv(ndev);
+> @@ -2190,6 +2202,75 @@ static int cpsw_ndo_set_tx_maxrate(struct net_device *ndev, int queue, u32 rate)
+>  	return ret;
+>  }
+>  
+> +static int cpsw_set_tc(struct net_device *ndev, void *type_data)
+> +{
 
-I think Geert has a better fix https://lkml.org/lkml/2018/6/11/122
+Hi Ivan
 
--- 
-With Best Regards,
-Andy Shevchenko
+Maybe this is not the best of names. What if you add support for
+another TC qdisc? So you have another case in the switch statement
+below?
+
+Maybe call it cpsw_set_mqprio?
+
+> +static int cpsw_ndo_setup_tc(struct net_device *ndev, enum tc_setup_type type,
+> +			     void *type_data)
+> +{
+> +	switch (type) {
+> +	case TC_SETUP_QDISC_MQPRIO:
+> +		return cpsw_set_tc(ndev, type_data);
+> +
+> +	default:
+> +		return -EOPNOTSUPP;
+> +	}
+> +}
+
+  Andrew
+  
