@@ -2,94 +2,123 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A9DEBC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 11:34:51 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4DD8BC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 11:39:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 564E22086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 11:34:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02CE02086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 11:39:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="mo4RvXbe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 564E22086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JiNeP3B2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02CE02086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932800AbeFLLet (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 07:34:49 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:57178 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932286AbeFLLer (ORCPT
+        id S933212AbeFLLjj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 07:39:39 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:44481 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932433AbeFLLjh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 07:34:47 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5CBLnjp050224;
-        Tue, 12 Jun 2018 11:34:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2017-10-26;
- bh=RpPrh9cbJv9CqKMPtNVmT36hYkP9sYHqq7wfEvwMPCg=;
- b=mo4RvXbeLz0JvbuQarvGyENBFHu3NfMm5zZ64b2KHkfAobLpNePX+/IVXBnDOL+EqwNz
- waLzE7tDFObNGcU0uaQFHjBbyS3WxTmOE6kyg4a/+GabV4KKfTTN3EFz42kCGrClL86o
- Q3dhVfwaMv+nMqoVrZCgFmST7btb4p7ZY0k67Z5OxLVyI1gJrlH/Brec6Sxmkyfd4zj5
- DuBbeh0TF1BPG1Ib+C2dwr1fk5deKHv/G9sKp9/dLBlCeTbV+CTrj/5kQsuOHay6HaOS
- HIn2oBok9a+bNFredMjDkY1o2TESCfuhpRrYTnKv6sSmmIUiQX599upacpAFXhzYRUOY 8w== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2120.oracle.com with ESMTP id 2jgecxgtcr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 12 Jun 2018 11:34:38 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5CBYbej030045
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 12 Jun 2018 11:34:37 GMT
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5CBYarY027120;
-        Tue, 12 Jun 2018 11:34:36 GMT
-Received: from mwanda (/197.157.0.30)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 12 Jun 2018 04:34:36 -0700
-Date:   Tue, 12 Jun 2018 14:34:22 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Zhouyang Jia <jiazhouyang09@gmail.com>
-Cc:     Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
-        devel@driverdev.osuosl.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Colin Ian King <colin.king@canonical.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>
-Subject: Re: [PATCH] staging: rtl8712: add error handling for register_netdev
-Message-ID: <20180612113422.tkta6ynquy6lfy7s@mwanda>
-References: <1528773525-37564-1-git-send-email-jiazhouyang09@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1528773525-37564-1-git-send-email-jiazhouyang09@gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8921 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=562
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806120134
+        Tue, 12 Jun 2018 07:39:37 -0400
+Received: by mail-lf0-f66.google.com with SMTP id 36-v6so35457366lfr.11
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 04:39:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=i7ebp6igC4T0NhmXNPm/+Mux8LUEMtkEedO9jVa6348=;
+        b=JiNeP3B2Hz84mS/IqmehbfTC8slPJKlCPyPtv0094XPBIDb4DMWTDoaaZa+JTtDnuw
+         /xxArCbv31MMXWcrc/m6MkyoqC5e/4rvb7KwnHQCNSdH0iGRTIQIG9/W7IfPsPRdgXtp
+         37d2IWEzsQ00ScCj6xhhKexeDhd3Wu/LVVfdg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=i7ebp6igC4T0NhmXNPm/+Mux8LUEMtkEedO9jVa6348=;
+        b=bU176UkkBAe39NgkIlBnS4vU8ZP29N1zO7wNvrYw7AxSRO/jIBipGGRLTkUkljT/K8
+         c0/07PlfCa7DskxbVzZeDSW9PyDzajGHjsq1RboQzwmeb9ql1cVBLaxOu6Pl9ZylGPBR
+         W+l4NtMwR4mqTz4QtVf5p4lWtVNqhLzDI3NTXMk6tvkmZahqB2Gq1xyaf7ERyKqOpPrs
+         cVPBQYbYani4lV4Pz5xiEFFjh4gEE3V/UOsccjldNnMAUizgO9jRuPo5lLRV71xg1rbn
+         lhiPSOc5t2SgzAaTYk2vwnzp6Z63g0xXen741tf3XyioN6hnEsZc2VfxtLsWIE2hFb59
+         y5Bg==
+X-Gm-Message-State: APt69E1jjGc9RX5pbB3mMaBxtDQhCJHLtHaV0RpgCMAYKYu1vZ5+9A4T
+        uUjjwsN3WEpN9OnR8df36BkfwQ==
+X-Google-Smtp-Source: ADUXVKIhR4MjHV+GcPLDITHLQjaSPzerqhUEOON/MmN4f/P5BW2j7CHMqLh/dYDX8SybWlbYuXO8Cw==
+X-Received: by 2002:a2e:6e19:: with SMTP id j25-v6mr2255933ljc.61.1528803576322;
+        Tue, 12 Jun 2018 04:39:36 -0700 (PDT)
+Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
+        by smtp.gmail.com with ESMTPSA id o11-v6sm186162lji.0.2018.06.12.04.39.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 12 Jun 2018 04:39:35 -0700 (PDT)
+From:   Niklas Cassel <niklas.cassel@linaro.org>
+To:     Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     Niklas Cassel <niklas.cassel@linaro.org>,
+        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] ath10k: do not mix spaces and tabs in Kconfig
+Date:   Tue, 12 Jun 2018 13:39:05 +0200
+Message-Id: <20180612113907.15043-1-niklas.cassel@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 11:18:43AM +0800, Zhouyang Jia wrote:
-> When register_netdev fails, the lack of error-handling code may
-> cause unexpected results.
-> 
-> This patch adds error-handling code after calling register_netdev.
-> 
+Do not mix spaces and tabs in Kconfig.
 
-It doesn't add any error handling.  It just adds an error message.
+Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+---
+ drivers/net/wireless/ath/ath10k/Kconfig | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-The error handling does look sort of messed up, but this isn't a useful
-patch.
-
-regards,
-dan carpenter
+diff --git a/drivers/net/wireless/ath/ath10k/Kconfig b/drivers/net/wireless/ath/ath10k/Kconfig
+index 84f071ac0d84..54ff5930126c 100644
+--- a/drivers/net/wireless/ath/ath10k/Kconfig
++++ b/drivers/net/wireless/ath/ath10k/Kconfig
+@@ -1,15 +1,15 @@
+ config ATH10K
+-        tristate "Atheros 802.11ac wireless cards support"
+-        depends on MAC80211 && HAS_DMA
++	tristate "Atheros 802.11ac wireless cards support"
++	depends on MAC80211 && HAS_DMA
+ 	select ATH_COMMON
+ 	select CRC32
+ 	select WANT_DEV_COREDUMP
+ 	select ATH10K_CE
+-        ---help---
+-          This module adds support for wireless adapters based on
+-          Atheros IEEE 802.11ac family of chipsets.
++	---help---
++	  This module adds support for wireless adapters based on
++	  Atheros IEEE 802.11ac family of chipsets.
+ 
+-          If you choose to build a module, it'll be called ath10k.
++	  If you choose to build a module, it'll be called ath10k.
+ 
+ config ATH10K_CE
+ 	bool
+@@ -41,12 +41,12 @@ config ATH10K_USB
+ 	  work in progress and will not fully work.
+ 
+ config ATH10K_SNOC
+-        tristate "Qualcomm ath10k SNOC support (EXPERIMENTAL)"
+-        depends on ATH10K && ARCH_QCOM
+-        ---help---
+-          This module adds support for integrated WCN3990 chip connected
+-          to system NOC(SNOC). Currently work in progress and will not
+-          fully work.
++	tristate "Qualcomm ath10k SNOC support (EXPERIMENTAL)"
++	depends on ATH10K && ARCH_QCOM
++	---help---
++	  This module adds support for integrated WCN3990 chip connected
++	  to system NOC(SNOC). Currently work in progress and will not
++	  fully work.
+ 
+ config ATH10K_DEBUG
+ 	bool "Atheros ath10k debugging"
+-- 
+2.17.1
 
