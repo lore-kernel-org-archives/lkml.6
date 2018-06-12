@@ -2,116 +2,135 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D941DC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:46:33 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id ECC6CC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:46:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DC9A2086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:46:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IX+WEYQX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DC9A2086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id AC3D12086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:46:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC3D12086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933934AbeFLNqc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 09:46:32 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:39371 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933228AbeFLNqa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 09:46:30 -0400
-Received: by mail-oi0-f66.google.com with SMTP id t22-v6so21136951oih.6;
-        Tue, 12 Jun 2018 06:46:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=m+1IZgUTfR9tXW6jxWQEO0Juc4VyWTra852j/2UchTc=;
-        b=IX+WEYQXJWtELNrwxP1fuJhaMKU6N3cd/zaSaQxiKU1q7MLWLE0SnCbeR4AYfiFil3
-         zr82uJl7ANCmUtECv2sX5z4EABK6CA8swk6dZcC9GQc3KahYBbBAI2QyHRU1v5pWpT+N
-         xQNUawMKolZtDAsygil7R7kN2Tdt3vpYql0v6WI5heZlI2jVFDfj4vWhwG+KVgOarlOi
-         qiVbkjwp1tgrGc+0MazOWfcUnWzr4e1R34UnVkQ+vykHjCpyOr7DTmbtdVW0/2P64Jdt
-         7yyKUn7Q+liI51gbz5StkNwoRYC8MTqWT79Tu1q4Uxv59BwSZFa35OjNB1Qc7EbpfVCp
-         m35Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=m+1IZgUTfR9tXW6jxWQEO0Juc4VyWTra852j/2UchTc=;
-        b=rwlmCN7rU+cVxbbaQhCVoJyw+83YI1dgObh5gBSj7mTDUhMR0phixDCFVM6PYRqqi4
-         sR2dvEkphJz1Lh4qmBoMBuKDqay+f2vjjffCPFafdqlwjTJ1vsL57ck0xE6bTUo6OmWm
-         fceg9PZhBuzH7YzOTT7Up3iDlL+TPEs0LyXD+6c1pI+Tm7TbtMf9fPRxl0J5wmfXC43W
-         MHIQYviWdb0UUWHPrcPEI0i540EMrX+5aI4jvnYuJ0RgPbe/ORWWCgKs0l09n54oUNGj
-         5xN45Nww0WB4uN7rWhh0vTj0o+iBvqIp+5eP66DupObpKyF4KbfQw9OmtkqFgG+G8yDy
-         UH7A==
-X-Gm-Message-State: APt69E0kOpMlGKyRRk3/SpgvcptY/UXUb5mSP8Ly9GIhQUR6m6VROJWr
-        cKlkqfwHbhzlR5zjOtQKTByeH3bkj1fbVJyOqzY=
-X-Google-Smtp-Source: ADUXVKKwui9y57Yn7iS4Ijqg14wZ/NA4PrSC0FxhRdRKTvtxxtp8C0Ajbsk6CH/Im9jc+Mf1SF5PTwogdPqeytNMUOs=
-X-Received: by 2002:aca:808:: with SMTP id 8-v6mr2083824oii.198.1528811189381;
- Tue, 12 Jun 2018 06:46:29 -0700 (PDT)
+        id S933965AbeFLNqt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 09:46:49 -0400
+Received: from foss.arm.com ([217.140.101.70]:33934 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932749AbeFLNqr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 09:46:47 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 719401529;
+        Tue, 12 Jun 2018 06:46:47 -0700 (PDT)
+Received: from [10.1.207.44] (e112298-lin.cambridge.arm.com [10.1.207.44])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 89A4B3F557;
+        Tue, 12 Jun 2018 06:46:40 -0700 (PDT)
+Subject: Re: [PATCH v4 02/26] arm64: cpufeature: Add cpufeature for IRQ
+ priority masking
+From:   Julien Thierry <julien.thierry@arm.com>
+To:     Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
+        joel@joelfernandes.org, marc.zyngier@arm.com, mark.rutland@arm.com,
+        christoffer.dall@arm.com, james.morse@arm.com,
+        catalin.marinas@arm.com, will.deacon@arm.com
+References: <1527241772-48007-1-git-send-email-julien.thierry@arm.com>
+ <1527241772-48007-3-git-send-email-julien.thierry@arm.com>
+ <e44df12f-9868-ae94-4623-ec221d72d783@arm.com>
+ <b0673d7e-9a1e-7dcb-5322-c05fe0821349@arm.com>
+ <c4e5f8ff-ecde-7b88-8a37-39e47ef22917@arm.com>
+ <54ff6127-928d-99a3-a6e9-59799628ca87@arm.com>
+ <3f0afa54-8e98-798e-68dc-bbbc74bd9e19@arm.com>
+ <acf4b44f-d5c7-c31a-7f47-cfbe1049eadc@arm.com>
+Message-ID: <bc8bb69d-8db4-87b7-adfb-589e1dd905c0@arm.com>
+Date:   Tue, 12 Jun 2018 14:46:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a9d:1049:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 06:46:28
- -0700 (PDT)
-In-Reply-To: <20180611052608.GB16091@dragon>
-References: <20180517191923.16212-1-nikita.yoush@cogentembedded.com> <20180611052608.GB16091@dragon>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Tue, 12 Jun 2018 10:46:28 -0300
-Message-ID: <CAOMZO5AHbPOS_3ShrMAoiXMxRWR6M16khDZM_9V4mRxM2MbnGQ@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: imx51-zii-rdu1: add rave-sp subdevices
-To:     Shawn Guo <shawnguo@kernel.org>
-Cc:     Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Chris Healy <cphealy@gmail.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Marco Franchi <marcofrk@gmail.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <acf4b44f-d5c7-c31a-7f47-cfbe1049eadc@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Shawn,
 
-On Mon, Jun 11, 2018 at 2:26 AM, Shawn Guo <shawnguo@kernel.org> wrote:
 
->> diff --git a/arch/arm/boot/dts/imx51-zii-rdu1.dts b/arch/arm/boot/dts/imx51-zii-rdu1.dts
->> index 0c99ac04ad08..98cc107098e0 100644
->> --- a/arch/arm/boot/dts/imx51-zii-rdu1.dts
->> +++ b/arch/arm/boot/dts/imx51-zii-rdu1.dts
->> @@ -581,6 +581,14 @@
->>               watchdog {
->>                       compatible = "zii,rave-sp-watchdog";
->>               };
->> +
->> +             backlight {
->> +                     compatible = "zii,rave-sp-backlight";
->> +             };
->> +
->> +             pwrbutton {
->> +                     compatible = "zii,rave-sp-pwrbutton";
->> +             };
->
-> Where are these compatibles documented?
+On 25/05/18 11:48, Julien Thierry wrote:
+> 
+> 
+> On 25/05/18 11:41, Suzuki K Poulose wrote:
+>> On 25/05/18 11:39, Julien Thierry wrote:
+>>>
+>>>
+>>> On 25/05/18 11:36, Suzuki K Poulose wrote:
+>>>> On 25/05/18 11:17, Julien Thierry wrote:
+>>>>>
+>>>>>
+>>>>> On 25/05/18 11:04, Suzuki K Poulose wrote:
+>>>>>> On 25/05/18 10:49, Julien Thierry wrote:
+>>>>>>> Add a cpufeature indicating whether a cpu supports masking 
+>>>>>>> interrupts
+>>>>>>> by priority.
+>>>>>>
+>>>>>> How is this different from the SYSREG_GIC_CPUIF cap ? Is it just
+>>>>>> the description ?
+>>>>>
+>>>>> More or less.
+>>>>>
+>>>>> It is just to have an easier condition in the rest of the series. 
+>>>>> Basically the PRIO masking feature is enabled if we have a GICv3 
+>>>>> CPUIF working *and* the option was selected at build time. Before 
+>>>>> this meant that I was checking for the GIC_CPUIF cap inside #ifdefs 
+>>>>> (and putting alternatives depending on that inside #ifdefs as well).
+>>>>>
+>>>>> Having this as a separate feature feels easier to manage in the 
+>>>>> code. It also makes it clearer at boot time that the kernel will be 
+>>>>> using irq priorities (although I admit it was not the initial 
+>>>>> intention):
+>>>>>
+>>>>> [    0.000000] CPU features: detected: IRQ priority masking
+>>>>>
+>>>>>
+>>>>> But yes that new feature will be detected only if SYSREG_GIC_CPUIF 
+>>>>> gets detected as well.
+>>>>
+>>>> Well, you could always wrap the check like :
+>>>>
+>>>> static inline bool system_has_irq_priority_masking(void)
+>>>> {
+>>>>      return (IS_ENABLED(CONFIG_YOUR_CONFIG) && 
+>>>> cpus_have_const_cap(HWCAP_SYSREG_GIC_CPUIF));
+>>>> }
+>>>>
+>>>> and use it everywhere.
+>>>>
+>>>
+>>> Yes, but I can't use that in the asm parts that use alternatives and 
+>>> would need to surround them in #ifdef... :\
+>>
+>> I thought there is _ALTERNATIVE_CFG() to base the alternative depend 
+>> on a CONFIG_xxx ?
+>> Doesn't that solve the problem ?
+> 
+> Right, I didn't see that one. It should work yes.
+> 
+> I'll try that when working on the next version.
 
-Currently they are documented in linux-next at:
+I've been trying to use this now, but I can't figure out how.
 
-Documentation/devicetree/bindings/watchdog/zii,rave-sp-wdt.txt
-Documentation/devicetree/bindings/leds/backlight/zii,rave-sp-backlight.txt
-Documentation/devicetree/bindings/input/zii,rave-sp-pwrbutton.txt
+The _ALTERNATIVE_CFG does not seem to work in assembly code (despite 
+having its own definition for __ASSEMBLY__), and the alternative_insn 
+does not seem to be suited for instructions that take operands (or more 
+than one operand)
 
-They should land in 4.18-rc1.
+If I am mistaken, can you provide an example of how to use this in 
+assembly with instructions having more than 1 operand?
+
+Cheers,
+
+-- 
+Julien Thierry
