@@ -2,127 +2,93 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2C4C8C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:12:25 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B1ACFC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:12:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D559C2089C
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:12:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 686082089C
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:12:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=roeck-us.net header.i=@roeck-us.net header.b="s9XQjaxo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D559C2089C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="i76w100/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 686082089C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934827AbeFLWMW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 18:12:22 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:58359 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933727AbeFLWMU (ORCPT
+        id S934844AbeFLWMm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 18:12:42 -0400
+Received: from mail-wm0-f47.google.com ([74.125.82.47]:55724 "EHLO
+        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933727AbeFLWMl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 18:12:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=roeck-us.net; s=default; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=JcfBnSgjyYlg7313iGYMt/XMTJkMS0molSMZ4Z10vgc=; b=s9XQjaxovX53ryq3DCTn9EaNb/
-        04wWgHTfWVCYHg10AcqgQ/hVMY3A8pEJW9r+B0nFpS8hTT4r5iHDnIX3R2X8msSkkRMjvx45hVaKU
-        aC93Oy6JoIHsCAwdtrmj+ZlnnLrAUhVr5Oam962DPprZ6TwSn8UzLrPllIJb88sWVDdVSafLABnMU
-        Ygp81URM9+gPdc9bxPamU0rGMJWHvTstUN85lbSQAdS3JhsNRYAYLFM715GIGkjjAWqr2dOlfIsJg
-        L+gQNE2YaDzKht5OcngsjUyYFdLP5A8touOUODFO2SsV1OOGdn97OA0nZlqM1YovjoW9CeWvPp4gZ
-        Y8qL5pCg==;
-Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:48156 helo=localhost)
-        by bh-25.webhostbox.net with esmtpa (Exim 4.89)
-        (envelope-from <linux@roeck-us.net>)
-        id 1fSrWV-005ViV-Pe; Tue, 12 Jun 2018 22:12:20 +0000
-Date:   Tue, 12 Jun 2018 15:12:18 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Paul Menzel <pmenzel+linux-hwmon@molgen.mpg.de>
-Cc:     Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: nct6775: UBSAN: shift exponent 32 is too large for 32-bit type
- 'long unsigned int'
-Message-ID: <20180612221218.GA15406@roeck-us.net>
-References: <d02001e2-fa4c-6a2e-cc50-a8d9a8146d57@molgen.mpg.de>
+        Tue, 12 Jun 2018 18:12:41 -0400
+Received: by mail-wm0-f47.google.com with SMTP id v16-v6so1325500wmh.5
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 15:12:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=QrRG76F6VztNr3hyktc/xR1i7Kkcp0JSjXEUIKzbhbg=;
+        b=i76w100/NReSnB5VHXZi7QgYCuvPnYuMFMkREH7GlNiuXzN9gUhbFc6hFEMznkbBdu
+         KfiGWZ+ZvPBhXEsDgRYtvvU8LpZ60vx87nyOY2PNl2J0eeNOZqPk/WreEIWSUPwx00J/
+         xBMFbtNhPSH9J/z5uT4DZoN5rcmpxMHbnup0I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=QrRG76F6VztNr3hyktc/xR1i7Kkcp0JSjXEUIKzbhbg=;
+        b=qZDQHwlnD1ccJ/33otsexcv3EGSSGizUS4d5En5aIm/5IWqsBwIRrTLcgmJQDGrAF1
+         z+5hwbtTQ3sfsZRD/W1bv1bihLml/nBNgOwzUpmJEQjr70EGMbSPps3y3F11N+oaKBgG
+         xhSaEoooBOtCFAEWB0ksVATOxDM+zJk2U7SPRGJ6drpmrGU+AwMiCRBK1k36X/7l4AZ6
+         955sZ5wrVi8WIiOPEvrJAWDuA2X0QgEwQyU7POB/ayojqY4YykFdplJoZkHxWA/UIP9D
+         LR7EzJeQ9ZSLz9/9a1Ns056xNhgE/HMz0tRWSqSDRzQvIKJfpQnr+72KdHFsv84m1G3z
+         jayg==
+X-Gm-Message-State: APt69E2nWt8ccHxshiY8XWvyX49Uhf3yVcxnQ8pYVkg4X20vz48lZAoR
+        Rf1vmsHyXs95fYDwmb5FPOx86fR4UuEnxRa+qEIeVw==
+X-Google-Smtp-Source: ADUXVKIzkEIkCjjfcUzfegWXrKkzP+b6luqmJVLa9qy4NCsWP7+i0iif1P8KsYmh9abdvXlzteM7GCRyI7B3Er3jvTY=
+X-Received: by 2002:a1c:da4e:: with SMTP id r75-v6mr1744663wmg.64.1528841559788;
+ Tue, 12 Jun 2018 15:12:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d02001e2-fa4c-6a2e-cc50-a8d9a8146d57@molgen.mpg.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Authenticated_sender: guenter@roeck-us.net
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
-X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Received: by 2002:a1c:8ac3:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 15:12:38
+ -0700 (PDT)
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Tue, 12 Jun 2018 15:12:38 -0700
+Message-ID: <CALAqxLW=nrX-S9eibsTc+S_4YsZ166OJgZGj_1TZRWZ2ut7aFQ@mail.gmail.com>
+Subject: REGRESSION: "wlcore: sdio: allow pm to handle sdio power" breaks wifi
+ on HiKey960
+To:     Kalle Valo <kvalo@codeaurora.org>, Eyal Reizer <eyalr@ti.com>
+Cc:     Tony Lindgren <tony@atomide.com>,
+        Valentin Schneider <Valentin.Schneider@arm.com>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
+Hey Folks,
+  I noticed with linus/master wifi wasn't coming up on HiKey960. I
+bisected it down and it seems to be due to:
 
-On Tue, Jun 12, 2018 at 11:50:45PM +0200, Paul Menzel wrote:
-> Dear Guenther, dear Jean,
-> 
-> 
-> Building Linux with the undefined behavior sanitizer (UBSAN), loading the
-> module *nct6775* on the ASRock E350M1 shows the error below.
-> 
-> ```
-> [   28.322775] UBSAN: Undefined behaviour in drivers/hwmon/nct6775.c:4179:27
-> [   28.322833] shift exponent 32 is too large for 32-bit type 'long unsigned
-> int'
-> ```
-> 
-> I believe this was introduced by commit cc66b3038254 (hwmon: (nct6775)
-> Rework temperature source and label handling), but the same issue was
-> already present before.
-> 
+60f36637bbbd ("wlcore: sdio: allow pm to handle sdio power")  and
+728a9dc61f13 ("wlcore: sdio: Fix flakey SDIO runtime PM handling")
 
-I don't think so. The code used to be
-	for (i = 0; i < data->temp_label_num - 1; i++) {
-Notice the "- 1". So it should be
-	for (i = 0; i < 31; i++) {
 
-In practice it doesn't matter because "data->temp_mask & BIT(31 + 1)"
-will always be false, causing the last loop iteration to abort, but
-it is nevertheless wrong.
+When wifi fails to load, the only useful error message I see is:
+[    8.466097] wl1271_sdio mmc1:0001:2: wl12xx_sdio_power_on: failed
+to get_sync(-13)
 
-Thanks a lot for the report. I'll prepare a patch.
+Reverting those two changes gets wifi working again for me:
+[    8.754953] wlcore: wl18xx HW: 183x or 180x, PG 2.2 (ROM 0x11)
+[    8.761778] random: crng init done
+[    8.765185] random: 7 urandom warning(s) missed due to ratelimiting
+[    8.779149] wlcore: loaded
+...
+[   12.945903] wlcore: PHY firmware version: Rev 8.2.0.0.237
+[   13.058077] wlcore: firmware booted (Rev 8.9.0.0.70)
 
-Guenter
 
-> ```
-> -       for (i = 0; i < data->temp_label_num - 1; i++) {
-> +       for (i = 0; i < 32; i++) {
-> +               if (!(data->temp_mask & BIT(i + 1)))
-> +                       continue;
-> ```
-> 
-> `include/linux/bitops.h` has the macros below.
-> 
-> ```
-> #define BIT(nr)                 (1UL << (nr))
-> #define BIT_ULL(nr)             (1ULL << (nr))
-> ```
-> 
-> Maybe `BIT_ULL` should be used, but I do not know, if that’d would work with
-> `data->temp_mask`, which has type `u32`.
-> 
-> 
-> Kind regards,
-> 
-> Paul
+Any suggestions how to resolve this w/o a revert?
+
+thanks
+-john
