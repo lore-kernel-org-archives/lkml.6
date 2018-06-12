@@ -6,44 +6,43 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D5041C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:48:23 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8A074C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:48:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A653208C0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:48:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3EDDE208C0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:48:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HDrChOXS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A653208C0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="U5t/ArWe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EDDE208C0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935001AbeFLQsT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 12:48:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34872 "EHLO mail.kernel.org"
+        id S935024AbeFLQsZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 12:48:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35058 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933429AbeFLQsR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 12:48:17 -0400
+        id S935000AbeFLQsT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 12:48:19 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA733208B8;
-        Tue, 12 Jun 2018 16:48:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D1794208BA;
+        Tue, 12 Jun 2018 16:48:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528822096;
-        bh=eGI/idKSmkKTJ+OA7qhwkqHXNTiQutlCwDBLjeSYMtk=;
+        s=default; t=1528822099;
+        bh=xS2D9/VY5Owdca0bkg9mnNFJz/HhxJdCqUm3Da01OBQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HDrChOXSHn0TqUH7z8ETwKBY/5GnZuPVdJRGXhy2qyfu5e1cHt2mINLxBn3zzBsAT
-         kb3yUZIG6VfcekA1i6vPUURWKe3g4l4dQY9UwQJi3hhEr9umTbyXLaw+8C3Rnktcnb
-         Qvu62ijkgJZKRzPff/aWmTPfMVrQY1IS7Vt7gsxw=
+        b=U5t/ArWeO4chSwiL8ToKxZQPbHSNvvYZqxBJGA73kU/AOSkLNPkwHh+XdiIP3165x
+         FUPsKIfBW7BPY9VS8fedoIpXR9mdiF14ybRBITXlxPf4WTXGEhGwOZEBoBjXUIybCk
+         YlYRpKSfS0ddF3GcRZn+sw2JYX0N2n+XLch64iNs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 04/31] mmap: relax file size limit for regular files
-Date:   Tue, 12 Jun 2018 18:46:07 +0200
-Message-Id: <20180612164620.966540380@linuxfoundation.org>
+        stable@vger.kernel.org, Anand Jain <anand.jain@oracle.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.9 05/31] btrfs: define SUPER_FLAG_METADUMP_V2
+Date:   Tue, 12 Jun 2018 18:46:08 +0200
+Message-Id: <20180612164621.006764182@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180612164620.797338191@linuxfoundation.org>
 References: <20180612164620.797338191@linuxfoundation.org>
@@ -60,54 +59,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Anand Jain <Anand.Jain@oracle.com>
 
-commit 423913ad4ae5b3e8fb8983f70969fb522261ba26 upstream.
+commit e2731e55884f2138a252b0a3d7b24d57e49c3c59 upstream.
 
-Commit be83bbf80682 ("mmap: introduce sane default mmap limits") was
-introduced to catch problems in various ad-hoc character device drivers
-doing mmap and getting the size limits wrong.  In the process, it used
-"known good" limits for the normal cases of mapping regular files and
-block device drivers.
+btrfs-progs uses super flag bit BTRFS_SUPER_FLAG_METADUMP_V2 (1ULL << 34).
+So just define that in kernel so that we know its been used.
 
-It turns out that the "s_maxbytes" limit was less "known good" than I
-thought.  In particular, /proc doesn't set it, but exposes one regular
-file to mmap: /proc/vmcore.  As a result, that file got limited to the
-default MAX_INT s_maxbytes value.
-
-This went unnoticed for a while, because apparently the only thing that
-needs it is the s390 kernel zfcpdump, but there might be other tools
-that use this too.
-
-Vasily suggested just changing s_maxbytes for all of /proc, which isn't
-wrong, but makes me nervous at this stage.  So instead, just make the
-new mmap limit always be MAX_LFS_FILESIZE for regular files, which won't
-affect anything else.  It wasn't the regular file case I was worried
-about.
-
-I'd really prefer for maxsize to have been per-inode, but that is not
-how things are today.
-
-Fixes: be83bbf80682 ("mmap: introduce sane default mmap limits")
-Reported-by: Vasily Gorbik <gor@linux.ibm.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Anand Jain <anand.jain@oracle.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/mmap.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/btrfs/disk-io.c              |    3 ++-
+ include/uapi/linux/btrfs_tree.h |    1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -1315,7 +1315,7 @@ static inline int mlock_future_check(str
- static inline u64 file_mmap_size_max(struct file *file, struct inode *inode)
- {
- 	if (S_ISREG(inode->i_mode))
--		return inode->i_sb->s_maxbytes;
-+		return MAX_LFS_FILESIZE;
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -59,7 +59,8 @@
+ 				 BTRFS_HEADER_FLAG_RELOC |\
+ 				 BTRFS_SUPER_FLAG_ERROR |\
+ 				 BTRFS_SUPER_FLAG_SEEDING |\
+-				 BTRFS_SUPER_FLAG_METADUMP)
++				 BTRFS_SUPER_FLAG_METADUMP |\
++				 BTRFS_SUPER_FLAG_METADUMP_V2)
  
- 	if (S_ISBLK(inode->i_mode))
- 		return MAX_LFS_FILESIZE;
+ static const struct extent_io_ops btree_extent_io_ops;
+ static void end_workqueue_fn(struct btrfs_work *work);
+--- a/include/uapi/linux/btrfs_tree.h
++++ b/include/uapi/linux/btrfs_tree.h
+@@ -452,6 +452,7 @@ struct btrfs_free_space_header {
+ 
+ #define BTRFS_SUPER_FLAG_SEEDING	(1ULL << 32)
+ #define BTRFS_SUPER_FLAG_METADUMP	(1ULL << 33)
++#define BTRFS_SUPER_FLAG_METADUMP_V2	(1ULL << 34)
+ 
+ 
+ /*
 
 
