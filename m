@@ -6,46 +6,45 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4307DC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:53:32 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id AF39AC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:53:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED757208B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:53:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 640E9208C1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:53:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TdbwW/pp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED757208B8
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="d/8kAsxJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 640E9208C1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935134AbeFLQx3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 12:53:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52194 "EHLO mail.kernel.org"
+        id S935157AbeFLQxf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 12:53:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933660AbeFLQxU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 12:53:20 -0400
+        id S935130AbeFLQx3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 12:53:29 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B0CAD208B4;
-        Tue, 12 Jun 2018 16:53:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7DFB7208B8;
+        Tue, 12 Jun 2018 16:53:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528822400;
-        bh=jKkFCtRqtigeay5ugPHxBz43kQcNXDOGzT+qCph5plM=;
+        s=default; t=1528822409;
+        bh=wK6TUtYychSxKvAtG5mJbNuofSYrNbkaxbGVU5D48bE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TdbwW/ppqkFpH6QpVxGW+Tu9R3f7VPKtcKM07GyVtDsGlAh09aFc7JYii2nStv9kK
-         Cj16w02v0gsp8HM/jjL3LtIu3opQX+tWK/nrtbKANAxVxEgoP1Fi2ZecZi27kX39TY
-         dIIlXZucL+3jZ7XW9FG6EN9Ozn8j0evueT977oxw=
+        b=d/8kAsxJucZVMjagDFd4knn7HqidCo5mkz4KRZTOqQzc3Rza10nviCaFy3yGtzB2X
+         BUkXJrHxaCmnZKUeMurJPl30WVwwU15SoXwNcOCf8z4wdD5Ek6Odm+agnmt4gi3gn6
+         qGtfS4EieDltz59nI3XJt79km2yt7YdxkvZgqehc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, Willy Tarreau <w@1wt.eu>,
-        Dave Airlie <airlied@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 03/24] mmap: introduce sane default mmap limits
-Date:   Tue, 12 Jun 2018 18:51:47 +0200
-Message-Id: <20180612164816.738560305@linuxfoundation.org>
+        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Josef Bacik <jbacik@fb.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+Subject: [PATCH 4.4 06/24] xfs: fix incorrect log_flushed on fsync
+Date:   Tue, 12 Jun 2018 18:51:50 +0200
+Message-Id: <20180612164816.861511958@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180612164816.587001852@linuxfoundation.org>
 References: <20180612164816.587001852@linuxfoundation.org>
@@ -62,124 +61,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Amir Goldstein <amir73il@gmail.com>
 
-commit be83bbf806822b1b89e0a0f23cd87cddc409e429 upstream.
+commit 47c7d0b19502583120c3f396c7559e7a77288a68 upstream.
 
-The internal VM "mmap()" interfaces are based on the mmap target doing
-everything using page indexes rather than byte offsets, because
-traditionally (ie 32-bit) we had the situation that the byte offset
-didn't fit in a register.  So while the mmap virtual address was limited
-by the word size of the architecture, the backing store was not.
+When calling into _xfs_log_force{,_lsn}() with a pointer
+to log_flushed variable, log_flushed will be set to 1 if:
+1. xlog_sync() is called to flush the active log buffer
+AND/OR
+2. xlog_wait() is called to wait on a syncing log buffers
 
-So we're basically passing "pgoff" around as a page index, in order to
-be able to describe backing store locations that are much bigger than
-the word size (think files larger than 4GB etc).
+xfs_file_fsync() checks the value of log_flushed after
+_xfs_log_force_lsn() call to optimize away an explicit
+PREFLUSH request to the data block device after writing
+out all the file's pages to disk.
 
-But while this all makes a ton of sense conceptually, we've been dogged
-by various drivers that don't really understand this, and internally
-work with byte offsets, and then try to work with the page index by
-turning it into a byte offset with "pgoff << PAGE_SHIFT".
+This optimization is incorrect in the following sequence of events:
 
-Which obviously can overflow.
+ Task A                    Task B
+ -------------------------------------------------------
+ xfs_file_fsync()
+   _xfs_log_force_lsn()
+     xlog_sync()
+        [submit PREFLUSH]
+                           xfs_file_fsync()
+                             file_write_and_wait_range()
+                               [submit WRITE X]
+                               [endio  WRITE X]
+                             _xfs_log_force_lsn()
+                               xlog_wait()
+        [endio  PREFLUSH]
 
-Adding the size of the mapping to it to get the byte offset of the end
-of the backing store just exacerbates the problem, and if you then use
-this overflow-prone value to check various limits of your device driver
-mmap capability, you're just setting yourself up for problems.
+The write X is not guarantied to be on persistent storage
+when PREFLUSH request in completed, because write A was submitted
+after the PREFLUSH request, but xfs_file_fsync() of task A will
+be notified of log_flushed=1 and will skip explicit flush.
 
-The correct thing for drivers to do is to do their limit math in page
-indices, the way the interface is designed.  Because the generic mmap
-code _does_ test that the index doesn't overflow, since that's what the
-mmap code really cares about.
+If the system crashes after fsync of task A, write X may not be
+present on disk after reboot.
 
-HOWEVER.
+This bug was discovered and demonstrated using Josef Bacik's
+dm-log-writes target, which can be used to record block io operations
+and then replay a subset of these operations onto the target device.
+The test goes something like this:
+- Use fsx to execute ops of a file and record ops on log device
+- Every now and then fsync the file, store md5 of file and mark
+  the location in the log
+- Then replay log onto device for each mark, mount fs and compare
+  md5 of file to stored value
 
-Finding and fixing various random drivers is a sisyphean task, so let's
-just see if we can just make the core mmap() code do the limiting for
-us.  Realistically, the only "big" backing stores we need to care about
-are regular files and block devices, both of which are known to do this
-properly, and which have nice well-defined limits for how much data they
-can access.
-
-So let's special-case just those two known cases, and then limit other
-random mmap users to a backing store that still fits in "unsigned long".
-Realistically, that's not much of a limit at all on 64-bit, and on
-32-bit architectures the only worry might be the GPU drivers, which can
-have big physical address spaces.
-
-To make it possible for drivers like that to say that they are 64-bit
-clean, this patch does repurpose the "FMODE_UNSIGNED_OFFSET" bit in the
-file flags to allow drivers to mark their file descriptors as safe in
-the full 64-bit mmap address space.
-
-[ The timing for doing this is less than optimal, and this should really
-  go in a merge window. But realistically, this needs wide testing more
-  than it needs anything else, and being main-line is the only way to do
-  that.
-
-  So the earlier the better, even if it's outside the proper development
-  cycle        - Linus ]
-
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Willy Tarreau <w@1wt.eu>
-Cc: Dave Airlie <airlied@redhat.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Josef Bacik <jbacik@fb.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/mmap.c |   32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ fs/xfs/xfs_log.c |    7 -------
+ 1 file changed, 7 deletions(-)
 
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -1275,6 +1275,35 @@ static inline int mlock_future_check(str
- 	return 0;
- }
+--- a/fs/xfs/xfs_log.c
++++ b/fs/xfs/xfs_log.c
+@@ -3323,8 +3323,6 @@ maybe_sleep:
+ 		 */
+ 		if (iclog->ic_state & XLOG_STATE_IOERROR)
+ 			return -EIO;
+-		if (log_flushed)
+-			*log_flushed = 1;
+ 	} else {
  
-+static inline u64 file_mmap_size_max(struct file *file, struct inode *inode)
-+{
-+	if (S_ISREG(inode->i_mode))
-+		return inode->i_sb->s_maxbytes;
-+
-+	if (S_ISBLK(inode->i_mode))
-+		return MAX_LFS_FILESIZE;
-+
-+	/* Special "we do even unsigned file positions" case */
-+	if (file->f_mode & FMODE_UNSIGNED_OFFSET)
-+		return 0;
-+
-+	/* Yes, random drivers might want more. But I'm tired of buggy drivers */
-+	return ULONG_MAX;
-+}
-+
-+static inline bool file_mmap_ok(struct file *file, struct inode *inode,
-+				unsigned long pgoff, unsigned long len)
-+{
-+	u64 maxsize = file_mmap_size_max(file, inode);
-+
-+	if (maxsize && len > maxsize)
-+		return false;
-+	maxsize -= len;
-+	if (pgoff > maxsize >> PAGE_SHIFT)
-+		return false;
-+	return true;
-+}
-+
- /*
-  * The caller must hold down_write(&current->mm->mmap_sem).
-  */
-@@ -1340,6 +1369,9 @@ unsigned long do_mmap(struct file *file,
- 	if (file) {
- 		struct inode *inode = file_inode(file);
+ no_sleep:
+@@ -3432,8 +3430,6 @@ try_again:
  
-+		if (!file_mmap_ok(file, inode, pgoff, len))
-+			return -EOVERFLOW;
-+
- 		switch (flags & MAP_TYPE) {
- 		case MAP_SHARED:
- 			if ((prot&PROT_WRITE) && !(file->f_mode&FMODE_WRITE))
+ 				xlog_wait(&iclog->ic_prev->ic_write_wait,
+ 							&log->l_icloglock);
+-				if (log_flushed)
+-					*log_flushed = 1;
+ 				already_slept = 1;
+ 				goto try_again;
+ 			}
+@@ -3467,9 +3463,6 @@ try_again:
+ 			 */
+ 			if (iclog->ic_state & XLOG_STATE_IOERROR)
+ 				return -EIO;
+-
+-			if (log_flushed)
+-				*log_flushed = 1;
+ 		} else {		/* just return */
+ 			spin_unlock(&log->l_icloglock);
+ 		}
 
 
