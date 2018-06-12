@@ -2,261 +2,219 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 172F7C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 09:34:59 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3341EC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 09:35:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACDBA208B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 09:34:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yq0TuZse"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACDBA208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id DC475208B0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 09:35:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC475208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933193AbeFLJe4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 05:34:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59466 "EHLO mail.kernel.org"
+        id S933487AbeFLJfF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 05:35:05 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:40696 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754182AbeFLJex (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 05:34:53 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A3EFE208B0;
-        Tue, 12 Jun 2018 09:34:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528796093;
-        bh=Xc6hydTOJxhRSpiRjKFTfRltWuOuO6hgaL7sBo3Oogw=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Yq0TuZseGEWFey+DJwnm9LDxPWXuZ5zGmpefqBH3wJYiEt0WB0ldf1Vk8TX01Zi8j
-         vtEo50598qudzb5IirxH7/vZmWzvmI535n+OlQgjG9Wa1UIkkrCFNsQJvef2Ovf915
-         MYM5baARXXOZ1KCDpgokeNrtwXv3snm9a/iAJdu8=
-Date:   Tue, 12 Jun 2018 11:34:31 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        torvalds@linux-foundation.org, stable@vger.kernel.org
-Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Linux 4.14.49
-Message-ID: <20180612093431.GA18376@kroah.com>
+        id S933216AbeFLJfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 05:35:02 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id CE9B320733; Tue, 12 Jun 2018 11:34:59 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-37-30.w90-88.abo.wanadoo.fr [90.88.156.30])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 46E2520733;
+        Tue, 12 Jun 2018 11:34:49 +0200 (CEST)
+Date:   Tue, 12 Jun 2018 11:34:49 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Stefan Agner <stefan@agner.ch>
+Cc:     axboe@kernel.dk, Dmitry Osipenko <digetx@gmail.com>,
+        dwmw2@infradead.org, computersforpeace@gmail.com,
+        marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        thierry.reding@gmail.com, dev@lynxeye.de,
+        miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com,
+        krzk@kernel.org, benjamin.lindqvist@endian.se,
+        jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        mirza.krak@gmail.com, gaireg@gaireg.de,
+        linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 4/6] mtd: rawnand: add NVIDIA Tegra NAND Flash
+ controller driver
+Message-ID: <20180612113449.79dddb38@bbrezillon>
+In-Reply-To: <53e36cff80e38e489959aa18471d0782@agner.ch>
+References: <20180611205224.23340-1-stefan@agner.ch>
+        <20180611205224.23340-5-stefan@agner.ch>
+        <4258393.O1xtUOGbca@dimapc>
+        <cb6f2ef0a5a41e001a2019caa1a18c23@agner.ch>
+        <20180612102734.0ea3bfa5@bbrezillon>
+        <53e36cff80e38e489959aa18471d0782@agner.ch>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="T4sUOijqQbZv57TR"
-Content-Disposition: inline
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 12 Jun 2018 11:17:09 +0200
+Stefan Agner <stefan@agner.ch> wrote:
 
---T4sUOijqQbZv57TR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> [also added Jens Axboe]
+> 
+> On 12.06.2018 10:27, Boris Brezillon wrote:
+> > On Tue, 12 Jun 2018 10:06:42 +0200
+> > Stefan Agner <stefan@agner.ch> wrote:
+> >   
+> >> On 12.06.2018 02:03, Dmitry Osipenko wrote:  
+> >> > On Monday, 11 June 2018 23:52:22 MSK Stefan Agner wrote:  
+> >> >> Add support for the NAND flash controller found on NVIDIA
+> >> >> Tegra 2 SoCs. This implementation does not make use of the
+> >> >> command queue feature. Regular operations/data transfers are
+> >> >> done in PIO mode. Page read/writes with hardware ECC make
+> >> >> use of the DMA for data transfer.
+> >> >>
+> >> >> Signed-off-by: Lucas Stach <dev@lynxeye.de>
+> >> >> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> >> >> ---
+> >> >>  MAINTAINERS                       |    7 +
+> >> >>  drivers/mtd/nand/raw/Kconfig      |    6 +
+> >> >>  drivers/mtd/nand/raw/Makefile     |    1 +
+> >> >>  drivers/mtd/nand/raw/tegra_nand.c | 1248 +++++++++++++++++++++++++++++
+> >> >>  4 files changed, 1262 insertions(+)
+> >> >>  create mode 100644 drivers/mtd/nand/raw/tegra_nand.c
+> >> >>  
+> >> [snip]  
+> >> >> +static int tegra_nand_cmd(struct nand_chip *chip,
+> >> >> +			 const struct nand_subop *subop)
+> >> >> +{
+> >> >> +	const struct nand_op_instr *instr;
+> >> >> +	const struct nand_op_instr *instr_data_in = NULL;
+> >> >> +	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip->controller);
+> >> >> +	unsigned int op_id, size = 0, offset = 0;
+> >> >> +	bool first_cmd = true;
+> >> >> +	u32 reg, cmd = 0;
+> >> >> +	int ret;
+> >> >> +
+> >> >> +	for (op_id = 0; op_id < subop->ninstrs; op_id++) {
+> >> >> +		unsigned int naddrs, i;
+> >> >> +		const u8 *addrs;
+> >> >> +		u32 addr1 = 0, addr2 = 0;
+> >> >> +
+> >> >> +		instr = &subop->instrs[op_id];
+> >> >> +
+> >> >> +		switch (instr->type) {
+> >> >> +		case NAND_OP_CMD_INSTR:
+> >> >> +			if (first_cmd) {
+> >> >> +				cmd |= COMMAND_CLE;
+> >> >> +				writel_relaxed(instr->ctx.cmd.opcode,
+> >> >> +					       ctrl->regs + CMD_REG1);
+> >> >> +			} else {
+> >> >> +				cmd |= COMMAND_SEC_CMD;
+> >> >> +				writel_relaxed(instr->ctx.cmd.opcode,
+> >> >> +					       ctrl->regs + CMD_REG2);
+> >> >> +			}
+> >> >> +			first_cmd = false;
+> >> >> +			break;
+> >> >> +		case NAND_OP_ADDR_INSTR:
+> >> >> +			offset = nand_subop_get_addr_start_off(subop, op_id);
+> >> >> +			naddrs = nand_subop_get_num_addr_cyc(subop, op_id);
+> >> >> +			addrs = &instr->ctx.addr.addrs[offset];
+> >> >> +
+> >> >> +			cmd |= COMMAND_ALE | COMMAND_ALE_SIZE(naddrs);
+> >> >> +			for (i = 0; i < min_t(unsigned int, 4, naddrs); i++)
+> >> >> +				addr1 |= *addrs++ << (BITS_PER_BYTE * i);
+> >> >> +			naddrs -= i;
+> >> >> +			for (i = 0; i < min_t(unsigned int, 4, naddrs); i++)
+> >> >> +				addr2 |= *addrs++ << (BITS_PER_BYTE * i);
+> >> >> +			writel_relaxed(addr1, ctrl->regs + ADDR_REG1);
+> >> >> +			writel_relaxed(addr2, ctrl->regs + ADDR_REG2);
+> >> >> +			break;
+> >> >> +
+> >> >> +		case NAND_OP_DATA_IN_INSTR:
+> >> >> +			size = nand_subop_get_data_len(subop, op_id);
+> >> >> +			offset = nand_subop_get_data_start_off(subop, op_id);
+> >> >> +
+> >> >> +			cmd |= COMMAND_TRANS_SIZE(size) | COMMAND_PIO |
+> >> >> +				COMMAND_RX | COMMAND_A_VALID;
+> >> >> +
+> >> >> +			instr_data_in = instr;
+> >> >> +			break;
+> >> >> +
+> >> >> +		case NAND_OP_DATA_OUT_INSTR:
+> >> >> +			size = nand_subop_get_data_len(subop, op_id);
+> >> >> +			offset = nand_subop_get_data_start_off(subop, op_id);
+> >> >> +
+> >> >> +			cmd |= COMMAND_TRANS_SIZE(size) | COMMAND_PIO |
+> >> >> +				COMMAND_TX | COMMAND_A_VALID;
+> >> >> +
+> >> >> +			memcpy(&reg, instr->ctx.data.buf.out + offset, size);
+> >> >> +			writel_relaxed(reg, ctrl->regs + RESP);
+> >> >> +
+> >> >> +			break;
+> >> >> +		case NAND_OP_WAITRDY_INSTR:
+> >> >> +			cmd |= COMMAND_RBSY_CHK;
+> >> >> +			break;
+> >> >> +
+> >> >> +		}
+> >> >> +	}
+> >> >> +
+> >> >> +	cmd |= COMMAND_GO | COMMAND_CE(ctrl->cur_cs);
+> >> >> +	writel_relaxed(cmd, ctrl->regs + COMMAND);
+> >> >> +	ret = wait_for_completion_io_timeout(&ctrl->command_complete,
+> >> >> +					     msecs_to_jiffies(500));  
+> >> >
+> >> > It's not obvious to me whether _io_ variant is appropriate to use here, would
+> >> > be nice if somebody could clarify that. Maybe block/ already does the IO
+> >> > accounting itself and hence the IO time would be counted twice in that case.  
+> >>
+> >> Good that you bring this up.
+> >>
+> >> I don't think that there is any higher layer which could take care of
+> >> accounting. Usually, with raw nand there is no block layer involved
+> >> anyway.
+> >>
+> >> In a quick test it seems that only when using wait_for_completion_io I/O
+> >> is properly accounted in the "wait" section of top.
+> >>
+> >> So far only a single driver (omap2) used the _io variant, but I think it
+> >> is the right thing to do! After all, it is I/O...
+> >>
+> >> Boris or any other MTD maintainer, any comment on this?  
+> > 
+> > Given this definition of io_schedule_timeout() [1] (which is used when
+> > you call wait_for_completion_io_timeout()), I'd say it's not useful to
+> > use the _io_ version, simply because MTD devs are not exposed as blk
+> > devices, and thus don't need the blk_schedule_flush_plug() that is done
+> > is io_schedule_prepare(). But that also means MTD I/Os are not
+> > accounted as I/Os :-(.  
+> 
+> Documentation of wait_for_completion_io says:
+> "The caller is accounted as waiting for IO (which traditionally means
+> blkio only)."
+> 
+> Which sounds as if it using _io is only an accounting thing...
+> 
+> The hint about blkio might suggest that there is more to it.
+> 
+> Is calling blk_schedule_flush_plug a problem for MTD?
+> https://elixir.bootlin.com/linux/v4.17.1/source/include/linux/blkdev.h#L1355
 
-I'm announcing the release of the 4.14.49 kernel.
+It shouldn't. It might add a bit of work when a blk_plug is attached to
+the task that is about to wait for I/Os (I honestly don't know what a
+blk_plug is :-)).
 
-All users of the 4.14 kernel series must upgrade.
+> 
+> > 
+> > Let's go for the non-io version for now, since all drivers except omap2
+> > seem to use this function.
+> >   
+> 
+> I still think it would be nice and "the right thing" from a user
+> perspective...
 
-The updated 4.14.y git tree can be found at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
-x-4.14.y
-and can be browsed at the normal kernel.org git web browser:
-	http://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Dsu=
-mmary
-
-thanks,
-
-greg k-h
-
-------------
-
- Documentation/networking/netdev-FAQ.txt          |    9 +
- Makefile                                         |    2=20
- drivers/gpu/drm/drm_file.c                       |    1=20
- drivers/isdn/hardware/eicon/diva.c               |   22 ++-
- drivers/isdn/hardware/eicon/diva.h               |    5=20
- drivers/isdn/hardware/eicon/divasmain.c          |   18 +--
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c |    2=20
- drivers/net/ethernet/cisco/enic/enic_main.c      |    8 -
- drivers/net/ethernet/emulex/benet/be_main.c      |    4=20
- drivers/net/ethernet/mellanox/mlx4/qp.c          |    4=20
- drivers/net/ethernet/mellanox/mlx5/core/en_rx.c  |   42 +++++++
- drivers/net/ethernet/qlogic/qed/qed_cxt.c        |    2=20
- drivers/net/phy/bcm-cygnus.c                     |    6 -
- drivers/net/phy/bcm-phy-lib.c                    |    2=20
- drivers/net/phy/bcm-phy-lib.h                    |    7 +
- drivers/net/phy/bcm7xxx.c                        |    4=20
- drivers/net/team/team.c                          |    3=20
- drivers/net/tun.c                                |   15 +-
- drivers/net/usb/cdc_mbim.c                       |    2=20
- drivers/net/virtio_net.c                         |   19 +--
- drivers/pci/host/pci-hyperv.c                    |   46 ++++++--
- drivers/scsi/sd_zbc.c                            |  128 +++++++++++++-----=
------
- drivers/vhost/vhost.c                            |    3=20
- fs/btrfs/disk-io.c                               |    3=20
- include/net/ipv6.h                               |    5=20
- include/uapi/linux/btrfs_tree.h                  |    1=20
- mm/mmap.c                                        |   32 +++++
- net/core/flow_dissector.c                        |    2=20
- net/core/net-sysfs.c                             |    6 -
- net/core/rtnetlink.c                             |    8 -
- net/dccp/proto.c                                 |    2=20
- net/ipv4/fib_frontend.c                          |    1=20
- net/ipv4/fib_semantics.c                         |    4=20
- net/ipv4/ip_sockglue.c                           |    2=20
- net/ipv4/ipmr.c                                  |    7 +
- net/ipv6/ip6_output.c                            |    3=20
- net/ipv6/ip6_tunnel.c                            |   11 +
- net/ipv6/ip6mr.c                                 |    3=20
- net/ipv6/ndisc.c                                 |    6 +
- net/ipv6/route.c                                 |    2=20
- net/ipv6/seg6_iptunnel.c                         |    4=20
- net/ipv6/sit.c                                   |    5=20
- net/kcm/kcmsock.c                                |    2=20
- net/packet/af_packet.c                           |    4=20
- net/sched/cls_flower.c                           |    2=20
- net/sctp/transport.c                             |    2=20
- scripts/kconfig/confdata.c                       |    2=20
- 47 files changed, 329 insertions(+), 144 deletions(-)
-
-Alexander Duyck (1):
-      net-sysfs: Fix memory leak in XPS configuration
-
-Alexey Kodanev (1):
-      dccp: don't free ccid2_hc_tx_sock struct in dccp_disconnect()
-
-Anand Jain (1):
-      btrfs: define SUPER_FLAG_METADUMP_V2
-
-Bart Van Assche (1):
-      scsi: sd_zbc: Avoid that resetting a zone fails sporadically
-
-Cong Wang (1):
-      netdev-FAQ: clarify DaveM's position for stable backports
-
-Damien Le Moal (1):
-      scsi: sd_zbc: Fix potential memory leak
-
-Dan Carpenter (1):
-      team: use netdev_features_t instead of u32
-
-Daniele Palmas (1):
-      net: usb: cdc_mbim: add flag FLAG_SEND_ZLP
-
-Dave Airlie (1):
-      drm: set FMODE_UNSIGNED_OFFSET for drm files
-
-Dexuan Cui (1):
-      PCI: hv: Do not wait forever on a device that has disappeared
-
-Eran Ben Elisha (1):
-      net/mlx5e: When RXFCS is set, add FCS data into checksum calculation
-
-Eric Dumazet (4):
-      ipmr: properly check rhltable_init() return value
-      net: metrics: add proper netlink validation
-      net/packet: refine check for priv area size
-      rtnetlink: validate attributes in do_setlink()
-
-Florian Fainelli (2):
-      net: phy: broadcom: Fix bcm_write_exp()
-      net: phy: broadcom: Fix auxiliary control register reads
-
-Govindarajulu Varadarajan (1):
-      enic: set DMA mask to 47 bit
-
-Greg Kroah-Hartman (1):
-      Linux 4.14.49
-
-Jack Morgenstein (1):
-      net/mlx4: Fix irq-unsafe spinlock usage
-
-Jason Wang (4):
-      vhost: synchronize IOTLB message with dev cleanup
-      virtio-net: correctly transmit XDP buff after linearizing
-      virtio-net: correctly check num_buf during err path
-      virtio-net: fix leaking page for gso packet during mergeable XDP
-
-Julia Lawall (1):
-      bnx2x: use the right constant
-
-Kirill Tkhai (1):
-      kcm: Fix use-after-free caused by clonned sockets
-
-Linus Torvalds (2):
-      mmap: introduce sane default mmap limits
-      mmap: relax file size limit for regular files
-
-Mathieu Xhonneux (1):
-      ipv6: sr: fix memory OOB access in seg6_do_srh_encap/inline
-
-Michal Kubecek (1):
-      ipv6: omit traffic class when calculating flow hash
-
-Nathan Chancellor (1):
-      kconfig: Avoid format overflow warning from GCC 8.1
-
-Nicolas Dichtel (1):
-      ip6_tunnel: remove magic mtu value 0xFFF8
-
-Paul Blakey (1):
-      cls_flower: Fix incorrect idr release when failing to modify rule
-
-Roopa Prabhu (1):
-      net: ipv4: add missing RTA_TABLE to rtm_ipv4_policy
-
-Sabrina Dubroca (1):
-      ip6mr: only set ip6mr_table from setsockopt when ip6mr_new_table succ=
-eeds
-
-Shahed Shaikh (1):
-      qed: Fix mask for physical address in ILT entry
-
-Stephen Suryaputra (1):
-      vrf: check the original netdevice for generating redirect
-
-Suresh Reddy (1):
-      be2net: Fix error detection logic for BE3
-
-Toshiaki Makita (1):
-      tun: Fix NULL pointer dereference in XDP redirect
-
-Wenwen Wang (1):
-      isdn: eicon: fix a missing-check bug
-
-Willem de Bruijn (2):
-      ipv4: remove warning in ip_recv_error
-      packet: fix reserve calculation
-
-Xin Long (1):
-      sctp: not allow transport timeout value less than HZ/5 for hb_timer
-
-
---T4sUOijqQbZv57TR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAlsfk6QACgkQONu9yGCS
-aT5f2A/+P2OKRbOQKf1P1bsoN3kCenpvdsPqnPnI8pdI6BHmCgDwJF70A3ZQN+GT
-sHPiIBlDD3D4xtfDi4tOBbW2kxIQTTB/MlkpL1PV192DC3NjVyaUCgQLTZMZhwpJ
-M770XORh++TKcKMjs1cJIqt9ovdsD8fUqVW39onp0FEEyc8ZLgYgxIT2TJdbSlNL
-CRc+n+rXjVtG5V7nNSuOc69aHTdsJMtQXKfhD8S3Vm4JJwdv/RP6Lq+UE+HngPBu
-OjmyfbNfdkUjCrT7ZeLwss74zEBsRwJq8hKM2wg+ckrfXjw9LwWk0h3WA8vtcBK8
-lJ7+wegcBMrLnQvtsQmyrIUIpm/uir+aDL1LIe4YzjK06Gy8vT3jJb0ZDon20Z7x
-gj2o6t7Zgy/+OJXFr2AO5fjmILdUWmbkFbvJ0uxeRgg5m4Mq8q0CUVT6/ojVcGFn
-fhEI7fjpkQWDHLwxGLnqBQBg/hjw9bB1SY+byKNbcXHdrknfH+tGNLQBUoSRi4D+
-YTV2VL+PoRqjnf8b/1AkMSz8FYza3Kq4UXySK8rVc7GzbvMX7G23Kakg4SpOaKWq
-wcLzaILnmwBGbs6cYpXCftaoNrT9LCuyhE4x3iPkldRB6EkDHWcdna0aHpS3qUfi
-rFU77KPQOE2dIy6NMTWj4ODknNRcX93qFTfEYLBJn+tyKVqEzhM=
-=m9oJ
------END PGP SIGNATURE-----
-
---T4sUOijqQbZv57TR--
+If we decide to switch to wait_for_completion_io_timeout(), I'd prefer
+to do that for all drivers rather than just this one, and I'm still not
+sure this is the right thing to do given the comment you pointed out
+("which traditionally means blkio only").
