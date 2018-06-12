@@ -6,43 +6,45 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8F037C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:53:47 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 89A1AC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:53:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 430AA208B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:53:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40033208B4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:53:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dIAMP8Si"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 430AA208B7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WWoH8ifB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40033208B4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935194AbeFLQxo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 12:53:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53462 "EHLO mail.kernel.org"
+        id S935221AbeFLQxt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 12:53:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53636 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933929AbeFLQxl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 12:53:41 -0400
+        id S935190AbeFLQxo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 12:53:44 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B745208B9;
-        Tue, 12 Jun 2018 16:53:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F7AF208B9;
+        Tue, 12 Jun 2018 16:53:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528822420;
-        bh=xmDCKy64HBWBABCzuuSAkqoE+Fith57GE2vBPtrXCSE=;
+        s=default; t=1528822423;
+        bh=PBitsKAMeo5iih/Wj3WM2zuKBkeFehVUE50IISNhsmY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dIAMP8SiAcuaHasfYEsOiRlx8CbozXMXcmcRJW328qwBupWmrFuOhr7NkvnUckGzP
-         DqO67HmyfBhocPMjJEDy1ZCL/KB0awPtzEJLPKHlwf096OcbT+Np+XSpS5Z43TAry4
-         W18dTRwuVgk7vok2MTlezXuycN4nQlTu/9yfkSLM=
+        b=WWoH8ifBsUZhIkk90+pMVAAH1NTtnTdEVuuxQXlh44MlnYOMDjO9C0VljHzmgHEgk
+         Ii/O8FGkDM83ybY7E20m2E+QV0PYlAa+YBXbBO/HgRci9snWzw6cq/tD6MX20azTds
+         xwTlGsHbrQmvsEFcTDNwB5oBB1DuywtqWxJtbp5Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        David Ahern <dsahern@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 23/24] net: phy: broadcom: Fix bcm_write_exp()
-Date:   Tue, 12 Jun 2018 18:52:07 +0200
-Message-Id: <20180612164817.823135174@linuxfoundation.org>
+Subject: [PATCH 4.4 24/24] net: metrics: add proper netlink validation
+Date:   Tue, 12 Jun 2018 18:52:08 +0200
+Message-Id: <20180612164817.877152473@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180612164816.587001852@linuxfoundation.org>
 References: <20180612164816.587001852@linuxfoundation.org>
@@ -59,90 +61,120 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 79fb218d97980d4fee9a64f4c8ff05289364ba25 ]
+[ Upstream commit 5b5e7a0de2bbf2a1afcd9f49e940010e9fb80d53 ]
 
-On newer PHYs, we need to select the expansion register to write with
-setting bits [11:8] to 0xf. This was done correctly by bcm7xxx.c prior
-to being migrated to generic code under bcm-phy-lib.c which
-unfortunately used the older implementation from the BCM54xx days.
+Before using nla_get_u32(), better make sure the attribute
+is of the proper size.
 
-Fix this by creating an inline stub: bcm_write_exp_sel() which adds the
-correct value (MII_BCM54XX_EXP_SEL_ER) and update both the Cygnus PHY
-and BCM7xxx PHY drivers which require setting these bits.
+Code recently was changed, but bug has been there from beginning
+of git.
 
-broadcom.c is unchanged because some PHYs even use a different selector
-method, so let them specify it directly (e.g: SerDes secondary selector).
+BUG: KMSAN: uninit-value in rtnetlink_put_metrics+0x553/0x960 net/core/rtnetlink.c:746
+CPU: 1 PID: 14139 Comm: syz-executor6 Not tainted 4.17.0-rc5+ #103
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x185/0x1d0 lib/dump_stack.c:113
+ kmsan_report+0x149/0x260 mm/kmsan/kmsan.c:1084
+ __msan_warning_32+0x6e/0xc0 mm/kmsan/kmsan_instr.c:686
+ rtnetlink_put_metrics+0x553/0x960 net/core/rtnetlink.c:746
+ fib_dump_info+0xc42/0x2190 net/ipv4/fib_semantics.c:1361
+ rtmsg_fib+0x65f/0x8c0 net/ipv4/fib_semantics.c:419
+ fib_table_insert+0x2314/0x2b50 net/ipv4/fib_trie.c:1287
+ inet_rtm_newroute+0x210/0x340 net/ipv4/fib_frontend.c:779
+ rtnetlink_rcv_msg+0xa32/0x1560 net/core/rtnetlink.c:4646
+ netlink_rcv_skb+0x378/0x600 net/netlink/af_netlink.c:2448
+ rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4664
+ netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+ netlink_unicast+0x1678/0x1750 net/netlink/af_netlink.c:1336
+ netlink_sendmsg+0x104f/0x1350 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:629 [inline]
+ sock_sendmsg net/socket.c:639 [inline]
+ ___sys_sendmsg+0xec0/0x1310 net/socket.c:2117
+ __sys_sendmsg net/socket.c:2155 [inline]
+ __do_sys_sendmsg net/socket.c:2164 [inline]
+ __se_sys_sendmsg net/socket.c:2162 [inline]
+ __x64_sys_sendmsg+0x331/0x460 net/socket.c:2162
+ do_syscall_64+0x152/0x230 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x455a09
+RSP: 002b:00007faae5fd8c68 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007faae5fd96d4 RCX: 0000000000455a09
+RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000013
+RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000000005d0 R14: 00000000006fdc20 R15: 0000000000000000
 
-Fixes: a1cba5613edf ("net: phy: Add Broadcom phy library for common interfaces")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Uninit was stored to memory at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:279 [inline]
+ kmsan_save_stack mm/kmsan/kmsan.c:294 [inline]
+ kmsan_internal_chain_origin+0x12b/0x210 mm/kmsan/kmsan.c:685
+ __msan_chain_origin+0x69/0xc0 mm/kmsan/kmsan_instr.c:529
+ fib_convert_metrics net/ipv4/fib_semantics.c:1056 [inline]
+ fib_create_info+0x2d46/0x9dc0 net/ipv4/fib_semantics.c:1150
+ fib_table_insert+0x3e4/0x2b50 net/ipv4/fib_trie.c:1146
+ inet_rtm_newroute+0x210/0x340 net/ipv4/fib_frontend.c:779
+ rtnetlink_rcv_msg+0xa32/0x1560 net/core/rtnetlink.c:4646
+ netlink_rcv_skb+0x378/0x600 net/netlink/af_netlink.c:2448
+ rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4664
+ netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+ netlink_unicast+0x1678/0x1750 net/netlink/af_netlink.c:1336
+ netlink_sendmsg+0x104f/0x1350 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:629 [inline]
+ sock_sendmsg net/socket.c:639 [inline]
+ ___sys_sendmsg+0xec0/0x1310 net/socket.c:2117
+ __sys_sendmsg net/socket.c:2155 [inline]
+ __do_sys_sendmsg net/socket.c:2164 [inline]
+ __se_sys_sendmsg net/socket.c:2162 [inline]
+ __x64_sys_sendmsg+0x331/0x460 net/socket.c:2162
+ do_syscall_64+0x152/0x230 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Uninit was created at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:279 [inline]
+ kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:189
+ kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:315
+ kmsan_slab_alloc+0x10/0x20 mm/kmsan/kmsan.c:322
+ slab_post_alloc_hook mm/slab.h:446 [inline]
+ slab_alloc_node mm/slub.c:2753 [inline]
+ __kmalloc_node_track_caller+0xb32/0x11b0 mm/slub.c:4395
+ __kmalloc_reserve net/core/skbuff.c:138 [inline]
+ __alloc_skb+0x2cb/0x9e0 net/core/skbuff.c:206
+ alloc_skb include/linux/skbuff.h:988 [inline]
+ netlink_alloc_large_skb net/netlink/af_netlink.c:1182 [inline]
+ netlink_sendmsg+0x76e/0x1350 net/netlink/af_netlink.c:1876
+ sock_sendmsg_nosec net/socket.c:629 [inline]
+ sock_sendmsg net/socket.c:639 [inline]
+ ___sys_sendmsg+0xec0/0x1310 net/socket.c:2117
+ __sys_sendmsg net/socket.c:2155 [inline]
+ __do_sys_sendmsg net/socket.c:2164 [inline]
+ __se_sys_sendmsg net/socket.c:2162 [inline]
+ __x64_sys_sendmsg+0x331/0x460 net/socket.c:2162
+ do_syscall_64+0x152/0x230 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Fixes: a919525ad832 ("net: Move fib_convert_metrics to metrics file")
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Cc: David Ahern <dsahern@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/bcm-cygnus.c  |    6 +++---
- drivers/net/phy/bcm-phy-lib.h |    7 +++++++
- drivers/net/phy/bcm7xxx.c     |    4 ++--
- 3 files changed, 12 insertions(+), 5 deletions(-)
+ net/ipv4/fib_semantics.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/phy/bcm-cygnus.c
-+++ b/drivers/net/phy/bcm-cygnus.c
-@@ -61,17 +61,17 @@ static int bcm_cygnus_afe_config(struct
- 		return rc;
- 
- 	/* make rcal=100, since rdb default is 000 */
--	rc = bcm_phy_write_exp(phydev, MII_BRCM_CORE_EXPB1, 0x10);
-+	rc = bcm_phy_write_exp_sel(phydev, MII_BRCM_CORE_EXPB1, 0x10);
- 	if (rc < 0)
- 		return rc;
- 
- 	/* CORE_EXPB0, Reset R_CAL/RC_CAL Engine */
--	rc = bcm_phy_write_exp(phydev, MII_BRCM_CORE_EXPB0, 0x10);
-+	rc = bcm_phy_write_exp_sel(phydev, MII_BRCM_CORE_EXPB0, 0x10);
- 	if (rc < 0)
- 		return rc;
- 
- 	/* CORE_EXPB0, Disable Reset R_CAL/RC_CAL Engine */
--	rc = bcm_phy_write_exp(phydev, MII_BRCM_CORE_EXPB0, 0x00);
-+	rc = bcm_phy_write_exp_sel(phydev, MII_BRCM_CORE_EXPB0, 0x00);
- 
- 	return 0;
- }
---- a/drivers/net/phy/bcm-phy-lib.h
-+++ b/drivers/net/phy/bcm-phy-lib.h
-@@ -14,11 +14,18 @@
- #ifndef _LINUX_BCM_PHY_LIB_H
- #define _LINUX_BCM_PHY_LIB_H
- 
-+#include <linux/brcmphy.h>
- #include <linux/phy.h>
- 
- int bcm_phy_write_exp(struct phy_device *phydev, u16 reg, u16 val);
- int bcm_phy_read_exp(struct phy_device *phydev, u16 reg);
- 
-+static inline int bcm_phy_write_exp_sel(struct phy_device *phydev,
-+					u16 reg, u16 val)
-+{
-+	return bcm_phy_write_exp(phydev, reg | MII_BCM54XX_EXP_SEL_ER, val);
-+}
-+
- int bcm_phy_write_misc(struct phy_device *phydev,
- 		       u16 reg, u16 chl, u16 value);
- int bcm_phy_read_misc(struct phy_device *phydev,
---- a/drivers/net/phy/bcm7xxx.c
-+++ b/drivers/net/phy/bcm7xxx.c
-@@ -48,10 +48,10 @@
- static void r_rc_cal_reset(struct phy_device *phydev)
- {
- 	/* Reset R_CAL/RC_CAL Engine */
--	bcm_phy_write_exp(phydev, 0x00b0, 0x0010);
-+	bcm_phy_write_exp_sel(phydev, 0x00b0, 0x0010);
- 
- 	/* Disable Reset R_AL/RC_CAL Engine */
--	bcm_phy_write_exp(phydev, 0x00b0, 0x0000);
-+	bcm_phy_write_exp_sel(phydev, 0x00b0, 0x0000);
- }
- 
- static int bcm7xxx_28nm_b0_afe_config_init(struct phy_device *phydev)
+--- a/net/ipv4/fib_semantics.c
++++ b/net/ipv4/fib_semantics.c
+@@ -979,6 +979,8 @@ fib_convert_metrics(struct fib_info *fi,
+ 			if (val == TCP_CA_UNSPEC)
+ 				return -EINVAL;
+ 		} else {
++			if (nla_len(nla) != sizeof(u32))
++				return false;
+ 			val = nla_get_u32(nla);
+ 		}
+ 		if (type == RTAX_ADVMSS && val > 65535 - 40)
 
 
