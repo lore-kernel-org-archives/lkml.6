@@ -2,93 +2,114 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 78BEDC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 04:46:41 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 61F88C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 04:48:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 191F9208B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 04:46:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 191F9208B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id F0F1E208B0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 04:48:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mEmXBK11"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0F1E208B0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753893AbeFLEqj (ORCPT
+        id S1754014AbeFLEsh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 00:46:39 -0400
-Received: from mga04.intel.com ([192.55.52.120]:23929 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751861AbeFLEqg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 00:46:36 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2018 21:46:36 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,213,1526367600"; 
-   d="scan'208";a="56580455"
-Received: from ltallent-mobl.amr.corp.intel.com (HELO tstruk-mobl1.jf.intel.com) ([10.254.114.208])
-  by FMSMGA003.fm.intel.com with ESMTP; 11 Jun 2018 21:46:36 -0700
-Subject: Re: [PATCH v2 2/2] tpm: add support for nonblocking operation
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@01.org, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <152876282414.19591.7972634639749417028.stgit@tstruk-mobl1.jf.intel.com>
- <201806120803.W0vjfLEH%fengguang.wu@intel.com>
-From:   Tadeusz Struk <tadeusz.struk@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
- xsDiBEiLICMRBADteQacQxypsuFvAw6IwYzbD8pgQi+kLYBcqfGgVAUN/cO+sLl6u1lVdaDB
- fhAArdbV9lpoqcWnmhQFTb4A+W569EpydBr6nuatWkEB+fmmx8YoUtuZfXt7v+1l1rc09kaW
- LY+TkwQkvFCeuvdasgmBLnmRWymEGWi1E12hUgTw/wCgtK24geC7XkiuANMv0gpr+raOgQMD
- /2yJZ0SeXQApWyTRaeIYN8GgYHZTWuBp/ofN+viEkhrDxahcaGPP5B/Nv6VS1+M0e5m8OzHj
- qPUbgfyOeJcslC5aoZdqqqzVWVLaA/+Jy+O+6T3k3R/IryVVATldBlwnGFDhET0mKQsd15zt
- cIdQBBbfSFR5VlugZuWV5q442IpPA/4g7nen9FFPxh45Te8D54hAsOCywjm6xUE0UJGYHeJ/
- MXCPtuXfVCbYcOxZVH7kUS2Vtk5d3bF40IE2WnVq1ZScNANF4ZjikxYhYGfNWX3HXak1gSoj
- UrY87rMSjPIAry4L0BoIx2qgL/k4iV/3QcXL4t5wosU0iw++suf1zGGcKM0gVGFkZXVzeiBT
- dHJ1ayA8dHN0cnVrQGdtYWlsLmNvbT7CYwQTEQIAIwIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
- AheABQJQTjJTAhkBAAoJEDFswfskq9xyqvcAoI2nsaUCX8ZGbu+Jhq+++qlBFJ2rAJ983RoO
- R2ofHhn3g3Qi4K34tw0l087BTQRauzUlARAAqkWRL/InEPnoGMg/gw/CRaDBaIBgMsvIcghI
- 7xevIzpleXt6jKHghSBooH+zaT7qi4u2gkgPn4odsER3Rm94XgrZJgoqls6EpKMWpJNGP4HT
- eYgykhfsZOLX8ijUbjTM/Sm/dZVo6aYoBL2+ciJwyl+Zt3Mp6un3/GWu6cA9005V50pRqO7j
- PTlVCHi2bedcEEf5DDsYJv/3Oz8/4LpSf6BL6BltjeZVa2y03dTMmD031JTH+OuyJm1yh72Z
- HWxhlYNXOv6uFJJVr+paQjrAsBVIYKhK24bD+uGJxLm8AN9i7/Si+2YeSsXvKUhk9mIoFBnU
- VFo63cziRTcpRu/kXgDAbujwN88qytEcvhEZHS6B9vdws+lhTpolEjkLCkz0Y59z4Fs9srKy
- QkRN+wtdiLgrwyDW3ryAKxcDmOumGWebDxpaOI/pBhrlS93HmDlvj7JmgTUU4a/NhwI3dXh5
- pn8FZzZyVXe3Kc3bu5T3UAC7uztinsAvCJQS6jGZWrXmXkqYkaLXQOw61eInWjr01zE/zDbE
- mdJPM0+va/gtZx9TtGxr4PpjbqswqCiubLDZXZHh5uqArPv/i+E8aXIsNSTN6Rrqs1j9YgDN
- ALksibv6+tXH3sOlCUgjuZgJH3+s/mnaAtiV2rZ/WlH15d6nd0uiDSZrKhlR+g4NHMh1ztEA
- EQEAAcJPBBgRAgAPBQJauzUlAhsMBQkJZgGAAAoJEDFswfskq9xyfv8AoI8aPrJCoM0h5WOP
- kKxMmPEPHzUNAJ9jBBYXhX1CWg+IhI7i/fLlI0vwCA==
-Message-ID: <359fe9af-ba17-e23b-a21e-c3c94f23b5ff@intel.com>
-Date:   Mon, 11 Jun 2018 21:46:35 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <201806120803.W0vjfLEH%fengguang.wu@intel.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 12 Jun 2018 00:48:37 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:42756 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751861AbeFLEsf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 00:48:35 -0400
+Received: by mail-pf0-f196.google.com with SMTP id w7-v6so11411681pfn.9;
+        Mon, 11 Jun 2018 21:48:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=bPcI2ECHz9/PT+hfWz4BwaLtsfX6pdaBxyMJA3e7VAE=;
+        b=mEmXBK111UxPnXw0XO1qddWM/OgjLpPY3MhMCXDHG/JkIXa+Wd32Db3J+55AKtC8kI
+         Y5Now5DRZn62dIT9l0b3Z2KsbVEb8aexfqYZPoeldkghRx+q/mxGmOOOPpnp7IZ8CW4S
+         zUFsDWKNrPYwv6NaAXPv3ZSce7peULiez/SZf/CqPl8bJ08vedd8I8Ym5NXAYdQI3QcE
+         KXwmOJ9YvG/kRUTaK4Do1fIthuUzCqXXgwrFzvKmuPF9IEMp1ekIZvXfPUzACXrzAxMP
+         ufvDluF3w9T8d5oWxO+wZ+47U5VNM87c7r/i3jg/A4pVYpe/43yWit1PsXrLy0zOSwNe
+         XfOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=bPcI2ECHz9/PT+hfWz4BwaLtsfX6pdaBxyMJA3e7VAE=;
+        b=qcmvD1WhpJMHmCV9SfobpsMeDYYF2jHNy54Ng1wgNjECUv36bt3p6V1IAiTeD6e5xt
+         NFQWOOhISf4ENMKAYCRxPxboGQ4uZDigRSDFo1E3Vb9v0goQON80ASpFczlHvGhKl0N7
+         LLDCA31F/YSX5cKQDNJyhxJ5Qmv11t0d5ILjmixZ2DRw9osUYFNL62UKywppW8fZWni1
+         Ewd392uFnsDNOef8Kioz4F4wUPSGzh9knxrWJVYO+Kiq4cvqtzDSQ+iNwgt7TCDQ/NLG
+         uOoxZSC4hYAjbhYk632fPayOpVFOVTLF9hHjqQNHCGy2/vgoaYyC07oUDokVZE5FZZ3g
+         CrzA==
+X-Gm-Message-State: APt69E34ihpL21PE1HL8bPbhx4fGPwWl4Pakh0b8EW4fbd/7hN5ybvwm
+        b7niHXhci2OOkJmzGoNkRoA=
+X-Google-Smtp-Source: ADUXVKKBvprcfJA+JfO+AxXxR/Q/0sxb4jG8SegFVfKlxLNIGz8ErLRRJ7WLHPELVXbB/b8gZ3VXjA==
+X-Received: by 2002:a63:6f8d:: with SMTP id k135-v6mr1858560pgc.48.1528778915085;
+        Mon, 11 Jun 2018 21:48:35 -0700 (PDT)
+Received: from localhost ([103.88.46.82])
+        by smtp.gmail.com with ESMTPSA id j19-v6sm26279997pfi.84.2018.06.11.21.48.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Jun 2018 21:48:34 -0700 (PDT)
+From:   Zhouyang Jia <jiazhouyang09@gmail.com>
+Cc:     Zhouyang Jia <jiazhouyang09@gmail.com>,
+        QLogic-Storage-Upstream@qlogic.com,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: qla4xxx: add error handling for try_module_get
+Date:   Tue, 12 Jun 2018 12:48:29 +0800
+Message-Id: <1528778910-42113-1-git-send-email-jiazhouyang09@gmail.com>
+X-Mailer: git-send-email 2.7.4
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/11/2018 07:53 PM, kbuild test robot wrote:
-> Hi Tadeusz,
-> 
-> Thank you for the patch! Yet something to improve:
-> 
-> [auto build test ERROR on char-misc/char-misc-testing]
-> [also build test ERROR on next-20180608]
-> [cannot apply to v4.17]
+When try_module_get fails, the lack of error-handling code may
+cause unexpected results.
 
-Hi,
-Thanks for the report. This patch should go on top of
-https://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git/?h=next-tpm
-I will check the config tomorrow.
-Thanks,
+This patch adds error-handling code after calling try_module_get.
+
+Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+---
+ drivers/scsi/qla4xxx/ql4_os.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/qla4xxx/ql4_os.c b/drivers/scsi/qla4xxx/ql4_os.c
+index 0e13349..6b677ab 100644
+--- a/drivers/scsi/qla4xxx/ql4_os.c
++++ b/drivers/scsi/qla4xxx/ql4_os.c
+@@ -7687,7 +7687,10 @@ static int qla4xxx_sysfs_ddb_logout_sid(struct iscsi_cls_session *cls_sess)
+ 	 * to be seamless without actually destroying the
+ 	 * session
+ 	 **/
+-	try_module_get(qla4xxx_iscsi_transport.owner);
++	if (!try_module_get(qla4xxx_iscsi_transport.owner))
++		ql4_printk(KERN_WARNING, ha,
++			"%s: cannot get module.\n", __func__);
++
+ 	iscsi_destroy_endpoint(ddb_entry->conn->ep);
+ 
+ 	spin_lock_irqsave(&ha->hardware_lock, flags);
+@@ -8970,7 +8973,9 @@ static void qla4xxx_destroy_fw_ddb_session(struct scsi_qla_host *ha)
+ 			 * to be seamless without actually destroying the
+ 			 * session
+ 			 **/
+-			try_module_get(qla4xxx_iscsi_transport.owner);
++			if (!try_module_get(qla4xxx_iscsi_transport.owner))
++				ql4_printk(KERN_WARNING, ha,
++					"%s: cannot get module.\n", __func__);
+ 			iscsi_destroy_endpoint(ddb_entry->conn->ep);
+ 			qla4xxx_free_ddb(ha, ddb_entry);
+ 			iscsi_session_teardown(ddb_entry->sess);
 -- 
-Tadeusz
+2.7.4
+
