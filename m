@@ -2,121 +2,179 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6509EC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:06:20 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id F2F87C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:06:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18C94208B1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:06:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="SV+GkUPW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18C94208B1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id A86D3208BA
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:06:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A86D3208BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933493AbeFLMGS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 08:06:18 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:35066 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932412AbeFLMGR (ORCPT
+        id S933559AbeFLMGh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 08:06:37 -0400
+Received: from lucky1.263xmail.com ([211.157.147.133]:42179 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932412AbeFLMGf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 08:06:17 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5CC5l1R146193;
-        Tue, 12 Jun 2018 12:05:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2017-10-26;
- bh=6poXulIUtzztQ5grNIfag9zQknDDPzpU3plil3fEJGU=;
- b=SV+GkUPWIJvozZhMIlwOjKY0+EBPbpHtINyfslaD2iJllMrMBtw1kuJab8VGjZKuxAmU
- dtFNSFdkKY/B18rBNlnNAM2ZjIBexJm0pScOzMhz4KFCDMf/RUrEYiOTwBKA1qu0B1R7
- 6gND602ZO9gXhhlWhfcOzr6vUUQv1OPOUedjqlakenc03AtEbr+hvDGQZUYBHmJvaAUM
- N3A436yV4gxQDG4yEGZq+VeBcnnC6WSnEcjD1joHVSBCdE5+5tU5oPAIq1wQeUzubjAB
- 9KZCbOP+T/ruZFoWyYGBDuOwCxf3Q0J9y2CyLhKR6CnBTFqwcMNO5XxK+O2tDYCsO6Nn 7w== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2130.oracle.com with ESMTP id 2jg4dm1vv2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 12 Jun 2018 12:05:51 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5CC5oH9024345
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 12 Jun 2018 12:05:50 GMT
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5CC5n7N004307;
-        Tue, 12 Jun 2018 12:05:49 GMT
-Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 12 Jun 2018 05:05:49 -0700
-Date:   Tue, 12 Jun 2018 05:05:47 -0700
-From:   Daniel Jordan <daniel.m.jordan@oracle.com>
-To:     "Huang, Ying" <ying.huang@intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Rik van Riel <riel@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Zi Yan <zi.yan@cs.rutgers.edu>
-Subject: Re: [PATCH -mm -V3 03/21] mm, THP, swap: Support PMD swap mapping in
- swap_duplicate()
-Message-ID: <20180612120547.njpz73dymeru5mzy@ca-dmjordan1.us.oracle.com>
-References: <20180523082625.6897-1-ying.huang@intel.com>
- <20180523082625.6897-4-ying.huang@intel.com>
- <20180611204231.ojhlyrbmda6pouxb@ca-dmjordan1.us.oracle.com>
- <87o9ggpzlk.fsf@yhuang-dev.intel.com>
- <87k1r4puen.fsf@yhuang-dev.intel.com>
+        Tue, 12 Jun 2018 08:06:35 -0400
+Received: from shawn.lin?rock-chips.com (unknown [192.168.167.8])
+        by lucky1.263xmail.com (Postfix) with ESMTP id 0944C9540A;
+        Tue, 12 Jun 2018 20:06:26 +0800 (CST)
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 1
+X-MAIL-DELIVERY: 0
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+Received: from [192.168.10.112] (localhost [127.0.0.1])
+        by smtp.263.net (Postfix) with ESMTPA id 5BC9B39C;
+        Tue, 12 Jun 2018 20:06:26 +0800 (CST)
+X-RL-SENDER: shawn.lin@rock-chips.com
+X-FST-TO: adrian.hunter@intel.com
+X-SENDER-IP: 220.200.5.8
+X-LOGIN-NAME: shawn.lin@rock-chips.com
+X-UNIQUE-TAG: <4874d0a801f7b2e8285b3d113d9ae522>
+X-ATTACHMENT-NUM: 0
+X-SENDER: lintao@rock-chips.com
+X-DNS-TYPE: 0
+Received: from [192.168.10.112] (unknown [220.200.5.8])
+        by smtp.263.net (Postfix) whith ESMTP id 30847RZPGDL;
+        Tue, 12 Jun 2018 20:06:27 +0800 (CST)
+Cc:     Feng Tang <feng.tang@intel.com>, shawn.lin@rock-chips.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Subject: Re: [PATCH] mmc: Move the mmc driver init earlier
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+References: <20180608095154.22413-1-feng.tang@intel.com>
+ <CAPDyKFrs3ngkVVQaq34V9qzV3KoFdy=B+UbLnzR=fHKsOco=tg@mail.gmail.com>
+ <20180612084234.gjzq66xsqblryrkm@shbuild888>
+ <CAPDyKFq8WZhQQ9EBjfuVvu=YHB9AdwvMHwyKOY5Wxku1V5PtmA@mail.gmail.com>
+From:   Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <03aa85b4-74cf-621c-08cf-271b4c0d8e8c@rock-chips.com>
+Date:   Tue, 12 Jun 2018 20:05:25 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87k1r4puen.fsf@yhuang-dev.intel.com>
-User-Agent: NeoMutt/20180323-268-5a959c
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8921 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806120142
+In-Reply-To: <CAPDyKFq8WZhQQ9EBjfuVvu=YHB9AdwvMHwyKOY5Wxku1V5PtmA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 11:15:28AM +0800, Huang, Ying wrote:
-> "Huang, Ying" <ying.huang@intel.com> writes:
-> >> On Wed, May 23, 2018 at 04:26:07PM +0800, Huang, Ying wrote:
-> >>> @@ -3516,11 +3512,39 @@ static int __swap_duplicate(swp_entry_t entry, unsigned char usage)
-> >>
-> >> Two comments about this part of __swap_duplicate as long as you're moving it to
-> >> another function:
-> >>
-> >>    } else if (count || has_cache) {
-> >>    
-> >>    	if ((count & ~COUNT_CONTINUED) < SWAP_MAP_MAX)          /* #1   */
-> >>    		count += usage;
-> >>    	else if ((count & ~COUNT_CONTINUED) > SWAP_MAP_MAX)     /* #2   */
-> >>    		err = -EINVAL;
-> >>
-> >> #1:  __swap_duplicate_locked might use
-> >>
-> >>     VM_BUG_ON(usage != SWAP_HAS_CACHE && usage != 1);
-> >>
-> >> to document the unstated assumption that usage is 1 (otherwise count could
-> >> overflow).
-> >
-> > Sounds good.  Will do this.
+On 2018/6/12 18:29, Ulf Hansson wrote:
+> On 12 June 2018 at 10:42, Feng Tang <feng.tang@intel.com> wrote:
+>> Hi Ulf,
+>>
+>> Thanks for the review.
+>>
+>> On Tue, Jun 12, 2018 at 08:25:44AM +0200, Ulf Hansson wrote:
+>>> On 8 June 2018 at 11:51, Feng Tang <feng.tang@intel.com> wrote:
+>>>> When doing some boot time optimization for an eMMC rootfs NUCs,
+>>>> we found the rootfs may spend around 100 microseconds waiting
+>>>> for eMMC card to be initialized, then the rootfs could be
+>>>> mounted.
+>>>>          [    1.216561] Waiting for root device /dev/mmcblk1p1...
+>>>>          [    1.289262] mmc1: new HS400 MMC card at address 0001
+>>>>          [    1.289667] mmcblk1: mmc1:0001 R1J56L 14.7 GiB
+>>>>          [    1.289772] mmcblk1boot0: mmc1:0001 R1J56L partition 1 8.00 MiB
+>>>>          [    1.289869] mmcblk1boot1: mmc1:0001 R1J56L partition 2 8.00 MiB
+>>>>          [    1.289967] mmcblk1rpmb: mmc1:0001 R1J56L partition 3 4.00 MiB
+>>>>          [    1.292798]  mmcblk1: p1 p2 p3
+>>>>          [    1.300576] EXT4-fs (mmcblk1p1): couldn't mount as ext3 due to feature incompatibilities
+>>>>          [    1.300912] EXT4-fs (mmcblk1p1): couldn't mount as ext2 due to feature incompatibilities
+>>>>
+>>>> And this is a common problem for smartphones, tablets, embedded
+>>>> devices and automotive products. This patch will make the eMMC/SD
+>>>> card  start initializing earlier, by changing its order in drivers/Makefile.
+>>>>
+>>>> On our platform, the waiting for eMMC card is almost eliminated with the patch,
+>>>> which is critical to boot time.
+>>>
+>>> I am wondering what kernel version you are running here. There have
+>>> been some changes to the mmc initialization path, which perhaps can
+>>> help.
+>> These logs in commit msg are based on kernel 4.14, and the patch is generated
+>> against kernel 4.17.
 > 
-> Found usage parameter of __swap_duplicate() could be SWAP_MAP_SHMEM too.
-> We can improve the parameter checking.  But that appears not belong to
-> this series.
+> Right. So it's quite recent, even if lot's of changes have been made
+> to the mmc core since then.
+> 
+> A few things (old/new) that is important.
+> 1) Check if your mmc host driver support MMC_CAP_WAIT_WHILE_BUSY. That
+> should have some effect, avoiding unnecessary polling.
+> 
+> 2) Since 4.18 rc1, you will be able to configure an over estimated
+> "power on" delay (via DT as well). Look at commit
+> 6d796c68cd15234a33a4bd2ef7231125fea2dc6c.
 
-Fair enough, I'll see about adding this along with the other patch I'm sending.
+Sorry to chime in. We could also reduce the "power on" delay via hosts'
+->set_ios() callback.
 
-Daniel
+> 
+> 3) If you use a DT based platform, I think what people do is to
+> re-organize the order of device nodes, such that as many as possible
+> -EPROBE_DEFER is avoided to be returned by drivers. This is also not a
+> good solution, but the best we have at this moment.
+
+Also DT based platform is allowed to add no-sd and no-sdio for the eMMC
+node, which could slighly help reduce the boot time.
+You could refer to Documentation/devicetree/bindings/mmc/mmc.txt for
+details.
+
+> 
+>>
+>>>
+>>>>
+>>>> Signed-off-by: Feng Tang <feng.tang@intel.com>
+>>>> ---
+>>>>   drivers/Makefile | 4 +++-
+>>>>   1 file changed, 3 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/Makefile b/drivers/Makefile
+>>>> index 24cd47014657..c473afd3c688 100644
+>>>> --- a/drivers/Makefile
+>>>> +++ b/drivers/Makefile
+>>>> @@ -50,6 +50,9 @@ obj-$(CONFIG_REGULATOR)               += regulator/
+>>>>   # reset controllers early, since gpu drivers might rely on them to initialize
+>>>>   obj-$(CONFIG_RESET_CONTROLLER) += reset/
+>>>>
+>>>> +# put mmc early as many morden devices use emm/sd card as rootfs storage
+>>>> +obj-y                          += mmc/
+>>>> +
+>>>
+>>> Your suggested approach isn't really a solution, as it may work for
+>>> your particular case but not for everybody else.
+>>
+>> Do you mean the patch may break some platforms? Yes, I only tested on
+>> some IA based NUCs, and I did think about other architectures, things
+>> that may affect MMC are gpio/clk/pinctrl, and those are still earlier
+>> than mmc after change.
+> 
+> I don't know if it breaks things, potentially it could, if drivers
+> don't implement support for -EPROBE_DEFER properly.
+> 
+> However, more importantly, it's not real fix to the problem, just
+> something that seems to work for you.
+> 
+> Kind regards
+> Uffe
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
+> 
+
+
+-- 
+Best Regards
+Shawn Lin
+
