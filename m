@@ -6,44 +6,45 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 85ECAC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:54:22 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8E5F6C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:54:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C3C6208BA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:54:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44E69208B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:54:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LFIOmXRI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C3C6208BA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="O78h3hu1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44E69208B8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935014AbeFLQyU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 12:54:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55512 "EHLO mail.kernel.org"
+        id S934845AbeFLQyb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 12:54:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934765AbeFLQyO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 12:54:14 -0400
+        id S934579AbeFLQyU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 12:54:20 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A4388208B8;
-        Tue, 12 Jun 2018 16:54:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4DE82208B8;
+        Tue, 12 Jun 2018 16:54:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528822454;
-        bh=W729ZqrgarqyQuaotihrgPztRnk/v4Pp38tsX1jkPtM=;
+        s=default; t=1528822459;
+        bh=Mv52hmUiMrMlFuCu8KOT5sgdcqJnh41Bc3wbFTdZHgA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LFIOmXRIRSkfxIY85ZY6mKlgS+fUDDWSyi3OTtccfOXQAcSKTB94H2bOQp38Epl8J
-         2elc7236yc5SsE5Yu2UN+x1mcL6GzJQhdHAtqCZBQHWsEm9SOwASWUbWJfDu/cBz/9
-         HxN1G7+sVg+fwC/YqQH7yaIdY1hd8NqeW9LRRMHE=
+        b=O78h3hu1X3dEBF02T2T/jxfZyj8nKS3lsjjkt+OENAbiEVnrNoLYFusrnJxpI/qmz
+         /TXbXG92gps7fen5OfK38A53DPwgFIS2N0uogu/T+Ww+tYKu2LbT+Qm+vmAVUclpRQ
+         mx7VgOuV1b4Yl9d9ZV9nw30SY5VS867zXATMw+48=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
+        stable@vger.kernel.org,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Tariq Toukan <tariqt@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 17/21] net/packet: refine check for priv area size
-Date:   Tue, 12 Jun 2018 18:52:14 +0200
-Message-Id: <20180612164826.097182019@linuxfoundation.org>
+Subject: [PATCH 3.18 19/21] net/mlx4: Fix irq-unsafe spinlock usage
+Date:   Tue, 12 Jun 2018 18:52:16 +0200
+Message-Id: <20180612164826.186608548@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180612164825.401145490@linuxfoundation.org>
 References: <20180612164825.401145490@linuxfoundation.org>
@@ -60,94 +61,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Jack Morgenstein <jackm@dev.mellanox.co.il>
 
-[ Upstream commit eb73190f4fbeedf762394e92d6a4ec9ace684c88 ]
+[ Upstream commit d546b67cda015fb92bfee93d5dc0ceadb91deaee ]
 
-syzbot was able to trick af_packet again [1]
+spin_lock/unlock was used instead of spin_un/lock_irq
+in a procedure used in process space, on a spinlock
+which can be grabbed in an interrupt.
 
-Various commits tried to address the problem in the past,
-but failed to take into account V3 header size.
+This caused the stack trace below to be displayed (on kernel
+4.17.0-rc1 compiled with Lock Debugging enabled):
 
-[1]
+[  154.661474] WARNING: SOFTIRQ-safe -> SOFTIRQ-unsafe lock order detected
+[  154.668909] 4.17.0-rc1-rdma_rc_mlx+ #3 Tainted: G          I
+[  154.675856] -----------------------------------------------------
+[  154.682706] modprobe/10159 [HC0[0]:SC0[0]:HE0:SE1] is trying to acquire:
+[  154.690254] 00000000f3b0e495 (&(&qp_table->lock)->rlock){+.+.}, at: mlx4_qp_remove+0x20/0x50 [mlx4_core]
+[  154.700927]
+and this task is already holding:
+[  154.707461] 0000000094373b5d (&(&cq->lock)->rlock/1){....}, at: destroy_qp_common+0x111/0x560 [mlx4_ib]
+[  154.718028] which would create a new lock dependency:
+[  154.723705]  (&(&cq->lock)->rlock/1){....} -> (&(&qp_table->lock)->rlock){+.+.}
+[  154.731922]
+but this new dependency connects a SOFTIRQ-irq-safe lock:
+[  154.740798]  (&(&cq->lock)->rlock){..-.}
+[  154.740800]
+... which became SOFTIRQ-irq-safe at:
+[  154.752163]   _raw_spin_lock_irqsave+0x3e/0x50
+[  154.757163]   mlx4_ib_poll_cq+0x36/0x900 [mlx4_ib]
+[  154.762554]   ipoib_tx_poll+0x4a/0xf0 [ib_ipoib]
+...
+to a SOFTIRQ-irq-unsafe lock:
+[  154.815603]  (&(&qp_table->lock)->rlock){+.+.}
+[  154.815604]
+... which became SOFTIRQ-irq-unsafe at:
+[  154.827718] ...
+[  154.827720]   _raw_spin_lock+0x35/0x50
+[  154.833912]   mlx4_qp_lookup+0x1e/0x50 [mlx4_core]
+[  154.839302]   mlx4_flow_attach+0x3f/0x3d0 [mlx4_core]
 
-tpacket_rcv: packet too big, clamped from 72 to 4294967224. macoff=96
-BUG: KASAN: use-after-free in prb_run_all_ft_ops net/packet/af_packet.c:1016 [inline]
-BUG: KASAN: use-after-free in prb_fill_curr_block.isra.59+0x4e5/0x5c0 net/packet/af_packet.c:1039
-Write of size 2 at addr ffff8801cb62000e by task kworker/1:2/2106
+Since mlx4_qp_lookup() is called only in process space, we can
+simply replace the spin_un/lock calls with spin_un/lock_irq calls.
 
-CPU: 1 PID: 2106 Comm: kworker/1:2 Not tainted 4.17.0-rc7+ #77
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: ipv6_addrconf addrconf_dad_work
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1b9/0x294 lib/dump_stack.c:113
- print_address_description+0x6c/0x20b mm/kasan/report.c:256
- kasan_report_error mm/kasan/report.c:354 [inline]
- kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
- __asan_report_store2_noabort+0x17/0x20 mm/kasan/report.c:436
- prb_run_all_ft_ops net/packet/af_packet.c:1016 [inline]
- prb_fill_curr_block.isra.59+0x4e5/0x5c0 net/packet/af_packet.c:1039
- __packet_lookup_frame_in_block net/packet/af_packet.c:1094 [inline]
- packet_current_rx_frame net/packet/af_packet.c:1117 [inline]
- tpacket_rcv+0x1866/0x3340 net/packet/af_packet.c:2282
- dev_queue_xmit_nit+0x891/0xb90 net/core/dev.c:2018
- xmit_one net/core/dev.c:3049 [inline]
- dev_hard_start_xmit+0x16b/0xc10 net/core/dev.c:3069
- __dev_queue_xmit+0x2724/0x34c0 net/core/dev.c:3584
- dev_queue_xmit+0x17/0x20 net/core/dev.c:3617
- neigh_resolve_output+0x679/0xad0 net/core/neighbour.c:1358
- neigh_output include/net/neighbour.h:482 [inline]
- ip6_finish_output2+0xc9c/0x2810 net/ipv6/ip6_output.c:120
- ip6_finish_output+0x5fe/0xbc0 net/ipv6/ip6_output.c:154
- NF_HOOK_COND include/linux/netfilter.h:277 [inline]
- ip6_output+0x227/0x9b0 net/ipv6/ip6_output.c:171
- dst_output include/net/dst.h:444 [inline]
- NF_HOOK include/linux/netfilter.h:288 [inline]
- ndisc_send_skb+0x100d/0x1570 net/ipv6/ndisc.c:491
- ndisc_send_ns+0x3c1/0x8d0 net/ipv6/ndisc.c:633
- addrconf_dad_work+0xbef/0x1340 net/ipv6/addrconf.c:4033
- process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
- worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
- kthread+0x345/0x410 kernel/kthread.c:240
- ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
-
-The buggy address belongs to the page:
-page:ffffea00072d8800 count:0 mapcount:-127 mapping:0000000000000000 index:0xffff8801cb620e80
-flags: 0x2fffc0000000000()
-raw: 02fffc0000000000 0000000000000000 ffff8801cb620e80 00000000ffffff80
-raw: ffffea00072e3820 ffffea0007132d20 0000000000000002 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff8801cb61ff00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff8801cb61ff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->ffff8801cb620000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-                      ^
- ffff8801cb620080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
- ffff8801cb620100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-
-Fixes: 2b6867c2ce76 ("net/packet: fix overflow in check for priv area size")
-Fixes: dc808110bb62 ("packet: handle too big packets for PACKET_V3")
-Fixes: f6fb8f100b80 ("af-packet: TPACKET_V3 flexible buffer implementation.")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
+Fixes: 6dc06c08bef1 ("net/mlx4: Fix the check in attaching steering rules")
+Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/packet/af_packet.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlx4/qp.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -3877,7 +3877,7 @@ static int packet_set_ring(struct sock *
- 			goto out;
- 		if (po->tp_version >= TPACKET_V3 &&
- 		    req->tp_block_size <=
--			  BLK_PLUS_PRIV((u64)req_u->req3.tp_sizeof_priv))
-+		    BLK_PLUS_PRIV((u64)req_u->req3.tp_sizeof_priv) + sizeof(struct tpacket3_hdr))
- 			goto out;
- 		if (unlikely(req->tp_frame_size < po->tp_hdrlen +
- 					po->tp_reserve))
+--- a/drivers/net/ethernet/mellanox/mlx4/qp.c
++++ b/drivers/net/ethernet/mellanox/mlx4/qp.c
+@@ -363,11 +363,11 @@ struct mlx4_qp *mlx4_qp_lookup(struct ml
+ 	struct mlx4_qp_table *qp_table = &mlx4_priv(dev)->qp_table;
+ 	struct mlx4_qp *qp;
+ 
+-	spin_lock(&qp_table->lock);
++	spin_lock_irq(&qp_table->lock);
+ 
+ 	qp = __mlx4_qp_lookup(dev, qpn);
+ 
+-	spin_unlock(&qp_table->lock);
++	spin_unlock_irq(&qp_table->lock);
+ 	return qp;
+ }
+ 
 
 
