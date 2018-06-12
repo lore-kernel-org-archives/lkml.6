@@ -2,249 +2,123 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E1597C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 21:08:29 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3A1F5C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 21:08:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AB042089C
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 21:08:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WOEiP54s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AB042089C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id ECD0F2086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 21:08:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECD0F2086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934028AbeFLVI0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 17:08:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46144 "EHLO mail.kernel.org"
+        id S934187AbeFLVIm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 17:08:42 -0400
+Received: from vps-vb.mhejs.net ([37.28.154.113]:36886 "EHLO vps-vb.mhejs.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932985AbeFLVIY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 17:08:24 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 22A9C2086E;
-        Tue, 12 Jun 2018 21:08:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528837704;
-        bh=y1jHAxodRlz5wzqg6tpKCyBrTG9dSSwQ/3U2IKKGW8k=;
-        h=Date:From:To:Cc:Subject:From;
-        b=WOEiP54ssxAgcprCM/e9SK+9pK1mc02nV1UplLFV9xHP4/taAd7AREXLmbbRB0RYz
-         Ff6801K9R6056+zxNusz9NZsSBuZdbfzosP3qmSv1mzSuz0CR4cyg1/v2q6oxUM7ua
-         Ot1xsUN95N/cStnfzgrj+uJLinPDIap1NM0hF5s0=
-Date:   Tue, 12 Jun 2018 16:08:20 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>
-Subject: [GIT PULL] PCI changes for v4.18, part 2
-Message-ID: <20180612210820.GA70310@bhelgaas-glaptop.roam.corp.google.com>
+        id S932985AbeFLVIk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 17:08:40 -0400
+Received: by vps-vb.mhejs.net with esmtps (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <mail@maciej.szmigiero.name>)
+        id 1fSqWl-0007sg-UO; Tue, 12 Jun 2018 23:08:31 +0200
+Subject: Re: [PATCH v6 8/8] x86/microcode/AMD: Don't scan past the CPU
+ equivalence table data
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1526767245.git.mail@maciej.szmigiero.name>
+ <04a252b1e06673b8a1f62196093d0573d302fc1b.1526767245.git.mail@maciej.szmigiero.name>
+ <20180605085506.GB27701@nazgul.tnic>
+From:   "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Openpgp: preference=signencrypt
+Autocrypt: addr=mail@maciej.szmigiero.name; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <957d6884-f24b-0d40-7584-d4386d05af21@maciej.szmigiero.name>
+Date:   Tue, 12 Jun 2018 23:08:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180605085506.GB27701@nazgul.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PCI changes:
+On 05.06.2018 10:55, Borislav Petkov wrote:
+> On Sun, May 20, 2018 at 12:07:22AM +0200, Maciej S. Szmigiero wrote:
+>> Currently, the code scanning a CPU equivalence table read from a microcode
+>> container file assumes that it actually contains a terminating zero entry,
+>> but if does not then the code will continue the scan past its valid data.
+>>
+>> For the late loader this can be improved by always appending a terminating
+>> zero entry to such table when loading it.
+>> This way we don't need an extra global variable for holding the table size
+>> and we don't have to reject such incomplete tables (for backward
+>> compatibility with the existing code which didn't do so).
+>>
+>> For the early loader, since we can't allocate memory and have to work
+>> in-place, let's pass an explicit size of this table to its scanning
+>> functions so they will know when to stop.
+> 
+> I don't like the difference between early and late here. Just pass
+> explicit size to the late loader too.
 
-  - squash AER directory into drivers/pci/pcie/aer.c (Bjorn Helgaas)
+That was the solution before this patch series version (6) - there was
+a variable holding the CPU equivalence table size for the late loader,
+but you didn't like it:> Instead of adding yet another global var which needs handling too,
+> and touching so many places, just do all checks and preparations in
+> install_equiv_cpu_table() so that the rest of the code can get what it
+> expects: terminating zero entry and proper size.
 
-  - collect all native hardware drivers under drivers/pci/controller/
-    (Shawn Lin)
+And we would need to hold this explicit size somewhere since the
+table scanning function in the late loader is on a different call
+path than microcode file parsing.
 
-
-The following changes since commit 3a3869f1c443383ef8354ffa0e5fb8df65d8b549:
-
-  Merge tag 'pci-v4.18-changes' of git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci (2018-06-07 12:45:58 -0700)
-
-are available in the Git repository at:
-
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git tags/pci-v4.18-changes-2
-
-for you to fetch changes up to ce4c7b241227ed49c0b6f0f1867653e1ee0007ef:
-
-  Merge branch 'pci/aer-squash' (2018-06-11 08:14:42 -0500)
-
-----------------------------------------------------------------
-pci-v4.18-changes-2
-
-----------------------------------------------------------------
-Bjorn Helgaas (15):
-      PCI/AER: Remove forward declarations
-      PCI/AER: Reorder code to group probe/remove stuff together
-      PCI/AER: Squash aerdrv_core.c into aerdrv.c
-      PCI/AER: Squash aerdrv_errprint.c into aerdrv.c
-      PCI/AER: Squash aerdrv_acpi.c into aerdrv.c
-      PCI/AER: Squash ecrc.c into aerdrv.c
-      PCI/AER: Remove duplicate pcie_port_bus_type declaration
-      PCI/AER: Move pcie_aer_get_firmware_first() to portdrv.h
-      PCI/AER: Move aer_irq() declaration to portdrv.h
-      PCI/AER: Move private AER things to aerdrv.c
-      PCI/AER: Squash Kconfig.debug into Kconfig
-      PCI/AER: Hoist aerdrv.c, aer_inject.c up to drivers/pci/pcie/
-      PCI/AER: Use "PCI Express" consistently in Kconfig text
-      Merge branch 'pci/renames'
-      Merge branch 'pci/aer-squash'
-
-Shawn Lin (1):
-      PCI: Collect all native drivers under drivers/pci/controller/
-
- MAINTAINERS                                        |   70 +-
- drivers/pci/Kconfig                                |    4 +-
- drivers/pci/Makefile                               |    6 +-
- drivers/pci/cadence/Kconfig                        |   27 -
- drivers/pci/cadence/Makefile                       |    4 -
- drivers/pci/{host => controller}/Kconfig           |   31 +-
- drivers/pci/{host => controller}/Makefile          |    6 +
- drivers/pci/{ => controller}/dwc/Kconfig           |    0
- drivers/pci/{ => controller}/dwc/Makefile          |    0
- drivers/pci/{ => controller}/dwc/pci-dra7xx.c      |    2 +-
- drivers/pci/{ => controller}/dwc/pci-exynos.c      |    0
- drivers/pci/{ => controller}/dwc/pci-imx6.c        |    0
- drivers/pci/{ => controller}/dwc/pci-keystone-dw.c |    0
- drivers/pci/{ => controller}/dwc/pci-keystone.c    |    0
- drivers/pci/{ => controller}/dwc/pci-keystone.h    |    0
- drivers/pci/{ => controller}/dwc/pci-layerscape.c  |    0
- drivers/pci/{ => controller}/dwc/pcie-armada8k.c   |    0
- drivers/pci/{ => controller}/dwc/pcie-artpec6.c    |    0
- .../pci/{ => controller}/dwc/pcie-designware-ep.c  |    0
- .../{ => controller}/dwc/pcie-designware-host.c    |    2 +-
- .../{ => controller}/dwc/pcie-designware-plat.c    |    0
- drivers/pci/{ => controller}/dwc/pcie-designware.c |    0
- drivers/pci/{ => controller}/dwc/pcie-designware.h |    0
- drivers/pci/{ => controller}/dwc/pcie-hisi.c       |    2 +-
- drivers/pci/{ => controller}/dwc/pcie-histb.c      |    0
- drivers/pci/{ => controller}/dwc/pcie-kirin.c      |    0
- drivers/pci/{ => controller}/dwc/pcie-qcom.c       |    0
- drivers/pci/{ => controller}/dwc/pcie-spear13xx.c  |    0
- drivers/pci/{host => controller}/pci-aardvark.c    |    0
- drivers/pci/{host => controller}/pci-ftpci100.c    |    0
- drivers/pci/{host => controller}/pci-host-common.c |    0
- .../pci/{host => controller}/pci-host-generic.c    |    0
- drivers/pci/{host => controller}/pci-hyperv.c      |    0
- drivers/pci/{host => controller}/pci-mvebu.c       |    0
- drivers/pci/{host => controller}/pci-rcar-gen2.c   |    0
- drivers/pci/{host => controller}/pci-tegra.c       |    0
- .../pci/{host => controller}/pci-thunder-ecam.c    |    0
- drivers/pci/{host => controller}/pci-thunder-pem.c |    0
- drivers/pci/{host => controller}/pci-v3-semi.c     |    0
- drivers/pci/{host => controller}/pci-versatile.c   |    0
- drivers/pci/{host => controller}/pci-xgene-msi.c   |    0
- drivers/pci/{host => controller}/pci-xgene.c       |    0
- drivers/pci/{host => controller}/pcie-altera-msi.c |    0
- drivers/pci/{host => controller}/pcie-altera.c     |    0
- .../pci/{cadence => controller}/pcie-cadence-ep.c  |    0
- .../{cadence => controller}/pcie-cadence-host.c    |    0
- drivers/pci/{cadence => controller}/pcie-cadence.c |    0
- drivers/pci/{cadence => controller}/pcie-cadence.h |    0
- drivers/pci/{host => controller}/pcie-iproc-bcma.c |    0
- drivers/pci/{host => controller}/pcie-iproc-msi.c  |    0
- .../pci/{host => controller}/pcie-iproc-platform.c |    0
- drivers/pci/{host => controller}/pcie-iproc.c      |    0
- drivers/pci/{host => controller}/pcie-iproc.h      |    0
- drivers/pci/{host => controller}/pcie-mediatek.c   |    0
- drivers/pci/{host => controller}/pcie-mobiveil.c   |    0
- drivers/pci/{host => controller}/pcie-rcar.c       |    0
- .../pci/{host => controller}/pcie-rockchip-ep.c    |    0
- .../pci/{host => controller}/pcie-rockchip-host.c  |    0
- drivers/pci/{host => controller}/pcie-rockchip.c   |    0
- drivers/pci/{host => controller}/pcie-rockchip.h   |    0
- drivers/pci/{host => controller}/pcie-tango.c      |    0
- drivers/pci/{host => controller}/pcie-xilinx-nwl.c |    0
- drivers/pci/{host => controller}/pcie-xilinx.c     |    0
- drivers/pci/{host => controller}/vmd.c             |    0
- drivers/pci/pcie/Kconfig                           |   41 +-
- drivers/pci/pcie/Makefile                          |    3 +-
- drivers/pci/pcie/aer.c                             | 1377 ++++++++++++++++++++
- drivers/pci/pcie/aer/Kconfig                       |   29 -
- drivers/pci/pcie/aer/Kconfig.debug                 |   19 -
- drivers/pci/pcie/aer/Makefile                      |   13 -
- drivers/pci/pcie/aer/aerdrv.c                      |  371 ------
- drivers/pci/pcie/aer/aerdrv.h                      |   95 --
- drivers/pci/pcie/aer/aerdrv_acpi.c                 |  141 --
- drivers/pci/pcie/aer/aerdrv_core.c                 |  496 -------
- drivers/pci/pcie/aer/aerdrv_errprint.c             |  260 ----
- drivers/pci/pcie/aer/ecrc.c                        |  117 --
- drivers/pci/pcie/{aer => }/aer_inject.c            |    3 +-
- drivers/pci/pcie/dpc.c                             |    1 -
- drivers/pci/pcie/portdrv.h                         |   15 +
- 79 files changed, 1509 insertions(+), 1626 deletions(-)
- delete mode 100644 drivers/pci/cadence/Kconfig
- delete mode 100644 drivers/pci/cadence/Makefile
- rename drivers/pci/{host => controller}/Kconfig (90%)
- rename drivers/pci/{host => controller}/Makefile (89%)
- rename drivers/pci/{ => controller}/dwc/Kconfig (100%)
- rename drivers/pci/{ => controller}/dwc/Makefile (100%)
- rename drivers/pci/{ => controller}/dwc/pci-dra7xx.c (99%)
- rename drivers/pci/{ => controller}/dwc/pci-exynos.c (100%)
- rename drivers/pci/{ => controller}/dwc/pci-imx6.c (100%)
- rename drivers/pci/{ => controller}/dwc/pci-keystone-dw.c (100%)
- rename drivers/pci/{ => controller}/dwc/pci-keystone.c (100%)
- rename drivers/pci/{ => controller}/dwc/pci-keystone.h (100%)
- rename drivers/pci/{ => controller}/dwc/pci-layerscape.c (100%)
- rename drivers/pci/{ => controller}/dwc/pcie-armada8k.c (100%)
- rename drivers/pci/{ => controller}/dwc/pcie-artpec6.c (100%)
- rename drivers/pci/{ => controller}/dwc/pcie-designware-ep.c (100%)
- rename drivers/pci/{ => controller}/dwc/pcie-designware-host.c (99%)
- rename drivers/pci/{ => controller}/dwc/pcie-designware-plat.c (100%)
- rename drivers/pci/{ => controller}/dwc/pcie-designware.c (100%)
- rename drivers/pci/{ => controller}/dwc/pcie-designware.h (100%)
- rename drivers/pci/{ => controller}/dwc/pcie-hisi.c (99%)
- rename drivers/pci/{ => controller}/dwc/pcie-histb.c (100%)
- rename drivers/pci/{ => controller}/dwc/pcie-kirin.c (100%)
- rename drivers/pci/{ => controller}/dwc/pcie-qcom.c (100%)
- rename drivers/pci/{ => controller}/dwc/pcie-spear13xx.c (100%)
- rename drivers/pci/{host => controller}/pci-aardvark.c (100%)
- rename drivers/pci/{host => controller}/pci-ftpci100.c (100%)
- rename drivers/pci/{host => controller}/pci-host-common.c (100%)
- rename drivers/pci/{host => controller}/pci-host-generic.c (100%)
- rename drivers/pci/{host => controller}/pci-hyperv.c (100%)
- rename drivers/pci/{host => controller}/pci-mvebu.c (100%)
- rename drivers/pci/{host => controller}/pci-rcar-gen2.c (100%)
- rename drivers/pci/{host => controller}/pci-tegra.c (100%)
- rename drivers/pci/{host => controller}/pci-thunder-ecam.c (100%)
- rename drivers/pci/{host => controller}/pci-thunder-pem.c (100%)
- rename drivers/pci/{host => controller}/pci-v3-semi.c (100%)
- rename drivers/pci/{host => controller}/pci-versatile.c (100%)
- rename drivers/pci/{host => controller}/pci-xgene-msi.c (100%)
- rename drivers/pci/{host => controller}/pci-xgene.c (100%)
- rename drivers/pci/{host => controller}/pcie-altera-msi.c (100%)
- rename drivers/pci/{host => controller}/pcie-altera.c (100%)
- rename drivers/pci/{cadence => controller}/pcie-cadence-ep.c (100%)
- rename drivers/pci/{cadence => controller}/pcie-cadence-host.c (100%)
- rename drivers/pci/{cadence => controller}/pcie-cadence.c (100%)
- rename drivers/pci/{cadence => controller}/pcie-cadence.h (100%)
- rename drivers/pci/{host => controller}/pcie-iproc-bcma.c (100%)
- rename drivers/pci/{host => controller}/pcie-iproc-msi.c (100%)
- rename drivers/pci/{host => controller}/pcie-iproc-platform.c (100%)
- rename drivers/pci/{host => controller}/pcie-iproc.c (100%)
- rename drivers/pci/{host => controller}/pcie-iproc.h (100%)
- rename drivers/pci/{host => controller}/pcie-mediatek.c (100%)
- rename drivers/pci/{host => controller}/pcie-mobiveil.c (100%)
- rename drivers/pci/{host => controller}/pcie-rcar.c (100%)
- rename drivers/pci/{host => controller}/pcie-rockchip-ep.c (100%)
- rename drivers/pci/{host => controller}/pcie-rockchip-host.c (100%)
- rename drivers/pci/{host => controller}/pcie-rockchip.c (100%)
- rename drivers/pci/{host => controller}/pcie-rockchip.h (100%)
- rename drivers/pci/{host => controller}/pcie-tango.c (100%)
- rename drivers/pci/{host => controller}/pcie-xilinx-nwl.c (100%)
- rename drivers/pci/{host => controller}/pcie-xilinx.c (100%)
- rename drivers/pci/{host => controller}/vmd.c (100%)
- create mode 100644 drivers/pci/pcie/aer.c
- delete mode 100644 drivers/pci/pcie/aer/Kconfig
- delete mode 100644 drivers/pci/pcie/aer/Kconfig.debug
- delete mode 100644 drivers/pci/pcie/aer/Makefile
- delete mode 100644 drivers/pci/pcie/aer/aerdrv.c
- delete mode 100644 drivers/pci/pcie/aer/aerdrv.h
- delete mode 100644 drivers/pci/pcie/aer/aerdrv_acpi.c
- delete mode 100644 drivers/pci/pcie/aer/aerdrv_core.c
- delete mode 100644 drivers/pci/pcie/aer/aerdrv_errprint.c
- delete mode 100644 drivers/pci/pcie/aer/ecrc.c
- rename drivers/pci/pcie/{aer => }/aer_inject.c (99%)
+Maciej
