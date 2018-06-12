@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B946FC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:47:35 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9A52DC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:47:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FAD0208B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:47:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 466AC208B7
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:47:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="C3uV9PAU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FAD0208B0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="knR5mIPY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 466AC208B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934348AbeFLQrd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 12:47:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59666 "EHLO mail.kernel.org"
+        id S934758AbeFLQrh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 12:47:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933748AbeFLQra (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 12:47:30 -0400
+        id S933748AbeFLQrd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 12:47:33 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 85558208B8;
-        Tue, 12 Jun 2018 16:47:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89769208B9;
+        Tue, 12 Jun 2018 16:47:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528822050;
-        bh=CfpaETPQeJUTO8uTSICYmTCFAC28FY/SUKzf7BdGqy0=;
+        s=default; t=1528822053;
+        bh=Hc6c4YC2FoNa4Wq6ObLvulCVohmVkhOsEBOaoMcSokQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C3uV9PAUkzYGfFKgWH0/mJ4EM3//BWbqEj/Ugfz0yJyrPMOy81ymWLbmtkGFc9SIh
-         RxKnMd6dnUBpuSxRko6C+ROvbzBmEEqQ3kmAz0zikElulHxIfXM49VUK5/Ok3pPIGh
-         2Ax0gHwk3sTZzoMWAPTmrDpCkUUn6FeDUhsb60nk=
+        b=knR5mIPYxe9CJCBbJyjQ41zRjG8egBTAqCQtBg5vaNy4TWDDJIIvBtubGIswniY15
+         Fn+2DnlJCT5UDb/a/rVKvi6Y9gyMZDQiTtlaCEZ9dlDOu1Y7E0GRFTOqDBJW1+xR1K
+         fzM2e5/mLTbCl6XvWNX0aqVdoNFwuJ3fQkQQ/Ris=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tariq Toukan <tariqt@mellanox.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
+        stable@vger.kernel.org, Shahed Shaikh <shahed.shaikh@cavium.com>,
+        Ariel Elior <ariel.elior@cavium.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 18/31] packet: fix reserve calculation
-Date:   Tue, 12 Jun 2018 18:46:21 +0200
-Message-Id: <20180612164621.514099465@linuxfoundation.org>
+Subject: [PATCH 4.9 19/31] qed: Fix mask for physical address in ILT entry
+Date:   Tue, 12 Jun 2018 18:46:22 +0200
+Message-Id: <20180612164621.554027038@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180612164620.797338191@linuxfoundation.org>
 References: <20180612164620.797338191@linuxfoundation.org>
@@ -61,46 +60,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Willem de Bruijn <willemb@google.com>
+From: Shahed Shaikh <shahed.shaikh@cavium.com>
 
-[ Upstream commit 9aad13b087ab0a588cd68259de618f100053360e ]
+[ Upstream commit fdd13dd350dda1826579eb5c333d76b14513b812 ]
 
-Commit b84bbaf7a6c8 ("packet: in packet_snd start writing at link
-layer allocation") ensures that packet_snd always starts writing
-the link layer header in reserved headroom allocated for this
-purpose.
+ILT entry requires 12 bit right shifted physical address.
+Existing mask for ILT entry of physical address i.e.
+ILT_ENTRY_PHY_ADDR_MASK is not sufficient to handle 64bit
+address because upper 8 bits of 64 bit address were getting
+masked which resulted in completer abort error on
+PCIe bus due to invalid address.
 
-This is needed because packets may be shorter than hard_header_len,
-in which case the space up to hard_header_len may be zeroed. But
-that necessary padding is not accounted for in skb->len.
+Fix that mask to handle 64bit physical address.
 
-The fix, however, is buggy. It calls skb_push, which grows skb->len
-when moving skb->data back. But in this case packet length should not
-change.
-
-Instead, call skb_reserve, which moves both skb->data and skb->tail
-back, without changing length.
-
-Fixes: b84bbaf7a6c8 ("packet: in packet_snd start writing at link layer allocation")
-Reported-by: Tariq Toukan <tariqt@mellanox.com>
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
+Fixes: fe56b9e6a8d9 ("qed: Add module with basic common support")
+Signed-off-by: Shahed Shaikh <shahed.shaikh@cavium.com>
+Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/packet/af_packet.c |    2 +-
+ drivers/net/ethernet/qlogic/qed/qed_cxt.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -2918,7 +2918,7 @@ static int packet_snd(struct socket *soc
- 		if (unlikely(offset < 0))
- 			goto out_free;
- 	} else if (reserve) {
--		skb_push(skb, reserve);
-+		skb_reserve(skb, -reserve);
- 	}
+--- a/drivers/net/ethernet/qlogic/qed/qed_cxt.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_cxt.c
+@@ -54,7 +54,7 @@
+ #define ILT_CFG_REG(cli, reg)	PSWRQ2_REG_ ## cli ## _ ## reg ## _RT_OFFSET
  
- 	/* Returns -EFAULT on error */
+ /* ILT entry structure */
+-#define ILT_ENTRY_PHY_ADDR_MASK		0x000FFFFFFFFFFFULL
++#define ILT_ENTRY_PHY_ADDR_MASK		(~0ULL >> 12)
+ #define ILT_ENTRY_PHY_ADDR_SHIFT	0
+ #define ILT_ENTRY_VALID_MASK		0x1ULL
+ #define ILT_ENTRY_VALID_SHIFT		52
 
 
