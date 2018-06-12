@@ -6,36 +6,38 @@ X-Spam-Status: No, score=0.4 required=3.0 tests=DATE_IN_PAST_06_12,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2B126C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:09:01 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5C7CAC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:09:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF23920660
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:09:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF23920660
+	by mail.kernel.org (Postfix) with ESMTP id 1D8DF2089C
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:09:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D8DF2089C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754395AbeFLTFf (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 15:05:35 -0400
+        id S933729AbeFLTJC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 15:09:02 -0400
 Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:18332 "EHLO
         EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754060AbeFLTFd (ORCPT
+        by vger.kernel.org with ESMTP id S1754390AbeFLTFf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 15:05:33 -0400
+        Tue, 12 Jun 2018 15:05:35 -0400
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
  EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
  15.0.1156.6; Tue, 12 Jun 2018 12:05:30 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 192C0406AE;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 62A8540981;
         Tue, 12 Jun 2018 12:05:33 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>
-CC:     Nadav Amit <namit@vmware.com>, Christopher Li <sparse@chrisli.org>,
-        <linux-sparse@vger.kernel.org>
-Subject: [PATCH v4 2/9] x86: objtool: use asm macro for better compiler decisions
-Date:   Tue, 12 Jun 2018 04:50:43 -0700
-Message-ID: <20180612115050.185112-3-namit@vmware.com>
+CC:     Nadav Amit <namit@vmware.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: [PATCH v4 7/9] x86: extable: use macros instead of inline assembly
+Date:   Tue, 12 Jun 2018 04:50:48 -0700
+Message-ID: <20180612115050.185112-8-namit@vmware.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180612115050.185112-1-namit@vmware.com>
 References: <20180612115050.185112-1-namit@vmware.com>
@@ -48,126 +50,130 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GCC considers the number of statements in inlined assembly blocks,
-according to new-lines and semicolons, as an indication to the cost of
-the block in time and space. This data is distorted by the kernel code,
-which puts information in alternative sections. As a result, the
-compiler may perform incorrect inlining and branch optimizations.
-
-In the case of objtool, this distortion is extreme, since anyhow the
-annotations of objtool are discarded during linkage.
-
-The solution is to set an assembly macro and call it from the inline
-assembly block. As a result GCC considers the inline assembly block as
-a single instruction.
-
-This patch slightly increases the kernel size.
+Use assembly macros for exception-tables and call them from inline
+assembly.  This not only makes the code more readable and allows to
+avoid the duplicate implementation, but also improves compilation
+decision, specifically inline decisions which GCC base on the number of
+new lines in inline assembly.
 
    text	   data	    bss	    dec	    hex	filename
-18140829 10224724 2957312 31322865 1ddf2f1 ./vmlinux before
-18140970 10225412 2957312 31323694 1ddf62e ./vmlinux after (+829)
+18162555 10226288 2957312 31346155 1de4deb ./vmlinux before
+18162879 10226256 2957312 31346447 1de4f0f ./vmlinux after (+292)
 
-Static text symbols:
-Before:	40321
-After:	40302	(-19)
+This allows to inline functions such as nested_vmx_exit_reflected(),
+set_segment_reg(), __copy_xstate_to_user().
 
-Cc: Christopher Li <sparse@chrisli.org>
-Cc: linux-sparse@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/kernel/macros.S |  2 ++
- include/linux/compiler.h | 56 ++++++++++++++++++++++++++++++----------
- 2 files changed, 45 insertions(+), 13 deletions(-)
+ arch/x86/include/asm/asm.h | 61 +++++++++++++++++---------------------
+ arch/x86/kernel/macros.S   |  1 +
+ 2 files changed, 28 insertions(+), 34 deletions(-)
 
-diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
-index cfc1c7d1a6eb..cee28c3246dc 100644
---- a/arch/x86/kernel/macros.S
-+++ b/arch/x86/kernel/macros.S
-@@ -5,3 +5,5 @@
-  * commonly used. The macros are precompiled into assmebly file which is later
-  * assembled together with each compiled file.
-  */
+diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
+index 219faaec51df..30bc1b0058ef 100644
+--- a/arch/x86/include/asm/asm.h
++++ b/arch/x86/include/asm/asm.h
+@@ -58,28 +58,44 @@
+ # define CC_OUT(c) [_cc_ ## c] "=qm"
+ #endif
+ 
+-/* Exception table entry */
+ #ifdef __ASSEMBLY__
+ # define _ASM_EXTABLE_HANDLE(from, to, handler)			\
+-	.pushsection "__ex_table","a" ;				\
+-	.balign 4 ;						\
+-	.long (from) - . ;					\
+-	.long (to) - . ;					\
+-	.long (handler) - . ;					\
+-	.popsection
++	ASM_EXTABLE_HANDLE from to handler
 +
-+#include <linux/compiler.h>
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index ab4711c63601..3efd85334774 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -99,22 +99,13 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
-  * unique, to convince GCC not to merge duplicate inline asm statements.
-  */
- #define annotate_reachable() ({						\
--	asm volatile("%c0:\n\t"						\
--		     ".pushsection .discard.reachable\n\t"		\
--		     ".long %c0b - .\n\t"				\
--		     ".popsection\n\t" : : "i" (__COUNTER__));		\
-+	asm volatile("ANNOTATE_REACHABLE counter=%c0"			\
-+		     : : "i" (__COUNTER__));				\
- })
- #define annotate_unreachable() ({					\
--	asm volatile("%c0:\n\t"						\
--		     ".pushsection .discard.unreachable\n\t"		\
--		     ".long %c0b - .\n\t"				\
--		     ".popsection\n\t" : : "i" (__COUNTER__));		\
-+	asm volatile("ANNOTATE_UNREACHABLE counter=%c0"			\
-+		     : : "i" (__COUNTER__));				\
- })
--#define ASM_UNREACHABLE							\
--	"999:\n\t"							\
--	".pushsection .discard.unreachable\n\t"				\
--	".long 999b - .\n\t"						\
--	".popsection\n\t"
- #else
- #define annotate_reachable()
- #define annotate_unreachable()
-@@ -280,6 +271,45 @@ unsigned long read_word_at_a_time(const void *addr)
- 
- #endif /* __KERNEL__ */
- 
 +#else /* __ASSEMBLY__ */
 +
-+#ifdef __KERNEL__
-+#ifndef LINKER_SCRIPT
++# define _ASM_EXTABLE_HANDLE(from, to, handler)			\
++	"ASM_EXTABLE_HANDLE from=" #from " to=" #to		\
++	" handler=\"" #handler "\"\n\t"
 +
-+#ifdef CONFIG_STACK_VALIDATION
-+.macro ANNOTATE_UNREACHABLE counter:req
-+\counter:
-+	.pushsection .discard.unreachable
-+	.long \counter\()b -.
-+	.popsection
-+.endm
++/* For C file, we already have NOKPROBE_SYMBOL macro */
 +
-+.macro ANNOTATE_REACHABLE counter:req
-+\counter:
-+	.pushsection .discard.reachable
-+	.long \counter\()b -.
-+	.popsection
-+.endm
-+
-+.macro ASM_UNREACHABLE
-+999:
-+	.pushsection .discard.unreachable
-+	.long 999b - .
-+	.popsection
-+.endm
-+#else /* CONFIG_STACK_VALIDATION */
-+.macro ANNOTATE_UNREACHABLE counter:req
-+.endm
-+
-+.macro ANNOTATE_REACHABLE counter:req
-+.endm
-+
-+.macro ASM_UNREACHABLE
-+.endm
-+#endif /* CONFIG_STACK_VALIDATION */
-+
-+#endif /* LINKER_SCRIPT */
-+#endif /* __KERNEL__ */
- #endif /* __ASSEMBLY__ */
++#endif /* __ASSEMBLY__ */
  
- #ifndef __optimize
+-# define _ASM_EXTABLE(from, to)					\
++#define _ASM_EXTABLE(from, to)					\
+ 	_ASM_EXTABLE_HANDLE(from, to, ex_handler_default)
+ 
+-# define _ASM_EXTABLE_FAULT(from, to)				\
++#define _ASM_EXTABLE_FAULT(from, to)				\
+ 	_ASM_EXTABLE_HANDLE(from, to, ex_handler_fault)
+ 
+-# define _ASM_EXTABLE_EX(from, to)				\
++#define _ASM_EXTABLE_EX(from, to)				\
+ 	_ASM_EXTABLE_HANDLE(from, to, ex_handler_ext)
+ 
+-# define _ASM_EXTABLE_REFCOUNT(from, to)			\
++#define _ASM_EXTABLE_REFCOUNT(from, to)				\
+ 	_ASM_EXTABLE_HANDLE(from, to, ex_handler_refcount)
+ 
++/* Exception table entry */
++#ifdef __ASSEMBLY__
++
++.macro ASM_EXTABLE_HANDLE from:req to:req handler:req
++	.pushsection "__ex_table","a"
++	.balign 4
++	.long (\from) - .
++	.long (\to) - .
++	.long (\handler) - .
++	.popsection
++.endm
++
+ # define _ASM_NOKPROBE(entry)					\
+ 	.pushsection "_kprobe_blacklist","aw" ;			\
+ 	_ASM_ALIGN ;						\
+@@ -110,29 +126,6 @@
+ 	_ASM_EXTABLE(101b,103b)
+ 	.endm
+ 
+-#else
+-# define _EXPAND_EXTABLE_HANDLE(x) #x
+-# define _ASM_EXTABLE_HANDLE(from, to, handler)			\
+-	" .pushsection \"__ex_table\",\"a\"\n"			\
+-	" .balign 4\n"						\
+-	" .long (" #from ") - .\n"				\
+-	" .long (" #to ") - .\n"				\
+-	" .long (" _EXPAND_EXTABLE_HANDLE(handler) ") - .\n"	\
+-	" .popsection\n"
+-
+-# define _ASM_EXTABLE(from, to)					\
+-	_ASM_EXTABLE_HANDLE(from, to, ex_handler_default)
+-
+-# define _ASM_EXTABLE_FAULT(from, to)				\
+-	_ASM_EXTABLE_HANDLE(from, to, ex_handler_fault)
+-
+-# define _ASM_EXTABLE_EX(from, to)				\
+-	_ASM_EXTABLE_HANDLE(from, to, ex_handler_ext)
+-
+-# define _ASM_EXTABLE_REFCOUNT(from, to)			\
+-	_ASM_EXTABLE_HANDLE(from, to, ex_handler_refcount)
+-
+-/* For C file, we already have NOKPROBE_SYMBOL macro */
+ #endif
+ 
+ #ifndef __ASSEMBLY__
+diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
+index 71d8b716b111..7baa40d5bf16 100644
+--- a/arch/x86/kernel/macros.S
++++ b/arch/x86/kernel/macros.S
+@@ -11,3 +11,4 @@
+ #include <asm/alternative-asm.h>
+ #include <asm/bug.h>
+ #include <asm/paravirt.h>
++#include <asm/asm.h>
 -- 
 2.17.0
 
