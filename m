@@ -6,22 +6,22 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3A17BC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:10:41 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 22BF2C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:11:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDBAA208AE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:10:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDBAA208AE
+	by mail.kernel.org (Postfix) with ESMTP id D76D6208AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:11:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D76D6208AE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sony.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933843AbeFLIKF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 04:10:05 -0400
-Received: from seldsegrel01.sonyericsson.com ([37.139.156.29]:6076 "EHLO
+        id S933923AbeFLILI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 04:11:08 -0400
+Received: from seldsegrel01.sonyericsson.com ([37.139.156.29]:6066 "EHLO
         SELDSEGREL01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933802AbeFLIKB (ORCPT
+        by vger.kernel.org with ESMTP id S933773AbeFLIJ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 04:10:01 -0400
+        Tue, 12 Jun 2018 04:09:59 -0400
 From:   Peter Enderborg <peter.enderborg@sony.com>
 To:     <peter.enderborg@sony.com>, Paul Moore <paul@paul-moore.com>,
         Stephen Smalley <sds@tycho.nsa.gov>,
@@ -32,9 +32,9 @@ To:     <peter.enderborg@sony.com>, Paul Moore <paul@paul-moore.com>,
         <linux-security-module@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         "Serge E . Hallyn" <serge@hallyn.com>
-Subject: [PATCH 13/13] selinux: Cleanup printk logging in netnode
-Date:   Tue, 12 Jun 2018 10:09:12 +0200
-Message-ID: <20180612080912.7827-14-peter.enderborg@sony.com>
+Subject: [PATCH 09/13] selinux: Cleanup printk logging in sidtab
+Date:   Tue, 12 Jun 2018 10:09:08 +0200
+Message-ID: <20180612080912.7827-10-peter.enderborg@sony.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180612080912.7827-1-peter.enderborg@sony.com>
 References: <20180612080912.7827-1-peter.enderborg@sony.com>
@@ -49,25 +49,32 @@ Replace printk with pr_* to avoid checkpatch warnings.
 
 Signed-off-by: Peter Enderborg <peter.enderborg@sony.com>
 ---
- security/selinux/netnode.c | 5 ++---
+ security/selinux/ss/sidtab.c | 5 ++---
  1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/security/selinux/netnode.c b/security/selinux/netnode.c
-index 6dd89b89bc1f..afa0d432436b 100644
---- a/security/selinux/netnode.c
-+++ b/security/selinux/netnode.c
-@@ -238,9 +238,8 @@ static int sel_netnode_sid_slow(void *addr, u16 family, u32 *sid)
- out:
- 	spin_unlock_bh(&sel_netnode_lock);
- 	if (unlikely(ret)) {
--		printk(KERN_WARNING
--		       "SELinux: failure in sel_netnode_sid_slow(),"
--		       " unable to determine network node label\n");
-+		pr_warn("SELinux: failure in %s(), unable to determine network node label\n",
-+			__func__);
- 		kfree(new);
+diff --git a/security/selinux/ss/sidtab.c b/security/selinux/ss/sidtab.c
+index 5be31b7af225..fd75a12fa8fc 100644
+--- a/security/selinux/ss/sidtab.c
++++ b/security/selinux/ss/sidtab.c
+@@ -214,8 +214,7 @@ int sidtab_context_to_sid(struct sidtab *s,
+ 		}
+ 		sid = s->next_sid++;
+ 		if (context->len)
+-			printk(KERN_INFO
+-		       "SELinux:  Context %s is not valid (left unmapped).\n",
++			pr_info("SELinux:  Context %s is not valid (left unmapped).\n",
+ 			       context->str);
+ 		ret = sidtab_insert(s, sid, context);
+ 		if (ret)
+@@ -253,7 +252,7 @@ void sidtab_hash_eval(struct sidtab *h, char *tag)
+ 		}
  	}
- 	return ret;
+ 
+-	printk(KERN_DEBUG "%s:  %d entries and %d/%d buckets used, longest "
++	pr_debug("%s:  %d entries and %d/%d buckets used, longest "
+ 	       "chain length %d\n", tag, h->nel, slots_used, SIDTAB_SIZE,
+ 	       max_chain_len);
+ }
 -- 
 2.15.1
 
