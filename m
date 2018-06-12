@@ -1,128 +1,103 @@
-Return-Path: <SRS0=KDb5=I5=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 33439C07E80
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 19:02:41 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id EF0A1C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 07:24:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD6B42086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Jun 2018 19:02:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-watchdog.org header.i=@linux-watchdog.org header.b="AL4b9lnN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD6B42086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux-watchdog.org
+	by mail.kernel.org (Postfix) with ESMTP id A658D208AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 07:24:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A658D208AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934572AbeFKTCi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 15:02:38 -0400
-Received: from www.linux-watchdog.org ([185.87.125.42]:42494 "EHLO
-        www.linux-watchdog.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933305AbeFKTCh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 15:02:37 -0400
-X-Greylist: delayed 339 seconds by postgrey-1.27 at vger.kernel.org; Mon, 11 Jun 2018 15:02:36 EDT
-Received: by www.linux-watchdog.org (Postfix, from userid 500)
-        id 122044060B; Mon, 11 Jun 2018 20:40:59 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 www.linux-watchdog.org 122044060B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-watchdog.org;
-        s=odk20180602; t=1528742460;
-        bh=ca9eTJ3AUPxmmfxbjfBgNJRnypF1WcZxq88MhDzMWkg=;
-        h=Date:From:To:Cc:Subject:From;
-        b=AL4b9lnNFVSWh/KBTEDw/F9gtnaK4+X/APFUnz2NGnf+zaLIrK7UF0KM7joWR4HSj
-         e3+RLG5I0SUTp+gYGTVdLTw3O31OTyW2zhgV/JRxp99Q9l92wpblYPPMJxslaXy40c
-         23Bqndc87j2eV8i8BSRVi4uOVFUhnlXvIbuRAluk=
-Date:   Mon, 11 Jun 2018 20:40:59 +0200
-From:   Wim Van Sebroeck <wim@linux-watchdog.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>
-Subject: [GIT PULL REQUEST] watchdog - v4.18 Merge window
-Message-ID: <20180611184059.GA4486@www.linux-watchdog.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.20 (2009-12-10)
+        id S933278AbeFLHYy convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 03:24:54 -0400
+Received: from mout.gmx.net ([212.227.17.21]:50977 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932944AbeFLHYx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 03:24:53 -0400
+Received: from [172.17.45.7] ([122.224.77.194]) by mail.gmx.com (mrgmx103
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 0MMkgl-1fK6Ph1gMh-008eZV; Tue, 12
+ Jun 2018 09:24:47 +0200
+Content-Type: text/plain;
+        charset=gb2312
+Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
+Subject: Re: [PATCH] gfs2: add error handling for kmem_cache_zalloc
+From:   "cgxu519@gmx.com" <cgxu519@gmx.com>
+In-Reply-To: <1528774692-38990-1-git-send-email-jiazhouyang09@gmail.com>
+Date:   Tue, 12 Jun 2018 15:24:41 +0800
+Cc:     "cgxu519@gmx.com" <cgxu519@gmx.com>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        cluster-devel@redhat.com, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <C20C8754-0C63-4EB2-B3E9-68E4EE29338D@gmx.com>
+References: <1528774692-38990-1-git-send-email-jiazhouyang09@gmail.com>
+To:     Zhouyang Jia <jiazhouyang09@gmail.com>
+X-Mailer: Apple Mail (2.3445.6.18)
+X-Provags-ID: V03:K1:PG5soE5SB63s6dvjyhZYRGuHzJc8EN8XMyZbq2LnGQto4AQrtTi
+ 1FITaMiqYvUN9LpZs1CsR3OCm7+IroPTfYs69xDNmnP90CewXo4VUyb9ABawR6Eu2gQLeXb
+ 1ET059+Tr3v7pCCPNrs/TVYUq00AypCfl1BYZQIvJNlPnGzRuvnR58evN91+agGyYix8vJP
+ YdTmijtWZXLqPoY9ik8CA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:YiMrRCEEeig=:iRB4D+x62cfQ1Z9U6tJ2XV
+ eLUfHbESEUJDKAhSmGVjMu60V5Fuypk9Ulo6ClmpD3bPyBG8NLXXRWf268sRcDFEmNVoy+gcI
+ 0Ha9SIpDSG7OJPKFkqudBH5gZaRiIaq07hG2HxXAaquT0O0V5ScLyNnRvvUNWQNJLxM34D7oL
+ bO0wPf+EEyBAztOnFuJhOEzYqk2aTzojgDafVDv5XhZoiLU4IYwSlWC2rjJ+xgqiOe63fwqSO
+ 2QrUzJu3kMt+/2R9uqIiT9gb9pvj65rTfTfr/ppafZumIsyxIdQwOFCcdzuC0cyZaybqvlQ4/
+ dfUd5dpj6B+wvS0A9W+xLhTb14JJBZl23JTM0Ak76/yb5HOQNG09WWi6zFSo3DsqQ6kbGim6W
+ 2ySCOi9QVeV84SLRcZJzUAxQwvFAgSnq/p6lz/A50DT5YsieiDmQ1B/+VSGDI3Jl68FJT9Ltk
+ 3fxdnnldhbJlFg0omcBE/ImNpT4KD67QohJQQUFoCzLfE0c76a+hrdBuXcaxUCDwLRV9VcVFQ
+ +rUmO7qXRQzPwfFPWsTwL3Na9BI2BHt7BEzDH1vcDh7u0CzLbGmhz3eWqXYo/GZ73ERok+Xkw
+ qMHUUXCtN3M1oDhQyizEm3g2uxkBWApGy/DVbeV/SnLzzegaOVjoTQ+Xu926yfkAyYGwPYPim
+ 3eUBKR1LSP4wcVFIzhVzS1lT47J/4qgNboiVT3lJkC6nVsXWkf6Tk1h53oz/cuSPDX8LYA5ql
+ 9E6pijx+KWNq6Ocvh+9fboDafOfMHY9qUZHV8q2c7laIzMktHC8hvTnML525n4OLM8a4p2jVm
+ vunxREP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
 
-Please pull the watchdog changes for the v4.18 release cycle.
+> 在 2018年6月12日，上午11:38，Zhouyang Jia <jiazhouyang09@gmail.com> 写道：
+> 
+> When kmem_cache_zalloc fails, the lack of error-handling code may
+> cause unexpected results.
+> 
+> This patch adds error-handling code after calling kmem_cache_zalloc.
 
-This series contains:
-* renesas_wdt: Add support for the R8A77965 WDT and R-Car Gen2
-* renesas-wdt: Remove R-Car M2-W ES2.x from blacklist
-* watchdog: Simplify getting .drvdata
-* sp805: Add restart handler
-* hpwdt: Claim NMIs generated by iLO5
-* mena21_wdt: Drop unnecessary mutex lock
-* da9062 & da9063: Fixes and general cleanups.
+Should not fail on this case.
 
-The output from git request-pull:
-----------------------------------------------------------------
+Thanks,
+Chengguang.
 
-The following changes since commit 771c577c23bac90597c685971d7297ea00f99d11:
 
-  Linux 4.17-rc6 (2018-05-20 15:31:38 -0700)
+> 
+> Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+> ---
+> fs/gfs2/trans.c | 3 +++
+> 1 file changed, 3 insertions(+)
+> 
+> diff --git a/fs/gfs2/trans.c b/fs/gfs2/trans.c
+> index 064c9a0..da81eb4 100644
+> --- a/fs/gfs2/trans.c
+> +++ b/fs/gfs2/trans.c
+> @@ -130,6 +130,9 @@ static struct gfs2_bufdata *gfs2_alloc_bufdata(struct gfs2_glock *gl,
+> 	struct gfs2_bufdata *bd;
+> 
+> 	bd = kmem_cache_zalloc(gfs2_bufdata_cachep, GFP_NOFS | __GFP_NOFAIL);
+> +	if (!bd)
+> +		return NULL;
+> +
+> 	bd->bd_bh = bh;
+> 	bd->bd_gl = gl;
+> 	bd->bd_ops = lops;
+> -- 
+> 2.7.4
+> 
 
-are available in the git repository at:
-
-  git://www.linux-watchdog.org/linux-watchdog.git tags/linux-watchdog-4.18-rc1
-
-for you to fetch changes up to 16a7eec2fcd020c73cf0ca38bf774775167d22eb:
-
-  watchdog: da9063: remove duplicated timeout_to_sel calls (2018-06-07 12:41:43 +0200)
-
-----------------------------------------------------------------
-linux-watchdog 4.18-rc1 tag
-
-----------------------------------------------------------------
-Fabrizio Castro (1):
-      dt-bindings: watchdog: renesas-wdt: Add R-Car Gen2 support
-
-Geert Uytterhoeven (1):
-      watchdog: renesas-wdt: Remove R-Car M2-W ES2.x from blacklist
-
-Jerry Hoemann (1):
-      watchdog: hpwdt: Claim NMIs generated by iLO5
-
-Jia-Ju Bai (1):
-      watchdog: mena21_wdt: Drop unnecessary mutex lock
-
-Jongsung Kim (1):
-      watchdog: sp805: add restart handler
-
-Marco Felsch (5):
-      watchdog: da9063: Fix setting/changing timeout
-      watchdog: da9063: Fix updating timeout value
-      watchdog: da9063: Fix timeout handling during probe
-      watchdog: da9063: rename helper function to avoid misunderstandings
-      watchdog: da9063: remove duplicated timeout_to_sel calls
-
-Michael Grzeschik (1):
-      watchdog: da9062: remove unused code
-
-Wolfram Sang (2):
-      watchdog: simplify getting .drvdata
-      watchdog: renesas-wdt: Add support for the R8A77965 WDT
-
- .../devicetree/bindings/watchdog/renesas-wdt.txt   | 23 ++++---
- drivers/watchdog/cadence_wdt.c                     |  6 +-
- drivers/watchdog/da9062_wdt.c                      | 10 ---
- drivers/watchdog/da9063_wdt.c                      | 73 ++++++++++++++++++----
- drivers/watchdog/hpwdt.c                           |  2 +-
- drivers/watchdog/mena21_wdt.c                      | 18 ------
- drivers/watchdog/of_xilinx_wdt.c                   |  6 +-
- drivers/watchdog/renesas_wdt.c                     |  2 +-
- drivers/watchdog/sp805_wdt.c                       | 14 +++++
- drivers/watchdog/wdat_wdt.c                        |  6 +-
- 10 files changed, 100 insertions(+), 60 deletions(-)
