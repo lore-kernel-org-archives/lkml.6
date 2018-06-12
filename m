@@ -6,43 +6,42 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id EC95AC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:59:47 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0F14CC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:00:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97C88208B1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:59:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE84B208B1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:00:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IUiYYzO3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97C88208B1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wBW7cjBm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE84B208B1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934259AbeFLQ7q (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 12:59:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53258 "EHLO mail.kernel.org"
+        id S934825AbeFLRAF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 13:00:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934905AbeFLQxi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 12:53:38 -0400
+        id S935142AbeFLQxc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 12:53:32 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61583208B9;
-        Tue, 12 Jun 2018 16:53:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F021208B9;
+        Tue, 12 Jun 2018 16:53:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528822417;
-        bh=aYxlI5xbVk4kZO5Zsn4UaODYNCWmWLoFSFScIb8sGl4=;
+        s=default; t=1528822411;
+        bh=hGAXu7Ax8YZFOxKss6hLyBlYNn6p8xmt1Ac4qIJIIiA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IUiYYzO3TwCxZssIFdoc1HX0YfGRhaEhmel7lFEkaPDbOkArMuMek10YDddA7wzxJ
-         wb7gSkSOocz5jq3vWd6ZNAdsB5YLw43CBbyDndt/Yn1we/DnYWO3QDTRTmf/vIUmIM
-         4VFL/Plsu5GBHlguyq3kOV8uxxt0SIzhfHTEOScI=
+        b=wBW7cjBml0BHguiDxPl4+ypa645n8Iqxzg6MS7QOeItgXc/ZCkieGb33WPnTFav3f
+         idNXcCAYdqIuM1C0nZtm2u98A4S7J1/mRmP3W/5aGWKC7J6hLRHeq5uSnKkoQmYz5U
+         8mkAnFeH6zPrOX38IVi47zUwNiKM1u5nqFeylWTo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 09/24] bnx2x: use the right constant
-Date:   Tue, 12 Jun 2018 18:51:53 +0200
-Message-Id: <20180612164817.037574260@linuxfoundation.org>
+        stable@vger.kernel.org, Dave Airlie <airlied@redhat.com>
+Subject: [PATCH 4.4 07/24] drm: set FMODE_UNSIGNED_OFFSET for drm files
+Date:   Tue, 12 Jun 2018 18:51:51 +0200
+Message-Id: <20180612164816.903425656@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180612164816.587001852@linuxfoundation.org>
 References: <20180612164816.587001852@linuxfoundation.org>
@@ -59,42 +58,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Dave Airlie <airlied@redhat.com>
 
-[ Upstream commit dd612f18a49b63af8b3a5f572d999bdb197385bc ]
+commit 76ef6b28ea4f81c3d511866a9b31392caa833126 upstream.
 
-Nearby code that also tests port suggests that the P0 constant should be
-used when port is zero.
+Since we have the ttm and gem vma managers using a subset
+of the file address space for objects, and these start at
+0x100000000 they will overflow the new mmap checks.
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+I've checked all the mmap routines I could see for any
+bad behaviour but overall most people use GEM/TTM VMA
+managers even the legacy drivers have a hashtable.
 
-// <smpl>
-@@
-expression e,e1;
-@@
-
-* e ? e1 : e1
-// </smpl>
-
-Fixes: 6c3218c6f7e5 ("bnx2x: Adjust ETS to 578xx")
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-and-Tested-by: Arthur Marsh (amarsh04 on #radeon)
+Fixes: be83bbf8068 (mmap: introduce sane default mmap limits)
+Signed-off-by: Dave Airlie <airlied@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
-@@ -594,7 +594,7 @@ static void bnx2x_ets_e3b0_nig_disabled(
- 	 * slots for the highest priority.
- 	 */
- 	REG_WR(bp, (port) ? NIG_REG_P1_TX_ARB_NUM_STRICT_ARB_SLOTS :
--		   NIG_REG_P1_TX_ARB_NUM_STRICT_ARB_SLOTS, 0x100);
-+		   NIG_REG_P0_TX_ARB_NUM_STRICT_ARB_SLOTS, 0x100);
- 	/* Mapping between the CREDIT_WEIGHT registers and actual client
- 	 * numbers
- 	 */
+---
+ drivers/gpu/drm/drm_fops.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/drivers/gpu/drm/drm_fops.c
++++ b/drivers/gpu/drm/drm_fops.c
+@@ -209,6 +209,7 @@ static int drm_open_helper(struct file *
+ 		return -ENOMEM;
+ 
+ 	filp->private_data = priv;
++	filp->f_mode |= FMODE_UNSIGNED_OFFSET;
+ 	priv->filp = filp;
+ 	priv->uid = current_euid();
+ 	priv->pid = get_pid(task_pid(current));
 
 
