@@ -2,168 +2,106 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id CE91AC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 14:06:41 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 31C26C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 14:07:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71B542089C
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 14:06:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAA8E2089C
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 14:07:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gNcqRb0f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71B542089C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="phReSwzU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAA8E2089C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933809AbeFLOGj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 10:06:39 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:40636 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933350AbeFLOGh (ORCPT
+        id S933938AbeFLOHN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 10:07:13 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:51220 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932749AbeFLOHM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 10:06:37 -0400
-Received: by mail-lf0-f66.google.com with SMTP id q11-v6so36219173lfc.7
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 07:06:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=bbYeUhSZMyYlqPxKC4a0fHeNlHuE1zrgnUaaMS2fhN8=;
-        b=gNcqRb0fy36Zt6OBN2yDbB8loauSoFqV+ucACccZHu2utICLpdcrFcr7aTdGLLNBHD
-         6GuVeQjx+uvGJPuadmOul6xsknsfKR1VPKeKcnP8tHEzgXGusPLTJ3M4AkVE0lwXn5gx
-         DiSbQ7Svt4jAtAdSHvs+2FqBzj41D/eHe7zlE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=bbYeUhSZMyYlqPxKC4a0fHeNlHuE1zrgnUaaMS2fhN8=;
-        b=hkVoyYhWHeKhbpEq8Ldx2SLEOfOKuIGp5Zv0rwOge0+FTrWR7jlXUVpnt5R2Dh35WZ
-         t35C4pbxBY0rZlB9Rx0cikCG0Vdj3sDZck2ckttW8MmHgw7qhtLzWZGENUXiPCifRPdL
-         npXdQslHLYn9X3EvgOHkUMw24JFw406SpQR3sGDRau/2nibT8h9yXEDGvxcyXff1ozDP
-         QradUWOxrwpjK+s3Ksrs3t1cP/YEN5YibTkDYh/DZS4Tx18JUxZtHm6+D19JERNWAB3g
-         tqEMKjUJBaIkpBIsiBbsqfgaESFnv71pxKkItm34E9vB7IoIIKEvMl0LpncXsIorqDp+
-         WhLw==
-X-Gm-Message-State: APt69E2sl5LXzo0OEQLk2ddXS+T4dOkdpl1taCpfBvLBDP+s1duuTDTU
-        y4oRrQHj5qrAo2Y4secxImFMaw==
-X-Google-Smtp-Source: ADUXVKKVpbNnZnsmDKtIYrt2VdK3lQfiwIp9RsMgrWjiWR7mWSKZ6aMyRvGJM/2XMfSrnf8Xxtj5zg==
-X-Received: by 2002:a19:cb96:: with SMTP id b144-v6mr331700lfg.72.1528812396033;
-        Tue, 12 Jun 2018 07:06:36 -0700 (PDT)
-Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
-        by smtp.gmail.com with ESMTPSA id o25-v6sm50854lfg.41.2018.06.12.07.06.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Jun 2018 07:06:35 -0700 (PDT)
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND] iommu/msm: Don't call iommu_device_{,un}link from atomic context
-Date:   Tue, 12 Jun 2018 16:06:10 +0200
-Message-Id: <20180612140610.31190-1-niklas.cassel@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        Tue, 12 Jun 2018 10:07:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=k9lVHYRt0Iiu0WcB+6hdvoLzY4VGCFinlG/XINzhYjU=; b=phReSwzUphSGLqec65OtN2RHS
+        Idh+M/PHwT9dhKFDlkp23Ij7tyQ1JA1FK6Com8CeMp0FQ57eXNj61ssZtsg/jLaN4NHwoHIdYDgAE
+        GhIglLcVmEWaWyPAQtqmpbtTkFx7rkO3uB+Ds6pGK3zeWKfzUd8hdC+EKQApiFz1+yvXJO6/s2DGB
+        YXtgP1H7BNaiJN9JGptUNFSbkdMinOWZ8jpByxn92mJsm7+2UsQ8vlCnilCZnEG3GS8uGfeufwVr2
+        ZwMyMawSwxA+2Q+NpHFCXQvJKINBOxXUzeJWnDijBCrQtQ+OymP1cIRzr38bnTIxJv4dlFJJXQVSw
+        EWTTTxWLg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fSjwm-0003to-8R; Tue, 12 Jun 2018 14:06:56 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 512FB201EA7CD; Tue, 12 Jun 2018 16:06:54 +0200 (CEST)
+Date:   Tue, 12 Jun 2018 16:06:54 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     viresh.kumar@linaro.org, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Javi Merino <javi.merino@kernel.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Kevin Wangtao <kevin.wangtao@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rui Zhang <rui.zhang@intel.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>
+Subject: Re: [PATCH V6] powercap/drivers/idle_injection: Add an idle
+ injection framework
+Message-ID: <20180612140654.GQ12217@hirez.programming.kicks-ass.net>
+References: <1528804816-32636-1-git-send-email-daniel.lezcano@linaro.org>
+ <20180612123036.GJ12180@hirez.programming.kicks-ass.net>
+ <16d5649d-863c-10c7-9287-202568e713e6@linaro.org>
+ <20180612125247.GO12217@hirez.programming.kicks-ass.net>
+ <16770447-afe3-0fd7-19f9-1bd52c4c8ced@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <16770447-afe3-0fd7-19f9-1bd52c4c8ced@linaro.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes the following splat during boot:
+On Tue, Jun 12, 2018 at 03:02:14PM +0200, Daniel Lezcano wrote:
+> On 12/06/2018 14:52, Peter Zijlstra wrote:
+> > In this case, you can do:
+> 
+> That is what we had before but we change the code to set the count
+> before waking up the task, so compute the cpumask_weight of the
+> resulting AND right before this loop.
+> 
+> > +       for_each_cpu_and(cpu, &ii_dev->cpumask, cpu_online_mask) {
+> > +               iit = per_cpu_ptr(&idle_injection_thread, cpu);
+> > +               iit->should_run = 1;
+> > +               wake_up_process(iit->tsk);
+> > +       }
 
-BUG: sleeping function called from invalid context at kernel/locking/mutex.c:747
-in_atomic(): 1, irqs_disabled(): 128, pid: 77, name: kworker/2:1
-4 locks held by kworker/2:1/77:
- #0: (ptrval) ((wq_completion)"events"){+.+.}, at: process_one_work+0x1fc/0x8fc
- #1: (ptrval) (deferred_probe_work){+.+.}, at: process_one_work+0x1fc/0x8fc
- #2: (ptrval) (&dev->mutex){....}, at: __device_attach+0x40/0x178
- #3: (ptrval) (msm_iommu_lock){....}, at: msm_iommu_add_device+0x28/0xcc
-irq event stamp: 348
-hardirqs last  enabled at (347): [<c049dc18>] kfree+0xe0/0x3c0
-hardirqs last disabled at (348): [<c0c35cac>] _raw_spin_lock_irqsave+0x2c/0x68
-softirqs last  enabled at (0): [<c0322fd8>] copy_process.part.5+0x280/0x1a68
-softirqs last disabled at (0): [<00000000>]   (null)
-Preemption disabled at:
-[<00000000>]   (null)
-CPU: 2 PID: 77 Comm: kworker/2:1 Not tainted 4.17.0-rc5-wt-ath-01075-gaca0516bb4cf #239
-Hardware name: Generic DT based system
-Workqueue: events deferred_probe_work_func
-[<c0314e00>] (unwind_backtrace) from [<c030fc70>] (show_stack+0x20/0x24)
-[<c030fc70>] (show_stack) from [<c0c16ad8>] (dump_stack+0xa0/0xcc)
-[<c0c16ad8>] (dump_stack) from [<c035a978>] (___might_sleep+0x1f8/0x2d4)
-ath10k_sdio mmc2:0001:1: Direct firmware load for ath10k/QCA9377/hw1.0/board-2.bin failed with error -2
-[<c035a978>] (___might_sleep) from [<c035aac4>] (__might_sleep+0x70/0xa8)
-[<c035aac4>] (__might_sleep) from [<c0c3066c>] (__mutex_lock+0x50/0xb28)
-[<c0c3066c>] (__mutex_lock) from [<c0c31170>] (mutex_lock_nested+0x2c/0x34)
-ath10k_sdio mmc2:0001:1: board_file api 1 bmi_id N/A crc32 544289f7
-[<c0c31170>] (mutex_lock_nested) from [<c052d798>] (kernfs_find_and_get_ns+0x30/0x5c)
-[<c052d798>] (kernfs_find_and_get_ns) from [<c0531cc8>] (sysfs_add_link_to_group+0x28/0x58)
-[<c0531cc8>] (sysfs_add_link_to_group) from [<c07ef75c>] (iommu_device_link+0x50/0xb4)
-[<c07ef75c>] (iommu_device_link) from [<c07f2288>] (msm_iommu_add_device+0xa0/0xcc)
-[<c07f2288>] (msm_iommu_add_device) from [<c07ec6d0>] (add_iommu_group+0x3c/0x64)
-[<c07ec6d0>] (add_iommu_group) from [<c07f9d40>] (bus_for_each_dev+0x84/0xc4)
-[<c07f9d40>] (bus_for_each_dev) from [<c07ec7c8>] (bus_set_iommu+0xd0/0x10c)
-[<c07ec7c8>] (bus_set_iommu) from [<c07f1a68>] (msm_iommu_probe+0x5b8/0x66c)
-[<c07f1a68>] (msm_iommu_probe) from [<c07feaa8>] (platform_drv_probe+0x60/0xbc)
-[<c07feaa8>] (platform_drv_probe) from [<c07fc1fc>] (driver_probe_device+0x30c/0x4cc)
-[<c07fc1fc>] (driver_probe_device) from [<c07fc59c>] (__device_attach_driver+0xac/0x14c)
-[<c07fc59c>] (__device_attach_driver) from [<c07f9e14>] (bus_for_each_drv+0x68/0xc8)
-[<c07f9e14>] (bus_for_each_drv) from [<c07fbd3c>] (__device_attach+0xe4/0x178)
-[<c07fbd3c>] (__device_attach) from [<c07fc698>] (device_initial_probe+0x1c/0x20)
-[<c07fc698>] (device_initial_probe) from [<c07faee8>] (bus_probe_device+0x98/0xa0)
-[<c07faee8>] (bus_probe_device) from [<c07fb4f4>] (deferred_probe_work_func+0x74/0x198)
-[<c07fb4f4>] (deferred_probe_work_func) from [<c0348eb4>] (process_one_work+0x2c4/0x8fc)
-[<c0348eb4>] (process_one_work) from [<c03497b0>] (worker_thread+0x2c4/0x5cc)
-[<c03497b0>] (worker_thread) from [<c0350d10>] (kthread+0x180/0x188)
-[<c0350d10>] (kthread) from [<c03010b4>] (ret_from_fork+0x14/0x20)
 
-Fixes: 42df43b36163 ("iommu/msm: Make use of iommu_device_register interface")
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
----
- drivers/iommu/msm_iommu.c | 16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
+Ah, I see, but since you do:
 
-diff --git a/drivers/iommu/msm_iommu.c b/drivers/iommu/msm_iommu.c
-index 0d3350463a3f..9a95c9b9d0d8 100644
---- a/drivers/iommu/msm_iommu.c
-+++ b/drivers/iommu/msm_iommu.c
-@@ -395,20 +395,15 @@ static int msm_iommu_add_device(struct device *dev)
- 	struct msm_iommu_dev *iommu;
- 	struct iommu_group *group;
- 	unsigned long flags;
--	int ret = 0;
- 
- 	spin_lock_irqsave(&msm_iommu_lock, flags);
--
- 	iommu = find_iommu_for_dev(dev);
-+	spin_unlock_irqrestore(&msm_iommu_lock, flags);
-+
- 	if (iommu)
- 		iommu_device_link(&iommu->iommu, dev);
- 	else
--		ret = -ENODEV;
--
--	spin_unlock_irqrestore(&msm_iommu_lock, flags);
--
--	if (ret)
--		return ret;
-+		return -ENODEV;
- 
- 	group = iommu_group_get_for_dev(dev);
- 	if (IS_ERR(group))
-@@ -425,13 +420,12 @@ static void msm_iommu_remove_device(struct device *dev)
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&msm_iommu_lock, flags);
--
- 	iommu = find_iommu_for_dev(dev);
-+	spin_unlock_irqrestore(&msm_iommu_lock, flags);
-+
- 	if (iommu)
- 		iommu_device_unlink(&iommu->iommu, dev);
- 
--	spin_unlock_irqrestore(&msm_iommu_lock, flags);
--
- 	iommu_group_remove_device(dev);
- }
- 
--- 
-2.17.1
+	if (atomic_dec_and_test())
+	  last_man()
 
+where that last_man() thing will start a timer, there is no real problem
+with doing atomic_inc() with before wake_up_process().
+
+Yes, it allows doing last_man, too often, but repeated hrtimer_start()
+will DTRT and reprogram the timer.
+
+Also, last_man() uses @run_duration, but the way I read it, the timer is
+for waking things up again, this means it is in fact the sleep duration,
+no?
+
+Furthermore, should you not be using hrtimer_forward(&timer,
+idle_duration + run_duration) instead? AFAICT the current scheme is
+prone to drifting.
