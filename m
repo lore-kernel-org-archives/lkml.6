@@ -2,123 +2,88 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 903F4C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:40:00 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C4FF3C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:40:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D97E2089C
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:40:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D97E2089C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B18A02086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:40:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OLTYh0Ca"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B18A02086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934922AbeFLWj6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 18:39:58 -0400
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:40621 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934418AbeFLWjz (ORCPT
+        id S934956AbeFLWko (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 18:40:44 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:55443 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934418AbeFLWkn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 18:39:55 -0400
-Received: by mail-yb0-f196.google.com with SMTP id v17-v6so219528ybe.7;
-        Tue, 12 Jun 2018 15:39:55 -0700 (PDT)
+        Tue, 12 Jun 2018 18:40:43 -0400
+Received: by mail-wm0-f65.google.com with SMTP id v16-v6so1406466wmh.5
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 15:40:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=hx+vH43n5PZp+7APDmcf4yYkJPhesrm9wSMWB7GYEHU=;
+        b=OLTYh0Ca+AOx3QiLpvNr97g9V/xMO/L1Dgs+bzG6y2BwFDSql/MCJSUysiqRSqbJtF
+         zelOWvjBdfrr//3u/Wfyzzs5p6bCTWTFTTRc4Il4k9G0U5V+WfmhVxBkGCbwYcM/iJqM
+         P7Rc/BpGPOLOrZ1uqNZlpe/7dFb+Bv5NtfCdQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9VxIY8A1QgTl9wG8rWxmmjfVioRKwSc3V0fBAbeN1L4=;
-        b=TK4QSK5SKicWT1ElrG8xyLBfgmz1BcYcWQGDkB+LH1TkrxC1pRbVK+1EsoaRkcmYbd
-         QZS2MtNQojmBqijOsabvaV6oRqVxxzLe6JFFVx8iWoUqhd6SZhzNPoySOXFG4qQN9ahm
-         ZyxZjYnp4xAInTfoLtgpl4zT2jahp+7kjfNOhRcYjxaYBSjTKV1pGgZolPvfSi0Y3Ad9
-         ghPzBlGitSx38L3OG4Nj17NzxSu9+pc4DodR/ufXBa/swYjfG72D/Pkjt+KTHi+ilRII
-         ZHZ78qYdp4Zh6v880uikr9CS+zipRoF6zeK23t/DuEh08f44Lklc4kwyiqlJDRXtEPTs
-         EgRg==
-X-Gm-Message-State: APt69E13t/7T9RVa3KRzOOuTRQXKRLC27zF8n+ntM/KZO/lyry/QdEFo
-        qioquXyuVqCZcy8IjUt2qB+k+NRvUw==
-X-Google-Smtp-Source: ADUXVKJ2mjvZ2ESBoC4mnqRXKKg8conwXymjqZZZSF96yMP1h6iEdQm8oyJMt8QZpctwkPn8XuuXlA==
-X-Received: by 2002:a25:7910:: with SMTP id u16-v6mr1138500ybc.209.1528843194920;
-        Tue, 12 Jun 2018 15:39:54 -0700 (PDT)
-Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.gmail.com with ESMTPSA id u17-v6sm542970ywu.16.2018.06.12.15.39.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Jun 2018 15:39:54 -0700 (PDT)
-Date:   Tue, 12 Jun 2018 16:39:53 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Songjun Wu <songjun.wu@linux.intel.com>
-Cc:     hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
-        chuanhua.lei@intel.com, linux-mips@linux-mips.org,
-        qi-ming.wu@intel.com, linux-clk@vger.kernel.org,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 7/7] tty: serial: lantiq: Add CCF support
-Message-ID: <20180612223953.GA21621@rob-hp-laptop>
-References: <20180612054034.4969-1-songjun.wu@linux.intel.com>
- <20180612054034.4969-8-songjun.wu@linux.intel.com>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=hx+vH43n5PZp+7APDmcf4yYkJPhesrm9wSMWB7GYEHU=;
+        b=GlrRjgcnnXIeSHtrOPmUehhQjiXNcxx6h7+EDJ88NQ09FSiwMdVgeEKyCFL8txDCCO
+         1sF7iHYiIB6NGU326b1uFf3B3+iR4dIr0tWRvfPaNdqjS60qeR2qQmCYgg1QEoK9JkmJ
+         0mNNjWA9G34/4iPROrJHUAhnHPrrFCaZrdMfV8ig293jiAZCtAzz7PG1kbhYcTkDnBfx
+         FRdvSeuidYzDi2Oe3CxIjIFecARilF5p4jDO9p/SCF6V/w+YuoCTAuEmZh7CzPaB7X0E
+         JfcUIEkhQieo8Sr9SLTuR2BlgyLhL7a0f9XWGyd9te6LYyDhtB3JekoabEyxwq7yIEv/
+         2fiw==
+X-Gm-Message-State: APt69E3ag5iExZ49Hi96wA8I83k0FIllnTWYbUsHwww37c52AeZp4MTT
+        UKq+GNDIrTa/CD4d4wD6V4WI3HqWM2ibBVTailHHUA==
+X-Google-Smtp-Source: ADUXVKLCj8hXGyqXJlcd2NZ7ATlt3LW0LtN+7/5up1MD9y5gtGNlVb01gvsKDcU74eiJXSkPErt7yYCf6lfIub3Ugwo=
+X-Received: by 2002:a1c:3c4:: with SMTP id 187-v6mr1681283wmd.96.1528843242241;
+ Tue, 12 Jun 2018 15:40:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180612054034.4969-8-songjun.wu@linux.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Received: by 2002:a1c:8ac3:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 15:40:41
+ -0700 (PDT)
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Tue, 12 Jun 2018 15:40:41 -0700
+Message-ID: <CALAqxLVCpyKzGJPVtBuipnZbGbDC_Z0rPBrn-J2mkMsQsSvdtA@mail.gmail.com>
+Subject: REGRESSION?: debugfs: inode: debugfs_create_dir uses mode permission
+ from parent
+To:     Thomas Richter <tmricht@linux.ibm.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 01:40:34PM +0800, Songjun Wu wrote:
-> Previous implementation uses platform-dependent API to get the clock.
-> Those functions are not available for other SoC which uses the same IP.
-> The CCF (Common Clock Framework) have an abstraction based APIs
-> for clock.
-> Change to use CCF APIs to get clock and rate.
-> So that different SoCs can use the same driver.
-> Clocks and clock-names are updated in device tree binding.
-> 
-> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
-> 
-> ---
-> 
->  .../devicetree/bindings/serial/lantiq_asc.txt      |  15 +++
+Hey all,
+  I noticed recently that linus/master (plus patches) stopped booting
+to UI on HiKey960, and I bisected the issue down to:
+92170b62f1c1 ("debugfs: inode: debugfs_create_dir uses mode permission
+from parent")
 
-Please split bindings to separate patch.
+On the HiKey960 board, we mount debugfs via:
+   mount debugfs /sys/kernel/debug /sys/kernel/debug mode=755
 
->  drivers/tty/serial/Kconfig                         |   2 +-
->  drivers/tty/serial/lantiq.c                        | 101 +++++++++++++++++----
->  3 files changed, 98 insertions(+), 20 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/serial/lantiq_asc.txt b/Documentation/devicetree/bindings/serial/lantiq_asc.txt
-> index 3acbd309ab9d..608f0c87a4af 100644
-> --- a/Documentation/devicetree/bindings/serial/lantiq_asc.txt
-> +++ b/Documentation/devicetree/bindings/serial/lantiq_asc.txt
-> @@ -6,6 +6,10 @@ Required properties:
->  - interrupts: the 3 (tx rx err) interrupt numbers. The interrupt specifier
->    depends on the interrupt-parent interrupt controller.
->  
-> +Optional properties:
-> +- clocks: Should contain frequency clock and gate clock
-> +- clock-names: Should be "freq" and "asc"
-> +
->  Example:
->  
->  asc1: serial@e100c00 {
-> @@ -14,3 +18,14 @@ asc1: serial@e100c00 {
->  	interrupt-parent = <&icu0>;
->  	interrupts = <112 113 114>;
->  };
-> +
-> +asc0: serial@600000 {
-> +	compatible = "lantiq,asc";
-> +	reg = <0x600000 0x100000>;
+But since the change, it seems most of the nodes in /sys/kernel/debug
+are: drwx------
 
-1MB of address space? That wastes a lot of virtual space on 32-bit 
-systems. Just make the size the actual used range.
+Which ends up breaking the egl library, keeping it from loading.
 
-> +	interrupt-parent = <&gic>;
-> +	interrupts = <GIC_SHARED 103 IRQ_TYPE_LEVEL_HIGH>,
-> +	<GIC_SHARED 105 IRQ_TYPE_LEVEL_HIGH>,
-> +	<GIC_SHARED 106 IRQ_TYPE_LEVEL_HIGH>;
-> +	clocks = <&pll0aclk SSX4_CLK>, <&clkgate1 GATE_URT_CLK>;
-> +	clock-names = "freq", "asc";
-> +};
+This seems to be the expected behavior of the patch, but I'm surprised
+the mode override is now ignored. It seems like the potential fix here
+would be to set the /sys/kernel/debug dir to 755 prior to mounting? Or
+is there some other advised solution?
+
+thanks
+-john
