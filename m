@@ -6,45 +6,43 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 067A0C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:53:44 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8F037C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:53:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B06BE208C0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:53:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 430AA208B7
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:53:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ba6gEqR4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B06BE208C0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dIAMP8Si"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 430AA208B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934031AbeFLQxk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 12:53:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53078 "EHLO mail.kernel.org"
+        id S935194AbeFLQxo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 12:53:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53462 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934280AbeFLQxf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 12:53:35 -0400
+        id S933929AbeFLQxl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 12:53:41 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 94365208B8;
-        Tue, 12 Jun 2018 16:53:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B745208B9;
+        Tue, 12 Jun 2018 16:53:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528822415;
-        bh=ak5JVHuRg1Yd74ro8+IzA8FRIW6Jpei50AgNtsSzVHY=;
+        s=default; t=1528822420;
+        bh=xmDCKy64HBWBABCzuuSAkqoE+Fith57GE2vBPtrXCSE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ba6gEqR4M9uhoJCgCRDSGiU8wxXQZhmHyvDvLf0bLT6NQKAke3Ns4JUmSRa9jwvTj
-         rIKbgdwXUpRuwst5KR64zkoilTO9ocwa4TowcBlPSsznepoeNAeQsuOKj7dxkNzZbG
-         y/PAyd/XGaca2mDAFg0d2G4nZOuCwPyLrkD6u7kQ=
+        b=dIAMP8SiAcuaHasfYEsOiRlx8CbozXMXcmcRJW328qwBupWmrFuOhr7NkvnUckGzP
+         DqO67HmyfBhocPMjJEDy1ZCL/KB0awPtzEJLPKHlwf096OcbT+Np+XSpS5Z43TAry4
+         W18dTRwuVgk7vok2MTlezXuycN4nQlTu/9yfkSLM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 08/24] brcmfmac: Fix check for ISO3166 code
-Date:   Tue, 12 Jun 2018 18:51:52 +0200
-Message-Id: <20180612164816.963565286@linuxfoundation.org>
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 23/24] net: phy: broadcom: Fix bcm_write_exp()
+Date:   Tue, 12 Jun 2018 18:52:07 +0200
+Message-Id: <20180612164817.823135174@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180612164816.587001852@linuxfoundation.org>
 References: <20180612164816.587001852@linuxfoundation.org>
@@ -61,36 +59,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan Wahren <stefan.wahren@i2se.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-commit 9b9322db5c5a1917a66c71fe47c3848a9a31227e upstream.
+[ Upstream commit 79fb218d97980d4fee9a64f4c8ff05289364ba25 ]
 
-The commit "regulatory: add NUL to request alpha2" increases the length of
-alpha2 to 3. This causes a regression on brcmfmac, because
-brcmf_cfg80211_reg_notifier() expect valid ISO3166 codes in the complete
-array. So fix this accordingly.
+On newer PHYs, we need to select the expansion register to write with
+setting bits [11:8] to 0xf. This was done correctly by bcm7xxx.c prior
+to being migrated to generic code under bcm-phy-lib.c which
+unfortunately used the older implementation from the BCM54xx days.
 
-Fixes: 657308f73e67 ("regulatory: add NUL to request alpha2")
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-Acked-by: Franky Lin <franky.lin@broadcom.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-[bwh: Backported to 4.4: adjust filename]
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Fix this by creating an inline stub: bcm_write_exp_sel() which adds the
+correct value (MII_BCM54XX_EXP_SEL_ER) and update both the Cygnus PHY
+and BCM7xxx PHY drivers which require setting these bits.
+
+broadcom.c is unchanged because some PHYs even use a different selector
+method, so let them specify it directly (e.g: SerDes secondary selector).
+
+Fixes: a1cba5613edf ("net: phy: Add Broadcom phy library for common interfaces")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/brcm80211/brcmfmac/cfg80211.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/phy/bcm-cygnus.c  |    6 +++---
+ drivers/net/phy/bcm-phy-lib.h |    7 +++++++
+ drivers/net/phy/bcm7xxx.c     |    4 ++--
+ 3 files changed, 12 insertions(+), 5 deletions(-)
 
---- a/drivers/net/wireless/brcm80211/brcmfmac/cfg80211.c
-+++ b/drivers/net/wireless/brcm80211/brcmfmac/cfg80211.c
-@@ -6167,7 +6167,7 @@ static void brcmf_cfg80211_reg_notifier(
- 		  req->alpha2[0], req->alpha2[1]);
+--- a/drivers/net/phy/bcm-cygnus.c
++++ b/drivers/net/phy/bcm-cygnus.c
+@@ -61,17 +61,17 @@ static int bcm_cygnus_afe_config(struct
+ 		return rc;
  
- 	/* ignore non-ISO3166 country codes */
--	for (i = 0; i < sizeof(req->alpha2); i++)
-+	for (i = 0; i < 2; i++)
- 		if (req->alpha2[i] < 'A' || req->alpha2[i] > 'Z') {
- 			brcmf_err("not a ISO3166 code\n");
- 			return;
+ 	/* make rcal=100, since rdb default is 000 */
+-	rc = bcm_phy_write_exp(phydev, MII_BRCM_CORE_EXPB1, 0x10);
++	rc = bcm_phy_write_exp_sel(phydev, MII_BRCM_CORE_EXPB1, 0x10);
+ 	if (rc < 0)
+ 		return rc;
+ 
+ 	/* CORE_EXPB0, Reset R_CAL/RC_CAL Engine */
+-	rc = bcm_phy_write_exp(phydev, MII_BRCM_CORE_EXPB0, 0x10);
++	rc = bcm_phy_write_exp_sel(phydev, MII_BRCM_CORE_EXPB0, 0x10);
+ 	if (rc < 0)
+ 		return rc;
+ 
+ 	/* CORE_EXPB0, Disable Reset R_CAL/RC_CAL Engine */
+-	rc = bcm_phy_write_exp(phydev, MII_BRCM_CORE_EXPB0, 0x00);
++	rc = bcm_phy_write_exp_sel(phydev, MII_BRCM_CORE_EXPB0, 0x00);
+ 
+ 	return 0;
+ }
+--- a/drivers/net/phy/bcm-phy-lib.h
++++ b/drivers/net/phy/bcm-phy-lib.h
+@@ -14,11 +14,18 @@
+ #ifndef _LINUX_BCM_PHY_LIB_H
+ #define _LINUX_BCM_PHY_LIB_H
+ 
++#include <linux/brcmphy.h>
+ #include <linux/phy.h>
+ 
+ int bcm_phy_write_exp(struct phy_device *phydev, u16 reg, u16 val);
+ int bcm_phy_read_exp(struct phy_device *phydev, u16 reg);
+ 
++static inline int bcm_phy_write_exp_sel(struct phy_device *phydev,
++					u16 reg, u16 val)
++{
++	return bcm_phy_write_exp(phydev, reg | MII_BCM54XX_EXP_SEL_ER, val);
++}
++
+ int bcm_phy_write_misc(struct phy_device *phydev,
+ 		       u16 reg, u16 chl, u16 value);
+ int bcm_phy_read_misc(struct phy_device *phydev,
+--- a/drivers/net/phy/bcm7xxx.c
++++ b/drivers/net/phy/bcm7xxx.c
+@@ -48,10 +48,10 @@
+ static void r_rc_cal_reset(struct phy_device *phydev)
+ {
+ 	/* Reset R_CAL/RC_CAL Engine */
+-	bcm_phy_write_exp(phydev, 0x00b0, 0x0010);
++	bcm_phy_write_exp_sel(phydev, 0x00b0, 0x0010);
+ 
+ 	/* Disable Reset R_AL/RC_CAL Engine */
+-	bcm_phy_write_exp(phydev, 0x00b0, 0x0000);
++	bcm_phy_write_exp_sel(phydev, 0x00b0, 0x0000);
+ }
+ 
+ static int bcm7xxx_28nm_b0_afe_config_init(struct phy_device *phydev)
 
 
