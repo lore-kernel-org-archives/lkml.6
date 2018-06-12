@@ -4,99 +4,104 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4FB7AC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 18:20:02 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 02DA4C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 18:20:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01065208B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 18:20:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC65E2089C
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 18:20:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hpjUwJug"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01065208B0
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BfT/y4y2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC65E2089C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754163AbeFLST7 (ORCPT
+        id S1754237AbeFLSUF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 14:19:59 -0400
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:43803 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753511AbeFLST6 (ORCPT
+        Tue, 12 Jun 2018 14:20:05 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:44317 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753455AbeFLSUB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 14:19:58 -0400
-Received: by mail-vk0-f66.google.com with SMTP id d74-v6so14692494vke.10
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 11:19:58 -0700 (PDT)
+        Tue, 12 Jun 2018 14:20:01 -0400
+Received: by mail-pl0-f66.google.com with SMTP id z9-v6so14824393plk.11;
+        Tue, 12 Jun 2018 11:20:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=si6MOoP6RDPuWCv2+Q6EgDn/kXN6Bcwd2/cgCDa/2Ng=;
-        b=hpjUwJugAH1JQFG95b/Jzyv7wLFeVZDE9bgqqLMGgzG0EHqhJA8vgQfQVR1aLPkN+p
-         XdpvGNLGcAKHJ314eOF7MpfSfcDrl9h7DjwYUs1W2KKSk6ee6jkOZSiiYleJyF3hkMhc
-         0M8lpmTWU/JN5YAIms/BKsnx58M58+br2ImXtG66HIoZex37L7Zjef4GNi5znD73Hrzy
-         imu6BzW+VrfztuO0t9ugJ5fkKQs/Lm+D++u0EXAvugElG+mIQLYUDhMxuvHBMqHZBf+6
-         ST357hEboVyt7DpxciYC7xcnK9UaJbcODVtbjFHq643PBV1S16gUh+p0wn3Y6+tMrKd2
-         NT2A==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Kpr8yk+NtI8ZwacqX5sGGe2h2O0AzzEMIqCRY8cmZ34=;
+        b=BfT/y4y2vDpP5V+ZjvpmD8NzuCkKZckkDgBteG3DzGX++nGRqy3fyJ0OBeevasCRoa
+         jFjBI43Vtq1veprKZX3TlPw9KVqZC/KV6RCM9jDvkGWKBpUlITY25CIKTckI0o3ZRAId
+         NA94fliBHYph/10jtuukqi3TgUc9pwpP3aIyiLdkrmOjBLd0TrBv9wLUrDgaBe1lucCT
+         qyEU1e611gSAgeZenGtTBPShuRCg+Dswz5RsOsOu0IHbrSxrvI/vMC9Gl05jEDoQ/aXR
+         /v1aSPXixEMPDA/2UZcE8vkvgM1AYMxorpaMMYLXbF9EfNAx2XIPazxBPRDGO3hQdGHg
+         BAjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=si6MOoP6RDPuWCv2+Q6EgDn/kXN6Bcwd2/cgCDa/2Ng=;
-        b=iN2s8yl//ce8ETi3x9Ad0VBwGFDEgS/7kLVjk3QZdaj9+nhzpnHhUglYl1tgdhmRqP
-         rqNErE9bvRx1XKz5P9E0t/jXGrtDiCpLtLkSQhIyG1NAK+zvb/PaXy8nYny6UQARUrBD
-         ciVnufSvmkRaKkZhTqeA2hyLBXQNvpxFoobmfL9PlVKvSxjNJmNUTpTBo+Y1AQ1dPRXQ
-         bx9whE9yNM3cc+2W+usfqQOmHtLdNcVkFLky/yyzeEA9qx5VzlK/nAx5DmjdkSnmRjha
-         HtLZf1t0JZTYJ0YZAlxPiVB+uQsv+39/C8RUgeSx8jPaBWhkhvKW1YHoA77F0WZRXAFW
-         rETw==
-X-Gm-Message-State: APt69E0w8XdF+tbAtpff5iPihK/rUaDXU9Y1e9QCIMs6Lj4+qlIA9y9w
-        tQMHk7sR2pPgsFLxdPQN9ma3KzQJFvA0tP+ReMQ=
-X-Google-Smtp-Source: ADUXVKK6n5k/ew/rEU605A1cV8eeQeOGqX16Pw7B9rYRCItW34lzlz89EdZU2F+dtU1yLrE33m/l0eLoHDtwtidHtz0=
-X-Received: by 2002:a1f:5244:: with SMTP id g65-v6mr1031230vkb.28.1528827597988;
- Tue, 12 Jun 2018 11:19:57 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Kpr8yk+NtI8ZwacqX5sGGe2h2O0AzzEMIqCRY8cmZ34=;
+        b=jgev0aULz783itZhDI4PX4ghg9iDJV+mKowH3Wz+5xBAKAfuLOh7u3xYWbQNal0T4i
+         hqno21i+jpMiibXbWwt/ps/vsGQdUAcIXalyZjFw1jqMnFqJDac7lXpqQAZwQP7ZR67l
+         uQgovpLo8j9HCM5UJx+8VBAh55v/XleM9hJG1mZEPQJ31+v1Lp1faIw3tS2g84I3pRDZ
+         snF9nSRsQKDg2ifz3uto+UjLwpVqJV/VniarA5DQDvDHHP4yGfDN4yA9OnSoyyeuap4A
+         6NdGpkaRa4YPaijtWtQmjoA4cGLRAySyZ2/TuB92PQi2kyAikExQz3h1PoZ4JmaswTQA
+         Y0RQ==
+X-Gm-Message-State: APt69E3G7FlJNcgldrepecifOkIZ3JX8mwcD9T3FhczeqoPNDtDObwbm
+        OIIv1NXlvR6vGBW7wDCngO4=
+X-Google-Smtp-Source: ADUXVKI/XLPrl0TGDB9/HggUfNTVa/royTAzpMGBG2ssYWIrI61IJ71qeR7xkg4t4XcqI/HcFnTfOQ==
+X-Received: by 2002:a17:902:28c8:: with SMTP id f66-v6mr1636266plb.60.1528827600851;
+        Tue, 12 Jun 2018 11:20:00 -0700 (PDT)
+Received: from localhost ([185.236.200.248])
+        by smtp.gmail.com with ESMTPSA id z64-v6sm1103654pfi.150.2018.06.12.11.19.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Jun 2018 11:20:00 -0700 (PDT)
+Date:   Tue, 12 Jun 2018 11:19:56 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 3.18 00/21] 3.18.113-stable review
+Message-ID: <20180612181956.GB2621@localhost>
+References: <20180612164825.401145490@linuxfoundation.org>
 MIME-Version: 1.0
-Received: by 2002:a9f:3c04:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 11:19:57
- -0700 (PDT)
-In-Reply-To: <mhng-92398134-2db9-4a35-b432-0ab444418e1b@palmer-si-x1c4>
-References: <20180612030006.h7a4mag76aqqifod@ltop.local> <mhng-92398134-2db9-4a35-b432-0ab444418e1b@palmer-si-x1c4>
-From:   Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Date:   Tue, 12 Jun 2018 20:19:57 +0200
-Message-ID: <CAMHZB6E3Jcvni=nsxvOB-+g8sDGCvEV2G2q2+3XrJJy7f__-eg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] riscv: fix __user annotation for __copy_user()
-To:     Palmer Dabbelt <palmer@sifive.com>
-Cc:     Atish Patra <atish.patra@wdc.com>, linux-riscv@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Albert Ou <albert@sifive.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180612164825.401145490@linuxfoundation.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 7:12 PM, Palmer Dabbelt <palmer@sifive.com> wrote:
-> On Mon, 11 Jun 2018 20:00:08 PDT (-0700), luc.vanoostenryck@gmail.com wrote:
->> On Mon, Jun 11, 2018 at 12:01:37PM -0700, Palmer Dabbelt wrote:
->>>
->>> OK, I'll try and figure out what's going on.  We've had a handful of
->>> headaches trying to get things like '.align 2; .align 2' to actually
->>> produce
->>> no NOPs for the second alignment directive, which is surprisingly
->>> complicated due to the aggressive linker relaxation we do.
->>
->>
->> OK. I imagine indeed but note that no linker is involved here so,
->> if the problem is still present, it must already be in the assembler.
->
->
-> Ah, OK -- in that case then it's just not a bug.  In RISC-V land we handle
-> alignment as part of relaxation in the linker, so if you're looking at the
-> output of the assembler then you'll always see a bunch of NOPs for every
-> alignment directive.  If you 'objdump -dr' you should be able to see the
-> relocations that get emitted, there should be a R_RISCV_ALIGN that points to
-> the run of NOPs.
+On Tue, Jun 12, 2018 at 06:51:57PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 3.18.113 release.
+> There are 21 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu Jun 14 16:48:15 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v3.x/stable-review/patch-3.18.113-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-3.18.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-Ah OK. Indeed I see the R_RISCV_ALIGN.
-Thanks for the explanation.
+Merged, compiled with -Werror, and installed on my Pixel XL.
 
--- Luc
+No initial issues noticed in dmesg or general usage.
+
+Thanks!
+Nathan
