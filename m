@@ -2,138 +2,80 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id EE990C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:30:37 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 005ABC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:30:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3A13208B1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:30:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8D87208B1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:30:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NVzXFH1V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3A13208B1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CfOCltaR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8D87208B1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933485AbeFLMaf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 08:30:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46124 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932811AbeFLMad (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 08:30:33 -0400
-Received: from mail.kernel.org (dyndsl-178-142-065-119.ewe-ip-backbone.de [178.142.65.119])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D89C6208B0;
-        Tue, 12 Jun 2018 12:30:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528806633;
-        bh=OJVPyyuWAVgix9exruOSHGpleMBIwBgesZjlhAaokxg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NVzXFH1V9+2WWnMCvBRIWAPQkqUiFnP/vfN4XuVP4BHsuIIph67mufm5ev0YBygLL
-         Kyi4u8Bg/RS3eA+LJEwx8hbKTL8Zhs0S6sXvGUp790RcjkozeT6MRoNn3rqOGq7DCi
-         LlgfUTdYeKVAwQH6K3LuqrcOJQGRPsBeS5Zu3YJU=
-Date:   Tue, 12 Jun 2018 14:30:30 +0200
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Brian Norris <briannorris@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        Rhyland Klein <rklein@nvidia.com>,
-        Alexandru Stan <amstan@chromium.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Doug Anderson <dianders@chromium.org>,
-        Phil Reid <preid@electromag.com.au>
-Subject: Re: [PATCH v4 2/2] dt-bindings: power: sbs-battery: re-document
- "ti,bq20z75"
-Message-ID: <20180612123030.l4ezeaw7674ig5kq@earth.universe>
-References: <20180608223655.33565-1-briannorris@chromium.org>
- <20180608223655.33565-2-briannorris@chromium.org>
+        id S933662AbeFLMap (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 08:30:45 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55192 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932811AbeFLMan (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 08:30:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=FgXlQTW1ZGbjnHhyBREFViq6EXTPSp5PgHfhh+11Os0=; b=CfOCltaRdSMmc5+5H2JZ0J3AB
+        a/8MMjRlHkoiFloKoTWX3Bq2DY9fGXEN3ApXK/JV4DEFBpeMYZFYv+X1o1Cvu0w0QAqCy1cwa7qbZ
+        hf9HIG7ILMQ4HXJXSynPuSWTIsSYA8h15/wagQOA1fp/CsyTsm8b7hzqq0EF9Xe2sK7jp00faDbun
+        AFCym1RWzx8uv2iGHrwu+QjaHwyZQPbcOfwXMktlBcjMk2dwWHutugFsmp8tVqbECMrTzybaz21Tr
+        +y2zCLOlYRbWI9DublSgbsVNDBmLMnFCNHdt6BsinDxol9Kxf8E6AEM1M+Q9ib58f2yMUd3yfEOar
+        QwqkKsk3Q==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fSiRa-0000SF-IF; Tue, 12 Jun 2018 12:30:38 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 0E198201EA7C9; Tue, 12 Jun 2018 14:30:36 +0200 (CEST)
+Date:   Tue, 12 Jun 2018 14:30:36 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     viresh.kumar@linaro.org, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Javi Merino <javi.merino@kernel.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Kevin Wangtao <kevin.wangtao@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rui Zhang <rui.zhang@intel.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>
+Subject: Re: [PATCH V6] powercap/drivers/idle_injection: Add an idle
+ injection framework
+Message-ID: <20180612123036.GJ12180@hirez.programming.kicks-ass.net>
+References: <1528804816-32636-1-git-send-email-daniel.lezcano@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="h4ysnlvpkncnk5pp"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180608223655.33565-2-briannorris@chromium.org>
-User-Agent: NeoMutt/20180512
+In-Reply-To: <1528804816-32636-1-git-send-email-daniel.lezcano@linaro.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jun 12, 2018 at 02:00:11PM +0200, Daniel Lezcano wrote:
+> +static void __idle_injection_wakeup(struct idle_injection_device *ii_dev)
+> +{
+> +	struct idle_injection_thread *iit;
+> +	struct cpumask tmp;
+> +	unsigned int cpu;
+> +
+> +	cpumask_and(&tmp, ii_dev->cpumask, cpu_online_mask);
 
---h4ysnlvpkncnk5pp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-On Fri, Jun 08, 2018 at 03:36:55PM -0700, Brian Norris wrote:
-> This compatible property was documented before the driver was renamed to
-> "SBS" (see commit e57f1b68c406 ("devicetree-bindings: Propagate
-> bq20z75->sbs rename to dt bindings")). The driver has continued to
-> support this property as an alternative to "sbs,sbs-battery", and
-> because we've noticed there are some lingering TI specifics (in the
-> manufacturer-specific portion of the SBS spec), we'd like to start using
-> this property again to differentiate.
->=20
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
-> Acked-by: Rhyland Klein <rklein@nvidia.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
-
-Please use "sbs,sbs-battery" as fallback, just like sbs-manager and
-sbs-charger, see for example:
-
-Documentation/devicetree/bindings/power/supply/sbs_sbs-charger.txt
-
--- Sebastian
-
-> v2: add Rhyland's Acked-by
-> v3: no change
-> v4: add Rob's Reviewed-by
-> ---
->  .../devicetree/bindings/power/supply/sbs_sbs-battery.txt        | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/power/supply/sbs_sbs-batte=
-ry.txt b/Documentation/devicetree/bindings/power/supply/sbs_sbs-battery.txt
-> index c40e8926facf..a7a9c3366f82 100644
-> --- a/Documentation/devicetree/bindings/power/supply/sbs_sbs-battery.txt
-> +++ b/Documentation/devicetree/bindings/power/supply/sbs_sbs-battery.txt
-> @@ -2,7 +2,7 @@ SBS sbs-battery
->  ~~~~~~~~~~
-> =20
->  Required properties :
-> - - compatible : "sbs,sbs-battery"
-> + - compatible : "sbs,sbs-battery" or "ti,bq20z75"
-> =20
->  Optional properties :
->   - sbs,i2c-retry-count : The number of times to retry i2c transactions o=
-n i2c
-> --=20
-> 2.18.0.rc1.242.g61856ae69a-goog
->=20
-
---h4ysnlvpkncnk5pp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlsfvOMACgkQ2O7X88g7
-+ppGjQ/8C5j/WJve+ASLo2oQ2CHvSdAHDBW4I0VWP5mRkdlfgtLMOvAOkHoBvBcT
-VZRP7aip9LLQuEdTsy/Dalqs3kzZRXCXY1oFfdweL2NBvM/qevAO1fZ2CYAqVuz/
-0fB0w2LFBgXXHzy2MJ+YdFju5wp7FaYkAUFQ7xJAQJIVeJHQiK6qlohw8pOx00TD
-QrXcXVO6nnhXTNgT//Kwa0rtdF/cBLr7DhFMUZ7uINcxuHg04nLkAZTQAwlqtSdY
-UJ8vo/xfyzfVZ2myXGSRdToa9Cw95TeYER1uLxYm4V3GtIB5zLmC1gOfhQD4ZLMu
-11PnfPdm+bMp8cO5RR3wWROmEUmr2XIo4fkyI+JH23dwxpGgv0z0XVoCqEyX2rko
-VTyTKGQquXavsIeBAtOtWn2+YzQSAVB6ndurxUA6PBH/ztmNeO7EIl/iGTikacPp
-53A4u+sFD1piUEBHTYf2CHYpm8WwBfBM6gMertL/M5SN52s8ZcZS2IjkTOgreAud
-Bb/JR1UbExXY6OjsmxOvXwT6CWUQ9tTykctWzIfz08+QCFtoXVOURzN4KT7JPMrX
-mJXPk8m5dTvVNG+Vo+XxXnvnPy2rZDpISzOnvO3UtNMEQNG0MqE6hBs8EzaCKeJG
-etfKKzZOnmFpRMnh9+G00AqB9PW0w9BrkvJdeNlMD/hUauBGDJQ=
-=tLAL
------END PGP SIGNATURE-----
-
---h4ysnlvpkncnk5pp--
+You should not be having a cpumask on the stack. Those things can be
+ginormous.
