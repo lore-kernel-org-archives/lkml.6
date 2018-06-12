@@ -2,183 +2,120 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6D649C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 20:49:55 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id AB0CAC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 20:55:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 210F3208AE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 20:49:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58D9420891
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 20:55:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="lbmlb5n8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 210F3208AE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YyaagYyP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58D9420891
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754423AbeFLUtx (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 16:49:53 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:39276 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753517AbeFLUtv (ORCPT
+        id S933517AbeFLUzv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 16:55:51 -0400
+Received: from mail-qt0-f181.google.com ([209.85.216.181]:44190 "EHLO
+        mail-qt0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754102AbeFLUzt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 16:49:51 -0400
-Received: by mail-wr0-f193.google.com with SMTP id w7-v6so403363wrn.6
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 13:49:50 -0700 (PDT)
+        Tue, 12 Jun 2018 16:55:49 -0400
+Received: by mail-qt0-f181.google.com with SMTP id l33-v6so385056qta.11
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 13:55:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=from:to:cc:subject:date:message-id;
-        bh=MpiRjHj4g89PdprBUicm3hngwetF+rdWseWCSZDOChk=;
-        b=lbmlb5n80/NdD4FAc0i+iL33vTb9DYeJVTrzDueMiSsAai5BOx2n0i4o8+vYnRv0CI
-         vHGbTGjKaRVVqfP/7b65LDzCwTxdSeeUKxF8x1W0cDEPZQe5tleN5yKml7WnEK5Qsbpy
-         GZLy16mZ7SlTUhriOdSyvYYLNxcSWJUDzvxAgMlQCo9ivRDYwbg+qQ40kkx0YPYPOE4W
-         HTS5CsHs1yBtefaXnPhNxEJhkNqtAKiqgZl3mu5egIDH8pPTyyNx9IBoI1Rj673dWvzK
-         5M+v4fWOoinjsei7mSFrEC/Wypl3dupQYUb90yM4fXcgf5ury+Q8kj9yFyvGitHh4tx/
-         8l4Q==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XbWyH/RJqGwyU7SdARggc8O5trda3Xtkh/som1V+pzw=;
+        b=YyaagYyPORtc9UJ0coch5bEV7yuSQArC1dxWyi0pzKywpE9rcvnVEMvFHVQfvfn/wW
+         jUuR/iG9Zx/yTU70M1cgc9QBU4VYluwdjKk/XF66dOWin0hG0dVeMzEPmaXcUbwkVCUS
+         /E4wa5sbObiqV1zHtxwDTxS42ZX2JmqrPNWCs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=MpiRjHj4g89PdprBUicm3hngwetF+rdWseWCSZDOChk=;
-        b=s7wMBTuJzW4ZINI02tm9pSUn4+BsnKol4JTRnJowxnUryeu6ezudYTZH1jWGwYtx3P
-         LVTc2KM55vvs4WWtBuQ3VWGHHV/ZraabfFwhZ+4DwxTzh1uOGZt92nX9e+cjJf559bYv
-         tzfPdDdxiSum95VNIxn4ZxZuD3r2ugFzQXuCEHrA9k6YR7iUCFSDpw/f/ISeuyZYWODT
-         FTljk6UdN0lD6iJQILXP4EHMOoYkhsBwR/YbPiR9XIDtotZMy/I4mxy9WHJAtLeWAoOE
-         /jYotdZ22EY9Wx3YEZyNQ39hzETHAbq26xVziGz8ZvNOPqiHq0BvJ9KIXmmfBtSqVFos
-         0BMg==
-X-Gm-Message-State: APt69E0IrDE6LCjNt0bUDQYDCukkGcPW8oJahCGT3vbL3VZtYXdvq/1y
-        b2wATfGvhq7a411tZnCSKKPRJmLfCGc=
-X-Google-Smtp-Source: ADUXVKIofw8TihljlEhYIu3yMaziPnf+9Cn66fy34K07/046n/V700ULpzCCY4VUOwe9tx1EVyBgrw==
-X-Received: by 2002:a5d:4a4d:: with SMTP id v13-v6mr1866441wrs.91.1528836589861;
-        Tue, 12 Jun 2018 13:49:49 -0700 (PDT)
-Received: from dhcp.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id e17-v6sm528446edq.12.2018.06.12.13.49.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Jun 2018 13:49:49 -0700 (PDT)
-From:   Dmitry Safonov <dima@arista.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Dmitry Safonov <dima@arista.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Borislav Petkov <bp@alien8.de>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vasiliy Khoruzhick <vasilykh@arista.com>, x86@kernel.org
-Subject: [RFC] x86/vdso: Align vdso after searching for free area
-Date:   Tue, 12 Jun 2018 21:49:48 +0100
-Message-Id: <20180612204948.4752-1-dima@arista.com>
-X-Mailer: git-send-email 2.13.6
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XbWyH/RJqGwyU7SdARggc8O5trda3Xtkh/som1V+pzw=;
+        b=QhHZWr9uPeE4tN5PbQUwPkZzgvYW9DHHWUSyByc4yBclzyCSTnTqyu8dPTr3ODIJGa
+         HvYJ+94qXh9XB0cwRsxjgoMU9OSAy6q2hyz2vZuTyjFLfKor6zCnbUYeQ8Wjd8C25Kod
+         oUW8qZGXypS1UbKRW/zW6zUV3A1QPyapBaMUCSEG0EG/r+neDLNdGNSrqrCiM2xGgm3D
+         GPOeno38hJsYVnohqm2id4ObGTw8WbkwoIfVue7nEMBNel1dutDi7oJjJL+4KOnMmyhG
+         X+rOOi+vZZsYMwAKQvXVzABUzgqy3jg6A61hUoZyNoIT0EQa/HGIp+SkXduT5emxWOi7
+         T9KQ==
+X-Gm-Message-State: APt69E39OzpO7kuQMUZTFuMvmPAHARxFCVo1KVXqsQoe6OEDze8TIuBC
+        hjSjn2UQOsPevNWQstOwMVHJMwr4JoVNyP3KCC22VQ==
+X-Google-Smtp-Source: ADUXVKLRpOG1IjurSF3GYH8MddPIGzGP63+u+PR7LyiHXyKBlA/cWVnBZEn7REBlSVYmKJapyD9ZoGK8IoUJGH/WhEs=
+X-Received: by 2002:a0c:b892:: with SMTP id y18-v6mr2062010qvf.188.1528836949050;
+ Tue, 12 Jun 2018 13:55:49 -0700 (PDT)
+MIME-Version: 1.0
+References: <cover.1528799892.git.amit.kucheria@linaro.org>
+ <ed6b51a1b08e195968f5423a86e40146279a8807.1528799892.git.amit.kucheria@linaro.org>
+ <20180612194302.GP14924@minitux>
+In-Reply-To: <20180612194302.GP14924@minitux>
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+Date:   Tue, 12 Jun 2018 23:55:37 +0300
+Message-ID: <CAP245DVQw1QwwKUGsB2gF=HrWfv7o0cLrt0wWLJA3jdWdciNnQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] thermal: tsens: Move 8996 get_temp() to common
+ code for reuse
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is errata for AMD family 15h CPUs [1] and since
-commit dfb09f9b7ab03 ("x86, amd: Avoid cache aliasing penalties on AMD
-family 15h") bits [14:12] are being cleared for shared libraries.
-Also per-boot ASLR applies over upper bits by OR directly over the
-address.
+On Tue, Jun 12, 2018 at 10:43 PM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+>
+> On Tue 12 Jun 03:54 PDT 2018, Amit Kucheria wrote:
+> > diff --git a/drivers/thermal/qcom/tsens-8996.c b/drivers/thermal/qcom/tsens-8996.c
+> [..]
+> >  static const struct tsens_ops ops_8996 = {
+> >       .init           = init_common,
+> > -     .get_temp       = get_temp_8996,
+> > +     .get_temp       = get_temp_tsens_v2,
+> >  };
+> >
+> >  const struct tsens_data data_8996 = {
+> > diff --git a/drivers/thermal/qcom/tsens-common.c b/drivers/thermal/qcom/tsens-common.c
+> [..]
+> > +int get_temp_tsens_v2(struct tsens_device *tmdev, int id, int *temp)
+>
+> I like the function name, but it's not really common for tsens, it's
+> just common for tsens v2. Also as patch 4 shows we end up adding a set
+> of essentially empty platform specific files for referencing this
+> function.
 
-As we need special alignment and lower bits values to be set, it makes
-only a little sense to call get_unmapped_area() after calculating the
-address. It also can lead to random crashes if get_unmapped_area()
-actually changes/aligns the address, which we observed on 15h CPU.
-Usually it's not a problem as there isn't many mappings (except possibly
-ld.so, uprobes?) and result address is the same before/after
-get_unmapped_area().
+> I would suggest that you instead rename tsens-8996.c to tsens-v2.c,
+> rename ops_8996 to ops_v2 and either add new tsens_data for each
+> platform or simply rename that too to data_v2 which we point to from
+> tsens_table.
 
-Move align_vdso_addr() after get_unmapped_area() to make sure that
-errata for AMD 15h is always applied.
+I was thinking of tsens-common.c as a library of tsens functions (v1
+and v2). Do you want tsens-common.c to essentially become tsens-v1.c?
+We'll end up with quite a bit of duplicated code in that case.
 
-[1]: https://developer.amd.com/wordpress/media/2012/10/SharedL1InstructionCacheonAMD15hCPU.pdf
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dmitry Safonov <0x7f454c46@gmail.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vasiliy Khoruzhick <vasilykh@arista.com>
-Cc: x86@kernel.org
-Signed-off-by: Dmitry Safonov <dima@arista.com>
----
- arch/x86/entry/vdso/vma.c    | 18 ++++++++++--------
- arch/x86/include/asm/elf.h   |  1 +
- arch/x86/kernel/sys_x86_64.c |  2 +-
- 3 files changed, 12 insertions(+), 9 deletions(-)
+IIUC what you are suggesting, we'll still need to compile in
+tsens-common.c even on v2 platforms.
 
-diff --git a/arch/x86/entry/vdso/vma.c b/arch/x86/entry/vdso/vma.c
-index 5b8b556dbb12..862f0cce3ee6 100644
---- a/arch/x86/entry/vdso/vma.c
-+++ b/arch/x86/entry/vdso/vma.c
-@@ -154,18 +154,26 @@ static int map_vdso(const struct vdso_image *image, unsigned long addr)
- 	struct mm_struct *mm = current->mm;
- 	struct vm_area_struct *vma;
- 	unsigned long text_start;
-+	unsigned long area_size = image->size - image->sym_vvar_start;
- 	int ret = 0;
- 
- 	if (down_write_killable(&mm->mmap_sem))
- 		return -EINTR;
- 
--	addr = get_unmapped_area(NULL, addr,
--				 image->size - image->sym_vvar_start, 0, 0);
-+	/* Find a bigger place for vma then needed - to align vdso later. */
-+	area_size += get_align_mask();
-+	addr = get_unmapped_area(NULL, addr, area_size, 0, 0);
- 	if (IS_ERR_VALUE(addr)) {
- 		ret = addr;
- 		goto up_fail;
- 	}
- 
-+	/*
-+	 * Forcibly align the final address in case we have a hardware
-+	 * issue that requires alignment for performance reasons.
-+	 */
-+	addr = align_vdso_addr(addr);
-+
- 	text_start = addr - image->sym_vvar_start;
- 
- 	/*
-@@ -239,12 +247,6 @@ static unsigned long vdso_addr(unsigned long start, unsigned len)
- 		addr = start;
- 	}
- 
--	/*
--	 * Forcibly align the final address in case we have a hardware
--	 * issue that requires alignment for performance reasons.
--	 */
--	addr = align_vdso_addr(addr);
--
- 	return addr;
- }
- 
-diff --git a/arch/x86/include/asm/elf.h b/arch/x86/include/asm/elf.h
-index 0d157d2a1e2a..88aa49294c9c 100644
---- a/arch/x86/include/asm/elf.h
-+++ b/arch/x86/include/asm/elf.h
-@@ -382,4 +382,5 @@ struct va_alignment {
- 
- extern struct va_alignment va_align;
- extern unsigned long align_vdso_addr(unsigned long);
-+extern unsigned long get_align_mask(void);
- #endif /* _ASM_X86_ELF_H */
-diff --git a/arch/x86/kernel/sys_x86_64.c b/arch/x86/kernel/sys_x86_64.c
-index 6a78d4b36a79..4dd74c6f236d 100644
---- a/arch/x86/kernel/sys_x86_64.c
-+++ b/arch/x86/kernel/sys_x86_64.c
-@@ -27,7 +27,7 @@
- /*
-  * Align a virtual address to avoid aliasing in the I$ on AMD F15h.
-  */
--static unsigned long get_align_mask(void)
-+unsigned long get_align_mask(void)
- {
- 	/* handle 32- and 64-bit case with a single conditional */
- 	if (va_align.flags < 0 || !(va_align.flags & (2 - mmap_is_ia32())))
--- 
-2.13.6
+> I think we should take it once step further and add "qcom,tsens-v2" as a
+> valid compatible in tsens_table and make the dts do:
 
+I like that idea.
+
+>         comaptible = "qcom,msm8996-tsens", "qcom,tsens-v2";
+>
+> and
+>         compatible = "qcom,sdm845-tsens", "qcom,tsens-v2";
+>
+> Regards,
+> Bjorn
