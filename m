@@ -2,200 +2,105 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 41495C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:10:23 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 63DFBC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:10:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E924D208B2
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:10:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1926A208B2
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:10:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ihPJL7+C";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dF4tEPoL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E924D208B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ldeDNnql"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1926A208B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934177AbeFLRKC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 13:10:02 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59220 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932969AbeFLRJ2 (ORCPT
+        id S934396AbeFLRKr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 13:10:47 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:56290 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933076AbeFLRKo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 13:09:28 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 5D71C60861; Tue, 12 Jun 2018 17:09:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528823367;
-        bh=W0+EccRP91tqB+tVSHWCovWQjJTs1jLKHZQeY/9oDhc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ihPJL7+C4JNVDJ415gjfj7x5a8LYUmRdsIE18kkMkuIhwoMbssp+ednrB0rxshKU3
-         ptHd+pIOlIyy0L5GPdYQQ7ypR+WnrboZU2dQ+V9j1HiLam/9yIbpfOnG8WWri/X50E
-         jlVvHTPVyglI4Cn6DuUXx9uZ9nAAWOBKmjZ07TGk=
-Received: from codeaurora.org (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kramasub@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 51AC6607F7;
-        Tue, 12 Jun 2018 17:09:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528823365;
-        bh=W0+EccRP91tqB+tVSHWCovWQjJTs1jLKHZQeY/9oDhc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dF4tEPoLcXk4Z0H3jhW+yHaT2YiZkUp0y40HqeIfhsVm5UVVjuQ0xQXh2qJF2yA1s
-         lx52nrg0RuZSV/J3Tx38ZCcuR7lI+QQGpjY4+jmR3OzEaokKhmWwZ3nlnDAhCf9haH
-         L+pBoHwnCTk7ChOeIzjWy8PjnHzWUeSDStu9nfk0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 51AC6607F7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kramasub@codeaurora.org
-From:   Karthikeyan Ramasubramanian <kramasub@codeaurora.org>
-To:     andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, wsa@the-dreams.de, gregkh@linuxfoundation.org
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-i2c@vger.kernel.org,
-        evgreen@chromium.org, acourbot@chromium.org, swboyd@chromium.org,
-        dianders@chromium.org,
-        Karthikeyan Ramasubramanian <kramasub@codeaurora.org>
-Subject: [PATCH v7 3/4] arm64: dts: sdm845: Add serial console support
-Date:   Tue, 12 Jun 2018 11:09:07 -0600
-Message-Id: <1528823348-30532-4-git-send-email-kramasub@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1528823348-30532-1-git-send-email-kramasub@codeaurora.org>
-References: <1528823348-30532-1-git-send-email-kramasub@codeaurora.org>
+        Tue, 12 Jun 2018 13:10:44 -0400
+Received: by mail-wm0-f67.google.com with SMTP id v16-v6so290885wmh.5;
+        Tue, 12 Jun 2018 10:10:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=TmefNusRW/S8xmQc1tMtHCL8cI/Czl2OomSl7Y/MQdg=;
+        b=ldeDNnqlY2tSxfgAHKPRtrLlJKwdeQtf5Rh59wNzOcqzFYocXBOwgSp8FE6P4frZHU
+         n1qtvcOSEJtblBcqx1O7orfYblbAfc/f71hH2RlgomrWMM/tMF7aXGA8G5FzjN8i1Oe+
+         LU/TchsGjJqffVvMmAOiZky6Dy03AqpDBMQERdfL+Zx1iUNXN5asZ/Slhd/9FT4lICCu
+         7kzW253OSFyVx5NqaiGMcweGl6UT3Xf0V90y0CCEM+oMmpiqladDyZTf/NEtyPt2CAWF
+         oYjSPeS/GBadK8czIXo7uE1EBfLtXdnZcdVdHV1PF7tb8jVPSW2uqNEH/XKsJQlCIZFW
+         dz4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TmefNusRW/S8xmQc1tMtHCL8cI/Czl2OomSl7Y/MQdg=;
+        b=hmX4cDMj3Ksi7IgJl9RsbbLDEm5sXcxP3v3wi5YggcY6JwH4nHcltpca0IdMIRcj3w
+         SB+e6iZ4VEKo6UQvteUnlkJVXy/OExp5NFhP8UBDK1Ps3oqfQuHFNEkJynvTJdJKFXgZ
+         8TAzeD0M9Cg/xj/vGLQw2AS5PLP0XJY/DLxhilYJFcBiOhCgk/CY2DMSJG3xxhXo/x8V
+         z7m/TiPZNBsrrMxeNuj0THwP1JTr29aJGGgVde8g4VOU/7E0WHTf6czDzo+KCbQsHKbZ
+         GgcZOgCIgqxEQjrkXJGo8XMKg19o8KZ97YuODe+ejZho4eaKIdz7kcvO2CBsT1BGflro
+         2wxw==
+X-Gm-Message-State: APt69E05wjkjPXCeL+9h9eD9jWkBro+CBCwPX93QUWmgM5vSLKYx2E15
+        Z154f6aCmyW47l4LQPL7Cxs=
+X-Google-Smtp-Source: ADUXVKLx3OHnevKeJDT8iRW9Z7CqAGgcpMinvWD7PYnHsi0PuAEuYpGqvqNLXq4seR7GQ9i5gfCoNw==
+X-Received: by 2002:a1c:afc3:: with SMTP id y186-v6mr780640wme.87.1528823442814;
+        Tue, 12 Jun 2018 10:10:42 -0700 (PDT)
+Received: from localhost ([185.236.200.248])
+        by smtp.gmail.com with ESMTPSA id g88-v6sm1347470wmc.27.2018.06.12.10.10.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Jun 2018 10:10:42 -0700 (PDT)
+Date:   Tue, 12 Jun 2018 10:10:35 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4.9 00/31] 4.9.108-stable review
+Message-ID: <20180612171035.GA31286@localhost>
+References: <20180612164620.797338191@linuxfoundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180612164620.797338191@linuxfoundation.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rajendra Nayak <rnayak@codeaurora.org>
+On Tue, Jun 12, 2018 at 06:46:03PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.108 release.
+> There are 31 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu Jun 14 16:46:09 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.108-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-Add the qup uart node and geni se instance needed to
-support the serial console on the MTP.
+Merged, compiled with -Werror, and installed on to my OnePlus 6.
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-Signed-off-by: Karthikeyan Ramasubramanian <kramasub@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/sdm845-mtp.dts | 41 +++++++++++++++++++++++++++++++++
- arch/arm64/boot/dts/qcom/sdm845.dtsi    | 39 +++++++++++++++++++++++++++++++
- 2 files changed, 80 insertions(+)
+No initial issues noticed in dmesg or general usage.
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-index 979ab49..17b2fb0 100644
---- a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-+++ b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-@@ -12,4 +12,45 @@
- / {
- 	model = "Qualcomm Technologies, Inc. SDM845 MTP";
- 	compatible = "qcom,sdm845-mtp";
-+
-+	aliases {
-+		serial0 = &uart2;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+};
-+
-+&soc {
-+	geniqup@ac0000 {
-+		status = "okay";
-+
-+		serial@a84000 {
-+			status = "okay";
-+		};
-+	};
-+
-+	pinctrl@3400000 {
-+		qup-uart2-default {
-+			pinconf_tx {
-+				pins = "gpio4";
-+				drive-strength = <2>;
-+				bias-disable;
-+			};
-+
-+			pinconf_rx {
-+				pins = "gpio5";
-+				drive-strength = <2>;
-+				bias-pull-up;
-+			};
-+		};
-+
-+		qup-uart2-sleep {
-+			pinconf {
-+				pins = "gpio4", "gpio5";
-+				bias-pull-down;
-+			};
-+		};
-+	};
- };
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index 32f8561..71801b9 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -6,6 +6,7 @@
-  */
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/qcom,gcc-sdm845.h>
- 
- / {
- 	interrupt-parent = <&intc>;
-@@ -194,6 +195,20 @@
- 			#gpio-cells = <2>;
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
-+
-+			qup_uart2_default: qup-uart2-default {
-+				pinmux {
-+					function = "qup9";
-+					pins = "gpio4", "gpio5";
-+				};
-+			};
-+
-+			qup_uart2_sleep: qup-uart2-sleep {
-+				pinmux {
-+					function = "gpio";
-+					pins = "gpio4", "gpio5";
-+				};
-+			};
- 		};
- 
- 		timer@17c90000 {
-@@ -272,5 +287,29 @@
- 			#interrupt-cells = <4>;
- 			cell-index = <0>;
- 		};
-+
-+		geniqup@ac0000 {
-+			compatible = "qcom,geni-se-qup";
-+			reg = <0xac0000 0x6000>;
-+			clock-names = "m-ahb", "s-ahb";
-+			clocks = <&gcc GCC_QUPV3_WRAP_1_M_AHB_CLK>,
-+				 <&gcc GCC_QUPV3_WRAP_1_S_AHB_CLK>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+			status = "disabled";
-+
-+			uart2: serial@a84000 {
-+				compatible = "qcom,geni-debug-uart";
-+				reg = <0xa84000 0x4000>;
-+				clock-names = "se";
-+				clocks = <&gcc GCC_QUPV3_WRAP1_S1_CLK>;
-+				pinctrl-names = "default", "sleep";
-+				pinctrl-0 = <&qup_uart2_default>;
-+				pinctrl-1 = <&qup_uart2_sleep>;
-+				interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
-+				status = "disabled";
-+			};
-+		};
- 	};
- };
--- 
-Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+Thanks!
+Nathan
