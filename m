@@ -6,48 +6,36 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4E9CFC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 05:10:51 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0835DC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 05:11:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBDC9208B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 05:10:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBDC9208B0
+	by mail.kernel.org (Postfix) with ESMTP id AE410208AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 05:11:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE410208AE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754214AbeFLFKs (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 01:10:48 -0400
-Received: from a.mx.secunet.com ([62.96.220.36]:37494 "EHLO a.mx.secunet.com"
+        id S932336AbeFLFLA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 01:11:00 -0400
+Received: from a.mx.secunet.com ([62.96.220.36]:37516 "EHLO a.mx.secunet.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753958AbeFLFKq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 01:10:46 -0400
+        id S1753890AbeFLFK7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 01:10:59 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by a.mx.secunet.com (Postfix) with ESMTP id 8891E2007F;
-        Tue, 12 Jun 2018 07:10:45 +0200 (CEST)
+        by a.mx.secunet.com (Postfix) with ESMTP id 16DFB2007F;
+        Tue, 12 Jun 2018 07:10:58 +0200 (CEST)
 X-Virus-Scanned: by secunet
 Received: from a.mx.secunet.com ([127.0.0.1])
         by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 9JUo7rOP_Ja8; Tue, 12 Jun 2018 07:10:45 +0200 (CEST)
+        with ESMTP id VAHxgnHUYrKZ; Tue, 12 Jun 2018 07:10:57 +0200 (CEST)
 Received: from mail-essen-01.secunet.de (mail-essen-01.secunet.de [10.53.40.204])
         (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by a.mx.secunet.com (Postfix) with ESMTPS id 0F3CA2006E;
-        Tue, 12 Jun 2018 07:10:45 +0200 (CEST)
+        by a.mx.secunet.com (Postfix) with ESMTPS id 76A682006E;
+        Tue, 12 Jun 2018 07:10:57 +0200 (CEST)
 Received: from [10.182.7.41] (10.182.7.41) by mail-essen-01.secunet.de
  (10.53.40.204) with Microsoft SMTP Server (TLS) id 14.3.399.0; Tue, 12 Jun
- 2018 07:10:44 +0200
-Subject: [PATCH v2 1/2] ALSA: hda: add dock and led support for HP EliteBook
- 830 G5
-To:     Takashi Iwai <tiwai@suse.de>,
-        =?UTF-8?Q?Jer=c3=b3nimo_Borque?= <jeronimo@borque.com.ar>,
-        Hui Wang <hui.wang@canonical.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Florin Tudorache <florin_tudorache@live.com>,
-        Jaroslav Kysela <perex@perex.cz>
-CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
-References: <0cd9e66b-460a-4dc3-cd9c-3b0124b8284c@secunet.com>
- <s5ho9ghbgt4.wl-tiwai@suse.de>
+ 2018 07:10:57 +0200
 From:   Dennis Wassenberg <dennis.wassenberg@secunet.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=dennis.wassenberg@secunet.com; prefer-encrypt=mutual; keydata=
@@ -94,12 +82,20 @@ Autocrypt: addr=dennis.wassenberg@secunet.com; prefer-encrypt=mutual; keydata=
  Lug+u9gbF4UfMW+1EB3JFMyJSmL1CXAt4hlmGlcnjxIf0bT3rq2gXbVdmmBJ10aQ75fajOmM
  YPsSSSBN/R6Xmw==
 Organization: secunet Security Networks
-Message-ID: <524c49c9-b9bf-2f27-e428-fcc65ebbb65b@secunet.com>
-Date:   Tue, 12 Jun 2018 07:10:59 +0200
+To:     Takashi Iwai <tiwai@suse.de>,
+        =?UTF-8?Q?Jer=c3=b3nimo_Borque?= <jeronimo@borque.com.ar>,
+        Hui Wang <hui.wang@canonical.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Florin Tudorache <florin_tudorache@live.com>,
+        Jaroslav Kysela <perex@perex.cz>
+CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 2/2] ALSA: hda: add dock and led support for HP ProBook 640
+ G4
+Message-ID: <0a9dcf10-44ea-7b6c-a952-3ae4944d1f44@secunet.com>
+Date:   Tue, 12 Jun 2018 07:11:11 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <s5ho9ghbgt4.wl-tiwai@suse.de>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: de-DE
 Content-Transfer-Encoding: 8bit
@@ -108,7 +104,7 @@ X-G-Data-MailSecurity-for-Exchange-Error: 0
 X-G-Data-MailSecurity-for-Exchange-Sender: 23
 X-G-Data-MailSecurity-for-Exchange-Server: d65e63f7-5c15-413f-8f63-c0d707471c93
 X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
-X-G-Data-MailSecurity-for-Exchange-Guid: 61283587-96DF-4237-B6CE-593A339FFF4A
+X-G-Data-MailSecurity-for-Exchange-Guid: 0B20DEEA-7BFE-4B03-8E5D-3DF9E7BB7AC3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -116,7 +112,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 This patch adds missing initialisation for HP 2013 UltraSlim Dock
 Line-In/Out PINs and activates keyboard mute/micmute leds
-for HP EliteBook 830 G5
+for HP ProBook 640 G4
 
 Signed-off-by: Dennis Wassenberg <dennis.wassenberg@secunet.com>
 ---
@@ -124,14 +120,14 @@ Signed-off-by: Dennis Wassenberg <dennis.wassenberg@secunet.com>
  1 file changed, 1 insertion(+)
 
 diff --git a/sound/pci/hda/patch_conexant.c b/sound/pci/hda/patch_conexant.c
-index 5b4dbcec6de8..bca71f35b34f 100644
+index bca71f35b34f..ff0c52e98977 100644
 --- a/sound/pci/hda/patch_conexant.c
 +++ b/sound/pci/hda/patch_conexant.c
-@@ -958,6 +958,7 @@ static const struct snd_pci_quirk cxt5066_fixups[] = {
- 	SND_PCI_QUIRK(0x103c, 0x8079, "HP EliteBook 840 G3", CXT_FIXUP_HP_DOCK),
+@@ -959,6 +959,7 @@ static const struct snd_pci_quirk cxt5066_fixups[] = {
  	SND_PCI_QUIRK(0x103c, 0x807C, "HP EliteBook 820 G3", CXT_FIXUP_HP_DOCK),
  	SND_PCI_QUIRK(0x103c, 0x80FD, "HP ProBook 640 G2", CXT_FIXUP_HP_DOCK),
-+	SND_PCI_QUIRK(0x103c, 0x83b3, "HP EliteBook 830 G5", CXT_FIXUP_HP_DOCK),
+ 	SND_PCI_QUIRK(0x103c, 0x83b3, "HP EliteBook 830 G5", CXT_FIXUP_HP_DOCK),
++	SND_PCI_QUIRK(0x103c, 0x83d3, "HP ProBook 640 G4", CXT_FIXUP_HP_DOCK),
  	SND_PCI_QUIRK(0x103c, 0x8174, "HP Spectre x360", CXT_FIXUP_HP_SPECTRE),
  	SND_PCI_QUIRK(0x103c, 0x8115, "HP Z1 Gen3", CXT_FIXUP_HP_GATE_MIC),
  	SND_PCI_QUIRK(0x103c, 0x814f, "HP ZBook 15u G3", CXT_FIXUP_MUTE_LED_GPIO),
