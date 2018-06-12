@@ -3,263 +3,125 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C56B8C004E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 00:18:58 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 08A46C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 00:20:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A18D2089C
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 00:18:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE3DE2089C
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 00:20:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Pseue5oA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A18D2089C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Lh1Q4FgI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE3DE2089C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933916AbeFLASz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 20:18:55 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:42353 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933489AbeFLASx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 20:18:53 -0400
-Received: by mail-qt0-f196.google.com with SMTP id y31-v6so22131770qty.9
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 17:18:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Iq/P/rbEfe8hyigEgjAKodEn+tzLxnORAlI/+6TSCIQ=;
-        b=Pseue5oAQ6TT1IGocO+he+fnUOW1xXClbD/6izRj5xEUcCSwaZOiauw+DCQHI56yma
-         BgT4bXYJ0Hy4Glq+4GV/W+kIRJ7uS41GVt77bzQv61JtP7pDyswmCSrAVrUw0rXBBzFw
-         Zr9LGEewNMa2ebwOF7C8JIziNhgxf1UXrMlbQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Iq/P/rbEfe8hyigEgjAKodEn+tzLxnORAlI/+6TSCIQ=;
-        b=V6RkAsOYHAkhF3jNuC/IKLH3ySDr6pitz1YKqB42preP1Q7iuc6SWQAbKs1vmZGKgV
-         U3mh+jIxYDsu37mh51Qn3NXdtawhG0eTrZ8CC9+hDjn86xQwAcbC5kWKCmghtVAld1lN
-         HaNLSuwYi/CcrCLAog52IdsXKZNh55umUaY9l17GwdhYpE+DzPIi6YS1Vmu0Ri9DmQj+
-         UMel8G1/NNFBchnQedSpgyXWZ49ZPm4ZY2TefBkw1w0LmXFDzjc3JJjbxdSy761WLhrH
-         L/i1jwRTudakfL9h2aQdM8nTF9/ijTrLXho0EYH9Hv4bMuVQ1JiX8vrX0xFOzKl+YLdd
-         MH5g==
-X-Gm-Message-State: APt69E3KgjoS2qm1JCEqbWTRmg6zhrUWR6DV3pLn/LFYZHz0LxXzkJBB
-        bACe/SS7CPpDFkO/5yZTk8fFFg==
-X-Google-Smtp-Source: ADUXVKISyASEMc9AYcDsjeHvFCXBTHWx5btCpIHKkaiu5F1qFjjrEjqpAHxKFUgMdHCKWp9ctNRxlw==
-X-Received: by 2002:aed:359d:: with SMTP id c29-v6mr1363787qte.240.1528762732693;
-        Mon, 11 Jun 2018 17:18:52 -0700 (PDT)
-Received: from [10.136.8.248] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id b38-v6sm4419217qta.96.2018.06.11.17.18.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Jun 2018 17:18:51 -0700 (PDT)
-Subject: Re: [PATCH INTERNAL 2/3] PCI: iproc: Fix up corrupted PAXC root
- complex config registers
-From:   Ray Jui <ray.jui@broadcom.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
-        Ray Jui <rjui@broadcom.com>
-References: <1526577692-21104-1-git-send-email-ray.jui@broadcom.com>
- <1526577692-21104-3-git-send-email-ray.jui@broadcom.com>
- <20180530172733.GN39853@bhelgaas-glaptop.roam.corp.google.com>
- <715d8746-1b68-4342-6258-7d9c1b5035bc@broadcom.com>
-Message-ID: <7e7ce21e-b39d-0d9e-1d75-7d0e2e432e48@broadcom.com>
-Date:   Mon, 11 Jun 2018 17:18:48 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S934208AbeFLAT7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 20:19:59 -0400
+Received: from ozlabs.org ([203.11.71.1]:51323 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934006AbeFLAT6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 20:19:58 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 414VrX5Z78z9ryk;
+        Tue, 12 Jun 2018 10:19:56 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1528762796;
+        bh=clZu0pAJz3yHa+3GInQnifR/oy4a2ywRAh5X8quyFdA=;
+        h=Date:From:To:Cc:Subject:From;
+        b=Lh1Q4FgITd4npdZKnFTf3SJsPsGVJEWq3xAR1YJEo3gIcJqgYDkvLz/r/+vncEO/n
+         R6dluRV5WK+brukDjsPGfTHxQgjk82/CGAUemT/6R+b6QIBP0Q5hcqmiWtUEzskY2N
+         jj7dUcFKViqFyh6JIEwgsEVZY82K8YPLKsG+ERdW05db3eg/L/fqJXYnXWK7IgLbS1
+         UUJ7GwdqqG7OmVfbet2/mNTs33mv4GNHKCaT2ElcBVF0ZlMiwxUZOAGuTDl8HQeL8n
+         ihh1jK/sPUTTWpzOvXC0gmCpKeeWes1cq8lykBSpPShTCqg3W3g9x6+871ZGNSKbix
+         Y0UQOlt5vA/Jw==
+Date:   Tue, 12 Jun 2018 10:19:54 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Samuel Ortiz <sameo@linux.intel.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Amit Pundir <amit.pundir@linaro.org>
+Subject: linux-next: build warning after merge of the nfc-next tree
+Message-ID: <20180612101954.63eb9e60@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <715d8746-1b68-4342-6258-7d9c1b5035bc@broadcom.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_//e3dZxhtjRKoFni_fnm7mO+"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
+--Sig_//e3dZxhtjRKoFni_fnm7mO+
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 5/30/2018 10:43 AM, Ray Jui wrote:
-> Hi Bjorn,
-> 
-> On 5/30/2018 10:27 AM, Bjorn Helgaas wrote:
->> On Thu, May 17, 2018 at 10:21:31AM -0700, Ray Jui wrote:
->>> On certain versions of Broadcom PAXC based root complexes, certain
->>> regions of the configuration space are corrupted. As a result, it
->>> prevents the Linux PCIe stack from traversing the linked list of the
->>> capability registers completely and therefore the root complex is
->>> not advertised as "PCIe capable". This prevents the correct PCIe RID
->>> from being parsed in the kernel PCIe stack. A correct RID is required
->>> for mapping to a stream ID from the SMMU or the device ID from the
->>> GICv3 ITS
->>>
->>> This patch fixes up the issue by manually populating the related
->>> PCIe capabilities based on readings from the PCIe capability structure
->>>
->>> Signed-off-by: Ray Jui <rjui@broadcom.com>
->>> Reviewed-by: Anup Patel <anup.patel@broadcom.com>
->>> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
->>> ---
->>>   drivers/pci/quirks.c | 95 
->>> ++++++++++++++++++++++++++++++++++++++++++++++++++++
->>>   1 file changed, 95 insertions(+)
->>>
->>> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
->>> index 47dfea0..0cdbd0a 100644
->>> --- a/drivers/pci/quirks.c
->>> +++ b/drivers/pci/quirks.c
->>> @@ -2198,6 +2198,101 @@ 
->>> DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0x16f0, 
->>> quirk_paxc_bridge);
->>>   DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd750, 
->>> quirk_paxc_bridge);
->>>   DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd802, 
->>> quirk_paxc_bridge);
->>>   DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd804, 
->>> quirk_paxc_bridge);
->>> +
->>> +/*
->>> + * The PCI capabilities list for certain revisions of Broadcom PAXC 
->>> root
->>> + * complexes is incorrectly terminated due to corrupted 
->>> configuration space
->>> + * registers in the range of 0x50 - 0x5f
->>> + *
->>> + * As a result, the capability list becomes broken and prevent 
->>> standard PCI
->>> + * stack from being able to traverse to the PCIe capability structure
->>> + */
->>> +static void quirk_paxc_pcie_capability(struct pci_dev *pdev)
->>> +{
->>> +    int pos, i = 0;
->>> +    u8 next_cap;
->>> +    u16 reg16, *cap;
->>> +    struct pci_cap_saved_state *state;
->>> +
->>> +    /* bail out if PCIe capability can be found */
->>> +    if (pdev->pcie_cap || pci_find_capability(pdev, PCI_CAP_ID_EXP))
->>> +        return;
->>> +
->>> +    /* locate the power management capability */
->>> +    pos = pci_find_capability(pdev, PCI_CAP_ID_PM);
->>> +    if (!pos)
->>> +        return;
->>> +
->>> +    /* bail out if the next capability pointer is not 0x50/0x58 */
->>> +    pci_read_config_byte(pdev, pos + 1, &next_cap);
->>> +    if (next_cap != 0x50 && next_cap != 0x58)
->>> +        return;
->>> +
->>> +    /* bail out if we do not terminate at 0x50/0x58 */
->>> +    pos = next_cap;
->>> +    pci_read_config_byte(pdev, pos + 1, &next_cap);
->>> +    if (next_cap != 0x00)
->>> +        return;
->>> +
->>> +    /*
->>> +     * On these buggy HW, PCIe capability structure is expected to 
->>> be at
->>> +     * 0xac and should terminate the list
->>> +     *
->>> +     * Borrow the similar logic from theIntel DH895xCC VFs fixup to 
->>> save
->>> +     * the PCIe capability list
->>> +     */
->>> +    pos = 0xac;
->>> +    pci_read_config_word(pdev, pos, &reg16);
->>> +    if (reg16 == (0x0000 | PCI_CAP_ID_EXP)) {
->>> +        u32 status;
->>> +
->>> +#ifndef PCI_EXP_SAVE_REGS
->>> +#define PCI_EXP_SAVE_REGS     7
->>> +#endif
->>> +        int size = PCI_EXP_SAVE_REGS * sizeof(u16);
->>> +
->>> +        pdev->pcie_cap = pos;
->>> +        pci_read_config_word(pdev, pos + PCI_EXP_FLAGS, &reg16);
->>> +        pdev->pcie_flags_reg = reg16;
->>> +        pci_read_config_word(pdev, pos + PCI_EXP_DEVCAP, &reg16);
->>> +        pdev->pcie_mpss = reg16 & PCI_EXP_DEVCAP_PAYLOAD;
->>
->> Is there any way you can fix this in iproc_pcie_config_read() instead,
->> by making it notice when we're reading a corrupted part of config
->> space, and then returning the correct data instead?  Is it just the
->> next capability pointer that's corrupted?
-> 
-> Let me look into that and I'll get back.
-> 
-> Thanks,
-> 
-> Ray
-> 
->>
->> If you could fix it in the config accessor, lspci would automatically
->> show all the correct data (I think lspci will still show the wrong
->> data with this patch).
->>
+Hi Samuel,
 
-I managed to get this fixed within iproc_pcie_config_read(). By doing it 
-this way, as you suggested, now lspci and dump of 
-/sys/bus/pci/devices/xxx:yyy:zzz.w all show correct data.
+After merging the nfc-next tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-I'll send out v2 of the patch series with the fix.
+drivers/nfc/fdp/fdp.c: In function 'fdp_nci_open':
+drivers/nfc/fdp/fdp.c:250:17: warning: unused variable 'dev' [-Wunused-vari=
+able]
+  struct device *dev =3D &info->phy->i2c_dev->dev;
+                 ^~~
+drivers/nfc/fdp/fdp.c: In function 'fdp_nci_close':
+drivers/nfc/fdp/fdp.c:260:17: warning: unused variable 'dev' [-Wunused-vari=
+able]
+  struct device *dev =3D &info->phy->i2c_dev->dev;
+                 ^~~
+drivers/nfc/fdp/fdp.c: In function 'fdp_nci_send':
+drivers/nfc/fdp/fdp.c:268:17: warning: unused variable 'dev' [-Wunused-vari=
+able]
+  struct device *dev =3D &info->phy->i2c_dev->dev;
+                 ^~~
+drivers/nfc/fdp/fdp.c: In function 'fdp_nci_recv_frame':
+drivers/nfc/fdp/fdp.c:279:17: warning: unused variable 'dev' [-Wunused-vari=
+able]
+  struct device *dev =3D &info->phy->i2c_dev->dev;
+                 ^~~
+drivers/nfc/fdp/fdp.c: In function 'fdp_nci_core_reset_ntf_packet':
+drivers/nfc/fdp/fdp.c:602:17: warning: unused variable 'dev' [-Wunused-vari=
+able]
+  struct device *dev =3D &info->phy->i2c_dev->dev;
+                 ^~~
+drivers/nfc/fdp/fdp.c: In function 'fdp_nci_prop_patch_ntf_packet':
+drivers/nfc/fdp/fdp.c:614:17: warning: unused variable 'dev' [-Wunused-vari=
+able]
+  struct device *dev =3D &info->phy->i2c_dev->dev;
+                 ^~~
+drivers/nfc/fdp/fdp.c: In function 'fdp_nci_remove':
+drivers/nfc/fdp/fdp.c:789:17: warning: unused variable 'dev' [-Wunused-vari=
+able]
+  struct device *dev =3D &info->phy->i2c_dev->dev;
+                 ^~~
 
-Thanks!
+Introduced by commit
 
-Ray
+  7579d009c4a1 ("NFC: fdp: Remove __func__ from dev_dbg()")
 
+--=20
+Cheers,
+Stephen Rothwell
 
->> The quirk seems like a maintenance issue because anything that calls
->>
->>    pci_find_capability(pdev, PCI_CAP_ID_EXP)
->>
->> will get the wrong answer.
->>
->>> +
->>> +        pdev->cfg_size = PCI_CFG_SPACE_EXP_SIZE;
->>> +        if (pci_read_config_dword(pdev, PCI_CFG_SPACE_SIZE, &status) !=
->>> +            PCIBIOS_SUCCESSFUL || (status == 0xffffffff))
->>> +            pdev->cfg_size = PCI_CFG_SPACE_SIZE;
->>> +
->>> +        if (pci_find_saved_cap(pdev, PCI_CAP_ID_EXP))
->>> +            return;
->>> +
->>> +        state = kzalloc(sizeof(*state) + size, GFP_KERNEL);
->>> +        if (!state)
->>> +            return;
->>> +
->>> +        state->cap.cap_nr = PCI_CAP_ID_EXP;
->>> +        state->cap.cap_extended = 0;
->>> +        state->cap.size = size;
->>> +        cap = (u16 *)&state->cap.data[0];
->>> +        pcie_capability_read_word(pdev, PCI_EXP_DEVCTL, &cap[i++]);
->>> +        pcie_capability_read_word(pdev, PCI_EXP_LNKCTL, &cap[i++]);
->>> +        pcie_capability_read_word(pdev, PCI_EXP_SLTCTL, &cap[i++]);
->>> +        pcie_capability_read_word(pdev, PCI_EXP_RTCTL,  &cap[i++]);
->>> +        pcie_capability_read_word(pdev, PCI_EXP_DEVCTL2, &cap[i++]);
->>> +        pcie_capability_read_word(pdev, PCI_EXP_LNKCTL2, &cap[i++]);
->>> +        pcie_capability_read_word(pdev, PCI_EXP_SLTCTL2, &cap[i++]);
->>> +        hlist_add_head(&state->next, &pdev->saved_cap_space);
->>> +    }
->>> +}
->>> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 
->>> PCI_DEVICE_ID_NX2_57810,
->>> +            quirk_paxc_pcie_capability);
->>> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0x16cd,
->>> +            quirk_paxc_pcie_capability);
->>> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0x16f0,
->>> +            quirk_paxc_pcie_capability);
->>> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd802,
->>> +            quirk_paxc_pcie_capability);
->>> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd804,
->>> +            quirk_paxc_pcie_capability);
->>>   #endif
->>>   /* Originally in EDAC sources for i82875P:
->>> -- 
->>> 2.1.4
->>>
+--Sig_//e3dZxhtjRKoFni_fnm7mO+
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsfEaoACgkQAVBC80lX
+0GxXzwf/V+PcEUtg5JzbR3IKI9xp0HjSRSb9DgjrKtLVtK0hd6ExUtu5G2LUjyR9
+EBvf3zxOdHqMP8s9WU6GYrrf555LIYKbgPdubuZaf7iYuy1y6/7xOHazXR0DRGYA
+KZ9FuDTgzGoQXcXHblSdB3DThIDfPZNpFfVVryn3pwTrjsGTZGTnem0Y5kMpohVe
+hrf+JB+uP6EKzv1VgvQ9nf5lm20blHJaXbDQFi76M6QmP14v6jqeVkBwd/rpOQeF
+w53fzcEHzYJogdH5dP+zXi+lwk14rx2z2lt1xzD+ouI6/8deecxYBanrEmXpd5ON
+0gi5mORQN8yh2Yrm8p1Rg4HELQoszg==
+=XmbC
+-----END PGP SIGNATURE-----
+
+--Sig_//e3dZxhtjRKoFni_fnm7mO+--
