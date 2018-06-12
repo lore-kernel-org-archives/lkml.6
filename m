@@ -2,204 +2,295 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 73D83C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:51:36 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D155DC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:52:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 132A3208B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:51:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B3BE208B0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:52:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="JeyKewZP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 132A3208B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DBYU+EEh";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bKsI6PPp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B3BE208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933785AbeFLIvc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 04:51:32 -0400
-Received: from mail-eopbgr00089.outbound.protection.outlook.com ([40.107.0.89]:10336
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933363AbeFLIv2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 04:51:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vOpJzMcmU2PQ7vTwJF6kBC7uMcTw6i3g/8X3MpJr6m0=;
- b=JeyKewZP/Ju/w8Hyf5kP4DwXCBPH3FhujE5puWS1quhr2poXxoozmBPVuFX8BUiO7SgPhxcjH5AhcgfT3Jh4dliMgh4HE3+7t7amXg4wXiVnFhl7VQgVBncS8XKBDgCwBil2NjOM8W/ALzqsIDMlqwBibep9jQOjTMJwGHeBwvo=
-Received: from DB6PR0402MB2838.eurprd04.prod.outlook.com (10.172.247.10) by
- DB6PR0402MB2838.eurprd04.prod.outlook.com (10.172.247.10) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.863.14; Tue, 12 Jun 2018 08:51:25 +0000
-Received: from DB6PR0402MB2838.eurprd04.prod.outlook.com
- ([fe80::49a5:1040:801d:2b97]) by DB6PR0402MB2838.eurprd04.prod.outlook.com
- ([fe80::49a5:1040:801d:2b97%2]) with mapi id 15.20.0863.010; Tue, 12 Jun 2018
- 08:51:25 +0000
-From:   Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-CC:     "richard@nod.at" <richard@nod.at>,
-        Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>,
-        Han Xu <han.xu@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        Frieder Schrempf <frieder.schrempf@exceet.de>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        David Wolfe <david.wolfe@nxp.com>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>
-Subject: RE: [PATCH 03/11] spi: Add a driver for the Freescale/NXP QuadSPI
- controller
-Thread-Topic: [PATCH 03/11] spi: Add a driver for the Freescale/NXP QuadSPI
- controller
-Thread-Index: AQHT+BiB2hXNm2lXyUydyOG4FdlBjqRWHnBAgABANgCABEvZ8IAAFd0AgAAehWCAAAtnAIAAAPSwgAFUQ+CAAAoIAIAAGBOg
-Date:   Tue, 12 Jun 2018 08:51:25 +0000
-Message-ID: <DB6PR0402MB28387FE79F2742C9BEBD4037997F0@DB6PR0402MB2838.eurprd04.prod.outlook.com>
-References: <1527686082-15142-1-git-send-email-frieder.schrempf@exceet.de>
-        <1527686082-15142-4-git-send-email-frieder.schrempf@exceet.de>
-        <DB6PR0402MB283845A1A98672FE63C89550997B0@DB6PR0402MB2838.eurprd04.prod.outlook.com>
-        <20180608145130.09f979f9@bbrezillon>
-        <DB6PR0402MB2838D514CF38AC5E6C004E8499780@DB6PR0402MB2838.eurprd04.prod.outlook.com>
-        <20180611094616.5c8f82cf@bbrezillon>
-        <DB6PR0402MB283825171DF93AD3C8590DD799780@DB6PR0402MB2838.eurprd04.prod.outlook.com>
-        <20180611121618.40f4b609@bbrezillon>
-        <DB6PR0402MB28388D9DEB86629BB58DD5E499780@DB6PR0402MB2838.eurprd04.prod.outlook.com>
-        <DB6PR0402MB2838563F1BA71A9A21ABBE01997F0@DB6PR0402MB2838.eurprd04.prod.outlook.com>
- <20180612091328.67734adb@bbrezillon>
-In-Reply-To: <20180612091328.67734adb@bbrezillon>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [14.142.187.166]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB6PR0402MB2838;7:fl7CoWOcI20ajpaySlGoZ9TDrh+Y7iRZcIQq9AJy+5nggGOl/5eCjBTXxPM4Vu/CDk2UfS0TRrMX3Dj+jdD9APsHNfH2gzhNkFhfgQxlh8OuZDgDcW4KKxAK+H9bxLZojRn9YJIK2sbMrVNCPPyrZ3ivQ55rKonTkjQfuCH5gwTw7gZLGwvzaiSuXbgCjfPuV6cQTl9BPwGRl3b3VQT/xAMAt1aw1iB1td1DhmIJx0FGUEXwIx3tUO1RCBzdCETw
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DB6PR0402MB2838;
-x-ms-traffictypediagnostic: DB6PR0402MB2838:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yogeshnarayan.gaur@nxp.com; 
-x-microsoft-antispam-prvs: <DB6PR0402MB2838016E1C90968D822DAE5B997F0@DB6PR0402MB2838.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(185117386973197)(85827821059158)(258649278758335);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:DB6PR0402MB2838;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0402MB2838;
-x-forefront-prvs: 07013D7479
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(376002)(346002)(39380400002)(366004)(13464003)(189003)(199004)(81156014)(81166006)(3280700002)(5660300001)(3660700001)(6916009)(8676002)(7416002)(8936002)(2906002)(229853002)(478600001)(14454004)(55016002)(9686003)(93886005)(316002)(6116002)(3846002)(99286004)(54906003)(33656002)(6436002)(97736004)(105586002)(86362001)(74316002)(106356001)(575784001)(26005)(4326008)(186003)(7736002)(39060400002)(68736007)(11346002)(305945005)(446003)(7696005)(6246003)(102836004)(5250100002)(25786009)(6506007)(59450400001)(76176011)(53546011)(55236004)(66066001)(476003)(53936002)(2900100001)(486006);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0402MB2838;H:DB6PR0402MB2838.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: EVHu6+0y330AiRsCYRVScz4bCKDVha4gdySLeOpQYLm10WgjusGa0vJW4NvYLdzsQ0MvTfTls8vmy7qtn6rdEZtFG299zEJ6woh1VPB/TP1aMs3faqQcLRUnVGao5XabbQJr3bHJbq0UVIV6/avSrlz/7tZWfQTnmU6FwMcMk0rF4iqlUz0m8ewxO8oaqbBF
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S933907AbeFLIwM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 04:52:12 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:60018 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933817AbeFLIwJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 04:52:09 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id CC4A7607E7; Tue, 12 Jun 2018 08:52:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528793528;
+        bh=sIHZzJPhncAHnBYV5VrveZetBQvZAkSIxYx9tUl1q4U=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=DBYU+EEhPGJa16nKlZgd1DlPgo8PzuXxY+YSAtt9sCfb96KsAY8IRIh+AF1/Cs/C4
+         9s3/u5kAJMpniEielh3quPXICVeEJMF00MCTpAtJM71MnQ0V/Oqv3iPeCWHr/GspFx
+         MZgRPLWEtMMv0OAkFtZR2jnUwg7Y92DQoU/ylZMc=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id C4CF1601C3;
+        Tue, 12 Jun 2018 08:52:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528793527;
+        bh=sIHZzJPhncAHnBYV5VrveZetBQvZAkSIxYx9tUl1q4U=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=bKsI6PPpNYqOa9zwLOAhr3OlKfOegVfGEHEB8+3EYI2F/TBTvRR5JpEmPykyeTfjh
+         iszq9jaO8eUaS7N+unB9IEwwM6xpAV1gQwSkAMwtKC2T5ASlhoduP/LqiHyBa+imUn
+         q9wl1Xc9uOUhonOhUInlytczBEnd6vLErBS/UJ+M=
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 14fb666a-db9b-466c-b7a1-08d5d041ae47
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 14fb666a-db9b-466c-b7a1-08d5d041ae47
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jun 2018 08:51:25.7555
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0402MB2838
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 12 Jun 2018 14:22:07 +0530
+From:   poza@codeaurora.org
+To:     Ray Jui <ray.jui@broadcom.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-pci-owner@vger.kernel.org
+Subject: Re: [PATCH 2/6] PCI: iproc: Add INTx support with better modeling
+In-Reply-To: <1527631130-20045-3-git-send-email-ray.jui@broadcom.com>
+References: <1527631130-20045-1-git-send-email-ray.jui@broadcom.com>
+ <1527631130-20045-3-git-send-email-ray.jui@broadcom.com>
+Message-ID: <3ecc33ebe3db1f010f5c8938dfb87677@codeaurora.org>
+X-Sender: poza@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+On 2018-05-30 03:28, Ray Jui wrote:
+> Add PCIe legacy interrupt INTx support to the iProc PCIe driver by
+> modeling it with its own IRQ domain. All 4 interrupts INTA, INTB, INTC,
+> INTD share the same interrupt line connected to the GIC in the system,
+> while the status of each INTx can be obtained through the INTX CSR
+> register
+> 
+> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+> ---
+>  drivers/pci/host/pcie-iproc-platform.c |  2 +
+>  drivers/pci/host/pcie-iproc.c          | 95 
+> +++++++++++++++++++++++++++++++++-
+>  drivers/pci/host/pcie-iproc.h          |  6 +++
+>  3 files changed, 101 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/host/pcie-iproc-platform.c
+> b/drivers/pci/host/pcie-iproc-platform.c
+> index e764a2a..7a51e6c 100644
+> --- a/drivers/pci/host/pcie-iproc-platform.c
+> +++ b/drivers/pci/host/pcie-iproc-platform.c
+> @@ -70,6 +70,8 @@ static int iproc_pcie_pltfm_probe(struct
+> platform_device *pdev)
+>  	}
+>  	pcie->base_addr = reg.start;
+> 
+> +	pcie->irq = platform_get_irq(pdev, 0);
+> +
+>  	if (of_property_read_bool(np, "brcm,pcie-ob")) {
+>  		u32 val;
+> 
+> diff --git a/drivers/pci/host/pcie-iproc.c 
+> b/drivers/pci/host/pcie-iproc.c
+> index 14f374d..0bd2c14 100644
+> --- a/drivers/pci/host/pcie-iproc.c
+> +++ b/drivers/pci/host/pcie-iproc.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/delay.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/irqchip/arm-gic-v3.h>
+> +#include <linux/irqchip/chained_irq.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/of_address.h>
+>  #include <linux/of_pci.h>
+> @@ -264,6 +265,7 @@ enum iproc_pcie_reg {
+> 
+>  	/* enable INTx */
+>  	IPROC_PCIE_INTX_EN,
+> +	IPROC_PCIE_INTX_CSR,
+> 
+>  	/* outbound address mapping */
+>  	IPROC_PCIE_OARR0,
+> @@ -305,6 +307,7 @@ static const u16 iproc_pcie_reg_paxb_bcma[] = {
+>  	[IPROC_PCIE_CFG_ADDR]		= 0x1f8,
+>  	[IPROC_PCIE_CFG_DATA]		= 0x1fc,
+>  	[IPROC_PCIE_INTX_EN]		= 0x330,
+> +	[IPROC_PCIE_INTX_CSR]		= 0x334,
+>  	[IPROC_PCIE_LINK_STATUS]	= 0xf0c,
+>  };
+> 
+> @@ -316,6 +319,7 @@ static const u16 iproc_pcie_reg_paxb[] = {
+>  	[IPROC_PCIE_CFG_ADDR]		= 0x1f8,
+>  	[IPROC_PCIE_CFG_DATA]		= 0x1fc,
+>  	[IPROC_PCIE_INTX_EN]		= 0x330,
+> +	[IPROC_PCIE_INTX_CSR]		= 0x334,
+>  	[IPROC_PCIE_OARR0]		= 0xd20,
+>  	[IPROC_PCIE_OMAP0]		= 0xd40,
+>  	[IPROC_PCIE_OARR1]		= 0xd28,
+> @@ -332,6 +336,7 @@ static const u16 iproc_pcie_reg_paxb_v2[] = {
+>  	[IPROC_PCIE_CFG_ADDR]		= 0x1f8,
+>  	[IPROC_PCIE_CFG_DATA]		= 0x1fc,
+>  	[IPROC_PCIE_INTX_EN]		= 0x330,
+> +	[IPROC_PCIE_INTX_CSR]		= 0x334,
+>  	[IPROC_PCIE_OARR0]		= 0xd20,
+>  	[IPROC_PCIE_OMAP0]		= 0xd40,
+>  	[IPROC_PCIE_OARR1]		= 0xd28,
+> @@ -782,9 +787,90 @@ static int iproc_pcie_check_link(struct iproc_pcie 
+> *pcie)
+>  	return link_is_active ? 0 : -ENODEV;
+>  }
+> 
+> -static void iproc_pcie_enable(struct iproc_pcie *pcie)
+> +static int iproc_pcie_intx_map(struct irq_domain *domain, unsigned int 
+> irq,
+> +			       irq_hw_number_t hwirq)
+>  {
+> +	irq_set_chip_and_handler(irq, &dummy_irq_chip, handle_simple_irq);
+> +	irq_set_chip_data(irq, domain->host_data);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct irq_domain_ops intx_domain_ops = {
+> +	.map = iproc_pcie_intx_map,
+> +};
+> +
+> +static void iproc_pcie_isr(struct irq_desc *desc)
+> +{
+> +	struct irq_chip *chip = irq_desc_get_chip(desc);
+> +	struct iproc_pcie *pcie;
+> +	struct device *dev;
+> +	unsigned long status;
+> +	u32 bit, virq;
+> +
+> +	chained_irq_enter(chip, desc);
+> +	pcie = irq_desc_get_handler_data(desc);
+> +	dev = pcie->dev;
+> +
+> +	/* go through INTx A, B, C, D until all interrupts are handled */
+> +	while ((status = iproc_pcie_read_reg(pcie, IPROC_PCIE_INTX_CSR) &
+> +		SYS_RC_INTX_MASK) != 0) {
+> +		for_each_set_bit(bit, &status, PCI_NUM_INTX) {
+> +			virq = irq_find_mapping(pcie->irq_domain, bit + 1);
+> +			if (virq)
+> +				generic_handle_irq(virq);
+> +			else
+> +				dev_err(dev, "unexpected INTx%u\n", bit);
+> +		}
+> +	}
+> +
 
------Original Message-----
-From: Boris Brezillon [mailto:boris.brezillon@bootlin.com]=20
-Sent: Tuesday, June 12, 2018 12:43 PM
-To: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-Cc: richard@nod.at; Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>; Han Xu=
- <han.xu@nxp.com>; linux-kernel@vger.kernel.org; linux-spi@vger.kernel.org;=
- marek.vasut@gmail.com; Frieder Schrempf <frieder.schrempf@exceet.de>; broo=
-nie@kernel.org; linux-mtd@lists.infradead.org; miquel.raynal@bootlin.com; F=
-abio Estevam <fabio.estevam@nxp.com>; David Wolfe <david.wolfe@nxp.com>; co=
-mputersforpeace@gmail.com; dwmw2@infradead.org
-Subject: Re: [PATCH 03/11] spi: Add a driver for the Freescale/NXP QuadSPI =
-controller
+Are these level or edge interrupts ? although I see DT says: 
+IRQ_TYPE_NONE
+do you not need to clear interrupt status bits in IPROC_PCIE_INTX_CSR ?
 
-On Tue, 12 Jun 2018 06:42:42 +0000
-Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
-
-> I have tried JFFS2 mounting with smaller partition size but still getting=
- failure.
-> For partition size equal or less than 1MB, getting errors as
->     [   25.044930] jffs2: Too few erase blocks (4)
-> Thus, need to have size more than 1MB.
->=20
-> For 2MB partition size getting error message from jffs2_scan_eraseblock()=
-.
->     root@ls1012ardb:~# cat /proc/mtd
->     dev:    size   erasesize  name
->     mtd0: 04000000 00040000 "20c0000.quadspi-0"
->     mtd1: 00500000 00040000 "rcw"
->     mtd2: 00a00000 00040000 "test"
->     mtd3: 00200000 00040000 "rootfs"
->     root@ls1012ardb:~#  mkdir /media/ram ; flash_eraseall /dev/mtd3
->     flash_eraseall has been replaced by `flash_erase <mtddev> 0 0`; pleas=
-e use it
->     Erasing 256 Kibyte @ 1c0000 -- 100 % complete
->     root@ls1012ardb:~# mount -t jffs2 /dev/mtdblock3 /media/ram/
->     [   26.380989] jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 n=
-ot found at 0x00000000: 0x0dd0 instead
->     [   26.390509] jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 n=
-ot found at 0x0000004c: 0x7366 instead
->     [   26.399999] jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 n=
-ot found at 0x00000050: 0x736c instead
-
-That's weird. Can you tell me on which platform you're testing?
-lsxxx or vf610? Can you dump the NOR after the erase to make sure the memor=
-y is actually erased (filled with 0xff)?
-
-I am working on lsxxx platform. With further debugging, I found that my era=
-se operation for second flash device is not working properly.
-Need to have debugging for this in Frieder Patch.
-
-When I have created multiple partition for First flash device, then JFFS2 m=
-ounting and booting of Linux kernel from rootfstype=3Djffs2 is successful.
-    root@ls1012ardb:~# cat /proc/mtd
-    dev:    size   erasesize  name
-    mtd0: 00500000 00040000 "rcw"
-    mtd1: 00a00000 00040000 "test"
-    mtd2: 02e00000 00040000 "rootfs"
-    mtd3: 04000000 00040000 "20c0000.quadspi-1"
-In above list, for MTD2 partition, able to perform JFFS2 mounting.
-
-Below is logs of erase for both flashes:
-    root@ls1012ardb:~# cat /proc/mtd
-    dev:    size   erasesize  name
-    mtd0: 04000000 00040000 "20c0000.quadspi-0"
-    mtd1: 04000000 00040000 "20c0000.quadspi-1"
-    root@ls1012ardb:~# mtd_debug erase /dev/mtd0 0x1000000 0x2000000
-    Erased 33554432 bytes from address 0x01000000 in flash
-    root@ls1012ardb:~#
-    root@ls1012ardb:~# mtd_debug read /dev/mtd0 0x1000000 0xa00000 rp
-    Copied 10485760 bytes from address 0x01000000 in flash to rp
-    root@ls1012ardb:~# hexdump rp
-    0000000 ffff ffff ffff ffff ffff ffff ffff ffff
-    *
-    0a00000
-    root@ls1012ardb:~#
-    root@ls1012ardb:~# mtd_debug erase /dev/mtd1 0x1000000 0x2000000
-     [   25.023027] random: crng init done
-    Erased 33554432 bytes from address 0x01000000 in flash
-    root@ls1012ardb:~# mtd_debug read /dev/mtd1 0x1000000 0xa00000 rp
-    Copied 10485760 bytes from address 0x01000000 in flash to rp
-    root@ls1012ardb:~#
-    root@ls1012ardb:~# hexdump rp
-    0000000 1985 2003 000c 0000 b0b1 e41e ffff ffff
-    0000010 ffff ffff ffff ffff ffff ffff ffff ffff
-    *
-    0040000 1985 2003 000c 0000 b0b1 e41e ffff ffff
-    0040010 ffff ffff ffff ffff ffff ffff ffff ffff
-
---
-Yogesh Gaur
+> +	chained_irq_exit(chip, desc);
+> +}
+> +
+> +static int iproc_pcie_intx_enable(struct iproc_pcie *pcie)
+> +{
+> +	struct device *dev = pcie->dev;
+> +	struct device_node *node = dev->of_node;
+> +	int ret;
+> +
+>  	iproc_pcie_write_reg(pcie, IPROC_PCIE_INTX_EN, SYS_RC_INTX_MASK);
+> +
+> +	/*
+> +	 * BCMA devices do not map INTx the same way as platform devices. All
+> +	 * BCMA needs is the above code to enable INTx
+> +	 */
+> +	if (pcie->irq <= 0)
+> +		return 0;
+> +
+> +	/* set IRQ handler */
+> +	irq_set_chained_handler_and_data(pcie->irq, iproc_pcie_isr, pcie);
+> +
+> +	/* add IRQ domain for INTx */
+> +	pcie->irq_domain = irq_domain_add_linear(node, PCI_NUM_INTX + 1,
+> +						 &intx_domain_ops, pcie);
+> +	if (!pcie->irq_domain) {
+> +		dev_err(dev, "failed to add INTx IRQ domain\n");
+> +		ret = -ENOMEM;
+> +		goto err_rm_handler_data;
+> +	}
+> +
+> +	return 0;
+> +
+> +err_rm_handler_data:
+> +	irq_set_chained_handler_and_data(pcie->irq, NULL, NULL);
+> +
+> +	return ret;
+> +}
+> +
+> +static void iproc_pcie_intx_disable(struct iproc_pcie *pcie)
+> +{
+> +	iproc_pcie_write_reg(pcie, IPROC_PCIE_INTX_EN, 0x0);
+> +
+> +	if (pcie->irq <= 0)
+> +		return;
+> +
+> +	irq_domain_remove(pcie->irq_domain);
+> +	irq_set_chained_handler_and_data(pcie->irq, NULL, NULL);
+>  }
+> 
+>  static inline bool iproc_pcie_ob_is_valid(struct iproc_pcie *pcie,
+> @@ -1410,7 +1496,11 @@ int iproc_pcie_setup(struct iproc_pcie *pcie,
+> struct list_head *res)
+>  		goto err_power_off_phy;
+>  	}
+> 
+> -	iproc_pcie_enable(pcie);
+> +	ret = iproc_pcie_intx_enable(pcie);
+> +	if (ret) {
+> +		dev_err(dev, "failed to enable INTx\n");
+> +		goto err_power_off_phy;
+> +	}
+> 
+>  	if (IS_ENABLED(CONFIG_PCI_MSI))
+>  		if (iproc_pcie_msi_enable(pcie))
+> @@ -1455,6 +1545,7 @@ int iproc_pcie_remove(struct iproc_pcie *pcie)
+>  	pci_remove_root_bus(pcie->root_bus);
+> 
+>  	iproc_pcie_msi_disable(pcie);
+> +	iproc_pcie_intx_disable(pcie);
+> 
+>  	phy_power_off(pcie->phy);
+>  	phy_exit(pcie->phy);
+> diff --git a/drivers/pci/host/pcie-iproc.h 
+> b/drivers/pci/host/pcie-iproc.h
+> index 67081cb..cbcaf9d 100644
+> --- a/drivers/pci/host/pcie-iproc.h
+> +++ b/drivers/pci/host/pcie-iproc.h
+> @@ -72,6 +72,9 @@ struct iproc_msi;
+>   * @ib: inbound mapping related parameters
+>   * @ib_map: outbound mapping region related parameters
+>   *
+> + * @irq: interrupt line wired to the generic GIC for INTx
+> + * @irq_domain: IRQ domain for INTx
+> + *
+>   * @need_msi_steer: indicates additional configuration of the iProc 
+> PCIe
+>   * controller is required to steer MSI writes to external interrupt 
+> controller
+>   * @msi: MSI data
+> @@ -99,6 +102,9 @@ struct iproc_pcie {
+>  	struct iproc_pcie_ib ib;
+>  	const struct iproc_pcie_ib_map *ib_map;
+> 
+> +	int irq;
+> +	struct irq_domain *irq_domain;
+> +
+>  	bool need_msi_steer;
+>  	struct iproc_msi *msi;
+>  };
