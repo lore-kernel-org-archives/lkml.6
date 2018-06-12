@@ -2,113 +2,125 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id EA6BEC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:49:33 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6973EC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:53:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FB2720660
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:49:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1190620891
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:53:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="YL9w044v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FB2720660
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ghBD451V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1190620891
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934465AbeFLRtb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 13:49:31 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:59902 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934060AbeFLRsk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 13:48:40 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5CHjwPc072155;
-        Tue, 12 Jun 2018 17:48:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2017-10-26;
- bh=wXkNaYS3WkjGPZE38G0sDH96xXhgl8/RE3r4ST5R3gU=;
- b=YL9w044vMlaoOPQFT+o6GMSjGPEqSRnCXsEtSwoH+Ia6b73Rd027dzQ1W0oimNnNJ0W7
- LqjYHtsbrRotS/Q5P4tCaYlT58KvE4imqEBHzUFiywzqzLalRqzwLIa98tnJdA6AEzPf
- 8lmDk7ZGW8z8EA3lwSCyrADDsBwDhHqplrgiPUmrTa5Fl5M6VN9dAujh4qT/82VlJBVq
- h/bgzVEdyKf+cb+wjC2bE/K6lK6ZHK4wFq4gTkk+d7hpFayq0h8YuxSW0BEw/Ea1iXmG
- RHWDCHBytrlHS9ObRevoMh5Xch2Q5Z1ubEM1cK/FlkwjbFDgZURJySdLbKThtxwvylHe sg== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2jg6b1k4qv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 12 Jun 2018 17:48:10 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5CHm7PH027505
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 12 Jun 2018 17:48:07 GMT
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5CHm6Y8006223;
-        Tue, 12 Jun 2018 17:48:07 GMT
-Received: from smazumda-Precision-T1600.us.oracle.com (/10.132.91.87)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 12 Jun 2018 10:48:06 -0700
-From:   subhra mazumdar <subhra.mazumdar@oracle.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     peterz@infradead.org, mingo@redhat.com, steven.sistare@oracle.com,
-        dhaval.giani@oracle.com, rohit.k.jain@oracle.com,
-        daniel.lezcano@linaro.org
-Subject: [PATCH 3/5] sched: rotate the cpu search window for better spread
-Date:   Tue, 12 Jun 2018 10:50:00 -0700
-Message-Id: <20180612175002.31453-4-subhra.mazumdar@oracle.com>
-X-Mailer: git-send-email 2.9.3
-In-Reply-To: <20180612175002.31453-1-subhra.mazumdar@oracle.com>
-References: <20180612175002.31453-1-subhra.mazumdar@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8922 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=658
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806120198
+        id S1754378AbeFLRxF (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 13:53:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49114 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754056AbeFLRxE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 13:53:04 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 198C220891;
+        Tue, 12 Jun 2018 17:53:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528825983;
+        bh=aAERSOix1p8OcjwrDDU6VsLhS/tV9+fgqFMBu11b3gM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ghBD451VimzzB+fTV1vTZEZXnxdX9ECopmCIW2HwKcoVaWV+Wla9Vua6jE9skwfef
+         5oVL3Zv/5E43XN6OHpMILaVi32v72/rL3EawH9G7utxCSac8eL3vosHN1iJ5Y03EmT
+         t1I45w6I9dsk8DO4P2s1dJprzpEEfW2GLcz8G1Ao=
+Date:   Tue, 12 Jun 2018 19:52:42 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Mikulas Patocka <mpatocka@redhat.com>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Ming Lei <ming.lei@redhat.com>,
+        USB list <linux-usb@vger.kernel.org>,
+        Kernel development list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] usb: don't offload isochronous urb completions to
+ ksoftirq
+Message-ID: <20180612175242.GA12855@kroah.com>
+References: <Pine.LNX.4.44L0.1806121232460.1582-100000@iolanthe.rowland.org>
+ <alpine.LRH.2.02.1806121304530.1848@file01.intranet.prod.int.rdu2.redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LRH.2.02.1806121304530.1848@file01.intranet.prod.int.rdu2.redhat.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rotate the cpu search window for better spread of threads. This will ensure
-an idle cpu will quickly be found if one exists.
+On Tue, Jun 12, 2018 at 01:19:28PM -0400, Mikulas Patocka wrote:
+> 
+> 
+> On Tue, 12 Jun 2018, Alan Stern wrote:
+> 
+> > On Tue, 12 Jun 2018, Mikulas Patocka wrote:
+> > 
+> > > > How about making the softirq thread's priority adjustable?
+> > > 
+> > > But you would have to argue with softirq maintainers about it - and you 
+> > > say that you don't have time for that.
+> > 
+> > But maybe _you_ do...
+> 
+> ksoftirqd has priority 0 - it is not suitable for real-time tasks, such as 
+> audio.
+> 
+> In my opinion, it is much easier to fix this in the ehci driver (by not 
+> offloading isochronous completions), than to design a new 
+> real-time-capable ksoftirqd.
 
-Signed-off-by: subhra mazumdar <subhra.mazumdar@oracle.com>
----
- kernel/sched/fair.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+Ok, but what happens when you plug your device into a xhci controller?
+Do we also need to change that?  Only touching a specific host
+controller is not good, you will be playing "whack a mole" for forever.
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 9a6d28d..849c7c8 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6372,7 +6372,7 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
- 	u64 avg_cost, avg_idle;
- 	u64 time, cost;
- 	s64 delta;
--	int cpu, limit, floor, nr = INT_MAX;
-+	int cpu, limit, floor, target_tmp, nr = INT_MAX;
- 
- 	this_sd = rcu_dereference(*this_cpu_ptr(&sd_llc));
- 	if (!this_sd)
-@@ -6403,9 +6403,15 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
- 		}
- 	}
- 
-+	if (per_cpu(next_cpu, target) != -1)
-+		target_tmp = per_cpu(next_cpu, target);
-+	else
-+		target_tmp = target;
-+
- 	time = local_clock();
- 
--	for_each_cpu_wrap(cpu, sched_domain_span(sd), target) {
-+	for_each_cpu_wrap(cpu, sched_domain_span(sd), target_tmp) {
-+		per_cpu(next_cpu, target) = cpu;
- 		if (!--nr)
- 			return -1;
- 		if (!cpumask_test_cpu(cpu, &p->cpus_allowed))
--- 
-2.9.3
+Isoc packets are, by definition, not supposed to be guaranteed at all.
+So if they are "slow" or dropped or delayed somehow, that's fine.  The
+sound protocol should be fine with it.
 
+Now yes, in reality, as you have found out, things can be "tight" on
+low-powered processors under heavy load.  But what you are doing here is
+a priority inversion.  You do not solve such a thing by going around and
+raising everything else up as well, this is supposed to be a "general
+purpose" kernel.  You can tune a specific machine/device just fine this
+way, but not by messing with the kernel for the most part.
+
+> > > > As for coordinating with the softirq maintainers -- whether I want to 
+> > > > or not isn't the issue.  Right now I don't have _time_ to do it.
+> > > > 
+> > > > Alan Stern
+> > > 
+> > > I am wondering - whats the purpose of that patch 
+> > > 428aac8a81058e2303677a8fbf26670229e51d3a at all? The patch shows some 
+> > > performance difference, but they are minor, about 1%.
+> > > 
+> > > If you want to call the urb callback as soon as possible - why don't you 
+> > > just call it? Why do you need to offload the callback to a softirq thread?
+> > 
+> > Please read the Changelog entry for commit 94dfd7edfd5c.  Basically the 
+> > idea was to reduce overall latency by not doing as much work in an 
+> > interrupt handler.
+> > 
+> > Alan Stern
+> 
+> snd_complete_urb is doing nothing but submitting the same urb again. Is 
+> resubmitting the urb really causing so much latency that you can't do it 
+> in the interrupt handler?
+
+snd_complete_urb() does much more than just submition of the same urb.
+Perhaps if this is a real problem, the sound driver should have more
+than one urb pending?  Is there a pool here that is somehow getting used
+up?
+
+thanks,
+
+greg k-h
