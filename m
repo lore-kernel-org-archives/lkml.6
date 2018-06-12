@@ -2,103 +2,116 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 194F6C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 07:48:36 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D8F1BC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 07:49:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1F3520693
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 07:48:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E36420693
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 07:49:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="g8CQiZRP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1F3520693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gY5/PsTC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E36420693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933490AbeFLHsd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 03:48:33 -0400
-Received: from smtprelay.synopsys.com ([198.182.37.59]:39209 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933244AbeFLHsc (ORCPT
+        id S933524AbeFLHtO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 03:49:14 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:42362 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933244AbeFLHtL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 03:48:32 -0400
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 71BC31E04A3;
-        Tue, 12 Jun 2018 09:48:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1528789710; bh=4h3IQ4zqWg9nkcRzeMskTCRxGrJ8+me7ZCSUyvkOch0=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=g8CQiZRPITqwg75IZq4YowaIEdPJft508nJWxvP9sqS56yTqFo0pDG+vr/w0y289Z
-         M+sJiJlm/yxTT92uE3Plj7ToAqi9p7D8zjN3x2opqG1sk21BCspkXF+ELEkImJ2BVm
-         Ca8RP55BP7ZGFKir8ziG7kyI4vbktr8b6DvufTJ3Vn5op3Asp6OKKgEbF/QSR6yJMA
-         00mDy0Sk9KN+pas0SEIqAfIkLY/yeTl5NyAwU5aQIpTunl5EWOvo5RnfOiRKOTKVFh
-         5X2QuIAHFsWpI867lIuMiAfjG8KQVqUxkNY1MElXHGc/7fpt5Fc+ZU5tCUhAalSD0T
-         00OYiknplA/Iw==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1.internal.synopsys.com [10.12.239.235])
-        by mailhost.synopsys.com (Postfix) with ESMTP id C5D683203;
-        Tue, 12 Jun 2018 00:48:29 -0700 (PDT)
-Received: from AM04WEHTCA.internal.synopsys.com (10.116.16.190) by
- us01wehtc1.internal.synopsys.com (10.12.239.231) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Tue, 12 Jun 2018 00:48:29 -0700
-Received: from AM04WEMBXA.internal.synopsys.com ([fe80::79c3:55f2:1f20:5bf4])
- by am04wehtca.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Tue,
- 12 Jun 2018 11:48:27 +0400
-From:   Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
-To:     Zeng Tao <prime.zeng@hisilicon.com>,
-        "Minas.Harutyunyan@synopsys.com" <Minas.Harutyunyan@synopsys.com>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] usb: dwc2: gadget: fix packet drop issue in
- dwc2_gadget_handle_nak
-Thread-Topic: [PATCH] usb: dwc2: gadget: fix packet drop issue in
- dwc2_gadget_handle_nak
-Thread-Index: AQHUAhnEFlH/rSKsX0G4MTSftUwoTw==
-Date:   Tue, 12 Jun 2018 07:48:25 +0000
-Message-ID: <410670D7E743164D87FA6160E7907A56013A5AA95B@am04wembxa.internal.synopsys.com>
-References: <1528814947-27098-1-git-send-email-prime.zeng@hisilicon.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.116.70.165]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+        Tue, 12 Jun 2018 03:49:11 -0400
+Received: by mail-lf0-f65.google.com with SMTP id v135-v6so34491434lfa.9;
+        Tue, 12 Jun 2018 00:49:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=s8s9VZvuLG6DKWZfDEtghM7KgX2IJNputjsN+9z4G9w=;
+        b=gY5/PsTCpqqeaI2VjkDvn2ahzoHU0e10WFCB8mzcyNqjiquxDhZUzQUZmRIHZe7d7r
+         duoq7kNrgijCgYWb2Mhx1d7FDX2ko0ZdlDKrsNmQ/hislo6BR2/nMprSV87ReSjgpGvi
+         TtZTMc/i/YlsKhi4UXGfUf+rxRsgb0HqFPNOyJuneJkwEog6qDMHFg6TJlnkabq6+2pS
+         xdNG314KBdLSj2gsfcanNVCNlVB3Smy1TbOiSdazMsJ3ffx75OJ12Coz568BlvNhaD4+
+         tft9dt510fNqMEIEwzyfwefgSK6hfTsPZ/6joeyjoQMtYVkckpEVz7QFZNnTanVUza2A
+         G64w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=s8s9VZvuLG6DKWZfDEtghM7KgX2IJNputjsN+9z4G9w=;
+        b=kcyf15qxK1MTaTIdQwqmFZsHzdc4orm6foPP9QDXxOZ9YVJ90BE8dvMH6fv/6ulUI1
+         RI8SzECbtbFP5vcljd/yTP/VqjoPVhvrgT03th+2FCm4bJ1OZJzKb9+ZDS4ZLlj21iTB
+         3mrsERHIFvjuj4twTRBhM59ScI7lQmb8SNSSA0O9SqFDqrKIIW72GOhZwmZf0VeHLA3O
+         pkyJ3ZpmxMNmY+5HSSnr8PmB2pxlsKSKC5zX3H+bOU9TPOEuLOyMZgaOCPCGkVqxQiUE
+         NsA5bbnbLzXd4RM1K0dK6aCuERCsJh4+dNd2FR2g3+MA+RKchbOB/8HWzmepnH1ARQx6
+         C3lA==
+X-Gm-Message-State: APt69E0OqBHASIiOw3uIJz8DnbQm4mx9NgZeyX8AXitSk1MGdrB5Y3dh
+        ADirR4+5IBYmlsHeEC4YNCpzyzh2
+X-Google-Smtp-Source: ADUXVKLmX4wFSF3JwTsDvOdSIS1wCH7BO5svmVEkncDrBFHMuMe+ZpMNjjiSHuXYk+eK0Q7Vx21O5w==
+X-Received: by 2002:a19:d7aa:: with SMTP id q42-v6mr1436917lfi.75.1528789750076;
+        Tue, 12 Jun 2018 00:49:10 -0700 (PDT)
+Received: from a2k-HP-ProDesk-600-G2-SFF.kyiv.epam.com (ll-74.141.223.85.sovam.net.ua. [85.223.141.74])
+        by smtp.gmail.com with ESMTPSA id b65-v6sm62657lfe.80.2018.06.12.00.49.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 12 Jun 2018 00:49:08 -0700 (PDT)
+From:   Oleksandr Andrushchenko <andr2000@gmail.com>
+To:     xen-devel@lists.xenproject.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dmitry.torokhov@gmail.com,
+        jgross@suse.com, lyan@suse.com, boris.ostrovsky@oracle.com
+Cc:     konrad.wilk@oracle.com, andr2000@gmail.com,
+        andrii_chepurnyi@epam.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Subject: [PATCH v5 0/3] Input: xen-kbdfront - allow better run-time configuration
+Date:   Tue, 12 Jun 2018 10:48:53 +0300
+Message-Id: <20180612074856.28451-1-andr2000@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Acked-by: Minas Harutyunyan <hminas@synopsys.com>=0A=
-=0A=
-On 6/12/2018 10:51 AM, Zeng Tao wrote:=0A=
-> In ISOC transfer, when the NAK interrupt happens, we shouldn't complete=
-=0A=
-> a usb request, the current flow will complete one usb request with no=0A=
-> hardware transfer, this will lead to a packet drop on the usb bus.=0A=
-> =0A=
-> Signed-off-by: Zeng Tao <prime.zeng@hisilicon.com>=0A=
-> ---=0A=
->   drivers/usb/dwc2/gadget.c | 3 ---=0A=
->   1 file changed, 3 deletions(-)=0A=
-> =0A=
-> diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c=0A=
-> index f0d9ccf..fbe65f6 100644=0A=
-> --- a/drivers/usb/dwc2/gadget.c=0A=
-> +++ b/drivers/usb/dwc2/gadget.c=0A=
-> @@ -2817,9 +2817,6 @@ static void dwc2_gadget_handle_nak(struct dwc2_hsot=
-g_ep *hs_ep)=0A=
->   =0A=
->   		tmp =3D dwc2_hsotg_read_frameno(hsotg);=0A=
->   		if (using_desc_dma(hsotg)) {=0A=
-> -			dwc2_hsotg_complete_request(hsotg, hs_ep,=0A=
-> -						    get_ep_head(hs_ep), 0);=0A=
-> -=0A=
->   			hs_ep->target_frame =3D tmp;=0A=
->   			dwc2_gadget_incr_frame_num(hs_ep);=0A=
->   			dwc2_gadget_start_isoc_ddma(hs_ep);=0A=
-> =0A=
-=0A=
+From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+
+Hi, all!
+
+This patch series synchronizes Xen canonical protocol definitions
+which allow the last two patches in the series to update Xen
+kbdfront driver with a fix and v5 of the patch to allow better
+run-time configuration for xen-kbdfront.
+
+As xen-kbdfront patches rely on protocol changes from patch 1 I am
+sending these all together: Boris, Juergen, if you and Dmitry do not
+mind, can we have patch 1 applied through Dmitry's tree?
+
+Thank you,
+Oleksandr
+
+Changes since v4:
+- Added required changes to Xen protocols
+- Added a fix for multi-touch XenStore node's locations
+- No changes to "Input: xen-kbdfront - allow better run-time
+  configuration"
+
+Changes since v3:
+- do not connect backend if all virtual devices are disabled (Dmitry)
+
+Changes since v2:
+- based on XenStore kbdif features to control which devices are
+  exposed instead of module parameters.
+
+Oleksandr Andrushchenko (3):
+  xen: Sync up with the canonical protocol definitions in Xen
+  Input: xen-kbdfront - fix multi-touch XenStore node's locations
+  Input: xen-kbdfront - allow better run-time configuration
+
+ drivers/input/misc/xen-kbdfront.c  | 183 +++++++++++++++++------------
+ include/xen/interface/io/displif.h |   8 ++
+ include/xen/interface/io/kbdif.h   |  78 +++++++++---
+ include/xen/interface/io/sndif.h   |  10 +-
+ 4 files changed, 180 insertions(+), 99 deletions(-)
+
+-- 
+2.17.1
+
