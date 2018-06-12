@@ -2,160 +2,98 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4CE62C004E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 01:23:27 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C89DDC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 01:30:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09142208AF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 01:23:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09142208AF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 71CE6208AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 01:30:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="QkRGqBzT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71CE6208AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934909AbeFLBXZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 21:23:25 -0400
-Received: from mga02.intel.com ([134.134.136.20]:36981 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932893AbeFLBXX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 21:23:23 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2018 18:23:23 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,212,1526367600"; 
-   d="scan'208";a="49117070"
-Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.13.118])
-  by orsmga006.jf.intel.com with ESMTP; 11 Jun 2018 18:23:20 -0700
-From:   "Huang\, Ying" <ying.huang@intel.com>
-To:     Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Rik van Riel <riel@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Zi Yan <zi.yan@cs.rutgers.edu>
-Subject: Re: [PATCH -mm -V3 03/21] mm, THP, swap: Support PMD swap mapping in swap_duplicate()
-References: <20180523082625.6897-1-ying.huang@intel.com>
-        <20180523082625.6897-4-ying.huang@intel.com>
-        <20180611204231.ojhlyrbmda6pouxb@ca-dmjordan1.us.oracle.com>
-Date:   Tue, 12 Jun 2018 09:23:19 +0800
-In-Reply-To: <20180611204231.ojhlyrbmda6pouxb@ca-dmjordan1.us.oracle.com>
-        (Daniel Jordan's message of "Mon, 11 Jun 2018 13:42:31 -0700")
-Message-ID: <87o9ggpzlk.fsf@yhuang-dev.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        id S934759AbeFLBaG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 21:30:06 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:33075 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933350AbeFLBaE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 21:30:04 -0400
+Received: by mail-io0-f193.google.com with SMTP id d185-v6so26193607ioe.0;
+        Mon, 11 Jun 2018 18:30:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1SluO0I9LboLAni0Ve/jBpQHgARmV2Y0yfL+OTjvxow=;
+        b=QkRGqBzTpXB5MMGRneex2VIuzgFD2GxgBZTTPGivDwYyc0ygj7ZQFSTVJ60q3bc0r1
+         UQ1Q7BP+FX1DOYbVI11TOnYtLWNxkpXNtH8wMpvqxEqs5U20Mnn0B9uohLI2c+JzTjao
+         6fwL9nms3O0thlS9i2sRII4qJG2L7dg8kOB1Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1SluO0I9LboLAni0Ve/jBpQHgARmV2Y0yfL+OTjvxow=;
+        b=VujW2NnMepOQrStWtfEIN830OJk9GzmEBn2kvYkr5UnosJWJM42CIJtFPeEVmxpqqG
+         iMG8yNd0vUAK5jXMSxpwzmK4mKrd2dNTNVU5aruRHccWRpFG4Dk/Y4RlnbuBSrAjsrBs
+         tqeDwQfe3aLzkGCFa3a8GXbHfaQSKVmA3x7N2FzAuIse8cQNwpZDZGdOdRU4pe5gM+WM
+         fAdbavsqeSzTxF0PkdVojVZTBGwPE2FOkUN7pNmLmwmYcuKWSX+5gjTwB7Dm5uBMO9Pl
+         cZssQ7EBsGGhNR2Boxkr0Ls6Shk18AzYQ0td4PyAJhKon/q01PEOqrTvVLHfe1ZZ+CnT
+         bB3A==
+X-Gm-Message-State: APt69E05Vv3cj0jlkCF32nwAV/bgUZJ6xaTUr5CF0KslauO4t6KW2OD6
+        YmLPucNQcxZ79CDH/SaIBYoGyxfeKR3klOZzOGY=
+X-Google-Smtp-Source: ADUXVKJYQBeYk7hRUhZjzPscshmHamTaHvlJAcEtwYNiW4iCipq7Bo2abvn9xovi/b7Q5PL/yJNV7Pj51uY7VWUty2c=
+X-Received: by 2002:a6b:f90b:: with SMTP id j11-v6mr1525242iog.238.1528767003771;
+ Mon, 11 Jun 2018 18:30:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+References: <20180612003224.3658-1-labbott@redhat.com>
+In-Reply-To: <20180612003224.3658-1-labbott@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 11 Jun 2018 18:29:53 -0700
+Message-ID: <CA+55aFwG-UwwHHuOWFnC3tphyEcyfx1zQMx8JuxmUGWo4YwD-Q@mail.gmail.com>
+Subject: Re: [PATCHv4 0/3] Salted build ids via linker sections
+To:     Laura Abbott <labbott@redhat.com>
+Cc:     Andrew Lutomirski <luto@kernel.org>, mjw@fedoraproject.org,
+        "H.J. Lu" <hjl.tools@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        nickc@redhat.com, Cary Coutant <ccoutant@gmail.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Daniel,
-
-Thanks for your effort to review this series.
-
-Daniel Jordan <daniel.m.jordan@oracle.com> writes:
-
-> Hi,
+On Mon, Jun 11, 2018 at 5:32 PM Laura Abbott <labbott@redhat.com> wrote:
 >
-> The series up to and including this patch doesn't build.  For this patch we
-> need:
->
-> diff --git a/mm/swap_state.c b/mm/swap_state.c
-> index c6b3eab73fde..2f2d07627113 100644
-> --- a/mm/swap_state.c
-> +++ b/mm/swap_state.c
-> @@ -433,7 +433,7 @@ struct page *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
->                 /*
->                  * Swap entry may have been freed since our caller observed it.
->                  */
-> -               err = swapcache_prepare(entry);
-> +               err = swapcache_prepare(entry, false);
->                 if (err == -EEXIST) {
->                         radix_tree_preload_end();
->                         /*
+> v4 takes Linus' suggestion of using linker fill to insert the build id.
 
-Thanks for pointing this out!  Will change in the next version.
+Heh. I was hoping somebody would come up with a way to avoid my crazy
+"put a LONG into an aligned section to cause alignment filling" thing.
 
->
-> On Wed, May 23, 2018 at 04:26:07PM +0800, Huang, Ying wrote:
->> @@ -3516,11 +3512,39 @@ static int __swap_duplicate(swp_entry_t entry, unsigned char usage)
->
-> Two comments about this part of __swap_duplicate as long as you're moving it to
-> another function:
->
->    } else if (count || has_cache) {
->    
->    	if ((count & ~COUNT_CONTINUED) < SWAP_MAP_MAX)          /* #1   */
->    		count += usage;
->    	else if ((count & ~COUNT_CONTINUED) > SWAP_MAP_MAX)     /* #2   */
->    		err = -EINVAL;
->
-> #1:  __swap_duplicate_locked might use
->
->     VM_BUG_ON(usage != SWAP_HAS_CACHE && usage != 1);
->
-> to document the unstated assumption that usage is 1 (otherwise count could
-> overflow).
+Because somebody will ask "what the heck is the meaning of that
+LONG(0xffaa5500) thing"?
 
-Sounds good.  Will do this.
+But since I couldn't come up with anything better myself, I guess I
+can't complain.
 
-> #2:  We've masked off SWAP_HAS_CACHE and COUNT_CONTINUED, and already checked
-> for SWAP_MAP_BAD, so I think condition #2 always fails and can just be removed.
+> This is pretty small but I also know people can be picky so I'm open to opinions or suggestions here.
 
-I think this is used to check some software bug.  For example,
-SWAP_MAP_SHMEM will yield true here.
+I'm not sure anybody will care about 32 bytes. Although maybe it could
+be made to be just 8 bytes (four bytes to force padding, four bytes of
+padding) and put somewhere where you'll have more padding anyway due
+to being followed by a PAGE_ALIGNED section or something?
 
->> +#ifdef CONFIG_THP_SWAP
->> +static int __swap_duplicate_cluster(swp_entry_t *entry, unsigned char usage)
-> ...
->> +	} else {
->> +		for (i = 0; i < SWAPFILE_CLUSTER; i++) {
->> +retry:
->> +			err = __swap_duplicate_locked(si, offset + i, 1);
->
-> I guess usage is assumed to be 1 at this point (__swap_duplicate_locked makes
-> the same assumption).  Maybe make this explicit with
->
-> 			err = __swap_duplicate_locked(si, offset + i, usage);
->
-> , use 'usage' in cluster_set_count and __swap_entry_free too, and then
-> earlier have a
->
->        VM_BUG_ON(usage != SWAP_HAS_CACHE && usage != 1);
->
-> ?
+I don't think we care.
 
-Yes.  I will fix this.  And we can just check it in
-__swap_duplicate_locked() and all these will be covered.
+Anyway, I'll pull this if somebody sends it to me, it seems to be
+fairly minimally invasive and apparently fixes an issue for distros.
 
->> +#else
->> +static inline int __swap_duplicate_cluster(swp_entry_t *entry,
->
-> This doesn't need inline.
-
-Why not?  This is just a one line stub.
-
-> Not related to your changes, but while we're here, the comment with
-> SWAP_HAS_CONT in swap_count() could be deleted: I don't think there ever was a
-> SWAP_HAS_CONT.
-
-Yes.  We should correct this.  Because this should go to a separate patch,
-would you mind to submit a patch to fix it?
-
-> The rest looks ok up to this point.
-
-Thanks!
-
-Best Regards,
-Huang, Ying
+                Linus
