@@ -3,87 +3,107 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id F15F0C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:14:49 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 794CCC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:15:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABD11208B4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:14:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABD11208B4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3823E2086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:15:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3823E2086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934228AbeFLQOr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 12:14:47 -0400
-Received: from mga14.intel.com ([192.55.52.115]:65444 "EHLO mga14.intel.com"
+        id S934425AbeFLQPF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 12:15:05 -0400
+Received: from mga18.intel.com ([134.134.136.126]:29093 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933666AbeFLQOq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 12:14:46 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S933363AbeFLQPC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 12:15:02 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2018 09:14:43 -0700
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2018 09:15:01 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,215,1526367600"; 
-   d="scan'208";a="47182351"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.44])
-  by fmsmga008.fm.intel.com with ESMTP; 12 Jun 2018 09:14:43 -0700
-Date:   Tue, 12 Jun 2018 10:17:39 -0600
-From:   Keith Busch <keith.busch@linux.intel.com>
-To:     intel-gfx@lists.freedesktop.org,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: [BUG] cc5b114dcf bpf, i40e: add meta data support
-Message-ID: <20180612161739.GA3303@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.1 (2017-09-22)
+   d="scan'208";a="48757143"
+Received: from weideng-mobl2.ccr.corp.intel.com ([10.255.30.49])
+  by orsmga008.jf.intel.com with ESMTP; 12 Jun 2018 09:15:00 -0700
+Message-ID: <1528820098.2661.28.camel@intel.com>
+Subject: [GIT PULL] Thermal management updates for v4.18-rc1 #1
+From:   Zhang Rui <rui.zhang@intel.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Eduardo Valentin <edubezval@gmail.com>
+Date:   Wed, 13 Jun 2018 00:14:58 +0800
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-My server's i40e no longer obtains an IP address on linux
-mainline. Bisected to the following:
+Hi, Linus,
 
-commit cc5b114dcf986bfd8e4c37bf65d1b7b1e5290ac6
-Author: Daniel Borkmann <daniel@iogearbox.net>
-Date:   Mon May 28 11:07:20 2018 +0200
+Please pull from
+  git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git next
 
-    bpf, i40e: add meta data support
+to receive the latest Thermal Management updates for v4.18-rc1 with
+top-most commit e9ed3ee61aa62ce280aadeeea1ec959f0c66a290:
 
-Reverting on mainline resolves the issue.
+  Merge branches 'thermal-core' and 'thermal-intel' into next (2018-05-30 14:54:20 +0800)
 
-Is there something wrong with my i40e adapter, or is the patch possibly
-doing something wrong? Or any other information I can get to help
-understand why it's stopped working with this feature?
+on top of commit 771c577c23bac90597c685971d7297ea00f99d11:
 
-An excert from "journalctl -xe" on on the failing network adapter
-is below.
+  Linux 4.17-rc6 (2018-05-20 15:31:38 -0700)
 
-Thanks,
-Keith
+Specifics:
 
----
-Jun 12 10:04:35 localhost.localdomain dhclient[2632]: DHCPDISCOVER on eno1 to 255.255.255.255 port 67 interval 7 (xid=0x3b301712)
-Jun 12 10:04:42 localhost.localdomain dhclient[2632]: DHCPDISCOVER on eno1 to 255.255.255.255 port 67 interval 14 (xid=0x3b301712)
-Jun 12 10:04:56 localhost.localdomain dhclient[2632]: DHCPDISCOVER on eno1 to 255.255.255.255 port 67 interval 21 (xid=0x3b301712)
-Jun 12 10:05:03 localhost.localdomain NetworkManager[2215]: <warn>  [1528819503.2274] dhcp4 (eno1): request timed out
-Jun 12 10:05:03 localhost.localdomain NetworkManager[2215]: <info>  [1528819503.2275] dhcp4 (eno1): state changed unknown -> timeout
-Jun 12 10:05:03 localhost.localdomain NetworkManager[2215]: <info>  [1528819503.2440] dhcp4 (eno1): canceled DHCP transaction, DHCP client pid 2632
-Jun 12 10:05:03 localhost.localdomain NetworkManager[2215]: <info>  [1528819503.2441] dhcp4 (eno1): state changed timeout -> done
-Jun 12 10:05:03 localhost.localdomain NetworkManager[2215]: <info>  [1528819503.2445] device (eno1): state change: ip-config -> failed (reason 'ip-config-unavailable', internal state 'managed')
-Jun 12 10:05:03 localhost.localdomain NetworkManager[2215]: <info>  [1528819503.2448] manager: NetworkManager state is now DISCONNECTED
-Jun 12 10:05:03 localhost.localdomain NetworkManager[2215]: <warn>  [1528819503.2452] device (eno1): Activation: failed for connection 'Wired connection 1'
-Jun 12 10:05:03 localhost.localdomain NetworkManager[2215]: <info>  [1528819503.2460] device (eno1): state change: failed -> disconnected (reason 'none', internal state 'managed')
-Jun 12 10:05:03 localhost.localdomain NetworkManager[2215]: <info>  [1528819503.2498] policy: auto-activating connection 'Wired connection 1'
-Jun 12 10:05:03 localhost.localdomain NetworkManager[2215]: <info>  [1528819503.2517] device (eno1): Activation: starting connection 'Wired connection 1' (16a13ab5-c51e-361b-90bc-b6fc6f84cbe9)
-Jun 12 10:05:03 localhost.localdomain NetworkManager[2215]: <info>  [1528819503.2520] device (eno1): state change: disconnected -> prepare (reason 'none', internal state 'managed')
-Jun 12 10:05:03 localhost.localdomain NetworkManager[2215]: <info>  [1528819503.2523] manager: NetworkManager state is now CONNECTING
-Jun 12 10:05:03 localhost.localdomain NetworkManager[2215]: <info>  [1528819503.2529] device (eno1): state change: prepare -> config (reason 'none', internal state 'managed')
+- convert thermal sysfs attributes to use DEVICE_ATTR_{RO|RW|WO}() variants (Viresh Kumar).
+
+- update license to SPDX format (Lina Iyer).
+
+- add GeminiLake support for int340x processor_thermal driver (Sumeet Pawnikar).
+
+- Prevent error in reading trip hysteresis attribute for int340x thermal driver (Srinivas Pandruvada).
+
+I merged the thermal-soc changes from Eduardo some days ago, but without any merge message in the changelog. And I realize this is wrong after reading the discussion for the libnvdimm pull request. So, to avoid a pretty new merge commit in my pull request, I decided to send the pull requests separately this time, one for thermal core and intel thermal driver changes, and another for the other thermal soc driver changes.
+
+BTW, for the top-most merge commit in this pull request, thermal-core and thermal-intel are not strictly topic branches, they are just collections of small patches, for thermal core framework and for Intel platform specific thermal drivers. Are you suggesting I should append the detailed specifics (like above) into the merge message as well?
+
+thanks,
+rui
+
+----------------------------------------------------------------
+Lina Iyer (1):
+      drivers: thermal: Update license to SPDX format
+
+Srinivas Pandruvada (1):
+      thermal: int340x: Prevent error in reading trip hysteresis
+attribute
+
+Sumeet Pawnikar (1):
+      thermal: int340x: processor_thermal: Add GeminiLake support
+
+Viresh Kumar (2):
+      thermal: Shorten name of sysfs callbacks
+      thermal: Use DEVICE_ATTR_{RO|RW|WO}() variants
+
+Zhang Rui (1):
+      Merge branches 'thermal-core' and 'thermal-intel' into next
+
+ .../thermal/int340x_thermal/int340x_thermal_zone.c |  6 +-
+ .../int340x_thermal/processor_thermal_device.c     |  4 ++
+ drivers/thermal/of-thermal.c                       | 19 +----
+ drivers/thermal/thermal_core.c                     | 11 ++-
+ drivers/thermal/thermal_core.h                     | 30 ++------
+ drivers/thermal/thermal_helpers.c                  |  5 +-
+ drivers/thermal/thermal_hwmon.c                    | 17 +----
+ drivers/thermal/thermal_hwmon.h                    | 17 +----
+ drivers/thermal/thermal_sysfs.c                    | 81 ++++++++----
+----------
+ include/linux/thermal.h                            | 17 +----
+ 10 files changed, 50 insertions(+), 157 deletions(-)
