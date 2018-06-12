@@ -2,132 +2,151 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2082CC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:58:58 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 49D1FC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:59:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C91222087E
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:58:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F25AA208B1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:59:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SExJJbxj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C91222087E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=kudzu-us.20150623.gappssmtp.com header.i=@kudzu-us.20150623.gappssmtp.com header.b="a1K854le"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F25AA208B1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kudzu.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934430AbeFLP64 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 11:58:56 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:53152 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933363AbeFLP6y (ORCPT
+        id S934504AbeFLP7f (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 11:59:35 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:38196 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934050AbeFLP7d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 11:58:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=YZG4hNRXa1wRPlvCZTAJonMB9re/azLfZgiiOcOFB4E=; b=SExJJbxjrjCCgkuuGhZiJLaQH
-        LCpQhn2PvrW3v1hZHyfPnJ4AALXRcMTRAcnDwy7jD7jB/y/3vKuhgphYAj2wZK2WljdCNxgqajZJf
-        H1MNehou56m4aj4NUVdwVo8FXLZBz4MBh+kOumJlrVPCtZLQisC0mR7B9WyQX2yrTEYXj8tIRhJK5
-        VZZpALkvTb22wFOJ9xr0QhnORXzooI5Bf2T6231Qlg2QPoRBKtvpRG39xINZ2puGoMpr4BTNmD+gq
-        tcpTlf+KfaztlyyJk1V6giqqAaiIKUzGtPDxctJhb0916B0LL/6IaGNBZK3jZZmBjo16BfwpWFpKv
-        nO+35ueHg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSlgy-0004cg-Q5; Tue, 12 Jun 2018 15:58:45 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id AA58A201EA7A5; Tue, 12 Jun 2018 17:58:41 +0200 (CEST)
-Date:   Tue, 12 Jun 2018 17:58:41 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     viresh.kumar@linaro.org, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Javi Merino <javi.merino@kernel.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Kevin Wangtao <kevin.wangtao@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rui Zhang <rui.zhang@intel.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>
-Subject: Re: [PATCH V6] powercap/drivers/idle_injection: Add an idle
- injection framework
-Message-ID: <20180612155841.GT12217@hirez.programming.kicks-ass.net>
-References: <1528804816-32636-1-git-send-email-daniel.lezcano@linaro.org>
- <20180612123036.GJ12180@hirez.programming.kicks-ass.net>
- <16d5649d-863c-10c7-9287-202568e713e6@linaro.org>
- <20180612125247.GO12217@hirez.programming.kicks-ass.net>
- <16770447-afe3-0fd7-19f9-1bd52c4c8ced@linaro.org>
- <20180612140654.GQ12217@hirez.programming.kicks-ass.net>
- <cce05d92-d51a-ab4f-83f2-37dcdee0cd6a@linaro.org>
+        Tue, 12 Jun 2018 11:59:33 -0400
+Received: by mail-io0-f194.google.com with SMTP id l19-v6so28677121ioj.5
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 08:59:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kudzu-us.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=6srdUGDMIVnDtA/ksB62yI5BOyICDwDPaYi+LrFPkoM=;
+        b=a1K854le4jRBfszXa2OQH+ZQUEmnwE9H6T5q6uJxZzyyKNEpgEnFI5meycWQ+tympX
+         1Tu//IKu14Vr31GiQBdbkGDRxJeL4zpwCsZAxtFg1qVjkNo/9/7outZeP9OzZ4PSTeZp
+         Jqj5gqeTSGrk2Fmr2YJx24W7fErlxTTqXc/NhjmgOdkkql96l2JS6Jjq8/vh3sT/kPeh
+         RNR+Oh1ZMwLepTnveNxUuDMmn3srt3CA+fM7mSYkhnqLmT/4t/p7c3v4PXRm41ud7TyI
+         U3EtEfVzwUAy9lPLWEhcdOQsBlYbzhwc3GM2CqIw16qxks90EFgOstuXxE76iIFk/R7i
+         EXxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=6srdUGDMIVnDtA/ksB62yI5BOyICDwDPaYi+LrFPkoM=;
+        b=SfwFfnoD3uQnAwW2s3nEZtyGYdFMyFrJmucAVC28jQTTIC4uN+bTx1V8zRTeZeBeUP
+         oyO01ANnmvIx8mlCu6yN5ZIOHCBGs83uSgHwj0L0WzquHJGygp/F4A2HgK5ewmvRhyB5
+         QmqX+mPGACRSQ0CB9zUK4PtsMGER10XZsaqd20Kz9fZuVWyquI/26WlbkWOJR91AQi9e
+         v+pNVfh+QgL9c1t6raMCku+7IvzI1sFWrT9FWXLndZKF90VXqBJQ7GDjPlDKhGOSG9lI
+         /tbA6kq5aFddKS83z8TNPnQr2li8gYFFl2qApCpcFet+WyK0vuW86aklWwaXdDkum3pP
+         onTg==
+X-Gm-Message-State: APt69E3lxImvShJvc4yg4P8ecO6rHvi4pXOxUQWYKKWC3lSxGfvUmBnj
+        WB0Xq99OBSW+Mz/aEVJ3MxqXu8Aobwve5tFq7qlTxg==
+X-Google-Smtp-Source: ADUXVKKbKyBl/f2LsO/YQz8tfqcWQ6+DcU3E8A5TzGrycPMZMmeejypIzqIKv9vUte1yrT5YTdJ7unUhp+jUwwMUE5s=
+X-Received: by 2002:a6b:82c7:: with SMTP id m68-v6mr1070146ioi.118.1528819173077;
+ Tue, 12 Jun 2018 08:59:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cce05d92-d51a-ab4f-83f2-37dcdee0cd6a@linaro.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Received: by 2002:ad5:5147:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 08:59:32
+ -0700 (PDT)
+In-Reply-To: <20180609000819.13883-4-logang@deltatee.com>
+References: <20180609000819.13883-1-logang@deltatee.com> <20180609000819.13883-4-logang@deltatee.com>
+From:   Jon Mason <jdmason@kudzu.us>
+Date:   Tue, 12 Jun 2018 11:59:32 -0400
+Message-ID: <CAPoiz9yF1c8ybJzA1ViUkvgxo2=u9ytTn6+kYuKv1HZSsUOuWw@mail.gmail.com>
+Subject: Re: [PATCH 3/8] NTB: Fix the default port and peer numbers for legacy drivers
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-ntb <linux-ntb@googlegroups.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Allen Hubbe <allenbh@gmail.com>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+        Shuah Khan <shuah@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 04:37:17PM +0200, Daniel Lezcano wrote:
-> On 12/06/2018 16:06, Peter Zijlstra wrote:
-> > On Tue, Jun 12, 2018 at 03:02:14PM +0200, Daniel Lezcano wrote:
-> >> On 12/06/2018 14:52, Peter Zijlstra wrote:
-> >>> In this case, you can do:
-> >>
-> >> That is what we had before but we change the code to set the count
-> >> before waking up the task, so compute the cpumask_weight of the
-> >> resulting AND right before this loop.
-> >>
-> >>> +       for_each_cpu_and(cpu, &ii_dev->cpumask, cpu_online_mask) {
-> >>> +               iit = per_cpu_ptr(&idle_injection_thread, cpu);
-> >>> +               iit->should_run = 1;
-> >>> +               wake_up_process(iit->tsk);
-> >>> +       }
-> > 
-> > 
-> > Ah, I see, but since you do:
-> > 
-> > 	if (atomic_dec_and_test())
-> > 	  last_man()
-> > 
-> > where that last_man() thing will start a timer, there is no real problem
-> > with doing atomic_inc() with before wake_up_process().
-> 
-> Viresh was worried about the scenario:
-> 
-> https://lkml.org/lkml/2018/6/5/276
+On Fri, Jun 8, 2018 at 8:08 PM, Logan Gunthorpe <logang@deltatee.com> wrote:
+> When the commit adding ntb_default_port_number() and
+> ntb_default_peer_port_number()  entered the kernel there was no
+> users of it so it was impossible to tell what the API needed.
+>
+> When a user finally landed a year later (ntb_pingpong) there were
+> more NTB topologies were created and no consideration was considered
+> to how other drivers had changed.
+>
+> Now that there is a user it can be fixed to provide a sensible default
+> for the legacy drivers that do not implement ntb_{peer_}port_number().
+> Seeing ntb_pingpong doesn't check error codes returning EINVAL was also
+> not sensible.
+>
+> Patches for ntb_pingpong and ntb_perf follow (which are broken
+> otherwise) to support hardware that doesn't have port numbers. This is
+> important not only to not break support with existing drivers but for
+> the cross link topology which, due to its perfect symmetry, cannot
+> assign unique port numbers to each side.
 
-Ah, but I think you have more races, for instance look at wakeup vs
-park, what if wakeup sets should_run after you've just checked it?
+This is a very long way of saying "no clients are checking the error
+codes, so removing them". :)
+I think the history and references to follow-on patches are not
+necessary in the commit message and belong more in a 0/X.
 
-Then you have an inc without a dec.
+This is more of a feature than a bug fix.  Can you break this (and the
+pingpong and perf changes caused by this) off into a separate series,
+as I'll want to apply this to the ntb-next and not bugfixes branch?
 
-> > Also, last_man() uses @run_duration, but the way I read it, the timer is
-> > for waking things up again, this means it is in fact the sleep duration,
-> > no?
-> 
-> No, it is the next idle injection deadline, meanwhile we let the system
-> continue running.
-> 
-> The sleep duration is managed by another timer in play_idle().
+Thanks,
+Jon
 
-No, that's the idle duration. Maybe avoid the issue entire by having a
-{period,idle} tuple, where your old run := period - idle.
-
-> > Furthermore, should you not be using hrtimer_forward(&timer,
-> > idle_duration + run_duration) instead? AFAICT the current scheme is
-> > prone to drifting.
-> 
-> (I assume you meant setting the timer in the wakeup task function).
-> 
-> Yes, drifting is not an issue if that happens. This scheme is simpler
-> and safer than setting the timer ahead before waking up the tasks with
-> the risk it expires before all the tasks ended their idle cycles.
-
-sloppy though..
+> Fixes: 1e5301196a88 ("NTB: Add indexed ports NTB API")
+> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+> ---
+>  drivers/ntb/ntb.c | 9 ++-------
+>  1 file changed, 2 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/ntb/ntb.c b/drivers/ntb/ntb.c
+> index 93f24440d11d..d955a92a095a 100644
+> --- a/drivers/ntb/ntb.c
+> +++ b/drivers/ntb/ntb.c
+> @@ -225,10 +225,8 @@ int ntb_default_port_number(struct ntb_dev *ntb)
+>         case NTB_TOPO_B2B_DSD:
+>                 return NTB_PORT_SEC_DSD;
+>         default:
+> -               break;
+> +               return 0;
+>         }
+> -
+> -       return -EINVAL;
+>  }
+>  EXPORT_SYMBOL(ntb_default_port_number);
+>
+> @@ -251,10 +249,8 @@ int ntb_default_peer_port_number(struct ntb_dev *ntb, int pidx)
+>         case NTB_TOPO_B2B_DSD:
+>                 return NTB_PORT_PRI_USD;
+>         default:
+> -               break;
+> +               return 0;
+>         }
+> -
+> -       return -EINVAL;
+>  }
+>  EXPORT_SYMBOL(ntb_default_peer_port_number);
+>
+> @@ -326,4 +322,3 @@ static void __exit ntb_driver_exit(void)
+>         bus_unregister(&ntb_bus);
+>  }
+>  module_exit(ntb_driver_exit);
+> -
+> --
+> 2.11.0
+>
