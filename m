@@ -2,106 +2,132 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 56488C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 09:23:23 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D9DCDC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 09:24:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14FC120693
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 09:23:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14FC120693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8D63320693
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 09:24:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="ADby6NGC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D63320693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933563AbeFLJXV convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 05:23:21 -0400
-Received: from mga01.intel.com ([192.55.52.88]:15984 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932639AbeFLJXR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 05:23:17 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2018 02:23:17 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,213,1526367600"; 
-   d="scan'208";a="63355266"
-Received: from jnikula-mobl2.fi.intel.com (HELO localhost) ([10.237.72.62])
-  by fmsmga001.fm.intel.com with ESMTP; 12 Jun 2018 02:23:14 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin King <colin.king@canonical.com>
-Cc:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][V2] drm/i915/guc: fix GEM_BUG_ON check
-In-Reply-To: <20180612091016.yi4lbmdgcltmcen3@mwanda>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20180611164653.13691-1-colin.king@canonical.com> <20180612091016.yi4lbmdgcltmcen3@mwanda>
-Date:   Tue, 12 Jun 2018 12:23:07 +0300
-Message-ID: <87d0ww2was.fsf@intel.com>
+        id S933581AbeFLJYo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 05:24:44 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:33567 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932711AbeFLJYk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 05:24:40 -0400
+Received: by mail-oi0-f67.google.com with SMTP id c6-v6so19352214oiy.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 02:24:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=fT4LvBQno4KmzP+ejnRwvqGk4h7hneauCpysJiUHZmI=;
+        b=ADby6NGCnyo7yJiCjmWw3/PNbdP1LR12zUHCoKoWvh8Ama3Mkw+aRjh7QTlx00OGBW
+         9gL9hQvu1VTRjgMX5WQAmAvztNi7nR61/tPJLr5DrVN4qBAVeAAO1Sna/lFuzAHUX4MN
+         r97ghB0e+FP/FgcvV+vKU7un651ekWm6l/chA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=fT4LvBQno4KmzP+ejnRwvqGk4h7hneauCpysJiUHZmI=;
+        b=JrNsQOFJzN9HwQUeJl/5j0+5Dx+pj0DNaKmoA+xvX6ioXr9uGHDuSoxaSW+o5fmhN0
+         zTuE7ZGSWtBJRmKPIBWjr+87mqT953bt9OYyHAy5EPUma+sf7kNH6slRCuhb99xgrb3L
+         fYpukYNkpP2XVcoePFz+kN3hXizAwftkOKyN427EEiU8zK3q68kWcR4WMAVDKIc97HSK
+         68NOjAMvtT66+AqVZYtZwweVa0CE9QMyERbvcI4Xy6FCxTEj+yvj7jJwM/R0Tmlkx7dL
+         oWv2UJX83fGvoVpdKn1ATCfd2AaU24qGHIuRxiZtzN6/8kUTPwf8/AONso3WBBktqzYE
+         v3FQ==
+X-Gm-Message-State: APt69E1M4QQXIjZgArF15cb7TCoVLBRcV2JmNKUGH/AmqYtGXEUbVV/V
+        WQAzoMQrQE6/eZOHj3sCu+qbcoJznt/AX0hWrVDxwg==
+X-Google-Smtp-Source: ADUXVKJoRqrrCHA/i5PXuIy0Uz/e/A0Af20DkwHD8kHbHLwPTsPdeNFNo5uLzTIRmB0ByvqCaQKB+wVCESC1G0kEPwA=
+X-Received: by 2002:aca:a646:: with SMTP id p67-v6mr1395545oie.149.1528795480393;
+ Tue, 12 Jun 2018 02:24:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Received: by 2002:a9d:1123:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 02:24:39
+ -0700 (PDT)
+X-Originating-IP: [176.63.54.97]
+In-Reply-To: <20180612024029.GZ30522@ZenIV.linux.org.uk>
+References: <20180529144339.16538-1-mszeredi@redhat.com> <20180529144339.16538-15-mszeredi@redhat.com>
+ <20180610041243.GJ30522@ZenIV.linux.org.uk> <CAJfpegtEGuBqmJ+6Kzd0456o0xyebe3LBk66xWQcuzsenqKVeg@mail.gmail.com>
+ <20180612022926.GY30522@ZenIV.linux.org.uk> <20180612024029.GZ30522@ZenIV.linux.org.uk>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 12 Jun 2018 11:24:39 +0200
+Message-ID: <CAJfpegvUkcUw0GXxFesT6V2f27EXW7jkvBpvnG4XB49BPdvjjA@mail.gmail.com>
+Subject: Re: [PATCH 14/39] ovl: stack file ops
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Jun 2018, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> On Mon, Jun 11, 2018 at 05:46:53PM +0100, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->> 
->> The check for level being less than zero always false because flags
->> is currently unsigned and can never be negative. Fix this by making
->> flags a s32.
->> 
->> Detected by CoverityScan, CID#1468363 ("Macro compares unsigned to 0")
->> 
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> 
->> ---
->> V2: Make flags s32 rather than remove the GEM_BUG_ON check, thanks to
->> Ville Syrjälä for spotting the mistake in my first attempt.
->> ---
->>  drivers/gpu/drm/i915/intel_guc.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->> 
->> diff --git a/drivers/gpu/drm/i915/intel_guc.c b/drivers/gpu/drm/i915/intel_guc.c
->> index 116f4ccf1bbd..fb31f5004bcf 100644
->> --- a/drivers/gpu/drm/i915/intel_guc.c
->> +++ b/drivers/gpu/drm/i915/intel_guc.c
->> @@ -206,7 +206,7 @@ void intel_guc_fini(struct intel_guc *guc)
->>  static u32 get_log_control_flags(void)
->>  {
->>  	u32 level = i915_modparams.guc_log_level;
->> -	u32 flags = 0;
->> +	s32 flags = 0;
->>  
->>  	GEM_BUG_ON(level < 0);
+On Tue, Jun 12, 2018 at 4:40 AM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> On Tue, Jun 12, 2018 at 03:29:26AM +0100, Al Viro wrote:
 >
-> Only insane people use "s32" when it's not part of the hardware spec and
-> you changed the wrong variable...
+>> It might (or might not) work for the filesystems you'd been testing
+>> on, but it's a lot of trouble waiting to happen.  Hell, try and use
+>> ecryptfs as lower layer, see how fast it'll blow up.  Sure, it's
+>> a dumb testcase, but I don't see how to check if something more
+>> realistic is trouble-free.
 
-Yeah, int level.
+That's funny, because when dhowells added the patch to make f_path
+point to the overlay, I was fighting tooth and claw against that
+change on the grounds of being unsafe, but it went through regardless
+(and was in fact one of the biggest headaches in overlay/vfs
+interaction).
 
-Also,
+So you might be right that there are bugs in the handling of ecryptfs,
+etc, however the patchset is guaranteed not to cause regressions in
+this area.
 
-Fixes: cb5d64e9f13e ("drm/i915/guc: Allow user to control default GuC logging")
+And yes, it would be best to get rid of that kludge once and for all.
 
-BR,
-Jani.
-
-
+>>
+>> I'd been trying to come up with some way to salvage that kludge of yours,
+>> but I don't see any solutions.  We don't have good proxies for "this
+>> filesystem might be unsafe as lower layer" ;-/
 >
-> regards,
-> dan carpenter
+> Note that anything that uses file_dentry() anywhere near ->open(),
+> ->read_iter() or ->write_iter() is an instant trouble with your scheme.
+> Such as
+> int nfs_open(struct inode *inode, struct file *filp)
+> {
+>         struct nfs_open_context *ctx;
 >
+>         ctx = alloc_nfs_open_context(file_dentry(filp), filp->f_mode, filp);
+>         if (IS_ERR(ctx))
+>                 return PTR_ERR(ctx);
+>         nfs_file_set_open_context(filp, ctx);
+>         put_nfs_open_context(ctx);
+>         nfs_fscache_open_file(inode, filp);
+>         return 0;
+> }
+>
+> You do want to support NFS for lower layers, right?
 
--- 
-Jani Nikula, Intel Open Source Graphics Center
+There's no change regarding how file_dentry() works.  We've just
+pushed these weird files (f_path points to overlay, f_inode points to
+underlay) down into the guts of overlayfs and are not directly
+referenced from the file table anymore.  That shouldn't make *any*
+difference from the lower fs's pov.
+
+The only difference is that now the real file has creds inherited from
+mounter task.  If lower filesystem's a_ops did some permission
+checking based on that, then that might make a difference in behavior.
+But I guess that difference would be in the positive direction, making
+behavior more consistent.
+
+Thanks,
+Miklos
