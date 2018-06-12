@@ -3,243 +3,193 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 839F8C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 09:58:46 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A621EC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 09:59:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3701F20693
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 09:58:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3701F20693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 5B77C20693
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 09:59:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B77C20693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932820AbeFLJ6o (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 05:58:44 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:25498 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932639AbeFLJ6l (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 05:58:41 -0400
-X-UUID: 27c43e1bc87f4bc2a83a95aa03e6352f-20180612
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <sean.wang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1485087371; Tue, 12 Jun 2018 17:58:38 +0800
-Received: from MTKMBS06N1.mediatek.inc (172.21.101.129) by
- mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Tue, 12 Jun 2018 17:58:36 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs06n1.mediatek.inc (172.21.101.129) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Tue, 12 Jun 2018 17:58:36 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Tue, 12 Jun 2018 17:58:36 +0800
-Message-ID: <1528797516.21593.46.camel@mtkswgap22>
-Subject: Re: [PATCH v2 4/7] Bluetooth: Add new quirk for non-persistent
- setup settings
-From:   Sean Wang <sean.wang@mediatek.com>
-To:     Marcel Holtmann <marcel@holtmann.org>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        BlueZ development <linux-bluetooth@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Date:   Tue, 12 Jun 2018 17:58:36 +0800
-In-Reply-To: <DC3FE66E-C3FD-455F-8592-E927604086CD@holtmann.org>
-References: <cover.1526374087.git.sean.wang@mediatek.com>
-         <1d6097f538b3182b2876ad48225ecd6e2d1b128c.1526374087.git.sean.wang@mediatek.com>
-         <920B3BE9-3FE8-4AC6-8C5F-63B0E00182AC@holtmann.org>
-         <1526976323.18877.47.camel@mtkswgap22> <1527057423.4607.3.camel@mtkswgap22>
-         <B82BB5F4-E197-4915-A543-C5FF9A5A41F1@holtmann.org>
-         <1527084544.4607.8.camel@mtkswgap22>
-         <37400FCE-8F9A-433B-8E3A-DE9CBEB469D7@holtmann.org>
-         <1527175805.4607.103.camel@mtkswgap22>
-         <DC3FE66E-C3FD-455F-8592-E927604086CD@holtmann.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 8bit
+        id S1754161AbeFLJ7I convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 05:59:08 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34160 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932639AbeFLJ7F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 05:59:05 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 95C1D83207;
+        Tue, 12 Jun 2018 09:59:04 +0000 (UTC)
+Received: from gondolin (ovpn-117-39.ams2.redhat.com [10.36.117.39])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2FDAA2023450;
+        Tue, 12 Jun 2018 09:59:03 +0000 (UTC)
+Date:   Tue, 12 Jun 2018 11:59:00 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Pierre Morel <pmorel@linux.ibm.com>
+Cc:     Halil Pasic <pasic@linux.ibm.com>,
+        Dong Jia Shi <bjsdjshi@linux.ibm.com>,
+        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, qemu-s390x@nongnu.org,
+        qemu-devel@nongnu.org
+Subject: Re: [PATCH RFC 2/2] vfio-ccw: support for halt/clear subchannel
+Message-ID: <20180612115900.4aa319d1.cohuck@redhat.com>
+In-Reply-To: <99ca65a2-ee33-6353-b6b7-aa4c07a34e2a@linux.ibm.com>
+References: <20180509154822.23510-1-cohuck@redhat.com>
+        <20180509154822.23510-3-cohuck@redhat.com>
+        <c18f9b9f-da00-1a0b-8ef0-7ac223c73d1a@linux.ibm.com>
+        <20180515181006.0cb1dfc2.cohuck@redhat.com>
+        <a5d08fb7-d9c1-b230-fe0c-acebbda2ba65@linux.ibm.com>
+        <20180522145208.310143ea.cohuck@redhat.com>
+        <4e4001cc-540e-0f2b-bbd1-1f82ca594bb3@linux.ibm.com>
+        <20180605151449.22aafbfc.cohuck@redhat.com>
+        <e73038ff-fb2d-5865-8b84-e775990f3983@linux.ibm.com>
+        <20180606142131.74ea2eb7.cohuck@redhat.com>
+        <5b77ec9c-41b8-2e32-ce79-d9005b93fdd0@linux.ibm.com>
+        <20180607115442.6a779ed9.cohuck@redhat.com>
+        <86d57698-3ea7-a390-2217-07c6d41ca9ed@linux.ibm.com>
+        <20180608142022.7dd6a658.cohuck@redhat.com>
+        <d68340a2-bb1b-cef9-e394-f0d55983c0bb@linux.ibm.com>
+        <20180608164514.2e8248f4.cohuck@redhat.com>
+        <99ca65a2-ee33-6353-b6b7-aa4c07a34e2a@linux.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 12 Jun 2018 09:59:04 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 12 Jun 2018 09:59:04 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-05-30 at 08:26 +0200, Marcel Holtmann wrote:
-> Hi Sean,
+On Fri, 8 Jun 2018 17:51:27 +0200
+Pierre Morel <pmorel@linux.ibm.com> wrote:
+
+> On 08/06/2018 16:45, Cornelia Huck wrote:
+> > On Fri, 8 Jun 2018 15:13:28 +0200
+> > Halil Pasic <pasic@linux.ibm.com> wrote:
+> >  
+> >> On 06/08/2018 02:20 PM, Cornelia Huck wrote:  
+> >>>>> My proposal is to do the same
+> >>>>> copying to scsw(r) again, which would mean we get a request with both
+> >>>>> the halt and the start bit set. The vfio code now needs to do a hsch
+> >>>>> (instead of a ssch). The real channel subsystem should figure this out,
+> >>>>> as we can't reliably check whether the start function has concluded
+> >>>>> already (there's always a race window).  
+> >>>> This I do not agree scsw(r) is part of the driver.
+> >>>> The interface here is not a device interface anymore but a driver
+> >>>> interface.
+> >>>> SCSW is a status, it is at its place in QEMU device interface with the
+> >>>> guest
+> >>>> but here pwrite() sends a command.  
+> >>> Hm, I rather consider that "we write a status, and the backend figures
+> >>> out what to do based on that status".
+> >>>      
+> >> The status of what? Kind of a target status?
+> >>
+> >> I think this approach is the source of lots of complications. For instance
+> >> take xsch. How are we supposed to react to a guest xsch (in QEMU and
+> >> in the kernel module)? My guess is that the right thing to do is to issue
+> >> an xsch in the vfio-ccw kernel module on the passed through subchannel.
+> >> But there is no bit in fctl for cancel.
+> >>
+> >> Bottom line is: I'm not happy with the current design but I'm not sure
+> >> if it's practical to do something about it (i.e. change it radically).  
+> > It might make sense to keep this for ssch, maybe reuse it for hsch/csch,  
 > 
-> >>>>>> 
-
-[ ... ]
-
-> >>> * Unknown packet (code 14 len 30)                                      0.641509
-> >>>       01 00 00 00 02 00 01 0e 00 01 00 00 00 10 62 6c  ..............bl
-> >>>       75 65 74 6f 6f 74 68 64 00 00 00 00 00 00        uetoothd......  
-> >>> * Unknown packet (code 14 len 30)                                      0.641592
-> >>>       02 00 00 00 02 00 01 0e 00 01 00 00 00 10 62 74  ..............bt
-> >>>       6d 6f 6e 00 00 00 00 00 00 00 00 00 00 00        mon...........  
-> >>> * Unknown packet (code 16 len 7)                                [hci0] 6.536771
-> >>>       01 00 00 00 05 00 01                             .......         
-> >>> = Open Index: 00:00:46:76:22:01                                 [hci0] 6.717019
-> >>> = Index Info: 00:00:46:76:22:01 (MediaTek, Inc.)                [hci0] 6.717030
-> >> 
-> >> can you try with the latest BlueZ 5.49 or git version. Seems it actually stumbles over the extra packet here. Fun fact is that I can not get a backtrace to pin-point the issue in btmon and why it crashes.
-> >> 
-> > 
-> > I had less experience updating user land BlueZ, but I can try it as possible and see whether Unknown packets still are present at newest version BlueZ. Hopefully I don't misunderstand your point here. 
+> I do not think we need to change the interface radically but
+> I also do not thing we should extend it by using multiple commands
+> in a single syscall.
 > 
-> please use the latest btmon and check if it can read your trace.
+> Currently:
+>    - only SSCH bit is used
+>    - only the SSCH instruction is implemented
+>    - all other bits, CSCH,HSCH produce an error when used alone
+>      or are ignored in conjonction with SSCH
+>     - there is no implementation using the other bits
+>     - It is not specified in the documentation that multiple commands
+>       can be used.
+
+Looking at Documentation/s390/vfio-ccw.txt, it states that "scsw_area
+should be filled with the SCSW of the Virtual Subchannel". This seems
+to indicate that this is really intended to be a scsw... but I agree,
+it does lack details.
+
 > 
-
-sure, I'll have a try with the latest btmon.
-
-> >>>> HCI Event: Unknown (0xe4) plen 5                              [hci0] 6.741093
-> >>>       02 01 01 00 00                                   .....           
-> >>>> HCI Event: Unknown (0xe4) plen 5                              [hci0] 6.742088
-> >>>       02 01 01 00 00                                   .....           
-> >>>> HCI Event: Unknown (0xe4) plen 5                              [hci0] 6.743102
-> >>>       02 01 01 00 00                                   .....           
-
-
-[ ... ]
-
-> >>>> HCI Event: Unknown (0xe4) plen 5                              [hci0] 6.814708
-> >>>       02 01 01 00 00                                   .....           
-> >>>> HCI Event: Unknown (0xe4) plen 5                              [hci0] 6.815705
-> >>>       02 01 01 00 00                                   .....           
-> >>>> HCI Event: Unknown (0xe4) plen 5                              [hci0] 6.816378
-> >>>       02 01 01 00 00                                   .....           
-> >> 
-> >> Why do I see only HCI events here? Is this event conveying any useful information. It is kinda complicated that this is 0xe4 event code which is actually reserved for future use by the Bluetooth SIG. Are there any accompanying HCI commands for this and they just not make it into btmon?
-> >> 
-> > 
-> > I have made all vendor HCI commands go through BlueZ core in v2 patch. 
-> > 
-> > And for these HCI events, they are all corresponding to vendor ACL data, applied only to firmware setup packets, but they're not being sent via BlueZ core, so they are not being logged in btmon.
-> > 
-> > As for its event, where heading 0xe4 refers to a vendor event and is used on notification of that either vendor ACL data or vendor HCI command have been done.
+> Looking at these, I think there is no trouble to modify the way
+> the Kernel interface is implemented without impact on current QEMU.
 > 
-> I would prefer if everything goes via the Bluetooth core since then we have it all properly scheduled. Sending things down the ACL data path however if kinda funky. Does your hardware accept sending command both via ACL data and as HCI command? If so, then I would prefer sending them as HCI commands since the speed improvement you think you are getting is neglectable on Linux (I have been down that path). This seems to be a pure optimization when Windows is driving the device.
+> But if we begin to allow ssch/hsch/csch in a single command
+> in a new implementation we will be stuck with it.
+
+Yes, we're currently still free to go in different directions; adding
+support for hsch/csch to the interface in the way I did would fix it.
+In any case, we need better documentation :/
+
 > 
-
-firmware people said the device can support firmware download as HCI commands. According to my test, this way indeed works so I will improve the part in the next version.
-
-
-> And the vendor event 0xe4 is really only received during firmware download? It is not ever received during normal operation?
+> > and think about something else for other things we want to handle  
 > 
-
-0xe4 is only received during chip initialization.
-
-I also thought 0xe4 is a poor definition for vendor event and already have notified firmware people should pick 0xff as its vendor event id in the future.
-
-but for now, unfortunately, 0xe4 cannot be changed on the device, the only way is to add a workaround in RX path as below to allow btmon can recognize these bad events properly. 
-
-int mtk_btuart_hci_frame(struct hci_dev *hdev, struct sk_buff *skb)
-{
-        struct hci_event_hdr *hdr = (void *)skb->data;
-
-        /* Fix up the vendor event id with HCI_VENDOR_PKT instead of
-         * 0xe4 so that btmon can parse the kind of vendor event properly.
-         */
-        if (hdr->evt == 0xe4)
-                hdr->evt = HCI_VENDOR_PKT;
-
-        /* Each HCI event would go through the core. */
-        return hci_recv_frame(hdev, skb);
-}
-
-
-> > 
-> >> 
-> >> 
-> >>> < HCI Command: Vendor (0x3f|0x006f) plen 5                      [hci0] 6.816413
-> >>>       01 07 01 00 04                                   .....           
-> >>>> HCI Event: Unknown (0xe4) plen 5                              [hci0] 6.816536
-> >>>       02 07 01 00 00                                   .....           
-
-[ ... ]
-
-> >>>         Encapsulated PDU
-> >>>         Erroneous Data Reporting
-> >>>         Non-flushable Packet Boundary Flag
-> >>>         Link Supervision Timeout Changed Event
-> >>>         Inquiry TX Power Level
-> >>>         Enhanced Power Control
-> >>>         Extended features
-> >>> < HCI Command: Read Local Version Info.. (0x04|0x0001) plen 0  [hci0] 10.865987
-> >>>> HCI Event: Vendor (0xff) plen 9                              [hci0] 10.866259
-> >>>       29 19 09 17 20 48 07 11 00                       )... H…       
-> >> 
-> >> Is this meant to happen here?
-> >> 
-> > 
-> > If event received is not expected as the specification defines, I think it's probably incorrect.
-> > 
-> > But it requires more discussion with firmware people to make it clearer.
+> Yes we will need to have another interface, ioctl, or new region,
+> all possible, but really more complex.
 > 
-> Please check and let them decode what this event means.
+> > (xsch, channel monitoring, the path handling stuff for which we already  
 > 
+> We can use another region for getting up information on path handling
+> or monitoring, as does the patch IIRC.
+> This is not a problem.
 
-it's just debugging purpose information listing built-time something
-like that and will be removed in the firmware.
+Not a problem, I agree (and yes, the patch did that).
 
-> > 
-> >>>> HCI Event: Command Complete (0x0e) plen 12                   [hci0] 10.866372
-> >>>     Read Local Version Information (0x04|0x0001) ncmd 1
-> >>>       Status: Success (0x00)
-> >>>       HCI version: Bluetooth 4.2 (0x08) - Revision 4359 (0x1107)
-> >>>       LMP version: Bluetooth 4.2 (0x08) - Subversion 2329 (0x0919)
-> >>>       Manufacturer: MediaTek, Inc. (70)
-> >>> < HCI Command: Read BD ADDR (0x04|0x0009) plen 0               [hci0] 10.866391
-> >>>> HCI Event: Command Complete (0x0e) plen 10                   [hci0] 10.866539
+For xsch, I like Halil's suggestion of simply always setting cc 2.
 
-[ ... ]
+Channel monitoring is a difficult beast (need to pass through msch, mix
+of virtual and passthrough devices on the machine which have different
+semantics etc.) I put some of my concerns into
+https://wiki.qemu.org/ToDo/Channel_I/O_Passthrough; please add to that
+if you have further thoughts.
 
-> >>>         LE Add Device To Resolving List (Octet 34 - Bit 3)
-> >>>         LE Remove Device From Resolving List (Octet 34 - Bit 4)
-> >>>         LE Clear Resolving List (Octet 34 - Bit 5)
-> >>>         LE Read Resolving List Size (Octet 34 - Bit 6)
-> >>>         LE Read Peer Resolvable Address (Octet 34 - Bit 7)
-> >>>         LE Read Local Resolvable Address (Octet 35 - Bit 0)
-> >>>         LE Set Address Resolution Enable (Octet 35 - Bit 1)
-> >>>         LE Set Resolvable Private Address Timeout (Octet 35 - Bit 2)
-> >>>         LE Read Maximum Data Length (Octet 35 - Bit 3)
-> >>>         Octet 35 - Bit 4 
-> >>>         Octet 35 - Bit 5 
-> >>>         Octet 35 - Bit 6 
-> >>>         Octet 35 - Bit 7 
-> >>>         Octet 36 - Bit 0 
-> >> 
-> >> So you support the PHY commands, but do not indicate support LE 2M or LE Coded? Also these are Bluetooth 5.0 commands.
-> >> 
-> > 
-> > To be honest. When I ported the device into Bluez core, a unexpected event for LE read local feature would cause a fail at Bluez core, so I made a hack on Bluez core  
-> > 
-> > to allow that I can keeping bring up the device without be blocked by the issue most probably from firmware.
-> > 
-> > Below code snippet is the only thing I added to avoid a fail at Bluez core to bring up the device.
-> > 
-> > @@ -927,6 +927,8 @@ static void hci_cc_le_read_local_features(struct hci_dev *hdev,
-> >                return;
-> > 
-> >        memcpy(hdev->le_features, rp->features, 8);
-> > +       hdev->le_features[0] = 0;
-> > +       hdev->le_features[1] = 0;
-> > }
+We should keep those requirements in mind, even if we won't implement
+support for it right now.
+
 > 
-> Send me the trace where you didn’t clear the feature bits and I check what is going on. I doubt that we have a bug, but maybe some of the commands are optional and we should add an appropriate check. Or you guys need to fix your firmware. A new btmon should decode all bits properly.
+> > had a prototype etc.) It's probably not practical to do radical surgery
+> > on the existing code.  
 > 
+> There is no need for radical surgery, no change is required to older or
+> current QEMU code.
+> My concern is to avoid a future implementation merging multiple commands
+> in a single syscall.
+> It is not only a problem of beauty of the interface,
+> using a status is for the up-stream, from device to program.
+> Using the same construct, same name and same location, to produce commands
+> for the down stream is misleading and source of incoherence.
 
-okay, I'll have a follow-up.
+OK, I think I see your concern now.
 
-> Regards
-> 
-> Marcel
-> 
+What happens on the real hardware is that we do a ssch etc. and this
+triggers a change that is visible in the scsw when we do a stsch.
 
+What happens here is that the guest doing a ssch triggers a change in
+our virtual scsw in QEMU (so far, so good); then we send this scsw to
+the vfio module, which looks at the scsw to figure out that it should
+do a ssch on the host. This works fine to figure out that a ssch needs
+to be done, and would also work for hsch and csch, but it is really a
+bit of reverse engineering, and it would probably fail for rsch
+(haven't thought about that yet). To parse the intention of doing a
+halt or clear out of the scsw_area, we need to rely (a) on user space
+doing the right thing, and (b) on us implementing the rules for which
+function can be initiated when correctly. If we treat fctl as a simple
+command field, we'll just do what user space asks of us directly.
 
+So, what are you proposing? Being more specific and stating that the
+scsw is not necessarily a real scsw, but merely a vehicle for sending a
+command? Or keeping it as it is now for ssch, and adding a second
+interface for hsch/csch (and maybe rsch, msch, ...)?
