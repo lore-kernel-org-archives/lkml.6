@@ -6,44 +6,46 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 376B7C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:48:16 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 379F1C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:48:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1779208BA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:48:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D79D1208C0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:48:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JgGA+IXO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1779208BA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qBqXcG6F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D79D1208C0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933779AbeFLQsN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 12:48:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34058 "EHLO mail.kernel.org"
+        id S934986AbeFLQsP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 12:48:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34240 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934947AbeFLQsF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 12:48:05 -0400
+        id S934928AbeFLQsI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 12:48:08 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B565208B7;
-        Tue, 12 Jun 2018 16:48:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73BCB208B9;
+        Tue, 12 Jun 2018 16:48:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528822085;
-        bh=w72pDsf1zlgltY+4KdYrsYI7usLj0Exu/QM9ZIFClSE=;
+        s=default; t=1528822088;
+        bh=WqnqCD5/752xTkcCJL/kH8TsGfELyAjNuN058TKwxVg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JgGA+IXOYHuDJoJFAz5mWJ6qUes+68okNbfKcyCtGE43EPvk7wAyNpSRDNzNAO8Kt
-         53cSxq1hnRwx4zz9yPPLQ8pMlEpceWVWZ4ntxc3yNL48GKVytvgif/dZJRrXXsXQW6
-         hzvqxLDlK2FpTUsTPM2xDyZheoke3X4l9JP8B81A=
+        b=qBqXcG6FXVph/CYYnYwi87wiA95aGgP/TcuTpALLtJry4NGAuF1Hk/7VM00giw69K
+         R5Cr0zzqu7nyj8nGKturdcp5WfuOVrMOhd9tXKAYZvSnFtI0ktpgVg/5v85uDLTJjm
+         uok4ta/bV3anRUxhN2ogd4dhfPvvyT9UqQF/ESso=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 4.9 29/31] dm bufio: avoid false-positive Wmaybe-uninitialized warning
-Date:   Tue, 12 Jun 2018 18:46:32 +0200
-Message-Id: <20180612164621.948353741@linuxfoundation.org>
+        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, Willy Tarreau <w@1wt.eu>,
+        Dave Airlie <airlied@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.9 03/31] mmap: introduce sane default mmap limits
+Date:   Tue, 12 Jun 2018 18:46:06 +0200
+Message-Id: <20180612164620.929942145@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180612164620.797338191@linuxfoundation.org>
 References: <20180612164620.797338191@linuxfoundation.org>
@@ -60,76 +62,124 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit 590347e4000356f55eb10b03ced2686bd74dab40 upstream.
+commit be83bbf806822b1b89e0a0f23cd87cddc409e429 upstream.
 
-gcc-6.3 and earlier show a new warning after a seemingly unrelated
-change to the arm64 PAGE_KERNEL definition:
+The internal VM "mmap()" interfaces are based on the mmap target doing
+everything using page indexes rather than byte offsets, because
+traditionally (ie 32-bit) we had the situation that the byte offset
+didn't fit in a register.  So while the mmap virtual address was limited
+by the word size of the architecture, the backing store was not.
 
-In file included from drivers/md/dm-bufio.c:14:0:
-drivers/md/dm-bufio.c: In function 'alloc_buffer':
-include/linux/sched/mm.h:182:56: warning: 'noio_flag' may be used uninitialized in this function [-Wmaybe-uninitialized]
-  current->flags = (current->flags & ~PF_MEMALLOC_NOIO) | flags;
-                                                        ^
+So we're basically passing "pgoff" around as a page index, in order to
+be able to describe backing store locations that are much bigger than
+the word size (think files larger than 4GB etc).
 
-The same warning happened earlier on linux-3.18 for MIPS and I did a
-workaround for that, but now it's come back.
+But while this all makes a ton of sense conceptually, we've been dogged
+by various drivers that don't really understand this, and internally
+work with byte offsets, and then try to work with the page index by
+turning it into a byte offset with "pgoff << PAGE_SHIFT".
 
-gcc-7 and newer are apparently smart enough to figure this out, and
-other architectures don't show it, so the best I could come up with is
-to rework the caller slightly in a way that makes it obvious enough to
-all arm64 compilers what is happening here.
+Which obviously can overflow.
 
-Fixes: 41acec624087 ("arm64: kpti: Make use of nG dependent on arm64_kernel_unmapped_at_el0()")
-Link: https://patchwork.kernel.org/patch/9692829/
-Cc: stable@vger.kernel.org
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-[snitzer: moved declarations inside conditional, altered vmalloc return]
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
-[nc: Backport to 4.9, adjust context for lack of 19809c2da28a]
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Adding the size of the mapping to it to get the byte offset of the end
+of the backing store just exacerbates the problem, and if you then use
+this overflow-prone value to check various limits of your device driver
+mmap capability, you're just setting yourself up for problems.
+
+The correct thing for drivers to do is to do their limit math in page
+indices, the way the interface is designed.  Because the generic mmap
+code _does_ test that the index doesn't overflow, since that's what the
+mmap code really cares about.
+
+HOWEVER.
+
+Finding and fixing various random drivers is a sisyphean task, so let's
+just see if we can just make the core mmap() code do the limiting for
+us.  Realistically, the only "big" backing stores we need to care about
+are regular files and block devices, both of which are known to do this
+properly, and which have nice well-defined limits for how much data they
+can access.
+
+So let's special-case just those two known cases, and then limit other
+random mmap users to a backing store that still fits in "unsigned long".
+Realistically, that's not much of a limit at all on 64-bit, and on
+32-bit architectures the only worry might be the GPU drivers, which can
+have big physical address spaces.
+
+To make it possible for drivers like that to say that they are 64-bit
+clean, this patch does repurpose the "FMODE_UNSIGNED_OFFSET" bit in the
+file flags to allow drivers to mark their file descriptors as safe in
+the full 64-bit mmap address space.
+
+[ The timing for doing this is less than optimal, and this should really
+  go in a merge window. But realistically, this needs wide testing more
+  than it needs anything else, and being main-line is the only way to do
+  that.
+
+  So the earlier the better, even if it's outside the proper development
+  cycle        - Linus ]
+
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Willy Tarreau <w@1wt.eu>
+Cc: Dave Airlie <airlied@redhat.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-bufio.c |   17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+ mm/mmap.c |   32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
---- a/drivers/md/dm-bufio.c
-+++ b/drivers/md/dm-bufio.c
-@@ -373,9 +373,6 @@ static void __cache_size_refresh(void)
- static void *alloc_buffer_data(struct dm_bufio_client *c, gfp_t gfp_mask,
- 			       enum data_mode *data_mode)
- {
--	unsigned noio_flag;
--	void *ptr;
--
- 	if (c->block_size <= DM_BUFIO_BLOCK_SIZE_SLAB_LIMIT) {
- 		*data_mode = DATA_MODE_SLAB;
- 		return kmem_cache_alloc(DM_BUFIO_CACHE(c), gfp_mask);
-@@ -399,16 +396,16 @@ static void *alloc_buffer_data(struct dm
- 	 * all allocations done by this process (including pagetables) are done
- 	 * as if GFP_NOIO was specified.
- 	 */
-+	if (gfp_mask & __GFP_NORETRY) {
-+		unsigned noio_flag = memalloc_noio_save();
-+		void *ptr = __vmalloc(c->block_size, gfp_mask | __GFP_HIGHMEM,
-+				      PAGE_KERNEL);
- 
--	if (gfp_mask & __GFP_NORETRY)
--		noio_flag = memalloc_noio_save();
--
--	ptr = __vmalloc(c->block_size, gfp_mask | __GFP_HIGHMEM, PAGE_KERNEL);
--
--	if (gfp_mask & __GFP_NORETRY)
- 		memalloc_noio_restore(noio_flag);
-+		return ptr;
-+	}
- 
--	return ptr;
-+	return __vmalloc(c->block_size, gfp_mask | __GFP_HIGHMEM, PAGE_KERNEL);
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -1312,6 +1312,35 @@ static inline int mlock_future_check(str
+ 	return 0;
  }
  
++static inline u64 file_mmap_size_max(struct file *file, struct inode *inode)
++{
++	if (S_ISREG(inode->i_mode))
++		return inode->i_sb->s_maxbytes;
++
++	if (S_ISBLK(inode->i_mode))
++		return MAX_LFS_FILESIZE;
++
++	/* Special "we do even unsigned file positions" case */
++	if (file->f_mode & FMODE_UNSIGNED_OFFSET)
++		return 0;
++
++	/* Yes, random drivers might want more. But I'm tired of buggy drivers */
++	return ULONG_MAX;
++}
++
++static inline bool file_mmap_ok(struct file *file, struct inode *inode,
++				unsigned long pgoff, unsigned long len)
++{
++	u64 maxsize = file_mmap_size_max(file, inode);
++
++	if (maxsize && len > maxsize)
++		return false;
++	maxsize -= len;
++	if (pgoff > maxsize >> PAGE_SHIFT)
++		return false;
++	return true;
++}
++
  /*
+  * The caller must hold down_write(&current->mm->mmap_sem).
+  */
+@@ -1384,6 +1413,9 @@ unsigned long do_mmap(struct file *file,
+ 	if (file) {
+ 		struct inode *inode = file_inode(file);
+ 
++		if (!file_mmap_ok(file, inode, pgoff, len))
++			return -EOVERFLOW;
++
+ 		switch (flags & MAP_TYPE) {
+ 		case MAP_SHARED:
+ 			if ((prot&PROT_WRITE) && !(file->f_mode&FMODE_WRITE))
 
 
