@@ -6,82 +6,104 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 661C0C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:24:24 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4546CC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:24:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25EAE208B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:24:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25EAE208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id 04E8A208B0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:24:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04E8A208B0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934045AbeFLKYW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 06:24:22 -0400
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:45745 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933166AbeFLKYU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 06:24:20 -0400
+        id S934065AbeFLKYs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 06:24:48 -0400
+Received: from mga09.intel.com ([134.134.136.24]:34386 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754325AbeFLKXY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 06:23:24 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2018 03:23:23 -0700
+X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,214,1526367600"; 
-   d="scan'208";a="15169861"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 12 Jun 2018 03:24:10 -0700
-Received: from [10.159.245.112] (10.10.76.4) by chn-sv-exch04.mchp-main.com
- (10.10.76.105) with Microsoft SMTP Server id 14.3.352.0; Tue, 12 Jun 2018
- 03:24:10 -0700
-Subject: Re: [PATCH 0/4] Fix suspend resume on at91sam9261 and at91sam9263
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-CC:     Rob Herring <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20180607084107.4461-1-alexandre.belloni@bootlin.com>
-From:   Nicolas Ferre <nicolas.ferre@microchip.com>
-Organization: microchip
-Message-ID: <fb9ed9bf-52b9-4a46-cd70-469d933deefd@microchip.com>
-Date:   Tue, 12 Jun 2018 12:24:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180607084107.4461-1-alexandre.belloni@bootlin.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+   d="scan'208";a="66322077"
+Received: from hao-dev.bj.intel.com ([10.238.157.61])
+  by orsmga002.jf.intel.com with ESMTP; 12 Jun 2018 03:23:20 -0700
+From:   Wu Hao <hao.wu@intel.com>
+To:     atull@kernel.org, mdf@kernel.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     linux-api@vger.kernel.org, luwei.kang@intel.com,
+        yi.z.zhang@intel.com, hao.wu@intel.com,
+        Tim Whisonant <tim.whisonant@intel.com>,
+        Enno Luebbers <enno.luebbers@intel.com>,
+        Shiva Rao <shiva.rao@intel.com>,
+        Christopher Rauer <christopher.rauer@intel.com>,
+        Xiao Guangrong <guangrong.xiao@linux.intel.com>
+Subject: [PATCH v6 26/29] fpga: dfl: afu: add DFL_FPGA_GET_API_VERSION/CHECK_EXTENSION ioctls support
+Date:   Tue, 12 Jun 2018 18:10:40 +0800
+Message-Id: <1528798243-2029-27-git-send-email-hao.wu@intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1528798243-2029-1-git-send-email-hao.wu@intel.com>
+References: <1528798243-2029-1-git-send-email-hao.wu@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/06/2018 at 10:41, Alexandre Belloni wrote:
-> USB clock detection may not work properly on at91sam9261 and at91sam9263
-> because they currently use the same bit mask as at91rm9200 instead of
-> the one for at91sam9260.
-> 
-> Take the opportunity to also change the PMC compatible strings for all
-> the other SoCs in preparation for the new clock bindings.
-> 
-> Alexandre Belloni (4):
->    dt-bindings: arm: remove PMC bindings
->    dt-bindings: clk: at91: Document all the PMC compatibles
->    ARM: at91: fix USB clock detection handling
->    ARM: dts: fix PMC compatible
+DFL_FPGA_GET_API_VERSION and DFL_FPGA_CHECK_EXTENSION ioctls are common
+ones which need to be supported by all feature devices drivers including
+FME and AFU. This patch implements above 2 ioctls in FPGA Accelerated
+Function Unit (AFU) driver.
 
-To the whole series:
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Signed-off-by: Tim Whisonant <tim.whisonant@intel.com>
+Signed-off-by: Enno Luebbers <enno.luebbers@intel.com>
+Signed-off-by: Shiva Rao <shiva.rao@intel.com>
+Signed-off-by: Christopher Rauer <christopher.rauer@intel.com>
+Signed-off-by: Xiao Guangrong <guangrong.xiao@linux.intel.com>
+Signed-off-by: Wu Hao <hao.wu@intel.com>
+Acked-by: Alan Tull <atull@kernel.org>
+Acked-by: Moritz Fischer <mdf@kernel.org>
+---
+v2: rebased
+v3: rebased as driver renamed to fpga-dfl-afu
+    fix one checkpatch issue
+v4: add Acked-by from Alan and Moritz.
+v5: rebase, and add DFL_ prefix to APIs.
+v6: rebase.
+---
+ drivers/fpga/dfl-afu-main.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Thanks, best regards.
-
->   .../devicetree/bindings/arm/atmel-pmc.txt          | 14 --------------
->   .../devicetree/bindings/clock/at91-clock.txt       |  9 ++++-----
->   arch/arm/boot/dts/at91sam9261.dtsi                 |  2 +-
->   arch/arm/boot/dts/at91sam9263.dtsi                 |  2 +-
->   arch/arm/boot/dts/at91sam9rl.dtsi                  |  2 +-
->   arch/arm/boot/dts/sama5d4.dtsi                     |  2 +-
->   arch/arm/mach-at91/pm.c                            |  5 +++++
->   7 files changed, 13 insertions(+), 23 deletions(-)
->   delete mode 100644 Documentation/devicetree/bindings/arm/atmel-pmc.txt
-> 
-
-
+diff --git a/drivers/fpga/dfl-afu-main.c b/drivers/fpga/dfl-afu-main.c
+index 30a6937..1f22423 100644
+--- a/drivers/fpga/dfl-afu-main.c
++++ b/drivers/fpga/dfl-afu-main.c
+@@ -236,6 +236,13 @@ static int afu_release(struct inode *inode, struct file *filp)
+ 	return 0;
+ }
+ 
++static long afu_ioctl_check_extension(struct dfl_feature_platform_data *pdata,
++				      unsigned long arg)
++{
++	/* No extension support for now */
++	return 0;
++}
++
+ static long afu_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ {
+ 	struct platform_device *pdev = filp->private_data;
+@@ -248,6 +255,10 @@ static long afu_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 	pdata = dev_get_platdata(&pdev->dev);
+ 
+ 	switch (cmd) {
++	case DFL_FPGA_GET_API_VERSION:
++		return DFL_FPGA_API_VERSION;
++	case DFL_FPGA_CHECK_EXTENSION:
++		return afu_ioctl_check_extension(pdata, arg);
+ 	default:
+ 		/*
+ 		 * Let sub-feature's ioctl function to handle the cmd
 -- 
-Nicolas Ferre
+1.8.3.1
+
