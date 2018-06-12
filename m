@@ -2,95 +2,128 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7A80CC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 11:39:57 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 201ACC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 11:43:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31DBE208BA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 11:39:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFA57208B0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 11:43:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AXtBfkqJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31DBE208BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ntCKsRSr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFA57208B0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933367AbeFLLjz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 07:39:55 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:36361 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932556AbeFLLji (ORCPT
+        id S932963AbeFLLnx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 07:43:53 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:34693 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754019AbeFLLnv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 07:39:38 -0400
-Received: by mail-lf0-f66.google.com with SMTP id u4-v6so35509855lff.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 04:39:38 -0700 (PDT)
+        Tue, 12 Jun 2018 07:43:51 -0400
+Received: by mail-ot0-f195.google.com with SMTP id r18-v6so13185694otk.1;
+        Tue, 12 Jun 2018 04:43:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=vFTi7s4U/f45GltnkDWLYM3rEREPqox/mTtdjzNYOG0=;
-        b=AXtBfkqJyfc4RQ8ZYIVdkmzXeHyAc4oJFIftEKwydl/7j77/JbdEwPXuSYswb3K7qV
-         CIbfyqK74FqVVo3Ehzyp/0kJVxU3ZmX0FbtPSurKRwGK2PorSdoTuhAbD5e4D2kZ/35K
-         HhYOXYsq17Qq+UB06ZzU1idJgleT7tMueG0EM=
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=n7EOqQTRPF9XI+2b894weAYj/hPS2OyKbWBt3ey6gmk=;
+        b=ntCKsRSrLeQHBMb19+FYtFn0qq+TX93ZybiyaiC9nsJ7ZlgUBiVqEeWkNFvaDnb5iR
+         eUFAKeAPnV+5PvvS7lcPlC85rt4OpGzMEtMUYIIWDJZpNiiW9VdePV6IHHPc6shsVuK4
+         peRC9ilh/SFMkiNxjakW1IQJKBGtReiGta/5+WWsixsuqEtpX6XCelCshR6olQdku4Zk
+         VYe5p0RQCp/AYnLZMGhr4nYg8Nm/Y0ih60f7Pij3pPM3l+aYSpXd8bFJ0uBzDtSlCI0g
+         phrrlS+atMJ7GEctsejRoiYkiapfqzcahvEzU3zyNXP6XoxCRCkbd9OyDKSCALpJEyEM
+         rUAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=vFTi7s4U/f45GltnkDWLYM3rEREPqox/mTtdjzNYOG0=;
-        b=doSUD5sgKgLwX7dxYWJQHFnh+LzdJnBOhfSVw30bG/ipwP/PtyEv9EuFUWEP6ZQulc
-         UfRm7wB426omve8TNkBFb5BM2MuyvdijnQcozHpOxJctv8/1q2HDFBYiw3dRnB3WtMLK
-         g+OAjegl+ExlEUQc5V/9Uk1ILwVCo84Dgid+Haq9Q1bZv5FnZ3Nx9SdmX+ak4rn1qg51
-         +8sqGfeLtdEuA6lBCP0bEbF0/4ABB5cJKlg/kK8V1MVZm+DJXAaKeKahB6G+uWg6SrDB
-         pwB7YxJC9bAljX2Xgxbsjzt78SlppY+oo8L4A3nZ1fxLf6Hcpxpk1IaQJFJ72GgkYKtH
-         /9vQ==
-X-Gm-Message-State: APt69E1W40obEdJBN3fb+HkkOg9aIzWV6lU+wg87DMjy7PjtuUTDFKuS
-        Trvyhe/jTUuAJDnOQE2AVSRgYw==
-X-Google-Smtp-Source: ADUXVKKS+cwpIi8AFbjjOzeY9uiHRpQUPYYak0jvNzmpbJz/9Pch7SEtjFAZ3khNmpAWv4oR/NpB6Q==
-X-Received: by 2002:a2e:55cf:: with SMTP id g76-v6mr22764lje.4.1528803577482;
-        Tue, 12 Jun 2018 04:39:37 -0700 (PDT)
-Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
-        by smtp.gmail.com with ESMTPSA id o11-v6sm186162lji.0.2018.06.12.04.39.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Jun 2018 04:39:37 -0700 (PDT)
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     Niklas Cassel <niklas.cassel@linaro.org>,
-        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] ath10k: allow ATH10K_SNOC with COMPILE_TEST
-Date:   Tue, 12 Jun 2018 13:39:06 +0200
-Message-Id: <20180612113907.15043-2-niklas.cassel@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180612113907.15043-1-niklas.cassel@linaro.org>
-References: <20180612113907.15043-1-niklas.cassel@linaro.org>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=n7EOqQTRPF9XI+2b894weAYj/hPS2OyKbWBt3ey6gmk=;
+        b=KYZWDxCoEaQvyieAYhx94BlB2S3cHVr4y4qUYfhv3SwvIaAGh8MuesuPwDCeIOopeU
+         Cc5a9HLRaPa8PgbVt1GuYOrImKzJdAS0SVcr35O/ld/7uOXcS5cACS9NPAnpswqZsIdj
+         vceusi9b9NSy2HaVAUrVsqyJzj4H1yD3Vow4CFlkg6Ts1QdJVcIioSDHJWV8aD1GDxip
+         9nWNijZgOgSRcaIXhNlcOQ5fJPdZKr2YorFAU9nAVhIjsQlYGLTf3vHwH2JN5OFNUJao
+         U8KCtnwjPkfwyBgECmbIe+bUXa3m5/aBljSv6ev1EK0y0Beez3GQwir1ljVfkyHm3sRS
+         ua+A==
+X-Gm-Message-State: APt69E3LWKmeO3b+MJt2u+uz6YjaUqqp4RSx7ekqKk++GukXFylNGQAx
+        UvsbKck+8vV84VFy+lXWCjiF5BePaE1PiU6ooHw=
+X-Google-Smtp-Source: ADUXVKIDxxXi+ovCh5PVqWTInnDlcDC0HmPxCOabTUhV9GCta6QDAMOKeb/uCRWPA96lKXF4D9GL/9CbXOlmj1IHQPo=
+X-Received: by 2002:a9d:2ed3:: with SMTP id w77-v6mr3410ota.123.1528803830389;
+ Tue, 12 Jun 2018 04:43:50 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a4a:7019:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 04:43:49
+ -0700 (PDT)
+In-Reply-To: <alpine.DEB.2.21.1806121155450.2157@nanos.tec.linutronix.de>
+References: <20180607143807.3611-1-yu-cheng.yu@intel.com> <20180607143807.3611-7-yu-cheng.yu@intel.com>
+ <CALCETrU6axo158CiSCRRkC4GC5hib9hypC98t7LLjA3gDaacsw@mail.gmail.com>
+ <1528403417.5265.35.camel@2b52.sc.intel.com> <CALCETrXz3WWgZwUXJsDTWvmqKUArQFuMH1xJdSLVKFpTysNWxg@mail.gmail.com>
+ <CAMe9rOr49V8rqRa_KVsw61PWd+crkQvPDgPKtvowazjmsfgWWQ@mail.gmail.com> <alpine.DEB.2.21.1806121155450.2157@nanos.tec.linutronix.de>
+From:   "H.J. Lu" <hjl.tools@gmail.com>
+Date:   Tue, 12 Jun 2018 04:43:49 -0700
+Message-ID: <CAMe9rOoCiXQ4iVD3j_AHGrvEXtoaVVZVs7H7fCuqNEuuR5j+2Q@mail.gmail.com>
+Subject: Re: [PATCH 06/10] x86/cet: Add arch_prctl functions for shadow stack
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        mike.kravetz@oracle.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ATH10K_SNOC builds just fine with COMPILE_TEST, so make that possible.
+On Tue, Jun 12, 2018 at 3:03 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
+> On Thu, 7 Jun 2018, H.J. Lu wrote:
+>> On Thu, Jun 7, 2018 at 2:01 PM, Andy Lutomirski <luto@kernel.org> wrote:
+>> > Why is the lockout necessary?  If user code enables CET and tries to
+>> > run code that doesn't support CET, it will crash.  I don't see why we
+>> > need special code in the kernel to prevent a user program from calling
+>> > arch_prctl() and crashing itself.  There are already plenty of ways to
+>> > do that :)
+>>
+>> On CET enabled machine, not all programs nor shared libraries are
+>> CET enabled.  But since ld.so is CET enabled, all programs start
+>> as CET enabled.  ld.so will disable CET if a program or any of its shared
+>> libraries aren't CET enabled.  ld.so will lock up CET once it is done CET
+>> checking so that CET can't no longer be disabled afterwards.
+>
+> That works for stuff which loads all libraries at start time, but what
+> happens if the program uses dlopen() later on? If CET is force locked and
+> the library is not CET enabled, it will fail.
 
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
----
- drivers/net/wireless/ath/ath10k/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+That is to prevent disabling CET by dlopening a legacy shared library.
 
-diff --git a/drivers/net/wireless/ath/ath10k/Kconfig b/drivers/net/wireless/ath/ath10k/Kconfig
-index 54ff5930126c..6572a43590a8 100644
---- a/drivers/net/wireless/ath/ath10k/Kconfig
-+++ b/drivers/net/wireless/ath/ath10k/Kconfig
-@@ -42,7 +42,8 @@ config ATH10K_USB
- 
- config ATH10K_SNOC
- 	tristate "Qualcomm ath10k SNOC support (EXPERIMENTAL)"
--	depends on ATH10K && ARCH_QCOM
-+	depends on ATH10K
-+	depends on ARCH_QCOM || COMPILE_TEST
- 	---help---
- 	  This module adds support for integrated WCN3990 chip connected
- 	  to system NOC(SNOC). Currently work in progress and will not
+> I don't see the point of trying to support CET by magic. It adds complexity
+> and you'll never be able to handle all corner cases correctly. dlopen() is
+> not even a corner case.
+
+That is a price we pay for security.  To enable CET, especially shadow
+shack, the program and all of shared libraries it uses should be CET
+enabled.  Most of programs can be enabled with CET by compiling them
+with -fcf-protection.
+
+> Occasionally stuff needs to be recompiled to utilize new mechanisms, see
+> retpoline ...
+>
+> Thanks,
+>
+>         tglx
+>
+
+
+
 -- 
-2.17.1
-
+H.J.
