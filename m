@@ -2,121 +2,155 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 64255C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:55:22 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E7BE1C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:56:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1375E208BA
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:55:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FE62208B3
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:56:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="Xr1hYw2z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1375E208BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LPwSt5x9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FE62208B3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933945AbeFLIzS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 04:55:18 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:37276 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933857AbeFLIzP (ORCPT
+        id S933969AbeFLI4f (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 04:56:35 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:36626 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933439AbeFLI4c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 04:55:15 -0400
-Received: by mail-lf0-f67.google.com with SMTP id g21-v6so32808555lfb.4
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 01:55:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=nYNRHA42EcASS3/6XHKUsdYlCMp9OvXIbZbySr/3NIM=;
-        b=Xr1hYw2ziEui+NLnr4Lxl8bTmrF2kiij8unvAt5rkD1cH4LR9aV8PvJ0p4NpzJP5ip
-         qOhO6N944GAiFby8onUWk95G0Kg4CoDNQSlvfxp8GrwLWXpeJK4CIp8rWzc0NtbL80Jx
-         Ja0OGu6+LfwdoWhag0wIsGvjlA2v9+3DvNOcyDaYQ83PnItvywlzgcGEeAmj3o55VdnJ
-         eH5h8zn2tdWXkTIEGsSdsqOfVlm6dpbLFfJj7ebUWanKGWpS0db2u6Qq+R8D7sOPXes/
-         NncvDk5qcVh+a/SWQm671pZEO3YMmRjq7s5lncUAHC4+CTqblo7Eh2EQH77TtRUiGb1j
-         iXMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=nYNRHA42EcASS3/6XHKUsdYlCMp9OvXIbZbySr/3NIM=;
-        b=K9mvWaBaNrePbulATrtYG1y9PvJI48S0Az6omFZ8XxCnBgzUtbBHQEQRo+3HflEvWo
-         fpm/Uz6rWmTS8pNR7EUKlchD5vvzryTJxOI+haM2DcaeMTmJfnAWxbK/PC8GGDuhNVU5
-         Kis8RnFWQq9pNZ5mDrA3asWvWw0I+szIuxjgnrxVMLjrOhBl8NG7fku8N5OwjeN6XrPp
-         AbjF6lSf452ZOa4DiY7WJhs99p/Vjd3aA8ReZx6DAI7ODxvNVlwIuUJSOGryOh4a5vCc
-         dRQTJg/z5p10wVIdZ0CddQvdkMGl638PmeKVSqoa5y9y3JS2ee6jBz6TNMx4Xq5TUF0Q
-         bIEQ==
-X-Gm-Message-State: APt69E0swaahd1Xt7tXh2BfnEwxS5Cw7tod3UVR84vcVkfCB7ub8pCGO
-        4FLEnfhFLyp9fqWmxAlqPf2lMbil6fI=
-X-Google-Smtp-Source: ADUXVKKGeuO6BdoD+cD36nsGScGIOGjroPGRa51SLKe1GMun/fr0OseOEhqA+EPEZ/ESMH41Vt1mYg==
-X-Received: by 2002:a19:e82c:: with SMTP id f44-v6mr1515212lfh.19.1528793714256;
-        Tue, 12 Jun 2018 01:55:14 -0700 (PDT)
-Received: from [192.168.0.126] ([31.173.81.249])
-        by smtp.gmail.com with ESMTPSA id x17-v6sm95224lfa.10.2018.06.12.01.55.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Jun 2018 01:55:12 -0700 (PDT)
-Subject: Re: [PATCH] usb: gadget: add error handling for
- platform_get_resource_byname
-To:     Zhouyang Jia <jiazhouyang09@gmail.com>
-Cc:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Kees Cook <keescook@chromium.org>,
-        Allen Pais <allen.lkml@gmail.com>, linux-usb@vger.kernel.org,
+        Tue, 12 Jun 2018 04:56:32 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5C8taxF146464;
+        Tue, 12 Jun 2018 08:56:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2017-10-26;
+ bh=M+RUTheYD/unWoN4X5PIzJQzkibbb/dZxi8qMCDBkYQ=;
+ b=LPwSt5x9gCfcSUfQlOPMhMJNb9WmA/aFs2rvzCBsMM6NPD+S0c3am2LprUAvPDpvHGXi
+ Mow/nqJlynO3jWCUQaXblpbnfffoT0rqVYxq+P5d5+vBA/qdJzCk6qKZq8/vaeuG/lyM
+ tPDorj+hSM5YQACXd/6Bb/DW4gCu7J9RB7OhfQzf21X8T87X1u9+buuCBPXExU0fVIRy
+ Dt/1kplMxslQTio6excxS7hs4cruAurr3Q41uAbSjzi9FmJKKAixTtTThma/urW4Vi9u
+ L0z1ermVGJGlHM7HZSyPdnMbVKPQDMVpxTpJJ0s92uLWfnmlTKLAKMtrybhpMtqwqr19 hw== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2120.oracle.com with ESMTP id 2jgecxgacu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Jun 2018 08:56:26 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5C8uPt5018796
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Jun 2018 08:56:25 GMT
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5C8uOSW031399;
+        Tue, 12 Jun 2018 08:56:24 GMT
+Received: from mwanda (/197.157.0.30)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 12 Jun 2018 01:56:23 -0700
+Date:   Tue, 12 Jun 2018 11:56:16 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     chris <eklikeroomys@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, Frank Mori Hess <fmh6jj@gmail.com>,
+        Ian Abbott <abbotti@mev.co.uk>,
+        Simo Koskinen <koskisoft@gmail.com>,
         linux-kernel@vger.kernel.org
-References: <1528777942-40876-1-git-send-email-jiazhouyang09@gmail.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <e6291d56-477e-980a-a8b4-de86e85d3851@cogentembedded.com>
-Date:   Tue, 12 Jun 2018 11:55:15 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+Subject: Re: [PATCH] staging: comedi: Improved readability of function
+ comedi_nsamples_left.
+Message-ID: <20180612085616.ukbpgtx7s4nxiekz@mwanda>
+References: <1528554204-4388-1-git-send-email-eklikeroomys@gmail.com>
+ <20180609140527.GC28854@kroah.com>
+ <20180610103001.GA7804@kerdev>
 MIME-Version: 1.0
-In-Reply-To: <1528777942-40876-1-git-send-email-jiazhouyang09@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180610103001.GA7804@kerdev>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8921 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=665
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806120107
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
+You haven't been sending the v2 and v3 patches in the right way.
 
-On 6/12/2018 7:32 AM, Zhouyang Jia wrote:
+Take a look through the email archive and see how this is normally done.
+Also google it:
+https://www.google.com/search?q=how+to+send+a+v2+patch
 
-> When platform_get_resource_byname fails, the lack of error-handling code may
-> cause unexpected results.
-
-    What results?
-
-> This patch adds error-handling code after calling platform_get_resource_byname.
+On Sun, Jun 10, 2018 at 12:30:01PM +0200, chris wrote:
+> Hi Greg,
+> I've added changelog text to the patch below. Appreciate your 
+> feedback!
+> Regards,
+> Chris Opperman
 > 
-> Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+> >8----------------------------------------------------------------------8<
+> 
+> Improved the readability of comedi_nsamples_left:
+> a) Reduced nesting by using more return calls.
+
+nit: return isn't a function so it can't be called.
+
+> b) Separated variable declarations from code.
+
+It was separate in the original code too.
+
+> c) Using kernel integer types.
+
+The original types were fine/better.
+
+The rules are that we don't like uint32_t and the reason for not liking
+it is that we looked through the kernel code and standardized on what
+was most common...
+
+Generally u32 and friends mean that the hardware or network protocol
+specifies the number of bits.  That's especially true for s32.  If you
+see code using s32 when it's not tied to a hardware spec then that's a
+sign that the code is written by an insane person and it's a tricky
+situation to deal with.
+
+Some other reasons to use u32 is because it's shorter to type than
+unsigned int and because of line lengths...  I've sometimes done that.
+But it's perhaps lazy.
+
+> 
+> Signed-off-by: Chris Opperman <eklikeroomys@gmail.com>
 > ---
->   drivers/usb/gadget/udc/r8a66597-udc.c | 5 +++++
->   1 file changed, 5 insertions(+)
+>  drivers/staging/comedi/drivers.c | 29 ++++++++++++++---------------
+>  1 file changed, 14 insertions(+), 15 deletions(-)
 > 
-> diff --git a/drivers/usb/gadget/udc/r8a66597-udc.c b/drivers/usb/gadget/udc/r8a66597-udc.c
-> index a3ecce6..a7bd5e7 100644
-> --- a/drivers/usb/gadget/udc/r8a66597-udc.c
-> +++ b/drivers/usb/gadget/udc/r8a66597-udc.c
-> @@ -1830,6 +1830,11 @@ static int r8a66597_sudmac_ioremap(struct r8a66597 *r8a66597,
->   	struct resource *res;
->   
->   	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "sudmac");
-> +	if (!res) {
-> +		dev_err(&pdev->dev, "could not allocate resource.\n");
-> +		return -ENODEV;
-> +	}
-> +
->   	r8a66597->sudmac_reg = devm_ioremap_resource(&pdev->dev, res);
+> diff --git a/drivers/staging/comedi/drivers.c b/drivers/staging/comedi/drivers.c
+> index 9d73347..3207ae2 100644
+> --- a/drivers/staging/comedi/drivers.c
+> +++ b/drivers/staging/comedi/drivers.c
+> @@ -468,26 +468,25 @@ EXPORT_SYMBOL_GPL(comedi_nscans_left);
+>   * Returns the number of samples remaining to complete the command, or the
+>   * specified expected number of samples (@nsamples), whichever is fewer.
+>   */
+> -unsigned int comedi_nsamples_left(struct comedi_subdevice *s,
+> -				  unsigned int nsamples)
+> +u32 comedi_nsamples_left(struct comedi_subdevice *s, u32 nsamples)
+>  {
+>  	struct comedi_async *async = s->async;
+>  	struct comedi_cmd *cmd = &async->cmd;
+> +	u32 scans_left;
 
-    This function checks for 'res == NULL', no?
+I would make scans_left an unsigned long long so that you can remove
+the cast when you do the multiply.
 
->   	return PTR_ERR_OR_ZERO(r8a66597->sudmac_reg);
->   }
+> +	u64 samples_left;
 
-MBR, Sergei
+Nothing wrong with unsigned long long.
+
+regards,
+dan carpenter
+
