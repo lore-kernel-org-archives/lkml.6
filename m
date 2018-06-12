@@ -2,144 +2,138 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.4 required=3.0 tests=DATE_IN_PAST_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3B82DC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:03:45 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A6019C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:05:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC9222089C
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:03:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC9222089C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5E63020660
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:05:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E63020660
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933280AbeFLTDn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 15:03:43 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50920 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932926AbeFLTDl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 15:03:41 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 023C24000B8A;
-        Tue, 12 Jun 2018 19:03:41 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E81732026DEF;
-        Tue, 12 Jun 2018 19:03:40 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w5CJ3eCV030776;
-        Tue, 12 Jun 2018 15:03:40 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w5CJ3eSw030772;
-        Tue, 12 Jun 2018 15:03:40 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Tue, 12 Jun 2018 15:03:40 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Alan Stern <stern@rowland.harvard.edu>
-cc:     Ming Lei <ming.lei@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] usb: don't offload isochronous urb completions to
- ksoftirq
-In-Reply-To: <Pine.LNX.4.44L0.1806121433290.1582-100000@iolanthe.rowland.org>
-Message-ID: <alpine.LRH.2.02.1806121450330.14879@file01.intranet.prod.int.rdu2.redhat.com>
-References: <Pine.LNX.4.44L0.1806121433290.1582-100000@iolanthe.rowland.org>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        id S932607AbeFLTFi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 15:05:38 -0400
+Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:18332 "EHLO
+        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754176AbeFLTFd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 15:05:33 -0400
+Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
+ EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
+ 15.0.1156.6; Tue, 12 Jun 2018 12:05:30 -0700
+Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 0ECC34058A;
+        Tue, 12 Jun 2018 12:05:33 -0700 (PDT)
+From:   Nadav Amit <namit@vmware.com>
+To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>
+CC:     Nadav Amit <namit@vmware.com>
+Subject: [PATCH v4 0/9] x86: macrofying inline asm for better compilation
+Date:   Tue, 12 Jun 2018 04:50:41 -0700
+Message-ID: <20180612115050.185112-1-namit@vmware.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 12 Jun 2018 19:03:41 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 12 Jun 2018 19:03:41 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
+Content-Type: text/plain
+Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
+ designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch-set deals with an interesting yet stupid problem: kernel code
+that does not get inlined despite its simplicity. There are several
+causes for this behavior: "cold" attribute on __init, different function
+optimization levels; conditional constant computations based on
+__builtin_constant_p(); and finally large inline assembly blocks.
+
+This patch-set deals with the inline assembly problem. I separated these
+patches from the others (that were sent in the RFC) for easier
+inclusion. I also separated the removal of unnecessary new-lines which
+would be sent separately.
+
+The problem with inline assembly is that inline assembly is often used
+by the kernel for things that are other than code - for example,
+assembly directives and data. GCC however is oblivious to the content of
+the blocks and assumes their cost in space and time is proportional to
+the number of the perceived assembly "instruction", according to the
+number of newlines and semicolons. Alternatives, paravirt and other
+mechanisms are affected, causing code not to be inlined, and degrading
+compilation quality in general.
+
+The solution that this patch-set carries for this problem is to create
+an assembly macro, and then call it from the inline assembly block.  As
+a result, the compiler sees a single "instruction" and assigns the more
+appropriate cost to the code.
+
+To avoid uglification of the code, as many noted, the macros are first
+precompiled into an assembly file, which is later assembled together
+with the C files. This also enables to avoid duplicate implementation
+that was set before for the asm and C code. This can be seen in the
+exception table changes.
+
+Overall this patch-set slightly increases the kernel size (my build was
+done using my Ubuntu 18.04 config + localyesconfig for the record):
+
+   text	   data	    bss	    dec	    hex	filename
+18140829 10224724 2957312 31322865 1ddf2f1 ./vmlinux before
+18163608 10227348 2957312 31348268 1de562c ./vmlinux after (+0.1%)
+
+The number of static functions in the image is reduced by 379, but
+actually inlining is even better, which does not always shows in these
+numbers: a function may be inlined causing the calling function not to
+be inlined.
+
+The Makefile stuff may not be too clean. Ideas for improvements are
+welcome.
+
+v3->v4: * Changed naming of macros in 2 patches (PeterZ)
+	* Minor cleanup of the paravirt patch
+
+v2->v3: * Several build issues resolved (0-day)
+	* Wrong comments fix (Josh)
+	* Change asm vs C order in refcount (Kees)
+
+v1->v2:	* Compiling the macros into a separate .s file, improving
+	  readability (Linus)
+	* Improving assembly formatting, applying most of the comments
+	  according to my judgment (Jan)
+	* Adding exception-table, cpufeature and jump-labels
+	* Removing new-line cleanup; to be submitted separately
 
 
-On Tue, 12 Jun 2018, Alan Stern wrote:
+Nadav Amit (9):
+  Makefile: Prepare for using macros for inline asm
+  x86: objtool: use asm macro for better compiler decisions
+  x86: refcount: prevent gcc distortions
+  x86: alternatives: macrofy locks for better inlining
+  x86: bug: prevent gcc distortions
+  x86: prevent inline distortion by paravirt ops
+  x86: extable: use macros instead of inline assembly
+  x86: cpufeature: use macros instead of inline assembly
+  x86: jump-labels: use macros instead of inline assembly
 
-> On Tue, 12 Jun 2018, Mikulas Patocka wrote:
-> 
-> > On Tue, 12 Jun 2018, Alan Stern wrote:
-> > 
-> > > On Tue, 12 Jun 2018, Mikulas Patocka wrote:
-> > > 
-> > > > > How about making the softirq thread's priority adjustable?
-> > > > 
-> > > > But you would have to argue with softirq maintainers about it - and you 
-> > > > say that you don't have time for that.
-> > > 
-> > > But maybe _you_ do...
-> > 
-> > ksoftirqd has priority 0 - it is not suitable for real-time tasks, such as 
-> > audio.
-> 
-> There have been suggestions posted to this mailing list for changing 
-> the USB stack to use a threaded interrupt routine instead of a tasklet
-> for this purpose.  Would that make your situation any better?
+ Makefile                               |  9 ++-
+ arch/x86/Makefile                      | 11 ++-
+ arch/x86/include/asm/alternative-asm.h | 20 ++++--
+ arch/x86/include/asm/alternative.h     | 11 +--
+ arch/x86/include/asm/asm.h             | 61 +++++++---------
+ arch/x86/include/asm/bug.h             | 98 +++++++++++++++-----------
+ arch/x86/include/asm/cpufeature.h      | 82 ++++++++++++---------
+ arch/x86/include/asm/jump_label.h      | 65 ++++++++++-------
+ arch/x86/include/asm/paravirt_types.h  | 56 +++++++--------
+ arch/x86/include/asm/refcount.h        | 74 +++++++++++--------
+ arch/x86/kernel/Makefile               |  6 ++
+ arch/x86/kernel/macros.S               | 16 +++++
+ include/asm-generic/bug.h              |  8 +--
+ include/linux/compiler.h               | 56 +++++++++++----
+ scripts/Kbuild.include                 |  4 +-
+ 15 files changed, 344 insertions(+), 233 deletions(-)
+ create mode 100644 arch/x86/kernel/macros.S
 
-If you set real-time priority to the interrupt thread, then yes, I think 
-it would solve the problem.
+-- 
+2.17.0
 
-> > In my opinion, it is much easier to fix this in the ehci driver (by not 
-> > offloading isochronous completions), than to design a new 
-> > real-time-capable ksoftirqd.
-> 
-> You probably never noticed this, but in fact we use _two_ bottom-half 
-> handlers for URB completions: one scheduled with normal priority and 
-> one scheduled with high priority (tasklet_hi_schedule()).  Isochronous 
-> URB completions go to the high-priority handler.
-> 
-> Shouldn't a high-priority tasklet be up to the job of handling audio?
-
-I noticed the function tasklet_hi_schedule. It has higher priority than 
-other softirqs - but it gets offloaded to the ksoftirqd thread that has 
-priority 0. So it can be preempted by anything - and it doesn't protect 
-against skipping.
-
-If we raise the priority of ksoftirqd, people will start complaining such 
-as "my machine is unuseable when it receives too many network packets". 
-So, you basically need two ksoftirqds, one for networking (with regular 
-priority) and one for audio (with high priority).
-
-> > > > > As for coordinating with the softirq maintainers -- whether I want to 
-> > > > > or not isn't the issue.  Right now I don't have _time_ to do it.
-> > > > > 
-> > > > > Alan Stern
-> > > > 
-> > > > I am wondering - whats the purpose of that patch 
-> > > > 428aac8a81058e2303677a8fbf26670229e51d3a at all? The patch shows some 
-> > > > performance difference, but they are minor, about 1%.
-> > > > 
-> > > > If you want to call the urb callback as soon as possible - why don't you 
-> > > > just call it? Why do you need to offload the callback to a softirq thread?
-> > > 
-> > > Please read the Changelog entry for commit 94dfd7edfd5c.  Basically the 
-> > > idea was to reduce overall latency by not doing as much work in an 
-> > > interrupt handler.
-> > > 
-> > > Alan Stern
-> > 
-> > snd_complete_urb is doing nothing but submitting the same urb again. Is 
-> > resubmitting the urb really causing so much latency that you can't do it 
-> > in the interrupt handler?
-> 
-> Perhaps snd_complete_urb doesn't doing very much, but other drivers
-> most definitely do.  In particular, the completion handler for the USB
-> video class driver can be very time consuming.  Your proposed change
-> would make things worse for people using USB video.
-
-In that case we can avoid offloading just for snd_complete_urb. Would you 
-agree to adding a flag such as URB_FAST_COMPLETION that is set just by the 
-audio driver?
-
-Do the video usb devices use isochronous or bulk transfers?
-
-> Alan Stern
-
-Mikulas
