@@ -2,70 +2,137 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 152AFC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 20:14:22 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9748AC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 20:18:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6EE620891
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 20:14:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="r7i+mPns"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6EE620891
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 4E28020891
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 20:18:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E28020891
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933640AbeFLUOT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 16:14:19 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47742 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932768AbeFLUOS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 16:14:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=edz73lJtyFma03ptPwbjaKspQQtNh4UpeT69geOGlyc=; b=r7i+mPns48RfDigqLFfgQ7rQD
-        hY2oLEkfuOv3P4D2dJecJC2EuxbqFKB5fhspSQ2e5tMPOYEMuuRuqHiZI+V1DFf7RSlQ+7B0G2tLC
-        /FqkirdEel9iH1aVSCPUPRhMxdasg9n+w6QRBpgVX29tjjgpSRSpdFdsDBHP4k1eSWpjFnDP6XMx7
-        a8KF7IxiSAoUEAYfRlmpM/uv1b6I4R5Epy7WgW6+aJ8LEnQSJronRueDQEVTPXXozF1jSc4Jd5aGQ
-        SqixYgsZnBhiRlsA6YZ1rZ+CxAQoOENb/zlq5VJ+aJs/UTMVpwVlsZv14IH7q/6rbLpNyOv3uSddH
-        O2IK7bjJg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSpgE-0007KH-61; Tue, 12 Jun 2018 20:14:14 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id E9077201EA7A3; Tue, 12 Jun 2018 22:14:11 +0200 (CEST)
-Date:   Tue, 12 Jun 2018 22:14:11 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH v3 0/3] Introduce atomic_dec_and_lock_irqsave +
- refcount_dec_and_lock_irqsave()
-Message-ID: <20180612201411.GU12198@hirez.programming.kicks-ass.net>
-References: <20180612161621.22645-1-bigeasy@linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180612161621.22645-1-bigeasy@linutronix.de>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S933630AbeFLUSt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 16:18:49 -0400
+Received: from mga18.intel.com ([134.134.136.126]:40916 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932823AbeFLUSr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 16:18:47 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2018 13:18:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,216,1526367600"; 
+   d="scan'208";a="236601496"
+Received: from 2b52.sc.intel.com (HELO [143.183.136.147]) ([143.183.136.147])
+  by fmsmga005.fm.intel.com with ESMTP; 12 Jun 2018 13:18:46 -0700
+Message-ID: <1528834538.9849.13.camel@2b52.sc.intel.com>
+Subject: Re: [PATCH 00/10] Control Flow Enforcement - Part (3)
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     bsingharora@gmail.com, LKML <linux-kernel@vger.kernel.org>,
+        linux-doc@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        mike.kravetz@oracle.com
+Date:   Tue, 12 Jun 2018 13:15:38 -0700
+In-Reply-To: <1528824280.9447.30.camel@2b52.sc.intel.com>
+References: <20180607143807.3611-1-yu-cheng.yu@intel.com>
+         <bbfde1b3-5e1b-80e3-30e8-fd1e46a2ceb1@gmail.com>
+         <1528815820.8271.16.camel@2b52.sc.intel.com>
+         <CALCETrXK6hypCb5sXwxWRKr=J6_7XtS6s5GB1WPBiqi79q8-8g@mail.gmail.com>
+         <1528820489.9324.14.camel@2b52.sc.intel.com>
+         <CALCETrVOyZz72RuoRB=z_EjFTqqctSLfX30GM+MSEVtbcd=PeQ@mail.gmail.com>
+         <1528824280.9447.30.camel@2b52.sc.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 06:16:18PM +0200, Sebastian Andrzej Siewior wrote:
-> This patchset introduces atomic_dec_and_lock_irqsave() and
-> refcount_dec_and_lock_irqsave(). The individual user are not part of
-> this series.
-> The custom Alpha implementation of atomic_dec_and_lock() is removed
-> because the decrement operation is not a RELEASE operation (pointed out
-> by Peter Zijlstra).
+On Tue, 2018-06-12 at 10:24 -0700, Yu-cheng Yu wrote:
+> On Tue, 2018-06-12 at 09:31 -0700, Andy Lutomirski wrote:
+> > On Tue, Jun 12, 2018 at 9:24 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+> > >
+> > > On Tue, 2018-06-12 at 09:00 -0700, Andy Lutomirski wrote:
+> > > > On Tue, Jun 12, 2018 at 8:06 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+> > > > >
+> > > > > On Tue, 2018-06-12 at 20:56 +1000, Balbir Singh wrote:
+> > > > > >
+> > > > > > On 08/06/18 00:37, Yu-cheng Yu wrote:
+> > > > > > > This series introduces CET - Shadow stack
+> > > > > > >
+> > > > > > > At the high level, shadow stack is:
+> > > > > > >
+> > > > > > >     Allocated from a task's address space with vm_flags VM_SHSTK;
+> > > > > > >     Its PTEs must be read-only and dirty;
+> > > > > > >     Fixed sized, but the default size can be changed by sys admin.
+> > > > > > >
+> > > > > > > For a forked child, the shadow stack is duplicated when the next
+> > > > > > > shadow stack access takes place.
+> > > > > > >
+> > > > > > > For a pthread child, a new shadow stack is allocated.
+> > > > > > >
+> > > > > > > The signal handler uses the same shadow stack as the main program.
+> > > > > > >
+> > > > > >
+> > > > > > Even with sigaltstack()?
+> > > > > >
+> > > > > >
+> > > > > > Balbir Singh.
+> > > > >
+> > > > > Yes.
+> > > > >
+> > > >
+> > > > I think we're going to need some provision to add an alternate signal
+> > > > stack to handle the case where the shadow stack overflows.
+> > >
+> > > The shadow stack stores only return addresses; its consumption will not
+> > > exceed a percentage of (program stack size + sigaltstack size) before
+> > > those overflow.  When that happens, there is usually very little we can
+> > > do.  So we set a default shadow stack size that supports certain nested
+> > > calls and allow sys admin to adjust it.
+> > >
+> > 
+> > Of course there's something you can do: add a sigaltstack-like stack
+> > switching mechanism.  Have a reserve shadow stack and, when a signal
+> > is delivered (possibly guarded by other conditions like "did the
+> > shadow stack overflow"), switch to a new shadow stack and maybe write
+> > a special token to the new shadow stack that says "signal delivery
+> > jumped here and will restore to the previous shadow stack and
+> > such-and-such address on return".
+> 
+> If (shstk size == (stack size + sigaltstack size)), then shstk will not
+> overflow before program stack overflows and sigaltstack also overflows.
+> 
+> Let me think about this.
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+The reserve shadow stack will help only when the shstk overflows but
+signal stack/sigaltstack still has room and we can deliver a signal.  If
+the shstk is large enough to cover any nested calls that will overflow
+both the program stack and sigaltstack then we don't need a reserve
+shstk.
+
+We can estimate how big the shstk needs to be; in the worst case it
+should not be greater than (program stack size + sigaltstack size).  The
+default shstk size we choose pass all signal tests in GLIBC.  In case
+there is a need to increase it for a very large RLIMIT_STACK or very
+large sigaltstack, the sys admin can increase the default shstk size.
+
+Yu-cheng
+
+
