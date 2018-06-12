@@ -2,117 +2,114 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0F16FC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:55:20 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E5D91C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:55:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAD57208AE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:55:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CA822089C
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:55:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="C1IIwlqc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAD57208AE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Vu1XqA1W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CA822089C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935030AbeFLWzS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 18:55:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44804 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934002AbeFLWzR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 18:55:17 -0400
-Received: from mail-it0-f52.google.com (mail-it0-f52.google.com [209.85.214.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 736E320891;
-        Tue, 12 Jun 2018 22:55:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528844116;
-        bh=r4QQnRnvReWaqntBLAoK4hGSb7FIkH6CyMjKOj+qyj8=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=C1IIwlqcqG6kPNl6YhWmT5XCE304nZGhfz+0lH4uKRqIrS1Dp6JSAPNr/hhwmxnHS
-         i/v185YdBijPOtPBV1geeN60TS6sQrWOaC86Rz2+eY+I3Imi43M/vlmXEeygOOXkh6
-         i1RGfsGi2e+wpt6qsMdT6z2ZgI7Y6/Pe9HzOJVA4=
-Received: by mail-it0-f52.google.com with SMTP id k17-v6so15433990ita.0;
-        Tue, 12 Jun 2018 15:55:16 -0700 (PDT)
-X-Gm-Message-State: APt69E0bpnwcYmn4BFWps+NrT8AUGo/KLvDNlbDpzhrcrdTlCT2by/ef
-        CQnh/5XHgDTJ0/7ez1a5gVfp/uMF9m+Ao3yknw==
-X-Google-Smtp-Source: ADUXVKICx+Fik/KHEBFw/A2lrL/fUiui5Q0QQQXMU2M82ktG92vFLQQEkMhW655L7osYnAbupjNHNSp0mEjgNHy9OlE=
-X-Received: by 2002:a24:f04e:: with SMTP id p14-v6mr2459181iti.106.1528844115907;
- Tue, 12 Jun 2018 15:55:15 -0700 (PDT)
+        id S935049AbeFLWzu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 18:55:50 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:57168 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934002AbeFLWzt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 18:55:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=qDOtPVXSvz/i+yNz3l5JiZWMhwzdk6Kd0mTMjrp2JRc=; b=Vu1XqA1WB6cYe7uFF4c5EaMts
+        qbUvka8zDr5pOMCnaHX5YKDgbmOH1WnEenDvO4O5B7xF+a46t3OuHRDuxQiD+jtZsU3ZzQD06lApz
+        ccRakZpiNsjSK3cAyy9fQck2wftQlt2aeoxRlj6s/YLCJ/WFmOZFGuMQRqKz7R3tZo+VCUup2Q1I9
+        QHNXYrie0W7C4AjbCZRRUcXwmzVvTAftOMb3bK0OR2yav/AwvD8sCcLrEuk9uML9OjaiICa4KSwO5
+        sZTgp09AiRQB+zZqyvR22ASvhUCgRARE3HupWQes2P9msTY/lAiUR8OhnHOwtg04kVNrXKhiabdvr
+        W75kmAzAQ==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fSsCS-0001JE-C2; Tue, 12 Jun 2018 22:55:40 +0000
+Subject: Re: [PATCH 0/3] sched/swait: Convert to full exclusive mode
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        =?UTF-8?Q?Andreas_Gr=c3=bcnbacher?= <andreas.gruenbacher@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>, quilt-dev@nongnu.org
+References: <20180612083449.100099222@infradead.org>
+ <CA+55aFzLNFO1za9-Lb=jxO_F9NS0jZyti+we=ycr5NTpgzdEbw@mail.gmail.com>
+ <CAHpGcMJSb4pqWF7X3K7yrk+N=FwcSrbjWm9xvprpaLRGgdE24A@mail.gmail.com>
+ <CA+55aFx81igOjFZcvO03mvDFd3=pxsq2QuNrWrPW+4pvJy780A@mail.gmail.com>
+ <alpine.DEB.2.21.1806122134410.1592@nanos.tec.linutronix.de>
+ <20180612215411.wcma6o7zd6cbytkk@linutronix.de>
+ <CA+55aFxCs+-6qNQoRLRx+-xzO_8dYXubK2B6LhuxObi7-ijbbw@mail.gmail.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <5a7b8827-56b7-254b-a410-f1c622b45b8f@infradead.org>
+Date:   Tue, 12 Jun 2018 15:55:38 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a4f:6403:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 15:54:55
- -0700 (PDT)
-In-Reply-To: <395f1fe8-76f1-8310-d09e-63e25bca23d2@broadcom.com>
-References: <1526668446-20048-1-git-send-email-scott.branden@broadcom.com>
- <d35afa1f-e0fd-84f1-7d42-60595e22cc77@gmail.com> <395f1fe8-76f1-8310-d09e-63e25bca23d2@broadcom.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 12 Jun 2018 16:54:55 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJEFLXFf-Vq9c9XC41vBpisQwxkd06_v8Fmt6X=gp=2_g@mail.gmail.com>
-Message-ID: <CAL_JsqJEFLXFf-Vq9c9XC41vBpisQwxkd06_v8Fmt6X=gp=2_g@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: stingray: use NUM_SATA to configure number of
- sata ports
-To:     Scott Branden <scott.branden@broadcom.com>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Ray Jui <rjui@broadcom.com>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CA+55aFxCs+-6qNQoRLRx+-xzO_8dYXubK2B6LhuxObi7-ijbbw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 7, 2018 at 12:53 PM, Scott Branden
-<scott.branden@broadcom.com> wrote:
-> Hi Rob,
->
-> Could you please kindly comment on change below.
->
-> It allows board variants to be added easily via a simple define for
-> different number of SATA ports.
->
->
->
-> On 18-06-04 09:22 AM, Florian Fainelli wrote:
+On 06/12/2018 03:03 PM, Linus Torvalds wrote:
+> On Tue, Jun 12, 2018 at 2:54 PM Sebastian Andrzej Siewior
+> <bigeasy@linutronix.de> wrote:
 >>
->> On 05/18/2018 11:34 AM, Scott Branden wrote:
->>>
->>> Move remaining sata configuration to stingray-sata.dtsi and enable
->>> ports based on NUM_SATA defined.
->>> Now, all that needs to be done is define NUM_SATA per board.
->>
->> Rob could you review this and let us know if this approach is okay or
->> not? Thank you!
->>
->>> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
->>> ---
+>> mutt sets this and the tip-bot, too. The difference is that quilt also
+>> sets the filename parameter. Do the mutt or tip-bot mails look flowed?
+> 
+> No, they look fine.
+> 
+> And yes, the difference looks to be that filename. Looking at the
+> tipbot emails, I see:
+> 
+>   Content-Transfer-Encoding: 8bit
+>   Content-Type: text/plain; charset=UTF-8
+>   Content-Disposition: inline
+> 
+> and the email looks perfectly normal.
+> 
+> So it's not Content-Disposition itself that triggers it, it is indeed
+> that *together* with filename information, so
+> 
+>   Content-Type: text/plain; charset=UTF-8
+>   Content-Disposition: inline; filename=peterz-swait-1.patch
+> 
+> makes gmail go "Oh, I want to help you download this thing", and makes
+> that "download attachment" widget, and makes the text itself act
+> flowed.
+> 
+> Yeah, that's just stupid of gmail.
+> 
+> I've sent feedback, but judging by my last attempt to get something
+> fixed (making the mobile application have a "Plain text" mode), I
+> expect to be laughed at by some coked-up QA person who thinks "flowed"
+> is obviously better.
 
->>> diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray-sata.dtsi
->>> b/arch/arm64/boot/dts/broadcom/stingray/stingray-sata.dtsi
->>> index 8c68e0c..7f6d176 100644
->>> --- a/arch/arm64/boot/dts/broadcom/stingray/stingray-sata.dtsi
->>> +++ b/arch/arm64/boot/dts/broadcom/stingray/stingray-sata.dtsi
->>> @@ -43,7 +43,11 @@
->>>                         interrupts = <GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH>;
->>>                         #address-cells = <1>;
->>>                         #size-cells = <0>;
->>> +#if (NUM_SATA > 0)
->>> +                       status = "okay";
->>> +#else
->>>                         status = "disabled";
->>> +#endif
 
-This only works if ports are contiguously enabled (0-N). You might not
-care, but it is not a pattern that works in general. And I'm not a fan
-of C preprocessing in DT files in general beyond just defines for
-single numbers.
+FWIW, Peter's patches also show up in Thunderbird as attachments (at least
+for me they do).
 
-Rob
+-- 
+~Randy
