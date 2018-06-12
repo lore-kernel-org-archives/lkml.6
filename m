@@ -2,117 +2,105 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 423A8C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 04:31:54 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id BD63FC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 04:32:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB826208B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 04:31:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7374F208B0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 04:32:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QY7RoVaq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB826208B0
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QHGALHFx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7374F208B0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754079AbeFLEbw (ORCPT
+        id S1754131AbeFLEc3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 00:31:52 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:36995 "EHLO
+        Tue, 12 Jun 2018 00:32:29 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:42436 "EHLO
         mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752816AbeFLEbu (ORCPT
+        with ESMTP id S1752816AbeFLEc1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 00:31:50 -0400
-Received: by mail-pg0-f67.google.com with SMTP id r21-v6so10491815pgv.4;
-        Mon, 11 Jun 2018 21:31:50 -0700 (PDT)
+        Tue, 12 Jun 2018 00:32:27 -0400
+Received: by mail-pg0-f67.google.com with SMTP id c10-v6so5205202pgu.9;
+        Mon, 11 Jun 2018 21:32:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=r7jgtGQSAaQdAS4oMWnSmS7E1ybyBaI261oGPDkfhL8=;
-        b=QY7RoVaq6tjRt5n4bQ2R8x4tZlS9v6Q7PLJs+woSPMDQuTaD4Fl8yL61RCV69Oane3
-         DC/PPxESjX97gyaEVikiFZnI2LH4iTtgBu1AIWPnmzQYUShm2vOeo2ebUpHE+m/00rIu
-         hOS2jKoNuMQ6OuxzbtXBlkD9V3D/AaP2HSuC28wsIkyBfW9kaPE9uVydfQDCa/k6AeAW
-         NLf7v786JgS467MBuXxHdAKA374S7PkDq2yTEnTaB/mfBYYCUzL2ThqF+Gdqz6O8/1wy
-         tVFSGT/OM9ULHziDHZ9QbB7lbVJbVtrXObL3/vUg8AqvoY79KhfXW0QbGjLpOZNHXGo9
-         CA1A==
+        h=from:to:cc:subject:date:message-id;
+        bh=4I4zmAFUSRdJmSlDOzsZuM9AZElhM4fEyOtUHKXe2yc=;
+        b=QHGALHFx3iKq3tmsE9mjf54uF3Df6joiocXFgMS9BCiopqjFPWuR1uxb9gOH6Vz903
+         HIQmuAw5fANSkl9uy0QPjzSArrXCZs7/vRGoEBHvYp04Kg0bKfBj+7cSKyTockY08RAy
+         HVON+iDarSfRh5gB2V/lU4fytPSu4wXNwatwc6MfaUQTc3XLOHIUqbUcBzm7Lnn5nmET
+         p/FbkMGHXkosk7oZbeOCO7W6/In6ES9LziJoObg6U6FdvWZQ1bXb09jKx9LKvkzDnnAC
+         VhLSCcjhcSC2hexzzGtmd1E3Y9j/gaIPhFrQgEI6t6mScJwXqi6RXJWFjLTi/l8YVeNu
+         oS/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=r7jgtGQSAaQdAS4oMWnSmS7E1ybyBaI261oGPDkfhL8=;
-        b=Baw+CQ/nzQRxEo5H7irA6pBodXcH1pCAva6LxrTwMKoFQv+pFU8nCT+S59TOMUIB0l
-         MTIm/ZQSdARPau7GhNeNmgnAwvvTK0uLsWQGDDn9Fp2GnJx/eys4P87/o2F5uogLj2hi
-         4Uf5pCAc1mGwRRnObChFWUUIiUmH5m2YPzSJ9mVOqXkyLX44zJ3LsoLD8Y1DLNJukHdr
-         UxOYDMbS3ioAw/abcxxw3FB68cRX//13AO7zA/rDxnCeaGhe1uLBxQz0NmOWCUWFUghP
-         StaiRm/j3ntRSl0arxT8TDTbNCvVkHde4EraMOgSFMQ0a27T7LZ0vvHirUy1Y/NqoxSZ
-         wISQ==
-X-Gm-Message-State: APt69E2L5CraqIteEPL9PLczK6lSZwUN/mO28NrPr/YkikvV1M870X6e
-        gzRxbiBGPzKqIDUHeRUmA+2kats1
-X-Google-Smtp-Source: ADUXVKJ5zS1Erd2SqpUqgsEsn4VbIFHERk38qvT95CfvLjqrIEund7O8jNt6TJpk6WiVMXSqqkjF6A==
-X-Received: by 2002:a65:468e:: with SMTP id h14-v6mr1695245pgr.89.1528777909726;
-        Mon, 11 Jun 2018 21:31:49 -0700 (PDT)
-Received: from [192.168.86.235] (c-67-180-167-114.hsd1.ca.comcast.net. [67.180.167.114])
-        by smtp.gmail.com with ESMTPSA id a8-v6sm23429111pfe.72.2018.06.11.21.31.47
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=4I4zmAFUSRdJmSlDOzsZuM9AZElhM4fEyOtUHKXe2yc=;
+        b=NZJNOvKj4BS3tbMYQkxWy0aPm5wLmyPdVzvkw3wVXzWUKLZO/cUPPJg8N9Z/tOFlw8
+         empwLkqjESADQ1h6NoZYIJSy1iILlXv6hZHeMi8GRC4KTK4g7NjlJZM7zJivuXIVjXOw
+         Yr78A6mnz+Gr04K5TBc236Lk5nkSB1gVHsdgF0AdHdrvS7GB9yinJJ4LD9fUAXbwqUO/
+         AK33pzQACDrNKaA8UZYOCpsEeCfgyskWlWvHF3aFZZUbhHxrsmYg23rI889G0Ds0dIc5
+         439f6tPJe7pC/+BjGtaWhHzWBBsE5vXs2KUYUPHrAmVF+WIXCMnVNlkUZ67Bz4hRjVfO
+         1bKA==
+X-Gm-Message-State: APt69E31OILQpcZlLGnUmWaPIHN+zw/1hkdDD0yOkf7qDc1gGGAArady
+        CckX913jciZj4XxDs0WlNEM=
+X-Google-Smtp-Source: ADUXVKIlM8F8qFbwGb1pQXaPl7Iv1QeoIUzBsKvNzhgH9MeC3c85FA+DY+znqyQP3ji8xOYo1ab7sA==
+X-Received: by 2002:a65:60ce:: with SMTP id r14-v6mr1762584pgv.41.1528777947239;
+        Mon, 11 Jun 2018 21:32:27 -0700 (PDT)
+Received: from localhost ([103.88.46.82])
+        by smtp.gmail.com with ESMTPSA id g78-v6sm54373727pfe.39.2018.06.11.21.32.26
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Jun 2018 21:31:48 -0700 (PDT)
-Subject: Re: [PATCH] net: add error handling for kmem_cache_create
-To:     Zhouyang Jia <jiazhouyang09@gmail.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Wei Wang <weiwan@google.com>, Martin KaFai Lau <kafai@fb.com>,
+        Mon, 11 Jun 2018 21:32:26 -0700 (PDT)
+From:   Zhouyang Jia <jiazhouyang09@gmail.com>
+Cc:     Zhouyang Jia <jiazhouyang09@gmail.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
         Kees Cook <keescook@chromium.org>,
-        Eric Dumazet <edumazet@google.com>,
-        Florian Westphal <fw@strlen.de>, Joe Perches <joe@perches.com>,
-        linux-decnet-user@lists.sourceforge.net, netdev@vger.kernel.org,
+        Allen Pais <allen.lkml@gmail.com>, linux-usb@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <1528777798-40722-1-git-send-email-jiazhouyang09@gmail.com>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <17050ede-26b7-dfa5-91c5-e94da3e336e6@gmail.com>
-Date:   Mon, 11 Jun 2018 21:31:47 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1528777798-40722-1-git-send-email-jiazhouyang09@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] usb: gadget: add error handling for platform_get_resource_byname
+Date:   Tue, 12 Jun 2018 12:32:19 +0800
+Message-Id: <1528777942-40876-1-git-send-email-jiazhouyang09@gmail.com>
+X-Mailer: git-send-email 2.7.4
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When platform_get_resource_byname fails, the lack of error-handling code may
+cause unexpected results.
 
+This patch adds error-handling code after calling platform_get_resource_byname.
 
-On 06/11/2018 09:29 PM, Zhouyang Jia wrote:
-> When kmem_cache_create fails, the lack of error-handling code may
-> cause unexpected results.
-> 
-> This patch adds error-handling code after calling kmem_cache_create.
-> 
-> Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
-> ---
->  net/decnet/dn_route.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/net/decnet/dn_route.c b/net/decnet/dn_route.c
-> index e747650..2b743c7 100644
-> --- a/net/decnet/dn_route.c
-> +++ b/net/decnet/dn_route.c
-> @@ -1861,6 +1861,9 @@ void __init dn_route_init(void)
->  	dn_dst_ops.kmem_cachep =
->  		kmem_cache_create("dn_dst_cache", sizeof(struct dn_route), 0,
->  				  SLAB_HWCACHE_ALIGN|SLAB_PANIC, NULL);
-> +	if (!dn_dst_ops.kmem_cachep)
-> +		panic("Failed to create dn_dst_cache cache\n");
-> +
+Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+---
+ drivers/usb/gadget/udc/r8a66597-udc.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Not needed, since SLAB_PANIC would have paniced the box earlier.
+diff --git a/drivers/usb/gadget/udc/r8a66597-udc.c b/drivers/usb/gadget/udc/r8a66597-udc.c
+index a3ecce6..a7bd5e7 100644
+--- a/drivers/usb/gadget/udc/r8a66597-udc.c
++++ b/drivers/usb/gadget/udc/r8a66597-udc.c
+@@ -1830,6 +1830,11 @@ static int r8a66597_sudmac_ioremap(struct r8a66597 *r8a66597,
+ 	struct resource *res;
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "sudmac");
++	if (!res) {
++		dev_err(&pdev->dev, "could not allocate resource.\n");
++		return -ENODEV;
++	}
++
+ 	r8a66597->sudmac_reg = devm_ioremap_resource(&pdev->dev, res);
+ 	return PTR_ERR_OR_ZERO(r8a66597->sudmac_reg);
+ }
+-- 
+2.7.4
 
->  	dst_entries_init(&dn_dst_ops);
->  	timer_setup(&dn_route_timer, dn_dst_check_expire, 0);
->  	dn_route_timer.expires = jiffies + decnet_dst_gc_interval * HZ;
-> 
