@@ -2,149 +2,140 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7B603C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:35:16 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id AEAA6C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:36:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31DBF20891
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:35:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 646082086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:36:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aRVpcnhc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31DBF20891
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JdNVBofg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 646082086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933460AbeFLTfO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 15:35:14 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:37733 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933224AbeFLTfL (ORCPT
+        id S933574AbeFLTgA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 15:36:00 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:52186 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932589AbeFLTf5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 15:35:11 -0400
-Received: by mail-pl0-f68.google.com with SMTP id 31-v6so63920plc.4
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 12:35:10 -0700 (PDT)
+        Tue, 12 Jun 2018 15:35:57 -0400
+Received: by mail-wm0-f66.google.com with SMTP id r15-v6so883170wmc.1;
+        Tue, 12 Jun 2018 12:35:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=SAMuhf0vaF3MUgU/uFUUNh8Ga/pQqEViocSlhwffGnI=;
-        b=aRVpcnhcbp0ya639DFHSLojpI5IR4sTwoRXrPxP6Pd0wzycUvXUqACPMoNrWA5ex3v
-         XDamZQfHzUbbW8P4EVWblm0rzXMyi4JNAPhjOG2d6YfpYoM0YM2XcaepV+6+7WkAVK0P
-         nEIIgWgWXOmrShHatSymfxZjoIPuBMnlg9Y+I=
+        d=gmail.com; s=20161025;
+        h=from:subject:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=FH4GWJUQbywt91Uqiv4s/rPvoA1GUZchfACnO4T4JtM=;
+        b=JdNVBofgwBd8ekaN4Od7n0bt8xXzGSnb06oZqN42zeBQnfj1g3Q6I5AbdlK2WRR11r
+         hkFtZQkCugq3BL7eva4nRpB77SDAGlY9oBrhO1dzcKrcd8D2XYJud9zXt6AEh9NI+KO7
+         4vXjp/G0i+MyyBO/vIUhXgg4ttZC3efUZ13wnH9zX0vM2QgYOF+dyUghRLwFS/ylvGvT
+         EuLE5d6BKIIJskaIbpRvypwg5i42y/x6Tm8A3RjQCTHFsrGzHuK7wMi6ll10FlG5Vy0w
+         0MwEiD/VUH6iM2Y5NubhLplyg/6k7BKhxOqLZ8QMHJrciYgJi1SfeHIWi4uaPujsSy/I
+         QMww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SAMuhf0vaF3MUgU/uFUUNh8Ga/pQqEViocSlhwffGnI=;
-        b=TlM2+90nBxrHX1z9A3mP7/IGsM7BHpkwFYjqxtN4ywTMfuruYacafOIdfmv8L8xDv0
-         f2yFWpyuVmhHMm1QyaEJfet1XsAf9POQAMpY7Z0VCF68rY00lv66uNFk9OYRlWeLKZf5
-         BVZOLUNSyilhroAOJFk6quJj4hGMaX9R5qE/iAxtLTtUTY0kvImeEK65Tf+uxlZUxlzS
-         U9POj6wv9SsxjCdylvf/h7dLvAkPUI8LN9fSYhVNlF2fJXOgCo/2VQjBnoKr4cPSYLB0
-         CnImx2tH+iXs/3OzjEnxvtzAyyxbAkyFMZtiFDW8iVAzMfD7lY9gR21xiGI8Xn/dsAXK
-         L8ww==
-X-Gm-Message-State: APt69E2kXXEngSsHFzzuFqY12sdZx6xTYcLQBKN5m6nQPselYQlgehTe
-        cQ1NmIGTpYApdmtGlzxamx5H+g==
-X-Google-Smtp-Source: ADUXVKJdV2dUrnCULAImh6tUTZ4JZGLYRwc0ig/5InIiUdb2lG8Kcy7I+KV+nuXjErKiaXQIuwiZNA==
-X-Received: by 2002:a17:902:b18b:: with SMTP id s11-v6mr1862098plr.190.1528832110503;
-        Tue, 12 Jun 2018 12:35:10 -0700 (PDT)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id p1-v6sm1068764pfp.137.2018.06.12.12.35.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Jun 2018 12:35:09 -0700 (PDT)
-Date:   Tue, 12 Jun 2018 12:35:07 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, rnayak@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, edubezval@gmail.com,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v2 2/5] dt: qcom: 8996: thermal: Move to DT initialisation
-Message-ID: <20180612193507.GO14924@minitux>
-References: <cover.1528799892.git.amit.kucheria@linaro.org>
- <683ceb9a7d283bcad47fc6e8e4fcfbd7e76c1018.1528799892.git.amit.kucheria@linaro.org>
+        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=FH4GWJUQbywt91Uqiv4s/rPvoA1GUZchfACnO4T4JtM=;
+        b=dnL9zdAbZKqc+ZIREjAJfSPSfYvtGfS+MPKzweEM+JeE/jQw2JZjJlyTzi7oVh6Rq/
+         h4hbilXPdNR8/+y0b/BSOTz5TBdXFjj5YLMHy9lrQlMZfIYQjpzpiZ+nqzuTEkEk30go
+         Ks1omYC7tlIgK7TSau8BIF4F8/jE2RnNYVwRzD+oGE6+q/zUdbYDY7EFDXvcul+NwS0o
+         Y6jbqBKl2uudnE2NyZsKxAm5dfzhqilbe43+bThxKPJ1itl7wCekvidkt+yk1rCNU/Id
+         AvIrOGzH0vEtvuieURqtskMgmK0JMzPC4KlnLY/ZJzqsEmoD7ANz/bLBfrIWY6vXvZBH
+         Q8Bw==
+X-Gm-Message-State: APt69E0j9uDThHmuXymM3t8fEhfLWdfjJf0awfMjSdkQw94AoWFYKyTe
+        INz/eCW2Lqa+cqR6AoBO1Mztbw==
+X-Google-Smtp-Source: ADUXVKK1o5H+18dAH0HrYyCxvM0ebCv7v/oVQmRWwCWrjfQ3abivSOFr4mONr5NgNZdF+Tl9bti0Ow==
+X-Received: by 2002:a1c:71db:: with SMTP id d88-v6mr1392801wmi.117.1528832155747;
+        Tue, 12 Jun 2018 12:35:55 -0700 (PDT)
+Received: from ?IPv6:2003:ea:8bd4:d600:bd18:6b21:eca7:82b0? (p200300EA8BD4D600BD186B21ECA782B0.dip0.t-ipconnect.de. [2003:ea:8bd4:d600:bd18:6b21:eca7:82b0])
+        by smtp.googlemail.com with ESMTPSA id t1-v6sm1109539wmt.40.2018.06.12.12.35.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Jun 2018 12:35:54 -0700 (PDT)
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: [PATCH 1/2] r8169: Don't disable ASPM in the driver
+To:     Kai-Heng Feng <kai.heng.feng@canonical.com>, davem@davemloft.net
+Cc:     ryankao@realtek.com, hayeswang@realtek.com, hau@realtek.com,
+        romieu@fr.zoreil.com, bhelgaas@google.com, netdev@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180612095759.6828-1-kai.heng.feng@canonical.com>
+Message-ID: <caa66d98-e5cc-8bcd-1052-cef4ff00c32d@gmail.com>
+Date:   Tue, 12 Jun 2018 21:30:53 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <683ceb9a7d283bcad47fc6e8e4fcfbd7e76c1018.1528799892.git.amit.kucheria@linaro.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180612095759.6828-1-kai.heng.feng@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 12 Jun 03:54 PDT 2018, Amit Kucheria wrote:
-
-> We also split up the regmap address space into two, one for the TM
-> registers, the other for the SROT registers. This was required to deal with
-> different address offsets for the TM and SROT registers across different
-> SoC families.
+On 12.06.2018 11:57, Kai-Heng Feng wrote:
+> Enable or disable ASPM should be done in PCI core instead of in the
+> device driver.
 > 
-> Since tsens-common.c/init_common() currently only registers one address space, the order is important (TM before SROT).This is OK since the code doesn't really use the SROT functionality yet.
-
-Please line wrap this.
-
+> Commit ba04c7c93bbc ("r8169: disable ASPM") uses
+> pci_disable_link_state() to disable ASPM. This is incorrect, if the
+> device really needs to disable ASPM, we should use a quirk in PCI core
+> to prevent the PCI core from setting ASPM altogether.
 > 
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+I wouldn't call using pci_disable_link_state() in a driver incorrect
+(as it works), there is just a better way which is more in line with
+the PCI subsystem architecture.
+
+> Let's remove pci_disable_link_state() for now. Use PCI core quirks if
+> any regression happens.
+> 
+The vendor driver disables ASPM unconditionally for chip version 25
+(there it's METHOD_9), so I think ASPM support is broken in this chip
+version. I'll cook a PCI quirk.
+
+> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+
+Please note that netdev is closed currently. Once 4.18-RC1 is out it
+will be re-opened. Then please re-submit properly annotating PATCH
+with "net-next" (I've forgotten this often enough myself).
+
 > ---
->  arch/arm64/boot/dts/qcom/msm8996.dtsi | 12 +++++++++++-
->  drivers/thermal/qcom/tsens-8996.c     |  1 -
->  2 files changed, 11 insertions(+), 2 deletions(-)
+> v2:
+> - Remove module parameter.
+> - Remove pci_disable_link_state().
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> index 410ae78..b4aab18 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> @@ -451,7 +451,17 @@
+>  drivers/net/ethernet/realtek/r8169.c | 5 -----
+>  1 file changed, 5 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
+> index 75dfac0248f4..9b55ce513a36 100644
+> --- a/drivers/net/ethernet/realtek/r8169.c
+> +++ b/drivers/net/ethernet/realtek/r8169.c
+> @@ -25,7 +25,6 @@
+>  #include <linux/dma-mapping.h>
+>  #include <linux/pm_runtime.h>
+>  #include <linux/firmware.h>
+> -#include <linux/pci-aspm.h>
+>  #include <linux/prefetch.h>
+>  #include <linux/ipv6.h>
+>  #include <net/ip6_checksum.h>
+> @@ -7647,10 +7646,6 @@ static int rtl_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+>  	mii->reg_num_mask = 0x1f;
+>  	mii->supports_gmii = cfg->has_gmii;
 >  
->  		tsens0: thermal-sensor@4a8000 {
->  			compatible = "qcom,msm8996-tsens";
-> -			reg = <0x4a8000 0x2000>;
-> +			reg = <0x4a9000 0x1000>, /* TM */
-> +			      <0x4a8000 0x1000>; /* SROT */
-> +			#qcom,sensors = <13>;
-> +			#thermal-sensor-cells = <1>;
-> +		};
-> +
-> +		tsens1: thermal-sensor@4ac000 {
-> +			compatible = "qcom,msm8996-tsens";
-> +			reg = <0x4ad000 0x1000>, /* TM */
-> +			      <0x4ac000 0x1000>; /* SROT */
-> +			#qcom,sensors = <8>;
->  			#thermal-sensor-cells = <1>;
->  		};
+> -	/* disable ASPM completely as that cause random device stop working
+> -	 * problems as well as full system hangs for some PCIe devices users */
+> -	pci_disable_link_state(pdev, PCIE_LINK_STATE_L0S | PCIE_LINK_STATE_L1 |
+> -				     PCIE_LINK_STATE_CLKPM);
 >  
-> diff --git a/drivers/thermal/qcom/tsens-8996.c b/drivers/thermal/qcom/tsens-8996.c
-> index e1f7781..6e59078 100644
-> --- a/drivers/thermal/qcom/tsens-8996.c
-> +++ b/drivers/thermal/qcom/tsens-8996.c
-> @@ -79,6 +79,5 @@ static const struct tsens_ops ops_8996 = {
->  };
->  
->  const struct tsens_data data_8996 = {
-> -	.num_sensors	= 13,
+>  	/* enable device (incl. PCI PM wakeup and hotplug setup) */
+>  	rc = pcim_enable_device(pdev);
+> 
 
-This will cause the current 8996 dts to fail probing the tsens. I think
-you should just leave this as is, because specifying qcom,sensors in dts
-will overwrite this number regardless.
-
-It also would make this change dts specific, which is convenient as it
-breaks the interdependency between the different subsystems.
-
->  	.ops		= &ops_8996,
-
-Regards,
-Bjorn
