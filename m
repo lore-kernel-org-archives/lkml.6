@@ -7,82 +7,80 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D3329C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 23:30:42 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2BF84C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 23:30:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E7B42086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 23:30:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4517208B2
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 23:30:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BqsviGXO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E7B42086D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tUQO2N8M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4517208B2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934733AbeFLXaj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 19:30:39 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:40792 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934131AbeFLXai (ORCPT
+        id S934857AbeFLXav (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 19:30:51 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:36921 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934131AbeFLXat (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 19:30:38 -0400
-Received: by mail-pl0-f65.google.com with SMTP id t12-v6so368906plo.7;
-        Tue, 12 Jun 2018 16:30:37 -0700 (PDT)
+        Tue, 12 Jun 2018 19:30:49 -0400
+Received: by mail-pf0-f195.google.com with SMTP id y5-v6so341200pfn.4;
+        Tue, 12 Jun 2018 16:30:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=53ABYaNH2Q+5xBaM30O2LUITF599oD6Wkqs3cq0+kgQ=;
-        b=BqsviGXORwLkkPuPP0JPA5lwg2hb3VynboX7bWwCeSeR2ebI4dMSFtQZFZgWH4VkD4
-         7rmxJXUelYwvww/jZbos9AJwdDQdJdfhMX5wrJycwTm1hhAzNMrkXGkjSmSGdwUHbThb
-         jUuQKSLjY9k8yvDJsy4RYw4/A3N0G5eC+4XqLPJe/kCxTMvqjGlN42dVkVACwfp36gC5
-         3xdJ/Zfwn+tHDZadYseWECVmrhRn2iJYnVl0+25qQ8hDTWV/3hcfTUvFSWcEulQPvtiW
-         GfJ9ZA0jw+2LVwcxKzT9jNaHtu3YU+ef/gEBC6J+04ZZQtAiok2H2CtH+jmetS+L25FF
-         p4bg==
+        bh=3A7q3aBJZ3UIxkW+DzJjR+YJZxhgWSL4OnjGf8xsvxE=;
+        b=tUQO2N8MlGcwHBFOWqIrxrwU82p905ItFYVWwQ8yeyjvOBg4EteEGGtTuKHL7lC05g
+         mGP4hnksppb8wYt/xi3BxmDzkUcDvbubx5yfHUZxSjiESqd1LLOQBf0JAsXMA1E3tfld
+         3IY2G4UHh8Bp+lYsBeMyOzVXnRE1ItdmdA8OIaLm+kt00XgE/K2f+RnR8xLrY3DcndqQ
+         UOXOYnIXcsXbURjjduQzPO/YaocCdqDfBNFGU3QSpoCB9ImuYjRtBiPd5BadarN4SBu4
+         pzFwgVVg53FHZwRRTFVxroZeizVAbyRzI6V978AjhczUFe1bG+sam/BnakVw8uHC1hAX
+         PzIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=53ABYaNH2Q+5xBaM30O2LUITF599oD6Wkqs3cq0+kgQ=;
-        b=pMIadal5z8MXYFa6KVWqV2nsVipgSTG/l+NHreHZztCstQMh7cSKObXHFDCXUuFpPK
-         PJLGplDQkCmpxAnDuzvSqfX72Jyq5UiRhQNhTAK/GofOyM8IgT6iqwou9c7uTOFUXGuk
-         9E1vAqEGG1mUboc+9uU86HW2Ruq3eQst3OsfxXagLEFSrZCdpAFzwMr6MGKI/dqmN6vy
-         8XSFF+NcV3Gm6nfMvCKvzjKuKjliB2z+BU2ezMy8r8/TUMN2W1XsPsySX9MJOays8KDH
-         j0I7dctUyTSZo39nuEwjd+CGDfXKNKLabaMZFuqR4sqVuLG6t7oNW3ejDYjtb98sXa7L
-         Ltkw==
-X-Gm-Message-State: APt69E2gXJ2jq5BU17Czkcz5l5zZyoe82VcjfTquw1GxeXpmhrFKWEnK
-        UD01qBsDylAX6lTpTttHXqs=
-X-Google-Smtp-Source: ADUXVKKGP90Et+xeuGUaDiKctR8gRe2epXOKU72yWb8Ti1rEf3WTLT0tDtSuKqqrSVEHbmD62bXpOg==
-X-Received: by 2002:a17:902:8206:: with SMTP id x6-v6mr2502043pln.220.1528846237086;
-        Tue, 12 Jun 2018 16:30:37 -0700 (PDT)
+        bh=3A7q3aBJZ3UIxkW+DzJjR+YJZxhgWSL4OnjGf8xsvxE=;
+        b=kb39ewo1ELctOKOSJ6+OdkBCYaMKXoqg4Tumb3nlAZjlOh/fa6pnfI4BUF4G2PTYCT
+         seAa5Rgwhc1X15sNcwuSJAKn1/jHMKasQ/u1/R8pmsvPVa5PndqRZGmIjKRqmISrdVxi
+         mr1a1LSLL83ramYg4X8qf9zOpaTlUTJs9iOeq1yMeQ2AOQED7AFoaw8oBB01ewdwjN37
+         Npjxe37YVFHmvegQAr1P+uHs1O/4wB0FuxJMtcsMOWILSI4+zfBTWguhb5t+MzNyv5YN
+         njC3EjXNCExvYWFDleADrhACZVqMjkAYmgAjYpon1tsryphUphxTQS1auuxzNo1dSfV+
+         blqw==
+X-Gm-Message-State: APt69E0Q0pNkiHo0746mnDykUWltwvsbBjz58cpIONYbe3Vrd64ATiuB
+        IL388zLOh4NRymoh0cU75WBJczct
+X-Google-Smtp-Source: ADUXVKJag/w5Ej2ZD8QZxrJzwHXACsAc/u38c+UiC/knBRmjdTYbXRwyQhimls7zOPGo9HXBiGPMXw==
+X-Received: by 2002:a65:5c42:: with SMTP id v2-v6mr2051871pgr.224.1528846248470;
+        Tue, 12 Jun 2018 16:30:48 -0700 (PDT)
 Received: from dtor-ws ([2620:0:1000:1511:8de6:27a8:ed13:2ef5])
-        by smtp.gmail.com with ESMTPSA id u8-v6sm1529202pgq.7.2018.06.12.16.30.35
+        by smtp.gmail.com with ESMTPSA id h10-v6sm1004508pgn.42.2018.06.12.16.30.47
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Jun 2018 16:30:35 -0700 (PDT)
-Date:   Tue, 12 Jun 2018 16:30:34 -0700
+        Tue, 12 Jun 2018 16:30:47 -0700 (PDT)
+Date:   Tue, 12 Jun 2018 16:30:45 -0700
 From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Cc:     linux-kernel@vger.kernel.org,
         Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
         linux-input@vger.kernel.org
-Subject: Re: [PATCH v3 09/12] Input: cros_ec_keyb - Make license text and
- module license match.
-Message-ID: <20180612233034.GE38773@dtor-ws>
+Subject: Re: [PATCH v3 10/12] Input: cros_ec_keyb - Switch to SPDX identifier.
+Message-ID: <20180612233045.GF38773@dtor-ws>
 References: <20180606150900.8342-1-enric.balletbo@collabora.com>
- <20180606150900.8342-10-enric.balletbo@collabora.com>
+ <20180606150900.8342-11-enric.balletbo@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180606150900.8342-10-enric.balletbo@collabora.com>
+In-Reply-To: <20180606150900.8342-11-enric.balletbo@collabora.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 06, 2018 at 05:08:57PM +0200, Enric Balletbo i Serra wrote:
-> The license text is specifying "GPLv2" but the MODULE_LICENSE is set to
-> GPL which means GNU Public License v2 or later. When MODULE_LICENSE and
-> boiler plate does not match, go for boiler plate license.
+On Wed, Jun 06, 2018 at 05:08:58PM +0200, Enric Balletbo i Serra wrote:
+> Adopt the SPDX license identifier headers to ease license compliance
+> management.
 > 
 > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 
@@ -93,21 +91,51 @@ Applied, thank you.
 > Changes in v3: None
 > Changes in v2: None
 > 
->  drivers/input/keyboard/cros_ec_keyb.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/input/keyboard/cros_ec_keyb.c | 34 ++++++++++-----------------
+>  1 file changed, 12 insertions(+), 22 deletions(-)
 > 
 > diff --git a/drivers/input/keyboard/cros_ec_keyb.c b/drivers/input/keyboard/cros_ec_keyb.c
-> index 79eb29550c34..9dd8c146699f 100644
+> index 9dd8c146699f..dd1b356d0004 100644
 > --- a/drivers/input/keyboard/cros_ec_keyb.c
 > +++ b/drivers/input/keyboard/cros_ec_keyb.c
-> @@ -674,6 +674,6 @@ static struct platform_driver cros_ec_keyb_driver = {
+> @@ -1,25 +1,15 @@
+> -/*
+> - * ChromeOS EC keyboard driver
+> - *
+> - * Copyright (C) 2012 Google, Inc
+> - *
+> - * This software is licensed under the terms of the GNU General Public
+> - * License version 2, as published by the Free Software Foundation, and
+> - * may be copied, distributed, and modified under those terms.
+> - *
+> - * This program is distributed in the hope that it will be useful,
+> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> - * GNU General Public License for more details.
+> - *
+> - * This driver uses the Chrome OS EC byte-level message-based protocol for
+> - * communicating the keyboard state (which keys are pressed) from a keyboard EC
+> - * to the AP over some bus (such as i2c, lpc, spi).  The EC does debouncing,
+> - * but everything else (including deghosting) is done here.  The main
+> - * motivation for this is to keep the EC firmware as simple as possible, since
+> - * it cannot be easily upgraded and EC flash/IRAM space is relatively
+> - * expensive.
+> - */
+> +// SPDX-License-Identifier: GPL-2.0
+> +// ChromeOS EC keyboard driver
+> +//
+> +// Copyright (C) 2012 Google, Inc.
+> +//
+> +// This driver uses the ChromeOS EC byte-level message-based protocol for
+> +// communicating the keyboard state (which keys are pressed) from a keyboard EC
+> +// to the AP over some bus (such as i2c, lpc, spi).  The EC does debouncing,
+> +// but everything else (including deghosting) is done here.  The main
+> +// motivation for this is to keep the EC firmware as simple as possible, since
+> +// it cannot be easily upgraded and EC flash/IRAM space is relatively
+> +// expensive.
 >  
->  module_platform_driver(cros_ec_keyb_driver);
->  
-> -MODULE_LICENSE("GPL");
-> +MODULE_LICENSE("GPL v2");
->  MODULE_DESCRIPTION("ChromeOS EC keyboard driver");
->  MODULE_ALIAS("platform:cros-ec-keyb");
+>  #include <linux/module.h>
+>  #include <linux/bitops.h>
 > -- 
 > 2.17.1
 > 
