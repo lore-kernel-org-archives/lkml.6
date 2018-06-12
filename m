@@ -2,186 +2,237 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 480B6C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:27:43 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id BC772C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:27:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3ED920693
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:27:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3ED920693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 63CAA208B1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:27:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ecCUpkyq";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="S+QQETqj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63CAA208B1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933670AbeFLI1k (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 04:27:40 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:39309 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932803AbeFLI1h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 04:27:37 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 3C68D20981; Tue, 12 Jun 2018 10:27:35 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-37-30.w90-88.abo.wanadoo.fr [90.88.156.30])
-        by mail.bootlin.com (Postfix) with ESMTPSA id B38C120376;
-        Tue, 12 Jun 2018 10:27:34 +0200 (CEST)
-Date:   Tue, 12 Jun 2018 10:27:34 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Stefan Agner <stefan@agner.ch>
-Cc:     Dmitry Osipenko <digetx@gmail.com>, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
-        dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
-        marcel@ziswiler.com, krzk@kernel.org, benjamin.lindqvist@endian.se,
-        jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        mirza.krak@gmail.com, gaireg@gaireg.de,
-        linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 4/6] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-Message-ID: <20180612102734.0ea3bfa5@bbrezillon>
-In-Reply-To: <cb6f2ef0a5a41e001a2019caa1a18c23@agner.ch>
-References: <20180611205224.23340-1-stefan@agner.ch>
-        <20180611205224.23340-5-stefan@agner.ch>
-        <4258393.O1xtUOGbca@dimapc>
-        <cb6f2ef0a5a41e001a2019caa1a18c23@agner.ch>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S933823AbeFLI1t (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 04:27:49 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:46506 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932803AbeFLI1n (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 04:27:43 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 67B0F602BD; Tue, 12 Jun 2018 08:27:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528792063;
+        bh=1TYLyPGn9d5IzkZCkQtFTT/1fAhg74C5jTmE2123b4M=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ecCUpkyqKkFZHuan83gtSS3nEFP2moLbnTgzlLndh+xWX+LySo/PIh7sPedDNDxZs
+         EYiSX791FWUNJKjnNkqnB43dFTRTWEH8hU71j7Bo+tMYdIddc7Ej4HEeR5L0GUmTPF
+         G0HBhrTg5Fjej1DJdgQX09KFtjH5BxRaY3XZJ7Qg=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 702EF602BD;
+        Tue, 12 Jun 2018 08:27:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528792062;
+        bh=1TYLyPGn9d5IzkZCkQtFTT/1fAhg74C5jTmE2123b4M=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=S+QQETqjp/BbK+Daoq6NvtyVkCkM2uCyRl/A4TBnbNLm/Aq7gZCTb4joB/ZLUSdd9
+         Axt3y3HCOo7vohZOqMYPGfhgtZUkgquS33zLYwl8RKwvQfLwV2/ZqwCFMt4HGMgM0P
+         Ibce7MDp0jmT3sisVn0TsXGq95ZDTlV25lk7QBNQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date:   Tue, 12 Jun 2018 13:57:42 +0530
+From:   poza@codeaurora.org
+To:     Ray Jui <ray.jui@broadcom.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
+        Ray Jui <rjui@broadcom.com>, linux-pci-owner@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] PCI: iproc: Fix up corrupted PAXC root complex
+ config registers
+In-Reply-To: <1528762867-16823-3-git-send-email-ray.jui@broadcom.com>
+References: <1528762867-16823-1-git-send-email-ray.jui@broadcom.com>
+ <1528762867-16823-3-git-send-email-ray.jui@broadcom.com>
+Message-ID: <2bafb8ae70029279a1849fb68a020d18@codeaurora.org>
+X-Sender: poza@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Jun 2018 10:06:42 +0200
-Stefan Agner <stefan@agner.ch> wrote:
+On 2018-06-12 05:51, Ray Jui wrote:
+> On certain versions of Broadcom PAXC based root complexes, certain
+> regions of the configuration space are corrupted. As a result, it
+> prevents the Linux PCIe stack from traversing the linked list of the
+> capability registers completely and therefore the root complex is
+> not advertised as "PCIe capable". This prevents the correct PCIe RID
+> from being parsed in the kernel PCIe stack. A correct RID is required
+> for mapping to a stream ID from the SMMU or the device ID from the
+> GICv3 ITS
+> 
+> This patch fixes up the issue by manually populating the related
+> PCIe capabilities
+> 
+> Signed-off-by: Ray Jui <rjui@broadcom.com>
+> ---
+>  drivers/pci/host/pcie-iproc.c | 65 
+> +++++++++++++++++++++++++++++++++++++++----
+>  drivers/pci/host/pcie-iproc.h |  3 ++
+>  2 files changed, 62 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/pci/host/pcie-iproc.c 
+> b/drivers/pci/host/pcie-iproc.c
+> index 3c76c5f..680f6b1 100644
+> --- a/drivers/pci/host/pcie-iproc.c
+> +++ b/drivers/pci/host/pcie-iproc.c
+> @@ -85,6 +85,8 @@
+>  #define IMAP_VALID_SHIFT		0
+>  #define IMAP_VALID			BIT(IMAP_VALID_SHIFT)
+> 
+> +#define IPROC_PCI_PM_CAP		0x48
+> +#define IPROC_PCI_PM_CAP_MASK		0xffff
+>  #define IPROC_PCI_EXP_CAP		0xac
+> 
+>  #define IPROC_PCIE_REG_INVALID		0xffff
+> @@ -375,6 +377,17 @@ static const u16 iproc_pcie_reg_paxc_v2[] = {
+>  	[IPROC_PCIE_CFG_DATA]		= 0x1fc,
+>  };
+> 
+> +/*
+> + * List of device IDs of controllers that have corrupted capability 
+> list that
+> + * require SW fixup
+> + */
+> +static const u16 iproc_pcie_corrupt_cap_did[] = {
+> +	0x16cd,
+> +	0x16f0,
+> +	0xd802,
+> +	0xd804
+> +};
+> +
+>  static inline struct iproc_pcie *iproc_data(struct pci_bus *bus)
+>  {
+>  	struct iproc_pcie *pcie = bus->sysdata;
+> @@ -495,6 +508,49 @@ static unsigned int iproc_pcie_cfg_retry(void
+> __iomem *cfg_data_p)
+>  	return data;
+>  }
+> 
+> +static void iproc_pcie_fix_cap(struct iproc_pcie *pcie, int where, u32 
+> *val)
+> +{
+> +	u32 i, dev_id;
+> +
+> +	switch (where & ~0x3) {
+> +	case PCI_VENDOR_ID:
+> +		dev_id = *val >> 16;
+> +
+> +		/*
+> +		 * Activate fixup for those controllers that have corrupted
+> +		 * capability list registers
+> +		 */
+> +		for (i = 0; i < ARRAY_SIZE(iproc_pcie_corrupt_cap_did); i++)
+> +			if (dev_id == iproc_pcie_corrupt_cap_did[i])
+> +				pcie->fix_paxc_cap = true;
 
-> On 12.06.2018 02:03, Dmitry Osipenko wrote:
-> > On Monday, 11 June 2018 23:52:22 MSK Stefan Agner wrote:  
-> >> Add support for the NAND flash controller found on NVIDIA
-> >> Tegra 2 SoCs. This implementation does not make use of the
-> >> command queue feature. Regular operations/data transfers are
-> >> done in PIO mode. Page read/writes with hardware ECC make
-> >> use of the DMA for data transfer.
-> >>
-> >> Signed-off-by: Lucas Stach <dev@lynxeye.de>
-> >> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> >> ---
-> >>  MAINTAINERS                       |    7 +
-> >>  drivers/mtd/nand/raw/Kconfig      |    6 +
-> >>  drivers/mtd/nand/raw/Makefile     |    1 +
-> >>  drivers/mtd/nand/raw/tegra_nand.c | 1248 +++++++++++++++++++++++++++++
-> >>  4 files changed, 1262 insertions(+)
-> >>  create mode 100644 drivers/mtd/nand/raw/tegra_nand.c
-> >>  
-> [snip]
-> >> +static int tegra_nand_cmd(struct nand_chip *chip,
-> >> +			 const struct nand_subop *subop)
-> >> +{
-> >> +	const struct nand_op_instr *instr;
-> >> +	const struct nand_op_instr *instr_data_in = NULL;
-> >> +	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip->controller);
-> >> +	unsigned int op_id, size = 0, offset = 0;
-> >> +	bool first_cmd = true;
-> >> +	u32 reg, cmd = 0;
-> >> +	int ret;
-> >> +
-> >> +	for (op_id = 0; op_id < subop->ninstrs; op_id++) {
-> >> +		unsigned int naddrs, i;
-> >> +		const u8 *addrs;
-> >> +		u32 addr1 = 0, addr2 = 0;
-> >> +
-> >> +		instr = &subop->instrs[op_id];
-> >> +
-> >> +		switch (instr->type) {
-> >> +		case NAND_OP_CMD_INSTR:
-> >> +			if (first_cmd) {
-> >> +				cmd |= COMMAND_CLE;
-> >> +				writel_relaxed(instr->ctx.cmd.opcode,
-> >> +					       ctrl->regs + CMD_REG1);
-> >> +			} else {
-> >> +				cmd |= COMMAND_SEC_CMD;
-> >> +				writel_relaxed(instr->ctx.cmd.opcode,
-> >> +					       ctrl->regs + CMD_REG2);
-> >> +			}
-> >> +			first_cmd = false;
-> >> +			break;
-> >> +		case NAND_OP_ADDR_INSTR:
-> >> +			offset = nand_subop_get_addr_start_off(subop, op_id);
-> >> +			naddrs = nand_subop_get_num_addr_cyc(subop, op_id);
-> >> +			addrs = &instr->ctx.addr.addrs[offset];
-> >> +
-> >> +			cmd |= COMMAND_ALE | COMMAND_ALE_SIZE(naddrs);
-> >> +			for (i = 0; i < min_t(unsigned int, 4, naddrs); i++)
-> >> +				addr1 |= *addrs++ << (BITS_PER_BYTE * i);
-> >> +			naddrs -= i;
-> >> +			for (i = 0; i < min_t(unsigned int, 4, naddrs); i++)
-> >> +				addr2 |= *addrs++ << (BITS_PER_BYTE * i);
-> >> +			writel_relaxed(addr1, ctrl->regs + ADDR_REG1);
-> >> +			writel_relaxed(addr2, ctrl->regs + ADDR_REG2);
-> >> +			break;
-> >> +
-> >> +		case NAND_OP_DATA_IN_INSTR:
-> >> +			size = nand_subop_get_data_len(subop, op_id);
-> >> +			offset = nand_subop_get_data_start_off(subop, op_id);
-> >> +
-> >> +			cmd |= COMMAND_TRANS_SIZE(size) | COMMAND_PIO |
-> >> +				COMMAND_RX | COMMAND_A_VALID;
-> >> +
-> >> +			instr_data_in = instr;
-> >> +			break;
-> >> +
-> >> +		case NAND_OP_DATA_OUT_INSTR:
-> >> +			size = nand_subop_get_data_len(subop, op_id);
-> >> +			offset = nand_subop_get_data_start_off(subop, op_id);
-> >> +
-> >> +			cmd |= COMMAND_TRANS_SIZE(size) | COMMAND_PIO |
-> >> +				COMMAND_TX | COMMAND_A_VALID;
-> >> +
-> >> +			memcpy(&reg, instr->ctx.data.buf.out + offset, size);
-> >> +			writel_relaxed(reg, ctrl->regs + RESP);
-> >> +
-> >> +			break;
-> >> +		case NAND_OP_WAITRDY_INSTR:
-> >> +			cmd |= COMMAND_RBSY_CHK;
-> >> +			break;
-> >> +
-> >> +		}
-> >> +	}
-> >> +
-> >> +	cmd |= COMMAND_GO | COMMAND_CE(ctrl->cur_cs);
-> >> +	writel_relaxed(cmd, ctrl->regs + COMMAND);
-> >> +	ret = wait_for_completion_io_timeout(&ctrl->command_complete,
-> >> +					     msecs_to_jiffies(500));  
-> > 
-> > It's not obvious to me whether _io_ variant is appropriate to use here, would 
-> > be nice if somebody could clarify that. Maybe block/ already does the IO 
-> > accounting itself and hence the IO time would be counted twice in that case.  
-> 
-> Good that you bring this up.
-> 
-> I don't think that there is any higher layer which could take care of
-> accounting. Usually, with raw nand there is no block layer involved
-> anyway.
-> 
-> In a quick test it seems that only when using wait_for_completion_io I/O
-> is properly accounted in the "wait" section of top.
-> 
-> So far only a single driver (omap2) used the _io variant, but I think it
-> is the right thing to do! After all, it is I/O...
-> 
-> Boris or any other MTD maintainer, any comment on this?
+and I think this code will try to fix up every time config space is 
+read.
+Does this get corrupted often, randomly ?
+Can it not be solved by using one time Quirk ?
+and if not Quirk, you dont want to be setting pcie->fix_paxc_cap = false 
+somewhere
 
-Given this definition of io_schedule_timeout() [1] (which is used when
-you call wait_for_completion_io_timeout()), I'd say it's not useful to
-use the _io_ version, simply because MTD devs are not exposed as blk
-devices, and thus don't need the blk_schedule_flush_plug() that is done
-is io_schedule_prepare(). But that also means MTD I/Os are not
-accounted as I/Os :-(.
+besides, pcie->fix_paxc_cap = true; is set if PCI_VENDOR_ID is read 
+first.
+and rest cases stay with the assumption that PCI_VENDOR_ID will be read 
+first.
+which is infact read first during enumeration
+(that is the assumption code is making), but that is safe assumption to 
+make I think.
 
-Let's go for the non-io version for now, since all drivers except omap2
-seem to use this function.
-
-[1]https://elixir.bootlin.com/linux/v4.17.1/source/kernel/sched/core.c#L5164
+> +		break;
+> +
+> +	case IPROC_PCI_PM_CAP:
+> +		if (pcie->fix_paxc_cap) {
+> +			/* advertise PM, force next capability to PCIe */
+> +			*val &= ~IPROC_PCI_PM_CAP_MASK;
+> +			*val |= IPROC_PCI_EXP_CAP << 8 | PCI_CAP_ID_PM;
+> +		}
+> +		break;
+> +
+> +	case IPROC_PCI_EXP_CAP:
+> +		if (pcie->fix_paxc_cap) {
+> +			/* advertise root port, version 2, terminate here */
+> +			*val = (PCI_EXP_TYPE_ROOT_PORT << 4 | 2) << 16 |
+> +				PCI_CAP_ID_EXP;
+> +		}
+> +		break;
+> +
+> +	case IPROC_PCI_EXP_CAP + PCI_EXP_RTCTL:
+> +		/* Don't advertise CRS SV support */
+> +		*val &= ~(PCI_EXP_RTCAP_CRSVIS << 16);
+> +		break;
+> +
+> +	default:
+> +		break;
+> +	}
+> +}
+> +
+>  static int iproc_pcie_config_read(struct pci_bus *bus, unsigned int 
+> devfn,
+>  				  int where, int size, u32 *val)
+>  {
+> @@ -509,13 +565,10 @@ static int iproc_pcie_config_read(struct pci_bus
+> *bus, unsigned int devfn,
+>  	/* root complex access */
+>  	if (busno == 0) {
+>  		ret = pci_generic_config_read32(bus, devfn, where, size, val);
+> -		if (ret != PCIBIOS_SUCCESSFUL)
+> -			return ret;
+> +		if (ret == PCIBIOS_SUCCESSFUL)
+> +			iproc_pcie_fix_cap(pcie, where, val);
+> 
+> -		/* Don't advertise CRS SV support */
+> -		if ((where & ~0x3) == IPROC_PCI_EXP_CAP + PCI_EXP_RTCTL)
+> -			*val &= ~(PCI_EXP_RTCAP_CRSVIS << 16);
+> -		return PCIBIOS_SUCCESSFUL;
+> +		return ret;
+>  	}
+> 
+>  	cfg_data_p = iproc_pcie_map_ep_cfg_reg(pcie, busno, slot, fn, where);
+> diff --git a/drivers/pci/host/pcie-iproc.h 
+> b/drivers/pci/host/pcie-iproc.h
+> index 814b600..9d5cfee 100644
+> --- a/drivers/pci/host/pcie-iproc.h
+> +++ b/drivers/pci/host/pcie-iproc.h
+> @@ -60,6 +60,8 @@ struct iproc_msi;
+>   * @ep_is_internal: indicates an internal emulated endpoint device is 
+> connected
+>   * @has_apb_err_disable: indicates the controller can be configured to 
+> prevent
+>   * unsupported request from being forwarded as an APB bus error
+> + * @fix_paxc_cap: indicates the controller has corrupted capability 
+> list in its
+> + * config space registers and requires SW based fixup
+>   *
+>   * @need_ob_cfg: indicates SW needs to configure the outbound mapping 
+> window
+>   * @ob: outbound mapping related parameters
+> @@ -85,6 +87,7 @@ struct iproc_pcie {
+>  	int (*map_irq)(const struct pci_dev *, u8, u8);
+>  	bool ep_is_internal;
+>  	bool has_apb_err_disable;
+> +	bool fix_paxc_cap;
+> 
+>  	bool need_ob_cfg;
+>  	struct iproc_pcie_ob ob;
