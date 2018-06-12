@@ -2,171 +2,106 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id BC35EC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:13:30 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5CF7FC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:13:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72337208AE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:13:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72337208AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 12B41208AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:13:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N1iHl/cW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12B41208AE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934070AbeFLIN1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 04:13:27 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:38961 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933568AbeFLINW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 04:13:22 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 9398420981; Tue, 12 Jun 2018 10:13:20 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-37-30.w90-88.abo.wanadoo.fr [90.88.156.30])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 1D2C720376;
-        Tue, 12 Jun 2018 10:13:20 +0200 (CEST)
-Date:   Tue, 12 Jun 2018 10:13:19 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Stefan Agner <stefan@agner.ch>
-Cc:     Dmitry Osipenko <digetx@gmail.com>, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
-        dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
-        marcel@ziswiler.com, krzk@kernel.org, benjamin.lindqvist@endian.se,
-        jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        mirza.krak@gmail.com, gaireg@gaireg.de,
-        linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 4/6] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-Message-ID: <20180612101319.528da20c@bbrezillon>
-In-Reply-To: <fd15fcac50d25281fa8f7d97a738bf6a@agner.ch>
-References: <20180611205224.23340-1-stefan@agner.ch>
-        <20180611205224.23340-5-stefan@agner.ch>
-        <2945591.o6hPPARSMh@dimapc>
-        <fd15fcac50d25281fa8f7d97a738bf6a@agner.ch>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S934098AbeFLINg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 04:13:36 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:37822 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933643AbeFLINb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 04:13:31 -0400
+Received: by mail-vk0-f68.google.com with SMTP id w8-v6so13877490vkh.4;
+        Tue, 12 Jun 2018 01:13:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=Y2BZHJyLODDXSd/OQ6ItWjdg9jgC2rhTrJbUKrkaFd8=;
+        b=N1iHl/cWRKzcA/Fla656UgRHfPAHly0kULEhTWrFGbhvmP2dLwdg+i57sCqyxLjQg2
+         i58xG2J8TRA6iMqtkKldIWHXymavAPHU73wkgjkf3OJ4HvKHihUZRQ+xdu3PE+GTV6Lp
+         9wK9LrGS0jr8DrY5SFBp8ufcIWe6zHbZlik1mxgBYEl6TQw/pqTItOvqTmO7Vy4S2eHP
+         TSy1SVQ28EKQoP1+jZdUjoFTm2dWT0UcPN7Ut3hqR4587/4pA/KSZveHUtYAGakeEQ+J
+         /3y6tymRqUxNgNmjf9Mg0h6AnKgsCpsteAYtzJX/rjmoifbfPG43VNGruduIxxHB9YkO
+         PGcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=Y2BZHJyLODDXSd/OQ6ItWjdg9jgC2rhTrJbUKrkaFd8=;
+        b=HbaayL9CTpLqik1ufEIMkCZgVxA9cTpTlBKTlbuJx5sFoz4qWE95Gsv43Tb2YC5VTt
+         7BfP6kX42eXx2t3hgyAJ5vvXJ5yAmKVnH8zdQGlKJgogEWBP08FGLawv2b0/qFbw8ZAW
+         58ocwx1Unm1f3by1nGbHRLj+un+ldtcJGdvgBVtYsoEkdLl4QLVZ1dux1ssFjD/BGv9e
+         b7/w6M1K01gqz+8pUCXDlTfvg/yLzWIR4LIG8lgUPGbxnfhA5GTlwmTB8ovebaWW3Tqh
+         r0SgITagUkklezMr84XA8F/rcui/9xTkhK447wnSarjl3uA65eX+magDdhHcdQq4I5F5
+         qbMQ==
+X-Gm-Message-State: APt69E1lTSPs6h6Rq4q0UYAQDZfAJE/tnAi/+xx9YY1Xq0kC+b2PiDSN
+        7x9S6qKGQH3oNleQHoD9usYyUGUb3l4XbEdkHjg=
+X-Google-Smtp-Source: ADUXVKLdCHm7Ad9A+47ef/zwibGY7xwrNzvUMqmhSH/jthvaSvs5DCqnXsjl203kDF+IQl4OK2lzU/vqOOdO5uAsry0=
+X-Received: by 2002:a1f:8e0f:: with SMTP id q15-v6mr1542764vkd.161.1528791210207;
+ Tue, 12 Jun 2018 01:13:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 01:13:29
+ -0700 (PDT)
+In-Reply-To: <20180612054034.4969-5-songjun.wu@linux.intel.com>
+References: <20180612054034.4969-1-songjun.wu@linux.intel.com> <20180612054034.4969-5-songjun.wu@linux.intel.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 12 Jun 2018 11:13:29 +0300
+Message-ID: <CAHp75Vc_EVgfj1MpuA_hKHgy6SiQdU7JQDdtVHfOT1sZ_K-nRQ@mail.gmail.com>
+Subject: Re: [PATCH 4/7] tty: serial: lantiq: Always use readl()/writel()
+To:     Songjun Wu <songjun.wu@linux.intel.com>
+Cc:     hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
+        chuanhua.lei@intel.com,
+        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
+        qi-ming.wu@intel.com, linux-clk@vger.kernel.org,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        James Hogan <jhogan@kernel.org>, Jiri Slaby <jslaby@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ralf Baechle <ralf@linux-mips.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Jun 2018 10:02:12 +0200
-Stefan Agner <stefan@agner.ch> wrote:
+On Tue, Jun 12, 2018 at 8:40 AM, Songjun Wu <songjun.wu@linux.intel.com> wrote:
+> Previous implementation uses platform-dependent functions
+> ltq_w32()/ltq_r32() to access registers. Those functions are not
+> available for other SoC which uses the same IP.
+> Change to OS provided readl()/writel() and readb()/writeb(), so
+> that different SoCs can use the same driver.
 
-> >> +static int tegra_nand_read_page_hwecc(struct mtd_info *mtd,
-> >> +				      struct nand_chip *chip,
-> >> +				      uint8_t *buf, int oob_required, int page)
-> >> +{
-> >> +	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip->controller);
-> >> +	struct tegra_nand_chip *nand = to_tegra_chip(chip);
-> >> +	void *oob_buf = oob_required ? chip->oob_poi : 0;
-> >> +	u32 dec_stat, max_corr_cnt;
-> >> +	unsigned long fail_sec_flag;
-> >> +	int ret;
-> >> +
-> >> +	tegra_nand_hw_ecc(ctrl, chip, true);
-> >> +	ret = tegra_nand_page_xfer(mtd, chip, buf, oob_buf, nand->tag.length,
-> >> +				   page, true);
-> >> +	tegra_nand_hw_ecc(ctrl, chip, false);
-> >> +	if (ret)
-> >> +		return ret;
-> >> +
-> >> +	/* No correctable or un-correctable errors, page must have 0 bitflips */
-> >> +	if (!ctrl->last_read_error)
-> >> +		return 0;
-> >> +
-> >> +	/*
-> >> +	 * Correctable or un-correctable errors occurred. Use DEC_STAT_BUF
-> >> +	 * which contains information for all ECC selections.
-> >> +	 *
-> >> +	 * Note that since we do not use Command Queues DEC_RESULT does not
-> >> +	 * state the number of pages we can read from the DEC_STAT_BUF. But
-> >> +	 * since CORRFAIL_ERR did occur during page read we do have a valid
-> >> +	 * result in DEC_STAT_BUF.
-> >> +	 */
-> >> +	ctrl->last_read_error = false;
-> >> +	dec_stat = readl_relaxed(ctrl->regs + DEC_STAT_BUF);
-> >> +
-> >> +	fail_sec_flag = (dec_stat & DEC_STAT_BUF_FAIL_SEC_FLAG_MASK) >>
-> >> +			DEC_STAT_BUF_FAIL_SEC_FLAG_SHIFT;
-> >> +
-> >> +	max_corr_cnt = (dec_stat & DEC_STAT_BUF_MAX_CORR_CNT_MASK) >>
-> >> +		       DEC_STAT_BUF_MAX_CORR_CNT_SHIFT;
-> >> +
-> >> +	if (fail_sec_flag) {
-> >> +		int bit, max_bitflips = 0;
-> >> +
-> >> +		/*
-> >> +		 * Check if all sectors in a page failed. If only some failed
-> >> +		 * its definitly not an erased page and we can return error
-> >> +		 * stats right away.
-> >> +		 *
-> >> +		 * E.g. controller might return fail_sec_flag with 0x4, which
-> >> +		 * would mean only the third sector failed to correct.
+This patch consists 2 or even 3 ones:
+- whitespace shuffling (indentation fixes, blank lines), I dunno if
+it's needed at all
+- some new registers / bits
+- actual switch to readl() / writel()
 
-That works because you have NAND_NO_SUBPAGE_WRITE set (i.e. no partial
-page programming), probably something you should state here.
+Please, split.
 
-> >> +		 */
-> >> +		if (fail_sec_flag ^ GENMASK(chip->ecc.steps - 1, 0)) {
-> >> +			mtd->ecc_stats.failed += hweight8(fail_sec_flag);
-> >> +			return max_corr_cnt;
-> >> +		}
-> >> +
-> >> +		/*
-> >> +		 * All sectors failed to correct, but the ECC isn't smart
-> >> +		 * enough to figure out if a page is really completely erased.
-> >> +		 * We check the read data here to figure out if it's a
-> >> +		 * legitimate ECC error or only an erased page.
-> >> +		 */
-> >> +		for_each_set_bit(bit, &fail_sec_flag, chip->ecc.steps) {
-> >> +			u8 *data = buf + (chip->ecc.size * bit);
-> >> +
-> >> +			ret = nand_check_erased_ecc_chunk(data, chip->ecc.size,
-> >> +							  NULL, 0,
+> +#define asc_w32_mask(clear, set, reg)  \
+> +       ({ typeof(reg) reg_ = (reg);    \
+> +       writel((readl(reg_) & ~(clear)) | (set), reg_); })
 
-You should also check that the ECC bytes are 0xff here, otherwise you
-won't detect corruption of pages almost filled 0xff but with a few bits
-set to 0.
+This would be better as a static inline helper, and name is completely
+misleading, it doesn't mask the register bits, it _updates_ them.
 
-When you use nand_check_erased_ecc_chunk(), it's important to always
-pass the data along with its associated ECC bytes.
-
-> >> +							  NULL, 0,
-
-If you support writing extra OOB bytes, you should also pass them here.
-
-> >> +							  chip->ecc.strength);
-> >> +			if (ret < 0)
-> >> +				mtd->ecc_stats.failed++;
-> >> +			else
-> >> +				max_bitflips = max(ret, max_bitflips);
-> >> +		}
-> >> +
-> >> +		return max_t(unsigned int, max_corr_cnt, max_bitflips);
-> >> +	} else {
-> >> +		int corr_sec_flag;
-> >> +
-> >> +		corr_sec_flag = (dec_stat & DEC_STAT_BUF_CORR_SEC_FLAG_MASK) >>
-> >> +				DEC_STAT_BUF_CORR_SEC_FLAG_SHIFT;
-> >> +
-> >> +		/*
-> >> +		 * The value returned in the register is the maximum of
-> >> +		 * bitflips encountered in any of the ECC regions. As there is
-> >> +		 * no way to get the number of bitflips in a specific regions
-> >> +		 * we are not able to deliver correct stats but instead
-> >> +		 * overestimate the number of corrected bitflips by assuming
-> >> +		 * that all regions where errors have been corrected
-> >> +		 * encountered the maximum number of bitflips.
-> >> +		 */
-> >> +		mtd->ecc_stats.corrected += max_corr_cnt * hweight8(corr_sec_flag);
-> >> +
-> >> +		return max_corr_cnt;
-> >> +	}
-> >> +  
-
+-- 
+With Best Regards,
+Andy Shevchenko
