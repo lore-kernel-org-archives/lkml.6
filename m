@@ -6,45 +6,43 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 86502C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:47:59 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id CE235C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:48:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31DFB208B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:47:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84C1F208B7
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:48:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WkKUc0br"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31DFB208B8
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="l9EUkBTG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84C1F208B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934914AbeFLQr4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 12:47:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33128 "EHLO mail.kernel.org"
+        id S934935AbeFLQsA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 12:48:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934882AbeFLQry (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 12:47:54 -0400
+        id S934882AbeFLQr5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 12:47:57 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 35E66208B8;
-        Tue, 12 Jun 2018 16:47:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F366D208B7;
+        Tue, 12 Jun 2018 16:47:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528822073;
-        bh=LaCoN77cgk+VNMcIT+wQCmaNIrlAOXR/2N+vTHNDfuA=;
+        s=default; t=1528822076;
+        bh=YOjI1NCl+iwQOvz+/VprM9EFlLuCUCGZTA56NjSbICE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WkKUc0brycbRoEr46bSUeWI0+wuom0V7+a/mrPqK7/vVxgL7XOQug+vp7CltLlNBj
-         uDzB9mZAaz1rDBmvO6EI04/Sc7uSM1NlYBTV0lM+UEGReqr2k/fcUP22ZH5A97Zgl1
-         9AtiTBH3m5vWD975/8yC4YinWq3HDaW8OKmlDFxo=
+        b=l9EUkBTGbAYA7Jux3WWDghIrNpWPY6Sp3j1K1wWFDxXERtyrWklJFHFoLYYdjhdZQ
+         LWLqIBAu95Yl3JPA1OuM4x8tYStSZYRqoC5dA4DAf/4LXubcP2dJ3+X43NgLMcWVn9
+         wvTzXvqlcOwMRQ/GqcVYR8f7TcZTpwGMtXOi8OUw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 25/31] rtnetlink: validate attributes in do_setlink()
-Date:   Tue, 12 Jun 2018 18:46:28 +0200
-Message-Id: <20180612164621.784249228@linuxfoundation.org>
+Subject: [PATCH 4.9 26/31] net: phy: broadcom: Fix bcm_write_exp()
+Date:   Tue, 12 Jun 2018 18:46:29 +0200
+Message-Id: <20180612164621.823639935@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180612164620.797338191@linuxfoundation.org>
 References: <20180612164620.797338191@linuxfoundation.org>
@@ -61,139 +59,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit 644c7eebbfd59e72982d11ec6cc7d39af12450ae ]
+[ Upstream commit 79fb218d97980d4fee9a64f4c8ff05289364ba25 ]
 
-It seems that rtnl_group_changelink() can call do_setlink
-while a prior call to validate_linkmsg(dev = NULL, ...) could
-not validate IFLA_ADDRESS / IFLA_BROADCAST
+On newer PHYs, we need to select the expansion register to write with
+setting bits [11:8] to 0xf. This was done correctly by bcm7xxx.c prior
+to being migrated to generic code under bcm-phy-lib.c which
+unfortunately used the older implementation from the BCM54xx days.
 
-Make sure do_setlink() calls validate_linkmsg() instead
-of letting its callers having this responsibility.
+Fix this by creating an inline stub: bcm_write_exp_sel() which adds the
+correct value (MII_BCM54XX_EXP_SEL_ER) and update both the Cygnus PHY
+and BCM7xxx PHY drivers which require setting these bits.
 
-With help from Dmitry Vyukov, thanks a lot !
+broadcom.c is unchanged because some PHYs even use a different selector
+method, so let them specify it directly (e.g: SerDes secondary selector).
 
-BUG: KMSAN: uninit-value in is_valid_ether_addr include/linux/etherdevice.h:199 [inline]
-BUG: KMSAN: uninit-value in eth_prepare_mac_addr_change net/ethernet/eth.c:275 [inline]
-BUG: KMSAN: uninit-value in eth_mac_addr+0x203/0x2b0 net/ethernet/eth.c:308
-CPU: 1 PID: 8695 Comm: syz-executor3 Not tainted 4.17.0-rc5+ #103
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x185/0x1d0 lib/dump_stack.c:113
- kmsan_report+0x149/0x260 mm/kmsan/kmsan.c:1084
- __msan_warning_32+0x6e/0xc0 mm/kmsan/kmsan_instr.c:686
- is_valid_ether_addr include/linux/etherdevice.h:199 [inline]
- eth_prepare_mac_addr_change net/ethernet/eth.c:275 [inline]
- eth_mac_addr+0x203/0x2b0 net/ethernet/eth.c:308
- dev_set_mac_address+0x261/0x530 net/core/dev.c:7157
- do_setlink+0xbc3/0x5fc0 net/core/rtnetlink.c:2317
- rtnl_group_changelink net/core/rtnetlink.c:2824 [inline]
- rtnl_newlink+0x1fe9/0x37a0 net/core/rtnetlink.c:2976
- rtnetlink_rcv_msg+0xa32/0x1560 net/core/rtnetlink.c:4646
- netlink_rcv_skb+0x378/0x600 net/netlink/af_netlink.c:2448
- rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4664
- netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
- netlink_unicast+0x1678/0x1750 net/netlink/af_netlink.c:1336
- netlink_sendmsg+0x104f/0x1350 net/netlink/af_netlink.c:1901
- sock_sendmsg_nosec net/socket.c:629 [inline]
- sock_sendmsg net/socket.c:639 [inline]
- ___sys_sendmsg+0xec0/0x1310 net/socket.c:2117
- __sys_sendmsg net/socket.c:2155 [inline]
- __do_sys_sendmsg net/socket.c:2164 [inline]
- __se_sys_sendmsg net/socket.c:2162 [inline]
- __x64_sys_sendmsg+0x331/0x460 net/socket.c:2162
- do_syscall_64+0x152/0x230 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x455a09
-RSP: 002b:00007fc07480ec68 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007fc07480f6d4 RCX: 0000000000455a09
-RDX: 0000000000000000 RSI: 00000000200003c0 RDI: 0000000000000014
-RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000000005d0 R14: 00000000006fdc20 R15: 0000000000000000
-
-Uninit was stored to memory at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:279 [inline]
- kmsan_save_stack mm/kmsan/kmsan.c:294 [inline]
- kmsan_internal_chain_origin+0x12b/0x210 mm/kmsan/kmsan.c:685
- kmsan_memcpy_origins+0x11d/0x170 mm/kmsan/kmsan.c:527
- __msan_memcpy+0x109/0x160 mm/kmsan/kmsan_instr.c:478
- do_setlink+0xb84/0x5fc0 net/core/rtnetlink.c:2315
- rtnl_group_changelink net/core/rtnetlink.c:2824 [inline]
- rtnl_newlink+0x1fe9/0x37a0 net/core/rtnetlink.c:2976
- rtnetlink_rcv_msg+0xa32/0x1560 net/core/rtnetlink.c:4646
- netlink_rcv_skb+0x378/0x600 net/netlink/af_netlink.c:2448
- rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4664
- netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
- netlink_unicast+0x1678/0x1750 net/netlink/af_netlink.c:1336
- netlink_sendmsg+0x104f/0x1350 net/netlink/af_netlink.c:1901
- sock_sendmsg_nosec net/socket.c:629 [inline]
- sock_sendmsg net/socket.c:639 [inline]
- ___sys_sendmsg+0xec0/0x1310 net/socket.c:2117
- __sys_sendmsg net/socket.c:2155 [inline]
- __do_sys_sendmsg net/socket.c:2164 [inline]
- __se_sys_sendmsg net/socket.c:2162 [inline]
- __x64_sys_sendmsg+0x331/0x460 net/socket.c:2162
- do_syscall_64+0x152/0x230 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-Uninit was created at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:279 [inline]
- kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:189
- kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:315
- kmsan_slab_alloc+0x10/0x20 mm/kmsan/kmsan.c:322
- slab_post_alloc_hook mm/slab.h:446 [inline]
- slab_alloc_node mm/slub.c:2753 [inline]
- __kmalloc_node_track_caller+0xb32/0x11b0 mm/slub.c:4395
- __kmalloc_reserve net/core/skbuff.c:138 [inline]
- __alloc_skb+0x2cb/0x9e0 net/core/skbuff.c:206
- alloc_skb include/linux/skbuff.h:988 [inline]
- netlink_alloc_large_skb net/netlink/af_netlink.c:1182 [inline]
- netlink_sendmsg+0x76e/0x1350 net/netlink/af_netlink.c:1876
- sock_sendmsg_nosec net/socket.c:629 [inline]
- sock_sendmsg net/socket.c:639 [inline]
- ___sys_sendmsg+0xec0/0x1310 net/socket.c:2117
- __sys_sendmsg net/socket.c:2155 [inline]
- __do_sys_sendmsg net/socket.c:2164 [inline]
- __se_sys_sendmsg net/socket.c:2162 [inline]
- __x64_sys_sendmsg+0x331/0x460 net/socket.c:2162
- do_syscall_64+0x152/0x230 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-Fixes: e7ed828f10bd ("netlink: support setting devgroup parameters")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
+Fixes: a1cba5613edf ("net: phy: Add Broadcom phy library for common interfaces")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/rtnetlink.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/phy/bcm-cygnus.c  |    6 +++---
+ drivers/net/phy/bcm-phy-lib.h |    7 +++++++
+ drivers/net/phy/bcm7xxx.c     |    4 ++--
+ 3 files changed, 12 insertions(+), 5 deletions(-)
 
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -1914,6 +1914,10 @@ static int do_setlink(const struct sk_bu
- 	const struct net_device_ops *ops = dev->netdev_ops;
- 	int err;
+--- a/drivers/net/phy/bcm-cygnus.c
++++ b/drivers/net/phy/bcm-cygnus.c
+@@ -61,17 +61,17 @@ static int bcm_cygnus_afe_config(struct
+ 		return rc;
  
-+	err = validate_linkmsg(dev, tb);
-+	if (err < 0)
-+		return err;
+ 	/* make rcal=100, since rdb default is 000 */
+-	rc = bcm_phy_write_exp(phydev, MII_BRCM_CORE_EXPB1, 0x10);
++	rc = bcm_phy_write_exp_sel(phydev, MII_BRCM_CORE_EXPB1, 0x10);
+ 	if (rc < 0)
+ 		return rc;
+ 
+ 	/* CORE_EXPB0, Reset R_CAL/RC_CAL Engine */
+-	rc = bcm_phy_write_exp(phydev, MII_BRCM_CORE_EXPB0, 0x10);
++	rc = bcm_phy_write_exp_sel(phydev, MII_BRCM_CORE_EXPB0, 0x10);
+ 	if (rc < 0)
+ 		return rc;
+ 
+ 	/* CORE_EXPB0, Disable Reset R_CAL/RC_CAL Engine */
+-	rc = bcm_phy_write_exp(phydev, MII_BRCM_CORE_EXPB0, 0x00);
++	rc = bcm_phy_write_exp_sel(phydev, MII_BRCM_CORE_EXPB0, 0x00);
+ 
+ 	return 0;
+ }
+--- a/drivers/net/phy/bcm-phy-lib.h
++++ b/drivers/net/phy/bcm-phy-lib.h
+@@ -14,11 +14,18 @@
+ #ifndef _LINUX_BCM_PHY_LIB_H
+ #define _LINUX_BCM_PHY_LIB_H
+ 
++#include <linux/brcmphy.h>
+ #include <linux/phy.h>
+ 
+ int bcm_phy_write_exp(struct phy_device *phydev, u16 reg, u16 val);
+ int bcm_phy_read_exp(struct phy_device *phydev, u16 reg);
+ 
++static inline int bcm_phy_write_exp_sel(struct phy_device *phydev,
++					u16 reg, u16 val)
++{
++	return bcm_phy_write_exp(phydev, reg | MII_BCM54XX_EXP_SEL_ER, val);
++}
 +
- 	if (tb[IFLA_NET_NS_PID] || tb[IFLA_NET_NS_FD]) {
- 		struct net *net = rtnl_link_get_net(dev_net(dev), tb);
- 		if (IS_ERR(net)) {
-@@ -2234,10 +2238,6 @@ static int rtnl_setlink(struct sk_buff *
- 		goto errout;
- 	}
+ int bcm_phy_write_misc(struct phy_device *phydev,
+ 		       u16 reg, u16 chl, u16 value);
+ int bcm_phy_read_misc(struct phy_device *phydev,
+--- a/drivers/net/phy/bcm7xxx.c
++++ b/drivers/net/phy/bcm7xxx.c
+@@ -48,10 +48,10 @@
+ static void r_rc_cal_reset(struct phy_device *phydev)
+ {
+ 	/* Reset R_CAL/RC_CAL Engine */
+-	bcm_phy_write_exp(phydev, 0x00b0, 0x0010);
++	bcm_phy_write_exp_sel(phydev, 0x00b0, 0x0010);
  
--	err = validate_linkmsg(dev, tb);
--	if (err < 0)
--		goto errout;
--
- 	err = do_setlink(skb, dev, ifm, tb, ifname, 0);
- errout:
- 	return err;
+ 	/* Disable Reset R_AL/RC_CAL Engine */
+-	bcm_phy_write_exp(phydev, 0x00b0, 0x0000);
++	bcm_phy_write_exp_sel(phydev, 0x00b0, 0x0000);
+ }
+ 
+ static int bcm7xxx_28nm_b0_afe_config_init(struct phy_device *phydev)
 
 
