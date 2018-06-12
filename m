@@ -3,157 +3,117 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id DAA7DC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:29:56 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6C606C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:30:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 863DD208AE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:29:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20E75208AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:30:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kHsLXVn/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 863DD208AE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="kfvru/5e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20E75208AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933395AbeFLK3y (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 06:29:54 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:46686 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933088AbeFLK3w (ORCPT
+        id S1754380AbeFLKal (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 06:30:41 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:39613 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754100AbeFLKai (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 06:29:52 -0400
-Received: by mail-io0-f195.google.com with SMTP id d22-v6so27394377iof.13
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 03:29:51 -0700 (PDT)
+        Tue, 12 Jun 2018 06:30:38 -0400
+Received: by mail-lf0-f66.google.com with SMTP id t134-v6so35197973lff.6
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 03:30:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=QJHgqkFvLTsM8STc/8YPQoKD29IzA3g5gEvJetaqwOc=;
-        b=kHsLXVn//mvh0vWOyQ0e45u4z7HrmYFSC6Y6AvEQ952UsgorYzcL40ERqGsYtDsS+B
-         jlDmR/BzM173tMgeVViKissUV6rQsX6lrLkFm5rLsmfUXosy5s/hd4+Wjdofc20qaG1f
-         jaL2Fo5djYNthWh1qwwdZzHDkP8m4qfBA5obI=
+        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=seVdsKj0EQqMOF4CwT0aE9lpFmK2oc2WEb1GlFRmp/w=;
+        b=kfvru/5eFh3HH50kPj1Q3ZaJHW0/PUE3dV5WJJ/XbvNqzmJx64N9kM5R6Cx1sjO3Cn
+         RZ5+S432OPanaEwHLfOjnG9R2zz/QRNvPGXppF6VBY4QGvXcckztD3vheSAEhnaviCU5
+         qCHRzdpcGOIhRVQw2KU7YamR/z8ILcnQeRYR0iGErCrXCdsqc8UMVkhugAbvWinyoKxW
+         W9uxHMaqnE1k5i/T/+sfEXlNObAzVLoGecMoZKtoVKLwQpunTkMF7jCHaG8WXq64nZVD
+         2U/ChbGpI8s5xtaXP09B91T2xZ7lu6671eKzJCB0Eynd9UIqvoUaYXbdLtzIpvrE4JEX
+         pqNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=QJHgqkFvLTsM8STc/8YPQoKD29IzA3g5gEvJetaqwOc=;
-        b=tq8IbM4CNyaF9Slc/r7JLXy+cIGgr7ZdyWLPupzGK0NJOy8Pn+6vzTdIUk+bZplly7
-         nRs0dlvppnjkEmoY6eulWH1g5VzUwohXKdZ5B1y2zT1p3QFsjIqtlbveJTkXBgVv0zjI
-         cX1vDJaRCulCV6XjmkMpfAOHMUl4oXcbVNVjMlv+zVsH6t3MF07NB8s9NWDiB3sqJ8Om
-         OI08gSdpIli3S6c/swsbckzq9ZMVtckPEZ9jS6m2TOyC4dedQ9peXietf4E7/1KMW8bh
-         zd/yJ3R4hOqJnfei9KXKhd2QAFCY8sdMqzI90Hq2YB9I25uxGmpsdtgBYFrMztz+Ew70
-         zmGg==
-X-Gm-Message-State: APt69E3mjfTAT43Sb055aH4PapSxQyvW4jsZ4wHEHT+fz5djIi6FUNB2
-        sBU5etv3nfJzvn2TLdxLb669+zE0dlXQ7Y9f32YLGg==
-X-Google-Smtp-Source: ADUXVKKebfCZ9uZogQR0ccpCSz/iL7ymuL097a2BBQPgQPSABdW+bxRanxptTsM6CM276tJJ4CKaBAqHVi4Lm+gtWKc=
-X-Received: by 2002:a6b:1410:: with SMTP id 16-v6mr2658318iou.218.1528799391442;
- Tue, 12 Jun 2018 03:29:51 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=seVdsKj0EQqMOF4CwT0aE9lpFmK2oc2WEb1GlFRmp/w=;
+        b=quMUtrgy6zcoVG6Juxol+bOVCmDzXDyra5J8hJ8Y5LVRQWkxL/OrF+kfAXLbf6Wev2
+         PwscA+vFuIsiASPiptlcl/wBknSwH3OEjv4rcDSgkFj6nd4sWoiKM5CA5UdOBP+7FXcs
+         z2NZFEHYN8JmUXaxLGvHEqxLAsMZokBY3abAwID8VV5WvWuNQxp/WPMTx2gzAyZ7rs5J
+         E9OeBkgmG7Z/+DxHmDuU1ZvWrYxUYVQDYbc1/CQC81gxKrGbhb1F71X7UGqHO/MIOKA7
+         10uzZWfMw8Ku4N6LZ+3tqDt1gukr1WPlHHlTk1LN4SU1IW7X0FzRdSA469KfpAaGrie5
+         esrQ==
+X-Gm-Message-State: APt69E3j6v2hI6oOsSowNfIeNWYzOVkNcHfj7r59n/1GJIi2byzK5fy0
+        hjGQZOJBgf4ORYNDQCe0CbRbKg==
+X-Google-Smtp-Source: ADUXVKKsNvUn99+ld/27T7eJE+tis6jZ6hHbZ0A/7pC9heWUx51QVgHsPTzFZWuFuK7XhsTv+KqmjA==
+X-Received: by 2002:a2e:330b:: with SMTP id d11-v6mr1932969ljc.67.1528799437622;
+        Tue, 12 Jun 2018 03:30:37 -0700 (PDT)
+Received: from Macroninja.cnexlabs.com (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
+        by smtp.gmail.com with ESMTPSA id f63-v6sm142211lje.79.2018.06.12.03.30.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Jun 2018 03:30:36 -0700 (PDT)
+From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+To:     igor.j.konopko@intel.com, marcin.dziegielewski@intel.com,
+        javier@cnexlabs.com, hans.holmberg@cnexlabs.com
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+Subject: [PATCH] lightnvm: pblk: limit get chk meta request size
+Date:   Tue, 12 Jun 2018 12:30:08 +0200
+Message-Id: <20180612103008.19436-1-mb@lightnvm.io>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Received: by 2002:a02:c054:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 03:29:50
- -0700 (PDT)
-In-Reply-To: <20180612084234.gjzq66xsqblryrkm@shbuild888>
-References: <20180608095154.22413-1-feng.tang@intel.com> <CAPDyKFrs3ngkVVQaq34V9qzV3KoFdy=B+UbLnzR=fHKsOco=tg@mail.gmail.com>
- <20180612084234.gjzq66xsqblryrkm@shbuild888>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 12 Jun 2018 12:29:50 +0200
-Message-ID: <CAPDyKFq8WZhQQ9EBjfuVvu=YHB9AdwvMHwyKOY5Wxku1V5PtmA@mail.gmail.com>
-Subject: Re: [PATCH] mmc: Move the mmc driver init earlier
-To:     Feng Tang <feng.tang@intel.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12 June 2018 at 10:42, Feng Tang <feng.tang@intel.com> wrote:
-> Hi Ulf,
->
-> Thanks for the review.
->
-> On Tue, Jun 12, 2018 at 08:25:44AM +0200, Ulf Hansson wrote:
->> On 8 June 2018 at 11:51, Feng Tang <feng.tang@intel.com> wrote:
->> > When doing some boot time optimization for an eMMC rootfs NUCs,
->> > we found the rootfs may spend around 100 microseconds waiting
->> > for eMMC card to be initialized, then the rootfs could be
->> > mounted.
->> >         [    1.216561] Waiting for root device /dev/mmcblk1p1...
->> >         [    1.289262] mmc1: new HS400 MMC card at address 0001
->> >         [    1.289667] mmcblk1: mmc1:0001 R1J56L 14.7 GiB
->> >         [    1.289772] mmcblk1boot0: mmc1:0001 R1J56L partition 1 8.00 MiB
->> >         [    1.289869] mmcblk1boot1: mmc1:0001 R1J56L partition 2 8.00 MiB
->> >         [    1.289967] mmcblk1rpmb: mmc1:0001 R1J56L partition 3 4.00 MiB
->> >         [    1.292798]  mmcblk1: p1 p2 p3
->> >         [    1.300576] EXT4-fs (mmcblk1p1): couldn't mount as ext3 due to feature incompatibilities
->> >         [    1.300912] EXT4-fs (mmcblk1p1): couldn't mount as ext2 due to feature incompatibilities
->> >
->> > And this is a common problem for smartphones, tablets, embedded
->> > devices and automotive products. This patch will make the eMMC/SD
->> > card  start initializing earlier, by changing its order in drivers/Makefile.
->> >
->> > On our platform, the waiting for eMMC card is almost eliminated with the patch,
->> > which is critical to boot time.
->>
->> I am wondering what kernel version you are running here. There have
->> been some changes to the mmc initialization path, which perhaps can
->> help.
-> These logs in commit msg are based on kernel 4.14, and the patch is generated
-> against kernel 4.17.
+For devices that does not specify a limit on its transfer size, the
+get_chk_meta command may send down a single I/O retrieving the full
+chunk metadata table. Resulting in large 2-4MB I/O requests. Instead,
+split up the I/Os to a maximum of 256KB and issue them separately to
+improve I/O latency.
 
-Right. So it's quite recent, even if lot's of changes have been made
-to the mmc core since then.
+Signed-off-by: Matias Bjørling <mb@lightnvm.io>
+---
+ drivers/nvme/host/lightnvm.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-A few things (old/new) that is important.
-1) Check if your mmc host driver support MMC_CAP_WAIT_WHILE_BUSY. That
-should have some effect, avoiding unnecessary polling.
+diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
+index b9989717418d..3b644b0e9713 100644
+--- a/drivers/nvme/host/lightnvm.c
++++ b/drivers/nvme/host/lightnvm.c
+@@ -583,7 +583,13 @@ static int nvme_nvm_get_chk_meta(struct nvm_dev *ndev,
+ 	struct ppa_addr ppa;
+ 	size_t left = nchks * sizeof(struct nvme_nvm_chk_meta);
+ 	size_t log_pos, offset, len;
+-	int ret, i;
++	int ret, i, max_len;
++
++	/*
++	 * limit requests to maximum 256K to avoid issuing arbitrary large
++	 * requests when the device does not specific a maximum transfer size.
++	 */
++	max_len = min_t(unsigned int, ctrl->max_hw_sectors << 9, 256 * 1024);
+ 
+ 	/* Normalize lba address space to obtain log offset */
+ 	ppa.ppa = slba;
+@@ -596,7 +602,7 @@ static int nvme_nvm_get_chk_meta(struct nvm_dev *ndev,
+ 	offset = log_pos * sizeof(struct nvme_nvm_chk_meta);
+ 
+ 	while (left) {
+-		len = min_t(unsigned int, left, ctrl->max_hw_sectors << 9);
++		len = min_t(unsigned int, left, max_len);
+ 
+ 		ret = nvme_get_log_ext(ctrl, ns, NVME_NVM_LOG_REPORT_CHUNK,
+ 				dev_meta, len, offset);
+-- 
+2.11.0
 
-2) Since 4.18 rc1, you will be able to configure an over estimated
-"power on" delay (via DT as well). Look at commit
-6d796c68cd15234a33a4bd2ef7231125fea2dc6c.
-
-3) If you use a DT based platform, I think what people do is to
-re-organize the order of device nodes, such that as many as possible
--EPROBE_DEFER is avoided to be returned by drivers. This is also not a
-good solution, but the best we have at this moment.
-
->
->>
->> >
->> > Signed-off-by: Feng Tang <feng.tang@intel.com>
->> > ---
->> >  drivers/Makefile | 4 +++-
->> >  1 file changed, 3 insertions(+), 1 deletion(-)
->> >
->> > diff --git a/drivers/Makefile b/drivers/Makefile
->> > index 24cd47014657..c473afd3c688 100644
->> > --- a/drivers/Makefile
->> > +++ b/drivers/Makefile
->> > @@ -50,6 +50,9 @@ obj-$(CONFIG_REGULATOR)               += regulator/
->> >  # reset controllers early, since gpu drivers might rely on them to initialize
->> >  obj-$(CONFIG_RESET_CONTROLLER) += reset/
->> >
->> > +# put mmc early as many morden devices use emm/sd card as rootfs storage
->> > +obj-y                          += mmc/
->> > +
->>
->> Your suggested approach isn't really a solution, as it may work for
->> your particular case but not for everybody else.
->
-> Do you mean the patch may break some platforms? Yes, I only tested on
-> some IA based NUCs, and I did think about other architectures, things
-> that may affect MMC are gpio/clk/pinctrl, and those are still earlier
-> than mmc after change.
-
-I don't know if it breaks things, potentially it could, if drivers
-don't implement support for -EPROBE_DEFER properly.
-
-However, more importantly, it's not real fix to the problem, just
-something that seems to work for you.
-
-Kind regards
-Uffe
