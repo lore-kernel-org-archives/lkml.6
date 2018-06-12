@@ -2,131 +2,104 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E1E61C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 20:36:49 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1E1CBC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 20:38:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97D932089C
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 20:36:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C370D2089C
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 20:38:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BLal9SON"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97D932089C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="FesqvtWx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C370D2089C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934673AbeFLUgr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 16:36:47 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:41618 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934236AbeFLUgo (ORCPT
+        id S1754411AbeFLUig (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 16:38:36 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:44027 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754325AbeFLUie (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 16:36:44 -0400
-Received: by mail-lf0-f65.google.com with SMTP id d24-v6so444855lfa.8
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 13:36:43 -0700 (PDT)
+        Tue, 12 Jun 2018 16:38:34 -0400
+Received: by mail-wr0-f193.google.com with SMTP id d2-v6so356741wrm.10
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 13:38:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AUg8/xwPIkMDxiYNYGykKAZfJA+HDKFtGocvEavjPb4=;
-        b=BLal9SONTRyzxVr023TVmi/2q6rCUmVIik9CSWEPg2QZ6G3+E5Z/GWrbL5iRL84c1P
-         4tV0VPmlbg/LvFJhSPJJnL3YbTRCct5CMh7DW0Kd99EcWI7pHZ4/K4vY+DZWe8JJskSI
-         42Gtl1ZF9ZbIVy0sZI1DfxIB5NOf4IhsRoVcs=
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=z432vuSKJQmbmG0J1IBk7+FGFTocRKF90+w5tJ26MC8=;
+        b=FesqvtWxWnqvsWQLN1uXJ/lEZI2+o/Yr7UDgAhsQ94cEqOV87ViEa/rQg4Egq6FVux
+         3PCYP1e8p7iwsjpguoXxti4gpNqZZQi85aQdo3ePJsAeKMhhpRUKgSyxppio8Oa1V9Jr
+         gp1PM8GzC36bO4/8B4sSj0vP+wQwo8teC3QjunsqaDV8CkhXXf+gaX7a5yWUas2/sLSd
+         HiGJyYiDc5saFj8PYzbi2BswZ3m8gOp5ye5v7K+iEzzamEDtAD4LST3uXi12oYT2mLcp
+         wXyeC0PAwAceeDaO9mmUg4HhL1foL4JHpJ1TL1YFEyF8fYIa94vIOfrWrjVkDvJNJE72
+         ZrAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=AUg8/xwPIkMDxiYNYGykKAZfJA+HDKFtGocvEavjPb4=;
-        b=ImFbxaVMoAQuYp/+X2UsJx25qp4o1cTUAYX1ACaWAbAkLywUO3EoMDMOPUZzw0oUxQ
-         lG82ZT/fdXAZ7nJLE/mBQ7ImOt9xcseUsDjkzm0D9MTaYpF+gvQPlyLZeNF5phLuAHyX
-         srwto8nRQGRL35ebo3sJSm7U7sbqAT0RecWzKUBDIx995LIIcvN+gzN38x+Wa0Ol14jt
-         mJTT+DP1/vV6OTNH3erL6fKWI7NtGB53+/OvgHmrqoyVvRc9/lfY9XRAFzXw/T+Cg0Jf
-         TO6wT15+0bx2x2tpVQy+Zp8pRWWUzkfcEU3tbVSgDvZ8IqdIyWqmKrbuzRgD2tWCwwX8
-         YmgA==
-X-Gm-Message-State: APt69E0vLzKtFg3GCUPx7cgHvmgnYP5kRnafoeSePnm0udAczbKN8hfE
-        dZyeRk9BM/8vV7D7vH3/BnPVTg==
-X-Google-Smtp-Source: ADUXVKKNMq0GExFPFyYmwdNK5BZRgmyyZuqCvdU+MjKgONiLvYayIRPKMKu1XhZR6Y7j0xXtx7KmjQ==
-X-Received: by 2002:a19:a68a:: with SMTP id p132-v6mr1050414lfe.89.1528835802838;
-        Tue, 12 Jun 2018 13:36:42 -0700 (PDT)
-Received: from khorivan (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
-        by smtp.gmail.com with ESMTPSA id q78-v6sm194028lfd.35.2018.06.12.13.36.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Jun 2018 13:36:42 -0700 (PDT)
-Date:   Tue, 12 Jun 2018 23:36:39 +0300
-From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-To:     Grygorii Strashko <grygorii.strashko@ti.com>
-Cc:     davem@davemloft.net, corbet@lwn.net, akpm@linux-foundation.org,
-        netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        vinicius.gomes@intel.com, henrik@austad.us,
-        jesus.sanchez-palencia@intel.com, ilias.apalodimas@linaro.org,
-        p-varis@ti.com, spatton@ti.com, francois.ozog@linaro.org,
-        yogeshs@ti.com, nsekhar@ti.com
-Subject: Re: [PATCH net-next 6/6] Documentation: networking: cpsw: add MQPRIO
- & CBS offload examples
-Message-ID: <20180612203638.GC9473@khorivan>
-Mail-Followup-To: Grygorii Strashko <grygorii.strashko@ti.com>,
-        davem@davemloft.net, corbet@lwn.net, akpm@linux-foundation.org,
-        netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        vinicius.gomes@intel.com, henrik@austad.us,
-        jesus.sanchez-palencia@intel.com, ilias.apalodimas@linaro.org,
-        p-varis@ti.com, spatton@ti.com, francois.ozog@linaro.org,
-        yogeshs@ti.com, nsekhar@ti.com
-References: <20180611133047.4818-1-ivan.khoronzhuk@linaro.org>
- <20180611133047.4818-7-ivan.khoronzhuk@linaro.org>
- <16c97ea6-9f28-1dd6-136a-2473423bf94a@ti.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=z432vuSKJQmbmG0J1IBk7+FGFTocRKF90+w5tJ26MC8=;
+        b=tdcvFVc0V34m8u99R3PthC4KQs5fvUm+PTkB4fiU0fN53Akl52B0o3YYZPHvjh+B7o
+         BlGgRwKDxI5vKViD8OO6gDGlRSn7DTelE9S54XTNfK91HmWLgXvDcPwCh7dhytPyvgJ3
+         1QoEc7czb5ETKJwzUwe6a6Rhm6p3dLBvtadWvTz9GYsUJgUhcSJMisXqFLAN0sHsGKST
+         sHA6AtlN1ZmAx9i9XN46Nle8+lKwmLmErJPMYeLIDOkBnrkRG8u3tNbIEoQgM9yO31jz
+         kfRQSiUAUMGfNLQ+aEc5fphayv4Nzev70lRvOLTBJ3rgjR3oBsoWuZqsNRTmIJVWkEsL
+         E9Dw==
+X-Gm-Message-State: APt69E3BtKX8Sjf8dVcsVpar24Ohh+s77GvjYjwF95ObW/zi28BrYzYt
+        RW8tCCUaL26GoeRNZNEnzPb08w==
+X-Google-Smtp-Source: ADUXVKInT0aJ/ZMZ6BKrVYpFyr80jXLXRbuxbEB6d1vQU/tiaHX0RhQI8HWhOWE6J59gYvfcnVezhA==
+X-Received: by 2002:adf:e644:: with SMTP id b4-v6mr1928684wrn.254.1528835913460;
+        Tue, 12 Jun 2018 13:38:33 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id u108-v6sm2041503wrc.40.2018.06.12.13.38.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Jun 2018 13:38:32 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.86_2)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1fSq3g-0008LD-Rd; Tue, 12 Jun 2018 14:38:28 -0600
+Date:   Tue, 12 Jun 2018 14:38:28 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     hans.westgaard.ry@oracle.com, Doug Ledford <dledford@redhat.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        linux-rdma@vger.kernel.org,
+        =?utf-8?B?SMOla29u?= Bugge <haakon.bugge@oracle.com>,
+        Parav Pandit <parav@mellanox.com>,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Pravin Shedge <pravin.shedge4linux@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] IB/mad: Agent registration is process context only
+Message-ID: <20180612203828.GH6314@ziepe.ca>
+References: <20180608174218.32455-1-willy@infradead.org>
+ <20180608174218.32455-2-willy@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <16c97ea6-9f28-1dd6-136a-2473423bf94a@ti.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180608174218.32455-2-willy@infradead.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 02:55:18PM -0500, Grygorii Strashko wrote:
->
->
->On 06/11/2018 08:30 AM, Ivan Khoronzhuk wrote:
->>This document describes MQPRIO and CBS Qdisc offload configuration
->>for cpsw driver based on examples. It potentially can be used in
->>audio video bridging (AVB) and time sensitive networking (TSN).
->>
->>Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
->>---
->>  Documentation/networking/cpsw.txt | 540 ++++++++++++++++++++++++++++++
->>  1 file changed, 540 insertions(+)
->>  create mode 100644 Documentation/networking/cpsw.txt
->>
->>diff --git a/Documentation/networking/cpsw.txt b/Documentation/networking/cpsw.txt
->>new file mode 100644
->>index 000000000000..f5d58f502e52
->>--- /dev/null
->>+++ b/Documentation/networking/cpsw.txt
->
->Could you name it with "ti" prefix, pls?
->
->Like "ti-cpsw.txt" or "ti,cpsw.txt"
-will name it ti-cpsw.txt in v2
+On Fri, Jun 08, 2018 at 10:42:17AM -0700, Matthew Wilcox wrote:
+> From: Matthew Wilcox <mawilcox@microsoft.com>
+> 
+> Document this (it's implicitly true due to sleeping operations already
+> in use in both registration and deregistration).  Use this fact to use
+> spin_lock_irq instead of spin_lock_irqsave.  This improves performance
+> slightly.
+> 
+> Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+> ---
+>  drivers/infiniband/core/mad.c | 16 +++++++++-------
+>  1 file changed, 9 insertions(+), 7 deletions(-)
 
->
->>@@ -0,0 +1,540 @@
->>+* Texas Instruments CPSW ethernet driver
->>+
->>+Multiqueue & CBS & MQPRIO
->>+=====================================================================
->>+=====================================================================
->[...]
->
->-- 
->regards,
->-grygorii
+In the mean time, this patch is straightfoward, applied to the interm
+for-next..
 
--- 
-Regards,
-Ivan Khoronzhuk
+Jason
