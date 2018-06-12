@@ -2,121 +2,138 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E98E8C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:29:04 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id EE990C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:30:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99683208B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:29:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99683208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id A3A13208B1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:30:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NVzXFH1V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3A13208B1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933467AbeFLM3B (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 08:29:01 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:59059 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933082AbeFLM3A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 08:29:00 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1fSiPu-0006Ev-Kz; Tue, 12 Jun 2018 14:28:54 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1fSiPr-0005vi-Cn; Tue, 12 Jun 2018 14:28:51 +0200
-Date:   Tue, 12 Jun 2018 14:28:51 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Stefan Agner <stefan@agner.ch>
-Cc:     gregkh@linuxfoundation.org, festevam@gmail.com, jslaby@suse.com,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] serial: imx: fix cached UCR2 read on software reset
-Message-ID: <20180612122851.7xjneseskhkvn3ih@pengutronix.de>
-References: <20180420124407.12892-1-stefan@agner.ch>
- <20180607075633.y3tm245jv7nkdrqx@pengutronix.de>
- <afda793c86ba7394233e17813589b44c@agner.ch>
+        id S933485AbeFLMaf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 08:30:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46124 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932811AbeFLMad (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 08:30:33 -0400
+Received: from mail.kernel.org (dyndsl-178-142-065-119.ewe-ip-backbone.de [178.142.65.119])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D89C6208B0;
+        Tue, 12 Jun 2018 12:30:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528806633;
+        bh=OJVPyyuWAVgix9exruOSHGpleMBIwBgesZjlhAaokxg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NVzXFH1V9+2WWnMCvBRIWAPQkqUiFnP/vfN4XuVP4BHsuIIph67mufm5ev0YBygLL
+         Kyi4u8Bg/RS3eA+LJEwx8hbKTL8Zhs0S6sXvGUp790RcjkozeT6MRoNn3rqOGq7DCi
+         LlgfUTdYeKVAwQH6K3LuqrcOJQGRPsBeS5Zu3YJU=
+Date:   Tue, 12 Jun 2018 14:30:30 +0200
+From:   Sebastian Reichel <sre@kernel.org>
+To:     Brian Norris <briannorris@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        Rhyland Klein <rklein@nvidia.com>,
+        Alexandru Stan <amstan@chromium.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Doug Anderson <dianders@chromium.org>,
+        Phil Reid <preid@electromag.com.au>
+Subject: Re: [PATCH v4 2/2] dt-bindings: power: sbs-battery: re-document
+ "ti,bq20z75"
+Message-ID: <20180612123030.l4ezeaw7674ig5kq@earth.universe>
+References: <20180608223655.33565-1-briannorris@chromium.org>
+ <20180608223655.33565-2-briannorris@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="h4ysnlvpkncnk5pp"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <afda793c86ba7394233e17813589b44c@agner.ch>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20180608223655.33565-2-briannorris@chromium.org>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 02:11:44PM +0200, Stefan Agner wrote:
-> On 07.06.2018 09:56, Uwe Kleine-König wrote:
-> > On Fri, Apr 20, 2018 at 02:44:07PM +0200, Stefan Agner wrote:
-> >> To reset the UART the SRST needs be cleared (low active). According
-> >> to the documentation the bit will remain active for 4 module clocks
-> >> until it is cleared (set to 1).
-> >>
-> >> Hence the real register need to be read in case the cached register
-> >> indicates that the SRST bit is zero.
-> >>
-> >> This bug lead to wrong baudrate because the baud rate register got
-> >> restored before reset completed in imx_flush_buffer.
-> >>
-> >> Fixes: 3a0ab62f43de ("serial: imx: implement shadow registers for UCRx and UFCR")
-> >> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> >> Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
-> >> Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> > 
-> > For the record, there is a customer of mine who reports that this commit
-> > breaks rs485 communication on i.MX25 because RTS stops to toggle as
-> > intended.
-> > 
-> > (Some details: uart3, fsl,uart-has-rtscts, fsl,dte-mode,
-> > linux,rs485-enabled-at-boot-time, native RTS.)
-> > 
-> > I didn't debug this yet.
-> 
-> I have seen your patch today "serial: imx: fix comment about UCR2_SRST
-> and its handling for shadowing" so I assume you looked into this issue?
-> 
-> Was it related to that change?
 
-I started looking into this issue, but didn't find the culprit yet.
+--h4ysnlvpkncnk5pp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-My work in progress patch looks as follows:
+Hi,
 
-diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
-index 758a67f3c8b3..5270173721c6 100644
---- a/drivers/tty/serial/imx.c
-+++ b/drivers/tty/serial/imx.c
-@@ -1357,6 +1357,12 @@ static int imx_uart_startup(struct uart_port *port)
- 	while (!(imx_uart_readl(sport, UCR2) & UCR2_SRST) && (--i > 0))
- 		udelay(1);
- 
-+	if (imx_uart_readl(sport, UCR2) & UCR2_SRST) {
-+		spin_unlock_irqrestore(&sport->port.lock, flags);
-+		dev_warn(port->dev, "SRST didn't go away\n");
-+		return -EIO;
-+	}
-+
- 	/*
- 	 * Finally, clear and enable interrupts
- 	 */
+On Fri, Jun 08, 2018 at 03:36:55PM -0700, Brian Norris wrote:
+> This compatible property was documented before the driver was renamed to
+> "SBS" (see commit e57f1b68c406 ("devicetree-bindings: Propagate
+> bq20z75->sbs rename to dt bindings")). The driver has continued to
+> support this property as an alternative to "sbs,sbs-battery", and
+> because we've noticed there are some lingering TI specifics (in the
+> manufacturer-specific portion of the SBS spec), we'd like to start using
+> this property again to differentiate.
+>=20
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> Acked-by: Rhyland Klein <rklein@nvidia.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
 
-which seems to trigger on both i.MX25 and i.MX6 at least occasionally.
+Please use "sbs,sbs-battery" as fallback, just like sbs-manager and
+sbs-charger, see for example:
 
-Maybe 100 us is too short?
+Documentation/devicetree/bindings/power/supply/sbs_sbs-charger.txt
 
-Best regards
-Uwe
+-- Sebastian
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+> v2: add Rhyland's Acked-by
+> v3: no change
+> v4: add Rob's Reviewed-by
+> ---
+>  .../devicetree/bindings/power/supply/sbs_sbs-battery.txt        | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/power/supply/sbs_sbs-batte=
+ry.txt b/Documentation/devicetree/bindings/power/supply/sbs_sbs-battery.txt
+> index c40e8926facf..a7a9c3366f82 100644
+> --- a/Documentation/devicetree/bindings/power/supply/sbs_sbs-battery.txt
+> +++ b/Documentation/devicetree/bindings/power/supply/sbs_sbs-battery.txt
+> @@ -2,7 +2,7 @@ SBS sbs-battery
+>  ~~~~~~~~~~
+> =20
+>  Required properties :
+> - - compatible : "sbs,sbs-battery"
+> + - compatible : "sbs,sbs-battery" or "ti,bq20z75"
+> =20
+>  Optional properties :
+>   - sbs,i2c-retry-count : The number of times to retry i2c transactions o=
+n i2c
+> --=20
+> 2.18.0.rc1.242.g61856ae69a-goog
+>=20
+
+--h4ysnlvpkncnk5pp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlsfvOMACgkQ2O7X88g7
++ppGjQ/8C5j/WJve+ASLo2oQ2CHvSdAHDBW4I0VWP5mRkdlfgtLMOvAOkHoBvBcT
+VZRP7aip9LLQuEdTsy/Dalqs3kzZRXCXY1oFfdweL2NBvM/qevAO1fZ2CYAqVuz/
+0fB0w2LFBgXXHzy2MJ+YdFju5wp7FaYkAUFQ7xJAQJIVeJHQiK6qlohw8pOx00TD
+QrXcXVO6nnhXTNgT//Kwa0rtdF/cBLr7DhFMUZ7uINcxuHg04nLkAZTQAwlqtSdY
+UJ8vo/xfyzfVZ2myXGSRdToa9Cw95TeYER1uLxYm4V3GtIB5zLmC1gOfhQD4ZLMu
+11PnfPdm+bMp8cO5RR3wWROmEUmr2XIo4fkyI+JH23dwxpGgv0z0XVoCqEyX2rko
+VTyTKGQquXavsIeBAtOtWn2+YzQSAVB6ndurxUA6PBH/ztmNeO7EIl/iGTikacPp
+53A4u+sFD1piUEBHTYf2CHYpm8WwBfBM6gMertL/M5SN52s8ZcZS2IjkTOgreAud
+Bb/JR1UbExXY6OjsmxOvXwT6CWUQ9tTykctWzIfz08+QCFtoXVOURzN4KT7JPMrX
+mJXPk8m5dTvVNG+Vo+XxXnvnPy2rZDpISzOnvO3UtNMEQNG0MqE6hBs8EzaCKeJG
+etfKKzZOnmFpRMnh9+G00AqB9PW0w9BrkvJdeNlMD/hUauBGDJQ=
+=tLAL
+-----END PGP SIGNATURE-----
+
+--h4ysnlvpkncnk5pp--
