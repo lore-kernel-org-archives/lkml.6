@@ -2,135 +2,136 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id EB3D6C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:32:53 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 84FE5C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:36:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 945BB208B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:32:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nruy2jfg";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nruy2jfg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 945BB208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 31234208B1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:36:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31234208B1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754339AbeFLMcv (ORCPT
+        id S1754353AbeFLMgB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 08:32:51 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48458 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754123AbeFLMct (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 08:32:49 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E40BA607BB; Tue, 12 Jun 2018 12:32:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528806768;
-        bh=3jgg9wjV4evhljJ5ApJI1AZTBRFzKbuPSAMDLOXDxtw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=nruy2jfgC1zv5FBG86+SyImauqPKYftdMMP7QkYpgYx0++zVR0HQd4xRExKYna8bh
-         u0ngboNjVxoAM1ISR5FgokJM0uuLPZh69rrV9W6hrudu0XDmJpDzfQ6A+q7yi63QAX
-         GyAZzIRxHn19lzE6749rbRE1W6uV8x4b12IXNWEQ=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 1FDDD607BB;
-        Tue, 12 Jun 2018 12:32:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528806768;
-        bh=3jgg9wjV4evhljJ5ApJI1AZTBRFzKbuPSAMDLOXDxtw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=nruy2jfgC1zv5FBG86+SyImauqPKYftdMMP7QkYpgYx0++zVR0HQd4xRExKYna8bh
-         u0ngboNjVxoAM1ISR5FgokJM0uuLPZh69rrV9W6hrudu0XDmJpDzfQ6A+q7yi63QAX
-         GyAZzIRxHn19lzE6749rbRE1W6uV8x4b12IXNWEQ=
+        Tue, 12 Jun 2018 08:36:01 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:49528 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754223AbeFLMf7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 08:35:59 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 42482FEC6A8DF;
+        Tue, 12 Jun 2018 20:35:56 +0800 (CST)
+Received: from [127.0.0.1] (10.177.23.164) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.382.0; Tue, 12 Jun 2018
+ 20:35:50 +0800
+Subject: Re: [PATCH v2 0/5] add non-strict mode support for arm-smmu-v3
+To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        iommu <iommu@lists.linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <1528628843-10280-1-git-send-email-thunder.leizhen@huawei.com>
+ <d6f46de0-f8c3-2c9e-4de3-5949db0cf7b5@arm.com>
+CC:     Xinwei Hu <huxinwei@huawei.com>, Hanjun Guo <guohanjun@huawei.com>,
+        "Guozhu Li" <liguozhu@hisilicon.com>,
+        Libin <huawei.libin@huawei.com>
+From:   "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+Message-ID: <5B1FBE1C.3060205@huawei.com>
+Date:   Tue, 12 Jun 2018 20:35:40 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <d6f46de0-f8c3-2c9e-4de3-5949db0cf7b5@arm.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Date:   Tue, 12 Jun 2018 18:02:48 +0530
-From:   Govind Singh <govinds@codeaurora.org>
-To:     niklas.cassel@linaro.org, kvalo@codeaurora.org, davem@davemloft.net
-Cc:     netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: FW: [PATCH 2/2] ath10k: allow ATH10K_SNOC with COMPILE_TEST
-In-Reply-To: <7058492257914633b55fcd423e4c0b59@aphydexm01b.ap.qualcomm.com>
-References: <20180612113907.15043-1-niklas.cassel@linaro.org>
- <20180612113907.15043-2-niklas.cassel@linaro.org>
- <7058492257914633b55fcd423e4c0b59@aphydexm01b.ap.qualcomm.com>
-Message-ID: <47cf8ec1b11d727ea928a307a431d4a2@codeaurora.org>
-X-Sender: govinds@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+X-Originating-IP: [10.177.23.164]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-06-12 17:45, Govind Singh wrote:
-> -----Original Message-----
-> From: ath10k <ath10k-bounces@lists.infradead.org> On Behalf Of Niklas 
-> Cassel
-> Sent: Tuesday, June 12, 2018 5:09 PM
-> To: Kalle Valo <kvalo@codeaurora.org>; David S. Miller 
-> <davem@davemloft.net>
-> Cc: Niklas Cassel <niklas.cassel@linaro.org>; netdev@vger.kernel.org;
-> linux-wireless@vger.kernel.org; linux-kernel@vger.kernel.org;
-> ath10k@lists.infradead.org
-> Subject: [PATCH 2/2] ath10k: allow ATH10K_SNOC with COMPILE_TEST
+
+
+On 2018/6/11 19:05, Jean-Philippe Brucker wrote:
+> Hi Zhen Lei,
 > 
-> ATH10K_SNOC builds just fine with COMPILE_TEST, so make that possible.
+> On 10/06/18 12:07, Zhen Lei wrote:
+>> v1 -> v2:
+>> Use the lowest bit of the io_pgtable_ops.unmap's iova parameter to pass the strict mode:
+>> 0, IOMMU_STRICT;
+>> 1, IOMMU_NON_STRICT;
+>> Treat 0 as IOMMU_STRICT, so that the unmap operation can compatible with
+>> other IOMMUs which still use strict mode. In other words, this patch series
+>> will not impact other IOMMU drivers. I tried add a new quirk IO_PGTABLE_QUIRK_NON_STRICT
+>> in io_pgtable_cfg.quirks, but it can not pass the strict mode of the domain from SMMUv3
+>> driver to io-pgtable module. 
+>>
+>> Add a new member domain_non_strict in struct iommu_dma_cookie, this member will only be
+>> initialized when the related domain and IOMMU driver support non-strict mode.
 > 
-> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-> ---
->  drivers/net/wireless/ath/ath10k/Kconfig | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> It's not obvious from the commit messages or comments what the
+> non-strict mode involves exactly. Could you add a description, and point
+> out the trade-off associated with it?
+
+Sorry, I described it in V1, but remove it in V2.
+https://lkml.org/lkml/2018/5/31/131
+
 > 
-> diff --git a/drivers/net/wireless/ath/ath10k/Kconfig
-> b/drivers/net/wireless/ath/ath10k/Kconfig
-> index 54ff5930126c..6572a43590a8 100644
-> --- a/drivers/net/wireless/ath/ath10k/Kconfig
-> +++ b/drivers/net/wireless/ath/ath10k/Kconfig
-> @@ -42,7 +42,8 @@ config ATH10K_USB
+> In this mode you don't send an invalidate commands when removing a leaf
+> entry, but instead send invalidate-all commands at regular interval.
+> This improves performance but introduces a vulnerability window, which
+> should be pointed out to users.
 > 
->  config ATH10K_SNOC
->  	tristate "Qualcomm ath10k SNOC support (EXPERIMENTAL)"
-> -	depends on ATH10K && ARCH_QCOM
-> +	depends on ATH10K
-> +	depends on ARCH_QCOM || COMPILE_TEST
->  	---help---
->  	  This module adds support for integrated WCN3990 chip connected
->  	  to system NOC(SNOC). Currently work in progress and will not
+> IOVA allocation isn't the only problem, I'm concerned about the page
+> allocator. If unmap() returns early, the TLB entry is still valid after
+> the kernel reallocate the page. The device can then perform a
+> use-after-free (instead of getting a translation fault), so a buggy
+> device will corrupt memory and an untrusted one will access arbitrary data.
 
-Thanks Niklas for enabling COMPILE_TEST. With QMI set of 
-changes(https://patchwork.kernel.org/patch/10448183/), we need to enable 
-COMPILE_TEST for
-QCOM_SCM/QMI_HELPERS which seems broken today. Are you planning to fix 
-the same.
+I have constrained VFIO to still use strict mode, so all other devices will only
+access memory in the kernel state, these related drivers are unlikely to attack
+kernel. The devices as part of the commercial product, the probability of such a
+bug is very low, at least the bug will not be reserved for the purpose of the
+attack. But the attackers may replace it as illegal devices on the spot.
 
-  config QCOM_SCM
-  	bool
--	depends on ARM || ARM64
-+	depends on ARM || ARM64 || COMPILE_TEST
-  	select RESET_CONTROLLER
+Take a step back, IOMMU disabled is also supported, non-strict mode is better
+than disabled. So maybe we should add a boot option, allowing the admin choose
+which mode to be used.
 
 
-  config QCOM_SCM_64
-  	def_bool y
--	depends on QCOM_SCM && ARM64
-+	depends on QCOM_SCM && ARM64 || COMPILE_TEST
+> 
+> Or is there a way in mm to ensure that the page isn't reallocated until
+> the invalidation succeeds? Could dma-iommu help with this? Having
 
-  config QCOM_QMI_HELPERS
-  	tristate
--	depends on ARCH_QCOM && NET
-+	depends on (ARCH_QCOM || COMPILE_TEST) && NET
+It's too hard. In some cases the memory is allocated by non dma-iommu API.
 
--obj-$(CONFIG_ARCH_QCOM)		+= qcom/
-+obj-y				+= qcom/
+> support from the mm would also help consolidate ATS, mark a page stale
+> when an ATC invalidation times out. But last time I checked it seemed
+> quite difficult to implement, and ATS is inherently insecure so I didn't
+> bother.
+> 
+> At the very least I think it might be worth warning users in dmesg about
+> this pitfall (and add_taint?). Tell them that an IOMMU in this mode is
+> good for scatter-gather performance but lacks full isolation. The
+> "non-strict" name seems somewhat harmless, and people should know what
+> they're getting into before enabling this.
 
-__qcom_scm_init/qcom_scm_call wrapper to support COMPILE_TEST.
+Yes, warning or add comments in source code will be better.
 
+> 
+> Thanks,
+> Jean
+> 
+> .
+> 
 
+-- 
+Thanks!
+BestRegards
 
-BR,
-Govind
