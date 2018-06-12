@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id DBF42C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 14:08:36 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6F350C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 14:08:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E5EC2089C
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 14:08:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E5EC2089C
+	by mail.kernel.org (Postfix) with ESMTP id 1A816208B2
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 14:08:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A816208B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934013AbeFLOIf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 10:08:35 -0400
-Received: from fw-tnat.cambridge.arm.com ([217.140.96.140]:55428 "EHLO
+        id S934082AbeFLOIh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 10:08:37 -0400
+Received: from fw-tnat.cambridge.arm.com ([217.140.96.140]:18859 "EHLO
         cam-smtp0.cambridge.arm.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933584AbeFLOId (ORCPT
+        by vger.kernel.org with ESMTP id S933550AbeFLOIe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 10:08:33 -0400
+        Tue, 12 Jun 2018 10:08:34 -0400
 Received: from e110455-lin.cambridge.arm.com (e110455-lin.cambridge.arm.com [10.2.131.61])
-        by cam-smtp0.cambridge.arm.com (8.13.8/8.13.8) with ESMTP id w5CE8DwP031673;
+        by cam-smtp0.cambridge.arm.com (8.13.8/8.13.8) with ESMTP id w5CE8DwT031673;
         Tue, 12 Jun 2018 15:08:18 +0100
 From:   Liviu Dudau <Liviu.Dudau@arm.com>
 To:     Mali DP Maintainers <malidp@foss.arm.com>
@@ -39,10 +39,11 @@ Cc:     Gustavo Padovan <gustavo@padovan.org>,
         Boris Brezillon <boris.brezillon@bootlin.com>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
         Daniel Stone <daniels@collabora.com>,
-        Mihail Atanassov <mihail.atanassov@arm.com>
-Subject: [PATCH v8 1/5] drm: mali-dp: Add support for writeback on DP550/DP650
-Date:   Tue, 12 Jun 2018 15:08:09 +0100
-Message-Id: <20180612140813.20419-2-Liviu.Dudau@arm.com>
+        Mihail Atanassov <mihail.atanassov@arm.com>,
+        Liviu Dudau <liviu.dudau@arm.com>
+Subject: [PATCH v8 5/5] drm: mali-dp: Add writeback connector
+Date:   Tue, 12 Jun 2018 15:08:13 +0100
+Message-Id: <20180612140813.20419-6-Liviu.Dudau@arm.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180612140813.20419-1-Liviu.Dudau@arm.com>
 References: <20180612140813.20419-1-Liviu.Dudau@arm.com>
@@ -51,192 +52,458 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mali-DP display processors are able to write the composition result to a
-memory buffer via the SE.
+From: Brian Starkey <brian.starkey@arm.com>
 
-Add entry points in the HAL for enabling/disabling this feature, and
-implement support for it on DP650 and DP550. DP500 acts differently and
-so is omitted from this change.
+Mali-DP has a memory writeback engine which can be used to write the
+composition result to a memory buffer. Expose this functionality as a
+DRM writeback connector on supported hardware.
+
+Changes since v1:
+ Daniel Vetter:
+ - Don't require a modeset when writeback routing changes
+ - Make writeback connector always disconnected
+
+Changes since v2:
+ - Rebase onto new drm_writeback_connector
+ - Add reset callback, allocating subclassed state
+ Daniel Vetter:
+ - Squash out-fence support into this commit
+ Gustavo Padovan:
+ - Don't signal fence directly from driver (and drop malidp_mw_job)
 
 Changes since v3:
- - Fix missing vsync interrupt for DP550
+ - Modifications to fit with Mali-DP commit tail changes
 
-Signed-off-by: Liviu Dudau <Liviu.Dudau@arm.com>
 Signed-off-by: Brian Starkey <brian.starkey@arm.com>
 [rebased and fixed conflicts]
 Signed-off-by: Mihail Atanassov <mihail.atanassov@arm.com>
+Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
 ---
- drivers/gpu/drm/arm/malidp_hw.c   | 55 +++++++++++++++++++++++++++++--
- drivers/gpu/drm/arm/malidp_hw.h   | 17 ++++++++++
- drivers/gpu/drm/arm/malidp_regs.h | 15 +++++++++
- 3 files changed, 85 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/arm/Makefile      |   1 +
+ drivers/gpu/drm/arm/malidp_crtc.c |  10 ++
+ drivers/gpu/drm/arm/malidp_drv.c  |  19 ++-
+ drivers/gpu/drm/arm/malidp_drv.h  |   3 +
+ drivers/gpu/drm/arm/malidp_hw.c   |   5 +
+ drivers/gpu/drm/arm/malidp_mw.c   | 250 ++++++++++++++++++++++++++++++
+ drivers/gpu/drm/arm/malidp_mw.h   |  14 ++
+ drivers/gpu/drm/drm_atomic.c      |   4 +
+ 8 files changed, 301 insertions(+), 5 deletions(-)
+ create mode 100644 drivers/gpu/drm/arm/malidp_mw.c
+ create mode 100644 drivers/gpu/drm/arm/malidp_mw.h
 
-diff --git a/drivers/gpu/drm/arm/malidp_hw.c b/drivers/gpu/drm/arm/malidp_hw.c
-index d789b46dc8173..7a48a0defd90a 100644
---- a/drivers/gpu/drm/arm/malidp_hw.c
-+++ b/drivers/gpu/drm/arm/malidp_hw.c
-@@ -588,6 +588,49 @@ static long malidp550_se_calc_mclk(struct malidp_hw_device *hwdev,
- 	return ret;
- }
+diff --git a/drivers/gpu/drm/arm/Makefile b/drivers/gpu/drm/arm/Makefile
+index bb8b158ff90d0..3bf31d1a4722c 100644
+--- a/drivers/gpu/drm/arm/Makefile
++++ b/drivers/gpu/drm/arm/Makefile
+@@ -1,4 +1,5 @@
+ hdlcd-y := hdlcd_drv.o hdlcd_crtc.o
+ obj-$(CONFIG_DRM_HDLCD)	+= hdlcd.o
+ mali-dp-y := malidp_drv.o malidp_hw.o malidp_planes.o malidp_crtc.o
++mali-dp-y += malidp_mw.o
+ obj-$(CONFIG_DRM_MALI_DISPLAY)	+= mali-dp.o
+diff --git a/drivers/gpu/drm/arm/malidp_crtc.c b/drivers/gpu/drm/arm/malidp_crtc.c
+index fcc62bc60f6a7..ef44202fb43f8 100644
+--- a/drivers/gpu/drm/arm/malidp_crtc.c
++++ b/drivers/gpu/drm/arm/malidp_crtc.c
+@@ -411,6 +411,16 @@ static int malidp_crtc_atomic_check(struct drm_crtc *crtc,
+ 		}
+ 	}
  
-+static int malidp550_enable_memwrite(struct malidp_hw_device *hwdev,
-+				     dma_addr_t *addrs, s32 *pitches,
-+				     int num_planes, u16 w, u16 h, u32 fmt_id)
-+{
-+	u32 base = MALIDP550_SE_MEMWRITE_BASE;
-+	u32 de_base = malidp_get_block_base(hwdev, MALIDP_DE_BLOCK);
++	/* If only the writeback routing has changed, we don't need a modeset */
++	if (state->connectors_changed) {
++		u32 old_mask = crtc->state->connector_mask;
++		u32 new_mask = state->connector_mask;
 +
-+	/* enable the scaling engine block */
-+	malidp_hw_setbits(hwdev, MALIDP_SCALE_ENGINE_EN, de_base + MALIDP_DE_DISPLAY_FUNC);
-+
-+	malidp_hw_write(hwdev, fmt_id, base + MALIDP_MW_FORMAT);
-+	switch (num_planes) {
-+	case 2:
-+		malidp_hw_write(hwdev, lower_32_bits(addrs[1]), base + MALIDP_MW_P2_PTR_LOW);
-+		malidp_hw_write(hwdev, upper_32_bits(addrs[1]), base + MALIDP_MW_P2_PTR_HIGH);
-+		malidp_hw_write(hwdev, pitches[1], base + MALIDP_MW_P2_STRIDE);
-+		/* fall through */
-+	case 1:
-+		malidp_hw_write(hwdev, lower_32_bits(addrs[0]), base + MALIDP_MW_P1_PTR_LOW);
-+		malidp_hw_write(hwdev, upper_32_bits(addrs[0]), base + MALIDP_MW_P1_PTR_HIGH);
-+		malidp_hw_write(hwdev, pitches[0], base + MALIDP_MW_P1_STRIDE);
-+		break;
-+	default:
-+		WARN(1, "Invalid number of planes");
++		if ((old_mask ^ new_mask) ==
++		    (1 << drm_connector_index(&malidp->mw_connector.base)))
++			state->connectors_changed = false;
 +	}
 +
-+	malidp_hw_write(hwdev, MALIDP_DE_H_ACTIVE(w) | MALIDP_DE_V_ACTIVE(h),
-+			MALIDP550_SE_MEMWRITE_OUT_SIZE);
-+	malidp_hw_setbits(hwdev, MALIDP550_SE_MEMWRITE_ONESHOT | MALIDP_SE_MEMWRITE_EN,
-+			  MALIDP550_SE_CONTROL);
+ 	ret = malidp_crtc_atomic_check_gamma(crtc, state);
+ 	ret = ret ? ret : malidp_crtc_atomic_check_ctm(crtc, state);
+ 	ret = ret ? ret : malidp_crtc_atomic_check_scaling(crtc, state);
+diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
+index e262620ffed55..fc264554c5035 100644
+--- a/drivers/gpu/drm/arm/malidp_drv.c
++++ b/drivers/gpu/drm/arm/malidp_drv.c
+@@ -31,6 +31,7 @@
+ #include <drm/drm_of.h>
+ 
+ #include "malidp_drv.h"
++#include "malidp_mw.h"
+ #include "malidp_regs.h"
+ #include "malidp_hw.h"
+ 
+@@ -238,7 +239,9 @@ static void malidp_atomic_commit_tail(struct drm_atomic_state *state)
+ 		malidp_atomic_commit_se_config(crtc, old_crtc_state);
+ 	}
+ 
+-	drm_atomic_helper_commit_planes(drm, state, 0);
++	drm_atomic_helper_commit_planes(drm, state, DRM_PLANE_COMMIT_ACTIVE_ONLY);
++
++	malidp_mw_atomic_commit(drm, state);
+ 
+ 	drm_atomic_helper_commit_modeset_enables(drm, state);
+ 
+@@ -276,12 +279,18 @@ static int malidp_init(struct drm_device *drm)
+ 	drm->mode_config.helper_private = &malidp_mode_config_helpers;
+ 
+ 	ret = malidp_crtc_init(drm);
+-	if (ret) {
+-		drm_mode_config_cleanup(drm);
+-		return ret;
+-	}
++	if (ret)
++		goto crtc_fail;
++
++	ret = malidp_mw_connector_init(drm);
++	if (ret)
++		goto crtc_fail;
+ 
+ 	return 0;
++
++crtc_fail:
++	drm_mode_config_cleanup(drm);
++	return ret;
+ }
+ 
+ static void malidp_fini(struct drm_device *drm)
+diff --git a/drivers/gpu/drm/arm/malidp_drv.h b/drivers/gpu/drm/arm/malidp_drv.h
+index e8c41cf1b5bd2..5febd4b43e058 100644
+--- a/drivers/gpu/drm/arm/malidp_drv.h
++++ b/drivers/gpu/drm/arm/malidp_drv.h
+@@ -13,6 +13,8 @@
+ #ifndef __MALIDP_DRV_H__
+ #define __MALIDP_DRV_H__
+ 
++#include <drm/drm_writeback.h>
++#include <drm/drm_encoder.h>
+ #include <linux/mutex.h>
+ #include <linux/wait.h>
+ #include <drm/drmP.h>
+@@ -25,6 +27,7 @@
+ struct malidp_drm {
+ 	struct malidp_hw_device *dev;
+ 	struct drm_crtc crtc;
++	struct drm_writeback_connector mw_connector;
+ 	wait_queue_head_t wq;
+ 	struct drm_pending_vblank_event *event;
+ 	atomic_t config_valid;
+diff --git a/drivers/gpu/drm/arm/malidp_hw.c b/drivers/gpu/drm/arm/malidp_hw.c
+index df3649203e6a9..e0de7a35a0beb 100644
+--- a/drivers/gpu/drm/arm/malidp_hw.c
++++ b/drivers/gpu/drm/arm/malidp_hw.c
+@@ -21,6 +21,7 @@
+ 
+ #include "malidp_drv.h"
+ #include "malidp_hw.h"
++#include "malidp_mw.h"
+ 
+ enum {
+ 	MW_NOT_ENABLED = 0,	/* SE writeback not enabled */
+@@ -995,7 +996,11 @@ static irqreturn_t malidp_se_irq(int irq, void *arg)
+ 
+ 	if (status & se->vsync_irq) {
+ 		switch (hwdev->mw_state) {
++		case MW_ONESHOT:
++			drm_writeback_signal_completion(&malidp->mw_connector, 0);
++			break;
+ 		case MW_STOP:
++			drm_writeback_signal_completion(&malidp->mw_connector, 0);
+ 			/* disable writeback after stop */
+ 			hwdev->mw_state = MW_NOT_ENABLED;
+ 			break;
+diff --git a/drivers/gpu/drm/arm/malidp_mw.c b/drivers/gpu/drm/arm/malidp_mw.c
+new file mode 100644
+index 0000000000000..cfd718e7e97c1
+--- /dev/null
++++ b/drivers/gpu/drm/arm/malidp_mw.c
+@@ -0,0 +1,250 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * (C) COPYRIGHT 2016 ARM Limited. All rights reserved.
++ * Author: Brian Starkey <brian.starkey@arm.com>
++ *
++ * ARM Mali DP Writeback connector implementation
++ */
++#include <drm/drm_atomic.h>
++#include <drm/drm_atomic_helper.h>
++#include <drm/drm_crtc.h>
++#include <drm/drm_crtc_helper.h>
++#include <drm/drm_fb_cma_helper.h>
++#include <drm/drm_gem_cma_helper.h>
++#include <drm/drmP.h>
++#include <drm/drm_writeback.h>
++
++#include "malidp_drv.h"
++#include "malidp_hw.h"
++#include "malidp_mw.h"
++
++#define to_mw_state(_state) (struct malidp_mw_connector_state *)(_state)
++
++struct malidp_mw_connector_state {
++	struct drm_connector_state base;
++	dma_addr_t addrs[2];
++	s32 pitches[2];
++	u8 format;
++	u8 n_planes;
++};
++
++static int malidp_mw_connector_get_modes(struct drm_connector *connector)
++{
++	struct drm_device *dev = connector->dev;
++
++	return drm_add_modes_noedid(connector, dev->mode_config.max_width,
++				    dev->mode_config.max_height);
++}
++
++static enum drm_mode_status
++malidp_mw_connector_mode_valid(struct drm_connector *connector,
++			       struct drm_display_mode *mode)
++{
++	struct drm_device *dev = connector->dev;
++	struct drm_mode_config *mode_config = &dev->mode_config;
++	int w = mode->hdisplay, h = mode->vdisplay;
++
++	if ((w < mode_config->min_width) || (w > mode_config->max_width))
++		return MODE_BAD_HVALUE;
++
++	if ((h < mode_config->min_height) || (h > mode_config->max_height))
++		return MODE_BAD_VVALUE;
++
++	return MODE_OK;
++}
++
++const struct drm_connector_helper_funcs malidp_mw_connector_helper_funcs = {
++	.get_modes = malidp_mw_connector_get_modes,
++	.mode_valid = malidp_mw_connector_mode_valid,
++};
++
++static void malidp_mw_connector_reset(struct drm_connector *connector)
++{
++	struct malidp_mw_connector_state *mw_state =
++		kzalloc(sizeof(*mw_state), GFP_KERNEL);
++
++	if (connector->state)
++		__drm_atomic_helper_connector_destroy_state(connector->state);
++
++	kfree(connector->state);
++	__drm_atomic_helper_connector_reset(connector, &mw_state->base);
++}
++
++static enum drm_connector_status
++malidp_mw_connector_detect(struct drm_connector *connector, bool force)
++{
++	return connector_status_disconnected;
++}
++
++static void malidp_mw_connector_destroy(struct drm_connector *connector)
++{
++	drm_connector_cleanup(connector);
++}
++
++static struct drm_connector_state *
++malidp_mw_connector_duplicate_state(struct drm_connector *connector)
++{
++	struct malidp_mw_connector_state *mw_state;
++
++	if (WARN_ON(!connector->state))
++		return NULL;
++
++	mw_state = kzalloc(sizeof(*mw_state), GFP_KERNEL);
++	if (!mw_state)
++		return NULL;
++
++	/* No need to preserve any of our driver-local data */
++	__drm_atomic_helper_connector_duplicate_state(connector, &mw_state->base);
++
++	return &mw_state->base;
++}
++
++static const struct drm_connector_funcs malidp_mw_connector_funcs = {
++	.reset = malidp_mw_connector_reset,
++	.detect = malidp_mw_connector_detect,
++	.fill_modes = drm_helper_probe_single_connector_modes,
++	.destroy = malidp_mw_connector_destroy,
++	.atomic_duplicate_state = malidp_mw_connector_duplicate_state,
++	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
++};
++
++static int
++malidp_mw_encoder_atomic_check(struct drm_encoder *encoder,
++			       struct drm_crtc_state *crtc_state,
++			       struct drm_connector_state *conn_state)
++{
++	struct malidp_mw_connector_state *mw_state = to_mw_state(conn_state);
++	struct malidp_drm *malidp = encoder->dev->dev_private;
++	struct drm_framebuffer *fb;
++	int i, n_planes;
++
++	if (!conn_state->writeback_job || !conn_state->writeback_job->fb)
++		return 0;
++
++	fb = conn_state->writeback_job->fb;
++	if ((fb->width != crtc_state->mode.hdisplay) ||
++	    (fb->height != crtc_state->mode.vdisplay)) {
++		DRM_DEBUG_KMS("Invalid framebuffer size %ux%u\n",
++				fb->width, fb->height);
++		return -EINVAL;
++	}
++
++	mw_state->format =
++		malidp_hw_get_format_id(&malidp->dev->hw->map, SE_MEMWRITE,
++					fb->format->format);
++	if (mw_state->format == MALIDP_INVALID_FORMAT_ID) {
++		struct drm_format_name_buf format_name;
++
++		DRM_DEBUG_KMS("Invalid pixel format %s\n",
++			      drm_get_format_name(fb->format->format,
++						  &format_name));
++		return -EINVAL;
++	}
++
++	n_planes = drm_format_num_planes(fb->format->format);
++	for (i = 0; i < n_planes; i++) {
++		struct drm_gem_cma_object *obj = drm_fb_cma_get_gem_obj(fb, i);
++		/* memory write buffers are never rotated */
++		u8 alignment = malidp_hw_get_pitch_align(malidp->dev, 0);
++
++		if (fb->pitches[i] & (alignment - 1)) {
++			DRM_DEBUG_KMS("Invalid pitch %u for plane %d\n",
++				      fb->pitches[i], i);
++			return -EINVAL;
++		}
++		mw_state->pitches[i] = fb->pitches[i];
++		mw_state->addrs[i] = obj->paddr + fb->offsets[i];
++	}
++	mw_state->n_planes = n_planes;
 +
 +	return 0;
 +}
 +
-+static void malidp550_disable_memwrite(struct malidp_hw_device *hwdev)
-+{
-+	u32 base = malidp_get_block_base(hwdev, MALIDP_DE_BLOCK);
++static const struct drm_encoder_helper_funcs malidp_mw_encoder_helper_funcs = {
++	.atomic_check = malidp_mw_encoder_atomic_check,
++};
 +
-+	malidp_hw_clearbits(hwdev, MALIDP550_SE_MEMWRITE_ONESHOT | MALIDP_SE_MEMWRITE_EN,
-+			    MALIDP550_SE_CONTROL);
-+	malidp_hw_clearbits(hwdev, MALIDP_SCALE_ENGINE_EN, base + MALIDP_DE_DISPLAY_FUNC);
++static u32 *get_writeback_formats(struct malidp_drm *malidp, int *n_formats)
++{
++	const struct malidp_hw_regmap *map = &malidp->dev->hw->map;
++	u32 *formats;
++	int n, i;
++
++	formats = kcalloc(map->n_pixel_formats, sizeof(*formats),
++			  GFP_KERNEL);
++	if (!formats)
++		return NULL;
++
++	for (n = 0, i = 0;  i < map->n_pixel_formats; i++) {
++		if (map->pixel_formats[i].layer & SE_MEMWRITE)
++			formats[n++] = map->pixel_formats[i].format;
++	}
++
++	*n_formats = n;
++
++	return formats;
 +}
 +
- static int malidp650_query_hw(struct malidp_hw_device *hwdev)
- {
- 	u32 conf = malidp_hw_read(hwdev, MALIDP550_CONFIG_ID);
-@@ -673,9 +716,11 @@ const struct malidp_hw malidp_device[MALIDP_MAX_DEVICES] = {
- 			.se_irq_map = {
- 				.irq_mask = MALIDP550_SE_IRQ_EOW |
- 					    MALIDP550_SE_IRQ_AXI_ERR,
-+				.vsync_irq = MALIDP550_SE_IRQ_EOW,
- 			},
- 			.dc_irq_map = {
--				.irq_mask = MALIDP550_DC_IRQ_CONF_VALID,
-+				.irq_mask = MALIDP550_DC_IRQ_CONF_VALID |
-+					    MALIDP550_DC_IRQ_SE,
- 				.vsync_irq = MALIDP550_DC_IRQ_CONF_VALID,
- 			},
- 			.pixel_formats = malidp550_de_formats,
-@@ -691,6 +736,8 @@ const struct malidp_hw malidp_device[MALIDP_MAX_DEVICES] = {
- 		.rotmem_required = malidp550_rotmem_required,
- 		.se_set_scaling_coeffs = malidp550_se_set_scaling_coeffs,
- 		.se_calc_mclk = malidp550_se_calc_mclk,
-+		.enable_memwrite = malidp550_enable_memwrite,
-+		.disable_memwrite = malidp550_disable_memwrite,
- 		.features = 0,
- 	},
- 	[MALIDP_650] = {
-@@ -711,9 +758,11 @@ const struct malidp_hw malidp_device[MALIDP_MAX_DEVICES] = {
- 			.se_irq_map = {
- 				.irq_mask = MALIDP550_SE_IRQ_EOW |
- 					    MALIDP550_SE_IRQ_AXI_ERR,
-+				.vsync_irq = MALIDP550_SE_IRQ_EOW,
- 			},
- 			.dc_irq_map = {
--				.irq_mask = MALIDP550_DC_IRQ_CONF_VALID,
-+				.irq_mask = MALIDP550_DC_IRQ_CONF_VALID |
-+					    MALIDP550_DC_IRQ_SE,
- 				.vsync_irq = MALIDP550_DC_IRQ_CONF_VALID,
- 			},
- 			.pixel_formats = malidp550_de_formats,
-@@ -729,6 +778,8 @@ const struct malidp_hw malidp_device[MALIDP_MAX_DEVICES] = {
- 		.rotmem_required = malidp550_rotmem_required,
- 		.se_set_scaling_coeffs = malidp550_se_set_scaling_coeffs,
- 		.se_calc_mclk = malidp550_se_calc_mclk,
-+		.enable_memwrite = malidp550_enable_memwrite,
-+		.disable_memwrite = malidp550_disable_memwrite,
- 		.features = 0,
- 	},
- };
-diff --git a/drivers/gpu/drm/arm/malidp_hw.h b/drivers/gpu/drm/arm/malidp_hw.h
-index b5dd6c73ec9f2..72cc22f828360 100644
---- a/drivers/gpu/drm/arm/malidp_hw.h
-+++ b/drivers/gpu/drm/arm/malidp_hw.h
-@@ -177,6 +177,23 @@ struct malidp_hw {
- 	long (*se_calc_mclk)(struct malidp_hw_device *hwdev,
- 			     struct malidp_se_config *se_config,
- 			     struct videomode *vm);
-+	/**
-+	 * Enable writing to memory the content of the next frame
-+	 * @param hwdev - malidp_hw_device structure containing the HW description
-+	 * @param addrs - array of addresses for each plane
-+	 * @param pitches - array of pitches for each plane
-+	 * @param num_planes - number of planes to be written
-+	 * @param w - width of the output frame
-+	 * @param h - height of the output frame
-+	 * @param fmt_id - internal format ID of output buffer
-+	 */
-+	int (*enable_memwrite)(struct malidp_hw_device *hwdev, dma_addr_t *addrs,
-+			       s32 *pitches, int num_planes, u16 w, u16 h, u32 fmt_id);
++int malidp_mw_connector_init(struct drm_device *drm)
++{
++	struct malidp_drm *malidp = drm->dev_private;
++	u32 *formats;
++	int ret, n_formats;
 +
-+	/*
-+	 * Disable the writing to memory of the next frame's content.
-+	 */
-+	void (*disable_memwrite)(struct malidp_hw_device *hwdev);
- 
- 	u8 features;
- };
-diff --git a/drivers/gpu/drm/arm/malidp_regs.h b/drivers/gpu/drm/arm/malidp_regs.h
-index 149024fb44327..e2b2c496225e3 100644
---- a/drivers/gpu/drm/arm/malidp_regs.h
-+++ b/drivers/gpu/drm/arm/malidp_regs.h
-@@ -66,6 +66,8 @@
- #define   MALIDP_DISP_FUNC_GAMMA	(1 << 0)
- #define   MALIDP_DISP_FUNC_CADJ		(1 << 4)
- #define   MALIDP_DISP_FUNC_ILACED	(1 << 8)
-+#define   MALIDP_SCALE_ENGINE_EN	(1 << 16)
-+#define   MALIDP_SE_MEMWRITE_EN		(2 << 5)
- 
- /* register offsets for IRQ management */
- #define MALIDP_REG_STATUS		0x00000
-@@ -153,6 +155,16 @@
- 		(((x) & MALIDP_SE_ENH_LIMIT_MASK) << 16)
- #define   MALIDP_SE_ENH_COEFF0			0x04
- 
++	if (!malidp->dev->hw->enable_memwrite)
++		return 0;
 +
-+/* register offsets relative to MALIDP5x0_SE_MEMWRITE_BASE */
-+#define MALIDP_MW_FORMAT		0x00000
-+#define MALIDP_MW_P1_STRIDE		0x00004
-+#define MALIDP_MW_P2_STRIDE		0x00008
-+#define MALIDP_MW_P1_PTR_LOW		0x0000c
-+#define MALIDP_MW_P1_PTR_HIGH		0x00010
-+#define MALIDP_MW_P2_PTR_LOW		0x0002c
-+#define MALIDP_MW_P2_PTR_HIGH		0x00030
++	malidp->mw_connector.encoder.possible_crtcs = 1 << drm_crtc_index(&malidp->crtc);
++	drm_connector_helper_add(&malidp->mw_connector.base,
++				 &malidp_mw_connector_helper_funcs);
 +
- /* register offsets and bits specific to DP500 */
- #define MALIDP500_ADDR_SPACE_SIZE	0x01000
- #define MALIDP500_DC_BASE		0x00000
-@@ -217,6 +229,9 @@
- #define MALIDP550_DE_PERF_BASE		0x00500
- #define MALIDP550_SE_BASE		0x08000
- #define MALIDP550_SE_CONTROL		0x08010
-+#define   MALIDP550_SE_MEMWRITE_ONESHOT	(1 << 7)
-+#define MALIDP550_SE_MEMWRITE_OUT_SIZE	0x08030
-+#define MALIDP550_SE_MEMWRITE_BASE	0x08100
- #define MALIDP550_DC_BASE		0x0c000
- #define MALIDP550_DC_CONTROL		0x0c010
- #define   MALIDP550_DC_CONFIG_REQ	(1 << 16)
++	formats = get_writeback_formats(malidp, &n_formats);
++	if (!formats)
++		return -ENOMEM;
++
++	ret = drm_writeback_connector_init(drm, &malidp->mw_connector,
++					   &malidp_mw_connector_funcs,
++					   &malidp_mw_encoder_helper_funcs,
++					   formats, n_formats);
++	kfree(formats);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++void malidp_mw_atomic_commit(struct drm_device *drm,
++			     struct drm_atomic_state *old_state)
++{
++	struct malidp_drm *malidp = drm->dev_private;
++	struct drm_writeback_connector *mw_conn = &malidp->mw_connector;
++	struct drm_connector_state *conn_state = mw_conn->base.state;
++	struct malidp_hw_device *hwdev = malidp->dev;
++	struct malidp_mw_connector_state *mw_state;
++
++	if (!conn_state)
++		return;
++
++	mw_state = to_mw_state(conn_state);
++
++	if (conn_state->writeback_job && conn_state->writeback_job->fb) {
++		struct drm_framebuffer *fb = conn_state->writeback_job->fb;
++
++		DRM_DEV_DEBUG_DRIVER(drm->dev,
++				     "Enable memwrite %ux%u:%d %pad fmt: %u\n",
++				     fb->width, fb->height,
++				     mw_state->pitches[0],
++				     &mw_state->addrs[0],
++				     mw_state->format);
++
++		drm_writeback_queue_job(mw_conn, conn_state->writeback_job);
++		conn_state->writeback_job = NULL;
++
++		hwdev->hw->enable_memwrite(hwdev, mw_state->addrs,
++					   mw_state->pitches, mw_state->n_planes,
++					   fb->width, fb->height, mw_state->format);
++	} else {
++		DRM_DEV_DEBUG_DRIVER(drm->dev, "Disable memwrite\n");
++		hwdev->hw->disable_memwrite(hwdev);
++	}
++}
+diff --git a/drivers/gpu/drm/arm/malidp_mw.h b/drivers/gpu/drm/arm/malidp_mw.h
+new file mode 100644
+index 0000000000000..19a007676a1db
+--- /dev/null
++++ b/drivers/gpu/drm/arm/malidp_mw.h
+@@ -0,0 +1,14 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * (C) COPYRIGHT 2016 ARM Limited. All rights reserved.
++ * Author: Brian Starkey <brian.starkey@arm.com>
++ *
++ */
++
++#ifndef __MALIDP_MW_H__
++#define __MALIDP_MW_H__
++
++int malidp_mw_connector_init(struct drm_device *drm);
++void malidp_mw_atomic_commit(struct drm_device *drm,
++			     struct drm_atomic_state *old_state);
++#endif
+diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+index db3cb47da31b6..da80ca611d918 100644
+--- a/drivers/gpu/drm/drm_atomic.c
++++ b/drivers/gpu/drm/drm_atomic.c
+@@ -1390,6 +1390,10 @@ static void drm_atomic_connector_print_state(struct drm_printer *p,
+ 	drm_printf(p, "connector[%u]: %s\n", connector->base.id, connector->name);
+ 	drm_printf(p, "\tcrtc=%s\n", state->crtc ? state->crtc->name : "(null)");
+ 
++	if (connector->connector_type == DRM_MODE_CONNECTOR_WRITEBACK)
++		if (state->writeback_job && state->writeback_job->fb)
++			drm_printf(p, "\tfb=%d\n", state->writeback_job->fb->base.id);
++
+ 	if (connector->funcs->atomic_print_state)
+ 		connector->funcs->atomic_print_state(p, state);
+ }
 -- 
 2.17.1
 
